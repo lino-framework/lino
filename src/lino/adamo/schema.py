@@ -291,7 +291,7 @@ class Schema(Describable):
 
     def startup(self,sess,checkIntegrity=None):
         if checkIntegrity is None:
-            checkIntegrity = center.checkIntegrity
+            checkIntegrity = center.doCheckIntegrity()
         assert len(self._databases) > 0, "no databases"
         for db in self._databases:
             sess.use(db)

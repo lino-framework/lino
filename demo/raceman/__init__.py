@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2004-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -16,29 +16,3 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-"""
-
-import csv
-import os
-
-from lino.schemas.sprl.tables import Nations
-
-
-dataDir = os.path.dirname(__file__)
-
-def populate(q):
-    #be = q.getColumnByName("nation").peek('be')
-    be = q.getSession().peek(Nations,'be')
-    f = file(os.path.join(dataDir,'belgzip.csv'),'rb')
-    r = csv.reader(f)
-    r.next()
-    #cities = be.cities
-    #print cities
-    for (name,zip) in r:
-        q.appendRow(name=name,zipCode=zip,nation=be)
-        #q.appendRow(name=name,zipCode=zip,nation_id='be')
-
-    
-
-    

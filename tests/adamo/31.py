@@ -54,7 +54,7 @@ class Case(TestCase):
         schema = Schema(label="Raceman Report Tester")
         schema.addPlugin(BasePlugin())
 
-        sess = schema.quickStartup(populate=False)
+        sess = schema.quickStartup()
 
 
 

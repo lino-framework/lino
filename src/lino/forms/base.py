@@ -131,6 +131,7 @@ class Entry(BaseEntry):
     def setValue(self,v):
         self._type.validate(v)
         self._value = v
+        self.refresh()
 
 
 class DataEntry(BaseEntry):
@@ -156,6 +157,7 @@ class DataEntry(BaseEntry):
     def refresh(self):
         frm = self.getForm()
         self.enabled = self.dc.canWrite(frm.data)
+        self.refresh()
         
         
 

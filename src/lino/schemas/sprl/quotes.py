@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -57,25 +57,6 @@ class PubTypes(BabelTable):
         self.addField('typeRefPrefix',STRING)
         self.addBabelField('pubRefLabel',STRING)
         
-    def populate(self,sess):
-        sess.setBabelLangs('en de')
-        q = sess.query(PubTypes,'id name typeRefPrefix pubRefLabel')
-        q.appendRow("book",
-                    ('Book','Buch')        ,
-                    'ISBN: ',
-                    ('page','Seite')  )
-        q.appendRow("url" , ('Web Page','Webseite')    ,
-                    'http:' , ( None, None)   )
-        q.appendRow("cd"  , ('CompactDisc', 'CD') , 'cddb: ',
-                    ('track','Stück') )
-        q.appendRow("art" , ('Article','Artikel')     ,
-                    ''      , ('page','Seite')  )
-        q.appendRow("mag" , ('Magazine','Zeitschrift')    ,
-                    ''      , ('page','Seite')  )
-        q.appendRow("sw"  , ('Software','Software')    ,
-                    ''      , (None,None)    )
-
-
 
 class Topics(TreeTable):
     def init(self):
@@ -142,13 +123,4 @@ class AuthorEventTypes(BabelTable):
 
     class Instance(BabelTable.Instance):
         pass
-
-    def populate(self,sess):
-        q = sess.query(AuthorEventTypes,'id name')
-        q.setBabelLangs('en de')
-        q.appendRow(1,('born','geboren'))
-        q.appendRow(2,('died','gestorben'))
-        q.appendRow(3,('married','Heirat'))
-        q.appendRow(4,('school','Schulabschluss'))
-        q.appendRow(5,('other','Sonstige'))	
 

@@ -16,12 +16,11 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import atexit
 from cStringIO import StringIO
 
 from lino.adamo.session import ConsoleSession
 from lino.ui import console
-
-#_center = None # User code should call getCenter() to get this instance.
 
 class Center:
     """
@@ -37,7 +36,7 @@ class Center:
         #self._databases = []
         self._sessions = []
         self._sessionFactory = ConsoleSession
-        self.checkIntegrity = False
+        self._checkIntegrity = False
 
     def addConnection(self,conn):
         assert not conn in self._connections
@@ -45,7 +44,7 @@ class Center:
         
     def set(self,checkIntegrity=None):
         if checkIntegrity is not None:
-            self.checkIntegrity = checkIntegrity
+            self._checkIntegrity = checkIntegrity
 
     def setSessionFactory(self,sf):
         self._sessionFactory = sf
@@ -82,6 +81,7 @@ class Center:
         
         assert len(self._schemas) > 0,"no schemas"
         sess = self.createSession()
+        sess.debug("center.startup()")
         for sch in self._schemas:
             sch.startup(sess,**kw)
         sess.setDefaultLanguage()
@@ -115,17 +115,23 @@ class Center:
     def parse_args(args=None):
         p = self.getOptionParser()
         return p.parse_args(args)
+
+    def doCheckIntegrity(self):
+        return self._checkIntegrity
     
             
-## _center = Center()
+_center = Center() 
+atexit.register(_center.shutdown)
 
 
-## for m in ('createSession','getOptionParser',
-##           'startup', 'shutdown',
-##           'addSchema', 
-##           'addConnection'
-##           ):
-##     globals()[m] = getattr(_center,m)
+
+for m in ('createSession','getOptionParser',
+          'startup', 'shutdown',
+          'doCheckIntegrity', 
+          'addSchema', 
+          'addConnection'
+          ):
+    globals()[m] = getattr(_center,m)
 
 
 

@@ -26,9 +26,9 @@ from lino.schemas.sprl.data import quotes_de
 
 class Case(tsttools.TestCase):
     def setUp(self):
-        self.db = demo.beginSession(withJokes=True)
-        quotes_de.populate(self.db)
-        self.db.commit()
+        self.db = demo.startup(withJokes=True)
+        #quotes_de.populate(self.db)
+        #self.db.commit()
         
     def tearDown(self):
         self.db.shutdown()

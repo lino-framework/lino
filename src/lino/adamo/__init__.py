@@ -26,7 +26,6 @@ from lino import __version__
 
 import __builtin__
 import sys
-import atexit
 
 from lino.adamo.table import Table, LinkTable,\
      MemoTable, TreeTable, MemoTreeTable,\
@@ -41,7 +40,7 @@ from lino.adamo.schema import Schema, SchemaPlugin, Populator
 #from session import Application
 from lino.adamo.datasource import DataRow
 #from database import QuickDatabase 
-from s_center import Center
+#from center import Center
 
 def _(s):
    return s
@@ -69,11 +68,8 @@ def beginQuickSession(schema,*args,**kw):
 ##     return sess
 
 
-center = Center() 
-atexit.register(center.shutdown)
 
-
-__all__ = ['center','Table','LinkTable',
+__all__ = ['Table','LinkTable',
            'TreeTable', 'MemoTable', 'MemoTreeTable',
            'BabelTable',
            'Field','Pointer','BabelField','Vurt',

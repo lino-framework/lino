@@ -54,13 +54,4 @@ class ProjectStati(BabelTable):
         self.addField('id',STRING)
         #self.name = BabelField(STRING)
 
-    def populate(self,sess):
-        q = sess.query(ProjectStati,'id name')
-        q.setBabelLangs('en de')
-        q.appendRow('T',('to do','zu erledigen'))
-        q.appendRow('D',('done','erledigt'))
-        q.appendRow('W',('waiting','wartet'))
-        q.appendRow('A',('abandoned','storniert'))
-        q.appendRow('S',('sleeping','schläft'))
-
 

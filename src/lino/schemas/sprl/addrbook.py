@@ -1,6 +1,4 @@
-#coding: latin1
-
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -150,11 +148,6 @@ class Users(Persons):
     class Instance(Persons.Instance):
         pass
 
-    def populate(self,sess):
-        q = sess.query(Users,'id firstName name')
-        q.appendRow("luc", "Luc", "Saffre")
-        q.appendRow("james", "James", "Bond")
-        
 
 ## class LoginForm(FormTemplate):
     
@@ -277,13 +270,6 @@ class Currencies(BabelTable):
         def __str__(self):
             return self.id
         
-    def populate(self,sess):
-        q = sess.query(Currencies)
-        q.setBabelLangs('en')
-        EUR = q.appendRow(id="EUR",name="Euro")
-        BEF = q.appendRow(id="BEF",name="Belgian Franc")
-        q.appendRow(id="USD",name="US Dollar")
-    
 class PartnerTypes(BabelTable):
     
     def init(self):
@@ -296,17 +282,6 @@ class PartnerTypes(BabelTable):
             pass
     
 
-    def populate(self,sess):
-        q = sess.query(PartnerTypes,'id name')
-        q.setBabelLangs('en de fr')
-        q.appendRow('c',('Customer', 'Kunde', 'Client'))
-        q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
-        q.appendRow('m',('Member', 'Mitglied', "Membre"))
-        q.appendRow('e',('Employee', 'Angestellter', "Employé"))
-        q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
-	
-        
-    
     
 class Nations(BabelTable):
     """List of Nations (countries) .
@@ -335,24 +310,6 @@ class Nations(BabelTable):
                 raise DataVeto("Nation.id must be 2 chars")
         
 
-    def populate(self,sess):
-        if sess.schema.options.big:
-            from lino.schemas.sprl.data import nations
-            nations.populate(sess)
-            if sess.supportsLang("de"):
-                from lino.schemas.sprl.data import nations_de
-                nations_de.populate(sess)
-            
-        else:
-            q = sess.query(Nations,'id name')
-            q.setBabelLangs('en')
-            q.appendRow("ee","Estonia")
-            q.appendRow("be","Belgium")
-            q.appendRow("de","Germany")
-            q.appendRow("fr","France")
-            q.appendRow("us","United States of America")
-
-    
         
 class Cities(Table):
     """One record for each city.
@@ -376,11 +333,6 @@ class Cities(Table):
                 return self.name
             return self.name + " (%s)" % self.nation.id
         
-    def populate(self,sess):
-        if sess.schema.options.big:
-            from lino.schemas.sprl.data import cities_be
-            cities_be.populate(sess) 
-
     
 class Org2Pers(LinkTable):
 ##      def __init__(self):
@@ -397,14 +349,13 @@ class Org2Pers(LinkTable):
 class ContactsPlugin(SchemaPlugin):
     
     def defineTables(self,schema):
+        schema.addTable(Currencies)
         schema.addTable(Nations, label="Nations" )
         schema.addTable(Cities, label="Cities")
         schema.addTable(Organisations,label="Organisations")
         schema.addTable(Partners, label="Partners")
         schema.addTable(PartnerTypes,
                         label="Partner Types")
-        schema.addTable(Currencies)
-
 
 
 

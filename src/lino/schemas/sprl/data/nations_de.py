@@ -19,9 +19,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.schemas.sprl.tables import Nations
+#from lino.schemas.sprl.tables import Nations
 
-def populate(sess):
+def populate(q):
     s = """
 #AC - Ascension Island 
 AD - Andorra 
@@ -316,16 +316,16 @@ ZR - Zaire (jetzt CD - Demokratische Republik Kongo)
 ZW - Simbabwe
 
 """
-    NATIONS = sess.query(Nations)
-    sess.setBabelLangs('de')
+    #NATIONS = sess.query(Nations)
+    q.setBabelLangs('de')
     for l in s.splitlines():
         if len(l) and l[0] != '#':
             (id,name) = l.split('-',1)
             id=id.strip().lower()
-            n = NATIONS.peek(id)
+            n = q.peek(id)
             n.lock()
             n.name = name.strip()
             n.unlock()
             #print __name__, n.name
             
-    sess.commit()
+    #sess.commit()

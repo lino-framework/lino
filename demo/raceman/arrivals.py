@@ -54,6 +54,7 @@ class Main:
             )
         self.data.append(line)
         frm.info("%s arrived at %s after %s" % line)
+        frm.entries.dossard.setValue('*')
         frm.entries.dossard.setFocus()
     
     def exit(self,parent):

@@ -248,7 +248,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
         if self._mirrorLoader is None:
             return
         if self._mirrorLoader.mtime() <= store.mtime():
-            sess.progress("No need to load "+\
+            sess.debug("No need to load "+\
                        self._mirrorLoader.sourceFilename())
             return
         sess.progress("Loading "+self._mirrorLoader.sourceFilename())

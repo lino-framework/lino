@@ -20,13 +20,14 @@
 
 import os
 import sys
-import unittest
 
 
 from lino.ui import console
 from lino.oogen import Document
 from lino import adamo
 from lino import copyleft
+
+from schema import makeSchema
 
 from lino.schemas.sprl.races import Races, RaceTypes, Categories, \
      Participants, Persons, Clubs
@@ -36,187 +37,13 @@ from lino.tools import dbfreader
 opj = os.path.join
 
 
-def dbfimport(q,filename,oneach=None,**kw):
-    console.info(q.getLabel())
-    if q.mtime() >= os.stat(filename).st_mtime:
-        console.info("%s : no need to read again" % filename)
-        return
-        
-    f = dbfreader.DBFFile(filename, codepage="cp850")
-    q.zap()
-    f.open()
-    for row in f:
-        try:
-            if oneach is None:
-                d = {}
-                for k,v in kw.items():
-                    d[k] = v(row)
-                q.appendRow(**d)
-            else:
-                oneach(q,row)
-        except adamo.DataVeto,e:
-            console.info(str(e))
-        except adamo.DatabaseError,e:
-            console.info(str(e))
-        except ValueError,e:
-            console.info(str(e))
-    f.close()
-    q.commit()
-    return q
-
-class DbfPopulator:
-    dbfpath="."
-    def populate(self,sess):
-        q = sess.query(self.__class__)
-        dbfimport(q,opj(self.dbfpath,self.name+".DBF"),
-                  self.appendFromDBF)
-
-class PAR(DbfPopulator,Persons):
-    def appendFromDBF(self,q,row):
-        q.appendRow(
-            id=row['IDPAR'],
-            name=row['FIRME'],
-            firstName=row['VORNAME'],
-            sex=row['SEX'],
-            birthDate=row['BIRTH'])
-        
-class CLB(DbfPopulator,Clubs):
-    def appendFromDBF(self,q,row):
-        q.appendRow(
-            id=row['IDCLB'],
-            name=row['NAME'],
-            )
-
-class CTY(DbfPopulator,RaceTypes):
-    def appendFromDBF(self,q,row):
-        q.appendRow(
-            id=row['IDCTY'],
-            name=row['NAME'],
-            )
-
-
-class CAT(DbfPopulator,Categories):
-    def appendFromDBF(self,q,row):
-        q.appendRow(
-            id=row['IDCAT'],
-            seq=row['SEQ'],
-            sex=row['SEX'],
-            type=q.getSession().peek(CTY,row['IDCTY']),
-            name=row['NAME'],
-            ageLimit=row['MAXAGE'],
-            )
-        
-
-class RAL(DbfPopulator,Races):
-    def init(self):
-        Races.init(self)
-        self.getRowAttr('id').setType(adamo.STRING(width=6))
-    def appendFromDBF(self,q,row):
-        q.appendRow(
-            id=row['IDRAL'],
-            name1=row['NAME1'],
-            name2=row['NAME2'],
-            date=row['DATE'],
-            )
-        
-
-class POS(DbfPopulator,Participants):
-    def appendFromDBF(self,q,row):
-        sess = q.getSession()
-        race = sess.peek(RAL,row['IDRAL'])
-        person = sess.peek(PAR,row['IDPAR'])
-        if race.type is None:
-            cat = None
-        else:
-            cat = sess.peek(race.type,CAT,row['IDCAT'])
-        club = sess.peek(CLB,row['IDCLB'])
-        q.appendRow(
-            race=race,
-            person=person,
-            cat=cat,
-            club=club,
-            dossard=row['IDPOS'],
-            time=row['TIME'],
-            place=int(row['PLACE']),
-            catPlace=int(row['CATPLACE']),
-            payment=row['PAYE'],
-            )
-    
-
-
 def main2(dbfpath,dbpath):
+
+    schema = makeSchema(dbfpath)
     
-    schema = adamo.Schema()
-    schema.addTable(CLB)
-    schema.addTable(PAR)
-    schema.addTable(CTY)
-    schema.addTable(CAT)
-    schema.addTable(RAL)
-    schema.addTable(POS)
-    
-    for t in schema.getTableList():
-        t.dbfpath = dbfpath
+    sess = schema.quickStartup( filename=opj(dbpath,"raceman.db"))
 
-    sess = schema.quickStartup(filename=opj(dbpath,"raceman.db"))
-
-##     PAR = sess.query(Persons)
-##     dbfimport(PAR,opj(dbfpath,"PAR.DBF"),
-##               id=lambda row:int(row['IDPAR']),
-##               name=lambda row:row['FIRME'],
-##               firstName=lambda row:row['VORNAME'],
-##               sex=lambda row:row['SEX'],
-##               birthDate=lambda row:row['BIRTH']
-##               )
-
-##     CLB = sess.query(Clubs)
-##     dbfimport(CLB,opj(dbfpath,"CLB.DBF"),
-##             id=lambda row:row['IDCLB'],
-##             name=lambda row:row['NAME'],
-##               )
-    
-##     CTY = sess.query(RaceTypes)
-##     dbfimport(CTY,opj(dbfpath,"CTY.DBF"),
-##             id=lambda row:row['IDCTY'],
-##             name=lambda row:row['NAME'],
-##               )
-    
-##     CAT = sess.query(Categories)
-##     dbfimport(CAT,opj(dbfpath,"CAT.DBF"),
-##             id=lambda row:row['IDCAT'],
-##             seq=lambda row:row['SEQ'],
-##             sex=lambda row:row['SEX'],
-##             type=lambda row:CTY.peek(row['IDCTY']),
-##             name=lambda row:row['NAME'],
-##             ageLimit=lambda row:row['MAXAGE'],
-##               )
-    
-##     RAL = sess.query(Races)
-##     dbfimport(RAL,opj(dbfpath,"RAL.DBF"),
-##             id=lambda row:int(row['IDRAL']),
-##             name1=lambda row:row['NAME1'],
-##             name2=lambda row:row['NAME2'],
-##             date=lambda row:row['DATE'],
-##               )
-
-
-##     POS = sess.query(Participants)
-##     def oneach(row):
-##         race = RAL.peek(int(row['IDRAL']))
-##         cat = CAT.peek(race.type,row['IDCAT'])
-##         club = CLB.peek(row['IDCLB'])
-##         POS.appendRow(
-##             race=race,
-##             person=PAR.peek(int(row['IDPAR'])),
-##             cat=cat,
-##             club=club,
-##             dossard=row['IDPOS'],
-##             time=row['TIME'],
-##             place=int(row['PLACE']),
-##             catPlace=int(row['CATPLACE']),
-##             payment=row['PAYE'],
-##             )
-##     dbfimport(POS,opj(dbfpath,"POS.DBF"),oneach)
-
+    sess.progress("Generating reports...")
     if True:
     
         doc = Document("1")
@@ -232,16 +59,18 @@ def main2(dbfpath,dbpath):
 
 def main3(doc,sess):
     
-    race = sess.peek(RAL,"000053")
+    race = sess.peek(Races,53)
     
-    q = sess.query(POS,"person.name cat time dossard",
+    assert race is not None
+    
+    q = sess.query(Participants,"person.name cat time dossard",
                    orderBy="person.name",
                    race=race)
     q.executeReport(doc.report(),
                     label="First report",
                     columnWidths="20 3 8 4")
 
-    q = sess.query(POS,"time person.name cat dossard",
+    q = sess.query(Participants,"time person.name cat dossard",
                    orderBy="time",
                    race=race)
     q.executeReport(doc.report(),
@@ -281,7 +110,7 @@ def ralGroupList(doc,race,
         groups.append(g)
         return g
         
-    for pos in race.pos_by_race.query(orderBy="time"):
+    for pos in race.participants_by_race.query(orderBy="time"):
         if pos.time != "X":
             if sex is None or pos.person.sex == sex:
                 v = getattr(pos,xnValue)

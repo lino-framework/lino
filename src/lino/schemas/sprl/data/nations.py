@@ -31,7 +31,7 @@ from lino import adamo
 
 factbookDir = os.path.dirname(__file__)
 
-def populate(sess):
+def populate(q):
 
     s = """\
 ad     Andorra, Principality of
@@ -280,9 +280,9 @@ zr     Zaire
 zw     Zimbabwe
 """
     
-    sess.setBabelLangs('en')
-    from lino.schemas.sprl.tables import Nations
-    q = sess.query(Nations)
+    q.setBabelLangs('en')
+    #from lino.schemas.sprl.tables import Nations
+    #q = sess.query(Nations)
     for l in s.splitlines():
         (id,name) = l.split(None,1)
         row = q.appendRow(id=id.strip(),

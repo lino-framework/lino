@@ -83,8 +83,8 @@ class SalesPlugin(adamo.SchemaPlugin):
         schema.addTable( Bookings,
                          label="Ledger Bookings")
 
-class JokesPlugin(adamo.SchemaPlugin):
-    pass
+#class JokesPlugin(adamo.SchemaPlugin):
+#    pass
 
 
 class QuotesPlugin(adamo.SchemaPlugin):
@@ -125,11 +125,11 @@ def makeSchema( withEvents=True,
                 withWeb=True,
                 withSales=True,
                 withNews=True,
-                withQuotes=True,
-                withJokes=False,
-                big=False):
+                withQuotes=True):
+##                 withJokes=False,
+##                 big=False):
     
-    schema = SprlSchema(big=big)
+    schema = SprlSchema() #big=big)
     
     schema.addPlugin(BasePlugin(True))
     schema.addPlugin(ContactsPlugin(True))
@@ -140,7 +140,7 @@ def makeSchema( withEvents=True,
     schema.addPlugin(WebPlugin(withWeb))
     schema.addPlugin(ProjectPlugin(withProjects))
     schema.addPlugin(NewsPlugin(withNews))
-    schema.addPlugin(JokesPlugin(withJokes))
+    #schema.addPlugin(JokesPlugin(withJokes))
     #schema.initialize()
     return schema
 

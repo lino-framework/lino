@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -29,17 +29,3 @@ class Languages(Table):
         def getLabel(self):
             return self.name
 
-    def populate(self,sess):
-        q = sess.query(Languages,'id name')
-        if sess.schema.options.big:
-            from lino.schemas.sprl.data import languages
-            languages.populate(q)
-        else:
-            q.setBabelLangs('en de fr')
-            q.appendRow('en',('English','Englisch','Anglais')     )
-            q.appendRow('de',('German','Deutsch', 'Allemand')     )
-            q.appendRow('et',('Estonian','Estnisch','Estonien')   )
-            q.appendRow('fr',('French','Französisch','Français')  )
-            q.appendRow('nl',('Dutch','Niederländisch','Neerlandais'))
-            
-    

@@ -28,6 +28,7 @@ from lino.adamo.database import Database
 from lino.adamo.dbds.sqlite_dbd import Connection
 from lino.schemas.sprl.sprl import makeSchema
 from lino.schemas.sprl.tables import *
+from lino.schemas.sprl import demo
 
 
 sharedTables = (Languages, Nations, 
@@ -41,9 +42,10 @@ class Case(TestCase):
 
     def test01(self):
 
-        schema = makeSchema(big=True) 
+        schema = makeSchema()
     
         schema.initialize()
+        schema.addPopulator(demo.Populator(big=True))
         
         conn = Connection(schema=schema)
         

@@ -35,15 +35,15 @@ class Case(TestCase):
         
     def test01(self):
         NATIONS = self.db.query(Nations)
-        from lino.schemas.sprl.data import nations_de
-        nations_de.populate(self.db)
+        #from lino.schemas.sprl.data import nations_de
+        #nations_de.populate(self.db)
         NATIONS.setBabelLangs('de')
         l1 = []
         l2 = []
         for nation in NATIONS.query(orderBy="name"):
             lbl = nation.getLabel()
             if lbl is None:
-                l1.append(repr(nation))
+                l1.append(nation)
             else:
                 l2.append(lbl)
         self.assertEqual(len(l1),0)

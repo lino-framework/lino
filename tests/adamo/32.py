@@ -70,14 +70,14 @@ TableName           |Count|First               |Last
 --------------------+-----+--------------------+--------------------
 Languages           |    5|English             |Dutch               
 Users               |    2|Luc Saffre          |James Bond          
+Currencies          |    3|EUR                 |USD                 
 Nations             |    5|Estonia             |United States of    
                     |     |                    |America             
 Cities              |   27|Bruxelles (be)      |Alfter-Oedekoven    
                     |     |                    |(de)                
-Organisations       |    1|(1,)                |(1,)                
+Organisations       |    0|                    |                    
 Partners            |   12|Luc Saffre          |Eesti Telefon       
 PartnerTypes        |    5|Customer            |Sponsor             
-Currencies          |    3|EUR                 |USD                 
 Events              |    0|                    |                    
 EventTypes          |    0|                    |                    
 Journals            |    1|outgoing invoices   |outgoing invoices   

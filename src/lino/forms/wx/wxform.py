@@ -1,3 +1,4 @@
+
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -262,9 +263,9 @@ class EntryMixin:
         self.wxctrl = mypanel
 
     def refresh(self):
-        #base.Entry.refresh(self)
-        s = self.getValueForEditor()
-        self.editor.SetValue(s)
+        if hasattr(self,'editor'):
+            s = self.getValueForEditor()
+            self.editor.SetValue(s)
         
     def setFocus(self):
         self.editor.SetFocus()
