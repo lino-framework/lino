@@ -15,7 +15,7 @@ from table import Table, LinkTable,\
 from forms import FormTemplate
 from widgets import Menu, Command
 from datatypes import *
-from rowattrs import Field, Pointer, BabelField, Vurt, Match
+from rowattrs import Field, Pointer, BabelField, Vurt, Match#, Button
 from schema import Schema, SchemaPlugin
 from context import ConsoleSession
 from datasource import DataRow
@@ -32,7 +32,7 @@ __builtin__.__dict__['_'] = _
 __all__ = ['Table','LinkTable',
 			  'TreeTable', 'MemoTable', 'MemoTreeTable',
 			  'BabelTable',
-			  'Field','Pointer','BabelField','Vurt','Match',
+			  'Field','Pointer','BabelField','Vurt','Match',#'Button',
 			  'DataVeto','InvalidRequestError',
 			  'DataRow',
 			  'FormTemplate','Menu','Command',

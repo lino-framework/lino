@@ -138,8 +138,8 @@ class SprlSchema(adamo.Schema):
 	def getContentRoot(self,ctx):
 		return ctx.tables.PAGES.findone(match="index")
 
-	def onStartSession(self,sess):
-		sess.openForm('login')
+	def onStartUI(self,sess):
+		sess.openForm('login',uid="luc")
 		
 ## 	def defineMenus(self,context,win):
 ## 		#assert db.schema is self

@@ -7,7 +7,7 @@
 import types
 
 from lino.misc.etc import issequence
-from query import ColumnList
+from query import ColumnList, BaseColumnList
 from datatypes import DataVeto
 from report import Report
 from rowattrs import FieldContainer, NoSuchField
@@ -18,10 +18,10 @@ class Datasource:
 	A Datasource is the central handle for a stream of data. 
 	"""
 	
-	def __init__(self, context, store, clist=None, **kw):
+	def __init__(self, session, store, clist=None, **kw):
 		self.rowcount = None
-
-		self._context = context
+		self._session = session
+		#self._context = context
 		self._store = store
 		#self._query = query
 		if clist is None:
@@ -151,7 +151,7 @@ class Datasource:
 			clist = ColumnList(self._store,columnNames)			
 			#clist = clist.child(columnNames)
 		#query = self._area._table.query(columnNames=columnNames,**kw)
-		ds = Datasource(self._context,
+		ds = Datasource(self._session,
 							 self._store,
 							 clist,
 							 samples=samples,
@@ -168,7 +168,7 @@ class Datasource:
 															 writer)
 	
 	def getContext(self):
-		return self._context
+		return self._session.getContext()
 
 	def getTableName(self):
 		return self._table.getTableName()
@@ -245,7 +245,7 @@ class Datasource:
 		atomicRow = self._clist.makeAtomicRow() 
 		for (name,value) in self._samples.items():
 			col = self._clist.getColumn(name)
-			col.value2atoms(value,atomicRow,self._context)
+			col.value2atoms(value,atomicRow,self._session.getContext())
 			for atom in col.getAtoms():
 				l.append((atom,atomicRow[atom.index]))
 		return l
@@ -282,7 +282,12 @@ class Datasource:
 	def setSearch(self,search):
 		self.setFilterExpressions(self._sqlFilters,search)
 		
-
+	def getVisibleColumns(self):
+		return self._clist.visibleColumns
+	
+	def getAttrList(self):
+		return self._table.getAttrList()
+	
 	def setFilterExpressions(self, sqlFilters, search):
 		"""
 		filters must be a sequence of strings containing SQL expressions
@@ -380,7 +385,7 @@ class Datasource:
 		l = []
 		i = 0
 		for col in self._clist._pkColumns:
-			l += col.rowAttr.value2atoms(id[i],self._context)
+			l += col.rowAttr.value2atoms(id[i],self._session.getContext())
 			i+=1
 			
 ## 		i = 0
@@ -570,6 +575,7 @@ class DataIterator:
 class DataRow:
 	def __init__(self,fc,clist,values,dirty=False):
 		assert isinstance(fc,FieldContainer)
+		assert isinstance(clist,BaseColumnList)
 		assert type(values) == types.DictType
 		self.__dict__["_values"] = values 
 		self.__dict__["_fc"] = fc
@@ -596,6 +602,10 @@ class DataRow:
 			return self._values[name]
 		except KeyError:
 			raise NoSuchField,name
+
+
+	def makeDataCell(self,colIndex,col):
+		return self.getSession()._dataCellFactory(self,colIndex,col)
 
 
 	def setDirty(self):
@@ -646,6 +656,7 @@ class DataRow:
 
 
 class StoredDataRow(DataRow):
+	# base class for Table.Row
 	
 	def __init__(self,ds,values,new,pseudo=False):
 		"""
@@ -683,7 +694,10 @@ class StoredDataRow(DataRow):
 ## 		rsp.writeParagraph()
 	
 	def getContext(self):
-		return self._ds._context
+		return self._ds.getContext()
+	
+	def getSession(self):
+		return self._ds._session
 	
 
 	
@@ -900,11 +914,13 @@ class RowIterator:
 			raise StopIteration
 		col = self._columns[self.colIndex]
 		self.colIndex += 1
-		return DataCell(self.row,col)
+		#return DataCell(self.row,col)
+		return self.row.makeDataCell(self.colIndex,col) 
 
 
 class DataCell:
-	def __init__(self,row,col):
+	def __init__(self,row,colIndex,col):
+		#self.colIndex = colIndex
 		self.row = row
 		self.col = col
 

@@ -1,7 +1,7 @@
 import os,sys
 
 from docutils import core
-from lino.webman.webman import WebModule
+from lino.webman.nodes import Site, WebModule, TxtWebPage
 from lino.misc.console import confirm
 
 ## DEFAULTS = {'input_encoding': 'latin-1',
@@ -14,30 +14,33 @@ from lino.misc.console import confirm
 ## 				}
 
 
-def _wmm2html(webmod,outdir=None,force=False):
+def _wmm2html(node,force=False):
 
+	#outfile = os.path.join(outdir,node.name)+'.html'
+	outfile = os.path.join(node.getModule().getLocalPath(),\
+								  node.getOutputFile())
+	outdir,leaf = os.path.split(outfile)
 	if not os.path.exists(outdir):
 		os.makedirs(outdir)
 		
-	for (name,page) in webmod._pages.items():
-		if isinstance(page,WebModule):
-			_wmm2html(page,os.path.join(outdir,name),force)
-		else:
-			outfile = os.path.join(outdir,name)+'.html'
-			srcfile = page.getSourcePath()
-			updodate = False
-			if not force:
-				try:
-					if os.path.getmtime(outfile) > os.path.getmtime(srcfile):
-						updodate = True
-				except os.error:
-					pass
-			if updodate:
-				print "%s : up to date" % outfile
-			else:
-				print "Processing %s..." % outfile
-				html = page(request=None)
-				open(outfile,"w").write(html)
+	srcfile = node.getSourcePath()
+	updodate = False
+	if not force:
+		try:
+			if os.path.getmtime(outfile) > os.path.getmtime(srcfile):
+				updodate = True
+		except os.error:
+			pass
+	if updodate:
+		print "%s : up to date" % outfile
+	else:
+		print "Writing %s..." % outfile
+		html = node.render_html(request=None)
+		open(outfile,"w").write(html)
+
+	for (name,childNode) in node.getChildren().items():
+		_wmm2html(childNode,force) #os.path.join(outdir,name),force)
+
 
 def wmm2html(srcdir,outdir=None,force=False,showOutput=True):
 	"""convert a complete module to static html
@@ -46,14 +49,11 @@ def wmm2html(srcdir,outdir=None,force=False,showOutput=True):
 	if outdir is None:
 		outdir = srcdir
 
-	webmod = WebModule(srcdir)
+	site = Site(srcdir)
 
-	_wmm2html(webmod,outdir,force)
-
-	#outDir = os.path.normpath(os.path.join(localRoot,root))
-		#print "outDir=%s" % outDir
-			
-	#os.chdir(cwd)
+	site.init()
+	
+	_wmm2html(site.root,force)
 
 	if showOutput:
 		import webbrowser

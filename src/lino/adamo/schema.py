@@ -217,7 +217,7 @@ class Schema:
 		return str(self.__class__)
 	
 
-	def onStartSession(self,sess):
+	def onStartUI(self,sess):
 		# overridden by sprl.Schema
 		pass
 

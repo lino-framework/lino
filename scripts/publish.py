@@ -11,7 +11,7 @@ there are no command-line parameters.
 
 """
 
-from lino import copyright
+from lino import copyleft
 
 import os,sys
 
@@ -78,7 +78,7 @@ def collect_images(path=".",
 if __name__ == "__main__":
 
 	print "Lino Publish"
-	print copyright('2002-2004','Luc Saffre')
+	print copyleft(year='2002-2004')
 	
 	# collect names of files or directories containing uppercase
 	# characters

@@ -21,7 +21,7 @@ import sys, getopt, os
 from email import message_from_file
 import csv
 
-from lino import copyright
+from lino import copyleft
 #from lino.misc import gpl
 #from lino import __version__
 
@@ -82,7 +82,7 @@ def body2dict(body):
 	
 if __name__ == '__main__':
 	print "lino eml2csv" # version " + __version__
-	print copyright('2004','Luc Saffre')
+	print copyleft(year='2004')
 
 	try:
 		opts, args = getopt.getopt(sys.argv[1:],

@@ -5,7 +5,7 @@ all files and directories to lower case.
 
 """
 
-from lino import copyright
+from lino import copyleft
 
 import os,sys
 
@@ -32,7 +32,7 @@ def collect_upper(path):
 if __name__ == "__main__":
 
 	print "Lino makelower"
-	print copyright('2002-2004','Luc Saffre')
+	print copyleft(year='2002-2004')
 
 	
 

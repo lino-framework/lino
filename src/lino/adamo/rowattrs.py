@@ -8,29 +8,17 @@ import types
 from copy import copy
 
 from lino.misc.compat import *
-from lino.misc.descr import Describable
 from lino.misc.etc import issequence
 from datatypes import DataVeto, StartupDelay
+from widgets import Action
+from lino.misc.descr import Describable
+from components import OwnedThing
 
 #def nop(*args):
 #	pass
 
 class NoSuchField(DataVeto):
 	pass
-
-class OwnedThing(Describable):
-	def __init__(self,label=None,doc=None):
-		Describable.__init__(self,None,label,doc)
-		self._owner = None
-
-	def setOwner(self,owner,name):
-		assert self._owner is None
-		self._owner = owner
-		#self._name = name
-		self.setName(name)
-		
-	def onOwnerInit1(self,owner,name):
-		pass
 
 class RowAttribute(OwnedThing):
 	def __init__(self,width=None,label=None,doc=None):
@@ -101,7 +89,7 @@ class RowAttribute(OwnedThing):
 		row._values[self._name] = value
 		
 	def getCellValue(self,row):
-		# overridden by Detail
+		# overridden by BabelField and Detail
 		return row.getFieldValue(self._name)
 	
 	def getFltAtoms(self,colAtoms,context):
@@ -128,7 +116,7 @@ class RowAttribute(OwnedThing):
 ## 			value = None
 ## 		if isinstance(self,Pointer):
 ## 			print value
-		return self.value2atoms(value, row._ds._context)
+		return self.value2atoms(value, row.getContext())
 
 		
 ## 		value = row._values[self._name]
@@ -143,13 +131,13 @@ class RowAttribute(OwnedThing):
 		atomicValues = [atomicRow[atom.index]
 							 for atom in colAtoms]
 		row._values[self._name] = self.atoms2value(atomicValues,
-																 row._ds._context)
+																 row.getSession())
 
 	#
 	# change atoms2value(self,atomicRow,colAtoms,context)
 	# to atoms2value(self,atomicValues,context)
 	#
-	def atoms2value(self,atomicValues,context):
+	def atoms2value(self,atomicValues,session):
 		raise NotImplementedError
 
 		
@@ -212,7 +200,7 @@ class Field(RowAttribute):
 		return ds._connection.testEqual(a.name,a.type,value)
 
 		
-	def atoms2value(self,atomicValues,context):
+	def atoms2value(self,atomicValues,session):
 		assert len(atomicValues) == 1
 		return atomicValues[0]
 		
@@ -238,7 +226,7 @@ class BabelField(Field):
 
 	
 	def setCellValue(self,row,value):
-		langs = row._ds._context.getBabelLangs()
+		langs = row.getContext().getBabelLangs()
 		values = row.getFieldValue(self._name)
 		if values is None:
 			values = [None] * len(row._ds._db.getBabelLangs())
@@ -262,7 +250,7 @@ class BabelField(Field):
 			
 		
 	def getCellValue(self,row):
-		langs = row._ds._context.getBabelLangs()
+		langs = row.getContext().getBabelLangs()
 		dblangs = row._ds._db.getBabelLangs()
 		values = row.getFieldValue(self._name)
 		#values = Field.getCellValue(self,row)
@@ -288,7 +276,7 @@ class BabelField(Field):
 			return values[index]
 		
 	def getTestEqual(self,ds, colAtoms,value):
-		langs = ds._context.getBabelLangs()
+		langs = ds.getContext().getBabelLangs()
 		lang = langs[0] # ignore secondary languages
 		a = colAtoms[lang.index]
 		return ds._connection.testEqual(a.name,a.type,value)
@@ -317,7 +305,7 @@ class BabelField(Field):
 		return rv
 			
  	def atoms2row(self,atomicRow,colAtoms,row):
-		langs = row._ds._context.getBabelLangs()
+		langs = row.getContext().getBabelLangs()
 		dblangs = row._ds._db.getBabelLangs()
 		values = row.getFieldValue(self._name)
 		#values = Field.getCellValue(self,row)
@@ -343,15 +331,24 @@ class BabelField(Field):
 
 	
 class Match(Field):
-	def __init__(self,origin):
+	def __init__(self,origin,**kw):
 		assert isinstance(origin,Field)
 		self._origin = origin
-		Field.__init__(self,origin.type)
+		Field.__init__(self,origin.type,**kw)
+		self.getLabel = origin.getLabel
 
 	def __getattr__(self,name):
 		return getattr(self._origin,name)
 
+## class Button(RowAttribute,Action):
+## 	def __init__(self,meth,label=None,*args,**kw):
+## 		RowAttribute.__init__(self,label=label,doc=meth.__doc__)
+## 		Action.__init__(self,meth,*args,**kw)
+		
+## 	def getCellValue(self,row):
+## 		return self._func(row)
 	
+
 
 class Pointer(RowAttribute):
 	"""
@@ -474,7 +471,7 @@ class Pointer(RowAttribute):
 					i += len(toTable.getPrimaryAtoms())
 
 
-	def atoms2value(self,atomicValues,ctx):
+	def atoms2value(self,atomicValues,sess):
 		#ctx = row._ds._context
 		if len(self._toTables) > 1:
 			toTable = self._findUsedToTable(atomicValues)
@@ -482,11 +479,11 @@ class Pointer(RowAttribute):
 				return None
 			atomicValues = self._reduceAtoms(toTable.getTableId(),
 														atomicValues)
-			toArea = getattr(ctx.tables,toTable.getTableName())
+			toArea = getattr(sess.tables,toTable.getTableName())
 		else:
 			toTable = self._toTables[0]
 			areaName = toTable.getTableName()
-			toArea = getattr(ctx.tables,areaName)
+			toArea = getattr(sess.tables,areaName)
 		
 		if None in atomicValues:
 			return None
@@ -561,7 +558,7 @@ class Detail(RowAttribute):
 	def atoms2row(self,atomicRow,colAtoms,row):
 		pass
 	
-	def atoms2value(self,atomicRow,colAtoms,context):
+	def atoms2value(self,atomicRow,colAtoms,sess):
 		assert len(colAtoms) == 0
 		raise "cannot"
 		
@@ -569,7 +566,7 @@ class Detail(RowAttribute):
 	def getCellValue(self,row): 
 		kw = dict(self._queryParams)
 		kw[self.pointer._name] = row
- 		slaveSource = getattr(row._ds._context.tables,
+ 		slaveSource = getattr(row.getSession().tables,
 									 self.pointer._owner.getTableName())
 		return slaveSource.query(**kw)
 		

@@ -3,3 +3,6 @@
 *.pdf
 *.html
 tmp.*
+TMP.*
+_attic
+

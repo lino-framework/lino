@@ -1,7 +1,9 @@
 """\
 Usage : db2html [options] FILE
 
-webserver starts a Twisted web server on an Adamo database in FILE
+DOES NOT WORK.
+
+Publish an Adamo database as static html
 
 Options:
   
@@ -14,15 +16,15 @@ Options:
 import sys, getopt, os
 import webbrowser
 
-from lino import copyright 
+from lino import copyleft
 
 from lino.adamo.dbds.sqlite_dbd import Connection
 from lino.adamo.ui import UI
 from lino.schemas.sprl.sprl import Schema
-from lino.adamo.widgets import Window
+#from lino.adamo.widgets import Window
 
 
-from lino.adamo.html import HtmlRenderer
+#from lino.adamo.html import HtmlRenderer
 
 class StaticRequest:
 	def __init__(self,baseuri,reqpath):
@@ -32,11 +34,11 @@ class StaticRequest:
 		for p in reqpath.split('/'):
 			self.basepath += './.'
 
-class StaticHtmlRenderer(HtmlRenderer,Window):
+class StaticHtmlRenderer: #(HtmlRenderer,Window):
 	
 	def __init__(self,db,localBasepath,baseuri):
-		Window.__init__(self)
-		HtmlRenderer.__init__(self,db,baseuri)
+		#Window.__init__(self)
+		#HtmlRenderer.__init__(self,db,baseuri)
 		self.db.schema.defineMenus(self)
 		self.localBasepath = localBasepath
 		
@@ -143,7 +145,7 @@ def db2html(db,localBasepath,baseuri):
 
 if __name__ == '__main__':
 	print "Lino db2html" # version " + __version__
-	print copyright(year='2004',author='Luc Saffre')
+	print copyleft(year='2004',author='Luc Saffre')
 
 	localBasepath = 'public_html'
 	baseuri = "http://my.tele2.ee/lsaffre"

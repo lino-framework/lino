@@ -2,7 +2,7 @@
 Installing Lino
 ---------------
 
-.. include:: _header.txt
+.. include:: ../_header.txt
 
 .. contents:: 
 

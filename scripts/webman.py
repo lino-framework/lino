@@ -1,12 +1,12 @@
 """
 WebMan creates static html files for one ore several WebMan modules.
 
-A WebMan module is a directory containing a series `*.txt` files and
-one file `init.py`.
+A WebMan module is a directory containing a series `*.txt` files (with
+reStructuredText content) and one file `init.wmi`. For each .txt file
+will be written a .html file. The init.wmi is executed once per
+module.
 
-(containing themselves text formatted using reStructuredText)
-
-USAGE : lino webman [options] DIR1 DIR2
+USAGE : lino webman [options] DIR1 [DIR2...]
 
 OPTIONS:
 
@@ -20,12 +20,12 @@ OPTIONS:
 if __name__ == '__main__':
 	import os,sys
 	import getopt
-	from lino.misc import gpl
-	from lino import __version__
+	#from lino.misc import gpl
+	from lino import __version__, copyleft
 	from lino.webman.static import wmm2html
 	
-	print "WebMan version " + __version__
-	print gpl.copyright('2003','Luc Saffre')
+	#print "WebMan version " + __version__
+	print copyleft('Lino/Webman', year='2003-2004')#,author='Luc Saffre')
 
 	try:
 		opts, args = getopt.getopt(sys.argv[1:],

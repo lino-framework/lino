@@ -42,7 +42,8 @@ class SprlPage(ContextedResponse,LayoutComponent):
 			if usr is None:
 				wr( "wie kann das?")
 			else:
-				wr("Logged in as " + usr.getLabel())
+				wr("""Logged in as %s.
+				<a href="logout">(log out)</a>""" % usr.getLabel())
 		else:
 			self.renderForm(frm)
 			wr("""<br><a href="%s">register</a>""" % \

@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------
-# main.py:	MainFrame
+# main.py
 #				
 #				
 # Created:	 2003-10-26
@@ -10,13 +10,51 @@
 import wx
 import os
 
-class MainFrame(wx.Frame):
+from lino.adamo.widgets import Action
+from lino.adamo.datasource import DataCell
+
+class EventCaller(Action):
+	"ignores the event"
+	def __init__(self,form,meth,*args,**kw):
+		self._form = form
+		Action.__init__(self,meth,*args,**kw)
+	def __call__(self,evt):
+		#self._form.getSession().notifyMessage("%s called %s." % (
+		#	str(evt), str(self)))
+		self.execute()
+
+
+
+class wxDataCell(DataCell):
+		
+	def makeEditor(self,parent):
+		self.editor = wx.TextCtrl(parent,-1,self.format())
+
+		#self.Bind(wx.EVT_TEXT, self.EvtText, t1)
+		#editor.Bind(wx.EVT_CHAR, self.EvtChar)
+		#editor.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
+		self.editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+		#editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
+		return self.editor
+
+	def OnKillFocus(self,evt):
+		v = self.editor.GetValue()
+		if len(v) == 0:
+			v = None
+		self.col.setCellValue(self.row,v)
+		evt.Skip()
+			
+
+class FormFrame(wx.Frame):
 	# overviewText = "wxPython Overview"
 
-	def __init__(self, parent, id, title):
+	def __init__(self, form):
+		print "FormFrame.__init__()"
 		#self.ui = ui
-		#title = ui.db.getLabel()
-		wx.Frame.__init__(self, parent, id, title,
+		title = form.getLabel()
+		#title = self.session.db.getLabel()
+		parent = form.getSession().getCurrentForm()
+		wx.Frame.__init__(self, parent, -1, title,
 								size = (400, 300),
 								style=wx.DEFAULT_FRAME_STYLE|
 								wx.NO_FULL_REPAINT_ON_RESIZE)
@@ -29,9 +67,97 @@ class MainFrame(wx.Frame):
 		self.Centre(wx.BOTH)
 		self.CreateStatusBar(1, wx.ST_SIZEGRIP)
 
+		self.setForm(form)
+		
+		self.Show()
 
 
-	#---------------------------------------------
+
+	def setForm(self,form):
+		self.form = form
+		
+		if len(form.getMenus()) != 0:
+			wxMenuBar = wx.MenuBar()
+			for mnu in self.form.getMenus():
+				wxm = self._createMenuWidget(mnu)
+				wxMenuBar.Append(wxm,mnu.getLabel())
+
+			self.SetMenuBar(wxMenuBar)
+			db = self.form.getSession().db
+			self.SetTitle(db.getLabel() +" - " \
+							  + self.form.getLabel().replace(db.schema.HK_CHAR, ''))
+			
+		#self.SetBackgroundColour(wx.RED)
+
+		if len(form) > 0:
+
+			fieldsPanel = wx.Panel(self,-1)
+
+			vbox = wx.BoxSizer(wx.VERTICAL)
+			for cell in form:
+				p = wx.Panel(fieldsPanel,-1)
+				vbox.Add(p)
+
+				hbox = wx.BoxSizer(wx.HORIZONTAL)
+				label = wx.StaticText(p, -1, cell.col.rowAttr.getLabel()) 
+				#label.SetBackgroundColour(wx.GREEN)
+				hbox.Add(label, 1, wx.ALL,10)
+
+				editor = cell.makeEditor(p)
+				hbox.Add(editor, 1, wx.ALL,10)
+				p.SetSizer(hbox)
+
+
+			fieldsPanel.SetSizer( vbox )
+
+
+			vbox = wx.BoxSizer(wx.VERTICAL)
+			vbox.Add(fieldsPanel,1,wx.EXPAND|wx.ALL,10)
+
+			buttons = form.getButtons()
+			if len(buttons):
+				buttonPanel = wx.Panel(self,-1) 
+				hbox = wx.BoxSizer(wx.HORIZONTAL)
+				for (name,meth) in buttons: 
+					winId = wx.NewId()
+					button = wx.Button(buttonPanel,winId,name,
+											 wx.DefaultPosition, wx.DefaultSize)
+					hbox.Add(button, 1, wx.ALL,10)
+
+					wx.EVT_BUTTON(self, winId, EventCaller(form,meth))
+
+				buttonPanel.SetSizer(hbox)
+				hbox.Fit(fieldsPanel)
+
+				vbox.Add(buttonPanel,1,wx.EXPAND|wx.ALL,10)
+
+			self.SetAutoLayout( True ) # tell dialog to use sizer
+
+			self.SetSizer( vbox )		# actually set the sizer
+
+
+			vbox.Fit( self ) # set size to minimum size as calculated by the sizer
+			#vbox.SetSizeHints( self ) # set size hints to honour mininum size
+			
+		self.Layout()
+
+
+
+
+	def _createMenuWidget(self,mnu):
+		wxMenu = wx.Menu()
+		for mi in mnu.getItems():
+			#print repr(mi.getLabel())
+			#"%s must be a String" % repr(mi.getLabel())
+			winId = wx.NewId()
+			doc = mi.getDoc()
+			if doc is None:
+				doc=""
+			wxMenu.Append(winId,mi.getLabel(),doc)
+			wx.EVT_MENU(self, winId, EventCaller(self.form,
+															 mi.execute))
+		return wxMenu
+
 	def OnCloseWindow(self, event):
 		self.dying = True
 		#self.window = None
@@ -41,17 +167,14 @@ class MainFrame(wx.Frame):
 		self.Destroy()
 
 
-	#---------------------------------------------
 	def OnIdle(self, evt):
 		#wx.LogMessage("OnIdle")
 		evt.Skip()
 
-	#---------------------------------------------
 	def OnIconfiy(self, evt):
 		wx.LogMessage("OnIconfiy")
 		evt.Skip()
 
-	#---------------------------------------------
 	def OnMaximize(self, evt):
 		wx.LogMessage("OnMaximize")
 		evt.Skip()
@@ -62,31 +185,23 @@ class MainFrame(wx.Frame):
 
 class MyApp(wx.App):
 
-	def __init__(self,ui):
-		self.ui = ui
+	def __init__(self,sess):
+		self.session = sess
+		sess._dataCellFactory = wxDataCell
+		sess._windowFactory = FormFrame
 		wx.App.__init__(self,0)
 		
 	def OnInit(self):
 		wx.InitAllImageHandlers()
-		frame = MainFrame(None, -1, self.ui.db.getLabel())
-		self.ui.mainframe = frame
-		self.ui.onAppInit(self)
-		# self.ui.showUserMenu(None)
-		# self._setMenuBar(frame,self.ui.db.getMainMenu(self.ui))
-		frame.Show()
+		self.session.onStartUI()
+		frame = self.session.getCurrentForm() # forms.login
+		#assert frame is not None
+		#print frame
+		#frame = FormFrame(None, -1, form)
 		self.SetTopWindow(frame)
 		return True
 
 	def OnExit(self):
-		self.ui.db.shutdown()
+		self.session.shutdown()
 
 
-
-if __name__ == '__main__':
-	# don't use this. use /scripts/wxdemo.py
-	from lino.sprl import demo
-	demo.startup()
-	from wxui import wxUI
-	ui = wxUI(demo.db)
-	app = MyApp(ui)
-	app.MainLoop()

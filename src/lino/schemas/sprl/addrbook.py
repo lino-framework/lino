@@ -107,27 +107,28 @@ class Users(Persons):
 		pass
 
 class LoginForm(FormTemplate):
-
+	
 	def init(self):
 		self.uid = Match(self._schema.tables.USERS.id)
 		self.password = Match(self._schema.tables.USERS.password)
-		#self.uid = Pointer(self._schema.tables.USERS.id)
-		#self.password = self._schema.tables.USERS.password
 
-	class Row(FormTemplate.Row):
+		self.setButtonNames("ok help")
+
+	class Instance(FormTemplate.Instance):
 	
-		def onSubmit(self):
-			sess = self.getSession()
-			
-			#sess.login(self.uid,self.password)
+		def ok(self):
+			"Log in with the supplied username and password."
 			uid = self.uid
 			pwd = self.password
+			sess = self.getSession()
+			sess.notifyMessage("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
 			
 			user = sess.tables.USERS.peek(uid)
 			if user is None:
 				return sess.errorMessage("%s  : no such user" % uid)
 			if user.password != pwd:
-				return sess.errorMessage("invalid password for "+user.getLabel())
+				return sess.errorMessage("invalid password for "+\
+												 user.getLabel())
 			sess.login(user)
 			sess.notifyMessage("Hello, "+user.getLabel())
 			sess.openForm("main")

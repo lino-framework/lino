@@ -4,9 +4,9 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
-from datasource import Datasource
+from datasource import Datasource, DataCell
 from tim2lino import TimMemoParser
-from forms import ContextForm
+#from forms import ContextForm
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 
@@ -19,7 +19,7 @@ class Context:
 	
 	def __init__(self,db,langs=None):
 		self._db = db
-		self.forms = AttrDict()
+		#self.forms = AttrDict()
 		
 		self._memoParser = TimMemoParser(self)
 
@@ -28,15 +28,11 @@ class Context:
 		self.setBabelLangs(langs)
 
 		#self._datasources = {}
-		self.tables = AttrDict()
-		for name,store in db._stores.items():
-			ds = Datasource(self,store)
-			self.tables.define(name,ds)
 			#self._datasources[name] = ds
 
-		self.forms = AttrDict()
-		for name,frm in db.schema.forms.items():
-			self.forms.define(name,ContextForm(frm,self))
+## 		self.forms = AttrDict()
+## 		for name,frm in db.schema.forms.items():
+## 			self.forms.define(name,ContextForm(frm,self))
 
 
 ## 	def beginSession(self,d=None):
@@ -48,12 +44,6 @@ class Context:
 
 	def getLabel(self):
 		return self._db.getLabel()
-
-	def getDatasource(self,name):
-		try:
-			return getattr(self.tables,name)
-		except AttributeError,e:
-			raise InvalidRequestError("no such table: "+name)
 
 ## 	def openForm(self,name):
 ## 		form = getattr(self._db.schema.forms,name)
@@ -104,23 +94,6 @@ class Context:
 		self._db.shutdown()
 
 		
-	def checkIntegrity(self):
-		msgs = []
-		for q in self.tables:
-			print "%s : %d rows" % (q._table.getTableName(), len(q))
-			l = len(q)
-			for row in q:
-				#row = q.atoms2instance(atomicRow)
-				msg = row.checkIntegrity()
-				if msg is not None:
-					msgs.append("%s[%s] : %s" % (
-						q._table.getTableName(),
-						str(row.getRowId()),
-						msg))
-			#store.flush()
-		return msgs
-		
-
 
 
 ## 	def __getattr__(self,name):
@@ -135,12 +108,14 @@ class Context:
 
 class AbstractSession:
 	def __init__(self,db=None):
+		self._dataCellFactory = DataCell
+		self._windowFactory = lambda x: x
 		self.context = None
 		self.schema = None
 		self.tables = None
 		self.db = None
-		self.forms = AttrDict()
-		#self._formStack = []
+		#self.forms = AttrDict()
+		self._formStack = []
 		
 		self._user = None
 
@@ -150,6 +125,18 @@ class AbstractSession:
 		#self._pwd = None
 		#self.notifyMessage("Lino Session started")
 		#print "Lino Session started"
+
+		
+	def openTable(self,name):
+		try:
+			store = self.db._stores[name]
+		except KeyError,e:
+			#except AttributeError,e:
+			raise InvalidRequestError("no such table: "+name)
+		return Datasource(self,store)
+	
+	def getDatasource(self,name):
+		return getattr(self.tables,name)
 
 	def progress(self,msg):
 		raise NotImplementedError
@@ -166,7 +153,13 @@ class AbstractSession:
 	def installto(self,d):
 		d['__session__'] = self
 		d['setBabelLangs'] = self.context.setBabelLangs
-		self.context.tables.installto(d)
+		#self.context.tables.installto(d)
+		#d.update(
+ 		for name in self.db._stores.keys():
+			d[name] = getattr(self.tables,name)
+ 		#for name,store in self.db._stores.items():
+		#   ds = Datasource(self,store)
+		#   self.tables.define(name,ds)
 		
 	def setContext(self,context):
 		if self.context is context:
@@ -181,8 +174,9 @@ class AbstractSession:
 		self.context = context
 		self.schema = context._db.schema # shortcut
 		self.db = context._db # shortcut
-		self.tables = context.tables # shortcut
-		self.forms = AttrDict()
+		#self.tables = context.tables # shortcut
+		self.tables = AttrDict(factory=self.openTable)
+		#self.forms = AttrDict()
 		#self.connection = context._db._connection
 
 		for name in ('commit', 'shutdown', 'setBabelLangs'):
@@ -192,31 +186,42 @@ class AbstractSession:
 		#	setattr(self,name,getattr(context._db._connection,name))
 		# only QuickDatabase knows her connection! 
 		
-		#self._formStack = []
+		self._formStack = []
 		#self.openForm('login')
-		self.schema.onStartSession(self)
 		#self.notifyMessage("beginContext()")
 		
+	def getContext(self):
+		return self.context
+	
+	def onStartUI(self):
+		self.schema.onStartUI(self)
+		
+	
 	def endContext(self):
 		if self._user is not None:
 			self.logout()
 		self.context = None
-		#self._formStack = []
+		self.tables = None
+		self.schema = None
+		self.db = None
+		self._formStack = []
 	
-	def openForm(self,formName):
+	def openForm(self,formName,**values):
 		#print "openForm()" + formName
-		tpl = getattr(self.context.forms,formName)
-		frm = tpl.open(self)
-		self.forms.define(formName,frm)
-		#self._formStack.append(frm)
-		return frm
+		tpl = getattr(self.schema.forms,formName)
+		frm = tpl.open(self,**values)
+		win = self._windowFactory(frm)
+		#self.forms.define(formName,frm)
+		self._formStack.append(win)
+		return win
 
 	def closeForm(self,formName):
-		del self.forms._values[formName]
+		raise NotImplementedError
+		#del self.forms._values[formName]
 	
-## 	def getCurrentForm(self):
-## 		if len(self._formStack) > 0:
-## 			return self._formStack[-1]
+	def getCurrentForm(self):
+		if len(self._formStack) > 0:
+			return self._formStack[-1]
 
 	def getUser(self):
 		return self._user
@@ -226,6 +231,25 @@ class AbstractSession:
 			self.logout()
 		self._user = user
 		
+	def checkIntegrity(self):
+		msgs = []
+		#for q in self.tables:
+ 		for name in self.db._stores.keys():
+			q = getattr(self.tables,name)
+			print "%s : %d rows" % (q._table.getTableName(), len(q))
+			l = len(q)
+			for row in q:
+				#row = q.atoms2instance(atomicRow)
+				msg = row.checkIntegrity()
+				if msg is not None:
+					msgs.append("%s[%s] : %s" % (
+						q._table.getTableName(),
+						str(row.getRowId()),
+						msg))
+			#store.flush()
+		return msgs
+		
+
 
 	def logout(self):
  		assert self._user is not None

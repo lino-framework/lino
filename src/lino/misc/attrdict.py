@@ -7,10 +7,11 @@
 import types
 
 class AttrDict(dict):
-	def __init__(self,d=None):
+	def __init__(self,d=None,factory=None):
 		if d is None:
 			d = {}
 		self.__dict__["_values"] = d
+		self.__dict__["_factory"] = factory
 		for m in ('values','__len__','keys','items','get'):
 			self.__dict__[m] = getattr(d,m)
 
@@ -18,6 +19,10 @@ class AttrDict(dict):
 		try:
 			return self._values[name]
 		except KeyError,e:
+			if self._factory is not None:
+				v = self._factory(name)
+				self._values[name] = v
+				return v
 			raise AttributeError,e
 
 	def __setattr__(self,name,value):

@@ -1,6 +1,6 @@
 # webman init file
 # coding: latin1
-# -*-*- (python-mode) -*-*-
+# *-*-*- (python-mode) -*-*-*
 
 
 self.setTitle("Lino Documentation")
@@ -25,8 +25,9 @@ overview
 faq
 links
 install
-	start
+start
 history
+todo
 """)
 
 def myLeftArea(page):

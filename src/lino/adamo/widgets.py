@@ -4,27 +4,26 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
-from lino.misc.descr import Describable
-from rowattrs import OwnedThing
+from components import OwnedThing
 
 
-class WindowComponent(Describable):
+## class WindowComponent(Describable):
 	
-	def __init__(self,name,label,doc):
-		Describable.__init__(self,name,label,doc)
-		self._parent = None
-		self._index = None
+## 	def __init__(self,name,label,doc):
+## 		Describable.__init__(self,name,label,doc)
+## 		self._parent = None
+## 		self._index = None
 		
-	def register(self,parent,index):
-		assert self._parent is None
-		self._parent = parent
-		self._index = index
+## 	def register(self,parent,index):
+## 		assert self._parent is None
+## 		self._parent = parent
+## 		self._index = index
 		
-	def getParent(self):
-		return self._parent
+## 	def getParent(self):
+## 		return self._parent
 		
-	def getId(self):
-		return self._index
+## 	def getId(self):
+## 		return self._index
 
 	
 class Action:
@@ -68,29 +67,29 @@ class Command(OwnedThing,Action):
 
 
 
-class Label(WindowComponent):
-	pass
+## class Label(WindowComponent):
+## 	pass
 
 	
-class Button(Action,WindowComponent):
-	def __init__(self,name=None,label=None,func=None,args=()):
-		#if action is None:
-		#	 action = Action(label,func,args)
-		#if label is None:
-		#	 label = action.getLabel()
-		WindowComponent.__init__(self,name,label)
-		Action.__init__(self,func,args)
-		#self._action = action
-		#self.func = func
-		#self.args = args
+## class Button(Action,WindowComponent):
+## 	def __init__(self,name=None,label=None,func=None,args=()):
+## 		#if action is None:
+## 		#	 action = Action(label,func,args)
+## 		#if label is None:
+## 		#	 label = action.getLabel()
+## 		WindowComponent.__init__(self,name,label)
+## 		Action.__init__(self,func,args)
+## 		#self._action = action
+## 		#self.func = func
+## 		#self.args = args
 
-	#def getAction(self):
-	#	 return self._action
+## 	#def getAction(self):
+## 	#	 return self._action
 	
-	#def register(self,win,index):
-	#	 Component.register(self,win,index)
-		#if self._action is None:
-		#	 self._action = win.addAction(self._label,self._func)
+## 	#def register(self,win,index):
+## 	#	 Component.register(self,win,index)
+## 		#if self._action is None:
+## 		#	 self._action = win.addAction(self._label,self._func)
 
 
 

@@ -1,40 +1,14 @@
 import wx
-from lino.agui.ui import UI
-from gridframe import RptGrid
+#from lino.adamo.ui import UI
 
-class wxUI(UI):
-
-	def _setMenuBar(self,frame,menuBar):
-		wxMenuBar = wx.MenuBar()
-		if menuBar.getLabel():
-			pass # ignore menubar title
-		for mnu in menuBar.getMenus():
-			wxm = self._createMenuWidget(frame,mnu)
-			wxMenuBar.Append(wxm,mnu.getLabel())
-
-		frame.SetMenuBar(wxMenuBar)
-
-	def _createMenuWidget(self,frame,mnu):
-		wxMenu = wx.Menu()
-		for mi in mnu.getItems():
-			#print repr(mi.getLabel())
-			#"%s must be a String" % repr(mi.getLabel())
-			winId = wx.NewId()
-			wxMenu.Append(winId,mi.getLabel(),mi.getDescription())
-			wx.EVT_MENU(frame, winId, mi.execute)
-		return wxMenu
+class wxUI: #(UI):
+	def __init__(self,sess):
+		self.session = sess
 
 	def onAppInit(self,app):
 		#self.mainframe
 		self.setMainMenu(None,"user")
 
-	def setMainMenu(self,evt,name):
-		mb = self.getMenuBars()[name]
-		self._setMenuBar(self.mainframe,mb)
-		self.mainframe.SetTitle(self.db.getLabel() +" - "\
-										+ mb.getLabel().replace(self.db.HK_CHAR,
-																		''))
-	
 ## 	def showAdminMenu(self,evt):
 ## 		mb = self.db.getAdminMenu(self)
 ## 		self._setMenuBar(self.mainframe,mb)
@@ -52,10 +26,10 @@ class wxUI(UI):
 
 	def showAbout(self, e):
 		"More information about this program"
-		from lino.misc import gpl
-		txt = self.db.getLabel()
-		txt += "\n\n" + self.db.getDescription()
-		txt += "\n\n" + gpl.copyright("2001-2003","Luc Saffre")
+		from lino import copyleft
+		txt = self.session.db.getLabel()
+		txt += "\n\n" + self.session.db.getDescription()
+		txt += "\n\n" + copyleft("2001-2003","Luc Saffre")
 		dlg = wx.MessageDialog(wx.GetApp().GetTopWindow(),
 									  txt, "About",
 									  wx.OK | wx.ICON_INFORMATION)
@@ -78,6 +52,7 @@ class wxUI(UI):
 	def show(self,e,rpt,**kw):
 		#rpt = self.db.provideReport(name,**kw)
 		frame = wx.Frame(wx.GetApp().GetTopWindow(),-1,rpt.getLabel())
+		from gridframe import RptGrid
 		grid = RptGrid(frame,rpt)
 		assert len(rpt.getColumns())
 		mb = rpt.query.getMenuBar(self)

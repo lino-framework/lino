@@ -22,12 +22,12 @@ class Case(TestCase):
 
 
 	def test01(self):
-		frm = self.sess.openForm("login")
+		frm = self.sess.getCurrentForm()
+		self.assertEqual(frm.getFormName(),"login")
 		self.assertEqual(frm.password,None)
 		self.assertEqual(frm.uid,None)
 		frm.uid = "luc"
-		frm.onSubmit()
-		#self.assertEqual(sess.getUser(),)
+		frm.ok()
 		usr = self.sess.getUser()
 		self.assertEqual(usr.getLabel(),"Luc Saffre")
 		self.assertEqual(usr.password,None)
