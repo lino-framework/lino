@@ -4,6 +4,15 @@
 # Send any comment or bug report to vivian@vdesmedt.com.
 # I would like to thanks William Tan for its support in tuning rsync.py to support unicode path.
 
+"""
+changes by LS:
+
+20041129 : main() : (1) "--times" was still not correctly recognized. (2) A (wrong) option "--time" was silently ignored, now main() 
+raises exception for any non-recognized option.
+
+
+"""
+
 #from __future__ import nested_scopes
 
 import os, os.path, shutil, glob, re, sys, getopt, stat, string
@@ -378,13 +387,13 @@ def printVersion():
 def main(argv):
 	cookie = Cookie()
 
-	opts, args = getopt.getopt(argv[1:], "qrRntuCIh", ["quiet", "recursive", "relative", "dry-run", "time", "update", "cvs-ignore", "ignore-times", "help", "delete", "delete-excluded", "existing", "size-only", "modify-window=", "exclude=", "exclude-from=", "include=", "include-from=", "version"])
+	opts, args = getopt.getopt(argv[1:], "qrRntuCIh", ["quiet", "recursive", "relative", "dry-run", "times", "update", "cvs-ignore", "ignore-times", "help", "delete", "delete-excluded", "existing", "size-only", "modify-window=", "exclude=", "exclude-from=", "include=", "include-from=", "version"])
 	for o, v in opts:
 		if o in ["-q", "--quiet"]:
 			cookie.quiet = 1
-		if o in ["-r", "--recursive"]:
+		elif o in ["-r", "--recursive"]:
 			cookie.recursive = 1
-		if o in ["-R", "--relative"]:
+		elif o in ["-R", "--relative"]:
 			cookie.relative = 1
 		elif o in ["-n", "--dry-run"]:
 			cookie.dry_run = 1
@@ -421,6 +430,8 @@ def main(argv):
 		elif o in ["-h", "--help"]:
 			printUsage()
 			return 0
+		else:
+			raise "unrecognized option " + str(o)
 
 	if len(args) <= 1:
 		printUsage()
