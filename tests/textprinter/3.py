@@ -13,12 +13,7 @@ from lino.misc import tsttools
 class Case(tsttools.TestCase):
     ""
 
-    def test01(self):
-
-        from lino.textprinter import winprn
-        spoolFile = self.addTempFile("3.ps",showOutput=True)
-        d = winprn.Win32PrinterDocument(self.win32_printerName_PS,
-                                        spoolFile)
+    def doit(self,d):
         d.printLine("")
         d.printLine("Win32PrinterDocument Test page")
         d.printLine("")
@@ -32,6 +27,21 @@ class Case(tsttools.TestCase):
         
         d.endDoc()
         
+
+    def test01(self):
+
+        from lino.textprinter import winprn
+        spoolFile = self.addTempFile("3.ps",showOutput=True)
+        d = winprn.Win32PrinterDocument(self.win32_printerName_PS,
+                                        spoolFile)
+        self.doit(d)
+        
+    def test02(self):
+
+        from lino.textprinter import pdfdoc
+        fn = self.addTempFile("3.pdf",showOutput=True)
+        d = pdfdoc.PdfDocument(fn)
+        self.doit(d)
 
 if __name__ == '__main__':
     tsttools.main()
