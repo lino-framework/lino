@@ -48,15 +48,13 @@ def makeSchema(populate=True,
     return schema
             
             
-def startup(filename=None,
+def startup(ui=None,
+            filename=None,
             langs=None,
             **kw):
     schema = makeSchema(**kw)
-    sess = schema.quickStartup(langs=langs, filename=filename)
+    sess = schema.quickStartup(ui=ui,langs=langs, filename=filename)
     
-        #from lino.schemas.sprl.data import demo1
-        #demo1.populate(sess)
-        
     return sess
 
 

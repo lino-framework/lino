@@ -10,7 +10,7 @@ from lino.ui import console as syscon
 
 def main(argv):
 
-    syscon.set(verbosity=-2)
+    #syscon.set(verbosity=-2)
     
     parser = syscon.getOptionParser(
         usage="usage: %prog [options] [TESTS]",

@@ -175,10 +175,12 @@ if 'timtools' in args:
     
     sys.argv[1:] = ["py2exe"]
     
-    console_targets = ['pds2pdf','prn2pdf',
-                       'sync', 'openmail',
-                       'prnprint',
-                       'pds2sxw', 'pds2sxc']
+    console_targets = [
+        'pds2pdf',
+        'pds2sxw', 'pds2sxc',
+        'prn2pdf', 'prnprint',
+        'sync', 'diag', 'openmail',
+                       ]
 
     name = "timtools"
 
@@ -200,6 +202,8 @@ if 'timtools' in args:
         "optimize": 2,
         "dist_dir" : dist_dir,
         "excludes" : excludes_console,
+        "includes": ["encodings",
+                     "encodings.cp850"],
         "dll_excludes" : dll_excludes,
         }}
         
@@ -223,13 +227,9 @@ if 'raceman' in args:
     
     sys.argv[1:] = ["py2exe"]
     
-    #excludes.remove('wx')
 
     console_targets = []
     windows_targets = ['raceman']
-
-    #console_targets = ['results']
-    #windows_targets = ['arrivals']
 
     dist_dir = opj(DIST_ROOT,"raceman")
     
@@ -244,17 +244,24 @@ if 'raceman' in args:
 An uncomplete race manager.
 Register participants, input arrival times,
 generate results report.""",
-        #console=[ opj("src", "lino", "apps","raceman",t+".py")
-        #          for t in console_targets],
         windows=[ opj("src", "lino", "apps","raceman",t+".py")
                   for t in windows_targets],
+##         packages= ["encodings",
+##                    "encodings.cp850",
+##                    #"encodings.latin_1"
+##                    ],
         options= { "py2exe": {
-        "packages": ["encodings"],
+##         "packages": ["encodings",
+##                      "encodings.cp850",
+##                      #"encodings.latin_1"
+##                      ],
+        #"includes": ["encodings",
+        #             "encodings.cp850"],
         "compressed": 1,
         "optimize": 2,
         "dist_dir" : dist_dir,
         "excludes" : excludes,
-        "dll_excludes" : dll_excludes
+        "dll_excludes" : dll_excludes        
         }}
         
         )
@@ -293,8 +300,15 @@ An uncomplete archive manager.
         #          for t in console_targets],
         windows=[ opj("src", "lino", "apps","keeper",t+".py")
                   for t in windows_targets],
+##         packages= ["encodings",
+##                    "encodings.cp850",
+##                    #"encodings.latin_1"
+##                    ],
         options= { "py2exe": {
-        "packages": ["encodings"],
+        "includes": ["encodings",
+                     "encodings.cp850"],
+##                      #"encodings.latin_1"
+##                      ],
         "compressed": 1,
         "optimize": 2,
         "dist_dir" : dist_dir,

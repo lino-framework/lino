@@ -208,6 +208,7 @@ src\lino\schemas\sprl\data\std.py
 src\lino\scripts\__init__.py
 src\lino\scripts\callme.py
 src\lino\scripts\db2html.py
+src\lino\scripts\diag.py
 src\lino\scripts\eml2csv.py
 src\lino\scripts\mailtomoz.py
 src\lino\scripts\makelc.py

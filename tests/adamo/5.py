@@ -18,19 +18,22 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
     
-import unittest
+from lino.misc.tsttools import TestCase, main
+#import unittest
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
 
-class Case(unittest.TestCase):
+class Case(TestCase):
     """
     Filters (not finished)
     """
 
     def setUp(self):
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui)
         
-        self.db = demo.beginSession()
+        #self.db = demo.beginSession()
 
     def tearDown(self):
         self.db.shutdown()
@@ -59,5 +62,5 @@ Jacques Brel""")
         
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
 

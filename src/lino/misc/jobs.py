@@ -23,132 +23,55 @@ from lino.i18n import itr,_
 itr("Working",
    de="Arbeitsvorgang läuft",
    fr="Travail en cours")
-
-
-"""
-    
-originally inspired by
-    http://docs.python.org/mac/progressbar-objects.html
-    
-and
-    http://search.cpan.org/src/FLUFFY/Term-ProgressBar-2.06-r1/README
-    
-and
-    http://www.lpthe.jussieu.fr/~zeitlin/wxWindows/docs/wxwin_wxprogressdialog.html
-
-
-20050307 : decided to convert Console() for using logging module
-  http://www.python.org/doc/current/lib/module-logging.html
-
-The logging module misses a level for normal messages that are not
-warnings.  (syslog calls them "notice", I called them message) "normal
-but significant condition"
-
-debug : only visible if -vv (very verbose)         10
-info  : only visible if -v (verbose)               20
-notice : normally visible (suppressed if -q)       
-warning : normally visible (suppressed if -qq)     30
-error : normally visible (suppressed if -qqq)      40
-critical : never suppressed                        50
-
-application example for sync.py:
-
-in user code i must :
-- replace info with notice
-- replace verbose with info
-
-logging.addLevelName(25,"NOTICE")
-
-
-OTOH:
-
-- the logging module is very heavy for DEBUG and INFO. These messages
-  should go simply to stdout (or not). Why keep their timestamp and
-  source line number for example?
-  
-  Idea: Console() never logs the "verbose" messages. In fact I keep my
-  current Console concept but take their args/kw system.
-
-- there is no solution formy status() method
-
-  status() : displays a message that will be overwritten by the next
-  message. If this is not possible, for example on a console that
-  doesn't suport CR, these messages are forwarded to info().
-  
-
-
-
-
-message, confirm and decide are no "logging" methods.
-they should maybe forward also to notice().
-maybe not: user code must decide about this.
-
-  
-    
-idea: make ProgressBar a subclass of Job!  If nested jobs are to be
-managed in a single ProgressBar, then that's the UI who decides. 
-Currently there is no visualisation of a job nesting level.
-
-If I want support for nested jobs, then a job has a parent, instead.
-
-Problem: PurzelStreamProgressBar must erase status line before writing
-any output, then write the output, then rewrite the status. That's why
-a ProgressBar is also a UI.
-
-Maybe write \r only before next output? If there are other processes
-writing to the stream (e.g. print messages), these will overwrite the
-status bar only partially if they are short. In any case one should
-avoid writing directly to the stream if there is also a
-PurzelStreamProgressBar writing to it.
-
-Console could split _stdout and _stderr into _debug, _verbose, _info,
-_warnings and _error. Depending on the console's verbosity, some of
-them would be noop writers.
-Advantage: performance?
-
-Disadvantage: how to capture? The current startDump()/stopDump() which
-is very usful for tesst cases wouldn't be possible anymore.
-
-There is a difference between filtering messages according to their
-importance level, and deciding where they go.
-
-"""
-
+itr("%d warnings",
+    de="%d Warnungen",
+    fr="%d avertissements")
+itr("%d errors" ,
+    de="%d Fehler",
+    fr="%d erreurs")
+itr("Aborted",
+    de="Vorgang abgebrochen")
+itr("Success",
+    de="Vorgang erfolgreich beendet.")
 
 
 class JobAborted(Exception):
     pass
 
 
-#uimeths = ('warning', 'message','info','error', 'verbose')
 
-
-class Job:
+class BaseJob:
     
-    def __init__(self,ui,label=None,status=None,maxval=0):
-        #self.pb = pb
-        self._label = label
+    def __init__(self):
+        pass
+        #self.init(*args,**kw)
+        
+    #def __init__(self,ui,label=None,status=None,maxval=0):
+    def init(self,ui,label=None,maxval=0):
         self.ui = ui
-        #for m in uimeths:
-        #    setattr(self,m,getattr(pb,m))
+        self._label = label
         self.curval = 0
         self.maxval = maxval
         self.pc = None
         self._done = False
-        self.onInit()
-        #if status is None:
-        #    status = _("Working")
-        #self.status(status)
+        
+        self.ui.onJobInit(self)
 
     def setMaxValue(self,n):
         self.maxval = n
 
-    def update(self,msg,n=1):
-        # shortcut to call both status() and inc()
-        self.status(msg)
-        self.inc(n)
+    def getStatus(self):
+        return _("Working")
+    
+    def getLabel(self):
+        return self._label 
+    
+##     def update(self,msg,n=1):
+##         # shortcut to call both status() and inc()
+##         self.status(msg)
+##         self.inc(n)
         
-    def inc(self,n=1):
+    def increment(self,n=1):
         self.curval += n
         if self._done:
             return
@@ -157,189 +80,150 @@ class Job:
             if pc == self.pc:
                 return
             self.pc = pc
-        self.onInc()
+        self.ui.onJobIncremented(self)
         
     def done(self,msg=None):
+        if msg is None:
+            msg = _("Success")
         if not self._done:
             self._done = True
+            #if msg is not None:
+            #    self._status = msg
             self.pc = 100
-            self.onInc()
-            if msg is not None and self._label is not None:
-                msg = self._label+": "+msg
-            self.onDone(msg)
+            #self.ui.onJobIncremented(self)
+            self.ui.onJobDone(self,msg)
+            #if msg is not None and self._label is not None:
+            #    msg = self._label+": "+msg
+            
+    def summary(self):
+        #self.info("%d increments",self.curval)
+        pass
 
-    def aborted(self,msg=None):
+    def abort(self,msg=None):
+        if msg is None:
+            msg = _("Aborted")
+##         if msg is not None:
+##             self._status = msg
         if not self._done:
             self._done = True
+            self.ui.onJobAbort(self,msg)
             #self.pc = 100
             #self.onInc()
             #self.onDone(msg)
 
             
-    def onInc(self):
-        pass
+##     def onInc(self):
+##         pass
     
-    def onInit(self):
-        if self._label is not None:
-            self.ui.info(self._label)
+##     def onInit(self):
+##         if self._label is not None:
+##             self.ui.info(self._label)
         
-    def onDone(self,msg):
-        if msg is None:
-            self.ui.status("")
-        else:
-            self.ui.status(msg)
+##     def onDone(self,msg):
+##         if msg is None:
+##             self.ui.status("")
+##         else:
+##             self.ui.status(msg)
         
 
 
-    def warning(self,msg):
-        self.ui.warning(msg)
+    def warning(self,*args,**kw):
+        self.ui.warning(*args,**kw)
         
-    def message(self,msg):
-        self.ui.message(msg)
+    def message(self,*args,**kw):
+        self.ui.message(*args,**kw)
         
-    def info(self,msg):
-        self.ui.info(msg)
+    def info(self,*args,**kw):
+        self.ui.info(*args,**kw)
         
-    def verbose(self,msg):
-        self.ui.verbose(msg)
+    def verbose(self,*args,**kw):
+        self.ui.verbose(*args,**kw)
         
     def error(self,*args,**kw):
         self.ui.error(*args,**kw)
         
-    def debug(self,msg):
-        self.ui.debug(msg)
+    def debug(self,*args,**kw):
+        self.ui.debug(*args,**kw)
         
-    def status(self,msg):
-        self.ui.status(msg)
+    def status(self,*args,**kw):
+        self.ui.status(*args,**kw)
     
         
 
-class PurzelConsoleJob(Job):
-    # for StatusConsole
+## class PurzelConsoleJob(Job):
+##     # for StatusConsole
 
-    purzelMann = "|/-\\"
+##     purzelMann = "|/-\\"
 
-    def __init__(self,*args,**kw):
-        self._status = ""
-        Job.__init__(self,*args,**kw)
+
+##     def status(self,msg,*args,**kw):
+##         msg = self.ui._buildMessage(msg,*args,**kw)
+##         self._status = msg
+##         self._display_job(job)
         
 
-##     def update(self,msg,n=1):
-##         # optimized (?) for better performance
-##         self.ui._status=msg
-##         self.inc(n)
-    
-    
+
+
+
+
+class Job(BaseJob):
+    # this is not to override but for use by ui.job()
+    def init(self,*args,**kw):
+        self._status = _("Working")
+        BaseJob.init(self,*args,**kw)
+
+    def getStatus(self):
+        return self._status
+
     def status(self,msg,*args,**kw):
-        msg = self.ui._buildMessage(msg,*args,**kw)
-        self._status = msg
-        self._display()
-        
-    def onInc(self):
-        self._display()
-        
-    def _display(self):
-        if self.maxval == 0:
-            s = '[' + self.purzelMann[self.curval % 4] + "] "
-        else:
-            if self.pc is None:
-                s = "[    ] " 
-            else:
-                s = "[%3d%%] " % self.pc
-        self.ui.status(s+self._status)
+        self._status = self.ui.buildMessage(msg,*args,**kw)
 
 
 
-
-## class ProgressBar:
-
-##     def __init__(self,label=None):
-        
-##         self._label = label
-##         self._jobs = []
-##         self.onInit()
-##         #self.status(status)
-
-##     def addJob(self,ui,*args,**kw):
-##         job = Job(self,ui,*args,**kw)
-##         self._jobs.append(job)
-##         self.onJob(job)
-##         return job
-        
-##     def onInit(self):
-##         pass
-    
-##     def onJob(self,job):
-##         self.onStatus(job,job._status)
-    
-##     def onStatus(self,job,status):
-##         pass
-    
-##     def onInc(self,job):
-##         pass
-
-##     def onDone(self,job):
-##         assert self._jobs[-1] == job, "%s != %s" % (
-##             str(job), str(self._jobs[-1]))
-##         del self._jobs[-1]
-    
-
-            
-
-
-
-class Task:
+class Task(BaseJob):
+    # must override
     def __init__(self):
-        self.job = None
-        self._todo = []
         self.count_errors = 0
         self.count_warnings = 0
+        BaseJob.__init__(self)
 
-##     def schedule(self,m,*args,**kw):
-##         self._todo.append( (m,args,kw) )
 
-    def getLabel(self):
-        return _("Working")
-    
-    def run(self,ui):
-        self.job = ui.job(self.getLabel())
+    def start(self):
+        # must override
+        raise NotImplementedError
+
+    def getStatus(self):
+        # may override
+        s = _("%d warnings") % (self.count_warnings) 
+        s += ". " + _("%d errors") % (self.count_errors) + "."
+        return s
+
+    def summary(self):
+        # may override
+        self.info(_("%d warnings"),self.count_warnings)
+        self.info(_("%d errors"), self.count_errors)
+
+        
+
+    def run(self,ui,*args,**kw):
+        self.init(ui,*args,**kw)
         try:
             self.start()
-            self.job.done()
+            self.done()
         except JobAborted,e:
-            self.job.aborted()
+            self.abort(str(e))
+        except KeyboardInterrupt,e:
+            self.abort()
             
-##         while len(self._todo) > 0:
-##             # self.job.inc()
-##             m,args,kw = self._todo.pop(0)
-##             m(*args,**kw)
-
-##     def setMaxValue(self,n):
-##         self.job.setMaxValue(n)
-
-    def message(self,msg):
-        self.job.message(msg)
-
-    def info(self,msg):
-        self.job.info(msg)
-
-    def status(self,msg):
-        self.job.status(msg)
-
-    def verbose(self,msg):
-        self.job.verbose(msg)
         
+
     def error(self,*args,**kw):
         self.count_errors += 1
-        self.job.error(*args,**kw)
+        Job.error(self,*args,**kw)
 
     def warning(self,msg):
         self.count_warnings += 1
-        self.job.warning(msg)
+        Job.warning(self,*args,**kw)
         
-
-    def start(self):
-        raise NotImplementedError
-
 
 

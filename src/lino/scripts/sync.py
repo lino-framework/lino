@@ -35,14 +35,48 @@ from lino.misc.jobs import Task
 from lino.i18n import itr,_
 itr("Start?",
    de="Arbeitsvorgang starten?",
-   fr="Démarrer?")
+   fr=u"Démarrer?")
+
+itr("Counting directories...",
+    de=u"Ordner zählen..."
+    )
+itr("Synchronize %s to %s",
+    de=u"Synchronisiere %s nach %s")
+itr("Source directory '%s' doesn't exist.",
+    de="Ursprungsordner '%s' existiert nicht.")
+itr("Found %d directories.",de="%d Ordner gefunden.")
+itr("Overwrite newer target %s",
+    de=u"Jüngere Zieldatei %s überschreiben")
+itr("%s is up-to-date",de="%s ist unverändert")
+itr("remove directory %s", de=u"Lösche Ordner %s")
+itr("remove file %s",de=u"Lösche Datei %s")
+itr("create directory %s",de="Erstelle Ordner %s")
+itr("copy file %s to %s",de=u"Kopiere Datei %s nach %s")
+itr("keep %d, update %d, copy %d, delete %d files.",
+    de=u"%d belassen, %d+%d  kopieren, %d löschen")
+itr( "%d files and %d directories ",
+     de="%d Dateien in %d Ordnern ",
+     fr=u"%d fichiers das %d répertoires ")
+     
+
+
+itr("were removed",
+    de="wurden gelöscht")
+itr( "were updated", de="wurden aktualisiert")
+itr("were copied", de=u"wurden übertragen")
+
+itr("would have been removed", de=u"wären gelöscht worden")
+itr("would have been updated", de="wären aktualisiert worden")
+itr("would have been copied", de="wären kopiert worden")
+itr("%d files up-to-date", de="%d Dateien unverändert")
+        
 
 class SyncError(Exception):
     pass
 
 class Synchronizer(Task):
+    
     def __init__(self,src,target,simulate,showProgress):
-        Task.__init__(self)
         self.src = src
         self.target = target
         self.simulate=simulate
@@ -59,31 +93,34 @@ class Synchronizer(Task):
         self.count_delete_dir = 0
         self.count_update_dir = 0
         self.count_copy_dir = 0
+        
+        Task.__init__(self)
 
         #self.job = console.job("Synchronizer")
 
     def getLabel(self):
-        s = "Synchronize %s to %s" % (self.src, self.target)
+        s = _("Synchronize %s to %s") % (self.src, self.target)
         if self.simulate:
             s += " (Simulation)"
         return s
-
+    
     def start(self):
         if not os.path.exists(self.src):
-            raise SyncError(self.src+" doesn't exist")
+            raise SyncError(
+                _("Source directory '%s' doesn't exist."))
 
         if self.showProgress:
-            self.status("Counting directories...")
+            self.status(_("Counting directories..."))
             n = 0
             for root, dirs, files in os.walk(self.src):
                 n += len(dirs)
                 n += len(files)
-            self.status("Found %d directories." % n)
-            self.job.setMaxValue(n)
+            self.status(_("Found %d directories.") % n)
+            self.setMaxValue(n)
             
         if os.path.exists(self.target):
             #self.schedule(self.update,self.src,self.target)
-            self.update(self.src,self.target)
+            self.update_it(self.src,self.target)
         else:
             #self.schedule(self.copy,self.src,self.target)
             self.copy(self.src,self.target)
@@ -109,7 +146,7 @@ class Synchronizer(Task):
 
                 
     def copy(self,src,target):
-        self.job.update(self.getStatus())
+        self.increment()
         if os.path.isfile(src):
             self.copy_file(src,target)
         elif os.path.isdir(src):
@@ -118,8 +155,8 @@ class Synchronizer(Task):
             raise SyncError(
                 "%s is neither file nor directory" % src)
 
-    def update(self,src,target):
-        self.job.update(self.getStatus())
+    def update_it(self,src,target):
+        self.increment()
         if os.path.isfile(src):
             self.update_file(src,target)
         elif os.path.isdir(src):
@@ -171,7 +208,7 @@ class Synchronizer(Task):
         del mustCopy
             
         for s,t in mustUpdate:
-            self.update(s,t)
+            self.update_it(s,t)
 
     
     def update_file(self,src,target):
@@ -199,12 +236,13 @@ class Synchronizer(Task):
         elif abs(target_mt - src_mt) > self.modify_window:
             doit = True
             if target_mt > src_mt:
-                self.warning("Overwrite newer target "+target)
+                self.warning(_("Overwrite newer target %s")
+                             %target)
 
         
         if not doit:
             self.count_uptodate += 1
-            self.verbose(target+" is up-to-date")
+            self.verbose(_("%s is up-to-date") % target)
             return
         self.count_update_file += 1
         if self.simulate:
@@ -232,7 +270,7 @@ class Synchronizer(Task):
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.info("mkdir " + target)
+        self.info(_("create directory %s") %target)
         if not self.simulate:
             try:
                 os.mkdir(target)
@@ -250,7 +288,7 @@ class Synchronizer(Task):
         
     def copy_file(self,src,target):
         self.count_copy_file += 1
-        self.info("copy %s to %s" % (src,target))
+        self.info(_("copy file %s to %s") % (src,target))
         if self.simulate:
             return
         try:
@@ -262,7 +300,7 @@ class Synchronizer(Task):
 
     def delete_dir(self,name):
         self.count_delete_dir += 1
-        self.info("rmdir "+name)
+        self.info(_("remove directory %s") % name)
         if self.simulate:
             return
         
@@ -276,7 +314,7 @@ class Synchronizer(Task):
             
     def delete_file(self,name):
         self.count_delete_file += 1
-        self.info("remove " + name)
+        self.info(_("remove file %s") % name)
         if self.simulate:
             return
 
@@ -296,45 +334,51 @@ class Synchronizer(Task):
         #    console.error(str(e))
         except IOError,e:
             self.error("os.remove('%s') failed",name)
-        
+            
     def summary(self):
-        s = "%d files and %d directories " % (
-            self.count_delete_file,
-            self.count_delete_dir)
+        s = _("%d files and %d directories ")
         if self.simulate:
-            s += "would have been deleted"
+            s += _("would have been removed")
         else:
-            s += "were deleted"
-        s += "\n%d files and %d directories " % (
-            self.count_update_file,
-            self.count_update_dir,
-            )
+            s += _("were removed")
+        self.info(s,
+                  self.count_delete_file,
+                  self.count_delete_dir)
+        
+        s = _("%d files and %d directories ")
         if self.simulate:
-            s += "would have been updated"
+            s += _("would have been updated")
         else:
-            s += "were updated"
-        s += "\n%d files and %d directories " % (
-            self.count_copy_file,
-            self.count_copy_dir,
-            )
+            s += _("were updated")
+        self.info(s,
+                  self.count_update_file,
+                  self.count_update_dir,
+                  )
+        
+        s = _("%d files and %d directories ")
         if self.simulate:
-            s += "would have been copied"
+            s += _("would have been copied")
         else:
-            s += "were copied"
-        s += "\n%d files up-to-date" % (self.count_uptodate)
-        s += "\n%d warnings" % (self.count_warnings)
-        s += "\n%d errors" % (self.count_errors)
-        return s
+            s += _("were copied")
+        self.info(s,
+                  self.count_copy_file,
+                  self.count_copy_dir,
+                  )
+        
+        self.info(_("%d files up-to-date"),self.count_uptodate)
+        Task.summary(self)
 
     def getStatus(self):
-        s = "keep %d, update %d, copy %d, delete %d files." % (
+##         if self._done:
+##             return "done"
+##         if self._aborted:
+##             return "aborted"
+        s = _("keep %d, update %d, copy %d, delete %d files.") % (
             self.count_uptodate,
             self.count_update_file,
             self.count_copy_file,
             self.count_delete_file)
-        s += " %d warnings." % (self.count_warnings)
-        s += " %d errors." % (self.count_errors)
-        return s
+        return s + " " + Task.getStatus(self)
 
 def main(argv):
     console.copyleft(name="Lino/sync",
@@ -380,9 +424,10 @@ show progress bar""",
     if not console.confirm(sync.getLabel()+"\n"+_("Start?")):
         return
         
-    sync.run(console)
-    
-    console.message(sync.summary())
+    sync.run(console.getSystemConsole())
+
+##     for l in sync.summary():
+##         console.info(l)
 
  
 

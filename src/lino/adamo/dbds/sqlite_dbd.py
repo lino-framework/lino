@@ -29,6 +29,12 @@ from types import TupleType
 
 from lino.adamo.sql import SqlConnection
 from lino.adamo import DatabaseError
+
+
+from lino.ui import console
+
+# import console to make sure that sys.setdefaultencoding() is done
+# because sqlite.Connection() will use this as default encoding.
         
 
 class Connection(SqlConnection):
@@ -48,6 +54,7 @@ class Connection(SqlConnection):
             
         try:
             self._dbconn = sqlite.connect(filename)
+                                          #client_encoding='latin1')
         except sqlite.DatabaseError,e:
             raise DatabaseError(filename + ":" +str(e))
 

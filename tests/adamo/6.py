@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,38 +17,43 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
    
-import sys
-
-from StringIO import StringIO
-
-from lino.misc.tsttools import TestCase
-
+from lino.misc.tsttools import TestCase, main
 from lino.examples import pizzeria,pizzeria2
 
-from lino.ui import console
-
-def catch_output(f,*args,**kw):
-    out = sys.stdout
-    sys.stdout = StringIO()
-    f(*args,**kw)
-    r = sys.stdout.getvalue()
-    sys.stdout = out
-    return r
+## import sys
+## from StringIO import StringIO
+##
+## def catch_output(f,*args,**kw):
+##     out = sys.stdout
+##     sys.stdout = StringIO()
+##     f(*args,**kw)
+##     r = sys.stdout.getvalue()
+##     sys.stdout = out
+##     return r
 
 
 
 class Case(TestCase):
+    
     def test01(self):
         "do the pizzeria examples work?"
-        
-        self.assertEquivalent(catch_output(pizzeria.main),"""\
+        #print self.ui
+        pizzeria.main(self.ui)
+        s = self.getConsoleOutput()
+        #s = catch_output(pizzeria.main)
+        #print s
+        self.assertEquivalent(s,"""\
 Henri must pay 12 EUR
 James must pay 53 EUR
 """)
 
     def test02(self):
         "testing pizzeria2"
-        self.assertEquivalent(catch_output(pizzeria2.main),"""\
+        pizzeria2.main(self.ui)
+        s = self.getConsoleOutput()
+        #s = catch_output(pizzeria2.main)
+        
+        self.assertEquivalent(s,"""\
 Order #: 3
 Date: 2004-03-18
 Customer: Bernard
@@ -67,6 +72,5 @@ Total:  7
         
 
 if __name__ == '__main__':
-    from unittest import main
     main()
 

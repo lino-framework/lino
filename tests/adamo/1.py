@@ -22,23 +22,26 @@
 Some tests on getDemoDB()
 """
 
-import types
-import unittest
+#import types
+#import unittest
 
 from lino.adamo.exceptions import DataVeto
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
+from lino.misc.tsttools import TestCase, main
 
-class Case(unittest.TestCase):
+class Case(TestCase):
 
     def setUp(self):
+        TestCase.setUp(self)
+        self.sess = demo.startup(self.ui)
         
-        self.db = demo.beginSession()
+        #self.db = demo.beginSession()
         #self.db.installto(globals())
 
     def tearDown(self):
-        self.db.shutdown()
+        self.sess.shutdown()
 
 
     def test01(self):
@@ -46,7 +49,7 @@ class Case(unittest.TestCase):
         ae = self.assertEqual
         
         l1 = [str(t.getTableName())
-                for t in self.db.schema.getTableList()]
+                for t in self.sess.schema.getTableList()]
         l1.sort()
 
         # print " ".join(l1)
@@ -65,9 +68,9 @@ class Case(unittest.TestCase):
 
         self.assertEqual(l1,l2)
         
-        self.db.setBabelLangs("en")
-        PARTNERS = self.db.query(Partners)
-        CITIES = self.db.query(Cities)
+        self.sess.setBabelLangs("en")
+        PARTNERS = self.sess.query(Partners)
+        CITIES = self.sess.query(Cities)
         row = PARTNERS.peek(1)
 
         # print "foobar " + repr(row.getValues())
@@ -98,8 +101,8 @@ class Case(unittest.TestCase):
         specify the field names each time, then you can create a Query:
         """
 
-        PARTNERS = self.db.query(Partners)
-        CITIES = self.db.query(Cities)
+        PARTNERS = self.sess.query(Partners)
+        CITIES = self.sess.query(Cities)
         
         q = PARTNERS.query('id firstName name')
         
@@ -118,9 +121,9 @@ class Case(unittest.TestCase):
         Belgium, then use this query to create a city row, then this row
         will automatically know that it's nation is Belgium.    """
 
-        NATIONS = self.db.query(Nations)
-        PARTNERS = self.db.query(Partners)
-        CITIES = self.db.query(Cities)
+        NATIONS = self.sess.query(Nations)
+        PARTNERS = self.sess.query(Partners)
+        CITIES = self.sess.query(Cities)
         
         be = NATIONS.peek("be")
         q = CITIES.query(nation=be)
@@ -135,10 +138,10 @@ class Case(unittest.TestCase):
     def test03(self):
         "logical primary key versus atomic primary key"
 
-        INVOICES = self.db.query(Invoices)
-        INVOICELINES = self.db.query(InvoiceLines)
-        #INVOICES = self.db.schema.INVOICES
-        #INVOICELINES = self.db.schema.INVOICELINES
+        INVOICES = self.sess.query(Invoices)
+        INVOICELINES = self.sess.query(InvoiceLines)
+        #INVOICES = self.sess.schema.INVOICES
+        #INVOICELINES = self.sess.schema.INVOICELINES
         self.assertEqual(INVOICES._table.getPrimaryKey(),
                               ("jnl","seq"))
         self.assertEqual(
@@ -163,4 +166,4 @@ class Case(unittest.TestCase):
 ##      tsttools.run("1")
 
 if __name__ == '__main__':
-    unittest.main()
+    main()

@@ -83,8 +83,8 @@ class OrderLines(Table):
                 return "product is mandatory"
 
 
-def Pizzeria(**kw):
-    schema = Schema(**kw)
+def Pizzeria(*args,**kw):
+    schema = Schema(*args,**kw)
     schema.addTable(Products)
     schema.addTable(Customers)
     schema.addTable(Orders)
@@ -118,11 +118,11 @@ def populate(sess):
     LINES.appendRow(ordr=o2,product=p1,qty=3)
     LINES.appendRow(ordr=o2,product=p2,qty=5)
 
-    sess.commit()
+    #sess.commit()
 
     o1.register()
     o2.register()
-    sess.commit()
+    #sess.commit()
     
 
 def query(sess):
@@ -135,14 +135,16 @@ def query(sess):
 ##  for (customer,totalPrice) in q:
 ##      print "%s must pay %d EUR" % (customer.name,totalPrice)
     for o in ORDERS.query("customer totalPrice"):
-        print "%s must pay %d EUR" % (o.customer.name,
-                                      o.totalPrice)
+        sess.ui.notice("%s must pay %d EUR",
+                       o.customer.name, o.totalPrice)
 
-def main():
+def main(ui):
 
     schema = Pizzeria(label="Lucs Pizza Restaurant")
 
-    sess = schema.quickStartup()
+    sess = schema.quickStartup(ui)
+    print sess.ui
+    raw_input("ok")
     
     populate(sess)
 
@@ -151,4 +153,5 @@ def main():
     sess.shutdown()
     
 if __name__ == "__main__":
-    main()
+    from lino.ui import console
+    main(console)

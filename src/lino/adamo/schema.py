@@ -76,18 +76,6 @@ class Schema(Describable):
         sequential list.  """
     
         
-    #def __init__(self,langs=defaultLangs,**kw):
-        #PropertySet.__init__(self,**kw)
-        #self.__dict__['_startupDone'] = False
-        #self.__dict__['_tables'] = []
-        #self.__dict__['_supportedLangs'] = langs
-
-##  def __setattr__(self,name,value):
-##      if self.__dict__.has_key(name):
-##          self.__dict__[name] = value
-##          return
-##      self.addTable(value,name)
-
     def addTable(self,tableClass,**kw):
         table = tableClass(**kw)
         assert isinstance(table,Table),\
@@ -139,7 +127,7 @@ class Schema(Describable):
 ##      #self._forms[name] = form
         
 
-    def initialize(self):
+    def initialize(self,ui):
         
         """ initialize will be called exactly once, after having
         declared all tables of the database.  """
@@ -149,12 +137,12 @@ class Schema(Describable):
         # assert not self._initDone, "double initialize()"
         #progress = self._app.console.progress
         #progress = pb.title
-        console.debug("Initializing database schema...")
+        ui.debug("Initializing database schema...")
         #self.defineSystemTables(ui)
         for plugin in self._plugins:
             plugin.defineTables(self)
 
-        console.debug(
+        ui.debug(
             "  Initializing %d tables..." % len(self._tables))
 
         # loop 1
@@ -172,7 +160,7 @@ class Schema(Describable):
                     table.init2()
                     somesuccess = True
                 except StartupDelay, e:
-                    console.debug("StartupDelay:"+repr(e))
+                    ui.debug("StartupDelay:"+repr(e))
                     tryagain.append(table)
             if not somesuccess:
                 "not supported: primary key with pointer to self"
@@ -209,7 +197,7 @@ class Schema(Describable):
         #   print "setupTables() done"
             
         self._initDone = True
-        console.debug("Schema initialized")
+        ui.debug("Schema initialized")
         
 
     def setLayout(self,layoutModule):
@@ -250,9 +238,9 @@ class Schema(Describable):
         sequence of Table classes for which we want the instance.  The
         list is sorted by table definition order.  It is forbidden to
         modify this list!  """
-        self.initialize()
-        #assert self._initDone, \
-        #       "getTableList() before initialize()"
+        #self.initialize()
+        assert self._initDone, \
+               "getTableList() before initialize()"
         if tableClasses is None:
             return self._tables
         return [t for t in self._tables
@@ -266,21 +254,23 @@ class Schema(Describable):
         return str(self.__class__)
 
 
-    def quickStartup(self, ui=None, langs=None,
+    def quickStartup(self,
+                     ui,
+                     langs=None,
                      filename=None,
                      **kw):
-        if ui is None:
-            ui = console.getSystemConsole()
+##         if ui is None:
+##             ui = console.getSystemConsole()
         job = ui.job("quickStartup()")
         job.status("Initialize Schema")
-        self.initialize()
+        self.initialize(ui)
         db = self.addDatabase(langs=langs)
         job.status("Connect")
         conn = center.connection(filename=filename,schema=self)
         #conn = Connection(filename=filename,schema=self)
         db.connect(conn)
         job.status("Startup")
-        sess =  center.startup(**kw)
+        sess =  center.startup(ui,**kw)
         job.done()
         return sess
 
@@ -303,7 +293,7 @@ class Schema(Describable):
             for store in db.getStoresById():
                 store.createTable(sess)
             for p in self._populators:
-                job = sess.job("populator " + p.getLabel())
+                job = sess.ui.job("populator " + p.getLabel())
                 for store in db.getStoresById():
                     store.populateOrNot(self,sess,p)
                 job.done()
@@ -314,8 +304,8 @@ class Schema(Describable):
         return sess
     
     
-    def shutdown(self):
-        console.debug("Schema.shutdown()")
+    def shutdown(self,ui):
+        ui.debug("Schema.shutdown()")
         for db in self._databases:
             db.close()
         self._databases = []

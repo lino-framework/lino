@@ -31,8 +31,8 @@ Here we test how a query translates to SQL.
 class Case(TestCase):
 
     def setUp(self):
-        
-        self.db = demo.beginSession()
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui)
         self.db.setBabelLangs('en')
 
     def tearDown(self):

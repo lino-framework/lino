@@ -72,21 +72,22 @@ def do_report(sess):
     print "Total: ", o.totalPrice
 
 
-def beginSession():
+def beginSession(ui):
 
     schema = Pizzeria(label="Lucs second Pizza Restaurant")
     schema.addTable(Services)
     
-    sess = schema.quickStartup()
+    sess = schema.quickStartup(ui)
     
     populate2(sess)
     
     return sess
     
-def main():
-    sess = beginSession()
+def main(ui):
+    sess = beginSession(ui)
     do_report(sess)
     sess.shutdown()
     
 if __name__ == "__main__":
-    main()
+    from lino.ui import console
+    main(console)

@@ -27,15 +27,15 @@ values or in a dict of complex values...
    (because this is the only one I am going to use. Plus the implicit
    "nation" column.
 
-    The "print p" statement will do a call to Partners.getRowLabel()
-    which will access row.name --- a field that was not included in my
-    query!
+   The "print p" statement will do a call to Partners.getRowLabel()
+   which will access row.name --- a field that was not included in my
+   columnNames!
 
-    Or if I modify the row, then the validateRow() action will be
-    triggered and it will ask for the partner's name.
+   Or if I modify the row, then the validateRow() action will be
+   triggered and it will ask for the partner's name.
 
-    If a field was not part of the initial query, it will silently be
-    looked up.
+   If a field was not part of the initial query, it will silently be
+   looked up.
 
 2. Accessing p.nation.name means that an attribute "p.nation" exists
    and has a Nations row as value.
@@ -54,13 +54,14 @@ from lino.schemas.sprl.tables import Nations,Partners
 class Case(TestCase):
     
     def test01(self):
-        sess = demo.startup()
+        sess = demo.startup(ui=self.ui)
         be = sess.query(Nations).peek("be")
         q = sess.query(Partners,"title firstName name",nation=be)
         
-        sess.startDump()
+        #sess.startDump()
         q.executeReport(columnWidths="6 10 20")
-        s = sess.stopDump()
+        #s = sess.stopDump()
+        s = self.getConsoleOutput()
         
         #print s
         

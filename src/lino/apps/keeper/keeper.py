@@ -31,8 +31,15 @@ from lino.forms.application import AdamoApplication
 
 class Keeper(AdamoApplication):
         
-    def makeMainForm(self,ui):
-        frm = ui.form(
+    def init(self,toolkit):
+        tables.setupSchema(self.schema)
+        
+        self.sess = self.schema.quickStartup(
+            ui=toolkit, filename=self.filename)
+        
+        assert self.mainForm is None
+        
+        self.mainForm = frm = self.form(
             label="Main menu",
             doc="""\
 This is the Keeper main menu.                                     
@@ -60,7 +67,7 @@ This is the Keeper main menu.
         m.addItem(label="&Beenden",action=frm.close)
         m.addItem(label="Inf&o").setHandler(ui.showAbout,self)
 
-        return frm
+        frm.addOnClose(self.close)
 
 ##     def loadPath(self,ui):
 ##         path = r'c:\temp\1'
@@ -71,7 +78,6 @@ def main(argv):
 
     app = Keeper(name="Keeper", years='2005')
     app.parse_args()
-    tables.setupSchema(app.schema)
     gui.run(app)
     
 

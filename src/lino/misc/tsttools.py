@@ -28,7 +28,11 @@ import types
 from cStringIO import StringIO
 
 from lino.misc.my_import import my_import
-from lino.ui import console 
+from lino.ui import console
+
+
+## class TestConsole(console.CaptureConsole):
+##     pass
 
 
 #~ def run(modname):
@@ -92,9 +96,11 @@ def alltests(argv,root='.'):
         
 ##         namefilters.append(f)
 
+    job = console.job("Collecting test cases")
     suites = []
     #for dirpath, dirname, filename in os.listdir(dirname):
     for dirpath, dirnames, filenames in os.walk(root):
+        job.status(dirpath)
         sys.path.append(dirpath)
         for filename in filenames:
             modname,ext = os.path.splitext(filename)
@@ -122,17 +128,30 @@ def alltests(argv,root='.'):
                         if modname == a[0]:
                             doit = True
                     else:
-                        print "unrecognized argument "+arg
+                        job.warning("unrecognized argument %s",
+                                    arg)
                 if doit:
-                    console.verbose("Extracting tests from %s..." % \
-                                    modname)
+                    job.status("Extracting tests from %s...", 
+                               modname)
                     suites.append(makesuite(modname))
         sys.path.remove(dirpath)
+        
+    job.done()
+    #raw_input("yes?")
 
     return unittest.TestSuite(suites)
      
 
 
+STOP_ON_FIRST_ERROR = True
+
+class TestResult(unittest.TestResult):
+
+    def stopTest(self, test):
+        "Called when the given test has been run"
+        if STOP_ON_FIRST_ERROR:
+            if len(self.errors) or len(self.failures):
+                self.stop()
 
 
 #def compressWhiteSpace(s):
@@ -141,11 +160,19 @@ def alltests(argv,root='.'):
 class TestCase(unittest.TestCase):
 
     win32_printerName_PS = "Lexmark Optra PS"
+
+##     def __init__(self):
+##         unittest.TestCase.__init__(self)
+##         self.shouldStop = 1
+    
+    def defaultTestResult(self):
+        return TestResult()
     
     def setUp(self):
         self._tempFiles = []
         self._showFiles = []
         self.keepTemporaryFiles = False
+        self.ui = console.CaptureConsole(verbosity=-2,batch=True)
 
     def tearDown(self):
         for fn in self._showFiles:
@@ -158,6 +185,9 @@ class TestCase(unittest.TestCase):
                               % len(self._tempFiles)):
                 for fn in self._tempFiles:
                     os.remove(fn)
+
+    def getConsoleOutput(self):
+        return self.ui.getvalue()
         
     def assertEquivalent(self,txt1,txt2):
         
@@ -189,7 +219,7 @@ class TestCase(unittest.TestCase):
             diff = ndiff(l1,l2)
             print '\n'.join(diff)
         
-        self.fail(a.getvalue()) # "texts differ. See stdout")
+        self.fail(a.getvalue()) 
 
     def addTempFile(self,filename,showOutput=None):
         """unlike tempfile, these files are not OPENED
@@ -214,4 +244,8 @@ class TestCase(unittest.TestCase):
 #b = sys.stdout # open("b.txt","w")
 
 main = unittest.main
+
+## def main(*args,**kw):
+##     runner = TextTestRunner(stream=?)
+##     TestProgram(testRunner)
 

@@ -20,12 +20,28 @@
 
 import sys
 import atexit
-from time import strftime
+import codecs
 
+from time import strftime
 from optparse import OptionParser
 from cStringIO import StringIO
 
 from lino import __version__, __author__
+
+
+
+# if frozen with py2exe, sys.setdefaultencoding() has not been
+# deleted.  And site.py and sitecustomize.py haven't been executed.
+
+if hasattr(sys,'setdefaultencoding'):
+
+    import locale
+    loc = locale.getdefaultlocale()
+    if loc[1]:
+        #print "sys.setdefaultencoding(%s)" % repr(loc[1])
+        sys.setdefaultencoding(loc[1])
+    
+
 
 """
 
@@ -39,7 +55,7 @@ try:
 except ImportError,e:
     sound = False
 
-from lino.misc.jobs import Job, PurzelConsoleJob
+from lino.misc.jobs import Job #, PurzelConsoleJob
 
 
 ## class ConsoleJob(Job):
@@ -47,11 +63,11 @@ from lino.misc.jobs import Job, PurzelConsoleJob
         
 ##     def onInit(self):
 ##         if self._label is not None:
-##             self.ui.info(self._label)
+##             self.ui.notice(self._label)
         
 ##     def onDone(self):
 ##         if self._label is not None:
-##             self.ui.info('\n')
+##             self.ui.notice('\n')
 ##         Job.onDone(self,job)
         
 ## class DecentStreamJob(StreamJob):
@@ -86,7 +102,7 @@ class Console(UI):
     def __init__(self, stdout, stderr,**kw):
         self._stdout = stdout
         self._stderr = stderr
-        self._log = None
+        self._logfile = None
         self._verbosity = 0
         self._batch = False
         #self._dumping = None
@@ -97,20 +113,16 @@ class Console(UI):
 ##         self._stdout = stdout
 ##         self._stderr = stderr
 
-    def set(self,
-            verbosity=None,
-            debug=None,
-            batch=None,
-            logfile=None):
+    def set(self, verbosity=None, batch=None, logfile=None):
         if verbosity is not None:
             self._verbosity += verbosity
             #print "verbositiy %d" % self._verbosity
         if batch is not None:
             self._batch = batch
         if logfile is not None:
-            if self._log is not None:
-                self._log.close()
-            self._log = open(logfile,"a")
+            if self._logfile is not None:
+                self._logfile.close()
+            self._logfile = open(logfile,"a")
 ##         if ui is not None:
 ##             self._ui = ui
         #if debug is not None:
@@ -151,20 +163,21 @@ class Console(UI):
         self._stdout(msg+"\n")
 
     def writelog(self,msg):
-        if self._log:
+        if self._logfile:
             #t = strftime("%a %Y-%m-%d %H:%M:%S")
             t = strftime("%H:%M:%S")
-            self._log.write(t+" "+msg+"\n")
+            self._logfile.write(t+" "+msg+"\n")
+            self._logfile.flush()
             
     def status(self,msg):
         self.verbose(msg)
 
     def error(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
+        msg = self.buildMessage(msg,*args,**kw)
         self._stderr(msg + "\n")
         self.writelog(msg)
 
-    def _buildMessage(self,msg,*args,**kw):
+    def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"
         if len(args) == 0:
             return msg
@@ -181,29 +194,52 @@ class Console(UI):
 
     def warning(self,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
-        msg = self._buildMessage(msg,*args,**kw)
+        msg = self.buildMessage(msg,*args,**kw)
         self.writelog(msg)
         if self._verbosity >= 0:
             self.writeout(msg)
 
-    def info(self,msg,*args,**kw):
+    def notice(self,msg,*args,**kw):
         "Display message if verbosity is normal. Not logged."
         if self._verbosity >= 0:
-            msg = self._buildMessage(msg,*args,**kw)
+            msg = self.buildMessage(msg,*args,**kw)
             self.writeout(msg)
 
     def verbose(self,msg,*args,**kw):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
-            msg = self._buildMessage(msg,*args,**kw)
+            msg = self.buildMessage(msg,*args,**kw)
             self.writeout(msg)
         
     def debug(self,msg,*args,**kw):
         "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
-            msg = self._buildMessage(msg,*args,**kw)
+            msg = self.buildMessage(msg,*args,**kw)
             self.writeout(msg)
             #self.out.write(msg + "\n")
+
+            
+
+
+    def onJobIncremented(self,job):
+        pass
+    
+    def onJobInit(self,job):
+        if job._label is not None:
+            self.notice(job._label)
+
+    def onJobStatus(self,job):
+        pass
+
+    def onJobDone(self,job,msg):
+        self.status(None)
+        job.summary()
+        self.notice(job.getLabel() + ": " + msg)
+    
+    def onJobAbort(self,job,msg):
+        self.status(None)
+        job.summary()
+        self.error(job.getLabel() + ": " + msg)
 
             
         
@@ -288,6 +324,7 @@ class Console(UI):
         given her answer. returns True or False.
         
         """
+        #print self._stdout
 ##         if self.app is not None:
 ##             return self.app.confirm(prompt,default)
         if self._batch:
@@ -341,14 +378,16 @@ class Console(UI):
             self.warning("wrong answer: "+s)
 
     def shutdown(self):
-        if self._log:
-            self._log.close()
+        if self._logfile:
+            self._logfile.close()
 
     def form(self,*args,**kw):
         raise NotImplementedError
 
     def job(self,*args,**kw):
-        return self.jobClass(self,*args,**kw)
+        job = Job()
+        job.init(self,*args,**kw)
+        return job
     
     def textprinter(self):
         from lino.textprinter.plain import PlainDocument
@@ -362,75 +401,126 @@ class Console(UI):
 class StatusConsole(Console):
 
     width = 78
-    jobClass = PurzelConsoleJob
+    purzelMann = "|/-\\"
+    #jobClass = PurzelConsoleJob
+
+    
 
     def __init__(self,*args,**kw):
-        self._status = ""
+        self._status = None
         Console.__init__(self,*args,**kw)
+
+
+    def onJobStatus(self,job):
+        self._display_job(job)
+
+    def onJobIncremented(self,job):
+        self._display_job(job)
+        
+    def _display_job(self,job):
+        if job.maxval == 0:
+            s = '[' + self.purzelMann[job.curval % 4] + "] "
+        else:
+            if job.pc is None:
+                s = "[    ] " 
+            else:
+                s = "[%3d%%] " % job.pc
+        self.status(s+job.getStatus())
+
+        
     
     def warning(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
+        msg = self.buildMessage(msg,*args,**kw)
         Console.warning(self,msg.ljust(self.width))
         self._refresh()
         
     def message(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
+        msg = self.buildMessage(msg,*args,**kw)
         Console.message(self,msg.ljust(self.width))
         self._refresh()
         
-    def info(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
-        Console.info(self,msg.ljust(self.width))
+    def notice(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
+        Console.notice(self,msg.ljust(self.width))
         self._refresh()
         
     def verbose(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
+        msg = self.buildMessage(msg,*args,**kw)
         Console.verbose(self,msg.ljust(self.width))
         self._refresh()
         
     def error(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
+        msg = self.buildMessage(msg,*args,**kw)
         Console.error(self,msg.ljust(self.width))
         self._refresh()
         
     def critical(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
+        msg = self.buildMessage(msg,*args,**kw)
         Console.critical(self,msg.ljust(self.width))
         self._refresh()
         
         
     def status(self,msg,*args,**kw):
-        msg = self._buildMessage(msg,*args,**kw)
-        self._status = msg[:self.width]
-        self._stdout(self._status.ljust(self.width)+"\r")
+        if msg is None:
+            self._status = None
+        else:
+            msg = self.buildMessage(msg,*args,**kw)
+            self._status = msg[:self.width]
+            self._stdout(self._status.ljust(self.width)+"\r")
 
     def _refresh(self):
-        self._stdout(self._status+"\r")
+        if self._status is not None:
+            self._stdout(self._status+"\r")
 
 
 class CaptureConsole(Console):
     
     def __init__(self,**kw):
         self.buffer = StringIO()
-        #self.before = getSystemConsole()
         Console.__init__(self,
                          self.buffer.write,
-                         self.buffer.write)
+                         self.buffer.write,**kw)
         
     def getvalue(self):
-        #setSystemConsole(self.before)
+        #self.buffer.flush()
         return self.buffer.getvalue()
     
         
-def getSystemConsole():
-    return _syscon
+_syscon = None
+
+
+# rewriter() inspired by a snippet in Marc-André Lemburg's Python
+# Unicode Tutorial
+# (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
+
+def rewriter(to_stream):
+    if to_stream.encoding is None:
+        return to_stream
+    if to_stream.encoding == sys.getdefaultencoding():
+        return to_stream
+
+    (e,d,sr,sw) = codecs.lookup(to_stream.encoding)
+    unicode_to_fs = sw(to_stream)
+
+    (e,d,sr,sw) = codecs.lookup(sys.getdefaultencoding())
+    class StreamRewriter(codecs.StreamWriter):
+
+        encode = e
+        decode = d
+
+        def write(self,object):
+            data,consumed = self.decode(object,self.errors)
+            self.stream.write(data)
+            return len(data)
+
+    return StreamRewriter(unicode_to_fs)
 
 def setSystemConsole(c):
     g = globals()
     g['_syscon'] = c
 
     for funcname in (
-        'debug','message','info','status',
+        'debug','message','notice','status',
         'job', 'verbose', 'error','critical',
         'confirm','warning',
         'report','textprinter',
@@ -439,59 +529,72 @@ def setSystemConsole(c):
         'getOptionParser','parse_args', ):
         g[funcname] = getattr(_syscon,funcname)
 
+def getSystemConsole():
+    return _syscon
 
-_stack = []
-_syscon = None
-
-def push(c):
-    _stack.append(_syscon)
-    setSystemConsole(c)
-
-def pop():
-    #assert len(_stack) > 0
-    rv = _syscon
-    setSystemConsole(_stack.pop())
-    return rv
-
-
-def startDump(**kw):
-    push(CaptureConsole(**kw))
-        
-def stopDump():
-    c = pop()
-    return c.getvalue()
-
-#_syscon = Console(sys.stdout.write, sys.stderr.write)
-setSystemConsole(
-    StatusConsole(sys.stdout.write, sys.stderr.write))
-
-atexit.register(_syscon.shutdown)
-
-
-
-## for m in ('debug','message','info','status',
-##           'job', 'verbose', 'error','critical',
-##           'confirm','warning',
-##           'report','textprinter',
-##           'startDump','stopDump',
-##           'isInteractive','isVerbose', 'set',
-##           'getOptionParser','parse_args',
-##           ):
-##     globals()[m] = getattr(_syscon,m)
-
-## def cmeth(funcname,*args,**kw):
-##     f = getattr(_syscon,funcname)
-##     return f(*args,**kw)
 
 
 def copyleft(name="Lino",
              version=__version__,
              years="2002-2005",
              author=__author__):
-    info("""\
+    notice("""\
 %s version %s.
 Copyright (c) %s %s.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information.""" % (
         name, version, years, author))
+
+
+if sys.getdefaultencoding() != sys.stdout.encoding:
+    sys.stdout = rewriter(sys.stdout)
+    sys.stderr = rewriter(sys.stderr)
+
+
+#_syscon = Console(sys.stdout.write, sys.stderr.write)
+setSystemConsole(
+    StatusConsole(sys.stdout.write, sys.stderr.write))
+
+
+
+atexit.register(_syscon.shutdown)
+
+
+
+
+
+## _stack = []
+
+## def push(c):
+##     _stack.append(_syscon)
+##     setSystemConsole(c)
+
+## def pop():
+##     #assert len(_stack) > 0
+##     rv = _syscon
+##     setSystemConsole(_stack.pop())
+##     return rv
+
+
+## def startDump(**kw):
+##     push(CaptureConsole(**kw))
+        
+## def stopDump():
+##     c = pop()
+##     return c.getvalue()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

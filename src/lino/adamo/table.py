@@ -383,8 +383,7 @@ class DbfMirrorLoader:
         f = dbfreader.DBFFile(self.sourceFilename(),
                               codepage="cp850")
         f.open()
-        job = ui.job("Loading "+
-                     self.sourceFilename(),len(f))
+        job = ui.job("Loading "+ self.sourceFilename(),len(f))
         q.zap()
         for dbfrow in f:
             job.inc()
@@ -394,8 +393,15 @@ class DbfMirrorLoader:
                 job.error(str(e))
             except DatabaseError,e:
                 job.error(str(e))
+            except UnicodeError,e:
+                raise
             except ValueError,e:
                 job.error(str(e))
+                #job.error(str(e))
+            except Exception,e:
+                if str(e).startswith("'ascii' codec can't encode character"):
+                    raise
+                job.error(repr(e))
         job.done()
         f.close()
         q.commit()

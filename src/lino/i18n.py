@@ -19,12 +19,22 @@
 _userLang = None
 _messages = {}
 
+import locale
+_userLang = locale.getdefaultlocale()[0][:2]
+#print _userLang
+
 def _(text_en):
     if _userLang is None:
         return text_en
     try:
         return _messages[text_en][_userLang]
     except KeyError:
+        from lino.ui import console
+        console.warning(
+            "No translation to %s for %s." % (
+            _userLang,
+            repr(text_en)))
+            
         return text_en
 
 def setUserLang(lang):

@@ -40,12 +40,13 @@ class Store:
     SST_READY = 3
     
     def __init__(self,conn,db,table):
-        self._connection = conn # shortcut
+        self._connection = conn 
         self._mtime = conn.getModificationTime(table)
         self._db = db
         self._table = table
-        self._schema = db.schema # shortcut
         self._status = self.SST_MUSTCHECK
+        
+        self._schema = db.schema # shortcut
         
         #self._datasources = []
         self._lockedRows = {}
@@ -84,11 +85,11 @@ class Store:
 
     def createTable(self,sess):
         if self._status == self.SST_MUSTCHECK:
-            sess.debug( "mustCheck " + self._table.name)
+            sess.ui.debug("mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
                 #self.createTable(sess)
-                sess.debug("create table " + \
-                           self._table.getTableName())
+                sess.ui.debug("create table " + \
+                              self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
                 self._status = self.SST_VIRGIN
             self._table.loadMirror(self,sess)
@@ -105,9 +106,9 @@ class Store:
         if self._connection.mustCheckTables():
             q = self.query()
             l = len(q)
-            job = sess.job("Checking Table %s : %d rows" % \
-                           q._table.getTableName(),
-                           maxval=l)
+            job = sess.ui.job("Checking Table %s : %d rows" % \
+                              q._table.getTableName(),
+                              maxval=l)
             for row in q:
                 job.inc()
                 msg = row.checkIntegrity()
@@ -116,7 +117,7 @@ class Store:
                         q._table.getTableName(),
                         str(row.getRowId()),
                         msg)
-                    sess.error(msg)
+                    sess.ui.error(msg)
                     #msgs.append(msg)
             job.done()
             

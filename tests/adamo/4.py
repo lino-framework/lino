@@ -27,7 +27,8 @@ from lino.schemas.sprl.tables import *
 class Case(TestCase):
 
     def setUp(self):
-        self.sess = demo.beginSession()
+        TestCase.setUp(self)
+        self.sess = demo.startup(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()

@@ -50,28 +50,30 @@ class Session(Context):
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,center,ui=None,**kw):
+    def __init__(self,center,ui,**kw):
         self.center = center
         self._user = None
         self.db = None
         self.schema = None
-        #self.forms = None
-##         if console is None:
-##             console = getSystemConsole()
-        if ui is None:
-            ui = console.getSystemConsole()
-        self.ui = ui
-        #self.console = console
-        for m in ('message', 'confirm','decide', 'form'):
-            setattr(self,m,getattr(ui,m))
-            
-        for m in ( 'debug','warning', 'info', 'job',
-                   'error','critical',
-                   'report','textprinter',
-                   'startDump','stopDump'):
-            setattr(self,m,getattr(console,m))
         
-        self._dumping = None
+##         if ui is None:
+##             ui = console.getSystemConsole()
+        
+        self.ui = ui
+        
+##         for m in (
+##             'message', 'confirm','decide', 'form'
+##             'debug','warning', 'info', 'job',
+##             'error','critical',
+##             'report','textprinter',
+##             ):
+##             setattr(self,m,getattr(ui,m))
+            
+##         for m in (
+##             'startDump','stopDump'
+##             ):
+##             setattr(self,m,getattr(console,m))
+        
         #self._setcon(console)
         self._ignoreExceptions = []
         

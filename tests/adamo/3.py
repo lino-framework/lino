@@ -31,8 +31,8 @@ from lino.schemas.sprl.tables import *
 class Case(TestCase):
 
     def setUp(self):
-        
-        self.db = demo.beginSession()
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui)
         self.db.setBabelLangs('en')
 
     def tearDown(self):
