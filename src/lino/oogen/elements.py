@@ -105,10 +105,11 @@ class P(Container):
 	allowedChildren = (CDATA,Text)
 	elementname = "text:p"
 	allowedAttribs = makedict(
-		style='text:style-name'
-	)
-	def __init__(self,style="Default",*content,**kw):
-		Container.__init__(self,style=style,*content,**kw)
+		styleName='text:style-name')
+		
+	#~ def __init__(self,style="Default",*content,**kw):
+		#~ kw['style'] = style
+		#~ Container.__init__(self,*content,**kw)
 		
 	
 class H(P):
@@ -117,8 +118,11 @@ class H(P):
 	allowedAttribs = makedict(
 		level='text:level',
 		**P.allowedAttribs)
+		
 	def __init__(self,level,*content,**kw):
-		P.__init__(self,level=level,style="Heading "+str(level),*content,**kw)
+		kw['styleName'] = "Heading "+str(level)
+		kw['level'] = level
+		P.__init__(self,*content,**kw)
 		
 		
 		

@@ -34,12 +34,13 @@ def makesuite(modname):
    return unittest.TestSuite(suites)
 
 
-def alltests(argv=None,dirname='.'):
+def alltests(argv,dirname='.'):
 	
 	"""inspect all python modules in the current directory for test
 	cases and suites. make one big suite from all this. """
 	
 	suites = []
+	sys.path.append(dirname)
 	for fn in os.listdir(dirname):
 		modname,ext = os.path.splitext(fn)
 		if ext == '.py':
@@ -62,6 +63,7 @@ def alltests(argv=None,dirname='.'):
 					raise "unrecognized argument "+arg
 			if doit:
 				suites.append(makesuite(modname))
+	sys.path.remove(dirname)
 
 	return unittest.TestSuite(suites)
     

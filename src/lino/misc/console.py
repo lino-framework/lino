@@ -140,6 +140,9 @@ def info(*args,**kw):
 def progress(*args,**kw):
 	return getSystemConsole().progress(*args,**kw)
 
+def isInteractive():
+	return not getSystemConsole().isBatch()
+
 
 ## def console_notify(msg):
 ##		print '[note] ' + msg
