@@ -135,6 +135,7 @@ class DBFFile:
     # --- Record-reading methods
 
     def open(self,deleted=False):
+        self.recno = 0
         self.deleted = deleted
         self.infile=open(self.filename,"rb")
         #self.infile.read(32+len(self.fields)*32+1)
@@ -144,6 +145,7 @@ class DBFFile:
     def get_next_record(self):
         values={}
         ch=self.infile.read(1)
+        self.recno += 1
         if ch=="*":
             deleted = True
             # Skip the record
@@ -158,7 +160,7 @@ class DBFFile:
             values[field.get_name()] = field.interpret(data)
         if deleted and not self.deleted:
             return self.get_next_record()
-        return DBFRecord(values,deleted)
+        return DBFRecord(self,values,deleted)
         
     def close(self):
         self.infile.close()
@@ -181,12 +183,16 @@ class DBFFile:
 
 
 class DBFRecord:
-    def __init__(self,values,deleted):
+    def __init__(self,dbf,values,deleted):
+        self._recno = dbf.recno
         self._values = values
         self._deleted = deleted
 
     def deleted(self):
         return self._deleted
+    
+    def recno(self):
+        return self._recno
 
     def __getitem__(self,name):
         return self._values[name]
