@@ -76,8 +76,7 @@ def main2(dbfpath,dbpath):
     s.addTable(Persons)
     #sess = adamo.beginQuickSession(s,filename=":memory:")
     sess = adamo.beginQuickSession(s,
-                                   filename=opj(dbpath,"tmp.db"),
-                                   isTemporary=False)
+                                   filename=opj(dbpath,"tmp.db"))
 
     PAR = sess.query(Persons)
     dbfimport(PAR,opj(dbfpath,"PAR.DBF"),
@@ -154,19 +153,8 @@ def main2(dbfpath,dbpath):
     
 
 def doit(q,rpt):
-    q.setupReport(rpt)
-    rpt.columns[0].configure(width=20)
-    rpt.columns[1].configure(width=3)
-    rpt.columns[2].configure(width=8)
-    rpt.columns[3].configure(width=4)
-
-    
-    rpt.beginReport()
-    for r in q:
-        rpt.processRow(r)
-    rpt.endReport()
-        
-
+    q.setupReport(rpt,columnWidths="20 3 8 4")
+    rpt.execute(q)
 
 
 def main(argv):
