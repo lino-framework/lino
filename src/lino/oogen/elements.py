@@ -19,7 +19,7 @@ class CDATA:
 	def __init__(self,text):
 		self.text = text
 	def __xml__(self,wr):
-		wr(self.text)
+		wr(self.text.decode().encode("utf-8"))
 		
 class Element:
 	elementname = None
@@ -72,6 +72,8 @@ class Container(Element):
 			for child in self.children:
 				child.__xml__(wr)
 			wr("</"+self.elementname+">" )
+			
+			
 		
 
 class Text(Container):
@@ -244,6 +246,7 @@ class Properties(Container):
 		textUnderlineColor="style:text-underline-color",
 		textAlign="fo:text-align",
 		textAlignSource="style:text-align-source",
+		justifySingleWord="style:justify-single-word",
 		direction="fo:direction",
 		rotationAngle="style:rotation-angle",
 		writingMode="style:writing-mode",
@@ -260,6 +263,14 @@ class Properties(Container):
 		numFormat="style:num-format",
 		printOrientation="style:print-orientation",
 		footnoteMaxHeight="style:footnote-max-height",
+		useWindowFontColor="style:use-window-font-color",
+		hyphenate="fo:hyphenate",
+		hypenationRemainCharCount="fo:hyphenation-remain-char-count",
+		hypenationPushCharCount="fo:hyphenation-push-char-count" ,
+		hypenationLadderCount="fo:hyphenation-ladder-count",
+		textAutospace="style:text-autospace",
+		punctuationWrap="style:punctuation-wrap",
+		lineBreak="style:line-break",
 		**Element.allowedAttribs)
 		
 		
@@ -315,11 +326,12 @@ class CurrencySymbol(Text):
 
 class Style(Container):
 	# <style:style style:name="Result2" style:family="table-cell" style:parent-style-name="Result" style:data-style-name="N106"/>
-	elementname = "office:style"
+	elementname = "style:style"
 	allowedChildren = (Properties,)
 	allowedAttribs=makedict(
 		name="style:name",
 		family="style:family",
+		className="style:class",
 		volatile="style:volatile",
 		parentStyleName="style:parent-style-name",
 		dataStyle="style:data-style-name",
@@ -331,7 +343,7 @@ class NumberStyle(Style):
 	elementname = "number:number-style"
 	allowedChildren = (Properties,Number,Text)
 	
-class DefaultStyle(Container):
+class DefaultStyle(Style):
 	"""
 A default style specifies default formatting properties for a certain style family. These defaults are
 used if a formatting property is neither specified by an automatic nor a common style. Default
@@ -439,3 +451,24 @@ class HeaderLeft(Header):
 class FooterLeft(Footer):
 	elementname = "style:footer-left"
 
+
+
+
+# second-level elements used in ifiles.py
+class Fonts(Container):
+		elementname = "office:font-decls"
+		allowedChildren = (Font,)
+
+class Styles(Container):
+		elementname = "office:styles"
+		allowedChildren = (Style,)
+		
+class AutoStyles(Container):
+		elementname = "office:automatic-styles"
+		allowedChildren = (Style,)
+		
+class MasterStyles(Container):
+		elementname = "office:master-styles"
+		allowedChildren = (Style,MasterPage)
+		
+			

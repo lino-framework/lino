@@ -25,10 +25,10 @@ class Document:
 		self.name = name
 		self.story = []
 		self.tables = []
-		self.fonts = []
-		self.styles = []
-		self.autoStyles = []
-		self.masterStyles = []
+		self.fonts = elements.Fonts()
+		self.styles = elements.Styles()
+		self.autoStyles =elements.AutoStyles()
+		self.masterStyles = elements.MasterStyles()
 		self.populate()
 		
 	def addFont(self,**kw):
@@ -43,8 +43,17 @@ class Document:
 	def populate(self):
 		
 		self.addFont(
+			name= "Tahoma1",
+			fontFamily="Tahoma",
+		)
+		self.addFont(
 			name= "Lucida Sans Unicode",
 			fontFamily="&apos;Lucida Sans Unicode&apos;",
+			fontPitch="variable",
+		)
+		self.addFont(
+			name= "Tahoma",
+			fontFamily="Tahoma",
 			fontPitch="variable",
 		)
 		self.addFont(
@@ -65,11 +74,54 @@ class Document:
 			fontFamilyGeneric="swiss",
 			fontPitch="variable",
 		)
-		self.addFont(
-			name= "Tahoma",
-			fontFamily="Tahoma",
-			fontPitch="variable",
-		)
+		
+		
+		
+#~ """
+#~ <style:default-style style:family="paragraph">
+#~ <style:properties style:use-window-font-color="true" style:font-name="Times New Roman" 
+	#~ fo:font-size="12pt" fo:language="en" fo:country="US" 
+		#~ style:font-name-asian="Lucida Sans Unicode" style:font-size-asian="12pt" style:language-asian="none" 
+			#~ style:country-asian="none" 
+		#~ style:font-name-complex="Tahoma" style:font-size-complex="12pt" style:language-complex="none" 
+			#~ style:country-complex="none" 
+		#~ fo:hyphenate="false" fo:hyphenation-remain-char-count="2" fo:hyphenation-push-char-count="2" 
+		#~ fo:hyphenation-ladder-count="no-limit" 
+			#~ style:text-autospace="ideograph-alpha" 
+				#~ style:punctuation-wrap="hanging" 
+					#~ style:line-break="strict" 
+						#~ style:tab-stop-distance="1.251cm" 
+							#~ style:writing-mode="page"/>
+#~ </style:default-style>
+#~ <style:style style:name="Standard" style:family="paragraph" style:class="text"/>
+#~ -
+	#~ <style:style style:name="Text body" style:family="paragraph" style:parent-style-name="Standard" style:class="text">
+#~ <style:properties fo:margin-top="0cm" fo:margin-bottom="0.212cm"/>
+#~ </style:style>		
+#~ """
+		
+		s = elements.DefaultStyle(family="paragraph")
+		s.append(elements.Properties(useWindowFontColor=True, 
+			fontName="Times New Roman",
+			fontSize="12pt",
+			language="en", country="US",
+			tabStopDistance="1.251cm",
+			writingMode="page",
+			hyphenate=False,
+			hypenationRemainCharCount=2,
+			hypenationPushCharCount=2,
+			hypenationLadderCount="no-limit",
+			textAutospace="ideograph-alpha",
+			punctuationWrap="hanging",
+			lineBreak="strict",
+			))
+		self.styles.append(s)
+		
+		s = elements.Style(name="Standard",family="paragraph",className="text")
+		self.styles.append(s)
+		s = elements.Style(name="Text body",family="paragraph",parentStyleName="Standard",className="text")
+		s.append(elements.Properties(marginTop="0cm",marginBottom="0.212cm"))
+		self.styles.append(s)
 
 		#~ f.write("""\
 #~ <style:default-style style:family="table-cell">

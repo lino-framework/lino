@@ -9,6 +9,7 @@ import types
 from cStringIO import StringIO
 
 from lino.misc.my_import import my_import
+from lino.misc import console 
 
 #~ def run(modname):
    #~ suite = makesuite(modname)
@@ -16,22 +17,22 @@ from lino.misc.my_import import my_import
    #~ runner.run(suite)
    
 def makesuite(modname):
-   mod = my_import(modname)
-   if hasattr(mod,"suite"):
-      return mod.suite()
-      # print modname + ".suite()"
-   suites = []
-   for (k,v) in mod.__dict__.items():
-      # Python 2.2 if type(v) == types.ClassType:
-      if type(v) == types.TypeType: # since 2.3
-         if issubclass(v,unittest.TestCase):
-            # print k
-            if v != TestCase:
-               suites.append(unittest.makeSuite(v))
-               # print modname + "." + k
-      #else:
-      #   print "type(%s) is %s" % (k,str(type(v)))
-   return unittest.TestSuite(suites)
+	mod = my_import(modname)
+	if hasattr(mod,"suite"):
+		return mod.suite()
+		# print modname + ".suite()"
+	suites = []
+	for (k,v) in mod.__dict__.items():
+		# Python 2.2 if type(v) == types.ClassType:
+		if type(v) == types.TypeType: # since 2.3
+			if issubclass(v,unittest.TestCase):
+				# print k
+				if v != TestCase:
+					suites.append(unittest.makeSuite(v))
+					# print modname + "." + k
+		#else:
+		#	 print "type(%s) is %s" % (k,str(type(v)))
+	return unittest.TestSuite(suites)
 
 
 def alltests(argv,dirname='.'):
@@ -66,45 +67,52 @@ def alltests(argv,dirname='.'):
 	sys.path.remove(dirname)
 
 	return unittest.TestSuite(suites)
-    
+	 
 
 
 
 
 #def compressWhiteSpace(s):
-#   return re.sub(r'\s+',' ',s)
-   
+#	 return re.sub(r'\s+',' ',s)
+	
 class TestCase(unittest.TestCase):
-      
-   def assertEquivalent(self,txt1,txt2):
-      """like assertEqual(), but any
-      whitespace is converted to a single space, and if they differ,
-      they are printed with a newline before each (so that it is more
-      easy to see the difference) """
+		
+	def assertEquivalent(self,txt1,txt2):
+		"""like assertEqual(), but any
+		whitespace is converted to a single space, and if they differ,
+		they are printed with a newline before each (so that it is more
+		easy to see the difference) """
 
-      l1 = txt1.strip().split()
-      l2 = txt2.strip().split()
+		l1 = txt1.strip().split()
+		l2 = txt2.strip().split()
 
-      if l1 == l2: return
+		if l1 == l2: return
 
-##       txt1 = compressWhiteSpace(txt1.strip())
-##       txt2 = compressWhiteSpace(txt2.strip())
-##       if txt1 == txt2: return
-      a = StringIO()
-      a.write("\n--- observed --- :\n")
-      a.write(" ".join(l1)) # txt1)
-      a.write("\n--- expected --- :\n")
-      a.write(" ".join(l2)) # txt1)
-      # b.write(txt2)
-      a.write("\n")
+##			txt1 = compressWhiteSpace(txt1.strip())
+##			txt2 = compressWhiteSpace(txt2.strip())
+##			if txt1 == txt2: return
+		a = StringIO()
+		a.write("\n--- observed --- :\n")
+		a.write(" ".join(l1)) # txt1)
+		a.write("\n--- expected --- :\n")
+		a.write(" ".join(l2)) # txt1)
+		# b.write(txt2)
+		a.write("\n")
 
-      if False:
-         from difflib import ndiff
-         diff = ndiff(l1,l2)
-         print '\n'.join(diff)
-      
-      self.fail(a.getvalue()) # "texts differ. See stdout")
-      
+		if False:
+			from difflib import ndiff
+			diff = ndiff(l1,l2)
+			print '\n'.join(diff)
+		
+		self.fail(a.getvalue()) # "texts differ. See stdout")
+	
+	def checkGeneratedFiles(self,*filenames):
+		for fn in filenames:
+			if console.isInteractive(): 
+				os.system("start "+fn)
+			else:
+				self.failUnless(os.path.exists(fn))
+				os.remove(fn)
 
 
 #a = sys.stdout # open("a.txt","w")

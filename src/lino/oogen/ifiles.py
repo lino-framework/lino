@@ -21,12 +21,11 @@ class InternalFile:
 		
 
 class InternalXmlFile(InternalFile):
-	doctype=NotImplementedError
+	#doctype=NotImplementedError
 	def writeInternalContent(self,f):
 		f.write("""\
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE %s PUBLIC "-//OpenOffice.org//DTD Manifest 1.0//EN" "Manifest.dtd">
-""" % self.doctype)
+""")
 		self.writeXmlContent(f)
 
 	def writeXmlContent(self,f):
@@ -41,9 +40,10 @@ class MIMETYPE(InternalFile):
 	
 class MANIFEST(InternalXmlFile):
 	filename = 'manifest.xml'
-	doctype = 'manifest:manifest'
+	#doctype = 'manifest:manifest'
 	def writeXmlContent(self,f):
 		f.write("""\
+<!DOCTYPE %s PUBLIC "-//OpenOffice.org//DTD Manifest 1.0//EN" "Manifest.dtd">
 <manifest:manifest xmlns:manifest="http://openoffice.org/2001/manifest">
 	<manifest:file-entry manifest:media-type="application/vnd.sun.xml.writer" manifest:full-path="/" />
 	<manifest:file-entry manifest:media-type=""manifest:full-path="Pictures/" />
@@ -56,7 +56,7 @@ class MANIFEST(InternalXmlFile):
 
 class META(InternalXmlFile):
 	filename = 'meta.xml'
-	doctype = 'office:document-meta'
+	#doctype = 'office:document-meta'
 	def writeXmlContent(self,f):
 		f.write("""\
 <office:document-meta 
@@ -84,9 +84,10 @@ xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:meta="http://openoffice.org/20
 		
 class SETTINGS(InternalXmlFile):
 	filename = 'settings.xml'
-	doctype = 'office:document-settings'
+	#doctype = 'office:document-settings'
 	def writeXmlContent(self,f):
 		f.write("""\
+<!DOCTYPE office:document-settings PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "office.dtd">
 <office:document-settings 
 	xmlns:office="http://openoffice.org/2000/office" 
 		xmlns:xlink="http://www.w3.org/1999/xlink" 
@@ -100,9 +101,10 @@ class SETTINGS(InternalXmlFile):
 		
 class STYLES(InternalXmlFile):
 	filename = 'styles.xml'
-	doctype = 'office:document-styles'
+	#doctype = 'office:document-styles'
 	def writeXmlContent(self,f):
 		f.write("""\
+<!DOCTYPE office:document-styles PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "office.dtd">		
 <office:document-styles 
 xmlns:office="http://openoffice.org/2000/office" 
 xmlns:style="http://openoffice.org/2000/style" 
@@ -121,34 +123,22 @@ xmlns:script="http://openoffice.org/2000/script"
 office:version="1.0">
 """)
 
-		f.write("<office:font-decls>")
-		for font in self.gen.doc.fonts:
-			font.__xml__(f.write)
-		f.write("</office:font-decls>")
+		self.gen.doc.fonts.__xml__(f.write)
+		self.gen.doc.styles.__xml__(f.write)
+		self.gen.doc.autoStyles.__xml__(f.write)
+		self.gen.doc.masterStyles.__xml__(f.write)
 		
-		f.write("""<office:styles>""")
-		for s in self.gen.doc.styles:
-			s.__xml__(f.write)
-		f.write("""</office:styles>""")
-		
-		f.write("""<office:automatic-styles>""")
-		for s in self.gen.doc.autoStyles:
-			s.__xml__(f.write)
-		f.write("""</office:automatic-styles>""")
-		f.write("""<office:master-styles>""")
-		for s in self.gen.doc.masterStyles:
-			s.__xml__(f.write)
-		f.write("""</office:master-styles>""")
-		f.write("""</office:document-styles>""")
+		f.write("""\n</office:document-styles>""")
 		
 
 	
 class CONTENT(InternalXmlFile):
 	filename = 'content.xml'
-	doctype = 'office:document-content'
+	#doctype = 'office:document-content'
 	
 	def writeXmlContent(self,f):
 		f.write("""\
+<!DOCTYPE office:document-content PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "office.dtd">
 <office:document-content 
 xmlns:office="http://openoffice.org/2000/office" 
 xmlns:style="http://openoffice.org/2000/style" 
@@ -167,14 +157,12 @@ xmlns:script="http://openoffice.org/2000/script"
 office:class="%s"
 office:version="1.0">
 """ % self.gen.officeClass)
-		f.write("""\
-<office:automatic-styles>
-</office:automatic-styles>
-""")
-		f.write("<office:body>")
+		self.gen.doc.fonts.__xml__(f.write)
+		self.gen.doc.autoStyles.__xml__(f.write)
+		f.write("\n<office:body>")
 		self.gen.writeBody(f.write)
-		f.write("</office:body>")
-		f.write("</office:document-content>")
+		f.write("\n</office:body>")
+		f.write("\n</office:document-content>")
 
 
 

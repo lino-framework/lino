@@ -1,6 +1,19 @@
 #coding: latin1
 # Luc Saffre 20041208
 
+
+"""
+this was my first testcase.
+Principle: first you fill document with content (adding elements to its story). 
+Tables are also collected in a separate list.
+
+A same document tree can be reused by several generators.
+Currently I am interested in spreadsheets and documents. graphics come later.
+Spreadsheets use only the tables, not the story of a document.
+
+
+"""
+
 import os
 import unittest
 from lino.misc import console

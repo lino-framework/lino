@@ -1,36 +1,26 @@
 #coding: latin1
 import os
-import unittest
-from lino.misc import console
+from lino.misc import console, tsttools
 from lino.oogen import Document,OoText, elements
 
-class Case(unittest.TestCase):
-	
-	generated_files = ("2.sxw", )
+class Case(tsttools.TestCase):
 	
 	def test01(self):
 		"First styles"
 		doc = Document("2")
 		
-		s = elements.Style(name="Rechts",family="paragraph",parentStyleName="Default")
-		s.append(elements.Properties(textAlign="end"))
+		s = elements.Style(name="Rechts",family="paragraph",parentStyleName="Standard",className="text")
+		s.append(elements.Properties(textAlign="end",justifySingleWord=False))
 		doc.styles.append(s)
 		
-		doc.h(1,"Rechnung Nr. 040235")
-		doc.p("Datum: 10. Dezember 2004",styleName="Rechts")
-		t = doc.table()
-		t.addColumn()
-		t.addColumn()
-		t.addRow("Kunde","Datum")
-		t.addRow("Hinz","2004-11-16")
-		t.addRow("Kunz","2004-11-17")
-		
-		doc.p("Here is another paragraph.")
+		doc.h(1,"This is a header")
+		doc.p("This is a right-aligned paragraph.",styleName="Rechts")
+		doc.p("Here is a standard paragraph.")
 	
 		oo = OoText(doc)
 		oo.save()
 
-		for fn in self.generated_files:
+		for fn in [ oo.outputFilename ]:
 			if console.isInteractive(): # showOutput:
 				os.system("start "+fn)
 			else:
@@ -38,4 +28,4 @@ class Case(unittest.TestCase):
 				os.remove(fn)
 
 if __name__ == "__main__":
-	unittest.main()
+	tsttools.main()

@@ -17,11 +17,11 @@ class Case(unittest.TestCase):
 		self.assertEqual(s.getvalue(),"""\
 <text:p>This is a paragraph</text:p>""")
 		
-		e = P("This is a paragraph",styleName="Default")
+		e = P("This is a paragraph",styleName="Standard")
 		s = StringIO()
 		e.__xml__(s.write)
 		self.assertEqual(s.getvalue(),"""\
-<text:p text:style-name="Default">This is a paragraph</text:p>""")
+<text:p text:style-name="Standard">This is a paragraph</text:p>""")
 
 		e = H(1,"This is a header")
 		s = StringIO()
