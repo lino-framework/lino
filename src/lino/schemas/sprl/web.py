@@ -33,7 +33,7 @@ class Pages(MemoTreeTable):
 
 		self.addView('std',columnNames="title abstract")
 
-	class Row(MemoTreeTable.Row):
+	class Instance(MemoTreeTable.Instance):
 		pass
 	
 ## 	def validate(self):

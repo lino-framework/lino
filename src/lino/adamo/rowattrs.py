@@ -26,6 +26,9 @@ class RowAttribute(OwnedThing):
 		self._width = width
 		self._isMandatory = False
 		
+	def acceptTrigger(self,row,value):
+		pass
+	
 	def afterSetAttr(self,row):
 		pass
 		"""called after setting this value for this attribute in this
@@ -86,6 +89,7 @@ class RowAttribute(OwnedThing):
 		return None
 
 	def setCellValue(self,row,value):
+		self.acceptTrigger(row,value)
 		row._values[self._name] = value
 		
 	def getCellValue(self,row):
@@ -227,7 +231,7 @@ class BabelField(Field):
 
 	
 	def setCellValue(self,row,value):
-		langs = row.getContext().getBabelLangs()
+		langs = row.getSession().getBabelLangs()
 		values = row.getFieldValue(self._name)
 		if values is None:
 			values = [None] * len(row._ds._db.getBabelLangs())
@@ -251,7 +255,7 @@ class BabelField(Field):
 			
 		
 	def getCellValue(self,row):
-		langs = row.getContext().getBabelLangs()
+		langs = row.getSession().getBabelLangs()
 		dblangs = row._ds._db.getBabelLangs()
 		values = row.getFieldValue(self._name)
 		#values = Field.getCellValue(self,row)
@@ -277,7 +281,7 @@ class BabelField(Field):
 			return values[index]
 		
 	def getTestEqual(self,ds, colAtoms,value):
-		langs = ds.getContext().getBabelLangs()
+		langs = ds.getSession().getBabelLangs()
 		lang = langs[0] # ignore secondary languages
 		a = colAtoms[lang.index]
 		return ds._connection.testEqual(a.name,a.type,value)
@@ -306,7 +310,7 @@ class BabelField(Field):
 		return rv
 			
  	def atoms2row(self,atomicRow,colAtoms,row):
-		langs = row.getContext().getBabelLangs()
+		langs = row.getSession().getBabelLangs()
 		dblangs = row._ds._db.getBabelLangs()
 		values = row.getFieldValue(self._name)
 		#values = Field.getCellValue(self,row)
@@ -566,6 +570,8 @@ class Detail(RowAttribute):
 
 	def getCellValue(self,row): 
 		kw = dict(self._queryParams)
+		#kw.setdefault('samples',{})
+		#kw['samples'][self.pointer._name] = row
 		kw[self.pointer._name] = row
  		slaveSource = getattr(row.getSession().tables,
 									 self.pointer._owner.getTableName())
@@ -621,7 +627,13 @@ class FieldContainer:
 		#self._peekColumnNames += name + " "
 		fld.setOwner(self,name)
 		try:
-			meth = getattr(self,"after_"+name)
+			meth = getattr(self.Instance,"accept_"+name)
+			fld.acceptTrigger = meth
+		except AttributeError:
+			pass
+		
+		try:
+			meth = getattr(self.Instance,"after_"+name)
 			fld.afterSetAttr = meth
 		except AttributeError:
 			pass

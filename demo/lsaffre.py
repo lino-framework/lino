@@ -1,28 +1,18 @@
 #coding: latin1
 
-"""\
-Usage : lsaffre.py [options] 
+"""
+Starts the web server who serves the content at
+http://lsaffre.dyndns.org:8080
 
-This starts the web server who serves the content at
-http://lsaffre.dyndns.org
-
-Options:
-  
-  -p PORT, --port PORT     alternate PORT where to listen
-                           (default is 8080)
-  -b, --batch              don't start a browser 
-  -n, --skip-test          skip integrity check of foreign databases
-  -h, --help               display this text
 """
 
 
+from optparse import OptionParser
 import sys, getopt, os
 
 from lino import copyleft
 from lino.adamo.dbds.sqlite_dbd import Connection
-#from lino.adamo.ui import UI
-#from lino.adamo.ui import UI
-from lino.adamo import RootSession
+from lino.adamo import center
 
 #from lino.adamo.twisted_ui import WebServer
 from lino.schemas.sprl.sprl import Schema
@@ -84,66 +74,62 @@ dbinfos.append(DBinfo(
 	staticDirs = TIMtree(os.path.join(wwwRoot,'comp'))))
 
 
+def main(argv):
 
-def main():
+	parser = OptionParser()
+	parser.add_option("-v", "--verbose",
+							help="display many messages",
+							action="store_true",
+							dest="verbose",
+							default=True)
+	parser.add_option("-s", "--skip-dbcheck",
+							help="skip integrity check of foreign databases",
+							action="store_true",
+							dest="skipTest",
+							default=False)
+	parser.add_option("-p", "--port",
+							help="alternate PORT where to listen"
+							"(default is 8080)",
+							action="store",
+							dest="port",
+							type="int",
+							default=8080,
+							)
+
+	(options, args) = parser.parse_args(argv)
+	del args[0] 
 	
-	port = 8080
-	verbose = True
-	skipTest = False
 	demoDir = os.path.dirname(__file__)
-
-	try:
-		opts, args = getopt.getopt(sys.argv[1:],
-											"?hp:bnq",
-											["help", "port=","batch",
-											 "skip-test", "quiet"])
-
-	except getopt.GetoptError,e:
-		print __doc__
-		print e
-		sys.exit(-1)
-
-## 	if len(args) < 1:
-## 		print __doc__
-## 		sys.exit(-1)
-
 	
-	for o, a in opts:
-		if o in ("-?", "-h", "--help"):
-			print __doc__
-			sys.exit()
-		elif o in ("-p", "--port"):
-			port = int(a)
-		elif o in ("-n", "--skip-test"):
-			skipTest = True
-		elif o in ("-q", "--quiet"):
-			verbose = False
+	center.start(verbose=options.verbose)
 
-	
-	sess = RootSession(verbose=verbose)
+	info = center.center().console.info
+
+	#progress = app.console.progress
 	
 	schema = Schema() 
 	
-	schema.startup(layouts=sprlwidgets, sess=sess)
+	schema.startup()
+	schema.setLayout(sprlwidgets)
 
-	serverRsc = ServerResource(wwwRoot,sess)
+	serverRsc = ServerResource(wwwRoot)
 
 	#sess = ConsoleSession()
+	sess = center.center().createSession()
 
 	if True:
 		"""
 		Shared tables are the same for each database
 		"""
 
-		sess.progress("Starting std.db...")
+		info("Starting std.db...")
 		conn = Connection(filename="std.db",
 								isTemporary=True,
 								schema=schema)
-		stddb = Database(sess,
-							  langs="en de fr et",
-							  schema=schema,
-							  name="std",
-							  label="shared standard data")
+		stddb = Database( langs="en de fr et",
+								schema=schema,
+								name="std",
+								label="shared standard data")
 
 		sharedTables = ('LANGS','NATIONS', #'CITIES',
 							 'PARTYPES','Currencies',
@@ -159,14 +145,14 @@ def main():
 
 		from lino.schemas.sprl.data import std
 		std.populate(sess,big=False)
+		#sess.end()
 
 		
-	
 	for dbi in dbinfos:
 		if len(args) == 0 or dbi.name in args:
-			ui.progress("Opening %s..." % dbi.name)
+			info("Opening %s..." % dbi.name)
 
-			db = Database(sess,
+			db = Database(
 							  langs=dbi.langs,
 							  schema=schema,
 							  name=dbi.name,
@@ -179,7 +165,7 @@ def main():
 
 			db.update(stddb)
 			
-			if not skipTest:
+			if not options.skipTest:
 				print "checkIntegrity: " + db.getName()
 				msgs = db.checkIntegrity()
 				if len(msgs):
@@ -200,7 +186,7 @@ def main():
 		#for modName in ('vor', 'etc'):
 		for modName in ('etc',):
 
-			sess.progress("Opening %s..." % modName)
+			info("Opening %s..." % modName)
 
 			mod = __import__(modName) # my_import(modName)
 
@@ -209,8 +195,7 @@ def main():
 			conn = Connection(filename=modName+'.db',
 									isTemporary=True,
 									schema=schema)
-			db = Database(sess,
-							  langs='en de',
+			db = Database( langs='en de',
 							  schema=schema,
 							  name=modName,
 							  label=mod.label)
@@ -233,33 +218,30 @@ def main():
 		del sys.path[0]
 
 
-	if ui.verbose:
-		print "Twisted Lino Server" 
-		print copyleft(year='2004',author='Luc Saffre')
-		print
-
+	info("Twisted Lino Server")
+	info(copyleft(year='2004',author='Luc Saffre'))
+		
 
 	from twisted.web import server
 	from twisted.internet import reactor
 
 	site = server.Site(serverRsc)
 	site.requestFactory = MyRequest
-	reactor.listenTCP(port, site)
-	reactor.addSystemEventTrigger("before","shutdown",
-											ui.shutdown)
+	reactor.listenTCP(options.port, site)
+	reactor.addSystemEventTrigger("before","shutdown", \
+											center.center().shutdown)
 
 			
-	if ui.verbose:
-		print "Serving on port %s." % port
-		print "(Press Ctrl-C to stop serving)"
+	info("Serving on port %s." % options.port)
+	info("(Press Ctrl-C to stop serving)")
 			
 	reactor.run()
 
-		
+	
 	
 
 
 
 	
 if __name__ == '__main__':
-	main()
+	main(sys.argv)

@@ -8,7 +8,7 @@ from datasource import Datasource, DataCell
 #from forms import ContextForm
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-from lino.misc.console import Console
+#from center import center
 
 
 class BabelLang:
@@ -20,75 +20,60 @@ class BabelLang:
 		return "<BabelLang %s(%d)>" % (self.id,self.index)
 
 
-class Context:
+
 	
+
+
+class Context:
+	"interface class"
 	def getBabelLangs(self):
 		raise NotImplementedError
-	
+
+
 			
-class Application:
-
-	def __init__(self,**kw):
-		self._databases = {}
-		self.console = Console(**kw)
-		
-	def addDatabase(self,db):
-		#assert db is not None
- 		assert not self._databases.has_key(db.getName())
- 		self._databases[db.getName()] = db
-		
-	def getDatabase(self,name):
- 		return self._databases[name]
-	
-	def removeDatabase(self,db):
-		del self._databases[db.getName()]
-		
-	
- 	def shutdown(self):
- 		for name,db in self._databases.items():
- 			db.shutdown()
-
-	def use(self,db=None,**kw):
-		self.addDatabase(db)
-		sess = ConsoleSession(self.console)
-		sess.use(db=db,**kw)
-		return sess
-
-class AdamoSession(Context):
+class Session(Context):
+	"""
+	A Session is if a machine starts Adamo
+	"""
+	_dataCellFactory = DataCell
+	#_windowFactory = lambda x: x
 	
 	def __init__(self,**kw):
-		self._dataCellFactory = DataCell
-		self._windowFactory = lambda x: x
+		#self.app = app
 		self._user = None
 		self.db = None
 		self.schema = None
 		self.tables = None
+		self.forms = None
+		#center().addSession(self)
 		self.use(**kw)
 			
 		
 	def use(self,db=None,langs=None):
 		# if necessary, stop using current db
 		if db != self.db and self.db is not None:
-			self.db.removeSession(self)
+			#self.db.removeSession(self)
 			if self._user is not None:
 				self.logout()
 		if db is None:
 			self.schema = None
 			self.tables = None
+			self.forms = None
 			self.db = None
 		else:
 			# start using new db
 			self.schema = db.schema # shortcut
 			self.db = db
 			self.tables = AttrDict(factory=self.openTable)
+			self.forms = AttrDict(factory=self.openForm)
 			if langs is None:
 				langs = db.getDefaultLanguage()
-			self.db.addSession(self)
+			#self.db.addSession(self)
 				
 		if langs is not None:
 			self.setBabelLangs(langs)
 		
-		self._formStack = []
+		#self._formStack = []
 
 	def commit(self):
 		return self.db.commit()
@@ -123,14 +108,14 @@ class AdamoSession(Context):
 	def getDatasource(self,name):
 		return getattr(self.tables,name)
 
-	def progress(self,msg):
-		raise NotImplementedError
+## 	def progress(self,msg):
+## 		raise NotImplementedError
 		
-	def errorMessage(self,msg):
-		raise NotImplementedError
+## 	def errorMessage(self,msg):
+## 		raise NotImplementedError
 
-	def notifyMessage(self,msg):
-		raise NotImplementedError
+## 	def notifyMessage(self,msg):
+## 		raise NotImplementedError
 
 	def installto(self,d):
 		"""
@@ -179,8 +164,8 @@ class AdamoSession(Context):
 ## 	def getContext(self):
 ## 		return self.context
 	
-	def onStartUI(self):
-		self.schema.onStartUI(self)
+	def onBeginSession(self):
+		self.schema.onBeginSession(self)
 		
 	
 ## 	def endContext(self):
@@ -196,18 +181,21 @@ class AdamoSession(Context):
 		#print "openForm()" + formName
 		tpl = getattr(self.schema.forms,formName)
 		frm = tpl.open(self,**values)
-		win = self._windowFactory(frm)
+		#win = self._windowFactory(frm)
 		#self.forms.define(formName,frm)
-		self._formStack.append(win)
-		return win
+		#self._formStack.append(win)
+		return frm
 
 	def closeForm(self,formName):
 		raise NotImplementedError
 		#del self.forms._values[formName]
+
+	def onLogin(self):
+		return self.db.schema.onLogin(self)
 	
-	def getCurrentForm(self):
-		if len(self._formStack) > 0:
-			return self._formStack[-1]
+## 	def getCurrentForm(self):
+## 		if len(self._formStack) > 0:
+## 			return self._formStack[-1]
 
 	def getUser(self):
 		return self._user
@@ -246,46 +234,12 @@ class AdamoSession(Context):
 ## 			self.context.schema.onStartSession(self)
 		
 		
-class ConsoleSession(AdamoSession):
-	def __init__(self,console,**kw):
-		AdamoSession.__init__(self,**kw)
-		self.console = console
-
-	def errorMessage(self,msg):
-		return self.console.notify(msg)
-
-	def notifyMessage(self,msg):
-		return self.console.notify(msg)
-		
-	def progress(self,msg):
-		return self.console.progress(msg)
-
-	def report(self,ds,showTitle=True):
-		wr = self.console.out.write
-		if showTitle:
-			wr(ds.getLabel()+"\n")
-			wr("="*len(ds.getLabel())+"\n")
-		columns = ds.getVisibleColumns()
-		wr(" ".join(
-			[col.getLabel().ljust(col.getPreferredWidth()) \
-			 for col in columns]).rstrip())
-		wr("\n")
-		wr(" ".join( ["-" * col.getPreferredWidth() \
-							  for col in columns]))
-		wr("\n")
-		for row in ds: #.iterateAsColumns():
-			l = []
-			for cell in row:
-				col = columns[i]
-				l.append(cell.format())
-			wr(" ".join(l).rstrip())
-			wr("\n")
 
 
-class WebSession(AdamoSession):
+class WebSession(Session):
 	
 	def __init__(self,**kw):
-		AdamoSession.__init__(self,**kw)
+		Session.__init__(self,**kw)
 		self._messages = []
 
 	def errorMessage(self,msg):

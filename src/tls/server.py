@@ -76,9 +76,9 @@ def hostname():
 class ServerResource(AdamoResource):
  	"Resource who serves a constant (renderable) target"
 	
- 	def __init__(self,homeDir,rootSession,**kw):
+ 	def __init__(self,homeDir,**kw):
  		self.homeDir =homeDir
-		self.rootSession = rootSession
+		#self.app = app
 		self.accounts = []
 		self.responderClass = ServerResponse
 		AdamoResource.__init__(self,parent=None,
@@ -100,9 +100,9 @@ class ServerResource(AdamoResource):
 		return self
 	
 	def addDatabase(self, db, staticDirs={},**kw):
-		self.rootSession.addDatabase(db)
-		ctx = db.beginContext()
-		rsc = DbResource(self,ctx, staticDirs, **kw)
+		#self.app.addDatabase(db)
+		#ctx = db.beginContext()
+		rsc = DbResource(self,db, staticDirs, **kw)
 		#rsc.putChild('db', DbBrowser(rsc,ctx))
 		#rsc.putChild('menu', MenuResource(rsc,ctx))
 		#self.addAccount(db.getName(),rsc,staticDirs)

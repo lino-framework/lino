@@ -9,6 +9,7 @@ import unittest
 import types
 
 from lino.adamo import *
+from lino import adamo
 
 ## from lino.adamo.datatypes import \
 ## 	  DataVeto, StartupDelay, \
@@ -53,7 +54,7 @@ class Cities(Table):
 		self.inhabitants = Field(INT)
 		self.setPrimaryKey("nation id")
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):		
 			if self.nation is None:
 				return self.name
@@ -71,7 +72,7 @@ class Addresses:
 		self.city = Pointer(Cities)
 		self.street = Field(STRING)
 
-	def on_city(self,row):
+	def after_city(self,row):
 		if row.city is not None:
 			row.nation = row.city.nation
 
@@ -86,7 +87,7 @@ class Organisations(Table,Contacts,Addresses):
 
 class MyPlugin(SchemaPlugin):
 	
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		schema.addTable(Nations())
 		schema.addTable(Cities())
 		schema.addTable(Organisations())
@@ -99,19 +100,17 @@ class Case(unittest.TestCase):
 
 		schema = Schema()
 		schema.addPlugin(MyPlugin())
+
+		sess = adamo.beginQuickSession(schema,
+												 langs='en de fr',
+												 isTemporary=True
+												 )
+
 		
-		db = quickdb(schema,
-						 langs='en de fr',
-						 isTemporary=True,
-						 verbose=False)
-		db.createTables()
-
-		sess = db.beginSession()
-
-		#ctx = db.beginContext('en')
-
+		
 		ds = sess.tables.Nations.query()
 
+		sess.setBabelLangs('en')
 		be = ds.appendRow(id="be", name="Belgium")
 		de = ds.appendRow(id="de", name="Germany")
 
@@ -123,8 +122,6 @@ class Case(unittest.TestCase):
 		be.name = "Belgien"
 		de.name = "Deutschland"
 		
-		#be.commit()
-		#de.commit()
 		sess.setBabelLangs('fr')
 		be.name = "Belgique"
 		de.name = "Allemagne"

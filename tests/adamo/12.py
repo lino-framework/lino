@@ -1,6 +1,5 @@
 #coding: latin1
    
-from lino.adamo import quickdb, ConsoleSession
 from lino.misc.tsttools import TestCase
 from lino.examples import pizzeria2
 
@@ -11,24 +10,17 @@ class Case(TestCase):
 	"""
 
 	def setUp(self):
-		db = quickdb(schema=pizzeria2.Pizzeria2(),
-						 isTemporary=True,
-						 label="Lucs Pizza Restaurant")
-		db.createTables()
-		self.sess = ConsoleSession(db=db)
+		self.sess = pizzeria2.beginSession()
 		self.sess.installto(globals())
 
 	def tearDown(self):
 		self.sess.shutdown()
 
 	def test01(self):
-		c = CUST.appendRow(name="Henri")
-		self.assertEqual(c.id,1) # ok
-		
-		#self.db.flush()
-		
-		c = CUST.peek(1)
-		self.assertEqual(c.id,1) # failed
+		c = CUST.appendRow(name="Mark")
+		newID = c.id
+		c = CUST.peek(newID)
+		self.assertEqual(c.id,newID) # failed
 		
 if __name__ == '__main__':
 	from unittest import main

@@ -25,7 +25,7 @@ class Services(Products):
 
 
 def Pizzeria2():
-	schema = Pizzeria()
+	schema = Pizzeria(label="Lucs second Pizza Restaurant")
 	schema.addPlugin(ServicesPlugin())
 	return schema
 		
@@ -84,13 +84,12 @@ def query2(sess):
 
 def beginSession():
 
-	schema=Pizzeria2()
+	schema = Pizzeria2()
 	
 	return adamo.beginQuickSession(
 		schema,
-		populate=populate2,
-		isTemporary=True,
-		label="Lucs Pizza Restaurant")
+		populator=populate2,
+		isTemporary=True)
 	
 def main():
 	sess = beginSession()

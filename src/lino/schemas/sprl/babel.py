@@ -12,7 +12,7 @@ class Languages(Table):
 		self.id = Field(STRING,width=2)
 		self.name = BabelField(STRING)
 	
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			return self.name
 

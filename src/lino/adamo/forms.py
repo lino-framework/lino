@@ -37,14 +37,14 @@ class FormInstance(DataRow):
 		# forward some methods::
 		for m in ('getFormName', 'getMenus'):
 			self.__dict__[m] = getattr(formTemplate,m)
-		for m in ('notifyMessage',):
-			self.__dict__[m] = getattr(session,m)
+		#for m in ('notifyMessage',):
+		#	self.__dict__[m] = getattr(session,m)
 
 	def getSession(self):
 		return self._session
 	
-	def getContext(self):
-		return self._session.getContext()
+## 	def getContext(self):
+## 		return self._session.getContext()
 	
 
 	def getLabel(self):
@@ -52,7 +52,7 @@ class FormInstance(DataRow):
 
 	def help(self):
 		"user forms must override this"
-		self._session.notifyMessage("help is not implemented")
+		self._session.warning("help is not implemented")
 
 	def getButtons(self):
 		l = []
@@ -132,7 +132,7 @@ class FormColumnList(BaseColumnList):
 
 	def __init__(self, form): #, columnNames=None):
 		self._form = form
-		BaseColumnList.__init__(self,form.getContext())
+		BaseColumnList.__init__(self,form.getSession())
 		#self.setVisibleColumns(columnNames)
 
 	def getFieldContainer(self):

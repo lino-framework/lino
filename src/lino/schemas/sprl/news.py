@@ -25,7 +25,7 @@ class News(MemoTable):
 		self.project = Pointer(Projects)
 		self.page = Pointer(Pages)
 
-		#self.writeParagraph = Vurt(self.Row.writeParagraph,MEMO)
+		#self.writeParagraph = Vurt(self.Instance.writeParagraph,MEMO)
 
 		#table.setColumnList('date title newsgroup abstract id lang')
 		self.setOrderBy("date")
@@ -34,7 +34,7 @@ class News(MemoTable):
 		self.addView("list","date writeParagraph",
 						 orderBy="date")
 		
-	class Row(MemoTable.Row):
+	class Instance(MemoTable.Instance):
 		def getLabel(self):
 			s = str(self.date)
 			if self.newsgroup is not None:
@@ -48,7 +48,7 @@ class Newsgroups(Table):
 		self.id = Field(STRING)
 		self.name = Field(STRING)
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			return self.name
 		

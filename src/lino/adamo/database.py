@@ -15,11 +15,12 @@ from session import Context, BabelLang
 #from query import DatasourceColumnList
 from tim2lino import TimMemoParser
 from store import Store
+from center import center
 
 
 class Database(Context,Describable):
 	
-	def __init__(self, app,schema,
+	def __init__(self, schema,
 					 name=None,
 					 langs=None,
 					 label=None,
@@ -34,22 +35,17 @@ class Database(Context,Describable):
 		
 		self._memoParser = TimMemoParser(self)
 
-		self._app = app
-		self._sessions = []
+		#self._app = app
+		#self._sessions = []
 		#assert hasattr(ui,'progress')
 		self.schema = schema
 		#self._contexts = []
 		self._stores = {}
+		center().addDatabase(self)
 
 	def getBabelLangs(self):
 		return self._supportedLangs
 
-	def removeSession(self,session):
-		self._sessions.remove(session)
-
-	def addSession(self,session):
-		self._sessions.append(session)
-	
 	def getDefaultLanguage(self):
 		return self._supportedLangs[0].id
 
@@ -86,6 +82,8 @@ class Database(Context,Describable):
  			self._stores[table.getTableName()] = Store(conn, self, table)
 	
 
+	def getContentRoot(self):
+		return self.schema.getContentRoot(self)
 
 	def update(self,otherdb):
 		self._stores.update(otherdb._stores)
@@ -138,15 +136,17 @@ class Database(Context,Describable):
 	#def disconnect(self):
 
  	def shutdown(self):
-		self._app.console.progress("Application shutdown "+ str(self))
+		center().console.info("Database shutdown "+ str(self))
  		#self.commit()
-		for sess in self._sessions:
-			#sess.beforeShutdown()
-			self.removeSession(sess)
+		
+## 		for sess in self._sessions:
+## 			#sess.beforeShutdown()
+## 			self.removeSession(sess)
+		
 		for store in self.getStoresById():
 			store.beforeShutdown()
 			
-		self._app.removeDatabase(self)
+		center().removeDatabase(self)
 	
 	def restart(self):
 		self.shutdown()
@@ -183,7 +183,6 @@ class Database(Context,Describable):
 class QuickDatabase(Database):
 	"Database instance with only one connection"
 	def __init__(self,
-					 sess,
 					 schema,
 					 verbose=False,
 					 langs=None,
@@ -194,7 +193,6 @@ class QuickDatabase(Database):
 
 
 		Database.__init__(self,
-								sess,
 								schema,
 								langs=langs,
 								label=label)

@@ -136,11 +136,16 @@ def Schema(
 
 class SprlSchema(adamo.Schema):
 
-	def getContentRoot(self,ctx):
-		return ctx.tables.PAGES.findone(match="index")
+	def getContentRoot(self,db):
+		return db.tables.PAGES.findone(match="index")
 
-	def onStartUI(self,sess):
-		sess.openForm('login',uid="luc")
+	def onBeginSession(self,sess):
+		if sess.forms.login.showModal():
+			if sess.onLogin():
+				return sess.forms.main.show()
+		
+## 	def onStartUI(self,sess):
+## 		sess.openForm('login',uid="luc")
 		
 ## 	def defineMenus(self,context,win):
 ## 		#assert db.schema is self

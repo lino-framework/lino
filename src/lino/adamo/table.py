@@ -61,7 +61,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
 	
 	"""
 	
-	class Row(StoredDataRow):
+	class Instance(StoredDataRow):
 		pass
 
 	def __init__(self,name=None,label=None,doc=None):
@@ -125,7 +125,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
 			attr.onOwnerInit1(self,name)
 			attr.onTableInit1(self,name)
 			try:
-				um = getattr(self.Row,"after_"+name)
+				um = getattr(self.Instance,"after_"+name)
 				attr.afterSetAttr = um
 			except AttributeError:
 				pass
@@ -271,7 +271,7 @@ class MemoTable(Table):
 		self.abstract = Field(MEMO)
 		self.body = Field(MEMO)
 
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		
 		def getLabel(self):
 			return self.title
@@ -286,7 +286,7 @@ class TreeTable(Table):
 		#self.super = Pointer(table._rowMixins[0])
 		self.super.setDetail('children')
 
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getUpTree(self):
 			l = []
 			super = self.super
@@ -300,7 +300,7 @@ class MemoTreeTable(MemoTable,TreeTable):
 		MemoTable.init(self)
 		TreeTable.init(self)
 
-	class Row(MemoTable.Row,TreeTable.Row):
+	class Instance(MemoTable.Instance,TreeTable.Instance):
 		def getLabel(self):
 			return self.title
 
@@ -312,6 +312,6 @@ class BabelTable(Table):
 	def init(self):
 		self.name = BabelField(STRING)
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			return self.name

@@ -18,7 +18,7 @@ class Invoices(PartnerDocuments):
 		self.partner = Pointer(Partners)
 		self.partner.setDetail('invoices')
 
-	class Row(PartnerDocuments.Row):
+	class Instance(PartnerDocuments.Instance):
 		
 		def close(self):
 			#print "Invoices.close() : %s lines" % len(self.lines)
@@ -44,7 +44,7 @@ class InvoiceLines(Table):
 		
 		self.setPrimaryKey("invoice line")
 
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def after_product(self):
 			self.unitPrice = self.product.price
 

@@ -1,4 +1,10 @@
 #coding: latin1
+"""
+
+20041004 : pizzeria2.beginSession() now also populates.  That's okay I
+           think. Adapted this test.
+
+"""
    
 from lino import adamo #import quickdb, beginQuickSession
 from lino.misc.tsttools import TestCase
@@ -22,34 +28,34 @@ class Case(TestCase):
 		SERV.startDump()
 		s1 = SERV.appendRow(name="bring home",price=99)
 		sql = SERV.stopDump()
+		# SELECT MAX(id) FROM SERV;
 		self.assertEquivalent(sql,"""\
-SELECT MAX(id) FROM SERV;
 INSERT INTO SERV ( id, responsible, name, price )
-         VALUES  ( 1,  NULL, 'bring home', 99 );
+         VALUES  ( 3,  NULL, 'bring home', 99 );
 """)
 		
 	def test02(self):
 		#pizzeria2.populate(self.db)
 		c = CUST.appendRow(name="Henri")
 		p = PROD.appendRow(name="Pizza Margerita",price=599)
-		self.assertEqual(c.id,1)
-		self.assertEqual(p.id,1)
+		self.assertEqual(c.id,4)
+		self.assertEqual(p.id,3)
 		#self.db.flush()
-		c = CUST.peek(1)
-		self.assertEqual(c.id,1)
-		p = PROD.peek(1)
-		self.assertEqual(p.id,1)
+		c = CUST.peek(4)
+		self.assertEqual(c.id,4)
+		p = PROD.peek(3)
+		self.assertEqual(p.id,3)
 		ORDERS.startDump()
 		o = ORDERS.appendRow(date="20040322",customer = c)
+		#SELECT MAX(id) FROM ORDERS;
 		self.assertEquivalent(ORDERS.stopDump(),"""\
-SELECT MAX(id) FROM ORDERS;
 INSERT INTO ORDERS (
 id,
 customer_id,
 date,
 totalPrice,
 isRegistered
-) VALUES ( 1, 1,
+) VALUES ( 5, 4,
 20040322,
 NULL,
 NULL );
@@ -59,13 +65,13 @@ NULL );
 		q = o.lines.query()
 		q.appendRow(product=p,qty=2)
 		#print self.db.conn.stopDump()
+		# SELECT MAX(id) FROM LINES;
 		self.assertEquivalent(LINES.stopDump(),"""\
-SELECT MAX(id) FROM LINES;
 INSERT INTO LINES (
 id, productPROD_id, productSERV_id,
 qty,
 ordr_id
-) VALUES ( 1, 1, NULL, 2, 1 );
+) VALUES ( 8, 3, NULL, 2, 5 );
 """)
 		q = LINES.query(ordr=ORDERS.peek(1))
 		self.assertEqual(len(q),1)

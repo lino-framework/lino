@@ -16,7 +16,7 @@ from lino.schemas.sprl import demo
 
 class Case(unittest.TestCase):
 	def setUp(self):
-		self.db = demo.getDemoDB(populator=None)
+		self.db = demo.beginSession(populator=None)
 		demo.populate(self.db,big=True)
 		self.db.installto(globals())
 		

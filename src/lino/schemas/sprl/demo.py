@@ -21,16 +21,18 @@ def populate(sess,big=False):
 def beginSession(populator=populate,
 					  langs=None,
 					  isTemporary=True,
-					  verbose=False,
+					  #verbose=False,
 					  **kw):
 	schema = Schema(**kw)
 	return adamo.beginQuickSession(schema,
-											 populator=populate,
-											 langs=None,
+											 populator=populator,
+											 langs=langs,
 											 isTemporary=True,
-											 verbose=False)
+											 #verbose=False
+											 )
 
-# old name:
+
+# deprecated name for beginSession:
 getDemoDB = beginSession
 
 if __name__ == '__main__':

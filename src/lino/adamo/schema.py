@@ -16,6 +16,7 @@ from datatypes import StartupDelay
 from datasource import Datasource
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
+from center import center
 
 
 
@@ -101,20 +102,21 @@ class Schema:
 		#self._forms[name] = form
 		
 
-	def startup(self,app):
+	def startup(self):
 		
 		""" startup will be called exactly
 		once, after having declared all tables of the database.  """
 	
-		self._app = app
+		#self._app = app
 		assert not self._startupDone, "double startup"
-		progress = self._app.console.progress
-		progress("Initializing database schema...")
+		#progress = self._app.console.progress
+		info = center().console.info
+		info("Initializing database schema...")
 		#self.defineSystemTables(ui)
 		for plugin in self._plugins:
 			plugin.defineTables(self)
 
-		progress("  Initializing %d tables..." % len(self._tables))
+		info("  Initializing %d tables..." % len(self._tables))
 
 		# loop 1
 		for table in self._tables:
@@ -156,7 +158,7 @@ class Schema:
 			
 		# initialize forms...
 
-		progress("  Initializing %d forms..." % len(self.forms))
+		info("  Initializing %d forms..." % len(self.forms))
 
 		for form in self.forms.values():
 			form.init1()
@@ -167,26 +169,25 @@ class Schema:
 		#	print "setupTables() done"
 			
 		self._startupDone = True
-		progress("Schema startup okay")
+		info("Schema startup okay")
 		
 
 	def setLayout(self,layoutModule):
 		# initialize layouts...
 		assert self._startupDone 
 		
-		if layouts is not None:
-			lf = LayoutFactory(layoutModule)
-			for table in self._tables:
-				wcl = lf.get_wcl(table.Row)
-				assert wcl is not None
-				table._rowRenderer = wcl
-				
+		lf = LayoutFactory(layoutModule)
+		for table in self._tables:
+			wcl = lf.get_wcl(table.Instance)
+			assert wcl is not None
+			table._rowRenderer = wcl
 
-			self._datasourceRenderer = lf.get_wcl(Datasource)
-			self._contextRenderer = lf.get_wcl(Database)
 
-			assert self._datasourceRenderer is not None
-			assert self._contextRenderer is not None
+		self._datasourceRenderer = lf.get_wcl(Datasource)
+		self._contextRenderer = lf.get_wcl(Database)
+
+		assert self._datasourceRenderer is not None
+		assert self._contextRenderer is not None
 		
 
 	
@@ -217,9 +218,12 @@ class Schema:
 		return str(self.__class__)
 	
 
-	def onStartUI(self,sess):
-		# overridden by sprl.Schema
-		pass
+## 	def onStartUI(self,sess):
+## 		# overridden by sprl.Schema
+## 		return True
+
+	def onLogin(self,sess):
+		return True
 
 ## class DatabaseSchema(Window,PropertySet):
 
@@ -305,13 +309,13 @@ class Schema:
 ## 			from ui import UI
 ## 			ui = UI()
 		
-## 		ui.progress("Adamo startup...")
+## 		ui.info("Adamo startup...")
 
-## 		ui.progress("  Initializing database...")
+## 		ui.info("  Initializing database...")
 ## 		self.defineSystemTables(ui)
 ## 		self.defineTables(ui)
 
-## 		ui.progress("  Initializing %d tables..." % len(self._tables))
+## 		ui.info("  Initializing %d tables..." % len(self._tables))
 
 ## 		# loop 1
 ## 		for table in self._tables:
@@ -347,7 +351,7 @@ class Schema:
 ## 		#if verbose:
 ## 		#	print "setupTables() done"
 			
-## 		ui.progress("Adamo startup okay")
+## 		ui.info("Adamo startup okay")
 
 	
 ## 		self.__dict__['startupDone'] = True

@@ -16,14 +16,14 @@ class Case(TestCase):
 
 	def setUp(self):
 		
-		self.db = demo.getDemoDB()
-		self.db.installto(globals()) 
+		self.sess = demo.beginSession()
 
 	def tearDown(self):
-		self.db.shutdown()
+		self.sess.shutdown()
 
 
 	def test01(self):
+		PROJECTS = self.sess.tables.PROJECTS
 		ds = PROJECTS.query("id super.id title")
 		self.assertEqual(len(ds),10)
 		s = ""
@@ -46,8 +46,8 @@ class Case(TestCase):
 		"""
 		The Python value None is principally translated as NULL to SQL.
 
-		For example, specifying super=None will select only those
-		projects whose super is NULL: """
+		For example, specifying super=None will select only the
+		top-level projects (whose super is NULL): """
 		
 		ds = PROJECTS.query("id title", super=None)
 		self.assertEqual(len(ds),3)
@@ -63,15 +63,19 @@ class Case(TestCase):
 
 
 		"""
-		This means that you cannot use None for "clearing" a keyword.
-		buildURL() now uses a special value "self.CLEAR" for this.
 
-		Imagine now that you want to use the ds from above as parent for
-		a new ds because you want to inherit columnNames.
+		Samples are sticky properties: once set, the get inherited by
+		all children.  To clear a sample, you must explicitly set it to
+		Datasource.ANY_VALUE.
 		
-		To clear a sample, you must use the samples= keyword.  """
+		Example: you want to use the ds from above as parent for a new
+		ds because you want to inherit columnNames. But now you want to
+		see them all, not only the top-level projects.  So you must
+		clear the "super=None" condition.
 
-		ds = ds.query(orderBy="title",samples={})
+		"""
+		
+		ds = ds.query(orderBy="title",super=ds.ANY_VALUE)
 		self.assertEqual(len(ds),10)
 
 		

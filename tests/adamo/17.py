@@ -12,7 +12,7 @@ from lino.adamo.datatypes import DataVeto
 
 class Case(TestCase):
 	def setUp(self):
-		self.db = demo.getDemoDB(langs="en de fr")
+		self.db = demo.beginSession(langs="en de fr")
 		self.db.installto(globals())
 		
 	def tearDown(self):

@@ -40,7 +40,7 @@ from lino.misc.etc import issequence
 from lino import adamo
 from lino.adamo.html import txt2html
 from lino.adamo.rowattrs import Field, Pointer, Detail
-from lino.adamo.context import WebSession
+from lino.adamo.session import WebSession
 from lino.adamo.widgets import Command
 
 
@@ -116,13 +116,6 @@ class HtmlResponse:
 	def renderFormattedLink(self,url,label):
 		"label can contain tags and must be valid HTML"
 		self.write('<a href="%s">%s</a>' % (url,label))
-
-	def getSession(self):
-		sess = self.request.getSession()
-		if not hasattr(sess,"_lino_session"):
-			sess._lino_session = WebSession()
-			#sess._lino_session.startSession()
-		return sess._lino_session
 
 	def write(self,html):
 		self._writer.write(html)
@@ -387,11 +380,6 @@ class ContextedResponse(HtmlResponse):
 		HtmlResponse.__init__(self,resource,request,writer)
 
 
-	def getSession(self):
-		sess = HtmlResponse.getSession(self)
-		sess.setContext(self._context)
-		return sess
-		
 		
 	def child(self,target):
 		return target.getRenderer(self.resource,

@@ -9,7 +9,7 @@ class Journals(Table):
 		self.name = Field(STRING)
 		self.tableName = Field( STRING)
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			return self.name
 		
@@ -32,7 +32,7 @@ class Documents(Table):
 		self.jnl = Pointer(Journals)
 		self.setPrimaryKey("jnl seq")
 
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			return self.jnl.id+"-"+str(self.seq)
 		

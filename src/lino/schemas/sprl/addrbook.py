@@ -14,7 +14,7 @@ class Contacts(Table):
 		self.fax = Field(STRING, doc="fax number")
 		self.website = Field(URL, doc="web site")
 
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			return self.name
 		
@@ -28,7 +28,7 @@ class Addresses(Table):
 		self.house = Field(INT)
 		self.box = Field(STRING)
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def after_city(self):
 			if self.city is not None:
 				self.nation = self.city.nation
@@ -43,7 +43,7 @@ class Organisations(Contacts,Addresses):
 		self.name = Field(STRING)
 		self.addView('std',columnNames="name email phone website")
 
-	class Row(Addresses.Row):
+	class Instance(Addresses.Instance):
 		pass
 
 class Persons(Table): #(Contact,Address):
@@ -59,7 +59,7 @@ class Persons(Table): #(Contact,Address):
 		self.setOrderBy('name firstName')
 		self.addView('std',columnNames="name firstName id")
 
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			if self.firstName is None:
 				return self.name
@@ -67,7 +67,7 @@ class Persons(Table): #(Contact,Address):
 
 		def validate(self):
 			if (self.firstName is None) and (self.name is None):
-				return "Either name or firstName must be specified"
+				raise DataVeto("Either name or firstName must be specified")
 
 	
 
@@ -78,7 +78,7 @@ class Persons(Table): #(Contact,Address):
 ## 		self.id = Field(STRING)
 ## 		self.person = Pointer(Persons)
 
-## 	class Row(Table.Row):
+## 	class Instance(Table.Instance):
 ## 		pass
 
 
@@ -103,7 +103,7 @@ class Users(Persons):
 		self.id = Field(STRING,label="Username")
 		self.password = Field(PASSWORD)
 
-	class Row(Persons.Row):
+	class Instance(Persons.Instance):
 		pass
 
 class LoginForm(FormTemplate):
@@ -115,13 +115,18 @@ class LoginForm(FormTemplate):
 		self.setButtonNames("ok help")
 
 	class Instance(FormTemplate.Instance):
+
+		def accept_uid(self,value):
+			if value is not None:
+				if "!" in value:
+					raise DataVeto(value + " : invalid username")
 	
 		def ok(self):
 			"Log in with the supplied username and password."
 			uid = self.uid
 			pwd = self.password
 			sess = self.getSession()
-			sess.notifyMessage("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
+			sess.debug("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
 			
 			user = sess.tables.USERS.peek(uid)
 			if user is None:
@@ -130,8 +135,8 @@ class LoginForm(FormTemplate):
 				return sess.errorMessage("invalid password for "+\
 												 user.getLabel())
 			sess.login(user)
-			sess.notifyMessage("Hello, "+user.getLabel())
-			sess.openForm("main")
+			sess.info("Hello, "+user.getLabel())
+			return True
 			
 
 class Partners(Contacts,Addresses):
@@ -153,10 +158,10 @@ class Partners(Contacts,Addresses):
 		self.lang = Pointer(Languages)
 		self.addView("std","name firstName email phone gsm")
 		
-	class Row(Contacts.Row,Addresses.Row):
+	class Instance(Contacts.Instance,Addresses.Instance):
 		def validate(self):
 			if self.name is None:
-				return "name must be specified"
+				raise("name must be specified")
 
 		def getLabel(self):
 			if self.firstName is None:
@@ -189,7 +194,7 @@ class Currencies(BabelTable):
 		self.id = Field(STRING,width=3)
 		BabelTable.init(self)
 		
-	class Row(BabelTable.Row):
+	class Instance(BabelTable.Instance):
 		def __str__(self):
 			return self.id
 	
@@ -200,7 +205,7 @@ class PartnerTypes(BabelTable):
 		BabelTable.init(self)
 		
 	def validatePartner(self,partner):
-		# otherwise BabelTable.Row is not seen during schema startup
+		# otherwise BabelTable.Instance is not seen during schema startup
 		pass
 	
 ## 	def populate(self,area):
@@ -212,7 +217,7 @@ class PartnerTypes(BabelTable):
 ## 		q.appendRow('e',('Employee',))
 ## 		q.appendRow('d',('Sponsor',))
 
-	class Row(BabelTable.Row):
+	class Instance(BabelTable.Instance):
 		pass
 
 ## class PartnerType:
@@ -237,11 +242,16 @@ class Nations(BabelTable):
 		self.isocode = Field(STRING)
 		self.addView('std',columnNames="name isocode id")
 
-	class Row(BabelTable.Row):
+	class Instance(BabelTable.Instance):
+		def accept_id(self,value):
+			if len(value) != 2:
+				raise DataVeto("Nation.id must be 2 chars")
+				#raise DataVeto("Nation.id must be 2 chars")
+		
 		def validate(self):
 			if len(self.id) != 2:
-				return "Nation.id must be 2 chars"
-				#raise DataVeto("Nation.id must be 2 chars")
+				#return "Nation.id must be 2 chars"
+				raise DataVeto("Nation.id must be 2 chars")
 		
 
 	
@@ -261,7 +271,7 @@ class Cities(Table):
 		# complex primary key used by test cases
 		self.addView('std',columnNames="name nation zipCode")
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			if self.nation is None:
 				return self.name

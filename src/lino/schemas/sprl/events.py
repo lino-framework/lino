@@ -26,7 +26,7 @@ class Events(Pages):
 		#self.setColumnList('date time place title abstract')
 		self.setOrderBy("date time")
 
-	class Row(Pages.Row):
+	class Instance(Pages.Instance):
 		
 		def getLabel(self):
 			s = ''
@@ -47,7 +47,7 @@ class EventTypes(MemoTable):
 		self.name = BabelField(STRING)
 		#table.addDetail('eventsByType',Event)
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def getLabel(self):
 			return self.title
 		

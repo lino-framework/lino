@@ -209,7 +209,7 @@ class SqlConnection(Connection):
 			for col in ds.orderByColumns:
 				#col = self.findColumn(colName)
 				#if col:
-					for atom in col.getFltAtoms(ds.getContext()):
+					for atom in col.getFltAtoms(ds.getSession()):
 						l.append(atom.getNameInQuery(clist))
 				#else:
 				#	raise "%s : no such column in %s" % \
@@ -327,7 +327,7 @@ class SqlConnection(Connection):
 	def executeInsert(self,row):
 		query = row._ds._store._peekQuery
 		table = row._ds._table
-		context = row.getContext()
+		context = row.getSession()
 
 		atomicRow = query.row2atoms(row)
 		
@@ -352,7 +352,7 @@ class SqlConnection(Connection):
 	def executeUpdate(self,row):
 		query = row._ds._store._peekQuery
 		table = row._ds._table
-		context = row.getContext()
+		context = row.getSession()
 
 		atomicRow = query.row2atoms(row)
 

@@ -39,7 +39,7 @@ class Orders(Table):
 		self.totalPrice = Field(PRICE)
 		self.isRegistered = Field(BOOL)
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def register(self):
 			self.lock()
 			totalPrice = 0
@@ -59,7 +59,7 @@ class OrderLines(Table):
 		self.qty = Field(INT)
 		self.ordr.setDetail('lines')
 		
-	class Row(Table.Row):
+	class Instance(Table.Instance):
 		def validate(self):
 			if self.ordr is None:
 				return "order is mandatory"
@@ -74,8 +74,8 @@ class BasePlugin(SchemaPlugin):
 		schema.addTable(Orders("ORDERS"))
 		schema.addTable(OrderLines("LINES"))
 		
-def Pizzeria():
-	schema = Schema()
+def Pizzeria(**kw):
+	schema = Schema(**kw)
 	schema.addPlugin(BasePlugin())
 	return schema
 
@@ -106,7 +106,6 @@ def populate(sess):
 
 	o1.register()
 	o2.register()
-
 	sess.commit()
 	
 
@@ -125,13 +124,12 @@ def query(sess):
 
 def main():
 
-	schema = Pizzeria()
+	schema = Pizzeria(label="Lucs Pizza Restaurant")
 
 	sess = adamo.beginQuickSession(
 		schema,
-		populate=populate,
-		isTemporary=True,
-		label="Lucs Pizza Restaurant")
+		populator=populate,
+		isTemporary=True)
 
 	query(sess)
 

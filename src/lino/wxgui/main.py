@@ -180,28 +180,57 @@ class FormFrame(wx.Frame):
 		evt.Skip()
 
 
+from lino.adamo.session import AdamoSession, Application
 
+class WxSession(AdamoSession):
+	
+	_dataCellFactory = wxDataCell
+	
+	_windowFactory = FormFrame
+	
+	def __init__(self,wxapp,adamoApp):
+		AdamoSession.__init__(self,adamoApp)
 
+	def errorMessage(self,msg):
+		return self.app.console.notify(msg)
 
-class MyApp(wx.App):
-
-	def __init__(self,sess):
-		self.session = sess
-		sess._dataCellFactory = wxDataCell
-		sess._windowFactory = FormFrame
-		wx.App.__init__(self,0)
+	def notifyMessage(self,msg):
+		return self.app.console.notify(msg)
 		
+	def progress(self,msg):
+		return self.app.console.progress(msg)
+
+
+class WxApp(wx.App):
+
+	def __init__(self,adamoApp):
+		wx.App.__init__(self,0)
+		self.session = WxSession(self,adamoApp)
+
+
 	def OnInit(self):
 		wx.InitAllImageHandlers()
-		self.session.onStartUI()
-		frame = self.session.getCurrentForm() # forms.login
-		#assert frame is not None
-		#print frame
-		#frame = FormFrame(None, -1, form)
-		self.SetTopWindow(frame)
+		self.session.onBeginSession()
+		
+## 		self.session.onStartUI()
+## 		frame = self.session.getCurrentForm() # forms.login
+## 		#assert frame is not None
+## 		#print frame
+## 		#frame = FormFrame(None, -1, form)
+## 		self.SetTopWindow(frame)
 		return True
 
 	def OnExit(self):
 		self.session.shutdown()
 
-
+## class wxApplication(Application):
+## 	def __init__(self,**kw):
+## 		Application.__init__(self,**kw)
+## 		self.wxapp = wxAppInstance(self)
+		
+## 	def createSession(self,**kw):
+## 		return wxSession(self,**kw)
+		
+## 	def run(self):
+## 		self.wxapp.MainLoop()
+		

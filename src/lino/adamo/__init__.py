@@ -3,8 +3,8 @@ adamo : Abstract Data Model
 
 """
 
-from lino import __version__
-# __version__ = "0.1.0"
+#from lino import __version__
+__version__ = "0.0.1 pre"
 
 import __builtin__
 import sys
@@ -18,9 +18,10 @@ from datatypes import *
 from rowattrs import Field, Pointer, BabelField, Vurt, Match#, Button
 from schema import Schema, SchemaPlugin
 #from session import ConsoleSession
-from session import Application
+#from session import Application
 from datasource import DataRow
-from database import QuickDatabase as quickdb
+from database import QuickDatabase 
+import center 
 
 def _(s):
    return s
@@ -32,22 +33,32 @@ def beginQuickSession(schema,
 							 populator=None,
 							 langs=None,
 							 isTemporary=True,
-							 verbose=False,
-							 **kw):
-	app =	Application(verbose=verbose)
-	schema.startup(app)
+							 #verbose=None
+							 ):
+## 	if verbose is not None:
+## 		start(verbose=verbose)
+		
+## 	ctr = center()
+## 	if app is None:
+## 		app =	Application(verbose=verbose)
+## 	else:
+## 		assert verbose is False
+		
+	schema.startup()
 	
-	db = quickdb(app,
-					 schema,
-					 langs=langs,
-					 isTemporary=isTemporary,
-					 verbose=verbose)
+	db = QuickDatabase( schema,
+							  langs=langs,
+							  isTemporary=isTemporary
+							  )
 	db.createTables()
 	
-	sess = app.use(db=db,langs=langs)
+	sess = center.center().createSession()
+	
+	sess.use(db=db,langs=langs)
 	
 	if populator:
 		populator(sess)
+		
 	return sess
 
 
@@ -63,8 +74,8 @@ __all__ = ['Table','LinkTable',
 			  'FormTemplate','Menu','Command',
 			  'Schema','SchemaPlugin',
 			  #'ConsoleSession',
-			  'Application',
-			  'quickdb',
+			  #'Application',
+			  #'quickdb',
 			  'INT', 'BOOL', 'ROWID', 'STRING', 'DATE', 'MEMO',
 			  'EMAIL', 'URL',
 			  'PRICE', 'AMOUNT', 

@@ -9,7 +9,7 @@ import types
 from lino.misc.etc import issequence
 from query import DataColumnList#, BaseColumnList
 #, DataColumn
-from datatypes import DataVeto
+from datatypes import DataVeto, InvalidRequestError
 from rowattrs import FieldContainer, NoSuchField
 
 class Datasource:
@@ -19,6 +19,7 @@ class Datasource:
 	"""
 	
 	#columnClass = DataColumn
+	ANY_VALUE = types.NoneType
 	
 	def __init__(self, session, store, clist=None, **kw):
 		self.rowcount = None
@@ -81,9 +82,10 @@ class Datasource:
 		if samples is None:
 			self.setSamples(**kw)
 		else:
-			assert len(kw) == 0
-			self._samples = {}
-			self.setSamples(**samples)
+			#assert len(kw) == 0, "kw is %s, but samples is %s" % (\
+			#	repr(kw),repr(samples))
+			self._samples = samples
+			self.setSamples(**kw)
 
 	def apply_GET(self,**kw):
 		qryParams = {}
@@ -138,6 +140,11 @@ class Datasource:
 ## 	def createColumn(self,colIndex, name, join,fld):
 ## 		# overridden by report.Report
 ## 		return DataColumn(self,colIndex, name, join,fld)
+
+
+## 	def clearSample(self,*names):
+## 		for name in names:
+## 			del self._samples[name]
 	
 
 	
@@ -172,6 +179,7 @@ class Datasource:
 		if self._sqlFilters is not None:
 			kw.setdefault('sqlFilters',tuple(self._sqlFilters))
 		#if samples is None:
+		#kw.setdefault('samples',self._samples)
 		for k,v in self._samples.items():
 			kw.setdefault(k,v)
 		
@@ -204,8 +212,11 @@ class Datasource:
 															 self.query(),
 															 writer)
 	
-	def getContext(self):
-		return self._session
+## 	def getContext(self):
+## 		return self._session
+
+ 	def getSession(self):
+ 		return self._session
 
 	def getTableName(self):
 		return self._table.getTableName()
@@ -239,43 +250,49 @@ class Datasource:
 		"each value is a Python object"
 		self._samples.update(kw)
 		for (name,value) in self._samples.items():
-			col = self._clist.provideColumn(name)
+			if value == self.ANY_VALUE:
+				del self._samples[name]
+			else:
+				col = self._clist.provideColumn(name)
 		return
 	
 	def setCsvSamples(self,**kw):
 		"each value is a string to be parsed by column"
 		#self._samples.update(kw)
 		for (name,value) in kw.items():
-			col = self._clist.provideColumn(name)
-			self._samples[name] = col.parse(value,self)
+			if value == self.ANY_VALUE:
+				del self._samples[name]
+			else:
+				col = self._clist.provideColumn(name)
+				self._samples[name] = col.parse(value,self)
 		return
 	
-	def setSamples_unused(self):
-		sampleColumns = []
-		atomicSamples = []
-		atomicRow = self._clist.makeAtomicRow(self._context) 
+## 	def setSamples_unused(self):
+## 		sampleColumns = []
+## 		atomicSamples = []
+## 		atomicRow = self._clist.makeAtomicRow(self._context) 
 
-		#tmpRow = self._table.Row(self,{},False,pseudo=True)
+## 		#tmpRow = self._table.Row(self,{},False,pseudo=True)
 		
-		for (name,value) in self._samples.items():
-			col = self._clist.getColumn(name)
-			#attr = self._table.getRowAttr(name)
-			sampleColumns.append( (col,value) )
-			#setattr(tmpRow,name,value)
-			#attr.setCellValue(tmpRow,value)
-			col.value2atoms(value,atomicRow,self._db)
+## 		for (name,value) in self._samples.items():
+## 			col = self._clist.getColumn(name)
+## 			#attr = self._table.getRowAttr(name)
+## 			sampleColumns.append( (col,value) )
+## 			#setattr(tmpRow,name,value)
+## 			#attr.setCellValue(tmpRow,value)
+## 			col.value2atoms(value,atomicRow,self._db)
 			
-		self.sampleColumns = tuple(sampleColumns)
+## 		self.sampleColumns = tuple(sampleColumns)
 		
-		#atomicRow = self.row2atoms(tmpRow)
-		for col,value in self.sampleColumns:
-			for atom in col.getAtoms():
-				atomicSamples.append((atom,atomicRow[atom.index]))
-## 			for aname,atype in attr.getNeededAtoms(self._db):
-## 				atomicSamples.append(
-## 					(aname,atype, tmpRow.getAtomicValue(aname)) )
+## 		#atomicRow = self.row2atoms(tmpRow)
+## 		for col,value in self.sampleColumns:
+## 			for atom in col.getAtoms():
+## 				atomicSamples.append((atom,atomicRow[atom.index]))
+## ## 			for aname,atype in attr.getNeededAtoms(self._db):
+## ## 				atomicSamples.append(
+## ## 					(aname,atype, tmpRow.getAtomicValue(aname)) )
 				
-		self.atomicSamples = tuple(atomicSamples)
+## 		self.atomicSamples = tuple(atomicSamples)
 		
 	def getAtomicSamples(self):
 		l = []
@@ -380,13 +397,15 @@ class Datasource:
 		#	print "datasource.py", args
 		#	print [col.name for col in self._clist.visibleColumns]
 		#self.startDump()
-		row = self._table.Row(self,{},True)
-		row.lock()
+		row = self._table.Instance(self,{},True)
+		#row.lock()
 		kw.update(self._samples)
 		self._clist.updateRow(row,*args,**kw)
+		
 		self.rowcount = None
 		self._store.setAutoRowId(row)
-		row.unlock()
+		row.writeToStore()
+		#row.unlock()
 		self._store.fireUpdate()
 		#print self.stopDump()
 		return row
@@ -441,7 +460,7 @@ class Datasource:
 		return self.atoms2row(atomicRow,False)
 
 	def getInstance(self,atomicId,new):
-		row = self._table.Row(self,{},new)
+		row = self._table.Instance(self,{},new)
 		i = 0
 		for col in self._clist._pkColumns:
 			col.atoms2row(atomicId,row)
@@ -500,7 +519,7 @@ class Datasource:
 
 		
 	def atoms2row(self,atomicRow,new):
-		row = self._table.Row(self,{},new)
+		row = self._table.Instance(self,{},new)
 		self._clist.atoms2row(atomicRow,row)
 		return row
 ## 		return DataRow(self,atomicRow,new)
@@ -580,10 +599,17 @@ class DataRow:
 	
 	def __setattr__(self,name,value):
       #def setAtomicValue(self,name,value)
+		if not self.isLocked():
+			raise InvalidRequestError("row is not locked")
 		#assert self._locked
 		rowattr = self._fc.getRowAttr(name)
-		rowattr.setCellValue(self,value)		
-		#self._values[name] = value
+		rowattr.setCellValue(self,value)
+## 		try:
+## 			rowattr.acceptTrigger(self,value)
+## 			rowattr.setCellValue(self,value)
+## 		except DataVeto,e:
+## 			self.getSession().errorMessage(str(e))
+## 			return
 		rowattr.afterSetAttr(self)
 		self.__dict__['_dirty'] = True
 
@@ -607,7 +633,7 @@ class DataRow:
 		
 	def __setitem__(self,i,value):
 		col = self._clist.visibleColumns[i]
-		assert self._pseudo or self._locked
+		assert self._pseudo or self._locked or self._new
 		col.rowAttr.setCellValue(self,value)
 		self.__dict__["_dirty"] = True
 		
@@ -638,6 +664,9 @@ class DataRow:
 		pass
 	
 	
+	def isLocked(self):
+		return True
+
 	def isDirty(self):
 		return self.__dict__['_dirty']
 
@@ -662,13 +691,13 @@ class StoredDataRow(DataRow):
 		self.__dict__["_isCompleting"] = False
 
 	def __eq__(self, other):
-		if other is None:
+		if (other is None) or (other is self._ds.ANY_VALUE):
 			return False
 		return self.getRowId() == other.getRowId()
 		#return tuple(self.getRowId()) == tuple(other.getRowId())
 		
 	def __ne__(self, other):
-		if other is None:
+		if (other is None) or (other is self._ds.ANY_VALUE):
 			return True
 		return self.getRowId() != other.getRowId()
 		#return tuple(self.getRowId()) == tuple(other.getRowId())
@@ -683,8 +712,8 @@ class StoredDataRow(DataRow):
 ## 		#assert rsp.request is self.request
 ## 		rsp.writeParagraph()
 	
-	def getContext(self):
-		return self._ds.getContext()
+## 	def getContext(self):
+## 		return self._ds.getContext()
 	
 	def getSession(self):
 		return self._ds._session
@@ -694,6 +723,9 @@ class StoredDataRow(DataRow):
 	def isComplete(self):
 		return self._complete
 	
+	def isLocked(self):
+		return (self._locked or self._new or self._pseudo)
+
 	def isNew(self):
 		return self._new
 	
@@ -818,7 +850,8 @@ class StoredDataRow(DataRow):
 
 
 	def lock(self):
-		assert not self._locked
+		assert not self._new, "Cannot lock a new row"
+		assert not self._locked, "already locked"
 		self.__dict__["_locked"] = True
 		self._ds._store.lockRow(self)
 			
@@ -826,15 +859,16 @@ class StoredDataRow(DataRow):
 	def unlock(self):
 		assert self._locked, "this row was not locked"
 		
-		if self._dirty:
-			msg = self.validate()
-			if msg:
-				raise DataVeto(repr(self) + ': ' + msg)
+			
+## 			msg = self.validate()
+## 			if msg:
+## 				raise DataVeto(repr(self) + ': ' + msg)
 			
 		#assert not None in self.getRowId(), "incomplete pk"
 		self.__dict__["_locked"] = False
 		self._ds._store.unlockRow(self)
-		self.writeToStore()
+ 		if self._dirty:
+			self.writeToStore()
 		
 
 	def writeToStore(self):
@@ -842,6 +876,10 @@ class StoredDataRow(DataRow):
 		#assert not self._locked
 		#if self._locked:
 		#	self.unlock()
+		try:
+			self.validate()
+		except DataVeto,e:
+			raise DataVeto(repr(self) + ': ' + str(e))
 		if self._new:
 			self._ds._connection.executeInsert(self)
 			self.__dict__["_new"] = False
@@ -920,7 +958,7 @@ class DataCell:
 		v = self.col.getCellValue(self.row)
 		if v is None:
 			return ""
-		return self.col.format(v,self.row.getContext())
+		return self.col.format(v,self.row.getSession())
 	
 
 

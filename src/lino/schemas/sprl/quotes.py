@@ -16,7 +16,7 @@ class Quotes(MemoTable):
 		#self.pubRef = Field(STRING)
 		#self.pub = Pointer("PUBLICATIONS")
 		
-	class Row(MemoTable.Row):
+	class Instance(MemoTable.Instance):
 		def getLabel(self):
 			return "[q"+str(self.id)+"]"
 
@@ -62,7 +62,7 @@ class Topics(TreeTable):
 		self.url = BabelField(URL)
 		self.addView('simple',"name url super children")
 		
-	class Row(TreeTable.Row):
+	class Instance(TreeTable.Instance):
 		def getLabel(self):
 			return self.name
 	
@@ -75,7 +75,7 @@ class Authors(Persons):
 		#self.birthPlace = Pointer(City)
 		#self.deathDate = Field(DATE)
 		#self.deathPlace = Pointer(City)
-	class Row(Persons.Row):
+	class Instance(Persons.Instance):
 		pass
 
 
@@ -91,7 +91,7 @@ class AuthorEvents(BabelTable):
 		#self.remark = Field(STRING)
 		self.setPrimaryKey('author seq')
 		
-	class Row(BabelTable.Row):
+	class Instance(BabelTable.Instance):
 		def getLabel(self):
 			s = self.type.getLabel()
 			if self.date is not None:
@@ -107,5 +107,5 @@ class AuthorEventTypes(BabelTable):
 		#self.name = BabelField(STRING)
 		
 
-	class Row(BabelTable.Row):
+	class Instance(BabelTable.Instance):
 		pass

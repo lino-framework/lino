@@ -25,7 +25,7 @@ class Projects(MemoTreeTable):
 						 label="Top-level projects",
 						 super=None)
 
-	class Row(MemoTreeTable.Row):
+	class Instance(MemoTreeTable.Instance):
 		pass
 
 

@@ -130,11 +130,13 @@ class PriceType(IntType):
 class StartupDelay(Exception):
 	pass
 
-class DataVeto(Exception):
-	pass
-
 class InvalidRequestError(Exception):
-	pass
+	"The requested action was refused"
+	#pass
+
+class DataVeto(Exception):
+	"Invalid data submitted"
+	#pass
 
 
 STRING = StringType()

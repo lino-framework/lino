@@ -44,6 +44,14 @@ class AdamoResource(Resource):
 		self.stylesheet = stylesheet
 		#print self, stylesheet
 
+	def getSession(self,request):
+		sess = request.getSession()
+		if not hasattr(sess,"_lino_session"):
+			sess._lino_session = WebSession()
+			#sess._lino_session.startSession()
+		return sess._lino_session
+
+		
 	def render_POST(self,request):
 		target = self.findTarget(request)
 		responder = target.getRenderer(self,request,None)
@@ -98,6 +106,103 @@ class AdamoResource(Resource):
 		if name == '':
 			return self
 		return Resource.getChild(self,name,request)
+
+
+
+
+
+
+class DbResource(AdamoResource):
+	isLeaf = True
+ 	def __init__(self,parent,db,staticDirs,**kw):
+		self.db = db
+		
+## 		self.staticDirs = {}
+## 		for (alias,path) in staticDirs.items():
+## 			fr = static.File(path)
+## 			print alias,"=", fr
+## 			self.staticDirs[alias] = fr
+			
+		AdamoResource.__init__(self,parent,**kw)
+		#self._window = TwistedWindow(ctx)
+		#ctx._db.schema.defineMenus(ctx,self._window)
+	
+
+	#def getChild(self, name, request):
+	#	raise "should never be called since isLeaf is True"
+	
+	def getSession(self,request):
+		sess = AdamoResource.getSession(self,request)
+		sess.use(db=self.db)
+		return sess
+	
+	def findTarget(self,request):
+		pp = list(request.postpath)
+		if len(pp) and len(pp[-1]) == 0:
+			pp = pp[:-1]
+		
+		if len(pp) == 0:
+			return self.db.getContentRoot()
+
+		cmd = pp[0]
+		if cmd == "db":
+
+			del pp[0]
+			ds = self.db.getDatasource(pp[0])
+			if len(pp) == 1:
+				return ds
+
+			del pp[0]
+			#pp = pp[1:]
+			id = pp[0].split(',')
+
+			pka = ds._table.getPrimaryAtoms()
+			if len(id) != len(pka):
+				raise InvalidRequestError('invalid id "%s"' % pp[0])
+
+			rid = []
+			i = 0
+			for (name,type) in pka:
+				try:
+					v = type.parse(id[i])
+				except ValueError,e:
+					msg="'%s' is not an %s" % (repr(id[i]), repr(type))
+					raise InvalidRequestError(msg)
+
+				rid.append(v)
+				i += 1
+			row = ds.peek(*rid)
+			if row is None:
+				msg = "%s(%s) : no such row"% (
+					ds._table.getTableName(), repr(id))
+				raise InvalidRequestError(msg)
+			return row
+
+
+		if cmd == "menu":
+			#return self.respond(request,self._window)
+			#return self._window.getRenderer(request)
+			raise "und jetzt?"
+			#return self._window
+		
+## 		try:
+## 			#print request.method
+## 			fr = self.staticDirs[cmd]
+## 			del request.postpath[0]
+## 			return fr.render(request)
+## 		except KeyError,e:
+## 			print str(e)
+			
+		return error.NoResource(
+			'invalid postpath: %s' % str(pp)).render(request)
+
+		
+
+
+
+
+
+	
 	
 
 
@@ -404,83 +509,3 @@ class AdamoResource(Resource):
 
 
 
-class DbResource(AdamoResource):
-	isLeaf = True
- 	def __init__(self,parent,ctx,staticDirs,**kw):
-		self.context = ctx
-		
-## 		self.staticDirs = {}
-## 		for (alias,path) in staticDirs.items():
-## 			fr = static.File(path)
-## 			print alias,"=", fr
-## 			self.staticDirs[alias] = fr
-			
-		AdamoResource.__init__(self,parent,**kw)
-		#self._window = TwistedWindow(ctx)
-		#ctx._db.schema.defineMenus(ctx,self._window)
-	
-
-	#def getChild(self, name, request):
-	#	raise "should never be called since isLeaf is True"
-	
-	def findTarget(self,request):
-		pp = list(request.postpath)
-		if len(pp) and len(pp[-1]) == 0:
-			pp = pp[:-1]
-		
-		if len(pp) == 0:
-			return self.context.getContentRoot()
-
-		cmd = pp[0]
-		if cmd == "db":
-
-			del pp[0]
-			ds = self.context.getDatasource(pp[0])
-			if len(pp) == 1:
-				return ds
-
-			del pp[0]
-			#pp = pp[1:]
-			id = pp[0].split(',')
-
-			pka = ds._table.getPrimaryAtoms()
-			if len(id) != len(pka):
-				raise InvalidRequestError('invalid id "%s"' % pp[0])
-
-			rid = []
-			i = 0
-			for (name,type) in pka:
-				try:
-					v = type.parse(id[i])
-				except ValueError,e:
-					msg="'%s' is not an %s" % (repr(id[i]), repr(type))
-					raise InvalidRequestError(msg)
-
-				rid.append(v)
-				i += 1
-			row = ds.peek(*rid)
-			if row is None:
-				msg = "%s(%s) : no such row"% (
-					ds._table.getTableName(), repr(id))
-				raise InvalidRequestError(msg)
-			return row
-
-
-		if cmd == "menu":
-			#return self.respond(request,self._window)
-			#return self._window.getRenderer(request)
-			raise "und jetzt?"
-			#return self._window
-		
-## 		try:
-## 			#print request.method
-## 			fr = self.staticDirs[cmd]
-## 			del request.postpath[0]
-## 			return fr.render(request)
-## 		except KeyError,e:
-## 			print str(e)
-			
-		return error.NoResource(
-			'invalid postpath: %s' % str(pp)).render(request)
-
-		

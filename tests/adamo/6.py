@@ -4,7 +4,6 @@ import sys
 
 from StringIO import StringIO
 
-from lino.adamo import quickdb
 from lino.misc.tsttools import TestCase
 
 from lino.examples import pizzeria,pizzeria2

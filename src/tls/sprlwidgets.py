@@ -92,7 +92,7 @@ class SprlSkipper(Skipper,SprlPage):
 		
 		
 class SprlRowLayout(SprlPage):
-	handledClass = adamo.Table.Row
+	handledClass = adamo.Table.Instance
 
 	def writeLabel(self):
 		row = self.target
@@ -129,7 +129,7 @@ class SprlRowLayout(SprlPage):
 
 
 class MemoLayout(SprlRowLayout):
-	handledClass = web.MemoTable.Row
+	handledClass = web.MemoTable.Instance
 	
 	def writeParagraph(self):
 		row = self.target
@@ -151,7 +151,7 @@ class MemoLayout(SprlRowLayout):
 
 
 class TreeLayout(SprlRowLayout):
-	handledClass = web.TreeTable.Row
+	handledClass = web.TreeTable.Instance
 	
 	def writePreTitle(self):
 		row = self.target
@@ -180,7 +180,7 @@ class TreeLayout(SprlRowLayout):
 
 	
 class MemoTreeLayout(TreeLayout,MemoLayout):
-	handledClass = adamo.MemoTreeTable.Row
+	handledClass = adamo.MemoTreeTable.Instance
 	
 	def writePage(self):
 		MemoLayout.writePage(self)
@@ -191,7 +191,7 @@ class MemoTreeLayout(TreeLayout,MemoLayout):
 		
 		
 class PageLayout(MemoTreeLayout):
-	handledClass = web.Pages.Row
+	handledClass = web.Pages.Instance
 	
 	def writePage(self):
 		row = self.target
@@ -228,7 +228,7 @@ class PageLayout(MemoTreeLayout):
 
 
 class EventLayout(PageLayout):
-	handledClass = events.Events.Row
+	handledClass = events.Events.Instance
 	def writeParagraph(self):
 		row = self.target
 		wr = self.write
@@ -259,7 +259,7 @@ class EventLayout(PageLayout):
 		
 
 class TopicLayout(TreeLayout):
-	handledClass = quotes.Topics.Row
+	handledClass = quotes.Topics.Instance
 		
 	def writePage(self):
 		row = self.target
@@ -270,7 +270,7 @@ class TopicLayout(TreeLayout):
 
 
 class NewsLayout(MemoLayout):
-	handledClass = news.News.Row
+	handledClass = news.News.Instance
 	
 	def writeParagraph(self):
 		row = self.target
