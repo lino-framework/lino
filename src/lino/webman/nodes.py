@@ -7,6 +7,7 @@
 import os
 
 #from xdocutils import publish
+from lino.misc import console
 from lino.misc.restify import reSTify 
 from lino.webman import __version__
 from lino.twisted_ui.response import HtmlResponse
@@ -215,7 +216,7 @@ class WebModule(Node):
             raise WebManException("%s is not a directory" % localPath)
         #self.localPath = localPath
 
-        print "Loading Webman module from %s..." % localPath
+        console.debug("Loading Webman module from %s..." % localPath)
 
         #raise "bla"
         # scan directory 

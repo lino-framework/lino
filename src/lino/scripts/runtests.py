@@ -21,6 +21,10 @@ where TESTS specifies the tests to run. Default is all. Other possible values e.
     
     (options, args) = parser.parse_args(argv)
     
+    if console.isInteractive():
+        console.warning("""\
+Note: Running in interactive mode. Specify -b to avoid questions.""")
+        
     suite = tsttools.alltests(args)
     runner = unittest.TextTestRunner()
     runner.run(suite)

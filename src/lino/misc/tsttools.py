@@ -88,10 +88,9 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         for fn in self._showFiles:
             self.failUnless(os.path.exists(fn))
-            if console.isInteractive():
-                if console.confirm("Okay to start %s ?" % fn):
-                    os.system('start ' + fn)
-                    #console.confirm("Press ENTER when %s is okay:"%fn)
+            if console.confirm("Okay to start %s ?" % fn,\
+                               default="n"):
+                os.system('start ' + fn)
         if len(self._tempFiles) > 0:
             if console.confirm("Okay to delete %d temporary files ?" \
                                % len(self._tempFiles)):

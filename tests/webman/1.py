@@ -1,24 +1,24 @@
-# coding: latin1
 #----------------------------------------------------------------------
-# Copyright: (c) 2003-2004 Luc Saffre
-# License:   GPL
+# Copyright 2003-2004 Luc Saffre
+# This file is published as part of the Lino project
 #----------------------------------------------------------------------
 
 """
 testing restify.inspect()
 """
-import unittest
+import os
 
+from lino.misc import tsttools
 from lino.misc.restify import inspect
 
-class Case(unittest.TestCase):
+class Case(tsttools.TestCase):
     ""
 
     def test01(self):
-        doc = inspect("index.txt")
+        doc = inspect(os.path.join("testdata","index.txt"))
         print repr(doc.get_children())
         
 
 if __name__ == '__main__':
-    unittest.main()
+    tsttools.main()
 
