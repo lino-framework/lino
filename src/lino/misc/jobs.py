@@ -66,11 +66,6 @@ class BaseJob:
     def getLabel(self):
         return self._label 
     
-##     def update(self,msg,n=1):
-##         # shortcut to call both status() and inc()
-##         self.status(msg)
-##         self.inc(n)
-        
     def increment(self,n=1):
         self.curval += n
         if self._done:
@@ -80,6 +75,9 @@ class BaseJob:
             if pc == self.pc:
                 return
             self.pc = pc
+        self.ui.onJobIncremented(self)
+
+    def refresh(self):
         self.ui.onJobIncremented(self)
         
     def done(self,msg=None,*args,**kw):
@@ -179,7 +177,7 @@ class Job(BaseJob):
 
     def status(self,msg,*args,**kw):
         self._status = self.ui.buildMessage(msg,*args,**kw)
-        #self.increment()
+        self.refresh()
 
 
 

@@ -253,7 +253,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
             sess.ui.debug("No need to load "+\
                           self._mirrorLoader.sourceFilename())
             return
-        self._mirrorLoader.load(sess,store.query(sess))
+        self._mirrorLoader.load(sess.ui,store.query(sess))
 
     def onAppend(self,row):
         pass
@@ -386,7 +386,7 @@ class DbfMirrorLoader:
         job = ui.job("Loading "+ self.sourceFilename(),len(f))
         q.zap()
         for dbfrow in f:
-            job.inc()
+            job.increment()
             try:
                 self.appendFromDBF(q,dbfrow)
             except DataVeto,e:

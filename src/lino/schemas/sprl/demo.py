@@ -28,6 +28,7 @@ from lino import adamo
 from lino.schemas.sprl import sprl, tables 
 from lino.tools.normalDate import ND
 from lino.adamo.datatypes import itod
+from lino.ui import console
 
 
 def makeSchema(populate=True,
@@ -48,11 +49,13 @@ def makeSchema(populate=True,
     return schema
             
             
-def startup(ui,
+def startup(ui=None,
             filename=None,
             langs=None,
             **kw):
     schema = makeSchema(**kw)
+    if ui is None:
+        ui = console.getSystemConsole()
     sess = schema.quickStartup(ui,langs=langs, filename=filename)
     
     return sess

@@ -30,6 +30,7 @@ from lino.misc.attrdict import AttrDict
 from lino.adamo.exceptions import InvalidRequestError
 from lino.ui import console
 from lino.forms.application import Application
+from lino.forms import gui
 
 
 
@@ -821,7 +822,7 @@ class Toolkit:
     
     def __init__(self,app=None):
         self._apps = []
-        #self.consoleForm = None
+        self.consoleForm = None
         self.console = console.CaptureConsole(
             verbosity=console._syscon._verbosity)
 
@@ -851,11 +852,12 @@ class Toolkit:
 
     def init(self):
         
-##         if self.consoleForm is None:
-##             self.consoleForm = frm = self._apps[0].form(
-##                 None, label="Console")
-##             frm.addViewer()
-##             frm.show()
+        if self.consoleForm is None:
+            self.consoleForm = frm = self._apps[0].form(
+                None, label="Console",
+                halign=gui.RIGHT, valign=gui.BOTTOM)
+            frm.addViewer()
+            frm.show()
             
         for app in self._apps:
             app.init()
@@ -869,8 +871,8 @@ class Toolkit:
         
     def closeApplication(self,app):
         self._apps.remove(app)
-##         if len(self._apps) == 0:
-##             self.consoleForm.close()
+        if len(self._apps) == 0:
+            self.consoleForm.close()
         
 
 ##     def form(self,parent,*args,**kw):

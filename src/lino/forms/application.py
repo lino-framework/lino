@@ -92,7 +92,7 @@ class Application(Describable):
         m = frm.addMenu("&Programm")
         m.addItem(label="&Beenden",action=frm.close)
         m.addItem(label="Inf&o").setHandler(self.showAbout)
-        m.addItem(label="show &Console").setHandler(self.showConsole)
+        #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
 
 

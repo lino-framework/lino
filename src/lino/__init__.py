@@ -2,7 +2,7 @@ __all__ = []
 
 __docformat__ = 'reStructuredText'
 
-__version__ = "0.6.4"
+__version__ = "0.6.5"
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 

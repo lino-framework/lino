@@ -22,7 +22,8 @@ from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Partners
 
 gui.parse_args()
-sess = demo.startup(ui=gui)
+#sess = demo.startup(ui=gui)
+sess = demo.startup()
 ds = sess.query(Partners, orderBy="name")
 
 frm = gui.form(label="The first DataGrid Form")

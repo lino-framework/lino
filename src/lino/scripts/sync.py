@@ -32,6 +32,18 @@ except:
 from lino.ui import console
 from lino.misc.jobs import Task
 
+
+
+## if gettext.find('lino')!=None:
+##     gettext.translation('lino').install()
+##     print "using language file ",gettext.find('dirssync')
+## else:
+##     print "no language file found."
+##     _=lambda msg: msg
+ 
+
+
+
 from lino.i18n import itr,_
 itr("Start?",
    de="Arbeitsvorgang starten?",
@@ -53,7 +65,7 @@ itr("remove file %s",de=u"Lösche Datei %s")
 itr("create directory %s",de="Erstelle Ordner %s")
 itr("copy file %s to %s",de=u"Kopiere Datei %s nach %s")
 itr("keep %d, update %d, copy %d, delete %d files.",
-    de=u"%d belassen, %d+%d  kopieren, %d löschen")
+    de=u"%d belassen, %d+%d kopieren, %d löschen")
 itr( "%d files and %d directories ",
      de="%d Dateien in %d Ordnern ",
      fr=u"%d fichiers das %d répertoires ")
@@ -63,7 +75,7 @@ itr( "%d files and %d directories ",
 itr("were removed",
     de="wurden gelöscht")
 itr( "were updated", de="wurden aktualisiert")
-itr("were copied", de=u"wurden übertragen")
+itr("were copied", de=u"wurden kopiert")
 
 itr("would have been removed", de=u"wären gelöscht worden")
 itr("would have been updated", de="wären aktualisiert worden")
@@ -166,6 +178,7 @@ class Synchronizer(Task):
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
+        self.refresh()
         if os.path.isfile(name):
             self.delete_file(name)
         elif os.path.isdir(name):
@@ -397,7 +410,6 @@ simulate only, don't do it""",
                       action="store_true",
                       dest="simulate",
                       default=False)
-    (options, args) = parser.parse_args(argv)
 
     parser.add_option("-p", "--progress",
                       help="""\
@@ -405,6 +417,7 @@ show progress bar""",
                       action="store_true",
                       dest="showProgress",
                       default=False)
+    
     (options, args) = parser.parse_args(argv)
 
     if len(args) != 2:
