@@ -188,10 +188,10 @@ class DataGridCtrl(wx.grid.Grid):
             return
             self.rowPopup(row, evt)
 
-    def Reset(self):
-        """reset the view based on the data in the table.   Call
-        this when rows are added or destroyed"""
-        self.table.ResetView(self)
+##     def Reset(self):
+##         """reset the view based on the data in the table.   Call
+##         this when rows are added or destroyed"""
+##         self.table.ResetView(self)
 
 
     def colPopup(self, col, evt):

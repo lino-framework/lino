@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -19,6 +19,8 @@
 
 
 from lino.misc.descr import Describable
+from lino.adamo.datatypes import STRING
+
 
 class BaseReport(Describable):
 
@@ -27,6 +29,8 @@ class BaseReport(Describable):
     CENTER = 3
     TOP = 4
     BOTTOM = 5
+
+    DEFAULT_TYPE = STRING
     
     def __init__(self,
                  columnWidths=None,
@@ -62,12 +66,13 @@ class BaseReport(Describable):
         if self.columnWidths is not None:
             i = 0
             for item in self.columnWidths.split():
+                col = self.columns[i]
                 if item.lower() == "d":
-                    pass
+                    col.width = col.getPreferredWidth()
                 elif item == "*":
-                    self.columns[i].width = None
+                    col.width = None
                 else:
-                    self.columns[i].width = int(item)
+                    col.width = int(item)
                 i += 1
 
         autoWidthColumns = []
@@ -132,8 +137,8 @@ class BaseReport(Describable):
         # now only stringify all values
         i = 0
         for col in self.columns:
-            self.cellValues[i] = self.formatCell(col,
-                                                 self.cellValues[i])
+            self.cellValues[i] = self.formatCell(
+                col, self.cellValues[i])
             i += 1
             
         self.onEndRow()
@@ -145,7 +150,7 @@ class BaseReport(Describable):
     def formatCell(self,col,value):
         if value is None:
             return ""
-        return str(value)
+        return col.format(value)
 
     ##
     ## methods to be overridden by subclasses
@@ -193,25 +198,44 @@ class ReportColumn(Describable):
     def getValue(self,row):
         raise NotImplementedError
 
+    def getPreferredWidth(self):
+        return None
+
+    def format(self,v):
+        raise NotImplementedError
+        #return str(v)
     
 
 class DataReportColumn(ReportColumn):
-    def __init__(self,owner,datacol,width=None,**kw):
-        if width is None:
-            width = datacol.getPreferredWidth()
-        ReportColumn.__init__(self,owner,width=width,**kw)
+    def __init__(self,owner,datacol,**kw):
+        ReportColumn.__init__(self,owner,**kw)
         self.datacol = datacol
 
     def getValue(self,row):
         return self.datacol.getCellValue(self._owner.crow)
+
+    def getPreferredWidth(self):
+        return self.datacol.getPreferredWidth()
         
+    def format(self,v):
+        return self.datacol.format(v)
+    
 class VurtReportColumn(ReportColumn):
-    def __init__(self,owner,meth,**kw):
+    def __init__(self,owner,meth,type=None,**kw):
         ReportColumn.__init__(self,owner,**kw)
         self.meth = meth
+        if type is None:
+            type = owner.DEFAULT_TYPE
+        self.type=type
 
     def getValue(self,row):
         return self.meth(self._owner.crow)
+    
+    def getPreferredWidth(self):
+        return self.type.getPreferredWidth()
+        
+    def format(self,v):
+        return self.type.format(v)
         
 class ConfigError(Exception):
     pass

@@ -21,20 +21,21 @@ import sys
 import os
 opj = os.path.join
 
+from lino import adamo
 from lino.ui import console
 
 #from lino.apps.raceman.schema import makeSchema
 
 from lino.apps.raceman import races, loaders
 
-from lino.apps.raceman.races import 
-     Categories, Participants, Persons, Clubs
+#from lino.apps.raceman.races import \
+#     Categories, Participants, Persons, Clubs
 
 from lino.forms.application import MirrorLoaderApplication
 
-import datetime
+#import datetime
 
-from lino.adamo.datatypes import STRING
+#from lino.adamo.datatypes import STRING
 
 ## class Arrivals:
 ##     def __init__(self,app,race=None,
@@ -128,7 +129,7 @@ from lino.adamo.datatypes import STRING
 class Raceman(MirrorLoaderApplication):
         
     def makeMainForm(self):
-        self.arrivals = Arrivals(self)
+        #self.arrivals = Arrivals(self)
         frm = self.addForm(
             label="Main menu",
             doc="""\
@@ -138,12 +139,12 @@ This is the Raceman main menu.
         m = frm.addMenu("&Stammdaten")
         m.addItem(label="&Races").setHandler(
             self.showTableGrid,
-            Races,
+            races.Races,
             columnNames="id name1 date startTime status tpl type name2")
         m.addItem(label="&Clubs").setHandler(self.showTableGrid,
-                                             Clubs)
+                                             races.Clubs)
         m.addItem(label="&Personen").setHandler(self.showTableGrid,
-                                                Persons)
+                                                races.Persons)
     
         #m = frm.addMenu("&Arrivals")
         #m.addItem(label="&Erfassen").setHandler(self.arrivals)
@@ -153,6 +154,9 @@ This is the Raceman main menu.
         m.addItem(label="Inf&o",action=self.showAbout)
 
         return frm
+
+    def getLoaders(self):
+        return [lc(self.loadfrom) for lc in loaders.LOADERS]
 
         
 
@@ -165,15 +169,9 @@ def main(argv):
     (options, args) = app.parse_args(argv)
 
 
-    #workdir = options.tempDir
-    #schema = makeSchema(app.loadfrom)
     schema = adamo.Schema()
     races.setupSchema(schema)
-    app.setMirrorLoaders(loaders)
-    #loaders.setupSchema(schema)
     app.startup(schema)
-    #filename=opj(workdir,"raceman.db")
-    #sess = schema.quickStartup(filename=filename)
     app.main()
     
 

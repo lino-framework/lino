@@ -23,7 +23,7 @@ from lino.ui import console
 from lino.forms.application import AdamoApplication
 
 from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Nations, Persons, Quotes
+from lino.schemas.sprl.tables import * # Nations,  Quotes
 
 
 class MyApplication(AdamoApplication):
@@ -34,18 +34,27 @@ class MyApplication(AdamoApplication):
 
         ds = self.sess.query(Quotes)
         q = random.choice(ds)
-        fortune = q.abstract
+        fortune = q.abstract.strip()
+        if q.author is not None:
+            fortune += " ("+str(q.author)+")"
         frm.addLabel(label="Random Quote:",
                      doc=fortune+('\n'*10))
         
         m = frm.addMenu("&File")
         m.addItem(label="&Quit",action=frm.close)
 
-        m = frm.addMenu("&Data")
-        m.addItem(label="&Nations").setHandler(self.showDataGrid,
+        m = frm.addMenu("&Contacts")
+        m.addItem(label="&Partners").setHandler(self.showTableGrid,
+                                                Partners)
+        m.addItem(label="&Cities").setHandler(self.showTableGrid,
+                                              Cities)
+        m.addItem(label="&Nations").setHandler(self.showTableGrid,
                                                Nations)
-        m.addItem(label="&Persons").setHandler(self.showDataGrid,
-                                               Persons)
+        m = frm.addMenu("&Sales")
+        OUT = self.getSession().peek(Journals,'OUT')
+        m.addItem(label="&Invoices").setHandler(self.showTableGrid,
+                                                Invoices,
+                                                jnl=OUT)
         m = frm.addMenu("&?")
         m.addItem(label="&About",action=self.showAbout)
         return frm

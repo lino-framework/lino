@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import types
+import datetime
 
 from lino.adamo import datatypes 
 from lino.adamo.rowattrs import Field, Pointer #, Detail
@@ -80,7 +81,13 @@ class SqlConnection(Connection):
         elif val is False:
             return '0'
         elif isinstance(type, datatypes.DateType):
-            return "%s" % str(val)
+            # 20050128 return "%s" % str(val)
+            return str(val.toordinal())
+        elif isinstance(type, datatypes.TimeType):
+            return "'%s'" % str(val).replace("'", "''") 
+        elif isinstance(type, datatypes.DurationType):
+            s = type.format(val)
+            return "'%s'" % s.replace("'", "''") 
         elif isinstance(type, datatypes.IntType):
             return "%s" % str(val)
         #elif isinstance(val, DateTime):
@@ -96,16 +103,23 @@ class SqlConnection(Connection):
         raise TypeError, repr(val)
     
 
-    def sql2value(self,val,type):
-        if val is None:
+    def sql2value(self,s,type):
+        #print "sql.sql2value() :", s, type
+        if s is None:
             return None
+        elif isinstance(type, datatypes.DateType):
+            return datetime.date.fromordinal(s)
         elif isinstance(type, datatypes.IntType):
-            return int(val)
+            return int(s)
+        elif isinstance(type, datatypes.TimeType):
+            return type.parse(s)
+        elif isinstance(type, datatypes.DurationType):
+            return type.parse(s)
         elif isinstance(type, datatypes.PriceType):
-            return int(val)
+            return int(s)
         #elif type == self.schema.areaType:
         #   return type.parse(val)
-        return val
+        return s
         
     def type2sql(self,type):
         if isinstance(type, datatypes.IntType):
@@ -120,13 +134,17 @@ class SqlConnection(Connection):
             return 'INT'
         #elif type == self.schema.areaType:
         #   return 'VARCHAR(%d)' % 30 # area names are limited to 30 chars
+        elif isinstance(type, datatypes.TimeType):
+            return 'CHAR(%d)' % type.width
+        elif isinstance(type, datatypes.DurationType):
+            return 'CHAR(%d)' % type.width
         elif isinstance(type, datatypes.StringType):
             if type.width < 20:
                 return 'CHAR(%d)' % type.width
             else:
                 return 'VARCHAR(%d)' % type.width
         else:
-            raise "%s : bad type" % str(type)
+            raise TypeError, repr(type)
 
     def mustCreateTables(self):
         console.debug('mustCreateTables '+str(self._status))
@@ -354,9 +372,7 @@ class SqlConnection(Connection):
                  "len(%s) != len(%s)" % (repr(id),
                                          repr(table.getPrimaryAtoms()))
         sql = "SELECT "
-        l = []
-        for atom in clist.getAtoms():
-            l.append(atom.name) 
+        l = [a.name for a in clist.getAtoms()]
         sql += ", ".join(l)
         sql += " FROM %s WHERE " % table.getTableName()
         
@@ -375,9 +391,17 @@ class SqlConnection(Connection):
         
         assert csr.rowcount == 1,\
                  "%s.peek(%s) found %d rows" % (table.getName(),\
-                                                          repr(id),\
-                                                          csr.rowcount)
-        return csr.fetchone()
+                                                repr(id),\
+                                                csr.rowcount)
+        return self.csr2atoms(clist,csr.fetchone())
+    
+    def csr2atoms(self,clist,sqlatoms):
+        l = []
+        i = 0
+        for a in clist.getAtoms():
+            l.append(self.sql2value(sqlatoms[i],a.type))
+            i += 1
+        return l
 
         
     def executeZap(self,table):
@@ -416,19 +440,13 @@ class SqlConnection(Connection):
 
         atomicRow = query.row2atoms(row)
 
-
-##      if table.getTableName() == "Nations":
-##          if row.id =="be":
-##              print atomicRow
-##              print row._values
-        
         sql = "UPDATE %s SET \n" % table.getTableName()
         
         l = []
         for atom in query.getFltAtoms(context): 
-            l.append("%s = %s" % ( atom.name,
-                                          self.value2sql( atomicRow[atom.index],
-                                                                atom.type)))
+            l.append("%s = %s" % (
+                atom.name,
+                self.value2sql(atomicRow[atom.index],atom.type)))
             
         sql += ", ".join(l)
         sql += " WHERE "
@@ -438,11 +456,26 @@ class SqlConnection(Connection):
         id = row.getRowId()
         for (name,type) in table.getPrimaryAtoms():
             l.append("%s = %s" % (name,
-                                         self.value2sql(id[i],type)))
+                                  self.value2sql(id[i],type)))
             i += 1
         sql += " AND ".join(l)
 
+        self.sql_exec(sql)
 
+    def executeDelete(self,row):
+        table = row._ds._table
+
+        sql = "DELETE FROM " + table.getTableName()
+        sql += " WHERE "
+
+        l = []
+        i = 0
+        id = row.getRowId()
+        for (name,type) in table.getPrimaryAtoms():
+            l.append("%s = %s" % (name,
+                                  self.value2sql(id[i],type)))
+            i += 1
+        sql += " AND ".join(l)
         self.sql_exec(sql)
 
 

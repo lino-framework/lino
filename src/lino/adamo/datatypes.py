@@ -23,7 +23,10 @@ another attempt to create a universal datatype definition model...
 
 """
 
+import datetime
+
 from lino.misc.descr import Describable
+from lino.adamo.exceptions import DataVeto
 
 ERR_FORMAT_NONE = "caller must handle None values"
 ERR_PARSE_EMPTY = "caller must handle empty strings"
@@ -50,6 +53,11 @@ class Type(Describable):
     def validate(self,value):
         pass
     
+    def getPreferredWidth(self):
+        #note: for StringType, self.width is an instance variable, for
+        #other classes it is a class variable.
+        return self.width
+    
         
     
 class StringType(Type):
@@ -65,6 +73,7 @@ class StringType(Type):
         assert v is not None, ERR_FORMAT_NONE
         return str(v)
         
+    
 class PasswordType(StringType):
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
@@ -89,15 +98,81 @@ class IntType(Type):
         assert len(s), ERR_PARSE_EMPTY
         return int(s)
 
+    
 class DateType(Type):
+    width = 10
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        s = s.replace(".","-")
+        l = s.split("-")
+        if len(l) == 3:
+            l = map(int,l)
+            return datetime.date(*l)
+        elif len(l) == 1:
+            assert len(s) == 8, repr(s)
+            y = int(s[0:4])
+            m = int(s[4:6])
+            d = int(s[6:8])
+            return datetime.date(y,m,d)
+        else:
+            raise ValueError, repr(s)
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        #return repr(v) # "[-]yyyymmdd"
+        return v.isoformat()
+    
+    def validate(self,value):
+        if not isinstance(value,datetime.date):
+            raise repr(value)+" is not a date"
+            #raise DataVeto(repr(value)+" is not a date")
+
+    
+class TimeType(Type):
     width = 8
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
-        return ND(s)
+        l = s.split(":")
+        if len(l) != 3:
+            raise ValueError, repr(s)
+        l = map(int,l)
+        return datetime.time(*l)
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
-        return repr(v) # "[-]yyyymmdd"
+        return str(v)
 
+    def validate(self,value):
+        if not isinstance(value,datetime.time):
+            raise repr(value)+" is not a time"
+            #raise DataVeto(repr(value)+" is not a time")
+            
+    
+class DurationType(Type):
+    width = 8
+    fmt = "hh.mm.ss" # currently only possible fmt
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        l = s.split(".")
+        if len(l) == 3:
+            hours = int(l[0])
+            minutes = int(l[1])
+            seconds = int(l[2])
+            return datetime.timedelta(0,seconds,0,0,minutes,hours)
+        elif len(l) == 2:
+            minutes = int(l[0])
+            seconds = int(l[1])
+            return datetime.timedelta(0,seconds,0,0,minutes)
+        else:
+            raise ValueError, repr(s)
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        h = v.seconds / 3600
+        m = (v.seconds - h * 3600) / 60
+        s = v.seconds - h * 3600 - m*60
+        return "%02d.%02d.%02d" % (h,m,s)
+
+    def validate(self,value):
+        if not isinstance(value,datetime.timedelta):
+            raise DataVeto(repr(value)+" is not a timedelta")
 
 class AutoIncType(IntType):
     pass
@@ -127,13 +202,12 @@ class AmountType(IntType):
 class PriceType(IntType):
     pass
 
-
-
 STRING = StringType()
 PASSWORD = PasswordType()
 MEMO = MemoType()     
 DATE = DateType()     
-TIME = StringType(width=8)
+TIME = TimeType() # StringType(width=8)
+DURATION = DurationType() 
 INT = IntType() 
 BOOL = BoolType()
 AMOUNT = AmountType()
@@ -151,6 +225,7 @@ __all__ = [
     'MEMO',
     'DATE',
     'TIME',
+    'DURATION',
     'INT',
     'BOOL',
     'AMOUNT',
@@ -162,3 +237,10 @@ __all__ = [
     'IMAGE',
     'LOGO',
     ]
+
+def itod(i):
+    return stod(str(i))
+
+def stod(s):
+    return DATE.parse(s)
+

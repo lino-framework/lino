@@ -22,7 +22,8 @@ from lino.ui import console
 from lino.oogen import Document
 
 def main(argv):
-    console.copyleft(name="Lino/oogen", years='2004-2005')
+    console.copyleft(name="Lino pds2oo",
+                     years='2004-2005')
     parser = console.getOptionParser(
         usage="usage: %prog [options] PDSFILE",
         description="""\

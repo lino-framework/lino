@@ -19,6 +19,7 @@
 import os
 
 from lino.forms.base import Application
+from lino.adamo.datasource import Datasource
 
 class AdamoApplication(Application):
 
@@ -31,6 +32,9 @@ class AdamoApplication(Application):
         """just an idea... for later when there is a default
         makeMainForm method."""
         pass
+
+    def getSession(self):
+        return self.sess
 
     def parse_args(self,
                    argv=None,
@@ -52,9 +56,13 @@ class AdamoApplication(Application):
     def startup(self,schema):
         self.sess = schema.quickStartup(filename=self.filename)
         
-    def showDataGrid(self,tc,**kw):
+    def showTableGrid(self,tc,**kw):
         ds = self.sess.query(tc,**kw)
-        frm = self.addForm(label=ds.getLabel())
+        return self.showDataGrid(ds)
+    
+    def showDataGrid(self,ds,**kw):
+        assert isinstance(ds,Datasource)
+        frm = self.mainForm.addForm(label=ds.getLabel(),**kw)
         frm.addDataGrid(ds)
         frm.show()
 
@@ -81,3 +89,10 @@ class MirrorLoaderApplication(AdamoApplication):
         (options, args) = AdamoApplication.parse_args(self,argv)
         self.loadfrom = options.loadfrom
         return (options, args)
+
+    def getLoaders(self):
+        return []
+    
+    def startup(self,schema):
+        schema.registerLoaders(self.getLoaders())
+        return AdamoApplication.startup(self,schema)

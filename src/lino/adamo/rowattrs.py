@@ -43,8 +43,11 @@ class RowAttribute(Describable):
         self._onValidate = []
         
     def validate(self,row,value):
-        if value is None and self._isMandatory:
-            raise DataVeto("may not be empty")
+        if value is None:
+            if self._isMandatory:
+                raise DataVeto("may not be empty")
+            else:
+                return
         for v in self._onValidate:
             v(row,value)
     
@@ -207,8 +210,10 @@ class Field(RowAttribute):
         return self.type.format(v)
         
     def validate(self,row,value):
-        self.type.validate(value)
+        if value is not None:
+            self.type.validate(value)
         RowAttribute.validate(self,row,value)
+        
     def parse(self,s):
         return self.type.parse(s)
         

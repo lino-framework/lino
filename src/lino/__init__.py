@@ -16,7 +16,9 @@ This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information.""" % __version__
 
-__credits__ = ""
+import sys
+__credits__ = "Python %d.%d.%d %s\n" % sys.version_info[0:4]
+
 try:
     import wx
     __credits__ += "wxPython " + wx.__version__ + "\n"
@@ -35,3 +37,4 @@ try:
 except ImportError:
     pass
         
+

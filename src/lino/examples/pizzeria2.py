@@ -19,11 +19,8 @@
 from pizzeria import Customers, Orders, OrderLines, Products, \
      populate, Pizzeria
 from lino.adamo import *
+from lino.adamo.datatypes import itod
 from lino import adamo
-
-class ServicesPlugin(SchemaPlugin):
-    def defineTables(self,schema):
-        schema.addTable(Services)
 
 class Services(Products):
     
@@ -45,12 +42,12 @@ def populate2(sess):
     s2 = SERV.appendRow(name="organize party",price=100)
     c3 = CUST.appendRow(name="Bernard")
 
-    o1 = ORDERS.appendRow(customer=c3,date="20040318")
+    o1 = ORDERS.appendRow(customer=c3,date=itod(20040318))
     q = o1.lines 
     q.appendRow(product=PROD.peek(1),qty=1)
     q.appendRow(product=s1,qty=1)
     
-    o2 = ORDERS.appendRow(customer=CUST.peek(1),date="20040319")
+    o2 = ORDERS.appendRow(customer=CUST.peek(1),date=itod(20040319))
     q = o2.lines 
     q.appendRow(product=PROD.peek(1),qty=2)
     q.appendRow(product=PROD.peek(2),qty=3)
@@ -60,7 +57,7 @@ def populate2(sess):
 
 
 
-def do_report(sess):    
+def do_report(sess):
     ORDERS = sess.query(Orders)
     o = ORDERS.peek(3)
     print "Order #:", o.id
@@ -78,7 +75,7 @@ def do_report(sess):
 def beginSession():
 
     schema = Pizzeria(label="Lucs second Pizza Restaurant")
-    schema.addPlugin(ServicesPlugin())
+    schema.addTable(Services)
     
     sess = schema.quickStartup()
     

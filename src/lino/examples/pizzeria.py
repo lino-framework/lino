@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,9 +22,10 @@ This is a short example to illustrate Adamo's basic idea.
 """
 
 from lino.adamo import *
-from lino import adamo
+from lino.adamo.datatypes import itod
+#from lino import adamo
 
-from lino.tools.normalDate import ND
+#from lino.tools.normalDate import ND
 
 # 1. Define the database schema
 
@@ -82,16 +83,12 @@ class OrderLines(Table):
                 return "product is mandatory"
 
 
-class BasePlugin(SchemaPlugin):
-    def defineTables(self,schema):
-        schema.addTable(Products)
-        schema.addTable(Customers)
-        schema.addTable(Orders)
-        schema.addTable(OrderLines)
-        
 def Pizzeria(**kw):
     schema = Schema(**kw)
-    schema.addPlugin(BasePlugin())
+    schema.addTable(Products)
+    schema.addTable(Customers)
+    schema.addTable(Orders)
+    schema.addTable(OrderLines)
     return schema
 
         
@@ -113,11 +110,11 @@ def populate(sess):
     p2 = PROD.appendRow(name="Pizza Marinara",price=7)
 
     o1 = ORDERS.appendRow(customer=c1,
-                          date=ND(20030816))
+                          date=itod(20030816))
     LINES.appendRow(ordr=o1,product=p1,qty=2)
 
 
-    o2 = ORDERS.appendRow(customer=c2,date=ND(20030816))
+    o2 = ORDERS.appendRow(customer=c2,date=itod(20030816))
     LINES.appendRow(ordr=o2,product=p1,qty=3)
     LINES.appendRow(ordr=o2,product=p2,qty=5)
 

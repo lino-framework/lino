@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,45 +20,33 @@
 
 """
 
-testing new races module, wrapped header labels and "d" or "*" as item
-in columnWidths
+tests new races module
+tests wrapped header labels and "d" or "*" as item in columnWidths
 
 """
 import os
 
 from lino.adamo import *
-from lino.tools.normalDate import ND
+from lino.adamo.datatypes import itod
+#from lino.tools.normalDate import ND
 from lino.ui import console
 from lino.misc.tsttools import TestCase, main
 
-from lino.schemas.sprl.addrbook import Persons
+from lino.apps.raceman import races
 
-from lino.schemas.sprl.races import Races, Participants, RaceTypes,\
-     Categories, Clubs
+#from lino.apps.raceman.races import Races, Participants, RaceTypes,\
+#     Categories, Clubs, Persons
 
-
-class BasePlugin(SchemaPlugin):
-    def defineTables(self,schema):
-        schema.addTable(Clubs)
-        schema.addTable(Persons)
-        schema.addTable(Categories)
-        schema.addTable(RaceTypes)
-        schema.addTable(Races)
-        schema.addTable(Participants)
-        
-        
         
 class Case(TestCase):
     
     def test01(self):
         schema = Schema(label="Raceman Report Tester")
-        schema.addPlugin(BasePlugin())
+        races.setupSchema(schema)
 
         sess = schema.quickStartup()
 
-
-
-        PERSONS = sess.query(Persons)
+        PERSONS = sess.query(races.Persons)
         norbert = PERSONS.appendRow( name="Ausdemwald",
                                      firstName="Norbert",
                                      sex="M",
@@ -68,32 +56,33 @@ class Case(TestCase):
                                    sex="M",
                                    birthDate="19800505")
 
-        RACES = sess.query(Races)
-        race = RACES.appendRow(date=ND(20040112),name1="test race")
-        race.participants_by_race.appendRow(person=norbert,
-                                            dossard="0012",
-                                            time="13:30:10")
-        race.participants_by_race.appendRow(person=edgar,
-                                            dossard="0013",
-                                            time="12:10:80")
+        RACES = sess.query(races.Races)
+        race = RACES.appendRow(date=itod(20040112),name1="test race")
+        race.participants.appendRow(
+            person=norbert,
+            dossard="0012",
+            duration=DURATION.parse("00.55.10"))
+        race.participants.appendRow(
+            person=edgar,
+            dossard="0013",
+            duration=DURATION.parse("01.10.50"))
 
         sess.startDump()
-        q = sess.query(Participants,
-                       "time dossard person.name person.firstName",
-                       race=race,
-                       orderBy="time dossard",
-                       pageLen=10)
+        q = race.participants.query(
+            "duration dossard person.name person.firstName",
+            orderBy="duration dossard",
+            pageLen=10)
         q.executeReport(columnWidths="d d 20 15")
         s = sess.stopDump()
         #print s
         self.assertEquals(s,"""\
 Participants
 ============
-time    |doss|name                |firstName      
+duration|doss|name                |firstName      
         |ard |                    |               
 --------+----+--------------------+---------------
-12:10:80|0013|Ausdemwald          |Edgar          
-13:30:10|0012|Ausdemwald          |Norbert        
+00.55.10|0012|Ausdemwald          |Norbert        
+01.10.50|0013|Ausdemwald          |Edgar          
 """)
 
         sess.shutdown()

@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -26,6 +26,7 @@ Logical columns (row attributes) versus physical columns (atoms)
 """
 
 from lino.misc.tsttools import TestCase, main
+from lino.adamo.datatypes import itod
 from lino.schemas.sprl import demo
 
 from lino.schemas.sprl.tables import \
@@ -71,7 +72,7 @@ class Case(TestCase):
         self.assertEqual(count,0)
 
         # create a new invoice :
-        i = invoices.appendRow(jnl,"2003-08-16","test")
+        i = invoices.appendRow(jnl,itod(20030816),"test")
         
         """
         The `seq` field of INVOICES is an auto-incrementing integer.

@@ -92,6 +92,7 @@ class InnoScript:
             print >> ofi, r'Name: "{group}\%s"; Filename: "{app}\%s"' % \
                   (self.name, path)
         print >> ofi, 'Name: "{group}\Uninstall %s"; Filename: "{uninstallexe}"' % self.name
+        ofi.close()
 
     def compile(self):
         try:
@@ -221,8 +222,11 @@ if 'raceman' in args:
     
     excludes.remove('wx')
 
-    console_targets = ['results']
-    windows_targets = ['arrivals']
+    console_targets = []
+    windows_targets = ['raceman']
+
+    #console_targets = ['results']
+    #windows_targets = ['arrivals']
 
     dist_dir = opj(DIST_ROOT,"raceman")
     
@@ -237,9 +241,9 @@ if 'raceman' in args:
 An uncomplete race manager.
 Register participants, input arrival times,
 generate results report.""",
-        console=[ opj("apps","raceman",t+".py")
+        console=[ opj("src", "lino", "apps","raceman",t+".py")
                   for t in console_targets],
-        windows=[ opj("apps","raceman",t+".py")
+        windows=[ opj("src", "lino", "apps","raceman",t+".py")
                   for t in windows_targets],
         options= { "py2exe": {
         "compressed": 1,

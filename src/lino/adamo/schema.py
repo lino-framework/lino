@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -68,7 +68,7 @@ class Schema(Describable):
         self._populators = []
         
         self.plugins = AttrDict()
-        self.forms = AttrDict()
+        #self.forms = AttrDict()
         self.options = AttrDict(d=kw)
         
         center.addSchema(self)
@@ -101,6 +101,13 @@ class Schema(Describable):
         #name = table.getTableName()
         #self.tables.define(name,table)
         
+    def registerLoaders(self,loaders):
+        for l in loaders:
+            it = self.findImplementingTables(l.tableClass)
+            assert len(it) == 1
+            it[0].setMirrorLoader(l)
+
+            
     def addPlugin(self,plugin):
         assert isinstance(plugin,SchemaPlugin),\
                  repr(plugin)+" is not a SchemaPlugin"
@@ -112,11 +119,11 @@ class Schema(Describable):
         self.plugins.define(name,plugin)
 
 
-    def addForm(self,cl):
-        assert not self._initDone,\
-                 "Too late to declare new forms in " + repr(self)
-        assert issubclass(cl,Form)
-        self.forms.define(cl.name,cl)
+##     def addForm(self,cl):
+##         assert not self._initDone,\
+##                  "Too late to declare new forms in " + repr(self)
+##         assert issubclass(cl,Form)
+##         self.forms.define(cl.name,cl)
 
     def addPopulator(self,p):
         self._populators.append(p)

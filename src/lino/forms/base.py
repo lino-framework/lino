@@ -25,6 +25,9 @@ from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
 #from lino import ui #import console
 
+from lino.adamo.exceptions import InvalidRequestError
+
+
 
 class Component(Describable):
     def __init__(self,owner,*args,**kw):
@@ -66,8 +69,12 @@ class Button(Component):
         frm = self.getForm()
         frm.store()
         frm.lastEvent = self
-        #self._action(frm,*(self._args),**(self._kw))
-        self._action(*(self._args),**(self._kw))
+        try:
+            self._action(*(self._args),**(self._kw))
+        except InvalidRequestError,e:
+            frm.error(str(e))
+        #except Exception,e:
+        #    frm.error(str(e))
         
 
 class BaseEntry(Component):
@@ -203,39 +210,77 @@ class MenuBar(Component):
         return i
 
 
-class DataGrid(Component):    
-    def __init__(self,owner,ds,*args,**kw):
-        Component.__init__(self,owner,*args,**kw)
+class Navigator:
+    def __init__(self,ds):
         self.ds = ds
         
+    def setupMenu(self):
         frm = self.getForm()
         m = frm.addMenu("file",label="&File")
-        m.addItem(label="&Exit",action=frm.close)
+        m.addItem(label="&Exit",
+                  action=frm.close,
+                  accel="ESC")
         m = frm.addMenu("row",label="&Row")
-        m.addItem(label="&Print",action=self.printSelectedRows,
+        m.addItem(label="&Print",
+                  action=self.printSelectedRows,
                   accel="F7")
+        m.addItem(label="&Delete this row",
+                  action=self.deleteSelectedRows,
+                  accel="DEL")
+        m.addItem(label="&Insert new row",
+                  action=self.insertRow,
+                  accel="INS")
+        self.ds.getLeadTable().setupMenu(self)
 
+    def deleteSelectedRows(self):
+        if not self.getForm().confirm(
+            "Delete %d rows. Are you sure?" % \
+            len(self.getSelectedRows())):
+            return
+        for i in self.getSelectedRows():
+            row = self.ds[i].delete()
+        self.refresh()
+
+    def insertRow(self):
+        row = self.ds.appendRow()
+        row.unlock()
+    
     def printSelectedRows(self):
         #print "printSelectedRows()", self.getSelectedRows()
-        workdir = "c:\\temp"
+        #workdir = "c:\\temp"
+        workdir = self.getForm().app.tempDir
         from lino.oogen import Document
         doc = Document("1")
         for i in self.getSelectedRows():
             row = self.ds[i]
-            row.writeReport(doc)
+            row.printRow(doc)
         outFile = opj(workdir,"raceman_report.sxc")
         doc.save(outFile,showOutput=True)
+
+    def getSelectedRows(self):
+        raise NotImplementedError
+
+    def getCurrentRow(self):
+        l = self.getSelectedRows()
+        if len(l) != 1:
+            raise InvalidRequestError("more than one row selected!")
+        return self.ds[l[0]]
+        
+
+
+class DataGrid(Navigator,Component):    
+    def __init__(self,owner,ds,*args,**kw):
+        Component.__init__(self,owner,*args,**kw)
+        Navigator.__init__(self,ds)
 
 
 def nop(x):
     pass
 
-class Navigator(Component):
+class DataNavigator(Navigator,Component):
     def __init__(self,owner,ds,afterSkip=nop,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
-        self.ds = ds
-        #if afterSkip is None:
-        #    afterSkip = lambda self: self.getForm().refresh()
+        Navigator.__init__(self,ds)
         self.afterSkip = afterSkip
         self.currentPos = 0
 
@@ -253,7 +298,8 @@ class Navigator(Component):
                 self.getForm().refresh()
 
 
-        
+    def getSelectedRows(self):
+        return [self.currentPos]
         
 
 
@@ -299,6 +345,7 @@ class Container(Component):
         frm = self.getForm()
         e = frm.app.ui.tableEditorFactory(self,ds,*args,**kw)
         self._components.append(e)
+        frm.setMenuController(e)
         if name is not None:
             frm.tables.define(name,e)
         
@@ -306,6 +353,7 @@ class Container(Component):
         frm = self.getForm()
         e = frm.app.ui.navigatorFactory(self,ds,afterSkip,*args,**kw)
         self._components.append(e)
+        frm.setMenuController(e)
         
     def addPanel(self,direction): 
         frm = self.getForm()
@@ -376,6 +424,7 @@ class Form(Describable):
         self.menuBar = None
         self.lastEvent = None
         self.mainComp = app.ui.panelFactory(self,Container.VERTICAL)
+        self._menuControllers = []
         for m in ('addLabel',
                   'addEntry', 'addDataEntry',
                   'addDataGrid','addNavigator',
@@ -388,6 +437,13 @@ class Form(Describable):
 
     def getForm(self):
         return self
+
+    def setMenuController(self,c):
+        self._menuControllers.append(c)
+
+    def setupMenu(self):
+        for c in self._menuControllers:
+            c.setupMenu()
     
     def addForm(self,*args,**kw):
         "create a form with this as parent"
@@ -439,6 +495,25 @@ class Form(Describable):
         self.warning(msg)
         #print msg
         
+    def confirm(self,prompt,default="y"):
+        frm = self.addForm(label="Confirmation")
+        frm.addLabel(prompt)
+        p = frm.addPanel(Panel.HORIZONTAL)
+        ok = p.addOkButton()
+        cancel = p.addCancelButton()
+        if default == "y":
+            ok.setDefault()
+        else:
+            cancel.setDefault()
+        frm.showModal()
+        return frm.lastEvent == ok
+
+    def warning(self,msg):
+        frm = self.addForm(label="Warning")
+        frm.addLabel(msg)
+        frm.addOkButton()
+        frm.showModal()
+
 
         
 
@@ -470,19 +545,6 @@ class Application(Describable):
     def addForm(self,parent=None,*args,**kw):
         return self.ui.formFactory(self,parent,*args,**kw)
     
-    def confirm(self,prompt,default="y"):
-        frm = self.addForm(label="Confirmation")
-        frm.addLabel(prompt)
-        p = frm.addPanel(Panel.HORIZONTAL)
-        ok = p.addOkButton()
-        cancel = p.addCancelButton()
-        if default == "y":
-            ok.setDefault()
-        else:
-            cancel.setDefault()
-        frm.showModal()
-        return frm.lastEvent == ok
-
     def showAbout(self):
         s = self.name
         if self.version is not None:
@@ -540,7 +602,7 @@ class BaseUI:
     buttonFactory = Button
     panelFactory = Panel
     tableEditorFactory = DataGrid
-    navigatorFactory = Navigator
+    navigatorFactory = DataNavigator
     formFactory = Form
     
 

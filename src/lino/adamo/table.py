@@ -123,6 +123,10 @@ class Table(FieldContainer,SchemaComponent,Describable):
     #   return self.getTableName()
 
 
+    def setupMenu(self,nav):
+        "override this to insert specific actions to a form's menu"
+        pass
+    
     def init1(self):
         #print "%s : init1()" % self._tableName
         self.init()
@@ -345,11 +349,37 @@ class BabelTable(Table):
             return self.name
 
 import os
+import datetime
+from lino.adamo.datatypes import TIME, DURATION
+from lino.adamo.exceptions import DataVeto, DatabaseError
+from lino.ui import console
+from lino.tools import dbfreader
 
 class DbfMirrorLoader:
 
+    tableClass = NotImplementedError  # adamo tableClass
+    tableName = NotImplementedError   # name of external .DBF file
+
     def __init__(self,dbfpath="."):
         self.dbfpath = dbfpath
+    
+    def dbfdate(self,s):
+        if len(s.strip()) == 0:
+            return None
+        return datatypes.DATE.parse(s)
+
+    def dbftime(self,s):
+        if len(s.strip()) == 0:
+            return None
+        return datatypes.TIME.parse(s.replace('.',':'))
+    
+    def dbfduration(self,s):
+        s = s.strip()
+        if len(s) == 0:
+            return None
+        if s == "X":
+            return None
+        return datatypes.DURATION.parse(s.replace(':','.'))
     
     def load(self,q):
         console.info(q.getLabel())
@@ -360,9 +390,9 @@ class DbfMirrorLoader:
         for dbfrow in f:
             try:
                 self.appendFromDBF(q,dbfrow)
-            except adamo.DataVeto,e:
+            except DataVeto,e:
                 console.info(str(e))
-            except adamo.DatabaseError,e:
+            except DatabaseError,e:
                 console.info(str(e))
             except ValueError,e:
                 console.info(str(e))

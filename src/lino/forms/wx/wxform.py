@@ -132,7 +132,8 @@ class DataGrid(base.DataGrid):
         box.Add(ctrl) #, 0, wx.CENTER,10)
         self.wxctrl = ctrl
     def refresh(self):
-        pass
+        self.wxctrl.ForceRefresh()
+
     def getSelectedRows(self):
         #return self.wxctrl.GetSelectedRows()
         l = self.wxctrl.GetSelectedCells()
@@ -141,7 +142,7 @@ class DataGrid(base.DataGrid):
         return l
                 
         
-class Navigator(base.Navigator):
+class DataNavigator(base.DataNavigator):
     
     def setup(self,parent,box):
         frm = self.getForm()
@@ -333,7 +334,8 @@ class Form(base.Form):
         else:
             self.wxctrl.SetStatusText(msg)
             
-    def setup(self): 
+    def setup(self):
+        self.setupMenu()
         if self._parent is None:
             #self.app = WxApp()
             wxparent = None
@@ -476,7 +478,7 @@ class WxUI:
     buttonFactory = Button
     panelFactory = Panel
     tableEditorFactory = DataGrid
-    navigatorFactory = Navigator
+    navigatorFactory = DataNavigator
     formFactory = Form
     
     def __init__(self,app):

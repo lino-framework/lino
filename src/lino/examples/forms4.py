@@ -23,11 +23,10 @@ from lino.schemas.sprl.tables import Partners
 
 def main():
     sess = demo.beginSession()
-    ds = sess.query(Partners,"name firstName email phone city")
+    ds = sess.query(Partners,"name firstName email phone city id")
     frm = console.addForm()
     ds.setupForm(frm)
-    frm.showModal()
-    sess.shutdown()
+    frm.show()
 
 if __name__ == "__main__":
     console.parse_args()

@@ -30,8 +30,8 @@ class BasePlugin(adamo.SchemaPlugin):
     def defineTables(self,schema):
         schema.addTable(Languages,label="Languages")
         schema.addTable(Users, label="Users" )
-        schema.addForm(LoginForm)
-        schema.addForm(MainForm)
+        #schema.addForm(LoginForm)
+        #schema.addForm(MainForm)
 
 
 class WebPlugin(adamo.SchemaPlugin):

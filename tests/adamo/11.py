@@ -24,6 +24,7 @@
 """
    
 from lino import adamo #import quickdb, beginQuickSession
+from lino.adamo.datatypes import itod
 from lino.misc import tsttools 
 from lino.examples import pizzeria, pizzeria2
 from lino.examples.pizzeria2 import Services, Customers,\
@@ -74,11 +75,11 @@ responsible
         p = PROD.peek(3)
         self.assertEqual(p.id,3)
         ORDERS.startDump()
-        o = ORDERS.appendRow(date="20040322",customer = c)
+        o = ORDERS.appendRow(date=itod(20040322),customer = c)
         #SELECT MAX(id) FROM ORDERS;
         self.assertEquivalent(ORDERS.stopDump(),"""\
 INSERT INTO Orders ( id, date, customer_id, totalPrice, isRegistered )
-            VALUES ( 5, 20040322, 4, NULL, NULL );
+            VALUES ( 5, 731662, 4, NULL, NULL );
 """)
         
         LINES.startDump()
@@ -166,12 +167,12 @@ SELECT id, name, price FROM Products WHERE id = 1;
         p1 = PROD.peek(1)
         p2 = PROD.peek(2)
 
-        o1 = ORDERS.appendRow(customer=c3,date="20040318")
+        o1 = ORDERS.appendRow(customer=c3,date=itod(20040318))
         q = o1.lines.query()
         q.appendRow(product=s1,qty=1)
         q.appendRow(product=p1,qty=1)
 
-        o2 = ORDERS.appendRow(customer=CUST[1],date="20040319")
+        o2 = ORDERS.appendRow(customer=CUST[1],date=itod(20040319))
         q = o2.lines.query()
         q.appendRow(product=p1,qty=2)
         q.appendRow(product=p2,qty=3)

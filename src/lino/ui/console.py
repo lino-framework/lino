@@ -22,7 +22,6 @@ from optparse import OptionParser
 from cStringIO import StringIO
 
 from lino import __version__, __author__
-from lino.reports.plain import Report
 
 """
 
@@ -98,9 +97,6 @@ class Console:
     def isQuiet(self):
         return (self._verbosity < 0)
     
-    def report(self,**kw):
-        return Report(writer=self.out,**kw)
-
 
     def log_message(self,msg):
         "Log a message to stdout."
@@ -265,6 +261,10 @@ class Console:
         from lino.textprinter.plain import PlainDocument
         return PlainDocument(self.out)
         
+    def report(self,**kw):
+        from lino.reports.plain import Report
+        return Report(writer=self.out,**kw)
+
 
 _syscon = Console()
 

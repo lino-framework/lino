@@ -27,6 +27,7 @@ from lino import adamo
 #from lino.schemas.sprl.sprl import makeSchema
 from lino.schemas.sprl import sprl, tables 
 from lino.tools.normalDate import ND
+from lino.adamo.datatypes import itod
 
 
 def makeSchema(populate=True,
@@ -281,7 +282,7 @@ class DemoPopulator(Populator):
     def populateInvoices(self,q):
         self.invoice = q.appendRow(jnl=self.OUT,
                                    partner=self.anton,
-                                   date=ND(20030822))
+                                   date=itod(20030822))
     def populateInvoiceLines(self,q):
         q.appendRow(invoice=self.invoice,product=self.chair,qty=4)
         q.appendRow(invoice=self.invoice,product=self.table,qty=1)
@@ -290,9 +291,10 @@ class DemoPopulator(Populator):
     def populateQuotes(self,q):
         q = q.query('lang abstract author')
 
-        q.appendRow(self.fr, """Entre nous soit dit, bonnes gens:
-        pour reconnaître que l'on est pas intelligent il faudrait
-        l'être. """, self.brassens)
+        q.appendRow(self.fr, """\
+Entre nous soit dit, bonnes gens:
+pour reconnaître que l'on est pas intelligent il faudrait
+l'être. """, self.brassens)
 
         q.appendRow(self.de, """\
 Körper, Geist und Seele sind die drei Bereiche des Menschen. Der
@@ -312,14 +314,16 @@ Many people are desperately looking for some wise advice which will
 recommend that they do what they want to do.    
 """, self.anon)
 
-        q.appendRow(self.en, """Carelessly planned projects take
-        three times longer to complete than expected.  Carefully planned
-        projects take four times longer to complete than expected,
-        mostly because the planners expect their planning to reduce the
-        time it takes. """,self.anon)
+        q.appendRow(self.en, """
+Carelessly planned projects take
+three times longer to complete than expected.  Carefully planned
+projects take four times longer to complete than expected,
+mostly because the planners expect their planning to reduce the
+time it takes. """,self.anon)
 
-        q.appendRow(self.en, """Don't believe everything you hear or
-        anything you say.""",self.anon)
+        q.appendRow(self.en, """\
+Don't believe everything you hear or anything you say.""",
+                    self.anon)
 
         q = self.mencken.quotesByAuthor.query('lang abstract')
         quote = q.appendRow(self.en,"""\
@@ -337,7 +341,9 @@ Conscience is the inner voice that warns us that someone may be looking.
             # cannot appendRow with value outside of leadTable:
             q = q.query('lang abstract author.firstName author.name')
             q.appendRow(self.en,
-                        """Trusting a scientist on questions of metaphysics is like paying someone else to worship God for you.""",\
+                        """\
+Trusting a scientist on questions of metaphysics is like paying
+someone else to worship God for you.""",\
                     "Bill","Welton"\
                     )
 

@@ -269,8 +269,17 @@ class Arrivals(Table):
         
 
 
-TABLES = (Races, Participants, Persons, RaceTypes, Categories,
-     Arrivals, Clubs)
+# order of tables is important: tables will be populated in this order
+TABLES = (
+    Clubs,
+    Persons,
+    RaceTypes,
+    Categories,
+    Races,
+    Participants,
+    Arrivals,
+    )
+
 
 def setupSchema(schema):
     for t in TABLES:

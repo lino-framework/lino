@@ -46,7 +46,7 @@ class Documents(Table):
 		self.addField('date',DATE)
 		self.addField('closed',BOOL)
 
-		self.addPointer('jnl',Journals)
+		self.addPointer('jnl',Journals).setDetail("documents")
 		self.setPrimaryKey("jnl seq")
 
 	class Instance(Table.Instance):

@@ -1,5 +1,4 @@
 COPYING.txt
-MKDIST.BAT
 README.txt
 TODO.txt
 genapidoc.py
@@ -8,11 +7,6 @@ mkdist.py
 py2exe.bat
 upgrade.py
 warnlino.txt
-apps\raceman\__init__.py
-apps\raceman\arrivals.py
-apps\raceman\arrivals.txt
-apps\raceman\results.py
-apps\raceman\schema.py
 demo\db2html.py
 demo\lsaffre.py
 demo\mapi_sendmail.py
@@ -72,6 +66,7 @@ src\forum\iCal.py
 src\forum\locals.py
 src\forum\simplemapi.py
 src\lino\__init__.py
+src\lino\runscript.py
 src\lino\adamo\__init__.py
 src\lino\adamo\area.py
 src\lino\adamo\cachedstore.py
@@ -114,6 +109,13 @@ src\lino\adamo\dbds\sqlite_dbd.py
 src\lino\agui\__init__.py
 src\lino\agui\httpui.py
 src\lino\agui\snakelets.py
+src\lino\apps\__init__.py
+src\lino\apps\raceman\__init__.py
+src\lino\apps\raceman\arrivals.py
+src\lino\apps\raceman\raceman.py
+src\lino\apps\raceman\races.py
+src\lino\apps\raceman\results.py
+src\lino\apps\raceman\schema.py
 src\lino\examples\__init__.py
 src\lino\examples\forms1.py
 src\lino\examples\forms2.py
@@ -126,6 +128,7 @@ src\lino\examples\reports1.py
 src\lino\examples\textprinter1.py
 src\lino\examples\voc.py
 src\lino\forms\__init__.py
+src\lino\forms\application.py
 src\lino\forms\base.py
 src\lino\forms\wx\__init__.py
 src\lino\forms\wx\main.py
@@ -178,7 +181,6 @@ src\lino\schemas\sprl\news.py
 src\lino\schemas\sprl\products.py
 src\lino\schemas\sprl\projects.py
 src\lino\schemas\sprl\quotes.py
-src\lino\schemas\sprl\races.py
 src\lino\schemas\sprl\sales.py
 src\lino\schemas\sprl\sdk.py
 src\lino\schemas\sprl\sprl.py
@@ -248,7 +250,6 @@ src\lino\textprinter\pdfdoc.py
 src\lino\textprinter\plain.py
 src\lino\textprinter\winprn.py
 src\lino\timtools\__init__.py
-src\lino\timtools\call.py
 src\lino\timtools\ftpsync.py
 src\lino\timtools\mail.py
 src\lino\timtools\pds2pdf.py

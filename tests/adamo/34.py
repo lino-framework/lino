@@ -41,15 +41,16 @@ class Case(unittest.TestCase):
         q.setupReport(rpt)
         rpt.execute(q)
         s = console.stopDump()
+        #print s
         self.assertEqual(s,"""\
 OrderLines
 ==========
-date    |customer  
---------+----------
-20030816|Henri     
-20030816|James     
-20040318|Bernard   
-20040319|Henri     
+date      |customer  
+----------+----------
+2003-08-16|Henri     
+2003-08-16|James     
+2004-03-18|Bernard   
+2004-03-19|Henri     
 """)        
         
         

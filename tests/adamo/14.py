@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,9 +18,11 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import datetime
 from unittest import TestCase, main
 
-from lino.tools.normalDate import ND
+from lino.adamo.datatypes import itod
+#from lino.tools.normalDate import ND
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Events
@@ -35,13 +37,13 @@ class Case(TestCase):
         
     def test01(self):
         EVENTS = self.db.query(Events)
-        d = ND(20040413)
+        d = itod(20040413)
         for i in range(100):
             EVENTS.appendRow(date=d,
                              title="Event # %d" % i)
-            d += 1
+            d += datetime.timedelta(days=1)
 
-        e = EVENTS.findone(date=ND(20040501))
+        e = EVENTS.findone(date=itod(20040501))
         self.assertEqual(e.id,19)
         self.assertEqual(e.title,'Event # 18')
         #print e

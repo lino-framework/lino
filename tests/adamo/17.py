@@ -27,6 +27,7 @@ The first multi-language database
 """
 from lino.misc.tsttools import TestCase, main
 
+from lino.adamo.datatypes import itod
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Languages, News
 
@@ -42,8 +43,8 @@ class Case(TestCase):
         NEWS = self.db.query(News)
         LANGS = self.db.query(Languages)
         
-        n = NEWS.appendRow(date=20040428,title="test")
-        self.assertEqual(str(n.date),'20040428')
+        n = NEWS.appendRow(date=itod(20040428),title="test")
+        self.assertEqual(str(n.date),'2004-04-28')
 
         q = LANGS.query(orderBy="name")
         

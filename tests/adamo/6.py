@@ -50,7 +50,7 @@ James must pay 53 EUR
         "testing pizzeria2"
         self.assertEquivalent(catch_output(pizzeria2.main),"""\
 Order #: 3
-Date: 20040318
+Date: 2004-03-18
 Customer: Bernard
 ----------------------------------------
 Pizza Margerita        1     6

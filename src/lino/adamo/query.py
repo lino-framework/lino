@@ -653,15 +653,15 @@ class DataColumn:
 #   def getNeededAtoms(self,db):
 #       return
     
-    def format(self,value,context):
-        raise "no longer used?"
-        values = self.rowAttr.value2atoms(value,context)
-        #print self, ":", values
-        #if len(self._atoms) == 1:
-        #   return self._atoms[0].type.format(values[0])
-        assert len(values) == len(self._atoms)
-        l = [a.type.format(v) for v,a in zip(values,self._atoms)]
-        return ",".join(l)
+##     def format(self,value,context):
+##         raise "no longer used?"
+##         values = self.rowAttr.value2atoms(value,context)
+##         #print self, ":", values
+##         #if len(self._atoms) == 1:
+##         #   return self._atoms[0].type.format(values[0])
+##         assert len(values) == len(self._atoms)
+##         l = [a.type.format(v) for v,a in zip(values,self._atoms)]
+##         return ",".join(l)
         
     def parse(self,s,ds):
         l1 = s.split(',')
@@ -670,8 +670,8 @@ class DataColumn:
                              for a,s1 in zip(self._atoms,l1)]
         return self.atoms2value(atomicValues,ds._session)
         
-##  def format(self,v):
-##      return self.rowAttr.format(v)
+    def format(self,v):
+        return self.rowAttr.format(v)
         
 ##  def parse(self,s):
 ##      return self.rowAttr.parse(v)

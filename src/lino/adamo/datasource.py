@@ -562,7 +562,7 @@ class SimpleDatasource:
         row = self.getRowAt(offset)
         if row is None:
             msg = "%s[%d] (%d) rows" % (self._table.getTableName(),
-                                                 offset,len(self))
+                                        offset,len(self))
             raise IndexError,msg
         
         return row
@@ -575,12 +575,14 @@ class SimpleDatasource:
         if csr.rowcount == 0:
             return None
         assert csr.rowcount == 1
-        atomicRow = csr.fetchone()
-        # d = self._clist.at2d(atomicRow)
-        # return self._table.Row(self,d,False)
+        #atomicRow = csr.fetchone()
+        sqlatoms = csr.fetchone()
+        atomicRow = self.csr2atoms(sqlatoms)
         return self.atoms2row(atomicRow,False)
 
-
+    def csr2atoms(self,sqlatoms):
+        return self._connection.csr2atoms(self._clist,sqlatoms)
+    
     def peek(self,*id):
         assert len(id) == len(self._clist._pkColumns),\
                  "expected %d values but got %s" % \
@@ -651,8 +653,9 @@ class SimpleDatasource:
             #raise DataVeto("findone(%s) found %d rows" % (
             #   repr(knownValues), csr.rowcount))
         
-        atomicRow = csr.fetchone()
-        assert atomicRow is not None, repr(csr.rowcount)
+        sqlatoms = csr.fetchone()
+        assert sqlatoms is not None, repr(csr.rowcount)
+        atomicRow = self.csr2atoms(sqlatoms)
         #d = self._clist.at2d(atomicRow)
         #return self._table.Row(self,d,False)
         return self.atoms2row(atomicRow,False)
@@ -813,10 +816,11 @@ class DataIterator:
         return self
     
     def next(self):
-        atomicRow = self.csr.fetchone()
-        if atomicRow == None:
+        sqlatoms = self.csr.fetchone()
+        if sqlatoms == None:
             raise StopIteration
         self.recno += 1
+        atomicRow = self.ds.csr2atoms(sqlatoms)
         return self.ds.atoms2row(atomicRow,new=False)
 
 
@@ -975,7 +979,7 @@ class StoredDataRow(DataRow):
 ##     def getContext(self):
 ##         return self._ds.getContext()
     
-    def writeReport(self,doc):
+    def printRow(self,doc):
         rpt = doc.report(label=self.getLabel())
         for c in self:
             rpt.addColumn(lambda cell: cell.col.getLabel(),
@@ -1155,7 +1159,8 @@ class StoredDataRow(DataRow):
         self.__dict__["_dirty"] = False
         
 
-            
+    def delete(self):        
+        self._ds._connection.executeDelete(self)
 
     def makeComplete(self):
         if self._pseudo or self._complete or self._isCompleting:
