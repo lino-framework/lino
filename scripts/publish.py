@@ -1,3 +1,5 @@
+raise "publish is deprecated. use maketn and makelc instead"
+
 """
 publish prepares a local file tree for publishing to a web server.
 - rename all files to lower case
@@ -91,13 +93,13 @@ if __name__ == "__main__":
 		"Okay to rename %d directories and %d files [Yn]?" %
 				  (len(upperDirnames),len(upperFilenames))):
 		
+		for (o,n) in upperFilenames:
+			os.rename(o,n)
+		print "%d files renamed" % len(upperFilenames)
 		for (o,n) in upperDirnames:
 			os.rename(o,n)
 		print "%d directories renamed" % len(upperDirnames)
 
-		for (o,n) in upperFilenames:
-			os.rename(o,n)
-		print "%d files renamed" % len(upperFilenames)
 
 	# collect names of image files
 

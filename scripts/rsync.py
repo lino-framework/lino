@@ -145,7 +145,7 @@ def logError(message):
 	try:
 		sys.stderr.write(message + "\n")
 	except UnicodeEncodeError:
-		sys.stderr.write(message.encode("utf8"))
+		sys.stderr.write(message.encode("utf8")+"\n")
 
 
 def shouldUpdate(cookie, sink, target):
@@ -388,7 +388,7 @@ def main(argv):
 			cookie.relative = 1
 		elif o in ["-n", "--dry-run"]:
 			cookie.dry_run = 1
-		elif o in ["-t", "--time"]:
+		elif o in ["-t", "--times"]:
 			cookie.time = 1
 		elif o in ["-u", "--update"]:
 			cookie.update = 1

@@ -1,3 +1,5 @@
+#coding: latin1
+
 """\
 Usage : pds2pdf [options] FILE
 
@@ -8,22 +10,25 @@ Note that you can specify only one FILE.
 
 Options:
   
-  -o NAME, --output NAME   alternate name for the output file
-  -b, --batch              don't start Acrobat Reader on the generated pdf file
   -h, --help               display this text
+  -o NAME, --output NAME   alternate name for the output file
+  -b, --batch              don't start Acrobat Reader on the
+                           generated pdf file
+                           
 """
 
 import sys, getopt, os
 #from lino.timtools.pds2pdf import cli,__doc__
 #from lino.misc import gpl
-from lino import __version__, copyleft
+from lino import copyleft
 
 from lino.sdoc.pdf import PdfRenderer
 from lino.sdoc.pdsparser import main
 
 if __name__ == '__main__':
-	print "lino pds2pdf version " + __version__
-	print copyleft('2002-2003','Luc Saffre')
+	#print "lino pds2pdf version " + __version__
+	print copyleft("Lino pds2pdf",year='2002-2004',author='Luc Saffre')
+	#print copyleft('2002-2003','Luc Saffre')
 
 	try:
 		opts, args = getopt.getopt(sys.argv[1:],

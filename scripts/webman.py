@@ -20,11 +20,10 @@ OPTIONS:
 if __name__ == '__main__':
 	import os,sys
 	import getopt
-	#from lino.misc import gpl
-	from lino import __version__, copyleft
+	from lino import copyleft
+	from lino.webman import __version__
 	from lino.webman.static import wmm2html
 	
-	#print "WebMan version " + __version__
 	print copyleft('Lino/Webman', year='2003-2004')#,author='Luc Saffre')
 
 	try:
