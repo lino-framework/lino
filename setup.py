@@ -1,8 +1,8 @@
 # setup.py
-raise NotImplementedError
 """
 
-don't use setup.py. Just checkout the latest source to some directory and add it to your PYTHONPATH.
+don't use setup.py to install the lino package. Just checkout the
+latest source to some directory and add it to your PYTHONPATH.
 
 """
 from distutils.core import setup
@@ -31,14 +31,25 @@ import glob
 
 from lino import __version__
 
+dll_excludes = ['cygwin1.dll']
+excludes = [ "pywin", "pywin.debugger", "pywin.debugger.dbgcon",
+             "pywin.dialogs", "pywin.dialogs.list",
+             "Tkconstants","Tkinter","tcl",
+             "wx"
+             ]
+
 setup(name="timtools",
-		version=__version__,
-		description="Lino TIM tools",
+      version=__version__,
+      description="Lino TIM tools",
       author="Luc Saffre",
       author_email="luc.saffre@gmx.net",
       url="http://lino.sourceforge.net",
-		long_description="A collection of command-line tools",
-		console=["scripts\\pds2pdf.py",
-					"scripts\\prn2pdf.py",
-					"scripts\\openmail.py"]
+      long_description="A collection of command-line tools",
+      console=[r"src\lino\scripts\pds2pdf.py",
+               r"src\lino\scripts\prn2pdf.py",
+               r"src\lino\scripts\openmail.py"],
+      options= { "py2exe": { 
+                 "excludes" : excludes
+                 }}
+      
 )
