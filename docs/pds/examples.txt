@@ -11,7 +11,7 @@ Python Document Script.
 	from lino.sdoc import commands as pds
 	from lino.sdoc.pdf import PdfRenderer
 	from lino.sdoc.html import HtmlRenderer
-	from lino.sdoc.pdsparser import main
+	from lino.scripts.pds2pdf import main
 
 	renderers = (
 		HtmlRenderer,

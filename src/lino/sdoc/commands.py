@@ -1,3 +1,21 @@
+## Copyright Luc Saffre 2003-2004.
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 from reportlab.lib import colors
 from reportlab.lib import pagesizes
 # from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
@@ -25,34 +43,34 @@ document = None
 #inputfile = None
 
 def setTitle(*args,**kw):
-   return document.setTitle(*args,**kw)
+    return document.setTitle(*args,**kw)
 def getTitle(*args,**kw):
-   return document.getTitle(*args,**kw)
+    return document.getTitle(*args,**kw)
 
 def setAuthor(*args,**kw):
-   return document.setAuthor(*args,**kw)
+    return document.setAuthor(*args,**kw)
 def getAuthor(*args,**kw):
-   return document.getAuthor(*args,**kw)
+    return document.getAuthor(*args,**kw)
 
 def getTextWidth(*args,**kw):
-   return document.getTextWidth(*args,**kw)
+    return document.getTextWidth(*args,**kw)
 def setFeeder(*args,**kw):
-   return document.setFeeder(*args,**kw)
+    return document.setFeeder(*args,**kw)
 
 def getSourceFileName(*args,**kw):
-   return document.getSourceFileName(*args,**kw)
+    return document.getSourceFileName(*args,**kw)
 
 def formatParagraph(*args,**kw):
-   return document.formatParagraph(*args,**kw)
+    return document.formatParagraph(*args,**kw)
 
 def getPageNumber():
-   return document.renderer.getPageNumber()
+    return document.renderer.getPageNumber()
 def getOutputFileName():
-   return document.renderer.getFilename()
+    return document.renderer.getFilename()
 
 def formatDocument(**kw):
-   for k,v in kw.items():
-      setattr(document.docstyle,k,v)
+    for k,v in kw.items():
+        setattr(document.docstyle,k,v)
 
 
 
@@ -91,21 +109,21 @@ def li(*args,**kw): return document.li(*args,**kw)
 def beginDocument(outputfile,
                   renderer,
                   source=None):
-   global document
-   global stylesheet
+    global document
+    global stylesheet
    
-   document = Document(styles.getDefaultStyleSheet(), source)
-
-   stylesheet = document.stylesheet
+    document = Document(styles.getDefaultStyleSheet(), source)
+    
+    stylesheet = document.stylesheet
    
-   # a renderer is allowed to change the name of outputfile
-   renderer.open(outputfile)
-   document.begin(renderer)
+    # a renderer is allowed to change the name of outputfile
+    renderer.open(outputfile)
+    document.begin(renderer)
 
 
 
 def endDocument(showOutput=False):
-   document.end()
-   document.renderer.close(showOutput)
+    document.end()
+    document.renderer.close(showOutput)
    
 

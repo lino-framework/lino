@@ -7,35 +7,9 @@ Lino is implemented as a collection of independent command-line tools
 or "scripts". Here is the complete list and usage documentation for
 them.
 
-Some, but not all of these scripts are released as
-`TIM Tools <timtools.html>`__.
+Some of these scripts are available as standalone Windows executables.
+See `TIM Tools <timtools.html>`__
 
-.. contents::
-
-
-.. exec::
-
-   import sys,os
-   scriptsPath = os.path.join("..","scripts")
-   
-   def printdoc(name):
-      if name in ('setup'): return
-      print name
-      print '-'*len(name)
-      try:
-        mod = __import__(name)
-        print mod.__doc__
-      except Exception,e:
-        print
-        print str(e)
-        print
-
-   sys.path.insert(0,scriptsPath)
-   for fn in os.listdir(scriptsPath):
-      if fn.endswith('.py'):
-         printdoc(fn[:-3])
-   del sys.path[0]
-   
 
   
 
