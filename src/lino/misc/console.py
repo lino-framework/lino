@@ -65,10 +65,13 @@ class Console:
 			self.warning("wrong answer: "+s)
 
 
+	def progress(self,msg):
+		self.out.write(msg + "\n")
+		
 	def notify(self,msg):
 		if sound:
 			sound.asterisk()
-		self.out.write(msg + "\n")
+		self.progress(msg)
 
 	def warning(self,msg):
 		
@@ -130,6 +133,12 @@ def confirm(*args,**kw):
 
 def notify(*args,**kw):
 	return getSystemConsole().confirm(*args,**kw)
+
+def info(*args,**kw):
+	return getSystemConsole().info(*args,**kw)
+
+def progress(*args,**kw):
+	return getSystemConsole().progress(*args,**kw)
 
 
 ## def console_notify(msg):

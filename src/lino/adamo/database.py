@@ -70,7 +70,7 @@ class Database(Context,Describable):
 		
 	def getStoresById(self):
 		l = []
- 		for table in self.schema.getTableList():
+		for table in self.schema.getTableList():
 			try:
 				l.append(self._stores[table.getTableName()])
 			except KeyError:
@@ -81,7 +81,7 @@ class Database(Context,Describable):
 
  		for table in self.schema.getTableList(flt):
  			self._stores[table.getTableName()] = Store(conn, self, table)
-	
+
 
 	def getContentRoot(self):
 		return self.schema.getContentRoot(self)
@@ -154,11 +154,11 @@ class Database(Context,Describable):
 		self.startup()
 
 			
-	def checkIntegrity(self):
-		ctx = self.beginContext()
-		retval = ctx.checkIntegrity()
-		self.endContext(ctx)
-		return retval
+	#~ def checkIntegrity(self):
+		#~ ctx = self.beginContext()
+		#~ retval = ctx.checkIntegrity()
+		#~ self.endContext(ctx)
+		#~ return retval
 		
 
 ## 	def beginSession(self,d=None):

@@ -14,7 +14,7 @@ from lino.adamo import InvalidRequestError
 
 from lino.adamo.html import MemoParser
 from lino.adamo.widgets import Action
-from lino.adamo.forms import FormTemplate
+#from lino.adamo.forms import FormTemplate
 from lino.misc.attrdict import AttrDict
 
 from response import ContextedResponse

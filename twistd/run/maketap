@@ -1,0 +1,2 @@
+mktap web --path ../www --port 8088
+echo now run /etc/init.d/twistd restart

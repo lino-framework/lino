@@ -9,7 +9,7 @@
 #from lino.adamo.datasource import Datasource
 #from lino.adamo.schema import LayoutComponent
 
-raise "Skipper muss noch angepasst werden, dass er den neuen Report nutzt. Siehe 20041007."
+#raise "Skipper muss noch angepasst werden, dass er den neuen Report nutzt. Siehe 20041007."
 
 class Skipper:
 	
@@ -46,40 +46,40 @@ class Skipper:
 		self.ds = self.target#.query()
 		self.ds.apply_GET(**forward)
 		
-		self.rpt = self.ds.report(None)
+		self.rpt = self.ds.report(pageNum=pageNum,pageLen=pageLen)
 		self.tplid = tplid
 		self.tpl = reportTemplates[tplid]
-		self.pageNum = pageNum
-		self.pageLen = pageLen
+		#self.pageNum = pageNum
+		#self.pageLen = pageLen
 		
 		# this is now also in Report
 		# todo: use it there!
-		if self.pageLen is None:
-			self.lastPage = 1
-		elif len(self.ds) == 0:
-			self.lastPage = 1
-		else:
-			self.lastPage = int((len(self.ds)-1) / self.pageLen) + 1
-			"""
-			if pageLen is 10:
-			- [0..10] rows --> 1 page
-			- [11..20] rows --> 2 pages
-			- [21..30] rows --> 2 pages
-			- 10 rows --> 1 page
-			- 11 rows --> 2 pages
-			"""
+		#if self.pageLen is None:
+		#	self.lastPage = 1
+		#elif len(self.ds) == 0:
+		#	self.lastPage = 1
+		#else:
+		#	self.lastPage = int((len(self.ds)-1) / self.pageLen) + 1
+			#~ """
+			#~ if pageLen is 10:
+			#~ - [0..10] rows --> 1 page
+			#~ - [11..20] rows --> 2 pages
+			#~ - [21..30] rows --> 2 pages
+			#~ - 10 rows --> 1 page
+			#~ - 11 rows --> 2 pages
+			#~ """
 
 	def uriToSelf(self,**p):
-		if self.pageNum != 1:
-			p.setdefault('pg',self.pageNum)
-		if self.pageLen != 15:
-			p.setdefault('pl',self.pageLen)
+		if self.rpt.pageNum != 1:
+			p.setdefault('pg',self.rpt.pageNum)
+		if self.rpt.pageLen != 15:
+			p.setdefault('pl',self.rpt.pageLen)
 		if self.tplid != 0:
 			p.setdefault('tpl',self.tplid)
 		return self.uriToDatasource(self.ds,**p)
 	
 	def writePreTitle(self):
-		if self.pageLen == 1:
+		if self.rpt.pageLen == 1:
 			url = self.uriToDatasource(self.ds)
 			label = self.rpt.getLabel()
 			self.renderLink(url,label)
@@ -93,8 +93,8 @@ class Skipper:
 		#self.write("<br>samples:" + repr(self.ds._samples))
 			
 	def getLabel(self):
-		if self.pageLen == 1:
-			row = self.ds[self.pageNum-1]
+		if self.rpt.pageLen == 1:
+			row = self.ds[self.rpt.pageNum-1]
 			#row = self.ds.atoms2instance(atomicRow)
 			return row.getLabel()
 		return self.rpt.getLabel()
@@ -146,15 +146,14 @@ class Skipper:
 ## 				wr(' (... total %d items)' % n)
 
  	def writePage(self):
-			
-		pageNum = self.pageNum
+		pageNum = self.rpt.pageNum
 		# this is now also in Report
 		# todo: use it there!
-		if self.pageLen is None:
+		if self.rpt.pageLen is None:
 			limit = offset = None
 			rowcount = 0
 		else:
-			if self.pageNum is None:
+			if self.rpt.pageNum is None:
 				self.pageNum=1
 			elif self.pageNum < 0:
 				self.pageNum = self.lastPage + self.pageNum - 1
@@ -166,11 +165,12 @@ class Skipper:
 		self.renderNavigator()
 		
 		if self.pageLen == 1:
-			row = self.ds[self.pageNum-1]
+			#row = self.ds[self.pageNum-1]
+			row = self.rpt[0]
 			self.child(row).writeBody()
 		else:
 			self.tpl.renderHeader(self)
-			for row in self.ds.iterate(offset=offset,limit=limit):
+			for row in self.rpt:
 				rowcount += 1
 				self.tpl.renderLine(self,rowcount,row)
 
@@ -181,7 +181,7 @@ class Skipper:
 		#rpt,ds,pageNum=None):
 		rpt = self.rpt
 		ds = self.ds
-		pageNum = self.pageNum
+		pageNum = self.rpt.pageNum
 		wr = self.write
 		renderer = self
 		
@@ -207,7 +207,7 @@ class Skipper:
 		wr("""
 		</form>		
 		""" )
-		if self.pageLen != 1:
+		if self.rpt.pageLen != 1:
 			wr(" Format: ")
 			self.renderLink(
 				self.uriToSelf(tpl=0),
@@ -247,7 +247,7 @@ class Skipper:
 			if pageNum is None:
 				pageNum = 1
 			elif pageNum < 0:
-				pageNum = self.lastPage + pageNum + 1
+				pageNum = self.rpt.lastPage + pageNum + 1
 				# pg=-1 --> lastPage
 				# pg=-2 --> lastPage-1
 				
@@ -268,7 +268,7 @@ class Skipper:
 
 			wr(" [page %d of %d] " % (pageNum, self.lastPage))
 				
-			if pageNum == self.lastPage:
+			if pageNum == self.rpt.lastPage:
 				wr(self.nextPageButton)
 				wr(self.lastPageButton)
 			else:
@@ -276,7 +276,7 @@ class Skipper:
 					self.uriToSelf(pg=pageNum+1),
 					label=self.nextPageButton)
 				renderer.renderLink(
-					self.uriToSelf(pg=self.lastPage),
+					self.uriToSelf(pg=self.rpt.lastPage),
 					label=self.lastPageButton)
 				
 			wr(' (%d rows)' % len(ds))
@@ -285,24 +285,24 @@ class Skipper:
 		
 
 		
-	def isFirstPage(self):
-		#pageLen = self.getParam('pageLen') 
-		if self.pageLen is None:
-			return True
-		return (self.pageLen == 1)
+	#~ def isFirstPage(self):
+		#~ #pageLen = self.getParam('pageLen') 
+		#~ if self.pageLen is None:
+			#~ return True
+		#~ return (self.pageLen == 1)
 	
-	def isLastPage(self):
-		#pageLen = self.getParam('pageLen') 
-		if self.pageLen is None:
-			return True
-		return self.pageNum
-		return len(self) > self.pageLen * self.pageNum
+	#~ def isLastPage(self):
+		#~ #pageLen = self.getParam('pageLen') 
+		#~ if self.pageLen is None:
+			#~ return True
+		#~ return self.pageNum
+		#~ return len(self) > self.pageLen * self.pageNum
 
-	def lastPage(self):
-		#pageLen = rpt.getParam('pageLen') 
-		if self.pageLen is None:
-			return 1
-		return int(len(self) / self.pageLen) + 1
+	#~ def lastPage(self):
+		#~ #pageLen = rpt.getParam('pageLen') 
+		#~ if self.pageLen is None:
+			#~ return 1
+		#~ return int(len(self) / self.pageLen) + 1
 
 	
 

@@ -19,6 +19,7 @@ class Center:
 	"""
 
 	def __init__(self,**kw):
+		assert len(kw) == 0
 		self._databases = []
 		self._sessions = []
 		#self._systemConsole = con
@@ -91,9 +92,13 @@ def getCenter():
 		start()
 	return _center
 
-#~ def getSystemConsole():
-	#~ return getCenter()._systemConsole
+#def getSystemConsole():
+#	return getCenter()._systemConsole
 
 def createSession(**kw):
 	return getCenter().createSession(**kw)
+	
+def shutdown(**kw):
+	return getCenter().shutdown(**kw)
+	
 	

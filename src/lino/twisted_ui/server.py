@@ -24,7 +24,7 @@ from twisted.web import static
 from twisted.web.server import Request
 
 from twisted.copyright import version
-if version == "1.2.0":
+if version >= "1.2.0":
 	from twisted.protocols.http import parse_qs
 else:	
 	from twisted.web.http import parse_qs

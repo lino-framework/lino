@@ -14,12 +14,12 @@ from lino.adamo import center
 
 #from lino.adamo.twisted_ui import WebServer
 from lino.schemas.sprl.sprl import Schema
-from tls import sprlwidgets
+from lino.twisted_ui import sprlwidgets
 
 from lino.adamo.database import Database
 from lino.misc.my_import import my_import
 
-from tls.server import ServerResource, MyRequest
+from lino.twisted_ui.server import ServerResource, MyRequest
 
 if os.name == 'nt':
 	wwwRoot = r'u:\htdocs\timwebs'
@@ -54,7 +54,6 @@ dbinfos.append(DBinfo(
 	label="Lucs Heimatseite",
 	langs='de en fr et',
 	dbfile = os.path.join(dbRoot,'luc.db'),
-	#staticDirs = TIMtree(wwwRoot)))
 	staticDirs = TIMtree(os.path.join(wwwRoot,'luc'))))
 
 dbinfos.append(DBinfo(
@@ -101,7 +100,8 @@ def main(argv):
 	
 	center.start(verbose=options.verbose)
 
-	info = center.center().console.info
+	#info = center.getSystemConsole().info
+	from lino.misc.console import info, progress
 
 	#progress = app.console.progress
 	
@@ -113,7 +113,7 @@ def main(argv):
 	serverRsc = ServerResource(wwwRoot)
 
 	#sess = ConsoleSession()
-	sess = center.center().createSession()
+	sess = center.createSession()
 
 	if True:
 		"""
@@ -162,10 +162,11 @@ def main(argv):
 			db.startup(conn)
 
 			db.update(stddb)
+			sess.use(db)
 			
 			if not options.skipTest:
-				print "checkIntegrity: " + db.getName()
-				msgs = db.checkIntegrity()
+				info("checkIntegrity: " + db.getName())
+				msgs = sess.checkIntegrity()
 				if len(msgs):
 					msg = "%s : %d database integrity problems" % (
 						db.getName(), len(msgs))
@@ -216,8 +217,8 @@ def main(argv):
 		del sys.path[0]
 
 
-	info("Twisted Lino Server")
-	info(copyleft(year='2004',author='Luc Saffre'))
+	progress("Twisted Lino Server")
+	progress(copyleft(year='2004',author='Luc Saffre'))
 		
 
 	from twisted.web import server
@@ -227,11 +228,11 @@ def main(argv):
 	site.requestFactory = MyRequest
 	reactor.listenTCP(options.port, site)
 	reactor.addSystemEventTrigger("before","shutdown", \
-											center.center().shutdown)
+											center.shutdown)
 
 			
-	info("Serving on port %s." % options.port)
-	info("(Press Ctrl-C to stop serving)")
+	progress("Serving on port %s." % options.port)
+	progress("(Press Ctrl-C to stop serving)")
 			
 	reactor.run()
 

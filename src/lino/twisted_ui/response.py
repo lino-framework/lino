@@ -40,7 +40,7 @@ from lino.misc.etc import issequence
 from lino import adamo
 from lino.adamo.html import txt2html
 from lino.adamo.rowattrs import Field, Pointer, Detail
-from lino.adamo.session import WebSession
+#from lino.adamo.session import WebSession
 from lino.adamo.widgets import Command
 
 
