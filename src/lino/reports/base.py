@@ -106,7 +106,7 @@ class BaseReport(Describable):
 
     ## public methods 
 
-    def addVurtColumn(self,meth,**kw):
+    def addColumn(self,meth,**kw):
         col = VurtReportColumn(self,meth,**kw)
         self.columns.append(col)
         return col

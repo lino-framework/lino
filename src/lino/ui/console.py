@@ -18,6 +18,9 @@
 
 import sys
 from optparse import OptionParser
+from cStringIO import StringIO
+
+from lino.reports.plain import PlainReport
 
 """
 
@@ -46,7 +49,9 @@ class Console:
     forwardables = ('confirm','decide',
                     'debug','info',
                     'warning',
-                    'error','critical')
+                    'error','critical',
+                    'report',
+                    'startDump','stopDump')
     """
     confirm and warning are always user messages
     """
@@ -58,6 +63,7 @@ class Console:
         self._verbosity = 0
         #self._debug = False
         self._batch = False
+        self._dumping = None
         self.set(**kw)
 
     def set(self,verbosity=None,debug=None,batch=None):
@@ -68,6 +74,18 @@ class Console:
         #if debug is not None:
         #    self._debug = debug
 
+    def startDump(self,**kw):
+        assert self._dumping is None
+        self._dumping = self.out
+        self.out=StringIO()
+
+    def stopDump(self):
+        assert self._dumping is not None, "dumping was not started"
+        s = self.out.getvalue()
+        self.out = self._dumping
+        self._dumping = None
+        return s
+        
     def isBatch(self):
         return self._batch
     def isInteractive(self):
@@ -79,6 +97,8 @@ class Console:
     def isQuiet(self):
         return (self._verbosity < 0)
     
+    def report(self,**kw):
+        return PlainReport(self.out,**kw)
 
 
     def log_message(self,msg):
@@ -251,25 +271,30 @@ def getSystemConsole():
 #for m in _syscon.forwardables:
 #    __dict__[m] = getattr(_syscon,m)
 
-error = _syscon.error       # to stderr
-#message = _syscon.message   # to stdout
+
+for m in _syscon.forwardables:
+    globals()[m] = getattr(_syscon,m)
+
+## error = _syscon.error       # to stderr
+## #message = _syscon.message   # to stdout
 
 
-debug = _syscon.debug       # message if verbosity very high
-info = _syscon.info         # message if verbosity high
-progress = _syscon.progress # message if verbosity is normal
-warning = _syscon.warning
-error = _syscon.error
-critical = _syscon.critical
+## debug = _syscon.debug       # message if verbosity very high
+## info = _syscon.info         # message if verbosity high
+## progress = _syscon.progress # message if verbosity is normal
+## warning = _syscon.warning
+## error = _syscon.error
+## critical = _syscon.critical
 
-# aliases
-alert = _syscon.warning
+## # aliases
+## alert = _syscon.warning
 
-# higher level:
-confirm = _syscon.confirm
-decide = _syscon.decide
+## # higher level:
+## confirm = _syscon.confirm
+## decide = _syscon.decide
 
 isInteractive = _syscon.isInteractive
+
 set = _syscon.set
 getOptionParser = _syscon.getOptionParser
 

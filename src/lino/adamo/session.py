@@ -20,7 +20,6 @@ from datasource import Datasource, DataCell
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 from lino.ui.console import getSystemConsole, Console
-from cStringIO import StringIO
 
 
 class BabelLang:
@@ -67,17 +66,17 @@ class Session(Context):
         for m in console.forwardables:
             setattr(self,m,getattr(console,m))
 
-    def startDump(self,**kw):
-        assert self._dumping is None
-        self._dumping = self.console
-        self._setcon(Console(out=StringIO(),**kw))
+##     def startDump(self,**kw):
+##         assert self._dumping is None
+##         self._dumping = self.console
+##         self._setcon(Console(out=StringIO(),**kw))
 
-    def stopDump(self):
-        assert self._dumping is not None, "dumping was not started"
-        s = self.console.out.getvalue()
-        self._setcon(self._dumping)
-        self._dumping = None
-        return s
+##     def stopDump(self):
+##         assert self._dumping is not None, "dumping was not started"
+##         s = self.console.out.getvalue()
+##         self._setcon(self._dumping)
+##         self._dumping = None
+##         return s
         
 
     def hasAuth(self,*args,**kw):
@@ -264,9 +263,8 @@ class ConsoleSession(Session):
             wr("\n")
 
 
-    def report(self,**kw):
-        from lino.reports.plain import PlainReport
-        return PlainReport(self.console.out,**kw)
+##     def report(self,**kw):
+##         return self.console.report(**kw)
         
     def showReport(self,ds,*args,**kw):
         rpt = self.report(ds,*args,**kw)

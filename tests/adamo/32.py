@@ -45,24 +45,25 @@ class Case(unittest.TestCase):
     def test01(self):
         
         self.sess.setBabelLangs('en')
+        self.sess.startDump()
         
         rpt = self.sess.report()
-        rpt.addVurtColumn(
+        rpt.addColumn(
             meth=lambda rpt: rpt.crow.getTableName(),
             label="TableName",
             width=20)
         def count(rpt):
             return len(self.sess.query(rpt.crow.__class__))
-        rpt.addVurtColumn(
+        rpt.addColumn(
             meth=count,
             width=5, halign=rpt.RIGHT,
             label="Count")
-        rpt.addVurtColumn(
+        rpt.addColumn(
             meth=lambda rpt: self.sess.query(rpt.crow.__class__)[0],
             when=lambda rpt: rpt.cellValues[1]>0,
             label="First",
             width=20)
-        rpt.addVurtColumn(
+        rpt.addColumn(
             meth=lambda rpt: self.sess.query(rpt.crow.__class__)[-1],
             when=lambda rpt: rpt.cellValues[1]>0,
             label="Last",
@@ -72,6 +73,44 @@ class Case(unittest.TestCase):
         for t in self.sess.schema.getTableList():
             rpt.processRow(t)
         rpt.endReport()
+        s = self.sess.stopDump()
+        # print s
+        self.assertEqual(s,"""\
+TableName           |Count|First               |Last                
+--------------------+-----+--------------------+--------------------
+Languages           |    5|English             |Dutch               
+Users               |    2|Luc Saffre          |James Bond          
+Nations             |    5|Estonia             |United States of    
+                    |     |                    |America             
+Cities              |   27|Bruxelles (be)      |Alfter-Oedekoven    
+                    |     |                    |(de)                
+Organisations       |    1|(1,)                |(1,)                
+Partners            |   12|Luc Saffre          |Eesti Telefon       
+PartnerTypes        |    5|Customer            |Sponsor             
+Currencies          |    3|EUR                 |USD                 
+Events              |    0|                    |                    
+EventTypes          |    0|                    |                    
+Journals            |    1|outgoing invoices   |outgoing invoices   
+Years               |    0|                    |                    
+Products            |    2|(3,)                |(16,)               
+Invoices            |    1|OUT-1               |OUT-1               
+InvoiceLines        |    2|('OUT', 1, 1)       |('OUT', 1, 2)       
+Bookings            |    0|                    |                    
+Authors             |   13|Bill Gates          |Henry Louis Mencken 
+AuthorEvents        |    0|                    |                    
+AuthorEventTypes    |    5|born                |other               
+Topics              |    0|                    |                    
+Publications        |    0|                    |                    
+Quotes              |    8|[q1]                |[q8]                
+PubTypes            |    6|Book                |Software            
+PubByAuth           |    0|                    |                    
+Pages               |    2|Lino Demo Data      |Bullshit Bingo      
+Projects            |   10|Project 1           |Project 1.3.2.2     
+ProjectStati        |    5|to do               |sleeping            
+News                |    0|                    |                    
+Newsgroups          |    0|                    |                    
+""")        
+        
             
 
 if __name__ == '__main__':
