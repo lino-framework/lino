@@ -54,36 +54,42 @@ def makesuite(modname):
     return unittest.TestSuite(suites)
 
 
-def alltests(argv,dirname='.'):
+def alltests(argv,root='.'):
     
     """inspect all python modules in the current directory for test
     cases and suites. make one big suite from all this. """
     
     suites = []
-    sys.path.append(dirname)
-    for fn in os.listdir(dirname):
-        modname,ext = os.path.splitext(fn)
-        if ext == '.py':
-            doit = (len(argv) == 0)
-            for arg in argv:
-                a = arg.split('-')
-                if len(a) == 2:
-                    if a[0].isdigit() and a[1].isdigit():
-                        if modname.isdigit():
-                            if int(modname) >= int(a[0]) \
-                                  and int(modname) <= int(a[1]):
+    #for dirpath, dirname, filename in os.listdir(dirname):
+    for dirpath, dirnames, filenames in os.walk(root):
+        sys.path.append(dirpath)
+        for filename in filenames:
+            modname,ext = os.path.splitext(filename)
+            #dirpath = dirpath.replace("."+os.path.sep,"")
+            #modname = dirpath.replace(os.path.sep,".")+"."+modname
+            #print dirpath, filename
+            #print modname
+            if ext == '.py':
+                doit = (len(argv) == 0)
+                for arg in argv:
+                    a = arg.split('-')
+                    if len(a) == 2:
+                        if a[0].isdigit() and a[1].isdigit():
+                            if modname.isdigit():
+                                if int(modname) >= int(a[0]) \
+                                      and int(modname) <= int(a[1]):
+                                    doit = True
+                        else:
+                            if modname >= a[0] and modname <= a[1]:
                                 doit = True
-                    else:
-                        if modname >= a[0] and modname <= a[1]:
+                    elif len(a) == 1:
+                        if modname == a[0]:
                             doit = True
-                elif len(a) == 1:
-                    if modname == a[0]:
-                        doit = True
-                else:
-                    raise "unrecognized argument "+arg
-            if doit:
-                suites.append(makesuite(modname))
-    sys.path.remove(dirname)
+                    else:
+                        raise "unrecognized argument "+arg
+                if doit:
+                    suites.append(makesuite(modname))
+        sys.path.remove(dirpath)
 
     return unittest.TestSuite(suites)
      

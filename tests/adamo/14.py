@@ -3,7 +3,7 @@ import unittest
 from lino.schemas.sprl import demo
 #from lino.adamo.schema import quickdb
 #from mx.DateTime import Date
-from forum.normalDate import ND
+from lino.tools.normalDate import ND
 
 class Case(unittest.TestCase):
 	def setUp(self):

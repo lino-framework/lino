@@ -1,5 +1,5 @@
 import unittest
-from forum.normalDate import ND
+from lino.tools.normalDate import ND
 
 class Case(unittest.TestCase):
 		

@@ -13,7 +13,7 @@ This is a short example to illustrate Adamo's basic idea.
 from lino.adamo import *
 from lino import adamo
 
-from forum.normalDate import ND
+from lino.tools.normalDate import ND
 
 # 1. Define the database schema
 
