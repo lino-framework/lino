@@ -5,14 +5,14 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
-from response import ContextedResponse
-from lino.adamo.datasource import Datasource
-from lino.adamo.schema import LayoutComponent
+#from response import ContextedResponse
+#from lino.adamo.datasource import Datasource
+#from lino.adamo.schema import LayoutComponent
 
 
-class Skipper(ContextedResponse,LayoutComponent):
+class Skipper:
 	
-	handledClass = Datasource
+	#handledClass = Datasource
 	
 	firstPageButton = '[<<]'
 	lastPageButton = '[>>]'
@@ -24,26 +24,12 @@ class Skipper(ContextedResponse,LayoutComponent):
 	endNavigator = "</p>"
 
 	def onBeginResponse(self):
-		# target,rsc,request,reqParams={}):
-		#print "Skipper(%s,%s)" % (repr(target),repr(reqParams))
-		#Widget.onBeginResponse(self,response)
-		#assert isinstance(target,Datasource)
-		#Widget.__init__(self,target,rsc,request)
-		#self.request = request
-		csvSamples = {}
-		qryParams = {}
-		viewName = None # self.target._table._defaultView
-## 		if self.target.getView('std')
-## 		if view is not None:
-## 			viewName = 'std'
-## 		else:
-## 			viewName = None
 		pageLen = 15
 		pageNum = None
 		qryid = None
 		tplid = 0
+		forward = {}
 		for k,v in self.request.args.items():
-		#for k,v in request.args.items():
 			assert len(v) == 1
 			if k == 'pg':
 				pageNum = int(v[0])
@@ -53,43 +39,15 @@ class Skipper(ContextedResponse,LayoutComponent):
 				tplid = int(v[0])
 			elif k == 'qry':
 				qryid = v[0]
-			elif k == 'ob':
-				qryParams['orderBy'] = " ".join(v)
-			#elif k == 'col':
-			#	p['columnList'] = " ".join(v)
-			elif k == 'v':
-				viewName = v[0]
-				if viewName == '':
-					viewName = None
-			elif k == 'search':
-				qryParams['search'] = v[0]
-			elif k == 'flt':
-				qryParams['sqlFilters'] = (v[0],)
-				#qryParams['filters'] = tuple(l)
-
 			else:
-				csvSamples[k] = v[0]
-				#qryParams['atomicSamples'][k] = v[0]
-				#qryParams['samples'][k] = v[0]
-				#p[k] = self.area.cellAtoms2Value(k,v)
-
-		#if viewName != self.target._table._defaultView:
-		qryParams['viewName'] = viewName
-
-		#print qryParams
-		self.ds = self.target.query(**qryParams)
-		#print self.ds._samples
-		self.ds.setCsvSamples(**csvSamples)
-			
-		
+				forward[k] = v
+				
+		self.ds = self.target#.query()
+		self.ds.apply_GET(**forward)
 		
 		self.rpt = self.ds.report(None)
-		#self.area = area
-		#self.rpt = ds._query.report(None)
-		#self.query = qry
 		self.tplid = tplid
 		self.tpl = reportTemplates[tplid]
-		#self.ds = Datasource(area,qry)
 		self.pageNum = pageNum
 		self.pageLen = pageLen
 		
@@ -98,12 +56,6 @@ class Skipper(ContextedResponse,LayoutComponent):
 		elif len(self.ds) == 0:
 			self.lastPage = 1
 		else:
-			#rowcount = len(self)
-			#rowcount = self.area._connection.executeCount(
-			#	self.query,**kw)
-				
-			#rowCount = self.executeCount
-			#rowCount = area._connection.executeCount(self.query)
 			self.lastPage = int((len(self.ds)-1) / self.pageLen) + 1
 			"""
 			if pageLen is 10:
@@ -114,42 +66,9 @@ class Skipper(ContextedResponse,LayoutComponent):
 			- 11 rows --> 2 pages
 			"""
 
-			
-## 	def __init__(self,ds,tplid=0,pageNum=None,pageLen=None):
-## 		#self.area = area
-## 		self.rpt = ds._query.report(None)
-## 		#self.query = qry
-## 		self.tpl = reportTemplates[tplid]
-## 		self.ds = ds
-## 		#self.ds = Datasource(area,qry)
-## 		self.pageNum = pageNum
-## 		self.pageLen = pageLen
-		
-## 		if self.pageLen is None:
-## 			self.lastPage = 1
-## 		elif len(self.ds) == 0:
-## 			self.lastPage = 1
-## 		else:
-## 			#rowcount = len(self)
-## 			#rowcount = self.area._connection.executeCount(
-## 			#	self.query,**kw)
-				
-## 			#rowCount = self.executeCount
-## 			#rowCount = area._connection.executeCount(self.query)
-## 			self.lastPage = int((len(self.ds)-1) / self.pageLen) + 1
-## 			"""
-## 			if pageLen is 10:
-## 			- [0..10] rows --> 1 page
-## 			- [11..20] rows --> 2 pages
-## 			- [21..30] rows --> 2 pages
-## 			- 10 rows --> 1 page
-## 			- 11 rows --> 2 pages
-## 			"""
-
-
-
-	def uriToSkipper(self,**p):
-		#p={}
+	def uriToSelf(self,**p):
+		if self.pageNum != 1:
+			p.setdefault('pg',self.pageNum)
 		if self.pageLen != 15:
 			p.setdefault('pl',self.pageLen)
 		if self.tplid != 0:
@@ -179,7 +98,7 @@ class Skipper(ContextedResponse,LayoutComponent):
 
 	def writeLabel(self):
 		return self.renderLink(
-			url=self.uriToSkipper(),
+			url=self.uriToSelf(),
 			label=self.getLabel())
 
 ## 	def asParagraph(self,ds):
@@ -245,10 +164,6 @@ class Skipper(ContextedResponse,LayoutComponent):
 		if self.pageLen == 1:
 			row = self.ds[self.pageNum-1]
 			self.child(row).writeBody()
-			#r = row.getRenderer(self.request)
-			#r.writeBody()
-			#w = self.get_widget(self.ds[self.pageNum-1])
-			#w.writeBody()
 		else:
 			self.tpl.renderHeader(self)
 			for row in self.ds.iterate(offset=offset,limit=limit):
@@ -267,23 +182,36 @@ class Skipper(ContextedResponse,LayoutComponent):
 		renderer = self
 		
 		
-		search = self.request.args.get('search',('',))[0]
-		uri = self.uriToSkipper()
+		#search = self.request.args.get('search',('',))[0]
+		search = self.target._search
+		if search is None:
+			search = ""
+		else:
+			search = " OR ".join(search)
+		uri = self.uriToSelf()
 		wr("""\
 		<form action="%(uri)s" method="GET" enctype="Mime-Type">
 		Search: <input type="text" name="search" value="%(search)s">
-		</form>		
 		""" % vars())
-		#uri = renderer.uriToSkipper(self)
+		for k,v in self.request.args.items():
+			if k != 'search':
+				if v is not None:
+					v = str(v[0])
+					wr("""
+					<input type="hidden" name="%s" value="%s">
+					""" % (k,v))
+		wr("""
+		</form>		
+		""" )
 		if self.pageLen != 1:
 			wr(" Format: ")
 			self.renderLink(
-				self.uriToSkipper(tpl=0),
+				self.uriToSelf(tpl=0),
 				label="[table]")
 															
 			wr(" ")
 			renderer.renderLink(
-				self.uriToSkipper(tpl=1),
+				self.uriToSelf(tpl=1),
 				label="[list]")
 			if len(self.ds._table._views) > 0:
 				wr(" View: ")
@@ -292,7 +220,7 @@ class Skipper(ContextedResponse,LayoutComponent):
 					wr(lbl)
 				else:
 					self.renderLink(
-						self.uriToSkipper(v=self.CLEAR),
+						self.uriToSelf(v=self.CLEAR),
 						label=lbl)
 				for viewName in self.ds._table._views.keys():
 					wr(" ")
@@ -301,7 +229,7 @@ class Skipper(ContextedResponse,LayoutComponent):
 						wr(lbl)
 					else:
 						renderer.renderLink(
-							self.uriToSkipper(v=viewName),
+							self.uriToSelf(v=viewName),
 							label=lbl)
 															
 ## 			body += " " + renderer.refToSelf(
@@ -327,11 +255,11 @@ class Skipper(ContextedResponse,LayoutComponent):
 ## 					self.uriToSelf(request, pg = 1),
 ## 					self.firstPageButton)
 				renderer.renderLink(
-					self.uriToSkipper(pg=1),
+					self.uriToSelf(pg=1),
 					label=self.firstPageButton)
 
 				renderer.renderLink(
-					self.uriToSkipper(pg=pageNum-1),
+					self.uriToSelf(pg=pageNum-1),
 					label=self.prevPageButton)
 
 			wr(" [page %d of %d] " % (pageNum, self.lastPage))
@@ -341,10 +269,10 @@ class Skipper(ContextedResponse,LayoutComponent):
 				wr(self.lastPageButton)
 			else:
 				renderer.renderLink(
-					self.uriToSkipper(pg=pageNum+1),
+					self.uriToSelf(pg=pageNum+1),
 					label=self.nextPageButton)
 				renderer.renderLink(
-					self.uriToSkipper(pg=self.lastPage),
+					self.uriToSelf(pg=self.lastPage),
 					label=self.lastPageButton)
 				
 			wr(' (%d rows)' % len(ds))
@@ -481,14 +409,10 @@ class TableReportTemplate(ReportTemplate):
 		if renderer.showRowCount:
 			wr("<td>#</td>")
 		for col in rpt.getColumns():
-			#print col.queryCol.name
-			#~ a = Action( func=grid.setOrderBy, args=(col.name,))
-			#~ ra = self.addAction(a)
 			wr('<td>')
 			renderer.renderLink(
-				renderer.uriToSkipper(ob=col.queryCol.name),
+				renderer.uriToSelf(ob=col.queryCol.name),
 				label=col.getLabel())
-			#~ self.wr(self.formatLink(label=col.getLabel(), action=ra))
 			wr("</td>\n")
 		wr('</tr>')
 	
@@ -496,13 +420,8 @@ class TableReportTemplate(ReportTemplate):
 		renderer = skipper
 		rpt = skipper.rpt
 		dh = skipper.ds
-		#row = dh.atoms2instance(atomicRow)
-		#if skipper.pageLen == 1:
-		#	w = self.get_widget(row)
-		#	return w.writeBody(row)
-			#return row.asBody(renderer)
-		
 		wr = renderer.write
+		
 		if int(rowcount) == rowcount:
 			wr('\n<tr class="evenDataRow">\n')
 		else:
@@ -511,30 +430,18 @@ class TableReportTemplate(ReportTemplate):
 		if renderer.showRowCount:
 			wr("<td>")
 			renderer.renderLink(
-				skipper.uriToSkipper(pl=1,pg=rowcount),
+				skipper.uriToSelf(pl=1,pg=rowcount),
 				label=str(rowcount))
 			wr("</td>")
 
-		i = 0
 		for cell in row:
 			wr('<td>')
 			value = cell.getValue()
-			#attr = col.queryCol.rowAttr
-			#value = attr.getValueFromRow(row)
 			if value is not None:
 				skipper.renderCellValue(cell.col,value)
-				#attr.asFormCell(renderer,value,(col.preferredWidth,
-				#										  rpt.rowHeight))
-## 			if hasattr(value,'asParagraph'):
-## 				value.asParagraph(renderer)
-## 			else:
-## 				type= getattr(attr,'type',None)
-## 				renderer.renderValue(value,type)
-			#i += 1
 
 			wr('</td>')
 		wr('\n</tr>')
-		#return body
 
 	def renderFooter(self,skipper):
 		skipper.write('\n</table>')

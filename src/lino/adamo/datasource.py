@@ -18,18 +18,15 @@ class Datasource:
 	A Datasource is the central handle for a stream of data. 
 	"""
 	
-	def __init__(self, context, store,
-					 clist=None, viewName=None,**kw):
-		if clist is None:
-			clist = store._peekQuery
-		assert clist.leadTable is store._table
-
+	def __init__(self, context, store, clist=None, **kw):
 		self.rowcount = None
 
 		self._context = context
 		self._store = store
-		store.registerDatasource(self)
 		#self._query = query
+		if clist is None:
+			clist = store._peekQuery
+		assert clist.leadTable is store._table
 		self._clist = clist
 		#self.report = clist.report
 
@@ -38,29 +35,33 @@ class Datasource:
 		self._schema = self._db.schema # shortcut
 		self._connection = store._connection # shortcut
 
+		store.registerDatasource(self)
+		
 		for name in ('startDump','stopDump'):
 			setattr(self,name,getattr(store._connection,name))
 
-		
-## 		if viewName is None:
-## 			if self._table._views.has_key('std'):
-## 				viewName = 'std'
-		self._viewName = viewName
-		
 		self._samples = {}
-		self._table.initDatasource(self)
+		
+		self.config(**kw)
 
+	def config(self,viewName=None,**kw):
+		"""
+		
+		note: _config() is a separate method because the viewName
+		parameter may control the default values for the other keywords.
+		
+		"""
+		self._viewName = viewName
 		if viewName is not None:
-			view = self.getView(viewName)
+			view = self._table.getView(viewName)
+			if view is None:
+				raise KeyError,viewName+": no such view"
 			for k,v in view.items():
 				kw.setdefault(k,v)
-			#kw = self._table._views[viewName]
-			#self.config(**kw)
+		self._config(**kw)
 		
-		#print kw
-		self.config(**kw)
 		
-	def config(self,
+	def _config(self,
 				  columnNames=None,
 				  orderBy=None,
 				  sqlFilters=None,
@@ -80,9 +81,50 @@ class Datasource:
 			assert len(kw) == 0
 			self._samples = {}
 			self.setSamples(**samples)
+
+	def apply_GET(self,**kw):
+		qryParams = {}
+		csvSamples = {}
+		for k,v in kw.items():
+			if k == 'ob':
+				qryParams['orderBy'] = " ".join(v)
+			elif k == 'v':
+				viewName = v[0]
+				if viewName == '':
+					viewName = None
+				qryParams['viewName'] = viewName
+			elif k == 'search':
+				qryParams['search'] = v[0]
+			elif k == 'flt':
+				qryParams['sqlFilters'] = v
+				#qryParams['sqlFilters'] = (v[0],)
+				#qryParams['filters'] = tuple(l)
+
+			else:
+				csvSamples[k] = v[0]
+				
+		self.config(**qryParams)
+		if len(csvSamples) > 0:
+			self.setCsvSamples(**csvSamples)
+
+	def get_GET(self):
+		p = {}
+		if self._orderBy != None:
+			p['ob'] = self._orderBy
+		if self._viewName != None:
+			p['v'] = self._viewName
+		if self._search != None:
+			p['search'] = self._search
+		if self._sqlFilters != None:
+			p['flt'] = self._sqlFilters
+		for (key,value) in self._samples.items():
+			col = self._clist.getColumn(key)
+			p[key] = col.format(value,self)
+		return p
+		
 			
-	def getView(self,viewName):
-		return self._table.getView(viewName)
+## 	def getView(self,viewName):
+## 		return self._table.getView(viewName)
 
 	def query(self,columnNames=None,samples=None,**kw):
 		
@@ -95,8 +137,6 @@ class Datasource:
 		#print kw
 		kw.setdefault('orderBy',self._orderBy)
 		kw.setdefault('search',self._search)
-		#if self._samples is not None:
-		#kw.setdefault('samples',dict(self._samples))
 		if self._label is not None:
 			kw.setdefault('label',self._label)
 		if self._sqlFilters is not None:
@@ -123,7 +163,9 @@ class Datasource:
  		return Report(self,name,**kw)
 
 	def getRenderer(self,rsc,req,writer=None):
-		return self._schema._datasourceRenderer(rsc,req,self,writer)
+		return self._schema._datasourceRenderer(rsc,req,
+															 self.query(),
+															 writer)
 	
 	def getContext(self):
 		return self._context

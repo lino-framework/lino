@@ -4,7 +4,7 @@
 
 
 import os
-from lino.adamo import quickdb
+from lino.adamo import quickdb, ConsoleSession
 from sprl import Schema
 
 
@@ -27,7 +27,11 @@ def beginSession(populator=populate,
 					 isTemporary=isTemporary,
 					 verbose=verbose)
 	db.createTables()
-	sess = db.beginSession()
+	
+	sess = ConsoleSession(db=db)
+	#sess.beginContext(db.beginContext())
+	
+	#sess = db.beginSession()
 	if populator:
 		populator(sess)
 	return sess

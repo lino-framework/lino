@@ -17,7 +17,10 @@ class Case(unittest.TestCase):
 
 	def test01(self):
 		"Accessing data that has not been inserted using adamo"
-		db = demo.getDemoDB(populator=None)
+		sess = demo.beginSession(populator=None)
+		
+		db = sess.db
+		connection = db._connection
 		
 ## 		ui = UI(verbose=False)
 ## 		schema = Schema()
@@ -30,17 +33,17 @@ class Case(unittest.TestCase):
 ## 		# db.connect(conn)
 ## 		db.createTables()
 		
-		db.connection.sql_exec("""
+		connection.sql_exec("""
 		INSERT INTO PARTNERS (id,name)
 		       VALUES (1, "Luc");
 		""")
 
-		db.connection.sql_exec("""
+		connection.sql_exec("""
 		INSERT INTO PARTNERS (id,name)
 		       VALUES (2, "Ly");
 		""")
 
-		db.installto(globals())
+		sess.installto(globals())
 
 		#ctx = db.beginContext()
 		#p = ctx.PARTNERS

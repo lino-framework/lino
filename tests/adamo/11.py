@@ -1,6 +1,6 @@
 #coding: latin1
    
-from lino.adamo import quickdb
+from lino.adamo import quickdb, ConsoleSession
 from lino.misc.tsttools import TestCase
 from lino.examples import pizzeria, pizzeria2
 
@@ -15,7 +15,8 @@ class Case(TestCase):
 								isTemporary=True,
 								label="Lucs Pizza Restaurant")
 		db.createTables()
-		self.sess = db.beginSession()
+		self.sess = ConsoleSession(db=db)
+		#self.sess = db.beginSession()
 		self.sess.installto(globals())
 
 	def tearDown(self):
@@ -23,9 +24,9 @@ class Case(TestCase):
 
 	def test01(self):
 		# testing whether INSERT INTO is correctly done
-		self.sess.startDump()
+		SERV.startDump()
 		s1 = SERV.appendRow(name="bring home",price=99)
-		sql = self.sess.stopDump()
+		sql = SERV.stopDump()
 		self.assertEquivalent(sql,"""\
 SELECT MAX(id) FROM SERV;
 INSERT INTO SERV ( id, responsible, name, price )
@@ -43,9 +44,9 @@ INSERT INTO SERV ( id, responsible, name, price )
 		self.assertEqual(c.id,1)
 		p = PROD.peek(1)
 		self.assertEqual(p.id,1)
-		self.sess.startDump()
+		ORDERS.startDump()
 		o = ORDERS.appendRow(date="20040322",customer = c)
-		self.assertEquivalent(self.sess.stopDump(),"""\
+		self.assertEquivalent(ORDERS.stopDump(),"""\
 SELECT MAX(id) FROM ORDERS;
 INSERT INTO ORDERS (
 id,
@@ -59,11 +60,11 @@ NULL,
 NULL );
 """)
 		
-		self.sess.startDump()
+		LINES.startDump()
 		q = o.lines.query()
 		q.appendRow(product=p,qty=2)
 		#print self.db.conn.stopDump()
-		self.assertEquivalent(self.sess.stopDump(),"""\
+		self.assertEquivalent(LINES.stopDump(),"""\
 SELECT MAX(id) FROM LINES;
 INSERT INTO LINES (
 id, productPROD_id, productSERV_id,
@@ -78,12 +79,12 @@ ordr_id
 		#self.db.flush()
 
 		
-		self.sess.startDump()
+		PROD.startDump()
 		prod = PROD.peek(1)
 		#self.assertEqual(len(PROD._cachedRows.keys()),1)
 		#self.assertEqual(PROD._cachedRows.keys()[0],(1,))
 		self.assertEqual(prod.name,"Pizza Margerita")
-		self.assertEquivalent(self.sess.stopDump(),"""\
+		self.assertEquivalent(PROD.stopDump(),"""\
 SELECT id, name, price FROM PROD WHERE id = 1;
 """)
 		#self.db.flush()
@@ -91,16 +92,16 @@ SELECT id, name, price FROM PROD WHERE id = 1;
 
 		
 		
-		self.sess.startDump()
+		LINES.startDump()
 		line = LINES.peek(1)
 		#self.assertEquivalent(self.db.conn.stopDump(),"")
-		self.assertEquivalent(self.sess.stopDump(),"""\
+		self.assertEquivalent(LINES.stopDump(),"""\
 SELECT id, productPROD_id, productSERV_id, qty, ordr_id  FROM LINES WHERE id = 1;""")
 
-		self.sess.startDump()
+		PROD.startDump()
 		self.assertEqual(line.product.name,"Pizza Margerita")
 		#print self.db.conn.stopDump()
-		self.assertEquivalent(self.sess.stopDump(),"""\
+		self.assertEquivalent(PROD.stopDump(),"""\
 SELECT id, name, price FROM PROD WHERE id = 1;
 """)
 		#self.db.flush()

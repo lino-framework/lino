@@ -131,7 +131,8 @@ def main():
 	# create empty tables
 	db.createTables()
 	
-	sess = db.beginSession()
+	sess = ConsoleSession(db=db)
+	#sess.beginContext(db.beginContext())
 
 	# play around
 	populate(sess)

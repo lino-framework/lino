@@ -1,6 +1,6 @@
 #coding: latin1
    
-from lino.adamo import quickdb
+from lino.adamo import quickdb, ConsoleSession
 from lino.misc.tsttools import TestCase
 from lino.examples import pizzeria2
 
@@ -15,7 +15,7 @@ class Case(TestCase):
 						 isTemporary=True,
 						 label="Lucs Pizza Restaurant")
 		db.createTables()
-		self.sess = db.beginSession()
+		self.sess = ConsoleSession(db=db)
 		self.sess.installto(globals())
 
 	def tearDown(self):

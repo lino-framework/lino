@@ -39,12 +39,12 @@ class Context:
 			self.forms.define(name,ContextForm(frm,self))
 
 
-	def beginSession(self,d=None):
-		sess = Session()
-		sess.beginContext(self)
-		if d is not None:
-			sess.installto(d)
-		return sess
+## 	def beginSession(self,d=None):
+## 		sess = Session()
+## 		sess.beginContext(self)
+## 		if d is not None:
+## 			sess.installto(d)
+## 		return sess
 
 	def getLabel(self):
 		return self._db.getLabel()
@@ -134,14 +134,18 @@ class Context:
 
 
 class AbstractSession:
-	def __init__(self):
+	def __init__(self,db=None):
 		self.context = None
 		self.schema = None
 		self.tables = None
 		self.db = None
-		self._formStack = []
+		self.forms = AttrDict()
+		#self._formStack = []
 		
 		self._user = None
+
+		if db is not None:
+			self.use(db)
 		#self._userId = None
 		#self._pwd = None
 		#self.notifyMessage("Lino Session started")
@@ -157,8 +161,7 @@ class AbstractSession:
 		raise NotImplementedError
 
 	def use(self,db):
-		ctx = db.beginContext()
-		self.setContext(ctx)
+		self.setContext(db.beginContext())
 
 	def installto(self,d):
 		d['__session__'] = self
@@ -173,12 +176,13 @@ class AbstractSession:
 		self.beginContext(context)
 			
 	def beginContext(self,context):
-		assert len(self._formStack) == 0
+		#assert len(self._formStack) == 0
 		assert self.context is None
 		self.context = context
 		self.schema = context._db.schema # shortcut
 		self.db = context._db # shortcut
 		self.tables = context.tables # shortcut
+		self.forms = AttrDict()
 		#self.connection = context._db._connection
 
 		for name in ('commit', 'shutdown', 'setBabelLangs'):
@@ -188,26 +192,31 @@ class AbstractSession:
 		#	setattr(self,name,getattr(context._db._connection,name))
 		# only QuickDatabase knows her connection! 
 		
-		self._formStack = []
+		#self._formStack = []
 		#self.openForm('login')
 		self.schema.onStartSession(self)
-		self.notifyMessage("beginContext()")
+		#self.notifyMessage("beginContext()")
 		
 	def endContext(self):
 		if self._user is not None:
 			self.logout()
 		self.context = None
-		self._formStack = []
-
+		#self._formStack = []
+	
 	def openForm(self,formName):
+		#print "openForm()" + formName
 		tpl = getattr(self.context.forms,formName)
 		frm = tpl.open(self)
-		self._formStack.append(frm)
+		self.forms.define(formName,frm)
+		#self._formStack.append(frm)
 		return frm
+
+	def closeForm(self,formName):
+		del self.forms._values[formName]
 	
-	def getCurrentForm(self):
-		if len(self._formStack) > 0:
-			return self._formStack[-1]
+## 	def getCurrentForm(self):
+## 		if len(self._formStack) > 0:
+## 			return self._formStack[-1]
 
 	def getUser(self):
 		return self._user

@@ -47,16 +47,18 @@ class AdamoResource(Resource):
 	def render_POST(self,request):
 		target = self.findTarget(request)
 		responder = target.getRenderer(self,request,None)
-		
-		frm = responder.getSession().getCurrentForm()
-		if frm is None:
-			raise "POST without active form"
-		if request.postdata['formName'][0] != frm.getFormName():
-			msg = "POSTDATA form %s != current form '%s'" % \
-					(repr(request.postdata['formName'][0]),
-					 frm.getFormName())
-			raise msg
+		frmName = request.postdata['formName'][0]
+		sess = responder.getSession()
+		frm = sess.forms.get(frmName,None)
+ 		if frm is None:
+ 			raise "POST without active form"
+## 		if request.postdata['formName'][0] != frm.getFormName():
+## 			raise "POSTDATA form %s != current form '%s'" % \
+## 					(repr(request.postdata['formName'][0]),
+## 					 frm.getFormName())
 		del request.postdata['formName']
+
+		# transfer postdata to form fields
 		d = {}
 		for k,v in request.postdata.items():
 			if len(v[0]) == 0:
@@ -66,9 +68,12 @@ class AdamoResource(Resource):
 		#print d # request.postdata
 		frm.update(**d)
 		#print frm._values
+		
+		#responder.executeForm(frm)
+		
 		frm.onSubmit()
-		print "form has been submitted!"
-		#return self.render_GET(request)
+		
+		sess.closeForm(frmName) 
 		
 		return self.letRespond(responder)
 		
@@ -419,31 +424,20 @@ class DbResource(AdamoResource):
 	#	raise "should never be called since isLeaf is True"
 	
 	def findTarget(self,request):
-		#self.onRender(request)
-		#renderer = TwistedRenderer(self,request)
 		pp = list(request.postpath)
 		if len(pp) and len(pp[-1]) == 0:
 			pp = pp[:-1]
 		
 		if len(pp) == 0:
 			return self.context.getContentRoot()
-			#return self.context.getContentRoot().getRenderer(request)
 
 		cmd = pp[0]
 		if cmd == "db":
 
 			del pp[0]
-			#ds = getattr(self.context.tables,pp[0],None)
 			ds = self.context.getDatasource(pp[0])
-## 			if ds is None:
-## 				raise 
-## 				return error.NoResource(
-## 					'invalid tablename "%s"' % pp[0]).render(request)
-
 			if len(pp) == 1:
 				return ds
-				#return ds.getRenderer(request)
-			   #return self.respond(request,ds)
 
 			del pp[0]
 			#pp = pp[1:]
@@ -452,10 +446,6 @@ class DbResource(AdamoResource):
 			pka = ds._table.getPrimaryAtoms()
 			if len(id) != len(pka):
 				raise InvalidRequestError('invalid id "%s"' % pp[0])
-## 				return error.NoResource(
-## 					request, 'invalid id "%s"' % pp[0]
-## 					).render(request)
-
 
 			rid = []
 			i = 0
@@ -465,7 +455,7 @@ class DbResource(AdamoResource):
 				except ValueError,e:
 					msg="'%s' is not an %s" % (repr(id[i]), repr(type))
 					raise InvalidRequestError(msg)
-					#return error.NoResource(msg).render(request)
+
 				rid.append(v)
 				i += 1
 			row = ds.peek(*rid)
@@ -473,10 +463,8 @@ class DbResource(AdamoResource):
 				msg = "%s(%s) : no such row"% (
 					ds._table.getTableName(), repr(id))
 				raise InvalidRequestError(msg)
-				#return error.NoResource(msg).render(request)
-			#return self.respond(request,row)
 			return row
-			#return row.getRenderer(request)
+
 
 		if cmd == "menu":
 			#return self.respond(request,self._window)

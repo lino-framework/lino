@@ -254,31 +254,15 @@ class HtmlResponse:
 
 		
 
-	def uriToSelf(self,*args,**kw):
+	def uriToSelf(self,**kw):
 		
-## 		"""twisted.web.http.Request.requestReceived() merges POSTDATA
-## 		and URL arguments into self.args So I must do the work again
-## 		because I want only the URI argumens.	"""
-		
-## 		x = self.request.uri.split('?')
-
-## 		if len(x) == 1:
-## 			args = {}
-## 		else:
-## 			if len(x) != 2:
-## 				raise "May ignore parts of this invalid URI: %s" % \
-## 						repr(self.uri)
-## 			args = parse_qs(x[1], 1)
- 
-		
-		args = self.request.args.copy()
+		d = self.request.args.copy()
 		for (k,v) in kw.items():
-			args[k] = v
+			d[k] = v
 			
-		#return self.buildURL(path,**args)
 		return self.buildURL(self.request.prePathURL(),
 									*self.request.postpath,
-									**args)
+									**d)
 
 		
 	def fileURI(self,*args):
@@ -286,6 +270,7 @@ class HtmlResponse:
 	
 	def uriToImage(self,*args):
 		return self.fileURI("images",*args)
+	
 
 
 	def formatLabel(self,label):
@@ -426,19 +411,8 @@ class ContextedResponse(HtmlResponse):
 											  *args)
 
 	def uriToDatasource(self,ds,**p):
-		if ds._orderBy != None:
-			p.setdefault('ob',ds._orderBy)
-		if ds._viewName != ds._table._defaultView:
-			p.setdefault('v', ds._viewName)
-		if ds._search != None:
-			p.setdefault('search', ds._search)
-		if ds._sqlFilters != None:
-			p.setdefault('flt',ds._sqlFilters)
-
-		for (key,value) in ds._samples.items():
-			col = ds._clist.getColumn(key)
-			p[key] = col.format(value,ds)
-		#uri = self.baseuri + ds._context._db.getName()+"/db"+ds._table.getTableName()
+		for k,v in ds.get_GET().items():
+			p.setdefault(k,v)
 		return self.uriToTable(ds._table,**p)
 
 	def uriToTable(self,table,**p):
@@ -497,45 +471,39 @@ class ContextedResponse(HtmlResponse):
 	def renderMemo(self,txt):
 		self._context.memo2html(self,txt)
 
+	def renderForm(self,frm):
+		for mnu in frm.getMenus():
+			self.renderMenu(mnu)
+		wr = self.write
+		if len(frm):
+			wr("""<p><form
+			style="padding:5px;border:1px solid black;"
+			action="%s"
+			method="POST">
+			""" % self.uriToSelf())
+
+			for cell in frm:
+				wr("\n")
+				wr(cell.col.name)
+				wr(": ")
+				wr("""<input type="text" name="%s" value="%s">""" % \
+					(cell.col.name,htmltext(cell.format())))
+				wr("\n<br>")
+			wr("""\n<input type="hidden" name="formName" value="%s">""" % frm.getFormName())
+			wr("""\n<input type="submit" value="OK">""")
+
+			wr("</form></p>")
 	
 	def writeUserPanel(self):
 		wr = self.write
 		sess = self.getSession()
-		frm = sess.getCurrentForm()
-		if frm is not None:
-			for mnu in frm.getMenus():
-				self.renderMenu(mnu)
-			
-			if len(frm):
-				wr("""<p><form
-				style="padding:5px;border:1px solid black;"
-				action="%s"
-				method="POST">
-				""" % self.uriToSelf())
+## 		frm = sess.getCurrentForm()
+## 		if frm is not None:
+## 			pass
+## 		else:
+## 			wr("""<p style="padding:5px;border:1px solid black;">""")
+## 			wr("no form</p>")
 
-				for cell in frm:
-					wr("\n")
-					wr(cell.col.name)
-					wr(": ")
-					wr("""<input type="text" name="%s" value="%s">""" % \
-						(cell.col.name,htmltext(cell.format())))
-					wr("\n<br>")
-				wr("""\n<input type="hidden" name="formName" value="%s">""" % frm.getFormName())
-				wr("""\n<input type="submit" value="OK">""")
-
-				wr("""<br><a href="%s">register</a>""" % \
-					self.contextURI("register"))
-				wr("</form></p>")
-		else:
-			wr("""<p style="padding:5px;border:1px solid black;">""")
-			wr("no form</p>")
-		msgs = sess.popMessages()
-		if len(msgs) > 0:
-			wr('<p>')
-			for msg in msgs:
-				wr("""<br><font color="red">%s</font>""" % htmltext(msg))
-			wr('</p>')
-			
 
 	def renderMenu(self,mnu):
 		wr = self.write

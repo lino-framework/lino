@@ -11,7 +11,7 @@ class AttrDict(dict):
 		if d is None:
 			d = {}
 		self.__dict__["_values"] = d
-		for m in ('values','__len__','keys','items'):
+		for m in ('values','__len__','keys','items','get'):
 			self.__dict__[m] = getattr(d,m)
 
 	def __getattr__(self,name):

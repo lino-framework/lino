@@ -209,6 +209,9 @@ class BabelLang:
 
 	def __repr__(self):
 		return "<BabelLang %s(%d)>" % (self.id,self.index)
+
+
+
 			
 class Database(Describable):
 	
@@ -292,12 +295,12 @@ class Database(Describable):
 		self._contexts.pop()
 		#ctx.commit()
 
-	def beginSession(self,context=None):
-		sess = Session()
-		if context is None:
-			context = self.beginContext()
-		session.setContext(context)
-		return session		
+## 	def beginSession(self,context=None):
+## 		sess = Session()
+## 		if context is None:
+## 			context = self.beginContext()
+## 		session.setContext(context)
+## 		return session		
 
 	def createTables(self):
  		for store in self.getStoresById():
@@ -342,10 +345,10 @@ class Database(Describable):
 		return retval
 		
 
-	def beginSession(self,d=None):
-		#assert not d.has_key('__context__')
-		ctx = self.beginContext()
-		return ctx.beginSession(d)
+## 	def beginSession(self,d=None):
+## 		#assert not d.has_key('__context__')
+## 		ctx = self.beginContext()
+## 		return ctx.beginSession(d)
 		
 ## 	def getAreaDict(self):
 ## 		return self._areas

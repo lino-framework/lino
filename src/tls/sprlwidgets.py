@@ -11,6 +11,9 @@ from lino.schemas.sprl import web, events, news, quotes
 
 from lino.adamo.database import Context
 from lino.adamo.schema import LayoutComponent
+from lino.adamo.datasource import Datasource
+
+from lino.adamo.html import txt2html
 
 #from widgets import Widget
 from response import ContextedResponse
@@ -24,22 +27,72 @@ from skipper import Skipper
 ## 		widget = self._wf.get_widget(row,self,request)
 ## 		#return widget.show()
 ## 		return self.show(widget)
-		
-		
-class SprlRowLayout(ContextedResponse,LayoutComponent):
-	handledClass = adamo.Table.Row
-	#def __init__(self,db):
-	#	self.db = db
 
 
+class SprlPage(ContextedResponse,LayoutComponent):
+	
 	def writeLeftMargin(self):
-		row = self.target
+		wr = self.write
+		#row = self.target
+
+		sess = self.getSession()
+		frm = sess.forms.get('login',None)
+		if frm is None:
+			usr = sess.getUser()
+			if usr is None:
+				wr( "wie kann das?")
+			else:
+				wr("Logged in as " + usr.getLabel())
+		else:
+			self.renderForm(frm)
+			wr("""<br><a href="%s">register</a>""" % \
+				self.contextURI("register"))
+
+		msgs = sess.popMessages()
+		if len(msgs) > 0:
+			wr("""<p style="padding:5px;border:1px solid black;
+				background-colr:gold;">""")
+			for msg in msgs:
+				wr("""<br><font color="red">%s</font>""" % txt2html(msg))
+			wr('</p>')
+			
+			
+		
 		ContextedResponse.writeLeftMargin(self)
-		self.write('<p><a href="add">add row</a>')
-		self.write('<br><a href="delete">delete row</a></p>')
+		#self.write('<p><a href="add">add row</a>')
+		#self.write('<br><a href="delete">delete row</a></p>')
 		self.writeContextMenu()
 		#self.target._ds._context.writeLeftMargin(renderer)
 		
+	def writeContextMenu(self):
+		ctx = self.target.getContext()
+		wr = self.write
+		
+		sponsor = ctx.tables.PARTYPES.peek('d')
+		ds = ctx.tables.PARTNERS.query(type=sponsor)
+		#ds.setFilter("logo NOTNULL")
+		if len(ds):
+			wr( "<p>Sponsors:")
+			for partner in ds:
+				wr('<p align="center">')
+				url = self.uriToRow(partner)
+				img = self.refToImage(
+					src=partner.logo,
+					tags='width="80" border=0',
+					label=partner.getLabel())
+				self.renderFormattedLink(url,label=img)
+		#renderer.write(leftMargin)
+
+
+	
+class SprlSkipper(Skipper,SprlPage):
+	handledClass = Datasource
+	
+		
+		
+class SprlRowLayout(SprlPage):
+	handledClass = adamo.Table.Row
+
 	def writeLabel(self):
 		row = self.target
 		self.renderLink(
@@ -70,42 +123,6 @@ class SprlRowLayout(ContextedResponse,LayoutComponent):
 
 		wr('\n</table>')
 		
-
-## 	def renderDetails(self):
-## 		pass
-## 		wr = renderer.write
-## 		if False:
-## 			wr("<ul>")
-## 			for (name,dtl) in self._area._table._details.items():
-## 				rpt = dtl.query(self)
-## 				wr('<li>')
-## 				rpt.asParagraph(renderer)
-## 				wr("</li>")
-
-## 			wr("</ul>")
-		
-			
-	
-	def writeContextMenu(self):
-		row = self.target
-		ctx = row._ds._context
-		wr = self.write
-		
-		sponsor = ctx.tables.PARTYPES.peek('d')
-		ds = ctx.tables.PARTNERS.query(type=sponsor)
-		#ds.setFilter("logo NOTNULL")
-		if len(ds):
-			wr( "<p>Sponsors:")
-			for partner in ds:
-				wr('<p align="center">')
-				url = self.uriToRow(partner)
-				img = self.refToImage(
-					src=partner.logo,
-					tags='width="80" border=0',
-					label=partner.getLabel())
-				self.renderFormattedLink(url,label=img)
-		#renderer.write(leftMargin)
-
 
 
 

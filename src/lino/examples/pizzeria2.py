@@ -87,7 +87,7 @@ def main():
 					 isTemporary=True,
 					 label="Lucs Pizza Restaurant")
 	db.createTables()
-	sess = db.beginSession()
+	sess = ConsoleSession(db=db)
 	populate2(sess)
 	query(sess)
 	sess.shutdown()

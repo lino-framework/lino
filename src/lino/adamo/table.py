@@ -184,16 +184,16 @@ class Table(FieldContainer,SchemaComponent,Describable):
 		return self._views.get(viewName,None)
 
 
-	def initDatasource(self,ds):
-		if ds._viewName is None:
-			return
-		view = self.getView(ds._viewName)
-		if view is None:
-			raise KeyError,ds._viewName+": no such view"
-		#print "Table.initDatasource(): " + repr(kw)
-		ds.config(**view)
-		#print ds._samples
-		#print "load() not yet implemented"
+## 	def initDatasource(self,ds):
+## 		if ds._viewName is None:
+## 			return
+## 		view = self.getView(ds._viewName)
+## 		if view is None:
+## 			raise KeyError,ds._viewName+": no such view"
+## 		#print "Table.initDatasource(): " + repr(kw)
+## 		ds.config(**view)
+## 		#print ds._samples
+## 		#print "load() not yet implemented"
 
 		
 		
