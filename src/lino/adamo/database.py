@@ -28,7 +28,7 @@ from session import Context, BabelLang
 #from query import DatasourceColumnList
 from tim2lino import TimMemoParser
 from store import Store
-from center import getCenter
+from lino.adamo import center # import getCenter
 
 
 class Database(Context,Describable):
@@ -54,7 +54,7 @@ class Database(Context,Describable):
         self.schema = schema
         #self._contexts = []
         self._stores = {}
-        getCenter().addDatabase(self)
+        center.addDatabase(self)
 
     def getBabelLangs(self):
         return self._supportedLangs
@@ -163,7 +163,7 @@ class Database(Context,Describable):
         for store in self.getStoresById():
             store.beforeShutdown()
             
-        getCenter().removeDatabase(self)
+        center.removeDatabase(self)
     
     def restart(self):
         self.shutdown()
@@ -203,7 +203,7 @@ class QuickDatabase(Database):
                  schema,
                  langs=None,
                  label=None,
-                 filename="tmp.db",
+                 filename=None,
                  isTemporary=True):
 
 

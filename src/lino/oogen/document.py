@@ -32,8 +32,9 @@ Bibliography:
 
 """
 
+import sys, os
+from lino.ui import console
 from lino.oogen import elements
-
 from lino.oogen.generators import OoText, OoSpreadsheet
 
 
@@ -52,10 +53,6 @@ class Document:
         x = elements.Font(**kw)
         self.fonts.append(x)
         return x
-        
-    #~ def toStory(self,elem):
-        #~ assert hasattr(elem,'__xml__')
-        #~ self.story.append(elem)
         
     def populate(self):
         
@@ -134,40 +131,24 @@ class Document:
             ))
         self.styles.append(s)
         
-        s = elements.Style(name="Standard",family="paragraph",className="text")
+        s = elements.Style(name="Standard",
+                           family="paragraph",className="text")
         self.styles.append(s)
-        s = elements.Style(name="Text body",family="paragraph",parentStyleName="Standard",className="text")
+        s = elements.Style(name="Text body",
+                           family="paragraph",
+                           parentStyleName="Standard",
+                           className="text")
         s.append(elements.Properties(marginTop="0cm",marginBottom="0.212cm"))
         self.styles.append(s)
-
-        #~ f.write("""\
-#~ <style:default-style style:family="table-cell">
-#~ <style:properties style:decimal-places="2" style:font-name="Arial" fo:language="en" fo:country="US" style:font-name-asian="Lucida Sans Unicode" style:language-asian="none" style:country-asian="none" style:font-name-complex="Tahoma" style:language-complex="none" style:country-complex="none" style:tab-stop-distance="1.25cm"/>
-#~ </style:default-style>
-#~ """)
-
 
         s = elements.DefaultStyle(family="table-cell")
         s.append(elements.Properties(decimalPlaces=2,fontName="Arial",language="en",country="US",tabStopDistance="1.25cm"))
         self.styles.append(s)
         
-        #~ f.write("""\
-#~ <number:number-style style:name="N0" style:family="data-style">
-#~ <number:number number:min-integer-digits="1"/>
-#~ </number:number-style>
-#~ """)
         s = elements.NumberStyle(name="N0",family="data-style")
         s.append(elements.Number(minIntegerDigits=1))
         self.styles.append(s)
         
-        #~ f.write("""\
-#~ <number:currency-style style:name="N106P0" style:family="data-style" style:volatile="true">
-#~ <number:number number:decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
-#~ <number:text> 
-#~ </number:text>
-#~ <number:currency-symbol number:language="fr" number:country="BE">EUR</number:currency-symbol>
-#~ </number:currency-style>
-#~ """)
         s = elements.CurrencyStyle(name="N106P0", family="data-style", volatile=True)
         s.append(elements.Number(decimalPlaces=2,minIntegerDigits=1,grouping=True))
         s.append(elements.Text("\n"))
@@ -292,36 +273,6 @@ class Document:
         p.append(elements.BackgroundImage())
         h.append(p)
         
-        """
-<style:master-page style:name="Default" style:page-master-name="pm1">
-    <style:header>
-        <text:p><text:sheet-name>???</text:sheet-name></text:p>
-    </style:header>
-    <style:header-left style:display="false"/>
-    <style:footer><text:p>Page <text:page-number>1</text:page-number></text:p></style:footer>
-    <style:footer-left style:display="false"/>
-</style:master-page>
-<style:master-page style:name="Report" style:page-master-name="pm2">
-    <style:header>
-        <style:region-left>
-            <text:p>
-                <text:sheet-name>???</text:sheet-name> (<text:title>???</text:title>)
-            </text:p>
-        </style:region-left>
-        <style:region-right>
-            <text:p>
-                <text:date style:data-style-name="N2" text:date-value="0-00-00">20/05/2004</text:date>,     
-                <text:time>13:59:08</text:time>
-            </text:p>
-        </style:region-right>
-    </style:header>
-    <style:header-left style:display="false"/>
-    <style:footer>
-        <text:p>Page <text:page-number>1</text:page-number> / <text:page-count>99</text:page-count></text:p>
-    </style:footer>
-    <style:footer-left style:display="false"/>
-</style:master-page>
-"""
         mp = elements.MasterPage(name="Default",pageMasterName="pm1")
         self.masterStyles.append(mp)
         h = elements.Header()
@@ -347,7 +298,9 @@ class Document:
                 ))
         h.append(r)
         
-        
+    def report(self):
+        from lino.reports.oo import OoReport
+        return OoReport(self)
         
     def table(self,name=None,style=None,**kw):
         if name is None:
@@ -375,13 +328,20 @@ class Document:
                 if filename.lower().endswith(cl.extension):
                     return cl(self,filename)
         if len(self.tables) == len(self.story):
-            return OoSpreadsheet(self)
-        return OoText(self)
+            return OoSpreadsheet(self,filename)
+        return OoText(self,filename)
         
                 
-    def save(self,filename=None):
+    def save(self,filename=None,showOutput=False):
         g = self.generator(filename)
         g.save()
+        if showOutput and console.isInteractive():
+            if sys.platform == "win32":
+                os.system("start %s" % g.outputFilename)
+            else:
+                console.warning("but how to start %s ?" % \
+                                g.outputFilename)
+
     
         
 

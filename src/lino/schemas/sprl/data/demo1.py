@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -28,7 +28,7 @@ from lino.tools.normalDate import ND
 from lino.schemas.sprl.tables import *
 
 
-def populate(sess,big=False):
+def populate(sess):
 
     LANGS = sess.query(Languages)
     NATIONS = sess.query(Nations)
@@ -309,8 +309,8 @@ Conscience is the inner voice that warns us that someone may be looking.
         QUOTES
         q = QUOTES.query('lang abstract author.firstName author.name')
         q.appendRow(en,
-                        """Trusting a scientist on questions of metaphysics is like paying someone else to worship God for you.""",\
-                        "Bill","Welton"\
-                        )
+                    """Trusting a scientist on questions of metaphysics is like paying someone else to worship God for you.""",\
+                    "Bill","Welton"\
+                    )
 
 

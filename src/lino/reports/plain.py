@@ -36,7 +36,6 @@ class PlainReport(BaseReport):
         self.columnSep = columnSep
         self.columnHeaderSep = columnHeaderSep
         self.write = self.dest.write
-        self.cellValues = None
         
         
     def setdefaults(self,kw):

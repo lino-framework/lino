@@ -17,12 +17,16 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+
 import os
 import sys
 import unittest
+
+
 from lino.ui import console
 from lino.oogen import Document
 from lino import adamo
+from lino import copyleft
 
 from lino.schemas.sprl.races import Races, RaceTypes, Categories, \
      Participants, Persons
@@ -62,7 +66,7 @@ def dbfimport(q,filename,oneach=None,**kw):
     
 
 
-def main(dbpath=r"c:\temp\timrun"):
+def main2(dbfpath,dbpath):
     
     s = adamo.Schema()
     s.addTable(Races)
@@ -72,11 +76,11 @@ def main(dbpath=r"c:\temp\timrun"):
     s.addTable(Persons)
     #sess = adamo.beginQuickSession(s,filename=":memory:")
     sess = adamo.beginQuickSession(s,
-                                   filename="tmp.db",
+                                   filename=opj(dbpath,"tmp.db"),
                                    isTemporary=False)
 
     PAR = sess.query(Persons)
-    dbfimport(PAR,opj(dbpath,"PAR.DBF"),
+    dbfimport(PAR,opj(dbfpath,"PAR.DBF"),
               id=lambda row:int(row['IDPAR']),
               name=lambda row:row['FIRME'],
               firstName=lambda row:row['VORNAME'],
@@ -85,13 +89,13 @@ def main(dbpath=r"c:\temp\timrun"):
               )
 
     CTY = sess.query(RaceTypes)
-    dbfimport(CTY,opj(dbpath,"CTY.DBF"),
+    dbfimport(CTY,opj(dbfpath,"CTY.DBF"),
             id=lambda row:row['IDCTY'],
             name=lambda row:row['NAME'],
               )
     
     CAT = sess.query(Categories)
-    dbfimport(CAT,opj(dbpath,"CAT.DBF"),
+    dbfimport(CAT,opj(dbfpath,"CAT.DBF"),
             id=lambda row:row['IDCAT'],
             seq=lambda row:row['SEQ'],
             sex=lambda row:row['SEX'],
@@ -101,7 +105,7 @@ def main(dbpath=r"c:\temp\timrun"):
               )
     
     RAL = sess.query(Races)
-    dbfimport(RAL,opj(dbpath,"RAL.DBF"),
+    dbfimport(RAL,opj(dbfpath,"RAL.DBF"),
             id=lambda row:int(row['IDRAL']),
             name1=lambda row:row['NAME1'],
             name2=lambda row:row['NAME2'],
@@ -121,7 +125,7 @@ def main(dbpath=r"c:\temp\timrun"):
             time=row['TIME'],
             payment=row['PAYE'],
             )
-    dbfimport(POS,opj(dbpath,"POS.DBF"),oneach)
+    dbfimport(POS,opj(dbfpath,"POS.DBF"),oneach)
 
     
     
@@ -135,8 +139,22 @@ def main(dbpath=r"c:\temp\timrun"):
     race = RAL.peek(53)
     q = sess.query(Participants,"person.name cat time dossard",
                    race=race)
-    rpt = sess.data_report(q)
-    #q.setupReport(rpt)
+    rpt = sess.report()
+    doit(q,rpt)
+    
+    doc = Document("1")
+    doc.h(1,"Raceman Generating OpenOffice documents")
+    
+    rpt = doc.report()
+    doit(q,rpt)
+
+    outFile = opj(dbpath,"raceman_report.sxc")
+    doc.save(outFile,showOutput=True)
+
+    
+
+def doit(q,rpt):
+    q.setupReport(rpt)
     rpt.columns[0].configure(width=20)
     rpt.columns[1].configure(width=3)
     rpt.columns[2].configure(width=8)
@@ -148,23 +166,43 @@ def main(dbpath=r"c:\temp\timrun"):
         rpt.processRow(r)
     rpt.endReport()
         
-    
-    
-    
-    
-##     doc = Document("1")
-##     doc.h(1,"Generating OpenOffice documents")
-##     doc.p("Here is a table:")
-##     t = doc.table()
-##     t.addColumn()
-##     t.addColumn()
-##     t.addRow("Kunde","Datum")
-##     t.addRow("Hinz","2004-11-16")
-##     t.addRow("Kunz","2004-11-17")
 
-##     doc.p("Here is another paragraph.")
 
-##     doc.save(fn)
 
-if __name__ == "__main__":
-    main() # sys.argv[1])
+def main(argv):
+
+    parser = console.getOptionParser(
+        usage="usage: %prog [options] DBFPATH",
+        description="""\
+where DBFPATh is the directory containing TIM files""")
+    
+    parser.add_option("-t", "--tempdir",
+                      help="""\
+directory for raceman files""",
+                      action="store",
+                      type="string",
+                      dest="tempDir",
+                      default=r'c:\temp')
+    
+    (options, args) = parser.parse_args(argv)
+
+    if len(args) == 1:
+        dbfpath= args[0]
+    else:
+        dbfpath=r"c:\temp\timrun"
+        
+    main2(dbfpath,options.tempDir)
+    
+
+
+
+
+if __name__ == '__main__':
+    print copyleft(name="Lino/Raceman",
+                   year='2002-2005',
+                   author='Luc Saffre')
+    main(sys.argv[1:])
+
+
+
+

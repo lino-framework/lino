@@ -21,7 +21,7 @@ import types
 
 from lino.misc.descr import Describable, Configurable
 
-class BaseReport(Describable):
+class BaseReport(Describable,Configurable):
 
     #dataColumnFactory = 
 
@@ -37,6 +37,7 @@ class BaseReport(Describable):
 ##         if label is None:
 ##             label = ds._table.getLabel()
         Describable.__init__(self,name,label,doc)
+        self.cellValues = None
 
         self.config(**kw)
 

@@ -21,8 +21,8 @@ adamo : Abstract Data Model
 
 """
 
-#from lino import __version__
-__version__ = "0.0.1 pre"
+from lino import __version__
+#__version__ = "0.0.1 pre"
 
 import __builtin__
 import sys
@@ -61,7 +61,7 @@ def beginQuickSession(schema,
                         )
     db.createTables()
     
-    sess = center.getCenter().createSession()
+    sess = center.createSession()
     
     sess.use(db=db,langs=langs)
     

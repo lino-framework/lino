@@ -1,4 +1,21 @@
-# coding: latin1
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 
 """ 20040206 : bug fixed
 
@@ -9,84 +26,54 @@ In the following test, p[2] returned the same row as the previous p[1]
 
 """
 import unittest
-#from lino.adamo.dbds.sqlite_dbd import Connection
 from lino.schemas.sprl import demo #.sprl import Schema
-#from lino.adamo.ui import UI
+from lino.schemas.sprl.tables import *
 
 class Case(unittest.TestCase):
 
-	def test01(self):
-		"Accessing data that has not been inserted using adamo"
-		sess = demo.beginSession(populator=None)
-		
-		db = sess.db
-		connection = db._connection
-		
-## 		ui = UI(verbose=False)
-## 		schema = Schema()
-## 		schema.startup(ui)
-	
-## 		conn = Connection("tmp.db",isTemporary=True)
-		
-## 		db = ui.addDatabase('demo',conn,schema,label="Lino Demo Database")
+    def test01(self):
+        "Accessing data that has not been inserted using adamo"
+        sess = demo.beginSession(populator=None)
+        
+        db = sess.db
+        connection = db._connection
+        
+        connection.sql_exec("""
+        INSERT INTO PARTNERS (id,name)
+               VALUES (1, "Luc");
+        """)
 
-## 		# db.connect(conn)
-## 		db.createTables()
-		
-		connection.sql_exec("""
-		INSERT INTO PARTNERS (id,name)
-		       VALUES (1, "Luc");
-		""")
+        connection.sql_exec("""
+        INSERT INTO PARTNERS (id,name)
+               VALUES (2, "Ly");
+        """)
 
-		connection.sql_exec("""
-		INSERT INTO PARTNERS (id,name)
-		       VALUES (2, "Ly");
-		""")
+        PARTNERS = sess.query(Partners)
 
-		sess.installto(globals())
+        luc = PARTNERS.peek(1)
+        self.assertEqual(luc.id,1)
+        self.assertEqual(luc.name,"Luc")
+        ly = PARTNERS.peek(2)
+        self.assertEqual(ly.id,2)
+        self.assertEqual(ly.name,"Ly")
 
-		#ctx = db.beginContext()
-		#p = ctx.PARTNERS
+        self.failIf(luc.isDirty())
+        self.failIf(ly.isDirty())
+        
+        db.shutdown()
 
-		#self.assertEqual(len(p._cachedRows),0)
-		luc = PARTNERS.peek(1)
-		self.assertEqual(luc.id,1)
-		self.assertEqual(luc.name,"Luc")
-		ly = PARTNERS.peek(2)
-		self.assertEqual(ly.id,2)
-		self.assertEqual(ly.name,"Ly")
-
-		self.failIf(luc.isDirty())
-		self.failIf(ly.isDirty())
-		
-		#self.failUnless(luc.isComplete())
-		#self.failUnless(ly.isComplete())
-
-		#print luc.getValues()
-		#print ly.getValues()
-		
-		#self.assertNotEqual(luc,ly)
-		
-		#self.assertEqual(p[1].name,'Luc')
-
-		# the following tests failed:
-		# self.assertEqual(p[2].id,2)
-		# self.assertEqual(p[2].name,'Ly')
-
-		db.shutdown()
-
-	def test02(self):
-		d = {}
-		id1 = (1,)
-		id2 = (2,)
-		s1 = "Luc"
-		s2 = "Ly"
-		d[id1] = s1
-		d[id2] = s2
-		
-		self.assertEqual(d[id1],'Luc')
-		self.assertEqual(d[id2],'Ly')
+    def test02(self):
+        d = {}
+        id1 = (1,)
+        id2 = (2,)
+        s1 = "Luc"
+        s2 = "Ly"
+        d[id1] = s1
+        d[id2] = s2
+        
+        self.assertEqual(d[id1],'Luc')
+        self.assertEqual(d[id2],'Ly')
 
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()
 

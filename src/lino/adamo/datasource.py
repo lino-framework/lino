@@ -201,26 +201,43 @@ class Datasource:
                            self._clist,
                            columnNames=columnNames,
                            **kw)
+
+
+    def setupReport(self,rpt):
+        for dc in self.getVisibleColumns():
+            rpt.addDataColumn(dc,
+                              width=dc.getPreferredWidth(),
+                              label=dc.getLabel())
+        rpt.configure(_name=self._table.getTableName(),
+                      _label=self._table.getLabel())
     
-    def report(self,columnNames=None,**kw):
-        # return self.child(Report,columnNames=columnNames,**kw)
-        # self.setdefaults(kw)
-##         if columnNames is None:
-##             columnNames = " ".join([col.name for col
-##                                     in self._clist.visibleColumns])
-        kw.setdefault("name",self._table.getTableName())
-        kw.setdefault("label",self._table.getLabel())
-        rpt = self._session.report(self,**kw)
+    def runReport(self,rpt):
+        rpt.beginReport()
+        for row in self:
+            rpt.processRow(row)
+        rpt.endReport()
+
+    def report(self,*args,**kw):
+        rpt = self._session.report(*args,**kw)
+        self.setupReport(rpt)
+        self.runReport(rpt)
+
         
-        if columnNames is None:
-            for dc in self.getVisibleColumns():
-                rpt.addDataColumn(dc)
-        else:
-            for colName in columnNames.split():
-                dc = self.getColumn(colName)
-                rpt.addDataColumn(dc)
+    
+##     def report(self,columnNames=None,**kw):
+##         kw.setdefault("name",self._table.getTableName())
+##         kw.setdefault("label",self._table.getLabel())
+##         rpt = self._session.report(self,**kw)
+        
+##         if columnNames is None:
+##             for dc in self.getVisibleColumns():
+##                 rpt.addDataColumn(dc)
+##         else:
+##             for colName in columnNames.split():
+##                 dc = self.getColumn(colName)
+##                 rpt.addDataColumn(dc)
                 
-        return rpt
+##         return rpt
         
 ##         from report import Report
 ##         return Report( self._session,

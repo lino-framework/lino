@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-import time
+#import time
 import warnings
 warnings.filterwarnings("ignore",
                         "DB-API extension",
@@ -39,22 +39,25 @@ class Connection(SqlConnection):
     def __init__(self,filename,schema,isTemporary=False):
         self.schema = schema
         self.dbapi = sqlite
-        self._isTemporary = isTemporary
-        self._filename = filename
+        #self._isTemporary = isTemporary
         self._dump = None
         self._mtime = 0.0
-        if filename:
-            if os.path.exists(filename):
-                if isTemporary:
-                    os.remove(filename)
-                else:
-                    self._mtime = os.stat(filename).st_mtime
-            try:
-                self._dbconn = sqlite.connect(filename)
-            except sqlite.DatabaseError,e:
-                raise DatabaseError(filename + ":" +str(e))
-##         else:
-##             self._mtime = time.time()
+        
+        self._filename = filename
+        if filename is None:
+            # assert isTemporary
+            filename=":memory:"
+        elif os.path.exists(filename):
+##                 if isTemporary:
+##                     os.remove(filename)
+##                 else:
+            self._mtime = os.stat(filename).st_mtime
+            
+        try:
+            self._dbconn = sqlite.connect(filename)
+        except sqlite.DatabaseError,e:
+            raise DatabaseError(filename + ":" +str(e))
+
 
     def __str__(self):
         filename = self._filename
@@ -74,15 +77,15 @@ class Connection(SqlConnection):
         self._dump = None
         return s
 
-    def isVirtual(self):
-        return self._filename is None
+##     def isVirtual(self):
+##         return self._filename is None
 
     def sql_exec(self,sql):
         if self._dump is not None:
             self._dump += sql + ";\n"
-        if self._filename is None:
-            print sql+";"
-            return
+##         if self._filename is None:
+##             print sql+";"
+##             return
         csr = sqlite.Cursor(self._dbconn,TupleType)
         #print "sqlite_dbd.py:" + sql
         try:
@@ -100,8 +103,8 @@ class Connection(SqlConnection):
     def close(self):
         self._dbconn.close()
         #self._dbconn = None
-        if self._isTemporary and self._filename is not None:
-            os.remove(self._filename)
+##         if self._isTemporary and self._filename is not None:
+##             os.remove(self._filename)
 
     def getModificationTime(self,table):
         return self._mtime
@@ -111,6 +114,8 @@ class Connection(SqlConnection):
         FROM sqlite_master
         where tbl_name='%s' AND type='table';""" % tableName
         csr = self.sql_exec(sql)
+        if csr is None:
+            return False
         if csr.rowcount == 0:
             return False
         if csr.rowcount == 1:

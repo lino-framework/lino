@@ -29,11 +29,9 @@ class Center:
     Each session can have its own console
     """
 
-    def __init__(self,**kw):
-        assert len(kw) == 0
+    def __init__(self):
         self._databases = []
         self._sessions = []
-        #self._systemConsole = con
         self._sessionFactory = ConsoleSession
 
     def setSessionFactory(self,sf):
@@ -80,33 +78,37 @@ class Center:
             
 
             
+_center = Center()
+
+for m in ('createSession', 'shutdown',
+          'addDatabase', 'removeDatabase'):
+    globals()[m] = getattr(_center,m)
 
 
-
-def start(**kw):
+## def start(**kw):
     
-    """This can be invoked once to specify explicit options for the Center singleton.  
-    It is not allowed to call it when the Center is already instanciated.
-    """
-    global _center
-    assert _center is None
-    _center = Center(**kw)
-    return _center
+##     """This can be invoked once to specify explicit options for the Center singleton.  
+##     It is not allowed to call it when the Center is already instanciated.
+##     """
+##     global _center
+##     assert _center is None
+##     return _center
 
-def getCenter():
+## def getCenter():
 
-    """ Returns the global Center singleton.  Instanciates it if this
-    is the first call.  """
+##     """ Returns the global Center singleton.  Instanciates it if this
+##     is the first call.  """
     
-    global _center
-    if _center is None:
-        start()
-    return _center
+##     global _center
+##     if _center is None:
+##         start()
+##     return _center
 
-def createSession(**kw):
-    return getCenter().createSession(**kw)
+## def createSession(**kw):
+##     return _center.createSession(**kw)
     
-def shutdown(**kw):
-    return getCenter().shutdown(**kw)
+## def shutdown(**kw):
+##     return _center.shutdown(**kw)
     
+
     

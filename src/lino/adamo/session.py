@@ -159,13 +159,13 @@ class Session(Context):
             raise InvalidRequestError("no such table: "+str(leadTable))
         return Datasource(self,store,columnNames=columnNames,**kw)
 
-    def data_report(self,ds,**kw):
-        rpt = self.report(**kw)
-        for dc in ds.getVisibleColumns():
-            rpt.addDataColumn(dc,
-                              width=dc.getPreferredWidth(),
-                              label=dc.getLabel())
-        return rpt    
+##     def data_report(self,ds,**kw):
+##         rpt = self.report(**kw)
+##         for dc in ds.getVisibleColumns():
+##             rpt.addDataColumn(dc,
+##                               width=dc.getPreferredWidth(),
+##                               label=dc.getLabel())
+##         return rpt    
         
 
 

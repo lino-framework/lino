@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -28,25 +28,27 @@ from lino.schemas.sprl.sprl import makeSchema
 
 
 
-def populate(sess,big=False):
+def populate(sess):
     from lino.schemas.sprl.data import demo1
     #std.populate(sess,big)
-    demo1.populate(sess,big)
+    demo1.populate(sess)
 
 
         
 def beginSession(populator=populate,
+                 filename=None,
                  langs=None,
                  isTemporary=True,
                  **kw):
     schema = makeSchema(**kw)
     sess = adamo.beginQuickSession(schema,
                                    langs=langs,
+                                   filename=filename,
                                    isTemporary=True,
                                    )
     
+    sess.populate()
     if populator:
-        sess.populate()
         populator(sess)
         
     return sess

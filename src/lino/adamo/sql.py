@@ -165,7 +165,7 @@ class SqlConnection(Connection):
                     for (a,b) in join.getJoinAtoms():
                         l.append("%s = %s" % (a.getNameInQuery(clist),
                                               b.getNameInQuery(clist)))
-                        sql += " AND ".join(l) + ")"
+                    sql += " AND ".join(l) + ")"
                 else:
                     joinAtoms = join.getJoinAtoms()
                     if join.parent is None:

@@ -1,5 +1,3 @@
-#coding: latin1
-
 ## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
@@ -17,29 +15,35 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-   
-from lino.misc import tsttools 
-from lino.examples import pizzeria2
 
+from lino.reports.base import BaseReport, ConfigError
 
-class Case(tsttools.TestCase):
-    """
-    (this failed on 20040322)
-    """
-
-    def setUp(self):
-        self.sess = pizzeria2.beginSession()
-
-    def tearDown(self):
-        self.sess.shutdown()
-
-    def test01(self):
-        CUST = self.sess.query(pizzeria2.Customers)
-        c = CUST.appendRow(name="Mark")
-        newID = c.id
-        c = CUST.peek(newID)
-        self.assertEqual(c.id,newID) # failed
+class OoReport(BaseReport):
+    
+    def config(self,
+               columnSep='|',
+               columnHeaderSep='-',
+               **kw):
         
-if __name__ == '__main__':
-    tsttools.main()
+        BaseReport.config(self,**kw)
+        
+        self.columnSep = columnSep
+        self.columnHeaderSep = columnHeaderSep
+        
+        
+    def onBeginReport(self):
+        self.table = self.dest.table()
+        for col in self.columns:
+            self.table.addColumn()
+        BaseReport.onBeginReport(self)
 
+
+    def renderHeader(self):
+        l = [ col.getLabel() for col in self.columns ]
+        self.table.addRow(*l)
+        
+
+    def onEndRow(self):
+        l = [ v for v in self.cellValues ]
+        self.table.addRow(*l)
+        

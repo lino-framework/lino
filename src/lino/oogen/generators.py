@@ -35,7 +35,9 @@ import zipfile
 import os.path
 opj = os.path.join
 
-from ifiles import IFILES
+from lino.oogen.ifiles import IFILES
+from lino.ui import console
+
 
 
 
@@ -60,6 +62,7 @@ class OoGenerator:
         self.ifiles = tuple([cl(self) for cl in IFILES])
         
     def save(self):
+        console.progress("Writing "+self.outputFilename)
         for f in self.ifiles:
             f.writeFile()
         zf = zipfile.ZipFile(self.outputFilename,'w',

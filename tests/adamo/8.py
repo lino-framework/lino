@@ -1,4 +1,22 @@
 # coding: latin1
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 
 """
 
@@ -19,13 +37,13 @@ An Area is a "connected table".
 >>> for i in q.instances(**queryParams):
 
 Alternatively (later):
-		
+        
 >>> for t in q.tuples(db):
 >>> for i in q.instances(db):
 
 This is less elegant because one needs to specify the db handle again.
 
-		
+        
 Perhaps even Areas are not needed?
 
 But how to call it?
@@ -52,37 +70,38 @@ Notes:
 - Moved from Table to Area: values2id(), createTable()
 
 """
-	
+    
 
 
 import unittest
+from lino.schemas.sprl import demo
+from lino.schemas.sprl.tables import Partners
 
 class Case(unittest.TestCase):
 
-		
-	def test02(self):
-		from lino.schemas.sprl import demo
-		db = demo.getDemoDB()
-		db.installto(globals())
-		s1 = ''
-		q = PARTNERS.query("name street city.name", orderBy="name")
-		for row in q:
-			#print row[0]
-			s1 += str(row[0]) + " "
-			s1 += str(row[1]) + " "
-			s1 += str(row[2]) + "\n"
-			
-		s2 = ''
-		for i in q:
-			s2 += str(i.name) + " "
-			s2 += str(i.street) + " "
-			s2 += str(i.city.name) + "\n"
+        
+    def test01(self):
+        db = demo.beginSession()
+        s1 = ''
+        q = db.query(Partners,\
+                     "name street city.name", orderBy="name")
+        for row in q:
+            #print row[0]
+            s1 += str(row[0]) + " "
+            s1 += str(row[1]) + " "
+            s1 += str(row[2]) + "\n"
+            
+        s2 = ''
+        for i in q:
+            s2 += str(i.name) + " "
+            s2 += str(i.street) + " "
+            s2 += str(i.city.name) + "\n"
 
-		#print s1
-		self.assertEqual(s1,s2)
+        #print s1
+        self.assertEqual(s1,s2)
 
-		
-		self.assertEqual(s1,"""\
+        
+        self.assertEqual(s1,"""\
 Arens None Eupen
 Ausdemwald None Aachen
 Bodard None Verviers
@@ -97,8 +116,8 @@ Rumma & Ko OÜ Tartu mnt. Tallinn
 Saffre None Tallinn
 """)
 
-		db.shutdown()
+        db.shutdown()
 
 if __name__ == '__main__':
-	unittest.main()
+    unittest.main()
 

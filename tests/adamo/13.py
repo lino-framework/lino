@@ -10,7 +10,7 @@ class Introduction(unittest.TestCase):
 
 	def setUp(self):
 		
-		self.db = demo.getDemoDB(populator=None)
+		self.db = demo.beginSession()
 		self.db.installto(globals()) #.update(demo.db.tables)
 
 	def tearDown(self):

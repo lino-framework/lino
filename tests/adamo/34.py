@@ -1,5 +1,3 @@
-#coding: latin1
-
 ## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
@@ -17,29 +15,41 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-   
-from lino.misc import tsttools 
-from lino.examples import pizzeria2
+
+"""
+using lino.reports on pizzeria
+"""
+
+import types
+import unittest
+
+from lino.ui import console
 
 
-class Case(tsttools.TestCase):
-    """
-    (this failed on 20040322)
-    """
+class Case(unittest.TestCase):
 
-    def setUp(self):
-        self.sess = pizzeria2.beginSession()
-
-    def tearDown(self):
-        self.sess.shutdown()
 
     def test01(self):
-        CUST = self.sess.query(pizzeria2.Customers)
-        c = CUST.appendRow(name="Mark")
-        newID = c.id
-        c = CUST.peek(newID)
-        self.assertEqual(c.id,newID) # failed
+        from lino.examples.pizzeria2 import beginSession,\
+             Products, OrderLines
+        sess = beginSession()
+        PROD = sess.query(Products)
+        q = sess.query(OrderLines,"ordr.date ordr.customer",
+                       product=PROD.peek(1))
+        console.startDump()
+        q.report()
+        s = console.stopDump()
+        self.assertEqual(s,"""\
+date    |customer  
+--------+----------
+20030816|Henri     
+20030816|James     
+20040318|Bernard   
+20040319|Henri     
+""")        
         
+        
+
 if __name__ == '__main__':
-    tsttools.main()
+    unittest.main()
 

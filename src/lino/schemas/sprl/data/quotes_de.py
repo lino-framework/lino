@@ -7,8 +7,7 @@ import re
 from lino.schemas.sprl.tables import Quotes, Authors, Languages
 
 def populate(sess):
-	QUOTES = sess.query(Quotes,'lang abstract')
-	s = """\
+    s = """\
 Abgeordnete sind immer zu tausend Spesen aufgelegt.
 Alle können denken; nur bleibt es den meisten erspart.
 Alle Menschen werden [noch!] als Original geboren, die meisten sterben als Kopie.
@@ -592,21 +591,23 @@ Zeige mir Deine Krawatte und ich sage Dir, was Du gegessen hast.
 Zum Leben muss man geboren sein.
 Zwei im Büro, und einer arbeitet? Ein Beamter und ein Ventilator."""
 
-	de = LANGS.peek('de')
-	for line in s.split('\n'):
-		q.appendRow(de,line)
-	#return s.split('\n')
+    LANGS = sess.query(Languages)
+    de = LANGS.peek('de')
+    q = sess.query(Quotes,'lang abstract')
+    for line in s.split('\n'):
+        q.appendRow(de,line)
+    #return s.split('\n')
 
-	#db.flush()
+    #db.flush()
 
 
 #http://www.sternstunden-des-lebens.net/weisheiten.htm
 # (c) Sternstunden des Lebens
-		
+        
 def populate2(db,**kw):
-	db.installto(globals())
-	
-	s = """\
+    db.installto(globals())
+    
+    s = """\
 
    1.
 
@@ -3688,16 +3689,16 @@ Krishna / Bhagavadgita
       Unsere Gedanken, unsere Worte und Taten
       sind die Fäden in einem Netz, das wir uns umhängen.
       Swami Vivekananda
-		
+        
 
 
 
-		
+        
 
 
-		
-		
-	
+        
+        
+    
  408.
 
        Sterben ist das Auslöschen 
@@ -4033,22 +4034,22 @@ Krishna / Bhagavadgita
 
       Wer einmal sich selbst gefunden,
       der kann nichts auf der Welt verlieren.
-      Stefan Zweig 		
+      Stefan Zweig      
 
 """
     AUTHORS = sess.query(Authors)
     LANGS = sess.query(Languages)
     author = AUTHORS.appendRow(name="TODO")
-	de = LANGS.peek('de')
-	for z in re.split("#|[0123456789]+\."):
-		z = z.strip()
-		l = z.splitlines()
-		body = "\n<br>".join(l[:-1])
-		authorName = l[:-1]
-		ds = QUOTES.findone(name=authorName)
-		QUOTES.appendRow(abstract=body,author=author,lang=de)
-			
-			
-			
-	
-	
+    de = LANGS.peek('de')
+    for z in re.split("#|[0123456789]+\."):
+        z = z.strip()
+        l = z.splitlines()
+        body = "\n<br>".join(l[:-1])
+        authorName = l[:-1]
+        ds = QUOTES.findone(name=authorName)
+        QUOTES.appendRow(abstract=body,author=author,lang=de)
+            
+            
+            
+    
+    
