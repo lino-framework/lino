@@ -2,6 +2,7 @@
 # normalDate.py - version 1.3 - 2002/05/24
 # Author: Jeff Bauer, Rubicon Research - jbauer@rubic.com
 # License: Same as Python 2.1 or later
+# http://starship.python.net/crew/jbauer/normalDate/
 
 # modifications by Luc Saffre:
 # fixed bug in weekOfYear
