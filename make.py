@@ -63,7 +63,8 @@ def main(targets):
             print "Gonna be severe...!"
         
     if len(targets) == 0:
-        targets = ['html','tests']
+        targets = ['unittest']
+        #targets = ['html','tests']
         # targets = ['html','doctest']
 
     if 'tests' in targets:
