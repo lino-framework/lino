@@ -50,7 +50,7 @@ class Main:
         duration = now - self.starttime
         line = (
             parent.entries.dossard.getValue(),
-            now, duration
+            str(now), str(duration)
             )
         self.data.append(line)
         parent.info("%s arrived at %s after %s" % line)
@@ -63,19 +63,18 @@ class Main:
             else:
                 parent.entries.dossard.setFocus()
                 return
-        parent.close()
+        parent.close(parent)
 
     def start(self,parent):
         self.starttime = datetime.datetime.now()
-        #self.starttime = time.time()
         parent.info("started at %s" %str(self.starttime))
         #parent.buttons.arrive.setFocus()
         parent.entries.dossard.setFocus()
 
     def run(self):
         
-        frm = Form( label="Raceman arrivals",
-                    doc="""\
+        frm = Form(label="Raceman arrivals",
+                   doc="""\
 Ankunftszeiten an der Ziellinie erfassen.
 Beim Startschuss "Start" klicken!
 Jedesmal wenn einer ankommt, ENTER drücken.
@@ -87,7 +86,8 @@ Jedesmal wenn einer ankommt, ENTER drücken.
                      doc="""Hier die Dossardnummer des ankommenden Läufers eingeben, oder '*' wenn sie später erfasst werden soll.""")
 
         
-        bbox = frm.addHPanel()
+        #bbox = frm.addHPanel()
+        bbox = frm
         bbox.addButton(name="start",
                       label="&Start",
                       onclick=self.start)
