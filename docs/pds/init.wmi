@@ -1,12 +1,3 @@
 # webman init file
 # coding: latin1
 
-self.setTitle("bla")
-
-self.setAbstract("""\
-blabla
-""")
-
-self.setStyleSheet('../default.css')
-
-#self.leftArea = None

@@ -2,6 +2,8 @@
 Pizzeria
 ========
 
+.. include:: ../_header.txt
+
 The file `src/lino/examples/pizzeria.py` is a simple example to
 introduce Adamo.
 
@@ -10,13 +12,13 @@ First day
 
 Here is the source code:
 
-  .. include:: ../src/lino/examples/pizzeria.py
+  .. include:: ../../src/lino/examples/pizzeria.py
      :literal:
 
 
 
 @{
-from lino.version import __version__
+from lino import __version__
 }
 
 Here is what you see if you run pizzeria::

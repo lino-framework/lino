@@ -169,6 +169,41 @@ known widths.</p>
 </td>
 </tr>
 </table>
+<H2>Another way</H2>
+<p>The following table is a total of an invoice.</p>
+<p>The middle row shows a common trap and known bug: if you start a table cell implicitly (without an explicit beginCell()), then the first paragraph of this cell won't get the expected column paraStyle but the tables default paraStyle.
+</p>
+<table border="1">
+<tr>
+<th></th>
+<th></th>
+</tr>
+<tr>
+<td>
+<p>Total:</p>
+</td>
+<td>
+<p>100,00</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>V.A.T.:</p>
+<p>This is a second paragraph in the same cell.</p>
+</td>
+<td>
+<p>21,00</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Total incl. VAT:</p>
+</td>
+<td>
+<p>121,00</p>
+</td>
+</tr>
+</table>
 
   </td>
   </tr>

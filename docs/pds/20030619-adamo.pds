@@ -1,9 +1,9 @@
 from lino.sdoc.pdstools import showAndExec, \
      tableFromCursor, tableFromQuery
 
-from lino.sprl import demo
-demo.startup()
-globals().update(demo.db.tables)
+from lino.schemas.sprl import demo
+sess = demo.getDemoDB()
+sess.installto(globals())
 
 pds.setTitle("Adamo and PDS")
 
@@ -14,8 +14,8 @@ These are the tables defined in the sprl schema:
 """)
 
 if pds.beginTable('lll'):
-   for table in demo.db.tables.values():
-      pds.tr(table.getName(),
+   for table in sess.tables.values():
+      pds.tr(table.getTableName(),
              table.__class__.__doc__,
              table.getAttrList())
    pds.endTable()
@@ -41,4 +41,4 @@ query""")
 
 tableFromQuery(q)
 
-demo.shutdown()
+sess.shutdown()

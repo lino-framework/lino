@@ -1,56 +1,70 @@
 # webman init file
 # coding: latin1
-# (python-mode)
+# -*-*- (python-mode) -*-*-
 
 
 self.setTitle("Lino Documentation")
 
-self.setTitle("""\
-Currently this is also the Lino Web Homepage.
-""")
+## self.setTitle("""\
+## Currently this is also the Lino Web Homepage.
+## """)
 
 self.setStyleSheet('default.css')
 
 self.setFilerefBase("..")
 self.setFilerefURL('http://cvs.sourceforge.net/viewcvs.py/lino/lino/%s?view=markup')
 
-self.siteMap = """\
-what 
+self.setMenu("""\
 overview
-   adamo
- 	timtools
- 	wui
+	adamo
+	timtools
+	wui
 	webman
+	pds
 faq
 links
 install
-start
+	start
 news
-"""
+diary
+	history
+""")
 
-def myLeftArea(page=None):
-	return """\
-<p class="menu">
-<a href="index.html">Home</a>
-<br><a href="http://sourceforge.net/projects/lino/">Forge</a>
-</p>
+def myLeftArea(page):
+	html = """\
+	<p class="menu">
+	<a href="index.html">Home</a>
+	<br><a href="http://sourceforge.net/projects/lino/">Forge</a>
+	</p>
+	"""
+	html += """
+	<p class="copyright">
+	&copy; 2001-2004
+	<br><a href="mailto:luc.saffre@gmx.net">Luc Saffre</a>
+	<br>
+	"""
 
-<p class="copyright">
-&copy; 2001-2003
-<br><a href="mailto:luc.saffre@gmx.net">Luc Saffre</a>
-<br>
-
-<br><a href="http://sourceforge.net">
-<img src="http://sourceforge.net/sflogo.php?group_id=87016&type=1"
+	html += """
+	<br><a href="http://sourceforge.net">
+	<img src="http://sourceforge.net/sflogo.php?group_id=87016&type=1"
    width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
-</p>
+	</p>
+	"""
+	mod = page.getModule()
+## 	l = mod.getChildren().keys()
+## 	l.sort()
+## 	for name in l:
+## 		child = getattr(mod,name)
+## 		html += """<br><a href="%s">%s</a>""" % (child.getURL(page),
+## 															  child.getTitle())
 
-	
+	html += mod.menu.render_html(page)
+## 	for mi in mod.menu:
+## 		html += "<br>"+ mi.render_html(page)
+	return html
 
 
-"""
-
-def myBottomArea():
+def myBottomArea(page):
 	from time import ctime
 	from lino import __version__
 	return """<p class="footer">""" \

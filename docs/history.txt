@@ -1,3 +1,6 @@
+======================================
+Historical moments of the Lino project
+======================================
 
 2003-04-15 : release  0.5.2 
 ---------------------------
@@ -28,7 +31,7 @@
   
 
 2003-06-03  release  0.6.0 
--------------------------
+--------------------------
 
 pds2pdf can now print barcodes.  HTML rendering works (although very
 early stage).  Internal redesign. The previous internals were too
@@ -40,13 +43,11 @@ close to the reportlab data model and had problems to render HTML.
 for a customer who starts to use TIM tools.
  
 2004-07-30:  Lino now hosted on lsaffre.dyndns.org
-------------------------------------------------
+--------------------------------------------------
 
 I will probably abandon the sourceforge project and host Lino
 myself. Because I prefer SVN to CVS. Because anyway I want to have my
 own web server.
 
 
-2004-09-16  release 0.6.2
--------------------------
 
