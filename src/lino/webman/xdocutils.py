@@ -6,7 +6,7 @@ from os.path import abspath, basename, dirname, normpath, join, exists
 # from docutils import core #import publish_string, publish_file
 from docutils import core, io
 from docutils.writers import html4css1
-import em
+#import em
 from StringIO import StringIO
 from textwrap import dedent
 
@@ -190,7 +190,7 @@ class WebmanWriter(html4css1.Writer):
 				
 
 
-def publish(node):
+def publish(node,srcpath):
 	description = ('Lino WebMan publisher.	 '
 						+ core.default_description)
 
@@ -205,7 +205,7 @@ def publish(node):
 	pub.process_command_line(webmod.argv,
 									 description=description,
 									 **webmod.defaults)
-	pub.set_source(None, node.getSourcePath())
+	pub.set_source(None, srcpath) # node.getSourcePath())
 	cwd = os.getcwd()
 	os.chdir(webmod.getLocalPath())
 	r = pub.publish() #enable_exit=enable_exit)

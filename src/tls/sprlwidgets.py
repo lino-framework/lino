@@ -211,7 +211,7 @@ class PageLayout(MemoTreeLayout):
 			wr('</ul>')
 
 		
-	def writeFooter(self):
+	def writePageBottom(self):
 		row = self.target
 		wr = self.write
 		wr('<table border="0">')

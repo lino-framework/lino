@@ -61,21 +61,35 @@ class HtmlResponse:
 	CLEAR = "__CLEAR"
 	showRowCount = True
 	
-	BEFORE_LEFT_MARGIN="""
+	BEFORE_HEAD='''\
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+	<HTML>
+	<HEAD>
+	'''
+	
+	AFTER_HEAD='''
+	<META HTTP-EQUIV="Content-Type"
+	content="text/html;charset=latin-1" />
+	</HEAD>
+	<BODY>
+	'''
+	
+	BEFORE_LEFT_MARGIN='''
 	<table class="main"><tr>
 	<td class="left" width="15%%">
-	"""
-	AFTER_LEFT_MARGIN="""
+	'''
+	
+	AFTER_LEFT_MARGIN='''
 	</td>
 	<td valign="top">
-	"""
+	'''
 
 	BEFORE_FOOT = """
 	</td></tr></table>
 	<table class="foot">
 	<tr>
 	"""
-	
 	BETWEEN_FOOT = """
 	<td align="right" valign="center">
 	"""
@@ -84,13 +98,11 @@ class HtmlResponse:
 	</td>
 	</tr>
 	</table>
-	</body>
-	</html>
+	</BODY>
+	</HTML>
 	"""
-
-	def __init__(self,resource,request,writer):
-		self.request = request
-		self.resource = resource
+	
+	def __init__(self,writer):
 		if writer is None:
 			self._writer = StringIO()
 		else:
@@ -98,6 +110,9 @@ class HtmlResponse:
 			self._writer = writer
 
 
+	def getStyleSheet(self):
+		return None
+	
 	def onBeginResponse(self):
 		pass
 
@@ -105,7 +120,7 @@ class HtmlResponse:
 		if label is None:
 			label="click!"
 		return self.renderLink(url,'[%s]' % label)
-		
+	
 	def renderLink(self,url,label=None):
 		if label is None:
 			label = url
@@ -120,16 +135,123 @@ class HtmlResponse:
 	def write(self,html):
 		self._writer.write(html)
 
-## 	def renderMenuBar(self,mb):
-## 		s = ""
-## 		if mb.getLabel():
-## 			s += '<p class="toc"><b>%s</b> ' \
-## 				  % self.formatLabel(mb.getLabel())
-## 		for mnu in mb.getMenus():
-## 			s += '<br><b>%s</b>: ' % self.formatLabel(mnu.getLabel())
-## 			for mi in mnu.getItems():
-## 				s += "<br>" + self.renderAction(mi)
-## 		self.write(s)
+	def writeDebugMessage(self,msg):
+		self.write('<font size="1" color="grey">')
+		self.write(escape(msg))
+		self.write('</font>')
+
+	def writeDebugPanel(self):
+		pass
+
+## 	def refToSelf(self,label,*args,**options):
+## 		raise NotImplementedError
+
+
+	def buildURL(self,url,*args,**kw):
+		if len(args):
+			url += "/" + "/".join([str(v) for v in args])
+		sep = "?"
+		for (k,v) in kw.items():
+			if issequence(v):
+				for i in v:
+					url += sep + k + "=" + str(i)
+					sep = "&"
+			elif v is not self.CLEAR:
+				if v is None:
+					url += sep + k + "=" 
+				else:
+					url += sep + k + "=" + str(v)
+				sep = "&"
+		return url
+		
+	def writePage(self):
+		raise NotImplementedError
+	
+	def writeBody(self):
+		self.writePage()
+		self.writePageBottom()
+
+	def writeUserPanel(self):
+		pass
+	
+	def writePageBottom(self):
+		pass
+
+	def writeLeftMargin(self):
+		pass
+	
+	def writePreTitle(self):
+		pass
+		#self.write('preTitle')
+
+	def writeLeftFooter(self):
+		pass
+	
+	def getTitle(self):
+		raise NotImplementedError
+		
+	def writeWholePage(self):
+		#assert isinstance(widget,Widget)
+
+		self.onBeginResponse()
+		
+		title = self.getTitle()
+
+		wr = self.write
+
+		wr(self.BEFORE_HEAD)
+		wr("<title>%s</title>" % title)
+		css = self.getStyleSheet()
+		if css is not None:
+			wr("""<link rel=stylesheet type="text/css" href="%s">
+			""" % css)
+		wr(self.AFTER_HEAD)
+		wr(self.BEFORE_LEFT_MARGIN)
+		self.writeUserPanel()
+		self.writeLeftMargin()
+		if True:
+			self.writeDebugPanel()
+		wr(self.AFTER_LEFT_MARGIN)
+		wr("""
+		<table class="head">
+		<tr>
+		<td>
+		""")
+		self.writePreTitle()
+		wr('<p class="title">%s</p>' % title)
+		wr("""
+		</td>
+		</tr>
+		</table>
+		""")
+
+		self.writeBody()
+
+		wr(self.BEFORE_FOOT)
+		self.writeFooter()
+		
+	def writeFooter(self):
+		wr = self.write
+		wr("""<td align="left" valign="center">""")
+		self.writeLeftFooter()
+		wr("</td>")
+		wr(self.BETWEEN_FOOT)
+		self.writeRightFooter()
+		wr(self.AFTER_FOOT)
+		
+	def writeRightFooter(self):
+		self.renderButton(url=self.uriToSelf(),
+								label="reload")
+
+
+		
+		
+class TwistedResponse(HtmlResponse):
+	
+	def __init__(self,resource,request,writer):
+		self.request = request
+		self.resource = resource
+		HtmlResponse(self,writer)
 
 
 	def renderCellValue(self,col,value):
@@ -144,6 +266,11 @@ class HtmlResponse:
 		else:
 			self.write("<tt>"+htmltext(str(value))+"</tt>")
 
+	def getStyleSheet(self):
+		if self.resource.stylesheet is None:
+			return None
+		return self.fileURI(self.resource.stylesheet)
+	
 	def renderValue(self,value,type,size=(10,3)):
 
 		if value is None:
@@ -201,33 +328,6 @@ class HtmlResponse:
 		wr('\n</table>')
 		
 
-	def writeDebugMessage(self,msg):
-		self.write('<font size="1" color="grey">')
-		self.write(escape(msg))
-		self.write('</font>')
-
-
-## 	def refToSelf(self,label,*args,**options):
-## 		raise NotImplementedError
-
-
-	def buildURL(self,url,*args,**kw):
-		if len(args):
-			url += "/" + "/".join([str(v) for v in args])
-		sep = "?"
-		for (k,v) in kw.items():
-			if issequence(v):
-				for i in v:
-					url += sep + k + "=" + str(i)
-					sep = "&"
-			elif v is not self.CLEAR:
-				if v is None:
-					url += sep + k + "=" 
-				else:
-					url += sep + k + "=" + str(v)
-				sep = "&"
-		return url
-		
 	
 	def homeURI(self,*args,**kw):
 		inet, addr, port = self.request.getHost()
@@ -269,86 +369,10 @@ class HtmlResponse:
 	def formatLabel(self,label):
 		return htmltext(label)
 
-	def writeBody(self):
-		self.writePage()
-		self.writeFooter()
-
-	def writeUserPanel(self):
-		pass
-	
-	def writeFooter(self):
-		pass
-
-	def writeLeftMargin(self):
-		pass
-	
-	def writePreTitle(self):
-		pass
-		#self.write('preTitle')
-
-	def getTitle(self):
-		raise NotImplementedError
-		
-	def writeWholePage(self):
-		#assert isinstance(widget,Widget)
-
-		self.onBeginResponse()
-		
-		title = self.getTitle()
-
-		wr = self.write
-
-		wr("""\
-		<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-		"http://www.w3.org/TR/html4/loose.dtd">
-		<html>
-		<head>
-		""")
-		wr("<title>%s</title>" % title)
-		if self.resource.stylesheet is not None:
-			wr("""\
-			<link rel=stylesheet type="text/css" href="%s">
-			""" % (self.fileURI(self.resource.stylesheet)))
-		wr("""
-		</head>
-		<body>
-		""")
-		wr(self.BEFORE_LEFT_MARGIN)
-		self.writeUserPanel()
-		self.writeLeftMargin()
-		if True:
-			wr("""<p><b>Debug panel:</b></p>""")
-			self.writeDebugPanel()
-		wr(self.AFTER_LEFT_MARGIN)
-		wr("""
-		<table class="head">
-		<tr>
-		<td>
-		""")
-		self.writePreTitle()
-		wr('<p class="title">%s</p>' % title)
-		wr("""
-		</td>
-		</tr>
-		</table>
-		""")
-
-		self.writeBody()
-
-		wr(self.BEFORE_FOOT)
-		wr("""<td align="left" valign="center">""")
-		self.writeLeftFooter()
-		wr("</td>")
-		
-		wr(self.BETWEEN_FOOT)
-		self.renderButton(url=self.uriToSelf(),
-								label="reload")
-		wr(self.AFTER_FOOT)
-
-
 
 	def writeDebugPanel(self):
 		wr = self.write
+		wr("""<p><b>Debug panel:</b></p>""")
 		wr("renderer: " + self.__class__.__name__)
 		#wr("<br>baseuri="+self.response.baseuri)
 		#wr("<br>prePathURL="+self.request.prePathURL())
@@ -371,13 +395,13 @@ class HtmlResponse:
 		
 
 	
-class ContextedResponse(HtmlResponse):
+class ContextedResponse(TwistedResponse):
 
 	def __init__(self,resource,request,target,writer):
 		self.target = target
 		self._context = target.getContext()
 		assert self._context is not None
-		HtmlResponse.__init__(self,resource,request,writer)
+		TwistedResponse.__init__(self,resource,request,writer)
 
 
 		

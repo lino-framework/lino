@@ -1,5 +1,5 @@
 #----------------------------------------------------------------------
-# ID:        $Id: console.py$
+# ID:			 $Id: console.py$
 # Copyright: (c) 2003-2004 Luc Saffre
 # License:	 GPL
 #----------------------------------------------------------------------
@@ -9,17 +9,34 @@ try:
 except ImportError,e:
 	sound = False
 
+
+_syscon = None	  
+
 class Console:
 
 	forwardables = ('confirm','warning','debug','info','error')
 
-	def __init__(self,out=None,verbose=False):
+	def __init__(self,out=None,verbose=False,debug=False,batch=False):
 		if out is None:
 			out = sys.stdout
 		self.out = out
 		self._verbose = verbose
-		self._debug = False
-		self._batch = False
+		self._debug = debug
+		self._batch = batch
+
+	def set(self,verbose=None,debug=None,batch=None):
+		if verbose is not None:
+			self._verbose = verbose
+		if batch is not None:
+			self._batch = batch
+		if debug is not None:
+			self._debug = debug
+
+	def isBatch(self):
+		return self._batch
+
+	def isVerbose(self):
+		return self._verbose
 
 
 	def confirm(self,prompt,answer="y",allowed="yn"):
@@ -28,6 +45,9 @@ class Console:
 		her answer.
 		
 		"""
+		if self._batch:
+			return (answer=='y')
+		
 		if sound:
 			sound.asterisk()
 		while True:
@@ -43,7 +63,7 @@ class Console:
 
 	def warning(self,msg):
 		
-		""" Log a warning message.  If self._batch is False, make sure
+		""" Log a warning message.	 If self._batch is False, make sure
 		that she has seen this message before returning.
 
 		"""
@@ -73,24 +93,24 @@ class Console:
 			sound.asterisk()
 		raise "critical error: " + msg
 		
-## 	def notify(self,msg):
+##		def notify(self,msg):
 
-## 		"""Notify the user about something just for information.
+##			"""Notify the user about something just for information.
 
-## 		Without acknowledgment request.
+##			Without acknowledgment request.
 
-## 		examples: why a requested action was not executed
-## 		"""
-## 		if sound:
-## 			sound.asterisk()
-## 		#notifier(msg)
-## 		self.out.write(msg + "\n")
-## 		#self.out.write('[note] ' + msg + "\n")
+##			examples: why a requested action was not executed
+##			"""
+##			if sound:
+##				sound.asterisk()
+##			#notifier(msg)
+##			self.out.write(msg + "\n")
+##			#self.out.write('[note] ' + msg + "\n")
 
-## 	def progress(self,msg):
-## 		"""as notify, but only if verbose """
-## 		if self.verbose:
-## 			self.notify(msg)
+##		def progress(self,msg):
+##			"""as notify, but only if verbose """
+##			if self.verbose:
+##				self.notify(msg)
 			
 
 def getSystemConsole(**kw):
@@ -107,7 +127,7 @@ def notify(*args,**kw):
 
 
 ## def console_notify(msg):
-## 	print '[note] ' + msg
+##		print '[note] ' + msg
 	
 ## notifier = console_notify
 
