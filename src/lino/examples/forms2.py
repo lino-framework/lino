@@ -19,21 +19,37 @@
 from lino.adamo.datatypes import STRING
 from lino.forms.wx.wxform import Form
 
-def main():
+def privacy(parent):
+    frm = parent.addForm(label="Privacy Statement")
+    frm.addLabel("""\
+
+(imagine our privacy statement here)
+
+Note that this form is a child of "%s".
+It is not modal,
+so you don't need to close it if you want to continue registering.
+""" % parent.getLabel())
+    btnPanel = frm.addPanel(frm.HORIZONTAL)
+    btnPanel.addOkButton()
+    btnPanel.addAbortButton()
+    frm.show()
     
-    frm = Form(label="my first form")
+def main():
+    frm = Form(label="my second form")
+    p = frm.addPanel(frm.VERTICAL)
     frm.addLabel("""\
 Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
 """)
-    frm.addEntry("firstName",STRING,
-                 label="First name",
-                 value="Norbert")
-    frm.addEntry("name",STRING,
-                 value="Ausdemwald")
-    frm.addOkButton()
-    frm.addAbortButton()
+    frm.addEntry("firstName",STRING,label="first name",
+               value="Norbert")
+    frm.addEntry("name",STRING,value="Ausdemwald")
+    
+    btnPanel = frm.addPanel(frm.HORIZONTAL)
+    btnPanel.addOkButton()
+    btnPanel.addAbortButton()
+    btnPanel.addButton(label="&Privacy statement").setHandler(privacy)
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.value,

@@ -17,29 +17,47 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.datatypes import STRING
+#from lino.adamo import center
 from lino.forms.wx.wxform import Form
 
-def main():
-    
-    frm = Form(label="my first form")
+from lino.schemas.sprl import demo
+from lino.schemas.sprl.tables import Partners
+
+#center.setFormFactory(Form)
+
+def clickme(parent):
+    frm = parent.addForm(label="click!")
     frm.addLabel("""\
-Please enter your personal data.
-Don't worry about your privacy.
-You can trust us.
-""")
-    frm.addEntry("firstName",STRING,
-                 label="First name",
-                 value="Norbert")
-    frm.addEntry("name",STRING,
-                 value="Ausdemwald")
+This is a child form. It is not modal,
+so you don't need to close it if you want to continue with "%s".
+""" % parent.getLabel())
     frm.addOkButton()
     frm.addAbortButton()
+    frm.show()
+    
+def main():
+    sess = demo.beginSession()
+    ds = sess.query(Partners)
+    
+    #frm = sess.addForm(label="my first form")
+    frm = Form(label="my first form")
+    box = frm.addBox(frm.VERTICAL)
+    box.addLabel("""\
+Please enter your personal data.
+We won't store it. You can trust us.
+""")
+    box.addEntry("firstName",STRING,label="first name")
+    box.addEntry("name",STRING)
+    btnBox = box.addBox(frm.HORIZONTAL)
+    btnBox.addOkButton()
+    btnBox.addAbortButton()
+    btnBox.addButton(name="click &Me").setHandler(clickme)
+    btnBox.addButton(label=ds.getLabel()).setHandler(ds.showGridForm)
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
-            frm.entries.firstName.value,
-            frm.entries.name.value)
+            frm.entries.firstName.getValue(),
+            frm.entries.name.getValue())
     else:
         print """You pressed ESC, clicked "Abort" or closed the form."""
         
-if __name__ == "__main__":
-    main()
+    sess.shutdown()
