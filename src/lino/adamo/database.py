@@ -84,7 +84,7 @@ class Database(Context,Describable):
 		l = []
 		for table in self.schema.getTableList():
 			try:
-				l.append(self._stores[table.getTableName()])
+				l.append(self._stores[table.__class__])
 			except KeyError:
 				pass
 		return l
@@ -92,7 +92,7 @@ class Database(Context,Describable):
 	def startup(self,conn,flt=None):
 
  		for table in self.schema.getTableList(flt):
- 			self._stores[table.getTableName()] = Store(conn, self, table)
+ 			self._stores[table.__class__] = Store(conn, self, table)
 
 
 	def getContentRoot(self):

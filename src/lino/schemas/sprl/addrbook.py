@@ -1,3 +1,5 @@
+#coding: latin1
+
 ## Copyright Luc Saffre 2004. This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -354,15 +356,44 @@ class Org2Pers(LinkTable):
 
 
 class ContactsPlugin(SchemaPlugin):
+    
     def defineTables(self,schema):
-        schema.addTable( Nations(
-            name="NATIONS",
-            label="Nations" ))
-        schema.addTable( Cities("CITIES","Cities"))
-        schema.addTable( Organisations("ORGS","Organisations"))
-        schema.addTable( Partners("PARTNERS","Partners"))
-        schema.addTable( PartnerTypes(
-            name="PARTYPES",
-            label="Partner Types"))
-        schema.addTable( Currencies())
+        schema.addTable(Nations, label="Nations" )
+        schema.addTable(Cities, label="Cities")
+        schema.addTable(Organisations,label="Organisations")
+        schema.addTable(Partners, label="Partners")
+        schema.addTable(PartnerTypes,
+                        label="Partner Types")
+        schema.addTable(Currencies)
 
+    def populate(self,sess):
+        q = sess.query(PartnerTypes,'id name')
+        q.setBabelLangs('en de fr')
+        q.appendRow('c',('Customer', 'Kunde', 'Client'))
+        q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
+        q.appendRow('m',('Member', 'Mitglied', "Membre"))
+        q.appendRow('e',('Employee', 'Angestellter', "Employé"))
+        q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
+	
+        
+
+        q = sess.query(Nations,'id name' )
+        if sess.schema.options.big:
+            from lino.schemas.sprl.data import nations
+            nations.populate(q)
+            from lino.schemas.sprl.data import cities_be
+            cities_be.populate(q.peek('be'))
+        else:
+            q.setBabelLangs('en')
+            q.appendRow("ee","Estonia")
+            q.appendRow("be","Belgium")
+            q.appendRow("de","Germany")
+            q.appendRow("fr","France")
+            q.appendRow("us","United States of America")
+
+        #CURR = sess.tables.Currencies
+        q = sess.query(Currencies)
+        q.setBabelLangs('en')
+        EUR = q.appendRow(id="EUR",name="Euro")
+        BEF = q.appendRow(id="BEF",name="Belgian Franc")
+        q.appendRow(id="USD",name="US Dollar")

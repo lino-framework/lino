@@ -16,25 +16,4 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-"""
 
-import csv
-import os
-from lino.adamo.datatypes import DataVeto
-
-
-dataDir = os.path.dirname(__file__)
-
-def populate(be):
-	f = file(os.path.join(dataDir,'belgzip.csv'),'rb')
-	r = csv.reader(f)
-	r.next()
-	cities = be.cities
-	#print cities
-	for (name,zip) in r:
-		cities.appendRow(name=name,zipCode=zip)
-
-	
-
-	

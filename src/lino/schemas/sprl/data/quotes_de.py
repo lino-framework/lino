@@ -4,9 +4,10 @@
 
 import re
 
-def populate(db,**kw):
-	db.installto(globals())
-	q = QUOTES.query('lang abstract')
+from lino.schemas.sprl.tables import Quotes, Authors, Languages
+
+def populate(sess):
+	QUOTES = sess.query(Quotes,'lang abstract')
 	s = """\
 Abgeordnete sind immer zu tausend Spesen aufgelegt.
 Alle können denken; nur bleibt es den meisten erspart.
@@ -4035,15 +4036,15 @@ Krishna / Bhagavadgita
       Stefan Zweig 		
 
 """
-	author = AUTHORS.appendRow(name="TODO")
+    AUTHORS = sess.query(Authors)
+    LANGS = sess.query(Languages)
+    author = AUTHORS.appendRow(name="TODO")
 	de = LANGS.peek('de')
 	for z in re.split("#|[0123456789]+\."):
 		z = z.strip()
 		l = z.splitlines()
 		body = "\n<br>".join(l[:-1])
 		authorName = l[:-1]
-		db.installto(globals())
-
 		ds = QUOTES.findone(name=authorName)
 		QUOTES.appendRow(abstract=body,author=author,lang=de)
 			

@@ -44,6 +44,8 @@ class SchemaPlugin(SchemaComponent,Describable):
         pass
     def defineMenus(self,schema,context,win):
         pass
+    def populate(self,sess):
+        pass
 
 
 class Schema:
@@ -62,8 +64,9 @@ class Schema:
         self._tables= []
         
         self.plugins = AttrDict()
-        self.tables = AttrDict()
+        #self.tables = AttrDict()
         self.forms = AttrDict()
+        self.options = AttrDict(d=kw)
 
         """ Note: for plugins and tables it is important to keep also a
         sequential list.  """
@@ -81,15 +84,16 @@ class Schema:
 ##          return
 ##      self.addTable(value,name)
 
-    def addTable(self,table):
+    def addTable(self,tableClass,**kw):
+        table = tableClass(**kw)
         assert isinstance(table,Table),\
                  repr(table)+" is not a Table"
         assert not self._startupDone,\
                  "Too late to declare new tables in " + repr(self)
         table.registerInSchema(self,len(self._tables))
         self._tables.append(table)
-        name = table.getTableName()
-        self.tables.define(name,table)
+        #name = table.getTableName()
+        #self.tables.define(name,table)
         
     def addPlugin(self,plugin):
         assert isinstance(plugin,SchemaPlugin),\
@@ -208,7 +212,9 @@ class Schema:
         assert self._contextRenderer is not None
         
 
-    
+    def populate(self,sess):
+        for plugin in self._plugins:
+            plugin.populate(sess)
     
     def findImplementingTables(self,toClass):
         l = []

@@ -52,7 +52,7 @@ class Session(Context):
         self._user = None
         self.db = None
         self.schema = None
-        self.tables = None
+        #self.tables = None
         self.forms = None
         
         if console is None:
@@ -92,14 +92,14 @@ class Session(Context):
                 self.logout()
         if db is None:
             self.schema = None
-            self.tables = None
+            #self.tables = None
             self.forms = None
             self.db = None
         else:
             # start using new db
             self.schema = db.schema # shortcut
             self.db = db
-            self.tables = AttrDict(factory=self.openTable)
+            # self.tables = AttrDict(factory=self.openTable)
             self.forms = AttrDict(factory=self.openForm)
             if langs is None:
                 langs = db.getDefaultLanguage()
@@ -153,35 +153,48 @@ class Session(Context):
     def getLangs(self):
         return " ".join([lng.id for lng in self._babelLangs])
     
-    def openTable(self,name):
+    def query(self,leadTable,columnNames=None,**kw):
         try:
-            store = self.db._stores[name]
+            store = self.db._stores[leadTable]
         except KeyError,e:
-            #except AttributeError,e:
-            raise InvalidRequestError("no such table: "+name)
-        return Datasource(self,store)
+            raise InvalidRequestError("no such table: "+str(leadTable))
+        return Datasource(self,store,columnNames=columnNames,**kw)
+
+    def report(self,**kw):
+        raise NotImplementedError
     
-    def getDatasource(self,name):
-        return getattr(self.tables,name)
+##     def openTable(self,name):
+##         try:
+##             store = self.db._stores[name]
+##         except KeyError,e:
+##             #except AttributeError,e:
+##             raise InvalidRequestError("no such table: "+name)
+##         return Datasource(self,store)
+    
+##     def getDatasource(self,name):
+##         return getattr(self.tables,name)
 
     def end(self):
         self.use()
+
+    def populate(self):
+        self.schema.populate(self)
         
 
-    def installto(self,d):
-        """
-        deprecated.
-        installto() will open all tables.
-        """
-        d['__session__'] = self
-        d['setBabelLangs'] = self.setBabelLangs
-        #self.context.tables.installto(d)
-        #d.update(
-        for name in self.db._stores.keys():
-            d[name] = getattr(self.tables,name)
-        #for name,store in self.db._stores.items():
-        #   ds = Datasource(self,store)
-        #   self.tables.define(name,ds)
+##     def installto(self,d):
+##         """
+##         deprecated.
+##         installto() will open all tables.
+##         """
+##         d['__session__'] = self
+##         d['setBabelLangs'] = self.setBabelLangs
+##         #self.context.tables.installto(d)
+##         #d.update(
+##         for name in self.db._stores.keys():
+##             d[name] = getattr(self.tables,name)
+##         #for name,store in self.db._stores.items():
+##         #   ds = Datasource(self,store)
+##         #   self.tables.define(name,ds)
         
     
     def onBeginSession(self):
@@ -213,9 +226,11 @@ class Session(Context):
     def checkIntegrity(self):
         msgs = []
         #for q in self.tables:
-        for name in self.db._stores.keys():
-            q = getattr(self.tables,name)
-            self.info("%s : %d rows" % (q._table.getTableName(), len(q)))
+        for cl in self.db._stores.keys():
+            q = self.query(cl)
+            #q = getattr(self.tables,name)
+            self.info("%s : %d rows" % (q._table.getTableName(),
+                                        len(q)))
             l = len(q)
             for row in q:
                 #row = q.atoms2instance(atomicRow)
@@ -247,30 +262,43 @@ class ConsoleSession(Session):
         for cell in frm:
             wr(cell.getLabel() + ":" + cell.format())
             wr("\n")
+
+
+    def report(self,**kw):
+        from lino.reports.plain import PlainReport
+        return PlainReport(self.console.out,**kw)
         
-    def showReport(self,ds,columnNames=None,showTitle=True,**kw):
-        wr = self.console.out.write
-        #if len(kw):
-        rpt = ds.report(columnNames,**kw)
-        #print [col.name for col in rpt._clist.visibleColumns]
-        if showTitle:
-            wr(rpt.getLabel()+"\n")
-            wr("="*len(rpt.getLabel())+"\n")
-        columns = rpt.getVisibleColumns()
-        wr(" ".join(
-            [col.getLabel().ljust(col.getPreferredWidth()) \
-             for col in columns]).rstrip())
-        wr("\n")
-        wr(" ".join( ["-" * col.getPreferredWidth() \
-                              for col in columns]))
-        wr("\n")
-        for row in rpt:
-            l = []
-            for cell in row:
-                #col = columns[i]
-                l.append(cell.format())
-            wr(" ".join(l).rstrip())
-            wr("\n")
+    def showReport(self,ds,*args,**kw):
+        rpt = self.report(ds,*args,**kw)
+        rpt.beginReport()
+        for row in ds:
+            rpt.renderRow(row)
+        rpt.endReport()
+        
+##     def showReport(self,ds,columnNames=None,showTitle=True,**kw):
+##         raise "replaced by report()"
+##         wr = self.console.out.write
+##         #if len(kw):
+##         rpt = ds.report(columnNames,**kw)
+##         #print [col.name for col in rpt._clist.visibleColumns]
+##         if showTitle:
+##             wr(rpt.getLabel()+"\n")
+##             wr("="*len(rpt.getLabel())+"\n")
+##         columns = rpt.getVisibleColumns()
+##         wr(" ".join(
+##             [col.getLabel().ljust(col.getPreferredWidth()) \
+##              for col in columns]).rstrip())
+##         wr("\n")
+##         wr(" ".join( ["-" * col.getPreferredWidth() \
+##                               for col in columns]))
+##         wr("\n")
+##         for row in rpt:
+##             l = []
+##             for cell in row:
+##                 #col = columns[i]
+##                 l.append(cell.format())
+##             wr(" ".join(l).rstrip())
+##             wr("\n")
 
 
 

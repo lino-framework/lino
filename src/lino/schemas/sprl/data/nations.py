@@ -1,3 +1,21 @@
+#coding: latin1
+
+## Copyright Luc Saffre 2004. This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 """
 ISO country codes from
 http://www.bcpl.net/~jspath/isocodes.html
@@ -13,9 +31,9 @@ from lino import adamo
 
 factbookDir = os.path.dirname(__file__)
 
-def populate(db):
+def populate(q):
 
-	s = """\
+    s = """\
 ad     Andorra, Principality of
 ae     United Arab Emirates
 af     Afghanistan, Islamic State of
@@ -261,94 +279,79 @@ zm     Zambia
 zr     Zaire
 zw     Zimbabwe
 """
-	
-	#ctx = adamo.getContext(db)
-	#ds.setBabelLangs('en')
-	#ds = ctx.open('NATIONS')
+    
+    q.setBabelLangs('en')
+    for l in s.splitlines():
+        (id,name) = l.split(None,1)
+        row = q.appendRow(id=id.strip(),
+                          name=name.strip())
+        
+    q.commit()
 
-	db.installto(globals())
-	
-	setBabelLangs('en')
-	for l in s.splitlines():
-		(id,name) = l.split(None,1)
-		row = NATIONS.appendRow(id=id.strip(),
-										name=name.strip())
-		
-	db.commit()
-
-	belgique = NATIONS.peek('be')
-	assert belgique.name == 'Belgium', repr(belgique.name)
-	
-	f = file(os.path.join(factbookDir,'2147rank.txt'))
-	#f = file(os.path.join(factbookDir,'rankorder','2147rank.txt'))
-	for l in f.readlines():
-		a = l.split('\t')
-		if len(a) == 1:
-			pass
-		else:
-			(rank,country,area,date) = a
-			if len(area) > 0:
-				area = area.replace(',','')
-				country = country.strip()
-				n = NATIONS.findone(name=country)
-				if n is not None:
-					n.lock()
-					n.area = int(area)
-					n.unlock()
-	f = file(os.path.join(factbookDir,'2119rank.txt'))
-	for l in f.readlines():
-		a = l.split('\t')
-		if len(a) == 1:
-			pass
-		else:
-			(rank,country,population,date) = a
-			if len(area) > 0:
-				population = population.replace(',','')
-				country = country.strip()
-				n = NATIONS.findone(name=country)
-				if n is not None:
-					n.lock()
-					n.population = int(population)
-					n.unlock()
+    belgique = q.peek('be')
+    assert belgique.name == 'Belgium', repr(belgique.name)
+    
+    f = file(os.path.join(factbookDir,'2147rank.txt'))
+    #f = file(os.path.join(factbookDir,'rankorder','2147rank.txt'))
+    for l in f.readlines():
+        a = l.split('\t')
+        if len(a) == 1:
+            pass
+        else:
+            (rank,country,area,date) = a
+            if len(area) > 0:
+                area = area.replace(',','')
+                country = country.strip()
+                n = q.findone(name=country)
+                if n is not None:
+                    n.lock()
+                    n.area = int(area)
+                    n.unlock()
+    f = file(os.path.join(factbookDir,'2119rank.txt'))
+    for l in f.readlines():
+        a = l.split('\t')
+        if len(a) == 1:
+            pass
+        else:
+            (rank,country,population,date) = a
+            if len(area) > 0:
+                population = population.replace(',','')
+                country = country.strip()
+                n = q.findone(name=country)
+                if n is not None:
+                    n.lock()
+                    n.population = int(population)
+                    n.unlock()
 
 
-	if False:
-		f = file(os.path.join(factbookDir,'world.csv'),'rb')
-		r = csv.reader(f)
-		r.next()
-		for line in r:
-			name = line[0]
-			capital = line[1]
-			#curr = line[3]
-			isocode = line[4]
-			dialcode = line[6]
-			population = line[7].replace(',','')
-			try:
-				population = int(population)
-			except ValueError:
-				population = None
-			if len(line) > 8:
-				x = line[8].replace(',','')
-				x = x.split()
-				if len(x) > 0:
-					x = x[0]
-					try:
-						area = int(x)
-					except ValueError:
-						area = None
-				else:
-					area = None
+    if False:
+        f = file(os.path.join(factbookDir,'world.csv'),'rb')
+        r = csv.reader(f)
+        r.next()
+        for line in r:
+            name = line[0]
+            capital = line[1]
+            #curr = line[3]
+            isocode = line[4]
+            dialcode = line[6]
+            population = line[7].replace(',','')
+            try:
+                population = int(population)
+            except ValueError:
+                population = None
+            if len(line) > 8:
+                x = line[8].replace(',','')
+                x = x.split()
+                if len(x) > 0:
+                    x = x[0]
+                    try:
+                        area = int(x)
+                    except ValueError:
+                        area = None
+                else:
+                    area = None
 
-			print ( name , capital, ccy_code, dialcode, population, area  )
-					
-	
-if __name__ == '__main__':
-	from lino.schemas.sprl.sprl import Schema
-	from lino.adamo.schema import quickdb
-	db = quickdb(Schema())
-	db.createTables()
-	populate(db)
-	db.installto(globals())
-	be = NATIONS.peek('be')
-	print "%d cities in Belgium" % len(be.cities)
-	
+            print ( name , capital, ccy_code, dialcode,
+                    population, area  )
+                    
+    
