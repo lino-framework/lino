@@ -48,8 +48,10 @@ Sizers explained using the master/slave vocabulary:
 
 import wx
 
-from lino.forms import base
 from lino.ui import console
+
+from lino.forms import base
+from lino.forms.wx import wxgrid
 
 WEIGHT = 1
 
@@ -104,7 +106,7 @@ class Button(Component,base.Button):
 
 class TableEditor(base.TableEditor,Component):        
     def setup(self,parent,box):
-        ctrl = wxgrid.TableEditorGrid(self,parent)
+        ctrl = wxgrid.TableEditorGrid(parent,self)
         box.Add(ctrl) #, 0, wx.CENTER,10)
         self.wxctrl = ctrl
                 
@@ -258,6 +260,7 @@ class Form(base.Form):
     entryFactory = Entry
     buttonFactory = Button
     panelFactory = Panel
+    tableEditorFactory = TableEditor
 
 ##     def afterShow(self):
 ##         console.debug(repr(self.mainComp))

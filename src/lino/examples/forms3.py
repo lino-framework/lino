@@ -17,48 +17,21 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.datatypes import STRING
-#from lino.adamo import center
-from lino.forms.wx.wxform import Form
+from lino.ui import console
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Partners
 
-#center.setFormFactory(Form)
-
-def clickme(parent):
-    frm = parent.addForm(label="click!")
-    frm.addLabel("""\
-This is a child form. It is not modal,
-so you don't need to close it if you want to continue with "%s".
-""" % parent.getLabel())
-    frm.addOkButton()
-    frm.addCancelButton()
-    frm.show()
-    
 def main():
     sess = demo.beginSession()
-    ds = sess.query(Partners)
+    ds = sess.query(Partners, orderBy="name")
     
-    #frm = sess.addForm(label="my first form")
-    frm = Form(label="my first form")
-    box = frm.addBox(frm.VERTICAL)
-    box.addLabel("""\
-Please enter your personal data.
-We won't store it. You can trust us.
-""")
-    box.addEntry("firstName",STRING,label="first name")
-    box.addEntry("name",STRING)
-    btnBox = box.addBox(frm.HORIZONTAL)
-    btnBox.addOkButton()
-    btnBox.addCancelButton()
-    btnBox.addButton(name="click &Me").setHandler(clickme)
-    btnBox.addButton(label=ds.getLabel()).setHandler(ds.showGridForm)
+    frm = console.addForm(label="The first data form")
+    frm.addTableEditor(ds)
+    frm.showModal()
     
-    if frm.showModal():
-        print "Hello %s %s. Thank you for registering." % (
-            frm.entries.firstName.getValue(),
-            frm.entries.name.getValue())
-    else:
-        print "You cancelled the form."
-        
     sess.shutdown()
+
+if __name__ == "__main__":
+    console.parse_args()
+    main()

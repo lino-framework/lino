@@ -49,11 +49,11 @@ class Describable(Configurable):
         #    #label = "Unlabeled %s instance" % self.__class__.__name__
         self.__dict__['label'] = label
         
-        if doc is None:
-            #   doc = "(No docstring available for " + label+")"
-            doc = self.__doc__
-        else:
-            assert type(doc)==type(""),repr(doc)
+        #if doc is None:
+        #    #   doc = "(No docstring available for " + label+")"
+        #    doc = self.__doc__
+        #else:
+        #    assert type(doc)==type(""),repr(doc)
         self.__dict__['doc'] = doc
             
         

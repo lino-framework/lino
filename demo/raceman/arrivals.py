@@ -1,3 +1,4 @@
+#coding: latin1
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -67,19 +68,28 @@ class Main:
 
     def run(self):
         
-        frm = Form(label="Raceman arrivals")
-        frm.addLabel("""\
-Raceman arrivals        
+        frm = Form( label="Raceman arrivals",
+                    doc="""\
+Ankunftszeiten an der Ziellinie erfassen.
+Beim Startschuss "Start" klicken!
+Jedesmal wenn einer ankommt, ENTER drücken.
     """)
-        frm.addEntry("dossard",STRING, label="Dossard", value="*")
-        frm.addButton(name="start",
+        
+        frm.addEntry("dossard",STRING,
+                     label="Dossard",
+                     value="*",
+                     doc="""Hier die Dossardnummer des ankommenden Läufers eingeben, oder '*' wenn sie später erfasst werden soll.""")
+
+        
+        bbox = frm.addHPanel()
+        bbox.addButton(name="start",
                       label="&Start",
                       onclick=self.start)
-        frm.addButton(name="arrive",
+        bbox.addButton(name="arrive",
                       label="&Arrive",
                       onclick=self.arrive).setDefault()
-        frm.addButton("write",label="&Write",onclick=self.writedata)
-        frm.addButton("exit",label="&Exit",onclick=self.exit)
+        bbox.addButton("write",label="&Write",onclick=self.writedata)
+        bbox.addButton("exit",label="&Exit",onclick=self.exit)
 
         fileMenu  = frm.addMenu("&File")
         fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")

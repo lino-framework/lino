@@ -52,7 +52,7 @@ class Console:
                     'debug','info',
                     'warning','progress',
                     'error','critical',
-                    'report',
+                    'report','addForm',
                     'startDump','stopDump')
     """
     confirm and warning are always user messages
@@ -253,6 +253,10 @@ class Console:
                      callback_kwargs=dict(batch=True)
                      )
         return p
+
+    def addForm(self,*args,**kw):
+        from lino.forms.wx.wxform import Form
+        return Form(*args,**kw)
 
 _syscon = Console()
 

@@ -28,6 +28,9 @@ class Component(Describable):
         self.owner = owner
     def setFocus(self):
         pass
+    def getForm(self):
+        return self.owner.getForm()
+    
         
 class Button(Component):
     def __init__(self,owner,onclick=None,*args,**kw):
@@ -44,11 +47,11 @@ class Button(Component):
 
     def setDefault(self):
         "set this button as default button for its form"
-        self.owner.defaultButton = self
+        self.getForm().defaultButton = self
         
     def click(self):
         "execute the button's handler"
-        self.owner.lastEvent = self
+        self.getForm().lastEvent = self
         self._onclick(self.owner,*(self._args),**(self._kw))
         
 
@@ -71,77 +74,7 @@ class Label(Component):
     def __init__(self,owner,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
 
-class Container:
-    # either a Panel or a Form
-    
-    VERTICAL = 1
-    HORIZONTAL = 2
 
-    def __init__(self):
-        self._components = []
-
-    def getForm(self):
-        raise NotImplementedError
-
-    def addLabel(self,label,**kw):
-        frm = self.getForm()
-        e = frm.labelFactory(self,label=label,**kw)
-        self._components.append(e)
-        return e
-        
-    def addEntry(self,name=None,type=None,*args,**kw):
-        frm = self.getForm()
-        #if name is None:
-        #    name = "entry" + str(len(frm.entries)+1)
-        if type is None:
-            type = STRING
-        e = frm.entryFactory(frm,type,name=name,*args,**kw)
-        self._components.append(e)
-        if name is not None:
-            frm.entries.define(name,e)
-        return e
-        
-    def addButton(self,name=None,*args,**kw): 
-        frm = self.getForm()
-        btn = frm.buttonFactory(frm,name=name,*args,**kw)
-        self._components.append(btn)
-        if name is not None:
-            frm.buttons.define(name,btn)
-        return btn
-
-    def addPanel(self,direction): 
-        frm = self.getForm()
-        btn = frm.panelFactory(frm,direction)
-        self._components.append(btn)
-        return btn
-
-    def addOkButton(self,*args,**kw):
-        b = self.addButton(name="ok",
-                           label="&OK",
-                           onclick=self.getForm().ok)
-        b.setDefault()
-        return b
-
-    def addCancelButton(self,*args,**kw):
-        return self.addButton(name="cancel",
-                              label="&Cancel",
-                              onclick=self.getForm().cancel)
-
-class Panel(Component,Container):
-    def __init__(self,frm,direction,name=None,*args,**kw):
-        assert direction in (self.VERTICAL,self.HORIZONTAL)
-        if name is None:
-            if direction is self.VERTICAL:
-                name = "VPanel"
-            else:
-                name = "HPanel"
-        Component.__init__(self,frm,name=name,*args,**kw)
-        Container.__init__(self)
-        self.direction = direction
-
-    def getForm(self):
-        return self.owner
-    
 
 
 class MenuItem(Button):
@@ -174,6 +107,94 @@ class MenuBar(Component):
         self.menus.append(i)
         return i
 
+
+
+        
+
+class Container:
+    # either a Panel or a Form
+    
+    VERTICAL = 1
+    HORIZONTAL = 2
+
+    def __init__(self):
+        self._components = []
+
+
+    def addLabel(self,label,**kw):
+        frm = self.getForm()
+        e = frm.labelFactory(self,label=label,**kw)
+        self._components.append(e)
+        return e
+        
+    def addEntry(self,name=None,type=None,*args,**kw):
+        frm = self.getForm()
+        if type is None:
+            type = STRING
+        e = frm.entryFactory(frm,type,name=name,*args,**kw)
+        self._components.append(e)
+        if name is not None:
+            frm.entries.define(name,e)
+        return e
+
+    def addTableEditor(self,ds,name=None,*args,**kw):
+        frm = self.getForm()
+        e = frm.tableEditorFactory(self,ds,*args,**kw)
+        self._components.append(e)
+        if name is not None:
+            frm.tables.define(name,e)
+        
+    def addPanel(self,direction): 
+        frm = self.getForm()
+        btn = frm.panelFactory(self,direction)
+        self._components.append(btn)
+        return btn
+    
+    def addVPanel(self):
+        return self.addPanel(self.VERTICAL)
+    def addHPanel(self):
+        return self.addPanel(self.HORIZONTAL)
+
+    def addButton(self,name=None,*args,**kw): 
+        frm = self.getForm()
+        btn = frm.buttonFactory(frm,name=name,*args,**kw)
+        self._components.append(btn)
+        if name is not None:
+            frm.buttons.define(name,btn)
+        return btn
+
+    def addOkButton(self,*args,**kw):
+        b = self.addButton(name="ok",
+                           label="&OK",
+                           onclick=self.getForm().ok)
+        b.setDefault()
+        return b
+
+    def addCancelButton(self,*args,**kw):
+        return self.addButton(name="cancel",
+                              label="&Cancel",
+                              onclick=self.getForm().cancel)
+
+class Panel(Component,Container):
+    def __init__(self,owner,direction,name=None,*args,**kw):
+        assert direction in (self.VERTICAL,self.HORIZONTAL)
+        if name is None:
+            if direction is self.VERTICAL:
+                name = "VPanel"
+            else:
+                name = "HPanel"
+        Component.__init__(self,owner,name=name,*args,**kw)
+        Container.__init__(self)
+        self.direction = direction
+
+
+
+class TableEditor(Component):    
+    def __init__(self,owner,ds,*args,**kw):
+        Component.__init__(self,owner,*args,**kw)
+        self.ds = ds
+        
+
     
 class Form(Describable):
 
@@ -181,22 +202,29 @@ class Form(Describable):
     entryFactory = Entry
     buttonFactory = Button
     panelFactory = Panel
+    tableEditorFactory = TableEditor
 
     def __init__(self,parent=None,*args,**kw):
         Describable.__init__(self,*args,**kw)
         self._parent = parent
         self.entries = AttrDict()
         self.buttons = AttrDict()
+        self.tables = AttrDict()
         self.defaultButton = None
         self._boxes = []
         self.menuBar = None
         self.lastEvent = None
         self.mainComp = self.panelFactory(self,Container.VERTICAL)
-        for m in ('addLabel','addEntry','addPanel',
+        for m in ('addLabel','addEntry','addTableEditor',
+                  'addPanel','addVPanel','addHPanel',
                   'addButton', 'VERTICAL', 'HORIZONTAL',
                   'addOkButton', 'addCancelButton'):
             setattr(self,m,getattr(self.mainComp,m))
+        if self.doc is not None:
+            self.addLabel(self.doc)
 
+    def getForm(self):
+        return self
     
     def addForm(self,*args,**kw):
         return self.__class__(self,*args,**kw)
