@@ -160,7 +160,7 @@ class PdfDocument(Document):
 
         self.textobject.textOut(text)
         
-    def writeln(self):
+    def newline(self):
         self.textobject.textLine()
 
         

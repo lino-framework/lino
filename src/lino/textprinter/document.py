@@ -73,11 +73,16 @@ class Document:
     def onEndPage(self):
         raise NotImplementedError
     def onSetPageSize(self):
-        raise NotImplementedError
+        pass
+    def onEndDoc(self):
+        pass
+            
+    
     def write(self,text):
         raise NotImplementedError
-    def writeln(self,text):
+    def newline(self,text):
         raise NotImplementedError
+    
         
     def beginPage(self):
         self.page += 1
@@ -100,8 +105,6 @@ class Document:
 
     def writechars(self,text):
         if self.textobject is None:
-            #if self.page == 2:
-            #    print repr(text)
             self.beginPage()
 
         self.write(text)
@@ -151,7 +154,7 @@ class Document:
         #if len(line) == 0: return
         
         self.writechars(line)
-        self.writeln()
+        self.newline()
                 
         
         #self.c.drawString(self.xpos, self.ypos, line)

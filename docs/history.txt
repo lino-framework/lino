@@ -2,9 +2,8 @@
 Historical moments of the Lino project
 ======================================
 
-2004-12-27 : moved SVN repository from asterix to tups.  old address:
-lsaffre.dyndns.org/mnt/svnroot/lino new address:
-lsaffre.dyndns.org/svn/lino
+(document no longer maintained. content converted to TIM on
+2004.12.30)
 
 2003-04-15 : release  0.5.2 
 ---------------------------
@@ -54,4 +53,10 @@ myself. Because I prefer SVN to CVS. Because anyway I want to have my
 own web server.
 
 
+2004-12-27 
+----------
+
+moved SVN repository from asterix to tups.  old address:
+lsaffre.dyndns.org/mnt/svnroot/lino new address:
+lsaffre.dyndns.org/svn/lino
 

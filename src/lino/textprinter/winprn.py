@@ -177,7 +177,7 @@ class Win32PrinterDocument(Document):
         self.textobject.write(text)
             
         
-    def writeln(self):
+    def newline(self):
         #self.textobject.flush()
         self.textobject.newline()
         #self.textobject = None
