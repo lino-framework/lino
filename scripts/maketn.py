@@ -53,12 +53,12 @@ def make_tn(path,sizes=SIZES):
 				
 if __name__ == "__main__":
 	from lino import copyright
-	import getopt
 	
 	print "Lino makethumbs"
 	print copyright('2002-2004','Luc Saffre')
 	
 
+	import getopt
 	try:
 		opts, args = getopt.getopt(sys.argv[1:],
 											"h?q",
