@@ -42,6 +42,7 @@ class AttrDict(dict):
 
     def define(self,name,value):
         assert type(name) == types.StringType
+        assert name.isalnum(), "invalid attribute name %s" % name
         assert not self._values.has_key(name), \
                "duplicate key %s" % repr(name)
         self._values[name] = value

@@ -36,25 +36,34 @@ class Main:
         parent.info("wrote %d lines to %s" % (len(self.data),
                                               self.datafile))
         self.data = []
+        #parent.buttons.arrive.setFocus()
+        parent.entries.dossard.setFocus()
 
     def arrive(self,parent):
         if self.starttime is None:
+            parent.buttons.start.setFocus()
             parent.error("cannot arrive before start")
             return
         line = (parent.entries.dossard.get(),
                 str(time.time() - self.starttime))
         self.data.append( line)
         parent.info("%s arrived at %s" % line)
+        parent.entries.dossard.setFocus()
     
     def exit(self,parent):
         if len(self.data) > 0:
             if parent.confirm("write data to file?"):
                 self.writedata(parent)
+            else:
+                parent.entries.dossard.setFocus()
+                return
         parent.close()
 
     def start(self,parent):
         self.starttime = time.time()
         parent.info("started at %s" %str(self.starttime))
+        #parent.buttons.arrive.setFocus()
+        parent.entries.dossard.setFocus()
 
     def run(self):
         
@@ -63,12 +72,23 @@ class Main:
 Raceman arrivals        
     """)
         frm.addEntry("dossard",STRING, label="Dossard", value="*")
-        self.startButton = frm.addButton(label="&Start",
-                                         onclick=self.start)
-        self.arriveButton = frm.addButton(label="&Arrive",
-                                          onclick=self.arrive)
-        frm.addButton(label="&Write",onclick=self.writedata)
-        frm.addButton(label="&Exit",onclick=self.exit)
+        frm.addButton(name="start",
+                      label="&Start",
+                      onclick=self.start)
+        frm.addButton(name="arrive",
+                      label="&Arrive",
+                      onclick=self.arrive).setDefault()
+        frm.addButton("write",label="&Write",onclick=self.writedata)
+        frm.addButton("exit",label="&Exit",onclick=self.exit)
+
+        fileMenu  = frm.addMenu("&File")
+        fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")
+        fileMenu.addButton(frm.buttons.exit,accel="Ctrl-Q")
+        
+        fileMenu  = frm.addMenu("&Edit")
+        fileMenu.addButton(frm.buttons.start)
+        fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
+        
         frm.show()
         
 if __name__ == "__main__":

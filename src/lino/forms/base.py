@@ -26,6 +26,8 @@ class Component(Describable):
     def __init__(self,owner,*args,**kw):
         Describable.__init__(self,*args,**kw)
         self.owner = owner
+    def setFocus(self):
+        pass
         
 class Button(Component):
     def __init__(self,owner,onclick=None,*args,**kw):
@@ -35,14 +37,17 @@ class Button(Component):
         self._kw = {}
 
     def setHandler(self,onclick,*args,**kw):
+        "set a handler with optional args and keyword parameters"
         self._onclick = onclick
         self._args = args
         self._kw = kw
 
     def setDefault(self):
+        "set this button as default button for its form"
         self.owner.defaultButton = self
         
     def click(self):
+        "execute the button's handler"
         self.owner.lastEvent = self
         self._onclick(self.owner,*(self._args),**(self._kw))
         
@@ -139,40 +144,35 @@ class Panel(Component,Container):
     
 
 
-## class ContainerForm(Describable,Container):
+class MenuItem(Button):
+    def __init__(self,owner,accel=None,*args,**kw):
+        Button.__init__(self,owner,*args,**kw)
+        self.accel = accel
 
-##     labelFactory = Label
-##     entryFactory = Entry
-##     buttonFactory = Button
-##     panelFactory = Panel
+class Menu(Component):
+    def __init__(self,*args,**kw):
+        Component.__init__(self,*args,**kw)
+        self.items = []
 
-##     def __init__(self,parent=None,*args,**kw):
-##         Describable.__init__(self,*args,**kw)
-##         Container.__init__(self)
-##         self._parent = parent
-##         self.entries = AttrDict()
-##         self.buttons = AttrDict()
-##         self.defaultButton = None
-##         self._boxes = []
-##         self._menu = None
-##         self.lastEvent = None
+    def addItem(self,*args,**kw):
+        i = MenuItem(self.owner,*args,**kw)
+        self.items.append(i)
+        return i
     
-##     def getForm(self):
-##         return self
+    def addButton(self,btn,accel=None,**kw):
+        kw.setdefault("label",btn.getLabel())
+        kw.setdefault("onclick",btn._onclick)
+        return self.addItem(accel=accel,**kw)
 
-##     def addForm(self,*args,**kw):
-##         return self.__class__(self,*args,**kw)
-    
-##     def show(self):
-##         raise NotImplementedError
-##     def showModal(self):
-##         raise NotImplementedError
+class MenuBar(Component):
+    def __init__(self,*args,**kw):
+        Component.__init__(self,*args,**kw)
+        self.menus = []
 
-##     def ok(self,frm):
-##         self.close()
-
-##     def cancel(self,frm):
-##         self.close()
+    def addMenu(self,*args,**kw):
+        i = Menu(self.owner,*args,**kw)
+        self.menus.append(i)
+        return i
 
     
 class Form(Describable):
@@ -189,7 +189,7 @@ class Form(Describable):
         self.buttons = AttrDict()
         self.defaultButton = None
         self._boxes = []
-        self._menu = None
+        self.menuBar = None
         self.lastEvent = None
         self.mainComp = self.panelFactory(self,Container.VERTICAL)
         for m in ('addLabel','addEntry','addPanel',
@@ -201,22 +201,35 @@ class Form(Describable):
     def addForm(self,*args,**kw):
         return self.__class__(self,*args,**kw)
     
+    def addMenu(self,*args,**kw):
+        if self.menuBar is None:
+            self.menuBar = MenuBar(self)
+        return self.menuBar.addMenu(*args,**kw)
+
     def show(self):
         raise NotImplementedError
+    
     def showModal(self):
-        raise NotImplementedError
-
+        self.show(modal=True)
+        return self.lastEvent == self.defaultButton
+    
     def info(self,msg):
         print msg
     def error(self,msg):
         print msg
         
-    def confirm(self,msg):
+    def confirm(self,prompt,default="y"):
         frm = self.addForm(label="Confirmation")
-        frm.addLabel(msg)
-        frm.addOkButton().setDefault()
-        frm.addCancelButton()
-        return frm.showModal()
+        frm.addLabel(prompt)
+        p = frm.addPanel(Panel.HORIZONTAL)
+        p.addOkButton()
+        p.addCancelButton()
+        if default == "y":
+            frm.buttons.ok.setDefault()
+        else:
+            frm.buttons.cancel.setDefault()
+        frm.showModal()
+        return frm.lastEvent == frm.buttons.ok
 
     def ok(self,frm):
         self.close()

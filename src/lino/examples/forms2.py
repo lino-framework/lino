@@ -21,7 +21,7 @@ from lino.forms.wx.wxform import Form
 from lino.ui import console
 
 def privacy(parent):
-    frm = parent.addForm(label="Privacy Statement")
+    frm = parent.addForm(label="Privacy Statement",modal=False)
     frm.addLabel("""\
 
 (imagine our privacy statement here)
@@ -36,7 +36,8 @@ so you don't need to close it if you want to continue registering.
     frm.show()
     
 def main():
-    frm = Form(label="my second form")
+    frm = Form(label="my second form",
+               modal=True)
     p = frm.addPanel(frm.VERTICAL)
     frm.addLabel("""\
 Please enter your personal data.
@@ -50,7 +51,7 @@ You can trust us.
     btnPanel.addOkButton()
     btnPanel.addCancelButton()
     btnPanel.addButton(label="&Privacy statement").setHandler(privacy)
-    if frm.showModal():
+    if frm.show():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.value,
             frm.entries.name.value)

@@ -26,23 +26,23 @@ about sizers.
 
 - I use only nested BoxSizers.
 
-- sizer.Add() can get either a wxWindow or another Sizer.
+Sizers explained using the master/slave vocabulary:
 
-- A Sizer normally sets size and position of its *children*, depending
-  on the size available in its parentWindow.
-
-- The parentWindow of a Sizer is the Window that has been dedicated to
-  this sizer, using SetSizer().
-
-- When the parentWindow's size changes, its sizer will layout all its
-  children.
+- master.SetSizer(sizer) tells the master
+  window that this Sizer is going to work for him.
   
-- sizer.Fit(window) : Tell the sizer to resize the window to match the
-  sizer's minimal size. That's the opposite direction: the sizer says
-  how much space it needs.
+- sizer.Add() adds another window as a slave.
 
-- only the topSizer of a sizer hierarchy must become SetSizer() for a
-  window. (Otherwise crash!)
+- When the master resizes, its sizer will layout all the slaves by
+  modifying their size and/or position as needed.
+
+  In fact the Sizer doesn't even know who is his master. The master
+  knows that this particular Sizer is his LayoutManager and simply
+  sends a RESIZE event.
+
+- sizer.Fit(master) : Tell the sizer to resize the master to match the
+  sizer's minimal size. That's the opposite direction: the sizer tells
+  the master how much space would be good to have.
 
 """
 
@@ -53,37 +53,38 @@ from lino.ui import console
 
 WEIGHT = 1
 
-class Label(base.Label):
+class Component:
     
     def __repr__(self):
-        return "Label %s %s at %s" % (
+        return "%s %s at %s" % (
             self.getName(),
             repr(self.wxctrl.GetSize()),
             repr(self.wxctrl.GetPosition()))
         
-    def setup(self,frm,panel,box):
+
+class Label(Component,base.Label):
+    
+    def setup(self,panel,box):
         text = wx.StaticText(panel,-1, self.getLabel())
         box.Add(text) #, WEIGHT, wx.EXPAND|wx.ALL, 10)
         self.wxctrl = text
                 
-class Button(base.Button):
+class Button(Component,base.Button):
     
-    def __repr__(self):
-        return "Button %s %s at %s" % (
-            self.getLabel(),
-            repr(self.wxctrl.GetSize()),
-            repr(self.wxctrl.GetPosition()))
+##     def __repr__(self):
+##         return "Button %s %s at %s" % (
+##             self.getLabel(),
+##             repr(self.wxctrl.GetSize()),
+##             repr(self.wxctrl.GetPosition()))
         
-    def setup(self,frame,panel,box):
+    def setup(self,panel,box):
         
         winId = wx.NewId()
         btn = wx.Button(panel,winId,self.getLabel(),
                         wx.DefaultPosition,
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
-        frame.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
-        if frame._frm.defaultButton == self:
-            btn.SetDefault()
+        self.owner.wxctrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
         box.Add(btn) #, 0, wx.CENTER,10)
         self.wxctrl = btn
 
@@ -91,10 +92,13 @@ class Button(base.Button):
         base.Button.setDefault(self)
         if hasattr(self,"wxctrl"):
             self.wxctrl.SetDefault()
+
+    def setFocus(self):
+        self.wxctrl.SetFocus()
                 
         
 
-class Panel(base.Panel):
+class Panel(Component,base.Panel):
 
     def __repr__(self):
         s = "%s %s at %s (" % (
@@ -107,36 +111,36 @@ class Panel(base.Panel):
         s += "\n)"
         return s
     
-    def setup(self,frm,panel,box):
+    def setup(self,panel,box):
         mypanel = wx.Panel(panel,-1)
         box.Add(mypanel) #, WEIGHT, wx.ALL|wx.EXPAND,10)
         if self.direction == self.VERTICAL:
             mybox = wx.BoxSizer(wx.VERTICAL)
         else:
             mybox = wx.BoxSizer(wx.HORIZONTAL)
-        mypanel.SetSizer(mybox) 
+        mypanel.SetSizer(mybox)
         
         self.mybox = mybox # store reference to avoid crash?
         self.wxctrl = mypanel
         
         for c in self._components:
-            c.setup(frm,mypanel,mybox)
+            c.setup(mypanel,mybox)
             
         
-class Entry(base.Entry):
+class Entry(Component,base.Entry):
 
-    def __repr__(self):
-        return "Entry %s %s at %s" % (
-            self.getLabel(),
-            repr(self.wxctrl.GetSize()),
-            repr(self.wxctrl.GetPosition()))
+##     def __repr__(self):
+##         return "Entry %s %s at %s" % (
+##             self.getLabel(),
+##             repr(self.wxctrl.GetSize()),
+##             repr(self.wxctrl.GetPosition()))
         
-    def setup(self,frm,panel,box):
+    def setup(self,panel,box):
         mypanel = wx.Panel(panel,-1)
         box.Add(mypanel)#, WEIGHT, wx.EXPAND|wx.ALL,10)
         
         mybox = wx.BoxSizer(wx.HORIZONTAL)
-        mypanel.SetSizer(mybox) 
+        mypanel.SetSizer(mybox)
         
         label = wx.StaticText(mypanel, -1, self.getLabel()) 
         #label.SetBackgroundColour(wx.GREEN)
@@ -156,6 +160,9 @@ class Entry(base.Entry):
         
         self.editor = editor # store reference to avoid crash?
         self.wxctrl = mypanel
+
+    def setFocus(self):
+        self.editor.SetFocus()
         
 
     def OnKillFocus(self,evt):
@@ -175,77 +182,134 @@ class Entry(base.Entry):
             evt.Skip()
         
 
+class EventCaller:
+    def __init__(self,meth,*args,**kw):
+        self.meth = meth
+        self.args = args
+        self.kw = kw
+    def __call__(self,event):
+        return self.meth(*self.args, **self.kw)
 
+            
 
-class WxFrame(wx.Frame):
+class Form(base.Form):
+    labelFactory = Label
+    entryFactory = Entry
+    buttonFactory = Button
+    panelFactory = Panel
 
-    def __init__(self, frm):
-        self._frm = frm
-        if frm._parent is None:
-            parent = None
-        else:
-            parent = frm._parent._wxFrame
-        wx.Frame.__init__(self, parent, -1,
-                          frm.getLabel(),
-                          #size = (400, 300),
-                          style=wx.DEFAULT_FRAME_STYLE|
-                          wx.NO_FULL_REPAINT_ON_RESIZE)
-
-        wx.EVT_IDLE(self, self.OnIdle)
-        wx.EVT_CLOSE(self, self.OnCloseWindow)
-        wx.EVT_ICONIZE(self, self.OnIconfiy)
-        wx.EVT_MAXIMIZE(self, self.OnMaximize)
-
-        self.Centre(wx.BOTH)
-        self.CreateStatusBar(1, wx.ST_SIZEGRIP)
+##     def afterShow(self):
+##         console.debug(repr(self.mainComp))
+##         #for ctrl in self._wxFrame.GetChildren():
+##         #    print repr(ctrl)
+##             #print ctrl.GetSize()
+##             #print ctrl.GetPosition()
+##         if self._parent is None:
+##             self.app.SetTopWindow(self.wxctrl)
+##             self.app.MainLoop()
 
 
     def setup(self): 
-        frm = self._frm
-        if frm._menu is not None:
+        if self._parent is None:
+            self.app = WxApp()
+            wxparent = None
+        else:
+            self.app = self._parent.app
+            wxparent = self._parent.wxctrl
+            
+        self.dying = False
+        
+        if self.modal:
+            self.wxctrl = wx.Dialog(wxparent,-1,self.getLabel(),
+                                    style=wx.DEFAULT_FRAME_STYLE|
+                                    wx.NO_FULL_REPAINT_ON_RESIZE)
+        else:
+            self.wxctrl = wx.Frame(wxparent,-1,self.getLabel(),
+                                   style=wx.DEFAULT_FRAME_STYLE|
+                                   wx.NO_FULL_REPAINT_ON_RESIZE)
+            self.wxctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
+
+        wx.EVT_IDLE(self.wxctrl, self.OnIdle)
+        wx.EVT_CLOSE(self.wxctrl, self.OnCloseWindow)
+        wx.EVT_ICONIZE(self.wxctrl, self.OnIconfiy)
+        wx.EVT_MAXIMIZE(self.wxctrl, self.OnMaximize)
+        
+        if self.menuBar is not None:
             # todo: won't work
             # todo: put following code to frm._menu.installto(self)
             wxMenuBar = wx.MenuBar()
-            for mnu in frm._menu.getMenus():
+            for mnu in self.menuBar.menus:
                 wxm = self._createMenuWidget(mnu)
                 wxMenuBar.Append(wxm,mnu.getLabel())
 
-            self.SetMenuBar(wxMenuBar)
+            self.wxctrl.SetMenuBar(wxMenuBar)
             
         #self.SetBackgroundColour(wx.RED)
         
         mainBox = wx.BoxSizer(wx.VERTICAL)
         
-        frm.mainComp.setup(self,self,mainBox)
+        self.mainComp.setup(self.wxctrl,mainBox)
         
-        self.SetSizerAndFit(mainBox)
-        self.mainBox = mainBox
-        #self.SetAutoLayout(True) 
-        self.Layout()
+        if self.defaultButton is not None:
+            self.defaultButton.setDefault()
+        
+        self.wxctrl.SetSizerAndFit(mainBox)
+        #self.mainBox = mainBox
+        #self.wxctrl.SetAutoLayout(True) 
+        #self.wxctrl.Layout()
+        self.wxctrl.Centre(wx.BOTH)
 
 
 
 
     def _createMenuWidget(self,mnu):
         wxMenu = wx.Menu()
-        for mi in mnu.getItems():
+        for mi in mnu.items:
             #print repr(mi.getLabel())
             #"%s must be a String" % repr(mi.getLabel())
             winId = wx.NewId()
             doc = mi.getDoc()
             if doc is None:
                 doc=""
-            assert type(doc) == type(""),\
-                     repr(mi)
-            assert type(mi.getLabel()) == type(""),\
-                     repr(mi)
-            wxMenu.Append(winId,mi.getLabel(),doc)
-            wx.EVT_MENU(self, winId, EventCaller(self.form,
-                                                 mi.execute))
+            assert type(doc) == type(""), repr(mi)
+            lbl = mi.getLabel()
+            if mi.accel is not None:
+                lbl += "\t" + mi.accel
+            wxMenu.Append(winId,lbl,doc)
+            wx.EVT_MENU(self.wxctrl, winId, EventCaller(mi.click))
         return wxMenu
 
+    
+    def show(self,modal=False):
+        self.modal = modal
+        #print "show", self.getLabel()
+        self.setup()
+        #for c in self.wxctrl.GetChildren():
+        #    print c
+        if self.modal:
+            self.wxctrl.ShowModal()
+        else:
+            self.wxctrl.Show()
+            if self._parent is None:
+                self.app.SetTopWindow(self.wxctrl)
+                self.app.MainLoop()
+
+
+##     def showModal(self):
+##         assert self._parent is not None
+##         self.setup()
+##         #self.afterShow()
+##         #self._wxFrame.MakeModal(True)
+##         #self.show()
+##         return self.lastEvent == self.buttons.ok
+
+    def close(self):
+        #print "close", self.getLabel()
+        self.wxctrl.Close()
+
+
     def OnCloseWindow(self, event):
-        self._frm.dying = True
+        self.dying = True
         # http://wiki.wxpython.org/index.cgi/Surviving_20with_20wxEVT_5fKILL_5fFOCUS_20under_20Microsoft_20Windows
         # Surviving with EVT_KILL_FOCUS under Microsoft Windows
         
@@ -253,7 +317,7 @@ class WxFrame(wx.Frame):
         #self.mainMenu = None
         #if hasattr(self, "tbicon"):
         #   del self.tbicon
-        self.Destroy()
+        self.wxctrl.Destroy()
 
 
     def OnIdle(self, evt):
@@ -268,50 +332,7 @@ class WxFrame(wx.Frame):
         wx.LogMessage("OnMaximize")
         evt.Skip()
 
-
-
-
-class Form(base.Form):
-    labelFactory = Label
-    entryFactory = Entry
-    buttonFactory = Button
-    panelFactory = Panel
-    def __init__(self,*args,**kw):
         
-        base.Form.__init__(self,*args,**kw)
-        if self._parent is None:
-            self.app = WxApp()
-        else:
-            self.app = self._parent.app
-            
-        self._wxFrame = WxFrame(self)
-        self.dying = False
-
-    def afterShow(self):
-        console.debug(repr(self.mainComp))
-        #for ctrl in self._wxFrame.GetChildren():
-        #    print repr(ctrl)
-            #print ctrl.GetSize()
-            #print ctrl.GetPosition()
-        if self._parent is None:
-            self.app.SetTopWindow(self._wxFrame)
-            self.app.MainLoop()
-    
-    def show(self):
-        self._wxFrame.setup()
-        self._wxFrame.Show()
-        self.afterShow()
-
-    def showModal(self):
-        self._wxFrame.MakeModal(True)
-        self._wxFrame.setup()
-        self._wxFrame.Show()
-        # wx.DebugContext.PrintStatistics()
-        self.afterShow()
-        return self.lastEvent == self.buttons.ok
-
-    def close(self):
-        self._wxFrame.Close()
 
 
 class WxApp(wx.App):
