@@ -542,22 +542,23 @@ class SimpleDatasource:
 
 
     def appendRow(self,*args,**kw):
-        #if self._table.getTableName() == "PARTNERS":
-        #   print "datasource.py", args
-        #   print [col.name for col in self._clist.visibleColumns]
-        #self.startDump()
+        row = self._appendRow(*args,**kw)
+        row.writeToStore()
+        self._store.fireUpdate()
+        return row
+
+    def appendRowEditor(self,*args,**kw):
+        return self._appendRow(*args,**kw)
+        
+        
+    def _appendRow(self,*args,**kw):
         row = self._table.Instance(self,{},True)
-        #row.lock()
         kw.update(self._samples)
         self._clist.updateRow(row,*args,**kw)
-        
         self.rowcount = None
         self._store.setAutoRowId(row)
-        row.writeToStore()
-        #row.unlock()
-        self._store.fireUpdate()
-        #print self.stopDump()
         return row
+        
 
 
     def __getitem__(self,offset):
@@ -1146,10 +1147,6 @@ class StoredDataRow(DataRow):
         
 
     def writeToStore(self):
-        #print "commit: ", self
-        #assert not self._locked
-        #if self._locked:
-        #   self.unlock()
         try:
             self.validate()
         except DataVeto,e:

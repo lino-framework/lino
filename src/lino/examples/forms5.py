@@ -20,17 +20,18 @@ import random
 
 #from lino.ui import console
 
-from lino.forms.application import AdamoApplication
-
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import * # Nations,  Quotes
+
+from lino.forms.application import AdamoApplication
+from lino.forms import gui
 
 
 class MyApplication(AdamoApplication):
     
-    def makeMainForm(self):
+    def makeMainForm(self,ui):
         
-        frm = self.addForm(label="Main menu")
+        frm = ui.form(label="Main menu")
 
         ds = self.sess.query(Quotes)
         q = random.choice(ds)
@@ -45,18 +46,18 @@ class MyApplication(AdamoApplication):
 
         m = frm.addMenu("&Contacts")
         m.addItem(label="&Partners").setHandler(self.showTableGrid,
-                                                Partners)
+                                                ui, Partners)
         m.addItem(label="&Cities").setHandler(self.showTableGrid,
-                                              Cities)
+                                              ui, Cities)
         m.addItem(label="&Nations").setHandler(self.showTableGrid,
-                                               Nations)
+                                               ui, Nations)
         m = frm.addMenu("&Sales")
         OUT = self.getSession().peek(Journals,'OUT')
         m.addItem(label="&Invoices").setHandler(self.showTableGrid,
-                                                Invoices,
+                                                ui, Invoices,
                                                 jnl=OUT)
         m = frm.addMenu("&?")
-        m.addItem(label="&About",action=self.showAbout)
+        m.addItem(label="&About",action=ui.showAbout)
         return frm
 
 
@@ -65,5 +66,5 @@ if __name__ == "__main__":
     schema = demo.makeSchema(big=True)
     app = MyApplication(schema)
     app.parse_args()
-    app.main()
+    gui.run(app)
 

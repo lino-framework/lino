@@ -12,17 +12,20 @@ See also :pageref:`/docs/openmail`.
 
 """
 
-import sys,os
+import sys
 
 from lino.timtools.mail import readmail, openmail
 
-
-if __name__ == '__main__':
-	if len(sys.argv) == 1:
+def main(argv):
+	if len(argv) != 1:
 		print __doc__
 		sys.exit(-1)
 
-	msg = readmail(sys.argv[1])
+	msg = readmail(argv[0])
 
 	openmail(msg)
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
+    
 

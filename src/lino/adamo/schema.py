@@ -149,13 +149,14 @@ class Schema(Describable):
             return
         # assert not self._initDone, "double initialize()"
         #progress = self._app.console.progress
-        progress = console.progress
-        progress("Initializing database schema...")
+        #progress = pb.title
+        console.debug("Initializing database schema...")
         #self.defineSystemTables(ui)
         for plugin in self._plugins:
             plugin.defineTables(self)
 
-        progress("  Initializing %d tables..." % len(self._tables))
+        console.debug(
+            "  Initializing %d tables..." % len(self._tables))
 
         # loop 1
         for table in self._tables:
@@ -208,7 +209,7 @@ class Schema(Describable):
         #   print "setupTables() done"
             
         self._initDone = True
-        progress("Schema initialized")
+        console.debug("Schema initialized")
         
 
     def setLayout(self,layoutModule):
@@ -265,14 +266,20 @@ class Schema(Describable):
         return str(self.__class__)
 
 
-    def quickStartup(self,
-                     langs=None,
-                     filename=None, **kw):
+    def quickStartup(self, ui=None, langs=None, filename=None, **kw):
+        if ui is None:
+            ui = console.getSystemConsole()
+        job = ui.progress("quickStartup()")
+        job.title("Initialize Schema")
         self.initialize()
         db = self.addDatabase(langs=langs)
+        job.title("Connect")
         conn = Connection(filename=filename,schema=self)
         db.connect(conn)
-        return center.startup(**kw)
+        job.title("Startup")
+        sess =  center.startup(**kw)
+        job.done()
+        return sess
 
     def addDatabase(self,langs=None,name=None,label=None):
         n = str(len(self._databases)+1)
@@ -293,9 +300,10 @@ class Schema(Describable):
             for store in db.getStoresById():
                 store.createTable(sess)
             for p in self._populators:
-                sess.progress("populator " + p.getLabel())
+                job = sess.progress("populator " + p.getLabel())
                 for store in db.getStoresById():
                     store.populateOrNot(self,sess,p)
+                job.done()
             if checkIntegrity:
                 for store in db.getStoresById():
                     store.checkIntegrity(sess)

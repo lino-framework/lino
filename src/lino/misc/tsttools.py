@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -30,10 +30,19 @@ from cStringIO import StringIO
 from lino.misc.my_import import my_import
 from lino.ui import console 
 
+
 #~ def run(modname):
    #~ suite = makesuite(modname)
    #~ runner = unittest.TextTestRunner()
    #~ runner.run(suite)
+
+
+def oneof(l,*args,**kw):
+    for f in l:
+        if f(*args,**kw): return True
+    return False
+    
+   
    
 def makesuite(modname):
     mod = my_import(modname)
@@ -58,7 +67,31 @@ def alltests(argv,root='.'):
     
     """inspect all python modules in the current directory for test
     cases and suites. make one big suite from all this. """
-    
+
+##     namefilters = []
+##     for arg in argv:
+##         a = arg.split('-')
+##         if len(a) == 2:
+##             if a[0].isdigit() and a[1].isdigit():
+##                 def f(modname):
+##                     if not modname.isdigit():
+##                         return False
+##                     if int(modname) >= int(a[0]) \
+##                           and int(modname) <= int(a[1]):
+##                         return True
+##             else:
+##                 def f(modname):
+##                     if modname >= a[0] and modname <= a[1]:
+##                         return True
+##         elif len(a) == 1:
+##             def f(modname):
+##                 if modname == a[0]:
+##                     return True
+##         else:
+##             raise "unrecognized argument "+arg
+        
+##         namefilters.append(f)
+
     suites = []
     #for dirpath, dirname, filename in os.listdir(dirname):
     for dirpath, dirnames, filenames in os.walk(root):
@@ -70,6 +103,9 @@ def alltests(argv,root='.'):
             #print dirpath, filename
             #print modname
             if ext == '.py':
+##                 if len(namefilters) == 0 or oneof(namefilters,modname):
+##                     print modname
+##                     suites.append(makesuite(modname))
                 doit = (len(argv) == 0)
                 for arg in argv:
                     a = arg.split('-')
@@ -86,8 +122,10 @@ def alltests(argv,root='.'):
                         if modname == a[0]:
                             doit = True
                     else:
-                        raise "unrecognized argument "+arg
+                        print "unrecognized argument "+arg
                 if doit:
+                    console.info("Extracting tests from %s..." % \
+                                modname)
                     suites.append(makesuite(modname))
         sys.path.remove(dirpath)
 
@@ -113,11 +151,11 @@ class TestCase(unittest.TestCase):
         for fn in self._showFiles:
             self.failUnless(os.path.exists(fn))
             if console.confirm("Okay to start %s ?" % fn,\
-                               default="n"):
+                              default="n"):
                 os.system('start ' + fn)
         if len(self._tempFiles) > 0:
             if console.confirm("Okay to delete %d temporary files ?" \
-                               % len(self._tempFiles)):
+                              % len(self._tempFiles)):
                 for fn in self._tempFiles:
                     os.remove(fn)
         
@@ -175,3 +213,4 @@ class TestCase(unittest.TestCase):
 #b = sys.stdout # open("b.txt","w")
 
 main = unittest.main
+

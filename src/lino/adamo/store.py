@@ -81,8 +81,8 @@ class Store:
             sess.debug( "mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
                 #self.createTable(sess)
-                sess.progress( "create table " + \
-                               self._table.getTableName())
+                sess.debug("create table " + \
+                           self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
                 self._status = self.SST_VIRGIN
             self._table.loadMirror(self,sess)

@@ -157,7 +157,7 @@ class Database(Context,Describable):
     #def disconnect(self):
 
     def close(self):
-        console.info("Database shutdown "+ str(self))
+        console.progress("Database shutdown "+ str(self))
         
 ##      for sess in self._sessions:
 ##          #sess.beforeShutdown()

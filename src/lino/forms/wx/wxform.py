@@ -411,7 +411,7 @@ class Form(base.Form):
     
     def show(self,modal=False):
         self.modal = modal
-        #print "show", self.getLabel()
+        console.debug("show(modal=%s) %s" % (modal, self.getLabel()))
         self.setup()
         #for c in self.wxctrl.GetChildren():
         #    print c

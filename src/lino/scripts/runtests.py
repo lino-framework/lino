@@ -1,18 +1,18 @@
 """
-scan a directory for .py files containing test cases and run these
+scan a directory tree for .py files containing test cases and run them
 """
 
 import sys
 import unittest
 
 from lino.misc import tsttools
-from lino.ui import console
+from lino.ui import console as syscon
 
 def main(argv):
 
-    console.set(verbosity=-1)
+    syscon.set(verbosity=-2)
     
-    parser = console.getOptionParser(
+    parser = syscon.getOptionParser(
         usage="usage: %prog [options] [TESTS]",
         description="""\
 where TESTS specifies the tests to run. Default is all. Other possible values e.g. `1` or `1-7` 

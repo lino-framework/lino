@@ -26,8 +26,6 @@ class Center:
     """
     The Center is the global singleton object used by adamo.
     It holds a list of connections, sessions and databases. 
-    Each session can have its own console
-    instanciated in adamo.__init__.py
     """
 
     def __init__(self):
@@ -71,19 +69,21 @@ class Center:
         
     def startup(self,ui=None,**kw):
         
-        # self.shutdown() # tests/adamo/7.py failed when several tests
-        # were run (because previous startups remained open.
-        
         assert len(self._schemas) > 0,"no schemas"
         sess = self.createSession(ui=ui)
-        sess.debug("center.startup()")
+        job = sess.progress("center.startup()",len(self._schemas))
         for sch in self._schemas:
+            job.inc()
             sch.startup(sess,**kw)
         sess.setDefaultLanguage()
+        job.done()
         return sess
 
     
     def shutdown(self):
+        # self.shutdown() # tests/adamo/7.py failed when several tests
+        # were run (because previous startups remained open.
+        
         #console.debug("Center.shutdown()")
         for sch in self._schemas:
             sch.shutdown()

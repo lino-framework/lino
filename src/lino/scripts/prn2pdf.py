@@ -1,6 +1,8 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2004. This file is part of the Lino project.
+## Copyright 2002-2005 Luc Saffre.
+
+## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by

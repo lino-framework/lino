@@ -29,6 +29,8 @@ from lino.misc.attrdict import AttrDict
 #from lino import ui #import console
 
 from lino.adamo.exceptions import InvalidRequestError
+from lino.ui import console
+from lino.forms.application import Application
 
 
 
@@ -413,8 +415,35 @@ class Panel(Container):
         self.direction = direction
 
 
+class GuiProgressBar(console.ProgressBar):
+    
+    def __init__(self,gui,label=None,**kw):
+        if label is None:
+            label = "Progress Bar"
+        self.frm = gui.form(label=label)
+        self.entry = self.frm.addEntry("progress",
+                                       value="0%",
+                                       enabled=False)
+        console.ProgressBar.__init__(self,label=label,**kw)
 
-class GUI:
+    def onInit(self):
+        self.frm.show()
+        
+    def onDone(self):
+        self.frm.close()
+        
+    def onTitle(self):
+        self.onInc()
+        
+    def onInc(self):
+        self.entry.setValue(self._title+" "+str(self.pc)+"%")
+        
+        
+
+class GUI(console.UI):
+    
+    def __init__(self):
+        console.UI.__init__(self)
 
     def form(self,*args,**kw):
         raise NotImplementedError
@@ -440,6 +469,12 @@ class GUI:
         frm.addLabel(msg)
         frm.addOkButton()
         frm.showModal()
+
+    def progress(self,*args,**kw):
+        return console.progress(*args,**kw)
+
+##     def make_progressbar(self,*args,**kw):
+##         return GuiProgressBar(self,*args,**kw)
 
     def showAbout(self,app):
         s = app.name
@@ -479,6 +514,7 @@ class Form(Describable,GUI):
 
     def __init__(self,toolkit,parent,data=None,*args,**kw):
         Describable.__init__(self,*args,**kw)
+        GUI.__init__(self)
         self.toolkit = toolkit
         self._parent = parent
         self.data = data
@@ -560,8 +596,8 @@ class Form(Describable,GUI):
 ##     def error(self,msg):
 ##         self.warning(msg)
 ##         #print msg
-        
-        
+
+
 
 class Toolkit(GUI):
     
@@ -578,6 +614,7 @@ class Toolkit(GUI):
     
     def __init__(self,app=None):
         self.app = app
+        GUI.__init__(self)
 
     def setApplication(self,app):
         self.app = app

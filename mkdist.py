@@ -174,7 +174,7 @@ if 'timtools' in args:
     sys.argv[1:] = ["py2exe"]
     
     console_targets = ['pds2pdf','prn2pdf',
-                       'rsync',
+                       'sync', 'openmail',
                        'prnprint', 'oogen']
 
     name = "timtools"

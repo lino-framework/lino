@@ -35,8 +35,9 @@ class MyDataTable(wx.grid.PyGridTableBase):
         self.loadData()
 
     def loadData(self):
-        self.rows = [ [str(cell) for cell in row]
-                      for row in self.ds]
+        self.rows = [ row for row in self.ds ]
+        #self.rows = [ [str(cell) for cell in row]
+        #              for row in self.ds]
         #self.rows = [row for row in self.report]
 
     def GetNumberRows(self): return len(self.rows) + 1
@@ -64,29 +65,24 @@ class MyDataTable(wx.grid.PyGridTableBase):
     # C++ version.
     def GetValue(self, rowIndex, colIndex):
         "required"
-        try:
-            return self.rows[rowIndex][colIndex]
-            # ret = self.columns[colIndex].GetCellValue(row)
-        except IndexError:
-            return None
+        if rowIndex == len(self.rows):
+            return "."
+        return str(self.rows[rowIndex][colIndex])
 
     def SetValue(self, rowIndex, colIndex, value):
         "required"
         #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
-        try:
-##             row = self.ds[rowIndex]
-##             #dc = self.ds.getColumn(colIndex)
-##             #v = dc.rowAttr.parse(value)
-##             #dc.setValueFromString(value)
-##             cell = row[colIndex]
-##             cell.setValueFromString(value)
-##             #row.setCellValue(colIndex, value)
-##             #row[colIndex] = value
-##             self.rows[rowIndex][colIndex] = cell.format()
-            self.rows[rowIndex][colIndex] = value
-        except IndexError:
-            row = [None] * len(self.columns)
-            raise "todo: append row"
+        if rowIndex == len(self.rows):
+            args = [None] * len(self.columns)
+            args[colIndex] = value
+            row = self.ds.appendRowEditor(*args)
+            self.rows.append(row)
+        else:
+            row = self.rows[rowIndex]
+        if not row.isLocked():
+            row.lock()
+        row[colIndex].setValue(value)
+        #self._lockedRows.append(row)
         
 ##     def GetTypeName(self,row,col):
 ##         rowAttr = self.columns[col].rowAttr

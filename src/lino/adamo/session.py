@@ -55,7 +55,6 @@ class Session(Context):
         self._user = None
         self.db = None
         self.schema = None
-        self.ui = ui
         #self.forms = None
 ##         if console is None:
 ##             console = getSystemConsole()
@@ -66,8 +65,7 @@ class Session(Context):
         for m in ('warning', 'confirm','decide', 'form'):
             setattr(self,m,getattr(ui,m))
             
-        for m in ( 'debug','info',
-                   'progress',
+        for m in ( 'debug','info', 'progress',
                    'error','critical',
                    'report','textprinter',
                    'startDump','stopDump'):
