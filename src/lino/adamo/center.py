@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -37,11 +37,15 @@ class Center:
         #self._databases = []
         self._sessions = []
         self._sessionFactory = ConsoleSession
+        self.checkIntegrity = False
 
     def addConnection(self,conn):
         assert not conn in self._connections
         self._connections.append(conn)
         
+    def set(self,checkIntegrity=None):
+        if checkIntegrity is not None:
+            self.checkIntegrity = checkIntegrity
 
     def setSessionFactory(self,sf):
         self._sessionFactory = sf
@@ -93,12 +97,31 @@ class Center:
             conn.close()
         self._connections = []
 
+    def getOptionParser(self,**kw):
+        p = console.getOptionParser(**kw)
+
+        def call_set(option, opt_str, value, parser,**kw):
+            self.set(**kw)
+
+        p.add_option("-c",
+                     "--check",
+                     help="perform integrity checks",
+                     action="callback",
+                     callback=call_set,
+                     callback_kwargs=dict(checkIntegrity=True)
+                     )
+        return p
+
+    def parse_args(args=None):
+        p = self.getOptionParser()
+        return p.parse_args(args)
+    
             
 _center = Center()
 
 atexit.register(_center.shutdown)
 
-for m in ('createSession',
+for m in ('createSession','getOptionParser',
           'startup', 'shutdown',
           'addSchema', 
           'addConnection'
