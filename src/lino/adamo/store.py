@@ -48,7 +48,7 @@ class Store:
         self._status = self.SST_MUSTCHECK
         
         #self._datasources = []
-        self._lockedRows = []
+        self._lockedRows = {}
         
         if len(self._table.getPrimaryAtoms()) == 1:
             self._lastId = None
@@ -121,36 +121,66 @@ class Store:
             job.done()
             
         self._status = self.SST_READY
-
+        
+    def view(self,sess,viewName,columnNames=None,**kw):
+        view = self._table.getView(viewName)
+        if view is None:
+            raise KeyError,viewName+": no such view"
             
-    def query(self,sess,*args,**kw):
-        return Datasource(sess,self,None,*args,**kw)
+        for k,v in view.items():
+            kw.setdefault(k,v)
+        kw['viewName'] = viewName
+        if columnNames is not None:
+            kw['columnNames'] = columnNames
+        return self.query(sess,**kw)
         
-    def lockRow(self,row):
-        # todo: use getLock() / releaseLock()
-        self.removeFromCache(row)
-        self._lockedRows.append(row)
+            
+    def query(self,sess,columnNames=None,**kw):
+        return Datasource(sess,self,None,
+                          columnNames=columnNames,**kw)
         
-    def unlockRow(self,row):
-        self.addToCache(row)
-        self._lockedRows.remove(row)
+    def lockRow(self,row,ds):
+        k = tuple(row.getRowId())
+        if self._lockedRows.has_key(k):
+            return False
+        self._lockedRows[k] = ds
+        return True
+
+    def unlockRow(self,row,ds):
+        k = tuple(row.getRowId())
+        x = self._lockedRows.pop(k)
+        assert x == ds
         self.touch()
-        #row.writeToStore()
         #if row.isDirty():
-        #   key = tuple(row.getRowId())
-        #   self._dirtyRows[key] = row
+        #    self._dirtyRows[k] = row
+        
+##     def lockRow(self,row):
+##         # todo: use getLock() / releaseLock()
+##         self.removeFromCache(row)
+##         self._lockedRows.append(row)
+        
+##     def unlockRow(self,row):
+##         self.addToCache(row)
+##         self._lockedRows.remove(row)
+##         self.touch()
+##         #row.writeToStore()
+##         #if row.isDirty():
+##         #   key = tuple(row.getRowId())
+##         #   self._dirtyRows[key] = row
 
     def unlockAll(self):
-        #print "Datasource.unlockAll()",self
-        for row in self._lockedRows:
-            row.unlock()
-        #assert len(self._lockedRows) == 0
+        assert len(self._lockedRows) == 0
+##         #print "Datasource.unlockAll()",self
+##         for row in self._lockedRows:
+##             row.unlock()
+##         #assert len(self._lockedRows) == 0
         
     def unlockDatasource(self,ds):
-        #print "Datasource.unlockAll()",self
-        for row in self._lockedRows:
-            if row._ds == ds:
-                row.unlock()
+        assert len(self._lockedRows) == 0
+##         #print "Datasource.unlockAll()",self
+##         for row in self._lockedRows:
+##             if row._ds == ds:
+##                 row.unlock()
     
         
                 
@@ -163,8 +193,10 @@ class Store:
         pass
 
     def commit(self):
-        for row in self._lockedRows:
-            row.writeToStore()
+        ""
+        assert len(self._lockedRows) == 0
+##         for row in self._lockedRows:
+##             row.writeToStore()
             
     def beforeShutdown(self):
         self.unlockAll()

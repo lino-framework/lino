@@ -323,7 +323,7 @@ class StoredDataRow(DataRow):
         assert not self._new, "Cannot lock a new row"
         assert not self._locked, "already locked"
         self.__dict__["_locked"] = True
-        self._ds._store.lockRow(self)
+        return self._ds._store.lockRow(self,self._ds)
             
 
     def unlock(self):
@@ -337,12 +337,14 @@ class StoredDataRow(DataRow):
             
         #assert not None in self.getRowId(), "incomplete pk"
         self.__dict__["_locked"] = False
-        self._ds._store.unlockRow(self)
-        if self._dirty:
-            self.writeToStore()
+        self._ds._store.unlockRow(self,self._ds)
+        self.commit()
         
 
-    def writeToStore(self):
+    #def writeToStore(self):
+    def commit(self):
+        if not self._dirty:
+            return
         #print "writeToStore()", self
         try:
             self.validate()

@@ -165,12 +165,17 @@ class Session(Context):
     def getBabelLangs(self):
         return self._babelLangs
 
-    def query(self,leadTable,*args,**kw):
+    def getStore(self,leadTable):
         try:
-            store = self.db._stores[leadTable]
+            return self.db._stores[leadTable]
         except KeyError,e:
             raise InvalidRequestError("no such table: "+str(leadTable))
-        return store.query(self,*args,**kw)
+    
+    def view(self,leadTable,*args,**kw):
+        return self.getStore(leadTable).view(self,*args,**kw)
+    
+    def query(self,leadTable,*args,**kw):
+        return self.getStore(leadTable).query(self,*args,**kw)
 
     def peek(self,tableClass,*args):
         # used in raceman/report.py, cities_be.py...

@@ -271,13 +271,13 @@ class Schema(Describable):
         if ui is None:
             ui = console.getSystemConsole()
         job = ui.job("quickStartup()")
-        job.title("Initialize Schema")
+        job.status("Initialize Schema")
         self.initialize()
         db = self.addDatabase(langs=langs)
-        job.title("Connect")
+        job.status("Connect")
         conn = Connection(filename=filename,schema=self)
         db.connect(conn)
-        job.title("Startup")
+        job.status("Startup")
         sess =  center.startup(**kw)
         job.done()
         return sess

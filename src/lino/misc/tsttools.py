@@ -124,8 +124,8 @@ def alltests(argv,root='.'):
                     else:
                         print "unrecognized argument "+arg
                 if doit:
-                    console.vmsg("Extracting tests from %s..." % \
-                                 modname)
+                    console.verbose("Extracting tests from %s..." % \
+                                    modname)
                     suites.append(makesuite(modname))
         sys.path.remove(dirpath)
 

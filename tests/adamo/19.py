@@ -117,23 +117,18 @@ class Case(TestCase):
         ds = sess.query(Nations)
 
         be = ds.appendRow(id="be", name="Belgium")
-        de = ds.appendRow(id="de", name="Germany")
 
-        be.lock()
-        de.lock()
-
-        
         sess.setBabelLangs('de')
         self.assertEqual(be.name,None)
-        be.name = "Belgien"
-        de.name = "Deutschland"
+        if be.lock():
+            be.name = "Belgien"
+            be.unlock()
         
         sess.setBabelLangs('fr')
-        be.name = "Belgique"
-        de.name = "Allemagne"
-
-        be.unlock()
-        de.unlock()
+        self.assertEqual(be.name,None)
+        if be.lock():
+            be.name = "Belgique"
+            be.unlock()
         
         
         be = sess.query(Nations).peek('be')

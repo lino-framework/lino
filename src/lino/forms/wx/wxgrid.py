@@ -129,8 +129,9 @@ class MyDataTable(wx.grid.PyGridTableBase):
             self.rows.append(row)
         else:
             row = self.rows[rowIndex]
-        row.lock()
-        #row[colIndex].setValue(value)
+        if not row.lock():
+            self.editor.getForm().message("sorry: row.lock() failed")
+            return
         col = self.columns[colIndex]
         col.setValueFromString(row,value)
         row.setDirty()

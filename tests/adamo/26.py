@@ -117,13 +117,13 @@ id   |title
         must show only the projects with super=None
         """
 
-        ds = PROJECTS.query(viewName="std")
+        ds = self.sess.view(Projects,"std")
         self.assertEqual(len(ds),3)
 
         
 
         try:
-            ds = PROJECTS.query(viewName="nonExistingViewName")
+            ds = self.sess.view(Projects,"nonExistingViewName")
             self.fail("failed to raise exception for bad viewName")
         except KeyError:
             pass

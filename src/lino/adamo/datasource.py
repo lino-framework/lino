@@ -85,37 +85,38 @@ class SimpleDatasource:
         self._store.zap()
 
         
-    def configure(self,viewName=None,**kw):
-        """
+##     def configure(self,viewName=None,**kw):
+##         """
         
-        note: _configure() is a separate method because the viewName
-        parameter may control the default values for the other
-        keywords.
+##         note: _configure() is a separate method because the viewName
+##         parameter may control the default values for the other
+##         keywords.
         
-        """
-        self._viewName = viewName
-        if viewName is not None:
-            view = self._table.getView(viewName)
-            if view is None:
-                raise KeyError,viewName+": no such view"
+##         """
+##         if viewName is not None:
+##             view = self._table.getView(viewName)
+##             if view is None:
+##                 raise KeyError,viewName+": no such view"
             
-            if kw.has_key('columnNames'):
-                if kw['columnNames'] is None:
-                    print "viewName", viewName, kw
-                    raise "columnNames was None"
+##             if kw.has_key('columnNames'):
+##                 if kw['columnNames'] is None:
+##                     print "viewName", viewName, kw
+##                     raise "columnNames was None"
                 
-            for k,v in view.items():
-                kw.setdefault(k,v)
-        self._configure(**kw)
+##             for k,v in view.items():
+##                 kw.setdefault(k,v)
+##         self._configure(**kw)
 
-    def _configure(self,
+    def configure(self,
                    columnNames=None,
+                   viewName=None,
                    orderBy=None,
                    sqlFilters=None,
                    search=None,
                    samples=None,
                    label=None,
                    **kw):
+        self._viewName = viewName
         if label is not None:
             assert type(label) == type(""),\
                    "%s not a string" % repr(label)
@@ -224,14 +225,14 @@ class SimpleDatasource:
 ##     def field(self,name):
 ##         return self._table._rowAttrs[name]
 
-    
+
     def query(self,columnNames=None,**kw):
         self.setdefaults(kw)
-        return self.__class__( self._session,
-                               self._store,
-                               self._clist,
-                               columnNames=columnNames,
-                               **kw)
+        return self.__class__(self._session,
+                              self._store,
+                              self._clist,
+                              columnNames=columnNames,
+                              **kw)
 
 
     def setupReport(self,rpt,**kw):
@@ -570,7 +571,7 @@ class SimpleDatasource:
         
     def appendRow(self,*args,**kw):
         row = self._appendRow(*args,**kw)
-        row.writeToStore()
+        row.commit()
         self._store.fireUpdate()
         return row
 
@@ -777,7 +778,9 @@ class Datasource(SimpleDatasource):
             elif self.pageNum < 0:
                 self.pageNum = self.lastPage + self.pageNum - 1
             elif self.pageNum > self.lastPage:
-                raise "pageNum > lastPage",self.lastPage
+                raise InvalidRequestError(\
+                    "pageNum=%d > lastPage=%d" % (self.pageNum,
+                                                  self.lastPage))
             self.startOffset = self.pageLen * (self.pageNum-1)
         
         
