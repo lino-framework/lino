@@ -1,5 +1,0 @@
-=======================================
-The Lino Database Application Framework
-=======================================
-
-This is the home page of the Lino project.
