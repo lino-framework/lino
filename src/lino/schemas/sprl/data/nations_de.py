@@ -1,7 +1,28 @@
 #coding: latin1
 
-def populate(db):
-	s = """
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
+from lino.schemas.sprl.tables import Nations
+
+def populate(sess):
+    s = """
 #AC - Ascension Island 
 AD - Andorra 
 AE - Vereinigte Arabische Emirate 
@@ -295,17 +316,15 @@ ZR - Zaire (jetzt CD - Demokratische Republik Kongo)
 ZW - Simbabwe
 
 """
-	#print "nations_de"
-	#db.NATIONS.setLanguage('de')
-	db.installto(globals())
-	setBabelLangs('de')
-	for l in s.splitlines():
-		if len(l) and l[0] != '#':
-			(id,name) = l.split('-',1)
-			id=id.strip().lower()
-			n = NATIONS.peek(id)
-			n.lock()
-			n.name = name.strip()
-			n.unlock()
-			
-	db.commit()
+    NATIONS = sess.query(Nations)
+    NATIONS.setBabelLangs('de')
+    for l in s.splitlines():
+        if len(l) and l[0] != '#':
+            (id,name) = l.split('-',1)
+            id=id.strip().lower()
+            n = NATIONS.peek(id)
+            n.lock()
+            n.name = name.strip()
+            n.unlock()
+            
+    sess.commit()

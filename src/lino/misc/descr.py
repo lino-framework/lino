@@ -17,7 +17,20 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-class Describable:
+class Configurable:
+    
+##     def __init__(self,*args,**kw):
+##         self.configure(*args,**kw)
+
+    def configure(self,**kw):
+        "make sure that no new attribute gets created"
+        for k,v in kw.items():
+            assert self.__dict__.has_key(k)
+            self.__dict__[k] = v
+            # setattr(self,k,v)
+
+
+class Describable(Configurable):
     """
     This interface is 
     - name should be a possibly valid Python identifier
@@ -28,55 +41,47 @@ class Describable:
     def __init__(self,name=None,label=None,doc=None):
         if name is None:
             name = self.__class__.__name__
-        self.__dict__['_name'] = name
+        self.__dict__['name'] = name
             
         #if label is None:
         #    label = name
         #    #label = "Unlabeled %s instance" % self.__class__.__name__
-        self.__dict__['_label'] = label
+        self.__dict__['label'] = label
         
         if doc is None:
             #   doc = "(No docstring available for " + label+")"
             doc = self.__doc__
         else:
             assert type(doc)==type(""),repr(doc)
-        self.__dict__['_doc'] = doc
+        self.__dict__['doc'] = doc
             
         
     def getLabel(self):
-        if self._label is None: return self._name
-        return self._label
+        if self.label is None: return self.name
+        return self.label
     
     def setLabel(self,label):
-        self.__dict__['_label'] = label
+        self.__dict__['label'] = label
 
     def getDoc(self):
-        return self._doc
+        return self.doc
     
     def setDoc(self,doc):
-        self._doc = doc
+        self.doc = doc
 
     def setName(self,name):
-        self._name = name
+        self.name = name
 
     def getName(self):
-        return self._name 
+        return self.name 
 
     def __str__(self):
-        if self._name == self.__class__.__name__:
-            return self._name
-        return self.__class__.__name__ + " " + str(self._name) 
+        if self.name == self.__class__.__name__:
+            return self.name
+        return self.__class__.__name__ + " " + str(self.name) 
 
     def __repr__(self):
-        return self.__class__.__name__ + " " + str(self._name) 
+        return self.__class__.__name__ + " " + str(self.name) 
 
 
 
-class Configurable:
-    
-    def configure(self,**kw):
-        "make sure that no new attribute gets created"
-        for k,v in kw.items():
-            assert self.__dict__.has_key(k)
-            self.__dict__[k] = v
-            # setattr(self,k,v)

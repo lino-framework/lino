@@ -49,8 +49,12 @@ class Case(tsttools.TestCase):
         sql = SERV.stopDump()
         # SELECT MAX(id) FROM SERV;
         self.assertEquivalent(sql,"""\
-INSERT INTO Services ( id, responsible, name, price )
-         VALUES  ( 3,  NULL, 'bring home', 99 );
+INSERT INTO Services (
+id,
+name, price,
+responsible
+)
+         VALUES  ( 3,  'bring home', 99, NULL );
 """)
         
     def test02(self):
@@ -73,16 +77,8 @@ INSERT INTO Services ( id, responsible, name, price )
         o = ORDERS.appendRow(date="20040322",customer = c)
         #SELECT MAX(id) FROM ORDERS;
         self.assertEquivalent(ORDERS.stopDump(),"""\
-INSERT INTO Orders (
-id,
-customer_id,
-date,
-totalPrice,
-isRegistered
-) VALUES ( 5, 4,
-20040322,
-NULL,
-NULL );
+INSERT INTO Orders ( id, date, customer_id, totalPrice, isRegistered )
+            VALUES ( 5, 20040322, 4, NULL, NULL );
 """)
         
         LINES.startDump()
@@ -91,11 +87,7 @@ NULL );
         #print self.db.conn.stopDump()
         # SELECT MAX(id) FROM LINES;
         self.assertEquivalent(LINES.stopDump(),"""\
-INSERT INTO OrderLines (
-id, productProducts_id, productServices_id,
-qty,
-ordr_id
-) VALUES ( 8, 3, NULL, 2, 5 );
+INSERT INTO OrderLines ( id, ordr_id, productProducts_id, productServices_id, qty ) VALUES ( 8, 5, 3, NULL, 2 );
 """)
         q = LINES.query(ordr=ORDERS.peek(1))
         self.assertEqual(len(q),1)
@@ -121,9 +113,8 @@ SELECT id, name, price FROM Products WHERE id = 1;
         line = LINES.peek(1)
         #self.assertEquivalent(self.db.conn.stopDump(),"")
         self.assertEquivalent(LINES.stopDump(),"""\
-SELECT id, productProducts_id, productServices_id, qty, ordr_id
-FROM OrderLines
-WHERE id = 1;""")
+SELECT id, ordr_id, productProducts_id, productServices_id, qty FROM OrderLines WHERE id = 1;        
+""")
 
         PROD.startDump()
         self.assertEqual(line.product.name,"Pizza Margerita")

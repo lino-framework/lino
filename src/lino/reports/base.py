@@ -21,9 +21,7 @@ import types
 
 from lino.misc.descr import Describable, Configurable
 
-class BaseReport(Describable,Configurable):
-
-    #dataColumnFactory = 
+class BaseReport(Describable):
 
     LEFT = 1
     RIGHT = 2
@@ -31,27 +29,23 @@ class BaseReport(Describable,Configurable):
     TOP = 4
     BOTTOM = 5
     
-    def __init__(self, dest, name=None, label=None, doc=None, **kw):
-        #self.ds = ds
-        self.dest = dest
-##         if label is None:
-##             label = ds._table.getLabel()
-        Describable.__init__(self,name,label,doc)
+    def __init__(self, *args, **kw):
         self.cellValues = None
 
-        self.config(**kw)
-
-    def config(self,
-               columnNames=None,
-               columnWidths=None,
-               width=None,
-               rowHeight=None):
-        #self.ds.config(self,**kw)
-        
         self.columns = []
         self.groups = []
         self.totals = []
 
+        Describable.__init__(self,*args,**kw)
+
+    def configure(self, 
+                  columnWidths=None,
+                  width=None,
+                  rowHeight=None,
+                  *args,
+                  **kw):
+        
+        Describable.configure(self,*args,**kw)
         if columnWidths is not None:
             i = 0
             for item in columnWidths.split():
@@ -64,7 +58,7 @@ class BaseReport(Describable,Configurable):
 
         self.rowHeight = rowHeight
         self.columnWidths = columnWidths
-        self.columnNames = columnNames
+        #self.columnNames = columnNames
 
         self.width = width
 
@@ -111,6 +105,13 @@ class BaseReport(Describable,Configurable):
         col = VurtReportColumn(self,meth,**kw)
         self.columns.append(col)
         return col
+
+
+    def execute(self,datasource):
+        self.beginReport()
+        for row in datasource:
+            self.processRow(row)
+        self.endReport()
 
     def beginReport(self):
         self.computeWidths()
@@ -215,7 +216,7 @@ class VurtReportColumn(ReportColumn):
         self.meth = meth
 
     def getValue(self,row):
-        return self.meth(self._owner)
+        return self.meth(self._owner.crow)
         
 class ConfigError(Exception):
     pass

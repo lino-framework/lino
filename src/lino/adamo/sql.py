@@ -18,24 +18,51 @@
 
 import types
 
-from datatypes import *
-from rowattrs import Field, Pointer #, Detail
+from lino.adamo.datatypes import *
+from lino.adamo.rowattrs import Field, Pointer #, Detail
 #from query import Query, QueryColumn
 
-from connection import Connection
+from lino.adamo.connection import Connection
 
 #from mx.DateTime import DateTime
 
 
 class SqlConnection(Connection):
-
+    
+    "base class for SQL connections"
+    
     DEBUG = False
     
+    CST_NEW = 1       # just created, must create tables and populate
+    CST_OPENED = 2    # just opened, must check integrity
+    CST_ACTIVE = 3    # tables created, integrity checked
+    CST_CLOSING = 4
+    CST_CLOSED = 5
+    
+    def __init__(self,schema):
+        Connection.__init__(self,schema)
+        self._dump = None
+        self._status = self.CST_NEW
+        
     def getModificationTime(self,table):
         raise NotImplementedError
-    def sql_exec(self,sql):
+    
+    def sql_exec_really(self,sql):
         raise NotImplementedError
     
+    def sql_exec(self,sql):
+        if self._dump is not None:
+            self._dump += sql + ";\n"
+        return self.sql_exec_really(sql)
+        
+    def startDump(self):
+        self._dump = ""
+
+    def stopDump(self):
+        s = self._dump 
+        self._dump = None
+        return s
+
     def testEqual(self,colName,type,value):
         if value is None:
             return "%s ISNULL" % (colName)
@@ -97,7 +124,13 @@ class SqlConnection(Connection):
                 return 'VARCHAR(%d)' % type.width
         else:
             raise "%s : bad type" % str(type)
-        
+
+    def mustCreateTables(self):
+        return self._status == self.CST_NEW
+    
+    def mustCheckTables(self):
+        return self._status == self.CST_OPENED
+
         
     def executeCreateTable(self,query):
         table = query.leadTable
@@ -316,7 +349,7 @@ class SqlConnection(Connection):
         #clist = table.clist()
         assert len(id) == len(table.getPrimaryAtoms()),\
                  "len(%s) != len(%s)" % (repr(id),
-                                                 repr(table.getPrimaryAtoms()))
+                                         repr(table.getPrimaryAtoms()))
         sql = "SELECT "
         l = []
         for atom in clist.getAtoms():
@@ -328,7 +361,7 @@ class SqlConnection(Connection):
         i = 0
         for (name,type) in table.getPrimaryAtoms():
             l.append("%s = %s" % (name,
-                                         self.value2sql(id[i],type)))
+                                  self.value2sql(id[i],type)))
             i += 1
         sql += " AND ".join(l)
         csr = self.sql_exec(sql)

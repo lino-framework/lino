@@ -28,21 +28,17 @@ import sqlite
 from types import TupleType
 from lino.ui.console import confirm
 
-# from lino.adamo.cursor import CursorMixin
 from lino.adamo.sql import SqlConnection
 from lino.adamo import DatabaseError
-# from lino.row import IntelliRow
         
 
 class Connection(SqlConnection):
     
-    def __init__(self,filename,schema,isTemporary=False):
-        self.schema = schema
+    def __init__(self,schema,filename=None):
+        SqlConnection.__init__(self,schema)
         self.dbapi = sqlite
         #self._isTemporary = isTemporary
-        self._dump = None
         self._mtime = 0.0
-        
         self._filename = filename
         if filename is None:
             # assert isTemporary
@@ -52,6 +48,7 @@ class Connection(SqlConnection):
 ##                     os.remove(filename)
 ##                 else:
             self._mtime = os.stat(filename).st_mtime
+            self._status = self.CST_OPENED
             
         try:
             self._dbconn = sqlite.connect(filename)
@@ -69,25 +66,15 @@ class Connection(SqlConnection):
         #print "SQLite database : " + os.path.abspath(filename)
         # self._dbcursor = self._dbconn.cursor()
 
-    def startDump(self):
-        self._dump = ""
-
-    def stopDump(self):
-        s = self._dump 
-        self._dump = None
-        return s
-
 ##     def isVirtual(self):
 ##         return self._filename is None
 
-    def sql_exec(self,sql):
-        if self._dump is not None:
-            self._dump += sql + ";\n"
+    def sql_exec_really(self,sql):
 ##         if self._filename is None:
 ##             print sql+";"
 ##             return
         csr = sqlite.Cursor(self._dbconn,TupleType)
-        #print "sqlite_dbd.py:" + sql
+        # print "sqlite_dbd.py:" + sql
         try:
 ##              if "PARTNERS" in sql:
 ##                  print "sqlite_dbd.py:" + sql
@@ -101,7 +88,9 @@ class Connection(SqlConnection):
         self._dbconn.commit()
 
     def close(self):
+        self._status = self.CST_CLOSING
         self._dbconn.close()
+        self._status = self.CST_CLOSED
         #self._dbconn = None
 ##         if self._isTemporary and self._filename is not None:
 ##             os.remove(self._filename)

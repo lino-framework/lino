@@ -27,29 +27,21 @@ from lino import adamo
 from lino.schemas.sprl.sprl import makeSchema
 
 
-
-def populate(sess):
-    from lino.schemas.sprl.data import demo1
-    #std.populate(sess,big)
-    demo1.populate(sess)
-
-
-        
-def beginSession(populator=populate,
-                 filename=None,
-                 langs=None,
-                 isTemporary=True,
-                 **kw):
-    schema = makeSchema(**kw)
-    sess = adamo.beginQuickSession(schema,
-                                   langs=langs,
-                                   filename=filename,
-                                   isTemporary=True,
-                                   )
+def startup(populate=True,
+            filename=None,
+            langs=None,
+            **kw):
     
-    sess.populate()
-    if populator:
-        populator(sess)
+    schema = makeSchema(**kw)
+    
+    sess = adamo.beginQuickSession(schema,
+                                   populate=populate,
+                                   langs=langs,
+                                   filename=filename )
+    
+    if populate:
+        from lino.schemas.sprl.data import demo1
+        demo1.populate(sess)
         
     return sess
 
@@ -57,3 +49,5 @@ def beginSession(populator=populate,
 # deprecated name for beginSession:
 # getDemoDB = beginSession
 
+# deprecated name for startup:
+beginSession = startup

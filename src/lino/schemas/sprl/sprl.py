@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -28,27 +28,10 @@ from lino.schemas.sprl.tables import *
 class BasePlugin(adamo.SchemaPlugin):
 
     def defineTables(self,schema):
-        schema.addTable( Languages,label="Languages")
-        schema.addTable( Users, label="Users" )
+        schema.addTable(Languages,label="Languages")
+        schema.addTable(Users, label="Users" )
         schema.addForm(LoginForm)
         schema.addForm(MainForm)
-
-    def populate(self,sess):
-        q = sess.query(Languages,'id name')
-        if sess.schema.options.big:
-            from lino.schemas.sprl.data import languages
-            languages.populate(q)
-        else:
-            q.setBabelLangs('en de fr')
-            q.appendRow('en',('English','Englisch','Anglais')	  )
-            q.appendRow('de',('German','Deutsch', 'Allemand')	  )
-            q.appendRow('et',('Estonian','Estnisch','Estonien')   )
-            q.appendRow('fr',('French','Französisch','Français')  )
-            q.appendRow('nl',('Dutch','Niederländisch','Neerlandais'))
-            
-        q = sess.query(Users,'id firstName name')
-        q.appendRow("luc", "Luc", "Saffre")
-        q.appendRow("james", "James", "Bond")
 
 
 class WebPlugin(adamo.SchemaPlugin):
@@ -65,16 +48,6 @@ class ProjectPlugin(adamo.SchemaPlugin):
                          label="Projects")
         schema.addTable( ProjectStati,
                          label="Project States")
-
-    def populate(self,sess):
-        q = sess.query(ProjectStati,'id name')
-        q.setBabelLangs('en de')
-        q.appendRow('T',('to do','zu erledigen'))
-        q.appendRow('D',('done','erledigt'))
-        q.appendRow('W',('waiting','wartet'))
-        q.appendRow('A',('abandoned','storniert'))
-        q.appendRow('S',('sleeping','schläft'))
-
 
 class NewsPlugin(adamo.SchemaPlugin):
 
@@ -133,32 +106,6 @@ class QuotesPlugin(adamo.SchemaPlugin):
         schema.addTable( PubByAuth,
                          label="Publications By Author")
         
-    def populate(self,sess):
-        sess.setBabelLangs('en de')
-        q = sess.query(PubTypes,'id name typeRefPrefix pubRefLabel')
-        q.appendRow("book",
-                    ('Book','Buch')        ,
-                    'ISBN: ',
-                    ('page','Seite')  )
-        q.appendRow("url" , ('Web Page','Webseite')    ,
-                    'http:' , ( None, None)   )
-        q.appendRow("cd"  , ('CompactDisc', 'CD') , 'cddb: ',
-                    ('track','Stück') )
-        q.appendRow("art" , ('Article','Artikel')     ,
-                    ''      , ('page','Seite')  )
-        q.appendRow("mag" , ('Magazine','Zeitschrift')    ,
-                    ''      , ('page','Seite')  )
-        q.appendRow("sw"  , ('Software','Software')    ,
-                    ''      , (None,None)    )
-
-        q = sess.query(AuthorEventTypes,'id name')
-        q.setBabelLangs('en de')
-        q.appendRow(1,('born','geboren'))
-        q.appendRow(2,('died','gestorben'))
-        q.appendRow(3,('married','Heirat'))
-        q.appendRow(4,('school','Schulabschluss'))
-        q.appendRow(5,('other','Sonstige'))	
-
 
         
 class SprlSchema(adamo.Schema):
@@ -170,6 +117,8 @@ class SprlSchema(adamo.Schema):
         if not sess.hasAuth():
             sess.showForm("login",modal=True)
         sess.showForm("main")
+
+        
 
 def makeSchema( withEvents=True,
                 withProjects=True,
@@ -192,7 +141,7 @@ def makeSchema( withEvents=True,
     schema.addPlugin(ProjectPlugin(withProjects))
     schema.addPlugin(NewsPlugin(withNews))
     schema.addPlugin(JokesPlugin(withJokes))
-
+    #schema.initialize()
     return schema
 
 

@@ -4,6 +4,8 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
+raise "no longer used"
+
 from lino.misc.descr import Describable
 
 class OwnedThing(Describable):

@@ -5,9 +5,9 @@ from addrbook import Partners
 
 class Journals(Table):
 	def init(self):
-		self.id = Field(STRING,width=3)
-		self.name = Field(STRING)
-		self.tableName = Field( STRING)
+		self.addField('id',STRING.child(width=3))
+		self.addField('name',STRING)
+		self.addField('tableName', STRING)
 		
 	class Instance(Table.Instance):
 		def getLabel(self):
@@ -18,18 +18,18 @@ class Journals(Table):
 
 class Years(Table):
 	def init(self):
-		self.id = Field(INT)
-		self.name = Field(STRING)
+		self.addField('id',INT)
+		self.addField('name',STRING)
 
 
 
 class Documents(Table):
 	def init(self):
-		self.seq = Field(INT)
-		self.date = Field(DATE)
-		self.closed = Field(BOOL)
+		self.addField('seq',INT)
+		self.addField('date',DATE)
+		self.addField('closed',BOOL)
 
-		self.jnl = Pointer(Journals)
+		self.addPointer('jnl',Journals)
 		self.setPrimaryKey("jnl seq")
 
 	class Instance(Table.Instance):
@@ -42,19 +42,19 @@ class Documents(Table):
 class FinancialDocuments(Documents):
 	def init(self):
 		Documents.init(self)
-		self.remark = Field(STRING)
+		self.addField('remark',STRING)
 		
 class BankStatements(FinancialDocuments):
 	def init(self):
 		FinancialDocuments.init(self)
-		self.balance1 = Field(AMOUNT)
-		self.balance2 = Field(AMOUNT)
+		self.addField('balance1',AMOUNT)
+		self.addField('balance2',AMOUNT)
 		
 class PartnerDocuments(Documents):
 	def init(self):
 		Documents.init(self)
-		self.remark = Field(STRING)
-		self.partner = Pointer(Partners)
+		self.addField('remark',STRING)
+		self.addPointer('partner',Partners)
 
 		
 

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -60,19 +60,21 @@ class Datasource:
 
         self._samples = {}
         
-        self.config(**kw)
+        self.configure(**kw)
 
     def mtime(self):
         return self._store.mtime()
 
+
     def zap(self):
         self._store.zap()
 
-    def config(self,viewName=None,**kw):
+    def configure(self,viewName=None,**kw):
         """
         
-        note: _config() is a separate method because the viewName
-        parameter may control the default values for the other keywords.
+        note: _configure() is a separate method because the viewName
+        parameter may control the default values for the other
+        keywords.
         
         """
         self._viewName = viewName
@@ -82,16 +84,16 @@ class Datasource:
                 raise KeyError,viewName+": no such view"
             for k,v in view.items():
                 kw.setdefault(k,v)
-        self._config(**kw)
+        self._configure(**kw)
 
-    def _config(self,
-                columnNames=None,
-                orderBy=None,
-                sqlFilters=None,
-                search=None,
-                samples=None,
-                label=None,
-                **kw):
+    def _configure(self,
+                   columnNames=None,
+                   orderBy=None,
+                   sqlFilters=None,
+                   search=None,
+                   samples=None,
+                   label=None,
+                   **kw):
         if label is not None:
             assert type(label) == type(""),\
                    "%s not a string" % repr(label)
@@ -135,7 +137,7 @@ class Datasource:
                 col = self._clist.provideColumn(k)
                 qryParams[k] = col.parse(v[0],self)
                 
-        self.config(**qryParams)
+        self.configure(**qryParams)
         #if len(csvSamples) > 0:
         #   self.setCsvSamples(**csvSamples)
             
@@ -203,24 +205,19 @@ class Datasource:
                            **kw)
 
 
-    def setupReport(self,rpt):
+    def setupReport(self,rpt,**kw):
         for dc in self.getVisibleColumns():
             rpt.addDataColumn(dc,
                               width=dc.getPreferredWidth(),
                               label=dc.getLabel())
-        rpt.configure(_name=self._table.getTableName(),
-                      _label=self._table.getLabel())
+        rpt.configure(name=self._table.getTableName(),
+                      label=self._table.getLabel(),
+                      **kw)
     
-    def runReport(self,rpt):
-        rpt.beginReport()
-        for row in self:
-            rpt.processRow(row)
-        rpt.endReport()
-
-    def report(self,*args,**kw):
-        rpt = self._session.report(*args,**kw)
-        self.setupReport(rpt)
-        self.runReport(rpt)
+    def report(self,**kw):
+        rpt = self._session.report()
+        self.setupReport(rpt,**kw)
+        rpt.execute(self)
 
         
     
@@ -527,16 +524,9 @@ class Datasource:
         l = []
         i = 0
         for col in self._clist._pkColumns:
-            #l += col.rowAttr.value2atoms(id[i],self._session.getContext())
             l += col.rowAttr.value2atoms(id[i],self._db)
             i+=1
             
-##      i = 0
-##      for atomicValue in id:
-##          if isinstance(atomicValue,DataRow):
-##              l += atomicValue.getRowId()
-##          else:
-##              l.append(atomicValue)
         atomicRow = self._connection.executePeek(self._clist,l)
         if atomicRow is None:
             return None
@@ -590,13 +580,14 @@ class Datasource:
         #csr = self._connection.executeSelect(q)
         csr = ds.executeSelect()
         if csr.rowcount != 1:
-            #print "findone(%s) found %d rows" % ( repr(knownValues),
-            #csr.rowcount))
+            #print "findone(%s) found %d rows" % (
+            #    repr(knownValues), csr.rowcount)
             return None
             #raise DataVeto("findone(%s) found %d rows" % (
             #   repr(knownValues), csr.rowcount))
         
         atomicRow = csr.fetchone()
+        assert atomicRow is not None, repr(csr.rowcount)
         #d = self._clist.at2d(atomicRow)
         #return self._table.Row(self,d,False)
         return self.atoms2row(atomicRow,False)
@@ -649,12 +640,12 @@ class Datasource:
 
 class PagingDatasource(Datasource):
 
-    def config(self,
-               pageNum=None,
-               pageLen=None,
-               **kw):
+    def configure(self,
+                  pageNum=None,
+                  pageLen=None,
+                  **kw):
         
-        Datasource.config(self,**kw)
+        Datasource.configure(self,**kw)
         
         self.pageNum = pageNum
         self.pageLen = pageLen

@@ -35,14 +35,15 @@ from lino.schemas.sprl.tables import Nations
 
 class Case(unittest.TestCase):
 	def setUp(self):
-		self.db = demo.beginSession(populator=None,big=True)
-		demo.populate(self.db,big=True)
+		self.db = demo.beginSession(big=True)
+		#self.db = demo.beginSession(populator=None,big=True)
+		#demo.populate(self.db,big=True)
 		
 	def tearDown(self):
 		self.db.shutdown()
 		
 	def test01(self):
-		be = NATIONS.peek('be')
+		be = self.db.query(Nations).peek('be')
 		s = ''
 		for city in be.cities.query(orderBy="name",
                                     search="eup"):

@@ -33,7 +33,7 @@ class BabelLang:
 
 
 class Context:
-    "interface class"
+    "interface implemented by Session and Database"
     def getBabelLangs(self):
         raise NotImplementedError
 
@@ -83,7 +83,7 @@ class Session(Context):
         return True
             
         
-    def use(self,db=None,langs=None):
+    def use(self,db=None): # ,langs=None):
         # if necessary, stop using current db
         if db != self.db and self.db is not None:
             #self.db.removeSession(self)
@@ -100,14 +100,15 @@ class Session(Context):
             self.db = db
             # self.tables = AttrDict(factory=self.openTable)
             self.forms = AttrDict(factory=self.openForm)
-            if langs is None:
-                langs = db.getDefaultLanguage()
-            #self.db.addSession(self)
-                
-        if langs is not None:
-            self.setBabelLangs(langs)
+            #if langs is None:
+            #    langs = db.getDefaultLanguage()
+            #self.setBabelLangs(langs)
+            self.setDefaultLanguage()
         
         #self._formStack = []
+
+    def setDefaultLanguage(self):
+        self.setBabelLangs(self.db.getDefaultLanguage())
         
     def showForm(self,formName,modal=False,**kw):
         raise NotImplementedError
@@ -131,7 +132,7 @@ class Session(Context):
         return self.db.commit()
 
     def shutdown(self):
-        return self.db.shutdown()
+        return self.db.close()
 
     def setBabelLangs(self,langs):
         
@@ -169,8 +170,8 @@ class Session(Context):
         
 
 
-    def report(self,**kw):
-        raise NotImplementedError
+##     def report(self,**kw):
+##         raise NotImplementedError
     
 ##     def openTable(self,name):
 ##         try:
@@ -186,8 +187,8 @@ class Session(Context):
     def end(self):
         self.use()
 
-    def populate(self):
-        self.schema.populate(self)
+##     def populate(self):
+##         self.schema.populate(self)
         
 
 ##     def installto(self,d):
@@ -232,26 +233,6 @@ class Session(Context):
         assert self._user is not None
         self._user = None
 
-    def checkIntegrity(self):
-        msgs = []
-        #for q in self.tables:
-        for cl in self.db._stores.keys():
-            q = self.query(cl)
-            #q = getattr(self.tables,name)
-            self.info("%s : %d rows" % (q._table.getTableName(),
-                                        len(q)))
-            l = len(q)
-            for row in q:
-                #row = q.atoms2instance(atomicRow)
-                msg = row.checkIntegrity()
-                if msg is not None:
-                    msgs.append("%s[%s] : %s" % (
-                        q._table.getTableName(),
-                        str(row.getRowId()),
-                        msg))
-            #store.flush()
-        return msgs
-        
 
 
 ##  def startSession(self):
@@ -278,12 +259,12 @@ class ConsoleSession(Session):
 ##         if ds is not None:
 ##             ds.
         
-    def showReport(self,ds,*args,**kw):
-        rpt = self.report(ds,*args,**kw)
-        rpt.beginReport()
-        for row in ds:
-            rpt.renderRow(row)
-        rpt.endReport()
+##     def showReport(self,ds,*args,**kw):
+##         rpt = self.report(ds,*args,**kw)
+##         rpt.beginReport()
+##         for row in ds:
+##             rpt.renderRow(row)
+##         rpt.endReport()
         
 ##     def showReport(self,ds,columnNames=None,showTitle=True,**kw):
 ##         raise "replaced by report()"

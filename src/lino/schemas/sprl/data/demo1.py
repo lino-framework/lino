@@ -108,7 +108,7 @@ def populate(sess):
 
     
 
-    if True:
+    if False:
         home = PAGES.appendRow(
             match='index',
             super=None,
@@ -299,10 +299,10 @@ Conscience is the inner voice that warns us that someone may be looking.
         p1322 = PROJECTS.appendRow(title="Project 1.3.2.2",super=p132)
         
 
-    if sess.schema.plugins.JokesPlugin.isActive():
-        import quotes_de
-        quotes_de.populate(sess)
-        sess.commit()
+##     if sess.schema.plugins.JokesPlugin.isActive():
+##         from lino.schemas.sprl.data import quotes_de
+##         quotes_de.populate(sess)
+##         sess.commit()
 
     if False:
         # cannot appendRow with value outside of leadTable:

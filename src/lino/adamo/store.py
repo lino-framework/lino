@@ -27,12 +27,19 @@ class Store:
     One instance per Database and Table.
     Distributes auto-incrementing keys for new rows.
     """
+
+    SST_MUSTCHECK = 1
+    SST_VIRGIN = 2 # must populate with default data?
+    SST_READY = 3
+    
     def __init__(self,conn,db,table):
+        self._connection = conn # shortcut
+        self._mtime = conn.getModificationTime(table)
         self._db = db
         self._table = table
         self._schema = db.schema # shortcut
-        self._connection = conn # shortcut
         self._lockedRows = []
+        self._status = self.SST_MUSTCHECK
         
         self._datasources = []
         
@@ -44,11 +51,7 @@ class Store:
         #self._queries = {}
         #self._peekQuery = self.defineQuery(None)
         self._peekQuery = DataColumnList(self,db)
-        
         self._table.onConnect(self)
-        #self._peekQuery = ...
-        #self._peekDS = Datasource(self,self._peekQuery)
-        self._mtime = conn.getModificationTime(table)
 
 
     def mtime(self):
@@ -73,6 +76,39 @@ class Store:
         for ds in self._datasources:
             ds.onStoreUpdate()
 
+    def createTables(self,sess):
+        if self._status == self.SST_MUSTCHECK:
+            if self._connection.mustCreateTables():
+                self.createTable(sess)
+                self._status = self.SST_VIRGIN
+                
+    def checkIntegrity(self,sess):
+        if self._status == self.SST_MUSTCHECK:
+            if self._connection.mustCheckTables():
+                self.checkTable(sess)
+            self._status = self.SST_READY
+                
+    def populate(self,sess):
+         if self._status == self.SST_VIRGIN:
+             self._table.populate(sess)
+         self._status = self.SST_READY
+        
+            
+
+    def checkTable(self,sess):
+        q = sess.query(self._table)
+        l = len(q)
+        sess.progress("%s : %d rows" % ( q._table.getTableName(),l))
+        for row in q:
+            msg = row.checkIntegrity()
+            if msg is not None:
+                msg = "%s[%s] : %s" % (
+                    q._table.getTableName(),
+                    str(row.getRowId()),
+                    msg)
+                sess.error(msg)
+                #msgs.append(msg)
+
         
         
     def removeFromCache(self,row):
@@ -92,8 +128,8 @@ class Store:
 ##          row.commit()
 ##      self._dirtyRows = {}
     
-    def createTable(self):
-        # print "CREATE TABLE " + self.getName()
+    def createTable(self,sess):
+        sess.progress( "create table " + self._table.getTableName())
         self._connection.executeCreateTable(self._peekQuery)
         #self._table.populate(self)
 

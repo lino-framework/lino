@@ -11,16 +11,14 @@ class Events(Pages):
 	def init(self):
 		#MemoMixin.init(self,table)
 		Pages.init(self)
-		self.id = Field( ROWID)
-		self.date = Field( DATE)
-		self.time = Field( STRING)
-		self.type = Pointer( EventTypes)
-		self.type.setDetail("eventsByType")
+		self.addField('id', ROWID)
+		self.addField('date', DATE)
+		self.addField('time', STRING)
+		self.addPointer('type', EventTypes).setDetail("eventsByType")
 		
-		self.responsible = Pointer(Partners) 
-		self.responsible.setDetail('eventsByResponsible')
-		self.place = Pointer( Partners)
-		self.place.setDetail('eventsByPlace')
+		self.addPointer('responsible',Partners).setDetail(
+            'eventsByResponsible')
+		self.addPointer('place',Partners).setDetail('eventsByPlace')
 		
 
 		#self.setColumnList('date time place title abstract')
@@ -43,8 +41,8 @@ class Events(Pages):
 class EventTypes(MemoTable):
 	def init(self):
 		MemoTable.init(self)
-		self.id = Field(STRING)
-		self.name = BabelField(STRING)
+		self.addField('id',STRING)
+		self.addBabelField('name',STRING)
 		#table.addDetail('eventsByType',Event)
 		
 	class Instance(Table.Instance):

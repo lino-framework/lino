@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -24,7 +24,7 @@ from lino.misc.etc import issequence
 from datatypes import DataVeto, StartupDelay
 from widgets import Action
 from lino.misc.descr import Describable
-from components import OwnedThing
+#from components import OwnedThing
 
 #def nop(*args):
 #   pass
@@ -32,10 +32,13 @@ from components import OwnedThing
 class NoSuchField(DataVeto):
     pass
 
-class RowAttribute(OwnedThing):
-    def __init__(self,width=None,label=None,doc=None):
-        OwnedThing.__init__(self,label,doc)
-        self._width = width
+class RowAttribute(Describable):
+    def __init__(self,
+                 owner, name,
+                 label=None,doc=None):
+        Describable.__init__(self,name,label,doc)
+        self._owner = owner
+        #self.width = width
         self._isMandatory = False
         
     def acceptTrigger(self,row,value):
@@ -57,6 +60,8 @@ class RowAttribute(OwnedThing):
     def parse(self,s):
         return s
         
+    def onOwnerInit1(self,owner,name):
+        pass
         
     def onTableInit1(self,owner,name):
         pass
@@ -87,26 +92,26 @@ class RowAttribute(OwnedThing):
         pass
 
     def getAttrName(self):
-        return self._name
+        return self.name
     
 ##  def __str__(self):
-##      return self._name
+##      return self.name
 
     def __repr__(self):
         return "<%s %s.%s>" % (self.__class__.__name__,
                                       self._owner.getTableName(),
-                                      self._name)
+                                      self.name)
 
     def getDefaultValue(self,row):
         return None
 
     def setCellValue(self,row,value):
         self.acceptTrigger(row,value)
-        row._values[self._name] = value
+        row._values[self.name] = value
         
     def getCellValue(self,row):
         # overridden by BabelField and Detail
-        return row.getFieldValue(self._name)
+        return row.getFieldValue(self.name)
     
     def getFltAtoms(self,colAtoms,context):
         return colAtoms
@@ -125,9 +130,9 @@ class RowAttribute(OwnedThing):
 ##          raise "atomicRow is %s\nbut index is %d" % (
 ##              repr(atomicRow),colAtoms[0].index)
         #value = getattr(row,self._name)
-        value = row._values.get(self._name)
+        value = row._values.get(self.name)
 ##      try:
-##          value = rowValues[self._name]
+##          value = rowValues[self.name]
 ##      except KeyError:
 ##          value = None
 ##      if isinstance(self,Pointer):
@@ -136,7 +141,7 @@ class RowAttribute(OwnedThing):
         return self.value2atoms(value, row._ds._db)
 
         
-##      value = row._values[self._name]
+##      value = row._values[self.name]
 ##      return self.value2atoms(value,atomicRow,colAtoms)
     
     def value2atoms(self,value,db):
@@ -145,10 +150,9 @@ class RowAttribute(OwnedThing):
     
     
     def atoms2row(self,atomicRow,colAtoms,row):
-        atomicValues = [atomicRow[atom.index]
-                             for atom in colAtoms]
-        row._values[self._name] = self.atoms2value(atomicValues,
-                                                                 row.getSession())
+        atomicValues = [atomicRow[atom.index] for atom in colAtoms]
+        row._values[self.name] = self.atoms2value(atomicValues,
+                                                   row.getSession())
 
     #
     # change atoms2value(self,atomicRow,colAtoms,context)
@@ -160,7 +164,7 @@ class RowAttribute(OwnedThing):
         
 ##  def atoms2dict(self,atomicRow,valueDict,colAtoms,area):
 ##      # overridden by Detail to do nothing
-##      valueDict[self._name] = self.atoms2value(atomicRow,colAtoms,area)
+##      valueDict[self.name] = self.atoms2value(atomicRow,colAtoms,area)
         
     
     def getNeededAtoms(self,ctx):
@@ -168,10 +172,10 @@ class RowAttribute(OwnedThing):
 
 ##  def getValueFromRow(self,row):
 ##      try:
-##          return row._values[self._name]
+##          return row._values[self.name]
 ##      except KeyError,e:
 ##          row._readFromStore()
-##          return row._values[self._name]
+##          return row._values[self.name]
 ##      #return row._values[name]
 
         
@@ -184,8 +188,8 @@ class Field(RowAttribute):
     A field will have a value of a certain type.
     
     """
-    def __init__(self,type,**kw):
-        RowAttribute.__init__(self,**kw)
+    def __init__(self,owner,name,type,**kw):
+        RowAttribute.__init__(self,owner,name,**kw)
         self.type = type
         #self.visibility = 0
         #self.format = format
@@ -200,7 +204,7 @@ class Field(RowAttribute):
 ##      renderer.renderValue(value,self.type,size)
         
     def getNeededAtoms(self,ctx):
-        return ((self._name, self.type),)
+        return ((self.name, self.type),)
         #return (query.provideAtom(self.name, self.type),)
 
     def value2atoms(self,value,db):
@@ -234,7 +238,7 @@ class BabelField(Field):
                  "tried to use BabelField for primary key?"
         l = []
         for lang in ctx.getBabelLangs(): 
-            l.append( (self._name+"_"+lang.id, self.type) )
+            l.append( (self.name+"_"+lang.id, self.type) )
         return l
 
 
@@ -244,14 +248,16 @@ class BabelField(Field):
     
     def setCellValue(self,row,value):
         langs = row.getSession().getBabelLangs()
-        values = row.getFieldValue(self._name)
+        values = row.getFieldValue(self.name)
         if values is None:
             values = [None] * len(row._ds._db.getBabelLangs())
-            row._values[self._name] = values
+            row._values[self.name] = values
         if len(langs) > 1:
-            assert issequence(value), "%s is not a sequence" % repr(value)
+            assert issequence(value), \
+                   "%s is not a sequence" % repr(value)
             assert len(value) == len(langs), \
-                     "%s expects %d values but got %s" % (self._name, len(langs), repr(value))
+                   "%s expects %d values but got %s" % \
+                   (self.name, len(langs), repr(value))
             i = 0
             for lang in langs:
                 if lang.index != -1:
@@ -267,15 +273,16 @@ class BabelField(Field):
     def getCellValue(self,row):
         langs = row.getSession().getBabelLangs()
         dblangs = row._ds._db.getBabelLangs()
-        values = row.getFieldValue(self._name)
+        values = row.getFieldValue(self.name)
         #values = Field.getCellValue(self,row)
         if values is None:
             values = [None] * len(dblangs)
         else:
-            assert issequence(values), "%s is not a sequence" % repr(values)
+            assert issequence(values), \
+                   "%s is not a sequence" % repr(values)
             assert len(values) == len(dblangs), \
-                     "Expected %d values but got %s" % ( len(dblangs),
-                                                                     repr(values))
+                   "Expected %d values but got %s" % \
+                   (len(dblangs), repr(values))
         
         if len(langs) > 1:
             l = []
@@ -309,8 +316,8 @@ class BabelField(Field):
 ##          return 
         assert issequence(value), "%s is not a sequence" % repr(value)
         assert len(value) == len(dblangs), \
-                 "Expected %d values but got %s" % ( len(dblangs),
-                                                                 repr(value))
+               "Expected %d values but got %s" % \
+               (len(dblangs), repr(value))
         i = 0
         for lang in dblangs:
             #atomicRow[colAtoms[lang.index].index] = value[i]
@@ -322,16 +329,16 @@ class BabelField(Field):
     def atoms2row(self,atomicRow,colAtoms,row):
         langs = row.getSession().getBabelLangs()
         dblangs = row._ds._db.getBabelLangs()
-        values = row.getFieldValue(self._name)
+        values = row.getFieldValue(self.name)
         #values = Field.getCellValue(self,row)
         if values is None:
             values = [None] * len(dblangs)
-            row._values[self._name] = values
+            row._values[self.name] = values
         for lang in dblangs:
             #if lang.index != -1:
             value = atomicRow[colAtoms[lang.index].index]
             values[lang.index] = value
-        #row._values[self._name] = l
+        #row._values[self.name] = l
     
     
     def getFltAtoms(self,colAtoms,context):
@@ -371,25 +378,28 @@ class Pointer(RowAttribute):
     A Pointer links from this to another table.
     
     """
-    def __init__(self, toClass,**kw):
-        RowAttribute.__init__(self,**kw)
+    def __init__(self, owner, name, toClass,
+                 detailName=None,
+                 **kw):
+        RowAttribute.__init__(self,owner,name,**kw)
         self._toClass = toClass
         
         self.sticky = True # joins are sticky by default
         
-        self.dtlName = None
+        self.detailName = detailName
         self.dtlColumnNames = None
-        self.dtlKeywords = None
+        self.dtlKeywords = {}
         self._neededAtoms = None
 
     def setDetail(self,name,columnNames=None,**kw):
-        self.dtlName = name
+        self.detailName = name
         self.dtlColumnNames = columnNames
         self.dtlKeywords = kw
         
     def onTableInit1(self,owner,name):
-        if self.dtlName is None:
-            self.setDetail(owner.getTableName().lower()+'_by_'+self._name)
+        if self.detailName is None:
+            self.setDetail(
+                owner.getTableName().lower()+'_by_'+self.name)
             
     def onTableInit2(self,owner,schema):
         self._toTables = schema.findImplementingTables(self._toClass)
@@ -404,10 +414,10 @@ class Pointer(RowAttribute):
     def onTableInit3(self,owner,schema):
         
         for toTable in self._toTables:
-            toTable.addDetail(self,
-                                    self.dtlName,
-                                    self.dtlColumnNames,
-                                    **self.dtlKeywords)
+            toTable.addDetail( self.detailName,
+                               self,
+                               self.dtlColumnNames,
+                               **self.dtlKeywords)
             
             
     def getNeededAtoms(self,ctx):
@@ -424,12 +434,13 @@ class Pointer(RowAttribute):
                 for toTable in self._toTables:
                     for (name,type) in toTable.getPrimaryAtoms():
                         neededAtoms.append(
-                            (self._name + toTable.getTableName()+"_" + name,
+                            (self.name + toTable.getTableName()
+                             + "_" + name,
                              type) )
                     i += 1
             else:
                 for (name,type) in self._toTables[0].getPrimaryAtoms():
-                    neededAtoms.append( (self._name + "_" + name,
+                    neededAtoms.append( (self.name + "_" + name,
                                                 type) )
 
             self._neededAtoms = tuple(neededAtoms)
@@ -442,7 +453,7 @@ class Pointer(RowAttribute):
 
         if pointedRow._ds.peek(*pointedRow.getRowId()) is None:
             return "%s points to non-existing row %s" % (
-                self._name,str(pointedRow.getRowId()))
+                self.name,str(pointedRow.getRowId()))
         
 
     def getPreferredWidth(self):
@@ -546,11 +557,11 @@ class Pointer(RowAttribute):
 
         
 class Detail(RowAttribute):
-    def __init__(self,pointer,label=None,doc=None,**kw):
+    def __init__(self,owner,name,pointer,label=None,doc=None,**kw):
         
         self.pointer = pointer
-        RowAttribute.__init__(self,label=label,doc=doc)
-        kw[self.pointer._name] = None
+        RowAttribute.__init__(self,owner,name,label=label,doc=doc)
+        kw[self.pointer.name] = None
         self._queryParams = kw
         
     def vetoDeleteIn(self,row):
@@ -559,7 +570,7 @@ class Detail(RowAttribute):
             return 
         #return "%s : %s not empty (contains %d rows)" % (
         #   str(row),self.name,len(ds))
-        return "%s : %s not empty" % (str(row),self._name)
+        return "%s : %s not empty" % (str(row),self.name)
             
     def validate(self,row,value):
         raise "cannot set value of a detail"
@@ -569,7 +580,7 @@ class Detail(RowAttribute):
         return 20
 
     def onAreaInit(self,area):
-        area.defineQuery(self._name,self._queryParams)
+        area.defineQuery(self.name,self._queryParams)
         
 
     def row2atoms(self,row):
@@ -587,7 +598,7 @@ class Detail(RowAttribute):
         kw = dict(self._queryParams)
         #kw.setdefault('samples',{})
         #kw['samples'][self.pointer._name] = row
-        kw[self.pointer._name] = row
+        kw[self.pointer.name] = row
         return row.getSession().query(self.pointer._owner.__class__,
                                       **kw)
 ##          slaveSource = getattr(row.getSession().tables,
@@ -636,45 +647,40 @@ class FieldContainer:
     def __init__(self):
         self.__dict__['_fields'] = []
         self.__dict__['_rowAttrs'] = {}
-        #self._peekColumnNames = ""
 
-    def addField(self,name,fld):
-        self._fields.append(fld)
-        self._rowAttrs[name] = fld
-        #self._peekColumnNames += name + " "
-        fld.setOwner(self,name)
+    def addField(self,name,type,*args,**kw):
+        return self.addRowAttr(Field(self,name,type,*args,**kw))
+    def addPointer(self,name,*args,**kw):
+        return self.addRowAttr(Pointer(self,name,*args,**kw))
+    def addBabelField(self,name,type,*args,**kw):
+        return self.addRowAttr(BabelField(self,name,type,*args,**kw))
+
+    def addRowAttr(self,attr):
+        assert attr._owner == self
+        self._fields.append(attr)
+        self._rowAttrs[attr.name] = attr
+        #fld.setOwner(self)
         i = self.Instance
         try:
-            meth = getattr(i,"accept_"+name)
-            #print meth
-            fld.acceptTrigger = meth
+            meth = getattr(i,"accept_"+attr.name)
+            attr.acceptTrigger = meth
         except AttributeError:
             pass
         
         try:
-            meth = getattr(i,"after_"+name)
-            fld.afterSetAttr = meth
+            meth = getattr(i,"after_"+attr.name)
+            attr.afterSetAttr = meth
         except AttributeError:
             pass
+        return attr
 
     def getFields(self):
         return self._fields
-    
-    def __getattr__(self,name):
-        return self.getRowAttr(name)
-##      try:
-##          return self.getRowAttr(name)
-##      except NoSuchField,e:
-##          raise AttributeError,e
-
-##  def getPeekColumnNames(self):
-##      return self._peekColumnNames
     
     def getRowAttr(self,name):
         try:
             return self._rowAttrs[name]
         except KeyError,e:
-            #raise NoSuchField, \
-            raise AttributeError,\
-                    "%s has no attribute '%s'" % (repr(self), name)
+            raise NoSuchField, "%s.%s" % (self.name,name)
 
+            #raise AttributeError,\

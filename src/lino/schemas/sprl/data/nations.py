@@ -31,7 +31,7 @@ from lino import adamo
 
 factbookDir = os.path.dirname(__file__)
 
-def populate(q):
+def populate(sess):
 
     s = """\
 ad     Andorra, Principality of
@@ -280,17 +280,27 @@ zr     Zaire
 zw     Zimbabwe
 """
     
-    q.setBabelLangs('en')
+    sess.setBabelLangs('en')
+    from lino.schemas.sprl.tables import Nations
+    q = sess.query(Nations)
     for l in s.splitlines():
         (id,name) = l.split(None,1)
         row = q.appendRow(id=id.strip(),
                           name=name.strip())
         
     q.commit()
+    #print q._session.getBabelLangs()
+##     print "1: ",\
+##           q._session.db._supportedLangs
+##     print "2: ", \
+##           q._clist._context.getBabelLangs()
+##     print "3: ", \
+##           q._clist.getAtoms()
 
     belgique = q.peek('be')
     assert belgique.name == 'Belgium', repr(belgique.name)
     
+    # set Nations.area per country:
     f = file(os.path.join(factbookDir,'2147rank.txt'))
     #f = file(os.path.join(factbookDir,'rankorder','2147rank.txt'))
     for l in f.readlines():
@@ -307,6 +317,8 @@ zw     Zimbabwe
                     n.lock()
                     n.area = int(area)
                     n.unlock()
+                    
+    # set Nations.population per country:
     f = file(os.path.join(factbookDir,'2119rank.txt'))
     for l in f.readlines():
         a = l.split('\t')

@@ -1,9 +1,22 @@
 # coding: latin1
-#----------------------------------------------------------------------
-# $Id: 20.py,v 1.3 2004/07/31 07:13:47 lsaffre Exp $
-# Copyright: (c) 2004 Luc Saffre
-# License:	 GPL
-#----------------------------------------------------------------------
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 
 """
 
@@ -14,15 +27,15 @@ values or in a dict of complex values...
    (because this is the only one I am going to use. Plus the implicit
    "nation" column.
 
-	The "print p" statement will do a call to Partners.getRowLabel()
-	which will access row.name --- a field that was not included in my
-	query!
+    The "print p" statement will do a call to Partners.getRowLabel()
+    which will access row.name --- a field that was not included in my
+    query!
 
-	Or if I modify the row, then the validateRow() action will be
-	triggered and it will ask for the partner's name.
+    Or if I modify the row, then the validateRow() action will be
+    triggered and it will ask for the partner's name.
 
-	If a field was not part of the initial query, it will silently be
-	looked up.
+    If a field was not part of the initial query, it will silently be
+    looked up.
 
 2. Accessing p.nation.name means that an attribute "p.nation" exists
    and has a Nations row as value.
@@ -33,41 +46,43 @@ values or in a dict of complex values...
 
 
 """
-import unittest
-import types
+from lino.misc.tsttools import TestCase, main
 
-#from lino.adamo import *
 from lino.schemas.sprl import demo
+from lino.schemas.sprl.tables import Nations,Partners
 
-class Case(unittest.TestCase):
-	
-	def setUp(self):
-		
-		self.db = demo.getDemoDB()
-		self.db.installto(globals()) 
-
-	def tearDown(self):
-		self.db.shutdown()
-
-	def test01(self):
-		s = ""
-		be = NATIONS.peek("be")
-		q = PARTNERS.query("title firstName name",nation=be)
-		for row in q:
-			s += "\t".join([str(cell.getValue()) for cell in row]) + "\n"
-		#print s
-		self.assertEqual(s,"""\
-Herrn	Andreas	Arens
-Dr.	Henri	Bodard
-Herrn	Emil	Eierschal
-Frau	Erna	Eierschal
-Herrn	Gerd	Großmann
-Herrn	Frédéric	Freitag
-None	None	PAC Systems PGmbH
+class Case(TestCase):
+    
+    def test01(self):
+        sess = demo.startup()
+        be = sess.query(Nations).peek("be")
+        q = sess.query(Partners,"title firstName name",nation=be)
+        
+        sess.startDump()
+        q.report(columnWidths="6 10 20")
+        s = sess.stopDump()
+        
+        #s = ""
+##         for row in q:
+##             s += "\t".join([str(cell.getValue()) for cell in row]) \
+##                  + "\n"
+        
+        #print s
+        
+        self.assertEqual(s,"""\
+title |firstName |name                
+------+----------+--------------------
+Herrn |Andreas   |Arens               
+Dr.   |Henri     |Bodard              
+Herrn |Emil      |Eierschal           
+Frau  |Erna      |Eierschal           
+Herrn |Gerd      |Großmann            
+Herrn |Frédéric  |Freitag             
+      |          |PAC Systems PGmbH   
 """)
-			
-				
+                         
+                
 
 if __name__ == '__main__':
-	unittest.main()
+    main()
 

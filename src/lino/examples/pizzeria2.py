@@ -34,7 +34,7 @@ class Services(Products):
     
     def init(self):
         Products.init(self)
-        self.responsible = Field(STRING)
+        self.addField('responsible',STRING)
 
 
 def populate2(sess):

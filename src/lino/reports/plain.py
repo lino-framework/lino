@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -16,32 +16,32 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
 from textwrap import TextWrapper
 
 from lino.reports.base import BaseReport, ConfigError
 
-class PlainReport(BaseReport):
+class Report(BaseReport):
     
     """a report that renders in plain text, destination just needs a
     write method """
-    
-
-    def config(self,
-               columnSep='|',
-               columnHeaderSep='-',
-               **kw):
-        
-        BaseReport.config(self,**kw)
-        
+    def __init__(self,
+                 writer=sys.stdout,
+                 columnSep='|',
+                 columnHeaderSep='-',
+                 **kw):
+        self.writer = writer
         self.columnSep = columnSep
         self.columnHeaderSep = columnHeaderSep
-        self.write = self.dest.write
-        
-        
+        BaseReport.__init__(self,**kw)
+                 
     def setdefaults(self,kw):
         kw.setdefault('columnSep',self.columnSep)
         kw.setdefault('columnHeaderSep',self.columnHeaderSep)
         BaseReport.setdefaults(self,kw)
+
+    def write(self,txt):
+        self.writer.write(txt)
 
     def onBeginReport(self):
         #self.wrappers = []

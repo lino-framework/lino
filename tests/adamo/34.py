@@ -37,7 +37,9 @@ class Case(unittest.TestCase):
         q = sess.query(OrderLines,"ordr.date ordr.customer",
                        product=PROD.peek(1))
         console.startDump()
-        q.report()
+        rpt = console.report()
+        q.setupReport(rpt)
+        rpt.execute(q)
         s = console.stopDump()
         self.assertEqual(s,"""\
 date    |customer  

@@ -11,12 +11,11 @@ class Invoices(PartnerDocuments):
 	
 	def init(self):
 		PartnerDocuments.init(self)
-		self.zziel = Field(DATE)
-		self.amount = Field(AMOUNT)
-		self.inverted = Field(BOOL)
+		self.addField('zziel',DATE)
+		self.addField('amount',AMOUNT)
+		self.addField('inverted',BOOL)
 		#self.addRowMethod("close")
-		self.partner = Pointer(Partners)
-		self.partner.setDetail('invoices')
+		self.addPointer('partner',Partners).setDetail('invoices')
 
 	class Instance(PartnerDocuments.Instance):
 		
@@ -32,15 +31,13 @@ class Invoices(PartnerDocuments):
 
 class InvoiceLines(Table):
 	def init(self):
-		self.line = Field(INT)
-		self.unitPrice = Field(AMOUNT)
-		self.qty = Field(INT)
-		self.remark = Field(STRING)
+		self.addField('line',INT)
+		self.addField('unitPrice',AMOUNT)
+		self.addField('qty',INT)
+		self.addField('remark',STRING)
 		
-		self.invoice = Pointer(Invoices)
-		self.invoice.setDetail('lines')
-		self.product = Pointer(Products)
-		self.product.setDetail('invoiceLines')
+		self.addPointer('invoice',Invoices).setDetail('lines')
+		self.addPointer('product',Products).setDetail('invoiceLines')
 		
 		self.setPrimaryKey("invoice line")
 

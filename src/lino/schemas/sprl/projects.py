@@ -1,45 +1,66 @@
+#coding: latin1
+
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 from lino.adamo import *
 from addrbook import Users, Partners
 #from web import MemoMixin, MemoTreeMixin
 
 
 class Projects(MemoTreeTable):
-	
-	def init(self):
-		MemoTreeTable.init(self)
-		self.id = Field(ROWID)
-		self.date = Field(DATE)
-		self.stopDate = Field(DATE)
+    
+    def init(self):
+        MemoTreeTable.init(self)
+        self.addField('id',ROWID)
+        self.addField('date',DATE)
+        self.addField('stopDate',DATE)
 
-		self.responsible = Pointer(Users)
-		self.responsible.setDetail("projects")
-		self.sponsor = Pointer( Partners) #,"projects")
-		self.status = Pointer( ProjectStati)
-		self.status.setDetail("projects")
-		
-		#from sdk import Version
-		#self.version = Pointer(Version,"projects")
+        self.addPointer('responsible',Users).setDetail("projects")
+        self.addPointer('sponsor', Partners) 
+        self.addPointer('status', ProjectStati).setDetail("projects")
+        
+        #from sdk import Version
+        #self.version = Pointer(Version,"projects")
 
-		self.addView("std",
-						 columnNames="title abstract status",
-						 label="Top-level projects",
-						 super=None)
+        self.addView("std",
+                     columnNames="title abstract status",
+                     label="Top-level projects",
+                     super=None)
 
-	class Instance(MemoTreeTable.Instance):
-		pass
+    class Instance(MemoTreeTable.Instance):
+        pass
 
 
 class ProjectStati(BabelTable):
-	"list of codes used to formulate how far a project is"
-	def init(self):
-		BabelTable.init(self)
-		self.id = Field(STRING)
-		#self.name = BabelField(STRING)
+    "list of codes used to formulate how far a project is"
+    def init(self):
+        BabelTable.init(self)
+        self.addField('id',STRING)
+        #self.name = BabelField(STRING)
 
-## 	def populate(self,area):
-## 		q = area.query('id title')
-## 		q.appendRow('T','to do')
-## 		q.appendRow('D','done');
-## 		q.appendRow('W','waiting');
-## 		q.appendRow('A','abandoned');
-## 		q.appendRow('S','sleeping');		
+    def populate(self,sess):
+        q = sess.query(ProjectStati,'id name')
+        q.setBabelLangs('en de')
+        q.appendRow('T',('to do','zu erledigen'))
+        q.appendRow('D',('done','erledigt'))
+        q.appendRow('W',('waiting','wartet'))
+        q.appendRow('A',('abandoned','storniert'))
+        q.appendRow('S',('sleeping','schläft'))
+
+

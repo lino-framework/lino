@@ -22,9 +22,13 @@ from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Partners
 from lino.schemas.sprl.tables import Quotes, Authors, Languages
 
+from lino.schemas.sprl.data import quotes_de
+
 class Case(tsttools.TestCase):
     def setUp(self):
         self.db = demo.beginSession(withJokes=True)
+        quotes_de.populate(self.db)
+        self.db.commit()
         
     def tearDown(self):
         self.db.shutdown()

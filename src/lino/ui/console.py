@@ -20,7 +20,7 @@ import sys
 from optparse import OptionParser
 from cStringIO import StringIO
 
-from lino.reports.plain import PlainReport
+from lino.reports.plain import Report
 
 """
 
@@ -98,7 +98,10 @@ class Console:
         return (self._verbosity < 0)
     
     def report(self,**kw):
-        return PlainReport(self.out,**kw)
+        r = Report(writer=self.out,**kw)
+        #assert r.writer is self.out
+        #print r.writer 
+        return r
 
 
     def log_message(self,msg):
@@ -255,43 +258,14 @@ class Console:
                      )
         return p
 
-## _syscon = None    
-
-## def getSystemConsole():
-##     global _syscon
-##     if _syscon is None:
-##         _syscon = Console()
-##     return _syscon
-
 _syscon = Console()
 
 def getSystemConsole():
     return _syscon
 
-#for m in _syscon.forwardables:
-#    __dict__[m] = getattr(_syscon,m)
-
 
 for m in _syscon.forwardables:
     globals()[m] = getattr(_syscon,m)
-
-## error = _syscon.error       # to stderr
-## #message = _syscon.message   # to stdout
-
-
-## debug = _syscon.debug       # message if verbosity very high
-## info = _syscon.info         # message if verbosity high
-## progress = _syscon.progress # message if verbosity is normal
-## warning = _syscon.warning
-## error = _syscon.error
-## critical = _syscon.critical
-
-## # aliases
-## alert = _syscon.warning
-
-## # higher level:
-## confirm = _syscon.confirm
-## decide = _syscon.decide
 
 isInteractive = _syscon.isInteractive
 

@@ -1,37 +1,56 @@
 # coding: latin1
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 
 """
 bug 20040724 : setting a sample on a query modifies the 
 
 """
-import types
-
-from lino.misc.tsttools import TestCase
+from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
+from lino.schemas.sprl.tables import Cities, Nations
+
 
 class Case(TestCase):
 
-	def setUp(self):
-		
-		self.db = demo.getDemoDB()
-		self.db.installto(globals()) 
+    def setUp(self):
+        
+        self.db = demo.startup()
 
-	def tearDown(self):
-		self.db.shutdown()
+    def tearDown(self):
+        self.db.shutdown()
 
 
-	def test01(self):
-		q = CITIES.query()
-		l = len(q)
-		
-		be = NATIONS.peek('be')
-		q = CITIES.query(nation=be)
-		
-		q = CITIES.query()
-		self.assertEqual(l,len(q))
-		
+    def test01(self):
+        CITIES = self.db.query(Cities)
+        NATIONS = self.db.query(Nations)
+        
+        q = CITIES.query()
+        l = len(q)
+        
+        be = NATIONS.peek('be')
+        q = CITIES.query(nation=be)
+        
+        q = CITIES.query()
+        self.assertEqual(l,len(q))
+        
 
 if __name__ == '__main__':
-	import unittest
-	unittest.main()
+    main()
 

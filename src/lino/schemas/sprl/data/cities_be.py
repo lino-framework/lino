@@ -21,20 +21,23 @@
 
 import csv
 import os
+
 from lino.adamo.datatypes import DataVeto
+from lino.schemas.sprl.tables import Nations
 
 
 dataDir = os.path.dirname(__file__)
 
-def populate(be):
-	f = file(os.path.join(dataDir,'belgzip.csv'),'rb')
-	r = csv.reader(f)
-	r.next()
-	cities = be.cities
-	#print cities
-	for (name,zip) in r:
-		cities.appendRow(name=name,zipCode=zip)
+def populate(sess):
+    be = sess.query(Nations).peek('be')
+    f = file(os.path.join(dataDir,'belgzip.csv'),'rb')
+    r = csv.reader(f)
+    r.next()
+    cities = be.cities
+    #print cities
+    for (name,zip) in r:
+        cities.appendRow(name=name,zipCode=zip)
 
-	
+    
 
-	
+    

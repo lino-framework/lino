@@ -55,7 +55,7 @@ class Schema:
     #sessionFactory = Session
     
     def __init__(self,**kw):
-        self._startupDone= False
+        self._initDone= False
         #self.forms= {
         self._datasourceRenderer= None
         self._contextRenderer= None
@@ -88,7 +88,7 @@ class Schema:
         table = tableClass(**kw)
         assert isinstance(table,Table),\
                  repr(table)+" is not a Table"
-        assert not self._startupDone,\
+        assert not self._initDone,\
                  "Too late to declare new tables in " + repr(self)
         table.registerInSchema(self,len(self._tables))
         self._tables.append(table)
@@ -98,7 +98,7 @@ class Schema:
     def addPlugin(self,plugin):
         assert isinstance(plugin,SchemaPlugin),\
                  repr(plugin)+" is not a SchemaPlugin"
-        assert not self._startupDone,\
+        assert not self._initDone,\
                  "Too late to declare new plugins in " + repr(self)
         plugin.registerInSchema(self,len(self._plugins))
         self._plugins.append(plugin)
@@ -107,7 +107,7 @@ class Schema:
 
 
     def addForm(self,cl):
-        assert not self._startupDone,\
+        assert not self._initDone,\
                  "Too late to declare new forms in " + repr(self)
         assert issubclass(cl,Form)
         self.forms.define(cl.name,cl)
@@ -124,13 +124,13 @@ class Schema:
 ##      #self._forms[name] = form
         
 
-    def startup(self):
+    def initialize(self):
         
-        """ startup will be called exactly
-        once, after having declared all tables of the database.  """
+        """ initialize will be called exactly once, after having
+        declared all tables of the database.  """
     
         #self._app = app
-        assert not self._startupDone, "double startup"
+        assert not self._initDone, "double initialize()"
         #progress = self._app.console.progress
         info = console.info
         info("Initializing database schema...")
@@ -158,7 +158,7 @@ class Schema:
                     print "StartupDelay:", e # self, self._primaryAtoms
                     tryagain.append(table)
             if not somesuccess:
-                raise "startup failed"
+                raise "initialize() failed"
             todo = tryagain
 
         # loop 2bis
@@ -190,13 +190,13 @@ class Schema:
         #if verbose:
         #   print "setupTables() done"
             
-        self._startupDone = True
-        info("Schema startup okay")
+        self._initDone = True
+        info("Schema initialized")
         
 
     def setLayout(self,layoutModule):
         # initialize layouts...
-        assert self._startupDone 
+        assert self._initDone 
         
         lf = LayoutFactory(layoutModule)
         for table in self._tables:
@@ -225,15 +225,21 @@ class Schema:
         return l
         
 
-    def getTableList(self,flt=None):
-        assert self._startupDone, \
-                 "getTableList() before startup()"
-        l = []
-        for t in self._tables:
-            if flt is None or flt(t):
-                l.append(t)
-        return l
-    
+    def getTableList(self,tableClasses=None):
+        
+        """returns an ordered list of all (or some) table instances in
+        this Schema.  If tableClasses is specified, it must be a
+        sequence of Table classes for which we want the instance.  The
+        list is sorted by table definition order.  It is forbidden to
+        modify this list!  """
+        
+        assert self._initDone, \
+               "getTableList() before initialize()"
+        if tableClasses is None:
+            return self._tables
+        return [t for t in self._tables
+                if t.__class__ in tableClasses]
+        
     
     def __repr__(self):
         return str(self.__class__)

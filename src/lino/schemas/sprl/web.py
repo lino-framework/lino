@@ -17,14 +17,14 @@ from addrbook import Users
 class Pages(MemoTreeTable):
 	def init(self):
 		MemoTreeTable.init(self)
-		self.id = Field(ROWID)
-		self.created = Field(DATE)
-		self.modified = Field(DATE)
-		self.author = Pointer(Users)
-		self.lang = Pointer(Languages)
-		self.match = Field(STRING)
+		self.addField('id',ROWID)
+		self.addField('created',DATE)
+		self.addField('modified',DATE)
+		self.addPointer('author',Users)
+		self.addPointer('lang',Languages)
+		self.addField('match',STRING)
 		
-		#self.pubRef = Field(STRING)
+		#self.addField('pubRef',STRING)
 		#table.addPointer("pub","PUBLICATIONS")
 
 		#rpt = table.provideReport()
@@ -64,5 +64,6 @@ class Pages(MemoTreeTable):
 			
 class Page2Page(Table):
 	def init(self):
-		self.seq = Field(ROWID)
+		self.addField('seq',ROWID)
+        
 		self.setPrimaryKey(tuple())

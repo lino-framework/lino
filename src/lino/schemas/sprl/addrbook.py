@@ -1,6 +1,7 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2004. This file is part of the Lino project.
+## Copyright Luc Saffre 2003-2005
+## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -27,16 +28,16 @@ SEX = datatypes.StringType(width=1)
 class Contacts(Table):
     "abstract"
     def init(self):
-        self.email = Field(EMAIL,
-                           label="e-mail",
-                           doc="Primary e-mail address")
-        self.phone = Field(STRING,
-                           doc="phone number")
-        self.gsm = Field(STRING,
-                         label="mobile phone",
-                         doc="mobile phone number")
-        self.fax = Field(STRING, doc="fax number")
-        self.website = Field(URL, doc="web site")
+        self.addField('email',EMAIL,
+                      label="e-mail",
+                      doc="Primary e-mail address")
+        self.addField('phone',STRING,
+                      doc="phone number")
+        self.addField('gsm',STRING,
+                      label="mobile phone",
+                      doc="mobile phone number")
+        self.addField('fax',STRING, doc="fax number")
+        self.addField('website',URL, doc="web site")
 
     class Instance(Table.Instance):
         def getLabel(self):
@@ -45,12 +46,12 @@ class Contacts(Table):
 class Addresses(Table):
     "abstract"
     def init(self):
-        self.nation = Pointer(Nations)
-        self.city = Pointer(Cities)
-        self.zip = Field(STRING)
-        self.street = Field(STRING)
-        self.house = Field(INT)
-        self.box = Field(STRING)
+        self.addPointer('nation',Nations)
+        self.addPointer('city',Cities)
+        self.addField('zip',STRING)
+        self.addField('street',STRING)
+        self.addField('house',INT)
+        self.addField('box',STRING)
         
     class Instance(Table.Instance):
         def after_city(self):
@@ -60,11 +61,11 @@ class Addresses(Table):
 class Organisations(Contacts,Addresses):
     "An Organisation is any named group of people."
     def init(self):
-        self.id = Field(ROWID,\
-                          doc="the internal id number")
+        self.addField('id',ROWID,\
+                      doc="the internal id number")
         Contacts.init(self)
         Addresses.init(self)
-        self.name = Field(STRING)
+        self.addField('name',STRING)
         self.addView('std',columnNames="name email phone website")
 
     class Instance(Addresses.Instance):
@@ -73,11 +74,11 @@ class Organisations(Contacts,Addresses):
 class Persons(Table): #(Contact,Address):
     "A Person describes a specific physical human."
     def init(self):
-        self.id = Field(ROWID)
-        self.name = Field(STRING)
-        self.firstName = Field(STRING)
-        self.sex  = Field(SEX)
-        self.birthDate  = Field(STRING,width=8)
+        self.addField('id',ROWID)
+        self.addField('name',STRING)
+        self.addField('firstName',STRING)
+        self.addField('sex',SEX)
+        self.addField('birthDate',STRING.child(width=8))
         
         # table.setFindColumns("name firstName")
 
@@ -93,7 +94,8 @@ class Persons(Table): #(Contact,Address):
 
         def validate(self):
             if (self.firstName is None) and (self.name is None):
-                raise DataVeto("Either name or firstName must be specified")
+                raise DataVeto(
+                    "Either name or firstName must be specified")
 
     
 
@@ -142,11 +144,17 @@ class Users(Persons):
     "People who can access this database"
     def init(self):
         Persons.init(self)
-        self.id = Field(STRING,label="Username")
-        self.password = Field(PASSWORD)
+        self.addField('id',STRING,label="Username")
+        self.addField('password',PASSWORD)
 
     class Instance(Persons.Instance):
         pass
+
+    def populate(self,sess):
+        q = sess.query(Users,'id firstName name')
+        q.appendRow("luc", "Luc", "Saffre")
+        q.appendRow("james", "James", "Bond")
+        
 
 ## class LoginForm(FormTemplate):
     
@@ -214,19 +222,19 @@ class Partners(Contacts,Addresses):
     """A Person or Organisation with whom I have business contacts.
     """
     def init(self):
-        self.name = Field(STRING)
-        self.firstName = Field(STRING)
+        self.addField('name',STRING)
+        self.addField('firstName',STRING)
         Contacts.init(self)
         Addresses.init(self)
-        self.id = Field(ROWID)
-        self.type = Pointer(PartnerTypes)
-        self.type.setDetail('partnersByType',orderBy='name firstName')
-        self.title = Field(STRING)
-        self.currency = Pointer(Currencies)
-        self.logo = Field(LOGO)
-        #self.org = Pointer(Organisation)
-        #self.person = Pointer(Person)
-        self.lang = Pointer(Languages)
+        self.addField('id',ROWID)
+        self.addPointer('type',PartnerTypes).setDetail(
+            'partnersByType',orderBy='name firstName')
+        self.addField('title',STRING)
+        self.addPointer('currency',Currencies)
+        self.addField('logo',LOGO)
+        #self.addPointer('org',Organisation)
+        #self.addPointer('person',Person)
+        self.addPointer('lang',Languages)
         self.addView("std","name firstName email phone gsm")
         
     class Instance(Contacts.Instance,Addresses.Instance):
@@ -262,42 +270,42 @@ class Partners(Contacts,Addresses):
 class Currencies(BabelTable):
     
     def init(self):
-        self.id = Field(STRING,width=3)
+        self.addField('id',STRING.child(width=3))
         BabelTable.init(self)
         
     class Instance(BabelTable.Instance):
         def __str__(self):
             return self.id
+        
+    def populate(self,sess):
+        q = sess.query(Currencies)
+        q.setBabelLangs('en')
+        EUR = q.appendRow(id="EUR",name="Euro")
+        BEF = q.appendRow(id="BEF",name="Belgian Franc")
+        q.appendRow(id="USD",name="US Dollar")
     
 class PartnerTypes(BabelTable):
     
     def init(self):
-        self.id = Field(STRING)
+        self.addField('id',STRING)
         BabelTable.init(self)
         
-    def validatePartner(self,partner):
-        # otherwise BabelTable.Instance is not seen during schema startup
-        pass
-    
-##  def populate(self,area):
-##      q = area.query('id name')
-##      q.setUsedLangs('en')
-##      q.appendRow('c',('Customer',))
-##      q.appendRow('s',('Supplier',))
-##      q.appendRow('m',('Member',))
-##      q.appendRow('e',('Employee',))
-##      q.appendRow('d',('Sponsor',))
 
     class Instance(BabelTable.Instance):
-        pass
+        def validatePartner(self,partner):
+            pass
+    
 
-## class PartnerType:
-##  def __init__(self,table):
-##      self.
-##  def validatePartner(self,partner):
-##      pass
-    
-    
+    def populate(self,sess):
+        q = sess.query(PartnerTypes,'id name')
+        q.setBabelLangs('en de fr')
+        q.appendRow('c',('Customer', 'Kunde', 'Client'))
+        q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
+        q.appendRow('m',('Member', 'Mitglied', "Membre"))
+        q.appendRow('e',('Employee', 'Angestellter', "Employé"))
+        q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
+	
+        
     
     
 class Nations(BabelTable):
@@ -305,12 +313,14 @@ class Nations(BabelTable):
     
     ISO 2-letter country codes."""
     def init(self):
-        self.id = Field(STRING,width=2)
+        
+        self.addField('id',STRING.child(width=2))
         BabelTable.init(self)
-        self.area = Field(INT)
-        self.population = Field(INT)
-        self.curr = Field(STRING)
-        self.isocode = Field(STRING)
+        self.addField('area',INT)
+        self.addField('population',INT)
+        self.addField('curr',STRING)
+        self.addField('isocode',STRING)
+        
         self.addView('std',columnNames="name isocode id")
 
     class Instance(BabelTable.Instance):
@@ -325,19 +335,33 @@ class Nations(BabelTable):
                 raise DataVeto("Nation.id must be 2 chars")
         
 
+    def populate(self,sess):
+        if sess.schema.options.big:
+            from lino.schemas.sprl.data import nations
+            nations.populate(sess)
+        else:
+            q = sess.query(Nations,'id name')
+            q.setBabelLangs('en')
+            q.appendRow("ee","Estonia")
+            q.appendRow("be","Belgium")
+            q.appendRow("de","Germany")
+            q.appendRow("fr","France")
+            q.appendRow("us","United States of America")
+
     
         
 class Cities(Table):
     """One record for each city.
     """
     def init(self):
-        self.id = Field(ROWID)
-        self.nation = Pointer(Nations)
-        self.nation.setDetail('cities',orderBy='name')
+        self.addField('id',ROWID)
+        self.addPointer('nation',Nations).setDetail('cities',
+                                                    orderBy='name')
         
-        self.name = Field(STRING)
-        self.zipCode = Field(STRING)
-        self.inhabitants = Field(INT)
+        self.addField('name',STRING)
+        self.addField('zipCode',STRING)
+        self.addField('inhabitants',INT)
+        
         self.setPrimaryKey("nation id")
         # complex primary key used by test cases
         self.addView('std',columnNames="name nation zipCode")
@@ -348,6 +372,10 @@ class Cities(Table):
                 return self.name
             return self.name + " (%s)" % self.nation.id
         
+    def populate(self,sess):
+        if sess.schema.options.big:
+            from lino.schemas.sprl.data import cities_be
+            cities_be.populate(sess) 
 
     
 class Org2Pers(LinkTable):
@@ -373,36 +401,6 @@ class ContactsPlugin(SchemaPlugin):
                         label="Partner Types")
         schema.addTable(Currencies)
 
-    def populate(self,sess):
-        q = sess.query(PartnerTypes,'id name')
-        q.setBabelLangs('en de fr')
-        q.appendRow('c',('Customer', 'Kunde', 'Client'))
-        q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
-        q.appendRow('m',('Member', 'Mitglied', "Membre"))
-        q.appendRow('e',('Employee', 'Angestellter', "Employé"))
-        q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
-	
-        
 
-        q = sess.query(Nations,'id name' )
-        if sess.schema.options.big:
-            from lino.schemas.sprl.data import nations
-            nations.populate(q)
-            from lino.schemas.sprl.data import cities_be
-            cities_be.populate(q.peek('be'))
-        else:
-            q.setBabelLangs('en')
-            q.appendRow("ee","Estonia")
-            q.appendRow("be","Belgium")
-            q.appendRow("de","Germany")
-            q.appendRow("fr","France")
-            q.appendRow("us","United States of America")
-
-        #CURR = sess.tables.Currencies
-        q = sess.query(Currencies)
-        q.setBabelLangs('en')
-        EUR = q.appendRow(id="EUR",name="Euro")
-        BEF = q.appendRow(id="BEF",name="Belgian Franc")
-        q.appendRow(id="USD",name="US Dollar")
 
 

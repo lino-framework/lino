@@ -7,8 +7,8 @@ from business import PartnerDocuments
 
 class Products(Table):
    def init(self):
-      self.id = Field(ROWID)
-      self.name = Field(STRING)
-      self.price = Field(PRICE)
+      self.addField('id',ROWID)
+      self.addField('name',STRING)
+      self.addField('price',PRICE)
 
    

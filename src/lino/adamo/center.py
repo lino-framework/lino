@@ -25,14 +25,20 @@ _center = None # User code should call getCenter() to get this instance.
 class Center:
     """
     The Center is the global singleton object used by adamo.
-    It holds a list of sessions and a list of databases. 
+    It holds a list of connections, sessions and databases. 
     Each session can have its own console
     """
 
     def __init__(self):
+        self._connections = []
         self._databases = []
         self._sessions = []
         self._sessionFactory = ConsoleSession
+
+    def addConnection(self,conn):
+        assert not conn in self._connections
+        self._connections.append(conn)
+        
 
     def setSessionFactory(self,sf):
         self._sessionFactory = sf
@@ -62,11 +68,32 @@ class Center:
         self._databases.remove(db)
         #del self._databases[db.getName()]
         
+    def startup(self,checkIntegrity=True,populate=True):
+        sess = self.createSession()
+        assert len(self._databases) > 0,"no databases"
+        for db in self._databases:
+            sess.use(db)
+            for store in db.getStoresById():
+                store.createTables(sess)
+            if populate:
+                for store in db.getStoresById():
+                    store.populate(sess)
+            if checkIntegrity:
+                for store in db.getStoresById():
+                    store.checkIntegrity(sess)
+        sess.setDefaultLanguage()
+        return sess
+
     
     def shutdown(self):
-        #for name,db in self._databases.items():
+
         for db in self._databases:
-            db.shutdown()
+            db.close()
+        self._databases = []
+        
+        for conn in self._connections:
+            conn.close()
+        self._connections = []
 
 ##    use createSession().use() instead!
 ##  def use(self,db=None,**kw):
@@ -80,8 +107,11 @@ class Center:
             
 _center = Center()
 
-for m in ('createSession', 'shutdown',
-          'addDatabase', 'removeDatabase'):
+for m in ('createSession',
+          'startup', 'shutdown',
+          'addDatabase', 'removeDatabase',
+          'addConnection'
+          ):
     globals()[m] = getattr(_center,m)
 
 

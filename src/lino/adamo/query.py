@@ -110,17 +110,17 @@ class BaseColumnList:
             pointer = fc.getRowAttr(cns[0])
             assert isinstance(pointer,Pointer)
             newJoin = self._provideJoin(joinName,
-                                                 pointer,
-                                                 join)
+                                        pointer,
+                                        join)
             fc = pointer._toTables[0]
             join = newJoin
             del cns[0]
             joinName += "_" + cns[0]
 
         cns = cns[0]
-        rowAttr = getattr(fc,cns,None)
-        if rowAttr is None:
-            raise NoSuchField,name
+        rowAttr = fc.getRowAttr(cns)
+        #if rowAttr is None:
+        #    raise NoSuchField,name
         return self.addColumn(rowAttr,join,name)
     
     def addColumn(self,fld,join,name):
@@ -450,9 +450,9 @@ class Atom:
         
 class Join:
     
-    def __init__(self,query,name,pointer,parent=None):
+    def __init__(self,owner,name,pointer,parent=None):
         self.name = name
-        self.query = query
+        self._owner = owner
         self.parent = parent
         self.pointer = pointer
         self._joinedTables = []
@@ -473,21 +473,21 @@ class Join:
             
         if len(self.pointer._toTables) == 1:
             for (name,type) in self.pointer._toTables[0].getPrimaryAtoms():
-                a = self.query.provideAtom( shortJoinName+"_"+name,
-                                                     type,
-                                                     parentJoinName)
-                b = self.query.provideAtom( name,
-                                                     type,
-                                                     self.name)
+                a = self._owner.provideAtom( shortJoinName+"_"+name,
+                                            type,
+                                            parentJoinName)
+                b = self._owner.provideAtom( name,
+                                            type,
+                                            self.name)
                 self._atoms.append((a,b))
         else:
             for toTable in self.pointer._toTables:
                 for (name,type) in toTable.getPrimaryAtoms():
-                    a = self.query.provideAtom(
+                    a = self._owner.provideAtom(
                         shortJoinName+toTable.getTableName()+"_"+name,
                         type,
                         parentJoinName)
-                    b = self.query.provideAtom(
+                    b = self._owner.provideAtom(
                         name,
                         type,
                         self.name+toTable.getTableName())
@@ -515,8 +515,8 @@ class Join:
 
 class DataColumn:
     
-    def __init__(self,query,index,name,join,rowAttr):
-        self.query = query
+    def __init__(self,owner,index,name,join,rowAttr):
+        self._owner = owner
         self.index = index
         self.name = name
         self.sticky = False
@@ -536,7 +536,7 @@ class DataColumn:
 
     def __repr__(self):
         return "<column %d:%s in %s>" % (self.index,self.name,
-                                                    repr(self.query))
+                                                    repr(self._owner))
 
 ##      def getLabel(self):
 ##          return self.name
@@ -545,7 +545,7 @@ class DataColumn:
         #assert self._atoms is None
         atoms = []
 ##          if self.join is None:
-##              if self.query.hasJoins(): # len(query._joins) == 0:
+##              if self._owner.hasJoins(): # len(query._joins) == 0:
 ##                  atomprefix = "lead."
 ##              else:
 ##                  atomprefix = ""
@@ -558,16 +558,16 @@ class DataColumn:
             joinName = None
         #l = self.getNeededAtoms()
         #print repr(l)
-        ctx = self.query.getContext()
+        ctx = self._owner.getContext()
         for (name,type) in self.rowAttr.getNeededAtoms(ctx):
             if self.join and len(self.join.pointer._toTables) > 1:
                 for toTable in self.join.pointer._toTables:
-                    a = self.query.provideAtom(
+                    a = self._owner.provideAtom(
                         name, type,
                         joinName+toTable.getTableName())
                     atoms.append(a)
             else:
-                a = self.query.provideAtom( name, type,joinName)
+                a = self._owner.provideAtom(name,type,joinName)
                 atoms.append(a)
 
         self._atoms = tuple(atoms)

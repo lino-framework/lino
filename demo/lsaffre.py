@@ -98,14 +98,14 @@ def main(argv):
     
     demoDir = os.path.dirname(__file__)
     
-    center.start(verbose=options.verbose)
+    #center.start(verbose=options.verbose)
 
     #info = center.getSystemConsole().info
     from lino.ui.console import info, progress
 
     #progress = app.console.progress
     
-    schema = Schema() 
+    schema = Schema(big=False) 
     
     schema.startup()
     schema.setLayout(sprlwidgets)
@@ -121,28 +121,25 @@ def main(argv):
         """
 
         info("Starting std.db...")
-        conn = Connection(filename="std.db",
-                                isTemporary=True,
-                                schema=schema)
-        stddb = Database( langs="en de fr et",
-                                schema=schema,
-                                name="std",
-                                label="shared standard data")
+        conn = Connection(schema=schema)
+        stddb = Database(langs="en de fr et",
+                         schema=schema,
+                         name="std",
+                         label="shared standard data")
 
-        sharedTables = ('LANGS','NATIONS', #'CITIES',
-                             'PARTYPES','Currencies',
-                             'PEVTYPES',
-                             'PUBTYPES',
-                             'PRJSTAT', 'USERS')
+        sharedTables = (Languages, Nations, 
+                        PartnerTypes, Currencies,
+                        AuthorEventTypes,
+                        PublicationTypes,
+                        ProjectStati, Users) 
 
-        stddb.startup(conn,
-                          lambda t: t.getTableName() in sharedTables)
+        stddb.connect(conn,sharedTables)
         
-        stddb.createTables()
-        sess.use(stddb)
+##         stddb.createTables()
+##         sess.use(stddb)
 
-        from lino.schemas.sprl.data import std
-        std.populate(sess,big=False)
+##         from lino.schemas.sprl.data import std
+##         std.populate(sess,big=False)
         #sess.end()
 
         
@@ -151,31 +148,23 @@ def main(argv):
             info("Opening %s..." % dbi.name)
 
             db = Database(
-                              langs=dbi.langs,
-                              schema=schema,
-                              name=dbi.name,
-                              label=dbi.label)
+                langs=dbi.langs,
+                schema=schema,
+                name=dbi.name,
+                label=dbi.label)
             
             conn = Connection(filename=dbi.dbfile,
-                                    schema=schema)
-
-            db.startup(conn)
+                              schema=schema)
 
             db.update(stddb)
-            sess.use(db)
-            
-            if not options.skipTest:
-                info("checkIntegrity: " + db.getName())
-                msgs = sess.checkIntegrity()
-                if len(msgs):
-                    msg = "%s : %d database integrity problems" % (
-                        db.getName(), len(msgs))
-                    print msg + ":"
-                    print "\n".join(msgs)
-                    #from lino.adamo.datatypes import DataVeto
-                    #raise DataVeto, msg
+            db.connect(conn)
 
+##             sess.use(db)
             serverRsc.addDatabase(db, stylesheet="www.css")
+
+    sess = center.startup(checkIntegrity=not options.skipTest)
+##     if not options.skipTest:
+##         db.checkIntegrity(sess)
 
 
     if True:
@@ -228,7 +217,7 @@ def main(argv):
     site.requestFactory = MyRequest
     reactor.listenTCP(options.port, site)
     reactor.addSystemEventTrigger("before","shutdown", \
-                                            center.shutdown)
+                                  center.shutdown)
 
             
     progress("Serving on port %s." % options.port)

@@ -1,41 +1,60 @@
 # coding: latin1
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
 """
 20040429
 
 """
-from lino.misc.tsttools import TestCase
+from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
+from lino.schemas.sprl.tables import Nations
+
 from lino.adamo.datatypes import DataVeto
 
 class Case(TestCase):
-	def setUp(self):
-		self.db = demo.getDemoDB(populator=None,
-										 langs='en de fr')
-		demo.populate(self.db,big=True)
-		self.db.installto(globals())
-		
-	def tearDown(self):
-		self.db.shutdown()
-		
-	def test01(self):
-		from lino.schemas.sprl.data import nations_de
-		nations_de.populate(self.db)
-		setBabelLangs('de')
-		l1 = []
-		l2 = []
-		for nation in NATIONS.query(orderBy="name"):
-			lbl = nation.getLabel()
-			if lbl is None:
-				l1.append(repr(nation))
-			else:
-				l2.append(lbl)
-		self.assertEqual(len(l1),0)
-		#s = "\n".join(l1)
-		#print s
-		s = " ".join(l2)
-		#print s
-		
-		self.assertEquivalent(s,"""\
+    def setUp(self):
+        self.db = demo.startup(langs='en de fr',big=True)
+        
+    def tearDown(self):
+        self.db.shutdown()
+        
+    def test01(self):
+        NATIONS = self.db.query(Nations)
+        from lino.schemas.sprl.data import nations_de
+        nations_de.populate(self.db)
+        NATIONS.setBabelLangs('de')
+        l1 = []
+        l2 = []
+        for nation in NATIONS.query(orderBy="name"):
+            lbl = nation.getLabel()
+            if lbl is None:
+                l1.append(repr(nation))
+            else:
+                l2.append(lbl)
+        self.assertEqual(len(l1),0)
+        #s = "\n".join(l1)
+        #print s
+        s = " ".join(l2)
+        #print s
+        
+        self.assertEquivalent(s,"""\
 Afghanistan Albanien Algerien Amerikanisch Samoa Andorra Angola
 Anguilla Antarktis Antigua und Barbuda Argentinien Armenien Aruba
 Aserbaidschan Australien Bahamas Bahrain Bangladesch Barbados Belarus
@@ -81,8 +100,7 @@ Arabische Emirate Vereinigte Staaten von Amerika Vereinigtes
 Königreich Vietnam Wallis und Futuna Weihnachtsinseln Westsahara Zaire
 (jetzt CD - Demokratische Republik Kongo) Zentralafrikanische Republik
 Zypern Ägypten Äquatorialguinea Äthiopien Österreich""")
-		
+        
 if __name__ == '__main__':
-	import unittest
-	unittest.main()
+    main()
 

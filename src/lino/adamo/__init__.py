@@ -48,24 +48,16 @@ __builtin__.__dict__['_'] = _
 
 
 def beginQuickSession(schema,
-                      langs=None,
-                      filename=None,
-                      isTemporary=True
-                      ):
-    schema.startup()
+                      langs=None, filename=None,
+                      **kw):
     
-    db = QuickDatabase( schema,
-                        langs=langs,
-                        filename=filename,
-                        isTemporary=isTemporary
-                        )
-    db.createTables()
-    
-    sess = center.createSession()
-    
-    sess.use(db=db,langs=langs)
-    
-    return sess
+    schema.initialize()
+    db = QuickDatabase(schema, langs=langs, filename=filename)
+    return center.startup(**kw)
+
+##     sess = center.startup(**kw)
+##     sess.use(db=db,langs=langs)
+##     return sess
 
 
  

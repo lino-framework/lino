@@ -33,14 +33,14 @@ from lino.tools.normalDate import ND
 
 class Products(Table):
     def init(self):
-        self.name = Field(STRING)
-        self.price = Field(PRICE)
+        self.addField('name',STRING)
+        self.addField('price',PRICE)
 
 class Customers(Table):
     def init(self):
-        self.name = Field(STRING)
-        self.street = Field(STRING)
-        self.city = Field(STRING)
+        self.addField('name',STRING)
+        self.addField('street',STRING)
+        self.addField('city',STRING)
         
     class Instance(Table.Instance):
         def getLabel(self):
@@ -49,10 +49,10 @@ class Customers(Table):
      
 class Orders(Table):
     def init(self):
-        self.date = Field(DATE)
-        self.customer = Pointer(Customers)
-        self.totalPrice = Field(PRICE)
-        self.isRegistered = Field(BOOL)
+        self.addField('date',DATE)
+        self.addPointer('customer',Customers)
+        self.addField('totalPrice',PRICE)
+        self.addField('isRegistered',BOOL)
         
     class Instance(Table.Instance):
         def register(self):
@@ -69,10 +69,10 @@ class Orders(Table):
      
 class OrderLines(Table):
     def init(self):
-        self.ordr = Pointer(Orders)
-        self.product = Pointer(Products)
-        self.qty = Field(INT)
-        self.ordr.setDetail('lines')
+        self.addPointer('ordr',Orders,detailName='lines')
+        #self.ordr.setDetail('lines')
+        self.addPointer('product',Products)
+        self.addField('qty',INT)
         
     class Instance(Table.Instance):
         def validate(self):
@@ -145,7 +145,7 @@ def main():
 
     schema = Pizzeria(label="Lucs Pizza Restaurant")
 
-    sess = adamo.beginQuickSession( schema, isTemporary=True)
+    sess = adamo.beginQuickSession( schema)
     
     populate(sess)
 

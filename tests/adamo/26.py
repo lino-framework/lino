@@ -1,4 +1,22 @@
 # coding: latin1
+## Copyright Luc Saffre 2003-2005
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 
 """
 Logical columns (row attributes) versus physical columns (atoms)
@@ -6,101 +24,110 @@ Logical columns (row attributes) versus physical columns (atoms)
 """
 import types
 
-from lino.misc.tsttools import TestCase
+from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
+from lino.schemas.sprl.tables import Projects
+
 
 class Case(TestCase):
-	"""
-	selecting "WHERE x is NULL"
-	"""
+    """
+    selecting "WHERE x is NULL"
+    """
 
-	def setUp(self):
-		
-		self.sess = demo.beginSession()
+    def setUp(self):
+        
+        self.sess = demo.startup()
 
-	def tearDown(self):
-		self.sess.shutdown()
+    def tearDown(self):
+        self.sess.shutdown()
 
 
-	def test01(self):
-		PROJECTS = self.sess.tables.PROJECTS
-		ds = PROJECTS.query("id super.id title")
-		self.assertEqual(len(ds),10)
-		s = ""
-		for p in ds:
-			s+= "\t".join([str(cell.getValue()) for cell in p]) + "\n"
-		#print s
-		self.assertEqual(s,"""\
-1	None	Project 1
-2	None	Project 2
-3	None	Project 3
-4	1	Project 1.1
-5	1	Project 1.2
-6	1	Project 1.3
-7	6	Project 1.3.1
-8	6	Project 1.3.2
-9	8	Project 1.3.2.1
-10	8	Project 1.3.2.2
-""")		
-		
-		"""
-		The Python value None is principally translated as NULL to SQL.
+    def test01(self):
+        PROJECTS = self.sess.query(Projects)
+        ds = PROJECTS.query("id super.id title")
+        self.assertEqual(len(ds),10)
+        self.sess.startDump()
+        ds.report(columnWidths="5 5 20")
+        s = self.sess.stopDump()
+        #print s
+        self.assertEqual(s,"""\
+id   |id   |title               
+-----+-----+--------------------
+1    |     |Project 1           
+2    |     |Project 2           
+3    |     |Project 3           
+4    |1    |Project 1.1         
+5    |1    |Project 1.2         
+6    |1    |Project 1.3         
+7    |6    |Project 1.3.1       
+8    |6    |Project 1.3.2       
+9    |8    |Project 1.3.2.1     
+10   |8    |Project 1.3.2.2     
+""")
+        
+        """
+        The Python value None is principally translated as NULL to SQL.
 
-		For example, specifying super=None will select only the
-		top-level projects (whose super is NULL): """
-		
-		ds = PROJECTS.query("id title", super=None)
-		self.assertEqual(len(ds),3)
-		s = ""
-		for p in ds:
-			s+= "\t".join([str(cell.getValue()) for cell in p]) + "\n"
-		#print s
-		self.assertEqual(s,"""\
-1	Project 1
-2	Project 2
-3	Project 3
+        For example, specifying super=None will select only the
+        top-level projects (whose super is NULL): """
+        
+        ds = self.sess.query(Projects,"id title", super=None)
+        self.assertEqual(len(ds),3)
+##         s = ""
+##         for p in ds:
+##             s+= "\t".join([str(cell.getValue()) for cell in p]) + "\n"
+        #print s
+        self.sess.startDump()
+        ds.report(columnWidths="5 20")
+        s = self.sess.stopDump()
+        #print s
+        self.assertEqual(s,"""\
+id   |title               
+-----+--------------------
+1    |Project 1           
+2    |Project 2           
+3    |Project 3           
 """)
 
 
-		"""
+        """
 
-		Samples are sticky properties: once set, the get inherited by
-		all children.  To clear a sample, you must explicitly set it to
-		Datasource.ANY_VALUE.
-		
-		Example: you want to use the ds from above as parent for a new
-		ds because you want to inherit columnNames. But now you want to
-		see them all, not only the top-level projects.  So you must
-		clear the "super=None" condition.
+        Samples are sticky properties: once set, the get inherited by
+        all children.  To clear a sample, you must explicitly set it to
+        Datasource.ANY_VALUE.
+        
+        Example: you want to use the ds from above as parent for a new
+        ds because you want to inherit columnNames. But now you want to
+        see them all, not only the top-level projects.  So you must
+        clear the "super=None" condition.
 
-		"""
-		
-		ds = ds.query(orderBy="title",super=ds.ANY_VALUE)
-		self.assertEqual(len(ds),10)
+        """
+        
+        ds = ds.query(orderBy="title",super=ds.ANY_VALUE)
+        self.assertEqual(len(ds),10)
 
-		
-		"""
-		Calling
-		http://localhost:8080/lino/db/PROJECTS?v=std
-		must show only the projects with super=None
-		"""
+        
+        """
+        Calling
+        http://localhost:8080/lino/db/PROJECTS?v=std
+        must show only the projects with super=None
+        """
 
-		ds = PROJECTS.query(viewName="std")
-		self.assertEqual(len(ds),3)
+        ds = PROJECTS.query(viewName="std")
+        self.assertEqual(len(ds),3)
 
-		
+        
 
-		try:
-			ds = PROJECTS.query(viewName="nonExistingViewName")
-			self.fail("failed to raise exception for bad viewName")
-		except KeyError:
-			pass
-		
-		
+        try:
+            ds = PROJECTS.query(viewName="nonExistingViewName")
+            self.fail("failed to raise exception for bad viewName")
+        except KeyError:
+            pass
+        
+        
 
 
 
 if __name__ == '__main__':
-	import unittest
-	unittest.main()
+    main()
 

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -20,43 +20,36 @@ from lino.misc.descr import Describable
 from lino.ui import console 
 from lino.adamo import DataVeto
 
-#from ui import UI
-from dbds.sqlite_dbd import Connection
+from lino.adamo.dbds.sqlite_dbd import Connection
 
-from session import Context, BabelLang
+from lino.adamo.session import Context, BabelLang
 
 #from query import DatasourceColumnList
-from tim2lino import TimMemoParser
-from store import Store
-from lino.adamo import center # import getCenter
+from lino.adamo.tim2lino import TimMemoParser
+from lino.adamo.store import Store
+from lino.adamo import center 
 
 
 class Database(Context,Describable):
     
-    def __init__(self, schema,
-                     name=None,
-                     langs=None,
-                     label=None,
-                     doc=None):
+    def __init__(self, schema, langs=None, **kw):
+        
         self._supportedLangs = []
         if langs is None:
             langs = 'en'
         for lang_id in langs.split():
             self._supportedLangs.append(
                 BabelLang(len(self._supportedLangs), lang_id) )
-        Describable.__init__(self,name,label,doc)
+        Describable.__init__(self,**kw)
         
         self._memoParser = TimMemoParser(self)
 
-        #self._app = app
-        #self._sessions = []
-        #assert hasattr(ui,'progress')
         self.schema = schema
-        #self._contexts = []
         self._stores = {}
         center.addDatabase(self)
 
     def getBabelLangs(self):
+        "implements Context.getBabelLangs()"
         return self._supportedLangs
 
     def getDefaultLanguage(self):
@@ -89,17 +82,22 @@ class Database(Context,Describable):
                 pass
         return l
 
-    def startup(self,conn,flt=None):
-
-        for table in self.schema.getTableList(flt):
-            self._stores[table.__class__] = Store(conn, self, table)
+    def connect(self,conn,tableClasses=None):
+        for t in self.schema.getTableList(tableClasses):
+            if not self._stores.has_key(t.__class__):
+                self._stores[t.__class__] = Store(conn,self,t)
 
 
     def getContentRoot(self):
         return self.schema.getContentRoot(self)
 
     def update(self,otherdb):
+        
+        # todo: should maybe explicitly close those stores who are
+        # going to be referenceless...
+        
         self._stores.update(otherdb._stores)
+        
 ##      l = list(self._stores)
 ##      for store in otherdb._stores:
 ##          if l.
@@ -123,6 +121,12 @@ class Database(Context,Describable):
 ##      sess.setContext(context)
 ##      return sess
 
+    def checkTables(self,sess):
+        sess.progress("checkTables: " + self.getName())
+
+        for store in self._stores.values():
+            store.checkTable(sess)
+        
     def createTables(self):
         for store in self.getStoresById():
             if store._connection.checkTableExist(
@@ -152,7 +156,7 @@ class Database(Context,Describable):
 
     #def disconnect(self):
 
-    def shutdown(self):
+    def close(self):
         console.info("Database shutdown "+ str(self))
         #self.commit()
         
@@ -162,15 +166,24 @@ class Database(Context,Describable):
         
         for store in self.getStoresById():
             store.beforeShutdown()
+
+        self._stores = []
             
         center.removeDatabase(self)
     
     def restart(self):
-        self.shutdown()
-        self.startup()
+        self.close()
+        self.open()
+
+                    
+##         msgs = sess.checkIntegrity()
+##         if len(msgs):
+##             msg = "%s : %d database integrity problems" % (
+##                 db.getName(), len(msgs))
+##             print msg + ":"
+##             print "\n".join(msgs)
 
             
-    #~ def checkIntegrity(self):
         #~ ctx = self.beginContext()
         #~ retval = ctx.checkIntegrity()
         #~ self.endContext(ctx)
@@ -203,8 +216,8 @@ class QuickDatabase(Database):
                  schema,
                  langs=None,
                  label=None,
-                 filename=None,
-                 isTemporary=True):
+                 filename=None
+                 ):
 
 
         Database.__init__(self,
@@ -214,19 +227,18 @@ class QuickDatabase(Database):
 
         
         self._connection = Connection(filename=filename,
-                                      schema=schema,
-                                      isTemporary=isTemporary)
+                                      schema=schema)
 
-        self.startup(self._connection)
+        self.connect(self._connection)
 
-    def shutdown(self):
-        Database.shutdown(self)
-        self._connection.close()
-        self._connection = None
+##     def close(self):
+##         Database.close(self)
+##         self._connection.close()
+##         self._connection = None
 
-    def commit(self):   
-        Database.commit(self)
-        self._connection.commit()
+##     def commit(self):   
+##         Database.commit(self)
+##         self._connection.commit()
         
         
 

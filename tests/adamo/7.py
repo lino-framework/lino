@@ -33,7 +33,7 @@ class Case(unittest.TestCase):
 
     def test01(self):
         "Accessing data that has not been inserted using adamo"
-        sess = demo.beginSession(populator=None)
+        sess = demo.startup(populate=False)
         
         db = sess.db
         connection = db._connection
@@ -60,7 +60,7 @@ class Case(unittest.TestCase):
         self.failIf(luc.isDirty())
         self.failIf(ly.isDirty())
         
-        db.shutdown()
+        db.close()
 
     def test02(self):
         d = {}
