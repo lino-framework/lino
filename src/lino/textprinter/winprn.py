@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2004-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -38,8 +38,6 @@ A4 = (210*mm, 297*mm)
 class TextObject:
     def __init__(self,doc):
         self.doc = doc
-        #self.x = doc.margin
-        #self.y = doc.margin
         self.x = self.doc.org[0] + self.doc.margin
         self.y = self.doc.org[1] + self.doc.margin
         self.doc.dc.MoveTo(int(self.x),-int(self.y))
@@ -48,10 +46,6 @@ class TextObject:
         self.leading = 0
         
     def write(self,text):
-        #text = text.strip()
-        #if text.endswith('\n'):
-        # text = text[:-1]
-        # flush = True
         assert not "\n" in text, repr(text)
         assert not "\r" in text, repr(text)
         self.line += text
@@ -59,7 +53,7 @@ class TextObject:
         font = win32ui.CreateFont(self.doc.fontDict)
         self.doc.dc.SelectObject(font)
         tm = self.doc.dc.GetTextMetrics()
-##         console.info(repr(tm))
+        #console.debug(repr(tm))
 ##         console.info(repr(self.dc.GetTextFace()))
 ##         console.info(repr(self.dc.GetViewportExt()))
 ##         console.info(repr(self.dc.GetViewportOrg()))
@@ -68,9 +62,9 @@ class TextObject:
         
         # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
         
-        self.doc.status.leading = tm['tmExternalLeading'] \
-                                  + tm['tmHeight'] \
-                                  #+ tm['tmInternalLeading'] \
+        self.leading = tm['tmExternalLeading'] \
+                       + tm['tmHeight'] \
+                       #+ tm['tmInternalLeading'] \
 
         # 
         #self.leading = max(self.leading,self.doc.status.leading)
@@ -78,14 +72,14 @@ class TextObject:
         self.doc.dc.TextOut(int(self.x),-int(self.y),self.line)
         (dx,dy) = self.doc.dc.GetTextExtent(self.line)
         self.x += dx
-        console.debug("TextOut(%d,%d,%s)" % \
-                      (int(self.x),-int(self.y),repr(self.line)))
+        #console.debug("TextOut(%d,%d,%s)" % \
+        #              (int(self.x),-int(self.y),repr(self.line)))
         self.line = ""
 
     def newline(self):
         #self.x = self.doc.margin
         self.x = self.doc.org[0] + self.doc.margin
-        self.y += self.doc.status.leading
+        self.y += self.leading
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
 
 class Win32PrinterDocument(Document):
@@ -138,25 +132,31 @@ class Win32PrinterDocument(Document):
         self.dc.EndDoc()
         del self.dc
             
-    def onSetFont(self):
-        Document.onSetFont(self)
-        self.fontDict['height'] = int(inch/self.status.size)
+    def setCpi(self,cpi):
+        w = int(inch/cpi)
+        console.debug("%d cpi = %d twips" % (cpi,w))
+        self.fontDict['width'] = w
+        # self.fontDict['height'] = w
         
-        if self.status.underline:
-            self.fontDict['underline'] = True
-        else:
-            self.fontDict['underline'] = None
-            
-        if self.status.bold:
-            self.fontDict['weight'] = win32con.FW_BOLD
-        else:
-            self.fontDict['weight'] = win32con.FW_NORMAL
-            
-        if self.status.ital:
+    def setItalic(self,ital):
+        if ital:
             self.fontDict['italic'] = True
         else:
             self.fontDict['italic'] = None
 
+    def setBold(self,bold):
+        if bold:
+            self.fontDict['weight'] = win32con.FW_BOLD
+        else:
+            self.fontDict['weight'] = win32con.FW_NORMAL
+            
+    def setUnderline(self,ul):
+        if ul:
+            self.fontDict['underline'] = True
+        else:
+            self.fontDict['underline'] = None
+            
+            
         # http://www.polyml.org/docs/Winref/Font.html
         ## name
         ## height

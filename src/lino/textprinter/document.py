@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003, 2004, 2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,32 +22,12 @@ from lino.ui import console
 class ParserError(Exception):
     pass
 
-class Status:
-    """
-    could be used to save/restore the status of the textobject
-    """
-    def __init__(self,size=10,
-                 psfontname="Courier",
-                 bold=False,
-                 ital=False,
-                 leading=14.4):
-        self.ital = ital
-        self.bold = bold
-        self.psfontname = psfontname
-        self.size = size
-        self.leading = leading
-        self.lpi = None
-        self.underline = False
-
-
-        
-
 
 class Document:
     def __init__(self,pageSize=(0,0),margin=0):
         self.commands = {
             chr(12) : self.formFeed,
-            chr(27)+"l" : self.setLpi,
+            chr(27)+"l" : self.parse_l,
             chr(27)+"c" : self.parse_c,
             chr(27)+"b" : self.parse_b,
             chr(27)+"u" : self.parse_u,
@@ -58,8 +38,6 @@ class Document:
         
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin # 5 * mm
-        self.status = Status()
-        #self.oldStatus = None # used by *untilEol cmds
         
         self.page = 0
 
@@ -83,6 +61,16 @@ class Document:
     def newline(self,text):
         raise NotImplementedError
     
+    def setCpi(self,cpi):
+        pass
+    def setItalic(self,ital):
+        pass
+    def setBold(self,bold):
+        pass
+    def setLpi(self,lpi):
+        pass
+    def setUnderline(self,ul):
+        pass
         
     def beginPage(self):
         self.page += 1
@@ -134,8 +122,6 @@ class Document:
 
     def printLine(self,line):
 
-        #if not self.oldStatus is None:
-        #    self.restoreStatus()
         line = line.rstrip()
         (pos,ctrl) = self.FindFirstCtrl(line)
         while pos != None:
@@ -160,21 +146,6 @@ class Document:
         #self.c.drawString(self.xpos, self.ypos, line)
         #self.ypos -= self.linespacing 
 
-##      def saveStatus(self):
-##          assert self.oldStatus is None
-##          self.oldStatus = self.status
-##          self.status = Status(self.status.size,
-##                                      self.status.psfontname,
-##                                      self.status.bold,
-##                                      self.status.ital,
-##                                      self.status.leading
-##                                      )
-
-##      def restoreStatus(self):
-##          self.status = self.oldStatus
-##          self.oldStatus = None
-##          self.setFont()
-
         
         
     def setPageLandscape(self,line):
@@ -193,48 +164,16 @@ class Document:
 
     ## methods called if ctrl sequence is found :
 
-    def setLpi(self,line):
+    def parse_l(self,line):
         par = line.split(None,1)[0]
-        lpi = int(par)
-        # if lpi != 6:
-        # ignore 6lpi because this is the standard.
-        # In a pdf file it's better to use 
-        self.status.lpi = lpi
-        self.onSetFont()
+        self.setLpi(int(par))
         return len(par)+1
-        
+    
     def parse_c(self,line):
         par = line.split(None,1)[0]
         self.setCpi(int(par))
         return len(par)+1
         
-    def setCpi(self,cpi):
-        "set font size in cpi (characters per inch)"
-        if cpi == 10:
-            self.status.size = 12
-            self.status.leading = 14
-        elif cpi == 12:
-            self.status.size = 10
-            self.status.leading = 12
-        elif cpi == 15:
-            self.status.size = 8
-            self.status.leading = 10
-        elif cpi == 17:
-            self.status.size = 7
-            self.status.leading = 8
-        elif cpi == 20:
-            self.status.size = 6
-            self.status.leading = 8
-        elif cpi == 5:
-            self.status.size = 24
-            self.status.leading = 28
-        else:
-            raise "%s : bad cpi size" % par
-        self.onSetFont()
-         
-    def insertImage(self,line):
-        raise NotImplementedError
-
     def parse_i(self,line):
         if line[0] == "0":
             self.setItalic(False)
@@ -242,10 +181,6 @@ class Document:
             self.setItalic(True)
         return 1
             
-    def setItalic(self,ital):
-        self.status.ital = ital
-        self.onSetFont()
-    
     def parse_b(self,line):
         if line[0] == "0":
             self.setBold(False)
@@ -256,10 +191,6 @@ class Document:
                               % line[0])
         return 1
     
-    def setBold(self,bold):
-        console.debug("setBold(%s)"%str(bold))
-        self.status.bold = bold
-        self.onSetFont()
     
     def parse_u(self,line):
         if line[0] == "0":
@@ -271,54 +202,14 @@ class Document:
                               % line[0])
         return 1
         
-    def setUnderline(self,ul):
-        console.debug("setUnderline(%s)"%str(ul))
-        self.status.underline = ul
-        self.onSetFont()
-        
     def formFeed(self,line):
         self.endPage()
         # self.beginPage()
         return 0
 
 
-## def main(argv,docfactory):
+    def insertImage(self,line):
+        raise NotImplementedError
 
-##     try:
-##         opts, args = getopt.getopt(argv,
-##                                             "h?o:b",
-##                                             ["help", "output=","batch"])
-
-##     except getopt.GetoptError:
-##         print __doc__
-##         sys.exit(-1)
-
-##     if len(args) != 1:
-##         print __doc__
-##         sys.exit(-1)
-
-##     inputfile = args[0]
-##     (root,ext) = os.path.splitext(inputfile)
-##     outputfile = root 
-##     if len(ext) == 0:
-##         inputfile += ".prn"
-
-##     #showOutput=True
-##     for o, a in opts:
-##         if o in ("-?", "-h", "--help"):
-##             print __doc__
-##             sys.exit()
-##         if o in ("-o", "--output"):
-##             outputfile = a
-##         if o in ("-b", "--batch"):
-##             #showOutput=False
-##             getSystemConsole().set(batch=True)
-            
-##     d = docfactory(outputfile)
-##     d.readfile(inputfile)
-##     d.endDoc()
-    
-##     return d
-    
 
         

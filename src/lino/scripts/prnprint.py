@@ -1,6 +1,8 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2004. This file is part of the Lino project.
+## Copyright 2004-2005 Luc Saffre 2004
+
+## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -25,10 +27,12 @@ from lino.textprinter import winprn
 def main(argv):
 
     parser = console.getOptionParser(
-        usage="usage: %prog [options] FILE",
+        usage="usage: %prog [options] FILE [FILE ...]",
         description="""\
-where FILE is the file to be printed on the Default Printer.
-It may contain plain text and simple formatting printer control sequences. """ )
+where FILE is a plain text file to be printed on the Default Printer.
+It must be in OEM charset and may contain simple formatting printer
+control sequences, see http://lsaffre.dyndns.org/lino/prn2pdf.html
+""" )
     
     parser.add_option("-p", "--printer",
                       help="""\
@@ -62,6 +66,7 @@ write to SPOOLFILE rather than really printing.""",
     
         
 if __name__ == '__main__':
-    print copyleft(name="Lino/prn2printer", year='2004')
+    print copyleft(name="Lino/prn2print",
+                   year='2004-2005')
     main(sys.argv[1:])
     

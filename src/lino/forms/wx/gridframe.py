@@ -1,9 +1,20 @@
-#----------------------------------------------------------------------
-# $Id: gridframe.py,v 1.2 2004/03/04 12:30:24 lsaffre Exp $
-# Created:	 2003-10-27
-# Copyright: (c) 2003 Luc Saffre
-# License:	 GPL
-#----------------------------------------------------------------------
+## Copyright 2003, 2004, 2005 Luc Saffre 
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import wx
 import wx.grid

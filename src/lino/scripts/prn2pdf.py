@@ -80,7 +80,7 @@ write to OUTFILE rather than FILE.pdf""",
 
 if __name__ == '__main__':
     print copyleft(name="Lino/prn2pdf",
-                   year='2002-2004',
+                   year='2002-2005',
                    author='Luc Saffre')
     main(sys.argv[1:])
 

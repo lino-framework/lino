@@ -40,20 +40,22 @@ def main():
     ds = sess.query(Partners)
     
     frm = sess.addForm(label="my first form")
-    frm.addLabel("""\
+    box = frm.addBox(frm.VERTICAL)
+    box.addLabel("""\
 Please enter your personal data.
 We won't store it. You can trust us.
 """)
-    frm.addEntry("firstName",STRING,label="first name")
-    frm.addEntry("name",STRING)
-    frm.addOkButton()
-    frm.addAbortButton()
-    frm.addButton(name="click &Me").setHandler(clickme)
-    frm.addButton(label=ds.getLabel()).setHandler(ds.showGridForm)
+    box.addEntry("firstName",STRING,label="first name")
+    box.addEntry("name",STRING)
+    btnBox = box.addBox(frm.HORIZONTAL)
+    btnBox.addOkButton()
+    btnBox.addAbortButton()
+    btnBox.addButton(name="click &Me").setHandler(clickme)
+    btnBox.addButton(label=ds.getLabel()).setHandler(ds.showGridForm)
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
-            frm.fields.firstName.getValue(),
-            frm.fields.name.getValue())
+            frm.entries.firstName.getValue(),
+            frm.entries.name.getValue())
     else:
         print """You pressed ESC, clicked "Abort" or closed the form."""
         

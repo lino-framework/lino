@@ -30,6 +30,29 @@ from lino.textprinter.document import Document
 UNICODE_HACK = True
 #UNICODE_HACK = False
 
+
+class Status:
+    """
+    could be used to save/restore the status of the textobject
+    """
+    def __init__(self,size=10,
+                 psfontname="Courier",
+                 bold=False,
+                 ital=False,
+                 leading=14.4):
+        self.ital = ital
+        self.bold = bold
+        self.psfontname = psfontname
+        self.size = size
+        self.leading = leading
+        self.lpi = None
+        self.underline = False
+
+
+        
+
+
+
 		
 class PdfDocument(Document):
     def __init__(self,filename,coding=None):
@@ -45,6 +68,7 @@ class PdfDocument(Document):
                                     pagesize=A4)
         self.coding = coding
         self.filename = filename
+        self.status = Status()
 
         #self.canvas.setAuthor("Generated using prn2pdf")
         #self.canvas.setSubject("http://my.tele2.ee/lsaffre/comp/prn2pdf.htm")
@@ -73,7 +97,7 @@ class PdfDocument(Document):
     def createTextObject(self):
         textobject = self.canvas.beginText()
         textobject.setTextOrigin(self.margin,
-                                         self.pageHeight-(2*self.margin))
+                                 self.pageHeight-(2*self.margin))
         textobject.setFont("Courier", 10)
         return textobject
         
@@ -188,3 +212,45 @@ class PdfDocument(Document):
                                      w,h)
         return len(params[0])+len(params[1])+len(params[2])+3
     
+    def setCpi(self,cpi):
+        "set font size in cpi (characters per inch)"
+        if cpi == 10:
+            self.status.size = 12
+            self.status.leading = 14
+        elif cpi == 12:
+            self.status.size = 10
+            self.status.leading = 12
+        elif cpi == 15:
+            self.status.size = 8
+            self.status.leading = 10
+        elif cpi == 17:
+            self.status.size = 7
+            self.status.leading = 8
+        elif cpi == 20:
+            self.status.size = 6
+            self.status.leading = 8
+        elif cpi == 5:
+            self.status.size = 24
+            self.status.leading = 28
+        else:
+            raise "%s : bad cpi size" % par
+        self.onSetFont()
+         
+    def setItalic(self,ital):
+        self.status.ital = ital
+        self.onSetFont()
+    
+    def setBold(self,bold):
+        console.debug("setBold(%s)"%str(bold))
+        self.status.bold = bold
+        self.onSetFont()
+        
+    def setUnderline(self,ul):
+        console.debug("setUnderline(%s)"%str(ul))
+        self.status.underline = ul
+        self.onSetFont()
+        
+    def setLpi(self,lpi):
+        self.status.lpi = lpi
+        self.onSetFont()
+        
