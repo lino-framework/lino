@@ -21,6 +21,8 @@ _messages = {}
 
 import locale
 _userLang = locale.getdefaultlocale()[0][:2]
+if _userLang == "en":
+    _userLang = None
 #print _userLang
 
 def _(text_en):

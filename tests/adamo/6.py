@@ -20,16 +20,16 @@
 from lino.misc.tsttools import TestCase, main
 from lino.examples import pizzeria,pizzeria2
 
-## import sys
-## from StringIO import StringIO
+import sys
+from StringIO import StringIO
 ##
-## def catch_output(f,*args,**kw):
-##     out = sys.stdout
-##     sys.stdout = StringIO()
-##     f(*args,**kw)
-##     r = sys.stdout.getvalue()
-##     sys.stdout = out
-##     return r
+def catch_output(f,*args,**kw):
+    out = sys.stdout
+    sys.stdout = StringIO()
+    f(*args,**kw)
+    r = sys.stdout.getvalue()
+    sys.stdout = out
+    return r
 
 
 
@@ -38,9 +38,9 @@ class Case(TestCase):
     def test01(self):
         "do the pizzeria examples work?"
         #print self.ui
-        pizzeria.main(self.ui)
-        s = self.getConsoleOutput()
-        #s = catch_output(pizzeria.main)
+        # pizzeria.main(self.ui)
+        # s = self.getConsoleOutput()
+        s = catch_output(pizzeria.main)
         #print s
         self.assertEquivalent(s,"""\
 Henri must pay 12 EUR
@@ -49,9 +49,9 @@ James must pay 53 EUR
 
     def test02(self):
         "testing pizzeria2"
-        pizzeria2.main(self.ui)
-        s = self.getConsoleOutput()
-        #s = catch_output(pizzeria2.main)
+        #pizzeria2.main(self.ui)
+        #s = self.getConsoleOutput()
+        s = catch_output(pizzeria2.main)
         
         self.assertEquivalent(s,"""\
 Order #: 3

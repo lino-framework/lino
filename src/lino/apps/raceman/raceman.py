@@ -43,9 +43,10 @@ class Raceman(MirrorLoaderApplication):
             ui=self.toolkit.console,
             filename=self.filename)
         
-        assert self.mainForm is None
+        #assert self.mainForm is None
         
-        self.mainForm = frm = self.form(
+        #self.mainForm = frm = self.form(
+        frm = self.form(
             label="Main menu",
             doc="""\
 This is the Raceman main menu.                                     
@@ -74,7 +75,8 @@ This is the Raceman main menu.
         self.addProgramMenu(frm)
         
         frm.addOnClose(self.close)
-
+        
+        frm.show()
 
         
 

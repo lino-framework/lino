@@ -25,7 +25,7 @@ from lino.ui import console
 
 from lino.adamo import center
 from lino.adamo.database import Database
-from lino.adamo.dbds.sqlite_dbd import Connection
+#from lino.adamo.dbds.sqlite_dbd import Connection
 from lino.schemas.sprl.sprl import makeSchema
 from lino.schemas.sprl.tables import *
 from lino.schemas.sprl import demo
@@ -47,7 +47,7 @@ class Case(TestCase):
         schema.initialize(self.ui)
         schema.addPopulator(demo.Populator(big=True))
         
-        conn = Connection(schema=schema)
+        conn = center.connection(self.ui,schema)
         
         stddb = schema.addDatabase(langs="en de fr et",
                                    name="std",
@@ -59,13 +59,13 @@ class Case(TestCase):
         db1 = schema.addDatabase(langs="de")
         db1.update(stddb)
         #conn = Connection(filename="db1.db", schema=schema)
-        conn = Connection(schema=schema)
+        conn = center.connection(self.ui,schema)
         db1.connect(conn)
         
         db2 = schema.addDatabase(langs="en")
         db2.update(stddb)
         #conn = Connection(filename="db2.db", schema=schema)
-        conn = Connection(schema=schema)
+        conn = center.connection(self.ui,schema)
         db2.connect(conn)
 
 

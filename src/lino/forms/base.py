@@ -861,7 +861,8 @@ class Toolkit:
             
         for app in self._apps:
             app.init()
-            app.mainForm.show()
+            #if app.mainComp
+            #app.mainForm.show()
             
         #frm = app.getMainForm(self)
         #self.consoleForm.setParent(frm)

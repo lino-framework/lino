@@ -29,7 +29,7 @@ class Case(TestCase):
     def test01(self):
         from lino.examples.pizzeria2 import beginSession,\
              Products, OrderLines
-        sess = beginSession(self.ui)
+        sess = beginSession()
         PROD = sess.query(Products)
         q = sess.query(OrderLines,"ordr.date ordr.customer",
                        product=PROD.peek(1))

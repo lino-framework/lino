@@ -133,14 +133,13 @@ def query(sess):
 ##  for (customer,totalPrice) in q:
 ##      print "%s must pay %d EUR" % (customer.name,totalPrice)
     for o in ORDERS.query("customer totalPrice"):
-        sess.ui.notice("%s must pay %d EUR",
-                       o.customer.name, o.totalPrice)
+        print "%s must pay %d EUR" % (o.customer.name, o.totalPrice)
 
-def main(ui):
+def main():
 
     schema = makeSchema(label="Luc's Pizza Restaurant")
 
-    sess = schema.quickStartup(ui)
+    sess = schema.quickStartup()
     #print sess.ui
     #raw_input("ok")
     
@@ -151,6 +150,6 @@ def main(ui):
     sess.shutdown()
     
 if __name__ == "__main__":
-    from lino.ui import console
-    console.parse_args()
-    main(console)
+##     from lino.ui import console
+##     console.parse_args()
+    main()

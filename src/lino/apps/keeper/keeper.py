@@ -38,7 +38,8 @@ class Keeper(AdamoApplication):
         
         assert self.mainForm is None
         
-        self.mainForm = frm = self.form(
+        #self.mainForm = frm = self.form(
+        frm = self.form(
             label="Main menu",
             doc="""\
 This is the Keeper main menu.                                     
@@ -61,6 +62,8 @@ This is the Keeper main menu.
         self.addProgramMenu(frm)
 
         frm.addOnClose(self.close)
+
+        frm.show()
 
 def main(argv):
 

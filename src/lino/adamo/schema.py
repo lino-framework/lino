@@ -21,7 +21,7 @@ import types
 
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-#from lino.ui import console
+from lino.ui import console
 
 #from lino.adamo.forms import Form
 from lino.adamo.database import Database
@@ -265,12 +265,12 @@ class Schema(Describable):
         return db
 
     def quickStartup(self,
-                     ui,
+                     ui=None,
                      langs=None,
                      filename=None,
                      **kw):
-##         if ui is None:
-##             ui = console.getSystemConsole()
+        if ui is None:
+            ui = console.getSystemConsole()
         #job = ui.job("quickStartup()")
         ui.debug("Initialize Schema")
         self.initialize(ui)

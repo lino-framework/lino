@@ -121,7 +121,7 @@ class Application(Describable):
         frm.show()
 
     def init(self):
-        # must set self.mainForm
+        # supposed to show the application's main form
         pass
 
     def run(self):
@@ -172,11 +172,6 @@ class AdamoApplication(Application):
         self.filename = filename
         self.sess = None
         
-    def addMasterTable(self,tc,**kw):
-        """just an idea... for later when there is a default
-        makeMainForm method."""
-        pass
-
     def getSession(self):
         return self.sess
 

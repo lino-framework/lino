@@ -51,9 +51,10 @@ def form(*args,**kw):
         from lino.forms.application import Application
         _app = Application(toolkit=_toolkit,
                            name="automagicApp")
-    frm = _app.form(None,*args,**kw)
-    _app.mainForm = frm
-    return frm
+    return _app.form(None,*args,**kw)
+##     frm = _app.form(None,*args,**kw)
+##     _app.mainForm = frm
+##     return frm
 
 def parse_args(*args,**kw):
     check()

@@ -523,8 +523,8 @@ class Form(base.Form):
             
         if not self.app.toolkit._started:
             self.app.toolkit.start()
-            if self.app.mainForm == self:
-                return
+            #if self.app.mainForm == self:
+            #    return
             # todo: uergh...
 
         if self.isShown():

@@ -30,15 +30,17 @@ Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
 """)
-    frm.addEntry("firstName",label="First name")
-    frm.addEntry("name")
+    firstName = frm.addEntry("firstName",label="First name")
+    name = frm.addEntry("name")
     frm.addOkButton()
     frm.addCancelButton()
 
     
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
-            frm.entries.firstName.getValue(),
-            frm.entries.name.getValue())
+            #frm.entries.firstName.getValue(),
+            #frm.entries.name.getValue())
+            firstName.getValue(),
+            name.getValue())
     else:
         print "You cancelled the form."

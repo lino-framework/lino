@@ -38,7 +38,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = pizzeria2.beginSession(self.ui)
+        self.sess = pizzeria2.beginSession()
 
     def tearDown(self):
         self.sess.shutdown()
