@@ -16,13 +16,13 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.ui import console
-from lino.textprinter.document import Document
+#from lino.ui import console
+from lino.textprinter.textprinter import TextPrinter
 
-class PlainDocument(Document):
+class PlainTextPrinter(TextPrinter):
     def __init__(self,writer,width=72,frameStyle="+-+|+-+|"):
         self.writer = writer
-        Document.__init__(self,width=width)
+        TextPrinter.__init__(self,width=width)
         assert len(frameStyle) == 8
         self.topLeft = frameStyle[0]
         self.topBorder = frameStyle[1]

@@ -36,7 +36,7 @@ class GUI:
         return self.app.form(*args,**kw)
 
     def textprinter(self):
-        from lino.textprinter.plain import PlainDocument
+        from lino.textprinter.plain import PlainTextPrinter
         return PlainDocument(self.out)
         
     def report(self,**kw):

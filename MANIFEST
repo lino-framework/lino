@@ -1,9 +1,9 @@
 COPYING.txt
-MCMILLAN.BAT
 README.txt
 TODO.txt
 genapidoc.py
 make.py
+mcmillan.bat
 mkdist.py
 py2exe.bat
 upgrade.py

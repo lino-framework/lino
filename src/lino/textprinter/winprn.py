@@ -20,6 +20,9 @@ import win32ui
 import win32con
 import win32print
 import pywintypes
+#import win32gui
+
+from PIL import Image, ImageWin
 
 OEM_CHARSET = win32con.OEM_CHARSET
 
@@ -260,7 +263,7 @@ class Win32TextPrinter(TextPrinter):
         
         
     def insertImage(self,width,height,filename):
-        # picture size must be givin in mm :
+        # picture size is given in mm
         w = float(width) * mm 
         h = float(height) * mm
         
@@ -274,5 +277,31 @@ class Win32TextPrinter(TextPrinter):
         else:
             # but picture starts on top of charbox:
             y += self.status.leading
-            
-        self.dc.drawImage(filename, x,y-h, w,h)
+
+
+        # thanks to http://dbforums.com/t944137.html
+        HORZRES = 8
+        VERTRES = 10
+
+        # Find the printer resolution to scale to
+        printer_resolution = self.dc.GetDeviceCaps(HORZRES),\
+                             self.dc.GetDeviceCaps(VERTRES)
+        print "printer resolution =", printer_resolution
+
+        img = Image.open(filename)
+        print "image size =", img.size
+
+        #
+        # Resize the image to fit the page but not to overflow
+        #
+        ratios = [1.0 * printer_resolution[0] / img.size[0],
+                  1.0 * printer_resolution[1] / bmp.size[1]]
+        print "ratios =", ratios
+        scale = min(ratios)
+        print "scale =", scale
+
+        dib = ImageWin.Dib(img)
+        scaled_size = [scale * i for i in img.size]
+        print "scaled bitmap size =", scaled_size
+        dib.draw(self.dc.GetHandleOutput(), [0, 0] + scaled_size)
+

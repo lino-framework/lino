@@ -206,9 +206,10 @@ if 'timtools' in args:
         "optimize": 2,
         "dist_dir" : dist_dir,
         "excludes" : excludes_console,
-        "includes": ["encodings",
-                     "encodings.cp850",
-                     "encodings.cp1252"
+        "includes": ["encodings.*",
+                     #"encodings.cp850",
+                     #"encodings.cp1252",
+                     #"encodings.iso-8859-1"
                      ],
         "dll_excludes" : dll_excludes,
         }}

@@ -395,8 +395,8 @@ class Console(UI):
         return job
     
     def textprinter(self):
-        from lino.textprinter.plain import PlainDocument
-        return PlainDocument(self._stdout)
+        from lino.textprinter.plain import PlainTextPrinter
+        return PlainTextPrinter(self._stdout)
         
     def report(self,**kw):
         from lino.reports.plain import Report
