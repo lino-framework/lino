@@ -48,7 +48,7 @@ class Console:
 
     forwardables = ('confirm','decide',
                     'debug','info',
-                    'warning',
+                    'warning','progress',
                     'error','critical',
                     'report',
                     'startDump','stopDump')

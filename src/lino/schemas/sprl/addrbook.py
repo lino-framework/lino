@@ -17,7 +17,12 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo import *
+from lino.adamo import datatypes
+
 from babel import Languages
+
+SEX = datatypes.StringType(width=1)
+
 
 class Contacts(Table):
     "abstract"
@@ -71,6 +76,8 @@ class Persons(Table): #(Contact,Address):
         self.id = Field(ROWID)
         self.name = Field(STRING)
         self.firstName = Field(STRING)
+        self.sex  = Field(SEX)
+        self.birthDate  = Field(STRING,width=8)
         
         # table.setFindColumns("name firstName")
 
@@ -397,3 +404,5 @@ class ContactsPlugin(SchemaPlugin):
         EUR = q.appendRow(id="EUR",name="Euro")
         BEF = q.appendRow(id="BEF",name="Belgian Franc")
         q.appendRow(id="USD",name="US Dollar")
+
+

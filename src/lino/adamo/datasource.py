@@ -62,6 +62,12 @@ class Datasource:
         
         self.config(**kw)
 
+    def mtime(self):
+        return self._store.mtime()
+
+    def zap(self):
+        self._store.zap()
+
     def config(self,viewName=None,**kw):
         """
         

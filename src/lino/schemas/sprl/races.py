@@ -1,4 +1,6 @@
-## Copyright Luc Saffre 2004. This file is part of the Lino project.
+## Copyright Luc Saffre 2004-2005.
+
+## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
 
 from lino.adamo import *
 from babel import Languages
-from addrbook import Persons
+from addrbook import Persons, SEX
 
 class Races(Table):
     def init(self):
@@ -25,12 +27,35 @@ class Races(Table):
         self.date = Field(DATE)
         self.status = Field(STRING,width=1)
         self.tpl  = Field(STRING,width=6)
-        self.catsys  = Field(STRING,width=5)
+        self.type  = Pointer(RaceTypes)
         self.startTime  = Field(TIME)
 
     class Instance(Table.Instance):
         def getLabel(self):
             return self.name1
+        
+class RaceTypes(Table):
+    def init(self):
+        self.id = Field(STRING,width=5)
+        self.name = Field(STRING,width=30)
+
+    class Instance(Table.Instance):
+        def getLabel(self):
+            return self.name
+        
+class Categories(Table):
+    def init(self):
+        self.type  = Pointer(RaceTypes)
+        self.id = Field(STRING,width=3)
+        self.seq = Field(ROWID)
+        self.name = Field(STRING,width=30)
+        self.sex  = Field(SEX)
+        self.ageLimit  = Field(INT)
+        self.setPrimaryKey('type id')
+
+    class Instance(Table.Instance):
+        def getLabel(self):
+            return self.id + " ("+self.name+")"
         
 class Participants(Table):
     def init(self):
@@ -39,9 +64,7 @@ class Participants(Table):
         self.dossard = Field(STRING)
         self.person = Pointer(Persons)
         self.time = Field(TIME)
+        self.cat = Pointer(Categories)
+        self.payment = Field(STRING,width=1)
         
-    class Instance(Table.Instance):
-        def after_city(self):
-            if self.city is not None:
-                self.nation = self.city.nation
 

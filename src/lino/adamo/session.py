@@ -159,6 +159,16 @@ class Session(Context):
             raise InvalidRequestError("no such table: "+str(leadTable))
         return Datasource(self,store,columnNames=columnNames,**kw)
 
+    def data_report(self,ds,**kw):
+        rpt = self.report(**kw)
+        for dc in ds.getVisibleColumns():
+            rpt.addDataColumn(dc,
+                              width=dc.getPreferredWidth(),
+                              label=dc.getLabel())
+        return rpt    
+        
+
+
     def report(self,**kw):
         raise NotImplementedError
     
@@ -263,8 +273,10 @@ class ConsoleSession(Session):
             wr("\n")
 
 
-##     def report(self,**kw):
-##         return self.console.report(**kw)
+##     def report(self,ds=None,**kw):
+##         rpt = self.console.report(**kw)
+##         if ds is not None:
+##             ds.
         
     def showReport(self,ds,*args,**kw):
         rpt = self.report(ds,*args,**kw)

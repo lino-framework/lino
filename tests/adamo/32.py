@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005.
 
 ## This file is part of the Lino project.
 
@@ -17,10 +17,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-
-"""
-Some tests on getDemoDB()
-"""
 
 import types
 import unittest

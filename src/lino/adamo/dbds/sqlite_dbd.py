@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005.
 
 ## This file is part of the Lino project.
 
@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import time
 import warnings
 warnings.filterwarnings("ignore",
                         "DB-API extension",
@@ -29,6 +30,7 @@ from lino.ui.console import confirm
 
 # from lino.adamo.cursor import CursorMixin
 from lino.adamo.sql import SqlConnection
+from lino.adamo import DatabaseError
 # from lino.row import IntelliRow
         
 
@@ -40,22 +42,19 @@ class Connection(SqlConnection):
         self._isTemporary = isTemporary
         self._filename = filename
         self._dump = None
+        self._mtime = 0.0
         if filename:
-            if isTemporary and os.path.exists(filename):
-                os.remove(filename)
-##              while True:
-##                  try:
-##                      os.remove(filename)
-##                      break
-##                  except OSError,e:
-##                      if not confirm(str(e)+"; retry?"):
-##                          raise
-                #assert not os.path.exists(filename)
+            if os.path.exists(filename):
+                if isTemporary:
+                    os.remove(filename)
+                else:
+                    self._mtime = os.stat(filename).st_mtime
             try:
                 self._dbconn = sqlite.connect(filename)
             except sqlite.DatabaseError,e:
-                raise filename + ":" +str(e)
-
+                raise DatabaseError(filename + ":" +str(e))
+##         else:
+##             self._mtime = time.time()
 
     def __str__(self):
         filename = self._filename
@@ -92,7 +91,7 @@ class Connection(SqlConnection):
             csr.execute(sql)
             return csr
         except sqlite.DatabaseError,e:
-            raise sqlite.DatabaseError,sql + "\n" + str(e)
+            raise DatabaseError(sql + "\n" + str(e))
 
     def commit(self):
         #print "commit"
@@ -104,6 +103,20 @@ class Connection(SqlConnection):
         if self._isTemporary and self._filename is not None:
             os.remove(self._filename)
 
+    def getModificationTime(self,table):
+        return self._mtime
+
+    def checkTableExist(self,tableName):
+        sql = """SELECT rootpage
+        FROM sqlite_master
+        where tbl_name='%s' AND type='table';""" % tableName
+        csr = self.sql_exec(sql)
+        if csr.rowcount == 0:
+            return False
+        if csr.rowcount == 1:
+            return True
+        raise DatabaseError('"%s" returned %d' % (sql,csr.rowcount))
+    
 
   
 

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005.
 
 ## This file is part of the Lino project.
 
@@ -19,7 +19,7 @@
 
 import types
 
-from lino.misc.descr import Describable
+from lino.misc.descr import Describable, Configurable
 
 class BaseReport(Describable):
 
@@ -174,28 +174,30 @@ class BaseReport(Describable):
     def onEndRow(self):
         pass
     
-    
 
-class ReportColumn(Describable):
+class ReportColumn(Describable,Configurable):
     
     def __init__(self,owner,
                  name=None,label=None,doc=None,
                  when=None,
                  halign=BaseReport.LEFT,
                  valign=BaseReport.TOP,
-                 width=None):
+                 width=None,
+                 ):
         self._owner = owner
         if label is None:
             label = name
         Describable.__init__(self, name,label,doc)
-        
+
         self.width = width
         self.valign = valign
         self.halign = halign
         self.when = when
         
+        
     def getValue(self,row):
         raise NotImplementedError
+
     
 
 class DataReportColumn(ReportColumn):

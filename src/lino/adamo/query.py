@@ -640,9 +640,13 @@ class DataColumn:
             i+=1
         
     def getAtoms(self): return self._atoms
+    def getPreferredWidth(self):
+        return self.rowAttr.getPreferredWidth()
+    def getLabel(self):
+        return self.rowAttr.getLabel()
 
 #   def getNeededAtoms(self,db):
-#       return 
+#       return
     
     def format(self,value,context):
         raise "no longer used?"

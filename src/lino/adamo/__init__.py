@@ -49,13 +49,14 @@ __builtin__.__dict__['_'] = _
 
 def beginQuickSession(schema,
                       langs=None,
-                      isTemporary=True,
-                      #verbose=None
+                      filename=None,
+                      isTemporary=True
                       ):
     schema.startup()
     
     db = QuickDatabase( schema,
                         langs=langs,
+                        filename=filename,
                         isTemporary=isTemporary
                         )
     db.createTables()
