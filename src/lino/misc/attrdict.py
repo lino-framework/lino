@@ -38,7 +38,10 @@ class AttrDict(dict):
             raise AttributeError,e
 
     def __setattr__(self,name,value):
-        raise "Not allowed"
+        if self._values.has_key(name):
+            self.__dict__['_values'][name] = value
+        else:
+            raise "Not allowed"
 
     def define(self,name,value):
         assert type(name) == types.StringType

@@ -144,6 +144,11 @@ class Container:
         if name is not None:
             frm.tables.define(name,e)
         
+    def addNavigator(self,ds,afterSkip,*args,**kw):
+        frm = self.getForm()
+        e = frm.navigatorFactory(self,ds,afterSkip,*args,**kw)
+        self._components.append(e)
+        
     def addPanel(self,direction): 
         frm = self.getForm()
         btn = frm.panelFactory(self,direction)
@@ -193,6 +198,28 @@ class TableEditor(Component):
     def __init__(self,owner,ds,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
         self.ds = ds
+
+
+class Navigator(Component):    
+    def __init__(self,owner,ds,afterSkip,*args,**kw):
+        Component.__init__(self,owner,*args,**kw)
+        self.ds = ds
+        self.afterSkip = afterSkip
+        self.currentPos = 0
+
+    def skip(self,n):
+        if n > 0:
+            if self.currentPos + n < len(self.ds):
+                self.currentPos += n
+                self.afterSkip(self)
+                self.getForm().refresh()
+        elif self.currentPos + n >= 0:
+            self.currentPos += n
+            self.afterSkip(self)
+            self.getForm().refresh()
+
+
+        
         
 
     
@@ -203,6 +230,7 @@ class Form(Describable):
     buttonFactory = Button
     panelFactory = Panel
     tableEditorFactory = TableEditor
+    navigatorFactory = Navigator
 
     def __init__(self,parent=None,*args,**kw):
         Describable.__init__(self,*args,**kw)
@@ -215,7 +243,8 @@ class Form(Describable):
         self.menuBar = None
         self.lastEvent = None
         self.mainComp = self.panelFactory(self,Container.VERTICAL)
-        for m in ('addLabel','addEntry','addTableEditor',
+        for m in ('addLabel','addEntry',
+                  'addTableEditor','addNavigator',
                   'addPanel','addVPanel','addHPanel',
                   'addButton', 'VERTICAL', 'HORIZONTAL',
                   'addOkButton', 'addCancelButton'):

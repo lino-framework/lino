@@ -92,7 +92,8 @@ class Button(Component,base.Button):
                         wx.DefaultPosition,
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
-        self.getForm().wxctrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
+        self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
+                                   lambda e:self.click(), btn)
         box.Add(btn) #, 0, wx.CENTER,10)
         self.wxctrl = btn
 
@@ -104,12 +105,44 @@ class Button(Component,base.Button):
     def setFocus(self):
         self.wxctrl.SetFocus()
 
-class TableEditor(base.TableEditor,Component):        
+class TableEditor(Component,base.TableEditor):
     def setup(self,parent,box):
         ctrl = wxgrid.TableEditorGrid(parent,self)
         box.Add(ctrl) #, 0, wx.CENTER,10)
         self.wxctrl = ctrl
                 
+        
+class Navigator(Component,base.Navigator):
+    
+    def setup(self,parent,box):
+        frm = self.getForm()
+                
+        mypanel = wx.Panel(parent,-1)
+        box.Add(mypanel, WEIGHT, wx.EXPAND|wx.ALL,10)
+        
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        mypanel.SetSizer(hbox)
+        self.wxctrl = mypanel
+
+
+        label = wx.StaticText(
+            mypanel, -1,
+            "%d/%d"%(self.currentPos,len(self.ds)))
+        hbox.Add(label, WEIGHT, wx.EXPAND, border=10 )
+        
+        hbox.Add( (10,1), 0)
+        
+        btn = wx.Button( mypanel, -1, "<")
+        hbox.Add(btn, WEIGHT, wx.EXPAND, border=10 )
+        self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
+                                   EventCaller(self.skip,-1))
+        
+        btn = wx.Button( mypanel, -1, ">")
+        hbox.Add(btn, WEIGHT, wx.EXPAND, border=10 )
+        self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
+                                   EventCaller(self.skip,1))
+        
+        
         
 
 class Panel(Component,base.Panel):
@@ -261,6 +294,7 @@ class Form(base.Form):
     buttonFactory = Button
     panelFactory = Panel
     tableEditorFactory = TableEditor
+    navigatorFactory = Navigator
 
 ##     def afterShow(self):
 ##         console.debug(repr(self.mainComp))
@@ -397,6 +431,27 @@ class Form(base.Form):
         wx.LogMessage("OnMaximize")
         evt.Skip()
 
+    def refresh(self):
+        self.wxctrl.Refresh()
+
         
 
+## class DataRowForm(Form):
+##     def __init__(self,parent,row,
+##                  name=None,
+##                  label=None,
+##                  doc=None,*args,**kw):
+##         if doc is None:
+##             doc = ds.getDoc()
+##         Form.__init__(self,parent,
+##                       name=name,label=label,doc=doc,
+##                       *args,**kw)
+##         self.row = row
 
+##     def setup(self):
+##         for cell in self.row:
+##             col = cell.col
+##             e = self.addEntry(name=col.name,
+##                               type=col.rowAttr.type,
+##                               label=col.getLabel())
+##         base.Form.setup(self)

@@ -21,8 +21,8 @@ import types
 from lino.misc.etc import issequence
 from query import DataColumnList#, BaseColumnList
 #, DataColumn
-from datatypes import DataVeto, InvalidRequestError
-from rowattrs import FieldContainer, NoSuchField
+from datatypes import DataVeto, InvalidRequestError, STRING
+from rowattrs import FieldContainer, NoSuchField, Pointer
 
 class SimpleDatasource:
     # inherited by Datasource
@@ -56,6 +56,15 @@ class SimpleDatasource:
 
     def mtime(self):
         return self._store.mtime()
+
+##     def getDoc(self):
+##         return self._store._table.doc
+
+##     def getLabel(self):
+##         return self._store._table.label
+
+##     def getName(self):
+##         return self._store._table.name
 
 
     def zap(self):
@@ -202,8 +211,9 @@ class SimpleDatasource:
             rpt.addDataColumn(dc,
                               width=dc.getPreferredWidth(),
                               label=dc.getLabel())
-        kw.setdefault('name',self._table.getTableName())
+        kw.setdefault('name',self._table.getName())
         kw.setdefault('label',self._table.getLabel())
+        kw.setdefault('doc',self._table.getDoc())
         rpt.configure(**kw)
         
     
@@ -212,6 +222,26 @@ class SimpleDatasource:
             rpt = self._session.report()
         self.setupReport(rpt,**kw)
         rpt.execute(self)
+
+
+    def setupForm(self,frm,**kw):
+        row = self[0]
+        for cell in row:
+            dc = cell.col
+            frm.addEntry(name=dc.name,
+                         type=STRING,
+                         label=dc.getLabel(),
+                         value=cell.format())
+
+        def afterSkip(nav):
+            row = self[nav.currentPos]
+            for cell in row:
+                setattr(frm.entries,cell.col.name,cell.format())
+        frm.addNavigator(self,afterSkip=afterSkip)
+        kw.setdefault('name',self._table.getName())
+        kw.setdefault('label',self._table.getLabel())
+        kw.setdefault('doc',self._table.getDoc())
+        frm.configure(**kw)
 
         
     

@@ -19,9 +19,9 @@
 import wx
 import wx.grid
 
-from lino.adamo.rowattrs import Pointer
+#from lino.adamo.rowattrs import Pointer
 
-pointerDataType = "Pointer"
+#pointerDataType = "Pointer"
 
 
 class MyDataTable(wx.grid.PyGridTableBase):
@@ -85,12 +85,12 @@ class MyDataTable(wx.grid.PyGridTableBase):
             row = [None] * len(self.columns)
             raise "todo: append row"
         
-    def GetTypeName(self,row,col):
-        rowAttr = self.columns[col].rowAttr
-        if isinstance(rowAttr,Pointer):
-            #print "Pointer"
-            return pointerDataType
-        return "string"
+##     def GetTypeName(self,row,col):
+##         rowAttr = self.columns[col].rowAttr
+##         if isinstance(rowAttr,Pointer):
+##             #print "Pointer"
+##             return pointerDataType
+##         return "string"
     
 
 
@@ -153,136 +153,10 @@ class MyDataTable(wx.grid.PyGridTableBase):
         self.ds.configure(orderBy=cn)
         self.loadData()
 
-class PointerRenderer(wx.grid.PyGridCellRenderer):
-    def __init__(self):
-        #print "__init__"
-        # copied and adapted from wxoo.table.baseviewer.BaseViewer
-        self.BACKGROUND_SELECTED = wx.SystemSettings_GetColour(
-            wx.SYS_COLOUR_HIGHLIGHT )
-        self.TEXT_SELECTED = wx.SystemSettings_GetColour(
-            wx.SYS_COLOUR_HIGHLIGHTTEXT )
-        self.BACKGROUND = wx.SystemSettings_GetColour(
-            wx.SYS_COLOUR_WINDOW  )
-        self.TEXT = wx.SystemSettings_GetColour(
-            wx.SYS_COLOUR_WINDOWTEXT  )
-        # end copy
-        wx.grid.PyGridCellRenderer.__init__(self)
 
-    def GetValueAsText( self, grid, row, col ):
-        """Customisation Point: Retrieve the current value for row,col as a text string"""
-        row = grid.GetTable().GetValue(row, col)
-        #value = self.GetCurrentTableValue( row, col )
-        if row is None:
-            return ""
-        #return row.getLabel()
-        return repr(row) 
-
-    def Draw(self, grid, attr, dc, rect, row, col, isSelected):
-        
-        """Draw the data from grid in the rectangle with attributes
-        using the dc"""
-        
-        self.Clip(dc, rect)
-        self.Background( grid, attr, dc, rect, row, col, isSelected)
-        try:
-            value = self.GetValueAsText( grid, row, col )
-            dc.SetFont( wx.NORMAL_FONT )
-            return self.SimpleText( value, attr, dc, rect, isSelected)
-        finally:
-            self.Unclip(dc)
-
-    def SimpleText( self, value, attr, dc, rect, isSelected):
-        
-        """Draw a simple text label in appropriate colours with
-        background.  Uses the system settings at application load to
-        draw a rectangle (rect) in either system window background or
-        system selected window background.  Then draws the string
-        "value" using either selected text or normal text colours.  """
-        
-        previousText = dc.GetTextForeground()
-        if isSelected:
-            dc.SetTextForeground( self.TEXT_SELECTED )
-        else:
-            dc.SetTextForeground( self.TEXT )
-        try:
-            dc.DrawText( value, rect.x+2,rect.y+2 )
-        finally:
-            dc.SetTextForeground( previousText )
-
-    def Background( self, grid, attr, dc, rect, row, col, isSelected):
-        """Draw an appropriate background based on selection state"""
-        if isSelected:
-            dc.SetBrush( wx.Brush( self.BACKGROUND_SELECTED, wx.SOLID) )
-        else:
-            dc.SetBrush( wx.Brush( self.BACKGROUND, wx.SOLID) )
-        try:
-            dc.SetPen(wx.TRANSPARENT_PEN)
-            dc.DrawRectangle( rect.x, rect.y, rect.width, rect.height )
-            if attr.IsReadOnly():
-                pass
-##              dc.DrawBitmap(
-##                  READONLYBITMAP,
-##                  rect.x+rect.width-READONLYBITMAP.GetWidth(),
-##                  rect.y+rect.height-READONLYBITMAP.GetHeight(),
-##                  1,
-##              )
-        finally:
-            dc.SetPen( wx.NullPen )
-            dc.SetBrush( wx.NullBrush )
-        
-
-    def Clip( self, dc, rect ):
-        """Setup the clipping rectangle"""
-        dc.SetClippingRegion( rect.x, rect.y, rect.width, rect.height )
-    def Unclip( self, dc ):
-        """Destroy the clipping rectangle"""
-        dc.DestroyClippingRegion()
-            
-        
-
-##  def Draw(self, grid, attr, dc, rect, row, col, isSelected):
-##      dc.SetBackgroundMode(wx.SOLID)
-##      dc.SetBrush(wx.Brush(wx.WHITE, wx.SOLID))
-##      dc.SetPen(wx.TRANSPARENT_PEN)
-##      dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height)
-
-##      dc.SetBackgroundMode(wx.TRANSPARENT)
-##      dc.SetFont(attr.GetFont())
-
-##      row = grid.GetTable().GetValue(row, col)
-##      if row is not None:
-##          text = row.getLabel()
-##         #colors = [wxRED, wxWHITE, wxCYAN]
-##          x = rect.x + 1
-##          y = rect.y + 1
-##          dc.DrawText(text, x, y)
-
-
-    def GetBestSize(self, grid, attr, dc, row, col):
-        row = grid.GetTable().GetValue(row, col)
-        #row = grid.GetCellValue(row, col)
-        if row is None:
-            return wx.Size(0,0)
-        #text = row.getLabel()
-        text = repr(row)
-        dc.SetFont(attr.GetFont())
-        w, h = dc.GetTextExtent(text)
-        return wx.Size(w, h)
-
-
-    def Clone(self):
-        return PointerRenderer()
-
-#from wxoo.resources import readonly_png
-#READONLYBITMAP = readonly_png.getBitmap()
-
-        
 class TableEditorGrid(wx.grid.Grid):
     def __init__(self, parent, editor):
         wx.grid.Grid.__init__(self, parent, -1)
-        self.RegisterDataType(pointerDataType,
-                              PointerRenderer(),
-                              wx.grid.GridCellTextEditor())
         self.table = MyDataTable(editor)
         self.SetTable(self.table,True)
         self.SetRowLabelSize(0)
@@ -302,13 +176,6 @@ class TableEditorGrid(wx.grid.Grid):
         if self.CanEnableCellControl():
              self.EnableCellEditControl()
 
-
-
-    def Reset(self):
-        """reset the view based on the data in the table.   Call
-        this when rows are added or destroyed"""
-        self.table.ResetView(self)
-
     def OnLabelRightClicked(self, evt):
         # Did we click on a row or a column?
         row, col = evt.GetRow(), evt.GetCol()
@@ -317,6 +184,11 @@ class TableEditorGrid(wx.grid.Grid):
             print "OnLabelRightClicked(%d,%d)" % (row,col)
             return
             self.rowPopup(row, evt)
+
+    def Reset(self):
+        """reset the view based on the data in the table.   Call
+        this when rows are added or destroyed"""
+        self.table.ResetView(self)
 
 
     def colPopup(self, col, evt):
@@ -353,7 +225,7 @@ class TableEditorGrid(wx.grid.Grid):
              
     def rowPopup(self, row, evt):
         
-        """(row, evt) -> display a popup menu when a row label is right clicked"""
+        """display a popup menu when a row label is right clicked"""
         
         appendID = wx.NewId()
         deleteID = wx.NewId()
