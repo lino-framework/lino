@@ -69,7 +69,7 @@ srcRoot = os.getcwd() # '.' # os.path.join('src','lino')
 ##         raise "Pilatus problem %s" % srcZipName
 ##     os.remove(srcZipName)
     
-binZipName = r'%s\lino-%s-timtools-mcmillan.zip' % (zipDir,VERSION)
+binZipName = r'%s\timtools-%s-mcmillan.zip' % (zipDir,VERSION)
 if os.path.exists(binZipName):
     if not confirm("Okay to overwrite %s?" % binZipName):
         #distlog.write("(aborted)\n")

@@ -21,8 +21,8 @@
 import sys
 import atexit
 import codecs
+import time
 
-from time import strftime
 from optparse import OptionParser
 from cStringIO import StringIO
 
@@ -105,6 +105,7 @@ class Console(UI):
         self._logfile = None
         self._verbosity = 0
         self._batch = False
+        self._started = time.time()
         #self._dumping = None
         # UI.__init__(self)
         self.set(**kw)
@@ -167,7 +168,7 @@ class Console(UI):
     def writelog(self,msg):
         if self._logfile:
             #t = strftime("%a %Y-%m-%d %H:%M:%S")
-            t = strftime("%H:%M:%S")
+            t = time.strftime("%H:%M:%S")
             self._logfile.write(t+" "+msg+"\n")
             self._logfile.flush()
             
@@ -379,8 +380,11 @@ class Console(UI):
             self.warning("wrong answer: "+s)
 
     def shutdown(self):
+        self.verbose("Done after %f seconds.",
+                    time.time() - self._started)
         if self._logfile:
             self._logfile.close()
+        
 
     def form(self,*args,**kw):
         raise NotImplementedError

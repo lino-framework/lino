@@ -44,15 +44,15 @@ class Case(TestCase):
 
         from lino.textprinter import winprn
         spoolFile = self.addTempFile("3.ps",showOutput=True)
-        d = winprn.Win32PrinterDocument(self.win32_printerName_PS,
-                                        spoolFile)
+        d = winprn.Win32TextPrinter(self.win32_printerName_PS,
+                                    spoolFile)
         self.doit(d)
         
     def test02(self):
 
-        from lino.textprinter import pdfdoc
+        from lino.textprinter import pdfprn
         fn = self.addTempFile("3.pdf",showOutput=True)
-        d = pdfdoc.PdfDocument(fn)
+        d = pdfdoc.PdfTextPrinter(fn)
         self.doit(d)
         
     def test03(self):
@@ -61,7 +61,7 @@ class Case(TestCase):
         fn = self.addTempFile("3.html",showOutput=True)
         f = open(fn,"wt")
         f.write("<html><body>")
-        d = htmlprn.HTMLPrinterDocument(f)
+        d = htmlprn.HtmlTextPrinter(f)
         self.doit(d)
         f.write("</body></html>")
         f.close()

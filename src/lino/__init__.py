@@ -17,6 +17,9 @@ distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information.""" % __version__
 
 
+## import time
+## def started():
+##     return _started
 
 ## import sys
 ## __credits__ = "Python %d.%d.%d %s\n" % sys.version_info[0:4]

@@ -20,17 +20,17 @@
 from twisted.web.html import escape
 
 from lino.ui import console
-from lino.textprinter.document import Document
+from lino.textprinter.textprinter import TextPrinter
 from lino.misc.txt2html import txt2html
 
 class TextObject:
     pass
         
-class HTMLPrinterDocument(Document):
+class HtmlTextPrinter(TextPrinter):
     def __init__(self,writer,
                  cpi=12,
                  charset=None):
-        Document.__init__(self)
+        TextPrinter.__init__(self)
         self.writer = writer
         self.setCpi(cpi)
         

@@ -215,7 +215,7 @@ if 'timtools' in args:
         
         )
 
-    zipname = "%s-%s-exe.zip" % (name,__version__)
+    zipname = "%s-%s-py2exe.zip" % (name,__version__)
     zipname = opj(DIST_ROOT,zipname)
     zf = zipfile.ZipFile(zipname,'w',zipfile.ZIP_DEFLATED)
     l = rdirlist(dist_dir)
