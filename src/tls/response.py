@@ -1,0 +1,567 @@
+#coding: latin1
+#---------------------------------------------------------------------
+# $Id: response.py $
+# Copyright: (c) 2003-2004 Luc Saffre
+# License:	 GPL
+#----------------------------------------------------------------------
+
+## class Response:
+	
+
+## 	def __init__(self,resource,request,context):
+## 		self.resource = resource
+## 		self.context = context
+## 		self.request = request
+		
+## 		updirsToBase = len(self.request.prepath) \
+## 							+ len(self.request.postpath) \
+## 							-1
+## 		self.baseuri = '../' * updirsToBase
+		
+
+
+
+## 	def refToSelf(self,label,**kw):
+## 		url = self.uriToSelf(**kw)
+## 		return '<a href="%s">%s</a>' % (url,label)
+
+## 	#def uriToFile(self):
+		
+
+	
+import types
+from cStringIO import StringIO
+from urllib import quote 
+
+from twisted.web.html import escape
+
+from lino.misc.etc import issequence
+
+from lino import adamo
+from lino.adamo.html import txt2html
+from lino.adamo.rowattrs import Field, Pointer, Detail
+from lino.adamo.context import WebSession
+from lino.adamo.widgets import Command
+
+
+#from quixote.html import htmltext  # to be replaced by equivalent
+def htmltext(s):
+	s = escape(s)
+	# s = s.replace('<','&lt;')
+	# s = s.replace('>','&gt;')
+	# s = s.replace('&','&amp;')
+	return txt2html(s)
+
+
+from lino.adamo.datatypes import MemoType, UrlType, EmailType, LogoType, ImageType
+
+
+class HtmlResponse:
+	
+	CLEAR = "__CLEAR"
+	showRowCount = True
+	
+	BEFORE_LEFT_MARGIN="""
+	<table class="main"><tr>
+	<td class="left" width="15%%">
+	"""
+	AFTER_LEFT_MARGIN="""
+	</td>
+	<td valign="top">
+	"""
+
+	BEFORE_FOOT = """
+	</td></tr></table>
+	<table class="foot">
+	<tr>
+	"""
+	
+	BETWEEN_FOOT = """
+	<td align="right" valign="center">
+	"""
+	
+	AFTER_FOOT = """
+	</td>
+	</tr>
+	</table>
+	</body>
+	</html>
+	"""
+
+	def __init__(self,resource,request,writer):
+		self.request = request
+		self.resource = resource
+		if writer is None:
+			self._writer = StringIO()
+		else:
+			assert hasattr(writer,"write")
+			self._writer = writer
+
+
+	def onBeginResponse(self):
+		pass
+
+	def renderButton(self,url,label=None):
+		if label is None:
+			label="click!"
+		return self.renderLink(url,'[%s]' % label)
+		
+	def renderLink(self,url,label=None):
+		if label is None:
+			label = url
+		else:
+			label = htmltext(label)
+		self.renderFormattedLink(url,label)
+
+	def renderFormattedLink(self,url,label):
+		"label can contain tags and must be valid HTML"
+		self.write('<a href="%s">%s</a>' % (url,label))
+
+	def getSession(self):
+		sess = self.request.getSession()
+		if not hasattr(sess,"_lino_session"):
+			sess._lino_session = WebSession()
+			#sess._lino_session.startSession()
+		return sess._lino_session
+
+	def write(self,html):
+		self._writer.write(html)
+
+## 	def renderMenuBar(self,mb):
+## 		s = ""
+## 		if mb.getLabel():
+## 			s += '<p class="toc"><b>%s</b> ' \
+## 				  % self.formatLabel(mb.getLabel())
+## 		for mnu in mb.getMenus():
+## 			s += '<br><b>%s</b>: ' % self.formatLabel(mnu.getLabel())
+## 			for mi in mnu.getItems():
+## 				s += "<br>" + self.renderAction(mi)
+## 		self.write(s)
+
+
+	def renderCellValue(self,col,value):
+		if isinstance(col.rowAttr,Detail):
+			r = self.child(value)
+			r.writeParagraph()
+		elif isinstance(col.rowAttr,Pointer):
+			r = self.child(value)
+			r.writeLabel()
+		elif isinstance(col.rowAttr,Field):
+			self.renderValue(value,col.rowAttr.type)
+		else:
+			self.write("<tt>"+htmltext(str(value))+"</tt>")
+
+	def renderValue(self,value,type,size=(10,3)):
+
+		if value is None:
+			self.write("&nbsp;")
+			return
+
+		#if hasattr(value,'asParagraph'):
+		#	return value.asParagraph(self)
+		if hasattr(value,'asLabel'):
+			return value.asLabel(self)
+
+		if type is not None:
+			if isinstance(type,MemoType):
+				return self.renderMemo(value)
+			if isinstance(type,LogoType):
+				w = size[0]
+				if w is None:
+					w = 10
+				w *= 10
+				return self.renderImage(src=value,
+												tags='width="%d"' % w,
+												label=value)
+			if isinstance(type,ImageType):
+				return self.renderImage(src=value,label=value)
+			if isinstance(type,UrlType):
+				return self.renderLink(value)
+			if isinstance(type,EmailType):
+				return self.renderFormattedLink('mailto:'+value,
+											  label=value)
+			#self.write('unkown type %s'%repr(type))
+		self.write(htmltext(str(value)))
+
+	def writeLabel(self):
+		raise NotImplementedError
+	
+	def writeParagraph(self):
+		self.writeLabel()
+
+	def writeForm(self,labeledValues):
+		wr = self.write
+		wr('<table border="0" class="data">')
+		for label,value in labeledValues:
+			#if not name in ('abstract','body'):
+			#value = getattr(row,attr.name)
+			if value is not None:
+				wr('\n<tr><td align="right">' + label + '</td>\n<td>')
+				wr('\n<tr><td>' + value + '</td>\n<td>')
+## 				if hasattr(value,'asFormCell'):
+## 					value.asFormCell(renderer)
+## 				else:
+## 					type = getattr(attr,'type',None)
+## 					renderer.renderValue(value,type)
+				wr('</td>\n</tr>')
+
+		wr('\n</table>')
+		
+
+	def writeDebugMessage(self,msg):
+		self.write('<font size="1" color="grey">')
+		self.write(escape(msg))
+		self.write('</font>')
+
+
+## 	def refToSelf(self,label,*args,**options):
+## 		raise NotImplementedError
+
+
+	def buildURL(self,url,*args,**kw):
+		if len(args):
+			url += "/" + "/".join([str(v) for v in args])
+		sep = "?"
+		for (k,v) in kw.items():
+			if issequence(v):
+				for i in v:
+					url += sep + k + "=" + str(i)
+					sep = "&"
+			elif v is not self.CLEAR:
+				if v is None:
+					url += sep + k + "=" 
+				else:
+					url += sep + k + "=" + str(v)
+				sep = "&"
+		return url
+		
+	
+	def homeURI(self,*args,**kw):
+		inet, addr, port = self.request.getHost()
+		if self.request.isSecure():
+			default = 443
+		else:
+			default = 80
+		if port == default:
+			hostport = ''
+		else:
+			hostport = ':%d' % port
+		uri = quote('http%s://%s%s' % (
+			self.request.isSecure() and 's' or '',
+			self.request.getRequestHostname(),
+			hostport), "/:")
+		return self.buildURL(uri,*args,**kw)
+
+		
+
+	def uriToSelf(self,*args,**kw):
+		
+## 		"""twisted.web.http.Request.requestReceived() merges POSTDATA
+## 		and URL arguments into self.args So I must do the work again
+## 		because I want only the URI argumens.	"""
+		
+## 		x = self.request.uri.split('?')
+
+## 		if len(x) == 1:
+## 			args = {}
+## 		else:
+## 			if len(x) != 2:
+## 				raise "May ignore parts of this invalid URI: %s" % \
+## 						repr(self.uri)
+## 			args = parse_qs(x[1], 1)
+ 
+		
+		args = self.request.args.copy()
+		for (k,v) in kw.items():
+			args[k] = v
+			
+		#return self.buildURL(path,**args)
+		return self.buildURL(self.request.prePathURL(),
+									*self.request.postpath,
+									**args)
+
+		
+	def fileURI(self,*args):
+		return self.homeURI("files",*args)
+	
+	def uriToImage(self,*args):
+		return self.fileURI("images",*args)
+
+
+	def formatLabel(self,label):
+		return htmltext(label)
+
+	def writeBody(self):
+		self.writePage()
+		self.writeFooter()
+
+	def writeUserPanel(self):
+		pass
+	
+	def writeFooter(self):
+		pass
+
+	def writeLeftMargin(self):
+		pass
+	
+	def writePreTitle(self):
+		pass
+		#self.write('preTitle')
+
+	def getTitle(self):
+		raise NotImplementedError
+		
+	def writeWholePage(self):
+		#assert isinstance(widget,Widget)
+
+		self.onBeginResponse()
+		
+		title = self.getTitle()
+
+		wr = self.write
+
+		wr("""\
+		<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+		"http://www.w3.org/TR/html4/loose.dtd">
+		<html>
+		<head>
+		""")
+		wr("<title>%s</title>" % title)
+		if self.resource.stylesheet is not None:
+			wr("""\
+			<link rel=stylesheet type="text/css" href="%s">
+			""" % (self.fileURI(self.resource.stylesheet)))
+		wr("""
+		</head>
+		<body>
+		""")
+		wr(self.BEFORE_LEFT_MARGIN)
+		self.writeUserPanel()
+		self.writeLeftMargin()
+		if True:
+			wr("""<p><b>Debug panel:</b></p>""")
+			self.writeDebugPanel()
+		wr(self.AFTER_LEFT_MARGIN)
+		wr("""
+		<table class="head">
+		<tr>
+		<td>
+		""")
+		self.writePreTitle()
+		wr('<p class="title">%s</p>' % title)
+		wr("""
+		</td>
+		</tr>
+		</table>
+		""")
+
+		self.writeBody()
+
+		wr(self.BEFORE_FOOT)
+		wr("""<td align="left" valign="center">""")
+		self.writeLeftFooter()
+		wr("</td>")
+		
+		wr(self.BETWEEN_FOOT)
+		self.renderButton(url=self.uriToSelf(),
+								label="reload")
+		wr(self.AFTER_FOOT)
+
+
+
+	def writeDebugPanel(self):
+		wr = self.write
+		wr("renderer: " + self.__class__.__name__)
+		#wr("<br>baseuri="+self.response.baseuri)
+		#wr("<br>prePathURL="+self.request.prePathURL())
+		wr("<br>stylesheet="+self.resource.stylesheet+"<br>")
+		
+	def writeLeftFooter(self):
+		self.write("""
+		<font size=1>
+		This site is hosted on a
+		<a href="%s"
+		target="_top">Twisted Lino Server</a>.
+		Copyright 1999-2004 Luc Saffre.
+		
+		</font>
+		""" % self.homeURI())
+
+
+
+
+		
+
+	
+class ContextedResponse(HtmlResponse):
+
+	def __init__(self,resource,request,target,writer):
+		self.target = target
+		self._context = target.getContext()
+		assert self._context is not None
+		HtmlResponse.__init__(self,resource,request,writer)
+
+
+	def getSession(self):
+		sess = HtmlResponse.getSession(self)
+		sess.setContext(self._context)
+		return sess
+		
+		
+	def child(self,target):
+		return target.getRenderer(self.resource,
+										  self.request,
+										  self._writer)
+		
+	def getTitle(self):
+		return htmltext(self.target.getLabel())
+	
+	def contextURI(self,*args,**kw):
+		return self.homeURI( self._context._db.getName(),
+									*args,**kw)
+	def fileURI(self,*args):
+		return HtmlResponse.homeURI(self,
+											 "files",
+											  self._context._db.getName(),
+											  *args)
+
+	def uriToDatasource(self,ds,**p):
+		if ds._orderBy != None:
+			p.setdefault('ob',ds._orderBy)
+		if ds._viewName != ds._table._defaultView:
+			p.setdefault('v', ds._viewName)
+		if ds._search != None:
+			p.setdefault('search', ds._search)
+		if ds._sqlFilters != None:
+			p.setdefault('flt',ds._sqlFilters)
+
+		for (key,value) in ds._samples.items():
+			col = ds._clist.getColumn(key)
+			p[key] = col.format(value,ds)
+		#uri = self.baseuri + ds._context._db.getName()+"/db"+ds._table.getTableName()
+		return self.uriToTable(ds._table,**p)
+
+	def uriToTable(self,table,**p):
+		return self.contextURI( "db",
+										table.getTableName(), **p)
+
+		
+	def uriToRow(self,row):
+		url = self.uriToTable(row._ds._table)
+		url += '/' + ','.join([str(v) for v in row.getRowId()])
+		return url
+
+
+
+	def formatLabel(self,label):
+		p = label.find(self._context._db.schema.HK_CHAR)
+		if p != -1:
+			return htmltext(label[:p]) \
+					  + '<u>' \
+					  + htmltext(label[p+1]) \
+					  + '</u>' \
+					  + htmltext(label[p+2:])
+		return htmltext(label)
+
+	def renderPicture(self,src,tags=None,label=None):
+		imageType = "pictures"
+		src = src.replace('\\','/')
+		pos = src.rfind('.')
+		if pos == -1:
+			raise "picture filename without extension"
+		webSrc = src[:pos]+"_web"+src[pos:]
+		self.write(
+			'<a href="%s">' % self.uriToImage(imageType,src))
+		if tags is None:
+			tags = 'height="150"'
+		else:
+			if not ("width=" in tags or "height=" in tags):
+				tags += 'height="150"'
+		self.renderImage(imageType,webSrc,tags,label)
+		self.write('</a>')
+					  
+	def renderImage(self,imageType,src,tags=None,label=None):
+		src = self.uriToImage(imageType,src)
+		self.write(self.refToImage(src,tags,label))
+					  
+	def refToImage(self,src,tags=None,label=None):
+		if label is None:
+			label = src
+		s = '<img src="%s" alt="%s"' % (src,htmltext(label))
+		if tags is not None:
+			s += " "+tags
+		s += ">"
+		return s
+
+	
+	def renderMemo(self,txt):
+		self._context.memo2html(self,txt)
+
+	
+	def writeUserPanel(self):
+		wr = self.write
+		sess = self.getSession()
+		frm = sess.getCurrentForm()
+		if frm is not None:
+			for mnu in frm.getMenus():
+				self.renderMenu(mnu)
+			
+			if len(frm):
+				wr("""<p><form
+				style="padding:5px;border:1px solid black;"
+				action="%s"
+				method="POST">
+				""" % self.uriToSelf())
+
+				for cell in frm:
+					wr("\n")
+					wr(cell.col.name)
+					wr(": ")
+					wr("""<input type="text" name="%s" value="%s">""" % \
+						(cell.col.name,htmltext(cell.format())))
+					wr("\n<br>")
+				wr("""\n<input type="hidden" name="formName" value="%s">""" % frm.getFormName())
+				wr("""\n<input type="submit" value="OK">""")
+
+				wr("""<br><a href="%s">register</a>""" % \
+					self.contextURI("register"))
+				wr("</form></p>")
+		else:
+			wr("""<p style="padding:5px;border:1px solid black;">""")
+			wr("no form</p>")
+		msgs = sess.popMessages()
+		if len(msgs) > 0:
+			wr('<p>')
+			for msg in msgs:
+				wr("""<br><font color="red">%s</font>""" % htmltext(msg))
+			wr('</p>')
+			
+
+	def renderMenu(self,mnu):
+		wr = self.write
+		wr('<p class="menu"><b>%s</b> :' % \
+			self.formatLabel(mnu.getLabel()))
+
+		for mi in mnu.getItems():
+			wr('<br>')
+			if isinstance(mi,Command):
+				self.renderFormattedLink(self.uriToCommand(mi),
+												 self.formatLabel(mi.getLabel()))
+			else:
+				wr(self.formatLabel(mi.getLabel()))
+			
+	def uriToCommand(self,a):
+		l =[ a.getName() ]
+		owner = a._owner
+		while owner is not None:
+			l.insert(0,owner.getName())
+			owner = getattr(owner,'_owner',None)
+		l.insert(0,"cmds")
+		return self.contextURI(*l)
+	
+		
+	def writeLeftMargin(self):
+		wr = self.write
+		wr('''<a href="%s">Home</a>''' % self.contextURI())
+		wr('''<br><a href="%s">Menu</a>''' % self.contextURI("menu"))
+	
