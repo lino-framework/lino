@@ -22,7 +22,7 @@ class Connection:
 
     def __init__(self,schema):
         self.schema = schema
-        center.addConnection(self)
+        #center.addConnection(self)
         
 
     def onTableSetup(self,table):
@@ -42,8 +42,8 @@ class Connection:
         pass
     
     def executeSelect(self,query,
-                            limit=None,
-                            offset=None):
+                      limit=None,
+                      offset=None):
         raise NotImplementedError
         
     def executeCount(self,query):

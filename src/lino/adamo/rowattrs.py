@@ -19,6 +19,7 @@
 #import types
 #from copy import copy
 
+from lino.adamo import datatypes
 from lino.misc.compat import *
 from lino.misc.etc import issequence
 from lino.adamo.exceptions import DataVeto, StartupDelay
@@ -217,6 +218,9 @@ class Field(RowAttribute):
 
     def setType(self,type):
         self.type = type
+
+    def getType(self):
+        return self.type
 
     def format(self,v):
         return self.type.format(v)
@@ -606,6 +610,9 @@ class Pointer(RowAttribute):
                 atomicValues = atomicValues[pklen:]
         raise "invalid tableId %d" % tableId
     
+    def getType(self):
+        return datatypes.STRING
+
     
 
         
@@ -675,6 +682,8 @@ class Detail(RowAttribute):
 ##                               self.pointer._owner.getTableName())
 ##      return slaveSource.query(**kw)
         
+    def getType(self):
+        return datatypes.STRING
 
 class Vurt(RowAttribute):
     """

@@ -210,51 +210,59 @@ class Panel(base.Panel):
 class EntryMixin:
 
     def setup(self,panel,box):
-        mypanel = wx.Panel(panel,-1)
-        mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
-        box.Add(mypanel, WEIGHT, wx.EXPAND|wx.ALL,10)
-        
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        mypanel.SetSizer(hbox)
+        if self.getLabel() is None:
+            mypanel = panel
+            hbox = box
+        else:
+            mypanel = wx.Panel(panel,-1)
+            mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
+            box.Add(mypanel, WEIGHT, wx.EXPAND|wx.ALL,10)
 
-        if self.doc is not None:
-            label = wx.Panel(mypanel,-1)
-            label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-            labelSizer = wx.BoxSizer(wx.VERTICAL)
-            label.SetSizer(labelSizer)
+            hbox = wx.BoxSizer(wx.HORIZONTAL)
+            mypanel.SetSizer(hbox)
 
-            labelCtrl = wx.StaticText(label, -1,
+            if self.doc is not None:
+                label = wx.Panel(mypanel,-1)
+                label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+                labelSizer = wx.BoxSizer(wx.VERTICAL)
+                label.SetSizer(labelSizer)
+
+                labelCtrl = wx.StaticText(label, -1,
+                                          self.getLabel(),
+                                          style=wx.ALIGN_RIGHT)
+                labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+                labelSizer.Add(labelCtrl,1,wx.EXPAND,10)
+
+                #ENTRY_DOC_FONT = wx.Font(pointSize=8,
+                #                         family=wx.DEFAULT)
+                ENTRY_DOC_FONT = wx.SMALL_FONT
+                docCtrl = wx.StaticText(
+                    label, -1,
+                    "\n".join(docWrapper.wrap(self.doc)),
+                    style=wx.ALIGN_LEFT)
+                docCtrl.SetFont(ENTRY_DOC_FONT)
+                docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+                labelSizer.Add(docCtrl,1,wx.EXPAND,10)
+
+            else:
+                label = wx.StaticText(mypanel, -1,
                                       self.getLabel(),
                                       style=wx.ALIGN_RIGHT)
-            labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-            labelSizer.Add(labelCtrl,1,wx.EXPAND,10)
-            
-            #ENTRY_DOC_FONT = wx.Font(pointSize=8,
-            #                         family=wx.DEFAULT)
-            ENTRY_DOC_FONT = wx.SMALL_FONT
-            docCtrl = wx.StaticText(
-                label, -1,
-                "\n".join(docWrapper.wrap(self.doc)),
-                style=wx.ALIGN_LEFT)
-            docCtrl.SetFont(ENTRY_DOC_FONT)
-            docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-            labelSizer.Add(docCtrl,1,wx.EXPAND,10)
-            
-        else:
-            label = wx.StaticText(mypanel, -1,
-                                  self.getLabel(),
-                                  style=wx.ALIGN_RIGHT)
-            label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-            
-        hbox.Add(label, WEIGHT,
-                 wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
-                 border=10,
-                 )
+                label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
 
-        hbox.Add( (10,1), 0) # spacer
+            hbox.Add(label, WEIGHT,
+                     wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
+                     border=10,
+                     )
+
+            hbox.Add( (10,1), 0) # spacer
 
 
-        editor = wx.TextCtrl(mypanel,-1,self.getValueForEditor())
+        style=0
+        if isinstance(self.getType(),datatypes.MemoType):
+            style = style|wx.TE_MULTILINE
+        editor = wx.TextCtrl(mypanel,-1,self.getValueForEditor(),
+                             style=style)
                              #validator=EntryValidator(self))
                              #style=wx.TE_PROCESS_ENTER)
         #self.Bind(wx.EVT_TEXT, self.EvtText, t1)

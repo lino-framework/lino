@@ -42,7 +42,12 @@ class Case(TestCase):
         sql = R.stopDump()
         #print sql
         self.assertEquivalent(sql,"""\
-SELECT MAX(id) FROM Races; INSERT INTO Races ( id, name1, name2, date, status, tpl, type_id, startTime ) VALUES ( 1, 'test a', NULL, 731974, NULL, NULL, NULL, '17:38:59' );        
+SELECT MAX(id) FROM Races; INSERT INTO Races (
+id, name1, name2, date, status, tpl, type_id,
+startTime, known, unknown, invalid, missing, event_id
+) VALUES
+( 1, 'test a', NULL, 731974, NULL, NULL, NULL,
+'17:38:59', NULL, NULL, NULL, NULL, NULL );        
         """)
 
         R.startDump()
@@ -50,7 +55,8 @@ SELECT MAX(id) FROM Races; INSERT INTO Races ( id, name1, name2, date, status, t
         sql = R.stopDump()
         #print sql
         self.assertEquivalent(sql,"""\
-SELECT id, name1, name2, date, status, tpl, type_id, startTime FROM Races WHERE id = 1;        
+SELECT id, name1, name2, date, status, tpl, type_id, startTime, known, unknown, invalid, missing, event_id
+FROM Races WHERE id = 1;        
         """)
         self.assertEqual(race.startTime,jetzt)
         self.assertEqual(race.date,heute)

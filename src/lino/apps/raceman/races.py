@@ -27,6 +27,18 @@ from lino.schemas.sprl.addrbook import Persons, SEX
 NAME = STRING(width=30)
 DOSSARD = STRING(width=4)
 
+
+class Events(Table):
+    def init(self):
+        self.addField('date',DATE)
+        self.addField('name',NAME)
+
+    class Instance(Table.Instance):
+        def getLabel(self):
+            return self.name
+        
+
+
 class Races(Table):
     def init(self):
         self.addField('id',ROWID) #STRING(width=6))
@@ -41,6 +53,7 @@ class Races(Table):
         self.addField('unknown',INT)
         self.addField('invalid',INT)
         self.addField('missing',INT)
+        self.addPointer('event',Events)
         self.addView( "std",
                       "date name1 status startTime "
                       "arrivals participants "
@@ -347,6 +360,7 @@ class Arrivals(Table):
 
 # order of tables is important: tables will be populated in this order
 TABLES = (
+    Events,
     Clubs,
     Persons,
     RaceTypes,

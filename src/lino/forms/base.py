@@ -83,8 +83,8 @@ class Button(Component):
         except InvalidRequestError,e:
             frm.status(str(e))
         except Exception,e:
-            frm.showException(e,"clicked %s in %s" % (
-                str(self),frm.getLabel()))
+            frm.showException(e,"after clicking '%s' in '%s'" % (
+                self.getLabel(),frm.getLabel()))
         #except Exception,e:
         #    frm.error(str(e))
         
@@ -144,6 +144,8 @@ class Entry(BaseEntry):
 
     def getValue(self):
         return self._value
+    def getType(self):
+        return self._type
     
     def format(self,v):
         return self._type.format(self._value)
@@ -173,6 +175,9 @@ class DataEntry(BaseEntry):
     def format(self,v):
         return self.dc.rowAttr.format(v)
 
+    def getType(self):
+        return self.dc.rowAttr.getType()
+    
     def getValue(self):
         frm = self.getForm()
         return self.dc.getCellValue(frm.data)
@@ -397,6 +402,12 @@ class Container(Component):
         self._components.append(e)
         return e
 
+##     def addTextEditor(self,s,*args,**kw):
+##         frm = self.getForm()
+##         e = frm.toolkit.textEditorFactory(frm,s,*args,**kw)
+##         self._components.append(e)
+##         return e
+
     def addDataGrid(self,ds,name=None,*args,**kw):
         frm = self.getForm()
         e = frm.toolkit.tableEditorFactory(self,ds,*args,**kw)
@@ -500,12 +511,26 @@ class GUI(console.UI):
     def form(self,*args,**kw):
         raise NotImplementedError
     
-    def decide(self,*args,**kw):
-        raise NotImplementedError
+    def decide(self,prompt,answers,
+               title="Decision",
+               default=0):
+        frm = self.form(label=title,doc=prompt)
+        p = frm.addPanel(Panel.HORIZONTAL)
+        buttons = []
+        for i in range(len(answers)):
+            btn = p.addButton(label=answers[i])
+            btn.setHandler(frm.close)
+            buttons.append(btn)
+        frm.showModal()
+        for i in range(len(answers)):
+            if frm.lastEvent == buttons[i]:
+                return i
+        raise "internal error: no button clicked?"
+        
     
     def confirm(self,prompt,default="y"):
-        frm = self.form(label="Confirmation")
-        frm.addLabel(prompt)
+        frm = self.form(label="Confirmation",doc=prompt)
+        #frm.addLabel(prompt)
         p = frm.addPanel(Panel.HORIZONTAL)
         ok = p.addOkButton()
         cancel = p.addCancelButton()
@@ -561,16 +586,29 @@ class GUI(console.UI):
         frm.show()
         
     def showException(self,e,details=None):
+        msg = str(e)
         out = StringIO()
         traceback.print_exc(None,out)
         s = out.getvalue()
         del out
         if details is not None:
-            s += "\n" + details
-        s += "\nIgnore?"
-        if self.confirm(s):
-            return
-        raise e
+            msg += "\n" + details
+        #msg += "\nIgnore?"
+        #print s
+        while True:
+            i = self.decide(
+                msg,
+                answers=("~End","~Ignore","~Details","~Send"))
+            if i == 0:
+                raise e
+            elif i == 1:
+                return
+            elif i == 2:
+                frm = self.form(label="Details")
+                frm.addEntry(type=MEMO,value=s)
+                frm.show()
+                
+
 
 
 
@@ -659,7 +697,7 @@ class Form(Describable,GUI):
             raise "Form with menu cannot be modal!"
         self.show(modal=True)
         return self.lastEvent == self.defaultButton
-    
+
     def ok(self):
         self.close()
 
@@ -680,6 +718,7 @@ class Toolkit(GUI):
     labelFactory = Label
     entryFactory = Entry
     dataEntryFactory = DataEntry
+    #textEditorFactory = TextEditor
     buttonFactory = Button
     panelFactory = Panel
     tableEditorFactory = DataGrid
