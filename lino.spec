@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -29,12 +29,17 @@ from lino.ui.console import confirm
 from lino.misc.rdir import rdirlist
 
 from lino import __version__
+
+VERSION = __version__
+for x in __version__.split('.'):
+    if not x.isdigit():
+        VERSION = "current"
+
 #from lino.releases import version, notes
 
-
 global distDir # otherwise build() won't find it
-
 distDir=r'c:\temp\lino'
+
 zipDir=r'u:\htdocs\timwebs\lino\dl'
 
 global opj
@@ -43,13 +48,13 @@ opj = os.path.join
 srcRoot = os.getcwd() # '.' # os.path.join('src','lino')
 #wwwPath = opj(srcRoot,"docs","download")
 
-srcZipName = r'%s\lino-%s-src.zip' % (zipDir,__version__)
+srcZipName = r'%s\lino-%s-src.zip' % (zipDir,VERSION)
 if os.path.exists(srcZipName):
 	if not confirm("Okay to remove %s?" % srcZipName):
 		raise "Pilatus problem %s" % srcZipName
 	os.remove(srcZipName)
 	
-binZipName = r'%s\lino-%s-timtools-win32.zip' % (zipDir,__version__)
+binZipName = r'%s\lino-%s-timtools-win32.zip' % (zipDir,VERSION)
 if os.path.exists(binZipName):
 	if not confirm("Okay to remove %s?" % binZipName):
 		raise "Pilatus problem %s" % binZipName
