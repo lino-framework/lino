@@ -66,7 +66,7 @@ class HTMLPrinterDocument(Document):
             
         
     def newline(self):
-        self.writer.write("<br/>")
+        self.writer.write("\n")
         
         
     def insertImage(self,line):
