@@ -34,7 +34,7 @@ import sys
 import getopt
 
 from lino import copyleft
-from lino.misc import console
+from lino.ui import console
 from lino.webman.static import wmm2html
     
 

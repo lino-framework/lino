@@ -23,10 +23,7 @@ import os, sys
 
 from lino.misc.compat import *
 from lino.misc import tsttools
-from lino.misc import console
-
-#from lino.sdoc.macros import fileref
-
+from lino.ui import console
 
 
 class FailuresFound(Exception):

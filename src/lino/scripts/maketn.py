@@ -17,7 +17,7 @@ import sys
 from PIL import Image
 
 from lino import copyleft
-from lino.misc import console
+from lino.ui import console
 
 class Size:
 	def __init__(self,suffix,size):

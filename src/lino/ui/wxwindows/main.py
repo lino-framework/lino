@@ -12,6 +12,8 @@ import os
 from lino.adamo.widgets import Action
 from lino.adamo.datasource import DataCell
 from lino.adamo import center
+from lino.adamo.session import Session
+
 
 from gridframe import RptFrame
 
@@ -186,8 +188,6 @@ class FormFrame(wx.Frame):
 		wx.LogMessage("OnMaximize")
 		evt.Skip()
 
-
-from lino.adamo.session import Session
 
 class WxSession(Session):
 	

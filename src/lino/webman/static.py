@@ -25,7 +25,7 @@ from docutils import core
 from nodes import WebModule, TxtWebPage
 from sitemap import Site
 
-from lino.misc import console 
+from lino.ui import console 
 
 ## DEFAULTS = {'input_encoding': 'latin-1',
 ##              'output_encoding': 'latin-1',

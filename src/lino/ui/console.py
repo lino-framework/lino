@@ -277,3 +277,5 @@ def parse_args(argv):
     p = _syscon.getOptionParser()
     return p.parse_args(argv)
     
+def run(sess):
+    pass

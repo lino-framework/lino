@@ -22,7 +22,7 @@ import win32ui
 import win32con
 
 from lino import copyleft
-from lino.misc import console
+from lino.ui import console
 from lino.misc.prndoc import Document, main
 
 pt = 20

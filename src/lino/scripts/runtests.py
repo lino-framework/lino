@@ -6,7 +6,7 @@ import sys
 import unittest
 
 from lino.misc import tsttools
-from lino.misc import console
+from lino.ui import console
 
 def main(argv):
 

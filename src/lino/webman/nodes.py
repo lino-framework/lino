@@ -20,7 +20,7 @@
 
 import os
 
-from lino.misc import console
+from lino.ui import console
 from lino.misc.restify import reSTify 
 from lino.webman import __version__
 from lino.twisted_ui.response import HtmlResponse

@@ -8,7 +8,7 @@
 import sys, os
 
 from lino import copyleft
-from lino.misc import console
+from lino.ui import console
 
 import datetime
 

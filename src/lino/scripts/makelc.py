@@ -28,7 +28,7 @@ import os
 import sys
 
 from lino import copyleft
-from lino.misc import console
+from lino.ui import console
 
 class Collector:
     def __init__(self):
