@@ -119,7 +119,9 @@ class RowAttribute(Describable):
     def getTestEqual(self,ds, colAtoms,value):
         raise NotImplementedError
 
-
+    def canWrite(self,row):
+        # note : row may be None. 
+        return True
     
     def row2atoms(self,row):
         """fill into atomicRow the atomic data necessary to represent

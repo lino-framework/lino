@@ -35,7 +35,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
         self.loadData()
 
     def loadData(self):
-        self.rows = [ [cell.format() for cell in row]
+        self.rows = [ [str(cell) for cell in row]
                       for row in self.ds]
         #self.rows = [row for row in self.report]
 
@@ -74,13 +74,16 @@ class MyDataTable(wx.grid.PyGridTableBase):
         "required"
         #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
         try:
-            row = self.ds[rowIndex]
-            cell = row[colIndex]
-            #row = self.rows[rowIndex]
-            cell.parse(value)
-            #row.setCellValue(colIndex, value)
-            #row[colIndex] = value
-            self.rows[rowIndex][colIndex] = cell.format()
+##             row = self.ds[rowIndex]
+##             #dc = self.ds.getColumn(colIndex)
+##             #v = dc.rowAttr.parse(value)
+##             #dc.setValueFromString(value)
+##             cell = row[colIndex]
+##             cell.setValueFromString(value)
+##             #row.setCellValue(colIndex, value)
+##             #row[colIndex] = value
+##             self.rows[rowIndex][colIndex] = cell.format()
+            self.rows[rowIndex][colIndex] = value
         except IndexError:
             row = [None] * len(self.columns)
             raise "todo: append row"

@@ -40,6 +40,8 @@ class SimpleDatasource:
             clist = store._peekQuery
         assert clist.leadTable is store._table
         self._clist = clist
+        #for m in 'getColumn', 'getColumnByName':
+        #    setattr(self,m,getattr(clist,m))
 
 
         # self._db = store._db # shortcut
@@ -180,13 +182,15 @@ class SimpleDatasource:
         if self._sqlFilters != None:
             p['flt'] = self._sqlFilters
         for (key,value) in self._samples.items():
-            col = self._clist.getColumn(key)
+            col = self.getColumnByName(key)
             p[key] = col.format(value,self)
         return p
         
-            
-    def getColumn(self,*args,**kw):
-        self._clist.getColumn(*args,**kw)
+        
+    def getColumn(self,i):
+        col = self._clist.visibleColumns[i]
+    def getColumnByName(self,name):
+        self._clist.getColumnByName(name)
         
         
 ##  def getView(self,viewName):
@@ -237,20 +241,27 @@ class SimpleDatasource:
         rpt.execute(self)
 
 
-    def setupForm(self,frm,**kw):
-        row = self[0]
-        for cell in row:
-            dc = cell.col
-            frm.addEntry(name=dc.name,
-                         type=STRING,
-                         label=dc.getLabel(),
-                         value=cell.format())
+    def setupForm(self,frm,row=None,**kw):
+        if row is None:
+            row = self[0]
+        for dc in self.getVisibleColumns():
+            frm.addDataEntry(dc)
+##         for cell in row:
+##             dc = cell.col
+##             frm.addDataEntry(dcname=dc.name,
+##                          label=dc.getLabel(),
+##                          enabled=cell.canWrite(),
+##                          getter=cell.__str__,
+##                          setter=cell.setValueFromString)
 
         def afterSkip(nav):
             row = self[nav.currentPos]
-            for cell in row:
-                setattr(frm.entries,cell.col.name,cell.format())
+            frm.data = row
+            #frm.refresh()
+##             for cell in row:
+##                 setattr(frm.entries,cell.col.name,cell.format())
         frm.addNavigator(self,afterSkip=afterSkip)
+        kw.setdefault('data',row)
         kw.setdefault('name',self._table.getName())
         kw.setdefault('label',self._table.getLabel())
         kw.setdefault('doc',self._table.getDoc())
@@ -352,7 +363,7 @@ class SimpleDatasource:
             if len(self._samples) > 0:
                 lbl += " ("
                 for (k,v) in self._samples.items():
-                    col = self._clist.getColumn(k)
+                    col = self._clist.getColumnByName(k)
                     lbl += col.name + "=" \
                              + col.rowAttr.format(v)
                 lbl += ")"
@@ -414,7 +425,7 @@ class SimpleDatasource:
         l = []
         atomicRow = self._clist.makeAtomicRow() 
         for (name,value) in self._samples.items():
-            col = self._clist.getColumn(name)
+            col = self._clist.getColumnByName(name)
             col.value2atoms(value,atomicRow,self.getDatabase())
             # 20050110
             # col.value2atoms(value,atomicRow,self.getContext())
@@ -606,7 +617,7 @@ class SimpleDatasource:
             flt.append(col.getTestEqual(self,arg))
             i+=1
         for k,v in knownValues.items():
-            col = self._clist.getColumn(k)
+            col = self._clist.getColumnByName(k)
             flt.append(col.getTestEqual(self,v))
         ds = self.query(sqlFilters=(' AND '.join(flt),))
         return ds
@@ -874,6 +885,9 @@ class DataRow:
         self.unlock()
 
 
+    def canWrite(self):
+        return True
+    
     def validate(self):
         pass
 
@@ -1192,6 +1206,11 @@ class DataCell:
 ##         if v is None:
 ##             return ""
 ##         return self.col.rowAttr.format(v)
+
+    def canWrite(self):
+        if self.row.canWrite():
+            return self.col.canWrite(self.row)
+        return False
     
     def __repr__(self):
         return repr(self.col.getCellValue(self.row))
@@ -1206,7 +1225,14 @@ class DataCell:
             return ""
         return self.col.rowAttr.format(v)
     
-    def parse(self,s):
-        value = self.col.rowAttr.parse(s)
+    #def parseAndSet(self,s):
+    def setValueFromString(self,s):
+        if len(s) == 0:
+            self.setValue(None)
+        else:
+            v=self.col.rowAttr.parse(s)
+            self.setValue(v)
+        
+    def setValue(self,value):
         self.col.setCellValue(self.row,value)
 

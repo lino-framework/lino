@@ -166,7 +166,10 @@ class BaseColumnList:
         #print "query.py: ", [col.name for col in self._columns]
         return None
 
-    def getColumn(self,name):
+##     def getColumn(self,i):
+##         return self.visibleColumns[i]
+    
+    def getColumnByName(self,name):
         col = self.findColumn(name)
         if col is None:
             msg = "No column '%s' in %s (%s)" % (
@@ -250,7 +253,7 @@ class BaseColumnList:
             i += 1
             
         for k,v in kw.items():
-            col = self.getColumn(k)
+            col = self.getColumnByName(k)
             col.setCellValue(row,v)
             #rowattr = self.leadTable.getRowAttr(k)
             #row._values[rowattr._name] = v
@@ -307,7 +310,7 @@ class BaseColumnList:
             i += 1
             
         for k,v in kw.items():
-            col = self.getColumn(k)
+            col = self.getColumnByName(k)
             col.value2atoms(v,atomicRow,context)
         return atomicRow
 
@@ -537,6 +540,8 @@ class DataColumn:
     def __repr__(self):
         return "<column %d:%s in %s>" % (self.index,self.name,
                                                     repr(self._owner))
+    def canWrite(self,row):
+        return self.rowAttr.canWrite(row)
 
 ##      def getLabel(self):
 ##          return self.name

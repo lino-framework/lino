@@ -61,23 +61,51 @@ ENTRY_LABEL_BACKGROUND = wx.GREEN
 from textwrap import TextWrapper
 docWrapper = TextWrapper(30)
 
-class Component:
+
+
+class EventCaller:
+    def __init__(self,meth,*args,**kw):
+        self.meth = meth
+        self.args = args
+        self.kw = kw
+    def __call__(self,event):
+        return self.meth(*self.args, **self.kw)
+
+            
+class WxApp(wx.App):
+
+    def __init__(self):
+        wx.App.__init__(self,0)
+
+
+    def OnInit(self):
+        wx.InitAllImageHandlers()
+        #center.onBeginGUI(self)
+        return True
+
+    def OnExit(self):
+        #center.shutdown()
+        pass
+
+
+
+## class Component:
     
-    def __repr__(self):
-        return "%s %s at %s" % (
-            self.getName(),
-            repr(self.wxctrl.GetSize()),
-            repr(self.wxctrl.GetPosition()))
+##     def __repr__(self):
+##         return "%s %s at %s" % (
+##             self.getName(),
+##             repr(self.wxctrl.GetSize()),
+##             repr(self.wxctrl.GetPosition()))
         
 
-class Label(Component,base.Label):
+class Label(base.Label):
     
     def setup(self,panel,box):
         text = wx.StaticText(panel,-1, self.getLabel())
         box.Add(text, WEIGHT, wx.EXPAND|wx.ALL, 10)
         self.wxctrl = text
                 
-class Button(Component,base.Button):
+class Button(base.Button):
     
 ##     def __repr__(self):
 ##         return "Button %s %s at %s" % (
@@ -105,14 +133,16 @@ class Button(Component,base.Button):
     def setFocus(self):
         self.wxctrl.SetFocus()
 
-class TableEditor(Component,base.TableEditor):
+class TableEditor(base.TableEditor):
     def setup(self,parent,box):
         ctrl = wxgrid.TableEditorGrid(parent,self)
         box.Add(ctrl) #, 0, wx.CENTER,10)
         self.wxctrl = ctrl
+    def refresh(self):
+        pass
                 
         
-class Navigator(Component,base.Navigator):
+class Navigator(base.Navigator):
     
     def setup(self,parent,box):
         frm = self.getForm()
@@ -125,38 +155,44 @@ class Navigator(Component,base.Navigator):
         self.wxctrl = mypanel
 
 
-        label = wx.StaticText(
-            mypanel, -1,
-            "%d/%d"%(self.currentPos,len(self.ds)))
-        hbox.Add(label, WEIGHT, wx.EXPAND, border=10 )
+        self.statusLabel = wx.StaticText( mypanel, -1,
+                                          self.getStatus())
+        hbox.Add(self.statusLabel, WEIGHT, wx.EXPAND, border=10 )
         
         hbox.Add( (10,1), 0)
         
         btn = wx.Button( mypanel, -1, "<")
         hbox.Add(btn, WEIGHT, wx.EXPAND, border=10 )
         self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                   EventCaller(self.skip,-1))
+                                   lambda e:self.skip(-1), btn)
+                                   #EventCaller(self.skip,-1))
         
         btn = wx.Button( mypanel, -1, ">")
         hbox.Add(btn, WEIGHT, wx.EXPAND, border=10 )
         self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                   EventCaller(self.skip,1))
+                                   lambda e:self.skip(1), btn)
+                                   #EventCaller(self.skip,1))
         
+    def getStatus(self):
+        return "%d/%d" % (self.currentPos,len(self.ds))
+    
+    def refresh(self):
+        self.statusLabel.SetLabel(self.getStatus())
         
         
 
-class Panel(Component,base.Panel):
+class Panel(base.Panel):
 
-    def __repr__(self):
-        s = "%s %s at %s (" % (
-            self.getName(),
-            repr(self.wxctrl.GetSize()),
-            repr(self.wxctrl.GetPosition()))
+##     def __repr__(self):
+##         s = "%s %s at %s (" % (
+##             self.getName(),
+##             repr(self.wxctrl.GetSize()),
+##             repr(self.wxctrl.GetPosition()))
         
-        for c in self._components:
-            s += "\n- " + ("\n  ".join(repr(c).splitlines()))
-        s += "\n)"
-        return s
+##         for c in self._components:
+##             s += "\n- " + ("\n  ".join(repr(c).splitlines()))
+##         s += "\n)"
+##         return s
     
     def setup(self,panel,box):
         mypanel = wx.Panel(panel,-1)
@@ -173,15 +209,8 @@ class Panel(Component,base.Panel):
         for c in self._components:
             c.setup(mypanel,mybox)
             
-        
-class Entry(Component,base.Entry):
+class EntryMixin:
 
-##     def __repr__(self):
-##         return "Entry %s %s at %s" % (
-##             self.getLabel(),
-##             repr(self.wxctrl.GetSize()),
-##             repr(self.wxctrl.GetPosition()))
-        
     def setup(self,panel,box):
         mypanel = wx.Panel(panel,-1)
         mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
@@ -225,10 +254,7 @@ class Entry(Component,base.Entry):
         #hbox.AddSpacer((10,1))
         hbox.Add( (10,1), 0)
 
-        if self.value is None:
-            s = ""
-        else:
-            s = self.type.format(self.value)
+        s = self.getValue()
         editor = wx.TextCtrl(mypanel,-1, s)
         #self.Bind(wx.EVT_TEXT, self.EvtText, t1)
         #editor.Bind(wx.EVT_CHAR, self.EvtChar)
@@ -243,6 +269,11 @@ class Entry(Component,base.Entry):
         self.editor = editor # store reference to avoid crash?
         self.wxctrl = mypanel
 
+    def refresh(self):
+        #base.Entry.refresh(self)
+        s = self.getValue()
+        self.editor.SetValue(s)
+        
     def setFocus(self):
         self.editor.SetFocus()
         
@@ -257,40 +288,28 @@ class Entry(Component,base.Entry):
         
         if self.editor.IsModified():
             s = self.editor.GetValue()
-            if len(s):
-                self.value = self.type.parse(s)
-            else:
-                self.value = None
+            self.setValue(s)
             evt.Skip()
-        
-
-class EventCaller:
-    def __init__(self,meth,*args,**kw):
-        self.meth = meth
-        self.args = args
-        self.kw = kw
-    def __call__(self,event):
-        return self.meth(*self.args, **self.kw)
 
             
-class WxApp(wx.App):
+class Entry(EntryMixin,base.Entry):
+    pass
+##     def refresh(self):
+##         EntryMixin.refresh(self)
 
-    def __init__(self):
-        wx.App.__init__(self,0)
-
-
-    def OnInit(self):
-        wx.InitAllImageHandlers()
-        #center.onBeginGUI(self)
-        return True
-
-    def OnExit(self):
-        #center.shutdown()
-        pass
+class DataEntry(EntryMixin,base.DataEntry):
+    
+    def refresh(self):
+        EntryMixin.refresh(self)
+        base.DataEntry.refresh(self)
+        self.editor.SetEditable(self.enabled)
+    
+        
 
 class Form(base.Form):
     labelFactory = Label
     entryFactory = Entry
+    dataEntryFactory = DataEntry
     buttonFactory = Button
     panelFactory = Panel
     tableEditorFactory = TableEditor
@@ -432,6 +451,7 @@ class Form(base.Form):
         evt.Skip()
 
     def refresh(self):
+        base.Form.refresh(self)
         self.wxctrl.Refresh()
 
         
