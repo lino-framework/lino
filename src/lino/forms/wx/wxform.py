@@ -86,6 +86,11 @@ class Button(base.Button):
             btn.SetDefault()
         box.Add(btn) #, 0, wx.CENTER,10)
         self.wxctrl = btn
+
+    def setDefault(self):
+        base.Button.setDefault(self)
+        if hasattr(self,"wxctrl"):
+            self.wxctrl.SetDefault()
                 
         
 
@@ -94,8 +99,8 @@ class Panel(base.Panel):
     def __repr__(self):
         s = "%s %s at %s (" % (
             self.getName(),
-            repr(self.mypanel.GetSize()),
-            repr(self.mypanel.GetPosition()))
+            repr(self.wxctrl.GetSize()),
+            repr(self.wxctrl.GetPosition()))
         
         for c in self._components:
             s += "\n- " + ("\n  ".join(repr(c).splitlines()))
@@ -109,12 +114,10 @@ class Panel(base.Panel):
             mybox = wx.BoxSizer(wx.VERTICAL)
         else:
             mybox = wx.BoxSizer(wx.HORIZONTAL)
-        # uncomment both following lines to get a crash
-        # box.Add(mybox)
         mypanel.SetSizer(mybox) 
         
         self.mybox = mybox # store reference to avoid crash?
-        self.mypanel = mypanel
+        self.wxctrl = mypanel
         
         for c in self._components:
             c.setup(frm,mypanel,mybox)
@@ -133,8 +136,6 @@ class Entry(base.Entry):
         box.Add(mypanel)#, WEIGHT, wx.EXPAND|wx.ALL,10)
         
         mybox = wx.BoxSizer(wx.HORIZONTAL)
-        # uncomment both following lines to get a crash
-        # box.Add(mybox)
         mypanel.SetSizer(mybox) 
         
         label = wx.StaticText(mypanel, -1, self.getLabel()) 
@@ -153,16 +154,16 @@ class Entry(base.Entry):
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
         mybox.Add(editor)#,WEIGHT,wx.EXPAND|wx.ALL,10)
         
-        #self.mybox = mybox # store reference to avoid crash?
         self.editor = editor # store reference to avoid crash?
         self.wxctrl = mypanel
         
-        #return self.editor
 
     def OnKillFocus(self,evt):
         console.debug("OnKillFocus() "+self.getLabel())
+        
         # on MS-Windows:
         # killfocus can accur after the windows have been destroyed
+        # note: looks as if this is not necessary anymore
         if self.owner.dying: return
         
         if self.editor.IsModified():
@@ -211,27 +212,12 @@ class WxFrame(wx.Frame):
 
             self.SetMenuBar(wxMenuBar)
             
-        #self.SetBackgroundColour("KHAKI3")
         #self.SetBackgroundColour(wx.RED)
-
         
         mainBox = wx.BoxSizer(wx.VERTICAL)
-        #panel = wx.Panel(self,-1)
-        #panel.SetBackgroundColour(wx.GREEN)
-        #box.Add(panel,WEIGHT,wx.EXPAND|wx.ALL,10)
         
         frm.mainComp.setup(self,self,mainBox)
         
-##         for c in frm._components:
-##             c.setup(self,panel,mainBox)
-##             c.setup(self,self,mainBox)
-                
-        
-        #box.Fit(self) # set size to minimum size as calculated by the
-        # sizer
-        #self.SetAutoLayout(True)
-        #self.SetSizer(mainBox)
-        #mainBox.Fit(self)
         self.SetSizerAndFit(mainBox)
         self.mainBox = mainBox
         #self.SetAutoLayout(True) 
@@ -268,7 +254,6 @@ class WxFrame(wx.Frame):
         #if hasattr(self, "tbicon"):
         #   del self.tbicon
         self.Destroy()
-        #self._frm
 
 
     def OnIdle(self, evt):

@@ -1,8 +1,4 @@
-*~
-*.pyc
-*.pdf
-*.html
-tmp.*
-TMP.*
-_attic
+dist.log
+warnlino.txt
+
 

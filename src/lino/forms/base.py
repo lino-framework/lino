@@ -86,20 +86,22 @@ class Container:
         
     def addEntry(self,name=None,type=None,*args,**kw):
         frm = self.getForm()
-        if name is None:
-            name = "entry" + str(len(frm.entries)+1)
+        #if name is None:
+        #    name = "entry" + str(len(frm.entries)+1)
         if type is None:
             type = STRING
         e = frm.entryFactory(frm,type,name=name,*args,**kw)
         self._components.append(e)
-        frm.entries.define(e.name,e)
+        if name is not None:
+            frm.entries.define(name,e)
         return e
         
-    def addButton(self,*args,**kw): 
+    def addButton(self,name=None,*args,**kw): 
         frm = self.getForm()
-        btn = frm.buttonFactory(frm,*args,**kw)
+        btn = frm.buttonFactory(frm,name=name,*args,**kw)
         self._components.append(btn)
-        frm.buttons.define(btn.name,btn)
+        if name is not None:
+            frm.buttons.define(name,btn)
         return btn
 
     def addPanel(self,direction): 
@@ -203,6 +205,18 @@ class Form(Describable):
         raise NotImplementedError
     def showModal(self):
         raise NotImplementedError
+
+    def info(self,msg):
+        print msg
+    def error(self,msg):
+        print msg
+        
+    def confirm(self,msg):
+        frm = self.addForm(label="Confirmation")
+        frm.addLabel(msg)
+        frm.addOkButton().setDefault()
+        frm.addCancelButton()
+        return frm.showModal()
 
     def ok(self,frm):
         self.close()
