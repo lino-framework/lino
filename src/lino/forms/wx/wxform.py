@@ -53,6 +53,12 @@ from lino.ui import console
 
 WEIGHT = 1
 
+ENTRY_PANEL_BACKGROUND = wx.GREEN
+ENTRY_LABEL_BACKGROUND = wx.GREEN
+
+from textwrap import TextWrapper
+docWrapper = TextWrapper(30)
+
 class Component:
     
     def __repr__(self):
@@ -66,7 +72,7 @@ class Label(Component,base.Label):
     
     def setup(self,panel,box):
         text = wx.StaticText(panel,-1, self.getLabel())
-        box.Add(text) #, WEIGHT, wx.EXPAND|wx.ALL, 10)
+        box.Add(text, WEIGHT, wx.EXPAND|wx.ALL, 10)
         self.wxctrl = text
                 
 class Button(Component,base.Button):
@@ -77,14 +83,14 @@ class Button(Component,base.Button):
 ##             repr(self.wxctrl.GetSize()),
 ##             repr(self.wxctrl.GetPosition()))
         
-    def setup(self,panel,box):
+    def setup(self,parent,box):
         
         winId = wx.NewId()
-        btn = wx.Button(panel,winId,self.getLabel(),
+        btn = wx.Button(parent,winId,self.getLabel(),
                         wx.DefaultPosition,
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
-        self.owner.wxctrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
+        self.getForm().wxctrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
         box.Add(btn) #, 0, wx.CENTER,10)
         self.wxctrl = btn
 
@@ -95,6 +101,12 @@ class Button(Component,base.Button):
 
     def setFocus(self):
         self.wxctrl.SetFocus()
+
+class TableEditor(base.TableEditor,Component):        
+    def setup(self,parent,box):
+        ctrl = wxgrid.TableEditorGrid(self,parent)
+        box.Add(ctrl) #, 0, wx.CENTER,10)
+        self.wxctrl = ctrl
                 
         
 
@@ -113,7 +125,7 @@ class Panel(Component,base.Panel):
     
     def setup(self,panel,box):
         mypanel = wx.Panel(panel,-1)
-        box.Add(mypanel) #, WEIGHT, wx.ALL|wx.EXPAND,10)
+        box.Add(mypanel, WEIGHT, wx.ALL|wx.EXPAND,0)
         if self.direction == self.VERTICAL:
             mybox = wx.BoxSizer(wx.VERTICAL)
         else:
@@ -137,14 +149,46 @@ class Entry(Component,base.Entry):
         
     def setup(self,panel,box):
         mypanel = wx.Panel(panel,-1)
-        box.Add(mypanel)#, WEIGHT, wx.EXPAND|wx.ALL,10)
+        mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
+        box.Add(mypanel, WEIGHT, wx.EXPAND|wx.ALL,10)
         
-        mybox = wx.BoxSizer(wx.HORIZONTAL)
-        mypanel.SetSizer(mybox)
-        
-        label = wx.StaticText(mypanel, -1, self.getLabel()) 
-        #label.SetBackgroundColour(wx.GREEN)
-        mybox.Add(label)#, WEIGHT, wx.ALL|wx.EXPAND,10)
+        hbox = wx.BoxSizer(wx.HORIZONTAL)
+        mypanel.SetSizer(hbox)
+
+        if self.doc is not None:
+            label = wx.Panel(mypanel,-1)
+            label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+            labelSizer = wx.BoxSizer(wx.VERTICAL)
+            label.SetSizer(labelSizer)
+
+            labelCtrl = wx.StaticText(label, -1,
+                                      self.getLabel(),
+                                      style=wx.ALIGN_RIGHT)
+            labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+            labelSizer.Add(labelCtrl,1,wx.EXPAND,10)
+            
+            #ENTRY_DOC_FONT = wx.Font(pointSize=8,
+            #                         family=wx.DEFAULT)
+            ENTRY_DOC_FONT = wx.SMALL_FONT
+            docCtrl = wx.StaticText(label, -1,
+                                    "\n".join(docWrapper.wrap(self.doc)),
+                                    style=wx.ALIGN_LEFT)
+            docCtrl.SetFont(ENTRY_DOC_FONT)
+            docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+            labelSizer.Add(docCtrl,1,wx.EXPAND,10)
+            
+        else:
+            label = wx.StaticText(mypanel, -1,
+                                  self.getLabel(),
+                                  style=wx.ALIGN_RIGHT)
+            label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+            
+        hbox.Add(label, WEIGHT,
+                 wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
+                 border=10,
+                 )
+        #hbox.AddSpacer((10,1))
+        hbox.Add( (10,1), 0)
 
         if self.value is None:
             s = ""
@@ -156,7 +200,10 @@ class Entry(Component,base.Entry):
         #editor.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
         editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
-        mybox.Add(editor)#,WEIGHT,wx.EXPAND|wx.ALL,10)
+        hbox.Add(editor,
+                 WEIGHT,
+                 wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
+                 10)
         
         self.editor = editor # store reference to avoid crash?
         self.wxctrl = mypanel
@@ -191,6 +238,20 @@ class EventCaller:
         return self.meth(*self.args, **self.kw)
 
             
+class WxApp(wx.App):
+
+    def __init__(self):
+        wx.App.__init__(self,0)
+
+
+    def OnInit(self):
+        wx.InitAllImageHandlers()
+        #center.onBeginGUI(self)
+        return True
+
+    def OnExit(self):
+        #center.shutdown()
+        pass
 
 class Form(base.Form):
     labelFactory = Label
@@ -286,6 +347,7 @@ class Form(base.Form):
         self.setup()
         #for c in self.wxctrl.GetChildren():
         #    print c
+        console.debug(repr(self.mainComp))
         if self.modal:
             self.wxctrl.ShowModal()
         else:
@@ -335,17 +397,3 @@ class Form(base.Form):
         
 
 
-class WxApp(wx.App):
-
-    def __init__(self):
-        wx.App.__init__(self,0)
-
-
-    def OnInit(self):
-        wx.InitAllImageHandlers()
-        #center.onBeginGUI(self)
-        return True
-
-    def OnExit(self):
-        #center.shutdown()
-        pass
