@@ -552,7 +552,8 @@ See file COPYING.txt for more information.""" % (
         name, version, years, author))
 
 
-if sys.getdefaultencoding() != sys.stdout.encoding:
+if hasattr(sys.stdout,"encoding") \
+      and sys.getdefaultencoding() != sys.stdout.encoding:
     sys.stdout = rewriter(sys.stdout)
     sys.stderr = rewriter(sys.stderr)
 
