@@ -34,11 +34,12 @@ from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl.addrbook import Persons
 
 from lino.schemas.sprl.races import Races, Participants, RaceTypes,\
-     Categories
+     Categories, Clubs
 
 
 class BasePlugin(SchemaPlugin):
     def defineTables(self,schema):
+        schema.addTable(Clubs)
         schema.addTable(Persons)
         schema.addTable(Categories)
         schema.addTable(RaceTypes)

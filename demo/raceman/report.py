@@ -108,6 +108,9 @@ class CAT(DbfPopulator,Categories):
         
 
 class RAL(DbfPopulator,Races):
+    def init(self):
+        Races.init(self)
+        self.getRowAttr('id').setType(adamo.STRING(width=6))
     def appendFromDBF(self,q,row):
         q.appendRow(
             id=row['IDRAL'],

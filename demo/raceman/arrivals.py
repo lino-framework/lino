@@ -41,20 +41,20 @@ class Main:
         #parent.buttons.arrive.setFocus()
         parent.entries.dossard.setFocus()
 
-    def arrive(self,parent):
+    def arrive(self,frm):
         if self.starttime is None:
-            parent.buttons.start.setFocus()
-            parent.error("cannot arrive before start")
+            frm.buttons.start.setFocus()
+            frm.error("cannot arrive before start")
             return
         now = datetime.datetime.now()
         duration = now - self.starttime
         line = (
-            parent.entries.dossard.getValue(),
+            frm.entries.dossard.getValue(),
             str(now), str(duration)
             )
         self.data.append(line)
-        parent.info("%s arrived at %s after %s" % line)
-        parent.entries.dossard.setFocus()
+        frm.info("%s arrived at %s after %s" % line)
+        frm.entries.dossard.setFocus()
     
     def exit(self,parent):
         if len(self.data) > 0:
@@ -97,13 +97,13 @@ Jedesmal wenn einer ankommt, ENTER drücken.
         bbox.addButton("write",label="&Write",onclick=self.writedata)
         bbox.addButton("exit",label="&Exit",onclick=self.exit)
 
-        fileMenu  = frm.addMenu("&File")
-        fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")
-        fileMenu.addButton(frm.buttons.exit,accel="Ctrl-Q")
+##         fileMenu  = frm.addMenu("&File")
+##         fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")
+##         fileMenu.addButton(frm.buttons.exit,accel="Ctrl-Q")
         
-        fileMenu  = frm.addMenu("&Edit")
-        fileMenu.addButton(frm.buttons.start)
-        fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
+##         fileMenu  = frm.addMenu("&Edit")
+##         fileMenu.addButton(frm.buttons.start)
+##         fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
         
         frm.show()
         

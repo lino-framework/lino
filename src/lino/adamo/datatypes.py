@@ -46,6 +46,9 @@ class Type(Describable):
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         return s
+
+    def validate(self,value):
+        pass
     
         
     
@@ -66,6 +69,7 @@ class PasswordType(StringType):
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
         return '*' * len(v)
+        
     
 
 

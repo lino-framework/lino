@@ -24,7 +24,7 @@ NAME = STRING(width=30)
 
 class Races(Table):
     def init(self):
-        self.addField('id',STRING(width=6))
+        self.addField('id',ROWID) #STRING(width=6))
         self.addField('name1',NAME)
         self.addField('name2',NAME)
         self.addField('date',DATE)

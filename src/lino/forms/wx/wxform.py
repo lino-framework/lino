@@ -17,35 +17,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-"""
-
-about sizers.
-
-- in wxWindows, a "Window" is what other GUI toolits call "Widget",
-  "Control" or "Component": any visible object on screen.
-
-- I use only nested BoxSizers.
-
-Sizers explained using the master/slave vocabulary:
-
-- master.SetSizer(sizer) tells the master
-  window that this Sizer is going to work for him.
-  
-- sizer.Add() adds another window as a slave.
-
-- When the master resizes, its sizer will layout all the slaves by
-  modifying their size and/or position as needed.
-
-  In fact the Sizer doesn't even know who is his master. The master
-  knows that this particular Sizer is his LayoutManager and simply
-  sends a RESIZE event.
-
-- sizer.Fit(master) : Tell the sizer to resize the master to match the
-  sizer's minimal size. That's the opposite direction: the sizer tells
-  the master how much space would be good to have.
-
-"""
-
 import wx
 
 from lino.ui import console
@@ -70,6 +41,27 @@ class EventCaller:
         self.kw = kw
     def __call__(self,event):
         return self.meth(*self.args, **self.kw)
+
+
+## class EntryValidator(wx.PyValidator):
+    
+##     def __init__(self,entry):
+##         wx.PyValidator.__init__(self)
+##         self._entry = entry
+        
+##     def Clone(self):
+##         print "Clone"
+##         return self.__class__(self._entry)
+
+##     def TransferToWindow(self):
+##         s = self._entry.getValue()
+##         self.GetWindow().SetValue(s)
+##         return True
+
+##     def TransferFromWindow( self ): 
+##         s = self.GetWindow().GetValue()
+##         self._entry.setValue(s)
+##         return True     
 
             
 class WxApp(wx.App):
@@ -115,8 +107,8 @@ class Button(base.Button):
         
     def setup(self,parentCtrl,box):
         parentFormCtrl = self.getForm().wxctrl
-        winId = wx.NewId()
-        btn = wx.Button(parentCtrl,winId,self.getLabel(),
+        #winId = wx.NewId()
+        btn = wx.Button(parentCtrl,-1,self.getLabel(),
                         wx.DefaultPosition,
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
@@ -231,9 +223,10 @@ class EntryMixin:
             #ENTRY_DOC_FONT = wx.Font(pointSize=8,
             #                         family=wx.DEFAULT)
             ENTRY_DOC_FONT = wx.SMALL_FONT
-            docCtrl = wx.StaticText(label, -1,
-                                    "\n".join(docWrapper.wrap(self.doc)),
-                                    style=wx.ALIGN_LEFT)
+            docCtrl = wx.StaticText(
+                label, -1,
+                "\n".join(docWrapper.wrap(self.doc)),
+                style=wx.ALIGN_LEFT)
             docCtrl.SetFont(ENTRY_DOC_FONT)
             docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
             labelSizer.Add(docCtrl,1,wx.EXPAND,10)
@@ -248,15 +241,17 @@ class EntryMixin:
                  wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
                  border=10,
                  )
-        #hbox.AddSpacer((10,1))
-        hbox.Add( (10,1), 0)
 
-        s = self.getValue()
-        editor = wx.TextCtrl(mypanel,-1, s)
+        hbox.Add( (10,1), 0) # spacer
+
+
+        editor = wx.TextCtrl(mypanel,-1,self.getValueForEditor())
+                             #validator=EntryValidator(self))
+                             #style=wx.TE_PROCESS_ENTER)
         #self.Bind(wx.EVT_TEXT, self.EvtText, t1)
         #editor.Bind(wx.EVT_CHAR, self.EvtChar)
         #editor.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
-        editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+        #editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
         hbox.Add(editor,
                  WEIGHT,
@@ -268,31 +263,37 @@ class EntryMixin:
 
     def refresh(self):
         #base.Entry.refresh(self)
-        s = self.getValue()
+        s = self.getValueForEditor()
         self.editor.SetValue(s)
         
     def setFocus(self):
         self.editor.SetFocus()
-        
+        self.editor.SetSelection(-1,-1)
 
-    def OnKillFocus(self,evt):
-        console.debug("OnKillFocus() "+self.getLabel())
-        
-        # on MS-Windows:
-        # killfocus can accur after the windows have been destroyed
-        # note: looks as if this is not necessary anymore
-        if self.owner.dying: return
-        
+
+    def store(self):
         if self.editor.IsModified():
             s = self.editor.GetValue()
-            self.setValue(s)
-            evt.Skip()
+            self.setValueFromEditor(s)
+        
+        
+
+##     def OnKillFocus(self,evt):
+##         print "OnKillFocus() "+self.getLabel()
+        
+##         # on MS-Windows:
+##         # killfocus can accur after the windows have been destroyed
+##         # note: looks as if this is not necessary anymore
+        
+##         #if self.owner.dying: return
+##         if self.editor.IsModified():
+##             s = self.editor.GetValue()
+##             self.setValueFromEditor(s)
+##             evt.Skip()
 
             
 class Entry(EntryMixin,base.Entry):
     pass
-##     def refresh(self):
-##         EntryMixin.refresh(self)
 
 class DataEntry(EntryMixin,base.DataEntry):
     
@@ -331,7 +332,7 @@ class Form(base.Form):
             self.app = self._parent.app
             wxparent = self._parent.wxctrl
             
-        self.dying = False
+        #self.dying = False
         
         if self.modal:
             self.wxctrl = wx.Dialog(wxparent,-1,self.getLabel(),
@@ -340,7 +341,9 @@ class Form(base.Form):
         else:
             self.wxctrl = wx.Frame(wxparent,-1,self.getLabel(),
                                    style=wx.DEFAULT_FRAME_STYLE|
-                                   wx.NO_FULL_REPAINT_ON_RESIZE)
+                                   wx.NO_FULL_REPAINT_ON_RESIZE|
+                                   wx.TAB_TRAVERSAL)
+                                   
             self.wxctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
 
         wx.EVT_CHAR(self.wxctrl, self.OnChar)
@@ -425,7 +428,7 @@ class Form(base.Form):
 
 
     def OnCloseWindow(self, event):
-        self.dying = True
+        #self.dying = True
         # http://wiki.wxpython.org/index.cgi/Surviving_20with_20wxEVT_5fKILL_5fFOCUS_20under_20Microsoft_20Windows
         # Surviving with EVT_KILL_FOCUS under Microsoft Windows
         
@@ -437,7 +440,7 @@ class Form(base.Form):
 
 
     def OnChar(self, evt):
-        print evt
+        print "OnChar", evt
 
 
     def OnIdle(self, evt):

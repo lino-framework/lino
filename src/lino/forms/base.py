@@ -36,6 +36,8 @@ class Component(Describable):
         return self.owner.getForm()
     def refresh(self):
         pass
+    def store(self):
+        pass
     
         
 class Button(Component):
@@ -58,12 +60,49 @@ class Button(Component):
     def click(self):
         "execute the button's handler"
         frm = self.getForm()
+        frm.store()
         frm.lastEvent = self
         self._onclick(frm,*(self._args),**(self._kw))
         #self._onclick(*(self._args),**(self._kw))
         
 
-class Entry(Component):
+class BaseEntry(Component):
+
+    def getValueForEditor(self):
+        "return current value as string"
+        v = self.getValue()
+        if v is None:
+            return ""
+        return self.format(v)
+
+    def setValueFromEditor(self,s):
+        "convert the string and store it as raw value"
+        if len(s) == 0:
+            self.setValue(None)
+        else:
+            self.setValue(self.parse(s))
+            
+    def store(self):
+        "store data from widget"
+        raise NotImplementedError
+    
+    def getValue(self):
+        "return current raw value"
+        raise NotImplementedError
+    
+    def setValue(self,v):
+        "store raw value"
+        raise NotImplementedError
+    
+    def format(self,v):
+        "convert raw value to string"
+        raise NotImplementedError
+    
+    def parse(self,s):
+        "convert the non-empty string to a raw value"
+        raise NotImplementedError
+        
+class Entry(BaseEntry):
     def __init__(self,owner, name=None, type=None,
                  enabled=True,
                  value="",
@@ -81,42 +120,42 @@ class Entry(Component):
         self.setValue(value)
 
     def getValue(self):
-        if self._value is None:
-            return ""
+        return self._value
+    
+    def format(self,v):
         return self._type.format(self._value)
     
-    def setValue(self,s):
-        if len(s) == 0:
-            self._value = None
-        else:
-            self._value = self._type.parse(s)
-    
+    def parse(self,s):
+        return self._type.parse(s)
 
-class DataEntry(Component):
+    def setValue(self,v):
+        self._type.validate(v)
+        self._value = v
+
+
+class DataEntry(BaseEntry):
     def __init__(self,owner,dc, *args,**kw):
         Component.__init__(self,owner, dc.name, *args,**kw)
         self.enabled = dc.canWrite(None)
         self.dc = dc
         
-    def setValue(self,s):
+    def setValue(self,v):
         frm = self.getForm()
-        if len(s) == 0:
-            self.dc.setCellValue(frm.data,None)
-        else:
-            v=self.dc.rowAttr.parse(s)
-            self.dc.setCellValue(frm.data,v)
+        self.dc.setCellValue(frm.data,v)
+        
+    def parse(self,s):
+        return self.dc.rowAttr.parse(s)
+    
+    def format(self,v):
+        return self.dc.rowAttr.format(v)
 
     def getValue(self):
         frm = self.getForm()
-        v = self.dc.getCellValue(frm.data)
-        if v is None:
-            return ""
-        return self.dc.rowAttr.format(v)
+        return self.dc.getCellValue(frm.data)
 
     def refresh(self):
         frm = self.getForm()
         self.enabled = self.dc.canWrite(frm.data)
-        
         
         
 
@@ -244,6 +283,10 @@ class Container(Component):
         for c in self._components:
             c.refresh()
         
+    def store(self):
+        for c in self._components:
+            c.store()
+        
 
 class Panel(Container):
     def __init__(self,owner,direction,name=None,*args,**kw):
@@ -341,10 +384,21 @@ class Form(Describable):
         raise NotImplementedError
     
             
+    def validate(self):
+        for e in self.entries:
+            msg = e.validate()
+            if msg is not None:
+                return msg
+            
     def refresh(self):
         self.mainComp.refresh()
+        
+    def store(self):
+        self.mainComp.store()
     
     def showModal(self):
+        if self.menuBar is not None:
+            raise "Form with menu cannot be modal!"
         self.show(modal=True)
         return self.lastEvent == self.defaultButton
     

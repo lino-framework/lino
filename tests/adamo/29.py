@@ -20,7 +20,7 @@
 
 """
 
-- new trigger accept_xx()
+- new trigger validate_xx()
 - "row is not locked"
 
 """

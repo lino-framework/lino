@@ -1,0 +1,177 @@
+## Copyright 2005 Luc Saffre 
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+import wx
+
+class EventViewer:
+    def __init__(self,name,ctrl):
+        self.name = name
+        self.ctrl = ctrl
+        binder = getattr(wx,name)
+        
+        ctrl.Bind(binder,self.showAndSkip)
+        
+    def showAndSkip(self,evt):
+        print self.ctrl.__class__.__name__, \
+              "got", \
+              self.name, \
+              "from", \
+              evt.GetEventObject().__class__.__name__
+        evt.Skip()
+
+# copied from wx/_core.py
+eventBinderNames = [ name for name in """
+EVT_SIZE
+EVT_SIZING
+EVT_MOVE
+EVT_MOVING
+EVT_CLOSE
+EVT_END_SESSION
+EVT_QUERY_END_SESSION
+EVT_PAINT
+EVT_NC_PAINT
+EVT_ERASE_BACKGROUND
+EVT_CHAR
+EVT_KEY_DOWN
+EVT_KEY_UP
+EVT_HOTKEY
+EVT_CHAR_HOOK
+EVT_MENU_OPEN
+EVT_MENU_CLOSE
+EVT_MENU_HIGHLIGHT
+EVT_MENU_HIGHLIGHT_ALL
+EVT_SET_FOCUS
+EVT_KILL_FOCUS
+EVT_CHILD_FOCUS
+EVT_ACTIVATE
+EVT_ACTIVATE_APP
+EVT_END_SESSION
+EVT_QUERY_END_SESSION
+EVT_DROP_FILES
+EVT_INIT_DIALOG
+EVT_SYS_COLOUR_CHANGED
+EVT_DISPLAY_CHANGED
+EVT_SHOW
+EVT_MAXIMIZE
+EVT_ICONIZE
+EVT_NAVIGATION_KEY
+EVT_PALETTE_CHANGED
+EVT_QUERY_NEW_PALETTE
+EVT_WINDOW_CREATE
+EVT_WINDOW_DESTROY
+#EVT_SET_CURSOR
+EVT_MOUSE_CAPTURE_CHANGED
+
+
+
+EVT_LEFT_DOWN
+EVT_LEFT_UP
+EVT_MIDDLE_DOWN
+EVT_MIDDLE_UP
+EVT_RIGHT_DOWN
+EVT_RIGHT_UP
+EVT_MOTION
+EVT_LEFT_DCLICK
+EVT_MIDDLE_DCLICK
+EVT_RIGHT_DCLICK
+EVT_LEAVE_WINDOW
+EVT_ENTER_WINDOW
+EVT_MOUSEWHEEL
+# all mouse events:
+EVT_MOUSE_EVENTS
+
+# Scrolling from wxWindow (sent to wxScrolledWindow)
+EVT_SCROLLWIN
+
+EVT_SCROLLWIN_TOP
+EVT_SCROLLWIN_BOTTOM
+EVT_SCROLLWIN_LINEUP
+EVT_SCROLLWIN_LINEDOWN
+EVT_SCROLLWIN_PAGEUP
+EVT_SCROLLWIN_PAGEDOWN
+EVT_SCROLLWIN_THUMBTRACK
+EVT_SCROLLWIN_THUMBRELEASE
+# Scrolling from wxSlider and wxScrollBar
+EVT_SCROLL
+
+EVT_SCROLL_TOP
+EVT_SCROLL_BOTTOM
+EVT_SCROLL_LINEUP
+EVT_SCROLL_LINEDOWN
+EVT_SCROLL_PAGEUP
+EVT_SCROLL_PAGEDOWN
+EVT_SCROLL_THUMBTRACK
+EVT_SCROLL_THUMBRELEASE
+EVT_SCROLL_ENDSCROLL
+# Scrolling from wxSlider and wxScrollBar, with an id
+EVT_COMMAND_SCROLL
+
+EVT_COMMAND_SCROLL_TOP
+EVT_COMMAND_SCROLL_BOTTOM
+EVT_COMMAND_SCROLL_LINEUP
+EVT_COMMAND_SCROLL_LINEDOWN
+EVT_COMMAND_SCROLL_PAGEUP
+EVT_COMMAND_SCROLL_PAGEDOWN
+EVT_COMMAND_SCROLL_THUMBTRACK
+EVT_COMMAND_SCROLL_THUMBRELEASE
+EVT_COMMAND_SCROLL_ENDSCROLL
+
+
+
+
+EVT_BUTTON
+EVT_CHECKBOX
+EVT_CHOICE
+EVT_LISTBOX
+EVT_LISTBOX_DCLICK
+EVT_MENU
+EVT_MENU_RANGE
+EVT_SLIDER
+EVT_RADIOBOX
+EVT_RADIOBUTTON
+
+EVT_SCROLLBAR
+EVT_VLBOX
+EVT_COMBOBOX
+EVT_TOOL
+EVT_TOOL_RANGE
+EVT_TOOL_RCLICKED
+EVT_TOOL_RCLICKED_RANGE
+EVT_TOOL_ENTER
+EVT_CHECKLISTBOX
+
+EVT_COMMAND_LEFT_CLICK
+EVT_COMMAND_LEFT_DCLICK
+EVT_COMMAND_RIGHT_CLICK
+EVT_COMMAND_RIGHT_DCLICK
+EVT_COMMAND_SET_FOCUS
+EVT_COMMAND_KILL_FOCUS
+EVT_COMMAND_ENTER
+
+#EVT_IDLE
+#EVT_UPDATE_UI
+#EVT_UPDATE_UI_RANGE
+
+EVT_CONTEXT_MENU
+""".splitlines() if len(name) and name[0] != "#"]
+
+
+def showEvents(ctrl):
+    for name in eventBinderNames:
+        EventViewer(name,ctrl)
+

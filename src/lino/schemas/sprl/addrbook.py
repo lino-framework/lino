@@ -197,7 +197,7 @@ class LoginForm(Form):
         self.addField("password",sess.tables.USERS.field("password"))
         self.setButtonNames("ok help")
 
-    def accept_uid(self,value):
+    def validate_uid(self,value):
         if value is not None:
             if "!" in value:
                 raise DataVeto(value + " : invalid username")
@@ -324,7 +324,7 @@ class Nations(BabelTable):
         self.addView('std',columnNames="name isocode id")
 
     class Instance(BabelTable.Instance):
-        def accept_id(self,value):
+        def validate_id(self,value):
             if len(value) != 2:
                 raise DataVeto("Nation.id must be 2 chars")
                 #raise DataVeto("Nation.id must be 2 chars")

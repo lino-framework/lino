@@ -40,9 +40,13 @@ class RowAttribute(Describable):
         self._owner = owner
         #self.width = width
         self._isMandatory = False
+        self._onValidate = []
         
-    def acceptTrigger(self,row,value):
-        pass
+    def validate(self,row,value):
+        if value is None and self._isMandatory:
+            raise DataVeto("may not be empty")
+        for v in self._onValidate:
+            v(row,value)
     
     def afterSetAttr(self,row):
         pass
@@ -71,7 +75,7 @@ class RowAttribute(Describable):
         #self.owner = table
         
     def onTableInit3(self,owner,schema):
-        pass
+        self._onValidate = tuple(self._onValidate)
 
     def onAreaInit(self,area):
         pass
@@ -85,8 +89,8 @@ class RowAttribute(Describable):
     def onAppend(self,row):
         pass
 
-    def validate(self,row,value):
-        return value
+##     def validate(self,row,value):
+##         return value
 
     def checkIntegrity(self,row):
         pass
@@ -106,7 +110,7 @@ class RowAttribute(Describable):
         return None
 
     def setCellValue(self,row,value):
-        self.acceptTrigger(row,value)
+        self.validate(row,value)
         row._values[self.name] = value
         
     def getCellValue(self,row):
@@ -196,9 +200,15 @@ class Field(RowAttribute):
         #self.visibility = 0
         #self.format = format
 
+    def setType(self,type):
+        self.type = type
+
     def format(self,v):
         return self.type.format(v)
         
+    def validate(self,row,value):
+        self.type.validate(value)
+        RowAttribute.validate(self,row,value)
     def parse(self,s):
         return self.type.parse(s)
         
@@ -418,7 +428,7 @@ class Pointer(RowAttribute):
         #   print "rowattrs.py:", repr(self)
 
     def onTableInit3(self,owner,schema):
-        
+        RowAttribute.onTableInit3(self,owner,schema)
         for toTable in self._toTables:
             toTable.addDetail( self.detailName,
                                self,
@@ -665,11 +675,10 @@ class FieldContainer:
         assert attr._owner == self
         self._fields.append(attr)
         self._rowAttrs[attr.name] = attr
-        #fld.setOwner(self)
         i = self.Instance
         try:
-            meth = getattr(i,"accept_"+attr.name)
-            attr.acceptTrigger = meth
+            meth = getattr(i,"validate_"+attr.name)
+            attr._onValidate.append(meth)
         except AttributeError:
             pass
         
