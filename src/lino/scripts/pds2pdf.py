@@ -68,10 +68,6 @@ def pds2pdf(ifname,renderer,ofname=None, showOutput=True):
 
 
 def main(argv):
-    console.copyleft(name="Lino/pds2pdf",
-                     years='2002-2005',
-                     author='Luc Saffre')
-
     parser = console.getOptionParser(
         usage="usage: lino pds2pdf [options] FILE",
         description="""\
@@ -105,5 +101,9 @@ write to OUTFILE rather than FILE.pdf""",
          showOutput=console.isInteractive())
 
 if __name__ == '__main__':
+    console.copyleft(name="Lino pds2pdf",
+                     years='2002-2005',
+                     author='Luc Saffre')
+
     sys.exit(main(sys.argv[1:]))
     #main(sys.argv[1:])

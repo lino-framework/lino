@@ -40,7 +40,8 @@ class TextPrinter:
             chr(27)+"u" : self.parse_u,
             chr(27)+"i" : self.parse_i,
             chr(27)+"L" : self.setPageLandscape,
-            chr(27)+"I" : self.insertImage,
+            chr(27)+"I" : self.parse_I,
+            #chr(27)+"I" : self.insertImage,
             }
         
         self.pageWidth,self.pageHeight = pageSize
@@ -222,13 +223,21 @@ class TextPrinter:
                               % line[0])
         return 1
         
+    def parse_I(self,line):
+        params = line.split(None,3)
+        if len(params) < 3:
+            raise ParserError("%s : need 3 parameters" % repr(params))
+        filename = params[2]
+        self.insertImage(*params)
+        return len(params[0])+len(params[1])+len(params[2])+3
+    
     def formFeed(self,line):
         self.endPage()
         # self.beginPage()
         return 0
 
 
-    def insertImage(self,line):
+    def insertImage(self,width,height,filename):
         raise NotImplementedError
 
 

@@ -18,14 +18,17 @@
 
 from lino.misc.tsttools import TestCase, main, catch_output
 from lino.misc.my_import import my_import
+from lino.apps import timtools
 
 # same list as in mkdist.py
-console_targets = [
-    'pds2pdf',
-    'pds2sxw', 'pds2sxc',
-    'prn2pdf', 'prnprint',
-    'sync', 'diag', 'openmail',
-    ]
+console_targets = timtools.console_targets()
+## [
+##     'pds2pdf',
+##     'pds2sxw', 'pds2sxc',
+##     'prn2pdf', 'prnprint',
+##     'sync', 'diag',
+##     'openmail', 'openurl'
+##     ]
 
 
 class Case(TestCase):
@@ -37,8 +40,8 @@ class Case(TestCase):
             #mod.main(["--help"])
 
         #s = self.getConsoleOutput()
-        print s
-        self.assertEquivalent(s,"")
+        #print s
+        #self.assertEquivalent(s,"")
         
     
     

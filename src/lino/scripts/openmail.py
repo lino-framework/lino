@@ -14,19 +14,22 @@ See also :pageref:`/docs/openmail`.
 
 import sys
 
-from lino.timtools.mail import readmail, openmail
+from lino.ui import console 
+from lino.tools.mail import readmail, openmail
 
 def main(argv):
-	if len(argv) != 1:
-		print __doc__
-		return -1
+    console.copyleft(name="Lino openmail",
+                     years='2002-2005',
+                     author='Luc Saffre')
+    
+    if len(argv) != 1:
+        print __doc__
+        return -1
 
-	msg = readmail(argv[0])
+    msg = readmail(argv[0])
 
-	openmail(msg)
+    openmail(msg)
 
 if __name__ == '__main__':
-    #main(sys.argv[1:])
-    
     sys.exit(main(sys.argv[1:]))
 

@@ -259,6 +259,20 @@ class Win32TextPrinter(TextPrinter):
         #self.textobject = None
         
         
-    def insertImage(self,line):
-        raise NotImplementedError
-
+    def insertImage(self,width,height,filename):
+        # picture size must be givin in mm :
+        w = float(width) * mm 
+        h = float(height) * mm
+        
+        # position of picture is the current text cursor 
+        x = self.textobject.x
+        y = self.textobject.y
+        if x == 0 and y == 0:
+            # print "no text has been processed until now"
+            x = self.margin + x
+            y = self.pageHeight-(2*self.margin)-h - y
+        else:
+            # but picture starts on top of charbox:
+            y += self.status.leading
+            
+        self.dc.drawImage(filename, x,y-h, w,h)

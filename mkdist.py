@@ -173,14 +173,18 @@ excludes_console = excludes + ['wx']
 
 if 'timtools' in args:
     
+    from lino.apps import timtools
+    
     sys.argv[1:] = ["py2exe"]
     
-    console_targets = [
-        'pds2pdf',
-        'pds2sxw', 'pds2sxc',
-        'prn2pdf', 'prnprint',
-        'sync', 'diag', 'openmail',
-                       ]
+    console_targets = timtools.console_targets()
+##     [
+##         'pds2pdf',
+##         'pds2sxw', 'pds2sxc',
+##         'prn2pdf', 'prnprint',
+##         'sync', 'diag',
+##         'openmail','openurl'
+##         ]
 
     name = "timtools"
 
@@ -192,7 +196,7 @@ if 'timtools' in args:
         description="Lino TIM tools",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.sourceforge.net/timtools.html",
+        url="http://lino.berlios.de/timtools.html",
         long_description="A collection of command-line tools",
         package_dir = {'': 'src'},
         console=[ opj("src","lino","scripts",t+".py")
@@ -219,8 +223,6 @@ if 'timtools' in args:
         zf.write(opj(dist_dir,fn),opj(name,fn))
     for fn in ['COPYING.txt']:
         zf.write(fn,opj(name,fn))
-    #zf.write(os.path.join(srcRoot,'COPYING.txt'),'COPYING.txt')
-    #zf.write(os.path.join(srcRoot,'dist.log'),'dist.log')
     zf.close()   
 
     
@@ -241,7 +243,7 @@ if 'raceman' in args:
         description="Lino Raceman",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.sourceforge.net/raceman.html",
+        url="http://lino.berlios.de/raceman.html",
         long_description="""\
 An uncomplete race manager.
 Register participants, input arrival times,
@@ -294,7 +296,7 @@ if 'keeper' in args:
         description="Lino Document Keeper",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.sourceforge.net/keeper.html",
+        url="http://lino.berlios.de/keeper.html",
         long_description="""\
 An uncomplete archive manager.
 """,
@@ -340,7 +342,7 @@ if 'sdist' in args:
         description="Lino Framework",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.sourceforge.net",
+        url="http://lino.berlios.de",
         long_description="""\
 Lino is a suite of Python packages for developing business applications for small and medium-sized organisations.
 """,

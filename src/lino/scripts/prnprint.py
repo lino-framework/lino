@@ -24,10 +24,10 @@ from lino.ui import console
 from lino.textprinter import winprn 
 
 def main(argv=None):
-
-    console.copyleft(name="Lino/prn2print",
+    console.copyleft(name="Lino prn2print",
                      years='2004-2005',
                      author="Luc Saffre")
+
     parser = console.getOptionParser(
         usage="usage: lino prnprint [options] FILE [FILE ...]",
         description="""\
@@ -59,15 +59,14 @@ write to SPOOLFILE rather than really printing.""",
         return -1
     
     for inputfile in args:
-        d = winprn.Win32PrinterDocument(options.printerName,
-                                        options.spoolFile,
-                                        charset=winprn.OEM_CHARSET)
+        d = winprn.Win32TextPrinter(options.printerName,
+                                    options.spoolFile,
+                                    charset=winprn.OEM_CHARSET)
         d.readfile(inputfile)
         d.endDoc()
 
     
         
 if __name__ == '__main__':
-    #main()
     sys.exit(main(sys.argv[1:]))
     

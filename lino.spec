@@ -23,30 +23,31 @@ import os
 
 import shutil
 import zipfile
-from time import localtime, strftime, ctime
+#from time import localtime, strftime, ctime
 
 from lino.ui.console import confirm
 from lino.misc.rdir import rdirlist
+from lino.apps import timtools
 
 from lino import __version__
 
 VERSION = __version__
-for x in __version__.split('.'):
-    if not x.isdigit():
-        VERSION = "current"
+#for x in __version__.split('.'):
+#    if not x.isdigit():
+#        VERSION = "current"
 
 
-distlog = file('dist.log','a')
-distlog.write("mkdist for version '%s' started at %s...\n" % (
-  VERSION, ctime()))
-distlog.flush()
+## distlog = file('dist.log','a')
+## distlog.write("mkdist for version '%s' started at %s...\n" % (
+##   VERSION, ctime()))
+## distlog.flush()
 
-if confirm("write svn status to dist.log?"):
-    distlog.close()
-    os.system('svn stat -u >> dist.log')
-    distlog = file('dist.log','a')
-else:
-    distlog.write("(no svn status information available)\n")
+## if confirm("write svn status to dist.log?"):
+##     distlog.close()
+##     os.system('svn stat -u >> dist.log')
+##     distlog = file('dist.log','a')
+## else:
+##     distlog.write("(no svn status information available)\n")
 
 #from lino.releases import version, notes
 
@@ -61,17 +62,17 @@ opj = os.path.join
 srcRoot = os.getcwd() # '.' # os.path.join('src','lino')
 #wwwPath = opj(srcRoot,"docs","download")
 
-srcZipName = r'%s\lino-%s-src.zip' % (zipDir,VERSION)
-if os.path.exists(srcZipName):
-    if not confirm("Okay to remove %s?" % srcZipName):
-        distlog.write("(aborted)\n")
-        raise "Pilatus problem %s" % srcZipName
-    os.remove(srcZipName)
+## srcZipName = r'%s\lino-%s-src.zip' % (zipDir,VERSION)
+## if os.path.exists(srcZipName):
+##     if not confirm("Okay to remove %s?" % srcZipName):
+##         #distlog.write("(aborted)\n")
+##         raise "Pilatus problem %s" % srcZipName
+##     os.remove(srcZipName)
     
-binZipName = r'%s\lino-%s-timtools-win32.zip' % (zipDir,VERSION)
+binZipName = r'%s\lino-%s-timtools-mcmillan.zip' % (zipDir,VERSION)
 if os.path.exists(binZipName):
-    if not confirm("Okay to remove %s?" % binZipName):
-        distlog.write("(aborted)\n")
+    if not confirm("Okay to overwrite %s?" % binZipName):
+        #distlog.write("(aborted)\n")
         raise "Pilatus problem %s" % binZipName
     os.remove(binZipName)
 
@@ -113,51 +114,51 @@ os.chdir(os.path.join('src','lino','scripts'))
 
 #targets = ['pds2pdf','prn2pdf','publish','sendmail']
 #targets = ['pds2pdf','prn2pdf','openmail']
-targets = ['pds2pdf','prn2pdf','rsync', 'prnprint', 'oogen']
-for t in targets:
+#targets = timtools.console_targets() #['pds2pdf','prn2pdf','rsync', 'prnprint', 'oogen']
+for t in timtools.console_targets():
     build(t) 
     # confirm("Did the Build succeed?") or raise UserAbort
 
 os.chdir(srcRoot)
 
-def srcfilter(fn):
-    if fn.endswith('~') : return False
-    if fn.startswith('tmp') : return False
-    root,ext = os.path.splitext(fn)
-    if len(ext) :
-        if ext.lower() in ('.pyc','.html','.zip','.pdf') :
-            return False
-    return True
+## def srcfilter(fn):
+##     if fn.endswith('~') : return False
+##     if fn.startswith('tmp') : return False
+##     root,ext = os.path.splitext(fn)
+##     if len(ext) :
+##         if ext.lower() in ('.pyc','.html','.zip','.pdf') :
+##             return False
+##     return True
 ##      return ext.lower() in ('.txt','.py','.bat', '.php',
 ##                                    '.spec', '.pds', 'pin', '.sql',
 ##                                    '.zip', '.jpg', '.gif')
 
-distlog.write("done at %s\n\n" % ctime())
-distlog.close()
+#distlog.write("done at %s\n\n" % ctime())
+#distlog.close()
 
-zf = zipfile.ZipFile(srcZipName,'w',zipfile.ZIP_DEFLATED)
+## zf = zipfile.ZipFile(srcZipName,'w',zipfile.ZIP_DEFLATED)
 
-pruneDirs = ('.svn','_attic','CVS')
+## pruneDirs = ('.svn','_attic','CVS')
 
-#for root, dirs, files in os.walk(srcRoot):
-for root, dirs, files in os.walk("."):
-    for pd in pruneDirs:
-        try:
-            dirs.remove(pd)
-        except ValueError:
-            pass
-    for fn in files:
-        if srcfilter(fn):
-            zf.write(opj(srcRoot,root,fn),opj(root,fn))
+## #for root, dirs, files in os.walk(srcRoot):
+## for root, dirs, files in os.walk("."):
+##     for pd in pruneDirs:
+##         try:
+##             dirs.remove(pd)
+##         except ValueError:
+##             pass
+##     for fn in files:
+##         if srcfilter(fn):
+##             zf.write(opj(srcRoot,root,fn),opj(root,fn))
             
-zf.close()   
+## zf.close()   
 
 zf = zipfile.ZipFile(binZipName,'w',zipfile.ZIP_DEFLATED)
 l = rdirlist(distDir)
 for fn in l:
     zf.write(opj(distDir,fn),fn)
 zf.write(os.path.join(srcRoot,'COPYING.txt'),'COPYING.txt')
-zf.write(os.path.join(srcRoot,'dist.log'),'dist.log')
+#zf.write(os.path.join(srcRoot,'dist.log'),'dist.log')
 zf.close()   
 
 ## shutil.copy('COPYING.txt',distDir)

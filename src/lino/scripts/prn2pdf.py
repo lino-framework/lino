@@ -18,34 +18,13 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-prn2pdf converts a file containing text and simple formatting
-printer control sequences into a PDF file.  
-
-USAGE :
-  prn2pdf [options] FILE
-
-  where FILE is the .prn file to be converted 
-  
-OPTIONS :
-  -o, --output FILE     write result to file FILE
-  -b, --batch           don't start Acrobat Reader on the generated
-                        pdf file
-  -h, --help            display this text
-
-"""
-
 import sys, os
 
 from lino.ui import console 
-from lino.textprinter.pdfdoc import PdfDocument
+from lino.textprinter.pdfprn import PdfTextPrinter
 
 
 def main(argv):
-    console.copyleft(name="Lino/prn2pdf",
-                     years='2002-2005',
-                     author='Luc Saffre')
-    
     parser = console.getOptionParser(
         usage="usage: lino prn2pdf [options] FILE",
         description="""\
@@ -68,11 +47,10 @@ write to OUTFILE rather than FILE.pdf""",
         return -1
     
     inputfile = args[0]
-    (root,ext) = os.path.splitext(inputfile)
     if options.outFile is None:
+        (root,ext) = os.path.splitext(inputfile)
         options.outFile = root +".pdf"
-    d = PdfDocument(options.outFile)#, coding="cp850")
-    #d.readfile(inputfile,coding="cp850")
+    d = PdfTextPrinter(options.outFile)
     d.readfile(inputfile,coding=sys.stdin.encoding)
     d.endDoc()
     if sys.platform == "win32" and console.isInteractive():
@@ -84,5 +62,9 @@ write to OUTFILE rather than FILE.pdf""",
 
 
 if __name__ == '__main__':
+    console.copyleft(name="Lino/prn2pdf",
+                     years='2002-2005',
+                     author='Luc Saffre')
+    
     sys.exit(main(sys.argv[1:]))
 

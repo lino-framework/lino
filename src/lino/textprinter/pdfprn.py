@@ -192,13 +192,33 @@ class PdfTextPrinter(TextPrinter):
 
         
         
-    def insertImage(self,line):
-        params = line.split(None,3)
-        if len(params) < 3:
-            raise "%s : need 3 parameters" % repr(params)
+##     def insertImage(self,line):
+##         params = line.split(None,3)
+##         if len(params) < 3:
+##             raise "%s : need 3 parameters" % repr(params)
+##         # picture size must be givin in mm :
+##         w = float(params[0]) * mm #*self.status.size
+##         h = float(params[1]) * mm #*self.status.leading
+##         # position of picture is the current text cursor 
+##         (x,y) = self.textobject.getCursor()
+##         if x == 0 and y == 0:
+##             # print "no text has been processed until now"
+##             x = self.margin + x
+##             y = self.pageHeight-(2*self.margin)-h - y
+##         else:
+##             # but picture starts on top of charbox:
+##             y += self.status.leading
+            
+##         filename = params[2]
+##         self.canvas.drawImage(filename,
+##                                      x,y-h,
+##                                      w,h)
+##         return len(params[0])+len(params[1])+len(params[2])+3
+    
+    def insertImage(self,width,height,filename):
         # picture size must be givin in mm :
-        w = float(params[0]) * mm #*self.status.size
-        h = float(params[1]) * mm #*self.status.leading
+        w = float(width) * mm 
+        h = float(height) * mm 
         # position of picture is the current text cursor 
         (x,y) = self.textobject.getCursor()
         if x == 0 and y == 0:
@@ -209,11 +229,7 @@ class PdfTextPrinter(TextPrinter):
             # but picture starts on top of charbox:
             y += self.status.leading
             
-        filename = params[2]
-        self.canvas.drawImage(filename,
-                                     x,y-h,
-                                     w,h)
-        return len(params[0])+len(params[1])+len(params[2])+3
+        self.canvas.drawImage(filename, x,y-h, w,h)
     
     def setCpi(self,cpi):
         "set font size in cpi (characters per inch)"
