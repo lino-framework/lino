@@ -107,10 +107,15 @@ class Container:
                               onclick=self.getForm().abort)
 
 class Panel(Component,Container):
-    def __init__(self,frm,direction,*args,**kw):
-        Component.__init__(self,frm,*args,**kw)
-        Container.__init__(self)
+    def __init__(self,frm,direction,name=None,*args,**kw):
         assert direction in (self.VERTICAL,self.HORIZONTAL)
+        if name is None:
+            if direction is self.VERTICAL:
+                name = "VPanel"
+            else:
+                name = "HPanel"
+        Component.__init__(self,frm,name=name,*args,**kw)
+        Container.__init__(self)
         self.direction = direction
 
     def getForm(self):
@@ -118,7 +123,7 @@ class Panel(Component,Container):
     
 
 
-class Form(Describable,Container):
+class ContainerForm(Describable,Container):
 
     labelFactory = Label
     entryFactory = Entry
@@ -138,6 +143,45 @@ class Form(Describable,Container):
     def getForm(self):
         return self
 
+    def addForm(self,*args,**kw):
+        return self.__class__(self,*args,**kw)
+    
+    def show(self):
+        raise NotImplementedError
+    def showModal(self):
+        raise NotImplementedError
+
+
+
+    def ok(self,frm):
+        self.close()
+
+    def abort(self,frm):
+        self.close()
+
+    
+class Form(Describable):
+
+    labelFactory = Label
+    entryFactory = Entry
+    buttonFactory = Button
+    panelFactory = Panel
+
+    def __init__(self,parent=None,*args,**kw):
+        Describable.__init__(self,*args,**kw)
+        self._parent = parent
+        self.entries = AttrDict()
+        self.buttons = AttrDict()
+        self._boxes = []
+        self._menu = None
+        self.lastEvent = None
+        self.mainCtrl = self.panelFactory(self,Container.VERTICAL)
+        for m in ('addLabel','addEntry','addPanel',
+                  'addButton', 'VERTICAL', 'HORIZONTAL',
+                  'addOkButton', 'addAbortButton'):
+            setattr(self,m,getattr(self.mainCtrl,m))
+
+    
     def addForm(self,*args,**kw):
         return self.__class__(self,*args,**kw)
     

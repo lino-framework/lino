@@ -186,7 +186,7 @@ class Table(Container):
 		self.append(col)
 		
 	def addRow(self,*cells,**kw):
-		assert len(cells) == len(self.columns)
+		#assert len(cells) == len(self.columns)
 		row = TableRow(**kw)
 		self.append(row)
 		for cell in cells:

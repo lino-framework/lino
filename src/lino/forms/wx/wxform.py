@@ -54,26 +54,50 @@ WEIGHT = 1
 
 class Label(base.Label):
     
+    def __repr__(self):
+        return "Label %s %s at %s" % (
+            self.getName(),
+            repr(self.wxctrl.GetSize()),
+            repr(self.wxctrl.GetPosition()))
+        
     def setup(self,frm,panel,box):
         text = wx.StaticText(panel,-1, self.getLabel())
         box.Add(text) #, WEIGHT, wx.EXPAND|wx.ALL, 10)
+        self.wxctrl = text
                 
 class Button(base.Button):
     
+    def __repr__(self):
+        return "Button %s %s at %s" % (
+            self.getLabel(),
+            repr(self.wxctrl.GetSize()),
+            repr(self.wxctrl.GetPosition()))
+        
     def setup(self,frm,panel,box):
         
         winId = wx.NewId()
         btn = wx.Button(panel,winId,self.getLabel(),
                         wx.DefaultPosition,
                         wx.DefaultSize)
-        btn.SetBackgroundColour('YELLOW')
+        #btn.SetBackgroundColour('YELLOW')
         frm.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
         #b.SetDefault()
         box.Add(btn) #, 0, wx.CENTER,10)
+        self.wxctrl = btn
                 
         
 
 class Panel(base.Panel):
+
+    def __repr__(self):
+        s = "%s %s at %s:" % (
+            self.getName(),
+            repr(self.mypanel.GetSize()),
+            repr(self.mypanel.GetPosition()))
+        
+        for c in self._components:
+            s += "\n- " + ("\n  ".join(repr(c).splitlines()))
+        return s
     
     def setup(self,frm,panel,box):
         mypanel = wx.Panel(panel,-1)
@@ -87,6 +111,7 @@ class Panel(base.Panel):
         #mypanel.SetSizer(mybox) 
         
         self.mybox = mybox # store reference to avoid crash?
+        self.mypanel = mypanel
         
         for c in self._components:
             c.setup(frm,mypanel,mybox)
@@ -94,6 +119,12 @@ class Panel(base.Panel):
         
 class Entry(base.Entry):
 
+    def __repr__(self):
+        return "Entry %s %s at %s" % (
+            self.getLabel(),
+            repr(self.wxctrl.GetSize()),
+            repr(self.wxctrl.GetPosition()))
+        
     def setup(self,frm,panel,box):
         mypanel = wx.Panel(panel,-1)
         box.Add(mypanel)#, WEIGHT, wx.EXPAND|wx.ALL,10)
@@ -104,7 +135,7 @@ class Entry(base.Entry):
         # mypanel.SetSizer(mybox) 
         
         label = wx.StaticText(mypanel, -1, self.getLabel()) 
-        label.SetBackgroundColour(wx.GREEN)
+        #label.SetBackgroundColour(wx.GREEN)
         mybox.Add(label)#, WEIGHT, wx.ALL|wx.EXPAND,10)
 
         s = self.type.format(self.value)
@@ -118,10 +149,14 @@ class Entry(base.Entry):
         
         self.mybox = mybox # store reference to avoid crash?
         self.editor = editor # store reference to avoid crash?
+        self.wxctrl = mypanel
         
         #return self.editor
 
     def OnKillFocus(self,evt):
+        # on MS-Windows:
+        if self.owner.dying: return
+        # killfocus can accur after the windows have been destroyed
         s = self.editor.GetValue()
         self.value = self.type.parse(s)
         evt.Skip()
@@ -165,15 +200,19 @@ class WxFrame(wx.Frame):
             self.SetMenuBar(wxMenuBar)
             
         #self.SetBackgroundColour("KHAKI3")
-        self.SetBackgroundColour(wx.RED)
+        #self.SetBackgroundColour(wx.RED)
+
         
         mainBox = wx.BoxSizer(wx.VERTICAL)
-        panel = wx.Panel(self,-1)
-        panel.SetBackgroundColour(wx.GREEN)
+        #panel = wx.Panel(self,-1)
+        #panel.SetBackgroundColour(wx.GREEN)
         #box.Add(panel,WEIGHT,wx.EXPAND|wx.ALL,10)
         
-        for c in frm._components:
-            c.setup(self,panel,mainBox)
+        frm.mainCtrl.setup(self,self,mainBox)
+        
+##         for c in frm._components:
+##             c.setup(self,panel,mainBox)
+##             c.setup(self,self,mainBox)
                 
         
         #box.Fit(self) # set size to minimum size as calculated by the
@@ -209,6 +248,9 @@ class WxFrame(wx.Frame):
 
     def OnCloseWindow(self, event):
         self.dying = True
+        # http://wiki.wxpython.org/index.cgi/Surviving_20with_20wxEVT_5fKILL_5fFOCUS_20under_20Microsoft_20Windows
+        # Surviving with EVT_KILL_FOCUS under Microsoft Windows
+        
         #self.window = None
         #self.mainMenu = None
         #if hasattr(self, "tbicon"):
@@ -248,6 +290,11 @@ class Form(base.Form):
         self._wxFrame = WxFrame(self)
 
     def afterShow(self):
+        print repr(self.mainCtrl)
+        #for ctrl in self._wxFrame.GetChildren():
+        #    print repr(ctrl)
+            #print ctrl.GetSize()
+            #print ctrl.GetPosition()
         if self._parent is None:
             self.app.SetTopWindow(self._wxFrame)
             self.app.MainLoop()
@@ -258,9 +305,10 @@ class Form(base.Form):
         self.afterShow()
 
     def showModal(self):
-        self._wxFrame.setup()
         self._wxFrame.MakeModal(True)
+        self._wxFrame.setup()
         self._wxFrame.Show()
+        # wx.DebugContext.PrintStatistics()
         self.afterShow()
         return self.lastEvent == self.buttons.ok
 
