@@ -131,7 +131,6 @@ class Report(Datasource,Describable):
 
 	def createColumnList(self,columnNames):
  		# overrides Datasource.createColumnList
-		print columnNames
 		return ReportColumnList(self._store,
 										self._session,
 										columnNames)

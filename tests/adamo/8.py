@@ -67,13 +67,14 @@ class Case(unittest.TestCase):
 		s1 = ''
 		q = PARTNERS.query("name street city.name", orderBy="name")
 		for row in q:
-			s1 += row[0] + " "
+			#print row[0]
+			s1 += str(row[0]) + " "
 			s1 += str(row[1]) + " "
 			s1 += str(row[2]) + "\n"
 			
 		s2 = ''
 		for i in q:
-			s2 += i.name + " "
+			s2 += str(i.name) + " "
 			s2 += str(i.street) + " "
 			s2 += str(i.city.name) + "\n"
 

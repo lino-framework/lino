@@ -6,20 +6,22 @@
 
 from cStringIO import StringIO
 
-from lino.misc.console import Console
+from lino.misc.console import Console, getSystemConsole
 from session import Session
 
+_center = None # User code should call getCenter() to get this instance.
 
 class Center:
 	"""
-	This is the global singleton object used by adamo.
-	User code should call center() to get this instance.
+	The Center is the global singleton object used by adamo.
+	It holds a list of sessions and a list of databases. 
+	Each session can have its own console
 	"""
 
 	def __init__(self,**kw):
 		self._databases = []
 		self._sessions = []
-		self.console = Console(**kw)
+		#self._systemConsole = con
 		self._sessionFactory = ConsoleSession
 
 	def setSessionFactory(self,sf):
@@ -38,8 +40,8 @@ class Center:
 	
 	def addDatabase(self,db):
 		#assert db is not None
- 		#assert not self._databases.has_key(db.getName())
- 		#self._databases[db.getName()] = db
+		#assert not self._databases.has_key(db.getName())
+		#self._databases[db.getName()] = db
 		assert not db in self._databases
 		self._databases.append(db)
 		
@@ -69,28 +71,31 @@ class ConsoleSession(Session):
 	def __init__(self,console=None,**kw):
 		Session.__init__(self,**kw)
 		if console is None:
-			console = center().console
-		self.console = console
+			console = getSystemConsole()
 		self._dumping = None
-		#for m in console.forwardables:
-		#	setattr(self,m,getattr(console,m))
+		self._setcon(console)
 
-	def info(self,*a):
-		return self.console.info(*a)
-	def debug(self,*a):
-		return self.console.debug(*a)
-	def error(self,*a):
-		return self.console.error(*a)
+	#~ def info(self,*a):
+		#~ return self.console.info(*a)
+	#~ def debug(self,*a):
+		#~ return self.console.debug(*a)
+	#~ def error(self,*a):
+		#~ return self.console.error(*a)
+		
+	def _setcon(self,console):
+		self.console = console
+		for m in console.forwardables:
+			setattr(self,m,getattr(console,m))
 
 	def startDump(self,**kw):
 		assert self._dumping is None
 		self._dumping = self.console
-		self.console = Console(out=StringIO(),**kw)
+		self._setcon(Console(out=StringIO(),**kw))
 
 	def stopDump(self):
 		assert self._dumping is not None, "dumping was not started"
 		s = self.console.out.getvalue()
-		self.console = self._dumping
+		self._setcon(self._dumping)
 		self._dumping = None
 		return s
 
@@ -103,10 +108,11 @@ class ConsoleSession(Session):
 			wr(cell.getLabel() + ":" + cell.format())
 			wr("\n")
 		
-	def showReport(self,ds,showTitle=True,**kw):
+	def showReport(self,ds,columnNames=None,showTitle=True,**kw):
 		wr = self.console.out.write
 		#if len(kw):
-		rpt = ds.report(**kw)
+		rpt = ds.report(columnNames,**kw)
+		#print [col.name for col in rpt._clist.visibleColumns]
 		if showTitle:
 			wr(rpt.getLabel()+"\n")
 			wr("="*len(rpt.getLabel())+"\n")
@@ -130,21 +136,20 @@ class ConsoleSession(Session):
 
 
 
-_center = None
-
-
-
 def start(**kw):
 	
-	"""This can be invoked once to specify explicit options for the
-	Center singleton.  It is not allowed to call it when the Center is
-	already instanciated. """
-	
+	"""This can be invoked once to specify explicit options for the Center singleton.  
+	It is not allowed to call it when the Center is
+	already instanciated. 	
+	"""
 	global _center
 	assert _center is None
 	_center = Center(**kw)
+	#con = Console(**kw)
+	#_center = Center(con)
+	return _center
 
-def center():
+def getCenter():
 
 	""" Returns the global Center singleton.  Instanciates it if this
 	is the first call.  """
@@ -154,3 +159,9 @@ def center():
 		start()
 	return _center
 
+#~ def getSystemConsole():
+	#~ return getCenter()._systemConsole
+
+def createSession(**kw):
+	return getCenter().createSession(**kw)
+	

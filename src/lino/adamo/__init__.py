@@ -21,7 +21,7 @@ from schema import Schema, SchemaPlugin
 #from session import Application
 from datasource import DataRow
 from database import QuickDatabase 
-import center 
+import center
 
 def _(s):
    return s
@@ -52,7 +52,7 @@ def beginQuickSession(schema,
 							  )
 	db.createTables()
 	
-	sess = center.center().createSession()
+	sess = center.getCenter().createSession()
 	
 	sess.use(db=db,langs=langs)
 	

@@ -14,7 +14,6 @@ from lino.adamo import DataVeto, InvalidRequestError
 class Case(TestCase):
 
 	def setUp(self):
-		
 		self.sess = demo.beginSession()
 
 	def tearDown(self):
@@ -26,10 +25,11 @@ class Case(TestCase):
 		rpt = self.sess.tables.CITIES.report("id name nation",
 														 orderBy="name",
 														 pageLen=10)
+		# print [col.name for col in rpt._clist.visibleColumns]
 		self.sess.startDump()
 		self.sess.showReport(rpt)
 		s = self.sess.stopDump()
-		#print s
+		# print s
 		self.assertEquivalent(s,"""\
 Cities
 ======

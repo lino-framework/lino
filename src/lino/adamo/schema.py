@@ -17,7 +17,8 @@ from datatypes import StartupDelay
 from datasource import Datasource
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-from center import center
+from lino.misc.console import getSystemConsole
+#from center import getCenter
 
 
 
@@ -118,7 +119,7 @@ class Schema:
 		#self._app = app
 		assert not self._startupDone, "double startup"
 		#progress = self._app.console.progress
-		info = center().console.info
+		info = getSystemConsole().info
 		info("Initializing database schema...")
 		#self.defineSystemTables(ui)
 		for plugin in self._plugins:

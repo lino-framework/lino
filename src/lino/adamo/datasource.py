@@ -182,7 +182,8 @@ class Datasource:
 		#return self.child(Report,columnNames=columnNames,**kw)
 		self.setdefaults(kw)
 		if columnNames is None:
-			columnNames = " ".join(self._table.getAttrList())
+			columnNames = " ".join([col.name for col in self._clist.visibleColumns])
+			#columnNames = " ".join(self._table.getAttrList())
 		from report import Report
 		return Report( self._session,
 							self._store,
@@ -990,13 +991,19 @@ class DataCell:
 
 	def getValue(self):
 		return self.col.getCellValue(self.row)
+		
+	def __str__(self):
+		return str(self.col.getCellValue(self.row))
+		#~ v = self.col.getCellValue(self.row)
+		#~ if v is None:
+			#~ return "None"
+		#~ return self.col.rowAttr.format(v)
 	
 	def format(self):
 		v = self.col.getCellValue(self.row)
 		if v is None:
 			return ""
-		#return self.col.format(v,self.row.getSession())
-		return self.col.rowAttr.format(v) #,self.row.getSession())
+		return self.col.rowAttr.format(v)
 	
 	def parse(self,s):
 		value = self.col.rowAttr.format(s)

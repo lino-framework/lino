@@ -5,6 +5,7 @@
 #----------------------------------------------------------------------
 
 from lino.misc.descr import Describable
+from lino.misc.console import getSystemConsole
 from lino.adamo import DataVeto
 
 #from ui import UI
@@ -15,7 +16,7 @@ from session import Context, BabelLang
 #from query import DatasourceColumnList
 from tim2lino import TimMemoParser
 from store import Store
-from center import center
+from center import getCenter
 
 
 class Database(Context,Describable):
@@ -41,7 +42,7 @@ class Database(Context,Describable):
 		self.schema = schema
 		#self._contexts = []
 		self._stores = {}
-		center().addDatabase(self)
+		getCenter().addDatabase(self)
 
 	def getBabelLangs(self):
 		return self._supportedLangs
@@ -136,7 +137,7 @@ class Database(Context,Describable):
 	#def disconnect(self):
 
  	def shutdown(self):
-		center().console.info("Database shutdown "+ str(self))
+		getSystemConsole().info("Database shutdown "+ str(self))
  		#self.commit()
 		
 ## 		for sess in self._sessions:
@@ -146,7 +147,7 @@ class Database(Context,Describable):
 		for store in self.getStoresById():
 			store.beforeShutdown()
 			
-		center().removeDatabase(self)
+		getCenter().removeDatabase(self)
 	
 	def restart(self):
 		self.shutdown()

@@ -239,9 +239,7 @@ class BabelField(Field):
 		if len(langs) > 1:
 			assert issequence(value), "%s is not a sequence" % repr(value)
 			assert len(value) == len(langs), \
-					 "%s expects %d values but got %s" % (self._name,
-																	  len(langs),
-																	  repr(value))
+					 "%s expects %d values but got %s" % (self._name, len(langs), repr(value))
 			i = 0
 			for lang in langs:
 				if lang.index != -1:
@@ -552,6 +550,9 @@ class Detail(RowAttribute):
 	def validate(self,row,value):
 		raise "cannot set value of a detail"
 	
+	def getPreferredWidth(self):
+		# TODO: 
+		return 20
 
 	def onAreaInit(self,area):
 		area.defineQuery(self._name,self._queryParams)
