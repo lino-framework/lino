@@ -238,7 +238,7 @@ class SimpleDatasource:
     def setupReport(self,rpt,**kw):
         for dc in self.getVisibleColumns():
             rpt.addDataColumn(dc,
-                              width=dc.getPreferredWidth(),
+                              width=dc.getMaxWidth(),
                               label=dc.getLabel())
         kw.setdefault('name',self._table.getName())
         kw.setdefault('label',self._table.getLabel())
@@ -251,6 +251,19 @@ class SimpleDatasource:
             rpt = self._session.report()
         self.setupReport(rpt,**kw)
         rpt.execute(self)
+
+    def __xml__(self,wr):
+        wr("<datasource>")
+        for row in self:
+            wr("<row>")
+            for col in self.getVisibleColumns():
+                wr("<td>")
+                v = v = col.getCellValue(row)
+                if v is not None:
+                    wr(col.format(v))
+                wr("</td>")
+            wr("</row>")
+        wr("</datasource>")
 
 
 ##     def setupTableEditor(self,e):

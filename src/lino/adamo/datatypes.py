@@ -34,7 +34,31 @@ ERR_PARSE_EMPTY = "caller must handle empty strings"
 
 class Type(Describable):
     "base class for containers of data-type specific meta information"
+
+    # sizes are given in "characters" or "lines"
+    minHeight = 1
+    maxHeight = 1
     
+    minWidth = 5
+    maxWidth = 40
+    
+    def __init__(self,
+                 minHeight=None,
+                 maxHeight=None,
+                 minWidth=None,
+                 maxWidth=None,
+                 **kw):
+        Describable.__init__(self,**kw)
+        
+        if minHeight is not None:
+            self.minHeight = minHeight
+        if maxHeight is not None:
+            self.maxHeight = maxHeight
+        if minWidth is not None:
+            self.minWidth = minWidth
+        if maxWidth is not None:
+            self.maxWidth = maxWidth
+        
     def __call__(self,**kw):
         return apply(self.__class__,[],kw)
     
@@ -53,17 +77,23 @@ class Type(Describable):
     def validate(self,value):
         pass
     
-    def getPreferredWidth(self):
-        #note: for StringType, self.width is an instance variable, for
-        #other classes it is a class variable.
-        return self.width
+##     def getPreferredWidth(self):
+##         #note: for StringType, self.width is an instance variable, for
+##         #other classes it is a class variable.
+##         return self.width
+
+##     def getMinSize(self):
+##         return (self.minWidth
+        
     
         
     
 class StringType(Type):
     def __init__(self,width=50,**kw):
+        self.minWidth = self.maxWidth = width
+        if width > 20:
+            self.minWidth = 20
         Type.__init__(self,**kw)
-        self.width = width
 
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
@@ -83,16 +113,22 @@ class PasswordType(StringType):
 
 
 class MemoType(StringType):
-    def __init__(self,width=50,height=4,**kw):
-        Type.__init__(self,**kw)
-        self.width = width
-        self.height = height
+    def __init__(self,height=4,**kw):
+        self.minHeight = self.maxHeight = height
+        if height > 10:
+            self.minHeight = 10
+        elif height < 10:
+            self.maxHeight = 10
+        StringType.__init__(self,**kw)
+        #self.width = width
+        #self.height = height
     
 
 class IntType(Type):
     def __init__(self,width=5,**kw):
+        self.minWidth = self.maxWidth = width
         Type.__init__(self,**kw)
-        self.width = width
+        #self.width = width
         
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
@@ -100,7 +136,8 @@ class IntType(Type):
 
     
 class DateType(Type):
-    width = 10
+    maxWidth = 10
+    minWidth = 10
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         s = s.replace(".","-")
@@ -128,7 +165,8 @@ class DateType(Type):
 
     
 class TimeType(Type):
-    width = 8
+    maxWidth = 8
+    minWidth = 8
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         l = s.split(":")
@@ -139,7 +177,7 @@ class TimeType(Type):
     
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
-        return str(v)[:self.width]
+        return str(v)[:self.maxWidth]
 
     def validate(self,value):
         if not isinstance(value,datetime.time):
@@ -148,7 +186,8 @@ class TimeType(Type):
             
     
 class DurationType(Type):
-    width = 8
+    minWidth = 8
+    maxWidth = 8
     fmt = "hh.mm.ss" # currently only possible fmt
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY

@@ -19,6 +19,8 @@
 import wx
 import wx.grid
 
+from lino.adamo.exceptions import RowLockFailed
+
 #from lino.adamo.rowattrs import Pointer
 
 #pointerDataType = "Pointer"
@@ -129,13 +131,14 @@ class MyDataTable(wx.grid.PyGridTableBase):
             self.rows.append(row)
         else:
             row = self.rows[rowIndex]
-        if not row.lock():
-            self.editor.getForm().message("sorry: row.lock() failed")
-            return
-        col = self.columns[colIndex]
-        col.setValueFromString(row,value)
-        row.setDirty()
-        row.unlock()
+        try:
+            row.lock()
+            col = self.columns[colIndex]
+            col.setValueFromString(row,value)
+            row.setDirty()
+            row.unlock()
+        except RowLockFailed,e:
+            self.editor.getForm().message(str(e))
         #row.setCellFromString(colIndex,value)
         #self._lockedRows.append(row)
         
@@ -404,10 +407,21 @@ class DataGridCtrl(wx.grid.Grid):
         
         if evt.KeyCode() == wx.WXK_RETURN:
             if evt.ControlDown():
-                ui = self.table.editor.getForm()
-                ui.showDataForm(self.table.editor.ds)
+                frm = self.table.editor.getForm()
+                frm.showDataForm(self.table.editor.ds)
                 #evt.Skip()
                 return
+
+            if self.table.editor.choosing:
+                frm = self.table.editor.getForm()
+                ds = self.table.editor.ds
+                l = self.getSelectedRows()
+                if len(l) == 1:
+                    self.table.editor.setChosenRow(ds[l[0]])
+                    frm.close()
+                    return
+                else:
+                    ui.status("no single row selected!")
 
             self.DisableCellEditControl()
 
@@ -419,7 +433,7 @@ class DataGridCtrl(wx.grid.Grid):
                     self.MakeCellVisible(newRow, 0)
                 else:
                     pass
-        elif evt.KeyCode() == wx.WXK_F2:
+        elif evt.KeyCode() == wx.WXK_F1:
             if evt.ControlDown() or evt.ShiftDown() or evt.AltDown():
                 evt.Skip()
                 return
@@ -429,8 +443,9 @@ class DataGridCtrl(wx.grid.Grid):
             ui = self.table.editor.getForm()
             
             if col.rowAttr.showEditor(ui,row):
+                self.refresh()
                 return
-            #print "F2 in column", col.name
+            #print "F1 in column", col.name
             evt.Skip()
         else:
             evt.Skip()

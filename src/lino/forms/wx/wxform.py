@@ -21,6 +21,7 @@ import wx
 
 from lino.ui import console
 
+from lino.adamo.datatypes import MemoType
 from lino.forms import base
 from lino.forms.wx import wxgrid
 #from lino.forms.wx.showevents import showEvents
@@ -210,10 +211,7 @@ class Panel(base.Panel):
 class EntryMixin:
 
     def setup(self,panel,box):
-        if self.getLabel() is None:
-            mypanel = panel
-            hbox = box
-        else:
+        if self.hasLabel():
             mypanel = wx.Panel(panel,-1)
             mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
             box.Add(mypanel, WEIGHT, wx.EXPAND|wx.ALL,10)
@@ -256,27 +254,60 @@ class EntryMixin:
                      )
 
             hbox.Add( (10,1), 0) # spacer
+            
+        else:
+            mypanel = panel
+            hbox = box
 
 
         style=0
-        if isinstance(self.getType(),datatypes.MemoType):
+        type = self.getType()
+        if type.maxHeight > 1:
             style = style|wx.TE_MULTILINE
-        editor = wx.TextCtrl(mypanel,-1,self.getValueForEditor(),
+        editor = wx.TextCtrl(mypanel,-1,
+                             self.getValueForEditor(),
                              style=style)
                              #validator=EntryValidator(self))
                              #style=wx.TE_PROCESS_ENTER)
+
+        
+        #LINEHEIGHT = 10
+        #CHARWIDTH = 10
+        
+        #CHARWIDTH = LINEHEIGHT = editor.GetFont().GetPointSize()
+        CHARWIDTH, LINEHEIGHT = editor.GetTextExtent("M")
+
+        CHARWIDTH *= 2
+        #LINEHEIGHT *= 2
+        
+        #print CHARWIDTH, LINEHEIGHT
+        
+        #editor.SetMaxSize( (type.maxWidth*CHARWIDTH,
+        #                    type.maxHeight*LINEHEIGHT) )
+        editor.SetMinSize( (type.minWidth*CHARWIDTH,
+                            type.minHeight*LINEHEIGHT) )
+
+        print editor.GetMinSize(), editor.GetMaxSize()
+        print mypanel.GetMinSize(), editor.GetMaxSize()
+        
         #self.Bind(wx.EVT_TEXT, self.EvtText, t1)
         #editor.Bind(wx.EVT_CHAR, self.EvtChar)
         #editor.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
         #editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
-        hbox.Add(editor,
-                 WEIGHT,
-                 wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
-                 10)
+
+
         
-        self.editor = editor # store reference to avoid crash?
-        self.wxctrl = mypanel
+        self.editor = editor 
+        if self.hasLabel():
+            hbox.Add(editor,
+                     WEIGHT,
+                     wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
+                     10)
+            self.wxctrl = mypanel
+        else:
+            hbox.Add(editor,wx.EXPAND|wx.ALL)
+            self.wxctrl = editor
 
     def refresh(self):
         if hasattr(self,'editor'):
@@ -372,6 +403,17 @@ class Form(base.Form):
                                    wx.TAB_TRAVERSAL)
                                    
             self.wxctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
+            
+            if self.menuBar is not None:
+                # todo: won't work
+                # todo: put following code to frm._menu.installto(self)
+                wxMenuBar = wx.MenuBar()
+                for mnu in self.menuBar.menus:
+                    wxm = self._createMenuWidget(mnu)
+                    wxMenuBar.Append(wxm,mnu.getLabel())
+
+                self.wxctrl.SetMenuBar(wxMenuBar)
+            
 
         wx.EVT_CHAR(self.wxctrl, self.OnChar)
         wx.EVT_IDLE(self.wxctrl, self.OnIdle)
@@ -381,16 +423,6 @@ class Form(base.Form):
         wx.EVT_MAXIMIZE(self.wxctrl, self.OnMaximize)
 
         
-        if self.menuBar is not None:
-            # todo: won't work
-            # todo: put following code to frm._menu.installto(self)
-            wxMenuBar = wx.MenuBar()
-            for mnu in self.menuBar.menus:
-                wxm = self._createMenuWidget(mnu)
-                wxMenuBar.Append(wxm,mnu.getLabel())
-
-            self.wxctrl.SetMenuBar(wxMenuBar)
-            
         #self.SetBackgroundColour(wx.RED)
         
         mainBox = wx.BoxSizer(wx.VERTICAL)

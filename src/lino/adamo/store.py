@@ -142,15 +142,14 @@ class Store:
     def lockRow(self,row,ds):
         k = tuple(row.getRowId())
         if self._lockedRows.has_key(k):
-            return False
+            raise RowLockFailed("Row is locked by another process")
         self._lockedRows[k] = ds
-        return True
 
     def unlockRow(self,row,ds):
         k = tuple(row.getRowId())
         x = self._lockedRows.pop(k)
         assert x == ds
-        self.touch()
+        #self.touch()
         #if row.isDirty():
         #    self._dirtyRows[k] = row
         
@@ -169,14 +168,18 @@ class Store:
 ##         #   self._dirtyRows[key] = row
 
     def unlockAll(self):
-        assert len(self._lockedRows) == 0
+        #assert len(self._lockedRows) == 0
 ##         #print "Datasource.unlockAll()",self
-##         for row in self._lockedRows:
-##             row.unlock()
+        for row in self._lockedRows:
+            print "forced unlock:", row
+            row.unlock()
 ##         #assert len(self._lockedRows) == 0
         
     def unlockDatasource(self,ds):
-        assert len(self._lockedRows) == 0
+        for row in self._lockedRows:
+            if row._ds == ds:
+                print "forced unlock:", row
+                row.unlock()
 ##         #print "Datasource.unlockAll()",self
 ##         for row in self._lockedRows:
 ##             if row._ds == ds:

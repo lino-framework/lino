@@ -19,11 +19,15 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.i18n import itr,_
-#from lino.ui import console
 
 itr("Working",
    de="Arbeitsvorgang läuft",
    fr="Travail en cours")
+
+
+
+class JobAborted(Exception):
+    pass
 
 
 uimeths = ('warning', 'message','info','error', 'verbose')
@@ -32,35 +36,57 @@ uimeths = ('warning', 'message','info','error', 'verbose')
 class Task:
     def __init__(self):
         self._todo = []
+        self.count_errors = 0
+        self.count_warnings = 0
 
-    def schedule(self,m,*args,**kw):
-        self._todo.append( (m,args,kw) )
+##     def schedule(self,m,*args,**kw):
+##         self._todo.append( (m,args,kw) )
 
     def getLabel(self):
         return _("Working")
     
     def run(self,ui):
-        self.ui = ui
-        self.job = self.ui.job(self.getLabel())
-        for m in uimeths:
-            setattr(self,m,getattr(self.job,m))
-        self.start()
-        while len(self._todo) > 0:
-            self.job.inc()
-            m,args,kw = self._todo.pop(0)
-            m(*args,**kw)
-        self.job.done()
+        #self.ui = ui
+        self.job = ui.job(self.getLabel())
+##         for m in uimeths:
+##             setattr(self,m,getattr(self.job,m))
+        try:
+            self.start()
+            self.job.done()
+        except JobAborted,e:
+            self.job.aborted()
+            
+##         while len(self._todo) > 0:
+##             # self.job.inc()
+##             m,args,kw = self._todo.pop(0)
+##             m(*args,**kw)
 
-##     def message(self,msg):
-##         self.job.message(msg)
+##     def setMaxValue(self,n):
+##         self.job.setMaxValue(n)
+
+    def message(self,msg):
+        self.job.message(msg)
+
+    def info(self,msg):
+        self.job.info(msg)
 
     def status(self,msg):
         self.job.status(msg)
 
-##     def error(self,msg):
-##         self.ui.error(msg)
+    def verbose(self,msg):
+        self.job.verbose(msg)
+        
+    def error(self,msg):
+        self.count_errors += 1
+        self.job.error(msg)
 
+    def warning(self,msg):
+        self.count_warnings += 1
+        self.job.warning(msg)
+        
 
+    def start(self):
+        raise NotImplementedError
 
 
 
@@ -78,13 +104,20 @@ class Job:
         self.pc = None
         self.status(status)
 
+    def setMaxValue(self,n):
+        self.maxval = n
+        
     def status(self,msg=""):
         self._status = msg
         self.pb.onStatus(self)
 
-    def ping(self,msg):
+    def info(self,msg):
+        self.pb.info(msg)
+        self.pb.onInc(self)
+        
+    def update(self,msg,n=1):
         self._status = msg
-        self.inc()
+        self.inc(n)
         
     def inc(self,n=1):
         self.curval += n
@@ -118,10 +151,14 @@ class ProgressBar:
 
     """
     
-    no longer inspired by
+    originally inspired by
     http://docs.python.org/mac/progressbar-objects.html
+    
     and
     http://search.cpan.org/src/FLUFFY/Term-ProgressBar-2.06-r1/README
+    
+    and
+    http://www.lpthe.jussieu.fr/~zeitlin/wxWindows/docs/wxwin_wxprogressdialog.html
 
     
     """
@@ -141,6 +178,10 @@ class ProgressBar:
         
     def info(self,msg):
         self.ui.info(msg)
+
+    
+    
+
         
     def verbose(self,msg):
         self.ui.verbose(msg)
@@ -172,48 +213,4 @@ class ProgressBar:
         del self._jobs[-1]
     
 
-class ConsoleProgressBar(ProgressBar):
-##     def __init__(self,ui,*args,**kw):
-##         self.console = console
-##         ProgressBar.__init__(self,*args,**kw)
-        
-    def onInit(self):
-        self.ui.writeout(self._label)
-        
-    def onDone(self,job):
-        self.ui.write('\n')
-        ProgressBar.onDone(self,job)
-        
-class DecentConsoleProgressBar(ConsoleProgressBar):
-    def onStatus(self):
-        self.ui.write(self._status)
-        
-    def onInc(self):
-        self.ui.write('.')
-        
-class PurzelConsoleProgressBar(ConsoleProgressBar):
-
-    width = 80
-    purzelMann = "|/-\\"
-    
-    def onInit(self):
-        if self._label is not None:
-            self.ui.writeout(self._label)
-        
-    def onStatus(self,job):
-        self.onInc(job)
-        
-    def onInc(self,job):
-        if job.maxval is None:
-            s = '[' + self.purzelMann[job.curval % 4] + "] "
-        else:
-            if job.pc is None:
-                s = "[    ] " 
-            else:
-                s = "[%3d%%] " % job.pc
-        s += job._status
-        s = s[:self.width-1]
-        self.ui.write(s.ljust(self.width) + '\r')
-
-    
             

@@ -259,8 +259,10 @@ class Field(RowAttribute):
         return atomicValues[0]
         
     
-    def getPreferredWidth(self):
-        return self.type.width
+    def getMinWidth(self):
+        return self.type.minWidth
+    def getMaxWidth(self):
+        return self.type.maxWidth
 
 
 
@@ -513,9 +515,12 @@ class Pointer(RowAttribute):
         return pointedRow._ds.query(**d)
         
 
-    def getPreferredWidth(self):
+    def getMinWidth(self):
         # TODO: 
         return 10
+    def getMaxWidth(self):
+        # TODO: 
+        return 50
         #w = 0
         #for pk in self._toTable.getPrimaryKey():
         #   w += pk.getPreferredWidth()
@@ -613,7 +618,19 @@ class Pointer(RowAttribute):
     def getType(self):
         return datatypes.STRING
 
+    def getTargetSource(self,row): 
+        return row.getSession().query(self._toClass)
     
+    def showEditor(self,ui,row):
+        row.lock()
+        ds = self.getTargetSource(row)
+        selectedRow = ui.chooseDataRow(ds,row)
+        if selectedRow is not None:
+            ui.status("you chose: "+str(row))
+            self.setCellValue(row,selectedRow)
+            row.setDirty()
+        row.unlock()
+        return True
 
         
 class Detail(RowAttribute):
@@ -644,9 +661,16 @@ class Detail(RowAttribute):
     def validate(self,row,value):
         raise "cannot set value of a detail"
     
-    def getPreferredWidth(self):
+##     def getPreferredWidth(self):
+##         # TODO: 
+##         return 20
+    
+    def getMinWidth(self):
         # TODO: 
         return 20
+    def getMaxWidth(self):
+        # TODO: 
+        return 40
 
     def onAreaInit(self,area):
         area.defineQuery(self.name,self._queryParams)
@@ -685,16 +709,16 @@ class Detail(RowAttribute):
     def getType(self):
         return datatypes.STRING
 
-class Vurt(RowAttribute):
+class Vurt(Field):
     """
     
     A Vurt (virtual field) is a method 
     
     """
     def __init__(self,func,type,**kw):
-        RowAttribute.__init__(self,**kw)
+        Field.__init__(self,type,**kw)
         self._func = func
-        self.type = type
+        #self.type = type
 
     def format(self,v):
         return self.type.format(v)
@@ -706,8 +730,8 @@ class Vurt(RowAttribute):
         raise "not allowed"
 
 
-    def getPreferredWidth(self):
-        return self.type.width
+##     def getPreferredWidth(self):
+##         return self.type.width
 
 
     def setCellValue(self,row,value):

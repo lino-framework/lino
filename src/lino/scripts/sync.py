@@ -41,18 +41,17 @@ class SyncError(Exception):
     pass
 
 class Synchronizer(Task):
-    def __init__(self,src,target,simulate):
+    def __init__(self,src,target,simulate,showProgress):
         Task.__init__(self)
         self.src = src
         self.target = target
         self.simulate=simulate
+        self.showProgress = showProgress
         #self.logger = logger
         
         self.ignore_times = False
         self.modify_window = 2
 
-        self.count_errors = 0
-        self.count_newer = 0
         self.count_uptodate = 0
         self.count_delete_file = 0
         self.count_update_file = 0
@@ -69,20 +68,29 @@ class Synchronizer(Task):
             s += " (Simulation)"
         return s
 
-
     def start(self):
         if not os.path.exists(self.src):
             raise SyncError(self.src+" doesn't exist")
-        
+
+        if self.showProgress:
+            self.status("Counting directories...")
+            n = 0
+            for root, dirs, files in os.walk(self.src):
+                n += len(dirs)
+            self.status("Found %d directories." % n)
+            self.job.setMaxValue(n)
+            
         if os.path.exists(self.target):
-            self.schedule(self.update,self.src,self.target)
+            #self.schedule(self.update,self.src,self.target)
+            self.update(self.src,self.target)
         else:
-            self.schedule(self.copy,self.src,self.target)
+            #self.schedule(self.copy,self.src,self.target)
+            self.copy(self.src,self.target)
 
 
-    def purzel(self):
-        #self.job.inc()
-        pass
+##     def purzel(self):
+##         #self.job.inc()
+##         pass
         
     def utime(self,src,target):
         # Note: The utime api of the 2.3 version of python is
@@ -91,7 +99,6 @@ class Synchronizer(Task):
             s = os.stat(src)
         except OSError,e:
         #except Exception,e:
-            self.count_errors += 1
             self.error("os.stat('%s') failed" % src)
             return
         
@@ -99,12 +106,11 @@ class Synchronizer(Task):
             os.utime(target, (s.st_atime, s.st_mtime))
         except OSError,e:
         #except Exception,e:
-            self.count_errors += 1
             self.error("os.utime('%s') failed" % target)
 
                 
     def copy(self,src,target):
-        self.purzel()
+        #self.purzel()
         if os.path.isfile(src):
             self.copy_file(src,target)
         elif os.path.isdir(src):
@@ -114,7 +120,7 @@ class Synchronizer(Task):
                 "%s is neither file nor directory" % src)
 
     def update(self,src,target):
-        self.purzel()
+        #self.purzel()
         if os.path.isfile(src):
             self.update_file(src,target)
         elif os.path.isdir(src):
@@ -124,7 +130,7 @@ class Synchronizer(Task):
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
-        self.purzel()
+        #self.purzel()
         if os.path.isfile(name):
             self.delete_file(name)
         elif os.path.isdir(name):
@@ -145,7 +151,7 @@ class Synchronizer(Task):
     def update_dir(self,src,target):
         #srcdir = os.path.join(self.srcroot,dirname)
         #destdir = os.path.join(self.destroot,dirname)
-        self.status("updating " + src)
+        self.job.update("updating " + src)
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
         mustCopy = []
@@ -170,15 +176,18 @@ class Synchronizer(Task):
         """
                 
         for name in destnames:
-            self.schedule(self.delete,os.path.join(target,name))
+            #self.schedule(self.delete,os.path.join(target,name))
+            self.delete(os.path.join(target,name))
         del destnames
 
         for s,t in mustCopy:
-            self.schedule(self.copy,s,t)
+            #self.schedule(self.copy,s,t)
+            self.copy(s,t)
         del mustCopy
             
         for s,t in mustUpdate:
-            self.schedule(self.update,s,t)
+            #self.schedule(self.update,s,t)
+            self.update(s,t)
 
     
     def update_file(self,src,target):
@@ -187,7 +196,6 @@ class Synchronizer(Task):
             src_sz = src_st.st_size
             src_mt = src_st.st_mtime
         except OSError,e:
-            self.count_errors += 1
             self.error("os.stat('%s') failed"%src)
             return False
 
@@ -196,7 +204,6 @@ class Synchronizer(Task):
             target_sz = target_st.st_size
             target_mt = target_st.st_mtime
         except OSError,e:
-            self.count_errors += 1
             self.error("os.stat('%s') failed" % target)
             return False
 
@@ -208,7 +215,6 @@ class Synchronizer(Task):
         elif abs(target_mt - src_mt) > self.modify_window:
             doit = True
             if target_mt > src_mt:
-                self.count_newer += 1
                 self.warning("Overwrite newer target "+target)
 
         
@@ -217,8 +223,8 @@ class Synchronizer(Task):
             self.verbose(target+" is up-to-date")
             return
         self.count_update_file += 1
-        self.info("update %s to %s" % (src,target))
         if self.simulate:
+            self.info("update %s to %s" % (src,target))
             return
         if win32file:
             filemode = win32file.GetFileAttributesW(target)
@@ -242,21 +248,22 @@ class Synchronizer(Task):
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.status("copying " + src)
+        self.job.update("copying " + src)
         self.info("mkdir " + target)
         if not self.simulate:
             try:
                 os.mkdir(target)
             except OSError,e:
-                self.count_errors += 1
                 self.error("os.mkdir('%s') failed" % target)
                 return
             self.utime(src,target)
             
         for fn in os.listdir(src):
-            self.schedule(self.copy,
-                          os.path.join(src,fn),
-                          os.path.join(target,fn))
+##             self.schedule(self.copy,
+##                           os.path.join(src,fn),
+##                           os.path.join(target,fn))
+            self.copy(os.path.join(src,fn),
+                      os.path.join(target,fn))
         
     def copy_file(self,src,target):
         self.count_copy_file += 1
@@ -266,7 +273,6 @@ class Synchronizer(Task):
         try:
             shutil.copyfile(src, target)
         except IOError,e:
-            self.count_errors += 1
             self.error("copy_file('%s','%s') failed" % (src,target))
             return
         self.utime(src,target)
@@ -283,7 +289,6 @@ class Synchronizer(Task):
         try:
             os.rmdir(name)
         except IOError,e:
-            self.count_errors += 1
             self.error("os.rmdir('%s') failed" % name)
             
     def delete_file(self,name):
@@ -307,7 +312,6 @@ class Synchronizer(Task):
         #except Exception,e:
         #    console.error(str(e))
         except IOError,e:
-            self.count_errors += 1
             self.error("os.remove('%s') failed" % name)
         
     def summary(self):
@@ -321,7 +325,7 @@ class Synchronizer(Task):
             self.count_copy_file,
             self.count_copy_dir)
         s += "\n%d files up-to-date" % (self.count_uptodate)
-        s += "\n%d newer targets" % (self.count_newer)
+        s += "\n%d warnings" % (self.count_warnings)
         s += "\n%d errors" % (self.count_errors)
         return s
 
@@ -344,6 +348,14 @@ simulate only, don't do it""",
                       default=False)
     (options, args) = parser.parse_args(argv)
 
+    parser.add_option("-p", "--progress",
+                      help="""\
+show progress bar""",
+                      action="store_true",
+                      dest="showProgress",
+                      default=False)
+    (options, args) = parser.parse_args(argv)
+
     if len(args) != 2:
         parser.print_help() 
         sys.exit(-1)
@@ -354,7 +366,9 @@ simulate only, don't do it""",
     #src = os.path.normpath(src)
     #target = os.path.normpath(target)
 
-    sync = Synchronizer(src,target,simulate=options.simulate)
+    sync = Synchronizer(src,target,
+                        simulate=options.simulate,
+                        showProgress=options.showProgress)
 
     if not console.confirm(sync.getLabel()+"\n"+_("Start?")):
         return

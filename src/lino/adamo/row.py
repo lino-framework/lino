@@ -72,6 +72,7 @@ class DataRow:
 
 
     def setDirty(self):
+        assert self.isLocked(), "row is not locked"
         self.__dict__["_dirty"] = True
 
     def __getitem__(self,i):
@@ -113,7 +114,7 @@ class DataRow:
         pass
 
     def lock(self):
-        pass
+        return False
     
     def unlock(self):
         pass
@@ -320,8 +321,12 @@ class StoredDataRow(DataRow):
 
 
     def lock(self):
-        assert not self._new, "Cannot lock a new row"
-        assert not self._locked, "already locked"
+        if self._new:
+            raise RowLockFailed("Cannot lock a new row")
+        if self._locked:
+            raise RowLockFailed("Tried another record lock")
+            #, "already locked"
+            return True
         self.__dict__["_locked"] = True
         return self._ds._store.lockRow(self,self._ds)
             
@@ -357,6 +362,7 @@ class StoredDataRow(DataRow):
             if not self._dirty: return
             self._ds._connection.executeUpdate(self)
         self.__dict__["_dirty"] = False
+        self._ds._store.touch()
         
 
     def delete(self):        

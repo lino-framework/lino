@@ -23,7 +23,7 @@ import traceback
 from cStringIO import StringIO
 
 
-from lino.adamo.datatypes import STRING
+from lino.adamo.datatypes import STRING, MEMO
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
 #from lino import ui #import console
@@ -242,6 +242,21 @@ class Navigator:
         m.addItem(label="&Refresh",
                   action=frm.refresh,
                   accel="Alt-F5")
+
+        def copy():
+            from cStringIO import StringIO
+            out = StringIO()
+            self.ds.__xml__(out.write)
+            f = frm.form("Text Editor")
+            f.addEntry(type=MEMO(width=80,height=10),
+                       value=out.getvalue())
+            f.show()
+        
+        
+        
+        m = frm.addMenu("edit",label="&Edit")
+        m.addItem(label="&Copy",
+                  action=copy)
         
         m = frm.addMenu("row",label="&Row")
         m.addItem(label="Print &Row",
@@ -286,27 +301,29 @@ class Navigator:
     def printRow(self):
         #print "printSelectedRows()", self.getSelectedRows()
         #workdir = "c:\\temp"
-        workdir = self.getForm().toolkit.app.tempDir
-        from lino.oogen import Document
-        doc = Document("printRow")
+        #ui = self.getForm()
+        #workdir = self.getForm().toolkit.app.tempDir
+        from lino.oogen import SpreadsheetDocument
+        doc = SpreadsheetDocument("printRow")
         for i in self.getSelectedRows():
             row = self.ds[i]
             row.printRow(doc)
-        outFile = opj(workdir,"raceman_report.sxc")
-        doc.save(outFile,showOutput=True)
+        #outFile = opj(workdir,"raceman_report.sxc")
+        doc.save(self.getForm(),showOutput=True)
 
     def printList(self):
-        workdir = self.getForm().toolkit.app.tempDir
-        from lino.oogen import Document
-        doc = Document("printList")
+        #ui = self.getForm()
+        #workdir = self.getForm().toolkit.app.tempDir
+        from lino.oogen import SpreadsheetDocument
+        doc = SpreadsheetDocument("printList")
         rows = self.getSelectedRows()
         if len(rows) == 1:
             rows = self.ds
         rpt = doc.report()
         self.ds.setupReport(rpt)
         rpt.execute(rows)
-        outFile = opj(workdir,self.ds.getName()+".sxc")
-        doc.save(outFile,showOutput=True)
+        #outFile = opj(workdir,self.ds.getName()+".sxc")
+        doc.save(self.getForm(),showOutput=True)
 
     def getSelectedRows(self):
         raise NotImplementedError
@@ -329,10 +346,22 @@ class Navigator:
         self.ds.unlock()
 
 
-class DataGrid(Navigator,Component):    
+class DataGrid(Navigator,Component):
     def __init__(self,owner,ds,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
         Navigator.__init__(self,ds)
+        self.choosing = False
+        self.chosenRow = None
+
+    def setModeChoosing(self):
+        self.choosing = True
+
+    def getChosenRow(self):
+        return self.chosenRow
+    
+    def setChosenRow(self,row):
+        self.chosenRow = row
+        
 
 
 def nop(x):
@@ -389,11 +418,12 @@ class Container(Component):
         self._components.append(e)
         return e
         
-    def addEntry(self,name,*args,**kw):
+    def addEntry(self,name=None,*args,**kw):
         frm = self.getForm()
         e = frm.toolkit.entryFactory(frm,name,*args,**kw)
         self._components.append(e)
-        frm.entries.define(name,e)
+        if name is not None:
+            frm.entries.define(name,e)
         return e
     
     def addDataEntry(self,dc,*args,**kw):
@@ -415,6 +445,7 @@ class Container(Component):
         frm.setMenuController(e)
         if name is not None:
             frm.tables.define(name,e)
+        return e
         
     def addNavigator(self,ds,afterSkip=None,*args,**kw):
         frm = self.getForm()
@@ -562,6 +593,9 @@ class GUI(console.UI):
     def error(self,msg):
         console.error(msg)
 
+    def isInteractive(self):
+        return True
+
     def job(self,*args,**kw):
         return console.job(*args,**kw)
 
@@ -580,10 +614,16 @@ class GUI(console.UI):
         frm.show()
         
     def showDataGrid(self,ds,**kw):
-        #assert isinstance(ds,Datasource)
         frm = self.form(label=ds.getLabel(),**kw)
         frm.addDataGrid(ds)
         frm.show()
+        
+    def chooseDataRow(self,ds,currentRow,**kw):
+        frm = self.form(label="Select from " + ds.getLabel(),**kw)
+        grid = frm.addDataGrid(ds)
+        grid.setModeChoosing()
+        frm.showModal()
+        return grid.getChosenRow()
         
     def showException(self,e,details=None):
         msg = str(e)
@@ -598,9 +638,13 @@ class GUI(console.UI):
         while True:
             i = self.decide(
                 msg,
-                answers=("~End","~Ignore","~Details","~Send"))
+                title="Oops, an error occured!",
+                answers=("&Raise exception",
+                         "&Ignore",
+                         "&Details",
+                         "&Send"))
             if i == 0:
-                raise e
+                raise
             elif i == 1:
                 return
             elif i == 2:
@@ -693,8 +737,8 @@ class Form(Describable,GUI):
         self.mainComp.store()
 
     def showModal(self):
-        if self.menuBar is not None:
-            raise "Form with menu cannot be modal!"
+        #if self.menuBar is not None:
+        #    raise "Form with menu cannot be modal!"
         self.show(modal=True)
         return self.lastEvent == self.defaultButton
 

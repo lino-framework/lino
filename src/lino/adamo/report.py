@@ -194,7 +194,7 @@ class ReportColumn(DataColumn,Describable):
     def getPreferredWidth(self):
         if self.preferredWidth:
             return self.preferredWidth
-        return self.rowAttr.getPreferredWidth()
+        return self.rowAttr.getMaxWidth()
 
 ##  def render(self,value):
 ##      return str(value).ljust(self.getPreferredWidth())

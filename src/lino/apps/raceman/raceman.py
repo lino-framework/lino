@@ -40,6 +40,11 @@ This is the Raceman main menu.
 """+("\n"*10))
 
         m = frm.addMenu("&Stammdaten")
+        
+        m.addItem(label="&Events").setHandler(
+            self.showViewGrid,ui,
+            races.Events,"std")
+        
         m.addItem(label="&Races").setHandler(
             self.showViewGrid,ui,
             races.Races,"std")
@@ -53,7 +58,7 @@ This is the Raceman main menu.
     
         #m = frm.addMenu("&Arrivals")
         #m.addItem(label="&Erfassen").setHandler(self.arrivals)
-        
+
         m = frm.addMenu("&Programm")
         m.addItem(label="&Beenden",action=frm.close)
         m.addItem(label="Inf&o").setHandler(ui.showAbout,self)

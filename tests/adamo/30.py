@@ -47,7 +47,7 @@ class Case(TestCase):
                            
         # print [col.name for col in rpt._clist.visibleColumns]
         self.sess.startDump()
-        q.executeReport()
+        q.executeReport(columnWidths="5 50 10")
         s = self.sess.stopDump()
         #print s
         self.assertEquivalent(s,"""\

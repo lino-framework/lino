@@ -649,8 +649,10 @@ class DataColumn:
             i+=1
         
     def getAtoms(self): return self._atoms
-    def getPreferredWidth(self):
-        return self.rowAttr.getPreferredWidth()
+    def getMaxWidth(self):
+        return self.rowAttr.getMaxWidth()
+    def getMinWidth(self):
+        return self.rowAttr.getMinWidth()
     def getLabel(self):
         return self.rowAttr.getLabel()
 

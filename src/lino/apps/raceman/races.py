@@ -32,11 +32,33 @@ class Events(Table):
     def init(self):
         self.addField('date',DATE)
         self.addField('name',NAME)
+        self.addView( "std","date name races")
 
     class Instance(Table.Instance):
         def getLabel(self):
             return self.name
         
+        def printRow(self,doc):
+            #print self.races
+            if len(self.races) == 0:
+                doc.p("no races")
+                return
+            columnNames = "place duration person.name cat dossard"
+            columnWidths = "4 20 3 8 4"
+            rpt = doc.report()
+            q = self.races[0].participants.query(columnNames)
+            q.setupReport( rpt, columnWidths=columnWidths)
+            rpt.beginReport()
+            rpt.table.h(1,self.getLabel())
+            
+            for race in self.races:
+                rpt.table.h(2,race.getLabel())
+                q = race.participants.query( columnNames,
+                                             orderBy="place")
+                for prt in q:
+                    rpt.processRow(prt)
+                
+            rpt.endReport()
 
 
 class Races(Table):
@@ -53,9 +75,9 @@ class Races(Table):
         self.addField('unknown',INT)
         self.addField('invalid',INT)
         self.addField('missing',INT)
-        self.addPointer('event',Events)
+        self.addPointer('event',Events).setDetail("races")
         self.addView( "std",
-                      "date name1 status startTime "
+                      "date event name1 status startTime "
                       "arrivals participants "
                       "known unknown invalid missing "
                       "tpl type name2 id")
@@ -147,8 +169,8 @@ class Races(Table):
 
         def computeResults(self,ui):
             ui.status("go")
-            if not self.lock():
-                return
+            self.lock()
+            #    return
             self.unknown = 0
             self.known = 0
             self.invalid = 0

@@ -135,14 +135,14 @@ class SqlConnection(Connection):
         #elif type == self.schema.areaType:
         #   return 'VARCHAR(%d)' % 30 # area names are limited to 30 chars
         elif isinstance(type, datatypes.TimeType):
-            return 'CHAR(%d)' % type.width
+            return 'CHAR(%d)' % type.maxWidth
         elif isinstance(type, datatypes.DurationType):
-            return 'CHAR(%d)' % type.width
+            return 'CHAR(%d)' % type.maxWidth
         elif isinstance(type, datatypes.StringType):
-            if type.width < 20:
-                return 'CHAR(%d)' % type.width
+            if type.maxWidth < 20:
+                return 'CHAR(%d)' % type.maxWidth
             else:
-                return 'VARCHAR(%d)' % type.width
+                return 'VARCHAR(%d)' % type.maxWidth
         else:
             raise TypeError, repr(type)
 

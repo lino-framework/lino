@@ -32,34 +32,28 @@ class Configurable:
 
 
 class Describable(Configurable):
-    """
-    This interface is 
-    - name should be a possibly valid Python identifier
-    - label can be longer, but only one line
-    - doc can be more than one line
-    """
 
     def __init__(self,name=None,label=None,doc=None):
+        
         if name is None:
             name = self.__class__.__name__
-        self.__dict__['name'] = name
+        else:
+            assert not " " in name
             
-        #if label is None:
-        #    label = name
-        #    #label = "Unlabeled %s instance" % self.__class__.__name__
-        self.__dict__['label'] = label
+        # place them directly to __dict__ in case that __setattr__ is
+        # also defined:
         
-        #if doc is None:
-        #    #   doc = "(No docstring available for " + label+")"
-        #    doc = self.__doc__
-        #else:
-        #    assert type(doc)==type(""),repr(doc)
+        self.__dict__['name'] = name
+        self.__dict__['label'] = label
         self.__dict__['doc'] = doc
             
         
     def getLabel(self):
         if self.label is None: return self.name
         return self.label
+
+    def hasLabel(self):
+        return (self.label is not None)
     
     def setLabel(self,label):
         self.__dict__['label'] = label

@@ -110,15 +110,15 @@ class Case(TestCase):
 
         sess.setBabelLangs('de')
         self.assertEqual(be.name,None)
-        if be.lock():
-            be.name = "Belgien"
-            be.unlock()
+        be.lock()
+        be.name = "Belgien"
+        be.unlock()
         
         sess.setBabelLangs('fr')
         self.assertEqual(be.name,None)
-        if be.lock():
-            be.name = "Belgique"
-            be.unlock()
+        be.lock()
+        be.name = "Belgique"
+        be.unlock()
         
         
         be = sess.query(Nations).peek('be')
@@ -150,13 +150,13 @@ class Case(TestCase):
         except InvalidRequestError,e:
             pass
         
-        if eupen.lock():
-            try:
-                sess.setBabelLangs('de')
-                self.fail("failed to raise InvalidRequestError")
-            except InvalidRequestError,e:
-                pass
-            eupen.unlock()
+        eupen.lock()
+        try:
+            sess.setBabelLangs('de')
+            self.fail("failed to raise InvalidRequestError")
+        except InvalidRequestError,e:
+            pass
+        eupen.unlock()
         
         
         sess.shutdown()

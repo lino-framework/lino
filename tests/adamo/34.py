@@ -38,7 +38,7 @@ class Case(unittest.TestCase):
                        product=PROD.peek(1))
         console.startDump()
         rpt = console.report()
-        q.setupReport(rpt)
+        q.setupReport(rpt,columnWidths="10 10")
         rpt.execute(q)
         s = console.stopDump()
         #print s

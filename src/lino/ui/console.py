@@ -39,6 +39,54 @@ try:
 except ImportError,e:
     sound = False
 
+from lino.misc.jobs import ProgressBar
+#             DecentConsoleProgressBar, \
+#             PurzelConsoleProgressBar
+
+
+class ConsoleProgressBar(ProgressBar):
+##     def __init__(self,ui,*args,**kw):
+##         self.console = console
+##         ProgressBar.__init__(self,*args,**kw)
+        
+    def onInit(self):
+        self.ui.writeout(self._label)
+        
+    def onDone(self,job):
+        self.ui.write('\n')
+        ProgressBar.onDone(self,job)
+        
+class DecentConsoleProgressBar(ConsoleProgressBar):
+    def onStatus(self):
+        self.ui.write(self._status)
+        
+    def onInc(self):
+        self.ui.write('.')
+        
+class PurzelConsoleProgressBar(ConsoleProgressBar):
+
+    width = 78
+    purzelMann = "|/-\\"
+    
+    def onInit(self):
+        if self._label is not None:
+            self.ui.writeout(self._label)
+        
+    def onStatus(self,job):
+        self.onInc(job)
+        
+    def onInc(self,job):
+        if job.maxval is None:
+            s = '[' + self.purzelMann[job.curval % 4] + "] "
+        else:
+            if job.pc is None:
+                s = "[    ] " 
+            else:
+                s = "[%3d%%] " % job.pc
+        s += job._status
+        s = s[:self.width]
+        self.ui.write(s.ljust(self.width) + '\r')
+
 
             
 class UI:
@@ -49,6 +97,9 @@ class UI:
         if self._progressBar is None:
             self._progressBar = self.make_progressbar()
         return self._progressBar.addJob(msg,maxval)
+
+
+    
         
 
 
@@ -310,9 +361,6 @@ class Console(UI):
         raise NotImplementedError
 
     def make_progressbar(self,*args,**kw):
-        from lino.misc.jobs import ProgressBar, \
-             DecentConsoleProgressBar, \
-             PurzelConsoleProgressBar
         if self.isVeryQuiet():
             return ProgressBar(self,*args,**kw)
         if self.isQuiet():

@@ -215,7 +215,7 @@ class DataReportColumn(ReportColumn):
         return self.datacol.getCellValue(self._owner.crow)
 
     def getPreferredWidth(self):
-        return self.datacol.getPreferredWidth()
+        return self.datacol.getMaxWidth()
         
     def format(self,v):
         return self.datacol.format(v)
@@ -232,7 +232,7 @@ class VurtReportColumn(ReportColumn):
         return self.meth(self._owner.crow)
     
     def getPreferredWidth(self):
-        return self.type.getPreferredWidth()
+        return self.type.maxWidth
         
     def format(self,v):
         return self.type.format(v)
