@@ -1,0 +1,25 @@
+from warnings import warn
+
+setTitle("TIM Tools")
+setAuthor("Luc Saffre")
+
+h1("Release history")
+
+currentRelease = None
+def release(ver,date,notes):
+   p('<b>%s</b> [%s] --- %s' % (ver,date,notes))
+   currentRelease = ver
+
+release('0.5.2','20030415',"""
+pds2pdf being actively used by a first customer who generates a Wochenplan with TIM.
+""")
+
+release('0.6.0','20030603',""" Internal redesign. The previous
+internals were too close to the reportlab data model and had problems
+to render HTML. Now the HTML rendering works (although only
+proof-of-concept stage).  """)
+
+from timtools.version import __version__
+if currentRelease != __version__:
+   warn("Release history says %s, but actual version is %s" % \
+        (currentRelease,__version__))

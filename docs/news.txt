@@ -1,0 +1,712 @@
+===========
+Latest news
+===========
+
+:Author: Luc Saffre
+:Contact: luc.saffre@gmx.net
+:Revision: $Revision: 1.36 $
+:Date: $Date: 2004/06/12 03:06:50 $
+
+(Older news are collected `here <diary/index.html>`_)
+
+20031021
+
+- worked on voc.py. Not finished.
+
+20031025
+	 
+I'm thinking about how to combine docutils with empy to generate a
+"real" website.
+
+  - new function txt2html() to separate the `html` target of
+    `make.py`.
+  
+  - First tests for a `fileref()` macro to be called by empy.
+    `Test page <20031025.html>`_ does not work correctly.
+  
+  - When making html from txt, should I run first empy and then
+	 docutils, or first docutils and then empy? Currently it runs empy
+	 first.  Disadvantage: the result of an empy macro cannot contain
+	 plain HTML because it will be processed by docutils afterwards. I
+	 can use docutil's `raw` directive but this raw html code will be
+	 in a separate paragraph. I didn't find a hack to avoid this.
+	 
+	 Georg Bauer does it the other way: he runs cheetah (which is
+	 equivalent to empy) *after* docutils.  Disadvantage is that the
+	 author of the `.txt` file must put macros between backticks. And
+	 the result *must* now be raw html (or invoke another
+	 publish_string() before returning the result.
+
+  - How to manage directory-specific and inheritable HTML chunks to be
+    glued around the body (but inside the <html>...</html>) of the
+    output? If there is a file named `header.inc` in the current
+    directory, then this file should be included before the body. If
+    there is no such file, then the parent directories should be
+    searched (until a determined level).
+
+  - It seems that I must write my own HtmlWriter for docutils...
+
+
+
+20031028
+
+- I started `wxgui` on Sunday.  Now there are first visible
+  results.  The Web UI is far from being ready, it is even not
+  functional at the moment, but for the moment I prefer to start with
+  a GUI, using wxPython.
+  Writing Web applications with Python is very nice, but there are so
+  many different ways to do it! And I spent quite much invisible time
+  with this subject.
+
+20031029
+
+- http://www.python.org/cgi-bin/moinmoin/WebProgramming :
+  Confirmation of my thoughts from yesterday.
+
+
+20031030
+
+- new file `setup.py`
+
+- new directory `/scripts`, containing `prn2pdf.py` and `pds2pdf.py`
+  who just import and call `cli()` (command-line interface) from their
+  respective real script.
+
+- Continued on package wxgui. DecideDialog
+- renamed directory `tests` to `test`
+
+
+20031031
+
+- continued wxgui/main.py
+- Report.setCellValue() works. At least for fields from leadTable.
+
+
+20031101
+
+- continued on `gridframe.py`.
+
+- "timtools wxdemo" now starts a demo application with wxgui
+
+- "timtools quixdemo" now starts a demo application with quixgui (but
+  quixgui is currently broken...)
+
+
+20031106
+
+- txt2html as TIM tool.  
+
+
+20031112
+
+- txt2html uses now its HtmlWriter.
+
+20031115
+
+- renamed `test` back to `tests` because i still didn't find the
+  elegant method to tell CVS that a directory has been renamed...
+
+  TODO:
+  
+  - rename "tests" to "test" because this is the standard name
+    according to distutils
+	 
+  - move `src/lino/examples` to `src/examples`,
+    move `src/lino/sprl` to `src/sprl`
+	 
+	 
+  
+20031116
+
+- continued on txt2html. Got the `exec` directive working.
+
+20031117
+
+- started `lino.webman` which is yet another CMS tool. Based on
+  txt2html and Quixote.
+
+20031119
+
+- done: How to make the leftArea customizable?
+
+- done: `/scripts/webmandemo.py` now works... almost. It starts a
+  medusa web server with a quixote application server, and the
+  namespace for quixote is not (as in `quixdemo.py`) an adamo database
+  on a webman webmodule.
+
+- todo: use webman to generate static html
+
+- todo: principal problem: intra-site links must have `.html`
+  extension when the site runs in static mode, but no extension when
+  run in dynamic mode. This must be solved by generating these
+  references instead of hard-coding them.
+
+20031124
+
+- More changes in `webman.py`
+
+  - `WebModule.__init__()` now raises the following exception if the
+	 specified srcdir is invalid::
+  
+      WebMan: foo is not a directory
+		
+  - cli() took `sys.argv` instead of `sys.argv[1:]` so that invoking
+    ``timtools webman foo`` (where foo is an existing directory
+    containing a Web module) would always raise WindowsError::
+	 
+	   [Errno 267] Der Verzeichnisname ist ungültig: 't:\\data\\luc\\rele ase\\lino\\scripts\\webman.py/*.*'
+
+  
+  - webman now provides new command-line options "-h", "--force" and
+    "--batch" 
+  
+
+  - currently webman still requires that a file `index.txt` exists in
+    the module.
+
+
+20031125
+
+- pds2pdf : file `src/lino/timtools/pds2pdf.py` no longer used. Its
+  contents is now in `scripts/pds2pdf.py`.
+
+20031127
+
+- pds2pdf now creates a separate namespace for each parsed pds file. I
+  discovered that some files in `tests/pds` worked only if parsed
+  together, but not if parsed separately.
+  
+- pds2pdf now defines a variable `pds` containing the pds command
+  set. 
+  A `.pds` file does not need anymore to do
+  ``from lino.sdoc.commands import *`` if it prefixes all pds comands
+  with `pds.`. 
+
+- WebMan : WebModules now can have sub-modules. Started to add module
+  "pds" with an examples page which generates the test files. Not
+  finished. I lost much time to make it possible that the source files
+  (init.py and `*.txt`) are in another location than what the web
+  structure (ni case of dynamic content) or the tree structure (in
+  case of static html) says. In fact this is a feature that I miss in
+  other CMSes : a possibility to tie modules from different locations
+  to a new logical structure, make the logical structure (which is
+  always very unstable) separate from physical structure.  But what I
+  did today is (a) not finished and (b) perhaps a wrong way. But we
+  will see...  I start also to be locked with WebMan because I need
+  customizable commands for docutils.
+
+  TODO:
+  
+  - pds results must go to docs/pds, not to tests/pds
+  
+  - WebMan should be able to specify the namespace for exec
+    directives. Currently the global() namespace is used, which means
+    that there could be side-effects when processing multiple files in
+    a same Python instance.
+
+  - And what about the stylesheet?
+
+20031128
+
+- moved pds examples from tests to docs.
+
+- The main reason why I implemented a possibility to add modules from
+  a directory in another tree is that I didn't want to move this
+  directory because of those CVS declaration afterwards.  The
+  possibility is still not perfectly implemented (what about the
+  source links?!) but I don't need it anymore.
+
+- webman now processes recursively all dubdirectories (sub-modules) of
+  a specified directory if they contain an `init.py`.
+
+- commit and make upload
+
+20031202 pds
+
+Reanimating pds2pdf.  I will perhaps start using pds2pdf at some other
+customers.  Development has been dormant for some time, pds being used
+at one customer to produce pdf documents.
+
+If a TableModel had no parent, then addColumn() added the column in
+the class attribute `defaults`, which created a very surprising result
+if you added columns to another TableModel without parent in the same
+document.
+
+TODO:
+
+- how to customize the header dimensions? Introduce flowable
+  "Minipages"? Placing images at a precise position.
+- rename `lino.sdoc` to `lino.pds`?
+
+
+20031203 webman
+
+Modified :fileref:`src/lino/webman/xdocutils.py` and
+:fileref:`src/lino/webman/webman.py` to implement `fileref` and `lref`
+as interpreted text roles.
+
+Examples:
+
+- :fileref:`setup.py` is in the top-level directory
+- :fileref:`src/lino/webman/xdocutils.py` is a source file
+- :fileref:`docs/news.txt` is this file.
+
+TODO:
+
+- The following links *don't* work:
+
+  - `Main page <index.*>`_
+  - `Overview <overview.*>`_
+  
+  Or:
+  
+  - :pageref:`/index` : the main page
+  - :pageref:`/overview` : the overview page
+
+
+20031203 surf
+
+Using python to publish html content:
+http://groups.google.com/groups?threadm=b82e5469.0311281057.f5c7822@posting.google.com
+
+
+20031205 pds
+
+New PDS command backgroundPainter() which can be used to insert images
+on an absolute position (relative to the page). The existing command
+img() inserts always a flowing image.
+
+- new file :fileref:`docs/pds/20031205-background.pds`.
+
+- :fileref:`src/lino/sdoc/commands.py` : new command
+  `backgroundPainter()`
+  
+- :fileref:`src/lino/sdoc/pdf.py` :
+  new method PdfRenderer.compileBackgroundPainter()
+  and class BackgroundPainter
+
+- :fileref:`src/lino/sdoc/html.py`:
+  HtmlRenderer.compileBackgroundPainter() does nothing
+  
+- :fileref:`src/lino/sdoc/environment.py` :
+  Environment.backgroundPainter() 
+
+
+20031208 WebMan
+
+- TODO: Maybe the "exec" directive should be expected to write
+  transformed output to stdout?  Or to the document tree?
+  
+- The script executed by an exec directive has now another variable
+  "writer" in its namespace.
+
+
+20031209 openmail
+
+- worked on
+  :fileref:`scripts/openmail.py`.
+  :fileref:`scripts/mailtomoz.py`.
+
+20031210 docs
+
+- updated some pages in docs
+
+20031210 pds
+
+- Worked on :fileref:`docs/pds/20031205-background.pds`.
+
+- renamed `backgroundPainter()` to `addBackgroundPainter()`
+
+20031212
+
+- :fileref:`make.py` : renamed target "test" to "tests".
+
+- started to use the :pageref: text role.
+
+
+20031213 4.00
+
+- Currently a WebMan module has a configuration file "init.py" which
+  is executed using execfile(), with "self" being the module
+  instance. So it is not a Python script to be executed
+  standalone. That's why its extension should not be ".py". ("make
+  tests" tried to execute them)
+
+20031213 10.00
+
+- WebMan now looks for a file `init.wmi` instead of `init.py`
+
+- new file `upgrade.py`: 
+  renames all files `init.py` to `init.wmi`
+
+
+
+20031216
+
+- :fileref:`/scripts/openmail.py` : "mailto" : "@" must not be encoded.
+
+
+20031217
+
+- :fileref:`/scripts/openmail.py`
+
+  - the "@" of the to header was also encoded, which caused problems
+	 on GroupWise (but not on Eudora).
+
+  - New file :fileref:`/src/lino/timtools/mail.py` with functions
+    mailto_url() and readmail(). These were in openmail.py until
+    now. I separated them to prepare unit tests.
+
+  - New unittest suite :fileref:`/tests/etc/1.py` to test mailto_url()
+
+- :fileref:`/src/lino/sdoc/tables.py`:
+
+  - new file :fileref:`/docs/pds/20031217-tableformat.pds`
+
+  - formatCell() and formatRow() acted on the cell/row above the
+	 wanted one if the table had a header row.
+
+  - inside a table you can now call getRowIndex() : -1 means that the
+	 the first row has not yet started, otherwise it is the 0-based
+	 index of the current data row.
+	 
+  - formatHeader() was missing in commands.py
+
+20031218 
+
+- :fileref:`/src/lino/webman/xdocutils.py` :
+  Not yet clear about how to convert the specified file to a local
+  absolute path. 
+
+- Switched from version 0.5.4+ to 0.5.5
+
+- Website update and release.
+  
+20040106
+
+- :fileref:`/docs/pds/20030315-tables.pds` : added section "another
+  way", illustrating the irritating behaviour that the TableColumns's
+  paragraph style is not taken when the cell was started implicitly
+  (that is without an explicit beginCell()).
+
+  
+20040118
+
+- `lino sendmail` prints now more verbose explanations about what went
+  wrong if the command-line was not okay. 2 new warnings:
+  "GetoptError: " or "No arguments specified"
+
+
+20040125
+
+- I rediscovered Webware for the third time (iterative development).
+  Preparing to write a Webware UI. Some changes to
+  
+  :fileref:`/src/lino/agui/ui.py`
+  :fileref:`/src/lino/wxgui/wxui.py`.
+  
+- :fileref:`/scripts/wxdemo.py` does not open another frame for the
+  admin menu, but the admin menu replaces the user menu if the main
+  frame. 
+  
+- sqlite_dbd.Connection() can now get a new keyword isTemporary. If
+  this is True, then the database file will be removed when the
+  connection is closed.
+
+20040128
+
+- moved sprl to schemas.sprl and merged sprl.plugins to sprl
+
+- 
+
+20040205
+
+I started a project to make a TIM database visible as a Webware
+application, using Adamo. Idea is that TIM writes an SQL file which
+fills the adamo database
+
+
+
+
+
+20040210 meditations
+
+I want to instanciate all possible Reports already on application
+startup.  These Reports would be initially in "seed" or "embryon" mode
+where they take not much memory.  Only upon first invocation it would
+do the rest of initialization.
+
+Currently the menu is being built with code like this::
+
+  mb.addItem("&Partners", ui.showReport,"PARTNERS")
+
+I want to replace this by something like::
+
+  rpt = PARTNERS.report()
+  rpt.setOrderBy('name fname id')
+  mb.addItem(rpt,label="&Partners")
+
+A Report and a Row have in common that a User Interface can show them.
+A Web ui will represent them as a page, and a graphical ui will
+display them as a window.
+
+
+I want to not require a name as identifier for a Report.  Reports need
+names only if I want to save them to independent files. But a separate
+configuration file should be optional.  Maybe I will prefer to
+formulate Report configurations using Python code.  I could still
+leave the Report.load() and .save() methods.
+
+So they should have a numeric auto-incrementing identifier.
+
+The name of a report should not be too much hard-wired.  Until now I
+believed that Lino will have URLs like
+
+  http://www.lino.org?r=PAGES&id=17
+  http://www.lino.org/pages/1
+  
+But I start to understand that
+    
+  http://www.lino.org?r=1&id=1
+  
+or even
+
+  http://www.lino.org?w=1:1
+  http://www.lino.org?w=1,1
+  http://www.lino.org/1/1
+
+is better.
+
+Parameters of a Report
+----------------------
+
+A report has a lot of parameters. Here is a rough overview::
+
+  datasource: either a table or a query. 
+  label: the one-line main header for the report
+  description:
+  columnWidths:
+  showTitle:
+  
+  mode: (one paragraph per row,
+		   list with one item per row,
+			table with one row per row)
+  
+  pageLength: or limit:
+  page: or offset:
+  slice
+
+  orderBy:
+  filters:
+  samples:
+  columnList:
+  
+
+Each parameter has a default value configured for this report, and an
+optional overridden value, specified by the caller.
+
+For example, a Contacts report has orderBy="name,fname" by
+default, but if I call
+
+  http://www.lino.org?w=17&orderBy=email,phone
+
+or, in a GUI,
+
+  ui.show(rpt,orderBy="email,phone")  
+
+then the orderBy parameter would be overridden. This call must of
+course not modify the application-unique instance of the Report. So
+the orderBy="email,phone" parameter is stored in a separate space.
+
+
+
+20040227
+
+- New file :fileref:`scripts/webserver.py`
+  starts a Twisted Web Server
+  on an adamo database.
+
+
+20040304
+
+- Uff! Now I deserved a break! 
+
+  webserver.py works relatively okay, at
+  least enough as a proof of concept.
+  
+  New file :fileref:`scripts/db2html.py` created but not
+  functional. This will expose the database content as a tree of static
+  html pages.  
+
+  It's time for a cvs commit.
+
+  
+
+20040305
+
+- :fileref:`scripts/db2html.py` will now create static files for
+  PAGES (not for the other tables)
+
+  
+20040314
+
+- the next series of heavy modifications ("reports and queries") in
+  adamo is done. At least the unittests work. doctests won't work
+  because i must rewrite big parts.
+  
+  
+  webserver.py is broken because I also want to rework the menuing
+  philosophy.
+
+- cvs commit  
+
+
+20040315
+
+  twisted_ui again functional, and better than before: most parameters
+  of a report can be specified in the url:
+
+    orderBy:
+    http://localhost:8080/CITIES?pg=1&orderBy=name
+
+	 filters:
+	 http://localhost:8080/PERSONS?filters=name%20like%20%22%%a%%22
+	 
+	 columnList:
+    http://localhost:8080/NEWS?pg=2&col=title&col=abstract
+
+	 "id" specifies a single row to be displayed without report (and
+    thus without navigator):
+	 
+    http://localhost:8080/NEWS?id=1
+
+	 samples don't work if the sample is a Pointer:
+	 http://localhost:8080/CITIES?pg=1&orderBy=name&nation=be
+
+20040317
+
+- new file :fileref:`/demo/tim2lino.py`
+  
+20040318 Continued on Adamo and webserver. 
+
+- New feature : a Pointer now supports if more than one implementing
+  table. In this case it is a "switching" pointer. The row in such an
+  attribute can be from different tables. These tables must all have
+  the same (name,type) for all primary atoms.
+
+  TODO:
+  
+  - specify explicitly the covered tables?
+  
+  - when adding to the schema another table covered by some pointer,
+    existing databases should not become unusable.
+
+20040319  Continued on Adamo and webserver.
+
+- New project "MultiQueries". A MultiQuery is a Query with multiple
+  lead tables.  This results in a SQL UNION of these tables.
+
+- The name "order" (used in pizzeria) turned out to be a reserved
+  word. SQLite got confused about this only now.
+
+
+
+20040320 Continued on Adamo and webserver. 
+
+- Discovered that I can use reactor.addSystemEventTrigger() in
+  twisted_ui.webserver() so that the database gets shut down
+  correctly.
+
+- Application of "switching pointer" : I made sprl.news.News a
+  subclass of sprl.web.Pages, so that News items can become a node of
+  the main document tree.  This worked amazingly well.
+
+  Is this structure suitable for the default schema? : For example if
+  a site wants to use complex id for the NEWS table (year,month,item),
+  they cannot be subclass of Pages anymore.
+  
+  
+20040322
+
+- Problem when TIM generates SQL code to fill the adamo database.
+
+  Since Pages.super is now a switching Pointer, the database structure
+  is modified: before 20040318 it was::
+
+    CREATE TABLE PAGES (
+      ...
+	   super_id BIGINT,
+		...
+
+  Now it is::
+		
+	 CREATE TABLE PAGES (
+		...
+		super_tableId BIGINT,
+		super0_id BIGINT,
+		super1_id BIGINT,
+		...
+
+  Is not obvious to find out which table is designated by 0 or 1
+  respectively.
+
+  Solution:
+
+  - Schema._tables becomes a tuple so that tables have a unique
+	 numeric id. This numeric id is stored (not, as it is now, the
+	 index of the table from Pointer._toTables)
+	 
+  - the _tableId should be a small INT since there won't be more than
+	 255 tables in a database.
+	 
+  - Adamo should use the table's name to name the pointing atom:
+    super0_id should be named superPAGES_id, and super1_id should be
+    superNEWS_id.
+
+- sqlite_db.Connection now has a startDump() and stopDump() method
+  used for testing.
+
+- (2 hours) if a test on an SQLite connection failed, then it could
+  happen that the other tests of the suite failed with "DatabaseError:
+  database disk image is malformed". There is also a warning:
+  Exception exceptions.AttributeError: <exceptions.AttributeError
+  instance at 0x008CFD50> in <bound method Connection.__del__ of
+  <sqlite.main.Connection instance at 0x0088D7B0>> ignored
+  
+  It seems that these strange phenomens came if an exception occured
+  when there are rows locked. Database.commit() refused then to
+  commit(), db.shutdown() failed, and the database file was still in
+  use when the next test wanted to use it.
+  tests/adamo/11.py
+
+
+20040323 Continued on adamo
+
+- Row.isNew() is not necessarily true as long as a row instance is not
+  "complete". Because "complete" means in fact
+  "hasBeenReadFromStore()". 
+
+
+20040325
+
+- New method Database.checkIntegrity(). Since TIM currently creates
+  Adamo databases using plain SQL, there can be database integrity
+  problems. tim2lino.py now checks the database for integrity at
+  startup. 
+
+- removed quixote dependency in adamo/html.py.
+
+20040608
+
+- Already many weeks that I am working to implement BabelFields into
+  Adamo. Lots of internal stuff and anyway nobody currently uses this
+  code.
+  
+20040608
+
+- sendmail.py : when sending multiple pictures, the subject contains
+  now "foo.jpg (1/7)" (if foo.bar is the name of the first file of
+  total 7 being sent) instead of "noconfirm" (which is only useful
+  when sending pictures to a photos.epson.com album).
+
+  

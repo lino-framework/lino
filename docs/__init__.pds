@@ -1,0 +1,45 @@
+def header():
+   if getPageNumber() == 1:
+      return
+   if beginTable('lr',styles.EmptyTable):
+      formatParagraph(fontSize=8)
+      formatTable("LINEBELOW",0.1,colors.black)
+      p(getTitle())
+      endCell()
+      formatParagraph(alignment=TA_RIGHT)
+      p("Page %d" % getPageNumber())
+      endTable()
+   
+
+formatDocument(topMargin=25*mm, header=header,
+               bottomMargin=20*mm,
+               leftMargin=40*mm,
+               rightMargin=20*mm)
+
+
+CodeExampleStyle = styles.Code.child(leftIndent=0)
+
+def showAndExec(txt):
+   setFeeder('plain')
+   pre(txt)
+   setFeeder('xml')
+   exec txt in globals(),globals()
+
+def codeExample(txt):
+   beginTable("ll",width=getTextWidth()*0.9,
+              model=styles.DefaultTable)
+   setFeeder('plain')
+   pre(txt,CodeExampleStyle)
+   endCell()
+   setFeeder('xml')
+   exec txt in globals()
+   endTable()
+   
+
+
+ShortQuoteStyle = styles.Normal.child(leftIndent=getTextWidth()*0.3,
+                                      rightIndent=getTextWidth()*0.1,
+                                      fontName='Times-Italic')
+
+def shortquote(txt,source):
+   return p(txt+' --- '+source,ShortQuoteStyle)

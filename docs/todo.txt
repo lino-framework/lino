@@ -1,0 +1,65 @@
+==========
+To-do-List
+==========
+
+
+.. sectnum::   
+.. contents:: Table of Contents
+   :depth: 2
+
+
+Adamo
+=====
+
+- implement `Plugin` and menus.
+- "Finding Georges Brassens" (tests/adamo/5.py) fails.
+- redesign Type definitions
+- Interaction with GUI and WUI 
+- Transactions
+- Database Version Management.
+
+
+WebMan
+======
+
+- pageref doesn't normalize always
+- only 1 publisher instance per module?
+- if running as medusa server (dynamic mode):
+  - pageref's don't work
+  - browser doesn't see default.css
+
+
+Documentation
+=============
+
+- much to do
+
+
+WUI
+===
+
+- Write a web application using Adamo and Webware
+
+
+
+sdoc
+====
+- print a beautiful demo invoice for /examples/pizzeria.py
+
+
+sendmail
+========
+
+- support disconnect/reconnect after 10 messages for smtp servers who
+  refuse batch mailing
+
+- write number of message being sent ["message 1 of 10"]  
+
+
+Other
+=====
+
+- /scripts : rename webmandemo.py to webmanserve.py and webman.py to
+  webman_static.py
+
+

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="latin-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=latin-1" />
+<meta name="generator" content="Docutils 0.3.1: http://docutils.sourceforge.net/" />
+<title>Pizzeria</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<table class="mainTable">
+			<tr>
+			<td valign="top" class="leftArea">
+			<p class="menu">
+<a href="index.html">Home</a>
+<br><a href="http://sourceforge.net/projects/lino/">Forge</a>
+</p>
+
+<p class="copyright">
+&copy; 2001-2003
+<br><a href="mailto:luc.saffre@gmx.net">Luc Saffre</a>
+<br>
+
+<br><a href="http://sourceforge.net">
+<img src="http://sourceforge.net/sflogo.php?group_id=87016&type=1"
+   width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+
+	
+
+
+</td>
+			<td class="textArea"><div class="document" id="pizzeria">
+<h1 class="title">Pizzeria</h1>
+<p>The file <cite>src/lino/examples/pizzeria.py</cite> is a simple example to
+introduce Adamo.</p>
+<p>Here is the source code:</p>
+<blockquote>
+<pre class="literal-block">
+# pizzeria.py
+# Author Luc Saffre 2003-2004
+
+&quot;&quot;&quot;
+This is a short example to illustrate Adamo's basic idea.
+
+&quot;&quot;&quot;
+
+
+# 1. Define the database schema
+
+
+from lino.adamo.database import Database
+
+class Pizzeria(Database):
+	def initDatabase(self):
+		self.addTable(&quot;PROD&quot;,Product)
+		self.addTable(&quot;CUST&quot;,Customer)
+		self.addTable(&quot;ORDERS&quot;,Order)
+		self.addTable(&quot;LINES&quot;,OrderLines)
+
+from lino.adamo.datatypes import STRING, PRICE, DATE, BOOL, INT
+
+class Product:
+	def init(self,table):
+		table.addField(&quot;name&quot;,STRING)
+		table.addField(&quot;price&quot;,PRICE)
+	 
+class Customer:
+	def init(self,table):
+		table.addField(&quot;name&quot;,STRING)
+		table.addField(&quot;street&quot;,STRING)
+		table.addField(&quot;city&quot;,STRING)
+
+	 
+class Order:
+	def init(self,table):
+		table.addField(&quot;date&quot;,DATE)
+		table.addPointer(&quot;customer&quot;,Customer)
+		table.addField(&quot;totalPrice&quot;,PRICE)
+		table.addField(&quot;isRegistered&quot;,BOOL)
+
+	def register(self):
+		self.lock()
+		q = self.table.db.LINES.query(columnList=&quot;product qty&quot;)
+		q.setSample(order=self)
+		totalPrice = 0
+		for (product,qty) in q:
+			totalPrice += (qty * product.price)
+		self.totalPrice = totalPrice
+		self.isRegistered = True
+		self.unlock()
+	  
+	 
+class OrderLines:
+	def init(self,table):
+		table.addPointer(&quot;order&quot;,Order)
+		table.addPointer(&quot;product&quot;,Product)
+		table.addField(&quot;qty&quot;,INT)
+
+
+		
+		
+def play(db):
+	&quot;&quot;&quot;
+	Create some data and play with it
+	&quot;&quot;&quot;
+	c1 = db.CUST.appendRow(name=&quot;Henri&quot;)
+	c2 = db.CUST.appendRow(name=&quot;James&quot;)
+
+	p1 = db.PROD.appendRow(name=&quot;Pizza Margerita&quot;,price=6)
+	p2 = db.PROD.appendRow(name=&quot;Pizza Marinara&quot;,price=7)
+
+	o1 = db.ORDERS.appendRow(customer=c1,date=&quot;20030816&quot;)
+	db.LINES.appendRow(order=o1,product=p1,qty=2)
+
+
+	o2 = db.ORDERS.appendRow(customer=c2,date=&quot;20030816&quot;)
+	db.LINES.appendRow(order=o2,product=p1,qty=3)
+	db.LINES.appendRow(order=o2,product=p2,qty=5)
+
+	db.commit()
+
+	o1.register()
+	o2.register()
+
+	db.commit()
+	
+	for (customer,totalPrice) in db.ORDERS.query(&quot;customer totalPrice&quot;):
+		print &quot;%s must pay %d EUR&quot; % (customer.name,totalPrice)
+
+def main():
+
+	# Decide which driver to use 
+	from lino.adamo.dbds.sqlite_dbd import Connection
+	conn = Connection(&quot;tmp.db&quot;)
+
+	# instantiate the database
+	db = Pizzeria(conn)
+
+	# start it up
+	db.startup()
+
+	# create empty tables
+	db.createTables()
+
+	# play around
+	play(db)
+
+	# commit changes and release the database file
+	db.shutdown()
+	
+if __name__ == &quot;__main__&quot;:
+	main()
+
+</pre>
+</blockquote>
+<p>&#64;{
+from lino.version import __version__
+}
+Here is what you see if you run pizzeria:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; from lino.examples.pizzeria import main
+&gt;&gt;&gt; main()
+Lino version 0.5.5
+Copyright (c) 2002-2004 Luc Saffre
+This software comes with ABSOLUTELY NO WARRANTY.
+Distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information.
+Adamo startup...
+  Initializing database...
+  Initializing 4 tables...
+Adamo startup okay
+Henri must pay 12 EUR
+James must pay 53 EUR
+</pre>
+<p>You can get the same output by simply running the <cite>pizzeria.py</cite> script
+from the command-line.</p>
+<p>TODO: add some explanations</p>
+</div>
+</td></tr></table></body>
+</html>
+<div class="bottomArea"><p class="footer">This page was generated on Mon Jan 26 09:37:42 2004 by Lino <a href="webman.html">WebMan</a> version 0.5.5.</div>

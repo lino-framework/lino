@@ -1,0 +1,88 @@
+from lino.sdoc.commands import *
+
+setTitle("Lists")
+
+formatDocument(showBoundary = True)
+
+# global filler
+
+filler = """ \
+The rest of this paragraph is just to have more than one
+line.  Really, it is. Don't read on here but skip to the next
+paragraph.  """
+
+def insertNormal():
+   p("""\
+This is a normal paragraph. If inside a list, leftIndent should be
+like the surrounding list items, but there is no bullet or number.
+""" + filler)
+
+def insertPre():   
+   pre("""\
+--------------------------------
+here is a preformatted paragraph
+--------------------------------
+""")
+
+h1(getTitle())
+
+p("""
+This document shows some list features.
+It also has the showBoundary document property set which causes a frame around each page.
+""" + filler)
+
+insertPre()
+insertNormal()
+
+beginList(stylesheet.OL)
+
+li("""Lists start with beginList() and end with endList().
+""" + filler)
+
+li("""Each item of the list is specified using li()
+""" + filler)
+
+insertNormal()
+insertPre()
+
+
+li("""switching from one style of list to the other needs only a single modification at the source code: the listStyle parameter of beginList(). endList() does not take any parameter
+""" + filler)
+
+li("""Currently defined liststyles are UL and OL.
+""" + filler)
+
+if beginList(stylesheet.OL):
+
+   li("""This is now the first item in a nested list.
+   """ + filler)
+
+   insertNormal()
+   insertPre()
+   insertNormal()
+
+   li("""And there is also a second item in this sublist.
+   """ + filler)
+
+   if beginList(NumberedListStyle(bulletWidth=24,
+                                  showParent=True)):
+
+      li("""Here is now a numbered list whose item numbers also show
+      their parent's bullet text.  """+filler)
+
+      li("""Here is now a numbered list whose item numbers also show
+      their parent's bullet text.  """+filler)
+
+
+      endList()
+
+   endList()
+
+li("""This is the last item of the outer list.
+""" + filler)
+
+endList()
+
+p("""
+Here is a normal paragraph after the list.
+""" + filler)

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="latin-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=latin-1" />
+<meta name="generator" content="Docutils 0.3.1: http://docutils.sourceforge.net/" />
+<title>prn2pdf</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<table class="mainTable">
+			<tr>
+			<td valign="top" class="leftArea">
+			<p class="menu">
+<a href="index.html">Home</a>
+<br><a href="http://sourceforge.net/projects/lino/">Forge</a>
+</p>
+
+<p class="copyright">
+&copy; 2001-2003
+<br><a href="mailto:luc.saffre@gmx.net">Luc Saffre</a>
+<br>
+
+<br><a href="http://sourceforge.net">
+<img src="http://sourceforge.net/sflogo.php?group_id=87016&type=1"
+   width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+
+	
+
+
+</td>
+			<td class="textArea"><div class="document" id="prn2pdf">
+<h1 class="title">prn2pdf</h1>
+<p>Prn2pdf converts a text file containing printer control characters
+into a PDF file.</p>
+<p>Possible applications of prn2pdf are</p>
+<ul class="simple">
+<li>use a non-text-capable printer to print documents from a text-only
+DOS application</li>
+<li>store these documents on a CD-ROM instead of printing them out.</li>
+</ul>
+<p>prn2pdf can be used in combination with any DOS application which
+offers the possibility (1) to configure manually the control sequences
+to be sent to the printer (2) to capture the printer output to a file
+instead of printing directly.  If (2) is missing, you can probably
+work around easily by using prn2file or some similar tool which
+redirects a printer port to file.</p>
+<p>prn2pdf takes the stream which was destinated to the printer and
+renders this text into a pdf file using the standard Courier font
+(which is the only monospaced standard font in PDF files). It also
+checks for control sequences and executes them, and converts the
+encoding from codepage 437 to latin-1.</p>
+<p>The DOS application thinks that it is printing to a normal text
+printer, but the printer output is redirected to a file. Then you run
+prn2pdf.exe to create a PDF file, and then you run Acrobat Reader to
+display or print the result.</p>
+<p>prn2pdf is written in Python, using the Reportlab Toolkit and
+distributed under the terms of the GNU General Public License.</p>
+<p>Output Examples</p>
+<ul>
+<li><dl class="first">
+<dt>1.pdf (18.04.03, 4612 bytes) <span class="classifier-delimiter">:</span> <span class="classifier">a general accounts balance</span></dt>
+<dd><p class="first last">(original input was 1.prn (18.04.03, 8675 bytes))</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first">
+<dt>2.pdf (18.04.03, 3601 bytes) <span class="classifier-delimiter">:</span> <span class="classifier">a listing in Landscape mode (would</span></dt>
+<dd><p class="first last">not print correctly on a real LQ) (original input was 2.prn
+(18.04.03, 6455 bytes))</p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="printer-control-codes">
+<h1><a name="printer-control-codes">Printer control codes</a></h1>
+<p>prn2pdf &quot;emulates&quot; a fictive printer which has control sequences to
+print in landscape mode, set the character size, print bold and/or
+italic.</p>
+<p>Besides this classical minimal functionality, prn2pdf also offers a
+control sequence to insert pictures which are stored in a .jpg file.</p>
+<p>A control sequence is always started by ESC, and stopped by SPC. Note
+that the trailing SPC is required and will not be printed.</p>
+<blockquote>
+ESC &quot;c12&quot; SPC    select 12 cpi
+ESC &quot;b1&quot; SPC     activate bold font
+ESC &quot;b0&quot; SPC     deactivate bold font
+ESC &quot;i1&quot; SPC     activate italic font
+ESC &quot;i0&quot; SPC     deactivate italic font
+ESC &quot;Ilogo.jpg 7x10mm&quot; SPC</blockquote>
+<p>ESC means : a byte of value 0x1B (Escape)
+SPC means : a byte of value 0x20 (Space)</p>
+<p>For more control sequences look at the source!</p>
+</div>
+<div class="section" id="to-do">
+<h1><a name="to-do">To do</a></h1>
+<ul>
+<li><p class="first">The box characters of codepage 437 or 850 are not correctly
+rendered. As a current workaround they are replaced by +, - and |
+and look a little bit...</p>
+<pre class="literal-block">
+???????????????
+?...like this ?
+???????????????
+</pre>
+<p>These box characters which are heavily used by DOS applications
+exist in Unicode, but I don't know how much work it is to convert
+them correctly to PDF.</p>
+</li>
+<li><p class="first">I implemented only those printer control commands which I thought
+useful.</p>
+</li>
+<li><p class="first">In Landscape mode, Acrobat reader does not recognize this fact and
+displays the document vertically rotated. But the printed document
+is okay.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="historical-notes">
+<h1><a name="historical-notes">Historical Notes</a></h1>
+<p>My first idea was to emulate an Epson LQ printer so that the tool
+would be more easy to integrate. But I dropped this idea because I
+don't know anybody who would need this feature. (If you are
+interested, you can ask me for this version which works in some cases
+but is incomplete: prn2pdf-0.0.1.py)</p>
+<p>Another reason why I dropped this idea is that prn2pdf extends the
+printing possibilities beyond the limits of physical printers.</p>
+<p>For example, Epson LQ printers don't offer the possibility to print in
+Landscape mode
+(www.missico.com/personal/support/epson_escape_codes.htm).</p>
+<p>I also thought to emulate HP instead of Epson (they have a Landscape
+mode), but HPLG is quite difficult to parse because the syntax is more
+complex.</p>
+</div>
+<div class="section" id="alternatives">
+<h1><a name="alternatives">Alternatives</a></h1>
+<ul class="simple">
+<li><a class="reference" href="http://dosprn.ks.ua/">http://dosprn.ks.ua/</a></li>
+</ul>
+</div>
+</div>
+</td></tr></table></body>
+</html>
+<div class="bottomArea"><p class="footer">This page was generated on Mon Jan 26 09:37:38 2004 by Lino <a href="webman.html">WebMan</a> version 0.5.5.</div>

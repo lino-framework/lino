@@ -1,0 +1,16 @@
+=========================
+page 2 (in fact a module)
+=========================
+
+
+This is the index page of module 2.
+
+Links to other pages: 
+
+:pageref:`index`
+
+:pageref:`..`
+
+
+
+

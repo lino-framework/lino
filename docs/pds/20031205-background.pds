@@ -1,0 +1,105 @@
+#coding: latin1
+
+"""
+shows how to use a a background painter is a function that can
+paint directly to the page canvas. It can be used to place images
+anchored to some absolute position.  """
+
+from lino.sdoc.commands import *
+
+
+
+def myBackground(canvas,x,y):
+	
+##		canvas.drawImage("background.jpg",
+##							  0,
+##							  0,
+##							  canvas._pagesize[0],
+##							  canvas._pagesize[1]
+##							  )
+
+	# drawImage(x,y,w,h)
+	# (0,0) is the bottom left corner
+	# and x and y are the bottom left corner of the image to insert
+	canvas.drawImage("logo.jpg",
+						  5*mm,
+						  canvas._pagesize[1]-35*mm,
+						  30*mm,
+						  30*mm
+						  )
+
+def myheader():
+	addBackgroundPainter(myBackground)
+	if beginTable('lr',stylesheet.EmptyTable):
+		formatParagraph(fontSize=8)
+		formatTable("LINEBELOW",0.1,pds.colors.black)
+		p("""\
+		S.A. Toutenler
+		Constructions générales
+		place des bâtisseurs 40
+		4000 Liège
+		""",style=stylesheet.Wrapped)
+		endCell()
+		formatParagraph(alignment=pds.TA_RIGHT)
+		p("Notre réf: " + getTitle())
+		p("Page %d" % getPageNumber())
+		endTable()
+	
+def myfooter():
+	if beginTable('lr',stylesheet.EmptyTable):
+		formatTable("LINEABOVE",0.1,pds.colors.black)
+		p("""\
+		S.A. Toutenler
+		Constructions générales
+		place des bâtisseurs 40
+		4000 Liège
+		""",style=stylesheet.Wrapped)
+		endCell()
+		formatParagraph(alignment=pds.TA_RIGHT)
+		p("Notre réf: " + getTitle())
+		p("Page %d" % getPageNumber())
+		endTable()
+	
+def address_to(text):
+	if beginTable('ll',stylesheet.EmptyTable):
+		formatParagraph(fontSize=8)
+		p(text,style=stylesheet.Wrapped)
+		endCell()
+		p("")
+		# p("Page %d" % getPageNumber())
+		endTable()
+
+
+setFeeder("plain")
+	
+ 
+setTitle("Offre 2003/123")
+
+
+formatDocument(topMargin=40*mm,
+					leftMargin=40*mm,
+					bottomMargin=80*mm,
+					header=myheader,
+					footer=myfooter)
+      
+
+
+address_to("""
+Bureau d'avocats
+Jérôme & Georges
+Avenue Reine Astrid 123
+1015 Bruxelles
+""")
+
+h1(getTitle())
+
+p("Messieurs,")
+
+p("bla bla"*20)
+
+
+for i in range(20):
+	p("This is a filler to make more than one page. "*20)
+
+p("En espérant que notre offre retiendra toute votre attention, je vous prie d’agréer mes salutations distinguées.")
+

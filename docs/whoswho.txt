@@ -1,0 +1,73 @@
+What is Lino?
+=============
+
+Lino is an Application Framework and a collection of standard
+applications.
+
+   * Developers_ are welcome to join the project.  There is a lot to
+     do.
+
+   * End-users_ are encouraged to co-operate with one of the
+     Lino `Service Providers`_.
+
+End-users
+---------
+
+Lino aims the low-cost Web Application market. Potential End-users are
+medium-sized or small companies who understand that they need
+assistance from IT experts for the analysis and setup of their
+Information System and who are willing to dedicate an appropriate
+budget to these services.
+
+Service Providers
+-----------------
+A Lino Service Provider is a company who knows enough about Lino to be
+able to give quality service to end-users. A Lino Service Provider
+should have the following abilities:
+
+* Selling:
+
+  Know the **Standard Modules** and what they do. Know also what
+  they can **not** do.
+
+* Analysis :
+  Speak with the User to find out which modules are necessary.
+
+
+* System Administration
+
+  - Install the different software products necessary to run Lino
+    (Apache, MySQL, PostgreSQL, PHP, Python, Lino,...)
+        
+  - Manage databases containing customer data.
+    Install backup possibilities. Explain to the User how to use
+    them.  
+
+* Maintenance
+
+  - Training : Explain to the User how to use their Lino
+    Application. 
+
+  - Support : Answer to the User's questions.
+  
+  - Check continuously with the User if the analysis is correct or
+    whether there are new needs.
+
+
+* Take part in the development process:
+
+  - Understand how Lino works
+  - Specify requirements for new Lino Modules.
+  - Test Lino modules and report bugs to a Developer.
+
+Developers
+----------
+
+A Lino Developer is somebody who writes new Lino Modules.  Currently
+there is only one such person, but I don't want to stay alone.
+
+Since Lino is Free Software, the Lino Service Providers are not
+legally bound to the developer. They can decide to rely on their own
+Lino Developer.
+
+     

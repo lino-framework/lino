@@ -1,0 +1,617 @@
+===========================
+Adamo : Abstract Data Model
+===========================
+
+Adamo is the data model used by Lino.
+It is a high-evel database interface.
+
+Create database-oriented applications with an extensible library of
+highly reusable schema modules.
+
+Abstract: an Adamo database can run via a Web or GUI application, via
+console interface, via agents, or via any combination of those.
+
+This document introduces the special features of
+Adamo.
+
+You may prefer to look at `Pizzeria <pizzeria.html>`_ which
+illustrates Adamo using a simple example.
+  
+.. contents:: Table of Contents
+	:depth: 2
+
+
+Adamo features
+==============
+
+- develop reusable Entity/Relationship schemas in Python
+
+- define business logic and design the user interface without worrying
+  whether it is for a Web or a GUI application.
+
+- Database schemas with Adamo don't use any SQL. Any SQL is
+  automatically generated if necessary.
+
+- The concept of a table is not limited to tables in a relational
+  database: any data with tabular structure can become a table for
+  Adamo. However currently there is only an SQL implementation of
+  tables.
+
+- Adamo manages links between tables in a transparent way.
+
+- Adamo can also be considered as a "object relational mapper" since
+  you access the database rows as objects.
+
+
+Environments
+============
+
+The `sprl` package is an "application environment".  An environment
+defines a set of "plugins" that are designed to work together.	 Each
+plugin adds some optional functionality to the application.	 The
+concrete database schema may change depending on what plugins are
+present or not.  The idea is that one can choose to import any
+combination of plugins as long as they come from the same environment.
+
+
+Database startup
+================
+
+A database contains tables, menus, forms...
+
+The following lines will create and start a demo database which is
+going to be used in the examples of this document::
+
+	>>> from lino.schemas.sprl import demo
+	>>> db = demo.startup()
+	
+`demo.startup()` instanciates and starts a database, then populates it
+with demo data, then returns a handle for this database.
+
+
+Tables
+======
+
+Table definitions are singleton objects and instanciated at database
+startup.	 They are always accessible and never change during a
+session.	 The common ancestor of all table definitions is
+`lino.adamo.table.Table`.
+
+The ``tables`` attribute of a database is a dictionary that holds the
+table definitions of this database. Let's use some Python trickery to
+print out a sorted list of all the tables in the demo database::
+
+		>>> l = db.schema.tables.keys()
+		>>> l.sort()
+		>>> from textwrap import fill
+		>>> print fill(" ".join(l),62)
+		BOOKINGS CITIES INVOICELINES INVOICES JOURNALS LANG NATIONS
+		ORG2ORG ORG2PERS ORGS PAGE2PAGE PAGES PARTNERS PERS2PERS
+		PERSONS PRODUCTS PUB2PERS PUBLICATIONS PUBTYPES QUOTES YEARS
+
+A hack to make all the table names of a database global is the
+following (which will be active for the rest of this document)::
+
+	>>> #globals().update(db.tables)
+	>>> db.schema.installto(globals())
+
+It is easy to display the contents of a table::
+
+	>>> #NATIONS.report(columnList="id name",orderBy="id").render()
+	>>> rpt = NATIONS.report(columnList="id name",orderBy="id")
+	>>> db.showReport(rpt)
+	id name
+	-- --------------------------------------------------
+	be Belgium
+	de Germany
+	ee Estonia
+	fr France
+	us United States of America
+
+		
+Rows
+====
+
+The data of a table can be considered a list of rows who have all the
+same set of attributes.
+
+Row attributes
+--------------
+
+Table.getRowAttributes() returns a `dict` that contains RowAttribute
+instances.
+
+For example, all rows of table PERSONS have the following
+attributes::
+
+	>>> print " ".join(PERSONS.getRowAttributes().keys())
+	box city name zip title house id phone street fname born nation email died
+	
+Note that row attributes are never ordered.
+
+Tables of the `sprl` module try to implement the convention that Row
+Attributes should have simple names. If a combined word is necessary,
+use camelCapitals naming style.
+
+Row Attributes contain meta-information about the information to be
+expected in rows of a table.	The details of what and how this
+information is going to be stored is not yet very fixed.
+
+But for example, phone numbers have a maximum width of 50::
+
+	>>> ORGS.phone.type.width
+	50
+
+And their "document string" is "phone number"::
+
+	>>> print ORGS.phone.type.doc
+	phone number
+	
+If there is no label, then GUIs should take the raw name...
+
+	>>> print ORGS.phone.type.label
+	None
+
+Primary key
+-----------
+
+You may access a specific row of a table if you know its primary key.
+`Table.__getitem__()` takes a primary key and returns the
+corresponding row instance::
+
+
+	>>> p = PERSONS[11]
+	>>> p.id
+	11
+	>>> p.name
+	'Tolkien'
+
+
+Non-integer primary keys
+------------------------
+
+Primary keys don't need to be integers::
+
+	>>> print NATIONS['be'].name
+	Belgium
+
+	
+Primary keys can also be complex. For example in `sprl`, invoices are
+identified by a combination of `journal` and `sequence`, where
+`journal` is a pointer to the `JOURNALS` table and `sequence` a simple
+integer. Let's first define a journal::
+
+
+	>>> jnl = JOURNALS["OUT"]
+	>>> print jnl.name
+	outgoing invoices
+
+Now we can access invoices from `jnl` as follows::	  
+
+	>>> i = INVOICES[(jnl,1)]
+	>>> print i.date
+	2003-08-22
+
+
+
+
+	
+Fields and Pointers
+===================
+
+Let's pick a Row from the ORGS table::
+
+	>>> row = PERSONS[1]
+
+Some attributes represent simple fields::
+
+	>>> row.name
+	'Saffre'
+	>>> row.fname
+	'Luc'
+
+Other attributes contain Row instances from other tables::
+
+	>>> print row.nation
+	NATIONSRow('ee',)
+	
+	>>> print row.city
+	CITIESRow('ee', 1)
+
+The attributes of these Row instances can be accessed recursively::
+	
+	>>> print row.city.name
+	Tallinn
+	>>> print row.nation.name
+	Estonia
+
+
+Adamo transparently manages the underlying Row caching and database
+accesses.
+
+Row attributes can be modified (or not) according to specific rules.
+
+
+	
+Queries
+=======
+
+Saying what you want
+--------------------
+
+A Query holds the meta-data about the (tabular) data being retrieved.
+A query leads to an SQL SELECT query (other SQL 'queries' as CREATE
+TABLE, UPDATE, INSERT... are different animals.	 Adamo does not call
+them 'queries').
+
+Instead of writing yourself the SQL statement, Adamo does a big part
+of the detail work for you.  For example you don't worry about JOINS
+between tables because Adamo knows that there is a link from Partners
+to Cities.
+
+The Query does not do any database access. It is just there to prepare
+the question you are going to ask.
+
+`Table.query()` instanciates a Query. You can specify keyword
+parameters to say what you want.
+
+	>>> q = CITIES.query(columnList="name", orderBy="name")
+
+If you prefer, you can also set these parameters afterwards, using
+their homologue methods.  The following three lines have the same
+result as the previous line.
+
+	>>> q = CITIES.query()
+	>>> q.setColumnList("name")
+	>>> q.setOrderBy("name")
+		
+If we want only cities in Belgium, then we use "sampling". 
+
+	>>> q.setSamples(nation=NATIONS["be"])
+
+
+Getting the answer
+------------------
+
+Note: Queries are used to *manipulate* data, not to display it.
+Queries know where your data comes from, how to store it, what is
+allowed to do with it... but they are *not* responsible for
+displaying, formatting or rendering this data. This is for the next
+section where we will talk about Reports.
+
+So here we concentrate on the internal representations.
+
+After thinking about how to formulate your question, you are going to
+ask it. This is also called "executing" the query.  One way to execute
+an Adamo query is to iterate over it::
+
+  >>> for row in q:
+  ...  print row
+  ['Brugge']
+  ['Bruxelles']
+  ['Charleroi']
+  ['Eupen']
+  ['Kelmis']
+  ['Kettenis']
+  ['Li\xe8ge']
+  ['Mons']
+  ['Raeren']
+  ['Verviers']
+
+Each row of the loop is a list of values, according to the columnList
+of the query.
+  
+  >>> print q[0:2]
+  [('be', 2, 'Brugge'), ('be', 1, 'Bruxelles')]
+		
+
+
+Query Examples
+--------------
+
+Here are some more examples of queries from the `sprl.demo` database.
+
+List of cities in Estonia, ordered by inhabitants::
+
+	>>> CITIES.report(columnList='name inhabitants',
+	...               columnWidths="30 10",
+	...					samples={'nation':NATIONS['ee']},
+	...					orderBy='inhabitants').render()
+	name                           inhabitants
+	------------------------------ ----------
+	Ruhnu                          58
+	Vigala                         1858
+	Kilingi-Nõmme                  2490
+	Rakvere                        18096
+	Viljandi                       20756
+	Pärnu                          52000
+	Kohtla-Järve                   70800
+	Narva                          80300
+	Tartu                          109100
+	Tallinn                        442000
+
+
+TODO: More examples
+
+
+
+Queries and the DB-API
+----------------------
+
+Just in case you wonder how Adamo compares to Python's `DB-API
+<http://www.python.org/topics/database/>`_.	Adamo is on a higher
+level than the DB-API, but there are some peepholes for the curious.
+
+Query.executeSelect() returns a DB-API-compliant cursor object whose
+`execute()` method has already been called.
+
+	>>> q = CITIES.query(columnList="name", orderBy="name")
+	>>> q.setSamples(nation=NATIONS["be"])
+	>>> csr = q.executeSelect()
+	
+Note that query.executeSelect() does not take an SQL string as
+parameter since the Query knows everything about what you want to
+ask. You don't have to (and you cannot) specify it again in plain
+SQL.	In Adamo you don't talk SQL.
+
+The cursor returned by Query.executeSelect() is a normal
+DBAPI-compliant cursor.	 The rows returned by fetchone() or fetchall()
+are simple tuples::
+
+  >>> csr.rowcount
+  10
+  >>> result = csr.fetchall()
+  >>> type(result)
+  <type 'list'>
+  >>> len(result)
+  10
+
+But the values in these tuples don't necessarily correspond to the
+logical columns of your query.  Adamo converts your logical columns to
+"atomic columns". Some additional internal information can be
+necessary for Adamo's communication with the database.  Imagine that
+the user modifies the name of a city.	For example, Adamo will always
+include the primary key of the lead table, even if you didn't ask it.
+Look at tests/adamo/2.py to see examples of how a query translates to
+SQL.
+
+That's why the DBAPI-compliant cursor is not useful in normal life.
+If you really want to use it, here is an example::
+	
+  >>> len(csr.description)
+  3
+  >>> print [x[0] for x in csr.description]
+  ['nation_id', 'id', 'name']
+
+Here you can see that Adamo has silently added two more columns
+"nation_id" and "id" to the SQL query, and that your "name" column is
+the third column.	 Here is how to get the same answer as earlier::
+
+  >>> l = [atomicRow[2] for atomicRow in result]
+  >>> print " ".join(l)
+  Brugge Bruxelles Charleroi Eupen Kelmis Kettenis Liège Mons Raeren Verviers
+
+
+Reports
+=======
+
+A Report is a set of information around a Query.  While a Query knows
+only *what* you want to see, a Report adds to this the details about
+knows *how* you want to see it.
+
+Example usage::
+
+  >>> ORGS.report(columnList="name city.name nation.name",
+  ...             columnWidths="25 15 15",
+  ...					orderBy="name").render()
+  name                      city.name       nation.name
+  ------------------------- --------------- ---------------
+  Eesti Telefon             Tallinn         Estonia
+  Girf OÜ                   Tallinn         Estonia
+  Microsoft Corporation     None            None
+  PAC Systems PGmbH         Eupen           Belgium
+  Rumma & Ko OÜ             Tallinn         Estonia
+							  
+Here you can see that `columnList` and `orderBy` are parameters for
+the query, while `columnWidths` is matter for the Report.
+
+In practice, if you want just a Report, then you should not need to
+worry about the difference between Query and Report. There should be a
+method `Table.report()` who accepts a mixture of Query and Report
+parameters. But this is not yet implemented.
+
+								  
+Adding data
+===========
+
+The `lino.sprl.demo` module provides a `populateDemo()` function that
+fills a database with demo data, using the following methods.	Since
+this test is using the sprl module and has called its populateDemo()
+during setUp(), the database contains already some data.	 We are now
+going to create some more rows, just to check if it still works.
+
+Table.appendRow()
+-----------------
+
+`Table.appendRow()` inserts a Row into a table and returns the
+instance of this row::
+
+	>>> row = PERSONS.appendRow(fname="Guido",
+	...								 name="van Rossum").commit()
+
+You don't need to specify all fields, but you must specify enough
+information so that Adamo can know the primary key of the row to be
+created.
+
+The primary key of table PERSONS is `id`, of type ROWID (aka
+auto-incrementing field).  That's why you don't need to worry at all
+about it.  But it is there.  Adamo created it silently::
+
+	
+	>>> print row.id
+	19
+	>>> gvr = PERSONS[19]
+	>>> print gvr.fname
+	Guido
+
+
+You don't *need* to specify the id, but you *can* do it.  If you do
+so, then you must take care to specify a unique one.  Adamo won't let
+you to create a row with a primary key that is already used by another
+row::
+
+
+	>>> PERSONS.appendRow(id=18,
+	...						 fname="Bert",
+	...						 name="Bigburger").commit()
+	Traceback (most recent call last):
+	(...)
+	DataVeto: Cannot create PERSONS row with existing id (18,)
+
+
+Most tables have a simple primary key whose name is `id` and which is
+of type ROWID.  That is, an auto-incrementing integer.  rowid fields
+are optional because Adamo will create them if not specified.  If you
+add another row to PERSONS, this time without giving an id, then Adamo
+will find it out for you::
+
+	>>> PERSONS.appendRow(fname="Bill",name="Jones").commit()
+	PERSONSRow(20,)
+
+Specifying unknown row attributes will produce an error::
+
+	>>> PERSONS.appendRow(foo="Bar").commit()
+	Traceback (most recent call last):
+	(...)
+	DataVeto: 'foo' : no such row attribute in PERSONS
+
+Your new row will be tested for validity.	 For example a Person must
+have at least a `name` or `fname` ::
+
+	>>> row = PERSONS.appendRow(phone="123").commit()
+	Traceback (most recent call last):
+	(...)
+	DataVeto: Either name or fname must be specified
+
+Note that this validity rule is application-specific. Here is how it
+has been defined in `src/sprl/plugins/addrbook.py`::
+
+	def validate(self):
+		if (self.fname is None) and (self.name is None):
+			raise DataVeto("Either name or fname must be specified")
+	
+Or, the `id` of a Nation must be exactly 2 characters::
+
+	>>> row = NATIONS.appendRow(id="bel").commit()
+	Traceback (most recent call last):
+	(...)
+	DataVeto: Nation.id must be 2 chars
+
+		
+Query.appendRow()
+-----------------
+
+If you are going to create several rows and don't want to
+specify the field names each time, then you can create a Query::
+
+		>>> q = PERSONS.query('fname name')
+		>>> q.appendRow("Jean","Dupont")
+		PERSONSRow(22,)
+		>>> q.appendRow("Joseph","Dupont")
+		PERSONSRow(23,)
+		>>> q.appendRow("Juliette","Dupont")
+		PERSONSRow(24,)
+		
+Also the commit() can be done for all these rows in one operation:
+
+		>>> PERSONS.commit()
+
+
+Appending rows in a sampled query
+---------------------------------
+
+If you tell a Query of Cities that you want only cities in Belgium,
+then any newly created row of this query will automatically know that it's nation is Belgium::
+
+  >>> be = NATIONS["be"]
+  >>> q = CITIES.query('id name')
+  >>> q.setSamples(nation=be)
+  >>> row = q.appendRow(20,'Sankt-Vith').commit()
+  >>> print row.nation.name
+  Belgium
+
+
+Updating data
+=============
+
+A Report has a method `setCellValue()` which can be used by a GUI to
+update individual data fields::
+
+  >>> p = PERSONS[1]
+  >>> print p.born
+  None
+  >>> rpt = PERSONS.report(columnList='name fname born',
+  ...                      columnWidths="20 10 10",
+  ...                      orderBy="id")
+  >>> print rpt[0]
+  (1, 'Saffre', 'Luc', None)
+  >>> rpt.setCellValue(0,2,"1968-06-01")
+  >>> print p.born
+  1968-06-01
+
+
+Logical primary key versus atomic primary key
+---------------------------------------------
+
+`Table.getPrimaryKey()` returns a tuple of attribute names.
+`Table.getPrimaryAtoms()` returns a tuple of (name,type) pairs that
+describe the atoms.
+
+For Tables with simple primary key there is no difference between the
+(logical) attribute names and the (atomic) column names::
+
+	>>> PARTNERS.getPrimaryKey()
+	('id',)
+	>>> [name for (name,type) in PARTNERS.getPrimaryAtoms()]
+	['id']
+
+INVOICES has a complex primary key whose first attribute `jnl` is a
+pointer.	 A pointer will be "expanded" to the atomic primary of the
+referred table::
+	
+	>>> INVOICES.getPrimaryKey()
+	('jnl', 'seq')
+	>>> [name for (name,type) in INVOICES.getPrimaryAtoms()]
+	['jnl_id', 'seq']
+
+The primary key of INVOICELINES is even more complex. Logically you
+need to know the `invoice` and the `line`.  `invoice` is a pointer to
+a table who has itself a complex primary key.  So here we get the case
+that there are more atoms than attributes::
+	
+	>>> INVOICELINES.getPrimaryKey()
+	('invoice', 'line')
+	>>> [name for (name,type) in INVOICELINES.getPrimaryAtoms()]
+	['invoice_jnl_id', 'invoice_seq', 'line']
+		
+	
+Attribute triggers
+------------------
+
+A Partner from (`sprl.plugins.addrbook`) means "either a person or an
+organisation". Setting one of the attributes `org` or `person` will
+automatically set the Partner's `name` attribute::
+
+	>>> luc = PERSONS[1]
+	>>> print luc.getLabel()
+	Luc Saffre
+	>>> p = PARTNERS.appendRow(person=luc)
+	>>> print p.name
+	Luc Saffre
+	
+Shutting down the database
+--------------------------
+
+After using a database, you must shut it down.
+
+  >>> db.shutdown()

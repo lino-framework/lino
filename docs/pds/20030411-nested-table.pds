@@ -1,0 +1,48 @@
+globals().update(pds.__dict__) #from lino.sdoc.commands import *
+setTitle("Nested tables")
+h1(getTitle())
+
+
+p("""Here is a table inside a table""")
+
+tm = stylesheet.DefaultTable.child()
+tm.formatTable("VALIGN","MIDDLE")
+# tm.formatTable("ALIGN","CENTER")
+
+if beginTable((1,1),model=tm):
+   formatParagraph(alignment=TA_CENTER)
+
+   p("A")
+
+   endCell()
+
+   if beginTable((1,1),model=tm):
+      # implicit beginRow() and beginCell() 
+      p("B1")
+      endCell()
+      # implicit beginCell()
+      p("B2")
+      # implicit endCell()
+      endRow()
+
+      p("B3")
+      endCell()
+      p("B4")
+      endRow()
+
+      endTable()
+
+   # implicit endCell()
+   endRow()
+
+   p("C")
+   endCell()
+
+   p("D")
+   #endCell()
+
+   endTable()
+
+p("This is some final text. " * 5)
+
+

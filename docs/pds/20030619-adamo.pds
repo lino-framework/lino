@@ -1,0 +1,44 @@
+from lino.sdoc.pdstools import showAndExec, \
+     tableFromCursor, tableFromQuery
+
+from lino.sprl import demo
+demo.startup()
+globals().update(demo.db.tables)
+
+pds.setTitle("Adamo and PDS")
+
+pds.h2("Tables")
+
+pds.memo("""
+These are the tables defined in the sprl schema:
+""")
+
+if pds.beginTable('lll'):
+   for table in demo.db.tables.values():
+      pds.tr(table.getName(),
+             table.__class__.__doc__,
+             table.getAttrList())
+   pds.endTable()
+
+pds.p("bla bla"*20)
+
+pds.h2("Queries")
+
+q = ORGS.query(\
+   "id name street city.name nation.id nation.name")
+
+q.setOrderBy("nation.name city.name")
+
+# from lino.sdoc.commands import *
+
+pds.memo("""tableFromCursor() creates a pds table from the result of a
+query""")
+
+tableFromCursor(q.executeSelect())
+
+pds.memo("""tableFromQuery() creates a pds table from the result of a
+query""")
+
+tableFromQuery(q)
+
+demo.shutdown()

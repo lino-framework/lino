@@ -1,0 +1,23 @@
+INSERT INTO CITIES VALUES (1,"ee","Tallinn");
+INSERT INTO CITIES VALUES (2,"ee","Tartu");
+INSERT INTO CITIES VALUES (3,"ee","Otepää");
+INSERT INTO CITIES VALUES (4,"ee","Narva");
+INSERT INTO CITIES VALUES (5,"ee","Kilingi-Nõmme");
+INSERT INTO CITIES VALUES (6,"ee","Pärnu");
+INSERT INTO CITIES VALUES (7,"ee","Rakvere");
+INSERT INTO CITIES VALUES (8,"ee","Viljandi");
+INSERT INTO CITIES VALUES (9,"ee","Ruhnu");
+INSERT INTO CITIES VALUES (10,"ee","Vigala");
+                           
+INSERT INTO CITIES VALUES (11,"be","Bruxelles");
+INSERT INTO CITIES VALUES (12,"be","Brugge");
+INSERT INTO CITIES VALUES (13,"be","Eupen");
+INSERT INTO CITIES VALUES (14,"be","Kettenis");
+INSERT INTO CITIES VALUES (15,"be","Kelmis");
+INSERT INTO CITIES VALUES (16,"be","Raeren");
+INSERT INTO CITIES VALUES (17,"be","Mons");
+INSERT INTO CITIES VALUES (18,"be","Liège");
+INSERT INTO CITIES VALUES (19,"be","Charleroi");
+
+
+

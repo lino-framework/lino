@@ -1,0 +1,36 @@
+globals().update(pds.__dict__) #from lino.sdoc.commands import *
+
+from reportlab.lib import randomtext
+setTitle('Random Text')
+h1(getTitle())
+
+
+p("""Here is a document that uses reportlab's randomtext module
+to generate random text. The source is quite short:
+""")
+setFeeder('plain')
+pre(file(getSourceFileName()).read())
+
+p("Now here is the result. Enjoy!")
+
+
+themes = {
+   
+   'STARTUP' : """words suitable for a business plan - or not as the
+   case may be""",   
+   'COMPUTERS' : """names of programming languages and operating
+   systems etc""",   
+   'BLAH' : "variations on the word 'blah'",
+   "BUZZWORD" : "buzzword bingo",
+   "STARTREK" : "Star Trek",
+   "PRINTING" : "print-related terms",
+   "PYTHON"   : "snippets and quotes from Monty Python",
+   }
+
+for name,desc in themes.items():
+   h2(name)
+   p(desc)
+   for i in range(10):
+      txt = randomtext.randomText(getattr(randomtext,name),7)
+      p(txt)
+

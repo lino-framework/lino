@@ -1,0 +1,130 @@
+
+  <html>
+  <head>
+  <title>Untitled</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel=stylesheet type="text/css" href="www.css">
+  <meta name="KEYWORDS" content="">
+  <meta name="GENERATOR" content="pds2html">
+  <meta name="author" content="">
+  <meta name="date" content="yyyy-mm-dd">
+  <head>
+
+  <body>
+
+  <table class="main">
+  <tr>
+  <td class="left" width="15%">
+
+  this is the left margin
+
+  <td>
+
+
+<H1>codeExample()</H1>
+<p>The following function shows how to insert code examples along with their result in a document. 
+</p>
+<pre>
+def codeExample(txt):
+   beginTable("ll",width=getTextWidth()*0.9,
+              model=stylesheet.DefaultTable)
+   setFeeder('plain')
+   pre(txt,CodeExampleStyle)
+   endCell()
+   setFeeder('xml')
+   exec txt in globals()
+   endTable()
+   
+</pre>
+<p>
+Here are now some code examples,
+along with their result.
+</p>
+<table border="1">
+<tr>
+<th></th>
+<th></th>
+</tr>
+<tr>
+<td>
+<pre>
+p("""
+A paragraph
+with some text
+""")
+</pre>
+</td>
+<td>
+<p>
+A paragraph
+with some text
+</p>
+</td>
+</tr>
+</table>
+<p>
+This is some text to explain the code example.  
+</p>
+<table border="1">
+<tr>
+<th></th>
+<th></th>
+</tr>
+<tr>
+<td>
+<pre>
+p("""
+A &lt;u>paragraph&lt;/u>
+with some
+&lt;b>formatted&lt;/b>
+text
+""")
+</pre>
+</td>
+<td>
+<p>
+A <u>paragraph</u>
+with some
+<b>formatted</b>
+text
+</p>
+</td>
+</tr>
+</table>
+<p>
+This is some text to explain the code example.  
+</p>
+<table border="1">
+<tr>
+<th></th>
+<th></th>
+</tr>
+<tr>
+<td>
+<pre>
+pre("""
+A preformatted
+paragraph.
+""")
+</pre>
+</td>
+<td>
+<pre>
+A preformatted
+paragraph.
+</pre>
+</td>
+</tr>
+</table>
+<p>
+This is some text to explain the code example.  
+</p>
+
+  </td>
+  </tr>
+  </table>
+
+  here comes the bottom line
+
+  </body>
+  </html>

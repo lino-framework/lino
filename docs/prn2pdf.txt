@@ -1,0 +1,123 @@
+=======
+prn2pdf
+=======
+
+Prn2pdf converts a text file containing printer control characters
+into a PDF file.
+
+Possible applications of prn2pdf are
+
+- use a non-text-capable printer to print documents from a text-only
+  DOS application
+
+- store these documents on a CD-ROM instead of printing them out.
+
+prn2pdf can be used in combination with any DOS application which
+offers the possibility (1) to configure manually the control sequences
+to be sent to the printer (2) to capture the printer output to a file
+instead of printing directly.  If (2) is missing, you can probably
+work around easily by using prn2file or some similar tool which
+redirects a printer port to file.
+
+prn2pdf takes the stream which was destinated to the printer and
+renders this text into a pdf file using the standard Courier font
+(which is the only monospaced standard font in PDF files). It also
+checks for control sequences and executes them, and converts the
+encoding from codepage 437 to latin-1.
+
+The DOS application thinks that it is printing to a normal text
+printer, but the printer output is redirected to a file. Then you run
+prn2pdf.exe to create a PDF file, and then you run Acrobat Reader to
+display or print the result.
+
+prn2pdf is written in Python, using the Reportlab Toolkit and
+distributed under the terms of the GNU General Public License.
+
+Output Examples
+
+- 1.pdf (18.04.03, 4612 bytes) : a general accounts balance
+        (original input was 1.prn (18.04.03, 8675 bytes))
+		  
+- 2.pdf (18.04.03, 3601 bytes) : a listing in Landscape mode (would
+		  not print correctly on a real LQ) (original input was 2.prn
+		  (18.04.03, 6455 bytes))
+
+Printer control codes
+---------------------
+
+prn2pdf "emulates" a fictive printer which has control sequences to
+print in landscape mode, set the character size, print bold and/or
+italic.
+
+Besides this classical minimal functionality, prn2pdf also offers a
+control sequence to insert pictures which are stored in a .jpg file.
+
+A control sequence is always started by ESC, and stopped by SPC. Note
+that the trailing SPC is required and will not be printed.
+
+  ESC "c12" SPC 	 select 12 cpi
+  ESC "b1" SPC 	 activate bold font
+  ESC "b0" SPC 	 deactivate bold font
+  ESC "i1" SPC 	 activate italic font
+  ESC "i0" SPC 	 deactivate italic font
+  ESC "Ilogo.jpg 7x10mm" SPC 	
+
+ESC means : a byte of value 0x1B (Escape)
+SPC means : a byte of value 0x20 (Space)
+
+For more control sequences look at the source!
+
+To do
+-----
+
+
+- The box characters of codepage 437 or 850 are not correctly
+  rendered. As a current workaround they are replaced by +, - and |
+  and look a little bit...
+
+  ::  
+
+    ???????????????
+    ?...like this ?
+    ???????????????
+
+  These box characters which are heavily used by DOS applications
+  exist in Unicode, but I don't know how much work it is to convert
+  them correctly to PDF.
+  
+
+- I implemented only those printer control commands which I thought
+  useful.
+  
+
+- In Landscape mode, Acrobat reader does not recognize this fact and
+  displays the document vertically rotated. But the printed document
+  is okay.
+  
+
+Historical Notes
+----------------
+
+My first idea was to emulate an Epson LQ printer so that the tool
+would be more easy to integrate. But I dropped this idea because I
+don't know anybody who would need this feature. (If you are
+interested, you can ask me for this version which works in some cases
+but is incomplete: prn2pdf-0.0.1.py)
+
+Another reason why I dropped this idea is that prn2pdf extends the
+printing possibilities beyond the limits of physical printers.
+
+For example, Epson LQ printers don't offer the possibility to print in
+Landscape mode
+(www.missico.com/personal/support/epson_escape_codes.htm).
+
+I also thought to emulate HP instead of Epson (they have a Landscape
+mode), but HPLG is quite difficult to parse because the syntax is more
+complex.
+
+
+
+Alternatives
+------------
+
+- http://dosprn.ks.ua/

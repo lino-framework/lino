@@ -1,0 +1,263 @@
+
+  <html>
+  <head>
+  <title>Untitled</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <link rel=stylesheet type="text/css" href="www.css">
+  <meta name="KEYWORDS" content="">
+  <meta name="GENERATOR" content="pds2html">
+  <meta name="author" content="">
+  <meta name="date" content="yyyy-mm-dd">
+  <head>
+
+  <body>
+
+  <table class="main">
+  <tr>
+  <td class="left" width="15%">
+
+  this is the left margin
+
+  <td>
+
+
+<H1>Formatting tables</H1>
+<H2>Formatting tables</H2>
+<p>
+</p>
+<p>
+pds provides a simplified interface to reportlab's table formatting
+model.  With pds you specify only the command and its parameters,
+while the coordinates of the cells to be formatted depend on which formatXxx() function you use:
+</p>
+<p>
+</p>
+<UL>
+<p>
+</p>
+<li value="-">formatTable() applies to all the cells of the table's data area
+</li>
+<li value="-">formatHeader() applies to all the cells of the table's header
+</li>
+<li value="-">formatRow(), formatColumn(), formatCell() to the current row, column or cell.
+</li>
+</UL>
+<p>
+</p>
+<p>
+See reportlab's userguide.pds for details about the formatting commands.
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>Here is a list of allowed commands: BACKGROUND, GRID, BOX, OUTLINE, INNERGRID, LINEBELOW, LINEABOVE, LINEBEFORE, LINEAFTER, FONT, FONTNAME, SIZE, LEADING, TEXTCOLOR, ALIGN, VALIGN, LEFTPADDING, RIGHTPADDING, TOPPADDING, BOTTOMPADDING
+</p>
+<H2>Cell background</H2>
+<p>
+</p>
+<p>
+Here is a table that could be the body of an invoice. The header line
+is grey, and one unit price cell is red.
+</p>
+<p>
+</p>
+<p>
+</p>
+<table border="1">
+<tr>
+<th>Description</th>
+<th>Qty</th>
+<th>delivery unit</th>
+<th>Unit pr.</th>
+<th>Price</th>
+</tr>
+<tr>
+<td>
+<p>This is a first item.
+	The unitprice is red.</p>
+</td>
+<td>
+<p>2</p>
+</td>
+<td>
+<p>pieces</p>
+</td>
+<td>
+<p>21.50</p>
+</td>
+<td>
+<p>43</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>
+	This is another item.
+	
+</p>
+</td>
+<td>
+<p>10</p>
+</td>
+<td>
+<p>pieces</p>
+</td>
+<td>
+<p>1.50</p>
+</td>
+<td>
+<p>15</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>This is the last item.</p>
+</td>
+<td>
+<p>10</p>
+</td>
+<td>
+<p>pieces</p>
+</td>
+<td>
+<p>1.50</p>
+</td>
+<td>
+<p>15</p>
+</td>
+</tr>
+</table>
+<p>
+Here are two headerless tables with background colors:
+</p>
+<p>
+</p>
+<table border="1">
+<tr>
+<th></th>
+<th></th>
+</tr>
+<tr>
+<td>
+<p>
+The Estonian flag needs formatRow():
+</p>
+<p>
+</p>
+<table border="1">
+<tr>
+</tr>
+<tr>
+<td>
+<p>A1</p>
+</td>
+<td>
+<p>A2</p>
+</td>
+<td>
+<p>A3</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>B1</p>
+</td>
+<td>
+<p>B2</p>
+</td>
+<td>
+<p>B3</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>C1</p>
+</td>
+<td>
+<p>C2</p>
+</td>
+<td>
+<p>C3</p>
+</td>
+</tr>
+</table>
+</td>
+<td>
+<p>
+And the Belgian flag uses formatColumn():
+</p>
+<p>
+</p>
+<table border="1">
+<tr>
+</tr>
+<tr>
+<td>
+<p>A1</p>
+</td>
+<td>
+<p>A2</p>
+</td>
+<td>
+<p>A3</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>B1</p>
+</td>
+<td>
+<p>B2</p>
+</td>
+<td>
+<p>B3</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>C1</p>
+</td>
+<td>
+<p>C2</p>
+</td>
+<td>
+<p>C3</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<H2>Empty tables</H2>
+<p>If you ask for an empty table, then the header line will be
+printed: 
+</p>
+<table border="1">
+<tr>
+<th>Description</th>
+<th>Qty</th>
+<th>delivery unit</th>
+<th>Unit pr.</th>
+<th>Price</th>
+</tr>
+</table>
+<p>If the empty table has no header, then nothing will be
+printed:
+</p>
+<table border="1">
+<tr>
+</tr>
+</table>
+<p>This paragraph follows the previous one as if nothing had
+happened.
+</p>
+
+  </td>
+  </tr>
+  </table>
+
+  here comes the bottom line
+
+  </body>
+  </html>

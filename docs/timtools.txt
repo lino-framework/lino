@@ -1,0 +1,35 @@
+=========
+TIM tools
+=========
+
+The TIM Tools are a suite of command-line tools designed as helpers
+for existing DOS applications.  I wrote them originally for use with
+`TIM <http://my.tele2.ee/lsaffre/tim>`_.  They are used by some of my
+customers.
+
+TIM users use the TIM Tools to:
+
+- print classical text-mode reports on printers without text support.
+  (prn2pdf)
+
+- let TIM print business documents as PDF files
+
+- invoke the user's Web browser to visit a Web site of a business
+  partner.
+
+- invoke the user's mail client with a TIM-generated business document
+  to be sent to a partner.  
+
+  
+Installing TIM Tools
+====================
+
+- Download the file `timtools-VER-.zip` from `here
+  <http://sourceforge.net/project/showfiles.php?group_id=87016&release_id=203525>`_.
+
+- Unpack the zip file to a separate directory in your PATH.
+
+Technically the TIM Tools are just an easy-to-install binary release
+with a selection of Lino `scripts <scripts.html>`_, implemented as
+Win32 executables.
+

@@ -1,0 +1,20 @@
+======================
+Python Document Script
+======================
+
+PDS ("Python Document Script") can be used to create formatted
+documents programmatically.
+
+PDS files are little programs who fill an abstract document with
+content. Usually the result will be some output file: a PDF file, or a
+Website. Or a DocBook XML file. Or an OpenOffice document.
+
+PDS is inspired by the LaTeX text processing system.  An author could
+use a plain text editor and write PDS code directly. This is similar
+to LaTeX, although less comfortable. Advantage is that prosaic content
+can be mixed with generated content.
+
+`Examples <examples.html>`__
+
+
+

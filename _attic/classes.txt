@@ -1,0 +1,149 @@
+Concept Overview
+================
+
+**COMPLETELY OBSOLETE. DON'T READ THIS!**
+
+This section gives a first introduction to the most important concepts
+in the Lino data model.
+
+.. contents::
+
+
+Links and Objects
+-----------------
+
+This is
+
+Application
+-----------
+
+A Lino application is a collection of modules. Each module defines
+some tables and how they behave: how they are linked to other tables,
+how they want to be displayed, what happens if somebody deletes a
+row...
+
+The behaviour of a Lino Application is defined by the set of modules
+which have been chosen to be part of this particular
+applications.
+[url http://www.girf.ee/luc/lino] is currently the only
+known Lino Application.
+
+Module
+------
+
+A Lino Module is currently
+nothing more than a collection of
+Table_ definitions.
+
+Examples of Lino Standard Modules :
+
+- System (Users, Views, Languages)
+
+- Addressbook (Persons, Organisations, Addresses)
+- Agenda (Talks, Meetings)
+- Community (News,Projects,To-Do-List)
+
+- Topics, Products, Ordering, Invoicing, Accounting...
+
+Each module is theoretically implemented in its own .php file.  But
+the list of Standard Modules and tables is still unstable.
+That's why currently the file
+<a href="source.php?file=crm.php">crm.php</a>
+provides three modules ADDRESS, COMMUNITY and
+AGENDA.
+
+
+
+Query
+-----
+
+User processes communicate with Lino using queries.  A Query is a
+request for data. The ultimate purpose of a Query is to get executed
+and to return a Cursor_, that is, a pointer to a sorted list of data
+rows.
+
+Attributes of a Query are:
+
+- leadTable. The only thing really necessary to specify when starting
+  a Query is the "lead table". Any Lino Table_ can be used as
+  leadTable for a Query. The leadTable can setup a Query with
+  table-specific default parameters.
+
+- scope : one or several columns whose value I know. If I want the
+  invoices issued for a known customer, then I can
+  SetScope(customer=17) to say that I don't want to worry about other
+  invoices than those for the customer whose id is 17.
+
+- filter : one or several conditions to hide certain rows from the
+  result.
+
+- visibleColumns : sorted list of the names of the columns that I am
+  interested in. SetVisibleColumns() sets an explicit list.
+  
+- budget : how much "energy" I am ready to invest into this query. The
+  budget is used to set up a default visibleColumns list.
+
+  thoroughness and visibility : a superficial query wants to see only
+  the very visible information which is easy to get while a thorough
+  query also wants the less visible information which takes more
+  energy to get.
+  
+
+SetScope() will automatically hide the columns whose value is known.
+
+
+Table
+-----
+
+A Table is the application-specific description of tabular data.
+
+Component
+'''''''''
+bla
+
+Type
+''''
+bla
+
+
+
+Cursor
+------
+
+A Cursor represents the result of a Query_
+
+Attributes of a Cursor are:
+
+- query : the query who owns this cursor.
+
+- columns : a list of Column instances
+
+- editable : whether I want the possibility to update rows
+  
+
+
+The budget of a Query
+---------------------
+
+The budget of a Query is used to avoid specifying explicitly which
+columns are to be shown in the result of a Query. This is one of
+Lino's innovative features.
+
+I can give to a Query a certain budget and space. (If not, it will
+have default values). These parameters are used to determine which
+columns will be visible in a Cursor_.
+
+The principal algorithm is simple: When asked to instanciate a Cursor_
+(and if no explicit columns have been specified), the Query will loop
+through the leadTable's component list, asking each component for its
+price and volume, using their GetPrice() and GetVolume() methods. The
+query then checks whether it can afford this component: 
+it looks into its purse to see if it has enough money, and into its
+store to see if there is enough space.
+If both conditions are okay, the deal is done. (Which means that the
+Component's SetupCursor() method ist called).
+
+
+
+
+

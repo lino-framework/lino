@@ -1,0 +1,6 @@
+publish.py does not re-create an existing thumbnail if the original
+has been modified
+
+publish.py does not delete an existing thumbnail if the original has
+been deleted.
+

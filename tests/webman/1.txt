@@ -1,0 +1,14 @@
+======
+page 1
+======
+
+
+This is page 1 of main module.
+
+Links to other pages: 
+:pageref:`index`
+:pageref:`1`
+:pageref:`2`
+
+
+

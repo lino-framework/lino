@@ -1,0 +1,132 @@
+globals().update(pds.__dict__) #from lino.sdoc.commands import *
+
+setTitle("Some Tables")
+## formatDocument(
+##    pagesize = pagesizes.A5,
+##    showBoundary = 0,
+##    leftMargin = 10*mm,
+##    rightMargin = 10*mm,
+##    topMargin = 10*mm,
+##    bottomMargin = 10*mm)
+   
+h1(getTitle())
+
+h2("Table without TableModel")
+
+p("""
+The following Table is declared using
+<font name="Courier" color="blue">beginTable("lll")</font>
+so it has three left-aligned columns.
+""")
+
+beginTable("lll",width=getTextWidth()*0.9)
+
+p("first cell in first row")
+endCell()
+p("second cell in first row")
+endCell()
+p("last cell in first row")
+endRow()
+
+p("first cell in second row")
+endCell()
+# p("")
+# center cell is empty
+endCell()
+p("last cell in second row")
+endRow()
+
+p("first cell in last row")
+endCell()
+p("second cell in last row")
+endCell()
+p("last cell in last row")
+endRow()
+
+endTable()
+
+p("""
+The following Table is declared using
+<font name="Courier" color="blue">beginTable("rcjl")</font>.
+""")
+
+if beginTable("rcjl"):
+   tr('r','c','j','l')
+   tr('a right aligned column '* 5,
+       'a centered column '* 5,
+       'a justified column '* 5,
+       'a left aligned column '* 5,
+       )
+   endTable()
+
+
+h2("Table with known (labeled) columns")
+
+p("""Here is a table with a TableModel an specified columns. Some of
+them have been told their width, others not. Those latter columns get
+the same width, sharing the width remaining after subtracting the
+known widths.""")
+
+m = stylesheet.DefaultTable.child()
+m.addColumn(label="ID",         width=15*mm, style=stylesheet.Number)
+m.addColumn(label="Description",             style=stylesheet.Normal)
+m.addColumn(label="Beschreibung",            style=stylesheet.Normal)
+m.addColumn(label="Price",      width=20*mm, style=stylesheet.Number)
+
+if beginTable(model=m,width=130*mm):
+   tr(1,"Chair", "Stuhl", "12,50")
+   tr(2,"Table", "Tisch", "62,50")
+   endTable()
+
+p("""Note that the text of ID and Price columns is aligned right.""")
+
+
+h2("Table with known (unlabeled) columns")
+
+m = stylesheet.DefaultTable.child()
+m.addColumn(width=20*mm)
+m.addColumn(width=30*mm)
+m.addColumn()
+
+beginTable(model=m)
+
+tr("this column is 20mm wide",
+   "this column is 30mm wide",
+   "this column gets the remaining width.")
+
+endTable()
+
+h2("Another way")
+
+chars = 6
+
+tm = TableModel()
+tm.addColumn(style=stylesheet.Normal.child(alignment=TA_RIGHT))
+tm.addColumn(width=10*chars,style=stylesheet.Number)
+
+p("""The following table is a total of an invoice.""")
+
+p("""The middle row shows a common trap and known bug: if you start a table cell implicitly (without an explicit beginCell()), then the first paragraph of this cell won't get the expected column paraStyle but the tables default paraStyle.
+""")
+
+beginTable(model=tm)
+beginCell()
+p("Total:")
+endCell()
+p("100,00")
+endRow()
+
+#beginCell()
+p("V.A.T.:")
+p("This is a second paragraph in the same cell.")
+endCell()
+p("21,00")
+endRow()
+
+beginCell()
+p("Total incl. VAT:")
+endCell()
+p("121,00")
+endRow()
+
+endTable()

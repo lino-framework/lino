@@ -1,0 +1,16 @@
+globals().update(pds.__dict__)
+formatDocument(pagesize=landscape(A4))
+
+p(""" 20030414 The table in this example did not take the full text
+width of a landscape A4 but only the width that it would have had in
+A4 portrait.  """)
+
+
+if beginTable('cc'):
+   p("A " * 100)
+   endCell()
+   p("B " * 100)
+   endRow()
+   endTable()
+   
+

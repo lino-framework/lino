@@ -1,0 +1,34 @@
+from lino.sdoc.commands import *
+
+setTitle("memo()")
+
+h1(getTitle())
+
+p("foo")
+
+memo("""
+
+The function memo() is designed for quick typing of
+more than one paragraph.
+
+<ul>
+<li>first list item
+<li>second list item
+</ul>
+
+You can now also use the <tt>typewriter</tt> tag.
+
+And if there is a blank line in a memo, this leads to a new paragraph.
+""")
+
+memo("""
+
+You can even define simple tables:
+
+<table>
+<tr><td>A<td>B<td>C
+<tr><td>1<td>2<td>3
+</table>
+""")
+
+p("bla bla" * 20 + ".")

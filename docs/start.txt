@@ -1,0 +1,27 @@
+============================
+How to get started with Lino
+============================
+
+The "visible" part of Lino is a collection
+of standalone `scripts <scripts.html>`_.
+
+Currently I can only give the following instructions:
+
+- `Install Lino <install.html>`_
+- run the test suites
+- look at the source code.
+
+You can also skip installation an `browse the CVS repository
+<http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/lino/>`_ to have a
+look at the code.
+  
+
+The source distribution has the following main subdirectories
+
+- tests : test suites. Currently the best place to start.
+
+- src : the Python source files.
+
+- docs : documentation.
+  Currently this contains the same as the homepage. 
+

@@ -1,0 +1,134 @@
+=====
+Links
+=====
+
+Comparable existing projects
+
+- Lino concurrents
+
+  - **GNU-Enterprise** :
+	 A promising project. Same goals as Lino.
+	 Also written in Python.
+	 GNUe works with an XML database schema.
+	 I prefer to write a database schema in Python.
+	 (http://www.gnuenterprise.org)
+
+- Data modeling systems. Lino currently uses his own data modeling
+  system `Adamo <adamo.html>`_.
+  There are some potential replacements:
+
+  - **Modeling** by Sébastien Bigaret is comparable to
+	 Adamo: it defines a database schema using Python.	 It is
+	 another approach for the same problem.
+	 (http://modeling.sourceforge.net)
+
+  - http://sourceforge.net/projects/pythondbo/
+
+  - http://sqlobject.org/
+
+  - **PDO** provides an object oriented API, similar to that of ADO or
+    JDBC.  http://pdo.neurokode.com
+
+  - `Twisted Enterprise Row Objects <http://www.twistedmatrix.com/documents/current/howto/row>`_
+	 
+  - See also: `higher level database toolkits
+    <http://www.python.org/cgi-bin/moinmoin/HigherLevelDatabaseProgramming>`_
+
+	 
+
+- Frameworks for Web-based applications:
+
+  - **Medusa** is a Python web server.
+	 (http://www.amk.ca/python/code/medusa.html)
+
+  - **Twisted** : http://www.twistedmatrix.com/
+
+  - **Webware for Python**.  A web application framework. Apache
+	 redirects requests to a Webware application server who sends the
+	 response back to Apache.	Lino could integrate there as a plugin.
+	 Each Adamo database becomes a webware application.
+	 (http://webware.sourceforge.net)
+  
+  - **Quixote**: a framework for writing Web-based applications using
+	 Python.	 (http://www.quixote.ca,
+	 http://www.mems-exchange.org/software/quixote/)
+
+  - **Albatross** : a Toolkit for Stateful Web Applications.
+	 Developed by Object Craft,
+	 a small company in Melbourne.
+	 Uses its own DTML-like templating language.
+	 (http://www.object-craft.com.au/projects/albatross)
+
+  - http://www.python.org/cgi-bin/moinmoin/WebProgramming
+	 
+
+- Frameworks for GUI applications:
+
+  - **Kiwi** uses GTK+.
+	 (http://www.async.com.br/projects/kiwi)
+
+  - **MojoView** uses wxPython.
+	 (http://www.netpromi.com/mojoview.html
+
+  - **anygui** is an abstract GUI toolkit wrapper for Python.
+	 (http://anygui.sourceforge.net/)
+
+- Python GUI toolkits:
+
+  Tkinter,
+  `wxPython <http://www.wxpython.org>`_,
+  `PyQt <http://www.riverbankcomputing.co.uk/pyqt>`_,
+  `PyGTK <http://www.daa.com.au/~james/software/pygtk/>`_
+  ...
+
+- Templating systems:
+
+  - **empy** : a robust templating system.
+	 Author Erik Max Francis.
+	 (http://www.alcyone.com/pyos/empy/)
+
+  - **preppy**:
+	 (http://www.reportlab.org)
+
+- Development tools:
+
+  - **SCons** : a make tool
+	 (http://www.scons.org/)
+
+  - Distribute a Python application as stand-alone executable:
+
+	 - **McMillan Installer**
+		(http://www.mcmillan-inc.com/install1.html)
+
+	 - **py2exe** by Thomas Heller
+	   (http://py2exe.sourceforge.net/) 
+
+	 - **xc_freeze**: yet another exe-file creator.
+		By Anthony Tuininga at computronix.com in Canada.
+		(http://starship.python.net/crew/atuining/cx_Freeze/)
+  
+- Useful tools:
+
+  - **Docutils** by David Goodger
+	 converts plain text to formatted documents, using 
+	 a set of intuitive syntax rules. 
+	 (http://docutils.sourceforge.net)
+
+  - **reportlab** generates PDF documents.
+	 They also have a tool `docco` similar to Lino's PDS.
+	 (http://www.reportlab.org)
+
+
+
+- Other:
+	 
+  - *Crystal Reports* is
+	 an example of a commercial reporting system.
+	 (http://www.crystaldecisions.com/products/crystalreports)
+
+  - *DocBook* is an XML schema definition for a widely-used document
+	 structure. (http://www.docbook.org)
+
+
+
+

@@ -1,0 +1,136 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: bookland.py  0.92  Jan. 2002
+%%Title: 5415006160675
+%%BoundingBox: 88 90 198 184
+%%EndComments
+
+% These font names might be different on your system:
+/ean13font { /OCRB findfont 10 scalefont setfont } def
+/isbnfont { /OCRB findfont 8 scalefont setfont } def
+/upc5font { /OCRB findfont 14 scalefont setfont } def
+
+/nextModule { moduleWidth 0 rmoveto } def
+% The following shenanigans is to deal with different implementations
+% of same font having different char sizes and spacing.
+% function fitstring:
+% usage: width string font fitstring
+% set font, scaled so that string exactly fits desired width
+% leave string on stack
+/fitstring { dup findfont 1 scalefont setfont % w s f
+3 1 roll % f w s
+dup stringwidth pop % f w s sw
+3 2 roll exch div % f s x
+3 2 roll findfont exch scalefont setfont
+} def
+/barHeight { 72 } def
+/nextModule { moduleWidth 0 rmoveto } def
+/topcentershow {dup stringwidth pop neg 2 div -9 rmoveto show} def
+/toprightshow {dup stringwidth pop neg -9 rmoveto show} def
+/bottomcentershow {dup stringwidth pop neg 2 div 0 rmoveto show} def
+/bottomrightshow {dup stringwidth pop neg 0 rmoveto show} def
+/W { moduleWidth mul 0 rmoveto } def
+/B { dup moduleWidth mul 2 div 0 rmoveto
+dup moduleWidth mul barWidthReduction sub setlinewidth
+0 barHeight rlineto 0 barHeight neg rmoveto
+currentpoint stroke moveto
+moduleWidth mul 2 div 0 rmoveto } def
+/L { dup moduleWidth mul 2 div 0 rmoveto
+dup moduleWidth mul barWidthReduction sub setlinewidth
+0 -5 rmoveto 0 5 rlineto
+0 barHeight rlineto 0 barHeight neg rmoveto
+currentpoint stroke moveto
+moduleWidth mul 2 div 0 rmoveto } def
+100
+100
+translate
+0 0 moveto
+ean13font
+% Bits:
+% L0L0100011011001101110010001101000110100001010L0L0110011010100001110010101000010001001001110L0L
+/moduleWidth { 0.013000 72 mul } def
+/barWidthReduction { 0.000000 72 mul } def
+/barHeight { 1.000000 72 mul } def
+0 0 moveto
+1 L 
+1 W 
+1 L 
+1 W 
+1 B 
+3 W 
+2 B 
+1 W 
+2 B 
+2 W 
+2 B 
+1 W 
+3 B 
+2 W 
+1 B 
+3 W 
+2 B 
+1 W 
+1 B 
+3 W 
+2 B 
+1 W 
+1 B 
+4 W 
+1 B 
+1 W 
+1 B 
+1 W 
+1 L 
+1 W 
+1 L 
+1 W 
+2 B 
+2 W 
+2 B 
+1 W 
+1 B 
+1 W 
+1 B 
+4 W 
+3 B 
+2 W 
+1 B 
+1 W 
+1 B 
+1 W 
+1 B 
+4 W 
+1 B 
+3 W 
+1 B 
+2 W 
+1 B 
+2 W 
+3 B 
+1 W 
+1 L 
+1 W 
+1 L 
+stroke
+% We do the left digits first and leave the font scaled
+% as is for the 9-digit and the right-digits.
+% EAN13 Left Digits:
+moduleWidth 24 mul 0 moveto
+moduleWidth 40 mul (415006) 
+/OCRB fitstring topcentershow
+
+% EAN13 human-readable number
+% The "9" digit (only when encoding ISBN's and ISMN's, I think):
+-5 0 moveto (5) toprightshow
+% EAN13 Right Digits:
+moduleWidth 70 mul 0 moveto
+moduleWidth 40 mul (160675) topcentershow
+isbnfont
+1.235000 72 mul dup 2 div
+1.000000 72 mul 3 add moveto
+ (name 5415006160675) /OCRB fitstring bottomcentershow
+%% this is a comment
+stroke
+% showpage supposedly OK in EPS
+showpage
+
+% Good luck!

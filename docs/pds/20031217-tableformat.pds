@@ -1,0 +1,255 @@
+from lino.sdoc.commands import *
+
+setFeeder('memo')
+setTitle("Formatting tables")
+h1(getTitle())
+
+
+
+h2("Formatting tables")
+
+cmds = (
+   ('BACKGROUND', ()),
+   ('GRID', ()),
+   ('BOX', ()),
+   ('OUTLINE', ()) ,
+   ('INNERGRID', ()),
+   ('LINEBELOW', ()),
+   ('LINEABOVE', ()),
+   ('LINEBEFORE', ()),
+   ('LINEAFTER', ()),
+   ('FONT', ()),
+   ('FONTNAME',  ()),
+   ('SIZE',  ()),
+   ('LEADING', ()),
+   ('TEXTCOLOR', ()),
+   ('ALIGN',  ()),
+   ('VALIGN', ()),
+   ('LEFTPADDING', ()),
+   ('RIGHTPADDING', ()),
+   ('TOPPADDING', ()),
+   ('BOTTOMPADDING', ()),
+   )
+		
+
+
+memo("""
+
+pds provides a simplified interface to reportlab's table formatting
+model.  With pds you specify only the command and its parameters,
+while the coordinates of the cells to be formatted depend on which formatXxx() function you use:
+
+<ul>
+<li>formatTable() applies to all the cells of the table's data area
+<li>formatHeader() applies to all the cells of the table's header
+<li>formatRow(), formatColumn(), formatCell() to the current row, column or cell.
+</ul>
+
+See reportlab's userguide.pds for details about the formatting commands.
+
+""")
+
+memo("""Here is a list of allowed commands: """+
+", ".join([cmd[0] for cmd in cmds]))
+
+h2("Cell background")
+
+memo("""
+
+Here is a table that could be the body of an invoice. The header line
+is grey, and one unit price cell is red.
+
+""")
+
+
+chars=6
+
+	
+th = stylesheet.DataTable.child()
+
+th.addColumn(label="Description",
+				 style=stylesheet.Normal)
+th.addColumn(label="Qty",
+				 width=8*chars,style=stylesheet.Number)
+th.addColumn(label="delivery unit",
+				 width=10*chars,style=stylesheet.Number)
+th.addColumn(label="Unit pr.",
+				 width=10*chars,style=stylesheet.Number)
+th.addColumn(label="Price",
+				 width=10*chars,style=stylesheet.Number)
+
+
+if beginTable(model=th):
+
+	formatHeader("BACKGROUND",colors.lightgrey)
+
+	# row 1
+
+	p("""This is a first item.
+	The unitprice is red.""")
+	endCell()
+	
+	p("2")	
+	endCell()
+	
+	p("pieces")	
+	endCell()
+	
+	p("21.50")	
+	formatCell("BACKGROUND",colors.red)
+	endCell()
+	p("43")
+	endCell()
+	
+
+	endRow()
+
+	
+	# row 2
+
+	memo("""
+	This is another item.
+	""")
+	endCell()
+	
+	p("10")	
+	endCell()
+	p("pieces")	
+	endCell()
+	
+	
+	p("1.50")	
+	endCell()
+	p("15")
+	endCell()
+	
+
+	endRow()
+
+	# row 3
+
+	p("This is the last item.")
+	endCell()
+	
+	p("10")	
+	endCell()
+	p("pieces")	
+	endCell()
+	
+	
+	p("1.50")	
+	endCell()
+	p("15")
+	endCell()
+	
+	# formatRow("BACKGROUND",colors.lightgrey)
+
+	endRow()
+
+	
+
+	endTable()
+
+
+memo("""
+Here are two headerless tables with background colors:
+""")
+
+beginTable("cc")
+
+memo("""
+The Estonian flag needs formatRow():
+""")
+
+if beginTable():
+	beginRow()
+	formatRow("BACKGROUND",colors.blue)
+	p("A1")
+	endCell()
+	p("A2")
+	endCell()
+	p("A3")
+	endCell()
+	endRow()
+	
+	beginRow()
+	p("B1")
+	endCell()
+	p("B2")
+	endCell()
+	p("B3")
+	endCell()
+	formatRow("BACKGROUND",colors.white)
+	endRow()
+	
+	beginRow()
+	formatRow("BACKGROUND",colors.black)
+	formatRow("TEXTCOLOR",colors.yellow)
+	p("C1")
+	endCell()
+	p("C2")
+	endCell()
+	p("C3")
+	endCell()
+	endRow()
+	
+	endTable()
+
+endCell()	
+
+memo("""
+And the Belgian flag uses formatColumn():
+""")
+
+if beginTable():
+	beginRow()
+	formatColumn("BACKGROUND",colors.black)
+	formatColumn("COLOR",colors.white)
+	p("A1")
+	endCell()
+	p("A2")
+	endCell()
+	p("A3")
+	formatColumn("BACKGROUND",colors.red)
+	endCell()
+	endRow()
+	
+	beginRow()
+	p("B1")
+	endCell()
+	p("B2")
+	endCell()
+	p("B3")
+	endCell()
+	endRow()
+	
+	beginRow()
+	p("C1")
+	endCell()
+	p("C2")
+	formatColumn("BACKGROUND",colors.yellow)
+	endCell()
+	p("C3")
+	endCell()
+	endRow()
+	
+	endTable()
+
+endTable()	
+
+h2("Empty tables")	
+
+memo("""If you ask for an empty table, then the header line will be
+printed: """)
+
+if beginTable(model=th):
+	endTable()
+
+memo("""If the empty table has no header, then nothing will be
+printed:""")
+
+if beginTable():
+	endTable()
+
+memo("""This paragraph follows the previous one as if nothing had
+happened.""")

@@ -1,0 +1,43 @@
+globals().update(pds.__dict__) #from lino.sdoc.commands import *
+
+setTitle("A Price List")
+
+h1(getTitle())
+
+p("""
+<i>bla</i> bla bla bla bla bla bla
+bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla
+bla bla bla bla bla bla bla
+""")
+
+p(""" There should now come a table with 4 columns
+'ID','Description', 'A' and 'B'. All columns except Description should be aligned right.
+""")
+
+# print repr(styles)
+tm = stylesheet.DefaultTable.child()
+assert tm.getColumnCount() == 0
+tm.addColumn(label="ID",         width=20*mm, style=stylesheet.Number)
+tm.addColumn(label="Description",             style=stylesheet.Normal)
+tm.addColumn(label="A",          width=20*mm, style=stylesheet.Number)
+tm.addColumn(label="B",          width=20*mm, style=stylesheet.Number)
+
+beginTable(model=tm)
+
+for i in range(10):
+   p(str(i))
+   endCell()
+   p("this is row # %d" % i)
+   endCell()
+   p(str(i * 10))
+   endCell()
+   p(str(i * 100))
+   endCell()
+   endRow()
+
+endTable()

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="latin-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=latin-1" />
+<meta name="generator" content="Docutils 0.3.1: http://docutils.sourceforge.net/" />
+<title>Lino scripts</title>
+<link rel="stylesheet" href="default.css" type="text/css" />
+</head>
+<body>
+<table class="mainTable">
+			<tr>
+			<td valign="top" class="leftArea">
+			<p class="menu">
+<a href="index.html">Home</a>
+<br><a href="http://sourceforge.net/projects/lino/">Forge</a>
+</p>
+
+<p class="copyright">
+&copy; 2001-2003
+<br><a href="mailto:luc.saffre@gmx.net">Luc Saffre</a>
+<br>
+
+<br><a href="http://sourceforge.net">
+<img src="http://sourceforge.net/sflogo.php?group_id=87016&type=1"
+   width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+
+	
+
+
+</td>
+			<td class="textArea"><div class="document" id="lino-scripts">
+<h1 class="title">Lino scripts</h1>
+<p>Lino is implemented as a collection of independent command-line tools
+or &quot;scripts&quot;. Here is the complete list and usage documentation for
+them.</p>
+<p>Some, but not all of these scripts are released as
+<a class="reference" href="timtools.html">TIM Tools</a>.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title"><a name="contents">Contents</a></p>
+<ul class="simple">
+<li><a class="reference" href="#prn2pdf" id="id2" name="id2">prn2pdf</a></li>
+<li><a class="reference" href="#openmail" id="id3" name="id3">openmail</a></li>
+<li><a class="reference" href="#openurl" id="id4" name="id4">openurl</a></li>
+<li><a class="reference" href="#pds2pdf" id="id5" name="id5">pds2pdf</a></li>
+<li><a class="reference" href="#publish" id="id6" name="id6">publish</a></li>
+<li><a class="reference" href="#sendmail" id="id7" name="id7">sendmail</a></li>
+<li><a class="reference" href="#treecomp" id="id8" name="id8">treecomp</a></li>
+<li><a class="reference" href="#wxdemo" id="id9" name="id9">wxdemo</a></li>
+<li><a class="reference" href="#quixdemo" id="id10" name="id10">quixdemo</a></li>
+<li><a class="reference" href="#mailtomoz" id="id11" name="id11">mailtomoz</a></li>
+<li><a class="reference" href="#callme" id="id12" name="id12">callme</a></li>
+<li><a class="reference" href="#webmandemo" id="id13" name="id13">webmandemo</a></li>
+<li><a class="reference" href="#webman" id="id14" name="id14">webman</a></li>
+</ul>
+</div>
+<div class="section" id="prn2pdf">
+<h1><a class="toc-backref" href="#id2" name="prn2pdf">prn2pdf</a></h1>
+<p>prn2pdf converts a stream containing text and simple formatting
+printer control sequences into a PDF file.</p>
+<dl>
+<dt>USAGE :</dt>
+<dd><p class="first">prn2pdf [options] FILE</p>
+<p class="last">where FILE is the .prn file to be converted</p>
+</dd>
+<dt>OPTIONS :</dt>
+<dd><table class="first last option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td colspan="2">
+<kbd><span class="option">-o</span>, <span class="option">--output</span> <var>FILE</var></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>write result to file FILE</td></tr>
+<tr><td>
+<kbd><span class="option">-b</span>, <span class="option">--batch</span></kbd></td>
+<td>don't start Acrobat Reader on the generated
+pdf file</td></tr>
+<tr><td>
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>display this text</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>See <a class="reference" href="..\docs\prn2pdf.html">docs/prn2pdf</a> for more documentation.</p>
+</div>
+<div class="section" id="openmail">
+<h1><a class="toc-backref" href="#id3" name="openmail">openmail</a></h1>
+<p>start the user's mail client with a ready-to-send message.</p>
+<p>USAGE : openmail FILE</p>
+<p>where FILE describes the contents of the message using a simplified
+pseudo RFC822 format.  Supported message header fields are &quot;to&quot; and
+&quot;subject&quot;, and the &quot;body&quot;.  &quot;to&quot; is mandatory, the other fields are
+optional.</p>
+<p>See also <a class="reference" href="..\docs\openmail.html">/docs/openmail</a>.</p>
+</div>
+<div class="section" id="openurl">
+<h1><a class="toc-backref" href="#id4" name="openurl">openurl</a></h1>
+<p>Usage: openurl URL</p>
+<p>Starts the default browser on your system to display the specified URL.</p>
+</div>
+<div class="section" id="pds2pdf">
+<h1><a class="toc-backref" href="#id5" name="pds2pdf">pds2pdf</a></h1>
+<p>Usage : pds2pdf [options] FILE</p>
+<p>pds2pdf converts the Python Document Script FILE (extension <cite>.pds</cite>) to
+a PDF file with same name, but <cite>.pdf</cite> as extension.
+Extension <cite>.pdf</cite> will be added if not specified.
+Note that you can specify only one FILE.</p>
+<p>Options:</p>
+<blockquote>
+<table class="option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td colspan="2">
+<kbd><span class="option">-o</span> <var>NAME</var>, <span class="option">--output</span> <var>NAME</var></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>alternate name for the output file</td></tr>
+<tr><td>
+<kbd><span class="option">-b</span>, <span class="option">--batch</span></kbd></td>
+<td>don't start Acrobat Reader on the generated pdf file</td></tr>
+<tr><td>
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>display this text</td></tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section" id="publish">
+<h1><a class="toc-backref" href="#id6" name="publish">publish</a></h1>
+<p>publish prepares a local file tree for publishing to a web server.
+- rename all files to lower case
+- create thumbnails</p>
+<p>USAGE:</p>
+<p>there are no command-line parameters.
+- cd to the root directory of your local file tree
+- timtools publish</p>
+</div>
+<div class="section" id="sendmail">
+<h1><a class="toc-backref" href="#id7" name="sendmail">sendmail</a></h1>
+<p>sendmail sends an email stored in a file to a list of recipients
+stored in a separate list file.</p>
+<dl>
+<dt>SYNTAX :</dt>
+<dd><p class="first">sendmail [options] FILE</p>
+<p class="last">where FILE is the input file (can be text or html)</p>
+</dd>
+<dt>mandatory options :</dt>
+<dd><table class="first last option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td>
+<kbd><span class="option">-s</span>, <span class="option">--sender</span></kbd></td>
+<td>sender's Name and email</td></tr>
+<tr><td>
+<kbd><span class="option">-h</span>, <span class="option">--host</span></kbd></td>
+<td>name of SMTP host</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>optional options <span class="classifier-delimiter">:</span> <span class="classifier"> </span></dt>
+<dd><table class="first last option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td>
+<kbd><span class="option">-u</span>, <span class="option">--user</span></kbd></td>
+<td>sender's login name
+(anonymous access if omitted)</td></tr>
+<tr><td colspan="2">
+<kbd><span class="option">-r</span>, <span class="option">--recipient</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>recipient's Name and email
+(taken from addrlist.txt if not given)</td></tr>
+<tr><td>
+<kbd><span class="option">-p</span>, <span class="option">--password</span></kbd></td>
+<td>sender's login password
+(asked interactively if not given)</td></tr>
+<tr><td>
+<kbd><span class="option">-d</span>, <span class="option">--debug</span></kbd></td>
+<td>turn debug mode on</td></tr>
+<tr><td>
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>display this text</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>See sendmail.txt for more information.</p>
+</div>
+<div class="section" id="treecomp">
+<h1><a class="toc-backref" href="#id8" name="treecomp">treecomp</a></h1>
+<p>treecomp is not finished. Don't try it.</p>
+<p>It is intended to compare two directory trees and provides different
+actions based on this analysis.</p>
+<p>SYNTAX :</p>
+<p>treecomp [options...] DIR1 DIR2</p>
+<ul class="simple">
+<li>DIR1 and DIR2 are two directories to compare</li>
+</ul>
+</div>
+<div class="section" id="wxdemo">
+<h1><a class="toc-backref" href="#id9" name="wxdemo">wxdemo</a></h1>
+<p>starts a GUI application with an adamo database.
+Just a proof of concept.
+Far from being usable.</p>
+</div>
+<div class="section" id="quixdemo">
+<h1><a class="toc-backref" href="#id10" name="quixdemo">quixdemo</a></h1>
+<p>starts a medusa web server with Quixote, serving an adamo database</p>
+</div>
+<div class="section" id="mailtomoz">
+<h1><a class="toc-backref" href="#id11" name="mailtomoz">mailtomoz</a></h1>
+<p>Wrapper to convert the <cite>mailto</cite> syntax (as used by browsers to call an
+external mail client) to Mozilla's &quot;-compose&quot; command-line syntax.</p>
+<p>Workaround for <a class="reference" href="http://bugzilla.mozilla.org/show_bug.cgi?id=220306">http://bugzilla.mozilla.org/show_bug.cgi?id=220306</a></p>
+<p>USAGE: timtools mailtomoz MOZILLA MAILTO</p>
+<p>Where:</p>
+<blockquote>
+<p>MOZILLA is the filename including path of your mozilla.exe</p>
+<p>MAILTO is a string of the form:</p>
+<pre class="literal-block">
+mailto:foo&#64;bar.com?subject=bla,body=blabla
+</pre>
+</blockquote>
+<p>mailtomoz will then do the following system call:</p>
+<pre class="literal-block">
+MOZILLA -compose to=foo&#64;bar.com,subject=bla,body=blabla
+</pre>
+<p>To use this script, you must edit your registry and modify the value
+of <cite>HKEY_CLASSES_ROOTmailtoshellopencommand</cite> to something like:</p>
+<pre class="literal-block">
+lino mailtomoz &quot;C:\Program files\mozilla.org\mozilla.exe&quot; &quot;%1&quot;
+# or &quot;C:\Programme\mozilla.org\Mozilla\mozilla.exe &quot;
+</pre>
+<p>When bug 220306 is fixed, change this entry back to:</p>
+<pre class="literal-block">
+C:\Programme\mozilla.org\Mozilla\mozilla.exe -mail %1
+</pre>
+<p>See also <a class="reference" href="openmail.html">openmail</a>.</p>
+</div>
+<div class="section" id="callme">
+<h1><a class="toc-backref" href="#id12" name="callme">callme</a></h1>
+<p>callme.py is a diagnostic tool that just displays the command-line
+parameters that it has been called with.</p>
+</div>
+<div class="section" id="webmandemo">
+<h1><a class="toc-backref" href="#id13" name="webmandemo">webmandemo</a></h1>
+<p>starts a Medusa server with Quixote, serving a WebMan module on Lino's
+<cite>docs</cite> directory.</p>
+</div>
+<div class="section" id="webman">
+<h1><a class="toc-backref" href="#id14" name="webman">webman</a></h1>
+<p>WebMan creates static html files for one ore several WebMan modules.</p>
+<p>A WebMan module is a directory containing a series <cite>*.txt</cite> files and
+one file <cite>init.py</cite>.</p>
+<p>(containing themselves text formatted using reStructuredText)</p>
+<p>USAGE : lino webman [options] DIR1 DIR2</p>
+<p>OPTIONS:</p>
+<table class="option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td>
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help text</td></tr>
+<tr><td>
+<kbd><span class="option">-f</span>, <span class="option">--force</span></kbd></td>
+<td>force generation even if target file is up-to-date</td></tr>
+<tr><td>
+<kbd><span class="option">-b</span>, <span class="option">--batch</span></kbd></td>
+<td>batch processing : don't start webbrowser on result</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</td></tr></table></body>
+</html>
+<div class="bottomArea"><p class="footer">This page was generated on Thu Dec 18 11:05:48 2003 by Lino <a href="webman.html">WebMan</a> version 0.5.5.</div>

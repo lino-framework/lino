@@ -1,0 +1,43 @@
+=============
+Lino Overview
+=============
+
+Lino is a framework for IT professionals who offer integrated business
+applications for small and medium-sized enterprises.
+
+Lino is published under the GNU General Public License (GPL) and
+implemented as a suite of Python packages.  Although these packages
+could possibly be useful separately, they are designed to co-operate.
+
+I started to publish Lino as a Sourceforge project in August 2003.
+Lino is currently rather a sandbox for several modules in different
+states of development and with different degrees of co-operation.  The
+only thing that they have in common is that I am author and
+maintainer.
+
+
+- `WebMan <webman.html>`_ is yet another system to create web pages. It
+  is used to generate this Website.
+  
+- `Python Document Script <pds/index.html>`_ (PDS) is a reporting
+  system to generate static documents on screen or paper.
+
+- `TIM tools <timtools.html>`_ are a collection of command-line
+  tools designed as helpers for DOS applications.
+  
+Being developed:
+
+
+- `Adamo <adamo.html>`_ ("abstract data model") is an API for writing
+  database schemas in pure Python, including business logic and
+  validation rules.
+   
+- agui (abstract user interface model) : adds forms, dialogs and menus
+  to a database.
+
+- The `Web UI <wui.html>`_ is a standalone HTTP server which runs a
+  Web Application that gives access to an Adamo database.
+   
+- Lino comes with a collection of reusable and interconnectible
+  application components
+

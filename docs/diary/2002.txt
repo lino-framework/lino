@@ -1,0 +1,93 @@
+Lino Diary 2002
+===============
+
+20021127 [timtools]
+
+- possibility to specify the name of output file
+- parses now the command line using getopt
+
+20021130 [timtools]
+
+- renamed the whole project to "TIM Tools".
+  prn2pdf is now a part of TIM Tools.
+  Another (new) TIM Tool in this suite is sendmail
+
+
+20021208 [timtools]
+
+How I use McMillan installer to create the binary distribution:
+
+- Created a spec file for every tool, using::
+  python s:\installer\Makespec.py prn2pdf.py
+  python s:\installer\Makespec.py sendmail.py
+  
+- Modified the `*.spec` files to specify the same temporary dist
+  directory::
+  
+    coll = COLLECT( exe,
+                    a.binaries,
+                    strip=0,
+                    name=r'c:\temp\dist\timtools')
+                    
+- mkdist.bat runs McMillan installer and creates the zip files on my
+  homepage.
+
+20021209 [timtools]
+
+- Published a relatively stable release. Both prn2pdf and sendmail work
+  well, at least for me and my customers. Hopefully.
+
+
+20021219
+
+- renamed t:/data/luc/lino/python to t:/data/luc/lino/src
+- renamed src/test to src/tests
+
+20021221
+
+- moved QueryRow to dbd.abstract.py
+- A Table on its own cannot create Rows. You need a Cursor for that.
+
+
+20021222
+
+- Query should one day be renamed to View. But not yet.
+
+- Columns are now instanciated in the cursor. The Query just stores
+  the column names.
+  
+- Component.GetColumn() ersetzt durch ein if isinstance() in
+  cursor.py. Denn table.py soll cursor.py nicht kennen.
+  
+- Table.expr2row(expr) muss jetzt die Row als Parameter mit bekommen.
+
+
+
+20021227 [timtools]
+
+- added ftpsync.py which was an early study before I asked this
+  question in comp.lang.python where Carl Banks wrote: 
+  on 12/12/2002 0:58
+  http://www.aerojockey.com/software/#ftpupsync
+  my ftpsync.py will probably vanish since I just need to adapt Carl's
+  ftpupsync.py to work on Windows.
+
+- added publish.py which I used until now under the name
+  renlower.py. "renlower" was no longer accurate name since it now
+  also creates thumbnails.
+  Here is the CHANGES string from renlower.py::
+  
+    20021218
+
+    - did not show the complete file names (only without path) for
+      confirmation
+
+    20021225  
+    - directory names were not renamed
+    - added thumbnail creation
+
+    20021227
+    - rename had a bug since 20021225
+
+  
+

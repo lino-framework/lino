@@ -1,0 +1,41 @@
+globals().update(pds.__dict__)
+setTitle("Barcodes")
+
+p("""Here are some EAN13 barcodes.  Beware! Barcodes are an
+experimental feature! I did not even test whether these barcode
+symbols are recognized.  """)
+
+
+tm = stylesheet.DefaultTable.child()
+for i in range(3):
+   tm.addColumn()
+
+tm.formatTable('ALIGN','CENTER')   
+
+count = 0   
+
+if beginTable(model=tm):
+   for c in (
+      "54.2500626.001.5",
+      "54.2500626.003.9",
+      "54.2500626.004.6",
+      "54.2500626.005.3",
+      "54.2500626.006.0",
+      "54.2500626.007.7",
+      "54.2500626.008.4",
+      "54.2500626.010.7",
+      "54.2500626.011.4",
+      "54.2500626.012.1",
+      "54.2500626.013.8",
+      "54.2500626.014.5"):
+      p('Barcode for %s' % c)
+      c = c.replace('.','')
+      # print c
+      barcode(c)
+      p('')
+      endCell()
+      #count += 1
+      #if count - (count / 4) != 0:
+      #   endRow()
+
+   endTable()

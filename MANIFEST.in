@@ -1,0 +1,6 @@
+global-include *.txt *.py *.spec *.pds *.BAT *.bat
+prune dist
+prune _attic
+prune src/_attic
+prune test/_attic
+prune build

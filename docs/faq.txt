@@ -1,0 +1,83 @@
+========
+Lino FAQ
+========
+
+
+.. contents:: Table of Contents
+
+
+How many developers are working on the project?
+-----------------------------------------------
+
+I am alone. For the moment.
+Project author and currently only developer is Luc Saffre who works
+for Rumma & Ko.  Rumma & Ko is a service provider in Tallinn with 2
+employees.  They live currently by selling support for `TIM
+<http://my.tele2.ee/lsaffre/tim>`_.  Lino is one of their long-term
+future projects.
+
+
+What is the project's status?
+-----------------------------
+
+(this entry last updated 2003-10-04)
+
+- The `Web UI <wui.html>`_
+  is currently most active.
+  
+- The `TIM tools <timtools.html>`_ are being used by some of my
+  customers.
+  
+- The sdoc module currently can generate HTML and PDF. The HTML part
+  is currently not used and will perhaps even vanish.
+  
+- `Adamo <adamo.html>`_
+  is already quite beautiful, but only in theory.
+  Adamo is now waiting for the `Web UI <wui.html>`_.
+
+- Documentation, including this web site is work in progress.
+
+
+Why did you start your own project?
+-----------------------------------
+
+"I have been writing customized database applications for over 10
+years. I am tired of looking for the perfect framework.  Now I am
+going to write it myself!"
+
+Of course the question remains active: am I re-inventing the wheel?
+This is why I maintain my `Links <links.html>`_ page which evolves
+each time I am pondering with this question.
+
+        "There is a certain charm to seeing someone happily advocate a
+        triangular wheel because it has one less bump per revolution
+        than a square wheel does. (Chuck Swiger)"
+
+        "Someone, somewhere said that you should at least skim through
+        the standard library of the language of your choice, just
+        because you shouldn't be re-inventing the wheel all the
+        time. (But don't underestimate the value of re-inventing the
+        wheel."  (Jarno Virtanen)
+
+Lino is an experimental project.  It is possible that parts of it are
+going to vanish completely if appropriate existing software solutions
+can be used.
+
+
+
+Why the name "Lino"?
+--------------------
+
+There is no serious reason.  Consider "Lino" just as a
+personalization.  Do you remember `Lino Ventura
+<http://www.allocine.fr/personne/fichepersonne_gen_cpersonne=400.html>`_
+?  I like to give human names to my software projects because they are
+in many respects like a person to me.
+
+But originally is "Lino" an acronym for "Linked Objects".  I used this
+name in 1990 for a (never-published) tool to visualize the "Links" and
+"Objects" of a datamodel defined for a proprietary database server.
+The tool has gone, but the name remained in my head.
+
+Afterwards I realized that "Lino" could be interpreted as "Lucs
+Increasingly Never-ending Obsessions"...

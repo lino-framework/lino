@@ -1,0 +1,68 @@
+globals().update(pds.__dict__) #from lino.sdoc.commands import *
+setTitle('codeExample()')
+h1(getTitle())
+
+CodeExampleStyle = stylesheet.Code.child(leftIndent=0)
+
+def showAndExec(txt):
+   setFeeder('plain')
+   pre(txt)
+   setFeeder('xml')
+   exec txt in globals(),globals()
+
+p("""The following function shows how to insert code examples along with their result in a document. 
+""")
+
+showAndExec("""
+def codeExample(txt):
+   beginTable("ll",width=getTextWidth()*0.9,
+              model=stylesheet.DefaultTable)
+   setFeeder('plain')
+   pre(txt,CodeExampleStyle)
+   endCell()
+   setFeeder('xml')
+   exec txt in globals()
+   endTable()
+   
+""")
+
+p("""
+Here are now some code examples,
+along with their result.
+""")
+
+
+codeExample('''
+p("""
+A paragraph
+with some text
+""")
+''')
+
+explanation = """
+This is some text to explain the code example.  
+"""
+
+p(explanation)
+
+codeExample('''
+p("""
+A <u>paragraph</u>
+with some
+<b>formatted</b>
+text
+""")
+''')
+
+p(explanation)
+
+codeExample('''
+pre("""
+A preformatted
+paragraph.
+""")
+''')
+
+p(explanation)
+
+

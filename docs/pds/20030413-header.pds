@@ -1,0 +1,33 @@
+import lino.sdoc.commands as pds
+from reportlab.lib.units import mm
+
+pds.setTitle("Page headers")
+
+def header():
+   if pds.beginTable('lr',pds.stylesheet.EmptyTable):
+      pds.formatParagraph(fontSize=8)
+      pds.formatTable("LINEBELOW",0.1,pds.colors.black)
+      pds.p(pds.getTitle())
+      pds.endCell()
+      pds.formatParagraph(alignment=pds.TA_RIGHT)
+      pds.p("Page %d" % pds.getPageNumber())
+      pds.endTable()
+   
+
+pds.formatDocument(topMargin=25*mm, header=header)
+      
+   
+pds.p("""
+This document tests if headers are okay...
+also for long documents...
+""")
+
+
+from reportlab.lib import randomtext
+
+# randomText() may contain characters '&', '<'
+pds.setFeeder('plain') 
+
+for i in range(100):
+   pds.p(randomtext.randomText(randomtext.STARTREK,7))
+

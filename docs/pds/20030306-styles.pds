@@ -1,0 +1,49 @@
+from lino.sdoc.commands import *
+
+setTitle("Playing with styles")
+
+h1(getTitle())
+
+
+
+p("""Paragraph styles can specify (or not) the following paragraph
+attributes""")
+
+
+beginList()
+for (k,v) in stylesheet.Normal.defaults.items():
+   li( "<b>%s</b>" % k
+       + " (%s);" % repr(v))
+endList()
+
+
+
+
+
+p("""Here is a list of the currently defined paragraph styles:""")
+
+from lino.sdoc.styles import ParagraphStyle
+beginList()
+setFeeder('plain')
+for s in stylesheet.values():
+   if isinstance(s,ParagraphStyle):
+      li( str(s) )
+endList()
+
+
+p("""
+Now let's change the text color for normal text to blue:
+""")
+
+pre("""
+formatParagraph(textColor=colors.blue)
+""")
+
+formatParagraph(textColor=colors.blue)
+
+
+
+p("""
+Now the text of this paragraph should be blue.
+""")
+

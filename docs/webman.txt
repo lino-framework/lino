@@ -1,0 +1,160 @@
+===========
+Lino WebMan
+===========
+
+
+.. contents::
+
+Introduction
+------------
+
+I wrote WebMan to create and maintain this site because as author I
+wanted to use the reStructuredText format to write my content, and as
+webmaster I saw the need to extend the raw docutils tools.
+
+Features:
+
+- authored articles are simple reStructuredText source files.
+
+- an "exec" directive for docutils to execute arbitrary Python code
+  during the txt-to-html conversion.
+
+- (not implemented) web sites with multiple content modules
+
+
+Using WebMan
+------------
+
+Besides Python and docutils you must `get the sources
+<install.html#get-the-sources>`_ for Lino.
+
+A WebMan "web module" is a single directory containing plain
+reStructuredText files and a configuration file `init.py`.  So create
+a new directory with some `*.txt` files and your customized copy of
+`init.py
+<http://cvs.sourceforge.net/viewcvs.py/lino/lino/docs/init.py?view=markup>`_.
+
+Launch `webman.py <scripts.html#webman>`_
+with your directory as
+first parameter.
+
+Or, adapt the script `webmandemo.py` to launch a web server on your
+web module. Note that intra-site links don't work when WebMan serves
+dynamically.
+
+
+
+Extensions to docutils
+----------------------
+
+The `exec` directive
+====================
+
+WebMan adds a new `exec` directive to reStructuredText.  This is used
+to execute arbitrary Python code when the document is parsed, thus
+creating dynamic content.
+
+The output of the code in an `exec` directive is supposed to be
+reStructuredText which will be parsed itself and inserted into the
+document. (This works similar to the existing `include` directive.)
+
+Example: here are some *Fibonacci* series, generated using the `exec`
+directive:
+
+   .. exec::
+
+		def fib(n):  # write Fibonacci series up to n
+			"""Print a Fibonacci series up to n."""
+			a, b = 0, 1
+			while b < n:
+				print b,
+				a, b = b, a+b
+
+		print "The *Fibonacci* series up to **%d** : " % 10
+		fib(10)
+
+		print "\n"
+
+		print "The *Fibonacci* series up to **%d** : " % 100
+		fib(100)
+
+If you look at the `source code <webman.txt>`_ of this page, you see
+the following Python code that was executed when this page has been
+generated::
+
+   .. exec::
+
+		def fib(n):  # write Fibonacci series up to n
+			"""Print a Fibonacci series up to n."""
+			a, b = 0, 1
+			while b < n:
+				print b,
+				a, b = b, a+b
+
+		print "The *Fibonacci* series up to **%d** : " % 10
+		fib(10)
+
+		print "\n"
+
+		print "The *Fibonacci* series up to **%d** : " % 100
+		fib(100)
+
+		
+The global Python namespace is the same for all `exec` runs within a
+document.  The `fib()` function is still known during the following
+second `exec`."
+
+   .. exec::
+
+		print "Again te *Fibonacci* series up to **%d** : " % 100
+		fib(100)
+		
+
+It is okay to have is no output at all, which can be useful to do some
+initializing or import at the beginning of a document.
+
+
+
+
+
+..  `WebModule.siteMap()` muss die hierarchische Liste aller
+	 txt-Dateien des Moduls zurück geben.  Die Dateien an sich sind
+	 flach strukturiert, aber der site map definiert ihre
+	 Hierarchie. Warning wenn sitemap nicht komplett ist.  Sitemap muss
+	 leicht editierbar sein.
+
+
+fileref
+=======
+
+I am still working on a solution to refer easily to source files of
+the project.
+
+Something like::
+
+  Don't execute `setup.py <fileref:/setup.py>`_ because it does
+  not work yet.
+
+Would create something like:
+
+  Don't execute `setup.py
+  <http://cvs.sourceforge.net/viewcvs.py/lino/lino/setup.py?rev=1.2&view=auto>`_
+  because it does not work yet.
+  
+  
+
+.. Weshalb bin ich mein eigenes CMS (webman) am schreiben, wo
+	es doch so viele bestehende Projekte gibt?
+
+	- Andere Namen : yawn, yet another web n...
+
+	- Ich will mehr als ein Wiki
+
+	- Ich will wenn möglich statisches HTML beim Provider verwenden.
+	  Heutzutage wird für meinen Geschmack viel zu viel dynamisches HTML
+	  verwendet. Oops... Was rede ich da? Und was ist mit user-specific
+	  content, searches und forms?  Okay, dynamisches Ausliefern muss
+	  möglich sein, aber ich will eine Website auch einfrieren können auf
+	  CD.
+  
+

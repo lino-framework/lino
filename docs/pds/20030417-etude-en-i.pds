@@ -1,0 +1,33 @@
+"""
+a table on more than one page
+"""
+import math
+
+globals().update(pds.__dict__)
+
+setTitle("Etude en i")
+h2(getTitle())
+
+formatDocument(pagesize=landscape(A4),
+               leftMargin=10*mm,
+               topMargin=20*mm,
+               bottomMargin=10*mm,
+               rightMargin=10*mm)
+
+setFeeder('plain')
+
+tm = stylesheet.DefaultTable.child() # document.getDefaultTableModel()
+tm.addColumn("i",width=15*mm)
+tm.addColumn("sqrt(i)",width=40*mm)
+tm.addColumn("chr(i)",width=15*mm)
+tm.addColumn("'i '*i")
+#tm.showHeaders = False
+
+assert tm.getColumnCount() == 4
+
+
+# if tm.beginTable():
+if beginTable(model=tm):
+   for i in range(0,255):
+      tr(i,math.sqrt(i),chr(i),"i "*i)
+   endTable()

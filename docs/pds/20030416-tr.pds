@@ -1,0 +1,42 @@
+# coding: latin1
+globals().update(pds.__dict__)
+setTitle("The tr() function")
+
+
+## tm = document.getDefaultTableModel()
+## tm.addColumn("Positions",width=20*mm)
+## tm.addColumn("Longueur",width=20*mm)
+## tm.addColumn("Type",width=20*mm)
+## tm.addColumn("Contenu")
+## if beginTable(tm):
+
+if beginTable():
+   addColumn("Positions",width=20*mm)
+   addColumn("Longueur",width=20*mm)
+   addColumn("Type",width=20*mm)
+   addColumn("Contenu")
+   
+
+   tr(1,1,"N","Identification de l'enregistrement : 0 (annexe I.1)")
+   tr("2 - 7","6","N","Date de création du fichier (format JJMMAA)")
+   tr("8 - 19","12","AN","Blancs")
+   tr("20 - 22","3", "N",
+      "N° de code protocolaire de la banque destinataire du fichier")
+   tr("23 - 24", 2, 'N',"Code application : 51")
+   tr("25 - 34","10","AN",
+      "N° de référence du fichier attribué par le remettant")
+   tr("35 - 45", 11, "N",
+      "N° d'identification du remettant du fichier :")
+   
+   restartRow(4) # start again in column 4
+   # undo the automatic endCell() and endRow() made by the last tr()
+   # call. Because I want to continue in this cell.
+   
+   if beginList():
+      li("""N° de T.V.A. (9N) pour les assujettis T.V.A. ou""")
+      li("""N° d'immatriculation national (11N) ou""")
+      li("""N° d'entreprise (10N)""")
+      endList()
+   p("""(voir annexe II.1)""")
+
+   endTable()

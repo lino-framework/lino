@@ -1,0 +1,6 @@
+http://3lib.ukonline.co.uk/pocketinfo/data/world.csv
+http://3lib.ukonline.co.uk/pocketinfo/data/belgzip.csv
+
+
+2147rank.txt and 2119rank.txt are from the World factbook
+http://www.cia.gov/cia/download.html

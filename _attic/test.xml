@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<?xml:stylesheet type="text/xsl" href="test.xsl"?>
+<me>
+	<name>John Doe</name>
+	<address>94, Main Street, Nowheresville 16463, XY</address>
+	<tel>738 2838</tel>
+	<email>johndoe@black.hole.com</email>
+	<url>http://www.unknown_and_unsung.com/</url>
+</me>

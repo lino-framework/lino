@@ -1,0 +1,102 @@
+=================================
+Running Lino as a Web application
+=================================
+
+The Web User Interface (WUI) is the first UI for Lino to be
+implemented.  This implementation is being done with a future support
+for a Graphical User Interface (GUI) in mind.
+
+To run as a Web Application, Lino currently uses Irmen de Jong's
+Snakelets server.  This is a standalone HTTP server in pure Python.
+Advantage of this aproach is that it is very easy to get a Lino
+running on any machine.  Also is the Snakelets code simple and easy to
+understand.
+
+Server startup
+--------------
+
+Invoking the `snake/serve.py` script will start the Snakelets server.
+The `snake/webapps`directory contains (besides those applications
+coming with Snakelets) one application "Lino".
+`snake/webapps/lino/__init__.py` will be run by the server, and it
+does especially the starup of the adamo database.  The Database object
+which acts as handler is then stored in the "application context"
+
+Windows
+-------
+
+Windows are abstract descriptors of a web page to be displayed. A
+Window contains Components.  Components are things as MenuBar, Label,
+Table, EntryField, DataGrid, Button, ...
+
+Windows and their Components are defined in
+`lino/agui/widgets.py`. They are abstract enough to be usable for GUI
+and WUI.  It is possible that these "Widgets" will be replaced by
+anygui.
+
+In a session there can be more than one Window at a time:
+
+- the user can simply open another browser instance. All browser
+  instances on the same maching share the same session.
+
+- a window can get children.
+
+Creating a non-modal child window corresponds to opening another
+browser instance. Creating a modal child means that the parent window
+stays in "background", waiting for the result of the child window.
+
+The server and Lino
+-------------------
+
+All Lino Web pages are created by a single Snakelet (MainSnakelet)
+who maintains a session-wide list of Window instances and does the
+dispatching work of deciding which Window comes next.
+
+The main responsibility of a snakelet is to write some HTML to the
+response's output stream.  MainSnakelet does this task by deciding
+which window must be rendered next, then creating a `SnakeUI` instance
+and calling its `renderWindow()` to do the work.
+
+The `UI` (user interface) class defines methods for communicating with
+the user, again hiding the fact whether it is a WUI or a GUI or
+any other UI.  In a Web application, UI.renderWindow() will write some
+HTML to the response's output stream.  In a GUI application it will
+open a Window on the users desktop. In a console UI it will display
+some text to the console and wait for keyboard input. An E-Mail UI
+would send an e-mail and wait for an answer...
+
+Application code can never call renderWindow() directly and wait for
+the answer (as is done by a old-fashioned GUI application when it
+opens a modal window) but can only define windows to be displayed and
+actions to be taken when the answer comes (call-back functions). Lino
+asks the application code to build windows, but how and when they will
+be rendered is transparent for the application. For example
+`Database.getMainWindow()` must return a window which serves as main
+entry point for this database. 
+
+`ui` is a subclass of the abstract user interface class
+`lino.agui.ui.UI`. `UI` defines the interface which is common for any
+user interface. HtmlUI is a first (still abstract) subclass of UI that
+contains methods to be used for any Web UI. SnakeUI finally is a
+usable subclass of HtmlUI which really collaborates with snakeserver.
+
+UI also provides some utility methods (`confirm()`, others to
+come) which return a ready-made Window.
+
+
+Callbacks
+---------
+
+Buttons and MenuItems are Components which can cause some application
+logic to be executed.
+
+
+Actions are functions or methods which can be invoked (for example if
+a Button has been klicked).
+
+`Actions` are "UI-aware methods": they will be called with a single
+parameter "ui", and they must return a Window instance which will be
+rendered as next window.  They can return None. Convention : usually
+their name starts with `ui_`.
+
+

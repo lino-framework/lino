@@ -1,0 +1,19 @@
+__all__ = []
+
+__docformat__ = 'reStructuredText'
+
+__version__ = "0.5.5"
+
+__author__ = "Luc Saffre <luc.saffre@gmx.net>"
+
+
+def copyright( year="2002-2004",
+					author=__author__):
+   return """\
+Lino version %s, Copyright (c) %s %s.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information.""" % (
+																 __version__,
+																 year, author,
+																 )

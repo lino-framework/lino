@@ -1,0 +1,81 @@
+============
+PDS examples
+============
+
+Here is a list of the examples which are used to illustrate and test
+Python Document Script.
+
+.. exec::
+
+	import os
+	from lino.sdoc import commands as pds
+	from lino.sdoc.pdf import PdfRenderer
+	from lino.sdoc.html import HtmlRenderer
+	from lino.sdoc.pdsparser import main
+
+	renderers = (
+		HtmlRenderer,
+		PdfRenderer,
+		)
+	
+	widths = (60,60,60)
+
+	def tablerow(widths,cells):
+		assert len(widths) == len(cells)
+		h = max(len(cells[0]),len(cells[1]),len(cells[2]))
+		line = ''
+		for i in range(h):
+			if i > 0:
+				line += " |\n"
+			for j in range(len(cells)):
+				line += "| "
+				if i < len(cells[j]):
+					line += cells[j][i].ljust(widths[j])
+				else:
+					line += (" " * widths[j])
+		line += " |"
+		return line
+
+	def rowsep(widths):
+		line = ""
+		for w in widths:
+			line += "+-" + ("-" * w)
+		line += "-+"
+		return line
+				  
+	print
+	print rowsep(widths)
+	print tablerow(widths,(
+		["source file"],
+		["results"],
+		["description"]
+		))
+	for fn in os.listdir("."):
+		root,ext = os.path.splitext(fn)
+		if ext == '.pds':
+			if root not in ("__init__"):
+				print rowsep(widths)
+				cell0 = ["`%s" % fn,
+							 "<%s>`__" % fn]
+				cell1 = []
+				#"`html <%s.html>`__" % root,
+				#"`pdf <%s.pdf>`__" % root]
+				cell2 = [ "no description yet" ]
+            for rc in renderers:
+               r = rc()
+					#ofname=os.path.join('..','..','docs','pds', root)
+               main(fn,r,#ofname=ofname,
+						  showOutput=False,
+						  verbose=False,
+						  force=False)
+					cell1.append("`%s <%s>`__" %
+									 (r.outputExt,
+									  r.getFilename().replace("\\","/")))
+				print tablerow(widths,(cell0,cell1,cell2))
+				
+	print rowsep(widths)
+	print
+
+
+
+blabla

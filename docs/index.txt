@@ -1,0 +1,18 @@
+=======================================
+The Lino Database Application Framework
+=======================================
+
+Welcome to the Lino homepage.
+
+- `Overview <overview.html>`_
+  
+- `Frequently asked questions <faq.html>`_
+
+- `Lino diary <news.html>`_
+
+- `Installing <install.html>`_ Lino.
+
+- `Getting started <start.html>`_ with Lino.
+
+- `Links <links.html>`_ 
+  

@@ -1,0 +1,19 @@
+pds.setTitle("Character formatting")
+
+
+pds.p("""
+This is <b>bold</b>.
+<i>italic</i>,
+<u>underline</u>,
+<super>superscript</super>,
+<sub>subscript</sub>.
+""")
+
+
+pds.p("""
+The following formats don't work:
+<em>emphasized</em>
+<tt>typewriter</tt>
+""")
+
+

@@ -1,0 +1,241 @@
+This tab-delimited file can be read by most spreadsheet applications after being saved properly.  At the top of your browser window, click 'File' and 'Save As...'  After saving the file, open your spreadsheet, find the file you just saved and then 'Open' it.
+Rank 	 Country 	 Population 	 Date of Information
+1 	 World 	      6,302,309,691 	 July 2003 est.
+2 	 China 	      1,286,975,468 	 July 2003 est.
+3 	 India 	      1,049,700,118 	 July 2003 est.
+4 	 United States 	       290,342,554 	 July 2003 est.
+5 	 Indonesia 	       234,893,453 	 July 2003 est.
+6 	 Brazil 	       182,032,604 	 July 2003 est.
+7 	 Pakistan 	       150,694,740 	 July 2003 est.
+8 	 Russia 	       144,526,278 	 July 2003 est.
+9 	 Bangladesh 	       138,448,210 	 July 2003 est.
+10 	 Nigeria 	       133,881,703 	 July 2003 est.
+11 	 Japan 	       127,214,499 	 July 2003 est.
+12 	 Mexico 	       104,907,991 	 July 2003 est.
+13 	 Philippines 	        84,619,974 	 July 2003 est.
+14 	 Germany 	        82,398,326 	 July 2003 est.
+15 	 Vietnam 	        81,624,716 	 July 2003 est.
+16 	 Egypt 	        74,718,797 	 July 2003 est.
+17 	 Iran 	        68,278,826 	 July 2003 est.
+18 	 Turkey 	        68,109,469 	 July 2003 est.
+19 	 Ethiopia 	        66,557,553 	 July 2003 est.
+20 	 Thailand 	        64,265,276 	 July 2003 est.
+21 	 France 	        60,180,529 	 July 2003 est.
+22 	 United Kingdom 	        60,094,648 	 July 2003 est.
+23 	 Italy 	        57,998,353 	 July 2003 est.
+24 	 Congo, Democratic Republic of the 	        56,625,039 	 July 2003 est.
+25 	 Korea, South 	        48,289,037 	 July 2003 est.
+26 	 Ukraine 	        48,055,439 	 July 2003 est.
+27 	 South Africa 	        42,768,678 	 July 2003 est.
+28 	 Burma 	        42,510,537 	 July 2003 est.
+29 	 Colombia 	        41,662,073 	 July 2003 est.
+30 	 Spain 	        40,217,413 	 July 2003 est.
+31 	 Argentina 	        38,740,807 	 July 2003 est.
+32 	 Poland 	        38,622,660 	 July 2003 est.
+33 	 Sudan 	        38,114,160 	 July 2003 est.
+34 	 Tanzania 	        35,922,454 	 July 2003 est.
+35 	 Algeria 	        32,818,500 	 July 2003 est.
+36 	 Canada 	        32,207,113 	 July 2003 est.
+37 	 Morocco 	        31,689,265 	 July 2003 est.
+38 	 Kenya 	        31,639,091 	 July 2003 est.
+39 	 Afghanistan 	        28,717,213 	 July 2003 est.
+40 	 Peru 	        28,409,897 	 July 2003 est.
+41 	 Nepal 	        26,469,569 	 July 2003 est.
+42 	 Uzbekistan 	        25,981,647 	 July 2003 est.
+43 	 Uganda 	        25,632,794 	 July 2003 est.
+44 	 Iraq 	        24,683,313 	 July 2003 est.
+45 	 Venezuela 	        24,654,694 	 July 2003 est.
+46 	 Saudi Arabia 	        24,293,844 	 July 2003 est.
+47 	 Malaysia 	        23,092,940 	 July 2003 est.
+48 	 Taiwan 	        22,603,001 	 July 2003 est.
+49 	 Korea, North 	        22,466,481 	 July 2003 est.
+50 	 Romania 	        22,271,839 	 July 2003 est.
+51 	 Ghana 	        20,467,747 	 July 2003 est.
+52 	 Sri Lanka 	        19,742,439 	 July 2003 est.
+53 	 Australia 	        19,731,984 	 July 2003 est.
+54 	 Yemen 	        19,349,881 	 July 2003 est.
+55 	 Syria 	        17,585,540 	 July 2003 est.
+56 	 Mozambique 	        17,479,266 	 July 2003 est.
+57 	 Madagascar 	        16,979,744 	 July 2003 est.
+58 	 Cote d'Ivoire 	        16,962,491 	 July 2003 est.
+59 	 Kazakhstan 	        16,763,795 	 July 2003 est.
+60 	 Netherlands 	        16,150,511 	 July 2003 est.
+61 	 Cameroon 	        15,746,179 	 July 2003 est.
+62 	 Chile 	        15,665,216 	 July 2003 est.
+63 	 Guatemala 	        13,909,384 	 July 2003 est.
+64 	 Ecuador 	        13,710,234 	 July 2003 est.
+65 	 Burkina Faso 	        13,228,460 	 July 2003 est.
+66 	 Cambodia 	        13,124,764 	 July 2003 est.
+67 	 Zimbabwe 	        12,576,742 	 July 2003 est.
+68 	 Malawi 	        11,651,239 	 July 2003 est.
+69 	 Mali 	        11,626,219 	 July 2003 est.
+70 	 Cuba 	        11,263,429 	 July 2003 est.
+71 	 Niger 	        11,058,590 	 July 2003 est.
+72 	 Angola 	        10,766,471 	 July 2003 est.
+73 	 Greece 	        10,665,989 	 July 2003 est.
+74 	 Serbia and Montenegro 	        10,655,774 	 July 2003 est.
+75 	 Senegal 	        10,580,307 	 July 2003 est.
+76 	 Belarus 	        10,322,151 	 July 2003 est.
+77 	 Zambia 	        10,307,333 	 July 2003 est.
+78 	 Belgium 	        10,289,088 	 July 2003 est.
+79 	 Czech Republic 	        10,249,216 	 July 2003 est.
+80 	 Portugal 	        10,102,022 	 July 2003 est.
+81 	 Hungary 	        10,045,407 	 July 2003 est.
+82 	 Tunisia 	         9,924,742 	 July 2003 est.
+83 	 Chad 	         9,253,493 	 July 2003 est.
+84 	 Guinea 	         9,030,220 	 July 2003 est.
+85 	 Sweden 	         8,878,085 	 July 2003 est.
+86 	 Dominican Republic 	         8,715,602 	 July 2003 est.
+87 	 Bolivia 	         8,586,443 	 July 2003 est.
+88 	 Austria 	         8,188,207 	 July 2003 est.
+89 	 Somalia 	         8,025,190 	 July 2003 est.
+90 	 Azerbaijan 	         7,830,764 	 July 2003 est.
+91 	 Rwanda 	         7,810,056 	 July 2003 est.
+92 	 Bulgaria 	         7,537,929 	 July 2003 est.
+93 	 Haiti 	         7,527,817 	 July 2003 est.
+94 	 Hong Kong 	         7,394,170 	 July 2003 est.
+95 	 Switzerland 	         7,318,638 	 July 2003 est.
+96 	 Benin 	         7,041,490 	 July 2003 est.
+97 	 Tajikistan 	         6,863,752 	 July 2003 est.
+98 	 Honduras 	         6,669,789 	 July 2003 est.
+99 	 El Salvador 	         6,470,379 	 July 2003 est.
+100 	 Israel 	         6,116,533 	 July 2003 est.
+101 	 Burundi 	         6,096,156 	 July 2003 est.
+102 	 Paraguay 	         6,036,900 	 July 2003 est.
+103 	 Laos 	         5,921,545 	 July 2003 est.
+104 	 Sierra Leone 	         5,732,681 	 July 2003 est.
+105 	 Libya 	         5,499,074 	 July 2003 est.
+106 	 Jordan 	         5,460,265 	 July 2003 est.
+107 	 Slovakia 	         5,430,033 	 July 2003 est.
+108 	 Togo 	         5,429,299 	 July 2003 est.
+109 	 Denmark 	         5,384,384 	 July 2003 est.
+110 	 Papua New Guinea 	         5,295,816 	 July 2003 est.
+111 	 Finland 	         5,190,785 	 July 2003 est.
+112 	 Nicaragua 	         5,128,517 	 July 2003 est.
+113 	 Georgia 	         4,934,413 	 July 2003 est.
+114 	 Kyrgyzstan 	         4,892,808 	 July 2003 est.
+115 	 Turkmenistan 	         4,775,544 	 July 2003 est.
+116 	 Singapore 	         4,608,595 	 July 2003 est.
+117 	 Norway 	         4,546,123 	 July 2003 est.
+118 	 Moldova 	         4,439,502 	 July 2003 est.
+119 	 Croatia 	         4,422,248 	 July 2003 est.
+120 	 Eritrea 	         4,362,254 	 July 2003 est.
+121 	 Bosnia and Herzegovina 	         3,989,018 	 July 2003 est.
+122 	 New Zealand 	         3,951,307 	 July 2003 est.
+123 	 Ireland 	         3,924,140 	 July 2003 est.
+124 	 Costa Rica 	         3,896,092 	 July 2003 est.
+125 	 Puerto Rico 	         3,885,877 	 July 2003 est.
+126 	 Lebanon 	         3,727,703 	 July 2003 est.
+127 	 Central African Republic 	         3,683,538 	 July 2003 est.
+128 	 Lithuania 	         3,592,561 	 July 2003 est.
+129 	 Albania 	         3,582,205 	 July 2003 est.
+130 	 Uruguay 	         3,413,329 	 July 2003 est.
+131 	 Armenia 	         3,326,448 	 July 2003 est.
+132 	 Liberia 	         3,317,176 	 July 2003 est.
+133 	 Panama 	         2,960,784 	 July 2003 est.
+134 	 Congo, Republic of the 	         2,954,258 	 July 2003 est.
+135 	 Mauritania 	         2,912,584 	 July 2003 est.
+136 	 Oman 	         2,807,125 	 July 2003 est.
+137 	 Mongolia 	         2,712,315 	 July 2003 est.
+138 	 Jamaica 	         2,695,867 	 July 2003 est.
+139 	 United Arab Emirates 	         2,484,818 	 July 2003 est.
+140 	 Latvia 	         2,348,784 	 July 2003 est.
+141 	 West Bank 	         2,237,194 	 July 2003 est.
+142 	 Kuwait 	         2,183,161 	 July 2003 est.
+143 	 Bhutan 	         2,139,549 	 July 2003 est.
+144 	 Macedonia, The Former Yugoslav Republic of 	         2,063,122 	 July 2003 est.
+145 	 Slovenia 	         1,935,677 	 July 2003 est.
+146 	 Namibia 	         1,927,447 	 July 2003 est.
+147 	 Lesotho 	         1,861,959 	 July 2003 est.
+148 	 Botswana 	         1,573,267 	 July 2003 est.
+149 	 Gambia, The 	         1,501,050 	 July 2003 est.
+150 	 Estonia 	         1,408,556 	 July 2003 est.
+151 	 Guinea-Bissau 	         1,360,827 	 July 2003 est.
+152 	 Gabon 	         1,321,560 	 July 2003 est.
+153 	 Gaza Strip 	         1,274,868 	 July 2003 est.
+154 	 Mauritius 	         1,210,447 	 July 2003 est.
+155 	 Swaziland 	         1,161,219 	 July 2003 est.
+156 	 Trinidad and Tobago 	         1,104,209 	 July 2003 est.
+157 	 East Timor 	          997,853 	 July 2003 est.
+158 	 Fiji 	          868,531 	 July 2003 est.
+159 	 Qatar 	          817,052 	 July 2003 est.
+160 	 Cyprus 	          771,657 	 July 2003 est.
+161 	 Reunion 	          755,171 	 July 2003 est.
+162 	 Guyana 	          702,100 	 July 2003 est.
+163 	 Bahrain 	          667,238 	 July 2003 est.
+164 	 Comoros 	          632,948 	 July 2003 est.
+165 	 Equatorial Guinea 	          510,473 	 July 2003 est.
+166 	 Solomon Islands 	          509,190 	 July 2003 est.
+167 	 Macau 	          469,903 	 July 2003 est.
+168 	 Djibouti 	          457,130 	 July 2003 est.
+169 	 Luxembourg 	          454,157 	 July 2003 est.
+170 	 Guadeloupe 	          440,189 	 July 2003 est.
+171 	 Suriname 	          435,449 	 July 2003 est.
+172 	 Martinique 	          425,966 	 July 2003 est.
+173 	 Cape Verde 	          412,137 	 July 2003 est.
+174 	 Malta 	          400,420 	 July 2003 est.
+175 	 Brunei 	          358,098 	 July 2003 est.
+176 	 Maldives 	          329,684 	 July 2003 est.
+177 	 Bahamas, The 	          297,477 	 July 2003 est.
+178 	 Iceland 	          280,798 	 July 2003 est.
+179 	 Barbados 	          277,264 	 July 2003 est.
+180 	 Belize 	          266,440 	 July 2003 est.
+181 	 French Polynesia 	          262,125 	 July 2003 est.
+182 	 Western Sahara 	          261,794 	 July 2003 est.
+183 	 Netherlands Antilles 	          216,226 	 July 2003 est.
+184 	 New Caledonia 	          210,798 	 July 2003 est.
+185 	 Vanuatu 	          199,414 	 July 2003 est.
+186 	 French Guiana 	          186,917 	 July 2003 est.
+187 	 Mayotte 	          178,437 	 July 2003 est.
+188 	 Samoa 	          178,173 	 July 2003 est.
+189 	 Sao Tome and Principe 	          175,883 	 July 2003 est.
+190 	 Guam 	          163,941 	 July 2003 est.
+191 	 Saint Lucia 	          162,157 	 July 2003 est.
+192 	 Virgin Islands 	          124,778 	 July 2003 est.
+193 	 Saint Vincent and the Grenadines 	          116,812 	 July 2003 est.
+194 	 Micronesia, Federated States of 	          108,143 	 July 2003 est.
+195 	 Tonga 	          108,141 	 July 2003 est.
+196 	 Kiribati 	           98,549 	 July 2003 est.
+197 	 Jersey 	           90,156 	 July 2003 est.
+198 	 Grenada 	           89,258 	 July 2003 est.
+199 	 Seychelles 	           80,469 	 July 2003 est.
+200 	 Northern Mariana Islands 	           80,006 	 July 2003 est.
+201 	 Man, Isle of 	           74,261 	 July 2003 est.
+202 	 Aruba 	           70,844 	 July 2003 est.
+203 	 American Samoa 	           70,260 	 July 2003 est.
+204 	 Dominica 	           69,655 	 July 2003 est.
+205 	 Andorra 	           69,150 	 July 2003 est.
+206 	 Antigua and Barbuda 	           67,897 	 July 2003 est.
+207 	 Guernsey 	           64,818 	 July 2003 est.
+208 	 Bermuda 	           64,482 	 July 2003 est.
+209 	 Marshall Islands 	           56,429 	 July 2003 est.
+210 	 Greenland 	           56,385 	 July 2003 est.
+211 	 Faroe Islands 	           46,345 	 July 2003 est.
+212 	 Cayman Islands 	           41,934 	 July 2003 est.
+213 	 Saint Kitts and Nevis 	           38,763 	 July 2003 est.
+214 	 Liechtenstein 	           33,145 	 July 2003 est.
+215 	 Monaco 	           32,130 	 July 2003 est.
+216 	 San Marino 	           28,119 	 July 2003 est.
+217 	 Gibraltar 	           27,776 	 July 2003 est.
+218 	 British Virgin Islands 	           21,730 	 July 2003 est.
+219 	 Cook Islands 	           21,008 	 July 2003 est.
+220 	 Palau 	           19,717 	 July 2003 est.
+221 	 Turks and Caicos Islands 	           19,350 	 July 2003 est.
+222 	 Wallis and Futuna 	           15,734 	 July 2003 est.
+223 	 Anguilla 	           12,738 	 July 2003 est.
+224 	 Nauru 	           12,570 	 July 2003 est.
+225 	 Tuvalu 	           11,305 	 July 2003 est.
+226 	 Montserrat 	            8,995 	 July 2003 est.
+227 	 Saint Helena 	            7,367 	 July 2003 est.
+228 	 Saint Pierre and Miquelon 	            6,976 	 July 2003 est.
+229 	 Falkland Islands (Islas Malvinas) 	            2,967 	 July 2003 est.
+230 	 Svalbard 	            2,811 	 July 2003 est.
+231 	 Niue 	            2,145 	 July 2003 est.
+232 	 Norfolk Island 	            1,853 	 July 2003 est.
+233 	 Tokelau 	            1,418 	 July 2003 est.
+234 	 Holy See (Vatican City) 	             911 	 July 2003 est.
+235 	 Cocos (Keeling) Islands 	             630 	 July 2003 est.
+236 	 Christmas Island 	             433 	 July 2003 est.
+237 	 Pitcairn Islands 	              47 	 July 2003 est.
+
+ This file was last updated on 18 December, 2003

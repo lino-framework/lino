@@ -1,0 +1,48 @@
+from lino.sdoc.commands import *
+
+h1("The first pds file")
+
+p(""" PDS stands for "Python Document Script".  pds files are Python
+scripts who fill an abstract document with content. to be executed by
+pds2pdf, pds2html, pds2prn and Co.
+
+PDS can be considered a Document Programmer's Interface (DPI). It is
+used to create formatted documents programmatically and independently
+of the destination.""")
+
+pre("""
+Here is a preformatted paragraph
+--- ---- ----
+ x   xx   xx
+--- ---- ----
+""")
+
+p("Now a table:")
+
+beginTable('ll')
+p("this is the first cell")
+endCell()
+p("this is the second cell")
+p("another paragraph in the second cell")
+endRow()
+p("second row, cell 1")
+endCell()
+p("second row, cell 2")
+endTable()
+
+text = """This is an important paragraph.
+We put it into a separate variable because we want to repeat it a few
+times.
+This text is longer than one line because we want to observe the text
+wrapping.
+
+Note that newlines don't create a new paragraph.
+"""
+
+p(text)
+p(text)
+p(text)
+
+p("Here is the source code used to produce this text:")
+
+pre(file(getSourceFileName()).read())

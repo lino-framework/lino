@@ -1,0 +1,128 @@
+========
+openmail
+========
+
+`Lino openmail` invokes the user's default mail client with a
+ready-to-send message.
+
+
+Usage
+-----
+
+Before calling `openmail` you must write the contents of your message
+to a temporary file, using a simplified pseudo-`RFC2822
+<http://www.faqs.org/rfcs/rfc2822.html>`_ format.
+
+Usage example:
+
+1. Create a file TMP.EML with the following content::
+
+     To: user@isp.com
+	  Subject: Kontoauszug
+
+	  Sehr geehrter Kunde!
+	 
+ 	  Wir erlauben uns, Sie auf folgende, noch
+	  ausstehende Rechnungen aufmerksam zu machen :
+
+	  ...
+
+     Mit freundlichen Grüßen
+
+	Note: if the file contains non-ASCII characters, it should be
+	cp850 encoded.
+	  
+
+2.	At the command line, type::
+
+     lino openmail TMP.EML
+
+
+
+
+How openmail does it
+--------------------
+
+openmail reads the specified file, then constructs a `mailto:` link
+and launches the default web browser with this URL.
+
+So the result is the same as clicking on a "mailto" link.  The browser
+is responsible for invoking the mail client correctly.  And the user
+for configuring her browser so that "mailto:" links work.
+
+Test: 
+Does your browser invoke your e-mail client correctly?
+
+- `first <mailto:Fritz%20Eierschale%20&lt;eierschale@irgend.wo&gt;?subject=eine%20Mail%20von%20deinen%20Web-Seiten?body=Hallo%20Fritz,%0D%0A%0D%0Aich%20wollte%20nur%20sagen,%20da%DF
+  ">`__
+
+The subject is quite complex, and it is likely that openmail does not
+work out of the box.  Don't hesitate to contact me.
+
+Sources of information:
+
+- http://www.faqs.org/rfcs/rfc2368.html :
+  The mailto URL scheme
+
+- http://selfhtml.teamone.de/html/verweise/email.htm:
+  comprehensive description of mailto URLs
+
+  
+
+- http://www.ianr.unl.edu/internet/mailto.html states that
+  multiline-bodies must be specified using multiple "body="
+  attributes. (But "This feature will NOT work with all e-mail
+  programs, in which case the body information appears as a single
+  line.")
+
+
+**Alternative approaches** (instead of using the mailto link) could
+be:
+
+- launch the mail client directly, but this would involve writing
+  "drivers" for every supported mail client.
+
+- starting an `*.eml` file on Windows will invoke Outlook with the
+  expected behaviour... except that the message is not editable for
+  further reviewing before sending it.
+
+  Mozilla seems to not be able to handle `*.eml` files:
+  http://bugzilla.mozilla.org/show_bug.cgi?id=11076
+
+
+
+Setting the default browser
+---------------------------
+
+The windows registry key::
+
+  HKEY_CLASSES_ROOT\mailto\shell\open\command
+  
+should contain::
+
+  rundll32.exe url.dll,MailToProtocolHandler %1
+
+
+
+
+- C:\Programme\mozilla.org\Mozilla\mozilla.exe -browser "mailto:%1"
+
+- C:\PROGRA~1\Qualcomm\Eudora\Eudora.exe /m %1
+  ``ForceDDEForHandlingMailto=1`` in `[Settings]` section of
+  `eudora.ini`.
+
+
+
+- http://support.microsoft.com/default.aspx?scid=kb;EN-US;154359 
+  How to Change Default Mail Client for Internet Explorer
+
+- http://home.att.net/~cherokee67/eudoradefault.html
+
+- http://support.microsoft.com/default.aspx?scid=kb;EN-US;149617:
+  Eudora Changes Default MailTo Handler
+
+
+- http://members.toast.net/4pf/Protocol.html: "Internet Explorer
+  (version 6, anyway) uses Windows Messaging by default to invoke a
+  mailer on a mailto: link. Only if the MAPI install is misconfigured
+  will it resort to directly accessing the mailto association key."

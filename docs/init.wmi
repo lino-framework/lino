@@ -1,0 +1,68 @@
+# webman init file
+# coding: latin1
+# (python-mode)
+
+
+self.setTitle("Lino Documentation")
+
+self.setTitle("""\
+Currently this is also the Lino Web Homepage.
+""")
+
+self.setStyleSheet('default.css')
+
+self.setFilerefBase("..")
+self.setFilerefURL('http://cvs.sourceforge.net/viewcvs.py/lino/lino/%s?view=markup')
+
+self.siteMap = """\
+what 
+overview
+   adamo
+ 	timtools
+ 	wui
+	webman
+faq
+links
+install
+start
+news
+"""
+
+def myLeftArea(page=None):
+	return """\
+<p class="menu">
+<a href="index.html">Home</a>
+<br><a href="http://sourceforge.net/projects/lino/">Forge</a>
+</p>
+
+<p class="copyright">
+&copy; 2001-2003
+<br><a href="mailto:luc.saffre@gmx.net">Luc Saffre</a>
+<br>
+
+<br><a href="http://sourceforge.net">
+<img src="http://sourceforge.net/sflogo.php?group_id=87016&type=1"
+   width="88" height="31" border="0" alt="SourceForge.net Logo" /></a>
+</p>
+
+	
+
+
+"""
+
+def myBottomArea():
+	from time import ctime
+	from lino import __version__
+	return """<p class="footer">""" \
+			 + "This page was generated on %s" % ctime() \
+			 + """ by Lino <a href="webman.html">WebMan</a>""" \
+			 + """ version %s.""" % __version__
+	
+self.setBottomArea(myBottomArea)
+self.setLeftArea(myLeftArea)
+
+
+		
+#self.addModule("pds",r"..\tests\pds")
+#self.addModule("pds",r"..\tests\pds")
+
