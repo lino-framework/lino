@@ -1,0 +1,74 @@
+==================
+Working with forms
+==================
+
+	>>> from lino.schemas.sprl import demo
+   >>> session = demo.beginSession()
+
+Every session has an attribute `forms`. This is where the Form
+Instances of a Session are stored.  If you want to play with a form,
+you just take it::
+
+   >>> frm = session.forms.login
+
+This will create a form instance if necessary. You cannot have more
+than one instance of a form.  Once a form instance is created for your
+session, it will be there until your session ends.
+
+With Adamo you can simulate a user session.  The following snippet
+will work without displaying any form.  It sets the value of the `uid`
+field, then performs programmatically the ok() action of that form::
+
+	>>> frm.uid = "luc" # 
+	>>> frm.ok()
+	Welcome, Luc Saffre.
+
+The field validators also work::	 
+
+	>>> frm.uid = "!@*:" 
+	!@*: : invalid username
+	>>> frm.ok()
+	 
+
+Note: why does the welcome message come to console? That's because we
+are using the console ui which simply prints user messages to the
+console.  Note that this will not display any form on a screen.  It
+runs in batch mode.
+
+  There could be a special console UI used to write even more
+  realistic test cases: I would call it "Monkey" because it would
+  simulate a monkey sitting in front of the terminal. But that's for
+  later...
+  
+
+  In a real interactive application the login procedure would look
+  something like this::
+
+    def onSessionBegin(self,sess):
+       if sess.forms.login.showModal():
+		    if not sess.onLogin():
+			    return False
+		    return sess.forms.main.show()
+
+
+  frm.showModal() instanciates and opens the form "modally". The form
+  becomes visible to the user, and the system will refuse switching to
+  other open windows.  This method waits until the user has made some
+  decision.  It returns True if the form's action succeeded.  The form
+  itself decides what to return.  The caller does not need to hide()
+  the form afterwards.
+  
+  frm.show() --- form becomes visible and will possibly generate
+  events. But program flow continues.
+
+  frm.abort() --- raises error if form is not visible. Otherwise hides
+  it and does nothing special. 
+  does nothing, except that the form instance is
+  possibly cleaned up and considered
+
+  frm.hide() --- close without any further action. Usually linked to
+  the "Abort" button, to the Escape key and to the windowClosed event
+  (triggered from outside when user clicked on the X)
+  
+  
+
