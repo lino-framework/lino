@@ -25,7 +25,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
-from lino.textprinter.document import Document
+from lino.textprinter.textprinter import TextPrinter
 
 from lino.ui import console
 
@@ -83,12 +83,12 @@ class Status:
 
 
 		
-class PdfDocument(Document):
+class PdfTextPrinter(TextPrinter):
 
     def __init__(self,filename,cpi=12):
-        Document.__init__(self,
-                          pageSize=A4,
-                          margin=5*mm)
+        TextPrinter.__init__(self,
+                             pageSize=A4,
+                             margin=5*mm)
         (root,ext) = os.path.splitext(filename)
         if ext.lower() != ".pdf":
             filename += ".pdf"
@@ -148,7 +148,7 @@ class PdfDocument(Document):
             sys.exit(-1)
             
 ##     def onSetFont(self):
-##         Document.onSetFont(self)
+##         TextPrinter.onSetFont(self)
 
     def prepareFont(self):
         if self.status.lpi is not None:

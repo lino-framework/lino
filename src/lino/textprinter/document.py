@@ -27,7 +27,7 @@ class PrinterNotReady(Exception):
     pass
 
 
-class Document:
+class TextPrinter:
     def __init__(self,
                  pageSize=(0,0),
                  margin=0,

@@ -27,7 +27,7 @@ OEM_CHARSET = win32con.OEM_CHARSET
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
 
 from lino.ui import console
-from lino.textprinter.document import Document, PrinterNotReady
+from lino.textprinter.textprinter import TextPrinter, PrinterNotReady
 
 pt = 20
 inch = 1440.0
@@ -108,7 +108,7 @@ class TextObject:
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
         console.debug("self.y += %d" % self.leading)
 
-class Win32PrinterDocument(Document):
+class Win32PrinterDocument(TextPrinter):
     
     def __init__(self,printerName=None,
                  spoolFile=None,
@@ -118,7 +118,7 @@ class Win32PrinterDocument(Document):
                  jobName="Win32PrinterDocument",
                  charset=None):
         
-        Document.__init__(self,pageSize=A4,margin=5*mm)
+        TextPrinter.__init__(self,pageSize=A4,margin=5*mm)
 
         self.fontDict = {
             'name' : fontName
