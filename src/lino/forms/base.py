@@ -357,14 +357,14 @@ class Form(Describable):
         frm = self.addForm(label="Confirmation")
         frm.addLabel(prompt)
         p = frm.addPanel(Panel.HORIZONTAL)
-        p.addOkButton()
-        p.addCancelButton()
+        ok = p.addOkButton()
+        cancel = p.addCancelButton()
         if default == "y":
-            frm.buttons.ok.setDefault()
+            ok.setDefault()
         else:
-            frm.buttons.cancel.setDefault()
+            cancel.setDefault()
         frm.showModal()
-        return frm.lastEvent == frm.buttons.ok
+        return frm.lastEvent == ok
 
     def ok(self,frm):
         self.close(frm)

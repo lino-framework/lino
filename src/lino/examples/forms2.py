@@ -34,6 +34,8 @@ so you don't need to close it if you want to continue registering.
     btnPanel.addOkButton()
     btnPanel.addCancelButton()
     frm.show()
+    print "Note that program flow continues after form.show(), "\
+          "but showModal() waits until the form is closed."
     
 def main():
     frm = Form(label="my second form",
@@ -48,7 +50,10 @@ You can trust us.
     btnPanel = frm.addHPanel()
     btnPanel.addOkButton()
     btnPanel.addCancelButton()
-    btnPanel.addButton(label="&Privacy statement").setHandler(privacy)
+    btnPanel.addButton(
+        label="&Privacy statement",
+        doc="Click here if you really cannot trust us."
+        ).setHandler(privacy)
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.getValue(),

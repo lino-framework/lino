@@ -113,22 +113,19 @@ class Button(base.Button):
 ##             repr(self.wxctrl.GetSize()),
 ##             repr(self.wxctrl.GetPosition()))
         
-    def setup(self,parent,box):
-        
+    def setup(self,parentCtrl,box):
+        parentFormCtrl = self.getForm().wxctrl
         winId = wx.NewId()
-        btn = wx.Button(parent,winId,self.getLabel(),
+        btn = wx.Button(parentCtrl,winId,self.getLabel(),
                         wx.DefaultPosition,
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
-        self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                   lambda e:self.click(), btn)
+        parentFormCtrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
+        if self.doc is not None:
+            btn.SetToolTipString(self.doc)
+
         box.Add(btn) #, 0, wx.CENTER,10)
         self.wxctrl = btn
-
-    def setDefault(self):
-        base.Button.setDefault(self)
-        if hasattr(self,"wxctrl"):
-            self.wxctrl.SetDefault()
 
     def setFocus(self):
         self.wxctrl.SetFocus()
@@ -346,6 +343,7 @@ class Form(base.Form):
                                    wx.NO_FULL_REPAINT_ON_RESIZE)
             self.wxctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
 
+        wx.EVT_CHAR(self.wxctrl, self.OnChar)
         wx.EVT_IDLE(self.wxctrl, self.OnIdle)
         wx.EVT_CLOSE(self.wxctrl, self.OnCloseWindow)
         wx.EVT_ICONIZE(self.wxctrl, self.OnIconfiy)
@@ -368,8 +366,8 @@ class Form(base.Form):
         self.mainComp.setup(self.wxctrl,mainBox)
         
         if self.defaultButton is not None:
-            self.defaultButton.setDefault()
-        
+            self.defaultButton.wxctrl.SetDefault()
+
         self.wxctrl.SetSizerAndFit(mainBox)
         #self.mainBox = mainBox
         #self.wxctrl.SetAutoLayout(True) 
@@ -436,6 +434,10 @@ class Form(base.Form):
         #if hasattr(self, "tbicon"):
         #   del self.tbicon
         self.wxctrl.Destroy()
+
+
+    def OnChar(self, evt):
+        print evt
 
 
     def OnIdle(self, evt):

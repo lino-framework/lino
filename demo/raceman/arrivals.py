@@ -17,7 +17,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import time
+#import time
+import datetime
 
 from lino.adamo.datatypes import STRING
 from lino.forms.wx.wxform import Form
@@ -45,10 +46,14 @@ class Main:
             parent.buttons.start.setFocus()
             parent.error("cannot arrive before start")
             return
-        line = (parent.entries.dossard.getValue(),
-                str(time.time() - self.starttime))
-        self.data.append( line)
-        parent.info("%s arrived at %s" % line)
+        now = datetime.datetime.now()
+        duration = now - self.starttime
+        line = (
+            parent.entries.dossard.getValue(),
+            now, duration
+            )
+        self.data.append(line)
+        parent.info("%s arrived at %s after %s" % line)
         parent.entries.dossard.setFocus()
     
     def exit(self,parent):
@@ -61,7 +66,8 @@ class Main:
         parent.close()
 
     def start(self,parent):
-        self.starttime = time.time()
+        self.starttime = datetime.datetime.now()
+        #self.starttime = time.time()
         parent.info("started at %s" %str(self.starttime))
         #parent.buttons.arrive.setFocus()
         parent.entries.dossard.setFocus()
