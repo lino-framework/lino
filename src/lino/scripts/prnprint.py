@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2004-2005 Luc Saffre 2004
+## Copyright 2004-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,14 +20,13 @@
 
 import sys, os
 
-from lino import copyleft
 from lino.ui import console
 from lino.textprinter import winprn 
 
 def main(argv=None):
 
     parser = console.getOptionParser(
-        usage="usage: %prog [options] FILE [FILE ...]",
+        usage="usage: lino prnprint [options] FILE [FILE ...]",
         description="""\
 where FILE is a plain text file to be printed on the Default Printer.
 It must be in OEM charset and may contain simple formatting printer

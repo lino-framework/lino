@@ -33,7 +33,7 @@ from lino.misc.rdir import rdirlist
 
 from lino import __version__
 
-VERSION = __version__
+#VERSION = __version__
 DIST_ROOT = 'dist'
 #DLROOT=r'u:\htdocs\timwebs\lino\dl'
 
@@ -132,7 +132,7 @@ args = sys.argv[1:]
 if len(args) == 0:
     args = ['timtools', 'raceman', 'sdist']
 
-msg = "mkdist (%s) version %s" % (' '.join(args),VERSION)
+msg = "mkdist (%s) version %s" % (' '.join(args),__version__)
 
 if not console.confirm(msg):
     sys.exit(-1)
@@ -182,7 +182,7 @@ if 'timtools' in args:
     
     setup(
         name=name,
-        version=VERSION,
+        version=__version__,
         description="Lino TIM tools",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
@@ -201,7 +201,7 @@ if 'timtools' in args:
         
         )
 
-    zipname = "%s-%s-exe.zip" % (name,VERSION)
+    zipname = "%s-%s-exe.zip" % (name,__version__)
     zipname = opj(DIST_ROOT,zipname)
     zf = zipfile.ZipFile(zipname,'w',zipfile.ZIP_DEFLATED)
     l = rdirlist(dist_dir)
@@ -228,7 +228,7 @@ if 'raceman' in args:
     
     setup(
         name="raceman",
-        version=VERSION,
+        version=__version__,
         description="Lino Raceman",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
@@ -254,7 +254,7 @@ generate results report.""",
     script = InnoScript(
         "Raceman",
         dist_dir,\
-        version=VERSION,
+        version=__version__,
         windows_exe_files= [ fn+".exe" for fn in windows_targets]
         )
     
@@ -267,7 +267,7 @@ if 'sdist' in args:
     
     setup(
         name="lino",
-        version=VERSION,
+        version=__version__,
         description="Lino Framework",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",

@@ -16,49 +16,49 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import random
+
 from lino.ui import console
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.forms.application import AdamoApplication
 
-def foo(frm,sess,tc):
-    ds = sess.query(tc)
-    frm = frm.addForm(label=ds.getLabel())
-    frm.addTableEditor(ds)
-    frm.show()
+from lino.schemas.sprl import demo
+from lino.schemas.sprl.tables import Nations, Persons, Quotes
+
+
+class MyApplication(AdamoApplication):
+    
+    def makeMainForm(self):
+        
+        frm = self.addForm(label="Main menu")
+
+        ds = self.sess.query(Quotes)
+        q = random.choice(ds)
+        fortune = q.abstract
+        frm.addLabel(label="Random Quote:",
+                     doc=fortune+('\n'*10))
+        
+        m = frm.addMenu("&File")
+        m.addItem(label="&Quit",action=frm.close)
+
+        m = frm.addMenu("&Data")
+        m.addItem(label="&Nations").setHandler(self.showDataGrid,
+                                               Nations)
+        m.addItem(label="&Persons").setHandler(self.showDataGrid,
+                                               Persons)
+        m = frm.addMenu("&?")
+        m.addItem(label="&About",action=self.showAbout)
+        return frm
+
 
 def main():
-    sess = demo.startup(big=True)
+    schema = demo.makeSchema(big=True)
+    app = MyApplication()
+    app.startup(schema)
+    app.main()
     
-    frm = sess.addForm(label="Main menu")
-    frm.addLabel("""\
-This is the main menu.                                           
-
-
-
-
-
-
-
-
-
-
-
-""")
-
-    m = frm.addMenu("&Stammdaten")
-    m.addItem(label="&Partner").setHandler(foo,sess,Partners)
-    m.addItem(label="&Nations").setHandler(foo,sess,Nations)
-    m.addItem(label="&Cities").setHandler(foo,sess,Cities)
-    m.addItem(label="&Quotes").setHandler(foo,sess,Quotes)
         
-    m = frm.addMenu("&Programm")
-    m.addItem(label="&Beenden",onclick=frm.close)
-    
-    frm.show()
-        
-    sess.shutdown()
-        
+
 if __name__ == "__main__":
     console.parse_args()
     main()

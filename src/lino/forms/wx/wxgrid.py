@@ -150,9 +150,9 @@ class MyDataTable(wx.grid.PyGridTableBase):
 ##          deleteCount += 1
 
     def setOrderBy(self,colIndexes):
-        print __name__, colIndexes
+        #print __name__, colIndexes
         cn = " ".join([self.columns[i].name for i in colIndexes])
-        print __name__,cn
+        #print __name__,cn
         self.ds.configure(orderBy=cn)
         self.loadData()
 

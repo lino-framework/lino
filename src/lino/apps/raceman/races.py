@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2004-2005.
+## Copyright 2004-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,8 +17,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo import *
-from babel import Languages
-from addrbook import Persons, SEX
+from lino.schemas.sprl.babel import Languages
+from lino.schemas.sprl.addrbook import Persons, SEX
 
 NAME = STRING(width=30)
 

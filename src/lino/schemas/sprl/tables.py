@@ -20,6 +20,7 @@
 
 from babel import Languages
 
+from addrbook import Persons
 from addrbook import Partners
 from addrbook import Organisations
 from addrbook import PartnerTypes

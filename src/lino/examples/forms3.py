@@ -25,11 +25,10 @@ def main():
     sess = demo.startup()
     ds = sess.query(Partners, orderBy="name")
     
-    frm = console.addForm(label="The first data form")
-    frm.addTableEditor(ds)
-    frm.showModal()
+    frm = console.addForm(label="The first DataGrid Form")
+    frm.addDataGrid(ds)
+    frm.show()
     
-    sess.shutdown()
 
 if __name__ == "__main__":
     console.parse_args()

@@ -24,9 +24,9 @@ examines the command-line arguments and call the appropriate script.
 The auto-generated file lino.bat uses this wrapper
 
 
-  python -c "from lino.timtools import call" %*
+  python -c "from lino import runscript" %*
   
-  python -c "from lino.timtools import call" %1 %2 %3 %4 %5 %6
+  python -c "from lino import runscript" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
 
 

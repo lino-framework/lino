@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -16,13 +16,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-#from datasource import Datasource, DataCell
-#from datasource import DataCell
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-#from lino.adamo import center
 from lino.ui.console import getSystemConsole
-
 
 class BabelLang:
     def __init__(self,index,id):
@@ -49,11 +45,8 @@ class Context:
         return False
     
 
-            
 class Session(Context):
-    """
-    A Session is if a machine starts Adamo
-    """
+    
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
@@ -62,7 +55,7 @@ class Session(Context):
         self._user = None
         self.db = None
         self.schema = None
-        self.forms = None
+        #self.forms = None
         
         if console is None:
             console = getSystemConsole()
@@ -76,18 +69,6 @@ class Session(Context):
         for m in console.forwardables:
             setattr(self,m,getattr(console,m))
 
-##     def startDump(self,**kw):
-##         assert self._dumping is None
-##         self._dumping = self.console
-##         self._setcon(Console(out=StringIO(),**kw))
-
-##     def stopDump(self):
-##         assert self._dumping is not None, "dumping was not started"
-##         s = self.console.out.getvalue()
-##         self._setcon(self._dumping)
-##         self._dumping = None
-##         return s
-        
 
     def hasAuth(self,*args,**kw):
         return True
@@ -102,14 +83,14 @@ class Session(Context):
         if db is None:
             self.schema = None
             #self.tables = None
-            self.forms = None
+            #self.forms = None
             self.db = None
         else:
             # start using new db
             self.schema = db.schema # shortcut
             self.db = db
             # self.tables = AttrDict(factory=self.openTable)
-            self.forms = AttrDict(factory=self.openForm)
+            #self.forms = AttrDict(factory=self.openForm)
             #if langs is None:
             #    langs = db.getDefaultLanguage()
             #self.setBabelLangs(langs)
@@ -198,36 +179,16 @@ class Session(Context):
     def end(self):
         self.use()
 
-##     def populate(self):
-##         self.schema.populate(self)
-        
-
-##     def installto(self,d):
-##         """
-##         deprecated.
-##         installto() will open all tables.
-##         """
-##         d['__session__'] = self
-##         d['setBabelLangs'] = self.setBabelLangs
-##         #self.context.tables.installto(d)
-##         #d.update(
-##         for name in self.db._stores.keys():
-##             d[name] = getattr(self.tables,name)
-##         #for name,store in self.db._stores.items():
-##         #   ds = Datasource(self,store)
-##         #   self.tables.define(name,ds)
-        
-    
     def onBeginSession(self):
         self.schema.onBeginSession(self)
         
     
-    def openForm(self,formName,*args,**values):
-        #print "openForm()" + formName
-        cl = getattr(self.schema.forms,formName)
-        frm = cl(self,*args,**values)
-        #frm.init()
-        return frm
+##     def openForm(self,formName,*args,**values):
+##         #print "openForm()" + formName
+##         cl = getattr(self.schema.forms,formName)
+##         frm = cl(self,*args,**values)
+##         #frm.init()
+##         return frm
     
     def onLogin(self):
         return self.db.schema.onLogin(self)
@@ -249,8 +210,6 @@ class Session(Context):
 ##  def startSession(self):
 ##      if self.context is not None:
 ##          self.context.schema.onStartSession(self)
-        
-        
 
 
 class ConsoleSession(Session):

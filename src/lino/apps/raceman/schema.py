@@ -26,7 +26,7 @@ from lino.ui import console
 from lino.oogen import Document
 from lino import adamo
 
-from lino.schemas.sprl.races import Races, RaceTypes, Categories, \
+from lino.apps.raceman.races import Races, RaceTypes, Categories, \
      Participants, Persons, Clubs
 
 from lino.adamo.table import DbfMirrorLoader

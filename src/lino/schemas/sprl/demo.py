@@ -24,22 +24,17 @@
 
 import os
 from lino import adamo
-from lino.schemas.sprl.sprl import makeSchema
-from lino.schemas.sprl import tables 
+#from lino.schemas.sprl.sprl import makeSchema
+from lino.schemas.sprl import sprl, tables 
 from lino.tools.normalDate import ND
 
-def startup(populate=True,
-            filename=None,
-            big=False,
-            withDemoData=True,
-            withJokes=False,
-            langs=None,
-            **kw):
-    """
-    populate
-    """
-    
-    schema = makeSchema(**kw)
+
+def makeSchema(populate=True,
+               big=False,
+               withDemoData=True,
+               withJokes=False,
+               **kw):
+    schema = sprl.makeSchema(**kw)
     if populate:
         if withJokes:
             schema.addPopulator(JokesPopulator(label="Weisheiten"))
@@ -49,17 +44,13 @@ def startup(populate=True,
         else:
             schema.addPopulator(Populator(big=big,
                                           label="Standard"))
+    return schema
             
-##     if withJokes:
-##         schema.addPopulator(JokesPopulator(
-        
-##     if populate:
-##         p = Populator(big=big,
-##                       withDemoData=withDemoData,
-##                       withJokes=withJokes,
-##                       )
-##     else:
-##         p = None
+            
+def startup(filename=None,
+            langs=None,
+            **kw):
+    schema = makeSchema(**kw)
     sess = schema.quickStartup(langs=langs, filename=filename)
     
         #from lino.schemas.sprl.data import demo1

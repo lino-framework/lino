@@ -62,6 +62,7 @@ class Console:
         if out is None:
             out = sys.stdout
         self.out = out
+        self.app = None
         self._verbosity = 0
         self._batch = False
         self._dumping = None
@@ -255,8 +256,10 @@ class Console:
         return p
 
     def addForm(self,*args,**kw):
-        from lino.forms.wx.wxform import Form
-        return Form(*args,**kw)
+        if self.app is None:
+            from lino.forms.base import Application
+            self.app = Application(console=self)
+        return self.app.addForm(*args,**kw)
 
     def textprinter(self):
         from lino.textprinter.plain import PlainDocument
@@ -284,10 +287,10 @@ def parse_args(args=None):
     return p.parse_args(args)
     
 
-def copyleft( name="Lino",
-              version=__version__,
-              years="2002-2005",
-              author=__author__):
+def copyleft(name="Lino",
+             version=__version__,
+             years="2002-2005",
+             author=__author__):
     info("""\
 %s version %s.
 Copyright (c) %s %s.

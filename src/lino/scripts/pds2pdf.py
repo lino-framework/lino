@@ -37,6 +37,8 @@ Options:
 import sys, getopt, os
 import traceback
 
+from lino.ui import console
+
 from lino.sdoc.pdf import PdfRenderer
 from lino.sdoc.environment import ParseError
 from lino.sdoc import commands
@@ -44,10 +46,7 @@ from lino.sdoc import commands
 
 
 
-def main(ifname,renderer,ofname=None,
-         showOutput=True,
-         verbose=True,
-         force=True):
+def pds2pdf(ifname,renderer,ofname=None, showOutput=True):
 
     (root,ext) = os.path.splitext(ifname)
     if ext == '':
@@ -61,9 +60,9 @@ def main(ifname,renderer,ofname=None,
 
     try:
         commands.beginDocument(ofname,renderer,ifname)
-        if verbose:
-            print "%s --> %s..." % (commands.getSourceFileName(),
-                                            commands.getOutputFileName())
+        console.progress(
+            "%s --> %s..." % (commands.getSourceFileName(),
+                              commands.getOutputFileName()))
         namespace = {}
         namespace.update(globals())
         namespace['pds'] = commands
@@ -72,8 +71,7 @@ def main(ifname,renderer,ofname=None,
                 execfile(initfile,namespace,namespace) 
             execfile(ifname,namespace,namespace)
             commands.endDocument(showOutput)
-            if verbose:
-                print "%d pages." % commands.getPageNumber()
+            console.progress("%d pages." % commands.getPageNumber())
         except ParseError,e:
             raise
             #traceback.print_exc(2)
@@ -88,38 +86,74 @@ def main(ifname,renderer,ofname=None,
 
 
 
-if __name__ == '__main__':
+def main(argv):
     console.copyleft(name="Lino/pds2pdf",
                      years='2002-2005',
                      author='Luc Saffre')
 
-    try:
-        opts, args = getopt.getopt(sys.argv[1:],
-                                   "?ho:b",
-                                   ["help", "output=","batch"])
 
-    except getopt.GetoptError,e:
-        print __doc__
-        print e
-        sys.exit(-1)
+
+
+    parser = console.getOptionParser(
+        usage="usage: lino pds2pdf [options] FILE",
+        description="""\
+pds2pdf converts the Python Document Script FILE (extension `.pds`) to
+a PDF file with same name, but `.pdf` as extension.
+Extension `.pdf` will be added if not specified.
+Note that you can specify only one FILE.
+""")
+
+    
+    parser.add_option("-o", "--output",
+                      help="""\
+write to OUTFILE rather than FILE.pdf""",
+                      action="store",
+                      type="string",
+                      dest="outFile",
+                      default=None)
+    
+    (options, args) = parser.parse_args(argv)
 
     if len(args) != 1:
-        print __doc__
+        print args
+        parser.print_help() 
         sys.exit(-1)
-
-    outputfile = None
-    showOutput = True
     
-    for o, a in opts:
-        if o in ("-?", "-h", "--help"):
-            print __doc__
-            sys.exit()
-        elif o in ("-o", "--output"):
-            outputfile = a
-        elif o in ("-b", "--batch"):
-            showOutput = False
+    inputfile = args[0]
 
-    main(args[0],
+
+    
+
+##     try:
+##         opts, args = getopt.getopt(argv,
+##                                    "?ho:b",
+##                                    ["help", "output=","batch"])
+
+##     except getopt.GetoptError,e:
+##         print __doc__
+##         print e
+##         sys.exit(-1)
+
+##     if len(args) != 1:
+##         print __doc__
+##         sys.exit(-1)
+
+##     outputfile = None
+##     showOutput = True
+    
+##     for o, a in opts:
+##         if o in ("-?", "-h", "--help"):
+##             print __doc__
+##             sys.exit()
+##         elif o in ("-o", "--output"):
+##             outputfile = a
+##         elif o in ("-b", "--batch"):
+##             showOutput = False
+
+    pds2pdf(inputfile,
          PdfRenderer(),
-         outputfile,
-         showOutput=showOutput)
+         options.outFile,
+         showOutput=console.isInteractive())
+
+if __name__ == '__main__':
+    main(sys.argv[1:])

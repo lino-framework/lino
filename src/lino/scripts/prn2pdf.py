@@ -45,7 +45,7 @@ def main(argv):
                      author='Luc Saffre')
     
     parser = console.getOptionParser(
-        usage="usage: %prog [options] FILE",
+        usage="usage: lino prn2pdf [options] FILE",
         description="""\
 where FILE is the file to be converted to a pdf file.
 It may contain plain text and simple formatting printer control sequences. """ )

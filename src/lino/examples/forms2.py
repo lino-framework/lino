@@ -17,7 +17,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.datatypes import STRING
-from lino.forms.wx.wxform import Form
 from lino.ui import console
 
 def privacy(parent):
@@ -35,11 +34,11 @@ so you don't need to close it if you want to continue registering.
     btnPanel.addCancelButton()
     frm.show()
     print "Note that program flow continues after form.show(), "\
-          "but showModal() waits until the form is closed."
+          "while showModal() would have waited until the form is closed."
     
 def main():
-    frm = Form(label="my second form",
-               doc="""\
+    frm = console.addForm(label="my second form",
+                          doc="""\
 Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
@@ -53,7 +52,7 @@ You can trust us.
     btnPanel.addButton(
         label="&Privacy statement",
         doc="Click here if you really cannot trust us."
-        ).setHandler(privacy)
+        ).setHandler(privacy,frm)
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.getValue(),

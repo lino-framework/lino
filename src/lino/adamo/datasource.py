@@ -975,7 +975,16 @@ class StoredDataRow(DataRow):
 ##     def getContext(self):
 ##         return self._ds.getContext()
     
-
+    def writeReport(self,doc):
+        rpt = doc.report(label=self.getLabel())
+        for c in self:
+            rpt.addColumn(lambda cell: cell.col.getLabel(),
+                          width=20,
+                          label="fieldName")
+            rpt.addColumn(lambda cell: str(cell),
+                          width=50,
+                          label="value")
+        rpt.execute(self)
     
     def isComplete(self):
         return self._complete

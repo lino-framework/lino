@@ -196,12 +196,14 @@ class ReportColumn(Describable):
     
 
 class DataReportColumn(ReportColumn):
-    def __init__(self,owner,dc,**kw):
-        ReportColumn.__init__(self,owner,**kw)
-        self.dc = dc
+    def __init__(self,owner,datacol,width=None,**kw):
+        if width is None:
+            width = datacol.getPreferredWidth()
+        ReportColumn.__init__(self,owner,width=width,**kw)
+        self.datacol = datacol
 
     def getValue(self,row):
-        return self.dc.getCellValue(self._owner.crow)
+        return self.datacol.getCellValue(self._owner.crow)
         
 class VurtReportColumn(ReportColumn):
     def __init__(self,owner,meth,**kw):

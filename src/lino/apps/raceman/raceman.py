@@ -23,75 +23,72 @@ opj = os.path.join
 
 from lino.ui import console
 
+from lino.apps.raceman.schema import makeSchema
+from lino.apps.raceman.races import Races, RaceTypes, \
+     Categories, Participants, Persons, Clubs
 
-from schema import makeSchema, Races, RaceTypes, Categories, \
-     Participants, Persons, Clubs
-
-def foo(frm,sess,tc):
-    ds = sess.query(tc)
-    frm = frm.addForm(label=ds.getLabel())
-    frm.addDataGrid(ds)
-    frm.show()
-
-
-
+from lino.forms.application import MirrorLoaderApplication
 
 import datetime
 
 from lino.adamo.datatypes import STRING
 
 class Arrivals:
-    def __init__(self,datafile="arrivals.txt"):
+    def __init__(self,app,race=None,
+                 datafile="arrivals.txt"):
+        self.app = app
+        self.race = race
         self.data = []
         self.datafile = datafile
         self.starttime = None
+        self.frm = None
 
-    def writedata(self,parent):
+    def writedata(self):
         f = file(self.datafile,"a")
         for line in self.data:
             f.write("\t".join(line)+"\n")
         f.close()
-        parent.info("wrote %d lines to %s" % (len(self.data),
-                                              self.datafile))
+        self.frm.info("wrote %d lines to %s" % (len(self.data),
+                                                self.datafile))
         self.data = []
         #parent.buttons.arrive.setFocus()
-        parent.entries.dossard.setFocus()
+        self.frm.entries.dossard.setFocus()
 
-    def arrive(self,frm):
+    def arrive(self):
         if self.starttime is None:
-            frm.buttons.start.setFocus()
-            frm.error("cannot arrive before start")
+            self.frm.buttons.start.setFocus()
+            self.frm.info("cannot arrive before start")
             return
         now = datetime.datetime.now()
         duration = now - self.starttime
         line = (
-            frm.entries.dossard.getValue(),
+            self.frm.entries.dossard.getValue(),
             str(now), str(duration)
             )
         self.data.append(line)
-        frm.info("%s arrived at %s after %s" % line)
-        frm.entries.dossard.setValue('*')
-        frm.entries.dossard.setFocus()
+        self.frm.info("%s arrived at %s after %s" % line)
+        self.frm.entries.dossard.setValue('*')
+        self.frm.entries.dossard.setFocus()
     
-    def exit(self,parent):
+    def exit(self):
         if len(self.data) > 0:
-            if parent.confirm("write data to file?"):
-                self.writedata(parent)
+            if self.app.confirm("write data to file?"):
+                self.writedata()
             else:
-                parent.entries.dossard.setFocus()
+                self.frm.entries.dossard.setFocus()
                 return
-        parent.close(parent)
+        self.frm.close()
 
-    def start(self,parent):
+    def start(self):
         self.starttime = datetime.datetime.now()
-        parent.info("started at %s" %str(self.starttime))
+        self.frm.info("started at %s" %str(self.starttime))
         #parent.buttons.arrive.setFocus()
-        parent.entries.dossard.setFocus()
+        self.frm.entries.dossard.setFocus()
 
-    def run(self):
-        
-        frm = Form(label="Raceman arrivals",
-                   doc="""\
+    def __call__(self):
+        frm = self.app.addForm(
+            label="Raceman arrivals",
+            doc="""\
 Ankunftszeiten an der Ziellinie erfassen.
 Beim Startschuss "Start" klicken!
 Jedesmal wenn einer ankommt, ENTER drücken.
@@ -107,12 +104,12 @@ Jedesmal wenn einer ankommt, ENTER drücken.
         bbox = frm
         bbox.addButton(name="start",
                       label="&Start",
-                      onclick=self.start)
+                      action=self.start)
         bbox.addButton(name="arrive",
                       label="&Arrive",
-                      onclick=self.arrive).setDefault()
-        bbox.addButton("write",label="&Write",onclick=self.writedata)
-        bbox.addButton("exit",label="&Exit",onclick=self.exit)
+                      action=self.arrive).setDefault()
+        bbox.addButton("write",label="&Write",action=self.writedata)
+        bbox.addButton("exit",label="&Exit",action=self.exit)
 
 ##         fileMenu  = frm.addMenu("&File")
 ##         fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")
@@ -121,76 +118,61 @@ Jedesmal wenn einer ankommt, ENTER drücken.
 ##         fileMenu  = frm.addMenu("&Edit")
 ##         fileMenu.addButton(frm.buttons.start)
 ##         fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
-        
+        self.frm = frm
         frm.show()
     
 
-def raceman(dbfpath,workdir):
-    schema = makeSchema(dbfpath)
-    filename=opj(workdir,"raceman.db")
-    sess = schema.quickStartup(filename=filename)
-    
-    frm = sess.addForm(label="Main menu",
-                       doc="""\
-This is the Raceman main menu.                                     
-
-
-
-
-
-
-
-
-
-
-
-""")
-
-    m = frm.addMenu("&Stammdaten")
-    m.addItem(label="&Personen").setHandler(foo,sess,Persons)
-    m.addItem(label="&Races").setHandler(foo,sess,Races)
-    
-    m = frm.addMenu("&Arrivals")
-    m.addItem(label="&Erfassen").setHandler(Arrivals().)
+class Raceman(MirrorLoaderApplication):
         
-    m = frm.addMenu("&Programm")
-    m.addItem(label="&Beenden",onclick=frm.close)
+    def makeMainForm(self):
+        self.arrivals = Arrivals(self)
+        frm = self.addForm(
+            label="Main menu",
+            doc="""\
+This is the Raceman main menu.                                     
+"""+("\n"*10))
+
+        m = frm.addMenu("&Stammdaten")
+        m.addItem(label="&Races").setHandler(self.showDataGrid,
+                                             Races)
+        m.addItem(label="&Clubs").setHandler(self.showDataGrid,
+                                             Clubs)
+        m.addItem(label="&Personen").setHandler(self.showDataGrid,
+                                                Persons)
     
-    frm.show()
-    
-    #sess.shutdown()
+        m = frm.addMenu("&Arrivals")
+        m.addItem(label="&Erfassen").setHandler(self.arrivals)
+        
+        m = frm.addMenu("&Programm")
+        m.addItem(label="&Beenden",action=frm.close)
+        m.addItem(label="Inf&o",action=self.showAbout)
+
+        return frm
+
         
 
 def main(argv):
 
-    parser = console.getOptionParser(
-        usage="usage: %prog [options] DBFPATH",
-        description="""\
-where DBFPATH is the directory containing TIM files""")
-    
-    parser.add_option("-t", "--tempdir",
-                      help="""\
-directory for raceman files""",
-                      action="store",
-                      type="string",
-                      dest="tempDir",
-                      default=r'c:\temp')
-    
-    (options, args) = parser.parse_args(argv)
+    app = Raceman(name="Raceman",
+                  years='2005',
+                  tempDir=r'c:\temp',
+                  loadfrom=r'c:\temp\timrun')
+    (options, args) = app.parse_args(argv)
 
-    if len(args) == 1:
-        dbfpath = args[0]
-    else:
-        dbfpath = r"c:\temp\timrun"
-        
-    raceman(dbfpath,options.tempDir)
+
+    #workdir = options.tempDir
+    schema = makeSchema(app.loadfrom)
+    app.startup(schema)
+    #filename=opj(workdir,"raceman.db")
+    #sess = schema.quickStartup(filename=filename)
+    app.main()
     
 
 
 
 
 if __name__ == '__main__':
-    console.copyleft(name="Lino/Raceman", years='2002-2005')
+    #console.copyleft(name="Lino/Raceman", years='2002-2005')
     main(sys.argv[1:])
 
 

@@ -16,12 +16,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.forms.wx.wxform import Form
 from lino.ui import console
 
 def main():
-    
-    frm = Form(label="The First Lino Form")
+    frm = console.addForm(label="The First Lino Form")
     frm.addLabel("""\
 Please enter your personal data.
 Don't worry about your privacy.

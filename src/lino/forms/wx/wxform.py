@@ -93,9 +93,13 @@ class WxApp(wx.App):
 class Label(base.Label):
     
     def setup(self,panel,box):
-        text = wx.StaticText(panel,-1, self.getLabel())
-        box.Add(text, WEIGHT, wx.EXPAND|wx.ALL, 10)
-        self.wxctrl = text
+
+        text = self.getLabel()
+        if self.getDoc() is not None:
+            text += '\n' + self.getDoc()
+        ctrl = wx.StaticText(panel,-1, text)
+        box.Add(ctrl, WEIGHT, wx.EXPAND|wx.ALL, 10)
+        self.wxctrl = ctrl
                 
 class Button(base.Button):
     
@@ -311,13 +315,6 @@ class DataEntry(EntryMixin,base.DataEntry):
         
 
 class Form(base.Form):
-    labelFactory = Label
-    entryFactory = Entry
-    dataEntryFactory = DataEntry
-    buttonFactory = Button
-    panelFactory = Panel
-    tableEditorFactory = DataGrid
-    navigatorFactory = Navigator
 
 ##     def afterShow(self):
 ##         console.debug(repr(self.mainComp))
@@ -330,12 +327,18 @@ class Form(base.Form):
 ##             self.app.MainLoop()
 
 
+    def setStatusMessage(self,msg):
+        if self.modal:
+            print msg
+        else:
+            self.wxctrl.SetStatusText(msg)
+            
     def setup(self): 
         if self._parent is None:
-            self.app = WxApp()
+            #self.app = WxApp()
             wxparent = None
         else:
-            self.app = self._parent.app
+            #self.app = self._parent.app
             wxparent = self._parent.wxctrl
             
         #self.dying = False
@@ -415,10 +418,10 @@ class Form(base.Form):
             self.wxctrl.ShowModal()
         else:
             self.wxctrl.Show()
-            if self._parent is None:
-                self.app.SetTopWindow(self.wxctrl)
-                self.app.MainLoop()
-
+            if self.app.mainForm is None:
+                #print "automagic app.main() call"
+                self.app.main(self)
+            
 
 ##     def showModal(self):
 ##         assert self._parent is not None
@@ -428,7 +431,7 @@ class Form(base.Form):
 ##         #self.show()
 ##         return self.lastEvent == self.buttons.ok
 
-    def close(self,callingForm):
+    def close(self):
         #print "close", self.getLabel()
         self.wxctrl.Close()
 
@@ -465,24 +468,27 @@ class Form(base.Form):
         base.Form.refresh(self)
         self.wxctrl.Refresh()
 
-        
 
-## class DataRowForm(Form):
-##     def __init__(self,parent,row,
-##                  name=None,
-##                  label=None,
-##                  doc=None,*args,**kw):
-##         if doc is None:
-##             doc = ds.getDoc()
-##         Form.__init__(self,parent,
-##                       name=name,label=label,doc=doc,
-##                       *args,**kw)
-##         self.row = row
+class WxUI:
+    labelFactory = Label
+    entryFactory = Entry
+    dataEntryFactory = DataEntry
+    buttonFactory = Button
+    panelFactory = Panel
+    tableEditorFactory = DataGrid
+    navigatorFactory = Navigator
+    formFactory = Form
+    
+    def __init__(self,app):
+        self.app = app
+        self.wxctrl = WxApp()
+        self.console = console
+        #app.console = ...
 
-##     def setup(self):
-##         for cell in self.row:
-##             col = cell.col
-##             e = self.addEntry(name=col.name,
-##                               type=col.rowAttr.type,
-##                               label=col.getLabel())
-##         base.Form.setup(self)
+    def mainLoop(self):
+        "called from Application.main()"
+        frm = self.app.mainForm
+        #frm.show()
+        self.wxctrl.SetTopWindow(frm.wxctrl)
+        self.wxctrl.MainLoop()
+
