@@ -20,15 +20,17 @@ from lino.adamo import *
 from babel import Languages
 from addrbook import Persons, SEX
 
+NAME = STRING.child(width=30)
+
 class Races(Table):
     def init(self):
-        self.name1 = Field(STRING,width=30)
-        self.name2 = Field(STRING,width=30)
-        self.date = Field(DATE)
-        self.status = Field(STRING,width=1)
-        self.tpl  = Field(STRING,width=6)
-        self.type  = Pointer(RaceTypes)
-        self.startTime  = Field(TIME)
+        self.addField('name1',NAME)
+        self.addField('name2',NAME)
+        self.addField('date',DATE)
+        self.addField('status',STRING.child(width=1))
+        self.addField('tpl',STRING.child(width=6))
+        self.addPointer('type',RaceTypes)
+        self.addField('startTime',TIME)
 
     class Instance(Table.Instance):
         def getLabel(self):
@@ -36,8 +38,8 @@ class Races(Table):
         
 class RaceTypes(Table):
     def init(self):
-        self.id = Field(STRING,width=5)
-        self.name = Field(STRING,width=30)
+        self.addField('id',STRING.child(width=5))
+        self.addField('name',NAME)
 
     class Instance(Table.Instance):
         def getLabel(self):
@@ -45,12 +47,13 @@ class RaceTypes(Table):
         
 class Categories(Table):
     def init(self):
-        self.type  = Pointer(RaceTypes)
-        self.id = Field(STRING,width=3)
-        self.seq = Field(ROWID)
-        self.name = Field(STRING,width=30)
-        self.sex  = Field(SEX)
-        self.ageLimit  = Field(INT)
+        self.addPointer('type',RaceTypes)
+        self.addField('id',STRING.child(width=3))
+        self.addField('seq',ROWID)
+        self.addField('name',STRING.child(width=30))
+        self.addField('sex',SEX)
+        self.addField('ageLimit',INT)
+        
         self.setPrimaryKey('type id')
 
     class Instance(Table.Instance):
@@ -60,11 +63,12 @@ class Categories(Table):
 class Participants(Table):
     def init(self):
         self.setPrimaryKey("race dossard")
-        self.race = Pointer(Races)
-        self.dossard = Field(STRING)
-        self.person = Pointer(Persons)
-        self.time = Field(TIME)
-        self.cat = Pointer(Categories)
-        self.payment = Field(STRING,width=1)
+        
+        self.addPointer('race',Races)
+        self.addField('dossard',STRING)
+        self.addPointer('person',Persons)
+        self.addField('time',TIME)
+        self.addPointer('cat',Categories)
+        self.addField('payment',STRING.child(width=1))
         
 
