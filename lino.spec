@@ -25,7 +25,7 @@ import shutil
 import zipfile
 from time import localtime, strftime
 
-from lino.misc.console import confirm
+from lino.ui.console import confirm
 from lino.misc.rdir import rdirlist
 
 from lino import __version__

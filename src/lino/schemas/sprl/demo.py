@@ -4,9 +4,7 @@
 
 
 import os
-#from lino.adamo import quickdb, Application
 from lino import adamo
-#from lino.misc.console import Console
 from sprl import Schema
 
 
@@ -19,17 +17,17 @@ def populate(sess,big=False):
 
 		
 def beginSession(populator=populate,
-					  langs=None,
-					  isTemporary=True,
-					  #verbose=False,
-					  **kw):
+                 langs=None,
+                 isTemporary=True,
+                 #verbose=False,
+                 **kw):
 	schema = Schema(**kw)
 	return adamo.beginQuickSession(schema,
-											 populator=populator,
-											 langs=langs,
-											 isTemporary=True,
-											 #verbose=False
-											 )
+                                   populator=populator,
+                                   langs=langs,
+                                   isTemporary=True,
+                                   #verbose=False
+                                   )
 
 
 # deprecated name for beginSession:

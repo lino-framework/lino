@@ -1,15 +1,26 @@
-#----------------------------------------------------------------------
-# prndoc.py
-# Copyright: (c) 2003-2004 Luc Saffre
-# License:	 GPL
-#----------------------------------------------------------------------
+## Copyright Luc Saffre 2003-2004.
 
-import sys, os, getopt
+## This file is part of the Lino project.
 
-from reportlab.lib.units import inch,mm
-from reportlab.lib.pagesizes import letter, A4
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
 
-from lino.misc.console import getSystemConsole
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+import sys
+from lino.ui import console
+
+class ParserError(Exception):
+    pass
 
 class Status:
     """
@@ -37,10 +48,10 @@ class Document:
         self.commands = {
             chr(12) : self.formFeed,
             chr(27)+"l" : self.setLpi,
-            chr(27)+"c" : self.setCpi,
-            chr(27)+"b" : self.setBold,
-            chr(27)+"u" : self.setUnderline,
-            chr(27)+"i" : self.setItalic,
+            chr(27)+"c" : self.parse_c,
+            chr(27)+"b" : self.parse_b,
+            chr(27)+"u" : self.parse_u,
+            chr(27)+"i" : self.parse_i,
             chr(27)+"L" : self.setPageLandscape,
             chr(27)+"I" : self.insertImage,
             }
@@ -111,17 +122,18 @@ class Document:
         try:
             f = file(inputfile)
             for line in f.readlines():
-                self.PrintLine(line.rstrip())
+                #self.printLine(line.rstrip())
+                self.printLine(line)
         except IOError,e:
             print e
             sys.exit(-1)
 
 
-    def PrintLine(self,line):
+    def printLine(self,line):
 
         #if not self.oldStatus is None:
         #    self.restoreStatus()
-        #line = line.strip()
+        line = line.rstrip()
         (pos,ctrl) = self.FindFirstCtrl(line)
         while pos != None:
             if pos > 0:
@@ -136,7 +148,7 @@ class Document:
             (pos,ctrl) = self.FindFirstCtrl(line)
 
         if line == "\r\n": return
-        if len(line) == 0: return
+        #if len(line) == 0: return
         
         self.writechars(line)
         self.writeln()
@@ -164,7 +176,7 @@ class Document:
         
     def setPageLandscape(self,line):
         assert self.textobject is None, \
-                 'setLandscape after first text has been printed'
+               'setLandscape after first text has been printed'
         if self.pageHeight > self.pageWidth:
             # only if not already
             self.pageHeight, self.pageWidth = \
@@ -175,9 +187,6 @@ class Document:
     def onSetFont(self):
         if self.textobject is None:
             self.beginPage()
-        if self.status.lpi is not None:
-            self.status.leading = 72 / self.status.lpi
-
 
     ## methods called if ctrl sequence is found :
 
@@ -191,9 +200,13 @@ class Document:
         self.onSetFont()
         return len(par)+1
         
-    def setCpi(self,line):
+    def parse_c(self,line):
         par = line.split(None,1)[0]
-        cpi = int(par) # ord(line[0])
+        self.setCpi(int(par))
+        return len(par)+1
+        
+    def setCpi(self,cpi):
+        "set font size in cpi (characters per inch)"
         if cpi == 10:
             self.status.size = 12
             self.status.leading = 14
@@ -215,35 +228,50 @@ class Document:
         else:
             raise "%s : bad cpi size" % par
         self.onSetFont()
-        return len(par)+1
          
     def insertImage(self,line):
         raise NotImplementedError
 
+    def parse_i(self,line):
+        if line[0] == "0":
+            self.setItalic(False)
+        elif line[0] == "1":
+            self.setItalic(True)
+        return 1
             
-    def setItalic(self,line):
-        if line[0] == "0":
-            self.status.ital = False
-        elif line[0] == "1":
-            self.status.ital = True
+    def setItalic(self,ital):
+        self.status.ital = ital
         self.onSetFont()
+    
+    def parse_b(self,line):
+        if line[0] == "0":
+            self.setBold(False)
+        elif line[0] == "1":
+            self.setBold(True)
+        else:
+            raise ParserError("0 or 1 expected, but got '%s'" \
+                              % line[0])
         return 1
     
-    def setBold(self,line):
-        if line[0] == "0":
-            self.status.bold = False
-        elif line[0] == "1":
-            self.status.bold = True
+    def setBold(self,bold):
+        console.debug("setBold(%s)"%str(bold))
+        self.status.bold = bold
         self.onSetFont()
-        return 1
     
-    def setUnderline(self,line):
+    def parse_u(self,line):
         if line[0] == "0":
-            self.status.underline = False
+            self.setUnderline(False)
         elif line[0] == "1":
-            self.status.underline = True
-        self.onSetFont()
+            self.setUnderline(True)
+        else:
+            raise ParserError("0 or 1 expected, but got '%s'" \
+                              % line[0])
         return 1
+        
+    def setUnderline(self,ul):
+        console.debug("setUnderline(%s)"%str(ul))
+        self.status.underline = ul
+        self.onSetFont()
         
     def formFeed(self,line):
         self.endPage()
@@ -251,43 +279,43 @@ class Document:
         return 0
 
 
-def main(argv,docfactory):
+## def main(argv,docfactory):
 
-    try:
-        opts, args = getopt.getopt(argv,
-                                            "h?o:b",
-                                            ["help", "output=","batch"])
+##     try:
+##         opts, args = getopt.getopt(argv,
+##                                             "h?o:b",
+##                                             ["help", "output=","batch"])
 
-    except getopt.GetoptError:
-        print __doc__
-        sys.exit(-1)
+##     except getopt.GetoptError:
+##         print __doc__
+##         sys.exit(-1)
 
-    if len(args) != 1:
-        print __doc__
-        sys.exit(-1)
+##     if len(args) != 1:
+##         print __doc__
+##         sys.exit(-1)
 
-    inputfile = args[0]
-    (root,ext) = os.path.splitext(inputfile)
-    outputfile = root 
-    if len(ext) == 0:
-        inputfile += ".prn"
+##     inputfile = args[0]
+##     (root,ext) = os.path.splitext(inputfile)
+##     outputfile = root 
+##     if len(ext) == 0:
+##         inputfile += ".prn"
 
-    #showOutput=True
-    for o, a in opts:
-        if o in ("-?", "-h", "--help"):
-            print __doc__
-            sys.exit()
-        if o in ("-o", "--output"):
-            outputfile = a
-        if o in ("-b", "--batch"):
-            #showOutput=False
-            getSystemConsole().set(batch=True)
+##     #showOutput=True
+##     for o, a in opts:
+##         if o in ("-?", "-h", "--help"):
+##             print __doc__
+##             sys.exit()
+##         if o in ("-o", "--output"):
+##             outputfile = a
+##         if o in ("-b", "--batch"):
+##             #showOutput=False
+##             getSystemConsole().set(batch=True)
             
-    d = docfactory(outputfile)
-    d.readfile(inputfile)
-    d.endDoc()
+##     d = docfactory(outputfile)
+##     d.readfile(inputfile)
+##     d.endDoc()
     
-    return d
+##     return d
     
 
         

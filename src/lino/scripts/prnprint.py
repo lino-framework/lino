@@ -20,7 +20,7 @@ import sys, os
 
 from lino import copyleft
 from lino.ui import console
-from lino.tools import winprn 
+from lino.textprinter import winprn 
 
 def main(argv):
 

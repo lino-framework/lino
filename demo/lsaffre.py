@@ -101,7 +101,7 @@ def main(argv):
     center.start(verbose=options.verbose)
 
     #info = center.getSystemConsole().info
-    from lino.misc.console import info, progress
+    from lino.ui.console import info, progress
 
     #progress = app.console.progress
     

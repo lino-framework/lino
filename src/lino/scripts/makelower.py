@@ -1,3 +1,5 @@
+raise Exception("makelower is replaced by makelc")
+
 """
 
 prepares a webtim tree for publishing to a UNIX web server by renaming
