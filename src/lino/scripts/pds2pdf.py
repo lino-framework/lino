@@ -95,7 +95,7 @@ write to OUTFILE rather than FILE.pdf""",
     if len(args) != 1:
         print args
         parser.print_help() 
-        sys.exit(-1)
+        return -1
     
     inputfile = args[0]
 
@@ -105,4 +105,5 @@ write to OUTFILE rather than FILE.pdf""",
          showOutput=console.isInteractive())
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    sys.exit(main(sys.argv[1:]))
+    #main(sys.argv[1:])

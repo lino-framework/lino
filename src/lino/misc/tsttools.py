@@ -41,6 +41,22 @@ from lino.ui import console
    #~ runner.run(suite)
 
 
+def catch_output(f,*args,**kw):
+    out = sys.stdout
+    sys.stdout = StringIO()
+    try:
+        f(*args,**kw)
+    #except Exception,e:
+    #    raise e
+    finally:
+        r = sys.stdout.getvalue()
+        sys.stdout = out
+        return r
+
+
+   
+
+
 def oneof(l,*args,**kw):
     for f in l:
         if f(*args,**kw): return True

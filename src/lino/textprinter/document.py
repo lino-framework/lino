@@ -18,7 +18,7 @@
 
 import sys
 
-from lino.ui import console
+#from lino.ui import console
 
 class ParserError(Exception):
     pass
@@ -45,11 +45,10 @@ class Document:
         
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin # 5 * mm
-        self.width=width
-        
+        self.width = width
         self.page = 0
-
         self.textobject = None
+        self.fontChanged = True
 
     def getWidth(self):
         "characters per page"
@@ -173,14 +172,15 @@ class Document:
                'setLandscape after first text has been printed'
         if self.pageHeight > self.pageWidth:
             # only if not already
-            self.pageHeight, self.pageWidth = \
-                                 (self.pageWidth,self.pageHeight)
+            (self.pageHeight, self.pageWidth) = \
+                             (self.pageWidth,self.pageHeight)
             self.onSetPageSize()
         return 0
 
     def onSetFont(self):
-        if self.textobject is None:
-            self.beginPage()
+        self.fontChanged = True
+        #if self.textobject is None:
+        #    self.beginPage()
 
     ## methods called if ctrl sequence is found :
 

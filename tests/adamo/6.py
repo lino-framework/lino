@@ -17,21 +17,12 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
    
-from lino.misc.tsttools import TestCase, main
+from lino.misc.tsttools import TestCase, main, catch_output
 from lino.examples import pizzeria,pizzeria2
 
 import sys
-from StringIO import StringIO
+#from StringIO import StringIO
 ##
-def catch_output(f,*args,**kw):
-    out = sys.stdout
-    sys.stdout = StringIO()
-    f(*args,**kw)
-    r = sys.stdout.getvalue()
-    sys.stdout = out
-    return r
-
-
 
 class Case(TestCase):
     

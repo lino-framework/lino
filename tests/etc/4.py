@@ -1,4 +1,4 @@
-## Copyright 2004-2005 Luc Saffre 
+## Copyright 2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -16,18 +16,32 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import sys
+from lino.misc.tsttools import TestCase, main, catch_output
+from lino.misc.my_import import my_import
 
-from lino.ui import console
-from lino.oogen import SpreadsheetDocument
-from lino.scripts.pds2sxw import pds2oo
+# same list as in mkdist.py
+console_targets = [
+    'pds2pdf',
+    'pds2sxw', 'pds2sxc',
+    'prn2pdf', 'prnprint',
+    'sync', 'diag', 'openmail',
+    ]
 
-def main(argv):
-    console.copyleft(name="Lino pds2sxc",
-                     years='2004-2005')
-    return pds2oo(SpreadsheetDocument,argv)
-    
+
+class Case(TestCase):
+    def test01(self):
+        s = ""
+        for scr in console_targets:
+            mod = my_import("lino.scripts." + scr)
+            s += catch_output(mod.main,[])
+            #mod.main(["--help"])
+
+        #s = self.getConsoleOutput()
+        print s
+        self.assertEquivalent(s,"")
         
+    
+    
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    main()
 

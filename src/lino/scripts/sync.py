@@ -422,7 +422,7 @@ show progress bar""",
 
     if len(args) != 2:
         parser.print_help() 
-        sys.exit(-1)
+        return -1
 
     src = args[0]
     target = args[1]
@@ -448,7 +448,8 @@ show progress bar""",
 
 if __name__ == '__main__':
     try:
-        main(sys.argv[1:])
+        sys.exit(main(sys.argv[1:]))
+        #main(sys.argv[1:])
     except SyncError,e:
         console.error(str(e))
         sys.exit(-1)

@@ -68,7 +68,15 @@ class VolumeVisitor(Task):
             for ln in open(name).readlines():
                 for w in ln.split():
                     count += 1
-            self.info("%s contains %d words." % (name,count))
+            self.info("%s contains %d words.", name, count)
+        elif ext == ".doc":
+            self.status("opening MS-Word %s.", name)
+            msdoc = MsWordDocument(name)
+            row.title = msdoc.title
+            count = 0
+            for w in msdoc.content.split():
+                count += 1
+            self.info("%s contains %d words.", name, count)
                     
     
     def visit_dir(self,row,fullname):

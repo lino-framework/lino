@@ -313,8 +313,8 @@ class Console(UI):
 ##         if self.app is not None:
 ##             return self.app.warning(msg)
         
-        if sound:
-            sound.asterisk()
+        #if sound:
+        #    sound.asterisk()
         self.writeout(msg)
         #self.alert(msg)
         if not self._batch:
@@ -355,12 +355,11 @@ class Console(UI):
                default=None,
                ignoreCase=True):
         
-        """Ask user a question and return only when she has
-        given her answer. Returns the letter answered by user.
+        """Ask user a question and return only when she has given her
+        answer. Returns the index of chosen answer or -1 if user
+        refused to answer.
         
         """
-##         if self.app is not None:
-##             return self.app.decide(prompt,answers,default,ignoreCase)
         if default is None:
             default = answers[0]
             
@@ -402,7 +401,7 @@ class Console(UI):
 
 class StatusConsole(Console):
 
-    width = 78
+    width = 78  # 
     purzelMann = "|/-\\"
     #jobClass = PurzelConsoleJob
 
@@ -556,6 +555,7 @@ if hasattr(sys.stdout,"encoding") \
       and sys.getdefaultencoding() != sys.stdout.encoding:
     sys.stdout = rewriter(sys.stdout)
     sys.stderr = rewriter(sys.stderr)
+    #print sys.stdout.encoding
 
 
 #_syscon = Console(sys.stdout.write, sys.stderr.write)
@@ -567,28 +567,6 @@ setSystemConsole(
 atexit.register(_syscon.shutdown)
 
 
-
-
-
-## _stack = []
-
-## def push(c):
-##     _stack.append(_syscon)
-##     setSystemConsole(c)
-
-## def pop():
-##     #assert len(_stack) > 0
-##     rv = _syscon
-##     setSystemConsole(_stack.pop())
-##     return rv
-
-
-## def startDump(**kw):
-##     push(CaptureConsole(**kw))
-        
-## def stopDump():
-##     c = pop()
-##     return c.getvalue()
 
 
 

@@ -22,18 +22,18 @@ import os
 import locale
 
 
-try:
-    import win32file
-except:
-    win32file = None
+## try:
+##     import win32file
+## except:
+##     win32file = None
 
 
 from lino.ui import console
 
-from lino.i18n import itr,_
-itr("Start?",
-   de="Arbeitsvorgang starten?",
-   fr=u"Démarrer?")
+## from lino.i18n import itr,_
+## itr("Start?",
+##    de="Arbeitsvorgang starten?",
+##    fr=u"Démarrer?")
 
 def main(argv):
     console.copyleft(name="Lino/diag",
@@ -58,7 +58,7 @@ writes some diagnostics about your computer.
 
     if len(args) != 0:
         parser.print_help() 
-        sys.exit(-1)
+        return -1
 
 
     diag(sys.stdout)
@@ -66,32 +66,21 @@ writes some diagnostics about your computer.
 def diag(out):    
 
     out.write("""
-Non-ASCII characters are handled differently and might fail to display
-correctly depending on the context and your computer settings.
-
-  Some sentences in different languages:
+Some sentences in different languages:
     
     Ännchen Müller machte große Augen.
     Cède à César les pâtes reçues.
     Tõesti, ma ütlen teile, see pole ükskõik.
 
-  Overview table with all accented characters:
+Overview table with all accented characters:
     
-          A E I O U   a e i o u            
-      ¨   Ä . Ï Ö Ü   ä ë ï ö ü
-      ~   Ã . . Õ .   ã . . õ .            
-      ´   Á É Í Ó Ú   á é í ó ú            
-      `   À È Ì Ò Ù   à è ì ò ù
-      ^   Â Ê Î Ô Û   â ê î ô û
+        A E I O U   a e i o u            
+    ¨   Ä . Ï Ö Ü   ä ë ï ö ü
+    ~   Ã . . Õ .   ã . . õ .            
+    ´   Á É Í Ó Ú   á é í ó ú            
+    `   À È Ì Ò Ù   à è ì ò ù
+    ^   Â Ê Î Ô Û   â ê î ô û
 """)
-    if False:
-        out.write("""
-  Graphic "box characters":
-""")
-        for e in ('cp850',):
-            fn = e+".txt"
-            for ln in file(fn).readlines():
-                out.write("    " + ln.decode(e))
     
     out.write("""
 Some system settings related to encodings:
@@ -108,12 +97,35 @@ Some system settings related to encodings:
         out.write(sys.stdout.encoding)
     except AttributeError:
         out.write("(undefined)")
+    out.write("\n    sys.stdin.encoding : ")
+    try:
+        out.write(sys.stdin.encoding)
+    except AttributeError:
+        out.write("(undefined)")
     out.write("\n")
+
+    out.write("""
+Miscellaneous system settings:
+""")
+    l = sys.modules.keys()
+    l.sort()
+    
+    out.write("modules: " + ' '.join(l)+"\n")
+
+##     rpt = console.report()
+##     rpt.addColumn(meth=lambda row: str(row[0]),
+##                   label="key",
+##                   width=12)
+##     rpt.addColumn(meth=lambda row: repr(row[1]),
+##                   label="value",
+##                   width=40)
+##     rpt.execute(d.items())    
     
 
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    sys.exit(main(sys.argv[1:]))
+    console.message("")
         
 

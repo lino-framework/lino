@@ -63,9 +63,9 @@ write to OUTFILE rather than FILE.pdf""",
     (options, args) = parser.parse_args(argv)
 
     if len(args) != 1:
-        print args
+        #print args
         parser.print_help() 
-        sys.exit(-1)
+        return -1
     
     inputfile = args[0]
     (root,ext) = os.path.splitext(inputfile)
@@ -84,5 +84,5 @@ write to OUTFILE rather than FILE.pdf""",
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    sys.exit(main(sys.argv[1:]))
 

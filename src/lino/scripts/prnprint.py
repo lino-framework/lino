@@ -56,7 +56,7 @@ write to SPOOLFILE rather than really printing.""",
 
     if len(args) == 0:
         parser.print_help() 
-        sys.exit(-1)
+        return -1
     
     for inputfile in args:
         d = winprn.Win32PrinterDocument(options.printerName,
@@ -68,5 +68,6 @@ write to SPOOLFILE rather than really printing.""",
     
         
 if __name__ == '__main__':
-    main()
+    #main()
+    sys.exit(main(sys.argv[1:]))
     

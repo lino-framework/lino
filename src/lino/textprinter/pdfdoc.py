@@ -27,6 +27,7 @@ from reportlab.lib.pagesizes import letter, A4
 
 from lino.textprinter.document import Document
 
+from lino.ui import console
 
 HACK_BOXCHARS = {
     
@@ -57,10 +58,6 @@ HACK_BOXCHARS = {
     u'\u255d': '+',
     }
 
-
-
-#UNICODE_HACK = True
-#UNICODE_HACK = False
 
 
 class Status:
@@ -124,7 +121,7 @@ class PdfDocument(Document):
         textobject = self.canvas.beginText()
         textobject.setTextOrigin(self.margin,
                                  self.pageHeight-(2*self.margin))
-        textobject.setFont("Courier", 10)
+        #textobject.setFont("Courier", 10)
         return textobject
         
     def onBeginPage(self):
@@ -150,8 +147,10 @@ class PdfDocument(Document):
             print e
             sys.exit(-1)
             
-    def onSetFont(self):
-        Document.onSetFont(self)
+##     def onSetFont(self):
+##         Document.onSetFont(self)
+
+    def prepareFont(self):
         if self.status.lpi is not None:
             self.status.leading = 72 / self.status.lpi
 
@@ -164,15 +163,19 @@ class PdfDocument(Document):
             psfontname += "-Oblique"
             
         self.textobject.setFont(psfontname,
-                                        self.status.size,
-                                        self.status.leading)
+                                self.status.size,
+                                self.status.leading)
+        
 
     def write(self,text):
 
+        if self.fontChanged:
+            self.prepareFont()
 
         for k,v in HACK_BOXCHARS.items():
             text = text.replace(k,v)
             
+        console.debug("write(%s)",repr(text))
         #text = text.encode("iso-8859-1","replace")
         try:
             text = text.encode("iso-8859-1","strict")

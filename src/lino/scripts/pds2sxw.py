@@ -42,7 +42,7 @@ is PDSFILE with extension %s.
 
     if len(args) != 1:
         parser.print_help() 
-        sys.exit(-1)
+        return -1
     ifname = args[0]
     #print ifname
     (basename,ext) = os.path.splitext(ifname)
@@ -66,9 +66,10 @@ is PDSFILE with extension %s.
 def main(argv):
     console.copyleft(name="Lino pds2sxw",
                      years='2004-2005')
-    pds2oo(TextDocument,argv)
+    return pds2oo(TextDocument,argv)
     
         
 if __name__ == '__main__':
-    g = main(sys.argv[1:])
+    #g = main(sys.argv[1:])
 
+    sys.exit(main(sys.argv[1:]))

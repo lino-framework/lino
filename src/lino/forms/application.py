@@ -108,10 +108,29 @@ class Application(Describable):
             s += " version " + self.version
         if self.author is not None:
             s += "Copyright (c) %s %s." % self.years, self.author
-        from lino import __copyright__, __credits__, __url__
+        from lino import __copyright__,  __url__
         s += "\n\n" + __copyright__
-        s += "\n\nCredits:\n" + __credits__
         s += "\n\nHomepage:\n" + __url__
+        s += "\n\nCredits:\n"
+        s += "Python %d.%d.%d %s\n" % sys.version_info[0:4]
+
+        if sys.modules.has_key('wx'):
+            wx = sys.modules['wx']
+            s += "wxPython " + wx.__version__ + "\n"
+    
+        if sys.modules.has_key('sqlite'):
+            sqlite = sys.modules['sqlite']
+            s += "PySQLLite " + sqlite.version + "\n"
+    
+        if sys.modules.has_key('reportlab'):
+            reportlab = sys.modules['reportlab']
+            s += "The Reportlab PDF generation library " + \
+                           reportlab.Version + "\n"
+
+        if sys.modules.has_key('win32print'):
+            win32print = sys.modules['win32print']
+            s += "Python Windows Extensions " + "\n"
+        
         return s
     
     def showConsole(self):

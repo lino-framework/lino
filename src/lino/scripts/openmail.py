@@ -19,13 +19,14 @@ from lino.timtools.mail import readmail, openmail
 def main(argv):
 	if len(argv) != 1:
 		print __doc__
-		sys.exit(-1)
+		return -1
 
 	msg = readmail(argv[0])
 
 	openmail(msg)
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    #main(sys.argv[1:])
     
+    sys.exit(main(sys.argv[1:]))
 
