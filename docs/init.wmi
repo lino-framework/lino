@@ -18,6 +18,7 @@ self.setMenu("""\
 overview
 	adamo
 	timtools
+	scripts
 	wui
 	webman
 	pds
@@ -25,9 +26,7 @@ faq
 links
 install
 	start
-news
-diary
-	history
+history
 """)
 
 def myLeftArea(page):
@@ -58,7 +57,7 @@ def myLeftArea(page):
 ## 		html += """<br><a href="%s">%s</a>""" % (child.getURL(page),
 ## 															  child.getTitle())
 
-	html += mod.menu.render_html(page)
+	html += mod.site.menu.render_html(page)
 ## 	for mi in mod.menu:
 ## 		html += "<br>"+ mi.render_html(page)
 	return html

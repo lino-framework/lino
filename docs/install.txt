@@ -13,11 +13,8 @@ Before installing
 Lino is in an early development stage.  And especially the release
 procedure through Internet is almost untested and will certainly not
 work out of the box.  But don't give up, there is hope: you can get
-free support from the project's author!
-
-So if you get locked, send me an e-mail, describing your problem.  I
-will do my best to help you.  And just don't forget that I am doing
-all this as a hobby or because I am crazy enough to believe it.
+free support from the project's author!  So if you get locked, send me
+an e-mail, describing your problem.  I will do my best to help you.
 
 
 Install Python
@@ -33,64 +30,10 @@ On Windows you can simply download and execute a binary installer:
    http://www.python.org/ftp/python/2.3.3/Python-2.3.3c1.exe
 
 
-Install a CVS client
---------------------
+Download Lino
+-------------
 
-Since there is no official release yet, I recommend using always the
-latest snapshot when playing with Lino.  By "snapshot" I mean a
-working copy on your computer, downloaded from the CVS repository at
-the SourceForge CVS server.
-
-You need a CVS client to do this.  You don't need to know much about
-CVS.  You are just going to use it to "checkout" Lino and to upgrade
-your local copy from time to time to get the newest Lino version.
-
-For most Windows user I recommend installing TortoiseCVS, an
-Open-Source project at SF.  Get it at
-http://tortoisecvs.sourceforge.net/.
-
-If you want to know more about accessing a CVS repository, see the
-general SourceForge documentation:
-http://sourceforge.net/cvs/?group_id=87016
-
-
-Get the sources
----------------
-
-When CVS is installed on your machine, you are ready to get your local
-copy of the Lino source tree.
-
-Basically you have to checkout a module `lino` from the project `lino`
-at the CVS server ``cvs.sourceforge.net``.
-
-Using TortoiseCVS:
-
-  Launch Windows Explorer, create an empty folder "snapshots" in the
-  root of your C: drive, then right-click on that folder and choose
-  "CVS checkout..."
-
-  Copy the following text to the "CVSROOT:" field::
-
-     :pserver:anonymous@cvs.sourceforge.net:/cvsroot/lino
-	  
-  In the field "Module:", type::
-  
-	  lino
-
-On a UNIX system you do something like::
-
-    INSTALLROOT=/opt
-    cd $INSTALLROOT
-    cvs -d:pserver:anonymous@cvs-pserver.sf.net:443/cvsroot/lino login
-    cvs -d:pserver:anonymous@cvs-pserver.sf.net:443/cvsroot/lino co lino
-    chmod -R a+r lino
-
-On Windows with Cygwin you would do::
-
-   md c:\snapshot\lino
-   cd c:\snapshot\lino
-   cvs -d:pserver:anonymous@cvs-pserver.sf.net:443/cvsroot/lino login
-   cvs -d:pserver:anonymous@cvs-pserver.sf.net:443/cvsroot/lino co lino
+See `Downloading Lino <download.html>`_.
 
 
 Add Lino to your Python path
@@ -129,6 +72,7 @@ Or you just set the PYTHONPATH environment variable to
   the installed Python version. Now I simply do::
 
     SET PYTHONPATH=s:/py-site-packages
+	 
 
 Install other Python packages
 -----------------------------
@@ -145,6 +89,8 @@ up-to-date.
 - `PySQLite <http://pysqlite.sourceforge.net/>`_
   
 - `docutils <http://docutils.sourceforge.net/>`_
+
+- `Twisted <http://www.twistedmatrix.com/>`_
 
 - `Medusa <http://www.amk.ca/python/code/medusa.html>`_ web server.
 
@@ -235,24 +181,5 @@ UNIX system) should be the only connection point.
 
 
 
-Getting up-to-date versions
----------------------------
-
-Later you can always download the latest snapshot by issuing the
-command::
-
-    cvs update -dP
-
-from the directory containing your local copy.
-
-
-Binary releases
----------------
-
-Currently there is only a quite old binary release of the `TIM Tools
-<timtools.html>`_ available for download 
-`here
-<http://sourceforge.net/project/showfiles.php?group_id=87016&release_id=200339>`_.
-Don't waste your time with this.
 
 	 
