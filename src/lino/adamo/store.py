@@ -19,7 +19,7 @@
 from time import time
 
 from lino.misc.descr import Describable
-from lino.adamo.exceptions import DataVeto
+from lino.adamo.exceptions import DataVeto, InvalidRequestError
 from lino.adamo.datasource import Datasource
 from lino.adamo.query import DataColumnList
 
@@ -194,7 +194,8 @@ class Store:
 
     def commit(self):
         ""
-        assert len(self._lockedRows) == 0
+        if len(self._lockedRows) > 0:
+            raise InvalidRequestError("unlock first, then commit!")
 ##         for row in self._lockedRows:
 ##             row.writeToStore()
             

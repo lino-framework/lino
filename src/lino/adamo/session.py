@@ -159,8 +159,9 @@ class Session(Context):
         for lang_id in langs.split():
             self._babelLangs.append(self.db.findBabelLang(lang_id))
         if self._babelLangs[0].index == -1:
-            raise "First item of %s must be one of %s" % (
-                repr(langs), repr(self.db.getBabelLangs()))
+            raise InvalidRequestError(
+                "First item of %s must be one of %s" % (
+                repr(langs), repr(self.db.getBabelLangs())))
 
     def getBabelLangs(self):
         return self._babelLangs

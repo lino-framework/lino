@@ -21,18 +21,16 @@
 """
 20040513
 
+20050228 : setBabelLangs() while rows are locked is no longer
+supported.
 
 
 """
 
 from lino.misc.tsttools import TestCase, main
 from lino.adamo import *
+#from lino.adamo.exceptions import InvalidRequestError
 from lino import adamo
-
-## from lino.adamo.rowattrs import Field, BabelField, Pointer, \
-##    RowAttribute
-
-# from lino.adamo.table import Table
 
 
 class Nations(Table):
@@ -44,14 +42,6 @@ class Nations(Table):
         self.addField('curr',STRING)
         self.addField('isocode',STRING)
 
-##  def validateRow(self,row):
-##      if len(row.id) != 2:
-##          return "id must be 2 chars"
-##          #raise DataVeto("Nation.id must be 2 chars")
-        
-##  def getRowLabel(self,row):
-##      return row.name_en
-        
 class Cities(Table):
     
     def init(self):
@@ -132,10 +122,9 @@ class Case(TestCase):
         
         
         be = sess.query(Nations).peek('be')
-        #print ctx._db._connection.stopDump()
-        #print be._values['name']
+
         
-        sess.query(Cities).appendRow(nation=be,name="Eupen")
+        eupen = sess.query(Cities).appendRow(nation=be,name="Eupen")
         
         sess.setBabelLangs('de')
         self.assertEqual(be.name,'Belgien')
@@ -148,6 +137,27 @@ class Case(TestCase):
         
         sess.setBabelLangs('en de')
         self.assertEqual(be.name,['Belgium','Belgien'])
+
+        sess.setBabelLangs('en fr')
+        self.assertEqual(be.name,['Belgium','Belgique'])
+
+        sess.setBabelLangs('fr de')
+        self.assertEqual(be.name,['Belgique','Belgien'])
+
+        try:
+            sess.setBabelLangs('xx')
+            self.fail("failed to raise InvalidRequestError")
+        except InvalidRequestError,e:
+            pass
+        
+        if eupen.lock():
+            try:
+                sess.setBabelLangs('de')
+                self.fail("failed to raise InvalidRequestError")
+            except InvalidRequestError,e:
+                pass
+            eupen.unlock()
+        
         
         sess.shutdown()
 

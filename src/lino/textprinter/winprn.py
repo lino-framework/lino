@@ -165,7 +165,10 @@ class Win32PrinterDocument(Document):
 ##         except pywintypes.error,e:
 ##             raise PrinterNotReady
 
-        self.dc.StartDoc(jobName,spoolFile)
+        try:
+            self.dc.StartDoc(jobName,spoolFile)
+        except win32ui.error,e:
+            raise PrinterNotReady
         self.dc.SetMapMode(win32con.MM_TWIPS)
         self.org = self.dc.GetWindowOrg()
         self.ext = self.dc.GetWindowExt()
