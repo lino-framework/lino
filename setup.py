@@ -1,4 +1,10 @@
 # setup.py
+raise NotImplementedError
+"""
+
+don't use setup.py. Just checkout the latest source to some directory and add it to your PYTHONPATH.
+
+"""
 from distutils.core import setup
 import py2exe
 import glob

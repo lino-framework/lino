@@ -8,16 +8,16 @@ create thumbnails and web-sized images if necessary
   
 New naming scheme : the separate "thumbnails" tree used by publish is
 replaced with the more "normal" method using "_tn" suffix.
-
-  
   
 """
 
 import os
+import sys
 
 from PIL import Image
 
-from lino.misc.console import getSystemConsole
+from lino import copyleft
+from lino.misc import console
 
 class Size:
 	def __init__(self,suffix,size):
@@ -31,11 +31,11 @@ SIZES = [ #Size("tn",(128,128)),
 #EXTENSIONS = (".jpg",".png")
 EXTENSIONS = (".jpg")
 
-def make_tn(path,sizes,console):
+def make_tn(path,sizes):
 	for fn in os.listdir(path):
 		pfn = os.path.join(path,fn)
 		if os.path.isdir(pfn):
-			make_tn(pfn,sizes,console)
+			make_tn(pfn,sizes)
 		else:
 			(root,ext) = os.path.splitext(pfn)
 			#(root,ext) = os.path.splitext(fn)
@@ -60,41 +60,28 @@ def make_tn(path,sizes,console):
 			
 				
 
+def main(argv):
+
+    parser = console.getOptionParser(
+        usage="usage: %prog [options] DIR1 [DIR2 ...]",
+        description="""\
+where DIR1 DIR2... are the root directories to be processed.
+Subdirectories of these directories will automatically be
+processed.
+
+""")
+
+    (options, args) = parser.parse_args(argv)
+
+
+    if len(args) == 0:
+        parser.print_help() 
+        return -1
+    
+	for DIR in args:
+		make_tn(DIR,SIZES)
 
 if __name__ == "__main__":
-	import sys
-	from lino import copyleft
-	
-	print "Lino maketn"
-	print copyleft(year='2002-2004',author='Luc Saffre')
-	
-
-	import getopt
-	try:
-		opts, args = getopt.getopt(sys.argv[1:],
-											"h?qb",
-											["help", "quiet", "batch"])
-
-	except getopt.GetoptError:
-		print __doc__
-		sys.exit(-1)
-
-
-	if len(args) == 0:
-		print __doc__
-		sys.exit(-1)
-
-	console = getSystemConsole(verbose=True,batch=False,debug=False)
-
-	for o, a in opts:
-		if o in ("-?", "-h", "--help"):
-			print __doc__
-			sys.exit()
-		if o in ("-q", "--quiet"):
-			console.set(verbose=False)
-		if o in ("-b", "--batch"):
-			console.set(batch=True)
-		
-
-	for DIR in args:
-		make_tn(DIR,SIZES,console)
+    print copyleft(name="Lino/maketn",year='2002-2004')
+    sys.exit(main(sys.argv[1:]))
+    

@@ -22,7 +22,7 @@ class Case(TestCase):
 
 
 	def test01(self):
-		self.sess.startDump(verbose=True)
+		self.sess.startDump(verbosity=1)
 		frm = self.sess.openForm('login')
 		self.assertEqual(frm.getFormName(),"login")
 		self.assertEqual(frm.password,None)

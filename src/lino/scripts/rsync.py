@@ -19,343 +19,343 @@ import os, os.path, shutil, glob, re, sys, getopt, stat, string
 
 
 try:
-	import win32file
+    import win32file
 except:
-	win32file = None
+    win32file = None
 
 class Cookie:
-	def __init__(self):
-		self.sink_root = ""
-		self.target_root = ""
-		self.quiet = 0
-		self.recursive = 0
-		self.relative = 0
-		self.dry_run = 0
-		self.time = 0
-		self.update = 0
-		self.cvs_ignore = 0
-		self.ignore_time = 0
-		self.delete = 0
-		self.delete_excluded = 0
-		self.size_only = 0
-		self.modify_window = 2
-		self.existing = 0
-		self.filters = []
-		self.case_sensitivity = 0
-		if os.name == "nt":
-			self.case_sensitivity = re.I
+    def __init__(self):
+        self.sink_root = ""
+        self.target_root = ""
+        self.quiet = 0
+        self.recursive = 0
+        self.relative = 0
+        self.dry_run = 0
+        self.time = 0
+        self.update = 0
+        self.cvs_ignore = 0
+        self.ignore_time = 0
+        self.delete = 0
+        self.delete_excluded = 0
+        self.size_only = 0
+        self.modify_window = 2
+        self.existing = 0
+        self.filters = []
+        self.case_sensitivity = 0
+        if os.name == "nt":
+            self.case_sensitivity = re.I
 
 def visit(cookie, dirname, names):
-	"""Copy files names from sink_root + (dirname - sink_root) to target_root + (dirname - sink_root)"""
-	if os.path.split(cookie.sink_root)[1]: # Should be tested with (C:\Cvs -> C:\)! (C:\Archives\MyDatas\UltraEdit -> C:\Archives\MyDatas) (Cvs -> "")! (Archives\MyDatas\UltraEdit -> Archives\MyDatas) (\Cvs -> \)! (\Archives\MyDatas\UltraEdit -> Archives\MyDatas)
-		dirname = dirname[len(cookie.sink_root) + 1:]
-	else:
-		dirname = dirname[len(cookie.sink_root):]
-	target_dir = os.path.join(cookie.target_root, dirname)
-	if not os.path.isdir(target_dir):
-		makeDir(cookie, target_dir)
-	sink_dir = os.path.join(cookie.sink_root, dirname)
+    """Copy files names from sink_root + (dirname - sink_root) to target_root + (dirname - sink_root)"""
+    if os.path.split(cookie.sink_root)[1]: # Should be tested with (C:\Cvs -> C:\)! (C:\Archives\MyDatas\UltraEdit -> C:\Archives\MyDatas) (Cvs -> "")! (Archives\MyDatas\UltraEdit -> Archives\MyDatas) (\Cvs -> \)! (\Archives\MyDatas\UltraEdit -> Archives\MyDatas)
+        dirname = dirname[len(cookie.sink_root) + 1:]
+    else:
+        dirname = dirname[len(cookie.sink_root):]
+    target_dir = os.path.join(cookie.target_root, dirname)
+    if not os.path.isdir(target_dir):
+        makeDir(cookie, target_dir)
+    sink_dir = os.path.join(cookie.sink_root, dirname)
 
-	filters = []
-	if cookie.cvs_ignore:
-		ignore = os.path.join(sink_dir, ".cvsignore")
-		if os.path.isfile(ignore):
-			filters = convertPatterns(ignore, "-")
-	filters = filters + cookie.filters
+    filters = []
+    if cookie.cvs_ignore:
+        ignore = os.path.join(sink_dir, ".cvsignore")
+        if os.path.isfile(ignore):
+            filters = convertPatterns(ignore, "-")
+    filters = filters + cookie.filters
 
-	if filters:
-		# filter sink files (names):
-		name_index = 0
-		while name_index < len(names):
-			name = names[name_index]
-			path = os.path.join(dirname, name)
-			path = convertPath(path)
-			if os.path.isdir(os.path.join(sink_dir, name)):
-				path = path + "/"
-			for filter in filters:
-				if re.search(filter[1], path, cookie.case_sensitivity):
-					if filter[0] == '-':
-						sink = os.path.join(sink_dir, name)
-						if cookie.delete_excluded:
-							if os.path.isfile(sink):
-								removeFile(cookie, sink)
-							elif os.path.isdir(sink):
-								removeDir(cookie, sink)
-							else:
-								logError("Sink %s is neither a file nor a folder (skip removal)" % sink)
-						del(names[name_index])
-						name_index = name_index - 1
-					elif filter[0] == '+':
-						break
-			name_index = name_index + 1
+    if filters:
+        # filter sink files (names):
+        name_index = 0
+        while name_index < len(names):
+            name = names[name_index]
+            path = os.path.join(dirname, name)
+            path = convertPath(path)
+            if os.path.isdir(os.path.join(sink_dir, name)):
+                path = path + "/"
+            for filter in filters:
+                if re.search(filter[1], path, cookie.case_sensitivity):
+                    if filter[0] == '-':
+                        sink = os.path.join(sink_dir, name)
+                        if cookie.delete_excluded:
+                            if os.path.isfile(sink):
+                                removeFile(cookie, sink)
+                            elif os.path.isdir(sink):
+                                removeDir(cookie, sink)
+                            else:
+                                logError("Sink %s is neither a file nor a folder (skip removal)" % sink)
+                        del(names[name_index])
+                        name_index = name_index - 1
+                    elif filter[0] == '+':
+                        break
+            name_index = name_index + 1
 
-	if cookie.delete and os.path.isdir(target_dir):
-		# Delete files and folder in target not present in filtered sink.
-		for name in os.listdir(target_dir):
-			if not name in names:
-				target = os.path.join(target_dir, name)
-				if os.path.isfile(target):
-					removeFile(cookie, target)
-				elif os.path.isdir(target):
-					removeDir(cookie, target)
-				else:
-					pass
+    if cookie.delete and os.path.isdir(target_dir):
+        # Delete files and folder in target not present in filtered sink.
+        for name in os.listdir(target_dir):
+            if not name in names:
+                target = os.path.join(target_dir, name)
+                if os.path.isfile(target):
+                    removeFile(cookie, target)
+                elif os.path.isdir(target):
+                    removeDir(cookie, target)
+                else:
+                    pass
 
-	for name in names:
-		# Copy files and folder from sink to target.
-		sink = os.path.join(sink_dir, name)
-		#print sink
-		target = os.path.join(target_dir, name)
-		if os.path.exists(target):
-			# When target already exit:
-			if os.path.isfile(sink):
-				if os.path.isfile(target):
-					# file-file
-					if shouldUpdate(cookie, sink, target):
-						updateFile(cookie, sink, target)
-				elif os.path.isdir(target):
-					# file-folder
-					removeDir(cookie, target)
-					copyFile(cookie, sink, target)
-				else:
-					# file-???
-					logError("Target %s is neither a file nor folder (skip update)" % sink)
+    for name in names:
+        # Copy files and folder from sink to target.
+        sink = os.path.join(sink_dir, name)
+        #print sink
+        target = os.path.join(target_dir, name)
+        if os.path.exists(target):
+            # When target already exit:
+            if os.path.isfile(sink):
+                if os.path.isfile(target):
+                    # file-file
+                    if shouldUpdate(cookie, sink, target):
+                        updateFile(cookie, sink, target)
+                elif os.path.isdir(target):
+                    # file-folder
+                    removeDir(cookie, target)
+                    copyFile(cookie, sink, target)
+                else:
+                    # file-???
+                    logError("Target %s is neither a file nor folder (skip update)" % sink)
 
-			elif os.path.isdir(sink):
-				if os.path.isfile(target):
-					# folder-file
-					removeFile(cookie, target)
-					makeDir(cookie, target)
-			else:
-				# ???-xxx
-				logError("Sink %s is neither a file nor a folder (skip update)" % sink)
+            elif os.path.isdir(sink):
+                if os.path.isfile(target):
+                    # folder-file
+                    removeFile(cookie, target)
+                    makeDir(cookie, target)
+            else:
+                # ???-xxx
+                logError("Sink %s is neither a file nor a folder (skip update)" % sink)
 
-		elif not cookie.existing:
-			# When target dont exist:
-			if os.path.isfile(sink):
-				# file
-				copyFile(cookie, sink, target)
-			elif os.path.isdir(sink):
-				# folder
-				makeDir(cookie, target)
-			else:
-				logError("Sink %s is neither a file nor a folder (skip update)" % sink)
+        elif not cookie.existing:
+            # When target dont exist:
+            if os.path.isfile(sink):
+                # file
+                copyFile(cookie, sink, target)
+            elif os.path.isdir(sink):
+                # folder
+                makeDir(cookie, target)
+            else:
+                logError("Sink %s is neither a file nor a folder (skip update)" % sink)
 
 
 def log(cookie, message):
-	if not cookie.quiet:
-		try:
-			print message
-		except UnicodeEncodeError:
-			print message.encode("utf8")
+    if not cookie.quiet:
+        try:
+            print message
+        except UnicodeEncodeError:
+            print message.encode("utf8")
 
 
 def logError(message):
-	try:
-		sys.stderr.write(message + "\n")
-	except UnicodeEncodeError:
-		sys.stderr.write(message.encode("utf8")+"\n")
+    try:
+        sys.stderr.write(message + "\n")
+    except UnicodeEncodeError:
+        sys.stderr.write(message.encode("utf8")+"\n")
 
 
 def shouldUpdate(cookie, sink, target):
-	try:
-		sink_st = os.stat(sink)
-		sink_sz = sink_st.st_size
-		sink_mt = sink_st.st_mtime
-	except:
-		logError("Fail to retrieve information about sink %s (skip update)" % sink)
-		return 0
+    try:
+        sink_st = os.stat(sink)
+        sink_sz = sink_st.st_size
+        sink_mt = sink_st.st_mtime
+    except:
+        logError("Fail to retrieve information about sink %s (skip update)" % sink)
+        return 0
 
-	try:
-		target_st = os.stat(target)
-		target_sz = target_st.st_size
-		target_mt = target_st.st_mtime
-	except:
-		logError("Fail to retrieve information about target %s (skip update)" % target)
-		return 0
+    try:
+        target_st = os.stat(target)
+        target_sz = target_st.st_size
+        target_mt = target_st.st_mtime
+    except:
+        logError("Fail to retrieve information about target %s (skip update)" % target)
+        return 0
 
-	if cookie.update:
-		return target_mt < sink_mt - cookie.modify_window
+    if cookie.update:
+        return target_mt < sink_mt - cookie.modify_window
 
-	if cookie.ignore_time:
-		return 1
+    if cookie.ignore_time:
+        return 1
 
-	if target_sz != sink_sz:
-		return 1
+    if target_sz != sink_sz:
+        return 1
 
-	if cookie.size_only:
-		return 0
+    if cookie.size_only:
+        return 0
 
-	return abs(target_mt - sink_mt) > cookie.modify_window
+    return abs(target_mt - sink_mt) > cookie.modify_window
 
 
 def copyFile(cookie, sink, target):
-	log(cookie, "copy: %s to: %s" % (sink, target))
-	if not cookie.dry_run:
-		try:
-			shutil.copyfile(sink, target)
-		except:
-			logError("Fail to copy %s" % sink)
+    log(cookie, "copy: %s to: %s" % (sink, target))
+    if not cookie.dry_run:
+        try:
+            shutil.copyfile(sink, target)
+        except:
+            logError("Fail to copy %s" % sink)
 
-		if cookie.time:
-			try:
-				s = os.stat(sink)
-				os.utime(target, (s.st_atime, s.st_mtime));
-			except:
-				logError("Fail to copy timestamp of %s" % sink)
+        if cookie.time:
+            try:
+                s = os.stat(sink)
+                os.utime(target, (s.st_atime, s.st_mtime));
+            except:
+                logError("Fail to copy timestamp of %s" % sink)
 
 
 def updateFile(cookie, sink, target):
-	log(cookie, "update: %s to: %s" % (sink, target))
-	if not cookie.dry_run:
-		# Read only and hidden and system files can not be overridden.
-		try:
-			try:
-				if win32file:
-					filemode = win32file.GetFileAttributesW(target)
-					win32file.SetFileAttributesW(target, filemode & ~win32file.FILE_ATTRIBUTE_READONLY & ~win32file.FILE_ATTRIBUTE_HIDDEN & ~win32file.FILE_ATTRIBUTE_SYSTEM)
-				else:
-					os.chmod(target, stat.S_IWUSR)
-			except:
-				#logError("Fail to allow override of %s" % target)
-				pass
+    log(cookie, "update: %s to: %s" % (sink, target))
+    if not cookie.dry_run:
+        # Read only and hidden and system files can not be overridden.
+        try:
+            try:
+                if win32file:
+                    filemode = win32file.GetFileAttributesW(target)
+                    win32file.SetFileAttributesW(target, filemode & ~win32file.FILE_ATTRIBUTE_READONLY & ~win32file.FILE_ATTRIBUTE_HIDDEN & ~win32file.FILE_ATTRIBUTE_SYSTEM)
+                else:
+                    os.chmod(target, stat.S_IWUSR)
+            except:
+                #logError("Fail to allow override of %s" % target)
+                pass
 
-			shutil.copyfile(sink, target)
-			if cookie.time:
-				try:
-					s = os.stat(sink)
-					os.utime(target, (s.st_atime, s.st_mtime));
-				except:
-					logError("Fail to copy timestamp of %s" % sink) # The utime api of the 2.3 version of python is not unicode compliant.
-		except:
-			logError("Fail to override %s" % sink)
+            shutil.copyfile(sink, target)
+            if cookie.time:
+                try:
+                    s = os.stat(sink)
+                    os.utime(target, (s.st_atime, s.st_mtime));
+                except:
+                    logError("Fail to copy timestamp of %s" % sink) # The utime api of the 2.3 version of python is not unicode compliant.
+        except:
+            logError("Fail to override %s" % sink)
 
-		if win32file:
-			win32file.SetFileAttributesW(target, filemode)
+        if win32file:
+            win32file.SetFileAttributesW(target, filemode)
 
 
 def removeFile(cookie, target):
-	# Read only files could not be deleted.
-	log(cookie, "remove: %s" % target)
-	if not cookie.dry_run:
-		try:
-			try:
-				if win32file:
-					filemode = win32file.GetFileAttributesW(target)
-					win32file.SetFileAttributesW(target, filemode & ~win32file.FILE_ATTRIBUTE_READONLY & ~win32file.FILE_ATTRIBUTE_HIDDEN & ~win32file.FILE_ATTRIBUTE_SYSTEM)
-				else:
-					os.chmod(target, stat.S_IWUSR)
-			except:
-				#logError("Fail to allow removal of %s" % target)
-				pass
+    # Read only files could not be deleted.
+    log(cookie, "remove: %s" % target)
+    if not cookie.dry_run:
+        try:
+            try:
+                if win32file:
+                    filemode = win32file.GetFileAttributesW(target)
+                    win32file.SetFileAttributesW(target, filemode & ~win32file.FILE_ATTRIBUTE_READONLY & ~win32file.FILE_ATTRIBUTE_HIDDEN & ~win32file.FILE_ATTRIBUTE_SYSTEM)
+                else:
+                    os.chmod(target, stat.S_IWUSR)
+            except:
+                #logError("Fail to allow removal of %s" % target)
+                pass
 
-			os.remove(target)
-		except:
-			logError("Fail to remove %s" % target)
+            os.remove(target)
+        except:
+            logError("Fail to remove %s" % target)
 
 
 
 def makeDir(cookie, target):
-	log(cookie, "make dir: %s" % target)
-	if not cookie.dry_run:
-		try:
-			os.makedirs(target)
-		except:
-			logError("Fail to make dir %s" % target)
+    log(cookie, "make dir: %s" % target)
+    if not cookie.dry_run:
+        try:
+            os.makedirs(target)
+        except:
+            logError("Fail to make dir %s" % target)
 
 
 def removeDir(cookie, target):
-	# Read only directory could not be deleted.
-	log(cookie, "remove dir: %s" % target)
-	if not cookie.dry_run:
-		try:
-			# 20041129 why ignore errors?
-			# shutil.rmtree(target,True)
-			shutil.rmtree(target) #, True)
-		except Exception,e:
-			logError("Fail to remove dir %s : %s" % (target,str(e)))
+    # Read only directory could not be deleted.
+    log(cookie, "remove dir: %s" % target)
+    if not cookie.dry_run:
+        try:
+            # 20041129 why ignore errors?
+            # shutil.rmtree(target,True)
+            shutil.rmtree(target) #, True)
+        except Exception,e:
+            logError("Fail to remove dir %s : %s" % (target,str(e)))
 
 
 def convertPath(path):
-	# Convert windows, mac path to unix version.
-	separator = os.path.normpath("/")
-	if separator != "/":
-		path = re.sub(re.escape(separator), "/", path)
+    # Convert windows, mac path to unix version.
+    separator = os.path.normpath("/")
+    if separator != "/":
+        path = re.sub(re.escape(separator), "/", path)
 
-	# Help file, folder pattern to express that it should match the all file or folder name.
-	path = "/" + path
-	return path
+    # Help file, folder pattern to express that it should match the all file or folder name.
+    path = "/" + path
+    return path
 
 
 def convertPattern(pattern, sign):
-	"""Convert a rsync pattern that match against a path to a filter that match against a converted path."""
+    """Convert a rsync pattern that match against a path to a filter that match against a converted path."""
 
-	# Check for include vs exclude patterns.
-	if pattern[:2] == "+ ":
-		pattern = pattern[2:]
-		sign = "+"
-	elif pattern[:2] == "- ":
-		pattern = pattern[2:]
-		sign = "-"
+    # Check for include vs exclude patterns.
+    if pattern[:2] == "+ ":
+        pattern = pattern[2:]
+        sign = "+"
+    elif pattern[:2] == "- ":
+        pattern = pattern[2:]
+        sign = "-"
 
-	# Express windows, mac patterns in unix patterns (rsync.py extension).
-	separator = os.path.normpath("/")
-	if separator != "/":
-		pattern = re.sub(re.escape(separator), "/", pattern)
+    # Express windows, mac patterns in unix patterns (rsync.py extension).
+    separator = os.path.normpath("/")
+    if separator != "/":
+        pattern = re.sub(re.escape(separator), "/", pattern)
 
-	# If pattern contains '/' it should match from the start.
-	temp = pattern
-	if pattern[0] == "/":
-		pattern = pattern[1:]
-	if temp[-1] == "/":
-		temp = temp[:-1]
+    # If pattern contains '/' it should match from the start.
+    temp = pattern
+    if pattern[0] == "/":
+        pattern = pattern[1:]
+    if temp[-1] == "/":
+        temp = temp[:-1]
 
-	# Convert pattern rules: ** * ? to regexp rules.
-	pattern = re.escape(pattern)
-	pattern = string.replace(pattern, "\\*\\*", ".*")
-	pattern = string.replace(pattern, "\\*", "[^/]*")
-	pattern = string.replace(pattern, "\\*", ".*")
+    # Convert pattern rules: ** * ? to regexp rules.
+    pattern = re.escape(pattern)
+    pattern = string.replace(pattern, "\\*\\*", ".*")
+    pattern = string.replace(pattern, "\\*", "[^/]*")
+    pattern = string.replace(pattern, "\\*", ".*")
 
-	if "/" in temp:
-		# If pattern contains '/' it should match from the start.
-		pattern = "^\\/" + pattern
-	else:
-		# Else the pattern should match the all file or folder name.
-		pattern = "\\/" + pattern
+    if "/" in temp:
+        # If pattern contains '/' it should match from the start.
+        pattern = "^\\/" + pattern
+    else:
+        # Else the pattern should match the all file or folder name.
+        pattern = "\\/" + pattern
 
-	if pattern[-2:] != "\\/" and pattern[-2:] != ".*":
-		# File patterns should match also folders.
-		pattern = pattern + "\\/?"
+    if pattern[-2:] != "\\/" and pattern[-2:] != ".*":
+        # File patterns should match also folders.
+        pattern = pattern + "\\/?"
 
-	# Pattern should match till the end.
-	pattern = pattern + "$"
-	return (sign, pattern)
+    # Pattern should match till the end.
+    pattern = pattern + "$"
+    return (sign, pattern)
 
 
 def convertPatterns(path, sign):
-	"""Read the files for pattern and return a vector of filters"""
-	filters = []
-	f = open(path, "r")
-	while 1:
-		pattern = f.readline()
-		if not pattern:
-			break
-		if pattern[-1] == "\n":
-			pattern = pattern[:-1]
+    """Read the files for pattern and return a vector of filters"""
+    filters = []
+    f = open(path, "r")
+    while 1:
+        pattern = f.readline()
+        if not pattern:
+            break
+        if pattern[-1] == "\n":
+            pattern = pattern[:-1]
 
-		if re.match("[\t ]*$", pattern):
-			continue
-		if pattern[0] == "#":
-			continue
-		filters = filters + [convertPattern(pattern, sign)]
-	f.close()
-	return filters
+        if re.match("[\t ]*$", pattern):
+            continue
+        if pattern[0] == "#":
+            continue
+        filters = filters + [convertPattern(pattern, sign)]
+    f.close()
+    return filters
 
 
 def printUsage():
-	"""Print the help string that should printed by rsync.py -h"""
-	print "usage: rsync.py [options] source target"
-	print """
+    """Print the help string that should printed by rsync.py -h"""
+    print "usage: rsync.py [options] source target"
+    print """
  -q, --quiet              decrease verbosity
  -r, --recursive          recurse into directories
  -R, --relative           use relative path names
@@ -383,113 +383,113 @@ Send an email to vivian@vdesmedt.com for comments and bug reports."""
 
 
 def printVersion():
-	print "rsync.py version 1.0.8"
+    print "rsync.py version 1.0.8"
 
 
 def main(argv):
-	cookie = Cookie()
+    cookie = Cookie()
 
-	opts, args = getopt.getopt(argv[1:], "qrRntuCIh", ["quiet", "recursive", "relative", "dry-run", "times", "update", "cvs-ignore", "ignore-times", "help", "delete", "delete-excluded", "existing", "size-only", "modify-window=", "exclude=", "exclude-from=", "include=", "include-from=", "version"])
-	for o, v in opts:
-		if o in ["-q", "--quiet"]:
-			cookie.quiet = 1
-		elif o in ["-r", "--recursive"]:
-			cookie.recursive = 1
-		elif o in ["-R", "--relative"]:
-			cookie.relative = 1
-		elif o in ["-n", "--dry-run"]:
-			cookie.dry_run = 1
-		elif o in ["-t", "--times"]:
-			cookie.time = 1
-		elif o in ["-u", "--update"]:
-			cookie.update = 1
-		elif o in ["-C", "--cvs-ignore"]:
-			cookie.cvs_ignore = 1
-		elif o in ["-I", "--ignore-time"]:
-			cookie.ignore_time = 1
-		elif o == "--delete":
-			cookie.delete = 1
-		elif o == "--delete-excluded":
-			cookie.delete = 1
-			cookie.delete_excluded = 1
-		elif o == "--size-only":
-			cookie.size_only = 1
-		elif o == "--modify-window":
-			cookie.modify_window = int(v)
-		elif o == "--existing":
-			cookie.existing = 1
-		elif o == "--exclude":
-			cookie.filters = cookie.filters + [convertPattern(v, "-")]
-		elif o == "--exclude-from":
-			cookie.filters = cookie.filters + convertPatterns(v, "-")
-		elif o == "--include":
-			cookie.filters = cookie.filters + [convertPattern(v, "+")]
-		elif o == "--include-from":
-			cookie.filters = cookie.filters + convertPatterns(v, "+")
-		elif o == "--version":
-			printVersion()
-			return 0
-		elif o in ["-h", "--help"]:
-			printUsage()
-			return 0
-		else:
-			raise "unrecognized option " + str(o)
+    opts, args = getopt.getopt(argv[1:], "qrRntuCIh", ["quiet", "recursive", "relative", "dry-run", "times", "update", "cvs-ignore", "ignore-times", "help", "delete", "delete-excluded", "existing", "size-only", "modify-window=", "exclude=", "exclude-from=", "include=", "include-from=", "version"])
+    for o, v in opts:
+        if o in ["-q", "--quiet"]:
+            cookie.quiet = 1
+        elif o in ["-r", "--recursive"]:
+            cookie.recursive = 1
+        elif o in ["-R", "--relative"]:
+            cookie.relative = 1
+        elif o in ["-n", "--dry-run"]:
+            cookie.dry_run = 1
+        elif o in ["-t", "--times"]:
+            cookie.time = 1
+        elif o in ["-u", "--update"]:
+            cookie.update = 1
+        elif o in ["-C", "--cvs-ignore"]:
+            cookie.cvs_ignore = 1
+        elif o in ["-I", "--ignore-time"]:
+            cookie.ignore_time = 1
+        elif o == "--delete":
+            cookie.delete = 1
+        elif o == "--delete-excluded":
+            cookie.delete = 1
+            cookie.delete_excluded = 1
+        elif o == "--size-only":
+            cookie.size_only = 1
+        elif o == "--modify-window":
+            cookie.modify_window = int(v)
+        elif o == "--existing":
+            cookie.existing = 1
+        elif o == "--exclude":
+            cookie.filters = cookie.filters + [convertPattern(v, "-")]
+        elif o == "--exclude-from":
+            cookie.filters = cookie.filters + convertPatterns(v, "-")
+        elif o == "--include":
+            cookie.filters = cookie.filters + [convertPattern(v, "+")]
+        elif o == "--include-from":
+            cookie.filters = cookie.filters + convertPatterns(v, "+")
+        elif o == "--version":
+            printVersion()
+            return 0
+        elif o in ["-h", "--help"]:
+            printUsage()
+            return 0
+        else:
+            raise "unrecognized option " + str(o)
 
-	if len(args) <= 1:
-		printUsage()
-		return 1
+    if len(args) <= 1:
+        printUsage()
+        return 1
 
-	#print cookie.filters
+    #print cookie.filters
 
-	target_root = args[1]
-	try: # In order to allow compatibility below 2.3.
-		pass
-		if os.path.__dict__.has_key("supports_unicode_filenames") and os.path.supports_unicode_filenames:
-			target_root = unicode(target_root, sys.getfilesystemencoding())
-	finally:
-		cookie.target_root = target_root
+    target_root = args[1]
+    try: # In order to allow compatibility below 2.3.
+        pass
+        if os.path.__dict__.has_key("supports_unicode_filenames") and os.path.supports_unicode_filenames:
+            target_root = unicode(target_root, sys.getfilesystemencoding())
+    finally:
+        cookie.target_root = target_root
 
-	sinks = glob.glob(args[0])
-	if not sinks:
-		return 0
+    sinks = glob.glob(args[0])
+    if not sinks:
+        return 0
 
-	sink_families = {}
-	for sink in sinks:
-		try: # In order to allow compatibility below 2.3.
-			if os.path.__dict__.has_key("supports_unicode_filenames") and os.path.supports_unicode_filenames:
-				sink = unicode(sink, sys.getfilesystemencoding())
-		except:
-			pass
-		sink_name = ""
-		sink_root = sink
-		while not sink_name:
-			sink_root, sink_name = os.path.split(sink_root)
-		if not sink_families.has_key(sink_root):
-			sink_families[sink_root] = []
-		sink_families[sink_root] = sink_families[sink_root] + [sink_name]
+    sink_families = {}
+    for sink in sinks:
+        try: # In order to allow compatibility below 2.3.
+            if os.path.__dict__.has_key("supports_unicode_filenames") and os.path.supports_unicode_filenames:
+                sink = unicode(sink, sys.getfilesystemencoding())
+        except:
+            pass
+        sink_name = ""
+        sink_root = sink
+        while not sink_name:
+            sink_root, sink_name = os.path.split(sink_root)
+        if not sink_families.has_key(sink_root):
+            sink_families[sink_root] = []
+        sink_families[sink_root] = sink_families[sink_root] + [sink_name]
 
-	for sink_root in sink_families.keys():
-		if cookie.relative:
-			cookie.sink_root = ""
-		else:
-			cookie.sink_root = sink_root
+    for sink_root in sink_families.keys():
+        if cookie.relative:
+            cookie.sink_root = ""
+        else:
+            cookie.sink_root = sink_root
 
-		global y # In order to allow compatibility below 2.1 (nested scope where used before).
-		y = sink_root
-		files = filter(lambda x: os.path.isfile(os.path.join(y, x)), sink_families[sink_root])
-		if files:
-			visit(cookie, sink_root, files)
+        global y # In order to allow compatibility below 2.1 (nested scope where used before).
+        y = sink_root
+        files = filter(lambda x: os.path.isfile(os.path.join(y, x)), sink_families[sink_root])
+        if files:
+            visit(cookie, sink_root, files)
 
-		#global y # In order to allow compatibility below 2.1 (nested scope where used before).
-		y = sink_root
-		folders = filter(lambda x: os.path.isdir(os.path.join(y, x)), sink_families[sink_root])
-		for folder in folders:
-			folder_path = os.path.join(sink_root, folder)
-			if not cookie.recursive:
-				visit(cookie, folder_path, os.listdir(folder_path))
-			else:
-				os.path.walk(folder_path, visit, cookie)
-	return 0
+        #global y # In order to allow compatibility below 2.1 (nested scope where used before).
+        y = sink_root
+        folders = filter(lambda x: os.path.isdir(os.path.join(y, x)), sink_families[sink_root])
+        for folder in folders:
+            folder_path = os.path.join(sink_root, folder)
+            if not cookie.recursive:
+                visit(cookie, folder_path, os.listdir(folder_path))
+            else:
+                os.path.walk(folder_path, visit, cookie)
+    return 0
 
 if __name__ == "__main__":
-	sys.exit(main(sys.argv))
+    sys.exit(main(sys.argv))

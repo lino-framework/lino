@@ -2,20 +2,24 @@
 Historical moments of the Lino project
 ======================================
 
+2004-12-27 : moved SVN repository from asterix to tups.  old address:
+lsaffre.dyndns.org/mnt/svnroot/lino new address:
+lsaffre.dyndns.org/svn/lino
+
 2003-04-15 : release  0.5.2 
 ---------------------------
 
-  pds2pdf being actively used by a first customer who generates a
-  Wochenplan with TIM.
+pds2pdf being actively used by a first customer who generates a
+Wochenplan with TIM.
   
 
 
 2003-04-17 : release 0.5.3
 --------------------------
 
-  first bugs in pds2pdf solved...
+first bugs in pds2pdf solved...
 
-  2003-11-26 : published release 0.5.3 on sf.net
+2003-11-26 : published release 0.5.3 on sf.net
 
 
 

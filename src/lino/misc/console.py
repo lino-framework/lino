@@ -7,6 +7,22 @@
 import sys
 from optparse import OptionParser
 
+"""
+
+A Console instance represents the console and encapsulates some
+often-used things that have to do with the console.
+
+Message importance levels:
+
+debug
+info
+warning
+error
+critical
+
+
+"""
+
 try:
     import sound
 except ImportError,e:
@@ -14,10 +30,12 @@ except ImportError,e:
 
 class Console:
 
-    forwardables = ('alert','confirm','warning',
-                    'debug','info','error','critical')
+    forwardables = ('confirm','decide',
+                    'debug','info',
+                    'warning',
+                    'error','critical')
     """
-    notify, confirm and warning are always user messages
+    confirm and warning are always user messages
     """
 
     def __init__(self, out=None,**kw):
@@ -50,8 +68,8 @@ class Console:
     
 
 
-    def message(self,msg):
-        "Log a message to stdout. even if verbosity is low."
+    def log_message(self,msg):
+        "Log a message to stdout."
         self.out.write(msg+"\n")
 
     def error(self,msg):
@@ -69,18 +87,18 @@ class Console:
     def progress(self,msg):
         "Display message if verbosity is normal."
         if self._verbosity >= 0:
-            self.message(msg)
+            self.log_message(msg)
         
     def info(self,msg):
         "Display message if verbosity is high."
         if self._verbosity >= 1:
-            self.message(msg)
+            self.log_message(msg)
             #self.out.write(msg + "\n")
 
     def debug(self,msg):
         "Display message if verbosity is very high."
         if self._verbosity >= 2:
-            self.message(msg)
+            self.log_message(msg)
             #self.out.write(msg + "\n")
             
     def warning(self,msg):
@@ -91,7 +109,7 @@ class Console:
         """
         if sound:
             sound.asterisk()
-        self.message(msg)
+        self.log_message(msg)
         #self.alert(msg)
         if not self._batch:
             raw_input("Press ENTER to continue...")
@@ -118,6 +136,33 @@ class Console:
                 return True
             if s == "n":
                 return False
+            self.warning("wrong answer: "+s)
+            
+
+    def decide(self,prompt,answers,
+               default=None,
+               ignoreCase=True):
+        
+        """Ask user a question and return only when she has
+        given her answer.
+        
+        """
+        if default is None:
+            default = answers[0]
+            
+        if self._batch:
+            return default
+        
+        if sound:
+            sound.asterisk()
+        while True:
+            s = raw_input(prompt+(" [%s]" % ",".join(answers)))
+            if s == "":
+                s = default
+            if ignoreCase:
+                s = s.lower()
+            if s in answers:
+                return s
             self.warning("wrong answer: "+s)
 
 
@@ -190,15 +235,22 @@ def getSystemConsole():
 #    __dict__[m] = getattr(_syscon,m)
 
 error = _syscon.error       # to stderr
-message = _syscon.message   # to stdout
+#message = _syscon.message   # to stdout
 
 
 debug = _syscon.debug       # message if verbosity very high
 info = _syscon.info         # message if verbosity high
 progress = _syscon.progress # message if verbosity is normal
-
-confirm = _syscon.confirm
 warning = _syscon.warning
+error = _syscon.error
+critical = _syscon.critical
+
+# aliases
+alert = _syscon.warning
+
+# higher level:
+confirm = _syscon.confirm
+decide = _syscon.decide
 
 isInteractive = _syscon.isInteractive
 set = _syscon.set
