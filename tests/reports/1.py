@@ -18,34 +18,28 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.ui import console
 
 
 class Case(TestCase):
-    "do the German country names get installed with big=True?"
-    def setUp(self):
-        self.sess = demo.startup(langs="en de", big=True)
-
-    def tearDown(self):
-        self.sess.shutdown()
-
+    "do the lino.examples work?"
 
     def test01(self):
-        NATIONS = self.sess.query(Nations)
-        
-        n = NATIONS.peek('al')
-        self.assertEqual(n.name, 'Albania')
-        self.assertEqual(n.area, 28748)
-        self.sess.setBabelLangs('de')
-        self.assertEqual(n.name, 'Albanien')
-        
-        n = NATIONS.peek('ee')
-        self.sess.setBabelLangs('de')
-        self.assertEqual(n.name, 'Estland')
-        self.sess.setBabelLangs('en')
-        self.assertEqual(n.name, 'Estonia')
-        
+        from lino.examples import reports1
+        console.startDump()
+        reports1.main()
+        s = console.stopDump()
+        #print s
+        self.assertEqual(s,"""\
+key         |value                                   
+------------+----------------------------------------
+size        |12                                      
+name        |'Ausdemwald'                            
+firstName   |'Norbert'                               
+description |'Norbert ist unser treuer Mitarbeiter im
+            |Vurt. Er wohnt in der Fremereygasse in  
+            |Eupen.'                                 
+""")
 
 if __name__ == '__main__':
     main()

@@ -78,7 +78,7 @@ class Persons(Table): #(Contact,Address):
         self.addField('name',STRING)
         self.addField('firstName',STRING)
         self.addField('sex',SEX)
-        self.addField('birthDate',STRING.child(width=8))
+        self.addField('birthDate',STRING(width=8))
         
         # table.setFindColumns("name firstName")
 
@@ -270,7 +270,7 @@ class Partners(Contacts,Addresses):
 class Currencies(BabelTable):
     
     def init(self):
-        self.addField('id',STRING.child(width=3))
+        self.addField('id',STRING(width=3))
         BabelTable.init(self)
         
     class Instance(BabelTable.Instance):
@@ -314,9 +314,9 @@ class Nations(BabelTable):
     ISO 2-letter country codes."""
     def init(self):
         
-        self.addField('id',STRING.child(width=2))
+        self.addField('id',STRING(width=2))
         BabelTable.init(self)
-        self.addField('area',INT.child(width=8))
+        self.addField('area',INT(width=8))
         self.addField('population',INT)
         self.addField('curr',STRING)
         self.addField('isocode',STRING)

@@ -30,7 +30,8 @@ from lino.misc.compat import *
 from lino.misc.descr import Describable
 
 #from widgets import Command
-from datatypes import *
+from lino.adamo import datatypes 
+from lino.adamo.exceptions import StartupDelay
 from rowattrs import RowAttribute,\
      Field, BabelField, Pointer, Detail, FieldContainer
 #from query import Query
@@ -107,6 +108,9 @@ class Table(FieldContainer,SchemaComponent,Describable):
     def init(self):
         raise NotImplementedError
 
+##     def peek(self,sess,*args):
+##         return sess.peek(self.__class__,*args)
+
 ##  def cmd_show(self):
 ##      return Command(self.show,label=self.getLabel())
 
@@ -129,7 +133,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
             if not self._rowAttrs.has_key(DEFAULT_PRIMARY_KEY):
                 #f = Field(ROWID)
                 #setattr(self,DEFAULT_PRIMARY_KEY,f)
-                self.addField(DEFAULT_PRIMARY_KEY,ROWID)
+                self.addField(DEFAULT_PRIMARY_KEY,datatypes.ROWID)
                 #self._rowAttrs[DEFAULT_PRIMARY_KEY] = f
             self.setPrimaryKey(DEFAULT_PRIMARY_KEY)
 
@@ -280,9 +284,9 @@ class LinkTable(Table):
 class MemoTable(Table):
         
     def init(self):
-        self.addField('title',STRING)
-        self.addField('abstract',MEMO)
-        self.addField('body',MEMO)
+        self.addField('title',datatypes.STRING)
+        self.addField('abstract',datatypes.MEMO)
+        self.addField('body',datatypes.MEMO)
 
     class Instance(Table.Instance):
         
@@ -294,7 +298,7 @@ class MemoTable(Table):
 class TreeTable(Table):
         
     def init(self):
-        self.addField('seq',INT)
+        self.addField('seq',datatypes.INT)
         self.addPointer('super',self.__class__).setDetail('children')
 
     class Instance(Table.Instance):
@@ -321,7 +325,7 @@ class MemoTreeTable(MemoTable,TreeTable):
 class BabelTable(Table):
     
     def init(self):
-        self.addBabelField('name',STRING)
+        self.addBabelField('name',datatypes.STRING)
         
     class Instance(Table.Instance):
         def getLabel(self):

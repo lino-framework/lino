@@ -26,8 +26,6 @@ from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Nations
 
-from lino.adamo.datatypes import DataVeto
-
 class Case(TestCase):
     def setUp(self):
         self.db = demo.startup(langs='en de fr',big=True)

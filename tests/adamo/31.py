@@ -31,8 +31,6 @@ from lino.tools.normalDate import ND
 from lino.ui import console
 from lino.misc.tsttools import TestCase, main
 
-from lino.tools.dbfreader import DBFFile
-
 from lino.schemas.sprl.addrbook import Persons
 
 from lino.schemas.sprl.races import Races, Participants, RaceTypes,\
@@ -52,7 +50,7 @@ class BasePlugin(SchemaPlugin):
 class Case(TestCase):
     
     def test01(self):
-        schema = Schema(label="ERTK report generator")
+        schema = Schema(label="Raceman Report Tester")
         schema.addPlugin(BasePlugin())
 
         sess = schema.quickStartup(populate=False)

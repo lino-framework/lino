@@ -21,9 +21,6 @@
 import types
 import unittest
 
-from lino.adamo.datatypes import DataVeto
-from lino.adamo import Table
-
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
@@ -66,10 +63,6 @@ class Case(unittest.TestCase):
             width=20)
 
         rpt.execute(self.sess.schema.getTableList())
-##         rpt.beginReport()
-##         for t in self.sess.schema.getTableList():
-##             rpt.processRow(t)
-##         rpt.endReport()
         s = self.sess.stopDump()
         #print s
         self.assertEqual(s,"""\

@@ -20,15 +20,16 @@ from lino.adamo import *
 from babel import Languages
 from addrbook import Persons, SEX
 
-NAME = STRING.child(width=30)
+NAME = STRING(width=30)
 
 class Races(Table):
     def init(self):
+        self.addField('id',STRING(width=6))
         self.addField('name1',NAME)
         self.addField('name2',NAME)
         self.addField('date',DATE)
-        self.addField('status',STRING.child(width=1))
-        self.addField('tpl',STRING.child(width=6))
+        self.addField('status',STRING(width=1))
+        self.addField('tpl',STRING(width=6))
         self.addPointer('type',RaceTypes)
         self.addField('startTime',TIME)
 
@@ -38,7 +39,16 @@ class Races(Table):
         
 class RaceTypes(Table):
     def init(self):
-        self.addField('id',STRING.child(width=5))
+        self.addField('id',STRING(width=5))
+        self.addField('name',NAME)
+
+    class Instance(Table.Instance):
+        def getLabel(self):
+            return self.name
+        
+class Clubs(Table):
+    def init(self):
+        self.addField('id',STRING(width=5))
         self.addField('name',NAME)
 
     class Instance(Table.Instance):
@@ -48,9 +58,9 @@ class RaceTypes(Table):
 class Categories(Table):
     def init(self):
         self.addPointer('type',RaceTypes)
-        self.addField('id',STRING.child(width=3))
+        self.addField('id',STRING(width=3))
         self.addField('seq',ROWID)
-        self.addField('name',STRING.child(width=30))
+        self.addField('name',STRING(width=30))
         self.addField('sex',SEX)
         self.addField('ageLimit',INT)
         
@@ -65,10 +75,13 @@ class Participants(Table):
         self.setPrimaryKey("race dossard")
         
         self.addPointer('race',Races)
-        self.addField('dossard',STRING.child(width=4))
+        self.addField('dossard',STRING(width=4))
         self.addPointer('person',Persons)
+        self.addPointer('club',Clubs)
         self.addField('time',TIME)
         self.addPointer('cat',Categories)
-        self.addField('payment',STRING.child(width=1))
+        self.addField('payment',STRING(width=1))
+        self.addField('place',INT)
+        self.addField('catPlace',INT)
         
 

@@ -166,6 +166,10 @@ class Session(Context):
             raise InvalidRequestError("no such table: "+str(leadTable))
         return Datasource(self,store,columnNames=columnNames,**kw)
 
+    def peek(self,tableClass,*args):
+        # used in raceman/report...
+        return self.query(tableClass).peek(*args)
+
 ##     def data_report(self,ds,**kw):
 ##         rpt = self.report(**kw)
 ##         for dc in ds.getVisibleColumns():

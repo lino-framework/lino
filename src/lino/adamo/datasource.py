@@ -19,10 +19,10 @@
 import types
 
 from lino.misc.etc import issequence
-from query import DataColumnList#, BaseColumnList
-#, DataColumn
-from datatypes import DataVeto, InvalidRequestError, STRING
-from rowattrs import FieldContainer, NoSuchField, Pointer
+from lino.adamo.query import DataColumnList
+from lino.adamo.datatypes import STRING
+from lino.adamo.exceptions import DataVeto, InvalidRequestError
+from lino.adamo.rowattrs import FieldContainer, NoSuchField, Pointer
 
 class SimpleDatasource:
     # inherited by Datasource

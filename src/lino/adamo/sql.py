@@ -18,7 +18,7 @@
 
 import types
 
-from lino.adamo.datatypes import *
+from lino.adamo import datatypes 
 from lino.adamo.rowattrs import Field, Pointer #, Detail
 #from query import Query, QueryColumn
 
@@ -69,7 +69,7 @@ class SqlConnection(Connection):
             return "%s ISNULL" % (colName)
         else:
             return "%s = %s" % (colName,
-                                      self.value2sql(value, type))
+                                self.value2sql(value, type))
 
     def value2sql(self,val,type):
         #print val, type
@@ -79,9 +79,9 @@ class SqlConnection(Connection):
             return '1'
         elif val is False:
             return '0'
-        elif isinstance(type, DateType):
+        elif isinstance(type, datatypes.DateType):
             return "%s" % str(val)
-        elif isinstance(type, IntType):
+        elif isinstance(type, datatypes.IntType):
             return "%s" % str(val)
         #elif isinstance(val, DateTime):
         #   return "'%s'" % str(val)
@@ -99,28 +99,28 @@ class SqlConnection(Connection):
     def sql2value(self,val,type):
         if val is None:
             return None
-        elif isinstance(type, IntType):
+        elif isinstance(type, datatypes.IntType):
             return int(val)
-        elif isinstance(type, PriceType):
+        elif isinstance(type, datatypes.PriceType):
             return int(val)
         #elif type == self.schema.areaType:
         #   return type.parse(val)
         return val
         
     def type2sql(self,type):
-        if isinstance(type, IntType):
+        if isinstance(type, datatypes.IntType):
             return 'BIGINT'
-        elif isinstance(type, PriceType):
+        elif isinstance(type, datatypes.PriceType):
             return 'BIGINT'
-        elif isinstance(type, DateType):
+        elif isinstance(type, datatypes.DateType):
             return 'INT'
-        elif isinstance(type, MemoType):
+        elif isinstance(type, datatypes.MemoType):
             return 'TEXT'
-        elif isinstance(type, BoolType):
+        elif isinstance(type, datatypes.BoolType):
             return 'INT'
         #elif type == self.schema.areaType:
         #   return 'VARCHAR(%d)' % 30 # area names are limited to 30 chars
-        elif isinstance(type, StringType):
+        elif isinstance(type, datatypes.StringType):
             if type.width < 20:
                 return 'CHAR(%d)' % type.width
             else:

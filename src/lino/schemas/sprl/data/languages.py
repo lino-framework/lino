@@ -36,7 +36,7 @@ characters. The Line terminator is the LF character.
 """
 
 import os
-from lino.adamo.datatypes import DataVeto
+from lino.adamo.exceptions import DataVeto
 
 dataDir = os.path.dirname(__file__)
 

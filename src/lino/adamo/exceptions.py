@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -16,28 +16,22 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-"""
+class StartupDelay(Exception):
+    pass
 
-import csv
-import os
+class InvalidRequestError(Exception):
+    "The requested action was refused"
+    #pass
 
-from lino.adamo.exceptions import DataVeto
-from lino.schemas.sprl.tables import Nations
+class DataVeto(Exception):
+    "Invalid data submitted"
+    #pass
 
+class DatabaseError(Exception):
+    "dbd-specific exception was raised"
 
-dataDir = os.path.dirname(__file__)
-
-def populate(sess):
-    be = sess.query(Nations).peek('be')
-    f = file(os.path.join(dataDir,'belgzip.csv'),'rb')
-    r = csv.reader(f)
-    r.next()
-    cities = be.cities
-    #print cities
-    for (name,zip) in r:
-        cities.appendRow(name=name,zipCode=zip)
-
-    
-
-    
+__all__ = [
+    'StartupDelay',
+    'InvalidRequestError',
+    'DataVeto',
+    'DatabaseError']

@@ -16,13 +16,13 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import types
-from copy import copy
+#import types
+#from copy import copy
 
 from lino.misc.compat import *
 from lino.misc.etc import issequence
-from datatypes import DataVeto, StartupDelay
-from widgets import Action
+from lino.adamo.exceptions import DataVeto, StartupDelay
+#from widgets import Action
 from lino.misc.descr import Describable
 #from components import OwnedThing
 

@@ -23,18 +23,16 @@ another attempt to create a universal datatype definition model...
 
 """
 
+from lino.misc.descr import Describable
+
 ERR_FORMAT_NONE = "caller must handle None values"
 ERR_PARSE_EMPTY = "caller must handle empty strings"
 
 
-class Type:
+class Type(Describable):
     "base class for containers of data-type specific meta information"
     
-    def __init__(self,label=None,doc=None):
-        self.label = label
-        self.doc = doc
-        
-    def child(self,**kw):
+    def __call__(self,**kw):
         return apply(self.__class__,[],kw)
     
     def __repr__(self):
@@ -62,15 +60,11 @@ class StringType(Type):
     
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
-        #assert v is not None, "caller must handle this case"
         return str(v)
         
 class PasswordType(StringType):
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
-        #assert v is not None, "caller must handle this case"
-        #if s is None:
-        #    return "None"
         return '*' * len(v)
     
 
@@ -80,9 +74,6 @@ class MemoType(StringType):
         Type.__init__(self,**kw)
         self.width = width
         self.height = height
-##      def expr2value(self,expr):
-##          raise LinoError("Memo fields cannot be in header")
-
     
 
 class IntType(Type):
@@ -93,26 +84,16 @@ class IntType(Type):
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         return int(s)
-##      def expr2value(self,expr):
-##          if len(expr)==0 : return None
-##          return int(expr)
-##      def value2sql(self,value):
-##          return str(value)
-
 
 class DateType(Type):
     width = 8
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         return ND(s)
-##      def expr2value(self,expr):
-##          if len(expr)==0 : return None
-##          return expr
-##      def value2sql(self,value):
-##          return '"' + value + '"'
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        return repr(v) # "[-]yyyymmdd"
 
-
-    
 
 class AutoIncType(IntType):
     pass
@@ -123,16 +104,6 @@ class BoolType(IntType):
 
 class AreaType(IntType):
     pass
-
-
-
-## class QueryType(Type):
-##      def expr2value(self,expr):
-##          if len(expr)==0 : return None
-##          return expr
-##      def value2sql(self,value):
-##          raise "value2sql"
-    
 
 class UrlType(StringType):
     pass
@@ -154,20 +125,6 @@ class PriceType(IntType):
 
 
 
-class StartupDelay(Exception):
-    pass
-
-class InvalidRequestError(Exception):
-    "The requested action was refused"
-    #pass
-
-class DataVeto(Exception):
-    "Invalid data submitted"
-    #pass
-
-class DatabaseError(Exception):
-    "dbd-specific exception was raised"
-
 STRING = StringType()
 PASSWORD = PasswordType()
 MEMO = MemoType()     
@@ -184,3 +141,20 @@ AREA = AreaType()
 IMAGE = ImageType()
 LOGO = LogoType()
 
+__all__ = [
+    'STRING',
+    'PASSWORD',
+    'MEMO',
+    'DATE',
+    'TIME',
+    'INT',
+    'BOOL',
+    'AMOUNT',
+    'PRICE',
+    'ROWID',
+    'URL',
+    'EMAIL',
+    'AREA',
+    'IMAGE',
+    'LOGO',
+    ]

@@ -1,6 +1,4 @@
-#coding: latin1
-
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,20 +20,17 @@ from pizzeria import Customers, Orders, OrderLines, Products, \
      populate, Pizzeria
 from lino.adamo import *
 from lino import adamo
-#from lino.adamo.schema import quickdb
 
 class ServicesPlugin(SchemaPlugin):
     def defineTables(self,schema):
         schema.addTable(Services)
-
-        
 
 class Services(Products):
     
     def init(self):
         Products.init(self)
         self.addField('responsible',STRING)
-
+        
 
 def populate2(sess):
     
@@ -51,22 +46,18 @@ def populate2(sess):
     c3 = CUST.appendRow(name="Bernard")
 
     o1 = ORDERS.appendRow(customer=c3,date="20040318")
-    q = o1.lines #.query()
+    q = o1.lines 
     q.appendRow(product=PROD.peek(1),qty=1)
     q.appendRow(product=s1,qty=1)
     
     o2 = ORDERS.appendRow(customer=CUST.peek(1),date="20040319")
-    q = o2.lines #.query()
+    q = o2.lines 
     q.appendRow(product=PROD.peek(1),qty=2)
     q.appendRow(product=PROD.peek(2),qty=3)
-    #LINES.appendRow(order=o1,product=s2,qty=1)
-
-    sess.commit()
 
     o1.register()
     o2.register()
 
-    sess.commit()
 
 
 def do_report(sess):    

@@ -22,7 +22,7 @@ from lino.adamo import *
 
 class Languages(Table):
     def init(self):
-        self.addField('id',STRING.child(width=2))
+        self.addField('id',STRING(width=2))
         self.addBabelField('name',STRING)
     
     class Instance(Table.Instance):

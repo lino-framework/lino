@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -16,28 +16,26 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-"""
+from lino.ui import console
 
-import csv
-import os
+def main():
 
-from lino.adamo.exceptions import DataVeto
-from lino.schemas.sprl.tables import Nations
-
-
-dataDir = os.path.dirname(__file__)
-
-def populate(sess):
-    be = sess.query(Nations).peek('be')
-    f = file(os.path.join(dataDir,'belgzip.csv'),'rb')
-    r = csv.reader(f)
-    r.next()
-    cities = be.cities
-    #print cities
-    for (name,zip) in r:
-        cities.appendRow(name=name,zipCode=zip)
-
-    
-
-    
+    d = dict(
+        name="Ausdemwald",
+        firstName="Norbert",
+        size=12,
+        description="""Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in Eupen."""
+        )
+        
+    rpt = console.report()
+    rpt.addColumn(meth=lambda row: str(row[0]),
+                  label="key",
+                  width=12)
+    rpt.addColumn(meth=lambda row: repr(row[1]),
+                  label="value",
+                  width=40)
+    rpt.execute(d.items())
+        
+if __name__ == "__main__":
+    console.parse_args()
+    main()

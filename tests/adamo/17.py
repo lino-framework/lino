@@ -29,7 +29,6 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Languages, News
-from lino.adamo.datatypes import DataVeto
 
 class Case(TestCase):
     def setUp(self):

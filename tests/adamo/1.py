@@ -25,7 +25,7 @@ Some tests on getDemoDB()
 import types
 import unittest
 
-from lino.adamo.datatypes import DataVeto
+from lino.adamo.exceptions import DataVeto
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *

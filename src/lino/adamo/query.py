@@ -20,7 +20,7 @@
 import types
 #from new import classobj
 
-from datatypes import DataVeto
+from lino.adamo.exceptions import DataVeto
 
 from lino.misc.compat import *
 from lino.misc.etc import issequence

@@ -26,7 +26,7 @@ from lino.ui import console
 from lino.adamo.forms import Form
 from lino.adamo.database import Database
 from lino.adamo.table import Table, LinkTable, SchemaComponent
-from lino.adamo.datatypes import StartupDelay
+from lino.adamo.exceptions import StartupDelay
 from lino.adamo.datasource import Datasource
 from lino.adamo import center
 
@@ -133,8 +133,9 @@ class Schema(Describable):
         """ initialize will be called exactly once, after having
         declared all tables of the database.  """
     
-        #self._app = app
-        assert not self._initDone, "double initialize()"
+        if self._initDone:
+            return
+        # assert not self._initDone, "double initialize()"
         #progress = self._app.console.progress
         info = console.info
         info("Initializing database schema...")
@@ -236,9 +237,9 @@ class Schema(Describable):
         sequence of Table classes for which we want the instance.  The
         list is sorted by table definition order.  It is forbidden to
         modify this list!  """
-        
-        assert self._initDone, \
-               "getTableList() before initialize()"
+        self.initialize()
+        #assert self._initDone, \
+        #       "getTableList() before initialize()"
         if tableClasses is None:
             return self._tables
         return [t for t in self._tables

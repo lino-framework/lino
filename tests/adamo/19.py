@@ -37,7 +37,7 @@ from lino import adamo
 
 class Nations(Table):
     def init(self):
-        self.addField('id',STRING.child(width=2))
+        self.addField('id',STRING(width=2))
         self.addBabelField('name',STRING)
         self.addField('area',INT)
         self.addField('population',INT)
