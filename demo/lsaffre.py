@@ -33,13 +33,13 @@ from lino.misc.my_import import my_import
 from tls.server import WebServer
 
 if os.name == 'nt':
-	wwwRoot = r'u:\htdocs\lsaffre'
+	wwwRoot = r'u:\htdocs\timwebs'
 	dbRoot = r'u:\tim2lino'
 else:
-	#wwwRoot = '/mnt/wwwroot'
-	#dbRoot = '/mnt/dbroot'
-	wwwRoot = '/var/lino/wwwroot'
-	dbRoot = '/var/lino/dbroot'
+	wwwRoot = '/mnt/wwwroot/timwebs'
+	dbRoot = '/mnt/dbroot'
+	#wwwRoot = '/var/lino/wwwroot'
+	#dbRoot = '/var/lino/dbroot'
 	
 class DBinfo:
 	def __init__(self,name,label,langs,dbfile,staticDirs):
@@ -65,7 +65,8 @@ dbinfos.append(DBinfo(
 	label="Lucs Heimatseite",
 	langs='de en fr et',
 	dbfile = os.path.join(dbRoot,'luc.db'),
-	staticDirs = TIMtree(wwwRoot)))
+	#staticDirs = TIMtree(wwwRoot)))
+	staticDirs = TIMtree(os.path.join(wwwRoot,'luc'))))
 
 dbinfos.append(DBinfo(
 	'tim',
