@@ -1,0 +1,203 @@
+#coding: latin1
+
+UNICODE_HACK = True
+
+import sys, os, getopt
+
+import win32ui
+import win32con
+
+#from reportlab.lib.units import inch,mm
+#from reportlab.lib.pagesizes import letter, A4
+
+from lino import copyleft
+from lino.misc import console
+from lino.misc.prndoc import Document, main
+
+pt = 20
+inch = 1440.0
+mm = inch / 25.4
+A4 = (210*mm, 297*mm)
+
+
+class TextObject:
+    def __init__(self,doc):
+        self.doc = doc
+        self.x = doc.margin
+        self.y = doc.pageHeight-(2*doc.margin)
+        self.line = ""
+        
+    def write(self,text):
+        #text = text.strip()
+        #if text.endswith('\n'):
+        # text = text[:-1]
+        # flush = True
+        assert not "\n" in text, repr(text)
+        assert not "\r" in text, repr(text)
+        self.line += text
+        #if flush:
+        # self.flush()
+
+    def flush(self):
+        self.doc.dc.TextOut(int(self.x),int(self.y),self.line)
+        console.info("TextOut(%d,%d,%s)" % \
+                     (int(self.x),int(self.y),repr(self.line)))
+        self.line = ""
+        self.x = self.doc.margin
+        self.y += self.doc.status.leading
+
+class Win32PrinterDocument(Document):
+    def __init__(self,printerName):
+        Document.__init__(self,pageSize=A4,margin=5*mm)
+
+        self.dc = win32ui.CreateDC()
+        self.dc.CreatePrinterDC(printerName)
+        self.dc.StartDoc("prn2printer","c:\temp\temp.txt")
+        self.dc.SetMapMode(win32con.MM_TWIPS)
+        
+        # Note that in all modes, the point 0,0 is the upper left
+        # corner of the page, and the units increase as you go down
+        # and across the page. A Twip is 1/20 of a typesetting
+        # Point. A Point is 1/72 of an inch, so a Twip is 1/1440 of an
+        # inch.
+        
+    def createTextObject(self):
+        textobject = TextObject(self)
+        #textobject.setFont("Courier", 10)
+        return textobject
+        
+    def onBeginPage(self):
+        self.dc.StartPage()
+        if self.pageHeight < self.pageWidth:
+            raise NotImplementedError
+            #self.canvas.rotate(90)
+            #self.canvas.translate(0,-210*mm)
+    
+    def onEndPage(self):
+        self.dc.EndPage()
+        
+    def onSetPageSize(self):
+        pass
+            
+
+    def onEndDoc(self):
+        self.dc.EndDoc()
+        del self.dc
+            
+    def onSetFont(self):
+        Document.onSetFont(self)
+        tm = self.dc.GetTextMetrics()
+        console.info(repr(tm))
+        console.info(repr(self.dc.GetTextFace()))
+        console.info(repr(self.dc.GetViewportExt()))
+        console.info(repr(self.dc.GetViewportOrg()))
+        console.info(repr(self.dc.GetWindowExt()))
+        console.info(repr(self.dc.GetWindowOrg()))
+        self.status.leading = tm['tmExternalLeading'] * pt
+        #self.dc.SetTextFace("Courier")
+        #self.textobject.setFont(psfontname,
+        #                               self.status.size,
+        #                               self.status.leading)
+
+    def write(self,text):
+
+        if UNICODE_HACK:
+
+            text = text.replace(chr(179),"|")
+            text = text.replace(chr(180),"+")
+            text = text.replace(chr(185),"+")
+            text = text.replace(chr(186),"|")
+            text = text.replace(chr(187),"+")
+            text = text.replace(chr(188),"+")
+            text = text.replace(chr(191),"+")
+            text = text.replace(chr(192),"+")
+            text = text.replace(chr(193),"+")
+            text = text.replace(chr(194),"+")
+            text = text.replace(chr(195),"+")
+            text = text.replace(chr(196),"-")
+            text = text.replace(chr(197),"+")
+            text = text.replace(chr(193),"+")
+            text = text.replace(chr(200),"+")
+            text = text.replace(chr(201),"+")
+            text = text.replace(chr(202),"+")
+            text = text.replace(chr(203),"+")
+            text = text.replace(chr(204),"+")
+            text = text.replace(chr(205),"-")
+            text = text.replace(chr(206),"+")
+            text = text.replace(chr(217),"+")
+            text = text.replace(chr(218),"+")
+
+            text = text.decode("cp850")
+            text = text.encode("iso-8859-1","replace")
+            
+        else:
+            text = text.decode("cp850")
+            
+        self.textobject.write(text)
+            
+        
+    def writeln(self):
+        self.textobject.flush()
+        #self.textobject = None
+        
+        
+    def insertImage(self,line):
+        raise NotImplementedError
+
+
+def main(argv):
+
+    parser = console.getOptionParser(
+        usage="usage: %prog [options] FILE",
+        description="""\
+where FILE is the file to be printed on the Default Printer.
+It may contain plain text and simple formatting printer control sequences. """ )
+    
+    parser.add_option("-p", "--printer",
+                      help="""\
+print on PRINTERNAME rather than on Default Printer.""",
+                      action="store",
+                      type="string",
+                      dest="printerName",
+                      default=None)
+    (options, args) = parser.parse_args(argv)
+    #del args[0]
+    
+##     try:
+##         opts, args = getopt.getopt(argv,
+##                                    "h?p:v",
+##                                    ["help", "printer=","verbose"])
+
+##     except getopt.GetoptError:
+##         print __doc__
+##         sys.exit(-1)
+    if len(args) == 0:
+        parser.print_help() #print __doc__
+        sys.exit(-1)
+    
+
+##     printerName = None
+##     inputfile = args[0]
+##     (root,ext) = os.path.splitext(inputfile)
+##     if len(ext) == 0:
+##         inputfile += ".prn"
+
+##     for o, a in opts:
+##         if o in ("-?", "-h", "--help"):
+##             print __doc__
+##             sys.exit()
+##         if o in ("-p", "--printer"):
+##             printerName = a
+##         if o in ("-v", "--verbose"):
+##             console.set(verbose=True)
+    for inputfile in args:
+        d = Win32PrinterDocument(options.printerName)
+        d.readfile(inputfile)
+        d.endDoc()
+
+    
+        
+if __name__ == '__main__':
+    print copyleft(name="Lino/prn2printer", year='2004')
+    main(sys.argv[1:])
+    

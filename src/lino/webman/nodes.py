@@ -9,14 +9,15 @@ import os
 #from xdocutils import publish
 from lino.misc.restify import reSTify 
 from lino.webman import __version__
+from lino.twisted_ui.response import HtmlResponse
 
 class WebManException(Exception):
 	pass
 
-from tls.response import HtmlResponse
 
 class WebmanResponse(HtmlResponse):
 	def __init__(self,node):
+		assert isinstance(node,Node)
 		self.node = node
 		HtmlResponse.__init__(self,None)
 
@@ -406,11 +407,26 @@ class TxtWebPage(FileNode):
 	
 	def writePageContent(self,response):
 		fn = self.getSourcePath()
-		wr = response.write
 		#if os.path.exists(fn):
-		wr(reSTify(open(fn).read(),
-					  namespace={},
+		cwd = os.getcwd()
+		os.chdir(self.getModule().getLocalPath())
+		response.write(
+			reSTify(open(fn).read(),
+                 source_path=fn,
+					  namespace={ "node":self,
+									  "response":response },
 					  settings=self.getModule().defaults))
+##			try:
+##				response.write(
+##					reSTify(open(fn).read(),
+##							  namespace={ "node":self,
+##											  "response":response },
+##							  settings=self.getModule().defaults))
+##			except Exception,e:
+##				print str(e)
+##			else:
+##				os.chdir(cwd)
+		os.chdir(cwd)			 
 
 		
 	

@@ -7,13 +7,13 @@
 """\
 Usage : eml2csv [options] DIR [DIR...]
 
-eml2csv converts the *.eml files in DIR to a CSV file.
+eml2csv converts the `*.eml` files in DIR to a CSV file.
 
 Options:
   
   -o FILE, --output FILE   output to file FILE instead of stdout
   -a, --append             append to existing FILE instead of overwrite
-  -c, --cleanup            delete *.eml files after conversion
+  -c, --cleanup            delete `*.eml` files after conversion
   -h, --help               display this text
 """
 

@@ -1,0 +1,234 @@
+/* www.css Luc Saffre 2000-12-12 */
+/* Ursprung: wselfhtm.css */
+
+body { margin-top:0px;
+  margin-bottom:0px;
+  margin-left:0px;
+  margin-right:0px;
+  }
+
+table {
+  width:90%;
+  border:5%;
+  margin:20pt;
+  background-color:#eeeeee;
+  border-style:solid;
+  border-width:thin;
+}
+td { vertical-align:top; }
+
+table.main {
+  text-align:left;
+  width:100%;
+  margin:0pt;
+  background-color:white;
+  border-style:none;
+  border-width:thin;
+}
+
+table.foot {
+  width:100%;
+  margin:0pt;
+  background-color:cornsilk;
+  border-style:none;
+  border-width:thin;
+  vertical-align:bottom;
+}
+
+table.head {
+  text-align:left;
+  width:100%;
+  margin:0pt;
+  background-color:#ffdfa4;
+  border-color:#ffdfa4;
+  border-style:solid;
+  border-width:0pt;
+}
+
+td.left {
+  vertical-align:top;
+  padding:5pt;
+  text-align:left;
+  background-color:cornsilk;
+  border-style:solid;
+  border-width:2px;
+  border-color:orange;
+}
+td.right {
+  vertical-align:top;
+  text-align:left;
+  background-color:cornsilk;
+  border-style:none;
+  border-width:thin;
+}
+
+
+
+table.foto {
+  text-align:left;
+  width:100%;
+  margin-left:0px;
+  background-color:sepia;
+  border-style:none;
+  border-width:thin;
+}
+td.foto { vertical-align:middle;}
+
+table.list {
+  text-align:left;
+  width:100%;
+  margin-left:0px;
+  background-color:#EEEEEE;
+  border-style:solid;
+  border-width:0pt;
+  cellspacing:20pt;
+  cellpadding:30pt;
+}
+td.list {
+  vertical-align:top;
+  border-style:solid;
+  border-width:thin;
+}
+
+
+
+pre.screen {
+  text-align:left;
+  width:100%;
+  margin-left:15px;
+  margin-right:15px;
+  border-style:single;
+  border-width:thin;
+  font-family:Courier New,Courier;
+  font-size:10pt;
+  background-color:gray;
+  color:gold;
+  padding:10px;
+}
+
+
+
+blockquote {
+  background-color:cornsilk;
+  border-style:double;
+  border-width:thin;
+  padding:10px
+}
+
+
+p,h1,h2,h3,h4,ul,ol,li,div,td,th,address,blockquote,nobr,b,i
+     { font-family:Arial,sans-serif; }
+
+p,h1,h2,h3,h4,ul,ol,li,div,td,th,address,blockquote,nobr,b,i
+     { margin-bottom:6pt;
+     margin-top:6pt}
+
+/* h1 { margin:12pt} */
+
+h1 { font-size:18pt;}
+
+h2 { font-size:16pt; }
+
+h3,h3.xmp,h3.xpl,h3.inf,h3.tip { font-size:12pt; }
+
+h4 { font-size:10pt; }
+
+p,ul,ol,li,div,td,th,address,nobr,b,i { font-size:10pt; }
+
+p.title {
+  font-size:18pt;
+  font-weight:bold;
+  margin:12pt}
+
+p.small { font-size:8pt; text-align:right}
+
+pre, pre p {
+  font-family:Courier New,Courier;
+  font-size:10pt; color:#0000C0;
+}
+
+
+tt { font-family:Courier New,Courier; font-size:10pt; color:#0000C0; }
+em.quote { color:blue; }
+
+td.xmpcode {
+  border-width:1pt; border-style:solid;
+  border-color:#999999;
+  background-color:#FFFFE0; }
+
+/* Bereiche mit Beispiel-Quelltexten */
+/* nur MS IE 4, Netscape 4.0 ignoriert diese Angaben */
+/* border-width = Randbreite */
+/* 1pt = 1 Punkt, Wert aenderbar */
+/* border-style = Randstil */
+/* solid = durchgezogen, Wert aenderbar */
+/* border-color = Randfarbe */
+/* #999999 = grau, Wert aenderbar */
+/* background-color = Hintergrundfarbe */
+/* #FFFFE0 = helles Gelb, Wert aenderbar */
+
+
+
+.code { background-color:#FFFFE0; }
+
+/* Tabelleninhalte mit Quellcode */
+/* background-color = Hintergrundfarbe */
+/* #FFFFE0 = helles Gelb, Wert aenderbar */
+/* Farbe sollte gleich sein wie bei td.xmpcode */
+
+
+
+td.xplcode { background-color:#EEEEFF; }
+
+/* Tabelleninhalte mit Erklaerungen */
+/* background-color = Hintergrundfarbe */
+/* #EEEEFF = helles Blau, Wert aenderbar */
+
+
+
+.doc { background-color:#EEEEEE; }
+
+/* Layout-Elemente mit hellgrauem Hintergrund */
+/* background-color = Hintergrundfarbe */
+/* #EEEEEE = helles Grau, Wert aenderbar */
+
+
+
+.qbar { background-color:#FFFFE0; font-size:9pt; font-family:Arial,sans-serif; }
+
+/* Layout-Elemente mit hellgrauem Hintergrund */
+/* nur MS IE 4, Netscape 4.0 ignoriert diese Angaben */
+/* background-color = Hintergrundfarbe */
+/* #FFFFE0 = helles Gelb, Wert aenderbar */
+/* font-family = Schriftart */
+/* Arial,sans-serif = Schriftarten, Wert aenderbar */
+/* font-size = Schriftgroesse */
+/* 9pt = 9 Punkt, Wert aenderbar */
+
+
+pre.normal { color:#000000; }
+
+/* normale praeformatierte Bereiche, nicht fuer Quelltexte */
+/* color = Farbe */
+/* #000000 = schwarz, Wert aenderbar */
+
+
+a:link { color:#AA5522; text-decoration:underline; }
+a:visited { color:#772200; text-decoration:underline; }
+a:active { color:#000000; text-decoration:underline; }
+
+/* a:link = Verweise zu noch nicht besuchten Seiten */
+/* a:visited = Verweise zu bereits besuchten Seiten */
+/* a:active = Verweise, die gerade angeklickt werden */
+/* color = Farbe */
+/* #AA5522 = kotzbeige, Wert aenderbar */
+/* #772200 = scheissbraun, Wert aenderbar */
+/* #000000 = schwarz, Wert aenderbar */
+/* text-decoration = Tesxtstil */
+/* underline = unterstrichen, Default-Wert, Wert aenderbar */
+/* none = nicht unterstrichen, Wert aenderbar */
+
+a.an { text-decoration:none; }
+
+
+

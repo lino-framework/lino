@@ -22,225 +22,225 @@ from lino.misc.my_import import my_import
 from lino.twisted_ui.server import ServerResource, MyRequest
 
 if os.name == 'nt':
-	wwwRoot = r'u:\htdocs\timwebs'
-	dbRoot = r'u:\tim2lino'
+    wwwRoot = r'u:\htdocs\timwebs'
+    dbRoot = r'u:\tim2lino'
 else:
-	wwwRoot = '/mnt/wwwroot/timwebs'
-	dbRoot = '/mnt/dbroot'
-	#wwwRoot = '/var/lino/wwwroot'
-	#dbRoot = '/var/lino/dbroot'
-	
+    wwwRoot = '/mnt/wwwroot/timwebs'
+    dbRoot = '/mnt/dbroot'
+    #wwwRoot = '/var/lino/wwwroot'
+    #dbRoot = '/var/lino/dbroot'
+    
 class DBinfo:
-	def __init__(self,name,label,langs,dbfile,staticDirs):
-		self.name = name
-		self.langs = langs
-		self.label = label
-		self.dbfile = dbfile
-		self.staticDirs = staticDirs
+    def __init__(self,name,label,langs,dbfile,staticDirs):
+        self.name = name
+        self.langs = langs
+        self.label = label
+        self.dbfile = dbfile
+        self.staticDirs = staticDirs
 
 
 def TIMtree(root):
-	return {
-		'files': root ,
-		'images': os.path.join(root,'images') ,
-		#'thumbnails': os.path.join(root,'thumbnails') ,
-		}
+    return {
+        'files': root ,
+        'images': os.path.join(root,'images') ,
+        #'thumbnails': os.path.join(root,'thumbnails') ,
+        }
 
 
 dbinfos = []
 
 dbinfos.append(DBinfo(
-	'luc',
-	label="Lucs Heimatseite",
-	langs='de en fr et',
-	dbfile = os.path.join(dbRoot,'luc.db'),
-	staticDirs = TIMtree(os.path.join(wwwRoot,'luc'))))
+    'luc',
+    label="Lucs Heimatseite",
+    langs='de en fr et',
+    dbfile = os.path.join(dbRoot,'luc.db'),
+    staticDirs = TIMtree(os.path.join(wwwRoot,'luc'))))
 
 dbinfos.append(DBinfo(
-	'tim',
-	label="Die TIM-Webseite",
-	langs='de en',
-	dbfile = os.path.join(dbRoot,'tim.db'),
-	staticDirs = TIMtree(os.path.join(wwwRoot,'tim'))))
+    'tim',
+    label="Die TIM-Webseite",
+    langs='de en',
+    dbfile = os.path.join(dbRoot,'tim.db'),
+    staticDirs = TIMtree(os.path.join(wwwRoot,'tim'))))
 
 dbinfos.append(DBinfo(
-	'lino',
-	label="The Lino Project",	
-	langs='en',
-	dbfile = os.path.join(dbRoot,'comp.db'),
-	staticDirs = TIMtree(os.path.join(wwwRoot,'comp'))))
+    'lino',
+    label="The Lino Project",   
+    langs='en',
+    dbfile = os.path.join(dbRoot,'comp.db'),
+    staticDirs = TIMtree(os.path.join(wwwRoot,'comp'))))
 
 
 def main(argv):
 
-	parser = OptionParser()
-	parser.add_option("-v", "--verbose",
-							help="display many messages",
-							action="store_true",
-							dest="verbose",
-							default=True)
-	parser.add_option("-s", "--skip-dbcheck",
-							help="skip integrity check of foreign databases",
-							action="store_true",
-							dest="skipTest",
-							default=False)
-	parser.add_option("-p", "--port",
-							help="alternate PORT where to listen"
-							"(default is 8080)",
-							action="store",
-							dest="port",
-							type="int",
-							default=8080,
-							)
+    parser = OptionParser()
+    parser.add_option("-v", "--verbose",
+                            help="display many messages",
+                            action="store_true",
+                            dest="verbose",
+                            default=True)
+    parser.add_option("-s", "--skip-dbcheck",
+                            help="skip integrity check of foreign databases",
+                            action="store_true",
+                            dest="skipTest",
+                            default=False)
+    parser.add_option("-p", "--port",
+                            help="alternate PORT where to listen"
+                            "(default is 8080)",
+                            action="store",
+                            dest="port",
+                            type="int",
+                            default=8080,
+                            )
 
-	(options, args) = parser.parse_args(argv)
-	del args[0] 
-	
-	demoDir = os.path.dirname(__file__)
-	
-	center.start(verbose=options.verbose)
+    (options, args) = parser.parse_args(argv)
+    del args[0] 
+    
+    demoDir = os.path.dirname(__file__)
+    
+    center.start(verbose=options.verbose)
 
-	#info = center.getSystemConsole().info
-	from lino.misc.console import info, progress
+    #info = center.getSystemConsole().info
+    from lino.misc.console import info, progress
 
-	#progress = app.console.progress
-	
-	schema = Schema() 
-	
-	schema.startup()
-	schema.setLayout(sprlwidgets)
+    #progress = app.console.progress
+    
+    schema = Schema() 
+    
+    schema.startup()
+    schema.setLayout(sprlwidgets)
 
-	serverRsc = ServerResource(wwwRoot)
+    serverRsc = ServerResource(wwwRoot)
 
-	#sess = ConsoleSession()
-	sess = center.createSession()
+    #sess = ConsoleSession()
+    sess = center.createSession()
 
-	if True:
-		"""
-		Shared tables are the same for each database
-		"""
+    if True:
+        """
+        Shared tables are the same for each database
+        """
 
-		info("Starting std.db...")
-		conn = Connection(filename="std.db",
-								isTemporary=True,
-								schema=schema)
-		stddb = Database( langs="en de fr et",
-								schema=schema,
-								name="std",
-								label="shared standard data")
+        info("Starting std.db...")
+        conn = Connection(filename="std.db",
+                                isTemporary=True,
+                                schema=schema)
+        stddb = Database( langs="en de fr et",
+                                schema=schema,
+                                name="std",
+                                label="shared standard data")
 
-		sharedTables = ('LANGS','NATIONS', #'CITIES',
-							 'PARTYPES','Currencies',
-							 'PEVTYPES',
-							 'PUBTYPES',
-							 'PRJSTAT', 'USERS')
+        sharedTables = ('LANGS','NATIONS', #'CITIES',
+                             'PARTYPES','Currencies',
+                             'PEVTYPES',
+                             'PUBTYPES',
+                             'PRJSTAT', 'USERS')
 
-		stddb.startup(conn,
-						  lambda t: t.getTableName() in sharedTables)
-		
-		stddb.createTables()
-		sess.use(stddb)
+        stddb.startup(conn,
+                          lambda t: t.getTableName() in sharedTables)
+        
+        stddb.createTables()
+        sess.use(stddb)
 
-		from lino.schemas.sprl.data import std
-		std.populate(sess,big=False)
-		#sess.end()
+        from lino.schemas.sprl.data import std
+        std.populate(sess,big=False)
+        #sess.end()
 
-		
-	for dbi in dbinfos:
-		if len(args) == 0 or dbi.name in args:
-			info("Opening %s..." % dbi.name)
+        
+    for dbi in dbinfos:
+        if len(args) == 0 or dbi.name in args:
+            info("Opening %s..." % dbi.name)
 
-			db = Database(
-							  langs=dbi.langs,
-							  schema=schema,
-							  name=dbi.name,
-							  label=dbi.label)
-			
-			conn = Connection(filename=dbi.dbfile,
-									schema=schema)
+            db = Database(
+                              langs=dbi.langs,
+                              schema=schema,
+                              name=dbi.name,
+                              label=dbi.label)
+            
+            conn = Connection(filename=dbi.dbfile,
+                                    schema=schema)
 
-			db.startup(conn)
+            db.startup(conn)
 
-			db.update(stddb)
-			sess.use(db)
-			
-			if not options.skipTest:
-				info("checkIntegrity: " + db.getName())
-				msgs = sess.checkIntegrity()
-				if len(msgs):
-					msg = "%s : %d database integrity problems" % (
-						db.getName(), len(msgs))
-					print msg + ":"
-					print "\n".join(msgs)
-					#from lino.adamo.datatypes import DataVeto
-					#raise DataVeto, msg
+            db.update(stddb)
+            sess.use(db)
+            
+            if not options.skipTest:
+                info("checkIntegrity: " + db.getName())
+                msgs = sess.checkIntegrity()
+                if len(msgs):
+                    msg = "%s : %d database integrity problems" % (
+                        db.getName(), len(msgs))
+                    print msg + ":"
+                    print "\n".join(msgs)
+                    #from lino.adamo.datatypes import DataVeto
+                    #raise DataVeto, msg
 
-			serverRsc.addDatabase(db, stylesheet="www.css")
-
-
-	if True:
-
-		sys.path.insert(0,demoDir)
-
-		#for modName in ('vor', 'etc'):
-		for modName in ('etc',):
-
-			info("Opening %s..." % modName)
-
-			mod = __import__(modName) # my_import(modName)
-
-			#print "%s (%s)" % (modName,mod.label)
-
-			conn = Connection(filename=modName+'.db',
-									isTemporary=True,
-									schema=schema)
-			db = Database( langs='en de',
-							  schema=schema,
-							  name=modName,
-							  label=mod.label)
-
-			db.startup(conn)
-			db.createTables()
-			
-			sess.use(db)
-			mod.populate(sess)
-
-			serverRsc.addDatabase(db)
-## 			, staticDirs = {
-## 				'files': os.path.join(demoDir,modName,'files'),
-## 				'images': os.path.join(demoDir,modName,'images'),
-## 				#'thumbnails': os.path.join(demoDir,modName,'thumbnails')
-## 				})
-
-			#db.flush()
-
-		del sys.path[0]
+            serverRsc.addDatabase(db, stylesheet="www.css")
 
 
-	progress("Twisted Lino Server")
-	progress(copyleft(year='2004',author='Luc Saffre'))
-		
+    if True:
 
-	from twisted.web import server
-	from twisted.internet import reactor
+        sys.path.insert(0,demoDir)
 
-	site = server.Site(serverRsc)
-	site.requestFactory = MyRequest
-	reactor.listenTCP(options.port, site)
-	reactor.addSystemEventTrigger("before","shutdown", \
-											center.shutdown)
+        #for modName in ('vor', 'etc'):
+        for modName in ('etc',):
 
-			
-	progress("Serving on port %s." % options.port)
-	progress("(Press Ctrl-C to stop serving)")
-			
-	reactor.run()
+            info("Opening %s..." % modName)
 
-	
-	
+            mod = __import__(modName) # my_import(modName)
+
+            #print "%s (%s)" % (modName,mod.label)
+
+            conn = Connection(filename=modName+'.db',
+                                    isTemporary=True,
+                                    schema=schema)
+            db = Database( langs='en de',
+                              schema=schema,
+                              name=modName,
+                              label=mod.label)
+
+            db.startup(conn)
+            db.createTables()
+            
+            sess.use(db)
+            mod.populate(sess)
+
+            serverRsc.addDatabase(db)
+##          , staticDirs = {
+##              'files': os.path.join(demoDir,modName,'files'),
+##              'images': os.path.join(demoDir,modName,'images'),
+##              #'thumbnails': os.path.join(demoDir,modName,'thumbnails')
+##              })
+
+            #db.flush()
+
+        del sys.path[0]
+
+
+    progress("Twisted Lino Server")
+    progress(copyleft(year='2004',author='Luc Saffre'))
+        
+
+    from twisted.web import server
+    from twisted.internet import reactor
+
+    site = server.Site(serverRsc)
+    site.requestFactory = MyRequest
+    reactor.listenTCP(options.port, site)
+    reactor.addSystemEventTrigger("before","shutdown", \
+                                            center.shutdown)
+
+            
+    progress("Serving on port %s." % options.port)
+    progress("(Press Ctrl-C to stop serving)")
+            
+    reactor.run()
+
+    
+    
 
 
 
-	
+    
 if __name__ == '__main__':
-	main(sys.argv)
+    main(sys.argv)

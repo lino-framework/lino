@@ -40,7 +40,7 @@ def node2html(node,destRoot,force=False):
 	assert node.modified is not None, str(node)
 	if not force:
 		try:
-			if os.path.getmtime(outfile) < node.modified:
+			if os.path.getmtime(outfile) > node.modified:
 				updodate = True
 		except os.error:
 			pass

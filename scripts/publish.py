@@ -1,4 +1,4 @@
-raise "publish is deprecated. use maketn and makelc instead"
+raise Exception("publish is deprecated. use maketn and makelc instead")
 
 """
 publish prepares a local file tree for publishing to a web server.

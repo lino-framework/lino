@@ -1,7 +1,7 @@
 """
-WebMan creates static html files for one ore several WebMan modules.
+Webman creates static html files for a Webman site.
 
-A WebMan module is a directory containing a series `*.txt` files (with
+A Webman site is a directory containing a series .txt files (with
 reStructuredText content) and one file `init.wmi`. For each .txt file
 will be written a .html file. The init.wmi is executed once per
 module.

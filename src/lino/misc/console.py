@@ -4,148 +4,170 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 import sys
-try:
-	import sound
-except ImportError,e:
-	sound = False
+from optparse import OptionParser
 
-_syscon = None	  
+try:
+    import sound
+except ImportError,e:
+    sound = False
+
+_syscon = None    
 
 class Console:
 
-	forwardables = ('notify','confirm','warning','debug','info','error','critical')
-	"""
-	notify, confirm and warning are always user messages
-	"""
+    forwardables = ('notify','confirm','warning',
+                    'debug','info','error','critical')
+    """
+    notify, confirm and warning are always user messages
+    """
 
-	def __init__(self,out=None,verbose=False,debug=False,batch=False):
-		if out is None:
-			out = sys.stdout
-		self.out = out
-		self._verbose = verbose
-		self._debug = debug
-		self._batch = batch
+    def __init__(self,
+                 out=None,verbose=False,
+                 debug=False,batch=False):
+        if out is None:
+            out = sys.stdout
+        self.out = out
+        self._verbose = verbose
+        self._debug = debug
+        self._batch = batch
 
-	def set(self,verbose=None,debug=None,batch=None):
-		if verbose is not None:
-			self._verbose = verbose
-		if batch is not None:
-			self._batch = batch
-		if debug is not None:
-			self._debug = debug
+    def set(self,verbose=None,debug=None,batch=None):
+        if verbose is not None:
+            self._verbose = verbose
+        if batch is not None:
+            self._batch = batch
+        if debug is not None:
+            self._debug = debug
 
-	def isBatch(self):
-		return self._batch
+    def isBatch(self):
+        return self._batch
 
-	def isVerbose(self):
-		return self._verbose
-
-
-	def confirm(self,prompt,default="y",allowed="yn",ignoreCase=True):
-		
-		""" ask the user a question and return only when she has given
-		her answer.
-		
-		"""
-		if self._batch:
-			return (answer=='y')
-		
-		if sound:
-			sound.asterisk()
-		while True:
-			s = raw_input(prompt+(" [%s]" % ",".join(allowed)))
-			if s == "":
-				s = default
-			if ignoreCase:
-				s = s.lower()
-			if s == "y":
-				return True
-			if s == "n":
-				return False
-			self.warning("wrong answer: "+s)
+    def isVerbose(self):
+        return self._verbose
 
 
-	def progress(self,msg):
-		self.out.write(msg + "\n")
-		
-	def notify(self,msg):
-		if sound:
-			sound.asterisk()
-		self.progress(msg)
+    def confirm(self,prompt,default="y",allowed="yn",ignoreCase=True):
+        
+        """Ask user a question and return only when she has given her
+        answer.
+        
+        """
+        if self._batch:
+            return (answer=='y')
+        
+        if sound:
+            sound.asterisk()
+        while True:
+            s = raw_input(prompt+(" [%s]" % ",".join(allowed)))
+            if s == "":
+                s = default
+            if ignoreCase:
+                s = s.lower()
+            if s == "y":
+                return True
+            if s == "n":
+                return False
+            self.warning("wrong answer: "+s)
 
-	def warning(self,msg):
-		
-		""" Log a warning message.	 If self._batch is False, make sure
-		that she has seen this message before returning.
 
-		"""
-		self.notify(msg)
-		if not self._batch:
-			raw_input("Press ENTER to continue...")
-			
-	def debug(self,msg):
-		"log a message if --debug is on"
-		if self._debug:
-			self.out.write(msg + "\n")
-			
-	def info(self,msg):
-		"log a message if _verbose is True"
-		if self._verbose:
-			self.out.write(msg + "\n")
+    def progress(self,msg):
+        self.out.write(msg + "\n")
+        
+    def notify(self,msg):
+        if sound:
+            sound.asterisk()
+        self.progress(msg)
 
-	def error(self,msg):
-		"log a message to stderr"
-		sys.stderr.write(msg + "\n")
+    def warning(self,msg):
+        
+        """Log a warning message.  If self._batch is False, make sure
+        that she has seen this message before returning.
 
-	def critical(self,msg):
-		if sound:
-			sound.asterisk()
-		raise "critical error: " + msg
-		
-##		def notify(self,msg):
+        """
+        self.notify(msg)
+        if not self._batch:
+            raw_input("Press ENTER to continue...")
+            
+    def debug(self,msg):
+        "log a message if --debug is on"
+        if self._debug:
+            self.out.write(msg + "\n")
+            
+    def info(self,msg):
+        "log a message if _verbose is True"
+        if self._verbose:
+            self.out.write(msg + "\n")
 
-##			"""Notify the user about something just for information.
+    def error(self,msg):
+        "log a message to stderr"
+        sys.stderr.write(msg + "\n")
 
-##			Without acknowledgment request.
+    def critical(self,msg):
+        if sound:
+            sound.asterisk()
+        raise "critical error: " + msg
+        
+##      def notify(self,msg):
 
-##			examples: why a requested action was not executed
-##			"""
-##			if sound:
-##				sound.asterisk()
-##			#notifier(msg)
-##			self.out.write(msg + "\n")
-##			#self.out.write('[note] ' + msg + "\n")
+##          """Notify the user about something just for information.
 
-##		def progress(self,msg):
-##			"""as notify, but only if verbose """
-##			if self.verbose:
-##				self.notify(msg)
-			
+##          Without acknowledgment request.
 
-def getSystemConsole(**kw):
-	global _syscon
-	if _syscon is None:
-		_syscon = Console(**kw)
-	return _syscon
+##          examples: why a requested action was not executed
+##          """
+##          if sound:
+##              sound.asterisk()
+##          #notifier(msg)
+##          self.out.write(msg + "\n")
+##          #self.out.write('[note] ' + msg + "\n")
+
+##      def progress(self,msg):
+##          """as notify, but only if verbose """
+##          if self.verbose:
+##              self.notify(msg)
+            
+
+def getSystemConsole():
+    global _syscon
+    if _syscon is None:
+        _syscon = Console()
+    return _syscon
+
+def set(**kw):
+    return getSystemConsole().set(**kw)
 
 def confirm(*args,**kw):
-	return getSystemConsole().confirm(*args,**kw)
+    return getSystemConsole().confirm(*args,**kw)
 
 def notify(*args,**kw):
-	return getSystemConsole().confirm(*args,**kw)
+    return getSystemConsole().notify(*args,**kw)
 
 def info(*args,**kw):
-	return getSystemConsole().info(*args,**kw)
+    return getSystemConsole().info(*args,**kw)
 
 def progress(*args,**kw):
-	return getSystemConsole().progress(*args,**kw)
+    return getSystemConsole().progress(*args,**kw)
 
 def isInteractive():
-	return not getSystemConsole().isBatch()
+    return not getSystemConsole().isBatch()
 
 
 ## def console_notify(msg):
-##		print '[note] ' + msg
-	
+##      print '[note] ' + msg
+    
 ## notifier = console_notify
 
+def getOptionParser(**kw):
+    con = getSystemConsole()
+    p = OptionParser(**kw)
+    
+    def setVerbose(option, opt_str, value, parser):
+        con.set(verbose=True)
+        
+    p.add_option("-v",
+                 "--verbose",
+                 help="display many messages",
+                 action="callback",
+                 callback=setVerbose)
+    return p
+        

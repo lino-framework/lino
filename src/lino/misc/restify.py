@@ -5,6 +5,7 @@ http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/193890
 
 added by LS:
 - output encoding
+- exec directive
 
 """
 from docutils import core
@@ -44,10 +45,11 @@ def exec_exec( name, arguments, options, content, lineno,
 	text = dedent(text)
 	_stdout = sys.stdout
 	sys.stdout = StringIO()
-	try:
-		exec text in _namespace,_namespace
-	except Exception,e:
-		traceback.print_exc(None,sys.stderr)
+	exec text in _namespace,_namespace
+	#try:
+	#	exec text in _namespace,_namespace
+	#except Exception,e:
+	#	traceback.print_exc(None,sys.stderr)
 		#print e
 	stdout_text = sys.stdout.getvalue()
 	sys.stdout = _stdout
@@ -60,19 +62,24 @@ def exec_exec( name, arguments, options, content, lineno,
 exec_exec.content = 1
 register_directive('exec',exec_exec)
 
-def reSTify(string,
+def reSTify(s,
+            source_path=None,
 				namespace=None,
 				settings=None):
 	if namespace is None:
 		namespace = {}
 	global _namespace
 	_namespace = namespace
-	try:
-		return core.publish_string(string,
-											settings_overrides=settings,
-											writer=_w)
-	except SystemMessage,e:
-		return str(e)+"\n"+string
+	return core.publish_string(s,
+                              source_path,
+										settings_overrides=settings,
+										writer=_w)
+## 	try:
+## 		return core.publish_string(s,
+## 											settings_overrides=settings,
+## 											writer=_w)
+## 	except SystemMessage,e:
+## 		return str(e)+"\n"+s
 
 if __name__ == '__main__':
     test = """

@@ -47,6 +47,7 @@ class WebmanWriter(html4css1.Writer):
 	def __init__(self,node):
 		html4css1.Writer.__init__(self)
 		#self.translator_class = MyHtmlTranslator
+      assert isinstance(node,nodes.Node)
 		self.node = node
 		# self.leftArea = leftArea
 		self.namespace = dict(globals())

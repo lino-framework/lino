@@ -203,7 +203,7 @@ class HtmlResponse:
 		wr("<title>%s</title>" % title)
 		css = self.getStyleSheet()
 		if css is not None:
-			wr("""<link rel=stylesheet type="text/css" href="%s">
+			wr("""<link rel=stylesheet type="text/css" href="%s"/>
 			""" % css)
 		wr(self.AFTER_HEAD)
 		wr(self.BEFORE_LEFT_MARGIN)
@@ -501,7 +501,8 @@ class ContextedResponse(TwistedResponse):
 				wr("""<input type="text" name="%s" value="%s">""" % \
 					(cell.col.name,htmltext(cell.format())))
 				wr("\n<br>")
-			wr("""\n<input type="hidden" name="formName" value="%s">""" % frm.getFormName())
+			wr("""\n<input type="hidden" name="formName" value="%s">""" \
+				% frm.getFormName())
 			wr("""\n<input type="submit" value="OK">""")
 
 			wr("</form></p>")
