@@ -1180,14 +1180,27 @@ class DataCell:
     def getValue(self):
         return self.col.getCellValue(self.row)
         
-    def __str__(self):
-        return str(self.col.getCellValue(self.row))
+##     def __str__(self):
+##         return str(self.col.getCellValue(self.row))
+##         #~ v = self.col.getCellValue(self.row)
+##         #~ if v is None:
+##             #~ return "None"
+##         #~ return self.col.rowAttr.format(v)
+    
+##     def format(self):
+##         v = self.col.getCellValue(self.row)
+##         if v is None:
+##             return ""
+##         return self.col.rowAttr.format(v)
+    
+    def __repr__(self):
+        return repr(self.col.getCellValue(self.row))
         #~ v = self.col.getCellValue(self.row)
         #~ if v is None:
             #~ return "None"
         #~ return self.col.rowAttr.format(v)
     
-    def format(self):
+    def __str__(self):
         v = self.col.getCellValue(self.row)
         if v is None:
             return ""
