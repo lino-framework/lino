@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,7 +18,7 @@
 
 import htmlentitydefs
 
-from twisted.web.html import escape
+# from twisted.web.html import escape
 
 def html_encode(txt):
 	txt2 = ''
