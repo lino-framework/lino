@@ -7,7 +7,7 @@
 from cStringIO import StringIO
 
 from lino.misc.console import Console, getSystemConsole
-from session import Session
+from session import ConsoleSession
 
 _center = None # User code should call getCenter() to get this instance.
 
@@ -67,71 +67,6 @@ class Center:
 
 			
 
-class ConsoleSession(Session):
-	def __init__(self,console=None,**kw):
-		Session.__init__(self,**kw)
-		if console is None:
-			console = getSystemConsole()
-		self._dumping = None
-		self._setcon(console)
-
-	#~ def info(self,*a):
-		#~ return self.console.info(*a)
-	#~ def debug(self,*a):
-		#~ return self.console.debug(*a)
-	#~ def error(self,*a):
-		#~ return self.console.error(*a)
-		
-	def _setcon(self,console):
-		self.console = console
-		for m in console.forwardables:
-			setattr(self,m,getattr(console,m))
-
-	def startDump(self,**kw):
-		assert self._dumping is None
-		self._dumping = self.console
-		self._setcon(Console(out=StringIO(),**kw))
-
-	def stopDump(self):
-		assert self._dumping is not None, "dumping was not started"
-		s = self.console.out.getvalue()
-		self._setcon(self._dumping)
-		self._dumping = None
-		return s
-
-	def showForm(self,formName,modal=False,**kw):
-		frm = self.openForm(formName,**kw)
-		wr = self.console.out.write
-		wr(frm.getLabel()+"\n")
-		wr("="*len(frm.getLabel())+"\n")
-		for cell in frm:
-			wr(cell.getLabel() + ":" + cell.format())
-			wr("\n")
-		
-	def showReport(self,ds,columnNames=None,showTitle=True,**kw):
-		wr = self.console.out.write
-		#if len(kw):
-		rpt = ds.report(columnNames,**kw)
-		#print [col.name for col in rpt._clist.visibleColumns]
-		if showTitle:
-			wr(rpt.getLabel()+"\n")
-			wr("="*len(rpt.getLabel())+"\n")
-		columns = rpt.getVisibleColumns()
-		wr(" ".join(
-			[col.getLabel().ljust(col.getPreferredWidth()) \
-			 for col in columns]).rstrip())
-		wr("\n")
-		wr(" ".join( ["-" * col.getPreferredWidth() \
-							  for col in columns]))
-		wr("\n")
-		for row in rpt:
-			l = []
-			for cell in row:
-				#col = columns[i]
-				l.append(cell.format())
-			wr(" ".join(l).rstrip())
-			wr("\n")
-
 			
 
 
@@ -139,14 +74,11 @@ class ConsoleSession(Session):
 def start(**kw):
 	
 	"""This can be invoked once to specify explicit options for the Center singleton.  
-	It is not allowed to call it when the Center is
-	already instanciated. 	
+	It is not allowed to call it when the Center is already instanciated.
 	"""
 	global _center
 	assert _center is None
 	_center = Center(**kw)
-	#con = Console(**kw)
-	#_center = Center(con)
 	return _center
 
 def getCenter():

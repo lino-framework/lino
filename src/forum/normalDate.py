@@ -404,27 +404,28 @@ class NormalDate:
         return (self.year(), self.month(), self.day())
 
     def weekOfYear(self):
-        """returns the week of the year as integer 1..53
+        """returns the week of the year as a string ww/yyyy 
+        where ww is 1..53 and yyyy is the year.
 
-		  "Week 01 of a year is per definition the first week that has
-		  the Thursday in this year, which is equivalent to the week
-		  that contains the fourth day of January. In other words, the
-		  first week of a new year is the week that has the majority of
-		  its days in the new year. Week 01 might also contain days from
-		  the previous year and the week before week 01 of a year is the
-		  last week (52 or 53) of the previous year even if it contains
-		  days from the new year. A week starts with Monday (day 1) and
-		  ends with Sunday (day 7)."		  
-		  (Markus Kuhn, http://www.cl.cam.ac.uk/~mgk25/iso-time.html)
-		  
+        "Week 01 of a year is per definition the first week that has
+        the Thursday in this year, which is equivalent to the week
+        that contains the fourth day of January. In other words, the
+        first week of a new year is the week that has the majority of
+        its days in the new year. Week 01 might also contain days from
+        the previous year and the week before week 01 of a year is the
+        last week (52 or 53) of the previous year even if it contains
+        days from the new year. A week starts with Monday (day 1) and
+        ends with Sunday (day 7)."		  
+        (Markus Kuhn, http://www.cl.cam.ac.uk/~mgk25/iso-time.html)
         """
-        jan4 = ND((self.year(),1,4))
+        year = self.year()
+        jan4 = ND((year,1,4))
         mondayW01 = jan4 - jan4.dayOfWeek()
         daysSinceW01 = self - mondayW01 
         if daysSinceW01 < 0:
-			  return (mondayW01-7).weekOfYear()
-        return daysSinceW01 / 7 + 1
-        
+          return (mondayW01-7).weekOfYear()
+        return str(daysSinceW01 / 7 + 1)+'/'+str(year)
+
 
     def year(self):
         """return year in yyyy format, negative values indicate B.C."""

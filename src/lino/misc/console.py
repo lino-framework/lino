@@ -9,12 +9,14 @@ try:
 except ImportError,e:
 	sound = False
 
-
 _syscon = None	  
 
 class Console:
 
-	forwardables = ('confirm','warning','debug','info','error')
+	forwardables = ('notify','confirm','warning','debug','info','error','critical')
+	"""
+	notify, confirm and warning are always user messages
+	"""
 
 	def __init__(self,out=None,verbose=False,debug=False,batch=False):
 		if out is None:
@@ -39,9 +41,9 @@ class Console:
 		return self._verbose
 
 
-	def confirm(self,prompt,answer="y",allowed="yn"):
+	def confirm(self,prompt,default="y",allowed="yn",ignoreCase=True):
 		
-		""" ask the user a question and return only whe she has given
+		""" ask the user a question and return only when she has given
 		her answer.
 		
 		"""
@@ -51,15 +53,22 @@ class Console:
 		if sound:
 			sound.asterisk()
 		while True:
-			s = raw_input(prompt+" [y,n]")
+			s = raw_input(prompt+(" [%s]" % ",".join(allowed)))
 			if s == "":
-				s = answer
-			s = s.lower()
+				s = default
+			if ignoreCase:
+				s = s.lower()
 			if s == "y":
 				return True
 			if s == "n":
 				return False
+			self.warning("wrong answer: "+s)
 
+
+	def notify(self,msg):
+		if sound:
+			sound.asterisk()
+		self.out.write(msg + "\n")
 
 	def warning(self,msg):
 		
@@ -67,13 +76,10 @@ class Console:
 		that she has seen this message before returning.
 
 		"""
-		if sound:
-			sound.asterisk()
-		#notifier(msg)
-		self.out.write(msg + "\n")
+		self.notify(msg)
 		if not self._batch:
 			raw_input("Press ENTER to continue...")
-
+			
 	def debug(self,msg):
 		"log a message if --debug is on"
 		if self._debug:

@@ -5,11 +5,10 @@
 #----------------------------------------------------------------------
 
 from datasource import Datasource, DataCell
-#from forms import ContextForm
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-#from center import center
-#import center
+from lino.misc.console import getSystemConsole, Console
+from cStringIO import StringIO
 
 
 class BabelLang:
@@ -20,9 +19,6 @@ class BabelLang:
 	def __repr__(self):
 		return "<BabelLang %s(%d)>" % (self.id,self.index)
 
-
-
-	
 
 
 class Context:
@@ -39,15 +35,38 @@ class Session(Context):
 	_dataCellFactory = DataCell
 	#_windowFactory = lambda x: x
 	
-	def __init__(self,**kw):
+	def __init__(self,console=None,**kw):
 		#self.app = app
 		self._user = None
 		self.db = None
 		self.schema = None
 		self.tables = None
 		self.forms = None
-		#center().addSession(self)
+		
+		if console is None:
+			console = getSystemConsole()
+		self._dumping = None
+		self._setcon(console)
+		
 		self.use(**kw)
+
+	def _setcon(self,console):
+		self.console = console
+		for m in console.forwardables:
+			setattr(self,m,getattr(console,m))
+
+	def startDump(self,**kw):
+		assert self._dumping is None
+		self._dumping = self.console
+		self._setcon(Console(out=StringIO(),**kw))
+
+	def stopDump(self):
+		assert self._dumping is not None, "dumping was not started"
+		s = self.console.out.getvalue()
+		self._setcon(self._dumping)
+		self._dumping = None
+		return s
+		
 
 	def hasAuth(self,*args,**kw):
 		return True
@@ -78,6 +97,19 @@ class Session(Context):
 			self.setBabelLangs(langs)
 		
 		#self._formStack = []
+		
+	def showForm(self,formName,modal=False,**kw):
+		raise NotImplementedError
+
+	def showReport(self,ds,showTitle=True,**kw):
+		raise NotImplementedError
+
+	def errorMessage(self,msg):
+		raise NotImplementedError
+
+	def notifyMessage(self,msg):
+		raise NotImplementedError
+		
 
 ## 	def spawn(self,**kw):
 ## 		kw.setdefault('db',self.db)
@@ -120,12 +152,6 @@ class Session(Context):
 	def getDatasource(self,name):
 		return getattr(self.tables,name)
 
-	def showForm(self,formName,modal=False,**kw):
-		raise NotImplementedError
-
-	def showReport(self,ds,showTitle=True,**kw):
-		raise NotImplementedError
-
 	def end(self):
 		self.use()
 		
@@ -133,15 +159,15 @@ class Session(Context):
 	def installto(self,d):
 		"""
 		deprecated.
-		note that installto() will open all tables.
+		installto() will open all tables.
 		"""
 		d['__session__'] = self
 		d['setBabelLangs'] = self.setBabelLangs
 		#self.context.tables.installto(d)
 		#d.update(
- 		for name in self.db._stores.keys():
+		for name in self.db._stores.keys():
 			d[name] = getattr(self.tables,name)
- 		#for name,store in self.db._stores.items():
+		#for name,store in self.db._stores.items():
 		#   ds = Datasource(self,store)
 		#   self.tables.define(name,ds)
 		
@@ -169,13 +195,13 @@ class Session(Context):
 		self._user = user
 		
 	def logout(self):
- 		assert self._user is not None
- 		self._user = None
+		assert self._user is not None
+		self._user = None
 
 	def checkIntegrity(self):
 		msgs = []
 		#for q in self.tables:
- 		for name in self.db._stores.keys():
+		for name in self.db._stores.keys():
 			q = getattr(self.tables,name)
 			self.info("%s : %d rows" % (q._table.getTableName(), len(q)))
 			l = len(q)
@@ -199,7 +225,46 @@ class Session(Context):
 		
 
 
-class WebSession(Session):
+class ConsoleSession(Session):
+
+	def showForm(self,formName,modal=False,**kw):
+		frm = self.openForm(formName,**kw)
+		wr = self.console.out.write
+		wr(frm.getLabel()+"\n")
+		wr("="*len(frm.getLabel())+"\n")
+		for cell in frm:
+			wr(cell.getLabel() + ":" + cell.format())
+			wr("\n")
+		
+	def showReport(self,ds,columnNames=None,showTitle=True,**kw):
+		wr = self.console.out.write
+		#if len(kw):
+		rpt = ds.report(columnNames,**kw)
+		#print [col.name for col in rpt._clist.visibleColumns]
+		if showTitle:
+			wr(rpt.getLabel()+"\n")
+			wr("="*len(rpt.getLabel())+"\n")
+		columns = rpt.getVisibleColumns()
+		wr(" ".join(
+			[col.getLabel().ljust(col.getPreferredWidth()) \
+			 for col in columns]).rstrip())
+		wr("\n")
+		wr(" ".join( ["-" * col.getPreferredWidth() \
+							  for col in columns]))
+		wr("\n")
+		for row in rpt:
+			l = []
+			for cell in row:
+				#col = columns[i]
+				l.append(cell.format())
+			wr(" ".join(l).rstrip())
+			wr("\n")
+
+
+
+
+
+class AbstractWebSession(Session):
 	
 	def __init__(self,**kw):
 		Session.__init__(self,**kw)
@@ -215,7 +280,12 @@ class WebSession(Session):
 		l = self._messages
 		self._messages = []
 		return l
-
+		
+	def showForm(self,formName,modal=False,**kw):
+		raise NotImplementedError
+		
+	def showReport(self,ds,columnNames=None,showTitle=True,**kw):
+		raise NotImplementedError
 		
 		
 		

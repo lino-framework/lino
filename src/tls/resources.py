@@ -10,8 +10,6 @@ from twisted.web.resource import Resource
 from twisted.web import error
 from twisted.web import static
 
-#from lino.adamo.widgets import Window
-
 from lino.adamo import InvalidRequestError
 
 from lino.adamo.html import MemoParser
@@ -21,13 +19,6 @@ from lino.misc.attrdict import AttrDict
 
 from response import ContextedResponse
 
-#from response import Response
-#from widgets import Widget
-
-#from skipper import Skipper
-#from widgets import Widget, ErrorWidget
-#from webcal import WebCalendar
-
 	
 CATCH_ERRORS = False
 
@@ -35,7 +26,6 @@ class AdamoResource(Resource):
 
 	def __init__(self, parent, stylesheet=None):
 		Resource.__init__(self)
-		#Window.__init__(self,parent)
 		if stylesheet is None:
 			if (parent is None) or (parent.stylesheet is None):
 				stylesheet="default.css"
@@ -58,8 +48,8 @@ class AdamoResource(Resource):
 		frmName = request.postdata['formName'][0]
 		sess = responder.getSession()
 		frm = sess.forms.get(frmName,None)
- 		if frm is None:
- 			raise "POST without active form"
+		if frm is None:
+			raise "POST without active form"
 ## 		if request.postdata['formName'][0] != frm.getFormName():
 ## 			raise "POSTDATA form %s != current form '%s'" % \
 ## 					(repr(request.postdata['formName'][0]),
@@ -114,7 +104,7 @@ class AdamoResource(Resource):
 
 class DbResource(AdamoResource):
 	isLeaf = True
- 	def __init__(self,parent,db,staticDirs,**kw):
+	def __init__(self,parent,db,staticDirs,**kw):
 		self.db = db
 		
 ## 		self.staticDirs = {}

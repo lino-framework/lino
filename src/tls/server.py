@@ -74,10 +74,8 @@ def hostname():
 
 	
 class ServerResource(AdamoResource):
- 	"Resource who serves a constant (renderable) target"
-	
- 	def __init__(self,homeDir,**kw):
- 		self.homeDir =homeDir
+	def __init__(self,homeDir,**kw):
+		self.homeDir =homeDir
 		#self.app = app
 		self.accounts = []
 		self.responderClass = ServerResponse
@@ -145,7 +143,6 @@ class ServerResponse(HtmlResponse):
 		wr("<ul>")
 		for a in srv.accounts:
 			wr("<li>")
-			
 			self.renderLink(url=a.getName())
 			wr(" : " + a.getLabel())
 			wr("</li>")
@@ -155,9 +152,9 @@ class ServerResponse(HtmlResponse):
 class MyRequest(Request):
 	
 	def requestReceived(self, command, path, version):
-		 
-		"""twisted.web.http.Request.requestReceived() merges POST and
-		GET arguments into self.args but I want to have them
+		"""
+		twisted.web.http.Request.requestReceived() merges POST and
+		GET arguments into self.args but Lino wants to have them
 		separately."""
 		
 		self.content.seek(0,0)
@@ -184,6 +181,7 @@ class MyRequest(Request):
 		self.host = self.channel.transport.getHost()
 
 		# Argument processing
+		# store POST data to self.postdata instead of self.args
 		args = self.postdata
 		ctype = self.getHeader('content-type')
 		if self.method == "POST" and ctype:

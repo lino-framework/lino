@@ -5,7 +5,7 @@
 # I would like to thanks William Tan for its support in tuning rsync.py to support unicode path.
 
 """
-changes by LS:
+changes LS:
 
 20041129 : main() : (1) "--times" was still not correctly recognized. (2) A (wrong) option "--time" was silently ignored, now main() 
 raises exception for any non-recognized option.
@@ -269,9 +269,11 @@ def removeDir(cookie, target):
 	log(cookie, "remove dir: %s" % target)
 	if not cookie.dry_run:
 		try:
-			shutil.rmtree(target, True)
-		except:
-			logError("Fail to remove dir %s" % target)
+			# 20041129 why ignore errors?
+			# shutil.rmtree(target,True)
+			shutil.rmtree(target) #, True)
+		except Exception,e:
+			logError("Fail to remove dir %s : %s" % (target,str(e)))
 
 
 def convertPath(path):

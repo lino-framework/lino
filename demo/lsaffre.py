@@ -1,11 +1,9 @@
 #coding: latin1
-
 """
 Starts the web server who serves the content at
 http://lsaffre.dyndns.org:8080
 
 """
-
 
 from optparse import OptionParser
 import sys, getopt, os
