@@ -100,12 +100,14 @@ class ConsoleSession(Session):
 ## 	def progress(self,msg):
 ## 		return self.console.progress(msg)
 
-	def report(self,ds,showTitle=True):
+	def showReport(self,ds,showTitle=True,**kw):
 		wr = self.console.out.write
+		#if len(kw):
+		rpt = ds.report(**kw)
 		if showTitle:
-			wr(ds.getLabel()+"\n")
-			wr("="*len(ds.getLabel())+"\n")
-		columns = ds.getVisibleColumns()
+			wr(rpt.getLabel()+"\n")
+			wr("="*len(rpt.getLabel())+"\n")
+		columns = rpt.getVisibleColumns()
 		wr(" ".join(
 			[col.getLabel().ljust(col.getPreferredWidth()) \
 			 for col in columns]).rstrip())
@@ -113,10 +115,10 @@ class ConsoleSession(Session):
 		wr(" ".join( ["-" * col.getPreferredWidth() \
 							  for col in columns]))
 		wr("\n")
-		for row in ds: #.iterateAsColumns():
+		for row in rpt:
 			l = []
 			for cell in row:
-				col = columns[i]
+				#col = columns[i]
 				l.append(cell.format())
 			wr(" ".join(l).rstrip())
 			wr("\n")

@@ -19,7 +19,7 @@ class Contacts(Table):
 			return self.name
 		
 class Addresses(Table):
-	""
+	"abstract"
 	def init(self):
 		self.nation = Pointer(Nations)
 		self.city = Pointer(Cities)
@@ -95,6 +95,17 @@ class MainForm(FormTemplate):
 											  )
 		
 			
+## class MainForm(FormTemplate):
+	
+## 	def init(self,sess):
+## 		mnu = self.addMenu("&Master")
+## 		mnu.addCommand(sess.report,sess.tables.PARTNERS)
+## 		mnu.addCommand(sess.report,sess.tables.ORGS)
+		
+## 		mnu = self.addMenu("&System")
+## 		mnu.addCommand(sess.logout,label="&Logout")
+		
+			
 
 class Users(Persons):
 	"People who can access this database"
@@ -137,6 +148,37 @@ class LoginForm(FormTemplate):
 			sess.login(user)
 			sess.info("Hello, "+user.getLabel())
 			return True
+			
+## class LoginForm(FormTemplate):
+	
+## 	def init(self,sess):
+## 		self.addField("uid",sess.tables.USERS.id)
+## 		self.addField("password",sess.tables.USERS.password)
+## 		self.addButtons("ok help")
+
+## 	class Instance(FormTemplate.Instance):
+
+## 		def accept_uid(self,value):
+## 			if value is not None:
+## 				if "!" in value:
+## 					raise DataVeto(value + " : invalid username")
+	
+## 		def ok(self):
+## 			"Log in with the supplied username and password."
+## 			uid = self.uid
+## 			pwd = self.password
+## 			sess = self.getSession()
+## 			sess.debug("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
+			
+## 			user = sess.tables.USERS.peek(uid)
+## 			if user is None:
+## 				return sess.errorMessage("%s  : no such user" % uid)
+## 			if user.password != pwd:
+## 				return sess.errorMessage("invalid password for "+\
+## 												 user.getLabel())
+## 			sess.login(user)
+## 			sess.info("Hello, "+user.getLabel())
+## 			return True
 			
 
 class Partners(Contacts,Addresses):
@@ -290,4 +332,17 @@ class Org2Pers(LinkTable):
 
 		
 
+
+class ContactsPlugin(SchemaPlugin):
+	def defineTables(self,schema):
+		schema.addTable( Nations(
+			name="NATIONS",
+			label="Nations" ))
+		schema.addTable( Cities("CITIES","Cities"))
+		schema.addTable( Organisations("ORGS","Organisations"))
+		schema.addTable( Partners("PARTNERS","Partners"))
+		schema.addTable( PartnerTypes(
+			name="PARTYPES",
+			label="Partner Types"))
+		schema.addTable( Currencies())
 

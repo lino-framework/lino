@@ -88,8 +88,11 @@ class Datasource:
 			self.setSamples(**kw)
 
 	def apply_GET(self,**kw):
+		"""
+		apply a (Twisted) GET dict to self
+		"""
 		qryParams = {}
-		csvSamples = {}
+		#csvSamples = {}
 		for k,v in kw.items():
 			if k == 'ob':
 				qryParams['orderBy'] = " ".join(v)
@@ -106,11 +109,24 @@ class Datasource:
 				#qryParams['filters'] = tuple(l)
 
 			else:
-				csvSamples[k] = v[0]
+				#csvSamples[k] = v[0]
+				col = self._clist.provideColumn(k)
+				qryParams[k] = col.parse(v[0],self)
 				
 		self.config(**qryParams)
-		if len(csvSamples) > 0:
-			self.setCsvSamples(**csvSamples)
+		#if len(csvSamples) > 0:
+		#	self.setCsvSamples(**csvSamples)
+			
+## 	def setCsvSamples(self,**kw):
+## 		"each value is a string to be parsed by column"
+## 		#self._samples.update(kw)
+## 		for (name,value) in kw.items():
+## 			if value == self.ANY_VALUE:
+## 				del self._samples[name]
+## 			else:
+## 				col = self._clist.provideColumn(name)
+## 				self._samples[name] = col.parse(value,self)
+## 		return
 
 	def get_GET(self):
 		p = {}
@@ -256,16 +272,6 @@ class Datasource:
 				col = self._clist.provideColumn(name)
 		return
 	
-	def setCsvSamples(self,**kw):
-		"each value is a string to be parsed by column"
-		#self._samples.update(kw)
-		for (name,value) in kw.items():
-			if value == self.ANY_VALUE:
-				del self._samples[name]
-			else:
-				col = self._clist.provideColumn(name)
-				self._samples[name] = col.parse(value,self)
-		return
 	
 ## 	def setSamples_unused(self):
 ## 		sampleColumns = []
@@ -540,8 +546,10 @@ class Datasource:
 	
 	def iterate(self,**kw):
 		
-		"""returns an iterator who returns a tuple of atomic values for
-		each row"""
+		""" like __iter___() but possible to specify keyword
+		parameters. E.g. offset and limit.
+		
+		"""
 		
 		return DataIterator(self,**kw)
 
@@ -554,6 +562,7 @@ class Datasource:
 		return self.rowcount
 		
 	def executeSelect(self,**kw):
+		# overridden by Report
 		return self._connection.executeSelect(self, **kw )
 
 	
@@ -958,7 +967,8 @@ class DataCell:
 		v = self.col.getCellValue(self.row)
 		if v is None:
 			return ""
-		return self.col.format(v,self.row.getSession())
+		#return self.col.format(v,self.row.getSession())
+		return self.col.rowAttr.format(v) #,self.row.getSession())
 	
 
 

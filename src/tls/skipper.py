@@ -9,6 +9,7 @@
 #from lino.adamo.datasource import Datasource
 #from lino.adamo.schema import LayoutComponent
 
+raise "Skipper muss noch angepasst werden, dass er den neuen Report nutzt. Siehe 20041007."
 
 class Skipper:
 	
@@ -51,6 +52,8 @@ class Skipper:
 		self.pageNum = pageNum
 		self.pageLen = pageLen
 		
+		# this is now also in Report
+		# todo: use it there!
 		if self.pageLen is None:
 			self.lastPage = 1
 		elif len(self.ds) == 0:
@@ -145,7 +148,8 @@ class Skipper:
  	def writePage(self):
 			
 		pageNum = self.pageNum
-		
+		# this is now also in Report
+		# todo: use it there!
 		if self.pageLen is None:
 			limit = offset = None
 			rowcount = 0

@@ -18,19 +18,6 @@ class BasePlugin(adamo.SchemaPlugin):
 		schema.addForm(addrbook.LoginForm(name="login"))
 		schema.addForm(addrbook.MainForm(name="main"))
 
-class ContactsPlugin(adamo.SchemaPlugin):
-	def defineTables(self,schema):
-		schema.addTable( addrbook.Nations(
-			name="NATIONS",
-			label="Nations" ))
-		schema.addTable( addrbook.Cities("CITIES","Cities"))
-		schema.addTable( addrbook.Organisations("ORGS","Organisations"))
-		schema.addTable( addrbook.Partners("PARTNERS","Partners"))
-		schema.addTable( addrbook.PartnerTypes(
-			name="PARTYPES",
-			label="Partner Types"))
-		schema.addTable( addrbook.Currencies())
-
 
 class WebPlugin(adamo.SchemaPlugin):
 
@@ -121,7 +108,7 @@ def Schema(
 	schema = SprlSchema()
 	
 	schema.addPlugin(BasePlugin(True))
-	schema.addPlugin(ContactsPlugin(True))
+	schema.addPlugin(addrbook.ContactsPlugin(True))
 	
 	schema.addPlugin(EventsPlugin(withEvents))
 	schema.addPlugin(SalesPlugin(withSales))

@@ -631,6 +631,7 @@ class DataColumn:
 #		return 
 	
 	def format(self,value,context):
+		raise "no longer used?"
 		values = self.rowAttr.value2atoms(value,context)
 		#print self, ":", values
 		#if len(self._atoms) == 1:

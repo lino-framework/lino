@@ -1,7 +1,7 @@
 # coding: latin1
 
 """
-new function Datasource.setCsvSamples()
+testing Datasource.apply_GET()
 
 """
 import types
@@ -22,12 +22,18 @@ class Case(TestCase):
 
 	def test01(self):
 		be = NATIONS.peek('be')
+		
+		# method 1
 		q = CITIES.query(nation=be)
 		l = len(q)
 		
+		# method 2
 		q = CITIES.query()
-		q.setCsvSamples(nation='be')
-		
+		q.apply_GET(nation=('be',))
+		self.assertEqual(l,len(q))
+
+		# method 3
+		q = be.cities.query()
 		self.assertEqual(l,len(q))
 		
 	def test02(self):
@@ -40,7 +46,7 @@ class Case(TestCase):
 		l = len(q)
 		
 		q = INVOICELINES.query()
-		q.setCsvSamples(invoice="OUT,1")
+		q.apply_GET(invoice=("OUT,1",))
 		
 		self.assertEqual(l,len(q))
 		

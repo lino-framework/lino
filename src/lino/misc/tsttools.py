@@ -108,3 +108,4 @@ class TestCase(unittest.TestCase):
 #a = sys.stdout # open("a.txt","w")
 #b = sys.stdout # open("b.txt","w")
 
+main = unittest.main
