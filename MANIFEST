@@ -81,7 +81,6 @@ src\lino\adamo\database.py
 src\lino\adamo\datasource.py
 src\lino\adamo\datatypes.py
 src\lino\adamo\exceptions.py
-src\lino\adamo\forms.py
 src\lino\adamo\mozilla_dbd.py
 src\lino\adamo\paramset.py
 src\lino\adamo\plain.py
@@ -96,7 +95,6 @@ src\lino\adamo\store.py
 src\lino\adamo\table.py
 src\lino\adamo\tim2lino.py
 src\lino\adamo\twisted_ui.py
-src\lino\adamo\ui.py
 src\lino\adamo\webcal.py
 src\lino\adamo\widgets.py
 src\lino\adamo\dbds\__init__.py
@@ -111,6 +109,10 @@ src\lino\agui\__init__.py
 src\lino\agui\httpui.py
 src\lino\agui\snakelets.py
 src\lino\apps\__init__.py
+src\lino\apps\keeper\__init__.py
+src\lino\apps\keeper\keeper.py
+src\lino\apps\keeper\keeper_tables.py
+src\lino\apps\keeper\populate.py
 src\lino\apps\raceman\__init__.py
 src\lino\apps\raceman\arrivals.py
 src\lino\apps\raceman\loaders.py
@@ -147,6 +149,7 @@ src\lino\misc\descr.py
 src\lino\misc\etc.py
 src\lino\misc\expose.py
 src\lino\misc\gpl.py
+src\lino\misc\jobs.py
 src\lino\misc\memo.py
 src\lino\misc\my_import.py
 src\lino\misc\parser.py
@@ -161,7 +164,6 @@ src\lino\oogen\document.py
 src\lino\oogen\elements.py
 src\lino\oogen\generators.py
 src\lino\oogen\ifiles.py
-src\lino\oogen\styles.py
 src\lino\quix\__init__.py
 src\lino\quix\default.py
 src\lino\quix\serve.py
@@ -213,8 +215,9 @@ src\lino\scripts\makelower.py
 src\lino\scripts\maketn.py
 src\lino\scripts\openmail.py
 src\lino\scripts\openurl.py
-src\lino\scripts\pds2oo.py
 src\lino\scripts\pds2pdf.py
+src\lino\scripts\pds2sxc.py
+src\lino\scripts\pds2sxw.py
 src\lino\scripts\prn2pdf.py
 src\lino\scripts\prnprint.py
 src\lino\scripts\publish.py
@@ -223,6 +226,7 @@ src\lino\scripts\rsync.py
 src\lino\scripts\runtests.py
 src\lino\scripts\sendmail.py
 src\lino\scripts\startup.py
+src\lino\scripts\sync-old.py
 src\lino\scripts\sync.py
 src\lino\scripts\treecomp.py
 src\lino\scripts\webman.py
@@ -366,6 +370,10 @@ tests\oogen\3.py
 tests\oogen\4.py
 tests\oogen\5.pds
 tests\oogen\5.py
+tests\oogen\5b.pds
+tests\oogen\5c.pds
+tests\oogen\5d.pds
+tests\oogen\RUNME.BAT
 tests\reports\1.py
 tests\reports\RUNME.BAT
 tests\textprinter\1.py

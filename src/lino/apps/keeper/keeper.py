@@ -69,10 +69,9 @@ This is the Keeper main menu.
 
 def main(argv):
 
-    schema = adamo.Schema()
-    tables.setupSchema(schema)
-    app = Keeper(schema, name="Keeper", years='2005')
+    app = Keeper(name="Keeper", years='2005')
     app.parse_args()
+    tables.setupSchema(app.schema)
     gui.run(app)
     
 

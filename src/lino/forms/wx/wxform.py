@@ -21,7 +21,7 @@ import wx
 
 from lino.ui import console
 
-from lino.adamo.datatypes import MemoType
+from lino.adamo.datatypes import MEMO
 from lino.forms import base
 from lino.forms.wx import wxgrid
 #from lino.forms.wx.showevents import showEvents
@@ -66,23 +66,6 @@ class EventCaller:
 ##         return True     
 
             
-class WxApp(wx.App):
-
-    def __init__(self):
-        wx.App.__init__(self,0)
-
-
-    def OnInit(self):
-        wx.InitAllImageHandlers()
-        #center.onBeginGUI(self)
-        return True
-
-    def OnExit(self):
-        #center.shutdown()
-        pass
-
-
-
 ## class Component:
     
 ##     def __repr__(self):
@@ -95,7 +78,6 @@ class WxApp(wx.App):
 class Label(base.Label):
     
     def setup(self,panel,box):
-
         text = self.getLabel()
         if self.getDoc() is not None:
             text += '\n' + self.getDoc()
@@ -180,6 +162,33 @@ class DataNavigator(base.DataNavigator):
         
         
 
+class TextViewer(base.TextViewer):
+
+    def __init__(self,*args,**kw):
+        base.TextViewer.__init__(self,*args,**kw)
+        self._buffer = ""
+        
+    def beforeClose(self):
+        raise "it is no good idea to close this window"
+    
+    def setup(self,parentCtrl,box):
+        parentFormCtrl = self.getForm().wxctrl
+        e = wx.TextCtrl(parentCtrl,-1,self._buffer,
+                        style=wx.TE_MULTILINE|wx.HSCROLL)
+        e.SetBackgroundColour('BLACK')
+        e.SetForegroundColour('WHITE')
+        e.SetEditable(False)
+        #e.SetEnabled(False)
+        box.Add(e, 0, wx.EXPAND|wx.ALL,10)
+        self.wxctrl = e
+        self._buffer = None
+
+    def addText(self,s):
+        if hasattr(self,"wxctrl"):
+            self.wxctrl.WriteText(s)
+        else:
+            self._buffer += s
+    
 class Panel(base.Panel):
 
 ##     def __repr__(self):
@@ -375,6 +384,10 @@ class Form(base.Form):
 ##             self.app.MainLoop()
 
 
+    def setParent(self,parent):
+        assert not hasattr(self,"wxctrl")
+        base.Form.setParent(self,parent)
+        
     def setStatusText(self,msg):
         if self.modal:
             print "[status]", msg
@@ -382,6 +395,7 @@ class Form(base.Form):
             self.wxctrl.SetStatusText(msg)
             
     def setup(self):
+        assert not hasattr(self,"wxctrl")
         self.setupMenu()
         if self._parent is None:
             #self.app = WxApp()
@@ -419,8 +433,8 @@ class Form(base.Form):
         wx.EVT_IDLE(self.wxctrl, self.OnIdle)
         #wx.EVT_SIZE(self.wxctrl, self.OnSize)
         wx.EVT_CLOSE(self.wxctrl, self.OnCloseWindow)
-        wx.EVT_ICONIZE(self.wxctrl, self.OnIconfiy)
-        wx.EVT_MAXIMIZE(self.wxctrl, self.OnMaximize)
+        #wx.EVT_ICONIZE(self.wxctrl, self.OnIconfiy)
+        #wx.EVT_MAXIMIZE(self.wxctrl, self.OnMaximize)
 
         
         #self.SetBackgroundColour(wx.RED)
@@ -462,6 +476,15 @@ class Form(base.Form):
 
     
     def show(self,modal=False):
+##         if not self.app.toolkit._setup:
+##             self.app.toolkit.setup()
+            
+        if not self.app.toolkit._started:
+            self.app.toolkit.start()
+            if self.app.mainForm == self:
+                return
+            # todo: uergh...
+            
         self.modal = modal
         console.debug("show(modal=%s) %s" % (modal, self.getLabel()))
         self.setup()
@@ -504,7 +527,7 @@ class Form(base.Form):
 
 
     def OnChar(self, evt):
-        print "OnChar", evt
+        self.debug("OnChar "+str(evt))
 
 
     def OnIdle(self, evt):
@@ -512,13 +535,13 @@ class Form(base.Form):
         #wx.LogMessage("OnIdle")
         evt.Skip()
 
-    def OnIconfiy(self, evt):
-        wx.LogMessage("OnIconfiy")
-        evt.Skip()
+##     def OnIconfiy(self, evt):
+##         wx.LogMessage("OnIconfiy")
+##         evt.Skip()
 
-    def OnMaximize(self, evt):
-        wx.LogMessage("OnMaximize")
-        evt.Skip()
+##     def OnMaximize(self, evt):
+##         wx.LogMessage("OnMaximize")
+##         evt.Skip()
         
     def OnSize(self, evt):
         wx.LogMessage("OnSize")
@@ -529,11 +552,35 @@ class Form(base.Form):
         self.wxctrl.Refresh()
 
 
+class WxApp(wx.App):
+
+    def __init__(self,toolkit):
+        self.toolkit = toolkit
+        wx.App.__init__(self,0)
+
+
+    def OnInit(self):
+        wx.InitAllImageHandlers()
+        #center.onBeginGUI(self)
+        self.toolkit.init()
+        #for a in self.toolkit._apps:
+            #a.mainForm.show()
+        #self.app.getMainForm().show()
+        #self.SetTopWindow(self.toolkit._apps[0].mainForm.wxctrl)
+        return True
+
+    def OnExit(self):
+        #center.shutdown()
+        pass
+
+
+
 class Toolkit(base.Toolkit):
     labelFactory = Label
     entryFactory = Entry
     dataEntryFactory = DataEntry
     buttonFactory = Button
+    viewerFactory = TextViewer
     panelFactory = Panel
     tableEditorFactory = DataGrid
     navigatorFactory = DataNavigator
@@ -541,14 +588,17 @@ class Toolkit(base.Toolkit):
     
     def __init__(self,*args,**kw):
         base.Toolkit.__init__(self,*args,**kw)
-        self.wxctrl = WxApp()
-        #self.console = console
+        #self.consoleForm = None
+        #self._setup = False
+        self._started = False
 
-    def main(self):
-        "called from Application.main()"
-        self.app.init(self)
-        frm = self.app.getMainForm(self)
-        frm.show()
-        self.wxctrl.SetTopWindow(frm.wxctrl)
+##     def setup(self):
+##         self._setup = True
+##         self.init()
+        
+    def start(self):
+        #if not self._setup:
+        #    self.setup()
+        self._started = True
+        self.wxctrl = WxApp(self)
         self.wxctrl.MainLoop()
-

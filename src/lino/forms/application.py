@@ -20,39 +20,45 @@ import os
 
 from lino.misc.descr import Describable
 from lino.adamo.datasource import Datasource
-#from lino.forms import gui
-from lino.ui.console import getSystemConsole
+from lino.adamo.schema import Schema
+from lino.forms import gui
+#from lino.ui.console import getSystemConsole
+from lino.ui import console
+
 
 
 class Application(Describable):
 
     def __init__(self,
-                 #toolkit=None,
+                 toolkit=None,
                  years="",
                  version=None,
                  author=None,
                  tempDir=".",
-                 console=None,
+                 #mainForm=None,
+                 #console=None,
                  **kw):
+        if toolkit is None:
+            toolkit = gui.choose()
+        self.toolkit = toolkit
+        self.toolkit.addApplication(self)
+        
         self.years = years
         self.version = version
         self.author = author
         self.tempDir = tempDir
         Describable.__init__(self,**kw)
-        #if ui is None:
-        #    ui = gui.choose(self)
-        #self.toolkit = toolkit
         self.mainForm = None
-        if console is None:
-            console = getSystemConsole()
-        self.console = console
+##         if console is None:
+##             console = getSystemConsole()
+##         self.console = console
         
 
+    def form(self,parent=None,*args,**kw):
+        return self.toolkit.formFactory(self,parent,*args,**kw)
+    
     def getOptionParser(self,**kw):
-        return self.console.getOptionParser(**kw)
-
-    def parse_args(self,argv=None,**kw):
-        parser = self.getOptionParser(**kw)
+        parser = self.toolkit.getOptionParser(**kw)
         parser.add_option(
             "-t", "--tempdir",
             help="directory for temporary files",
@@ -60,24 +66,34 @@ class Application(Describable):
             type="string",
             dest="tempDir",
             default=self.tempDir)
-    
+        return parser
+        #return self.toolkit.getOptionParser(**kw)
+
+    def parse_args(self,argv=None,**kw):
+        parser = self.getOptionParser(**kw)
         (options, args) = parser.parse_args(argv)
         self.tempDir = options.tempDir
         return (options, args)
 
-    def setMainForm(self,frm):
-        self.mainForm = frm
+##     def setMainForm(self,frm):
+##         self.mainForm = frm
         
-    def getMainForm(self,ui):
-        if self.mainForm is None:
-            self.mainForm = self.makeMainForm(ui)
-        assert self.mainForm.toolkit == ui
-        return self.mainForm 
+##     def getMainForm(self,ui):
+##         if self.mainForm is None:
+##             self.mainForm = self.makeMainForm(ui)
+##         assert self.mainForm.toolkit == ui
+##         return self.mainForm 
 
-    def makeMainForm(self,ui):
-        "must call ui.form(), configure and return it"
-        raise NotImplementedError
+##     def makeMainForm(self,ui):
+##         "must call ui.form(), configure and return it"
+##         raise NotImplementedError
 
+    def showAbout(self):
+        frm = self.form(label="About",doc=self.aboutString())
+        frm.addOkButton()
+        frm.show()
+        
+        
     def aboutString(self):
         s = self.name
         if self.version is not None:
@@ -92,7 +108,12 @@ class Application(Describable):
     
 
     def init(self,ui):
+        # must set self.mainForm
         pass
+
+    def run(self):
+        self.toolkit.start()
+        
     
         
 ##     def main(self,frm=None):
@@ -109,15 +130,29 @@ class Application(Describable):
 ##         #self.ui.mainLoop()
         
 
+## class GuiConsole(Application):
+    
+##     def write(self,s):
+##         n = self.consoleEntry.getValue() + s
+##         self.consoleEntry.setValue(n)
+
+##     def init(self,toolkit):
+##         frm self.form(None,label="Console")
+##         self.consoleEntry = frm.addEntry(
+##             type=MEMO(height=10,width=90))
+##         self.mainForm = frm
+##         console._syscon.redirect(stdout=self,stderr=self)
+##         self.mainForm.show()
+
 
 
 
 
 class AdamoApplication(Application):
 
-    def __init__(self,schema,filename=None,**kw):
-        self.schema = schema
+    def __init__(self,filename=None,**kw):
         Application.__init__(self,**kw)
+        self.schema = Schema()
         self.filename = filename
         self.sess = None
         
@@ -149,6 +184,7 @@ where DBFILE is the name of the sqlite database file""",
 
 
     def init(self,ui,*args,**kw):
+        # called from Toolkit.main()
         self.sess = self.schema.quickStartup(ui=ui,
                                              filename=self.filename)
         return Application.init(self,ui,*args,**kw)
@@ -166,8 +202,8 @@ where DBFILE is the name of the sqlite database file""",
 
 class MirrorLoaderApplication(AdamoApplication):
 
-    def __init__(self,schema,loadfrom=".",**kw):
-        AdamoApplication.__init__(self,schema,**kw)
+    def __init__(self,loadfrom=".",**kw):
+        AdamoApplication.__init__(self,**kw)
         self.loadfrom = loadfrom
     
     def getOptionParser(self,**kw):
@@ -187,9 +223,9 @@ class MirrorLoaderApplication(AdamoApplication):
         self.loadfrom = options.loadfrom
         return (options, args)
 
-    def getLoaders(self):
-        return []
+##     def getLoaders(self):
+##         return []
     
-    def init(self,ui,*args,**kw):
-        self.schema.registerLoaders(self.getLoaders())
-        AdamoApplication.init(self,ui,*args,**kw)
+##     def init(self,ui,*args,**kw):
+##         self.schema.registerLoaders(self.getLoaders())
+##         AdamoApplication.init(self,ui,*args,**kw)

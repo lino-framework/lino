@@ -16,22 +16,20 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
-opj = os.path.join
+#import os
 
 import traceback
 from cStringIO import StringIO
 
 
 from lino.adamo.datatypes import STRING, MEMO
+from lino.misc import jobs
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-#from lino import ui #import console
 
 from lino.adamo.exceptions import InvalidRequestError
 from lino.ui import console
 from lino.forms.application import Application
-from lino.misc import jobs
 
 
 
@@ -87,7 +85,13 @@ class Button(Component):
                 self.getLabel(),frm.getLabel()))
         #except Exception,e:
         #    frm.error(str(e))
-        
+
+class TextViewer(Component):
+    
+    def addText(self,v):
+        raise NotImplementedError
+
+    
 
 class BaseEntry(Component):
 
@@ -414,13 +418,13 @@ class Container(Component):
     
     def addLabel(self,label,**kw):
         frm = self.getForm()
-        e = frm.toolkit.labelFactory(self,label=label,**kw)
+        e = frm.app.toolkit.labelFactory(self,label=label,**kw)
         self._components.append(e)
         return e
         
     def addEntry(self,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.toolkit.entryFactory(frm,name,*args,**kw)
+        e = frm.app.toolkit.entryFactory(frm,name,*args,**kw)
         self._components.append(e)
         if name is not None:
             frm.entries.define(name,e)
@@ -428,19 +432,13 @@ class Container(Component):
     
     def addDataEntry(self,dc,*args,**kw):
         frm = self.getForm()
-        e = frm.toolkit.dataEntryFactory(frm,dc,*args,**kw)
+        e = frm.app.toolkit.dataEntryFactory(frm,dc,*args,**kw)
         self._components.append(e)
         return e
 
-##     def addTextEditor(self,s,*args,**kw):
-##         frm = self.getForm()
-##         e = frm.toolkit.textEditorFactory(frm,s,*args,**kw)
-##         self._components.append(e)
-##         return e
-
     def addDataGrid(self,ds,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.toolkit.tableEditorFactory(self,ds,*args,**kw)
+        e = frm.app.toolkit.tableEditorFactory(self,ds,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         if name is not None:
@@ -449,15 +447,22 @@ class Container(Component):
         
     def addNavigator(self,ds,afterSkip=None,*args,**kw):
         frm = self.getForm()
-        e = frm.toolkit.navigatorFactory(self,ds,afterSkip,*args,**kw)
+        e = frm.app.toolkit.navigatorFactory(
+            self, ds,afterSkip,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         
     def addPanel(self,direction): 
         frm = self.getForm()
-        btn = frm.toolkit.panelFactory(self,direction)
+        btn = frm.app.toolkit.panelFactory(self,direction)
         self._components.append(btn)
         return btn
+    
+    def addViewer(self): 
+        frm = self.getForm()
+        c = frm.app.toolkit.viewerFactory(self)
+        self._components.append(c)
+        return c
     
     def addVPanel(self):
         return self.addPanel(self.VERTICAL)
@@ -466,7 +471,7 @@ class Container(Component):
 
     def addButton(self,name=None,*args,**kw): 
         frm = self.getForm()
-        btn = frm.toolkit.buttonFactory(frm,name=name,*args,**kw)
+        btn = frm.app.toolkit.buttonFactory(frm,name=name,*args,**kw)
         self._components.append(btn)
         if name is not None:
             frm.buttons.define(name,btn)
@@ -518,27 +523,25 @@ class GuiProgressBar(jobs.ProgressBar):
         self.entry = self.frm.addEntry("progress",
                                        value="0%",
                                        enabled=False)
-        jobs.ProgressBar.__init__(self,label=label,**kw)
+        jobs.ProgressBar.__init__(self,gui,label=label,**kw)
 
     def onInit(self):
         self.frm.show()
         
-    def onDone(self):
-        self.frm.close()
+##     def onDone(self,job):
+##         self.frm.close()
         
-    def onTitle(self):
-        self.onInc()
+    def onStatus(self,job):
+        self.onInc(job)
         
-    def onInc(self):
-        self.entry.setValue(self._title+" "+str(self.pc)+"%")
+        
+    def onInc(self,job):
+        self.entry.setValue(job._status+" "+str(job.pc)+"%")
         
         
 
 class GUI(console.UI):
     
-    def __init__(self):
-        console.UI.__init__(self)
-
     def form(self,*args,**kw):
         raise NotImplementedError
     
@@ -578,21 +581,6 @@ class GUI(console.UI):
         frm.addOkButton()
         frm.showModal()
 
-    def status(self,msg):
-        self.warning(msg)
-        
-    def warning(self,msg):
-        console.warning(msg)
-
-    def verbose(self,msg):
-        console.verbose(msg)
-
-    def info(self,msg):
-        console.info(msg)
-
-    def error(self,msg):
-        console.error(msg)
-
     def isInteractive(self):
         return True
 
@@ -602,12 +590,6 @@ class GUI(console.UI):
 ##     def make_progressbar(self,*args,**kw):
 ##         return GuiProgressBar(self,*args,**kw)
 
-    def showAbout(self,app):
-        frm = self.form(label="About",doc=app.aboutString())
-        frm.addOkButton()
-        frm.show()
-        
-        
     def showDataForm(self,ds,**kw):
         frm = self.form(label=ds.getLabel(),**kw)
         ds.setupForm(frm)
@@ -633,8 +615,6 @@ class GUI(console.UI):
         del out
         if details is not None:
             msg += "\n" + details
-        #msg += "\nIgnore?"
-        #print s
         while True:
             i = self.decide(
                 msg,
@@ -658,10 +638,11 @@ class GUI(console.UI):
 
 class Form(Describable,GUI):
 
-    def __init__(self,toolkit,parent,data=None,*args,**kw):
+    def __init__(self,app,parent,data=None,*args,**kw):
         Describable.__init__(self,*args,**kw)
         GUI.__init__(self)
-        self.toolkit = toolkit
+        assert isinstance(app,Application)
+        self.app = app
         self._parent = parent
         self.data = data
         self.entries = AttrDict()
@@ -671,10 +652,11 @@ class Form(Describable,GUI):
         self._boxes = []
         self.menuBar = None
         self.lastEvent = None
-        self.mainComp = toolkit.panelFactory(self,Container.VERTICAL)
+        self.mainComp = app.toolkit.panelFactory(
+            self, Container.VERTICAL)
         self._menuController = None
         self._idleEvents = []
-        for m in ('addLabel',
+        for m in ('addLabel','addViewer',
                   'addEntry', 'addDataEntry',
                   'addDataGrid','addNavigator',
                   'addPanel','addVPanel','addHPanel',
@@ -691,7 +673,7 @@ class Form(Describable,GUI):
         if self._menuController is None:
             self._menuController = c
         else:
-            console.debug("ignored menuController %s" % str(c))
+            self.debug("ignored menuController %s" % str(c))
 
     def addIdleEvent(self,f):
         self._idleEvents.append(f)
@@ -699,10 +681,14 @@ class Form(Describable,GUI):
     def setupMenu(self):
         if self._menuController is not None:
             self._menuController.setupMenu()
+            
+    def setParent(self,parent):
+        assert self._parent is None
+        #self._parent = parent
     
     def form(self,*args,**kw):
         "create a form with this as parent"
-        return self.toolkit.form(self,*args,**kw)
+        return self.app.form(self,*args,**kw)
     
     def addMenu(self,*args,**kw):
         if self.menuBar is None:
@@ -748,6 +734,27 @@ class Form(Describable,GUI):
     def cancel(self):
         self.close()
 
+
+    def status(self,msg):
+        console.status(msg)
+        
+    def debug(self,msg):
+        console.status(msg)
+        
+    def warning(self,msg):
+        console.warning(msg)
+
+    def verbose(self,msg):
+        console.verbose(msg)
+
+    def info(self,msg):
+        console.info(msg)
+
+    def error(self,msg):
+        console.error(msg)
+
+        
+
 ##     def info(self,msg):
 ##         #print msg
 ##         self.setMessage(msg)
@@ -762,9 +769,9 @@ class Toolkit(GUI):
     labelFactory = Label
     entryFactory = Entry
     dataEntryFactory = DataEntry
-    #textEditorFactory = TextEditor
     buttonFactory = Button
     panelFactory = Panel
+    viewerFactory = TextViewer
     tableEditorFactory = DataGrid
     navigatorFactory = DataNavigator
     formFactory = Form
@@ -772,38 +779,69 @@ class Toolkit(GUI):
 
     
     def __init__(self,app=None):
-        self.app = app
+        self._apps = []
+        self.console = None
         GUI.__init__(self)
+        #self.app = app
 
-    def setApplication(self,app):
-        self.app = app
+##     def setApplication(self,app):
+##         self.app = app
 
-    def check(self):
-        if self.app is None:
-            self.app = Application(name="Automagic GUI application")
+##     def check(self):
+##         if self.app is None:
+##             self.app = Application(name="Automagic GUI application")
     
     def getOptionParser(self,**kw):
-        self.check()
-        return self.app.getOptionParser(**kw)
+        #self.check()
+        return console.getOptionParser(**kw)
 
     def parse_args(self,argv=None,**kw):
+        # only used with automagicApp
         parser = self.getOptionParser(**kw)
         return parser.parse_args(argv)
+    
+        
+    def addApplication(self,app):
+        self._apps.append(app)
+        
+    def write(self,s):
+        self.consoleEntry.addText(s)
+        #self.consoleEntry.setValue(n)
+
+    def init(self):
+        
+        if self.console is None:
+            self.console = self._apps[0].form(None,label="Console")
+            self.consoleEntry = self.console.addViewer()
+            #self.console.addEntry(type=MEMO(
+            #    height=10,width=90))
+            console._syscon.redirect(stdout=self,stderr=self)
+            self.console.show()
+            
+        for app in self._apps:
+            app.init(self)
+            app.mainForm.show()
+            
+        #frm = app.getMainForm(self)
+        #self.consoleForm.setParent(frm)
+        #self.app.setMainForm(frm)
+        #frm.show()
+        #self.wxctrl.SetTopWindow(frm.wxctrl)
         
 
-    def form(self,parent=None,*args,**kw):
-        self.check()
-        frm = self.formFactory(self,parent,*args,**kw)
-        if parent is None:
-            if self.app.mainForm is None:
-                self.app.setMainForm(frm)
-        return frm
+##     def form(self,parent,*args,**kw):
+##         #self.check()
+##         return self.formFactory(self,parent,*args,**kw)
+##         #if parent is None:
+##         #    if self.app.mainForm is None:
+##         #        self.app.setMainForm(frm)
+##         #return frm
+
     
 
-    def main(self):
+    def start(self):
         raise NotImplementedError
-        #frm = self.app.getMainForm()
-        #frm.show()
+
 
         
 

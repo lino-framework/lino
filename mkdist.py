@@ -131,7 +131,7 @@ class InnoScript:
 args = sys.argv[1:]
 # sys.args will be rewritten later
 if len(args) == 0:
-    args = ['timtools', 'raceman', 'sdist']
+    args = ['timtools', 'raceman', 'keeper', 'sdist']
 
 msg = "mkdist (%s) version %s" % (' '.join(args),__version__)
 
@@ -162,11 +162,13 @@ excludes = [ #"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
              #"pywin.dialogs", "pywin.dialogs.list",
              "Tkconstants","Tkinter",
              "tcl",
-             "wx", 'xml',
+             'xml',
              'twisted',
              'mx',
              'docutils'
              ]
+
+excludes_console = excludes + ['wx']
 
 
 if 'timtools' in args:
@@ -175,7 +177,8 @@ if 'timtools' in args:
     
     console_targets = ['pds2pdf','prn2pdf',
                        'sync', 'openmail',
-                       'prnprint', 'pds2oo']
+                       'prnprint',
+                       'pds2sxw', 'pds2sxc']
 
     name = "timtools"
 
@@ -196,7 +199,7 @@ if 'timtools' in args:
         "compressed": 1,
         "optimize": 2,
         "dist_dir" : dist_dir,
-        "excludes" : excludes,
+        "excludes" : excludes_console,
         "dll_excludes" : dll_excludes,
         }}
         
@@ -220,7 +223,7 @@ if 'raceman' in args:
     
     sys.argv[1:] = ["py2exe"]
     
-    excludes.remove('wx')
+    #excludes.remove('wx')
 
     console_targets = []
     windows_targets = ['raceman']
@@ -241,11 +244,12 @@ if 'raceman' in args:
 An uncomplete race manager.
 Register participants, input arrival times,
 generate results report.""",
-        console=[ opj("src", "lino", "apps","raceman",t+".py")
-                  for t in console_targets],
+        #console=[ opj("src", "lino", "apps","raceman",t+".py")
+        #          for t in console_targets],
         windows=[ opj("src", "lino", "apps","raceman",t+".py")
                   for t in windows_targets],
         options= { "py2exe": {
+        "packages": ["encodings"],
         "compressed": 1,
         "optimize": 2,
         "dist_dir" : dist_dir,
@@ -257,6 +261,51 @@ generate results report.""",
 
     script = InnoScript(
         "Raceman",
+        dist_dir,\
+        version=__version__,
+        windows_exe_files= [ fn+".exe" for fn in windows_targets]
+        )
+    
+    script.create()
+    script.compile()
+    
+
+if 'keeper' in args:
+    
+    sys.argv[1:] = ["py2exe"]
+    
+    console_targets = []
+    windows_targets = ['keeper']
+
+    dist_dir = opj(DIST_ROOT,"keeper")
+    
+    setup(
+        name="keeper",
+        version=__version__,
+        description="Lino Document Keeper",
+        author="Luc Saffre",
+        author_email="luc.saffre@gmx.net",
+        url="http://lino.sourceforge.net/keeper.html",
+        long_description="""\
+An uncomplete archive manager.
+""",
+        #console=[ opj("src", "lino", "apps","keeper",t+".py")
+        #          for t in console_targets],
+        windows=[ opj("src", "lino", "apps","keeper",t+".py")
+                  for t in windows_targets],
+        options= { "py2exe": {
+        "packages": ["encodings"],
+        "compressed": 1,
+        "optimize": 2,
+        "dist_dir" : dist_dir,
+        "excludes" : excludes,
+        "dll_excludes" : dll_excludes
+        }}
+        
+        )
+
+    script = InnoScript(
+        "Keeper",
         dist_dir,\
         version=__version__,
         windows_exe_files= [ fn+".exe" for fn in windows_targets]

@@ -20,8 +20,11 @@
 from lino.forms import gui
 
 if __name__ == "__main__":
+    
     gui.parse_args()
+    
     frm = gui.form(label="The First Lino Form")
+    
     frm.addLabel("""\
 Please enter your personal data.
 Don't worry about your privacy.
@@ -31,6 +34,8 @@ You can trust us.
     frm.addEntry("name")
     frm.addOkButton()
     frm.addCancelButton()
+
+    
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.getValue(),

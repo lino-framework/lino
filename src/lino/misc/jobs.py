@@ -178,10 +178,6 @@ class ProgressBar:
         
     def info(self,msg):
         self.ui.info(msg)
-
-    
-    
-
         
     def verbose(self,msg):
         self.ui.verbose(msg)

@@ -22,18 +22,28 @@ import os
 opj = os.path.join
 
 from lino import adamo
-from lino.forms import gui
+#from lino.forms import gui
 
 from lino.apps.raceman import races, loaders
 
 from lino.forms.application import MirrorLoaderApplication
 
 
+
 class Raceman(MirrorLoaderApplication):
+
+    def getLoaders(self):
+        return [lc(self.loadfrom) for lc in loaders.LOADERS]
+
+    def init(self,toolkit):
+        races.setupSchema(self.schema)
+        self.schema.registerLoaders(self.getLoaders())
         
-    def makeMainForm(self,ui):
-        #self.arrivals = Arrivals(self)
-        frm = ui.form(
+        self.sess = self.schema.quickStartup(
+            ui=toolkit, filename=self.filename)
+        
+        assert self.mainForm is None
+        frm = self.form(
             label="Main menu",
             doc="""\
 This is the Raceman main menu.                                     
@@ -42,18 +52,18 @@ This is the Raceman main menu.
         m = frm.addMenu("&Stammdaten")
         
         m.addItem(label="&Events").setHandler(
-            self.showViewGrid,ui,
+            self.showViewGrid,frm,
             races.Events,"std")
         
         m.addItem(label="&Races").setHandler(
-            self.showViewGrid,ui,
+            self.showViewGrid,frm,
             races.Races,"std")
 
         m.addItem(label="&Clubs").setHandler(
-            self.showTableGrid,ui,
+            self.showTableGrid,frm,
             races.Clubs)
         m.addItem(label="&Personen").setHandler(
-            self.showTableGrid,ui,
+            self.showTableGrid,frm,
             races.Persons)
     
         #m = frm.addMenu("&Arrivals")
@@ -61,29 +71,24 @@ This is the Raceman main menu.
 
         m = frm.addMenu("&Programm")
         m.addItem(label="&Beenden",action=frm.close)
-        m.addItem(label="Inf&o").setHandler(ui.showAbout,self)
+        m.addItem(label="Inf&o").setHandler(self.showAbout)
 
-        return frm
-
-    def getLoaders(self):
-        return [lc(self.loadfrom) for lc in loaders.LOADERS]
+        self.mainForm = frm
 
         
 
 def main(argv):
 
-    schema = adamo.Schema()
-    races.setupSchema(schema)
-    app = Raceman(schema, name="Raceman", years='2005')
-    app.parse_args()
-    gui.run(app)
-    
+    app = Raceman(name="Raceman", years='2005')
+    app.parse_args(argv)
+    #gui.run(app)
+    app.run()
+
 
 
 
 
 if __name__ == '__main__':
-    #console.copyleft(name="Lino/Raceman", years='2002-2005')
     main(sys.argv[1:])
 
 

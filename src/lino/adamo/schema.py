@@ -266,7 +266,9 @@ class Schema(Describable):
         return str(self.__class__)
 
 
-    def quickStartup(self, ui=None, langs=None, filename=None, **kw):
+    def quickStartup(self, ui=None, langs=None,
+                     filename=None,
+                     **kw):
         if ui is None:
             ui = console.getSystemConsole()
         job = ui.job("quickStartup()")

@@ -17,9 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.forms.application import Application
 
 _toolkit = None
+_app = None
 
 def choose(wishlist="wx"):
     global _toolkit
@@ -36,22 +36,32 @@ def choose(wishlist="wx"):
 def check():
     if _toolkit is None:
         choose()
+        #GuiConsole(toolkit=_toolkit)
 
     
 def form(*args,**kw):
     check()
-    return _toolkit.form(*args,**kw)
+    global _app
+    if _app is None:
+        from lino.forms.application import Application
+        _app = Application(toolkit=_toolkit,
+                           name="automagicApp")
+    frm = _app.form(None,*args,**kw)
+    _app.mainForm = frm
+    return frm
 
 def parse_args(*args,**kw):
     check()
+    #assert _app is not None, "only for use with automagicApp"
     return _toolkit.parse_args(*args,**kw)
 
 
-def main(*args,**kw):
-    check()
-    return _toolkit.main(*args,**kw)
+## def main(*args,**kw):
+##     check()
+##     return _toolkit.main(*args,**kw)
 
-def run(app,*args,**kw):
-    check()
-    _toolkit.setApplication(app)
-    return _toolkit.main(*args,**kw)
+## def run(app,*args,**kw):
+##     check()
+##     _toolkit.setApplication(app)
+##     return _toolkit.main(*args,**kw)
+##     #return _toolkit.main(*args,**kw)

@@ -40,8 +40,6 @@ except ImportError,e:
     sound = False
 
 from lino.misc.jobs import ProgressBar
-#             DecentConsoleProgressBar, \
-#             PurzelConsoleProgressBar
 
 
 class ConsoleProgressBar(ProgressBar):
@@ -105,18 +103,19 @@ class UI:
 
 class Console(UI):
 
-    def __init__(self, out=None,**kw):
-        if out is None:
-            out = sys.stdout
-        self.out = out
+    def __init__(self, **kw):
+        self.stdout = sys.stdout
+        self.stderr = sys.stderr
         self._log = None
-        #self.app = None
         self._verbosity = 0
         self._batch = False
         self._dumping = None
         UI.__init__(self)
-        #self._ui = self
         self.set(**kw)
+
+    def redirect(self,stdout,stderr):
+        self.stdout = stdout
+        self.stderr = stderr
 
     def set(self,
             verbosity=None,
@@ -139,13 +138,13 @@ class Console(UI):
 
     def startDump(self,**kw):
         assert self._dumping is None
-        self._dumping = self.out
-        self.out=StringIO()
+        self._dumping = self.stdout
+        self.stdout = StringIO()
 
     def stopDump(self):
         assert self._dumping is not None, "dumping was not started"
-        s = self.out.getvalue()
-        self.out = self._dumping
+        s = self.stdout.getvalue()
+        self.stdout = self._dumping
         self._dumping = None
         return s
         
@@ -165,26 +164,22 @@ class Console(UI):
     
 
     def write(self,msg):
-        self.out.write(msg)
+        self.stdout.write(msg)
         
     def writeout(self,msg):
-        self.out.write(msg+"\n")
+        self.stdout.write(msg+"\n")
 
     def writelog(self,msg):
         if self._log:
             t = strftime("%a %Y-%m-%d %H:%M:%S")
             self._log.write(t+" "+msg+"\n")
             
-##     def log_message(self,msg):
-##         "Log a message to stdout."
-##         self.write(msg+"\n")
-
     def status(self,msg):
         self.verbose(msg)
 
     def error(self,msg):
         "Log a message to stderr"
-        sys.stderr.write(msg + "\n")
+        self.stderr.write(msg + "\n")
         self.writelog(msg)
 
     def critical(self,msg):
@@ -369,11 +364,11 @@ class Console(UI):
 
     def textprinter(self):
         from lino.textprinter.plain import PlainDocument
-        return PlainDocument(self.out)
+        return PlainDocument(self.stdout)
         
     def report(self,**kw):
         from lino.reports.plain import Report
-        return Report(writer=self.out,**kw)
+        return Report(writer=self.stdout,**kw)
 
 
 _syscon = Console()
