@@ -17,9 +17,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import types
 
-from lino.misc.descr import Describable, Configurable
+from lino.misc.descr import Describable
 
 class BaseReport(Describable):
 
@@ -29,40 +28,23 @@ class BaseReport(Describable):
     TOP = 4
     BOTTOM = 5
     
-    def __init__(self, *args, **kw):
+    def __init__(self,
+                 columnWidths=None,
+                 width=None,
+                 rowHeight=None,
+                 *args, **kw):
+        
         self.cellValues = None
-
         self.columns = []
         self.groups = []
         self.totals = []
 
-        Describable.__init__(self,*args,**kw)
-
-    def configure(self, 
-                  columnWidths=None,
-                  width=None,
-                  rowHeight=None,
-                  *args,
-                  **kw):
-        
-        Describable.configure(self,*args,**kw)
-        if columnWidths is not None:
-            i = 0
-            for item in columnWidths.split():
-                try:
-                    width = int(item)
-                except ValueError:
-                    width = None
-                self.columns[i].width = width
-                i += 1
-
         self.rowHeight = rowHeight
         self.columnWidths = columnWidths
-        #self.columnNames = columnNames
-
         self.width = width
-
         
+        Describable.__init__(self,*args,**kw)
+
     def setdefaults(self,kw):
         kw.setdefault('columnNames',self.columnNames)
         kw.setdefault('columnWidths',self.columnWidths)
@@ -77,6 +59,16 @@ class BaseReport(Describable):
 
         """
         
+        if self.columnWidths is not None:
+            i = 0
+            for item in self.columnWidths.split():
+                try:
+                    width = int(item)
+                except ValueError:
+                    width = None
+                self.columns[i].width = width
+                i += 1
+
         autoWidthColumns = []
         totalWidth = 0
         for col in self.columns:
@@ -177,7 +169,7 @@ class BaseReport(Describable):
         pass
     
 
-class ReportColumn(Describable,Configurable):
+class ReportColumn(Describable):
     
     def __init__(self,owner,
                  name=None,label=None,doc=None,

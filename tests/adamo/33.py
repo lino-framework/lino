@@ -25,7 +25,6 @@ Some tests on getDemoDB()
 import types
 import unittest
 
-from lino.reports.plain import PlainReport
 from lino.ui import console
 
 
@@ -43,16 +42,17 @@ class Case(unittest.TestCase):
         
         console.startDump()
         rpt = console.report()
-        rpt.addColumn(meth=lambda rpt: str(rpt.crow[0]),
+        rpt.addColumn(meth=lambda row: str(row[0]),
                       label="key",
                       width=12)
-        rpt.addColumn(meth=lambda rpt: repr(rpt.crow[1]),
+        rpt.addColumn(meth=lambda row: repr(row[1]),
                       label="value",
                       width=40)
-        rpt.beginReport()
-        for i in d.items():
-            rpt.processRow(i)
-        rpt.endReport()
+        rpt.execute(d.items())
+##         rpt.beginReport()
+##         for i in d.items():
+##             rpt.processRow(i)
+##         rpt.endReport()
         s = console.stopDump()
         #print s
         self.assertEqual(s,"""\
