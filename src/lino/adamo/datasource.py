@@ -12,6 +12,10 @@ from datatypes import DataVeto
 from report import Report
 
 class Datasource:
+
+	"""
+	A Datasource is the central handle for a stream of data. 
+	"""
 	
 	def __init__(self, context, store,
 					 clist=None, viewName=None,**kw):
@@ -101,8 +105,8 @@ class Datasource:
 		return ds
 
 
- 	def report(self,name,**kw):
-		return Report(self,name,**kw)
+  	def report(self,name,**kw):
+ 		return Report(self,name,**kw)
 	
 	def getLabel(self):
 		if self._label is None:

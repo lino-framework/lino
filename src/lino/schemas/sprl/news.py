@@ -25,8 +25,14 @@ class News(MemoTable):
 		self.project = Pointer(Projects)
 		self.page = Pointer(Pages)
 
+		#self.writeParagraph = Vurt(self.Row.writeParagraph,MEMO)
+
 		#table.setColumnList('date title newsgroup abstract id lang')
 		self.setOrderBy("date")
+		self.addView("simple","date title abstract",
+						 orderBy="date")
+		self.addView("list","date writeParagraph",
+						 orderBy="date")
 		
 	class Row(MemoTable.Row):
 		def getLabel(self):

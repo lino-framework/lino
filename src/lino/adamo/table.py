@@ -5,6 +5,12 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
+"""
+
+Baseclass Table and some derived classes (LinkTable, MemoTable, TreeTable, MemoTreeTable, BabelTable)
+
+"""
+
 import types
 
 from lino.misc.compat import *
@@ -29,6 +35,14 @@ notnull
 DEFAULT_PRIMARY_KEY = 'id'
 
 class Table(Describable):
+	"""
+	
+	Holds meta-information about a data table. There is one instance of
+	each database table in a Schema.  Note that the Table does not
+	worry about how the data is stored.
+	
+	
+	"""
 	
 	class Row(DataRow):
 		pass

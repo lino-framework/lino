@@ -520,7 +520,8 @@ class ErrorWidget(Widget):
 		pass
 	
 class WidgetFactory:
-	def __init__(self,mod):
+	def __init__(self,schema,mod):
+		self._schema = schema
 		self._widgets = {}
 		for k,v in mod.__dict__.items():
 			if type(v) is types.ClassType:
@@ -538,6 +539,15 @@ class WidgetFactory:
 		for k,v in self._widgets.items():
 			print str(k), ":", str(v)
 		print len(self._widgets), "class widgets"
+		
+		# setupSchema()
+		for table in schema._tables:
+			if not table._rowAttrs.has_key("writeParagraph"):
+				wcl = self.get_wcl(table.Row)
+				assert wcl is not None
+				from lino.adamo import Vurt, MEMO
+				table._rowAttrs["writeParagraph"] = Vurt(
+					wcl.writeParagraph,MEMO)
 
 	def get_bases_widget(self,cl):
 		#print "get_bases_widget(%s)" % repr(cl)

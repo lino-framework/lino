@@ -1,5 +1,5 @@
 """
-adamo : Abstract Database Model
+adamo : Abstract Data Model
 
 """
 
@@ -13,7 +13,7 @@ from table import Table, LinkTable,\
 	  MemoTable, TreeTable, MemoTreeTable,\
 	  BabelTable
 from datatypes import *
-from rowattrs import Field, Pointer, BabelField
+from rowattrs import Field, Pointer, BabelField, Vurt
 from schema import Schema
 from datasource import DataRow
 from database import QuickDatabase as quickdb
@@ -29,7 +29,7 @@ __builtin__.__dict__['_'] = _
 __all__ = ['Table','LinkTable',
 			  'TreeTable', 'MemoTable', 'MemoTreeTable',
 			  'BabelTable',
-			  'Field','Pointer','BabelField',
+			  'Field','Pointer','BabelField','Vurt',
 			  'DataVeto','DataRow',
 			  'Schema','quickdb',
 			  'INT', 'BOOL', 'ROWID', 'STRING', 'DATE', 'MEMO',

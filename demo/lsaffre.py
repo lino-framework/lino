@@ -126,8 +126,8 @@ if __name__ == '__main__':
 	schema = Schema() #langs=('en','de','fr'))
 	schema.startup(ui)
 	
-	wf = WidgetFactory(sprlwidgets)
-	
+	wf = WidgetFactory(schema,sprlwidgets)
+
 	server = WebServer(demoDir,ui, wf, port=port)
 
 	if True:

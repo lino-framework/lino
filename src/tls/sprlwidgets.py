@@ -7,14 +7,11 @@
 
 from lino import adamo
 
-#from lino.schemas.sprl import Schema
 from lino.schemas.sprl import web, events, news, quotes
 
 from lino.adamo.database import Context
 
 from widgets import Widget, RowWidget
-
-#from resources import DbResource
 
 # not used here, but WidgetFactory must find it:
 from skipper import Skipper
@@ -56,13 +53,11 @@ class MemoWidget(SprlRowWidget):
 	handledClass = web.MemoTable.Row
 	
 	def writeParagraph(self):
-		#self.writeDebugMessage("foofoo")
 		row = self.target
-		#self.asLabel(row)
 		self.renderLink(self.uriToRow(row),
 							 label=row.getLabel())
 		self.write('\n&mdash; ')
-		self.renderMemo(self.target.abstract)
+		self.renderMemo(row.abstract)
 
 	def writePage(self):
 		wr = self.write

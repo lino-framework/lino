@@ -599,8 +599,8 @@ class QueryColumn:
 
 		#print __file__, atoms
 		self._atoms = tuple(atoms)
-		assert isinstance(self.rowAttr,Detail) or len(self._atoms) > 0,\
-				 "%s.setupAtoms() found no atoms" % str(self)
+		#assert isinstance(self.rowAttr,Detail) or len(self._atoms) > 0,\
+		#		 "%s.setupAtoms() found no atoms" % str(self)
 
 
 	#def preferredWidth(self):

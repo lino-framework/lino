@@ -12,8 +12,8 @@ from lino.misc.descr import Describable
 from lino.misc.etc import issequence
 from datatypes import DataVeto, StartupDelay
 
-def nop(*args):
-	pass
+#def nop(*args):
+#	pass
 
 
 
@@ -195,7 +195,7 @@ class Field(RowAttribute):
 		return self.type.format(v)
 		
 	def parse(self,s):
-		return self.type.parse(v)
+		return self.type.parse(s)
 		
 ## 	def asFormCell(self,renderer,value,size=None):
 ## 		renderer.renderValue(value,self.type,size)
@@ -937,3 +937,37 @@ class Detail(RowAttribute):
 		
 
 
+class Vurt(RowAttribute):
+	"""
+	
+	A Vurt (virtual field) is a method 
+	
+	"""
+	def __init__(self,func,type,**kw):
+		RowAttribute.__init__(self,**kw)
+		self._func = func
+		self.type = type
+
+	def format(self,v):
+		return self.type.format(v)
+		
+	def parse(self,s):
+		raise "not allowed"
+		
+	def value2atoms(self,value,context):
+		raise "not allowed"
+
+
+	def getPreferredWidth(self):
+		return self.type.width
+
+
+	def setCellValue(self,row,value):
+		raise "not allowed"
+		
+	def getCellValue(self,row):
+		return self._func(row)
+	
+	def atoms2row(self,atomicRow,colAtoms,row):
+		pass
+	
