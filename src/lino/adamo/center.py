@@ -22,6 +22,11 @@ from cStringIO import StringIO
 from lino.adamo.session import Session
 from lino.ui import console
 
+try:
+    from lino.adamo.dbds.sqlite_dbd import Connection
+except ImportError:
+    from lino.adamo.dbds.mysql_dbd import Connection
+
 class Center:
     """
     The Center is the global singleton object used by adamo.
@@ -36,8 +41,8 @@ class Center:
         #self._sessionFactory = Session
         self._checkIntegrity = False
 
-    def addConnection(self,conn):
-        assert not conn in self._connections
+    def connect(self,*args,**kw):
+        conn = Connection(*args,**kw)
         self._connections.append(conn)
         
     def set(self,checkIntegrity=None):

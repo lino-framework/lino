@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -33,16 +33,16 @@ class OoReport(BaseReport):
     def onBeginReport(self):
         self.table = self.document.table(name=self.getLabel())
         for col in self.columns:
-            self.table.addColumn()
+            self.table.column()
         BaseReport.onBeginReport(self)
 
 
     def renderHeader(self):
         l = [ col.getLabel() for col in self.columns ]
-        self.table.addRow(*l)
+        self.table.headerRow(*l)
         
 
     def onEndRow(self):
         l = [ v for v in self.cellValues ]
-        self.table.addRow(*l)
+        self.table.row(*l)
         

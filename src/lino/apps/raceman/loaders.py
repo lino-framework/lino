@@ -23,7 +23,6 @@ import sys
 
 
 from lino.ui import console
-from lino.oogen import Document
 from lino import adamo
 
 from lino.apps.raceman.races import Races, RaceTypes, Categories, \

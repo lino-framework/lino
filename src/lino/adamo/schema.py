@@ -30,7 +30,6 @@ from lino.adamo.exceptions import StartupDelay
 from lino.adamo.datasource import Datasource
 from lino.adamo import center
 
-from lino.adamo.dbds.sqlite_dbd import Connection
 
 
 class SchemaPlugin(SchemaComponent,Describable):
@@ -274,9 +273,9 @@ class Schema(Describable):
         job.status("Initialize Schema")
         self.initialize()
         db = self.addDatabase(langs=langs)
-        conn = center.connect(filename=filename,schema=self)
         job.status("Connect")
-        conn = Connection(filename=filename,schema=self)
+        conn = center.connect(filename=filename,schema=self)
+        #conn = Connection(filename=filename,schema=self)
         db.connect(conn)
         job.status("Startup")
         sess =  center.startup(**kw)
@@ -500,8 +499,8 @@ class Schema(Describable):
 def connect_sqlite():
     from lino.adamo.dbds.sqlite_dbd import Connection
     return Connection(filename="tmp.db",
-                            schema=schema,
-                            isTemporary=True)
+                      schema=schema,
+                      isTemporary=True)
 
 def connect_odbc():
     raise ImportError

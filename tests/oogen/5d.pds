@@ -1,0 +1,37 @@
+# my third pds script for oogen
+
+doc.setPageProperties(marginLeft="6cm")
+
+s = doc.addStyle(name="Rechts",
+                 family="paragraph",
+                 parentStyleName="Standard",
+                 className="text")
+s.addProperties(textAlign="end",
+                justifySingleWord=False)
+
+t = doc.table("First Sheet")
+
+t.column(columnWidth="4cm")
+t.column(columnWidth="3cm")
+t.column(columnWidth="7cm")
+
+t.h(1,"This is a top-level heading")
+
+t.row("Hinz","Heinz")
+t.row("Kunz","Karl")
+
+t.p("This is another top-level heading")
+
+row = t.row()
+row.cell("Langer")
+row.cell("Leo")
+row.cell(
+    doc.elements.P("Here is a cell with three paragraphs"),
+    doc.elements.P("The second paragraph is aligned right.",
+                   styleName="Rechts"),
+    doc.elements.P("And the last paragraph"),
+    )
+
+
+
+

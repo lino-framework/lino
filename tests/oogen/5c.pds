@@ -1,6 +1,64 @@
-# my third pds for pds2oo document
+# my third pds script for oogen
 
-doc.setPageProperties(marginLeft="6cm")
+doc.h(1,"Formatting Tables")
+
+doc.p("""
+The doc.table() method has one optional positional argument "name",
+and some keyword arguments:
+width,
+relWidth
+marginLeft,
+marginRight,
+marginTop,
+marginBottom
+align
+""")
+
+doc.h(2,"widths")
+
+doc.p("""If you specify only the table's total width, this will center
+the table""")
+t = doc.table(width="6cm")
+t.row("Hinz","Heinz")
+t.row("Kunz","Karl")
+
+doc.p("""Or you can specify the table's total width together with
+align="left" or align="right"
+""")
+t = doc.table(width="6cm",align="left")
+t.row("Hinz","Heinz")
+t.row("Kunz","Karl")
+
+t = doc.table(width="6cm",align="right")
+t.row("Hinz","Heinz")
+t.row("Kunz","Karl")
+
+
+doc.p("specify each column's width")
+t = doc.table(width="13cm")
+t.column(columnWidth="4cm")
+t.column(columnWidth="3cm")
+t.column(columnWidth="6cm")
+
+t.headerRow("Name","Vorname","Bemerkung")
+
+t.row("Hinz","Heinz")
+t.row("Kunz","Karl")
+
+
+doc.h(2,"repeating header rows")
+
+doc.p("""Here is a table that should spread on more than one page, and the
+column headers repeat automatically.""")
+
+t = doc.table()
+
+t.headerRow("i","i*i")
+for i in range(200):
+    t.row(str(i),str(i*i))
+
+
+doc.h(1,"This is another top-level heading")
 
 s = doc.addStyle(name="Rechts",
                  family="paragraph",
@@ -9,21 +67,23 @@ s = doc.addStyle(name="Rechts",
 s.addProperties(textAlign="end",
                 justifySingleWord=False)
 
-t = doc.table("First Sheet")
 
-t.h(1,"This is a top-level heading")
+t = doc.table()
 
-t.column("Name",columnWidth="4cm")
-t.column("Vorname",columnWidth="3cm")
+t.column(columnWidth="4cm")
+t.column(columnWidth="3cm")
+t.column(columnWidth="7cm")
 
-t.row("Hinz","Heinz")
-t.row("Kunz","Karl")
+t.headerRow("Name","Vorname","Bemerkung")
 
-t.h(1,"This is another top-level heading")
+t.row("Hinz","Heinz","no comment")
+t.row("Kunz","Karl","no comment")
 
-r2 = t.row()
-r2.cell(
-    doc.elements.P("Here is a cell with two paragraphs"),
+row = t.row()
+row.cell("Langer")
+row.cell("Leo")
+row.cell(
+    doc.elements.P("Here is a cell with three paragraphs"),
     doc.elements.P("The second paragraph is aligned right.",
                    styleName="Rechts"),
     doc.elements.P("And the last paragraph"),

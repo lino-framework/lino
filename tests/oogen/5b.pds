@@ -1,4 +1,4 @@
-# my second pds for pds2oo document
+# my second pds script for oogen
 
 doc.p("This document has a leftMargin of 6cm")
 doc.setPageProperties(marginLeft="6cm")

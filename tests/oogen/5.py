@@ -31,8 +31,12 @@ class Case(tsttools.TestCase):
         pds2sxw.main(["-o", fn, "-b", "5b.pds"])
         
     def test03(self):
-        fn = self.addTempFile("5.sxc")
-        pds2sxc.main(["-o", fn, "-b", "5c.pds"])
+        fn = self.addTempFile("5c.sxw")
+        pds2sxw.main(["-o", fn, "-b", "5c.pds"])
+
+    def test04(self):
+        fn = self.addTempFile("5d.sxc")
+        pds2sxc.main(["-o", fn, "-b", "5d.pds"])
 
 if __name__ == "__main__":
     tsttools.main()

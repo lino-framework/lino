@@ -18,11 +18,12 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
+import types
 
 class InvalidRequest(Exception):
     pass
 
-import types
 
 def quote(x):
     if type(x) == types.IntType:
@@ -47,32 +48,50 @@ class CDATA:
 class Element:
     elementname = None
     allowedAttribs = {}
+    #defaultAttribs = {}
     def __init__(self,**kw):
-        assert self.elementname is not None, \
-               "Cannot instantiate %s : no elementname" % str(self.__class__)
-        self.attribs = {}
+        if self.elementname is None:
+            raise InvalidRequest(
+                "Cannot instantiate %s : no elementname" %
+                str(self.__class__))
+        self._attribs = {}
         self.setAttribs(**kw)
         
     def setAttribs(self,**kw):
         for k,v in kw.items():
+            #assert not k in self.defaultAttribs.keys()
             try:
                 xmlname = self.allowedAttribs[k]
             except KeyError,e:
                 raise InvalidRequest(
                     "%s attribute not allowed for %s" % (
                     repr(k), self.__class__.__name__))
-            self.attribs[xmlname] = v
+            self._attribs[k] = v
+            
+    def __getattr__(self,name):
+        try:
+            return self._attribs[name]
+        except KeyError:
+            raise AttributeError(
+                "%s instance has no attribute '%s'" % (
+                self.__class__.__name__, name))
         
     def __xml__(self,wr):
         wr("<"+self.elementname)
-        if len(self.attribs) > 0:
-            for k,v in self.attribs.items():
-                wr(' %s=%s' % (k,quote(v)))
+        #for k,v in self.defaultAttribs.items():
+        #    wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
+        for k,v in self._attribs.items():
+            wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
         #wr('/>')
         wr('/>\n')
         
+class TextElement(Element):
+    "any element that may appear besides CDATA in a paragraph context"
+    pass
+
 class Container(Element):
     allowedChildren = (CDATA,Element)
+    primaryKey = None
     def __init__(self,*content,**kw):
         Element.__init__(self,**kw)
         self.children = []
@@ -91,12 +110,32 @@ class Container(Element):
         raise InvalidRequest(
             "%s not allowed in %s" %
             (str(elem.__class__),repr(self)))
+
+    def peek(self,*key):
+        if self.primaryKey is None:
+            raise InvalidRequest(
+                str(self.__class__)+" has no primaryKey")
+        if len(self.primaryKey) != len(key):
+            raise InvalidRequest(
+                "Expected %d key elements but got %d" %
+                len(self.primaryKey),len(key))
+        for ch in self.children:
+            i = 0
+            found = True
+            for k in key:
+                if getattr(ch,self.primaryKey[i]) != k:
+                    found = False
+                    break
+            if found: return ch
+        raise InvalidRequest(str(key)+" no such child")
+                
+        
         
     def __xml__(self,wr):
         wr("<"+self.elementname)
-        if len(self.attribs) > 0:
-            for k,v in self.attribs.items():
-                wr(' %s=%s' % (k,quote(v)))
+        if len(self._attribs) > 0:
+            for k,v in self._attribs.items():
+                wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
         if len(self.children) == 0:
             wr('/>\n')
         else:
@@ -105,16 +144,35 @@ class Container(Element):
                 child.__xml__(wr)
             wr("</"+self.elementname+">\n" )
 
+class TextContainer(Container):
+    
+    """any conainer element that may appear besides TextElement and
+    CDATA in a paragraph context"""
+    
+    pass
+
 class Story(Container):            
             
-    def table(self,name=None,styleName=None,**kw):
-        if name is None:
-            name = "Table"+str(len(self.getTables())+1)
-        if styleName is None:
-            styleName = name
-        t = Table(name=name, styleName=styleName, **kw)
+    def table(self,doc,*args,**kw):
+        t = Table(doc,*args,**kw)
         self.append(t)
         return t
+    
+##     def table(self,doc,name=None,styleName=None,**kw):
+##         if name is None:
+##             name = "Table"+str(len(doc.getTables())+1)
+##         if styleName is None:
+##             styleName = name
+##             s = doc.addAutoStyle(name=styleName, family="table")
+##         else:
+##             s = doc.getStyle(styleName,"table")
+##             # just to check existence
+                                 
+##         t = Table(doc,name=name, styleName=styleName)
+##         if len(kw)>0:
+##             s.addProperties(**kw)
+##         self.append(t)
+##         return t
         
     def p(self,*args,**kw):
         p = P(*args,**kw)
@@ -125,12 +183,15 @@ class Story(Container):
         h = H(level,text,**kw)
         self.append(h)
         return h
+    
+
+class LineBreak(TextElement):
+    elementname = "text:line-break"
 
 
-class Text(Container):
+class Text(TextContainer):
     elementname = "number:text"
     allowedChildren = (CDATA,)
-
 
 class Span(Text):
     elementname = "text:span"
@@ -144,7 +205,7 @@ class Title(Text):
     
 class Date(Text):
     elementname = "text:date"
-    allowedAttribs=makedict(
+    allowedAttribs=dict(
         dataStyleName="style:data-style-name",
         dateValue="text:date-value")
 
@@ -155,7 +216,7 @@ class Time(Text):
         
         
 class P(Container):
-    allowedChildren = (CDATA,Text)
+    allowedChildren = (CDATA,TextElement,TextContainer)
     elementname = "text:p"
     allowedAttribs = makedict(
         styleName='text:style-name')
@@ -183,66 +244,6 @@ class H(P):
 
 
 
-
-
-        
-        
-class TableColumn(Element):
-    elementname = "table:table-column"
-    def addProperties(self,**kw):
-
-    
-class TableCell(Container):
-    allowedChildren = (CDATA,P,Span,Container)
-    elementname = "table:table-cell"
-    
-class TableRow(Container):
-    allowedChildren = (TableCell,)
-    elementname = "table:table-row"
-
-    def cell(self,*content,**kw):
-        elem = TableCell(*content,**kw)
-        self.append(elem)
-        return elem
-
-class Table(Container):
-    elementname = "table:table"
-    allowedChildren = (TableColumn,TableRow)
-    allowedAttribs = makedict(
-        name="table:name",
-        styleName='table:style-name',
-        styleFamily='style:family',
-    )
-    
-    def __init__(self,styleFamily="table",**kw):
-        self.columns = []
-        Container.__init__(self,styleFamily=styleFamily,**kw)
-
-    def h(self,level,text,**kw):
-        assert level == 1
-        r = self.row()
-        h = H(level,text,**kw)
-        r.cell(h)
-        return h
-
-    def column(self,*args,**kw):
-        col = TableColumn(*args,**kw)
-        self.columns.append(col)
-        self.append(col)
-        return col
-        
-    def row(self,*cells,**kw):
-        #assert len(cells) == len(self.columns)
-        row = TableRow(**kw)
-        self.append(row)
-        for cell in cells:
-            if isinstance(cell,TableCell):
-                row.append(cell)
-            else:
-                row.append(TableCell(cell))
-        return row
-                
-                
 
 """
 If you want to create documents in the same format as OpenOffice.org does, you should give each 
@@ -300,7 +301,7 @@ class Properties(Container):
     #~ <style:properties fo:min-height="0.751cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0.25cm" 
     #~  fo:border="0.088cm solid #000000" fo:padding="0.018cm" fo:background-color="#c0c0c0">
     elementname="style:properties"
-    allowedAttribs=makedict(
+    allowedAttribs=dict(
         decimalPlaces="style:decimal-places",
         fontName="style:font-name",
         fontSize="fo:font-size",
@@ -340,6 +341,13 @@ class Properties(Container):
         lineBreak="style:line-break",
         columnWidth="style:column-width",
         **Element.allowedAttribs)
+
+class TableProperties(Properties):
+    allowedAttribs=dict(
+        align="table:align",
+        width="style:width",
+        relWidth="style:rel-width",
+        **Element.allowedAttribs)
         
         
 class PageLayout(Properties):
@@ -356,7 +364,8 @@ class PageLayout(Properties):
         
 class FootnoteSep(Element):
         elementname = "style:footnote-sep"
-        allowedAttribs  = makedict(width="style:width",
+        allowedAttribs  = makedict(
+            width="style:width",
             distanceBeforeSep="style:distance-before-sep",
             distanceAfterSep="style:distance-after-sep",
             adjustment="style:adjustment",
@@ -393,7 +402,6 @@ class CurrencySymbol(Text):
 
 
 class Style(Container):
-    # <style:style style:name="Result2" style:family="table-cell" style:parent-style-name="Result" style:data-style-name="N106"/>
     elementname = "style:style"
     allowedChildren = (Properties,)
     allowedAttribs=makedict(
@@ -405,6 +413,8 @@ class Style(Container):
         dataStyle="style:data-style-name",
         #displayName="style:display-name",
     )
+    primaryKey = ('name','family')
+    
     def addProperties(self,**kw):
         self.append(Properties(**kw))
     
@@ -426,8 +436,8 @@ on the style family.
 [oospec-1.0, p. 386]
     """
     elementname = "style:default-style"
-    allowedAttribs=makedict(family="style:family")
-    allowedChildren = (Properties,)
+    allowedAttribs=dict(family="style:family")
+    allowedChildren=(Properties,)
 
 class FooterStyle(Style):
     elementname = "style:footer-style"
@@ -437,6 +447,170 @@ class HeaderStyle(Style):
 
 class CurrencyStyle(NumberStyle):
     elementname = "number:currency-style"
+
+
+
+
+
+
+
+
+
+
+        
+        
+class TableColumn(Element):
+    elementname = "table:table-column"
+    allowedAttribs = dict(
+        styleName="table:style-name",
+        numberColumnsRepeated="table:number-columns-repeated"
+        )
+    #def addProperties(self,**kw):
+    def __init__(self,table,**kw):
+        assert isinstance(table,Table)
+        self.table = table
+        name = table.name+"."+str(len(table.columns)+1)
+        s = table.doc.addAutoStyle(name=name,family="table-column")
+        if len(kw):
+            s.addProperties(**kw)
+        Element.__init__(self,styleName=s.name)
+
+##     def addProperties(self,**kw):
+##         self.append(Properties(**kw))
+    
+    
+class TableCell(Container):
+    allowedChildren = (P,Span,Container)
+    elementname = "table:table-cell"
+    allowedAttribs = dict(
+        valueType="table:value-type",
+        numberColumnsSpanned="table:number-columns-spanned",
+        )
+    
+class TableRow(Container):
+    allowedChildren = (TableCell,)
+    elementname = "table:table-row"
+    def __init__(self,table,*args,**kw):
+        Container.__init__(self,*args,**kw)
+        self._table = table
+
+    def cell(self,*content,**kw):
+        if len(self.children) == len(self._table.columns):
+            s = self._table.column()
+        elem = TableCell(valueType="string",*content,**kw)
+##         for x in content:
+##             if isinstance(x,TableCell):
+##                 row.cell(cell)
+##             else:
+##                 row.cell(TableCell(cell))
+        self.append(elem)
+            
+        #if len(kw):
+        #    raise NotImplementedError
+            #if kw.has_key('styleName')
+            #s = self._table.doc.addAutoStyle(name="?",family="todo")
+            # cell style? or paragraph style
+        return elem
+
+class TableHeaderRows(Container):
+    allowedChildren = (TableRow,)
+    elementname = "table:table-header-rows"
+
+    
+
+class Table(Container):
+    elementname = "table:table"
+    allowedChildren = (TableHeaderRows,TableColumn,TableRow)
+    allowedAttribs = dict(
+        name="table:name",
+        styleName='table:style-name',
+        #styleFamily='style:family',
+    )
+    #defaultAttribs = dict(styleFamily="table")
+    
+    
+    def __init__(self,doc,name=None,styleName=None,**kw):
+
+        if name is None:
+            name = "Table"+str(len(doc.getTables())+1)
+        if styleName is None:
+            styleName = name
+            s = doc.addAutoStyle(name=styleName,
+                                 family="table")
+            if len(kw)>0:
+                if kw.has_key('width'):
+                    if not kw.has_key('align'):
+                        kw['align'] = 'center'
+                s.append(TableProperties(**kw))
+        else:
+            assert len(kw) == 0
+            s = doc.getStyle(styleName,"table")
+            # just to check existence
+                                 
+        Container.__init__(self,name=name, styleName=styleName)
+
+        self.doc = doc
+        self.columns = []
+        self._headerRows = None
+
+    def h(self,level,text,**kw):
+        return self.p(text,styleName="Heading",**kw)
+    
+    def p(self,text,**kw):
+        r = self.row()
+        p = P(text,**kw)
+        r.cell(p,numberColumnsSpanned=str(len(self.columns)))
+        #r.__xml__(sys.stdout.write)
+        return p
+
+    def column(self,**kw):
+        assert self._headerRows is None
+        col = TableColumn(self,**kw)
+        self.columns.append(col)
+        self.append(col)
+        return col
+    
+##     def column(self,**kw):
+##         name = self.name+"."+str(len(self.columns)+1)
+##         s = self.doc.addAutoStyle(name=name,family="table-column")
+##         if len(kw):
+##             s.addProperties(**kw)
+##         col = TableColumn(self,**kw)
+##         self.columns.append(col)
+##         self.append(col)
+##         if len(kw):
+##             col.addProperties(**kw)
+##         return col
+        
+    def createTableRow(self,*cells,**kw):
+        row = TableRow(self,**kw)
+        for cell in cells:
+            row.cell(cell)
+##             if isinstance(cell,TableCell):
+##                 row.cell(cell)
+##             else:
+##                 row.cell(TableCell(cell))
+        return row
+
+    def row(self,*cells,**kw):
+        r = self.createTableRow(*cells,**kw)
+        self.append(r)
+        return r
+        
+    def headerRow(self,*cells,**kw):
+        r = self.createTableRow(*cells,**kw)
+        if not self._headerRows:
+            self._headerRows = TableHeaderRows()
+            self.append(self._headerRows)
+        self._headerRows.append(r)
+                
+                
+
+
+
+
+
+    
     
 class Font(Element):
     elementname = "style:font-decl"
@@ -533,9 +707,6 @@ class FooterLeft(Footer):
     elementname = "style:footer-left"
 
 
-class LineBreak(Element):
-    elementname = "text:line-break"
-
 
 # second-level elements used in ifiles.py
 class Fonts(Container):
@@ -558,27 +729,22 @@ class MasterStyles(Container):
 class Body(Story):
     elementname = "office:body"
     
-class TextBody(Body):
-    
-    def __init__(self):
-        Body.__init__(self)
-        self.tables = []
-
-    def getTables(self):
-        return self.tables
-    
-    def table(self,*args,**kw):
-        t = Story.table(self,*args,**kw)
-        self.tables.append(t)
-        return t
+##     def __init__(self,doc):
+##         Story.__init__(self)
+##         self.doc = doc
         
-class SpreadsheetBody(Body):
-
-    def getTables(self):
-        return self.children
+##     def getTables(self):
+##         raise NotImplementedError
             
-    def p(self,*args,**kw):
-        raise InvalidRequest("Spreadsheet body contains only tables")
+## class TextBody(Body):
     
-    def h(self,*args,**kw):
-        raise InvalidRequest("Spreadsheet body contains only tables")
+##     def __init__(self,doc):
+##         Body.__init__(self,doc)
+
+##     def table(self,*args,**kw):
+##         t = Story.table(self,*args,**kw)
+##         self.tables.append(t)
+##         return t
+        
+## class SpreadsheetBody(Body):
+

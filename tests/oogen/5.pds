@@ -1,16 +1,14 @@
 # my first pds for pds2oo document
 
-doc.p("""Note: PDS for pds2oo is a new pds dialect that will replace
-the old dialect""")
+doc.p("""Note: PDS for oogen is a new pds dialect that will replace
+the old pds dialect""")
 
-from lino.oogen import elements
-s = elements.Style(name="Rechts",
-                   family="paragraph",
-                   parentStyleName="Standard",
-                   className="text")
-s.append(elements.Properties(textAlign="end",
-                             justifySingleWord=False))
-doc.styles.append(s)
+s = doc.addStyle(name="Rechts",
+                 family="paragraph",
+                 parentStyleName="Standard",
+                 className="text")
+s.addProperties(textAlign="end",
+                justifySingleWord=False)
 doc.h(1,"This is a header")
 doc.p("This is a right-aligned paragraph.",styleName="Rechts")
 doc.p("Here is a standard paragraph.")

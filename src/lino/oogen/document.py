@@ -32,12 +32,11 @@ class Document:
     extension = NotImplementedError
     mimetype = NotImplementedError
     officeClass = NotImplementedError
-    bodyClass = NotImplementedError
+    #bodyClass = NotImplementedError
     
     def __init__(self,filename):
-        self.body = self.bodyClass()
-        for m in ('p','h','table'):
-            setattr(self,m,getattr(self.body,m))
+        self.body = elements.Body() # self.bodyClass(self)
+            
         self.fonts = elements.Fonts()
         self.styles = elements.Styles()
         self.autoStyles = elements.AutoStyles()
@@ -104,6 +103,17 @@ class Document:
         s = elements.Style(**kw)
         self.styles.append(s)
         return s
+        
+    def addAutoStyle(self,**kw):
+        s = elements.Style(**kw)
+        self.autoStyles.append(s)
+        return s
+
+    def getStyle(self,name,family):
+        try:
+            return self.autoStyles.peek(name,family)
+        except elements.InvalidRequest:
+            return self.styles.peek(name,family)
         
     def createStyles(self):
         s = elements.DefaultStyle(family="paragraph")
@@ -380,17 +390,45 @@ class TextDocument(Document):
     extension = ".sxw"
     officeClass = "text"
     mimetype = "application/vnd.sun.xml.writer"
-    bodyClass = elements.TextBody
+    #bodyClass = elements.TextBody
     
-##     def __init__(self,*args,**kw):
-##         Document.__init__(self,*args,**kw)
-##         self.body = elements.TextBody()
+    def __init__(self,*args,**kw):
+        Document.__init__(self,*args,**kw)
+        self.tables = []
+        
+    def getTables(self):
+        return self.tables
+    
+    def table(self,*args,**kw):
+        t = self.body.table(self,*args,**kw)
+        self.tables.append(t)
+        return t
+
+    def p(self,*args,**kw):
+        return self.body.p(*args,**kw)
+    def h(self,*args,**kw):
+        return self.body.h(*args,**kw)
+        
 
 class SpreadsheetDocument(Document):
     
     extension = ".sxc"
     officeClass = "spreadsheet"
     mimetype = "application/vnd.sun.xml.calc"
-    bodyClass = elements.SpreadsheetBody
+    #bodyClass = elements.SpreadsheetBody
     
 
+    def getTables(self):
+        return self.body.children
+
+    def table(self,*args,**kw):
+        return self.body.table(self,*args,**kw)
+        
+    def p(self,*args,**kw):
+        raise element.InvalidRequest(
+            "Spreadsheet body contains only tables")
+    
+    def h(self,*args,**kw):
+        raise elements.InvalidRequest(
+            "Spreadsheet body contains only tables")
+    
