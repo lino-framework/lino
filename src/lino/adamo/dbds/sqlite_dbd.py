@@ -31,16 +31,15 @@ from lino.adamo.sql import SqlConnection
 from lino.adamo import DatabaseError
 
 
-from lino.ui import console
-
+# from lino.ui import console
 # import console to make sure that sys.setdefaultencoding() is done
 # because sqlite.Connection() will use this as default encoding.
         
 
 class Connection(SqlConnection):
     
-    def __init__(self,schema,filename=None):
-        SqlConnection.__init__(self,schema)
+    def __init__(self,ui,filename=None):
+        SqlConnection.__init__(self,ui)
         self.dbapi = sqlite
         #self._isTemporary = isTemporary
         self._mtime = 0.0

@@ -24,7 +24,7 @@ from lino.adamo.rowattrs import Field, Pointer #, Detail
 #from query import Query, QueryColumn
 
 from lino.adamo.connection import Connection
-from lino.ui import console
+#from lino.ui import console
 
 #from mx.DateTime import DateTime
 
@@ -41,8 +41,8 @@ class SqlConnection(Connection):
     CST_CLOSING = 4
     CST_CLOSED = 5
     
-    def __init__(self,schema):
-        Connection.__init__(self,schema)
+    def __init__(self,*args,**kw):
+        Connection.__init__(self,*args,**kw)
         self._dump = None
         self._status = self.CST_NEW
         
@@ -147,7 +147,7 @@ class SqlConnection(Connection):
             raise TypeError, repr(type)
 
     def mustCreateTables(self):
-        console.debug('mustCreateTables '+str(self._status))
+        self.ui.debug('mustCreateTables '+str(self._status))
         if self._status == self.CST_NEW:
             return True
         return False

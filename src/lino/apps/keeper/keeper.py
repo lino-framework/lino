@@ -19,7 +19,6 @@
 
 import sys
 import os
-opj = os.path.join
 
 from lino import adamo
 from lino.forms import gui
@@ -31,11 +30,11 @@ from lino.forms.application import AdamoApplication
 
 class Keeper(AdamoApplication):
         
-    def init(self,toolkit):
+    def init(self):
         tables.setupSchema(self.schema)
         
         self.sess = self.schema.quickStartup(
-            ui=toolkit, filename=self.filename)
+            ui=self.toolkit.console, filename=self.filename)
         
         assert self.mainForm is None
         
@@ -47,38 +46,27 @@ This is the Keeper main menu.
 
         m = frm.addMenu("&Stammdaten")
         m.addItem(label="&Volumes").setHandler(
-            self.showTableGrid,ui,
-            tables.Volumes,viewName="std")
+            self.showViewGrid,frm,
+            tables.Volumes)
         m.addItem(label="&Files").setHandler(
-            self.showTableGrid,ui,
-            tables.Files,viewName="std")
+            self.showViewGrid,frm,
+            tables.Files)
         m.addItem(label="&Directories").setHandler(
-            self.showTableGrid,ui,
-            tables.Directories,viewName="std")
+            self.showViewGrid,frm,
+            tables.Directories)
         m.addItem(label="&Words").setHandler(
-            self.showTableGrid,ui,
+            self.showViewGrid,frm,
             tables.Words)
     
-##         m = frm.addMenu("&Load")
-##         m.addItem(label="&Path").setHandler(
-##             self.loadPath,ui)
-        
-        m = frm.addMenu("&Programm")
-        m.addItem(label="&Beenden",action=frm.close)
-        m.addItem(label="Inf&o").setHandler(ui.showAbout,self)
+        self.addProgramMenu(frm)
 
         frm.addOnClose(self.close)
-
-##     def loadPath(self,ui):
-##         path = r'c:\temp\1'
-##         p = Populator(self.sess)
-##         p.visit(path,"")
 
 def main(argv):
 
     app = Keeper(name="Keeper", years='2005')
     app.parse_args()
-    gui.run(app)
+    app.run()
     
 
 

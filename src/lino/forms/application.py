@@ -88,6 +88,14 @@ class Application(Describable):
 ##         "must call ui.form(), configure and return it"
 ##         raise NotImplementedError
 
+    def addProgramMenu(self,frm):
+        m = frm.addMenu("&Programm")
+        m.addItem(label="&Beenden",action=frm.close)
+        m.addItem(label="Inf&o").setHandler(self.showAbout)
+        m.addItem(label="show &Console").setHandler(self.showConsole)
+        return m
+
+
     def showAbout(self):
         frm = self.form(label="About",doc=self.aboutString())
         frm.addOkButton()
@@ -106,8 +114,13 @@ class Application(Describable):
         s += "\n\nHomepage:\n" + __url__
         return s
     
+    def showConsole(self):
+        frm = self.form(label="Console",
+                        halign=gui.RIGHT, valign=gui.BOTTOM)
+        frm.addViewer()
+        frm.show()
 
-    def init(self,ui):
+    def init(self):
         # must set self.mainForm
         pass
 
@@ -186,11 +199,14 @@ where DBFILE is the name of the sqlite database file""",
         return (options,args)
 
 
-    def init(self,ui,*args,**kw):
+    def init(self): #,*args,**kw):
         # called from Toolkit.main()
-        self.sess = self.schema.quickStartup(ui=ui,
-                                             filename=self.filename)
-        return Application.init(self,ui,*args,**kw)
+        self.sess = self.schema.quickStartup(
+            ui=self.toolkit.console,
+            filename=self.filename)
+##         return Application.init(self,
+##                                 self.toolkit.console,
+##                                 *args,**kw)
         
         
         
@@ -198,7 +214,7 @@ where DBFILE is the name of the sqlite database file""",
         ds = self.sess.query(tc,*args,**kw)
         return ui.showDataGrid(ds)
     
-    def showViewGrid(self,ui,tc,viewName,*args,**kw):
+    def showViewGrid(self,ui,tc,viewName="std",*args,**kw):
         ds = self.sess.view(tc,viewName,*args,**kw)
         return ui.showDataGrid(ds)
     

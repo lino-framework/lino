@@ -246,7 +246,7 @@ class Synchronizer(Task):
             return
         self.count_update_file += 1
         if self.simulate:
-            self.info("update %s to %s" % (src,target))
+            self.notice("update %s to %s" % (src,target))
             return
         if win32file:
             filemode = win32file.GetFileAttributesW(target)
@@ -270,7 +270,7 @@ class Synchronizer(Task):
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.info(_("create directory %s") %target)
+        self.notice(_("create directory %s") %target)
         if not self.simulate:
             try:
                 os.mkdir(target)
@@ -288,7 +288,7 @@ class Synchronizer(Task):
         
     def copy_file(self,src,target):
         self.count_copy_file += 1
-        self.info(_("copy file %s to %s") % (src,target))
+        self.notice(_("copy file %s to %s") % (src,target))
         if self.simulate:
             return
         try:
@@ -300,7 +300,7 @@ class Synchronizer(Task):
 
     def delete_dir(self,name):
         self.count_delete_dir += 1
-        self.info(_("remove directory %s") % name)
+        self.notice(_("remove directory %s") % name)
         if self.simulate:
             return
         
@@ -314,7 +314,7 @@ class Synchronizer(Task):
             
     def delete_file(self,name):
         self.count_delete_file += 1
-        self.info(_("remove file %s") % name)
+        self.notice(_("remove file %s") % name)
         if self.simulate:
             return
 
@@ -341,7 +341,7 @@ class Synchronizer(Task):
             s += _("would have been removed")
         else:
             s += _("were removed")
-        self.info(s,
+        self.notice(s,
                   self.count_delete_file,
                   self.count_delete_dir)
         
@@ -350,7 +350,7 @@ class Synchronizer(Task):
             s += _("would have been updated")
         else:
             s += _("were updated")
-        self.info(s,
+        self.notice(s,
                   self.count_update_file,
                   self.count_update_dir,
                   )
@@ -360,12 +360,12 @@ class Synchronizer(Task):
             s += _("would have been copied")
         else:
             s += _("were copied")
-        self.info(s,
+        self.notice(s,
                   self.count_copy_file,
                   self.count_copy_dir,
                   )
         
-        self.info(_("%d files up-to-date"),self.count_uptodate)
+        self.notice(_("%d files up-to-date"),self.count_uptodate)
         Task.summary(self)
 
     def getStatus(self):
@@ -427,7 +427,7 @@ show progress bar""",
     sync.run(console.getSystemConsole())
 
 ##     for l in sync.summary():
-##         console.info(l)
+##         console.notice(l)
 
  
 

@@ -32,7 +32,7 @@ itr("%d errors" ,
 itr("Aborted",
     de="Vorgang abgebrochen")
 itr("Success",
-    de="Vorgang erfolgreich beendet.")
+    de="Vorgang erfolgreich beendet")
 
 
 class JobAborted(Exception):
@@ -98,7 +98,7 @@ class BaseJob:
             #    msg = self._label+": "+msg
             
     def summary(self):
-        #self.info("%d increments",self.curval)
+        #self.notice("%d increments",self.curval)
         pass
 
     def abort(self,msg=None):
@@ -119,7 +119,7 @@ class BaseJob:
     
 ##     def onInit(self):
 ##         if self._label is not None:
-##             self.ui.info(self._label)
+##             self.ui.notice(self._label)
         
 ##     def onDone(self,msg):
 ##         if msg is None:
@@ -135,8 +135,8 @@ class BaseJob:
     def message(self,*args,**kw):
         self.ui.message(*args,**kw)
         
-    def info(self,*args,**kw):
-        self.ui.info(*args,**kw)
+    def notice(self,*args,**kw):
+        self.ui.notice(*args,**kw)
         
     def verbose(self,*args,**kw):
         self.ui.verbose(*args,**kw)
@@ -203,8 +203,8 @@ class Task(BaseJob):
 
     def summary(self):
         # may override
-        self.info(_("%d warnings"),self.count_warnings)
-        self.info(_("%d errors"), self.count_errors)
+        self.notice(_("%d warnings"),self.count_warnings)
+        self.notice(_("%d errors"), self.count_errors)
 
         
 
@@ -222,11 +222,11 @@ class Task(BaseJob):
 
     def error(self,*args,**kw):
         self.count_errors += 1
-        Job.error(self,*args,**kw)
+        BaseJob.error(self,*args,**kw)
 
-    def warning(self,msg):
+    def warning(self,*args,**kw):
         self.count_warnings += 1
-        Job.warning(self,*args,**kw)
+        BaseJob.warning(self,*args,**kw)
         
 
 

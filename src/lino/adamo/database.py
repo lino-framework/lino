@@ -156,8 +156,8 @@ class Database(Context,Describable):
 
     #def disconnect(self):
 
-    def close(self):
-        console.debug("Closing database "+ str(self))
+    def close(self,ui):
+        ui.debug("Closing database "+ str(self))
         
 ##      for sess in self._sessions:
 ##          #sess.beforeShutdown()

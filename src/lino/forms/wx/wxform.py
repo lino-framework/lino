@@ -19,10 +19,10 @@
 
 import wx
 
-from lino.ui import console
+#from lino.ui import console
 
 from lino.adamo.datatypes import MEMO
-from lino.forms import base
+from lino.forms import base, gui
 from lino.forms.wx import wxgrid
 #from lino.forms.wx.showevents import showEvents
 
@@ -186,31 +186,36 @@ class TextViewer(base.TextViewer):
         #self._buffer = ""
         self.wxctrl = None
         
-    def onShow(self):
-        c = console.Console(self.addText,self.addText,
-                            verbosity=console._syscon._verbosity)
-        console.push(c)
+##     def onShow(self):
+##         c = console.Console(self.addText,self.addText,
+##                             verbosity=console._syscon._verbosity)
+##         console.push(c)
         
     def onClose(self):
-        console.pop()
+##         console.pop()
+        console = self.getForm().app.toolkit.console
+        console.redirect(*self.redirect)
         self.wxctrl = None
         #self._buffer = ""
         #raise "it is no good idea to close this window"
     
     def setup(self,parentCtrl,box):
         parentFormCtrl = self.getForm().wxctrl
-        e = wx.TextCtrl(parentCtrl,-1,"",
+        console = self.getForm().app.toolkit.console
+        e = wx.TextCtrl(parentCtrl,-1,console.getConsoleOutput(),
                         style=wx.TE_MULTILINE|wx.HSCROLL)
         e.SetBackgroundColour('BLACK')
         e.SetForegroundColour('WHITE')
         e.SetEditable(False)
         _setEditorSize(e,MEMO(width=80,height=10))
-        self.getForm().debug(
-            str(e.GetMinSize())+" "+str(e.GetMaxSize()))
         #e.SetEnabled(False)
         box.Add(e, 1, wx.EXPAND|wx.ALL,0)
         self.wxctrl = e
-        #self._buffer = None
+        self.wxctrl.SetInsertionPointEnd()
+        #self.wxctrl.ShowPosition(-1)
+        self.redirect = console.redirect(self.addText,self.addText)
+        self.getForm().debug(
+            str(e.GetMinSize())+" "+str(e.GetMaxSize()))
 
     def addText(self,s):
         self.wxctrl.WriteText(s)
@@ -409,7 +414,7 @@ class Form(base.Form):
         
     def status(self,msg,*args,**kw):
         if self.modal or not self.isShown():
-            console.status(msg,*args,**kw)
+            self.app.toolkit.console.status(msg,*args,**kw)
         else:
             self.wxctrl.SetStatusText(msg)
             
@@ -470,8 +475,26 @@ class Form(base.Form):
         #self.wxctrl.SetAutoLayout(True) 
         #self.wxctrl.Layout()
 
-        if False:
-            self.wxctrl.Centre(wx.BOTH)
+        if self.halign is gui.CENTER:
+            self.wxctrl.Centre(wx.HORIZONTAL)
+        if self.valign is gui.CENTER:
+            self.wxctrl.Centre(wx.VERTICAL)
+            
+        x,y = self.wxctrl.GetPositionTuple()
+
+        if self.halign is gui.LEFT:
+            x = 0
+        elif self.halign is gui.RIGHT:
+            x = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_X)
+            x -= self.wxctrl.GetSizeTuple()[0]
+            
+        if self.valign is gui.TOP:
+            y = 0
+        elif self.halign is gui.RIGHT:
+            y = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_Y)
+            y -= self.wxctrl.GetSizeTuple()[1]
+
+        self.wxctrl.SetPosition((x,y))
 
 
 

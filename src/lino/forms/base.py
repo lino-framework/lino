@@ -592,8 +592,8 @@ class GUI(console.UI):
     def isInteractive(self):
         return True
 
-    def job(self,*args,**kw):
-        return console.job(*args,**kw)
+##     def job(self,*args,**kw):
+##         return console.job(*args,**kw)
 
 ##     def make_progressbar(self,*args,**kw):
 ##         return ProgressBar(self,*args,**kw)
@@ -647,7 +647,9 @@ class GUI(console.UI):
 
 class Form(Describable,GUI):
 
-    def __init__(self,app,parent,data=None,*args,**kw):
+    def __init__(self,app,parent,data=None,
+                 halign=None, valign=None,
+                 *args,**kw):
         Describable.__init__(self,*args,**kw)
         #GUI.__init__(self)
         assert isinstance(app,Application)
@@ -658,6 +660,8 @@ class Form(Describable,GUI):
         self.buttons = AttrDict()
         self.tables = AttrDict()
         self.defaultButton = None
+        self.valign = valign
+        self.halign = halign
         self._boxes = []
         self.menuBar = None
         self.lastEvent = None
@@ -698,7 +702,7 @@ class Form(Describable,GUI):
     def setParent(self,parent):
         assert self._parent is None
         #self._parent = parent
-    
+
     def form(self,*args,**kw):
         "create a form with this as parent"
         return self.app.form(self,*args,**kw)
@@ -757,27 +761,42 @@ class Form(Describable,GUI):
         self.close()
 
 
-    def status(self,msg):
-        console.status(msg)
+    def job(self,*args,**kw):
+        return self.app.toolkit.console.job(*args,**kw)
+
+    def status(self,*args,**kw):
+        return self.app.toolkit.console.status(*args,**kw)
         
-    def debug(self,msg):
-        console.debug(msg)
+    def debug(self,*args,**kw):
+        return self.app.toolkit.console.debug(*args,**kw)
         
-    def warning(self,msg):
-        console.warning(msg)
+    def warning(self,*args,**kw):
+        return self.app.toolkit.console.warning(*args,**kw)
 
-    def verbose(self,msg):
-        console.verbose(msg)
+    def verbose(self,*args,**kw):
+        return self.app.toolkit.console.verbose(*args,**kw)
 
-    def info(self,msg):
-        console.info(msg)
+    def notice(self,*args,**kw):
+        return self.app.toolkit.console.notice(*args,**kw)
 
-    def error(self,msg):
-        console.error(msg)
+    def error(self,*args,**kw):
+        return self.app.toolkit.console.error(*args,**kw)
+    
+    def onJobIncremented(self,*args,**kw):
+        return self.app.toolkit.console.onJobIncremented(*args,**kw)
+
+    def onJobInit(self,*args,**kw):
+        return self.app.toolkit.console.onJobInit(*args,**kw)
+
+    def onJobDone(self,*args,**kw):
+        return self.app.toolkit.console.onJobDone(*args,**kw)
+
+    def onJobAbort(self,*args,**kw):
+        return self.app.toolkit.console.onJobAbort(*args,**kw)
 
         
 
-##     def info(self,msg):
+##     def notice(self,msg):
 ##         #print msg
 ##         self.setMessage(msg)
 ##     def error(self,msg):
@@ -786,7 +805,7 @@ class Form(Describable,GUI):
 
 
 
-class Toolkit(GUI):
+class Toolkit:
     
     labelFactory = Label
     entryFactory = Entry
@@ -802,9 +821,9 @@ class Toolkit(GUI):
     
     def __init__(self,app=None):
         self._apps = []
-        self.consoleForm = None
-        #GUI.__init__(self)
-        #self.app = app
+        #self.consoleForm = None
+        self.console = console.CaptureConsole(
+            verbosity=console._syscon._verbosity)
 
 ##     def setApplication(self,app):
 ##         self.app = app
@@ -815,7 +834,7 @@ class Toolkit(GUI):
     
     def getOptionParser(self,**kw):
         #self.check()
-        return console.getOptionParser(**kw)
+        return self.console.getOptionParser(**kw)
 
     def parse_args(self,argv=None,**kw):
         # only used with automagicApp
@@ -832,14 +851,14 @@ class Toolkit(GUI):
 
     def init(self):
         
-        if self.consoleForm is None:
-            self.consoleForm = frm = self._apps[0].form(
-                None, label="Console")
-            frm.addViewer()
-            frm.show()
+##         if self.consoleForm is None:
+##             self.consoleForm = frm = self._apps[0].form(
+##                 None, label="Console")
+##             frm.addViewer()
+##             frm.show()
             
         for app in self._apps:
-            app.init(self)
+            app.init()
             app.mainForm.show()
             
         #frm = app.getMainForm(self)
@@ -850,8 +869,8 @@ class Toolkit(GUI):
         
     def closeApplication(self,app):
         self._apps.remove(app)
-        if len(self._apps) == 0:
-            self.consoleForm.close()
+##         if len(self._apps) == 0:
+##             self.consoleForm.close()
         
 
 ##     def form(self,parent,*args,**kw):

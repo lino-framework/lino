@@ -110,8 +110,10 @@ class Console(UI):
         self.set(**kw)
 
     def redirect(self,stdout,stderr):
+        old = (self._stdout, self._stderr)
         self._stdout = stdout
         self._stderr = stderr
+        return old
 
     def set(self, verbosity=None, batch=None, logfile=None):
         if verbosity is not None:

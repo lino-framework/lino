@@ -22,7 +22,6 @@ import os
 opj = os.path.join
 
 from lino.apps.keeper import keeper_tables as tables
-from lino.ui import console
 from lino.misc.jobs import Task
 
 class VolumeVisitor(Task):
@@ -39,7 +38,7 @@ class VolumeVisitor(Task):
         self.occs = sess.query(tables.Occurences)
         for row in self.dirs.query(volume=self.volume):
             row.delete()
-        self.schedule(self.visit,self.volume.path,"")
+        self.visit(self.volume.path,"")
 
     def getLabel(self):
         return "Loading "+self.volume.getLabel()
@@ -73,12 +72,12 @@ class VolumeVisitor(Task):
                     
     
     def visit_dir(self,row,fullname):
-        self.warning("visit_dir " + fullname)
+        self.status("visit_dir " + fullname)
         for fn in os.listdir(fullname):
-            self.schedule(self.visit,
-                          os.path.join(fullname,fn),
-                          fn,
-                          row)
+            self.visit(
+                os.path.join(fullname,fn),
+                fn,
+                row)
         
     def readTimeStamp(self,row,filename):
         try:

@@ -35,12 +35,13 @@ class Raceman(MirrorLoaderApplication):
     def getLoaders(self):
         return [lc(self.loadfrom) for lc in loaders.LOADERS]
 
-    def init(self,toolkit):
+    def init(self):
         races.setupSchema(self.schema)
         self.schema.registerLoaders(self.getLoaders())
         
         self.sess = self.schema.quickStartup(
-            ui=toolkit, filename=self.filename)
+            ui=self.toolkit.console,
+            filename=self.filename)
         
         assert self.mainForm is None
         
@@ -69,11 +70,9 @@ This is the Raceman main menu.
     
         #m = frm.addMenu("&Arrivals")
         #m.addItem(label="&Erfassen").setHandler(self.arrivals)
-
-        m = frm.addMenu("&Programm")
-        m.addItem(label="&Beenden",action=frm.close)
-        m.addItem(label="Inf&o").setHandler(self.showAbout)
-
+        
+        self.addProgramMenu(frm)
+        
         frm.addOnClose(self.close)
 
 

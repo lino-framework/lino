@@ -250,8 +250,8 @@ class Table(FieldContainer,SchemaComponent,Describable):
         if self._mirrorLoader is None:
             return
         if self._mirrorLoader.mtime() <= store.mtime():
-            sess.debug("No need to load "+\
-                       self._mirrorLoader.sourceFilename())
+            sess.ui.debug("No need to load "+\
+                          self._mirrorLoader.sourceFilename())
             return
         self._mirrorLoader.load(sess,store.query(sess))
 
@@ -349,7 +349,7 @@ import os
 import datetime
 from lino.adamo.datatypes import TIME, DURATION
 from lino.adamo.exceptions import DataVeto, DatabaseError
-from lino.ui import console
+#from lino.ui import console
 from lino.tools import dbfreader
 
 class DbfMirrorLoader:

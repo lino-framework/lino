@@ -61,40 +61,55 @@ writes some diagnostics about your computer.
         sys.exit(-1)
 
 
-    out = sys.stdout
+    diag(sys.stdout)
 
-    out.write("\nlocale.getdefaultlocale(): "
+def diag(out):    
+
+    out.write("""
+Non-ASCII characters are handled differently and might fail to display
+correctly depending on the context and your computer settings.
+
+  Some sentences in different languages:
+    
+    Ännchen Müller machte große Augen.
+    Cède à César les pâtes reçues.
+    Tõesti, ma ütlen teile, see pole ükskõik.
+
+  Overview table with all accented characters:
+    
+          A E I O U   a e i o u            
+      ¨   Ä . Ï Ö Ü   ä ë ï ö ü
+      ~   Ã . . Õ .   ã . . õ .            
+      ´   Á É Í Ó Ú   á é í ó ú            
+      `   À È Ì Ò Ù   à è ì ò ù
+      ^   Â Ê Î Ô Û   â ê î ô û
+""")
+    if False:
+        out.write("""
+  Graphic "box characters":
+""")
+        for e in ('cp850',):
+            fn = e+".txt"
+            for ln in file(fn).readlines():
+                out.write("    " + ln.decode(e))
+    
+    out.write("""
+Some system settings related to encodings:
+""")    
+    out.write("\n    locale.getdefaultlocale(): "
               + repr(locale.getdefaultlocale()))
 
-    out.write("\ngetdefaultencoding() : "
+    out.write("\n    getdefaultencoding() : "
               + sys.getdefaultencoding())
-    out.write("\ngetfilesystemencoding() : "
+    out.write("\n    getfilesystemencoding() : "
               + sys.getfilesystemencoding())
-    out.write("\nout.encoding : ")
+    out.write("\n    sys.stdout.encoding : ")
     try:
-        out.write(out.encoding)
+        out.write(sys.stdout.encoding)
     except AttributeError:
         out.write("(undefined)")
     out.write("\n")
     
-    out.write(u"""
-
-Do the following accented characters display correctly?
-
-       A E I O U   a e i o u            
-   ¨   Ä . Ï Ö Ü   ä ë ï ö ü
-   ~   Ã . . Õ .   ã . . õ .            
-   ´   Á É Í Ó Ú   á é í ó ú            
-   `   À È Ì Ò Ù   à è ì ò ù
-   ^   Â Ê Î Ô Û   â ê î ô û 
-
-""")
-    out.write("""
-    Ännchen Müller machte große Augen.
-    Cède à César les pâtes reçues.
-    Tõesti, ma ütlen teile, see pole ükskõik.
-    """)
- 
 
 
 

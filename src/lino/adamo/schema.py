@@ -276,7 +276,7 @@ class Schema(Describable):
         self.initialize(ui)
         db = self.addDatabase(langs=langs)
         ui.debug("Connect")
-        conn = center.connection(filename=filename,schema=self)
+        conn = center.connection(ui,filename=filename,schema=self)
         #conn = Connection(filename=filename,schema=self)
         db.connect(conn)
         ui.debug("Startup")
@@ -312,7 +312,7 @@ class Schema(Describable):
     def shutdown(self,ui):
         ui.debug("Schema.shutdown()")
         for db in self._databases:
-            db.close()
+            db.close(ui)
         self._databases = []
         
     

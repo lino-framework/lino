@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import atexit
-from cStringIO import StringIO
+#from cStringIO import StringIO
 
 from lino.adamo.session import Session
 #from lino.ui import console
@@ -37,12 +37,12 @@ class Center:
         #self._sessionFactory = Session
         self._checkIntegrity = False
 
-    def connection(self,*args,**kw):
+    def connection(self,ui,schema,*args,**kw):
         try:
             from lino.adamo.dbds.sqlite_dbd import Connection
         except ImportError:
             from lino.adamo.dbds.mysql_dbd import Connection
-        conn = Connection(*args,**kw)
+        conn = Connection(ui,*args,**kw)
         self._connections.append(conn)
         return conn
         
