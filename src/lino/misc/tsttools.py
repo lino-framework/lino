@@ -10,10 +10,10 @@ from cStringIO import StringIO
 
 from lino.misc.my_import import my_import
 
-def run(modname):
-   suite = makesuite(modname)
-   runner = unittest.TextTestRunner()
-   runner.run(suite)
+#~ def run(modname):
+   #~ suite = makesuite(modname)
+   #~ runner = unittest.TextTestRunner()
+   #~ runner.run(suite)
    
 def makesuite(modname):
    mod = my_import(modname)
@@ -43,7 +43,7 @@ def alltests(argv=None,dirname='.'):
 	for fn in os.listdir(dirname):
 		modname,ext = os.path.splitext(fn)
 		if ext == '.py':
-			doit = False
+			doit = (len(argv) == 0)
 			for arg in argv:
 				a = arg.split('-')
 				if len(a) == 2:

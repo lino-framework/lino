@@ -1,11 +1,13 @@
 import unittest
-import sys,os
+import sys
 
-from gandalf.misc import tsttools
+from lino.misc import tsttools
 
 
 if __name__ == "__main__":
-   suite = tsttools.alltests(sys.argv[1:])
+   suite = tsttools.alltests(argv=sys.argv[1:])
    runner = unittest.TextTestRunner()
    runner.run(suite)
    
+
+

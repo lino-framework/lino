@@ -11,11 +11,11 @@ if __name__ == "__main__":
 	t = doc.table()
 	t.addColumn()
 	t.addColumn()
-	t.addRow(cells=("Kunde","Datum"))
-	t.addRow(cells=("Hinz","2004-11-16"))
-	t.addRow(cells=("Kunz","2004-11-17"))
+	t.addRow("Kunde","Datum")
+	t.addRow("Hinz","2004-11-16")
+	t.addRow("Kunz","2004-11-17")
 	
-	doc.p("Here is another paragraph:")
+	doc.p("Here is another paragraph.")
 	
 	oo = OoText(doc)
 	oo.save()
