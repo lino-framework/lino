@@ -122,10 +122,14 @@ class Database(Context,Describable):
 ##      return sess
 
     def checkTables(self,sess):
-        sess.progress("checkTables: " + self.getName())
+        job = sess.job("checkTables: " + self.getName(),
+                       maxval=len(self._stores))
 
         for store in self._stores.values():
             store.checkTable(sess)
+            job.inc()
+            
+        job.done()
         
     def createTables(self):
         for store in self.getStoresById():

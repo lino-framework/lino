@@ -30,18 +30,29 @@ except:
 
 
 from lino.ui import console
+from lino.misc.jobs import Task
+
+from lino.i18n import itr,_
+itr("Start?",
+   de="Arbeitsvorgang starten?",
+   fr="Démarrer?")
 
 class SyncError(Exception):
     pass
 
-class Synchronizer:
-    def __init__(self,simulate):
+class Synchronizer(Task):
+    def __init__(self,src,target,simulate):
+        Task.__init__(self)
+        self.src = src
+        self.target = target
         self.simulate=simulate
         #self.logger = logger
         
         self.ignore_times = False
         self.modify_window = 2
 
+        self.count_errors = 0
+        self.count_newer = 0
         self.count_uptodate = 0
         self.count_delete_file = 0
         self.count_update_file = 0
@@ -50,48 +61,28 @@ class Synchronizer:
         self.count_update_dir = 0
         self.count_copy_dir = 0
 
-        self.job = console.progress("Synchronizer")
- 
+        #self.job = console.job("Synchronizer")
+
+    def getLabel(self):
+        s = "Synchronize %s to %s" % (self.src, self.target)
+        if self.simulate:
+            s += " (Simulation)"
+        return s
 
 
-    def mustUpdate(self, src, target):
-        try:
-            src_st = os.stat(src)
-            src_sz = src_st.st_size
-            src_mt = src_st.st_mtime
-        except OSError,e:
-        #except Exception,e:
-            console.error("os.stat('%s') failed"%src)
-            return False
-
-        try:
-            target_st = os.stat(target)
-            target_sz = target_st.st_size
-            target_mt = target_st.st_mtime
-        except OSError,e:
-        #except Exception,e:
-            console.error("os.stat('%s') failed" % target)
-            #console.error(str(e))
-            return False
-
-        if target_sz != src_sz:
-            return True
-
-        if self.ignore_times:
-            return True
-
-        if abs(target_mt - src_mt) > self.modify_window:
-    ##         print "%s to %s:\nabs(%s - %s) > %s" % (
-    ##             src,target,
-    ##             target_mt, src_mt,
-    ##             cookie.modify_window)
-            return True
+    def start(self):
+        if not os.path.exists(self.src):
+            raise SyncError(self.src+" doesn't exist")
         
-        return False
+        if os.path.exists(self.target):
+            self.schedule(self.update,self.src,self.target)
+        else:
+            self.schedule(self.copy,self.src,self.target)
 
 
     def purzel(self):
-        self.job.inc()
+        #self.job.inc()
+        pass
         
     def utime(self,src,target):
         # Note: The utime api of the 2.3 version of python is
@@ -100,14 +91,16 @@ class Synchronizer:
             s = os.stat(src)
         except OSError,e:
         #except Exception,e:
-            console.error("os.stat('%s') failed" % src)
+            self.count_errors += 1
+            self.error("os.stat('%s') failed" % src)
             return
         
         try:
             os.utime(target, (s.st_atime, s.st_mtime))
         except OSError,e:
         #except Exception,e:
-            console.error("os.utime('%s') failed" % target)
+            self.count_errors += 1
+            self.error("os.utime('%s') failed" % target)
 
                 
     def copy(self,src,target):
@@ -150,9 +143,9 @@ class Synchronizer:
 ##             console.error(str(e))
             
     def update_dir(self,src,target):
-        self.count_update_dir += 1
         #srcdir = os.path.join(self.srcroot,dirname)
         #destdir = os.path.join(self.destroot,dirname)
+        self.status("updating " + src)
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
         mustCopy = []
@@ -166,26 +159,65 @@ class Synchronizer:
                 mustCopy.append( (s,t) )
             else:
                 mustUpdate.append( (s,t) )
+
+        if len(destnames) > 0 or len(mustCopy) > 0:
+            self.count_update_dir += 1
+
+        """
+        why delete first?
+        (1) disk space may be limited
+        (2) if only upper/lowercase changed
+        """
                 
         for name in destnames:
-            self.delete(os.path.join(target,name))
+            self.schedule(self.delete,os.path.join(target,name))
         del destnames
 
         for s,t in mustCopy:
-            self.copy(s,t)
+            self.schedule(self.copy,s,t)
         del mustCopy
             
         for s,t in mustUpdate:
-            self.update(s,t)
+            self.schedule(self.update,s,t)
 
     
     def update_file(self,src,target):
-        if not self.mustUpdate(src,target):
+        try:
+            src_st = os.stat(src)
+            src_sz = src_st.st_size
+            src_mt = src_st.st_mtime
+        except OSError,e:
+            self.count_errors += 1
+            self.error("os.stat('%s') failed"%src)
+            return False
+
+        try:
+            target_st = os.stat(target)
+            target_sz = target_st.st_size
+            target_mt = target_st.st_mtime
+        except OSError,e:
+            self.count_errors += 1
+            self.error("os.stat('%s') failed" % target)
+            return False
+
+        doit = False
+        if target_sz != src_sz:
+            doit = True
+        elif self.ignore_times:
+            doit = False
+        elif abs(target_mt - src_mt) > self.modify_window:
+            doit = True
+            if target_mt > src_mt:
+                self.count_newer += 1
+                self.warning("Overwrite newer target "+target)
+
+        
+        if not doit:
             self.count_uptodate += 1
-            self.vmsg(target+" is up-to-date")
+            self.verbose(target+" is up-to-date")
             return
         self.count_update_file += 1
-        self.message("update %s %s" % (src,target))
+        self.info("update %s to %s" % (src,target))
         if self.simulate:
             return
         if win32file:
@@ -210,35 +242,38 @@ class Synchronizer:
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.message("copy_dir %s to %s" % (src,target))
+        self.status("copying " + src)
+        self.info("mkdir " + target)
         if not self.simulate:
             try:
                 os.mkdir(target)
             except OSError,e:
-                console.error("os.mkdir('%s') failed" % target)
+                self.count_errors += 1
+                self.error("os.mkdir('%s') failed" % target)
                 return
             self.utime(src,target)
             
         for fn in os.listdir(src):
-            self.copy(os.path.join(src,fn),
-                      os.path.join(target,fn))
+            self.schedule(self.copy,
+                          os.path.join(src,fn),
+                          os.path.join(target,fn))
         
     def copy_file(self,src,target):
         self.count_copy_file += 1
-        self.message("copy_file %s to %s" % (src,target))
+        self.info("copy %s to %s" % (src,target))
         if self.simulate:
             return
         try:
             shutil.copyfile(src, target)
         except IOError,e:
-            console.error("copyfile('%s','%s') failed" % (
-                src,target))
+            self.count_errors += 1
+            self.error("copy_file('%s','%s') failed" % (src,target))
             return
         self.utime(src,target)
 
     def delete_dir(self,name):
         self.count_delete_dir += 1
-        self.message("rmdir "+name)
+        self.info("rmdir "+name)
         if self.simulate:
             return
         
@@ -248,11 +283,12 @@ class Synchronizer:
         try:
             os.rmdir(name)
         except IOError,e:
-            console.error("os.rmdir('%s') failed" % name)
+            self.count_errors += 1
+            self.error("os.rmdir('%s') failed" % name)
             
     def delete_file(self,name):
         self.count_delete_file += 1
-        self.message("delete_file %s" % name)
+        self.info("remove " + name)
         if self.simulate:
             return
 
@@ -271,26 +307,23 @@ class Synchronizer:
         #except Exception,e:
         #    console.error(str(e))
         except IOError,e:
-            console.error("os.remove('%s') failed" % name)
+            self.count_errors += 1
+            self.error("os.remove('%s') failed" % name)
         
     def summary(self):
-        self.message("deleted %d directories and %d files" % (
+        s = "delete %d directories and %d files" % (
             self.count_delete_dir,
-            self.count_delete_file))
-        self.message("updated %d directories and %d files" % (
+            self.count_delete_file)
+        s += "\nupdate %d directories and %d files" % (
             self.count_update_dir,
-            self.count_update_file))
-        self.message("copied %d directories and %d files" % (
+            self.count_update_file)
+        s += "\ncopy %d directories and %d files" % (
             self.count_copy_file,
-            self.count_copy_dir))
-        self.message("%d files were up-to-date" % (
-            self.count_uptodate))
-
-    def vmsg(self,msg):
-        console.vmsg(msg)
-
-    def message(self,msg):
-        console.message(msg)
+            self.count_copy_dir)
+        s += "\n%d files up-to-date" % (self.count_uptodate)
+        s += "\n%d newer targets" % (self.count_newer)
+        s += "\n%d errors" % (self.count_errors)
+        return s
 
 def main(argv):
     console.copyleft(name="Lino/sync",
@@ -321,28 +354,17 @@ simulate only, don't do it""",
     #src = os.path.normpath(src)
     #target = os.path.normpath(target)
 
-    sync = Synchronizer(simulate=options.simulate)
+    sync = Synchronizer(src,target,simulate=options.simulate)
 
-    if not os.path.exists(src):
-        raise SyncError(src+" doesn't exists")
-
-    msg = "sync %s to %s\n" % (src,target)
-    if sync.simulate:
-        msg += "simulate it?"
-    else:
-        msg += "do it?"
-        
-    if not console.confirm(msg):
+    if not console.confirm(sync.getLabel()+"\n"+_("Start?")):
         return
         
-    if os.path.exists(target):
-        sync.update(src,target)
-    else:
-        sync.copy(src,target)
+    sync.run(console)
+    
+    console.message(sync.summary())
 
-    sync.summary()
+ 
 
-    sync.job.done()
 
 
 if __name__ == '__main__':

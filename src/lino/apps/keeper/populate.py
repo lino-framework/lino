@@ -69,11 +69,11 @@ class VolumeVisitor(Task):
             for ln in open(name).readlines():
                 for w in ln.split():
                     count += 1
-            print "%s contains %d words." % (name,count)
+            self.info("%s contains %d words." % (name,count))
                     
     
     def visit_dir(self,row,fullname):
-        self.message("visit_dir " + fullname)
+        self.warning("visit_dir " + fullname)
         for fn in os.listdir(fullname):
             self.schedule(self.visit,
                           os.path.join(fullname,fn),
@@ -86,7 +86,7 @@ class VolumeVisitor(Task):
             sz = st.st_size
             mt = st.st_mtime
         except OSError,e:
-            self.warning("os.stat('%s') failed" % filename)
+            self.error("os.stat('%s') failed" % filename)
             return
         row.mtime = x
 

@@ -60,7 +60,7 @@ def pds2pdf(ifname,renderer,ofname=None, showOutput=True):
 
     try:
         commands.beginDocument(ofname,renderer,ifname)
-        console.progress(
+        job = console.job(
             "%s --> %s..." % (commands.getSourceFileName(),
                               commands.getOutputFileName()))
         namespace = {}
@@ -71,7 +71,7 @@ def pds2pdf(ifname,renderer,ofname=None, showOutput=True):
                 execfile(initfile,namespace,namespace) 
             execfile(ifname,namespace,namespace)
             commands.endDocument(showOutput)
-            console.progress("%d pages." % commands.getPageNumber())
+            job.done("%d pages." % commands.getPageNumber())
         except ParseError,e:
             raise
             #traceback.print_exc(2)

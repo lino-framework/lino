@@ -105,10 +105,9 @@ class Store:
         if self._connection.mustCheckTables():
             q = self.query()
             l = len(q)
-            job = sess.progress(
-                "Checking Table %s : %d rows" % \
-                q._table.getTableName(),
-                maxval=l)
+            job = sess.job("Checking Table %s : %d rows" % \
+                           q._table.getTableName(),
+                           maxval=l)
             for row in q:
                 job.inc()
                 msg = row.checkIntegrity()

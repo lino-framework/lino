@@ -45,7 +45,7 @@ class UI:
     def __init__(self):
         self._progressBar = None
 
-    def progress(self,msg,maxval=0):
+    def job(self,msg,maxval=0):
         if self._progressBar is None:
             self._progressBar = self.make_progressbar()
         return self._progressBar.addJob(msg,maxval)
@@ -123,11 +123,13 @@ class Console(UI):
         if self._log:
             t = strftime("%a %Y-%m-%d %H:%M:%S")
             self._log.write(t+" "+msg+"\n")
-            #self._log.write(msg+"\n")
             
 ##     def log_message(self,msg):
 ##         "Log a message to stdout."
 ##         self.write(msg+"\n")
+
+    def status(self,msg):
+        self.verbose(msg)
 
     def error(self,msg):
         "Log a message to stderr"
@@ -143,19 +145,24 @@ class Console(UI):
     
         
 
-    def message(self,msg):
-        "Display message if verbosity is normal (not quiet)."
+    def warning(self,msg):
+        "Display message if verbosity is normal. Logged."
         self.writelog(msg)
         if self._verbosity >= 0:
             self.writeout(msg)
 
-    def vmsg(self,msg):
-        "Display message if verbosity is high. Never logged."
+    def info(self,msg):
+        "Display message if verbosity is normal. Not logged."
+        if self._verbosity >= 0:
+            self.writeout(msg)
+
+    def verbose(self,msg):
+        "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
             self.writeout(msg)
         
     def debug(self,msg):
-        "Display message if verbosity is very high. Never logged."
+        "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
             self.writeout(msg)
             #self.out.write(msg + "\n")
@@ -226,11 +233,7 @@ class Console(UI):
                      callback=set_logfile)
         return p
 
-    def warning(self,msg):
-        """Log a warning message.  If interactive, make sure that she
-        has seen this message before returning.
-
-        """
+    def message(self,msg):
 ##         if self.app is not None:
 ##             return self.app.warning(msg)
         
@@ -332,9 +335,8 @@ def getSystemConsole():
     return _syscon
 
 
-for m in ('debug','message','vmsg',
-          'progress',
-          'error','critical',
+for m in ('debug','message','info','status',
+          'job', 'verbose', 'error','critical',
           'confirm','warning',
           'report','textprinter',
           'startDump','stopDump',
@@ -348,7 +350,7 @@ def copyleft(name="Lino",
              version=__version__,
              years="2002-2005",
              author=__author__):
-    message("""\
+    info("""\
 %s version %s.
 Copyright (c) %s %s.
 This software comes with ABSOLUTELY NO WARRANTY and is

@@ -60,7 +60,7 @@ class Directories(Table):
             "subdirs",viewName="std")
         self.addPointer('volume',Volumes).setDetail(
             "directories",parent=None,viewName="std")
-        self.addView("std","parent name subdirs meta volume")
+        self.addView("std","parent name subdirs files meta volume")
         #self.setPrimaryKey("volume parent name")
 
     class Instance(Table.Instance):

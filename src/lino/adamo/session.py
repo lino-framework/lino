@@ -62,10 +62,10 @@ class Session(Context):
             ui = console.getSystemConsole()
         self.ui = ui
         #self.console = console
-        for m in ('warning', 'confirm','decide', 'form'):
+        for m in ('message', 'confirm','decide', 'form'):
             setattr(self,m,getattr(ui,m))
             
-        for m in ( 'debug','message', 'vmsg', 'progress',
+        for m in ( 'debug','warning', 'info', 'job',
                    'error','critical',
                    'report','textprinter',
                    'startDump','stopDump'):

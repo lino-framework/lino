@@ -62,7 +62,7 @@ class OoGenerator:
         self.ifiles = tuple([cl(self) for cl in IFILES])
         
     def save(self):
-        console.progress("Writing "+self.outputFilename)
+        job = console.job("Writing "+self.outputFilename)
         for f in self.ifiles:
             f.writeFile()
         zf = zipfile.ZipFile(self.outputFilename,'w',
@@ -70,7 +70,7 @@ class OoGenerator:
         for f in self.ifiles:
             zf.write(opj(self.tempDir,f.filename),f.filename)
         zf.close()
-        
+        job.done()
 
 
 class OoText(OoGenerator):

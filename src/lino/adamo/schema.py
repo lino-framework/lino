@@ -270,7 +270,7 @@ class Schema(Describable):
     def quickStartup(self, ui=None, langs=None, filename=None, **kw):
         if ui is None:
             ui = console.getSystemConsole()
-        job = ui.progress("quickStartup()")
+        job = ui.job("quickStartup()")
         job.title("Initialize Schema")
         self.initialize()
         db = self.addDatabase(langs=langs)
@@ -301,7 +301,7 @@ class Schema(Describable):
             for store in db.getStoresById():
                 store.createTable(sess)
             for p in self._populators:
-                job = sess.progress("populator " + p.getLabel())
+                job = sess.job("populator " + p.getLabel())
                 for store in db.getStoresById():
                     store.populateOrNot(self,sess,p)
                 job.done()

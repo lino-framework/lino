@@ -51,7 +51,7 @@ def collect_upper(path,collector):
         else:
             if fn != fn.lower():
                 i = (os.path.join(path.lower(),fn), pfn.lower())
-                console.info( "%s -> %s" % i)
+                console.verbose( "%s -> %s" % i)
                 collector.filenames.append(i)
                     
                 
@@ -88,7 +88,7 @@ processed.
             for (o,n) in collector.filenames:
                 os.rename(o,n)
             console.info("%d files renamed" % \
-                             len(collector.filenames))
+                         len(collector.filenames))
 
             for (o,n) in collector.dirnames:
                 os.rename(o,n)

@@ -91,29 +91,6 @@ class Document:
         
         
         
-#~ """
-#~ <style:default-style style:family="paragraph">
-#~ <style:properties style:use-window-font-color="true" style:font-name="Times New Roman" 
-    #~ fo:font-size="12pt" fo:language="en" fo:country="US" 
-        #~ style:font-name-asian="Lucida Sans Unicode" style:font-size-asian="12pt" style:language-asian="none" 
-            #~ style:country-asian="none" 
-        #~ style:font-name-complex="Tahoma" style:font-size-complex="12pt" style:language-complex="none" 
-            #~ style:country-complex="none" 
-        #~ fo:hyphenate="false" fo:hyphenation-remain-char-count="2" fo:hyphenation-push-char-count="2" 
-        #~ fo:hyphenation-ladder-count="no-limit" 
-            #~ style:text-autospace="ideograph-alpha" 
-                #~ style:punctuation-wrap="hanging" 
-                    #~ style:line-break="strict" 
-                        #~ style:tab-stop-distance="1.251cm" 
-                            #~ style:writing-mode="page"/>
-#~ </style:default-style>
-#~ <style:style style:name="Standard" style:family="paragraph" style:class="text"/>
-#~ -
-    #~ <style:style style:name="Text body" style:family="paragraph" style:parent-style-name="Standard" style:class="text">
-#~ <style:properties fo:margin-top="0cm" fo:margin-bottom="0.212cm"/>
-#~ </style:style>       
-#~ """
-        
         s = elements.DefaultStyle(family="paragraph")
         s.append(elements.Properties(useWindowFontColor=True, 
             fontName="Times New Roman",
@@ -138,29 +115,30 @@ class Document:
                            family="paragraph",
                            parentStyleName="Standard",
                            className="text")
-        s.append(elements.Properties(marginTop="0cm",marginBottom="0.212cm"))
+        s.append(elements.Properties(marginTop="0cm",
+                                     marginBottom="0.212cm"))
         self.styles.append(s)
 
         s = elements.DefaultStyle(family="table-cell")
-        s.append(elements.Properties(decimalPlaces=2,fontName="Arial",language="en",country="US",tabStopDistance="1.25cm"))
+        s.append(elements.Properties(decimalPlaces=2,
+                                     fontName="Arial",
+                                     language="en",country="US",
+                                     tabStopDistance="1.25cm"))
         self.styles.append(s)
         
         s = elements.NumberStyle(name="N0",family="data-style")
         s.append(elements.Number(minIntegerDigits=1))
         self.styles.append(s)
         
-        s = elements.CurrencyStyle(name="N106P0", family="data-style", volatile=True)
-        s.append(elements.Number(decimalPlaces=2,minIntegerDigits=1,grouping=True))
+        s = elements.CurrencyStyle(name="N106P0",
+                                   family="data-style",
+                                   volatile=True)
+        s.append(elements.Number(decimalPlaces=2,minIntegerDigits=1,
+                                 grouping=True))
         s.append(elements.Text("\n"))
         s.append(elements.CurrencySymbol("EUR",language="fr",country="BE"))
         self.styles.append(s)
         
-        #~ f.write("""\
-#~ <number:currency-style style:name="N106" style:family="data-style">
-#~ <style:properties fo:color="#ff0000"/>
-#~ <number:text>-</number:text><number:number number:decimal-places="2" number:min-integer-digits="1" number:grouping="true"/><number:text> </number:text><number:currency-symbol number:language="fr" number:country="BE">EUR</number:currency-symbol><style:map style:condition="value()&gt;=0" style:apply-style-name="N106P0"/>
-#~ </number:currency-style>
-#~ """)
 
         s = elements.CurrencyStyle(name="N106", family="data-style", volatile=True)
         s.append(elements.Number(decimalPlaces=2,minIntegerDigits=1,grouping=True))
@@ -168,51 +146,24 @@ class Document:
         s.append(elements.CurrencySymbol("EUR",language="fr",country="BE"))
         self.styles.append(s)
         
-        #~ f.write("""\
-#~ <style:style style:name="Default" style:family="table-cell"/>
-#~ <style:style style:name="Result" style:family="table-cell" style:parent-style-name="Default">
-#~ <style:properties fo:font-style="italic" style:text-underline="single" style:text-underline-color="font-color" fo:font-weight="bold"/>
-#~ </style:style>
-#~ """)
+
         self.styles.append(elements.Style(name="Default", family="table-cell", volatile=True))
         s = elements.Style(name="Result", family="table-cell", parentStyleName="Default")
         s.append(elements.Properties(fontStyle="italic",textUnderline="single",textUnderlineColor="font-color",fontWeight="bold"))
         self.styles.append(s)
 
-        #~ f.write("""\
-#~ <style:style style:name="Result2" style:family="table-cell" style:parent-style-name="Result" style:data-style-name="N106"/>
-#~ <style:style style:name="Heading" style:family="table-cell" style:parent-style-name="Default">
-#~ <style:properties fo:text-align="center" style:text-align-source="fix" fo:font-size="16pt" fo:font-style="italic" fo:font-weight="bold"/>
-#~ </style:style>
-#~ """)
 
         self.styles.append(elements.Style(name="Result2", family="table-cell", parentStyleName="Default", dataStyle="N106"))
         s = elements.Style(name="Heading", family="table-cell", parentStyleName="Default")
         s.append(elements.Properties(textAlign="center",textAlignSource="fix",fontSize="16pt",fontStyle="italic",fontWeight="bold"))
         self.styles.append(s)
 
-        #~ f.write("""\
-#~ <style:style style:name="Heading1" style:family="table-cell" style:parent-style-name="Heading">
-#~ <style:properties fo:direction="ltr" style:rotation-angle="90"/>
-#~ </style:style>
-#~ """)
         s = elements.Style(name="Heading1", family="table-cell", parentStyleName="Heading")
         s.append(elements.Properties(direction="ltr",rotationAngle=90))
         self.styles.append(s)
 
 
         
-        #~ f.write("""\
-#~ <style:page-master style:name="pm1">
-    #~ <style:properties style:writing-mode="lr-tb"/>
-    #~ <style:header-style>
-        #~ <style:properties fo:min-height="0.751cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-bottom="0.25cm"/>
-    #~ </style:header-style>
-    #~ <style:footer-style>
-        #~ <style:properties fo:min-height="0.751cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0.25cm"/>
-    #~ </style:footer-style>
-#~ </style:page-master>
-#~ """)
         pm = elements.PageMaster(name="pm1")
         self.autoStyles.append(pm)
         pm.append(elements.Properties(writingMode="lr-tb"))
@@ -238,23 +189,7 @@ class Document:
         h.append(elements.Properties(minHeight="0.751cm",marginLeft="0cm",marginRight="0cm",marginBottom="0.25cm"))
         pm.append(h)
         
-        #~ f.write("""\
-#~ <style:page-master style:name="pm2">
-    #~ <style:properties style:writing-mode="lr-tb"/>
-    #~ <style:header-style>
-        #~ <style:properties fo:min-height="0.751cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-bottom="0.25cm" 
-            #~ fo:border="0.088cm solid #000000" fo:padding="0.018cm" fo:background-color="#c0c0c0">
-        #~ <style:background-image/>
-        #~ </style:properties>
-    #~ </style:header-style>
-    #~ <style:footer-style>
-        #~ <style:properties fo:min-height="0.751cm" fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0.25cm" 
-            #~ fo:border="0.088cm solid #000000" fo:padding="0.018cm" fo:background-color="#c0c0c0">
-            #~ <style:background-image/>
-        #~ </style:properties>
-        #~ </style:footer-style>
-#~ </style:page-master>
-#~ """)
+
         pm = elements.PageMaster(name="pm2")
         self.autoStyles.append(pm)
         pm.append(elements.Properties(writingMode="lr-tb"))
@@ -341,7 +276,7 @@ class Document:
             if sys.platform == "win32":
                 os.system("start %s" % g.outputFilename)
             else:
-                console.warning("but how to start %s ?" % \
+                console.message("but how to start %s ?" % \
                                 g.outputFilename)
 
     

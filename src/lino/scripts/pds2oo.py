@@ -50,7 +50,7 @@ is PDSFILE with extension .sxw or .sxc depending on content.
     (basename,ext) = os.path.splitext(ifname)
     if ext != ".pds":
         ifname += ".pds"
-    console.progress("Processing " +ifname+" ...")
+    job = console.job("Processing " +ifname+" ...")
     doc = Document(basename)
     namespace = {'doc':doc}
     try:
@@ -60,9 +60,10 @@ is PDSFILE with extension .sxw or .sxc depending on content.
 
     g=doc.generator(filename=options.outFile)
     g.save()
+    job.done()
+    
     if sys.platform == "win32" and console.isInteractive():
         os.system("start %s" % g.outputFilename)
-    
     
         
 if __name__ == '__main__':

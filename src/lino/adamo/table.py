@@ -383,8 +383,8 @@ class DbfMirrorLoader:
         f = dbfreader.DBFFile(self.sourceFilename(),
                               codepage="cp850")
         f.open()
-        job = ui.progress("Loading "+
-                          self.sourceFilename(),len(f))
+        job = ui.job("Loading "+
+                     self.sourceFilename(),len(f))
         q.zap()
         for dbfrow in f:
             job.inc()

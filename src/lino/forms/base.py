@@ -81,7 +81,7 @@ class Button(Component):
         try:
             self._action(*(self._args),**(self._kw))
         except InvalidRequestError,e:
-            frm.message(str(e))
+            frm.status(str(e))
         except Exception,e:
             frm.showException(e,"clicked %s in %s" % (
                 str(self),frm.getLabel()))
@@ -451,7 +451,7 @@ class GuiProgressBar(jobs.ProgressBar):
         self.entry = self.frm.addEntry("progress",
                                        value="0%",
                                        enabled=False)
-        console.ProgressBar.__init__(self,label=label,**kw)
+        jobs.ProgressBar.__init__(self,label=label,**kw)
 
     def onInit(self):
         self.frm.show()
@@ -491,14 +491,29 @@ class GUI(console.UI):
         frm.showModal()
         return frm.lastEvent == ok
 
-    def warning(self,msg):
-        frm = self.form(label="Warning")
+    def message(self,msg):
+        frm = self.form(label="Message")
         frm.addLabel(msg)
         frm.addOkButton()
         frm.showModal()
 
-    def progress(self,*args,**kw):
-        return console.progress(*args,**kw)
+    def status(self,msg):
+        self.warning(msg)
+        
+    def warning(self,msg):
+        console.warning(msg)
+
+    def verbose(self,msg):
+        console.verbose(msg)
+
+    def info(self,msg):
+        console.info(msg)
+
+    def error(self,msg):
+        console.error(msg)
+
+    def job(self,*args,**kw):
+        return console.job(*args,**kw)
 
 ##     def make_progressbar(self,*args,**kw):
 ##         return GuiProgressBar(self,*args,**kw)
@@ -633,9 +648,6 @@ class Form(Describable,GUI):
 
     def cancel(self):
         self.close()
-
-    def message(self,msg):
-        print msg
 
 ##     def info(self,msg):
 ##         #print msg

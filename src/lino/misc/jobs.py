@@ -26,7 +26,7 @@ itr("Working",
    fr="Travail en cours")
 
 
-uimeths = ('message','vmsg','error')
+uimeths = ('warning', 'message','info','error', 'verbose')
 
 
 class Task:
@@ -41,9 +41,9 @@ class Task:
     
     def run(self,ui):
         self.ui = ui
+        self.job = self.ui.job(self.getLabel())
         for m in uimeths:
-            setattr(self,m,getattr(ui,m))
-        self.job = self.ui.progress(self.getLabel())
+            setattr(self,m,getattr(self.job,m))
         self.start()
         while len(self._todo) > 0:
             self.job.inc()
@@ -52,7 +52,10 @@ class Task:
         self.job.done()
 
 ##     def message(self,msg):
-##         self.ui.message(msg)
+##         self.job.message(msg)
+
+    def status(self,msg):
+        self.job.status(msg)
 
 ##     def error(self,msg):
 ##         self.ui.error(msg)
@@ -63,24 +66,24 @@ class Task:
 
 class Job:
     
-    def __init__(self,pb,title=None,maxval=None):
+    def __init__(self,pb,status=None,maxval=None):
         self.pb = pb
         for m in uimeths:
             setattr(self,m,getattr(pb,m))
         self.curval = 0
         self.maxval = maxval
         self._done = False
-        if title is None:
-            title = _("Working")
+        if status is None:
+            status = _("Working")
         self.pc = None
-        self.title(title)
+        self.status(status)
 
-    def title(self,newstr=""):
-        self._title = newstr
-        self.pb.onTitle(self)
+    def status(self,msg=""):
+        self._status = msg
+        self.pb.onStatus(self)
 
     def ping(self,msg):
-        self._title = msg
+        self._status = msg
         self.inc()
         
     def inc(self,n=1):
@@ -94,15 +97,17 @@ class Job:
             self.pc = pc
         self.pb.onInc(self)
         
-    def done(self):
+    def done(self,msg=None):
+        if msg:
+            self._status = msg
         if not self._done:
             self._done = True
             self.pc = 100
             self.pb.onInc(self)
             self.pb.onDone(self)
 
-    def __str__(self):
-        return self._title
+##     def __str__(self):
+##         return self._title
 
             
 
@@ -122,24 +127,27 @@ class ProgressBar:
     """
     def __init__(self,ui,label=None):
         
-        """
-        
-        title is the text string displayed (default ``Working...''),
-        maxval is the value at which progress is complete (default 0,
-        indicating that an indeterminate amount of work remains to be
-        done), and label is the text that is displayed above the
-        progress bar itself.
-        
-        
-        """
         self.ui = ui
-        for m in uimeths:
-            setattr(self,m,getattr(ui,m))
         self._label = label
         self._jobs = []
         self.onInit()
-        #self.title(title)
+        #self.status(status)
 
+    def warning(self,msg):
+        self.ui.warning(msg)
+        
+    def message(self,msg):
+        self.ui.message(msg)
+        
+    def info(self,msg):
+        self.ui.info(msg)
+        
+    def verbose(self,msg):
+        self.ui.verbose(msg)
+        
+    def error(self,msg):
+        self.ui.error(msg)
+        
     def addJob(self,*args,**kw):
         job = Job(self,*args,**kw)
         self._jobs.append(job)
@@ -150,9 +158,9 @@ class ProgressBar:
         pass
     
     def onJob(self,job):
-        self.onTitle(job)
+        self.onStatus(job)
     
-    def onTitle(self,job):
+    def onStatus(self,job):
         pass
     
     def onInc(self,job):
@@ -177,21 +185,22 @@ class ConsoleProgressBar(ProgressBar):
         ProgressBar.onDone(self,job)
         
 class DecentConsoleProgressBar(ConsoleProgressBar):
-    def onTitle(self):
-        self.ui.write(self._title)
+    def onStatus(self):
+        self.ui.write(self._status)
         
     def onInc(self):
         self.ui.write('.')
         
 class PurzelConsoleProgressBar(ConsoleProgressBar):
 
+    width = 80
     purzelMann = "|/-\\"
     
     def onInit(self):
         if self._label is not None:
             self.ui.writeout(self._label)
         
-    def onTitle(self,job):
+    def onStatus(self,job):
         self.onInc(job)
         
     def onInc(self,job):
@@ -202,8 +211,9 @@ class PurzelConsoleProgressBar(ConsoleProgressBar):
                 s = "[    ] " 
             else:
                 s = "[%3d%%] " % job.pc
-        s += job._title
-        self.ui.write(s.ljust(80) + '\r')
+        s += job._status
+        s = s[:self.width-1]
+        self.ui.write(s.ljust(self.width) + '\r')
 
     
             

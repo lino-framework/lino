@@ -71,7 +71,7 @@ class Center:
         
         assert len(self._schemas) > 0,"no schemas"
         sess = self.createSession(ui=ui)
-        job = sess.progress("center.startup()",len(self._schemas))
+        job = sess.job("center.startup()",len(self._schemas))
         for sch in self._schemas:
             job.inc()
             sch.startup(sess,**kw)

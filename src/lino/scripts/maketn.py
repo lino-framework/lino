@@ -38,7 +38,7 @@ class Size:
 
 
 SIZES = [ #Size("tn",(128,128)),
-			 Size("web",(512,512)) ]
+    Size("web",(512,512)) ]
 
 #EXTENSIONS = (".jpg",".png")
 EXTENSIONS = (".jpg")
@@ -65,7 +65,7 @@ def make_tn(path,sizes):
 					tfn = root + size.suffix + ext
 					# TODO : check whether it is older than original
 					if not os.path.exists(tfn):
-						console.info("%s -> %s" % (pfn,tfn))
+						console.verbose("%s -> %s" % (pfn,tfn))
 						im = Image.open(pfn)
 						im.thumbnail(size.size) 
 						im.save(tfn)
