@@ -17,16 +17,17 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.misc import tsttools
+from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Partners
 from lino.schemas.sprl.tables import Quotes, Authors, Languages
 
 from lino.schemas.sprl.data import quotes_de
 
-class Case(tsttools.TestCase):
+class Case(TestCase):
     def setUp(self):
-        self.db = demo.startup(withJokes=True)
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui,withJokes=True)
         #quotes_de.populate(self.db)
         #self.db.commit()
         
@@ -84,5 +85,5 @@ So lange der Klügere nachgibt, wird die Welt von Dummen beherrscht.
 """)
         
 if __name__ == '__main__':
-    tsttools.main()
+    main()
 

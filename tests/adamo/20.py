@@ -54,7 +54,7 @@ from lino.schemas.sprl.tables import Nations,Partners
 class Case(TestCase):
     
     def test01(self):
-        sess = demo.startup(ui=self.ui)
+        sess = demo.startup(self.ui)
         be = sess.query(Nations).peek("be")
         q = sess.query(Partners,"title firstName name",nation=be)
         

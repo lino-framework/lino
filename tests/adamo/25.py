@@ -32,8 +32,9 @@ from lino.schemas.sprl.tables \
 class Case(TestCase):
 
     def setUp(self):
+        TestCase.setUp(self)
         
-        self.db = demo.startup()
+        self.db = demo.startup(self.ui)
 
     def tearDown(self):
         self.db.shutdown()

@@ -48,12 +48,12 @@ def makeSchema(populate=True,
     return schema
             
             
-def startup(ui=None,
+def startup(ui,
             filename=None,
             langs=None,
             **kw):
     schema = makeSchema(**kw)
-    sess = schema.quickStartup(ui=ui,langs=langs, filename=filename)
+    sess = schema.quickStartup(ui,langs=langs, filename=filename)
     
     return sess
 

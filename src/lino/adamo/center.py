@@ -78,20 +78,21 @@ class Center:
 ##             ui = console.getSystemConsole()
         self.ui = ui
         assert len(self._schemas) > 0, "no schemas"
-        job = ui.job("center.startup()",len(self._schemas))
+        #job = ui.job("center.startup()",len(self._schemas))
         sess = self.createSession(ui)
         for sch in self._schemas:
-            job.increment()
+            #job.increment()
             sch.startup(sess,**kw)
         sess.setDefaultLanguage()
-        job.done()
+        #job.done()
         return sess
 
     
     def shutdown(self):
         # self.shutdown() # tests/adamo/7.py failed when several tests
         # were run (because previous startups remained open.
-        
+        if self.ui is None:
+            return
         self.ui.debug("Center.shutdown()")
         for sch in self._schemas:
             sch.shutdown(self.ui)

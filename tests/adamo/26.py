@@ -35,8 +35,8 @@ class Case(TestCase):
     """
 
     def setUp(self):
-        
-        self.sess = demo.startup()
+        TestCase.setUp(self)
+        self.sess = demo.startup(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -46,9 +46,9 @@ class Case(TestCase):
         PROJECTS = self.sess.query(Projects)
         ds = PROJECTS.query("id super.id title")
         self.assertEqual(len(ds),10)
-        self.sess.startDump()
+        #self.sess.startDump()
         ds.executeReport(columnWidths="5 5 20")
-        s = self.sess.stopDump()
+        s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 Projects
@@ -79,9 +79,9 @@ id   |id   |title
 ##         for p in ds:
 ##             s+= "\t".join([str(cell.getValue()) for cell in p]) + "\n"
         #print s
-        self.sess.startDump()
+        #self.sess.startDump()
         ds.executeReport(columnWidths="5 20")
-        s = self.sess.stopDump()
+        s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 Projects

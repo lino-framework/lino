@@ -21,7 +21,7 @@ import types
 
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-from lino.ui import console
+#from lino.ui import console
 
 #from lino.adamo.forms import Form
 from lino.adamo.database import Database
@@ -254,26 +254,6 @@ class Schema(Describable):
         return str(self.__class__)
 
 
-    def quickStartup(self,
-                     ui,
-                     langs=None,
-                     filename=None,
-                     **kw):
-##         if ui is None:
-##             ui = console.getSystemConsole()
-        job = ui.job("quickStartup()")
-        job.status("Initialize Schema")
-        self.initialize(ui)
-        db = self.addDatabase(langs=langs)
-        job.status("Connect")
-        conn = center.connection(filename=filename,schema=self)
-        #conn = Connection(filename=filename,schema=self)
-        db.connect(conn)
-        job.status("Startup")
-        sess =  center.startup(ui,**kw)
-        job.done()
-        return sess
-
     def addDatabase(self,langs=None,name=None,label=None):
         n = str(len(self._databases)+1)
         if name is None:
@@ -284,12 +264,36 @@ class Schema(Describable):
         self._databases.append(db)
         return db
 
+    def quickStartup(self,
+                     ui,
+                     langs=None,
+                     filename=None,
+                     **kw):
+##         if ui is None:
+##             ui = console.getSystemConsole()
+        #job = ui.job("quickStartup()")
+        ui.debug("Initialize Schema")
+        self.initialize(ui)
+        db = self.addDatabase(langs=langs)
+        ui.debug("Connect")
+        conn = center.connection(filename=filename,schema=self)
+        #conn = Connection(filename=filename,schema=self)
+        db.connect(conn)
+        ui.debug("Startup")
+        sess =  center.startup(ui,**kw)
+        #job.done()
+        return sess
+
     def startup(self,sess,checkIntegrity=None):
         if checkIntegrity is None:
             checkIntegrity = center.doCheckIntegrity()
         assert len(self._databases) > 0, "no databases"
+        #n = sum([len(db.getStoresById()) for db in self._databases])
+        #job = sess.ui.job("schema.startup()",len(self._databases))
         for db in self._databases:
             sess.use(db)
+            #job.status(db.getLabel())
+            sess.ui.debug(db.getLabel())
             for store in db.getStoresById():
                 store.createTable(sess)
             for p in self._populators:
@@ -301,6 +305,7 @@ class Schema(Describable):
                 for store in db.getStoresById():
                     store.checkIntegrity(sess)
         sess.setDefaultLanguage()
+        #job.done()
         return sess
     
     

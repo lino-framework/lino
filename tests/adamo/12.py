@@ -18,17 +18,19 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
    
-from lino.misc import tsttools 
+from lino.misc.tsttools import TestCase, main
+#from lino.misc import tsttools 
 from lino.examples import pizzeria2
 
 
-class Case(tsttools.TestCase):
+class Case(TestCase):
     """
     (this failed on 20040322)
     """
 
     def setUp(self):
-        self.sess = pizzeria2.beginSession()
+        TestCase.setUp(self)
+        self.sess = pizzeria2.beginSession(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -41,5 +43,5 @@ class Case(tsttools.TestCase):
         self.assertEqual(c.id,newID) # failed
         
 if __name__ == '__main__':
-    tsttools.main()
+    main()
 

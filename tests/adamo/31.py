@@ -44,7 +44,7 @@ class Case(TestCase):
         schema = Schema(label="Raceman Report Tester")
         races.setupSchema(schema)
 
-        sess = schema.quickStartup()
+        sess = schema.quickStartup(self.ui)
 
         PERSONS = sess.query(races.Persons)
         norbert = PERSONS.appendRow( name="Ausdemwald",
@@ -67,13 +67,13 @@ class Case(TestCase):
             dossard="0013",
             duration=DURATION.parse("01.10.50"))
 
-        sess.startDump()
+        #sess.startDump()
         q = race.participants.query(
             "duration dossard person.name person.firstName",
             orderBy="duration dossard",
             pageLen=10)
         q.executeReport(columnWidths="d d 20 15")
-        s = sess.stopDump()
+        s = self.getConsoleOutput()
         #print s
         self.assertEquals(s,"""\
 Participants

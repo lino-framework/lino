@@ -18,16 +18,16 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import unittest
+from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Pages
 
-class Introduction(unittest.TestCase):
+class Introduction(TestCase):
 
     def setUp(self):
-        
-        self.db = demo.beginSession()
+        TestCase.setUp(self)
+        self.db = demo.beginSession(self.ui)
 
     def tearDown(self):
         self.db.shutdown()
@@ -52,5 +52,5 @@ class Introduction(unittest.TestCase):
         
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
 

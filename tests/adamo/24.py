@@ -30,8 +30,8 @@ from lino.schemas.sprl.tables import Cities, Nations
 class Case(TestCase):
 
     def setUp(self):
-        
-        self.db = demo.startup()
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui)
 
     def tearDown(self):
         self.db.shutdown()

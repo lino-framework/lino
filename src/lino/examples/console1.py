@@ -29,19 +29,20 @@ def f(withMaxVal):
     if withMaxVal:
         job.setMaxValue(pow(STEPS,5))
     
+    job.status("Working hard")
     for n in range(STEPS):
         console.error('error message %d',n)
         for h in range(STEPS):
             console.warning('warning message %d.%d',n,h)
             for i in range(STEPS):
-                console.info('info message %d.%d.%d',n,h,i)
+                console.notice('notice message %d.%d.%d',n,h,i)
                 for j in range(STEPS):
                     console.verbose(
                         'verbose message %d.%d.%d.%d',n,h,i,j)
                     for k in range(STEPS):
                         console.debug(
                             'debug message %d.%d.%d.%d.%d',n,h,i,j,k)
-                        job.update("Working hard")
+                        job.increment()
                         sleep(0.1)
         
     job.done()

@@ -25,19 +25,20 @@
    
 from lino import adamo #import quickdb, beginQuickSession
 from lino.adamo.datatypes import itod
-from lino.misc import tsttools 
+from lino.misc.tsttools import TestCase, main
 from lino.examples import pizzeria, pizzeria2
 from lino.examples.pizzeria2 import Services, Customers,\
      Products, Orders, OrderLines
 
 
-class Case(tsttools.TestCase):
+class Case(TestCase):
     """
     Tests about switching pointers, using the pizzeria2 example
     """
 
     def setUp(self):
-        self.sess = pizzeria2.beginSession()
+        TestCase.setUp(self)
+        self.sess = pizzeria2.beginSession(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -223,5 +224,5 @@ SELECT id, name, price FROM Products WHERE id = 1;
         
 
 if __name__ == '__main__':
-    tsttools.main()
+    main()
 

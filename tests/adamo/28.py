@@ -18,23 +18,23 @@
 
 """
 
-bug 20040914: tables LANGS and NATIONS of demo db seemed empty (theyr
+bug 20040914: tables LANGS and NATIONS of demo db seemed empty (their
 len() was 0) because Datasource.rowcount (which is a cached value) was
 not re-read from database when some other Datasource on same store did
 an appendRow().
 
 """
 
-import unittest
+from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
-class Case(unittest.TestCase):
+class Case(TestCase):
 
     def setUp(self):
-        
-        self.sess = demo.beginSession()
+        TestCase.setUp(self)
+        self.sess = demo.beginSession(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -47,4 +47,4 @@ class Case(unittest.TestCase):
         
 
 if __name__ == '__main__':
-    unittest.main()
+    main()

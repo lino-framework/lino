@@ -30,8 +30,6 @@ from lino.adamo.datatypes import itod
 # 1. Define the database schema
 
 
-#from lino.adamo.schema import DatabaseSchema, quickdb
-
 class Products(Table):
     def init(self):
         self.addField('name',STRING)
@@ -83,7 +81,7 @@ class OrderLines(Table):
                 return "product is mandatory"
 
 
-def Pizzeria(*args,**kw):
+def makeSchema(*args,**kw):
     schema = Schema(*args,**kw)
     schema.addTable(Products)
     schema.addTable(Customers)
@@ -140,11 +138,11 @@ def query(sess):
 
 def main(ui):
 
-    schema = Pizzeria(label="Lucs Pizza Restaurant")
+    schema = makeSchema(label="Luc's Pizza Restaurant")
 
     sess = schema.quickStartup(ui)
-    print sess.ui
-    raw_input("ok")
+    #print sess.ui
+    #raw_input("ok")
     
     populate(sess)
 
@@ -154,4 +152,5 @@ def main(ui):
     
 if __name__ == "__main__":
     from lino.ui import console
+    console.parse_args()
     main(console)

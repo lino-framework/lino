@@ -44,7 +44,7 @@ class Case(TestCase):
 
         schema = makeSchema()
     
-        schema.initialize()
+        schema.initialize(self.ui)
         schema.addPopulator(demo.Populator(big=True))
         
         conn = Connection(schema=schema)
@@ -69,16 +69,16 @@ class Case(TestCase):
         db2.connect(conn)
 
 
-        sess = center.startup()
+        sess = center.startup(self.ui)
         
         sess.use(db1)
         q = sess.query(Nations,"id name area",pageLen=10,
                        search="%be%")
         self.assertEqual(q.getLangs(),"de")
         self.assertEqual(q.getDatabase().getLangs(),"en de fr et")
-        sess.startDump()
+        #sess.startDump()
         q.executeReport()
-        s = sess.stopDump()
+        s = self.getConsoleOutput()
         
         self.assertEqual(s,"""\
 Nations

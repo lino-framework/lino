@@ -33,8 +33,9 @@ from lino.adamo.exceptions import DataVeto, InvalidRequestError
 class Case(TestCase):
 
     def setUp(self):
+        TestCase.setUp(self)
         
-        self.sess = demo.beginSession()
+        self.sess = demo.startup(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()

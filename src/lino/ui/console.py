@@ -109,9 +109,9 @@ class Console(UI):
         # UI.__init__(self)
         self.set(**kw)
 
-##     def redirect(self,stdout,stderr):
-##         self._stdout = stdout
-##         self._stderr = stderr
+    def redirect(self,stdout,stderr):
+        self._stdout = stdout
+        self._stderr = stderr
 
     def set(self, verbosity=None, batch=None, logfile=None):
         if verbosity is not None:
@@ -480,10 +480,13 @@ class CaptureConsole(Console):
         Console.__init__(self,
                          self.buffer.write,
                          self.buffer.write,**kw)
-        
-    def getvalue(self):
-        #self.buffer.flush()
-        return self.buffer.getvalue()
+
+    def getConsoleOutput(self):
+        s = self.buffer.getvalue()
+        self.buffer.close()
+        self.buffer = StringIO()
+        self.redirect(self.buffer.write,self.buffer.write)
+        return s
     
         
 _syscon = None

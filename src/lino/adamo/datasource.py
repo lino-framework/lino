@@ -248,7 +248,7 @@ class SimpleDatasource:
     
     def executeReport(self,rpt=None,**kw):
         if rpt is None:
-            rpt = self._session.report()
+            rpt = self._session.ui.report()
         self.setupReport(rpt,**kw)
         rpt.execute(self)
 

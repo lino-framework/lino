@@ -82,9 +82,11 @@ class BaseJob:
             self.pc = pc
         self.ui.onJobIncremented(self)
         
-    def done(self,msg=None):
+    def done(self,msg=None,*args,**kw):
         if msg is None:
             msg = _("Success")
+        else:
+            msg = self.ui.buildMessage(msg,*args,**kw)
         if not self._done:
             self._done = True
             #if msg is not None:
@@ -177,6 +179,7 @@ class Job(BaseJob):
 
     def status(self,msg,*args,**kw):
         self._status = self.ui.buildMessage(msg,*args,**kw)
+        #self.increment()
 
 
 

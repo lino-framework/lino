@@ -136,10 +136,9 @@ def alltests(argv,root='.'):
                     suites.append(makesuite(modname))
         sys.path.remove(dirpath)
         
-    job.done()
-    #raw_input("yes?")
-
-    return unittest.TestSuite(suites)
+    suite = unittest.TestSuite(suites)
+    job.done("Found %d tests.",suite.countTestCases())
+    return suite
      
 
 
@@ -187,7 +186,7 @@ class TestCase(unittest.TestCase):
                     os.remove(fn)
 
     def getConsoleOutput(self):
-        return self.ui.getvalue()
+        return self.ui.getConsoleOutput()
         
     def assertEquivalent(self,txt1,txt2):
         

@@ -33,7 +33,8 @@ from lino.adamo import DataVeto, InvalidRequestError
 class Case(TestCase):
 
     def setUp(self):
-        self.sess = demo.beginSession()
+        TestCase.setUp(self)
+        self.sess = demo.startup(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -46,9 +47,9 @@ class Case(TestCase):
                            pageLen=10)
                            
         # print [col.name for col in rpt._clist.visibleColumns]
-        self.sess.startDump()
+        #self.sess.startDump()
         q.executeReport(columnWidths="5 50 10")
-        s = self.sess.stopDump()
+        s = self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
 Cities
@@ -70,9 +71,9 @@ id   |name                                              |nation
     def test02(self):
         "report with a BabelField"
         q = self.sess.query(Nations,"id name")
-        self.sess.startDump()
+        #self.sess.startDump()
         q.executeReport(columnWidths="2 25")
-        s = self.sess.stopDump()
+        s = self.getConsoleOutput()
         # print s
         self.assertEquivalent(s,"""\
 Nations

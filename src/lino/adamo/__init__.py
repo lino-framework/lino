@@ -43,18 +43,18 @@ from lino.adamo.row import DataRow
 #from database import QuickDatabase 
 #from center import Center
 
-def _(s):
-   return s
+## def _(s):
+##    return s
 
-__builtin__.__dict__['_'] = _
+## __builtin__.__dict__['_'] = _
 
 
-def beginQuickSession(schema,*args,**kw):
+## def beginQuickSession(schema,*args,**kw):
     
-    print """adamo.__init__.py: use schema.quickStart() instead of
-    deprecated adamo.beginQuickSession(schema)"""
+##     print """adamo.__init__.py: use schema.quickStart() instead of
+##     deprecated adamo.beginQuickSession(schema)"""
     
-    schema.quickStartup(*args,**kw)
+##     schema.quickStartup(*args,**kw)
     
 ## def beginQuickSession(schema,
 ##                       langs=None, filename=None,

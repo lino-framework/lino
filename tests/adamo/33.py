@@ -23,12 +23,13 @@ Some tests on getDemoDB()
 """
 
 import types
-import unittest
+#import unittest
+from lino.misc.tsttools import TestCase, main
 
-from lino.ui import console
+#from lino.ui import console
 
 
-class Case(unittest.TestCase):
+class Case(TestCase):
 
 
     def test01(self):
@@ -40,8 +41,8 @@ class Case(unittest.TestCase):
             description="""Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in Eupen."""
             )
         
-        console.startDump()
-        rpt = console.report()
+        #console.startDump()
+        rpt = self.ui.report()
         rpt.addColumn(meth=lambda row: str(row[0]),
                       label="key",
                       width=12)
@@ -49,11 +50,7 @@ class Case(unittest.TestCase):
                       label="value",
                       width=40)
         rpt.execute(d.items())
-##         rpt.beginReport()
-##         for i in d.items():
-##             rpt.processRow(i)
-##         rpt.endReport()
-        s = console.stopDump()
+        s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 key         |value                                   
@@ -69,5 +66,5 @@ description |'Norbert ist unser treuer Mitarbeiter im
         
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
 

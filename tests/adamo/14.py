@@ -19,18 +19,17 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import datetime
-from unittest import TestCase, main
+from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.datatypes import itod
-#from lino.tools.normalDate import ND
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Events
 
 class Case(TestCase):
     def setUp(self):
-        #self.db = quickdb()
-        self.db = demo.beginSession(populate=False)
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui,populate=False)
         
     def tearDown(self):
         self.db.shutdown()

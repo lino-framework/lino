@@ -28,7 +28,9 @@ from lino.schemas.sprl.tables import Nations
 
 class Case(TestCase):
     def setUp(self):
-        self.db = demo.startup(langs='en de fr',big=True)
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui,
+                               langs='en de fr',big=True)
         
     def tearDown(self):
         self.db.shutdown()

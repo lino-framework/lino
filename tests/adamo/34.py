@@ -20,27 +20,23 @@
 using lino.reports on pizzeria
 """
 
-import types
-import unittest
-
-from lino.ui import console
+from lino.misc.tsttools import TestCase, main
 
 
-class Case(unittest.TestCase):
+class Case(TestCase):
 
 
     def test01(self):
         from lino.examples.pizzeria2 import beginSession,\
              Products, OrderLines
-        sess = beginSession()
+        sess = beginSession(self.ui)
         PROD = sess.query(Products)
         q = sess.query(OrderLines,"ordr.date ordr.customer",
                        product=PROD.peek(1))
-        console.startDump()
-        rpt = console.report()
+        rpt = self.ui.report()
         q.setupReport(rpt,columnWidths="10 10")
         rpt.execute(q)
-        s = console.stopDump()
+        s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 OrderLines
@@ -56,5 +52,5 @@ date      |customer
         
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
 

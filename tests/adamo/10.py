@@ -28,34 +28,36 @@ pre-build query of CITIES from this nation.
 
 
 """
-import unittest
+
+from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Nations
 
 
-class Case(unittest.TestCase):
-	def setUp(self):
-		self.db = demo.beginSession(big=True)
-		#self.db = demo.beginSession(populator=None,big=True)
-		#demo.populate(self.db,big=True)
-		
-	def tearDown(self):
-		self.db.shutdown()
-		
-	def test01(self):
-		be = self.db.query(Nations).peek('be')
-		s = ''
-		for city in be.cities.query(orderBy="name",
+class Case(TestCase):
+    def setUp(self):
+        TestCase.setUp(self)
+        self.db = demo.beginSession(self.ui,big=True)
+        #self.db = demo.beginSession(populator=None,big=True)
+        #demo.populate(self.db,big=True)
+        
+    def tearDown(self):
+        self.db.shutdown()
+        
+    def test01(self):
+        be = self.db.query(Nations).peek('be')
+        s = ''
+        for city in be.cities.query(orderBy="name",
                                     search="eup"):
-			s += city.zipCode + " "+ city.name + "\n"
-		# print s
-		self.assertEqual(s,"""\
+            s += city.zipCode + " "+ city.name + "\n"
+        # print s
+        self.assertEqual(s,"""\
 4700 Eupen
 9700 Leupegem
 4120 Neupre
 4280 Villers-le-Peuplier
 """)
-		
+        
 if __name__ == '__main__':
-	unittest.main()
+    main()
 

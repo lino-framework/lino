@@ -19,14 +19,15 @@
 
 """
 """
-from unittest import TestCase, main
+from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Languages
 
 class Case(TestCase):
     def setUp(self):
-        self.db = demo.startup()
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui)
         
     def tearDown(self):
         self.db.shutdown()

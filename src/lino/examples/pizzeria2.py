@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from pizzeria import Customers, Orders, OrderLines, Products, \
-     populate, Pizzeria
+     populate, makeSchema
 from lino.adamo import *
 from lino.adamo.datatypes import itod
 from lino import adamo
@@ -74,7 +74,7 @@ def do_report(sess):
 
 def beginSession(ui):
 
-    schema = Pizzeria(label="Lucs second Pizza Restaurant")
+    schema = makeSchema(label="Luc's second Pizza Restaurant")
     schema.addTable(Services)
     
     sess = schema.quickStartup(ui)
@@ -90,4 +90,5 @@ def main(ui):
     
 if __name__ == "__main__":
     from lino.ui import console
+    console.parse_args()
     main(console)

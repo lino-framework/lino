@@ -18,7 +18,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from  unittest import TestCase, main
+from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Nations
@@ -27,7 +27,8 @@ class Case(TestCase):
     "Does the big demo database startup()"
 
     def setUp(self):
-        self.db = demo.startup(langs="en fr",big=True)
+        TestCase.setUp(self)
+        self.db = demo.startup(self.ui,langs="en fr",big=True)
 
     def tearDown(self):
         self.db.shutdown()

@@ -19,17 +19,17 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import types
-import unittest
+from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
 
-class Case(unittest.TestCase):
+class Case(TestCase):
 
     def setUp(self):
-        
-        self.sess = demo.beginSession()
+        TestCase.setUp(self)
+        self.sess = demo.startup(self.ui)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -38,9 +38,9 @@ class Case(unittest.TestCase):
     def test01(self):
         
         self.sess.setBabelLangs('en')
-        self.sess.startDump()
+        #self.sess.startDump()
         
-        rpt = self.sess.report()
+        rpt = self.ui.report()
         rpt.addColumn(
             meth=lambda row: row.getTableName(),
             label="TableName",
@@ -63,7 +63,7 @@ class Case(unittest.TestCase):
             width=20)
 
         rpt.execute(self.sess.schema.getTableList())
-        s = self.sess.stopDump()
+        s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 TableName           |Count|First               |Last                
@@ -104,5 +104,5 @@ Newsgroups          |    0|                    |
             
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
 

@@ -27,7 +27,7 @@ class Case(TestCase):
     def test01(self):
         sch = Schema()
         setupSchema(sch)
-        sess = sch.quickStartup()
+        sess = sch.quickStartup(self.ui)
 
         R = sess.query(Races)
         P = sess.query(Participants)
