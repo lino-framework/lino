@@ -65,7 +65,7 @@ class Participants(Table):
         self.setPrimaryKey("race dossard")
         
         self.addPointer('race',Races)
-        self.addField('dossard',STRING)
+        self.addField('dossard',STRING.child(width=4))
         self.addPointer('person',Persons)
         self.addField('time',TIME)
         self.addPointer('cat',Categories)

@@ -24,28 +24,20 @@ from query import DataColumnList#, BaseColumnList
 from datatypes import DataVeto, InvalidRequestError
 from rowattrs import FieldContainer, NoSuchField
 
-class Datasource:
-    # inherited by PagingDatasource
+class SimpleDatasource:
+    # inherited by Datasource
 
-    """
-    A Datasource is the central handle for a stream of data. 
-    """
-    
-    #columnClass = DataColumn
     ANY_VALUE = types.NoneType
     
     def __init__(self, session, store, clist=None, **kw):
         self.rowcount = None
         self._session = session
         self.setBabelLangs = session.setBabelLangs
-        #self._context = context
         self._store = store
-        #self._query = query
         if clist is None:
             clist = store._peekQuery
         assert clist.leadTable is store._table
         self._clist = clist
-        #self.report = clist.report
 
 
         self._db = store._db # shortcut
@@ -99,7 +91,10 @@ class Datasource:
                    "%s not a string" % repr(label)
         self._label = label
         if columnNames is not None:
-            self._clist = self.createColumnList(columnNames)
+            #self._clist = self.createColumnList(columnNames)
+            self._clist = DataColumnList(self._store,
+                                         self._session,
+                                         columnNames)
         self.setOrderBy(orderBy)
         self.setFilterExpressions(sqlFilters,search)
         
@@ -175,11 +170,9 @@ class Datasource:
 ##  def getView(self,viewName):
 ##      return self._table.getView(viewName)
 
-    def createColumnList(self,columnNames):
-        # (no longer) overridden by report.Report
-        return DataColumnList(self._store,
-                              self._session,
-                              columnNames)
+##  def createColumnList(self,columnNames):
+##      # (no longer) overridden by report.Report
+##      return DataColumnList(self._store, self._session, columnNames)
     
 ##  def createColumn(self,colIndex, name, join,fld):
 ##      # overridden by report.Report
@@ -191,18 +184,17 @@ class Datasource:
 ##          del self._samples[name]
     
     #def __getattr__(self,name):
-    def field(self,name):
-        return self._table._rowAttrs[name]
+##     def field(self,name):
+##         return self._table._rowAttrs[name]
 
     
     def query(self,columnNames=None,**kw):
-        #return self.child(Datasource,columnNames=columnNames,**kw)
         self.setdefaults(kw)
-        return Datasource( self._session,
-                           self._store,
-                           self._clist,
-                           columnNames=columnNames,
-                           **kw)
+        return self.__class__( self._session,
+                               self._store,
+                               self._clist,
+                               columnNames=columnNames,
+                               **kw)
 
 
     def setupReport(self,rpt,**kw):
@@ -214,8 +206,9 @@ class Datasource:
                       label=self._table.getLabel(),
                       **kw)
     
-    def report(self,**kw):
-        rpt = self._session.report()
+    def executeReport(self,rpt=None,**kw):
+        if rpt is None:
+            rpt = self._session.report()
         self.setupReport(rpt,**kw)
         rpt.execute(self)
 
@@ -638,14 +631,14 @@ class Datasource:
 
 
 
-class PagingDatasource(Datasource):
+class Datasource(SimpleDatasource):
 
-    def configure(self,
-                  pageNum=None,
-                  pageLen=None,
-                  **kw):
+    def __init__(self, session, store, clist=None,
+                 pageNum=None,
+                 pageLen=None,
+                 **kw):
         
-        Datasource.configure(self,**kw)
+        SimpleDatasource.__init__(self,session, store, clist, **kw)
         
         self.pageNum = pageNum
         self.pageLen = pageLen
@@ -693,11 +686,11 @@ class PagingDatasource(Datasource):
                 p['pageLen'] = str(v[0])
             else:
                 p[k] = v
-        Datasource.apply_GET(self,**p)
+        SimpleDatasource.apply_GET(self,**p)
         #self.config(**rptParams)
         
     def get_GET(self):
-        p = Datasource.get_GET(self)
+        p = SimpleDatasource.get_GET(self)
         if self.pageNum != None:
             p['pg'] = self.pageNum
         if self.pageLen != None:
@@ -708,12 +701,12 @@ class PagingDatasource(Datasource):
     def setdefaults(self,kw):
         kw.setdefault('pageNum',self.pageNum)
         kw.setdefault('pageLen',self.pageLen)
-        Datasource.setdefaults(self,kw)
+        SimpleDatasource.setdefaults(self,kw)
 
     def executeSelect(self,
                       limit=None,
                       offset=None,**kw):
-        # overrides Datasource.executeSelect()
+        # overrides SimpleDatasource.executeSelect()
         """
         modify limit and offset to contain self.pageNum and self.pageLen
         

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -61,7 +61,6 @@ class Console:
             out = sys.stdout
         self.out = out
         self._verbosity = 0
-        #self._debug = False
         self._batch = False
         self._dumping = None
         self.set(**kw)
@@ -93,15 +92,11 @@ class Console:
     
     def isVerbose(self):
         return (self._verbosity > 0)
-
     def isQuiet(self):
         return (self._verbosity < 0)
     
     def report(self,**kw):
-        r = Report(writer=self.out,**kw)
-        #assert r.writer is self.out
-        #print r.writer 
-        return r
+        return Report(writer=self.out,**kw)
 
 
     def log_message(self,msg):
@@ -121,26 +116,25 @@ class Console:
         
 
     def info(self,msg):
-        "Display message if verbosity is normal."
+        "Display message if verbosity is normal (not quiet)."
         if self._verbosity >= 0:
             self.log_message(msg)
-            #self.out.write(msg + "\n")
 
     def progress(self,msg):
         "Display message if verbosity is high."
-        if self._verbosity >= 1:
+        if self._verbosity > 0:
             self.log_message(msg)
         
     def debug(self,msg):
         "Display message if verbosity is very high."
-        if self._verbosity >= 2:
+        if self._verbosity > 1:
             self.log_message(msg)
             #self.out.write(msg + "\n")
             
     def warning(self,msg):
         
-        """Log a warning message.  If self._batch is False, make sure
-        that she has seen this message before returning.
+        """Log a warning message.  If interactive, make sure that she
+        has seen this message before returning.
 
         """
         if sound:
@@ -276,5 +270,3 @@ def parse_args(argv):
     p = _syscon.getOptionParser()
     return p.parse_args(argv)
     
-def run(sess):
-    pass

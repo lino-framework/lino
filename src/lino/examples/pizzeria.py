@@ -145,7 +145,7 @@ def main():
 
     schema = Pizzeria(label="Lucs Pizza Restaurant")
 
-    sess = adamo.beginQuickSession( schema)
+    sess = schema.quickStartup()
     
     populate(sess)
 

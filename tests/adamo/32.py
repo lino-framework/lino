@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2005.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -45,32 +45,33 @@ class Case(unittest.TestCase):
         
         rpt = self.sess.report()
         rpt.addColumn(
-            meth=lambda rpt: rpt.crow.getTableName(),
+            meth=lambda row: row.getTableName(),
             label="TableName",
             width=20)
-        def count(rpt):
-            return len(self.sess.query(rpt.crow.__class__))
+        def count(row):
+            return len(self.sess.query(row.__class__))
         rpt.addColumn(
             meth=count,
             width=5, halign=rpt.RIGHT,
             label="Count")
         rpt.addColumn(
-            meth=lambda rpt: self.sess.query(rpt.crow.__class__)[0],
+            meth=lambda row: self.sess.query(row.__class__)[0],
             when=lambda rpt: rpt.cellValues[1]>0,
             label="First",
             width=20)
         rpt.addColumn(
-            meth=lambda rpt: self.sess.query(rpt.crow.__class__)[-1],
+            meth=lambda row: self.sess.query(row.__class__)[-1],
             when=lambda rpt: rpt.cellValues[1]>0,
             label="Last",
             width=20)
-        
-        rpt.beginReport()
-        for t in self.sess.schema.getTableList():
-            rpt.processRow(t)
-        rpt.endReport()
+
+        rpt.execute(self.sess.schema.getTableList())
+##         rpt.beginReport()
+##         for t in self.sess.schema.getTableList():
+##             rpt.processRow(t)
+##         rpt.endReport()
         s = self.sess.stopDump()
-        # print s
+        #print s
         self.assertEqual(s,"""\
 TableName           |Count|First               |Last                
 --------------------+-----+--------------------+--------------------
@@ -100,7 +101,7 @@ Publications        |    0|                    |
 Quotes              |    8|[q1]                |[q8]                
 PubTypes            |    6|Book                |Software            
 PubByAuth           |    0|                    |                    
-Pages               |    2|Lino Demo Data      |Bullshit Bingo      
+Pages               |    0|                    |                    
 Projects            |   10|Project 1           |Project 1.3.2.2     
 ProjectStati        |    5|to do               |sleeping            
 News                |    0|                    |                    

@@ -19,7 +19,8 @@
 from datasource import Datasource, DataCell
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-from lino.ui.console import getSystemConsole, Console
+#from lino.adamo import center
+from lino.ui.console import getSystemConsole
 
 
 class BabelLang:
@@ -46,8 +47,8 @@ class Session(Context):
     _dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,console=None,**kw):
-        #self.app = app
+    def __init__(self,center,console=None,**kw):
+        self.center = center
         self._user = None
         self.db = None
         self.schema = None
@@ -132,7 +133,7 @@ class Session(Context):
         return self.db.commit()
 
     def shutdown(self):
-        return self.db.close()
+        return self.center.shutdown() # self.db.close()
 
     def setBabelLangs(self,langs):
         

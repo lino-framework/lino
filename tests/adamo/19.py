@@ -110,7 +110,7 @@ class Case(TestCase):
         schema = Schema()
         schema.addPlugin(MyPlugin())
 
-        sess = adamo.beginQuickSession(schema,langs='en de fr')
+        sess = schema.quickStartup(langs='en de fr')
 
         #sess.setBabelLangs('en')
         

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -44,9 +44,6 @@ class Connection(SqlConnection):
             # assert isTemporary
             filename=":memory:"
         elif os.path.exists(filename):
-##                 if isTemporary:
-##                     os.remove(filename)
-##                 else:
             self._mtime = os.stat(filename).st_mtime
             self._status = self.CST_OPENED
             
@@ -89,6 +86,7 @@ class Connection(SqlConnection):
 
     def close(self):
         self._status = self.CST_CLOSING
+        self._dbconn.commit()
         self._dbconn.close()
         self._status = self.CST_CLOSED
         #self._dbconn = None

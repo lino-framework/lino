@@ -28,6 +28,7 @@ In the following test, p[2] returned the same row as the previous p[1]
 import unittest
 from lino.schemas.sprl import demo #.sprl import Schema
 from lino.schemas.sprl.tables import *
+from lino.adamo import center
 
 class Case(unittest.TestCase):
 
@@ -36,7 +37,7 @@ class Case(unittest.TestCase):
         sess = demo.startup(populate=False)
         
         db = sess.db
-        connection = db._connection
+        connection = center._center._connections[0]
         
         connection.sql_exec("""
         INSERT INTO PARTNERS (id,name)

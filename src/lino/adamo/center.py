@@ -16,9 +16,11 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import atexit
 from cStringIO import StringIO
 
-from session import ConsoleSession
+from lino.adamo.session import ConsoleSession
+from lino.ui import console
 
 _center = None # User code should call getCenter() to get this instance.
 
@@ -30,8 +32,9 @@ class Center:
     """
 
     def __init__(self):
+        self._schemas = []
         self._connections = []
-        self._databases = []
+        #self._databases = []
         self._sessions = []
         self._sessionFactory = ConsoleSession
 
@@ -44,7 +47,7 @@ class Center:
         self._sessionFactory = sf
         
     def createSession(self,**kw):
-        sess = self._sessionFactory(**kw)
+        sess = self._sessionFactory(self,**kw)
         self._sessions.append(sess)
         return sess
 
@@ -54,91 +57,54 @@ class Center:
 ##      def addSession(self,session):
 ##          self._sessions.append(session)
     
-    def addDatabase(self,db):
+    def addSchema(self,schema):
         #assert db is not None
         #assert not self._databases.has_key(db.getName())
         #self._databases[db.getName()] = db
-        assert not db in self._databases
-        self._databases.append(db)
+        assert not schema in self._schemas
+        self._schemas.append(schema)
         
 ##  def getDatabase(self,name):
 ##          return self._databases[name]
     
-    def removeDatabase(self,db):
-        self._databases.remove(db)
-        #del self._databases[db.getName()]
+##     def removeSchema(self,sch):
+##         self._schemas.remove(sch)
+##         #del self._databases[db.getName()]
         
-    def startup(self,checkIntegrity=True,populate=True):
+    def startup(self,**kw):
+        
+        # self.shutdown() # tests/adamo/7.py failed when several tests
+        # were run (because previous startups remained open.
+        
+        assert len(self._schemas) > 0,"no schemas"
         sess = self.createSession()
-        assert len(self._databases) > 0,"no databases"
-        for db in self._databases:
-            sess.use(db)
-            for store in db.getStoresById():
-                store.createTables(sess)
-            if populate:
-                for store in db.getStoresById():
-                    store.populate(sess)
-            if checkIntegrity:
-                for store in db.getStoresById():
-                    store.checkIntegrity(sess)
+        for sch in self._schemas:
+            sch.startup(sess,**kw)
         sess.setDefaultLanguage()
         return sess
 
     
     def shutdown(self):
-
-        for db in self._databases:
-            db.close()
-        self._databases = []
-        
+        #console.debug("Center.shutdown()")
+        for sch in self._schemas:
+            sch.shutdown()
+        self._schemas = []
         for conn in self._connections:
             conn.close()
         self._connections = []
 
-##    use createSession().use() instead!
-##  def use(self,db=None,**kw):
-##      self.addDatabase(db)
-##      sess = self.createSession()
-##      sess.use(db=db,**kw)
-##      return sess
-
-            
-
             
 _center = Center()
 
+atexit.register(_center.shutdown)
+
 for m in ('createSession',
           'startup', 'shutdown',
-          'addDatabase', 'removeDatabase',
+          'addSchema', 
           'addConnection'
           ):
     globals()[m] = getattr(_center,m)
 
 
-## def start(**kw):
-    
-##     """This can be invoked once to specify explicit options for the Center singleton.  
-##     It is not allowed to call it when the Center is already instanciated.
-##     """
-##     global _center
-##     assert _center is None
-##     return _center
-
-## def getCenter():
-
-##     """ Returns the global Center singleton.  Instanciates it if this
-##     is the first call.  """
-    
-##     global _center
-##     if _center is None:
-##         start()
-##     return _center
-
-## def createSession(**kw):
-##     return _center.createSession(**kw)
-    
-## def shutdown(**kw):
-##     return _center.shutdown(**kw)
-    
 
     

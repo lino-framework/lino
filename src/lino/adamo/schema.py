@@ -19,16 +19,18 @@
 
 import types
 
-from forms import Form
-from database import Database
-from table import Table, LinkTable, SchemaComponent
-from datatypes import StartupDelay
-from datasource import Datasource
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-from lino.ui import console 
-#from center import getCenter
+from lino.ui import console
 
+from lino.adamo.forms import Form
+from lino.adamo.database import Database
+from lino.adamo.table import Table, LinkTable, SchemaComponent
+from lino.adamo.datatypes import StartupDelay
+from lino.adamo.datasource import Datasource
+from lino.adamo import center
+
+from lino.adamo.dbds.sqlite_dbd import Connection
 
 
 class SchemaPlugin(SchemaComponent,Describable):
@@ -48,25 +50,27 @@ class SchemaPlugin(SchemaComponent,Describable):
         pass
 
 
-class Schema:
+class Schema(Describable):
 
     HK_CHAR = '&'
     defaultLangs = ('en',)
     #sessionFactory = Session
     
-    def __init__(self,**kw):
+    def __init__(self,name=None,label=None,doc=None,**kw):
+        Describable.__init__(self,name,label,doc)
         self._initDone= False
-        #self.forms= {
         self._datasourceRenderer= None
         self._contextRenderer= None
         
-        self._plugins= []
-        self._tables= []
+        self._databases = []
+        self._plugins = []
+        self._tables = []
         
         self.plugins = AttrDict()
-        #self.tables = AttrDict()
         self.forms = AttrDict()
         self.options = AttrDict(d=kw)
+        
+        center.addSchema(self)
 
         """ Note: for plugins and tables it is important to keep also a
         sequential list.  """
@@ -246,6 +250,47 @@ class Schema:
     
     def __str__(self):
         return str(self.__class__)
+
+
+    def quickStartup(self, langs=None, filename=None, **kw):
+        self.initialize()
+        db = self.addDatabase(langs=langs)
+        conn = Connection(filename=filename,schema=self)
+        db.connect(conn)
+        return center.startup(**kw)
+
+    def addDatabase(self,langs=None,name=None,label=None):
+        n = str(len(self._databases)+1)
+        if name is None:
+            name = self.name+n
+        if label is None:
+            label = self.getLabel()+n
+        db = Database(self,langs=langs,name=name,label=label)
+        self._databases.append(db)
+        return db
+
+    def startup(self,sess,checkIntegrity=True,populate=True):
+        assert len(self._databases) > 0,"no databases"
+        for db in self._databases:
+            sess.use(db)
+            for store in db.getStoresById():
+                store.createTables(sess)
+            if populate:
+                for store in db.getStoresById():
+                    store.populate(sess)
+            if checkIntegrity:
+                for store in db.getStoresById():
+                    store.checkIntegrity(sess)
+        sess.setDefaultLanguage()
+        return sess
+    
+    
+    def shutdown(self):
+        console.debug("Schema.shutdown()")
+        for db in self._databases:
+            db.close()
+        self._databases = []
+        
     
 
 ##  def onStartUI(self,sess):

@@ -47,7 +47,7 @@ class Case(TestCase):
         ds = PROJECTS.query("id super.id title")
         self.assertEqual(len(ds),10)
         self.sess.startDump()
-        ds.report(columnWidths="5 5 20")
+        ds.executeReport(columnWidths="5 5 20")
         s = self.sess.stopDump()
         #print s
         self.assertEqual(s,"""\
@@ -78,7 +78,7 @@ id   |id   |title
 ##             s+= "\t".join([str(cell.getValue()) for cell in p]) + "\n"
         #print s
         self.sess.startDump()
-        ds.report(columnWidths="5 20")
+        ds.executeReport(columnWidths="5 20")
         s = self.sess.stopDump()
         #print s
         self.assertEqual(s,"""\

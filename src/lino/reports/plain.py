@@ -53,14 +53,30 @@ class Report(BaseReport):
 
 
     def renderHeader(self):
-        l = [ self.hfill(col.getLabel(),
-                         col.halign,
-                         col.width )
-              for col in self.columns]
-        self.write(self.columnSep.join(l) + "\n")
+        if self.label is not None:
+            self.write(self.label+"\n")
+            self.write("="*len(self.label)+"\n")
+            
+        # wrap header labels:
+        headerCells = []
+        headerHeight=1
+        for col in self.columns:
+            cell = col.wrapper.wrap(col.getLabel())
+            headerCells.append(cell)
+            headerHeight = max(headerHeight,len(cell))
+        for cell in headerCells:
+            self.vfill(cell,self.TOP,headerHeight)
+        for i in range(headerHeight):
+            self._writeLine(headerCells,i)
+                               
+##         l = [ self.hfill(col.getLabel(),
+##                          col.halign,
+##                          col.width )
+##               for col in self.columns]
+##         self.write(self.columnSep.join(l) + "\n")
         
         l = [ self.columnHeaderSep * col.width
-                   for col in self.columns]
+              for col in self.columns]
         self.write("+".join(l) + "\n")
             
 
@@ -87,7 +103,7 @@ class Report(BaseReport):
             rowHeight = self.rowHeight
 
         if rowHeight == 1:
-            self._writeLine(0)
+            self._writeLine(self.cellValues,0)
         else:
             # vfill each cell:
             for j in range(len(self.columns)):
@@ -96,12 +112,12 @@ class Report(BaseReport):
                            rowHeight)
              
             for i in range(rowHeight):
-                self._writeLine(i)
+                self._writeLine(self.cellValues,i)
 
-    def _writeLine(self,i):
+    def _writeLine(self,cellValues,i):
         l = []
         for j in range(len(self.columns)):
-            l.append(self.hfill(self.cellValues[j][i],
+            l.append(self.hfill(cellValues[j][i],
                                 self.columns[j].halign,
                                 self.columns[j].width
                                 ))
@@ -117,23 +133,23 @@ class Report(BaseReport):
             return s.center(width)
         raise ConfigError("hfill() : %s" % repr(align))
 
-    def vfill(self,lines,align,height):
+    def vfill(self,lines,valign,height):
         n = height - len(lines) # negative if too many
         if n == 0: return
-        if align == self.TOP:
+        if valign == self.TOP:
             if n > 0:
                 for i in range(n):
                     lines.append("")
             else:
                 del lines[n:] # ?
-        elif align == self.BOTTOM:
+        elif valign == self.BOTTOM:
             if n > 0:
                 for i in range(-n):
                     lines.insert(0,"")
             else:
                 del lines[0:n] # ?
-        elif align == self.CENTER:
+        elif valign == self.CENTER:
             raise NotImplementedError
         else:
-            raise ConfigError("vfill() : %s" % repr(align))
+            raise ConfigError("vfill() : %s" % repr(valign))
                 

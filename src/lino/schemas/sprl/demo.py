@@ -25,6 +25,7 @@
 import os
 from lino import adamo
 from lino.schemas.sprl.sprl import makeSchema
+from lino.schemas.sprl import tables 
 
 
 def startup(populate=True,
@@ -34,10 +35,9 @@ def startup(populate=True,
     
     schema = makeSchema(**kw)
     
-    sess = adamo.beginQuickSession(schema,
-                                   populate=populate,
-                                   langs=langs,
-                                   filename=filename )
+    sess = schema.quickStartup(populate=populate,
+                               langs=langs,
+                               filename=filename )
     
     if populate:
         from lino.schemas.sprl.data import demo1

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -78,6 +78,7 @@ class Store:
 
     def createTables(self,sess):
         if self._status == self.SST_MUSTCHECK:
+            sess.debug( "mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
                 self.createTable(sess)
                 self._status = self.SST_VIRGIN

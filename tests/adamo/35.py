@@ -20,9 +20,7 @@
 multiple databases and connections
 """
 
-import types
-import unittest
-
+from lino.misc.tsttools import TestCase, main
 from lino.ui import console
 
 from lino.adamo import center
@@ -38,43 +36,47 @@ sharedTables = (Languages, Nations,
                 PubTypes,
                 ProjectStati, Users) 
 
-class Case(unittest.TestCase):
+class Case(TestCase):
 
 
     def test01(self):
 
         schema = makeSchema(big=True) 
     
-        schema.startup()
+        schema.initialize()
         
         conn = Connection(schema=schema)
-        stddb = Database(langs="en de fr et",
-                         schema=schema,
-                         name="std",
-                         label="shared standard data")
+        stddb = schema.addDatabase(langs="en de fr et",
+                                   name="std",
+                                   label="shared data")
 
         stddb.connect(conn,sharedTables)
 
 
-        db1 = Database( langs="de", schema=schema, name="db1")
+        db1 = schema.addDatabase(langs="de")
         db1.update(stddb)
         conn = Connection(filename="db1.db", schema=schema)
         db1.connect(conn)
         
-        db2 = Database( langs="en", schema=schema, name="db1")
+        db2 = schema.addDatabase(langs="en")
         db2.update(stddb)
         conn = Connection(filename="db2.db", schema=schema)
         db2.connect(conn)
 
 
         sess = center.startup()
+        
         sess.use(db1)
         q = sess.query(Nations,"id name area")
-        q.report()
-        #sess.query(Nations,"id name area",orderBy="area").report()
+        sess.startDump()
+        q.executeReport()
+        s = sess.stopDump()
+        print s
+        self.assertEqual(s,"""\
+""")        
 
         
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
 

@@ -25,7 +25,8 @@ class Configurable:
     def configure(self,**kw):
         "make sure that no new attribute gets created"
         for k,v in kw.items():
-            assert self.__dict__.has_key(k)
+            assert self.__dict__.has_key(k), \
+                   "invalid keyword "+k
             self.__dict__[k] = v
             # setattr(self,k,v)
 

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2004.
+## Copyright Luc Saffre 2004-2005
 
 ## This file is part of the Lino project.
 
@@ -68,15 +68,13 @@ def dbfimport(q,filename,oneach=None,**kw):
 
 def main2(dbfpath,dbpath):
     
-    s = adamo.Schema()
-    s.addTable(Races)
-    s.addTable(RaceTypes)
-    s.addTable(Categories)
-    s.addTable(Participants)
-    s.addTable(Persons)
-    #sess = adamo.beginQuickSession(s,filename=":memory:")
-    sess = adamo.beginQuickSession(s,
-                                   filename=opj(dbpath,"tmp.db"))
+    schema = adamo.Schema()
+    schema.addTable(Races)
+    schema.addTable(RaceTypes)
+    schema.addTable(Categories)
+    schema.addTable(Participants)
+    schema.addTable(Persons)
+    sess = schema.quickStartup(filename=opj(dbpath,"raceman.db"))
 
     PAR = sess.query(Persons)
     dbfimport(PAR,opj(dbfpath,"PAR.DBF"),
@@ -127,35 +125,27 @@ def main2(dbfpath,dbpath):
     dbfimport(POS,opj(dbfpath,"POS.DBF"),oneach)
 
     
-    
-    
-##     q = sess.query(Races,"id name1 name2 date")
-##     q.setupReport(rpt)
-##     rpt.columns[0].configure(width=5)
-##     rpt.columns[1].configure(width=30)
-##     rpt.columns[2].configure(width=30)
-
-    race = RAL.peek(53)
-    q = sess.query(Participants,"person.name cat time dossard",
-                   race=race)
-    rpt = sess.report()
-    doit(q,rpt)
-    
     doc = Document("1")
     doc.h(1,"Raceman Generating OpenOffice documents")
     
-    rpt = doc.report()
-    doit(q,rpt)
+    race = RAL.peek(53)
+    
+    q = sess.query(Participants,"person.name cat time dossard",
+                   orderBy="person.name",
+                   race=race)
+    q.executeReport(doc.report(name="rpt1"),
+                    columnWidths="20 3 8 4")
+
+    q = sess.query(Participants,"time person.name cat dossard",
+                   orderBy="time",
+                   race=race)
+    q.executeReport(doc.report(name="rpt2"),
+                    columnWidths="8 20 3 4")
 
     outFile = opj(dbpath,"raceman_report.sxc")
     doc.save(outFile,showOutput=True)
 
     
-
-def doit(q,rpt):
-    q.setupReport(rpt,columnWidths="20 3 8 4")
-    rpt.execute(q)
-
 
 def main(argv):
 
@@ -175,9 +165,9 @@ directory for raceman files""",
     (options, args) = parser.parse_args(argv)
 
     if len(args) == 1:
-        dbfpath= args[0]
+        dbfpath = args[0]
     else:
-        dbfpath=r"c:\temp\timrun"
+        dbfpath = r"c:\temp\timrun"
         
     main2(dbfpath,options.tempDir)
     

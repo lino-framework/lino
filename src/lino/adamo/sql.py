@@ -23,6 +23,7 @@ from lino.adamo.rowattrs import Field, Pointer #, Detail
 #from query import Query, QueryColumn
 
 from lino.adamo.connection import Connection
+from lino.ui import console
 
 #from mx.DateTime import DateTime
 
@@ -86,6 +87,8 @@ class SqlConnection(Connection):
         #   return "'%s'" % str(val)
         elif isinstance(val, types.StringType):
             return "'%s'" % val.replace("'", "''") 
+        #elif isinstance(type, StringType):
+        #    return "'%s'" % val.replace("'", "''") 
         elif isinstance(val, types.UnicodeType):
             return "'%s'" % val.replace("'", "''") 
         #elif type == self.schema.areaType:
@@ -126,7 +129,10 @@ class SqlConnection(Connection):
             raise "%s : bad type" % str(type)
 
     def mustCreateTables(self):
-        return self._status == self.CST_NEW
+        console.debug('mustCreateTables '+str(self._status))
+        if self._status == self.CST_NEW:
+            return True
+        return False
     
     def mustCheckTables(self):
         return self._status == self.CST_OPENED

@@ -27,18 +27,18 @@ from lino import __version__
 import __builtin__
 import sys
 
-from table import Table, LinkTable,\
-      MemoTable, TreeTable, MemoTreeTable,\
-      BabelTable
-from forms import Form
+from lino.adamo.table import Table, LinkTable,\
+     MemoTable, TreeTable, MemoTreeTable,\
+     BabelTable
+from lino.adamo.forms import Form
 #from widgets import Menu, Command
-from datatypes import *
-from rowattrs import Field, Pointer, BabelField, Vurt #, Match#, Button
-from schema import Schema, SchemaPlugin
+from lino.adamo.datatypes import *
+from lino.adamo.rowattrs import Field, Pointer, BabelField, Vurt #, Match#, Button
+from lino.adamo.schema import Schema, SchemaPlugin
 #from session import ConsoleSession
 #from session import Application
-from datasource import DataRow
-from database import QuickDatabase 
+from lino.adamo.datasource import DataRow
+#from database import QuickDatabase 
 import center
 
 def _(s):
@@ -47,13 +47,20 @@ def _(s):
 __builtin__.__dict__['_'] = _
 
 
-def beginQuickSession(schema,
-                      langs=None, filename=None,
-                      **kw):
+def beginQuickSession(schema,*args,**kw):
     
-    schema.initialize()
-    db = QuickDatabase(schema, langs=langs, filename=filename)
-    return center.startup(**kw)
+    print """adamo.__init__.py: use schema.quickStart() instead of
+    deprecated adamo.beginQuickSession(schema)"""
+    
+    schema.quickStartup(*args,**kw)
+    
+## def beginQuickSession(schema,
+##                       langs=None, filename=None,
+##                       **kw):
+    
+##     schema.initialize()
+##     db = QuickDatabase(schema, langs=langs, filename=filename)
+##     return center.startup(**kw)
 
 ##     sess = center.startup(**kw)
 ##     sess.use(db=db,langs=langs)

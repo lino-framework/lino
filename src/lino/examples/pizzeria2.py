@@ -89,7 +89,7 @@ def beginSession():
     schema = Pizzeria(label="Lucs second Pizza Restaurant")
     schema.addPlugin(ServicesPlugin())
     
-    sess = adamo.beginQuickSession(schema)
+    sess = schema.quickStartup()
     
     populate2(sess)
     

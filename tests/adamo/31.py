@@ -19,77 +19,83 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-discovering and extending Lars M. Garshol's dbfreader.py
+
+testing new races module, wrapped header labels and "d" or "*" as item
+in columnWidths
+
 """
 import os
-from lino.ui import console
-from lino.misc import tsttools
 
 from lino.adamo import *
-from lino.adamo import beginQuickSession
+from lino.tools.normalDate import ND
+from lino.ui import console
+from lino.misc.tsttools import TestCase, main
+
 from lino.tools.dbfreader import DBFFile
 
-from lino.schemas.sprl.addrbook import Partners,\
-     Cities, Nations, Currencies, PartnerTypes, Persons
-from lino.schemas.sprl.races import Races, Participants
-from lino.schemas.sprl.babel import Languages
+from lino.schemas.sprl.addrbook import Persons
+
+from lino.schemas.sprl.races import Races, Participants, RaceTypes,\
+     Categories
 
 
 class BasePlugin(SchemaPlugin):
     def defineTables(self,schema):
-        #schema.addTable(PartnerTypes("PRT"))
-        #schema.addTable(Currencies("DEV"))
-        #schema.addTable(Languages("LNG"))
-        #schema.addTable(Cities("PLZ"))
-        #schema.addTable(Nations("NAT"))
-        #schema.addTable(Partners("PAR"))
-        schema.addTable(Persons("PAR"))
-        schema.addTable(Races("RAL"))
-        schema.addTable(Participants("POS"))
+        schema.addTable(Persons)
+        schema.addTable(Categories)
+        schema.addTable(RaceTypes)
+        schema.addTable(Races)
+        schema.addTable(Participants)
         
         
         
-def populate(sess):
-    """
-    Create some data and play with it
-    """
-    sess.installto(globals())
-
-    dbf = DBFFile(r'c:\temp\par.dbf')
-    dbf.open()
-    for p in dbf:
-        PAR.appendRow(name=p['FIRME'],
-                      firstName=p['VORNAME'])
-        if p.recno() > 30:
-            break
-    dbf.close()
-    
-    sess.commit()
-
-
-def query(sess):
-    """
-    Create some data and play with it
-    """
-    sess.installto(globals())
-
-    rpt = PAR.report(orderBy="name firstName",
-                     pageLen=10)
-    sess.showReport(rpt)
-
-
-class Case(tsttools.TestCase):
+class Case(TestCase):
     
     def test01(self):
         schema = Schema(label="ERTK report generator")
         schema.addPlugin(BasePlugin())
 
-        sess = beginQuickSession(
-            schema,
-            populator=populate,
-            isTemporary=True)
+        sess = schema.quickStartup(populate=False)
 
-        query(sess)
+
+
+        PERSONS = sess.query(Persons)
+        norbert = PERSONS.appendRow( name="Ausdemwald",
+                                     firstName="Norbert",
+                                     sex="M",
+                                     birthDate="19800506")
+        edgar = PERSONS.appendRow( name="Ausdemwald",
+                                   firstName="Edgar",
+                                   sex="M",
+                                   birthDate="19800505")
+
+        RACES = sess.query(Races)
+        race = RACES.appendRow(date=ND(20040112),name1="test race")
+        race.participants_by_race.appendRow(person=norbert,
+                                            dossard="0012",
+                                            time="13:30:10")
+        race.participants_by_race.appendRow(person=edgar,
+                                            dossard="0013",
+                                            time="12:10:80")
+
+        sess.startDump()
+        q = sess.query(Participants,
+                       "time dossard person.name person.firstName",
+                       race=race,
+                       orderBy="time dossard",
+                       pageLen=10)
+        q.executeReport(columnWidths="d d 20 15")
+        s = sess.stopDump()
+        #print s
+        self.assertEquals(s,"""\
+Participants
+============
+time    |doss|name                |firstName      
+        |ard |                    |               
+--------+----+--------------------+---------------
+12:10:80|0013|Ausdemwald          |Edgar          
+13:30:10|0012|Ausdemwald          |Norbert        
+""")
 
         sess.shutdown()
 
@@ -98,4 +104,4 @@ class Case(tsttools.TestCase):
         
         
 if __name__ == "__main__":
-    tsttools.main()
+    main()

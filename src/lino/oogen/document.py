@@ -298,16 +298,16 @@ class Document:
                 ))
         h.append(r)
         
-    def report(self):
+    def report(self,**kw):
         from lino.reports.oo import OoReport
-        return OoReport(self)
+        return OoReport(self,**kw)
         
     def table(self,name=None,style=None,**kw):
         if name is None:
             name = "Table"+str(len(self.tables)+1)
         if style is None:
             style = name
-        t = elements.Table(name,style)
+        t = elements.Table(name,style,**kw)
         self.story.append(t)
         self.tables.append(t)
         return t

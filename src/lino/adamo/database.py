@@ -20,7 +20,7 @@ from lino.misc.descr import Describable
 from lino.ui import console 
 from lino.adamo import DataVeto
 
-from lino.adamo.dbds.sqlite_dbd import Connection
+#from lino.adamo.dbds.sqlite_dbd import Connection
 
 from lino.adamo.session import Context, BabelLang
 
@@ -46,7 +46,7 @@ class Database(Context,Describable):
 
         self.schema = schema
         self._stores = {}
-        center.addDatabase(self)
+        #center.addDatabase(self)
 
     def getBabelLangs(self):
         "implements Context.getBabelLangs()"
@@ -158,7 +158,6 @@ class Database(Context,Describable):
 
     def close(self):
         console.info("Database shutdown "+ str(self))
-        #self.commit()
         
 ##      for sess in self._sessions:
 ##          #sess.beforeShutdown()
@@ -169,7 +168,7 @@ class Database(Context,Describable):
 
         self._stores = []
             
-        center.removeDatabase(self)
+        #center.removeDatabase(self)
     
     def restart(self):
         self.close()
@@ -210,35 +209,35 @@ class Database(Context,Describable):
 
 
 
-class QuickDatabase(Database):
-    "Database instance with only one connection"
-    def __init__(self,
-                 schema,
-                 langs=None,
-                 label=None,
-                 filename=None
-                 ):
+## class QuickDatabase(Database):
+##     "Database instance with only one connection"
+##     def __init__(self,
+##                  schema,
+##                  langs=None,
+##                  label=None,
+##                  filename=None
+##                  ):
 
 
-        Database.__init__(self,
-                          schema,
-                          langs=langs,
-                          label=label)
+##         Database.__init__(self,
+##                           schema,
+##                           langs=langs,
+##                           label=label)
 
         
-        self._connection = Connection(filename=filename,
-                                      schema=schema)
+##         self._connection = Connection(filename=filename,
+##                                       schema=schema)
 
-        self.connect(self._connection)
+##         self.connect(self._connection)
 
-##     def close(self):
-##         Database.close(self)
-##         self._connection.close()
-##         self._connection = None
+## ##     def close(self):
+## ##         Database.close(self)
+## ##         self._connection.close()
+## ##         self._connection = None
 
-##     def commit(self):   
-##         Database.commit(self)
-##         self._connection.commit()
+## ##     def commit(self):   
+## ##         Database.commit(self)
+## ##         self._connection.commit()
         
         
 

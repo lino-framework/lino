@@ -62,11 +62,12 @@ class BaseReport(Describable):
         if self.columnWidths is not None:
             i = 0
             for item in self.columnWidths.split():
-                try:
-                    width = int(item)
-                except ValueError:
-                    width = None
-                self.columns[i].width = width
+                if item.lower() == "d":
+                    pass
+                elif item == "*":
+                    self.columns[i].width = None
+                else:
+                    self.columns[i].width = int(item)
                 i += 1
 
         autoWidthColumns = []

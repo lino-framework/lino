@@ -59,7 +59,7 @@ class Case(TestCase):
         q = sess.query(Partners,"title firstName name",nation=be)
         
         sess.startDump()
-        q.report(columnWidths="6 10 20")
+        q.executeReport(columnWidths="6 10 20")
         s = sess.stopDump()
         
         #s = ""

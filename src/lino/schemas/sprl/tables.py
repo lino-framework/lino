@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright Luc Saffre 2003-2005
 
 ## This file is part of the Lino project.
 
@@ -58,3 +58,4 @@ from products import Products
 from ledger import Bookings
 from sales import Invoices, InvoiceLines
 
+__all__ = filter(lambda x: x[0] != "_", dir())

@@ -20,19 +20,18 @@ from lino.reports.base import BaseReport, ConfigError
 
 class OoReport(BaseReport):
     
-    def config(self,
-               columnSep='|',
-               columnHeaderSep='-',
-               **kw):
+    def __init__(self,
+                 document,
+                 **kw):
+        self.document = document
+        BaseReport.__init__(self,**kw)
         
-        BaseReport.config(self,**kw)
-        
-        self.columnSep = columnSep
-        self.columnHeaderSep = columnHeaderSep
+        #self.columnSep = columnSep
+        #self.columnHeaderSep = columnHeaderSep
         
         
     def onBeginReport(self):
-        self.table = self.dest.table()
+        self.table = self.document.table(name=self.name)
         for col in self.columns:
             self.table.addColumn()
         BaseReport.onBeginReport(self)
