@@ -1,16 +1,14 @@
-                             Lino 
-                            
-         yet another database application framework
-         
-               http://lino.sourceforge.net
+Lino README.txt
+===============
 
+The Lino homepage at http://lino.sourceforge.net is currently obsolete.
+ 
+Lino is a collection of free software written or maintained by Luc
+Saffre.  Luc's vision is that Lino becomes the first really good
+database application framework available for general public use, but
+currently this is just a vision...
 
-Copyright (c) 2001-2004 Luc Saffre.
-This software comes with ABSOLUTELY NO WARRANTY.
-Distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information.
-
-This Lino distribution contains some works from third-party authors
+This Lino distribution contains some works from third-party authors:
 
 - [file /src/snakeserver] a slightly modified copy of Irmen de Jong's
   Snakelets 1.3 which is licensed under a MIT licence.

@@ -1,54 +1,24 @@
-#coding: latin1
-import os, sys, traceback
+## Copyright Luc Saffre 2004.
 
-from lino.sdoc.environment import ParseError
+## This file is part of the Lino project.
 
-#from lino.sdoc import styles, tables
-from lino.sdoc import commands
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
 
-def main(ifname,renderer,ofname=None,
-			showOutput=True,
-			verbose=True,
-			force=True):
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
 
-	(root,ext) = os.path.splitext(ifname)
-	if ext == '':
-		ifname += ".pds"
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-	if ofname is None:
-		ofname = root 
-		
-	(head,tail) = os.path.split(ifname)
-	initfile = os.path.join(head,'__init__.pds')
+raise """
+old: from lino.sdoc.pdsparser import main
+new: from lino.scripts.pds2pdf import main
+"""
 
-	try:
-		commands.beginDocument(ofname,renderer,ifname)
-		if verbose:
-			print "%s --> %s..." % (commands.getSourceFileName(),
-											commands.getOutputFileName())
-		namespace = {}
-		namespace.update(globals())
-		namespace['pds'] = commands
-		try:
-			if os.path.exists(initfile):
-				execfile(initfile,namespace,namespace) 
-			execfile(ifname,namespace,namespace)
-			commands.endDocument(showOutput)
-			if verbose:
-				print "%d pages." % commands.getPageNumber()
-		except ParseError,e:
-			raise
-			#traceback.print_exc(2)
-			# print document
-			# print e
-			# showOutput = False
-
-
-	except IOError,e:
-		print e
-		sys.exit(1)
-
-	
-
-	 
 

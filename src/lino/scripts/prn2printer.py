@@ -1,14 +1,25 @@
 #coding: latin1
 
-UNICODE_HACK = True
+## Copyright Luc Saffre 2004. This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys, os
 
 import win32ui
 import win32con
-
-#from reportlab.lib.units import inch,mm
-#from reportlab.lib.pagesizes import letter, A4
 
 from lino import copyleft
 from lino.misc import console
@@ -56,9 +67,21 @@ class TextObject:
         self.y += self.doc.status.leading
 
 class Win32PrinterDocument(Document):
-    def __init__(self,printerName,spoolFile=None):
+    def __init__(self,printerName,
+                 spoolFile=None,
+                 charset=None):
         Document.__init__(self,pageSize=A4,margin=5*mm)
+        
 
+        self.fontDict = {
+            'name' : 'Courier New'
+            }
+        
+        
+        if charset is not None:
+            self.fontDict['charset'] = charset
+
+        
         self.dc = win32ui.CreateDC()
         self.dc.CreatePrinterDC(printerName)
         self.dc.StartDoc("prn2printer",spoolFile)
@@ -91,19 +114,35 @@ class Win32PrinterDocument(Document):
             
     def onSetFont(self):
         Document.onSetFont(self)
+        self.fontDict['height'] = int(inch/self.status.size)
+
+        # http://www.polyml.org/docs/Winref/Font.html
+        ## name
+        ## height
+        #weight
+        #italic
+        #underline
+        #pitch
+        #family
+        #charset
+        
+        font = win32ui.CreateFont(self.fontDict)
+        self.dc.SelectObject(font)
+
+
         tm = self.dc.GetTextMetrics()
-        console.info(repr(tm))
-        console.info(repr(self.dc.GetTextFace()))
-        console.info(repr(self.dc.GetViewportExt()))
-        console.info(repr(self.dc.GetViewportOrg()))
-        console.info(repr(self.dc.GetWindowExt()))
-        console.info(repr(self.dc.GetWindowOrg()))
+##         console.info(repr(tm))
+##         console.info(repr(self.dc.GetTextFace()))
+##         console.info(repr(self.dc.GetViewportExt()))
+##         console.info(repr(self.dc.GetViewportOrg()))
+##         console.info(repr(self.dc.GetWindowExt()))
+##         console.info(repr(self.dc.GetWindowOrg()))
         
         # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
         
         self.status.leading = tm['tmExternalLeading'] \
-                              + tm['tmInternalLeading'] \
                               + tm['tmHeight']
+                              # + tm['tmInternalLeading'] \
         #print self.status.leading
         #self.dc.SetTextFace("Courier")
         #self.textobject.setFont(psfontname,
@@ -112,37 +151,37 @@ class Win32PrinterDocument(Document):
 
     def write(self,text):
 
-        if UNICODE_HACK:
+##         if False:
 
-            text = text.replace(chr(179),"|")
-            text = text.replace(chr(180),"+")
-            text = text.replace(chr(185),"+")
-            text = text.replace(chr(186),"|")
-            text = text.replace(chr(187),"+")
-            text = text.replace(chr(188),"+")
-            text = text.replace(chr(191),"+")
-            text = text.replace(chr(192),"+")
-            text = text.replace(chr(193),"+")
-            text = text.replace(chr(194),"+")
-            text = text.replace(chr(195),"+")
-            text = text.replace(chr(196),"-")
-            text = text.replace(chr(197),"+")
-            text = text.replace(chr(193),"+")
-            text = text.replace(chr(200),"+")
-            text = text.replace(chr(201),"+")
-            text = text.replace(chr(202),"+")
-            text = text.replace(chr(203),"+")
-            text = text.replace(chr(204),"+")
-            text = text.replace(chr(205),"-")
-            text = text.replace(chr(206),"+")
-            text = text.replace(chr(217),"+")
-            text = text.replace(chr(218),"+")
+##             text = text.replace(chr(179),"|")
+##             text = text.replace(chr(180),"+")
+##             text = text.replace(chr(185),"+")
+##             text = text.replace(chr(186),"|")
+##             text = text.replace(chr(187),"+")
+##             text = text.replace(chr(188),"+")
+##             text = text.replace(chr(191),"+")
+##             text = text.replace(chr(192),"+")
+##             text = text.replace(chr(193),"+")
+##             text = text.replace(chr(194),"+")
+##             text = text.replace(chr(195),"+")
+##             text = text.replace(chr(196),"-")
+##             text = text.replace(chr(197),"+")
+##             text = text.replace(chr(193),"+")
+##             text = text.replace(chr(200),"+")
+##             text = text.replace(chr(201),"+")
+##             text = text.replace(chr(202),"+")
+##             text = text.replace(chr(203),"+")
+##             text = text.replace(chr(204),"+")
+##             text = text.replace(chr(205),"-")
+##             text = text.replace(chr(206),"+")
+##             text = text.replace(chr(217),"+")
+##             text = text.replace(chr(218),"+")
 
-            text = text.decode("cp850")
-            text = text.encode("iso-8859-1","replace")
+##             text = text.decode("cp850")
+##             text = text.encode("iso-8859-1","replace")
             
-        else:
-            text = text.decode("cp850")
+##         if False:
+##             text = text.decode("cp850")
             
         self.textobject.write(text)
             
@@ -188,7 +227,8 @@ write to SPOOLFILE rather than really printing.""",
     
     for inputfile in args:
         d = Win32PrinterDocument(options.printerName,
-                                 options.spoolFile)
+                                 options.spoolFile,
+                                 charset=win32con.OEM_CHARSET)
         d.readfile(inputfile)
         d.endDoc()
 

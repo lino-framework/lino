@@ -116,7 +116,7 @@ class Console:
             raw_input("Press ENTER to continue...")
             
             
-    def confirm(self,prompt,default="y",allowed="yn",ignoreCase=True):
+    def confirm(self,prompt,default="y"):
         
         """Ask user a yes/no question and return only when she has
         given her answer. returns True or False.
@@ -127,17 +127,21 @@ class Console:
         
         if sound:
             sound.asterisk()
+        if default == "y":
+            prompt += " [Y,n]"
+        else:
+            assert default == "n"
+            prompt += " [y,N]"
         while True:
-            s = raw_input(prompt+(" [%s]" % ",".join(allowed)))
+            s = raw_input(prompt)
             if s == "":
                 s = default
-            if ignoreCase:
-                s = s.lower()
+            s = s.lower()
             if s == "y":
                 return True
             if s == "n":
                 return False
-            self.warning("wrong answer: "+s)
+            self.warning("wrong answer, must be 'y' or 'n': "+s)
             
 
     def decide(self,prompt,answers,
