@@ -71,8 +71,9 @@ write to OUTFILE rather than FILE.pdf""",
     (root,ext) = os.path.splitext(inputfile)
     if options.outFile is None:
         options.outFile = root +".pdf"
-    d = PdfDocument(options.outFile, coding="cp850")
-    d.readfile(inputfile)
+    d = PdfDocument(options.outFile)#, coding="cp850")
+    #d.readfile(inputfile,coding="cp850")
+    d.readfile(inputfile,coding=sys.stdin.encoding)
     d.endDoc()
     if sys.platform == "win32" and console.isInteractive():
         os.system("start %s" % options.outFile)

@@ -124,10 +124,12 @@ class Document:
         return (firstpos,firstctrl)
     
 
-    def readfile(self,inputfile):
+    def readfile(self,inputfile,coding=None):
         try:
             f = file(inputfile)
             for line in f.readlines():
+                if coding is not None:
+                    line = line.decode(coding)
                 #self.printLine(line.rstrip())
                 self.writeln(line)
         except IOError,e:

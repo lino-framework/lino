@@ -25,10 +25,41 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
-#from lino.ui import console
 from lino.textprinter.document import Document
 
-UNICODE_HACK = True
+
+HACK_BOXCHARS = {
+    
+    # generated using tests/etc/3.py
+
+    u'\u250c': '+',
+    u'\u2500': '-',
+    u'\u252c': '+',
+    u'\u2510': '+',
+    u'\u2502': '|',
+    u'\u251c': '+',
+    u'\u253c': '+',
+    u'\u2524': '+',
+    u'\u2514': '+',
+    u'\u2534': '+',
+    u'\u2518': '+',
+              
+    u'\u2554': '+',
+    u'\u2550': '-',
+    u'\u2566': '+',
+    u'\u2557': '+',
+    u'\u2551': '|',
+    u'\u2560': '+',
+    u'\u256c': '+',
+    u'\u2563': '+',
+    u'\u255a': '+',
+    u'\u2569': '+',
+    u'\u255d': '+',
+    }
+
+
+
+#UNICODE_HACK = True
 #UNICODE_HACK = False
 
 
@@ -57,7 +88,7 @@ class Status:
 		
 class PdfDocument(Document):
 
-    def __init__(self,filename,coding=None, cpi=12):
+    def __init__(self,filename,cpi=12):
         Document.__init__(self,
                           pageSize=A4,
                           margin=5*mm)
@@ -67,16 +98,9 @@ class PdfDocument(Document):
         
         self.canvas = canvas.Canvas(filename,
                                     pagesize=A4)
-        self.coding = coding
         self.filename = filename
         self.status = Status()
         self.setCpi(cpi)
-
-        #self.canvas.setAuthor("Generated using prn2pdf")
-        #self.canvas.setSubject("http://my.tele2.ee/lsaffre/comp/prn2pdf.htm")
-
-        
-
 
 
 ##      def background(self):
@@ -145,44 +169,18 @@ class PdfDocument(Document):
 
     def write(self,text):
 
-        if self.coding is not None:
 
-            # Schade, dass PDF oder reportlab scheinbar nicht Unicode
-            # unterstützt. Deshalb muss ich die Box-Character hier durch
-            # Minusse & Co ersetzen...
-
-            if UNICODE_HACK:
-
-                text = text.replace(chr(179),"|")
-                text = text.replace(chr(180),"+")
-                text = text.replace(chr(185),"+")
-                text = text.replace(chr(186),"|")
-                text = text.replace(chr(187),"+")
-                text = text.replace(chr(188),"+")
-                text = text.replace(chr(191),"+")
-                text = text.replace(chr(192),"+")
-                text = text.replace(chr(193),"+")
-                text = text.replace(chr(194),"+")
-                text = text.replace(chr(195),"+")
-                text = text.replace(chr(196),"-")
-                text = text.replace(chr(197),"+")
-                text = text.replace(chr(193),"+")
-                text = text.replace(chr(200),"+")
-                text = text.replace(chr(201),"+")
-                text = text.replace(chr(202),"+")
-                text = text.replace(chr(203),"+")
-                text = text.replace(chr(204),"+")
-                text = text.replace(chr(205),"-")
-                text = text.replace(chr(206),"+")
-                text = text.replace(chr(217),"+")
-                text = text.replace(chr(218),"+")
-
-                text = text.decode(self.coding) #"cp850")
-                text = text.encode("iso-8859-1","replace")
-
-            else:
-                text = text.decode(self.coding) #"cp850")
-                #text = text.decode("cp850")
+        for k,v in HACK_BOXCHARS.items():
+            text = text.replace(k,v)
+            
+        #text = text.encode("iso-8859-1","replace")
+        try:
+            text = text.encode("iso-8859-1","strict")
+        except UnicodeError, e:
+            print e
+            print repr(text)
+            #print HACK_BOXCHARS
+            text = text.encode("iso-8859-1","replace")
 
         self.textobject.textOut(text)
         
