@@ -16,45 +16,136 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from lino.adamo.datatypes import STRING
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
 
-class BaseForm(Describable):
 
-    def __init__(self,*args,**kw):
+
+class Component(Describable):
+    def __init__(self,owner,*args,**kw):
         Describable.__init__(self,*args,**kw)
-        self.entries = AttrDict()
-        self.buttons = []
-        self.boxes = []
-        self.components = []
+        self.owner = owner
+        
+class Button(Component):
+    def __init__(self,owner,onclick=None,*args,**kw):
+        Component.__init__(self,owner,*args,**kw)
+        self._onclick = onclick
+        self._args = []
+        self._kw = {}
+
+    def setHandler(self,onclick,*args,**kw):
+        self._onclick = onclick
+        self._args = args
+        self._kw = kw
+        
+    def click(self):
+        self.owner.lastEvent = self
+        self._onclick(self.owner,*(self._args),**(self._kw))
+        
+
+
+class Entry(Component):
+    def __init__(self,owner,type,value=None,*args,**kw):
+        Component.__init__(self,owner, *args,**kw)
+        self.type = type
+        self.value = value
+
+
+class Label(Component):
+    def __init__(self,owner,*args,**kw):
+        Component.__init__(self,owner,*args,**kw)
+
+class Container:
+    # either a Panel or a Form
     
-    def addEntry(self,*args,**kw): 
-        e = self.createEntry(*args,**kw)
-        self.components.append(e)
-        self.entries.define(e.name,e)
+    VERTICAL = 1
+    HORIZONTAL = 2
+
+    def __init__(self):
+        self._components = []
+
+    def getForm(self):
+        raise NotImplementedError
+
+    def addLabel(self,label,**kw):
+        frm = self.getForm()
+        e = frm.labelFactory(self,label=label,**kw)
+        self._components.append(e)
+        return e
+        
+    def addEntry(self,name=None,type=None,*args,**kw):
+        frm = self.getForm()
+        if name is None:
+            name = "entry" + str(len(frm.entries)+1)
+        if type is None:
+            type = STRING
+        e = frm.entryFactory(frm,type,name=name,*args,**kw)
+        self._components.append(e)
+        frm.entries.define(e.name,e)
         return e
         
     def addButton(self,*args,**kw): 
-        btn = self.createButton(*args,**kw)
-        self.components.append(btn)
-        self.buttons[btn.name] = btn
+        frm = self.getForm()
+        btn = frm.buttonFactory(frm,*args,**kw)
+        self._components.append(btn)
+        frm.buttons.define(btn.name,btn)
+        return btn
+
+    def addPanel(self,direction): 
+        frm = self.getForm()
+        btn = frm.panelFactory(frm,direction)
+        self._components.append(btn)
         return btn
 
     def addOkButton(self,*args,**kw):
-        return self.addButton(name="ok",onclick=self.ok)
+        return self.addButton(name="ok",
+                              onclick=self.getForm().ok)
 
     def addAbortButton(self,*args,**kw):
-        return self.addButton(name="abort",onclick=self.abort)
+        return self.addButton(name="abort",
+                              onclick=self.getForm().abort)
 
-    def createEntry(self,name,type,label=None):
-        raise NotImplementedError
-    def createButton(self,name,onclick=None,label=None):
-        raise NotImplementedError
+class Panel(Component,Container):
+    def __init__(self,frm,direction,*args,**kw):
+        Component.__init__(self,frm,*args,**kw)
+        Container.__init__(self)
+        assert direction in (self.VERTICAL,self.HORIZONTAL)
+        self.direction = direction
+
+    def getForm(self):
+        return self.owner
+    
+
+
+class Form(Describable,Container):
+
+    labelFactory = Label
+    entryFactory = Entry
+    buttonFactory = Button
+    panelFactory = Panel
+
+    def __init__(self,parent=None,*args,**kw):
+        Describable.__init__(self,*args,**kw)
+        Container.__init__(self)
+        self._parent = parent
+        self.entries = AttrDict()
+        self.buttons = AttrDict()
+        self._boxes = []
+        self._menu = None
+        self.lastEvent = None
+    
+    def getForm(self):
+        return self
+
+    def addForm(self,*args,**kw):
+        return self.__class__(self,*args,**kw)
     
     def show(self):
         raise NotImplementedError
     def showModal(self):
         raise NotImplementedError
+
 
 
     def ok(self,frm):
@@ -64,15 +155,3 @@ class BaseForm(Describable):
         self.close()
 
     
-class BaseButton(Describable):
-    def __init__(self,onclick,*args,**kw):
-        Describable.__init__(self,*args,**kw)
-        self.onclick = onclick
-
-    def setHandler(self,onclick,*args,**kw):
-        self.onclick = onclick
-        self.args = args
-        self.kw = kw
-        
-    def click(self):
-        self.onclick(self

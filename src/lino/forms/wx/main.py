@@ -1,4 +1,4 @@
-## Copyright 2003, 2004, 2005 Luc Saffre 
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -136,7 +136,8 @@ class FormFrame(wx.Frame):
                 for (name,meth) in buttons: 
                     winId = wx.NewId()
                     button = wx.Button(buttonPanel,winId,name,
-                                             wx.DefaultPosition, wx.DefaultSize)
+                                       wx.DefaultPosition,
+                                       wx.DefaultSize)
                     hbox.Add(button, 1, wx.ALL,10)
 
                     wx.EVT_BUTTON(self, winId, EventCaller(form,meth))
