@@ -269,27 +269,42 @@ class TwistedRenderer(HtmlRenderer):
 		return '<a href="%s">%s</a>' % (url,label)
 
 	
+
+	
 	def renderPicture(self,src,tags=None,label=None):
-		self.write('<a href="%s">' % self.uriToImage('pictures',src))
-		self.renderImage('thumbnails',src,tags,label)
+		imageType = "pictures"
+		src = src.replace('\\','/')
+		pos = src.rfind('.')
+		if pos == -1:
+			raise "picture filename without extension"
+		webSrc = src[:pos]+"_web"+src[pos:]
+		self.write('<a href="%s">' % self.uriToImage(imageType,src))
+		if tags is None:
+			tags = 'height="150"'
+		else:
+			if not ("width=" in tags or "height=" in tags):
+				tags += 'height="150"'
+		self.renderImage(imageType,webSrc,tags,label)
 		self.write('</a>')
 					  
 	def renderImage(self,imageType,src,tags=None,label=None):
-		self.write(self.refToImage(imageType,src,tags,label))
+		src = self.uriToImage(imageType,src)
+		self.write(self.refToImage(src,tags,label))
 					  
-	def refToImage(self,imageType,src,tags=None,label=None):
+	def refToImage(self,src,tags=None,label=None):
 		if label is None:
 			label = src
-		#print vars()
-		src = self.uriToImage(imageType,src)
 		s = '<img src="%s" alt="%s"' % (src,htmltext(label))
 		if tags is not None:
-			s += tags
+			s += " "+tags
 		s += ">"
 		return s
 
 	def uriToImage(self,imageType,src):
 		return self.baseuri+"images/"+imageType+"/"+src
+
+
+	
 	
 	def renderMemo(self,txt):
 		# memo2html
