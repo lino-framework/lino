@@ -221,7 +221,7 @@ class WxApp(wx.App):
 		#self.session = rootSession.spawn()
 		#rootSession.end()
 		self.session = WxSession(db=rootSession.db,
-										 langs=rootSession.getLangs())
+                                 langs=rootSession.getLangs())
 		wx.App.__init__(self,0)
 
 
