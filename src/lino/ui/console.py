@@ -246,7 +246,7 @@ class Console:
 
         p.add_option("-b",
                      "--batch",
-                     help="don't ask anything [default: %default]",
+                     help="not interactive (don't ask anything)",
                      default=self.isBatch(),
                      action="callback",
                      callback=call_set,
@@ -268,9 +268,11 @@ isInteractive = _syscon.isInteractive
 set = _syscon.set
 getOptionParser = _syscon.getOptionParser
 
-def parse_args(argv):
+def parse_args(args=None):
+    #if args is None:
+    #    args = sys.argv[1:]
     p = _syscon.getOptionParser()
-    return p.parse_args(argv)
+    return p.parse_args(args)
     
 
 def copyleft( name="Lino",

@@ -18,6 +18,7 @@
 
 from lino.adamo.datatypes import STRING
 from lino.forms.wx.wxform import Form
+from lino.ui import console
 
 def privacy(parent):
     frm = parent.addForm(label="Privacy Statement")
@@ -31,7 +32,7 @@ so you don't need to close it if you want to continue registering.
 """ % parent.getLabel())
     btnPanel = frm.addPanel(frm.HORIZONTAL)
     btnPanel.addOkButton()
-    btnPanel.addAbortButton()
+    btnPanel.addCancelButton()
     frm.show()
     
 def main():
@@ -42,20 +43,20 @@ Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
 """)
-    frm.addEntry("firstName",STRING,label="first name",
-               value="Norbert")
-    frm.addEntry("name",STRING,value="Ausdemwald")
+    frm.addEntry("firstName",STRING,label="first name")
+    frm.addEntry("name",STRING)
     
     btnPanel = frm.addPanel(frm.HORIZONTAL)
     btnPanel.addOkButton()
-    btnPanel.addAbortButton()
+    btnPanel.addCancelButton()
     btnPanel.addButton(label="&Privacy statement").setHandler(privacy)
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.value,
             frm.entries.name.value)
     else:
-        print """You pressed ESC, clicked "Abort" or closed the form."""
+        print "You canceled the form."
         
 if __name__ == "__main__":
+    console.parse_args()
     main()

@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005.
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -23,6 +23,9 @@ another attempt to create a universal datatype definition model...
 
 """
 
+ERR_FORMAT_NONE = "caller must handle None values"
+ERR_PARSE_EMPTY = "caller must handle empty strings"
+
 
 class Type:
     "base class for containers of data-type specific meta information"
@@ -38,9 +41,14 @@ class Type:
         return "%s (%s)" % (self.__class__.__name__,
                             repr(self.__dict__))
 
-    def format(self,s):
-        return repr(s)
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        return repr(v)
 
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        return s
+    
         
     
 class StringType(Type):
@@ -49,24 +57,21 @@ class StringType(Type):
         self.width = width
 
     def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
         return s
     
-    def format(self,s):
-        return str(s)
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        #assert v is not None, "caller must handle this case"
+        return str(v)
         
-##      def expr2value(self,expr):
-##          if(len(expr)==0) : return None;
-##          return expr
-##      def value2sql(self,value):
-##          if len(value) == 0:
-##              return 'NULL'
-##          return '"' + value.replace('"',r'\"') + '"'
-
 class PasswordType(StringType):
-    def format(self,s):
-        if s is None:
-            return "None"
-        return '*' * len(s)
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        #assert v is not None, "caller must handle this case"
+        #if s is None:
+        #    return "None"
+        return '*' * len(v)
     
 
 
@@ -84,7 +89,9 @@ class IntType(Type):
     def __init__(self,width=5,**kw):
         Type.__init__(self,**kw)
         self.width = width
+        
     def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
         return int(s)
 ##      def expr2value(self,expr):
 ##          if len(expr)==0 : return None
@@ -96,6 +103,7 @@ class IntType(Type):
 class DateType(Type):
     width = 8
     def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
         return ND(s)
 ##      def expr2value(self,expr):
 ##          if len(expr)==0 : return None

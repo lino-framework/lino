@@ -18,28 +18,27 @@
 
 from lino.adamo.datatypes import STRING
 from lino.forms.wx.wxform import Form
+from lino.ui import console
 
 def main():
     
-    frm = Form(label="my first form")
+    frm = Form(label="The First Lino Form")
     frm.addLabel("""\
 Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
 """)
-    frm.addEntry("firstName",STRING,
-                 label="First name",
-                 value="Norbert")
-    frm.addEntry("name",STRING,
-                 value="Ausdemwald")
+    frm.addEntry("firstName",STRING, label="First name")
+    frm.addEntry("name",STRING)
     frm.addOkButton()
-    frm.addAbortButton()
+    frm.addCancelButton()
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.value,
             frm.entries.name.value)
     else:
-        print """You pressed ESC, clicked "Abort" or closed the form."""
+        print "You cancelled the form."
         
 if __name__ == "__main__":
+    console.parse_args()
     main()

@@ -24,7 +24,7 @@ from lino import copyleft
 from lino.ui import console
 from lino.textprinter import winprn 
 
-def main(argv):
+def main(argv=None):
 
     parser = console.getOptionParser(
         usage="usage: %prog [options] FILE [FILE ...]",
@@ -66,7 +66,7 @@ write to SPOOLFILE rather than really printing.""",
     
         
 if __name__ == '__main__':
-    print copyleft(name="Lino/prn2print",
-                   year='2004-2005')
-    main(sys.argv[1:])
+    console.copyleft(name="Lino/prn2print",
+                     years='2004-2005')
+    main()
     

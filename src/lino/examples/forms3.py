@@ -32,7 +32,7 @@ This is a child form. It is not modal,
 so you don't need to close it if you want to continue with "%s".
 """ % parent.getLabel())
     frm.addOkButton()
-    frm.addAbortButton()
+    frm.addCancelButton()
     frm.show()
     
 def main():
@@ -50,14 +50,15 @@ We won't store it. You can trust us.
     box.addEntry("name",STRING)
     btnBox = box.addBox(frm.HORIZONTAL)
     btnBox.addOkButton()
-    btnBox.addAbortButton()
+    btnBox.addCancelButton()
     btnBox.addButton(name="click &Me").setHandler(clickme)
     btnBox.addButton(label=ds.getLabel()).setHandler(ds.showGridForm)
+    
     if frm.showModal():
         print "Hello %s %s. Thank you for registering." % (
             frm.entries.firstName.getValue(),
             frm.entries.name.getValue())
     else:
-        print """You pressed ESC, clicked "Abort" or closed the form."""
+        print "You cancelled the form."
         
     sess.shutdown()

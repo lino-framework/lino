@@ -49,6 +49,7 @@ about sizers.
 import wx
 
 from lino.forms import base
+from lino.ui import console
 
 WEIGHT = 1
 
@@ -73,15 +74,16 @@ class Button(base.Button):
             repr(self.wxctrl.GetSize()),
             repr(self.wxctrl.GetPosition()))
         
-    def setup(self,frm,panel,box):
+    def setup(self,frame,panel,box):
         
         winId = wx.NewId()
         btn = wx.Button(panel,winId,self.getLabel(),
                         wx.DefaultPosition,
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
-        frm.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
-        #b.SetDefault()
+        frame.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
+        if frame._frm.defaultButton == self:
+            btn.SetDefault()
         box.Add(btn) #, 0, wx.CENTER,10)
         self.wxctrl = btn
                 
@@ -90,13 +92,14 @@ class Button(base.Button):
 class Panel(base.Panel):
 
     def __repr__(self):
-        s = "%s %s at %s:" % (
+        s = "%s %s at %s (" % (
             self.getName(),
             repr(self.mypanel.GetSize()),
             repr(self.mypanel.GetPosition()))
         
         for c in self._components:
             s += "\n- " + ("\n  ".join(repr(c).splitlines()))
+        s += "\n)"
         return s
     
     def setup(self,frm,panel,box):
@@ -107,8 +110,8 @@ class Panel(base.Panel):
         else:
             mybox = wx.BoxSizer(wx.HORIZONTAL)
         # uncomment both following lines to get a crash
-        box.Add(mybox)
-        #mypanel.SetSizer(mybox) 
+        # box.Add(mybox)
+        mypanel.SetSizer(mybox) 
         
         self.mybox = mybox # store reference to avoid crash?
         self.mypanel = mypanel
@@ -131,14 +134,17 @@ class Entry(base.Entry):
         
         mybox = wx.BoxSizer(wx.HORIZONTAL)
         # uncomment both following lines to get a crash
-        box.Add(mybox)
-        # mypanel.SetSizer(mybox) 
+        # box.Add(mybox)
+        mypanel.SetSizer(mybox) 
         
         label = wx.StaticText(mypanel, -1, self.getLabel()) 
         #label.SetBackgroundColour(wx.GREEN)
         mybox.Add(label)#, WEIGHT, wx.ALL|wx.EXPAND,10)
 
-        s = self.type.format(self.value)
+        if self.value is None:
+            s = ""
+        else:
+            s = self.type.format(self.value)
         editor = wx.TextCtrl(mypanel,-1, s)
         #self.Bind(wx.EVT_TEXT, self.EvtText, t1)
         #editor.Bind(wx.EVT_CHAR, self.EvtChar)
@@ -147,19 +153,25 @@ class Entry(base.Entry):
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
         mybox.Add(editor)#,WEIGHT,wx.EXPAND|wx.ALL,10)
         
-        self.mybox = mybox # store reference to avoid crash?
+        #self.mybox = mybox # store reference to avoid crash?
         self.editor = editor # store reference to avoid crash?
         self.wxctrl = mypanel
         
         #return self.editor
 
     def OnKillFocus(self,evt):
+        console.debug("OnKillFocus() "+self.getLabel())
         # on MS-Windows:
-        if self.owner.dying: return
         # killfocus can accur after the windows have been destroyed
-        s = self.editor.GetValue()
-        self.value = self.type.parse(s)
-        evt.Skip()
+        if self.owner.dying: return
+        
+        if self.editor.IsModified():
+            s = self.editor.GetValue()
+            if len(s):
+                self.value = self.type.parse(s)
+            else:
+                self.value = None
+            evt.Skip()
         
 
 
@@ -208,7 +220,7 @@ class WxFrame(wx.Frame):
         #panel.SetBackgroundColour(wx.GREEN)
         #box.Add(panel,WEIGHT,wx.EXPAND|wx.ALL,10)
         
-        frm.mainCtrl.setup(self,self,mainBox)
+        frm.mainComp.setup(self,self,mainBox)
         
 ##         for c in frm._components:
 ##             c.setup(self,panel,mainBox)
@@ -247,7 +259,7 @@ class WxFrame(wx.Frame):
         return wxMenu
 
     def OnCloseWindow(self, event):
-        self.dying = True
+        self._frm.dying = True
         # http://wiki.wxpython.org/index.cgi/Surviving_20with_20wxEVT_5fKILL_5fFOCUS_20under_20Microsoft_20Windows
         # Surviving with EVT_KILL_FOCUS under Microsoft Windows
         
@@ -288,9 +300,10 @@ class Form(base.Form):
             self.app = self._parent.app
             
         self._wxFrame = WxFrame(self)
+        self.dying = False
 
     def afterShow(self):
-        print repr(self.mainCtrl)
+        console.debug(repr(self.mainComp))
         #for ctrl in self._wxFrame.GetChildren():
         #    print repr(ctrl)
             #print ctrl.GetSize()

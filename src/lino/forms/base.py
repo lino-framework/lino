@@ -38,6 +38,9 @@ class Button(Component):
         self._onclick = onclick
         self._args = args
         self._kw = kw
+
+    def setDefault(self):
+        self.owner.defaultButton = self
         
     def click(self):
         self.owner.lastEvent = self
@@ -50,6 +53,13 @@ class Entry(Component):
         Component.__init__(self,owner, *args,**kw)
         self.type = type
         self.value = value
+
+    def get(self):
+        return self.value
+    
+    def set(self,value):
+        return self.value 
+    
 
 
 class Label(Component):
@@ -99,12 +109,16 @@ class Container:
         return btn
 
     def addOkButton(self,*args,**kw):
-        return self.addButton(name="ok",
-                              onclick=self.getForm().ok)
+        b = self.addButton(name="ok",
+                           label="&OK",
+                           onclick=self.getForm().ok)
+        b.setDefault()
+        return b
 
-    def addAbortButton(self,*args,**kw):
-        return self.addButton(name="abort",
-                              onclick=self.getForm().abort)
+    def addCancelButton(self,*args,**kw):
+        return self.addButton(name="cancel",
+                              label="&Cancel",
+                              onclick=self.getForm().cancel)
 
 class Panel(Component,Container):
     def __init__(self,frm,direction,name=None,*args,**kw):
@@ -123,41 +137,40 @@ class Panel(Component,Container):
     
 
 
-class ContainerForm(Describable,Container):
+## class ContainerForm(Describable,Container):
 
-    labelFactory = Label
-    entryFactory = Entry
-    buttonFactory = Button
-    panelFactory = Panel
+##     labelFactory = Label
+##     entryFactory = Entry
+##     buttonFactory = Button
+##     panelFactory = Panel
 
-    def __init__(self,parent=None,*args,**kw):
-        Describable.__init__(self,*args,**kw)
-        Container.__init__(self)
-        self._parent = parent
-        self.entries = AttrDict()
-        self.buttons = AttrDict()
-        self._boxes = []
-        self._menu = None
-        self.lastEvent = None
+##     def __init__(self,parent=None,*args,**kw):
+##         Describable.__init__(self,*args,**kw)
+##         Container.__init__(self)
+##         self._parent = parent
+##         self.entries = AttrDict()
+##         self.buttons = AttrDict()
+##         self.defaultButton = None
+##         self._boxes = []
+##         self._menu = None
+##         self.lastEvent = None
     
-    def getForm(self):
-        return self
+##     def getForm(self):
+##         return self
 
-    def addForm(self,*args,**kw):
-        return self.__class__(self,*args,**kw)
+##     def addForm(self,*args,**kw):
+##         return self.__class__(self,*args,**kw)
     
-    def show(self):
-        raise NotImplementedError
-    def showModal(self):
-        raise NotImplementedError
+##     def show(self):
+##         raise NotImplementedError
+##     def showModal(self):
+##         raise NotImplementedError
 
+##     def ok(self,frm):
+##         self.close()
 
-
-    def ok(self,frm):
-        self.close()
-
-    def abort(self,frm):
-        self.close()
+##     def cancel(self,frm):
+##         self.close()
 
     
 class Form(Describable):
@@ -172,14 +185,15 @@ class Form(Describable):
         self._parent = parent
         self.entries = AttrDict()
         self.buttons = AttrDict()
+        self.defaultButton = None
         self._boxes = []
         self._menu = None
         self.lastEvent = None
-        self.mainCtrl = self.panelFactory(self,Container.VERTICAL)
+        self.mainComp = self.panelFactory(self,Container.VERTICAL)
         for m in ('addLabel','addEntry','addPanel',
                   'addButton', 'VERTICAL', 'HORIZONTAL',
-                  'addOkButton', 'addAbortButton'):
-            setattr(self,m,getattr(self.mainCtrl,m))
+                  'addOkButton', 'addCancelButton'):
+            setattr(self,m,getattr(self.mainComp,m))
 
     
     def addForm(self,*args,**kw):
@@ -190,12 +204,10 @@ class Form(Describable):
     def showModal(self):
         raise NotImplementedError
 
-
-
     def ok(self,frm):
         self.close()
 
-    def abort(self,frm):
+    def cancel(self,frm):
         self.close()
 
     
