@@ -83,6 +83,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._pk = None
         self._views = {}
         self._rowRenderer = None
+        self._mirrorLoader = None
         
         if name is None:
             name = self.__class__.__name__
@@ -106,7 +107,8 @@ class Table(FieldContainer,SchemaComponent,Describable):
 ##                                        (WritableRow,), ns )
 
     def init(self):
-        raise NotImplementedError
+        pass
+
 
 ##     def peek(self,sess,*args):
 ##         return sess.peek(self.__class__,*args)
@@ -235,11 +237,22 @@ class Table(FieldContainer,SchemaComponent,Describable):
             raise "Table %s : primary key is None!" % self.getName()
         return self._pk # ('id',)
 
-    def onConnect(self,area):
+    def onConnect(self,store):
+        # will maybe never be used
         pass
-
-    def populate(self,sess):
-        pass
+    
+    def setMirrorLoader(self,loader):
+        self._mirrorLoader = loader
+        
+    def loadMirror(self,store,sess):
+        if self._mirrorLoader is None:
+            return
+        if self._mirrorLoader.mtime() <= store.mtime():
+            sess.progress("No need to load "+\
+                       self._mirrorLoader.sourceFilename())
+            return
+        sess.progress("Loading "+self._mirrorLoader.sourceFilename())
+        self._mirrorLoader.load(store.query(sess))
 
     def onAppend(self,row):
         pass
@@ -330,3 +343,36 @@ class BabelTable(Table):
     class Instance(Table.Instance):
         def getLabel(self):
             return self.name
+
+import os
+
+class DbfMirrorLoader:
+
+    def __init__(self,dbfpath="."):
+        self.dbfpath = dbfpath
+    
+    def load(self,q):
+        console.info(q.getLabel())
+        f = dbfreader.DBFFile(self.sourceFilename(),
+                              codepage="cp850")
+        f.open()
+        q.zap()
+        for dbfrow in f:
+            try:
+                self.appendFromDBF(q,dbfrow)
+            except adamo.DataVeto,e:
+                console.info(str(e))
+            except adamo.DatabaseError,e:
+                console.info(str(e))
+            except ValueError,e:
+                console.info(str(e))
+        f.close()
+        q.commit()
+
+    def sourceFilename(self):
+        return os.path.join(self.dbfpath, self.tableName+".DBF")
+        
+    def mtime(self):
+        return os.stat(self.sourceFilename()).st_mtime
+
+

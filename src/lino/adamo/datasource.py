@@ -49,7 +49,7 @@ class SimpleDatasource:
         self._schema = store._db.schema # shortcut
         self._connection = store._connection # shortcut
 
-        store.registerDatasource(self)
+        #store.registerDatasource(self)
         
         for m in ('startDump','stopDump'):
             setattr(self,m,getattr(store._connection,m))
@@ -60,6 +60,9 @@ class SimpleDatasource:
 
     def getDatabase(self):
         return self._store._db
+
+    def getLeadTable(self):
+        return self._clist.leadTable
 
 ##     def getContext(self):
 ##         #return self._clist._context
@@ -847,7 +850,8 @@ class DataRow:
 
 
     def makeDataCell(self,colIndex,col):
-        return self.getSession()._dataCellFactory(self,colIndex,col)
+        #return self.getSession()._dataCellFactory(self,colIndex,col)
+        return DataCell(self,colIndex,col)
 
 
     def setDirty(self):

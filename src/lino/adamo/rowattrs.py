@@ -470,6 +470,14 @@ class Pointer(RowAttribute):
         if pointedRow._ds.peek(*pointedRow.getRowId()) is None:
             return "%s points to non-existing row %s" % (
                 self.name,str(pointedRow.getRowId()))
+
+
+    def getReachableData(self,row):
+        pointedRow = self.getCellValue(row)
+        if pointedRow is None:
+            return # ok
+        d = { self.name : pointedRow }
+        return pointedRow._ds.query(**d)
         
 
     def getPreferredWidth(self):

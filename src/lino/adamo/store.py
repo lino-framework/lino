@@ -19,7 +19,7 @@
 from time import time
 
 from lino.adamo import DataVeto
-#from datasource import Datasource
+from datasource import Datasource
 from query import DataColumnList
 
 class Store:
@@ -30,6 +30,7 @@ class Store:
 
     SST_MUSTCHECK = 1
     SST_VIRGIN = 2 # must populate with default data?
+    #SST_MUSTLOAD = 3 # must load mirror?
     SST_READY = 3
     
     def __init__(self,conn,db,table):
@@ -49,7 +50,6 @@ class Store:
             self._lastId = {}
 
         self._peekQuery = DataColumnList(self,db)
-        self._table.onConnect(self)
 
 
     def mtime(self):
@@ -57,7 +57,10 @@ class Store:
 
     def touch(self):
         self._mtime = time()
-    
+        
+    def onConnect(self):
+        self._table.onConnect(self)
+        
     def getTable(self):
         return self._table
         #return self.schema.getTable(self._table.getTableId())
@@ -67,47 +70,56 @@ class Store:
         self.touch()
 
 
-    def registerDatasource(self,ds):
-        self._datasources.append(ds)
 
     def fireUpdate(self):
         for ds in self._datasources:
             ds.onStoreUpdate()
 
-    def createTables(self,sess):
+    def createTable(self,sess):
         if self._status == self.SST_MUSTCHECK:
             sess.debug( "mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
-                self.createTable(sess)
+                #self.createTable(sess)
+                sess.progress( "create table " + \
+                               self._table.getTableName())
+                self._connection.executeCreateTable(self._peekQuery)
                 self._status = self.SST_VIRGIN
+            self._table.loadMirror(self,sess)
                 
-    def checkIntegrity(self,sess):
-        if self._status == self.SST_MUSTCHECK:
-            if self._connection.mustCheckTables():
-                self.checkTable(sess)
-            self._status = self.SST_READY
-                
-    def populate(self,sess):
+    def populate(self,schema,sess,populator):
          if self._status == self.SST_VIRGIN:
-             self._table.populate(sess)
+             q = self.query(sess)
+             populator.populateStore(q)
+             #self._table.populate(sess)
          self._status = self.SST_READY
         
+    def checkIntegrity(self,sess):
+        if self._status != self.SST_MUSTCHECK:
+            return
+        if self._connection.mustCheckTables():
+            q = self.query()
+            l = len(q)
+            sess.progress("Checking Table %s : %d rows" % (
+                q._table.getTableName(),l))
+            for row in q:
+                msg = row.checkIntegrity()
+                if msg is not None:
+                    msg = "%s[%s] : %s" % (
+                        q._table.getTableName(),
+                        str(row.getRowId()),
+                        msg)
+                    sess.error(msg)
+                    #msgs.append(msg)
             
+        self._status = self.SST_READY
 
-    def checkTable(self,sess):
-        q = sess.query(self._table)
-        l = len(q)
-        sess.progress("%s : %d rows" % ( q._table.getTableName(),l))
-        for row in q:
-            msg = row.checkIntegrity()
-            if msg is not None:
-                msg = "%s[%s] : %s" % (
-                    q._table.getTableName(),
-                    str(row.getRowId()),
-                    msg)
-                sess.error(msg)
-                #msgs.append(msg)
-
+            
+    def query(self,sess,columnNames=None,**kw):
+        ds = Datasource(sess,self,columnNames=columnNames,**kw)
+        self._datasources.append(ds)
+        return ds
+        
+                
         
         
     def removeFromCache(self,row):
@@ -127,12 +139,6 @@ class Store:
 ##          row.commit()
 ##      self._dirtyRows = {}
     
-    def createTable(self,sess):
-        sess.progress( "create table " + self._table.getTableName())
-        self._connection.executeCreateTable(self._peekQuery)
-        #self._table.populate(self)
-
-        
 
     def lockRow(self,row):
         # todo: use getLock() / releaseLock()

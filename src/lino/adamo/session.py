@@ -16,7 +16,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from datasource import Datasource, DataCell
+#from datasource import Datasource, DataCell
+#from datasource import DataCell
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from lino.adamo import center
@@ -41,13 +42,19 @@ class Context:
     def getLangs(self):
         return " ".join([lng.id for lng in self.getBabelLangs()])
 
+    def supportsLang(self,lngId):
+        for lng in self.getBabelLangs():
+            if lng.id == lngId:
+                return True
+        return False
+    
 
             
 class Session(Context):
     """
     A Session is if a machine starts Adamo
     """
-    _dataCellFactory = DataCell
+    #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
     def __init__(self,center,console=None,**kw):
@@ -153,21 +160,15 @@ class Session(Context):
     def getBabelLangs(self):
         return self._babelLangs
 
-    def supportsLang(self,lngId):
-        for lng in self.db.getBabelLangs():
-            if lng.id == lngId:
-                return True
-        return False
-    
-    def query(self,leadTable,columnNames=None,**kw):
+    def query(self,leadTable,*args,**kw):
         try:
             store = self.db._stores[leadTable]
         except KeyError,e:
             raise InvalidRequestError("no such table: "+str(leadTable))
-        return Datasource(self,store,columnNames=columnNames,**kw)
+        return store.query(self,*args,**kw)
 
     def peek(self,tableClass,*args):
-        # used in raceman/report...
+        # used in raceman/report.py, cities_be.py...
         return self.query(tableClass).peek(*args)
 
 ##     def data_report(self,ds,**kw):

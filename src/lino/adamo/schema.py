@@ -46,8 +46,22 @@ class SchemaPlugin(SchemaComponent,Describable):
         pass
     def defineMenus(self,schema,context,win):
         pass
-    def populate(self,sess):
-        pass
+##     def populate(self,sess):
+##         pass
+
+
+class Populator(Describable):
+    def __init__(self,*args,**kw):
+        Describable.__init__(self,*args,**kw)
+    
+    def populateStore(self,q):
+        name = "populate"+q.getLeadTable().name
+        try:
+            m = getattr(self,name)
+        except AttributeError:
+            return
+        m(q)
+    
 
 
 class Schema(Describable):
@@ -65,6 +79,7 @@ class Schema(Describable):
         self._databases = []
         self._plugins = []
         self._tables = []
+        self._populators = []
         
         self.plugins = AttrDict()
         self.forms = AttrDict()
@@ -96,6 +111,7 @@ class Schema(Describable):
                  "Too late to declare new tables in " + repr(self)
         table.registerInSchema(self,len(self._tables))
         self._tables.append(table)
+        return table
         #name = table.getTableName()
         #self.tables.define(name,table)
         
@@ -115,6 +131,9 @@ class Schema(Describable):
                  "Too late to declare new forms in " + repr(self)
         assert issubclass(cl,Form)
         self.forms.define(cl.name,cl)
+
+    def addPopulator(self,p):
+        self._populators.append(p)
         
 ##  def addForm(self,form):
 ##      assert isinstance(form,FormTemplate), \
@@ -137,13 +156,13 @@ class Schema(Describable):
             return
         # assert not self._initDone, "double initialize()"
         #progress = self._app.console.progress
-        info = console.info
-        info("Initializing database schema...")
+        progress = console.progress
+        progress("Initializing database schema...")
         #self.defineSystemTables(ui)
         for plugin in self._plugins:
             plugin.defineTables(self)
 
-        info("  Initializing %d tables..." % len(self._tables))
+        progress("  Initializing %d tables..." % len(self._tables))
 
         # loop 1
         for table in self._tables:
@@ -196,7 +215,7 @@ class Schema(Describable):
         #   print "setupTables() done"
             
         self._initDone = True
-        info("Schema initialized")
+        progress("Schema initialized")
         
 
     def setLayout(self,layoutModule):
@@ -217,9 +236,9 @@ class Schema(Describable):
         assert self._contextRenderer is not None
         
 
-    def populate(self,sess):
-        for plugin in self._plugins:
-            plugin.populate(sess)
+##     def populate(self,sess):
+##         for plugin in self._plugins:
+##             plugin.populate(sess)
     
     def findImplementingTables(self,toClass):
         l = []
@@ -270,15 +289,18 @@ class Schema(Describable):
         self._databases.append(db)
         return db
 
-    def startup(self,sess,checkIntegrity=True,populate=True):
-        assert len(self._databases) > 0,"no databases"
+    def startup(self,sess,checkIntegrity=None):
+        if checkIntegrity is None:
+            checkIntegrity = center.checkIntegrity
+        assert len(self._databases) > 0, "no databases"
         for db in self._databases:
             sess.use(db)
             for store in db.getStoresById():
-                store.createTables(sess)
-            if populate:
+                store.createTable(sess)
+            for p in self._populators:
+                sess.progress("populator " + p.getLabel())
                 for store in db.getStoresById():
-                    store.populate(sess)
+                    store.populate(self,sess,p)
             if checkIntegrity:
                 for store in db.getStoresById():
                     store.checkIntegrity(sess)
