@@ -3,14 +3,14 @@ starts a GUI application with an adamo database.
 Just a proof of concept, far from being usable.
 """
 
-if __name__ == "__main__":
-	
-	from lino.adamo import center 
-	center.start(verbose=True)
+import sys
 
-	from lino.schemas.sprl import demo
-	sess = demo.beginSession()
-	
-	from lino.wxgui.main import WxApp
-	app = WxApp(sess)
-	app.MainLoop()
+from lino.misc import console
+from lino.schemas.sprl import demo
+from lino import wxgui 
+
+if __name__ == "__main__":
+    console.parse_args(sys.argv)
+    sess = demo.beginSession()
+    wxgui.run(sess)
+    

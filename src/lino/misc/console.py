@@ -15,6 +15,7 @@ often-used things that have to do with the console.
 Message importance levels:
 
 debug
+progress
 info
 warning
 error
@@ -84,17 +85,17 @@ class Console:
     
         
 
-    def progress(self,msg):
+    def info(self,msg):
         "Display message if verbosity is normal."
         if self._verbosity >= 0:
             self.log_message(msg)
-        
-    def info(self,msg):
+            #self.out.write(msg + "\n")
+
+    def progress(self,msg):
         "Display message if verbosity is high."
         if self._verbosity >= 1:
             self.log_message(msg)
-            #self.out.write(msg + "\n")
-
+        
     def debug(self,msg):
         "Display message if verbosity is very high."
         if self._verbosity >= 2:
@@ -118,7 +119,7 @@ class Console:
     def confirm(self,prompt,default="y",allowed="yn",ignoreCase=True):
         
         """Ask user a yes/no question and return only when she has
-        given her answer.
+        given her answer. returns True or False.
         
         """
         if self._batch:
@@ -144,7 +145,7 @@ class Console:
                ignoreCase=True):
         
         """Ask user a question and return only when she has
-        given her answer.
+        given her answer. Returns the letter answered by user.
         
         """
         if default is None:
@@ -256,3 +257,7 @@ isInteractive = _syscon.isInteractive
 set = _syscon.set
 getOptionParser = _syscon.getOptionParser
 
+def parse_args(argv):
+    p = _syscon.getOptionParser()
+    return p.parse_args(argv)
+    
