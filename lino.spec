@@ -1,6 +1,24 @@
-# $Id: lino.spec,v 1.6 2003/12/13 13:30:38 lsaffre Exp $
+## Copyright Luc Saffre 2003-2004.
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 # (python-mode)
-# Note: [C-x C-e : eval elisp expression before cursor]
+# Press [C-x C-e] to eval elisp expression before cursor
+
 import os
 
 import shutil
@@ -70,12 +88,12 @@ def build(name):
 						 upx=0,
 						 name=distDir)
 
-#os.chdir(os.path.join('src','lino','timtools'))
-os.chdir('scripts')
+os.chdir(os.path.join('src','lino','scripts'))
+#os.chdir('scripts')
 
 #targets = ['pds2pdf','prn2pdf','publish','sendmail']
 #targets = ['pds2pdf','prn2pdf','openmail']
-targets = ['pds2pdf','prn2pdf','rsync']
+targets = ['pds2pdf','prn2pdf','rsync', 'prnprint']
 for t in targets:
 	build(t) 
 	# confirm("Did the Build succeed?") or raise UserAbort
