@@ -15,8 +15,8 @@ class BasePlugin(adamo.SchemaPlugin):
 		schema.addTable( babel.Languages("LANGS","Languages"))
 		schema.addTable( addrbook.Users( name="USERS",
 													label="Users" ))
-		schema.addForm(addrbook.LoginForm(name="login"))
-		schema.addForm(addrbook.MainForm(name="main"))
+		schema.addForm(addrbook.LoginForm)
+		schema.addForm(addrbook.MainForm)
 
 
 class WebPlugin(adamo.SchemaPlugin):
@@ -127,9 +127,9 @@ class SprlSchema(adamo.Schema):
 		return db.tables.PAGES.findone(match="index")
 
 	def onBeginSession(self,sess):
-		if sess.forms.login.showModal():
-			if sess.onLogin():
-				return sess.forms.main.show()
+		if not sess.hasAuth():
+			sess.showForm("login",modal=True)
+		sess.showForm("main")
 		
 ## 	def onStartUI(self,sess):
 ## 		sess.openForm('login',uid="luc")

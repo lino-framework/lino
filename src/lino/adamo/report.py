@@ -18,12 +18,20 @@ class Report(Datasource,Describable):
 	#columnClass = ReportColumn
 
 	def __init__(self,
-					 session, store, clist=None,
+					 session, store,
+					 clist=None,
 					 name=None,
 					 label=None,
 					 doc=None,
 					 **kw):
+		#if clist is None:
+		#	clist = ReportColumnList(self,store._db)
+			# cannot use store._peekQuery because this is not a
+			# ReportColumnList...
+			
 		Datasource.__init__(self,session,store,clist,**kw)
+		if label is None:
+			label = self._table.getLabel()
 		Describable.__init__(self,name,label,doc)
 
 		self.config(**kw)
@@ -64,6 +72,20 @@ class Report(Datasource,Describable):
 		"""note: pageNum can be None even if pageLen isn't.  This will
 		default to either 1 OR lastPage with a future option
 		"fromBottom" """
+
+
+		if self.pageLen is None:
+			self.startOffset = 0
+		else:
+			if self.pageNum is None:
+				self.pageNum=1
+			elif self.pageNum < 0:
+				self.pageNum = self.lastPage + self.pageNum - 1
+			elif self.pageNum > self.lastPage:
+				raise "pageNum > lastPage",self.lastPage
+			self.startOffset = self.pageLen * (self.pageNum-1)
+		
+		
 		
 	def apply_GET(self,**kw):
 		#rptParams = {}
@@ -87,6 +109,18 @@ class Report(Datasource,Describable):
 			p['pl'] = self.pageLen
 		return p
 		
+## 	def report(self,columnNames=None,**kw):
+## 		# overrides Datasource.report() because we can reuse self._clist
+		
+## 		#return self.child(Report,columnNames=columnNames,**kw)
+## 		self.setdefaults(kw)
+## 		from report import Report
+## 		return Report( self._session,
+## 							self._store,
+## 							self._clist,
+## 							columnNames=columnNames,
+## 							**kw)
+
 
 	def setdefaults(self,kw):
 		kw.setdefault('columnWidths',self.columnWidths)
@@ -97,6 +131,7 @@ class Report(Datasource,Describable):
 
 	def createColumnList(self,columnNames):
  		# overrides Datasource.createColumnList
+		print columnNames
 		return ReportColumnList(self._store,
 										self._session,
 										columnNames)
@@ -109,17 +144,12 @@ class Report(Datasource,Describable):
 		modify limit and offset to contain self.pageNum and self.pageLen
 		
 		"""
-		assert limit is None # untested case...
-		assert offset is None # untested case...
-		if self.pageLen is not None:
+		if offset is None:
+			offset = self.startOffset
+		else:
+			offset += self.startOffset
+		if limit is None:
 			limit = self.pageLen
-			if self.pageNum is None:
-				self.pageNum=1
-			elif self.pageNum < 0:
-				self.pageNum = self.lastPage + self.pageNum - 1
-			elif self.pageNum > self.lastPage:
-				raise "pageNum > lastPage",self.lastPage
-			offset = self.pageLen * (self.pageNum-1)
 		
 		return self._connection.executeSelect(self, limit=limit,
 														  offset=offset, **kw )

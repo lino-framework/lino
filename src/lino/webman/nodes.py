@@ -84,7 +84,6 @@ class Node:
 		self.title = None
 		self.abstract = None
 		self.name = name # os.path.dirname(self.__module__.__file__)
-		#self.siteMap = None
 
 	def setTitle(self,title):
 		self.title = title
@@ -119,21 +118,22 @@ class Node:
 			p = p.parent
 		return s
 
-	def getOutputFile(self):
-		# this must return the filename
-		# relative to self.getModule().getLocalPath()
-		# raise NotImplementedError
-		return self.name + ".html"
+	def getOutputFiles(self):
+		return [
+			os.path.join(self.getModule().getLocalPath(), self.getURL())]
+			
+## 	def getOutputFile(self):
+## 		"""this must return the filename
+## 		relative to self.getModule().getLocalPath()"""
+## 		return self.name + ".html"
 	
 	def getURL(self,fromNode=None):
+		nodeFile = self.name + ".html"
 		if fromNode is None or fromNode.getModule() == self.getModule():
-			return self.getOutputFile()
+			# URL for a link from same directory
+			return nodeFile
 		fromBase = fromNode.getModule().getLocalPath().split(os.sep)
 		toBase = self.getModule().getLocalPath().split(os.sep)
-## 		print "%s -> %s : %s, %s" % ( str(fromNode),
-## 												str(self),
-## 												str(fromBase), str(toBase))
-			
 		while True:
 			if len(fromBase) == 0: break
 			if len(toBase) == 0: break
@@ -147,7 +147,7 @@ class Node:
 			url += "../"
 		for elem in toBase:
 			url += elem + "/"
-		return url + self.getOutputFile()
+		return url + nodeFile
 
 	
 class WebModule(Node):
@@ -159,6 +159,7 @@ class WebModule(Node):
 		"""
 		self.filerefBase = None
 		self.filerefURL = None
+		self.modified = None
 
 		
 		Node.__init__(self,name,parent)
@@ -182,10 +183,13 @@ class WebModule(Node):
 		for fn in os.listdir(self.localPath):
 			(name,ext) = os.path.splitext(fn)
 			if len(name) and name[0] != "_":
+				pfn = os.path.join(self.localPath,fn)
+				self.modified = max( self.modified, os.path.getmtime(pfn))
 				if name != self.name:
-					pfn = os.path.join(self.localPath,fn)
 					if ext == ".txt":
-						self.addPage(name,TxtWebPage(self,name))
+						self.addNode(name,TxtWebPage(self,name))
+					elif ext == ".jpg":
+						self.addNode(name,ImgWebPage(self,name))
 					elif os.path.isdir(pfn):
 						if name != fn:
 							raise WebManException("module names cannot contain '.'")
@@ -193,7 +197,7 @@ class WebModule(Node):
 
 		#self._q_index = self
 		self.title = self.name
-		
+
 
 	def init(self):
 
@@ -294,16 +298,16 @@ class WebModule(Node):
 	def getPages(self):
 		return self._nodes.values()
 
-	def addPage(self,name,page):
+	def addNode(self,name,page):
 		if self._nodes.has_key(name):
-			raise WebManException('Page %s already defined' % name)
+			raise WebManException('Duplicate definition for node %s' % name)
 		self._nodes[name] = page
 		self._q_exports.append(name)
 		
 	def addModule(self,name,srcdir):
 		# assert not self._nodes.has_key(name)
 		m = WebModule(self.site,srcdir,parent=self)
-		self.addPage(name,m)
+		self.addNode(name,m)
 		#self._pages[name] = m
 		
 		
@@ -340,16 +344,27 @@ class TxtWebPage(Node):
 	def getSourcePath(self):
 		return os.path.join(self.parent.getLocalPath(), self.name)+'.txt'
 	
-## 	def getURL(self):
-## 		(url,ext) = os.path.splitext(self.getSourcePath())
-## 		return url + ".html"
 		
 	def getModule(self):
 		return self.parent
 	
-	#def getOutputFile(self):
-	#	return self.name + ".html"
 	
+class ImgWebPage(Node):
+	def __init__(self,mod,name,title=None):
+		Node.__init__(self,name,parent=mod)
+		if title is None:
+			title = name
+		self.title = title
+
+	def getSourcePath(self):
+		return os.path.join(self.parent.getLocalPath(), self.name)+'.jpg'
+	
+		
+	def getModule(self):
+		return self.parent
+	
+	
+	def render_html(self,request):
 	
 class OopsPage(TxtWebPage):
 

@@ -12,10 +12,10 @@ import sys
 from table import Table, LinkTable,\
 	  MemoTable, TreeTable, MemoTreeTable,\
 	  BabelTable
-from forms import FormTemplate
-from widgets import Menu, Command
+from forms import Form
+#from widgets import Menu, Command
 from datatypes import *
-from rowattrs import Field, Pointer, BabelField, Vurt, Match#, Button
+from rowattrs import Field, Pointer, BabelField, Vurt #, Match#, Button
 from schema import Schema, SchemaPlugin
 #from session import ConsoleSession
 #from session import Application
@@ -68,10 +68,12 @@ def beginQuickSession(schema,
 __all__ = ['Table','LinkTable',
 			  'TreeTable', 'MemoTable', 'MemoTreeTable',
 			  'BabelTable',
-			  'Field','Pointer','BabelField','Vurt','Match',#'Button',
+			  'Field','Pointer','BabelField','Vurt',
+			  #'Match',#'Button',
 			  'DataVeto','InvalidRequestError',
 			  'DataRow',
-			  'FormTemplate','Menu','Command',
+			  'Form',
+			  #'Menu','Command',
 			  'Schema','SchemaPlugin',
 			  #'ConsoleSession',
 			  #'Application',

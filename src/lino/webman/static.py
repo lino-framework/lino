@@ -1,8 +1,7 @@
 import os,sys
 
 from docutils import core
-from lino.webman.nodes import Site, WebModule, TxtWebPage
-from lino.misc.console import confirm
+from nodes import Site, WebModule, TxtWebPage
 
 ## DEFAULTS = {'input_encoding': 'latin-1',
 ## 				'output_encoding': 'latin-1',
@@ -14,32 +13,30 @@ from lino.misc.console import confirm
 ## 				}
 
 
-def _wmm2html(node,force=False):
+def node2html(node,force=False):
+	for outfile in node.getOutputFiles():
+		#outfile = os.path.join(node.getModule().getLocalPath(),\
+		#							  node.getOutputFile())
+		outdir,leaf = os.path.split(outfile)
+		if not os.path.exists(outdir):
+			os.makedirs(outdir)
 
-	#outfile = os.path.join(outdir,node.name)+'.html'
-	outfile = os.path.join(node.getModule().getLocalPath(),\
-								  node.getOutputFile())
-	outdir,leaf = os.path.split(outfile)
-	if not os.path.exists(outdir):
-		os.makedirs(outdir)
-		
-	srcfile = node.getSourcePath()
-	updodate = False
-	if not force:
-		try:
-			if os.path.getmtime(outfile) > os.path.getmtime(srcfile):
-				updodate = True
-		except os.error:
-			pass
-	if updodate:
-		print "%s : up to date" % outfile
-	else:
-		print "Writing %s..." % outfile
-		html = node.render_html(request=None)
-		open(outfile,"w").write(html)
+		updodate = False
+		if not force:
+			try:
+				if os.path.getmtime(outfile) > node.modified:
+					updodate = True
+			except os.error:
+				pass
+		if updodate:
+			print "%s : up to date" % outfile
+		else:
+			print "Writing %s..." % outfile
+			html = node.render_html(request=None)
+			open(outfile,"w").write(html)
 
 	for (name,childNode) in node.getChildren().items():
-		_wmm2html(childNode,force) #os.path.join(outdir,name),force)
+		node2html(childNode,force) 
 
 
 def wmm2html(srcdir,outdir=None,force=False,showOutput=True):
@@ -53,7 +50,7 @@ def wmm2html(srcdir,outdir=None,force=False,showOutput=True):
 
 	site.init()
 	
-	_wmm2html(site.root,force)
+	node2html(site.root,force)
 
 	if showOutput:
 		import webbrowser

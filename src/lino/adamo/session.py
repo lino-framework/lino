@@ -9,6 +9,7 @@ from datasource import Datasource, DataCell
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from center import center
+#import center
 
 
 class BabelLang:
@@ -47,6 +48,9 @@ class Session(Context):
 		self.forms = None
 		#center().addSession(self)
 		self.use(**kw)
+
+	def hasAuth(self,*args,**kw):
+		return True
 			
 		
 	def use(self,db=None,langs=None):
@@ -75,6 +79,11 @@ class Session(Context):
 		
 		#self._formStack = []
 
+## 	def spawn(self,**kw):
+## 		kw.setdefault('db',self.db)
+## 		kw.setdefault('langs',self.getLangs())
+## 		return center.center().createSession(**kw)
+
 	def commit(self):
 		return self.db.commit()
 
@@ -96,6 +105,9 @@ class Session(Context):
 
 	def getBabelLangs(self):
 		return self._babelLangs
+
+	def getLangs(self):
+		return " ".join([lng.id for lng in self._babelLangs])
 	
 	def openTable(self,name):
 		try:
@@ -108,14 +120,15 @@ class Session(Context):
 	def getDatasource(self,name):
 		return getattr(self.tables,name)
 
-## 	def progress(self,msg):
-## 		raise NotImplementedError
-		
-## 	def errorMessage(self,msg):
-## 		raise NotImplementedError
+	def showForm(self,formName,modal=False,**kw):
+		raise NotImplementedError
 
-## 	def notifyMessage(self,msg):
-## 		raise NotImplementedError
+	def showReport(self,ds,showTitle=True,**kw):
+		raise NotImplementedError
+
+	def end(self):
+		self.use()
+		
 
 	def installto(self,d):
 		"""
@@ -132,71 +145,21 @@ class Session(Context):
 		#   ds = Datasource(self,store)
 		#   self.tables.define(name,ds)
 		
-## 	def setContext(self,context):
-## 		if self.context is context:
-## 			return
-## 		if self.context is not None:
-## 			self.endContext()
-## 		self.beginContext(context)
-			
-## 	def beginContext(self,context):
-## 		#assert len(self._formStack) == 0
-## 		assert self.context is None
-## 		self.context = context
-## 		self.schema = context._db.schema # shortcut
-## 		self.db = context._db # shortcut
-## 		#self.tables = context.tables # shortcut
-## 		self.tables = AttrDict(factory=self.openTable)
-## 		#self.forms = AttrDict()
-## 		#self.connection = context._db._connection
-
-## 		for name in ('commit', 'shutdown', 'setBabelLangs'):
-## 			setattr(self,name,getattr(context,name))
-			
-## 		#for name in ('startDump', 'stopDump'):
-## 		#	setattr(self,name,getattr(context._db._connection,name))
-## 		# only QuickDatabase knows her connection! 
-		
-## 		self._formStack = []
-## 		#self.openForm('login')
-## 		#self.notifyMessage("beginContext()")
-		
-## 	def getContext(self):
-## 		return self.context
 	
 	def onBeginSession(self):
 		self.schema.onBeginSession(self)
 		
 	
-## 	def endContext(self):
-## 		if self._user is not None:
-## 			self.logout()
-## 		self.context = None
-## 		self.tables = None
-## 		self.schema = None
-## 		self.db = None
-## 		self._formStack = []
-	
-	def openForm(self,formName,**values):
+	def openForm(self,formName,*args,**values):
 		#print "openForm()" + formName
-		tpl = getattr(self.schema.forms,formName)
-		frm = tpl.open(self,**values)
-		#win = self._windowFactory(frm)
-		#self.forms.define(formName,frm)
-		#self._formStack.append(win)
+		cl = getattr(self.schema.forms,formName)
+		frm = cl(self,*args,**values)
+		#frm.init()
 		return frm
-
-	def closeForm(self,formName):
-		raise NotImplementedError
-		#del self.forms._values[formName]
-
+	
 	def onLogin(self):
 		return self.db.schema.onLogin(self)
 	
-## 	def getCurrentForm(self):
-## 		if len(self._formStack) > 0:
-## 			return self._formStack[-1]
-
 	def getUser(self):
 		return self._user
 
@@ -214,7 +177,7 @@ class Session(Context):
 		#for q in self.tables:
  		for name in self.db._stores.keys():
 			q = getattr(self.tables,name)
-			print "%s : %d rows" % (q._table.getTableName(), len(q))
+			self.info("%s : %d rows" % (q._table.getTableName(), len(q)))
 			l = len(q)
 			for row in q:
 				#row = q.atoms2instance(atomicRow)

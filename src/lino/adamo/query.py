@@ -24,6 +24,7 @@ from rowattrs import Detail, Pointer, NoSuchField
 class BaseColumnList: 
 	
 	def __init__(self,context):
+		# a context is either a session or a database
 		self._columns = []
 		self._joins = []
 		self._atoms = []

@@ -23,16 +23,18 @@ class Describable:
 ##  				description = parent.getDescription()
 		if name is None:
 			name = self.__class__.__name__
-		self._name = name
+		self.__dict__['_name'] = name
 			
 		if label is None:
 			label = "Unlabeled %s instance" % self.__class__.__name__
-		self._label = label
+		self.__dict__['_label'] = label
 		
  		if doc is None:
 			#	doc = "(No docstring available for " + label+")"
 			doc = self.__doc__
-		self._doc = doc
+		else:
+			assert type(doc)==type(""),repr(doc)
+		self.__dict__['_doc'] = doc
 			
 ## 		self._parent = parent
 		
@@ -46,7 +48,7 @@ class Describable:
 ## 		return self._parent
 
 	def setLabel(self,label):
-		self._label = label
+		self.__dict__['_label'] = label
 
 	def getDoc(self):
 		return self._doc

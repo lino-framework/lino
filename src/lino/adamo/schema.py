@@ -8,7 +8,8 @@
 import types
 
 #from widgets import Form
-from forms import FormTemplate, TableForm
+#from forms import FormTemplate, TableForm
+from forms import Form
 #from context import Context #, Session
 from database import Database
 from table import Table, LinkTable, SchemaComponent
@@ -89,17 +90,24 @@ class Schema:
 		self._plugins.append(plugin)
 		name = plugin.getName()
 		self.plugins.define(name,plugin)
-		
-	def addForm(self,form):
-		assert isinstance(form,FormTemplate), \
-				 repr(form)+" is not a FormTemplate"
+
+
+	def addForm(self,cl):
 		assert not self._startupDone,\
 				 "Too late to declare new forms in " + repr(self)
-		form.registerInSchema(self,len(self.forms))
-		name = form.getFormName()
-		self.forms.define(name,form)
-		#assert not self._forms.has_key(name)
-		#self._forms[name] = form
+		assert issubclass(cl,Form)
+		self.forms.define(cl.name,cl)
+		
+## 	def addForm(self,form):
+## 		assert isinstance(form,FormTemplate), \
+## 				 repr(form)+" is not a FormTemplate"
+## 		assert not self._startupDone,\
+## 				 "Too late to declare new forms in " + repr(self)
+## 		form.registerInSchema(self,len(self.forms))
+## 		name = form.getFormName()
+## 		self.forms.define(name,form)
+## 		#assert not self._forms.has_key(name)
+## 		#self._forms[name] = form
 		
 
 	def startup(self):
@@ -152,16 +160,16 @@ class Schema:
 			table.init4()
 
 			
-		for table in self._tables:
-			self.addForm(TableForm(table))
+		#for table in self._tables:
+		#	self.addForm(TableForm(table))
 
 			
-		# initialize forms...
+## 		# initialize forms...
 
-		info("  Initializing %d forms..." % len(self.forms))
+## 		info("  Initializing %d forms..." % len(self.forms))
 
-		for form in self.forms.values():
-			form.init1()
+## 		for form in self.forms.values():
+## 			form.init1()
 			
 		# self.defineMenus(self,ui)
 		

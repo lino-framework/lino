@@ -79,6 +79,8 @@ class ConsoleSession(Session):
 		return self.console.info(*a)
 	def debug(self,*a):
 		return self.console.debug(*a)
+	def error(self,*a):
+		return self.console.error(*a)
 
 	def startDump(self,**kw):
 		assert self._dumping is None
@@ -89,17 +91,18 @@ class ConsoleSession(Session):
 		assert self._dumping is not None, "dumping was not started"
 		s = self.console.out.getvalue()
 		self.console = self._dumping
+		self._dumping = None
 		return s
 
-## 	def errorMessage(self,msg):
-## 		return self.console.notify(msg)
-
-## 	def notifyMessage(self,msg):
-## 		return self.console.notify(msg)
+	def showForm(self,formName,modal=False,**kw):
+		frm = self.openForm(formName,**kw)
+		wr = self.console.out.write
+		wr(frm.getLabel()+"\n")
+		wr("="*len(frm.getLabel())+"\n")
+		for cell in frm:
+			wr(cell.getLabel() + ":" + cell.format())
+			wr("\n")
 		
-## 	def progress(self,msg):
-## 		return self.console.progress(msg)
-
 	def showReport(self,ds,showTitle=True,**kw):
 		wr = self.console.out.write
 		#if len(kw):

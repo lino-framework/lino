@@ -4,7 +4,8 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
-from components import OwnedThing
+#from components import OwnedThing
+from lino.misc.descr import Describable
 
 
 ## class WindowComponent(Describable):
@@ -40,29 +41,48 @@ class Action:
 		f = self.method
 		return f(*args,**self.keywords)
 
+class Command(Describable,Action):
+	def __init__(self,label,method,*args,**kw):
+		#assert type(label) == type(""),"%s not a string" % repr(label)
+		Describable.__init__(self,None,label)
+		Action.__init__(self,method,*args,**kw)
 
 
-class Menu(OwnedThing):
+
+
+class Menu(Describable):
 	def __init__(self,label,doc=None):
-		OwnedThing.__init__(self,label,doc)
+		Describable.__init__(self,None,label,doc)
 		self._items = []
 		
 		
 	def getItems(self):
 		return self._items
 
-	def onOwnerInit1(self,owner,name):
-		for (name,attr) in self.__dict__.items():
-			if isinstance(attr,Command):
-				attr.setOwner(self,name)
-				self._items.append(attr)
+## 	def onOwnerInit1(self,owner,name):
+## 		for (name,attr) in self.__dict__.items():
+## 			if isinstance(attr,Command):
+## 				attr.setOwner(self,name)
+## 				self._items.append(attr)
+
+	def addCommand(self,label,meth,*args,**kw):
+ 		assert type(label) == type(""),\
+ 				 "%s : not a string" % repr(label)
+## 		if label is None:
+## 			for a in args:
+## 				if hasattr(a,"getLabel"):
+## 					label = a.getLabel()
+## 					assert type(label) == type(""),\
+## 							 "%s : not a string" % repr(label)
+## 					break
+		#if label is None:
+		#	label = meth.__name__
+## 		if label is None:
+## 			label = str(self)
+		cmd = Command(label,meth, *args,**kw)
+		self._items.append(cmd)
+		return cmd
 	
-
-class Command(OwnedThing,Action):
-	def __init__(self,method,label=None,doc=None,*args,**kw):
-		OwnedThing.__init__(self,label,doc)
-		Action.__init__(self,method,*args,**kw)
-
 
 
 

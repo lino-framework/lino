@@ -1,9 +1,8 @@
 #----------------------------------------------------------------------
 # main.py
 #				
-#				
 # Created:	 2003-10-26
-# Copyright: (c) 2003 Luc Saffre
+# Copyright: (c) 2003-2004 Luc Saffre
 # License:	 GPL
 #----------------------------------------------------------------------
 
@@ -12,6 +11,9 @@ import os
 
 from lino.adamo.widgets import Action
 from lino.adamo.datasource import DataCell
+from lino.adamo import center
+
+from gridframe import RptFrame
 
 class EventCaller(Action):
 	"ignores the event"
@@ -53,7 +55,8 @@ class FormFrame(wx.Frame):
 		#self.ui = ui
 		title = form.getLabel()
 		#title = self.session.db.getLabel()
-		parent = form.getSession().getCurrentForm()
+		#parent = form.getSession().getCurrentForm()
+		parent = None
 		wx.Frame.__init__(self, parent, -1, title,
 								size = (400, 300),
 								style=wx.DEFAULT_FRAME_STYLE|
@@ -153,6 +156,10 @@ class FormFrame(wx.Frame):
 			doc = mi.getDoc()
 			if doc is None:
 				doc=""
+			assert type(doc) == type(""),\
+					 repr(mi)
+			assert type(mi.getLabel()) == type(""),\
+					 repr(mi)
 			wxMenu.Append(winId,mi.getLabel(),doc)
 			wx.EVT_MENU(self, winId, EventCaller(self.form,
 															 mi.execute))
@@ -180,32 +187,42 @@ class FormFrame(wx.Frame):
 		evt.Skip()
 
 
-from lino.adamo.session import AdamoSession, Application
+from lino.adamo.session import Session
 
-class WxSession(AdamoSession):
+class WxSession(Session):
 	
 	_dataCellFactory = wxDataCell
 	
-	_windowFactory = FormFrame
+	def error(self,*a):
+		return center.center().console.error(*a)
+	def debug(self,*a):
+		return center.center().console.debug(*a)
+	def info(self,*a):
+		return center.center().console.info(*a)
+
+	def showForm(self,formName,modal=False,**kw):
+		frm = self.openForm(formName,**kw)
+		frame = FormFrame(frm)
+## 		if modal:
+## 			frame.showModal()
+## 		else:
+## 			frame.show()
+
+	def showReport(self,ds,showTitle=True,**kw):
+		frame = RptFrame(None,-1,ds)
+		frame.Show()
 	
-	def __init__(self,wxapp,adamoApp):
-		AdamoSession.__init__(self,adamoApp)
-
-	def errorMessage(self,msg):
-		return self.app.console.notify(msg)
-
-	def notifyMessage(self,msg):
-		return self.app.console.notify(msg)
-		
-	def progress(self,msg):
-		return self.app.console.progress(msg)
 
 
 class WxApp(wx.App):
 
-	def __init__(self,adamoApp):
+	def __init__(self,rootSession):
+		#center.center().setSessionFactory(WxSession)
+		#self.session = rootSession.spawn()
+		#rootSession.end()
+		self.session = WxSession(db=rootSession.db,
+										 langs=rootSession.getLangs())
 		wx.App.__init__(self,0)
-		self.session = WxSession(self,adamoApp)
 
 
 	def OnInit(self):

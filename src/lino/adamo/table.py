@@ -95,11 +95,11 @@ class Table(FieldContainer,SchemaComponent,Describable):
 	def init(self):
 		raise NotImplementedError
 
-	def cmd_show(self):
-		return Command(self.show,label=self.getLabel())
+## 	def cmd_show(self):
+## 		return Command(self.show,label=self.getLabel())
 
-	def show(self,sess):
-		sess.openForm(self.getTableName())
+## 	def show(self,sess):
+## 		sess.openForm(self.getTableName())
 
 	#def getLabel(self):
 	#	return self.getTableName()

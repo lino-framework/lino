@@ -18,11 +18,14 @@ class MyDataTable(wx.grid.PyGridTableBase):
 	def __init__(self, report):
 		wx.grid.PyGridTableBase.__init__(self)
 		self.report = report
-		self.columns = report.getColumns()
+		self.columns = report.getVisibleColumns()
 		self.loadData()
 
 	def loadData(self):
-		self.rows = [row for row in self.report]
+		self.rows = [ [cell.format()
+							for cell in row]
+						  for row in self.report]
+		#self.rows = [row for row in self.report]
 
 	def GetNumberRows(self): return len(self.rows) + 1
 	def GetNumberCols(self): return len(self.columns)
@@ -59,15 +62,19 @@ class MyDataTable(wx.grid.PyGridTableBase):
 		"required"
 		#print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
 		try:
-			row = self.rows[rowIndex]
-			self.report.setCellValue(rowIndex, colIndex, value)
-			row[colIndex] = value
+			row = self.report[rowIndex]
+			cell = row[colIndex]
+			#row = self.rows[rowIndex]
+			cell.parse(value)
+			#row.setCellValue(colIndex, value)
+			#row[colIndex] = value
+			self.rows[rowIndex][colIndex] = cell.format()
 		except IndexError:
 			row = [None] * len(self.columns)
 			raise "todo: append row"
 		
 	def GetTypeName(self,row,col):
-		rowAttr = self.columns[col].queryCol.rowAttr
+		rowAttr = self.columns[col].rowAttr
 		if isinstance(rowAttr,Pointer):
 			#print "Pointer"
 			return pointerDataType
@@ -129,22 +136,22 @@ class MyDataTable(wx.grid.PyGridTableBase):
 
 	def setOrderBy(self,colIndexes):
 		cols = [self.columns[i].queryCol for i in colIndexes]
-		self.report.query.setOrderByColumns(cols)
+		self.report.setOrderByColumns(cols)
 		self.loadData()
 
 class PointerRenderer(wx.grid.PyGridCellRenderer):
-	# copied and adapted from wxoo.table.baseviewer.BaseViewer
-	BACKGROUND_SELECTED = wx.SystemSettings_GetColour(
-		wx.SYS_COLOUR_HIGHLIGHT )
-	TEXT_SELECTED = wx.SystemSettings_GetColour(
-		wx.SYS_COLOUR_HIGHLIGHTTEXT )
-	BACKGROUND = wx.SystemSettings_GetColour(
-		wx.SYS_COLOUR_WINDOW  )
-	TEXT = wx.SystemSettings_GetColour(
-		wx.SYS_COLOUR_WINDOWTEXT  )
-	
 	def __init__(self):
 		#print "__init__"
+		# copied and adapted from wxoo.table.baseviewer.BaseViewer
+		self.BACKGROUND_SELECTED = wx.SystemSettings_GetColour(
+			wx.SYS_COLOUR_HIGHLIGHT )
+		self.TEXT_SELECTED = wx.SystemSettings_GetColour(
+			wx.SYS_COLOUR_HIGHLIGHTTEXT )
+		self.BACKGROUND = wx.SystemSettings_GetColour(
+			wx.SYS_COLOUR_WINDOW  )
+		self.TEXT = wx.SystemSettings_GetColour(
+			wx.SYS_COLOUR_WINDOWTEXT  )
+		# end copy
 		wx.grid.PyGridCellRenderer.__init__(self)
 
 	def GetValueAsText( self, grid, row, col ):
@@ -260,7 +267,7 @@ class RptGrid(wx.grid.Grid):
 		self.RegisterDataType(pointerDataType,
 									 PointerRenderer(),
 									 wx.grid.GridCellTextEditor())
-		report.setupReport()
+		#report.setupReport()
 		self.table = MyDataTable(report)
 		self.SetTable(self.table,True)
 ##		for col in table.columns:
@@ -370,18 +377,18 @@ class RptGrid(wx.grid.Grid):
 
 		
 		
-## class RptFrame(wx.Frame):
-## 	def __init__(self, parent, id, report):
-## 		title = report.getLabel()
-## 		# print title
-## 		#print parent, id, title
-## 		wx.Frame.__init__(self, parent, id, title)
-## ## 			size=wx.Size(400,200),
-## ## 			style = wx.DEFAULT_FRAME_STYLE | wx.WANTS_CHARS |
-## ## 			wx.NO_FULL_REPAINT_ON_RESIZE)
+class RptFrame(wx.Frame):
+	def __init__(self, parent, id, report):
+		title = report.getLabel()
+		# print title
+		#print parent, id, title
+		wx.Frame.__init__(self, parent, id, title)
+## 			size=wx.Size(400,200),
+## 			style = wx.DEFAULT_FRAME_STYLE | wx.WANTS_CHARS |
+## 			wx.NO_FULL_REPAINT_ON_RESIZE)
 	
 		
-##   		grid = RptGrid(self,report)
+  		grid = RptGrid(self,report)
 		
 	
 

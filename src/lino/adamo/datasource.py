@@ -73,6 +73,8 @@ class Datasource:
 				  samples=None,
 				  label=None,
 				  **kw):
+		if label is not None:
+			assert type(label) == type(""),"%s not a string" % repr(label)
 		self._label = label
 		if columnNames is not None:
 			self._clist = self.createColumnList(columnNames)
@@ -162,30 +164,47 @@ class Datasource:
 ## 		for name in names:
 ## 			del self._samples[name]
 	
+	#def __getattr__(self,name):
+	def field(self,name):
+		return self._table._rowAttrs[name]
 
 	
 	def query(self,columnNames=None,**kw):
-		return self.child(Datasource,columnNames=columnNames,**kw)
+		#return self.child(Datasource,columnNames=columnNames,**kw)
+		self.setdefaults(kw)
+		return Datasource( self._session,
+								 self._store,
+								 self._clist,
+								 columnNames=columnNames,
+								 **kw)
 	
 	def report(self,columnNames=None,**kw):
-		from report import Report
-		return self.child(Report,columnNames=columnNames,**kw)
-
-		
-
-	def child(self,cl,**kw):
-		
-		"""creates a child (a detached copy) of this.  Modifying the
-		child won't affect the parent.  columnNames can optionally be
-		specified as first (non-keyword) argument.  if arguments are
-		given, then they override the corresponding value in the parent.
-		
-		"""
+		#return self.child(Report,columnNames=columnNames,**kw)
 		self.setdefaults(kw)
-		return cl( self._session,
-					  self._store,
-					  self._clist,
-					  **kw)
+		if columnNames is None:
+			columnNames = " ".join(self._table.getAttrList())
+		from report import Report
+		return Report( self._session,
+							self._store,
+							self._clist,
+							columnNames=columnNames,
+							**kw)
+
+		
+
+## 	def child(self,cl,**kw):
+		
+## 		"""creates a child (a detached copy) of this.  Modifying the
+## 		child won't affect the parent.  columnNames can optionally be
+## 		specified as first (non-keyword) argument.  if arguments are
+## 		given, then they override the corresponding value in the parent.
+		
+## 		"""
+## 		self.setdefaults(kw)
+## 		return cl( self._session,
+## 					  self._store,
+## 					  self._clist,
+## 					  **kw)
 
 	def setdefaults(self,kw):
 		kw.setdefault('orderBy',self._orderBy)
@@ -249,6 +268,7 @@ class Datasource:
 				lbl += ")"
 			return lbl
 		if callable(self._label):
+			raise "not yet tested"
 			return self._label(self)
 		return self._label
 			
@@ -608,6 +628,9 @@ class DataRow:
 	
 	def __setattr__(self,name,value):
       #def setAtomicValue(self,name,value)
+		if self.__dict__.has_key(name):
+			self.__dict__[name] = value
+			return
 		if not self.isLocked():
 			raise InvalidRequestError("row is not locked")
 		#assert self._locked
@@ -638,7 +661,12 @@ class DataRow:
 
 	def __getitem__(self,i):
 		col = self._clist.visibleColumns[i]
-		return col.getCellValue(self)
+		return self.makeDataCell(i,col)
+		#return col.getCellValue(self)
+		
+## 	def __getitem__(self,i):
+## 		col = self._clist.visibleColumns[i]
+## 		return col.getCellValue(self)
 		
 	def __setitem__(self,i,value):
 		col = self._clist.visibleColumns[i]
@@ -970,5 +998,7 @@ class DataCell:
 		#return self.col.format(v,self.row.getSession())
 		return self.col.rowAttr.format(v) #,self.row.getSession())
 	
-
+	def parse(self,s):
+		value = self.col.rowAttr.format(s)
+		self.col.setCellValue(self.row,value)
 

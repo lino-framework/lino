@@ -82,28 +82,33 @@ class Persons(Table): #(Contact,Address):
 ## 		pass
 
 
-class MainForm(FormTemplate):
-	
-	def init(self):
-		self.master = Menu("&Master")
-		self.master.partners = self._schema.tables.PARTNERS.cmd_show()
-		self.master.orgs = self._schema.tables.ORGS.cmd_show()
-		
-		self.system = Menu("&System")
-		self.system.logout = Command(lambda sess: sess.logout,
-											  label="&Logout"
-											  )
-		
-			
 ## class MainForm(FormTemplate):
 	
-## 	def init(self,sess):
-## 		mnu = self.addMenu("&Master")
-## 		mnu.addCommand(sess.report,sess.tables.PARTNERS)
-## 		mnu.addCommand(sess.report,sess.tables.ORGS)
+## 	def init(self):
+## 		self.master = Menu("&Master")
+## 		self.master.partners = self._schema.tables.PARTNERS.cmd_show()
+## 		self.master.orgs = self._schema.tables.ORGS.cmd_show()
 		
-## 		mnu = self.addMenu("&System")
-## 		mnu.addCommand(sess.logout,label="&Logout")
+## 		self.system = Menu("&System")
+## 		self.system.logout = Command(lambda sess: sess.logout,
+## 											  label="&Logout"
+## 											  )
+		
+			
+class MainForm(Form):
+	name = "main"
+	label="User menu"
+	def init(self):
+		sess = self.getSession()
+		mnu = self.addMenu("&Master")
+		mnu.addCommand(
+			"&Partners",
+			sess.showReport,
+			sess.tables.PARTNERS.report(columnNames="name firstName id"))
+		mnu.addCommand("&Organisations",sess.showReport,sess.tables.ORGS)
+		
+		mnu = self.addMenu("&System")
+		mnu.addCommand("&Logout",sess.logout)
 		
 			
 
@@ -117,44 +122,13 @@ class Users(Persons):
 	class Instance(Persons.Instance):
 		pass
 
-class LoginForm(FormTemplate):
-	
-	def init(self):
-		self.uid = Match(self._schema.tables.USERS.id)
-		self.password = Match(self._schema.tables.USERS.password)
-
-		self.setButtonNames("ok help")
-
-	class Instance(FormTemplate.Instance):
-
-		def accept_uid(self,value):
-			if value is not None:
-				if "!" in value:
-					raise DataVeto(value + " : invalid username")
-	
-		def ok(self):
-			"Log in with the supplied username and password."
-			uid = self.uid
-			pwd = self.password
-			sess = self.getSession()
-			sess.debug("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
-			
-			user = sess.tables.USERS.peek(uid)
-			if user is None:
-				return sess.errorMessage("%s  : no such user" % uid)
-			if user.password != pwd:
-				return sess.errorMessage("invalid password for "+\
-												 user.getLabel())
-			sess.login(user)
-			sess.info("Hello, "+user.getLabel())
-			return True
-			
 ## class LoginForm(FormTemplate):
 	
-## 	def init(self,sess):
-## 		self.addField("uid",sess.tables.USERS.id)
-## 		self.addField("password",sess.tables.USERS.password)
-## 		self.addButtons("ok help")
+## 	def init(self):
+## 		self.uid = Match(self._schema.tables.USERS.id)
+## 		self.password = Match(self._schema.tables.USERS.password)
+
+## 		self.setButtonNames("ok help")
 
 ## 	class Instance(FormTemplate.Instance):
 
@@ -179,6 +153,35 @@ class LoginForm(FormTemplate):
 ## 			sess.login(user)
 ## 			sess.info("Hello, "+user.getLabel())
 ## 			return True
+			
+class LoginForm(Form):
+	label="Login"
+	name = "login"
+	def init(self):
+		sess = self.getSession()
+		self.addField("uid",sess.tables.USERS.field("id"))
+		self.addField("password",sess.tables.USERS.field("password"))
+		self.setButtonNames("ok help")
+
+	def accept_uid(self,value):
+		if value is not None:
+			if "!" in value:
+				raise DataVeto(value + " : invalid username")
+
+	def ok(self):
+		"Log in with the supplied username and password."
+		uid = self.uid
+		pwd = self.password
+		sess = self.getSession()
+		sess.debug("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
+
+		user = sess.tables.USERS.peek(uid)
+		if user is None:
+			raise DataVeto("%s : no such user" % uid)
+		if user.password != pwd:
+			raise DataVeto("invalid password for "+user.getLabel())
+		sess.login(user)
+		sess.info("Hello, "+user.getLabel())
 			
 
 class Partners(Contacts,Addresses):

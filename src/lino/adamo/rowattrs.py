@@ -617,8 +617,8 @@ class Vurt(RowAttribute):
 class FieldContainer:
 	# inherited by Table and FormTemplate
 	def __init__(self):
-		self._fields = []
-		self._rowAttrs = {}
+		self.__dict__['_fields'] = []
+		self.__dict__['_rowAttrs'] = {}
 		#self._peekColumnNames = ""
 
 	def addField(self,name,fld):
@@ -626,14 +626,16 @@ class FieldContainer:
 		self._rowAttrs[name] = fld
 		#self._peekColumnNames += name + " "
 		fld.setOwner(self,name)
+		i = self.Instance
 		try:
-			meth = getattr(self.Instance,"accept_"+name)
+			meth = getattr(i,"accept_"+name)
+			#print meth
 			fld.acceptTrigger = meth
 		except AttributeError:
 			pass
 		
 		try:
-			meth = getattr(self.Instance,"after_"+name)
+			meth = getattr(i,"after_"+name)
 			fld.afterSetAttr = meth
 		except AttributeError:
 			pass
