@@ -28,76 +28,129 @@ from distutils.core import setup
 import py2exe
 
 
-from lino.ui.console import confirm
+from lino.ui import console 
 from lino.misc.rdir import rdirlist
 
 from lino import __version__
 
 VERSION = __version__
-
-## for x in __version__.split('.'):
-##     if not x.isdigit():
-##         VERSION = "current"
+DIST_ROOT = 'dist'
+#DLROOT=r'u:\htdocs\timwebs\lino\dl'
 
 
-ZIPROOT=r'u:\htdocs\timwebs\lino\dl'
+class InnoScript:
+    """inspired by py2exe/samples/extending/setup.py
+    
+    My version just takes all the files in the directory.  You must
+    just specify names of the Windows executables without any
+    directory name. All files that are not in this list will be
+    considered library files. Sub-directories are not supported.
+    
+    """
+    def __init__(self, name, dist_dir, version,
+                 windows_exe_files = []
+                 ):
+        self.dist_dir = dist_dir
+        if not self.dist_dir[-1] in "\\/":
+            self.dist_dir += "\\"
+        self.name = name
+        self.version = version
+        self.windows_exe_files = windows_exe_files
+        self.lib_files = []
+        for fn in os.listdir(self.dist_dir):
+            if fn == "Output":
+                pass
+            elif not fn in self.windows_exe_files:
+                self.lib_files.append(fn)
+                
+    def create(self, pathname=None):
+        if pathname is None:
+            pathname = self.dist_dir+"\\"+self.name+".iss"
+        self.pathname = pathname
+        ofi = self.file = open(pathname, "w")
+        print >> ofi, "; WARNING: This script has been created by py2exe. Changes to this script"
+        print >> ofi, "; will be overwritten the next time py2exe is run!"
+        print >> ofi, r"[Setup]"
+        print >> ofi, r"AppName=%s" % self.name
+        print >> ofi, r"AppVerName=%s %s" % (self.name, self.version)
+        print >> ofi, r"DefaultDirName={pf}\%s" % self.name
+        print >> ofi, r"DefaultGroupName=%s" % self.name
+        print >> ofi, r"OutputBaseFilename=%s-%s-setup" % (
+            self.name, self.version)
+        print >> ofi, r"OutputManifestFile=%s-%s-manifest.txt" % (
+            self.name, self.version)
+        
+        print >> ofi
 
+        print >> ofi, r"[Files]"
+        for path in self.windows_exe_files + self.lib_files:
+            print >> ofi, r'Source: "%s"; DestDir: "{app}\%s"; Flags: ignoreversion' % (path, os.path.dirname(path))
+        print >> ofi
+
+        print >> ofi, r"[Icons]"
+        for path in self.windows_exe_files:
+            print >> ofi, r'Name: "{group}\%s"; Filename: "{app}\%s"' % \
+                  (self.name, path)
+        print >> ofi, 'Name: "{group}\Uninstall %s"; Filename: "{uninstallexe}"' % self.name
+
+    def compile(self):
+        try:
+            import ctypes
+        except ImportError:
+            try:
+                import win32api
+            except ImportError:
+                import os
+                os.startfile(self.pathname)
+            else:
+                print "Ok, using win32api."
+                win32api.ShellExecute(0, "compile",
+                                      self.pathname,
+                                      None,
+                                      None,
+                                      0)
+        else:
+            print "Cool, you have ctypes installed."
+            res = ctypes.windll.shell32.ShellExecuteA(0, "compile",
+                                                      self.pathname,
+                                                      None,
+                                                      None,
+                                                      0)
+            if res < 32:
+                raise RuntimeError, "ShellExecute failed, error %d" % res
+
+
+
+
+## if not os.path.exists(DLROOT):
+##     raise "%s does not exist! Create it or set DLROOT!"
 
 
 
 args = sys.argv[1:]
-sys.argv[1:] = ["py2exe"]
+# sys.args will be rewritten later
 if len(args) == 0:
-    args = ['timtools', 'raceman']
+    args = ['timtools', 'raceman', 'sdist']
 
 msg = "mkdist (%s) version %s" % (' '.join(args),VERSION)
 
-if not confirm(msg):
+if not console.confirm(msg):
     sys.exit(-1)
+ 
+## distlog = file('dist.log','a')
+## distlog.write("%s started at %s...\n" % (msg, ctime()))
+## distlog.flush()
 
-
-if not os.path.exists(ZIPROOT):
-    raise "%s does not exist! Create it or set ZIPROOT!"
-
-srcZipName = r'%s\lino-%s-src.zip' % (ZIPROOT,VERSION)
-if os.path.exists(srcZipName):
-    if not confirm("Okay to remove %s?" % srcZipName):
-        distlog.write("(aborted)\n")
-        raise "Pilatus problem %s" % srcZipName
-    os.remove(srcZipName)
-    
-binZipName = r'%s\lino-%s-timtools-win32.zip' % (ZIPROOT,VERSION)
-if os.path.exists(binZipName):
-    if not confirm("Okay to remove %s?" % binZipName):
-        distlog.write("(aborted)\n")
-        raise "Pilatus problem %s" % binZipName
-    os.remove(binZipName)
-
-## if not os.path.exists(distDir):
-##     os.makedirs(distDir)
-## l = os.listdir(distDir)
-## if len(l) > 0:
-##     if confirm("Delete %d files in %s ?" % (len(l),distDir)):
-##         shutil.rmtree(distDir)
-##         os.makedirs(distDir)
-    
-    
-distlog = file('dist.log','a')
-distlog.write("%s started at %s...\n" % (msg, ctime()))
-distlog.flush()
-
-if confirm("write svn status to dist.log?"):
-    distlog.close()
-    os.system('svn stat -u >> dist.log')
-    distlog = file('dist.log','a')
-else:
-    distlog.write("(no svn status information)\n")
+## if console.confirm("write svn status to dist.log?"):
+##     distlog.close()
+##     os.system('svn stat -u >> dist.log')
+##     distlog = file('dist.log','a')
+## else:
+##     distlog.write("(no svn status information)\n")
 
 
 
 
-
-DIST_ROOT = 'dist'
 
 dll_excludes = ['cygwin1.dll',
                 'tk84.dll', 'tcl84.dll',
@@ -117,35 +170,62 @@ excludes = [ #"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
 
 if 'timtools' in args:
     
-    timtools_targets = ['pds2pdf','prn2pdf',
-                        'rsync',
-                        'prnprint', 'oogen']
+    sys.argv[1:] = ["py2exe"]
+    
+    console_targets = ['pds2pdf','prn2pdf',
+                       'rsync',
+                       'prnprint', 'oogen']
+
+    name = "timtools"
+
+    dist_dir = opj(DIST_ROOT,name)
+    
     setup(
-        name="timtools",
+        name=name,
         version=VERSION,
         description="Lino TIM tools",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
         url="http://lino.sourceforge.net/timtools.html",
         long_description="A collection of command-line tools",
-        dist_dir=opj(DIST_ROOT,"timtools"),
+        package_dir = {'': 'src'},
         console=[ opj("src","lino","scripts",t+".py")
-                  for t in timtools_targets],
+                  for t in console_targets],
         options= { "py2exe": {
-        "dist_dir" : opj(DIST_ROOT,"timtools"),
+        "compressed": 1,
+        "optimize": 2,
+        "dist_dir" : dist_dir,
         "excludes" : excludes,
         "dll_excludes" : dll_excludes,
         }}
         
         )
 
+    zipname = "%s-%s-exe.zip" % (name,VERSION)
+    zipname = opj(DIST_ROOT,zipname)
+    zf = zipfile.ZipFile(zipname,'w',zipfile.ZIP_DEFLATED)
+    l = rdirlist(dist_dir)
+    for fn in l:
+        zf.write(opj(dist_dir,fn),opj(name,fn))
+    for fn in ['COPYING.txt']:
+        zf.write(fn,opj(name,fn))
+    #zf.write(os.path.join(srcRoot,'COPYING.txt'),'COPYING.txt')
+    #zf.write(os.path.join(srcRoot,'dist.log'),'dist.log')
+    zf.close()   
+
+    
+
 if 'raceman' in args:
+    
+    sys.argv[1:] = ["py2exe"]
     
     excludes.remove('wx')
 
-    raceman_console_target = ['results']
-    raceman_windows_target = ['arrivals']
+    console_targets = ['results']
+    windows_targets = ['arrivals']
 
+    dist_dir = opj(DIST_ROOT,"raceman")
+    
     setup(
         name="raceman",
         version=VERSION,
@@ -154,56 +234,52 @@ if 'raceman' in args:
         author_email="luc.saffre@gmx.net",
         url="http://lino.sourceforge.net/raceman.html",
         long_description="""\
-    An uncomplete race manager.
-    Register participants, input arrival times,
-    generate results report.""",
+An uncomplete race manager.
+Register participants, input arrival times,
+generate results report.""",
         console=[ opj("apps","raceman",t+".py")
-                  for t in raceman_console_target],
+                  for t in console_targets],
         windows=[ opj("apps","raceman",t+".py")
-                  for t in raceman_windows_target],
+                  for t in windows_targets],
         options= { "py2exe": {
-        "dist_dir" : opj(DIST_ROOT,"raceman"),
+        "compressed": 1,
+        "optimize": 2,
+        "dist_dir" : dist_dir,
         "excludes" : excludes,
-        "dll_excludes" : dll_excludes,
+        "dll_excludes" : dll_excludes
         }}
         
         )
 
+    script = InnoScript(
+        "Raceman",
+        dist_dir,\
+        version=VERSION,
+        windows_exe_files= [ fn+".exe" for fn in windows_targets]
+        )
+    
+    script.create()
+    script.compile()
+    
+
+if 'sdist' in args:
+    sys.argv[1:] = ["sdist"]
+    
+    setup(
+        name="lino",
+        version=VERSION,
+        description="Lino Framework",
+        author="Luc Saffre",
+        author_email="luc.saffre@gmx.net",
+        url="http://lino.sourceforge.net",
+        long_description="""\
+Lino is a suite of Python packages for developing business applications for small and medium-sized organisations.
+""",
+        package_dir = {'': 'src'},
+        packages=['lino'],
+        )
 
 
-def srcfilter(fn):
-    if fn.endswith('~') : return False
-    if fn.startswith('tmp') : return False
-    root,ext = os.path.splitext(fn)
-    if len(ext) :
-        if ext.lower() in ('.pyc','.html','.zip','.pdf') :
-            return False
-    return True
-
-distlog.write("done at %s\n\n" % ctime())
-distlog.close()
-
-zf = zipfile.ZipFile(srcZipName,'w',zipfile.ZIP_DEFLATED)
-
-pruneDirs = ('.svn','_attic','CVS')
-
-for root, dirs, files in os.walk("."):
-    for pd in pruneDirs:
-        try:
-            dirs.remove(pd)
-        except ValueError:
-            pass
-    for fn in files:
-        if srcfilter(fn):
-            zf.write(opj(srcRoot,root,fn),opj(root,fn))
-            
-zf.close()   
-
-zf = zipfile.ZipFile(binZipName,'w',zipfile.ZIP_DEFLATED)
-l = rdirlist(distDir)
-for fn in l:
-    zf.write(opj(distDir,fn),fn)
-zf.write(os.path.join(srcRoot,'COPYING.txt'),'COPYING.txt')
-zf.write(os.path.join(srcRoot,'dist.log'),'dist.log')
-zf.close()   
+## distlog.write("done at %s\n\n" % ctime())
+## distlog.close()
 

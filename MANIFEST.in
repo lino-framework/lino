@@ -1,6 +1,8 @@
-global-include *.txt *.py *.spec *.pds *.BAT *.bat
+global-include *.txt *.py *.pds *.BAT *.bat
+global-exclude */.svn/*
+prune .svn
 prune dist
 prune _attic
-prune src/_attic
-prune test/_attic
+prune tests/_attic
 prune build
+
