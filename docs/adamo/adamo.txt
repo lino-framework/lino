@@ -1,0 +1,42 @@
+===========================
+Adamo : Abstract Data Model
+===========================
+
+Adamo is the data model used by Lino.
+It is a high-evel database interface.
+
+Create database-oriented applications with an extensible library of
+highly reusable schema modules.
+
+Abstract: an Adamo database can run via a Web or GUI application, via
+console interface, via agents, or via any combination of those.
+
+This document introduces the special features of
+Adamo.
+
+You may prefer to look at `Pizzeria <pizzeria.html>`_ which
+illustrates Adamo using a simple example.
+  
+
+Adamo features
+==============
+
+- develop reusable Entity/Relationship schemas in Python
+
+- define business logic and design the user interface without worrying
+  whether it is for a Web or a GUI application.
+
+- Database schemas with Adamo don't use any SQL. Any SQL is
+  automatically generated if necessary.
+
+- The concept of a table is not limited to tables in a relational
+  database: any data with tabular structure can become a table for
+  Adamo. However currently there is only an SQL implementation of
+  tables.
+
+- Adamo manages links between tables in a transparent way.
+
+- Adamo can also be considered as a "object relational mapper" since
+  you access the database rows as objects.
+
+
