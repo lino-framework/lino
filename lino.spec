@@ -39,7 +39,14 @@ for x in __version__.split('.'):
 distlog = file('dist.log','a')
 distlog.write("mkdist for version '%s' started at %s...\n" % (
   VERSION, ctime()))
-        
+distlog.flush()
+
+if confirm("write svn status to dist.log?"):
+    distlog.close()
+    os.system('svn stat -u >> dist.log')
+    distlog = file('dist.log','a')
+else:
+    distlog.write("(no svn status information available)\n")
 
 #from lino.releases import version, notes
 
@@ -56,48 +63,50 @@ srcRoot = os.getcwd() # '.' # os.path.join('src','lino')
 
 srcZipName = r'%s\lino-%s-src.zip' % (zipDir,VERSION)
 if os.path.exists(srcZipName):
-	if not confirm("Okay to remove %s?" % srcZipName):
-		raise "Pilatus problem %s" % srcZipName
-	os.remove(srcZipName)
-	
+    if not confirm("Okay to remove %s?" % srcZipName):
+        distlog.write("(aborted)\n")
+        raise "Pilatus problem %s" % srcZipName
+    os.remove(srcZipName)
+    
 binZipName = r'%s\lino-%s-timtools-win32.zip' % (zipDir,VERSION)
 if os.path.exists(binZipName):
-	if not confirm("Okay to remove %s?" % binZipName):
-		raise "Pilatus problem %s" % binZipName
-	os.remove(binZipName)
+    if not confirm("Okay to remove %s?" % binZipName):
+        distlog.write("(aborted)\n")
+        raise "Pilatus problem %s" % binZipName
+    os.remove(binZipName)
 
 if not os.path.exists(zipDir):
-	os.makedirs(zipDir)
+    os.makedirs(zipDir)
 if not os.path.exists(distDir):
-	os.makedirs(distDir)
+    os.makedirs(distDir)
 l = os.listdir(distDir)
 if len(l) > 0:
-	if confirm("Delete %d files in %s ?" % (len(l),distDir)):
-		shutil.rmtree(distDir)
-		os.makedirs(distDir)
+    if confirm("Delete %d files in %s ?" % (len(l),distDir)):
+        shutil.rmtree(distDir)
+        os.makedirs(distDir)
 
 
 def build(name):
-	a = Analysis([\
-		  opj(HOMEPATH,'support','_mountzlib.py'),
-		  opj(HOMEPATH,'support','useUnicode.py'),
-		  name + '.py'],
-		  pathex=[])
-	pyz = PYZ(a.pure)
-					 #a.scripts + [('v', '', 'OPTION')],
-	exe = EXE(pyz,
-				 a.scripts,
-				 exclude_binaries=1,
-				 name=opj(BUILDPATH,name+'.exe'),
-				 debug=0,
-				 strip=0,
-				 upx=0,
-				 console=1 )
-	coll = COLLECT( exe,
-						 a.binaries,
-						 strip=0,
-						 upx=0,
-						 name=distDir)
+    a = Analysis([\
+          opj(HOMEPATH,'support','_mountzlib.py'),
+          opj(HOMEPATH,'support','useUnicode.py'),
+          name + '.py'],
+          pathex=[])
+    pyz = PYZ(a.pure)
+                     #a.scripts + [('v', '', 'OPTION')],
+    exe = EXE(pyz,
+                 a.scripts,
+                 exclude_binaries=1,
+                 name=opj(BUILDPATH,name+'.exe'),
+                 debug=0,
+                 strip=0,
+                 upx=0,
+                 console=1 )
+    coll = COLLECT( exe,
+                         a.binaries,
+                         strip=0,
+                         upx=0,
+                         name=distDir)
 
 os.chdir(os.path.join('src','lino','scripts'))
 #os.chdir('scripts')
@@ -106,22 +115,22 @@ os.chdir(os.path.join('src','lino','scripts'))
 #targets = ['pds2pdf','prn2pdf','openmail']
 targets = ['pds2pdf','prn2pdf','rsync', 'prnprint', 'oogen']
 for t in targets:
-	build(t) 
-	# confirm("Did the Build succeed?") or raise UserAbort
+    build(t) 
+    # confirm("Did the Build succeed?") or raise UserAbort
 
 os.chdir(srcRoot)
 
 def srcfilter(fn):
-	if fn.endswith('~') : return False
-	if fn.startswith('tmp') : return False
-	root,ext = os.path.splitext(fn)
-	if len(ext) :
-		if ext.lower() in ('.pyc','.html','.zip','.pdf') :
-			return False
-	return True
-##		return ext.lower() in ('.txt','.py','.bat', '.php',
-##									  '.spec', '.pds', 'pin', '.sql',
-##									  '.zip', '.jpg', '.gif')
+    if fn.endswith('~') : return False
+    if fn.startswith('tmp') : return False
+    root,ext = os.path.splitext(fn)
+    if len(ext) :
+        if ext.lower() in ('.pyc','.html','.zip','.pdf') :
+            return False
+    return True
+##      return ext.lower() in ('.txt','.py','.bat', '.php',
+##                                    '.spec', '.pds', 'pin', '.sql',
+##                                    '.zip', '.jpg', '.gif')
 
 distlog.write("done at %s\n\n" % ctime())
 distlog.close()
@@ -132,30 +141,30 @@ pruneDirs = ('.svn','_attic','CVS')
 
 #for root, dirs, files in os.walk(srcRoot):
 for root, dirs, files in os.walk("."):
-	for pd in pruneDirs:
-		try:
-			dirs.remove(pd)
-		except ValueError:
-			pass
-	for fn in files:
-		if srcfilter(fn):
-			zf.write(opj(srcRoot,root,fn),opj(root,fn))
-			
-zf.close()	 
+    for pd in pruneDirs:
+        try:
+            dirs.remove(pd)
+        except ValueError:
+            pass
+    for fn in files:
+        if srcfilter(fn):
+            zf.write(opj(srcRoot,root,fn),opj(root,fn))
+            
+zf.close()   
 
 zf = zipfile.ZipFile(binZipName,'w',zipfile.ZIP_DEFLATED)
 l = rdirlist(distDir)
 for fn in l:
-	zf.write(opj(distDir,fn),fn)
+    zf.write(opj(distDir,fn),fn)
 zf.write(os.path.join(srcRoot,'COPYING.txt'),'COPYING.txt')
 zf.write(os.path.join(srcRoot,'dist.log'),'dist.log')
-zf.close()	 
+zf.close()   
 
 ## shutil.copy('COPYING.txt',distDir)
 
 ## os.chdir(distDir)
 ## cmd = r'zip %s *.*' % binZipName
 ## if not confirm(cmd):
-##		raise UserAbort
+##      raise UserAbort
 ## os.system(cmd)
 ## os.chdir(cwd)
