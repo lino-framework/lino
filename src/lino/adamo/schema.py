@@ -50,20 +50,6 @@ class SchemaPlugin(SchemaComponent,Describable):
 ##         pass
 
 
-class Populator(Describable):
-    def __init__(self,*args,**kw):
-        Describable.__init__(self,*args,**kw)
-    
-    def populateStore(self,q):
-        name = "populate"+q.getLeadTable().name
-        try:
-            m = getattr(self,name)
-        except AttributeError:
-            return
-        m(q)
-    
-
-
 class Schema(Describable):
 
     HK_CHAR = '&'
@@ -300,7 +286,7 @@ class Schema(Describable):
             for p in self._populators:
                 sess.progress("populator " + p.getLabel())
                 for store in db.getStoresById():
-                    store.populate(self,sess,p)
+                    store.populateOrNot(self,sess,p)
             if checkIntegrity:
                 for store in db.getStoresById():
                     store.checkIntegrity(sess)

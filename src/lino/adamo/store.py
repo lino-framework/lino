@@ -18,9 +18,10 @@
 
 from time import time
 
-from lino.adamo import DataVeto
-from datasource import Datasource
-from query import DataColumnList
+from lino.misc.descr import Describable
+from lino.adamo.exceptions import DataVeto
+from lino.adamo.datasource import Datasource
+from lino.adamo.query import DataColumnList
 
 class Store:
     """
@@ -86,10 +87,9 @@ class Store:
                 self._status = self.SST_VIRGIN
             self._table.loadMirror(self,sess)
                 
-    def populate(self,schema,sess,populator):
+    def populateOrNot(self,schema,sess,populator):
          if self._status == self.SST_VIRGIN:
-             q = self.query(sess)
-             populator.populateStore(q)
+             populator.populateStore(self,sess)
              #self._table.populate(sess)
          self._status = self.SST_READY
         
@@ -223,5 +223,19 @@ class Store:
 
 
 
+
+
+class Populator(Describable):
+    def __init__(self,*args,**kw):
+        Describable.__init__(self,*args,**kw)
+    
+    def populateStore(self,store,sess):
+        name = "populate"+store.getTable().name
+        try:
+            m = getattr(self,name)
+        except AttributeError:
+            return
+        m(store.query(sess))
+    
 
 

@@ -36,6 +36,82 @@ class Races(Table):
     class Instance(Table.Instance):
         def getLabel(self):
             return self.name1
+
+        def writeReport(self,doc):
+            sess = self.getSession()
+            q = sess.query(Participants,"person.name cat time dossard",
+                           orderBy="person.name",
+                           race=self)
+            q.executeReport(doc.report(),
+                            label="First report",
+                            columnWidths="20 3 8 4")
+
+            q = sess.query(Participants,"time person.name cat dossard",
+                           orderBy="time",
+                           race=self)
+            q.executeReport(doc.report(),
+                            label="Another report",
+                            columnWidths="8 20 3 4")
+
+            self.ralGroupList(doc, xcKey="club", nGroupSize=3)
+            self.ralGroupList(doc, xcKey="club", nGroupSize=5,sex="M")
+            self.ralGroupList(doc, xcKey="club", nGroupSize=5,sex="F")
+
+        def ralGroupList(self,doc,
+                         xcKey="club",
+                         xnValue="place",
+                         nGroupSize=3,
+                         sex=None,
+                         xcName=None):
+            class Group:
+                def __init__(self,id):
+                    self.id = id
+                    self.values = []
+                    self.sum = 0
+                    self.names = []
+
+            groups = []
+
+            def collectPos(groups,key):
+                for g in groups:
+                    if g.id == key:
+                        if len(g.values) < nGroupSize:
+                            return g
+                g = Group(key)
+                groups.append(g)
+                return g
+
+            for pos in self.participants_by_race.query(orderBy="time"):
+                if pos.time != "X":
+                    if sex is None or pos.person.sex == sex:
+                        v = getattr(pos,xnValue)
+                        key = getattr(pos,xcKey)
+                        g = collectPos(groups,key)
+                        g.values.append(v)
+                        g.sum += v
+                        if xcName is not None:
+                            g.names.append(xcName(pos))
+
+            groups.sort(lambda a,b: a.sum > b.sum)
+
+            rpt = doc.report(label="inter %s %s by %d" % (xcKey,
+                                                          sex,
+                                                          nGroupSize))
+            rpt.addColumn(meth=lambda g: str(g.id),
+                          label=xcKey,
+                          width=20)
+            rpt.addColumn(meth=lambda g: str(g.sum),
+                          label=xnValue,
+                          width=5)
+            rpt.addColumn(meth=lambda g: str(g.values),
+                          label="values",
+                          width=30)
+            rpt.execute(groups)
+
+            
+
+
+        
         
 class RaceTypes(Table):
     def init(self):

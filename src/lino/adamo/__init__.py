@@ -35,7 +35,8 @@ from lino.adamo.forms import Form
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
 from lino.adamo.rowattrs import Field, Pointer, BabelField, Vurt #, Match#, Button
-from lino.adamo.schema import Schema, SchemaPlugin, Populator
+from lino.adamo.schema import Schema, SchemaPlugin
+from lino.adamo.store import Populator
 #from session import ConsoleSession
 #from session import Application
 from lino.adamo.datasource import DataRow

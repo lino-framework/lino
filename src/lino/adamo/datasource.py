@@ -244,6 +244,19 @@ class SimpleDatasource:
         rpt.execute(self)
 
 
+##     def setupTableEditor(self,e):
+##         frm = e.getForm()
+##         m = frm.addMenu("file",label="&File")
+##         m.addItem(label="&Exit",frm.close)
+##         m = frm.addMenu("row",label="&Row")
+##         def printRow(frm):
+##             for row in r.getSelectedRows():
+                
+##         m.addItem(label="&Print",self.printRow)
+
+##     def printRow(self,ui):
+##         self._table.ui_printRow(ui)
+        
     def setupForm(self,frm,row=None,**kw):
         if row is None:
             row = self[0]

@@ -1,4 +1,3 @@
-
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -123,13 +122,19 @@ class Button(base.Button):
     def setFocus(self):
         self.wxctrl.SetFocus()
 
-class TableEditor(base.TableEditor):
+class DataGrid(base.DataGrid):
     def setup(self,parent,box):
-        ctrl = wxgrid.TableEditorGrid(parent,self)
+        ctrl = wxgrid.DataGridCtrl(parent,self)
         box.Add(ctrl) #, 0, wx.CENTER,10)
         self.wxctrl = ctrl
     def refresh(self):
         pass
+    def getSelectedRows(self):
+        #return self.wxctrl.GetSelectedRows()
+        l = self.wxctrl.GetSelectedCells()
+        if len(l) == 0:
+            return [self.wxctrl.GetGridCursorRow()]
+        return l
                 
         
 class Navigator(base.Navigator):
@@ -311,7 +316,7 @@ class Form(base.Form):
     dataEntryFactory = DataEntry
     buttonFactory = Button
     panelFactory = Panel
-    tableEditorFactory = TableEditor
+    tableEditorFactory = DataGrid
     navigatorFactory = Navigator
 
 ##     def afterShow(self):

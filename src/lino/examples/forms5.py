@@ -21,8 +21,8 @@ from lino.ui import console
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
-def foo(frm,sess,t):
-    ds = sess.query(t)
+def foo(frm,sess,tc):
+    ds = sess.query(tc)
     frm = frm.addForm(label=ds.getLabel())
     frm.addTableEditor(ds)
     frm.show()

@@ -157,7 +157,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
         self.loadData()
 
 
-class TableEditorGrid(wx.grid.Grid):
+class DataGridCtrl(wx.grid.Grid):
     def __init__(self, parent, editor):
         wx.grid.Grid.__init__(self, parent, -1)
         self.table = MyDataTable(editor)

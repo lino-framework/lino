@@ -16,6 +16,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
+opj = os.path.join
+
+
 from lino.adamo.datatypes import STRING
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
@@ -199,6 +203,59 @@ class MenuBar(Component):
         return i
 
 
+class DataGrid(Component):    
+    def __init__(self,owner,ds,*args,**kw):
+        Component.__init__(self,owner,*args,**kw)
+        self.ds = ds
+        
+        frm = self.getForm()
+        m = frm.addMenu("file",label="&File")
+        m.addItem(label="&Exit",onclick=frm.close)
+        m = frm.addMenu("row",label="&Row")
+        m.addItem(label="&Print",onclick=self.printSelectedRows,
+                  accel="F7")
+
+    def printSelectedRows(self,frm):
+        #print "printSelectedRows()", self.getSelectedRows()
+        workdir = "c:\\temp"
+        from lino.oogen import Document
+        doc = Document("1")
+        for i in self.getSelectedRows():
+            row = self.ds[i]
+            row.writeReport(doc)
+        outFile = opj(workdir,"raceman_report.sxc")
+        doc.save(outFile,showOutput=True)
+
+
+def nop(x):
+    pass
+
+class Navigator(Component):
+    def __init__(self,owner,ds,afterSkip=nop,*args,**kw):
+        Component.__init__(self,owner,*args,**kw)
+        self.ds = ds
+        #if afterSkip is None:
+        #    afterSkip = lambda self: self.getForm().refresh()
+        self.afterSkip = afterSkip
+        self.currentPos = 0
+
+    def skip(self,n):
+        #print __name__, n
+        if n > 0:
+            if self.currentPos + n < len(self.ds):
+                self.currentPos += n
+                self.afterSkip(self)
+                self.getForm().refresh()
+        else:
+            if self.currentPos + n >= 0:
+                self.currentPos += n
+                self.afterSkip(self)
+                self.getForm().refresh()
+
+
+        
+        
+
 
         
 
@@ -238,7 +295,7 @@ class Container(Component):
         self._components.append(e)
         return e
 
-    def addTableEditor(self,ds,name=None,*args,**kw):
+    def addDataGrid(self,ds,name=None,*args,**kw):
         frm = self.getForm()
         e = frm.tableEditorFactory(self,ds,*args,**kw)
         self._components.append(e)
@@ -303,41 +360,6 @@ class Panel(Container):
 
 
 
-class TableEditor(Component):    
-    def __init__(self,owner,ds,*args,**kw):
-        Component.__init__(self,owner,*args,**kw)
-        self.ds = ds
-
-
-def nop(x):
-    pass
-
-class Navigator(Component):
-    def __init__(self,owner,ds,afterSkip=nop,*args,**kw):
-        Component.__init__(self,owner,*args,**kw)
-        self.ds = ds
-        #if afterSkip is None:
-        #    afterSkip = lambda self: self.getForm().refresh()
-        self.afterSkip = afterSkip
-        self.currentPos = 0
-
-    def skip(self,n):
-        #print __name__, n
-        if n > 0:
-            if self.currentPos + n < len(self.ds):
-                self.currentPos += n
-                self.afterSkip(self)
-                self.getForm().refresh()
-        else:
-            if self.currentPos + n >= 0:
-                self.currentPos += n
-                self.afterSkip(self)
-                self.getForm().refresh()
-
-
-        
-        
-
     
 class Form(Describable):
 
@@ -346,7 +368,7 @@ class Form(Describable):
     dataEntryFactory = DataEntry
     buttonFactory = Button
     panelFactory = Panel
-    tableEditorFactory = TableEditor
+    tableEditorFactory = DataGrid
     navigatorFactory = Navigator
 
     def __init__(self,parent=None,data=None,*args,**kw):
@@ -363,7 +385,7 @@ class Form(Describable):
         self.mainComp = self.panelFactory(self,Container.VERTICAL)
         for m in ('addLabel',
                   'addEntry', 'addDataEntry',
-                  'addTableEditor','addNavigator',
+                  'addDataGrid','addNavigator',
                   'addPanel','addVPanel','addHPanel',
                   'addButton', 'VERTICAL', 'HORIZONTAL',
                   'addOkButton', 'addCancelButton'):
