@@ -33,6 +33,7 @@ from lino.adamo.table import DbfMirrorLoader
 
 
 class PersonsMirrorLoader(DbfMirrorLoader):
+    table = Persons
     tableName = "PAR"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -44,6 +45,7 @@ class PersonsMirrorLoader(DbfMirrorLoader):
 
 
 class ClubsMirrorLoader(DbfMirrorLoader):
+    table = Clubs
     tableName = "CLB"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -52,6 +54,7 @@ class ClubsMirrorLoader(DbfMirrorLoader):
             )
 
 class RaceTypesMirrorLoader(DbfMirrorLoader):
+    table = RaceTypes
     tableName = "CTY"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -61,6 +64,7 @@ class RaceTypesMirrorLoader(DbfMirrorLoader):
 
 
 class CategoriesMirrorLoader(DbfMirrorLoader):
+    table = Categories
     tableName = "CAT"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -74,20 +78,24 @@ class CategoriesMirrorLoader(DbfMirrorLoader):
         
 
 class RacesMirrorLoader(DbfMirrorLoader):
+    table = Races
     tableName = "RAL"
     #def init(self):
     #    Races.init(self)
     #    self.getRowAttr('id').setType(adamo.STRING(width=6))
     def appendFromDBF(self,q,row):
+         
         q.appendRow(
             id=int(row['IDRAL']),
             name1=row['NAME1'],
             name2=row['NAME2'],
-            date=row['DATE'],
+            date=self.dbfdate(row['DATE']),
+            startTime=self.dbftime(row['STARTTIME']),
             )
         
 
 class ParticipantsMirrorLoader(DbfMirrorLoader):
+    table = Participants
     tableName = "POS"
     def appendFromDBF(self,q,row):
         sess = q.getSession()
@@ -104,30 +112,39 @@ class ParticipantsMirrorLoader(DbfMirrorLoader):
             cat=cat,
             club=club,
             dossard=row['IDPOS'],
-            time=row['TIME'],
+            duration=self.dbfduration(row['TIME']),
             place=int(row['PLACE']),
             catPlace=int(row['CATPLACE']),
             payment=row['PAYE'],
             )
     
-        
-def makeSchema(dbfpath):
-    
-    schema = adamo.Schema()
-    schema.addTable(Clubs).setMirrorLoader(
-        ClubsMirrorLoader(dbfpath))
-    schema.addTable(Persons).setMirrorLoader(
-        PersonsMirrorLoader(dbfpath))
-    schema.addTable(RaceTypes).setMirrorLoader(
-        RaceTypesMirrorLoader(dbfpath))
-    schema.addTable(Categories).setMirrorLoader(
-        CategoriesMirrorLoader(dbfpath))
-    schema.addTable(Races).setMirrorLoader(
-        RacesMirrorLoader(dbfpath))
-    schema.addTable(Participants).setMirrorLoader(
-        ParticipantsMirrorLoader(dbfpath))
 
-    return schema
+LOADERS = (
+    PersonsMirrorLoader,
+    ClubsMirrorLoader,
+    RacesMirrorLoader,
+    RaceTypesMirrorLoader,
+    CategoriesMirrorLoader,
+    ParticipantsMirrorLoader,
+    )
+
+## def makeSchema(dbfpath):
+    
+##     schema = adamo.Schema()
+##     schema.addTable(Clubs).setMirrorLoader(
+##         ClubsMirrorLoader(dbfpath))
+##     schema.addTable(Persons).setMirrorLoader(
+##         PersonsMirrorLoader(dbfpath))
+##     schema.addTable(RaceTypes).setMirrorLoader(
+##         RaceTypesMirrorLoader(dbfpath))
+##     schema.addTable(Categories).setMirrorLoader(
+##         CategoriesMirrorLoader(dbfpath))
+##     schema.addTable(Races).setMirrorLoader(
+##         RacesMirrorLoader(dbfpath))
+##     schema.addTable(Participants).setMirrorLoader(
+##         ParticipantsMirrorLoader(dbfpath))
+##     schema.addTable(Arrivals)
+##     return schema
     
 
 

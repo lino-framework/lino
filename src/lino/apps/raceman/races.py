@@ -1,3 +1,5 @@
+#coding: latin1
+
 ## Copyright 2004-2005 Luc Saffre
 
 ## This file is part of the Lino project.
@@ -16,11 +18,14 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import datetime
+
 from lino.adamo import *
 from lino.schemas.sprl.babel import Languages
 from lino.schemas.sprl.addrbook import Persons, SEX
 
 NAME = STRING(width=30)
+DOSSARD = STRING(width=4)
 
 class Races(Table):
     def init(self):
@@ -33,36 +38,122 @@ class Races(Table):
         self.addPointer('type',RaceTypes)
         self.addField('startTime',TIME)
 
+    def setupMenu(self,nav):
+        frm = nav.getForm()
+        m = frm.addMenu("&Race")
+        def f():
+            race = nav.getCurrentRow()
+            race.showArrivalEntry(frm)
+            
+        m.addItem(label="&Arrivals",
+                  action=f,
+                  accel="F6")
+
     class Instance(Table.Instance):
         def getLabel(self):
             return self.name1
 
-        def writeReport(self,doc):
+        def showArrivalEntry(self,parentForm):
+            self.lock()
+            frm = parentForm.addForm(
+                label="Arrivals for "+str(self),
+                doc="""\
+    Ankunftszeiten an der Ziellinie erfassen.
+    Beim Startschuss "Start" klicken!
+    Jedesmal wenn einer ankommt, ENTER drücken.
+        """)
+
+            frm.addEntry("dossard",STRING,
+                         label="Dossard",
+                         value="*",
+                         doc="""Hier die Dossardnummer des ankommenden Läufers eingeben, oder '*' wenn sie später erfasst werden soll.""")
+
+
+            def startNow():
+                self.startTime = datetime.datetime.now().time()
+                frm.info("started at %s" %str(self.startTime))
+                #parent.buttons.arrive.setFocus()
+                frm.entries.dossard.setFocus()
+
+            def arriveNow():
+                if self.startTime is None:
+                    frm.buttons.start.setFocus()
+                    raise InvalidRequestError(
+                        "cannot arrive before start")
+                now = datetime.datetime.now()
+                #assert now.date() == self.date,\
+                #       "%s != %s" % (repr(now.date()),repr(self.date))
+                duration = now - datetime.datetime.combine(
+                    now.date(), self.startTime)
+                a = self.arrivals.appendRow(
+                    dossard=frm.entries.dossard.getValue(),
+                    duration=duration,
+                    time=now.time())
+                frm.info("%s arrived at %s after %s" %(
+                    a.dossard,a.time,a.duration))
+                frm.entries.dossard.setValue('*')
+                frm.entries.dossard.setFocus()
+                
+
+
+            #bbox = frm.addHPanel()
+            bbox = frm
+            bbox.addButton(name="start",
+                          label="&Start",
+                          action=startNow)
+            bbox.addButton(name="arrive",
+                          label="&Arrive",
+                          action=arriveNow).setDefault()
+            #bbox.addButton("write",
+            #               label="&Write",
+            #               action=self.writedata)
+            bbox.addButton("exit",label="&Exit",action=frm.close)
+
+    ##         fileMenu  = frm.addMenu("&File")
+    ##         fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")
+    ##         fileMenu.addButton(frm.buttons.exit,accel="Ctrl-Q")
+
+    ##         fileMenu  = frm.addMenu("&Edit")
+    ##         fileMenu.addButton(frm.buttons.start)
+    ##         fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
+            #self.frm = frm
+            frm.showModal()
+            self.unlock()
+
+        def printRow(self,prn):
             sess = self.getSession()
-            q = sess.query(Participants,"person.name cat time dossard",
-                           orderBy="person.name",
-                           race=self)
-            q.executeReport(doc.report(),
+            q = self.participants.query(
+                "person.name cat time dossard",
+                orderBy="person.name")
+            q.executeReport(prn.report(),
                             label="First report",
                             columnWidths="20 3 8 4")
 
             q = sess.query(Participants,"time person.name cat dossard",
                            orderBy="time",
                            race=self)
-            q.executeReport(doc.report(),
+            q.executeReport(prn.report(),
                             label="Another report",
                             columnWidths="8 20 3 4")
 
-            self.ralGroupList(doc, xcKey="club", nGroupSize=3)
-            self.ralGroupList(doc, xcKey="club", nGroupSize=5,sex="M")
-            self.ralGroupList(doc, xcKey="club", nGroupSize=5,sex="F")
+            self.ralGroupList(prn,
+                              xcKey="club",
+                              nGroupSize=3)
+            self.ralGroupList(prn, xcKey="club",
+                              nGroupSize=5,
+                              sex="M")
+            self.ralGroupList(prn,
+                              xcKey="club",
+                              nGroupSize=5,
+                              sex="F")
 
-        def ralGroupList(self,doc,
+        def ralGroupList(self,prn,
                          xcKey="club",
                          xnValue="place",
                          nGroupSize=3,
                          sex=None,
-                         xcName=None):
+                         xcName=None,
+                         maxGroups=10):
             class Group:
                 def __init__(self,id):
                     self.id = id
@@ -81,20 +172,26 @@ class Races(Table):
                 groups.append(g)
                 return g
 
-            for pos in self.participants_by_race.query(orderBy="time"):
-                if pos.time != "X":
+            for pos in self.participants_by_race.query( \
+                orderBy="duration"):
+                if pos.duration != None:
                     if sex is None or pos.person.sex == sex:
-                        v = getattr(pos,xnValue)
                         key = getattr(pos,xcKey)
-                        g = collectPos(groups,key)
-                        g.values.append(v)
-                        g.sum += v
-                        if xcName is not None:
-                            g.names.append(xcName(pos))
+                        if key is not None:
+                            v = getattr(pos,xnValue)
+                            g = collectPos(groups,key)
+                            g.values.append(v)
+                            g.sum += v
+                            if xcName is None:
+                                g.names.append(str(v))
+                            else:
+                                g.names.append(xcName(pos))
 
-            groups.sort(lambda a,b: a.sum > b.sum)
+            groups = filter(lambda g: len(g.values) == nGroupSize,
+                            groups)
+            groups.sort(lambda a,b: a.sum - b.sum)
 
-            rpt = doc.report(label="inter %s %s by %d" % (xcKey,
+            rpt = prn.report(label="inter %s %s by %d" % (xcKey,
                                                           sex,
                                                           nGroupSize))
             rpt.addColumn(meth=lambda g: str(g.id),
@@ -103,10 +200,11 @@ class Races(Table):
             rpt.addColumn(meth=lambda g: str(g.sum),
                           label=xnValue,
                           width=5)
-            rpt.addColumn(meth=lambda g: str(g.values),
-                          label="values",
-                          width=30)
-            rpt.execute(groups)
+            rpt.addColumn(
+                meth=lambda g: " + ".join(g.names)+" = " +str(g.sum),
+                label="values",
+                width=40)
+            rpt.execute(groups[:maxGroups])
 
             
 
@@ -150,14 +248,31 @@ class Participants(Table):
     def init(self):
         self.setPrimaryKey("race dossard")
         
-        self.addPointer('race',Races)
-        self.addField('dossard',STRING(width=4))
+        self.addPointer('race',Races).setDetail('participants')
+        self.addField('dossard',DOSSARD)
         self.addPointer('person',Persons)
         self.addPointer('club',Clubs)
-        self.addField('time',TIME)
+        self.addField('duration',DURATION)
         self.addPointer('cat',Categories)
         self.addField('payment',STRING(width=1))
         self.addField('place',INT)
         self.addField('catPlace',INT)
         
+
+class Arrivals(Table):
+    def init(self):
+        self.addPointer('race',Races).setDetail('arrivals')
+        self.addField('dossard',DOSSARD)
+        self.addField('time',TIME)
+        self.addField('duration',DURATION)
+        self.addField('ok',BOOL)
+        
+
+
+TABLES = (Races, Participants, Persons, RaceTypes, Categories,
+     Arrivals, Clubs)
+
+def setupSchema(schema):
+    for t in TABLES:
+        schema.addTable(t)
 
