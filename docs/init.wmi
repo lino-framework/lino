@@ -3,12 +3,6 @@
 # *-*-*- (python-mode) -*-*-*
 
 
-self.setTitle("Lino Documentation")
-
-## self.setTitle("""\
-## Currently this is also the Lino Web Homepage.
-## """)
-
 #self.setStyleSheet('default.css')
 self.setStyleSheet('www.css')
 

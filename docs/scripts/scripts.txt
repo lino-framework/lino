@@ -1,8 +1,6 @@
 Lino scripts
 ============
 
-.. include:: _header.txt
-
 Lino is implemented as a collection of independent command-line tools
 or "scripts". Here is the complete list and usage documentation for
 them.
