@@ -192,7 +192,8 @@ class TestCase(unittest.TestCase):
         self.fail(a.getvalue()) # "texts differ. See stdout")
 
     def addTempFile(self,filename,showOutput=None):
-        "unlike tempfile, these files are not OPENED"
+        """unlike tempfile, these files are not OPENED
+        """
         fn = os.path.join(tempfile.gettempdir(),filename)
         self._tempFiles.append(fn)
         if showOutput:

@@ -20,14 +20,7 @@
 
 """
 
-this was my first oogen testcase.  Principle: first you fill document
-with content (adding elements to its story).  Tables are also
-collected in a separate list.
-
-A same document tree can be reused by several generators.  Currently I
-am interested in spreadsheets and documents. graphics come later.
-Spreadsheets use only the tables, not the story of a document.
-
+this was my first oogen testcase.
 
 """
 
@@ -35,14 +28,15 @@ import os
 import unittest
 from lino.ui import console
 from lino.misc import tsttools
-from lino.oogen import Document
+from lino.oogen import SpreadsheetDocument, TextDocument
 
 
 class Case(tsttools.TestCase):
     
     def test01(self):
 
-        doc = Document("1")
+        fn = self.addTempFile("1.sxw", showOutput=True)
+        doc = TextDocument(fn)
         doc.h(1,"Generating OpenOffice documents")
         doc.p("Here is a table:")
         t = doc.table()
@@ -53,11 +47,36 @@ class Case(tsttools.TestCase):
         t.addRow("Kunz","2004-11-17")
     
         doc.p("Here is another paragraph.")
+        doc.save(console)
+        
+    def test02(self):
 
-        for ext in (".sxw", ".sxc"):
-            fn = self.addTempFile(doc.name+ext,
-                                  showOutput=True)
-            doc.save(fn)
+        fn = self.addTempFile("1.sxc", showOutput=True)
+        doc = SpreadsheetDocument(fn)
+        
+        t = doc.table(name="Kunden")
+        t.addColumn()
+        t.addColumn()
+        t.addRow("Kunde","Datum")
+        t.addRow("Hinz","2004-11-16")
+        t.addRow("Kunz","2004-11-17")
+        
+        t = doc.table(name="Freunde")
+        t.addColumn()
+        t.addColumn()
+        t.addRow("Freund","Datum")
+        t.addRow("Hinz","2004-11-16")
+        t.addRow("Kunz","2004-11-17")
+    
+        doc.save(console)
+        
+
+##         for ext in (".sxw", ".sxc"):
+##             fn = self.addTempFile(doc.name+ext,
+##                                   showOutput=True)
+##             doc.save(fn)
+
+            
 
 if __name__ == "__main__":
     unittest.main()

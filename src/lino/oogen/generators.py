@@ -1,6 +1,8 @@
-#coding: utf-8
+raise "no longer used since 20050302"
 
-## Copyright Luc Saffre 2004-2005.
+#coding: latin1
+
+## Copyright 2004-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -37,9 +39,6 @@ opj = os.path.join
 
 from lino.oogen.ifiles import IFILES
 from lino.ui import console
-
-
-
 
 class OoGenerator:
     "base clase for OoText,OoSpreadsheet,..."

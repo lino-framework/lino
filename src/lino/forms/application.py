@@ -77,6 +77,18 @@ class Application(Describable):
     def makeMainForm(self,ui):
         "must call ui.form(), configure and return it"
         raise NotImplementedError
+
+    def aboutString(self):
+        s = self.name
+        if self.version is not None:
+            s += " version " + self.version
+        if self.author is not None:
+            s += "Copyright (c) %s %s." % self.years, self.author
+        from lino import __copyright__, __credits__, __url__
+        s += "\n\n" + __copyright__
+        s += "\n\nCredits:\n" + __credits__
+        s += "\n\nHomepage:\n" + __url__
+        return s
     
 
     def init(self,ui):
@@ -145,6 +157,10 @@ where DBFILE is the name of the sqlite database file""",
         
     def showTableGrid(self,ui,tc,*args,**kw):
         ds = self.sess.query(tc,*args,**kw)
+        return ui.showDataGrid(ds)
+    
+    def showViewGrid(self,ui,tc,viewName,*args,**kw):
+        ds = self.sess.view(tc,viewName,*args,**kw)
         return ui.showDataGrid(ds)
     
 

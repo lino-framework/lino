@@ -19,11 +19,9 @@
 import sys, os
 
 from lino.ui import console
-from lino.oogen import TextDocument as docClass
+from lino.oogen import TextDocument
 
-def main(argv):
-    console.copyleft(name="Lino pds2sxw",
-                     years='2004-2005')
+def pds2oo(docClass,argv):
     parser = console.getOptionParser(
         usage="usage: %prog [options] PDSFILE",
         description="""\
@@ -33,8 +31,8 @@ where PDSFILE is the pds file (oogen slang)
     parser.add_option("-o", "--output",
                       help="""\
 generate to OUTFILE instead of default name. Default output filename
-is PDSFILE with extension .sxw.
-""",
+is PDSFILE with extension %s.
+""" % docClass.extension,
                       action="store",
                       type="string",
                       dest="outFile",
@@ -48,18 +46,27 @@ is PDSFILE with extension .sxw.
     ifname = args[0]
     #print ifname
     (basename,ext) = os.path.splitext(ifname)
-    if ext != ".pds":
-        ifname += ".pds"
-    doc = docClass(options.outFile)
+    #if ext != ".pds":
+    #    ifname += ".pds"
+    if options.outFile is None:
+        filename = basename + docClass.extension
+    else:
+        filename = options.outFile
+    doc = docClass(filename)
     job = console.job(ifname+" --> "+doc.filename)
     namespace = {'doc':doc}
     execfile(ifname,namespace,namespace)
 
-    g.save(console,showOutput=True)
+    doc.save(console,showOutput=True)
     job.done()
     
 ##     if sys.platform == "win32" and console.isInteractive():
 ##         os.system("start %s" % g.outputFilename)
+    
+def main(argv):
+    console.copyleft(name="Lino pds2sxw",
+                     years='2004-2005')
+    pds2oo(TextDocument,argv)
     
         
 if __name__ == '__main__':

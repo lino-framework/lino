@@ -1,4 +1,24 @@
-﻿#coding: utf-8
+#coding: utf-8
+
+## Copyright 2004-2005 Luc Saffre
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+
 """
 this module defines one class for each internal file of an oo document
 """
@@ -7,12 +27,12 @@ opj = os.path.join
 
 class InternalFile:
 	filename = NotImplementedError
-	def __init__(self,gen):
+	def __init__(self,doc):
 		#assert isinstance(gen,OoGenerator)
-		self.gen = gen
+		self.doc = doc
 		
 	def writeFile(self):
-		f = open(opj(self.gen.tempDir,self.filename),"w")
+		f = open(opj(self.doc.tempDir,self.filename),"w")
 		self.writeInternalContent(f)
 		f.close()
 		
@@ -35,7 +55,7 @@ class InternalXmlFile(InternalFile):
 class MIMETYPE(InternalFile):
 	filename = 'mimetype'
 	def writeInternalContent(self,f):
-		f.write(self.gen.mimetype+"\n")
+		f.write(self.doc.mimetype+"\n")
 		
 	
 class MANIFEST(InternalXmlFile):
@@ -123,10 +143,10 @@ xmlns:script="http://openoffice.org/2000/script"
 office:version="1.0">
 """)
 
-		self.gen.doc.fonts.__xml__(f.write)
-		self.gen.doc.styles.__xml__(f.write)
-		self.gen.doc.autoStyles.__xml__(f.write)
-		self.gen.doc.masterStyles.__xml__(f.write)
+		self.doc.fonts.__xml__(f.write)
+		self.doc.styles.__xml__(f.write)
+		self.doc.autoStyles.__xml__(f.write)
+		self.doc.masterStyles.__xml__(f.write)
 		
 		f.write("""\n</office:document-styles>""")
 		
@@ -156,12 +176,13 @@ xmlns:form="http://openoffice.org/2000/form"
 xmlns:script="http://openoffice.org/2000/script" 
 office:class="%s"
 office:version="1.0">
-""" % self.gen.officeClass)
-		self.gen.doc.fonts.__xml__(f.write)
-		self.gen.doc.autoStyles.__xml__(f.write)
-		f.write("\n<office:body>")
-		self.gen.writeBody(f.write)
-		f.write("\n</office:body>")
+""" % self.doc.officeClass)
+		self.doc.fonts.__xml__(f.write)
+		self.doc.autoStyles.__xml__(f.write)
+		self.doc.body.__xml__(f.write)
+		#f.write("\n<office:body>")
+		#self.gen.writeBody(f.write)
+		#f.write("\n</office:body>")
 		f.write("\n</office:document-content>")
 
 

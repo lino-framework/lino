@@ -1,6 +1,4 @@
-## project started 2004-11-15
-
-## Copyright 2004-2005 Luc Saffre
+## Copyright 2004-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -18,6 +16,18 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
 
-from document import SpreadsheetDocument, TextDocument
+from lino.ui import console
+from lino.oogen import SpreadsheetDocument
+from lino.scripts.pds2sxw import pds2oo
+
+def main(argv):
+    console.copyleft(name="Lino pds2sxc",
+                     years='2004-2005')
+    pds2oo(SpreadsheetDocument,argv)
+    
+        
+if __name__ == '__main__':
+    g = main(sys.argv[1:])
 

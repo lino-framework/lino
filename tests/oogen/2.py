@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,39 +20,28 @@
 import os
 from lino.ui import console
 from lino.misc import tsttools
-from lino.oogen import Document, elements
+from lino.oogen import TextDocument, elements
 
 class Case(tsttools.TestCase):
     
     def test01(self):
         "First styles"
-        doc = Document("2")
+        fn = self.addTempFile("2.sxw", showOutput=True)
+        doc = TextDocument(fn)
         
-        s = elements.Style(name="Rechts",
-                           family="paragraph",
-                           parentStyleName="Standard",
-                           className="text")
-        s.append(elements.Properties(textAlign="end",
-                                     justifySingleWord=False))
-        doc.styles.append(s)
+        s = doc.addStyle(name="Rechts",
+                         family="paragraph",
+                         parentStyleName="Standard",
+                         className="text")
+        s.addProperties(textAlign="end",
+                        justifySingleWord=False)
         
-        doc.h(1,"This is a header")
+        
+        doc.h(1,"Defining custom styles")
         doc.p("This is a right-aligned paragraph.",styleName="Rechts")
         doc.p("Here is a standard paragraph.")
     
-        fn = self.addTempFile(doc.name+".sxw",showOutput=True)
-        doc.save(fn)
+        doc.save(console)
         
-##         oo = OoText(doc)
-##         oo.save()
-        
-
-##         for fn in [ oo.outputFilename ]:
-##             if console.isInteractive(): # showOutput:
-##                 os.system("start "+fn)
-##             else:
-##                 self.failUnless(os.path.exists(fn))
-##                 os.remove(fn)
-
 if __name__ == "__main__":
     tsttools.main()

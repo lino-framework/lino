@@ -1,4 +1,7 @@
-# my first pds for pds2oo document
+# my second pds for pds2oo document
+
+doc.p("This document has a leftMargin of 6cm")
+doc.setPageProperties(marginLeft="6cm")
 
 doc.p("""Note: PDS for pds2oo is a new pds dialect that will replace
 the old dialect""")

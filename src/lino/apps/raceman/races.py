@@ -18,7 +18,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import datetime
+from datetime import datetime
 
 from lino.adamo import *
 from lino.schemas.sprl.babel import Languages
@@ -37,9 +37,15 @@ class Races(Table):
         self.addField('tpl',STRING(width=6))
         self.addPointer('type',RaceTypes)
         self.addField('startTime',TIME)
-        self.addView(
-            "std",
-            "date name1 status startTime arrivals tpl type name2 id")
+        self.addField('known',INT)
+        self.addField('unknown',INT)
+        self.addField('invalid',INT)
+        self.addField('missing',INT)
+        self.addView( "std",
+                      "date name1 status startTime "
+                      "arrivals participants "
+                      "known unknown invalid missing "
+                      "tpl type name2 id")
 
     def setupMenu(self,nav):
         frm = nav.getForm()
@@ -47,22 +53,26 @@ class Races(Table):
         def f():
             race = nav.getCurrentRow()
             race.showArrivalEntry(frm)
+            frm.refresh()
             
         m.addItem(label="&Arrivals",
                   action=f,
                   accel="F6")
+        
+        m.addItem(label="&Compute results", accel="F3").setHandler(
+            nav.withCurrentRow,self.Instance.computeResults,frm)
+
 
     class Instance(Table.Instance):
         def getLabel(self):
             return self.name1
 
         def showArrivalEntry(self,ui):
-            self.lock()
+            #self.lock()
             frm = ui.form(
                 label="Arrivals for "+str(self),
                 doc="""\
     Ankunftszeiten an der Ziellinie erfassen.
-    Beim Startschuss "Start" klicken!
     Jedesmal wenn einer ankommt, ENTER drücken.
         """)
 
@@ -72,28 +82,26 @@ class Races(Table):
                          doc="""Hier die Dossardnummer des ankommenden Läufers eingeben, oder '*' wenn sie später erfasst werden soll.""")
 
 
-            def startNow():
-                self.startTime = datetime.datetime.now().time()
-                frm.message("started at " + str(self.startTime))
-                #parent.buttons.arrive.setFocus()
-                frm.entries.dossard.setFocus()
+##             def startNow():
+##                 self.startTime = datetime.datetime.now().time()
+##                 frm.message("started at " + str(self.startTime))
+##                 #parent.buttons.arrive.setFocus()
+##                 frm.entries.dossard.setFocus()
 
             def arriveNow():
                 if self.startTime is None:
                     frm.buttons.start.setFocus()
                     raise InvalidRequestError(
                         "cannot arrive before start")
-                now = datetime.datetime.now()
+                now = datetime.now()
                 #assert now.date() == self.date,\
                 #       "%s != %s" % (repr(now.date()),repr(self.date))
-                duration = now - datetime.datetime.combine(
-                    now.date(), self.startTime)
+                #duration = now - datetime.datetime.combine(
+                #    now.date(), self.startTime)
                 a = self.arrivals.appendRow(
                     dossard=frm.entries.dossard.getValue(),
-                    duration=duration,
                     time=now.time())
-                frm.message("%s arrived at %s after %s" %(
-                    a.dossard,a.time,a.duration))
+                frm.status("%s arrived at %s" % (a.dossard,a.time))
                 frm.entries.dossard.setValue('*')
                 frm.entries.dossard.setFocus()
                 
@@ -101,9 +109,9 @@ class Races(Table):
 
             #bbox = frm.addHPanel()
             bbox = frm
-            bbox.addButton(name="start",
-                          label="&Start",
-                          action=startNow)
+##             bbox.addButton(name="start",
+##                           label="&Start",
+##                           action=startNow)
             bbox.addButton(name="arrive",
                           label="&Arrive",
                           action=arriveNow).setDefault()
@@ -120,8 +128,73 @@ class Races(Table):
     ##         fileMenu.addButton(frm.buttons.start)
     ##         fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
             #self.frm = frm
-            frm.showModal()
+            frm.show()
+            #frm.showModal()
+            #self.unlock()
+
+        def computeResults(self,ui):
+            ui.status("go")
+            if not self.lock():
+                return
+            self.unknown = 0
+            self.known = 0
+            self.invalid = 0
+            self.missing = 0
+            ui.status("scanning %d arrivals" % len(self.arrivals))
+            for a in self.arrivals:
+                if a.dossard == '*':
+                    self.unknown += 1
+                else:
+                    p = self.participants.peek(self,a.dossard)
+                    if p is None:
+                        self.invalid += 1
+                    elif p.lock():
+                        p.duration = a.time - datetime.combine(
+                            self.date, self.startTime)
+                        p.unlock()
+                        self.known += 1
+                    else:
+                        raise RowLockFailed
+
+##             ui.status(
+##                 "%d recognized, %d unknown and %d invalid arrivals"\
+##                 % (self.known, self.unknown, invalid))
+            ui.status("scanning %d participants" % \
+                      len(self.participants))
+            place = 0
+            for p in self.participants.query(
+                orderBy='duration'):
+                if p.duration is None:
+                    self.missing  += 1
+                else:
+                    place += 1
+                    if p.lock():
+                        print p, place
+                        p.place = place
+                        p.unlock()
+                    else:
+                        raise RowLockFailed
+                
+            ui.status("scanning %d participants" % \
+                      len(self.participants))
+            place = 0
+            cat = None
+            for p in self.participants.query(
+                orderBy='cat duration'):
+                if p.duration is not None:
+                    if cat == p.cat:
+                        place += 1
+                    else:
+                        place = 1
+                        cat = p.cat
+                    if p.lock():
+                        p.place = place
+                        p.unlock()
+                    else:
+                        raise RowLockFailed
+                
             self.unlock()
+                
 
         def printRow(self,prn):
             sess = self.getSession()
@@ -267,7 +340,7 @@ class Arrivals(Table):
         self.addPointer('race',Races).setDetail('arrivals')
         self.addField('dossard',DOSSARD)
         self.addField('time',TIME)
-        self.addField('duration',DURATION)
+        #self.addField('duration',DURATION)
         self.addField('ok',BOOL)
         
 

@@ -1,0 +1,34 @@
+# my third pds for pds2oo document
+
+doc.setPageProperties(marginLeft="6cm")
+
+s = doc.addStyle(name="Rechts",
+                 family="paragraph",
+                 parentStyleName="Standard",
+                 className="text")
+s.addProperties(textAlign="end",
+                justifySingleWord=False)
+
+t = doc.table("First Sheet")
+
+t.h(1,"This is a top-level heading")
+
+t.column("Name",columnWidth="4cm")
+t.column("Vorname",columnWidth="3cm")
+
+t.row("Hinz","Heinz")
+t.row("Kunz","Karl")
+
+t.h(1,"This is another top-level heading")
+
+r2 = t.row()
+r2.cell(
+    doc.elements.P("Here is a cell with two paragraphs"),
+    doc.elements.P("The second paragraph is aligned right.",
+                   styleName="Rechts"),
+    doc.elements.P("And the last paragraph"),
+    )
+
+
+
+

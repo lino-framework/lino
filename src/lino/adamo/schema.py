@@ -274,6 +274,7 @@ class Schema(Describable):
         job.status("Initialize Schema")
         self.initialize()
         db = self.addDatabase(langs=langs)
+        conn = center.connect(filename=filename,schema=self)
         job.status("Connect")
         conn = Connection(filename=filename,schema=self)
         db.connect(conn)

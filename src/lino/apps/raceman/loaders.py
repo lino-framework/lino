@@ -84,12 +84,14 @@ class RacesMirrorLoader(DbfMirrorLoader):
     #    Races.init(self)
     #    self.getRowAttr('id').setType(adamo.STRING(width=6))
     def appendFromDBF(self,q,row):
-         
+        sess = q.getSession()
+        raceType = sess.peek(RaceTypes,row['CATTYPE'])
         q.appendRow(
             id=int(row['IDRAL']),
             name1=row['NAME1'],
             name2=row['NAME2'],
             date=self.dbfdate(row['DATE']),
+            type=raceType,
             startTime=self.dbftime(row['STARTTIME']),
             )
         
@@ -104,7 +106,7 @@ class ParticipantsMirrorLoader(DbfMirrorLoader):
         if race.type is None:
             cat = None
         else:
-            cat = sess.peek(race.type,Categories,row['IDCAT'])
+            cat = sess.peek(Categories,race.type,row['IDCAT'])
         club = sess.peek(Clubs,row['IDCLB'])
         q.appendRow(
             race=race,

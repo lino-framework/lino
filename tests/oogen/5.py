@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,14 +18,21 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc import tsttools
-from lino.scripts import oogen 
+from lino.scripts import pds2sxw, pds2sxc
 
 class Case(tsttools.TestCase):
     
     def test01(self):
-
-        fn = self.addTempFile("5.sxw")
-        oogen.main(["-o", fn, "5.pds"])
+        fn = self.addTempFile("5.sxw",showOutput=True)
+        pds2sxw.main(["-o", fn, "-b", "5.pds"])
+        
+    def test02(self):
+        fn = self.addTempFile("5b.sxw")
+        pds2sxw.main(["-o", fn, "-b", "5b.pds"])
+        
+    def test03(self):
+        fn = self.addTempFile("5.sxc")
+        pds2sxc.main(["-o", fn, "-b", "5c.pds"])
 
 if __name__ == "__main__":
     tsttools.main()

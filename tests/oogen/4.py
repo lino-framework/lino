@@ -21,19 +21,22 @@
 import os
 from lino.ui import console
 from lino.misc import tsttools
-from lino.oogen import Document, elements
+from lino.oogen import TextDocument
 
 class Case(tsttools.TestCase):
     
     def test01(self):
         "First styles"
-        doc = Document("rechnung")
+
+        fn = self.addTempFile("4.sxw", showOutput=True)
+        doc = TextDocument(fn)
         
-        doc.styles.append(elements.Style(
-            elements.Properties(textAlign="end",
-                                justifySingleWord=False),
-            name="Rechts",family="paragraph",
-            parentStyleName="Standard",className="text"))
+        s = doc.addStyle(name="Rechts",
+                         family="paragraph",
+                         parentStyleName="Standard",
+                         className="text")
+        s.addProperties(textAlign="end",
+                        justifySingleWord=False)
         
         doc.h(1,"Rechnung Nr. 040235")
         doc.p("Datum: 10. Dezember 2004",styleName="Rechts")
@@ -50,8 +53,7 @@ class Case(tsttools.TestCase):
         doc.p("Alle Preise in €.")
         doc.p("Zahlungsbedingungen: ...")
 
-        fn = self.addTempFile("4.sxw",showOutput=True)
-        doc.save(fn)
+        doc.save(console)
         
 if __name__ == "__main__":
     tsttools.main()

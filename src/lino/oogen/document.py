@@ -19,42 +19,53 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-"""
-oogen : generate OpenOffice documents programmatically
-
-Bibliography:
--   http://books.evc-cit.info
-    Using OpenOffice.org's XML Data Format
--   http://www.oooforum.org/forum/viewtopic.php?t=13861
-    Opening 2 csv text files into OOo Calc as separate sheets
--   http://udk.openoffice.org/python/python-bridge.html
-    Python-UNO bridge
-
-"""
-
 import sys, os
-from lino.ui import console
-from lino.oogen import elements
-from lino.oogen.generators import OoText, OoSpreadsheet
+import zipfile
+import tempfile
 
+#from lino.ui import console
+from lino.oogen import elements
+#from lino.oogen.generators import OoText, OoSpreadsheet
+from lino.oogen.ifiles import IFILES
 
 class Document:
-    def __init__(self,name):
-        self.name = name
-        self.story = []
-        self.tables = []
+    extension = NotImplementedError
+    mimetype = NotImplementedError
+    officeClass = NotImplementedError
+    bodyClass = NotImplementedError
+    
+    def __init__(self,filename):
+        self.body = self.bodyClass()
+        for m in ('p','h','table'):
+            setattr(self,m,getattr(self.body,m))
         self.fonts = elements.Fonts()
         self.styles = elements.Styles()
-        self.autoStyles =elements.AutoStyles()
+        self.autoStyles = elements.AutoStyles()
         self.masterStyles = elements.MasterStyles()
-        self.populate()
+        
+        self.createFonts()
+        self.createStyles()
+        self.createAutoStyles()
+        self.createMasterStyles()
+        self.elements = elements # used in pds scripts
+
+        
+        self.tempDir = tempfile.gettempdir()
+
+        if not filename.lower().endswith(self.extension):
+            filename += self.extension
+        self.filename = filename
+        
+        self.ifiles = tuple([cl(self) for cl in IFILES])
+        
+        
         
     def addFont(self,**kw):
         x = elements.Font(**kw)
         self.fonts.append(x)
         return x
         
-    def populate(self):
+    def createFonts(self):
         
         self.addFont(
             name= "Tahoma1",
@@ -88,9 +99,13 @@ class Document:
             fontFamilyGeneric="swiss",
             fontPitch="variable",
         )
+
+    def addStyle(self,**kw):
+        s = elements.Style(**kw)
+        self.styles.append(s)
+        return s
         
-        
-        
+    def createStyles(self):
         s = elements.DefaultStyle(family="paragraph")
         s.append(elements.Properties(useWindowFontColor=True, 
             fontName="Times New Roman",
@@ -111,6 +126,7 @@ class Document:
         s = elements.Style(name="Standard",
                            family="paragraph",className="text")
         self.styles.append(s)
+        
         s = elements.Style(name="Text body",
                            family="paragraph",
                            parentStyleName="Standard",
@@ -140,145 +156,241 @@ class Document:
         self.styles.append(s)
         
 
-        s = elements.CurrencyStyle(name="N106", family="data-style", volatile=True)
-        s.append(elements.Number(decimalPlaces=2,minIntegerDigits=1,grouping=True))
+        s = elements.CurrencyStyle(name="N106",
+                                   family="data-style", volatile=True)
+        s.append(elements.Number(decimalPlaces=2,
+                                 minIntegerDigits=1,
+                                 grouping=True))
         s.append(elements.Text(""))
-        s.append(elements.CurrencySymbol("EUR",language="fr",country="BE"))
+        s.append(elements.CurrencySymbol(
+            "EUR",language="fr",country="BE"))
         self.styles.append(s)
         
 
-        self.styles.append(elements.Style(name="Default", family="table-cell", volatile=True))
-        s = elements.Style(name="Result", family="table-cell", parentStyleName="Default")
-        s.append(elements.Properties(fontStyle="italic",textUnderline="single",textUnderlineColor="font-color",fontWeight="bold"))
+        self.styles.append(elements.Style(
+            name="Default", family="table-cell", volatile=True))
+        
+        s = elements.Style(
+            name="Result", family="table-cell",
+            parentStyleName="Default")
+        s.append(elements.Properties(
+            fontStyle="italic",
+            textUnderline="single",
+            textUnderlineColor="font-color",
+            fontWeight="bold"))
         self.styles.append(s)
 
 
-        self.styles.append(elements.Style(name="Result2", family="table-cell", parentStyleName="Default", dataStyle="N106"))
-        s = elements.Style(name="Heading", family="table-cell", parentStyleName="Default")
-        s.append(elements.Properties(textAlign="center",textAlignSource="fix",fontSize="16pt",fontStyle="italic",fontWeight="bold"))
+        self.styles.append(elements.Style(
+            name="Result2", family="table-cell",
+            parentStyleName="Default", dataStyle="N106"))
+        
+        s = elements.Style(
+            name="Heading", family="table-cell",
+            parentStyleName="Default")
+        s.append(elements.Properties(
+            textAlign="center",textAlignSource="fix",
+            fontSize="16pt",fontStyle="italic",
+            fontWeight="bold"))
         self.styles.append(s)
 
-        s = elements.Style(name="Heading1", family="table-cell", parentStyleName="Heading")
-        s.append(elements.Properties(direction="ltr",rotationAngle=90))
+        s = elements.Style(
+            name="Heading1", family="table-cell",
+            parentStyleName="Heading")
+        s.append(elements.Properties(direction="ltr",
+                                     rotationAngle=90))
         self.styles.append(s)
 
+    def setPageProperties(self,**kw):
+        self.pageProperties.setAttribs(**kw)
 
+    def setHeaderProperties(self,**kw):
+        self.headerProperties.setAttribs(**kw)
+
+    def setFooterProperties(self,**kw):
+        self.footerProperties.setAttribs(**kw)
+
+
+    def createAutoStyles(self):
         
         pm = elements.PageMaster(name="pm1")
         self.autoStyles.append(pm)
-        pm.append(elements.Properties(writingMode="lr-tb"))
+        #pm.append(elements.Properties(writingMode="lr-tb"))
         
-        pm.append(elements.Properties(
-            pageWidth="20.999cm", pageHeight="29.699cm", numFormat="1", 
+        self.pageProperties = elements.Properties(
+            pageWidth="20.999cm",
+            pageHeight="29.699cm",
+            numFormat="1", 
             printOrientation="portrait", 
             marginTop="2cm",
             marginBottom="2cm",
             marginLeft="2cm",
             marginRight="2cm",
+            footnoteMaxHeight="0cm",
             writingMode="lr-tb",
-            footnoteMaxHeight="0cm"))
+            )
+            
+        pm.append(self.pageProperties)
         pm.append(elements.FootnoteSep(
             width="0.018cm", distanceBeforeSep="0.101cm", 
-            distanceAfterSep="0.101cm", adjustment="left", relWidth="25%", color="#000000"))
+            distanceAfterSep="0.101cm", adjustment="left",
+            relWidth="25%", color="#000000"))
         
         h = elements.HeaderStyle()
-        h.append(elements.Properties(minHeight="0.751cm",marginLeft="0cm",marginRight="0cm",marginBottom="0.25cm"))
+        self.headerProperties = elements.Properties(
+            minHeight="0.751cm",
+            marginLeft="0cm",marginRight="0cm",
+            marginBottom="0.25cm")
+        h.append(self.headerProperties)
         pm.append(h)
         
         h = elements.FooterStyle()
-        h.append(elements.Properties(minHeight="0.751cm",marginLeft="0cm",marginRight="0cm",marginBottom="0.25cm"))
+        self.footerProperties = elements.Properties(
+            minHeight="0.751cm",marginLeft="0cm",
+            marginRight="0cm",marginBottom="0.25cm")
+        h.append(self.footerProperties)
         pm.append(h)
         
+        if False:
+            pm = elements.PageMaster(name="pm2")
+            self.autoStyles.append(pm)
+            pm.append(elements.Properties(writingMode="lr-tb"))
 
-        pm = elements.PageMaster(name="pm2")
-        self.autoStyles.append(pm)
-        pm.append(elements.Properties(writingMode="lr-tb"))
+            h = elements.HeaderStyle()
+            pm.append(h)
+            p = elements.Properties(
+                minHeight="0.751cm",marginLeft="0cm",
+                marginRight="0cm",marginBottom="0.25cm",
+                border="0.088cm solid #000000",
+                padding="0.018cm", backgroundColor="#c0c0c0")
+            p.append(elements.BackgroundImage())
+            h.append(p)
+
+            h = elements.FooterStyle()
+            pm.append(h)
+            p = elements.Properties(
+                minHeight="0.751cm",marginLeft="0cm",
+                marginRight="0cm",marginBottom="0.25cm",
+                border="0.088cm solid #000000",
+                padding="0.018cm", backgroundColor="#c0c0c0")
+            p.append(elements.BackgroundImage())
+            h.append(p)
+
+    def getHeader(self):
+        """
+        Examples:
+         h = doc.getHeader()
+         h.p("This is a simple paragraph in the header")
+         
+         
+        writer ignores header if it contains regions!
+        how to validate this?!
         
-        h = elements.HeaderStyle()
-        pm.append(h)
-        p = elements.Properties(minHeight="0.751cm",marginLeft="0cm",marginRight="0cm",marginBottom="0.25cm",
-            border="0.088cm solid #000000", padding="0.018cm", backgroundColor="#c0c0c0")
-        p.append(elements.BackgroundImage())
-        h.append(p)
-        
-        h = elements.FooterStyle()
-        pm.append(h)
-        p = elements.Properties(minHeight="0.751cm",marginLeft="0cm",marginRight="0cm",marginBottom="0.25cm",
-            border="0.088cm solid #000000", padding="0.018cm", backgroundColor="#c0c0c0")
-        p.append(elements.BackgroundImage())
-        h.append(p)
+        """
+        return self.headerContent
+    
+    def getFooter(self):
+        return self.footerContent
+
+
+    def createMasterStyles(self):
         
         mp = elements.MasterPage(name="Default",pageMasterName="pm1")
         self.masterStyles.append(mp)
-        h = elements.Header()
-        mp.append(h)
-        h.append(elements.P(elements.SheetName("???")))
-        mp.append(elements.HeaderLeft(display=False))
-        f = elements.Footer()
-        mp.append(f)
-        f.append(elements.P("Page ",elements.PageNumber("1")))
-        mp.append(elements.FooterLeft(display=False))
         
-        mp = elements.MasterPage(name="Report",pageMasterName="pm2")
-        self.masterStyles.append(mp)
-        h = elements.Footer()
+        h = elements.Header()
+        self.headerContent = h
         mp.append(h)
-        r = elements.RegionLeft(elements.P(elements.SheetName("???"),"(",elements.Title("???"),")"))
-        h.append(r)
-        r = elements.RegionRight(
-            elements.P(
-                elements.Date("20/05/2004",dataStyleName="N2",dateValue="0-00-00"),
-                ",",
-                elements.Time("13:59:08")
-                ))
-        h.append(r)
+        #h.append(elements.P(elements.SheetName("???")))
+##         if False:
+##             h.append(elements.P("Here is a simple header"))
+##         else:
+##             h.append(elements.RegionLeft(elements.P("left header")))
+##             h.append(elements.RegionCenter(elements.P("center header")))
+##             h.append(elements.RegionRight(elements.P("right header")))
+        
+        mp.append(elements.HeaderLeft(display=False))
+        
+        f = elements.Footer()
+        self.footerContent = f
+        mp.append(f)
+        #f.append(elements.P("Page ",elements.PageNumber("1")))
+        
+        mp.append(elements.FooterLeft(display=False))
+
+        if False:
+        
+            mp = elements.MasterPage(name="Report",
+                                     pageMasterName="pm2")
+            self.masterStyles.append(mp)
+            h = elements.Footer()
+            mp.append(h)
+            r = elements.RegionLeft(
+                elements.P(elements.SheetName("???"),
+                           "(",
+                           elements.Title("???"),")"))
+            h.append(r)
+            r = elements.RegionRight(
+                elements.P(
+                    elements.Date("20/05/2004",
+                                  dataStyleName="N2",
+                                  dateValue="0-00-00"),
+                    ",",
+                    elements.Time("13:59:08")
+                    ))
+            h.append(r)
         
     def report(self,**kw):
         from lino.reports.oo import OoReport
         return OoReport(self,**kw)
         
-    def table(self,name=None,styleName=None,**kw):
-        if name is None:
-            name = "Table"+str(len(self.tables)+1)
-        if styleName is None:
-            styleName = name
-        t = elements.Table(name=name,
-                           styleName=styleName,
-                           **kw)
-        self.story.append(t)
-        self.tables.append(t)
-        return t
-        
-    def p(self,*args,**kw):
-        p = elements.P(*args,**kw)
-        self.story.append(p)
-        return p
-        
-    def h(self,level,text,**kw):
-        h = elements.H(level,text,**kw)
-        self.story.append(h)
-        return h
-
-    def generator(self,filename=None):
-        if filename is not None:
-            for cl in (OoText,OoSpreadsheet):
-                if filename.lower().endswith(cl.extension):
-                    return cl(self,filename)
-        if len(self.tables) == len(self.story):
-            return OoSpreadsheet(self,filename)
-        return OoText(self,filename)
+##     def generator(self,filename=None):
+##         if filename is not None:
+##             for cl in (OoText,OoSpreadsheet):
+##                 if filename.lower().endswith(cl.extension):
+##                     return cl(self,filename)
+##         if len(self.tables) == len(self.children):
+##             return OoSpreadsheet(self,filename)
+##         return OoText(self,filename)
         
                 
-    def save(self,filename=None,showOutput=False):
-        g = self.generator(filename)
-        g.save()
-        if showOutput and console.isInteractive():
+    def save(self,ui,showOutput=False):
+        job = ui.job("Writing "+self.filename)
+        for f in self.ifiles:
+            f.writeFile()
+        zf = zipfile.ZipFile(self.filename,'w', zipfile.ZIP_DEFLATED)
+        for f in self.ifiles:
+            zf.write(os.path.join(self.tempDir,f.filename),
+                     f.filename)
+        zf.close()
+        job.done()
+
+        if showOutput and ui.isInteractive():
             if sys.platform == "win32":
-                os.system("start %s" % g.outputFilename)
+                os.system("start %s" % self.filename)
             else:
-                console.message("but how to start %s ?" % \
-                                g.outputFilename)
+                ui.message("but how to start %s ?" % \
+                           self.filename)
 
     
         
+
+class TextDocument(Document):
+    
+    extension = ".sxw"
+    officeClass = "text"
+    mimetype = "application/vnd.sun.xml.writer"
+    bodyClass = elements.TextBody
+    
+##     def __init__(self,*args,**kw):
+##         Document.__init__(self,*args,**kw)
+##         self.body = elements.TextBody()
+
+class SpreadsheetDocument(Document):
+    
+    extension = ".sxc"
+    officeClass = "spreadsheet"
+    mimetype = "application/vnd.sun.xml.calc"
+    bodyClass = elements.SpreadsheetBody
+    
 

@@ -41,13 +41,15 @@ This is the Raceman main menu.
 
         m = frm.addMenu("&Stammdaten")
         m.addItem(label="&Races").setHandler(
-            self.showTableGrid,ui,
-            races.Races,viewName="std")
+            self.showViewGrid,ui,
+            races.Races,"std")
 
-        m.addItem(label="&Clubs").setHandler(self.showTableGrid,ui,
-                                             races.Clubs)
-        m.addItem(label="&Personen").setHandler(self.showTableGrid,ui,
-                                                races.Persons)
+        m.addItem(label="&Clubs").setHandler(
+            self.showTableGrid,ui,
+            races.Clubs)
+        m.addItem(label="&Personen").setHandler(
+            self.showTableGrid,ui,
+            races.Persons)
     
         #m = frm.addMenu("&Arrivals")
         #m.addItem(label="&Erfassen").setHandler(self.arrivals)

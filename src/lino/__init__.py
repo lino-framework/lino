@@ -24,6 +24,7 @@ try:
     __credits__ += "wxPython " + wx.__version__ + "\n"
 except ImportError:
     pass
+
 try:
     import sqlite
     __credits__ += "PySQLLite " + sqlite.version + "\n"
@@ -37,4 +38,10 @@ try:
 except ImportError:
     pass
         
+
+try:
+    import win32print
+    __credits__ += "Python Windows Extensions " + "\n"
+except ImportError:
+    pass
 

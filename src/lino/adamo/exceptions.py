@@ -27,11 +27,16 @@ class DataVeto(Exception):
     "Invalid data submitted"
     #pass
 
+class RowLockFailed(Exception):
+    "Failed to get a lock for a row"
+    #pass
+
 class DatabaseError(Exception):
     "dbd-specific exception was raised"
 
 __all__ = [
     'StartupDelay',
     'InvalidRequestError',
+    'RowLockFailed',
     'DataVeto',
     'DatabaseError']

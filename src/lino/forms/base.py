@@ -223,6 +223,7 @@ class MenuBar(Component):
 
 
 class Navigator:
+    # mixin to be used with Component
     def __init__(self,ds):
         self.ds = ds
         #assert len(ds._lockedRows) == 0
@@ -233,10 +234,17 @@ class Navigator:
         m.addItem(label="&Exit",
                   action=frm.close,
                   accel="ESC")
+        m.addItem(label="&Refresh",
+                  action=frm.refresh,
+                  accel="Alt-F5")
+        
         m = frm.addMenu("row",label="&Row")
-        m.addItem(label="&Print",
-                  action=self.printSelectedRows,
+        m.addItem(label="Print &Row",
+                  action=self.printRow,
                   accel="F7")
+        m.addItem(label="Print &List",
+                  action=self.printList,
+                  accel="Shift-F7")
         m.addItem(label="&Delete this row",
                   action=self.deleteSelectedRows,
                   accel="DEL")
@@ -270,16 +278,29 @@ class Navigator:
         row = self.ds.appendRow()
         self.refresh()
     
-    def printSelectedRows(self):
+    def printRow(self):
         #print "printSelectedRows()", self.getSelectedRows()
         #workdir = "c:\\temp"
         workdir = self.getForm().toolkit.app.tempDir
         from lino.oogen import Document
-        doc = Document("1")
+        doc = Document("printRow")
         for i in self.getSelectedRows():
             row = self.ds[i]
             row.printRow(doc)
         outFile = opj(workdir,"raceman_report.sxc")
+        doc.save(outFile,showOutput=True)
+
+    def printList(self):
+        workdir = self.getForm().toolkit.app.tempDir
+        from lino.oogen import Document
+        doc = Document("printList")
+        rows = self.getSelectedRows()
+        if len(rows) == 1:
+            rows = self.ds
+        rpt = doc.report()
+        self.ds.setupReport(rpt)
+        rpt.execute(rows)
+        outFile = opj(workdir,self.ds.getName()+".sxc")
         doc.save(outFile,showOutput=True)
 
     def getSelectedRows(self):
@@ -294,6 +315,10 @@ class Navigator:
             raise InvalidRequestError(\
                 "you cannot select the after-last row!")
         return self.ds[i]
+
+    def withCurrentRow(self,meth,*args,**kw):
+        r = self.getCurrentRow()
+        meth(r,*args,**kw)
         
     def beforeClose(self):
         self.ds.unlock()
@@ -519,16 +544,8 @@ class GUI(console.UI):
 ##         return GuiProgressBar(self,*args,**kw)
 
     def showAbout(self,app):
-        s = app.name
-        if app.version is not None:
-            s += " version " + app.version
-        if app.author is not None:
-            s += "Copyright (c) %s %s." % app.years, app.author
-        from lino import __copyright__, __credits__
-        s += "\n\n" + __copyright__
-        s += "\n\nCredits:\n" + __credits__
-        
-        frm = self.form(label="About",doc=s)
+        frm = self.form(label="About",doc=app.aboutString())
+        frm.addOkButton()
         frm.show()
         
         
