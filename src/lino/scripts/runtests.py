@@ -10,7 +10,7 @@ from lino.ui import console
 
 def main(argv):
 
-    #console.getSystemConsole().set(batch=True)
+    console.set(verbosity=-1)
     
     parser = console.getOptionParser(
         usage="usage: %prog [options] [TESTS]",

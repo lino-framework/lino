@@ -4,7 +4,7 @@
 
 
 import os
-from forum.normalDate import ND
+from lino.tools.normalDate import ND
 
 
 def populate(db,big=False):
