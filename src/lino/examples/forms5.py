@@ -19,18 +19,46 @@
 from lino.ui import console
 
 from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Partners
+from lino.schemas.sprl.tables import *
+
+def foo(frm,sess,t):
+    ds = sess.query(t)
+    frm = frm.addForm(label=ds.getLabel())
+    frm.addTableEditor(ds)
+    frm.show()
 
 def main():
-    sess = demo.startup()
-    ds = sess.query(Partners, orderBy="name")
+    sess = demo.startup(big=True)
     
-    frm = console.addForm(label="The first data form")
-    frm.addTableEditor(ds)
-    frm.showModal()
-    
-    sess.shutdown()
+    frm = sess.addForm(label="Main menu")
+    frm.addLabel("""\
+This is the main menu.                                           
 
+
+
+
+
+
+
+
+
+
+
+""")
+
+    m = frm.addMenu("&Stammdaten")
+    m.addItem(label="&Partner").setHandler(foo,sess,Partners)
+    m.addItem(label="&Nations").setHandler(foo,sess,Nations)
+    m.addItem(label="&Cities").setHandler(foo,sess,Cities)
+    m.addItem(label="&Quotes").setHandler(foo,sess,Quotes)
+        
+    m = frm.addMenu("&Programm")
+    m.addItem(label="&Beenden",onclick=frm.close)
+    
+    frm.show()
+        
+    sess.shutdown()
+        
 if __name__ == "__main__":
     console.parse_args()
     main()

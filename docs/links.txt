@@ -2,40 +2,6 @@
 Links
 =====
 
-Comparable existing projects
-
-- Lino concurrents
-
-  - **GNU-Enterprise** :
-	 A promising project. Same goals as Lino.
-	 Also written in Python.
-	 GNUe works with an XML database schema.
-	 I prefer to write a database schema in Python.
-	 (http://www.gnuenterprise.org)
-
-- Data modeling systems. Lino currently uses his own data modeling
-  system `Adamo <adamo.html>`_.
-  There are some potential replacements:
-
-  - **Modeling** by Sébastien Bigaret is comparable to
-	 Adamo: it defines a database schema using Python.	 It is
-	 another approach for the same problem.
-	 (http://modeling.sourceforge.net)
-
-  - http://sourceforge.net/projects/pythondbo/
-
-  - http://sqlobject.org/
-
-  - **PDO** provides an object oriented API, similar to that of ADO or
-    JDBC.  http://pdo.neurokode.com
-
-  - `Twisted Enterprise Row Objects <http://www.twistedmatrix.com/documents/current/howto/row>`_
-	 
-  - See also: `higher level database toolkits
-    <http://www.python.org/cgi-bin/moinmoin/HigherLevelDatabaseProgramming>`_
-
-	 
-
 - Frameworks for Web-based applications:
 
   - **Medusa** is a Python web server.

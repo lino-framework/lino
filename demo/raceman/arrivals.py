@@ -45,7 +45,7 @@ class Main:
             parent.buttons.start.setFocus()
             parent.error("cannot arrive before start")
             return
-        line = (parent.entries.dossard.get(),
+        line = (parent.entries.dossard.getValue(),
                 str(time.time() - self.starttime))
         self.data.append( line)
         parent.info("%s arrived at %s" % line)

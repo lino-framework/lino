@@ -194,8 +194,8 @@ class Panel(base.Panel):
 ##         s += "\n)"
 ##         return s
     
-    def setup(self,panel,box):
-        mypanel = wx.Panel(panel,-1)
+    def setup(self,parent,box):
+        mypanel = wx.Panel(parent,-1)
         box.Add(mypanel, WEIGHT, wx.ALL|wx.EXPAND,0)
         if self.direction == self.VERTICAL:
             mybox = wx.BoxSizer(wx.VERTICAL)
@@ -421,7 +421,7 @@ class Form(base.Form):
 ##         #self.show()
 ##         return self.lastEvent == self.buttons.ok
 
-    def close(self):
+    def close(self,callingForm):
         #print "close", self.getLabel()
         self.wxctrl.Close()
 

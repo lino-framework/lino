@@ -57,8 +57,10 @@ class Button(Component):
         
     def click(self):
         "execute the button's handler"
-        self.getForm().lastEvent = self
-        self._onclick(self.owner,*(self._args),**(self._kw))
+        frm = self.getForm()
+        frm.lastEvent = self
+        self._onclick(frm,*(self._args),**(self._kw))
+        #self._onclick(*(self._args),**(self._kw))
         
 
 class Entry(Component):

@@ -16,7 +16,6 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.datatypes import STRING
 from lino.forms.wx.wxform import Form
 from lino.ui import console
 
@@ -28,8 +27,8 @@ Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
 """)
-    frm.addEntry("firstName",STRING, label="First name")
-    frm.addEntry("name",STRING)
+    frm.addEntry("firstName",label="First name")
+    frm.addEntry("name")
     frm.addOkButton()
     frm.addCancelButton()
     if frm.showModal():
