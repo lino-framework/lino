@@ -17,8 +17,16 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import sys
 from distutils.core import setup
 import py2exe
+
+
+if len(sys.argv) == 1:
+    sys.argv.append("py2exe")
+else:
+    print """No command-line parameters so far. Good bye."""
+    sys.exit(-1)
 
 from lino import __version__
 
