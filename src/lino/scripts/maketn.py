@@ -1,8 +1,21 @@
-#----------------------------------------------------------------------
-# makelc.py
-# Copyright: (c) 2003-2004 Luc Saffre
-# License:	 GPL
-#----------------------------------------------------------------------
+## Copyright 2003-2005 Luc Saffre 
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 """
 create thumbnails and web-sized images if necessary
   
@@ -16,7 +29,6 @@ import sys
 
 from PIL import Image
 
-from lino import copyleft
 from lino.ui import console
 
 class Size:
@@ -62,6 +74,7 @@ def make_tn(path,sizes):
 
 def main(argv):
 
+    console.copyleft(name="Lino/maketn",years='2002-2005')
     parser = console.getOptionParser(
         usage="usage: %prog [options] DIR1 [DIR2 ...]",
         description="""\
@@ -82,6 +95,5 @@ processed.
 		make_tn(DIR,SIZES)
 
 if __name__ == "__main__":
-    print copyleft(name="Lino/maketn",year='2002-2004')
     sys.exit(main(sys.argv[1:]))
     

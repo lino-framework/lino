@@ -23,7 +23,7 @@ import os
 
 import shutil
 import zipfile
-from time import localtime, strftime
+from time import localtime, strftime, ctime
 
 from lino.ui.console import confirm
 from lino.misc.rdir import rdirlist
@@ -34,6 +34,12 @@ VERSION = __version__
 for x in __version__.split('.'):
     if not x.isdigit():
         VERSION = "current"
+
+
+distlog = file('dist.log','a')
+distlog.write("mkdist for version '%s' started at %s...\n" % (
+  VERSION, ctime()))
+        
 
 #from lino.releases import version, notes
 
@@ -117,6 +123,9 @@ def srcfilter(fn):
 ##									  '.spec', '.pds', 'pin', '.sql',
 ##									  '.zip', '.jpg', '.gif')
 
+distlog.write("done at %s\n\n" % ctime())
+distlog.close()
+
 zf = zipfile.ZipFile(srcZipName,'w',zipfile.ZIP_DEFLATED)
 
 pruneDirs = ('.svn','_attic','CVS')
@@ -139,6 +148,7 @@ l = rdirlist(distDir)
 for fn in l:
 	zf.write(opj(distDir,fn),fn)
 zf.write(os.path.join(srcRoot,'COPYING.txt'),'COPYING.txt')
+zf.write(os.path.join(srcRoot,'dist.log'),'dist.log')
 zf.close()	 
 
 ## shutil.copy('COPYING.txt',distDir)

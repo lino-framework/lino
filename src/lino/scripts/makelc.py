@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -27,7 +27,6 @@ Works only on Windows (on UNIX it isn't necessary)
 import os
 import sys
 
-from lino import copyleft
 from lino.ui import console
 
 class Collector:
@@ -59,7 +58,7 @@ def collect_upper(path,collector):
 
 
 def main(argv):
-
+    console.copyleft(name="Lino/makelc",years='2002-2005')
     parser = console.getOptionParser(
         usage="usage: %prog [options] DIR1 [DIR2 ...]",
         description="""\
@@ -97,7 +96,6 @@ processed.
                              len(collector.dirnames))
     
 if __name__ == "__main__":
-    print copyleft(name="Lino/makelc",year='2002-2004')
     sys.exit(main(sys.argv[1:]))
         
 
