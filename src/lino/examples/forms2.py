@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.datatypes import STRING
-from lino.ui import console
+from lino.forms import gui
 
 def privacy(parent):
     frm = parent.addForm(label="Privacy Statement")
@@ -37,8 +37,8 @@ so you don't need to close it if you want to continue registering.
           "while showModal() would have waited until the form is closed."
     
 def main():
-    frm = console.addForm(label="my second form",
-                          doc="""\
+    frm = gui.form(label="my second form",
+                   doc="""\
 Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
@@ -61,5 +61,5 @@ You can trust us.
         print "You canceled the form."
         
 if __name__ == "__main__":
-    console.parse_args()
+    gui.parse_args()
     main()

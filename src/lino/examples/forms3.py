@@ -16,20 +16,16 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.ui import console
+from lino.forms import gui
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Partners
 
-def main():
-    sess = demo.startup()
-    ds = sess.query(Partners, orderBy="name")
-    
-    frm = console.addForm(label="The first DataGrid Form")
-    frm.addDataGrid(ds)
-    frm.show()
-    
+gui.parse_args()
+sess = demo.startup(ui=gui)
+ds = sess.query(Partners, orderBy="name")
 
-if __name__ == "__main__":
-    console.parse_args()
-    main()
+frm = gui.form(label="The first DataGrid Form")
+frm.addDataGrid(ds)
+frm.show()
+

@@ -22,7 +22,7 @@ import os
 opj = os.path.join
 
 from lino import adamo
-from lino.ui import console
+from lino.forms import gui
 
 #from lino.apps.raceman.schema import makeSchema
 
@@ -128,9 +128,9 @@ from lino.forms.application import MirrorLoaderApplication
 
 class Raceman(MirrorLoaderApplication):
         
-    def makeMainForm(self):
+    def makeMainForm(self,ui):
         #self.arrivals = Arrivals(self)
-        frm = self.addForm(
+        frm = ui.form(
             label="Main menu",
             doc="""\
 This is the Raceman main menu.                                     
@@ -138,12 +138,12 @@ This is the Raceman main menu.
 
         m = frm.addMenu("&Stammdaten")
         m.addItem(label="&Races").setHandler(
-            self.showTableGrid,
+            self.showTableGrid,ui,
             races.Races,
             columnNames="id name1 date startTime status tpl type name2")
-        m.addItem(label="&Clubs").setHandler(self.showTableGrid,
+        m.addItem(label="&Clubs").setHandler(self.showTableGrid,ui,
                                              races.Clubs)
-        m.addItem(label="&Personen").setHandler(self.showTableGrid,
+        m.addItem(label="&Personen").setHandler(self.showTableGrid,ui,
                                                 races.Persons)
     
         #m = frm.addMenu("&Arrivals")
@@ -151,7 +151,7 @@ This is the Raceman main menu.
         
         m = frm.addMenu("&Programm")
         m.addItem(label="&Beenden",action=frm.close)
-        m.addItem(label="Inf&o",action=self.showAbout)
+        m.addItem(label="Inf&o").setHandler(ui.showAbout,self)
 
         return frm
 
@@ -162,17 +162,11 @@ This is the Raceman main menu.
 
 def main(argv):
 
-    app = Raceman(name="Raceman",
-                  years='2005',
-                  tempDir=r'c:\temp',
-                  loadfrom=r'c:\temp\timrun')
-    (options, args) = app.parse_args(argv)
-
-
     schema = adamo.Schema()
     races.setupSchema(schema)
-    app.startup(schema)
-    app.main()
+    app = Raceman(schema, name="Raceman", years='2005')
+    app.parse_args()
+    gui.run(app)
     
 
 

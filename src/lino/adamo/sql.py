@@ -76,18 +76,18 @@ class SqlConnection(Connection):
         #print val, type
         if val is None:
             return 'NULL'
-        elif val is True:
-            return '1'
-        elif val is False:
-            return '0'
+        elif isinstance(type, datatypes.BoolType):
+            if val:
+                return '1'
+            else:
+                return '0'
         elif isinstance(type, datatypes.DateType):
             # 20050128 return "%s" % str(val)
             return str(val.toordinal())
         elif isinstance(type, datatypes.TimeType):
-            return "'%s'" % str(val).replace("'", "''") 
+            return "'" + type.format(val).replace("'", "''") + "'"
         elif isinstance(type, datatypes.DurationType):
-            s = type.format(val)
-            return "'%s'" % s.replace("'", "''") 
+            return "'" + type.format(val).replace("'", "''") + "'"
         elif isinstance(type, datatypes.IntType):
             return "%s" % str(val)
         #elif isinstance(val, DateTime):
@@ -365,9 +365,8 @@ class SqlConnection(Connection):
 
         
         
-    def executePeek(self,clist,id):
+    def executePeek(self,clist,id,sess):
         table = clist.leadTable
-        #clist = table.clist()
         assert len(id) == len(table.getPrimaryAtoms()),\
                  "len(%s) != len(%s)" % (repr(id),
                                          repr(table.getPrimaryAtoms()))
@@ -393,13 +392,24 @@ class SqlConnection(Connection):
                  "%s.peek(%s) found %d rows" % (table.getName(),\
                                                 repr(id),\
                                                 csr.rowcount)
-        return self.csr2atoms(clist,csr.fetchone())
+        return self.csr2atoms(clist,csr.fetchone(),sess)
     
-    def csr2atoms(self,clist,sqlatoms):
+    def csr2atoms(self,clist,sqlatoms,sess):
         l = []
         i = 0
         for a in clist.getAtoms():
-            l.append(self.sql2value(sqlatoms[i],a.type))
+            try:
+                v = self.sql2value(sqlatoms[i],a.type)
+            except Exception,e:
+                sess.handleException(
+                    e, details="""\
+Could not convert raw atomic value %s in %s.%s (expected %s).""" \
+                    % (repr(sqlatoms[i]),
+                       clist.leadTable.name,
+                       a.name,
+                       str(a.type)))
+                v = None
+            l.append(v)
             i += 1
         return l
 

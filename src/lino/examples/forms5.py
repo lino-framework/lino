@@ -18,7 +18,7 @@
 
 import random
 
-from lino.ui import console
+#from lino.ui import console
 
 from lino.forms.application import AdamoApplication
 
@@ -60,14 +60,10 @@ class MyApplication(AdamoApplication):
         return frm
 
 
-def main():
-    schema = demo.makeSchema(big=True)
-    app = MyApplication()
-    app.startup(schema)
-    app.main()
-    
-        
-
 if __name__ == "__main__":
-    console.parse_args()
-    main()
+
+    schema = demo.makeSchema(big=True)
+    app = MyApplication(schema)
+    app.parse_args()
+    app.main()
+

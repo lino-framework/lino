@@ -47,12 +47,11 @@ except ImportError,e:
 
 class Console:
 
-    forwardables = ('confirm','decide',
-                    'debug','info',
-                    'warning','progress',
-                    'error','critical',
-                    'report','addForm','textprinter',
-                    'startDump','stopDump')
+##     forwardables = ('warning', 'confirm','decide', 
+##                     'debug','info', 'progress',
+##                     'error','critical',
+##                     'report','textprinter',
+##                     'startDump','stopDump')
     """
     confirm and warning are always user messages
     """
@@ -61,17 +60,21 @@ class Console:
         if out is None:
             out = sys.stdout
         self.out = out
-        self.app = None
+        #self.app = None
         self._verbosity = 0
         self._batch = False
         self._dumping = None
+        self._ui = self
         self.set(**kw)
 
-    def set(self,verbosity=None,debug=None,batch=None):
+    def set(self,verbosity=None,debug=None,batch=None,
+            ui=None):
         if verbosity is not None:
             self._verbosity += verbosity
         if batch is not None:
             self._batch = batch
+        if ui is not None:
+            self._ui = ui
         #if debug is not None:
         #    self._debug = debug
 
@@ -130,75 +133,6 @@ class Console:
             self.log_message(msg)
             #self.out.write(msg + "\n")
             
-    def warning(self,msg):
-        
-        """Log a warning message.  If interactive, make sure that she
-        has seen this message before returning.
-
-        """
-        if sound:
-            sound.asterisk()
-        self.log_message(msg)
-        #self.alert(msg)
-        if not self._batch:
-            raw_input("Press ENTER to continue...")
-            
-            
-    def confirm(self,prompt,default="y"):
-        
-        """Ask user a yes/no question and return only when she has
-        given her answer. returns True or False.
-        
-        """
-        if self._batch:
-            return (default=='y')
-        
-        if sound:
-            sound.asterisk()
-        if default == "y":
-            prompt += " [Y,n]"
-        else:
-            assert default == "n"
-            prompt += " [y,N]"
-        while True:
-            s = raw_input(prompt)
-            if s == "":
-                s = default
-            s = s.lower()
-            if s == "y":
-                return True
-            if s == "n":
-                return False
-            self.warning("wrong answer, must be 'y' or 'n': "+s)
-            
-
-    def decide(self,prompt,answers,
-               default=None,
-               ignoreCase=True):
-        
-        """Ask user a question and return only when she has
-        given her answer. Returns the letter answered by user.
-        
-        """
-        if default is None:
-            default = answers[0]
-            
-        if self._batch:
-            return default
-        
-        if sound:
-            sound.asterisk()
-        while True:
-            s = raw_input(prompt+(" [%s]" % ",".join(answers)))
-            if s == "":
-                s = default
-            if ignoreCase:
-                s = s.lower()
-            if s in answers:
-                return s
-            self.warning("wrong answer: "+s)
-
-
         
 ##      def notify(self,msg):
 
@@ -219,6 +153,10 @@ class Console:
 ##          if self.verbose:
 ##              self.notify(msg)
             
+    def parse_args(args=None):
+        p = self.getOptionParser()
+        return p.parse_args(args)
+
     def getOptionParser(self,**kw):
         p = OptionParser(**kw)
 
@@ -251,11 +189,82 @@ class Console:
                      )
         return p
 
-    def addForm(self,*args,**kw):
-        if self.app is None:
-            from lino.forms.base import Application
-            self.app = Application(console=self)
-        return self.app.addForm(*args,**kw)
+    def warning(self,msg):
+        """Log a warning message.  If interactive, make sure that she
+        has seen this message before returning.
+
+        """
+##         if self.app is not None:
+##             return self.app.warning(msg)
+        
+        if sound:
+            sound.asterisk()
+        self.log_message(msg)
+        #self.alert(msg)
+        if not self._batch:
+            raw_input("Press ENTER to continue...")
+            
+            
+    def confirm(self,prompt,default="y"):
+        """Ask user a yes/no question and return only when she has
+        given her answer. returns True or False.
+        
+        """
+##         if self.app is not None:
+##             return self.app.confirm(prompt,default)
+        if self._batch:
+            return (default=='y')
+        
+        if sound:
+            sound.asterisk()
+        if default == "y":
+            prompt += " [Y,n]"
+        else:
+            assert default == "n"
+            prompt += " [y,N]"
+        while True:
+            s = raw_input(prompt)
+            if s == "":
+                s = default
+            s = s.lower()
+            if s == "y":
+                return True
+            if s == "n":
+                return False
+            self.warning("wrong answer, must be 'y' or 'n': "+s)
+            
+
+    def decide(self,prompt,answers,
+               default=None,
+               ignoreCase=True):
+        
+        """Ask user a question and return only when she has
+        given her answer. Returns the letter answered by user.
+        
+        """
+##         if self.app is not None:
+##             return self.app.decide(prompt,answers,default,ignoreCase)
+        if default is None:
+            default = answers[0]
+            
+        if self._batch:
+            return default
+        
+        if sound:
+            sound.asterisk()
+        while True:
+            s = raw_input(prompt+(" [%s]" % ",".join(answers)))
+            if s == "":
+                s = default
+            if ignoreCase:
+                s = s.lower()
+            if s in answers:
+                return s
+            self.warning("wrong answer: "+s)
+
+    def form(self,*args,**kw):
+        raise NotImplementedError
+
 
     def textprinter(self):
         from lino.textprinter.plain import PlainDocument
@@ -272,20 +281,15 @@ def getSystemConsole():
     return _syscon
 
 
-for m in _syscon.forwardables:
+for m in ('debug','info', 'progress',
+          'error','critical',
+          'report','textprinter',
+          'startDump','stopDump',
+          'isInteractive','set',
+          'getOptionParser','parse_args',
+          ):
     globals()[m] = getattr(_syscon,m)
 
-isInteractive = _syscon.isInteractive
-
-set = _syscon.set
-getOptionParser = _syscon.getOptionParser
-
-def parse_args(args=None):
-    #if args is None:
-    #    args = sys.argv[1:]
-    p = _syscon.getOptionParser()
-    return p.parse_args(args)
-    
 
 def copyleft(name="Lino",
              version=__version__,

@@ -533,7 +533,9 @@ class SimpleDatasource:
 ##                for (name,type) in self._table.getPrimaryAtoms()]
 
     def executePeek(self,id):
-        return self._connection.executePeek(self._clist,id)
+        return self._connection.executePeek(self._clist,
+                                            id,
+                                            self._session)
 
     def commit(self):
         self._session.commit()
@@ -581,7 +583,9 @@ class SimpleDatasource:
         return self.atoms2row(atomicRow,False)
 
     def csr2atoms(self,sqlatoms):
-        return self._connection.csr2atoms(self._clist,sqlatoms)
+        return self._connection.csr2atoms(self._clist,
+                                          sqlatoms,
+                                          self._session)
     
     def peek(self,*id):
         assert len(id) == len(self._clist._pkColumns),\
@@ -594,7 +598,7 @@ class SimpleDatasource:
             l += col.rowAttr.value2atoms(id[i],self.getDatabase())
             i+=1
             
-        atomicRow = self._connection.executePeek(self._clist,l)
+        atomicRow = self.executePeek(l)
         if atomicRow is None:
             return None
         #d = self._clist.at2d(atomicRow)
@@ -1046,7 +1050,7 @@ class StoredDataRow(DataRow):
         #leadRow = self._ds._store._peekQuery.peek(id)
         #d = self._values
         atomicRow = self._ds._connection.executePeek(
-            self._ds._store._peekQuery,id)
+            self._ds._store._peekQuery,id,self._ds._session)
         if self._new:
             if atomicRow is not None:
                 raise DataVeto("Cannot create another %s row %s" \

@@ -265,7 +265,9 @@ class Schema(Describable):
         return str(self.__class__)
 
 
-    def quickStartup(self, langs=None, filename=None, **kw):
+    def quickStartup(self,
+                     langs=None,
+                     filename=None, **kw):
         self.initialize()
         db = self.addDatabase(langs=langs)
         conn = Connection(filename=filename,schema=self)

@@ -328,7 +328,7 @@ class Form(base.Form):
 ##             self.app.MainLoop()
 
 
-    def setStatusMessage(self,msg):
+    def setMessage(self,msg):
         if self.modal:
             print msg
         else:
@@ -420,9 +420,9 @@ class Form(base.Form):
             self.wxctrl.ShowModal()
         else:
             self.wxctrl.Show()
-            if self.app.mainForm is None:
-                #print "automagic app.main() call"
-                self.app.main(self)
+            #if self.toolkit.mainForm is None:
+            #    #print "automagic app.main() call"
+            #    self.app.main(self)
             
 
 ##     def showModal(self):
@@ -471,7 +471,7 @@ class Form(base.Form):
         self.wxctrl.Refresh()
 
 
-class WxUI:
+class Toolkit(base.Toolkit):
     labelFactory = Label
     entryFactory = Entry
     dataEntryFactory = DataEntry
@@ -481,16 +481,16 @@ class WxUI:
     navigatorFactory = DataNavigator
     formFactory = Form
     
-    def __init__(self,app):
-        self.app = app
+    def __init__(self,*args,**kw):
+        base.Toolkit.__init__(self,*args,**kw)
         self.wxctrl = WxApp()
-        self.console = console
-        #app.console = ...
+        #self.console = console
 
-    def mainLoop(self):
+    def main(self):
         "called from Application.main()"
-        frm = self.app.mainForm
-        #frm.show()
+        self.app.init(self)
+        frm = self.app.getMainForm(self)
+        frm.show()
         self.wxctrl.SetTopWindow(frm.wxctrl)
         self.wxctrl.MainLoop()
 

@@ -19,7 +19,7 @@
 import atexit
 from cStringIO import StringIO
 
-from lino.adamo.session import ConsoleSession
+from lino.adamo.session import Session
 from lino.ui import console
 
 class Center:
@@ -35,7 +35,7 @@ class Center:
         self._connections = []
         #self._databases = []
         self._sessions = []
-        self._sessionFactory = ConsoleSession
+        #self._sessionFactory = Session
         self._checkIntegrity = False
 
     def addConnection(self,conn):
@@ -46,11 +46,12 @@ class Center:
         if checkIntegrity is not None:
             self._checkIntegrity = checkIntegrity
 
-    def setSessionFactory(self,sf):
-        self._sessionFactory = sf
+##     def setSessionFactory(self,sf):
+##         self._sessionFactory = sf
         
     def createSession(self,**kw):
-        sess = self._sessionFactory(self,**kw)
+        #sess = self._sessionFactory(self,**kw)
+        sess = Session(self,**kw)
         self._sessions.append(sess)
         return sess
 
@@ -67,20 +68,14 @@ class Center:
         assert not schema in self._schemas
         self._schemas.append(schema)
         
-##  def getDatabase(self,name):
-##          return self._databases[name]
-    
-##     def removeSchema(self,sch):
-##         self._schemas.remove(sch)
-##         #del self._databases[db.getName()]
         
-    def startup(self,**kw):
+    def startup(self,ui=None,**kw):
         
         # self.shutdown() # tests/adamo/7.py failed when several tests
         # were run (because previous startups remained open.
         
         assert len(self._schemas) > 0,"no schemas"
-        sess = self.createSession()
+        sess = self.createSession(ui=ui)
         sess.debug("center.startup()")
         for sch in self._schemas:
             sch.startup(sess,**kw)
@@ -128,7 +123,7 @@ atexit.register(_center.shutdown)
 for m in ('createSession','getOptionParser',
           'startup', 'shutdown',
           'doCheckIntegrity', 
-          'addSchema', 
+          'addSchema',
           'addConnection'
           ):
     globals()[m] = getattr(_center,m)

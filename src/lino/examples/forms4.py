@@ -16,7 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.ui import console
+from lino.forms import gui
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Partners
@@ -24,10 +24,10 @@ from lino.schemas.sprl.tables import Partners
 def main():
     sess = demo.beginSession()
     ds = sess.query(Partners,"name firstName email phone city id")
-    frm = console.addForm()
+    frm = gui.form()
     ds.setupForm(frm)
     frm.show()
 
 if __name__ == "__main__":
-    console.parse_args()
+    gui.parse_args()
     main()

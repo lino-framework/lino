@@ -18,7 +18,7 @@
 
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-from lino.ui.console import getSystemConsole
+from lino.ui import console 
 
 class BabelLang:
     def __init__(self,index,id):
@@ -50,29 +50,50 @@ class Session(Context):
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,center,console=None,**kw):
+    def __init__(self,center,ui=None,**kw):
         self.center = center
         self._user = None
         self.db = None
         self.schema = None
+        self.ui = ui
         #self.forms = None
+##         if console is None:
+##             console = getSystemConsole()
+        if ui is None:
+            ui = console.getSystemConsole()
+        self.ui = ui
+        #self.console = console
+        for m in ('warning', 'confirm','decide', 'form'):
+            setattr(self,m,getattr(ui,m))
+            
+        for m in ( 'debug','info',
+                   'progress',
+                   'error','critical',
+                   'report','textprinter',
+                   'startDump','stopDump'):
+            setattr(self,m,getattr(console,m))
         
-        if console is None:
-            console = getSystemConsole()
         self._dumping = None
-        self._setcon(console)
+        #self._setcon(console)
+        self._ignoreExceptions = []
         
         self.use(**kw)
 
-    def _setcon(self,console):
-        self.console = console
-        for m in console.forwardables:
-            setattr(self,m,getattr(console,m))
-
+##     def _setcon(self,console):
+##         self.console = console
+##         for m in console.forwardables:
+##             setattr(self,m,getattr(console,m))
 
     def hasAuth(self,*args,**kw):
         return True
             
+##     def warning(self,msg):
+##         """Log a warning message.  If interactive, make sure that she
+##         has seen this message before returning.
+
+##         """
+##         if self.app is not None:
+##             return self.app.warning(msg)
         
     def use(self,db=None): # ,langs=None):
         # if necessary, stop using current db
@@ -101,17 +122,22 @@ class Session(Context):
     def setDefaultLanguage(self):
         self.setBabelLangs(self.db.getDefaultLanguage())
         
-    def showForm(self,formName,modal=False,**kw):
-        raise NotImplementedError
+##     def showForm(self,formName,modal=False,**kw):
+##         raise NotImplementedError
 
-    def showReport(self,ds,showTitle=True,**kw):
-        raise NotImplementedError
+##     def showReport(self,ds,showTitle=True,**kw):
+##         raise NotImplementedError
 
-    def errorMessage(self,msg):
-        raise NotImplementedError
+##     def errorMessage(self,msg):
+##         raise NotImplementedError
 
-    def notifyMessage(self,msg):
-        raise NotImplementedError
+##     def notifyMessage(self,msg):
+##         raise NotImplementedError
+        
+    def handleException(self,e,details=None):
+        if e.__class__ in self._ignoreExceptions:
+            return
+        self.ui.showException(e,details)
         
 
 ##  def spawn(self,**kw):
@@ -212,16 +238,16 @@ class Session(Context):
 ##          self.context.schema.onStartSession(self)
 
 
-class ConsoleSession(Session):
+## class ConsoleSession(Session):
 
-    def showForm(self,formName,modal=False,**kw):
-        frm = self.openForm(formName,**kw)
-        wr = self.console.out.write
-        wr(frm.getLabel()+"\n")
-        wr("="*len(frm.getLabel())+"\n")
-        for cell in frm:
-            wr(cell.getLabel() + ":" + cell.format())
-            wr("\n")
+##     def showForm(self,formName,modal=False,**kw):
+##         frm = self.openForm(formName,**kw)
+##         wr = self.console.out.write
+##         wr(frm.getLabel()+"\n")
+##         wr("="*len(frm.getLabel())+"\n")
+##         for cell in frm:
+##             wr(cell.getLabel() + ":" + cell.format())
+##             wr("\n")
 
 
 ##     def report(self,ds=None,**kw):
@@ -265,28 +291,28 @@ class ConsoleSession(Session):
 
 
 
-class AbstractWebSession(Session):
+## class AbstractWebSession(Session):
     
-    def __init__(self,**kw):
-        Session.__init__(self,**kw)
-        self._messages = []
+##     def __init__(self,**kw):
+##         Session.__init__(self,**kw)
+##         self._messages = []
 
-    def errorMessage(self,msg):
-        self._messages.append(msg)
+##     def errorMessage(self,msg):
+##         self._messages.append(msg)
 
-    def notifyMessage(self,msg):
-        self._messages.append(msg)
+##     def notifyMessage(self,msg):
+##         self._messages.append(msg)
 
-    def popMessages(self):
-        l = self._messages
-        self._messages = []
-        return l
+##     def popMessages(self):
+##         l = self._messages
+##         self._messages = []
+##         return l
         
-    def showForm(self,formName,modal=False,**kw):
-        raise NotImplementedError
+##     def showForm(self,formName,modal=False,**kw):
+##         raise NotImplementedError
         
-    def showReport(self,ds,columnNames=None,showTitle=True,**kw):
-        raise NotImplementedError
+##     def showReport(self,ds,columnNames=None,showTitle=True,**kw):
+##         raise NotImplementedError
         
         
         

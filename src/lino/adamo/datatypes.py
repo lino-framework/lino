@@ -136,9 +136,10 @@ class TimeType(Type):
             raise ValueError, repr(s)
         l = map(int,l)
         return datetime.time(*l)
+    
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
-        return str(v)
+        return str(v)[:self.width]
 
     def validate(self,value):
         if not isinstance(value,datetime.time):

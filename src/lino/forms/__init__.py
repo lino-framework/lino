@@ -1,4 +1,4 @@
-## Copyright 2003, 2004, 2005 Luc Saffre 
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -19,3 +19,24 @@
 __all__ = []
 
 __docformat__ = 'reStructuredText'
+
+from lino.forms.application import Application
+
+
+class GUI:
+    def __init__(self):
+        self.app = None
+
+    def form(self,*args,**kw):
+        if self.app is None:
+            self.app = Application()
+        return self.app.form(*args,**kw)
+
+    def textprinter(self):
+        from lino.textprinter.plain import PlainDocument
+        return PlainDocument(self.out)
+        
+    def report(self,**kw):
+        from lino.reports.plain import Report
+        return Report(writer=self.out,**kw)
+

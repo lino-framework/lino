@@ -53,9 +53,9 @@ class Races(Table):
         def getLabel(self):
             return self.name1
 
-        def showArrivalEntry(self,parentForm):
+        def showArrivalEntry(self,ui):
             self.lock()
-            frm = parentForm.addForm(
+            frm = ui.form(
                 label="Arrivals for "+str(self),
                 doc="""\
     Ankunftszeiten an der Ziellinie erfassen.
@@ -71,7 +71,7 @@ class Races(Table):
 
             def startNow():
                 self.startTime = datetime.datetime.now().time()
-                frm.info("started at %s" %str(self.startTime))
+                frm.setMessage("started at " + str(self.startTime))
                 #parent.buttons.arrive.setFocus()
                 frm.entries.dossard.setFocus()
 
@@ -89,7 +89,7 @@ class Races(Table):
                     dossard=frm.entries.dossard.getValue(),
                     duration=duration,
                     time=now.time())
-                frm.info("%s arrived at %s after %s" %(
+                frm.setMessage("%s arrived at %s after %s" %(
                     a.dossard,a.time,a.duration))
                 frm.entries.dossard.setValue('*')
                 frm.entries.dossard.setFocus()

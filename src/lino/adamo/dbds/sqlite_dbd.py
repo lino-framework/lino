@@ -26,7 +26,6 @@ warnings.filterwarnings("ignore",
 
 import sqlite
 from types import TupleType
-from lino.ui.console import confirm
 
 from lino.adamo.sql import SqlConnection
 from lino.adamo import DatabaseError

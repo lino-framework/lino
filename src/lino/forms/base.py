@@ -19,6 +19,9 @@
 import os
 opj = os.path.join
 
+import traceback
+from cStringIO import StringIO
+
 
 from lino.adamo.datatypes import STRING
 from lino.misc.descr import Describable
@@ -72,7 +75,10 @@ class Button(Component):
         try:
             self._action(*(self._args),**(self._kw))
         except InvalidRequestError,e:
-            frm.error(str(e))
+            frm.setMessage(str(e))
+        except Exception,e:
+            frm.showException(e,"clicked %s in %s" % (
+                str(self),frm.getLabel()))
         #except Exception,e:
         #    frm.error(str(e))
         
@@ -248,7 +254,7 @@ class Navigator:
     def printSelectedRows(self):
         #print "printSelectedRows()", self.getSelectedRows()
         #workdir = "c:\\temp"
-        workdir = self.getForm().app.tempDir
+        workdir = self.getForm().toolkit.app.tempDir
         from lino.oogen import Document
         doc = Document("1")
         for i in self.getSelectedRows():
@@ -324,26 +330,26 @@ class Container(Component):
     
     def addLabel(self,label,**kw):
         frm = self.getForm()
-        e = frm.app.ui.labelFactory(self,label=label,**kw)
+        e = frm.toolkit.labelFactory(self,label=label,**kw)
         self._components.append(e)
         return e
         
     def addEntry(self,name,*args,**kw):
         frm = self.getForm()
-        e = frm.app.ui.entryFactory(frm,name,*args,**kw)
+        e = frm.toolkit.entryFactory(frm,name,*args,**kw)
         self._components.append(e)
         frm.entries.define(name,e)
         return e
     
     def addDataEntry(self,dc,*args,**kw):
         frm = self.getForm()
-        e = frm.app.ui.dataEntryFactory(frm,dc,*args,**kw)
+        e = frm.toolkit.dataEntryFactory(frm,dc,*args,**kw)
         self._components.append(e)
         return e
 
     def addDataGrid(self,ds,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.ui.tableEditorFactory(self,ds,*args,**kw)
+        e = frm.toolkit.tableEditorFactory(self,ds,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         if name is not None:
@@ -351,13 +357,13 @@ class Container(Component):
         
     def addNavigator(self,ds,afterSkip=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.ui.navigatorFactory(self,ds,afterSkip,*args,**kw)
+        e = frm.toolkit.navigatorFactory(self,ds,afterSkip,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         
     def addPanel(self,direction): 
         frm = self.getForm()
-        btn = frm.app.ui.panelFactory(self,direction)
+        btn = frm.toolkit.panelFactory(self,direction)
         self._components.append(btn)
         return btn
     
@@ -368,7 +374,7 @@ class Container(Component):
 
     def addButton(self,name=None,*args,**kw): 
         frm = self.getForm()
-        btn = frm.app.ui.buttonFactory(frm,name=name,*args,**kw)
+        btn = frm.toolkit.buttonFactory(frm,name=name,*args,**kw)
         self._components.append(btn)
         if name is not None:
             frm.buttons.define(name,btn)
@@ -408,12 +414,72 @@ class Panel(Container):
 
 
 
-    
-class Form(Describable):
+class GUI:
 
-    def __init__(self,app,parent,data=None,*args,**kw):
+    def form(self,*args,**kw):
+        raise NotImplementedError
+    
+    def decide(self,*args,**kw):
+        raise NotImplementedError
+    
+    def confirm(self,prompt,default="y"):
+        frm = self.form(label="Confirmation")
+        frm.addLabel(prompt)
+        p = frm.addPanel(Panel.HORIZONTAL)
+        ok = p.addOkButton()
+        cancel = p.addCancelButton()
+        if default == "y":
+            ok.setDefault()
+        else:
+            cancel.setDefault()
+        frm.showModal()
+        return frm.lastEvent == ok
+
+    def warning(self,msg):
+        frm = self.form(label="Warning")
+        frm.addLabel(msg)
+        frm.addOkButton()
+        frm.showModal()
+
+    def showAbout(self,app):
+        s = app.name
+        if app.version is not None:
+            s += " version " + app.version
+        if app.author is not None:
+            s += "Copyright (c) %s %s." % app.years, app.author
+        from lino import __copyright__, __credits__
+        s += "\n\n" + __copyright__
+        s += "\n\nCredits:\n" + __credits__
+        
+        frm = self.form(label="About",doc=s)
+        frm.show()
+        
+        
+    def showDataGrid(self,ds,**kw):
+        #assert isinstance(ds,Datasource)
+        frm = self.form(label=ds.getLabel(),**kw)
+        frm.addDataGrid(ds)
+        frm.show()
+        
+    def showException(self,e,details=None):
+        out = StringIO()
+        traceback.print_exc(None,out)
+        s = out.getvalue()
+        del out
+        if details is not None:
+            s += "\n" + details
+        s += "\nIgnore?"
+        if self.confirm(s):
+            return
+        raise e
+
+
+
+class Form(Describable,GUI):
+
+    def __init__(self,toolkit,parent,data=None,*args,**kw):
         Describable.__init__(self,*args,**kw)
-        self.app = app
+        self.toolkit = toolkit
         self._parent = parent
         self.data = data
         self.entries = AttrDict()
@@ -423,7 +489,7 @@ class Form(Describable):
         self._boxes = []
         self.menuBar = None
         self.lastEvent = None
-        self.mainComp = app.ui.panelFactory(self,Container.VERTICAL)
+        self.mainComp = toolkit.panelFactory(self,Container.VERTICAL)
         self._menuControllers = []
         for m in ('addLabel',
                   'addEntry', 'addDataEntry',
@@ -445,9 +511,9 @@ class Form(Describable):
         for c in self._menuControllers:
             c.setupMenu()
     
-    def addForm(self,*args,**kw):
+    def form(self,*args,**kw):
         "create a form with this as parent"
-        return self.app.addForm(self,*args,**kw)
+        return self.toolkit.form(self,*args,**kw)
     
     def addMenu(self,*args,**kw):
         if self.menuBar is None:
@@ -485,116 +551,19 @@ class Form(Describable):
     def cancel(self):
         self.close()
 
-    def setStatusMessage(self,msg):
+    def setMessage(self,msg):
         print msg
 
-    def info(self,msg):
-        #print msg
-        self.setStatusMessage(msg)
-    def error(self,msg):
-        self.warning(msg)
-        #print msg
-        
-    def confirm(self,prompt,default="y"):
-        frm = self.addForm(label="Confirmation")
-        frm.addLabel(prompt)
-        p = frm.addPanel(Panel.HORIZONTAL)
-        ok = p.addOkButton()
-        cancel = p.addCancelButton()
-        if default == "y":
-            ok.setDefault()
-        else:
-            cancel.setDefault()
-        frm.showModal()
-        return frm.lastEvent == ok
-
-    def warning(self,msg):
-        frm = self.addForm(label="Warning")
-        frm.addLabel(msg)
-        frm.addOkButton()
-        frm.showModal()
-
-
-        
-
-class Application(Describable):
-    # implements UI
-
-    def __init__(self,ui=None,
-                 years="",
-                 version=None,
-                 author=None,
-                 tempDir=None,
-                 console=None,
-                 **kw):
-        self.years = years
-        self.version = version
-        self.author = author
-        self.tempDir = tempDir
-        Describable.__init__(self,**kw)
-        if ui is None:
-            from lino.forms.wx.wxform import WxUI
-            ui = WxUI(self)
-        self.ui = ui
-        self.mainForm = None
-        if console is None:
-            console = ui.console
-        self.console = console
-        
-
-    def addForm(self,parent=None,*args,**kw):
-        return self.ui.formFactory(self,parent,*args,**kw)
-    
-    def showAbout(self):
-        s = self.name
-        if self.version is not None:
-            s += " version " + self.version
-        if self.author is not None:
-            s += "Copyright (c) %s %s." % self.years, self.author
-        from lino import __copyright__, __credits__
-        s += "\n\n" + __copyright__
-        s += "\n\nCredits:\n" + __credits__
-        
-        frm = self.mainForm.addForm(label="About",doc=s)
-        frm.show()
+##     def info(self,msg):
+##         #print msg
+##         self.setMessage(msg)
+##     def error(self,msg):
+##         self.warning(msg)
+##         #print msg
         
         
-    def makeMainForm(self):
-        "must call self.addForm(), configure and return it"
-        raise NotImplementedError
 
-    def getOptionParser(self,**kw):
-        return self.console.getOptionParser(**kw)
-
-    def parse_args(self,argv=None,**kw):
-        parser = self.getOptionParser(**kw)
-        parser.add_option(
-            "-t", "--tempdir",
-            help="directory for temporary files",
-            action="store",
-            type="string",
-            dest="tempDir",
-            default=self.tempDir)
-    
-        (options, args) = parser.parse_args(argv)
-        self.tempDir = options.tempDir
-        return (options, args)
-
-    def main(self,frm=None):
-        if frm is None:
-            print "app.main() explicit call"
-            #self.console.copyleft(name=self.name,
-            #                      years=self.years)
-            self.mainForm = self.makeMainForm()
-            self.mainForm.show()
-        else:
-            print "app.main() automagic call"
-            self.mainForm = frm
-        self.ui.mainLoop()
-        
-
-
-class BaseUI:
+class Toolkit(GUI):
     
     labelFactory = Label
     entryFactory = Entry
@@ -607,8 +576,38 @@ class BaseUI:
     
 
     
-    def __init__(self,app):
+    def __init__(self,app=None):
         self.app = app
+
+    def setApplication(self,app):
+        self.app = app
+
+    def check(self):
+        if self.app is None:
+            self.app = Application(name="Automagic GUI application")
     
-    def mainLoop(self):
+    def getOptionParser(self,**kw):
+        self.check()
+        return self.app.getOptionParser(**kw)
+
+    def parse_args(self,argv=None,**kw):
+        parser = self.getOptionParser(**kw)
+        return parser.parse_args(argv)
+        
+
+    def form(self,parent=None,*args,**kw):
+        self.check()
+        frm = self.formFactory(self,parent,*args,**kw)
+        if parent is None:
+            if self.app.mainForm is None:
+                self.app.setMainForm(frm)
+        return frm
+    
+
+    def main(self):
         raise NotImplementedError
+        #frm = self.app.getMainForm()
+        #frm.show()
+
+        
+

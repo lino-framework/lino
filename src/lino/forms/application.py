@@ -18,12 +18,93 @@
 
 import os
 
-from lino.forms.base import Application
+from lino.misc.descr import Describable
 from lino.adamo.datasource import Datasource
+#from lino.forms import gui
+from lino.ui.console import getSystemConsole
+
+
+class Application(Describable):
+
+    def __init__(self,
+                 #toolkit=None,
+                 years="",
+                 version=None,
+                 author=None,
+                 tempDir=".",
+                 console=None,
+                 **kw):
+        self.years = years
+        self.version = version
+        self.author = author
+        self.tempDir = tempDir
+        Describable.__init__(self,**kw)
+        #if ui is None:
+        #    ui = gui.choose(self)
+        #self.toolkit = toolkit
+        self.mainForm = None
+        if console is None:
+            console = getSystemConsole()
+        self.console = console
+        
+
+    def getOptionParser(self,**kw):
+        return self.console.getOptionParser(**kw)
+
+    def parse_args(self,argv=None,**kw):
+        parser = self.getOptionParser(**kw)
+        parser.add_option(
+            "-t", "--tempdir",
+            help="directory for temporary files",
+            action="store",
+            type="string",
+            dest="tempDir",
+            default=self.tempDir)
+    
+        (options, args) = parser.parse_args(argv)
+        self.tempDir = options.tempDir
+        return (options, args)
+
+    def setMainForm(self,frm):
+        self.mainForm = frm
+        
+    def getMainForm(self,ui):
+        if self.mainForm is None:
+            self.mainForm = self.makeMainForm(ui)
+        assert self.mainForm.toolkit == ui
+        return self.mainForm 
+
+    def makeMainForm(self,ui):
+        "must call ui.form(), configure and return it"
+        raise NotImplementedError
+    
+
+    def init(self,ui):
+        pass
+    
+        
+##     def main(self,frm=None):
+##         if frm is None:
+##             console.debug("app.main() explicit call")
+##             #self.console.copyleft(name=self.name,
+##             #                      years=self.years)
+##             self.mainForm.show()
+##             console.set(ui=self)
+##         else:
+##             console.debug("app.main() automagic call")
+##             self.mainForm = frm
+            
+##         #self.ui.mainLoop()
+        
+
+
+
+
 
 class AdamoApplication(Application):
 
-    def __init__(self,filename=None,**kw):
+    def __init__(self,schema,filename=None,**kw):
+        self.schema = schema
         Application.__init__(self,**kw)
         self.filename = filename
         self.sess = None
@@ -39,7 +120,8 @@ class AdamoApplication(Application):
     def parse_args(self,
                    argv=None,
                    usage="usage: %prog [options] DBFILE",
-                   description="where DBFILE is the name of the sqlite database file",
+                   description="""\
+where DBFILE is the name of the sqlite database file""",
                    **kw):
         (options,args) = Application.parse_args(self,
                                                 usage=usage,
@@ -53,24 +135,22 @@ class AdamoApplication(Application):
         return (options,args)
 
 
-    def startup(self,schema):
-        self.sess = schema.quickStartup(filename=self.filename)
+    def init(self,ui,*args,**kw):
+        self.sess = self.schema.quickStartup(ui=ui,
+                                             filename=self.filename)
+        return Application.init(self,ui,*args,**kw)
         
-    def showTableGrid(self,tc,**kw):
+        
+        
+    def showTableGrid(self,ui,tc,**kw):
         ds = self.sess.query(tc,**kw)
-        return self.showDataGrid(ds)
+        return ui.showDataGrid(ds)
     
-    def showDataGrid(self,ds,**kw):
-        assert isinstance(ds,Datasource)
-        frm = self.mainForm.addForm(label=ds.getLabel(),**kw)
-        frm.addDataGrid(ds)
-        frm.show()
-
 
 class MirrorLoaderApplication(AdamoApplication):
 
-    def __init__(self,loadfrom=None,**kw):
-        AdamoApplication.__init__(self,**kw)
+    def __init__(self,schema,loadfrom=".",**kw):
+        AdamoApplication.__init__(self,schema,**kw)
         self.loadfrom = loadfrom
     
     def getOptionParser(self,**kw):
@@ -93,6 +173,6 @@ class MirrorLoaderApplication(AdamoApplication):
     def getLoaders(self):
         return []
     
-    def startup(self,schema):
-        schema.registerLoaders(self.getLoaders())
-        return AdamoApplication.startup(self,schema)
+    def init(self,ui,*args,**kw):
+        self.schema.registerLoaders(self.getLoaders())
+        AdamoApplication.init(self,ui,*args,**kw)
