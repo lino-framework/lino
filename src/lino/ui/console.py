@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,9 +17,11 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
+
 from optparse import OptionParser
 from cStringIO import StringIO
 
+from lino import __version__, __author__
 from lino.reports.plain import Report
 
 """
@@ -270,3 +272,15 @@ def parse_args(argv):
     p = _syscon.getOptionParser()
     return p.parse_args(argv)
     
+
+def copyleft( name="Lino",
+              version=__version__,
+              years="2002-2005",
+              author=__author__):
+    info("""\
+%s version %s.
+Copyright (c) %s %s.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information.""" % (
+        name, version, years, author))

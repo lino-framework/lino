@@ -69,11 +69,11 @@ def dbfimport(q,filename,oneach=None,**kw):
 def main2(dbfpath,dbpath):
     
     schema = adamo.Schema()
-    schema.addTable(Races)
+    schema.addTable(Persons)
     schema.addTable(RaceTypes)
     schema.addTable(Categories)
+    schema.addTable(Races)
     schema.addTable(Participants)
-    schema.addTable(Persons)
     sess = schema.quickStartup(filename=opj(dbpath,"raceman.db"))
 
     PAR = sess.query(Persons)
@@ -126,6 +126,7 @@ def main2(dbfpath,dbpath):
 
     
     doc = Document("1")
+    
     doc.h(1,"Raceman Generating OpenOffice documents")
     
     race = RAL.peek(53)
@@ -133,13 +134,15 @@ def main2(dbfpath,dbpath):
     q = sess.query(Participants,"person.name cat time dossard",
                    orderBy="person.name",
                    race=race)
-    q.executeReport(doc.report(name="rpt1"),
+    q.executeReport(doc.report(),
+                    label="First report",
                     columnWidths="20 3 8 4")
 
     q = sess.query(Participants,"time person.name cat dossard",
                    orderBy="time",
                    race=race)
-    q.executeReport(doc.report(name="rpt2"),
+    q.executeReport(doc.report(),
+                    label="Another report",
                     columnWidths="8 20 3 4")
 
     outFile = opj(dbpath,"raceman_report.sxc")
@@ -176,9 +179,7 @@ directory for raceman files""",
 
 
 if __name__ == '__main__':
-    print copyleft(name="Lino/Raceman",
-                   year='2002-2005',
-                   author='Luc Saffre')
+    console.copyleft(name="Lino/Raceman", years='2002-2005')
     main(sys.argv[1:])
 
 

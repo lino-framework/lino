@@ -31,7 +31,7 @@ class OoReport(BaseReport):
         
         
     def onBeginReport(self):
-        self.table = self.document.table(name=self.name)
+        self.table = self.document.table(name=self.getLabel())
         for col in self.columns:
             self.table.addColumn()
         BaseReport.onBeginReport(self)

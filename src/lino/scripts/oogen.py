@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2004-2005.
+## Copyright 2004-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -18,12 +18,11 @@
 
 import sys, os
 
-from lino import copyleft
 from lino.ui import console
 from lino.oogen import Document
 
 def main(argv):
-
+    console.copyleft(name="Lino/oogen", years='2004-2005')
     parser = console.getOptionParser(
         usage="usage: %prog [options] PDSFILE",
         description="""\
@@ -59,13 +58,12 @@ is PDSFILE with extension .sxw or .sxc depending on content.
         raise
 
     g=doc.generator(filename=options.outFile)
-    return g.save()
+    g.save()
+    if sys.platform == "win32" and console.isInteractive():
+        os.system("start %s" % g.outputFilename)
     
     
         
 if __name__ == '__main__':
-    print copyleft(name="Lino/oogen", year='2004-2005')
     g = main(sys.argv[1:])
-    if sys.platform == "win32" and console.isInteractive():
-        os.system("start %s" % g.outputFilename)
 

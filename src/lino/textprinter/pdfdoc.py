@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2004.
+## Copyright 2004-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -25,6 +25,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
+#from lino.ui import console
 from lino.textprinter.document import Document
 
 UNICODE_HACK = True
@@ -241,12 +242,12 @@ class PdfDocument(Document):
         self.onSetFont()
     
     def setBold(self,bold):
-        console.debug("setBold(%s)"%str(bold))
+        #console.debug("setBold(%s)"%str(bold))
         self.status.bold = bold
         self.onSetFont()
         
     def setUnderline(self,ul):
-        console.debug("setUnderline(%s)"%str(ul))
+        #console.debug("setUnderline(%s)"%str(ul))
         self.status.underline = ul
         self.onSetFont()
         

@@ -168,17 +168,17 @@ class TableRow(Container):
 	elementname = "table:table-row"
 
 class Table(Container):
-	allowedChildren = (TableColumn,TableRow)
 	elementname = "table:table"
+	allowedChildren = (TableColumn,TableRow)
 	allowedAttribs = makedict(
 		name="table:name",
-		style='table:style-name',
+		styleName='table:style-name',
 		styleFamily='style:family',
 	)
 	
-	def __init__(self,name,style,styleFamily="table",**kw):
+	def __init__(self,styleFamily="table",**kw):
 		self.columns = []
-		Container.__init__(self,**kw)
+		Container.__init__(self,styleFamily=styleFamily,**kw)
 
 	def addColumn(self,*args,**kw):
 		col = TableColumn(*args,**kw)

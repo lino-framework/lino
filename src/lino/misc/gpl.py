@@ -1,6 +1,6 @@
 # gpl.py
 
-raise 'no longer used. use "from lino import copyright"'
+raise 'no longer used. use "from lino import copyleft"'
 ## import sys,traceback,inspect
 
 ## def version():

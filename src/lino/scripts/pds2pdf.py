@@ -37,7 +37,6 @@ Options:
 import sys, getopt, os
 import traceback
 
-from lino import copyleft
 from lino.sdoc.pdf import PdfRenderer
 from lino.sdoc.environment import ParseError
 from lino.sdoc import commands
@@ -90,14 +89,14 @@ def main(ifname,renderer,ofname=None,
 
 
 if __name__ == '__main__':
-    print copyleft(name="Lino pds2pdf",
-                   year='2002-2004',
-                   author='Luc Saffre')
+    console.copyleft(name="Lino/pds2pdf",
+                     years='2002-2005',
+                     author='Luc Saffre')
 
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                            "?ho:b",
-                                            ["help", "output=","batch"])
+                                   "?ho:b",
+                                   ["help", "output=","batch"])
 
     except getopt.GetoptError,e:
         print __doc__

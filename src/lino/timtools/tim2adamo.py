@@ -1,3 +1,5 @@
+raise "not used"
+
 from lino.adamo.database import Database
 from lino.adamo.table import Table
 from lino.agui.ui import UI

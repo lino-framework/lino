@@ -202,9 +202,10 @@ class SimpleDatasource:
             rpt.addDataColumn(dc,
                               width=dc.getPreferredWidth(),
                               label=dc.getLabel())
-        rpt.configure(name=self._table.getTableName(),
-                      label=self._table.getLabel(),
-                      **kw)
+        kw.setdefault('name',self._table.getTableName())
+        kw.setdefault('label',self._table.getLabel())
+        rpt.configure(**kw)
+        
     
     def executeReport(self,rpt=None,**kw):
         if rpt is None:

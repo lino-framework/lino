@@ -1,6 +1,6 @@
 #coding: utf-8
 
-## Copyright Luc Saffre 2004-2005.
+## Copyright 2004-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -302,12 +302,14 @@ class Document:
         from lino.reports.oo import OoReport
         return OoReport(self,**kw)
         
-    def table(self,name=None,style=None,**kw):
+    def table(self,name=None,styleName=None,**kw):
         if name is None:
             name = "Table"+str(len(self.tables)+1)
-        if style is None:
-            style = name
-        t = elements.Table(name,style,**kw)
+        if styleName is None:
+            styleName = name
+        t = elements.Table(name=name,
+                           styleName=styleName,
+                           **kw)
         self.story.append(t)
         self.tables.append(t)
         return t

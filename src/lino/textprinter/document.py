@@ -1,4 +1,4 @@
-## Copyright 2003, 2004, 2005 Luc Saffre
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
+
 from lino.ui import console
 
 class ParserError(Exception):

@@ -35,13 +35,15 @@ OPTIONS :
 
 import sys, os
 
-from lino import copyleft
 from lino.ui import console 
 from lino.textprinter.pdfdoc import PdfDocument
 
 
 def main(argv):
-
+    console.copyleft(name="Lino/prn2pdf",
+                     years='2002-2005',
+                     author='Luc Saffre')
+    
     parser = console.getOptionParser(
         usage="usage: %prog [options] FILE",
         description="""\
@@ -79,8 +81,5 @@ write to OUTFILE rather than FILE.pdf""",
 
 
 if __name__ == '__main__':
-    print copyleft(name="Lino/prn2pdf",
-                   year='2002-2005',
-                   author='Luc Saffre')
     main(sys.argv[1:])
 

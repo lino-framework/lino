@@ -389,7 +389,7 @@ def printVersion():
 def main(argv):
     cookie = Cookie()
 
-    opts, args = getopt.getopt(argv[1:], "qrRntuCIh", ["quiet", "recursive", "relative", "dry-run", "times", "update", "cvs-ignore", "ignore-times", "help", "delete", "delete-excluded", "existing", "size-only", "modify-window=", "exclude=", "exclude-from=", "include=", "include-from=", "version"])
+    opts, args = getopt.getopt(argv, "qrRntuCIh", ["quiet", "recursive", "relative", "dry-run", "times", "update", "cvs-ignore", "ignore-times", "help", "delete", "delete-excluded", "existing", "size-only", "modify-window=", "exclude=", "exclude-from=", "include=", "include-from=", "version"])
     for o, v in opts:
         if o in ["-q", "--quiet"]:
             cookie.quiet = 1
@@ -492,4 +492,4 @@ def main(argv):
     return 0
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(main(sys.argv[1:]))

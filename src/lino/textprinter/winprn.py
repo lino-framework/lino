@@ -21,6 +21,9 @@ import win32con
 
 OEM_CHARSET = win32con.OEM_CHARSET
 
+# OEM_FIXED_FONT = win32con.OEM_FIXED_FONT
+# http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
+
 from lino.ui import console
 from lino.textprinter.document import Document
 
@@ -51,6 +54,9 @@ class TextObject:
         self.line += text
 
         font = win32ui.CreateFont(self.doc.fontDict)
+        
+        # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
+        
         self.doc.dc.SelectObject(font)
         tm = self.doc.dc.GetTextMetrics()
         #console.debug(repr(tm))
@@ -69,8 +75,8 @@ class TextObject:
         # 
         #self.leading = max(self.leading,self.doc.status.leading)
         #self.doc.dc.TextOut(self.line)
-        self.doc.dc.TextOut(int(self.x),-int(self.y),self.line)
-        (dx,dy) = self.doc.dc.GetTextExtent(self.line)
+        self.doc.dc.TextOut(int(self.x),-int(self.y),line)
+        (dx,dy) = self.doc.dc.GetTextExtent(line)
         self.x += dx
         #console.debug("TextOut(%d,%d,%s)" % \
         #              (int(self.x),-int(self.y),repr(self.line)))
@@ -132,9 +138,14 @@ class Win32PrinterDocument(Document):
         self.dc.EndDoc()
         del self.dc
             
+    def setLpi(self,lpi):
+        h = int(inch/lpi)
+        #console.debug("%d lpi = %d twips" % (lpi,h))
+        self.fontDict['height'] = h
+        
     def setCpi(self,cpi):
         w = int(inch/cpi)
-        console.debug("%d cpi = %d twips" % (cpi,w))
+        #console.debug("%d cpi = %d twips" % (cpi,w))
         self.fontDict['width'] = w
         # self.fontDict['height'] = w
         
