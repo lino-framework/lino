@@ -113,6 +113,9 @@ class Application(Describable):
 
     def run(self):
         self.toolkit.start()
+
+    def close(self):
+        self.toolkit.closeApplication(self)
         
     
         

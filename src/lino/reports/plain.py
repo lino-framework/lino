@@ -26,7 +26,7 @@ class Report(BaseReport):
     """a report that renders in plain text, destination just needs a
     write method """
     def __init__(self,
-                 writer=sys.stdout,
+                 writer=sys.stdout.write,
                  columnSep='|',
                  columnHeaderSep='-',
                  **kw):
@@ -41,7 +41,7 @@ class Report(BaseReport):
         BaseReport.setdefaults(self,kw)
 
     def write(self,txt):
-        self.writer.write(txt)
+        self.writer(txt)
 
     def onBeginReport(self):
         #self.wrappers = []

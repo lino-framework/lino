@@ -35,6 +35,23 @@ from textwrap import TextWrapper
 docWrapper = TextWrapper(30)
 
 
+def _setEditorSize(editor,type):
+    #LINEHEIGHT = 10
+    #CHARWIDTH = 10
+        
+    #CHARWIDTH = LINEHEIGHT = editor.GetFont().GetPointSize()
+    CHARWIDTH, LINEHEIGHT = editor.GetTextExtent("M")
+
+    CHARWIDTH *= 2
+    #LINEHEIGHT *= 2
+        
+    #print CHARWIDTH, LINEHEIGHT
+        
+    #editor.SetMaxSize( (type.maxWidth*CHARWIDTH,
+    #                    type.maxHeight*LINEHEIGHT) )
+    editor.SetMinSize( (type.minWidth*CHARWIDTH,
+                        type.minHeight*LINEHEIGHT) )
+
 
 class EventCaller:
     def __init__(self,meth,*args,**kw):
@@ -166,28 +183,43 @@ class TextViewer(base.TextViewer):
 
     def __init__(self,*args,**kw):
         base.TextViewer.__init__(self,*args,**kw)
-        self._buffer = ""
+        #self._buffer = ""
+        self.wxctrl = None
         
-    def beforeClose(self):
-        raise "it is no good idea to close this window"
+    def onShow(self):
+        c = console.Console(self.addText,self.addText,
+                            verbosity=console._syscon._verbosity)
+        console.push(c)
+        
+    def onClose(self):
+        console.pop()
+        self.wxctrl = None
+        #self._buffer = ""
+        #raise "it is no good idea to close this window"
     
     def setup(self,parentCtrl,box):
         parentFormCtrl = self.getForm().wxctrl
-        e = wx.TextCtrl(parentCtrl,-1,self._buffer,
+        e = wx.TextCtrl(parentCtrl,-1,"",
                         style=wx.TE_MULTILINE|wx.HSCROLL)
         e.SetBackgroundColour('BLACK')
         e.SetForegroundColour('WHITE')
         e.SetEditable(False)
+        _setEditorSize(e,MEMO(width=80,height=10))
+        self.getForm().debug(
+            str(e.GetMinSize())+" "+str(e.GetMaxSize()))
         #e.SetEnabled(False)
-        box.Add(e, 0, wx.EXPAND|wx.ALL,10)
+        box.Add(e, 1, wx.EXPAND|wx.ALL,0)
         self.wxctrl = e
-        self._buffer = None
+        #self._buffer = None
 
     def addText(self,s):
-        if hasattr(self,"wxctrl"):
-            self.wxctrl.WriteText(s)
-        else:
-            self._buffer += s
+        self.wxctrl.WriteText(s)
+        self.wxctrl.ShowPosition(-1)
+##         if self.wxctrl is not None:
+##             self.wxctrl.WriteText(s)
+##             self.wxctrl.ShowPosition(-1)
+##         else:
+##             self._buffer += s
     
 class Panel(base.Panel):
 
@@ -280,24 +312,9 @@ class EntryMixin:
                              #style=wx.TE_PROCESS_ENTER)
 
         
-        #LINEHEIGHT = 10
-        #CHARWIDTH = 10
-        
-        #CHARWIDTH = LINEHEIGHT = editor.GetFont().GetPointSize()
-        CHARWIDTH, LINEHEIGHT = editor.GetTextExtent("M")
-
-        CHARWIDTH *= 2
-        #LINEHEIGHT *= 2
-        
-        #print CHARWIDTH, LINEHEIGHT
-        
-        #editor.SetMaxSize( (type.maxWidth*CHARWIDTH,
-        #                    type.maxHeight*LINEHEIGHT) )
-        editor.SetMinSize( (type.minWidth*CHARWIDTH,
-                            type.minHeight*LINEHEIGHT) )
-
-        print editor.GetMinSize(), editor.GetMaxSize()
-        print mypanel.GetMinSize(), editor.GetMaxSize()
+        _setEditorSize(editor,type)
+        #print editor.GetMinSize(), editor.GetMaxSize()
+        #print mypanel.GetMinSize(), editor.GetMaxSize()
         
         #self.Bind(wx.EVT_TEXT, self.EvtText, t1)
         #editor.Bind(wx.EVT_CHAR, self.EvtChar)
@@ -305,8 +322,6 @@ class EntryMixin:
         #editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
 
-
-        
         self.editor = editor 
         if self.hasLabel():
             hbox.Add(editor,
@@ -383,19 +398,23 @@ class Form(base.Form):
 ##             self.app.SetTopWindow(self.wxctrl)
 ##             self.app.MainLoop()
 
+    def __init__(self,*args,**kw):
+        self.wxctrl = None
+        base.Form.__init__(self,*args,**kw)
+
 
     def setParent(self,parent):
-        assert not hasattr(self,"wxctrl")
+        assert self.wxctrl is None
         base.Form.setParent(self,parent)
         
-    def setStatusText(self,msg):
-        if self.modal:
-            print "[status]", msg
+    def status(self,msg,*args,**kw):
+        if self.modal or not self.isShown():
+            console.status(msg,*args,**kw)
         else:
             self.wxctrl.SetStatusText(msg)
             
     def setup(self):
-        assert not hasattr(self,"wxctrl")
+        assert self.wxctrl is None
         self.setupMenu()
         if self._parent is None:
             #self.app = WxApp()
@@ -484,13 +503,17 @@ class Form(base.Form):
             if self.app.mainForm == self:
                 return
             # todo: uergh...
+
+        if self.isShown():
+            raise InvalidRequestError("form is already open")
             
         self.modal = modal
-        console.debug("show(modal=%s) %s" % (modal, self.getLabel()))
+        self.debug("show(modal=%s) %s" % (modal, self.getLabel()))
         self.setup()
         #for c in self.wxctrl.GetChildren():
         #    print c
-        console.debug(repr(self.mainComp))
+        self.debug(repr(self.mainComp))
+        self.onShow()
         if self.modal:
             self.wxctrl.ShowModal()
         else:
@@ -509,8 +532,11 @@ class Form(base.Form):
 ##         return self.lastEvent == self.buttons.ok
 
     def close(self):
-        #print "close", self.getLabel()
-        self.wxctrl.Close()
+        if self.isShown():
+            self.wxctrl.Close()
+
+    def isShown(self):
+        return (self.wxctrl is not None)
 
 
     def OnCloseWindow(self, event):
@@ -524,6 +550,7 @@ class Form(base.Form):
         #   del self.tbicon
         self.onClose()
         self.wxctrl.Destroy()
+        self.wxctrl = None
 
 
     def OnChar(self, evt):
@@ -561,12 +588,7 @@ class WxApp(wx.App):
 
     def OnInit(self):
         wx.InitAllImageHandlers()
-        #center.onBeginGUI(self)
         self.toolkit.init()
-        #for a in self.toolkit._apps:
-            #a.mainForm.show()
-        #self.app.getMainForm().show()
-        #self.SetTopWindow(self.toolkit._apps[0].mainForm.wxctrl)
         return True
 
     def OnExit(self):

@@ -50,7 +50,10 @@ class Component(Describable):
     def store(self):
         pass
     
-    def beforeClose(self):
+    def onClose(self):
+        pass
+    
+    def onShow(self):
         pass
     
         
@@ -286,7 +289,7 @@ class Navigator:
                 
             #if len(self.ds._lockedRows) > 0:
             #    s += " (%d locked)" % len(self.ds._lockedRows)
-            frm.setStatusText(s)
+            frm.status(s)
         frm.addIdleEvent(f)
 
     def deleteSelectedRows(self):
@@ -346,7 +349,7 @@ class Navigator:
         r = self.getCurrentRow()
         meth(r,*args,**kw)
         
-    def beforeClose(self):
+    def onClose(self):
         self.ds.unlock()
 
 
@@ -497,9 +500,13 @@ class Container(Component):
         for c in self._components:
             c.store()
         
-    def beforeClose(self):
+    def onClose(self):
         for c in self._components:
-            c.beforeClose()
+            c.onClose()
+
+    def onShow(self):
+        for c in self._components:
+            c.onShow()
 
 
 class Panel(Container):
@@ -514,33 +521,34 @@ class Panel(Container):
         self.direction = direction
 
 
-class GuiProgressBar(jobs.ProgressBar):
+## class GuiProgressBar(jobs.ProgressBar):
     
-    def __init__(self,gui,label=None,**kw):
-        if label is None:
-            label = "Progress Bar"
-        self.frm = gui.form(label=label)
-        self.entry = self.frm.addEntry("progress",
-                                       value="0%",
-                                       enabled=False)
-        jobs.ProgressBar.__init__(self,gui,label=label,**kw)
+##     def __init__(self,gui,label=None,**kw):
+##         if label is None:
+##             label = "Progress Bar"
+##         self.frm = gui.form(label=label)
+##         self.entry = self.frm.addEntry("progress",
+##                                        value="0%",
+##                                        enabled=False)
+##         jobs.ProgressBar.__init__(self,gui,label=label,**kw)
 
-    def onInit(self):
-        self.frm.show()
+##     def onInit(self):
+##         self.frm.show()
         
-##     def onDone(self,job):
-##         self.frm.close()
+## ##     def onDone(self,job):
+## ##         self.frm.close()
         
-    def onStatus(self,job):
-        self.onInc(job)
+##     def onStatus(self,job):
+##         self.onInc(job)
         
         
-    def onInc(self,job):
-        self.entry.setValue(job._status+" "+str(job.pc)+"%")
+##     def onInc(self,job):
+##         self.entry.setValue(job._status+" "+str(job.pc)+"%")
         
         
 
 class GUI(console.UI):
+    
     
     def form(self,*args,**kw):
         raise NotImplementedError
@@ -588,7 +596,8 @@ class GUI(console.UI):
         return console.job(*args,**kw)
 
 ##     def make_progressbar(self,*args,**kw):
-##         return GuiProgressBar(self,*args,**kw)
+##         return ProgressBar(self,*args,**kw)
+##         # return GuiProgressBar(self,*args,**kw)
 
     def showDataForm(self,ds,**kw):
         frm = self.form(label=ds.getLabel(),**kw)
@@ -640,7 +649,7 @@ class Form(Describable,GUI):
 
     def __init__(self,app,parent,data=None,*args,**kw):
         Describable.__init__(self,*args,**kw)
-        GUI.__init__(self)
+        #GUI.__init__(self)
         assert isinstance(app,Application)
         self.app = app
         self._parent = parent
@@ -656,6 +665,7 @@ class Form(Describable,GUI):
             self, Container.VERTICAL)
         self._menuController = None
         self._idleEvents = []
+        self._onClose = []
         for m in ('addLabel','addViewer',
                   'addEntry', 'addDataEntry',
                   'addDataGrid','addNavigator',
@@ -678,6 +688,9 @@ class Form(Describable,GUI):
     def addIdleEvent(self,f):
         self._idleEvents.append(f)
 
+    def addOnClose(self,f):
+        self._onClose.append(f)
+
     def setupMenu(self):
         if self._menuController is not None:
             self._menuController.setupMenu()
@@ -698,15 +711,24 @@ class Form(Describable,GUI):
     def show(self,modal=False):
         raise NotImplementedError
     
+    def isShown(self):
+        raise NotImplementedError
+    
     def onIdle(self):
         for e in self._idleEvents:
             e()
     
+    def onShow(self):
+        self.mainComp.onShow()
+        
     def onClose(self):
-        self.mainComp.beforeClose()
+        self.mainComp.onClose()
+        for e in self._onClose:
+            e()
         
     def close(self):
-        self.onClose()
+        if self.isShown():
+            self.onClose()
     
     
             
@@ -739,7 +761,7 @@ class Form(Describable,GUI):
         console.status(msg)
         
     def debug(self,msg):
-        console.status(msg)
+        console.debug(msg)
         
     def warning(self,msg):
         console.warning(msg)
@@ -780,8 +802,8 @@ class Toolkit(GUI):
     
     def __init__(self,app=None):
         self._apps = []
-        self.console = None
-        GUI.__init__(self)
+        self.consoleForm = None
+        #GUI.__init__(self)
         #self.app = app
 
 ##     def setApplication(self,app):
@@ -804,19 +826,17 @@ class Toolkit(GUI):
     def addApplication(self,app):
         self._apps.append(app)
         
-    def write(self,s):
-        self.consoleEntry.addText(s)
-        #self.consoleEntry.setValue(n)
+##     def write(self,s):
+##         self.consoleEntry.addText(s)
+##         #self.consoleEntry.setValue(n)
 
     def init(self):
         
-        if self.console is None:
-            self.console = self._apps[0].form(None,label="Console")
-            self.consoleEntry = self.console.addViewer()
-            #self.console.addEntry(type=MEMO(
-            #    height=10,width=90))
-            console._syscon.redirect(stdout=self,stderr=self)
-            self.console.show()
+        if self.consoleForm is None:
+            self.consoleForm = frm = self._apps[0].form(
+                None, label="Console")
+            frm.addViewer()
+            frm.show()
             
         for app in self._apps:
             app.init(self)
@@ -827,6 +847,11 @@ class Toolkit(GUI):
         #self.app.setMainForm(frm)
         #frm.show()
         #self.wxctrl.SetTopWindow(frm.wxctrl)
+        
+    def closeApplication(self,app):
+        self._apps.remove(app)
+        if len(self._apps) == 0:
+            self.consoleForm.close()
         
 
 ##     def form(self,parent,*args,**kw):

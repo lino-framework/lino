@@ -20,33 +20,34 @@ from time import sleep
 
 from lino.ui import console
 
-def f(maxval):
+STEPS = 3
+
+def f(withMaxVal):
+        
+    job = console.job("Demonstrating console.job()")
     
-    #p = console.progressbar("Gonna do it", maxval=maxval*3)
-    p = console.progress("Gonna do it")
+    if withMaxVal:
+        job.setMaxValue(pow(STEPS,5))
     
-    p.title("First part")
-    for i in range(maxval):
-        console.debug('foo')
-        sleep(0.5)
-        p.inc()
-        sleep(0.5)
+    for n in range(STEPS):
+        console.error('error message %d',n)
+        for h in range(STEPS):
+            console.warning('warning message %d.%d',n,h)
+            for i in range(STEPS):
+                console.info('info message %d.%d.%d',n,h,i)
+                for j in range(STEPS):
+                    console.verbose(
+                        'verbose message %d.%d.%d.%d',n,h,i,j)
+                    for k in range(STEPS):
+                        console.debug(
+                            'debug message %d.%d.%d.%d.%d',n,h,i,j,k)
+                        job.update("Working hard")
+                        sleep(0.1)
         
-    p.title("Second part (with longer title)")
-    for i in range(maxval):
-        sleep(0.5)
-        p.inc()
-        sleep(0.5)
-        
-    p.title("Last part")
-    for i in range(maxval):
-        sleep(0.5)
-        p.inc()
-        sleep(0.5)
-        
-    p.done()
+    job.done()
 
 
 if __name__ == "__main__":
     console.parse_args()
-    f(3)
+    f(True)
+    f(False)

@@ -37,14 +37,14 @@ class PlainDocument(Document):
         return ""
         
     def onBeginPage(self):
-        self.writer.write(
+        self.writer(
             self.topLeft+
             self.topBorder*self.getWidth()
             +self.topRight
             +"\n")
         
     def onEndPage(self):
-        self.writer.write(
+        self.writer(
             self.bottomLeft+
             self.bottomBorder*self.getWidth()+
             self.bottomRight+
@@ -56,7 +56,7 @@ class PlainDocument(Document):
     def newline(self):
         ln = self.textobject.ljust(self.getWidth())
         ln = ln[:self.getWidth()]
-        self.writer.write(self.leftBorder+ln+self.rightBorder+"\n")
+        self.writer(self.leftBorder+ln+self.rightBorder+"\n")
         self.textobject = ""
         
     def insertImage(self,line):

@@ -39,62 +39,40 @@ try:
 except ImportError,e:
     sound = False
 
-from lino.misc.jobs import ProgressBar
+from lino.misc.jobs import Job, PurzelConsoleJob
 
 
-class ConsoleProgressBar(ProgressBar):
-##     def __init__(self,ui,*args,**kw):
-##         self.console = console
-##         ProgressBar.__init__(self,*args,**kw)
+## class ConsoleJob(Job):
+##     # for RawConsole
         
-    def onInit(self):
-        self.ui.writeout(self._label)
+##     def onInit(self):
+##         if self._label is not None:
+##             self.ui.info(self._label)
         
-    def onDone(self,job):
-        self.ui.write('\n')
-        ProgressBar.onDone(self,job)
+##     def onDone(self):
+##         if self._label is not None:
+##             self.ui.info('\n')
+##         Job.onDone(self,job)
         
-class DecentConsoleProgressBar(ConsoleProgressBar):
-    def onStatus(self):
-        self.ui.write(self._status)
+## class DecentStreamJob(StreamJob):
+##     def onStatus(self):
+##         self.writer(self._status)
         
-    def onInc(self):
-        self.ui.write('.')
+##     def onInc(self):
+##         self.writer('.')
         
-class PurzelConsoleProgressBar(ConsoleProgressBar):
-
-    width = 78
-    purzelMann = "|/-\\"
-    
-    def onInit(self):
-        if self._label is not None:
-            self.ui.writeout(self._label)
-        
-    def onStatus(self,job):
-        self.onInc(job)
-        
-    def onInc(self,job):
-        if job.maxval is None:
-            s = '[' + self.purzelMann[job.curval % 4] + "] "
-        else:
-            if job.pc is None:
-                s = "[    ] " 
-            else:
-                s = "[%3d%%] " % job.pc
-        s += job._status
-        s = s[:self.width]
-        self.ui.write(s.ljust(self.width) + '\r')
-
 
             
 class UI:
-    def __init__(self):
-        self._progressBar = None
+    pass
 
-    def job(self,msg,maxval=0):
-        if self._progressBar is None:
-            self._progressBar = self.make_progressbar()
-        return self._progressBar.addJob(msg,maxval)
+##     def __init__(self):
+##         self._progressBar = None
+
+##     def job(self,label,maxval=0):
+##         if self._progressBar is None:
+##             self._progressBar = self.make_progressbar()
+##         return self._progressBar.addJob(self,label,maxval)
 
 
     
@@ -103,19 +81,21 @@ class UI:
 
 class Console(UI):
 
-    def __init__(self, **kw):
-        self.stdout = sys.stdout
-        self.stderr = sys.stderr
+    jobClass = Job
+
+    def __init__(self, stdout, stderr,**kw):
+        self._stdout = stdout
+        self._stderr = stderr
         self._log = None
         self._verbosity = 0
         self._batch = False
-        self._dumping = None
-        UI.__init__(self)
+        #self._dumping = None
+        # UI.__init__(self)
         self.set(**kw)
 
-    def redirect(self,stdout,stderr):
-        self.stdout = stdout
-        self.stderr = stderr
+##     def redirect(self,stdout,stderr):
+##         self._stdout = stdout
+##         self._stderr = stderr
 
     def set(self,
             verbosity=None,
@@ -136,17 +116,18 @@ class Console(UI):
         #if debug is not None:
         #    self._debug = debug
 
-    def startDump(self,**kw):
-        assert self._dumping is None
-        self._dumping = self.stdout
-        self.stdout = StringIO()
+##     def startDump(self,**kw):
+##         assert self._dumping is None
+##         self._dumping = (StringIO(), self._stdout)
+##         self._stdout = self._dumping[0].write
 
-    def stopDump(self):
-        assert self._dumping is not None, "dumping was not started"
-        s = self.stdout.getvalue()
-        self.stdout = self._dumping
-        self._dumping = None
-        return s
+##     def stopDump(self):
+##         assert self._dumping is not None, "dumping was not started"
+##         s = self._dumping[0].getvalue()
+##         self._stdout = self._dumping[1]
+##         self._dumping = None
+##         return s
+
         
     def isBatch(self):
         return self._batch
@@ -164,52 +145,63 @@ class Console(UI):
     
 
     def write(self,msg):
-        self.stdout.write(msg)
+        self._stdout(msg)
         
     def writeout(self,msg):
-        self.stdout.write(msg+"\n")
+        self._stdout(msg+"\n")
 
     def writelog(self,msg):
         if self._log:
-            t = strftime("%a %Y-%m-%d %H:%M:%S")
+            #t = strftime("%a %Y-%m-%d %H:%M:%S")
+            t = strftime("%H:%M:%S")
             self._log.write(t+" "+msg+"\n")
             
     def status(self,msg):
         self.verbose(msg)
 
-    def error(self,msg):
-        "Log a message to stderr"
-        self.stderr.write(msg + "\n")
+    def error(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        self._stderr(msg + "\n")
         self.writelog(msg)
 
-    def critical(self,msg):
+    def _buildMessage(self,msg,*args,**kw):
+        assert len(kw) == 0, "kwargs not yet implemented"
+        if len(args) == 0:
+            return msg
+        return msg % args
+    
+    def critical(self,msg,*args,**kw):
         "Something terrible has happened..."
-        self.writelog(msg)
-        if sound:
-            sound.asterisk()
-        raise "critical error: " + msg
+        #self.writelog(msg)
+        #if sound:
+        #    sound.asterisk()
+        self.error("critical: " + msg,*args,**kw)
     
         
 
-    def warning(self,msg):
+    def warning(self,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
+        msg = self._buildMessage(msg,*args,**kw)
         self.writelog(msg)
         if self._verbosity >= 0:
             self.writeout(msg)
 
-    def info(self,msg):
+    def info(self,msg,*args,**kw):
         "Display message if verbosity is normal. Not logged."
         if self._verbosity >= 0:
+            msg = self._buildMessage(msg,*args,**kw)
             self.writeout(msg)
 
-    def verbose(self,msg):
+    def verbose(self,msg,*args,**kw):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
+            msg = self._buildMessage(msg,*args,**kw)
             self.writeout(msg)
         
-    def debug(self,msg):
+    def debug(self,msg,*args,**kw):
         "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
+            msg = self._buildMessage(msg,*args,**kw)
             self.writeout(msg)
             #self.out.write(msg + "\n")
 
@@ -317,7 +309,7 @@ class Console(UI):
                 return True
             if s == "n":
                 return False
-            self.warning("wrong answer, must be 'y' or 'n': "+s)
+            self.error("wrong answer, must be 'y' or 'n': "+s)
             
 
     def decide(self,prompt,answers,
@@ -355,38 +347,141 @@ class Console(UI):
     def form(self,*args,**kw):
         raise NotImplementedError
 
-    def make_progressbar(self,*args,**kw):
-        if self.isVeryQuiet():
-            return ProgressBar(self,*args,**kw)
-        if self.isQuiet():
-            return DecentConsoleProgressBar(self,*args,**kw)
-        return PurzelConsoleProgressBar(self,*args,**kw)
-
+    def job(self,*args,**kw):
+        return self.jobClass(self,*args,**kw)
+    
     def textprinter(self):
         from lino.textprinter.plain import PlainDocument
-        return PlainDocument(self.stdout)
+        return PlainDocument(self._stdout)
         
     def report(self,**kw):
         from lino.reports.plain import Report
-        return Report(writer=self.stdout,**kw)
+        return Report(writer=self._stdout,**kw)
 
 
-_syscon = Console()
-atexit.register(_syscon.shutdown)
+class StatusConsole(Console):
 
+    width = 78
+    jobClass = PurzelConsoleJob
+
+    def __init__(self,*args,**kw):
+        self._status = ""
+        Console.__init__(self,*args,**kw)
+    
+    def warning(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        Console.warning(self,msg.ljust(self.width))
+        self._refresh()
+        
+    def message(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        Console.message(self,msg.ljust(self.width))
+        self._refresh()
+        
+    def info(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        Console.info(self,msg.ljust(self.width))
+        self._refresh()
+        
+    def verbose(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        Console.verbose(self,msg.ljust(self.width))
+        self._refresh()
+        
+    def error(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        Console.error(self,msg.ljust(self.width))
+        self._refresh()
+        
+    def critical(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        Console.critical(self,msg.ljust(self.width))
+        self._refresh()
+        
+        
+    def status(self,msg,*args,**kw):
+        msg = self._buildMessage(msg,*args,**kw)
+        self._status = msg[:self.width]
+        self._stdout(self._status.ljust(self.width)+"\r")
+
+    def _refresh(self):
+        self._stdout(self._status+"\r")
+
+
+class CaptureConsole(Console):
+    
+    def __init__(self,**kw):
+        self.buffer = StringIO()
+        #self.before = getSystemConsole()
+        Console.__init__(self,
+                         self.buffer.write,
+                         self.buffer.write)
+        
+    def getvalue(self):
+        #setSystemConsole(self.before)
+        return self.buffer.getvalue()
+    
+        
 def getSystemConsole():
     return _syscon
 
+def setSystemConsole(c):
+    g = globals()
+    g['_syscon'] = c
 
-for m in ('debug','message','info','status',
-          'job', 'verbose', 'error','critical',
-          'confirm','warning',
-          'report','textprinter',
-          'startDump','stopDump',
-          'isInteractive','isVerbose', 'set',
-          'getOptionParser','parse_args',
-          ):
-    globals()[m] = getattr(_syscon,m)
+    for funcname in (
+        'debug','message','info','status',
+        'job', 'verbose', 'error','critical',
+        'confirm','warning',
+        'report','textprinter',
+        #'startDump','stopDump',
+        'isInteractive','isVerbose', 'set',
+        'getOptionParser','parse_args', ):
+        g[funcname] = getattr(_syscon,funcname)
+
+
+_stack = []
+_syscon = None
+
+def push(c):
+    _stack.append(_syscon)
+    setSystemConsole(c)
+
+def pop():
+    #assert len(_stack) > 0
+    rv = _syscon
+    setSystemConsole(_stack.pop())
+    return rv
+
+
+def startDump(**kw):
+    push(CaptureConsole(**kw))
+        
+def stopDump():
+    c = pop()
+    return c.getvalue()
+
+#_syscon = Console(sys.stdout.write, sys.stderr.write)
+setSystemConsole(
+    StatusConsole(sys.stdout.write, sys.stderr.write))
+
+atexit.register(_syscon.shutdown)
+
+
+
+## for m in ('debug','message','info','status',
+##           'job', 'verbose', 'error','critical',
+##           'confirm','warning',
+##           'report','textprinter',
+##           'startDump','stopDump',
+##           'isInteractive','isVerbose', 'set',
+##           'getOptionParser','parse_args',
+##           ):
+##     globals()[m] = getattr(_syscon,m)
+
+## def cmeth(funcname,*args,**kw):
+##     f = getattr(_syscon,funcname)
+##     return f(*args,**kw)
 
 
 def copyleft(name="Lino",

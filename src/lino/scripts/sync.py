@@ -77,6 +77,7 @@ class Synchronizer(Task):
             n = 0
             for root, dirs, files in os.walk(self.src):
                 n += len(dirs)
+                n += len(files)
             self.status("Found %d directories." % n)
             self.job.setMaxValue(n)
             
@@ -98,19 +99,17 @@ class Synchronizer(Task):
         try:
             s = os.stat(src)
         except OSError,e:
-        #except Exception,e:
-            self.error("os.stat('%s') failed" % src)
+            self.error("os.stat() failed: %s",e)
             return
         
         try:
             os.utime(target, (s.st_atime, s.st_mtime))
         except OSError,e:
-        #except Exception,e:
-            self.error("os.utime('%s') failed" % target)
+            self.error("os.utime() failed: %s",e)
 
                 
     def copy(self,src,target):
-        #self.purzel()
+        self.job.update(self.getStatus())
         if os.path.isfile(src):
             self.copy_file(src,target)
         elif os.path.isdir(src):
@@ -120,7 +119,7 @@ class Synchronizer(Task):
                 "%s is neither file nor directory" % src)
 
     def update(self,src,target):
-        #self.purzel()
+        self.job.update(self.getStatus())
         if os.path.isfile(src):
             self.update_file(src,target)
         elif os.path.isdir(src):
@@ -130,7 +129,6 @@ class Synchronizer(Task):
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
-        #self.purzel()
         if os.path.isfile(name):
             self.delete_file(name)
         elif os.path.isdir(name):
@@ -139,19 +137,8 @@ class Synchronizer(Task):
             raise SyncError(
                 "%s is neither file nor directory" % name)
 
-##     def make_dir(self,name):
-##         if self.simulate:
-##             print "mkdir "+name
-##             return
-##         try:
-##             os.makedirs(name)
-##         except Exception,e:
-##             console.error(str(e))
             
     def update_dir(self,src,target):
-        #srcdir = os.path.join(self.srcroot,dirname)
-        #destdir = os.path.join(self.destroot,dirname)
-        self.job.update("updating " + src)
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
         mustCopy = []
@@ -176,17 +163,14 @@ class Synchronizer(Task):
         """
                 
         for name in destnames:
-            #self.schedule(self.delete,os.path.join(target,name))
             self.delete(os.path.join(target,name))
         del destnames
 
         for s,t in mustCopy:
-            #self.schedule(self.copy,s,t)
             self.copy(s,t)
         del mustCopy
             
         for s,t in mustUpdate:
-            #self.schedule(self.update,s,t)
             self.update(s,t)
 
     
@@ -196,7 +180,7 @@ class Synchronizer(Task):
             src_sz = src_st.st_size
             src_mt = src_st.st_mtime
         except OSError,e:
-            self.error("os.stat('%s') failed"%src)
+            self.error("os.stat() failed: ",e)
             return False
 
         try:
@@ -204,7 +188,7 @@ class Synchronizer(Task):
             target_sz = target_st.st_size
             target_mt = target_st.st_mtime
         except OSError,e:
-            self.error("os.stat('%s') failed" % target)
+            self.error("os.stat() failed: ",e)
             return False
 
         doit = False
@@ -248,13 +232,12 @@ class Synchronizer(Task):
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.job.update("copying " + src)
         self.info("mkdir " + target)
         if not self.simulate:
             try:
                 os.mkdir(target)
             except OSError,e:
-                self.error("os.mkdir('%s') failed" % target)
+                self.error("os.mkdir('%s') failed",target)
                 return
             self.utime(src,target)
             
@@ -273,7 +256,7 @@ class Synchronizer(Task):
         try:
             shutil.copyfile(src, target)
         except IOError,e:
-            self.error("copy_file('%s','%s') failed" % (src,target))
+            self.error("copy_file('%s','%s') failed",src,target)
             return
         self.utime(src,target)
 
@@ -289,7 +272,7 @@ class Synchronizer(Task):
         try:
             os.rmdir(name)
         except IOError,e:
-            self.error("os.rmdir('%s') failed" % name)
+            self.error("os.rmdir('%s') failed",name)
             
     def delete_file(self,name):
         self.count_delete_file += 1
@@ -312,21 +295,45 @@ class Synchronizer(Task):
         #except Exception,e:
         #    console.error(str(e))
         except IOError,e:
-            self.error("os.remove('%s') failed" % name)
+            self.error("os.remove('%s') failed",name)
         
     def summary(self):
-        s = "delete %d directories and %d files" % (
-            self.count_delete_dir,
-            self.count_delete_file)
-        s += "\nupdate %d directories and %d files" % (
+        s = "%d files and %d directories " % (
+            self.count_delete_file,
+            self.count_delete_dir)
+        if self.simulate:
+            s += "would have been deleted"
+        else:
+            s += "were deleted"
+        s += "\n%d files and %d directories " % (
+            self.count_update_file,
             self.count_update_dir,
-            self.count_update_file)
-        s += "\ncopy %d directories and %d files" % (
+            )
+        if self.simulate:
+            s += "would have been updated"
+        else:
+            s += "were updated"
+        s += "\n%d files and %d directories " % (
             self.count_copy_file,
-            self.count_copy_dir)
+            self.count_copy_dir,
+            )
+        if self.simulate:
+            s += "would have been copied"
+        else:
+            s += "were copied"
         s += "\n%d files up-to-date" % (self.count_uptodate)
         s += "\n%d warnings" % (self.count_warnings)
         s += "\n%d errors" % (self.count_errors)
+        return s
+
+    def getStatus(self):
+        s = "keep %d, update %d, copy %d, delete %d files." % (
+            self.count_uptodate,
+            self.count_update_file,
+            self.count_copy_file,
+            self.count_delete_file)
+        s += " %d warnings." % (self.count_warnings)
+        s += " %d errors." % (self.count_errors)
         return s
 
 def main(argv):
