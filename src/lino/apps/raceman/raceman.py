@@ -139,8 +139,8 @@ This is the Raceman main menu.
         m = frm.addMenu("&Stammdaten")
         m.addItem(label="&Races").setHandler(
             self.showTableGrid,ui,
-            races.Races,
-            columnNames="id name1 date startTime status tpl type name2")
+            races.Races,viewName="std")
+
         m.addItem(label="&Clubs").setHandler(self.showTableGrid,ui,
                                              races.Clubs)
         m.addItem(label="&Personen").setHandler(self.showTableGrid,ui,

@@ -26,6 +26,9 @@ itr("Working",
    fr="Travail en cours")
 
 
+uimeths = ('message','vmsg','error')
+
+
 class Task:
     def __init__(self):
         self._todo = []
@@ -38,6 +41,8 @@ class Task:
     
     def run(self,ui):
         self.ui = ui
+        for m in uimeths:
+            setattr(self,m,getattr(ui,m))
         self.job = self.ui.progress(self.getLabel())
         self.start()
         while len(self._todo) > 0:
@@ -46,11 +51,11 @@ class Task:
             m(*args,**kw)
         self.job.done()
 
-    def message(self,msg):
-        self.ui.message(msg)
+##     def message(self,msg):
+##         self.ui.message(msg)
 
-    def error(self,msg):
-        self.ui.error(msg)
+##     def error(self,msg):
+##         self.ui.error(msg)
 
 
 
@@ -58,8 +63,10 @@ class Task:
 
 class Job:
     
-    def __init__(self,pb,title=None,maxval=0):
+    def __init__(self,pb,title=None,maxval=None):
         self.pb = pb
+        for m in uimeths:
+            setattr(self,m,getattr(pb,m))
         self.curval = 0
         self.maxval = maxval
         self._done = False
@@ -80,14 +87,12 @@ class Job:
         self.curval += n
         if self._done:
             return
-        if self.maxval == 0:
-            self.pb.onInc(self)
-        else:
+        if self.maxval:
             pc = int(100*self.curval/self.maxval)
             if pc == self.pc:
                 return
             self.pc = pc
-            self.pb.onInc(self)
+        self.pb.onInc(self)
         
     def done(self):
         if not self._done:
@@ -98,6 +103,7 @@ class Job:
 
     def __str__(self):
         return self._title
+
             
 
 
@@ -114,7 +120,7 @@ class ProgressBar:
 
     
     """
-    def __init__(self,label=None):
+    def __init__(self,ui,label=None):
         
         """
         
@@ -126,6 +132,9 @@ class ProgressBar:
         
         
         """
+        self.ui = ui
+        for m in uimeths:
+            setattr(self,m,getattr(ui,m))
         self._label = label
         self._jobs = []
         self.onInit()
@@ -156,45 +165,45 @@ class ProgressBar:
     
 
 class ConsoleProgressBar(ProgressBar):
-    def __init__(self,console,*args,**kw):
-        self.console = console
-        ProgressBar.__init__(self,*args,**kw)
+##     def __init__(self,ui,*args,**kw):
+##         self.console = console
+##         ProgressBar.__init__(self,*args,**kw)
         
     def onInit(self):
-        self.console.writeout(self._label)
+        self.ui.writeout(self._label)
         
     def onDone(self,job):
-        self.console.write('\n')
+        self.ui.write('\n')
         ProgressBar.onDone(self,job)
         
 class DecentConsoleProgressBar(ConsoleProgressBar):
     def onTitle(self):
-        self.console.write(self._title)
+        self.ui.write(self._title)
         
     def onInc(self):
-        self.console.write('.')
+        self.ui.write('.')
         
 class PurzelConsoleProgressBar(ConsoleProgressBar):
 
-    purzelMann = r"|/-\*"
+    purzelMann = "|/-\\"
     
     def onInit(self):
         if self._label is not None:
-            self.console.writeout(self._label)
+            self.ui.writeout(self._label)
         
     def onTitle(self,job):
         self.onInc(job)
         
     def onInc(self,job):
-        if job.maxval is 0:
-            s = '[' + self.purzelMann[job.curval % 5] + "] "
+        if job.maxval is None:
+            s = '[' + self.purzelMann[job.curval % 4] + "] "
         else:
             if job.pc is None:
                 s = "[    ] " 
             else:
                 s = "[%3d%%] " % job.pc
         s += job._title
-        self.console.write(s.ljust(80) + '\r')
+        self.ui.write(s.ljust(80) + '\r')
 
     
             

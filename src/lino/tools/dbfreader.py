@@ -119,6 +119,9 @@ class DBFFile:
     def get_version(self):
         return DBFFile.versionmap[self.version]
 
+    def __len__(self):
+        return self.get_record_count()
+
     def get_record_count(self):
         return self.rec_num
 

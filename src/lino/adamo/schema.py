@@ -176,6 +176,7 @@ class Schema(Describable):
                     console.debug("StartupDelay:"+repr(e))
                     tryagain.append(table)
             if not somesuccess:
+                "not supported: primary key with pointer to self"
                 raise "Schema.initialize() failed"
             todo = tryagain
 

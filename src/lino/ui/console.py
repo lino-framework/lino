@@ -311,7 +311,7 @@ class Console(UI):
              DecentConsoleProgressBar, \
              PurzelConsoleProgressBar
         if self.isVeryQuiet():
-            return ProgressBar(*args,**kw)
+            return ProgressBar(self,*args,**kw)
         if self.isQuiet():
             return DecentConsoleProgressBar(self,*args,**kw)
         return PurzelConsoleProgressBar(self,*args,**kw)

@@ -225,7 +225,7 @@ class MenuBar(Component):
 class Navigator:
     def __init__(self,ds):
         self.ds = ds
-        assert len(ds._lockedRows) == 0
+        #assert len(ds._lockedRows) == 0
         
     def setupMenu(self):
         frm = self.getForm()
@@ -248,12 +248,12 @@ class Navigator:
         def f():
             l = self.getSelectedRows()
             if len(l) == 1:
-                s = "Row %d of %d" % (l[0],len(self.ds))
+                s = "Row %d of %d" % (l[0]+1,len(self.ds))
             else:
-                s = "%d rows" % len(self.ds)
+                s = "Selected %s of %d rows" % (len(l), len(self.ds))
                 
-            if len(self.ds._lockedRows) > 0:
-                s += " (%d locked)" % len(self.ds._lockedRows)
+            #if len(self.ds._lockedRows) > 0:
+            #    s += " (%d locked)" % len(self.ds._lockedRows)
             frm.setStatusText(s)
         frm.addIdleEvent(f)
 
@@ -296,7 +296,7 @@ class Navigator:
         return self.ds[i]
         
     def beforeClose(self):
-        self.ds.unlockAll()
+        self.ds.unlock()
 
 
 class DataGrid(Navigator,Component):    
@@ -516,6 +516,11 @@ class GUI(console.UI):
         frm = self.form(label="About",doc=s)
         frm.show()
         
+        
+    def showDataForm(self,ds,**kw):
+        frm = self.form(label=ds.getLabel(),**kw)
+        ds.setupForm(frm)
+        frm.show()
         
     def showDataGrid(self,ds,**kw):
         #assert isinstance(ds,Datasource)

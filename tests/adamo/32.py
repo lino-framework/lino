@@ -86,12 +86,12 @@ Products            |    2|(3,)                |(16,)
 Invoices            |    1|OUT-1               |OUT-1               
 InvoiceLines        |    2|('OUT', 1, 1)       |('OUT', 1, 2)       
 Bookings            |    0|                    |                    
-Authors             |   13|Bill Gates          |Henry Louis Mencken 
+Authors             |   14|Bill Gates          |Winston Churchill   
 AuthorEvents        |    0|                    |                    
 AuthorEventTypes    |    5|born                |other               
 Topics              |    0|                    |                    
 Publications        |    0|                    |                    
-Quotes              |    8|[q1]                |[q8]                
+Quotes              |    9|[q1]                |[q9]                
 PubTypes            |    6|Book                |Software            
 PubByAuth           |    0|                    |                    
 Pages               |    0|                    |                    

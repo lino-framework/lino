@@ -41,13 +41,13 @@ This is the Keeper main menu.
         m = frm.addMenu("&Stammdaten")
         m.addItem(label="&Volumes").setHandler(
             self.showTableGrid,ui,
-            tables.Volumes)
+            tables.Volumes,viewName="std")
         m.addItem(label="&Files").setHandler(
             self.showTableGrid,ui,
-            tables.Files)
+            tables.Files,viewName="std")
         m.addItem(label="&Directories").setHandler(
             self.showTableGrid,ui,
-            tables.Directories)
+            tables.Directories,viewName="std")
         m.addItem(label="&Words").setHandler(
             self.showTableGrid,ui,
             tables.Words)

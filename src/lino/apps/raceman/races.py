@@ -37,6 +37,9 @@ class Races(Table):
         self.addField('tpl',STRING(width=6))
         self.addPointer('type',RaceTypes)
         self.addField('startTime',TIME)
+        self.addView(
+            "std",
+            "date name1 status startTime arrivals tpl type name2 id")
 
     def setupMenu(self,nav):
         frm = nav.getForm()
@@ -71,7 +74,7 @@ class Races(Table):
 
             def startNow():
                 self.startTime = datetime.datetime.now().time()
-                frm.setMessage("started at " + str(self.startTime))
+                frm.message("started at " + str(self.startTime))
                 #parent.buttons.arrive.setFocus()
                 frm.entries.dossard.setFocus()
 
@@ -89,7 +92,7 @@ class Races(Table):
                     dossard=frm.entries.dossard.getValue(),
                     duration=duration,
                     time=now.time())
-                frm.setMessage("%s arrived at %s after %s" %(
+                frm.message("%s arrived at %s after %s" %(
                     a.dossard,a.time,a.duration))
                 frm.entries.dossard.setValue('*')
                 frm.entries.dossard.setFocus()

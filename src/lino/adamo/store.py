@@ -23,6 +23,11 @@ from lino.adamo.exceptions import DataVeto
 from lino.adamo.datasource import Datasource
 from lino.adamo.query import DataColumnList
 
+class Lock:
+    def __init__(self,row):
+        self._row = row
+        
+
 class Store:
     """
     One instance per Database and Table.
@@ -42,7 +47,8 @@ class Store:
         self._schema = db.schema # shortcut
         self._status = self.SST_MUSTCHECK
         
-        self._datasources = []
+        #self._datasources = []
+        self._lockedRows = []
         
         if len(self._table.getPrimaryAtoms()) == 1:
             self._lastId = None
@@ -72,8 +78,9 @@ class Store:
 
 
     def fireUpdate(self):
-        for ds in self._datasources:
-            ds.onStoreUpdate()
+        pass
+        #for ds in self._datasources:
+        #    ds.onStoreUpdate()
 
     def createTable(self,sess):
         if self._status == self.SST_MUSTCHECK:
@@ -98,9 +105,12 @@ class Store:
         if self._connection.mustCheckTables():
             q = self.query()
             l = len(q)
-            sess.progress("Checking Table %s : %d rows" % (
-                q._table.getTableName(),l))
+            job = sess.progress(
+                "Checking Table %s : %d rows" % \
+                q._table.getTableName(),
+                maxval=l)
             for row in q:
+                job.inc()
                 msg = row.checkIntegrity()
                 if msg is not None:
                     msg = "%s[%s] : %s" % (
@@ -109,14 +119,40 @@ class Store:
                         msg)
                     sess.error(msg)
                     #msgs.append(msg)
+            job.done()
             
         self._status = self.SST_READY
 
             
-    def query(self,sess,columnNames=None,**kw):
-        ds = Datasource(sess,self,columnNames=columnNames,**kw)
-        self._datasources.append(ds)
-        return ds
+    def query(self,sess,*args,**kw):
+        return Datasource(sess,self,None,*args,**kw)
+        
+    def lockRow(self,row):
+        # todo: use getLock() / releaseLock()
+        self.removeFromCache(row)
+        self._lockedRows.append(row)
+        
+    def unlockRow(self,row):
+        self.addToCache(row)
+        self._lockedRows.remove(row)
+        self.touch()
+        #row.writeToStore()
+        #if row.isDirty():
+        #   key = tuple(row.getRowId())
+        #   self._dirtyRows[key] = row
+
+    def unlockAll(self):
+        #print "Datasource.unlockAll()",self
+        for row in self._lockedRows:
+            row.unlock()
+        #assert len(self._lockedRows) == 0
+        
+    def unlockDatasource(self,ds):
+        #print "Datasource.unlockAll()",self
+        for row in self._lockedRows:
+            if row._ds == ds:
+                row.unlock()
+    
         
                 
         
@@ -128,16 +164,17 @@ class Store:
         pass
 
     def commit(self):
-        for ds in self._datasources:
-            ds.commit()
+        for row in self._lockedRows:
+            row.writeToStore()
             
     def beforeShutdown(self):
-        for ds in self._datasources:
-            ds.close()
+        self.unlockAll()
+        #for ds in self._datasources:
+        #    ds.close()
 
 
-    def removeDatasource(self,ds):
-        self._datasources.remove(ds)
+##     def removeDatasource(self,ds):
+##         self._datasources.remove(ds)
         
 
     def setAutoRowId(self,row):

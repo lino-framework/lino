@@ -129,12 +129,12 @@ class MyDataTable(wx.grid.PyGridTableBase):
             self.rows.append(row)
         else:
             row = self.rows[rowIndex]
-        #if not row.isLocked():
         row.lock()
         #row[colIndex].setValue(value)
         col = self.columns[colIndex]
         col.setValueFromString(row,value)
         row.setDirty()
+        row.unlock()
         #row.setCellFromString(colIndex,value)
         #self._lockedRows.append(row)
         
@@ -207,20 +207,258 @@ class MyDataTable(wx.grid.PyGridTableBase):
         self.loadData()
 
 
+
+## class MyCellEditor(wx.grid.PyGridCellEditor):
+## ##     def __init__(self, log):
+## ##         self.log = log
+## ##         self.log.write("MyCellEditor ctor\n")
+## ##         gridlib.PyGridCellEditor.__init__(self)
+
+
+##     def Create(self, parent, id, evtHandler):
+##         """
+##         Called to create the control, which must derive from wx.Control.
+##         *Must Override*
+##         """
+##         console.message("MyCellEditor: Create")
+##         self._frm = wx.TextCtrl(parent, id, "")
+##         self._tc.SetInsertionPoint(0)
+##         self.SetControl(self._tc)
+
+##         if evtHandler:
+##             self._tc.PushEventHandler(evtHandler)
+
+
+## ##     def SetSize(self, rect):
+## ##         """
+## ##         Called to position/size the edit control within the cell rectangle.
+## ##         If you don't fill the cell (the rect) then be sure to override
+## ##         PaintBackground and do something meaningful there.
+## ##         """
+## ##         self.log.write("MyCellEditor: SetSize %s\n" % rect)
+## ##         self._tc.SetDimensions(rect.x, rect.y, rect.width+2, rect.height+2,
+## ##                                wx.SIZE_ALLOW_MINUS_ONE)
+
+
+##     def Show(self, show, attr):
+##         """
+##         Show or hide the edit control.  You can use the attr (if not None)
+##         to set colours or fonts for the control.
+##         """
+##         console.message("MyCellEditor: Show(self, %s, %s)" % (show,
+##                                                               attr))
+##         #self.base_Show(show, attr)
+
+
+##     def PaintBackground(self, rect, attr):
+##         """
+##         Draws the part of the cell not occupied by the edit control.  The
+##         base  class version just fills it with background colour from the
+##         attribute.  In this class the edit control fills the whole cell so
+##         don't do anything at all in order to reduce flicker.
+##         """
+##         console.message("MyCellEditor: PaintBackground")
+
+
+##     def BeginEdit(self, row, col, grid):
+##         """
+##         Fetch the value from the table and prepare the edit control
+##         to begin editing.  Set the focus to the edit control.
+##         *Must Override*
+##         """
+##         self.startValue = grid.GetTable().GetValue(row, col)
+##         console.message("MyCellEditor: BeginEdit (%d,%d) : %s" % (
+##             row, col, self.startValue))
+## ##         self._tc.SetValue(self.startValue)
+## ##         self._tc.SetInsertionPointEnd()
+## ##         self._tc.SetFocus()
+
+## ##         # For this example, select the text
+## ##         self._tc.SetSelection(0, self._tc.GetLastPosition())
+
+
+##     def EndEdit(self, row, col, grid):
+##         """
+##         Complete the editing of the current cell. Returns True if the value
+##         has changed.  If necessary, the control may be destroyed.
+##         *Must Override*
+##         """
+##         console.message("MyCellEditor: EndEdit (%d,%d)" % (row, col))
+##         changed = False
+
+## ##         val = self._tc.GetValue()
+        
+## ##         if val != self.startValue:
+## ##             changed = True
+## ##             grid.GetTable().SetValue(row, col, val) # update the table
+
+## ##         self.startValue = ''
+## ##         self._tc.SetValue('')
+##         return changed
+
+
+##     def Reset(self):
+##         """
+##         Reset the value in the control back to its starting value.
+##         *Must Override*
+##         """
+##         console.message("MyCellEditor: Reset")
+##         #self._tc.SetValue(self.startValue)
+##         #self._tc.SetInsertionPointEnd()
+
+
+## ##     def IsAcceptedKey(self, evt):
+## ##         """
+## ##         Return True to allow the given key to start editing: the base class
+## ##         version only checks that the event has no modifiers.  F2 is special
+## ##         and will always start the editor.
+## ##         """
+## ##         self.log.write("MyCellEditor: IsAcceptedKey: %d\n" % (evt.GetKeyCode()))
+
+## ##         ## Oops, there's a bug here, we'll have to do it ourself..
+## ##         ##return self.base_IsAcceptedKey(evt)
+
+## ##         return (not (evt.ControlDown() or evt.AltDown()) and
+## ##                 evt.GetKeyCode() != wx.WXK_SHIFT)
+
+
+##     def StartingKey(self, evt):
+##         """
+##         If the editor is enabled by pressing keys on the grid, this will be
+##         called to let the editor do something about that first key if desired.
+##         """
+##         console.message(
+##             "MyCellEditor: StartingKey %d" % evt.GetKeyCode())
+##         key = evt.GetKeyCode()
+##         ch = None
+##         if key in [ wx.WXK_NUMPAD0, wx.WXK_NUMPAD1,
+##                     wx.WXK_NUMPAD2, wx.WXK_NUMPAD3, 
+##                     wx.WXK_NUMPAD4, wx.WXK_NUMPAD5,
+##                     wx.WXK_NUMPAD6, wx.WXK_NUMPAD7, 
+##                     wx.WXK_NUMPAD8, wx.WXK_NUMPAD9
+##                     ]:
+
+##             ch = ch = chr(ord('0') + key - wx.WXK_NUMPAD0)
+
+##         elif key < 256 and key >= 0 and chr(key) in string.printable:
+##             ch = chr(key)
+##             if not evt.ShiftDown():
+##                 ch = ch.lower()
+
+##         if ch is not None:
+##             # For this example, replace the text.  Normally we would append it.
+##             #self._tc.AppendText(ch)
+##             self._tc.SetValue(ch)
+##             self._tc.SetInsertionPointEnd()
+##         else:
+##             evt.Skip()
+
+
+##     def StartingClick(self):
+##         """
+##         If the editor is enabled by clicking on the cell, this method will be
+##         called to allow the editor to simulate the click on the control if
+##         needed.
+##         """
+##         console.message("MyCellEditor: StartingClick")
+
+
+##     def Destroy(self):
+##         """final cleanup"""
+##         console.message("MyCellEditor: Destroy")
+##         self.base_Destroy()
+
+
+##     def Clone(self):
+##         """
+##         Create a new object which is the copy of this one
+##         *Must Override*
+##         """
+##         console.message("MyCellEditor: Clone")
+##         return MyCellEditor()
+
+
+
+
 class DataGridCtrl(wx.grid.Grid):
     def __init__(self, parent, editor):
         wx.grid.Grid.__init__(self, parent, -1)
         self.table = MyDataTable(editor)
         self.SetTable(self.table,True)
-        self.SetRowLabelSize(0)
+        if True:
+            self.SetRowLabelSize(0)
         self.SetMargins(0,0)
         self.AutoSizeColumns(True)
+        self.SetSizeHints(400,200)
         
         wx.grid.EVT_GRID_CELL_LEFT_DCLICK(self,
                                           self.OnLeftDClick)
         wx.grid.EVT_GRID_LABEL_RIGHT_CLICK(self,
                                            self.OnLabelRightClicked)
 
+        self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+
+
+    def OnKeyDown(self, evt):
+        
+        if evt.KeyCode() == wx.WXK_RETURN:
+            if evt.ControlDown():
+                ui = self.table.editor.getForm()
+                ui.showDataForm(self.table.editor.ds)
+                #evt.Skip()
+                return
+
+            self.DisableCellEditControl()
+
+            if not self.MoveCursorRight(evt.ShiftDown()):
+                newRow = self.GetGridCursorRow() + 1
+
+                if newRow < self.GetTable().GetNumberRows():
+                    self.SetGridCursor(newRow, 0)
+                    self.MakeCellVisible(newRow, 0)
+                else:
+                    pass
+        elif evt.KeyCode() == wx.WXK_F2:
+            if evt.ControlDown() or evt.ShiftDown() or evt.AltDown():
+                evt.Skip()
+                return
+            colIndex = self.GetGridCursorCol()
+            col = self.table.columns[colIndex]
+            row = self.table.editor.getCurrentRow()
+            ui = self.table.editor.getForm()
+            
+            if col.rowAttr.showEditor(ui,row):
+                return
+            #print "F2 in column", col.name
+            evt.Skip()
+        else:
+            evt.Skip()
+            return
+            
+    def getSelectedRows(self):
+        lt = self.GetSelectionBlockTopLeft()
+        lb = self.GetSelectionBlockBottomRight()
+        if len(lt) == 0:
+            return [self.GetGridCursorRow()]
+        assert len(lb) == len(lt)
+        #print lt, lb
+        l = []
+        for i in range(len(lt)):
+            t = lt[i][0]
+            b = lb[i][0]
+            l += range(t,b+1)
+        #l = [i for i in range(t[0],b[0]) ]
+        #print "selected rows:", l
+        """note: self.GetSelectedCells()
+        is always empty in normal selection mode
+        """
+        return l
+    
+##         l = self.GetSelectedCells()
+##         print len(l), "cells selected"
+##         if len(l) == 0:
+##             return [self.GetGridCursorRow()]
+##         return l
 
     def refresh(self):
         self.table.refresh(self)

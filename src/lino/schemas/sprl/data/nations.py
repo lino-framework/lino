@@ -288,7 +288,7 @@ zw     Zimbabwe
         row = q.appendRow(id=id.strip(),
                           name=name.strip())
         
-    q.commit()
+    #q.commit()
     #print q._session.getBabelLangs()
 ##     print "1: ",\
 ##           q._session.db._supportedLangs

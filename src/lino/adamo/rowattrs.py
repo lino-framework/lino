@@ -199,6 +199,8 @@ class RowAttribute(Describable):
 
         
 
+    def showEditor(self,ui,row):
+        return False
 
 class Field(RowAttribute):
     """
@@ -242,7 +244,7 @@ class Field(RowAttribute):
         return (value,)
 
 
-    def getTestEqual(self,ds, colAtoms,value):
+    def getTestEqual(self,ds,colAtoms,value):
         assert len(colAtoms) == 1
         a = colAtoms[0]
         return ds._connection.testEqual(a.name,a.type,value)
@@ -418,13 +420,15 @@ class Pointer(RowAttribute):
         self.sticky = True # joins are sticky by default
         
         self.detailName = detailName
-        self.dtlColumnNames = None
+        #self.dtlColumnNames = None
         self.dtlKeywords = {}
         self._neededAtoms = None
 
     def setDetail(self,name,columnNames=None,**kw):
         self.detailName = name
-        self.dtlColumnNames = columnNames
+        #self.dtlColumnNames = columnNames
+        if columnNames is not None:
+            kw['columnNames'] = columnNames
         self.dtlKeywords = kw
         
     def onTableInit1(self,owner,name):
@@ -447,9 +451,19 @@ class Pointer(RowAttribute):
         for toTable in self._toTables:
             toTable.addDetail( self.detailName,
                                self,
-                               self.dtlColumnNames,
+                               #self.dtlColumnNames,
                                **self.dtlKeywords)
             
+    def getTestEqual(self,ds,colAtoms,value):
+        av = self.value2atoms(value,ds.getSession())
+        i = 0
+        l = []
+        for (n,t) in self.getNeededAtoms(ds.getSession()):
+            l.append(ds._connection.testEqual(n,t,av[i]))
+            i += 1
+        return " AND ".join(l)
+
+
             
     def getNeededAtoms(self,ctx):
         
@@ -472,7 +486,7 @@ class Pointer(RowAttribute):
             else:
                 for (name,type) in self._toTables[0].getPrimaryAtoms():
                     neededAtoms.append( (self.name + "_" + name,
-                                                type) )
+                                         type) )
 
             self._neededAtoms = tuple(neededAtoms)
         return self._neededAtoms
@@ -611,6 +625,15 @@ class Detail(RowAttribute):
         #   str(row),self.name,len(ds))
         return "%s : %s not empty" % (str(row),self.name)
             
+##     def format(self,v):
+##         if v is None:
+##             return ""
+##         detailDs = self.getCellValue(v)
+##         return str(len(detailDs))+" "+detailDs.leadTable.getName()
+        
+    def format(self,ds):
+        return str(len(ds))+" "+ds._table.getName()
+        
     def validate(self,row,value):
         raise "cannot set value of a detail"
     
@@ -632,6 +655,14 @@ class Detail(RowAttribute):
         assert len(colAtoms) == 0
         raise "cannot"
         
+    def canWrite(self,row):
+        # note : row may be None. 
+        return False
+
+    def showEditor(self,ui,row):
+        ds = self.getCellValue(row)
+        ui.showDataGrid(ds)
+        return True
 
     def getCellValue(self,row): 
         kw = dict(self._queryParams)
@@ -691,6 +722,8 @@ class FieldContainer:
         return self.addRowAttr(Field(self,name,type,*args,**kw))
     def addPointer(self,name,*args,**kw):
         return self.addRowAttr(Pointer(self,name,*args,**kw))
+##     def addDetail(self,name,fromTable,ptrName=None,*args,**kw):
+##         return self.addRowAttr(Detail(self,name,*args,**kw))
     def addBabelField(self,name,type,*args,**kw):
         return self.addRowAttr(BabelField(self,name,type,*args,**kw))
 

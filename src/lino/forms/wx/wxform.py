@@ -137,11 +137,7 @@ class DataGrid(base.DataGrid):
         self.wxctrl.refresh()
 
     def getSelectedRows(self):
-        #return self.wxctrl.GetSelectedRows()
-        l = self.wxctrl.GetSelectedCells()
-        if len(l) == 0:
-            return [self.wxctrl.GetGridCursorRow()]
-        return l
+        return self.wxctrl.getSelectedRows()
                 
         
 class DataNavigator(base.DataNavigator):
@@ -175,11 +171,11 @@ class DataNavigator(base.DataNavigator):
                                    lambda e:self.skip(1), btn)
                                    #EventCaller(self.skip,1))
         
-##     def getStatus(self):
-##         return "%d/%d" % (self.currentPos,len(self.ds))
+    def getStatus(self):
+        return "%d/%d" % (self.currentPos,len(self.ds))
     
-##     def refresh(self):
-##         self.statusLabel.SetLabel(self.getStatus())
+    def refresh(self):
+        self.statusLabel.SetLabel(self.getStatus())
         
         
 
@@ -310,10 +306,16 @@ class Entry(EntryMixin,base.Entry):
 
 class DataEntry(EntryMixin,base.DataEntry):
     
+    def setup(self,panel,box):
+        EntryMixin.setup(self,panel,box)
+        self.editor.SetEditable(self.enabled)
+        
     def refresh(self):
         EntryMixin.refresh(self)
         base.DataEntry.refresh(self)
         self.editor.SetEditable(self.enabled)
+        #if not self.enabled:
+        #    print str(self), "is read-only"
     
 
 
@@ -394,7 +396,9 @@ class Form(base.Form):
         #self.mainBox = mainBox
         #self.wxctrl.SetAutoLayout(True) 
         #self.wxctrl.Layout()
-        self.wxctrl.Centre(wx.BOTH)
+
+        if False:
+            self.wxctrl.Centre(wx.BOTH)
 
 
 

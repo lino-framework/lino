@@ -143,8 +143,8 @@ where DBFILE is the name of the sqlite database file""",
         
         
         
-    def showTableGrid(self,ui,tc,**kw):
-        ds = self.sess.query(tc,**kw)
+    def showTableGrid(self,ui,tc,*args,**kw):
+        ds = self.sess.query(tc,*args,**kw)
         return ui.showDataGrid(ds)
     
 
@@ -157,7 +157,7 @@ class MirrorLoaderApplication(AdamoApplication):
     def getOptionParser(self,**kw):
         parser = AdamoApplication.getOptionParser(self,**kw)
         
-        parser.add_option("-l", "--loadfrom",
+        parser.add_option("--loadfrom",
                           help="""\
                           directory for mirror source files""",
                           action="store",

@@ -187,10 +187,10 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._initStatus = 4
 
             
-    def addDetail(self,name,ptr,columnNames,**kw):
+    def addDetail(self,name,ptr,**kw):
         # used by Pointer. onTableInit3()
         #print '%s.addDetail(%s)' % (self.getTableName(),name)
-        dtl = Detail(self,name,ptr, columnNames=columnNames, **kw)
+        dtl = Detail(self,name,ptr, **kw)
         self._rowAttrs[name] = dtl
         #dtl.setOwner(self,name)
         #dtl.onTableInit2(self,schema)
@@ -253,8 +253,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
             sess.debug("No need to load "+\
                        self._mirrorLoader.sourceFilename())
             return
-        sess.progress("Loading "+self._mirrorLoader.sourceFilename())
-        self._mirrorLoader.load(store.query(sess))
+        self._mirrorLoader.load(sess,store.query(sess))
 
     def onAppend(self,row):
         pass
@@ -379,21 +378,25 @@ class DbfMirrorLoader:
             return None
         return datatypes.DURATION.parse(s.replace(':','.'))
     
-    def load(self,q):
-        console.info(q.getLabel())
+    def load(self,ui,q):
+        #job = ui.progress("q.getLabel())
         f = dbfreader.DBFFile(self.sourceFilename(),
                               codepage="cp850")
         f.open()
+        job = ui.progress("Loading "+
+                          self.sourceFilename(),len(f))
         q.zap()
         for dbfrow in f:
+            job.inc()
             try:
                 self.appendFromDBF(q,dbfrow)
             except DataVeto,e:
-                console.info(str(e))
+                job.error(str(e))
             except DatabaseError,e:
-                console.info(str(e))
+                job.error(str(e))
             except ValueError,e:
-                console.info(str(e))
+                job.error(str(e))
+        job.done()
         f.close()
         q.commit()
 

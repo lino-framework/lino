@@ -29,7 +29,7 @@ class SimpleDatasource:
 
     ANY_VALUE = types.NoneType
     
-    def __init__(self, session, store, clist=None, **kw):
+    def __init__(self, session, store, clist, **kw):
         self.rowcount = None
         self._session = session
         for m in ('setBabelLangs','getLangs'):
@@ -55,7 +55,6 @@ class SimpleDatasource:
             setattr(self,m,getattr(store._connection,m))
 
         self._samples = {}
-        self._lockedRows = []
         
         self.configure(**kw)
 
@@ -99,6 +98,12 @@ class SimpleDatasource:
             view = self._table.getView(viewName)
             if view is None:
                 raise KeyError,viewName+": no such view"
+            
+            if kw.has_key('columnNames'):
+                if kw['columnNames'] is None:
+                    print "viewName", viewName, kw
+                    raise "columnNames was None"
+                
             for k,v in view.items():
                 kw.setdefault(k,v)
         self._configure(**kw)
@@ -193,9 +198,10 @@ class SimpleDatasource:
         
         
     def getColumn(self,i):
-        col = self._clist.visibleColumns[i]
+        return self._clist.visibleColumns[i]
+        
     def getColumnByName(self,name):
-        self._clist.getColumnByName(name)
+        return self._clist.getColumnByName(name)
         
         
 ##  def getView(self,viewName):
@@ -540,44 +546,27 @@ class SimpleDatasource:
                                             self._session)
 
     def commit(self):
-        for row in self._lockedRows:
-            row.writeToStore()
+        self._store.unlockDatasource(self)
         
-    def close(self):
-        #print "close()", self
-        self.unlockAll()
-        assert len(self._lockedRows) == 0
-        self._store.removeDatasource(self)
-
-    def __del__(self):
-        if len(self._lockedRows):
-            print "%s had %d locked rows" % (
-                str(self),
-                len(self._lockedRows))
-        #self.close()
-
-
-    def lockRow(self,row):
-        # todo: use getLock() / releaseLock()
-        self._store.removeFromCache(row)
-        self._lockedRows.append(row)
+##     def commit(self):
+##         for row in self._lockedRows:
+##             row.writeToStore()
         
-    def unlockRow(self,row):
-        self._store.addToCache(row)
-        self._lockedRows.remove(row)
-        self._store.touch()
-        #row.writeToStore()
-        #if row.isDirty():
-        #   key = tuple(row.getRowId())
-        #   self._dirtyRows[key] = row
+##     def close(self):
+##         #print "close()", self
+##         self.unlockAll()
+##         assert len(self._lockedRows) == 0
+##         self._store.removeDatasource(self)
 
-    def unlockAll(self):
-        #print "Datasource.unlockAll()",self
-        for row in self._lockedRows:
-            row.unlock()
-        #assert len(self._lockedRows) == 0
-    
-        
+##     def __del__(self):
+##         if len(self._lockedRows):
+##             print "%s had %d locked rows" % (
+##                 str(self),
+##                 len(self._lockedRows))
+##         #self.close()
+
+    def unlock(self):
+        return self._store.unlockDatasource(self)
         
     def appendRow(self,*args,**kw):
         row = self._appendRow(*args,**kw)
@@ -751,7 +740,7 @@ class SimpleDatasource:
 
 class Datasource(SimpleDatasource):
 
-    def __init__(self, session, store, clist=None,
+    def __init__(self, session, store, clist,
                  pageNum=None,
                  pageLen=None,
                  **kw):

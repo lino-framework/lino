@@ -27,6 +27,9 @@ class Volumes(Table):
         self.addField('name',STRING)
         self.addField('meta',MEMO(width=50,height=5))
         self.addField('path',STRING)
+        #self.addDetail('directories',Directories,parent=None)
+        self.addView("std", "id name path directories meta")
+        
 
     def setupMenu(self,nav):
         frm = nav.getForm()
@@ -53,8 +56,12 @@ class Directories(Table):
         self.addField('name',STRING)
         #self.addField('mtime',TIMESTAMP)
         self.addField('meta',MEMO(width=50,height=5))
-        self.addPointer('parent',Directories)
-        self.addPointer('volume',Volumes)
+        self.addPointer('parent',Directories).setDetail(
+            "subdirs",viewName="std")
+        self.addPointer('volume',Volumes).setDetail(
+            "directories",parent=None,viewName="std")
+        self.addView("std","parent name subdirs meta volume")
+        #self.setPrimaryKey("volume parent name")
 
     class Instance(Table.Instance):
         def getLabel(self):
@@ -63,15 +70,27 @@ class Directories(Table):
             if self.parent is None:
                 return self.name
             return os.path.join(self.parent.path(),self.name)
+        
+        def delete(self):
+            #print "Delete entry for ",self
+            for row in self.files:
+                row.delete()
+            for row in self.subdirs:
+                row.delete()
+            Table.Instance.delete(self)
+                
 
 class Files(Table):
     def init(self):
-        self.addField('id',ROWID) 
+        #self.addField('id',ROWID) 
         self.addField('name',STRING)
         #self.addField('mtime',TIMESTAMP)
         self.addField('meta',MEMO(width=50,height=5))
-        self.addPointer('dir',Directories)
+        self.addPointer('dir',Directories).setDetail(
+            "files",orderBy="name")
         self.addPointer('type',FileTypes)
+        self.setPrimaryKey("dir name")
+        self.addView("std","dir name type meta")
 
     class Instance(Table.Instance):
         def getLabel(self):

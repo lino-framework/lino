@@ -256,6 +256,9 @@ class DemoPopulator(Populator):
 
         self.mencken = q.appendRow(firstName="Henry Louis",
                                    name="Mencken")
+        self.churchill = q.appendRow(firstName="Winston",
+                                     name="Churchill")
+
 
         
 
@@ -334,6 +337,11 @@ cabbage, concludes that it will also make better soup.
         quote = q.appendRow(self.en,"""\
 Conscience is the inner voice that warns us that someone may be looking.        
 """)
+        q = self.churchill.quotesByAuthor.query('lang abstract')
+        quote = q.appendRow(self.en,"""\
+A fanatic is one who can't change his mind and won't change the subject.
+""")
+
         # http://www.io.com/~gibbonsb/mencken.html
         #a.events.appendRow()
 

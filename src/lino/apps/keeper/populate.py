@@ -37,6 +37,8 @@ class VolumeVisitor(Task):
         self.dirs = sess.query(tables.Directories)
         self.words = sess.query(tables.Words)
         self.occs = sess.query(tables.Occurences)
+        for row in self.dirs.query(volume=self.volume):
+            row.delete()
         self.schedule(self.visit,self.volume.path,"")
 
     def getLabel(self):
@@ -44,10 +46,17 @@ class VolumeVisitor(Task):
 
     def visit(self,fullname,shortname,dir=None):
         if os.path.isfile(fullname):
-            row = self.files.appendRow(name=shortname,dir=dir)
+            row = self.files.peek(dir,shortname)
+            if row is None:
+                row = self.files.appendRow(name=shortname,dir=dir)
             self.visit_file(row,fullname)
         elif os.path.isdir(fullname):
-            row = self.dirs.appendRow(name=shortname,parent=dir)
+            #print "findone(",dict(parent=dir,name=shortname),")"
+            row = self.dirs.findone(parent=dir,name=shortname)
+            if row is None:
+                row = self.dirs.appendRow(name=shortname,
+                                          parent=dir,
+                                          volume=self.volume)
             self.visit_dir(row,fullname)
         else:
             raise SyncError(

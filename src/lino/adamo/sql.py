@@ -244,39 +244,8 @@ class SqlConnection(Connection):
                                 b.getNameInQuery(clist)) )
                             i += 1
                         sql += " AND ".join(l) + ")"
-                
-        where = []
 
-##      if len(ctrl.atomicSamplesColumns) > 0:
-##          for (atom,value) in ctrl.atomicSamplesColumns:
-##              where.append("%s = %s" % (atom.name,
-##                                                conn.value2sql(value,
-##                                                                    atom.type)))
-
-        for (atom,value) in ds.getAtomicSamples():
-        #for (atom,value) in ds.atomicSamples:
-            where.append(self.testEqual(atom.name,atom.type,value))         
-            
-##      for (col,value) in self.getSampleColumns(samples):
-##          w = col.
-##          if isinstance(col.rowAttr,Pointer):
-##              avalues = value.getRowId()
-##          else:
-##              avalues = (value,)
-
-##          i = 0
-##          for atom in col.getAtoms():
-##              where.append("%s = %s" % (atom.name,
-##                                                conn.value2sql(avalues[i],
-##                                                                    atom.type)))
-##              i += 1
-                    
-
-        where += ds.filterExpressions
-        
-        if len(where):
-            sql += "\n  WHERE " + "\n     AND ".join(where)
-
+        sql += self.whereClause(ds)
                 
         if len(ds.orderByColumns) >  0 :
             l = []
@@ -301,10 +270,16 @@ class SqlConnection(Connection):
         return sql
     
 
+    def whereClause(self,ds):
+                
+        where = []
+        for (atom,value) in ds.getAtomicSamples():
+            where.append(self.testEqual(atom.name,atom.type,value))
+        where += ds.filterExpressions
+        if len(where):
+            return "\n  WHERE " + "\n     AND ".join(where)
+        return ""
 
-        
-
-        
     def executeSelect(self,ds,**kw):
         sql = self.getSqlSelect(ds,sqlColumnNames=None, **kw)
         #print sql
@@ -488,6 +463,12 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         sql += " AND ".join(l)
         self.sql_exec(sql)
 
+##     def executeDeleteRows(self,ds):
+##         sql = "DELETE FROM " + ds._table.getTableName()
+##         sql += self.whereClause(ds)
+##         self.sql_exec(sql)
+
+        
 
 #class SqlQuery(Query):     
 #   def __init__(self, leadTable, name=None):
