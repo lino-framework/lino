@@ -2,6 +2,7 @@
 """
 #import re
 import unittest
+import tempfile
 import sys
 import os
 import types
@@ -76,6 +77,26 @@ def alltests(argv,dirname='.'):
 #    return re.sub(r'\s+',' ',s)
     
 class TestCase(unittest.TestCase):
+
+    win32_printerName_PS = "Lexmark Optra PS"
+    
+    def setUp(self):
+        self._tempFiles = []
+        self._showFiles = []
+        self.keepTemporaryFiles = False
+
+    def tearDown(self):
+        for fn in self._showFiles:
+            self.failUnless(os.path.exists(fn))
+            if console.isInteractive():
+                if console.confirm("Okay to start %s ?" % fn):
+                    os.system('start ' + fn)
+                    #console.confirm("Press ENTER when %s is okay:"%fn)
+        if len(self._tempFiles) > 0:
+            if console.confirm("Okay to delete %d temporary files ?" \
+                               % len(self._tempFiles)):
+                for fn in self._tempFiles:
+                    os.remove(fn)
         
     def assertEquivalent(self,txt1,txt2):
         
@@ -108,14 +129,23 @@ class TestCase(unittest.TestCase):
             print '\n'.join(diff)
         
         self.fail(a.getvalue()) # "texts differ. See stdout")
+
+    def addTempFile(self,filename,showOutput=None):
+        "unlike tempfile, these files are not OPENED"
+        fn = os.path.join(tempfile.gettempdir(),filename)
+        self._tempFiles.append(fn)
+        if showOutput:
+            self._showFiles.append(fn)
+        return fn
     
     def checkGeneratedFiles(self,*filenames):
-        for fn in filenames:
-            if console.isInteractive(): 
-                os.system("start "+fn)
-            else:
-                self.failUnless(os.path.exists(fn))
-                os.remove(fn)
+        raise DeprecationWarning("use addTempFile(showOutput=True)")
+##         for fn in filenames:
+##             if console.isInteractive(): 
+##                 os.system("start "+fn)
+##             else:
+##                 self.failUnless(os.path.exists(fn))
+##                 os.remove(fn)
 
 
 #a = sys.stdout # open("a.txt","w")

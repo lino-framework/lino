@@ -11,8 +11,6 @@ try:
 except ImportError,e:
     sound = False
 
-_syscon = None    
-
 class Console:
 
     forwardables = ('notify','confirm','warning',
@@ -21,15 +19,14 @@ class Console:
     notify, confirm and warning are always user messages
     """
 
-    def __init__(self,
-                 out=None,verbose=False,
-                 debug=False,batch=False):
+    def __init__(self, out=None,**kw):
         if out is None:
             out = sys.stdout
         self.out = out
-        self._verbose = verbose
-        self._debug = debug
-        self._batch = batch
+        self._verbose = False
+        self._debug = False
+        self._batch = False
+        self.set(**kw)
 
     def set(self,verbose=None,debug=None,batch=None):
         if verbose is not None:
@@ -127,10 +124,17 @@ class Console:
 ##              self.notify(msg)
             
 
+## _syscon = None    
+
+## def getSystemConsole():
+##     global _syscon
+##     if _syscon is None:
+##         _syscon = Console()
+##     return _syscon
+
+_syscon = Console()
+
 def getSystemConsole():
-    global _syscon
-    if _syscon is None:
-        _syscon = Console()
     return _syscon
 
 def set(**kw):
@@ -168,7 +172,8 @@ def getOptionParser(**kw):
         
     p.add_option("-v",
                  "--verbose",
-                 help="display many messages",
+                 help="display many messages [default: %default]",
+                 default=con.isVerbose(),
                  action="callback",
                  callback=con_set,
                  callback_kwargs=dict(verbose=True)
@@ -176,7 +181,8 @@ def getOptionParser(**kw):
     
     p.add_option("-b",
                  "--batch",
-                 help="display many messages",
+                 help="don't ask anything [default: %default]",
+                 default=con.isBatch(),
                  action="callback",
                  callback=con_set,
                  callback_kwargs=dict(batch=True)

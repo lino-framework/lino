@@ -2,7 +2,7 @@
 
 UNICODE_HACK = True
 
-import sys, os, getopt
+import sys, os
 
 import win32ui
 import win32con
@@ -28,8 +28,10 @@ A4 = (210*mm, 297*mm)
 class TextObject:
     def __init__(self,doc):
         self.doc = doc
-        self.x = doc.margin
-        self.y = doc.margin
+        #self.x = doc.margin
+        #self.y = doc.margin
+        self.x = self.doc.org[0] + self.doc.margin
+        self.y = self.doc.org[1] + self.doc.margin
         #self.y = doc.pageHeight-(2*doc.margin)
         self.line = ""
         
@@ -45,22 +47,24 @@ class TextObject:
         # self.flush()
 
     def flush(self):
-        self.doc.dc.TextOut(int(self.x),int(self.y),self.line)
+        self.doc.dc.TextOut(int(self.x),-int(self.y),self.line)
         console.info("TextOut(%d,%d,%s)" % \
-                     (int(self.x),int(self.y),repr(self.line)))
+                     (int(self.x),-int(self.y),repr(self.line)))
         self.line = ""
-        self.x = self.doc.margin
+        #self.x = self.doc.margin
+        self.x = self.doc.org[0] + self.doc.margin
         self.y += self.doc.status.leading
 
 class Win32PrinterDocument(Document):
-    def __init__(self,printerName):
+    def __init__(self,printerName,spoolFile=None):
         Document.__init__(self,pageSize=A4,margin=5*mm)
 
         self.dc = win32ui.CreateDC()
         self.dc.CreatePrinterDC(printerName)
-        self.dc.StartDoc("prn2printer",
-                         r"c:\temp\temp.txt")
+        self.dc.StartDoc("prn2printer",spoolFile)
         self.dc.SetMapMode(win32con.MM_TWIPS)
+        self.org = self.dc.GetWindowOrg()
+        self.ext = self.dc.GetWindowExt()
         
     def createTextObject(self):
         textobject = TextObject(self)
@@ -94,7 +98,13 @@ class Win32PrinterDocument(Document):
         console.info(repr(self.dc.GetViewportOrg()))
         console.info(repr(self.dc.GetWindowExt()))
         console.info(repr(self.dc.GetWindowOrg()))
-        self.status.leading = tm['tmExternalLeading'] * pt
+        
+        # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
+        
+        self.status.leading = tm['tmExternalLeading'] \
+                              + tm['tmInternalLeading'] \
+                              + tm['tmHeight']
+        #print self.status.leading
         #self.dc.SetTextFace("Courier")
         #self.textobject.setFont(psfontname,
         #                               self.status.size,
@@ -161,38 +171,24 @@ print on PRINTERNAME rather than on Default Printer.""",
                       type="string",
                       dest="printerName",
                       default=None)
-    (options, args) = parser.parse_args(argv)
-    #del args[0]
     
-##     try:
-##         opts, args = getopt.getopt(argv,
-##                                    "h?p:v",
-##                                    ["help", "printer=","verbose"])
+    parser.add_option("-o", "--output",
+                      help="""\
+write to SPOOLFILE rather than really printing.""",
+                      action="store",
+                      type="string",
+                      dest="spoolFile",
+                      default=None)
+    
+    (options, args) = parser.parse_args(argv)
 
-##     except getopt.GetoptError:
-##         print __doc__
-##         sys.exit(-1)
     if len(args) == 0:
-        parser.print_help() #print __doc__
+        parser.print_help() 
         sys.exit(-1)
     
-
-##     printerName = None
-##     inputfile = args[0]
-##     (root,ext) = os.path.splitext(inputfile)
-##     if len(ext) == 0:
-##         inputfile += ".prn"
-
-##     for o, a in opts:
-##         if o in ("-?", "-h", "--help"):
-##             print __doc__
-##             sys.exit()
-##         if o in ("-p", "--printer"):
-##             printerName = a
-##         if o in ("-v", "--verbose"):
-##             console.set(verbose=True)
     for inputfile in args:
-        d = Win32PrinterDocument(options.printerName)
+        d = Win32PrinterDocument(options.printerName,
+                                 options.spoolFile)
         d.readfile(inputfile)
         d.endDoc()
 

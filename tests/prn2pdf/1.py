@@ -25,9 +25,13 @@ class Case(tsttools.TestCase):
 
     def test01(self):
         for i in ('1','2'):
-            fn = os.path.join(dataPath,i)+".prn"
-            main(["-b","-v","-p","Virtual PDF Printer",fn] )
+            spoolFile = self.addTempFile(i+".ps",showOutput=True)
+            inputFile = os.path.join(dataPath,i)+".prn"
+            main([ "-p", self.win32_printerName_PS,
+                   "-o", spoolFile,
+                   inputFile] )
         
+            
 
 if __name__ == '__main__':
     tsttools.main()
