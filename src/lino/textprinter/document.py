@@ -25,7 +25,7 @@ class ParserError(Exception):
 
 
 class Document:
-    def __init__(self,pageSize=(0,0),margin=0):
+    def __init__(self,pageSize=(0,0),margin=0,width=None):
         self.commands = {
             chr(12) : self.formFeed,
             chr(27)+"l" : self.parse_l,
@@ -39,18 +39,23 @@ class Document:
         
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin # 5 * mm
+        self.width=width
         
         self.page = 0
 
         self.textobject = None
         
+    def getWidth(self):
+        "characters per page"
+        return self.width
+    
     def createTextObject(self):
         raise NotImplementedError
         
     def onBeginPage(self):
-        raise NotImplementedError
+        pass
     def onEndPage(self):
-        raise NotImplementedError
+        pass
     def onSetPageSize(self):
         pass
     def onEndDoc(self):
@@ -61,7 +66,7 @@ class Document:
         raise NotImplementedError
     def newline(self,text):
         raise NotImplementedError
-    
+
     def setCpi(self,cpi):
         pass
     def setItalic(self,ital):
@@ -115,13 +120,13 @@ class Document:
             f = file(inputfile)
             for line in f.readlines():
                 #self.printLine(line.rstrip())
-                self.printLine(line)
+                self.writeln(line)
         except IOError,e:
             print e
             sys.exit(-1)
 
 
-    def printLine(self,line):
+    def writeln(self,line):
 
         line = line.rstrip()
         (pos,ctrl) = self.FindFirstCtrl(line)
@@ -147,6 +152,9 @@ class Document:
         #self.c.drawString(self.xpos, self.ypos, line)
         #self.ypos -= self.linespacing 
 
+    def printLine(self,line):
+        # deprecated alias for writeln
+        self.writeln(line)
         
         
     def setPageLandscape(self,line):

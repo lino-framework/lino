@@ -75,8 +75,8 @@ class TextObject:
         # 
         #self.leading = max(self.leading,self.doc.status.leading)
         #self.doc.dc.TextOut(self.line)
-        self.doc.dc.TextOut(int(self.x),-int(self.y),line)
-        (dx,dy) = self.doc.dc.GetTextExtent(line)
+        self.doc.dc.TextOut(int(self.x),-int(self.y),self.line)
+        (dx,dy) = self.doc.dc.GetTextExtent(self.line)
         self.x += dx
         #console.debug("TextOut(%d,%d,%s)" % \
         #              (int(self.x),-int(self.y),repr(self.line)))
@@ -89,7 +89,7 @@ class TextObject:
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
 
 class Win32PrinterDocument(Document):
-    def __init__(self,printerName,
+    def __init__(self,printerName=None,
                  spoolFile=None,
                  cpi=12,
                  fontName="Courier New",
@@ -148,6 +148,9 @@ class Win32PrinterDocument(Document):
         #console.debug("%d cpi = %d twips" % (cpi,w))
         self.fontDict['width'] = w
         # self.fontDict['height'] = w
+        self.width = int(
+            (self.pageWidth-(self.margin*2))/inch*cpi)
+        #print __name__, self.width
         
     def setItalic(self,ital):
         if ital:

@@ -56,7 +56,7 @@ class Status:
 
 		
 class PdfDocument(Document):
-    def __init__(self,filename,coding=None):
+    def __init__(self,filename,coding=None, cpi=12 ):
         Document.__init__(self,
                           pageSize=A4,
                           margin=5*mm)
@@ -70,6 +70,7 @@ class PdfDocument(Document):
         self.coding = coding
         self.filename = filename
         self.status = Status()
+        self.setCpi(cpi)
 
         #self.canvas.setAuthor("Generated using prn2pdf")
         #self.canvas.setSubject("http://my.tele2.ee/lsaffre/comp/prn2pdf.htm")
@@ -235,6 +236,9 @@ class PdfDocument(Document):
             self.status.leading = 28
         else:
             raise "%s : bad cpi size" % par
+        self.width = int(
+            (self.pageWidth-(self.margin*2))/inch*cpi)
+        #print __name__, self.width
         self.onSetFont()
          
     def setItalic(self,ital):

@@ -367,9 +367,9 @@ class Form(Describable):
         return frm.lastEvent == frm.buttons.ok
 
     def ok(self,frm):
-        self.close()
+        self.close(frm)
 
     def cancel(self,frm):
-        self.close()
+        self.close(frm)
 
     

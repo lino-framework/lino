@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,15 +20,9 @@
 testing textprinter
 """
 
-import sys
-import os
+from lino.misc.tsttools import TestCase, main
 
-import win32ui
-import win32con
-
-from lino.misc import tsttools
-
-class Case(tsttools.TestCase):
+class Case(TestCase):
     ""
 
     def doit(self,d):
@@ -73,6 +67,6 @@ class Case(tsttools.TestCase):
         f.close()
 
 if __name__ == '__main__':
-    tsttools.main()
+    main()
 
 
