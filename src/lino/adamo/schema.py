@@ -9,7 +9,8 @@ import types
 
 #from widgets import Form
 from forms import FormTemplate, TableForm
-from context import Context #, Session
+#from context import Context #, Session
+from database import Database
 from table import Table, LinkTable, SchemaComponent
 from datatypes import StartupDelay
 from datasource import Datasource
@@ -27,7 +28,7 @@ class SchemaPlugin(SchemaComponent,Describable):
 	def isActive(self):
 		return self._isActive
 		
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		pass
 	def defineMenus(self,schema,context,win):
 		pass
@@ -100,25 +101,20 @@ class Schema:
 		#self._forms[name] = form
 		
 
-	def startup(self,ui=None,layouts=None):
+	def startup(self,app):
 		
 		""" startup will be called exactly
 		once, after having declared all tables of the database.  """
 	
+		self._app = app
 		assert not self._startupDone, "double startup"
-
-		if ui is None:
-			from ui import UI
-			ui = UI()
-
-		ui.progress("Schema startup...")
-
-		ui.progress("  Initializing database...")
+		progress = self._app.console.progress
+		progress("Initializing database schema...")
 		#self.defineSystemTables(ui)
-		for pl in self._plugins:
-			pl.defineTables(self,ui)
+		for plugin in self._plugins:
+			plugin.defineTables(self)
 
-		ui.progress("  Initializing %d tables..." % len(self._tables))
+		progress("  Initializing %d tables..." % len(self._tables))
 
 		# loop 1
 		for table in self._tables:
@@ -160,15 +156,26 @@ class Schema:
 			
 		# initialize forms...
 
-		ui.progress("  Initializing %d forms..." % len(self.forms))
+		progress("  Initializing %d forms..." % len(self.forms))
 
 		for form in self.forms.values():
 			form.init1()
 			
+		# self.defineMenus(self,ui)
+		
+		#if verbose:
+		#	print "setupTables() done"
+			
+		self._startupDone = True
+		progress("Schema startup okay")
+		
+
+	def setLayout(self,layoutModule):
 		# initialize layouts...
+		assert self._startupDone 
 		
 		if layouts is not None:
-			lf = LayoutFactory(layouts)
+			lf = LayoutFactory(layoutModule)
 			for table in self._tables:
 				wcl = lf.get_wcl(table.Row)
 				assert wcl is not None
@@ -176,19 +183,12 @@ class Schema:
 				
 
 			self._datasourceRenderer = lf.get_wcl(Datasource)
-			self._contextRenderer = lf.get_wcl(Context)
+			self._contextRenderer = lf.get_wcl(Database)
 
 			assert self._datasourceRenderer is not None
 			assert self._contextRenderer is not None
 		
 
-		# self.defineMenus(self,ui)
-		
-		#if verbose:
-		#	print "setupTables() done"
-			
-		self._startupDone = True
-		ui.progress("Schema startup okay")
 	
 	
 	def findImplementingTables(self,toClass):

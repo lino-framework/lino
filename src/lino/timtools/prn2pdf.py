@@ -340,7 +340,7 @@ class PdfPage:
 
 def main(argv):
 	print "prn2pdf" # version " + __version__
-	print copyleft('2002-2004','Luc Saffre')
+	print copyleft(year='2002-2004',author='Luc Saffre')
 
 
 

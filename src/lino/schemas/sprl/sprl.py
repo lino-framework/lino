@@ -11,7 +11,7 @@ import babel, addrbook, news # , sdk
 
 class BasePlugin(adamo.SchemaPlugin):
 
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		schema.addTable( babel.Languages("LANGS","Languages"))
 		schema.addTable( addrbook.Users( name="USERS",
 													label="Users" ))
@@ -19,7 +19,7 @@ class BasePlugin(adamo.SchemaPlugin):
 		schema.addForm(addrbook.MainForm(name="main"))
 
 class ContactsPlugin(adamo.SchemaPlugin):
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		schema.addTable( addrbook.Nations(
 			name="NATIONS",
 			label="Nations" ))
@@ -34,7 +34,7 @@ class ContactsPlugin(adamo.SchemaPlugin):
 
 class WebPlugin(adamo.SchemaPlugin):
 
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		import web
 		schema.addTable( web.Pages("PAGES","Content Pages"))
 		# self.addLinkTable("PAGE2PAGE",web.Page,web.Page,web.Page2Page)
@@ -42,7 +42,7 @@ class WebPlugin(adamo.SchemaPlugin):
 		
 class ProjectPlugin(adamo.SchemaPlugin):
 
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		import projects
 		schema.addTable( projects.Projects("PROJECTS","Projects"))
 		schema.addTable( projects.ProjectStati("PRJSTAT",
@@ -51,7 +51,7 @@ class ProjectPlugin(adamo.SchemaPlugin):
 
 class NewsPlugin(adamo.SchemaPlugin):
 
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		import news
 		schema.addTable( news.News("NEWS",
 										 label="News Items"))
@@ -62,14 +62,14 @@ class NewsPlugin(adamo.SchemaPlugin):
 
 		
 class EventsPlugin(adamo.SchemaPlugin):
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		import events
 		schema.addTable( events.Events("EVENTS","Events"))
 		schema.addTable( events.EventTypes("EVENTTYPES",
 													  label="Event Types"))
 
 class SalesPlugin(adamo.SchemaPlugin):	
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		import business, products, sales, ledger
 		schema.addTable( business.Journals("JOURNALS","Journals"))
 		schema.addTable( business.Years("YEARS","Fiscal Years"))
@@ -87,7 +87,7 @@ class JokesPlugin(adamo.SchemaPlugin):
 
 
 class QuotesPlugin(adamo.SchemaPlugin):	
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		import quotes
 		schema.addTable( quotes.Authors("AUTHORS","Authors"))
 		schema.addTable( quotes.AuthorEvents("PEREVENTS",
@@ -110,7 +110,8 @@ class QuotesPlugin(adamo.SchemaPlugin):
 			label="Publications By Author"))
 
 		
-def Schema( withEvents=True,
+def Schema( 
+				withEvents=True,
 				withProjects=True,
 				withWeb=True,
 				withSales=True,

@@ -10,124 +10,128 @@
 #from lino.adamo.database import Database
 #from lino import copyright
 
+raise "no longer used"
 
-class UI:
-	def __init__(self,
-					 author=None,
-					 year=None,
-					 verbose=False):
-		self._messages = []
-		self._defaultAction = None
-		self._databases = {}
-		#self.reportClass = None
-		#self._mainWindow = None
-		#if db is not None:
-		#	self.setDatabase(db)
-		self.verbose = verbose
-  		#if verbose:
-		#	print "verbose!"
+
+## class UI:
+## 	def __init__(self,
+## 					 author=None,
+## 					 year=None,
+## 					 verbose=False):
+## 		self._messages = []
+## 		self._defaultAction = None
+## 		self._databases = {}
+## 		#self.reportClass = None
+## 		#self._mainWindow = None
+## 		#if db is not None:
+## 		#	self.setDatabase(db)
+## 		self.verbose = verbose
+##   		#if verbose:
+## 		#	print "verbose!"
 		
-##  		if verbose:
-## 			print copyright(author=author,year=year)
-## 			print "Lino version " + __version__
-## 			print gpl.copyright(year,author)
+## ##  		if verbose:
+## ## 			print copyright(author=author,year=year)
+## ## 			print "Lino version " + __version__
+## ## 			print gpl.copyright(year,author)
 
 
-	def addDatabase(self,db):
-		self._databases[db.getName()] = db
+## 	def addDatabase(self,db):
+## 		self._databases[db.getName()] = db
 
-## 	def addDatabase(self,name,
-## 						 conn,schema,
-## 						 label=None,description=None):
-## 		db = Database(self,name,conn,schema,label,description)
-## 		self._databases[name] = db
-## 		# win = Window(db.getLabel())
-## 		# schema.setupContext(self,ctx)
-## 		# self.setMainWindow(win)
-## 		# db.initUI(self)
-## 		return db
+## ## 	def addDatabase(self,name,
+## ## 						 conn,schema,
+## ## 						 label=None,description=None):
+## ## 		db = Database(self,name,conn,schema,label,description)
+## ## 		self._databases[name] = db
+## ## 		# win = Window(db.getLabel())
+## ## 		# schema.setupContext(self,ctx)
+## ## 		# self.setMainWindow(win)
+## ## 		# db.initUI(self)
+## ## 		return db
 
-	def getDatabase(self,name):
-		return self._databases[name]
+## 	def getDatabase(self,name):
+## 		return self._databases[name]
 		
-	def message(self,msg):
-		self._messages.append(msg)
+## 	def message(self,msg):
+## 		self._messages.append(msg)
 			
-	def clearMessages(self):
-		self._messages = []
+## 	def clearMessages(self):
+## 		self._messages = []
 		
-	def getMessages(self):
-		return self._messages
+## 	def getMessages(self):
+## 		return self._messages
 
-	def shutdown(self):
-		for name,db in self._databases.items():
-			db.shutdown()
+## 	def shutdown(self):
+## 		for name,db in self._databases.items():
+## 			db.shutdown()
 
 	
 
-## 	def getMainWindow(self):
-## 		return self._mainWindow
+## ## 	def getMainWindow(self):
+## ## 		return self._mainWindow
 
-## 	def setMainWindow(self,w):
-## 		self._mainWindow = w
+## ## 	def setMainWindow(self,w):
+## ## 		self._mainWindow = w
 
-	def progress(self,msg):
-		if self.verbose:
-			print msg
+## 	def progress(self,msg):
+## 		if self.verbose:
+## 			print msg
 		
-	def decide(self,msg,answers,label="Question"):
+## 	def decide(self,msg,answers,label="Question"):
 		
-		"""display string `msg` in a window with string `label` as
-		title.  `answers` is a list of strings. Display one button for
-		each item of `answers`.  return the index of selected answer.
-		"""
+## 		"""display string `msg` in a window with string `label` as
+## 		title.  `answers` is a list of strings. Display one button for
+## 		each item of `answers`.  return the index of selected answer.
+## 		"""
 		
-		raise NotImplementedError
+## 		raise NotImplementedError
 		
-	def confirm(self,label,msg):
+## 	def confirm(self,label,msg):
 
-		"""display string `msg` in a window with string `label` as title
- 		and two buttons labeled 'Yes' and 'No'. Return True if user
- 		selected OK.  """
+## 		"""display string `msg` in a window with string `label` as title
+##  		and two buttons labeled 'Yes' and 'No'. Return True if user
+##  		selected OK.  """
 
-		raise	NotImplementedError
+## 		raise	NotImplementedError
 
 	
-## 	def addMenuBar(self,name,label):
-## 		mb = MenuBar(self,label)
-## 		self._menubars[name] = mb
-## 		return mb
+## ## 	def addMenuBar(self,name,label):
+## ## 		mb = MenuBar(self,label)
+## ## 		self._menubars[name] = mb
+## ## 		return mb
 
 
-## 	def setDefaultAction(self,meth,*args):
-## 		self._defaultAction = Action(self,meth,args)
-## 	def getDefaultAction(self):
-## 		return self._defaultAction
+## ## 	def setDefaultAction(self,meth,*args):
+## ## 		self._defaultAction = Action(self,meth,args)
+## ## 	def getDefaultAction(self):
+## ## 		return self._defaultAction
 
-	##
-	## the following methods should be usable as actions
-	## 
+## 	##
+## 	## the following methods should be usable as actions
+## 	## 
 	
-	def showReport(self,rpt,**kw):
-		raise NotImplementedError
+## 	def showReport(self,rpt,**kw):
+## 		raise NotImplementedError
 
-	def showForm(self,rpt,**kw):
-		raise NotImplementedError
+## 	def showForm(self,rpt,**kw):
+## 		raise NotImplementedError
 
-	def setMainMenu(self,evt,name):
-		raise NotImplementedError
+## 	def setMainMenu(self,evt,name):
+## 		raise NotImplementedError
 
-	def showAbout(self,evt,id,**kw):
-		raise NotImplementedError,self.__class__
+## 	def showAbout(self,evt,id,**kw):
+## 		raise NotImplementedError,self.__class__
 	
-	def test_decide(self,evt,id,**kw):
-		raise NotImplementedError,self.__class__
+## 	def test_decide(self,evt,id,**kw):
+## 		raise NotImplementedError,self.__class__
 	
-	def showWindow(self,evt,id,**kw):
-		raise NotImplementedError
+## 	def showWindow(self,evt,id,**kw):
+## 		raise NotImplementedError
 
-	def exit(self,evt):
-		raise NotImplementedError
+## 	def exit(self,evt):
+## 		raise NotImplementedError
+
+
 	
 ## class WindowManager:
 ##		def __init__(self):
@@ -217,38 +221,3 @@ class UI:
 
 		
 
-
-import sys
-
-class ConsoleUI(UI):
-
-	def showReport(self,rpt,out=None):
-		if out is None:
-			out = sys.stdout
-		if rpt._showTitle:
-			out.write(rpt.getLabel()+"\n")
-			out.write("="*len(rpt.getLabel())+"\n")
-		columns = rpt.getVisibleColumns()
-		out.write(" ".join(
-			[col.getLabel().ljust(col.getPreferredWidth()) \
-			 for col in columns]).rstrip())
-		out.write("\n")
-		out.write(" ".join( ["-" * col.getPreferredWidth() \
-							  for col in columns]))
-		out.write("\n")
-		for values in rpt: #.iterateAsColumns():
-			l = []
-			i = 0
-			for value in values:
-				col = columns[i]
-				i += 1
-				#value = qrow[col.queryCol.index]
-				#value = col.atoms2value(atomicRow)
-				l.append(col.render(value))
-				#l.append(str(value).ljust(col.getPreferredWidth()))
-				#i += 1
-			out.write(" ".join(l).rstrip())
-			out.write("\n")
-
-
-	

@@ -25,15 +25,6 @@ Here is what you see if you run pizzeria::
 
 	>>> from lino.examples.pizzeria import main
 	>>> main()
-	Lino version 0.5.5
-	Copyright (c) 2002-2004 Luc Saffre
-	This software comes with ABSOLUTELY NO WARRANTY.
-	Distributed under the terms of the GNU General Public License.
-	See file COPYING.txt for more information.
-	Adamo startup...
-	  Initializing database...
-	  Initializing 4 tables...
-	Adamo startup okay
 	Henri must pay 12 EUR
 	James must pay 53 EUR
 

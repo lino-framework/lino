@@ -21,8 +21,8 @@ import sys, getopt, os
 from lino import copyleft
 from lino.adamo.dbds.sqlite_dbd import Connection
 #from lino.adamo.ui import UI
-from lino.adamo.ui import UI
-from lino.adamo import ConsoleSession
+#from lino.adamo.ui import UI
+from lino.adamo import RootSession
 
 #from lino.adamo.twisted_ui import WebServer
 from lino.schemas.sprl.sprl import Schema
@@ -120,15 +120,15 @@ def main():
 			verbose = False
 
 	
-	ui = UI(verbose=verbose)
+	sess = RootSession(verbose=verbose)
 	
 	schema = Schema() 
 	
-	schema.startup(layouts=sprlwidgets, ui=ui)
+	schema.startup(layouts=sprlwidgets, sess=sess)
 
-	serverRsc = ServerResource(wwwRoot,ui)
+	serverRsc = ServerResource(wwwRoot,sess)
 
-	sess = ConsoleSession()
+	#sess = ConsoleSession()
 
 	if True:
 		"""
@@ -139,7 +139,7 @@ def main():
 		conn = Connection(filename="std.db",
 								isTemporary=True,
 								schema=schema)
-		stddb = Database(ui=ui,
+		stddb = Database(sess,
 							  langs="en de fr et",
 							  schema=schema,
 							  name="std",
@@ -166,7 +166,7 @@ def main():
 		if len(args) == 0 or dbi.name in args:
 			ui.progress("Opening %s..." % dbi.name)
 
-			db = Database(ui=ui,
+			db = Database(sess,
 							  langs=dbi.langs,
 							  schema=schema,
 							  name=dbi.name,
@@ -209,7 +209,7 @@ def main():
 			conn = Connection(filename=modName+'.db',
 									isTemporary=True,
 									schema=schema)
-			db = Database(ui=ui,
+			db = Database(sess,
 							  langs='en de',
 							  schema=schema,
 							  name=modName,

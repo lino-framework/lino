@@ -92,6 +92,8 @@ up-to-date.
 
 - `Twisted <http://www.twistedmatrix.com/>`_
 
+- `wxPython <http://www.wxpython.org/>`_
+
 - `Medusa <http://www.amk.ca/python/code/medusa.html>`_ web server.
 
 - `Quixote <http://www.mems-exchange.org/software/quixote/>`_

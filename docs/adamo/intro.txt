@@ -13,11 +13,13 @@ Environments
 ============
 
 The `sprl` package is an "application environment".  An environment
-defines a set of "plugins" that are designed to work together.	 Each
-plugin adds some optional functionality to the application.	 The
-concrete database schema may change depending on what plugins are
-present or not.  The idea is that one can choose to import any
-combination of plugins as long as they come from the same environment.
+defines a set of "plugins" that are designed to work together.  The
+rely on some common conventions, for example the internal table names
+within the application.  Each plugin adds some optional functionality
+to the application.  The concrete database schema may change depending
+on what plugins are present or not.  The idea is that one can choose
+to import any combination of plugins as long as they come from the
+same environment.
 
 
 Database startup
@@ -29,7 +31,7 @@ The following lines will create and start a demo database which is
 going to be used in the examples of this document::
 
 	>>> from lino.schemas.sprl import demo
-	>>> db = demo.startup()
+	>>> sess = demo.beginSession()
 	
 `demo.startup()` instanciates and starts a database, then populates it
 with demo data, then returns a handle for this database.
@@ -45,27 +47,29 @@ session.	 The common ancestor of all table definitions is
 
 The ``tables`` attribute of a database is a dictionary that holds the
 table definitions of this database. Let's use some Python trickery to
-print out a sorted list of all the tables in the demo database::
+print out a sorted list of all the tables in our database::
 
-		>>> l = db.schema.tables.keys()
+		>>> l = sess.tables.keys()
 		>>> l.sort()
 		>>> from textwrap import fill
 		>>> print fill(" ".join(l),62)
-		BOOKINGS CITIES INVOICELINES INVOICES JOURNALS LANG NATIONS
-		ORG2ORG ORG2PERS ORGS PAGE2PAGE PAGES PARTNERS PERS2PERS
-		PERSONS PRODUCTS PUB2PERS PUBLICATIONS PUBTYPES QUOTES YEARS
+		AUTHORS BOOKINGS CITIES Currencies EVENTS EVENTTYPES
+		INVOICELINES INVOICES JOURNALS LANGS NATIONS NEWS NEWSGROUPS
+		ORGS PAGES PARTNERS PARTYPES PEREVENTS PEVTYPES PRJSTAT
+		PRODUCTS PROJECTS PUB2AUTH PUBLICATIONS PUBTYPES QUOTES TOPICS
+		USERS YEARS
 
 A hack to make all the table names of a database global is the
 following (which will be active for the rest of this document)::
 
-	>>> #globals().update(db.tables)
-	>>> db.schema.installto(globals())
+	>>> #sess.installto(globals())
+	>>> NATIONS = sess.tables.NATIONS
+	>>> PERSONS = sess.tables.PERSONS
 
 It is easy to display the contents of a table::
 
-	>>> #NATIONS.report(columnList="id name",orderBy="id").render()
-	>>> rpt = NATIONS.report(columnList="id name",orderBy="id")
-	>>> db.showReport(rpt)
+	>>> q = NATIONS.report(columnNames="id name",orderBy="id")
+	>>> sess.report(q)
 	id name
 	-- --------------------------------------------------
 	be Belgium
@@ -91,7 +95,7 @@ For example, all rows of table PERSONS have the following
 attributes::
 
 	>>> print " ".join(PERSONS.getRowAttributes().keys())
-	box city name zip title house id phone street fname born nation email died
+	box city name zip title house id phone street firstName born nation email died
 	
 Note that row attributes are never ordered.
 
@@ -173,7 +177,7 @@ Some attributes represent simple fields::
 
 	>>> row.name
 	'Saffre'
-	>>> row.fname
+	>>> row.firstName
 	'Luc'
 
 Other attributes contain Row instances from other tables::
@@ -221,7 +225,7 @@ the question you are going to ask.
 `Table.query()` instanciates a Query. You can specify keyword
 parameters to say what you want.
 
-	>>> q = CITIES.query(columnList="name", orderBy="name")
+	>>> q = CITIES.query(columnNames="name", orderBy="name")
 
 If you prefer, you can also set these parameters afterwards, using
 their homologue methods.  The following three lines have the same
@@ -264,7 +268,7 @@ an Adamo query is to iterate over it::
   ['Raeren']
   ['Verviers']
 
-Each row of the loop is a list of values, according to the columnList
+Each row of the loop is a list of values, according to the columnNames
 of the query.
   
   >>> print q[0:2]
@@ -279,7 +283,7 @@ Here are some more examples of queries from the `sprl.demo` database.
 
 List of cities in Estonia, ordered by inhabitants::
 
-	>>> CITIES.report(columnList='name inhabitants',
+	>>> CITIES.report(columnNames='name inhabitants',
 	...               columnWidths="30 10",
 	...					samples={'nation':NATIONS['ee']},
 	...					orderBy='inhabitants').render()
@@ -311,7 +315,7 @@ level than the DB-API, but there are some peepholes for the curious.
 Query.executeSelect() returns a DB-API-compliant cursor object whose
 `execute()` method has already been called.
 
-	>>> q = CITIES.query(columnList="name", orderBy="name")
+	>>> q = CITIES.query(columnNames="name", orderBy="name")
 	>>> q.setSamples(nation=NATIONS["be"])
 	>>> csr = q.executeSelect()
 	
@@ -367,7 +371,7 @@ knows *how* you want to see it.
 
 Example usage::
 
-  >>> ORGS.report(columnList="name city.name nation.name",
+  >>> ORGS.report(columnNames="name city.name nation.name",
   ...             columnWidths="25 15 15",
   ...					orderBy="name").render()
   name                      city.name       nation.name
@@ -378,7 +382,7 @@ Example usage::
   PAC Systems PGmbH         Eupen           Belgium
   Rumma & Ko OÜ             Tallinn         Estonia
 							  
-Here you can see that `columnList` and `orderBy` are parameters for
+Here you can see that `columnNames` and `orderBy` are parameters for
 the query, while `columnWidths` is matter for the Report.
 
 In practice, if you want just a Report, then you should not need to
@@ -402,7 +406,7 @@ Table.appendRow()
 `Table.appendRow()` inserts a Row into a table and returns the
 instance of this row::
 
-	>>> row = PERSONS.appendRow(fname="Guido",
+	>>> row = PERSONS.appendRow(firstName="Guido",
 	...								 name="van Rossum").commit()
 
 You don't need to specify all fields, but you must specify enough
@@ -417,7 +421,7 @@ about it.  But it is there.  Adamo created it silently::
 	>>> print row.id
 	19
 	>>> gvr = PERSONS[19]
-	>>> print gvr.fname
+	>>> print gvr.firstName
 	Guido
 
 
@@ -428,7 +432,7 @@ row::
 
 
 	>>> PERSONS.appendRow(id=18,
-	...						 fname="Bert",
+	...						 firstName="Bert",
 	...						 name="Bigburger").commit()
 	Traceback (most recent call last):
 	(...)
@@ -441,7 +445,7 @@ are optional because Adamo will create them if not specified.  If you
 add another row to PERSONS, this time without giving an id, then Adamo
 will find it out for you::
 
-	>>> PERSONS.appendRow(fname="Bill",name="Jones").commit()
+	>>> PERSONS.appendRow(firstName="Bill",name="Jones").commit()
 	PERSONSRow(20,)
 
 Specifying unknown row attributes will produce an error::
@@ -452,19 +456,19 @@ Specifying unknown row attributes will produce an error::
 	DataVeto: 'foo' : no such row attribute in PERSONS
 
 Your new row will be tested for validity.	 For example a Person must
-have at least a `name` or `fname` ::
+have at least a `name` or `firstName` ::
 
 	>>> row = PERSONS.appendRow(phone="123").commit()
 	Traceback (most recent call last):
 	(...)
-	DataVeto: Either name or fname must be specified
+	DataVeto: Either name or firstName must be specified
 
 Note that this validity rule is application-specific. Here is how it
 has been defined in `src/sprl/plugins/addrbook.py`::
 
 	def validate(self):
-		if (self.fname is None) and (self.name is None):
-			raise DataVeto("Either name or fname must be specified")
+		if (self.firstName is None) and (self.name is None):
+			raise DataVeto("Either name or firstName must be specified")
 	
 Or, the `id` of a Nation must be exactly 2 characters::
 
@@ -480,7 +484,7 @@ Query.appendRow()
 If you are going to create several rows and don't want to
 specify the field names each time, then you can create a Query::
 
-		>>> q = PERSONS.query('fname name')
+		>>> q = PERSONS.query('firstName name')
 		>>> q.appendRow("Jean","Dupont")
 		PERSONSRow(22,)
 		>>> q.appendRow("Joseph","Dupont")
@@ -516,7 +520,7 @@ update individual data fields::
   >>> p = PERSONS[1]
   >>> print p.born
   None
-  >>> rpt = PERSONS.report(columnList='name fname born',
+  >>> rpt = PERSONS.report(columnNames='name firstName born',
   ...                      columnWidths="20 10 10",
   ...                      orderBy="id")
   >>> print rpt[0]

@@ -7,10 +7,11 @@
 
 from pizzeria import Products, populate, Pizzeria
 from lino.adamo import *
+from lino import adamo
 #from lino.adamo.schema import quickdb
 
 class ServicesPlugin(SchemaPlugin):
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		schema.addTable(Services("SERV"))
 
 		
@@ -81,14 +82,18 @@ def query2(sess):
 
 	
 
-def main():
+def beginSession():
 
-	db = quickdb(schema=Pizzeria2(),
-					 isTemporary=True,
-					 label="Lucs Pizza Restaurant")
-	db.createTables()
-	sess = ConsoleSession(db=db)
-	populate2(sess)
+	schema=Pizzeria2()
+	
+	return adamo.beginQuickSession(
+		schema,
+		populate=populate2,
+		isTemporary=True,
+		label="Lucs Pizza Restaurant")
+	
+def main():
+	sess = beginSession()
 	query(sess)
 	sess.shutdown()
 	

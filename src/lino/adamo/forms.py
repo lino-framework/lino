@@ -132,14 +132,14 @@ class FormColumnList(BaseColumnList):
 
 	def __init__(self, form): #, columnNames=None):
 		self._form = form
-		BaseColumnList.__init__(self)
+		BaseColumnList.__init__(self,form.getContext())
 		#self.setVisibleColumns(columnNames)
 
 	def getFieldContainer(self):
 		return self._form._formTemplate
 
-	def getContext(self):
-		return self._form.getContext()
+## 	def getContext(self):
+## 		return self._form.getContext()
 
 
 

@@ -176,16 +176,17 @@ class WebModule(Node):
 			raise WebManException("%s is not a directory" % localPath)
 		self.localPath = localPath
 
-		print "Loading WebMan module from %s..." % localPath
+		print "Loading Webman module from %s..." % localPath
 		# scan directory 
 
 		for fn in os.listdir(self.localPath):
 			(name,ext) = os.path.splitext(fn)
 			if len(name) and name[0] != "_":
 				if name != self.name:
+					pfn = os.path.join(self.localPath,fn)
 					if ext == ".txt":
 						self.addPage(name,TxtWebPage(self,name))
-					elif os.path.isdir(fn):
+					elif os.path.isdir(pfn):
 						if name != fn:
 							raise WebManException("module names cannot contain '.'")
 						self.addModule(name,fn)
@@ -204,7 +205,7 @@ class WebModule(Node):
 			self.defaults = {
 				'input_encoding': 'latin-1',
 				'output_encoding': 'latin-1',
-				'stylesheet_path': 'default.css',
+				'stylesheet': 'default.css',
 				'embed_stylesheet': False,
 				'source_link': 0,
 				'tab_width': 3,
@@ -268,7 +269,7 @@ class WebModule(Node):
 		return self._nodes[name]
 	
 	def setStyleSheet(self,name):
-		self.defaults['stylesheet_path']=name
+		self.defaults['stylesheet']=name
 
 	def setFilerefBase(self,pth):
 		self.filerefBase = pth

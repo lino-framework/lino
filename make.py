@@ -9,26 +9,39 @@ import doctest
 import unittest
 import os, sys
 
-def doctest_dir(dirname,verbose):
+class FailuresFound(Exception):
+	pass
+
+def doctest_dir(dirname,verbose,severe=False):
 	for fn in os.listdir(dirname):
 		pfn = os.path.join(dirname,fn)
 		if fn.endswith('.txt'):
 			tester = doctest.Tester(globs={},\
-											verbose=verbose)
+											verbose=False)
 			s = file(pfn).read()
-			tester.runstring(s,pfn)
+			(f,t) = tester.runstring(s,pfn)
+			if f != 0 and severe:
+				raise FailuresFound,\
+						"Stopped after %d failures in %s" % (f,pfn)
 			doctest.master.merge(tester)
 		elif os.path.isdir(pfn):
-			doctest_dir(pfn,verbose)
+			doctest_dir(pfn,verbose,severe)
 
 def main(targets):
 
 	verbose = False
+	severe = False
 
 	if "-v" in targets:
 		targets.remove("-v")
 		verbose = True
 		print "Gonna be verbose...!"
+		
+	if "-s" in targets:
+		targets.remove("-s")
+		severe = True
+		if verbose:
+			print "Gonna be severe...!"
 		
 	if len(targets) == 0:
 		targets = ['html','tests']
@@ -46,11 +59,11 @@ def main(targets):
 				if ext in (".html",'.pdf'):
 					fn = os.path.join(root,fn)
 					if verbose:
-						print fn
+						print "removed:", fn
 					os.remove(fn)
 		
-	if 'upload' in targets:
-		targets.remove('upload')
+	if 'upload_sf' in targets:
+		targets.remove('upload_sf')
 		os.chdir("docs")
 		os.system('rsync --rsh=ssh -v -r . lsaffre@shell.sourceforge.net:/home/groups/l/li/lino/htdocs')
 		os.chdir("..")
@@ -59,12 +72,8 @@ def main(targets):
 		targets.remove('html')
 		print "Generating docs..."
 		from lino.webman.static import wmm2html
-		wmm2html(srcdir='docs') #,force=True) 
+		wmm2html(srcdir='docs',showOutput=False) #,force=True) 
 		
-## 		from lino.timtools.txt2html import txt2html
-## 		txt2html(sourceRoot='docs')
-##       localBase = os.path.join(os.getcwd(),'docs'))
-
 
 	if 'unittest' in targets:
 		targets.remove('unittest')
@@ -104,12 +113,19 @@ def main(targets):
 		modules = (adamo,sdoc)
 
 		print "Running doctest on %s ..." % [M.__name__ for M in modules]
+		failures = 0
+		tested = 0
 		for M in modules: 
-			doctest.testmod(M, verbose=False, report=0)
+			(f,t) = doctest.testmod(M, verbose=False, report=0)
+			if f != 0 and severe:
+				raise FailuresFound,\
+						"Stopped after %d failures in %s" % (f,pfn)
+			failures += f
+			tested += t
 
 
 		print "Running doctest on docs/ ..."
-		doctest_dir('docs',verbose=False)
+		doctest_dir('docs',verbose,severe)
 
 
 		doctest.master.summarize(verbose=verbose)

@@ -11,6 +11,7 @@ This is a short example to illustrate Adamo's basic idea.
 """
 
 from lino.adamo import *
+from lino import adamo
 
 from forum.normalDate import ND
 
@@ -67,7 +68,7 @@ class OrderLines(Table):
 
 
 class BasePlugin(SchemaPlugin):
-	def defineTables(self,schema,ui):
+	def defineTables(self,schema):
 		schema.addTable( Products("PROD"))
 		schema.addTable(Customers("CUST"))
 		schema.addTable(Orders("ORDERS"))
@@ -124,23 +125,16 @@ def query(sess):
 
 def main():
 
-	db = quickdb(schema=Pizzeria(),
-					 isTemporary=True,
-					 label="Lucs Pizza Restaurant")
+	schema = Pizzeria()
 
-	# create empty tables
-	db.createTables()
-	
-	sess = ConsoleSession(db=db)
-	#sess.beginContext(db.beginContext())
+	sess = adamo.beginQuickSession(
+		schema,
+		populate=populate,
+		isTemporary=True,
+		label="Lucs Pizza Restaurant")
 
-	# play around
-	populate(sess)
-	sess.commit()
-	
 	query(sess)
 
-	# commit changes and release the database file
 	sess.shutdown()
 	
 if __name__ == "__main__":

@@ -116,13 +116,14 @@ class RowAttribute(OwnedThing):
 ## 			value = None
 ## 		if isinstance(self,Pointer):
 ## 			print value
-		return self.value2atoms(value, row.getContext())
+		#return self.value2atoms(value, row.getContext())
+		return self.value2atoms(value, row._ds._db)
 
 		
 ## 		value = row._values[self._name]
 ## 		return self.value2atoms(value,atomicRow,colAtoms)
 	
-	def value2atoms(self,value,context):
+	def value2atoms(self,value,db):
 		print self,value
 		raise NotImplementedError
 	
@@ -146,7 +147,7 @@ class RowAttribute(OwnedThing):
 ## 		valueDict[self._name] = self.atoms2value(atomicRow,colAtoms,area)
 		
 	
-	def getNeededAtoms(self,db):
+	def getNeededAtoms(self,ctx):
 		return ()
 
 ## 	def getValueFromRow(self,row):
@@ -182,11 +183,11 @@ class Field(RowAttribute):
 ## 	def asFormCell(self,renderer,value,size=None):
 ## 		renderer.renderValue(value,self.type,size)
 		
-	def getNeededAtoms(self,db):
+	def getNeededAtoms(self,ctx):
 		return ((self._name, self.type),)
 		#return (query.provideAtom(self.name, self.type),)
 
-	def value2atoms(self,value,context):
+	def value2atoms(self,value,db):
 		#assert issequence(atomicRow), repr(atomicRow)
 		#assert issequence(colAtoms)
 		#assert len(colAtoms) == 1
@@ -212,11 +213,11 @@ class Field(RowAttribute):
 
 class BabelField(Field):
 
-	def getNeededAtoms(self,db):
-		assert db is not None,\
+	def getNeededAtoms(self,ctx):
+		assert ctx is not None,\
 				 "tried to use BabelField for primary key?"
 		l = []
-		for lang in db.getBabelLangs(): 
+		for lang in ctx.getBabelLangs(): 
 			l.append( (self._name+"_"+lang.id, self.type) )
 		return l
 
@@ -282,9 +283,9 @@ class BabelField(Field):
 		return ds._connection.testEqual(a.name,a.type,value)
 
 	#def value2atoms(self,value,atomicRow,colAtoms,context):
-	def value2atoms(self,value,context):
+	def value2atoms(self,value,db):
 		# value is a sequence with all langs of db
-		dblangs = context._db.getBabelLangs()
+		dblangs = db.getBabelLangs()
 		rv = [None] * len(dblangs)
 		#langs = context.getBabelLangs()
 		if value is None:
@@ -395,7 +396,7 @@ class Pointer(RowAttribute):
 									**self.dtlKeywords)
 			
 			
-	def getNeededAtoms(self,db):
+	def getNeededAtoms(self,ctx):
 		
 		""" The toTable is possibly not yet enough initialized to tell
 		me her primary atoms. In this case getPrimaryAtoms() will raise
@@ -446,7 +447,7 @@ class Pointer(RowAttribute):
 		raise "not found %d" % tableId
 
 	
-	def value2atoms(self,value,context):
+	def value2atoms(self,value,db):
 		pointedRow = value
 		#print repr(pointedRow)
 		if pointedRow is None:
@@ -588,7 +589,7 @@ class Vurt(RowAttribute):
 	def parse(self,s):
 		raise "not allowed"
 		
-	def value2atoms(self,value,context):
+	def value2atoms(self,value,db):
 		raise "not allowed"
 
 

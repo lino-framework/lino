@@ -4,8 +4,8 @@
 from html import MemoParser
 
 class TimMemoParser(MemoParser):
-	def __init__(self,context):
-		self._context = context
+	def __init__(self,db):
+		self._db = db
 		cmds = {
 			'url' : self.cmd_url,
 			'ref' : self.cmd_ref,
@@ -57,7 +57,7 @@ class TimMemoParser(MemoParser):
 		elif ref[0] == "PUB":
 			ref[0] = "PUBLICATIONS"
 		#try:
-		ds = self._context.getDatasource(ref[0])
+		ds = self._db.getDatasource(ref[0])
 		#except AttributeError,e:
 			
 			#return str(e)

@@ -7,9 +7,9 @@
 import types
 
 from lino.misc.etc import issequence
-from query import ColumnList, BaseColumnList
+from query import DataColumnList#, BaseColumnList
+#, DataColumn
 from datatypes import DataVeto
-from report import Report
 from rowattrs import FieldContainer, NoSuchField
 
 class Datasource:
@@ -17,6 +17,8 @@ class Datasource:
 	"""
 	A Datasource is the central handle for a stream of data. 
 	"""
+	
+	#columnClass = DataColumn
 	
 	def __init__(self, session, store, clist=None, **kw):
 		self.rowcount = None
@@ -29,6 +31,7 @@ class Datasource:
 		assert clist.leadTable is store._table
 		self._clist = clist
 		#self.report = clist.report
+
 
 		self._db = store._db # shortcut
 		self._table = store._table # shortcut
@@ -71,7 +74,7 @@ class Datasource:
 				  **kw):
 		self._label = label
 		if columnNames is not None:
-			self._clist = ColumnList(self._store,columnNames)
+			self._clist = self.createColumnList(columnNames)
 		self.setOrderBy(orderBy)
 		self.setFilterExpressions(sqlFilters,search)
 		
@@ -126,7 +129,28 @@ class Datasource:
 ## 	def getView(self,viewName):
 ## 		return self._table.getView(viewName)
 
-	def query(self,columnNames=None,samples=None,**kw):
+	def createColumnList(self,columnNames):
+ 		# overridden by report.Report
+		return DataColumnList(self._store,
+									 self._session,
+									 columnNames)
+
+## 	def createColumn(self,colIndex, name, join,fld):
+## 		# overridden by report.Report
+## 		return DataColumn(self,colIndex, name, join,fld)
+	
+
+	
+	def query(self,columnNames=None,**kw):
+		return self.child(Datasource,columnNames=columnNames,**kw)
+	
+	def report(self,columnNames=None,**kw):
+		from report import Report
+		return self.child(Report,columnNames=columnNames,**kw)
+
+		
+
+	def child(self,cl,**kw):
 		
 		"""creates a child (a detached copy) of this.  Modifying the
 		child won't affect the parent.  columnNames can optionally be
@@ -134,33 +158,46 @@ class Datasource:
 		given, then they override the corresponding value in the parent.
 		
 		"""
-		#print kw
+		self.setdefaults(kw)
+		return cl( self._session,
+					  self._store,
+					  self._clist,
+					  **kw)
+
+	def setdefaults(self,kw):
 		kw.setdefault('orderBy',self._orderBy)
 		kw.setdefault('search',self._search)
 		if self._label is not None:
 			kw.setdefault('label',self._label)
 		if self._sqlFilters is not None:
 			kw.setdefault('sqlFilters',tuple(self._sqlFilters))
-		if samples is None:
-			for k,v in self._samples.items():
-				kw.setdefault(k,v)
-		#print kw
+		#if samples is None:
+		for k,v in self._samples.items():
+			kw.setdefault(k,v)
 		
-		clist = self._clist
-		if columnNames is not None:
-			clist = ColumnList(self._store,columnNames)			
-			#clist = clist.child(columnNames)
-		#query = self._area._table.query(columnNames=columnNames,**kw)
-		ds = Datasource(self._session,
-							 self._store,
-							 clist,
-							 samples=samples,
-							 **kw)
-		return ds
 
+## 	def child(self,cl,columnNames=None,samples=None,**kw):
+		
+## 		"""creates a child (a detached copy) of this.  Modifying the
+## 		child won't affect the parent.  columnNames can optionally be
+## 		specified as first (non-keyword) argument.  if arguments are
+## 		given, then they override the corresponding value in the parent.
+		
+## 		"""
+## 		self.setdefaults(kw)
+## 		clist = self._clist
+## 		if columnNames is not None:
+## 			clist = DataColumnList(self,columnNames)			
+## 			#clist = clist.child(columnNames)
+## 		#query = self._area._table.query(columnNames=columnNames,**kw)
 
-  	def report(self,name,**kw):
- 		return Report(self,name,**kw)
+		
+## 		return cl(self._session,
+## 					 self._store,
+## 					 clist,
+## 					 samples=samples,
+## 					 **kw)
+
 
 	def getRenderer(self,rsc,req,writer=None):
 		return self._schema._datasourceRenderer(rsc,req,
@@ -168,7 +205,7 @@ class Datasource:
 															 writer)
 	
 	def getContext(self):
-		return self._session.getContext()
+		return self._session
 
 	def getTableName(self):
 		return self._table.getTableName()
@@ -226,7 +263,7 @@ class Datasource:
 			sampleColumns.append( (col,value) )
 			#setattr(tmpRow,name,value)
 			#attr.setCellValue(tmpRow,value)
-			col.value2atoms(value,atomicRow,self._context)
+			col.value2atoms(value,atomicRow,self._db)
 			
 		self.sampleColumns = tuple(sampleColumns)
 		
@@ -245,7 +282,8 @@ class Datasource:
 		atomicRow = self._clist.makeAtomicRow() 
 		for (name,value) in self._samples.items():
 			col = self._clist.getColumn(name)
-			col.value2atoms(value,atomicRow,self._session.getContext())
+			col.value2atoms(value,atomicRow,self._db)
+			#col.value2atoms(value,atomicRow,self._session.getContext())
 			for atom in col.getAtoms():
 				l.append((atom,atomicRow[atom.index]))
 		return l
@@ -385,7 +423,8 @@ class Datasource:
 		l = []
 		i = 0
 		for col in self._clist._pkColumns:
-			l += col.rowAttr.value2atoms(id[i],self._session.getContext())
+			#l += col.rowAttr.value2atoms(id[i],self._session.getContext())
+			l += col.rowAttr.value2atoms(id[i],self._db)
 			i+=1
 			
 ## 		i = 0
@@ -500,55 +539,6 @@ class Datasource:
 
 	
 			
-## 	def tuples(self,**kw):
-		
-## 		"""returns an iterator who returns a tuple of column values for
-## 		each row """
-		
-## 		return TuplesIterator(self,**kw)
-
-	
-## 	def instances(self,**kw):
-## 		"returns an iterator who returns an instance for each row"
-		
-## 		return InstanceIterator(self,**kw)
-
-
-
-
-
-	
-	
-
-## 	def atoms2values(self,atomicRow):
-## ##  		return [col.atoms2value(atomicRow,self.area)
-## ##  				  for col in self.visibleColumns]
-## 		return self._query.atoms2values(atomicRow,self._area)
-	
-	
-
-## 	def __getslice__(self,a,b):
-## 		csr = self.executeSelect( offset=a, limit=b-a)
-## 		return csr.fetchall()
-
-
-
-
-
-## 	def setCellValue(self,rowIndex,colIndex,value):
-## 		return self._query.setCellValue(self._area,
-## 												 rowIndex,colIndex,
-## 												 value)
-
-	
-		
-		
-## 	def getRowLabel(self):
-## 		return self._area._table.getRowLabel(self._currentRow)
-	
-	
-## 	def getQueryColumns(self):
-## 		return self.query.getColumns()
 
 class DataIterator:
 
@@ -575,7 +565,7 @@ class DataIterator:
 class DataRow:
 	def __init__(self,fc,clist,values,dirty=False):
 		assert isinstance(fc,FieldContainer)
-		assert isinstance(clist,BaseColumnList)
+		#assert isinstance(clist,BaseColumnList)
 		assert type(values) == types.DictType
 		self.__dict__["_values"] = values 
 		self.__dict__["_fc"] = fc
@@ -663,7 +653,7 @@ class StoredDataRow(DataRow):
 		"""
 		assert type(new) == types.BooleanType
 		DataRow.__init__(self,ds._table,ds._clist,values,dirty=new)
-		#self.__dict__["_rowId"] = rowId
+
 		self.__dict__["_ds"] = ds
 		self.__dict__["_new"] = new
 		self.__dict__["_pseudo"] = pseudo
@@ -914,7 +904,6 @@ class RowIterator:
 			raise StopIteration
 		col = self._columns[self.colIndex]
 		self.colIndex += 1
-		#return DataCell(self.row,col)
 		return self.row.makeDataCell(self.colIndex,col) 
 
 
@@ -933,3 +922,5 @@ class DataCell:
 			return ""
 		return self.col.format(v,self.row.getContext())
 	
+
+

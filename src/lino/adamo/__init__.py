@@ -17,7 +17,8 @@ from widgets import Menu, Command
 from datatypes import *
 from rowattrs import Field, Pointer, BabelField, Vurt, Match#, Button
 from schema import Schema, SchemaPlugin
-from context import ConsoleSession
+#from session import ConsoleSession
+from session import Application
 from datasource import DataRow
 from database import QuickDatabase as quickdb
 
@@ -25,6 +26,30 @@ def _(s):
    return s
 
 __builtin__.__dict__['_'] = _
+
+
+def beginQuickSession(schema,
+							 populator=None,
+							 langs=None,
+							 isTemporary=True,
+							 verbose=False,
+							 **kw):
+	app =	Application(verbose=verbose)
+	schema.startup(app)
+	
+	db = quickdb(app,
+					 schema,
+					 langs=langs,
+					 isTemporary=isTemporary,
+					 verbose=verbose)
+	db.createTables()
+	
+	sess = app.use(db=db,langs=langs)
+	
+	if populator:
+		populator(sess)
+	return sess
+
 
  
 
@@ -37,7 +62,8 @@ __all__ = ['Table','LinkTable',
 			  'DataRow',
 			  'FormTemplate','Menu','Command',
 			  'Schema','SchemaPlugin',
-			  'ConsoleSession',
+			  #'ConsoleSession',
+			  'Application',
 			  'quickdb',
 			  'INT', 'BOOL', 'ROWID', 'STRING', 'DATE', 'MEMO',
 			  'EMAIL', 'URL',

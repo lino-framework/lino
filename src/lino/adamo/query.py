@@ -23,12 +23,14 @@ from rowattrs import Detail, Pointer, NoSuchField
 
 class BaseColumnList: 
 	
-	def __init__(self):
+	def __init__(self,context):
 		self._columns = []
 		self._joins = []
 		self._atoms = []
-		#self._reports = {}
-		#self._name = name
+		self._context = context
+
+	def getContext(self):
+		return self._context
 		
 	def setVisibleColumns(self,columnNames):
 		l = []
@@ -46,10 +48,10 @@ class BaseColumnList:
 		self.visibleColumns = tuple(l)
 			
 
-	def atoms2values(self,atomicRow,ctx):
+	def atoms2values(self,atomicRow,sess):
 		raise "won't work?"
 		atomicValues = [atomicRow[atom.index] for atom in self._atoms]
- 		return [col.atoms2value(atomicValues,ctx)
+ 		return [col.atoms2value(atomicValues,sess)
  				  for col in self.visibleColumns]
 
 
@@ -108,10 +110,16 @@ class BaseColumnList:
 		return self.addColumn(rowAttr,join,name)
 	
 	def addColumn(self,fld,join,name):
-		col = QueryColumn(self, len(self._columns), name, join,fld)
+		#col = self._ds.columnClass(self, len(self._columns),
+		#									name, join,fld)
+		col = self.createColumn(len(self._columns), name, join,fld)
 		self._columns.append(col)
 		col.setupAtoms()
 		return col
+
+	def createColumn(self,colIndex,name,join,fld):
+		# overridden by Report
+		return DataColumn(self,colIndex,name,join,fld)
 
 			
 	def getColumns(self,columnNames=None):
@@ -155,10 +163,6 @@ class BaseColumnList:
 		return col
 
 
-## 	def isEditable(self):
-## 		return self.editable
-
-
 	def getAtoms(self):
 		return self._atoms
 	
@@ -168,8 +172,6 @@ class BaseColumnList:
 		
 		"""Return the atom with specified name if already present.	type
 		must match in this case.  Create the atom if not present. """
-
-		#assert not self.mustSetup()
 
 		a = self.findAtom(joinName,name)
 		if a is not None:
@@ -310,17 +312,14 @@ class BaseColumnList:
 
 
 
-
-
 		
 
-class ColumnList(BaseColumnList):
+class DataColumnList(BaseColumnList):
 	
-	def __init__(self, store, columnNames=None):
-		self._store = store
-		self.leadTable = store._table # shortcut
+	def __init__(self, store, context, columnNames=None):
+		self.leadTable = store._table 
 
-		BaseColumnList.__init__(self)
+		BaseColumnList.__init__(self,context)
 		
 		l = []
 		for name in self.leadTable.getPrimaryKey():
@@ -335,8 +334,9 @@ class ColumnList(BaseColumnList):
 				 [col.name for col in self._columns]
 
 
-	def getContext(self):
-		return self._store._db
+## 	def getContext(self):
+## 		return self._ds.getContext()
+## 		#return self._store._db
 	
 	def getFieldContainer(self):
 		return self.leadTable
@@ -482,16 +482,6 @@ class Join:
 	def getJoinAtoms(self):
 		return self._atoms
 
-## 	def getJoinedRowId(self,atomicRow):
-## 		raise "not used?"
-## 		pk = self.toTable.getPrimaryAtoms()
-## 		rid = []
-## 		for (name,type) in pk:
-## 			atom = self.query.findAtom(self,name)
-## 			assert atom.type == type,\
-## 					 "%s != %s" % (repr(atom.type),repr(type))
-## 			rid.append(atomicRow[atom.index])
-## 		return tuple(rid)
 
 	def __repr__(self):
 		return "Join(%s,%s)" % (self.name,repr(self.parent))
@@ -509,10 +499,9 @@ class Join:
 
 
 
-class QueryColumn:
+class DataColumn:
 	
 	def __init__(self,query,index,name,join,rowAttr):
-		# Describable.__init__(self,rowAttr)
 		self.query = query
 		self.index = index
 		self.name = name
@@ -524,8 +513,8 @@ class QueryColumn:
 		
 		self._atoms = None
 
-		# self._atoms is list of those atoms in query which have been
-		# requested for this column
+		# self._atoms is list of those atoms in ColumnList which have
+		# been requested for this column
 
 
 	def __str__(self):
@@ -555,7 +544,8 @@ class QueryColumn:
 			joinName = None
 		#l = self.getNeededAtoms()
 		#print repr(l)
-		for (name,type) in self.getNeededAtoms(self.query.getContext()):
+		ctx = self.query.getContext()
+		for (name,type) in self.rowAttr.getNeededAtoms(ctx):
 			if self.join and len(self.join.pointer._toTables) > 1:
 				for toTable in self.join.pointer._toTables:
 					a = self.query.provideAtom(
@@ -566,15 +556,9 @@ class QueryColumn:
 				a = self.query.provideAtom( name, type,joinName)
 				atoms.append(a)
 
-		#print __file__, atoms
 		self._atoms = tuple(atoms)
-		#assert isinstance(self.rowAttr,Detail) or len(self._atoms) > 0,\
-		#		 "%s.setupAtoms() found no atoms" % str(self)
 
 
-	#def preferredWidth(self):
-	#	return self.rowAttr.type.width
-	
 	def setCellValue(self,row,value):
 		#print self, value
 		self.rowAttr.setCellValue(row,value)
@@ -618,11 +602,11 @@ class QueryColumn:
 ## 															 self._atoms,
 ## 															 area)
 
-	def atoms2value(self,atomicValues,area):
+	def atoms2value(self,atomicValues,sess):
 		#return self.rowAttr.atoms2value(atomicRow,self._atoms,area)
 		#atomicValues = [atomicRow[atom.index]
 		#					 for atom in self._atoms]
-		return self.rowAttr.atoms2value(atomicValues,area)
+		return self.rowAttr.atoms2value(atomicValues,sess)
 	
 
 	def value2atoms(self,value,atomicRow,context):
@@ -643,8 +627,8 @@ class QueryColumn:
 		
 	def getAtoms(self): return self._atoms
 
-	def getNeededAtoms(self,db):
-		return self.rowAttr.getNeededAtoms(db)
+#	def getNeededAtoms(self,db):
+#		return 
 	
 	def format(self,value,context):
 		values = self.rowAttr.value2atoms(value,context)
@@ -660,7 +644,7 @@ class QueryColumn:
 		assert len(l1) == len(self._atoms)
 		atomicValues = [a.type.parse(s1)
 							 for a,s1 in zip(self._atoms,l1)]
-		return self.atoms2value(atomicValues,ds._context)
+		return self.atoms2value(atomicValues,ds._session)
 		
 ## 	def format(self,v):
 ## 		return self.rowAttr.format(v)
@@ -669,20 +653,3 @@ class QueryColumn:
 ## 		return self.rowAttr.parse(v)
 		
 
-	
-##		def atoms2row(self,atomicRow,row):
-##			values = row.getValues()
-##			id = []
-##			for atom in self._atoms:
-##				id.append(atomicRow[atom.index])
-##			values[self.name] = tuple(id)
-
-	
-	  
-
-
-		#return self.query.provideRow(atomicRow)
-
-			
-
-	

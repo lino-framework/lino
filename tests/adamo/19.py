@@ -106,13 +106,12 @@ class Case(unittest.TestCase):
 						 verbose=False)
 		db.createTables()
 
-		ctx = db.beginContext('en')
+		sess = db.beginSession()
 
-		ds = ctx.tables.Nations.query()
+		#ctx = db.beginContext('en')
 
-		#ctx._db._connection.startDump()
-		
-		#ds.setBabelLanguage('en')
+		ds = sess.tables.Nations.query()
+
 		be = ds.appendRow(id="be", name="Belgium")
 		de = ds.appendRow(id="de", name="Germany")
 
@@ -120,13 +119,13 @@ class Case(unittest.TestCase):
 		de.lock()
 
 		
-		ctx.setBabelLangs('de')
+		sess.setBabelLangs('de')
 		be.name = "Belgien"
 		de.name = "Deutschland"
 		
 		#be.commit()
 		#de.commit()
-		ctx.setBabelLangs('fr')
+		sess.setBabelLangs('fr')
 		be.name = "Belgique"
 		de.name = "Allemagne"
 
@@ -143,25 +142,25 @@ class Case(unittest.TestCase):
 		
 		#print be._values['name']
 		#ctx._db._connection.startDump()
-		be = ctx.tables.Nations.peek('be')
+		be = sess.tables.Nations.peek('be')
 		#print ctx._db._connection.stopDump()
 		#print be._values['name']
 		
-		ctx.tables.Cities.appendRow(nation=be,name="Eupen")
+		sess.tables.Cities.appendRow(nation=be,name="Eupen")
 		
-		ctx.setBabelLangs('de')
+		sess.setBabelLangs('de')
 		self.assertEqual(be.name,'Belgien')
 		
-		ctx.setBabelLangs('fr')
+		sess.setBabelLangs('fr')
 		self.assertEqual(be.name,'Belgique')
 		
-		ctx.setBabelLangs('en')
+		sess.setBabelLangs('en')
 		self.assertEqual(be.name,'Belgium')
 		
-		ctx.setBabelLangs('en de')
+		sess.setBabelLangs('en de')
 		self.assertEqual(be.name,['Belgium','Belgien'])
 		
-		ctx.shutdown()
+		sess.shutdown()
 
 		
 

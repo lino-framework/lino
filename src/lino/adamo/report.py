@@ -7,179 +7,76 @@
 import types
 
 from lino.misc.descr import Describable
-from paramset import ParamOwner
+#from paramset import ParamOwner
+from datasource import Datasource, DataColumnList
 
 
 
-class Report(ParamOwner):
+class Report(Datasource,Describable):
 
-	paramNames = {
-		"label" : None,
-		"rowHeight" : 3,
-		"description" : None,
-		"columnNames" : None,
-		"columnWidths" : None,
-		}
-		
-	def __init__(self, ds, name, **kw):
+	#columnClass = ReportColumn
 
-		self.name = name
-		self._clist = ds._clist
-		self._ds = ds
+	def __init__(self,
+					 session, store, clist=None,
+					 name=None,
+					 label=None,
+					 doc=None,
+					 **kw):
+		Datasource.__init__(self,session,store,clist,**kw)
+		Describable.__init__(self,name,label,doc)
 
-		self.configure(**kw)
+		self.config(**kw)
 
-	def onConfigure(self,unknownParams):
-		assert len(unknownParams) == 0
-		self._columns = []
-		if self.columnNames is None:
-			for col in self._clist.visibleColumns:
-				self.addColumn(col)
-		else:
-			for colName in self.columnNames.split():
-				col = self._clist.columnList.getColumn(colName)
-				self.addColumn(col)
-			
-		if self.columnWidths is not None:
+	def config(self, rowHeight=3, columnWidths=None, **kw):
+		self.rowHeight = rowHeight
+		self.columnWidths = columnWidths
+		if columnWidths is not None:
 			i = 0
-			for item in self.columnWidths.split():
+			for item in columnWidths.split():
 				self._columns[i].preferredWidth = int(item)
 				i += 1
 
-## 	def child(self,name,**kw):
-## 		d = self.myParams()
-## 		d.update(kw)
-## 		return Report(self._query,name,**d)
+		Datasource.config(self,**kw)
 
-	def getLabel(self):
-		if self.label is None:
-			return self._ds.getLabel()
-		return self.label
-		
+	def setdefaults(self,kw):
+		kw.setdefault('columnWidths',self.columnWidths)
+		kw.setdefault('rowHeight',self.rowHeight)
+		Datasource.setdefaults(self,kw)
 
-##  	def execute(self,db,renderer,tpl):
-		
-## 		ds = db.datasource(self._query)
-			
-## 		if self.pageLen is None:
-## 			self.lastPage = 1
-## 		elif len(ds) == 0:
-## 			self.lastPage = 1
-## 		else:
-## 			#rowcount = len(self)
-## 			#rowcount = self.area._connection.executeCount(
-## 			#	self.query,**kw)
-				
-## 			#rowCount = self.executeCount
-## 			#rowCount = area._connection.executeCount(self.query)
-## 			self.lastPage = int((len(ds)-1) / self.pageLen) + 1
-## 			"""
-## 			if pageLen is 10:
-## 			- [0..10] rows --> 1 page
-## 			- [11..20] rows --> 2 pages
-## 			- [21..30] rows --> 2 pages
-## 			- 10 rows --> 1 page
-## 			- 11 rows --> 2 pages
-## 			"""
-## 		pageNum = self.pageNum
-		
-## 		if self.pageLen is None:
-## 			limit = offset = None
-## 			rowcount = 0
-## 		else:
-## 			if pageNum is None:
-## 				pageNum=1
-## 			elif pageNum < 0:
-## 				pageNum = self.lastPage + pageNum - 1
-## 			elif pageNum > self.lastPage:
-## 				raise "pageNum > lastPage",self.lastPage
-## 			rowcount = offset = self.pageLen*(pageNum-1) # +1
-## 			limit = self.pageLen
-		
-## 		tpl.renderHeader(ds,renderer,self,pageNum)
-		
-## 		for atomicRow in ds.execute(offset=offset,limit=limit):
-## 			rowcount += 1
-## 			tpl.renderLine(ds,renderer,self,pageNum,
-## 								rowcount,atomicRow)
-
-## 		tpl.renderFooter(ds,renderer,self,pageNum)
-
-		
-		
-	def addColumn(self,queryCol,label=None,preferredWidth=None):
-		#queryCol = self.dh.query.getColumn(colName)
-		if label is None:
-			label = queryCol.name
-		col = ReportColumn(queryCol,label,preferredWidth)
-		self._columns.append(col)
-
-
-
-
-	def defineMenus(self,win):
-		#self.initQuery()
-		mb = win.addMenuBar("data","&Data menu")
-		mnu = mb.addMenu("&Row")
-		mnu.addItem("&Append",self.mnu_appendRow,win)
-		# mnu.addItem("&Delete",self.mnu_deleteRow)
-		# w.addGrid(self)
-		# return mb
-		mnu = mb.addMenu("&File")
-		mnu.addItem("E&xit",win.close)
-
-	def mnu_appendRow(self,win):
-		print win.getSelectedRows()
-## 		row = self.appendRow()
-## 		ui.message("new row has been created")
-## 		return row.ui_openFormWindow(ui)
-
-		
-	#def load(self):
-
-## 	def save(self):
-## 		assert self.generated
-## 		filename = self.name + ".rpt"
-## 		f = open(filename)
-## 		f.write("self.generated = True\n")
-## 		for col in self._columns:
-## 			f.write("self.addColumn(name=%s,label=%s,preferredWidth=%d)\n" %
-## 					  (repr(col.name), repr(col.getLabel()), col.preferredWidth))
-
+	def createColumnList(self,columnNames):
+ 		# overridden from Datasource
+		return ReportColumnList(self._store,
+										self._session,
+										columnNames)
 	
-
-
- 	def getColumns(self):
- 		return self._columns
-
-
-
-class ReportColumn: #(Describable):
+class ReportColumnList(DataColumnList):
 	
-	def __init__(self,queryCol,label, preferredWidth,
-					 description=None):
-## 		Describable.__init__(self,
-## 									parent=queryCol.rowAttr,
-## 									label=label,
-## 									description=description)
-## 		assert self._label == label,\
-## 				 "%s is not %s" % (repr(self._label),repr(label))
-		self.queryCol = queryCol
+	def createColumn(self, colIndex, name, join,fld):
+		# overridden from DataColumnList
+		return ReportColumn(self,colIndex, name, join,fld)
+
+
+
+class ReportColumn(DataColumn,Describable):
+	
+	def __init__(self,clist,colIndex,name,join,rowAttr,
+					 label=None, doc=None,preferredWidth=None):
 		if label is None:
-			label = queryCol.name
-		self._label = label
+			label = name
+		DataColumn.__init__(self,clist,colIndex,name,join,rowAttr)
+ 		Describable.__init__(self, name,label,doc)
 		self.preferredWidth = preferredWidth
 		
 
 	def getPreferredWidth(self):
 		if self.preferredWidth:
 			return self.preferredWidth
-		return self.queryCol.rowAttr.getPreferredWidth()
+		return self.rowAttr.getPreferredWidth()
 
-	def render(self,value):
-		return str(value).ljust(self.getPreferredWidth())
+## 	def render(self,value):
+## 		return str(value).ljust(self.getPreferredWidth())
 
 
-	def getLabel(self):
-		return self._label
+## 	def getLabel(self):
+## 		return self._label
 
