@@ -369,19 +369,19 @@ class Document:
         self.story.append(h)
         return h
 
-    def save(self,filename=None,*args,**kw):
-        gen = None
+    def generator(self,filename=None):
         if filename is not None:
             for cl in (OoText,OoSpreadsheet):
                 if filename.lower().endswith(cl.extension):
-                    gen = cl(self)
-        if gen is None:
-            if len(self.tables) == len(self.story):
-                gen = OoSpreadsheet(self)
-            else:
-                gen = OoText(self)
+                    return cl(self,filename)
+        if len(self.tables) == len(self.story):
+            return OoSpreadsheet(self)
+        return OoText(self)
+        
                 
-        gen.save(filename,*args,**kw)
+    def save(self,filename=None):
+        g = self.generator(filename)
+        g.save()
     
         
 

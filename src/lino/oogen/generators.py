@@ -44,22 +44,22 @@ class OoGenerator:
     extension = NotImplementedError
     mimetype = NotImplementedError
     
-    def __init__(self,doc=None):
+    def __init__(self,doc=None,filename=None):
         if doc is None:
             doc = Document()
         self.doc = doc
         
         self.tempDir = r'c:\temp'
-        self.outputFilename = None
-        self.ifiles = tuple([cl(self) for cl in IFILES])
-        
-    def save(self,filename=None):
+
         if filename is None:
             filename = self.doc.name
         if not filename.lower().endswith(self.extension):
             filename += self.extension
         self.outputFilename = filename
-            
+        
+        self.ifiles = tuple([cl(self) for cl in IFILES])
+        
+    def save(self):
         for f in self.ifiles:
             f.writeFile()
         zf = zipfile.ZipFile(self.outputFilename,'w',

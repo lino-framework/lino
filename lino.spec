@@ -93,7 +93,7 @@ os.chdir(os.path.join('src','lino','scripts'))
 
 #targets = ['pds2pdf','prn2pdf','publish','sendmail']
 #targets = ['pds2pdf','prn2pdf','openmail']
-targets = ['pds2pdf','prn2pdf','rsync', 'prnprint']
+targets = ['pds2pdf','prn2pdf','rsync', 'prnprint', 'oogen']
 for t in targets:
 	build(t) 
 	# confirm("Did the Build succeed?") or raise UserAbort

@@ -20,7 +20,7 @@ import sys, os
 
 from lino import copyleft
 from lino.ui import console
-from lino.oogen import Document,OoText,OoSpreadsheet
+from lino.oogen import Document
 
 def main(argv):
 
@@ -30,44 +30,42 @@ def main(argv):
 where PDSFILE is the pds file (oogen slang)
 """ )
     
-    parser.add_option("-c", "--component",
-                      help="""\
-.""",
-                      action="store",
-                      type="string",
-                      dest="component",
-                      default=None)
-    
     parser.add_option("-o", "--output",
                       help="""\
-output to specified instead of default name.""",
+generate to OUTFILE instead of default name. Default output filename
+is PDSFILE with extension .sxw or .sxc depending on content.
+""",
                       action="store",
                       type="string",
-                      dest="outputFile",
+                      dest="outFile",
                       default=None)
     
     (options, args) = parser.parse_args(argv)
 
-    if len(args) == 0:
+    if len(args) != 1:
         parser.print_help() 
         sys.exit(-1)
-    
-    for ifname in args:
-        (basename,ext) = os.path.splitext(ifname)
-        if ext != ".pds":
-            ifname += ".pds"
-        console.progress("Processing " +ifname+" ...")
-        doc = Document(basename)
-        namespace = {'doc':doc}
-        try:
-            execfile(ifname,namespace,namespace)
-        except ParseError,e:
-            raise
-        doc.generate()
+    ifname = args[0]
+    print ifname
+    (basename,ext) = os.path.splitext(ifname)
+    if ext != ".pds":
+        ifname += ".pds"
+    console.progress("Processing " +ifname+" ...")
+    doc = Document(basename)
+    namespace = {'doc':doc}
+    try:
+        execfile(ifname,namespace,namespace)
+    except ParseError,e:
+        raise
 
+    g=doc.generator(filename=options.outFile)
+    return g.save()
+    
     
         
 if __name__ == '__main__':
     print copyleft(name="Lino/oogen", year='2004-2005')
-    main(sys.argv[1:])
-    
+    g = main(sys.argv[1:])
+    if sys.platform == "win32" and console.isInteractive():
+        os.system("start %s" % g.outputFilename)
+
