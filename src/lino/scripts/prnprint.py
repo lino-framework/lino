@@ -25,6 +25,9 @@ from lino.textprinter import winprn
 
 def main(argv=None):
 
+    console.copyleft(name="Lino/prn2print",
+                     years='2004-2005',
+                     author="Luc Saffre")
     parser = console.getOptionParser(
         usage="usage: lino prnprint [options] FILE [FILE ...]",
         description="""\
@@ -65,7 +68,5 @@ write to SPOOLFILE rather than really printing.""",
     
         
 if __name__ == '__main__':
-    console.copyleft(name="Lino/prn2print",
-                     years='2004-2005')
     main()
     

@@ -30,18 +30,63 @@ class MyDataTable(wx.grid.PyGridTableBase):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
         #self.report = report
-        self.ds = editor.ds
-        self.columns = self.ds.getVisibleColumns()
-        self.loadData()
+        #self.ds = editor.ds
+        self.columns = self.editor.ds.getVisibleColumns()
+        self.rows = [ row for row in self.editor.ds ]
 
-    def loadData(self):
-        self.rows = [ row for row in self.ds ]
-        #self.rows = [ [str(cell) for cell in row]
-        #              for row in self.ds]
-        #self.rows = [row for row in self.report]
+    def refresh(self,grid):
+        before = self.GetNumberRows()
+        self.rows = [ row for row in self.editor.ds ]
+        self.resetRows(grid,before)
+        self.updateValues(grid)
 
     def GetNumberRows(self): return len(self.rows) + 1
     def GetNumberCols(self): return len(self.columns)
+
+    def updateValues(self, grid):
+        """Update all displayed values"""
+        
+        # This sends an event to the grid table to update all of the
+        # values
+        
+        msg = wx.grid.GridTableMessage(
+            self,
+            wx.grid.GRIDTABLE_REQUEST_VIEW_GET_VALUES)
+        grid.ProcessTableMessage(msg)
+
+
+    def resetRows(self, grid, before):
+        """
+        (Grid) -> Reset the grid view.   Call this to
+        update the grid if rows and columns have been added or deleted
+        """
+        grid.BeginBatch()
+
+        current = self.GetNumberRows()
+             
+        if current < before:
+            msg = wx.grid.GridTableMessage(
+                self,
+                wx.grid.GRIDTABLE_NOTIFY_ROWS_DELETED,
+                current,before-current)
+            grid.ProcessTableMessage(msg)
+        elif current > before:
+            msg = wx.grid.GridTableMessage(
+                self,
+                wx.grid.GRIDTABLE_NOTIFY_ROWS_APPENDED,
+                current-before)
+            grid.ProcessTableMessage(msg)
+            self.updateValues(grid)
+
+        grid.EndBatch()
+
+        # update the column rendering plugins
+        #self._updateColAttrs(grid)
+
+        # update the scrollbars and the displayed part of the grid
+        grid.AdjustScrollbars()
+        grid.ForceRefresh()
+    
         
     def IsEmptyCell(self, row, col):
         
@@ -67,7 +112,12 @@ class MyDataTable(wx.grid.PyGridTableBase):
         "required"
         if rowIndex == len(self.rows):
             return "."
-        return str(self.rows[rowIndex][colIndex])
+        col = self.columns[colIndex]
+        v = col.getCellValue(self.rows[rowIndex])
+        if v is None:
+            return ""
+        return col.format(v)
+        #return str(self.rows[rowIndex][colIndex])
 
     def SetValue(self, rowIndex, colIndex, value):
         "required"
@@ -75,13 +125,17 @@ class MyDataTable(wx.grid.PyGridTableBase):
         if rowIndex == len(self.rows):
             args = [None] * len(self.columns)
             args[colIndex] = value
-            row = self.ds.appendRowEditor(*args)
+            row = self.editor.ds.appendRowForEditing(*args)
             self.rows.append(row)
         else:
             row = self.rows[rowIndex]
-        if not row.isLocked():
-            row.lock()
-        row[colIndex].setValue(value)
+        #if not row.isLocked():
+        row.lock()
+        #row[colIndex].setValue(value)
+        col = self.columns[colIndex]
+        col.setValueFromString(row,value)
+        row.setDirty()
+        #row.setCellFromString(colIndex,value)
         #self._lockedRows.append(row)
         
 ##     def GetTypeName(self,row,col):
@@ -149,7 +203,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
         #print __name__, colIndexes
         cn = " ".join([self.columns[i].name for i in colIndexes])
         #print __name__,cn
-        self.ds.configure(orderBy=cn)
+        self.editor.ds.configure(orderBy=cn)
         self.loadData()
 
 
@@ -168,8 +222,9 @@ class DataGridCtrl(wx.grid.Grid):
                                            self.OnLabelRightClicked)
 
 
-    
-    
+    def refresh(self):
+        self.table.refresh(self)
+        
     def OnLeftDClick(self, evt):
         # start cell editor on doubleclick, not only on second click.
         if self.CanEnableCellControl():

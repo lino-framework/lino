@@ -19,31 +19,18 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
+import atexit
+from time import strftime
 
 from optparse import OptionParser
 from cStringIO import StringIO
 
 from lino import __version__, __author__
-from lino.i18n import itr,_
-
-itr("Working...",
-   de="Arbeitsvorgang läuft...",
-   fr="Travail en cours...")
 
 """
 
 A Console instance represents the console and encapsulates some
 often-used things that have to do with the console.
-
-Message importance levels:
-
-debug
-progress
-info
-warning
-error
-critical
-
 
 """
 
@@ -53,141 +40,6 @@ except ImportError,e:
     sound = False
 
 
-class Job:
-    
-    def __init__(self,pb,title=None,maxval=0):
-        self.pb = pb
-        self.curval = 0
-        self.maxval = maxval
-        self._done = False
-        if title is None:
-            title = _("Working...")
-        self.pc = None
-        self.title(title)
-
-    def title(self,newstr=""):
-        self._title = newstr
-        self.pb.onTitle(self)
-        
-    def inc(self,n=1):
-        self.curval += n
-        if self._done:
-            return
-        if self.maxval == 0:
-            self.pb.onInc(self)
-        else:
-            pc = int(100*self.curval/self.maxval)
-            if pc == self.pc:
-                return
-            self.pc = pc
-            self.pb.onInc(self)
-        
-    def done(self):
-        if not self._done:
-            self._done = True
-            self.pc = 100
-            self.pb.onInc(self)
-            self.pb.onDone(self)
-
-    def __str__(self):
-        return self._title
-            
-
-class ProgressBar:
-
-    """
-    
-    no longer inspired by
-    http://docs.python.org/mac/progressbar-objects.html
-    and
-    http://search.cpan.org/src/FLUFFY/Term-ProgressBar-2.06-r1/README
-
-    
-    """
-    def __init__(self,label=None):
-        
-        """
-        
-        title is the text string displayed (default ``Working...''),
-        maxval is the value at which progress is complete (default 0,
-        indicating that an indeterminate amount of work remains to be
-        done), and label is the text that is displayed above the
-        progress bar itself.
-        
-        
-        """
-        self._label = label
-        self._jobs = []
-        self.onInit()
-        #self.title(title)
-
-    def addJob(self,*args,**kw):
-        job = Job(self,*args,**kw)
-        self._jobs.append(job)
-        self.onJob(job)
-        return job
-        
-    def onInit(self):
-        pass
-    
-    def onJob(self,job):
-        self.onTitle(job)
-    
-    def onTitle(self,job):
-        pass
-    
-    def onInc(self,job):
-        pass
-
-    def onDone(self,job):
-        assert self._jobs[-1] == job, "%s != %s" % (
-            str(job), str(self._jobs[-1]))
-        del self._jobs[-1]
-    
-
-class ConsoleProgressBar(ProgressBar):
-    def __init__(self,console,*args,**kw):
-        self.console = console
-        ProgressBar.__init__(self,*args,**kw)
-        
-    def onInit(self):
-        self.console.write(self._label+'\n')
-        
-    def onDone(self,job):
-        self.console.write('\n')
-        ProgressBar.onDone(self,job)
-        
-class DecentConsoleProgressBar(ConsoleProgressBar):
-    def onTitle(self):
-        self.console.write(self._title)
-        
-    def onInc(self):
-        self.console.write('.')
-        
-class PurzelConsoleProgressBar(ConsoleProgressBar):
-
-    purzelMann = r"|/-\*"
-    
-    def onInit(self):
-        if self._label is not None:
-            self.console.write(self._label+'\n')
-        
-    def onTitle(self,job):
-        self.onInc(job)
-        
-    def onInc(self,job):
-        if job.maxval is 0:
-            s = '[' + self.purzelMann[job.curval % 5] + "] "
-        else:
-            if job.pc is None:
-                s = "[    ] " 
-            else:
-                s = "[%3d%%] " % job.pc
-        s += job._title
-        self.console.write(s.ljust(80) + '\r')
-
-    
-            
             
 class UI:
     def __init__(self):
@@ -202,19 +54,11 @@ class UI:
 
 class Console(UI):
 
-##     forwardables = ('warning', 'confirm','decide', 
-##                     'debug','info', 'progress',
-##                     'error','critical',
-##                     'report','textprinter',
-##                     'startDump','stopDump')
-    """
-    confirm and warning are always user messages
-    """
-
     def __init__(self, out=None,**kw):
         if out is None:
             out = sys.stdout
         self.out = out
+        self._log = None
         #self.app = None
         self._verbosity = 0
         self._batch = False
@@ -223,12 +67,20 @@ class Console(UI):
         #self._ui = self
         self.set(**kw)
 
-    def set(self,verbosity=None,debug=None,batch=None):
+    def set(self,
+            verbosity=None,
+            debug=None,
+            batch=None,
+            logfile=None):
         if verbosity is not None:
             self._verbosity += verbosity
             #print "verbositiy %d" % self._verbosity
         if batch is not None:
             self._batch = batch
+        if logfile is not None:
+            if self._log is not None:
+                self._log.close()
+            self._log = open(logfile,"a")
 ##         if ui is not None:
 ##             self._ui = ui
         #if debug is not None:
@@ -263,37 +115,49 @@ class Console(UI):
 
     def write(self,msg):
         self.out.write(msg)
+        
+    def writeout(self,msg):
+        self.out.write(msg+"\n")
 
-    def log_message(self,msg):
-        "Log a message to stdout."
-        self.write(msg+"\n")
+    def writelog(self,msg):
+        if self._log:
+            t = strftime("%a %Y-%m-%d %H:%M:%S")
+            self._log.write(t+" "+msg+"\n")
+            #self._log.write(msg+"\n")
+            
+##     def log_message(self,msg):
+##         "Log a message to stdout."
+##         self.write(msg+"\n")
 
     def error(self,msg):
         "Log a message to stderr"
         sys.stderr.write(msg + "\n")
+        self.writelog(msg)
 
     def critical(self,msg):
         "Something terrible has happened..."
+        self.writelog(msg)
         if sound:
             sound.asterisk()
         raise "critical error: " + msg
     
         
 
-    def info(self,msg):
+    def message(self,msg):
         "Display message if verbosity is normal (not quiet)."
+        self.writelog(msg)
         if self._verbosity >= 0:
-            self.log_message(msg)
+            self.writeout(msg)
 
-    def plauder(self,msg):
-        "Display message if verbosity is high."
+    def vmsg(self,msg):
+        "Display message if verbosity is high. Never logged."
         if self._verbosity > 0:
-            self.log_message(msg)
+            self.writeout(msg)
         
     def debug(self,msg):
-        "Display message if verbosity is very high."
+        "Display message if verbosity is very high. Never logged."
         if self._verbosity > 1:
-            self.log_message(msg)
+            self.writeout(msg)
             #self.out.write(msg + "\n")
 
             
@@ -327,6 +191,9 @@ class Console(UI):
         def call_set(option, opt_str, value, parser,**kw):
             self.set(**kw)
 
+        def set_logfile(option, opt_str, value, parser,**kw):
+            self.set(logfile=value)
+
         p.add_option("-v",
                      "--verbose",
                      help="increase verbosity",
@@ -351,6 +218,12 @@ class Console(UI):
                      callback=call_set,
                      callback_kwargs=dict(batch=True)
                      )
+        p.add_option("-l", "--logfile",
+                     help="log a report to FILE",
+                     type="string",
+                     dest="logFile",
+                     action="callback",
+                     callback=set_logfile)
         return p
 
     def warning(self,msg):
@@ -363,7 +236,7 @@ class Console(UI):
         
         if sound:
             sound.asterisk()
-        self.log_message(msg)
+        self.writeout(msg)
         #self.alert(msg)
         if not self._batch:
             raw_input("Press ENTER to continue...")
@@ -426,10 +299,17 @@ class Console(UI):
                 return s
             self.warning("wrong answer: "+s)
 
+    def shutdown(self):
+        if self._log:
+            self._log.close()
+
     def form(self,*args,**kw):
         raise NotImplementedError
 
     def make_progressbar(self,*args,**kw):
+        from lino.misc.jobs import ProgressBar, \
+             DecentConsoleProgressBar, \
+             PurzelConsoleProgressBar
         if self.isVeryQuiet():
             return ProgressBar(*args,**kw)
         if self.isQuiet():
@@ -446,12 +326,13 @@ class Console(UI):
 
 
 _syscon = Console()
+atexit.register(_syscon.shutdown)
 
 def getSystemConsole():
     return _syscon
 
 
-for m in ('debug','info',
+for m in ('debug','message','vmsg',
           'progress',
           'error','critical',
           'confirm','warning',
@@ -467,7 +348,7 @@ def copyleft(name="Lino",
              version=__version__,
              years="2002-2005",
              author=__author__):
-    info("""\
+    message("""\
 %s version %s.
 Copyright (c) %s %s.
 This software comes with ABSOLUTELY NO WARRANTY and is

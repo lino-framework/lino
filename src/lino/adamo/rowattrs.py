@@ -113,12 +113,22 @@ class RowAttribute(Describable):
         return None
 
     def setCellValue(self,row,value):
+        # does not setDirty() !
         self.validate(row,value)
         row._values[self.name] = value
         
     def getCellValue(self,row):
         # overridden by BabelField and Detail
         return row.getFieldValue(self.name)
+
+    def setValueFromString(self,row,s):
+        # does not setDirty() !
+        if len(s) == 0:
+            self.setCellValue(row,v)
+        else:
+            v=self.parse(s)
+            self.setCellValue(row,v)
+    
     
     def getFltAtoms(self,colAtoms,context):
         return colAtoms

@@ -38,18 +38,18 @@ class Case(TestCase):
             s1 += str(row[2]) + "\n"
         #print s1
         self.assertEqual(s1,"""\
-Arens  Eupen
-Ausdemwald  Aachen
-Bodard  Verviers
+Arens None Eupen
+Ausdemwald None Aachen
+Bodard None Verviers
 Eesti Telefon Sõpruse pst. Tallinn
-Eierschal  Eupen
-Eierschal  Eupen
-Freitag  Eupen
+Eierschal None Eupen
+Eierschal None Eupen
+Freitag None Eupen
 Girf OÜ Laki Tallinn
-Großmann  Eupen
+Großmann None Eupen
 PAC Systems PGmbH Hütte Eupen
 Rumma & Ko OÜ Tartu mnt. Tallinn
-Saffre  Tallinn
+Saffre None Tallinn
 """)
 
         

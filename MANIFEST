@@ -66,6 +66,7 @@ src\forum\iCal.py
 src\forum\locals.py
 src\forum\simplemapi.py
 src\lino\__init__.py
+src\lino\i18n.py
 src\lino\runscript.py
 src\lino\adamo\__init__.py
 src\lino\adamo\area.py
@@ -112,11 +113,12 @@ src\lino\agui\snakelets.py
 src\lino\apps\__init__.py
 src\lino\apps\raceman\__init__.py
 src\lino\apps\raceman\arrivals.py
+src\lino\apps\raceman\loaders.py
 src\lino\apps\raceman\raceman.py
 src\lino\apps\raceman\races.py
 src\lino\apps\raceman\results.py
-src\lino\apps\raceman\schema.py
 src\lino\examples\__init__.py
+src\lino\examples\console1.py
 src\lino\examples\forms1.py
 src\lino\examples\forms2.py
 src\lino\examples\forms3.py
@@ -130,6 +132,7 @@ src\lino\examples\voc.py
 src\lino\forms\__init__.py
 src\lino\forms\application.py
 src\lino\forms\base.py
+src\lino\forms\gui.py
 src\lino\forms\wx\__init__.py
 src\lino\forms\wx\main.py
 src\lino\forms\wx\showevents.py
@@ -208,9 +211,9 @@ src\lino\scripts\mailtomoz.py
 src\lino\scripts\makelc.py
 src\lino\scripts\makelower.py
 src\lino\scripts\maketn.py
-src\lino\scripts\oogen.py
 src\lino\scripts\openmail.py
 src\lino\scripts\openurl.py
+src\lino\scripts\pds2oo.py
 src\lino\scripts\pds2pdf.py
 src\lino\scripts\prn2pdf.py
 src\lino\scripts\prnprint.py
@@ -220,6 +223,7 @@ src\lino\scripts\rsync.py
 src\lino\scripts\runtests.py
 src\lino\scripts\sendmail.py
 src\lino\scripts\startup.py
+src\lino\scripts\sync.py
 src\lino\scripts\treecomp.py
 src\lino\scripts\webman.py
 src\lino\scripts\webmandemo.py
@@ -302,6 +306,7 @@ src\sandbox\test_pgdb.py
 src\sandbox\tmp.txt
 src\sandbox\xmlrpcd.py
 src\sandbox\twistserver\1.py
+tests\runme.bat
 tests\adamo\1.py
 tests\adamo\10.py
 tests\adamo\11.py
@@ -333,6 +338,7 @@ tests\adamo\34.py
 tests\adamo\35.py
 tests\adamo\36.py
 tests\adamo\37.py
+tests\adamo\38.py
 tests\adamo\4.py
 tests\adamo\5.py
 tests\adamo\6.py
@@ -342,6 +348,7 @@ tests\adamo\9.py
 tests\adamo\RUNME.BAT
 tests\dbfreader\1.py
 tests\etc\1.py
+tests\etc\2.py
 tests\etc\20030412.py
 tests\etc\20030529.py
 tests\etc\20040302.py

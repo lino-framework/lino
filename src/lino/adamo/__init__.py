@@ -30,7 +30,7 @@ import sys
 from lino.adamo.table import Table, LinkTable,\
      MemoTable, TreeTable, MemoTreeTable,\
      BabelTable
-from lino.adamo.forms import Form
+#from lino.adamo.forms import Form
 #from widgets import Menu, Command
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
@@ -39,7 +39,7 @@ from lino.adamo.schema import Schema, SchemaPlugin
 from lino.adamo.store import Populator
 #from session import ConsoleSession
 #from session import Application
-from lino.adamo.datasource import DataRow
+from lino.adamo.row import DataRow
 #from database import QuickDatabase 
 #from center import Center
 
@@ -77,7 +77,7 @@ __all__ = ['Table','LinkTable',
            #'Match',#'Button',
            'DataVeto','InvalidRequestError',
            'DataRow',
-           'Form',
+           #'Form',
            #'Menu','Command',
            'Schema','SchemaPlugin','Populator',
            #'ConsoleSession',

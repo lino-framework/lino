@@ -18,6 +18,8 @@
 
 import win32ui
 import win32con
+import win32print
+import pywintypes
 
 OEM_CHARSET = win32con.OEM_CHARSET
 
@@ -25,7 +27,7 @@ OEM_CHARSET = win32con.OEM_CHARSET
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
 
 from lino.ui import console
-from lino.textprinter.document import Document
+from lino.textprinter.document import Document, PrinterNotReady
 
 pt = 20
 inch = 1440.0
@@ -36,6 +38,18 @@ A4 = (210*mm, 297*mm)
 # the page, and the units increase as you go down and across the
 # page. A Twip is 1/20 of a typesetting Point. A Point is 1/72 of an
 # inch, so a Twip is 1/1440 of an inch.
+
+
+# setLpi(6): 6 lines per inch means that leading must be 240.  If I
+# ask height=240, then (for Courier New) I get a leading of 240+17=257
+#
+# leading = height * 257 / 240
+# <=> height = leading * 240 / 257
+#
+# h = inch/lpi * 240 /257
+# <=> h = (inch * 240 / 257) / lpi
+
+LPIBASE = inch * 240 / 257 
         
 
 class TextObject:
@@ -80,6 +94,11 @@ class TextObject:
         self.x += dx
         #console.debug("TextOut(%d,%d,%s)" % \
         #              (int(self.x),-int(self.y),repr(self.line)))
+        console.debug(
+            "dy=%d, extLeading=%d, height=%d, intLeading=%d" % \
+            (dy,tm['tmExternalLeading'],tm['tmHeight'],
+             tm['tmInternalLeading']))
+                      
         self.line = ""
 
     def newline(self):
@@ -87,16 +106,19 @@ class TextObject:
         self.x = self.doc.org[0] + self.doc.margin
         self.y += self.leading
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
+        console.debug("self.y += %d" % self.leading)
 
 class Win32PrinterDocument(Document):
+    
     def __init__(self,printerName=None,
                  spoolFile=None,
                  cpi=12,
+                 lpi=6,
                  fontName="Courier New",
                  jobName="Win32PrinterDocument",
                  charset=None):
-        Document.__init__(self,pageSize=A4,margin=5*mm)
         
+        Document.__init__(self,pageSize=A4,margin=5*mm)
 
         self.fontDict = {
             'name' : fontName
@@ -109,11 +131,46 @@ class Win32PrinterDocument(Document):
         
         self.dc = win32ui.CreateDC()
         self.dc.CreatePrinterDC(printerName)
+
+##         while True:
+##             h = win32print.OpenPrinter(win32print.GetDefaultPrinter())
+##             t = win32print.GetPrinter(h)
+##             win32print.ClosePrinter(h)
+
+
+##             if t[18]:
+##                 break
+##             print t
+##             if not console.confirm("not ready. retry?"):
+##                 raise PrinterNotReady
+        
+##             # structure of t:
+##             # http://msdn.microsoft.com/library/default.asp?\
+##             #   url=/library/en-us/gdi/prntspol_9otu.asp
+
+##             """
+##             ('\\\\KYLLIKI',
+##              '\\\\KYLLIKI\\Samsung ML-1200 Series',
+##              'ML-1200',
+##              'LPT1:',
+##              'Samsung ML-1200 Series',
+##              'Samsung ML-1210/ML-1220M',
+##              '', None, '', 'WinPrint',
+##              'RAW', '', None, 24, 1, 0, 0, 0, 0, 1, 0)
+##              """
+
+##         only on win95:
+##         try:
+##             h = win32print.EnumPrinters(win32print.PRINTER_ENUM_DEFAULT)
+##         except pywintypes.error,e:
+##             raise PrinterNotReady
+
         self.dc.StartDoc(jobName,spoolFile)
         self.dc.SetMapMode(win32con.MM_TWIPS)
         self.org = self.dc.GetWindowOrg()
         self.ext = self.dc.GetWindowExt()
         self.setCpi(cpi)
+        #self.setLpi(lpi)
         
     def createTextObject(self):
         textobject = TextObject(self)
@@ -139,9 +196,11 @@ class Win32PrinterDocument(Document):
         del self.dc
             
     def setLpi(self,lpi):
-        h = int(inch/lpi)
+        h = int(LPIBASE / lpi)
+        #h = int(inch/lpi)
         #console.debug("%d lpi = %d twips" % (lpi,h))
-        self.fontDict['height'] = h
+        #self.fontDict['height'] = h
+        #self.leading = int(inch/lpi)
         
     def setCpi(self,cpi):
         w = int(inch/cpi)

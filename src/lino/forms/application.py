@@ -123,10 +123,11 @@ class AdamoApplication(Application):
                    description="""\
 where DBFILE is the name of the sqlite database file""",
                    **kw):
-        (options,args) = Application.parse_args(self,
-                                                usage=usage,
-                                                description=description,
-                                                **kw)
+        (options,args) = Application.parse_args(
+            self,
+            usage=usage,
+            description=description,
+            **kw)
         if len(args) == 1:
             self.filename = args[0]
         else:

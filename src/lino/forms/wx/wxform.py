@@ -23,6 +23,7 @@ from lino.ui import console
 
 from lino.forms import base
 from lino.forms.wx import wxgrid
+#from lino.forms.wx.showevents import showEvents
 
 WEIGHT = 1
 
@@ -127,12 +128,13 @@ class Button(base.Button):
         self.wxctrl.SetFocus()
 
 class DataGrid(base.DataGrid):
+    
     def setup(self,parent,box):
-        ctrl = wxgrid.DataGridCtrl(parent,self)
-        box.Add(ctrl) #, 0, wx.CENTER,10)
-        self.wxctrl = ctrl
+        self.wxctrl = wxgrid.DataGridCtrl(parent,self)
+        box.Add(self.wxctrl, 0, wx.EXPAND,10)
+        
     def refresh(self):
-        self.wxctrl.ForceRefresh()
+        self.wxctrl.refresh()
 
     def getSelectedRows(self):
         #return self.wxctrl.GetSelectedRows()
@@ -173,11 +175,11 @@ class DataNavigator(base.DataNavigator):
                                    lambda e:self.skip(1), btn)
                                    #EventCaller(self.skip,1))
         
-    def getStatus(self):
-        return "%d/%d" % (self.currentPos,len(self.ds))
+##     def getStatus(self):
+##         return "%d/%d" % (self.currentPos,len(self.ds))
     
-    def refresh(self):
-        self.statusLabel.SetLabel(self.getStatus())
+##     def refresh(self):
+##         self.statusLabel.SetLabel(self.getStatus())
         
         
 
@@ -313,6 +315,10 @@ class DataEntry(EntryMixin,base.DataEntry):
         base.DataEntry.refresh(self)
         self.editor.SetEditable(self.enabled)
     
+
+
+
+
         
 
 class Form(base.Form):
@@ -328,9 +334,9 @@ class Form(base.Form):
 ##             self.app.MainLoop()
 
 
-    def setMessage(self,msg):
+    def setStatusText(self,msg):
         if self.modal:
-            print msg
+            print "[status]", msg
         else:
             self.wxctrl.SetStatusText(msg)
             
@@ -359,9 +365,11 @@ class Form(base.Form):
 
         wx.EVT_CHAR(self.wxctrl, self.OnChar)
         wx.EVT_IDLE(self.wxctrl, self.OnIdle)
+        #wx.EVT_SIZE(self.wxctrl, self.OnSize)
         wx.EVT_CLOSE(self.wxctrl, self.OnCloseWindow)
         wx.EVT_ICONIZE(self.wxctrl, self.OnIconfiy)
         wx.EVT_MAXIMIZE(self.wxctrl, self.OnMaximize)
+
         
         if self.menuBar is not None:
             # todo: won't work
@@ -447,6 +455,7 @@ class Form(base.Form):
         #self.mainMenu = None
         #if hasattr(self, "tbicon"):
         #   del self.tbicon
+        self.onClose()
         self.wxctrl.Destroy()
 
 
@@ -455,6 +464,7 @@ class Form(base.Form):
 
 
     def OnIdle(self, evt):
+        self.onIdle()
         #wx.LogMessage("OnIdle")
         evt.Skip()
 
@@ -464,6 +474,10 @@ class Form(base.Form):
 
     def OnMaximize(self, evt):
         wx.LogMessage("OnMaximize")
+        evt.Skip()
+        
+    def OnSize(self, evt):
+        wx.LogMessage("OnSize")
         evt.Skip()
 
     def refresh(self):

@@ -1,361 +1,463 @@
-raise "no longer used"
+## Copyright 2003-2005 Luc Saffre
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import types
 
-from lino.misc.compat import *
+from lino.adamo.exceptions import DataVeto, InvalidRequestError
 
-from datatypes import DataVeto
-from rowattrs import Pointer
-from datasource import Datasource
-from widgets import Widget
-			
-class BaseRow(Widget):
-	
-	#def __init__(self,rowId,knownValues,complete,new):
-	def __init__(self,rowId,atomicValues,new):
-		"""
-		"""
-		
-		# note : self._area is a class variable which is set during
-		# dynamic creation of a subclass of WritableRow see area.py)
-		
-		#self.__dict__["_rowId"] = rowId
-		self.__dict__["_new"] = new
-		if atomicValues is None:
-			self.__dict__["_complete"] = False
-			atomicValues = [None] * len(self._query.getAtoms())
-			atomicValues[0:len(rowId)] = rowId
-		else:
-			self.__dict__["_complete"] = True
-			assert rowId == atomicValues[:self._query._pkaLen]
-			
-## 		d = {}
-## 		if knownValues is not None:
-## 			for(k,v) in knownValues.items():
-## 				attr = self._area._table.getRowAttr(k)
-## 				d[attr.getAttrName()] = attr.validate(self,v)
-				#assert
-				
-## 		if complete:
-## 			for k in self._area._table._rowAttrs.keys():
-## 				if not knownValues.has_key(k):
-## 					knownValues[k] = None
-## 			if new:
-## 				for k in self._area._table._rowAttrs.keys():
-## 				 if not knownValues.has_key(k):
-## 					 knownValues[k] = None
-## 			else:
-## 				for k in self._area._table._rowAttrs.keys():
-## 					assert knownValues.has_key(k),\
-## 							 "complete claimed but attrib %s missing" % k
+## from lino.adamo.rowattrs import RowAttribute,\
+##      Field, BabelField, Pointer, Detail, FieldContainer
 
 
-				
-		self.__dict__["_values"] = atomicValues
-		self.__dict__["_isCompleting"] = False
-				
+class DataRow:
+    def __init__(self,fc,clist,values,dirty=False):
+        #assert isinstance(fc,FieldContainer)
+        #assert isinstance(clist,BaseColumnList)
+        assert type(values) == types.DictType
+        self.__dict__["_values"] = values 
+        self.__dict__["_fc"] = fc
+        self.__dict__["_clist"] = clist
+        self.__dict__["_dirty"] = dirty
+        
+    def __getattr__(self,name):
+        assert self.__dict__.has_key("_fc")
+        #print repr(self._fc)
+        rowattr = self._fc.getRowAttr(name)
+        return rowattr.getCellValue(self)
+    
+    def __setattr__(self,name,value):
+      #def setAtomicValue(self,name,value)
+        if self.__dict__.has_key(name):
+            self.__dict__[name] = value
+            return
+        if not self.isLocked():
+            raise InvalidRequestError("row is not locked")
+        #assert self._locked
+        rowattr = self._fc.getRowAttr(name)
+        rowattr.setCellValue(self,value)
+##      try:
+##          rowattr.acceptTrigger(self,value)
+##          rowattr.setCellValue(self,value)
+##      except DataVeto,e:
+##          self.getSession().errorMessage(str(e))
+##          return
+        rowattr.afterSetAttr(self)
+        self.__dict__['_dirty'] = True
 
-##			atomicRow = [None] * len(self.table.getAtoms())
-		
-##			for col in self.table.getColumns():
-##				col.atoms2row(atomicRow,self)
-			# self._values[col.name] = col.getDefaultValue(self)
-			
-##			for (k,v) in initialValues.items():
-##				col = self.table.findColumn(k)
-##				assert col is not None
-##				self._values[k] = v
-
-	def isComplete(self):
-		return self.__dict__['_complete']
-	
-	def isNew(self):
-		return self.__dict__['_new']
-	
-		
-## 	def getGrid(self,ui):
-## 		# currently not used
-## 		#w = ui.openWindow(label="%s (Form)" % repr(self))
-## 		q = self._area._table.peekQuery.copy()
-## 		id = self.getRowId()
-## 		i = 0
-## 		for (name,type) in self._area._table.getPrimaryAtoms():
-## 			q.setAtomicSample(name,type,id[i])
-## 			i += 1
-			
-## 		#w.add(Grid(q, asTable=False))
-		
-## 		return Grid(q,asTable=False)
-
-	def getRowId(self):
-		return self._values[0:len(self._query._pkaLen)]
-		#return self._rowId
-
-		#return str(self._rowId)
-		
-	
-## 	def setValues(self,valueDict):
-## 		"initialize values without validation"
-## 		for (k,v) in valueDict.items():
-## 			assert self._area._table._rowAttrs.has_attr(k)
-## 			self.__dict__['_values'][k] = v
-		
-## 	def getValues(self):
-		
-## 		"""Returns the value dictionary.	 If you update this, then there
-## 		is no validation and the row is not marked dirty."""
-		
-## 		return self.__dict__['_values']
-	
-##		def setAtomicValues(self,atomicRow):
-##			for attr in self.table.getAttributes():
-##				attr.atoms2row(atomicRow,self)
-			
-##		# def getAtomicRow(self):
-##		def getAtomicValues(self):
-##			atomicRow = [None] * len(self.table.getAtoms())
-##			for col in self.table.getColumns():
-##				col.row2atoms(self,atomicRow)
-##			return tuple(atomicRow)
-
-	def makeComplete(self,area):
-		if self._dirty:
-			raise "cannot makeComplete() a dirty row!"
-		if not self._complete:
-			self._readFromStore(area)
-
-	def _readFromStore(self,area):
-		"""
-		make this row complete using a single database lookup
-		"""
-		assert not self.__dict__['_complete'],\
-				 "%s : readFromStore() called a second time" % repr(self)
-		#assert not self._new,\
-		#		 "cannot call readFromStore() for a new row"
-		assert not self._isCompleting
-		assert area._table == self._query.leadTable
+    def getFieldValue(self,name):
+        try:
+            return self._values[name]
+        except KeyError:
+            raise NoSuchField,name
 
 
-		
-		
-		# but what if atoms2row() causes __getattr__ to be called
-		# again? maybe a switch _isCompleting to check this.
-		self.__dict__["_isCompleting"] = True
-		
-		# print "makeComplete() : %s" % repr(self)
-		id = self.getRowId()
-		#d = self._values
-		atomicRow = area._connection.executePeek(area._table, id)
-		if self._new:
-			if atomicRow is not None:
-				raise DataVeto("Cannot create another %s row %s" \
-									% (self.__class__.__name__, id))
-		else:
-			if atomicRow is None:
-				#self.__dict__['_new'] = True
-				raise DataVeto("Cannot find %s row %s" \
-									% (self.__class__.__name__, id))
-				
-## 				raise DataVeto("Cannot find %s row %s" \
-## 									% (self.__class__.__name__, id))
-
-			
-		if atomicRow is None:
-			for attr in self._area._table._rowAttrs.values():
-				self._values[attr.getAttrName()] = None
-		else:
-			q = self._area._table.query()
-			q.atoms2dict( atomicRow, self._values, self._area)
-		#for col in self._area._table.peekQuery.getColumns():
-			
-		#	col.atoms2dict(atomicRow,d,self._area)
-		"""maybe a third argument `fillMode` to atoms2dict() which
-		indicates whether existing (known) values should be
-		overwritten, checked for equality or ignored...	 """
-
-##			for atom in self.table.peekQuery.getAtoms():
-##				if d.has_key(atom.name):
-##					assert d[atom.name] == atomicRow[atom.index]
-##				else:
-##					d[atom.name] = atomicRow[atom.index]
-		
-		self.__dict__['_complete'] = True
-		self.__dict__["_isCompleting"] = False
-
-	def exists(self):
-		if not self._complete:
-			self._readFromStore()
-		return not self.isNew()
-
-	def checkIntegrity(self):
-		if not self._complete:
-			self._readFromStore()
-		for name,attr in self._area._table._rowAttrs.items():
-			if isinstance(attr,Pointer):
-				pointedRow = getattr(self,name)
-				if pointedRow is not None:
-					if not pointedRow.exists():
-						return "%s points to non-existing row %s" % (
-							name,str(pointedRow.getRowId()))
-		
-	def getAttrValues(self,columnNames=None):
-		l = []
-		if columnNames is None:
-			q = self._area._table.query()
-			for col in q.getColumns():
-				attr = col.rowAttr 
-				l.append( (attr,attr.getValueFromRow(self)) )
-		else:
-			for name in columnNames.split():
-				attr = self._area._table.__getattr__(name) 
-				l.append( (attr,attr.getValueFromRow(self)) )
-		return tuple(l)
-		
-	
-	def __repr__(self):
-		return self.__class__.__name__ + repr(self.getRowId())
-
-	def __str__(self):
-		return str(self.getLabel())
+    def makeDataCell(self,colIndex,col):
+        #return self.getSession()._dataCellFactory(self,colIndex,col)
+        return DataCell(self,colIndex,col)
 
 
+    def setDirty(self):
+        self.__dict__["_dirty"] = True
 
-##			d = {}
-##			for k,v in self._values.items():
-##				if v is not None:
-##					# col = self.table.findColumn(k)
-##					#if isinstance(col,Field):
-##					d[k] = v
-##			return "%s <%s>" % (self.__class__.__name__,
-##									 repr(d))
-
-								  
-##			from textwrap import wrap
-##			rows = []
-##			w1 = 4
-##			for k,v in self._values.items():
-##				rows.append( (k, repr(v) ) )
-##				if len(k) > w1:
-##					w1 = len(k)
-##			lines = []
-##			for row in rows:
-##				cellLines = wrap(row[1],70-w1)
-##				lines.append("%s : %s" % (row[0],cellLines[0]))
-##				for cl in cellLines[1:]:
-##					lines.append(" "*w1+"	"+cl)
-
-##			return "%s:\n%s" % (self.__class__.__name__,
-##									  "\n".join(lines))
-
-	def asBody(self,renderer):
-		self.asPage(renderer)
-		self.asFooter(renderer)
-
-	def asLeftMargin(self,renderer):
-		renderer.write('<p><a href="add">add row</a>')
-		renderer.write('<br><a href="delete">delete row</a></p>')
-		self._area._db.asLeftMargin(renderer)
+    def __getitem__(self,i):
+        col = self._clist.visibleColumns[i]
+        # 20050222 return self.makeDataCell(i,col)
+        return col.getCellValue(self)
+        
+##  def __getitem__(self,i):
+##      col = self._clist.visibleColumns[i]
+##      return col.getCellValue(self)
+        
+    def __setitem__(self,i,value):
+        col = self._clist.visibleColumns[i]
+        assert self._pseudo or self._locked or self._new
+        col.rowAttr.setCellValue(self,value)
+        self.__dict__["_dirty"] = True
+        
+    def __iter__(self):
+        return RowIterator(self,self._clist.visibleColumns)
+    
+    def __len__(self):
+        return len(self._clist.visibleColumns)
+    
+    def getCells(self,columnNames=None):
+        return RowIterator(self,self._clist.getColumns(columnNames))
+        
+    def update(self,**kw):
+        self.lock()
+        for (k,v) in kw.items():
+            setattr(self,k,v)
+        self.validate()
+        self.unlock()
 
 
-	def asPreTitle(self,renderer):
-		pass
-	
-	def asFooter(self,renderer):
-		pass
+    def canWrite(self):
+        return True
+    
+    def validate(self):
+        pass
 
-	def asFormCell(self,renderer):
-		self.asParagraph(renderer)
+    def lock(self):
+        pass
+    
+    def unlock(self):
+        pass
+    
+    
+    def isLocked(self):
+        return True
 
-	def asLabel(self,renderer):
-		renderer.renderLink(
-			url=renderer.uriToRow(self),
-			label=self.getLabel())
-		
-	def asPage(self,renderer):
-		renderer.writeForm(self.getAttrValues())
+    def isDirty(self):
+        return self.__dict__['_dirty']
 
-	def renderDetails(self,renderer):
-		pass
-## 		wr = renderer.write
-## 		if False:
-## 			wr("<ul>")
-## 			for (name,dtl) in self._area._table._details.items():
-## 				rpt = dtl.query(self)
-## 				wr('<li>')
-## 				rpt.asParagraph(renderer)
-## 				wr("</li>")
-
-## 			wr("</ul>")
-		
-			
-	def asParagraph(self,renderer):
-		return self.asLabel(renderer)
-## 		wr = renderer.write
-## 		for name,attr in self._area._table._rowAttrs.items():
-## 			if not name in ('body'):
-## 				value = getattr(self,name)
-## 				if value is not None:
-## 					wr('<b>%s:</b> ' % name)
-## 					type = getattr(attr,'type',None)
-## 					renderer.renderValue(value,type)
-## 					wr(" ")
+    def makeComplete(self):
+        pass
 
 
-	
+class StoredDataRow(DataRow):
+    # base class for Table.Row
+    
+    def __init__(self,ds,values,new,pseudo=False):
+        """
+        """
+        assert type(new) == types.BooleanType
+        DataRow.__init__(self,ds._table,ds._clist,values,dirty=new)
+
+        self.__dict__["_ds"] = ds
+        self.__dict__["_new"] = new
+        self.__dict__["_pseudo"] = pseudo
+        self.__dict__["_complete"] = False #ds.isComplete()
+        self.__dict__["_locked"] = False
+        self.__dict__["_isCompleting"] = False
+
+    def __eq__(self, other):
+        if (other is None) or (other is self._ds.ANY_VALUE):
+            return False
+        return self.getRowId() == other.getRowId()
+        #return tuple(self.getRowId()) == tuple(other.getRowId())
+        
+    def __ne__(self, other):
+        if (other is None) or (other is self._ds.ANY_VALUE):
+            return True
+        return self.getRowId() != other.getRowId()
+        #return tuple(self.getRowId()) == tuple(other.getRowId())
+        
+    def getRenderer(self,rsc,req,writer=None):
+        return self._ds._table._rowRenderer(rsc,req,self,writer)
+
+##  def writeParagraph(self,parentResponder):
+##      rsp = self.getRenderer(parentResponder.resource,
+##                                    parentResponder.request,
+##                                    parentResponder._writer)
+##      #assert rsp.request is self.request
+##      rsp.writeParagraph()
+    
+    def getSession(self):
+        return self._ds._session
+
+    def getDatabase(self):
+        return self._ds.getDatabase()
+
+    def getTableName(self):
+        return self._ds.getTableName()
+    
+##     def getContext(self):
+##         return self._ds.getContext()
+    
+    def printRow(self,doc):
+        rpt = doc.report(label=self.getLabel())
+        for c in self:
+            rpt.addColumn(lambda cell: cell.col.getLabel(),
+                          width=20,
+                          label="fieldName")
+            rpt.addColumn(lambda cell: str(cell),
+                          width=50,
+                          label="value")
+        rpt.execute(self)
+    
+    def isComplete(self):
+        return self._complete
+    
+    def isLocked(self):
+        return (self._locked or self._new or self._pseudo)
+
+    def isNew(self):
+        return self._new
+    
+    def getRowId(self):
+        id = [None] * len(self._clist.leadTable.getPrimaryAtoms())
+        for col in self._clist._pkColumns:
+            col.row2atoms(self,id)
+##      if self._ds._table.getTableName() == "CITIES":
+##          print [(col.name,col.rowAttr) for col in self._ds._clist._pkColumns]
+##          print [atom.name for atom in self._ds._clist._atoms]
+##          print id
+        return id
+        #return self._ds.getRowId(self._values)
+        
+    def getLabel(self):
+        return str(tuple(self.getRowId()))
+        #return self._ds._table.getRowLabel(self)
+        
+    def getFieldValue(self,name):
+        try:
+            return self._values[name]
+        except KeyError:
+            if self._isCompleting:
+                return None
+            self.makeComplete()
+            try:
+                return self._values[name]
+            except KeyError:
+                raise NoSuchField,name
 
 
-class WritableRow(BaseRow):
+    def _readFromStore(self):
+        """
+        make this row complete using a single database lookup
+        """
+        assert not self._pseudo,\
+                 "%s : readFromStore() called for a pseudo row" % repr(self)
+        assert not self._complete,\
+                 "%s : readFromStore() called a second time" % repr(self)
+        assert not self._isCompleting
+        
+        # but what if atoms2row() causes __getattr__ to be called
+        # again? maybe a switch _isCompleting to check this.
+        self.__dict__["_isCompleting"] = True
+        
+        # print "makeComplete() : %s" % repr(self)
+        id = self.getRowId()
+        #leadRow = self._ds._store._peekQuery.peek(id)
+        #d = self._values
+        atomicRow = self._ds._connection.executePeek(
+            self._ds._store._peekQuery,id,self._ds._session)
+        if self._new:
+            if atomicRow is not None:
+                raise DataVeto("Cannot create another %s row %s" \
+                                    % (self.__class__.__name__, id))
+            #for a in self._ds._store._peekQuery.getAtoms():
+            for attrname in self._ds._table.getAttrList():
+                self._values.setdefault(attrname,None)
+        else:
+            if atomicRow is None:
+                #self.__dict__['_new'] = True
+                raise DataVeto("Cannot find %s row %s" \
+                                    % (self._ds._table.getTableName(), id))
+            self._ds._store._peekQuery.atoms2row(atomicRow,self)
+            #for a in self._ds._store._peekQuery.getAtoms():
+            #   self._values.setdefault(a.name,atomicRow[a.index])
+            #if self._dirty:
+            #   raise "cannot yet call readFromStore() for a dirty row"
+                
+        #self.__dict__['_values'] = atomicRow
+        
+        """maybe a third argument `fillMode` to atoms2dict() which
+        indicates whether existing (known) values should be
+        overwritten, checked for equality or ignored...  """
 
-	def __init__(self,
-					 rowId,
-					 knownValues=None,
-					 #complete=False,
-					 new=False):
-		BaseRow.__init__(self,rowId,knownValues,new)
-		#BaseRow.__init__(self,rowId,knownValues,complete,new)
-		assert type(new) == types.BooleanType
-		self.__dict__["_dirty"] = new
-		self.__dict__["_lockedBy"] = None
+        self.__dict__['_complete'] = True
+        self.__dict__["_isCompleting"] = False
+
+    def checkIntegrity(self):
+        #if not self._complete:
+        self.makeComplete()
+        for name,attr in self._ds._table._rowAttrs.items():
+            msg = attr.checkIntegrity(self)
+            if msg is not None:
+                return msg
+        
+##  def getAtomicValue(self,i):
+##      return self._values[i]
+
+##  def atomicValues(self):
+##      return self._values
+        
+
+    def getAttrValues(self,columnNames=None):
+        l = []
+        if columnNames is None:
+            q = self._area._query()
+            for col in q.getColumns():
+                attr = col.rowAttr 
+                l.append( (attr,attr.getValueFromRow(self)) )
+        else:
+            for name in columnNames.split():
+                col = q.getColumn(name)
+                attr = col.rowAttr
+                #attr = self._area._table.__getattr__(name) 
+                l.append( (attr,attr.getValueFromRow(self)) )
+        return tuple(l)
+        
+    
+    def __repr__(self):
+        if self._isCompleting:
+            return "Uncomplete " + repr(self._ds) + "Row(" \
+                     + str(self._values)+")"
+        return self._ds._table.getTableName() + "Row(" + str(self._values)+")"
+        #return repr(self._ds) + "Row" + repr(tuple(self.getRowId()))
+
+    def __str__(self):
+        return str(self.getLabel())
 
 
-	def setDirty(self,dirty=True):
-		self.__dict__["_dirty"] = dirty
-
-	def isDirty(self):
-		return self.__dict__['_dirty']
-	
-	def registerLock(self,ds):
-		if self._lockedBy is None:
-			self.__dict__["_lockedBy"] = ds
-			return True
-		
-
-	def unregisterLock(self,ds):
-		if self._lockedBy is not ds:
-			raise "this row was not locked by this ds"
-		self.__dict__["_lockedBy"] = None
-		# self._area.unlockRow(self)
-		
 
 
-	def defineMenus(self,win):
-		#self.initQuery()
-		mb = win.addMenuBar("row","&Row menu")
-		mnu = mb.addMenu("&Row")
-		mnu.addItem("&Edit",self.mnu_toggleEdit,win)
-		# mnu.addItem("&Delete",self.mnu_deleteRow)
-		# w.addGrid(self)
-		# return mb
-		mnu = mb.addMenu("&File")
-		mnu.addItem("E&xit",win.close)
 
-	def mnu_toggleEdit(self,win):
-		pass
+    def lock(self):
+        assert not self._new, "Cannot lock a new row"
+        assert not self._locked, "already locked"
+        self.__dict__["_locked"] = True
+        self._ds.lockRow(self)
+            
 
-	def vetoDelete(self):
-		for name,attr in self._area._table._rowAttrs.items():
-			msg = attr.vetoDeleteIn(self)
-			if msg:
-				return msg
+    def unlock(self):
+        #print "unlock()", self
+        assert self._locked, "this row was not locked"
+        
+            
+##          msg = self.validate()
+##          if msg:
+##              raise DataVeto(repr(self) + ': ' + msg)
+            
+        #assert not None in self.getRowId(), "incomplete pk"
+        self.__dict__["_locked"] = False
+        self._ds.unlockRow(self)
+        if self._dirty:
+            self.writeToStore()
+        
 
+    def writeToStore(self):
+        #print "writeToStore()", self
+        try:
+            self.validate()
+        except DataVeto,e:
+            raise DataVeto(repr(self) + ': ' + str(e))
+        if self._new:
+            self._ds._connection.executeInsert(self)
+            self.__dict__["_new"] = False
+        else:
+            if not self._dirty: return
+            self._ds._connection.executeUpdate(self)
+        self.__dict__["_dirty"] = False
+        
+
+    def delete(self):        
+        self._ds._connection.executeDelete(self)
+
+    def makeComplete(self):
+        if self._pseudo or self._complete or self._isCompleting:
+            return False
+        self._readFromStore()
+        return True
+
+    def exists(self):
+        if not self._complete:
+            self._readFromStore()
+        return not self.isNew()
+
+    
+    
+
+
+    def defineMenus(self,win):
+        #self.initQuery()
+        mb = win.addMenuBar("row","&Row menu")
+        mnu = mb.addMenu("&Row")
+        mnu.addItem("&Edit",self.mnu_toggleEdit,win)
+        # mnu.addItem("&Delete",self.mnu_deleteRow)
+        # w.addGrid(self)
+        # return mb
+        mnu = mb.addMenu("&File")
+        mnu.addItem("E&xit",win.close)
+
+    def mnu_toggleEdit(self,win):
+        pass
+
+    def vetoDelete(self):
+        for name,attr in self._ds._table._rowAttrs.items():
+            msg = attr.vetoDeleteIn(self)
+            if msg:
+                return msg
+
+
+class RowIterator:
+
+    def __init__(self,row,columns):
+        self.row = row
+        self.colIndex = 0
+        self._columns = columns
+        
+    def __iter__(self):
+        return self
+    
+    def next(self):
+        if self.colIndex == len(self._columns):
+            raise StopIteration
+        col = self._columns[self.colIndex]
+        self.colIndex += 1
+        return self.row.makeDataCell(self.colIndex,col) 
+
+
+class DataCell:
+    def __init__(self,row,colIndex,col):
+        #self.colIndex = colIndex
+        self.row = row
+        self.col = col
+
+    def getValue(self):
+        return self.col.getCellValue(self.row)
+        
+##     def __str__(self):
+##         return str(self.col.getCellValue(self.row))
+##         #~ v = self.col.getCellValue(self.row)
+##         #~ if v is None:
+##             #~ return "None"
+##         #~ return self.col.rowAttr.format(v)
+    
+##     def format(self):
+##         v = self.col.getCellValue(self.row)
+##         if v is None:
+##             return ""
+##         return self.col.rowAttr.format(v)
+
+    def canWrite(self):
+        if self.row.canWrite():
+            return self.col.canWrite(self.row)
+        return False
+    
+    def __repr__(self):
+        return repr(self.col.getCellValue(self.row))
+        #~ v = self.col.getCellValue(self.row)
+        #~ if v is None:
+            #~ return "None"
+        #~ return self.col.rowAttr.format(v)
+    
+    def __str__(self):
+        v = self.col.getCellValue(self.row)
+        if v is None:
+            return ""
+        return self.col.rowAttr.format(v)
+    
+    #def parseAndSet(self,s):
+    def setValueFromString(self,s):
+        self.col.rowAttr.setValueFromString(self.row,s)
+        
+    def setValue(self,value):
+        self.col.setCellValue(self.row,value)
 

@@ -1,3 +1,5 @@
+raise "no longer used"
+
 #----------------------------------------------------------------------
 # ID:        $Id: widgets.py,v 1.5 2004/07/31 07:13:46 lsaffre Exp $
 # Copyright: (c) 2003-2004 Luc Saffre
@@ -8,12 +10,12 @@
 
 from lino.misc.descr import Describable
 from lino.misc.etc import issequence
-from rowattrs import RowAttribute, FieldContainer, Match
-from query import BaseColumnList
-from table import SchemaComponent
-from datasource import DataRow
+from lino.adamo.rowattrs import RowAttribute, FieldContainer, Match
+from lino.adamo.query import BaseColumnList
+from lino.adamo.table import SchemaComponent
+from lino.adamo.row import DataRow
 #from widgets import WindowComponent, Menu, Command
-from widgets import Menu, Command
+from lino.adamo.widgets import Menu, Command
 
 
 class Form(DataRow,

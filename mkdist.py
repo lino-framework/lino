@@ -175,7 +175,7 @@ if 'timtools' in args:
     
     console_targets = ['pds2pdf','prn2pdf',
                        'sync', 'openmail',
-                       'prnprint', 'oogen']
+                       'prnprint', 'pds2oo']
 
     name = "timtools"
 

@@ -23,9 +23,15 @@ from lino.ui import console
 class ParserError(Exception):
     pass
 
+class PrinterNotReady(Exception):
+    pass
+
 
 class Document:
-    def __init__(self,pageSize=(0,0),margin=0,width=None):
+    def __init__(self,
+                 pageSize=(0,0),
+                 margin=0,
+                 width=None):
         self.commands = {
             chr(12) : self.formFeed,
             chr(27)+"l" : self.parse_l,
@@ -44,7 +50,7 @@ class Document:
         self.page = 0
 
         self.textobject = None
-        
+
     def getWidth(self):
         "characters per page"
         return self.width
@@ -91,6 +97,9 @@ class Document:
         self.onEndPage()
         self.textobject = None
 
+    def beginDoc(self):
+        pass
+    
     def endDoc(self):
         if not self.textobject is None:
             self.endPage()

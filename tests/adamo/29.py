@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -28,7 +28,7 @@
 from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
-from lino.adamo import DataVeto, InvalidRequestError
+from lino.adamo.exceptions import DataVeto, InvalidRequestError
 
 class Case(TestCase):
 

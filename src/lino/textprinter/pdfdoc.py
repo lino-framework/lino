@@ -56,11 +56,11 @@ class Status:
 
 		
 class PdfDocument(Document):
-    def __init__(self,filename,coding=None, cpi=12 ):
+
+    def __init__(self,filename,coding=None, cpi=12):
         Document.__init__(self,
                           pageSize=A4,
                           margin=5*mm)
-        
         (root,ext) = os.path.splitext(filename)
         if ext.lower() != ".pdf":
             filename += ".pdf"

@@ -21,8 +21,8 @@ from lino.textprinter.document import Document
 
 class PlainDocument(Document):
     def __init__(self,writer,width=72,frameStyle="+-+|+-+|"):
-        Document.__init__(self,width=width)
         self.writer = writer
+        Document.__init__(self,width=width)
         assert len(frameStyle) == 8
         self.topLeft = frameStyle[0]
         self.topBorder = frameStyle[1]

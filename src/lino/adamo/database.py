@@ -141,14 +141,10 @@ class Database(Context,Describable):
 ##      def connect(self,conn):
 ##          self.__dict__['conn'] = conn
 
-    def commit(self):   
-        #self.schema.commit(self)
-        #assert conn is not None
+    def commit(self):
         for store in self.getStoresById():
-            #if store._table.getTableName() == "NATIONS":
-            #   print "commit"+str(store._table.getTableName())
-            store.beforeCommit()
-        
+            store.commit()
+            
     #def flush(self):
     #   for store in self._stores:
     #       store.flush()
@@ -157,7 +153,7 @@ class Database(Context,Describable):
     #def disconnect(self):
 
     def close(self):
-        console.progress("Database shutdown "+ str(self))
+        console.debug("Closing database "+ str(self))
         
 ##      for sess in self._sessions:
 ##          #sess.beforeShutdown()

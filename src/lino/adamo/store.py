@@ -40,7 +40,6 @@ class Store:
         self._db = db
         self._table = table
         self._schema = db.schema # shortcut
-        self._lockedRows = []
         self._status = self.SST_MUSTCHECK
         
         self._datasources = []
@@ -128,37 +127,18 @@ class Store:
     def addToCache(self,row):
         pass
 
-    def beforeCommit(self):
-        #assert len(self._lockedRows) == 0
-        for row in self._lockedRows:
-            row.writeToStore()
-        
+    def commit(self):
+        for ds in self._datasources:
+            ds.commit()
+            
     def beforeShutdown(self):
-        assert len(self._lockedRows) == 0
-##      for row in self._dirtyRows.values():
-##          row.commit()
-##      self._dirtyRows = {}
-    
+        for ds in self._datasources:
+            ds.close()
 
-    def lockRow(self,row):
-        # todo: use getLock() / releaseLock()
-        self.removeFromCache(row)
-        self._lockedRows.append(row)
+
+    def removeDatasource(self,ds):
+        self._datasources.remove(ds)
         
-    def unlockRow(self,row):
-        self.addToCache(row)
-        self._lockedRows.remove(row)
-        self.touch()
-        #row.writeToStore()
-        #if row.isDirty():
-        #   key = tuple(row.getRowId())
-        #   self._dirtyRows[key] = row
-
-    def unlockall(self):
-        for row in self._lockedRows:
-            row.unlock()
-        assert len(self._lockedRows) == 0
-    
 
     def setAutoRowId(self,row):
         "get auto-incremented row id"

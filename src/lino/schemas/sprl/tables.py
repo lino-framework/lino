@@ -29,8 +29,8 @@ from addrbook import Cities
 from addrbook import Users
 from addrbook import Currencies
 
-from addrbook import LoginForm
-from addrbook import MainForm
+#from addrbook import LoginForm
+#from addrbook import MainForm
 
 from web import Pages
 

@@ -28,16 +28,14 @@ import types
 
 from lino.misc.compat import *
 from lino.misc.descr import Describable
+from lino.misc.etc import issequence
 
 #from widgets import Command
 from lino.adamo import datatypes 
 from lino.adamo.exceptions import StartupDelay
-from rowattrs import RowAttribute,\
+from lino.adamo.rowattrs import RowAttribute,\
      Field, BabelField, Pointer, Detail, FieldContainer
-#from query import Query
-
-from lino.misc.etc import issequence
-from datasource import StoredDataRow
+from lino.adamo.row import StoredDataRow
 
 
 reservedWords = """\

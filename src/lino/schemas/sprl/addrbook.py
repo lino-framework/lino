@@ -121,20 +121,20 @@ class Persons(Table): #(Contact,Address):
 ##                                            )
         
             
-class MainForm(Form):
-    name = "main"
-    label="User menu"
-    def init(self):
-        sess = self.getSession()
-        mnu = self.addMenu("&Master")
-        mnu.addCommand(
-            "&Partners",
-            sess.showReport,
-            sess.tables.PARTNERS.report(columnNames="name firstName id"))
-        mnu.addCommand("&Organisations",sess.showReport,sess.tables.ORGS)
+## class MainForm(Form):
+##     name = "main"
+##     label="User menu"
+##     def init(self):
+##         sess = self.getSession()
+##         mnu = self.addMenu("&Master")
+##         mnu.addCommand(
+##             "&Partners",
+##             sess.showReport,
+##             sess.tables.PARTNERS.report(columnNames="name firstName id"))
+##         mnu.addCommand("&Organisations",sess.showReport,sess.tables.ORGS)
         
-        mnu = self.addMenu("&System")
-        mnu.addCommand("&Logout",sess.logout)
+##         mnu = self.addMenu("&System")
+##         mnu.addCommand("&Logout",sess.logout)
         
             
 
@@ -181,34 +181,34 @@ class Users(Persons):
 ##          sess.info("Hello, "+user.getLabel())
 ##          return True
             
-class LoginForm(Form):
-    label="Login"
-    name = "login"
-    def init(self):
-        sess = self.getSession()
-        self.addField("uid",sess.tables.USERS.field("id"))
-        self.addField("password",sess.tables.USERS.field("password"))
-        self.setButtonNames("ok help")
+## class LoginForm(Form):
+##     label="Login"
+##     name = "login"
+##     def init(self):
+##         sess = self.getSession()
+##         self.addField("uid",sess.tables.USERS.field("id"))
+##         self.addField("password",sess.tables.USERS.field("password"))
+##         self.setButtonNames("ok help")
 
-    def validate_uid(self,value):
-        if value is not None:
-            if "!" in value:
-                raise DataVeto(value + " : invalid username")
+##     def validate_uid(self,value):
+##         if value is not None:
+##             if "!" in value:
+##                 raise DataVeto(value + " : invalid username")
 
-    def ok(self):
-        "Log in with the supplied username and password."
-        uid = self.uid
-        pwd = self.password
-        sess = self.getSession()
-        sess.debug("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
+##     def ok(self):
+##         "Log in with the supplied username and password."
+##         uid = self.uid
+##         pwd = self.password
+##         sess = self.getSession()
+##         sess.debug("uid=%s,pwd=%s" % (repr(uid),repr(pwd)))
 
-        user = sess.tables.USERS.peek(uid)
-        if user is None:
-            raise DataVeto("%s : no such user" % uid)
-        if user.password != pwd:
-            raise DataVeto("invalid password for "+user.getLabel())
-        sess.login(user)
-        sess.info("Hello, "+user.getLabel())
+##         user = sess.tables.USERS.peek(uid)
+##         if user is None:
+##             raise DataVeto("%s : no such user" % uid)
+##         if user.password != pwd:
+##             raise DataVeto("invalid password for "+user.getLabel())
+##         sess.login(user)
+##         sess.info("Hello, "+user.getLabel())
             
 
 class Partners(Contacts,Addresses):

@@ -65,7 +65,7 @@ class Session(Context):
         for m in ('warning', 'confirm','decide', 'form'):
             setattr(self,m,getattr(ui,m))
             
-        for m in ( 'debug','info', 'progress',
+        for m in ( 'debug','message', 'vmsg', 'progress',
                    'error','critical',
                    'report','textprinter',
                    'startDump','stopDump'):
@@ -147,7 +147,7 @@ class Session(Context):
         return self.db.commit()
 
     def shutdown(self):
-        return self.center.shutdown() # self.db.close()
+        return self.center.shutdown() 
 
     def setBabelLangs(self,langs):
         

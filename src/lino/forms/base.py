@@ -31,6 +31,7 @@ from lino.misc.attrdict import AttrDict
 from lino.adamo.exceptions import InvalidRequestError
 from lino.ui import console
 from lino.forms.application import Application
+from lino.misc import jobs
 
 
 
@@ -49,6 +50,9 @@ class Component(Describable):
     def refresh(self):
         pass
     def store(self):
+        pass
+    
+    def beforeClose(self):
         pass
     
         
@@ -77,7 +81,7 @@ class Button(Component):
         try:
             self._action(*(self._args),**(self._kw))
         except InvalidRequestError,e:
-            frm.setMessage(str(e))
+            frm.message(str(e))
         except Exception,e:
             frm.showException(e,"clicked %s in %s" % (
                 str(self),frm.getLabel()))
@@ -221,6 +225,7 @@ class MenuBar(Component):
 class Navigator:
     def __init__(self,ds):
         self.ds = ds
+        assert len(ds._lockedRows) == 0
         
     def setupMenu(self):
         frm = self.getForm()
@@ -240,6 +245,18 @@ class Navigator:
                   accel="INS")
         self.ds.getLeadTable().setupMenu(self)
 
+        def f():
+            l = self.getSelectedRows()
+            if len(l) == 1:
+                s = "Row %d of %d" % (l[0],len(self.ds))
+            else:
+                s = "%d rows" % len(self.ds)
+                
+            if len(self.ds._lockedRows) > 0:
+                s += " (%d locked)" % len(self.ds._lockedRows)
+            frm.setStatusText(s)
+        frm.addIdleEvent(f)
+
     def deleteSelectedRows(self):
         if not self.getForm().confirm(
             "Delete %d rows. Are you sure?" % \
@@ -251,7 +268,7 @@ class Navigator:
 
     def insertRow(self):
         row = self.ds.appendRow()
-        row.unlock()
+        self.refresh()
     
     def printSelectedRows(self):
         #print "printSelectedRows()", self.getSelectedRows()
@@ -272,8 +289,14 @@ class Navigator:
         l = self.getSelectedRows()
         if len(l) != 1:
             raise InvalidRequestError("more than one row selected!")
-        return self.ds[l[0]]
+        i = l[0]
+        if i == len(self.ds):
+            raise InvalidRequestError(\
+                "you cannot select the after-last row!")
+        return self.ds[i]
         
+    def beforeClose(self):
+        self.ds.unlockAll()
 
 
 class DataGrid(Navigator,Component):    
@@ -402,6 +425,10 @@ class Container(Component):
         for c in self._components:
             c.store()
         
+    def beforeClose(self):
+        for c in self._components:
+            c.beforeClose()
+
 
 class Panel(Container):
     def __init__(self,owner,direction,name=None,*args,**kw):
@@ -415,7 +442,7 @@ class Panel(Container):
         self.direction = direction
 
 
-class GuiProgressBar(console.ProgressBar):
+class GuiProgressBar(jobs.ProgressBar):
     
     def __init__(self,gui,label=None,**kw):
         if label is None:
@@ -526,7 +553,8 @@ class Form(Describable,GUI):
         self.menuBar = None
         self.lastEvent = None
         self.mainComp = toolkit.panelFactory(self,Container.VERTICAL)
-        self._menuControllers = []
+        self._menuController = None
+        self._idleEvents = []
         for m in ('addLabel',
                   'addEntry', 'addDataEntry',
                   'addDataGrid','addNavigator',
@@ -541,11 +569,17 @@ class Form(Describable,GUI):
         return self
 
     def setMenuController(self,c):
-        self._menuControllers.append(c)
+        if self._menuController is None:
+            self._menuController = c
+        else:
+            console.debug("ignored menuController %s" % str(c))
+
+    def addIdleEvent(self,f):
+        self._idleEvents.append(f)
 
     def setupMenu(self):
-        for c in self._menuControllers:
-            c.setupMenu()
+        if self._menuController is not None:
+            self._menuController.setupMenu()
     
     def form(self,*args,**kw):
         "create a form with this as parent"
@@ -558,8 +592,16 @@ class Form(Describable,GUI):
 
     def show(self,modal=False):
         raise NotImplementedError
+    
+    def onIdle(self):
+        for e in self._idleEvents:
+            e()
+    
+    def onClose(self):
+        self.mainComp.beforeClose()
+        
     def close(self):
-        raise NotImplementedError
+        self.onClose()
     
     
             
@@ -587,7 +629,7 @@ class Form(Describable,GUI):
     def cancel(self):
         self.close()
 
-    def setMessage(self,msg):
+    def message(self,msg):
         print msg
 
 ##     def info(self,msg):

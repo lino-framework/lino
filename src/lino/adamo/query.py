@@ -583,6 +583,10 @@ class DataColumn:
         self.rowAttr.setCellValue(row,value)
         self.rowAttr.afterSetAttr(row)
 
+    def setValueFromString(self,row,s):
+        self.rowAttr.setValueFromString(row,s)
+        self.rowAttr.afterSetAttr(row)
+        
     def getFltAtoms(self,context):
         return self.rowAttr.getFltAtoms(self._atoms,context)
         
