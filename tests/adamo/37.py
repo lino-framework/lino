@@ -1,3 +1,4 @@
+# coding: latin1
 ## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
@@ -16,18 +17,19 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"Does the default demo database startup()"
-
+"""
+do the German country names get installed with big=True?
+"""
 from lino.misc.tsttools import TestCase, main
-
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
 
 class Case(TestCase):
+    "Does the default demo database startup()"
 
     def setUp(self):
-        self.sess = demo.beginSession()
+        self.sess = demo.startup(langs="en de", big=True)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -35,23 +37,19 @@ class Case(TestCase):
 
     def test01(self):
         NATIONS = self.sess.query(Nations)
+        
+        n = NATIONS.peek('al')
+        self.assertEqual(n.name, 'Albania')
+        self.assertEqual(n.area, 28748)
+        self.sess.setBabelLangs('de')
+        self.assertEqual(n.name, 'Albanien')
+        
         n = NATIONS.peek('ee')
+        self.sess.setBabelLangs('de')
+        self.assertEqual(n.name, 'Estland')
+        self.sess.setBabelLangs('en')
         self.assertEqual(n.name, 'Estonia')
         
-        try:
-            NATIONS.peek(['ee'])
-        except TypeError,e:
-            pass
-        else:
-            self.fail('Failed to raise TypeError')
-            
-        try:
-            NATIONS.peek(1)
-        except TypeError,e:
-            pass
-        else:
-            self.fail('Failed to raise TypeError')
-            
 
 if __name__ == '__main__':
     main()

@@ -316,7 +316,7 @@ class Nations(BabelTable):
         
         self.addField('id',STRING.child(width=2))
         BabelTable.init(self)
-        self.addField('area',INT)
+        self.addField('area',INT.child(width=8))
         self.addField('population',INT)
         self.addField('curr',STRING)
         self.addField('isocode',STRING)
@@ -339,6 +339,10 @@ class Nations(BabelTable):
         if sess.schema.options.big:
             from lino.schemas.sprl.data import nations
             nations.populate(sess)
+            if sess.supportsLang("de"):
+                from lino.schemas.sprl.data import nations_de
+                nations_de.populate(sess)
+            
         else:
             q = sess.query(Nations,'id name')
             q.setBabelLangs('en')

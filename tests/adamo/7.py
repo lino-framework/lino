@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -25,12 +25,12 @@ In the following test, p[2] returned the same row as the previous p[1]
 
 
 """
-import unittest
+from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo #.sprl import Schema
 from lino.schemas.sprl.tables import *
 from lino.adamo import center
 
-class Case(unittest.TestCase):
+class Case(TestCase):
 
     def test01(self):
         "Accessing data that has not been inserted using adamo"
@@ -61,7 +61,8 @@ class Case(unittest.TestCase):
         self.failIf(luc.isDirty())
         self.failIf(ly.isDirty())
         
-        db.close()
+        #db.close()
+        sess.shutdown()
 
     def test02(self):
         d = {}
@@ -76,5 +77,5 @@ class Case(unittest.TestCase):
         self.assertEqual(d[id2],'Ly')
 
 if __name__ == '__main__':
-    unittest.main()
+    main()
 

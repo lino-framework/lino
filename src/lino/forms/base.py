@@ -112,7 +112,6 @@ class MenuBar(Component):
         
 
 class Container:
-    # either a Panel or a Form
     
     VERTICAL = 1
     HORIZONTAL = 2
@@ -200,7 +199,7 @@ class TableEditor(Component):
         self.ds = ds
 
 
-class Navigator(Component):    
+class Navigator(Component):
     def __init__(self,owner,ds,afterSkip,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
         self.ds = ds

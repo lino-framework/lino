@@ -166,13 +166,13 @@ class Database(Context,Describable):
         for store in self.getStoresById():
             store.beforeShutdown()
 
-        self._stores = []
+        self._stores = {}
             
         #center.removeDatabase(self)
     
-    def restart(self):
-        self.close()
-        self.open()
+##     def restart(self):
+##         self.close()
+##         self.open()
 
                     
 ##         msgs = sess.checkIntegrity()

@@ -159,10 +159,10 @@ class Schema(Describable):
                     table.init2()
                     somesuccess = True
                 except StartupDelay, e:
-                    print "StartupDelay:", e # self, self._primaryAtoms
+                    console.debug("StartupDelay:"+repr(e))
                     tryagain.append(table)
             if not somesuccess:
-                raise "initialize() failed"
+                raise "Schema.initialize() failed"
             todo = tryagain
 
         # loop 2bis

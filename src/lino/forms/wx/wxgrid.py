@@ -238,12 +238,12 @@ class TableEditorGrid(wx.grid.Grid):
         menu.Append(deleteID, "Delete Row(s)")
 
         def append(event, self=self, row=row):
-            self._table.AppendRow(row)
+            self.table.AppendRow(row)
             self.Reset()
 
         def delete(event, self=self, row=row):
             rows = self.GetSelectedRows()
-            self._table.DeleteRows(rows)
+            self.table.DeleteRows(rows)
             self.Reset()
 
         EVT_MENU(self, appendID, append)

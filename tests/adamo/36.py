@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -40,9 +40,6 @@ from unittest import TestCase, main
 import sqlite
 
 
-SQLITE_BUG_FIXED = True
-
-
 class Case(TestCase):
 
 
@@ -72,8 +69,8 @@ class Case(TestCase):
         csr.execute("""SELECT id, name, curr from Nations
         WHERE id = 'foo'
         """)
-        if SQLITE_BUG_FIXED:
-            self.assertEqual(csr.rowcount,0)
+        # this fails with pysqlite
+        self.assertEqual(csr.rowcount,0)
         row = csr.fetchone()
         self.assertEqual(row,None)
 

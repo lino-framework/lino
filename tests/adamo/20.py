@@ -62,14 +62,11 @@ class Case(TestCase):
         q.executeReport(columnWidths="6 10 20")
         s = sess.stopDump()
         
-        #s = ""
-##         for row in q:
-##             s += "\t".join([str(cell.getValue()) for cell in row]) \
-##                  + "\n"
-        
         #print s
         
         self.assertEqual(s,"""\
+Partners
+========
 title |firstName |name                
 ------+----------+--------------------
 Herrn |Andreas   |Arens               

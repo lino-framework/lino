@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -48,8 +48,6 @@ class Store:
         else:
             self._lastId = {}
 
-        #self._queries = {}
-        #self._peekQuery = self.defineQuery(None)
         self._peekQuery = DataColumnList(self,db)
         self._table.onConnect(self)
 

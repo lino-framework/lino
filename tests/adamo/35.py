@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -46,6 +46,7 @@ class Case(TestCase):
         schema.initialize()
         
         conn = Connection(schema=schema)
+        
         stddb = schema.addDatabase(langs="en de fr et",
                                    name="std",
                                    label="shared data")
@@ -67,12 +68,27 @@ class Case(TestCase):
         sess = center.startup()
         
         sess.use(db1)
-        q = sess.query(Nations,"id name area")
+        q = sess.query(Nations,"id name area",pageLen=10,
+                       search="%be%")
+        self.assertEqual(q.getLangs(),"de")
+        self.assertEqual(q.getDatabase().getLangs(),"en de fr et")
         sess.startDump()
         q.executeReport()
         s = sess.stopDump()
-        print s
+        
         self.assertEqual(s,"""\
+Nations
+=======
+id|name                                              |area    
+--+--------------------------------------------------+--------
+be|Belgium                                           |30510   
+bj|Benin                                             |112620  
+bm|Bermuda                                           |53      
+by|Belarus                                           |207600  
+bz|Belize                                            |22966   
+ci|Ivory Coast (Cote D'Ivoire)                       |        
+lr|Liberia                                           |111370  
+uz|Uzbekistan                                        |447400  
 """)        
 
         

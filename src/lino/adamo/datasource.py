@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -32,7 +32,9 @@ class SimpleDatasource:
     def __init__(self, session, store, clist=None, **kw):
         self.rowcount = None
         self._session = session
-        self.setBabelLangs = session.setBabelLangs
+        for m in ('setBabelLangs','getLangs'):
+            setattr(self,m,getattr(session,m))
+        
         self._store = store
         if clist is None:
             clist = store._peekQuery
@@ -40,19 +42,26 @@ class SimpleDatasource:
         self._clist = clist
 
 
-        self._db = store._db # shortcut
+        # self._db = store._db # shortcut
         self._table = store._table # shortcut
-        self._schema = self._db.schema # shortcut
+        self._schema = store._db.schema # shortcut
         self._connection = store._connection # shortcut
 
         store.registerDatasource(self)
         
-        for name in ('startDump','stopDump'):
-            setattr(self,name,getattr(store._connection,name))
+        for m in ('startDump','stopDump'):
+            setattr(self,m,getattr(store._connection,m))
 
         self._samples = {}
         
         self.configure(**kw)
+
+    def getDatabase(self):
+        return self._store._db
+
+##     def getContext(self):
+##         #return self._clist._context
+##         return self._session
 
     def mtime(self):
         return self._store.mtime()
@@ -101,9 +110,13 @@ class SimpleDatasource:
         self._label = label
         if columnNames is not None:
             #self._clist = self.createColumnList(columnNames)
-            self._clist = DataColumnList(self._store,
-                                         self._session,
-                                         columnNames)
+            
+            # 20050119 : new DataColumnList's must have the database,
+            # (not the session) as context! see tests/adamo/35.py
+            self._clist = DataColumnList(
+                self._store,
+                self.getDatabase(), 
+                columnNames)
         self.setOrderBy(orderBy)
         self.setFilterExpressions(sqlFilters,search)
         
@@ -402,8 +415,9 @@ class SimpleDatasource:
         atomicRow = self._clist.makeAtomicRow() 
         for (name,value) in self._samples.items():
             col = self._clist.getColumn(name)
-            col.value2atoms(value,atomicRow,self._db)
-            #col.value2atoms(value,atomicRow,self._session.getContext())
+            col.value2atoms(value,atomicRow,self.getDatabase())
+            # 20050110
+            # col.value2atoms(value,atomicRow,self.getContext())
             for atom in col.getAtoms():
                 l.append((atom,atomicRow[atom.index]))
         return l
@@ -548,7 +562,7 @@ class SimpleDatasource:
         l = []
         i = 0
         for col in self._clist._pkColumns:
-            l += col.rowAttr.value2atoms(id[i],self._db)
+            l += col.rowAttr.value2atoms(id[i],self.getDatabase())
             i+=1
             
         atomicRow = self._connection.executePeek(self._clist,l)
@@ -776,8 +790,6 @@ class DataIterator:
         if atomicRow == None:
             raise StopIteration
         self.recno += 1
-        #d = self.ds._clist.at2d(atomicRow)
-        #return self.ds._table.Row(self.ds,d,False)
         return self.ds.atoms2row(atomicRow,new=False)
 
 
@@ -920,11 +932,17 @@ class StoredDataRow(DataRow):
 ##      #assert rsp.request is self.request
 ##      rsp.writeParagraph()
     
-##  def getContext(self):
-##      return self._ds.getContext()
-    
     def getSession(self):
         return self._ds._session
+
+    def getDatabase(self):
+        return self._ds.getDatabase()
+
+    def getTableName(self):
+        return self._ds.getTableName()
+    
+##     def getContext(self):
+##         return self._ds.getContext()
     
 
     
@@ -1176,6 +1194,6 @@ class DataCell:
         return self.col.rowAttr.format(v)
     
     def parse(self,s):
-        value = self.col.rowAttr.format(s)
+        value = self.col.rowAttr.parse(s)
         self.col.setCellValue(self.row,value)
 

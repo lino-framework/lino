@@ -51,6 +51,8 @@ class Case(TestCase):
         s = self.sess.stopDump()
         #print s
         self.assertEqual(s,"""\
+Projects
+========
 id   |id   |title               
 -----+-----+--------------------
 1    |     |Project 1           
@@ -82,6 +84,8 @@ id   |id   |title
         s = self.sess.stopDump()
         #print s
         self.assertEqual(s,"""\
+Projects
+========
 id   |title               
 -----+--------------------
 1    |Project 1           

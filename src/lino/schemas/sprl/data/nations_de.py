@@ -317,7 +317,7 @@ ZW - Simbabwe
 
 """
     NATIONS = sess.query(Nations)
-    NATIONS.setBabelLangs('de')
+    sess.setBabelLangs('de')
     for l in s.splitlines():
         if len(l) and l[0] != '#':
             (id,name) = l.split('-',1)
@@ -326,5 +326,6 @@ ZW - Simbabwe
             n.lock()
             n.name = name.strip()
             n.unlock()
+            #print __name__, n.name
             
     sess.commit()

@@ -170,22 +170,19 @@ class SqlConnection(Connection):
 
 
     def getSqlSelect(self, ds, 
-                          sqlColumnNames=None,
-                          limit=None,
-                          offset=None) :
+                     sqlColumnNames=None,
+                     limit=None,
+                     offset=None) :
         clist = ds._clist
         leadTable = ds._clist.leadTable
-        #self.initQuery()
+        
         if sqlColumnNames is None:
             sqlColumnNames = ''
         else:
             sqlColumnNames += ', '
             
         sqlColumnNames += ", ".join([a.getNameInQuery(clist)
-                                              for a in clist.getAtoms()])
-        #if samples is None:
-        #   samples = self.samples
-        
+                                     for a in clist.getAtoms()])
         sql = "SELECT " + sqlColumnNames
         
         sql += "\nFROM " + leadTable.getTableName()

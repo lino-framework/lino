@@ -38,6 +38,9 @@ class Context:
     def getBabelLangs(self):
         raise NotImplementedError
 
+    def getLangs(self):
+        return " ".join([lng.id for lng in self.getBabelLangs()])
+
 
             
 class Session(Context):
@@ -52,7 +55,6 @@ class Session(Context):
         self._user = None
         self.db = None
         self.schema = None
-        #self.tables = None
         self.forms = None
         
         if console is None:
@@ -151,8 +153,11 @@ class Session(Context):
     def getBabelLangs(self):
         return self._babelLangs
 
-    def getLangs(self):
-        return " ".join([lng.id for lng in self._babelLangs])
+    def supportsLang(self,lngId):
+        for lng in self.db.getBabelLangs():
+            if lng.id == lngId:
+                return True
+        return False
     
     def query(self,leadTable,columnNames=None,**kw):
         try:

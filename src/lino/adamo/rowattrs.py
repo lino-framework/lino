@@ -138,13 +138,13 @@ class RowAttribute(Describable):
 ##      if isinstance(self,Pointer):
 ##          print value
         #return self.value2atoms(value, row.getContext())
-        return self.value2atoms(value, row._ds._db)
+        return self.value2atoms(value, row.getDatabase())
 
         
 ##      value = row._values[self.name]
 ##      return self.value2atoms(value,atomicRow,colAtoms)
     
-    def value2atoms(self,value,db):
+    def value2atoms(self,value,ctx):
         print self,value
         raise NotImplementedError
     
@@ -152,7 +152,7 @@ class RowAttribute(Describable):
     def atoms2row(self,atomicRow,colAtoms,row):
         atomicValues = [atomicRow[atom.index] for atom in colAtoms]
         row._values[self.name] = self.atoms2value(atomicValues,
-                                                   row.getSession())
+                                                  row.getSession())
 
     #
     # change atoms2value(self,atomicRow,colAtoms,context)
@@ -207,7 +207,7 @@ class Field(RowAttribute):
         return ((self.name, self.type),)
         #return (query.provideAtom(self.name, self.type),)
 
-    def value2atoms(self,value,db):
+    def value2atoms(self,value,ctx):
         #assert issequence(atomicRow), repr(atomicRow)
         #assert issequence(colAtoms)
         #assert len(colAtoms) == 1
@@ -250,7 +250,7 @@ class BabelField(Field):
         langs = row.getSession().getBabelLangs()
         values = row.getFieldValue(self.name)
         if values is None:
-            values = [None] * len(row._ds._db.getBabelLangs())
+            values = [None] * len(row.getDatabase().getBabelLangs())
             row._values[self.name] = values
         if len(langs) > 1:
             assert issequence(value), \
@@ -272,7 +272,10 @@ class BabelField(Field):
         
     def getCellValue(self,row):
         langs = row.getSession().getBabelLangs()
-        dblangs = row._ds._db.getBabelLangs()
+        dblangs = row.getDatabase().getBabelLangs()
+        #if row.getTableName() == "Nations":
+        #    print __name__, langs, dblangs
+        # 35.py dblangs = row._ds._session.getBabelLangs()
         values = row.getFieldValue(self.name)
         #values = Field.getCellValue(self,row)
         if values is None:
@@ -295,6 +298,7 @@ class BabelField(Field):
         else:
             index = langs[0].index
             assert not index == -1
+            #print __name__, values[index], langs
             return values[index]
         
     def getTestEqual(self,ds, colAtoms,value):
@@ -303,12 +307,10 @@ class BabelField(Field):
         a = colAtoms[lang.index]
         return ds._connection.testEqual(a.name,a.type,value)
 
-    #def value2atoms(self,value,atomicRow,colAtoms,context):
-    def value2atoms(self,value,db):
+    def value2atoms(self,value,ctx):
         # value is a sequence with all langs of db
-        dblangs = db.getBabelLangs()
+        dblangs = ctx.getBabelLangs()
         rv = [None] * len(dblangs)
-        #langs = context.getBabelLangs()
         if value is None:
             return rv
 ##          for lang in dblangs:
@@ -328,13 +330,15 @@ class BabelField(Field):
             
     def atoms2row(self,atomicRow,colAtoms,row):
         langs = row.getSession().getBabelLangs()
-        dblangs = row._ds._db.getBabelLangs()
+        dblangs = row.getDatabase().getBabelLangs()
+        # 35.py dblangs = row._ds._session.getBabelLangs()
         values = row.getFieldValue(self.name)
         #values = Field.getCellValue(self,row)
         if values is None:
             values = [None] * len(dblangs)
             row._values[self.name] = values
         for lang in dblangs:
+            #assert lang.index != -1
             #if lang.index != -1:
             value = atomicRow[colAtoms[lang.index].index]
             values[lang.index] = value
@@ -472,7 +476,7 @@ class Pointer(RowAttribute):
         raise "not found %d" % tableId
 
     
-    def value2atoms(self,value,db):
+    def value2atoms(self,value,ctx):
         pointedRow = value
         #print repr(pointedRow)
         if pointedRow is None:
@@ -623,7 +627,7 @@ class Vurt(RowAttribute):
     def parse(self,s):
         raise "not allowed"
         
-    def value2atoms(self,value,db):
+    def value2atoms(self,value,ctx):
         raise "not allowed"
 
 
