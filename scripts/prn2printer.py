@@ -19,12 +19,18 @@ inch = 1440.0
 mm = inch / 25.4
 A4 = (210*mm, 297*mm)
 
+# Note that in all modes, the point 0,0 is the upper left corner of
+# the page, and the units increase as you go down and across the
+# page. A Twip is 1/20 of a typesetting Point. A Point is 1/72 of an
+# inch, so a Twip is 1/1440 of an inch.
+        
 
 class TextObject:
     def __init__(self,doc):
         self.doc = doc
         self.x = doc.margin
-        self.y = doc.pageHeight-(2*doc.margin)
+        self.y = doc.margin
+        #self.y = doc.pageHeight-(2*doc.margin)
         self.line = ""
         
     def write(self,text):
@@ -52,14 +58,9 @@ class Win32PrinterDocument(Document):
 
         self.dc = win32ui.CreateDC()
         self.dc.CreatePrinterDC(printerName)
-        self.dc.StartDoc("prn2printer","c:\temp\temp.txt")
+        self.dc.StartDoc("prn2printer",
+                         r"c:\temp\temp.txt")
         self.dc.SetMapMode(win32con.MM_TWIPS)
-        
-        # Note that in all modes, the point 0,0 is the upper left
-        # corner of the page, and the units increase as you go down
-        # and across the page. A Twip is 1/20 of a typesetting
-        # Point. A Point is 1/72 of an inch, so a Twip is 1/1440 of an
-        # inch.
         
     def createTextObject(self):
         textobject = TextObject(self)

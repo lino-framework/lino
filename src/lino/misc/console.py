@@ -161,13 +161,25 @@ def getOptionParser(**kw):
     con = getSystemConsole()
     p = OptionParser(**kw)
     
-    def setVerbose(option, opt_str, value, parser):
-        con.set(verbose=True)
+##     def setVerbose(option, opt_str, value, parser):
+##         con.set(verbose=True)
+    def con_set(option, opt_str, value, parser,**kw):
+        con.set(**kw)
         
     p.add_option("-v",
                  "--verbose",
                  help="display many messages",
                  action="callback",
-                 callback=setVerbose)
+                 callback=con_set,
+                 callback_kwargs=dict(verbose=True)
+                 )
+    
+    p.add_option("-b",
+                 "--batch",
+                 help="display many messages",
+                 action="callback",
+                 callback=con_set,
+                 callback_kwargs=dict(batch=True)
+                 )
     return p
         
