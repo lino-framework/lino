@@ -108,7 +108,7 @@ class TextObject:
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
         console.debug("self.y += %d" % self.leading)
 
-class Win32PrinterDocument(TextPrinter):
+class Win32TextPrinter(TextPrinter):
     
     def __init__(self,printerName=None,
                  spoolFile=None,
