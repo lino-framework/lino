@@ -1,13 +1,205 @@
-from area import Store
-#from widgets import Window
-from lino.misc.descr import Describable
+#----------------------------------------------------------------------
+# $Id: database.py $
+# Copyright: (c) 2003-2004 Luc Saffre
+# License:	 GPL
+#----------------------------------------------------------------------
 
-from datasource import Datasource
-from tim2lino import TimMemoParser
-#from widgets import Widget
+from lino.misc.descr import Describable
 
 from ui import UI
 from dbds.sqlite_dbd import Connection
+
+from context import Context
+
+from query import ColumnList
+
+class ConnectedTable:
+	"""
+	(previously called "Store", "Area",...)
+	One instance per Database and Table.
+	Instanciates row proxy objects.
+	"""
+	def __init__(self,conn,db,table):
+		#q = self.defineQuery(None)
+		#q = Query(self,None)
+		#BaseDatasource.__init__(self,db,table)
+		self._db = db
+		#from database import Context
+		#assert isinstance(db,Context)
+		self._table = table
+		self._schema = db.schema # shortcut
+		self._connection = conn # shortcut
+		#self._cachedRows = {}
+		self._lockedRows = []
+		#self._dirtyRows = {}
+		
+		self._datasources = []
+		
+		if len(self._table.getPrimaryAtoms()) == 1:
+			self._lastId = None
+		else:
+			self._lastId = {}
+
+		#self._queries = {}
+		#self._peekQuery = self.defineQuery(None)
+		self._peekQuery = ColumnList(self) #,table.getPeekColumnNames())
+		
+		self._table.onConnect(self)
+		#self._peekQuery = ...
+		#self._peekDS = Datasource(self,self._peekQuery)
+
+## 	def defineQuery(self,name,**kw):
+## 		assert not self._queries.has_key(name), \
+## 				 "%s : duplicate query definition %s" % (str(self), name)
+##  		q = ColumnList(self,name,**kw)
+##  		self._queries[name] = q
+##  		return q
+## ## 		try:
+## ## 			return self._queries[name]
+## ## 		except KeyError,e:
+## ## 			q = Query(self,name,**kw)
+## ## 			self._queries[name] = q
+## ## 			return q
+		
+
+##  	def getQuery(self,name=None):
+## 		return self._queries[name]
+## ## 		q = self._queries[name]
+## ## 		if len(kw) == 0:
+## ## 			return q
+## ## 		return q.child(name,**kw)
+
+
+## 	def getBabelLangs(self):
+## 		return self._db._babelLangs
+
+	def getTable(self):
+		return self._table
+		#return self.schema.getTable(self._table.getTableId())
+	
+## 	def query(self,columnNames=None,**kw):
+## 		"""creates a temporary query.
+## 		columnNames can be specified as argument"""
+## 		#q = self._table.query(None,columnNames=columnNames,**kw)
+## 		q = self._query.child(None,columnNames=columnNames,**kw)
+## 		return Datasource(self,q)
+
+
+	def registerDatasource(self,ds):
+		self._datasources.append(ds)
+
+	def fireUpdate(self):
+		for ds in self._datasources:
+			ds.onStoreUpdate()
+
+		
+		
+	def removeFromCache(self,row):
+		pass
+	
+	def addToCache(self,row):
+		pass
+
+ 	def beforeCommit(self):
+		#assert len(self._lockedRows) == 0
+		for row in self._lockedRows:
+			row.writeToStore()
+		
+ 	def beforeShutdown(self):
+		assert len(self._lockedRows) == 0
+## 		for row in self._dirtyRows.values():
+## 			row.commit()
+## 		self._dirtyRows = {}
+	
+	def createTable(self):
+		# print "CREATE TABLE " + self.getName()
+		self._connection.executeCreateTable(self._peekQuery)
+		#self._table.populate(self)
+
+		
+
+	def lockRow(self,row):
+		# todo: use getLock() / releaseLock()
+		self.removeFromCache(row)
+		self._lockedRows.append(row)
+		
+	def unlockRow(self,row):
+		self.addToCache(row)
+		self._lockedRows.remove(row)
+		#row.writeToStore()
+		#if row.isDirty():
+		#	key = tuple(row.getRowId())
+		#	self._dirtyRows[key] = row
+
+	def unlockall(self):
+		for row in self._lockedRows:
+			row.unlock()
+		assert len(self._lockedRows) == 0
+	
+
+	def setAutoRowId(self,row):
+		"get auto-incremented row id"
+		autoIncCol = self._peekQuery._pkColumns[-1]
+		#assert isinstance(autoIncCol.rowAttr.type,AutoIncType)
+		assert len(autoIncCol._atoms) == 1
+		autoIncAtom = autoIncCol._atoms[0]
+		
+		pka = self._table.getPrimaryAtoms()
+		id = row.getRowId()
+		#id = atomicRow[:len(pka)]
+		#print "area.py:%s" % repr(id)
+		front, tail = id[:-1], id[-1]
+		if None in front:
+			raise DataVeto("Incomplete primary key %s for table %s" %(
+				repr(id),self._table.getTableName()))
+		#tailAtomicName = pka[-1][0]
+		#tailType = pka[-1][1]
+
+		# get or set self._lastId
+		if len(front):
+			# self._lastId is a dict
+			x = self._lastId
+			for i in front[:-1]:
+				try:
+					x = x[i]
+				except KeyError:
+					x[i] = {}
+					x = x[i]
+			# x is now the bottom-level dict
+			i = front[-1]
+			if not x.has_key(i):
+				x[i] = self._connection.executeGetLastId(self._table,front)
+				if x[i] is None:
+					x[i] = 0
+			if tail is None:
+				x[i] += 1
+				id[-1] = x[i]
+			elif tail > x[i]:
+				x[i] = tail
+				
+		else:
+			if self._lastId is None:
+				self._lastId = self._connection.executeGetLastId(
+					self._table,front)
+				if self._lastId is None:
+					self._lastId = 0
+			if tail is None:
+				if type(self._lastId) == type(''):
+					self._lastId = str(int(self._lastId)+1)
+				else:
+					self._lastId += 1
+				id[-1] = self._lastId
+			elif tail > self._lastId:
+				self._lastId = tail
+
+		if tail is None:
+			#row.setAtomicValue(pka[-1][0],id[-1])
+			#atomicRow[len(pka)-1] = id[-1]
+			autoIncCol.setCellValue(row,id[-1])
+		#return tuple(id)
+
+
+
 
 
 class BabelLang:
@@ -25,8 +217,6 @@ class Database(Describable):
 					 langs=None,
 					 label=None,
 					 doc=None):
-		#if label is None:
-		#	label = "Unnamed Lino Database"
 		
 		self._babelLangs = []
 		if langs is None:
@@ -40,12 +230,9 @@ class Database(Describable):
 
 		self.ui = ui
 		assert hasattr(ui,'progress')
-		#self.name = name
-		#self.conn = conn
 		self.schema = schema
 		self._contexts = []
 		self._stores = {}
-		#self.startup()
 
 	def getStoresById(self):
 		l = []
@@ -60,22 +247,11 @@ class Database(Describable):
 
 		l = []
  		for table in self.schema.getTableList(flt):
-			#l.append(Store(conn,self,table))
- 			self._stores[table.getTableName()] = Store(conn,self,table)
-## 			#print "%s.setupConnection()" % table.getName()
-						
-		#self._stores = tuple(l)
-
-## 	def __str__(self):
-## 		if self.name is not None:
-## 			return self.name
-## 		return str(self.__class__)
+ 			self._stores[table.getTableName()] = ConnectedTable(conn,
+																				 self,
+																				 table)
 	
 
-		
-## 		schema.defineMenus(self)
-
-		#self._defaultLanguage = lang_id
 
 	def update(self,otherdb):
 		self._stores.update(otherdb._stores)
@@ -116,6 +292,13 @@ class Database(Describable):
 		self._contexts.pop()
 		#ctx.commit()
 
+	def beginSession(self,context=None):
+		sess = Session()
+		if context is None:
+			context = self.beginContext()
+		session.setContext(context)
+		return session		
+
 	def createTables(self):
  		for store in self.getStoresById():
 			store.createTable()
@@ -130,6 +313,8 @@ class Database(Describable):
 		#self.schema.commit(self)
 		#assert conn is not None
 		for store in self.getStoresById():
+			#if store._table.getTableName() == "NATIONS":
+			#	print "commit"+str(store._table.getTableName())
 			store.beforeCommit()
 		
 	#def flush(self):
@@ -157,14 +342,11 @@ class Database(Describable):
 		return retval
 		
 
-	def installto(self,d):
+	def beginSession(self,d=None):
 		#assert not d.has_key('__context__')
 		ctx = self.beginContext()
-		d['__context__'] = ctx
-		d['setBabelLangs'] = ctx.setBabelLangs
-		#d['commit'] = ctx.commit
-		d.update(ctx._datasources)
-
+		return ctx.beginSession(d)
+		
 ## 	def getAreaDict(self):
 ## 		return self._areas
 
@@ -181,7 +363,7 @@ class Database(Describable):
 
 
 class QuickDatabase(Database):
-
+	"Database instance with only one connection"
 	def __init__(self,schema, verbose=False,
 					 langs=None,
 					 label=None,
@@ -216,83 +398,4 @@ class QuickDatabase(Database):
 		
 		
 
-
-class Context:
-	
-	def __init__(self,db,langs=None):
-		self._db = db
-		self._datasources = {}
-
-		if langs is None:
-			langs = db.getDefaultLanguage()
-		self.setBabelLangs(langs)
-
-		for name,store in db._stores.items():
-			ds = Datasource(self,store)
-			self._datasources[name] = ds
-
-		self._memoParser = TimMemoParser(self)
-
-	def getLabel(self):
-		return self._db.getLabel()
-
-	def memo2html(self,renderer,txt):
-		if txt is None:
-			return ''
-		txt = txt.strip()
-		self._memoParser.parse(renderer,txt)
-		#return self.memoParser.html
-
-
-	def getAreaDict(self):
-		return self._datasources
-
-	def getDatasources(self):
-		return self._datasources.values()
-
-	def getBabelLangs(self):
-		return self._babelLangs
-
-	def setBabelLangs(self,langs):
-		"string containing a space-separated list of babel language codes"
-		self.commit()
-		self._babelLangs = []
-		for lang_id in langs.split():
-			self._babelLangs.append(self._db.findBabelLang(lang_id))
-		if self._babelLangs[0].index == -1:
-			raise "First item of %s must be one of %s" % (
-				repr(langs), repr(self._db.getBabelLangs()))
-
-
-	def commit(self):
-		self._db.commit()
-
-		
-	def checkIntegrity(self):
-		msgs = []
-		for q in self._datasources.values():
-			print "%s : %d rows" % (q._table.getTableName(), len(q))
-			l = len(q)
-			for row in q:
-				#row = q.atoms2instance(atomicRow)
-				msg = row.checkIntegrity()
-				if msg is not None:
-					msgs.append("%s[%s] : %s" % (
-						q._table.getTableName(),
-						str(row.getRowId()),
-						msg))
-			#store.flush()
-		return msgs
-		
-
-
-
-	def __getattr__(self,name):
-  		try:
-  			return self._datasources[name]
-  		except KeyError,e:
-			print self._datasources
-  			raise AttributeError, \
-					"%s instance has no attribute %s" % (
-				self.__class__.__name__,str(e))
 

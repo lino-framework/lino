@@ -6,7 +6,7 @@
 
 #from lino.misc import gpl
 #from lino import __version__
-from widgets import Window, MenuBar, Action
+#from widgets import Window, MenuBar, Action
 #from lino.adamo.database import Database
 #from lino import copyright
 
@@ -151,69 +151,69 @@ class UI:
 
 
 
-class WindowingUI(UI):
-	# no longer used
-	def __init__(self,db):
-		UI.__init__(self,db)
-		#self._wm = WindowManager()
-		self._windows = []
-		self._currentWindow = None
+## class WindowingUI(UI):
+## 	# no longer used
+## 	def __init__(self,db):
+## 		UI.__init__(self,db)
+## 		#self._wm = WindowManager()
+## 		self._windows = []
+## 		self._currentWindow = None
 		
-	def getCurrentWindow(self):
-		return self._currentWindow
+## 	def getCurrentWindow(self):
+## 		return self._currentWindow
 	
-	def setCurrentWindow(self,win):
-		if not hasattr(win,'uiid'):
-			self.addWindow(win)
-		self._currentWindow = win
+## 	def setCurrentWindow(self,win):
+## 		if not hasattr(win,'uiid'):
+## 			self.addWindow(win)
+## 		self._currentWindow = win
 	
-	def getWindow(self,id):
-		return self._windows[id]
+## 	def getWindow(self,id):
+## 		return self._windows[id]
 
-	def getMainWindow(self):
-		if len(self._windows):
-			self.message("taking 0 as default")
-			return self._windows[0]
-		self.message("creating main window")
-		# db = request.getWebApp().getConfigItem('db')
-		w = self.db.getUserMenu(self)
-		self.addWindow(w)
-		return w
+## 	def getMainWindow(self):
+## 		if len(self._windows):
+## 			self.message("taking 0 as default")
+## 			return self._windows[0]
+## 		self.message("creating main window")
+## 		# db = request.getWebApp().getConfigItem('db')
+## 		w = self.db.getUserMenu(self)
+## 		self.addWindow(w)
+## 		return w
 	
-##		def getCurrentWindow(self):
-##			return self._wm.getCurrentWindow()
+## ##		def getCurrentWindow(self):
+## ##			return self._wm.getCurrentWindow()
 	
-##		def getWindow(self,id):
-##			return self._wm.getWindow(id)
+## ##		def getWindow(self,id):
+## ##			return self._wm.getWindow(id)
 
 
 
 
-	def addWindow(self,w):
-		assert not hasattr(w,"ui")
-		assert not hasattr(w,"winid")
-		assert not hasattr(w,"renderedActions")
-		w.ui = self
-		w.winid = len(self._windows)
-		w.renderedActions = None
-		self._windows.append(w)
+## 	def addWindow(self,w):
+## 		assert not hasattr(w,"ui")
+## 		assert not hasattr(w,"winid")
+## 		assert not hasattr(w,"renderedActions")
+## 		w.ui = self
+## 		w.winid = len(self._windows)
+## 		w.renderedActions = None
+## 		self._windows.append(w)
 
-	def killWindow(self,win):
-		assert self._windows[win.winid] is win
-		self._windows[win.winid] = None
+## 	def killWindow(self,win):
+## 		assert self._windows[win.winid] is win
+## 		self._windows[win.winid] = None
 	
-## 	def confirm(self,label,msg,onOk,onNok=None):
+## ## 	def confirm(self,label,msg,onOk,onNok=None):
 		
-## 		win = Window(label)
+## ## 		win = Window(label)
 		
-## 		#win = self.openWindow(label)
-## 		self.addWindow(win)
-## 		if onNok is None:
-## 			onNok = win.getParent
-## 		win.addLabel(label)
-## 		win.addButton(label="Yes",func=onOk)
-## 		win.addButton(label="No",func=onNok)
-## 		return win
+## ## 		#win = self.openWindow(label)
+## ## 		self.addWindow(win)
+## ## 		if onNok is None:
+## ## 			onNok = win.getParent
+## ## 		win.addLabel(label)
+## ## 		win.addButton(label="Yes",func=onOk)
+## ## 		win.addButton(label="No",func=onNok)
+## ## 		return win
 
 		
 

@@ -5,37 +5,56 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
+import types
 
-from lino.misc.pset import PropertySet
-
-from widgets import Window
-from table import Table, LinkTable
+#from widgets import Form
+from forms import FormTemplate, TableForm
+from context import Context #, Session
+from table import Table, LinkTable, SchemaComponent
 from datatypes import StartupDelay
-from database import Database
-
-#from babel import Language
-#from report import Report
-
-#from datatypes import AREA
+from datasource import Datasource
+from lino.misc.descr import Describable
+from lino.misc.attrdict import AttrDict
 
 
 
+class SchemaPlugin(SchemaComponent,Describable):
+	def __init__(self,isActive=True,*args,**kw):
+		SchemaComponent.__init__(self)
+		Describable.__init__(self,*args,**kw)
+		self._isActive = isActive
 
-class Schema(PropertySet):
+	def isActive(self):
+		return self._isActive
+		
+	def defineTables(self,schema,ui):
+		pass
+	def defineMenus(self,schema,context,win):
+		pass
+
+
+class Schema:
 
 	HK_CHAR = '&'
 	defaultLangs = ('en',)
-
-	defaults = {
-		"_startupDone" : False,
-		"_tables" : [],
-		#"langs" : defaultLangs,
-		#"areaType"  : AREA
-		}
+	#sessionFactory = Session
 	
 	def __init__(self,**kw):
- 		PropertySet.__init__(self,**kw)
-		#Window.__init__(self)
+		self._startupDone= False
+		#self.forms= {
+		self._datasourceRenderer= None
+		self._contextRenderer= None
+		
+		self._plugins= []
+		self._tables= []
+		
+		self.plugins = AttrDict()
+		self.tables = AttrDict()
+		self.forms = AttrDict()
+
+		""" Note: for plugins and tables it is important to keep also a
+		sequential list.  """
+	
 		
 	#def __init__(self,langs=defaultLangs,**kw):
  		#PropertySet.__init__(self,**kw)
@@ -50,23 +69,38 @@ class Schema(PropertySet):
 ## 		self.addTable(value,name)
 
 	def addTable(self,table):
-					 #name=None,
-					 #label=None,
-					 #doc=None):
 		assert isinstance(table,Table),\
 				 repr(table)+" is not a Table"
 		assert not self._startupDone,\
 				 "Too late to declare new tables in " + repr(self)
-		#if name is not None:
-		#	table.setTableName(name)
-
-		table.setTableId(self,len(self._tables))
+		table.registerInSchema(self,len(self._tables))
 		self._tables.append(table)
+		name = table.getTableName()
+		self.tables.define(name,table)
 		
-	def defineTables(self,ui):
-		raise NotImplementedError
+	def addPlugin(self,plugin):
+		assert isinstance(plugin,SchemaPlugin),\
+				 repr(plugin)+" is not a SchemaPlugin"
+		assert not self._startupDone,\
+				 "Too late to declare new plugins in " + repr(self)
+		plugin.registerInSchema(self,len(self._plugins))
+		self._plugins.append(plugin)
+		name = plugin.getName()
+		self.plugins.define(name,plugin)
+		
+	def addForm(self,form):
+		assert isinstance(form,FormTemplate), \
+				 repr(form)+" is not a FormTemplate"
+		assert not self._startupDone,\
+				 "Too late to declare new forms in " + repr(self)
+		form.registerInSchema(self,len(self.forms))
+		name = form.getFormName()
+		self.forms.define(name,form)
+		#assert not self._forms.has_key(name)
+		#self._forms[name] = form
+		
 
-	def startup(self,ui=None):
+	def startup(self,ui=None,layouts=None):
 		
 		""" startup will be called exactly
 		once, after having declared all tables of the database.  """
@@ -80,8 +114,9 @@ class Schema(PropertySet):
 		ui.progress("Schema startup...")
 
 		ui.progress("  Initializing database...")
-		self.defineSystemTables(ui)
-		self.defineTables(ui)
+		#self.defineSystemTables(ui)
+		for pl in self._plugins:
+			pl.defineTables(self,ui)
 
 		ui.progress("  Initializing %d tables..." % len(self._tables))
 
@@ -118,6 +153,34 @@ class Schema(PropertySet):
 		for table in self._tables:
 			table.init4()
 
+			
+		for table in self._tables:
+			self.addForm(TableForm(table))
+
+			
+		# initialize forms...
+
+		ui.progress("  Initializing %d forms..." % len(self.forms))
+
+		for form in self.forms.values():
+			form.init1()
+			
+		# initialize layouts...
+		
+		if layouts is not None:
+			lf = LayoutFactory(layouts)
+			for table in self._tables:
+				wcl = lf.get_wcl(table.Row)
+				assert wcl is not None
+				table._rowRenderer = wcl
+				
+
+			self._datasourceRenderer = lf.get_wcl(Datasource)
+			self._contextRenderer = lf.get_wcl(Context)
+
+			assert self._datasourceRenderer is not None
+			assert self._contextRenderer is not None
+		
 
 		# self.defineMenus(self,ui)
 		
@@ -136,11 +199,6 @@ class Schema(PropertySet):
 				#break
 		return l
 		
-	def defineSystemTables(self,ui):
-		pass
-
-## 	def getSupportedLangs(self):
-## 		return self.langs
 
 	def getTableList(self,flt=None):
 		assert self._startupDone, \
@@ -402,4 +460,85 @@ def connect_mysql():
 
 ## 	ui.addDatabase(db) #'tmp', conn,schema, label=label)
 ## 	return db
+
+
+
+class LayoutComponent:
+	pass
+
+class LayoutFactory:
+	"extracts Layouts from "
+	def __init__(self,mod):
+		#self._schema = schema
+		self._layouts = {}
+		for k,v in mod.__dict__.items():
+			if type(v) is types.ClassType:
+				if issubclass(v,LayoutComponent):
+					try:
+						hcl = v.handledClass
+					except AttributeError:
+						pass
+					else:
+						assert not self._layouts.has_key(hcl),\
+								 repr(v) + ": duplicate class handler for " + repr(hcl)
+						self._layouts[hcl] = v
+						#print k,v.handledClass,v
+
+		for k,v in self._layouts.items():
+			print str(k), ":", str(v)
+		print len(self._layouts), "class layouts"
+		
+		# setupSchema()
+## 		for table in schema._tables:
+## 			if not table._rowAttrs.has_key("writeParagraph"):
+## 				wcl = self.get_wcl(table.Row)
+## 				assert wcl is not None
+## 				from lino.adamo import Vurt, MEMO
+## 				table._rowAttrs["writeParagraph"] = Vurt(
+## 					wcl.writeParagraph,MEMO)
+
+	def get_bases_widget(self,cl):
+		#print "get_bases_widget(%s)" % repr(cl)
+		try:
+			return self._layouts[cl]
+		except KeyError:
+			pass #print "no widget for " + repr(cl)
+
+		for base in cl.__bases__:
+			try:
+				return self._layouts[base]
+			except KeyError:
+				#print "no widget for " + repr(cl)
+				pass
+		raise KeyError
+
+
+	def get_wcl(self,cl):
+		#print "get_wcl(%s)" % repr(cl)
+		try:
+			return self.get_bases_widget(cl)
+		except KeyError:
+			pass
+
+		for base in cl.__bases__:
+			try:
+				return self.get_bases_widget(base)
+			except KeyError:
+				pass
+		return None
+	
+	def get_widget(self,o,*args,**kw):
+		#print "get_widget(%s)" % repr(o)
+		wcl = self.get_wcl(o.__class__)
+		if wcl is None:
+			msg = "really no widget for "+repr(o)
+			#+" (bases = " + str([repr(b) for b in cl.__bases__])
+			raise msg
+		#print "--> found widget " + repr(wcl)
+		return wcl(o,*args,**kw)
+
+## def get_rowwidget(row):		
+## 	cl = get_widget(row._ds._table.__class__)
+## 	return cl(row)
+		
 

@@ -5,14 +5,13 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
-from  pizzeria import Pizzeria, Products, populate
+from pizzeria import Products, populate, Pizzeria
 from lino.adamo import *
 #from lino.adamo.schema import quickdb
 
-class Pizzeria2(Pizzeria):
-	def defineTables(self,ui):
-		Pizzeria.defineTables(self,ui)
-		self.addTable(Services("SERV"))
+class ServicesPlugin(SchemaPlugin):
+	def defineTables(self,schema,ui):
+		schema.addTable(Services("SERV"))
 
 		
 
@@ -22,11 +21,16 @@ class Services(Products):
 		Products.init(self)
 		self.responsible = Field(STRING)
 
-	 
+
+
+def Pizzeria2():
+	schema = Pizzeria()
+	schema.addPlugin(ServicesPlugin())
+	return schema
 		
-def populate2(db):
-	populate(db)
-	db.installto(globals())
+def populate2(sess):
+	populate(sess)
+	sess.installto(globals())
 	s1 = SERV.appendRow(name="bring home",price=1)
 	s2 = SERV.appendRow(name="organize party",price=100)
 	c3 = CUST.appendRow(name="Bernard")
@@ -42,17 +46,17 @@ def populate2(db):
 	q.appendRow(product=PROD.peek(2),qty=3)
 	#LINES.appendRow(order=o1,product=s2,qty=1)
 
-	db.commit()
+	sess.commit()
 
 	o1.register()
 	o2.register()
 
-	db.commit()
+	sess.commit()
 
 
-def query(db):	
+def query(sess):	
 	# make table names global variables
-	db.installto(globals())
+	sess.installto(globals())
 	o = ORDERS.peek(3)
 	print "Order #:", o.id
 	print "Date:", o.date
@@ -65,10 +69,10 @@ def query(db):
 	print "-" * 40
 	print "Total: ", o.totalPrice
 
-def query2(db):	
-	db.installto(globals())
+def query2(sess):
+	sess.installto(globals())
 	from lino.adamo.plain import PlainRenderer
-	r = PlainRenderer(None,db)
+	r = PlainRenderer(None,sess)
 	rpt = LINES.report("ordr.date ordr.customer.name",
 							 product=PROD.peek(1))
 	print r.renderReport(None,rpt)
@@ -83,9 +87,10 @@ def main():
 					 isTemporary=True,
 					 label="Lucs Pizza Restaurant")
 	db.createTables()
-	populate2(db)
-	query(db)
-	db.shutdown()
+	sess = db.beginSession()
+	populate2(sess)
+	query(sess)
+	sess.shutdown()
 	
 if __name__ == "__main__":
 	main()

@@ -4,7 +4,7 @@
 #from lino.schemas.sprl.demo import getDemoDB
 #from lino.adamo.twisted_ui import webserver, UiResource, DbResource
 
-from lino.misc.normalDate import ND
+from forum.normalDate import ND
 
 
 def populate(db):

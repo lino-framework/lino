@@ -37,7 +37,7 @@ def make_tn(path,sizes=SIZES):
 				if root.endswith(size.suffix):
 					# it's a thumbnail
 					origname = root[:-len(size.suffix)]+ext
-					if not os.path.exist(origname):
+					if not os.path.exists(origname):
 						print origname
 						print "Warning: original for %s does not exist" % pfn
 				else:
@@ -52,10 +52,10 @@ def make_tn(path,sizes=SIZES):
 			
 				
 if __name__ == "__main__":
-	from lino import copyright
+	from lino import copyleft
 	
 	print "Lino makethumbs"
-	print copyright('2002-2004','Luc Saffre')
+	print copyleft(year='2002-2004',author='Luc Saffre')
 	
 
 	import getopt

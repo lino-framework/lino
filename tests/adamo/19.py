@@ -84,12 +84,12 @@ class Organisations(Table,Contacts,Addresses):
 		Addresses.init(self)
 
 
-class MySchema(Schema):
+class MyPlugin(SchemaPlugin):
 	
-	def defineTables(self,ui):
-		self.addTable(Nations())
-		self.addTable(Cities())
-		self.addTable(Organisations())
+	def defineTables(self,schema,ui):
+		schema.addTable(Nations())
+		schema.addTable(Cities())
+		schema.addTable(Organisations())
 		
 
 
@@ -97,7 +97,8 @@ class Case(unittest.TestCase):
 	
 	def test01(self):
 
-		schema = MySchema()
+		schema = Schema()
+		schema.addPlugin(MyPlugin())
 		
 		db = quickdb(schema,
 						 langs='en de fr',
@@ -107,7 +108,7 @@ class Case(unittest.TestCase):
 
 		ctx = db.beginContext('en')
 
-		ds = ctx.Nations.query()
+		ds = ctx.tables.Nations.query()
 
 		#ctx._db._connection.startDump()
 		
@@ -142,11 +143,11 @@ class Case(unittest.TestCase):
 		
 		#print be._values['name']
 		#ctx._db._connection.startDump()
-		be = ctx.Nations.peek('be')
+		be = ctx.tables.Nations.peek('be')
 		#print ctx._db._connection.stopDump()
 		#print be._values['name']
 		
-		ctx.Cities.appendRow(nation=be,name="Eupen")
+		ctx.tables.Cities.appendRow(nation=be,name="Eupen")
 		
 		ctx.setBabelLangs('de')
 		self.assertEqual(be.name,'Belgien')
@@ -160,7 +161,7 @@ class Case(unittest.TestCase):
 		ctx.setBabelLangs('en de')
 		self.assertEqual(be.name,['Belgium','Belgien'])
 		
-		db.shutdown()
+		ctx.shutdown()
 
 		
 

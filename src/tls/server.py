@@ -5,18 +5,39 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
+"""
+WebServer ist the main application class for a Twisted Lino Server.
+"""
+
+__TODO__ = """
+convert WebServer to a real Twisted Application
+
+"""
+
 import os
-from twisted.internet import reactor
+import cgi
+
 # from twisted.internet.app import Application
 # see http://gnosis.cx/publish/programming/twisted_1.html
 
-from twisted.web import server
 from twisted.web import static
+from twisted.web.server import Request
 
-from lino import copyright 
-from widgets import Widget
+from twisted.copyright import version
+if version == "1.2.0":
+	from twisted.protocols.http import parse_qs
+else:	
+	from twisted.web.http import parse_qs
 
-from resources import MainResource, WidgetResource
+
+
+
+#from widgets import Widget
+from response import HtmlResponse
+from resources import AdamoResource		
+
+#from resources import DbBrowser, TargetResource, MenuResource
+from resources import DbResource
 
 def hostname():
 	if os.name == 'nt':
@@ -29,8 +50,82 @@ def hostname():
 		name = 'localhost'
 	return name
 
-class ServerWidget(Widget):
 
+## class WebServer:
+	
+## 	def __init__(self,
+## 					 homeDir,ui,
+## 					 hostName=None,
+## 					 port=8080 ):
+## 		self.homeDir =homeDir
+## 		#self.widgetFactory = wf
+## 		self.port = port
+## 		if hostName is None:
+## 			hostName = hostname()
+## 		self.hostName = hostName
+## 		#self._rendererClass = ServerResponse
+## 		self._root = ServerResource(None,self)
+## 		#self._root = TargetResource(None,self)
+
+
+
+
+			
+
+	
+class ServerResource(AdamoResource):
+ 	"Resource who serves a constant (renderable) target"
+	
+ 	def __init__(self,homeDir,ui,**kw):
+ 		self.homeDir =homeDir
+		self.ui = ui
+		self.accounts = []
+		self.responderClass = ServerResponse
+		AdamoResource.__init__(self,parent=None,
+									  **kw)
+		staticDirs = {
+			#'files' : os.path.join(self.homeDir,'files')
+			'files' : self.homeDir
+			}
+		for (name,path) in staticDirs.items():
+			self.putChild(name, static.File(path))
+		
+	def getLabel(self):
+		return 'Lino Server on '+self.hostName
+
+	def getRenderer(self,resource,request,writer):
+		return self.responderClass(self, resource, request, None)
+
+	def findTarget(self):
+		return self
+	
+	def addDatabase(self, db, staticDirs={},**kw):
+		self.ui.addDatabase(db)
+		ctx = db.beginContext()
+		rsc = DbResource(self,ctx, staticDirs, **kw)
+		#rsc.putChild('db', DbBrowser(rsc,ctx))
+		#rsc.putChild('menu', MenuResource(rsc,ctx))
+		#self.addAccount(db.getName(),rsc,staticDirs)
+## 		for (name,path) in staticDirs.items():
+## 			#print name, path
+## 			rsc.putChild(name, static.File(path))
+		self.putChild(db.getName(),rsc)
+		self.accounts.append(db)
+
+	def render_GET(self,request):
+		#renderer = TwistedRenderer(self,request)
+		rsp = self.responderClass(self, request, None)
+		return self.letRespond(rsp)
+		#resp = Response(self,request)
+		#self._row.asPage(resp)
+
+
+class ServerResponse(HtmlResponse):
+	#handledClass = WebServer
+
+	def getTitle(self):
+		pass
+	
 	def writeLeftFooter(self):
 		self.write("""
 		<font size=1>
@@ -45,79 +140,73 @@ class ServerWidget(Widget):
 		""")
 		
 	def writeBody(self):
-		body = "<ul>"
-		for name,a in self.target.accounts.items():
-			body += "<li>"
-			body += '<a href="'+name+'/">' + name + " : " + a.getLabel()+'</a>'
-			body += "</li>"
-		body += "</ul>"
-		self.write(body)
+		srv = self.resource
+		wr = self.write
+		wr("<ul>")
+		for a in srv.accounts:
+			wr("<li>")
+			
+			self.renderLink(url=a.getName())
+			wr(" : " + a.getLabel())
+			wr("</li>")
+		wr("</ul>")
+
+
+class MyRequest(Request):
+	
+	def requestReceived(self, command, path, version):
+		 
+		"""twisted.web.http.Request.requestReceived() merges POST and
+		GET arguments into self.args but I want to have them
+		separately."""
 		
-	
+		self.content.seek(0,0)
+		self.args = {}
+		self.postdata = {}
+		self.stack = []
 
-class WebServer:
-	def __init__(self,homeDir,ui,wf,
-					 hostName=None,
-					 port=8080 ):
-		self.homeDir =homeDir
-		self.ui = ui
-		self.widgetFactory = wf
-		self.port = port
-		if hostName is None:
-			hostName = hostname()
-		self.hostName = hostName
-		self.accounts = {}
+		self.method, self.uri = command, path
+		self.clientproto = version
+		x = self.uri.split('?')
 
-	def getLabel(self):
-		return 'Lino Server on '+self.hostName
-
-	def addDatabase(self, db, staticDirs={},**kw):
-		self.ui.addDatabase(db)
-		ctx = db.beginContext()
-		rsc = MainResource(ctx, self.widgetFactory, **kw)
-		self.addAccount(db.getName(),rsc,staticDirs)
-
-	def addAccount(self,accountName,rsc,staticDirs={}):
-		for (name,path) in staticDirs.items():
-			#print name, path
-			rsc.putChild(name, static.File(path))
-
-		self.accounts[accountName] = rsc
-
-	def run(self,showOutput=False):
-	
-		if self.ui.verbose:
-			print "Lino Web Server" # version " + __version__
-			print copyright(year='2004',author='Luc Saffre')
-			print
-
-		if len(self.accounts.keys()) != 1:
-			root = WidgetResource(None, ServerWidget, self)
-			staticDirs = {
-				'files' : os.path.join(self.homeDir,'files')
-				}
-			for (name,path) in staticDirs.items():
-				root.putChild(name, static.File(path))
-			for (name,accnt) in self.accounts.items():
-				#accnt.renderer.setupRenderer(self.baseuri+"/"+name)
-				root.putChild(name,accnt)
+		if len(x) == 1:
+			self.path = self.uri
 		else:
-			accnt = self.accounts.values()[0]
-			#accnt.renderer.setupRenderer(self.baseuri+"/"+name)
-			root = accnt
+			if len(x) != 2:
+				log.msg("May ignore parts of this invalid URI: %s"
+						  % repr(self.uri))
+			self.path, argstring = x[0], x[1]
+			self.args = parse_qs(argstring, 1)
 
-		site = server.Site(root)
-		reactor.listenTCP(self.port, site)
-		reactor.addSystemEventTrigger("before","shutdown",
-												self.ui.shutdown)
+		# cache the client and server information, we'll need this later to be
+		# serialized and sent with the request so CGIs will work remotely
+		self.client = self.channel.transport.getPeer()
+		self.host = self.channel.transport.getHost()
 
-		#if showOutput:
-		#	webbrowser.open(self.baseuri,new=True)
-			
-		if self.ui.verbose:
-			print "Serving on port %s." % self.port
-			print "(Press Ctrl-C to stop serving)"
-			
-		reactor.run()
-		
+		# Argument processing
+		args = self.postdata
+		ctype = self.getHeader('content-type')
+		if self.method == "POST" and ctype:
+			mfd = 'multipart/form-data'
+			key, pdict = cgi.parse_header(ctype)
+			if key == 'application/x-www-form-urlencoded':
+				args.update(parse_qs(self.content.read(), 1))
+			elif key == mfd:
+				try:
+					args.update(cgi.parse_multipart(self.content, pdict))
+				except KeyError, e:
+					if e.args[0] == 'content-disposition':
+						# Parse_multipart can't cope with missing
+						# content-dispostion headers in multipart/form-data
+						# parts, so we catch the exception and tell the client
+						# it was a bad request.
+						self.channel.transport.write(
+							"HTTP/1.1 400 Bad Request\r\n\r\n")
+						self.channel.transport.loseConnection()
+						return
+					raise
+			else:
+				pass
 
+		self.process()
+ 

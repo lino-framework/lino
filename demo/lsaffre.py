@@ -18,19 +18,20 @@ Options:
 
 import sys, getopt, os
 
+from lino import copyleft
 from lino.adamo.dbds.sqlite_dbd import Connection
 #from lino.adamo.ui import UI
 from lino.adamo.ui import UI
+from lino.adamo import ConsoleSession
 
 #from lino.adamo.twisted_ui import WebServer
 from lino.schemas.sprl.sprl import Schema
 from tls import sprlwidgets
-from tls.widgets import WidgetFactory
 
 from lino.adamo.database import Database
 from lino.misc.my_import import my_import
 
-from tls.server import WebServer
+from tls.server import ServerResource, MyRequest
 
 if os.name == 'nt':
 	wwwRoot = r'u:\htdocs\timwebs'
@@ -84,10 +85,9 @@ dbinfos.append(DBinfo(
 
 
 
-if __name__ == '__main__':
-
+def main():
+	
 	port = 8080
-	showOutput = False
 	verbose = True
 	skipTest = False
 	demoDir = os.path.dirname(__file__)
@@ -118,21 +118,24 @@ if __name__ == '__main__':
 			skipTest = True
 		elif o in ("-q", "--quiet"):
 			verbose = False
-		elif o in ("-b", "--batch"):
-			showOutput = False
 
 	
 	ui = UI(verbose=verbose)
-	schema = Schema() #langs=('en','de','fr'))
-	schema.startup(ui)
 	
-	wf = WidgetFactory(schema,sprlwidgets)
+	schema = Schema() 
+	
+	schema.startup(layouts=sprlwidgets, ui=ui)
 
-	server = WebServer(demoDir,ui, wf, port=port)
+	serverRsc = ServerResource(wwwRoot,ui)
+
+	sess = ConsoleSession()
 
 	if True:
+		"""
+		Shared tables are the same for each database
+		"""
 
-		ui.progress("Starting std.db...")
+		sess.progress("Starting std.db...")
 		conn = Connection(filename="std.db",
 								isTemporary=True,
 								schema=schema)
@@ -146,15 +149,16 @@ if __name__ == '__main__':
 							 'PARTYPES','Currencies',
 							 'PEVTYPES',
 							 'PUBTYPES',
-							 'PRJSTAT')
+							 'PRJSTAT', 'USERS')
 
 		stddb.startup(conn,
 						  lambda t: t.getTableName() in sharedTables)
 		
 		stddb.createTables()
+		sess.use(stddb)
 
 		from lino.schemas.sprl.data import std
-		std.populate(stddb,big=False)
+		std.populate(sess,big=False)
 
 		
 	
@@ -186,9 +190,7 @@ if __name__ == '__main__':
 					#from lino.adamo.datatypes import DataVeto
 					#raise DataVeto, msg
 
-			server.addDatabase(db,
-									 stylesheet="files/www.css",
-									 staticDirs=dbi.staticDirs)
+			serverRsc.addDatabase(db, stylesheet="www.css")
 
 
 	if True:
@@ -198,7 +200,7 @@ if __name__ == '__main__':
 		#for modName in ('vor', 'etc'):
 		for modName in ('etc',):
 
-			ui.progress("Opening %s..." % modName)
+			sess.progress("Opening %s..." % modName)
 
 			mod = __import__(modName) # my_import(modName)
 
@@ -215,22 +217,49 @@ if __name__ == '__main__':
 
 			db.startup(conn)
 			db.createTables()
+			
+			sess.use(db)
+			mod.populate(sess)
 
-			mod.populate(db)
-
-			server.addDatabase(db, staticDirs = {
-				'files': os.path.join(demoDir,modName,'files'),
-				'images': os.path.join(demoDir,modName,'images'),
-				#'thumbnails': os.path.join(demoDir,modName,'thumbnails')
-				})
+			serverRsc.addDatabase(db)
+## 			, staticDirs = {
+## 				'files': os.path.join(demoDir,modName,'files'),
+## 				'images': os.path.join(demoDir,modName,'images'),
+## 				#'thumbnails': os.path.join(demoDir,modName,'thumbnails')
+## 				})
 
 			#db.flush()
 
 		del sys.path[0]
 
 
-	server.run(showOutput=showOutput)
+	if ui.verbose:
+		print "Twisted Lino Server" 
+		print copyleft(year='2004',author='Luc Saffre')
+		print
+
+
+	from twisted.web import server
+	from twisted.internet import reactor
+
+	site = server.Site(serverRsc)
+	site.requestFactory = MyRequest
+	reactor.listenTCP(port, site)
+	reactor.addSystemEventTrigger("before","shutdown",
+											ui.shutdown)
+
+			
+	if ui.verbose:
+		print "Serving on port %s." % port
+		print "(Press Ctrl-C to stop serving)"
+			
+	reactor.run()
+
+		
+	
 
 
 
 	
+if __name__ == '__main__':
+	main()

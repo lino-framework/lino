@@ -16,13 +16,15 @@ import types
 from lino.misc.compat import *
 from lino.misc.descr import Describable
 
+#from lino.adamo import *
+from widgets import Command
 from datatypes import *
 from rowattrs import RowAttribute,\
-	  Field, BabelField, Pointer, Detail 
+	  Field, BabelField, Pointer, Detail, FieldContainer
 #from query import Query
 
 from lino.misc.etc import issequence
-from datasource import DataRow
+from datasource import StoredDataRow
 
 
 reservedWords = """\
@@ -34,7 +36,22 @@ notnull
 
 DEFAULT_PRIMARY_KEY = 'id'
 
-class Table(Describable):
+class SchemaComponent:
+	
+	def __init__(self):
+		self._schema = None
+		self._id = None
+		
+	def registerInSchema(self,schema,id):
+		assert self._schema is None
+		self._schema = schema
+		self._id = id
+
+	def getSchema(self):
+		return self._schema
+
+
+class Table(FieldContainer,SchemaComponent,Describable):
 	"""
 	
 	Holds meta-information about a data table. There is one instance of
@@ -44,14 +61,15 @@ class Table(Describable):
 	
 	"""
 	
-	class Row(DataRow):
+	class Row(StoredDataRow):
 		pass
 
 	def __init__(self,name=None,label=None,doc=None):
+		SchemaComponent.__init__(self)
+		FieldContainer.__init__(self)
 		self._pk = None
-		self._schema = None
-		self._rowAttrs = {}
 		self._views = {}
+		self._rowRenderer = None
 		
 		if name is None:
 			name = self.__class__.__name__
@@ -68,7 +86,7 @@ class Table(Describable):
 		self._initStatus = 0
 		#self._rowClass = DataRow
 
-		self._peekColumnNames = ""
+		self._defaultView = None
 
 ## 		ns = { '_table' : self }
 ## 		self._rowClass = classobj(self.getTableName()+"Row",
@@ -77,8 +95,15 @@ class Table(Describable):
 	def init(self):
 		raise NotImplementedError
 
+	def cmd_show(self):
+		return Command(self.show,label=self.getLabel())
+
+	def show(self,sess):
+		sess.openForm(self.getTableName())
+
 	#def getLabel(self):
 	#	return self.getTableName()
+
 
 	def init1(self):
 		#print "%s : init1()" % self._tableName
@@ -86,32 +111,18 @@ class Table(Describable):
 		
 		for (name,attr) in self.__dict__.items():
 			if isinstance(attr,RowAttribute):
-				self._rowAttrs[name] = attr
-				self._peekColumnNames += name + " "
-				try:
-					meth = getattr(self,"after_"+name)
-					attr.afterSetAttr = meth
-				except AttributeError:
-					pass
+				self.addField(name,attr)
 				
-## 		for (name,attr) in self.__class__.__dict__.items():
-##  			if type(attr) is types.ClassType:
-## 				if issubclass(attr,DataRow):
-## 					self._rowClass = attr
-##  			elif type(attr) is types.MethodType:
-## 				raise "hurra"
-## 			else:
-## 				print "foo", name, attr
-## 				raise "bla"
-
 		if self._pk == None:
 			if not self._rowAttrs.has_key(DEFAULT_PRIMARY_KEY):
 				f = Field(ROWID)
 				setattr(self,DEFAULT_PRIMARY_KEY,f)
-				self._rowAttrs[DEFAULT_PRIMARY_KEY] = f
+				self.addField(DEFAULT_PRIMARY_KEY,f)
+				#self._rowAttrs[DEFAULT_PRIMARY_KEY] = f
 			self.setPrimaryKey(DEFAULT_PRIMARY_KEY)
 
 		for name,attr in self._rowAttrs.items():
+			attr.onOwnerInit1(self,name)
 			attr.onTableInit1(self,name)
 			try:
 				um = getattr(self.Row,"after_"+name)
@@ -149,6 +160,9 @@ class Table(Describable):
 	def init4(self):
 		#if self._columnList is None:
 		#	self._columnList = " ".join(self.getAttrList())
+		if self._defaultView is None:
+			if self._views.has_key('std'):
+				self._defaultView = 'std'
 		self._initStatus = 4
 
 			
@@ -157,7 +171,7 @@ class Table(Describable):
 		#print '%s.addDetail(%s)' % (self.getTableName(),name)
 		dtl = Detail(ptr, columnNames=columnNames, **kw)
 		self._rowAttrs[name] = dtl
-		dtl.onTableInit1(self,name)
+		dtl.setOwner(self,name)
 		#dtl.onTableInit2(self,schema)
 		#setattr(self,ame,dtl)
 
@@ -165,13 +179,19 @@ class Table(Describable):
 		if columnNames is not None:
 			kw['columnNames'] = columnNames
 		self._views[viewName] = kw
+		
+	def getView(self,viewName):
+		return self._views.get(viewName,None)
+
 
 	def initDatasource(self,ds):
 		if ds._viewName is None:
 			return
-		kw = self._views[ds._viewName]
+		view = self.getView(ds._viewName)
+		if view is None:
+			raise KeyError,ds._viewName+": no such view"
 		#print "Table.initDatasource(): " + repr(kw)
-		ds.config(**kw)
+		ds.config(**view)
 		#print ds._samples
 		#print "load() not yet implemented"
 
@@ -191,19 +211,6 @@ class Table(Describable):
 			columnList = columnList.split()
 		self._pk = tuple(columnList)
 
-
-##		def setPrimaryKey(self,colNames):
-##			"Use this during init() if primary key is not 'id'"
-##			pk = []
-##			for colName in colNames.split():
-##				comp = self.findComponent(colName.strip())
-##				if comp is None:
-##					raise "%s : no such column in Table %s." % \
-##							(colName,self.getName())
-##				comp.setMandatory()
-##				pk.append(comp)
-##			self._pk = tuple(pk)
-		
 
 	def getPrimaryKey(self):
 		"returns a tuple of the names of the columns who are primary key"
@@ -226,44 +233,11 @@ class Table(Describable):
 		except AttributeError:
 			raise StartupDelay, str(self)+"._primaryAtoms"
 
-	def getPeekColumnNames(self):
-		return self._peekColumnNames
-		#return " ".join(self.getAttrList())
-		
-## 		atoms = []
-## 		for attrname in self._pk:
-## 			# col = self.findColumn(colname)
-## 			attr = self._rowAttrs[attrname]
-## 			#if attr.getNeededAtoms() is None:
-## 			#	 raise StartupDelay, \
-## 			#			 "%s.%s.getNeededAtoms() is None" \
-## 			#			 % (self.getName(), attr.name)
-## 			# print attr.getNeededAtoms()
-## 			for (name,type) in attr.getNeededAtoms():
-## 				atoms.append((name,type))
-## 		return tuple(atoms)
-		
-			
  	def setColumnList(self,columnList):
 		pass
-## 		self._columnList = columnList
-		
-## 	def getColumnList(self):
-## 		return self._columnList
-
-		
 		
  	def setOrderBy(self,orderBy):
 		pass
-## 		self._orderBy = orderBy
-		
-## 	def getOrderBy(self):
-## 		return self._orderBy
-
-	def setTableId(self,schema,id):
-		assert self._schema is None
-		self._schema = schema
-		self._id = id
 
 	def getTableId(self):
 		return self._id
@@ -271,25 +245,6 @@ class Table(Describable):
 	def getTableName(self):
 		return self._name
 
-## 	def setTableName(self,name):
-## 		self._tableName = name
-
-	def getSchema(self):
-		return self._schema
-
-##  	def validateRow(self,row):
-##  		pass
-
-
-	def __getattr__(self,name):
-		return self.getRowAttr(name)
-
-	def getRowAttr(self,name):
-		try:
-			return self._rowAttrs[name]
-		except KeyError,e:
-			raise AttributeError, \
-					"%s has no attribute '%s'" % (repr(self), name)
 
 
 

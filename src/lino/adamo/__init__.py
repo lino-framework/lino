@@ -12,9 +12,12 @@ import sys
 from table import Table, LinkTable,\
 	  MemoTable, TreeTable, MemoTreeTable,\
 	  BabelTable
+from forms import FormTemplate
+from widgets import Menu, Command
 from datatypes import *
-from rowattrs import Field, Pointer, BabelField, Vurt
-from schema import Schema
+from rowattrs import Field, Pointer, BabelField, Vurt, Match
+from schema import Schema, SchemaPlugin
+from context import ConsoleSession
 from datasource import DataRow
 from database import QuickDatabase as quickdb
 
@@ -29,10 +32,14 @@ __builtin__.__dict__['_'] = _
 __all__ = ['Table','LinkTable',
 			  'TreeTable', 'MemoTable', 'MemoTreeTable',
 			  'BabelTable',
-			  'Field','Pointer','BabelField','Vurt',
-			  'DataVeto','DataRow',
-			  'Schema','quickdb',
+			  'Field','Pointer','BabelField','Vurt','Match',
+			  'DataVeto','InvalidRequestError',
+			  'DataRow',
+			  'FormTemplate','Menu','Command',
+			  'Schema','SchemaPlugin',
+			  'ConsoleSession',
+			  'quickdb',
 			  'INT', 'BOOL', 'ROWID', 'STRING', 'DATE', 'MEMO',
 			  'EMAIL', 'URL',
 			  'PRICE', 'AMOUNT', 
-			  'IMAGE', 'LOGO']
+			  'IMAGE', 'LOGO', 'PASSWORD']

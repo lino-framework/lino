@@ -11,14 +11,15 @@ class Case(TestCase):
 	"""
 
 	def setUp(self):
-		self.db = quickdb(schema=pizzeria2.Pizzeria2(),
-								isTemporary=True,
-								label="Lucs Pizza Restaurant")
-		self.db.createTables()
-		self.db.installto(globals())
+		db = quickdb(schema=pizzeria2.Pizzeria2(),
+						 isTemporary=True,
+						 label="Lucs Pizza Restaurant")
+		db.createTables()
+		self.sess = db.beginSession()
+		self.sess.installto(globals())
 
 	def tearDown(self):
-		self.db.shutdown()
+		self.sess.shutdown()
 
 	def test01(self):
 		c = CUST.appendRow(name="Henri")

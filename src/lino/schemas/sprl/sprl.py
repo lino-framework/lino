@@ -9,148 +9,176 @@ from lino import adamo
 import babel, addrbook, news # , sdk
 
 
-class Schema(adamo.Schema):
+class BasePlugin(adamo.SchemaPlugin):
 
-	defaults = {
-		'withEvents' : True,
-		'withProjects' : True,
-		'withWeb' : True,
-		'withSales' : True,
-		'withNews' : True,
-		'withQuotes' : True,
-		'withJokes' : False,
-		}
+	def defineTables(self,schema,ui):
+		schema.addTable( babel.Languages("LANGS","Languages"))
+		schema.addTable( addrbook.Users( name="USERS",
+													label="Users" ))
+		schema.addForm(addrbook.LoginForm(name="login"))
+		schema.addForm(addrbook.MainForm(name="main"))
+
+class ContactsPlugin(adamo.SchemaPlugin):
+	def defineTables(self,schema,ui):
+		schema.addTable( addrbook.Nations(
+			name="NATIONS",
+			label="Nations" ))
+		schema.addTable( addrbook.Cities("CITIES","Cities"))
+		schema.addTable( addrbook.Organisations("ORGS","Organisations"))
+		schema.addTable( addrbook.Partners("PARTNERS","Partners"))
+		schema.addTable( addrbook.PartnerTypes(
+			name="PARTYPES",
+			label="Partner Types"))
+		schema.addTable( addrbook.Currencies())
 
 
-	def defineTables(self,ui):
-		self.addTable( babel.Languages("LANGS","Languages"))
+class WebPlugin(adamo.SchemaPlugin):
+
+	def defineTables(self,schema,ui):
+		import web
+		schema.addTable( web.Pages("PAGES","Content Pages"))
+		# self.addLinkTable("PAGE2PAGE",web.Page,web.Page,web.Page2Page)
+
 		
-		if True:
-			self.addTable( addrbook.Users(
-				name="USERS",
-				label="Users" ))
-			self.addTable( addrbook.Nations(
-				name="NATIONS",
-				label="Nations" ))
-			self.addTable( addrbook.Cities("CITIES","Cities"))
-			self.addTable( addrbook.Organisations("ORGS","Organisations"))
-			self.addTable( addrbook.Partners("PARTNERS","Partners"))
-			self.addTable( addrbook.PartnerTypes(
-				name="PARTYPES",
-				label="Partner Types"))
-			self.addTable( addrbook.Currencies())
+class ProjectPlugin(adamo.SchemaPlugin):
 
-		#self.addLinkTable("PERS2PERS", Person, Person)
-		#self.addLinkTable("ORG2ORG",	 Organisation,		Organisation)
-		#self.addLinkTable("ORG2PERS",	 Organisation,		Person,
-		#					 addrbook.Org2Pers)
-
-		if self.withSales:
-			import business, products, sales, ledger
-			self.addTable( business.Journals("JOURNALS","Journals"))
-			self.addTable( business.Years("YEARS","Fiscal Years"))
-
-			self.addTable( products.Products("PRODUCTS","Products"))
-
-			self.addTable( sales.Invoices("INVOICES","Invoices"))
-			self.addTable( sales.InvoiceLines("INVOICELINES",
-														 "Invoice Lines"))
-			self.addTable( ledger.Bookings("BOOKINGS",
-													 "Ledger Bookings"))
-
-		if self.withQuotes:
-			import quotes
-			self.addTable( quotes.Authors("AUTHORS","Authors"))
-			self.addTable( quotes.AuthorEvents("PEREVENTS",
-														  "Biographic Events"))
-			self.addTable( quotes.AuthorEventTypes(
-				name="PEVTYPES",
-				label="Biographic Event Types"))
-			self.addTable( quotes.Topics("TOPICS","Topics"))
-			self.addTable( quotes.Publications(
-				name="PUBLICATIONS",
-				label="Publications"))
-			self.addTable( quotes.Quotes("QUOTES","Quotes"))
-			self.addTable( quotes.PubTypes(
-				name="PUBTYPES",
-				label="Publication Types"))
-			self.addTable( adamo.LinkTable(
-				quotes.Publications,
-				quotes.Authors,
-				name="PUB2AUTH",
-				label="Publications By Author"))
-
-		if self.withWeb:
-			import web
-			self.addTable( web.Pages("PAGES","Content Pages"))
-			# self.addLinkTable("PAGE2PAGE",web.Page,web.Page,web.Page2Page)
-
-		if self.withProjects:
-			import projects
-			self.addTable( projects.Projects("PROJECTS","Projects"))
-			self.addTable( projects.ProjectStati("PRJSTAT",
+	def defineTables(self,schema,ui):
+		import projects
+		schema.addTable( projects.Projects("PROJECTS","Projects"))
+		schema.addTable( projects.ProjectStati("PRJSTAT",
 															 label="Project States"))
-			
-		if self.withNews:
-			import news
-			self.addTable( news.News("NEWS",
-											 label="News Items"))
-			self.addTable( news.Newsgroups("NEWSGROUPS",
-													 label="Newsgroups"))
-			#self.addLinkTable("NEWS2NEWSGROUPS",
-			#					 news.News, news.Newsgroup)
-			
-		if self.withEvents:
-			import events
-			self.addTable( events.Events("EVENTS","Events"))
-			self.addTable( events.EventTypes("EVENTTYPES",
-														label="Event Types"))
-			
-	#def defaultAction(self,ui):
-	#	return ui.show(self.tables['PAGES'][1])
-		
 
-	def defineMenus(self,win):
-		#assert db.schema is self
-		
-		self.installto(globals())
-		ui = win
 
-		frm = PAGES.form()
-		frm.setRange("1")
-		#ui.setDefaultAction(ui.showForm,frm)
+class NewsPlugin(adamo.SchemaPlugin):
+
+	def defineTables(self,schema,ui):
+		import news
+		schema.addTable( news.News("NEWS",
+										 label="News Items"))
+		schema.addTable( news.Newsgroups("NEWSGROUPS",
+												 label="Newsgroups"))
+		#self.addLinkTable("NEWS2NEWSGROUPS",
+		#					 news.News, news.Newsgroup)
+
 		
+class EventsPlugin(adamo.SchemaPlugin):
+	def defineTables(self,schema,ui):
+		import events
+		schema.addTable( events.Events("EVENTS","Events"))
+		schema.addTable( events.EventTypes("EVENTTYPES",
+													  label="Event Types"))
+
+class SalesPlugin(adamo.SchemaPlugin):	
+	def defineTables(self,schema,ui):
+		import business, products, sales, ledger
+		schema.addTable( business.Journals("JOURNALS","Journals"))
+		schema.addTable( business.Years("YEARS","Fiscal Years"))
+
+		schema.addTable( products.Products("PRODUCTS","Products"))
+
+		schema.addTable( sales.Invoices("INVOICES","Invoices"))
+		schema.addTable( sales.InvoiceLines("INVOICELINES",
+													 "Invoice Lines"))
+		schema.addTable( ledger.Bookings("BOOKINGS",
+												  "Ledger Bookings"))
+
+class JokesPlugin(adamo.SchemaPlugin):
+	pass
+
+
+class QuotesPlugin(adamo.SchemaPlugin):	
+	def defineTables(self,schema,ui):
+		import quotes
+		schema.addTable( quotes.Authors("AUTHORS","Authors"))
+		schema.addTable( quotes.AuthorEvents("PEREVENTS",
+													  "Biographic Events"))
+		schema.addTable( quotes.AuthorEventTypes(
+			name="PEVTYPES",
+			label="Biographic Event Types"))
+		schema.addTable( quotes.Topics("TOPICS","Topics"))
+		schema.addTable( quotes.Publications(
+			name="PUBLICATIONS",
+			label="Publications"))
+		schema.addTable( quotes.Quotes("QUOTES","Quotes"))
+		schema.addTable( quotes.PubTypes(
+			name="PUBTYPES",
+			label="Publication Types"))
+		schema.addTable( adamo.LinkTable(
+			quotes.Publications,
+			quotes.Authors,
+			name="PUB2AUTH",
+			label="Publications By Author"))
+
 		
-		mb = ui.addMenuBar("user","&User Menu")
+def Schema( withEvents=True,
+				withProjects=True,
+				withWeb=True,
+				withSales=True,
+				withNews=True,
+				withQuotes=True,
+				withJokes=False,):
+	schema = SprlSchema()
+	
+	schema.addPlugin(BasePlugin(True))
+	schema.addPlugin(ContactsPlugin(True))
+	
+	schema.addPlugin(EventsPlugin(withEvents))
+	schema.addPlugin(SalesPlugin(withSales))
+	schema.addPlugin(QuotesPlugin(withQuotes))
+	schema.addPlugin(WebPlugin(withWeb))
+	schema.addPlugin(ProjectPlugin(withProjects))
+	schema.addPlugin(NewsPlugin(withNews))
+	schema.addPlugin(JokesPlugin(withJokes))
+
+	return schema
+
+
+class SprlSchema(adamo.Schema):
+
+	def getContentRoot(self,ctx):
+		return ctx.tables.PAGES.findone(match="index")
+
+	def onStartSession(self,sess):
+		sess.openForm('login')
+		
+## 	def defineMenus(self,context,win):
+## 		#assert db.schema is self
+		
+## 		ui = win
+## 		context.installto(globals())
+
+		
+## 		mb = win.addMenuBar("user","&User Menu")
 ## 		m = mb.addMenu("&Master data")
-## 		m.addItem("&Persons",       ui.showReport, PERSONS.report())
-## 		m.addItem("&Organisations", ui.showReport, ORGS.report())
-## 		m.addItem("&Partners",      ui.showReport, PARTNERS.report())
-## 		m.addItem("&Pages",         ui.showReport, PAGES.report())
+## 		#m.addItem("&Persons",       ui.showReport, PERSONS)
+## 		m.addItem("&Organisations", ui.showReport, ORGS)
+## 		m.addItem("&Partners",      ui.showReport, PARTNERS)
+## 		m.addItem("&Pages",         ui.showReport, PAGES)
 
-		# m = self.addSystemMenu(ui,mb)
-		#m.addItem("Ad&min menu",ui.setMainMenu,'admin')
+## 		m = mb.addMenu("&Journals")
+## 		m.addItem("&Invoices",      ui.showReport, INVOICES)
+## 		# m = self.addSystemMenu(ui,mb)
+## 		#m.addItem("Ad&min menu",ui.setMainMenu,'admin')
 		
 		
-		# mb = win.addMenuBar("admin","&Admin Menu")
-		m = mb.addMenu("&Tables")
-		for area in win.db._areas.values():
-			table = area._table
-		#for (name,table) in self.getTableDict().items():
-			if table.getLabel() is not None:
-				rpt = area.report()
-				m.addItem(table.getLabel(),
-							 ui.showReport,
-							 rpt)
-		m = mb.addMenu("T&ests")
-		m.addItem("&Decide",ui.test_decide)
+## 		# mb = win.addMenuBar("admin","&Admin Menu")
+## 		m = mb.addMenu("&Tables")
+## 		for ds in context.getDatasources():
+## 			table = ds._table
+## 			if table.getLabel() is not None:
+## 				#rpt = area.report()
+## 				m.addItem(table.getLabel(),
+## 							 ui.showReport,
+## 							 ds)
+## 		m = mb.addMenu("T&ests")
+## 		m.addItem("&Decide",ui.test_decide)
 		
-		#m = self.addSystemMenu(ui,mb)
-		#m.addItem("&User menu",ui.setMainMenu,'user')
+## 		#m = self.addSystemMenu(ui,mb)
+## 		#m.addItem("&User menu",ui.setMainMenu,'user')
 
-		m = mb.addMenu("&System")
-		m.addItem("&Exit",ui.exit)
-		m.addItem("&About",ui.showAbout)
+## 		m = mb.addMenu("&System")
+## 		m.addItem("&Exit",ui.exit)
+## 		m.addItem("&About",ui.showAbout)
 		
 ## 	def addSystemMenu(self,ui,mb):
 ## 		#m.addItem("~Main menu",self.getMainMenu)
@@ -169,23 +197,4 @@ class Schema(adamo.Schema):
 
 
 
-## 	def getUserMenu(self,ui):
-## 		#win = ui.openWindow(label=self.getLabel())
-## 		mb = MenuBar("Main Menu")
 
-## 		m = mb.addMenu("&Master")
-## 		m.addItem("&Persons", ui.showReport,"PERSONS")
-## 		m.addItem("&Organisations", ui.showReport,"ORGS")
-## 		m.addItem("&Partners", ui.showReport,"PARTNERS")
-
-## 		m = self.addSystemMenu(ui,mb)
-## 		m.addItem("Ad&min menu",ui.showAdminMenu)
-
-## 		return mb
-	
-	
-
-## def quickdb(**kw):
-## 	sch = Schema(**kw)
-## 	return schema.quickdb(schema=sch)
-	

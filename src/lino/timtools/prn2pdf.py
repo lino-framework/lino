@@ -25,7 +25,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
-from lino import __version__, copyright
+from lino import __version__, copyleft
 #from lino.misc import gpl
 
 class Status:
@@ -340,7 +340,7 @@ class PdfPage:
 
 def main(argv):
 	print "prn2pdf" # version " + __version__
-	print copyright('2002-2004','Luc Saffre')
+	print copyleft('2002-2004','Luc Saffre')
 
 
 

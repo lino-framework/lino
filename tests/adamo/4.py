@@ -16,7 +16,7 @@ class Case(unittest.TestCase):
 	"Does the default demo database startup()"
 
 	def setUp(self):
-		self.db = demo.getDemoDB()
+		self.db = demo.beginSession()
 		self.db.installto(globals())
 
 	def tearDown(self):
@@ -25,6 +25,8 @@ class Case(unittest.TestCase):
 
 	def test01(self):
 		self.assertEqual(NATIONS.peek('ee').name, 'Estonia')
+		self.assertEqual(self.db.tables.NATIONS.peek('ee').name,
+							  'Estonia')
 		
 		try:
 			NATIONS.peek(['ee'])

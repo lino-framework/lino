@@ -1,8 +1,4 @@
 from lino.adamo import *
-#from lino.adamo.table import Table,LinkTable
-#from lino.adamo.datatypes import *
-
-# from lino.sprl.plugins import babel
 from babel import Languages
 
 class Contacts(Table):
@@ -45,6 +41,7 @@ class Organisations(Contacts,Addresses):
 		Contacts.init(self)
 		Addresses.init(self)
 		self.name = Field(STRING)
+		self.addView('std',columnNames="name email phone website")
 
 	class Row(Addresses.Row):
 		pass
@@ -58,8 +55,9 @@ class Persons(Table): #(Contact,Address):
 		
 		# table.setFindColumns("name firstName")
 
-		self.setColumnList("name firstName id")
+		#self.setColumnList("name firstName id")
 		self.setOrderBy('name firstName')
+		self.addView('std',columnNames="name firstName id")
 
 	class Row(Table.Row):
 		def getLabel(self):
@@ -73,15 +71,67 @@ class Persons(Table): #(Contact,Address):
 
 	
 
+## class Users(Table):
+## 	"People who can access this database"
+## 	def init(self):
+## 		#Persons.init(self)
+## 		self.id = Field(STRING)
+## 		self.person = Pointer(Persons)
+
+## 	class Row(Table.Row):
+## 		pass
+
+
+class MainForm(FormTemplate):
+	
+	def init(self):
+		self.master = Menu("&Master")
+		self.master.partners = self._schema.tables.PARTNERS.cmd_show()
+		self.master.orgs = self._schema.tables.ORGS.cmd_show()
+		
+		self.system = Menu("&System")
+		self.system.logout = Command(lambda sess: sess.logout,
+											  label="&Logout"
+											  )
+		
+			
+
 class Users(Persons):
 	"People who can access this database"
 	def init(self):
 		Persons.init(self)
-		self.id = Field(STRING)
+		self.id = Field(STRING,label="Username")
+		self.password = Field(PASSWORD)
 
 	class Row(Persons.Row):
 		pass
 
+class LoginForm(FormTemplate):
+
+	def init(self):
+		self.uid = Match(self._schema.tables.USERS.id)
+		self.password = Match(self._schema.tables.USERS.password)
+		#self.uid = Pointer(self._schema.tables.USERS.id)
+		#self.password = self._schema.tables.USERS.password
+
+	class Row(FormTemplate.Row):
+	
+		def onSubmit(self):
+			sess = self.getSession()
+			
+			#sess.login(self.uid,self.password)
+			uid = self.uid
+			pwd = self.password
+			
+			user = sess.tables.USERS.peek(uid)
+			if user is None:
+				return sess.errorMessage("%s  : no such user" % uid)
+			if user.password != pwd:
+				return sess.errorMessage("invalid password for "+user.getLabel())
+			sess.login(user)
+			sess.notifyMessage("Hello, "+user.getLabel())
+			sess.openForm("main")
+			
 
 class Partners(Contacts,Addresses):
 	"""A Person or Organisation with whom I have business contacts.
@@ -100,7 +150,7 @@ class Partners(Contacts,Addresses):
 		#self.org = Pointer(Organisation)
 		#self.person = Pointer(Person)
 		self.lang = Pointer(Languages)
-		self.addView("simple","name firstName email phone gsm")
+		self.addView("std","name firstName email phone gsm")
 		
 	class Row(Contacts.Row,Addresses.Row):
 		def validate(self):
@@ -184,6 +234,7 @@ class Nations(BabelTable):
 		self.population = Field(INT)
 		self.curr = Field(STRING)
 		self.isocode = Field(STRING)
+		self.addView('std',columnNames="name isocode id")
 
 	class Row(BabelTable.Row):
 		def validate(self):
@@ -207,6 +258,7 @@ class Cities(Table):
 		self.inhabitants = Field(INT)
 		self.setPrimaryKey("nation id")
 		# complex primary key used by test cases
+		self.addView('std',columnNames="name nation zipCode")
 		
 	class Row(Table.Row):
 		def getLabel(self):

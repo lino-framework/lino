@@ -10,6 +10,7 @@ from lino.misc.etc import issequence
 from query import ColumnList
 from datatypes import DataVeto
 from report import Report
+from rowattrs import FieldContainer, NoSuchField
 
 class Datasource:
 
@@ -27,21 +28,31 @@ class Datasource:
 
 		self._context = context
 		self._store = store
+		store.registerDatasource(self)
 		#self._query = query
 		self._clist = clist
 		#self.report = clist.report
-		self._viewName = viewName
-		
+
 		self._db = store._db # shortcut
 		self._table = store._table # shortcut
 		self._schema = self._db.schema # shortcut
 		self._connection = store._connection # shortcut
 
+		for name in ('startDump','stopDump'):
+			setattr(self,name,getattr(store._connection,name))
+
+		
+## 		if viewName is None:
+## 			if self._table._views.has_key('std'):
+## 				viewName = 'std'
+		self._viewName = viewName
+		
 		self._samples = {}
 		self._table.initDatasource(self)
 
 		if viewName is not None:
-			for k,v in self._table._views[viewName].items():
+			view = self.getView(viewName)
+			for k,v in view.items():
 				kw.setdefault(k,v)
 			#kw = self._table._views[viewName]
 			#self.config(**kw)
@@ -69,6 +80,9 @@ class Datasource:
 			assert len(kw) == 0
 			self._samples = {}
 			self.setSamples(**samples)
+			
+	def getView(self,viewName):
+		return self._table.getView(viewName)
 
 	def query(self,columnNames=None,samples=None,**kw):
 		
@@ -107,6 +121,15 @@ class Datasource:
 
   	def report(self,name,**kw):
  		return Report(self,name,**kw)
+
+	def getRenderer(self,rsc,req,writer=None):
+		return self._schema._datasourceRenderer(rsc,req,self,writer)
+	
+	def getContext(self):
+		return self._context
+
+	def getTableName(self):
+		return self._table.getTableName()
 	
 	def getLabel(self):
 		if self._label is None:
@@ -271,6 +294,7 @@ class Datasource:
 		#if self._table.getTableName() == "PARTNERS":
 		#	print "datasource.py", args
 		#	print [col.name for col in self._clist.visibleColumns]
+		#self.startDump()
 		row = self._table.Row(self,{},True)
 		row.lock()
 		kw.update(self._samples)
@@ -278,6 +302,8 @@ class Datasource:
 		self.rowcount = None
 		self._store.setAutoRowId(row)
 		row.unlock()
+		self._store.fireUpdate()
+		#print self.stopDump()
 		return row
 
 
@@ -414,8 +440,8 @@ class Datasource:
 		
 		return DataIterator(self,**kw)
 
-	def onStoreAppendRow(self):
-		self.rowcount = None
+ 	def onStoreUpdate(self):
+ 		self.rowcount = None
 	
 	def __len__(self):
 		if self.rowcount is None:
@@ -500,20 +526,96 @@ class DataIterator:
 
 
 class DataRow:
+	def __init__(self,fc,clist,values,dirty=False):
+		assert isinstance(fc,FieldContainer)
+		assert type(values) == types.DictType
+		self.__dict__["_values"] = values 
+		self.__dict__["_fc"] = fc
+		self.__dict__["_clist"] = clist
+		self.__dict__["_dirty"] = dirty
+		
+	def __getattr__(self,name):
+		assert self.__dict__.has_key("_fc")
+		#print repr(self._fc)
+		rowattr = self._fc.getRowAttr(name)
+		return rowattr.getCellValue(self)
+	
+	def __setattr__(self,name,value):
+      #def setAtomicValue(self,name,value)
+		#assert self._locked
+		rowattr = self._fc.getRowAttr(name)
+		rowattr.setCellValue(self,value)		
+		#self._values[name] = value
+		rowattr.afterSetAttr(self)
+		self.__dict__['_dirty'] = True
+
+	def getFieldValue(self,name):
+		try:
+			return self._values[name]
+		except KeyError:
+			raise NoSuchField,name
+
+
+	def setDirty(self):
+		self.__dict__["_dirty"] = True
+
+	def __getitem__(self,i):
+		col = self._clist.visibleColumns[i]
+		return col.getCellValue(self)
+		
+	def __setitem__(self,i,value):
+		col = self._clist.visibleColumns[i]
+		assert self._pseudo or self._locked
+		col.rowAttr.setCellValue(self,value)
+		self.__dict__["_dirty"] = True
+		
+	def __iter__(self):
+		return RowIterator(self,self._clist.visibleColumns)
+	
+	def __len__(self):
+		return len(self._clist.visibleColumns)
+	
+	def getCells(self,columnNames=None):
+		return RowIterator(self,self._clist.getColumns(columnNames))
+		
+	def update(self,**kw):
+		self.lock()
+		for (k,v) in kw.items():
+			setattr(self,k,v)
+		self.validate()
+		self.unlock()
+
+
+	def validate(self):
+		pass
+
+	def lock(self):
+		pass
+	
+	def unlock(self):
+		pass
+	
+	
+	def isDirty(self):
+		return self.__dict__['_dirty']
+
+	def makeComplete(self):
+		pass
+
+
+class StoredDataRow(DataRow):
 	
 	def __init__(self,ds,values,new,pseudo=False):
 		"""
 		"""
 		assert type(new) == types.BooleanType
-		assert type(values) == types.DictType
+		DataRow.__init__(self,ds._table,ds._clist,values,dirty=new)
 		#self.__dict__["_rowId"] = rowId
 		self.__dict__["_ds"] = ds
 		self.__dict__["_new"] = new
 		self.__dict__["_pseudo"] = pseudo
 		self.__dict__["_complete"] = False #ds.isComplete()
-		self.__dict__["_dirty"] = new
 		self.__dict__["_locked"] = False
-		self.__dict__["_values"] = values 
 		self.__dict__["_isCompleting"] = False
 
 	def __eq__(self, other):
@@ -528,63 +630,21 @@ class DataRow:
 		return self.getRowId() != other.getRowId()
 		#return tuple(self.getRowId()) == tuple(other.getRowId())
 		
+	def getRenderer(self,rsc,req,writer=None):
+		return self._ds._table._rowRenderer(rsc,req,self,writer)
 
-	def __getattr__(self,name):
-		rowattr = self._ds._table.getRowAttr(name)
-		return rowattr.getCellValue(self)
+## 	def writeParagraph(self,parentResponder):
+## 		rsp = self.getRenderer(parentResponder.resource,
+## 									  parentResponder.request,
+## 									  parentResponder._writer)
+## 		#assert rsp.request is self.request
+## 		rsp.writeParagraph()
 	
-	def __setattr__(self,name,value):
-      #def setAtomicValue(self,name,value)
-		assert self._locked
-		rowattr = self._ds._table.getRowAttr(name)
-		rowattr.setCellValue(self,value)		
-		#self._values[name] = value
-		rowattr.afterSetAttr(self)
-		self.__dict__['_dirty'] = True
+	def getContext(self):
+		return self._ds._context
 	
-				
-## 	def __getattr__(self,name):
-## 		rowattr = self._ds._table.getRowAttr(name)
-## 		return rowattr.getCellValue(self)
-	
-## 	def __getattr__(self,name):
-## 		try:
-## 			#col = self._ds._query.getColumn(name)
-## 			col = self._ds._store._peekQuery.getColumn(name)
-## 		except DataVeto,e:
-## 			# must convert DataVeto to AttributeError 
-## 			# but still have the full message of the DataVeto
-## 			# example:
-## 			# AttributeError: No column 'cities' in NATIONS (id, name)
-## 			raise AttributeError(str(e))
-## 		return col.getCellValue(self)
-	
-	def __getitem__(self,i):
-		col = self._ds._clist.visibleColumns[i]
-		return col.getCellValue(self)
-		
-## 	def __getattr__(self,name):
-## 		atom = self._area._query.getAtomByName(name)
-## 		return self._values[atom.index]
-## 		# attr = self._area._table.__getattr__(name) 
-## 		# return attr.getValueFromRow(self)
 
-## 	def __setattr__(self,name,value):
-## 		rowattr = self._ds._table.getRowAttr(name)
-## 		#col = self._ds._store._peekQuery.getColumn(name)
-## 		assert self._pseudo or self._locked
-## 		rowattr.setCellValue(self,value)
-## 		self.__dict__["_dirty"] = True
-		
-	def __setitem__(self,i,value):
-		col = self._ds._clist.visibleColumns[i]
-		assert self._pseudo or self._locked
-		col.rowAttr.setCellValue(self,value)
-		self.__dict__["_dirty"] = True
-		
-	def setDirty(self):
-		self.__dict__["_dirty"] = True
-
+	
 	def isComplete(self):
 		return self._complete
 	
@@ -592,8 +652,8 @@ class DataRow:
 		return self._new
 	
 	def getRowId(self):
-		id = [None] * len(self._ds._table.getPrimaryAtoms())
-		for col in self._ds._clist._pkColumns:
+		id = [None] * len(self._clist.leadTable.getPrimaryAtoms())
+		for col in self._clist._pkColumns:
 			col.row2atoms(self,id)
 ## 		if self._ds._table.getTableName() == "CITIES":
 ## 			print [(col.name,col.rowAttr) for col in self._ds._clist._pkColumns]
@@ -606,6 +666,19 @@ class DataRow:
 		return str(tuple(self.getRowId()))
 		#return self._ds._table.getRowLabel(self)
 		
+	def getFieldValue(self,name):
+		try:
+			return self._values[name]
+		except KeyError:
+			if self._isCompleting:
+				return None
+			self.makeComplete()
+			try:
+				return self._values[name]
+			except KeyError:
+				raise NoSuchField,name
+
+
 	def _readFromStore(self):
 		"""
 		make this row complete using a single database lookup
@@ -734,32 +807,9 @@ class DataRow:
 
 			
 
-	def update(self,**kw):
-		self.lock()
-		for (k,v) in kw.items():
-			setattr(self,k,v)
-		self.validate()
-		self.unlock()
-
-
-	def validate(self):
-		pass
-		#self._ds._table.validateRow(self)
-
-	
-#	def setAtomicValue(self,i,value):
-#		self._values[i] = value
-
-
-	def isDirty(self):
-		return self.__dict__['_dirty']
-
-
 	def makeComplete(self):
 		if self._pseudo or self._complete or self._isCompleting:
 			return False
-		#if self._dirty:
-		#	raise "%s is dirty but not complete!" % repr(self)
 		self._readFromStore()
 		return True
 
@@ -792,12 +842,6 @@ class DataRow:
 			if msg:
 				return msg
 
-	def __iter__(self):
-		return RowIterator(self,self._ds._clist.visibleColumns)
-	
-	def getCells(self,columnNames=None):
-		return RowIterator(self,self._ds._clist.getColumns(columnNames))
-		
 
 class RowIterator:
 
@@ -827,5 +871,7 @@ class DataCell:
 	
 	def format(self):
 		v = self.col.getCellValue(self.row)
-		return self.col.format(v,self.row._ds)
+		if v is None:
+			return ""
+		return self.col.format(v,self.row.getContext())
 	

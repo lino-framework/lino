@@ -5,11 +5,12 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
-from widgets import Widget
+from response import ContextedResponse
 from lino.adamo.datasource import Datasource
+from lino.adamo.schema import LayoutComponent
 
 
-class Skipper(Widget):
+class Skipper(ContextedResponse,LayoutComponent):
 	
 	handledClass = Datasource
 	
@@ -22,18 +23,26 @@ class Skipper(Widget):
 	'''
 	endNavigator = "</p>"
 
-	def __init__(self,target,rsc,request,reqParams={}):
+	def onBeginResponse(self):
+		# target,rsc,request,reqParams={}):
 		#print "Skipper(%s,%s)" % (repr(target),repr(reqParams))
-		assert isinstance(target,Datasource)
-		Widget.__init__(self,target,rsc,request)
-		self.request = request
+		#Widget.onBeginResponse(self,response)
+		#assert isinstance(target,Datasource)
+		#Widget.__init__(self,target,rsc,request)
+		#self.request = request
 		csvSamples = {}
 		qryParams = {}
+		viewName = None # self.target._table._defaultView
+## 		if self.target.getView('std')
+## 		if view is not None:
+## 			viewName = 'std'
+## 		else:
+## 			viewName = None
 		pageLen = 15
 		pageNum = None
 		qryid = None
 		tplid = 0
-		for k,v in reqParams.items():
+		for k,v in self.request.args.items():
 		#for k,v in request.args.items():
 			assert len(v) == 1
 			if k == 'pg':
@@ -49,7 +58,9 @@ class Skipper(Widget):
 			#elif k == 'col':
 			#	p['columnList'] = " ".join(v)
 			elif k == 'v':
-				qryParams['viewName'] = v[0]
+				viewName = v[0]
+				if viewName == '':
+					viewName = None
 			elif k == 'search':
 				qryParams['search'] = v[0]
 			elif k == 'flt':
@@ -62,9 +73,11 @@ class Skipper(Widget):
 				#qryParams['samples'][k] = v[0]
 				#p[k] = self.area.cellAtoms2Value(k,v)
 
+		#if viewName != self.target._table._defaultView:
+		qryParams['viewName'] = viewName
 
 		#print qryParams
-		self.ds = target.query(**qryParams)
+		self.ds = self.target.query(**qryParams)
 		#print self.ds._samples
 		self.ds.setCsvSamples(**csvSamples)
 			
@@ -230,8 +243,12 @@ class Skipper(Widget):
 		self.renderNavigator()
 		
 		if self.pageLen == 1:
-			w = self.get_widget(self.ds[self.pageNum-1])
-			w.writeBody()
+			row = self.ds[self.pageNum-1]
+			self.child(row).writeBody()
+			#r = row.getRenderer(self.request)
+			#r.writeBody()
+			#w = self.get_widget(self.ds[self.pageNum-1])
+			#w.writeBody()
 		else:
 			self.tpl.renderHeader(self)
 			for row in self.ds.iterate(offset=offset,limit=limit):

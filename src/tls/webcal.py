@@ -6,7 +6,7 @@
 #----------------------------------------------------------------------
 
 from time import localtime, time
-from lino.misc.normalDate import ND
+from forum.normalDate import ND
 #from twisted_ui import TwistedRenderer,AdamoResource
 from skipper import Skipper
 from widgets import Widget

@@ -18,27 +18,31 @@ from lino.misc.etc import issequence
 from paramset import ParamOwner
 import datatypes
 
-from rowattrs import Detail, Pointer
+from rowattrs import Detail, Pointer, NoSuchField
 
 
-class AbstractQuery: 
+class BaseColumnList: 
 	
-	def __init__(self,columnNames):
+	def __init__(self):
 		self._columns = []
 		self._joins = []
 		self._atoms = []
 		#self._reports = {}
 		#self._name = name
 		
+	def setVisibleColumns(self,columnNames):
 		l = []
-		for name in self.leadTable.getPrimaryKey():
-			l.append(self.provideColumn(name))
-		self._pkColumns = tuple(l)
-
-		assert type(columnNames) is types.StringType
-		l = []
-		for colName in columnNames.split():
-			l.append(self.provideColumn(colName))
+		if columnNames is None:
+			fc = self.getFieldContainer()
+			for fld in fc.getFields():
+				col = self.findColumn(fld.getName())
+				if col is None:
+					col = self.addColumn(fld,None,fld.getName())
+				l.append(col)
+		else:
+			assert type(columnNames) is types.StringType
+			for colName in columnNames.split():
+				l.append(self.provideColumn(colName))
 		self.visibleColumns = tuple(l)
 			
 
@@ -47,7 +51,7 @@ class AbstractQuery:
 		atomicValues = [atomicRow[atom.index] for atom in self._atoms]
  		return [col.atoms2value(atomicValues,ctx)
  				  for col in self.visibleColumns]
-	
+
 
 ##  	def report(self,name,**kw):
 ## 		try:
@@ -81,25 +85,30 @@ class AbstractQuery:
 		if col is not None:
 			return col
 		
+		#print "provide new column", name
 		cns = name.split('.')
 		join = None # parent of potential join
 		joinName = cns[0]
-		table = self.leadTable
+		fc = self.getFieldContainer()
 		while len(cns) > 1:
-			pointer = table.getRowAttr(cns[0])
+			pointer = fc.getRowAttr(cns[0])
 			assert isinstance(pointer,Pointer)
 			newJoin = self._provideJoin(joinName,
 												 pointer,
 												 join)
-			table = pointer._toTables[0]
+			fc = pointer._toTables[0]
 			join = newJoin
 			del cns[0]
 			joinName += "_" + cns[0]
 
 		cns = cns[0]
-		rowAttr = getattr(table,cns)
-		col = QueryColumn(self, len(self._columns), name,
-								join,rowAttr)
+		rowAttr = getattr(fc,cns,None)
+		if rowAttr is None:
+			raise NoSuchField,name
+		return self.addColumn(rowAttr,join,name)
+	
+	def addColumn(self,fld,join,name):
+		col = QueryColumn(self, len(self._columns), name, join,fld)
 		self._columns.append(col)
 		col.setupAtoms()
 		return col
@@ -305,29 +314,32 @@ class AbstractQuery:
 
 		
 
-class ColumnList(AbstractQuery):
+class ColumnList(BaseColumnList):
 	
-	def __init__(self, store, columnNames):
+	def __init__(self, store, columnNames=None):
 		self._store = store
 		self.leadTable = store._table # shortcut
-## 		if columnNames is None:
-## 			#columnNames = self.leadTable.getColumnNames()
-## 			columnNames = self.leadTable.getPeekColumnNames()
-		AbstractQuery.__init__(self,columnNames)
+
+		BaseColumnList.__init__(self)
+		
+		l = []
+		for name in self.leadTable.getPrimaryKey():
+			l.append(self.provideColumn(name))
+		self._pkColumns = tuple(l)
+
+		self.setVisibleColumns(columnNames)
+		
 
 	def __repr__(self):
-		return self.leadTable.getTableName()+"Query(%s)"%[col.name for col in self._columns]
+		return self.leadTable.getTableName()+"Query(%s)" % \
+				 [col.name for col in self._columns]
 
-## 	def child(self,name,**kw):
-## 		q = self._store.getQuery(name)
-## 		d = self.myParams()
-## 		for col,value in self.samples:
-## 			d[col.name] = value
-## 		d.update(kw)
-## 		return Query(self._store,name,**d)
 
-## 	def child(self,columnNames):
-## 		return ColumnList(self._store,columnNames)
+	def getContext(self):
+		return self._store._db
+	
+	def getFieldContainer(self):
+		return self.leadTable
 
 	def getSearchAtoms(self):
 		l = []
@@ -361,19 +373,11 @@ class ColumnList(AbstractQuery):
 		
 		return row
 
-## 	def getSqlSelect(self,conn,**kw):
-## 		return conn.getSqlSelectTable(self,
-## 												self.leadTable,
-## 												**kw)
 
 
 	def commit(self):
 		self.leadTable.commit()
 
-## 	def datasource(self,db):
-## 		area = getattr(db,self.leadTable.getTableName())
-## 		return Datasource(area,self)
-		
 
 	def values2id(self,knownValues):
 		"convert dict of knownValues to sequence of pk atoms"
@@ -388,10 +392,6 @@ class ColumnList(AbstractQuery):
 		return id
 
 	
-
-
-
-
 
 
 
@@ -446,37 +446,6 @@ class Join:
 		
 		"""self._atoms is a list of (a,b) couples where a and b are
 		atoms used for the join.  """
-
-## 	def getJoinedRow(self,row):
-## 		"""
-## 		Imagine a query "id name j1 j2 j3" where j3.parent is j2 and j2.parent is j1.
-## 		If j3 has a rowattribute "foo", then, the user can ask::
-
-## 		  row.j1.j2.j3.foo
-		
-## 		"""
-## 		if self.parent is not None:
-## 			row = self.parent.getJoinedRow(row)
-## 		return getattr(row,self.name)
-
-## 	def setJoinedRow(self,row,value):
-## 		if self.parent is not None:
-## 			row = self.parent.getJoinedRow(row)
-## 		return setattr(row,self.name,value)
-
-## 	def atoms2row(self,atomicRow,row):
-## 		joinedRow = self.pointer.makeRowInstance(row._ds,
-## 															  atomicRow,
-## 															  self._atoms)
-## 		self.setJoinedRow(row,joinedRow)
-## 		_findUsedToTable()
-			
-## 		# if pointer is a multipointer he will analyse the atomic
-## 		# values to see which table is used.
-
-## 		# should _joins (and Join) be replaced by _joinColumns ?
-			
-## 		row.setAtomicValue(self.name,joinedRow)
 
 		
 	def setupAtoms(self):
@@ -586,7 +555,7 @@ class QueryColumn:
 			joinName = None
 		#l = self.getNeededAtoms()
 		#print repr(l)
-		for (name,type) in self.getNeededAtoms(self.query._store._db):
+		for (name,type) in self.getNeededAtoms(self.query.getContext()):
 			if self.join and len(self.join.pointer._toTables) > 1:
 				for toTable in self.join.pointer._toTables:
 					a = self.query.provideAtom(
@@ -677,8 +646,8 @@ class QueryColumn:
 	def getNeededAtoms(self,db):
 		return self.rowAttr.getNeededAtoms(db)
 	
-	def format(self,value,ds):
-		values = self.rowAttr.value2atoms(value,ds._context)
+	def format(self,value,context):
+		values = self.rowAttr.value2atoms(value,context)
 		#print self, ":", values
 		#if len(self._atoms) == 1:
 		#	return self._atoms[0].type.format(values[0])

@@ -31,7 +31,7 @@ class Pages(MemoTreeTable):
 		#table.setColumnList('title abstract id created lang')
 		#rpt.setLabel('Pages')
 
-		self.addView('simple',columnNames="title abstract")
+		self.addView('std',columnNames="title abstract")
 
 	class Row(MemoTreeTable.Row):
 		pass

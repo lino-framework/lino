@@ -4,6 +4,8 @@
 # License:	 GPL
 #----------------------------------------------------------------------
 
+raise "class Store is now in database.py"
+
 import types
 import warnings
 
@@ -17,22 +19,17 @@ from lino.misc.descr import Describable
 
 class Store:
 	"""
-	This is a connected or opened Table.
+	A Store is a connected (opened) Table.
 	One instance per Database and Table.
 	Does not cache the rows (see CachedStore)
 	Instanciates row proxy objects.
 	"""
 	def __init__(self,conn,db,table):
-		#q = self.defineQuery(None)
-		#q = Query(self,None)
-		#BaseDatasource.__init__(self,db,table)
 		self._db = db
 		self._table = table
 		self._schema = db.schema # shortcut
 		self._connection = conn # shortcut
-		#self._cachedRows = {}
 		self._lockedRows = []
-		#self._dirtyRows = {}
 		
 		self._datasources = []
 		
@@ -95,6 +92,8 @@ class Store:
 		#assert len(self._lockedRows) == 0
 		for row in self._lockedRows:
 			row.writeToStore()
+			#if self._table.getTableName() == "NATIONS":
+			#	print row
 		
  	def beforeShutdown(self):
 		assert len(self._lockedRows) == 0

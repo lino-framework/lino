@@ -5,18 +5,18 @@ label = 'A Collection of Lino Demo Data'
 from lino.schemas.sprl import demo 
 #from lino.schemas.sprl.data import langs
 
-def populate(db):
+def populate(sess):
 	
 	#import etc1
 	#etc1.populate(db)
 
 	#langs.populate(db)
-	demo.populate(db,big=True)
+	demo.populate(sess,big=True)
 	
-	db.installto(globals())
+	sess.installto(globals())
 	
 	from lino.schemas.sprl.data import nations_de
-	nations_de.populate(db)
+	nations_de.populate(sess)
 	
 
 	de = LANGS.peek('de')
@@ -34,4 +34,4 @@ def populate(db):
 	#q.appendRow("","")
 
 
-	db.commit()
+	sess.commit()

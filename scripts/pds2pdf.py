@@ -15,15 +15,15 @@ Options:
 
 import sys, getopt, os
 #from lino.timtools.pds2pdf import cli,__doc__
-from lino.misc import gpl
-from lino import __version__
+#from lino.misc import gpl
+from lino import __version__, copyleft
 
 from lino.sdoc.pdf import PdfRenderer
 from lino.sdoc.pdsparser import main
 
 if __name__ == '__main__':
 	print "lino pds2pdf version " + __version__
-	print gpl.copyright('2002-2003','Luc Saffre')
+	print copyleft('2002-2003','Luc Saffre')
 
 	try:
 		opts, args = getopt.getopt(sys.argv[1:],

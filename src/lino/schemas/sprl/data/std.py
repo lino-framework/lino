@@ -4,48 +4,51 @@
 
 
 import os
-from lino.misc.normalDate import ND
+from forum.normalDate import ND
 
 
-def populate(db,big=False):
+def populate(sess,big=False):
 
-	db.installto(globals())
+	#db.installto(globals())
 
 	# ISO 639 : Code for the representation of names of languages
 	if big:
 		import languages
-		languages.populate(db)
+		languages.populate(sess)
 		
-	if len(LANGS) == 0:
-		q = LANGS.query('id name')
-		setBabelLangs('en de fr')
+	if len(sess.tables.LANGS) == 0:
+		q = sess.tables.LANGS.query('id name')
+		sess.setBabelLangs('en de fr')
+		#q.startDump()
 		q.appendRow('en',('English','Englisch','Anglais')	  )
 		q.appendRow('de',('German','Deutsch', 'Allemand')	  )
 		q.appendRow('et',('Estonian','Estnisch','Estonien')  )
 		q.appendRow('fr',('French','Französisch','Français')	  )
 		q.appendRow('nl',('Dutch','Niederländisch','Neerlandais')	  )
-		
+		#print len(q)
+		#print len(sess.tables.LANGS)
+		#print q.stopDump()
 		# ISO 3166 : alpha-2 country codes
 
 		
-	q = PARTYPES.query('id name')
-	setBabelLangs('en de fr')
+	q = sess.tables.PARTYPES.query('id name')
+	sess.setBabelLangs('en de fr')
 	q.appendRow('c',('Customer', 'Kunde', 'Client'))
 	q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
 	q.appendRow('m',('Member', 'Mitglied', "Membre"))
 	q.appendRow('e',('Employee', 'Angestellter', "Employé"))
 	q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
 	
-	q = PRJSTAT.query('id name')
-	setBabelLangs('en de')
+	q = sess.tables.PRJSTAT.query('id name')
+	sess.setBabelLangs('en de')
 	q.appendRow('T',('to do','zu erledigen'))
 	q.appendRow('D',('done','erledigt'))
 	q.appendRow('W',('waiting','wartet'))
 	q.appendRow('A',('abandoned','storniert'))
 	q.appendRow('S',('sleeping','schläft'))
 
-	q = PUBTYPES.query('id name typeRefPrefix pubRefLabel')
-	setBabelLangs('en de')
+	q = sess.tables.PUBTYPES.query('id name typeRefPrefix pubRefLabel')
+	sess.setBabelLangs('en de')
 	q.appendRow("book",
 					('Book','Buch')        ,
 					'ISBN: ',
@@ -61,21 +64,25 @@ def populate(db,big=False):
 	q.appendRow("sw"  , ('Software','Software')    ,
 					''      , (None,None)    )
 
-	q = PEVTYPES.query('id name')
-	setBabelLangs('en de')
+	q = sess.tables.PEVTYPES.query('id name')
+	sess.setBabelLangs('en de')
 	q.appendRow(1,('born','geboren'))
 	q.appendRow(2,('died','gestorben'))
 	q.appendRow(3,('married','Heirat'))
 	q.appendRow(4,('school','Schulabschluss'))
 	q.appendRow(5,('other','Sonstige'))	
 
+	q = sess.tables.USERS.query('id firstName name')
+	q.appendRow("luc", "Luc", "Saffre")
+	q.appendRow("james", "James", "Bond")
+	
 	if big:
 		import nations
-		nations.populate(db)
+		nations.populate(sess)
 
-	if len(NATIONS) == 0:
-		q = NATIONS.query('id name' )
-		setBabelLangs('en')
+	if len(sess.tables.NATIONS) == 0:
+		q = sess.tables.NATIONS.query('id name' )
+		sess.setBabelLangs('en')
 		q.appendRow("ee","Estonia")
 		q.appendRow("be","Belgium")
 		q.appendRow("de","Germany")
@@ -86,11 +93,12 @@ def populate(db,big=False):
 	
 	if big:
 		import cities_be
-		cities_be.populate(db)
+		cities_be.populate(sess)
 		
-	setBabelLangs('en')
-	EUR = Currencies.appendRow(id="EUR",name="Euro")
-	Currencies.appendRow(id="USD",name="US Dollar")
-	BEF = Currencies.appendRow(id="BEF",name="Belgian Franc")
+	sess.setBabelLangs('en')
+	CURR = sess.tables.Currencies
+	EUR = CURR.appendRow(id="EUR",name="Euro")
+	CURR.appendRow(id="USD",name="US Dollar")
+	BEF = CURR.appendRow(id="BEF",name="Belgian Franc")
 
 

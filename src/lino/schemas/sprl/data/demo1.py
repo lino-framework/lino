@@ -4,7 +4,7 @@
 
 
 import os
-from lino.misc.normalDate import ND
+from forum.normalDate import ND
 
 
 def populate(db,big=False):
@@ -181,7 +181,7 @@ def populate(db,big=False):
 
 	db.commit()
 
-	if db.schema.withSales:
+	if db.schema.plugins.SalesPlugin.isActive():
 		p = PARTNERS.peek(3)
 		q = JOURNALS.query("id name tableName")
 		jnl = q.appendRow("OUT","outgoing invoices","INVOICES")
@@ -201,7 +201,7 @@ def populate(db,big=False):
 		db.commit()
 
 
-	if db.schema.withQuotes:
+	if db.schema.plugins.QuotesPlugin.isActive():
 ## 		q = PUBTYPES.query('id name typeRefPrefix pubRefLabel')
 ## 		q.appendRow("book",'Book','ISBN: ','page')
 ## 		q.appendRow("url",'Web Page','http:',None)
@@ -255,7 +255,7 @@ Conscience is the inner voice that warns us that someone may be looking.
 		# http://www.io.com/~gibbonsb/mencken.html
 		#a.events.appendRow()
 
-	if db.schema.withProjects:
+	if db.schema.plugins.ProjectPlugin.isActive():
 		p1 = PROJECTS.appendRow(title="Project 1")
 		p2 = PROJECTS.appendRow(title="Project 2")
 		p3 = PROJECTS.appendRow(title="Project 3")
@@ -268,7 +268,7 @@ Conscience is the inner voice that warns us that someone may be looking.
 		p1322 = PROJECTS.appendRow(title="Project 1.3.2.2",super=p132)
 		
 
-	if db.schema.withJokes:
+	if db.schema.plugins.JokesPlugin.isActive():
 		import quotes_de
 		quotes_de.populate(db)
 		db.commit()

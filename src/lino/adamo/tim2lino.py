@@ -19,6 +19,14 @@ class TimMemoParser(MemoParser):
 		MemoParser.__init__(self,cmds)
 
 	
+	def cmd_url(self,renderer,s):
+		s = s.split(None,1)
+		renderer.renderLink(*s)
+	## 	if len(s) == 2:
+	## 		return renderLink(s[0],label=s[1])
+	## 	else:
+	## 		return renderLink(s[0])
+
 	def cmd_btn(self,renderer,s):
 		s = s.split(None,1)
 		renderer.renderImage('buttons',*s)
@@ -35,32 +43,26 @@ class TimMemoParser(MemoParser):
 		s = s.split(None,1)
 		ref = s[0].split(':')
 		if len(ref) != 2:
-			return 
-		try:
-			if ref[0] == "MSX":
-				ref[0] = "PAGES"
-			elif ref[0] == "TPC":
-				ref[0] = "TOPICS"
-			elif ref[0] == "AUT":
-				ref[0] = "AUTHORS"
-			elif ref[0] == "NEW":
-				ref[0] = "NEWS"
-			elif ref[0] == "PUB":
-				ref[0] = "PUBLICATIONS"
-			ds = getattr(self._context,ref[0])
-		except AttributeError,e:
-			return 
+			raise "invalid ref %s" % repr(s)
+			#renderer.write(
+			#return
+		if ref[0] == "MSX":
+			ref[0] = "PAGES"
+		elif ref[0] == "TPC":
+			ref[0] = "TOPICS"
+		elif ref[0] == "AUT":
+			ref[0] = "AUTHORS"
+		elif ref[0] == "NEW":
+			ref[0] = "NEWS"
+		elif ref[0] == "PUB":
+			ref[0] = "PUBLICATIONS"
+		#try:
+		ds = self._context.getDatasource(ref[0])
+		#except AttributeError,e:
+			
 			#return str(e)
 		s[0] = renderer.uriToTable(ds._table)+"/"+ref[1]
 		renderer.renderLink(*s)
-
-	def cmd_url(self,renderer,s):
-		s = s.split(None,1)
-		renderer.renderLink(*s)
-	## 	if len(s) == 2:
-	## 		return renderLink(s[0],label=s[1])
-	## 	else:
-	## 		return renderLink(s[0])
 
 
 	

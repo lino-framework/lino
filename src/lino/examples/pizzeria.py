@@ -12,20 +12,13 @@ This is a short example to illustrate Adamo's basic idea.
 
 from lino.adamo import *
 
-from lino.misc.normalDate import ND
+from forum.normalDate import ND
 
 # 1. Define the database schema
 
 
 #from lino.adamo.schema import DatabaseSchema, quickdb
 
-class Pizzeria(Schema):
-	def defineTables(self,ui):
-		self.addTable( Products("PROD"))
-		self.addTable(Customers("CUST"))
-		self.addTable(Orders("ORDERS"))
-		self.addTable(OrderLines("LINES"))
-		
 class Products(Table):
 	def init(self):
 		self.name = Field(STRING)
@@ -45,7 +38,7 @@ class Orders(Table):
 		self.totalPrice = Field(PRICE)
 		self.isRegistered = Field(BOOL)
 		
-	class Row(DataRow):
+	class Row(Table.Row):
 		def register(self):
 			self.lock()
 			totalPrice = 0
@@ -65,20 +58,33 @@ class OrderLines(Table):
 		self.qty = Field(INT)
 		self.ordr.setDetail('lines')
 		
-	def validateRow(self,row):
-		if row.ordr is None:
-			raise DataVeto("order is mandatory")
-		if row.product is None:
-			raise DataVeto("product is mandatory")
+	class Row(Table.Row):
+		def validate(self):
+			if self.ordr is None:
+				return "order is mandatory"
+			if self.product is None:
+				return "product is mandatory"
 
+
+class BasePlugin(SchemaPlugin):
+	def defineTables(self,schema,ui):
+		schema.addTable( Products("PROD"))
+		schema.addTable(Customers("CUST"))
+		schema.addTable(Orders("ORDERS"))
+		schema.addTable(OrderLines("LINES"))
+		
+def Pizzeria():
+	schema = Schema()
+	schema.addPlugin(BasePlugin())
+	return schema
 
 		
 		
-def populate(db):
+def populate(sess):
 	"""
 	Create some data and play with it
 	"""
-	db.installto(globals())
+	sess.installto(globals())
 	
 	c1 = CUST.appendRow(name="Henri")
 	c2 = CUST.appendRow(name="James")
@@ -95,19 +101,19 @@ def populate(db):
 	LINES.appendRow(ordr=o2,product=p1,qty=3)
 	LINES.appendRow(ordr=o2,product=p2,qty=5)
 
-	db.commit()
+	sess.commit()
 
 	o1.register()
 	o2.register()
 
-	db.commit()
+	sess.commit()
 	
 
-def query(db):
+def query(sess):
 	"""
 	Create some data and play with it
 	"""
-	db.installto(globals())
+	sess.installto(globals())
 	
 ## 	q = ORDERS.query("customer totalPrice")
 ## 	for (customer,totalPrice) in q:
@@ -124,16 +130,17 @@ def main():
 
 	# create empty tables
 	db.createTables()
-
+	
+	sess = db.beginSession()
 
 	# play around
-	populate(db)
-	db.commit()
+	populate(sess)
+	sess.commit()
 	
-	query(db)
+	query(sess)
 
 	# commit changes and release the database file
-	db.shutdown()
+	sess.shutdown()
 	
 if __name__ == "__main__":
 	main()

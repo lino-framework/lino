@@ -30,12 +30,12 @@ class Case(unittest.TestCase):
 ## 		# db.connect(conn)
 ## 		db.createTables()
 		
-		db._connection.sql_exec("""
+		db.connection.sql_exec("""
 		INSERT INTO PARTNERS (id,name)
 		       VALUES (1, "Luc");
 		""")
 
-		db._connection.sql_exec("""
+		db.connection.sql_exec("""
 		INSERT INTO PARTNERS (id,name)
 		       VALUES (2, "Ly");
 		""")

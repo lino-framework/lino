@@ -15,8 +15,9 @@ from lino import __version__
 
 
 global distDir # otherwise build() won't find it
+
 distDir=r'c:\temp\lino'
-zipDir=r'c:\temp\linozip'
+zipDir=r'u:\htdocs\timwebs\lino\dl'
 
 global opj
 opj = os.path.join
@@ -24,13 +25,13 @@ opj = os.path.join
 srcRoot = os.getcwd() # '.' # os.path.join('src','lino')
 #wwwPath = opj(srcRoot,"docs","download")
 
-srcZipName = r'%s\lino-src-%s.zip' % (zipDir,__version__)
+srcZipName = r'%s\lino-%s-src.zip' % (zipDir,__version__)
 if os.path.exists(srcZipName):
 	if not confirm("Okay to remove %s?" % srcZipName):
 		raise "Pilatus problem %s" % srcZipName
 	os.remove(srcZipName)
 	
-binZipName = r'%s\timtools-%s.zip' % (zipDir,__version__)
+binZipName = r'%s\lino-%s-timtools-win32.zip' % (zipDir,__version__)
 if os.path.exists(binZipName):
 	if not confirm("Okay to remove %s?" % binZipName):
 		raise "Pilatus problem %s" % binZipName
@@ -73,7 +74,8 @@ def build(name):
 os.chdir('scripts')
 
 #targets = ['pds2pdf','prn2pdf','publish','sendmail']
-targets = ['pds2pdf','prn2pdf','openmail']
+#targets = ['pds2pdf','prn2pdf','openmail']
+targets = ['pds2pdf','prn2pdf','rsync']
 for t in targets:
 	build(t) 
 	# confirm("Did the Build succeed?") or raise UserAbort
@@ -94,7 +96,15 @@ def srcfilter(fn):
 
 zf = zipfile.ZipFile(srcZipName,'w',zipfile.ZIP_DEFLATED)
 
-for root, dirs, files in os.walk(srcRoot):
+pruneDirs = ('.svn','_attic','CVS')
+
+#for root, dirs, files in os.walk(srcRoot):
+for root, dirs, files in os.walk("."):
+	for pd in pruneDirs:
+		try:
+			dirs.remove(pd)
+		except ValueError:
+			pass
 	for fn in files:
 		if srcfilter(fn):
 			zf.write(opj(srcRoot,root,fn),opj(root,fn))

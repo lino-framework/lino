@@ -15,14 +15,14 @@ class Describable:
 	
 	#def __init__(self,label=None,description=None):
  	#def __init__(self,parent=None,label=None,description=None):
- 	def __init__(self,name,label,doc):
+ 	def __init__(self,name=None,label=None,doc=None):
 ##  		if parent is not None:
 ##  			if label is None:
 ##  				label = parent.getLabel()
 ## 			if description is None:
 ##  				description = parent.getDescription()
-		#if name is None:
-		#	name = self.__class__.__name__
+		if name is None:
+			name = self.__class__.__name__
 		self._name = name
 			
 		if label is None:

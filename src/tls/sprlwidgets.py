@@ -10,10 +10,12 @@ from lino import adamo
 from lino.schemas.sprl import web, events, news, quotes
 
 from lino.adamo.database import Context
+from lino.adamo.schema import LayoutComponent
 
-from widgets import Widget, RowWidget
+#from widgets import Widget
+from response import ContextedResponse
 
-# not used here, but WidgetFactory must find it:
+# not used here, but LayoutFactory must find it:
 from skipper import Skipper
 
 ## class SprlDbResource(DbResource):
@@ -23,15 +25,74 @@ from skipper import Skipper
 ## 		#return widget.show()
 ## 		return self.show(widget)
 		
-class SprlRowWidget(RowWidget):
+		
+class SprlRowLayout(ContextedResponse,LayoutComponent):
 	handledClass = adamo.Table.Row
 	#def __init__(self,db):
 	#	self.db = db
-	def writeContextMenu(self,ctx):
+
+
+	def writeLeftMargin(self):
+		row = self.target
+		ContextedResponse.writeLeftMargin(self)
+		self.write('<p><a href="add">add row</a>')
+		self.write('<br><a href="delete">delete row</a></p>')
+		self.writeContextMenu()
+		#self.target._ds._context.writeLeftMargin(renderer)
+		
+	def writeLabel(self):
+		row = self.target
+		self.renderLink(
+			url=self.uriToRow(row),
+			label=row.getLabel())
+		
+	def writePage(self):
+		self.writeCellTable(self.target.__iter__())
+		
+	def writeCellTable(self,cells):
+		wr = self.write
+		wr('<table border="0" class="data">')
+		for cell in cells:
+			value = cell.getValue()
+			if True or value is not None:
+				label = cell.col.name
+				wr('\n<tr>')
+				wr('<td align="right">' + label + '</td>')
+				wr('\n<td>')
+				self.renderCellValue(cell.col,value)
+## 				if hasattr(value,'asFormCell'):
+## 					value.asFormCell(renderer)
+## 				else:
+## 					type = getattr(attr,'type',None)
+## 					renderer.renderValue(value,type)
+				wr('</td>')
+				wr('\n</tr>')
+
+		wr('\n</table>')
+		
+
+## 	def renderDetails(self):
+## 		pass
+## 		wr = renderer.write
+## 		if False:
+## 			wr("<ul>")
+## 			for (name,dtl) in self._area._table._details.items():
+## 				rpt = dtl.query(self)
+## 				wr('<li>')
+## 				rpt.asParagraph(renderer)
+## 				wr("</li>")
+
+## 			wr("</ul>")
+		
+			
+	
+	def writeContextMenu(self):
+		row = self.target
+		ctx = row._ds._context
 		wr = self.write
 		
-		sponsor = ctx.PARTYPES.peek('d')
-		ds = ctx.PARTNERS.query(type=sponsor)
+		sponsor = ctx.tables.PARTYPES.peek('d')
+		ds = ctx.tables.PARTNERS.query(type=sponsor)
 		#ds.setFilter("logo NOTNULL")
 		if len(ds):
 			wr( "<p>Sponsors:")
@@ -49,19 +110,20 @@ class SprlRowWidget(RowWidget):
 
 
 
-class MemoWidget(SprlRowWidget):
+class MemoLayout(SprlRowLayout):
 	handledClass = web.MemoTable.Row
 	
 	def writeParagraph(self):
 		row = self.target
+		#print row
 		self.renderLink(self.uriToRow(row),
 							 label=row.getLabel())
 		self.write('\n&mdash; ')
 		self.renderMemo(row.abstract)
 
 	def writePage(self):
-		wr = self.write
 		row = self.target
+		wr = self.write
 		wr('<p>')
 		self.renderMemo(row.abstract)
 		wr('</p>')
@@ -70,12 +132,12 @@ class MemoWidget(SprlRowWidget):
 		wr('</p>')
 
 
-class TreeWidget(SprlRowWidget):
+class TreeLayout(SprlRowLayout):
 	handledClass = web.TreeTable.Row
 	
 	def writePreTitle(self):
-		wr = self.write
 		row = self.target
+		wr = self.write
 		sep = ""
 		for superRow in row.getUpTree():
 			wr(sep)
@@ -86,37 +148,36 @@ class TreeWidget(SprlRowWidget):
 
 	def writeChildren(self):
 		wr = self.write
-		row = self.target
 		wr("<ul>")
-		for row in row.children.query(orderBy="seq"):
+		for row in self.target.children.query(orderBy="seq"):
 			wr('<li>')
-			self.asParagraph(row)
+			self.child(row).writeParagraph()
 			wr("</li>")
 		wr("</ul>")
 
 	def writePage(self):
-		SprlRowWidget.writePage(self)
+		SprlRowLayout.writePage(self)
 		self.writeChildren()
 
 
 	
-class MemoTreeWidget(TreeWidget,MemoWidget):
+class MemoTreeLayout(TreeLayout,MemoLayout):
 	handledClass = adamo.MemoTreeTable.Row
 	
 	def writePage(self):
-		MemoWidget.writePage(self)
+		MemoLayout.writePage(self)
 		self.writeChildren()
 		
 	def writeParagraph(self):
-		MemoWidget.writeParagraph(self)
+		MemoLayout.writeParagraph(self)
 		
 		
-class PageWidget(MemoTreeWidget):
+class PageLayout(MemoTreeLayout):
 	handledClass = web.Pages.Row
 	
 	def writePage(self):
-		MemoTreeWidget.writePage(self)
 		row = self.target
+		MemoTreeLayout.writePage(self)
 		wr = self.write
 		if len(row.news_by_page) > 0:
 			wr('<p><b>')
@@ -133,12 +194,13 @@ class PageWidget(MemoTreeWidget):
 
 		
 	def writeFooter(self):
+		row = self.target
 		wr = self.write
 		wr('<table border="0">')
 		for name in 'created modified author lang'.split():
-			value = getattr(self.target,name)
+			value = getattr(row,name)
 			if value is not None:
-				attr = self.target._ds._table._rowAttrs[name]
+				attr = row._ds._table._rowAttrs[name]
 				wr('\n<tr><td>' + name+ '</td><td>')
 				type = getattr(attr,'type',None)
 				self.renderValue(value,type)
@@ -147,12 +209,12 @@ class PageWidget(MemoTreeWidget):
 		wr('\n</table>')
 
 
-class EventWidget(PageWidget):
+class EventLayout(PageLayout):
 	handledClass = events.Events.Row
 	def writeParagraph(self):
-		wr = self.write
 		row = self.target
-		self.asLabel(row)
+		wr = self.write
+		self.writeLabel()
 		wr('\n&mdash; ')
 		if row.title:
 			wr(" " + row.title)
@@ -174,26 +236,27 @@ class EventWidget(PageWidget):
 		self.renderLink(self.uriToRow(row), label="more")
 
 	def writePage(self):
-		MemoWidget.writePage(self)
-		RowWidget.writePage(self)
+		MemoLayout.writePage(self)
+		RowLayout.writePage(self)
 		
 
-class TopicWidget(TreeWidget):
+class TopicLayout(TreeLayout):
 	handledClass = quotes.Topics.Row
 		
 	def writePage(self):
-		self.writeCellTable(self.target.getCells("dmoz wikipedia url"))
-		#TreeWidget.writePage(self)
+		row = self.target
+		self.writeCellTable(row.getCells("dmoz wikipedia url"))
+		#TreeLayout.writePage(self)
 		self.writeChildren()
 
 
 
-class NewsWidget(MemoWidget):
+class NewsLayout(MemoLayout):
 	handledClass = news.News.Row
 	
 	def writeParagraph(self):
-		wr = self.write
 		row = self.target
+		wr = self.write
 
 		wr(row.getLabel())
 		if row.abstract is not None:
@@ -209,35 +272,47 @@ class NewsWidget(MemoWidget):
 				self.renderLink(self.uriToRow(row),"(more)")
 
 		
-## class ContextWidget(PageWidget):
+## class ContextLayout(PageLayout):
 ## 	handledClass = Context
 ## 	def __init__(self,target,rsc,request):
 ## 		row=target.PAGES.findone(match='index')
-## 		PageWidget.__init__(row,rsc,request)
+## 		PageLayout.__init__(row,rsc,request)
 
 
-class ContextWidget(Widget):
+class ContextLayout(ContextedResponse,LayoutComponent):
  	handledClass = Context
 
-	def writePreTitle(self):
-		ctx = self.target
-		self.renderLink(
-			url=self.baseuri,
-			label=ctx.getLabel())
+## 	def writeLeftMargin(self,ctx):
+## 		if len(ctx._db.getBabelLangs()) > 1:
+## 			wr('<p>')
+## 			for lang in ctx._db.getBabelLangs():
+## 				#if lang.id == self.langs[0]:
+## 				#	wr(lang.id)
+## 				#else:
+## 				self.renderLink(
+## 					url=self.response.uriToSelf(lng=lang.id),
+## 					label=lang.id)
+## 				wr(' ')
+## 			wr('</p>')
+					
+## 	def writePreTitle(self):
+## 		self.renderLink(
+## 			url=self.homeURI(),
+## 			label=self.target.getLabel())
 		
 	def getLabel(self):
 		return "List of tables"
 
 	def writePage(self):
-		wr = self.write
 		ctx = self.target
+		wr = self.write
 		wr("<ul>")
 		for ds in ctx.getDatasources():
 			table = ds._table
 			if table.getLabel() is not None:
 				#if len(ds) != 0:
 				wr('<li><a href="%s">%s</a>' % (
-					self.uriToTable(table),
+					self.uriToDatasource(ds),
 					table.getLabel()))
 				doc = table.getDoc()
 				if doc is not None:
@@ -255,6 +330,9 @@ class ContextWidget(Widget):
 			if table.getLabel() is not None:
 				if len(ds) != 0:
 					wr(sep+'<a href="%s">%s</a>' % (
-						self.uriToTable(table),
+						self.uriToDatasource(ds),
 						table.getLabel()))
 					sep=", "
+
+
+

@@ -10,12 +10,12 @@ from lino.adamo.datatypes import DataVeto
 
 from lino.schemas.sprl import demo
 
-class Introduction(unittest.TestCase):
+class Case(unittest.TestCase):
 
 	def setUp(self):
 		
-		self.db = demo.getDemoDB()
-		self.db.installto(globals()) #.update(demo.db.tables)
+		self.db = demo.beginSession()
+		self.db.installto(globals())
 
 	def tearDown(self):
 		self.db.shutdown()
@@ -37,12 +37,12 @@ class Introduction(unittest.TestCase):
 
 		self.assertEqual(l1,l2)
 		
-		ctx = self.db.beginContext("en")
+		setBabelLangs("en")
 		l = []
-		for ds in ctx.getAreaDict().values():
-			line = [ds._table.getTableName()]
+		for ds in self.db.tables.values():
+			line = [ds.getTableName()]
 			line.append(len(ds))
-			if len(ds):
+			if len(ds) != 0:
 				line.append(ds[0])
 				line.append(ds[-1])
 				
@@ -51,8 +51,6 @@ class Introduction(unittest.TestCase):
 ## 				if len(a._table.getPrimaryKey()) == 1:
 ## 					r = q.appendRow()
 
-		#def mycmp(a, b):
-		#	return cmp(a[0], b[0])
 		l.sort()
 		
 		lines = []
@@ -68,8 +66,8 @@ Currencies	3	EUR	BEF
 EVENTS	0
 EVENTTYPES	0
 INVOICELINES	2	('OUT', 1, 1)	('OUT', 1, 2)
-INVOICES	1	('OUT', 1)	('OUT', 1)
-JOURNALS	1	('OUT',)	('OUT',)
+INVOICES	1	OUT-1	OUT-1
+JOURNALS	1	outgoing invoices	outgoing invoices
 LANGS	5	English	Dutch
 NATIONS	5	Estonia	United States of America
 NEWS	0
@@ -79,16 +77,16 @@ PAGES	2	Lino Demo Data	Bullshit Bingo
 PARTNERS	12	Luc Saffre	Eesti Telefon
 PARTYPES	5	Customer	Sponsor
 PEREVENTS	0
-PEVTYPES	5	(1,)	(5,)
-PRJSTAT	5	('T',)	('S',)
+PEVTYPES	5	born	other
+PRJSTAT	5	to do	sleeping
 PRODUCTS	2	(3,)	(16,)
-PROJECTS	0
+PROJECTS	10	Project 1	Project 1.3.2.2
 PUB2AUTH	0
 PUBLICATIONS	0
 PUBTYPES	6	Book	Software
-QUOTES	8	[1]	[8]
+QUOTES	8	[q1]	[q8]
 TOPICS	0
-USERS	0
+USERS	2	Luc Saffre	James Bond
 YEARS	0""")
 				
 

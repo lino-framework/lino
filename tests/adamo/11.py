@@ -11,31 +11,31 @@ class Case(TestCase):
 	"""
 
 	def setUp(self):
-		self.db = quickdb(schema=pizzeria2.Pizzeria2(),
+		db = quickdb(schema=pizzeria2.Pizzeria2(),
 								isTemporary=True,
 								label="Lucs Pizza Restaurant")
-		self.db.createTables()
-		self.db.installto(globals())
+		db.createTables()
+		self.sess = db.beginSession()
+		self.sess.installto(globals())
 
 	def tearDown(self):
-		self.db.shutdown()
+		self.sess.shutdown()
 
 	def test01(self):
 		# testing whether INSERT INTO is correctly done
-		self.db._connection.startDump()
-		s1 = SERV.appendRow(name="bring home",price=1)
-		#s1.commit()
-		#print db.conn.stopDump()
-		self.assertEquivalent(self.db._connection.stopDump(),"""\
+		self.sess.startDump()
+		s1 = SERV.appendRow(name="bring home",price=99)
+		sql = self.sess.stopDump()
+		self.assertEquivalent(sql,"""\
 SELECT MAX(id) FROM SERV;
-INSERT INTO SERV (
-id, responsible, name, price ) VALUES ( 1, 1, NULL, 'bring home' );
+INSERT INTO SERV ( id, responsible, name, price )
+         VALUES  ( 1,  NULL, 'bring home', 99 );
 """)
 		
 	def test02(self):
 		#pizzeria2.populate(self.db)
 		c = CUST.appendRow(name="Henri")
-		p = PROD.appendRow(name="Pizza Margerita",price=6)
+		p = PROD.appendRow(name="Pizza Margerita",price=599)
 		self.assertEqual(c.id,1)
 		self.assertEqual(p.id,1)
 		#self.db.flush()
@@ -43,24 +43,27 @@ id, responsible, name, price ) VALUES ( 1, 1, NULL, 'bring home' );
 		self.assertEqual(c.id,1)
 		p = PROD.peek(1)
 		self.assertEqual(p.id,1)
-		self.db._connection.startDump()
+		self.sess.startDump()
 		o = ORDERS.appendRow(date="20040322",customer = c)
-		self.assertEquivalent(self.db._connection.stopDump(),"""\
+		self.assertEquivalent(self.sess.stopDump(),"""\
 SELECT MAX(id) FROM ORDERS;
 INSERT INTO ORDERS (
 id,
 customer_id,
-isRegistered,
+date,
 totalPrice,
-date
-) VALUES ( 1, 1, NULL, NULL, 20040322 );
+isRegistered
+) VALUES ( 1, 1,
+20040322,
+NULL,
+NULL );
 """)
 		
-		self.db._connection.startDump()
+		self.sess.startDump()
 		q = o.lines.query()
 		q.appendRow(product=p,qty=2)
 		#print self.db.conn.stopDump()
-		self.assertEquivalent(self.db._connection.stopDump(),"""\
+		self.assertEquivalent(self.sess.stopDump(),"""\
 SELECT MAX(id) FROM LINES;
 INSERT INTO LINES (
 id, productPROD_id, productSERV_id,
@@ -75,12 +78,12 @@ ordr_id
 		#self.db.flush()
 
 		
-		self.db._connection.startDump()
+		self.sess.startDump()
 		prod = PROD.peek(1)
 		#self.assertEqual(len(PROD._cachedRows.keys()),1)
 		#self.assertEqual(PROD._cachedRows.keys()[0],(1,))
 		self.assertEqual(prod.name,"Pizza Margerita")
-		self.assertEquivalent(self.db._connection.stopDump(),"""\
+		self.assertEquivalent(self.sess.stopDump(),"""\
 SELECT id, name, price FROM PROD WHERE id = 1;
 """)
 		#self.db.flush()
@@ -88,17 +91,17 @@ SELECT id, name, price FROM PROD WHERE id = 1;
 
 		
 		
-		self.db._connection.startDump()
+		self.sess.startDump()
 		line = LINES.peek(1)
 		#self.assertEquivalent(self.db.conn.stopDump(),"")
-		self.assertEquivalent(self.db._connection.stopDump(),"""\
-SELECT id, productPROD_id, productSERV_id, ordr_id, qty FROM LINES WHERE id = 1;""")
+		self.assertEquivalent(self.sess.stopDump(),"""\
+SELECT id, productPROD_id, productSERV_id, qty, ordr_id  FROM LINES WHERE id = 1;""")
 
-		self.db._connection.startDump()
+		self.sess.startDump()
 		self.assertEqual(line.product.name,"Pizza Margerita")
 		#print self.db.conn.stopDump()
-		self.assertEquivalent(self.db._connection.stopDump(),"""\
-SELECT id, price, name FROM PROD WHERE id = 1;
+		self.assertEquivalent(self.sess.stopDump(),"""\
+SELECT id, name, price FROM PROD WHERE id = 1;
 """)
 		#self.db.flush()
 
@@ -124,9 +127,9 @@ SELECT id, price, name FROM PROD WHERE id = 1;
 		""")
 
 	def test04(self):
-		db = self.db
-		pizzeria.populate(db)
-		db.installto(globals())
+		#db = self.db
+		pizzeria.populate(self.sess)
+		self.sess.installto(globals())
 		
 		s1 = SERV.appendRow(name="bring home",price=1)
 		s2 = SERV.appendRow(name="organize party",price=100)
@@ -158,7 +161,7 @@ SELECT id, price, name FROM PROD WHERE id = 1;
 		o1.register()
 		o2.register()
 
-		db.commit()
+		self.sess.commit()
 
 		
 		

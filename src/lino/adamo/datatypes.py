@@ -35,7 +35,7 @@ class StringType(Type):
 		return s
 	
 	def format(self,s):
-		return s
+		return str(s)
 		
 ##		def expr2value(self,expr):
 ##			if(len(expr)==0) : return None;
@@ -44,6 +44,13 @@ class StringType(Type):
 ##			if len(value) == 0:
 ##				return 'NULL'
 ##			return '"' + value.replace('"',r'\"') + '"'
+
+class PasswordType(StringType):
+	def format(self,s):
+		if s is None:
+			return "None"
+		return '*' * len(s)
+	
 
 
 class MemoType(StringType):
@@ -126,8 +133,12 @@ class StartupDelay(Exception):
 class DataVeto(Exception):
 	pass
 
+class InvalidRequestError(Exception):
+	pass
+
 
 STRING = StringType()
+PASSWORD = PasswordType()
 MEMO = MemoType()	  
 DATE = DateType()	  
 INT = IntType()	
