@@ -25,7 +25,6 @@ import sys
 from lino.ui import console
 from lino.oogen import Document
 from lino import adamo
-from lino import copyleft
 
 from schema import makeSchema
 
@@ -62,80 +61,12 @@ def main3(doc,sess):
     race = sess.peek(Races,53)
     
     assert race is not None
+
+    race.writeReport(doc)
     
-    q = sess.query(Participants,"person.name cat time dossard",
-                   orderBy="person.name",
-                   race=race)
-    q.executeReport(doc.report(),
-                    label="First report",
-                    columnWidths="20 3 8 4")
-
-    q = sess.query(Participants,"time person.name cat dossard",
-                   orderBy="time",
-                   race=race)
-    q.executeReport(doc.report(),
-                    label="Another report",
-                    columnWidths="8 20 3 4")
-
-    ralGroupList(doc,race, xcKey="club", nGroupSize=3)
-    ralGroupList(doc,race, xcKey="club", nGroupSize=5,sex="M")
-    ralGroupList(doc,race, xcKey="club", nGroupSize=5,sex="F")
 
 
 
-
-
-
-def ralGroupList(doc,race,
-                 xcKey="club",
-                 xnValue="place",
-                 nGroupSize=3,
-                 sex=None,
-                 xcName=None):
-    class Group:
-        def __init__(self,id):
-            self.id = id
-            self.values = []
-            self.sum = 0
-            self.names = []
-            
-    groups = []
-
-    def collectPos(groups,key):
-        for g in groups:
-            if g.id == key:
-                if len(g.values) < nGroupSize:
-                    return g
-        g = Group(key)
-        groups.append(g)
-        return g
-        
-    for pos in race.participants_by_race.query(orderBy="time"):
-        if pos.time != "X":
-            if sex is None or pos.person.sex == sex:
-                v = getattr(pos,xnValue)
-                key = getattr(pos,xcKey)
-                g = collectPos(groups,key)
-                g.values.append(v)
-                g.sum += v
-                if xcName is not None:
-                    g.names.append(xcName(pos))
-
-    groups.sort(lambda a,b: a.sum > b.sum)
-
-    rpt = doc.report(label="inter %s %s by %d" % (xcKey,
-                                                  sex,
-                                                  nGroupSize))
-    rpt.addColumn(meth=lambda g: str(g.id),
-                  label=xcKey,
-                  width=20)
-    rpt.addColumn(meth=lambda g: str(g.sum),
-                  label=xnValue,
-                  width=5)
-    rpt.addColumn(meth=lambda g: str(g.values),
-                  label="values",
-                  width=30)
-    rpt.execute(groups)
 
     
 

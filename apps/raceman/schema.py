@@ -25,15 +25,11 @@ import sys
 from lino.ui import console
 from lino.oogen import Document
 from lino import adamo
-from lino import copyleft
 
 from lino.schemas.sprl.races import Races, RaceTypes, Categories, \
      Participants, Persons, Clubs
 
-from lino.tools import dbfreader
 from lino.adamo.table import DbfMirrorLoader
-
-opj = os.path.join
 
 
 class PersonsMirrorLoader(DbfMirrorLoader):
