@@ -31,7 +31,7 @@ import py2exe
 from lino.ui import console 
 from lino.misc.rdir import rdirlist
 
-from lino import __version__
+from lino import __version__, __url__
 
 #VERSION = __version__
 DIST_ROOT = 'dist'
@@ -178,13 +178,6 @@ if 'timtools' in args:
     sys.argv[1:] = ["py2exe"]
     
     console_targets = timtools.console_targets()
-##     [
-##         'pds2pdf',
-##         'pds2sxw', 'pds2sxc',
-##         'prn2pdf', 'prnprint',
-##         'sync', 'diag',
-##         'openmail','openurl'
-##         ]
 
     name = "timtools"
 
@@ -196,7 +189,7 @@ if 'timtools' in args:
         description="Lino TIM tools",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.berlios.de/timtools.html",
+        url=__url__+"/timtools.html",
         long_description="A collection of command-line tools",
         package_dir = {'': 'src'},
         console=[ opj("src","lino","scripts",t+".py")
@@ -244,7 +237,7 @@ if 'raceman' in args:
         description="Lino Raceman",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.berlios.de/raceman.html",
+        url=__url__+"/raceman.html",
         long_description="""\
 An uncomplete race manager.
 Register participants, input arrival times,
@@ -297,7 +290,7 @@ if 'keeper' in args:
         description="Lino Document Keeper",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.berlios.de/keeper.html",
+        url=__url__+"/keeper.html",
         long_description="""\
 An uncomplete archive manager.
 """,
@@ -343,7 +336,7 @@ if 'sdist' in args:
         description="Lino Framework",
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
-        url="http://lino.berlios.de",
+        url=__url__,
         long_description="""\
 Lino is a suite of Python packages for developing business applications for small and medium-sized organisations.
 """,

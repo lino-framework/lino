@@ -18,6 +18,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
 import sys
 import atexit
 import codecs
@@ -105,7 +106,7 @@ class Console(UI):
         self._logfile = None
         self._verbosity = 0
         self._batch = False
-        self._started = time.time()
+        #self._started = time.time()
         #self._dumping = None
         # UI.__init__(self)
         self.set(**kw)
@@ -380,8 +381,15 @@ class Console(UI):
             self.warning("wrong answer: "+s)
 
     def shutdown(self):
-        self.verbose("Done after %f seconds.",
-                    time.time() - self._started)
+        #self.verbose("Done after %f seconds.",
+        #             time.time() - self._started)
+        if sys.platform == "win32":
+            utime, stime, cutime, cstime, elapsed_time = os.times()
+            self.verbose("%.2f+%.2f=%.2f seconds used",
+                         utime,stime,utime+stime)
+        else:
+            self.verbose( "+".join([str(x) for x in os.times()])
+                          + " seconds used")
         if self._logfile:
             self._logfile.close()
         
@@ -555,11 +563,10 @@ See file COPYING.txt for more information.""" % (
         name, version, years, author))
 
 
-if hasattr(sys.stdout,"encoding") \
+if False and hasattr(sys.stdout,"encoding") \
       and sys.getdefaultencoding() != sys.stdout.encoding:
     sys.stdout = rewriter(sys.stdout)
     sys.stderr = rewriter(sys.stderr)
-    #print sys.stdout.encoding
 
 
 #_syscon = Console(sys.stdout.write, sys.stderr.write)
