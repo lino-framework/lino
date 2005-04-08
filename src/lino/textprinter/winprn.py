@@ -39,7 +39,9 @@ A4 = (210*mm, 297*mm)
 
 # Note that in all modes, the point 0,0 is the upper left corner of
 # the page, and the units increase as you go down and across the
-# page. A Twip is 1/20 of a typesetting Point. A Point is 1/72 of an
+# page.
+# We work in twips: self.dc.SetMapMode(win32con.MM_TWIPS)
+# A Twip is 1/20 of a typesetting Point. A Point is 1/72 of an
 # inch, so a Twip is 1/1440 of an inch.
 
 
@@ -103,6 +105,9 @@ class TextObject:
              tm['tmInternalLeading']))
                       
         self.line = ""
+
+    def flush(self):
+        self.write("")
 
     def newline(self):
         #self.x = self.doc.margin
@@ -265,43 +270,89 @@ class Win32TextPrinter(TextPrinter):
     def insertImage(self,width,height,filename):
         # picture size is given in mm
         w = float(width) * mm 
-        h = float(height) * mm
+        h = float(height) * mm 
         
-        # position of picture is the current text cursor 
-        x = self.textobject.x
-        y = self.textobject.y
-        if x == 0 and y == 0:
-            # print "no text has been processed until now"
-            x = self.margin + x
-            y = self.pageHeight-(2*self.margin)-h - y
+        # position of picture is the current text cursor
+        if self.textobject:
+            self.textobject.flush()
+            x = self.textobject.x
+            y = self.textobject.y
         else:
-            # but picture starts on top of charbox:
-            y += self.status.leading
+            print "no text has been processed until now"
+            x = self.margin
+            #y = self.pageHeight-(2*self.margin)-h - y
+            y = self.margin
+##         else:
+##             # but picture starts on top of charbox:
+##             y += self.status.leading
+
+        #print "x,y", x, y
 
 
         # thanks to http://dbforums.com/t944137.html
-        HORZRES = 8
-        VERTRES = 10
+        # and
+        # http://www.activevb.de/rubriken/apikatalog/deklarationen/getdevicecaps.html
+        """
+        HORZRES	: Breite des Bildscchirms, angegeben in Pixeln.
+        
+        VERTRES	: Höhe des Bildschorms, angegeben in Rasterzeilen.
+        
+        LOGPIXELSX : Anzahl der Pixel pro logischen Inch über die
+        Bildschirmbreite.
+        
+        LOGPIXELSY: Anzahl der Pixel pro logischen Inch über die
+        Bildschirmhöhe.
+        
 
-        # Find the printer resolution to scale to
-        printer_resolution = self.dc.GetDeviceCaps(HORZRES),\
-                             self.dc.GetDeviceCaps(VERTRES)
-        print "printer resolution =", printer_resolution
+        """
+##         printer_resolution = self.dc.GetDeviceCaps(win32con.HORZRES),\
+##                              self.dc.GetDeviceCaps(win32con.VERTRES)
+##         print "printer resolution =", printer_resolution
 
-        img = Image.open(filename)
-        print "image size =", img.size
+        
+        print "twips:", x,y,w,h
+        # convert to inch
+        x /= inch
+        y /= inch
+        w /= inch
+        h /= inch
+        print "inch:", x,y,w,h
+        
+        # convert to pixels
+        x *= self.dc.GetDeviceCaps(win32con.LOGPIXELSX)
+        y *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
+        w *= self.dc.GetDeviceCaps(win32con.LOGPIXELSX)
+        h *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
+        print "pixels:", x,y,w,h
 
-        #
-        # Resize the image to fit the page but not to overflow
-        #
-        ratios = [1.0 * printer_resolution[0] / img.size[0],
-                  1.0 * printer_resolution[1] / bmp.size[1]]
-        print "ratios =", ratios
-        scale = min(ratios)
-        print "scale =", scale
+        try:
+            img = Image.open(filename)
+        except OSError,e:
+            console.error(str(e))
+            return
+        
+##         print "image size =", img.size
+
+##         #
+##         # Resize the image to fit the page but not to overflow
+##         #
+##         ratios = [1.0 * printer_resolution[0] / img.size[0],
+##                   1.0 * printer_resolution[1] / img.size[1]]
+##         print "ratios =", ratios
+##         scale = min(ratios)
+##         print "scale =", scale
 
         dib = ImageWin.Dib(img)
-        scaled_size = [scale * i for i in img.size]
-        print "scaled bitmap size =", scaled_size
-        dib.draw(self.dc.GetHandleOutput(), [0, 0] + scaled_size)
+##         scaled_size = [int(scale * i) for i in img.size]
+##         print "scaled_size =", scaled_size
+##         destination = [x, y] + scaled_size
+        
+        #y = 500
+        # destination is a 4-tuple topx,topy, botx,boty
+        destination = ( x, -y, x+w, -(y+h) )
+        #destination = [int(x) for x in destination]
+        #destination = [x, y, 500, 500]
+        print "destination:", destination
+        dib.draw(self.dc.GetHandleOutput(),destination)
+                 
 

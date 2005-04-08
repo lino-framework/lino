@@ -193,6 +193,9 @@ class Console(UI):
         #if sound:
         #    sound.asterisk()
         self.error("critical: " + msg,*args,**kw)
+
+##     def handleException(self,e):
+##         self.error(str(e))
     
         
 

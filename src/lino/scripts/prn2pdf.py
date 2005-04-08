@@ -51,8 +51,17 @@ write to OUTFILE rather than FILE.pdf""",
         (root,ext) = os.path.splitext(inputfile)
         options.outFile = root +".pdf"
     d = PdfTextPrinter(options.outFile)
-    d.readfile(inputfile,coding=sys.stdin.encoding)
+    ok = True
+    try:
+        d.readfile(inputfile,coding=sys.stdin.encoding)
+    except Exception,e:
+        console.error(str(e))
+        ok = False
+    
     d.endDoc()
+    if not ok:
+        return -1
+    
     if sys.platform == "win32" and console.isInteractive():
         os.system("start %s" % options.outFile)
 

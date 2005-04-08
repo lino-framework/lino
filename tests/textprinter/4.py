@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,47 +17,43 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-testing textprinter
+testing textprinter.insertImage()
 """
 
 from lino.misc.tsttools import TestCase, main
+from lino.textprinter import winprn
+from lino.textprinter import pdfprn
+from lino.textprinter import htmlprn
 
 class Case(TestCase):
     ""
 
     def doit(self,d):
-        d.printLine("")
-        d.printLine("Win32PrinterDocument Test page")
-        d.printLine("")
-        cols = 9
-        d.printLine("".join([" "*9+str(i+1) for i in range(cols)]))
-        d.printLine("1234567890"*cols)
-        d.printLine("")
-        d.printLine("Here is some \033b1bold\033b0 text.")
-        d.printLine("Here is some \033u1underlined\033u0 text.")
-        d.printLine("Here is some \033i1italic\033i0 text.")
-        
+        try:
+            d.readfile(r"testdata\4.prn",coding="cp850")
+        except Exception,e:
+            print e
+            #self.ui.error(str(e))
+            
         d.endDoc()
         
 
     def test01(self):
 
-        from lino.textprinter import winprn
-        spoolFile = self.addTempFile("3.ps",showOutput=True)
+        spoolFile = self.addTempFile("4.ps",showOutput=True)
         d = winprn.Win32TextPrinter(self.win32_printerName_PS,
                                     spoolFile)
         self.doit(d)
         
     def test02(self):
+        return
 
-        from lino.textprinter import pdfprn
         fn = self.addTempFile("3.pdf",showOutput=True)
         d = pdfprn.PdfTextPrinter(fn)
         self.doit(d)
         
     def test03(self):
-
-        from lino.textprinter import htmlprn
+        return
         fn = self.addTempFile("3.html",showOutput=True)
         f = open(fn,"wt")
         f.write("<html><body>")

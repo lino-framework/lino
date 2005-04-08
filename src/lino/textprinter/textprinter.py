@@ -16,7 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import sys
+import sys, os
 
 #from lino.ui import console
 
@@ -125,16 +125,19 @@ class TextPrinter:
     
 
     def readfile(self,inputfile,coding=None):
-        try:
-            f = file(inputfile)
-            for line in f.readlines():
-                if coding is not None:
-                    line = line.decode(coding)
-                #self.printLine(line.rstrip())
-                self.writeln(line)
-        except IOError,e:
-            print e
-            sys.exit(-1)
+        f = file(inputfile)
+        dirname = os.path.dirname(inputfile)
+        if len(dirname)==0:
+            dirname="."
+        cwd = os.getcwd()
+        os.chdir(dirname)
+        print "chdir", dirname
+        for line in f.readlines():
+            if coding is not None:
+                line = line.decode(coding)
+            #self.printLine(line.rstrip())
+            self.writeln(line)
+        os.chdir(cwd)
 
 
     def writeln(self,line):
@@ -225,10 +228,11 @@ class TextPrinter:
         
     def parse_I(self,line):
         params = line.split(None,3)
-        if len(params) < 3:
-            raise ParserError("%s : need 3 parameters" % repr(params))
+        print params
+        if len(params) <= 3:
+            raise ParserError("%r : need 3 parameters" % params)
         filename = params[2]
-        self.insertImage(*params)
+        self.insertImage(*params[:3])
         return len(params[0])+len(params[1])+len(params[2])+3
     
     def formFeed(self,line):
