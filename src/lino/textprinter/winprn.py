@@ -24,13 +24,17 @@ import pywintypes
 
 from PIL import Image, ImageWin
 
-OEM_CHARSET = win32con.OEM_CHARSET
+#OEM_CHARSET = win32con.OEM_CHARSET
+
+charsets = {
+    "cp850" : win32con.OEM_CHARSET
+    }
 
 # OEM_FIXED_FONT = win32con.OEM_FIXED_FONT
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
 
 from lino.ui import console
-from lino.textprinter.textprinter import TextPrinter, PrinterNotReady
+from lino.textprinter.textprinter import TextPrinter, PrinterNotReady, ParserError
 
 pt = 20
 inch = 1440.0
@@ -57,64 +61,79 @@ A4 = (210*mm, 297*mm)
 LPIBASE = inch * 240 / 257 
         
 
-class TextObject:
-    def __init__(self,doc):
-        self.doc = doc
-        self.x = self.doc.org[0] + self.doc.margin
-        self.y = self.doc.org[1] + self.doc.margin
-        self.doc.dc.MoveTo(int(self.x),-int(self.y))
-        #self.y = doc.pageHeight-(2*doc.margin)
-        self.line = ""
-        self.leading = 0
+## class TextObject:
+##     def __init__(self,doc):
+##         self.doc = doc
+##         self.x = self.doc.org[0] + self.doc.margin
+##         self.y = self.doc.org[1] + self.doc.margin
+##         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
+##         #self.y = doc.pageHeight-(2*doc.margin)
+##         self.line = ""
+##         self.leading = 0
         
-    def write(self,text):
-        assert not "\n" in text, repr(text)
-        assert not "\r" in text, repr(text)
-        self.line += text
+##     def write(self,text):
+##         assert not "\n" in text, repr(text)
+##         assert not "\r" in text, repr(text)
+##         if self.doc.coding is not None:
+##             #print "gonna code", repr(text)
+##             #text = text.decode(self.coding)
+##             text = text.encode(self.doc.coding)
+##             #print "result:", repr(text)
+##         self.line += text
 
-        font = win32ui.CreateFont(self.doc.fontDict)
+##         font = win32ui.CreateFont(self.doc.fontDict)
         
-        # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
+##         # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
         
-        self.doc.dc.SelectObject(font)
-        tm = self.doc.dc.GetTextMetrics()
-        #console.debug(repr(tm))
-##         console.info(repr(self.dc.GetTextFace()))
-##         console.info(repr(self.dc.GetViewportExt()))
-##         console.info(repr(self.dc.GetViewportOrg()))
-##         console.info(repr(self.dc.GetWindowExt()))
-##         console.info(repr(self.dc.GetWindowOrg()))
+##         self.doc.dc.SelectObject(font)
+##         #console.debug(repr(tm))
+## ##         console.info(repr(self.dc.GetTextFace()))
+## ##         console.info(repr(self.dc.GetViewportExt()))
+## ##         console.info(repr(self.dc.GetViewportOrg()))
+## ##         console.info(repr(self.dc.GetWindowExt()))
+## ##         console.info(repr(self.dc.GetWindowOrg()))
         
-        # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
+##         # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
         
-        self.leading = tm['tmExternalLeading'] \
-                       + tm['tmHeight'] \
-                       #+ tm['tmInternalLeading'] \
+## ##         self.leading = tm['tmExternalLeading'] \
+## ##                        + tm['tmHeight'] \
+## ##                        #+ tm['tmInternalLeading'] \
 
-        # 
-        #self.leading = max(self.leading,self.doc.status.leading)
-        #self.doc.dc.TextOut(self.line)
-        self.doc.dc.TextOut(int(self.x),-int(self.y),self.line)
-        (dx,dy) = self.doc.dc.GetTextExtent(self.line)
-        self.x += dx
-        #console.debug("TextOut(%d,%d,%s)" % \
-        #              (int(self.x),-int(self.y),repr(self.line)))
-        console.debug(
-            "dy=%d, extLeading=%d, height=%d, intLeading=%d" % \
-            (dy,tm['tmExternalLeading'],tm['tmHeight'],
-             tm['tmInternalLeading']))
+##         # 
+##         #self.leading = max(self.leading,self.doc.status.leading)
+##         #self.doc.dc.TextOut(self.line)
+##         console.debug("self.doc.dc.TextOut(%d,%d,%r)",
+##                       int(self.x),-int(self.y),self.line)
+##         self.doc.dc.TextOut(int(self.x),-int(self.y),self.line)
+##         (dx,dy) = self.doc.dc.GetTextExtent(self.line)
+        
+##         # GetTextExtent() returns the dimensions of the string in
+##         # logical units (twips)
+        
+##         self.x += dx
+##         #console.debug("TextOut(%d,%d,%s)" % \
+##         #              (int(self.x),-int(self.y),repr(self.line)))
+##         if dy != 0:
+##             self.leading = dy
+##         self.line = ""
+            
+## ##         tm = self.doc.dc.GetTextMetrics()
+## ##         console.debug(
+## ##             "dy=%d, leading=%d, extLeading=%d, height=%d, intLeading=%d",
+## ##             dy, self.leading,
+## ##             tm['tmExternalLeading'],tm['tmHeight'],
+## ##             tm['tmInternalLeading'])
                       
-        self.line = ""
 
-    def flush(self):
-        self.write("")
+##     def flush(self):
+##         self.write("")
 
-    def newline(self):
-        #self.x = self.doc.margin
-        self.x = self.doc.org[0] + self.doc.margin
-        self.y += self.leading
-        #self.doc.dc.MoveTo(int(self.x),-int(self.y))
-        console.debug("self.y += %d" % self.leading)
+##     def newline(self):
+##         #self.x = self.doc.margin
+##         self.x = self.doc.org[0] + self.doc.margin
+##         self.y += self.leading
+##         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
+##         console.debug("self.y += %d" % self.leading)
 
 class Win32TextPrinter(TextPrinter):
     
@@ -124,7 +143,7 @@ class Win32TextPrinter(TextPrinter):
                  lpi=6,
                  fontName="Courier New",
                  jobName="Win32PrinterDocument",
-                 charset=None):
+                 coding=None):
         
         TextPrinter.__init__(self,pageSize=A4,margin=5*mm)
 
@@ -133,12 +152,16 @@ class Win32TextPrinter(TextPrinter):
             }
         
         
-        if charset is not None:
-            self.fontDict['charset'] = charset
+        if coding is not None:
+            self.fontDict['charset'] = charsets[coding]
 
+        self.coding = coding
+        self.font = None
         
         self.dc = win32ui.CreateDC()
         self.dc.CreatePrinterDC(printerName)
+
+
 
 ##         while True:
 ##             h = win32print.OpenPrinter(win32print.GetDefaultPrinter())
@@ -182,22 +205,32 @@ class Win32TextPrinter(TextPrinter):
         self.ext = self.dc.GetWindowExt()
         self.setCpi(cpi)
         #self.setLpi(lpi)
+
+        self.x = self.org[0] + self.margin
+        self.y = self.org[1] + self.margin
+        #self.doc.dc.MoveTo(int(self.x),-int(self.y))
+        #self.y = doc.pageHeight-(2*doc.margin)
+        self.line = ""
+        self.leading = 0
         
-    def createTextObject(self):
-        textobject = TextObject(self)
-        #textobject.setFont("Courier", 10)
-        return textobject
+        
+        
+##     def createTextObject(self):
+##         textobject = TextObject(self)
+##         #textobject.setFont("Courier", 10)
+##         return textobject
         
     def onBeginPage(self):
         self.dc.StartPage()
+        #self.drawDebugRaster()
         if self.pageHeight < self.pageWidth:
-            raise NotImplementedError
+            console.warning("Portrait orientation not yet supported!")
             #self.canvas.rotate(90)
             #self.canvas.translate(0,-210*mm)
     
     def onEndPage(self):
         self.dc.EndPage()
-        
+
     def onSetPageSize(self):
         pass
             
@@ -218,27 +251,31 @@ class Win32TextPrinter(TextPrinter):
         #console.debug("%d cpi = %d twips" % (cpi,w))
         self.fontDict['width'] = w
         # self.fontDict['height'] = w
-        self.width = int(
-            (self.pageWidth-(self.margin*2))/inch*cpi)
+        self.cpl = int(self.lineWidth()/inch*cpi)
+            #(self.pageWidth-(self.margin*2))/inch*cpi)
         #print __name__, self.width
+        self.font = None
         
     def setItalic(self,ital):
         if ital:
             self.fontDict['italic'] = True
         else:
             self.fontDict['italic'] = None
+        self.font = None
 
     def setBold(self,bold):
         if bold:
             self.fontDict['weight'] = win32con.FW_BOLD
         else:
             self.fontDict['weight'] = win32con.FW_NORMAL
+        self.font = None
             
     def setUnderline(self,ul):
         if ul:
             self.fontDict['underline'] = True
         else:
             self.fontDict['underline'] = None
+        self.font = None
             
             
         # http://www.polyml.org/docs/Winref/Font.html
@@ -257,31 +294,129 @@ class Win32TextPrinter(TextPrinter):
         #                               self.status.size,
         #                               self.status.leading)
 
-    def write(self,text):
-        self.textobject.write(text)
+##     def write(self,text):
+##         self.textobject.write(text)
             
         
+##     def newline(self):
+##         #self.textobject.flush()
+##         self.textobject.newline()
+##         #self.textobject = None
+
+        
+    def write(self,text):
+        assert not "\n" in text, repr(text)
+        assert not "\r" in text, repr(text)
+        if self.coding is not None:
+            #print "gonna code", repr(text)
+            #text = text.decode(self.coding)
+            text = text.encode(self.coding)
+            #print "result:", repr(text)
+        self.line += text
+
+        if self.font is None:
+            self.font = win32ui.CreateFont(self.fontDict)
+        
+            # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
+        
+            self.dc.SelectObject(self.font)
+            console.debug("select font %s",self.fontDict)
+            
+        #console.debug(repr(tm))
+##         console.info(repr(self.dc.GetTextFace()))
+##         console.info(repr(self.dc.GetViewportExt()))
+##         console.info(repr(self.dc.GetViewportOrg()))
+##         console.info(repr(self.dc.GetWindowExt()))
+##         console.info(repr(self.dc.GetWindowOrg()))
+        
+        # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
+        
+##         self.leading = tm['tmExternalLeading'] \
+##                        + tm['tmHeight'] \
+##                        #+ tm['tmInternalLeading'] \
+
+        # 
+        #self.leading = max(self.leading,self.doc.status.leading)
+        #self.doc.dc.TextOut(self.line)
+        console.debug("self.dc.TextOut(%d,%d,%r)",
+                      int(self.x),-int(self.y),self.line)
+        self.dc.TextOut(int(self.x),-int(self.y),self.line)
+        (dx,dy) = self.dc.GetTextExtent(self.line)
+        
+        # GetTextExtent() returns the dimensions of the string in
+        # logical units (twips)
+        
+        self.x += dx
+        #console.debug("TextOut(%d,%d,%s)" % \
+        #              (int(self.x),-int(self.y),repr(self.line)))
+        if dy != 0:
+            self.leading = dy
+        self.line = ""
+            
+##         tm = self.doc.dc.GetTextMetrics()
+##         console.debug(
+##             "dy=%d, leading=%d, extLeading=%d, height=%d, intLeading=%d",
+##             dy, self.leading,
+##             tm['tmExternalLeading'],tm['tmHeight'],
+##             tm['tmInternalLeading'])
+                      
+
+    def flush(self):
+        self.write("")
+
     def newline(self):
-        #self.textobject.flush()
-        self.textobject.newline()
-        #self.textobject = None
+        #self.x = self.doc.margin
+        self.x = self.org[0] + self.margin
+        self.y += self.leading
+        #self.doc.dc.MoveTo(int(self.x),-int(self.y))
+        console.debug("self.y += %d" % self.leading)
+
+
+    def length2i(self,s):
+        try:
+            if s.endswith("mm"):
+                return float(s[:-2]) * mm
+            if s.endswith("ch"):
+                self.flush()
+                assert self.font is not None
+                return float(s[:-2]) * self.fontDict['width']
+            if s.endswith("ln"):
+                self.flush()
+                return float(s[:-2]) * self.leading
+            return float(s) * mm
+        except ValueError,e:
+            raise ParserError("invalid length: %r" % s)
         
         
-    def insertImage(self,width,height,filename):
+    def insertImage(self,filename,w=None,h=None,dx=None,dy=None):
         # picture size is given in mm
-        w = float(width) * mm 
-        h = float(height) * mm 
+        # w = float(width) * mm 
+        # h = float(height) * mm
+
+        try:
+            img = Image.open(filename)
+        except OSError,e:
+            console.error(str(e))
+            return
         
-        # position of picture is the current text cursor
-        if self.textobject:
-            self.textobject.flush()
-            x = self.textobject.x
-            y = self.textobject.y
-        else:
-            print "no text has been processed until now"
-            x = self.margin
-            #y = self.pageHeight-(2*self.margin)-h - y
-            y = self.margin
+        self.flush() # make sure that self.x and self.y are correct
+
+        
+
+        
+        
+##         # position of picture is the current text cursor
+##         if self.textobject:
+##             self.textobject.flush()
+##             x = self.textobject.x
+##             y = self.textobject.y
+##         else:
+##             #print "no text has been processed until now"
+##             x = self.org[0] + self.margin
+##             y = self.org[1] + self.margin
+##             #x = self.margin
+##             #y = self.pageHeight-(2*self.margin)-h - y
+##             #y = self.margin
 ##         else:
 ##             # but picture starts on top of charbox:
 ##             y += self.status.leading
@@ -310,27 +445,41 @@ class Win32TextPrinter(TextPrinter):
 ##         print "printer resolution =", printer_resolution
 
         
-        print "twips:", x,y,w,h
-        # convert to inch
-        x /= inch
-        y /= inch
-        w /= inch
-        h /= inch
-        print "inch:", x,y,w,h
+##         print "twips:", x,y,w,h
+##         # convert to inch
+##         x /= inch
+##         y /= inch
+##         w /= inch
+##         h /= inch
+##         print "inch:", x,y,w,h
         
-        # convert to pixels
-        x *= self.dc.GetDeviceCaps(win32con.LOGPIXELSX)
-        y *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
-        w *= self.dc.GetDeviceCaps(win32con.LOGPIXELSX)
-        h *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
-        print "pixels:", x,y,w,h
+##         # convert to pixels
+##         x *= self.dc.GetDeviceCaps(win32con.LOGPIXELSX)
+##         y *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
+##         w *= self.dc.GetDeviceCaps(win32con.LOGPIXELSX)
+##         h *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
 
-        try:
-            img = Image.open(filename)
-        except OSError,e:
-            console.error(str(e))
-            return
+        x = int(self.x)
+        y = int(self.y)
+        if dx is not None:
+            x += self.length2i(dx)
+        if dy is not None:
+            y += self.length2i(dy)
         
+        width = height = None
+        if w is not None:
+            width = self.length2i(w)
+        if h is not None:
+            height = self.length2i(h)
+            
+        if height is None:
+            height = int(width * img.size[0] / img.size[1])
+        if width is None:
+            width = int(height * img.size[1] / img.size[0])
+        
+        #print "pixels:", x,y,w,h
+
+
 ##         print "image size =", img.size
 
 ##         #
@@ -349,10 +498,30 @@ class Win32TextPrinter(TextPrinter):
         
         #y = 500
         # destination is a 4-tuple topx,topy, botx,boty
-        destination = ( x, -y, x+w, -(y+h) )
+        destination = ( x, -y, x+width, -(y+height) )
         #destination = [int(x) for x in destination]
         #destination = [x, y, 500, 500]
-        print "destination:", destination
+        #print "destination:", destination
         dib.draw(self.dc.GetHandleOutput(),destination)
                  
 
+    def drawDebugRaster(self):
+        DELTA=10
+        self.dc.MoveTo(self.org)
+        # to upper right
+        self.dc.LineTo((self.ext[0],-self.org[1]))
+        
+        # to lower right
+        #self.dc.LineTo((0,-self.ext[1]))
+        self.dc.LineTo((self.ext[0]-DELTA,-(self.ext[1]-DELTA)))
+
+        # to lower left
+        self.dc.LineTo((self.org[0],-(self.ext[1]-DELTA)))
+
+        # to upper left
+        self.dc.LineTo((self.org[0],-self.org[1]))
+        
+        #self.dc.LineTo((0,-self.ext[1]))
+        #self.dc.MoveTo(self.org)
+        #self.dc.LineTo((0,5000))
+        

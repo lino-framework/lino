@@ -29,8 +29,8 @@ class Case(tsttools.TestCase):
         minx, miny = dc.GetWindowOrg()
         maxx,maxy = dc.GetWindowExt()
         for x in range(minx,maxx,1440):
-            for y in range(-miny,-maxy,-1440):
-                dc.TextOut(x,y,repr((x,y)))
+            for y in range(miny,maxy,1440):
+                dc.TextOut(x,-y,repr((x,y)))
         dc.EndDoc()
 
 

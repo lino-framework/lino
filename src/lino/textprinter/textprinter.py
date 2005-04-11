@@ -31,7 +31,11 @@ class TextPrinter:
     def __init__(self,
                  pageSize=(0,0),
                  margin=0,
-                 width=None):
+                 cpl=None):
+
+##         self.lineCommands = {
+##             ".image" : "parse_image",
+##             }
         self.commands = {
             chr(12) : self.formFeed,
             chr(27)+"l" : self.parse_l,
@@ -45,18 +49,22 @@ class TextPrinter:
             }
         
         self.pageWidth,self.pageHeight = pageSize
-        self.margin = margin # 5 * mm
-        self.width = width
+        self.margin = margin 
+        self.cpl = cpl
         self.page = 0
-        self.textobject = None
+        #self.textobject = None
         self.fontChanged = True
+        self._pageStarted = False
 
-    def getWidth(self):
-        "characters per page"
-        return self.width
+    def getCpl(self):
+        "characters per line"
+        return self.cpl
     
-    def createTextObject(self):
-        raise NotImplementedError
+    def lineWidth(self):
+        return self.pageWidth - self.margin * 2
+        
+##     def createTextObject(self):
+##         raise NotImplementedError
         
     def onBeginPage(self):
         pass
@@ -87,27 +95,34 @@ class TextPrinter:
     def beginPage(self):
         self.page += 1
         self.onBeginPage()
-        assert self.textobject is None
-        self.textobject = self.createTextObject()
+        assert not self._pageStarted
+        self._pageStarted = True
+        #assert self.textobject is None
+        #self.textobject = self.createTextObject()
 
     def endPage(self):
-        if self.textobject is None:
+        #if self.textobject is None:
+        if not self._pageStarted:
             # formfeed without any preceding text generates blank page
             self.beginPage()
         self.onEndPage()
-        self.textobject = None
+        self._pageStarted = False
 
     def beginDoc(self):
         pass
     
     def endDoc(self):
-        if not self.textobject is None:
+        #if not self.textobject is None:
+        if self._pageStarted:
             self.endPage()
         self.onEndDoc()
+
+##     def pageStarted(self):
+##         return (self.textobject is not None)
         
 
     def writechars(self,text):
-        if self.textobject is None:
+        if not self._pageStarted:
             self.beginPage()
 
         self.write(text)
@@ -131,7 +146,7 @@ class TextPrinter:
             dirname="."
         cwd = os.getcwd()
         os.chdir(dirname)
-        print "chdir", dirname
+        #print "chdir", dirname
         for line in f.readlines():
             if coding is not None:
                 line = line.decode(coding)
@@ -141,8 +156,24 @@ class TextPrinter:
 
 
     def writeln(self,line):
-
+        
         line = line.rstrip()
+        
+        if line.startswith("#exec "):
+            a=line.split(None,1)
+            if len(a)==2:
+                #eval("self."+line[1:])
+                eval(a[1])
+                #m = getattr(self,v)
+                #m(a[1])
+                return
+                
+##         for k,v in self.lineCommands.items():
+##             if line.startswith(k):
+##                 m = getattr(self,v)
+##                 m(line[len(k):])
+##                 return
+            
         (pos,ctrl) = self.FindFirstCtrl(line)
         while pos != None:
             if pos > 0:
@@ -172,8 +203,8 @@ class TextPrinter:
         
         
     def setPageLandscape(self,line):
-        assert self.textobject is None, \
-               'setLandscape after first text has been printed'
+        #assert self.textobject is None, \
+        #       'setLandscape after first text has been printed'
         if self.pageHeight > self.pageWidth:
             # only if not already
             (self.pageHeight, self.pageWidth) = \
@@ -227,13 +258,26 @@ class TextPrinter:
         return 1
         
     def parse_I(self,line):
+        # deprecated, but still in use
+        # use #self.insertImage() instead
         params = line.split(None,3)
-        print params
+        #print params
         if len(params) <= 3:
             raise ParserError("%r : need 3 parameters" % params)
-        filename = params[2]
-        self.insertImage(*params[:3])
+        #width=self.length2i(params[0])
+        #height=self.length2i(params[1])
+        #filename = params[2]
+        self.insertImage(filename=params[2],
+                         w=params[0],
+                         h=params[1])
         return len(params[0])+len(params[1])+len(params[2])+3
+
+##     def parse_image(self,line):
+##         x = "self.insertImage(%s)" % line
+##         print x
+##         eval(x)
+        #assert type(d) == DictType
+        #self.insertImage(**d)
     
     def formFeed(self,line):
         self.endPage()
@@ -241,7 +285,7 @@ class TextPrinter:
         return 0
 
 
-    def insertImage(self,width,height,filename):
+    def insertImage(self,filename,w,h):
         raise NotImplementedError
 
 
