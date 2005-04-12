@@ -219,6 +219,51 @@ if 'timtools' in args:
         zf.write(fn,opj(name,fn))
     zf.close()   
 
+if 'hello' in args:
+    
+    sys.argv[1:] = ["py2exe"]
+    
+    console_targets = ["hello"]
+
+    name = "hello"
+
+    dist_dir = opj(DIST_ROOT,name)
+    
+    setup(
+        name=name,
+        version=__version__,
+        description="Lino Hello",
+        author="Luc Saffre",
+        author_email="luc.saffre@gmx.net",
+        url=__url__+"/hello.html",
+        long_description='"Hello, world!"',
+        package_dir = {'': 'src'},
+        console=[ opj("src","lino","scripts","hello.py")],
+        options= { "py2exe": {
+        "compressed": 1,
+        "optimize": 2,
+        "dist_dir" : dist_dir,
+        "excludes" : excludes_console,
+        #"includes": ["encodings.*",
+                     #"encodings.cp850",
+                     #"encodings.cp1252",
+                     #"encodings.iso-8859-1"
+        #             ],
+        "dll_excludes" : dll_excludes,
+        }}
+        
+        )
+
+    zipname = "%s-%s-py2exe.zip" % (name,__version__)
+    zipname = opj(DIST_ROOT,zipname)
+    zf = zipfile.ZipFile(zipname,'w',zipfile.ZIP_DEFLATED)
+    l = rdirlist(dist_dir)
+    for fn in l:
+        zf.write(opj(dist_dir,fn),opj(name,fn))
+    for fn in ['COPYING.txt']:
+        zf.write(fn,opj(name,fn))
+    zf.close()   
+
     
 
 if 'raceman' in args:

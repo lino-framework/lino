@@ -61,7 +61,8 @@ write to SPOOLFILE rather than really printing.""",
     for inputfile in args:
         d = winprn.Win32TextPrinter(options.printerName,
                                     options.spoolFile,
-                                    charset=winprn.OEM_CHARSET)
+                                    coding=sys.stdin.encoding)
+                                    #charset=winprn.OEM_CHARSET)
         d.readfile(inputfile)
         d.endDoc()
 

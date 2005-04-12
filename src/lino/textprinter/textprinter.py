@@ -31,7 +31,8 @@ class TextPrinter:
     def __init__(self,
                  pageSize=(0,0),
                  margin=0,
-                 cpl=None):
+                 cpl=None,
+                 coding=None):
 
 ##         self.lineCommands = {
 ##             ".image" : "parse_image",
@@ -47,7 +48,8 @@ class TextPrinter:
             chr(27)+"I" : self.parse_I,
             #chr(27)+"I" : self.insertImage,
             }
-        
+
+        self.coding = coding
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin 
         self.cpl = cpl
@@ -140,13 +142,14 @@ class TextPrinter:
     
 
     def readfile(self,inputfile,coding=None):
+        if coding is None:
+            coding = self.coding
         f = file(inputfile)
-        dirname = os.path.dirname(inputfile)
-        if len(dirname)==0:
-            dirname="."
         cwd = os.getcwd()
-        os.chdir(dirname)
-        #print "chdir", dirname
+        dirname = os.path.dirname(inputfile)
+        if len(dirname) != 0:
+            os.chdir(dirname)
+            #print "chdir", dirname
         for line in f.readlines():
             if coding is not None:
                 line = line.decode(coding)

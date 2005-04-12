@@ -1,3 +1,4 @@
+#coding: latin1
 ## Copyright 2004-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -15,6 +16,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+from math import sin, cos, radians
 
 import win32ui
 import win32con
@@ -143,19 +146,18 @@ class Win32TextPrinter(TextPrinter):
                  lpi=6,
                  fontName="Courier New",
                  jobName="Win32PrinterDocument",
-                 coding=None):
+                 **kw):
         
-        TextPrinter.__init__(self,pageSize=A4,margin=5*mm)
+        TextPrinter.__init__(self,pageSize=A4,margin=5*mm,**kw)
 
         self.fontDict = {
             'name' : fontName
             }
         
         
-        if coding is not None:
-            self.fontDict['charset'] = charsets[coding]
+        if self.coding is not None:
+            self.fontDict['charset'] = charsets[self.coding]
 
-        self.coding = coding
         self.font = None
         
         self.dc = win32ui.CreateDC()
@@ -201,13 +203,12 @@ class Win32TextPrinter(TextPrinter):
         except win32ui.error,e:
             raise PrinterNotReady
         self.dc.SetMapMode(win32con.MM_TWIPS)
+        self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
         self.org = self.dc.GetWindowOrg()
         self.ext = self.dc.GetWindowExt()
         self.setCpi(cpi)
         #self.setLpi(lpi)
 
-        self.x = self.org[0] + self.margin
-        self.y = self.org[1] + self.margin
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
         #self.y = doc.pageHeight-(2*doc.margin)
         self.line = ""
@@ -221,12 +222,41 @@ class Win32TextPrinter(TextPrinter):
 ##         return textobject
         
     def onBeginPage(self):
+        self.x = self.org[0] + self.margin
+        self.y = self.org[1] + self.margin
         self.dc.StartPage()
         #self.drawDebugRaster()
         if self.pageHeight < self.pageWidth:
+            
+            """
+
+SetWorldTransform( eM11,eM12,eM21,eM22,eDx,eDy):
+
+for any coordinates (x, y) in world space, the transformed coordinates
+in page space (x', y') can be determined by the following algorithm:
+
+   x' = x * eM11 + y * eM12 + eDx
+   y' = x * eM12 + y * eM22 + eDy
+    
+
+example:
+
+    x,y -> x', y'
+
+a : 0,0 -> 0,-297
+b : 1,0 -> 0,-296
+c : 0,-1 -> 1,-297
+d : 1,-1 -> 1,-296
+
+c:\1.ps
+
+
+"""
+
+            self.dc.SetWorldTransform(0,-1, 1,0, 0,-297*mm)
+            #print self.dc.SetWorldTransform(0,1, -1,0, 0,297*mm)
+            #self.dc.SetViewportOrg((0,int(-210*mm)))
             console.warning("Portrait orientation not yet supported!")
-            #self.canvas.rotate(90)
-            #self.canvas.translate(0,-210*mm)
     
     def onEndPage(self):
         self.dc.EndPage()

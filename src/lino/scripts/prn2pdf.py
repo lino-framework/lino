@@ -25,6 +25,10 @@ from lino.textprinter.pdfprn import PdfTextPrinter
 
 
 def main(argv):
+    console.copyleft(name="Lino/prn2pdf",
+                     years='2002-2005',
+                     author='Luc Saffre')
+    
     parser = console.getOptionParser(
         usage="usage: lino prn2pdf [options] FILE",
         description="""\
@@ -50,10 +54,10 @@ write to OUTFILE rather than FILE.pdf""",
     if options.outFile is None:
         (root,ext) = os.path.splitext(inputfile)
         options.outFile = root +".pdf"
-    d = PdfTextPrinter(options.outFile)
+    d = PdfTextPrinter(options.outFile,coding=sys.stdin.encoding)
     ok = True
     try:
-        d.readfile(inputfile,coding=sys.stdin.encoding)
+        d.readfile(inputfile)#,coding=sys.stdin.encoding)
     except Exception,e:
         console.error(str(e))
         ok = False
@@ -71,9 +75,5 @@ write to OUTFILE rather than FILE.pdf""",
 
 
 if __name__ == '__main__':
-    console.copyleft(name="Lino/prn2pdf",
-                     years='2002-2005',
-                     author='Luc Saffre')
-    
     sys.exit(main(sys.argv[1:]))
 

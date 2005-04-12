@@ -16,8 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino import __version__, __author__, __copyright__, __url__,\
-     __credits__
+from lino import __version__, __author__, __copyright__, __url__
 
 __all__ = []
 

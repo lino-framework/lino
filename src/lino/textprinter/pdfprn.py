@@ -25,7 +25,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
-from lino.textprinter.textprinter import TextPrinter
+from lino.textprinter.textprinter import TextPrinter, ParserError
 
 from lino.ui import console
 
@@ -85,16 +85,19 @@ class Status:
 		
 class PdfTextPrinter(TextPrinter):
 
-    def __init__(self,filename,cpi=12):
+    def __init__(self,filename,cpi=12,**kw):
         TextPrinter.__init__(self,
                              pageSize=A4,
-                             margin=5*mm)
+                             margin=5*mm,
+                             **kw)
         (root,ext) = os.path.splitext(filename)
         if ext.lower() != ".pdf":
             filename += ".pdf"
         
         self.canvas = canvas.Canvas(filename,
+                                    #encoding=self.coding,
                                     pagesize=A4)
+        self.textobject = None
         self.filename = filename
         self.status = Status()
         self.setCpi(cpi)
@@ -117,12 +120,9 @@ class PdfTextPrinter(TextPrinter):
 ##          textobject.textLine("Eesti")
 ##          self.canvas.drawText(textobject)
 
-    def createTextObject(self):
-        textobject = self.canvas.beginText()
-        textobject.setTextOrigin(self.margin,
-                                 self.pageHeight-(2*self.margin))
-        #textobject.setFont("Courier", 10)
-        return textobject
+##     def createTextObject(self):
+##         #textobject.setFont("Courier", 10)
+##         return textobject
         
     def onBeginPage(self):
         #self.background()
@@ -130,10 +130,14 @@ class PdfTextPrinter(TextPrinter):
             # if landscape mode
             self.canvas.rotate(90)
             self.canvas.translate(0,-210*mm)
+        self.textobject = self.canvas.beginText()
+        self.textobject.setTextOrigin(
+            self.margin, self.pageHeight-(2*self.margin))
     
     def onEndPage(self):
         self.canvas.drawText(self.textobject)
         self.canvas.showPage()
+        self.textobject = None
         
     def onSetPageSize(self):
         self.canvas.setPageSize((self.pageHeight,self.pageWidth))
@@ -172,9 +176,14 @@ class PdfTextPrinter(TextPrinter):
         if self.fontChanged:
             self.prepareFont()
 
+##         if self.coding is not None:
+##             text = text.encode(self.coding)
+##         self.textobject.textOut(text)
+##         return
+            
         for k,v in HACK_BOXCHARS.items():
             text = text.replace(k,v)
-            
+
         console.debug("write(%s)",repr(text))
         #text = text.encode("iso-8859-1","replace")
         try:
@@ -190,6 +199,21 @@ class PdfTextPrinter(TextPrinter):
     def newline(self):
         self.textobject.textLine()
 
+        
+    def length2i(self,s):
+        try:
+            if s.endswith("mm"):
+                return float(s[:-2]) * mm
+            if s.endswith("ch"):
+                self.flush()
+                assert self.font is not None
+                return float(s[:-2]) * self.fontDict['width']
+            if s.endswith("ln"):
+                self.flush()
+                return float(s[:-2]) * self.leading
+            return float(s) * mm
+        except ValueError,e:
+            raise ParserError("invalid length: %r" % s)
         
         
 ##     def insertImage(self,line):
@@ -215,21 +239,30 @@ class PdfTextPrinter(TextPrinter):
 ##                                      w,h)
 ##         return len(params[0])+len(params[1])+len(params[2])+3
     
-    def insertImage(self,width,height,filename):
+    def insertImage(self,filename,w=None,h=None,dx=None,dy=None):
+    #def insertImage(self,filename,width,height,filename):
         # picture size must be givin in mm :
-        w = float(width) * mm 
-        h = float(height) * mm 
+        width = self.length2i(w)
+        height = self.length2i(h)
+        #w = float(width) * mm 
+        #h = float(height) * mm 
         # position of picture is the current text cursor 
         (x,y) = self.textobject.getCursor()
         if x == 0 and y == 0:
             # print "no text has been processed until now"
             x = self.margin + x
-            y = self.pageHeight-(2*self.margin)-h - y
+            y = self.pageHeight-(2*self.margin)-height - y
         else:
             # but picture starts on top of charbox:
             y += self.status.leading
             
-        self.canvas.drawImage(filename, x,y-h, w,h)
+        if dx is not None:
+            x += self.length2i(dx)
+        if dy is not None:
+            y += self.length2i(dy)
+            
+        self.canvas.drawImage(filename,
+                              x,y-height, width,height)
     
     def setCpi(self,cpi):
         "set font size in cpi (characters per inch)"
