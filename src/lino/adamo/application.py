@@ -106,11 +106,3 @@ class MirrorLoaderApplication(AdamoApplication):
     
 
 
-from lupy.indexer import Index
-
-class LupyMixin: # for Application
-    
-    def openLupy(self,indexName):
-        self.indexName = indexName
-        self.indexer = Index(self.indexName, create=True)
-     
