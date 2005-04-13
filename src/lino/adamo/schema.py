@@ -1,4 +1,3 @@
-#coding: latin1
 ## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.

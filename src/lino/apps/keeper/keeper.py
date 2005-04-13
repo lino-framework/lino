@@ -26,7 +26,7 @@ from lino.forms import gui
 from lino.apps.keeper import keeper_tables as tables
 #from lino.apps.keeper.populate import Populator
 
-from lino.forms.application import AdamoApplication
+from lino.adamo.application import AdamoApplication
 
 class Keeper(AdamoApplication):
         
@@ -34,7 +34,8 @@ class Keeper(AdamoApplication):
         tables.setupSchema(self.schema)
         
         self.sess = self.schema.quickStartup(
-            ui=self.toolkit.console, filename=self.filename)
+            ui=self.toolkit.console,
+            filename=self.filename)
         
         assert self.mainForm is None
         

@@ -26,7 +26,7 @@ from lino import adamo
 
 from lino.apps.raceman import races, loaders
 
-from lino.forms.application import MirrorLoaderApplication
+from lino.adamo.application import MirrorLoaderApplication
 
 
 

@@ -16,16 +16,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
-
 from lino.misc.descr import Describable
-from lino.adamo.datasource import Datasource
-from lino.adamo.schema import Schema
 from lino.forms import gui
-#from lino.ui.console import getSystemConsole
-from lino.ui import console
-
-
 
 class Application(Describable):
 
@@ -183,82 +175,3 @@ class Application(Describable):
 
 
 
-class AdamoApplication(Application):
-
-    def __init__(self,filename=None,**kw):
-        Application.__init__(self,**kw)
-        self.schema = Schema()
-        self.filename = filename
-        self.sess = None
-        
-    def getSession(self):
-        return self.sess
-
-    def parse_args(self,
-                   argv=None,
-                   usage="usage: %prog [options] DBFILE",
-                   description="""\
-where DBFILE is the name of the sqlite database file""",
-                   **kw):
-        (options,args) = Application.parse_args(
-            self,
-            usage=usage,
-            description=description,
-            **kw)
-        if len(args) == 1:
-            self.filename = args[0]
-        else:
-            self.filename=os.path.join(self.tempDir,
-                                       self.name+".db")
-        return (options,args)
-
-
-    def init(self): #,*args,**kw):
-        # called from Toolkit.main()
-        self.sess = self.schema.quickStartup(
-            ui=self.toolkit.console,
-            filename=self.filename)
-##         return Application.init(self,
-##                                 self.toolkit.console,
-##                                 *args,**kw)
-        
-        
-        
-    def showTableGrid(self,ui,tc,*args,**kw):
-        ds = self.sess.query(tc,*args,**kw)
-        return ui.showDataGrid(ds)
-    
-    def showViewGrid(self,ui,tc,viewName="std",*args,**kw):
-        ds = self.sess.view(tc,viewName,*args,**kw)
-        return ui.showDataGrid(ds)
-    
-
-class MirrorLoaderApplication(AdamoApplication):
-
-    def __init__(self,loadfrom=".",**kw):
-        AdamoApplication.__init__(self,**kw)
-        self.loadfrom = loadfrom
-    
-    def getOptionParser(self,**kw):
-        parser = AdamoApplication.getOptionParser(self,**kw)
-        
-        parser.add_option("--loadfrom",
-                          help="""\
-                          directory for mirror source files""",
-                          action="store",
-                          type="string",
-                          dest="loadfrom",
-                          default=self.loadfrom)
-        return parser
-    
-    def parse_args(self,argv=None):
-        (options, args) = AdamoApplication.parse_args(self,argv)
-        self.loadfrom = options.loadfrom
-        return (options, args)
-
-##     def getLoaders(self):
-##         return []
-    
-##     def init(self,ui,*args,**kw):
-##         self.schema.registerLoaders(self.getLoaders())
-##         AdamoApplication.init(self,ui,*args,**kw)
