@@ -22,6 +22,7 @@ from lino.misc.descr import Describable
 from lino.adamo.exceptions import DataVeto, InvalidRequestError
 from lino.adamo.datasource import Datasource
 from lino.adamo.query import DataColumnList
+from lino.adamo import datatypes 
 
 class Lock:
     def __init__(self,row):
@@ -46,7 +47,7 @@ class Store:
         self._table = table
         self._status = self.SST_MUSTCHECK
         
-        self._schema = db.schema # shortcut
+        # self._schema = db.schema # shortcut
         
         #self._datasources = []
         self._lockedRows = {}
@@ -214,11 +215,22 @@ class Store:
         
 
     def setAutoRowId(self,row):
-        "get auto-incremented row id"
+        "set auto-incrementing row id"
         autoIncCol = self._peekQuery._pkColumns[-1]
+##         if autoIncCol.rowAttr.type is not ROWID:
+##             return
+##         if self._table.getTableName() == "Words":
+##             print autoIncCol.rowAttr.type
+##             raise "foo"
         #assert isinstance(autoIncCol.rowAttr.type,AutoIncType)
         assert len(autoIncCol._atoms) == 1
         autoIncAtom = autoIncCol._atoms[0]
+        if autoIncAtom.type is not datatypes.AutoIncType:
+            return
+        
+        if self._table.getTableName() == "Occurences":
+            print repr(autoIncAtom.type)
+            raise "foo"
         
         pka = self._table.getPrimaryAtoms()
         id = row.getRowId()

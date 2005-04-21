@@ -22,33 +22,46 @@ from lino.ui import console
 
 STEPS = 3
 
-def f(withMaxVal):
+def f(ui,withMaxVal):
         
-    job = console.job("Demonstrating console.job()")
     
     if withMaxVal:
-        job.setMaxValue(pow(STEPS,5))
+        job = ui.job("Job with maxval",maxval=pow(STEPS,5))
+    else:
+        job = ui.job("Job without maxval")
     
     job.status("Working hard")
     for n in range(STEPS):
-        console.error('error message %d',n)
+        job.error('error message %d',n)
         for h in range(STEPS):
-            console.warning('warning message %d.%d',n,h)
+            job.warning('warning message %d.%d',n,h)
             for i in range(STEPS):
-                console.notice('notice message %d.%d.%d',n,h,i)
+                job.notice('notice message %d.%d.%d',n,h,i)
                 for j in range(STEPS):
-                    console.verbose(
+                    job.verbose(
                         'verbose message %d.%d.%d.%d',n,h,i,j)
                     for k in range(STEPS):
-                        console.debug(
+                        job.debug(
                             'debug message %d.%d.%d.%d.%d',n,h,i,j,k)
                         job.increment()
-                        sleep(0.1)
+                        sleep(0.05)
         
     job.done()
 
 
 if __name__ == "__main__":
     console.parse_args()
-    f(True)
-    f(False)
+
+    if False:
+        print "Demonstrating Job"
+        f(console,True)
+        f(console,False)
+    
+    from lino.forms import gui
+    frm = gui.form("Demonstrating Job")
+    frm.addButton("with").setHandler(frm,True)
+    frm.addButton("without").setHandler(frm,False)
+    frm.show()
+    #f(frm,True)
+    #f(frm,False)
+    

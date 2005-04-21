@@ -23,8 +23,10 @@ opj = os.path.join
 
 from lino.apps.keeper import keeper_tables as tables
 from lino.misc.jobs import Task
+#from lino.tools.msword import MsWordDocument
 
 class VolumeVisitor(Task):
+    
     def __init__(self,vol):
         Task.__init__(self)
         self.volume = vol
@@ -35,15 +37,17 @@ class VolumeVisitor(Task):
         self.files = sess.query(tables.Files)
         self.dirs = sess.query(tables.Directories)
         self.words = sess.query(tables.Words)
-        self.occs = sess.query(tables.Occurences)
-        for row in self.dirs.query(volume=self.volume):
-            row.delete()
+        self.occurences = sess.query(tables.Occurences)
+        self.volume.directories.deleteAll()
+        #for row in self.dirs.query(volume=self.volume):
+        #    row.delete()
         self.visit(self.volume.path,"")
 
     def getLabel(self):
         return "Loading "+self.volume.getLabel()
 
     def visit(self,fullname,shortname,dir=None):
+        self.status(fullname)
         if os.path.isfile(fullname):
             row = self.files.peek(dir,shortname)
             if row is None:
@@ -56,36 +60,51 @@ class VolumeVisitor(Task):
                 row = self.dirs.appendRow(name=shortname,
                                           parent=dir,
                                           volume=self.volume)
+                assert row.parent == dir
             self.visit_dir(row,fullname)
         else:
             raise SyncError(
                 "%s is neither file nor directory" % src)
 
-    def visit_file(self,row,name):
+    def visit_file(self,fileRow,name):
         base,ext = os.path.splitext(name)
-        if ext == ".txt":
-            count = 0
-            for ln in open(name).readlines():
-                for w in ln.split():
-                    count += 1
-            self.verbose("%s contains %d words.", name, count)
+        #self.status(name)
+        if ext.lower() == ".txt":
+            tokens = open(name).read().split()
+            self.loadWords(fileRow,tokens)
+##             count = 0
+##             for ln in open(name).readlines():
+##                 for w in ln.split():
+##                     count += 1
+##             self.verbose("%s contains %d words.", name, count)
         elif ext == ".doc":
-            self.status("opening MS-Word %s.", name)
-            msdoc = MsWordDocument(name)
-            row.title = msdoc.title
-            count = 0
-            for w in msdoc.content.split():
-                count += 1
-            self.verbose("%s contains %d words.", name, count)
+            self.status("Ignoring MS-Word %s.", name)
+            #msdoc = MsWordDocument(name)
+            #fileRow.title = msdoc.title
+            #self.loadWords(fileRow,msdoc.content.split())
                     
+    def loadWords(self,fileRow,tokens):
+        self.status("Document %s : %d tokens",fileRow.name,len(tokens))
+        fileRow.occurences.deleteAll()
+        #self.occurences.query(file=deleteRows(file=fileRow)
+        pos = 0
+        for token in tokens:
+            pos += 1
+            word = self.words.peek(token)
+            if word is None:
+                word = self.words.appendRow(id=token)
+            #elif word.ignore:
+            #    continue
+            fileRow.occurences.appendRow(word=word, pos=pos)
+
     
-    def visit_dir(self,row,fullname):
-        self.status("visit_dir " + fullname)
+    def visit_dir(self,dirRow,fullname):
+        #self.status("visit_dir " + fullname)
         for fn in os.listdir(fullname):
             self.visit(
                 os.path.join(fullname,fn),
                 fn,
-                row)
+                dirRow)
         
     def readTimeStamp(self,row,filename):
         try:

@@ -40,11 +40,8 @@ class SimpleDatasource:
             clist = store._peekQuery
         assert clist.leadTable is store._table
         self._clist = clist
-        #for m in 'getColumn', 'getColumnByName':
-        #    setattr(self,m,getattr(clist,m))
 
 
-        # self._db = store._db # shortcut
         self._table = store._table # shortcut
         self._schema = store._db.schema # shortcut
         self._connection = store._connection # shortcut
@@ -84,6 +81,8 @@ class SimpleDatasource:
     def zap(self):
         self._store.zap()
 
+    def deleteAll(self):
+        self._connection.executeDeleteAll(self)
         
 ##     def configure(self,viewName=None,**kw):
 ##         """

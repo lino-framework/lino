@@ -24,12 +24,46 @@ from lino import adamo
 from lino.forms import gui
 
 from lino.apps.keeper import keeper_tables as tables
-#from lino.apps.keeper.populate import Populator
 
 from lino.adamo.application import AdamoApplication
 
+
 class Keeper(AdamoApplication):
         
+    def showSearchForm(self,ui):
+        self.searchData = self.sess.query(tables.Files)
+        frm = ui.form(label="Search")
+
+        searchString = frm.addEntry("searchString",adamo.STRING,
+                                    label="Words to look for",
+                                    value="")
+        def search():
+            self.searchData.configure(search=searchString.getValue())
+            frm.refresh()
+            #a = self.arrivals.appendRow(
+            #    dossard=frm.entries.dossard.getValue(),
+            #    time=now.time())
+            #frm.status("%s arrived at %s" % (a.dossard,a.time))
+            #searchString.setValue('')
+            #frm.entries.dossard.setFocus()
+
+
+
+        #bbox = frm.addHPanel()
+        bbox = frm
+        bbox.addButton("search",
+                       label="&Search",
+                       action=search).setDefault()
+        #bbox.addButton("exit",
+        #               label="&Exit",
+        #               action=frm.close)
+
+        bbox.addDataGrid(self.searchData)
+
+        frm.show()
+        #frm.showModal()
+
+
     def init(self):
         tables.setupSchema(self.schema)
         
@@ -37,7 +71,7 @@ class Keeper(AdamoApplication):
             ui=self.toolkit.console,
             filename=self.filename)
         
-        assert self.mainForm is None
+        #assert self.mainForm is None
         
         #self.mainForm = frm = self.form(
         frm = self.form(
@@ -46,7 +80,11 @@ class Keeper(AdamoApplication):
 This is the Keeper main menu.                                     
 """+("\n"*10))
 
-        m = frm.addMenu("&Stammdaten")
+        m = frm.addMenu("&Suchen")
+        m.addItem(label="&Suchen").setHandler(
+            self.showSearchForm,frm)
+    
+        m = frm.addMenu("&Datenbank")
         m.addItem(label="&Volumes").setHandler(
             self.showViewGrid,frm,
             tables.Volumes)
@@ -59,7 +97,7 @@ This is the Keeper main menu.
         m.addItem(label="&Words").setHandler(
             self.showViewGrid,frm,
             tables.Words)
-    
+        
         self.addProgramMenu(frm)
 
         frm.addOnClose(self.close)

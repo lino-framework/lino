@@ -16,10 +16,41 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
+
 from lino.misc.descr import Describable
 from lino.forms import gui
+from lino.ui import console
 
-class Application(Describable):
+class BaseApplication(console.CLI):
+
+    def __init__(self, toolkit):
+        if toolkit is None:
+            toolkit = gui.choose()
+        self.toolkit = toolkit
+        self.toolkit.addApplication(self)
+        
+    def form(self,parent=None,*args,**kw):
+        return self.toolkit.formFactory(self,parent,*args,**kw)
+    
+    def setupOptionParser(self,parser):
+        self.toolkit.setupOptionParser(parser)
+
+    def applyOptions(self,options,args):
+        self.toolkit.applyOptions(options,args)
+    
+    def init(self):
+        # supposed to show the application's main form
+        pass
+
+    def run(self):
+        self.toolkit.run_forever()
+
+    def close(self):
+        self.toolkit.closeApplication(self)
+
+        
+class Application(BaseApplication,Describable):
 
     def __init__(self,
                  toolkit=None,
@@ -27,30 +58,17 @@ class Application(Describable):
                  version=None,
                  author=None,
                  tempDir=".",
-                 #mainForm=None,
-                 #console=None,
                  **kw):
-        if toolkit is None:
-            toolkit = gui.choose()
-        self.toolkit = toolkit
-        self.toolkit.addApplication(self)
-        
         self.years = years
         self.version = version
         self.author = author
         self.tempDir = tempDir
+        BaseApplication.__init__(self,toolkit)
         Describable.__init__(self,**kw)
-        self.mainForm = None
-##         if console is None:
-##             console = getSystemConsole()
-##         self.console = console
         
 
-    def form(self,parent=None,*args,**kw):
-        return self.toolkit.formFactory(self,parent,*args,**kw)
-    
-    def getOptionParser(self,**kw):
-        parser = self.toolkit.getOptionParser(**kw)
+    def setupOptionParser(self,parser):
+        BaseApplication.setupOptionParser(self,parser)
         parser.add_option(
             "-t", "--tempdir",
             help="directory for temporary files",
@@ -58,14 +76,27 @@ class Application(Describable):
             type="string",
             dest="tempDir",
             default=self.tempDir)
-        return parser
-        #return self.toolkit.getOptionParser(**kw)
 
-    def parse_args(self,argv=None,**kw):
-        parser = self.getOptionParser(**kw)
-        (options, args) = parser.parse_args(argv)
+    def applyOptions(self,options,args):
+        BaseApplication.applyOptions(self,options,args)
         self.tempDir = options.tempDir
-        return (options, args)
+
+##     def get OptionParser(self,**kw):
+##         parser = self.toolkit.getOptionParser(**kw)
+##         parser.add_option(
+##             "-t", "--tempdir",
+##             help="directory for temporary files",
+##             action="store",
+##             type="string",
+##             dest="tempDir",
+##             default=self.tempDir)
+##         return parser
+
+##     def parse_args(self,argv=None,**kw):
+##         parser = self.getOptionParser(**kw)
+##         (options, args) = parser.parse_args(argv)
+##         self.tempDir = options.tempDir
+##         return (options, args)
 
 ##     def setMainForm(self,frm):
 ##         self.mainForm = frm
@@ -125,21 +156,16 @@ class Application(Describable):
         
         return s
     
-    def showConsole(self):
-        frm = self.form(label="Console",
-                        halign=gui.RIGHT, valign=gui.BOTTOM)
-        frm.addViewer()
-        frm.show()
 
+
+class AutomagicApplication(BaseApplication):
+    
+    def __init__(self, toolkit,*args,**kw):
+        BaseApplication.__init__(self,toolkit)
+        self._form = self.form(*args,**kw)
+        
     def init(self):
-        # supposed to show the application's main form
-        pass
-
-    def run(self):
-        self.toolkit.start()
-
-    def close(self):
-        self.toolkit.closeApplication(self)
+        self._form.show()
         
     
         

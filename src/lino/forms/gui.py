@@ -48,9 +48,11 @@ def form(*args,**kw):
     check()
     global _app
     if _app is None:
-        from lino.forms.application import Application
-        _app = Application(toolkit=_toolkit,
-                           name="automagicApp")
+        from lino.forms.application import BaseApplication
+        _app = BaseApplication(toolkit=_toolkit)
+        #from lino.forms.application import AutomagicApplication
+        #_app = AutomagicApplication(toolkit=_toolkit,*args,**kw)
+        #return _app._form
     return _app.form(None,*args,**kw)
 ##     frm = _app.form(None,*args,**kw)
 ##     _app.mainForm = frm

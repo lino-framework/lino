@@ -34,23 +34,38 @@ class AdamoApplication(Application):
     def getSession(self):
         return self.sess
 
-    def parse_args(self,
-                   argv=None,
-                   usage="usage: %prog [options] DBFILE",
-                   description="""\
-where DBFILE is the name of the sqlite database file""",
-                   **kw):
-        (options,args) = Application.parse_args(
-            self,
-            usage=usage,
-            description=description,
-            **kw)
+    def parse_args(self,args=None,**kw):
+        kw.update(dict(
+            usage="usage: %prog [options] DBFILE",
+            description="""\
+where DBFILE is the name of the sqlite database file"""))
+        return Application.parse_args(self,args,**kw)
+        
+    def applyOptions(self,options,args):
+        Application.applyOptions(self,options,args)
         if len(args) == 1:
             self.filename = args[0]
         else:
             self.filename=os.path.join(self.tempDir,
                                        self.name+".db")
-        return (options,args)
+
+##     def parse_args(self,
+##                    argv=None,
+##                    usage="usage: %prog [options] DBFILE",
+##                    description="""\
+## where DBFILE is the name of the sqlite database file""",
+##                    **kw):
+##         (options,args) = Application.parse_args(
+##             self,
+##             usage=usage,
+##             description=description,
+##             **kw)
+##         if len(args) == 1:
+##             self.filename = args[0]
+##         else:
+##             self.filename=os.path.join(self.tempDir,
+##                                        self.name+".db")
+##         return (options,args)
 
 
     def init(self): #,*args,**kw):
@@ -79,6 +94,8 @@ class MirrorLoaderApplication(AdamoApplication):
         AdamoApplication.__init__(self,**kw)
         self.loadfrom = loadfrom
     
+    def setupOptionParser(self,parser):
+        AdamoApplication.setupOptionParser(self,parser)
     def getOptionParser(self,**kw):
         parser = AdamoApplication.getOptionParser(self,**kw)
         

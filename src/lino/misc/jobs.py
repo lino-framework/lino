@@ -35,26 +35,22 @@ itr("Success",
     de="Vorgang erfolgreich beendet")
 
 
+
 class JobAborted(Exception):
-    pass
+    def __init__(self, job):
+        self.job = job
+
 
 
 
 class BaseJob:
     
-    def __init__(self):
-        pass
-        #self.init(*args,**kw)
-        
-    #def __init__(self,ui,label=None,status=None,maxval=0):
-    def init(self,ui,label=None,maxval=0):
+    def init(self,ui,maxval=0):
         self.ui = ui
-        self._label = label
-        self.curval = 0
         self.maxval = maxval
+        self.curval = 0
         self.pc = None
         self._done = False
-        
         self.ui.onJobInit(self)
 
     def setMaxValue(self,n):
@@ -64,8 +60,11 @@ class BaseJob:
         return _("Working")
     
     def getLabel(self):
-        return self._label 
+        raise NotImplementedError
     
+    def confirmAbort(self):
+        return self.ui.confirm("Are you sure you want to abort?")
+        
     def increment(self,n=1):
         self.curval += n
         if self._done:
@@ -75,10 +74,11 @@ class BaseJob:
             if pc == self.pc:
                 return
             self.pc = pc
-        self.ui.onJobIncremented(self)
+        #self.ui.onJobIncremented(self)
+        self.refresh()
 
     def refresh(self):
-        self.ui.onJobIncremented(self)
+        self.ui.onJobRefresh(self)
         
     def done(self,msg=None,*args,**kw):
         if msg is None:
@@ -110,6 +110,7 @@ class BaseJob:
             #self.pc = 100
             #self.onInc()
             #self.onDone(msg)
+        raise JobAborted(self)
 
             
 ##     def onInc(self):
@@ -163,15 +164,19 @@ class BaseJob:
         
 
 
-
-
-
 class Job(BaseJob):
-    # this is not to override but for use by ui.job()
-    def init(self,*args,**kw):
+    
+    """user code should not override this but instanciate it using
+    ui.job(). subclassed by lino.forms.wx"""
+    
+    def init(self,ui,label=None,*args,**kw):
+        self._label = label
         self._status = _("Working")
-        BaseJob.init(self,*args,**kw)
+        BaseJob.init(self,ui,*args,**kw)
 
+    def getLabel(self):
+        return self._label
+    
     def getStatus(self):
         return self._status
 
@@ -181,16 +186,32 @@ class Job(BaseJob):
 
 
 
-class Task(BaseJob):
-    # must override
-    def __init__(self):
+class Task:#(BaseJob):
+
+    def __init__(self,*args,**kw):
+        self.configure(*args,**kw)
+
+
+    def run(self,ui,*args,**kw):
+        self.configure(*args,**kw)
+        # don't override
+        self.job = ui.job(self.getLabel(),*args,**kw)
+        try:
+            self.start()
+            self.job.done()
+        except JobAborted,e:
+            assert e.job == self.job
+            #self.job.abort(str(e))
+        #except KeyboardInterrupt,e:
+        #    self.job.abort()
+            
+            
+    def configure(self):
+        # may override
         self.count_errors = 0
         self.count_warnings = 0
-        BaseJob.__init__(self)
-
 
     def start(self):
-        # must override
         raise NotImplementedError
 
     def getStatus(self):
@@ -206,25 +227,26 @@ class Task(BaseJob):
 
         
 
-    def run(self,ui,*args,**kw):
-        self.init(ui,*args,**kw)
-        try:
-            self.start()
-            self.done()
-        except JobAborted,e:
-            self.abort(str(e))
-        except KeyboardInterrupt,e:
-            self.abort()
-            
         
 
+##     def error(self,*args,**kw):
+##         self.count_errors += 1
+##         BaseJob.error(self,*args,**kw)
+
+##     def warning(self,*args,**kw):
+##         self.count_warnings += 1
+##         BaseJob.warning(self,*args,**kw)
+        
     def error(self,*args,**kw):
         self.count_errors += 1
-        BaseJob.error(self,*args,**kw)
+        self.job.error(*args,**kw)
 
     def warning(self,*args,**kw):
         self.count_warnings += 1
-        BaseJob.warning(self,*args,**kw)
+        self.job.warning(*args,**kw)
+        
+    def status(self,*args,**kw):
+        self.job.status(*args,**kw)
         
 
 

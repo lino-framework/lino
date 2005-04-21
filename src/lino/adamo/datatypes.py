@@ -128,7 +128,6 @@ class IntType(Type):
     def __init__(self,width=5,**kw):
         self.minWidth = self.maxWidth = width
         Type.__init__(self,**kw)
-        #self.width = width
         
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY

@@ -88,7 +88,7 @@ class SyncError(Exception):
 
 class Synchronizer(Task):
     
-    def __init__(self,src,target,simulate,showProgress):
+    def configure(self,src,target,simulate,showProgress):
         self.src = src
         self.target = target
         self.simulate=simulate
@@ -105,8 +105,9 @@ class Synchronizer(Task):
         self.count_delete_dir = 0
         self.count_update_dir = 0
         self.count_copy_dir = 0
+        Task.configure(self)
         
-        Task.__init__(self)
+        #Task.__init__(self,label)
 
         #self.job = console.job("Synchronizer")
 
@@ -114,7 +115,7 @@ class Synchronizer(Task):
         s = _("Synchronize %s to %s") % (self.src, self.target)
         if self.simulate:
             s += " (Simulation)"
-        return s
+        #return s
     
     def start(self):
         if not os.path.exists(self.src):
@@ -433,9 +434,9 @@ show progress bar""",
     sync = Synchronizer(src,target,
                         simulate=options.simulate,
                         showProgress=options.showProgress)
-
-    if not console.confirm(sync.getLabel()+"\n"+_("Start?")):
-        return
+    if not options.simulate:
+        if not console.confirm(sync.getLabel()+"\n"+_("Start?")):
+            return
         
     sync.run(console.getSystemConsole())
 

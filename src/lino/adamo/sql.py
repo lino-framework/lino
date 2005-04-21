@@ -271,7 +271,6 @@ class SqlConnection(Connection):
     
 
     def whereClause(self,ds):
-                
         where = []
         for (atom,value) in ds.getAtomicSamples():
             where.append(self.testEqual(atom.name,atom.type,value))
@@ -461,6 +460,12 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
                                   self.value2sql(id[i],type)))
             i += 1
         sql += " AND ".join(l)
+        self.sql_exec(sql)
+
+    def executeDeleteAll(self,ds):
+        sql = "DELETE FROM " + ds._table.getTableName()
+        sql += self.whereClause(ds)
+        #print sql
         self.sql_exec(sql)
 
 ##     def executeDeleteRows(self,ds):

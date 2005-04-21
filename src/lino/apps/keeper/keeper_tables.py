@@ -73,10 +73,13 @@ class Directories(Table):
         
         def delete(self):
             #print "Delete entry for ",self
-            for row in self.files:
-                row.delete()
-            for row in self.subdirs:
-                row.delete()
+            assert not self in self.subdirs
+            self.files.deleteAll()
+            self.subdirs.deleteAll()
+##             for row in self.files:
+##                 row.delete()
+##             for row in self.subdirs:
+##                 row.delete()
             Table.Instance.delete(self)
                 
 
@@ -93,11 +96,13 @@ class Files(Table):
         self.addView("std","dir name type meta")
 
     class Instance(Table.Instance):
+        
         def getLabel(self):
             return self.name
+        
         def path(self):
             return os.path.join(self.dir.path(),self.name)
-
+        
 class FileTypes(Table):
     def init(self):
         self.addField('id',STRING(width=5))
@@ -109,22 +114,29 @@ class FileTypes(Table):
         
 class Words(Table):
     def init(self):
-        self.addField('id',ROWID)
-        self.addField('word',STRING)
+        self.addField('id',STRING)
+        #self.addField('word',STRING)
         self.addPointer('synonym',Words)
-
-    class Instance(Table.Instance):
-        def getLabel(self):
-            return self.name
-
-class Occurences(Table):
-    def init(self):
-        self.addPointer('word',Words)
-        self.addPointer('file',Files)
-        self.addField('pos',INT)
+        #self.addField('ignore',BOOL)
+        self.addView("std","id synonym occurences")
 
     class Instance(Table.Instance):
         pass
+        #def getLabel(self):
+        #    return self.id
+
+class Occurences(Table):
+    def init(self):
+        self.addPointer('word',Words).setDetail("occurences")
+        self.addPointer('file',Files).setDetail("occurences")
+        self.addField('pos',INT)
+        self.setPrimaryKey("word file pos")
+
+    class Instance(Table.Instance):
+        pass
+
+
+    
 # order of tables is important: tables will be populated in this order
 TABLES = (
     Volumes,

@@ -31,8 +31,6 @@ class MyDataTable(wx.grid.PyGridTableBase):
     def __init__(self, editor):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
-        #self.report = report
-        #self.ds = editor.ds
         self.columns = self.editor.ds.getVisibleColumns()
         self.rows = [ row for row in self.editor.ds ]
 
@@ -487,11 +485,12 @@ class DataGridCtrl(wx.grid.Grid):
     def OnLabelRightClicked(self, evt):
         # Did we click on a row or a column?
         row, col = evt.GetRow(), evt.GetCol()
-        if row == -1: self.colPopup(col, evt)
+        if row == -1:
+            self.colPopup(col, evt)
         elif col == -1:
             print "OnLabelRightClicked(%d,%d)" % (row,col)
             return
-            self.rowPopup(row, evt)
+        self.rowPopup(row, evt)
 
 ##     def Reset(self):
 ##         """reset the view based on the data in the table.   Call

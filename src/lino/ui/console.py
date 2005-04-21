@@ -31,8 +31,9 @@ from lino import __version__, __author__
 
 
 
-# if frozen with py2exe, sys.setdefaultencoding() has not been
-# deleted.  And site.py and sitecustomize.py haven't been executed.
+# if frozen (with py2exe or McMillan), sys.setdefaultencoding() has
+# not been deleted.  And site.py and sitecustomize.py haven't been
+# executed.
 
 if hasattr(sys,'setdefaultencoding'):
 
@@ -42,6 +43,18 @@ if hasattr(sys,'setdefaultencoding'):
         #print "sys.setdefaultencoding(%s)" % repr(loc[1])
         sys.setdefaultencoding(loc[1])
     
+
+try:
+    import msvcrt
+except ImportError:
+    msvcrt = False
+
+
+#class JobAborted(Exception):
+#    pass
+
+
+
 
 
 """
@@ -82,6 +95,20 @@ from lino.misc.jobs import Job #, PurzelConsoleJob
             
 class UI:
     pass
+    
+class CLI:
+    
+    def parse_args(self,args=None,**kw):
+        p = OptionParser(**kw)
+        self.setupOptionParser(p)
+        options,args = p.parse_args(args)
+        self.applyOptions(options,args)
+
+    def applyOptions(self,options,args):
+        pass
+    
+    def setupOptionParser(self,parser):
+        pass
 
 ##     def __init__(self):
 ##         self._progressBar = None
@@ -96,7 +123,7 @@ class UI:
         
 
 
-class Console(UI):
+class Console(UI,CLI):
 
     jobClass = Job
 
@@ -174,6 +201,7 @@ class Console(UI):
             self._logfile.flush()
             
     def status(self,msg):
+        #self.notice(msg)
         self.verbose(msg)
 
     def error(self,msg,*args,**kw):
@@ -228,15 +256,15 @@ class Console(UI):
             
 
 
-    def onJobIncremented(self,job):
+    def onJobRefresh(self,job):
         pass
     
     def onJobInit(self,job):
         if job._label is not None:
             self.notice(job._label)
 
-    def onJobStatus(self,job):
-        pass
+##     def onJobStatus(self,job):
+##         pass
 
     def onJobDone(self,job,msg):
         self.status(None)
@@ -269,13 +297,7 @@ class Console(UI):
 ##          if self.verbose:
 ##              self.notify(msg)
             
-    def parse_args(self,args=None):
-        p = self.getOptionParser()
-        return p.parse_args(args)
-
-    def getOptionParser(self,**kw):
-        p = OptionParser(**kw)
-
+    def setupOptionParser(self,p):
         def call_set(option, opt_str, value, parser,**kw):
             self.set(**kw)
 
@@ -312,7 +334,6 @@ class Console(UI):
                      dest="logFile",
                      action="callback",
                      callback=set_logfile)
-        return p
 
     def message(self,msg):
 ##         if self.app is not None:
@@ -413,8 +434,11 @@ class Console(UI):
         from lino.reports.plain import Report
         return Report(writer=self._stdout,**kw)
 
+    def abortRequested(self):
+        return False
+        
 
-class StatusConsole(Console):
+class TtyConsole(Console):
 
     width = 78  # 
     purzelMann = "|/-\\"
@@ -427,12 +451,16 @@ class StatusConsole(Console):
         Console.__init__(self,*args,**kw)
 
 
-    def onJobStatus(self,job):
-        self._display_job(job)
+##     def onJobStatus(self,job):
+##         self._display_job(job)
 
-    def onJobIncremented(self,job):
+    def onJobRefresh(self,job):
         self._display_job(job)
-        
+        if self.abortRequested():
+            if job.confirmAbort():
+                #job.abort()
+                raise JobAborted()
+                
     def _display_job(self,job):
         if job.maxval == 0:
             s = '[' + self.purzelMann[job.curval % 4] + "] "
@@ -442,9 +470,24 @@ class StatusConsole(Console):
             else:
                 s = "[%3d%%] " % job.pc
         self.status(s+job.getStatus())
-
-        
+##         if abortRequested():
+##             if self.confirm("Are you sure you want to abort?"):
+##                 job.abort() # raises JobAborted
     
+    def abortRequested(self):
+        if not msvcrt: return False
+        # print "abortRequested"
+        while msvcrt.kbhit():
+            ch = msvcrt.getch()
+            #print ch
+            if ord(ch) == 0: #'\000':
+                ch = msvcrt.getch()
+                if ord(ch) == 27:
+                    return True
+            elif ord(ch) == 27:
+                return True
+        return False
+
     def warning(self,msg,*args,**kw):
         msg = self.buildMessage(msg,*args,**kw)
         Console.warning(self,msg.ljust(self.width))
@@ -504,7 +547,6 @@ class CaptureConsole(Console):
         self.redirect(self.buffer.write,self.buffer.write)
         return s
     
-        
 _syscon = None
 
 
@@ -545,7 +587,7 @@ def setSystemConsole(c):
         'report','textprinter',
         #'startDump','stopDump',
         'isInteractive','isVerbose', 'set',
-        'getOptionParser','parse_args', ):
+        'parse_args', ):
         g[funcname] = getattr(_syscon,funcname)
 
 def getSystemConsole():
@@ -566,7 +608,7 @@ See file COPYING.txt for more information.""" % (
         name, version, years, author))
 
 
-if False and hasattr(sys.stdout,"encoding") \
+if hasattr(sys.stdout,"encoding") \
       and sys.getdefaultencoding() != sys.stdout.encoding:
     sys.stdout = rewriter(sys.stdout)
     sys.stderr = rewriter(sys.stderr)
@@ -574,7 +616,7 @@ if False and hasattr(sys.stdout,"encoding") \
 
 #_syscon = Console(sys.stdout.write, sys.stderr.write)
 setSystemConsole(
-    StatusConsole(sys.stdout.write, sys.stderr.write))
+    TtyConsole(sys.stdout.write, sys.stderr.write))
 
 
 

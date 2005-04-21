@@ -29,7 +29,7 @@ from lino.misc.attrdict import AttrDict
 
 from lino.adamo.exceptions import InvalidRequestError
 from lino.ui import console
-from lino.forms.application import Application
+from lino.forms.application import BaseApplication
 from lino.forms import gui
 
 
@@ -442,7 +442,7 @@ class Container(Component):
 
     def addDataGrid(self,ds,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.tableEditorFactory(self,ds,*args,**kw)
+        e = frm.app.toolkit.dataGridFactory(self,ds,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         if name is not None:
@@ -545,8 +545,8 @@ class Panel(Container):
         
 ##     def onInc(self,job):
 ##         self.entry.setValue(job._status+" "+str(job.pc)+"%")
-        
-        
+
+
 
 class GUI(console.UI):
     
@@ -584,6 +584,9 @@ class GUI(console.UI):
         frm.showModal()
         return frm.lastEvent == ok
 
+    def abortRequested(self):
+        return False
+    
     def message(self,msg):
         frm = self.form(label="Message")
         frm.addLabel(msg)
@@ -653,7 +656,7 @@ class Form(Describable,GUI):
                  *args,**kw):
         Describable.__init__(self,*args,**kw)
         #GUI.__init__(self)
-        assert isinstance(app,Application)
+        assert isinstance(app,BaseApplication)
         self.app = app
         self._parent = parent
         self.data = data
@@ -765,6 +768,9 @@ class Form(Describable,GUI):
     def job(self,*args,**kw):
         return self.app.toolkit.console.job(*args,**kw)
 
+    def buildMessage(self,*args,**kw):
+        return self.app.toolkit.console.buildMessage(*args,**kw)
+        
     def status(self,*args,**kw):
         return self.app.toolkit.console.status(*args,**kw)
         
@@ -806,7 +812,7 @@ class Form(Describable,GUI):
 
 
 
-class Toolkit:
+class Toolkit(console.CLI):
     
     labelFactory = Label
     entryFactory = Entry
@@ -814,7 +820,7 @@ class Toolkit:
     buttonFactory = Button
     panelFactory = Panel
     viewerFactory = TextViewer
-    tableEditorFactory = DataGrid
+    dataGridFactory = DataGrid
     navigatorFactory = DataNavigator
     formFactory = Form
     
@@ -833,14 +839,45 @@ class Toolkit:
 ##         if self.app is None:
 ##             self.app = Application(name="Automagic GUI application")
     
-    def getOptionParser(self,**kw):
-        #self.check()
-        return self.console.getOptionParser(**kw)
 
-    def parse_args(self,argv=None,**kw):
-        # only used with automagicApp
-        parser = self.getOptionParser(**kw)
-        return parser.parse_args(argv)
+    def setupOptionParser(self,parser):
+        self.console.setupOptionParser(parser)
+        parser.add_option(
+            "--console",
+            help="open separate window for console output",
+            action="store_true",
+            dest="showConsole",
+            default=True)
+        parser.add_option(
+            "--no-console",
+            help="no console window",
+            action="store_false",
+            dest="showConsole")
+
+    def applyOptions(self,options,args):
+        self.console.applyOptions(options,args)
+        self.showConsole = options.showConsole
+    
+##     def get OptionParser(self,**kw):
+##         parser = self.console.getOptionParser(**kw)
+##         parser.add_option(
+##             "--console",
+##             help="open separate window for console output",
+##             action="store_true",
+##             dest="showConsole",
+##             default=True)
+##         parser.add_option(
+##             "--no-console",
+##             help="no console window",
+##             action="store_false",
+##             dest="showConsole")
+##         return parser
+
+##     def parse_args(self,argv=None,**kw):
+##         parser = self.getOptionParser(**kw)
+##         (options, args) = parser.parse_args(argv)
+##         self.showConsole = options.showConsole
+##         return (options, args)
     
         
     def addApplication(self,app):
@@ -852,12 +889,16 @@ class Toolkit:
 
     def init(self):
         
-        if self.consoleForm is None:
-            self.consoleForm = frm = self._apps[0].form(
-                None, label="Console",
-                halign=gui.RIGHT, valign=gui.BOTTOM)
-            frm.addViewer()
-            frm.show()
+        """ the console window must be visible during
+        application.init()"""
+        
+        if self.showConsole:
+            if self.consoleForm is None:
+                self.consoleForm = frm = self._apps[0].form(
+                    None, label="Console",
+                    halign=gui.RIGHT, valign=gui.BOTTOM)
+                frm.addViewer()
+                frm.show()
             
         for app in self._apps:
             app.init()
@@ -873,7 +914,8 @@ class Toolkit:
     def closeApplication(self,app):
         self._apps.remove(app)
         if len(self._apps) == 0:
-            self.consoleForm.close()
+            if self.consoleForm is not None:
+                self.consoleForm.close()
         
 
 ##     def form(self,parent,*args,**kw):
@@ -886,7 +928,13 @@ class Toolkit:
 
     
 
-    def start(self):
+    def running(self):
+        raise NotImplementedError
+        
+    def run_forever(self):
+        raise NotImplementedError
+    
+    def run_awhile(self):
         raise NotImplementedError
 
 

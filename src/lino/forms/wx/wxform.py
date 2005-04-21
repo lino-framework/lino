@@ -25,6 +25,7 @@ from lino.adamo.datatypes import MEMO
 from lino.forms import base, gui
 from lino.forms.wx import wxgrid
 #from lino.forms.wx.showevents import showEvents
+from lino.misc import jobs
 
 WEIGHT = 1
 
@@ -131,7 +132,7 @@ class DataGrid(base.DataGrid):
     
     def setup(self,parent,box):
         self.wxctrl = wxgrid.DataGridCtrl(parent,self)
-        box.Add(self.wxctrl, 0, wx.EXPAND,10)
+        box.Add(self.wxctrl, 1, wx.EXPAND,10)
         
     def refresh(self):
         self.wxctrl.refresh()
@@ -388,7 +389,11 @@ class DataEntry(EntryMixin,base.DataEntry):
 
 
 
-
+class Job(jobs.Job):
+    def status(self,msg,*args,**kw):
+        self._status = self.ui.buildMessage(msg,*args,**kw)
+        self.refresh()
+    
         
 
 class Form(base.Form):
@@ -404,6 +409,7 @@ class Form(base.Form):
 ##             self.app.MainLoop()
 
     def __init__(self,*args,**kw):
+        self.progressDialog = None
         self.wxctrl = None
         base.Form.__init__(self,*args,**kw)
 
@@ -412,11 +418,55 @@ class Form(base.Form):
         assert self.wxctrl is None
         base.Form.setParent(self,parent)
         
+    def job(self,*args,**kw):
+        job = Job()
+        job.init(self,*args,**kw)
+        return job
+    
     def status(self,msg,*args,**kw):
         if self.modal or not self.isShown():
             self.app.toolkit.console.status(msg,*args,**kw)
         else:
             self.wxctrl.SetStatusText(msg)
+
+##     def abortRequested(self):
+##         return self.app.toolkit.abortRequested()
+
+    def onJobInit(self,job):
+        assert self.progressDialog is None
+        self.progressDialog = wx.ProgressDialog(
+            job.getLabel(),
+            job.getStatus(),
+            100, self.wxctrl,
+            wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
+        #return self.app.toolkit.console.onJobInit(job)
+
+    def onJobRefresh(self,job):
+        self.app.toolkit.run_awhile()
+        pc = job.pc
+        if pc is None:
+            pc = 0
+        if self.progressDialog is None:
+            return
+        if not self.progressDialog.Update(pc,job.getStatus()):
+            if job.confirmAbort():
+                #raise jobs.JobAborted()
+                job.abort()
+            else:
+                self.progressDialog.Resume()
+
+    def onJobDone(self,job,msg):
+        self.progressDialog.Update(100,msg)
+        self.progressDialog.Destroy()
+        self.progressDialog = None
+        #return self.app.toolkit.console.onJobDone(*args,**kw)
+
+    def onJobAbort(self,*args,**kw):
+        self.progressDialog.Destroy()
+        self.progressDialog = None
+        #return self.app.toolkit.console.onJobAbort(*args,**kw)
+
+    
             
     def setup(self):
         assert self.wxctrl is None
@@ -521,8 +571,8 @@ class Form(base.Form):
 ##         if not self.app.toolkit._setup:
 ##             self.app.toolkit.setup()
             
-        if not self.app.toolkit._started:
-            self.app.toolkit.start()
+        if not self.app.toolkit.running():
+            self.app.toolkit.run_forever()
             #if self.app.mainForm == self:
             #    return
             # todo: uergh...
@@ -533,8 +583,6 @@ class Form(base.Form):
         self.modal = modal
         self.debug("show(modal=%s) %s" % (modal, self.getLabel()))
         self.setup()
-        #for c in self.wxctrl.GetChildren():
-        #    print c
         self.debug(repr(self.mainComp))
         self.onShow()
         if self.modal:
@@ -610,6 +658,12 @@ class WxApp(wx.App):
 
 
     def OnInit(self):
+        
+        # wx.App.OnInit(self)        
+        # Notice that if you want to to use the command line
+        # processing provided by wxWidgets you have to call the base
+        # class version in the derived class OnInit().
+        
         wx.InitAllImageHandlers()
         self.toolkit.init()
         return True
@@ -627,7 +681,7 @@ class Toolkit(base.Toolkit):
     buttonFactory = Button
     viewerFactory = TextViewer
     panelFactory = Panel
-    tableEditorFactory = DataGrid
+    dataGridFactory = DataGrid
     navigatorFactory = DataNavigator
     formFactory = Form
     
@@ -635,15 +689,29 @@ class Toolkit(base.Toolkit):
         base.Toolkit.__init__(self,*args,**kw)
         #self.consoleForm = None
         #self._setup = False
-        self._started = False
+        self._running = False
+        self.wxapp = None
+        #self._abortRequested = False
+
+    def running(self):
+        return self._running # self.wxapp is not None
+
+    def run_awhile(self):
+        assert self.running()
+        while self.wxapp.Pending():
+            self.wxapp.Dispatch()
+
+            #print self.wxctrl.Yield(False)
+        #return self._abortRequested
 
 ##     def setup(self):
 ##         self._setup = True
 ##         self.init()
         
-    def start(self):
+    def run_forever(self):
         #if not self._setup:
         #    self.setup()
-        self._started = True
-        self.wxctrl = WxApp(self)
-        self.wxctrl.MainLoop()
+        assert not self.running()
+        self._running = True
+        self.wxapp = WxApp(self)
+        self.wxapp.MainLoop()

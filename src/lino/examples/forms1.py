@@ -35,12 +35,13 @@ You can trust us.
     frm.addOkButton()
     frm.addCancelButton()
 
-    
     if frm.showModal():
+        
         print "Hello %s %s. Thank you for registering." % (
             #frm.entries.firstName.getValue(),
             #frm.entries.name.getValue())
             firstName.getValue(),
             name.getValue())
     else:
+        
         print "You cancelled the form."
