@@ -1,0 +1,44 @@
+
+Gnosis Utilities contains several subpackages for working with XML,
+as well as other generally useful tools. The major modules are:
+
+     gnosis.indexer          (Full-text indexing/searching)
+     gnosis.xml.pickle       (XML pickling of Python objects)
+     gnosis.xml.objectify    (Any XML to "native" Python objects)
+     gnosis.xml.validity     (Enforce validity constraints)
+     gnosis.xml.relax        (Tools for working with RelaxNG)
+     gnosis.xml.indexer      (XPATH indexing of XML documents)
+     [...].convert.txt2html  (Convert ASCII source files to HTML)
+     gnosis.util.dtd2sql     (DTD -> SQL 'CREATE TABLE' statements)
+     gnosis.util.sql2dtd     (SQL query -> DTD for query results)
+     gnosis.util.xml2sql     (XML -> SQL 'INSERT INTO' statements)
+     gnosis.util.combinators (Combinatorial higher-order functions)
+     gnosis.util.introspect  (Introspect Python objects)
+     gnosis.magic            (Multimethods, metaclasses, etc)
+
+Installation (*):
+
+   python setup.py build
+   python setup.py install
+
+Trying it out:
+
+     cd gnosis/xml/pickle/test
+     python test_all.py
+
+(or similarly for other subpackages)
+
+If any errors occur, please email mertz@gnosis.cx, or frankm@hiwaay.net.
+Please include the output from test_all.py in your email, as well
+as other pertinent details such as Python version and operating system.
+
+For more info, e.g.:
+
+   pydoc gnosis
+   pydoc gnosis.xml.pickle.doc
+   See xml_matters articles under gnosis/doc
+
+(*) If you are using Python 2.0, you must first install a newer
+version of PyXML. See: http://pyxml.sourceforge.net/topics/download.html
+You don't have to do anything for Python 2.1 and up.
+
