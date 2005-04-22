@@ -20,16 +20,21 @@
 import sys
 import os
 opj = os.path.join
+import codecs
 
 from lino.apps.keeper import keeper_tables as tables
 from lino.misc.jobs import Task
 #from lino.tools.msword import MsWordDocument
+from lino.guessenc.guesser import EncodingGuesser
+#from lino.tools.guesscoding import EncodingGuesser
+from lupy.index.documentwriter import standardTokenizer
 
 class VolumeVisitor(Task):
     
     def __init__(self,vol):
         Task.__init__(self)
         self.volume = vol
+        self.encodingGuesser = EncodingGuesser()
 
     def start(self):
         sess = self.volume.getSession()
@@ -70,7 +75,18 @@ class VolumeVisitor(Task):
         base,ext = os.path.splitext(name)
         #self.status(name)
         if ext.lower() == ".txt":
-            tokens = open(name).read().split()
+            s = open(name).read()
+            coding = self.encodingGuesser.guess(name,s)
+            print name,":",coding
+            if coding:
+                tokens = standardTokenizer(s.decode(coding))
+            else:
+                tokens = standardTokenizer(s)
+            
+            #coding = guesscoding(name)
+            #f = codecs.open(name,encoding=coding)
+            #tokens = standardTokenizer(f.read())
+            #tokens = open(name).read().split()
             self.loadWords(fileRow,tokens)
 ##             count = 0
 ##             for ln in open(name).readlines():
@@ -84,12 +100,13 @@ class VolumeVisitor(Task):
             #self.loadWords(fileRow,msdoc.content.split())
                     
     def loadWords(self,fileRow,tokens):
-        self.status("Document %s : %d tokens",fileRow.name,len(tokens))
+        #self.status("%s : %d words",fileRow.name,len(tokens))
         fileRow.occurences.deleteAll()
         #self.occurences.query(file=deleteRows(file=fileRow)
         pos = 0
         for token in tokens:
             pos += 1
+            self.status(fileRow.name+": "+token)
             word = self.words.peek(token)
             if word is None:
                 word = self.words.appendRow(id=token)
