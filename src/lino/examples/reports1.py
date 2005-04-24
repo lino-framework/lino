@@ -16,26 +16,29 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.ui import console
+from lino.ui.console import ConsoleApplication
+from lino.reports.reports import DictReport
 
-def main():
+class MyReport(ConsoleApplication):
+    
+    def run(self,ui):
 
-    d = dict(
-        name="Ausdemwald",
-        firstName="Norbert",
-        size=12,
-        description="""Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in Eupen."""
-        )
-        
-    rpt = console.report()
-    rpt.addColumn(meth=lambda row: str(row[0]),
-                  label="key",
-                  width=12)
-    rpt.addColumn(meth=lambda row: repr(row[1]),
-                  label="value",
-                  width=40)
-    rpt.execute(d.items())
+        d = dict(
+            name="Ausdemwald",
+            firstName="Norbert",
+            size=12,
+            description="""Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in Eupen."""
+            )
+
+        rpt = DictReport(d)
+        ui.report(rpt)
+##         rpt.addColumn(meth=lambda row: str(row[0]),
+##                       label="key",
+##                       width=12)
+##         rpt.addColumn(meth=lambda row: repr(row[1]),
+##                       label="value",
+##                       width=40)
+##         rpt.execute(d.items())
         
 if __name__ == "__main__":
-    console.parse_args()
-    main()
+    MyReport().main()

@@ -17,46 +17,56 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-raise "lino.reports.base replaced by lino.reports.reports"
+import copy
 
 from lino.misc.descr import Describable
 from lino.adamo.datatypes import STRING
 
+class ConfigError(Exception):
+    pass
 
+LEFT = 1
+RIGHT = 2
+CENTER = 3
+TOP = 4
+BOTTOM = 5
+    
 class BaseReport(Describable):
 
-    LEFT = 1
-    RIGHT = 2
-    CENTER = 3
-    TOP = 4
-    BOTTOM = 5
 
     DEFAULT_TYPE = STRING
     
     def __init__(self,
-                 iterator=None,
+                 iterator,
                  columnWidths=None,
                  width=None,
                  rowHeight=None,
-                 *args, **kw):
+                 **kw):
 
-        self.iterator = iterator
-        self.cellValues = None
+        #self.cellValues = None
         self.columns = []
         self.groups = []
         self.totals = []
+        
+        self.iterator = iterator
 
         self.rowHeight = rowHeight
         self.columnWidths = columnWidths
         self.width = width
         
-        Describable.__init__(self,*args,**kw)
+        Describable.__init__(self,**kw)
 
 ##     def setdefaults(self,kw):
 ##         kw.setdefault('columnNames',self.columnNames)
 ##         kw.setdefault('columnWidths',self.columnWidths)
 ##         kw.setdefault('rowHeight',self.rowHeight)
 ##         #self.ds.setdefaults(self,kw)
+
+    def getTitle(self):
+        return self.getLabel()
+    
+    def render(self,doc):
+        doc.report(self)
 
     def computeWidths(self):
         
@@ -106,11 +116,11 @@ class BaseReport(Describable):
         
     def processRow(self,doc,row):
         # note: a report is not thread-safe
-        assert self.cellValues is None
+        #assert self.cellValues is None
         #self.rowno += 1
         #self.cellValues = []
         #self.crow = row
-        cellValues = []
+        cells = []
         
         #self.onBeginRow()
 
@@ -120,14 +130,14 @@ class BaseReport(Describable):
                 v = None
             else:
                 v = col.getValue(row)
-            cellValues.append(v)
+            cells.append(Cell(row,col,v))
             
-        # now only stringify all values
-        i = 0
-        for col in self.columns:
-            cellValues[i] = doc.formatReportCell(
-                col, cellValues[i])
-            i += 1
+##         # now only stringify all values
+##         i = 0
+##         for col in self.columns:
+##             cellValues[i] = doc.formatReportCell(
+##                 col, cellValues[i])
+##             i += 1
             
         #self.onEndRow()
         
@@ -135,7 +145,7 @@ class BaseReport(Describable):
         #self.cellValues = None
         #self.crow = None
 
-        return cellValues
+        return cells
 
 ##     def formatCell(self,doc,col,value):
 ##         if value is None:
@@ -182,7 +192,8 @@ class BaseReport(Describable):
 class DataReport(BaseReport):
     def __init__(self,ds,name=None,label=None,doc=None):
 
-        if name is None: name=ds._table.getName()
+        if name is None:
+            name=ds._table.getName()
         if label is None: label=ds._table.getLabel()
         if doc is None: doc=ds._table.getDoc()
         
@@ -190,7 +201,7 @@ class DataReport(BaseReport):
     
     def beginReport(self,doc):
         if len(self.columns) == 0:
-            for dc in ds.getVisibleColumns():
+            for dc in self.iterator.getVisibleColumns():
                 self.addDataColumn(dc,
                                    width=dc.getMaxWidth(),
                                    label=dc.getLabel())
@@ -203,6 +214,14 @@ class DataReport(BaseReport):
 
     def execute(self,ds):
         rpt.configure(**kw)
+
+    def child(self,**kw):
+        c = copy.copy(self)
+        for k,v in kw.items():
+            if hasattr(self,k):
+                setattr(self,k,v)
+            else:
+                raise "foo"
 
 
 class DictReport(BaseReport):
@@ -226,8 +245,8 @@ class ReportColumn(Describable):
     def __init__(self,owner,
                  name=None,label=None,doc=None,
                  when=None,
-                 halign=BaseReport.LEFT,
-                 valign=BaseReport.TOP,
+                 halign=LEFT,
+                 valign=TOP,
                  width=None,
                  ):
         self._owner = owner
@@ -253,12 +272,21 @@ class ReportColumn(Describable):
     
 
 class DataReportColumn(ReportColumn):
-    def __init__(self,owner,datacol,**kw):
-        ReportColumn.__init__(self,owner,**kw)
+    def __init__(self,owner,datacol,
+                 name=None,label=None,doc=None,
+                 **kw):
+        if name is None: name=datacol.name
+        #assert name != "DataReportColumn"
+        if label is None: label=datacol.rowAttr.label
+        if doc is None: label=datacol.rowAttr.doc
+        ReportColumn.__init__(self,owner,name,label,doc,
+                              **kw)
+        #assert self.name != "DataReportColumn"
         self.datacol = datacol
 
     def getValue(self,row):
-        return self.datacol.getCellValue(self._owner.crow)
+        #return self.datacol.getCellValue(self._owner.crow)
+        return self.datacol.getCellValue(row)
 
     def getPreferredWidth(self):
         return self.datacol.getMaxWidth()
@@ -275,13 +303,20 @@ class VurtReportColumn(ReportColumn):
         self.type=type
 
     def getValue(self,row):
-        return self.meth(self._owner.crow)
+        #return self.meth(self._owner.crow)
+        return self.meth(row)
     
     def getPreferredWidth(self):
         return self.type.maxWidth
         
     def format(self,v):
         return self.type.format(v)
+
+
+class Cell:
+    def __init__(self,row,col,value):
+        self.row = row
+        self.col = col
+        self.value = value
+
         
-class ConfigError(Exception):
-    pass

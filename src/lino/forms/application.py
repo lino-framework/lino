@@ -22,7 +22,7 @@ from lino.misc.descr import Describable
 from lino.forms import gui
 from lino.ui import console
 
-class BaseApplication(console.CLI):
+class BaseApplication(console.ConsoleApplication):
 
     def __init__(self, toolkit):
         if toolkit is None:
@@ -37,7 +37,7 @@ class BaseApplication(console.CLI):
         self.toolkit.setupOptionParser(parser)
 
     def applyOptions(self,options,args):
-        self.toolkit.applyOptions(options,args)
+        return self.toolkit.applyOptions(options,args)
     
     def init(self):
         # supposed to show the application's main form
@@ -54,14 +54,14 @@ class Application(BaseApplication,Describable):
 
     def __init__(self,
                  toolkit=None,
-                 years="",
-                 version=None,
-                 author=None,
+                 #years="",
+                 #version=None,
+                 #author=None,
                  tempDir=".",
                  **kw):
-        self.years = years
-        self.version = version
-        self.author = author
+        #self.years = years
+        #self.version = version
+        #self.author = author
         self.tempDir = tempDir
         BaseApplication.__init__(self,toolkit)
         Describable.__init__(self,**kw)

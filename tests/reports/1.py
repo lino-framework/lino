@@ -25,10 +25,11 @@ class Case(TestCase):
     "do the lino.examples work?"
 
     def test01(self):
-        from lino.examples import reports1
-        console.startDump()
-        reports1.main()
-        s = console.stopDump()
+        from lino.examples.reports1 import MyReport
+        MyReport(self.ui).main()
+        #console.startDump()
+        #reports1.main()
+        s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 key         |value                                   

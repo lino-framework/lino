@@ -225,12 +225,13 @@ class Store:
         #assert isinstance(autoIncCol.rowAttr.type,AutoIncType)
         assert len(autoIncCol._atoms) == 1
         autoIncAtom = autoIncCol._atoms[0]
-        if autoIncAtom.type is not datatypes.AutoIncType:
+        
+        if not isinstance(autoIncAtom.type,datatypes.AutoIncType):
             return
         
-        if self._table.getTableName() == "Occurences":
-            print repr(autoIncAtom.type)
-            raise "foo"
+##         if self._table.getTableName() == "Partners":
+##             print repr(autoIncAtom.type)
+##             raise "foo"
         
         pka = self._table.getPrimaryAtoms()
         id = row.getRowId()

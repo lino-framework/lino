@@ -6,31 +6,62 @@ import sys
 import unittest
 
 from lino.misc import tsttools
-from lino.ui import console as syscon
+from lino.ui import console 
 
-def main(argv):
+class Runtests(console.ConsoleApplication):
+
+    name="Lino/runtests"
+    years='2004-2005'
+    author='Luc Saffre'
+    
+    usage="usage: %prog [options] [TESTS]"
+    
+    description="""\
+where TESTS specifies the tests to run. Default is all. Other possible values e.g. `1` or `1-7` 
+"""
+    
+    #def main(self,argv):
 
     #syscon.set(verbosity=-2)
     
-    parser = syscon.getOptionParser(
-        usage="usage: %prog [options] [TESTS]",
-        description="""\
-where TESTS specifies the tests to run. Default is all. Other possible values e.g. `1` or `1-7` 
-""")
+##     parser = syscon.getOptionParser(
+##         usage="usage: %prog [options] [TESTS]",
+##         description="""\
+## where TESTS specifies the tests to run. Default is all. Other possible values e.g. `1` or `1-7` 
+## """)
     
     
-    (options, args) = parser.parse_args(argv)
+    #(options, args) = syscon.parse_args(argv)
+    
     
 ##     if console.isInteractive():
 ##         console.message("""\
 ## Note: Running in interactive mode. Specify -b to avoid questions.""")
-        
-    suite = tsttools.alltests(args)
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
 
-if __name__ == "__main__":
-    main(sys.argv[1:])
+    def applyOptions(self,options,args):
+        console.ConsoleApplication.applyOptions(self,options,args)
+        self.suite = tsttools.alltests(args)
+##         console.ConsoleApplication.applyOptions(self,options.args)
+        
+    
+    def run(self,ui):
+        runner = unittest.TextTestRunner()
+        runner.run(self.suite)
+
+
+# lino.runscript expects a name consoleApplicationClass
+consoleApplicationClass = Runtests
+
+if __name__ == '__main__':
+    consoleApplicationClass().main() # console,sys.argv[1:])
+    
+
+
+## def main(args):
+##     Runtests().main(console,args)
+
+## if __name__ == "__main__":
+##     main(sys.argv[1:])
 
 
 

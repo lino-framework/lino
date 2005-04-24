@@ -83,17 +83,16 @@ itr("would have been copied", de="wären kopiert worden")
 itr("%d files up-to-date", de="%d Dateien unverändert")
         
 
-class SyncError(Exception):
-    pass
+#class SyncError(Exception):
+#    pass
 
-class Synchronizer(Task):
+class SynchronizerTask(Task):
     
     def configure(self,src,target,simulate,showProgress):
         self.src = src
         self.target = target
-        self.simulate=simulate
+        self.simulate = simulate
         self.showProgress = showProgress
-        #self.logger = logger
         
         self.ignore_times = False
         self.modify_window = 2
@@ -107,19 +106,16 @@ class Synchronizer(Task):
         self.count_copy_dir = 0
         Task.configure(self)
         
-        #Task.__init__(self,label)
-
-        #self.job = console.job("Synchronizer")
 
     def getLabel(self):
         s = _("Synchronize %s to %s") % (self.src, self.target)
         if self.simulate:
             s += " (Simulation)"
-        #return s
+        return s
     
     def start(self):
         if not os.path.exists(self.src):
-            raise SyncError(
+            raise console.ApplicationError(
                 _("Source directory '%s' doesn't exist."))
 
         if self.showProgress:
@@ -159,23 +155,23 @@ class Synchronizer(Task):
 
                 
     def copy(self,src,target):
-        self.increment()
+        self.job.increment()
         if os.path.isfile(src):
             self.copy_file(src,target)
         elif os.path.isdir(src):
             self.copy_dir(src,target)
         else:
-            raise SyncError(
+            raise console.ApplicationError(
                 "%s is neither file nor directory" % src)
 
     def update_it(self,src,target):
-        self.increment()
+        self.job.increment()
         if os.path.isfile(src):
             self.update_file(src,target)
         elif os.path.isdir(src):
             self.update_dir(src,target)
         else:
-            raise SyncError(
+            raise console.ApplicationError(
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
@@ -185,7 +181,7 @@ class Synchronizer(Task):
         elif os.path.isdir(name):
             self.delete_dir(name)
         else:
-            raise SyncError(
+            raise console.ApplicationError(
                 "%s is neither file nor directory" % name)
 
             
@@ -256,11 +252,11 @@ class Synchronizer(Task):
         
         if not doit:
             self.count_uptodate += 1
-            self.verbose(_("%s is up-to-date") % target)
+            self.job.verbose(_("%s is up-to-date") % target)
             return
         self.count_update_file += 1
         if self.simulate:
-            self.notice("update %s to %s" % (src,target))
+            self.job.notice("update %s to %s" % (src,target))
             return
         if win32file:
             filemode = win32file.GetFileAttributesW(target)
@@ -284,7 +280,7 @@ class Synchronizer(Task):
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.notice(_("create directory %s") %target)
+        self.job.notice(_("create directory %s") %target)
         if not self.simulate:
             try:
                 os.mkdir(target)
@@ -302,7 +298,7 @@ class Synchronizer(Task):
         
     def copy_file(self,src,target):
         self.count_copy_file += 1
-        self.notice(_("copy file %s to %s") % (src,target))
+        self.job.notice(_("copy file %s to %s") % (src,target))
         if self.simulate:
             return
         try:
@@ -314,7 +310,7 @@ class Synchronizer(Task):
 
     def delete_dir(self,name):
         self.count_delete_dir += 1
-        self.notice(_("remove directory %s") % name)
+        self.job.notice(_("remove directory %s") % name)
         if self.simulate:
             return
         
@@ -328,7 +324,7 @@ class Synchronizer(Task):
             
     def delete_file(self,name):
         self.count_delete_file += 1
-        self.notice(_("remove file %s") % name)
+        self.job.notice(_("remove file %s") % name)
         if self.simulate:
             return
 
@@ -355,7 +351,7 @@ class Synchronizer(Task):
             s += _("would have been removed")
         else:
             s += _("were removed")
-        self.notice(s,
+        self.job.notice(s,
                   self.count_delete_file,
                   self.count_delete_dir)
         
@@ -364,7 +360,7 @@ class Synchronizer(Task):
             s += _("would have been updated")
         else:
             s += _("were updated")
-        self.notice(s,
+        self.job.notice(s,
                   self.count_update_file,
                   self.count_update_dir,
                   )
@@ -374,12 +370,12 @@ class Synchronizer(Task):
             s += _("would have been copied")
         else:
             s += _("were copied")
-        self.notice(s,
+        self.job.notice(s,
                   self.count_copy_file,
                   self.count_copy_dir,
                   )
         
-        self.notice(_("%d files up-to-date"),self.count_uptodate)
+        self.job.notice(_("%d files up-to-date"),self.count_uptodate)
         Task.summary(self)
 
     def getStatus(self):
@@ -394,65 +390,76 @@ class Synchronizer(Task):
             self.count_delete_file)
         return s + " " + Task.getStatus(self)
 
-def main(argv):
-    console.copyleft(name="Lino/sync",
-                     years='2005',
-                     author='Luc Saffre')
-    
-    parser = console.getOptionParser(
-        usage="usage: lino sync [options] SRC DEST",
-        description="""\
+class Sync(console.ConsoleApplication):
+
+    name="Lino/sync"
+    years='2005'
+    author='Luc Saffre'
+    usage="usage: lino sync [options] SRC DEST"
+    description="""\
 where SRC and DEST are two directories to be synchronized.
-""" )
+""" 
     
-    parser.add_option("-s", "--simulate",
-                      help="""\
-simulate only, don't do it""",
-                      action="store_true",
-                      dest="simulate",
-                      default=False)
+    def setupOptionParser(self,parser):
+        console.ConsoleApplication.setupOptionParser(self,parser)
 
-    parser.add_option("-p", "--progress",
-                      help="""\
-show progress bar""",
-                      action="store_true",
-                      dest="showProgress",
-                      default=False)
+        parser.add_option(
+            "-s", "--simulate",
+            help="simulate only, don't do it",
+            action="store_true",
+            dest="simulate",
+            default=False)
+
+        parser.add_option(
+            "-p", "--progress",
+            help="show progress bar",
+            action="store_true",
+            dest="showProgress",
+            default=False)
     
-    (options, args) = parser.parse_args(argv)
+    def applyOptions(self,options,args):
+        console.ConsoleApplication.applyOptions(self,options,args)
 
-    if len(args) != 2:
-        parser.print_help() 
-        return -1
+        if len(args) != 2:
+            raise console.UsageError("needs 2 arguments")
+            #parser.print_help() 
+            #return -1
 
-    src = args[0]
-    target = args[1]
+        src = args[0]
+        target = args[1]
     
-    #src = os.path.normpath(src)
-    #target = os.path.normpath(target)
+        #src = os.path.normpath(src)
+        #target = os.path.normpath(target)
 
-    sync = Synchronizer(src,target,
-                        simulate=options.simulate,
-                        showProgress=options.showProgress)
-    if not options.simulate:
-        if not console.confirm(sync.getLabel()+"\n"+_("Start?")):
-            return
+        self.task = SynchronizerTask(
+            src=src,
+            target=target,
+            simulate=options.simulate,
+            showProgress=options.showProgress)
+
+    def run(self,ui):
+         
+        if not self.task.simulate:
+            if not ui.confirm(self.task.getLabel()+"\n"+_("Start?")):
+                return
         
-    sync.run(console.getSystemConsole())
+        self.task.run(ui)
 
 ##     for l in sync.summary():
 ##         console.notice(l)
 
- 
 
-
+# lino.runscript expects a name consoleApplicationClass
+consoleApplicationClass = Sync
 
 if __name__ == '__main__':
-    try:
-        sys.exit(main(sys.argv[1:]))
-        #main(sys.argv[1:])
-    except SyncError,e:
-        console.error(str(e))
-        sys.exit(-1)
+    consoleApplicationClass().main() # console,sys.argv[1:])
+    
+##     try:
+##         sys.exit(main(sys.argv[1:]))
+##         #main(sys.argv[1:])
+##     except SyncError,e:
+##         console.error(str(e))
+##         sys.exit(-1)
         
 

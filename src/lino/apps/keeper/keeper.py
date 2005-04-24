@@ -29,7 +29,11 @@ from lino.adamo.application import AdamoApplication
 
 
 class Keeper(AdamoApplication):
-        
+    
+    name="Keeper"
+    years='2005'
+    author="Luc Saffre"
+    
     def showSearchForm(self,ui):
         self.searchData = self.sess.query(tables.Files)
         frm = ui.form(label="Search")
@@ -106,7 +110,7 @@ This is the Keeper main menu.
 
 def main(argv):
 
-    app = Keeper(name="Keeper", years='2005')
+    app = Keeper()
     app.parse_args()
     app.run()
     

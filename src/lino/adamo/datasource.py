@@ -778,12 +778,14 @@ class Datasource(SimpleDatasource):
             """
 
         """note: pageNum can be None even if pageLen isn't.  This will
-        default to either 1 OR lastPage with a future option
-        "fromBottom" """
+        default to either 1 *or* lastPage if reverse.
+        (but reverse not yet implemented)
+        """
 
 
         if self.pageLen is None:
-            self.startOffset = 0
+            self.startOffset=0
+            self.pageNum=1
         else:
             if self.pageNum is None:
                 self.pageNum=1

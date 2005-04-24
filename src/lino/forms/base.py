@@ -61,13 +61,13 @@ class Component(Describable):
 class Button(Component):
     def __init__(self,owner,action=None,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
-        self._action = action
+        self.action = action
         self._args = []
         self._kw = {}
 
     def setHandler(self,action,*args,**kw):
         "set a handler with optional args and keyword parameters"
-        self._action = action
+        self.action = action
         self._args = args
         self._kw = kw
 
@@ -81,7 +81,7 @@ class Button(Component):
         frm.store()
         frm.lastEvent = self
         try:
-            self._action(*(self._args),**(self._kw))
+            self.action(*(self._args),**(self._kw))
         except InvalidRequestError,e:
             frm.status(str(e))
         except Exception,e:
@@ -221,10 +221,17 @@ class Menu(Component):
     
     def addButton(self,btn,accel=None,**kw):
         kw.setdefault("label",btn.getLabel())
-        kw.setdefault("action",btn._action)
+        kw.setdefault("action",btn.action)
         return self.addItem(accel=accel,**kw)
+    
+    def addLink(self,htdoc,**kw):
+        # used by gendoc.html
+        kw.setdefault("label",htdoc.title)
+        kw.setdefault("action",self.owner.urlto(htdoc))
+        return self.addItem(**kw)
 
 class MenuBar(Component):
+    
     def __init__(self,*args,**kw):
         Component.__init__(self,*args,**kw)
         self.menus = []
@@ -647,14 +654,30 @@ class GUI(console.UI):
                 
 
 
+class MenuContainer:
+    def __init__(self):
+        self.menuBar = None
+        self._menuController = None
+        
+    def addMenu(self,*args,**kw):
+        if self.menuBar is None:
+            self.menuBar = MenuBar(self)
+        return self.menuBar.addMenu(*args,**kw)
+
+    def setMenuController(self,c):
+        if self._menuController is None:
+            self._menuController = c
+        else:
+            self.debug("ignored menuController %s" % str(c))
 
 
-class Form(Describable,GUI):
+class Form(Describable,GUI,MenuContainer):
 
     def __init__(self,app,parent,data=None,
                  halign=None, valign=None,
                  *args,**kw):
         Describable.__init__(self,*args,**kw)
+        MenuContainer.__init__(self)
         #GUI.__init__(self)
         assert isinstance(app,BaseApplication)
         self.app = app
@@ -667,11 +690,9 @@ class Form(Describable,GUI):
         self.valign = valign
         self.halign = halign
         self._boxes = []
-        self.menuBar = None
         self.lastEvent = None
         self.mainComp = app.toolkit.panelFactory(
             self, Container.VERTICAL)
-        self._menuController = None
         self._idleEvents = []
         self._onClose = []
         for m in ('addLabel','addViewer',
@@ -686,12 +707,6 @@ class Form(Describable,GUI):
 
     def getForm(self):
         return self
-
-    def setMenuController(self,c):
-        if self._menuController is None:
-            self._menuController = c
-        else:
-            self.debug("ignored menuController %s" % str(c))
 
     def addIdleEvent(self,f):
         self._idleEvents.append(f)
@@ -711,11 +726,6 @@ class Form(Describable,GUI):
         "create a form with this as parent"
         return self.app.form(self,*args,**kw)
     
-    def addMenu(self,*args,**kw):
-        if self.menuBar is None:
-            self.menuBar = MenuBar(self)
-        return self.menuBar.addMenu(*args,**kw)
-
     def show(self,modal=False):
         raise NotImplementedError
     

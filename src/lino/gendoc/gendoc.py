@@ -1,4 +1,6 @@
-## Copyright 2004-2005 Luc Saffre 
+#coding: latin1
+
+## Copyright 2003-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -16,28 +18,36 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
 
-This is a wrapper to the Lino scripts. Simply importing this module
-examines the command-line arguments and call the appropriate script.
+#import sys
 
-The auto-generated file lino.bat uses this wrapper
+class GenericDocument:
+    
+##     def formatReportCell(self,col,value):
+##         if value is None:
+##             return ""
+##         return col.format(value)
+
+    def beginDocument(self):
+        pass
+    
+    def endDocument(self):
+        pass
+
+    def report(self,rpt):
+        raise NotImplementedError
+    
 
 
-  python -c "from lino import runscript" %*
-  
-  python -c "from lino import runscript" %1 %2 %3 %4 %5 %6 %7 %8 %9
+class WriterDocument(GenericDocument):
+    def __init__(self, writer=None):
+        #if writer is None: writer=sys.stdout.write
+        self.writer = writer
+
+    
+    def write(self,txt):
+        self.writer(txt)
+        
 
 
 
-"""
-
-import sys
-
-from lino.ui import console
-from lino.misc.my_import import my_import
-
-mod = my_import("lino.scripts." + sys.argv[1])
-app = mod.consoleApplicationClass()
-
-sys.exit(app.main(sys.argv[2:]))

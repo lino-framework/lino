@@ -193,9 +193,9 @@ class Task:#(BaseJob):
 
 
     def run(self,ui,*args,**kw):
-        self.configure(*args,**kw)
         # don't override
-        self.job = ui.job(self.getLabel(),*args,**kw)
+        #self.reconfigure(*args,**kw)
+        self.job = ui.job(self.getLabel())
         try:
             self.start()
             self.job.done()
@@ -210,6 +210,9 @@ class Task:#(BaseJob):
         # may override
         self.count_errors = 0
         self.count_warnings = 0
+
+##     def reconfigure(self,*args,**kw):
+##         self.configure(*args,**kw)
 
     def start(self):
         raise NotImplementedError

@@ -25,6 +25,10 @@ from lino.adamo.schema import Schema
 
 class AdamoApplication(Application):
 
+    usage="usage: %prog [options] DBFILE"
+    description="""\
+where DBFILE is the name of the sqlite database file"""
+    
     def __init__(self,filename=None,**kw):
         Application.__init__(self,**kw)
         self.schema = Schema()
@@ -34,13 +38,6 @@ class AdamoApplication(Application):
     def getSession(self):
         return self.sess
 
-    def parse_args(self,args=None,**kw):
-        kw.update(dict(
-            usage="usage: %prog [options] DBFILE",
-            description="""\
-where DBFILE is the name of the sqlite database file"""))
-        return Application.parse_args(self,args,**kw)
-        
     def applyOptions(self,options,args):
         Application.applyOptions(self,options,args)
         if len(args) == 1:

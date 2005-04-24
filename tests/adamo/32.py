@@ -64,7 +64,7 @@ class Case(TestCase):
 
         rpt.execute(self.sess.schema.getTableList())
         s = self.getConsoleOutput()
-        #print s
+        print s
         self.assertEqual(s,"""\
 TableName           |Count|First               |Last                
 --------------------+-----+--------------------+--------------------

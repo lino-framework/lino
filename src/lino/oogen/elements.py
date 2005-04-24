@@ -157,7 +157,7 @@ class Story(Container):
         t = Table(doc,*args,**kw)
         self.append(t)
         return t
-    
+
 ##     def table(self,doc,name=None,styleName=None,**kw):
 ##         if name is None:
 ##             name = "Table"+str(len(doc.getTables())+1)

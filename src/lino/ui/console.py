@@ -97,12 +97,21 @@ class UI:
     pass
     
 class CLI:
+    name = None
+    years = None
+    author = None
+    usage = None
+    description = None
     
-    def parse_args(self,args=None,**kw):
-        p = OptionParser(**kw)
+    def parse_args(self,args=None): #,**kw):
+        p = OptionParser(
+            usage=self.usage,
+            description=self.description)
+            
         self.setupOptionParser(p)
         options,args = p.parse_args(args)
         self.applyOptions(options,args)
+        
 
     def applyOptions(self,options,args):
         pass
@@ -119,7 +128,77 @@ class CLI:
 ##         return self._progressBar.addJob(self,label,maxval)
 
 
+
+class UsageError(Exception):
+    pass
+class ApplicationError(Exception):
+    pass
+
+class ConsoleApplication(CLI):
+    """
     
+    vocabulary:
+    
+    main() processes command-line arguments ("get the
+    instructions") runs the application and returns a system error
+    code (usually forwarded to sys.exit())
+
+    run() expects that all instructions are known and performs the
+    actual task.
+    
+    
+    """
+    def __init__(self,ui=None):
+        if ui is None:
+            ui = _syscon
+        self.ui = ui
+        if self.name is not None:
+            ui.copyleft(name=self.name,
+                        years=self.years,
+                        author=self.author)
+
+        
+    def setupOptionParser(self,parser):
+        self.ui.setupOptionParser(parser)
+        
+    def main(self,argv=None):
+        """
+        meant to be called
+        
+            if __name__ == '__main__':
+                MyConsoleApplication().main()
+                
+        but lino.runscript calls it with sys.argv[:2] (command-line
+        arguments are shifted by one)
+        
+        """
+        if argv is None:
+            argv = sys.argv[1:]
+        
+        p = OptionParser(
+            usage=self.usage,
+            description=self.description)
+            
+        self.setupOptionParser(p)
+        
+        try:
+            options,args = p.parse_args(argv)
+            self.applyOptions(options,args)
+        except UsageError,e:
+            p.print_help()
+            return -1
+
+        
+        try:
+            
+            return self.run(self.ui)
+        
+        except ApplicationError,e:
+            self.ui.error(str(e))
+            return -1
+
+    def run(self,ui):
+        raise NotImplementedError
         
 
 
@@ -200,9 +279,8 @@ class Console(UI,CLI):
             self._logfile.write(t+" "+msg+"\n")
             self._logfile.flush()
             
-    def status(self,msg):
-        #self.notice(msg)
-        self.verbose(msg)
+    def status(self,*args,**kw):
+        self.verbose(*args,**kw)
 
     def error(self,msg,*args,**kw):
         msg = self.buildMessage(msg,*args,**kw)
@@ -430,9 +508,19 @@ class Console(UI,CLI):
         from lino.textprinter.plain import PlainTextPrinter
         return PlainTextPrinter(self._stdout)
         
-    def report(self,**kw):
-        from lino.reports.plain import Report
-        return Report(writer=self._stdout,**kw)
+##     def report(self,**kw):
+##         from lino.reports.plain import Report
+##         return Report(writer=self._stdout,**kw)
+
+
+    def report(self,rpt,*args,**kw):
+        from lino.gendoc.plain import PlainDocument
+        gd = PlainDocument(writer=self._stdout)
+        gd.beginDocument()
+        gd.report(rpt)
+        gd.endDocument()
+    
+
 
     def abortRequested(self):
         return False
@@ -458,8 +546,8 @@ class TtyConsole(Console):
         self._display_job(job)
         if self.abortRequested():
             if job.confirmAbort():
-                #job.abort()
-                raise JobAborted()
+                job.abort()
+                #raise JobAborted()
                 
     def _display_job(self,job):
         if job.maxval == 0:
@@ -531,6 +619,20 @@ class TtyConsole(Console):
         if self._status is not None:
             self._stdout(self._status+"\r")
 
+    def copyleft(self,name="Lino",
+                 version=__version__,
+                 years="2002-2005",
+                 author=__author__):
+        self.notice("""\
+%s version %s.
+Copyright (c) %s %s.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information.""" % (
+            name, version, years, author))
+
+
+
 
 class CaptureConsole(Console):
     
@@ -583,7 +685,7 @@ def setSystemConsole(c):
     for funcname in (
         'debug','message','notice','status',
         'job', 'verbose', 'error','critical',
-        'confirm','warning',
+        'confirm','warning','copyleft',
         'report','textprinter',
         #'startDump','stopDump',
         'isInteractive','isVerbose', 'set',
@@ -593,19 +695,6 @@ def setSystemConsole(c):
 def getSystemConsole():
     return _syscon
 
-
-
-def copyleft(name="Lino",
-             version=__version__,
-             years="2002-2005",
-             author=__author__):
-    notice("""\
-%s version %s.
-Copyright (c) %s %s.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information.""" % (
-        name, version, years, author))
 
 
 if hasattr(sys.stdout,"encoding") \
@@ -621,14 +710,6 @@ setSystemConsole(
 
 
 atexit.register(_syscon.shutdown)
-
-
-
-
-
-
-
-
 
 
 

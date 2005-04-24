@@ -350,9 +350,10 @@ class Document:
                     ))
             h.append(r)
         
-    def report(self,**kw):
-        from lino.reports.oo import OoReport
-        return OoReport(self,**kw)
+##     def report(self,**kw):
+##         from lino.reports.oo import OoReport
+##         return OoReport(self,**kw)
+
         
 ##     def generator(self,filename=None):
 ##         if filename is not None:
@@ -381,6 +382,31 @@ class Document:
             else:
                 ui.message("but how to start %s ?" % \
                            self.filename)
+
+    
+    def report(self,rpt,name=None,*args,**kw):
+        if name is None: name=rpt.getLabel()
+        rpt.beginReport(self)
+        t = self.table(name=name)
+        for col in rpt.columns:
+            t.column()
+        #rpt.renderHeader(self)
+        
+        l = [ col.getLabel() for col in rpt.columns ]
+        self.table.headerRow(*l)
+        
+        for row in rpt.iterator:
+            cells = rpt.processRow(self,row)
+            l = []
+            for c in cells:
+                if c.value is None:
+                    l.append("")
+                else:
+                    l.append(c.col.format(c.value))
+            self.table.row(*l)
+        #rpt.renderFooter(self)
+        
+        rpt.endReport(self)
 
     
         

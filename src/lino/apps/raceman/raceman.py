@@ -31,7 +31,10 @@ from lino.adamo.application import MirrorLoaderApplication
 
 
 class Raceman(MirrorLoaderApplication):
-
+    
+    name="Raceman"
+    years='2005'
+    
     def getLoaders(self):
         return [lc(self.loadfrom) for lc in loaders.LOADERS]
 
@@ -82,7 +85,7 @@ This is the Raceman main menu.
 
 def main(argv):
 
-    app = Raceman(name="Raceman", years='2005')
+    app = Raceman()
     app.parse_args(argv)
     #gui.run(app)
     app.run()
