@@ -31,7 +31,7 @@ class Invoices(PartnerDocuments):
 
 class InvoiceLines(Table):
 	def init(self):
-		self.addField('line',INT)
+		self.addField('line',ROWID)
 		self.addField('unitPrice',AMOUNT)
 		self.addField('qty',INT)
 		self.addField('remark',STRING)

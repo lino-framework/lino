@@ -29,6 +29,7 @@ from lino.misc.tsttools import main, TestCase
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 from lino.adamo import DataVeto, InvalidRequestError
+from lino.reports import DataReport
 
 class Case(TestCase):
 
@@ -42,13 +43,16 @@ class Case(TestCase):
 
     def test01(self):
         "report with a Pointer"
-        q =self.sess.query(Cities,"id name nation",
+        ds =self.sess.query(Cities,"id name nation",
                            orderBy="name",
                            pageLen=10)
                            
         # print [col.name for col in rpt._clist.visibleColumns]
         #self.sess.startDump()
-        q.executeReport(columnWidths="5 50 10")
+        #q.executeReport(columnWidths="5 50 10")
+        rpt=DataReport(ds,columnWidths="5 50 10")
+        self.ui.report(rpt)
+
         s = self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
@@ -70,9 +74,11 @@ id   |name                                              |nation
         
     def test02(self):
         "report with a BabelField"
-        q = self.sess.query(Nations,"id name")
+        ds = self.sess.query(Nations,"id name")
         #self.sess.startDump()
-        q.executeReport(columnWidths="2 25")
+        rpt=DataReport(ds,columnWidths="2 25")
+        self.ui.report(rpt)
+        #q.executeReport(columnWidths="2 25")
         s = self.getConsoleOutput()
         # print s
         self.assertEquivalent(s,"""\

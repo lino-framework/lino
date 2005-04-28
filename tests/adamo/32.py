@@ -24,6 +24,8 @@ from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
+from lino.reports import Report, RIGHT
+
 
 class Case(TestCase):
 
@@ -38,33 +40,34 @@ class Case(TestCase):
     def test01(self):
         
         self.sess.setBabelLangs('en')
-        #self.sess.startDump()
         
-        rpt = self.ui.report()
+        rpt=Report(self.sess.schema.getTableList())
+        def onEach(row):
+            row.count=len(self.sess.query(row.item.__class__))
+        rpt.onEach(onEach)
+        
         rpt.addColumn(
-            meth=lambda row: row.getTableName(),
+            meth=lambda row: row.item.getTableName(),
             label="TableName",
             width=20)
-        def count(row):
-            return len(self.sess.query(row.__class__))
         rpt.addColumn(
-            meth=count,
-            width=5, halign=rpt.RIGHT,
+            meth=lambda row: row.count,
+            width=5, halign=RIGHT,
             label="Count")
         rpt.addColumn(
-            meth=lambda row: self.sess.query(row.__class__)[0],
-            when=lambda rpt: rpt.cellValues[1]>0,
+            meth=lambda row: self.sess.query(row.item.__class__)[0],
+            when=lambda row: row.count>0,
             label="First",
             width=20)
         rpt.addColumn(
-            meth=lambda row: self.sess.query(row.__class__)[-1],
-            when=lambda rpt: rpt.cellValues[1]>0,
+            meth=lambda row: self.sess.query(row.item.__class__)[-1],
+            when=lambda row: row.count>0,
             label="Last",
             width=20)
 
-        rpt.execute(self.sess.schema.getTableList())
+        self.ui.report(rpt)
         s = self.getConsoleOutput()
-        print s
+        #print s
         self.assertEqual(s,"""\
 TableName           |Count|First               |Last                
 --------------------+-----+--------------------+--------------------

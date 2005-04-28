@@ -17,7 +17,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from math import sin, cos, radians
+#from math import sin, cos, radians
+
+#from ctypes import WinError
 
 import win32ui
 import win32con
@@ -26,6 +28,17 @@ import pywintypes
 #import win32gui
 
 from PIL import Image, ImageWin
+
+# thanks to
+# http://starship.python.net/crew/theller/moin.cgi/PIL_20and_20py2exe
+# for the following trick to avoid "IOError: cannot identify image
+# file" when exefied with py2exe
+
+#from PIL import PngImagePlugin
+from PIL import JpegImagePlugin
+from PIL import BmpImagePlugin
+
+Image._initialized=2
 
 #OEM_CHARSET = win32con.OEM_CHARSET
 
@@ -91,10 +104,6 @@ LPIBASE = inch * 240 / 257
 ##         self.doc.dc.SelectObject(font)
 ##         #console.debug(repr(tm))
 ## ##         console.info(repr(self.dc.GetTextFace()))
-## ##         console.info(repr(self.dc.GetViewportExt()))
-## ##         console.info(repr(self.dc.GetViewportOrg()))
-## ##         console.info(repr(self.dc.GetWindowExt()))
-## ##         console.info(repr(self.dc.GetWindowOrg()))
         
 ##         # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
         
@@ -203,7 +212,11 @@ class Win32TextPrinter(TextPrinter):
         except win32ui.error,e:
             raise PrinterNotReady
         self.dc.SetMapMode(win32con.MM_TWIPS)
+        # for SetWorldTransform():
         self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
+        
+        #self.org = self.dc.GetViewportOrg()
+        #self.ext = self.dc.GetViewportExt()
         self.org = self.dc.GetWindowOrg()
         self.ext = self.dc.GetWindowExt()
         self.setCpi(cpi)
@@ -213,6 +226,10 @@ class Win32TextPrinter(TextPrinter):
         #self.y = doc.pageHeight-(2*doc.margin)
         self.line = ""
         self.leading = 0
+        
+        #print "Viewport:",\
+        #      self.dc.GetViewportOrg(), self.dc.GetViewportExt()
+        #print "Window:", self.dc.GetWindowOrg(), self.dc.GetWindowExt()
         
         
         
@@ -224,41 +241,36 @@ class Win32TextPrinter(TextPrinter):
     def onBeginPage(self):
         self.x = self.org[0] + self.margin
         self.y = self.org[1] + self.margin
-        self.dc.StartPage()
+        self._images=[]
         #self.drawDebugRaster()
+
         if self.pageHeight < self.pageWidth:
+            # see news item 125 (20050428)
             
-            """
-
-SetWorldTransform( eM11,eM12,eM21,eM22,eDx,eDy):
-
-for any coordinates (x, y) in world space, the transformed coordinates
-in page space (x', y') can be determined by the following algorithm:
-
-   x' = x * eM11 + y * eM12 + eDx
-   y' = x * eM12 + y * eM22 + eDy
-    
-
-example:
-
-    x,y -> x', y'
-
-a : 0,0 -> 0,-297
-b : 1,0 -> 0,-296
-c : 0,-1 -> 1,-297
-d : 1,-1 -> 1,-296
-
-c:\1.ps
-
-
-"""
-
-            self.dc.SetWorldTransform(0,-1, 1,0, 0,-297*mm)
+            r=0
+            # shifts to right:
+            #r=self.dc.SetWorldTransform(1,0, 0,1, 200,0)
+            
+            r=self.dc.SetWorldTransform(
+                0,1,
+                -1,0,
+                0, -int(self.pageWidth-2*self.margin))
+            if r == 0:
+                print "SetWorldTransform() failed" #,  WinError()
             #print self.dc.SetWorldTransform(0,1, -1,0, 0,297*mm)
             #self.dc.SetViewportOrg((0,int(-210*mm)))
-            console.warning("Portrait orientation not yet supported!")
+            #console.warning("Portrait orientation not yet supported!")
+            
+##         print "Viewport:",\
+##               self.dc.GetViewportOrg(), self.dc.GetViewportExt()
+##         print "Window:", self.dc.GetWindowOrg(), self.dc.GetWindowExt()
+        
+        self.dc.StartPage()
     
     def onEndPage(self):
+        for dib,destination in self._images:
+            dib.draw(self.dc.GetHandleOutput(),destination)
+                 
         self.dc.EndPage()
 
     def onSetPageSize(self):
@@ -418,7 +430,10 @@ c:\1.ps
             raise ParserError("invalid length: %r" % s)
         
         
-    def insertImage(self,filename,w=None,h=None,dx=None,dy=None):
+    def insertImage(self,filename,
+                    w=None,h=None,
+                    dx=None,dy=None,
+                    behindText=False):
         # picture size is given in mm
         # w = float(width) * mm 
         # h = float(height) * mm
@@ -430,9 +445,6 @@ c:\1.ps
             return
         
         self.flush() # make sure that self.x and self.y are correct
-
-        
-
         
         
 ##         # position of picture is the current text cursor
@@ -532,18 +544,26 @@ c:\1.ps
         #destination = [int(x) for x in destination]
         #destination = [x, y, 500, 500]
         #print "destination:", destination
-        dib.draw(self.dc.GetHandleOutput(),destination)
-                 
+        if behindText:
+            dib.draw(self.dc.GetHandleOutput(),destination)
+        else:
+            self._add_image(dib,destination)
+
+    def _add_image(self,dib,destination):
+        self._images.append((dib,destination))
+
 
     def drawDebugRaster(self):
         DELTA=10
-        self.dc.MoveTo(self.org)
+        print "org:", self.org
+        print "ext:", self.ext
+        self.dc.MoveTo((self.org[0]+DELTA,-self.org[1]-DELTA))
         # to upper right
-        self.dc.LineTo((self.ext[0],-self.org[1]))
+        self.dc.LineTo((self.ext[0]+DELTA,-self.org[1]-DELTA))
         
         # to lower right
         #self.dc.LineTo((0,-self.ext[1]))
-        self.dc.LineTo((self.ext[0]-DELTA,-(self.ext[1]-DELTA)))
+        self.dc.LineTo((self.ext[0]-DELTA,-self.ext[1]-DELTA))
 
         # to lower left
         self.dc.LineTo((self.org[0],-(self.ext[1]-DELTA)))
@@ -551,7 +571,19 @@ c:\1.ps
         # to upper left
         self.dc.LineTo((self.org[0],-self.org[1]))
         
-        #self.dc.LineTo((0,-self.ext[1]))
-        #self.dc.MoveTo(self.org)
+        CS=50 # Cross Size
+        for x in range(self.org[0],self.ext[0],int(20*mm)):
+            for y in range(self.org[1],self.ext[1],int(20*mm)):
+                
+                self.dc.MoveTo((x-CS,-y))
+                self.dc.LineTo((x+CS,-y))
+                
+                self.dc.MoveTo((x,-y-CS))
+                self.dc.LineTo((x,-y+CS))
+                
+                self.dc.TextOut(x,-y,"(%d,%d)"%(x,-y))
+                #print (x,y)
+        
         #self.dc.LineTo((0,5000))
+        
         

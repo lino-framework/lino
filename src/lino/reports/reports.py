@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import copy
+#import copy
 
 from lino.misc.descr import Describable
 from lino.adamo.datatypes import STRING
@@ -31,22 +31,23 @@ CENTER = 3
 TOP = 4
 BOTTOM = 5
     
-class BaseReport(Describable):
+class Report(Describable):
 
 
     DEFAULT_TYPE = STRING
     
-    def __init__(self,
-                 iterator,
+    def __init__(self, iterator,
                  columnWidths=None,
                  width=None,
                  rowHeight=None,
-                 **kw):
+                 name=None,
+                 label=None,
+                 doc=None):
 
-        #self.cellValues = None
         self.columns = []
         self.groups = []
         self.totals = []
+        self._onRowEvents=[]
         
         self.iterator = iterator
 
@@ -54,7 +55,7 @@ class BaseReport(Describable):
         self.columnWidths = columnWidths
         self.width = width
         
-        Describable.__init__(self,**kw)
+        Describable.__init__(self,name,label,doc)
 
 ##     def setdefaults(self,kw):
 ##         kw.setdefault('columnNames',self.columnNames)
@@ -62,11 +63,42 @@ class BaseReport(Describable):
 ##         kw.setdefault('rowHeight',self.rowHeight)
 ##         #self.ds.setdefaults(self,kw)
 
+    def child(self,
+              iterator=None,
+              columnWidths=None,
+              width=None,
+              rowHeight=None,
+              name=None,
+              label=None,
+              doc=None,
+              **kw):
+        
+        if iterator is None:
+            if len(kw):
+                iterator=self.iterator.child(**kw)
+            else:
+                iterator=self.iterator
+        else:
+            assert len(kw) == 0
+            
+        if columnWidths is None: columnWidths=self.columnWidths
+        if width is None: width=self.width
+        if rowHeight is None: rowHeight=self.rowHeight
+        if name is None: name=self.name
+        if label is None: label=self.label
+        if doc is None: doc=self.doc
+        
+        return self.__class__(iterator,
+                              columnWidths,width,rowHeight,
+                              name,label,doc)
+
     def getTitle(self):
         return self.getLabel()
     
-    def render(self,doc):
-        doc.report(self)
+
+##     def __getattr__(self,name):
+##         # forwards "everything else" to the iterator...
+##         return getattr(self.iterator,name)
 
     def computeWidths(self):
         
@@ -107,30 +139,36 @@ class BaseReport(Describable):
 
     def beginReport(self,doc):
         self.computeWidths()
-        self.rowno = 0
+        #self.rowno = 0
         #self.onBeginReport()
         
     def endReport(self,doc):
         pass
         #self.onEndReport()
+
         
-    def processRow(self,doc,row):
+        
+    def processItem(self,doc,item):
+        row = Row(item)
+
+        for e in self._onRowEvents:
+            e(row)
         # note: a report is not thread-safe
         #assert self.cellValues is None
         #self.rowno += 1
         #self.cellValues = []
         #self.crow = row
-        cells = []
+        #cells = []
         
         #self.onBeginRow()
 
         # first compute all values
         for col in self.columns:
-            if col.when and not col.when(self):
+            if col.when and not col.when(row):
                 v = None
             else:
                 v = col.getValue(row)
-            cells.append(Cell(row,col,v))
+            row.cells.append(Cell(row,col,v))
             
 ##         # now only stringify all values
 ##         i = 0
@@ -145,7 +183,7 @@ class BaseReport(Describable):
         #self.cellValues = None
         #self.crow = None
 
-        return cells
+        return row
 
 ##     def formatCell(self,doc,col,value):
 ##         if value is None:
@@ -183,21 +221,28 @@ class BaseReport(Describable):
         self.columns.append(col)
         return col
 
+    def onEach(self,meth):
+        self._onRowEvents.append(meth)
+
 ##     def execute(self,iter):
 ##         self.beginReport()
 ##         for row in iter:
 ##             self.processRow(row)
 ##         self.endReport()
 
-class DataReport(BaseReport):
-    def __init__(self,ds,name=None,label=None,doc=None):
+class DataReport(Report):
+    def __init__(self,ds,
+                 columnWidths=None,width=None,rowHeight=None,
+                 name=None,label=None,doc=None):
 
         if name is None:
             name=ds._table.getName()
         if label is None: label=ds._table.getLabel()
         if doc is None: doc=ds._table.getDoc()
         
-        BaseReport.__init__(self,ds,name=name,label=label,doc=doc)
+        Report.__init__(self,ds,
+                        columnWidths,width,rowHeight,
+                        name=name,label=label,doc=doc)
     
     def beginReport(self,doc):
         if len(self.columns) == 0:
@@ -205,28 +250,34 @@ class DataReport(BaseReport):
                 self.addDataColumn(dc,
                                    width=dc.getMaxWidth(),
                                    label=dc.getLabel())
-        BaseReport.beginReport(self,doc)
+        Report.beginReport(self,doc)
             
     def addDataColumn(self,dc,**kw):
         col = DataReportColumn(self,dc,**kw)
         self.columns.append(col)
         return col
 
-    def execute(self,ds):
-        rpt.configure(**kw)
+    #def execute(self,ds):
+    #    rpt.configure(**kw)
 
-    def child(self,**kw):
-        c = copy.copy(self)
-        for k,v in kw.items():
-            if hasattr(self,k):
-                setattr(self,k,v)
-            else:
-                raise "foo"
+##     def child(self,**kw):
+##         fwd={}
+##         c = copy.copy(self)
+##         for k,v in kw.items():
+##             if hasattr(self,k):
+##                 setattr(self,k,v)
+##             else:
+##                 fwd[k]=v
+##         if len(fwd):
+##             assert c.iterator is self.iterator
+##             #print "fwd %s to %s" % (fwd,c.iterator)
+##             c.iterator = c.iterator.child(**fwd)
+##         return c
 
 
-class DictReport(BaseReport):
-    def __init__(self,d):
-        BaseReport.__init__(self,iterator=d.items())
+class DictReport(Report):
+    def __init__(self,d,*args,**kw):
+        Report.__init__(self,d.items(),*args,**kw)
                             
     def beginReport(self,doc):
         if len(self.columns) == 0:
@@ -236,7 +287,7 @@ class DictReport(BaseReport):
             self.addColumn(meth=lambda row: repr(row[1]),
                            label="value",
                            width=40)
-        BaseReport.beginReport(self,doc)
+        Report.beginReport(self,doc)
         
     
 
@@ -286,7 +337,7 @@ class DataReportColumn(ReportColumn):
 
     def getValue(self,row):
         #return self.datacol.getCellValue(self._owner.crow)
-        return self.datacol.getCellValue(row)
+        return self.datacol.getCellValue(row.item)
 
     def getPreferredWidth(self):
         return self.datacol.getMaxWidth()
@@ -318,5 +369,10 @@ class Cell:
         self.row = row
         self.col = col
         self.value = value
+
+class Row:
+    def __init__(self,item):
+        self.item = item
+        self.cells = []
 
         

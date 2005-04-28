@@ -28,6 +28,7 @@ from lino.misc.tsttools import TestCase, main
 
 #from lino.ui import console
 
+from lino.reports import Report
 
 class Case(TestCase):
 
@@ -42,14 +43,16 @@ class Case(TestCase):
             )
         
         #console.startDump()
-        rpt = self.ui.report()
-        rpt.addColumn(meth=lambda row: str(row[0]),
+        #rpt = self.ui.report()
+        rpt=Report(d.items())
+        rpt.addColumn(meth=lambda row: str(row.item[0]),
                       label="key",
                       width=12)
-        rpt.addColumn(meth=lambda row: repr(row[1]),
+        rpt.addColumn(meth=lambda row: repr(row.item[1]),
                       label="value",
                       width=40)
-        rpt.execute(d.items())
+        self.ui.report(rpt)
+        #rpt.execute(d.items())
         s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\

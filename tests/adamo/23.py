@@ -75,7 +75,7 @@ class Case(TestCase):
         i = invoices.appendRow(jnl,itod(20030816),"test")
         
         """
-        The `seq` field of INVOICES is an auto-incrementing integer.
+        The `seq` field of Invoices is an auto-incrementing integer.
         """
         self.assertEqual(i.seq,2)
 

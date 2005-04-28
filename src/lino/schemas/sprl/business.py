@@ -42,7 +42,7 @@ class Years(Table):
 
 class Documents(Table):
 	def init(self):
-		self.addField('seq',INT)
+		self.addField('seq',ROWID)
 		self.addField('date',DATE)
 		self.addField('closed',BOOL)
 

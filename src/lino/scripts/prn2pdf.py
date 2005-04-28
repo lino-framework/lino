@@ -23,57 +23,59 @@ import sys, os
 from lino.ui import console 
 from lino.textprinter.pdfprn import PdfTextPrinter
 
+class Prn2pdf(console.ConsoleApplication):
 
-def main(argv):
-    console.copyleft(name="Lino/prn2pdf",
-                     years='2002-2005',
-                     author='Luc Saffre')
-    
-    parser = console.getOptionParser(
-        usage="usage: lino prn2pdf [options] FILE",
-        description="""\
+    name="Lino/prn2pdf"
+    years='2002-2005'
+    author='Luc Saffre'
+    usage="usage: lino prn2pdf [options] FILE"
+    description="""\
 where FILE is the file to be converted to a pdf file.
-It may contain plain text and simple formatting printer control sequences. """ )
+It may contain plain text and simple formatting printer control sequences. """
     
-    parser.add_option("-o", "--output",
-                      help="""\
+    def setupOptionParser(self,parser):
+        console.ConsoleApplication.setupOptionParser(self,parser)
+    
+        parser.add_option("-o", "--output",
+                          help="""\
 write to OUTFILE rather than FILE.pdf""",
-                      action="store",
-                      type="string",
-                      dest="outFile",
-                      default=None)
-    
-    (options, args) = parser.parse_args(argv)
-
-    if len(args) != 1:
-        #print args
-        parser.print_help() 
-        return -1
-    
-    inputfile = args[0]
-    if options.outFile is None:
-        (root,ext) = os.path.splitext(inputfile)
-        options.outFile = root +".pdf"
-    d = PdfTextPrinter(options.outFile,coding=sys.stdin.encoding)
-    ok = True
-    try:
-        d.readfile(inputfile)#,coding=sys.stdin.encoding)
-    except Exception,e:
-        console.error(str(e))
-        ok = False
-    
-    d.endDoc()
-    if not ok:
-        return -1
-    
-    if sys.platform == "win32" and console.isInteractive():
-        os.system("start %s" % options.outFile)
-
+                          action="store",
+                          type="string",
+                          dest="outFile",
+                          default=None)
     
 
+    def run(self,ui):
+        
+        if len(self.args) != 1:
+            raise console.UsageError("needs 1 argument")
+    
+        inputfile = self.args[0]
+        if self.options.outFile is None:
+            (root,ext) = os.path.splitext(inputfile)
+            self.options.outFile = root +".pdf"
 
+        d = PdfTextPrinter(self.options.outFile,
+                           coding=sys.stdin.encoding)
+        ok = True
+        try:
+            d.readfile(inputfile)#,coding=sys.stdin.encoding)
+        except Exception,e:
+            ui.error(str(e))
+            ok = False
 
+        d.endDoc()
+        if not ok:
+            return -1
+
+        if sys.platform == "win32" and ui.isInteractive():
+            os.system("start %s" % self.options.outFile)
+
+    
+# lino.runscript expects a name consoleApplicationClass
+consoleApplicationClass = Prn2pdf
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    consoleApplicationClass().main() # console,sys.argv[1:])
+    #sys.exit(main(sys.argv[1:]))
 

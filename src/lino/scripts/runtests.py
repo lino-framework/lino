@@ -38,15 +38,11 @@ where TESTS specifies the tests to run. Default is all. Other possible values e.
 ##         console.message("""\
 ## Note: Running in interactive mode. Specify -b to avoid questions.""")
 
-    def applyOptions(self,options,args):
-        console.ConsoleApplication.applyOptions(self,options,args)
-        self.suite = tsttools.alltests(args)
-##         console.ConsoleApplication.applyOptions(self,options.args)
-        
     
     def run(self,ui):
+        suite = tsttools.alltests(self.args)
         runner = unittest.TextTestRunner()
-        runner.run(self.suite)
+        runner.run(suite)
 
 
 # lino.runscript expects a name consoleApplicationClass

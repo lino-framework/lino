@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,43 +17,41 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-using lino.reports on pizzeria
+testing textprinter
 """
 
 from lino.misc.tsttools import TestCase, main
-from lino.reports import DataReport
-
 
 class Case(TestCase):
+    ""
 
+    def doit(self,d):
+        d.setPageLandscape()
+        d.drawDebugRaster()
+        d.printLine("")
+        d.printLine("Win32PrinterDocument Test page")
+        d.printLine("")
+        cols = 9
+        d.printLine("".join([" "*9+str(i+1) for i in range(cols)]))
+        d.printLine("1234567890"*cols)
+        d.printLine("")
+        d.printLine("Here is some \033b1bold\033b0 text.")
+        d.printLine("Here is some \033u1underlined\033u0 text.")
+        d.printLine("Here is some \033i1italic\033i0 text.")
+        
+        d.endDoc()
+        
 
     def test01(self):
-        from lino.examples.pizzeria2 import beginSession,\
-             Products, OrderLines
-        sess = beginSession()
-        PROD = sess.query(Products)
-        ds = sess.query(OrderLines,"ordr.date ordr.customer",
-                        product=PROD.peek(1))
-        rpt=DataReport(ds,columnWidths="10 13")
-        self.ui.report(rpt)
-##         rpt = self.ui.report()
-##         q.setupReport(rpt,columnWidths="10 10")
-##         rpt.execute(q)
-        s = self.getConsoleOutput()
-        #print s
-        self.assertEqual(s,"""\
-OrderLines
-==========
-ordr.date |ordr.customer
-----------+-------------
-2003-08-16|Henri        
-2003-08-16|James        
-2004-03-18|Bernard      
-2004-03-19|Henri        
-""")        
-        
+
+        from lino.textprinter import winprn
+        spoolFile = self.addTempFile("4.ps",showOutput=True)
+        d = winprn.Win32TextPrinter(self.win32_printerName_PS,
+                                    spoolFile)
+        self.doit(d)
         
 
 if __name__ == '__main__':
     main()
+
 

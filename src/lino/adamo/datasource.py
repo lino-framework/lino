@@ -107,14 +107,15 @@ class SimpleDatasource:
 ##         self._configure(**kw)
 
     def configure(self,
-                   columnNames=None,
-                   viewName=None,
-                   orderBy=None,
-                   sqlFilters=None,
-                   search=None,
-                   samples=None,
-                   label=None,
-                   **kw):
+                  columnNames=None,
+                  viewName=None,
+                  orderBy=None,
+                  sortColumns=None,
+                  sqlFilters=None,
+                  search=None,
+                  samples=None,
+                  label=None,
+                  **kw):
         self._viewName = viewName
         if label is not None:
             assert type(label) == type(""),\
@@ -129,7 +130,13 @@ class SimpleDatasource:
                 self._store,
                 self.getDatabase(), 
                 columnNames)
-        self.setOrderBy(orderBy)
+            
+        if orderBy is not None:
+            assert sortColumns is None
+            self.setOrderBy(orderBy)
+        else:
+            self.setSortColumns(sortColumns)
+            
         self.setFilterExpressions(sqlFilters,search)
         
         if samples is None:
@@ -225,31 +232,33 @@ class SimpleDatasource:
 ##         return self._table._rowAttrs[name]
 
 
-    def query(self,columnNames=None,**kw):
+    def child(self,columnNames=None,**kw):
         self.setdefaults(kw)
         return self.__class__(self._session,
                               self._store,
                               self._clist,
                               columnNames=columnNames,
                               **kw)
+    # deprecated name:
+    query=child
 
 
-    def setupReport(self,rpt,**kw):
-        for dc in self.getVisibleColumns():
-            rpt.addDataColumn(dc,
-                              width=dc.getMaxWidth(),
-                              label=dc.getLabel())
-        kw.setdefault('name',self._table.getName())
-        kw.setdefault('label',self._table.getLabel())
-        kw.setdefault('doc',self._table.getDoc())
-        rpt.configure(**kw)
+##     def setupReport(self,rpt,**kw):
+##         for dc in self.getVisibleColumns():
+##             rpt.addDataColumn(dc,
+##                               width=dc.getMaxWidth(),
+##                               label=dc.getLabel())
+##         kw.setdefault('name',self._table.getName())
+##         kw.setdefault('label',self._table.getLabel())
+##         kw.setdefault('doc',self._table.getDoc())
+##         rpt.configure(**kw)
         
     
-    def executeReport(self,rpt=None,**kw):
-        if rpt is None:
-            rpt = self._session.ui.report()
-        self.setupReport(rpt,**kw)
-        rpt.execute(self)
+##     def executeReport(self,rpt=None,**kw):
+##         if rpt is None:
+##             rpt = self._session.ui.report()
+##         self.setupReport(rpt,**kw)
+##         rpt.execute(self)
 
     def __xml__(self,wr):
         wr("<datasource>")
@@ -345,7 +354,8 @@ class SimpleDatasource:
 ##                    **kw)
 
     def setdefaults(self,kw):
-        kw.setdefault('orderBy',self._orderBy)
+        if not kw.has_key('orderBy'):
+            kw.setdefault('sortColumns',self.sortColumns)
         kw.setdefault('search',self._search)
         if self._label is not None:
             kw.setdefault('label',self._label)
@@ -413,12 +423,20 @@ class SimpleDatasource:
 
     def setOrderBy(self,orderBy):
         #assert type(orderBy) is type('')
-        self._orderBy = orderBy
+        #self._orderBy = orderBy
         l = []
         if orderBy is not None:
             for colName in orderBy.split():
                 l.append(self._clist.provideColumn(colName))
-        self.orderByColumns = tuple(l)
+        self.sortColumns = tuple(l)
+
+    def setSortColumns(self,sortColumns):
+        if sortColumns is None:
+            self.sortColumns=[]
+        else:
+            #self._orderBy=" ".join([col.name
+            #                        for col in sortColumns])
+            self.sortColumns=sortColumns
 
     def setSamples(self,**kw):
         "each value is a Python object"

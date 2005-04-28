@@ -219,7 +219,7 @@ class Store:
         autoIncCol = self._peekQuery._pkColumns[-1]
 ##         if autoIncCol.rowAttr.type is not ROWID:
 ##             return
-##         if self._table.getTableName() == "Words":
+##         if self._table.getTableName() == "Invoices":
 ##             print autoIncCol.rowAttr.type
 ##             raise "foo"
         #assert isinstance(autoIncCol.rowAttr.type,AutoIncType)

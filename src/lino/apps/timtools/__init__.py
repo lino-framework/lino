@@ -19,7 +19,7 @@
 def console_targets():
     return [
         'pds2pdf',
-        'pds2sxw', 'pds2sxc',
+        #'pds2sxw', 'pds2sxc',
         'prn2pdf', 'prnprint',
         'sync', 'diag',
         'openmail','openurl'

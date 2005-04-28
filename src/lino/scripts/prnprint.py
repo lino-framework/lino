@@ -23,51 +23,53 @@ import sys, os
 from lino.ui import console
 from lino.textprinter import winprn 
 
-def main(argv=None):
-    console.copyleft(name="Lino prn2print",
-                     years='2004-2005',
-                     author="Luc Saffre")
+class PrnPrint(console.ConsoleApplication):
+    
+    name="Lino prnprint"
+    years='2004-2005'
+    author="Luc Saffre"
 
-    parser = console.getOptionParser(
-        usage="usage: lino prnprint [options] FILE [FILE ...]",
-        description="""\
+    usage="usage: lino prnprint [options] FILE [FILE ...]"
+    description="""\
 where FILE is a plain text file to be printed on the Default Printer.
 It must be in OEM charset and may contain simple formatting printer
 control sequences, see http://lsaffre.dyndns.org/lino/prn2pdf.html
-""" )
+""" 
     
-    parser.add_option("-p", "--printer",
-                      help="""\
+    def setupOptionParser(self,parser):
+        console.ConsoleApplication.setupOptionParser(self,parser)
+    
+        parser.add_option("-p", "--printer",
+                          help="""\
 print on PRINTERNAME rather than on Default Printer.""",
-                      action="store",
-                      type="string",
-                      dest="printerName",
-                      default=None)
+                          action="store",
+                          type="string",
+                          dest="printerName",
+                          default=None)
     
-    parser.add_option("-o", "--output",
-                      help="""\
+        parser.add_option("-o", "--output",
+                          help="""\
 write to SPOOLFILE rather than really printing.""",
-                      action="store",
-                      type="string",
-                      dest="spoolFile",
-                      default=None)
+                          action="store",
+                          type="string",
+                          dest="spoolFile",
+                          default=None)
     
-    (options, args) = parser.parse_args(argv)
+    def run(self,ui):
+        if len(self.args) == 0:
+            raise console.UsageError("no arguments specified")
+        for inputfile in self.args:
+            d = winprn.Win32TextPrinter(
+                self.options.printerName,
+                self.options.spoolFile,
+                coding=sys.stdin.encoding)
+                #charset=winprn.OEM_CHARSET)
+            d.readfile(inputfile)
+            d.endDoc()
 
-    if len(args) == 0:
-        parser.print_help() 
-        return -1
-    
-    for inputfile in args:
-        d = winprn.Win32TextPrinter(options.printerName,
-                                    options.spoolFile,
-                                    coding=sys.stdin.encoding)
-                                    #charset=winprn.OEM_CHARSET)
-        d.readfile(inputfile)
-        d.endDoc()
-
+consoleApplicationClass = PrnPrint
     
         
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    consoleApplicationClass().main() # console,sys.argv[1:])
     

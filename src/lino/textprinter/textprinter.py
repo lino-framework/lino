@@ -44,7 +44,8 @@ class TextPrinter:
             chr(27)+"b" : self.parse_b,
             chr(27)+"u" : self.parse_u,
             chr(27)+"i" : self.parse_i,
-            chr(27)+"L" : self.setPageLandscape,
+            chr(27)+"L" : self.parse_L,
+            #chr(27)+"L" : self.setPageLandscape,
             chr(27)+"I" : self.parse_I,
             #chr(27)+"I" : self.insertImage,
             }
@@ -127,6 +128,21 @@ class TextPrinter:
         if not self._pageStarted:
             self.beginPage()
 
+        pos=text.find("#python ")
+
+        if pos != -1:
+            if pos > 0:
+                self.write(text[:pos])
+                text=text[pos+1:]
+            a=text.split(None,1)
+            if len(a)==2:
+                #eval("self."+line[1:])
+                eval(a[1])
+                #m = getattr(self,v)
+                #m(a[1])
+                return
+            raise "foo, a=%r" % a
+        
         self.write(text)
         
 
@@ -162,15 +178,6 @@ class TextPrinter:
         
         line = line.rstrip()
         
-        if line.startswith("#exec "):
-            a=line.split(None,1)
-            if len(a)==2:
-                #eval("self."+line[1:])
-                eval(a[1])
-                #m = getattr(self,v)
-                #m(a[1])
-                return
-                
 ##         for k,v in self.lineCommands.items():
 ##             if line.startswith(k):
 ##                 m = getattr(self,v)
@@ -205,7 +212,11 @@ class TextPrinter:
         self.writeln(line)
         
         
-    def setPageLandscape(self,line):
+    def parse_L(self,line):
+        self.setPageLandscape()
+        return 0
+    
+    def setPageLandscape(self):
         #assert self.textobject is None, \
         #       'setLandscape after first text has been printed'
         if self.pageHeight > self.pageWidth:
@@ -213,7 +224,6 @@ class TextPrinter:
             (self.pageHeight, self.pageWidth) = \
                              (self.pageWidth,self.pageHeight)
             self.onSetPageSize()
-        return 0
 
     def onSetFont(self):
         self.fontChanged = True
@@ -262,10 +272,10 @@ class TextPrinter:
         
     def parse_I(self,line):
         # deprecated, but still in use
-        # use #self.insertImage() instead
+        # use #python self.insertImage() instead
         params = line.split(None,3)
         #print params
-        if len(params) <= 3:
+        if len(params) < 3:
             raise ParserError("%r : need 3 parameters" % params)
         #width=self.length2i(params[0])
         #height=self.length2i(params[1])

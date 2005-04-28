@@ -21,11 +21,15 @@
 import sys
 import os
 opj = os.path.join
-
+from cStringIO import StringIO
 
 from lino.gendoc.gendoc import WriterDocument
 from lino.forms.base import MenuContainer
 
+from lino.adamo.query import DataColumn
+
+
+# from twisted.web.microdom
 ESCAPE_CHARS = (('&', '&amp;'),
                 ('<', '&lt;'),
                 ('>', '&gt;'),
@@ -38,48 +42,22 @@ def unescape(text):
     return text
 
 def escape(text):
-    "Escape a few XML special chars with XML entities."
+    "replace a few special chars with HTML entities."
     for ch, h in ESCAPE_CHARS:
         text = text.replace(ch, h)
     return text 
 
-txt2html = escape
 
-## from twisted.web.html import escape
-
-## def txt2html(s):
-## 	return escape(s)
-## 	#s = escape(s)
-## 	# s = s.replace('<','&lt;')
-## 	# s = s.replace('>','&gt;')
-## 	# s = s.replace('&','&amp;')
-## 	#return txt2html(s)
-
-def locdiff(l1,l2):
-    if l1 == l2: return ""
-    back = len(l1.split("/"))-1
-    toloc = l2.split("/")
-    l = [".."]*back + toloc
-    return "/".join(l)+"/"
+firstPageButton = '[<<]'
+lastPageButton = '[>>]'
+prevPageButton = '[<]'
+nextPageButton = '[>]'
+beginNavigator = '''
+<p class="nav">Navigator:
+'''
+endNavigator = "</p>"
 
 
-
-
-BEGIN_PAGE = """
-  <html>
-  <head>
-  <title>%s</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-  <link rel=stylesheet type="text/css" href="wp-admin.css">
-  <meta name="KEYWORDS" content="">
-  <meta name="GENERATOR" content="Lino">
-  <meta name="author" content="">
-  <meta name="date" content="%s">
-  <head>
-
-  <body>
-
-"""
 END_PAGE = """
   </body>
   </html>
@@ -87,113 +65,190 @@ END_PAGE = """
 
 
 
-class Location:
+class Locatable:
     # local URL. URL for a local resource
-    extension=".html"
-    def __init__(self,href):
-        l = href.split("/")
-        assert len(l) > 0
-        self.head = l[:-1]
-        self.tail = l[-1]
-        assert os.path.splitext(self.tail) == self.extension
+    extension=None
+    def __init__(self,name,location=None,parent=None):
+        pos=name.rfind("/")
+        if pos != -1:
+            assert location is None
+            location=name[:pos]
+            name=name[pos+1:]
+            
+        if location is None:
+            if parent is None:
+                location=""
+            else:
+                location = parent.location
+        else:
+            assert not location.endswith('/')
+            assert not location.startswith('/')
+            if parent is not None:
+                location = parent.addloc(location)
+            
+        self.location=location
+        if name.endswith(self.extension):
+            name = name[:-len(self.extension)]
+        self.name=name
         
     def filename(self):
-        return self.tail
+        return self.name + self.extension
 
     def dirname(self):
-        return opj(self.head)
+        return self.location.replace("/",os.path.sep)
 
-    def child(self,href):
-        l = href.split("/")
-        ch = copy(self)
-        ch.tail = l[-1]
-        ch.head = list(self.head)
-        head = l[:-1]
-        while head[0] == "..":
-            ch.head.pop()
-            del head[0]
-        ch.head += head
-        return ch
-        
+    def getRoot(self):
+        if self.parent is None:
+            return self
+        return self.parent.getRoot()
 
-    def __str__(self):
-        if len(self.head):
-            return "/".join(self.head)+self.tail
-        return self.tail
+    def urlto(self,other):
+        if self.location == other.location:
+            return other.filename()
+        return self.locto(other.location) + "/" + other.filename()
+    
+    def locto(self,dest):
+        if self.location=="": return dest
+        l1=self.location.split("/")
+        if dest=="": return "/".join([".."]*len(l1))
+        l2=dest.split("/")
+        while len(l1) and len(l2) and l1[0] == l2[0]:
+            del l1[0]
+            del l2[0]
+        #l= [".."]*(len(l1)-1) + l2
+        l= [".."]*len(l1) + l2
+        return "/".join(l)
 
-class HtmlFile(Location):    
-    extension=".html"
+    def addloc(self,location):
+        if self.location == "":
+            return location
+        return self.location+"/"+location
 
-class StyleSheet(Location):    
+
+class StyleSheet(Locatable): 
     extension=".css"
 
 
-class HtmlDocument(WriterDocument,MenuContainer,):
+class HtmlDocument(WriterDocument,MenuContainer,Locatable):
+    extension=".html"
     def __init__(self,
                  content=None,
                  title=None,
                  date=None,
-                 location="index.html",
-                 css="wp-admin.css",
+                 name=None,
+                 location=None,
+                 parent=None,
+                 stylesheet=None,
                  **kw):
+        #if content is not None:
+        #    if name is None: name=content.getName()
+        #    if title is None: title=content.getTitle()
+
+        if name is None:
+            name="index"
+        
+        Locatable.__init__(self,name,location,parent)
         WriterDocument.__init__(self)
         MenuContainer.__init__(self)
-        self.date = date
-        self.css = StyleSheet(css)
-        #self.cssName = cssName
-        #self.cssLocation = cssLocation
-        self.content=content
-        if type(location) == type(''):
-            location = HtmlFile(location)
-        self.location = location
-        #self.name=name
+        
+                
+        if stylesheet is None:
+            if parent is not None:
+                stylesheet=parent.stylesheet
+        else:
+            assert type(stylesheet)==type('')
+            stylesheet = StyleSheet(stylesheet,parent=self)
+
+        self.stylesheet = stylesheet
+        
+        #self.content=content
 
         self.children = []
-        #assert self.name is not None
+        #self.childrenByName = {}
+
         if title is None:
-            title = self.location.filename()
+            title = self.filename()
         self.title = title
-
-    def child(self,content=None,location=None,**kw):
-        kw.setdefault("css",str(self.css))
+        self.date = date
+        self._reports=[]
         if content is not None:
-            kw.setdefault("location",self.location.child(
-                content.getName()+self.location.extension))
-            #kw.setdefault("name",content.getName())
-            kw.setdefault("title",content.getTitle())
-            kw['content'] = content
-        c = self.__class__(**kw)
-        self.children.append(c)
-        return c
+            assert hasattr(content,"render")
+            self._body=[content]
+        else:
+            self._body=[]
 
-
-    def text(self,txt):
-        self.write(txt2html(txt))
+#    def child(self,**kw):
+##         if kw.has_key("stylesheet"):
+##             kw.setdefault("cssLocation",self.css.location)
+##         else:
+##             kw.setdefault("css",self.css)
+##         if not kw.has_key("cssLocation"):
+##             kw['cssLocation']
+##         kw.setdefault("cssName",self.css.name)
+##         if content is not None:
+##             kw.setdefault("name",content.getName())
+##             kw.setdefault("title",content.getTitle())
+##             kw['content'] = content
+#        return self.__class__(parent=self,**kw)
         
-    def a(self,href,label,doc=None):
+    def addChild(self,**kw):
+        c = self.__class__(parent=self,**kw)
+        #assert not self.childrenByName.has_key(c.name)
+        self.children.append(c)
+        #self.childrenByName[c.name] = c
+        return c
+    
+##     def addChild(self,**kw):
+##         c = self.__class__(parent=self,**kw)
+##         root=self.getRoot()
+##         assert not root.childrenByName.has_key(c.name)
+##         self.children.append(c)
+##         self.childrenByName[c.name] = c
+##         return c
+
+##     def getChild(self,name):
+##         return self.getRoot().childrenByName[name]
+
+
+    def writeText(self,txt):
+        self.write(escape(txt))
+        
+    def writeLink(self,href,label,doc=None):
         self.write('<a href="'+href+'">')
-        self.text(label)
+        self.writeText(label)
         self.write('</a>')
 
 
     def h(self,level,txt):
-        assert level > 0 and level <= 9
-        tag = "H"+str(level)
-        self.write("<%s>" % tag)
-        self.text(txt)
-        self.write("</%s>\n" % tag)
+        self._body.append(H(level,txt))
 
+    def report(self,rpt):
+        self._reports.append(rpt)
+        self._body.append(ReportElement(rpt))
 
     def beginDocument(self,wr):
         self.writer = wr
-        self.write(BEGIN_PAGE)
+        wr("<html><head><title>")
+        self.writeText(self.title)
+        wr("""</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+""")
+        if self.stylesheet is not None:
+            wr('<link rel=stylesheet type="text/css" href="%s">\n'
+               % self.urlto(self.stylesheet))
+        wr('<meta name="KEYWORDS" content="">\n')
+        wr('<meta name="GENERATOR" content="Lino">\n')
+        wr('<meta name="author" content="">\n')
+        wr('<meta name="date" content="%s">')
+        wr("<head><body>\n")
+        
     
     def endDocument(self):
         self.write(END_PAGE)
         self.writer = None
 
 
-    def render(self,wr):
+    def writeDocument(self,wr):
         self.beginDocument(wr)
         if self.menuBar is not None:
             for menu in self.menuBar.menus:
@@ -201,179 +256,254 @@ class HtmlDocument(WriterDocument,MenuContainer,):
                 for mi in menu.items:
                     #assert mi.action is not None
                     self.write('<li>')
-                    self.a(href=mi.action,
-                           label=mi.getLabel())
+                    self.writeLink(
+                        href=mi.action,
+                        label=mi.getLabel())
                     self.write('</li>')
                 self.write('</ul>')
 
 
-                    
-        if self.content is not None:
-            self.content.render(self)
+        for elem in self._body:
+            elem.render(self)
         self.endDocument()
 
     
-    def save(self,ui,targetRoot="."):
+    def save(self,ui,targetRoot=".",simulate=False):
         filenames = []
         dirname = opj(targetRoot,
                       self.location.replace("/",os.path.sep))
-        fn = opj(dirname, self.leafname())
-        print fn
-        ui.status("Writing %s...",fn)
-        if not os.path.isdir(dirname):
-            ui.notice("makedirs(%s)",dirname)
-            os.makedirs(dirname)
-        if not ui.confirm(fn):
-            return []
+        fn = opj(dirname, self.filename())
         filenames.append(fn)
-        fd = file(fn,"wt")
-        self.render(fd.write)
+        print fn
+        if simulate:
+            ui.status("Would write %s...",fn)
+            fd = StringIO()
+        else:
+            ui.status("Writing %s...",fn)
+            if not os.path.isdir(dirname):
+                ui.notice("makedirs(%s)",dirname)
+                os.makedirs(dirname)
+            if not ui.confirm(fn):
+                return []
+            
+            fd = file(fn,"wt")
+            
+        self.writeDocument(fd.write)
         fd.close()
-        for ch in self.children:
-            filenames += ch.save(ui,targetRoot)
-        return filenames
+        
+##         for rpt in self._reports:
+##             for col in rpt.columns:
+##                 for i in range(rpt.iterator.lastPage):
+##                     subrpt = rpt.child(
+##                         orderBy=col.name,
+##                         pageNum=i+1)
+
+##                     def render(doc):
+##                         #doc.h(1,subrpt.getLabel())
+##                         doc.report(subrpt)
+
+##                     self.addChild(
+##                         name=rptname(subrpt),
+##                         title=subrpt.getLabel(),
+##                         content=render)
 
         
-    def report(self,rpt):
-        if rpt.iterator.lastPage > 1:
-            self._report(rpt.child(name="index",pageNum=1))
-            for i in range(1,rpt.iterator.lastPage):
-                childrpt = rpt.child(name=str(i+1),pageNum=i+1)
-                self.child(content=childrpt)
+        for rpt in self._reports:
+            for col in rpt.columns:
+                for pg in range(rpt.iterator.lastPage):
+                    if pg != 0 or \
+                       col.datacol != rpt.iterator.sortColumns[0]:
+                        e=ReportElement(rpt,pg+1,col.datacol)
+                        ch=self.addChild(
+                            name=rptname(rpt,
+                                         pageNum=pg+1,
+                                         sortColumn=col.datacol),
+                            title=rpt.getLabel(),
+                            content=e)
+                
+        
+        
+        #print len(subdocs)
+        #raise "hier"
+        #for ch in subdocs:
+        #    filenames += ch.save(ui,targetRoot,simulate)
+        for ch in self.children:
+            filenames += ch.save(ui,targetRoot,simulate)
+        return filenames
+
+
+        
+class H:
+    def __init__(self,level,txt):
+        assert level > 0 and level <= 9
+        self.level=level
+        self.text=txt
+        
+    def render(self,doc):
+        tag = "H"+str(self.level)
+        doc.write("<%s>" % tag)
+        doc.writeText(self.text)
+        doc.write("</%s>\n" % tag)
+
+
+def rptname(rpt,sortColumn=None,pageNum=None):
+    if sortColumn is None: sortColumn=rpt.iterator.sortColumns[0]
+    if pageNum is None: pageNum=rpt.pageNum
+    if pageNum==1 and sortColumn==rpt.iterator.sortColumns[0]:
+        return rpt.name
+    return str(pageNum)+"_"+sortColumn.name
+                    
+
+
+
+        
+        
+class ReportElement:
+    def __init__(self,rpt,pageNum=1,sortColumn=None):
+        self.rpt=rpt
+        self.pageNum=pageNum
+        if sortColumn is None:
+            #print rpt.columns
+            #print rpt.iterator.sortColumns
+            sortColumn=rpt.iterator.sortColumns[0]
         else:
-            self._report(rpt)
-        
-    def _report(self,rpt):
-        
+            assert isinstance(sortColumn,DataColumn)
+        self.sortColumn=sortColumn
+
+    def rptname(self):
+        return str(self.pageNum)+"_"+self.sortColumn.name
+    
+    def render(self,doc):
+        rpt=self.rpt
+        ds=rpt.iterator
+        pageNum=self.pageNum
+        sortColumn=self.sortColumn
+        wr=doc.write
         # initialize...
-        rpt.beginReport(self)
+        rpt.beginReport(doc)
 
         # title
 
-        if rpt.label is not None:
-            self.h(1,rpt.label)
+        #if rpt.label is not None:
+        #    self.h(1,rpt.label)
+
+
+        # navigator
+
+        if True: # flup.lastPage > 1:
+            wr(beginNavigator)
+                
+            if pageNum is None:
+                pageNum = 1
+            elif pageNum < 0:
+                pageNum = ds.lastPage + pageNum + 1
+                # pg=-1 --> lastPage
+                # pg=-2 --> lastPage-1
+                
+            if pageNum == 1:
+                wr(firstPageButton)
+                wr(prevPageButton)
+            else:
+
+                doc.writeLink(
+                    href=rptname(rpt,
+                                 sortColumn=sortColumn,
+                                 pageNum=1)+doc.extension,
+                    label=firstPageButton)
+                
+                doc.writeLink(
+                    href=rptname(rpt,
+                                 sortColumn=sortColumn,
+                                 pageNum=pageNum-1)+doc.extension,
+                    label=prevPageButton)
+
+##                 ch=self.getChild(rptname(rpt,pageNum=pageNum-1))
+##              self.link(uri=self.urito(ch),
+##                           label=prevPageButton)
+
+
+
+            wr(" [page %d of %d] " % (pageNum, ds.lastPage))
+                
+            if pageNum == ds.lastPage:
+                wr(nextPageButton)
+                wr(lastPageButton)
+            else:
+                doc.writeLink(
+                    href=rptname(rpt,
+                                 sortColumn=sortColumn,
+                                 pageNum=pageNum+1)+doc.extension,
+                    label=nextPageButton)
+                doc.writeLink(
+                    href=rptname(rpt,
+                                 sortColumn=sortColumn,
+                                 pageNum=ds.lastPage)+doc.extension,
+                    label=lastPageButton)
+                
+                
+##                 ch=self.getChild(rptname(rpt,pageNum=pageNum+1))
+##              self.link(uri=self.urito(ch),
+##                           label=nextPageButton)
+##                 ch=self.getChild(rptname(rpt,pageNum=rpt.lastPage))
+##              self.link(uri=self.urito(ch),
+##                           label=lastPageButton)
+                
+            wr(' (%d rows)' % len(ds))
+            wr(endNavigator)
+
+        
+        
 
         # renderHeader
 
-        self.write(
-            '<table width="100%" cellpadding="3" cellspacing="3">')
-        self.write('<tr>\n')
+        wr('<table width="100%" cellpadding="3" cellspacing="3">')
+        wr('<tr>\n')
         for col in rpt.columns:
-            self.write('<th scope="col">')
-            self.text(col.getLabel())
-            self.write('</th>\n')
-        self.write('</tr>\n')
-
-        self.write("<tr>")
-        for col in rpt.columns:
-            self.write("<th>")
-            if len(rpt.iterator.orderByColumns) == 0 \
-               or col == rpt.iterator.orderByColumns[0]:
-                self.text(col.getLabel())
+            wr('<th scope="col">')
+            if col.datacol == sortColumn:
+                doc.writeText(col.getLabel())
             else:
-                ds2 = rpt.iterator.query(orderBy=col.name)
-                rpt2 = rpt.child(iterator=ds2)
-                name = self.name
-                if rpt.iterator.pageNum is not None:
-                    name += str(rpt.iterator.pageNum)
-                name += "_" + col.name
-                child = self.child(name=name,content=rpt2)
-                url = self.urlto(child)
-                self.a(
+                url=rptname(rpt,
+                            pageNum=pageNum,
+                            sortColumn=col.datacol)+doc.extension
+                doc.writeLink(
                     href=url,
                     label=col.getLabel(),
                     doc="Click here to sort by "+col.getLabel())
-            self.write("<th>")
+            wr('</th>\n')
             
-        self.write("</tr>")
+        wr("</tr>\n")
             
             
         # iterate...
         rowno = 0
-        for row in rpt.iterator:
+        for datarow in ds.child(pageNum=pageNum,
+                                sortColumns=[sortColumn]):
             rowno += 1
             if rowno % 2 == 0:
-                self.write("<tr class=''>\n")
+                wr("<tr class=''>\n")
             else:
-                self.write("<tr class='alternate'>\n")
+                wr("<tr class='alternate'>\n")
             
-            cells = rpt.processRow(self,row)
+            rptrow = rpt.processItem(doc,datarow)
 
-            for cell in cells:
+            for cell in rptrow.cells:
                 if cell.value is None:
                     s = ""
                 else:
                     s = cell.col.format(cell.value)
                     
-                self.write('<td>')
-                #self.write('<th scope="row">')
-                self.text(s)
-                self.write("</td>")
-            self.write("</tr>\n")
+                wr('<td>')
+                #wr('<th scope="row">')
+                doc.writeText(s)
+                wr("</td>")
+            wr("</tr>\n")
             
             
         # renderFooter
         
-        self.write("</table>")
+        wr("</table>")
         
         rpt.endReport(self)
 
     
-    def urlto(self,to):
-        return locdiff(self.location,to.location) + to.leafname()
-
-    def leafname(self):
-        return self.name + ".html"    
-        
-
-
-## class Node:
-##     def __init__(self,parent=None,name=None,targetDir=None):
-##         self.parent=parent
-##         self.name=name
-##         self.targetDir = targetDir
-##         self.children=[]
-##         if parent is not None:
-##             parent.addChild(self)
-        
-##     def addChild(self,node):
-##         self.children.append(node)
-
-##     def filename()
-
-##     def urlto(self,to,*args,**kw):
-##         relPath
-        
-
-## class DataReportNode(Node):
-##     def __init__(self,site,parent,ds):
-##         Node.__init__(self,site,parent,ds.
-##         self.ds=ds
-
-##     def myurl(self,orderBy=None,pageNum=None):
-        
-##         if pageNum is None:
-##             pageNum = self.ds.pageNum # usually 1
-##         if pageNum is None:
-##             pageNum = 1
-##         if pageNum == 1:
-##             if orderBy is None or orderBy == self.ds.orderByColumns[0]:
-##                 return "index.html"
-            
-##         s = str(pageNum) + "_" + orderBy.name
-##         return s + ".html"
-    
-##     def generate(self):
-##         filenames = []
-##         for i in range(0,self.ds.lastPage):
-##             for col in self.ds.getVisibleColumns():
-##                 q = self.ds.query(pageNum=i+1,orderBy=col.name)
-##                 fn = self.myurl(orderBy=col)
-##                 filenames.append(fn)
-##                 fd = file(opj(self.targetDir,fn),"wt")
-##                 rpt = MpsHtmlReport(self,fd.write)
-##                 q.executeReport(rpt)
-##                 fd.close()
-                
-##         return filenames
-

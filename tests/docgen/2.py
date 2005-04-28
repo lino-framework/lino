@@ -26,7 +26,6 @@ from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 
-#from lino.reports.mpshtml import DataReportNode, opj
 from lino.gendoc.html import HtmlDocument
 from lino.reports.reports import DataReport
 
@@ -36,14 +35,15 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup(self.ui,withJokes=True)
+        self.sess = demo.startup(self.ui,big=True,withJokes=True)
 
     def tearDown(self):
         self.sess.shutdown()
 
     def test01(self):
         #targetDir = opj(tempfile.gettempdir(), "reports_test_2")
-        targetDir = opj(r"c:\temp","linoweb")
+        #targetDir = opj(r"c:\temp","linoweb")
+        #targetDir="temp"
         #print targetDir
         
         root = HtmlDocument(title="The first Linoweb",
@@ -51,7 +51,9 @@ class Case(TestCase):
         mnu = root.addMenu()
                             
         
-        ds = self.sess.query(Nations,orderBy="name")
+        ds = self.sess.query(Nations,
+                             pageLen=50,
+                             orderBy="name")
         rpt = DataReport(ds)
         doc=root.addChild(location="nations",
                           name=rpt.name,
@@ -61,7 +63,7 @@ class Case(TestCase):
 
         if True:
             ds = self.sess.query(Quotes,"abstract author.name id",
-                                 pageLen=20,
+                                 pageLen=50,
                                  orderBy="id")
             rpt = DataReport(ds)
             doc=root.addChild(location="quotes",
@@ -71,7 +73,11 @@ class Case(TestCase):
             mnu.addLink(doc)
                 
 
-        root.save(self.ui,targetDir) #,simulate=True)
+            
+        files=root.save(self.ui,opj(self.tempDir,"gendoc","2"))
+        self.addTempFile(files[0],showOutput=True)
+        for fn in files[1:]:
+            self.addTempFile(fn)
         
     
 if __name__ == '__main__':

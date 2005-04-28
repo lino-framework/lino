@@ -1,35 +1,54 @@
-"""
-start the user's mail client with a ready-to-send message.
+## Copyright 2004-2005 Luc Saffre.
+## This file is part of the Lino project.
 
-USAGE : openmail FILE
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
 
-where FILE describes the contents of the message using a simplified
-pseudo RFC822 format.  Supported message header fields are "to" and
-"subject", and the "body".  "to" is mandatory, the other fields are
-optional.
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
 
-See also :pageref:`/docs/openmail`.
-
-"""
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
 
 from lino.ui import console 
 from lino.tools.mail import readmail, openmail
 
-def main(argv):
-    console.copyleft(name="Lino openmail",
-                     years='2002-2005',
-                     author='Luc Saffre')
+class OpenMail(console.ConsoleApplication):
+    name="Lino openmail"
+    years='2002-2005'
+    author='Luc Saffre'
+    usage="usage: lino openmail FILE"
+    description="""\
     
-    if len(argv) != 1:
-        print __doc__
-        return -1
+Start the user's default mail client with a ready-to-send message
+whose content is previously read from FILE.
 
-    msg = readmail(argv[0])
+FILE describes the contents of the message using a simplified pseudo
+RFC822 format.  Supported message header fields are "to", 
+"subject", and the "body".  "to" is mandatory, the other fields are
+optional.
 
-    openmail(msg)
+"""
+    
+    def run(self,ui):
+        if len(self.args) != 1:
+            raise console.UsageError("no arguments specified")
+
+        msg = readmail(self.args[0])
+
+        openmail(msg)
+        
+
+consoleApplicationClass = OpenMail
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    consoleApplicationClass().main() 
+
 

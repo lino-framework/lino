@@ -160,6 +160,10 @@ class ConsoleApplication(CLI):
         
     def setupOptionParser(self,parser):
         self.ui.setupOptionParser(parser)
+
+    def applyOptions(self,options,args):
+        self.options=options
+        self.args=args
         
     def main(self,argv=None):
         """
@@ -184,15 +188,11 @@ class ConsoleApplication(CLI):
         try:
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
+            return self.run(self.ui)
+        
         except UsageError,e:
             p.print_help()
             return -1
-
-        
-        try:
-            
-            return self.run(self.ui)
-        
         except ApplicationError,e:
             self.ui.error(str(e))
             return -1

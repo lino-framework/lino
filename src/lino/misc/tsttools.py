@@ -175,6 +175,7 @@ class TestResult(unittest.TestResult):
 class TestCase(unittest.TestCase):
 
     win32_printerName_PS = "Lexmark Optra PS"
+    tempDir = r"c:\temp"
 
 ##     def __init__(self):
 ##         unittest.TestCase.__init__(self)

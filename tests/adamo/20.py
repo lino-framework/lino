@@ -50,6 +50,7 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Nations,Partners
+from lino.reports import DataReport
 
 class Case(TestCase):
     
@@ -59,7 +60,8 @@ class Case(TestCase):
         q = sess.query(Partners,"title firstName name",nation=be)
         
         #sess.startDump()
-        q.executeReport(columnWidths="6 10 20")
+        rpt=DataReport(q,columnWidths="6 10 20")
+        self.ui.report(rpt)
         #s = sess.stopDump()
         s = self.getConsoleOutput()
         

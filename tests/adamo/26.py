@@ -27,6 +27,7 @@ import types
 from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Projects
+from lino.reports import DataReport
 
 
 class Case(TestCase):
@@ -47,13 +48,17 @@ class Case(TestCase):
         ds = PROJECTS.query("id super.id title")
         self.assertEqual(len(ds),10)
         #self.sess.startDump()
-        ds.executeReport(columnWidths="5 5 20")
+        #ds.executeReport(columnWidths="5 5 20")
+        rpt=DataReport(ds,columnWidths="5 5 20")
+        self.ui.report(rpt)
+        
         s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 Projects
 ========
-id   |id   |title               
+id   |super|title               
+     |.id  |                    
 -----+-----+--------------------
 1    |     |Project 1           
 2    |     |Project 2           
@@ -80,7 +85,10 @@ id   |id   |title
 ##             s+= "\t".join([str(cell.getValue()) for cell in p]) + "\n"
         #print s
         #self.sess.startDump()
-        ds.executeReport(columnWidths="5 20")
+        #ds.executeReport(columnWidths="5 20")
+        rpt=DataReport(ds,columnWidths="5 20")
+        self.ui.report(rpt)
+        
         s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\

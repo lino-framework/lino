@@ -247,9 +247,9 @@ class SqlConnection(Connection):
 
         sql += self.whereClause(ds)
                 
-        if len(ds.orderByColumns) >  0 :
+        if len(ds.sortColumns) >  0 :
             l = []
-            for col in ds.orderByColumns:
+            for col in ds.sortColumns:
                 #col = self.findColumn(colName)
                 #if col:
                     for atom in col.getFltAtoms(ds.getSession()):

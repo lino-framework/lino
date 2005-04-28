@@ -73,13 +73,13 @@ class PlainDocument(GenericDocument):
         self.write("+".join(l) + "\n")
         
         # iterate...
-        for row in rpt.iterator:
+        for item in rpt.iterator:
             
-            cells = rpt.processRow(self,row)
+            row=rpt.processItem(self,item)
 
             wrappedCells = []
             i = 0
-            for cell in cells:
+            for cell in row.cells:
                 if cell.value is None:
                     s = ""
                 else:

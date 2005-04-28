@@ -39,7 +39,8 @@ def makeSchema(populate=True,
     schema = sprl.makeSchema(**kw)
     if populate:
         if withJokes:
-            schema.addPopulator(JokesPopulator(label="Weisheiten"))
+            schema.addPopulator(JokesPopulator(big=big,
+                                               label="Weisheiten"))
         elif withDemoData:
             schema.addPopulator(DemoPopulator(big=big,
                                               label="StandardDemo"))
@@ -82,7 +83,7 @@ class Populator(adamo.Populator):
         #self.withJokes = withJokes
         
     def populateUsers(self,q):
-        q = q.query('id firstName name')
+        q = q.child('id firstName name')
         q.appendRow("luc", "Luc", "Saffre")
         q.appendRow("james", "James", "Bond")
         

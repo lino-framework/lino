@@ -175,7 +175,7 @@ class SynchronizerTask(Task):
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
-        self.refresh()
+        self.job.refresh()
         if os.path.isfile(name):
             self.delete_file(name)
         elif os.path.isdir(name):
@@ -417,33 +417,24 @@ where SRC and DEST are two directories to be synchronized.
             dest="showProgress",
             default=False)
     
-    def applyOptions(self,options,args):
-        console.ConsoleApplication.applyOptions(self,options,args)
-
-        if len(args) != 2:
+    def run(self,ui):
+         
+        if len(self.args) != 2:
             raise console.UsageError("needs 2 arguments")
             #parser.print_help() 
             #return -1
 
-        src = args[0]
-        target = args[1]
-    
-        #src = os.path.normpath(src)
-        #target = os.path.normpath(target)
+        task = SynchronizerTask(
+            src=self.args[0],
+            target=self.args[1],
+            simulate=self.options.simulate,
+            showProgress=self.options.showProgress)
 
-        self.task = SynchronizerTask(
-            src=src,
-            target=target,
-            simulate=options.simulate,
-            showProgress=options.showProgress)
-
-    def run(self,ui):
-         
-        if not self.task.simulate:
-            if not ui.confirm(self.task.getLabel()+"\n"+_("Start?")):
+        if not task.simulate:
+            if not ui.confirm(task.getLabel()+"\n"+_("Start?")):
                 return
         
-        self.task.run(ui)
+        task.run(ui)
 
 ##     for l in sync.summary():
 ##         console.notice(l)
