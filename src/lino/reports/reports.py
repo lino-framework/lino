@@ -42,13 +42,17 @@ class Report(Describable):
                  rowHeight=None,
                  name=None,
                  label=None,
-                 doc=None):
+                 doc=None,
+                 **kw
+                 ):
 
         self.columns = []
         self.groups = []
         self.totals = []
         self._onRowEvents=[]
-        
+
+        if len(kw):
+            iterator=iterator.child(**kw)
         self.iterator = iterator
 
         self.rowHeight = rowHeight
@@ -56,6 +60,7 @@ class Report(Describable):
         self.width = width
         
         Describable.__init__(self,name,label,doc)
+        
 
 ##     def setdefaults(self,kw):
 ##         kw.setdefault('columnNames',self.columnNames)
@@ -73,13 +78,14 @@ class Report(Describable):
               doc=None,
               **kw):
         
-        if iterator is None:
-            if len(kw):
-                iterator=self.iterator.child(**kw)
-            else:
-                iterator=self.iterator
-        else:
-            assert len(kw) == 0
+        if iterator is None: iterator=self.iterator
+##         if iterator is None:
+##             if len(kw):
+##                 iterator=self.iterator.child(**kw)
+##             else:
+##                 iterator=self.iterator
+##         else:
+##             assert len(kw) == 0
             
         if columnWidths is None: columnWidths=self.columnWidths
         if width is None: width=self.width
@@ -90,7 +96,7 @@ class Report(Describable):
         
         return self.__class__(iterator,
                               columnWidths,width,rowHeight,
-                              name,label,doc)
+                              name,label,doc,**kw)
 
     def getTitle(self):
         return self.getLabel()
@@ -139,12 +145,9 @@ class Report(Describable):
 
     def beginReport(self,doc):
         self.computeWidths()
-        #self.rowno = 0
-        #self.onBeginReport()
         
     def endReport(self,doc):
         pass
-        #self.onEndReport()
 
         
         
@@ -153,16 +156,9 @@ class Report(Describable):
 
         for e in self._onRowEvents:
             e(row)
-        # note: a report is not thread-safe
-        #assert self.cellValues is None
-        #self.rowno += 1
-        #self.cellValues = []
-        #self.crow = row
-        #cells = []
-        
-        #self.onBeginRow()
+            
 
-        # first compute all values
+        # compute all cell values
         for col in self.columns:
             if col.when and not col.when(row):
                 v = None
@@ -170,47 +166,9 @@ class Report(Describable):
                 v = col.getValue(row)
             row.cells.append(Cell(row,col,v))
             
-##         # now only stringify all values
-##         i = 0
-##         for col in self.columns:
-##             cellValues[i] = doc.formatReportCell(
-##                 col, cellValues[i])
-##             i += 1
-            
-        #self.onEndRow()
-        
-        #forget cellValues and crow 
-        #self.cellValues = None
-        #self.crow = None
 
         return row
 
-##     def formatCell(self,doc,col,value):
-##         if value is None:
-##             return ""
-##         return col.format(value)
-
-    ##
-    ## methods to be overridden by implementor subclasses
-    ##
-        
-##     def onBeginReport(self):
-##         self.renderHeader()
-        
-##     def onEndReport(self):
-##         self.renderFooter()
-        
-##     def renderHeader(self):
-##         pass
-    
-##     def renderFooter(self):
-##         pass
-
-##     def onBeginRow(self):
-##         pass
-    
-##     def onEndRow(self):
-##         pass
     
     ##
     ## public methods for user code
@@ -224,16 +182,11 @@ class Report(Describable):
     def onEach(self,meth):
         self._onRowEvents.append(meth)
 
-##     def execute(self,iter):
-##         self.beginReport()
-##         for row in iter:
-##             self.processRow(row)
-##         self.endReport()
 
 class DataReport(Report):
     def __init__(self,ds,
                  columnWidths=None,width=None,rowHeight=None,
-                 name=None,label=None,doc=None):
+                 name=None,label=None,doc=None,**kw):
 
         if name is None:
             name=ds._table.getName()
@@ -242,7 +195,7 @@ class DataReport(Report):
         
         Report.__init__(self,ds,
                         columnWidths,width,rowHeight,
-                        name=name,label=label,doc=doc)
+                        name=name,label=label,doc=doc,**kw)
     
     def beginReport(self,doc):
         if len(self.columns) == 0:

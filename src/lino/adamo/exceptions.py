@@ -19,17 +19,18 @@
 class StartupDelay(Exception):
     pass
 
+
 class InvalidRequestError(Exception):
     "The requested action was refused"
-    #pass
+
+class NoSuchField(InvalidRequestError):
+    "no such field"
 
 class DataVeto(Exception):
     "Invalid data submitted"
-    #pass
 
 class RowLockFailed(Exception):
     "Failed to get a lock for a row"
-    #pass
 
 class DatabaseError(Exception):
     "dbd-specific exception was raised"

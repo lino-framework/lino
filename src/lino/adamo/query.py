@@ -132,7 +132,6 @@ class BaseColumnList:
         return col
 
     def createColumn(self,colIndex,name,join,fld):
-        # overridden by Report
         return DataColumn(self,colIndex,name,join,fld)
 
             

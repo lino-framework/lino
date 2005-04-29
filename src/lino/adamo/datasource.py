@@ -22,7 +22,7 @@ from lino.misc.etc import issequence
 from lino.adamo.query import DataColumnList
 from lino.adamo.datatypes import STRING
 from lino.adamo.exceptions import DataVeto, InvalidRequestError
-from lino.adamo.rowattrs import FieldContainer, NoSuchField, Pointer
+
 
 class SimpleDatasource:
     # inherited by Datasource
@@ -81,6 +81,13 @@ class SimpleDatasource:
     def zap(self):
         self._store.zap()
 
+    def addFilter(self,cls,*args,**kw):
+        flt=cls(self,*args,**kw)
+        if self._filters is None:
+            self._filters=[]
+        self._filters.append(flt)
+        self.rowcount=None
+
     def deleteAll(self):
         self._connection.executeDeleteAll(self)
         
@@ -112,10 +119,15 @@ class SimpleDatasource:
                   orderBy=None,
                   sortColumns=None,
                   sqlFilters=None,
+                  filters=None,
                   search=None,
                   samples=None,
                   label=None,
                   **kw):
+        
+        #print "Datasource.configure()", self
+        self.rowcount = None
+        
         self._viewName = viewName
         if label is not None:
             assert type(label) == type(""),\
@@ -138,6 +150,9 @@ class SimpleDatasource:
             self.setSortColumns(sortColumns)
             
         self.setFilterExpressions(sqlFilters,search)
+
+        self._filters=filters
+            
         
         if samples is None:
             self.setSamples(**kw)
@@ -361,6 +376,9 @@ class SimpleDatasource:
             kw.setdefault('label',self._label)
         if self._sqlFilters is not None:
             kw.setdefault('sqlFilters',tuple(self._sqlFilters))
+        if self._filters is not None:
+            kw.setdefault('filters',list(self._filters))
+            #print self._filters
         #if samples is None:
         #kw.setdefault('samples',self._samples)
         for k,v in self._samples.items():
@@ -755,6 +773,7 @@ class SimpleDatasource:
         return DataIterator(self,**kw)
 
     def onStoreUpdate(self):
+        print __file__,"onStoreUpdate()"
         self.rowcount = None
     
     def __len__(self):
@@ -867,7 +886,10 @@ class Datasource(SimpleDatasource):
 
     
 
-    
+def trigger(events,*args):
+    for e in events:
+        if not e(*args): return False
+    return True
             
 
 class DataIterator:
@@ -883,11 +905,17 @@ class DataIterator:
         return self
     
     def next(self):
-        sqlatoms = self.csr.fetchone()
-        if sqlatoms == None:
-            raise StopIteration
-        self.recno += 1
-        atomicRow = self.ds.csr2atoms(sqlatoms)
-        return self.ds.atoms2row(atomicRow,new=False)
+##         while True:
+            sqlatoms = self.csr.fetchone()
+            if sqlatoms == None:
+                raise StopIteration
+            atomicRow = self.ds.csr2atoms(sqlatoms)
+            row=self.ds.atoms2row(atomicRow,new=False)
+##             if self.ds._filters is not None:
+##                 if not trigger(self.ds._filters,row):
+##                     continue
+                    
+            self.recno += 1
+            return row
 
 

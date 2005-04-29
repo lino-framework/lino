@@ -32,9 +32,9 @@ from lino.misc.etc import issequence
 
 #from widgets import Command
 from lino.adamo import datatypes 
-from lino.adamo.exceptions import StartupDelay
+from lino.adamo.exceptions import StartupDelay, NoSuchField
 from lino.adamo.rowattrs import RowAttribute,\
-     Field, BabelField, Pointer, Detail, FieldContainer
+     Field, BabelField, Pointer, Detail
 from lino.adamo.row import StoredDataRow
 
 
@@ -60,6 +60,52 @@ class SchemaComponent:
 
     def getSchema(self):
         return self._schema
+
+
+class FieldContainer:
+    # inherited by Table and FormTemplate
+    def __init__(self):
+        self.__dict__['_fields'] = []
+        self.__dict__['_rowAttrs'] = {}
+
+    def addField(self,name,type,*args,**kw):
+        return self.addRowAttr(Field(self,name,type,*args,**kw))
+    def addPointer(self,name,*args,**kw):
+        return self.addRowAttr(Pointer(self,name,*args,**kw))
+    def addDetail(self,*args,**kw):
+        return self.addRowAttr(Detail(self,*args,**kw))
+    def addBabelField(self,name,type,*args,**kw):
+        return self.addRowAttr(BabelField(self,name,type,*args,**kw))
+
+    def addRowAttr(self,attr):
+        assert attr._owner == self
+        self._fields.append(attr)
+        self._rowAttrs[attr.name] = attr
+        i = self.Instance
+        try:
+            meth = getattr(i,"validate_"+attr.name)
+            attr._onValidate.append(meth)
+        except AttributeError:
+            pass
+        
+        try:
+            meth = getattr(i,"after_"+attr.name)
+            attr.afterSetAttr = meth
+        except AttributeError:
+            pass
+        return attr
+
+    def getFields(self):
+        return self._fields
+    
+    def getRowAttr(self,name):
+        try:
+            return self._rowAttrs[name]
+        except KeyError,e:
+            raise NoSuchField, "%s.%s" % (self.name,name)
+
+            #raise AttributeError,\
+    
 
 
 class Table(FieldContainer,SchemaComponent,Describable):
@@ -187,14 +233,14 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._initStatus = 4
 
             
-    def addDetail(self,name,ptr,**kw):
-        # used by Pointer. onTableInit3()
-        #print '%s.addDetail(%s)' % (self.getTableName(),name)
-        dtl = Detail(self,name,ptr, **kw)
-        self._rowAttrs[name] = dtl
-        #dtl.setOwner(self,name)
-        #dtl.onTableInit2(self,schema)
-        #setattr(self,ame,dtl)
+##     def addDetail(self,name,ptr,**kw):
+##         # used by Pointer. onTableInit3()
+##         #print '%s.addDetail(%s)' % (self.getTableName(),name)
+##         dtl = Detail(self,name,ptr, **kw)
+##         self._rowAttrs[name] = dtl
+##         #dtl.setOwner(self,name)
+##         #dtl.onTableInit2(self,schema)
+##         #setattr(self,ame,dtl)
 
     def addView(self,viewName,columnNames=None,**kw):
         if columnNames is not None:

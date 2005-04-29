@@ -37,8 +37,8 @@ class PlainDocument(GenericDocument):
     def write(self,txt):
         self.writer(txt)
         
-    def report(self,rpt,*args,**kw):
-        
+    def report(self,rpt):
+        #print __file__, rpt.iterator._filters
         # initialize...
         rpt.beginReport(self)
         wrappers = []
@@ -72,9 +72,9 @@ class PlainDocument(GenericDocument):
               for col in rpt.columns]
         self.write("+".join(l) + "\n")
         
+        print __file__,rpt.iterator._filters
         # iterate...
         for item in rpt.iterator:
-            
             row=rpt.processItem(self,item)
 
             wrappedCells = []

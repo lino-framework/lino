@@ -86,10 +86,16 @@ INSERT INTO Orders ( id, date, customer_id, totalPrice, isRegistered )
         LINES.startDump()
         q = o.lines.query()
         q.appendRow(product=p,qty=2)
-        #print self.db.conn.stopDump()
+        s=LINES.stopDump()
+        #print s
         # SELECT MAX(id) FROM LINES;
-        self.assertEquivalent(LINES.stopDump(),"""\
-INSERT INTO OrderLines ( id, ordr_id, productProducts_id, productServices_id, qty ) VALUES ( 8, 5, 3, NULL, 2 );
+        self.assertEquivalent(s,"""\
+SELECT id, date, customer_id, totalPrice, isRegistered
+FROM Orders
+WHERE id = 5;
+INSERT INTO OrderLines (
+id, ordr_id, productProducts_id, productServices_id, qty )
+VALUES ( 8, 5, 3, NULL, 2 );
 """)
         q = LINES.query(ordr=ORDERS.peek(1))
         self.assertEqual(len(q),1)

@@ -24,7 +24,9 @@ warnings.filterwarnings("ignore",
                         UserWarning,
                         "sqlite")
 
-import sqlite
+import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
+#import sqlite # pysqlite 0.4.3
+
 from types import TupleType
 
 from lino.adamo.sql import SqlConnection

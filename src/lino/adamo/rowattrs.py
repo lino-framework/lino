@@ -368,7 +368,6 @@ class BabelField(Field):
         dblangs = row.getDatabase().getBabelLangs()
         # 35.py dblangs = row._ds._session.getBabelLangs()
         values = row.getFieldValue(self.name)
-        #values = Field.getCellValue(self,row)
         if values is None:
             values = [None] * len(dblangs)
             row._values[self.name] = values
@@ -680,7 +679,7 @@ class Detail(RowAttribute):
         return ()
     
     def atoms2row(self,atomicRow,colAtoms,row):
-        pass
+        row._values[self.name] = None
     
     def atoms2value(self,atomicRow,colAtoms,sess):
         assert len(colAtoms) == 0
@@ -695,16 +694,18 @@ class Detail(RowAttribute):
         ui.showDataGrid(ds)
         return True
 
-    def getCellValue(self,row): 
-        kw = dict(self._queryParams)
-        #kw.setdefault('samples',{})
-        #kw['samples'][self.pointer._name] = row
-        kw[self.pointer.name] = row
-        return row.getSession().query(self.pointer._owner.__class__,
-                                      **kw)
-##          slaveSource = getattr(row.getSession().tables,
-##                               self.pointer._owner.getTableName())
-##      return slaveSource.query(**kw)
+    #def getDefaultValue(self,sess):
+
+    def getCellValue(self,row):
+        ds=row.getFieldValue(self.name)
+        if ds is None:
+            #ds=self.getDefaultValue()
+            kw = dict(self._queryParams)
+            kw[self.pointer.name] = row
+            ds=row.getSession().query(
+                self.pointer._owner.__class__, **kw)
+            row._values[self.name] = ds
+        return ds
         
     def getType(self):
         return datatypes.STRING
@@ -745,46 +746,3 @@ class Vurt(Field):
 
     
     
-class FieldContainer:
-    # inherited by Table and FormTemplate
-    def __init__(self):
-        self.__dict__['_fields'] = []
-        self.__dict__['_rowAttrs'] = {}
-
-    def addField(self,name,type,*args,**kw):
-        return self.addRowAttr(Field(self,name,type,*args,**kw))
-    def addPointer(self,name,*args,**kw):
-        return self.addRowAttr(Pointer(self,name,*args,**kw))
-##     def addDetail(self,name,fromTable,ptrName=None,*args,**kw):
-##         return self.addRowAttr(Detail(self,name,*args,**kw))
-    def addBabelField(self,name,type,*args,**kw):
-        return self.addRowAttr(BabelField(self,name,type,*args,**kw))
-
-    def addRowAttr(self,attr):
-        assert attr._owner == self
-        self._fields.append(attr)
-        self._rowAttrs[attr.name] = attr
-        i = self.Instance
-        try:
-            meth = getattr(i,"validate_"+attr.name)
-            attr._onValidate.append(meth)
-        except AttributeError:
-            pass
-        
-        try:
-            meth = getattr(i,"after_"+attr.name)
-            attr.afterSetAttr = meth
-        except AttributeError:
-            pass
-        return attr
-
-    def getFields(self):
-        return self._fields
-    
-    def getRowAttr(self,name):
-        try:
-            return self._rowAttrs[name]
-        except KeyError,e:
-            raise NoSuchField, "%s.%s" % (self.name,name)
-
-            #raise AttributeError,\

@@ -20,13 +20,15 @@ import types
 import datetime
 
 from lino.adamo import datatypes 
-from lino.adamo.rowattrs import Field, Pointer #, Detail
+from lino.adamo.rowattrs import Field, Pointer, Detail
 #from query import Query, QueryColumn
 
 from lino.adamo.connection import Connection
 #from lino.ui import console
 
 #from mx.DateTime import DateTime
+
+from lino.adamo.filters import NotEmpty
 
 
 class SqlConnection(Connection):
@@ -268,6 +270,34 @@ class SqlConnection(Connection):
                 sql += " LIMIT %d OFFSET %d" % (limit,offset)
                 
         return sql
+
+    def filterWhere(self,flt,ds):
+        l=[]
+        if isinstance(flt,NotEmpty):
+            if isinstance(flt.col.rowAttr,Field):
+                for a in flt.col.getAtoms():
+                    l.append(a.name+" NOT NULL")
+            elif isinstance(flt.col.rowAttr,Detail):
+                dtl=flt.col.rowAttr
+                kw=dict(dtl._queryParams)
+                kw[dtl.pointer.name]
+                s = "EXISTS (SELECT * FROM "
+                s += dtl.pointer._owner.getTableName()
+                s += " WHERE "
+                l2=[]
+                for name,t in dtl.pointer._owner.getPrimaryAtoms():
+                    #s2=name
+                    s2=dtl.pointer._owner.getTableName()+"."+name
+                    s2+="="
+                    s2+=ds._table.getTableName()+"."+name
+                    l2.append(s2)
+                s+=" AND ".join(l2)
+                s += ")"
+                l.append(s)
+            else:
+                raise NotImplementedError
+                    
+        return l
     
 
     def whereClause(self,ds):
@@ -275,6 +305,9 @@ class SqlConnection(Connection):
         for (atom,value) in ds.getAtomicSamples():
             where.append(self.testEqual(atom.name,atom.type,value))
         where += ds.filterExpressions
+        if ds._filters is not None:
+            for flt in ds._filters:
+                where+=self.filterWhere(flt,ds)
         if len(where):
             return "\n  WHERE " + "\n     AND ".join(where)
         return ""
@@ -298,12 +331,12 @@ class SqlConnection(Connection):
         sql = self.getSqlSelect(ds,sqlColumnNames='COUNT()' )
         #print sql
         csr = self.sql_exec(sql)
-        if self.DEBUG:
-            print "%s -> %d" % (sql, csr.rowcount)
         assert csr.rowcount == 1
         atomicRow = csr.fetchone()
         #print atomicRow
         count = int(atomicRow[0])
+        #if self.DEBUG:
+        #print "%s -> %d" % (sql, count)
         # print repr(count)
         return count
         #print "%s -> %d rows" % (sql,csr.rowcount)
@@ -463,6 +496,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         self.sql_exec(sql)
 
     def executeDeleteAll(self,ds):
+        assert ds._filters is None
         sql = "DELETE FROM " + ds._table.getTableName()
         sql += self.whereClause(ds)
         #print sql

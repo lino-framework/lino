@@ -18,7 +18,8 @@
 
 import types
 
-from lino.adamo.exceptions import DataVeto, InvalidRequestError
+from lino.adamo.exceptions import DataVeto, InvalidRequestError, \
+     NoSuchField
 
 ## from lino.adamo.rowattrs import RowAttribute,\
 ##      Field, BabelField, Pointer, Detail, FieldContainer
@@ -244,29 +245,21 @@ class StoredDataRow(DataRow):
         
         # print "makeComplete() : %s" % repr(self)
         id = self.getRowId()
-        #leadRow = self._ds._store._peekQuery.peek(id)
-        #d = self._values
         atomicRow = self._ds._connection.executePeek(
             self._ds._store._peekQuery,id,self._ds._session)
         if self._new:
             if atomicRow is not None:
                 raise DataVeto("Cannot create another %s row %s" \
                                     % (self.__class__.__name__, id))
-            #for a in self._ds._store._peekQuery.getAtoms():
             for attrname in self._ds._table.getAttrList():
                 self._values.setdefault(attrname,None)
         else:
             if atomicRow is None:
-                #self.__dict__['_new'] = True
-                raise DataVeto("Cannot find %s row %s" \
-                                    % (self._ds._table.getTableName(), id))
+                raise DataVeto(
+                    "Cannot find %s row %s" \
+                    % (self._ds._table.getTableName(), id))
             self._ds._store._peekQuery.atoms2row(atomicRow,self)
-            #for a in self._ds._store._peekQuery.getAtoms():
-            #   self._values.setdefault(a.name,atomicRow[a.index])
-            #if self._dirty:
-            #   raise "cannot yet call readFromStore() for a dirty row"
                 
-        #self.__dict__['_values'] = atomicRow
         
         """maybe a third argument `fillMode` to atoms2dict() which
         indicates whether existing (known) values should be
