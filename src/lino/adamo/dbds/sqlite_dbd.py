@@ -18,14 +18,17 @@
 
 import os
 #import time
-import warnings
-warnings.filterwarnings("ignore",
-                        "DB-API extension",
-                        UserWarning,
-                        "sqlite")
 
-import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
-#import sqlite # pysqlite 0.4.3
+if True:
+    import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
+else:
+    import warnings
+    warnings.filterwarnings("ignore",
+                            "DB-API extension",
+                            UserWarning,
+                            "sqlite")
+
+    import sqlite # pysqlite 0.4.3
 
 from types import TupleType
 
