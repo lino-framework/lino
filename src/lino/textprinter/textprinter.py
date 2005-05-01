@@ -16,7 +16,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import sys, os
+import sys
+import os
+import codecs
 
 #from lino.ui import console
 
@@ -160,15 +162,15 @@ class TextPrinter:
     def readfile(self,inputfile,coding=None):
         if coding is None:
             coding = self.coding
-        f = file(inputfile)
+        f = codecs.open(inputfile,"r",coding)
         cwd = os.getcwd()
         dirname = os.path.dirname(inputfile)
         if len(dirname) != 0:
             os.chdir(dirname)
             #print "chdir", dirname
         for line in f.readlines():
-            if coding is not None:
-                line = line.decode(coding)
+            #if coding is not None:
+            #    line = line.decode(coding)
             #self.printLine(line.rstrip())
             self.writeln(line)
         os.chdir(cwd)

@@ -36,14 +36,20 @@ characters. The Line terminator is the LF character.
 """
 
 import os
+import codecs
+
 from lino.adamo.exceptions import DataVeto
 
 dataDir = os.path.dirname(__file__)
 
 def populate(q):
     q.setBabelLangs('en fr')
-    f = file(os.path.join(dataDir,'ISO-639-2_values_8bits.txt'))
+    #f = file(os.path.join(dataDir,'ISO-639-2_values_8bits.txt'))
+    f = codecs.open(
+        os.path.join(dataDir,'ISO-639-2_values_8bits.txt'),
+        "r", "latin1")
     for line in f.readlines():
+        #print line
         a = line.split('|')
         if len(a) > 2:
             bibliographic = a[0]

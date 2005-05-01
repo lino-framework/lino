@@ -20,6 +20,7 @@ import atexit
 #from cStringIO import StringIO
 
 from lino.adamo.session import Session
+from lino.adamo import DatabaseError
 #from lino.ui import console
 
 class Center:
@@ -41,7 +42,14 @@ class Center:
         try:
             from lino.adamo.dbds.sqlite_dbd import Connection
         except ImportError:
-            from lino.adamo.dbds.mysql_dbd import Connection
+            try:
+                from lino.adamo.dbds.mysql_dbd import Connection
+            except ImportError:
+                try:
+                    from lino.adamo.dbds.gadfly_dbd import Connection
+                except ImportError:
+                    raise DatabaseError("no database available")
+                
         conn = Connection(ui,*args,**kw)
         self._connections.append(conn)
         return conn

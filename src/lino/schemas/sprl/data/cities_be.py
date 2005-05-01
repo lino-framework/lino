@@ -21,16 +21,17 @@
 
 import csv
 import os
+import codecs
 
 from lino.schemas.sprl.tables import Nations
-
 
 dataDir = os.path.dirname(__file__)
 
 def populate(q):
     #be = q.getColumnByName("nation").peek('be')
     be = q.getSession().peek(Nations,'be')
-    f = file(os.path.join(dataDir,'belgzip.csv'),'rb')
+    #f = open(os.path.join(dataDir,'belgzip.csv'),'rb')
+    f = codecs.open(os.path.join(dataDir,'belgzip.csv'),'rb',"cp850")
     r = csv.reader(f)
     r.next()
     #cities = be.cities
@@ -38,7 +39,8 @@ def populate(q):
     for (name,zip) in r:
         q.appendRow(name=name,zipCode=zip,nation=be)
         #q.appendRow(name=name,zipCode=zip,nation_id='be')
-
+        
+    f.close()
     
 
     

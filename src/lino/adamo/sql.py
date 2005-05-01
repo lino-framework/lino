@@ -316,8 +316,8 @@ class SqlConnection(Connection):
         sql = self.getSqlSelect(ds,sqlColumnNames=None, **kw)
         #print sql
         csr = self.sql_exec(sql)
-        if self.DEBUG:
-            print "%s -> %d rows" % (sql,csr.rowcount)
+##         if self.DEBUG:
+##             print "%s -> %d rows" % (sql,csr.rowcount)
 ##          print "Selected %d rows for %s" % (csr.rowcount,
 ##                                                        query.getName())
         
@@ -329,19 +329,13 @@ class SqlConnection(Connection):
 
     def executeCount(self,ds):
         sql = self.getSqlSelect(ds,sqlColumnNames='COUNT()' )
-        #print sql
         csr = self.sql_exec(sql)
-        assert csr.rowcount == 1
+        #assert csr.rowcount is None or csr.rowcount == 1
         atomicRow = csr.fetchone()
-        #print atomicRow
+        assert csr.fetchone() is None, "more than one row?!"
         count = int(atomicRow[0])
-        #if self.DEBUG:
         #print "%s -> %d" % (sql, count)
-        # print repr(count)
         return count
-        #print "%s -> %d rows" % (sql,csr.rowcount)
-        #print csr.
-        #return csr.rowcount
 
     def isVirtual(self):
         return False
@@ -366,7 +360,8 @@ class SqlConnection(Connection):
             sql += " WHERE " + " AND ".join(l)
         #print sql
         csr = self.sql_exec(sql)
-        assert csr.rowcount == 1
+        #assert csr.rowcount is None or csr.rowcount == 1
+        #assert csr.rowcount == 1
         val = csr.fetchone()[0]
         return self.sql2value(val,pka[-1][1])
 
@@ -390,16 +385,25 @@ class SqlConnection(Connection):
             i += 1
         sql += " AND ".join(l)
         csr = self.sql_exec(sql)
-        if False: 
-            print "%s -> %d rows" % (sql,csr.rowcount)
-        if csr.rowcount == 0:
+        atomicRow=csr.fetchone()
+        #print atomicRow
+        if atomicRow is None:
             return None
+        assert csr.fetchone() is None, \
+               "%s.peek(%r) found more than one row" % (
+            table.getName(), id)
+        return self.csr2atoms(clist,atomicRow,sess)
+    
+##         if False: 
+##             print "%s -> %d rows" % (sql,csr.rowcount)
+##         if csr.rowcount == 0:
+##             return None
         
-        assert csr.rowcount == 1,\
-                 "%s.peek(%s) found %d rows" % (table.getName(),\
-                                                repr(id),\
-                                                csr.rowcount)
-        return self.csr2atoms(clist,csr.fetchone(),sess)
+##         assert csr.rowcount == 1,\
+##                  "%s.peek(%s) found %d rows" % (table.getName(),\
+##                                                 repr(id),\
+##                                                 csr.rowcount)
+##         return self.csr2atoms(clist,csr.fetchone(),sess)
     
     def csr2atoms(self,clist,sqlatoms,sess):
         l = []
@@ -444,8 +448,10 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
             l.append(
                 self.value2sql( atomicRow[atom.index],
                                      atom.type))
-            
+        #try:
         sql += ", ".join(l)
+        #except UnicodeDecodeError,e:
+        #    raise Exception(repr(l) + "\n" + str(e))
         
         sql += " )"
         self.sql_exec(sql)

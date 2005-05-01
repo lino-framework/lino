@@ -18,6 +18,7 @@
 
 import os
 #import time
+from types import StringType
 
 if True:
     import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
@@ -80,8 +81,11 @@ class Connection(SqlConnection):
 ##         if self._filename is None:
 ##             print sql+";"
 ##             return
-        csr = sqlite.Cursor(self._dbconn,TupleType)
+        #csr = sqlite.Cursor(self._dbconn,TupleType)
+        csr=self._dbconn.cursor()
         # print "sqlite_dbd.py:" + sql
+        if type(sql) == StringType:
+            sql=sql.decode("latin1")
         try:
 ##              if "PARTNERS" in sql:
 ##                  print "sqlite_dbd.py:" + sql

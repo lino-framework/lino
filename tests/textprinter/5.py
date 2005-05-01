@@ -1,3 +1,4 @@
+#coding:latin1
 ## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
@@ -16,36 +17,36 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-testing setPageLandscape()
-"""
-
+import os
+opj=os.path.join
 from lino.misc.tsttools import TestCase, main
+
+dataPath = os.path.join(os.path.dirname(__file__),'testdata')
+dataPath = os.path.abspath(dataPath)
 
 class Case(TestCase):
     ""
 
     def doit(self,d):
-        d.setPageLandscape()
-        d.drawDebugRaster()
-        d.printLine("")
-        d.printLine("Win32PrinterDocument Test page")
-        d.printLine("")
-        cols = 9
-        d.printLine("".join([" "*9+str(i+1) for i in range(cols)]))
-        d.printLine("1234567890"*cols)
-        d.printLine("")
-        d.printLine("Here is some \033b1bold\033b0 text.")
-        d.printLine("Here is some \033u1underlined\033u0 text.")
-        d.printLine("Here is some \033i1italic\033i0 text.")
-        
+
+        d.writeln("--- File 5.prn:---")
+        d.readfile(opj(dataPath,"5.prn"),coding="cp850")
+        d.writeln("--- eof 5.prn---")
+
+        d.writeln("Here is some more text.")
+        d.writeln("Ännchen Müller machte große Augen.")
+        d.write("And here")
+        d.write(" is some")
+        d.write(" frag")
+        d.writeln("mented text.")
+        #d.drawDebugRaster()
         d.endDoc()
         
 
     def test01(self):
 
         from lino.textprinter import winprn
-        spoolFile = self.addTempFile("4.ps",showOutput=True)
+        spoolFile = self.addTempFile("5.ps",showOutput=True)
         d = winprn.Win32TextPrinter(self.win32_printerName_PS,
                                     spoolFile)
         self.doit(d)

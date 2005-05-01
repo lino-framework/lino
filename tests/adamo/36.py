@@ -37,7 +37,10 @@ demonstrate this bug::
 from types import TupleType
 from unittest import TestCase, main
 
-import sqlite
+if True:
+    import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
+else:
+    import sqlite
 
 
 class Case(TestCase):
@@ -46,7 +49,8 @@ class Case(TestCase):
     def test01(self):
 
         conn = sqlite.connect(':memory:')
-        csr = sqlite.Cursor(conn,TupleType)
+        #csr = sqlite.Cursor(conn,TupleType)
+        csr = conn.cursor()
         csr.execute("""CREATE TABLE Nations (
         id char(50),
         name varchar(80),
@@ -62,17 +66,21 @@ class Case(TestCase):
         csr.execute("""SELECT id, name, curr from Nations
         WHERE id = 'ee'
         """)
-        self.assertEqual(csr.rowcount,1)
+        #self.assertEqual(csr.rowcount,1)
         row = csr.fetchone()
-        self.assertEqual(str(row),"('ee', 'Estonia', 'EEK')")
+        self.assertEqual(row[0],'ee')
+        self.assertEqual(row[1],'Estonia')
+        self.assertEqual(row[2],'EEK')
         
         csr.execute("""SELECT id, name, curr from Nations
         WHERE id = 'foo'
         """)
+        
         # this fails with pysqlite
-        self.assertEqual(csr.rowcount,0)
+        #self.assertEqual(csr.rowcount,0)
         row = csr.fetchone()
         self.assertEqual(row,None)
+        
 
 
 

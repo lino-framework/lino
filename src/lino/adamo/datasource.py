@@ -651,11 +651,12 @@ class SimpleDatasource:
         if offset < 0:
             offset = len(self) + offset 
         csr = self.executeSelect(offset=offset,limit=1)
-        if csr.rowcount == 0:
+        sqlatoms=csr.fetchone()
+        if sqlatoms is None:
             return None
-        assert csr.rowcount == 1
-        #atomicRow = csr.fetchone()
-        sqlatoms = csr.fetchone()
+        assert csr.fetchone() is None, \
+               "Datasource.getRowAt() got more than one row"
+        
         atomicRow = self.csr2atoms(sqlatoms)
         return self.atoms2row(atomicRow,False)
 
@@ -727,18 +728,17 @@ class SimpleDatasource:
         #q = self._table.query(filters=' AND'.join(flt))
         #csr = self._connection.executeSelect(q)
         csr = ds.executeSelect()
-        if csr.rowcount != 1:
-            #print "findone(%s) found %d rows" % (
-            #    repr(knownValues), csr.rowcount)
-            return None
-            #raise DataVeto("findone(%s) found %d rows" % (
-            #   repr(knownValues), csr.rowcount))
         
         sqlatoms = csr.fetchone()
-        assert sqlatoms is not None, repr(csr.rowcount)
+        if sqlatoms is None:
+            return None
+
+        assert csr.fetchone() is None, \
+               "Datasource.findone() found more than one row"
+               #"%s.findone(%r) found more than one row" % (
+               #    self._table.getTableName(), knownValues)
+        
         atomicRow = self.csr2atoms(sqlatoms)
-        #d = self._clist.at2d(atomicRow)
-        #return self._table.Row(self,d,False)
         return self.atoms2row(atomicRow,False)
     
 
