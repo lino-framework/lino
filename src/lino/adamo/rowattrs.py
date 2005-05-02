@@ -84,8 +84,8 @@ class RowAttribute(Describable):
     def onAreaInit(self,area):
         pass
     
-    def setSticky(self):
-        self.sticky = True
+    #def setSticky(self):
+    #    self.sticky = True
 
     def setMandatory(self):
         self._isMandatory = True
@@ -422,7 +422,7 @@ class Pointer(RowAttribute):
         RowAttribute.__init__(self,owner,name,**kw)
         self._toClass = toClass
         
-        self.sticky = True # joins are sticky by default
+        #self.sticky = True # joins are sticky by default
         
         self.detailName = detailName
         #self.dtlColumnNames = None

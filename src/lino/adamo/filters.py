@@ -17,9 +17,12 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 class Filter:
-    pass
+    def getLabel(self):
+        raise NotImplementedError
 
 class NotEmpty(Filter):
     def __init__(self,ds,columnName):
         self.col=ds.getColumnByName(columnName)
     
+    def getLabel(self):
+        return "'%s' not empty" % self.col.getLabel()

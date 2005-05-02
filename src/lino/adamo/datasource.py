@@ -432,6 +432,10 @@ class SimpleDatasource:
                     lbl += col.name + "=" \
                              + col.rowAttr.format(v)
                 lbl += ")"
+            if self._filters is not None:
+                lbl += " where "
+                lbl += " and ".join(
+                    [f.getLabel() for f in self._filters])
             return lbl
         if callable(self._label):
             raise "not yet tested"

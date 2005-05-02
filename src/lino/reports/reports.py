@@ -190,8 +190,8 @@ class DataReport(Report):
 
         if name is None:
             name=ds._table.getName()
-        if label is None: label=ds._table.getLabel()
-        if doc is None: doc=ds._table.getDoc()
+        if label is None: label=ds.getLabel()
+        #if doc is None: doc=ds.getDoc()
         
         Report.__init__(self,ds,
                         columnWidths,width,rowHeight,

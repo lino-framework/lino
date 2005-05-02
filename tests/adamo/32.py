@@ -87,7 +87,7 @@ Journals            |    1|outgoing invoices   |outgoing invoices
 Years               |    0|                    |                    
 Products            |    2|(3,)                |(16,)               
 Invoices            |    1|OUT-1               |OUT-1               
-InvoiceLines        |    2|('OUT', 1, 1)       |('OUT', 1, 2)       
+InvoiceLines        |    2|(u'OUT', 1, 1)      |(u'OUT', 1, 2)      
 Bookings            |    0|                    |                    
 Authors             |   14|Bill Gates          |Winston Churchill   
 AuthorEvents        |    0|                    |                    

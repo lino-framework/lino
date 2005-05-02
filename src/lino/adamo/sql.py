@@ -278,19 +278,33 @@ class SqlConnection(Connection):
                 for a in flt.col.getAtoms():
                     l.append(a.name+" NOT NULL")
             elif isinstance(flt.col.rowAttr,Detail):
-                dtl=flt.col.rowAttr
-                kw=dict(dtl._queryParams)
-                kw[dtl.pointer.name]
+                #dtl=flt.col.rowAttr
+                #kw=dict(dtl._queryParams)
+                #kw[dtl.pointer.name]
+                
+                master=flt.col.rowAttr._owner
+                slave=flt.col.rowAttr.pointer._owner
+                #print "Master:", master.getTableName()
+                #print "Slave:", slave.getTableName()
                 s = "EXISTS (SELECT * FROM "
-                s += dtl.pointer._owner.getTableName()
+                s += slave.getTableName()
                 s += " WHERE "
                 l2=[]
-                for name,t in dtl.pointer._owner.getPrimaryAtoms():
+                i=0
+                #pka=flt.col._atoms
+                pka=flt.col.rowAttr.pointer.getNeededAtoms(None)
+                #print master.getPrimaryAtoms()
+                #print pka
+                #for name,t in dtl.pointer._owner.getPrimaryAtoms():
+                for name,t in master.getPrimaryAtoms():
                     #s2=name
-                    s2=dtl.pointer._owner.getTableName()+"."+name
+                    s2=master.getTableName()+"."+name
                     s2+="="
-                    s2+=ds._table.getTableName()+"."+name
+                    #print s2
+                    s2+=slave.getTableName()+"."+pka[i][0]
+                    #print s2
                     l2.append(s2)
+                    i+=1
                 s+=" AND ".join(l2)
                 s += ")"
                 l.append(s)
