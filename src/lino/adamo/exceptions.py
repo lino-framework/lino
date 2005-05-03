@@ -35,6 +35,10 @@ class RowLockFailed(Exception):
 class DatabaseError(Exception):
     "dbd-specific exception was raised"
 
+class NoSuchField(DataVeto):
+    pass
+    
+
 __all__ = [
     'StartupDelay',
     'InvalidRequestError',

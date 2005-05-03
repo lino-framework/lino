@@ -138,7 +138,8 @@ class StoredDataRow(DataRow):
         """
         """
         assert type(new) == types.BooleanType
-        DataRow.__init__(self,ds._table,ds._clist,values,dirty=new)
+        DataRow.__init__(self,ds.getLeadTable(),
+                         ds,values,dirty=new)
 
         self.__dict__["_ds"] = ds
         self.__dict__["_new"] = new
@@ -160,7 +161,7 @@ class StoredDataRow(DataRow):
         #return tuple(self.getRowId()) == tuple(other.getRowId())
         
     def getRenderer(self,rsc,req,writer=None):
-        return self._ds._table._rowRenderer(rsc,req,self,writer)
+        return self._ds.getLeadTable()._rowRenderer(rsc,req,self,writer)
 
 ##  def writeParagraph(self,parentResponder):
 ##      rsp = self.getRenderer(parentResponder.resource,
@@ -202,7 +203,7 @@ class StoredDataRow(DataRow):
         return self._new
     
     def getRowId(self):
-        id = [None] * len(self._clist.leadTable.getPrimaryAtoms())
+        id = [None] * len(self._clist.getLeadTable().getPrimaryAtoms())
         for col in self._clist._pkColumns:
             col.row2atoms(self,id)
 ##      if self._ds._table.getTableName() == "CITIES":
@@ -251,14 +252,14 @@ class StoredDataRow(DataRow):
             if atomicRow is not None:
                 raise DataVeto("Cannot create another %s row %s" \
                                     % (self.__class__.__name__, id))
-            for attrname in self._ds._table.getAttrList():
+            for attrname in self._ds.getLeadTable().getAttrList():
                 self._values.setdefault(attrname,None)
         else:
             if atomicRow is None:
                 raise DataVeto(
                     "Cannot find %s row %s" \
-                    % (self._ds._table.getTableName(), id))
-            self._ds._store._peekQuery.atoms2row(atomicRow,self)
+                    % (self._ds.getLeadTable().getTableName(), id))
+            self._ds._store._peekQuery.atoms2row1(atomicRow,self)
                 
         
         """maybe a third argument `fillMode` to atoms2dict() which
@@ -271,7 +272,7 @@ class StoredDataRow(DataRow):
     def checkIntegrity(self):
         #if not self._complete:
         self.makeComplete()
-        for name,attr in self._ds._table._rowAttrs.items():
+        for name,attr in self._ds.getLeadTable()._rowAttrs.items():
             msg = attr.checkIntegrity(self)
             if msg is not None:
                 return msg
@@ -303,7 +304,7 @@ class StoredDataRow(DataRow):
         if self._isCompleting:
             return "Uncomplete " + repr(self._ds) + "Row(" \
                      + str(self._values)+")"
-        return self._ds._table.getTableName() + "Row(" + str(self._values)+")"
+        return self._ds.getLeadTable().getTableName() + "Row(" + str(self._values)+")"
         #return repr(self._ds) + "Row" + repr(tuple(self.getRowId()))
 
     def __str__(self):
@@ -391,7 +392,7 @@ class StoredDataRow(DataRow):
         pass
 
     def vetoDelete(self):
-        for name,attr in self._ds._table._rowAttrs.items():
+        for name,attr in self._ds.getLeadTable()._rowAttrs.items():
             msg = attr.vetoDeleteIn(self)
             if msg:
                 return msg

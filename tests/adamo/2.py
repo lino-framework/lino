@@ -49,14 +49,14 @@ class Case(TestCase):
         table's primary key suffixed, usually "_id". """
         
         q = self.db.query(Organisations,"id name city nation")
-        assert q._clist.getJoinList() == ""
+        assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """\
 SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         """)
 
         q = self.db.query(Invoices,"seq date jnl remark partner")
-        assert q._clist.getJoinList() == ""
+        assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
@@ -103,7 +103,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         """)
         # atom city_id has automatically been added because necessary
         # for the join        
-        assert q._clist.getJoinList() == "city nation"
+        assert q.getJoinList() == "city nation"
 
 
         q = self.db.query(Invoices,"seq date jnl remark partner.name")
@@ -124,7 +124,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
 
         # atom city_id has automatically been added because necessary
         # for the join
-        self.assertEqual(q._clist.getJoinList(),"partner")
+        self.assertEqual(q.getJoinList(),"partner")
 
         
 
@@ -144,11 +144,11 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         FROM InvoiceLines 
         """)
 
-        self.assertEqual(q._clist.getJoinList(),"")
+        self.assertEqual(q.getJoinList(),"")
         
         q = self.db.query(InvoiceLines,
                           "invoice.date product.name unitPrice")
-        self.assertEqual(q._clist.getJoinList(),"invoice product")
+        self.assertEqual(q.getJoinList(),"invoice product")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
           lead.invoice_jnl_id,
@@ -211,7 +211,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
           LEFT JOIN Products AS product
              ON (lead.product_id = product.id)
         """)
-        assert q._clist.getJoinList() == "invoice invoice_partner product"
+        assert q.getJoinList() == "invoice invoice_partner product"
         
         """
         - invoice is a pointer from InvoiceLines to Invoices 
@@ -228,7 +228,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         eupen = CITIES.findone(name="Eupen")
         q = self.db.query(Partners,
                           "name", city=eupen)
-        assert q._clist.getJoinList() == ""
+        assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT id, name, city_nation_id, city_id        

@@ -33,6 +33,8 @@ whether there will be more environments.
 
 #__all__ = []
 
+from lino.schemas.sprl.tables import *
+
 
 
 def InstallInWebKit(appServer):

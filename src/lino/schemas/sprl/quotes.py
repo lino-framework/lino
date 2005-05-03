@@ -89,8 +89,8 @@ class Authors(Persons):
         pass
 
 class PubByAuth(LinkTable):
-    def __init__(self,**kw):
-        LinkTable.__init__(self,Publications,Authors,**kw)
+    def __init__(self,parent,**kw):
+        LinkTable.__init__(self,parent,Publications,Authors,**kw)
 
 
 class AuthorEvents(BabelTable):

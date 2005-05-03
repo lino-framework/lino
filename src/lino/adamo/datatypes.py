@@ -36,31 +36,33 @@ class Type(Describable):
     "base class for containers of data-type specific meta information"
 
     # sizes are given in "characters" or "lines"
-    minHeight = 1
-    maxHeight = 1
     
-    minWidth = 5
-    maxWidth = 40
+##     minHeight = 1
+##     maxHeight = 1
     
-    def __init__(self,
-                 minHeight=None,
-                 maxHeight=None,
-                 minWidth=None,
-                 maxWidth=None,
-                 **kw):
-        Describable.__init__(self,**kw)
+##     minWidth = 5
+##     maxWidth = 40
+    
+##     def __init__(self,parent,
+##                  minHeight=None,
+##                  maxHeight=None,
+##                  minWidth=None,
+##                  maxWidth=None,
+##                  **kw):
+##         Describable.__init__(self,parent,**kw)
         
-        if minHeight is not None:
-            self.minHeight = minHeight
-        if maxHeight is not None:
-            self.maxHeight = maxHeight
-        if minWidth is not None:
-            self.minWidth = minWidth
-        if maxWidth is not None:
-            self.maxWidth = maxWidth
+##         if minHeight is not None:
+##             self.minHeight = minHeight
+##         if maxHeight is not None:
+##             self.maxHeight = maxHeight
+##         if minWidth is not None:
+##             self.minWidth = minWidth
+##         if maxWidth is not None:
+##             self.maxWidth = maxWidth
         
-    def __call__(self,**kw):
-        return apply(self.__class__,[],kw)
+    def __call__(self,*args,**kw):
+        return self.child(*args,**kw)
+        #return apply(self.__class__,[],kw)
     
     def __repr__(self):
         return "%s (%s)" % (self.__class__.__name__,
@@ -87,13 +89,47 @@ class Type(Describable):
         
     
         
+class WidthType(Type):
+    defaultWidth=50
+    minWidth=15
+    maxWidth=50
+    def __init__(self,parent=None,
+                 width=None,minWidth=None,maxWidth=None,
+                 **kw):
+        Type.__init__(self,parent,**kw)
+        
+        if width is not None:
+            minWidth = maxWidth = width
+            
+        if maxWidth is not None:
+            self.maxWidth = maxWidth
+        elif parent is not None:
+            if self.maxWidth != parent.maxWidth:
+                self.maxWidth = parent.maxWidth
+        if minWidth is not None:
+            self.minWidth = minWidth
+        elif parent is not None:
+            if self.minWidth != parent.minWidth:
+                self.minWidth = parent.minWidth
+                
     
-class StringType(Type):
-    def __init__(self,width=50,**kw):
-        self.minWidth = self.maxWidth = width
-        if width > 20:
-            self.minWidth = 20
-        Type.__init__(self,**kw)
+class IntType(WidthType):
+    defaultWidth=5
+    minWidth=3
+    maxWidth=7
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        return int(s)
+
+    
+class StringType(WidthType):
+    defaultWidth=50
+    minWidth=15
+    maxWidth=50
+##     def __init__(self,parent=None,**kw):
+##         WidthType.__init__(self,parent,**kw)
+##         if self.minWidth > 20:
+##             self.minWidth = 20
 
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
@@ -113,27 +149,30 @@ class PasswordType(StringType):
 
 
 class MemoType(StringType):
-    def __init__(self,height=4,**kw):
-        self.minHeight = self.maxHeight = height
-        if height > 10:
-            self.minHeight = 10
-        elif height < 10:
-            self.maxHeight = 10
-        StringType.__init__(self,**kw)
-        #self.width = width
-        #self.height = height
+    def __init__(self,parent=None,
+                 height=None, minHeight=None,maxHeight=None,
+                 **kw):
+        StringType.__init__(self,parent,**kw)
+        if height is not None:
+            minHeight = maxHeight = height
+            
+        if minHeight is None:
+            if parent is None:
+                minHeight=4
+            else:
+                minHeight=parent.minHeight
+                
+        if maxHeight is None:
+            if parent is None:
+                maxHeight=10
+            else:
+                maxHeight=parent.maxHeight
+                
+        self.minHeight = minHeight
+        self.maxHeight = maxHeight
     
 
-class IntType(Type):
-    def __init__(self,width=5,**kw):
-        self.minWidth = self.maxWidth = width
-        Type.__init__(self,**kw)
         
-    def parse(self,s):
-        assert len(s), ERR_PARSE_EMPTY
-        return int(s)
-
-    
 class DateType(Type):
     maxWidth = 10
     minWidth = 10

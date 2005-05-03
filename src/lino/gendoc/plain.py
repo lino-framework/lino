@@ -34,6 +34,12 @@ class PlainDocument(GenericDocument):
         self.columnSep = columnSep
         self.columnHeaderSep = columnHeaderSep
     
+    def getLineWidth(self):
+        return 79
+
+    def getColumnSepWidth(self):
+        return len(self.columnSep)
+    
     def write(self,txt):
         self.writer(txt)
         

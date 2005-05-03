@@ -177,8 +177,11 @@ class Session(Context):
     def view(self,leadTable,*args,**kw):
         return self.getStore(leadTable).view(self,*args,**kw)
     
-    def query(self,leadTable,*args,**kw):
-        return self.getStore(leadTable).query(self,*args,**kw)
+    def query(self,leadTable,columnNames=None,**kw):
+        if columnNames is None:
+            columnNames="*"
+        return self.getStore(leadTable).createQuery(
+            self,columnNames,**kw)
 
     def peek(self,tableClass,*args):
         # used in raceman/report.py, cities_be.py...

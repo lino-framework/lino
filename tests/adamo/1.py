@@ -142,19 +142,19 @@ class Case(TestCase):
         INVOICELINES = self.sess.query(InvoiceLines)
         #INVOICES = self.sess.schema.INVOICES
         #INVOICELINES = self.sess.schema.INVOICELINES
-        self.assertEqual(INVOICES._table.getPrimaryKey(),
+        self.assertEqual(INVOICES.getLeadTable().getPrimaryKey(),
                               ("jnl","seq"))
         self.assertEqual(
             tuple(map(lambda (n,t) : n,
-                         INVOICES._table.getPrimaryAtoms())),
+                         INVOICES.getLeadTable().getPrimaryAtoms())),
             ("jnl_id","seq")
             )
         
-        self.assertEqual(INVOICELINES._table.getPrimaryKey(),
+        self.assertEqual(INVOICELINES.getLeadTable().getPrimaryKey(),
                               ("invoice","line"))
         self.assertEqual(
             tuple(map(lambda (n,t) : n,
-                         INVOICELINES._table.getPrimaryAtoms())),
+                         INVOICELINES.getLeadTable().getPrimaryAtoms())),
             ("invoice_jnl_id","invoice_seq","line")
             )
         

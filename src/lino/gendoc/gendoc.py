@@ -36,6 +36,13 @@ class GenericDocument:
 
     def report(self,rpt):
         raise NotImplementedError
+
+    def getLineWidth(self):
+        raise NotImplementedError
+    
+    def getColumnSepWidth(self):
+        raise NotImplementedError
+        
     
 
 

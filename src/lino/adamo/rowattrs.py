@@ -22,27 +22,24 @@
 from lino.adamo import datatypes
 from lino.misc.compat import *
 from lino.misc.etc import issequence
-from lino.adamo.exceptions import DataVeto, StartupDelay
+from lino.adamo.exceptions import DataVeto, StartupDelay, NoSuchField
 #from widgets import Action
-from lino.misc.descr import Describable
+from lino.misc.descr import Describable, setdefaults
 #from components import OwnedThing
 
-#def nop(*args):
-#   pass
-
-class NoSuchField(DataVeto):
-    pass
 
 class RowAttribute(Describable):
-    def __init__(self,
+    def __init__(self,parent,
                  owner, name,
                  label=None,doc=None):
-        Describable.__init__(self,name,label,doc)
+        Describable.__init__(self,None,name,label,doc)
         self._owner = owner
-        #self.width = width
         self._isMandatory = False
         self._onValidate = []
         
+    def child(self,*args,**kw):
+        return self.__class__(self,owner,*args,**kw)
+    
     def validate(self,row,value):
         if value is None:
             if self._isMandatory:
@@ -210,8 +207,8 @@ class Field(RowAttribute):
     A field will have a value of a certain type.
     
     """
-    def __init__(self,owner,name,type,**kw):
-        RowAttribute.__init__(self,owner,name,**kw)
+    def __init__(self,parent,owner,name,type,**kw):
+        RowAttribute.__init__(self,parent,owner,name,**kw)
         self.type = type
         #self.visibility = 0
         #self.format = format
@@ -390,15 +387,16 @@ class BabelField(Field):
     
 
     
-class Match(Field):
-    def __init__(self,origin,**kw):
-        assert isinstance(origin,Field)
-        self._origin = origin
-        Field.__init__(self,origin.type,**kw)
-        self.getLabel = origin.getLabel
+## class Match(Field):
+##     def __init__(self,origin,**kw):
+##         assert isinstance(origin,Field)
+##         self._origin = origin
+##         Field.__init__(self,origin.type,**kw)
+##         self.getLabel = origin.getLabel
 
-    def __getattr__(self,name):
-        return getattr(self._origin,name)
+##     def __getattr__(self,name):
+##         return getattr(self._origin,name)
+    
 
 ## class Button(RowAttribute,Action):
 ##  def __init__(self,meth,label=None,*args,**kw):
@@ -416,10 +414,10 @@ class Pointer(RowAttribute):
     A Pointer links from this to another table.
     
     """
-    def __init__(self, owner, name, toClass,
+    def __init__(self, parent,owner, name, toClass,
                  detailName=None,
                  **kw):
-        RowAttribute.__init__(self,owner,name,**kw)
+        RowAttribute.__init__(self,parent,owner,name,**kw)
         self._toClass = toClass
         
         #self.sticky = True # joins are sticky by default
@@ -544,7 +542,7 @@ class Pointer(RowAttribute):
         else:
             rv = [None] * len(self._neededAtoms)
             i = 0
-            tableId = pointedRow._ds._table.getTableId()
+            tableId = pointedRow._ds.getLeadTable().getTableId()
             rid = pointedRow.getRowId()
             for toTable in self._toTables:
                 if toTable.getTableId() == tableId:
@@ -633,11 +631,15 @@ class Pointer(RowAttribute):
 
         
 class Detail(RowAttribute):
-    def __init__(self,owner,name,pointer,label=None,doc=None,**kw):
+    def __init__(self,parent,owner,
+                 name,pointer,label=None,doc=None,**kw):
         
         self.pointer = pointer
-        RowAttribute.__init__(self,owner,name,label=label,doc=doc)
-        kw[self.pointer.name] = None
+        RowAttribute.__init__(self,parent,owner,name,label=label,doc=doc)
+        if parent is None:
+            kw[self.pointer.name] = None
+        else:
+            setdefaults(kw,parent._queryParams)
         self._queryParams = kw
         
     def vetoDeleteIn(self,row):
@@ -655,7 +657,8 @@ class Detail(RowAttribute):
 ##         return str(len(detailDs))+" "+detailDs.leadTable.getName()
         
     def format(self,ds):
-        return str(len(ds))+" "+ds._table.getName()
+        return str(len(ds))+" "+ds.getLeadTable().getName()
+
         
     def validate(self,row,value):
         raise "cannot set value of a detail"

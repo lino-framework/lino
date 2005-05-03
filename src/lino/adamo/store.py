@@ -20,8 +20,8 @@ from time import time
 
 from lino.misc.descr import Describable
 from lino.adamo.exceptions import DataVeto, InvalidRequestError
-from lino.adamo.datasource import Datasource
-from lino.adamo.query import DataColumnList
+#from lino.adamo.datasource import Datasource
+from lino.adamo.query import PeekQuery, Query
 from lino.adamo import datatypes 
 
 class Lock:
@@ -57,7 +57,7 @@ class Store:
         else:
             self._lastId = {}
 
-        self._peekQuery = DataColumnList(self,db)
+        self._peekQuery = PeekQuery(self)
 
 
     def mtime(self):
@@ -137,9 +137,10 @@ class Store:
         return self.query(sess,**kw)
         
             
-    def query(self,sess,columnNames=None,**kw):
-        return Datasource(sess,self,None,
-                          columnNames=columnNames,**kw)
+    def createQuery(self,sess,columnNames=None,**kw):
+        #return Query(self._peekQuery,self,sess,
+        #             columnNames=columnNames,**kw)
+        return Query(None,self,sess,columnNames,**kw)
         
     def lockRow(self,row,ds):
         k = tuple(row.getRowId())
@@ -292,8 +293,6 @@ class Store:
 
 
 class Populator(Describable):
-    def __init__(self,*args,**kw):
-        Describable.__init__(self,*args,**kw)
     
     def populateStore(self,store,sess):
         name = "populate"+store.getTable().name
@@ -301,7 +300,8 @@ class Populator(Describable):
             m = getattr(self,name)
         except AttributeError:
             return
-        m(store.query(sess))
+        qry=store.createQuery(sess,"*")
+        m(qry)
     
 
 

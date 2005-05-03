@@ -69,13 +69,14 @@ class FieldContainer:
         self.__dict__['_rowAttrs'] = {}
 
     def addField(self,name,type,*args,**kw):
-        return self.addRowAttr(Field(self,name,type,*args,**kw))
+        return self.addRowAttr(Field(None,self,name,type,*args,**kw))
     def addPointer(self,name,*args,**kw):
-        return self.addRowAttr(Pointer(self,name,*args,**kw))
+        return self.addRowAttr(Pointer(None,self,name,*args,**kw))
     def addDetail(self,*args,**kw):
-        return self.addRowAttr(Detail(self,*args,**kw))
+        return self.addRowAttr(Detail(None,self,*args,**kw))
     def addBabelField(self,name,type,*args,**kw):
-        return self.addRowAttr(BabelField(self,name,type,*args,**kw))
+        return self.addRowAttr(BabelField(None,self,
+                                          name,type,*args,**kw))
 
     def addRowAttr(self,attr):
         assert attr._owner == self
@@ -121,34 +122,23 @@ class Table(FieldContainer,SchemaComponent,Describable):
     class Instance(StoredDataRow):
         pass
 
-    def __init__(self,name=None,label=None,doc=None):
-        SchemaComponent.__init__(self)
-        FieldContainer.__init__(self)
-        self._pk = None
-        self._views = {}
-        self._rowRenderer = None
-        self._mirrorLoader = None
-        
+    def __init__(self,parent,name=None,label=None,doc=None):
         if name is None:
             name = self.__class__.__name__
         if label is None:
             label = name
-        #self._tableName = name
-        Describable.__init__(self,name,label,doc)
-        
-        #self._label = None
-        #self._doc = None
-        
-        #self._orderBy = None
-        #self._columnList = None
-        self._initStatus = 0
-        #self._rowClass = DataRow
 
+        Describable.__init__(self,parent,name,label,doc)
+        SchemaComponent.__init__(self)
+        FieldContainer.__init__(self)
+        
+        self._pk = None
+        self._views = {}
+        self._rowRenderer = None
+        self._mirrorLoader = None
+        self._initStatus = 0
         self._defaultView = None
 
-##      ns = { '_table' : self }
-##      self._rowClass = classobj(self.getTableName()+"Row",
-##                                        (WritableRow,), ns )
 
     def init(self):
         pass
@@ -326,19 +316,19 @@ class Table(FieldContainer,SchemaComponent,Describable):
 
 
 class LinkTable(Table):
-    def __init__(self, parentClass, childClass,*args,**kw):
-        Table.__init__(self,*args,**kw)
-        self._parentClass = parentClass
-        self._childClass = childClass 
+    def __init__(self, parent, fromClass, toClass,*args,**kw):
+        Table.__init__(self,parent,*args,**kw)
+        self._fromClass = fromClass
+        self._toClass = toClass 
         
 
     def init(self):
         # Table.init(self)
-        self.addPointer('p',self._parentClass)
-        self.addPointer('c',self._childClass)
+        self.addPointer('p',self._fromClass)
+        self.addPointer('c',self._toClass)
         self.setPrimaryKey("p c")
-        del self._parentClass
-        del self._childClass
+        del self._fromClass
+        del self._toClass
 
 
 class MemoTable(Table):
@@ -390,6 +380,19 @@ class BabelTable(Table):
     class Instance(Table.Instance):
         def getLabel(self):
             return self.name
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 import os
 import datetime

@@ -20,29 +20,18 @@ class Runtests(console.ConsoleApplication):
 where TESTS specifies the tests to run. Default is all. Other possible values e.g. `1` or `1-7` 
 """
     
-    #def main(self,argv):
-
-    #syscon.set(verbosity=-2)
-    
-##     parser = syscon.getOptionParser(
-##         usage="usage: %prog [options] [TESTS]",
-##         description="""\
-## where TESTS specifies the tests to run. Default is all. Other possible values e.g. `1` or `1-7` 
-## """)
-    
-    
-    #(options, args) = syscon.parse_args(argv)
-    
-    
-##     if console.isInteractive():
-##         console.message("""\
-## Note: Running in interactive mode. Specify -b to avoid questions.""")
-
-    
+##     def run(self,ui):
+##         suite = tsttools.alltests(self.args)
+##         runner = unittest.TextTestRunner()
+##         runner.run(suite)
+        
     def run(self,ui):
-        suite = tsttools.alltests(self.args)
-        runner = unittest.TextTestRunner()
-        runner.run(suite)
+        tests = tsttools.collectTestCases(ui,self.args)
+        runner = unittest.TextTestRunner(verbosity=1)
+        for t in tests:
+            result=runner.run(t)
+            if not result.wasSuccessful():
+                return -1
 
 
 # lino.runscript expects a name consoleApplicationClass

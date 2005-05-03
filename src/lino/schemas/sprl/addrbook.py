@@ -321,7 +321,7 @@ class Cities(Table):
         
         self.addField('name',STRING)
         self.addField('zipCode',STRING)
-        self.addField('inhabitants',INT)
+        self.addField('inhabitants',INT(minWidth=5,maxWidth=9))
         
         self.setPrimaryKey("nation id")
         # complex primary key used by test cases

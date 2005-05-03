@@ -26,7 +26,7 @@ from lino.ui import console
 from lino.adamo.database import Database
 from lino.adamo.table import Table, LinkTable, SchemaComponent
 from lino.adamo.exceptions import StartupDelay
-from lino.adamo.datasource import Datasource
+from lino.adamo.query import Query
 from lino.adamo import center
 
 
@@ -34,7 +34,7 @@ from lino.adamo import center
 class SchemaPlugin(SchemaComponent,Describable):
     def __init__(self,isActive=True,*args,**kw):
         SchemaComponent.__init__(self)
-        Describable.__init__(self,*args,**kw)
+        Describable.__init__(self,None,*args,**kw)
         self._isActive = isActive
 
     def isActive(self):
@@ -55,7 +55,7 @@ class Schema(Describable):
     #sessionFactory = Session
     
     def __init__(self,name=None,label=None,doc=None,**kw):
-        Describable.__init__(self,name,label,doc)
+        Describable.__init__(self,None,name,label,doc)
         self._initDone= False
         self._datasourceRenderer= None
         self._contextRenderer= None
@@ -76,7 +76,8 @@ class Schema(Describable):
     
         
     def addTable(self,tableClass,**kw):
-        table = tableClass(**kw)
+        #print tableClass
+        table = tableClass(None,**kw)
         assert isinstance(table,Table),\
                  repr(table)+" is not a Table"
         assert not self._initDone,\
@@ -210,7 +211,7 @@ class Schema(Describable):
             table._rowRenderer = wcl
 
 
-        self._datasourceRenderer = lf.get_wcl(Datasource)
+        self._datasourceRenderer = lf.get_wcl(Query)
         self._contextRenderer = lf.get_wcl(Database)
 
         assert self._datasourceRenderer is not None

@@ -159,7 +159,7 @@ class SqlConnection(Connection):
 
         
     def executeCreateTable(self,query):
-        table = query.leadTable
+        table = query.getLeadTable()
         #query = table.query()
         sql = 'CREATE TABLE ' + table.getTableName() + " (\n     "
         sep = ' '
@@ -193,8 +193,8 @@ class SqlConnection(Connection):
                      sqlColumnNames=None,
                      limit=None,
                      offset=None) :
-        clist = ds._clist
-        leadTable = ds._clist.leadTable
+        clist = ds
+        leadTable = ds.getLeadTable()
         
         if sqlColumnNames is None:
             sqlColumnNames = ''
@@ -381,13 +381,13 @@ class SqlConnection(Connection):
 
         
         
-    def executePeek(self,clist,id,sess):
-        table = clist.leadTable
+    def executePeek(self,qry,id,sess):
+        table = qry.getLeadTable()
         assert len(id) == len(table.getPrimaryAtoms()),\
                  "len(%s) != len(%s)" % (repr(id),
                                          repr(table.getPrimaryAtoms()))
         sql = "SELECT "
-        l = [a.name for a in clist.getAtoms()]
+        l = [a.name for a in qry.getAtoms()]
         sql += ", ".join(l)
         sql += " FROM %s WHERE " % table.getTableName()
         
@@ -406,7 +406,7 @@ class SqlConnection(Connection):
         assert csr.fetchone() is None, \
                "%s.peek(%r) found more than one row" % (
             table.getName(), id)
-        return self.csr2atoms(clist,atomicRow,sess)
+        return self.csr2atoms(qry,atomicRow,sess)
     
 ##         if False: 
 ##             print "%s -> %d rows" % (sql,csr.rowcount)
@@ -419,10 +419,10 @@ class SqlConnection(Connection):
 ##                                                 csr.rowcount)
 ##         return self.csr2atoms(clist,csr.fetchone(),sess)
     
-    def csr2atoms(self,clist,sqlatoms,sess):
+    def csr2atoms(self,qry,sqlatoms,sess):
         l = []
         i = 0
-        for a in clist.getAtoms():
+        for a in qry.getAtoms():
             try:
                 v = self.sql2value(sqlatoms[i],a.type)
             except Exception,e:
@@ -430,7 +430,7 @@ class SqlConnection(Connection):
                     e, details="""\
 Could not convert raw atomic value %s in %s.%s (expected %s).""" \
                     % (repr(sqlatoms[i]),
-                       clist.leadTable.name,
+                       qry.getLeadTable().name,
                        a.name,
                        str(a.type)))
                 v = None
@@ -445,7 +445,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         
     def executeInsert(self,row):
         query = row._ds._store._peekQuery
-        table = row._ds._table
+        table = row._ds.getLeadTable()
         context = row.getSession()
 
         atomicRow = query.row2atoms(row)
@@ -472,7 +472,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         
     def executeUpdate(self,row):
         query = row._ds._store._peekQuery
-        table = row._ds._table
+        table = row._ds.getLeadTable()
         context = row.getSession()
 
         atomicRow = query.row2atoms(row)
@@ -500,7 +500,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         self.sql_exec(sql)
 
     def executeDelete(self,row):
-        table = row._ds._table
+        table = row._ds.getLeadTable()
 
         sql = "DELETE FROM " + table.getTableName()
         sql += " WHERE "
@@ -517,7 +517,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
 
     def executeDeleteAll(self,ds):
         assert ds._filters is None
-        sql = "DELETE FROM " + ds._table.getTableName()
+        sql = "DELETE FROM " + ds.getLeadTable().getTableName()
         sql += self.whereClause(ds)
         #print sql
         self.sql_exec(sql)

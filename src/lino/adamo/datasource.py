@@ -1,3 +1,7 @@
+raise """
+versuchsweise nach query versetzt und als Unterklasse von DataColumnList statt self._clist. Neue Philosophie wegen 40.py.
+"""
+
 ## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
@@ -67,6 +71,10 @@ class SimpleDatasource:
 
     def mtime(self):
         return self._store.mtime()
+
+    def setupColumn(self,name,*args,**kw):
+        col=self.getColumnByName(name)
+        col.rowAttr = tja
 
 ##     def getDoc(self):
 ##         return self._store._table.doc
@@ -226,27 +234,6 @@ class SimpleDatasource:
         return self._clist.getColumnByName(name)
         
         
-##  def getView(self,viewName):
-##      return self._table.getView(viewName)
-
-##  def createColumnList(self,columnNames):
-##      # (no longer) overridden by report.Report
-##      return DataColumnList(self._store, self._session, columnNames)
-    
-##  def createColumn(self,colIndex, name, join,fld):
-##      # overridden by report.Report
-##      return DataColumn(self,colIndex, name, join,fld)
-
-
-##  def clearSample(self,*names):
-##      for name in names:
-##          del self._samples[name]
-    
-    #def __getattr__(self,name):
-##     def field(self,name):
-##         return self._table._rowAttrs[name]
-
-
     def child(self,columnNames=None,**kw):
         self.setdefaults(kw)
         return self.__class__(self._session,
@@ -257,23 +244,6 @@ class SimpleDatasource:
     # deprecated name:
     query=child
 
-
-##     def setupReport(self,rpt,**kw):
-##         for dc in self.getVisibleColumns():
-##             rpt.addDataColumn(dc,
-##                               width=dc.getMaxWidth(),
-##                               label=dc.getLabel())
-##         kw.setdefault('name',self._table.getName())
-##         kw.setdefault('label',self._table.getLabel())
-##         kw.setdefault('doc',self._table.getDoc())
-##         rpt.configure(**kw)
-        
-    
-##     def executeReport(self,rpt=None,**kw):
-##         if rpt is None:
-##             rpt = self._session.ui.report()
-##         self.setupReport(rpt,**kw)
-##         rpt.execute(self)
 
     def __xml__(self,wr):
         wr("<datasource>")
@@ -289,19 +259,6 @@ class SimpleDatasource:
         wr("</datasource>")
 
 
-##     def setupTableEditor(self,e):
-##         frm = e.getForm()
-##         m = frm.addMenu("file",label="&File")
-##         m.addItem(label="&Exit",frm.close)
-##         m = frm.addMenu("row",label="&Row")
-##         def printRow(frm):
-##             for row in r.getSelectedRows():
-                
-##         m.addItem(label="&Print",self.printRow)
-
-##     def printRow(self,ui):
-##         self._table.ui_printRow(ui)
-        
     def setupForm(self,frm,row=None,**kw):
         if row is None:
             row = self[0]
@@ -330,30 +287,6 @@ class SimpleDatasource:
 
         
     
-##     def report(self,columnNames=None,**kw):
-##         kw.setdefault("name",self._table.getTableName())
-##         kw.setdefault("label",self._table.getLabel())
-##         rpt = self._session.report(self,**kw)
-        
-##         if columnNames is None:
-##             for dc in self.getVisibleColumns():
-##                 rpt.addDataColumn(dc)
-##         else:
-##             for colName in columnNames.split():
-##                 dc = self.getColumn(colName)
-##                 rpt.addDataColumn(dc)
-                
-##         return rpt
-        
-##         from report import Report
-##         return Report( self._session,
-##                        self._store,
-##                        self._clist,
-##                        columnNames=columnNames,
-##                        **kw)
-
-        
-
 ##  def child(self,cl,**kw):
         
 ##      """creates a child (a detached copy) of this.  Modifying the
@@ -410,12 +343,9 @@ class SimpleDatasource:
 
     def getRenderer(self,rsc,req,writer=None):
         return self._schema._datasourceRenderer(rsc,req,
-                                                             self.query(),
-                                                             writer)
+                                                self.query(),
+                                                writer)
     
-##  def getContext(self):
-##      return self._session
-
     def getSession(self):
         return self._session
 
@@ -471,33 +401,6 @@ class SimpleDatasource:
         return
     
     
-##  def setSamples_unused(self):
-##      sampleColumns = []
-##      atomicSamples = []
-##      atomicRow = self._clist.makeAtomicRow(self._context) 
-
-##      #tmpRow = self._table.Row(self,{},False,pseudo=True)
-        
-##      for (name,value) in self._samples.items():
-##          col = self._clist.getColumn(name)
-##          #attr = self._table.getRowAttr(name)
-##          sampleColumns.append( (col,value) )
-##          #setattr(tmpRow,name,value)
-##          #attr.setCellValue(tmpRow,value)
-##          col.value2atoms(value,atomicRow,self._db)
-            
-##      self.sampleColumns = tuple(sampleColumns)
-        
-##      #atomicRow = self.row2atoms(tmpRow)
-##      for col,value in self.sampleColumns:
-##          for atom in col.getAtoms():
-##              atomicSamples.append((atom,atomicRow[atom.index]))
-## ##           for aname,atype in attr.getNeededAtoms(self._db):
-## ##               atomicSamples.append(
-## ##                   (aname,atype, tmpRow.getAtomicValue(aname)) )
-                
-##      self.atomicSamples = tuple(atomicSamples)
-        
     def getAtomicSamples(self):
         l = []
         atomicRow = self._clist.makeAtomicRow() 
@@ -510,32 +413,6 @@ class SimpleDatasource:
                 l.append((atom,atomicRow[atom.index]))
         return l
             
-##  def setCsvSamples(self,**kw):
-##      "each value is a (comma-separated) string"
-##      sampleColumns = []
-##      atomicSamples = []
-##      tmpRow = self._table.Row(self,{},False,pseudo=True)
-##      for (name,value) in kw.items():
-##          attr = self._table.getRowAttr(name)
-
-##          rid = value.split(',')
-##          i = 0
-##          for aname,atype in attr.getNeededAtoms(self._db):
-##              tmpRow.setAtomicValue(aname,atype.parse(rid[i]))
-##              i += 1
-                
-##          value = attr.getCellValue(tmpRow)
-##          sampleColumns.append( (attr,value) )
-##          self._samples[name] = value
-                
-##          for aname,atype in attr.getNeededAtoms(self._db):
-##              atomicSamples.append(
-##                  (aname,atype, tmpRow.getAtomicValue(aname)) )
-                
-##      self.sampleColumns = tuple(sampleColumns)
-##      self.atomicSamples = tuple(atomicSamples)
-
-
     def setSqlFilters(self,*sqlFilters):
         self.setFilterExpressions(sqlFilters,self._search)
         

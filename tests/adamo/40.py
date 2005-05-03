@@ -25,7 +25,8 @@ from lino.schemas.sprl.tables import Nations, Cities
 from lino.adamo.filters import NotEmpty
 
 '''
-adamo-filters: first use of SQL subqueries to provide nested search.
+
+adamo.filters: first use of SQL nested SELECT
 
 List of Nations who have at least one city [whose name contains "eup"].
 
@@ -49,20 +50,9 @@ class Case(TestCase):
         self.sess.shutdown()
         
     def test01(self):
-        ds=self.sess.query(Nations,"id name cities")
-        #ds.cities.configure(search="eup")
-        #ds.addFilter(None,"ANY","cities")
-##         def flt(row):
-##             row._ds.startDump()
-##             l = len(row.cities)
-##             s=row._ds.stopDump()
-##             print s
-##             return l > 0
-##         ds.addFilter(flt)
-        #ds.addFilter(lambda row: len(row.cities)>0)
+        ds=self.sess.query(Nations,"id name")
+        ds.addColumn("cities",search="eup")
         ds.addFilter(NotEmpty,"cities")
-        #for row in ds:
-        #    print row
         rpt=DataReport(ds,pageLen=5,pageNum=1,columnWidths="2 15 20")
         self.ui.report(rpt)
         s=self.getConsoleOutput()
@@ -76,6 +66,15 @@ be|Belgium        |2846 Cities
 de|Germany        |7 Cities
 ee|Estonia        |10 Cities
 """)
+        sql=ds.getSqlSelect()
+        #print __file__,"\n", sql
+        self.assertEquivalent(sql,"""\
+SELECT id, name_en
+FROM Nations
+WHERE EXISTS (SELECT *
+              FROM Cities
+              WHERE Nations.id=Cities.nation_id)
+        """)
         
 if __name__ == '__main__':
     main()

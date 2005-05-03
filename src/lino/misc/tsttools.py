@@ -83,51 +83,89 @@ def makesuite(modname):
     return unittest.TestSuite(suites)
 
 
-def alltests(argv,root='.'):
+## def alltests(argv,root='.'):
     
-    """inspect all python modules in the current directory for test
-    cases and suites. make one big suite from all this. """
+##     """inspect all python modules in the current directory for test
+##     cases and suites. make one big suite from all this. """
 
-##     namefilters = []
-##     for arg in argv:
-##         a = arg.split('-')
-##         if len(a) == 2:
-##             if a[0].isdigit() and a[1].isdigit():
-##                 def f(modname):
-##                     if not modname.isdigit():
-##                         return False
-##                     if int(modname) >= int(a[0]) \
-##                           and int(modname) <= int(a[1]):
-##                         return True
-##             else:
-##                 def f(modname):
-##                     if modname >= a[0] and modname <= a[1]:
-##                         return True
-##         elif len(a) == 1:
-##             def f(modname):
-##                 if modname == a[0]:
-##                     return True
-##         else:
-##             raise "unrecognized argument "+arg
+## ##     namefilters = []
+## ##     for arg in argv:
+## ##         a = arg.split('-')
+## ##         if len(a) == 2:
+## ##             if a[0].isdigit() and a[1].isdigit():
+## ##                 def f(modname):
+## ##                     if not modname.isdigit():
+## ##                         return False
+## ##                     if int(modname) >= int(a[0]) \
+## ##                           and int(modname) <= int(a[1]):
+## ##                         return True
+## ##             else:
+## ##                 def f(modname):
+## ##                     if modname >= a[0] and modname <= a[1]:
+## ##                         return True
+## ##         elif len(a) == 1:
+## ##             def f(modname):
+## ##                 if modname == a[0]:
+## ##                     return True
+## ##         else:
+## ##             raise "unrecognized argument "+arg
         
-##         namefilters.append(f)
+## ##         namefilters.append(f)
 
-    job = console.job("Collecting test cases")
-    suites = []
-    #for dirpath, dirname, filename in os.listdir(dirname):
+##     job = console.job("Collecting test cases")
+##     suites = []
+##     #for dirpath, dirname, filename in os.listdir(dirname):
+##     for dirpath, dirnames, filenames in os.walk(root):
+##         job.status(dirpath)
+##         sys.path.append(dirpath)
+##         for filename in filenames:
+##             modname,ext = os.path.splitext(filename)
+##             #dirpath = dirpath.replace("."+os.path.sep,"")
+##             #modname = dirpath.replace(os.path.sep,".")+"."+modname
+##             #print dirpath, filename
+##             #print modname
+##             if ext == '.py':
+## ##                 if len(namefilters) == 0 or oneof(namefilters,modname):
+## ##                     print modname
+## ##                     suites.append(makesuite(modname))
+##                 doit = (len(argv) == 0)
+##                 for arg in argv:
+##                     a = arg.split('-')
+##                     if len(a) == 2:
+##                         if a[0].isdigit() and a[1].isdigit():
+##                             if modname.isdigit():
+##                                 if int(modname) >= int(a[0]) \
+##                                       and int(modname) <= int(a[1]):
+##                                     doit = True
+##                         else:
+##                             if modname >= a[0] and modname <= a[1]:
+##                                 doit = True
+##                     elif len(a) == 1:
+##                         if modname == a[0]:
+##                             doit = True
+##                     else:
+##                         job.warning("unrecognized argument %s",
+##                                     arg)
+##                 if doit:
+##                     job.status("Extracting tests from %s...", 
+##                                modname)
+##                     suites.append(makesuite(modname))
+##         sys.path.remove(dirpath)
+        
+##     suite = unittest.TestSuite(suites)
+##     job.done("Found %d tests.",suite.countTestCases())
+##     return suite
+     
+def collectTestCases(ui,argv,root='.'):
+    
+    job = ui.job("Collecting test cases")
+    tests = []
     for dirpath, dirnames, filenames in os.walk(root):
         job.status(dirpath)
         sys.path.append(dirpath)
         for filename in filenames:
             modname,ext = os.path.splitext(filename)
-            #dirpath = dirpath.replace("."+os.path.sep,"")
-            #modname = dirpath.replace(os.path.sep,".")+"."+modname
-            #print dirpath, filename
-            #print modname
             if ext == '.py':
-##                 if len(namefilters) == 0 or oneof(namefilters,modname):
-##                     print modname
-##                     suites.append(makesuite(modname))
                 doit = (len(argv) == 0)
                 for arg in argv:
                     a = arg.split('-')
@@ -149,24 +187,23 @@ def alltests(argv,root='.'):
                 if doit:
                     job.status("Extracting tests from %s...", 
                                modname)
-                    suites.append(makesuite(modname))
+                    tests.append(makesuite(modname))
         sys.path.remove(dirpath)
         
-    suite = unittest.TestSuite(suites)
-    job.done("Found %d tests.",suite.countTestCases())
-    return suite
+    job.done("Found %d tests.",len(tests))
+    return tests
      
 
 
-STOP_ON_FIRST_ERROR = True
+## STOP_ON_FIRST_ERROR = True
 
-class TestResult(unittest.TestResult):
+## class TestResult(unittest.TestResult):
 
-    def stopTest(self, test):
-        "Called when the given test has been run"
-        if STOP_ON_FIRST_ERROR:
-            if len(self.errors) or len(self.failures):
-                self.stop()
+##     def stopTest(self, test):
+##         "Called when the given test has been run"
+##         if STOP_ON_FIRST_ERROR:
+##             if len(self.errors) or len(self.failures):
+##                 self.stop()
 
 
 #def compressWhiteSpace(s):
@@ -181,8 +218,8 @@ class TestCase(unittest.TestCase):
 ##         unittest.TestCase.__init__(self)
 ##         self.shouldStop = 1
     
-    def defaultTestResult(self):
-        return TestResult()
+##     def defaultTestResult(self):
+##         return TestResult()
     
     def setUp(self):
         self._tempFiles = []

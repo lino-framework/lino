@@ -17,6 +17,10 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+def setdefaults(d,f):
+    for k,v in f.items():
+        d.setdefault(k,v)
+
 class Configurable:
     
 ##     def __init__(self,*args,**kw):
@@ -33,19 +37,31 @@ class Configurable:
 
 class Describable(Configurable):
 
-    def __init__(self,name=None,label=None,doc=None):
+    def __init__(self,parent=None,name=None,label=None,doc=None):
         
         if name is None:
+            if parent is not None:
+                name=parent.name
             name = self.__class__.__name__
         else:
             assert not " " in name
             
+        if parent is not None:
+            assert isinstance(parent,self.__class__)
+            if label is None:
+                label=parent.label
+            if doc is None:
+                label=parent.doc
+            
         # place them directly to __dict__ in case that __setattr__ is
-        # also defined:
+        # also defined
         
         self.__dict__['name'] = name
         self.__dict__['label'] = label
         self.__dict__['doc'] = doc
+
+    def child(self,*args,**kw):
+        return self.__class__(self,*args,**kw)
             
         
     def getLabel(self):

@@ -23,12 +23,9 @@ This is a short example to illustrate Adamo's basic idea.
 
 from lino.adamo import *
 from lino.adamo.datatypes import itod
-#from lino import adamo
 
-#from lino.tools.normalDate import ND
 
 # 1. Define the database schema
-
 
 class Products(Table):
     def init(self):
@@ -116,11 +113,8 @@ def populate(sess):
     LINES.appendRow(ordr=o2,product=p1,qty=3)
     LINES.appendRow(ordr=o2,product=p2,qty=5)
 
-    #sess.commit()
-
     o1.register()
     o2.register()
-    #sess.commit()
     
 
 def query(sess):

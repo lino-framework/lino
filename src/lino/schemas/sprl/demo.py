@@ -78,7 +78,7 @@ class Populator(adamo.Populator):
                  #withJokes=False,
                  ):
         self.big = big
-        adamo.Populator.__init__(self,**kw)
+        adamo.Populator.__init__(self,None,**kw)
         #self.withDemoData = withDemoData
         #self.withJokes = withJokes
         
@@ -206,7 +206,7 @@ class Populator(adamo.Populator):
         q.appendRow(5,('other','Sonstige'))	
 
     def populateLanguages(self,q):
-        q = q.query('id name')
+        q.setVisibleColumns('id name')
         if self.big:
             from lino.schemas.sprl.data import languages
             languages.populate(q)
