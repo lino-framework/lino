@@ -27,7 +27,6 @@ import types
 
 from cStringIO import StringIO
 
-from lino.misc.my_import import my_import
 from lino.ui import console
 
 
@@ -64,24 +63,6 @@ def oneof(l,*args,**kw):
     
    
    
-def makesuite(modname):
-    mod = my_import(modname)
-    if hasattr(mod,"suite"):
-        return mod.suite()
-        # print modname + ".suite()"
-    suites = []
-    for (k,v) in mod.__dict__.items():
-        # Python 2.2 if type(v) == types.ClassType:
-        if type(v) == types.TypeType: # since 2.3
-            if issubclass(v,unittest.TestCase):
-                # print k
-                if v != TestCase:
-                    suites.append(unittest.makeSuite(v))
-                    # print modname + "." + k
-        #else:
-        #    print "type(%s) is %s" % (k,str(type(v)))
-    return unittest.TestSuite(suites)
-
 
 ## def alltests(argv,root='.'):
     
@@ -156,58 +137,11 @@ def makesuite(modname):
 ##     job.done("Found %d tests.",suite.countTestCases())
 ##     return suite
      
-def collectTestCases(ui,argv,root='.'):
-    
-    job = ui.job("Collecting test cases")
-    tests = []
-    for dirpath, dirnames, filenames in os.walk(root):
-        job.status(dirpath)
-        sys.path.append(dirpath)
-        for filename in filenames:
-            modname,ext = os.path.splitext(filename)
-            if ext == '.py':
-                doit = (len(argv) == 0)
-                for arg in argv:
-                    a = arg.split('-')
-                    if len(a) == 2:
-                        if a[0].isdigit() and a[1].isdigit():
-                            if modname.isdigit():
-                                if int(modname) >= int(a[0]) \
-                                      and int(modname) <= int(a[1]):
-                                    doit = True
-                        else:
-                            if modname >= a[0] and modname <= a[1]:
-                                doit = True
-                    elif len(a) == 1:
-                        if modname == a[0]:
-                            doit = True
-                    else:
-                        job.warning("unrecognized argument %s",
-                                    arg)
-                if doit:
-                    job.status("Extracting tests from %s...", 
-                               modname)
-                    tests.append(makesuite(modname))
-        sys.path.remove(dirpath)
-        
-    job.done("Found %d tests.",len(tests))
-    return tests
-     
-
-
-## STOP_ON_FIRST_ERROR = True
-
-## class TestResult(unittest.TestResult):
-
-##     def stopTest(self, test):
-##         "Called when the given test has been run"
-##         if STOP_ON_FIRST_ERROR:
-##             if len(self.errors) or len(self.failures):
-##                 self.stop()
 
 
 #def compressWhiteSpace(s):
 #    return re.sub(r'\s+',' ',s)
+
     
 class TestCase(unittest.TestCase):
 
