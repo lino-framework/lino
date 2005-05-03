@@ -171,7 +171,7 @@ class StoredDataRow(DataRow):
 ##      rsp.writeParagraph()
     
     def getSession(self):
-        return self._ds._session
+        return self._ds.getSession()
 
     def getDatabase(self):
         return self._ds.getDatabase()

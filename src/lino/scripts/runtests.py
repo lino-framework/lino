@@ -8,25 +8,23 @@ import unittest
 
 #from lino.misc import tsttools
 from lino.misc.my_import import my_import
-from lino.ui import console
+from lino.ui.console import ConsoleApplication
 
 
-STOP_ON_FIRST_ERROR = True
-
-class MyTestResult(unittest._TextTestResult):
+class StoppingTestResult(unittest._TextTestResult):
 
     def stopTest(self, test):
         "Called when the given test has been run"
-        if STOP_ON_FIRST_ERROR:
-            if len(self.errors) or len(self.failures):
-                self.stop()
+        if len(self.errors) or len(self.failures):
+            self.stop()
 
 
-class MyTestRunner(unittest.TextTestRunner):
+class StoppingTestRunner(unittest.TextTestRunner):
+    
     def _makeResult(self):
-        return MyTestResult(self.stream,
-                            self.descriptions,
-                            self.verbosity)
+        return StoppingTestResult(self.stream,
+                                  self.descriptions,
+                                  self.verbosity)
 
 def makesuite(modname):
     mod = my_import(modname)
@@ -49,7 +47,7 @@ def makesuite(modname):
     
 
 
-class Runtests(console.ConsoleApplication):
+class Runtests(ConsoleApplication):
 
     name="Lino/runtests"
     years='2004-2005'
@@ -60,6 +58,16 @@ class Runtests(console.ConsoleApplication):
     description="""\
 where TESTS specifies the tests to run. Default is all. Other possible values e.g. `1` or `1-7` 
 """
+    def setupOptionParser(self,parser):
+        ConsoleApplication.setupOptionParser(self,parser)
+    
+        parser.add_option("-i", "--ignore-failures",
+                          help="""\
+continue testing even if failures or errors occur""",
+                          action="store_true",
+                          dest="ignore",
+                          default=False)
+    
     def collectTestCases(self,ui,argv,root='.'):
 
         job = ui.job("Collecting test cases")
@@ -104,7 +112,10 @@ where TESTS specifies the tests to run. Default is all. Other possible values e.
         tests = self.collectTestCases(ui,self.args)
         suite = unittest.TestSuite(tests)
         #runner = unittest.TextTestRunner()
-        runner = MyTestRunner()
+        if self.options.ignore:
+            runner = unittest.TextTestRunner()
+        else:
+            runner = StoppingTestRunner()
         runner.run(suite)
         
 ##     def run(self,ui):

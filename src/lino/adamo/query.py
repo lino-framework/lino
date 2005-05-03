@@ -401,6 +401,11 @@ class LeadTableColumnList(BaseColumnList):
     def mtime(self):
         return self._store.mtime()
     
+    def atoms2row(self,atomicRow,new):
+        row = self.getLeadTable().Instance(self,{},new)
+        self.atoms2row1(atomicRow,row)
+        return row
+    
     def atoms2row1(self,atomicRow,row):
         #for join in self._joins:
         #   join.atoms2row(atomicRow,row)
@@ -515,10 +520,6 @@ class SimpleQuery(LeadTableColumnList):
         rpt=createReport(self,**kw)
         self._session.ui.report(rpt)
     
-    def atoms2row(self,atomicRow,new):
-        row = self.getLeadTable().Instance(self,{},new)
-        self.atoms2row1(atomicRow,row)
-        return row
 
     def zap(self):
         self._store.zap()
