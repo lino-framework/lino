@@ -34,13 +34,14 @@ class BaseColumnList:
     
     def __init__(self,parent,columnNames):
         if parent is not None and columnNames is None:
-            self._frozen=True
-            self._columns = tuple(parent._columns)
-            self._joins = tuple(parent._joins)
-            self._atoms = tuple(parent._atoms)
-            self._pkColumns = parent._pkColumns
-            self.visibleColumns=tuple(parent.visibleColumns)
-            return
+            if parent.getContext() == self.getContext():
+                self._frozen=True
+                self._columns = tuple(parent._columns)
+                self._joins = tuple(parent._joins)
+                self._atoms = tuple(parent._atoms)
+                self._pkColumns = parent._pkColumns
+                self.visibleColumns=tuple(parent.visibleColumns)
+                return
         
         self._frozen=False
         self._columns = []
@@ -127,7 +128,7 @@ class BaseColumnList:
         col = DataColumn(self,len(self._columns),
                          name, fld, join)
         self._columns.append(col)
-        col.setupAtoms()
+        col.setupColAtoms(self.getDatabase())
         return col
 
 ##     def createColumn(self,colIndex,name,join,fld):
@@ -223,7 +224,7 @@ class BaseColumnList:
                 return j
         j = Join(self,name,pointer,parent)
         self._joins.append(j)
-        j.setupAtoms()
+        j.setupJoinAtoms()
         return j
 
 
@@ -1177,7 +1178,7 @@ class Join:
         atoms used for the join.  """
 
         
-    def setupAtoms(self):
+    def setupJoinAtoms(self):
         assert self._atoms is None
         self._atoms = []
         shortJoinName = self.name.split("_")[-1]
@@ -1259,25 +1260,14 @@ class DataColumn:
 ##      def getLabel(self):
 ##          return self.name
 
-    def setupAtoms(self):
+    def setupColAtoms(self,db):
         #assert self._atoms is None
         atoms = []
-##          if self.join is None:
-##              if self._owner.hasJoins(): # len(query._joins) == 0:
-##                  atomprefix = "lead."
-##              else:
-##                  atomprefix = ""
-##          else:
-##              atomprefix = join.name + "." 
-
         if self.join:
             joinName = self.join.name
         else:
             joinName = None
-        #l = self.getNeededAtoms()
-        #print repr(l)
-        ctx = self._owner.getContext()
-        for (name,type) in self.rowAttr.getNeededAtoms(ctx):
+        for (name,type) in self.rowAttr.getNeededAtoms(db):
             if self.join and len(self.join.pointer._toTables) > 1:
                 for toTable in self.join.pointer._toTables:
                     a = self._owner.provideAtom(

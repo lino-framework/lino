@@ -274,8 +274,8 @@ class BabelField(Field):
         return l
 
 
-    def getSupportedLangs(self):
-        return self._owner._schema.getSupportedLangs()
+##     def getSupportedLangs(self):
+##         return self._owner._schema.getSupportedLangs()
 
     
     def setCellValue(self,row,value):
@@ -363,6 +363,7 @@ class BabelField(Field):
     def atoms2row(self,atomicRow,colAtoms,row):
         langs = row.getSession().getBabelLangs()
         dblangs = row.getDatabase().getBabelLangs()
+        assert len(dblangs) == len(colAtoms)
         # 35.py dblangs = row._ds._session.getBabelLangs()
         values = row.getFieldValue(self.name)
         if values is None:

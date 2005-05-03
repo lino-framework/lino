@@ -88,10 +88,21 @@ class Populator(adamo.Populator):
         q.appendRow("james", "James", "Bond")
         
     def populateCurrencies(self,q):
-        q.setBabelLangs('en')
-        self.EUR = q.appendRow(id="EUR",name="Euro")
-        self.BEF = q.appendRow(id="BEF",name="Belgian Franc")
-        self.USD = q.appendRow(id="USD",name="US Dollar")
+        q.setBabelLangs('en de fr et')
+        self.EUR = q.appendRow(
+            id="EUR",
+            name=("Euro","Euro","Euro","Euro"))
+        self.BEF = q.appendRow(
+            id="BEF",
+            name=("Belgian Francs","Belgischer Franken",
+                  "Franc belge","Belgia frank"))
+        self.USD = q.appendRow(
+            id="USD",
+            name=("US Dollar","US-Dollar",
+                  "Dollar US","USA dollar"))
+        self.EEK = q.appendRow(
+            id="EEK",name=("Estonian kroon","Estnische Krone",
+                           "Couronne estonienne","Eesti kroon"))
     
     def populatePartnerTypes(self,q):
         q = q.query('id name')

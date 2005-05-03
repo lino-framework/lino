@@ -1,16 +1,18 @@
 from lino.schemas.sprl import demo, Currencies
 
-sess=demo.startup(langs="en de fr")
+sess=demo.startup(langs="en fr")
 
-q1=sess.query(Currencies)
-q1.report()
+qry=sess.query(Currencies)
 
-sess.setBabelLang("de")
-q1.report()
+ccy=qry.peek("EEK")
 
-sess.setBabelLang("fr")
-q1.report()
+#sess.setBabelLangs("en")
+print "Your currency: %s (%s)" % (ccy.name,ccy.id)
+qry.report()
 
-sess.setBabelLang("en fr de")
-q1.report()
+print
+sess.setBabelLangs("fr")
+print "Votre monnaie: %s (%s)" % (ccy.name,ccy.id)
+qry.report()
+
 
