@@ -30,8 +30,6 @@ from lino.schemas.sprl.sprl import makeSchema
 from lino.schemas.sprl.tables import *
 from lino.schemas.sprl import demo
 
-from lino.reports import DataReport
-
 sharedTables = (Languages, Nations, 
                 PartnerTypes, Currencies,
                 AuthorEventTypes,
@@ -77,23 +75,22 @@ class Case(TestCase):
                        search="%be%")
         self.assertEqual(q.getLangs(),"de")
         self.assertEqual(q.getDatabase().getLangs(),"en de fr et")
-        self.ui.report(DataReport(q))
-        #q.executeReport()
+        q.report(width=50)
         s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
 Nations
 =======
-id|name                                              |area    
---+--------------------------------------------------+--------
-be|Belgium                                           |30510   
-bj|Benin                                             |112620  
-bm|Bermuda                                           |53      
-by|Belarus                                           |207600  
-bz|Belize                                            |22966   
-ci|Ivory Coast (Cote D'Ivoire)                       |        
-lr|Liberia                                           |111370  
-uz|Uzbekistan                                        |447400  
+id|name                                  |area    
+--+--------------------------------------+--------
+be|Belgium                               |30510   
+bj|Benin                                 |112620  
+bm|Bermuda                               |53      
+by|Belarus                               |207600  
+bz|Belize                                |22966   
+ci|Ivory Coast (Cote D'Ivoire)           |        
+lr|Liberia                               |111370  
+uz|Uzbekistan                            |447400  
 """)        
 
         

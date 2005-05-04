@@ -42,6 +42,7 @@ SELECT id, name_en
 '''
 
 class Case(TestCase):
+    skip=True
     def setUp(self):
         TestCase.setUp(self)
         self.sess = demo.beginSession(self.ui,big=True)

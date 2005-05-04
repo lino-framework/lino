@@ -26,6 +26,7 @@ from lino.reports import DataReport
 
 class Case(TestCase):
 
+    skip=True
 
     def test01(self):
         from lino.examples.pizzeria2 import beginSession,\

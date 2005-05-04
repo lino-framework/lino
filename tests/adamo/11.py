@@ -26,8 +26,8 @@
 from lino import adamo #import quickdb, beginQuickSession
 from lino.adamo.datatypes import itod
 from lino.misc.tsttools import TestCase, main
-from lino.examples import pizzeria, pizzeria2
-from lino.examples.pizzeria2 import Services, Customers,\
+from lino.apps.pizzeria import pizzeria, services
+from lino.apps.pizzeria.services import Services, Customers,\
      Products, Orders, OrderLines
 
 
@@ -38,7 +38,10 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = pizzeria2.beginSession()
+        schema=services.makeSchema()
+        self.sess = schema.quickStartup()
+        services.populate(self.sess)
+        #services.beginSession()
 
     def tearDown(self):
         self.sess.shutdown()
@@ -49,7 +52,7 @@ class Case(TestCase):
         SERV.startDump()
         s1 = SERV.appendRow(name="bring home",price=99)
         sql = SERV.stopDump()
-        # SELECT MAX(id) FROM SERV;
+        #SELECT MAX(id) FROM Services;
         self.assertEquivalent(sql,"""\
 INSERT INTO Services (
 id,
@@ -208,7 +211,7 @@ SELECT id, name, price FROM Products WHERE id = 1;
         PROD = self.sess.query(Products)
         ORDERS = self.sess.query(Orders)
         LINES = self.sess.query(OrderLines)
-        pizzeria2.populate(self.db)
+        services.populate(self.sess)
         q = LINES.query("ordr.date ordr.customer.name",
                              product=PROD[1])
         self.assertEquivalent(q.getSqlSelect(), """

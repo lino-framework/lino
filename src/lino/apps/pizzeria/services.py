@@ -1,7 +1,3 @@
-raise "moved to lino/apps/pizzeria and docs/examples"
-
-
-
 ## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
@@ -20,22 +16,30 @@ raise "moved to lino/apps/pizzeria and docs/examples"
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from pizzeria import Customers, Orders, OrderLines, Products, \
-     populate, makeSchema
-from lino.adamo import *
-from lino.adamo.datatypes import itod
-from lino import adamo
+from lino.adamo.datatypes import STRING, itod
+from lino.apps.pizzeria import pizzeria
+from lino.apps.pizzeria.pizzeria import Orders, Products, OrderLines, Customers
 
 class Services(Products):
     
     def init(self):
         Products.init(self)
         self.addField('responsible',STRING)
-        
 
-def populate2(sess):
+
+TABLES = pizzeria.TABLES + (Services,)
+
+
+def makeSchema(**kw):
+
+    schema = pizzeria.makeSchema(**kw)
+    schema.addTable(Services)
+    return schema
     
-    populate(sess)
+
+def populate(sess):
+    
+    pizzeria.populate(sess)
     
     SERV = sess.query(Services)
     CUST = sess.query(Customers)
@@ -60,40 +64,3 @@ def populate2(sess):
     o2.register()
 
 
-
-def do_report(sess):
-    ORDERS = sess.query(Orders)
-    o = ORDERS.peek(3)
-    print "Order #:", o.id
-    print "Date:", o.date
-    print "Customer:", o.customer.name
-    print "-" * 40
-    for line in o.lines:
-        print "%-20s %3d %5d" % (line.product.name,
-                                 line.qty,
-                                 line.product.price*line.qty)
-    print "-" * 40
-    print "Total: ", o.totalPrice
-
-
-def beginSession():
-
-    schema = makeSchema(label="Luc's second Pizza Restaurant")
-    schema.addTable(Services)
-    
-    sess = schema.quickStartup()
-    
-    populate2(sess)
-    
-    return sess
-    
-def main():
-    sess = beginSession()
-    do_report(sess)
-    sess.shutdown()
-    
-if __name__ == "__main__":
-    #from lino.ui import console
-    #console.parse_args()
-    #main(console)
-    main()

@@ -84,7 +84,7 @@ continue testing even if failures or errors occur""",
                         tests += self.findTestCases(modname)
             sys.path.remove(dirpath)
 
-        job.done("Collected %d tests.", len(tests))
+        job.done("found %d tests.", len(tests))
         suites=[]
         for tcl in tests:
             suites.append(unittest.makeSuite(tcl))

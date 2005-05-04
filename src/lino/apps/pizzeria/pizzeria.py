@@ -1,5 +1,3 @@
-raise "moved to lino/apps/pizzeria and docs/examples"
-
 ## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
@@ -80,12 +78,13 @@ class OrderLines(Table):
                 return "product is mandatory"
 
 
+TABLES=(Products, Customers, Orders, OrderLines)
+
+
 def makeSchema(*args,**kw):
     schema = Schema(*args,**kw)
-    schema.addTable(Products)
-    schema.addTable(Customers)
-    schema.addTable(Orders)
-    schema.addTable(OrderLines)
+    for t in TABLES:
+        schema.addTable(t)
     return schema
 
         

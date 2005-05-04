@@ -1,5 +1,4 @@
-#coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2004-2005 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -16,16 +15,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-   
-from lino.misc.tsttools import TestCase, main, catch_output
 
-class Case(TestCase):
-    skip=True
-    
-    def test01(self):
-        pass
+#from lino.apps.pizzeria.pizzeria import makeSchema, populate, TABLES
 
-
-if __name__ == '__main__':
-    main()
-
+#for t in TABLES:
+#    globals()[t.__name__]=t

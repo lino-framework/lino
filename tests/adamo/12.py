@@ -20,7 +20,7 @@
    
 from lino.misc.tsttools import TestCase, main
 #from lino.misc import tsttools 
-from lino.examples import pizzeria2
+from lino.apps.pizzeria import services
 
 
 class Case(TestCase):
@@ -30,13 +30,15 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = pizzeria2.beginSession()
+        schema=services.makeSchema()
+        self.sess=schema.quickStartup()
+        services.populate(self.sess)
 
     def tearDown(self):
         self.sess.shutdown()
 
     def test01(self):
-        CUST = self.sess.query(pizzeria2.Customers)
+        CUST = self.sess.query(services.Customers)
         c = CUST.appendRow(name="Mark")
         newID = c.id
         c = CUST.peek(newID)
