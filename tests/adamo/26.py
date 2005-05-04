@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -27,7 +27,7 @@ import types
 from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Projects
-from lino.reports import DataReport
+#from lino.reports import DataReport
 
 
 class Case(TestCase):
@@ -47,10 +47,7 @@ class Case(TestCase):
         PROJECTS = self.sess.query(Projects)
         ds = PROJECTS.query("id super.id title")
         self.assertEqual(len(ds),10)
-        #self.sess.startDump()
-        #ds.executeReport(columnWidths="5 5 20")
-        rpt=DataReport(ds,columnWidths="5 5 20")
-        self.ui.report(rpt)
+        ds.report(columnWidths="5 5 20")
         
         s = self.getConsoleOutput()
         #print s
@@ -80,20 +77,13 @@ id   |super|title
         
         ds = self.sess.query(Projects,"id title", super=None)
         self.assertEqual(len(ds),3)
-##         s = ""
-##         for p in ds:
-##             s+= "\t".join([str(cell.getValue()) for cell in p]) + "\n"
-        #print s
-        #self.sess.startDump()
-        #ds.executeReport(columnWidths="5 20")
-        rpt=DataReport(ds,columnWidths="5 20")
-        self.ui.report(rpt)
+        ds.report(columnWidths="5 20")
         
         s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\
-Projects
-========
+Projects (super=None)
+=====================
 id   |title               
 -----+--------------------
 1    |Project 1           
@@ -105,8 +95,8 @@ id   |title
         """
 
         Samples are sticky properties: once set, the get inherited by
-        all children.  To clear a sample, you must explicitly set it to
-        Datasource.ANY_VALUE.
+        all children.  To clear a sample of a child, you must
+        explicitly set it to Datasource.ANY_VALUE.
         
         Example: you want to use the ds from above as parent for a new
         ds because you want to inherit columnNames. But now you want to

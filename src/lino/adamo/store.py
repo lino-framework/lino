@@ -134,7 +134,7 @@ class Store:
         kw['viewName'] = viewName
         if columnNames is not None:
             kw['columnNames'] = columnNames
-        return self.query(sess,**kw)
+        return self.createQuery(sess,**kw)
         
             
     def createQuery(self,sess,columnNames=None,**kw):

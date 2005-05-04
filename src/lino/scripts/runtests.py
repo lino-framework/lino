@@ -26,26 +26,6 @@ class StoppingTestRunner(unittest.TextTestRunner):
                                   self.descriptions,
                                   self.verbosity)
 
-def makesuite(modname):
-    mod = my_import(modname)
-    if hasattr(mod,"suite"):
-        return mod.suite()
-        # print modname + ".suite()"
-    suites = []
-    for (k,v) in mod.__dict__.items():
-        # Python 2.2 if type(v) == types.ClassType:
-        if type(v) == types.TypeType: # since 2.3
-            if issubclass(v,unittest.TestCase):
-                # print k
-                #if v != TestCase:
-                suites.append(unittest.makeSuite(v))
-                    # print modname + "." + k
-        #else:
-        #    print "type(%s) is %s" % (k,str(type(v)))
-    return unittest.TestSuite(suites)
-
-    
-
 
 class Runtests(ConsoleApplication):
 
@@ -68,10 +48,11 @@ continue testing even if failures or errors occur""",
                           dest="ignore",
                           default=False)
     
-    def collectTestCases(self,ui,argv,root='.'):
+    def makeSuite(self,ui,argv,root='.'):
 
         job = ui.job("Collecting test cases")
         tests = []
+        #skipped=[]
         for dirpath, dirnames, filenames in os.walk(root):
             job.status(dirpath)
             sys.path.append(dirpath)
@@ -99,18 +80,43 @@ continue testing even if failures or errors occur""",
                     if doit:
                         job.status("Extracting tests from %s...", 
                                    modname)
-                        tests.append(makesuite(modname))
+                        
+                        tests += self.findTestCases(modname)
             sys.path.remove(dirpath)
 
-        job.done("Found %d tests.",len(tests))
-        return tests
+        job.done("Collected %d tests.", len(tests))
+        suites=[]
+        for tcl in tests:
+            suites.append(unittest.makeSuite(tcl))
+        return unittest.TestSuite(suites)
      
+    def findTestCases(self,modname):
+        cases=[]
+        mod = my_import(modname)
+        if hasattr(mod,"suite"):
+            return mod.suite()
+            # print modname + ".suite()"
+        for (k,v) in mod.__dict__.items():
+            # Python 2.2 if type(v) == types.ClassType:
+            if type(v) == types.TypeType: # since 2.3
+                if issubclass(v,unittest.TestCase):
+                    if hasattr(v,"skip") and v.skip:
+                        self.ui.notice("Skipping %s.%s",
+                                       modname,v.__name__)
+                        #skipped.append(v)
+                    else:
+                        cases.append(v)
+                    # print k
+                    #if v != TestCase:
+                    #suites.append(unittest.makeSuite(v))
+                        # print modname + "." + k
+        return cases
     
     
     def run(self,ui):
         #suite = tsttools.alltests(self.args)
-        tests = self.collectTestCases(ui,self.args)
-        suite = unittest.TestSuite(tests)
+        suite = self.makeSuite(ui,self.args)
+        #suite = unittest.TestSuite(tests)
         #runner = unittest.TextTestRunner()
         if self.options.ignore:
             runner = unittest.TextTestRunner()

@@ -81,19 +81,19 @@ class BaseJob:
         self.ui.onJobRefresh(self)
         
     def done(self,msg=None,*args,**kw):
+        if self._done: return
         if msg is None:
             msg = _("Success")
         else:
             msg = self.ui.buildMessage(msg,*args,**kw)
-        if not self._done:
-            self._done = True
-            #if msg is not None:
-            #    self._status = msg
-            self.pc = 100
-            #self.ui.onJobIncremented(self)
-            self.ui.onJobDone(self,msg)
-            #if msg is not None and self._label is not None:
-            #    msg = self._label+": "+msg
+        self._done = True
+        #if msg is not None:
+        #    self._status = msg
+        self.pc = 100
+        #self.ui.onJobIncremented(self)
+        self.ui.onJobDone(self,msg)
+        #if msg is not None and self._label is not None:
+        #    msg = self._label+": "+msg
             
     def summary(self):
         #self.notice("%d increments",self.curval)

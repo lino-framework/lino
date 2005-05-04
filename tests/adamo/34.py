@@ -30,15 +30,13 @@ class Case(TestCase):
     def test01(self):
         from lino.examples.pizzeria2 import beginSession,\
              Products, OrderLines
-        sess = beginSession()
+        sess = beginSession(self.ui)
         PROD = sess.query(Products)
         ds = sess.query(OrderLines,"ordr.date ordr.customer",
                         product=PROD.peek(1))
-        rpt=DataReport(ds,columnWidths="10 13")
-        self.ui.report(rpt)
-##         rpt = self.ui.report()
-##         q.setupReport(rpt,columnWidths="10 10")
-##         rpt.execute(q)
+        ds.report(columnWidths="10 13")
+        #rpt=DataReport(ds,columnWidths="10 13")
+        #self.ui.report(rpt)
         s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\

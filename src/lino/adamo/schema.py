@@ -297,10 +297,10 @@ class Schema(Describable):
             for store in db.getStoresById():
                 store.createTable(sess)
             for p in self._populators:
-                job = sess.ui.job("populator " + p.getLabel())
+                #job = sess.ui.job("populator " + p.getLabel())
                 for store in db.getStoresById():
                     store.populateOrNot(self,sess,p)
-                job.done()
+                #job.done()
             if checkIntegrity:
                 for store in db.getStoresById():
                     store.checkIntegrity(sess)

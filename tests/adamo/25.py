@@ -20,16 +20,16 @@
 
 
 
-"""
-testing Datasource.apply_GET()
-
-"""
 from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables \
      import Cities, Nations, Invoices, InvoiceLines, Journals
 
 class Case(TestCase):
+    
+    "testing Datasource.apply_GET()"
+    
+    skip=1
 
     def setUp(self):
         TestCase.setUp(self)

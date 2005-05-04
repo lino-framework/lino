@@ -29,7 +29,7 @@ from lino.misc.tsttools import main, TestCase
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import *
 from lino.adamo import DataVeto, InvalidRequestError
-from lino.reports import DataReport
+#from lino.reports import DataReport
 
 class Case(TestCase):
 
@@ -50,8 +50,7 @@ class Case(TestCase):
         # print [col.name for col in rpt._clist.visibleColumns]
         #self.sess.startDump()
         #q.executeReport(columnWidths="5 50 10")
-        rpt=DataReport(ds,columnWidths="5 50 10")
-        self.ui.report(rpt)
+        ds.report(columnWidths="5 50 10")
 
         s = self.getConsoleOutput()
         #print s
@@ -66,18 +65,18 @@ id   |name                                              |nation
 4    |Bonn                                              |Germany   
 2    |Brugge                                            |Belgium   
 1    |Bruxelles                                         |Belgium   
-9    |Charleroi                                         |Belgium   
+8    |Charleroi                                         |Belgium   
 6    |Eschweiler                                        |Germany   
 3    |Eupen                                             |Belgium   
-5    |Kelmis                                            |Belgium   
+4    |Kelmis                                            |Belgium   
 """)
         
     def test02(self):
         "report with a BabelField"
         ds = self.sess.query(Nations,"id name")
         #self.sess.startDump()
-        rpt=DataReport(ds,columnWidths="2 25")
-        self.ui.report(rpt)
+        ds.report(columnWidths="2 25")
+        #self.ui.report(rpt)
         #q.executeReport(columnWidths="2 25")
         s = self.getConsoleOutput()
         # print s

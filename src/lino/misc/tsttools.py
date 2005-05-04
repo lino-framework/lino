@@ -144,7 +144,7 @@ def oneof(l,*args,**kw):
 
     
 class TestCase(unittest.TestCase):
-
+    waiting=False
     win32_printerName_PS = "Lexmark Optra PS"
     tempDir = r"c:\temp"
 
@@ -176,7 +176,7 @@ class TestCase(unittest.TestCase):
     def getConsoleOutput(self):
         return self.ui.getConsoleOutput()
         
-    def assertEquivalent(self,txt1,txt2):
+    def assertEquivalent(self,observed,expected,msg=None):
         
         """like assertEqual(), but any whitespace is converted to a
         single space, and if they differ, they are printed with a
@@ -185,20 +185,18 @@ class TestCase(unittest.TestCase):
 
         """
 
-        l1 = txt1.strip().split()
-        l2 = txt2.strip().split()
+        l1 = observed.strip().split()
+        l2 = expected.strip().split()
 
         if l1 == l2: return
 
-##          txt1 = compressWhiteSpace(txt1.strip())
-##          txt2 = compressWhiteSpace(txt2.strip())
-##          if txt1 == txt2: return
         a = StringIO()
+        if msg is not None:
+            a.write(msg+":")
         a.write("\n--- observed --- :\n")
         a.write(" ".join(l1)) # txt1)
         a.write("\n--- expected --- :\n")
         a.write(" ".join(l2)) # txt1)
-        # b.write(txt2)
         a.write("\n")
 
         if False:

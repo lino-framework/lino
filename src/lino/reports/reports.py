@@ -35,7 +35,7 @@ CENTER = 3
 TOP = 4
 BOTTOM = 5
     
-class Report(Describable):
+class BaseReport(Describable):
 
 
     DEFAULT_TYPE = STRING
@@ -211,6 +211,10 @@ class Report(Describable):
     def onEach(self,meth):
         self._onRowEvents.append(meth)
 
+    def show(self,**kw):
+        from lino.ui import console
+        console.report(self,**kw)
+
 
 
 class ReportColumn(Describable):
@@ -305,7 +309,7 @@ class Row:
 
 
 
-class DataReport(Report):
+class DataReport(BaseReport):
     
     def __init__(self,parent,ds,
                  columnWidths=None,width=None,rowHeight=None,
@@ -320,9 +324,9 @@ class DataReport(Report):
             # forward keywords to the query
             iterator=iterator.child(**kw)
             
-        Report.__init__(self,parent,ds,
-                        columnWidths,width,rowHeight,
-                        name=name,label=label,doc=doc)
+        BaseReport.__init__(self,parent,ds,
+                            columnWidths,width,rowHeight,
+                            name=name,label=label,doc=doc)
     
     def beginReport(self,doc):
         if len(self.columns) == 0:
@@ -330,7 +334,7 @@ class DataReport(Report):
                 self.addDataColumn(dc,
                                    #width=dc.getMaxWidth(),
                                    label=dc.getLabel())
-        Report.beginReport(self,doc)
+        BaseReport.beginReport(self,doc)
             
     def addDataColumn(self,dc,**kw):
         col = DataReportColumn(self,dc,**kw)
@@ -355,7 +359,11 @@ class DataReport(Report):
 ##         return c
 
 
-class DictReport(Report):
+class DictReport(BaseReport):
+    
+    def __init__(self,d,**kw):
+        BaseReport.__init__(self,None, d.items(), **kw)
+        
     def beginReport(self,doc):
         if len(self.columns) == 0:
             self.addColumn(meth=lambda row: str(row[0]),
@@ -368,11 +376,14 @@ class DictReport(Report):
         
     
         
+class Report(BaseReport):
+    def __init__(self,iterator,**kw):
+        BaseReport.__init__(self,None, iterator, **kw)
 
         
 def createReport(iterator,**kw):
     if isinstance(iterator,Query):
         return DataReport(None,iterator,**kw)
     if isinstance(iterator,dict):
-        return DictReport(None,iterator.items(),**kw)
+        return DictReport(iterator,**kw)
     return Report(None,iterator,**kw)

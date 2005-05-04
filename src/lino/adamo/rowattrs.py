@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -23,9 +23,7 @@ from lino.adamo import datatypes
 from lino.misc.compat import *
 from lino.misc.etc import issequence
 from lino.adamo.exceptions import DataVeto, StartupDelay, NoSuchField
-#from widgets import Action
 from lino.misc.descr import Describable, setdefaults
-#from components import OwnedThing
 
 
 class RowAttribute(Describable):

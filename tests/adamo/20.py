@@ -50,7 +50,7 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.schemas.sprl import demo
 from lino.schemas.sprl.tables import Nations,Partners
-from lino.reports import DataReport
+#from lino.reports import DataReport
 
 class Case(TestCase):
     
@@ -58,18 +58,14 @@ class Case(TestCase):
         sess = demo.startup(self.ui)
         be = sess.query(Nations).peek("be")
         q = sess.query(Partners,"title firstName name",nation=be)
-        
-        #sess.startDump()
-        rpt=DataReport(q,columnWidths="6 10 20")
-        self.ui.report(rpt)
-        #s = sess.stopDump()
+        q.report(columnWidths="6 10 20")
         s = self.getConsoleOutput()
         
         #print s
         
-        self.assertEqual(s,"""\
-Partners
-========
+        self.assertEquivalent(s,"""\
+Partners (nation=Belgium)
+=========================
 title |firstName |name                
 ------+----------+--------------------
 Herrn |Andreas   |Arens               

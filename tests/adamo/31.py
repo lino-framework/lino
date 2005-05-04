@@ -34,7 +34,7 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.apps.raceman import races
 
-from lino.reports import DataReport
+#from lino.reports import DataReport
 
 #from lino.apps.raceman.races import Races, Participants, RaceTypes,\
 #     Categories, Clubs, Persons
@@ -75,14 +75,14 @@ class Case(TestCase):
             orderBy="duration dossard",
             pageLen=10)
         
-        rpt=DataReport(q,columnWidths="d d 20 15")
-        self.ui.report(rpt)
+        q.report(columnWidths="d d 20 15")
+        #self.ui.report(rpt)
         #q.executeReport(columnWidths="d d 20 15")
         s = self.getConsoleOutput()
         #print s
         self.assertEquals(s,"""\
-Participants
-============
+Participants (race=test race)
+=============================
 duration|doss|person.name         |person.firstNam
         |ard |                    |e              
 --------+----+--------------------+---------------

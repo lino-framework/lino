@@ -516,9 +516,12 @@ class SimpleQuery(LeadTableColumnList):
     def getContext(self):
         return self._session
 
+    def createReport(self,**kw):
+        from lino.reports.reports import DataReport
+        return DataReport(None,self,**kw)
+
     def report(self,**kw):
-        from lino.reports.reports import createReport
-        rpt=createReport(self,**kw)
+        rpt=self.createReport(**kw)
         self._session.ui.report(rpt)
     
 
@@ -1245,7 +1248,7 @@ class DataColumn:
         self._atoms = atoms
 
         # self._atoms is list of those atoms in ColumnList which have
-        # been requested for this column
+        # been requested by this column
 
 
     def __str__(self):
