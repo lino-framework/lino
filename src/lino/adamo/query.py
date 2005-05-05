@@ -414,39 +414,28 @@ class BaseColumnList:
 
         cns = cns[0]
         rowAttr = table.getRowAttr(cns)
-        #if rowAttr is None:
-        #    raise NoSuchField,name
         return self.addColumn(name,rowAttr,join)
 
     
-    def addColumn(self,name,rowAttr,join=None,**kw):
+    def addColumn(self,name,rowAttr=None,join=None,**kw):
         if self._frozen:
             raise InvalidRequestError(
                 "Cannot append columns to frozen %r" % self)
+        if rowAttr is None:
+            rowAttr=self.getLeadTable().getRowAttr(name)
+        #    visible=True
+        #else:
+        #    visible=False
         for ccl in self.columnClasses:
             if isinstance(rowAttr,ccl.fieldClass):
                 col=ccl(self,len(self._columns),
-                        name, rowAttr, join)
+                        name, rowAttr, join,**kw)
                 self._columns.append(col)
-                col.setupColAtoms(self.getDatabase(),**kw)
+                col.setupColAtoms(self.getDatabase())
+                #if visible:
+                #    self.visibleColumns.append(col)
                 return col
-##         for fcl,ccl in self.columnClasses.items():
-##             if isinstance(rowAttr,fcl):
-##                 col=ccl(self,len(self._columns),
-##                         name, rowAttr, join)
-##                 self._columns.append(col)
-##                 col.setupColAtoms(self.getDatabase(),**kw)
-##                 return col
-
-##         if isinstance(rowAttr,Detail):
-##             col = DetailColumn(self,len(self._columns),
-##                                name, rowAttr, join,**kw)
-##         else:
-##             col = QueryColumn(self,len(self._columns),
-##                               name, rowAttr, join,**kw)
-##         self._columns.append(col)
-##         col.setupColAtoms(self.getDatabase())
-##         return col
+        #raise "no columnClass for %r" % rowAttr
 
             
     def getColumns(self,columnNames=None):
@@ -924,8 +913,8 @@ class SimpleQuery(LeadTableColumnList):
     def zap(self):
         self._store.zap()
 
-    def addFilter(self,cls,*args,**kw):
-        flt=cls(self,*args,**kw)
+    def addFilter(self,flt): # cls,*args,**kw):
+        #flt=cls(self,*args,**kw)
         if self._filters is None:
             self._filters=[]
         self._filters.append(flt)

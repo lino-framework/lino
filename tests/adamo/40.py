@@ -42,32 +42,42 @@ SELECT id, name_en
 '''
 
 class Case(TestCase):
-    skip=True
+    
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.beginSession(self.ui,big=True)
+        self.sess = demo.beginSession(self.ui)
         
     def tearDown(self):
         self.sess.shutdown()
         
     def test01(self):
+        q=self.sess.query(Nations,"id name cities")
+##         q.report(pageLen=5,pageNum=1,columnWidths="2 15 20")
+##         s=self.getConsoleOutput()
+##         print __file__,"\n", s
+##         self.assertEquivalent(s,"""\
+## """)
         q=self.sess.query(Nations,"id name")
-        q.addColumn("cities",search="eup")
-        q.addFilter(NotEmpty,"cities")
-        q.report(pageLen=5,pageNum=1,columnWidths="2 15 20")
-        s=self.getConsoleOutput()
-        #print __file__,"\n", s
-        self.assertEquivalent(s,"""\
-Nations where 'cities' not empty
-================================
-id|name           |cities
---+---------------+--------------------
-be|Belgium        |2846 Cities
-de|Germany        |7 Cities
-ee|Estonia        |10 Cities
-""")
-        sql=ds.getSqlSelect()
-        #print __file__,"\n", sql
+        cities=q.addColumn("cities")
+        q.addFilter(NotEmpty(cities))
+        q.setVisibleColumns("id name cities")
+        sql=q.getSqlSelect()
+        print __file__,"\n", sql
+        self.assertEquivalent(sql,"""\
+SELECT id, name_en
+FROM Nations
+WHERE EXISTS (SELECT *
+              FROM Cities
+              WHERE Nations.id=Cities.nation_id)
+        """)
+        
+    def test02(self):
+        q=self.sess.query(Nations,"id name")
+        cities=q.addColumn("cities",search="eup")
+        q.addFilter(NotEmpty(cities))
+        q.setVisibleColumns("id name cities")
+        sql=q.getSqlSelect()
+        print __file__,"\n", sql
         self.assertEquivalent(sql,"""\
 SELECT id, name_en
 FROM Nations

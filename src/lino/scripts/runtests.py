@@ -21,7 +21,7 @@ import sys
 import types
 import unittest
 
-#from lino.misc import tsttools
+from lino.misc import tsttools
 from lino.misc.my_import import my_import
 from lino.ui.console import ConsoleApplication
 
@@ -117,16 +117,13 @@ continue testing even if failures or errors occur""",
             # Python 2.2 if type(v) == types.ClassType:
             if type(v) == types.TypeType: # since 2.3
                 if issubclass(v,unittest.TestCase):
-                    if hasattr(v,"skip") and v.skip:
-                        self.ui.notice("Skipping %s.%s",
-                                       modname,v.__name__)
-                        #skipped.append(v)
-                    else:
-                        cases.append(v)
-                    # print k
-                    #if v != TestCase:
-                    #suites.append(unittest.makeSuite(v))
-                        # print modname + "." + k
+                    if v != unittest.TestCase \
+                          and v != tsttools.TestCase:
+                        if hasattr(v,"skip") and v.skip:
+                            self.ui.notice("Skipping %s.%s",
+                                           modname,v.__name__)
+                        else:
+                            cases.append(v)
         return cases
     
     

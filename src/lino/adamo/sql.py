@@ -31,6 +31,18 @@ from lino.adamo.connection import Connection
 from lino.adamo.filters import NotEmpty, IsEqual
 
 
+class Master:
+    def __init__(self,ds):
+        self.ds=ds
+
+    def getRowId(self):
+        l = []
+        for col in self.ds._pkColumns:
+            for a in col.getAtoms():
+                l.append(a.name)
+        return l
+
+
 class SqlConnection(Connection):
     
     "base class for SQL connections"
@@ -197,12 +209,11 @@ class SqlConnection(Connection):
         leadTable = ds.getLeadTable()
         
         if sqlColumnNames is None:
-            sqlColumnNames = ''
-        else:
-            sqlColumnNames += ', '
-            
-        sqlColumnNames += ", ".join([a.getNameInQuery(clist)
-                                     for a in clist.getAtoms()])
+            sqlColumnNames = ", ".join([a.getNameInQuery(ds)
+                                        for a in ds.getAtoms()])
+        elif sqlColumnNames != "*":
+            sqlColumnNames += ", ".join([a.getNameInQuery(ds)
+                                         for a in ds.getAtoms()])
         sql = "SELECT " + sqlColumnNames
         
         sql += "\nFROM " + leadTable.getTableName()
@@ -283,18 +294,8 @@ class SqlConnection(Connection):
                     for a in flt.col.getAtoms():
                         l.append(a.name+" ISNULL")
                 else:
-                    """flt.value is a Row, and I must test each atom of this row's primary key. But 
-                    """
-                    
-##                     pk=flt.value.getRowId()
-##                     assert len(pk) == len(flt.col.getAtoms()),\
-##                            "%s: len(%s) != len(%s)" % (
-##                         ds,flt.value.getRowId(),
-##                         [a.name for a in flt.col.getAtoms()]
-##                         )
-                    #av=[None]*len(flt.col.getAtoms())
-                    avalues=flt.col.atomize(flt.value,
-                                            ds.getDatabase())
+                    avalues=flt.col.atomize(
+                        flt.value, ds.getDatabase())
                     i=0
                     for a in flt.col.getAtoms():
                         l.append(self.testEqual(
@@ -308,25 +309,28 @@ class SqlConnection(Connection):
                 for a in flt.col.getAtoms():
                     l.append(a.name+" NOT NULL")
             elif isinstance(flt.col.rowAttr,Detail):
-                #slave=flt.col.getCellValue(?)
-                master=flt.col.rowAttr._owner
-                slave=flt.col.rowAttr.pointer._owner
+                master=Master(ds)
+                slave=flt.col.getCellValue(master)
+                #master=flt.col.rowAttr._owner
+                #slave=flt.col.rowAttr.pointer._owner
                 #print "Master:", master.getTableName()
                 #print "Slave:", slave.getTableName()
-                s = "EXISTS (SELECT * FROM "
-                s += slave.getTableName()
-                s += " WHERE "
-                l2=[]
-                i=0
-                pka=flt.col.rowAttr.pointer.getNeededAtoms(None)
-                for name,t in master.getPrimaryAtoms():
-                    s2=master.getTableName()+"."+name
-                    s2+="="
-                    s2+=slave.getTableName()+"."+pka[i][0]
-                    l2.append(s2)
-                    i+=1
-                s+=" AND ".join(l2)
+                s = "EXISTS ("
+                s += self.getSqlSelect(slave,"*")
                 s += ")"
+##                 s += slave.getTableName()
+##                 s += " WHERE "
+##                 l2=[]
+##                 i=0
+##                 pka=flt.col.rowAttr.pointer.getNeededAtoms(None)
+##                 for name,t in master.getPrimaryAtoms():
+##                     s2=master.getTableName()+"."+name
+##                     s2+="="
+##                     s2+=slave.getTableName()+"."+pka[i][0]
+##                     l2.append(s2)
+##                     i+=1
+##                 s+=" AND ".join(l2)
+##                 s += ")"
                 l.append(s)
             else:
                 raise NotImplementedError
@@ -377,7 +381,7 @@ class SqlConnection(Connection):
             for flt in ds._filters:
                 where+=self.filterWhere(flt,ds)
         if len(where):
-            return "\n  WHERE " + "\n     AND ".join(where)
+            return " WHERE " + " AND ".join(where)
         return ""
 
     def executeSelect(self,ds,**kw):

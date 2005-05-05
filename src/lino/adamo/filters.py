@@ -21,8 +21,9 @@ class Filter:
         raise NotImplementedError
 
 class NotEmpty(Filter):
-    def __init__(self,ds,columnName):
-        self.col=ds.getColumnByName(columnName)
+    
+    def __init__(self,col):
+        self.col=col
     
     def getLabel(self):
         return "'%s' not empty" % self.col.getLabel()
