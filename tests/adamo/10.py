@@ -47,6 +47,12 @@ class Case(TestCase):
     def test01(self):
         be = self.db.query(Nations).peek('be')
         s = ''
+        
+        #cities=be.cities
+        #print cities._masters
+        #cities=be.cities.query(orderBy="name",
+        #                       search="eup")
+        #print cities.getSqlSelect()
         for city in be.cities.query(orderBy="name",
                                     search="eup"):
             s += city.zipCode + " "+ city.name + "\n"

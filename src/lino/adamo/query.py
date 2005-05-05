@@ -170,10 +170,14 @@ class QueryColumn:
         
 
 class FieldColumn(QueryColumn):
+    
     fieldClass=Field
+
+    def atomize(self,value,ctx):
+        return (value,)
+    
     def value2atoms(self,value,atomicRow,context):
-        #values = self.rowAttr.value2atoms(value,context)
-        self.values2atoms((value,),atomicRow)
+        self.values2atoms(self.atomize(value,context),atomicRow)
         
     def row2atoms(self,row,atomicRow):
         value=row._values.get(self.rowAttr.name)
@@ -181,24 +185,91 @@ class FieldColumn(QueryColumn):
 
 class BabelFieldColumn(FieldColumn):
     fieldClass=BabelField
-    def value2atoms(self,value,atomicRow,context):
-        #values = self.rowAttr.value2atoms(value,context)
-        self.values2atoms((value,),atomicRow)
+##     def value2atoms(self,value,atomicRow,context):
+##         self.values2atoms((value,),atomicRow)
+        
+##     def row2atoms(self,row,atomicRow):
+##         values = self.rowAttr.row2atoms(row)
+##         self.values2atoms(values,atomicRow)
+
+##     def row2atoms(self,row,atomicRow):
+##         value = row._values.get(self.rowAttr.name)
+##         values=self.rowAttr.value2atoms(value, row.getDatabase())
+##         self.values2atoms(values,atomicRow)
+
+    def atomize(self,value,ctx):
+        # value is a sequence with all langs of db
+        dblangs = ctx.getBabelLangs()
+        values = [None] * len(dblangs)
+        if value is not None:
+            assert issequence(value), \
+                   "%s is not a sequence" % repr(value)
+            assert len(value) == len(dblangs), \
+                   "Expected %d values but got %s" % \
+                   (len(dblangs), repr(value))
+            i = 0
+            for lang in dblangs:
+                values[lang.index] = value[i]
+                i += 1
+        return values
+        
         
     def row2atoms(self,row,atomicRow):
-        values = self.rowAttr.row2atoms(row)
-        self.values2atoms(values,atomicRow)
+        value = row._values.get(self.rowAttr.name)
+        self.values2atoms(
+            self.atomize(value,row.getDatabase()),
+            atomicRow)
+
+
+        
         
         
 class PointerColumn(QueryColumn):
     fieldClass=Pointer
-    def value2atoms(self,value,atomicRow,context):
-        values = self.rowAttr.value2atoms(value,context)
-        self.values2atoms(values,atomicRow)
         
     def row2atoms(self,row,atomicRow):
         value=row._values.get(self.rowAttr.name)
         self.value2atoms(value,atomicRow,row.getDatabase())
+
+##     def value2atoms(self,value,atomicRow,context):
+##         values = self.rowAttr.value2atoms(value,context)
+##         self.values2atoms(values,atomicRow)
+
+    def atomize(self,value,ctx):
+        if value is None:
+            return [None]*len(self._atoms)
+        if len(self.rowAttr._toTables) == 1:
+            return value.getRowId()
+        
+        values = [None] * len(self._atoms)
+        i = 0
+        tableId = value._query.getLeadTable().getTableId()
+        rid = value.getRowId()
+        for toTable in self.rowAttr._toTables:
+            if toTable.getTableId() == tableId:
+                ai = 0
+                for a in toTable.getPrimaryAtoms():
+                    values[i] = rid[ai]
+                    i+=1
+                    ai+=1
+                return values
+            else:
+                i += len(toTable.getPrimaryAtoms())
+                
+        raise "something wrong?"
+        
+    def value2atoms(self,value,atomicRow,context):
+        values=self.atomize(value,context)
+##         if pointedRow is None:
+##             values = [None] * len(self._atoms)
+##             return self.values2atoms(values,atomicRow)
+        
+##         if len(self.rowAttr._toTables) == 1:
+##             return self.values2atoms(pointedRow.getRowId(),atomicRow)
+        
+        self.values2atoms(values,atomicRow)
+
+        
         
 class DetailColumn(QueryColumn):
     fieldClass=Detail

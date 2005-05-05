@@ -275,6 +275,7 @@ class SqlConnection(Connection):
         l=[]
         if isinstance(flt,IsEqual):
             if isinstance(flt.col.rowAttr,Field):
+                assert len(flt.col.getAtoms()) == 1
                 a=flt.col.getAtoms()[0]
                 l.append(self.testEqual(a.name,a.type,flt.value))
             elif isinstance(flt.col.rowAttr,Pointer):
@@ -282,16 +283,22 @@ class SqlConnection(Connection):
                     for a in flt.col.getAtoms():
                         l.append(a.name+" ISNULL")
                 else:
-                    pk=flt.value.getRowId()
-                    assert len(pk) == len(flt.col.getAtoms()),\
-                           "%s: len(%s) != len(%s)" % (
-                        ds,flt.value.getRowId(),
-                        [a.name for a in flt.col.getAtoms()]
-                        )
+                    """flt.value is a Row, and I must test each atom of this row's primary key. But 
+                    """
+                    
+##                     pk=flt.value.getRowId()
+##                     assert len(pk) == len(flt.col.getAtoms()),\
+##                            "%s: len(%s) != len(%s)" % (
+##                         ds,flt.value.getRowId(),
+##                         [a.name for a in flt.col.getAtoms()]
+##                         )
+                    #av=[None]*len(flt.col.getAtoms())
+                    avalues=flt.col.atomize(flt.value,
+                                            ds.getDatabase())
                     i=0
                     for a in flt.col.getAtoms():
                         l.append(self.testEqual(
-                            a.name,a.type,pk[i]))
+                            a.name,a.type,avalues[i]))
                         i+=1
             else:
                 raise NotImplementedError

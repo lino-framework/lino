@@ -133,16 +133,16 @@ class RowAttribute(Describable):
         # note : row may be None. 
         return True
     
-    def row2atoms(self,row):
-        """fill into atomicRow the atomic data necessary to represent
-        this column"""
-        value = row._values.get(self.name)
-        return self.value2atoms(value, row.getDatabase())
+##     def row2atoms(self,row):
+##         """fill into atomicRow the atomic data necessary to represent
+##         this column"""
+##         value = row._values.get(self.name)
+##         return self.value2atoms(value, row.getDatabase())
 
         
-    def value2atoms(self,value,ctx):
-        print self,value
-        raise NotImplementedError
+##     def value2atoms(self,value,ctx):
+##         print self,value
+##         raise NotImplementedError
     
     
     def atoms2row(self,atomicRow,colAtoms,row):
@@ -314,26 +314,22 @@ class BabelField(Field):
         a = colAtoms[lang.index]
         return ds._connection.testEqual(a.name,a.type,value)
 
-    def value2atoms(self,value,ctx):
-        # value is a sequence with all langs of db
-        dblangs = ctx.getBabelLangs()
-        rv = [None] * len(dblangs)
-        if value is None:
-            return rv
-##          for lang in dblangs:
-##              atomicRow[colAtoms[lang.index].index] = None
-##          return 
-        assert issequence(value), "%s is not a sequence" % repr(value)
-        assert len(value) == len(dblangs), \
-               "Expected %d values but got %s" % \
-               (len(dblangs), repr(value))
-        i = 0
-        for lang in dblangs:
-            #atomicRow[colAtoms[lang.index].index] = value[i]
-            rv[lang.index] = value[i]
-            i += 1
+##     def value2atoms(self,value,ctx):
+##         # value is a sequence with all langs of db
+##         dblangs = ctx.getBabelLangs()
+##         rv = [None] * len(dblangs)
+##         if value is None:
+##             return rv
+##         assert issequence(value), "%s is not a sequence" % repr(value)
+##         assert len(value) == len(dblangs), \
+##                "Expected %d values but got %s" % \
+##                (len(dblangs), repr(value))
+##         i = 0
+##         for lang in dblangs:
+##             rv[lang.index] = value[i]
+##             i += 1
 
-        return rv
+##         return rv
             
     def atoms2row(self,atomicRow,colAtoms,row):
         langs = row.getSession().getBabelLangs()
@@ -508,29 +504,29 @@ class Pointer(RowAttribute):
 ##         raise "not found %d" % tableId
 
     
-    def value2atoms(self,value,ctx):
-        pointedRow = value
-        #print repr(pointedRow)
-        if pointedRow is None:
-            return [None] * len(self._neededAtoms)
+##     def value2atoms(self,value,ctx):
+##         pointedRow = value
+##         #print repr(pointedRow)
+##         if pointedRow is None:
+##             return [None] * len(self._neededAtoms)
         
-        if len(self._toTables) == 1:
-            return pointedRow.getRowId()
-        else:
-            rv = [None] * len(self._neededAtoms)
-            i = 0
-            tableId = pointedRow._query.getLeadTable().getTableId()
-            rid = pointedRow.getRowId()
-            for toTable in self._toTables:
-                if toTable.getTableId() == tableId:
-                    ai = 0
-                    for a in toTable.getPrimaryAtoms():
-                        rv[i] = rid[ai]
-                        i+=1
-                        ai+=1
-                    return rv
-                else:
-                    i += len(toTable.getPrimaryAtoms())
+##         if len(self._toTables) == 1:
+##             return pointedRow.getRowId()
+##         else:
+##             rv = [None] * len(self._neededAtoms)
+##             i = 0
+##             tableId = pointedRow._query.getLeadTable().getTableId()
+##             rid = pointedRow.getRowId()
+##             for toTable in self._toTables:
+##                 if toTable.getTableId() == tableId:
+##                     ai = 0
+##                     for a in toTable.getPrimaryAtoms():
+##                         rv[i] = rid[ai]
+##                         i+=1
+##                         ai+=1
+##                     return rv
+##                 else:
+##                     i += len(toTable.getPrimaryAtoms())
 
 
     def atoms2value(self,atomicValues,sess):
@@ -691,9 +687,6 @@ class Vurt(Field):
     def parse(self,s):
         raise "not allowed"
         
-    def value2atoms(self,value,ctx):
-        raise "not allowed"
-
 
 ##     def getPreferredWidth(self):
 ##         return self.type.width
