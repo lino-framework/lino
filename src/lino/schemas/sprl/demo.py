@@ -124,7 +124,7 @@ class Populator(adamo.Populator):
                 nations_de.populate(q)
             
         else:
-            q = q.query('id name')
+            q = q.query('id name cities')
             q.setBabelLangs('en')
             q.appendRow("ee","Estonia")
             q.appendRow("be","Belgium")
@@ -251,7 +251,7 @@ class DemoPopulator(Populator):
     
         
     def populateAuthors(self,q):
-        q = q.query('name firstName' )
+        q = q.query('name firstName quotesByAuthor' )
         q.appendRow( 'Gates'         ,'Bill') #       ,usa)
         q.appendRow( 'Huxley'    ,'Aldous') #     ,None)
         q.appendRow( 'Tolkien'   ,'J.R.R.') #     ,None)

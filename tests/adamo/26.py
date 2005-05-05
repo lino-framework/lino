@@ -92,21 +92,21 @@ id   |title
 """)
 
 
-        """
+##         """
 
-        Samples are sticky properties: once set, the get inherited by
-        all children.  To clear a sample of a child, you must
-        explicitly set it to Datasource.ANY_VALUE.
+##         Samples are sticky properties: once set, the get inherited by
+##         all children.  To clear a sample of a child, you must
+##         explicitly set it to Datasource.ANY_VALUE.
         
-        Example: you want to use the ds from above as parent for a new
-        ds because you want to inherit columnNames. But now you want to
-        see them all, not only the top-level projects.  So you must
-        clear the "super=None" condition.
+##         Example: you want to use the ds from above as parent for a new
+##         ds because you want to inherit columnNames. But now you want to
+##         see them all, not only the top-level projects.  So you must
+##         clear the "super=None" condition.
 
-        """
+##         """
         
-        ds = ds.query(orderBy="title",super=ds.ANY_VALUE)
-        self.assertEqual(len(ds),10)
+##         ds = ds.query(orderBy="title",super=ds.ANY_VALUE)
+##         self.assertEqual(len(ds),10)
 
         
         """

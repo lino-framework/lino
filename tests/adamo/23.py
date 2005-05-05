@@ -61,8 +61,8 @@ class Case(TestCase):
 
         "create a query"
         
-        invoices = INVOICES.query("jnl date remark",
-                                          partner=p)
+        invoices = INVOICES.query("jnl date remark lines",
+                                  partner=p)
         #invoices.setSamples(partner=p)
         #csr = invoices.executeSelect()
         #count = csr.rowcount

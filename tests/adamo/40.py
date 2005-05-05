@@ -51,11 +51,10 @@ class Case(TestCase):
         self.sess.shutdown()
         
     def test01(self):
-        ds=self.sess.query(Nations,"id name")
-        ds.addColumn("cities",search="eup")
-        ds.addFilter(NotEmpty,"cities")
-        rpt=DataReport(ds,pageLen=5,pageNum=1,columnWidths="2 15 20")
-        self.ui.report(rpt)
+        q=self.sess.query(Nations,"id name")
+        q.addColumn("cities",search="eup")
+        q.addFilter(NotEmpty,"cities")
+        q.report(pageLen=5,pageNum=1,columnWidths="2 15 20")
         s=self.getConsoleOutput()
         #print __file__,"\n", s
         self.assertEquivalent(s,"""\

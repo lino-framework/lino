@@ -27,10 +27,240 @@ from lino.misc.etc import issequence
 
 from lino.adamo import datatypes
 
-from lino.adamo.rowattrs import Detail, Pointer
+from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField
+
+#MS_COLUMN=1
+#MS_MASTER=1
+
+class QueryColumn:
+    
+    def __init__(self,owner,index,name,rowAttr,
+                 join=None,atoms=None):
+        self._owner = owner
+        self.index = index
+        self.name = name
+        self.rowAttr = rowAttr
+        self.join = join
+        #self.sticky = False
+        #self.isVisible = isVisible
+        #self.width = rowAttr.width
+        
+        self._atoms = atoms
+
+        # self._atoms is list of those atoms in ColumnList which have
+        # been requested by this column
+
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return "<column %d:%s in %s>" % (self.index,self.name,
+                                         repr(self._owner))
+    def canWrite(self,row):
+        return self.rowAttr.canWrite(row)
+    
+
+    def setupColAtoms(self,db):
+        #assert self._atoms is None
+        atoms = []
+        if self.join:
+            joinName = self.join.name
+        else:
+            joinName = None
+        for (name,type) in self.rowAttr.getNeededAtoms(db):
+            if self.join and len(self.join.pointer._toTables) > 1:
+                for toTable in self.join.pointer._toTables:
+                    a = self._owner.provideAtom(
+                        name, type,
+                        joinName+toTable.getTableName())
+                    atoms.append(a)
+            else:
+                a = self._owner.provideAtom(name,type,joinName)
+                atoms.append(a)
+
+        self._atoms = tuple(atoms)
+
+    def vetoDeleteRow(self,row):
+        pass
+
+
+    def setCellValue(self,row,value):
+        self.rowAttr.setCellValue(row,value)
+        self.rowAttr.afterSetAttr(row)
+
+    def setValueFromString(self,row,s):
+        self.rowAttr.setValueFromString(row,s)
+        self.rowAttr.afterSetAttr(row)
+        
+    def getFltAtoms(self,context):
+        return self.rowAttr.getFltAtoms(self._atoms,context)
+        
+    def getTestEqual(self,ds,value):
+        return self.rowAttr.getTestEqual(ds,self._atoms,value)
+        
+        
+    def getCellValue(self,row):
+        if self.join is None:
+            return self.rowAttr.getCellValue(row,self)
+        row = getattr(row,self.join.name)
+        if row is None: return None
+        return self.rowAttr.getCellValue(row,self)
+        
+
+    def atoms2row(self,atomicRow,row):
+        if self.join is None:
+            self.rowAttr.atoms2row(atomicRow,self._atoms,row)
+        else:
+            #print "query.py", joinedRow
+            row = getattr(row,self.join.name)
+            if row is None: 
+                return
+            self.rowAttr.atoms2row(atomicRow,self._atoms,row)
+        
+    def atoms2dict(self,atomicRow,valueDict,area):
+        """Fill rowValues with values from atomicRow"""
+        self.rowAttr.atoms2dict(atomicRow,valueDict,self._atoms,area)
+
+    def atoms2value(self,atomicValues,sess):
+        #return self.rowAttr.atoms2value(atomicRow,self._atoms,area)
+        #atomicValues = [atomicRow[atom.index]
+        #                    for atom in self._atoms]
+        return self.rowAttr.atoms2value(atomicValues,sess)
+    
+
+    def value2atoms(self,value,atomicRow,context):
+        raise NotImplementedError
+    
+    def row2atoms(self,row,atomicRow):
+        raise NotImplementedError
+    
+##     def row2atoms(self,row,atomicRow):
+##         value=row._values.get(self.rowAttr.name)
+##         self.value2atoms(value,atomicRow,row.getDatabase())
+##     def row2atoms(self,row,atomicRow):
+##         values = self.rowAttr.row2atoms(row)
+##         self.values2atoms(values,atomicRow)
+
+
+    def values2atoms(self,values,atomicRow):
+        assert len(values) == len(self._atoms)
+        i = 0
+        for atom in self._atoms:
+            atomicRow[atom.index] = values[i]
+            i+=1
+        
+    def getAtoms(self): return self._atoms
+    def getMaxWidth(self):
+        return self.rowAttr.getMaxWidth()
+    def getMinWidth(self):
+        return self.rowAttr.getMinWidth()
+    def getLabel(self):
+        return self.rowAttr.getLabel()
+
+    def parse(self,s,ds):
+        l1 = s.split(',')
+        assert len(l1) == len(self._atoms)
+        atomicValues = [a.type.parse(s1)
+                             for a,s1 in zip(self._atoms,l1)]
+        return self.atoms2value(atomicValues,ds._session)
+        
+    def format(self,v):
+        return self.rowAttr.format(v)
+        
+
+class FieldColumn(QueryColumn):
+    fieldClass=Field
+    def value2atoms(self,value,atomicRow,context):
+        #values = self.rowAttr.value2atoms(value,context)
+        self.values2atoms((value,),atomicRow)
+        
+    def row2atoms(self,row,atomicRow):
+        value=row._values.get(self.rowAttr.name)
+        self.value2atoms(value,atomicRow,row.getDatabase())
+
+class BabelFieldColumn(FieldColumn):
+    fieldClass=BabelField
+    def value2atoms(self,value,atomicRow,context):
+        #values = self.rowAttr.value2atoms(value,context)
+        self.values2atoms((value,),atomicRow)
+        
+    def row2atoms(self,row,atomicRow):
+        values = self.rowAttr.row2atoms(row)
+        self.values2atoms(values,atomicRow)
+        
+        
+class PointerColumn(QueryColumn):
+    fieldClass=Pointer
+    def value2atoms(self,value,atomicRow,context):
+        values = self.rowAttr.value2atoms(value,context)
+        self.values2atoms(values,atomicRow)
+        
+    def row2atoms(self,row,atomicRow):
+        value=row._values.get(self.rowAttr.name)
+        self.value2atoms(value,atomicRow,row.getDatabase())
+        
+class DetailColumn(QueryColumn):
+    fieldClass=Detail
+    def __init__(self,owner,index,name,rowAttr,
+                 join=None,atoms=None,**kw):
+        QueryColumn.__init__(self,owner,index,name,rowAttr,join,atoms)
+        for k,v in self.rowAttr._queryParams.items():
+            kw.setdefault(k,v)
+        self._queryParams=kw
+        self.detailQuery=None
+        
+    def getCellValue(self,row):
+        if self.detailQuery is None:
+            self.detailQuery=self._owner.getSession().query(
+                self.rowAttr.pointer._owner.__class__,
+                **self._queryParams)
+        return QueryColumn.getCellValue(self,row)
+
+
+    def vetoDeleteRow(self,row):
+        detailDs = self.getCellValue(row)
+        if len(detailDs) == 0:
+            return 
+        #return "%s : %s not empty (contains %d rows)" % (
+        #   str(row),self.name,len(ds))
+        return "%s : %s not empty" % (str(row),self.name)
+            
+        
+
+    def value2atoms(self,value,atomicRow,context):
+        values = self.rowAttr.value2atoms(value,context)
+        self.values2atoms(values,atomicRow)
+        
+
+    def row2atoms(self,row,atomicRow):
+        pass
+
+
+
+
+
+
+
+
+
+
 
 
 class BaseColumnList: 
+    
+    ANY_VALUE = types.NoneType
+    
+    columnClasses=( PointerColumn,
+                    BabelFieldColumn,
+                    FieldColumn,
+                    )
+    
+##     columnClasses={ 
+##                     Pointer: PointerColumn,
+##                     Field: FieldColumn,
+##                     BabelField: FieldColumn,
+##                     }
     
     def __init__(self,parent,columnNames):
         if parent is not None and columnNames is None:
@@ -116,23 +346,36 @@ class BaseColumnList:
         #if rowAttr is None:
         #    raise NoSuchField,name
         return self.addColumn(name,rowAttr,join)
+
     
-    def addColumn(self,name,fld,join=None,**kw):
+    def addColumn(self,name,rowAttr,join=None,**kw):
         if self._frozen:
             raise InvalidRequestError(
                 "Cannot append columns to frozen %r" % self)
-        #col = self._ds.columnClass(self, len(self._columns),
-        #                                   name, join,fld)
-        if len(kw):
-            fld=fld.child(kw)
-        col = DataColumn(self,len(self._columns),
-                         name, fld, join)
-        self._columns.append(col)
-        col.setupColAtoms(self.getDatabase())
-        return col
+        for ccl in self.columnClasses:
+            if isinstance(rowAttr,ccl.fieldClass):
+                col=ccl(self,len(self._columns),
+                        name, rowAttr, join)
+                self._columns.append(col)
+                col.setupColAtoms(self.getDatabase(),**kw)
+                return col
+##         for fcl,ccl in self.columnClasses.items():
+##             if isinstance(rowAttr,fcl):
+##                 col=ccl(self,len(self._columns),
+##                         name, rowAttr, join)
+##                 self._columns.append(col)
+##                 col.setupColAtoms(self.getDatabase(),**kw)
+##                 return col
 
-##     def createColumn(self,colIndex,name,join,fld):
-##         return DataColumn(self,colIndex,name,join,fld)
+##         if isinstance(rowAttr,Detail):
+##             col = DetailColumn(self,len(self._columns),
+##                                name, rowAttr, join,**kw)
+##         else:
+##             col = QueryColumn(self,len(self._columns),
+##                               name, rowAttr, join,**kw)
+##         self._columns.append(col)
+##         col.setupColAtoms(self.getDatabase())
+##         return col
 
             
     def getColumns(self,columnNames=None):
@@ -340,12 +583,6 @@ class LeadTableColumnList(BaseColumnList):
         
         
 
-    def __repr__(self):
-        return self.__class__.__name__+\
-               "(%s,columnNames='%s')" % (\
-               self.getLeadTable().getTableName(),\
-               " ".join([col.name for col in self._columns]))
-
 
 ##     def getFieldContainer(self):
 ##         return self._store._table # self.leadTable
@@ -434,8 +671,15 @@ class PeekQuery(LeadTableColumnList):
 
 class SimpleQuery(LeadTableColumnList):
 
-    ANY_VALUE = types.NoneType
-    
+    columnClasses=( PointerColumn,
+                    DetailColumn,
+                    BabelFieldColumn,
+                    FieldColumn,
+                    )
+##     columnClasses={ Detail: DetailColumn,
+##                     Pointer: PointerColumn,
+##                     Field: FieldColumn,
+##                     }
     def __init__(self, parent, store, session,
                  columnNames=None,
                  viewName=None,
@@ -444,7 +688,8 @@ class SimpleQuery(LeadTableColumnList):
                  sqlFilters=None,
                  filters=None,
                  search=None,
-                 samples=None,
+                 masterColumns=None,
+                 masters=[],
                  label=None,
                  **kw):
         self._session = session
@@ -495,23 +740,103 @@ class SimpleQuery(LeadTableColumnList):
             
         
         if parent is None:
-            self._samples = {}
+            #self._samples = {}
+            self._masterColumns=[]
+            self._masters={}
         else:
-            self._samples = dict(parent._samples)
+            #self._samples = dict(parent._samples)
+            self._masterColumns=list(parent._masterColumns)
+            self._masters=dict(parent._masters)
+
+        if masterColumns is not None:
+            self.setMasterColumns(masterColumns)
+            
+        self.setMasters(*masters,**kw)
+
+##         if self.getTableName() == "Quotes":
+##             print "created", self
         
-        if samples is None:
-            self.setSamples(**kw)
-        else:
-            #assert len(kw) == 0, "kw is %s, but samples is %s" % (\
-            #   repr(kw),repr(samples))
-            self._samples.update(samples)
-            self.setSamples(**kw)
+##         if samples is None:
+##             self.setSamples(**kw)
+##         else:
+##             #assert len(kw) == 0, "kw is %s, but samples is %s" % (\
+##             #   repr(kw),repr(samples))
+##             #self._samples.update(samples)
+##             self.setSamples(samples)
+##             self.setSamples(**kw)
 
             
 ##     def getContext(self):
 ##         #return self._clist._context
 ##         return self._session
 
+    def setMasterColumns(self,columnNames):
+        self._masterColumns = [
+            self.provideColumn(name)
+            for name in columnNames.split()]
+
+            
+    def setMasters(self,*masters,**kw):
+        #self._masters={}
+        if len(masters):
+            assert len(self._masterColumns) == len(masters)
+            assert len(kw) == 0
+            # master columns have been set previously
+            i=0
+            for mc in self._masterColumns:
+                self._masters[mc.name]=masters[i]
+                i+=1
+            return
+        if len(kw) == 0: return
+        if len(self._masterColumns) == 0:
+            for name,master in kw.items():
+                self._masterColumns.append(self.provideColumn(name))
+                self._masters[name]=master
+        else:
+            for name,master in kw.items():
+                l=[col.name for col in self._masterColumns]
+                assert name in l, \
+                       "%s not in %s" % (name,l)
+                self._masters[name]=master
+
+
+##             col=self.provideColumn(name)
+##             for ms in self._masters:
+##                 if ms[MS_COLUMN] == col:
+##                     ms[MS_MASTER]=master
+##                     return
+##             self._masters.append( (col,master) ) # MS_COLUMN, MS_MASTER
+            
+##     def setSamples(self,**kw):
+##         "each value is a Python object"
+##         self._samples.update(kw)
+##         for (name,value) in self._samples.items():
+##             if value == self.ANY_VALUE:
+##                 del self._samples[name]
+##             else:
+##                 col = self.provideColumn(name)
+    
+    
+##     def getAtomicSamples(self):
+##         l = []
+##         atomicRow = self.makeAtomicRow() 
+##         for (name,value) in self._samples.items():
+##             col = self.getColumnByName(name)
+##             col.value2atoms(value,atomicRow,self.getDatabase())
+##             # 20050110
+##             # col.value2atoms(value,atomicRow,self.getContext())
+##             for atom in col.getAtoms():
+##                 l.append((atom,atomicRow[atom.index]))
+##         return l
+
+
+    def __repr__(self):
+        return self.__class__.__name__+\
+               "(%s,'%s',masterColumns='%s')" % (\
+               self.getLeadTable().getTableName(),\
+               " ".join([col.name for col in self._columns]),
+               " ".join([col.name for col in self._masterColumns]),
+               )
 
     def getContext(self):
         return self._session
@@ -682,28 +1007,6 @@ class SimpleQuery(LeadTableColumnList):
             kw.setdefault(k,v)
         
 
-##  def child(self,cl,columnNames=None,samples=None,**kw):
-        
-##      """creates a child (a detached copy) of this.  Modifying the
-##      child won't affect the parent.  columnNames can optionally be
-##      specified as first (non-keyword) argument.  if arguments are
-##      given, then they override the corresponding value in the parent.
-        
-##      """
-##      self.setdefaults(kw)
-##      clist = self._clist
-##      if columnNames is not None:
-##          clist = DataColumnList(self,columnNames)            
-##          #clist = clist.child(columnNames)
-##      #query = self._area._table.query(columnNames=columnNames,**kw)
-
-        
-##      return cl(self._session,
-##                   self._store,
-##                   clist,
-##                   samples=samples,
-##                   **kw)
-
 
     def getRenderer(self,rsc,req,writer=None):
         return self._schema._datasourceRenderer(rsc,req,
@@ -719,12 +1022,12 @@ class SimpleQuery(LeadTableColumnList):
     def getLabel(self):
         if self._label is None:
             lbl = self.getLeadTable().getLabel()
-            if len(self._samples) > 0:
+            if len(self._masterColumns) > 0:
                 lbl += " ("
-                for (k,v) in self._samples.items():
-                    col = self.getColumnByName(k)
-                    lbl += col.name + "=" \
-                             + col.rowAttr.format(v)
+                for mc in self._masterColumns:
+                    v=self._masters[mc.name]
+                    lbl += mc.name + "=" \
+                           + mc.rowAttr.format(v)
                 lbl += ")"
             if self._filters is not None:
                 lbl += " where "
@@ -754,27 +1057,6 @@ class SimpleQuery(LeadTableColumnList):
 ##             #                        for col in sortColumns])
 ##             self.sortColumns=sortColumns
 
-    def setSamples(self,**kw):
-        "each value is a Python object"
-        self._samples.update(kw)
-        for (name,value) in self._samples.items():
-            if value == self.ANY_VALUE:
-                del self._samples[name]
-            else:
-                col = self.provideColumn(name)
-    
-    
-    def getAtomicSamples(self):
-        l = []
-        atomicRow = self.makeAtomicRow() 
-        for (name,value) in self._samples.items():
-            col = self.getColumnByName(name)
-            col.value2atoms(value,atomicRow,self.getDatabase())
-            # 20050110
-            # col.value2atoms(value,atomicRow,self.getContext())
-            for atom in col.getAtoms():
-                l.append((atom,atomicRow[atom.index]))
-        return l
             
     def setSqlFilters(self,*sqlFilters):
         self.setFilterExpressions(sqlFilters,self._search)
@@ -865,7 +1147,12 @@ class SimpleQuery(LeadTableColumnList):
         
     def _appendRow(self,*args,**kw):
         row = self.getLeadTable().Instance(self,{},True)
-        kw.update(self._samples)
+        for mc in self._masterColumns:
+            #v = mc.getCellValue(self._masters[mc.name])
+            #kw[mc.name] = v
+            #kw[mc.name] = self._masters[mc.name]
+            mc.setCellValue(row,self._masters[mc.name])
+        #kw.update(self._samples)
         self.updateRow(row,*args,**kw)
         self.rowcount = None
         self._store.setAutoRowId(row)
@@ -906,12 +1193,20 @@ class SimpleQuery(LeadTableColumnList):
         assert len(id) == len(self._pkColumns),\
                  "expected %d values but got %s" % \
                  ( len(self._pkColumns), repr(id))
-        # flatten the id :
-        l = []
-        i = 0
+        
+        # atomize the id :
+        l = [None] * len(self.getLeadTable().getPrimaryAtoms())
+        i=0
         for col in self._pkColumns:
-            l += col.rowAttr.value2atoms(id[i],self.getDatabase())
+            col.value2atoms(id[i],l,self.getDatabase())
             i+=1
+            
+##         # atomize the id :
+##         l = []
+##         i = 0
+##         for col in self._pkColumns:
+##             l += col.rowAttr.value2atoms(id[i],self.getDatabase())
+##             i+=1
             
         atomicRow = self.executePeek(l)
         if atomicRow is None:
@@ -1231,178 +1526,6 @@ class Join:
 
 
 
-
-class DataColumn:
-    
-    def __init__(self,owner,index,name,rowAttr,
-                 join=None,atoms=None):
-        self._owner = owner
-        self.index = index
-        self.name = name
-        self.rowAttr = rowAttr
-        self.join = join
-        #self.sticky = False
-        #self.isVisible = isVisible
-        #self.width = rowAttr.width
-        
-        self._atoms = atoms
-
-        # self._atoms is list of those atoms in ColumnList which have
-        # been requested by this column
-
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return "<column %d:%s in %s>" % (self.index,self.name,
-                                         repr(self._owner))
-    def canWrite(self,row):
-        return self.rowAttr.canWrite(row)
-
-##      def getLabel(self):
-##          return self.name
-
-    def setupColAtoms(self,db):
-        #assert self._atoms is None
-        atoms = []
-        if self.join:
-            joinName = self.join.name
-        else:
-            joinName = None
-        for (name,type) in self.rowAttr.getNeededAtoms(db):
-            if self.join and len(self.join.pointer._toTables) > 1:
-                for toTable in self.join.pointer._toTables:
-                    a = self._owner.provideAtom(
-                        name, type,
-                        joinName+toTable.getTableName())
-                    atoms.append(a)
-            else:
-                a = self._owner.provideAtom(name,type,joinName)
-                atoms.append(a)
-
-        self._atoms = tuple(atoms)
-
-
-    def setCellValue(self,row,value):
-        #print self, value
-        self.rowAttr.setCellValue(row,value)
-        self.rowAttr.afterSetAttr(row)
-
-    def setValueFromString(self,row,s):
-        self.rowAttr.setValueFromString(row,s)
-        self.rowAttr.afterSetAttr(row)
-        
-    def getFltAtoms(self,context):
-        return self.rowAttr.getFltAtoms(self._atoms,context)
-        
-    def getTestEqual(self,ds,value):
-        return self.rowAttr.getTestEqual(ds,self._atoms,value)
-        
-        
-    def getCellValue(self,row):
-        if self.join is None:
-            return self.rowAttr.getCellValue(row)
-        row = getattr(row,self.join.name)
-        if row is None: return None
-        return self.rowAttr.getCellValue(row)
-        
-
-    def atoms2row(self,atomicRow,row):
-        if self.join is None:
-            self.rowAttr.atoms2row(atomicRow,self._atoms,row)
-        else:
-            #print "query.py", joinedRow
-            row = getattr(row,self.join.name)
-            if row is None: 
-                return
-            self.rowAttr.atoms2row(atomicRow,self._atoms,row)
-##          try:
-##              joinedRow = row._values[self.join.name]
-##          except KeyError:
-##              joinedRow = self.join.pointer.
-##              row._values[self.join.name] = joinedRow
-        
-    def atoms2dict(self,atomicRow,valueDict,area):
-        """Fill rowValues with values from atomicRow"""
-        self.rowAttr.atoms2dict(atomicRow,valueDict,self._atoms,area)
-##      attr = self.rowAttr
-##      valueDict[attr.name] = attr.atoms2value(atomicRow,
-##                                                           self._atoms,
-##                                                           area)
-
-    def atoms2value(self,atomicValues,sess):
-        #return self.rowAttr.atoms2value(atomicRow,self._atoms,area)
-        #atomicValues = [atomicRow[atom.index]
-        #                    for atom in self._atoms]
-        return self.rowAttr.atoms2value(atomicValues,sess)
-    
-
-    def value2atoms(self,value,atomicRow,context):
-        values = self.rowAttr.value2atoms(value,context)
-        self.values2atoms(values,atomicRow)
-        
-    def row2atoms(self,row,atomicRow):
-        values = self.rowAttr.row2atoms(row)
-        self.values2atoms(values,atomicRow)
-
-
-    def values2atoms(self,values,atomicRow):
-        assert len(values) == len(self._atoms)
-        i = 0
-        for atom in self._atoms:
-            atomicRow[atom.index] = values[i]
-            i+=1
-        
-    def getAtoms(self): return self._atoms
-    def getMaxWidth(self):
-        return self.rowAttr.getMaxWidth()
-    def getMinWidth(self):
-        return self.rowAttr.getMinWidth()
-    def getLabel(self):
-        return self.rowAttr.getLabel()
-
-#   def getNeededAtoms(self,db):
-#       return
-    
-##     def format(self,value,context):
-##         raise "no longer used?"
-##         values = self.rowAttr.value2atoms(value,context)
-##         #print self, ":", values
-##         #if len(self._atoms) == 1:
-##         #   return self._atoms[0].type.format(values[0])
-##         assert len(values) == len(self._atoms)
-##         l = [a.type.format(v) for v,a in zip(values,self._atoms)]
-##         return ",".join(l)
-        
-    def parse(self,s,ds):
-        l1 = s.split(',')
-        assert len(l1) == len(self._atoms)
-        atomicValues = [a.type.parse(s1)
-                             for a,s1 in zip(self._atoms,l1)]
-        return self.atoms2value(atomicValues,ds._session)
-        
-    def format(self,v):
-        return self.rowAttr.format(v)
-        
-##  def parse(self,s):
-##      return self.rowAttr.parse(v)
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def trigger(events,*args):
     for e in events:
         if not e(*args): return False
@@ -1422,26 +1545,13 @@ class DataIterator:
         return self
     
     def next(self):
-##         while True:
-            sqlatoms = self.csr.fetchone()
-            if sqlatoms == None:
-                raise StopIteration
-            atomicRow = self.ds.csr2atoms(sqlatoms)
-            row=self.ds.atoms2row(atomicRow,new=False)
-##             if self.ds._filters is not None:
-##                 if not trigger(self.ds._filters,row):
-##                     continue
-                    
-            self.recno += 1
-            return row
-
-
-
-
-
-
-
-
+        sqlatoms = self.csr.fetchone()
+        if sqlatoms == None:
+            raise StopIteration
+        atomicRow = self.ds.csr2atoms(sqlatoms)
+        row=self.ds.atoms2row(atomicRow,new=False)
+        self.recno += 1
+        return row
 
 
 

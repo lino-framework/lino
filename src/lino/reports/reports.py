@@ -322,7 +322,7 @@ class DataReport(BaseReport):
         
         if len(kw):
             # forward keywords to the query
-            iterator=iterator.child(**kw)
+            ds=ds.child(**kw)
             
         BaseReport.__init__(self,parent,ds,
                             columnWidths,width,rowHeight,

@@ -52,11 +52,12 @@ class Case(TestCase):
                     cmd="python "+os.path.join(examplesDir,filename)
                     fd=os.popen(cmd,"r")
                     observed=fd.read()
-                    self.assertEqual(fd.close(),None)
+                    msg="Example %s failed" % filename
+                    self.assertEqual(fd.close(),None,msg)
                     outfile=os.path.join(examplesDir,base)+".out"
                     expected=open(outfile).read()
-                    self.assertEquivalent(observed,expected,
-                                          "Example %s failed"%filename)
+                    self.assertEquivalent(observed,expected,msg)
+                                          
         
         
 ##         self.sess.setBabelLangs('en')

@@ -54,9 +54,6 @@ class RowAttribute(Describable):
         Override this to modify other attributes who depend on this
         one.    """
 
-    def vetoDeleteIn(self,row):
-        pass
-
     def format(self,v):
         return str(v)
         
@@ -76,8 +73,8 @@ class RowAttribute(Describable):
     def onTableInit3(self,owner,schema):
         self._onValidate = tuple(self._onValidate)
 
-    def onAreaInit(self,area):
-        pass
+##     def onAreaInit(self,area):
+##         pass
     
     #def setSticky(self):
     #    self.sticky = True
@@ -113,7 +110,7 @@ class RowAttribute(Describable):
         self.validate(row,value)
         row._values[self.name] = value
         
-    def getCellValue(self,row):
+    def getCellValue(self,row,col):
         # overridden by BabelField and Detail
         return row.getFieldValue(self.name)
 
@@ -139,26 +136,10 @@ class RowAttribute(Describable):
     def row2atoms(self,row):
         """fill into atomicRow the atomic data necessary to represent
         this column"""
-        #rowValues = row._values
-        #assert type(rowValues) is types.DictType
-##      if len(atomicRow) <= colAtoms[0].index:
-##          raise "atomicRow is %s\nbut index is %d" % (
-##              repr(atomicRow),colAtoms[0].index)
-        #value = getattr(row,self._name)
         value = row._values.get(self.name)
-##      try:
-##          value = rowValues[self.name]
-##      except KeyError:
-##          value = None
-##      if isinstance(self,Pointer):
-##          print value
-        #return self.value2atoms(value, row.getContext())
         return self.value2atoms(value, row.getDatabase())
 
         
-##      value = row._values[self.name]
-##      return self.value2atoms(value,atomicRow,colAtoms)
-    
     def value2atoms(self,value,ctx):
         print self,value
         raise NotImplementedError
@@ -202,7 +183,7 @@ class Field(RowAttribute):
     """
     
     A Field is a component which represents an atomic piece of data.
-    A field will have a value of a certain type.
+    A field is a storable atomic value of a certain type.
     
     """
     def __init__(self,parent,owner,name,type,**kw):
@@ -235,12 +216,8 @@ class Field(RowAttribute):
         return ((self.name, self.type),)
         #return (query.provideAtom(self.name, self.type),)
 
-    def value2atoms(self,value,ctx):
-        #assert issequence(atomicRow), repr(atomicRow)
-        #assert issequence(colAtoms)
-        #assert len(colAtoms) == 1
-        #atomicRow[colAtoms[0].index] = value
-        return (value,)
+##     def value2atoms(self,value,ctx):
+##         return (value,)
 
 
     def getTestEqual(self,ds,colAtoms,value):
@@ -300,7 +277,7 @@ class BabelField(Field):
             values[index] = value
             
         
-    def getCellValue(self,row):
+    def getCellValue(self,row,col):
         langs = row.getSession().getBabelLangs()
         dblangs = row.getDatabase().getBabelLangs()
         #if row.getTableName() == "Nations":
@@ -477,14 +454,14 @@ class Pointer(RowAttribute):
             neededAtoms = []
             if len(self._toTables) > 1:
                 #neededAtoms.append((self.name+"_tableId",AREATYPE))
-                i = 0
+                #i = 0
                 for toTable in self._toTables:
                     for (name,type) in toTable.getPrimaryAtoms():
                         neededAtoms.append(
                             (self.name + toTable.getTableName()
                              + "_" + name,
                              type) )
-                    i += 1
+                    #i += 1
             else:
                 for (name,type) in self._toTables[0].getPrimaryAtoms():
                     neededAtoms.append( (self.name + "_" + name,
@@ -494,21 +471,22 @@ class Pointer(RowAttribute):
         return self._neededAtoms
 
     def checkIntegrity(self,row):
+        raise "won't work: getCellValue() now needs col"
         pointedRow = self.getCellValue(row)
         if pointedRow is None:
             return # ok
 
-        if pointedRow._ds.peek(*pointedRow.getRowId()) is None:
+        if pointedRow._query.peek(*pointedRow.getRowId()) is None:
             return "%s points to non-existing row %s" % (
                 self.name,str(pointedRow.getRowId()))
 
 
-    def getReachableData(self,row):
-        pointedRow = self.getCellValue(row)
+    def getReachableData(self,row,col):
+        pointedRow = self.getCellValue(row,col)
         if pointedRow is None:
             return # ok
         d = { self.name : pointedRow }
-        return pointedRow._ds.query(**d)
+        return pointedRow._query.child(**d)
         
 
     def getMinWidth(self):
@@ -523,11 +501,11 @@ class Pointer(RowAttribute):
         #return w
 
         
-    def _findToTable(self,tableId):
-        for toTable in self._toTables:
-            if toTable.getTableId() == tableId:
-                return toTable
-        raise "not found %d" % tableId
+##     def _findToTable(self,tableId):
+##         for toTable in self._toTables:
+##             if toTable.getTableId() == tableId:
+##                 return toTable
+##         raise "not found %d" % tableId
 
     
     def value2atoms(self,value,ctx):
@@ -541,7 +519,7 @@ class Pointer(RowAttribute):
         else:
             rv = [None] * len(self._neededAtoms)
             i = 0
-            tableId = pointedRow._ds.getLeadTable().getTableId()
+            tableId = pointedRow._query.getLeadTable().getTableId()
             rid = pointedRow.getRowId()
             for toTable in self._toTables:
                 if toTable.getTableId() == tableId:
@@ -634,26 +612,13 @@ class Detail(RowAttribute):
                  name,pointer,label=None,doc=None,**kw):
         
         self.pointer = pointer
-        RowAttribute.__init__(self,parent,owner,name,label=label,doc=doc)
+        RowAttribute.__init__(self,parent,owner,
+                              name,label=label,doc=doc)
         if parent is None:
             kw[self.pointer.name] = None
         else:
             setdefaults(kw,parent._queryParams)
         self._queryParams = kw
-        
-    def vetoDeleteIn(self,row):
-        detailDs = self.getCellValue(row)
-        if len(detailDs) == 0:
-            return 
-        #return "%s : %s not empty (contains %d rows)" % (
-        #   str(row),self.name,len(ds))
-        return "%s : %s not empty" % (str(row),self.name)
-            
-##     def format(self,v):
-##         if v is None:
-##             return ""
-##         detailDs = self.getCellValue(v)
-##         return str(len(detailDs))+" "+detailDs.leadTable.getName()
         
     def format(self,ds):
         return str(len(ds))+" "+ds.getLeadTable().getName()
@@ -662,10 +627,6 @@ class Detail(RowAttribute):
     def validate(self,row,value):
         raise "cannot set value of a detail"
     
-##     def getPreferredWidth(self):
-##         # TODO: 
-##         return 20
-    
     def getMinWidth(self):
         # TODO: 
         return 20
@@ -673,12 +634,12 @@ class Detail(RowAttribute):
         # TODO: 
         return 40
 
-    def onAreaInit(self,area):
-        area.defineQuery(self.name,self._queryParams)
+##     def onAreaInit(self,area):
+##         area.defineQuery(self.name,self._queryParams)
         
 
-    def row2atoms(self,row):
-        return ()
+##     def row2atoms(self,row):
+##         return ()
     
     def atoms2row(self,atomicRow,colAtoms,row):
         row._values[self.name] = None
@@ -691,23 +652,24 @@ class Detail(RowAttribute):
         # note : row may be None. 
         return False
 
-    def showEditor(self,ui,row):
-        ds = self.getCellValue(row)
+    def showEditor(self,ui,row,col):
+        ds = self.getCellValue(row,col)
         ui.showDataGrid(ds)
         return True
 
-    #def getDefaultValue(self,sess):
-
-    def getCellValue(self,row):
-        ds=row.getFieldValue(self.name)
-        if ds is None:
-            #ds=self.getDefaultValue()
-            kw = dict(self._queryParams)
-            kw[self.pointer.name] = row
-            ds=row.getSession().query(
-                self.pointer._owner.__class__, **kw)
-            row._values[self.name] = ds
-        return ds
+    def getCellValue(self,row,col):
+        return col.detailQuery.child(masters=(row,))
+##         return col.detailQuery.child(samples={
+##             self.pointer.name:row})
+##         ds=row.getFieldValue(self.name)
+##         if ds is None:
+##             #ds=self.getDefaultValue()
+##             kw = dict(self._queryParams)
+##             kw[self.pointer.name] = row
+##             ds=row.getSession().query(
+##                 self.pointer._owner.__class__, **kw)
+##             row._values[self.name] = ds
+##         return ds
         
     def getType(self):
         return datatypes.STRING
@@ -740,7 +702,7 @@ class Vurt(Field):
     def setCellValue(self,row,value):
         raise "not allowed"
         
-    def getCellValue(self,row):
+    def getCellValue(self,row,col):
         return self._func(row)
     
     def atoms2row(self,atomicRow,colAtoms,row):

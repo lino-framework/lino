@@ -187,29 +187,6 @@ class Session(Context):
         # used in raceman/report.py, cities_be.py...
         return self.query(tableClass).peek(*args)
 
-##     def data_report(self,ds,**kw):
-##         rpt = self.report(**kw)
-##         for dc in ds.getVisibleColumns():
-##             rpt.addDataColumn(dc,
-##                               width=dc.getPreferredWidth(),
-##                               label=dc.getLabel())
-##         return rpt    
-        
-
-
-##     def report(self,**kw):
-##         raise NotImplementedError
-    
-##     def openTable(self,name):
-##         try:
-##             store = self.db._stores[name]
-##         except KeyError,e:
-##             #except AttributeError,e:
-##             raise InvalidRequestError("no such table: "+name)
-##         return Datasource(self,store)
-    
-##     def getDatasource(self,name):
-##         return getattr(self.tables,name)
 
     def end(self):
         self.use()
@@ -217,13 +194,6 @@ class Session(Context):
     def onBeginSession(self):
         self.schema.onBeginSession(self)
         
-    
-##     def openForm(self,formName,*args,**values):
-##         #print "openForm()" + formName
-##         cl = getattr(self.schema.forms,formName)
-##         frm = cl(self,*args,**values)
-##         #frm.init()
-##         return frm
     
     def onLogin(self):
         return self.db.schema.onLogin(self)

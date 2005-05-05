@@ -28,7 +28,7 @@ from lino.adamo.connection import Connection
 
 #from mx.DateTime import DateTime
 
-from lino.adamo.filters import NotEmpty
+from lino.adamo.filters import NotEmpty, IsEqual
 
 
 class SqlConnection(Connection):
@@ -273,15 +273,35 @@ class SqlConnection(Connection):
 
     def filterWhere(self,flt,ds):
         l=[]
-        if isinstance(flt,NotEmpty):
+        if isinstance(flt,IsEqual):
+            if isinstance(flt.col.rowAttr,Field):
+                a=flt.col.getAtoms()[0]
+                l.append(self.testEqual(a.name,a.type,flt.value))
+            elif isinstance(flt.col.rowAttr,Pointer):
+                if flt.value is None:
+                    for a in flt.col.getAtoms():
+                        l.append(a.name+" ISNULL")
+                else:
+                    pk=flt.value.getRowId()
+                    assert len(pk) == len(flt.col.getAtoms()),\
+                           "%s: len(%s) != len(%s)" % (
+                        ds,flt.value.getRowId(),
+                        [a.name for a in flt.col.getAtoms()]
+                        )
+                    i=0
+                    for a in flt.col.getAtoms():
+                        l.append(self.testEqual(
+                            a.name,a.type,pk[i]))
+                        i+=1
+            else:
+                raise NotImplementedError
+                
+        elif isinstance(flt,NotEmpty):
             if isinstance(flt.col.rowAttr,Field):
                 for a in flt.col.getAtoms():
                     l.append(a.name+" NOT NULL")
             elif isinstance(flt.col.rowAttr,Detail):
-                #dtl=flt.col.rowAttr
-                #kw=dict(dtl._queryParams)
-                #kw[dtl.pointer.name]
-                
+                #slave=flt.col.getCellValue(?)
                 master=flt.col.rowAttr._owner
                 slave=flt.col.rowAttr.pointer._owner
                 #print "Master:", master.getTableName()
@@ -291,18 +311,11 @@ class SqlConnection(Connection):
                 s += " WHERE "
                 l2=[]
                 i=0
-                #pka=flt.col._atoms
                 pka=flt.col.rowAttr.pointer.getNeededAtoms(None)
-                #print master.getPrimaryAtoms()
-                #print pka
-                #for name,t in dtl.pointer._owner.getPrimaryAtoms():
                 for name,t in master.getPrimaryAtoms():
-                    #s2=name
                     s2=master.getTableName()+"."+name
                     s2+="="
-                    #print s2
                     s2+=slave.getTableName()+"."+pka[i][0]
-                    #print s2
                     l2.append(s2)
                     i+=1
                 s+=" AND ".join(l2)
@@ -313,11 +326,45 @@ class SqlConnection(Connection):
                     
         return l
     
+##     def filterWhere(self,flt,ds):
+##         l=[]
+##         if isinstance(flt,NotEmpty):
+##             if isinstance(flt.col.rowAttr,Field):
+##                 for a in flt.col.getAtoms():
+##                     l.append(a.name+" NOT NULL")
+##             elif isinstance(flt.col.rowAttr,Detail):
+##                 master=flt.col.rowAttr._owner
+##                 slave=flt.col.rowAttr.pointer._owner
+##                 #print "Master:", master.getTableName()
+##                 #print "Slave:", slave.getTableName()
+##                 s = "EXISTS (SELECT * FROM "
+##                 s += slave.getTableName()
+##                 s += " WHERE "
+##                 l2=[]
+##                 i=0
+##                 pka=flt.col.rowAttr.pointer.getNeededAtoms(None)
+##                 for name,t in master.getPrimaryAtoms():
+##                     s2=master.getTableName()+"."+name
+##                     s2+="="
+##                     s2+=slave.getTableName()+"."+pka[i][0]
+##                     l2.append(s2)
+##                     i+=1
+##                 s+=" AND ".join(l2)
+##                 s += ")"
+##                 l.append(s)
+##             else:
+##                 raise NotImplementedError
+                    
+##         return l
+    
 
     def whereClause(self,ds):
         where = []
-        for (atom,value) in ds.getAtomicSamples():
-            where.append(self.testEqual(atom.name,atom.type,value))
+        for mc in ds._masterColumns:
+            flt=IsEqual(mc,ds._masters[mc.name])
+            where+=self.filterWhere(flt,ds)
+##         for (atom,value) in ds.getAtomicSamples():
+##             where.append(self.testEqual(atom.name,atom.type,value))
         where += ds.filterExpressions
         if ds._filters is not None:
             for flt in ds._filters:
@@ -444,8 +491,8 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         self.sql_exec(sql)
         
     def executeInsert(self,row):
-        query = row._ds._store._peekQuery
-        table = row._ds.getLeadTable()
+        query = row._query._store._peekQuery
+        table = row._query.getLeadTable()
         context = row.getSession()
 
         atomicRow = query.row2atoms(row)
@@ -471,8 +518,8 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         self.sql_exec(sql)
         
     def executeUpdate(self,row):
-        query = row._ds._store._peekQuery
-        table = row._ds.getLeadTable()
+        query = row._query._store._peekQuery
+        table = row._query.getLeadTable()
         context = row.getSession()
 
         atomicRow = query.row2atoms(row)
@@ -500,7 +547,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         self.sql_exec(sql)
 
     def executeDelete(self,row):
-        table = row._ds.getLeadTable()
+        table = row._query.getLeadTable()
 
         sql = "DELETE FROM " + table.getTableName()
         sql += " WHERE "

@@ -26,20 +26,25 @@ from lino.adamo.exceptions import DataVeto, InvalidRequestError, \
 
 
 class DataRow:
-    def __init__(self,fc,clist,values,dirty=False):
+    def __init__(self,query,values,dirty=False):
         #assert isinstance(fc,FieldContainer)
         #assert isinstance(clist,BaseColumnList)
         assert type(values) == types.DictType
         self.__dict__["_values"] = values 
-        self.__dict__["_fc"] = fc
-        self.__dict__["_clist"] = clist
+        self.__dict__["_query"] = query
+        #self.__dict__["_fc"] = fc
+        #self.__dict__["_clist"] = clist
         self.__dict__["_dirty"] = dirty
         
     def __getattr__(self,name):
-        assert self.__dict__.has_key("_fc")
+        #assert self.__dict__.has_key("_fc")
         #print repr(self._fc)
-        rowattr = self._fc.getRowAttr(name)
-        return rowattr.getCellValue(self)
+        col=self._query.findColumn(name)
+        if col is None:
+            col=self._query._store._peekQuery.getColumnByName(name)
+        return col.getCellValue(self)
+        #rowattr = self.__dict__['_fc'].getRowAttr(name)
+        #return rowattr.getCellValue(self)
     
     def __setattr__(self,name,value):
       #def setAtomicValue(self,name,value)
@@ -49,15 +54,20 @@ class DataRow:
         if not self.isLocked():
             raise InvalidRequestError("row is not locked")
         #assert self._locked
-        rowattr = self._fc.getRowAttr(name)
-        rowattr.setCellValue(self,value)
+        col=self._query.findColumn(name)
+        if col is None:
+            col=self._query._store._peekQuery.getColumnByName(name)
+        #col=self._query.getColumnByName(name)
+        col.setCellValue(self,value)
+        #rowattr = self._fc.getRowAttr(name)
+        #rowattr.setCellValue(self,value)
 ##      try:
 ##          rowattr.acceptTrigger(self,value)
 ##          rowattr.setCellValue(self,value)
 ##      except DataVeto,e:
 ##          self.getSession().errorMessage(str(e))
 ##          return
-        rowattr.afterSetAttr(self)
+        #rowattr.afterSetAttr(self)
         self.__dict__['_dirty'] = True
 
     def getFieldValue(self,name):
@@ -77,7 +87,7 @@ class DataRow:
         self.__dict__["_dirty"] = True
 
     def __getitem__(self,i):
-        col = self._clist.visibleColumns[i]
+        col = self._query.visibleColumns[i]
         # 20050222 return self.makeDataCell(i,col)
         return col.getCellValue(self)
         
@@ -86,19 +96,19 @@ class DataRow:
 ##      return col.getCellValue(self)
         
     def __setitem__(self,i,value):
-        col = self._clist.visibleColumns[i]
+        col = self._query.visibleColumns[i]
         assert self._pseudo or self._locked or self._new
-        col.rowAttr.setCellValue(self,value)
+        col.setCellValue(self,value)
         self.__dict__["_dirty"] = True
         
     def __iter__(self):
-        return RowIterator(self,self._clist.visibleColumns)
+        return RowIterator(self,self._query.visibleColumns)
     
     def __len__(self):
-        return len(self._clist.visibleColumns)
+        return len(self._query.visibleColumns)
     
     def getCells(self,columnNames=None):
-        return RowIterator(self,self._clist.getColumns(columnNames))
+        return RowIterator(self,self._query.getColumns(columnNames))
         
     def update(self,**kw):
         self.lock()
@@ -134,14 +144,13 @@ class DataRow:
 class StoredDataRow(DataRow):
     # base class for Table.Row
     
-    def __init__(self,ds,values,new,pseudo=False):
+    def __init__(self,qry,values,new,pseudo=False):
         """
         """
         assert type(new) == types.BooleanType
-        DataRow.__init__(self,ds.getLeadTable(),
-                         ds,values,dirty=new)
+        DataRow.__init__(self,qry,values,dirty=new)
 
-        self.__dict__["_ds"] = ds
+        #self.__dict__["_ds"] = ds
         self.__dict__["_new"] = new
         self.__dict__["_pseudo"] = pseudo
         self.__dict__["_complete"] = False #ds.isComplete()
@@ -149,19 +158,20 @@ class StoredDataRow(DataRow):
         self.__dict__["_isCompleting"] = False
 
     def __eq__(self, other):
-        if (other is None) or (other is self._ds.ANY_VALUE):
+        if (other is None) or (other is self._query.ANY_VALUE):
             return False
         return self.getRowId() == other.getRowId()
         #return tuple(self.getRowId()) == tuple(other.getRowId())
         
     def __ne__(self, other):
-        if (other is None) or (other is self._ds.ANY_VALUE):
+        if (other is None) or (other is self._query.ANY_VALUE):
             return True
         return self.getRowId() != other.getRowId()
         #return tuple(self.getRowId()) == tuple(other.getRowId())
         
     def getRenderer(self,rsc,req,writer=None):
-        return self._ds.getLeadTable()._rowRenderer(rsc,req,self,writer)
+        return self._query.getLeadTable()._rowRenderer(
+            rsc,req,self,writer)
 
 ##  def writeParagraph(self,parentResponder):
 ##      rsp = self.getRenderer(parentResponder.resource,
@@ -171,13 +181,13 @@ class StoredDataRow(DataRow):
 ##      rsp.writeParagraph()
     
     def getSession(self):
-        return self._ds.getSession()
+        return self._query.getSession()
 
     def getDatabase(self):
-        return self._ds.getDatabase()
+        return self._query.getDatabase()
 
     def getTableName(self):
-        return self._ds.getTableName()
+        return self._query.getTableName()
     
 ##     def getContext(self):
 ##         return self._ds.getContext()
@@ -203,15 +213,10 @@ class StoredDataRow(DataRow):
         return self._new
     
     def getRowId(self):
-        id = [None] * len(self._clist.getLeadTable().getPrimaryAtoms())
-        for col in self._clist._pkColumns:
+        id = [None] * len(self._query.getLeadTable().getPrimaryAtoms())
+        for col in self._query._pkColumns:
             col.row2atoms(self,id)
-##      if self._ds._table.getTableName() == "CITIES":
-##          print [(col.name,col.rowAttr) for col in self._ds._clist._pkColumns]
-##          print [atom.name for atom in self._ds._clist._atoms]
-##          print id
         return id
-        #return self._ds.getRowId(self._values)
         
     def getLabel(self):
         return str(tuple(self.getRowId()))
@@ -227,7 +232,7 @@ class StoredDataRow(DataRow):
             try:
                 return self._values[name]
             except KeyError:
-                raise NoSuchField,name
+                raise NoSuchField("%r has no field '%s'"%(self,name))
 
 
     def _readFromStore(self):
@@ -246,20 +251,21 @@ class StoredDataRow(DataRow):
         
         # print "makeComplete() : %s" % repr(self)
         id = self.getRowId()
-        atomicRow = self._ds._connection.executePeek(
-            self._ds._store._peekQuery,id,self._ds._session)
+        atomicRow = self._query._connection.executePeek(
+            self._query._store._peekQuery,id,
+            self._query.getSession())
         if self._new:
             if atomicRow is not None:
                 raise DataVeto("Cannot create another %s row %s" \
                                     % (self.__class__.__name__, id))
-            for attrname in self._ds.getLeadTable().getAttrList():
+            for attrname in self._query.getLeadTable().getAttrList():
                 self._values.setdefault(attrname,None)
         else:
             if atomicRow is None:
                 raise DataVeto(
                     "Cannot find %s row %s" \
-                    % (self._ds.getLeadTable().getTableName(), id))
-            self._ds._store._peekQuery.atoms2row1(atomicRow,self)
+                    % (self._query.getLeadTable().getTableName(), id))
+            self._query._store._peekQuery.atoms2row1(atomicRow,self)
                 
         
         """maybe a third argument `fillMode` to atoms2dict() which
@@ -272,7 +278,7 @@ class StoredDataRow(DataRow):
     def checkIntegrity(self):
         #if not self._complete:
         self.makeComplete()
-        for name,attr in self._ds.getLeadTable()._rowAttrs.items():
+        for name,attr in self._query.getLeadTable()._rowAttrs.items():
             msg = attr.checkIntegrity(self)
             if msg is not None:
                 return msg
@@ -302,10 +308,11 @@ class StoredDataRow(DataRow):
     
     def __repr__(self):
         if self._isCompleting:
-            return "Uncomplete " + repr(self._ds) + "Row(" \
+            return "Uncomplete " + repr(self._query) + "Row(" \
                      + str(self._values)+")"
-        return self._ds.getLeadTable().getTableName() + "Row(" + str(self._values)+")"
-        #return repr(self._ds) + "Row" + repr(tuple(self.getRowId()))
+        #return self._query.getName() \
+        #       + "Row(" + str(self._values)+")"
+        return self._query.getName() + "Row" + repr(tuple(self.getRowId()))
 
     def __str__(self):
         return str(self.getLabel())
@@ -322,7 +329,7 @@ class StoredDataRow(DataRow):
             #, "already locked"
             return True
         self.__dict__["_locked"] = True
-        return self._ds._store.lockRow(self,self._ds)
+        return self._query._store.lockRow(self,self._query)
             
 
     def unlock(self):
@@ -336,7 +343,7 @@ class StoredDataRow(DataRow):
             
         #assert not None in self.getRowId(), "incomplete pk"
         self.__dict__["_locked"] = False
-        self._ds._store.unlockRow(self,self._ds)
+        self._query._store.unlockRow(self,self._query)
         self.commit()
         
 
@@ -350,17 +357,17 @@ class StoredDataRow(DataRow):
         except DataVeto,e:
             raise DataVeto(repr(self) + ': ' + str(e))
         if self._new:
-            self._ds._connection.executeInsert(self)
+            self._query._connection.executeInsert(self)
             self.__dict__["_new"] = False
         else:
             if not self._dirty: return
-            self._ds._connection.executeUpdate(self)
+            self._query._connection.executeUpdate(self)
         self.__dict__["_dirty"] = False
-        self._ds._store.touch()
+        self._query._store.touch()
         
 
     def delete(self):        
-        self._ds._connection.executeDelete(self)
+        self._query._connection.executeDelete(self)
 
     def makeComplete(self):
         if self._pseudo or self._complete or self._isCompleting:
@@ -392,10 +399,13 @@ class StoredDataRow(DataRow):
         pass
 
     def vetoDelete(self):
-        for name,attr in self._ds.getLeadTable()._rowAttrs.items():
-            msg = attr.vetoDeleteIn(self)
-            if msg:
-                return msg
+        for col in self._query._columns:
+            msg=col.vetoDeleteRow(self)
+            if msg: return msg
+            
+##         for name,attr in self._query.getLeadTable()._rowAttrs.items():
+##             msg = attr.vetoDeleteIn(self)
+##             if msg: return msg
 
 
 class RowIterator:

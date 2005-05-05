@@ -92,10 +92,11 @@ INSERT INTO Orders ( id, date, customer_id, totalPrice, isRegistered )
         s=LINES.stopDump()
         #print s
         # SELECT MAX(id) FROM LINES;
+        #SELECT id, date, customer_id, totalPrice, isRegistered
+        #FROM Orders
+        #WHERE id = 5;
+        
         self.assertEquivalent(s,"""\
-SELECT id, date, customer_id, totalPrice, isRegistered
-FROM Orders
-WHERE id = 5;
 INSERT INTO OrderLines (
 id, ordr_id, productProducts_id, productServices_id, qty )
 VALUES ( 8, 5, 3, NULL, 2 );

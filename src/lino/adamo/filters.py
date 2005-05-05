@@ -26,3 +26,11 @@ class NotEmpty(Filter):
     
     def getLabel(self):
         return "'%s' not empty" % self.col.getLabel()
+
+class IsEqual(Filter):
+    def __init__(self,col,value):
+        self.col=col
+        self.value=value
+    
+    def getLabel(self):
+        return "'%s' == %r" % (self.col.getLabel(),self.value)
