@@ -1,0 +1,19 @@
+Nations where 'cities' not empty
+================================
+id|name           |cities                                  
+--+---------------+----------------------------------------
+be|Belgium        |Audregnies (be), Berendrecht (be),      
+  |               |Drehance (be), Gondregnies (be),        
+  |               |Houdremont (be), Jandrain-Jandrenouille 
+  |               |(be), Kieldrecht (be), Merendree (be),  
+  |               |Mont-Saint-Andre (be), Saint-Andre (be),
+  |               |Wandre (be), Warnant-Dreye (be), Waudrez
+  |               |(be), Xhendremael (be), Zwijndrecht (be)
+de|Germany        |Drebkau  (Brandenburg) (de), Dreieich   
+  |               |(Hessen) (de), Drensteinfurt (Nordrhein-
+  |               |Westfalen) (de), Dresden                
+  |               |(Landeshauptstadt von Sachsen) (de),    
+  |               |Sankt Andreasberg, Bergstadt  (Nieders.)
+  |               |(de)                                    
+
+SELECT id, name_en FROM Nations WHERE EXISTS (SELECT * FROM Cities WHERE nation_id=Nations.id AND name LIKE '%dre%' OR zipCode LIKE '%dre%' ORDER BY name)

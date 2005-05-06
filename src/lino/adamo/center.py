@@ -48,7 +48,7 @@ class Center:
                 try:
                     from lino.adamo.dbds.gadfly_dbd import Connection
                 except ImportError:
-                    raise DatabaseError("no database available")
+                    raise DatabaseError("no database driver available")
                 
         conn = Connection(ui,*args,**kw)
         self._connections.append(conn)

@@ -42,7 +42,7 @@ SELECT id, name_en
 '''
 
 class Case(TestCase):
-    
+    skip=True # covered by examples filters1 and filters2
     def setUp(self):
         TestCase.setUp(self)
         self.sess = demo.beginSession(self.ui)
@@ -51,39 +51,18 @@ class Case(TestCase):
         self.sess.shutdown()
         
     def test01(self):
-        q=self.sess.query(Nations,"id name cities")
-##         q.report(pageLen=5,pageNum=1,columnWidths="2 15 20")
-##         s=self.getConsoleOutput()
-##         print __file__,"\n", s
-##         self.assertEquivalent(s,"""\
-## """)
-        q=self.sess.query(Nations,"id name")
-        cities=q.addColumn("cities")
-        q.addFilter(NotEmpty(cities))
-        q.setVisibleColumns("id name cities")
-        sql=q.getSqlSelect()
-        print __file__,"\n", sql
-        self.assertEquivalent(sql,"""\
-SELECT id, name_en
-FROM Nations
-WHERE EXISTS (SELECT *
-              FROM Cities
-              WHERE Nations.id=Cities.nation_id)
-        """)
         
-    def test02(self):
         q=self.sess.query(Nations,"id name")
-        cities=q.addColumn("cities",search="eup")
-        q.addFilter(NotEmpty(cities))
-        q.setVisibleColumns("id name cities")
+        q.addColumn("eup_cities",search="eup").addFilter(NotEmpty)
+        #q.setVisibleColumns("id name eup_cities")
         sql=q.getSqlSelect()
-        print __file__,"\n", sql
+        print __file__,":", sql
         self.assertEquivalent(sql,"""\
 SELECT id, name_en
 FROM Nations
 WHERE EXISTS (SELECT *
               FROM Cities
-              WHERE Nations.id=Cities.nation_id)
+              WHERE nation_id = Nations.id)
         """)
         
 if __name__ == '__main__':

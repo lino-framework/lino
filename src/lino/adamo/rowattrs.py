@@ -110,9 +110,9 @@ class RowAttribute(Describable):
         self.validate(row,value)
         row._values[self.name] = value
         
-    def getCellValue(self,row,col):
-        # overridden by BabelField and Detail
-        return row.getFieldValue(self.name)
+##     def getCellValue(self,row,col):
+##         # overridden by BabelField and Detail
+##         return row.getFieldValue(self.name)
 
     def setValueFromString(self,row,s):
         # does not setDirty() !
@@ -277,36 +277,36 @@ class BabelField(Field):
             values[index] = value
             
         
-    def getCellValue(self,row,col):
-        langs = row.getSession().getBabelLangs()
-        dblangs = row.getDatabase().getBabelLangs()
-        #if row.getTableName() == "Nations":
-        #    print __name__, langs, dblangs
-        # 35.py dblangs = row._ds._session.getBabelLangs()
-        values = row.getFieldValue(self.name)
-        #values = Field.getCellValue(self,row)
-        if values is None:
-            values = [None] * len(dblangs)
-        else:
-            assert issequence(values), \
-                   "%s is not a sequence" % repr(values)
-            assert len(values) == len(dblangs), \
-                   "Expected %d values but got %s" % \
-                   (len(dblangs), repr(values))
+##     def getCellValue(self,row,col):
+##         langs = row.getSession().getBabelLangs()
+##         dblangs = row.getDatabase().getBabelLangs()
+##         #if row.getTableName() == "Nations":
+##         #    print __name__, langs, dblangs
+##         # 35.py dblangs = row._ds._session.getBabelLangs()
+##         values = row.getFieldValue(self.name)
+##         #values = Field.getCellValue(self,row)
+##         if values is None:
+##             values = [None] * len(dblangs)
+##         else:
+##             assert issequence(values), \
+##                    "%s is not a sequence" % repr(values)
+##             assert len(values) == len(dblangs), \
+##                    "Expected %d values but got %s" % \
+##                    (len(dblangs), repr(values))
         
-        if len(langs) > 1:
-            l = []
-            for lang in langs:
-                if lang.index != -1:
-                    l.append(values[lang.index])
-                else:
-                    l.append(None)
-            return l
-        else:
-            index = langs[0].index
-            assert not index == -1
-            #print __name__, values[index], langs
-            return values[index]
+##         if len(langs) > 1:
+##             l = []
+##             for lang in langs:
+##                 if lang.index != -1:
+##                     l.append(values[lang.index])
+##                 else:
+##                     l.append(None)
+##             return l
+##         else:
+##             index = langs[0].index
+##             assert not index == -1
+##             #print __name__, values[index], langs
+##             return values[index]
         
     def getTestEqual(self,ds, colAtoms,value):
         langs = ds.getSession().getBabelLangs()
@@ -477,13 +477,6 @@ class Pointer(RowAttribute):
                 self.name,str(pointedRow.getRowId()))
 
 
-    def getReachableData(self,row,col):
-        pointedRow = self.getCellValue(row,col)
-        if pointedRow is None:
-            return # ok
-        d = { self.name : pointedRow }
-        return pointedRow._query.child(**d)
-        
 
     def getMinWidth(self):
         # TODO: 
@@ -653,8 +646,10 @@ class Detail(RowAttribute):
         ui.showDataGrid(ds)
         return True
 
-    def getCellValue(self,row,col):
-        return col.detailQuery.child(masters=(row,))
+##     def getCellValue(self,row,col):
+##         q=col.detailQuery.child(masters=(row,))
+##         #print "Detail.getCellValue():", q._search
+##         return q
 ##         return col.detailQuery.child(samples={
 ##             self.pointer.name:row})
 ##         ds=row.getFieldValue(self.name)

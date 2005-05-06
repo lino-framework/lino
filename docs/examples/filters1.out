@@ -3,9 +3,7 @@ Nations where 'cities' not empty
 id|name           |cities              
 --+---------------+--------------------
 be|Belgium        |2846 Cities         
-de|Germany        |7 Cities            
+de|Germany        |2080 Cities         
 ee|Estonia        |10 Cities           
 
-SELECT id, name_en
-FROM Nations
-  WHERE EXISTS (SELECT * FROM Cities WHERE Nations.id=Cities.nation_id)
+SELECT id, name_en FROM Nations WHERE EXISTS (SELECT * FROM Cities WHERE nation_id=Nations.id ORDER BY name)

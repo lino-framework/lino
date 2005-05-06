@@ -84,6 +84,10 @@ class QueryColumn:
     def vetoDeleteRow(self,row):
         pass
 
+    def addFilter(self,fcl,*args,**kw):
+        flt=fcl(self,*args,**kw)
+        self._owner.addFilter(flt)
+
 
     def setCellValue(self,row,value):
         self.rowAttr.setCellValue(row,value)
@@ -100,13 +104,23 @@ class QueryColumn:
         return self.rowAttr.getTestEqual(ds,self._atoms,value)
         
         
-    def getCellValue(self,row):
-        if self.join is None:
-            return self.rowAttr.getCellValue(row,self)
-        row = getattr(row,self.join.name)
-        if row is None: return None
-        return self.rowAttr.getCellValue(row,self)
+##     def getCellValue(self,row):
+##         if self.join is None:
+##             return self.rowAttr.getCellValue(row,self)
+##         row = getattr(row,self.join.name)
+##         if row is None: return None
+##         return self.rowAttr.getCellValue(row,self)
         
+    def getCellValue(self,row):
+        if self.join is not None:
+            row = getattr(row,self.join.name)
+            if row is None: return None
+        return self.extractCellValue(row)
+        
+    def extractCellValue(self,row):
+        # overridden by BabelField and Detail
+        return row.getFieldValue(self.rowAttr.name)
+
 
     def atoms2row(self,atomicRow,row):
         if self.join is None:
@@ -221,6 +235,33 @@ class BabelFieldColumn(FieldColumn):
             atomicRow)
 
 
+    def extractCellValue(self,row):
+        langs = row.getSession().getBabelLangs()
+        dblangs = row.getDatabase().getBabelLangs()
+        values = row.getFieldValue(self.rowAttr.name)
+        if values is None:
+            values = [None] * len(dblangs)
+        else:
+            assert issequence(values), \
+                   "%s is not a sequence" % repr(values)
+            assert len(values) == len(dblangs), \
+                   "Expected %d values but got %s" % \
+                   (len(dblangs), repr(values))
+        
+        if len(langs) > 1:
+            l = []
+            for lang in langs:
+                if lang.index != -1:
+                    l.append(values[lang.index])
+                else:
+                    l.append(None)
+            return l
+        else:
+            index = langs[0].index
+            assert not index == -1
+            #print __name__, values[index], langs
+            return values[index]
+        
         
         
         
@@ -269,24 +310,38 @@ class PointerColumn(QueryColumn):
         
         self.values2atoms(values,atomicRow)
 
+    def getReachableData(self,row):
+        pointedRow = self.getCellValue(row)
+        if pointedRow is None:
+            return 
+        #d = { self.rowAttr.name : pointedRow }
+        #return pointedRow._query.child(**d)
+        
         
         
 class DetailColumn(QueryColumn):
     fieldClass=Detail
     def __init__(self,owner,index,name,rowAttr,
-                 join=None,atoms=None,**kw):
+                 join=None,atoms=None,depth=0,**kw):
         QueryColumn.__init__(self,owner,index,name,rowAttr,join,atoms)
         for k,v in self.rowAttr._queryParams.items():
             kw.setdefault(k,v)
         self._queryParams=kw
         self.detailQuery=None
+        self.depth=depth
         
-    def getCellValue(self,row):
+
+    def extractCellValue(self,row):
+        # lazy instanciation for self.detailQuery 
         if self.detailQuery is None:
             self.detailQuery=self._owner.getSession().query(
                 self.rowAttr.pointer._owner.__class__,
                 **self._queryParams)
-        return QueryColumn.getCellValue(self,row)
+            #print "DetailColumn created ", self.detailQuery,\
+            #      self.detailQuery._search
+        return self.detailQuery.child(masters=(row,))
+
+    
 
 
     def vetoDeleteRow(self,row):
@@ -307,6 +362,10 @@ class DetailColumn(QueryColumn):
     def row2atoms(self,row,atomicRow):
         pass
 
+    def format(self,v):
+        if self.depth == 0:
+            return str(len(v))+" "+v.getLeadTable().getName()
+        return ", ".join([r.getLabel() for r in v])
 
 
 
@@ -377,7 +436,7 @@ class BaseColumnList:
                 for fld in self.getLeadTable().getFields():
                     col = self.findColumn(fld.getName())
                     if col is None:
-                        col = self.addColumn(fld.getName(),fld)
+                        col = self._addColumn(fld.getName(),fld)
                     l.append(col)
             else:
                 l.append(self.provideColumn(colName))
@@ -414,10 +473,15 @@ class BaseColumnList:
 
         cns = cns[0]
         rowAttr = table.getRowAttr(cns)
-        return self.addColumn(name,rowAttr,join)
+        return self._addColumn(name,rowAttr,join)
 
     
-    def addColumn(self,name,rowAttr=None,join=None,**kw):
+    def addColumn(self,*args,**kw):
+        col=self._addColumn(*args,**kw)
+        self.visibleColumns= self.visibleColumns + (col,)
+        return col
+    
+    def _addColumn(self,name,rowAttr=None,join=None,**kw):
         if self._frozen:
             raise InvalidRequestError(
                 "Cannot append columns to frozen %r" % self)
@@ -435,7 +499,9 @@ class BaseColumnList:
                 #if visible:
                 #    self.visibleColumns.append(col)
                 return col
-        #raise "no columnClass for %r" % rowAttr
+##         print "%s ignores addColumn for %r" % (
+##             self.__class__.__name__,
+##             rowAttr)
 
             
     def getColumns(self,columnNames=None):
@@ -484,15 +550,6 @@ class BaseColumnList:
 
     def getAtoms(self):
         return self._atoms
-    
-    def getSearchAtoms(self):
-        l = []
-        for col in self.visibleColumns:
-            if hasattr(col.rowAttr,'type'):
-                if isinstance(col.rowAttr.type,datatypes.StringType):
-                    l += col.getAtoms()
-        return tuple(l)
-        
     
 
     def provideAtom(self,name,type,joinName=None):
@@ -790,14 +847,6 @@ class SimpleQuery(LeadTableColumnList):
             self.sortColumns=sortColumns
             #self.setSortColumns(sortColumns)
             
-        self.setFilterExpressions(sqlFilters,search)
-
-        if filters is None:
-            if parent is not None:
-                if parent._filters is not None:
-                    filters=list(parent._filters)
-        self._filters=filters
-            
         
         if parent is None:
             #self._samples = {}
@@ -807,7 +856,15 @@ class SimpleQuery(LeadTableColumnList):
             #self._samples = dict(parent._samples)
             self._masterColumns=list(parent._masterColumns)
             self._masters=dict(parent._masters)
+            if search is None:
+                search=parent._search
+            if filters is None:
+                if parent._filters is not None:
+                    filters=list(parent._filters)
 
+        self._filters=filters
+        self.setFilterExpressions(sqlFilters,search)
+        
         if masterColumns is not None:
             self.setMasterColumns(masterColumns)
             
@@ -1050,21 +1107,21 @@ class SimpleQuery(LeadTableColumnList):
 ##                    self._clist,
 ##                    **kw)
 
-    def setdefaults(self,kw):
-        if not kw.has_key('orderBy'):
-            kw.setdefault('sortColumns',self.sortColumns)
-        kw.setdefault('search',self._search)
-        if self._label is not None:
-            kw.setdefault('label',self._label)
-        if self._sqlFilters is not None:
-            kw.setdefault('sqlFilters',tuple(self._sqlFilters))
-        if self._filters is not None:
-            kw.setdefault('filters',list(self._filters))
-            #print self._filters
-        #if samples is None:
-        #kw.setdefault('samples',self._samples)
-        for k,v in self._samples.items():
-            kw.setdefault(k,v)
+##     def setdefaults(self,kw):
+##         if not kw.has_key('orderBy'):
+##             kw.setdefault('sortColumns',self.sortColumns)
+##         kw.setdefault('search',self._search)
+##         if self._label is not None:
+##             kw.setdefault('label',self._label)
+##         if self._sqlFilters is not None:
+##             kw.setdefault('sqlFilters',tuple(self._sqlFilters))
+##         if self._filters is not None:
+##             kw.setdefault('filters',list(self._filters))
+##             #print self._filters
+##         #if samples is None:
+##         #kw.setdefault('samples',self._samples)
+##         for k,v in self._samples.items():
+##             kw.setdefault(k,v)
         
 
 
@@ -1132,7 +1189,7 @@ class SimpleQuery(LeadTableColumnList):
     
     def setFilterExpressions(self, sqlFilters, search):
         """
-        filters must be a sequence of strings containing SQL expressions
+        sqlFilters must be a sequence of strings containing SQL expressions
         """
         self._sqlFilters = sqlFilters
         self._search = search
@@ -1156,6 +1213,15 @@ class SimpleQuery(LeadTableColumnList):
                 
         self.filterExpressions = tuple(l)
         
+    def getSearchAtoms(self):
+        l = []
+        for col in self.visibleColumns:
+            if hasattr(col.rowAttr,'type'):
+                if isinstance(col.rowAttr.type,datatypes.StringType):
+                    l += col.getAtoms()
+        return tuple(l)
+        
+    
 
 
 ##  def __str__(self,):

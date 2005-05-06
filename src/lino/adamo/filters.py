@@ -35,3 +35,9 @@ class IsEqual(Filter):
     
     def getLabel(self):
         return "'%s' == %r" % (self.col.getLabel(),self.value)
+
+## class Master(Filter):
+##     def __init__(self,col,slave):
+##         self.col=col
+##         self.slave=slave
+    

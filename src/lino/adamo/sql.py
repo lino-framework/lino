@@ -20,7 +20,9 @@ import types
 import datetime
 
 from lino.adamo import datatypes 
-from lino.adamo.rowattrs import Field, Pointer, Detail
+#from lino.adamo.rowattrs import Field, Pointer, Detail
+from lino.adamo.query import DetailColumn, FieldColumn, PointerColumn
+from lino.adamo.row import DataRow
 #from query import Query, QueryColumn
 
 from lino.adamo.connection import Connection
@@ -39,7 +41,7 @@ class Master:
         l = []
         for col in self.ds._pkColumns:
             for a in col.getAtoms():
-                l.append(a.name)
+                l.append(self.ds.getTableName()+"."+a.name)
         return l
 
 
@@ -212,22 +214,22 @@ class SqlConnection(Connection):
             sqlColumnNames = ", ".join([a.getNameInQuery(ds)
                                         for a in ds.getAtoms()])
         elif sqlColumnNames != "*":
-            sqlColumnNames += ", ".join([a.getNameInQuery(ds)
-                                         for a in ds.getAtoms()])
+            sqlColumnNames += ", " +", ".join(
+                [a.getNameInQuery(ds) for a in ds.getAtoms()])
         sql = "SELECT " + sqlColumnNames
         
-        sql += "\nFROM " + leadTable.getTableName()
+        sql += " FROM " + leadTable.getTableName()
         
-        if clist.hasJoins():
+        if ds.hasJoins():
             
             sql += " AS lead"
             
             for join in clist._joins:
                 if len(join.pointer._toTables) == 1:
                     toTable = join.pointer._toTables[0]
-                    sql += '\n  LEFT JOIN ' + toTable.getTableName()
+                    sql += ' LEFT JOIN ' + toTable.getTableName()
                     sql += ' AS ' + join.name 
-                    sql += '\n    ON ('
+                    sql += ' ON ('
                     l = []
                     for (a,b) in join.getJoinAtoms():
                         l.append("%s = %s" % (a.getNameInQuery(clist),
@@ -244,12 +246,11 @@ class SqlConnection(Connection):
                         parentJoinName = join.parent.name+"."
                     i = 0
                     for toTable in join.pointer._toTables:
-                        sql += '\n  LEFT JOIN ' + toTable.getTableName()
-                        sql += ' AS ' + join.name + toTable.getTableName()
-                        sql += '\n    ON ('
+                        sql += ' LEFT JOIN ' + toTable.getTableName()
+                        sql += ' AS ' + join.name + \
+                               toTable.getTableName()
+                        sql += ' ON ('
                         l = []
-                        #l.append("%s_tableId = %d" % (
-                        #   parentJoinName+join.name,toTable.getTableId()))
                         for (name,type) in toTable.getPrimaryAtoms():
                             (a,b) = joinAtoms[i]
                             l.append("%s = %s" % (
@@ -263,20 +264,13 @@ class SqlConnection(Connection):
         if len(ds.sortColumns) >  0 :
             l = []
             for col in ds.sortColumns:
-                #col = self.findColumn(colName)
-                #if col:
-                    for atom in col.getFltAtoms(ds.getSession()):
-                        l.append(atom.getNameInQuery(clist))
-                #else:
-                #   raise "%s : no such column in %s" % \
-                #           (colName,
-                #            [col.name for col in self.getColumns()])
-            sql += "\n  ORDER BY " + ", ".join(l)
+                for atom in col.getFltAtoms(ds.getSession()):
+                    l.append(atom.getNameInQuery(clist))
+            sql += " ORDER BY " + ", ".join(l)
 
         if limit is not None:
             if offset is None:
                 sql += " LIMIT %d" % limit
-                #offset = 0
             else:
                 sql += " LIMIT %d OFFSET %d" % (limit,offset)
                 
@@ -285,15 +279,16 @@ class SqlConnection(Connection):
     def filterWhere(self,flt,ds):
         l=[]
         if isinstance(flt,IsEqual):
-            if isinstance(flt.col.rowAttr,Field):
+            if isinstance(flt.col,FieldColumn):
                 assert len(flt.col.getAtoms()) == 1
                 a=flt.col.getAtoms()[0]
                 l.append(self.testEqual(a.name,a.type,flt.value))
-            elif isinstance(flt.col.rowAttr,Pointer):
+            elif isinstance(flt.col,PointerColumn):
                 if flt.value is None:
                     for a in flt.col.getAtoms():
                         l.append(a.name+" ISNULL")
-                else:
+                elif isinstance(flt.value,DataRow):
+                    # a constant pointer 
                     avalues=flt.col.atomize(
                         flt.value, ds.getDatabase())
                     i=0
@@ -301,16 +296,35 @@ class SqlConnection(Connection):
                         l.append(self.testEqual(
                             a.name,a.type,avalues[i]))
                         i+=1
+                elif isinstance(flt.value,Master):
+                    masterAtoms=[]
+                    for c in flt.value.ds._pkColumns:
+                        masterAtoms += c.getAtoms()
+                    assert len(masterAtoms) == len(flt.col.getAtoms())
+                    i=0
+                    for a in flt.col.getAtoms():
+                        l.append(\
+                            a.name + \
+                            "="+\
+                            flt.value.ds.getTableName()+\
+                            "."+masterAtoms[i].name)
+                        i+=1
             else:
                 raise NotImplementedError
                 
+##         elif isinstance(flt,Master):
+##             assert isinstance(flt.col,DetailColumn)
+##             print flt.slave
+##             raise "hier"
+        
         elif isinstance(flt,NotEmpty):
-            if isinstance(flt.col.rowAttr,Field):
+            if isinstance(flt.col,FieldColumn):
                 for a in flt.col.getAtoms():
                     l.append(a.name+" NOT NULL")
-            elif isinstance(flt.col.rowAttr,Detail):
+            elif isinstance(flt.col,DetailColumn):
                 master=Master(ds)
                 slave=flt.col.getCellValue(master)
+                #print "slave search:", slave._search
                 #master=flt.col.rowAttr._owner
                 #slave=flt.col.rowAttr.pointer._owner
                 #print "Master:", master.getTableName()
@@ -372,6 +386,7 @@ class SqlConnection(Connection):
     def whereClause(self,ds):
         where = []
         for mc in ds._masterColumns:
+            #flt=Master(mc,ds)
             flt=IsEqual(mc,ds._masters[mc.name])
             where+=self.filterWhere(flt,ds)
 ##         for (atom,value) in ds.getAtomicSamples():

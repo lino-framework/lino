@@ -5,9 +5,8 @@ from lino.adamo.filters import NotEmpty
 sess = demo.beginSession(big=True)
         
 q=sess.query(Nations,"id name")
-q.addColumn("cities").addFilter(NotEmpty)
-q.report(columnWidths="2 15 20")
-#q.report(pageLen=5,pageNum=1,columnWidths="2 15 20")
+q.addColumn("cities",search="dre",depth=1).addFilter(NotEmpty)
+q.report(columnWidths="2 15 *")
 
 print
 print q.getSqlSelect()

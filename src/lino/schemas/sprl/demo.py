@@ -139,6 +139,8 @@ class Populator(adamo.Populator):
     
     def populateCities(self,q):
         if self.big:
+            from lino.schemas.sprl.data import cities_de
+            cities_de.populate(q)
             from lino.schemas.sprl.data import cities_be
             cities_be.populate(q)
         else:
