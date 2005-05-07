@@ -101,7 +101,9 @@ class QueryColumn:
         return self.rowAttr.getFltAtoms(self._atoms,context)
         
     def getTestEqual(self,ds,value):
-        return self.rowAttr.getTestEqual(ds,self._atoms,value)
+        assert len(self._atoms) == 1
+        a=self._atoms[0]
+        return ds._connection.testEqual(a.name,a.type,value)
         
         
 ##     def getCellValue(self,row):
@@ -262,6 +264,11 @@ class BabelFieldColumn(FieldColumn):
             #print __name__, values[index], langs
             return values[index]
         
+    def getTestEqual(self,ds,value):
+        langs = ds.getSession().getBabelLangs()
+        lang = langs[0] # ignore secondary languages
+        a = self._atoms[lang.index]
+        return ds._connection.testEqual(a.name,a.type,value)
         
         
         
@@ -310,6 +317,16 @@ class PointerColumn(QueryColumn):
         
         self.values2atoms(values,atomicRow)
 
+    def getTestEqual(self,ds,value):
+        av = [None] * len(ds.getAtoms()) 
+        self.value2atoms(value,av,ds.getSession())
+        i = 0
+        l = []
+        for (n,t) in self.rowAttr.getNeededAtoms(ds.getSession()):
+            l.append(ds._connection.testEqual(n,t,av[i]))
+            i += 1
+        return " AND ".join(l)
+
     def getReachableData(self,row):
         pointedRow = self.getCellValue(row)
         if pointedRow is None:
@@ -331,7 +348,7 @@ class DetailColumn(QueryColumn):
         self.depth=depth
         
 
-    def extractCellValue(self,row):
+    def extractCellValue(self,row,**kw):
         # lazy instanciation for self.detailQuery 
         if self.detailQuery is None:
             self.detailQuery=self._owner.getSession().query(
@@ -339,7 +356,9 @@ class DetailColumn(QueryColumn):
                 **self._queryParams)
             #print "DetailColumn created ", self.detailQuery,\
             #      self.detailQuery._search
-        return self.detailQuery.child(masters=(row,))
+        kw[self.rowAttr.pointer.name]=row
+        return self.detailQuery.child(**kw)
+        #return self.detailQuery.child(masters=(row,))
 
     
 
@@ -392,15 +411,15 @@ class BaseColumnList:
 ##                     BabelField: FieldColumn,
 ##                     }
     
-    def __init__(self,parent,columnNames):
-        if parent is not None and columnNames is None:
-            if parent.getContext() == self.getContext():
+    def __init__(self,_parent,columnNames):
+        if _parent is not None and columnNames is None:
+            if _parent.getContext() == self.getContext():
                 self._frozen=True
-                self._columns = tuple(parent._columns)
-                self._joins = tuple(parent._joins)
-                self._atoms = tuple(parent._atoms)
-                self._pkColumns = parent._pkColumns
-                self.visibleColumns=tuple(parent.visibleColumns)
+                self._columns = tuple(_parent._columns)
+                self._joins = tuple(_parent._joins)
+                self._atoms = tuple(_parent._atoms)
+                self._pkColumns = _parent._pkColumns
+                self.visibleColumns=tuple(_parent.visibleColumns)
                 return
         
         self._frozen=False
@@ -689,12 +708,12 @@ class BaseColumnList:
 
 class LeadTableColumnList(BaseColumnList):
     
-    def __init__(self,parent,store,columnNames):
+    def __init__(self,_parent,store,columnNames):
 
         assert store.__class__.__name__ == "Store", \
                store.__class__.__name__+" is not a Store"
         self._store=store
-        BaseColumnList.__init__(self,parent,columnNames)
+        BaseColumnList.__init__(self,_parent,columnNames)
 
         #self.leadTable = store._table 
         
@@ -797,7 +816,7 @@ class SimpleQuery(LeadTableColumnList):
 ##                     Pointer: PointerColumn,
 ##                     Field: FieldColumn,
 ##                     }
-    def __init__(self, parent, store, session,
+    def __init__(self, _parent, store, session,
                  columnNames=None,
                  viewName=None,
                  orderBy=None,
@@ -810,7 +829,7 @@ class SimpleQuery(LeadTableColumnList):
                  label=None,
                  **kw):
         self._session = session
-        LeadTableColumnList.__init__(self,parent,store,columnNames)
+        LeadTableColumnList.__init__(self,_parent,store,columnNames)
         self.rowcount = None
         
         for m in ('setBabelLangs','getLangs'):
@@ -840,27 +859,27 @@ class SimpleQuery(LeadTableColumnList):
             self.setOrderBy(orderBy)
         else:
             if sortColumns is None:
-                if parent is not None:
-                    sortColumns=parent.sortColumns
+                if _parent is not None:
+                    sortColumns=_parent.sortColumns
                 else:
                     sortColumns=tuple()
             self.sortColumns=sortColumns
             #self.setSortColumns(sortColumns)
             
         
-        if parent is None:
+        if _parent is None:
             #self._samples = {}
             self._masterColumns=[]
             self._masters={}
         else:
             #self._samples = dict(parent._samples)
-            self._masterColumns=list(parent._masterColumns)
-            self._masters=dict(parent._masters)
+            self._masterColumns=list(_parent._masterColumns)
+            self._masters=dict(_parent._masters)
             if search is None:
-                search=parent._search
+                search=_parent._search
             if filters is None:
-                if parent._filters is not None:
-                    filters=list(parent._filters)
+                if _parent._filters is not None:
+                    filters=list(_parent._filters)
 
         self._filters=filters
         self.setFilterExpressions(sqlFilters,search)
@@ -896,9 +915,11 @@ class SimpleQuery(LeadTableColumnList):
     def setMasters(self,*masters,**kw):
         #self._masters={}
         if len(masters):
-            assert len(self._masterColumns) == len(masters)
+            # masterColumns have been set previously
             assert len(kw) == 0
-            # master columns have been set previously
+            assert len(self._masterColumns) == len(masters),\
+                   str([c.name for c in self._masterColumns])\
+                   + " != " + str(masters)
             i=0
             for mc in self._masterColumns:
                 self._masters[mc.name]=masters[i]
@@ -1439,18 +1460,18 @@ class SimpleQuery(LeadTableColumnList):
 
 class Query(SimpleQuery):
 
-    def __init__(self, parent, store, session,
+    def __init__(self, _parent, store, session,
                  columnNames=None,
                  pageNum=None,
                  pageLen=None,
                  **kw):
         
         
-        SimpleQuery.__init__(self,parent,store,session,columnNames,
+        SimpleQuery.__init__(self, _parent,store,session,columnNames,
                              **kw)
-        if parent is not None:
-            if pageNum is None: pageNum=parent.pageNum
-            if pageLen is None: pageLen=parent.pageLen
+        if _parent is not None:
+            if pageNum is None: pageNum=_parent.pageNum
+            if pageLen is None: pageLen=_parent.pageLen
             
         self.pageNum = pageNum
         self.pageLen = pageLen

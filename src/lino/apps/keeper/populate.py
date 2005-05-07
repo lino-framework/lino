@@ -68,8 +68,7 @@ class VolumeVisitor(Task):
                 assert row.parent == dir
             self.visit_dir(row,fullname)
         else:
-            raise SyncError(
-                "%s is neither file nor directory" % src)
+            self.error("%s is neither file nor directory",fullname)
 
     def visit_file(self,fileRow,name):
         base,ext = os.path.splitext(name)

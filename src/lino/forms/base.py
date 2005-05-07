@@ -36,7 +36,7 @@ from lino.forms import gui
 
 class Component(Describable):
     def __init__(self,owner,*args,**kw):
-        Describable.__init__(self,*args,**kw)
+        Describable.__init__(self,None,*args,**kw)
         self.owner = owner
 
     def __repr__(self):
@@ -676,7 +676,7 @@ class Form(Describable,GUI,MenuContainer):
     def __init__(self,app,parent,data=None,
                  halign=None, valign=None,
                  *args,**kw):
-        Describable.__init__(self,*args,**kw)
+        Describable.__init__(self,None,*args,**kw)
         MenuContainer.__init__(self)
         #GUI.__init__(self)
         assert isinstance(app,BaseApplication)
@@ -836,11 +836,13 @@ class Toolkit(console.CLI):
     
 
     
-    def __init__(self,app=None):
+    def __init__(self,app=None,console=None):
         self._apps = []
         self.consoleForm = None
-        self.console = console.CaptureConsole(
-            verbosity=console._syscon._verbosity)
+        if console is None:
+            console=console.CaptureConsole(
+                verbosity=console._syscon._verbosity)
+        self.console = console
 
 ##     def setApplication(self,app):
 ##         self.app = app
@@ -928,16 +930,6 @@ class Toolkit(console.CLI):
                 self.consoleForm.close()
         
 
-##     def form(self,parent,*args,**kw):
-##         #self.check()
-##         return self.formFactory(self,parent,*args,**kw)
-##         #if parent is None:
-##         #    if self.app.mainForm is None:
-##         #        self.app.setMainForm(frm)
-##         #return frm
-
-    
-
     def running(self):
         raise NotImplementedError
         
@@ -949,4 +941,3 @@ class Toolkit(console.CLI):
 
 
         
-

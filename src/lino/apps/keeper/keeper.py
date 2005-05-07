@@ -35,14 +35,17 @@ class Keeper(AdamoApplication):
     author="Luc Saffre"
     
     def showSearchForm(self,ui):
-        self.searchData = self.sess.query(tables.Files)
+        self.searchData = self.sess.query(tables.Files,"name")
+        self.occs=self.searchData.addColumn("occurences")
+        
         frm = ui.form(label="Search")
 
         searchString = frm.addEntry("searchString",adamo.STRING,
                                     label="Words to look for",
                                     value="")
         def search():
-            self.searchData.configure(search=searchString.getValue())
+            #self.searchData.setSarch(searchString.getValue())
+            self.occs._queryParams["search"]=searchString.getValue()
             frm.refresh()
             #a = self.arrivals.appendRow(
             #    dossard=frm.entries.dossard.getValue(),

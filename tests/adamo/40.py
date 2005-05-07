@@ -17,53 +17,43 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
+
 from lino.misc.tsttools import TestCase, main
-from lino.reports import DataReport
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Nations, Cities
 
-from lino.adamo.filters import NotEmpty
+from lino.apps.keeper.keeper import Keeper
+from lino.apps.keeper.keeper_tables import *
 
-'''
+from lino.forms.testkit import Toolkit
 
-adamo.filters: first use of SQL nested SELECT
-
-List of Nations who have at least one city [whose name contains "eup"].
-
-SELECT id, name_en
-  FROM Nations
-  WHERE EXISTS (
-    SELECT *
-        FROM Cities
-        WHERE Cities.nation_id=Nations.id
-            [and Cities.name like '%eup%']
-    )
-
-'''
+TESTDATA = os.path.join(os.path.dirname(__file__),"testdata")
 
 class Case(TestCase):
-    skip=True # covered by examples filters1 and filters2
+    
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.beginSession(self.ui)
+        self.app=Keeper(toolkit=Toolkit(console=self.ui))
+        #self.app.run_forever()
+        self.app.init()
         
     def tearDown(self):
-        self.sess.shutdown()
+        self.app.close()
         
     def test01(self):
-        
-        q=self.sess.query(Nations,"id name")
-        q.addColumn("eup_cities",search="eup").addFilter(NotEmpty)
-        #q.setVisibleColumns("id name eup_cities")
-        sql=q.getSqlSelect()
-        print __file__,":", sql
-        self.assertEquivalent(sql,"""\
-SELECT id, name_en
-FROM Nations
-WHERE EXISTS (SELECT *
-              FROM Cities
-              WHERE nation_id = Nations.id)
+        s=self.getConsoleOutput()
+        print s
+        self.assertEquivalent(s,"""\
         """)
+        
+        q=self.app.sess.query(Volumes)
+        vol=q.appendRow(name="foo",path=TESTDATA)
+        vol.load(self.ui)
+        vol.directories.report()
+        s=self.getConsoleOutput()
+        print s
+        self.assertEquivalent(s,"""\
+        """)
+        
         
 if __name__ == '__main__':
     main()

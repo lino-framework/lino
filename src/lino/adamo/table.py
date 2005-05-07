@@ -69,14 +69,14 @@ class FieldContainer:
         self.__dict__['_rowAttrs'] = {}
 
     def addField(self,name,type,*args,**kw):
-        return self.addRowAttr(Field(None,self,name,type,*args,**kw))
+        return self.addRowAttr(Field(self,name,type,*args,**kw))
     def addPointer(self,name,*args,**kw):
-        return self.addRowAttr(Pointer(None,self,name,*args,**kw))
+        return self.addRowAttr(Pointer(self,name,*args,**kw))
     def addDetail(self,*args,**kw):
-        return self.addRowAttr(Detail(None,self,*args,**kw))
+        return self.addRowAttr(Detail(self,*args,**kw))
     def addBabelField(self,name,type,*args,**kw):
-        return self.addRowAttr(BabelField(None,self,
-                                          name,type,*args,**kw))
+        return self.addRowAttr(
+            BabelField(self,name,type,*args,**kw))
 
     def addRowAttr(self,attr):
         assert attr._owner == self

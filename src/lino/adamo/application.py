@@ -19,7 +19,6 @@
 import os
 
 from lino.forms import Application
-from lino.adamo.datasource import Datasource
 from lino.adamo.schema import Schema
 
 

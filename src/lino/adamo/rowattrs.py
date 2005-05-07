@@ -27,8 +27,7 @@ from lino.misc.descr import Describable, setdefaults
 
 
 class RowAttribute(Describable):
-    def __init__(self,parent,
-                 owner, name,
+    def __init__(self,owner, name,
                  label=None,doc=None):
         Describable.__init__(self,None,name,label,doc)
         self._owner = owner
@@ -126,8 +125,8 @@ class RowAttribute(Describable):
     def getFltAtoms(self,colAtoms,context):
         return colAtoms
 
-    def getTestEqual(self,ds, colAtoms,value):
-        raise NotImplementedError
+##     def getTestEqual(self,ds, colAtoms,value):
+##         raise NotImplementedError
 
     def canWrite(self,row):
         # note : row may be None. 
@@ -186,8 +185,8 @@ class Field(RowAttribute):
     A field is a storable atomic value of a certain type.
     
     """
-    def __init__(self,parent,owner,name,type,**kw):
-        RowAttribute.__init__(self,parent,owner,name,**kw)
+    def __init__(self,owner,name,type,**kw):
+        RowAttribute.__init__(self,owner,name,**kw)
         self.type = type
         #self.visibility = 0
         #self.format = format
@@ -220,10 +219,10 @@ class Field(RowAttribute):
 ##         return (value,)
 
 
-    def getTestEqual(self,ds,colAtoms,value):
-        assert len(colAtoms) == 1
-        a = colAtoms[0]
-        return ds._connection.testEqual(a.name,a.type,value)
+##     def getTestEqual(self,ds,colAtoms,value):
+##         assert len(colAtoms) == 1
+##         a = colAtoms[0]
+##         return ds._connection.testEqual(a.name,a.type,value)
 
         
     def atoms2value(self,atomicValues,session):
@@ -308,11 +307,11 @@ class BabelField(Field):
 ##             #print __name__, values[index], langs
 ##             return values[index]
         
-    def getTestEqual(self,ds, colAtoms,value):
-        langs = ds.getSession().getBabelLangs()
-        lang = langs[0] # ignore secondary languages
-        a = colAtoms[lang.index]
-        return ds._connection.testEqual(a.name,a.type,value)
+##     def getTestEqual(self,ds, colAtoms,value):
+##         langs = ds.getSession().getBabelLangs()
+##         lang = langs[0] # ignore secondary languages
+##         a = colAtoms[lang.index]
+##         return ds._connection.testEqual(a.name,a.type,value)
 
 ##     def value2atoms(self,value,ctx):
 ##         # value is a sequence with all langs of db
@@ -386,10 +385,10 @@ class Pointer(RowAttribute):
     A Pointer links from this to another table.
     
     """
-    def __init__(self, parent,owner, name, toClass,
+    def __init__(self, owner, name, toClass,
                  detailName=None,
                  **kw):
-        RowAttribute.__init__(self,parent,owner,name,**kw)
+        RowAttribute.__init__(self,owner,name,**kw)
         self._toClass = toClass
         
         #self.sticky = True # joins are sticky by default
@@ -429,14 +428,14 @@ class Pointer(RowAttribute):
                                #self.dtlColumnNames,
                                **self.dtlKeywords)
             
-    def getTestEqual(self,ds,colAtoms,value):
-        av = self.value2atoms(value,ds.getSession())
-        i = 0
-        l = []
-        for (n,t) in self.getNeededAtoms(ds.getSession()):
-            l.append(ds._connection.testEqual(n,t,av[i]))
-            i += 1
-        return " AND ".join(l)
+##     def getTestEqual(self,ds,colAtoms,value):
+##         av = self.value2atoms(value,ds.getSession())
+##         i = 0
+##         l = []
+##         for (n,t) in self.getNeededAtoms(ds.getSession()):
+##             l.append(ds._connection.testEqual(n,t,av[i]))
+##             i += 1
+##         return " AND ".join(l)
 
 
             
@@ -597,16 +596,13 @@ class Pointer(RowAttribute):
 
         
 class Detail(RowAttribute):
-    def __init__(self,parent,owner,
+    def __init__(self,owner,
                  name,pointer,label=None,doc=None,**kw):
         
         self.pointer = pointer
-        RowAttribute.__init__(self,parent,owner,
+        RowAttribute.__init__(self,owner,
                               name,label=label,doc=doc)
-        if parent is None:
-            kw[self.pointer.name] = None
-        else:
-            setdefaults(kw,parent._queryParams)
+        kw[self.pointer.name] = None
         self._queryParams = kw
         
     def format(self,ds):
