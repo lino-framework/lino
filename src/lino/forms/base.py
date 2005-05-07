@@ -836,13 +836,13 @@ class Toolkit(console.CLI):
     
 
     
-    def __init__(self,app=None,console=None):
+    def __init__(self,app=None,_console=None):
         self._apps = []
         self.consoleForm = None
-        if console is None:
-            console=console.CaptureConsole(
+        if _console is None:
+            _console=console.CaptureConsole(
                 verbosity=console._syscon._verbosity)
-        self.console = console
+        self.console = _console
 
 ##     def setApplication(self,app):
 ##         self.app = app

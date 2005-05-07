@@ -26,6 +26,8 @@ CENTER = 5
 _toolkit = None
 _app = None
 
+
+
 def choose(wishlist="wx"):
     global _toolkit
     
@@ -34,6 +36,10 @@ def choose(wishlist="wx"):
     for tkname in wishlist.split():
         if tkname == "wx": 
             from lino.forms.wx.wxform import Toolkit
+            _toolkit = Toolkit()
+            return _toolkit
+        if tkname == "testkit": 
+            from lino.forms.testkit import Toolkit
             _toolkit = Toolkit()
             return _toolkit
     raise "no toolkit found"

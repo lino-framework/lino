@@ -5,7 +5,7 @@ openmail
 """
 import unittest
 
-from lino.timtools.mail import readmail, mailto_url
+from lino.tools.mail import readmail, mailto_url
 
 class Case(unittest.TestCase):
 

@@ -234,3 +234,5 @@ main = unittest.main
 ##     runner = TextTestRunner(stream=?)
 ##     TestProgram(testRunner)
 
+from lino.forms import gui
+gui.choose("testkit")

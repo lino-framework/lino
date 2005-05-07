@@ -68,7 +68,8 @@ continue testing even if failures or errors occur""",
     def makeSuite(self,ui,argv,root='.'):
 
         job = ui.job("Collecting test cases")
-        tests = []
+        suites=[]
+        cases = []
         #skipped=[]
         for dirpath, dirnames, filenames in os.walk(root):
             job.status(dirpath)
@@ -92,27 +93,27 @@ continue testing even if failures or errors occur""",
                             if modname == a[0]:
                                 doit = True
                         else:
-                            job.warning("unrecognized argument %s",
+                            job.warning("Unrecognized argument %s",
                                         arg)
                     if doit:
-                        job.status("Extracting tests from %s...", 
+                        job.status("Extracting cases from %s...", 
                                    modname)
                         
-                        tests += self.findTestCases(modname)
+                        self.findTestCases(modname,cases,suites)
             sys.path.remove(dirpath)
 
-        job.done("found %d tests.", len(tests))
-        suites=[]
-        for tcl in tests:
+        job.done("found %d cases and %d suites.",
+                 len(cases),len(suites))
+        for tcl in cases:
             suites.append(unittest.makeSuite(tcl))
         return unittest.TestSuite(suites)
      
-    def findTestCases(self,modname):
-        cases=[]
+    def findTestCases(self,modname,cases,suites):
         mod = my_import(modname)
+        #cases=[]
         if hasattr(mod,"suite"):
-            return mod.suite()
-            # print modname + ".suite()"
+            #print modname + ".suite()"
+            suites.append(mod.suite())
         for (k,v) in mod.__dict__.items():
             # Python 2.2 if type(v) == types.ClassType:
             if type(v) == types.TypeType: # since 2.3
