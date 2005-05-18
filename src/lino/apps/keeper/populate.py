@@ -72,11 +72,13 @@ class VolumeVisitor(Task):
 
     def visit_file(self,fileRow,name):
         base,ext = os.path.splitext(name)
-        #self.status(name)
+        #
         if ext.lower() == ".txt":
+            self.status(name)
             s = open(name).read()
             coding = self.encodingGuesser.guess(name,s)
-            print name,":",coding
+            self.status("%s: %s", name,coding)
+            #print name,":",coding
             if coding:
                 tokens = standardTokenizer(s.decode(coding))
             else:
@@ -97,15 +99,18 @@ class VolumeVisitor(Task):
             #msdoc = MsWordDocument(name)
             #fileRow.title = msdoc.title
             #self.loadWords(fileRow,msdoc.content.split())
+        else:
+            self.status("Ignoring unknown file %s.", name)
                     
     def loadWords(self,fileRow,tokens):
         #self.status("%s : %d words",fileRow.name,len(tokens))
+        print fileRow.path(), ".occurences.deleteAll()"
         fileRow.occurences.deleteAll()
         #self.occurences.query(file=deleteRows(file=fileRow)
         pos = 0
         for token in tokens:
             pos += 1
-            self.status(fileRow.name+": "+token)
+            self.status(fileRow.path()+": "+token)
             word = self.words.peek(token)
             if word is None:
                 word = self.words.appendRow(id=token)

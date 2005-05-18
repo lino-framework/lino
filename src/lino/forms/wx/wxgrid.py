@@ -440,7 +440,7 @@ class DataGridCtrl(wx.grid.Grid):
             row = self.table.editor.getCurrentRow()
             ui = self.table.editor.getForm()
             
-            if col.rowAttr.showEditor(ui,row):
+            if col.showEditor(ui,row):
                 self.refresh()
                 return
             #print "F1 in column", col.name

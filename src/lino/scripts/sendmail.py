@@ -43,6 +43,7 @@ import smtplib
 import socket
 import sys
 import os.path
+opj=os.path.join
 #import getopt
 import getpass
 import glob
@@ -129,8 +130,7 @@ Taken from addrlist.txt if not given.
         if self.options.host is None:
             raise UsageError("--host must be specified")
 
-        if not self.connect():
-            raise ApplicationError("Abort : connect() failed")
+        self.connect()
         
         for pattern in self.args:
             l = glob.glob(pattern)
@@ -153,17 +153,22 @@ Taken from addrlist.txt if not given.
     def connect(self):
 
         try:
+            self.ui.notice("Connecting to %s",self.options.host)
             self.server = smtplib.SMTP(self.options.host)
+        except socket.error,e:
+            raise ApplicationError(
+                "Could not connect to %s : %s" % (
+                self.options.host,e))
         except socket.gaierror,e:
-            self.ui.error(
-                "Could not connect to %s : %s",self.options.host,e)
-            return False
+            raise ApplicationError(
+                "Could not connect to %s : %s" % (
+                self.options.host,e))
 
         # server.set_debuglevel(1)
 
         if self.options.user is None:
             self.ui.notice("Using anonymous SMTP")
-            return True
+            return 
 
         if self.options.password is None:
             self.options.password = getpass.getpass(
@@ -172,18 +177,20 @@ Taken from addrlist.txt if not given.
             
         try:
             self.server.login(self.options.user,self.options.password)
-            return True
+            return
         
-        except smtplib.SMTPHeloError,e:
-            self.ui.error(
-                "The server didn't reply properly to the 'HELO' greeting: %s", e)
-        except smtplib.SMTPAuthenticationError,e:
-            self.ui.error(
-                "The server didn't accept the username/password combination: %s",e)
-        except smtplib.SMTPException,e:
-            self.ui.error(str(e))
-            
-        return False
+        except Exception,e:
+            raise ApplicationError(str(e))
+        
+##         except smtplib.SMTPHeloError,e:
+##             self.ui.error(
+##                 "The server didn't reply properly to the 'HELO' greeting: %s", e)
+##         except smtplib.SMTPAuthenticationError,e:
+##             self.ui.error(
+##                 "The server didn't accept the username/password combination: %s",e)
+##         except smtplib.SMTPException,e:
+##             self.ui.error(str(e))
+##         return False
 
     def processFile(self,filename,i):
         self.ui.notice("%s (%d/%d)",filename,i,self.count_todo)
@@ -307,14 +314,16 @@ Taken from addrlist.txt if not given.
             return 
         
         except smtplib.SMTPRecipientsRefused,e:
-            self.ui.warning("%s : %s", toAddr,e)
+            self.ui.error("%s : %s", toAddr,e)
             # All recipients were refused. Nobody got the mail.
         except smtplib.SMTPHeloError,e:
-            self.ui.warning("%s : %s", toAddr,e)
+            self.ui.error("%s : %s", toAddr,e)
+        except smtplib.SMTPServerDisconnected,e:
+            self.ui.error("%s : %s", toAddr,e)
         except smtplib.SMTPSenderRefused,e:
-            self.ui.warning("%s : %s", toAddr,e)
+            self.ui.error("%s : %s", toAddr,e)
         except smtplib.SMTPDataError,e:
-            self.ui.warning("%s : %s", toAddr,e)
+            self.ui.error("%s : %s", toAddr,e)
             
         self.count_nok += 1
         return 

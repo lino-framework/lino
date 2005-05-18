@@ -158,13 +158,13 @@ class StoredDataRow(DataRow):
         self.__dict__["_isCompleting"] = False
 
     def __eq__(self, other):
-        if (other is None) or (other is self._query.ANY_VALUE):
+        if (other is None):# or (other is self._query.ANY_VALUE):
             return False
         return self.getRowId() == other.getRowId()
         #return tuple(self.getRowId()) == tuple(other.getRowId())
         
     def __ne__(self, other):
-        if (other is None) or (other is self._query.ANY_VALUE):
+        if (other is None):# or (other is self._query.ANY_VALUE):
             return True
         return self.getRowId() != other.getRowId()
         #return tuple(self.getRowId()) == tuple(other.getRowId())

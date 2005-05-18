@@ -184,6 +184,9 @@ class QueryColumn:
     def format(self,v):
         return self.rowAttr.format(v)
         
+    def showEditor(self,ui,row):
+        return False
+
 
 class FieldColumn(QueryColumn):
     
@@ -327,6 +330,17 @@ class PointerColumn(QueryColumn):
             i += 1
         return " AND ".join(l)
 
+    def showEditor(self,ui,row):
+        row.lock()
+        ds = self.rowAttr.getTargetSource(row)
+        selectedRow = ui.chooseDataRow(ds,row)
+        if selectedRow is not None:
+            ui.status("you chose: "+str(row))
+            self.setCellValue(row,selectedRow)
+            row.setDirty()
+        row.unlock()
+        return True
+
     def getReachableData(self,row):
         pointedRow = self.getCellValue(row)
         if pointedRow is None:
@@ -388,6 +402,10 @@ class DetailColumn(QueryColumn):
 
 
 
+    def showEditor(self,ui,row):
+        ds = self.getCellValue(row)
+        ui.showDataGrid(ds)
+        return True
 
 
 
@@ -398,7 +416,7 @@ class DetailColumn(QueryColumn):
 
 class BaseColumnList: 
     
-    ANY_VALUE = types.NoneType
+    #ANY_VALUE = types.NoneType
     
     columnClasses=( PointerColumn,
                     BabelFieldColumn,
@@ -449,7 +467,7 @@ class BaseColumnList:
 
     def setVisibleColumns(self,columnNames):
         l = []
-        assert type(columnNames) is types.StringType
+        assert type(columnNames) in (str,unicode) #is types.StringType
         for colName in columnNames.split():
             if colName == "*":
                 for fld in self.getLeadTable().getFields():
@@ -1219,7 +1237,9 @@ class SimpleQuery(LeadTableColumnList):
         if self._sqlFilters is not None:
             assert issequence(self._sqlFilters), repr(self._sqlFilters)
             for expr in self._sqlFilters:
-                assert type(expr) == types.StringType
+                assert type(expr) in (str, unicode),\
+                       "Expected list of strings, got "+\
+                       repr(self._sqlFilters)
                 l.append(expr)
         #self.filterExp = tuple(l)
 
@@ -1580,7 +1600,7 @@ class Atom:
         self.index = index
         self.name = name
         self.joinName = joinName
-        assert (joinName is None) or type(joinName) is types.StringType
+        assert (joinName is None) or type(joinName) in (str, unicode) # is types.StringType
         
 
     def getNameInQuery(self,query):

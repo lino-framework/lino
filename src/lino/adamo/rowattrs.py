@@ -175,9 +175,6 @@ class RowAttribute(Describable):
 
         
 
-    def showEditor(self,ui,row):
-        return False
-
 class Field(RowAttribute):
     """
     
@@ -583,17 +580,6 @@ class Pointer(RowAttribute):
     def getTargetSource(self,row): 
         return row.getSession().query(self._toClass)
     
-    def showEditor(self,ui,row):
-        row.lock()
-        ds = self.getTargetSource(row)
-        selectedRow = ui.chooseDataRow(ds,row)
-        if selectedRow is not None:
-            ui.status("you chose: "+str(row))
-            self.setCellValue(row,selectedRow)
-            row.setDirty()
-        row.unlock()
-        return True
-
         
 class Detail(RowAttribute):
     def __init__(self,owner,
@@ -637,10 +623,6 @@ class Detail(RowAttribute):
         # note : row may be None. 
         return False
 
-    def showEditor(self,ui,row,col):
-        ds = self.getCellValue(row,col)
-        ui.showDataGrid(ds)
-        return True
 
 ##     def getCellValue(self,row,col):
 ##         q=col.detailQuery.child(masters=(row,))

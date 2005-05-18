@@ -80,8 +80,13 @@ class SalesPlugin(adamo.SchemaPlugin):
         schema.addTable( Invoices,label="Invoices")
         schema.addTable( InvoiceLines,
                          label="Invoice Lines")
-        schema.addTable( Bookings,
-                         label="Ledger Bookings")
+        
+        schema.addTable(Accounts)
+        schema.addTable(Statements)
+        schema.addTable(StatementLines)
+        
+        schema.addTable(Bookings)
+        
 
 #class JokesPlugin(adamo.SchemaPlugin):
 #    pass

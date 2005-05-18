@@ -44,7 +44,9 @@ class Volumes(Table):
 
     class Instance(Table.Instance):
         def getLabel(self):
-            return self.name
+            if self.name is not None: return self.name
+            return self.path
+        
         def load(self,ui):
             from lino.apps.keeper.populate import VolumeVisitor
             VolumeVisitor(self).run(ui)
