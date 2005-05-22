@@ -269,8 +269,8 @@ class BabelField(Field):
         else:
             assert not issequence(value)
             index = langs[0].index
-            assert not index == -1
-            values[index] = value
+            if index != -1:
+                values[index] = value
             
         
 ##     def getCellValue(self,row,col):

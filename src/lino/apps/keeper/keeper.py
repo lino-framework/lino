@@ -23,9 +23,127 @@ import os
 from lino import adamo
 from lino.forms import gui
 
-from lino.apps.keeper import keeper_tables as tables
+#from lino.apps.keeper import keeper_tables as tables
 
 from lino.adamo.application import AdamoApplication
+
+class Volumes(Table):
+    def init(self):
+        self.addField('id',ROWID) 
+        self.addField('name',STRING)
+        self.addField('meta',MEMO(width=50,height=5))
+        self.addField('path',STRING)
+        #self.addDetail('directories',Directories,parent=None)
+        self.addView("std", "id name path directories meta")
+        
+
+    def setupMenu(self,nav):
+        frm = nav.getForm()
+        m = frm.addMenu("&Volume")
+        def f():
+            vol = nav.getCurrentRow()
+            vol.load(frm)
+            
+        m.addItem(label="&Load",
+                  action=f,
+                  accel="F6")
+
+    class Instance(Table.Instance):
+        def getLabel(self):
+            if self.name is not None: return self.name
+            return self.path
+        
+        def load(self,ui):
+            from lino.apps.keeper.populate import VolumeVisitor
+            VolumeVisitor(self).run(ui)
+    
+        
+class Directories(Table):
+    def init(self):
+        self.addField('id',ROWID) 
+        self.addField('name',STRING)
+        #self.addField('mtime',TIMESTAMP)
+        self.addField('meta',MEMO(width=50,height=5))
+        self.addPointer('parent',Directories).setDetail(
+            "subdirs",viewName="std")
+        self.addPointer('volume',Volumes).setDetail(
+            "directories",parent=None,viewName="std")
+        self.addView("std","parent name subdirs files meta volume")
+        #self.setPrimaryKey("volume parent name")
+
+    class Instance(Table.Instance):
+        def getLabel(self):
+            return self.name
+        def path(self):
+            if self.parent is None:
+                return self.name
+            return os.path.join(self.parent.path(),self.name)
+        
+        def delete(self):
+            #print "Delete entry for ",self
+            assert not self in self.subdirs
+            self.files.deleteAll()
+            self.subdirs.deleteAll()
+##             for row in self.files:
+##                 row.delete()
+##             for row in self.subdirs:
+##                 row.delete()
+            Table.Instance.delete(self)
+                
+
+class Files(Table):
+    def init(self):
+        #self.addField('id',ROWID) 
+        self.addField('name',STRING)
+        #self.addField('mtime',TIMESTAMP)
+        self.addField('meta',MEMO(width=50,height=5))
+        self.addPointer('dir',Directories).setDetail(
+            "files",orderBy="name")
+        self.addPointer('type',FileTypes)
+        self.setPrimaryKey("dir name")
+        self.addView("std","dir name type meta")
+
+    class Instance(Table.Instance):
+        
+        def getLabel(self):
+            return self.name
+        
+        def path(self):
+            return os.path.join(self.dir.path(),self.name)
+        
+class FileTypes(Table):
+    def init(self):
+        self.addField('id',STRING(width=5))
+        self.addField('name',STRING)
+
+    class Instance(Table.Instance):
+        def getLabel(self):
+            return self.name
+        
+class Words(Table):
+    def init(self):
+        self.addField('id',STRING)
+        #self.addField('word',STRING)
+        self.addPointer('synonym',Words)
+        #self.addField('ignore',BOOL)
+        self.addView("std","id synonym occurences")
+
+    class Instance(Table.Instance):
+        pass
+        #def getLabel(self):
+        #    return self.id
+
+class Occurences(Table):
+    def init(self):
+        self.addPointer('word',Words).setDetail("occurences")
+        self.addPointer('file',Files).setDetail("occurences")
+        self.addField('pos',INT)
+        self.setPrimaryKey("word file pos")
+
+    class Instance(Table.Instance):
+        pass
+
+
 
 
 class Keeper(AdamoApplication):
@@ -34,8 +152,17 @@ class Keeper(AdamoApplication):
     years='2005'
     author="Luc Saffre"
     
+    tables = (
+        Volumes,
+        Files,
+        Directories,
+        FileTypes,
+        Words,
+        Occurences,
+        )
+
     def showSearchForm(self,ui):
-        self.searchData = self.sess.query(tables.Files,"name")
+        self.searchData = self.sess.query(Files,"name")
         self.occs=self.searchData.addColumn("occurences")
         
         frm = ui.form(label="Search")
@@ -70,13 +197,17 @@ class Keeper(AdamoApplication):
         frm.show()
         #frm.showModal()
 
+    def setupSchema(self,schema):
+        # order of tables is important: tables will be populated in
+        # this order
+        for t in TABLES:
+            schema.addTable(t)
+
+
 
     def init(self):
-        tables.setupSchema(self.schema)
-        
-        self.sess = self.schema.quickStartup(
-            ui=self.toolkit.console,
-            filename=self.filename)
+        #tables.setupSchema(self.schema)
+        self.startup()
         
         #assert self.mainForm is None
         
@@ -94,16 +225,16 @@ This is the Keeper main menu.
         m = frm.addMenu("&Datenbank")
         m.addItem(label="&Volumes").setHandler(
             self.showViewGrid,frm,
-            tables.Volumes)
+            Volumes)
         m.addItem(label="&Files").setHandler(
             self.showViewGrid,frm,
-            tables.Files)
+            Files)
         m.addItem(label="&Directories").setHandler(
             self.showViewGrid,frm,
-            tables.Directories)
+            Directories)
         m.addItem(label="&Words").setHandler(
             self.showViewGrid,frm,
-            tables.Words)
+            Words)
         
         self.addProgramMenu(frm)
 

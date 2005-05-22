@@ -17,6 +17,11 @@ Years               |    0|                    |
 Products            |    2|(3,)                |(16,)               
 Invoices            |    1|OUT-1               |OUT-1               
 InvoiceLines        |    2|(u'OUT', 1, 1)      |(u'OUT', 1, 2)      
+BalanceItems        |    0|                    |                    
+CashFlowItems       |    0|                    |                    
+ProfitAndLossItems  |   17|TULUD               |Ärikasum (-kahjum)  
+Accounts            |    0|                    |                    
+Bookings            |    0|                    |                    
 Bookings            |    0|                    |                    
 Authors             |   14|Bill Gates          |Winston Churchill   
 AuthorEvents        |    0|                    |                    

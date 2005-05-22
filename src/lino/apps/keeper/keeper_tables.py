@@ -18,6 +18,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+
+raise "no longer used. 20050522"
+
+import os
 from lino.adamo import *
 from lino.schemas.sprl.babel import Languages
 
@@ -138,19 +142,21 @@ class Occurences(Table):
         pass
 
 
+
+
     
-# order of tables is important: tables will be populated in this order
-TABLES = (
-    Volumes,
-    Files,
-    Directories,
-    FileTypes,
-    Words,
-    Occurences,
-    )
+## # order of tables is important: tables will be populated in this order
+## TABLES = (
+##     Volumes,
+##     Files,
+##     Directories,
+##     FileTypes,
+##     Words,
+##     Occurences,
+##     )
 
 
-def setupSchema(schema):
-    for t in TABLES:
-        schema.addTable(t)
+## def setupSchema(schema):
+##     for t in TABLES:
+##         schema.addTable(t)
 

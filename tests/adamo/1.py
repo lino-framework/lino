@@ -52,20 +52,12 @@ class Case(TestCase):
                 for t in self.sess.schema.getTableList()]
         l1.sort()
 
-        # print " ".join(l1)
+        #print " ".join(l1)
 
-        l2 = """AuthorEventTypes AuthorEvents Authors Bookings Cities
-        Currencies EventTypes Events InvoiceLines Invoices Journals
-        Languages Nations News Newsgroups Organisations Pages
-        PartnerTypes Partners Products ProjectStati Projects PubByAuth
-        PubTypes Publications Quotes Topics Users Years""".split()
+        l2 = """
+Accounts AuthorEventTypes AuthorEvents Authors BalanceItems Bookings Bookings CashFlowItems Cities Currencies EventTypes Events InvoiceLines Invoices Journals Languages Nations News Newsgroups Organisations Pages PartnerTypes Partners Products ProfitAndLossItems ProjectStati Projects PubByAuth PubTypes Publications Quotes Topics Users Years
+""".split()
         
-##         l2 = """AUTHORS BOOKINGS CITIES Currencies EVENTS EVENTTYPES
-##         INVOICELINES INVOICES JOURNALS LANGS NATIONS NEWS NEWSGROUPS
-##         ORGS PAGES PARTNERS PARTYPES PEREVENTS PEVTYPES PRJSTAT PRODUCTS
-##         PROJECTS PUB2AUTH PUBLICATIONS PUBTYPES QUOTES TOPICS USERS
-##         YEARS""".split()
-
         self.assertEqual(l1,l2)
         
         self.sess.setBabelLangs("en")

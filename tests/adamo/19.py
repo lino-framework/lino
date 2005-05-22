@@ -143,7 +143,7 @@ class Case(TestCase):
 
         sess.setBabelLangs('fr de')
         self.assertEqual(be.name,['Belgique','Belgien'])
-
+        
         try:
             sess.setBabelLangs('xx')
             self.fail("failed to raise InvalidRequestError")

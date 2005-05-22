@@ -20,6 +20,7 @@
 #from math import sin, cos, radians
 
 #from ctypes import WinError
+import sys
 
 import win32ui
 import win32con
@@ -154,18 +155,19 @@ class Win32TextPrinter(TextPrinter):
                  cpi=12,
                  lpi=6,
                  fontName="Courier New",
+                 coding=sys.stdin.encoding,
                  jobName="Win32PrinterDocument",
                  **kw):
         
-        TextPrinter.__init__(self,pageSize=A4,margin=5*mm,**kw)
+        TextPrinter.__init__(self,pageSize=A4,margin=5*mm,
+                             coding=coding,**kw)
 
         self.fontDict = {
             'name' : fontName
             }
         
         
-        if self.coding is not None:
-            self.fontDict['charset'] = charsets[self.coding]
+        self.fontDict['charset'] = charsets[coding]
 
         self.font = None
         
@@ -210,7 +212,7 @@ class Win32TextPrinter(TextPrinter):
         try:
             self.dc.StartDoc(jobName,spoolFile)
         except win32ui.error,e:
-            raise PrinterNotReady
+            raise PrinterNotReady("StartDoc() failed")
         self.dc.SetMapMode(win32con.MM_TWIPS)
         # for SetWorldTransform():
         self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
@@ -245,7 +247,7 @@ class Win32TextPrinter(TextPrinter):
         #self.drawDebugRaster()
 
         if self.pageHeight < self.pageWidth:
-            # see news item 125 (20050428)
+            # see http://lino.berlios.de/176.html
             
             r=0
             # shifts to right:
@@ -256,22 +258,21 @@ class Win32TextPrinter(TextPrinter):
                 -1,0,
                 0, -int(self.pageWidth-2*self.margin))
             if r == 0:
-                print "SetWorldTransform() failed" #,  WinError()
-            #print self.dc.SetWorldTransform(0,1, -1,0, 0,297*mm)
-            #self.dc.SetViewportOrg((0,int(-210*mm)))
-            #console.warning("Portrait orientation not yet supported!")
-            
-##         print "Viewport:",\
-##               self.dc.GetViewportOrg(), self.dc.GetViewportExt()
-##         print "Window:", self.dc.GetWindowOrg(), self.dc.GetWindowExt()
+                raise PrinterNotReady("SetWorldTransform() failed")
         
-        self.dc.StartPage()
+        r = self.dc.StartPage()
+        # seems to be always None
+        #if r <= 0:
+        #    raise PrinterNotReady("StartPage() returned %d",r)
     
     def onEndPage(self):
         for dib,destination in self._images:
             dib.draw(self.dc.GetHandleOutput(),destination)
                  
-        self.dc.EndPage()
+        r=self.dc.EndPage()
+        # seems to be always None
+        #if r <= 0:
+        #    raise PrinterNotReady("EndPage() returned %d",r)
 
     def onSetPageSize(self):
         pass
@@ -417,15 +418,15 @@ class Win32TextPrinter(TextPrinter):
     def length2i(self,s):
         try:
             if s.endswith("mm"):
-                return float(s[:-2]) * mm
+                return int(float(s[:-2]) * mm)
             if s.endswith("ch"):
                 self.flush()
                 assert self.font is not None
-                return float(s[:-2]) * self.fontDict['width']
+                return int(float(s[:-2]) * self.fontDict['width'])
             if s.endswith("ln"):
                 self.flush()
-                return float(s[:-2]) * self.leading
-            return float(s) * mm
+                return int(float(s[:-2]) * self.leading)
+            return int(float(s) * mm)
         except ValueError,e:
             raise ParserError("invalid length: %r" % s)
         

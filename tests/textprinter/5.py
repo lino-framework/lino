@@ -17,6 +17,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
 import os
 opj=os.path.join
 from lino.misc.tsttools import TestCase, main
@@ -34,7 +35,7 @@ class Case(TestCase):
         d.writeln("--- eof 5.prn---")
 
         d.writeln("Here is some more text.")
-        d.writeln("Ännchen Müller machte große Augen.")
+        d.writeln(u"Ännchen Müller machte große Augen.")
         d.write("And here")
         d.write(" is some")
         d.write(" frag")
@@ -48,7 +49,7 @@ class Case(TestCase):
         from lino.textprinter import winprn
         spoolFile = self.addTempFile("5.ps",showOutput=True)
         d = winprn.Win32TextPrinter(self.win32_printerName_PS,
-                                    spoolFile)
+                                    spoolFile )
         self.doit(d)
         
 

@@ -24,7 +24,7 @@ from lino.misc import tsttools
 
 #scriptsPath = os.path.join("..","..","scripts")
 #sys.path.append(scriptsPath)
-from lino.scripts.prnprint import main
+from lino.scripts.prnprint import PrnPrint
 
 dataPath = os.path.join(os.path.dirname(__file__),'testdata')
 dataPath = os.path.abspath(dataPath)
@@ -34,12 +34,13 @@ class Case(tsttools.TestCase):
     ""
 
     def test01(self):
+        app=PrnPrint()
         for i in ('1','2'):
             spoolFile = self.addTempFile(i+".ps",showOutput=True)
             inputFile = os.path.join(dataPath,i)+".prn"
-            main([ "-p", self.win32_printerName_PS,
-                   "-o", spoolFile,
-                   inputFile] )
+            app.main([ "-p", self.win32_printerName_PS,
+                       "-o", spoolFile,
+                       inputFile] )
         
             
 

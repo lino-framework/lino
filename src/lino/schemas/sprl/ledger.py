@@ -32,12 +32,13 @@ from sales import Invoices
 
         
 class StatementItems(BabelTable):
-    
+    #abstract
     def init(self):
         BabelTable.init(self)
         self.addField('id',STRING)
         self.addField('attrib',STRING)
-        self.addField('filter',STRING)
+        self.addField('dc',STRING(1))
+        self.addField('type',STRING(2))
         self.addField('doc',MEMO)
         #self.setPrimaryKey("stmt id")
 
@@ -110,7 +111,7 @@ class Accounts(BabelTable):
         BabelTable.init(self)
         #self.addField('label',STRING)
         self.addField('pcmn',STRING)
-        self.addPointer('parent',Account)
+        self.addPointer('parent',Accounts)
         self.addPointer('balance',BalanceItems)
         self.addPointer('profit',ProfitAndLossItems)
         self.addPointer('cash',CashFlowItems)
@@ -130,3 +131,5 @@ class Bookings(Table):
       
         #self.setPrimaryKey("date seq")
    
+tables = (BalanceItems,CashFlowItems,ProfitAndLossItems,
+          Accounts,Bookings)

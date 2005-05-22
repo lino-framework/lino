@@ -134,10 +134,10 @@ class Store:
         kw['viewName'] = viewName
         if columnNames is not None:
             kw['columnNames'] = columnNames
-        return self.createQuery(sess,**kw)
+        return self.query(sess,**kw)
         
             
-    def createQuery(self,sess,columnNames=None,**kw):
+    def query(self,sess,columnNames=None,**kw):
         #return Query(self._peekQuery,self,sess,
         #             columnNames=columnNames,**kw)
         return Query(None,self,sess,columnNames,**kw)
@@ -300,7 +300,7 @@ class Populator(Describable):
             m = getattr(self,name)
         except AttributeError:
             return
-        qry=store.createQuery(sess,"*")
+        qry=store.query(sess,"*")
         m(qry)
     
 

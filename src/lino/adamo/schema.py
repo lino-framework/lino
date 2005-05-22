@@ -54,11 +54,16 @@ class Schema(Describable):
     defaultLangs = ('en',)
     #sessionFactory = Session
     
-    def __init__(self,name=None,label=None,doc=None,**kw):
+    def __init__(self,name=None,label=None,doc=None,
+                 langs=None,
+                 **kw):
         Describable.__init__(self,None,name,label,doc)
         self._initDone= False
         self._datasourceRenderer= None
         self._contextRenderer= None
+        if langs is None:
+            langs="en de fr nl et"
+        self._possibleLangs = tuple(langs.split())
         
         self._databases = []
         self._plugins = []

@@ -21,7 +21,7 @@
 import sys, os
 
 from lino.ui import console
-from lino.textprinter import winprn 
+from lino.textprinter import winprn
 
 class PrnPrint(console.ConsoleApplication):
     

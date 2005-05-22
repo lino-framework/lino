@@ -57,13 +57,11 @@ class Case(TestCase):
 
         db1 = schema.addDatabase(langs="de")
         db1.update(stddb)
-        #conn = Connection(filename="db1.db", schema=schema)
         conn = center.connection(self.ui,schema)
         db1.connect(conn)
         
         db2 = schema.addDatabase(langs="en")
         db2.update(stddb)
-        #conn = Connection(filename="db2.db", schema=schema)
         conn = center.connection(self.ui,schema)
         db2.connect(conn)
 

@@ -160,10 +160,11 @@ class Session(Context):
         self._babelLangs = []
         for lang_id in langs.split():
             self._babelLangs.append(self.db.findBabelLang(lang_id))
-        if self._babelLangs[0].index == -1:
-            raise InvalidRequestError(
-                "First item of %s must be one of %s" % (
-                repr(langs), repr(self.db.getBabelLangs())))
+            
+##         if self._babelLangs[0].index == -1:
+##             raise InvalidRequestError(
+##                 "First item of %s must be one of %s" % (
+##                 repr(langs), repr(self.db.getBabelLangs())))
 
     def getBabelLangs(self):
         return self._babelLangs
@@ -180,8 +181,7 @@ class Session(Context):
     def query(self,leadTable,columnNames=None,**kw):
         if columnNames is None:
             columnNames="*"
-        return self.getStore(leadTable).createQuery(
-            self,columnNames,**kw)
+        return self.getStore(leadTable).query(self,columnNames,**kw)
 
     def peek(self,tableClass,*args):
         # used in raceman/report.py, cities_be.py...

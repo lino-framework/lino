@@ -27,10 +27,11 @@ class AdamoApplication(Application):
     usage="usage: %prog [options] DBFILE"
     description="""\
 where DBFILE is the name of the sqlite database file"""
+    tables = NotImplementedError
     
     def __init__(self,filename=None,**kw):
         Application.__init__(self,**kw)
-        self.schema = Schema()
+        #self.schema = Schema()
         self.filename = filename
         self.sess = None
         
@@ -44,6 +45,12 @@ where DBFILE is the name of the sqlite database file"""
         else:
             self.filename=os.path.join(self.tempDir,
                                        self.name+".db")
+
+    def setupSchema(self,schema):
+        # order of tables is important: tables will be populated in
+        # this order
+        for t in TABLES:
+            schema.addTable(t)
 
 ##     def parse_args(self,
 ##                    argv=None,
@@ -66,7 +73,12 @@ where DBFILE is the name of the sqlite database file"""
 
     def init(self): #,*args,**kw):
         # called from Toolkit.main()
-        self.sess = self.schema.quickStartup(
+        self.startup()
+        
+    def startup(self): #,*args,**kw):
+        schema = Schema()
+        self.setupSchema(schema)
+        self.sess = schema.quickStartup(
             ui=self.toolkit.console,
             filename=self.filename)
 ##         return Application.init(self,

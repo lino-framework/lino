@@ -80,10 +80,14 @@ class SalesPlugin(adamo.SchemaPlugin):
         schema.addTable( Invoices,label="Invoices")
         schema.addTable( InvoiceLines,
                          label="Invoice Lines")
-        
-        schema.addTable(Accounts)
-        schema.addTable(Statements)
-        schema.addTable(StatementLines)
+
+        import ledger
+        for t in ledger.tables:
+            schema.addTable(t)
+            
+        #schema.addTable(Accounts)
+        #schema.addTable(Statements)
+        #schema.addTable(StatementLines)
         
         schema.addTable(Bookings)
         

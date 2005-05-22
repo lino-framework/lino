@@ -19,6 +19,7 @@
 from lino.misc.descr import Describable
 from lino.ui import console 
 from lino.adamo import DataVeto
+from lino.adamo import InvalidRequestError
 
 #from lino.adamo.dbds.sqlite_dbd import Connection
 
@@ -59,6 +60,12 @@ class Database(Context,Describable):
         for lang in self._supportedLangs:
             if lang.id == lang_id:
                 return lang
+            
+        if not lang_id in self.schema._possibleLangs:
+            raise InvalidRequestError(
+                "%r : impossible language (must be one of %r)" % (
+                lang_id, self.schema._possibleLangs))
+            
         """
         index -1 means that values in this language should be ignored
         """

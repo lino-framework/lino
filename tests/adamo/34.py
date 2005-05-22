@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-using lino.reports on pizzeria
+
 """
 
 from lino.misc.tsttools import TestCase, main
@@ -26,30 +26,11 @@ from lino.reports import DataReport
 
 class Case(TestCase):
 
-    skip=True
 
     def test01(self):
-        from lino.examples.pizzeria2 import beginSession,\
-             Products, OrderLines
-        sess = beginSession(self.ui)
-        PROD = sess.query(Products)
-        ds = sess.query(OrderLines,"ordr.date ordr.customer",
-                        product=PROD.peek(1))
-        ds.report(columnWidths="10 13")
-        #rpt=DataReport(ds,columnWidths="10 13")
-        #self.ui.report(rpt)
-        s = self.getConsoleOutput()
-        #print s
-        self.assertEqual(s,"""\
-OrderLines
-==========
-ordr.date |ordr.customer
-----------+-------------
-2003-08-16|Henri        
-2003-08-16|James        
-2004-03-18|Bernard      
-2004-03-19|Henri        
-""")        
+        from lino.apps import keeper
+        app = keeper.Keeper()
+        sess = app.startup(self.ui)
         
         
 

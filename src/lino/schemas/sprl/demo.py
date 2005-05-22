@@ -346,7 +346,7 @@ class Populator(adamo.Populator):
 """
         #q.setBabelLangs("ee")
         for ln in s.splitlines():
-            a=ln.split(None,2)
+            a=ln.split(None,1)
             assert len(a) == 2
             q.appendRow(id=a[0].strip(), name=a[1].strip(),dc="D")
             
@@ -371,13 +371,14 @@ class Populator(adamo.Populator):
 224        Aruandeperioodi kasum (-kahjum)               
 """                                                      
         for ln in s.splitlines():
-            a=ln.split(None,2)
+            a=ln.split(None,1)
             assert len(a) == 2
             q.appendRow(id=a[0].strip(), name=a[1].strip(),dc="C")
             
     def populateProfitAndLossItems(self,q):
-        # Kasumiaruanne                                  
-        s="""\                                           
+        q.setBabelLangs("en")
+        # Kasumiaruanne
+        s="""\
 4          TULUD                       
 41         Äritulud                    
 411        Realiseerimise netokäive    
@@ -393,11 +394,12 @@ class Populator(adamo.Populator):
 612        Kulum ja allahindlus        
 6121       Põhivara kulum              
 613        Muud ärikulud               
-62         Finantskulud                
-63         Ärikasum (-kahjum)          
+62         Finantskulud
+63         Ärikasum (-kahjum)
 """
+        #print s.splitlines()
         for ln in s.splitlines():
-            a=ln.split(None,2)
+            a=ln.split(None,1)
             assert len(a) == 2
             q.appendRow(id=a[0].strip(), name=a[1].strip(),dc="C")
 

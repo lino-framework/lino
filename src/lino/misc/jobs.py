@@ -186,7 +186,7 @@ class Job(BaseJob):
 
 
 
-class Task:#(BaseJob):
+class Task:
 
     def __init__(self,*args,**kw):
         self.configure(*args,**kw)
@@ -200,10 +200,11 @@ class Task:#(BaseJob):
             self.start()
             self.job.done()
         except JobAborted,e:
+            # Job ot Task called itself abort()
             assert e.job == self.job
-            #self.job.abort(str(e))
-        #except KeyboardInterrupt,e:
-        #    self.job.abort()
+        except Exception,e:
+            # job called itself abort()
+            self.job.abort()
             
             
     def configure(self):

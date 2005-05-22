@@ -55,8 +55,13 @@ from quotes import Quotes
 
 from business import Journals
 from business import Years
+
 from products import Products
-from ledger import Bookings
+import ledger
+for tcl in ledger.tables:
+    globals()[tcl.__name__] = tcl
+#from ledger import Bookings
+
 from sales import Invoices, InvoiceLines
 
 __all__ = filter(lambda x: x[0] != "_", dir())
