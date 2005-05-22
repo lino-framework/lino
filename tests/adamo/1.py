@@ -49,7 +49,7 @@ class Case(TestCase):
         ae = self.assertEqual
         
         l1 = [str(t.getTableName())
-                for t in self.sess.schema.getTableList()]
+              for t in self.sess.db.app.getTableList()]
         l1.sort()
 
         #print " ".join(l1)
@@ -132,8 +132,6 @@ Accounts AuthorEventTypes AuthorEvents Authors BalanceItems Bookings Bookings Ca
 
         INVOICES = self.sess.query(Invoices)
         INVOICELINES = self.sess.query(InvoiceLines)
-        #INVOICES = self.sess.schema.INVOICES
-        #INVOICELINES = self.sess.schema.INVOICELINES
         self.assertEqual(INVOICES.getLeadTable().getPrimaryKey(),
                               ("jnl","seq"))
         self.assertEqual(

@@ -18,7 +18,7 @@
 
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-from lino.ui import console 
+from lino.ui import console
 
 class BabelLang:
     def __init__(self,index,id):
@@ -50,16 +50,18 @@ class Session(Context):
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,center,ui,**kw):
-        self.center = center
+    def __init__(self,sessionManager,ui,**kw):
+        self.sessionManager = sessionManager
+        #self.app = app
+        assert ui is not None
+        self.ui = ui
         self._user = None
         self.db = None
-        self.schema = None
+        #self.schema = None
         
 ##         if ui is None:
 ##             ui = console.getSystemConsole()
         
-        self.ui = ui
         
 ##         for m in (
 ##             'message', 'confirm','decide', 'form'
@@ -102,13 +104,13 @@ class Session(Context):
             if self._user is not None:
                 self.logout()
         if db is None:
-            self.schema = None
+            #self.schema = None
             #self.tables = None
             #self.forms = None
             self.db = None
         else:
             # start using new db
-            self.schema = db.schema # shortcut
+            #self.schema = db.schema # shortcut
             self.db = db
             # self.tables = AttrDict(factory=self.openTable)
             #self.forms = AttrDict(factory=self.openForm)
@@ -149,7 +151,8 @@ class Session(Context):
         return self.db.commit()
 
     def shutdown(self):
-        return self.center.shutdown() 
+        self.db.commit()
+        return self.sessionManager.closeSession(self) 
 
     def setBabelLangs(self,langs):
         
@@ -192,11 +195,11 @@ class Session(Context):
         self.use()
 
     def onBeginSession(self):
-        self.schema.onBeginSession(self)
+        self.db.app.onBeginSession(self)
         
     
     def onLogin(self):
-        return self.db.schema.onLogin(self)
+        return self.db.app.onLogin(self)
     
     def getUser(self):
         return self._user

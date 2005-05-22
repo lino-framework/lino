@@ -22,7 +22,7 @@ import os
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.keeper.keeper import Keeper
-from lino.apps.keeper.keeper_tables import *
+#from lino.apps.keeper.keeper_tables import *
 
 from lino.forms.testkit import Toolkit
 
@@ -32,7 +32,7 @@ class Case(TestCase):
     
     def setUp(self):
         TestCase.setUp(self)
-        self.app=Keeper(toolkit=Toolkit(console=self.ui))
+        self.app=Keeper(toolkit=Toolkit(_console=self.ui))
         #self.app.run_forever()
         self.app.init()
         
@@ -40,6 +40,7 @@ class Case(TestCase):
         self.app.close()
         
     def test01(self):
+        self.app.installto(globals())
         s=self.getConsoleOutput()
         print s
         self.assertEquivalent(s,"""\

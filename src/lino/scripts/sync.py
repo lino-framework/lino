@@ -390,7 +390,7 @@ class SynchronizerTask(Task):
             self.count_delete_file)
         return s + " " + Task.getStatus(self)
 
-class Sync(console.ConsoleApplication):
+class Sync(console.Application):
 
     name="Lino/sync"
     years='2005'
@@ -401,7 +401,7 @@ where SRC and DEST are two directories to be synchronized.
 """ 
     
     def setupOptionParser(self,parser):
-        console.ConsoleApplication.setupOptionParser(self,parser)
+        console.Application.setupOptionParser(self,parser)
 
         parser.add_option(
             "-s", "--simulate",

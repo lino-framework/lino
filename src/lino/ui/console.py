@@ -134,7 +134,7 @@ class UsageError(Exception):
 class ApplicationError(Exception):
     pass
 
-class ConsoleApplication(CLI):
+class Application(CLI):
     """
     
     vocabulary:
@@ -148,36 +148,84 @@ class ConsoleApplication(CLI):
     
     
     """
-    def __init__(self,ui=None):
-        if ui is None:
-            ui = _syscon
-        self.ui = ui
+    def __init__(self,console=None):
+        if console is None:
+            console = _syscon
+        self.console = console
+        #self.ui = ui
         if self.name is not None:
-            ui.copyleft(name=self.name,
-                        years=self.years,
-                        author=self.author)
+            console.copyleft(name=self.name,
+                             years=self.years,
+                             author=self.author)
 
         
     def setupOptionParser(self,parser):
-        self.ui.setupOptionParser(parser)
+        self.console.setupOptionParser(parser)
 
     def applyOptions(self,options,args):
         self.options=options
         self.args=args
+
+    def addProgramMenu(self,frm):
+        m = frm.addMenu("&Programm")
+        m.addItem(label="&Beenden",action=frm.close)
+        m.addItem(label="Inf&o").setHandler(self.showAbout)
+        #m.addItem(label="show &Console").setHandler(self.showConsole)
+        return m
+
+
+    def showAbout(self):
+        frm = self.form(label="About",doc=self.aboutString())
+        frm.addOkButton()
+        frm.show()
         
-    def main(self,argv=None):
+        
+    def aboutString(self):
+        s = self.name
+        if self.version is not None:
+            s += " version " + self.version
+        if self.author is not None:
+            s += "Copyright (c) %s %s." % self.years, self.author
+        from lino import __copyright__,  __url__
+        s += "\n\n" + __copyright__
+        s += "\n\nHomepage:\n" + __url__
+        s += "\n\nCredits:\n"
+        s += "Python %d.%d.%d %s\n" % sys.version_info[0:4]
+
+        if sys.modules.has_key('wx'):
+            wx = sys.modules['wx']
+            s += "wxPython " + wx.__version__ + "\n"
+    
+        if sys.modules.has_key('sqlite'):
+            sqlite = sys.modules['sqlite']
+            s += "PySQLLite " + sqlite.version + "\n"
+    
+        if sys.modules.has_key('reportlab'):
+            reportlab = sys.modules['reportlab']
+            s += "The Reportlab PDF generation library " + \
+                           reportlab.Version + "\n"
+
+        if sys.modules.has_key('win32print'):
+            win32print = sys.modules['win32print']
+            s += "Python Windows Extensions " + "\n"
+        
+        return s
+    
+        
+        
+    def main(self,args=None):
         """
         meant to be called
         
             if __name__ == '__main__':
-                MyConsoleApplication().main()
+                MyApplication().main()
                 
-        but lino.runscript calls it with sys.argv[:2] (command-line
+        but lino.runscript calls it with args=sys.argv[:2] (command-line
         arguments are shifted by one)
         
         """
-        if argv is None:
-            argv = sys.argv[1:]
+        if args is None:
+            args = sys.argv[1:]
         
         p = OptionParser(
             usage=self.usage,
@@ -186,15 +234,15 @@ class ConsoleApplication(CLI):
         self.setupOptionParser(p)
         
         try:
-            options,args = p.parse_args(argv)
+            options,args = p.parse_args(args)
             self.applyOptions(options,args)
-            return self.run(self.ui)
+            return self.run(self.console)
         
         except UsageError,e:
             p.print_help()
             return -1
         except ApplicationError,e:
-            self.ui.error(str(e))
+            self.console.error(str(e))
             return -1
 
     def run(self,ui):
@@ -347,7 +395,8 @@ class Console(UI,CLI):
     def onJobDone(self,job,msg):
         self.status(None)
         job.summary()
-        self.notice(job.getLabel() + ": " + msg)
+        if msg is not None:
+            self.notice(job.getLabel() + ": " + msg)
     
     def onJobAbort(self,job,msg):
         self.status(None)

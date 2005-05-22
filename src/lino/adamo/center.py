@@ -61,39 +61,34 @@ class Center:
 ##     def setSessionFactory(self,sf):
 ##         self._sessionFactory = sf
         
-    def createSession(self,ui,**kw):
+    def openSession(self,ui,**kw):
         #sess = self._sessionFactory(self,**kw)
         sess = Session(self,ui,**kw)
         self._sessions.append(sess)
         return sess
 
-    def removeSession(self,session):
+    def closeSession(self,session):
         self._sessions.remove(session)
 
 ##      def addSession(self,session):
 ##          self._sessions.append(session)
     
-    def addSchema(self,schema):
-        #assert db is not None
-        #assert not self._databases.has_key(db.getName())
-        #self._databases[db.getName()] = db
-        assert not schema in self._schemas
-        self._schemas.append(schema)
+##     def addSchema(self,schema):
+##         #assert db is not None
+##         #assert not self._databases.has_key(db.getName())
+##         #self._databases[db.getName()] = db
+##         assert not schema in self._schemas
+##         self._schemas.append(schema)
         
         
-    def startup(self,ui,**kw):
-##         if ui is None:
-##             ui = console.getSystemConsole()
-        self.ui = ui
-        assert len(self._schemas) > 0, "no schemas"
-        #job = ui.job("center.startup()",len(self._schemas))
-        sess = self.createSession(ui)
-        for sch in self._schemas:
-            #job.increment()
-            sch.startup(sess,**kw)
-        sess.setDefaultLanguage()
-        #job.done()
-        return sess
+##     def startup(self,ui,**kw):
+##         self.ui = ui
+##         assert len(self._schemas) > 0, "no schemas"
+##         sess = self.createSession(ui)
+##         for sch in self._schemas:
+##             sch.startup(sess,**kw)
+##         sess.setDefaultLanguage()
+##         return sess
 
     
     def shutdown(self):
@@ -137,10 +132,10 @@ atexit.register(_center.shutdown)
 
 
 
-for m in ('createSession','getOptionParser',
-          'startup', 'shutdown',
+for m in ('openSession','getOptionParser',
+          'shutdown',
           'doCheckIntegrity', 
-          'addSchema',
+          #'addSchema',
           'connection'
           ):
     globals()[m] = getattr(_center,m)

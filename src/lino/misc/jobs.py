@@ -31,8 +31,8 @@ itr("%d errors" ,
     fr="%d erreurs")
 itr("Aborted",
     de="Vorgang abgebrochen")
-itr("Success",
-    de="Vorgang erfolgreich beendet")
+#itr("Success",
+#    de="Vorgang erfolgreich beendet")
 
 
 
@@ -82,9 +82,7 @@ class BaseJob:
         
     def done(self,msg=None,*args,**kw):
         if self._done: return
-        if msg is None:
-            msg = _("Success")
-        else:
+        if msg is not None:
             msg = self.ui.buildMessage(msg,*args,**kw)
         self._done = True
         #if msg is not None:
@@ -231,16 +229,6 @@ class Task:
 
         
 
-        
-
-##     def error(self,*args,**kw):
-##         self.count_errors += 1
-##         BaseJob.error(self,*args,**kw)
-
-##     def warning(self,*args,**kw):
-##         self.count_warnings += 1
-##         BaseJob.warning(self,*args,**kw)
-        
     def error(self,*args,**kw):
         self.count_errors += 1
         self.job.error(*args,**kw)

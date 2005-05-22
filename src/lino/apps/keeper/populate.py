@@ -22,7 +22,7 @@ import os
 opj = os.path.join
 import codecs
 
-from lino.apps.keeper import keeper_tables as tables
+#from lino.apps.keeper import keeper_tables as tables
 from lino.misc.jobs import Task
 #from lino.tools.msword import MsWordDocument
 from lino.guessenc.guesser import EncodingGuesser
@@ -38,7 +38,9 @@ class VolumeVisitor(Task):
 
     def start(self):
         sess = self.volume.getSession()
-        self.ftypes = sess.query(tables.FileTypes)
+        for t in self.job.ui.app.tables:
+            setattr(
+        self.ftypes = sess.query(app.tables.FileTypes)
         self.files = sess.query(tables.Files)
         self.dirs = sess.query(tables.Directories)
         self.words = sess.query(tables.Words)

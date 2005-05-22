@@ -21,6 +21,7 @@ import types
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
 from lino.ui import console
+from lino.ui.console import Application
 
 #from lino.adamo.forms import Form
 from lino.adamo.database import Database
@@ -48,22 +49,32 @@ class SchemaPlugin(SchemaComponent,Describable):
 ##         pass
 
 
-class Schema(Describable):
+class Schema(Application):
+    usage="usage: %prog [options] DBFILE"
+    description="""\
+where DBFILE is the name of the sqlite database file"""
 
     HK_CHAR = '&'
     defaultLangs = ('en',)
-    #sessionFactory = Session
     
-    def __init__(self,name=None,label=None,doc=None,
-                 langs=None,
-                 **kw):
-        Describable.__init__(self,None,name,label,doc)
+    def __init__(self,filename=None,
+                 #populate=False,
+                 supportedLangs=None,**kw):
+        Application.__init__(self,**kw)
+        #self.schema = Schema()
+        self.filename = filename
+        #self.populate=populate
+        #self.sess = None
+##     def __init__(self,name=None,label=None,doc=None,
+##                  langs=None,
+##                  **kw):
+##         Describable.__init__(self,None,name,label,doc)
         self._initDone= False
         self._datasourceRenderer= None
         self._contextRenderer= None
-        if langs is None:
-            langs="en de fr nl et"
-        self._possibleLangs = tuple(langs.split())
+        if supportedLangs is None:
+            supportedLangs="en de fr nl et"
+        self._possibleLangs = tuple(supportedLangs.split())
         
         self._databases = []
         self._plugins = []
@@ -72,14 +83,21 @@ class Schema(Describable):
         
         self.plugins = AttrDict()
         #self.forms = AttrDict()
-        self.options = AttrDict(d=kw)
+        #self.options = AttrDict(d=kw)
         
-        center.addSchema(self)
+        #center.addSchema(self)
 
         """ Note: for plugins and tables it is important to keep also a
         sequential list.  """
     
         
+    def applyOptions(self,options,args):
+        Application.applyOptions(self,options,args)
+        if len(args) == 1:
+            self.filename = args[0]
+        else:
+            self.filename=os.path.join(self.tempDir,
+                                       self.name+".db")
     def addTable(self,tableClass,**kw):
         #print tableClass
         table = tableClass(None,**kw)
@@ -111,11 +129,6 @@ class Schema(Describable):
         self.plugins.define(name,plugin)
 
 
-##     def addForm(self,cl):
-##         assert not self._initDone,\
-##                  "Too late to declare new forms in " + repr(self)
-##         assert issubclass(cl,Form)
-##         self.forms.define(cl.name,cl)
 
     def addPopulator(self,p):
         self._populators.append(p)
@@ -139,13 +152,14 @@ class Schema(Describable):
     
         if self._initDone:
             return
+        #print "%s.initialize()" % self.__class__
         # assert not self._initDone, "double initialize()"
         #progress = self._app.console.progress
         #progress = pb.title
-        ui.debug("Initializing database schema...")
-        #self.defineSystemTables(ui)
-        for plugin in self._plugins:
-            plugin.defineTables(self)
+##         ui.debug("Initializing database schema...")
+##         #self.defineSystemTables(ui)
+##         for plugin in self._plugins:
+##             plugin.defineTables(self)
 
         ui.debug(
             "  Initializing %d tables..." % len(self._tables))
@@ -184,23 +198,6 @@ class Schema(Describable):
         for table in self._tables:
             table.init4()
 
-            
-        #for table in self._tables:
-        #   self.addForm(TableForm(table))
-
-            
-##      # initialize forms...
-
-##      info("  Initializing %d forms..." % len(self.forms))
-
-##      for form in self.forms.values():
-##          form.init1()
-            
-        # self.defineMenus(self,ui)
-        
-        #if verbose:
-        #   print "setupTables() done"
-            
         self._initDone = True
         ui.debug("Schema initialized")
         
@@ -223,9 +220,6 @@ class Schema(Describable):
         assert self._contextRenderer is not None
         
 
-##     def populate(self,sess):
-##         for plugin in self._plugins:
-##             plugin.populate(sess)
     
     def findImplementingTables(self,toClass):
         l = []
@@ -238,11 +232,12 @@ class Schema(Describable):
 
     def getTableList(self,tableClasses=None):
         
-        """returns an ordered list of all (or some) table instances in
-        this Schema.  If tableClasses is specified, it must be a
-        sequence of Table classes for which we want the instance.  The
-        list is sorted by table definition order.  It is forbidden to
-        modify this list!  """
+        """returns an ordered list of all (or optinally some) table
+        instances in this Schema.  If tableClasses is specified, it
+        must be a sequence of Table classes for which we want the
+        instance.  The list is sorted by table definition order.  It
+        is forbidden to modify this list!  """
+        
         #self.initialize()
         assert self._initDone, \
                "getTableList() before initialize()"
@@ -259,37 +254,54 @@ class Schema(Describable):
         return str(self.__class__)
 
 
-    def addDatabase(self,langs=None,name=None,label=None):
-        n = str(len(self._databases)+1)
+    #def addDatabase(self,langs=None,name=None,label=None):
+    def createDatabase(self,name=None,**kw):
         if name is None:
-            name = self.name+n
-        if label is None:
-            label = self.getLabel()+n
-        db = Database(self,langs=langs,name=name,label=label)
+            name = self.name+str(len(self._databases)+1)
+        #if label is None:
+        #    label = self.getLabel()+n
+        db = Database(self,name=name,**kw)
+        #langs=langs,name=name,label=label)
         self._databases.append(db)
         return db
+
+    def setupSchema(self,ui):
+        #print "%s.setupSchema()" % self.__class__
+        for p in self._plugins:
+            p.defineTables(self)
+    
+    def init(self): 
+        # called from Toolkit.main()
+        self.startup()
+        
 
     def quickStartup(self,
                      ui=None,
                      langs=None,
                      filename=None,
                      **kw):
+        #print "%s.quickStartup()" % self.__class__
         if ui is None:
             ui = console.getSystemConsole()
+        self.setupSchema(ui)
         #job = ui.job("quickStartup()")
         ui.debug("Initialize Schema")
         self.initialize(ui)
-        db = self.addDatabase(langs=langs)
+        db = self.createDatabase(langs=langs)
         ui.debug("Connect")
         conn = center.connection(ui,filename=filename,schema=self)
-        #conn = Connection(filename=filename,schema=self)
         db.connect(conn)
-        ui.debug("Startup")
-        sess =  center.startup(ui,**kw)
-        #job.done()
-        return sess
+        return self.startup(ui)
+    
+##         ui.debug("Startup")
+##         return center.
+##         sess =  center.startup(ui,**kw)
+##         #job.done()
+##         return sess
 
-    def startup(self,sess,checkIntegrity=None):
+    def startup(self,ui,checkIntegrity=None):
+        #print "%s.startup()" % self.__class__
+        sess=center.openSession(console)
         if checkIntegrity is None:
             checkIntegrity = center.doCheckIntegrity()
         assert len(self._databases) > 0, "no databases"

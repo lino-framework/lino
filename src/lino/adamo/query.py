@@ -855,7 +855,7 @@ class SimpleQuery(LeadTableColumnList):
         
 
         #self._table = store._table # shortcut
-        self._schema = store._db.schema # shortcut
+        self.app = store._db.app # shortcut
         self._connection = store._connection # shortcut
 
         for m in ('startDump','stopDump'):
@@ -1165,9 +1165,9 @@ class SimpleQuery(LeadTableColumnList):
 
 
     def getRenderer(self,rsc,req,writer=None):
-        return self._schema._datasourceRenderer(rsc,req,
-                                                self.query(),
-                                                writer)
+        return self.app._datasourceRenderer(rsc,req,
+                                            self.query(),
+                                            writer)
     
     def getSession(self):
         return self._session

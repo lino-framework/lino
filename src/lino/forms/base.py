@@ -29,7 +29,7 @@ from lino.misc.attrdict import AttrDict
 
 from lino.adamo.exceptions import InvalidRequestError
 from lino.ui import console
-from lino.forms.application import BaseApplication
+#from lino.forms.application import BaseApplication
 from lino.forms import gui
 
 
@@ -679,7 +679,7 @@ class Form(Describable,GUI,MenuContainer):
         Describable.__init__(self,None,*args,**kw)
         MenuContainer.__init__(self)
         #GUI.__init__(self)
-        assert isinstance(app,BaseApplication)
+        assert isinstance(app,console.Application)
         self.app = app
         self._parent = parent
         self.data = data

@@ -30,7 +30,6 @@ from lino.misc.compat import *
 from lino.misc.descr import Describable
 from lino.misc.etc import issequence
 
-#from widgets import Command
 from lino.adamo import datatypes 
 from lino.adamo.exceptions import StartupDelay, NoSuchField
 from lino.adamo.rowattrs import RowAttribute,\

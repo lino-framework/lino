@@ -18,14 +18,15 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino import adamo 
+#from lino import adamo 
 
 #import babel, addrbook, news # , sdk
 
 from addrbook import ContactsPlugin
 from lino.schemas.sprl.tables import *
+from lino.adamo.schema import Schema, SchemaPlugin
 
-class BasePlugin(adamo.SchemaPlugin):
+class BasePlugin(SchemaPlugin):
 
     def defineTables(self,schema):
         schema.addTable(Languages,label="Languages")
@@ -34,14 +35,14 @@ class BasePlugin(adamo.SchemaPlugin):
         #schema.addForm(MainForm)
 
 
-class WebPlugin(adamo.SchemaPlugin):
+class WebPlugin(SchemaPlugin):
 
     def defineTables(self,schema):
         schema.addTable( Pages,label="Content Pages")
         # self.addLinkTable("PAGE2PAGE",web.Page,web.Page,web.Page2Page)
 
         
-class ProjectPlugin(adamo.SchemaPlugin):
+class ProjectPlugin(SchemaPlugin):
 
     def defineTables(self,schema):
         schema.addTable( Projects,
@@ -49,7 +50,7 @@ class ProjectPlugin(adamo.SchemaPlugin):
         schema.addTable( ProjectStati,
                          label="Project States")
 
-class NewsPlugin(adamo.SchemaPlugin):
+class NewsPlugin(SchemaPlugin):
 
     def defineTables(self,schema):
         schema.addTable( News,
@@ -60,14 +61,14 @@ class NewsPlugin(adamo.SchemaPlugin):
         #                    news.News, news.Newsgroup)
 
         
-class EventsPlugin(adamo.SchemaPlugin):
+class EventsPlugin(SchemaPlugin):
     def defineTables(self,schema):
         schema.addTable( Events,
                          label="Events")
         schema.addTable( EventTypes,
                          label="Event Types")
 
-class SalesPlugin(adamo.SchemaPlugin):  
+class SalesPlugin(SchemaPlugin):  
     def defineTables(self,schema):
         schema.addTable( Journals,
                          label="Journals")
@@ -92,11 +93,11 @@ class SalesPlugin(adamo.SchemaPlugin):
         schema.addTable(Bookings)
         
 
-#class JokesPlugin(adamo.SchemaPlugin):
+#class JokesPlugin(SchemaPlugin):
 #    pass
 
 
-class QuotesPlugin(adamo.SchemaPlugin):
+class QuotesPlugin(SchemaPlugin):
     
     def defineTables(self,schema):
         schema.addTable( Authors,label="Authors")
@@ -117,8 +118,29 @@ class QuotesPlugin(adamo.SchemaPlugin):
         
 
         
-class SprlSchema(adamo.Schema):
-
+class Sprl(Schema):
+    name="Sprl"
+    years="2002-2005"
+    author="Luc Saffre"
+    def __init__(self,
+                 withEvents=True,
+                 withProjects=True,
+                 withWeb=True,
+                 withSales=True,
+                 withNews=True,
+                 withQuotes=True,
+                 **kw):
+        Schema.__init__(self,**kw)
+        self.addPlugin(BasePlugin(True))
+        self.addPlugin(ContactsPlugin(True))
+    
+        self.addPlugin(EventsPlugin(withEvents))
+        self.addPlugin(SalesPlugin(withSales))
+        self.addPlugin(QuotesPlugin(withQuotes))
+        self.addPlugin(WebPlugin(withWeb))
+        self.addPlugin(ProjectPlugin(withProjects))
+        self.addPlugin(NewsPlugin(withNews))
+        
     def getContentRoot(self,db):
         return db.tables.PAGES.findone(match="index")
 
@@ -128,30 +150,29 @@ class SprlSchema(adamo.Schema):
         sess.showForm("main")
 
         
-
-def makeSchema( withEvents=True,
-                withProjects=True,
-                withWeb=True,
-                withSales=True,
-                withNews=True,
-                withQuotes=True):
-##                 withJokes=False,
-##                 big=False):
+## def makeSchema( withEvents=True,
+##                 withProjects=True,
+##                 withWeb=True,
+##                 withSales=True,
+##                 withNews=True,
+##                 withQuotes=True):
+## ##                 withJokes=False,
+## ##                 big=False):
     
-    schema = SprlSchema() #big=big)
+##     schema = Sprl() 
     
-    schema.addPlugin(BasePlugin(True))
-    schema.addPlugin(ContactsPlugin(True))
+##     schema.addPlugin(BasePlugin(True))
+##     schema.addPlugin(ContactsPlugin(True))
     
-    schema.addPlugin(EventsPlugin(withEvents))
-    schema.addPlugin(SalesPlugin(withSales))
-    schema.addPlugin(QuotesPlugin(withQuotes))
-    schema.addPlugin(WebPlugin(withWeb))
-    schema.addPlugin(ProjectPlugin(withProjects))
-    schema.addPlugin(NewsPlugin(withNews))
-    #schema.addPlugin(JokesPlugin(withJokes))
-    #schema.initialize()
-    return schema
+##     schema.addPlugin(EventsPlugin(withEvents))
+##     schema.addPlugin(SalesPlugin(withSales))
+##     schema.addPlugin(QuotesPlugin(withQuotes))
+##     schema.addPlugin(WebPlugin(withWeb))
+##     schema.addPlugin(ProjectPlugin(withProjects))
+##     schema.addPlugin(NewsPlugin(withNews))
+##     #schema.addPlugin(JokesPlugin(withJokes))
+##     #schema.initialize()
+##     return schema
 
 
         

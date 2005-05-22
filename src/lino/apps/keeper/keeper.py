@@ -20,7 +20,7 @@
 import sys
 import os
 
-from lino import adamo
+from lino.adamo.tabledef import *
 from lino.forms import gui
 
 #from lino.apps.keeper import keeper_tables as tables
@@ -197,17 +197,11 @@ class Keeper(AdamoApplication):
         frm.show()
         #frm.showModal()
 
-    def setupSchema(self,schema):
-        # order of tables is important: tables will be populated in
-        # this order
-        for t in TABLES:
-            schema.addTable(t)
-
 
 
     def init(self):
         #tables.setupSchema(self.schema)
-        self.startup()
+        AdamoApplication.init(self)
         
         #assert self.mainForm is None
         
@@ -242,16 +236,18 @@ This is the Keeper main menu.
 
         frm.show()
 
-def main(argv):
+## def main(argv):
 
-    app = Keeper()
-    app.parse_args()
-    app.run()
+##     app=Keeper()
+##     app.parse_args()
+##     app.run()
     
 
+## if __name__ == '__main__':
+##     main(sys.argv[1:])
+
+
 if __name__ == '__main__':
-    main(sys.argv[1:])
-
-
-
-
+    app=Keeper()
+    app.parse_args()
+    app.run()

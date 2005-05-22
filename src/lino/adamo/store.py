@@ -85,6 +85,7 @@ class Store:
         #    ds.onStoreUpdate()
 
     def createTable(self,sess):
+        #print "%s.createTable()" % self.__class__
         if self._status == self.SST_MUSTCHECK:
             sess.ui.debug("mustCheck " + self._table.name)
             if self._connection.mustCreateTables():

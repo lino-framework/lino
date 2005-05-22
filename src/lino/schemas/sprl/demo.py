@@ -25,41 +25,63 @@
 import os
 from lino import adamo
 #from lino.schemas.sprl.sprl import makeSchema
-from lino.schemas.sprl import sprl, tables 
+#from lino.schemas.sprl import tables 
 from lino.tools.normalDate import ND
 from lino.adamo.datatypes import itod
 from lino.ui import console
+from lino.schemas.sprl.sprl import Sprl
+
+class DemoSprl(Sprl):
+
+    def __init__(self,
+                 populate=True,
+                 big=False,
+                 withDemoData=True,
+                 withJokes=False,
+                 **kw):
+        Sprl.__init__(self,**kw)
+        #self.big=big
+        #self.withDemoData=withDemoData
+        #self.withJokes=withJokes
+        if populate:
+            if withJokes:
+                self.addPopulator(JokesPopulator(big=big,
+                                                 label="Weisheiten"))
+            elif withDemoData:
+                self.addPopulator(DemoPopulator(big=big,
+                                                  label="StandardDemo"))
+            else:
+                self.addPopulator(Populator(big=big,
+                                            label="Standard"))
 
 
-def makeSchema(populate=True,
-               big=False,
-               withDemoData=True,
-               withJokes=False,
-               **kw):
-    schema = sprl.makeSchema(**kw)
-    if populate:
-        if withJokes:
-            schema.addPopulator(JokesPopulator(big=big,
-                                               label="Weisheiten"))
-        elif withDemoData:
-            schema.addPopulator(DemoPopulator(big=big,
-                                              label="StandardDemo"))
-        else:
-            schema.addPopulator(Populator(big=big,
-                                          label="Standard"))
-    return schema
+## def makeSchema(populate=True,
+##                big=False,
+##                withDemoData=True,
+##                withJokes=False,
+##                **kw):
+##     schema = sprl.makeSchema(**kw)
+##     if populate:
+##         if withJokes:
+##             schema.addPopulator(JokesPopulator(big=big,
+##                                                label="Weisheiten"))
+##         elif withDemoData:
+##             schema.addPopulator(DemoPopulator(big=big,
+##                                               label="StandardDemo"))
+##         else:
+##             schema.addPopulator(Populator(big=big,
+##                                           label="Standard"))
+##     return schema
             
             
 def startup(ui=None,
             filename=None,
             langs=None,
             **kw):
-    schema = makeSchema(**kw)
-    if ui is None:
-        ui = console.getSystemConsole()
-    sess = schema.quickStartup(ui,langs=langs, filename=filename)
-    
-    return sess
+    schema = DemoSprl(**kw)
+    #if ui is None:
+    #    ui = console.getSystemConsole()
+    return schema.quickStartup(ui,langs=langs, filename=filename)
 
 
 # very deprecated name for startup:

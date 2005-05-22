@@ -16,6 +16,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+#from lino.ui.console import ConsoleApplication
+
 LEFT = 1
 RIGHT = 2
 TOP = 3
@@ -69,6 +71,11 @@ def parse_args(*args,**kw):
     #assert _app is not None, "only for use with automagicApp"
     return _toolkit.parse_args(*args,**kw)
 
+def run(app):
+    check()
+    _toolkit.addApplication(app)
+    _toolkit.run_forever()
+
 
 ## def main(*args,**kw):
 ##     check()
@@ -79,3 +86,66 @@ def parse_args(*args,**kw):
 ##     _toolkit.setApplication(app)
 ##     return _toolkit.main(*args,**kw)
 ##     #return _toolkit.main(*args,**kw)
+
+
+
+## class GuiApplication(ConsoleApplication):
+
+##     def __init__(self, toolkit,**kw):
+##         if toolkit is None:
+##             toolkit = choose()
+##         self.toolkit = toolkit
+##         self.toolkit.addApplication(self)
+##         ConsoleApplication.__init__(self,**kw)
+        
+##     def form(self,parent=None,*args,**kw):
+##         return self.toolkit.formFactory(self,parent,*args,**kw)
+    
+##     def setupOptionParser(self,parser):
+##         self.toolkit.setupOptionParser(parser)
+
+##     def applyOptions(self,options,args):
+##         return self.toolkit.applyOptions(options,args)
+    
+##     def init(self):
+##         # supposed to show the application's main form
+##         pass
+
+##     def run(self):
+##         self.toolkit.run_forever()
+
+##     def close(self):
+##         self.toolkit.closeApplication(self)
+
+
+
+## class AutomagicApplication(GuiApplication):
+    
+##     def __init__(self, toolkit,*args,**kw):
+##         GuiApplication.__init__(self,toolkit)
+##         self._form = self.form(*args,**kw)
+        
+##     def init(self):
+##         self._form.show()
+        
+
+
+
+class GUI:
+    def __init__(self):
+        raise "Aha, wird also benutzt"
+        self.app = None
+
+    def form(self,*args,**kw):
+        if self.app is None:
+            self.app = Application()
+        return self.app.form(*args,**kw)
+
+    def textprinter(self):
+        from lino.textprinter.plain import PlainTextPrinter
+        return PlainDocument(self.out)
+        
+    def report(self,**kw):
+        from lino.reports.plain import Report
+        return Report(writer=self.out,**kw)
+

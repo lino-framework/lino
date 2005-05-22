@@ -16,6 +16,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+raise "no longer used. 20050522"
+
 import os
 
 from lino.forms import Application
@@ -45,12 +47,6 @@ where DBFILE is the name of the sqlite database file"""
         else:
             self.filename=os.path.join(self.tempDir,
                                        self.name+".db")
-
-    def setupSchema(self,schema):
-        # order of tables is important: tables will be populated in
-        # this order
-        for t in TABLES:
-            schema.addTable(t)
 
 ##     def parse_args(self,
 ##                    argv=None,
@@ -85,6 +81,16 @@ where DBFILE is the name of the sqlite database file"""
 ##                                 self.toolkit.console,
 ##                                 *args,**kw)
         
+    def setupSchema(self,schema):
+        # order of tables is important: tables will be populated in
+        # this order
+        for t in self.tables:
+            schema.addTable(t)
+
+    def installto(self,d):
+        for t in self.tables:
+            d[t.__name__] = t
+
         
         
     def showTableGrid(self,ui,tc,*args,**kw):

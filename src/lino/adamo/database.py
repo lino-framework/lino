@@ -33,7 +33,7 @@ from lino.adamo import center
 
 class Database(Context,Describable):
     
-    def __init__(self, schema, langs=None, **kw):
+    def __init__(self, app, langs=None, **kw):
         
         self._supportedLangs = []
         if langs is None:
@@ -45,7 +45,7 @@ class Database(Context,Describable):
         
         self._memoParser = TimMemoParser(self)
 
-        self.schema = schema
+        self.app = app
         self._stores = {}
         #center.addDatabase(self)
 
@@ -61,10 +61,10 @@ class Database(Context,Describable):
             if lang.id == lang_id:
                 return lang
             
-        if not lang_id in self.schema._possibleLangs:
+        if not lang_id in self.app._possibleLangs:
             raise InvalidRequestError(
                 "%r : impossible language (must be one of %r)" % (
-                lang_id, self.schema._possibleLangs))
+                lang_id, self.app._possibleLangs))
             
         """
         index -1 means that values in this language should be ignored
@@ -82,7 +82,7 @@ class Database(Context,Describable):
         
     def getStoresById(self):
         l = []
-        for table in self.schema.getTableList():
+        for table in self.app.getTableList():
             try:
                 l.append(self._stores[table.__class__])
             except KeyError:
@@ -90,13 +90,13 @@ class Database(Context,Describable):
         return l
 
     def connect(self,conn,tableClasses=None):
-        for t in self.schema.getTableList(tableClasses):
+        for t in self.app.getTableList(tableClasses):
             if not self._stores.has_key(t.__class__):
                 self._stores[t.__class__] = Store(conn,self,t)
 
 
     def getContentRoot(self):
-        return self.schema.getContentRoot(self)
+        return self.app.getContentRoot(self)
 
     def update(self,otherdb):
         

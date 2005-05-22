@@ -23,7 +23,7 @@ import unittest
 
 from lino.misc import tsttools
 from lino.misc.my_import import my_import
-from lino.ui.console import ConsoleApplication
+from lino.ui.console import Application
 
 
 class StoppingTestResult(unittest._TextTestResult):
@@ -42,7 +42,7 @@ class StoppingTestRunner(unittest.TextTestRunner):
                                   self.verbosity)
 
 
-class Runtests(ConsoleApplication):
+class Runtests(Application):
 
     name="Lino/runtests"
     years='2004-2005'
@@ -56,7 +56,7 @@ them.  TESTS specifies the tests to run. Default is all. Other
 possible values e.g. `1` or `1-7`.
 """
     def setupOptionParser(self,parser):
-        ConsoleApplication.setupOptionParser(self,parser)
+        Application.setupOptionParser(self,parser)
     
         parser.add_option("-i", "--ignore-failures",
                           help="""\
@@ -99,7 +99,7 @@ continue testing even if failures or errors occur""",
                         job.status("Extracting cases from %s...", 
                                    modname)
                         
-                        self.findTestCases(modname,cases,suites)
+                        self.findTestCases(ui,modname,cases,suites)
             sys.path.remove(dirpath)
 
         job.done("found %d cases and %d suites.",
@@ -108,7 +108,7 @@ continue testing even if failures or errors occur""",
             suites.append(unittest.makeSuite(tcl))
         return unittest.TestSuite(suites)
      
-    def findTestCases(self,modname,cases,suites):
+    def findTestCases(self,ui,modname,cases,suites):
         mod = my_import(modname)
         #cases=[]
         if hasattr(mod,"suite"):
@@ -121,8 +121,8 @@ continue testing even if failures or errors occur""",
                     if v != unittest.TestCase \
                           and v != tsttools.TestCase:
                         if hasattr(v,"skip") and v.skip:
-                            self.ui.notice("Skipping %s.%s",
-                                           modname,v.__name__)
+                            ui.notice("Skipping %s.%s",
+                                      modname,v.__name__)
                         else:
                             cases.append(v)
         return cases
