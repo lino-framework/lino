@@ -1,0 +1,66 @@
+TableName      |Fields                        |Details                            
+---------------+------------------------------+-----------------------------------
+Languages      |id, name                      |partners_by_lang, events_by_lang,  
+               |                              |publications_by_lang,              
+               |                              |quotes_by_lang, pages_by_lang,     
+               |                              |news_by_lang                       
+Users          |id, name, firstName, sex,     |events_by_author, pages_by_author, 
+               |birthDate, id, password       |projects, newsByAuthor             
+Currencies     |id, name                      |partners_by_currency               
+Nations        |id, name, area, population,   |cities, organisations_by_nation,   
+               |curr, isocode                 |partners_by_nation                 
+Cities         |id, name, zipCode, inhabitants|organisations_by_city,             
+               |                              |partners_by_city,                  
+               |                              |authorevents_by_place              
+Organisations  |id, email, phone, gsm, fax,   |                                   
+               |website, zip, street, house,  |                                   
+               |box, name                     |                                   
+Partners       |name, firstName, email, phone,|eventsByResponsible, eventsByPlace,
+               |gsm, fax, website, zip,       |invoices, bookings_by_partner,     
+               |street, house, box, id, title,|bookings_by_partner,               
+               |logo                          |projects_by_sponsor                
+PartnerTypes   |id, name                      |partnersByType                     
+Events         |title, abstract, body, seq,   |children, children, news_by_page   
+               |id, created, modified, match, |                                   
+               |id, date, time                |                                   
+EventTypes     |title, abstract, body, id,    |eventsByType                       
+               |name                          |                                   
+Journals       |id, name, tableName           |documents                          
+Years          |id, name                      |                                   
+Products       |id, name, price               |invoiceLines                       
+Invoices       |seq, date, closed, remark,    |lines, bookings_by_invoice,        
+               |zziel, amount, inverted       |bookings_by_invoice                
+InvoiceLines   |line, unitPrice, qty, remark  |                                   
+BalanceItems   |name, id, attrib, dc, type,   |accounts_by_balance                
+               |doc                           |                                   
+CashFlowItems  |name, id, attrib, dc, type,   |accounts_by_cash                   
+               |doc                           |                                   
+ProfitAndLossIt|name, id, attrib, dc, type,   |accounts_by_profit                 
+ems            |doc                           |                                   
+Accounts       |name, pcmn, id                |accounts_by_parent, bookings_by_db,
+               |                              |bookings_by_cr, bookings_by_db,    
+               |                              |bookings_by_cr                     
+Bookings       |date, amount, label, id       |                                   
+Bookings       |date, amount, label, id       |                                   
+Authors        |id, id, name, firstName, sex, |authorevents_by_author,            
+               |birthDate                     |publications_by_author,            
+               |                              |quotesByAuthor, pubbyauth_by_c     
+AuthorEvents   |name, seq, date               |                                   
+AuthorEventType|name, id                      |authorevents_by_type               
+s              |                              |                                   
+Topics         |seq, id, name, dewey, cdu,    |children                           
+               |dmoz, wikipedia, url          |                                   
+Publications   |title, abstract, body, seq,   |children, pubbyauth_by_p           
+               |id, year, subtitle, typeRef   |                                   
+Quotes         |title, abstract, body, id     |                                   
+PubTypes       |id, name, typeRefPrefix,      |publications_by_type               
+               |pubRefLabel                   |                                   
+PubByAuth      |                              |                                   
+Pages          |title, abstract, body, seq,   |children, news_by_page             
+               |id, created, modified, match  |                                   
+Projects       |title, abstract, body, seq,   |children, news_by_project          
+               |id, date, stopDate            |                                   
+ProjectStati   |name, id                      |projects                           
+News           |title, abstract, body, id,    |                                   
+               |date                          |                                   
+Newsgroups     |id, name                      |newsByGroup                        
