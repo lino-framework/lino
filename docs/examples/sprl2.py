@@ -4,7 +4,7 @@ from lino.adamo.rowattrs import Field, Detail
 
 sess = demo.startup(populate=False)
 
-rpt=Report(sess.schema.getTableList())
+rpt=Report(sess.db.app.getTableList())
 
 rpt.addColumn(
     meth=lambda row: row.item.getTableName(),

@@ -28,9 +28,9 @@ class Case(TestCase):
 
 
     def test01(self):
-        from lino.apps import keeper
+        from lino.apps.keeper import keeper
         app = keeper.Keeper()
-        sess = app.startup()
+        sess = app.quickStartup()
         
         
 

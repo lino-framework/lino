@@ -19,6 +19,8 @@
 from time import time
 
 from lino.misc.descr import Describable
+from lino.console import syscon
+
 from lino.adamo.exceptions import DataVeto, InvalidRequestError
 #from lino.adamo.datasource import Datasource
 from lino.adamo.query import PeekQuery, Query
@@ -84,22 +86,24 @@ class Store:
         #for ds in self._datasources:
         #    ds.onStoreUpdate()
 
-    def createTable(self,sess):
+    def onStartup(self,sess):
         #print "%s.createTable()" % self.__class__
         if self._status == self.SST_MUSTCHECK:
-            sess.ui.debug("mustCheck " + self._table.name)
+            syscon.debug("mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
                 #self.createTable(sess)
-                sess.ui.debug("create table " + \
+                syscon.debug("create table " + \
                               self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
                 self._status = self.SST_VIRGIN
             self._table.loadMirror(self,sess)
+
+    def isVirgin(self):
+        return self._status == self.SST_VIRGIN
                 
-    def populateOrNot(self,schema,sess,populator):
-         if self._status == self.SST_VIRGIN:
-             populator.populateStore(self,sess)
-             #self._table.populate(sess)
+    def populate(self,schema,sess,populator):
+         assert self._status == self.SST_VIRGIN
+         populator.populateStore(self,sess)
          self._status = self.SST_READY
         
     def checkIntegrity(self,sess):
@@ -112,15 +116,13 @@ class Store:
                               q._table.getTableName(),
                               maxval=l)
             for row in q:
-                job.inc()
+                job.increment()
                 msg = row.checkIntegrity()
                 if msg is not None:
-                    msg = "%s[%s] : %s" % (
-                        q._table.getTableName(),
-                        str(row.getRowId()),
-                        msg)
-                    sess.ui.error(msg)
-                    #msgs.append(msg)
+                    job.error("%s[%s] : %s",
+                              q._table.getTableName(),
+                              str(row.getRowId()),
+                              msg)
             job.done()
             
         self._status = self.SST_READY

@@ -37,7 +37,7 @@ class Case(TestCase):
     def test01(self):
         
         l = []
-        for t in self.sess.schema.getTableList():
+        for t in self.sess.db.app.getTableList():
             s = t.getTableName() + ": "
             s += ", ".join(["%s(%s)"%a
                            for a in t.getPrimaryAtoms()])

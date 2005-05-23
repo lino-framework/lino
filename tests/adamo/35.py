@@ -41,32 +41,37 @@ class Case(TestCase):
 
     def test01(self):
 
-        schema = Sprl()
+        app = Sprl()
     
-        schema.initialize()
-        schema.addPopulator(demo.Populator(big=True))
+        app.setupSchema()
         
-        conn = center.connection(schema)
+        app.initialize()
         
-        stddb = schema.addDatabase(langs="en de fr et",
-                                   name="std",
-                                   label="shared data")
+        # print app._tables
+        
+        app.addPopulator(demo.Populator(big=True))
+        
+        conn = center.connection(app)
+        
+        stddb = app.addDatabase("std",
+                                langs="en de fr et",
+                                label="shared data")
 
         stddb.connect(conn,sharedTables)
 
 
-        db1 = schema.addDatabase(langs="de")
+        db1 = app.addDatabase(langs="de")
         db1.update(stddb)
-        conn = center.connection(schema)
+        conn = center.connection(app)
         db1.connect(conn)
         
-        db2 = schema.addDatabase(langs="en")
+        db2 = app.addDatabase(langs="en")
         db2.update(stddb)
-        conn = center.connection(schema)
+        conn = center.connection(app)
         db2.connect(conn)
 
 
-        sess = center.startup()
+        sess = app.startup()
         
         sess.use(db1)
         q = sess.query(Nations,"id name area",pageLen=10,

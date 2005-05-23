@@ -3,7 +3,7 @@ from lino.reports import Report, RIGHT
 
 sess = demo.startup()
 
-rpt=Report(sess.schema.getTableList())
+rpt=Report(sess.db.app.getTableList())
 
 def onEach(row):
     row.count=len(sess.query(row.item.__class__))

@@ -50,10 +50,9 @@ class Session(Context):
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,sessionManager,ui,**kw):
+    def __init__(self,center,ui,**kw):
         # sessionManager is lino.adamo.center
-        self.sessionManager = sessionManager
-        
+        self.center = center
         #self.app = app
         assert ui is not None
         self.ui = ui
@@ -127,22 +126,12 @@ class Session(Context):
     def setDefaultLanguage(self):
         self.setBabelLangs(self.db.getDefaultLanguage())
         
-##     def showForm(self,formName,modal=False,**kw):
-##         raise NotImplementedError
-
-##     def showReport(self,ds,showTitle=True,**kw):
-##         raise NotImplementedError
-
-##     def errorMessage(self,msg):
-##         raise NotImplementedError
-
-##     def notifyMessage(self,msg):
-##         raise NotImplementedError
         
     def handleException(self,e,details=None):
         if e.__class__ in self._ignoreExceptions:
             return
-        self.ui.showException(e,details)
+        raise e
+        #self.ui.showException(e,details)
         
 
 ##  def spawn(self,**kw):
@@ -158,7 +147,7 @@ class Session(Context):
         # supposted to close all connections
         #
         self.end()
-        self.sessionManager.shutdown()
+        self.center.shutdown()
 
     def setBabelLangs(self,langs):
         
@@ -199,7 +188,7 @@ class Session(Context):
 
     def end(self):
         self.use()
-        self.sessionManager.closeSession(self)
+        self.center.closeSession(self)
 
 
     def onBeginSession(self):

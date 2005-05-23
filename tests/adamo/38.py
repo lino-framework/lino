@@ -20,14 +20,13 @@ from lino.adamo import Schema
 from lino.misc.tsttools import TestCase, main
 from lino.adamo.datatypes import DATE, TIME
 
-from lino.apps.raceman.races import setupSchema, Races, Participants
+from lino.apps.raceman.raceman import Raceman
+from lino.apps.raceman.races import Races, Participants
 
 class Case(TestCase):
 
     def test01(self):
         app=Raceman()
-        #sch = Schema()
-        #setupSchema(sch)
         sess = app.quickStartup()
 
         R = sess.query(Races)

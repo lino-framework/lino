@@ -1,8 +1,9 @@
-from lino.apps.pizzeria.services import makeSchema, populate, Orders
+from lino.apps.pizzeria.pizzeria import Orders
+from lino.apps.pizzeria.services import ServicePizzeria, populate
 
-schema = makeSchema(label="Luc's Pizza Service")
+app = ServicePizzeria() # label="Luc's Pizza Service")
 
-sess = schema.quickStartup()
+sess = app.quickStartup()
     
 populate(sess)
 

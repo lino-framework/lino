@@ -1,23 +1,16 @@
-from lino.apps.pizzeria.services import makeSchema, populate, Orders
+from lino.apps.pizzeria.services import \
+     makeSchema, populate, Products, OrderLines
 
-schema = makeSchema(label="Luc's Pizza Service")
-
+schema = makeSchema()
 sess = schema.quickStartup()
-    
 populate(sess)
 
-orders = sess.query(Orders)
+p=sess.query(Products).peek(1)
 
-o = orders.peek(3)
+title="Who bought %s (product# %s)?" % (p.name, p.id)
 
-print "Order #:", o.id
-print "Date:", o.date
-print "Customer:", o.customer.name
-print "-" * 40
-for line in o.lines:
-    print "%-20s %3d %5d" % (line.product.name,
-                             line.qty,
-                             line.product.price*line.qty)
-print "-" * 40
-print "Total: ", o.totalPrice
+qry = sess.query(OrderLines,"ordr.date ordr.customer",
+                 product=p)
+qry.report(columnWidths="10 13",
+           label=title)
 

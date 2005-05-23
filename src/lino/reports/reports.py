@@ -20,6 +20,7 @@
 #import copy
 
 from lino.misc.descr import Describable
+from lino.console import syscon
 from lino.adamo.datatypes import STRING
 from lino.adamo.query import Query
 
@@ -212,8 +213,7 @@ class BaseReport(Describable):
         self._onRowEvents.append(meth)
 
     def show(self,**kw):
-        from lino.ui import console
-        console.report(self,**kw)
+        syscon.report(self,**kw)
 
 
 

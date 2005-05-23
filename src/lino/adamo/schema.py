@@ -31,7 +31,8 @@ from lino.adamo.exceptions import StartupDelay
 from lino.adamo.query import Query
 from lino.adamo import center
 
-
+class TooLate(Exception):
+    pass
 
 class SchemaPlugin(SchemaComponent,Describable):
     def __init__(self,isActive=True,*args,**kw):
@@ -74,6 +75,7 @@ where DBFILE is the name of the sqlite database file"""
 ##                  **kw):
 ##         Describable.__init__(self,None,name,label,doc)
         self._initDone= False
+        self._startupDone= False
         self._datasourceRenderer= None
         self._contextRenderer= None
         if supportedLangs is None:
@@ -142,6 +144,8 @@ where DBFILE is the name of the sqlite database file"""
 
 
     def addPopulator(self,p):
+        if self._startupDone:
+            raise TooLate("Cannot addPopulator() after startup()")
         self._populators.append(p)
         
 ##  def addForm(self,form):
@@ -156,24 +160,16 @@ where DBFILE is the name of the sqlite database file"""
 ##      #self._forms[name] = form
         
 
-    def initialize(self,ui):
+    def initialize(self):
         
         """ initialize will be called exactly once, after having
         declared all tables of the database.  """
     
         if self._initDone:
             return
-        #print "%s.initialize()" % self.__class__
-        # assert not self._initDone, "double initialize()"
-        #progress = self._app.console.progress
-        #progress = pb.title
-##         ui.debug("Initializing database schema...")
-##         #self.defineSystemTables(ui)
-##         for plugin in self._plugins:
-##             plugin.defineTables(self)
 
-        ui.debug(
-            "  Initializing %d tables..." % len(self._tables))
+        syscon.debug(
+            "Initializing %d tables..." % len(self._tables))
 
         # loop 1
         for table in self._tables:
@@ -190,7 +186,7 @@ where DBFILE is the name of the sqlite database file"""
                     table.init2()
                     somesuccess = True
                 except StartupDelay, e:
-                    ui.debug("StartupDelay:"+repr(e))
+                    syscon.debug("StartupDelay:"+repr(e))
                     tryagain.append(table)
             if not somesuccess:
                 "not supported: primary key with pointer to self"
@@ -210,7 +206,7 @@ where DBFILE is the name of the sqlite database file"""
             table.init4()
 
         self._initDone = True
-        ui.debug("Schema initialized")
+        syscon.debug("Schema initialized")
         
 
     def setLayout(self,layoutModule):
@@ -266,7 +262,9 @@ where DBFILE is the name of the sqlite database file"""
 
 
     #def addDatabase(self,langs=None,name=None,label=None):
-    def createDatabase(self,name=None,**kw):
+    def addDatabase(self,name=None,**kw):
+        if self._startupDone:
+            raise TooLate("Cannot addDatabase() after startup()")
         if name is None:
             name = self.name+str(len(self._databases)+1)
         #if label is None:
@@ -276,7 +274,7 @@ where DBFILE is the name of the sqlite database file"""
         self._databases.append(db)
         return db
 
-    def setupSchema(self,ui):
+    def setupSchema(self):
         #print "%s.setupSchema()" % self.__class__
         for t in self.tables:
             self.addTable(t)
@@ -289,56 +287,60 @@ where DBFILE is the name of the sqlite database file"""
                      filename=None,
                      **kw):
         #print "%s.quickStartup()" % self.__class__
-        if ui is None:
-            ui = syscon.getSystemConsole()
-        self.setupSchema(ui)
+        self.setupSchema()
         #job = ui.job("quickStartup()")
-        ui.debug("Initialize Schema")
-        self.initialize(ui)
-        db = self.createDatabase(langs=langs)
-        ui.debug("Connect")
+        syscon.debug("Initialize Schema")
+        self.initialize()
+        db = self.addDatabase(langs=langs)
+        syscon.debug("Connect")
         conn = center.connection(filename=filename,schema=self)
         db.connect(conn)
-        return self.startup(ui)
+        return self.startup()
     
-##         ui.debug("Startup")
-##         return center.
-##         sess =  center.startup(ui,**kw)
-##         #job.done()
-##         return sess
 
-    def startup(self,ui): #,checkIntegrity=None):
+    def startup(self): #,checkIntegrity=None):
         #print "%s.startup()" % self.__class__
-        sess=center.openSession(ui)
-        #if checkIntegrity is None:
-        #    checkIntegrity = self.doCheckIntegrity
-        #    checkIntegrity = center.doCheckIntegrity()
+        #if ui is None:
+        #    ui = syscon.getSystemConsole()
+        sess=center.openSession(syscon.getSystemConsole())
         assert len(self._databases) > 0, "no databases"
-        #n = sum([len(db.getStoresById()) for db in self._databases])
-        #job = sess.ui.job("schema.startup()",len(self._databases))
+        assert not self._startupDone,\
+                 "Cannot startup() again " + repr(self)
         for db in self._databases:
             sess.use(db)
-            #job.status(db.getLabel())
-            sess.ui.debug(db.getLabel())
+            #syscon.debug(db.getLabel())
             for store in db.getStoresById():
-                store.createTable(sess)
+                store.onStartup(sess)
+                
+        self._startupDone=True
+        
+        self.check(sess)
+        sess.setDefaultLanguage()
+        return sess
+    
+    
+    def check(self,sess):
+        #print "%s.check()" % self.__class__
+        assert self._startupDone
+        for db in self._databases:
+            sess.use(db)
+            syscon.debug("Checking %s", db.getLabel())
             for p in self._populators:
                 #job = sess.ui.job("populator " + p.getLabel())
                 for store in db.getStoresById():
-                    store.populateOrNot(self,sess,p)
+                    if store.isVirgin():
+                        store.populate(self,sess,p)
                 #job.done()
             if self.checkIntegrity:
                 for store in db.getStoresById():
                     store.checkIntegrity(sess)
-        sess.setDefaultLanguage()
-        #job.done()
-        return sess
+        #sess.setDefaultLanguage()
     
     
-    def shutdown(self,ui):
-        ui.debug("Schema.shutdown()")
+    def shutdown(self):
+        syscon.debug("Schema.shutdown()")
         for db in self._databases:
-            db.close(ui)
+            db.close()
         self._databases = []
         
     def init(self,ui): 

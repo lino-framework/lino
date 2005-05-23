@@ -18,6 +18,8 @@
 
 from lino.misc.descr import Describable
 #from lino.ui import console 
+from lino.console import syscon
+
 from lino.adamo import DataVeto
 from lino.adamo import InvalidRequestError
 
@@ -47,7 +49,6 @@ class Database(Context,Describable):
 
         self.app = app
         self._stores = {}
-        #center.addDatabase(self)
 
     def getBabelLangs(self):
         "implements Context.getBabelLangs()"
@@ -163,8 +164,8 @@ class Database(Context,Describable):
 
     #def disconnect(self):
 
-    def close(self,ui):
-        ui.debug("Closing database "+ str(self))
+    def close(self):
+        syscon.debug("Closing database "+ str(self))
         
 ##      for sess in self._sessions:
 ##          #sess.beforeShutdown()

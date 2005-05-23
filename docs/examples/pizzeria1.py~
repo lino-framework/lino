@@ -1,4 +1,4 @@
-from lino.apps.pizzeria import makeSchema, populate, Orders
+from lino.apps.pizzeria.pizzeria import makeSchema, populate, Orders
 
 schema = makeSchema(label="Luc's Pizza Restaurant")
 
