@@ -129,24 +129,13 @@ continue testing even if failures or errors occur""",
     
     
     def run(self,ui):
-        #suite = tsttools.alltests(self.args)
         suite = self.makeSuite(ui,self.args)
-        #suite = unittest.TestSuite(tests)
-        #runner = unittest.TextTestRunner()
         if self.options.ignore:
             runner = unittest.TextTestRunner()
         else:
             runner = StoppingTestRunner()
         runner.run(suite)
         
-##     def run(self,ui):
-##         tests = tsttools.collectTestCases(ui,self.args)
-##         runner = unittest.TextTestRunner(verbosity=1)
-##         for t in tests:
-##             result=runner.run(t)
-##             if not result.wasSuccessful():
-##                 return -1
-
 
 # lino.runscript expects a name consoleApplicationClass
 consoleApplicationClass = Runtests
