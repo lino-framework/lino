@@ -32,7 +32,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(self.ui)
+        self.db = demo.startup()
         self.db.setBabelLangs('en')
 
     def tearDown(self):

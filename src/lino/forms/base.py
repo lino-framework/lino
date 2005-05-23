@@ -28,11 +28,13 @@ from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
 
 from lino.adamo.exceptions import InvalidRequestError
-from lino.ui import console
+#from lino.ui import console
 #from lino.forms.application import BaseApplication
 from lino.forms import gui
 
-
+from lino.console import syscon
+from lino.console.application import Application
+from lino.console.console import CLI, CaptureConsole
 
 class Component(Describable):
     def __init__(self,owner,*args,**kw):
@@ -555,7 +557,7 @@ class Panel(Container):
 
 
 
-class GUI(console.UI):
+class GUI: #(console.UI):
     
     
     def form(self,*args,**kw):
@@ -679,7 +681,7 @@ class Form(Describable,GUI,MenuContainer):
         Describable.__init__(self,None,*args,**kw)
         MenuContainer.__init__(self)
         #GUI.__init__(self)
-        assert isinstance(app,console.Application)
+        assert isinstance(app,Application)
         self.app = app
         self._parent = parent
         self.data = data
@@ -822,7 +824,7 @@ class Form(Describable,GUI,MenuContainer):
 
 
 
-class Toolkit(console.CLI):
+class Toolkit(CLI):
     
     labelFactory = Label
     entryFactory = Entry
@@ -836,13 +838,13 @@ class Toolkit(console.CLI):
     
 
     
-    def __init__(self,app=None,_console=None):
+    def __init__(self,app=None,console=None):
         self._apps = []
         self.consoleForm = None
-        if _console is None:
-            _console=console.CaptureConsole(
-                verbosity=console._syscon._verbosity)
-        self.console = _console
+        if console is None:
+            console=CaptureConsole(
+                verbosity=syscon._syscon._verbosity)
+        self.console = console
 
 ##     def setApplication(self,app):
 ##         self.app = app

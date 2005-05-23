@@ -21,12 +21,12 @@ multiple databases and connections
 """
 
 from lino.misc.tsttools import TestCase, main
-from lino.ui import console
+#from lino.ui import console
 
 from lino.adamo import center
 from lino.adamo.database import Database
 #from lino.adamo.dbds.sqlite_dbd import Connection
-from lino.schemas.sprl.sprl import makeSchema
+from lino.schemas.sprl.sprl import Sprl
 from lino.schemas.sprl.tables import *
 from lino.schemas.sprl import demo
 
@@ -41,12 +41,12 @@ class Case(TestCase):
 
     def test01(self):
 
-        schema = makeSchema()
+        schema = Sprl()
     
-        schema.initialize(self.ui)
+        schema.initialize()
         schema.addPopulator(demo.Populator(big=True))
         
-        conn = center.connection(self.ui,schema)
+        conn = center.connection(schema)
         
         stddb = schema.addDatabase(langs="en de fr et",
                                    name="std",
@@ -57,16 +57,16 @@ class Case(TestCase):
 
         db1 = schema.addDatabase(langs="de")
         db1.update(stddb)
-        conn = center.connection(self.ui,schema)
+        conn = center.connection(schema)
         db1.connect(conn)
         
         db2 = schema.addDatabase(langs="en")
         db2.update(stddb)
-        conn = center.connection(self.ui,schema)
+        conn = center.connection(schema)
         db2.connect(conn)
 
 
-        sess = center.startup(self.ui)
+        sess = center.startup()
         
         sess.use(db1)
         q = sess.query(Nations,"id name area",pageLen=10,

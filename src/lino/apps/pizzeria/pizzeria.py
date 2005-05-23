@@ -21,7 +21,7 @@ This is a short example to illustrate Adamo's basic idea.
 
 """
 
-from lino.adamo import *
+from lino.adamo.ddl import *
 from lino.adamo.datatypes import itod
 
 

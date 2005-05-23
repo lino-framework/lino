@@ -34,7 +34,7 @@ class Case(TestCase):
 
     def test01(self):
         "Accessing data that has not been inserted using adamo"
-        sess = demo.startup(self.ui,populate=False)
+        sess = demo.startup(populate=False)
         
         db = sess.db
         connection = center._center._connections[0]

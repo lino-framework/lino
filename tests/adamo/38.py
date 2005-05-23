@@ -25,9 +25,10 @@ from lino.apps.raceman.races import setupSchema, Races, Participants
 class Case(TestCase):
 
     def test01(self):
-        sch = Schema()
-        setupSchema(sch)
-        sess = sch.quickStartup(self.ui)
+        app=Raceman()
+        #sch = Schema()
+        #setupSchema(sch)
+        sess = app.quickStartup()
 
         R = sess.query(Races)
         P = sess.query(Participants)

@@ -37,7 +37,7 @@ from lino.schemas.sprl.tables import Nations
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.beginSession(self.ui,big=True)
+        self.db = demo.beginSession(big=True)
         #self.db = demo.beginSession(populator=None,big=True)
         #demo.populate(self.db,big=True)
         

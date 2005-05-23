@@ -27,7 +27,7 @@ from lino.schemas.sprl.tables import Languages
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(self.ui)
+        self.db = demo.startup()
         
     def tearDown(self):
         self.db.shutdown()

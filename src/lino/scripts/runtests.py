@@ -23,8 +23,11 @@ import unittest
 
 from lino.misc import tsttools
 from lino.misc.my_import import my_import
-from lino.ui.console import Application
 
+from lino.console.application import Application
+
+from lino.forms import gui
+gui.choose("testkit")
 
 class StoppingTestResult(unittest._TextTestResult):
 
@@ -130,6 +133,7 @@ continue testing even if failures or errors occur""",
     
     def run(self,ui):
         suite = self.makeSuite(ui,self.args)
+        
         if self.options.ignore:
             runner = unittest.TextTestRunner()
         else:

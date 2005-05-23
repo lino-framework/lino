@@ -29,7 +29,7 @@ from lino.schemas.sprl.tables import Events
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(self.ui,populate=False)
+        self.db = demo.startup(populate=False)
         
     def tearDown(self):
         self.db.shutdown()

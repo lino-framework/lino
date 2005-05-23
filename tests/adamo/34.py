@@ -30,7 +30,7 @@ class Case(TestCase):
     def test01(self):
         from lino.apps import keeper
         app = keeper.Keeper()
-        sess = app.startup(self.ui)
+        sess = app.startup()
         
         
 

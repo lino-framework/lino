@@ -28,7 +28,7 @@ from lino import adamo
 #from lino.schemas.sprl import tables 
 from lino.tools.normalDate import ND
 from lino.adamo.datatypes import itod
-from lino.ui import console
+#from lino.ui import console
 from lino.schemas.sprl.sprl import Sprl
 
 class DemoSprl(Sprl):

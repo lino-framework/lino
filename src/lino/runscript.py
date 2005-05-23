@@ -34,7 +34,7 @@ The auto-generated file lino.bat uses this wrapper
 
 import sys
 
-from lino.ui import console
+#from lino.ui import console
 from lino.misc.my_import import my_import
 
 mod = my_import("lino.scripts." + sys.argv[1])

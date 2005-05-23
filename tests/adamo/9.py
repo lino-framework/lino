@@ -27,7 +27,7 @@ from lino.schemas.sprl.data import quotes_de
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(self.ui,withJokes=True)
+        self.db = demo.startup(withJokes=True)
         #quotes_de.populate(self.db)
         #self.db.commit()
         

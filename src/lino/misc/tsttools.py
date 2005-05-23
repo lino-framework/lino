@@ -27,7 +27,9 @@ import types
 
 from cStringIO import StringIO
 
-from lino.ui import console
+#from lino.ui import console
+from lino.console import syscon
+from lino.console.console import CaptureConsole
 
 
 ## class TestConsole(console.CaptureConsole):
@@ -159,22 +161,27 @@ class TestCase(unittest.TestCase):
         self._tempFiles = []
         self._showFiles = []
         self.keepTemporaryFiles = False
-        self.ui = console.CaptureConsole(verbosity=-2,batch=True)
+        #self.ui = console.CaptureConsole(verbosity=-2,batch=True)
+        self.syscon=syscon.getSystemConsole()
+        syscon.setSystemConsole(
+            CaptureConsole(verbosity=-2,batch=True))
 
     def tearDown(self):
+        syscon.setSystemConsole(self.syscon)
         for fn in self._showFiles:
             self.failUnless(os.path.exists(fn))
-            if console.confirm("Okay to start %s ?" % fn,\
+            if syscon.confirm("Okay to start %s ?" % fn,\
                               default="n"):
                 os.system('start ' + fn)
         if len(self._tempFiles) > 0:
-            if console.confirm("Okay to delete %d temporary files ?" \
+            if syscon.confirm("Okay to delete %d temporary files ?" \
                               % len(self._tempFiles)):
                 for fn in self._tempFiles:
                     os.remove(fn)
 
     def getConsoleOutput(self):
-        return self.ui.getConsoleOutput()
+        return syscon.getConsoleOutput()
+        #return self.ui.getConsoleOutput()
         
     def assertEquivalent(self,observed,expected,msg=None):
         
@@ -234,5 +241,3 @@ main = unittest.main
 ##     runner = TextTestRunner(stream=?)
 ##     TestProgram(testRunner)
 
-from lino.forms import gui
-gui.choose("testkit")

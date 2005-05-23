@@ -20,49 +20,16 @@
 
 import os
 import sys
-import atexit
-import codecs
 import time
 
 from optparse import OptionParser
 from cStringIO import StringIO
 
-from lino import __version__, __author__
-
-
-
-# if frozen (with py2exe or McMillan), sys.setdefaultencoding() has
-# not been deleted.  And site.py and sitecustomize.py haven't been
-# executed.
-
-if hasattr(sys,'setdefaultencoding'):
-
-    import locale
-    loc = locale.getdefaultlocale()
-    if loc[1]:
-        #print "sys.setdefaultencoding(%s)" % repr(loc[1])
-        sys.setdefaultencoding(loc[1])
-    
 
 try:
     import msvcrt
 except ImportError:
     msvcrt = False
-
-
-#class JobAborted(Exception):
-#    pass
-
-
-
-
-
-"""
-
-A Console instance represents the console and encapsulates some
-often-used things that have to do with the console.
-
-"""
 
 try:
     import sound
@@ -71,45 +38,24 @@ except ImportError,e:
 
 from lino.misc.jobs import Job #, PurzelConsoleJob
 
-
-## class ConsoleJob(Job):
-##     # for RawConsole
-        
-##     def onInit(self):
-##         if self._label is not None:
-##             self.ui.notice(self._label)
-        
-##     def onDone(self):
-##         if self._label is not None:
-##             self.ui.notice('\n')
-##         Job.onDone(self,job)
-        
-## class DecentStreamJob(StreamJob):
-##     def onStatus(self):
-##         self.writer(self._status)
-        
-##     def onInc(self):
-##         self.writer('.')
-        
-
-            
-class UI:
-    pass
+## class UI:
+##     pass
     
 class CLI:
-    name = None
-    years = None
-    author = None
     usage = None
     description = None
     
-    def parse_args(self,args=None): #,**kw):
+    def parse_args(self,argv=None): #,**kw):
         p = OptionParser(
             usage=self.usage,
             description=self.description)
             
         self.setupOptionParser(p)
-        options,args = p.parse_args(args)
+        
+        if argv is None:
+            argv = sys.argv[1:]
+        
+        options,args = p.parse_args(argv)
         self.applyOptions(options,args)
         
 
@@ -119,138 +65,9 @@ class CLI:
     def setupOptionParser(self,parser):
         pass
 
-##     def __init__(self):
-##         self._progressBar = None
-
-##     def job(self,label,maxval=0):
-##         if self._progressBar is None:
-##             self._progressBar = self.make_progressbar()
-##         return self._progressBar.addJob(self,label,maxval)
-
-
-
-class UsageError(Exception):
-    pass
-class ApplicationError(Exception):
-    pass
-
-class Application(CLI):
-    """
-    
-    vocabulary:
-    
-    main() processes command-line arguments ("get the
-    instructions") runs the application and returns a system error
-    code (usually forwarded to sys.exit())
-
-    run() expects that all instructions are known and performs the
-    actual task.
-    
-    
-    """
-    def __init__(self,console=None):
-        if console is None:
-            console = _syscon
-        self.console = console
-        #self.ui = ui
-        if self.name is not None:
-            console.copyleft(name=self.name,
-                             years=self.years,
-                             author=self.author)
-
-        
-    def setupOptionParser(self,parser):
-        self.console.setupOptionParser(parser)
-
-    def applyOptions(self,options,args):
-        self.options=options
-        self.args=args
-
-    def addProgramMenu(self,frm):
-        m = frm.addMenu("&Programm")
-        m.addItem(label="&Beenden",action=frm.close)
-        m.addItem(label="Inf&o").setHandler(self.showAbout)
-        #m.addItem(label="show &Console").setHandler(self.showConsole)
-        return m
-
-
-    def showAbout(self):
-        frm = self.form(label="About",doc=self.aboutString())
-        frm.addOkButton()
-        frm.show()
-        
-        
-    def aboutString(self):
-        s = self.name
-        if self.version is not None:
-            s += " version " + self.version
-        if self.author is not None:
-            s += "Copyright (c) %s %s." % self.years, self.author
-        from lino import __copyright__,  __url__
-        s += "\n\n" + __copyright__
-        s += "\n\nHomepage:\n" + __url__
-        s += "\n\nCredits:\n"
-        s += "Python %d.%d.%d %s\n" % sys.version_info[0:4]
-
-        if sys.modules.has_key('wx'):
-            wx = sys.modules['wx']
-            s += "wxPython " + wx.__version__ + "\n"
-    
-        if sys.modules.has_key('sqlite'):
-            sqlite = sys.modules['sqlite']
-            s += "PySQLLite " + sqlite.version + "\n"
-    
-        if sys.modules.has_key('reportlab'):
-            reportlab = sys.modules['reportlab']
-            s += "The Reportlab PDF generation library " + \
-                           reportlab.Version + "\n"
-
-        if sys.modules.has_key('win32print'):
-            win32print = sys.modules['win32print']
-            s += "Python Windows Extensions " + "\n"
-        
-        return s
-    
-        
-        
-    def main(self,args=None):
-        """
-        meant to be called
-        
-            if __name__ == '__main__':
-                MyApplication().main()
-                
-        but lino.runscript calls it with args=sys.argv[:2] (command-line
-        arguments are shifted by one)
-        
-        """
-        if args is None:
-            args = sys.argv[1:]
-        
-        p = OptionParser(
-            usage=self.usage,
-            description=self.description)
             
-        self.setupOptionParser(p)
-        
-        try:
-            options,args = p.parse_args(args)
-            self.applyOptions(options,args)
-            return self.run(self.console)
-        
-        except UsageError,e:
-            p.print_help()
-            return -1
-        except ApplicationError,e:
-            self.console.error(str(e))
-            return -1
-
-    def run(self,ui):
-        raise NotImplementedError
-        
-
-
-class Console(UI,CLI):
+#class Console(UI,CLI):
+class Console(CLI):
 
     jobClass = Job
 
@@ -668,19 +485,6 @@ class TtyConsole(Console):
         if self._status is not None:
             self._stdout(self._status+"\r")
 
-    def copyleft(self,name="Lino",
-                 version=__version__,
-                 years="2002-2005",
-                 author=__author__):
-        self.notice("""\
-%s version %s.
-Copyright (c) %s %s.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information.""" % (
-            name, version, years, author))
-
-
 
 
 class CaptureConsole(Console):
@@ -698,73 +502,3 @@ class CaptureConsole(Console):
         self.redirect(self.buffer.write,self.buffer.write)
         return s
     
-_syscon = None
-
-
-# rewriter() inspired by a snippet in Marc-André Lemburg's Python
-# Unicode Tutorial
-# (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
-
-def rewriter(to_stream):
-    if to_stream.encoding is None:
-        return to_stream
-    if to_stream.encoding == sys.getdefaultencoding():
-        return to_stream
-
-    (e,d,sr,sw) = codecs.lookup(to_stream.encoding)
-    unicode_to_fs = sw(to_stream)
-
-    (e,d,sr,sw) = codecs.lookup(sys.getdefaultencoding())
-    class StreamRewriter(codecs.StreamWriter):
-
-        encode = e
-        decode = d
-
-        def write(self,object):
-            data,consumed = self.decode(object,self.errors)
-            self.stream.write(data)
-            return len(data)
-
-    return StreamRewriter(unicode_to_fs)
-
-def setSystemConsole(c):
-    g = globals()
-    g['_syscon'] = c
-
-    for funcname in (
-        'debug','message','notice','status',
-        'job', 'verbose', 'error','critical',
-        'confirm','warning','copyleft',
-        'report','textprinter',
-        #'startDump','stopDump',
-        'isInteractive','isVerbose', 'set',
-        'parse_args', ):
-        g[funcname] = getattr(_syscon,funcname)
-
-def getSystemConsole():
-    return _syscon
-
-
-
-if hasattr(sys.stdout,"encoding") \
-      and sys.getdefaultencoding() != sys.stdout.encoding:
-    sys.stdout = rewriter(sys.stdout)
-    sys.stderr = rewriter(sys.stderr)
-
-
-#_syscon = Console(sys.stdout.write, sys.stderr.write)
-setSystemConsole(
-    TtyConsole(sys.stdout.write, sys.stderr.write))
-
-
-
-atexit.register(_syscon.shutdown)
-
-
-
-
-
-
-
-
-

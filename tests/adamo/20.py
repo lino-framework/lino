@@ -55,7 +55,7 @@ from lino.schemas.sprl.tables import Nations,Partners
 class Case(TestCase):
     
     def test01(self):
-        sess = demo.startup(self.ui)
+        sess = demo.startup()
         be = sess.query(Nations).peek("be")
         q = sess.query(Partners,"title firstName name",nation=be)
         q.report(columnWidths="6 10 20")

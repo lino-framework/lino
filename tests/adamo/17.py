@@ -34,7 +34,7 @@ from lino.schemas.sprl.tables import Languages, News
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(self.ui,langs="en de fr")
+        self.db = demo.startup(langs="en de fr")
         
     def tearDown(self):
         self.db.shutdown()

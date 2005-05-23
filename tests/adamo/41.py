@@ -33,7 +33,7 @@ class Case(TestCase):
     skip=True
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup(self.ui,populate=False)
+        self.sess = demo.startup(populate=False)
 
     def tearDown(self):
         self.sess.shutdown()

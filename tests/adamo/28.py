@@ -34,7 +34,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.beginSession(self.ui)
+        self.sess = demo.beginSession()
 
     def tearDown(self):
         self.sess.shutdown()

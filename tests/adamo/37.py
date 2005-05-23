@@ -26,7 +26,7 @@ class Case(TestCase):
     "do the German country names get installed with big=True?"
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup(self.ui,langs="en de", big=True)
+        self.sess = demo.startup(langs="en de", big=True)
 
     def tearDown(self):
         self.sess.shutdown()

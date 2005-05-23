@@ -18,7 +18,7 @@
 
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-from lino.ui import console
+#from lino.ui import console
 
 class BabelLang:
     def __init__(self,index,id):
@@ -51,7 +51,9 @@ class Session(Context):
     #_windowFactory = lambda x: x
     
     def __init__(self,sessionManager,ui,**kw):
+        # sessionManager is lino.adamo.center
         self.sessionManager = sessionManager
+        
         #self.app = app
         assert ui is not None
         self.ui = ui
@@ -100,6 +102,7 @@ class Session(Context):
     def use(self,db=None): # ,langs=None):
         # if necessary, stop using current db
         if db != self.db and self.db is not None:
+            self.db.commit()
             #self.db.removeSession(self)
             if self._user is not None:
                 self.logout()
@@ -151,8 +154,11 @@ class Session(Context):
         return self.db.commit()
 
     def shutdown(self):
-        self.db.commit()
-        return self.sessionManager.closeSession(self) 
+        # called in many TestCases during tearDown()
+        # supposted to close all connections
+        #
+        self.end()
+        self.sessionManager.shutdown()
 
     def setBabelLangs(self,langs):
         
@@ -193,6 +199,8 @@ class Session(Context):
 
     def end(self):
         self.use()
+        self.sessionManager.closeSession(self)
+
 
     def onBeginSession(self):
         self.db.app.onBeginSession(self)

@@ -22,6 +22,7 @@ import atexit
 from lino.adamo.session import Session
 from lino.adamo import DatabaseError
 #from lino.ui import console
+from lino.console import syscon
 
 class Center:
     """
@@ -36,9 +37,9 @@ class Center:
         #self._databases = []
         self._sessions = []
         #self._sessionFactory = Session
-        self._checkIntegrity = False
+        #self._checkIntegrity = False
 
-    def connection(self,ui,schema,*args,**kw):
+    def connection(self,schema,*args,**kw):
         try:
             from lino.adamo.dbds.sqlite_dbd import Connection
         except ImportError:
@@ -50,13 +51,13 @@ class Center:
                 except ImportError:
                     raise DatabaseError("no database driver available")
                 
-        conn = Connection(ui,*args,**kw)
+        conn = Connection(syscon,*args,**kw)
         self._connections.append(conn)
         return conn
         
-    def set(self,checkIntegrity=None):
-        if checkIntegrity is not None:
-            self._checkIntegrity = checkIntegrity
+##     def set(self,checkIntegrity=None):
+##         if checkIntegrity is not None:
+##             self._checkIntegrity = checkIntegrity
 
 ##     def setSessionFactory(self,sf):
 ##         self._sessionFactory = sf
@@ -92,39 +93,40 @@ class Center:
 
     
     def shutdown(self):
-        # self.shutdown() # tests/adamo/7.py failed when several tests
+        # tests/adamo/7.py failed when several tests
         # were run (because previous startups remained open.
-        if self.ui is None:
-            return
-        self.ui.debug("Center.shutdown()")
+        #if self.ui is None:
+        #    return
+        assert len(self._sessions) == 0
+        syscon.debug("Center.shutdown()")
         for sch in self._schemas:
-            sch.shutdown(self.ui)
+            sch.shutdown(syscon)
         self._schemas = []
         for conn in self._connections:
             conn.close()
         self._connections = []
 
-    def getOptionParser(self,**kw):
-        p = self.ui.getOptionParser(**kw)
+##     def getOptionParser(self,**kw):
+##         p = self.ui.getOptionParser(**kw)
 
-        def call_set(option, opt_str, value, parser,**kw):
-            self.set(**kw)
+##         def call_set(option, opt_str, value, parser,**kw):
+##             self.set(**kw)
 
-        p.add_option("-c",
-                     "--check",
-                     help="perform integrity checks",
-                     action="callback",
-                     callback=call_set,
-                     callback_kwargs=dict(checkIntegrity=True)
-                     )
-        return p
+##         p.add_option("-c",
+##                      "--check",
+##                      help="perform integrity checks",
+##                      action="callback",
+##                      callback=call_set,
+##                      callback_kwargs=dict(checkIntegrity=True)
+##                      )
+##         return p
 
-    def parse_args(args=None):
-        p = self.getOptionParser()
-        return p.parse_args(args)
+##     def parse_args(args=None):
+##         p = self.getOptionParser()
+##         return p.parse_args(args)
 
-    def doCheckIntegrity(self):
-        return self._checkIntegrity
+##     def doCheckIntegrity(self):
+##         return self._checkIntegrity
     
             
 _center = Center() 
@@ -132,9 +134,9 @@ atexit.register(_center.shutdown)
 
 
 
-for m in ('openSession','getOptionParser',
+for m in ('openSession',#'getOptionParser',
           'shutdown',
-          'doCheckIntegrity', 
+          #'doCheckIntegrity', 
           #'addSchema',
           'connection'
           ):

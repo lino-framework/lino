@@ -26,7 +26,7 @@ class Case(TestCase):
 
         
     def test01(self):
-        db = demo.startup(self.ui)
+        db = demo.startup()
         s1 = ''
         q = db.query(Partners,\
                      "name street city.name",

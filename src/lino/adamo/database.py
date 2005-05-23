@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc.descr import Describable
-from lino.ui import console 
+#from lino.ui import console 
 from lino.adamo import DataVeto
 from lino.adamo import InvalidRequestError
 

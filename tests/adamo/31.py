@@ -29,7 +29,7 @@ import os
 from lino.adamo import *
 from lino.adamo.datatypes import itod
 #from lino.tools.normalDate import ND
-from lino.ui import console
+#from lino.ui import console
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.raceman import races
@@ -46,7 +46,7 @@ class Case(TestCase):
         schema = Schema(label="Raceman Report Tester")
         races.setupSchema(schema)
 
-        sess = schema.quickStartup(self.ui)
+        sess = schema.quickStartup()
 
         PERSONS = sess.query(races.Persons)
         norbert = PERSONS.appendRow( name="Ausdemwald",

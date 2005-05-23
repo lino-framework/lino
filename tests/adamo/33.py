@@ -18,15 +18,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-Some tests on getDemoDB()
-"""
-
 import types
-#import unittest
 from lino.misc.tsttools import TestCase, main
-
-#from lino.ui import console
+from lino.console import syscon
 
 from lino.reports import Report
 
@@ -51,7 +45,7 @@ class Case(TestCase):
         rpt.addColumn(meth=lambda row: repr(row.item[1]),
                       label="value",
                       width=40)
-        self.ui.report(rpt)
+        syscon.report(rpt)
         #rpt.execute(d.items())
         s = self.getConsoleOutput()
         #print s

@@ -28,7 +28,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(self.ui,langs="en fr",big=True)
+        self.db = demo.startup(langs="en fr",big=True)
 
     def tearDown(self):
         self.db.shutdown()

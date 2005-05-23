@@ -27,7 +27,7 @@ class Introduction(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.beginSession(self.ui)
+        self.db = demo.startup()
 
     def tearDown(self):
         self.db.shutdown()

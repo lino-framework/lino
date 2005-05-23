@@ -20,8 +20,9 @@ import types
 
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-from lino.ui import console
-from lino.ui.console import Application
+#from lino.ui import console
+from lino.console import syscon
+from lino.console.application import Application
 
 #from lino.adamo.forms import Form
 from lino.adamo.database import Database
@@ -58,11 +59,13 @@ where DBFILE is the name of the sqlite database file"""
     defaultLangs = ('en',)
     
     def __init__(self,filename=None,
+                 checkIntegrity=False,
                  #populate=False,
                  supportedLangs=None,**kw):
         Application.__init__(self,**kw)
         #self.schema = Schema()
         self.filename = filename
+        self.checkIntegrity = checkIntegrity
         #self.populate=populate
         #self.sess = None
 ##     def __init__(self,name=None,label=None,doc=None,
@@ -89,10 +92,23 @@ where DBFILE is the name of the sqlite database file"""
 
         """ Note: for plugins and tables it is important to keep also a
         sequential list.  """
-    
+    def setupOptionParser(self,parser):
+        Application.setupOptionParser(self,parser)
+        #def call_set(option, opt_str, value, parser,**kw):
+        #    self.set(**kw)
+
+        p.add_option("-c",
+                     "--check",
+                     help="perform integrity checks",
+                     action="store_true",
+                     dest="checkIntegrity",
+                     default=self.checkIntegrity,
+                     )
+        
         
     def applyOptions(self,options,args):
         Application.applyOptions(self,options,args)
+        self.checkIntegrity = options.checkIntegrity
         if len(args) == 1:
             self.filename = args[0]
         else:
@@ -282,14 +298,14 @@ where DBFILE is the name of the sqlite database file"""
                      **kw):
         #print "%s.quickStartup()" % self.__class__
         if ui is None:
-            ui = console.getSystemConsole()
+            ui = syscon.getSystemConsole()
         self.setupSchema(ui)
         #job = ui.job("quickStartup()")
         ui.debug("Initialize Schema")
         self.initialize(ui)
         db = self.createDatabase(langs=langs)
         ui.debug("Connect")
-        conn = center.connection(ui,filename=filename,schema=self)
+        conn = center.connection(filename=filename,schema=self)
         db.connect(conn)
         return self.startup(ui)
     
@@ -299,11 +315,12 @@ where DBFILE is the name of the sqlite database file"""
 ##         #job.done()
 ##         return sess
 
-    def startup(self,ui,checkIntegrity=None):
+    def startup(self,ui): #,checkIntegrity=None):
         #print "%s.startup()" % self.__class__
-        sess=center.openSession(console)
-        if checkIntegrity is None:
-            checkIntegrity = center.doCheckIntegrity()
+        sess=center.openSession(ui)
+        #if checkIntegrity is None:
+        #    checkIntegrity = self.doCheckIntegrity
+        #    checkIntegrity = center.doCheckIntegrity()
         assert len(self._databases) > 0, "no databases"
         #n = sum([len(db.getStoresById()) for db in self._databases])
         #job = sess.ui.job("schema.startup()",len(self._databases))
@@ -318,7 +335,7 @@ where DBFILE is the name of the sqlite database file"""
                 for store in db.getStoresById():
                     store.populateOrNot(self,sess,p)
                 #job.done()
-            if checkIntegrity:
+            if self.checkIntegrity:
                 for store in db.getStoresById():
                     store.checkIntegrity(sess)
         sess.setDefaultLanguage()
