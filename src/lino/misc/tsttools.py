@@ -180,7 +180,7 @@ class TestCase(unittest.TestCase):
                     os.remove(fn)
 
     def getConsoleOutput(self):
-        return syscon.getConsoleOutput()
+        return syscon.getSystemConsole().getConsoleOutput()
         #return self.ui.getConsoleOutput()
         
     def assertEquivalent(self,observed,expected,msg=None):

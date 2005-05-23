@@ -16,35 +16,31 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.datatypes import STRING, itod
+from lino.adamo.ddl import *
+from lino.adamo.datatypes import itod
 from lino.apps.pizzeria import pizzeria
-from lino.apps.pizzeria.pizzeria import Orders, Products, OrderLines, Customers
+#from lino.apps.pizzeria.pizzeria import Orders, Products, OrderLines, Customers
 
-class Services(Products):
+class Services(pizzeria.Products):
     
     def init(self):
-        Products.init(self)
+        pizzeria.Products.init(self)
         self.addField('responsible',STRING)
 
 
-TABLES = pizzeria.TABLES + (Services,)
+class ServicePizzeria(pizzeria.Pizzeria):
 
+    tables = pizzeria.Pizzeria.tables + (Services,)
 
-def makeSchema(**kw):
-
-    schema = pizzeria.makeSchema(**kw)
-    schema.addTable(Services)
-    return schema
-    
 
 def populate(sess):
     
     pizzeria.populate(sess)
     
     SERV = sess.query(Services)
-    CUST = sess.query(Customers)
-    ORDERS = sess.query(Orders)
-    PROD = sess.query(Products)
+    CUST = sess.query(pizzeria.Customers)
+    ORDERS = sess.query(pizzeria.Orders)
+    PROD = sess.query(pizzeria.Products)
     
     s1 = SERV.appendRow(name="bring home",price=1)
     s2 = SERV.appendRow(name="organize party",price=100)

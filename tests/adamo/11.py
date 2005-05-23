@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -27,7 +27,8 @@ from lino import adamo #import quickdb, beginQuickSession
 from lino.adamo.datatypes import itod
 from lino.misc.tsttools import TestCase, main
 from lino.apps.pizzeria import pizzeria, services
-from lino.apps.pizzeria.services import Services, Customers,\
+from lino.apps.pizzeria.services import Services
+from lino.apps.pizzeria.pizzeria import Customers,\
      Products, Orders, OrderLines
 
 
@@ -38,8 +39,8 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        schema=services.makeSchema()
-        self.sess = schema.quickStartup()
+        app=services.ServicePizzeria()
+        self.sess = app.quickStartup()
         services.populate(self.sess)
         #services.beginSession()
 

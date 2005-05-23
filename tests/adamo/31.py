@@ -32,6 +32,7 @@ from lino.adamo.datatypes import itod
 #from lino.ui import console
 from lino.misc.tsttools import TestCase, main
 
+from lino.apps.raceman.raceman import Raceman
 from lino.apps.raceman import races
 
 #from lino.reports import DataReport
@@ -43,10 +44,10 @@ from lino.apps.raceman import races
 class Case(TestCase):
     
     def test01(self):
-        schema = Schema(label="Raceman Report Tester")
-        races.setupSchema(schema)
+        app = Raceman() # label="Raceman Report Tester")
+        #races.setupSchema(schema)
 
-        sess = schema.quickStartup()
+        sess = app.quickStartup()
 
         PERSONS = sess.query(races.Persons)
         norbert = PERSONS.appendRow( name="Ausdemwald",

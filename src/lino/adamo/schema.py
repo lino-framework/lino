@@ -57,6 +57,7 @@ where DBFILE is the name of the sqlite database file"""
 
     HK_CHAR = '&'
     defaultLangs = ('en',)
+    tables=[]
     
     def __init__(self,filename=None,
                  checkIntegrity=False,
@@ -92,6 +93,7 @@ where DBFILE is the name of the sqlite database file"""
 
         """ Note: for plugins and tables it is important to keep also a
         sequential list.  """
+        
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
         #def call_set(option, opt_str, value, parser,**kw):
@@ -127,13 +129,6 @@ where DBFILE is the name of the sqlite database file"""
         #name = table.getTableName()
         #self.tables.define(name,table)
         
-    def registerLoaders(self,loaders):
-        for l in loaders:
-            it = self.findImplementingTables(l.tableClass)
-            assert len(it) == 1
-            it[0].setMirrorLoader(l)
-
-            
     def addPlugin(self,plugin):
         assert isinstance(plugin,SchemaPlugin),\
                  repr(plugin)+" is not a SchemaPlugin"
@@ -283,14 +278,11 @@ where DBFILE is the name of the sqlite database file"""
 
     def setupSchema(self,ui):
         #print "%s.setupSchema()" % self.__class__
+        for t in self.tables:
+            self.addTable(t)
         for p in self._plugins:
             p.defineTables(self)
     
-    def init(self): 
-        # called from Toolkit.main()
-        self.startup()
-        
-
     def quickStartup(self,
                      ui=None,
                      langs=None,
@@ -349,6 +341,11 @@ where DBFILE is the name of the sqlite database file"""
             db.close(ui)
         self._databases = []
         
+    def init(self,ui): 
+        # called from Toolkit.main()
+        sess = self.startup(ui)
+        self.showMainForm(ui)
+
     
 
 ##  def onStartUI(self,sess):
@@ -681,3 +678,34 @@ class LayoutFactory:
 ##  return cl(row)
         
 
+class MirrorLoaderApplication(Schema):
+
+    def __init__(self,loadfrom=".",**kw):
+        Schema.__init__(self,**kw)
+        self.loadfrom = loadfrom
+    
+    def registerLoaders(self,loaders):
+        for l in loaders:
+            it = self.findImplementingTables(l.tableClass)
+            assert len(it) == 1
+            it[0].setMirrorLoader(l)
+
+            
+    def setupOptionParser(self,parser):
+        AdamoApplication.setupOptionParser(self,parser)
+    def getOptionParser(self,**kw):
+        parser = AdamoApplication.getOptionParser(self,**kw)
+        
+        parser.add_option("--loadfrom",
+                          help="""\
+                          directory for mirror source files""",
+                          action="store",
+                          type="string",
+                          dest="loadfrom",
+                          default=self.loadfrom)
+        return parser
+    
+    def parse_args(self,argv=None):
+        (options, args) = AdamoApplication.parse_args(self,argv)
+        self.loadfrom = options.loadfrom
+        return (options, args)

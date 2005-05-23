@@ -22,25 +22,24 @@ import os
 opj = os.path.join
 
 from lino import adamo
-#from lino.forms import gui
+from lino.forms import gui
 
 from lino.apps.raceman import races, loaders
 
-from lino.adamo.application import MirrorLoaderApplication
-
-
+# from lino.adamo.application import MirrorLoaderApplication
+from lino.adamo.schema import MirrorLoaderApplication
 
 class Raceman(MirrorLoaderApplication):
     
     name="Raceman"
     years='2005'
+    tables = races.TABLES
     
     def getLoaders(self):
         return [lc(self.loadfrom) for lc in loaders.LOADERS]
 
     def init(self):
-        races.setupSchema(self.schema)
-        self.schema.registerLoaders(self.getLoaders())
+        self.registerLoaders(self.getLoaders())
         
         self.sess = self.schema.quickStartup(
             ui=self.toolkit.console,
@@ -84,17 +83,17 @@ This is the Raceman main menu.
         
 
 def main(argv):
-
     app = Raceman()
     app.parse_args(argv)
-    #gui.run(app)
-    app.run()
+    gui.run(app)
+    #app.run()
 
 
 
 
 
 if __name__ == '__main__':
+    #main(sys.argv[1:])
     main(sys.argv[1:])
 
 

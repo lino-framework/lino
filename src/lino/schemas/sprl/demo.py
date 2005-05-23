@@ -84,9 +84,6 @@ def startup(ui=None,
     return schema.quickStartup(ui,langs=langs, filename=filename)
 
 
-# very deprecated name for startup:
-# getDemoDB = beginSession
-
 # deprecated name for startup:
 beginSession = startup
 

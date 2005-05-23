@@ -25,7 +25,7 @@ from lino.forms import gui
 
 #from lino.apps.keeper import keeper_tables as tables
 
-from lino.adamo.application import AdamoApplication
+from lino.adamo.schema import Schema
 
 class Volumes(Table):
     def init(self):
@@ -146,7 +146,7 @@ class Occurences(Table):
 
 
 
-class Keeper(AdamoApplication):
+class Keeper(Schema):
     
     name="Keeper"
     years='2005'
@@ -199,14 +199,8 @@ class Keeper(AdamoApplication):
 
 
 
-    def init(self):
-        #tables.setupSchema(self.schema)
-        AdamoApplication.init(self)
-        
-        #assert self.mainForm is None
-        
-        #self.mainForm = frm = self.form(
-        frm = self.form(
+    def showMainForm(self,ui):
+        frm = ui.form(
             label="Main menu",
             doc="""\
 This is the Keeper main menu.                                     

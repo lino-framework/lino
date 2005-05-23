@@ -133,7 +133,7 @@ def run(app):
 
 class GUI:
     def __init__(self):
-        raise "Aha, wird also benutzt"
+        raise "Aha, wird also doch benutzt"
         self.app = None
 
     def form(self,*args,**kw):

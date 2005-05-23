@@ -95,6 +95,7 @@ def setSystemConsole(c):
         'debug','message','notice','status',
         'job', 'verbose', 'error','critical',
         'confirm','warning',
+        #'getConsoleOutput',
         #'copyleft',
         'report','textprinter',
         'isInteractive','isVerbose', 'set',
@@ -115,7 +116,7 @@ def shutdown():
 if hasattr(sys.stdout,"encoding") \
       and sys.getdefaultencoding() != sys.stdout.encoding:
     sys.stdout = rewriter(sys.stdout)
-    sys.stderr = rewriter(sys.stderr)
+    #sys.stderr = rewriter(sys.stderr)
 
 
 setSystemConsole(

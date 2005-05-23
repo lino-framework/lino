@@ -50,13 +50,15 @@ class Application(CLI):
     
     """
     def __init__(self,console=None):
+        if self.name is None:
+            self.name=self.__class__.__name__
         if console is None:
             console = syscon.getSystemConsole()
         self.console = console
-        if self.name is not None:
+        if self.author is not None:
             self.copyleft(name=self.name,
-                             years=self.years,
-                             author=self.author)
+                          years=self.years,
+                          author=self.author)
 
         
     def setupOptionParser(self,parser):
@@ -157,8 +159,17 @@ See file COPYING.txt for more information.""" % (
             self.console.error(str(e))
             return -1
 
+
+    def init(self,ui): 
+        # called from Toolkit.main()
+        # overridden by Schema
+        self.showMainForm(ui)
+
+        
+
     def run(self,ui):
         raise NotImplementedError
         
-
-
+    def showMainForm(self):
+        raise NotImplementedError
+        

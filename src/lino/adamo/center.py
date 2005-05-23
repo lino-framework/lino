@@ -97,7 +97,9 @@ class Center:
         # were run (because previous startups remained open.
         #if self.ui is None:
         #    return
-        assert len(self._sessions) == 0
+        for sess in self._sessions:
+            syscon.debug("Killing session %r",sess)
+            sess.end()
         syscon.debug("Center.shutdown()")
         for sch in self._schemas:
             sch.shutdown(syscon)

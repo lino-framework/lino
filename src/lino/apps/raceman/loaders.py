@@ -22,11 +22,11 @@ import os
 import sys
 
 
-from lino.ui import console
 from lino import adamo
 
-from lino.apps.raceman.races import Races, RaceTypes, Categories, \
-     Participants, Persons, Clubs
+from lino.apps.raceman.races import *
+#Races, RaceTypes, Categories, \
+#     Participants, Persons, Clubs
 
 from lino.adamo.table import DbfMirrorLoader
 

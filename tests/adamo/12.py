@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -19,8 +19,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
    
 from lino.misc.tsttools import TestCase, main
-#from lino.misc import tsttools 
 from lino.apps.pizzeria import services
+from lino.apps.pizzeria.pizzeria import Customers
 
 
 class Case(TestCase):
@@ -30,15 +30,15 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        schema=services.makeSchema()
-        self.sess=schema.quickStartup()
+        app=services.ServicePizzeria()
+        self.sess=app.quickStartup()
         services.populate(self.sess)
 
     def tearDown(self):
         self.sess.shutdown()
 
     def test01(self):
-        CUST = self.sess.query(services.Customers)
+        CUST = self.sess.query(Customers)
         c = CUST.appendRow(name="Mark")
         newID = c.id
         c = CUST.peek(newID)

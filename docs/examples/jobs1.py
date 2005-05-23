@@ -1,8 +1,8 @@
 from time import sleep
 
-from lino.ui import console
+from lino.console import syscon
 
-STEPS = 3
+STEPS = 2
 
 def work(ui,withMaxVal):
     
@@ -32,8 +32,8 @@ def work(ui,withMaxVal):
 
 if __name__ == "__main__":
     #print __doc__
-    console.parse_args()
-    work(console,True)
-    work(console,False)
+    syscon.parse_args()
+    work(syscon,True)
+    work(syscon,False)
     
     

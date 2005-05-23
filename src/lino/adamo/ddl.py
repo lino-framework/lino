@@ -19,7 +19,7 @@
 from lino.adamo.table import Table, LinkTable,\
      MemoTable, TreeTable, MemoTreeTable,\
      BabelTable
-from lino.adamo.schema import SchemaPlugin
+from lino.adamo.schema import SchemaPlugin, Schema
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
 from lino.adamo.store import Populator

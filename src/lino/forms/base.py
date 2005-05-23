@@ -915,7 +915,7 @@ class Toolkit(CLI):
                 frm.show()
             
         for app in self._apps:
-            app.init()
+            app.init(self)
             #if app.mainComp
             #app.mainForm.show()
             

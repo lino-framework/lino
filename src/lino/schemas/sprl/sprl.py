@@ -119,9 +119,9 @@ class QuotesPlugin(SchemaPlugin):
 
         
 class Sprl(Schema):
-    name="Sprl"
-    years="2002-2005"
-    author="Luc Saffre"
+    #name="Sprl"
+    #years="2002-2005"
+    #author="Luc Saffre"
     def __init__(self,
                  withEvents=True,
                  withProjects=True,

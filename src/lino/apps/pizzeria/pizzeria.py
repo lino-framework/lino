@@ -78,16 +78,10 @@ class OrderLines(Table):
                 return "product is mandatory"
 
 
-TABLES=(Products, Customers, Orders, OrderLines)
+class Pizzeria(Schema):
+    tables=Products, Customers, Orders, OrderLines
 
 
-def makeSchema(*args,**kw):
-    schema = Schema(*args,**kw)
-    for t in TABLES:
-        schema.addTable(t)
-    return schema
-
-        
         
 def populate(sess):
     """
@@ -132,7 +126,7 @@ def query(sess):
 
 def main():
 
-    schema = makeSchema(label="Luc's Pizza Restaurant")
+    app = Pizzeria() #label="Luc's Pizza Restaurant")
 
     sess = schema.quickStartup()
     #print sess.ui
