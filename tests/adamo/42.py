@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -21,39 +21,36 @@ import os
 
 from lino.misc.tsttools import TestCase, main
 
+from lino.console import syscon
+
 from lino.apps.keeper.keeper import Keeper
-#from lino.apps.keeper.keeper_tables import *
+from lino.apps.keeper.tables import *
 
-from lino.forms.testkit import Toolkit
-
-TESTDATA = os.path.join(os.path.dirname(__file__),"testdata")
+TESTDATA = os.path.join(
+    os.path.dirname(__file__),"..","etc","testdata")
 
 class Case(TestCase):
     
-    def setUp(self):
-        TestCase.setUp(self)
-        self.app=Keeper(toolkit=Toolkit(_console=self.ui))
-        #self.app.run_forever()
-        self.app.init()
-        
-    def tearDown(self):
-        self.app.close()
-        
     def test01(self):
-        self.app.installto(globals())
-        s=self.getConsoleOutput()
-        print s
-        self.assertEquivalent(s,"""\
-        """)
+        app=Keeper()
+        sess=app.quickStartup()
         
-        q=self.app.sess.query(Volumes)
-        vol=q.appendRow(name="foo",path=TESTDATA)
-        vol.load(self.ui)
-        vol.directories.report()
+        q=sess.query(Volumes)
+        vol=q.appendRow(name="test",path=TESTDATA)
+        vol.load(syscon)
+        vol.directories.report(
+            columnNames="id name parent files subdirs",
+            width=70)
         s=self.getConsoleOutput()
-        print s
+        #print s
         self.assertEquivalent(s,"""\
-        """)
+Directories (volume=testparent=None)
+====================================
+id     |name          |parent        |files         |subdirs
+-------+--------------+--------------+--------------+--------------
+1      |              |              |6 Files       |1 Directories
+""")
+        sess.shutdown()
         
         
 if __name__ == '__main__':

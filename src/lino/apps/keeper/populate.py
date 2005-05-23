@@ -22,13 +22,14 @@ import os
 opj = os.path.join
 import codecs
 
-#from lino.apps.keeper import keeper_tables as tables
+from lino.adamo.ddl import *
 from lino.misc.jobs import Task
 #from lino.tools.msword import MsWordDocument
 from lino.guessenc.guesser import EncodingGuesser
-#from lino.tools.guesscoding import EncodingGuesser
 from lupy.index.documentwriter import standardTokenizer
 
+
+    
 class VolumeVisitor(Task):
     
     def __init__(self,vol):
@@ -38,9 +39,8 @@ class VolumeVisitor(Task):
 
     def start(self):
         sess = self.volume.getSession()
-        for t in self.job.ui.app.tables:
-            setattr(
-        self.ftypes = sess.query(app.tables.FileTypes)
+        from lino.apps.keeper import tables 
+        self.ftypes = sess.query(tables.FileTypes)
         self.files = sess.query(tables.Files)
         self.dirs = sess.query(tables.Directories)
         self.words = sess.query(tables.Words)
@@ -106,7 +106,7 @@ class VolumeVisitor(Task):
                     
     def loadWords(self,fileRow,tokens):
         #self.status("%s : %d words",fileRow.name,len(tokens))
-        print fileRow.path(), ".occurences.deleteAll()"
+        #print fileRow.path(), ".occurences.deleteAll()"
         fileRow.occurences.deleteAll()
         #self.occurences.query(file=deleteRows(file=fileRow)
         pos = 0
