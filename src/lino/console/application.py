@@ -69,9 +69,9 @@ class Application(CLI):
         self.args=args
 
     def addProgramMenu(self,frm):
-        m = frm.addMenu("&Programm")
-        m.addItem(label="&Beenden",action=frm.close)
-        m.addItem(label="Inf&o").setHandler(self.showAbout)
+        m = frm.addMenu("system","&Programm")
+        m.addItem("logout",label="&Beenden",action=frm.close)
+        m.addItem("about",label="Inf&o").setHandler(self.showAbout)
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
 

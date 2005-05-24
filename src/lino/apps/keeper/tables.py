@@ -52,6 +52,8 @@ class Volumes(Table):
         def load(self,ui):
             VolumeVisitor(self).run(ui)
 
+        def delete(self):
+            self.directories.deleteAll()
             
         
 class Directories(Table):

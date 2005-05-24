@@ -26,7 +26,7 @@ from lino.reports import DataReport
 
 class Case(TestCase):
 
-
+    
     def test01(self):
         from lino.apps.keeper import keeper
         app = keeper.Keeper()

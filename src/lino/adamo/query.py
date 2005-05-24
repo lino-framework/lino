@@ -1017,7 +1017,11 @@ class SimpleQuery(LeadTableColumnList):
         self.rowcount=None
 
     def deleteAll(self):
-        self._connection.executeDeleteAll(self)
+        for row in self:
+            row.delete()
+        # volume.directories.deleteAll() did not delete the files in each directory. 
+        #self._connection.executeDeleteAll(self)
+        #
         
 
 ##     def apply_GET(self,**kw):

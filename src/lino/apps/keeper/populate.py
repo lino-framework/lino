@@ -35,6 +35,89 @@ class VolumeVisitor(Task):
     def __init__(self,vol):
         Task.__init__(self)
         self.volume = vol
+
+    def start(self):
+        from lino.apps.keeper import tables 
+        sess = self.volume.getSession()
+        self.ftypes = sess.query(tables.FileTypes)
+        self.files = sess.query(tables.Files)
+        self.dirs = sess.query(tables.Directories)
+        if len(self.volume.directories) > 0:
+            self.freshen(self.volume.path,"")
+        else:
+            self.load(self.volume.path,"")
+
+    def getLabel(self):
+        return "Loading "+self.volume.getLabel()
+
+    def freshen(self,fullname,shortname,dir=None):
+        self.status(fullname)
+        if os.path.isfile(fullname):
+            row = self.files.peek(dir,shortname)
+            if row is None:
+                row = self.files.appendRow(name=shortname,dir=dir)
+            self.readTimeStamp(row,fullname)
+        elif os.path.isdir(fullname):
+            row = self.dirs.findone(parent=dir,name=shortname)
+            if row is None:
+                row = self.dirs.appendRow(name=shortname,
+                                          parent=dir,
+                                          volume=self.volume)
+                
+            else:
+            self.visit_dir(row,fullname)
+        else:
+            self.error("%s : no such file or directory",fullname)
+
+    def load(self,fullname,shortname,dir=None):
+        self.status(fullname)
+        if os.path.isfile(fullname):
+            if self.reloading:
+                row = self.files.peek(dir,shortname)
+            else:
+                row=None
+            if row is None:
+                row = self.files.appendRow(name=shortname,dir=dir)
+            #self.visit_file(row,fullname)
+            self.readTimeStamp(row,fullname)
+        elif os.path.isdir(fullname):
+            #print "findone(",dict(parent=dir,name=shortname),")"
+            if self.reloading:
+                row = self.dirs.findone(parent=dir,name=shortname)
+            else:
+                row=None
+            if row is None:
+                row = self.dirs.appendRow(name=shortname,
+                                          parent=dir,
+                                          volume=self.volume)
+                assert row.parent == dir
+            self.visit_dir(row,fullname)
+        else:
+            self.error("%s : no such file or directory",fullname)
+
+    def visit_dir(self,dirRow,fullname):
+        #self.status("visit_dir " + fullname)
+        for fn in os.listdir(fullname):
+            self.visit(
+                os.path.join(fullname,fn),
+                fn,
+                dirRow)
+        
+    def readTimeStamp(self,fileRow,fullname):
+        try:
+            st = os.stat(fullname)
+            sz = st.st_size
+            mt = st.st_mtime
+        except OSError,e:
+            self.error("os.stat('%s') failed" % fullname)
+            return
+        row.mtime = x
+
+class FileVisitor(Task):
+    
+    def __init__(self,vol):
+        Task.__init__(self)
+        self.volume = vol
         self.encodingGuesser = EncodingGuesser()
 
     def start(self):
@@ -52,25 +135,6 @@ class VolumeVisitor(Task):
 
     def getLabel(self):
         return "Loading "+self.volume.getLabel()
-
-    def visit(self,fullname,shortname,dir=None):
-        self.status(fullname)
-        if os.path.isfile(fullname):
-            row = self.files.peek(dir,shortname)
-            if row is None:
-                row = self.files.appendRow(name=shortname,dir=dir)
-            self.visit_file(row,fullname)
-        elif os.path.isdir(fullname):
-            #print "findone(",dict(parent=dir,name=shortname),")"
-            row = self.dirs.findone(parent=dir,name=shortname)
-            if row is None:
-                row = self.dirs.appendRow(name=shortname,
-                                          parent=dir,
-                                          volume=self.volume)
-                assert row.parent == dir
-            self.visit_dir(row,fullname)
-        else:
-            self.error("%s is neither file nor directory",fullname)
 
     def visit_file(self,fileRow,name):
         base,ext = os.path.splitext(name)
@@ -121,22 +185,6 @@ class VolumeVisitor(Task):
             fileRow.occurences.appendRow(word=word, pos=pos)
 
     
-    def visit_dir(self,dirRow,fullname):
-        #self.status("visit_dir " + fullname)
-        for fn in os.listdir(fullname):
-            self.visit(
-                os.path.join(fullname,fn),
-                fn,
-                dirRow)
-        
-    def readTimeStamp(self,row,filename):
-        try:
-            st = os.stat(filename)
-            sz = st.st_size
-            mt = st.st_mtime
-        except OSError,e:
-            self.error("os.stat('%s') failed" % filename)
-            return
-        row.mtime = x
+
 
         

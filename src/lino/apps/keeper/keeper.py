@@ -74,21 +74,21 @@ class Keeper(Schema):
 This is the Keeper main menu.                                     
 """+("\n"*10))
 
-        m = frm.addMenu("&Suchen")
-        m.addItem(label="&Suchen").setHandler(
+        m = frm.addMenu("search","&Suchen")
+        m.addItem("search",label="&Suchen").setHandler(
             self.showSearchForm,frm)
     
-        m = frm.addMenu("&Datenbank")
-        m.addItem(label="&Volumes").setHandler(
+        m = frm.addMenu("db","&Datenbank")
+        m.addItem("volumes",label="&Volumes").setHandler(
             self.showViewGrid,frm,
             Volumes)
-        m.addItem(label="&Files").setHandler(
+        m.addItem("files",label="&Files").setHandler(
             self.showViewGrid,frm,
             Files)
-        m.addItem(label="&Directories").setHandler(
+        m.addItem("dirs",label="&Directories").setHandler(
             self.showViewGrid,frm,
             Directories)
-        m.addItem(label="&Words").setHandler(
+        m.addItem("words",label="&Words").setHandler(
             self.showViewGrid,frm,
             Words)
         
