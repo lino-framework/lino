@@ -261,11 +261,11 @@ class SqlConnection(Connection):
 
         sql += self.whereClause(ds)
                 
-        if len(ds.sortColumns) >  0 :
-            l = []
-            for col in ds.sortColumns:
-                for atom in col.getFltAtoms(ds.getSession()):
-                    l.append(atom.getNameInQuery(clist))
+        l = []
+        for col in ds.sortColumns:
+            for atom in col.getFltAtoms(ds.getSession()):
+                l.append(atom.getNameInQuery(clist))
+        if len(l) >  0 :
             sql += " ORDER BY " + ", ".join(l)
 
         if limit is not None:

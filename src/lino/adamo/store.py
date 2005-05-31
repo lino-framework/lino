@@ -97,7 +97,7 @@ class Store:
                               self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
                 self._status = self.SST_VIRGIN
-            self._table.loadMirror(self,sess)
+            #self._table.loadMirror(self,sess)
 
     def isVirgin(self):
         return self._status == self.SST_VIRGIN
@@ -177,14 +177,14 @@ class Store:
     def unlockAll(self):
         #assert len(self._lockedRows) == 0
 ##         #print "Datasource.unlockAll()",self
-        for row in self._lockedRows:
+        for row in self._lockedRows.values():
             print "forced unlock:", row
             row.unlock()
 ##         #assert len(self._lockedRows) == 0
         
     def unlockDatasource(self,ds):
-        for row in self._lockedRows:
-            if row._ds == ds:
+        for row in self._lockedRows.values():
+            if row._query == ds:
                 print "forced unlock:", row
                 row.unlock()
 ##         #print "Datasource.unlockAll()",self
@@ -202,14 +202,14 @@ class Store:
     def addToCache(self,row):
         pass
 
-    def commit(self):
+    def commit(self,sess):
         ""
         if len(self._lockedRows) > 0:
             raise InvalidRequestError("unlock first, then commit!")
 ##         for row in self._lockedRows:
 ##             row.writeToStore()
             
-    def beforeShutdown(self):
+    def close(self):
         self.unlockAll()
         #for ds in self._datasources:
         #    ds.close()

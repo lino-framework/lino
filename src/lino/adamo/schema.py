@@ -26,8 +26,6 @@ from lino.console import syscon
 from lino.console.application import Application
 
 #from lino.adamo.forms import Form
-from lino.adamo.dbsession import DbSession
-from lino.adamo.database import Database
 from lino.adamo.table import Table, LinkTable, SchemaComponent
 from lino.adamo.exceptions import StartupDelay
 from lino.adamo.query import Query
@@ -54,26 +52,26 @@ class SchemaPlugin(SchemaComponent,Describable):
 
 
 class Schema(Application):
-    usage="usage: %prog [options] DBFILE"
-    description="""\
-where DBFILE is the name of the sqlite database file"""
+##     usage="usage: %prog [options] DBFILE"
+##     description="""\
+## where DBFILE is the name of the sqlite database file"""
 
     HK_CHAR = '&'
     defaultLangs = ('en',)
     tables=[]
 
-    toolkits="wx console"
+    #toolkits="wx console"
     
     #_sessionFactory=DbSession
     
-    def __init__(self,filename=None,
+    def __init__(self,#filename=None,
                  checkIntegrityOnStartup=False,
                  tempDir=".",
                  #populate=False,
                  langs=None,**kw):
         Application.__init__(self,**kw)
         #self.schema = Schema()
-        self.filename = filename
+        #self.filename = filename
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup
         #self.populate=populate
@@ -83,14 +81,13 @@ where DBFILE is the name of the sqlite database file"""
 ##                  **kw):
 ##         Describable.__init__(self,None,name,label,doc)
         self._initDone= False
-        self._startupDone= False
         self._datasourceRenderer= None
         self._contextRenderer= None
         if langs is None:
             langs="en de fr nl et"
         self._possibleLangs = tuple(langs.split())
         
-        self._databases = []
+        #self._databases = []
         self._plugins = []
         self._tables = []
         
@@ -103,28 +100,29 @@ where DBFILE is the name of the sqlite database file"""
         """ Note: for plugins and tables it is important to keep also a
         sequential list.  """
         
-    def setupOptionParser(self,parser):
-        Application.setupOptionParser(self,parser)
-        #def call_set(option, opt_str, value, parser,**kw):
-        #    self.set(**kw)
+##     def setupOptionParser(self,parser):
+##         Application.setupOptionParser(self,parser)
+##         #def call_set(option, opt_str, value, parser,**kw):
+##         #    self.set(**kw)
 
-        parser.add_option("-c",
-                          "--check",
-                          help="perform integrity check on startup",
-                          action="store_true",
-                          dest="checkIntegrityOnStartup",
-                          default=self.checkIntegrityOnStartup,
-                          )
+##         parser.add_option("-c",
+##                           "--check",
+##                           help="perform integrity check on startup",
+##                           action="store_true",
+##                           dest="checkIntegrityOnStartup",
+##                           default=False,
+##                           )
         
         
-    def applyOptions(self,options,args):
-        Application.applyOptions(self,options,args)
-        self.checkIntegrityOnStartup = options.checkIntegrityOnStartup
-        if len(args) == 1:
-            self.filename = args[0]
-        else:
-            self.filename=os.path.join(self.tempDir,
-                                       self.name+".db")
+##     def applyOptions(self,options,args):
+##         Application.applyOptions(self,options,args)
+##         #self.checkIntegrityOnStartup = options.checkIntegrityOnStartup
+##         if len(args) == 1:
+##             self.filename = args[0]
+##         else:
+##             self.filename=os.path.join(self.tempDir,
+##                                        self.name+".db")
+        
     def addTable(self,tableClass,**kw):
         #print tableClass
         table = tableClass(None,**kw)
@@ -206,10 +204,14 @@ where DBFILE is the name of the sqlite database file"""
         # loop 4
         for table in self._tables:
             table.init4()
-
+            
+        self.onInitialize()
+        
         self._initDone = True
         syscon.debug("Schema initialized")
-        
+
+    def onInitialize(self):
+        pass
 
     def setLayout(self,layoutModule):
         # initialize layouts...
@@ -263,18 +265,17 @@ where DBFILE is the name of the sqlite database file"""
         return str(self.__class__)
 
 
-    def addDatabase(self,name=None,**kw): #langs=None,label=None):
-    #def openDatabase(self,name=None,**kw):
-        if self._startupDone:
-            raise TooLate("Cannot addDatabase() after startup()")
-        if name is None:
-            name = self.name+str(len(self._databases)+1)
-        #if label is None:
-        #    label = self.getLabel()+n
-        db = Database(self,name=name,**kw)
-        #langs=langs,name=name,label=label)
-        self._databases.append(db)
-        return db
+    def database(self,*args,**kw):
+        return center.database(self,*args,**kw)
+    
+##     def addDatabase(self,name=None,**kw): #langs=None,label=None):
+##     #def openDatabase(self,name=None,**kw):
+##         if self._startupDone:
+##             raise TooLate("Cannot addDatabase() after startup()")
+##         db = Database(self,name=name,**kw)
+##         #langs=langs,name=name,label=label)
+##         self._databases.append(db)
+##         return db
 
     def setupSchema(self):
         #print "%s.setupSchema()" % self.__class__
@@ -293,49 +294,15 @@ where DBFILE is the name of the sqlite database file"""
         #job = ui.job("quickStartup()")
         syscon.debug("Initialize Schema")
         self.initialize()
-        db = self.addDatabase(langs=langs)
+        db = self.database(langs=langs)
         syscon.debug("Connect")
         conn = center.connection(filename=filename)
         db.connect(conn)
-        self.startup()
-        return DbSession(db,syscon.getSystemConsole())
+        return db.startup(syscon.getSystemConsole())
+        #return DbSession(db,syscon.getSystemConsole())
         #assert len(self._sessions) == 1
         #return self._sessions[0]
     
-
-    def startup(self): # ,toolkit=None): #,checkIntegrity=None):
-        #print "%s.startup()" % self.__class__
-        #if ui is None:
-        #    ui = syscon.getSystemConsole()
-        #sess=center.openSession(syscon.getSystemConsole())
-        assert len(self._databases) > 0, "no databases"
-        assert not self._startupDone,\
-                 "Cannot startup() again " + repr(self)
-        console=syscon.getSystemConsole()
-        for db in self._databases:
-            sess=DbSession(db,console)
-            #self.openSession(sess)
-            #syscon.debug(db.getLabel())
-            #print "Database %s: %s" % (db.name, db.getStoresById())
-            #print
-            for store in db.getStoresById():
-                store.onStartup(sess)
-                
-            #db.populate(sess)
-                
-            if self.checkIntegrityOnStartup:
-                self.checkIntegrity(sess)
-
-            sess.close()
-                
-        self._startupDone=True
-        
-    def checkIntegrity(self,sess):
-        sess.debug("Checking %s", sess.db.getLabel())
-        for store in sess.db.getStoresById():
-            store.checkIntegrity(sess)
-        
-        
         #sess.setDefaultLanguage()
         #return self._sessions
 
@@ -346,11 +313,11 @@ where DBFILE is the name of the sqlite database file"""
 ##         return sess
 
         
-    def start_gui(self,toolkit):
-        for db in self._databases:
-            sess=DbSession(db,toolkit)
-            self.run(sess)
-            self.addSession(sess)
+##     def start_gui(self,toolkit):
+##         for db in self._databases:
+##             sess=DbSession(db,toolkit)
+##             self.run(sess)
+##             self.addSession(sess)
     
     
     def run(self,sess):
@@ -359,11 +326,11 @@ where DBFILE is the name of the sqlite database file"""
     def showMainForm(self,sess):
         pass
         
-    def shutdown(self):
-        syscon.debug("Schema.shutdown()")
-        for db in self._databases:
-            db.close()
-        self._databases = []
+##     def shutdown(self):
+##         syscon.debug("Schema.shutdown()")
+##         for db in self._databases:
+##             db.close()
+##         self._databases = []
         
 ##     def init(self,ui): 
 ##         # called from Toolkit.main()
@@ -716,20 +683,16 @@ class MirrorLoaderApplication(Schema):
 
             
     def setupOptionParser(self,parser):
-        AdamoApplication.setupOptionParser(self,parser)
-    def getOptionParser(self,**kw):
-        parser = AdamoApplication.getOptionParser(self,**kw)
+        Schema.setupOptionParser(self,parser)
         
         parser.add_option("--loadfrom",
                           help="""\
-                          directory for mirror source files""",
+directory containing mirror source files""",
                           action="store",
                           type="string",
                           dest="loadfrom",
-                          default=self.loadfrom)
-        return parser
+                          default=".")
     
-    def parse_args(self,argv=None):
-        (options, args) = AdamoApplication.parse_args(self,argv)
-        self.loadfrom = options.loadfrom
-        return (options, args)
+##     def applyOptions(self,options,args):
+##         Application.applyOptions(self,options,args)
+##         self.loadfrom = options.loadfrom

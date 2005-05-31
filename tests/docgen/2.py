@@ -35,7 +35,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup(self.ui,big=True,withJokes=True)
+        self.sess = demo.startup(big=True,withJokes=True)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -74,7 +74,7 @@ class Case(TestCase):
                 
 
             
-        files=root.save(self.ui,opj(self.tempDir,"gendoc","2"))
+        files=root.save(self.sess,opj(self.tempDir,"gendoc","2"))
         self.addTempFile(files[0],showOutput=True)
         for fn in files[1:]:
             self.addTempFile(fn)

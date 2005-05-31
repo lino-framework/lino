@@ -184,7 +184,7 @@ class QueryColumn:
     def format(self,v):
         return self.rowAttr.format(v)
         
-    def showEditor(self,ui,row):
+    def showSelector(self,frm,row):
         return False
 
 
@@ -262,10 +262,11 @@ class BabelFieldColumn(FieldColumn):
                     l.append(None)
             return l
         else:
-            index = langs[0].index
-            assert not index == -1
+            assert langs[0].index != -1,\
+                   "Session language %r not supported by %s" \
+                   % (langs[0].id,row.getDatabase().getSupportedLangs())
             #print __name__, values[index], langs
-            return values[index]
+            return values[langs[0].index]
         
     def getTestEqual(self,ds,value):
         langs = ds.getSession().getBabelLangs()
@@ -330,12 +331,13 @@ class PointerColumn(QueryColumn):
             i += 1
         return " AND ".join(l)
 
-    def showEditor(self,ui,row):
+    def showSelector(self,frm,row):
+        sess=frm.session
         row.lock()
         ds = self.rowAttr.getTargetSource(row)
-        selectedRow = ui.chooseDataRow(ds,row)
+        selectedRow = sess.chooseDataRow(ds,row)
         if selectedRow is not None:
-            ui.status("you chose: "+str(row))
+            sess.notice("you selected: "+str(row))
             self.setCellValue(row,selectedRow)
             row.setDirty()
         row.unlock()
@@ -402,9 +404,9 @@ class DetailColumn(QueryColumn):
 
 
 
-    def showEditor(self,ui,row):
+    def showSelector(self,frm,row):
         ds = self.getCellValue(row)
-        ui.showDataGrid(ds)
+        frm.session.showDataGrid(ds)
         return True
 
 
@@ -994,7 +996,7 @@ class SimpleQuery(LeadTableColumnList):
 
     def createReport(self,**kw):
         from lino.reports.reports import DataReport
-        return DataReport(None,self,**kw)
+        return DataReport(self,**kw)
 
     def report(self,**kw):
         rpt=self.createReport(**kw)

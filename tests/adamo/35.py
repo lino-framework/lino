@@ -57,33 +57,32 @@ class Case(TestCase):
         
         conn = center.connection()
         
-        stddb = app.addDatabase("std",
-                                langs="en de fr et",
-                                label="shared data")
+        stddb = app.database("std",
+                             langs="en de fr et",
+                             label="shared data")
 
         stddb.connect(conn,sharedTables)
 
 
-        db1 = app.addDatabase(langs="de")
-        db1.update(stddb)
+        db = app.database(langs="de")
+        db.update(stddb)
         conn = center.connection()
-        db1.connect(conn)
-        db1.populate(demo.Populator(big=True))
+        db.connect(conn)
+        sess1=db.startup()
+        sess1.populate(demo.Populator(big=True))
         
         
-        db2 = app.addDatabase(langs="en")
-        db2.update(stddb)
+        db = app.database(langs="en")
+        db.update(stddb)
         conn = center.connection()
-        db2.connect(conn)
-        db2.addPopulator(demo.Populator(big=True))
+        db.connect(conn)
+        sess2=db.startup()
+        sess2.populate(demo.Populator(big=True))
         
 
 
-        sess = app.startup()
-        
-        sess.use(db1)
-        q = sess.query(Nations,"id name area",pageLen=10,
-                       search="%be%")
+        q = sess1.query(Nations,"id name area",pageLen=10,
+                        search="%be%")
         self.assertEqual(q.getLangs(),"de")
         self.assertEqual(q.getDatabase().getLangs(),"en de fr et")
         q.report(width=50)

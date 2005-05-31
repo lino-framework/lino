@@ -19,7 +19,8 @@
 import atexit
 #from cStringIO import StringIO
 
-from lino.adamo.session import Session
+#from lino.adamo.session import Session
+from lino.adamo.database import Database
 from lino.adamo import DatabaseError
 #from lino.ui import console
 from lino.console import syscon
@@ -31,9 +32,9 @@ class Center:
 
     def __init__(self):
         #self.ui = None
-        self._schemas = []
+        #self._schemas = []
         self._connections = []
-        #self._databases = []
+        self._databases = []
         #self._sessionFactory = Session
         #self._checkIntegrity = False
 
@@ -52,6 +53,13 @@ class Center:
         conn = Connection(syscon,*args,**kw)
         self._connections.append(conn)
         return conn
+
+    def database(self,app,name=None,**kw):
+        if name is None:
+            name = app.name+str(len(self._databases)+1)
+        db = Database(app,name=name,**kw)
+        self._databases.append(db)
+        return db
         
 ##     def set(self,checkIntegrity=None):
 ##         if checkIntegrity is not None:
@@ -87,9 +95,12 @@ class Center:
         #if self.ui is None:
         #    return
         syscon.debug("Center.shutdown()")
-        for sch in self._schemas:
-            sch.shutdown(syscon)
-        self._schemas = []
+##         for sch in self._schemas:
+##             sch.shutdown(syscon)
+##         self._schemas = []
+        for db in self._databases:
+            db.close()
+        self._databases = []
         for conn in self._connections:
             conn.close()
         self._connections = []
@@ -123,7 +134,7 @@ atexit.register(_center.shutdown)
 
 
 for m in ( #'openSession',#'getOptionParser',
-          'shutdown',
+          'shutdown','database',
           #'doCheckIntegrity', 
           #'addSchema',
           'connection'

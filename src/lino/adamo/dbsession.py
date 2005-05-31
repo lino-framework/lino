@@ -20,7 +20,7 @@ from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from lino.ui import console
 from lino.forms.session import Session
-from lino.adamo import center
+#from lino.adamo import center
 
 class BabelLang:
     def __init__(self,index,id):
@@ -96,10 +96,13 @@ class DbSession(Session,Context):
         """langs is a string containing a space-separated list of babel
         language codes"""
         
-        self.db.commit()
+        self.db.commit(self)
         self._babelLangs = []
         for lang_id in langs.split():
             self._babelLangs.append(self.db.findBabelLang(lang_id))
+        assert self._babelLangs[0].index != -1,\
+               "First language of %r must be one of %r" \
+               % (langs,self.db.getSupportedLangs())
             
 ##         if self._babelLangs[0].index == -1:
 ##             raise InvalidRequestError(
@@ -109,30 +112,38 @@ class DbSession(Session,Context):
     def getBabelLangs(self):
         return self._babelLangs
 
-    def close(self):
-        self.db.removeSession(self)
+    def checkIntegrity(self):
+        self.status("Checking %s", self.db.getLabel())
+        for store in self.db.getStoresById():
+            store.checkIntegrity(self)
+        self.status("Checking %s", self.db.getLabel())
         
+            
     def populate(self,p):
-        status=self.getStatus()
+        status=self.getSessionStatus()
         self.db.populate(self,p)
-        self.setStatus(status)
+        self.setSessionStatus(status)
 
-    def getStatus(self):
+    def getSessionStatus(self):
         return (self.getBabelLangs(),)
         
-    def setStatus(self,status):
-        self.db.commit()
+    def setSessionStatus(self,status):
+        self.commit()
         self._babelLangs = status[0]
         
     def commit(self):
-        return self.db.commit()
+        return self.db.commit(self)
 
+    def close(self):
+        self.db.removeSession(self)
+        
     def shutdown(self):
         # called in many TestCases during tearDown()
         # supposted to close all connections
         #
         self.close()
-        center.shutdown()
+        self.db.shutdown()
+        #center.shutdown()
 
     def getStore(self,leadTable):
         try:
@@ -204,3 +215,6 @@ class DbSession(Session,Context):
         frm.showModal()
         return grid.getChosenRow()
         
+    def runLoader(self,loader):
+        store=self.getStore(loader.tableClass)
+        loader.load(self,store)

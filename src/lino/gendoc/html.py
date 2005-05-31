@@ -26,7 +26,7 @@ from cStringIO import StringIO
 from lino.gendoc.gendoc import WriterDocument
 from lino.forms.base import MenuContainer
 
-from lino.adamo.query import DataColumn
+from lino.adamo.query import QueryColumn
 
 
 # from twisted.web.microdom
@@ -210,6 +210,12 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
 ##         return self.getRoot().childrenByName[name]
 
 
+    def getLineWidth(self):
+        return 100
+    
+    def getColumnSepWidth(self):
+        return 0
+    
     def writeText(self,txt):
         self.write(escape(txt))
         
@@ -367,7 +373,7 @@ class ReportElement:
             #print rpt.iterator.sortColumns
             sortColumn=rpt.iterator.sortColumns[0]
         else:
-            assert isinstance(sortColumn,DataColumn)
+            assert isinstance(sortColumn,QueryColumn)
         self.sortColumn=sortColumn
 
     def rptname(self):

@@ -134,7 +134,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._pk = None
         self._views = {}
         self._rowRenderer = None
-        self._mirrorLoader = None
+        #self._mirrorLoader = None
         self._initStatus = 0
         self._defaultView = None
 
@@ -278,17 +278,17 @@ class Table(FieldContainer,SchemaComponent,Describable):
         # will maybe never be used
         pass
     
-    def setMirrorLoader(self,loader):
-        self._mirrorLoader = loader
+##     def setMirrorLoader(self,loader):
+##         self._mirrorLoader = loader
         
-    def loadMirror(self,store,sess):
-        if self._mirrorLoader is None:
-            return
-        if self._mirrorLoader.mtime() <= store.mtime():
-            sess.ui.debug("No need to load "+\
-                          self._mirrorLoader.sourceFilename())
-            return
-        self._mirrorLoader.load(sess.ui,store.query(sess))
+##     def loadMirror(self,store,sess):
+##         if self._mirrorLoader is None:
+##             return
+##         if self._mirrorLoader.mtime() <= store.mtime():
+##             sess.debug("No need to load "+\
+##                        self._mirrorLoader.sourceFilename())
+##             return
+##         self._mirrorLoader.load(sess,store.query(sess))
 
     def onAppend(self,row):
         pass
@@ -402,11 +402,12 @@ from lino.tools import dbfreader
 
 class DbfMirrorLoader:
 
-    tableClass = NotImplementedError  # adamo tableClass
+    tableClass = NotImplementedError  # subclass of adamo.tables.Table
     tableName = NotImplementedError   # name of external .DBF file
 
-    def __init__(self,dbfpath="."):
+    def __init__(self,dbfpath=".",severe=True):
         self.dbfpath = dbfpath
+        self.severe=severe
     
     def dbfdate(self,s):
         if len(s.strip()) == 0:
@@ -426,30 +427,39 @@ class DbfMirrorLoader:
             return None
         return datatypes.DURATION.parse(s.replace(':','.'))
     
-    def load(self,ui,q):
-        #job = ui.progress("q.getLabel())
+    def load(self,sess,store):
+
+        if self.mtime() <= store.mtime():
+            sess.debug("No need to load %s.",self.sourceFilename())
+            return
+        
         f = dbfreader.DBFFile(self.sourceFilename(),
                               codepage="cp850")
         f.open()
-        job = ui.job("Loading "+ self.sourceFilename(),len(f))
+        job = sess.job("Loading "+ self.sourceFilename(),len(f))
+        
+        q=store.query(sess,"*")
         q.zap()
         for dbfrow in f:
             job.increment()
-            try:
+            if self.severe:
                 self.appendFromDBF(q,dbfrow)
-            except DataVeto,e:
-                job.error(str(e))
-            except DatabaseError,e:
-                job.error(str(e))
-            except UnicodeError,e:
-                raise
-            except ValueError,e:
-                job.error(str(e))
-                #job.error(str(e))
-            except Exception,e:
-                if str(e).startswith("'ascii' codec can't encode character"):
+            else:
+                try:
+                    self.appendFromDBF(q,dbfrow)
+                except DataVeto,e:
+                    job.error(str(e))
+                except DatabaseError,e:
+                    job.error(str(e))
+                except UnicodeError,e:
                     raise
-                job.error(repr(e))
+                except ValueError,e:
+                    job.error(str(e))
+                    #job.error(str(e))
+                except Exception,e:
+                    if str(e).startswith("'ascii' codec can't encode character"):
+                        raise
+                    job.error(repr(e))
         job.done()
         f.close()
         q.commit()

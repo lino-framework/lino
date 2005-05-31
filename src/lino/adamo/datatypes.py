@@ -208,7 +208,9 @@ class TimeType(Type):
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         l = s.split(":")
-        if len(l) != 3:
+        if len(l) > 4:
+            raise ValueError, repr(s)
+        if len(l) < 1:
             raise ValueError, repr(s)
         l = map(int,l)
         return datetime.time(*l)

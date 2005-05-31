@@ -235,7 +235,7 @@ class Menu(Component):
         # used by gendoc.html
         kw.setdefault("label",htdoc.title)
         kw.setdefault("action",self.owner.urlto(htdoc))
-        return self.addItem(**kw)
+        return self.addItem(htdoc.name,**kw)
 
 class MenuBar(Component):
     
@@ -270,7 +270,7 @@ class Navigator:
             from cStringIO import StringIO
             out = StringIO()
             self.ds.__xml__(out.write)
-            f = frm.form("Text Editor")
+            f = frm.session.form("Text Editor")
             f.addEntry(type=MEMO(width=80,height=10),
                        value=out.getvalue())
             f.show()
@@ -646,8 +646,8 @@ class Form(Describable,MenuContainer):
         #self._parent = parent
 
     def show(self,modal=False):
+        # overridden by implementors
         self.session.notice("show(%s)",self.getLabel())
-        #raise NotImplementedError
     
     def isShown(self):
         raise NotImplementedError
@@ -837,7 +837,7 @@ class Toolkit:
 
 
     def message(self,sess,msg):
-        frm = self.form(sess,label="Message")
+        frm = sess.form(label="Message")
         frm.addLabel(msg)
         frm.addOkButton()
         frm.showModal()
@@ -845,7 +845,7 @@ class Toolkit:
     def decide(self,sess,prompt,answers,
                title="Decision",
                default=0):
-        frm = sess.form(sess,label=title,doc=prompt)
+        frm = sess.form(label=title,doc=prompt)
         p = frm.addPanel(Panel.HORIZONTAL)
         buttons = []
         for i in range(len(answers)):
@@ -860,7 +860,7 @@ class Toolkit:
         
     
     def confirm(self,sess,prompt,default="y"):
-        frm = self.form(sess,label="Confirmation",doc=prompt)
+        frm = sess.form(label="Confirmation",doc=prompt)
         #frm.addLabel(prompt)
         p = frm.addPanel(Panel.HORIZONTAL)
         ok = p.addOkButton()

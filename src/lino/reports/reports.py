@@ -311,7 +311,7 @@ class Row:
 
 class DataReport(BaseReport):
     
-    def __init__(self,parent,ds,
+    def __init__(self,ds,
                  columnWidths=None,width=None,rowHeight=None,
                  name=None,label=None,doc=None,**kw):
 
@@ -324,7 +324,7 @@ class DataReport(BaseReport):
             # forward keywords to the query
             ds=ds.child(**kw)
             
-        BaseReport.__init__(self,parent,ds,
+        BaseReport.__init__(self,None,ds,
                             columnWidths,width,rowHeight,
                             name=name,label=label,doc=doc)
     

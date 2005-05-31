@@ -30,7 +30,8 @@ from lino.adamo.session import Context, BabelLang
 #from query import DatasourceColumnList
 from lino.adamo.tim2lino import TimMemoParser
 from lino.adamo.store import Store
-from lino.adamo import center 
+#from lino.adamo import center 
+from lino.adamo.dbsession import DbSession
 
 
 class Database(Context,Describable):
@@ -50,12 +51,15 @@ class Database(Context,Describable):
         self.app = app
         self._stores = {}
         self._sessions=[]
-        self._populators = []
+        self._connections=[]
+        #self._populators = []
+        self._startupDone= False
+        print self, "__init__():", self.getSupportedLangs()
 
-    def addPopulator(self,p):
-        #if self._startupDone:
-        #    raise TooLate("Cannot addPopulator() after startup()")
-        self._populators.append(p)
+##     def addPopulator(self,p):
+##         #if self._startupDone:
+##         #    raise TooLate("Cannot addPopulator() after startup()")
+##         self._populators.append(p)
         
     def addSession(self,s):
         self._sessions.append(s)
@@ -75,6 +79,9 @@ class Database(Context,Describable):
         "implements Context.getBabelLangs()"
         return self._supportedLangs
 
+    def getSupportedLangs(self):
+        return " ".join([lng.id for lng in self._supportedLangs])
+
     def getDefaultLanguage(self):
         return self._supportedLangs[0].id
 
@@ -91,6 +98,8 @@ class Database(Context,Describable):
         """
         index -1 means that values in this language should be ignored
         """
+        print self, ":", lang_id, \
+              "not found in", self.getSupportedLangs()
         return BabelLang(-1,lang_id)
         #raise "%s : no such language code in %s" % (lang_id, repr(self))
         
@@ -112,6 +121,7 @@ class Database(Context,Describable):
         return l
 
     def connect(self,conn,tableClasses=None):
+        self._connections.append(conn)
         for t in self.app.getTableList(tableClasses):
             if not self._stores.has_key(t.__class__):
                 self._stores[t.__class__] = Store(conn,self,t)
@@ -174,9 +184,28 @@ class Database(Context,Describable):
 ##      def connect(self,conn):
 ##          self.__dict__['conn'] = conn
 
-    def commit(self):
+
+    def startup(self,console=None):
+        #print "%s.startup()" % self.__class__
+        #if ui is None:
+        #    ui = syscon.getSystemConsole()
+        #sess=center.openSession(syscon.getSystemConsole())
+        assert not self._startupDone,\
+                 "Cannot startup() again " + repr(self)
+        if console is None:
+            console=syscon.getSystemConsole()
+            
+        sess=DbSession(self,console)
         for store in self.getStoresById():
-            store.commit()
+            store.onStartup(sess)
+                
+        self._startupDone=True
+        return sess
+        
+
+    def commit(self,sess):
+        for store in self.getStoresById():
+            store.commit(sess)
             
     #def flush(self):
     #   for store in self._stores:
@@ -186,17 +215,23 @@ class Database(Context,Describable):
     #def disconnect(self):
 
     def close(self):
+        for store in self.getStoresById():
+            store.close()
+        self._stores = {}
+        self._startupDone=False
+            
+        
+    def shutdown(self):
         syscon.debug("Closing database "+ str(self))
+        self.close()
+        for conn in self._connections:
+            conn.close()
+        self._connections = []
         
 ##      for sess in self._sessions:
 ##          #sess.beforeShutdown()
 ##          self.removeSession(sess)
         
-        for store in self.getStoresById():
-            store.beforeShutdown()
-
-        self._stores = {}
-            
         #center.removeDatabase(self)
     
 ##     def restart(self):
