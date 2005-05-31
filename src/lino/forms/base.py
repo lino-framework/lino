@@ -26,15 +26,19 @@ from lino.adamo.datatypes import STRING, MEMO
 from lino.misc import jobs
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
+from lino.misc.jobs import Job
+
 
 from lino.adamo.exceptions import InvalidRequestError
 #from lino.ui import console
 #from lino.forms.application import BaseApplication
 from lino.forms import gui
-
 from lino.console import syscon
-from lino.console.application import Application
-from lino.console.console import CLI, CaptureConsole
+
+#from lino.console import syscon
+#from lino.console.application import Application
+#from lino.console.console import CLI
+#from lino.console.console import CaptureConsole
 
 class Component(Describable):
     def __init__(self,owner,*args,**kw):
@@ -61,8 +65,8 @@ class Component(Describable):
     
         
 class Button(Component):
-    def __init__(self,owner,action=None,*args,**kw):
-        Component.__init__(self,owner,*args,**kw)
+    def __init__(self,owner,name=None,action=None,*args,**kw):
+        Component.__init__(self,owner,name,*args,**kw)
         self.action = action
         self._args = []
         self._kw = {}
@@ -85,9 +89,10 @@ class Button(Component):
         try:
             self.action(*(self._args),**(self._kw))
         except InvalidRequestError,e:
-            frm.status(str(e))
+            frm.session.status(str(e))
         except Exception,e:
-            frm.showException(e,"after clicking '%s' in '%s'" % (
+            frm.session.exception(
+                e,"after clicking '%s' in '%s'" % (
                 self.getLabel(),frm.getLabel()))
         #except Exception,e:
         #    frm.error(str(e))
@@ -207,8 +212,8 @@ class Label(Component):
 
 
 class MenuItem(Button):
-    def __init__(self,owner,accel=None,*args,**kw):
-        Button.__init__(self,owner,*args,**kw)
+    def __init__(self,owner,name,accel,*args,**kw):
+        Button.__init__(self,owner,name,*args,**kw)
         self.accel = accel
 
 class Menu(Component):
@@ -216,8 +221,8 @@ class Menu(Component):
         Component.__init__(self,*args,**kw)
         self.items = []
 
-    def addItem(self,*args,**kw):
-        i = MenuItem(self.owner,*args,**kw)
+    def addItem(self,name,accel=None,**kw):
+        i = MenuItem(self.owner,name,accel,**kw)
         self.items.append(i)
         return i
     
@@ -253,10 +258,11 @@ class Navigator:
     def setupMenu(self):
         frm = self.getForm()
         m = frm.addMenu("file",label="&File")
-        m.addItem(label="&Exit",
+        m.addItem("exit",label="&Exit",
                   action=frm.close,
                   accel="ESC")
-        m.addItem(label="&Refresh",
+        m.addItem("refresh",
+                  label="&Refresh",
                   action=frm.refresh,
                   accel="Alt-F5")
 
@@ -272,20 +278,25 @@ class Navigator:
         
         
         m = frm.addMenu("edit",label="&Edit")
-        m.addItem(label="&Copy",
+        m.addItem("copy",
+                  label="&Copy",
                   action=copy)
         
         m = frm.addMenu("row",label="&Row")
-        m.addItem(label="Print &Row",
+        m.addItem("printRow",
+                  label="Print &Row",
                   action=self.printRow,
                   accel="F7")
-        m.addItem(label="Print &List",
+        m.addItem("printList",
+                  label="Print &List",
                   action=self.printList,
                   accel="Shift-F7")
-        m.addItem(label="&Delete this row",
+        m.addItem("delete",
+                  label="&Delete this row",
                   action=self.deleteSelectedRows,
                   accel="DEL")
-        m.addItem(label="&Insert new row",
+        m.addItem("insert",
+                  label="&Insert new row",
                   action=self.insertRow,
                   accel="INS")
         self.ds.getLeadTable().setupMenu(self)
@@ -299,7 +310,7 @@ class Navigator:
                 
             #if len(self.ds._lockedRows) > 0:
             #    s += " (%d locked)" % len(self.ds._lockedRows)
-            frm.status(s)
+            frm.session.status(s)
         frm.addIdleEvent(f)
 
     def deleteSelectedRows(self):
@@ -431,13 +442,13 @@ class Container(Component):
     
     def addLabel(self,label,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.labelFactory(self,label=label,**kw)
+        e = frm.session.toolkit.labelFactory(self,label=label,**kw)
         self._components.append(e)
         return e
         
     def addEntry(self,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.entryFactory(frm,name,*args,**kw)
+        e = frm.session.toolkit.entryFactory(frm,name,*args,**kw)
         self._components.append(e)
         if name is not None:
             frm.entries.define(name,e)
@@ -445,13 +456,13 @@ class Container(Component):
     
     def addDataEntry(self,dc,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.dataEntryFactory(frm,dc,*args,**kw)
+        e = frm.session.toolkit.dataEntryFactory(frm,dc,*args,**kw)
         self._components.append(e)
         return e
 
     def addDataGrid(self,ds,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.dataGridFactory(self,ds,*args,**kw)
+        e = frm.session.toolkit.dataGridFactory(self,ds,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         if name is not None:
@@ -460,20 +471,20 @@ class Container(Component):
         
     def addNavigator(self,ds,afterSkip=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.navigatorFactory(
+        e = frm.session.toolkit.navigatorFactory(
             self, ds,afterSkip,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         
     def addPanel(self,direction): 
         frm = self.getForm()
-        btn = frm.app.toolkit.panelFactory(self,direction)
+        btn = frm.session.toolkit.panelFactory(self,direction)
         self._components.append(btn)
         return btn
     
     def addViewer(self): 
         frm = self.getForm()
-        c = frm.app.toolkit.viewerFactory(self)
+        c = frm.session.toolkit.viewerFactory(self)
         self._components.append(c)
         return c
     
@@ -484,7 +495,8 @@ class Container(Component):
 
     def addButton(self,name=None,*args,**kw): 
         frm = self.getForm()
-        btn = frm.app.toolkit.buttonFactory(frm,name=name,*args,**kw)
+        btn = frm.session.toolkit.buttonFactory(
+            frm,name=name,*args,**kw)
         self._components.append(btn)
         if name is not None:
             frm.buttons.define(name,btn)
@@ -557,104 +569,7 @@ class Panel(Container):
 
 
 
-class GUI: #(console.UI):
     
-    
-    def form(self,*args,**kw):
-        raise NotImplementedError
-    
-    def decide(self,prompt,answers,
-               title="Decision",
-               default=0):
-        frm = self.form(label=title,doc=prompt)
-        p = frm.addPanel(Panel.HORIZONTAL)
-        buttons = []
-        for i in range(len(answers)):
-            btn = p.addButton(label=answers[i])
-            btn.setHandler(frm.close)
-            buttons.append(btn)
-        frm.showModal()
-        for i in range(len(answers)):
-            if frm.lastEvent == buttons[i]:
-                return i
-        raise "internal error: no button clicked?"
-        
-    
-    def confirm(self,prompt,default="y"):
-        frm = self.form(label="Confirmation",doc=prompt)
-        #frm.addLabel(prompt)
-        p = frm.addPanel(Panel.HORIZONTAL)
-        ok = p.addOkButton()
-        cancel = p.addCancelButton()
-        if default == "y":
-            ok.setDefault()
-        else:
-            cancel.setDefault()
-        frm.showModal()
-        return frm.lastEvent == ok
-
-    def abortRequested(self):
-        return False
-    
-    def message(self,msg):
-        frm = self.form(label="Message")
-        frm.addLabel(msg)
-        frm.addOkButton()
-        frm.showModal()
-
-    def isInteractive(self):
-        return True
-
-##     def job(self,*args,**kw):
-##         return console.job(*args,**kw)
-
-##     def make_progressbar(self,*args,**kw):
-##         return ProgressBar(self,*args,**kw)
-##         # return GuiProgressBar(self,*args,**kw)
-
-    def showDataForm(self,ds,**kw):
-        frm = self.form(label=ds.getLabel(),**kw)
-        ds.setupForm(frm)
-        frm.show()
-        
-    def showDataGrid(self,ds,**kw):
-        frm = self.form(label=ds.getLabel(),**kw)
-        frm.addDataGrid(ds)
-        frm.show()
-        
-    def chooseDataRow(self,ds,currentRow,**kw):
-        frm = self.form(label="Select from " + ds.getLabel(),**kw)
-        grid = frm.addDataGrid(ds)
-        grid.setModeChoosing()
-        frm.showModal()
-        return grid.getChosenRow()
-        
-    def showException(self,e,details=None):
-        msg = str(e)
-        out = StringIO()
-        traceback.print_exc(None,out)
-        s = out.getvalue()
-        del out
-        if details is not None:
-            msg += "\n" + details
-        while True:
-            i = self.decide(
-                msg,
-                title="Oops, an error occured!",
-                answers=("&Raise exception",
-                         "&Ignore",
-                         "&Details",
-                         "&Send"))
-            if i == 0:
-                raise
-            elif i == 1:
-                return
-            elif i == 2:
-                frm = self.form(label="Details")
-                frm.addEntry(type=MEMO,value=s)
-                frm.show()
-                
-
 
 class MenuContainer:
     def __init__(self):
@@ -673,16 +588,22 @@ class MenuContainer:
             self.debug("ignored menuController %s" % str(c))
 
 
-class Form(Describable,GUI,MenuContainer):
 
-    def __init__(self,app,parent,data=None,
+
+
+
+class Form(Describable,MenuContainer):
+
+    def __init__(self,sess,parent,data=None,
                  halign=None, valign=None,
                  *args,**kw):
         Describable.__init__(self,None,*args,**kw)
         MenuContainer.__init__(self)
         #GUI.__init__(self)
-        assert isinstance(app,Application)
-        self.app = app
+        #assert isinstance(app,Application)
+        self.session=sess
+        #self.toolkit=sess.toolkit
+        #self.app = sess.app
         self._parent = parent
         self.data = data
         self.entries = AttrDict()
@@ -693,7 +614,7 @@ class Form(Describable,GUI,MenuContainer):
         self.halign = halign
         self._boxes = []
         self.lastEvent = None
-        self.mainComp = app.toolkit.panelFactory(
+        self.mainComp = sess.toolkit.panelFactory(
             self, Container.VERTICAL)
         self._idleEvents = []
         self._onClose = []
@@ -724,12 +645,9 @@ class Form(Describable,GUI,MenuContainer):
         assert self._parent is None
         #self._parent = parent
 
-    def form(self,*args,**kw):
-        "create a form with this as parent"
-        return self.app.form(self,*args,**kw)
-    
     def show(self,modal=False):
-        raise NotImplementedError
+        self.session.notice("show(%s)",self.getLabel())
+        #raise NotImplementedError
     
     def isShown(self):
         raise NotImplementedError
@@ -777,54 +695,11 @@ class Form(Describable,GUI,MenuContainer):
         self.close()
 
 
-    def job(self,*args,**kw):
-        return self.app.toolkit.console.job(*args,**kw)
-
-    def buildMessage(self,*args,**kw):
-        return self.app.toolkit.console.buildMessage(*args,**kw)
-        
-    def status(self,*args,**kw):
-        return self.app.toolkit.console.status(*args,**kw)
-        
-    def debug(self,*args,**kw):
-        return self.app.toolkit.console.debug(*args,**kw)
-        
-    def warning(self,*args,**kw):
-        return self.app.toolkit.console.warning(*args,**kw)
-
-    def verbose(self,*args,**kw):
-        return self.app.toolkit.console.verbose(*args,**kw)
-
-    def notice(self,*args,**kw):
-        return self.app.toolkit.console.notice(*args,**kw)
-
-    def error(self,*args,**kw):
-        return self.app.toolkit.console.error(*args,**kw)
-    
-    def onJobIncremented(self,*args,**kw):
-        return self.app.toolkit.console.onJobIncremented(*args,**kw)
-
-    def onJobInit(self,*args,**kw):
-        return self.app.toolkit.console.onJobInit(*args,**kw)
-
-    def onJobDone(self,*args,**kw):
-        return self.app.toolkit.console.onJobDone(*args,**kw)
-
-    def onJobAbort(self,*args,**kw):
-        return self.app.toolkit.console.onJobAbort(*args,**kw)
-
-        
-
-##     def notice(self,msg):
-##         #print msg
-##         self.setMessage(msg)
-##     def error(self,msg):
-##         self.warning(msg)
-##         #print msg
 
 
 
-class Toolkit(CLI):
+
+class Toolkit:
     
     labelFactory = Label
     entryFactory = Entry
@@ -835,16 +710,41 @@ class Toolkit(CLI):
     dataGridFactory = DataGrid
     navigatorFactory = DataNavigator
     formFactory = Form
+    jobFactory=Job
     
-
-    
-    def __init__(self,app=None,console=None):
+    def __init__(self,console=None):
         self._apps = []
-        self.consoleForm = None
+        #self.consoleForm = None
         if console is None:
-            console=CaptureConsole(
-                verbosity=syscon._syscon._verbosity)
+            console=syscon.getSystemConsole()
+            #console=CaptureConsole(
+            #    verbosity=syscon._syscon._verbosity)
         self.console = console
+        # non-overridable forwarding
+        for funcname in (
+            'debug', 'notice','warning',
+            'verbose', 'error','critical',
+            'job',
+            'report','textprinter',
+            ):
+            setattr(self,funcname,getattr(console,funcname))
+
+    def status(self,*args,**kw):
+        # overridable forwarding
+        return self.console.status(self,*args,**kw)
+
+
+    def onJobRefresh(self,*args,**kw):
+        return self.console.onJobRefresh(self,*args,**kw)
+    def onJobInit(self,*args,**kw):
+        return self.console.onJobInit(self,*args,**kw)
+    def onJobDone(self,*args,**kw):
+        return self.console.onJobDone(self,*args,**kw)
+    def onJobAbort(self,*args,**kw):
+        return self.console.onJobAbort(self,*args,**kw)
+    
+            
+   
 
 ##     def setApplication(self,app):
 ##         self.app = app
@@ -854,7 +754,7 @@ class Toolkit(CLI):
 ##             self.app = Application(name="Automagic GUI application")
     
 
-    def setupOptionParser(self,parser):
+    def unused_setupOptionParser(self,parser):
         self.console.setupOptionParser(parser)
         parser.add_option(
             "--console",
@@ -868,7 +768,7 @@ class Toolkit(CLI):
             action="store_false",
             dest="showConsole")
 
-    def applyOptions(self,options,args):
+    def unused_applyOptions(self,options,args):
         self.console.applyOptions(options,args)
         self.showConsole = options.showConsole
     
@@ -894,30 +794,29 @@ class Toolkit(CLI):
 ##         return (options, args)
     
         
+    def createForm(self,sess,parent,*args,**kw):
+        return self.formFactory(sess,parent,*args,**kw)
+    
     def addApplication(self,app):
+        #app.setToolkit(self)
         self._apps.append(app)
         
-##     def write(self,s):
-##         self.consoleEntry.addText(s)
-##         #self.consoleEntry.setValue(n)
-
     def init(self):
         
         """ the console window must be visible during
         application.init()"""
         
-        if self.showConsole:
-            if self.consoleForm is None:
-                self.consoleForm = frm = self._apps[0].form(
-                    None, label="Console",
-                    halign=gui.RIGHT, valign=gui.BOTTOM)
-                frm.addViewer()
-                frm.show()
-            
+##         if self.showConsole:
+##             if self.consoleForm is None:
+##                 self.consoleForm = frm = self._apps[0].form(
+##                     None, label="Console",
+##                     halign=gui.RIGHT, valign=gui.BOTTOM)
+##                 frm.addViewer()
+##                 frm.show()
         for app in self._apps:
-            app.init(self)
-            #if app.mainComp
-            #app.mainForm.show()
+            app.start_gui(self)
+            #for sess in app.startup(self):
+            #    app.showMainForm(sess)
             
         #frm = app.getMainForm(self)
         #self.consoleForm.setParent(frm)
@@ -928,9 +827,94 @@ class Toolkit(CLI):
     def closeApplication(self,app):
         self._apps.remove(app)
         if len(self._apps) == 0:
-            if self.consoleForm is not None:
-                self.consoleForm.close()
+            self.stopRunning()
+            #if self.consoleForm is not None:
+            #    self.consoleForm.close()
         
+
+
+
+
+
+    def message(self,sess,msg):
+        frm = self.form(sess,label="Message")
+        frm.addLabel(msg)
+        frm.addOkButton()
+        frm.showModal()
+
+    def decide(self,sess,prompt,answers,
+               title="Decision",
+               default=0):
+        frm = sess.form(sess,label=title,doc=prompt)
+        p = frm.addPanel(Panel.HORIZONTAL)
+        buttons = []
+        for i in range(len(answers)):
+            btn = p.addButton(label=answers[i])
+            btn.setHandler(frm.close)
+            buttons.append(btn)
+        frm.showModal()
+        for i in range(len(answers)):
+            if frm.lastEvent == buttons[i]:
+                return i
+        raise "internal error: no button clicked?"
+        
+    
+    def confirm(self,sess,prompt,default="y"):
+        frm = self.form(sess,label="Confirmation",doc=prompt)
+        #frm.addLabel(prompt)
+        p = frm.addPanel(Panel.HORIZONTAL)
+        ok = p.addOkButton()
+        cancel = p.addCancelButton()
+        if default == "y":
+            ok.setDefault()
+        else:
+            cancel.setDefault()
+        frm.showModal()
+        return frm.lastEvent == ok
+
+    def abortRequested(self):
+        return False
+    
+    def isInteractive(self):
+        return True
+
+##     def job(self,*args,**kw):
+##         return console.job(*args,**kw)
+
+##     def make_progressbar(self,*args,**kw):
+##         return ProgressBar(self,*args,**kw)
+##         # return GuiProgressBar(self,*args,**kw)
+
+    def showException(self,sess,e,details=None):
+        msg = str(e)
+        out = StringIO()
+        traceback.print_exc(None,out)
+        s = out.getvalue()
+        del out
+        if details is not None:
+            msg += "\n" + details
+        while True:
+            i = sess.decide(
+                msg,
+                title="Oops, an error occured!",
+                answers=("&Raise exception",
+                         "&Ignore",
+                         "&Details",
+                         "&Send"))
+            if i == 0:
+                raise
+            elif i == 1:
+                return
+            elif i == 2:
+                frm = sess.form(label="Details")
+                frm.addEntry(type=MEMO,value=s)
+                frm.show()
+                
+
+
+
+
+
 
     def running(self):
         raise NotImplementedError
@@ -941,5 +925,12 @@ class Toolkit(CLI):
     def run_awhile(self):
         raise NotImplementedError
 
+    def stopRunning(self):
+        raise NotImplementedError
+        
 
+    def main(self,app,argv=None):
+        app.parse_args(argv)
+        self.addApplication(app)
+        self.run_forever()
         

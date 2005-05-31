@@ -423,11 +423,6 @@ class BaseColumnList:
                     FieldColumn,
                     )
     
-##     columnClasses={ 
-##                     Pointer: PointerColumn,
-##                     Field: FieldColumn,
-##                     BabelField: FieldColumn,
-##                     }
     
     def __init__(self,_parent,columnNames):
         if _parent is not None and columnNames is None:
@@ -834,7 +829,7 @@ class SimpleQuery(LeadTableColumnList):
 ##                     Pointer: PointerColumn,
 ##                     Field: FieldColumn,
 ##                     }
-    def __init__(self, _parent, store, session,
+    def __init__(self, _parent, store, sess,
                  columnNames=None,
                  viewName=None,
                  orderBy=None,
@@ -846,12 +841,12 @@ class SimpleQuery(LeadTableColumnList):
                  masters=[],
                  label=None,
                  **kw):
-        self._session = session
+        self.session = sess
         LeadTableColumnList.__init__(self,_parent,store,columnNames)
         self.rowcount = None
         
         for m in ('setBabelLangs','getLangs'):
-            setattr(self,m,getattr(session,m))
+            setattr(self,m,getattr(sess,m))
         
 
         #self._table = store._table # shortcut
@@ -995,7 +990,7 @@ class SimpleQuery(LeadTableColumnList):
                )
 
     def getContext(self):
-        return self._session
+        return self.session
 
     def createReport(self,**kw):
         from lino.reports.reports import DataReport
@@ -1003,7 +998,7 @@ class SimpleQuery(LeadTableColumnList):
 
     def report(self,**kw):
         rpt=self.createReport(**kw)
-        self._session.ui.report(rpt)
+        self.session.report(rpt)
     
 
     def zap(self):
@@ -1087,7 +1082,7 @@ class SimpleQuery(LeadTableColumnList):
         
     def child(self,columnNames=None,**kw):
         #self.setdefaults(kw)
-        return self.__class__(self,self._store,self._session,
+        return self.__class__(self,self._store,self.session,
                               columnNames=columnNames,
                               **kw)
     # alias for child() of a Query:
@@ -1174,7 +1169,7 @@ class SimpleQuery(LeadTableColumnList):
                                             writer)
     
     def getSession(self):
-        return self._session
+        return self.session
 
     def getTableName(self):
         return self.getLeadTable().getTableName()
@@ -1281,7 +1276,7 @@ class SimpleQuery(LeadTableColumnList):
 ##                for (name,type) in self._table.getPrimaryAtoms()]
 
     def executePeek(self,id):
-        return self._connection.executePeek(self, id, self._session)
+        return self._connection.executePeek(self, id, self.session)
 
     def commit(self):
         self._store.unlockDatasource(self)
@@ -1358,7 +1353,7 @@ class SimpleQuery(LeadTableColumnList):
     def csr2atoms(self,sqlatoms):
         return self._connection.csr2atoms(self,
                                           sqlatoms,
-                                          self._session)
+                                          self.session)
     
     def peek(self,*id):
         assert len(id) == len(self._pkColumns),\
@@ -1484,15 +1479,15 @@ class SimpleQuery(LeadTableColumnList):
 
 class Query(SimpleQuery):
 
-    def __init__(self, _parent, store, session,
+    def __init__(self, _parent, store, sess,
                  columnNames=None,
                  pageNum=None,
                  pageLen=None,
                  **kw):
         
         
-        SimpleQuery.__init__(self, _parent,store,session,columnNames,
-                             **kw)
+        SimpleQuery.__init__(
+            self, _parent,store,sess,columnNames,**kw)
         if _parent is not None:
             if pageNum is None: pageNum=_parent.pageNum
             if pageLen is None: pageLen=_parent.pageLen

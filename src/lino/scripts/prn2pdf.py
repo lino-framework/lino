@@ -20,10 +20,12 @@
 
 import sys, os
 
-from lino.ui import console 
+#from lino.ui import console 
 from lino.textprinter.pdfprn import PdfTextPrinter
 
-class Prn2pdf(console.ConsoleApplication):
+from lino.console.application import Application, UsageError
+
+class Prn2pdf(Application):
 
     name="Lino/prn2pdf"
     years='2002-2005'
@@ -34,7 +36,7 @@ where FILE is the file to be converted to a pdf file.
 It may contain plain text and simple formatting printer control sequences. """
     
     def setupOptionParser(self,parser):
-        console.ConsoleApplication.setupOptionParser(self,parser)
+        Application.setupOptionParser(self,parser)
     
         parser.add_option("-o", "--output",
                           help="""\
@@ -45,10 +47,10 @@ write to OUTFILE rather than FILE.pdf""",
                           default=None)
     
 
-    def run(self,ui):
+    def run(self,sess):
         
         if len(self.args) != 1:
-            raise console.UsageError("needs 1 argument")
+            raise UsageError("needs 1 argument")
     
         inputfile = self.args[0]
         if self.options.outFile is None:
@@ -61,14 +63,14 @@ write to OUTFILE rather than FILE.pdf""",
         try:
             d.readfile(inputfile)#,coding=sys.stdin.encoding)
         except Exception,e:
-            ui.error(str(e))
+            sess.error(str(e))
             ok = False
 
         d.endDoc()
         if not ok:
             return -1
 
-        if sys.platform == "win32" and ui.isInteractive():
+        if sys.platform == "win32" and sess.isInteractive():
             os.system("start %s" % self.options.outFile)
 
     

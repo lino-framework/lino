@@ -68,9 +68,9 @@ continue testing even if failures or errors occur""",
                           dest="ignore",
                           default=False)
     
-    def makeSuite(self,ui,argv,root='.'):
+    def makeSuite(self,sess,argv,root='.'):
 
-        job = ui.job("Collecting test cases")
+        job = sess.job("Collecting test cases")
         suites=[]
         cases = []
         #skipped=[]
@@ -102,7 +102,7 @@ continue testing even if failures or errors occur""",
                         job.status("Extracting cases from %s...", 
                                    modname)
                         
-                        self.findTestCases(ui,modname,cases,suites)
+                        self.findTestCases(sess,modname,cases,suites)
             sys.path.remove(dirpath)
 
         job.done("found %d cases and %d suites.",
@@ -111,7 +111,7 @@ continue testing even if failures or errors occur""",
             suites.append(unittest.makeSuite(tcl))
         return unittest.TestSuite(suites)
      
-    def findTestCases(self,ui,modname,cases,suites):
+    def findTestCases(self,sess,modname,cases,suites):
         mod = my_import(modname)
         #cases=[]
         if hasattr(mod,"suite"):
@@ -124,15 +124,15 @@ continue testing even if failures or errors occur""",
                     if v != unittest.TestCase \
                           and v != tsttools.TestCase:
                         if hasattr(v,"skip") and v.skip:
-                            ui.notice("Skipping %s.%s",
-                                      modname,v.__name__)
+                            sess.notice("Skipping %s.%s",
+                                        modname,v.__name__)
                         else:
                             cases.append(v)
         return cases
     
     
-    def run(self,ui):
-        suite = self.makeSuite(ui,self.args)
+    def run(self,sess):
+        suite = self.makeSuite(sess,self.args)
         
         if self.options.ignore:
             runner = unittest.TextTestRunner()

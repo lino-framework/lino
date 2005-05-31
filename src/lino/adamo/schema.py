@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
 import types
 
 from lino.misc.descr import Describable
@@ -25,6 +26,7 @@ from lino.console import syscon
 from lino.console.application import Application
 
 #from lino.adamo.forms import Form
+from lino.adamo.dbsession import DbSession
 from lino.adamo.database import Database
 from lino.adamo.table import Table, LinkTable, SchemaComponent
 from lino.adamo.exceptions import StartupDelay
@@ -59,15 +61,21 @@ where DBFILE is the name of the sqlite database file"""
     HK_CHAR = '&'
     defaultLangs = ('en',)
     tables=[]
+
+    toolkits="wx console"
+    
+    #_sessionFactory=DbSession
     
     def __init__(self,filename=None,
-                 checkIntegrity=False,
+                 checkIntegrityOnStartup=False,
+                 tempDir=".",
                  #populate=False,
-                 supportedLangs=None,**kw):
+                 langs=None,**kw):
         Application.__init__(self,**kw)
         #self.schema = Schema()
         self.filename = filename
-        self.checkIntegrity = checkIntegrity
+        self.tempDir=tempDir
+        self.checkIntegrityOnStartup = checkIntegrityOnStartup
         #self.populate=populate
         #self.sess = None
 ##     def __init__(self,name=None,label=None,doc=None,
@@ -78,14 +86,13 @@ where DBFILE is the name of the sqlite database file"""
         self._startupDone= False
         self._datasourceRenderer= None
         self._contextRenderer= None
-        if supportedLangs is None:
-            supportedLangs="en de fr nl et"
-        self._possibleLangs = tuple(supportedLangs.split())
+        if langs is None:
+            langs="en de fr nl et"
+        self._possibleLangs = tuple(langs.split())
         
         self._databases = []
         self._plugins = []
         self._tables = []
-        self._populators = []
         
         self.plugins = AttrDict()
         #self.forms = AttrDict()
@@ -101,18 +108,18 @@ where DBFILE is the name of the sqlite database file"""
         #def call_set(option, opt_str, value, parser,**kw):
         #    self.set(**kw)
 
-        p.add_option("-c",
-                     "--check",
-                     help="perform integrity checks",
-                     action="store_true",
-                     dest="checkIntegrity",
-                     default=self.checkIntegrity,
-                     )
+        parser.add_option("-c",
+                          "--check",
+                          help="perform integrity check on startup",
+                          action="store_true",
+                          dest="checkIntegrityOnStartup",
+                          default=self.checkIntegrityOnStartup,
+                          )
         
         
     def applyOptions(self,options,args):
         Application.applyOptions(self,options,args)
-        self.checkIntegrity = options.checkIntegrity
+        self.checkIntegrityOnStartup = options.checkIntegrityOnStartup
         if len(args) == 1:
             self.filename = args[0]
         else:
@@ -143,11 +150,6 @@ where DBFILE is the name of the sqlite database file"""
 
 
 
-    def addPopulator(self,p):
-        if self._startupDone:
-            raise TooLate("Cannot addPopulator() after startup()")
-        self._populators.append(p)
-        
 ##  def addForm(self,form):
 ##      assert isinstance(form,FormTemplate), \
 ##               repr(form)+" is not a FormTemplate"
@@ -261,8 +263,8 @@ where DBFILE is the name of the sqlite database file"""
         return str(self.__class__)
 
 
-    #def addDatabase(self,langs=None,name=None,label=None):
-    def addDatabase(self,name=None,**kw):
+    def addDatabase(self,name=None,**kw): #langs=None,label=None):
+    #def openDatabase(self,name=None,**kw):
         if self._startupDone:
             raise TooLate("Cannot addDatabase() after startup()")
         if name is None:
@@ -282,7 +284,7 @@ where DBFILE is the name of the sqlite database file"""
             p.defineTables(self)
     
     def quickStartup(self,
-                     ui=None,
+                     #toolkit=None,
                      langs=None,
                      filename=None,
                      **kw):
@@ -293,60 +295,80 @@ where DBFILE is the name of the sqlite database file"""
         self.initialize()
         db = self.addDatabase(langs=langs)
         syscon.debug("Connect")
-        conn = center.connection(filename=filename,schema=self)
+        conn = center.connection(filename=filename)
         db.connect(conn)
-        return self.startup()
+        self.startup()
+        return DbSession(db,syscon.getSystemConsole())
+        #assert len(self._sessions) == 1
+        #return self._sessions[0]
     
 
-    def startup(self): #,checkIntegrity=None):
+    def startup(self): # ,toolkit=None): #,checkIntegrity=None):
         #print "%s.startup()" % self.__class__
         #if ui is None:
         #    ui = syscon.getSystemConsole()
-        sess=center.openSession(syscon.getSystemConsole())
+        #sess=center.openSession(syscon.getSystemConsole())
         assert len(self._databases) > 0, "no databases"
         assert not self._startupDone,\
                  "Cannot startup() again " + repr(self)
+        console=syscon.getSystemConsole()
         for db in self._databases:
-            sess.use(db)
+            sess=DbSession(db,console)
+            #self.openSession(sess)
             #syscon.debug(db.getLabel())
+            #print "Database %s: %s" % (db.name, db.getStoresById())
+            #print
             for store in db.getStoresById():
                 store.onStartup(sess)
                 
+            #db.populate(sess)
+                
+            if self.checkIntegrityOnStartup:
+                self.checkIntegrity(sess)
+
+            sess.close()
+                
         self._startupDone=True
         
-        self.check(sess)
-        sess.setDefaultLanguage()
-        return sess
-    
-    
-    def check(self,sess):
-        #print "%s.check()" % self.__class__
-        assert self._startupDone
-        for db in self._databases:
-            sess.use(db)
-            syscon.debug("Checking %s", db.getLabel())
-            for p in self._populators:
-                #job = sess.ui.job("populator " + p.getLabel())
-                for store in db.getStoresById():
-                    if store.isVirgin():
-                        store.populate(self,sess,p)
-                #job.done()
-            if self.checkIntegrity:
-                for store in db.getStoresById():
-                    store.checkIntegrity(sess)
+    def checkIntegrity(self,sess):
+        sess.debug("Checking %s", sess.db.getLabel())
+        for store in sess.db.getStoresById():
+            store.checkIntegrity(sess)
+        
+        
         #sess.setDefaultLanguage()
+        #return self._sessions
+
+##     def openSession(self,db):
+##         sess = DbSession(db,toolkit)
+##         self._sessions.append(sess)
+##         self.onOpenSession(sess)
+##         return sess
+
+        
+    def start_gui(self,toolkit):
+        for db in self._databases:
+            sess=DbSession(db,toolkit)
+            self.run(sess)
+            self.addSession(sess)
     
     
+    def run(self,sess):
+        self.showMainForm(sess)
+        
+    def showMainForm(self,sess):
+        pass
+        
     def shutdown(self):
         syscon.debug("Schema.shutdown()")
         for db in self._databases:
             db.close()
         self._databases = []
         
-    def init(self,ui): 
-        # called from Toolkit.main()
-        sess = self.startup(ui)
-        self.showMainForm(ui)
+##     def init(self,ui): 
+##         # called from Toolkit.main()
+##         sess = self.startup(ui)
+##         self.showMainForm(ui)
 
     
 
@@ -526,39 +548,39 @@ where DBFILE is the name of the sqlite database file"""
         
 
             
-def connect_sqlite():
-    from lino.adamo.dbds.sqlite_dbd import Connection
-    return Connection(filename="tmp.db",
-                      schema=schema,
-                      isTemporary=True)
+## def connect_sqlite():
+##     from lino.adamo.dbds.sqlite_dbd import Connection
+##     return Connection(filename="tmp.db",
+##                       schema=schema,
+##                       isTemporary=True)
 
-def connect_odbc():
-    raise ImportError
-    """
+## def connect_odbc():
+##     raise ImportError
+##     """
     
-    odbc does not work. to continue getting it work, uncomment the
-    above line and run tests/adamo/4.py to reproduce the following
-    error:
+##     odbc does not work. to continue getting it work, uncomment the
+##     above line and run tests/adamo/4.py to reproduce the following
+##     error:
     
-    DatabaseError: CREATE TABLE PARTNERS (
-         id BIGINT,
-         lang_id CHAR(3),
-         org_id BIGINT,
-         person_id BIGINT,
-         name VARCHAR(50),
-         PRIMARY KEY (id)
-)
-('37000', -3553, '[Microsoft][ODBC dBASE Driver] Syntaxfehler in Felddefinition.
-', 4612)
+##     DatabaseError: CREATE TABLE PARTNERS (
+##          id BIGINT,
+##          lang_id CHAR(3),
+##          org_id BIGINT,
+##          person_id BIGINT,
+##          name VARCHAR(50),
+##          PRIMARY KEY (id)
+## )
+## ('37000', -3553, '[Microsoft][ODBC dBASE Driver] Syntaxfehler in Felddefinition.
+## ', 4612)
 
-    """
-    from lino.adamo.dbds.odbc_dbd import Connection
-    return Connection(dsn="DBFS")
+##     """
+##     from lino.adamo.dbds.odbc_dbd import Connection
+##     return Connection(dsn="DBFS")
 
-def connect_mysql():
-    raise ImportError
-    from lino.adamo.dbds.mysql_dbd import Connection
-    return Connection("linodemo")
+## def connect_mysql():
+##     raise ImportError
+##     from lino.adamo.dbds.mysql_dbd import Connection
+##     return Connection("linodemo")
     
 
     

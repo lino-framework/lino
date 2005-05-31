@@ -18,6 +18,12 @@
 
 """
 multiple databases and connections
+
+What's wrong: There are 3 calls to addDatabase() although logically
+there is only 2 databases.  The shared tables must not be in a
+database, but the Application must be Context. To check: will Query
+and Store still work if they know only a Context, not a Database?
+
 """
 
 from lino.misc.tsttools import TestCase, main
@@ -49,9 +55,7 @@ class Case(TestCase):
         
         # print app._tables
         
-        app.addPopulator(demo.Populator(big=True))
-        
-        conn = center.connection(app)
+        conn = center.connection()
         
         stddb = app.addDatabase("std",
                                 langs="en de fr et",
@@ -62,13 +66,17 @@ class Case(TestCase):
 
         db1 = app.addDatabase(langs="de")
         db1.update(stddb)
-        conn = center.connection(app)
+        conn = center.connection()
         db1.connect(conn)
+        db1.populate(demo.Populator(big=True))
+        
         
         db2 = app.addDatabase(langs="en")
         db2.update(stddb)
-        conn = center.connection(app)
+        conn = center.connection()
         db2.connect(conn)
+        db2.addPopulator(demo.Populator(big=True))
+        
 
 
         sess = app.startup()

@@ -24,6 +24,7 @@ import time
 
 from optparse import OptionParser
 from cStringIO import StringIO
+#from lino.forms.base import Toolkit
 
 
 try:
@@ -41,37 +42,38 @@ from lino.misc.jobs import Job #, PurzelConsoleJob
 ## class UI:
 ##     pass
     
-class CLI:
-    usage = None
-    description = None
+## class CLI:
+##     usage = None
+##     description = None
     
-    def parse_args(self,argv=None): #,**kw):
-        p = OptionParser(
-            usage=self.usage,
-            description=self.description)
+##     def parse_args(self,argv=None): #,**kw):
+##         p = OptionParser(
+##             usage=self.usage,
+##             description=self.description)
             
-        self.setupOptionParser(p)
+##         self.setupOptionParser(p)
         
-        if argv is None:
-            argv = sys.argv[1:]
+##         if argv is None:
+##             argv = sys.argv[1:]
         
-        options,args = p.parse_args(argv)
-        self.applyOptions(options,args)
+##         options,args = p.parse_args(argv)
+##         self.applyOptions(options,args)
         
 
-    def applyOptions(self,options,args):
-        pass
+##     def applyOptions(self,options,args):
+##         pass
     
-    def setupOptionParser(self,parser):
-        pass
+##     def setupOptionParser(self,parser):
+##         pass
 
             
 #class Console(UI,CLI):
-class Console(CLI):
+class Console: #(Toolkit):
 
-    jobClass = Job
+    jobFactory = Job
 
     def __init__(self, stdout, stderr,**kw):
+        #Toolkit.__init__(self,self)
         self._stdout = stdout
         self._stderr = stderr
         self._logfile = None
@@ -102,18 +104,6 @@ class Console(CLI):
 ##             self._ui = ui
         #if debug is not None:
         #    self._debug = debug
-
-##     def startDump(self,**kw):
-##         assert self._dumping is None
-##         self._dumping = (StringIO(), self._stdout)
-##         self._stdout = self._dumping[0].write
-
-##     def stopDump(self):
-##         assert self._dumping is not None, "dumping was not started"
-##         s = self._dumping[0].getvalue()
-##         self._stdout = self._dumping[1]
-##         self._dumping = None
-##         return s
 
         
     def isBatch(self):
@@ -147,52 +137,47 @@ class Console(CLI):
     def status(self,*args,**kw):
         self.verbose(*args,**kw)
 
-    def error(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
+    def error(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
         self._stderr(msg + "\n")
         self.writelog(msg)
 
-    def buildMessage(self,msg,*args,**kw):
-        assert len(kw) == 0, "kwargs not yet implemented"
-        if len(args) == 0:
-            return msg
-        return msg % args
-    
-    def critical(self,msg,*args,**kw):
+    def critical(self,sess,msg,*args,**kw):
         "Something terrible has happened..."
         #self.writelog(msg)
         #if sound:
         #    sound.asterisk()
-        self.error("critical: " + msg,*args,**kw)
+        self.error(sess,"critical: " + msg,*args,**kw)
 
 ##     def handleException(self,e):
 ##         self.error(str(e))
     
-        
+    def showException(self,sess,e,details=None):
+        raise
 
-    def warning(self,msg,*args,**kw):
+    def warning(self,sess,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
-        msg = self.buildMessage(msg,*args,**kw)
+        msg = sess.buildMessage(msg,*args,**kw)
         self.writelog(msg)
         if self._verbosity >= 0:
             self.writeout(msg)
 
-    def notice(self,msg,*args,**kw):
+    def notice(self,sess,msg,*args,**kw):
         "Display message if verbosity is normal. Not logged."
         if self._verbosity >= 0:
-            msg = self.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args,**kw)
             self.writeout(msg)
 
-    def verbose(self,msg,*args,**kw):
+    def verbose(self,sess,msg,*args,**kw):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
-            msg = self.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args,**kw)
             self.writeout(msg)
         
-    def debug(self,msg,*args,**kw):
+    def debug(self,sess,msg,*args,**kw):
         "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
-            msg = self.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args,**kw)
             self.writeout(msg)
             #self.out.write(msg + "\n")
 
@@ -204,21 +189,18 @@ class Console(CLI):
     
     def onJobInit(self,job):
         if job._label is not None:
-            self.notice(job._label)
-
-##     def onJobStatus(self,job):
-##         pass
+            self.notice(job.session,job._label)
 
     def onJobDone(self,job,msg):
-        self.status(None)
+        self.status(job.session,None)
         job.summary()
         if msg is not None:
-            self.notice(job.getLabel() + ": " + msg)
+            self.notice(job.session,job.getLabel() + ": " + msg)
     
     def onJobAbort(self,job,msg):
-        self.status(None)
+        self.status(job.session,None)
         job.summary()
-        self.error(job.getLabel() + ": " + msg)
+        self.error(job.session,job.getLabel() + ": " + msg)
 
             
         
@@ -279,7 +261,8 @@ class Console(CLI):
                      action="callback",
                      callback=set_logfile)
 
-    def message(self,msg):
+    def message(self,sess,msg,**kw):
+        #msg=sess.buildMessage(msg,**kw)
 ##         if self.app is not None:
 ##             return self.app.warning(msg)
         
@@ -291,7 +274,7 @@ class Console(CLI):
             raw_input("Press ENTER to continue...")
             
             
-    def confirm(self,prompt,default="y"):
+    def confirm(self,sess,prompt,default="y"):
         """Ask user a yes/no question and return only when she has
         given her answer. returns True or False.
         
@@ -321,7 +304,7 @@ class Console(CLI):
             self.error("wrong answer, must be 'y' or 'n': "+s)
             
 
-    def decide(self,prompt,answers,
+    def decide(self,sess,prompt,answers,
                default=None,
                ignoreCase=True):
         
@@ -351,35 +334,32 @@ class Console(CLI):
     def shutdown(self):
         #self.verbose("Done after %f seconds.",
         #             time.time() - self._started)
-        if sys.platform == "win32":
-            utime, stime, cutime, cstime, elapsed_time = os.times()
-            self.verbose("%.2f+%.2f=%.2f seconds used",
-                         utime,stime,utime+stime)
-        else:
-            self.verbose( "+".join([str(x) for x in os.times()])
-                          + " seconds used")
+##         if sys.platform == "win32":
+##             utime, stime, cutime, cstime, elapsed_time = os.times()
+##             syscon.verbose("%.2f+%.2f=%.2f seconds used",
+##                            utime,stime,utime+stime)
+##         else:
+##             syscon.verbose( "+".join([str(x) for x in os.times()])
+##                           + " seconds used")
         if self._logfile:
             self._logfile.close()
         
-
-    def form(self,*args,**kw):
-        raise NotImplementedError
 
     def job(self,*args,**kw):
         job = Job()
         job.init(self,*args,**kw)
         return job
     
-    def textprinter(self):
+    def textprinter(self,sess,**kw):
         from lino.textprinter.plain import PlainTextPrinter
-        return PlainTextPrinter(self._stdout)
+        return PlainTextPrinter(self._stdout,**kw)
         
 ##     def report(self,**kw):
 ##         from lino.reports.plain import Report
 ##         return Report(writer=self._stdout,**kw)
 
 
-    def report(self,rpt,*args,**kw):
+    def report(self,sess,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
         gd = PlainDocument(writer=self._stdout)
         gd.beginDocument()
@@ -396,7 +376,6 @@ class TtyConsole(Console):
 
     width = 78  # 
     purzelMann = "|/-\\"
-    #jobClass = PurzelConsoleJob
 
     
 
@@ -404,9 +383,6 @@ class TtyConsole(Console):
         self._status = None
         Console.__init__(self,*args,**kw)
 
-
-##     def onJobStatus(self,job):
-##         self._display_job(job)
 
     def onJobRefresh(self,job):
         self._display_job(job)
@@ -423,10 +399,7 @@ class TtyConsole(Console):
                 s = "[    ] " 
             else:
                 s = "[%3d%%] " % job.pc
-        self.status(s+job.getStatus())
-##         if abortRequested():
-##             if self.confirm("Are you sure you want to abort?"):
-##                 job.abort() # raises JobAborted
+        self.status(job.session,s+job.getStatus())
     
     def abortRequested(self):
         if not msvcrt: return False
@@ -442,42 +415,42 @@ class TtyConsole(Console):
                 return True
         return False
 
-    def warning(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.warning(self,msg.ljust(self.width))
+    def warning(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.warning(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def message(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.message(self,msg.ljust(self.width))
+    def message(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.message(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def notice(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.notice(self,msg.ljust(self.width))
+    def notice(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.notice(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def verbose(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.verbose(self,msg.ljust(self.width))
+    def verbose(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.verbose(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def error(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.error(self,msg.ljust(self.width))
+    def error(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.error(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def critical(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.critical(self,msg.ljust(self.width))
+    def critical(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.critical(self,sess,msg.ljust(self.width))
         self._refresh()
         
         
-    def status(self,msg,*args,**kw):
+    def status(self,sess,msg,*args,**kw):
         if msg is None:
             self._status = None
         else:
-            msg = self.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args,**kw)
             self._status = msg[:self.width]
             self._stdout(self._status.ljust(self.width)+"\r")
 

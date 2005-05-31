@@ -40,7 +40,8 @@ class Volumes(Table):
             vol = nav.getCurrentRow()
             vol.load(frm)
             
-        m.addItem(label="&Load",
+        m.addItem("load",
+                  label="&Load",
                   action=f,
                   accel="F6")
 

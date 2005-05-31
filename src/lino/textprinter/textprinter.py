@@ -20,8 +20,6 @@ import sys
 import os
 import codecs
 
-#from lino.ui import console
-
 class ParserError(Exception):
     pass
 

@@ -23,6 +23,7 @@ import atexit
 import codecs
 
 from lino.console.console import TtyConsole
+from lino.forms.session import Session
 
 # if frozen (with py2exe or McMillan), sys.setdefaultencoding() has
 # not been deleted.  And site.py and sitecustomize.py haven't been
@@ -90,19 +91,55 @@ def rewriter(to_stream):
 
 def setSystemConsole(c):
     g = globals()
-
+    
     for funcname in (
-        'debug','message','notice','status',
-        'job', 'verbose', 'error','critical',
-        'confirm','warning',
-        #'getConsoleOutput',
-        #'copyleft',
-        'report','textprinter',
-        'isInteractive','isVerbose', 'set',
-        'parse_args', ):
+        'isInteractive','isVerbose',
+        #'run',
+        'set', #'parse_args',
+        ):
         g[funcname] = getattr(c,funcname)
         
+    sess = Session(c)
+    for funcname in (
+        'debug',
+        'notice','status','warning',
+        'verbose', 'error','critical',
+        'job',
+        'message','confirm',
+        'report','textprinter',
+        ):
+        g[funcname] = getattr(sess,funcname)
+        
     g['_syscon'] = c
+    g['_session'] = sess
+
+## def setSystemConsole(c):
+##     g = globals()
+    
+##     for funcname in (
+##         'isInteractive','isVerbose',
+##         #'run',
+##         'set', #'parse_args',
+##         ):
+##         g[funcname] = getattr(c,funcname)
+        
+##     g['_syscon'] = c
+##     setSystemSession(Session(c))
+
+## def setSystemSession(sess):
+##     g = globals()
+##     for funcname in (
+##         'debug',
+##         'notice','status','warning',
+##         'verbose', 'error','critical',
+##         'job',
+##         'message','confirm',
+##         'report','textprinter',
+##         ):
+##         g[funcname] = getattr(sess,funcname)
+        
+##     g['_session'] = sess
+
 
 def getSystemConsole():
     return _syscon
@@ -119,17 +156,7 @@ if hasattr(sys.stdout,"encoding") \
     #sys.stderr = rewriter(sys.stderr)
 
 
-setSystemConsole(
-    TtyConsole(sys.stdout.write, sys.stderr.write))
-
+setSystemConsole(TtyConsole(sys.stdout.write, sys.stderr.write))
 
 atexit.register(shutdown)
-
-
-
-
-
-
-
-
 

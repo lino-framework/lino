@@ -26,20 +26,18 @@ from lino.console import syscon
 
 class Center:
     """
-    The Center is the global singleton object used by adamo.
-    It holds a list of connections, sessions and databases. 
+    singleton object used by adamo.
     """
 
     def __init__(self):
-        self.ui = None
+        #self.ui = None
         self._schemas = []
         self._connections = []
         #self._databases = []
-        self._sessions = []
         #self._sessionFactory = Session
         #self._checkIntegrity = False
 
-    def connection(self,schema,*args,**kw):
+    def connection(self,*args,**kw):
         try:
             from lino.adamo.dbds.sqlite_dbd import Connection
         except ImportError:
@@ -62,15 +60,6 @@ class Center:
 ##     def setSessionFactory(self,sf):
 ##         self._sessionFactory = sf
         
-    def openSession(self,ui,**kw):
-        #sess = self._sessionFactory(self,**kw)
-        sess = Session(self,ui,**kw)
-        self._sessions.append(sess)
-        return sess
-
-    def closeSession(self,session):
-        self._sessions.remove(session)
-
 ##      def addSession(self,session):
 ##          self._sessions.append(session)
     
@@ -97,9 +86,6 @@ class Center:
         # were run (because previous startups remained open.
         #if self.ui is None:
         #    return
-        for sess in self._sessions:
-            syscon.debug("Killing session %r",sess)
-            sess.end()
         syscon.debug("Center.shutdown()")
         for sch in self._schemas:
             sch.shutdown(syscon)
@@ -136,7 +122,7 @@ atexit.register(_center.shutdown)
 
 
 
-for m in ('openSession',#'getOptionParser',
+for m in ( #'openSession',#'getOptionParser',
           'shutdown',
           #'doCheckIntegrity', 
           #'addSchema',

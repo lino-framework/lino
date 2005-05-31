@@ -50,7 +50,7 @@ charsets = {
 # OEM_FIXED_FONT = win32con.OEM_FIXED_FONT
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
 
-from lino.ui import console
+from lino.console import syscon
 from lino.textprinter.textprinter import TextPrinter, PrinterNotReady, ParserError
 
 pt = 20
@@ -363,7 +363,7 @@ class Win32TextPrinter(TextPrinter):
             # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
         
             self.dc.SelectObject(self.font)
-            console.debug("select font %s",self.fontDict)
+            syscon.debug("select font %s",self.fontDict)
             
         #console.debug(repr(tm))
 ##         console.info(repr(self.dc.GetTextFace()))
@@ -381,8 +381,8 @@ class Win32TextPrinter(TextPrinter):
         # 
         #self.leading = max(self.leading,self.doc.status.leading)
         #self.doc.dc.TextOut(self.line)
-        console.debug("self.dc.TextOut(%d,%d,%r)",
-                      int(self.x),-int(self.y),self.line)
+        syscon.debug("self.dc.TextOut(%d,%d,%r)",
+                     int(self.x),-int(self.y),self.line)
         self.dc.TextOut(int(self.x),-int(self.y),self.line)
         (dx,dy) = self.dc.GetTextExtent(self.line)
         
@@ -412,7 +412,7 @@ class Win32TextPrinter(TextPrinter):
         self.x = self.org[0] + self.margin
         self.y += self.leading
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
-        console.debug("self.y += %d" % self.leading)
+        syscon.debug("self.y += %d" % self.leading)
 
 
     def length2i(self,s):
@@ -442,7 +442,7 @@ class Win32TextPrinter(TextPrinter):
         try:
             img = Image.open(filename)
         except OSError,e:
-            console.error(str(e))
+            syscon.error(str(e))
             return
         
         self.flush() # make sure that self.x and self.y are correct

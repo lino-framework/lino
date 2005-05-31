@@ -64,7 +64,6 @@ class VolumeVisitor(Task):
                                           parent=dir,
                                           volume=self.volume)
                 
-            else:
             self.visit_dir(row,fullname)
         else:
             self.error("%s : no such file or directory",fullname)

@@ -46,13 +46,13 @@ class JobAborted(Exception):
 
 class BaseJob:
     
-    def init(self,ui,maxval=0):
-        self.ui = ui
+    def init(self,sess,maxval=0):
+        self.session = sess
         self.maxval = maxval
         self.curval = 0
         self.pc = None
         self._done = False
-        self.ui.onJobInit(self)
+        self.session.toolkit.onJobInit(self)
 
     def setMaxValue(self,n):
         self.maxval = n
@@ -64,7 +64,7 @@ class BaseJob:
         raise NotImplementedError
     
     def confirmAbort(self):
-        return self.ui.confirm("Are you sure you want to abort?")
+        return self.session.confirm("Are you sure you want to abort?")
         
     def increment(self,n=1):
         self.curval += n
@@ -79,18 +79,18 @@ class BaseJob:
         self.refresh()
 
     def refresh(self):
-        self.ui.onJobRefresh(self)
+        self.session.toolkit.onJobRefresh(self)
         
     def done(self,msg=None,*args,**kw):
         if self._done: return
         if msg is not None:
-            msg = self.ui.buildMessage(msg,*args,**kw)
+            msg = self.session.buildMessage(msg,*args,**kw)
         self._done = True
         #if msg is not None:
         #    self._status = msg
         self.pc = 100
         #self.ui.onJobIncremented(self)
-        self.ui.onJobDone(self,msg)
+        self.session.toolkit.onJobDone(self,msg)
         #if msg is not None and self._label is not None:
         #    msg = self._label+": "+msg
             
@@ -105,7 +105,7 @@ class BaseJob:
 ##             self._status = msg
         if not self._done:
             self._done = True
-            self.ui.onJobAbort(self,msg)
+            self.session.toolkit.onJobAbort(self,msg)
             #self.pc = 100
             #self.onInc()
             #self.onDone(msg)
@@ -128,25 +128,25 @@ class BaseJob:
 
 
     def warning(self,*args,**kw):
-        self.ui.warning(*args,**kw)
+        self.session.warning(*args,**kw)
         
     def message(self,*args,**kw):
-        self.ui.message(*args,**kw)
+        self.session.message(*args,**kw)
         
     def notice(self,*args,**kw):
-        self.ui.notice(*args,**kw)
+        self.session.notice(*args,**kw)
         
     def verbose(self,*args,**kw):
-        self.ui.verbose(*args,**kw)
+        self.session.verbose(*args,**kw)
         
     def error(self,*args,**kw):
-        self.ui.error(*args,**kw)
+        self.session.error(*args,**kw)
         
     def debug(self,*args,**kw):
-        self.ui.debug(*args,**kw)
+        self.session.debug(*args,**kw)
         
     def status(self,*args,**kw):
-        self.ui.status(*args,**kw)
+        self.session.status(*args,**kw)
     
         
 
@@ -166,12 +166,12 @@ class BaseJob:
 class Job(BaseJob):
     
     """user code should not override this but instanciate it using
-    ui.job(). subclassed by lino.forms.wx"""
+    Session.job(). subclassed by lino.forms.wx"""
     
-    def init(self,ui,label=None,*args,**kw):
+    def init(self,session,label=None,*args,**kw):
         self._label = label
         self._status = _("Working")
-        BaseJob.init(self,ui,*args,**kw)
+        BaseJob.init(self,session,*args,**kw)
 
     def getLabel(self):
         return self._label
@@ -180,7 +180,7 @@ class Job(BaseJob):
         return self._status
 
     def status(self,msg,*args,**kw):
-        self._status = self.ui.buildMessage(msg,*args,**kw)
+        self._status = self.session.buildMessage(msg,*args,**kw)
         self.refresh()
 
 
@@ -191,10 +191,10 @@ class Task:
         self.configure(*args,**kw)
 
 
-    def run(self,ui,*args,**kw):
+    def run(self,session,*args,**kw):
         # don't override
         #self.reconfigure(*args,**kw)
-        self.job = ui.job(self.getLabel())
+        self.job = session.job(self.getLabel())
         try:
             self.start()
             self.job.done()

@@ -62,6 +62,9 @@ class Store:
         self._peekQuery = PeekQuery(self)
 
 
+    def __repr__(self):
+        return "Store(%s.%s)"%(self._db.name,self._table)
+
     def mtime(self):
         return self._mtime
 
@@ -78,8 +81,6 @@ class Store:
     def zap(self):
         self._connection.executeZap(self._table)
         self.touch()
-
-
 
     def fireUpdate(self):
         pass
@@ -101,7 +102,7 @@ class Store:
     def isVirgin(self):
         return self._status == self.SST_VIRGIN
                 
-    def populate(self,schema,sess,populator):
+    def populate(self,sess,populator):
          assert self._status == self.SST_VIRGIN
          populator.populateStore(self,sess)
          self._status = self.SST_READY

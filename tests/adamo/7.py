@@ -36,6 +36,9 @@ class Case(TestCase):
         "Accessing data that has not been inserted using adamo"
         sess = demo.startup(populate=False)
         
+        assert len(sess.query(Partners)) == 0, \
+               "db not empty: previous test run didn't shutdown"
+        
         db = sess.db
         connection = center._center._connections[0]
         

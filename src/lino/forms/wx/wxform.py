@@ -24,6 +24,7 @@ import wx
 from lino.adamo.datatypes import MEMO
 from lino.forms import base, gui
 from lino.forms.wx import wxgrid
+from lino.console import syscon
 #from lino.forms.wx.showevents import showEvents
 from lino.misc import jobs
 
@@ -194,7 +195,7 @@ class TextViewer(base.TextViewer):
         
     def onClose(self):
 ##         console.pop()
-        console = self.getForm().app.toolkit.console
+        console = self.getForm().session.toolkit.console
         console.redirect(*self.redirect)
         self.wxctrl = None
         #self._buffer = ""
@@ -202,7 +203,7 @@ class TextViewer(base.TextViewer):
     
     def setup(self,parentCtrl,box):
         parentFormCtrl = self.getForm().wxctrl
-        console = self.getForm().app.toolkit.console
+        console = self.getForm().session.toolkit.console
         e = wx.TextCtrl(parentCtrl,-1,console.getConsoleOutput(),
                         style=wx.TE_MULTILINE|wx.HSCROLL)
         e.SetBackgroundColour('BLACK')
@@ -215,7 +216,7 @@ class TextViewer(base.TextViewer):
         self.wxctrl.SetInsertionPointEnd()
         #self.wxctrl.ShowPosition(-1)
         self.redirect = console.redirect(self.addText,self.addText)
-        self.getForm().debug(
+        self.getForm().session.debug(
             str(e.GetMinSize())+" "+str(e.GetMaxSize()))
 
     def addText(self,s):
@@ -391,7 +392,7 @@ class DataEntry(EntryMixin,base.DataEntry):
 
 class Job(jobs.Job):
     def status(self,msg,*args,**kw):
-        self._status = self.ui.buildMessage(msg,*args,**kw)
+        self._status = self.session.buildMessage(msg,*args,**kw)
         self.refresh()
     
         
@@ -409,7 +410,7 @@ class Form(base.Form):
 ##             self.app.MainLoop()
 
     def __init__(self,*args,**kw):
-        self.progressDialog = None
+        #self.progressDialog = None
         self.wxctrl = None
         base.Form.__init__(self,*args,**kw)
 
@@ -418,56 +419,11 @@ class Form(base.Form):
         assert self.wxctrl is None
         base.Form.setParent(self,parent)
         
-    def job(self,*args,**kw):
-        job = Job()
-        job.init(self,*args,**kw)
-        return job
+##     def job(self,*args,**kw):
+##         job = Job()
+##         job.init(self,*args,**kw)
+##         return job
     
-    def status(self,msg,*args,**kw):
-        if self.modal or not self.isShown():
-            self.app.toolkit.console.status(msg,*args,**kw)
-        else:
-            self.wxctrl.SetStatusText(msg)
-
-##     def abortRequested(self):
-##         return self.app.toolkit.abortRequested()
-
-    def onJobInit(self,job):
-        assert self.progressDialog is None
-        self.progressDialog = wx.ProgressDialog(
-            job.getLabel(),
-            job.getStatus(),
-            100, self.wxctrl,
-            wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
-        #return self.app.toolkit.console.onJobInit(job)
-
-    def onJobRefresh(self,job):
-        self.app.toolkit.run_awhile()
-        pc = job.pc
-        if pc is None:
-            pc = 0
-        if self.progressDialog is None:
-            return
-        if not self.progressDialog.Update(pc,job.getStatus()):
-            if job.confirmAbort():
-                #raise jobs.JobAborted()
-                job.abort()
-            else:
-                self.progressDialog.Resume()
-
-    def onJobDone(self,job,msg):
-        self.progressDialog.Update(100,msg)
-        self.progressDialog.Destroy()
-        self.progressDialog = None
-        #return self.app.toolkit.console.onJobDone(*args,**kw)
-
-    def onJobAbort(self,*args,**kw):
-        self.progressDialog.Destroy()
-        self.progressDialog = None
-        #return self.app.toolkit.console.onJobAbort(*args,**kw)
-
-    
-            
     def setup(self):
         assert self.wxctrl is None
         self.setupMenu()
@@ -571,8 +527,8 @@ class Form(base.Form):
 ##         if not self.app.toolkit._setup:
 ##             self.app.toolkit.setup()
             
-        if not self.app.toolkit.running():
-            self.app.toolkit.run_forever()
+        if not self.session.toolkit.running():
+            self.session.toolkit.run_forever()
             #if self.app.mainForm == self:
             #    return
             # todo: uergh...
@@ -581,9 +537,9 @@ class Form(base.Form):
             raise InvalidRequestError("form is already open")
             
         self.modal = modal
-        self.debug("show(modal=%s) %s" % (modal, self.getLabel()))
+        self.session.debug("show(modal=%s) %s",modal,self.getLabel())
         self.setup()
-        self.debug(repr(self.mainComp))
+        self.session.debug(repr(self.mainComp))
         self.onShow()
         if self.modal:
             self.wxctrl.ShowModal()
@@ -625,7 +581,7 @@ class Form(base.Form):
 
 
     def OnChar(self, evt):
-        self.debug("OnChar "+str(evt))
+        self.session.debug("OnChar "+str(evt))
 
 
     def OnIdle(self, evt):
@@ -684,6 +640,7 @@ class Toolkit(base.Toolkit):
     dataGridFactory = DataGrid
     navigatorFactory = DataNavigator
     formFactory = Form
+    jobFactory=Job
     
     def __init__(self,*args,**kw):
         base.Toolkit.__init__(self,*args,**kw)
@@ -693,6 +650,55 @@ class Toolkit(base.Toolkit):
         self.wxapp = None
         #self._abortRequested = False
 
+
+
+    def status(self,sess,msg,*args,**kw):
+        frm=sess._activeForm
+        if frm is None or frm.modal:
+            syscon.status(msg,*args,**kw)
+        else:
+            frm.wxctrl.SetStatusText(msg)
+
+##     def abortRequested(self):
+##         return self.app.toolkit.abortRequested()
+
+    def onJobInit(self,job):
+        #assert self.progressDialog is None
+        assert self._activeForm is not None
+        job.wxctrl = wx.ProgressDialog(
+            job.getLabel(),
+            job.getStatus(),
+            100, self._activeForm.wxctrl,
+            wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
+        #return self.app.toolkit.console.onJobInit(job)
+
+    def onJobRefresh(self,job):
+        self.run_awhile()
+        pc = job.pc
+        if pc is None:
+            pc = 0
+        if job.wxctrl is None:
+            return
+        if not job.wxctrl.Update(pc,job.getStatus()):
+            if job.confirmAbort():
+                #raise jobs.JobAborted()
+                job.abort()
+            else:
+                job.wxctrl.Resume()
+
+    def onJobDone(self,job,msg):
+        job.wxctrl.Update(100,msg)
+        job.wxctrl.Destroy()
+        job.wxctrl = None
+        #return self.app.toolkit.console.onJobDone(*args,**kw)
+
+    def onJobAbort(self,job,*args,**kw):
+        job.wxctrl.Destroy()
+        job.wxctrl = None
+        #return self.app.toolkit.console.onJobAbort(*args,**kw)
+
+    
+            
     def running(self):
         return self._running # self.wxapp is not None
 

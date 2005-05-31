@@ -49,6 +49,27 @@ class Database(Context,Describable):
 
         self.app = app
         self._stores = {}
+        self._sessions=[]
+        self._populators = []
+
+    def addPopulator(self,p):
+        #if self._startupDone:
+        #    raise TooLate("Cannot addPopulator() after startup()")
+        self._populators.append(p)
+        
+    def addSession(self,s):
+        self._sessions.append(s)
+        
+
+    def removeSession(self,s):
+        self._sessions.remove(s)
+        #if len(self._sessions) == 0:
+        #    self.close()
+        
+    def populate(self,sess,p):
+        for store in self.getStoresById():
+            if store.isVirgin():
+                store.populate(sess,p)
 
     def getBabelLangs(self):
         "implements Context.getBabelLangs()"

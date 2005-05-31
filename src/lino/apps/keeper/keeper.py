@@ -19,7 +19,8 @@
 
 from lino.forms import gui
 
-from lino.apps.keeper import tables
+from lino.apps.keeper.tables import *
+from lino.apps.keeper.tables import TABLES
 from lino.adamo.ddl import Schema
 
 class Keeper(Schema):
@@ -27,20 +28,20 @@ class Keeper(Schema):
     years='2005'
     author="Luc Saffre"
     
-    tables = tables.TABLES
+    tables = TABLES
 
-    def showSearchForm(self,ui):
-        self.searchData = self.sess.query(Files,"name")
-        self.occs=self.searchData.addColumn("occurences")
+    def showSearchForm(self,sess):
+        searchData = sess.query(Files,"name")
+        occs=searchData.addColumn("occurences")
         
-        frm = ui.form(label="Search")
+        frm = sess.form(label="Search")
 
         searchString = frm.addEntry("searchString",adamo.STRING,
                                     label="Words to look for",
                                     value="")
         def search():
             #self.searchData.setSarch(searchString.getValue())
-            self.occs._queryParams["search"]=searchString.getValue()
+            occs._queryParams["search"]=searchString.getValue()
             frm.refresh()
             #a = self.arrivals.appendRow(
             #    dossard=frm.entries.dossard.getValue(),
@@ -60,15 +61,15 @@ class Keeper(Schema):
         #               label="&Exit",
         #               action=frm.close)
 
-        bbox.addDataGrid(self.searchData)
+        bbox.addDataGrid(searchData)
 
         frm.show()
         #frm.showModal()
 
 
 
-    def showMainForm(self,ui):
-        frm = ui.form(
+    def showMainForm(self,sess):
+        frm = sess.form(
             label="Main menu",
             doc="""\
 This is the Keeper main menu.                                     
@@ -76,30 +77,27 @@ This is the Keeper main menu.
 
         m = frm.addMenu("search","&Suchen")
         m.addItem("search",label="&Suchen").setHandler(
-            self.showSearchForm,frm)
+            self.showSearchForm,sess)
     
         m = frm.addMenu("db","&Datenbank")
         m.addItem("volumes",label="&Volumes").setHandler(
-            self.showViewGrid,frm,
-            Volumes)
+            sess.showViewGrid, Volumes)
         m.addItem("files",label="&Files").setHandler(
-            self.showViewGrid,frm,
-            Files)
+            sess.showViewGrid, Files)
         m.addItem("dirs",label="&Directories").setHandler(
-            self.showViewGrid,frm,
-            Directories)
+            sess.showViewGrid, Directories)
         m.addItem("words",label="&Words").setHandler(
-            self.showViewGrid,frm,
-            Words)
+            sess.showViewGrid, Words)
         
-        self.addProgramMenu(frm)
+        self.addProgramMenu(sess,frm)
 
-        frm.addOnClose(self.close)
+        frm.addOnClose(sess.close)
 
         frm.show()
 
 
 if __name__ == '__main__':
     app=Keeper()
-    app.parse_args()
+    app.quickStartup()
+    #app.main()
     gui.run(app)

@@ -20,10 +20,11 @@
 
 import sys, os
 
-from lino.ui import console
+#from lino.ui import console
 from lino.textprinter import winprn
+from lino.console.application import Application, UsageError
 
-class PrnPrint(console.ConsoleApplication):
+class PrnPrint(Application):
     
     name="Lino prnprint"
     years='2004-2005'
@@ -37,7 +38,7 @@ control sequences, see http://lsaffre.dyndns.org/lino/prn2pdf.html
 """ 
     
     def setupOptionParser(self,parser):
-        console.ConsoleApplication.setupOptionParser(self,parser)
+        Application.setupOptionParser(self,parser)
     
         parser.add_option("-p", "--printer",
                           help="""\
@@ -57,7 +58,7 @@ write to SPOOLFILE rather than really printing.""",
     
     def run(self,ui):
         if len(self.args) == 0:
-            raise console.UsageError("no arguments specified")
+            raise UsageError("no arguments specified")
         for inputfile in self.args:
             d = winprn.Win32TextPrinter(
                 self.options.printerName,

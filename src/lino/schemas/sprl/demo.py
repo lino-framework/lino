@@ -31,28 +31,28 @@ from lino.adamo.datatypes import itod
 #from lino.ui import console
 from lino.schemas.sprl.sprl import Sprl
 
-class DemoSprl(Sprl):
+## class DemoSprl(Sprl):
 
-    def __init__(self,
-                 populate=True,
-                 big=False,
-                 withDemoData=True,
-                 withJokes=False,
-                 **kw):
-        Sprl.__init__(self,**kw)
-        #self.big=big
-        #self.withDemoData=withDemoData
-        #self.withJokes=withJokes
-        if populate:
-            if withJokes:
-                self.addPopulator(JokesPopulator(big=big,
-                                                 label="Weisheiten"))
-            elif withDemoData:
-                self.addPopulator(DemoPopulator(big=big,
-                                                  label="StandardDemo"))
-            else:
-                self.addPopulator(Populator(big=big,
-                                            label="Standard"))
+##     def __init__(self,
+##                  populate=True,
+##                  big=False,
+##                  withDemoData=True,
+##                  withJokes=False,
+##                  **kw):
+##         Sprl.__init__(self,**kw)
+##         #self.big=big
+##         #self.withDemoData=withDemoData
+##         #self.withJokes=withJokes
+##         if populate:
+##             if withJokes:
+##                 self.addPopulator(JokesPopulator(big=big,
+##                                                  label="Weisheiten"))
+##             elif withDemoData:
+##                 self.addPopulator(DemoPopulator(big=big,
+##                                                   label="StandardDemo"))
+##             else:
+##                 self.addPopulator(Populator(big=big,
+##                                             label="Standard"))
 
 
 ## def makeSchema(populate=True,
@@ -74,14 +74,28 @@ class DemoSprl(Sprl):
 ##     return schema
             
             
-def startup(ui=None,
-            filename=None,
-            langs=None,
+def startup(filename=None, langs=None,
+            populate=True,
+            big=False,
+            withDemoData=True,
+            withJokes=False,
             **kw):
-    schema = DemoSprl(**kw)
+    schema = Sprl(**kw)
     #if ui is None:
     #    ui = console.getSystemConsole()
-    return schema.quickStartup(ui,langs=langs, filename=filename)
+    sess=schema.quickStartup(langs=langs, filename=filename)
+    if populate:
+        if withJokes:
+            sess.populate(JokesPopulator(big=big,
+                                         label="Weisheiten"))
+        elif withDemoData:
+            sess.populate(DemoPopulator(big=big,
+                                        label="StandardDemo"))
+        else:
+            sess.populate(Populator(big=big,
+                                    label="Standard"))
+
+    return sess
 
 
 # deprecated name for startup:

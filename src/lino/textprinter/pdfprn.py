@@ -27,7 +27,9 @@ from reportlab.lib.pagesizes import letter, A4
 
 from lino.textprinter.textprinter import TextPrinter, ParserError
 
-from lino.ui import console
+from lino.console import syscon
+
+#from lino.ui import console
 
 HACK_BOXCHARS = {
     
@@ -184,7 +186,7 @@ class PdfTextPrinter(TextPrinter):
         for k,v in HACK_BOXCHARS.items():
             text = text.replace(k,v)
 
-        console.debug("write(%s)",repr(text))
+        syscon.debug("write(%r)",text)
         #text = text.encode("iso-8859-1","replace")
         try:
             text = text.encode("iso-8859-1","strict")

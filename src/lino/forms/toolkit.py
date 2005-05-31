@@ -24,13 +24,15 @@ TOP = 3
 BOTTOM = 4
 CENTER = 5
 
+from lino.console.syscon import Toolkit
+_toolkit = Toolkit()
 
-_toolkit = None
+#_toolkit = None
 #_app = None
 
 
 
-def choose(wishlist="wx"):
+def choose(wishlist="console"):
     global _toolkit
     
     assert _toolkit is None, "cannot choose a second time"
@@ -40,7 +42,7 @@ def choose(wishlist="wx"):
             from lino.forms.wx.wxform import Toolkit
             _toolkit = Toolkit()
             return _toolkit
-        if tkname == "testkit": 
+        if tkname == "test": 
             from lino.forms.testkit import Toolkit
             _toolkit = Toolkit()
             return _toolkit
@@ -53,11 +55,6 @@ def choose(wishlist="wx"):
             _toolkit = Toolkit()
             return _toolkit
     raise "no toolkit found"
-
-def check():
-    if _toolkit is None:
-        choose()
-        #GuiConsole(toolkit=_toolkit)
 
     
 ## def form(*args,**kw):
@@ -80,8 +77,9 @@ def check():
 ##     return _toolkit.parse_args(*args,**kw)
 
 def run(app):
-    check()
-    _toolkit.main(app)
+    _toolkit.addApplication(app)
+    _toolkit.parse_args()
+    _toolkit.run_forever()
 
 
 ## def main(*args,**kw):

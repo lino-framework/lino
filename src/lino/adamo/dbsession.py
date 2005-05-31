@@ -19,6 +19,8 @@
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from lino.ui import console
+from lino.forms.session import Session
+from lino.adamo import center
 
 class BabelLang:
     def __init__(self,index,id):
@@ -44,110 +46,50 @@ class Context:
                 return True
         return False
     
-
-class Session(Context):
+class DbSession(Session,Context):
     
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,center,ui,**kw):
-        # sessionManager is lino.adamo.center
-        self.center = center
-        #self.app = app
-        assert ui is not None
-        self.ui = ui
-        self._user = None
-        self.db = None
-        #self.schema = None
-        
-##         if ui is None:
-##             ui = console.getSystemConsole()
-        
-        
-##         for m in (
-##             'message', 'confirm','decide', 'form'
-##             'debug','warning', 'info', 'job',
-##             'error','critical',
-##             'report','textprinter',
-##             ):
-##             setattr(self,m,getattr(ui,m))
-            
-##         for m in (
-##             'startDump','stopDump'
-##             ):
-##             setattr(self,m,getattr(console,m))
-        
-        #self._setcon(console)
-        self._ignoreExceptions = []
-        
-        self.use(**kw)
-
-##     def _setcon(self,console):
-##         self.console = console
-##         for m in console.forwardables:
-##             setattr(self,m,getattr(console,m))
-
-    def hasAuth(self,*args,**kw):
-        return True
-            
-##     def warning(self,msg):
-##         """Log a warning message.  If interactive, make sure that she
-##         has seen this message before returning.
-
-##         """
-##         if self.app is not None:
-##             return self.app.warning(msg)
-        
-    def use(self,db=None): # ,langs=None):
-        # if necessary, stop using current db
-        if db != self.db and self.db is not None:
-            self.db.commit()
-            #self.db.removeSession(self)
-            if self._user is not None:
-                self.logout()
-        if db is None:
-            #self.schema = None
-            #self.tables = None
-            #self.forms = None
-            self.db = None
-        else:
-            # start using new db
-            #self.schema = db.schema # shortcut
-            self.db = db
-            # self.tables = AttrDict(factory=self.openTable)
-            #self.forms = AttrDict(factory=self.openForm)
-            #if langs is None:
-            #    langs = db.getDefaultLanguage()
-            #self.setBabelLangs(langs)
-            self.setDefaultLanguage()
-        
-        #self._formStack = []
+    def __init__(self,db,toolkit,user=None,pwd=None,*args,**kw):
+        self.db = db
+        self.user=user
+        self.pwd=pwd
+        Session.__init__(self,toolkit,*args,**kw)
+        self.setDefaultLanguage()
+        db.addSession(self)
 
     def setDefaultLanguage(self):
         self.setBabelLangs(self.db.getDefaultLanguage())
         
+    def hasAuth(self,*args,**kw):
+        return True
+            
         
-    def handleException(self,e,details=None):
-        if e.__class__ in self._ignoreExceptions:
-            return
-        raise e
-        #self.ui.showException(e,details)
+##     def use(self,db=None): # ,langs=None):
+##         # if necessary, stop using current db
+##         if db != self.db and self.db is not None:
+##             self.db.commit()
+##             #self.db.removeSession(self)
+##             if self._user is not None:
+##                 self.logout()
+##         if db is None:
+##             #self.schema = None
+##             #self.tables = None
+##             #self.forms = None
+##             self.db = None
+##         else:
+##             # start using new db
+##             #self.schema = db.schema # shortcut
+##             self.db = db
+##             # self.tables = AttrDict(factory=self.openTable)
+##             #self.forms = AttrDict(factory=self.openForm)
+##             #if langs is None:
+##             #    langs = db.getDefaultLanguage()
+##             #self.setBabelLangs(langs)
+##             self.setDefaultLanguage()
         
-
-##  def spawn(self,**kw):
-##      kw.setdefault('db',self.db)
-##      kw.setdefault('langs',self.getLangs())
-##      return center.center().createSession(**kw)
-
-    def commit(self):
-        return self.db.commit()
-
-    def shutdown(self):
-        # called in many TestCases during tearDown()
-        # supposted to close all connections
-        #
-        self.end()
-        self.center.shutdown()
+##         #self._formStack = []
 
     def setBabelLangs(self,langs):
         
@@ -166,6 +108,31 @@ class Session(Context):
 
     def getBabelLangs(self):
         return self._babelLangs
+
+    def close(self):
+        self.db.removeSession(self)
+        
+    def populate(self,p):
+        status=self.getStatus()
+        self.db.populate(self,p)
+        self.setStatus(status)
+
+    def getStatus(self):
+        return (self.getBabelLangs(),)
+        
+    def setStatus(self,status):
+        self.db.commit()
+        self._babelLangs = status[0]
+        
+    def commit(self):
+        return self.db.commit()
+
+    def shutdown(self):
+        # called in many TestCases during tearDown()
+        # supposted to close all connections
+        #
+        self.close()
+        center.shutdown()
 
     def getStore(self,leadTable):
         try:
@@ -186,15 +153,11 @@ class Session(Context):
         return self.query(tableClass).peek(*args)
 
 
-    def end(self):
-        self.use()
-        self.center.closeSession(self)
+##     def end(self):
+##         self.use()
+##         self.center.closeSession(self)
 
 
-    def onBeginSession(self):
-        self.db.app.onBeginSession(self)
-        
-    
     def onLogin(self):
         return self.db.app.onLogin(self)
     
@@ -211,4 +174,33 @@ class Session(Context):
         self._user = None
 
 
+    def showAbout(self):
+        frm = self.form(label="About",doc=self.db.app.aboutString())
+        frm.addOkButton()
+        frm.show()
+        
+    def showDataGrid(self,ds,**kw):
+        frm = self.form(label=ds.getLabel(),**kw)
+        frm.addDataGrid(ds)
+        frm.show()
 
+    def showTableGrid(self,tc,*args,**kw):
+        q = self.query(tc,*args,**kw)
+        return self.showDataGrid(q)
+    
+    def showViewGrid(self,tc,viewName="std",*args,**kw):
+        q = self.view(tc,viewName,*args,**kw)
+        return self.showDataGrid(q)
+
+    def showDataForm(self,ds,**kw):
+        frm = self.form(label=ds.getLabel(),**kw)
+        ds.setupForm(frm)
+        frm.show()
+        
+    def chooseDataRow(self,ds,currentRow,**kw):
+        frm = self.form(label="Select from " + ds.getLabel(),**kw)
+        grid = frm.addDataGrid(ds)
+        grid.setModeChoosing()
+        frm.showModal()
+        return grid.getChosenRow()
+        

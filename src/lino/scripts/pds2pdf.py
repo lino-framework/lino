@@ -20,90 +20,99 @@
 import sys, getopt, os
 import traceback
 
-from lino.ui import console
+#from lino.ui import console
 
 from lino.sdoc.pdf import PdfRenderer
 from lino.sdoc.environment import ParseError
 from lino.sdoc import commands
 
+from lino.console.application import Application, UsageError
 
-def pds2pdf(ifname,renderer,ofname=None, showOutput=True):
+class Pds2pdf(Application):
 
-    (root,ext) = os.path.splitext(ifname)
-    if ext == '':
-        ifname += ".pds"
-
-    if ofname is None:
-        ofname = root 
-        
-    (head,tail) = os.path.split(ifname)
-    initfile = os.path.join(head,'__init__.pds')
-
-    try:
-        commands.beginDocument(ofname,renderer,ifname)
-        job = console.job(
-            "%s --> %s..." % (commands.getSourceFileName(),
-                              commands.getOutputFileName()))
-        namespace = {}
-        namespace.update(globals())
-        namespace['pds'] = commands
-        try:
-            if os.path.exists(initfile):
-                execfile(initfile,namespace,namespace) 
-            execfile(ifname,namespace,namespace)
-            commands.endDocument(showOutput)
-            job.done("%d pages." % commands.getPageNumber())
-        except ParseError,e:
-            raise
-            #traceback.print_exc(2)
-            # print document
-            # print e
-            # showOutput = False
-
-
-    except IOError,e:
-        print e
-        sys.exit(1)
-
-
-
-def main(argv):
-    parser = console.getOptionParser(
-        usage="usage: lino pds2pdf [options] FILE",
-        description="""\
+    name="Lino/pds2pdf"
+    years='2002-2005'
+    author='Luc Saffre'
+    
+    usage="usage: lino pds2pdf [options] FILE"
+    description="""\
 pds2pdf converts the Python Document Script FILE (extension `.pds`) to
 a PDF file with same name, but `.pdf` as extension.
 Extension `.pdf` will be added if not specified.
 Note that you can specify only one FILE.
-""")
+"""
 
+    def setupOptionParser(self,parser):
+        Application.setupOptionParser(self,parser)
     
-    parser.add_option("-o", "--output",
-                      help="""\
+        parser.add_option("-o", "--output",
+                          help="""\
 write to OUTFILE rather than FILE.pdf""",
-                      action="store",
-                      type="string",
-                      dest="outFile",
-                      default=None)
+                          action="store",
+                          type="string",
+                          dest="outFile",
+                          default=None)
     
-    (options, args) = parser.parse_args(argv)
 
-    if len(args) != 1:
-        print args
-        parser.print_help() 
-        return -1
+
+    def run(self,sess):
+        if len(self.args) != 1:
+            raise UsageError("needs 1 argument")
     
-    inputfile = args[0]
+        ifname = self.args[0]
 
-    pds2pdf(inputfile,
-         PdfRenderer(),
-         options.outFile,
-         showOutput=console.isInteractive())
+        renderer=PdfRenderer()
+        
+        ofname=self.options.outFile
+        showOutput=sess.isInteractive()
+
+
+        (root,ext) = os.path.splitext(ifname)
+        if ext == '':
+            ifname += ".pds"
+
+        if ofname is None:
+            ofname = root 
+
+        (head,tail) = os.path.split(ifname)
+        initfile = os.path.join(head,'__init__.pds')
+
+        try:
+            commands.beginDocument(ofname,renderer,ifname)
+            job = sess.job(
+                "%s --> %s..." % (commands.getSourceFileName(),
+                                  commands.getOutputFileName()))
+            namespace = {}
+            namespace.update(globals())
+            namespace['pds'] = commands
+            try:
+                if os.path.exists(initfile):
+                    execfile(initfile,namespace,namespace) 
+                execfile(ifname,namespace,namespace)
+                commands.endDocument(showOutput)
+                job.done("%d pages." % commands.getPageNumber())
+            except ParseError,e:
+                raise
+                #traceback.print_exc(2)
+                # print document
+                # print e
+                # showOutput = False
+
+
+        except IOError,e:
+            print e
+            return -1
+
+
+
+        
+
+# lino.runscript expects a name consoleApplicationClass
+consoleApplicationClass = Pds2pdf
 
 if __name__ == '__main__':
-    console.copyleft(name="Lino pds2pdf",
-                     years='2002-2005',
-                     author='Luc Saffre')
+    consoleApplicationClass().main() # console,sys.argv[1:])
+    
 
-    sys.exit(main(sys.argv[1:]))
-    #main(sys.argv[1:])
+
+

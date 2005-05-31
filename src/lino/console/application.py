@@ -19,22 +19,33 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
+from optparse import OptionParser
 
 from lino import __version__, __author__
 
-from lino.console.console import CLI
+#from lino.console.console import CLI
 from lino.console import syscon
+
+from lino.forms.session import Session
 
 class UsageError(Exception):
     pass
 class ApplicationError(Exception):
     pass
 
-class Application(CLI):
+#class Application(CLI):
+class Application:
     
     name = None
     years = None
-    author = None
+    author=None
+    version=__version__
+    usage = None
+    description = None
+
+    toolkits="console"
+    
+    #_sessionFactory=Session
     
     """
     
@@ -49,29 +60,47 @@ class Application(CLI):
     
     
     """
-    def __init__(self,console=None):
+    def __init__(self): #,console=None):
         if self.name is None:
             self.name=self.__class__.__name__
-        if console is None:
-            console = syscon.getSystemConsole()
-        self.console = console
+##         if console is None:
+##             console = syscon.getSystemConsole()
+##         self.console = console
+        #self.toolkit=console
+        self._sessions = []
+            
+
+        
+    def parse_args(self,argv=None): #,**kw):
         if self.author is not None:
             self.copyleft(name=self.name,
                           years=self.years,
                           author=self.author)
-
+        p = OptionParser(
+            usage=self.usage,
+            description=self.description)
+            
+        self.setupOptionParser(p)
         
+        if argv is None:
+            argv = sys.argv[1:]
+        
+        options,args = p.parse_args(argv)
+        self.applyOptions(options,args)
+        
+
+    
     def setupOptionParser(self,parser):
-        self.console.setupOptionParser(parser)
+        pass
 
     def applyOptions(self,options,args):
         self.options=options
         self.args=args
 
-    def addProgramMenu(self,frm):
+    def addProgramMenu(self,sess,frm):
         m = frm.addMenu("system","&Programm")
         m.addItem("logout",label="&Beenden",action=frm.close)
-        m.addItem("about",label="Inf&o").setHandler(self.showAbout)
+        m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
 
@@ -80,7 +109,7 @@ class Application(CLI):
                  version=__version__,
                  years="2002-2005",
                  author=__author__):
-        self.console.notice("""\
+        syscon.notice("""\
 %s version %s.
 Copyright (c) %s %s.
 This software comes with ABSOLUTELY NO WARRANTY and is
@@ -88,19 +117,19 @@ distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information.""" % (
             name, version, years, author))
 
-
-    def showAbout(self):
-        frm = self.form(label="About",doc=self.aboutString())
-        frm.addOkButton()
-        frm.show()
+##     def setToolkit(self,tk):
+##         self.toolkit=tk
         
+##     def form(self,parent=None,*args,**kw):
+##         return self.toolkit.form(self,parent,*args,**kw)
+    
         
     def aboutString(self):
         s = self.name
         if self.version is not None:
             s += " version " + self.version
         if self.author is not None:
-            s += "Copyright (c) %s %s." % self.years, self.author
+            s += "\nCopyright (c) %s %s." % (self.years, self.author)
         from lino import __copyright__,  __url__
         s += "\n\n" + __copyright__
         s += "\n\nHomepage:\n" + __url__
@@ -146,30 +175,53 @@ See file COPYING.txt for more information.""" % (
             
 ##         self.setupOptionParser(p)
         
+        #toolkit=syscon.getSystemConsole()
         try:
+            #toolkit=syscon.getSystemConsole()
+            #toolkit.addApplication(self)
+            #sess = Session(toolkit)
+            #self.openSession(sess)
+            #raise "... was wenn Schema mehr als eine db hat?"
+            #self.startup(toolkit)
+            #syscon.setSystemSession(self._sessions[0])
+            #syscon.setSystemSession(sess)
             self.parse_args(argv)
-            #options,args = p.parse_args(argv)
-            #self.applyOptions(options,args)
-            return self.run(self.console)
+            return self.run(syscon._session)
         
         except UsageError,e:
             p.print_help()
             return -1
         except ApplicationError,e:
-            self.console.error(str(e))
+            syscon.error(str(e))
             return -1
 
+    def showMainForm(self,sess):
+        pass
 
-    def init(self,ui): 
-        # called from Toolkit.main()
-        # overridden by Schema
-        self.showMainForm(ui)
 
+    def addSession(self,sess):
+        #sess = self._sessionFactory(self,toolkit,**kw)
+        #sess = Session(toolkit)
+        self._sessions.append(sess)
+        #self.onOpenSession(sess)
+        #return sess
+
+    def removeSession(self,sess):
+        #self.onCloseSession(sess)
+        self._sessions.remove(sess)
+
+    def onOpenSession(self,sess):
+        self.showMainForm(sess)
+
+    def onCloseSession(self,sess):
+        pass
+
+
+    def shutdown(self):
+        for sess in self._sessions:
+            #syscon.debug("Killing session %r",sess)
+            sess.close()
         
-
-    def run(self,ui):
+    def run(self,sess):
         raise NotImplementedError
-        
-    def showMainForm(self):
-        raise NotImplementedError
-        
+    
