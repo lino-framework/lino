@@ -298,7 +298,7 @@ class Schema(Application):
         syscon.debug("Connect")
         conn = center.connection(filename=filename)
         db.connect(conn)
-        return db.startup(syscon.getSystemConsole())
+        return db.startup(**kw) #syscon.getSystemConsole())
         #return DbSession(db,syscon.getSystemConsole())
         #assert len(self._sessions) == 1
         #return self._sessions[0]

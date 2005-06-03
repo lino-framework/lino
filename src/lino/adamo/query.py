@@ -59,6 +59,9 @@ class QueryColumn:
                                          repr(self._owner))
     def canWrite(self,row):
         return self.rowAttr.canWrite(row)
+
+    def getValueClass(self):
+        raise NotImplementedError
     
 
     def setupColAtoms(self,db):
@@ -202,6 +205,9 @@ class FieldColumn(QueryColumn):
         value=row._values.get(self.rowAttr.name)
         self.value2atoms(value,atomicRow,row.getDatabase())
 
+    def getValueClass(self):
+        return self.rowAttr.type
+    
 class BabelFieldColumn(FieldColumn):
     fieldClass=BabelField
 ##     def value2atoms(self,value,atomicRow,context):
@@ -350,6 +356,9 @@ class PointerColumn(QueryColumn):
         #d = { self.rowAttr.name : pointedRow }
         #return pointedRow._query.child(**d)
         
+    def getValueClass(self):
+        return self.rowAttr._toClass
+    
         
         
 class DetailColumn(QueryColumn):
@@ -362,9 +371,8 @@ class DetailColumn(QueryColumn):
         self._queryParams=kw
         self.detailQuery=None
         self.depth=depth
-        
 
-    def extractCellValue(self,row,**kw):
+    def prepare(self):
         # lazy instanciation for self.detailQuery 
         if self.detailQuery is None:
             self.detailQuery=self._owner.getSession().query(
@@ -372,6 +380,10 @@ class DetailColumn(QueryColumn):
                 **self._queryParams)
             #print "DetailColumn created ", self.detailQuery,\
             #      self.detailQuery._search
+        
+
+    def extractCellValue(self,row,**kw):
+        self.prepare()
         kw[self.rowAttr.pointer.name]=row
         return self.detailQuery.child(**kw)
         #return self.detailQuery.child(masters=(row,))
@@ -410,6 +422,11 @@ class DetailColumn(QueryColumn):
         return True
 
 
+    def getValueClass(self):
+        return Query
+        #self.prepare()
+        #return self.detailQuery
+    
 
 
 

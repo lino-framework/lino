@@ -43,7 +43,7 @@ sharedTables = (Languages, Nations,
                 ProjectStati, Users) 
 
 class Case(TestCase):
-    skip="(todo: shared tables with different babelLangs)"
+    todo="shared tables with different babelLangs"
 
     def test01(self):
 

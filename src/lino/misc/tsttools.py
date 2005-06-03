@@ -30,7 +30,7 @@ from cStringIO import StringIO
 #from lino.ui import console
 from lino.console import syscon
 from lino.console.console import CaptureConsole
-
+from lino.forms.testkit import Toolkit
 
 ## class TestConsole(console.CaptureConsole):
 ##     pass

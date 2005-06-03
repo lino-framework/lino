@@ -94,8 +94,9 @@ class Form(base.Form):
             
         self.modal = modal
         print "show(modal=%s) %s" % (modal, self.getLabel())
-        self.notice("show(modal=%s) %s" % (modal, self.getLabel()))
-        self.notice(repr(self.mainComp))
+        self.session.notice(
+            "show(modal=%s) %s" % (modal, self.getLabel()))
+        self.session.notice(repr(self.mainComp))
         self.onShow()
 
 

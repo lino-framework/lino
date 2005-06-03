@@ -28,7 +28,7 @@ In the following test, p[2] returned the same row as the previous p[1]
 from lino.misc.tsttools import TestCase, main
 from lino.schemas.sprl import demo #.sprl import Schema
 from lino.schemas.sprl.tables import *
-from lino.adamo import center
+#from lino.adamo import center
 
 class Case(TestCase):
 
@@ -40,7 +40,8 @@ class Case(TestCase):
                "db not empty: previous test run didn't shutdown"
         
         db = sess.db
-        connection = center._center._connections[0]
+        #connection = center._center._connections[0]
+        connection = db._connections[0]
         
         connection.sql_exec("""
         INSERT INTO PARTNERS (id,name)

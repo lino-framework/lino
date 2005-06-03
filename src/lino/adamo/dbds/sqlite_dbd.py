@@ -99,9 +99,14 @@ class Connection(SqlConnection):
         self._dbconn.commit()
 
     def close(self):
+        if self._status == self.CST_CLOSED:
+            return
+        if self._status == self.CST_CLOSING:
+            return
         self._status = self.CST_CLOSING
         self._dbconn.commit()
         self._dbconn.close()
+        self._dbconn=None
         self._status = self.CST_CLOSED
         #self._dbconn = None
 ##         if self._isTemporary and self._filename is not None:

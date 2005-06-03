@@ -27,6 +27,7 @@ from lino.gendoc.gendoc import WriterDocument
 from lino.forms.base import MenuContainer
 
 from lino.adamo.query import QueryColumn
+from lino.adamo.query import Query
 
 
 # from twisted.web.microdom
@@ -64,6 +65,16 @@ END_PAGE = """
 """
 
 
+class Resolver:
+    def __init__(self,cl,i2name):
+        self.cl=cl
+        self.i2name=i2name
+
+    def href(self,fromLoc,toRow):
+        return self.i2name(toRow)+".html"
+        
+
+
 
 class Locatable:
     # local URL. URL for a local resource
@@ -90,6 +101,7 @@ class Locatable:
         if name.endswith(self.extension):
             name = name[:-len(self.extension)]
         self.name=name
+        self.parent=parent
         
     def filename(self):
         return self.name + self.extension
@@ -140,9 +152,6 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
                  parent=None,
                  stylesheet=None,
                  **kw):
-        #if content is not None:
-        #    if name is None: name=content.getName()
-        #    if title is None: title=content.getTitle()
 
         if name is None:
             name="index"
@@ -151,7 +160,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         WriterDocument.__init__(self)
         MenuContainer.__init__(self)
         
-                
+        
         if stylesheet is None:
             if parent is not None:
                 stylesheet=parent.stylesheet
@@ -171,26 +180,13 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.title = title
         self.date = date
         self._reports=[]
+        self._resolvers=[]
         if content is not None:
             assert hasattr(content,"render")
             self._body=[content]
         else:
             self._body=[]
 
-#    def child(self,**kw):
-##         if kw.has_key("stylesheet"):
-##             kw.setdefault("cssLocation",self.css.location)
-##         else:
-##             kw.setdefault("css",self.css)
-##         if not kw.has_key("cssLocation"):
-##             kw['cssLocation']
-##         kw.setdefault("cssName",self.css.name)
-##         if content is not None:
-##             kw.setdefault("name",content.getName())
-##             kw.setdefault("title",content.getTitle())
-##             kw['content'] = content
-#        return self.__class__(parent=self,**kw)
-        
     def addChild(self,**kw):
         c = self.__class__(parent=self,**kw)
         #assert not self.childrenByName.has_key(c.name)
@@ -198,18 +194,9 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         #self.childrenByName[c.name] = c
         return c
     
-##     def addChild(self,**kw):
-##         c = self.__class__(parent=self,**kw)
-##         root=self.getRoot()
-##         assert not root.childrenByName.has_key(c.name)
-##         self.children.append(c)
-##         self.childrenByName[c.name] = c
-##         return c
-
-##     def getChild(self,name):
-##         return self.getRoot().childrenByName[name]
-
-
+    def addResolver(self,tc,i2name):
+        self._resolvers.append(Resolver(tc,i2name))
+    
     def getLineWidth(self):
         return 100
     
@@ -224,6 +211,37 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.writeText(label)
         self.write('</a>')
 
+    def findResolver(self,cl):
+        root=self.getRoot()
+        for rs in root._resolvers:
+            if rs.cl == cl: return rs
+
+    def writeColValue(self,col,value):
+        if value is None:
+            s = ""
+        else:
+            cl=col.getValueClass()
+            if cl is Query:
+                cl=value.getLeadTable().__class__
+                #print cl
+                rs=self.findResolver(cl)
+                if rs is not None:
+                    #print "bla"
+                    for row in value:
+                        href=rs.href(self,row)
+                        label=row.getLabel()
+                        self.writeLink(href,label) 
+                        self.writeText(", ")
+                    return
+                        
+            rs=self.findResolver(cl)
+            if rs is not None:
+                href=rs.href(self,value)
+                label=value.getLabel()
+                self.writeLink(href,label)
+                return
+            
+            self.writeText(col.format(value))
 
     def h(self,level,txt):
         self._body.append(H(level,txt))
@@ -280,45 +298,27 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
                       self.location.replace("/",os.path.sep))
         fn = opj(dirname, self.filename())
         filenames.append(fn)
-        print fn
+        #print fn
         if simulate:
             ui.status("Would write %s...",fn)
             fd = StringIO()
         else:
             ui.status("Writing %s...",fn)
             if not os.path.isdir(dirname):
-                ui.notice("makedirs(%s)",dirname)
                 os.makedirs(dirname)
-            if not ui.confirm(fn):
-                return []
+                ui.notice("Created directory %s",dirname)
             
             fd = file(fn,"wt")
             
         self.writeDocument(fd.write)
         fd.close()
         
-##         for rpt in self._reports:
-##             for col in rpt.columns:
-##                 for i in range(rpt.iterator.lastPage):
-##                     subrpt = rpt.child(
-##                         orderBy=col.name,
-##                         pageNum=i+1)
-
-##                     def render(doc):
-##                         #doc.h(1,subrpt.getLabel())
-##                         doc.report(subrpt)
-
-##                     self.addChild(
-##                         name=rptname(subrpt),
-##                         title=subrpt.getLabel(),
-##                         content=render)
-
         
         for rpt in self._reports:
             for col in rpt.columns:
-                for pg in range(rpt.iterator.lastPage):
+                for pg in range(rpt._iterator.ds.lastPage):
                     if pg != 0 or \
-                       col.datacol != rpt.iterator.sortColumns[0]:
+                       col.datacol != rpt._iterator.ds.sortColumns[0]:
                         e=ReportElement(rpt,pg+1,col.datacol)
                         ch=self.addChild(
                             name=rptname(rpt,
@@ -328,11 +328,19 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
                             content=e)
                 
         
-        
         #print len(subdocs)
         #raise "hier"
         #for ch in subdocs:
         #    filenames += ch.save(ui,targetRoot,simulate)
+
+##         for rs in self._resolvers:
+##             for x in ui.query(rs.cl):
+##                 ch=self.__class__(parent=self,
+##                                   name=rs.i2name(x),
+##                                   title=x.getLabel(),
+##                                   content=DataRowElement(x))
+##                 filenames += ch.save(ui,targetRoot,simulate)
+                
         for ch in self.children:
             filenames += ch.save(ui,targetRoot,simulate)
         return filenames
@@ -353,9 +361,9 @@ class H:
 
 
 def rptname(rpt,sortColumn=None,pageNum=None):
-    if sortColumn is None: sortColumn=rpt.iterator.sortColumns[0]
+    if sortColumn is None: sortColumn=rpt._iterator.ds.sortColumns[0]
     if pageNum is None: pageNum=rpt.pageNum
-    if pageNum==1 and sortColumn==rpt.iterator.sortColumns[0]:
+    if pageNum==1 and sortColumn==rpt._iterator.ds.sortColumns[0]:
         return rpt.name
     return str(pageNum)+"_"+sortColumn.name
                     
@@ -364,6 +372,37 @@ def rptname(rpt,sortColumn=None,pageNum=None):
 
         
         
+class DataRowElement:
+    def __init__(self,row):
+        self.row=row
+        
+    def render(self,doc):
+        wr=doc.write
+        
+        wr('<table width="100%" cellpadding="3" cellspacing="3">')
+            
+            
+        # iterate...
+        rowno = 0
+        for cell in self.row:
+            rowno += 1
+            if rowno % 2 == 0:
+                wr("<tr class=''>\n")
+            else:
+                wr("<tr class='alternate'>\n")
+
+            wr('<td>')
+            doc.writeText(cell.col.getLabel())
+            wr("</td>")
+            
+            wr('<td>')
+            doc.writeColValue(cell.col,cell.getValue())
+            wr("</td>")
+            wr("</tr>\n")
+        
+        wr("</table>")
+
+        
 class ReportElement:
     def __init__(self,rpt,pageNum=1,sortColumn=None):
         self.rpt=rpt
@@ -371,7 +410,7 @@ class ReportElement:
         if sortColumn is None:
             #print rpt.columns
             #print rpt.iterator.sortColumns
-            sortColumn=rpt.iterator.sortColumns[0]
+            sortColumn=rpt._iterator.ds.sortColumns[0]
         else:
             assert isinstance(sortColumn,QueryColumn)
         self.sortColumn=sortColumn
@@ -381,7 +420,7 @@ class ReportElement:
     
     def render(self,doc):
         rpt=self.rpt
-        ds=rpt.iterator
+        ds=rpt._iterator.ds
         pageNum=self.pageNum
         sortColumn=self.sortColumn
         wr=doc.write
@@ -494,14 +533,9 @@ class ReportElement:
             rptrow = rpt.processItem(doc,datarow)
 
             for cell in rptrow.cells:
-                if cell.value is None:
-                    s = ""
-                else:
-                    s = cell.col.format(cell.value)
-                    
                 wr('<td>')
+                doc.writeColValue(cell.col.datacol,cell.value)
                 #wr('<th scope="row">')
-                doc.writeText(s)
                 wr("</td>")
             wr("</tr>\n")
             
@@ -513,3 +547,4 @@ class ReportElement:
         rpt.endReport(self)
 
     
+                    

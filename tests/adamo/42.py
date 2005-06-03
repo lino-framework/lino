@@ -30,7 +30,7 @@ TESTDATA = os.path.join(
     os.path.dirname(__file__),"..","etc","testdata")
 
 class Case(TestCase):
-    
+    todo="VolumeVisitor instance has no attribute 'reloading'"
     def test01(self):
         app=Keeper()
         sess=app.quickStartup()

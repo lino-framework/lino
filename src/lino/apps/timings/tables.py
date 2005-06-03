@@ -52,7 +52,7 @@ class Resources(Table):
 class Usages(Table):
     def init(self):
         self.addField('id',ROWID) 
-        self.addField('date',DATE)
+        self.addPointer('date',Days)
         self.addField('start',TIME)
         self.addField('stop',TIME)
         self.addPointer('type',UsageTypes)
@@ -63,6 +63,8 @@ class Usages(Table):
 
     class Instance(Table.Instance):
         def getLabel(self):
+            if self.start is None:
+                return self.date.getLabel()
             return "%s (%s-%s)" % (self.date,self.start,self.stop)
         
 
@@ -75,8 +77,19 @@ class UsageTypes(Table):
         def getLabel(self):
             return self.name
         
+class Days(Table):
+    def init(self):
+        self.addField('date',DATE)
+        self.addField('remark',STRING)
+        self.setPrimaryKey("date")
+        
+    class Instance(Table.Instance):
+        def getLabel(self):
+            return str(self.date)
+
 
 TABLES = (
+    Days,
     UsageTypes,
     Resources,
     Usages,

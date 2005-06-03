@@ -28,8 +28,9 @@ try:
 except:
     win32file = None
 
+from lino.console.application import Application, UsageError, ApplicationError
 
-from lino.ui import console
+#from lino.ui import console
 from lino.misc.jobs import Task
 
 
@@ -115,7 +116,7 @@ class SynchronizerTask(Task):
     
     def start(self):
         if not os.path.exists(self.src):
-            raise console.ApplicationError(
+            raise ApplicationError(
                 _("Source directory '%s' doesn't exist."))
 
         if self.showProgress:
@@ -161,7 +162,7 @@ class SynchronizerTask(Task):
         elif os.path.isdir(src):
             self.copy_dir(src,target)
         else:
-            raise console.ApplicationError(
+            raise ApplicationError(
                 "%s is neither file nor directory" % src)
 
     def update_it(self,src,target):
@@ -171,7 +172,7 @@ class SynchronizerTask(Task):
         elif os.path.isdir(src):
             self.update_dir(src,target)
         else:
-            raise console.ApplicationError(
+            raise ApplicationError(
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
@@ -181,7 +182,7 @@ class SynchronizerTask(Task):
         elif os.path.isdir(name):
             self.delete_dir(name)
         else:
-            raise console.ApplicationError(
+            raise ApplicationError(
                 "%s is neither file nor directory" % name)
 
             
@@ -390,7 +391,7 @@ class SynchronizerTask(Task):
             self.count_delete_file)
         return s + " " + Task.getStatus(self)
 
-class Sync(console.Application):
+class Sync(Application):
 
     name="Lino/sync"
     years='2005'
@@ -401,7 +402,7 @@ where SRC and DEST are two directories to be synchronized.
 """ 
     
     def setupOptionParser(self,parser):
-        console.Application.setupOptionParser(self,parser)
+        Application.setupOptionParser(self,parser)
 
         parser.add_option(
             "-s", "--simulate",
@@ -420,7 +421,7 @@ where SRC and DEST are two directories to be synchronized.
     def run(self,ui):
          
         if len(self.args) != 2:
-            raise console.UsageError("needs 2 arguments")
+            raise UsageError("needs 2 arguments")
             #parser.print_help() 
             #return -1
 

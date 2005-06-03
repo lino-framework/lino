@@ -54,14 +54,14 @@ class BaseReport(Describable):
         self.totals = []
         self._onRowEvents=[]
 
-        self.iterator = iterator
 
         Describable.__init__(self,parent,**kw)
         if parent is not None:
-            if iterator is None: iterator=parent.iterator
+            if iterator is None: iterator=parent._iterator
             if columnWidths is None: columnWidths=parent.columnWidths
             if width is None: width=parent.width
             if rowHeight is None: rowHeight=parent.rowHeight
+        self._iterator = iterator.__iter__()
         self.rowHeight = rowHeight
         self.columnWidths = columnWidths
         self.width = width
@@ -142,25 +142,14 @@ class BaseReport(Describable):
     def endReport(self,doc):
         pass
 
-        
+    def rows(self,doc):
+        return ReportIterator(self,doc)
         
     def processItem(self,doc,item):
-        row = Row(item)
+        return ReportRow(self,doc,item)
+        #row = Row(item)
 
-        for e in self._onRowEvents:
-            e(row)
-            
-
-        # compute all cell values
-        for col in self.columns:
-            if col.when and not col.when(row):
-                v = None
-            else:
-                v = col.getValue(row)
-            row.cells.append(Cell(row,col,v))
-            
-
-        return row
+        #return row
 
     
     ##
@@ -265,12 +254,37 @@ class Cell:
         self.col = col
         self.value = value
 
-class Row:
-    def __init__(self,item):
+class ReportRow:
+    def __init__(self,rpt,doc,item):
         self.item = item
         self.cells = []
+        
+        for e in rpt._onRowEvents:
+            e(self)
+            
+
+        # compute all cell values
+        for col in rpt.columns:
+            if col.when and not col.when(self):
+                v = None
+            else:
+                v = col.getValue(self)
+            self.cells.append(Cell(self,col,v))
+            
 
 
+
+class ReportIterator:
+    def __init__(self,rpt,doc):
+        self.rpt=rpt
+        self.doc=doc
+        
+    def __iter__(self):
+        return self
+
+    def next(self):
+        return self.rpt.processItem(
+            self.doc, self.rpt._iterator.next())
 
 class DataReport(BaseReport):
     
@@ -284,7 +298,7 @@ class DataReport(BaseReport):
         #if doc is None: doc=ds.getDoc()
         
         if len(kw):
-            # forward keywords to the query
+            # forward keywords to the Query
             ds=ds.child(**kw)
             
         BaseReport.__init__(self,None,ds,
@@ -293,7 +307,7 @@ class DataReport(BaseReport):
     
     def beginReport(self,doc):
         if len(self.columns) == 0:
-            for dc in self.iterator.getVisibleColumns():
+            for dc in self._iterator.ds.getVisibleColumns():
                 self.addDataColumn(dc,
                                    #width=dc.getMaxWidth(),
                                    label=dc.getLabel())
@@ -344,9 +358,9 @@ class Report(BaseReport):
         BaseReport.__init__(self,None, iterator, **kw)
 
         
-def createReport(iterator,**kw):
-    if isinstance(iterator,Query):
-        return DataReport(None,iterator,**kw)
-    if isinstance(iterator,dict):
-        return DictReport(iterator,**kw)
-    return Report(None,iterator,**kw)
+## def createReport(iterator,**kw):
+##     if isinstance(iterator,Query):
+##         return DataReport(None,iterator,**kw)
+##     if isinstance(iterator,dict):
+##         return DictReport(iterator,**kw)
+##     return Report(None,iterator,**kw)

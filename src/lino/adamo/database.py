@@ -185,17 +185,17 @@ class Database(Context,Describable):
 ##          self.__dict__['conn'] = conn
 
 
-    def startup(self,console=None):
+    def startup(self,toolkit=None):
         #print "%s.startup()" % self.__class__
         #if ui is None:
         #    ui = syscon.getSystemConsole()
         #sess=center.openSession(syscon.getSystemConsole())
         assert not self._startupDone,\
                  "Cannot startup() again " + repr(self)
-        if console is None:
-            console=syscon.getSystemConsole()
+        if toolkit is None:
+            toolkit=syscon.getSystemConsole()
             
-        sess=DbSession(self,console)
+        sess=DbSession(self,toolkit)
         for store in self.getStoresById():
             store.onStartup(sess)
                 

@@ -87,6 +87,7 @@ class Application:
         
         options,args = p.parse_args(argv)
         self.applyOptions(options,args)
+        return p
         
 
     
@@ -185,7 +186,7 @@ See file COPYING.txt for more information.""" % (
             #self.startup(toolkit)
             #syscon.setSystemSession(self._sessions[0])
             #syscon.setSystemSession(sess)
-            self.parse_args(argv)
+            p=self.parse_args(argv)
             return self.run(syscon._session)
         
         except UsageError,e:

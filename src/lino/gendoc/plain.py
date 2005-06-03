@@ -80,8 +80,10 @@ class PlainDocument(GenericDocument):
         
         #print __file__,rpt.iterator._filters
         # iterate...
-        for item in rpt.iterator:
-            row=rpt.processItem(self,item)
+
+        for row in rpt.rows(self):
+        #for item in rpt._iterator:
+        #    row=rpt.processItem(self,item)
 
             wrappedCells = []
             i = 0

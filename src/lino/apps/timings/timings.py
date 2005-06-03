@@ -21,31 +21,49 @@ from lino.forms import gui
 
 from lino.apps.timings.tables import *
 from lino.apps.timings.tables import TABLES
-#from lino.apps.timings.loaders import LOADERS
-from lino.adamo.ddl import Schema #MirrorLoaderApplication
+from lino.adamo.ddl import Schema
 
 from lino.gendoc.html import HtmlDocument
 from lino.reports.reports import DataReport
 
 
 class Timings(Schema):
-    
+    #name="Lino/Timings"
     years='2005'
     author="Luc Saffre"
     htmlRoot="gendoc_html"
     
     tables = TABLES
 
-##     def onInitialize(self):
-##         self.registerLoaders(
-##             [lc(self.loadfrom) for lc in LOADERS])
-
     def writeStaticSite(self,sess):
         if not sess.confirm("Generate HTML in %s" % self.htmlRoot):
             return
+        files = self._writeStaticSite(sess,self.htmlRoot)
+        sess.notice("%d files have been generated",len(files))
+        
+        
+    def _writeStaticSite(self,sess,targetRoot):
         root = HtmlDocument(title="Timings",
                             stylesheet="wp-admin.css")
+
+        root.addResolver(Resources, lambda x: x.id.strip())
+        root.addResolver(UsageTypes, lambda x: x.id.strip())
+        root.addResolver(Usages, lambda x: str(x.date))
+        root.addResolver(Days, lambda x: str(x.date))
+
+##         def query2name(q):
+##             if q.getLeadTable().__class__ == Resources:
+##                 return "resources"
+##         root.addResolver(Query, query2name)
+##         root.addResolver(
+##             Days,
+##             lambda x: str(x.date.year)+str(x.date.month)
+        
+        
+
         mnu = root.addMenu()
+
+        
         ds = sess.query(Resources,
                         pageLen=50,
                         orderBy="name")
@@ -55,7 +73,9 @@ class Timings(Schema):
                           title=rpt.getLabel())
         doc.report(rpt)
         mnu.addLink(doc)
-
+        
+            
+        
         ds = sess.query(UsageTypes,
                         pageLen=50,
                         orderBy="id")
@@ -65,9 +85,33 @@ class Timings(Schema):
                           title=rpt.getLabel())
         doc.report(rpt)
         mnu.addLink(doc)
-            
-        files=root.save(sess,self.htmlRoot)
-        sess.notice("%d files have been generated",len(files))
+        
+        ds = sess.query(Days,
+                        pageLen=50,
+                        orderBy="date")
+        rpt = DataReport(ds)
+        doc=root.addChild(location="days",
+                          name=rpt.name,
+                          title=rpt.getLabel())
+        doc.report(rpt)
+        mnu.addLink(doc)
+
+        filenames=root.save(sess,targetRoot)
+
+        from lino.gendoc.html import DataRowElement
+        
+        for cl in (Resources, UsageTypes, Days):
+            rs=root.findResolver(cl)
+            for x in sess.query(cl):
+                ch=root.__class__(parent=root,
+                                  name=rs.i2name(x),
+                                  title=x.getLabel(),
+                                  content=DataRowElement(x))
+                filenames += ch.save(sess,targetRoot)
+        
+        
+
+        return filenames
         
 
     def showMainForm(self,sess):

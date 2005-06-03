@@ -17,13 +17,55 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
    
-from lino.misc.tsttools import TestCase, main, catch_output
+from lino.misc.tsttools import TestCase, main, Toolkit
+
+from lino.adamo.store import Populator
+
+from lino.apps.timings.timings import Timings
+from lino.apps.timings.tables import *
+from lino.adamo.datatypes import itod
+
+class TestPopulator(Populator):
+    def populateUsageTypes(self,q):
+        self.a=q.appendRow(id="A ",name="Arbeit")
+        self.u=q.appendRow(id="U ",name="Urlaub")
+        self.m=q.appendRow(id="M ",name="Mission")
+
+    def populateResources(self,q):
+        self.ls=q.appendRow(id="luc",name="Luc")
+        self.gx=q.appendRow(id="gerd",name="Gerd")
+        
+    def populateDays(self,q):
+        for i in range(20050601,20050630):
+            q.appendRow(date=itod(i))
+
+    def populateUsages(self,q):
+        days=q.getSession().query(Days)
+        for i in range(20050601,20050630):
+            d=days.peek(itod(i))
+            q.appendRow(resource=self.ls,
+                        date=d,
+                        type=self.a)
+
 
 class Case(TestCase):
-    skip=True
     
     def test01(self):
-        pass
+        app=Timings()
+        sess=app.quickStartup(toolkit=Toolkit())
+        sess.populate(TestPopulator())
+        #sess.commit()
+        
+        #app.showMainForm(sess)
+        #s=self.getConsoleOutput()
+        #print s
+        
+        files=app._writeStaticSite(sess,r"c:\temp\timings")
+        s=self.getConsoleOutput()
+        print s
+        
+        print files
+
 
 
 if __name__ == '__main__':

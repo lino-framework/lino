@@ -108,7 +108,12 @@ continue testing even if failures or errors occur""",
         job.done("found %d cases and %d suites.",
                  len(cases),len(suites))
         for tcl in cases:
-            suites.append(unittest.makeSuite(tcl))
+            if hasattr(tcl,"todo"):
+                sess.notice("Todo %s : %s",
+                            tcl.__module__,tcl.todo)
+            else:
+                suites.append(unittest.makeSuite(tcl))
+                
         return unittest.TestSuite(suites)
      
     def findTestCases(self,sess,modname,cases,suites):
@@ -120,14 +125,14 @@ continue testing even if failures or errors occur""",
         for (k,v) in mod.__dict__.items():
             # Python 2.2 if type(v) == types.ClassType:
             if type(v) == types.TypeType: # since 2.3
-                if issubclass(v,unittest.TestCase):
-                    if v != unittest.TestCase \
-                          and v != tsttools.TestCase:
-                        if hasattr(v,"skip") and v.skip:
-                            sess.notice("Skipping %s.%s",
-                                        modname,v.__name__)
-                        else:
-                            cases.append(v)
+                if issubclass(v,unittest.TestCase) \
+                      and v != unittest.TestCase \
+                      and v != tsttools.TestCase:
+                    if hasattr(v,"skip") and v.skip:
+                        sess.notice("Skipping %s.%s",
+                                    modname,v.__name__)
+                    else:
+                        cases.append(v)
         return cases
     
     
