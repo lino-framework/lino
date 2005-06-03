@@ -58,6 +58,8 @@ inch = 1440.0
 mm = inch / 25.4
 A4 = (210*mm, 297*mm)
 
+RATIO=1.7
+
 # Note that in all modes, the point 0,0 is the upper left corner of
 # the page, and the units increase as you go down and across the
 # page.
@@ -283,7 +285,8 @@ class Win32TextPrinter(TextPrinter):
         del self.dc
             
     def setLpi(self,lpi):
-        h = int(LPIBASE / lpi)
+        pass
+        #h = int(LPIBASE / lpi)
         #h = int(inch/lpi)
         #console.debug("%d lpi = %d twips" % (lpi,h))
         #self.fontDict['height'] = h
@@ -292,8 +295,12 @@ class Win32TextPrinter(TextPrinter):
     def setCpi(self,cpi):
         w = int(inch/cpi)
         #console.debug("%d cpi = %d twips" % (cpi,w))
+        
         self.fontDict['width'] = w
-        # self.fontDict['height'] = w
+        # see 20050602:
+        self.fontDict['height'] = int(w*RATIO)
+        # if RATIO changes, I must adapt TIM's prnprint.drv
+        
         self.cpl = int(self.lineWidth()/inch*cpi)
             #(self.pageWidth-(self.margin*2))/inch*cpi)
         #print __name__, self.width

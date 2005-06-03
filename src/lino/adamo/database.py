@@ -54,7 +54,7 @@ class Database(Context,Describable):
         self._connections=[]
         #self._populators = []
         self._startupDone= False
-        print self, "__init__():", self.getSupportedLangs()
+        #print self, "__init__():", self.getSupportedLangs()
 
 ##     def addPopulator(self,p):
 ##         #if self._startupDone:
@@ -98,8 +98,8 @@ class Database(Context,Describable):
         """
         index -1 means that values in this language should be ignored
         """
-        print self, ":", lang_id, \
-              "not found in", self.getSupportedLangs()
+        #print self, ":", lang_id, \
+        #      "not found in", self.getSupportedLangs()
         return BabelLang(-1,lang_id)
         #raise "%s : no such language code in %s" % (lang_id, repr(self))
         

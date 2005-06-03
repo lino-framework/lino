@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-multiple databases and connections
+multiple databases and connections with different BabelLangs
 
 What's wrong: There are 3 calls to addDatabase() although logically
 there is only 2 databases.  The shared tables must not be in a
@@ -43,7 +43,7 @@ sharedTables = (Languages, Nations,
                 ProjectStati, Users) 
 
 class Case(TestCase):
-
+    skip="(todo: shared tables with different babelLangs)"
 
     def test01(self):
 

@@ -67,43 +67,6 @@ class BaseReport(Describable):
         self.width = width
         
         
-
-##     def setdefaults(self,kw):
-##         kw.setdefault('columnNames',self.columnNames)
-##         kw.setdefault('columnWidths',self.columnWidths)
-##         kw.setdefault('rowHeight',self.rowHeight)
-##         #self.ds.setdefaults(self,kw)
-
-##     def child(self,
-##               iterator=None,
-##               columnWidths=None,
-##               width=None,
-##               rowHeight=None,
-##               name=None,
-##               label=None,
-##               doc=None,
-##               **kw):
-        
-##         if iterator is None: iterator=self.iterator
-## ##         if iterator is None:
-## ##             if len(kw):
-## ##                 iterator=self.iterator.child(**kw)
-## ##             else:
-## ##                 iterator=self.iterator
-## ##         else:
-## ##             assert len(kw) == 0
-            
-##         if columnWidths is None: columnWidths=self.columnWidths
-##         if width is None: width=self.width
-##         if rowHeight is None: rowHeight=self.rowHeight
-##         if name is None: name=self.name
-##         if label is None: label=self.label
-##         if doc is None: doc=self.doc
-        
-##         return self.__class__(iterator,
-##                               columnWidths,width,rowHeight,
-##                               name,label,doc,**kw)
-
     def getTitle(self):
         return self.getLabel()
     

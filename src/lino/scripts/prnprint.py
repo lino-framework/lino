@@ -56,7 +56,7 @@ write to SPOOLFILE rather than really printing.""",
                           dest="spoolFile",
                           default=None)
     
-    def run(self,ui):
+    def run(self,sess):
         if len(self.args) == 0:
             raise UsageError("no arguments specified")
         for inputfile in self.args:
@@ -67,6 +67,7 @@ write to SPOOLFILE rather than really printing.""",
                 #charset=winprn.OEM_CHARSET)
             d.readfile(inputfile)
             d.endDoc()
+            sess.notice("%s : %d pages(s)",inputfile,d.page)
 
 consoleApplicationClass = PrnPrint
     
