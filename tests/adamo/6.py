@@ -52,7 +52,7 @@ class Case(TestCase):
     
     def test01(self):
         app=Timings()
-        sess=app.quickStartup(toolkit=Toolkit())
+        sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
         sess.populate(TestPopulator())
         #sess.commit()
         
@@ -63,8 +63,11 @@ class Case(TestCase):
         files=app._writeStaticSite(sess,r"c:\temp\timings")
         s=self.getConsoleOutput()
         print s
-        
-        print files
+        self.assertEquivalent(s,"")
+        self.assertEqual(len(files),58)
+        #print sess.db._connections[0].stopDump()
+        sess.commit()
+        #print files
 
 
 

@@ -35,11 +35,11 @@ class BasePlugin(SchemaPlugin):
         #schema.addForm(MainForm)
 
 
-class WebPlugin(SchemaPlugin):
+## class WebPlugin(SchemaPlugin):
 
-    def defineTables(self,schema):
-        schema.addTable( Pages,label="Content Pages")
-        # self.addLinkTable("PAGE2PAGE",web.Page,web.Page,web.Page2Page)
+##     def defineTables(self,schema):
+##         schema.addTable( Pages,label="Content Pages")
+##         # self.addLinkTable("PAGE2PAGE",web.Page,web.Page,web.Page2Page)
 
         
 class ProjectPlugin(SchemaPlugin):
@@ -50,15 +50,15 @@ class ProjectPlugin(SchemaPlugin):
         schema.addTable( ProjectStati,
                          label="Project States")
 
-class NewsPlugin(SchemaPlugin):
+## class NewsPlugin(SchemaPlugin):
 
-    def defineTables(self,schema):
-        schema.addTable( News,
-                         label="News Items")
-        schema.addTable( Newsgroups,
-                         label="Newsgroups")
-        #self.addLinkTable("NEWS2NEWSGROUPS",
-        #                    news.News, news.Newsgroup)
+##     def defineTables(self,schema):
+##         schema.addTable( News,
+##                          label="News Items")
+##         schema.addTable( Newsgroups,
+##                          label="Newsgroups")
+##         #self.addLinkTable("NEWS2NEWSGROUPS",
+##         #                    news.News, news.Newsgroup)
 
         
 class EventsPlugin(SchemaPlugin):
@@ -97,24 +97,24 @@ class SalesPlugin(SchemaPlugin):
 #    pass
 
 
-class QuotesPlugin(SchemaPlugin):
+## class QuotesPlugin(SchemaPlugin):
     
-    def defineTables(self,schema):
-        schema.addTable( Authors,label="Authors")
-        schema.addTable( AuthorEvents,
-                         label="Biographic Events")
-        schema.addTable( AuthorEventTypes,
-                         label="Biographic Event Types")
-        schema.addTable( Topics,
-                         label="Topics")
-        schema.addTable( Publications,
-                         label="Publications")
-        schema.addTable( Quotes,
-                         label="Quotes")
-        schema.addTable( PubTypes,
-                         label="Publication Types")
-        schema.addTable( PubByAuth,
-                         label="Publications By Author")
+##     def defineTables(self,schema):
+##         schema.addTable( Authors,label="Authors")
+##         schema.addTable( AuthorEvents,
+##                          label="Biographic Events")
+##         schema.addTable( AuthorEventTypes,
+##                          label="Biographic Event Types")
+##         schema.addTable( Topics,
+##                          label="Topics")
+##         schema.addTable( Publications,
+##                          label="Publications")
+##         schema.addTable( Quotes,
+##                          label="Quotes")
+##         schema.addTable( PubTypes,
+##                          label="Publication Types")
+##         schema.addTable( PubByAuth,
+##                          label="Publications By Author")
         
 
         
@@ -136,10 +136,10 @@ class Sprl(Schema):
     
         self.addPlugin(EventsPlugin(withEvents))
         self.addPlugin(SalesPlugin(withSales))
-        self.addPlugin(QuotesPlugin(withQuotes))
-        self.addPlugin(WebPlugin(withWeb))
+        #self.addPlugin(QuotesPlugin(withQuotes))
+        #self.addPlugin(WebPlugin(withWeb))
         self.addPlugin(ProjectPlugin(withProjects))
-        self.addPlugin(NewsPlugin(withNews))
+        #self.addPlugin(NewsPlugin(withNews))
         
     def getContentRoot(self,db):
         return db.tables.PAGES.findone(match="index")

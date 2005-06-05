@@ -46,10 +46,23 @@ class Timings(Schema):
         root = HtmlDocument(title="Timings",
                             stylesheet="wp-admin.css")
 
-        root.addResolver(Resources, lambda x: x.id.strip())
-        root.addResolver(UsageTypes, lambda x: x.id.strip())
-        root.addResolver(Usages, lambda x: str(x.date))
-        root.addResolver(Days, lambda x: str(x.date))
+        def iif(t,x,y):
+            if t: return x
+            return y
+        
+        root.addResolver(
+            Resources,
+            lambda row: "resources/"+row.id.strip()
+            )
+        root.addResolver(
+            UsageTypes, lambda x: "types/"+x.id.strip()
+            )
+        root.addResolver(
+            Usages, lambda x: "days/"+str(x.date)
+            )
+        root.addResolver(
+            Days, lambda x: "days/"+str(x.date)
+            )
 
 ##         def query2name(q):
 ##             if q.getLeadTable().__class__ == Resources:
@@ -68,10 +81,7 @@ class Timings(Schema):
                         pageLen=50,
                         orderBy="name")
         rpt = DataReport(ds)
-        doc=root.addChild(location="resources",
-                          name=rpt.name,
-                          title=rpt.getLabel())
-        doc.report(rpt)
+        doc=root.addReportChild(rpt)
         mnu.addLink(doc)
         
             
@@ -80,21 +90,19 @@ class Timings(Schema):
                         pageLen=50,
                         orderBy="id")
         rpt = DataReport(ds)
-        doc=root.addChild(location="usagetypes",
-                          name=rpt.name,
-                          title=rpt.getLabel())
-        doc.report(rpt)
+        doc=root.addReportChild(rpt)
         mnu.addLink(doc)
         
         ds = sess.query(Days,
                         pageLen=50,
                         orderBy="date")
         rpt = DataReport(ds)
-        doc=root.addChild(location="days",
-                          name=rpt.name,
-                          title=rpt.getLabel())
-        doc.report(rpt)
+        doc=root.addReportChild(rpt)
         mnu.addLink(doc)
+
+        for r in sess.query(Resources):
+            root.addReportChild(DataReport(
+                r.usages_by_resource,orderBy="date start"))
 
         filenames=root.save(sess,targetRoot)
 
@@ -108,8 +116,6 @@ class Timings(Schema):
                                   title=x.getLabel(),
                                   content=DataRowElement(x))
                 filenames += ch.save(sess,targetRoot)
-        
-        
 
         return filenames
         

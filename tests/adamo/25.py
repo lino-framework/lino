@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,63 +18,100 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from unittest import TestCase, main
 
+import pysqlite2.dbapi2 as sqlite 
 
-from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables \
-     import Cities, Nations, Invoices, InvoiceLines, Journals
 
 class Case(TestCase):
     
-    "testing Datasource.apply_GET()"
-    
-    skip=1
-
-    def setUp(self):
-        TestCase.setUp(self)
-        
-        self.db = demo.startup()
-
-    def tearDown(self):
-        self.db.shutdown()
-
-
     def test01(self):
-        CITIES = self.db.query(Cities)
-        NATIONS = self.db.query(Nations)
-        be = NATIONS.peek('be')
         
-        # method 1
-        q = CITIES.query(nation=be)
-        l = len(q)
-        
-        # method 2
-        q = CITIES.query()
-        q.apply_GET(nation=('be',))
-        self.assertEqual(l,len(q))
+        self.assertEqual(sqlite.version,'2.0.3')
 
-        # method 3
-        q = be.cities.query()
-        self.assertEqual(l,len(q))
+        conn = sqlite.connect(':memory:')
+        csr = conn.cursor()
+        csr.execute("""
+CREATE TABLE Days (
+     date INT,
+  remark VARCHAR(50),
+  PRIMARY KEY (date)
+);
+        """)
+        csr.execute("""
+CREATE TABLE UsageTypes (
+     id CHAR(2),
+  name VARCHAR(50),
+  PRIMARY KEY (id)
+);
+        """)
+        csr.execute("""
+CREATE TABLE Resources (
+     id VARCHAR(50),
+  name VARCHAR(50),
+  PRIMARY KEY (id)
+);
+        """)
+        csr.execute("""
+CREATE TABLE Usages (
+     id BIGINT,
+  date_date INT,
+  start CHAR(8),
+  stop CHAR(8),
+  type_id CHAR(2),
+  remark VARCHAR(50),
+  resource_id VARCHAR(50),
+  PRIMARY KEY (id)
+);
+        """)
+        csr.execute("""
+        CREATE TABLE Tester (
+        id int,
+        name varchar(80)
+        )
+        """)
+        #conn.commit()
+        for i in range(1000):
+            csr.execute("""
+INSERT INTO Tester VALUES (%d, 'This is row %d')
+            """ % (i,i))
+            #conn.commit()
+            
+        for i in range(732098,732126):
+            csr.execute("""
+INSERT INTO Days (
+date, remark ) VALUES ( %d, NULL );
+            """ % i)
+            
+        #conn.commit()
+        csr.execute("""SELECT id, name from Tester
+        WHERE id == 517 
+        """)
+        #self.assertEqual(csr.rowcount,1)
+        rows = csr.fetchall()
+        row=rows[0]
+        self.assertEqual(row[0],517)
         
-    def test02(self):
-        JOURNALS = self.db.query(Journals)
-        INVOICES = self.db.query(Invoices)
-        INVOICELINES = self.db.query(InvoiceLines)
+        #csr.execute("""SELECT id, name, curr from Nations
+        #WHERE id = 'foo'
+        #""")
         
-        jnl = JOURNALS.peek('OUT')
-        inv = INVOICES.peek(jnl,1)
-        self.assertEqual(str(inv.partner),"Anton Ausdemwald")
-        self.assertEqual(len(inv.lines),2)
-
-        q = INVOICELINES.query(invoice=inv)
-        l = len(q)
+        #conn.commit()
+        conn.commit()
         
-        q = INVOICELINES.query()
-        q.apply_GET(invoice=("OUT,1",))
+        conn.close()
+        try:
+            conn.commit()
+            self.fail("failed to raise ProgrammingError")
+        except sqlite.ProgrammingError:
+            # ProgrammingError: Cannot operate on a closed database.
+            pass
         
-        self.assertEqual(l,len(q))
+        #row = csr.fetchone()
+        #rows = csr.fetchall()
+        #row=rows[0]
+        #self.assertEqual(row,None)
+        
         
 
 if __name__ == '__main__':

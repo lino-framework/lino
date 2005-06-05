@@ -318,6 +318,15 @@ class DataReport(BaseReport):
         self.columns.append(col)
         return col
 
+    def doesShow(self,qry):
+        #used in lino.gendoc.html
+        myqry=self._iterator.ds
+        if myqry.getLeadTable().name != qry.getLeadTable().name:
+            return False
+        #if myqry._masters != qry._masters:
+        #    return False
+        return True
+
     #def execute(self,ds):
     #    rpt.configure(**kw)
 

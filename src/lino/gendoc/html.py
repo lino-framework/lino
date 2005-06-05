@@ -66,14 +66,23 @@ END_PAGE = """
 
 
 class Resolver:
-    def __init__(self,cl,i2name):
+    def __init__(self,root,cl,i2name):
+        self.root=root
         self.cl=cl
         self.i2name=i2name
+        #self.qry2name=qry2name
 
     def href(self,fromLoc,toRow):
-        return self.i2name(toRow)+".html"
-        
+        return fromLoc.locto(self.i2name(toRow)) + fromLoc.extension
+    #".html"
 
+    
+        
+def rpt2name(rpt):
+    qry=rpt._iterator.ds
+    return "/".join(
+        [rpt.name]+[col.name for col in qry._masterColumns])+"/index"
+                            
 
 
 class Locatable:
@@ -195,7 +204,14 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         return c
     
     def addResolver(self,tc,i2name):
-        self._resolvers.append(Resolver(tc,i2name))
+        self._resolvers.append(Resolver(self,tc,i2name))
+
+    def addReportChild(self,rpt):
+        doc=self.addChild(name=rpt2name(rpt),
+                          title=rpt.getLabel())
+        doc.report(rpt)
+        return doc
+        
     
     def getLineWidth(self):
         return 100
@@ -220,27 +236,35 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         if value is None:
             s = ""
         else:
+            root=self.getRoot()
             cl=col.getValueClass()
             if cl is Query:
-                cl=value.getLeadTable().__class__
-                #print cl
+                for rpt in root._reports:
+                    if rpt.doesShow(value):
+                        name=rpt2name(rpt)
+                        href=self.urlto(name)
+                        self.writeLink(href,str(value)) 
+                        return
+                print "no report for", value
+##                 cl=value.getLeadTable().__class__
+##                 #print cl
+##                 rs=self.findResolver(cl)
+##                 if rs is not None:
+##                     #print "bla"
+##                     for row in value:
+##                         href=rs.href(self,row)
+##                         label=row.getLabel()
+##                         self.writeLink(href,label) 
+##                         self.writeText(", ")
+##                     return
+            else:
                 rs=self.findResolver(cl)
                 if rs is not None:
-                    #print "bla"
-                    for row in value:
-                        href=rs.href(self,row)
-                        label=row.getLabel()
-                        self.writeLink(href,label) 
-                        self.writeText(", ")
+                    href=rs.href(self,value)
+                    label=value.getLabel()
+                    self.writeLink(href,label)
                     return
-                        
-            rs=self.findResolver(cl)
-            if rs is not None:
-                href=rs.href(self,value)
-                label=value.getLabel()
-                self.writeLink(href,label)
-                return
-            
+
             self.writeText(col.format(value))
 
     def h(self,level,txt):

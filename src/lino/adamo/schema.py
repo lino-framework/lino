@@ -287,6 +287,7 @@ class Schema(Application):
     def quickStartup(self,
                      #toolkit=None,
                      langs=None,
+                     dump=False,
                      filename=None,
                      **kw):
         #print "%s.quickStartup()" % self.__class__
@@ -298,6 +299,8 @@ class Schema(Application):
         syscon.debug("Connect")
         conn = center.connection(filename=filename)
         db.connect(conn)
+        if dump:
+            conn.startDump()
         return db.startup(**kw) #syscon.getSystemConsole())
         #return DbSession(db,syscon.getSystemConsole())
         #assert len(self._sessions) == 1

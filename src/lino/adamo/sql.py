@@ -61,6 +61,7 @@ class SqlConnection(Connection):
         Connection.__init__(self,*args,**kw)
         self._dump = None
         self._status = self.CST_NEW
+        self._dirty=False
         
     def getModificationTime(self,table):
         raise NotImplementedError
@@ -199,6 +200,7 @@ class SqlConnection(Connection):
         #   sql += ', ' + ndx
      
         sql += "\n)"
+        self._dirty=True
         self.sql_exec(sql)
 
 
@@ -418,8 +420,11 @@ class SqlConnection(Connection):
         sql = self.getSqlSelect(ds,sqlColumnNames='COUNT()' )
         csr = self.sql_exec(sql)
         #assert csr.rowcount is None or csr.rowcount == 1
-        atomicRow = csr.fetchone()
-        assert csr.fetchone() is None, "more than one row?!"
+        result=csr.fetchall()
+        assert len(result) == 1, "more than one row?!"
+        atomicRow=result[0]
+        #atomicRow = csr.fetchone()
+        #assert csr.fetchone() is None, "more than one row?!"
         count = int(atomicRow[0])
         #print "%s -> %d" % (sql, count)
         return count
@@ -449,7 +454,10 @@ class SqlConnection(Connection):
         csr = self.sql_exec(sql)
         #assert csr.rowcount is None or csr.rowcount == 1
         #assert csr.rowcount == 1
-        val = csr.fetchone()[0]
+        result=csr.fetchall()
+        assert len(result) == 1, "more than one row?!"
+        val=result[0][0]
+        #val = csr.fetchone()[0]
         return self.sql2value(val,pka[-1][1])
 
         
@@ -472,13 +480,21 @@ class SqlConnection(Connection):
             i += 1
         sql += " AND ".join(l)
         csr = self.sql_exec(sql)
-        atomicRow=csr.fetchone()
-        #print atomicRow
-        if atomicRow is None:
+        
+        result=csr.fetchall()
+        if len(result) == 0:
             return None
-        assert csr.fetchone() is None, \
+        assert len(result) == 1, \
                "%s.peek(%r) found more than one row" % (
             table.getName(), id)
+        atomicRow=result[0]
+        
+        #atomicRow=csr.fetchone()
+        #if atomicRow is None:
+        #    return None
+        #assert csr.fetchone() is None, \
+        #       "%s.peek(%r) found more than one row" % (
+        #    table.getName(), id)
         return self.csr2atoms(qry,atomicRow,sess)
     
 ##         if False: 
@@ -542,6 +558,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         
         sql += " )"
         self.sql_exec(sql)
+        self._dirty=True
         
     def executeUpdate(self,row):
         query = row._query._store._peekQuery
@@ -571,6 +588,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         sql += " AND ".join(l)
 
         self.sql_exec(sql)
+        self._dirty=True
 
     def executeDelete(self,row):
         table = row._query.getLeadTable()
@@ -587,13 +605,19 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
             i += 1
         sql += " AND ".join(l)
         self.sql_exec(sql)
+        self._dirty=True
 
     def executeDeleteAll(self,ds):
+        
+        # no longer used because each row's delete() method must
+        # indiviually be called
+        
         assert ds._filters is None
         sql = "DELETE FROM " + ds.getLeadTable().getTableName()
         sql += self.whereClause(ds)
         #print sql
         self.sql_exec(sql)
+        self._dirty=True
 
 ##     def executeDeleteRows(self,ds):
 ##         sql = "DELETE FROM " + ds._table.getTableName()
@@ -607,20 +631,20 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
 #       Query.__init__(self,leadTable,name)
         
 
-class ConsoleWrapper:
+## class ConsoleWrapper:
     
-    """
-    SQL requests are simply written to stdout.
-    """
+##     """
+##     SQL requests are simply written to stdout.
+##     """
 
-    def __init__(self,conn):
-        if writer is None:
-            self.writer = sys.stdout
-        else:
-            self.writer = writer
+##     def __init__(self,conn):
+##         if writer is None:
+##             self.writer = sys.stdout
+##         else:
+##             self.writer = writer
 
-    def write(self,msg):
-        self.writer.write(msg+";\n")
+##     def write(self,msg):
+##         self.writer.write(msg+";\n")
 
 
 

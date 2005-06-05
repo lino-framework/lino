@@ -96,7 +96,10 @@ class Connection(SqlConnection):
 
     def commit(self):
         #print "commit"
-        self._dbconn.commit()
+        if self._dirty:
+            #print "COMMIT", __file__
+            self._dbconn.commit()
+        self._dirty=False
 
     def close(self):
         if self._status == self.CST_CLOSED:
@@ -104,7 +107,9 @@ class Connection(SqlConnection):
         if self._status == self.CST_CLOSING:
             return
         self._status = self.CST_CLOSING
-        self._dbconn.commit()
+        self.commit()
+        if self._dirty:
+            self._dbconn.commit()
         self._dbconn.close()
         self._dbconn=None
         self._status = self.CST_CLOSED

@@ -58,8 +58,7 @@ class Usages(Table):
         self.addPointer('type',UsageTypes)
         self.addField('remark',STRING)
         #self.addField('mtime',TIMESTAMP)
-        self.addPointer('resource',Resources).setDetail(
-            "usages")
+        self.addPointer('resource',Resources)#.setDetail("usages")
 
     class Instance(Table.Instance):
         def getLabel(self):
