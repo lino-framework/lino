@@ -23,8 +23,8 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.datatypes import itod
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Events
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import Events
 
 class Case(TestCase):
     def setUp(self):

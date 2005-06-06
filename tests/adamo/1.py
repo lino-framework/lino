@@ -50,15 +50,16 @@ class Case(TestCase):
         
         l1 = [str(t.getTableName())
               for t in self.sess.db.app.getTableList()]
-        l1.sort()
 
-        #print " ".join(l1)
-
-        l2 = """
-Accounts AuthorEventTypes AuthorEvents Authors BalanceItems Bookings Bookings CashFlowItems Cities Currencies EventTypes Events InvoiceLines Invoices Journals Languages Nations News Newsgroups Organisations Pages PartnerTypes Partners Products ProfitAndLossItems ProjectStati Projects PubByAuth PubTypes Publications Quotes Topics Users Years
-""".split()
+        s=" ".join(l1)
         
-        self.assertEqual(l1,l2)
+        #print s
+
+        self.assertEquivalent(s, """\
+Users Currencies Nations Cities Organisations Partners PartnerTypes
+Journals Years Products Invoices InvoiceLines BalanceItems
+CashFlowItems ProfitAndLossItems Accounts Bookings
+""")
         
         self.sess.setBabelLangs("en")
         PARTNERS = self.sess.query(Partners)

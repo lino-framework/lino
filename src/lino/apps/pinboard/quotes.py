@@ -18,10 +18,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo import *
-from babel import Languages
+from lino.adamo.ddl import *
+#from babel import Languages
 
-from addrbook import Persons, Cities
+from tables import Persons, Cities, Languages
 #from babel import Language
 #from web import MemoMixin, MemoTreeMixin, TreeMixin
 

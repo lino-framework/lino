@@ -1,6 +1,5 @@
 TableName           |Count|First               |Last                
 --------------------+-----+--------------------+--------------------
-Languages           |    5|English             |Dutch               
 Users               |    2|Luc Saffre          |James Bond          
 Currencies          |    4|EUR                 |EEK                 
 Nations             |    5|Estonia             |United States of    
@@ -10,8 +9,6 @@ Cities              |   26|Bruxelles (be)      |Alfter-Oedekoven
 Organisations       |    0|                    |                    
 Partners            |   12|Luc Saffre          |Eesti Telefon       
 PartnerTypes        |    5|Customer            |Sponsor             
-Events              |    0|                    |                    
-EventTypes          |    0|                    |                    
 Journals            |    1|outgoing invoices   |outgoing invoices   
 Years               |    0|                    |                    
 Products            |    2|(3,)                |(16,)               
@@ -22,17 +19,3 @@ CashFlowItems       |    0|                    |
 ProfitAndLossItems  |   17|TULUD               |Ärikasum (-kahjum)  
 Accounts            |    0|                    |                    
 Bookings            |    0|                    |                    
-Bookings            |    0|                    |                    
-Authors             |   14|Bill Gates          |Winston Churchill   
-AuthorEvents        |    0|                    |                    
-AuthorEventTypes    |    5|born                |other               
-Topics              |    0|                    |                    
-Publications        |    0|                    |                    
-Quotes              |    9|[q1]                |[q9]                
-PubTypes            |    6|Book                |Software            
-PubByAuth           |    0|                    |                    
-Pages               |    0|                    |                    
-Projects            |   10|Project 1           |Project 1.3.2.2     
-ProjectStati        |    5|to do               |sleeping            
-News                |    0|                    |                    
-Newsgroups          |    0|                    |                    

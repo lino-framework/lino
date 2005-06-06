@@ -20,8 +20,8 @@
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Pages
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import Pages
 
 class Introduction(TestCase):
 

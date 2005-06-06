@@ -7,7 +7,7 @@
 from lino.adamo import *
 
 from babel import Languages
-from addrbook import Users
+from lino.schemas.sprl.addrbook import Users
 
 		
 #	def getChildren(self):

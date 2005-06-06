@@ -223,64 +223,6 @@ class Populator(adamo.Populator):
 
             
 
-    def populatePubTypes(self,q):
-        q.setBabelLangs('en de')
-        q = q.query('id name typeRefPrefix pubRefLabel')
-        q.appendRow("book",
-                    ('Book','Buch')        ,
-                    'ISBN: ',
-                    ('page','Seite')  )
-        q.appendRow("url" , ('Web Page','Webseite')    ,
-                    'http:' , ( None, None)   )
-        q.appendRow("cd"  , ('CompactDisc', 'CD') , 'cddb: ',
-                    ('track','Stück') )
-        q.appendRow("art" , ('Article','Artikel')     ,
-                    ''      , ('page','Seite')  )
-        q.appendRow("mag" , ('Magazine','Zeitschrift')    ,
-                    ''      , ('page','Seite')  )
-        q.appendRow("sw"  , ('Software','Software')    ,
-                    ''      , (None,None)    )
-
-
-    def populateAuthorEventTypes(self,q):
-        q = q.query('id name')
-        q.setBabelLangs('en de')
-        q.appendRow(1,('born','geboren'))
-        q.appendRow(2,('died','gestorben'))
-        q.appendRow(3,('married','Heirat'))
-        q.appendRow(4,('school','Schulabschluss'))
-        q.appendRow(5,('other','Sonstige'))	
-
-    def populateLanguages(self,q):
-        q.setVisibleColumns('id name')
-        if self.big:
-            from lino.schemas.sprl.data import languages
-            languages.populate(q)
-        else:
-            q.setBabelLangs('en de fr')
-            q.appendRow(
-                'en',('English','Englisch','Anglais')     )
-            q.appendRow(
-                'de',('German','Deutsch', 'Allemand')     )
-            q.appendRow(
-                'et',('Estonian','Estnisch','Estonien')   )
-            q.appendRow(
-                'fr',('French','Französisch','Français')  )
-            q.appendRow(
-                'nl',('Dutch','Niederländisch','Neerlandais'))
-
-        for lng in ('en','de','et','fr'):
-            setattr(self,lng,q.peek(lng))
-            
-    def populateProjectStati(self,q):
-        q = q.query('id name')
-        q.setBabelLangs('en de')
-        q.appendRow('T',('to do','zu erledigen'))
-        q.appendRow('D',('done','erledigt'))
-        q.appendRow('W',('waiting','wartet'))
-        q.appendRow('A',('abandoned','storniert'))
-        q.appendRow('S',('sleeping','schläft'))
-
 
 ##     def populateStatements(self,q):
 ##         q.setBabelLangs("en de fr ee")
@@ -461,43 +403,7 @@ class Populator(adamo.Populator):
 class DemoPopulator(Populator):
     
         
-    def populateAuthors(self,q):
-        q = q.query('name firstName quotesByAuthor' )
-        q.appendRow( 'Gates'         ,'Bill') #       ,usa)
-        q.appendRow( 'Huxley'    ,'Aldous') #     ,None)
-        q.appendRow( 'Tolkien'   ,'J.R.R.') #     ,None)
-        q.appendRow( 'Watzlawick','Paul') #       ,usa)
-        q.appendRow( 'Bisset'    ,'Donald') #     ,None)
-        q.appendRow( 'Meves'         ,'Christa') #    ,None)
-        q.appendRow( 'Brel'      ,'Jacques') #    ,belgique)
-        self.brassens = q.appendRow(
-            'Brassens' ,'Georges') #    ,belgique)
-        q.appendRow( 'Lorenz'    ,'Konrad') #     ,deutschland)
-        q.appendRow( 'Zink'      ,'Jörg') #       ,deutschland)
-        # q.appendRow( 'Robinson'   ,'Larry H.'  ,None, None, None)
-        self.anon = q.appendRow('Anonymus' ,None) #   ,None)
-        self.lauster = q.appendRow( 'Lauster'  ,'Peter') 
 
-        self.mencken = q.appendRow(firstName="Henry Louis",
-                                   name="Mencken")
-        self.churchill = q.appendRow(firstName="Winston",
-                                     name="Churchill")
-
-
-        
-
-    def populateProjects(self,q):
-        p1 = q.appendRow(title="Project 1")
-        p2 = q.appendRow(title="Project 2")
-        p3 = q.appendRow(title="Project 3")
-        p11 = q.appendRow(title="Project 1.1",super=p1)
-        p12 = q.appendRow(title="Project 1.2",super=p1)
-        p13 = q.appendRow(title="Project 1.3",super=p1)
-        p131 = q.appendRow(title="Project 1.3.1",super=p13)
-        p132 = q.appendRow(title="Project 1.3.2",super=p13)
-        p1321 = q.appendRow(title="Project 1.3.2.1",super=p132)
-        p1322 = q.appendRow(title="Project 1.3.2.2",super=p132)
-    
     def populateJournals(self,q):
         q = q.query("id name tableName")
         self.OUT = q.appendRow("OUT","outgoing invoices","INVOICES")
@@ -515,71 +421,6 @@ class DemoPopulator(Populator):
         q.appendRow(invoice=self.invoice,product=self.table,qty=1)
 
         
-    def populateQuotes(self,q):
-        q = q.query('lang abstract author')
-
-        q.appendRow(self.fr, """\
-Entre nous soit dit, bonnes gens:
-pour reconnaître que l'on est pas intelligent il faudrait
-l'être. """, self.brassens)
-
-        q.appendRow(self.de, """\
-Körper, Geist und Seele sind die drei Bereiche des Menschen. Der
-Körper sollte gesund sein, der Geist intelligent, und die Seele - das
-Kostbarste und Wichtigste - sollte frei sein. Dann kann das Leben
-gelingen und zum Geschenk werden.\
-""",self.lauster)
-
-
-        q.appendRow(self.en, """\
-It is much easier to suggest solutions
-when you know nothing about the problem.
-""", self.anon)
-
-        q.appendRow(self.en,"""\
-Many people are desperately looking for some wise advice which will
-recommend that they do what they want to do.    
-""", self.anon)
-
-        q.appendRow(self.en, """
-Carelessly planned projects take
-three times longer to complete than expected.  Carefully planned
-projects take four times longer to complete than expected,
-mostly because the planners expect their planning to reduce the
-time it takes. """,self.anon)
-
-        q.appendRow(self.en, """\
-Don't believe everything you hear or anything you say.""",
-                    self.anon)
-
-        q = self.mencken.quotesByAuthor.query('lang abstract')
-        quote = q.appendRow(self.en,"""\
-An idealist is one who, on noticing that a rose smells better than a
-cabbage, concludes that it will also make better soup.
-""")
-        assert quote.author.name == "Mencken"
-        quote = q.appendRow(self.en,"""\
-Conscience is the inner voice that warns us that someone may be looking.        
-""")
-        q = self.churchill.quotesByAuthor.query('lang abstract')
-        quote = q.appendRow(self.en,"""\
-A fanatic is one who can't change his mind and won't change the subject.
-""")
-
-        # http://www.io.com/~gibbonsb/mencken.html
-        #a.events.appendRow()
-
-        if False:
-            # cannot appendRow with value outside of leadTable:
-            q = q.query('lang abstract author.firstName author.name')
-            q.appendRow(self.en,
-                        """\
-Trusting a scientist on questions of metaphysics is like paying
-someone else to worship God for you.""",\
-                    "Bill","Welton"\
-                    )
-
-
     def populatePartners(self,q):
 
 ##         tallinn = q.getSession().query(Cities).findone(
@@ -655,11 +496,3 @@ someone else to worship God for you.""",\
             
             
     
-class JokesPopulator(Populator):
-
-        
-    def populateQuotes(self,q):
-        from lino.schemas.sprl.data import quotes_de
-        quotes_de.populate(q,self.de)
-        #print "%d Weisheiten" % len(q)
-            

@@ -19,12 +19,49 @@
 
 from lino.adamo.ddl import *
 
+from lino.schemas.sprl.addrbook import Users
+from lino.schemas.sprl.addrbook import Partners
+from lino.schemas.sprl.addrbook import Nations
+from lino.schemas.sprl.addrbook import Cities
+from lino.schemas.sprl.addrbook import Persons
+
+from babel import Languages
+
+from web import Pages
+
+from events import Events
+from events import EventTypes
+
+from projects import Projects
+from projects import ProjectStati
+
+from news import News
+from news import Newsgroups
+
+from quotes import Authors
+from quotes import AuthorEvents
+from quotes import AuthorEventTypes
+from quotes import Topics
+from quotes import Publications
+from quotes import PubTypes
+from quotes import PubByAuth
+from quotes import Quotes
 
 
 
-TABLES=(Pages,News, Newsgroups,
-        Authors, AuthorEvents,
+TABLES=(
+        Users,Partners,
+        Nations,
+        Cities,
+        Languages,
+        ProjectStati,Projects,
+        EventTypes, Events,
+        Pages,
+        Newsgroups, News, 
         AuthorEventTypes,
+        AuthorEvents,
+        Authors,
         Topics, Publications,
         Quotes, PubTypes, PubByAuth)
 
+__all__ = filter(lambda x: x[0] != "_", dir())

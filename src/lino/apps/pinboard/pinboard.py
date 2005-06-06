@@ -19,8 +19,7 @@
 
 from lino.forms import gui
 
-from lino.apps.timings.tables import *
-from lino.apps.timings.tables import TABLES
+from lino.apps.pinboard.tables import *
 from lino.adamo.ddl import Schema
 
 from lino.gendoc.html import HtmlDocument
@@ -28,7 +27,7 @@ from lino.reports.reports import DataReport
 
 
 class Pinboard(Schema):
-    #name="Lino/Timings"
+    name="Lino/Pinboard"
     years='2005'
     author="Luc Saffre"
     
@@ -61,7 +60,7 @@ This is the Timings main menu.
 
 
 if __name__ == '__main__':
-    app=Timings()
+    app=Pinboard()
     app.quickStartup()
     #app.main()
     gui.run(app)

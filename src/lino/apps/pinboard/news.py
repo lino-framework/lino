@@ -18,12 +18,11 @@
 """
 """
 
-# from lino import adamo
-from lino.adamo import *
+from lino.adamo.ddl import *
 
 from babel import Languages
 from web import Pages
-from addrbook import Users
+from lino.schemas.sprl.addrbook import Users
 from projects import Projects
 
 class News(MemoTable):

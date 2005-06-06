@@ -72,8 +72,7 @@ class Database(Context,Describable):
         
     def populate(self,sess,p):
         for store in self.getStoresById():
-            if store.isVirgin():
-                store.populate(sess,p)
+            store.populate(sess,p)
 
     def getBabelLangs(self):
         "implements Context.getBabelLangs()"

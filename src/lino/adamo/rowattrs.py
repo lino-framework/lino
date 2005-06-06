@@ -33,9 +33,13 @@ class RowAttribute(Describable):
         self._owner = owner
         self._isMandatory = False
         self._onValidate = []
+        self._deleted=False
         
     def child(self,*args,**kw):
         return self.__class__(self,owner,*args,**kw)
+
+    def delete(self):
+        self._deleted=True
     
     def validate(self,row,value):
         if value is None:
@@ -409,6 +413,9 @@ class Pointer(RowAttribute):
             
     def onTableInit2(self,owner,schema):
         self._toTables = schema.findImplementingTables(self._toClass)
+        if len(self._toTables) == 0:
+            self.delete()
+            return
         assert len(self._toTables) > 0, \
                  "%s.%s : found no tables implementing %s" % \
                  (owner.getName(),
@@ -444,7 +451,9 @@ class Pointer(RowAttribute):
         
         if self._neededAtoms is None:
             neededAtoms = []
-            if len(self._toTables) > 1:
+            if self._deleted:
+                pass
+            elif len(self._toTables) > 1:
                 #neededAtoms.append((self.name+"_tableId",AREATYPE))
                 #i = 0
                 for toTable in self._toTables:
@@ -520,7 +529,9 @@ class Pointer(RowAttribute):
 
     def atoms2value(self,atomicValues,sess):
         #ctx = row._ds._context
-        if len(self._toTables) > 1:
+        if self._deleted:
+            return None
+        elif len(self._toTables) > 1:
             toTable = self._findUsedToTable(atomicValues)
             if toTable is None:
                 return None

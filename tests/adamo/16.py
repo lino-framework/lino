@@ -21,8 +21,8 @@
 """
 from lino.misc.tsttools import TestCase, main
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Languages
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import Languages
 
 class Case(TestCase):
     def setUp(self):

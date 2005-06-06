@@ -18,9 +18,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Partners
-from lino.schemas.sprl.tables import Quotes, Authors, Languages
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import Partners,\
+     Quotes, Authors, Languages
 
 from lino.schemas.sprl.data import quotes_de
 

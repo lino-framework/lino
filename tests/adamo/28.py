@@ -27,14 +27,14 @@ an appendRow().
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import *
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.beginSession()
+        self.sess = demo.startup()
 
     def tearDown(self):
         self.sess.shutdown()

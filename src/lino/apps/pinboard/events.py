@@ -1,9 +1,8 @@
 #coding: latin1
 
-from lino.adamo import *
+from lino.adamo.ddl import *
 
-from babel import Languages
-from addrbook import Persons, Partners
+from lino.schemas.sprl.addrbook import Partners
 from web import Pages
 
 

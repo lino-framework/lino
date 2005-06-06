@@ -28,8 +28,8 @@ The first multi-language database
 from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.datatypes import itod
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Languages, News
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import Languages,News
 
 class Case(TestCase):
     def setUp(self):

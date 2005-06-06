@@ -50,14 +50,6 @@ class Case(TestCase):
 
         
         
-    def test03(self):
-        "2 successive appendRow() without specifying id"
-        AUTHORS = self.db.query(Authors)
-        pot = AUTHORS.appendRow(firstName="Harry",name="Potter")
-        bel = AUTHORS.appendRow(firstName="Harry",name="Bellafonte")
-        self.assertEqual(pot.id, bel.id-1)
-        
-
     
 ## if __name__ == "__main__":
 ##      print __file__

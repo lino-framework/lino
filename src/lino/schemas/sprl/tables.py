@@ -18,8 +18,6 @@
 
 
 
-from babel import Languages
-
 from addrbook import Persons
 from addrbook import Partners
 from addrbook import Organisations
@@ -31,27 +29,6 @@ from addrbook import Currencies
 
 #from addrbook import LoginForm
 #from addrbook import MainForm
-
-from web import Pages
-
-from projects import Projects
-from projects import ProjectStati
-
-from events import Events
-from events import EventTypes
-
-from news import News
-from news import Newsgroups
-
-from quotes import Authors
-from quotes import AuthorEvents
-from quotes import AuthorEventTypes
-from quotes import Topics
-from quotes import Publications
-from quotes import PubTypes
-from quotes import PubByAuth
-from quotes import Quotes
-
 
 from business import Journals
 from business import Years

@@ -45,9 +45,11 @@ class Store:
     def __init__(self,conn,db,table):
         self._connection = conn 
         self._mtime = conn.getModificationTime(table)
+        self._dirty = False
+        self._virgin=None
         self._db = db
         self._table = table
-        self._status = self.SST_MUSTCHECK
+        #self._status = self.SST_MUSTCHECK
         
         # self._schema = db.schema # shortcut
         
@@ -70,6 +72,7 @@ class Store:
 
     def touch(self):
         self._mtime = time()
+        self._dirty = True
         
     def onConnect(self):
         self._table.onConnect(self)
@@ -89,27 +92,31 @@ class Store:
 
     def onStartup(self,sess):
         #print "%s.createTable()" % self.__class__
-        if self._status == self.SST_MUSTCHECK:
+        if self._virgin is None: # == self.SST_MUSTCHECK:
             syscon.debug("mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
                 #self.createTable(sess)
                 syscon.debug("create table " + \
                               self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
-                self._status = self.SST_VIRGIN
+                #self._status = self.SST_VIRGIN
+                self._virgin=True
+            else:
+                self._virgin=False
             #self._table.loadMirror(self,sess)
 
     def isVirgin(self):
-        return self._status == self.SST_VIRGIN
+        return self._virgin
+        #return self._status == self.SST_VIRGIN
                 
     def populate(self,sess,populator):
-         assert self._status == self.SST_VIRGIN
+         #assert self._status == self.SST_VIRGIN
          populator.populateStore(self,sess)
-         self._status = self.SST_READY
+         #self._status = self.SST_READY
         
     def checkIntegrity(self,sess):
-        if self._status != self.SST_MUSTCHECK:
-            return
+        #if self._status != self.SST_MUSTCHECK:
+        #    return
         if self._connection.mustCheckTables():
             q = self.query()
             l = len(q)
@@ -126,7 +133,7 @@ class Store:
                               msg)
             job.done()
             
-        self._status = self.SST_READY
+        #self._status = self.SST_READY
         
     def view(self,sess,viewName,columnNames=None,**kw):
         view = self._table.getView(viewName)
@@ -303,6 +310,9 @@ class Populator(Describable):
         try:
             m = getattr(self,name)
         except AttributeError:
+            return
+        if not store.isVirgin():
+            print self,"not virgin"
             return
         qry=store.query(sess,"*")
         m(qry)

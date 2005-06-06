@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,8 +18,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo import *
-from addrbook import Users, Partners
+from lino.adamo.ddl import *
+from tables import Users, Partners
 #from web import MemoMixin, MemoTreeMixin
 
 

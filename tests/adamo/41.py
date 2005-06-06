@@ -18,19 +18,14 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import types
 from lino.misc.tsttools import TestCase, main
 
-from lino.adamo.rowattrs import Field, Detail
-
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
-
-from lino.reports import Report, RIGHT
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import *
 
 
 class Case(TestCase):
-    skip=True
+    
     def setUp(self):
         TestCase.setUp(self)
         self.sess = demo.startup(populate=False)
@@ -40,7 +35,29 @@ class Case(TestCase):
 
 
     def test01(self):
-        pass
+        
+        ae = self.assertEqual
+        
+        l1 = [str(t.getTableName())
+              for t in self.sess.db.app.getTableList()]
+        #l1.sort()
+
+        s=" ".join(l1)
+        
+        #print s
+
+        self.assertEquivalent(s, """\
+Users Partners Nations Cities Languages ProjectStati Projects EventTypes Events Pages Newsgroups News AuthorEventTypes AuthorEvents Authors Topics Publications Quotes PubTypes PubByAuth
+""")
+        
+        
+    def test02(self):
+        "2 successive appendRow() without specifying id"
+        AUTHORS = self.db.query(Authors)
+        pot = AUTHORS.appendRow(firstName="Harry",name="Potter")
+        bel = AUTHORS.appendRow(firstName="Harry",name="Bellafonte")
+        self.assertEqual(pot.id, bel.id-1)
+        
 
 if __name__ == '__main__':
     main()

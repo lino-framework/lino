@@ -25,8 +25,8 @@ Logical columns (row attributes) versus physical columns (atoms)
 import types
 
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Projects
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import Projects
 #from lino.reports import DataReport
 
 

@@ -29,7 +29,7 @@ from lino.adamo.schema import Schema, SchemaPlugin
 class BasePlugin(SchemaPlugin):
 
     def defineTables(self,schema):
-        schema.addTable(Languages,label="Languages")
+        #schema.addTable(Languages,label="Languages")
         schema.addTable(Users, label="Users" )
         #schema.addForm(LoginForm)
         #schema.addForm(MainForm)
@@ -42,13 +42,13 @@ class BasePlugin(SchemaPlugin):
 ##         # self.addLinkTable("PAGE2PAGE",web.Page,web.Page,web.Page2Page)
 
         
-class ProjectPlugin(SchemaPlugin):
+## class ProjectPlugin(SchemaPlugin):
 
-    def defineTables(self,schema):
-        schema.addTable( Projects,
-                         label="Projects")
-        schema.addTable( ProjectStati,
-                         label="Project States")
+##     def defineTables(self,schema):
+##         schema.addTable( Projects,
+##                          label="Projects")
+##         schema.addTable( ProjectStati,
+##                          label="Project States")
 
 ## class NewsPlugin(SchemaPlugin):
 
@@ -61,12 +61,12 @@ class ProjectPlugin(SchemaPlugin):
 ##         #                    news.News, news.Newsgroup)
 
         
-class EventsPlugin(SchemaPlugin):
-    def defineTables(self,schema):
-        schema.addTable( Events,
-                         label="Events")
-        schema.addTable( EventTypes,
-                         label="Event Types")
+## class EventsPlugin(SchemaPlugin):
+##     def defineTables(self,schema):
+##         schema.addTable( Events,
+##                          label="Events")
+##         schema.addTable( EventTypes,
+##                          label="Event Types")
 
 class SalesPlugin(SchemaPlugin):  
     def defineTables(self,schema):
@@ -90,7 +90,7 @@ class SalesPlugin(SchemaPlugin):
         #schema.addTable(Statements)
         #schema.addTable(StatementLines)
         
-        schema.addTable(Bookings)
+        #schema.addTable(Bookings)
         
 
 #class JokesPlugin(SchemaPlugin):
@@ -123,31 +123,31 @@ class Sprl(Schema):
     #years="2002-2005"
     #author="Luc Saffre"
     def __init__(self,
-                 withEvents=True,
-                 withProjects=True,
-                 withWeb=True,
+                 #withEvents=True,
+                 #withProjects=True,
+                 #withWeb=True,
                  withSales=True,
-                 withNews=True,
-                 withQuotes=True,
+                 #withNews=True,
+                 #withQuotes=True,
                  **kw):
         Schema.__init__(self,**kw)
         self.addPlugin(BasePlugin(True))
         self.addPlugin(ContactsPlugin(True))
     
-        self.addPlugin(EventsPlugin(withEvents))
+        #self.addPlugin(EventsPlugin(withEvents))
         self.addPlugin(SalesPlugin(withSales))
         #self.addPlugin(QuotesPlugin(withQuotes))
         #self.addPlugin(WebPlugin(withWeb))
-        self.addPlugin(ProjectPlugin(withProjects))
+        #self.addPlugin(ProjectPlugin(withProjects))
         #self.addPlugin(NewsPlugin(withNews))
         
-    def getContentRoot(self,db):
-        return db.tables.PAGES.findone(match="index")
+##     def getContentRoot(self,db):
+##         return db.tables.PAGES.findone(match="index")
 
-    def onBeginSession(self,sess):
-        if not sess.hasAuth():
-            sess.showForm("login",modal=True)
-        sess.showForm("main")
+##     def onBeginSession(self,sess):
+##         if not sess.hasAuth():
+##             sess.showForm("login",modal=True)
+##         sess.showForm("main")
 
         
 ## def makeSchema( withEvents=True,

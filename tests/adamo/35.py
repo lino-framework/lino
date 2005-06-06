@@ -36,11 +36,9 @@ from lino.schemas.sprl.sprl import Sprl
 from lino.schemas.sprl.tables import *
 from lino.schemas.sprl import demo
 
-sharedTables = (Languages, Nations, 
+sharedTables = (Nations, 
                 PartnerTypes, Currencies,
-                AuthorEventTypes,
-                PubTypes,
-                ProjectStati, Users) 
+                Users) 
 
 class Case(TestCase):
     todo="shared tables with different babelLangs"
