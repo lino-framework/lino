@@ -46,8 +46,12 @@ class UsagesMirrorLoader(DbfMirrorLoader):
         sess = q.getSession()
         usageType = sess.peek(UsageTypes,row['TYPE'])
         resource = sess.peek(Resources,row['IDRES'])
+        day=sess.query(Days).peek(self.dbfdate(row['DATE']))
+        if day is None:
+            day=sess.query(Days).appendRow(
+                date=self.dbfdate(row['DATE']))
         q.appendRow(
-            date=self.dbfdate(row['DATE']),
+            date=day,
             start=self.dbftime(row['QTE1']),
             stop=self.dbftime(row['QTE2']),
             resource=resource,

@@ -18,6 +18,6 @@ sess=app.quickStartup()
 sess.populate(CpasPopulator())
 for lc in LOADERS:
     sess.runLoader(lc(loadfrom))
-gui.run(app)
+gui.run(sess)
 
 

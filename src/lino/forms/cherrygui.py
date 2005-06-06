@@ -55,11 +55,10 @@ class DataEntry(base.DataEntry):
 
 
 
-
-
-
-
 class Page:
+    def __init__(self,app):
+        self._app = app
+
     def header(self,title):
         return '''
             <html>
@@ -75,9 +74,6 @@ class Page:
             </body>
             </html>
         '''
-
-    def __init__(self,app):
-        self._app = app
 
     def index(self):
         yield self.header(self._app.getLabel())

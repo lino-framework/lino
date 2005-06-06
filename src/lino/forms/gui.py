@@ -79,9 +79,11 @@ def check():
 ##     #assert _app is not None, "only for use with automagicApp"
 ##     return _toolkit.parse_args(*args,**kw)
 
-def run(app):
+def run(sess):
     check()
-    _toolkit.main(app)
+    _toolkit.addSession(sess)
+    _toolkit.run_forever()
+    #_toolkit.main(app)
 
 
 ## def main(*args,**kw):

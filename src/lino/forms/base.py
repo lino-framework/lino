@@ -713,7 +713,7 @@ class Toolkit:
     jobFactory=Job
     
     def __init__(self,console=None):
-        self._apps = []
+        self._sessions = []
         #self.consoleForm = None
         if console is None:
             console=syscon.getSystemConsole()
@@ -797,9 +797,10 @@ class Toolkit:
     def createForm(self,sess,parent,*args,**kw):
         return self.formFactory(sess,parent,*args,**kw)
     
-    def addApplication(self,app):
+    def addSession(self,sess):
         #app.setToolkit(self)
-        self._apps.append(app)
+        sess.toolkit = self
+        self._sessions.append(sess)
         
     def init(self):
         
@@ -813,8 +814,8 @@ class Toolkit:
 ##                     halign=gui.RIGHT, valign=gui.BOTTOM)
 ##                 frm.addViewer()
 ##                 frm.show()
-        for app in self._apps:
-            app.start_gui(self)
+        for sess in self._sessions:
+            sess.db.app.showMainForm(sess)
             #for sess in app.startup(self):
             #    app.showMainForm(sess)
             
@@ -824,9 +825,9 @@ class Toolkit:
         #frm.show()
         #self.wxctrl.SetTopWindow(frm.wxctrl)
         
-    def closeApplication(self,app):
-        self._apps.remove(app)
-        if len(self._apps) == 0:
+    def closeSession(self,sess):
+        self._sessions.remove(sess)
+        if len(self._sessions) == 0:
             self.stopRunning()
             #if self.consoleForm is not None:
             #    self.consoleForm.close()
@@ -931,6 +932,6 @@ class Toolkit:
 
     def main(self,app,argv=None):
         app.parse_args(argv)
-        self.addApplication(app)
+        self.addSession(sess)
         self.run_forever()
         

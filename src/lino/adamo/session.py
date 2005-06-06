@@ -50,9 +50,9 @@ class Session(Context):
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,center,ui,**kw):
-        # sessionManager is lino.adamo.center
-        self.center = center
+    def __init__(self,toolkit,ui,**kw):
+        self.toolkit = toolkit
+        # Toolkit.addSession(will set another toolkit)
         #self.app = app
         assert ui is not None
         self.ui = ui
@@ -147,7 +147,7 @@ class Session(Context):
         # supposted to close all connections
         #
         self.end()
-        self.center.shutdown()
+        self.toolkit.shutdown()
 
     def setBabelLangs(self,langs):
         
@@ -188,7 +188,7 @@ class Session(Context):
 
     def end(self):
         self.use()
-        self.center.closeSession(self)
+        self.toolkit.closeSession(self)
 
 
     def onBeginSession(self):

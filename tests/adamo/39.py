@@ -18,10 +18,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.exceptions import DataVeto
-
 from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
 from lino.misc.tsttools import TestCase, main
 
 class Case(TestCase):
@@ -45,10 +42,9 @@ class Case(TestCase):
 
         s = "\n".join(l)
 
-        #print s
+        # print s
 
         self.assertEquivalent(s,"""\
-Languages: id(StringType)
 Users: id(StringType)
 Currencies: id(StringType)
 Nations: id(StringType)
@@ -56,8 +52,6 @@ Cities: nation_id(StringType), id(AutoIncType)
 Organisations: id(AutoIncType)
 Partners: id(AutoIncType)
 PartnerTypes: id(StringType)
-Events: id(AutoIncType)
-EventTypes: id(StringType)
 Journals: id(StringType)
 Years: id(IntType)
 Products: id(AutoIncType)
@@ -68,20 +62,6 @@ CashFlowItems: id(StringType)
 ProfitAndLossItems: id(StringType)
 Accounts: id(AutoIncType)
 Bookings: id(AutoIncType)
-Bookings: id(AutoIncType)
-Authors: id(AutoIncType)
-AuthorEvents: author_id(AutoIncType), seq(AutoIncType)
-AuthorEventTypes: id(AutoIncType)
-Topics: id(AutoIncType)
-Publications: id(AutoIncType)
-Quotes: id(AutoIncType)
-PubTypes: id(StringType)
-PubByAuth: p_id(AutoIncType), c_id(AutoIncType)
-Pages: id(AutoIncType)
-Projects: id(AutoIncType)
-ProjectStati: id(StringType)
-News: id(AutoIncType)
-Newsgroups: id(StringType)
 """)
 
         

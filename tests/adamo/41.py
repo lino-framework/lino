@@ -53,7 +53,7 @@ Users Partners Nations Cities Languages ProjectStati Projects EventTypes Events 
         
     def test02(self):
         "2 successive appendRow() without specifying id"
-        AUTHORS = self.db.query(Authors)
+        AUTHORS = self.sess.query(Authors)
         pot = AUTHORS.appendRow(firstName="Harry",name="Potter")
         bel = AUTHORS.appendRow(firstName="Harry",name="Bellafonte")
         self.assertEqual(pot.id, bel.id-1)
