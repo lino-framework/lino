@@ -56,8 +56,8 @@ class Session(Context):
         #self.app = app
         assert ui is not None
         self.ui = ui
-        self._user = None
-        self.db = None
+        #self._user = None
+        #self.db = None
         #self.schema = None
         
 ##         if ui is None:
@@ -98,33 +98,33 @@ class Session(Context):
 ##         if self.app is not None:
 ##             return self.app.warning(msg)
         
-    def use(self,db=None): # ,langs=None):
-        # if necessary, stop using current db
-        if db != self.db and self.db is not None:
-            self.db.commit()
-            #self.db.removeSession(self)
-            if self._user is not None:
-                self.logout()
-        if db is None:
-            #self.schema = None
-            #self.tables = None
-            #self.forms = None
-            self.db = None
-        else:
-            # start using new db
-            #self.schema = db.schema # shortcut
-            self.db = db
-            # self.tables = AttrDict(factory=self.openTable)
-            #self.forms = AttrDict(factory=self.openForm)
-            #if langs is None:
-            #    langs = db.getDefaultLanguage()
-            #self.setBabelLangs(langs)
-            self.setDefaultLanguage()
+##     def use(self,db=None): # ,langs=None):
+##         # if necessary, stop using current db
+##         if db != self.db and self.db is not None:
+##             self.db.commit()
+##             #self.db.removeSession(self)
+##             if self._user is not None:
+##                 self.logout()
+##         if db is None:
+##             #self.schema = None
+##             #self.tables = None
+##             #self.forms = None
+##             self.db = None
+##         else:
+##             # start using new db
+##             #self.schema = db.schema # shortcut
+##             self.db = db
+##             # self.tables = AttrDict(factory=self.openTable)
+##             #self.forms = AttrDict(factory=self.openForm)
+##             #if langs is None:
+##             #    langs = db.getDefaultLanguage()
+##             #self.setBabelLangs(langs)
+##             self.setDefaultLanguage()
         
-        #self._formStack = []
+##         #self._formStack = []
 
-    def setDefaultLanguage(self):
-        self.setBabelLangs(self.db.getDefaultLanguage())
+##     def setDefaultLanguage(self):
+##         self.setBabelLangs(self.db.getDefaultLanguage())
         
         
     def handleException(self,e,details=None):
@@ -139,8 +139,8 @@ class Session(Context):
 ##      kw.setdefault('langs',self.getLangs())
 ##      return center.center().createSession(**kw)
 
-    def commit(self):
-        return self.db.commit()
+##     def commit(self):
+##         return self.db.commit()
 
     def shutdown(self):
         # called in many TestCases during tearDown()
@@ -149,66 +149,66 @@ class Session(Context):
         self.end()
         self.toolkit.shutdown()
 
-    def setBabelLangs(self,langs):
+##     def setBabelLangs(self,langs):
         
-        """langs is a string containing a space-separated list of babel
-        language codes"""
+##         """langs is a string containing a space-separated list of babel
+##         language codes"""
         
-        self.db.commit()
-        self._babelLangs = []
-        for lang_id in langs.split():
-            self._babelLangs.append(self.db.findBabelLang(lang_id))
+##         self.db.commit()
+##         self._babelLangs = []
+##         for lang_id in langs.split():
+##             self._babelLangs.append(self.db.findBabelLang(lang_id))
             
-##         if self._babelLangs[0].index == -1:
-##             raise InvalidRequestError(
-##                 "First item of %s must be one of %s" % (
-##                 repr(langs), repr(self.db.getBabelLangs())))
+## ##         if self._babelLangs[0].index == -1:
+## ##             raise InvalidRequestError(
+## ##                 "First item of %s must be one of %s" % (
+## ##                 repr(langs), repr(self.db.getBabelLangs())))
 
-    def getBabelLangs(self):
-        return self._babelLangs
+##     def getBabelLangs(self):
+##         return self._babelLangs
 
-    def getStore(self,leadTable):
-        try:
-            return self.db._stores[leadTable]
-        except KeyError,e:
-            raise InvalidRequestError("no such table: "+str(leadTable))
+##     def getStore(self,leadTable):
+##         try:
+##             return self.db._stores[leadTable]
+##         except KeyError,e:
+##             raise InvalidRequestError("no such table: "+str(leadTable))
     
-    def view(self,leadTable,*args,**kw):
-        return self.getStore(leadTable).view(self,*args,**kw)
+##     def view(self,leadTable,*args,**kw):
+##         return self.getStore(leadTable).view(self,*args,**kw)
     
-    def query(self,leadTable,columnNames=None,**kw):
-        if columnNames is None:
-            columnNames="*"
-        return self.getStore(leadTable).query(self,columnNames,**kw)
+##     def query(self,leadTable,columnNames=None,**kw):
+##         if columnNames is None:
+##             columnNames="*"
+##         return self.getStore(leadTable).query(self,columnNames,**kw)
 
-    def peek(self,tableClass,*args):
-        # used in raceman/report.py, cities_be.py...
-        return self.query(tableClass).peek(*args)
-
-
-    def end(self):
-        self.use()
-        self.toolkit.closeSession(self)
+##     def peek(self,tableClass,*args):
+##         # used in raceman/report.py, cities_be.py...
+##         return self.query(tableClass).peek(*args)
 
 
-    def onBeginSession(self):
-        self.db.app.onBeginSession(self)
+##     def end(self):
+##         self.use()
+##         self.toolkit.closeSession(self)
+
+
+##     def onBeginSession(self):
+##         self.db.app.onBeginSession(self)
         
     
-    def onLogin(self):
-        return self.db.app.onLogin(self)
+##     def onLogin(self):
+##         return self.db.app.onLogin(self)
     
-    def getUser(self):
-        return self._user
+##     def getUser(self):
+##         return self._user
 
-    def login(self,user):
-        if self._user is not None:
-            self.logout()
-        self._user = user
+##     def login(self,user):
+##         if self._user is not None:
+##             self.logout()
+##         self._user = user
         
-    def logout(self):
-        assert self._user is not None
-        self._user = None
+##     def logout(self):
+##         assert self._user is not None
+##         self._user = None
 
 
 

@@ -30,7 +30,7 @@ from lino.adamo.connection import Connection
 
 #from mx.DateTime import DateTime
 
-from lino.adamo.filters import NotEmpty, IsEqual
+from lino.adamo.filters import NotEmpty, IsEqual, DateEquals
 
 
 class Master:
@@ -319,6 +319,20 @@ class SqlConnection(Connection):
 ##             print flt.slave
 ##             raise "hier"
         
+        elif isinstance(flt,DateEquals):
+            if isinstance(flt.col,FieldColumn):
+                a=flt.col.getAtoms()
+                assert len(a) == 1
+                a=a[0]
+                if flt.year is not None:
+                    l.append("year("+a.name+")="+str(flt.year))
+                if flt.month is not None:
+                    #l.append(a.name+".month="+str(flt.month))
+                    l.append("month("+a.name+")="+str(flt.month))
+                if flt.day is not None:
+                    l.append("DAY("+a.name+")="+str(flt.day))
+            else:
+                raise NotImplementedError
         elif isinstance(flt,NotEmpty):
             if isinstance(flt.col,FieldColumn):
                 for a in flt.col.getAtoms():
@@ -549,8 +563,8 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         l = []
         for atom in query.getFltAtoms(context):
             l.append(
-                self.value2sql( atomicRow[atom.index],
-                                     atom.type))
+                self.value2sql(atomicRow[atom.index],
+                               atom.type))
         #try:
         sql += ", ".join(l)
         #except UnicodeDecodeError,e:

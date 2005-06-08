@@ -26,6 +26,7 @@ another attempt to create a universal datatype definition model...
 import datetime
 
 from lino.misc.descr import Describable
+#from lino.adamo.exceptions import RefuseValue
 from lino.adamo.exceptions import DataVeto
 
 ERR_FORMAT_NONE = "caller must handle None values"
@@ -198,8 +199,8 @@ class DateType(Type):
     
     def validate(self,value):
         if not isinstance(value,datetime.date):
-            raise repr(value)+" is not a date"
-            #raise DataVeto(repr(value)+" is not a date")
+            #raise repr(value)+" is not a date"
+            raise DataVeto("not a date")
 
     
 class TimeType(Type):
@@ -221,8 +222,8 @@ class TimeType(Type):
 
     def validate(self,value):
         if not isinstance(value,datetime.time):
-            raise repr(value)+" is not a time"
-            #raise DataVeto(repr(value)+" is not a time")
+            #raise repr(value)+" is not a time"
+            raise DataVeto("not a time")
             
     
 class DurationType(Type):
@@ -252,7 +253,8 @@ class DurationType(Type):
 
     def validate(self,value):
         if not isinstance(value,datetime.timedelta):
-            raise DataVeto(repr(value)+" is not a timedelta")
+            #raise DataVeto(repr(value)+" is not a timedelta")
+            raise DataVeto("not a timedelta")
 
 class AutoIncType(IntType):
     pass
@@ -299,28 +301,35 @@ AREA = AreaType()
 IMAGE = ImageType()
 LOGO = LogoType()
 
-__all__ = [
-    'STRING',
-    'PASSWORD',
-    'MEMO',
-    'DATE',
-    'TIME',
-    'DURATION',
-    'INT',
-    'BOOL',
-    'AMOUNT',
-    'PRICE',
-    'ROWID',
-    'URL',
-    'EMAIL',
-    'AREA',
-    'IMAGE',
-    'LOGO',
-    ]
+
+## __all__ = [
+##     'STRING',
+##     'PASSWORD',
+##     'MEMO',
+##     'DATE',
+##     'TIME',
+##     'DURATION',
+##     'INT',
+##     'BOOL',
+##     'AMOUNT',
+##     'PRICE',
+##     'ROWID',
+##     'URL',
+##     'EMAIL',
+##     'AREA',
+##     'IMAGE',
+##     'LOGO',
+##     ]
 
 def itod(i):
-    return stod(str(i))
+    s=str(i)
+    assert len(s) == 8, repr(i)
+    y = int(s[0:4])
+    m = int(s[4:6])
+    d = int(s[6:8])
+    return datetime.date(y,m,d)
 
 def stod(s):
     return DATE.parse(s)
 
+__all__ = filter(lambda x: x[0] != "_", dir())

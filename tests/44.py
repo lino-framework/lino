@@ -20,31 +20,47 @@
 
 from unittest import TestCase, main
 
+import datetime
+
 import pysqlite2.dbapi2 as sqlite 
 
 
 class Case(TestCase):
     
-    """
-
-    pysqlite 2.0.3 raises "OperationalError: Unable to close due to
-    unfinalised statements" during commit() if one or more cursors
-    have not been "used up".
-
-    """
-    
     def test01(self):
-
-        conn = sqlite.connect(':memory:')
+        
+        def month(s):
+            d=datetime.date.fromordinal(s)
+            return d.month
+        def year(s):
+            d=datetime.date.fromordinal(s)
+            return d.year
+        def day(s):
+            d=datetime.date.fromordinal(s)
+            return d.day
+        
+        conn = sqlite.connect( ':memory:')
+        #detect_types=sqlite.PARSE_DECLTYPES|sqlite.PARSE_COLNAMES)
+        conn.create_function("month",1,month)
+        conn.create_function("year",1,year)
+        conn.create_function("day",1,day)
+        
         csr = conn.cursor()
         
         # create and fill Tester table
-        csr.execute("CREATE TABLE Versuch (id int, name varchar(80))")
-        sql="INSERT INTO Versuch VALUES (%d, 'This is row %d')"
-        for i in range(100):
-            csr.execute( sql % (i,i))
-            
-        csr.execute("SELECT id, name from Versuch WHERE id < 10")
+        csr.execute("CREATE TABLE Days (date date)")
+        sql="INSERT INTO Days (date) VALUES ( %d )"
+        for i in range(732098,732103):
+            csr.execute(sql % i)
+        
+        csr.execute("SELECT date from Days")
+        s=" ".join([str(l[0]) for l in csr.fetchall()])
+        print s
+        
+        csr.execute("SELECT date from Days WHERE month(date) = 6")
+        s=" ".join([str(l[0]) for l in csr.fetchall()])
+        print s
+        
         # don't do anything with the cursor
         try:
             conn.close()

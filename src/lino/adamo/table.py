@@ -132,6 +132,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
         FieldContainer.__init__(self)
         
         self._pk = None
+        self._mandatoryColumns = None
         self._views = {}
         self._rowRenderer = None
         #self._mirrorLoader = None
@@ -176,6 +177,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
                 #self._rowAttrs[DEFAULT_PRIMARY_KEY] = f
             self.setPrimaryKey(DEFAULT_PRIMARY_KEY)
 
+        mandatoryColumns=[]
         for name,attr in self._rowAttrs.items():
             attr.onOwnerInit1(self,name)
             attr.onTableInit1(self,name)
@@ -184,7 +186,11 @@ class Table(FieldContainer,SchemaComponent,Describable):
                 attr.afterSetAttr = um
             except AttributeError:
                 pass
+            if attr._isMandatory or name in self._pk:
+                if not isinstance(attr.type,datatypes.AutoIncType):
+                    mandatoryColumns.append(attr)
             
+        self._mandatoryColumns = tuple(mandatoryColumns)
         self._initStatus = 1
 
     def init2(self):

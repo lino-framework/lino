@@ -47,24 +47,32 @@ class Resources(Table):
         
         def delete(self):
             self.usages.deleteAll()
+
+##         def daily(self,day):
+##             qry=self.usages_by_resource.child(date=day)
+##             print qry.getSqlSelect()
+##             return ", ".join([u.short() for u in qry])
+            
             
         
 class Usages(Table):
     def init(self):
         self.addField('id',ROWID) 
-        self.addPointer('date',Days)
+        self.addPointer('date',Days).setMandatory()
         self.addField('start',TIME)
         self.addField('stop',TIME)
         self.addPointer('type',UsageTypes)
         self.addField('remark',STRING)
         #self.addField('mtime',TIMESTAMP)
-        self.addPointer('resource',Resources)#.setDetail("usages")
+        self.addPointer('resource',Resources).setMandatory()
 
     class Instance(Table.Instance):
         def getLabel(self):
-            if self.start is None:
-                return self.date.getLabel()
-            return "%s (%s-%s)" % (self.date,self.start,self.stop)
+            return self.short()
+        def short(self):
+            if self.start is None and self.stop is None:
+                return self.type.id
+            return "%s (%s-%s)" % (self.type.id,self.start,self.stop)
         
 
 class UsageTypes(Table):

@@ -79,7 +79,7 @@ class Resolver:
     
         
 def rpt2name(rpt):
-    qry=rpt._iterator.ds
+    qry=rpt.ds
     return "/".join(
         [rpt.name]+[col.name for col in qry._masterColumns])+"/index"
                             
@@ -245,7 +245,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
                         href=self.urlto(name)
                         self.writeLink(href,str(value)) 
                         return
-                print "no report for", value
+                #print "no report for", value
 ##                 cl=value.getLeadTable().__class__
 ##                 #print cl
 ##                 rs=self.findResolver(cl)
@@ -340,9 +340,9 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         
         for rpt in self._reports:
             for col in rpt.columns:
-                for pg in range(rpt._iterator.ds.lastPage):
+                for pg in range(rpt.ds.lastPage):
                     if pg != 0 or \
-                       col.datacol != rpt._iterator.ds.sortColumns[0]:
+                       col.datacol != rpt.ds.sortColumns[0]:
                         e=ReportElement(rpt,pg+1,col.datacol)
                         ch=self.addChild(
                             name=rptname(rpt,
@@ -385,9 +385,9 @@ class H:
 
 
 def rptname(rpt,sortColumn=None,pageNum=None):
-    if sortColumn is None: sortColumn=rpt._iterator.ds.sortColumns[0]
+    if sortColumn is None: sortColumn=rpt.ds.sortColumns[0]
     if pageNum is None: pageNum=rpt.pageNum
-    if pageNum==1 and sortColumn==rpt._iterator.ds.sortColumns[0]:
+    if pageNum==1 and sortColumn==rpt.ds.sortColumns[0]:
         return rpt.name
     return str(pageNum)+"_"+sortColumn.name
                     
@@ -434,7 +434,7 @@ class ReportElement:
         if sortColumn is None:
             #print rpt.columns
             #print rpt.iterator.sortColumns
-            sortColumn=rpt._iterator.ds.sortColumns[0]
+            sortColumn=rpt.ds.sortColumns[0]
         else:
             assert isinstance(sortColumn,QueryColumn)
         self.sortColumn=sortColumn
@@ -444,7 +444,7 @@ class ReportElement:
     
     def render(self,doc):
         rpt=self.rpt
-        ds=rpt._iterator.ds
+        ds=rpt.ds
         pageNum=self.pageNum
         sortColumn=self.sortColumn
         wr=doc.write

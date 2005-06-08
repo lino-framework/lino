@@ -74,9 +74,13 @@ continue testing even if failures or errors occur""",
         suites=[]
         cases = []
         #skipped=[]
+        sys.path.append(root)
         for dirpath, dirnames, filenames in os.walk(root):
+            prefix=".".join(dirpath.split(os.path.sep)[1:])
+            if len(prefix):
+                prefix+="."
+            #print dirpath
             job.status(dirpath)
-            sys.path.append(dirpath)
             for filename in filenames:
                 modname,ext = os.path.splitext(filename)
                 if ext == '.py':
@@ -99,18 +103,18 @@ continue testing even if failures or errors occur""",
                             job.warning("Unrecognized argument %s",
                                         arg)
                     if doit:
-                        job.status("Extracting cases from %s...", 
+                        modname=prefix+modname
+                        job.notice("Loading cases from %s...",
                                    modname)
                         
                         self.findTestCases(sess,modname,cases,suites)
-            sys.path.remove(dirpath)
+        sys.path.remove(root)
 
         job.done("found %d cases and %d suites.",
                  len(cases),len(suites))
         for tcl in cases:
             if hasattr(tcl,"todo"):
-                sess.notice("Todo %s : %s",
-                            tcl.__module__,tcl.todo)
+                sess.notice("Todo %s : %s", tcl.__module__,tcl.todo)
             else:
                 suites.append(unittest.makeSuite(tcl))
                 

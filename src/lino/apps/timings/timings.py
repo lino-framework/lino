@@ -22,11 +22,38 @@ from lino.forms import gui
 from lino.apps.timings.tables import *
 from lino.apps.timings.tables import TABLES
 from lino.adamo.ddl import Schema
+from lino.adamo.filters import DateEquals
+from lino.adamo.datatypes import itod
 
 from lino.gendoc.html import HtmlDocument
 from lino.reports.reports import DataReport
 
+import datetime
 
+DAY = datetime.timedelta(1)
+
+def everyday(d1,d2):
+    l=[]
+    d=d1
+    while d <= d2:
+        l.append(d)
+        d += DAY
+    return l
+
+
+## class daterange:
+
+##     def __init__(self, d1, high):
+##         self.low = low
+##         self.high = high
+        
+##     def __contains__(self, obj):
+##         return self.low < obj < self.high 
+
+def iif(t,x,y):
+    if t: return x
+    return y
+        
 class Timings(Schema):
     #name="Lino/Timings"
     years='2005'
@@ -46,10 +73,6 @@ class Timings(Schema):
         root = HtmlDocument(title="Timings",
                             stylesheet="wp-admin.css")
 
-        def iif(t,x,y):
-            if t: return x
-            return y
-        
         root.addResolver(
             Resources,
             lambda row: "resources/"+row.id.strip()
@@ -118,6 +141,34 @@ class Timings(Schema):
                 filenames += ch.save(sess,targetRoot)
 
         return filenames
+
+    def writeMonthCalendar(self,sess,year=2005,month=6):
+        ds=sess.query(Days, orderBy="date")
+        def fmt(d):
+            return "["+str(d)+"]" # "%d-%d-%d"
+        rpt = DataReport(ds)
+        rpt.addDataColumn("date",formatter=fmt).addFilter(
+            DateEquals,year,month)
+        
+        rpt.addColumn(lambda row:str(row.item.date),
+                      label="ISO")
+        
+        for res in sess.query(Resources,orderBy="id"):
+            def val(row):
+                #qry=sess.query(Usages,
+                #               date=row.cells[0].value,
+                #               resource=res)
+                return res.usages_by_resource.child(
+                    date=row.cells[0].value)
+                #print qry.getSqlSelect()
+                #return qry.lister
+            def fmt(qry):
+                return ", ".join([u.short() for u in qry])
+            rpt.addColumn(val,
+                          label=res.getLabel(),
+                          formatter=fmt)
+
+        sess.report(rpt)
         
 
     def showMainForm(self,sess):

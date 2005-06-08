@@ -29,6 +29,9 @@ class NoSuchField(InvalidRequestError):
 class DataVeto(Exception):
     "Invalid data submitted"
 
+class RefuseValue(Exception):
+    "Invalid data submitted"
+
 class RowLockFailed(Exception):
     "Failed to get a lock for a row"
 

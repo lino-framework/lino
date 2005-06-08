@@ -36,6 +36,20 @@ class IsEqual(Filter):
     def getLabel(self):
         return "'%s' == %r" % (self.col.getLabel(),self.value)
 
+class DateEquals(Filter):
+    def __init__(self,col,year=None,month=None,day=None):
+        self.col=col
+        self.year=year
+        self.month=month
+        self.day=day
+    
+    def getLabel(self):
+        return "'%s' == %s-%s-%s" % (
+            self.col.getLabel(),
+            self.year,self.month,self.day)
+
+    
+
 ## class Master(Filter):
 ##     def __init__(self,col,slave):
 ##         self.col=col

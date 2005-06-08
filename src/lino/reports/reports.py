@@ -42,7 +42,7 @@ class BaseReport(Describable):
     DEFAULT_TYPE = STRING
     
     def __init__(self, parent,
-                 iterator,
+                 ds,
                  columnWidths=None,
                  width=None,
                  rowHeight=None,
@@ -57,11 +57,13 @@ class BaseReport(Describable):
 
         Describable.__init__(self,parent,**kw)
         if parent is not None:
-            if iterator is None: iterator=parent._iterator
+            #if iterator is None: iterator=parent._iterator
+            if ds is None: ds=parent.ds
             if columnWidths is None: columnWidths=parent.columnWidths
             if width is None: width=parent.width
             if rowHeight is None: rowHeight=parent.rowHeight
-        self._iterator = iterator.__iter__()
+        #self._iterator = iterator.__iter__()
+        self.ds = ds
         self.rowHeight = rowHeight
         self.columnWidths = columnWidths
         self.width = width
@@ -171,7 +173,7 @@ class BaseReport(Describable):
 
 class ReportColumn(Describable):
     
-    def __init__(self,owner,
+    def __init__(self,owner,formatter=str,
                  name=None,label=None,doc=None,
                  when=None,
                  halign=LEFT,
@@ -187,6 +189,7 @@ class ReportColumn(Describable):
         self.valign = valign
         self.halign = halign
         self.when = when
+        self._formatter=formatter
         
         
     def getValue(self,row):
@@ -198,19 +201,21 @@ class ReportColumn(Describable):
         raise NotImplementedError
 
     def format(self,v):
-        raise NotImplementedError
-        #return str(v)
+        return self._formatter(v)
     
 
 class DataReportColumn(ReportColumn):
     def __init__(self,owner,datacol,
                  name=None,label=None,doc=None,
+                 formatter=None,
                  **kw):
         if name is None: name=datacol.name
+        if formatter is None: formatter=datacol.format
         #assert name != "DataReportColumn"
         if label is None: label=datacol.rowAttr.label
         if doc is None: label=datacol.rowAttr.doc
-        ReportColumn.__init__(self,owner,name,label,doc,
+        ReportColumn.__init__(self,owner,formatter,
+                              name,label,doc,
                               **kw)
         #assert self.name != "DataReportColumn"
         self.datacol = datacol
@@ -223,16 +228,20 @@ class DataReportColumn(ReportColumn):
         return self.datacol.getMinWidth()
     def getMaxWidth(self):
         return self.datacol.getMaxWidth()
+
+    def addFilter(self,*args):
+        self.datacol.addFilter(*args)
         
-    def format(self,v):
-        return self.datacol.format(v)
+##     def format(self,v):
+##         return self.datacol.format(v)
     
 class VurtReportColumn(ReportColumn):
-    def __init__(self,owner,meth,type=None,**kw):
-        ReportColumn.__init__(self,owner,**kw)
-        self.meth = meth
+    def __init__(self,owner,meth,type=None,formatter=None,**kw):
         if type is None:
             type = owner.DEFAULT_TYPE
+        if formatter is None: formatter=type.format
+        ReportColumn.__init__(self,owner,formatter,**kw)
+        self.meth = meth
         self.type=type
 
     def getValue(self,row):
@@ -244,8 +253,8 @@ class VurtReportColumn(ReportColumn):
     def getMaxWidth(self):
         return self.type.maxWidth
         
-    def format(self,v):
-        return self.type.format(v)
+##     def format(self,v):
+##         return self.type.format(v)
 
 
 class Cell:
@@ -276,6 +285,7 @@ class ReportRow:
 
 class ReportIterator:
     def __init__(self,rpt,doc):
+        self.iterator=rpt.ds.__iter__()
         self.rpt=rpt
         self.doc=doc
         
@@ -283,8 +293,7 @@ class ReportIterator:
         return self
 
     def next(self):
-        return self.rpt.processItem(
-            self.doc, self.rpt._iterator.next())
+        return self.rpt.processItem(self.doc,self.iterator.next())
 
 class DataReport(BaseReport):
     
@@ -307,20 +316,23 @@ class DataReport(BaseReport):
     
     def beginReport(self,doc):
         if len(self.columns) == 0:
-            for dc in self._iterator.ds.getVisibleColumns():
-                self.addDataColumn(dc,
-                                   #width=dc.getMaxWidth(),
-                                   label=dc.getLabel())
+            for dc in self.ds.getVisibleColumns():
+                col = DataReportColumn(self,dc,
+                                       #width=dc.getMaxWidth(),
+                                       label=dc.getLabel())
+                self.columns.append(col)
+                                   
         BaseReport.beginReport(self,doc)
             
-    def addDataColumn(self,dc,**kw):
+    def addDataColumn(self,colName,**kw):
+        dc=self.ds.findColumn(colName)
         col = DataReportColumn(self,dc,**kw)
         self.columns.append(col)
         return col
 
     def doesShow(self,qry):
         #used in lino.gendoc.html
-        myqry=self._iterator.ds
+        myqry=self.ds
         if myqry.getLeadTable().name != qry.getLeadTable().name:
             return False
         #if myqry._masters != qry._masters:
@@ -363,8 +375,8 @@ class DictReport(BaseReport):
     
         
 class Report(BaseReport):
-    def __init__(self,iterator,**kw):
-        BaseReport.__init__(self,None, iterator, **kw)
+    def __init__(self,ds,**kw):
+        BaseReport.__init__(self,None, ds, **kw)
 
         
 ## def createReport(iterator,**kw):

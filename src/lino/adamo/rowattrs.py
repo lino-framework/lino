@@ -41,14 +41,13 @@ class RowAttribute(Describable):
     def delete(self):
         self._deleted=True
     
-    def validate(self,row,value):
-        if value is None:
-            if self._isMandatory:
-                raise DataVeto("may not be empty")
-            else:
-                return
-        for v in self._onValidate:
-            v(row,value)
+##     def canSetValue(self,row,value):
+##         if value is None:
+##             if self._isMandatory: return "may not be empty"
+##             return
+##         for v in self._onValidate:
+##             msg=v(row,value)
+##             if msg is not None: return msg
     
     def afterSetAttr(self,row):
         pass
@@ -110,7 +109,13 @@ class RowAttribute(Describable):
 
     def setCellValue(self,row,value):
         # does not setDirty() !
-        self.validate(row,value)
+##         if value is None:
+##             if self._isMandatory:
+##                 raise RefuseValue("may not be empty")
+##         else:
+        for v in self._onValidate:
+            v(row,value)
+        #self.canSetValue(row,value)
         row._values[self.name] = value
         
 ##     def getCellValue(self,row,col):
@@ -120,7 +125,7 @@ class RowAttribute(Describable):
     def setValueFromString(self,row,s):
         # does not setDirty() !
         if len(s) == 0:
-            self.setCellValue(row,v)
+            self.setCellValue(row,None)
         else:
             v=self.parse(s)
             self.setCellValue(row,v)
@@ -201,10 +206,15 @@ class Field(RowAttribute):
     def format(self,v):
         return self.type.format(v)
         
-    def validate(self,row,value):
+    def setCellValue(self,row,value):
         if value is not None:
             self.type.validate(value)
-        RowAttribute.validate(self,row,value)
+        RowAttribute.setCellValue(self,row,value)
+        
+##     def canSetValue(self,row,value):
+##         if value is not None:
+##             self.type.validate(value)
+##         RowAttribute.canSetValue(self,row,value)
         
     def parse(self,s):
         return self.type.parse(s)
@@ -257,6 +267,8 @@ class BabelField(Field):
         langs = row.getSession().getBabelLangs()
         values = row.getFieldValue(self.name)
         if values is None:
+            #if self._isMandatory:
+            #    raise DataVeto("may not be empty")
             values = [None] * len(row.getDatabase().getBabelLangs())
             row._values[self.name] = values
         if len(langs) > 1:
@@ -390,7 +402,7 @@ class Pointer(RowAttribute):
                  detailName=None,
                  **kw):
         RowAttribute.__init__(self,owner,name,**kw)
-        self._toClass = toClass
+        self.type = toClass
         
         #self.sticky = True # joins are sticky by default
         
@@ -412,7 +424,7 @@ class Pointer(RowAttribute):
                 owner.getTableName().lower()+'_by_'+self.name)
             
     def onTableInit2(self,owner,schema):
-        self._toTables = schema.findImplementingTables(self._toClass)
+        self._toTables = schema.findImplementingTables(self.type)
         if len(self._toTables) == 0:
             self.delete()
             return
@@ -420,7 +432,7 @@ class Pointer(RowAttribute):
                  "%s.%s : found no tables implementing %s" % \
                  (owner.getName(),
                   str(self),
-                  str(self._toClass))
+                  str(self.type))
         #if len(self._toTables) > 1:
         #   print "rowattrs.py:", repr(self)
 
@@ -589,7 +601,7 @@ class Pointer(RowAttribute):
         return datatypes.STRING
 
     def getTargetSource(self,row): 
-        return row.getSession().query(self._toClass)
+        return row.getSession().query(self.type)
     
         
 class Detail(RowAttribute):
@@ -606,8 +618,8 @@ class Detail(RowAttribute):
         return str(len(ds))+" "+ds.getLeadTable().getName()
 
         
-    def validate(self,row,value):
-        raise "cannot set value of a detail"
+##     def canSetValue(self,row,value):
+##         raise "cannot set value of a detail"
     
     def getMinWidth(self):
         # TODO: 
@@ -677,7 +689,7 @@ class Vurt(Field):
 
 
     def setCellValue(self,row,value):
-        raise "not allowed"
+        raise DataVeto("not allowed")
         
     def getCellValue(self,row,col):
         return self._func(row)

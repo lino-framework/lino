@@ -60,6 +60,13 @@ class Center:
         db = Database(app,name=name,**kw)
         self._databases.append(db)
         return db
+
+    def startDump(self):
+        assert len(self._connections) == 1
+        self._connections[0].startDump()
+    def stopDump(self):
+        assert len(self._connections) == 1
+        return self._connections[0].stopDump()
         
 ##     def set(self,checkIntegrity=None):
 ##         if checkIntegrity is not None:
@@ -135,6 +142,7 @@ atexit.register(_center.shutdown)
 
 for m in ( #'openSession',#'getOptionParser',
           'shutdown','database',
+          'startDump', 'stopDump',
           #'doCheckIntegrity', 
           #'addSchema',
           'connection'

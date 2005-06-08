@@ -19,6 +19,7 @@
 import os
 #import time
 from types import StringType
+import datetime
 
 if True:
     import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
@@ -40,6 +41,17 @@ from lino.adamo import DatabaseError
 # from lino.ui import console
 # import console to make sure that sys.setdefaultencoding() is done
 # because sqlite.Connection() will use this as default encoding.
+
+def month(s):
+    d=datetime.date.fromordinal(s)
+    return d.month
+def year(s):
+    d=datetime.date.fromordinal(s)
+    return d.year
+def day(s):
+    d=datetime.date.fromordinal(s)
+    return d.day
+
         
 
 class Connection(SqlConnection):
@@ -59,9 +71,23 @@ class Connection(SqlConnection):
             
         try:
             self._dbconn = sqlite.connect(filename)
-                                          #client_encoding='latin1')
+                                          #client_encoding='latin1'
+##             def month(d):
+##                 return d.month
+##             def year(d):
+##                 raise "foo"
+##                 print d
+##                 return d.year
+##             def day(d):
+##                 return d.day
+            self._dbconn.create_function("month",1,month)
+            self._dbconn.create_function("year",1,year)
+            self._dbconn.create_function("day",1,day)
+                                          
         except sqlite.DatabaseError,e:
             raise DatabaseError(filename + ":" +str(e))
+        
+        self._iterators=[]
 
 
     def __str__(self):
@@ -94,6 +120,14 @@ class Connection(SqlConnection):
         except sqlite.DatabaseError,e:
             raise DatabaseError(sql + "\n" + str(e))
 
+    def addIterator(self,i):
+        self._iterators.append(i)
+        
+    def removeIterator(self,i):
+        self._iterators.remove(i)
+        
+
+        
     def commit(self):
         #print "commit"
         if self._dirty:
@@ -106,6 +140,8 @@ class Connection(SqlConnection):
             return
         if self._status == self.CST_CLOSING:
             return
+        if len(self._iterators):
+            print self._iterators
         self._status = self.CST_CLOSING
         self.commit()
         if self._dirty:

@@ -93,7 +93,11 @@ class QueryColumn:
 
 
     def setCellValue(self,row,value):
-        self.rowAttr.setCellValue(row,value)
+        #self.rowAttr.canSetValue(row,value)
+        try:
+            self.rowAttr.setCellValue(row,value)
+        except DataVeto,e:
+            raise DataVeto(repr(value)+": "+str(e))
         self.rowAttr.afterSetAttr(row)
 
     def setValueFromString(self,row,s):
@@ -676,6 +680,11 @@ class BaseColumnList:
             #rowattr = self.leadTable.getRowAttr(k)
             #row._values[rowattr._name] = v
             #rowattr.setCellValue(row,v)
+
+        for rowattr in self.getLeadTable()._mandatoryColumns:
+            if row.getFieldValue(rowattr.name) is None:
+                raise DataVeto("Column '%s.%s' may not be empty"\
+                               % (self.getTableName(),rowattr.name))
             
         row.setDirty()
             
@@ -943,6 +952,9 @@ class SimpleQuery(LeadTableColumnList):
             self.provideColumn(name)
             for name in columnNames.split()]
 
+    def getMaster(self,name):
+        return self._masters[name]
+
             
     def setMasters(self,*masters,**kw):
         #self._masters={}
@@ -963,10 +975,13 @@ class SimpleQuery(LeadTableColumnList):
                 self._masterColumns.append(self.provideColumn(name))
                 self._masters[name]=master
         else:
+            l=[col.name for col in self._masterColumns]
             for name,master in kw.items():
-                l=[col.name for col in self._masterColumns]
-                assert name in l, \
-                       "%s not in %s" % (name,l)
+                if not name in l:
+                    self._masterColumns.append(self.findColumn(name))
+                #l=[col.name for col in self._masterColumns]
+                #assert name in l, \
+                #       "%s not in %s" % (name,l)
                 self._masters[name]=master
 
 
@@ -1715,6 +1730,16 @@ def trigger(events,*args):
     for e in events:
         if not e(*args): return False
     return True
+
+
+from traceback import print_stack
+from cStringIO import StringIO
+
+def calledfrom():
+    f=StringIO()
+    print_stack(limit=4,file=f)
+    lines=f.getvalue().splitlines()
+    return ":".join(lines[:2])
             
 
 class DataIterator:
@@ -1723,15 +1748,20 @@ class DataIterator:
         self.ds = ds
         self.csr = ds.executeSelect(**kw)
         self.recno = 0
+        self.ds._connection.addIterator(self)
+        self._calledfrom = calledfrom()
         
-
         
+    def __repr__(self):
+        return 'Iterator on row %d in "%s" (called from %s)' % (
+            self.recno,self.ds.getSqlSelect(),self._calledfrom)
     def __iter__(self):
         return self
     
     def next(self):
         sqlatoms = self.csr.fetchone()
         if sqlatoms == None:
+            self.ds._connection.removeIterator(self)
             raise StopIteration
         atomicRow = self.ds.csr2atoms(sqlatoms)
         row=self.ds.atoms2row(atomicRow,new=False)
