@@ -104,7 +104,7 @@ continue testing even if failures or errors occur""",
                                         arg)
                     if doit:
                         modname=prefix+modname
-                        job.notice("Loading cases from %s...",
+                        job.verbose("Loading cases from %s...",
                                    modname)
                         
                         self.findTestCases(sess,modname,cases,suites)

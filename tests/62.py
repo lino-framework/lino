@@ -23,7 +23,6 @@ discovering and extending Lars M. Garshol's dbfreader.py
 """
 import os
 from cStringIO import StringIO
-from lino.ui import console
 from lino.tools import dbfreader
 from lino.misc import tsttools
 
