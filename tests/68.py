@@ -18,11 +18,12 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc.tsttools import TestCase, main
-from lino.ui import console
+#from lino.ui import console
 
 
 class Case(TestCase):
-    "do the lino.examples work?"
+    skip=True
+    # now covered by docs/examples/reports1.py
 
     def test01(self):
         from lino.examples.reports1 import MyReport

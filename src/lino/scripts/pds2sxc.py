@@ -18,7 +18,7 @@
 
 import sys
 
-from lino.ui import console
+#from lino.ui import console
 from lino.oogen import SpreadsheetDocument
 from lino.scripts.pds2sxw import pds2oo
 

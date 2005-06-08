@@ -18,7 +18,7 @@
 
 import sys, os
 
-from lino.ui import console
+#from lino.ui import console
 from lino.oogen import TextDocument
 
 def pds2oo(docClass,argv):

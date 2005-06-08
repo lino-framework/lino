@@ -18,11 +18,12 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-from lino.ui import console
+#from lino.ui import console
 from lino.misc import tsttools
 from lino.oogen import TextDocument, elements
 
 class Case(tsttools.TestCase):
+    todo="Migrate oogen to gendoc.openoffice"
     
     def test01(self):
         "First styles"

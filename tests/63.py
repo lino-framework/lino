@@ -26,13 +26,13 @@ this was my first oogen testcase.
 
 import os
 import unittest
-from lino.ui import console
+#from lino.ui import console
 from lino.misc import tsttools
 from lino.oogen import SpreadsheetDocument, TextDocument
 
 
 class Case(tsttools.TestCase):
-    
+    todo="Migrate oogen to gendoc.openoffice"
     def test01(self):
 
         fn = self.addTempFile("1.sxw", showOutput=True)

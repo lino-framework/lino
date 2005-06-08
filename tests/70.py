@@ -3,20 +3,16 @@
 # This file is published as part of the Lino project
 #----------------------------------------------------------------------
 
-"""
-testing restify.inspect()
-"""
 import os
 
 from lino.misc import tsttools
-from lino.misc.restify import inspect
+from lino.scripts.webman import main
 
 class Case(tsttools.TestCase):
     ""
 
     def test01(self):
-        doc = inspect(os.path.join("testdata","index.txt"))
-        print repr(doc.get_children())
+        main([os.path.join("testdata","webman")])
         
 
 if __name__ == '__main__':
