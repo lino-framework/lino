@@ -23,24 +23,32 @@ import os
 from lino.misc.tsttools import TestCase, main
 
 examplesDir=os.path.join(os.path.dirname(__file__),
-                         "..","..", "docs","examples")
+                         "..", "docs","examples")
 
 class Case(TestCase):
 
     def test01(self):
-
+        examples=[]
+        #count=0
         for dirpath, dirnames, filenames in os.walk(examplesDir):
             for filename in filenames:
                 base,ext = os.path.splitext(filename)
                 if ext == '.py':
-                    cmd="python "+os.path.join(examplesDir,filename)
-                    fd=os.popen(cmd,"r")
-                    observed=fd.read()
-                    msg="Example %s failed" % filename
-                    self.assertEqual(fd.close(),None,msg)
-                    outfile=os.path.join(examplesDir,base)+".out"
-                    expected=open(outfile).read()
-                    self.assertEquivalent(observed,expected,msg)
+                    examples.append(base)
+                    
+        self.assertEqual(len(examples),12)
+        
+        for base in examples:
+            filename = base+".py"
+            cmd="python "+os.path.join(examplesDir,filename)
+            fd=os.popen(cmd,"r")
+            observed=fd.read()
+            msg="Example %s failed" % filename
+            self.assertEqual(fd.close(),None,msg)
+            outfile=os.path.join(examplesDir,base)+".out"
+            expected=open(outfile).read()
+            self.assertEquivalent(observed,expected,msg)
+                    
                                           
         
         

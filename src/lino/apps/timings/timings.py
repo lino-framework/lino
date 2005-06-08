@@ -166,7 +166,7 @@ class Timings(Schema):
 
         return filenames
 
-    def showMonthCalendar(self,sess,year=2005,month=6):
+    def showMonthlyCalendar(self,sess,year=2005,month=6):
         ds=sess.query(Days, orderBy="date")
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
@@ -214,7 +214,7 @@ This is the Timings main menu.
         m.addItem("s",label="&Static HTML").setHandler(
             self.writeStaticSite,sess)
         m.addItem("m",label="&Monthly Calendar").setHandler(
-            self.showMonthCalendar,sess)
+            self.showMonthlyCalendar,sess)
         
         self.addProgramMenu(sess,frm)
 

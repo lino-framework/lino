@@ -105,7 +105,7 @@ class Case(TestCase):
         #self.assertEquivalent(s,""" """)        
         
         #center.startDump()
-        app.showMonthCalendar(sess,2005,6)
+        app.showMonthlyCalendar(sess,2005,6)
         #s=center.stopDump()
         #print s
 ##         self.assertEquivalent(s,"""

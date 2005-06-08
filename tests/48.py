@@ -16,13 +16,15 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
 from lino.misc.tsttools import TestCase, main
 
 class Case(TestCase):
     def test01(self):
     
         s = ""
-        for line in file('cp850.txt').readlines():
+        fn=os.path.join("testdata",'cp850box.txt')
+        for line in file(fn).readlines():
             line = line.strip().decode('cp850')
             for c in line:
                 if c == " ":

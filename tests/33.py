@@ -25,7 +25,7 @@ from lino.console import syscon
 from lino.reports import Report
 
 class Case(TestCase):
-
+    skip=True # now covered by docs/examples/reports1.py
 
     def test01(self):
         #
@@ -39,7 +39,7 @@ class Case(TestCase):
         #console.startDump()
         #rpt = self.ui.report()
         rpt=Report(d.items())
-        rpt.addColumn(meth=lambda row: str(row.item[0]),
+        rpt.addVurtColumn(meth=lambda row: str(row.item[0]),
                       label="key",
                       width=12)
         rpt.addColumn(meth=lambda row: repr(row.item[1]),

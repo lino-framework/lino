@@ -16,6 +16,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
+
 from lino.misc.tsttools import TestCase, main, catch_output
 from lino.misc.my_import import my_import
 from lino.apps import timtools
@@ -35,8 +37,22 @@ class Case(TestCase):
     def test01(self):
         s = ""
         for scr in console_targets:
-            mod = my_import("lino.scripts." + scr)
-            s += catch_output(mod.main,[])
+
+
+
+            cmd="lino "+scr+" --help"
+            fd=os.popen(cmd,"r")
+            observed=fd.read()
+            msg="lino %s failed" % scr
+            self.assertEqual(fd.close(),None,msg)
+            outfile=os.path.join("testdata","timtools",scr)+".hlp"
+            expected=open(outfile).read()
+            self.assertEquivalent(observed,expected,msg)
+
+##             mod = my_import("lino.scripts." + scr)
+##             self.failUnless(hasattr(mod,"consoleApplicationClass"),scr)
+##             main=mod.consoleApplicationClass.main
+##             s += catch_output(mod.main,[])
             #mod.main(["--help"])
 
         #s = self.getConsoleOutput()

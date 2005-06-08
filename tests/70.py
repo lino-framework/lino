@@ -6,10 +6,10 @@
 import os
 
 from lino.misc import tsttools
-from lino.scripts.webman import main
+#from lino.scripts.webman import main
 
 class Case(tsttools.TestCase):
-    ""
+    todo="scripts/webman is broken"
 
     def test01(self):
         main([os.path.join("testdata","webman")])

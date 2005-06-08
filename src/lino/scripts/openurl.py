@@ -19,23 +19,22 @@
 import sys
 import webbrowser
 
-from lino.ui import console 
+from lino.console.application import Application, UsageError
 
-class OpenURL(console.ConsoleApplication):
+class OpenURL(Application):
     name="Lino openurl"
     years='2002-2005'
     author='Luc Saffre'
-    usage="Usage: openurl URL [URL...]"
+    usage="Usage: lino openurl URL [URL...]"
     description="""\
-    
 Starts the default browser on the specified URL(s).
 
 """
 
     
-    def run(self,ui):
+    def run(self,sess):
         if len(self.args) != 1:
-            raise console.UsageError("no arguments specified")
+            raise UsageError("no arguments specified")
         for url in self.args:
             # webbrowser.open(url,new=1)
             webbrowser.open_new(url)

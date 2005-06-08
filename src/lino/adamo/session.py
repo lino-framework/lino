@@ -50,7 +50,7 @@ class Session(Context):
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,toolkit,ui,**kw):
+    def __init__(self,toolkit,ui): #,**kw):
         self.toolkit = toolkit
         # Toolkit.addSession(will set another toolkit)
         #self.app = app
@@ -80,7 +80,7 @@ class Session(Context):
         #self._setcon(console)
         self._ignoreExceptions = []
         
-        self.use(**kw)
+        #self.use(**kw)
 
 ##     def _setcon(self,console):
 ##         self.console = console

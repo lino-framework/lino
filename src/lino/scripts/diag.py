@@ -21,47 +21,24 @@ import sys
 import os
 import locale
 
+from lino.console.application import Application, UsageError
 
-## try:
-##     import win32file
-## except:
-##     win32file = None
-
-
-from lino.ui import console
-
-## from lino.i18n import itr,_
-## itr("Start?",
-##    de="Arbeitsvorgang starten?",
-##    fr=u"Démarrer?")
-
-def main(argv):
-    console.copyleft(name="Lino/diag",
-                     years='2005',
-                     author='Luc Saffre')
+class Diag(Application):
+    name="Lino/diag"
+    years='2005'
+    author='Luc Saffre'
     
-    parser = console.getOptionParser(
-        usage="usage: lino diag [options]",
-        description="""\
+    usage="usage: lino diag [options]"
+    description="""\
 writes some diagnostics about your computer.
-""" )
+""" 
     
-##     parser.add_option("-s", "--simulate",
-##                       help="""\
-## simulate only, don't do it""",
-##                       action="store_true",
-##                       dest="simulate",
-##                       default=False)
-##     (options, args) = parser.parse_args(argv)
+    def run(self,sess):
+        if len(self.args) != 0:
+            raise UsageError("no arguments please")
 
-    (options, args) = parser.parse_args(argv)
-
-    if len(args) != 0:
-        parser.print_help() 
-        return -1
-
-
-    diag(sys.stdout)
+        diag(sys.stdout)
+        sess.message("")
 
 def diag(out):    
 
@@ -123,9 +100,10 @@ Miscellaneous system settings:
     
 
 
+consoleApplicationClass = Diag
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
-    console.message("")
+    consoleApplicationClass().main() 
+    
         
 

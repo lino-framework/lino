@@ -17,16 +17,15 @@
 
 import sys
 
-from lino.ui import console 
+from lino.console.application import Application, UsageError
 from lino.tools.mail import readmail, openmail
 
-class OpenMail(console.ConsoleApplication):
+class OpenMail(Application):
     name="Lino openmail"
     years='2002-2005'
     author='Luc Saffre'
     usage="usage: lino openmail FILE"
     description="""\
-    
 Start the user's default mail client with a ready-to-send message
 whose content is previously read from FILE.
 
@@ -34,12 +33,11 @@ FILE describes the contents of the message using a simplified pseudo
 RFC822 format.  Supported message header fields are "to", 
 "subject", and the "body".  "to" is mandatory, the other fields are
 optional.
-
 """
     
-    def run(self,ui):
+    def run(self,sess):
         if len(self.args) != 1:
-            raise console.UsageError("no arguments specified")
+            raise UsageError("exactly 1 argument required")
 
         msg = readmail(self.args[0])
 

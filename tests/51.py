@@ -21,13 +21,14 @@ import os
 import sys
 
 from lino.misc.tsttools import TestCase, main, catch_output
-from lino.tools import textsplitter 
+from lino.tools import textsplitter
 from lino.tools import guesscoding 
 
 
 TESTDATA = os.path.join(os.path.dirname(__file__),"testdata")
 
 class Case(TestCase):
+    skip=True # textsplitter is frozen
     def test01(self):
 
 
