@@ -23,7 +23,7 @@ from lino.adamo.store import Populator
 
 from lino.apps.timings.timings import Timings, everyday
 from lino.apps.timings.tables import *
-from lino.adamo.datatypes import itod
+from lino.adamo.datatypes import itot
 from lino.adamo import center
 
 class TestPopulator(Populator):
@@ -31,25 +31,34 @@ class TestPopulator(Populator):
         self.a=q.appendRow(id="A ",name="Arbeit")
         self.u=q.appendRow(id="U ",name="Urlaub")
         self.m=q.appendRow(id="M ",name="Mission")
-        self.types=(self.a,self.u,self.m)
+        self.k=q.appendRow(id="K ",name="Krank")
+        self.types=(self.a,self.u,self.m,self.k)
 
     def populateResources(self,q):
         self.luc=q.appendRow(id="luc",name="Luc")
         self.gerd=q.appendRow(id="gerd",name="Gerd")
         
     def populateDays(self,q):
-        for d in everyday(itod(20050626),itod(20050730)):
+        for d in everyday(20050601,20050731):
             q.appendRow(date=d)
 
     def populateUsages(self,q):
         days=q.getSession().query(Days)
-        i=0
-        for d in days:
-            #d=days.peek(i)
+        for d in everyday(20050620,20050624):
             q.appendRow(resource=self.luc,
-                        date=d,
-                        type=self.types[i%3])
-            i+=1
+                        date=days.peek(d),
+                        start=itot(530),
+                        stop=itot(2145),
+                        type=self.a)
+        for d in everyday(20050625,20050628):
+            q.appendRow(resource=self.luc,
+                        date=days.peek(d),
+                        type=self.k)
+            
+        for d in everyday(20050628,20050702):
+            q.appendRow(resource=self.gerd,
+                        date=days.peek(d),
+                        type=self.k)
 
 
 class Case(TestCase):
@@ -64,26 +73,29 @@ class Case(TestCase):
         
         l=[]
         for res in sess.query(Resources,orderBy="id"):
-            print res,":"
+            #print res,":"
             def val(day):
                 return res.usages_by_resource.child(date=day)
             def fmt(qry):
-                s="Resource %s has %d usages on %s: " % (
-                    qry.getMaster("resource").getLabel(),
-                    len(qry),
-                    qry.getMaster("date"))
-                s += ", ".join([u.short() for u in qry])
+                #s="Resource %s has %d usages on %s: " % (
+                #    qry.getMaster("resource").getLabel(),
+                #    len(qry),
+                #    qry.getMaster("date"))
+                s = ", ".join([u.short() for u in qry])
                 return s
             l.append((val,fmt))
+        rng=everyday(20050624,20050703)
         for day in sess.query(Days, orderBy="date"):
-            for val,fmt in l:
-                value=val(day)
-                #print fmt(value)
+            if day.date in rng:
+                print day,":",
+                for val,fmt in l:
+                    value=val(day)
+                    print fmt(value),
+                print
                 
         sess.shutdown()
         
     def test02(self):
-        return
         app=Timings()
         sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
         #center.startDump()

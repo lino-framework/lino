@@ -39,8 +39,6 @@ BOTTOM = 5
 class BaseReport(Describable):
 
 
-    DEFAULT_TYPE = STRING
-    
     def __init__(self, parent,
                  ds,
                  columnWidths=None,
@@ -158,10 +156,12 @@ class BaseReport(Describable):
     ## public methods for user code
     ##
 
-    def addColumn(self,meth,**kw):
-        col = VurtReportColumn(self,meth,**kw)
+    def addColumn(self,col):
         self.columns.append(col)
         return col
+    
+    def addVurtColumn(self,meth,**kw):
+        return self.addColumn(VurtReportColumn(self,meth,**kw))
 
     def onEach(self,meth):
         self._onRowEvents.append(meth)
@@ -173,14 +173,14 @@ class BaseReport(Describable):
 
 class ReportColumn(Describable):
     
-    def __init__(self,owner,formatter=str,
+    def __init__(self,formatter=str,
                  name=None,label=None,doc=None,
                  when=None,
                  halign=LEFT,
                  valign=TOP,
                  width=None,
                  ):
-        self._owner = owner
+        #self._owner = owner
         if label is None:
             label = name
         Describable.__init__(self, None, name,label,doc)
@@ -192,12 +192,12 @@ class ReportColumn(Describable):
         self._formatter=formatter
         
         
-    def getValue(self,row):
-        raise NotImplementedError
-
     def getMinWidth(self):
-        raise NotImplementedError
+        return self.width
     def getMaxnWidth(self):
+        return self.width
+
+    def getValue(self,row):
         raise NotImplementedError
 
     def format(self,v):
@@ -205,7 +205,7 @@ class ReportColumn(Describable):
     
 
 class DataReportColumn(ReportColumn):
-    def __init__(self,owner,datacol,
+    def __init__(self,datacol,
                  name=None,label=None,doc=None,
                  formatter=None,
                  **kw):
@@ -214,7 +214,7 @@ class DataReportColumn(ReportColumn):
         #assert name != "DataReportColumn"
         if label is None: label=datacol.rowAttr.label
         if doc is None: label=datacol.rowAttr.doc
-        ReportColumn.__init__(self,owner,formatter,
+        ReportColumn.__init__(self,formatter,
                               name,label,doc,
                               **kw)
         #assert self.name != "DataReportColumn"
@@ -236,13 +236,15 @@ class DataReportColumn(ReportColumn):
 ##         return self.datacol.format(v)
     
 class VurtReportColumn(ReportColumn):
-    def __init__(self,owner,meth,type=None,formatter=None,**kw):
-        if type is None:
-            type = owner.DEFAULT_TYPE
-        if formatter is None: formatter=type.format
-        ReportColumn.__init__(self,owner,formatter,**kw)
+    
+    type = STRING
+    
+    def __init__(self,meth,type=None,formatter=None,**kw):
+        if type is not None:
+            self.type=type
+        if formatter is None: formatter=self.type.format
+        ReportColumn.__init__(self,formatter,**kw)
         self.meth = meth
-        self.type=type
 
     def getValue(self,row):
         #return self.meth(self._owner.crow)
@@ -364,12 +366,12 @@ class DictReport(BaseReport):
         
     def beginReport(self,doc):
         if len(self.columns) == 0:
-            self.addColumn(meth=lambda row: str(row[0]),
-                           label="key",
-                           width=12)
-            self.addColumn(meth=lambda row: repr(row[1]),
-                           label="value",
-                           width=40)
+            self.addVurtColumn(meth=lambda row: str(row[0]),
+                               label="key",
+                               width=12)
+            self.addVurtColumn(meth=lambda row: repr(row[1]),
+                               label="value",
+                               width=40)
         Report.beginReport(self,doc)
         
     

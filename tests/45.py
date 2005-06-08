@@ -28,6 +28,7 @@ from lino.tools import guesscoding
 TESTDATA = os.path.join(os.path.dirname(__file__),"testdata")
 
 class Case(TestCase):
+    skip=True
     def test01(self):
         
         splitter = TextSplitter()

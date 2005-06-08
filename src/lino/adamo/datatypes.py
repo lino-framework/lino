@@ -212,7 +212,7 @@ class TimeType(Type):
         if len(l) > 4:
             raise ValueError, repr(s)
         if len(l) < 1:
-            raise ValueError, repr(s)
+            return stot(s)
         l = map(int,l)
         return datetime.time(*l)
     
@@ -320,6 +320,19 @@ LOGO = LogoType()
 ##     'IMAGE',
 ##     'LOGO',
 ##     ]
+
+def itot(i):
+    return stot(str(i))
+
+def stot(s):
+    if len(s) == 4:
+        return datetime.time(int(s[0:2]),int(s[2:]))
+    elif len(s) == 3:
+        return datetime.time(int(s[0:1]),int(s[1:]))
+    elif len(s) <= 2:
+        return datetime.time(i)
+    else:
+        raise ValueError, repr(s)
 
 def itod(i):
     s=str(i)

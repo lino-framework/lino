@@ -26,32 +26,56 @@ from lino.adamo.filters import DateEquals
 from lino.adamo.datatypes import itod
 
 from lino.gendoc.html import HtmlDocument
-from lino.reports.reports import DataReport
+from lino.reports.reports import DataReport, ReportColumn
 
 import datetime
 
 DAY = datetime.timedelta(1)
 
+## def everyday(d1,d2):
+##     l=[]
+##     d=d1
+##     while d <= d2:
+##         l.append(d)
+##         d += DAY
+##     return l
+
 def everyday(d1,d2):
-    l=[]
-    d=d1
-    while d <= d2:
-        l.append(d)
-        d += DAY
-    return l
+    #return xrange(itod(d1),itod(d2),DAY)
+    return urange(itod(d1),itod(d2),DAY)
 
+class urange:
 
-## class daterange:
-
-##     def __init__(self, d1, high):
-##         self.low = low
-##         self.high = high
+    def __init__(self, start, stop, step=DAY):
+        self.start = start
+        self.stop = stop
+        self.step = step
         
-##     def __contains__(self, obj):
-##         return self.low < obj < self.high 
+    def __contains__(self, obj):
+        return self.start <= obj <= self.stop
 
-def iif(t,x,y):
-    if t: return x
+    def __iter__(self):
+        return uiter(self)
+
+class uiter:
+    def __init__(self,rng):
+        self.rng=rng
+        self.current=None # rng.start
+
+    def __iter__(self):
+        return self
+    
+    def next(self):
+        if self.current is None:
+            self.current = self.rng.start
+        else:
+            self.current += self.rng.step
+        if self.current > self.rng.stop:
+            raise StopIteration
+        return self.current
+
+def iif(test,x,y):
+    if test: return x
     return y
         
 class Timings(Schema):
@@ -150,23 +174,37 @@ class Timings(Schema):
         rpt.addDataColumn("date",formatter=fmt).addFilter(
             DateEquals,year,month)
         
-        rpt.addColumn(lambda row:str(row.item.date),
+        rpt.addVurtColumn(lambda row:str(row.item.date),
                       label="ISO")
+
+        class ResourceColumn(ReportColumn):
+            def __init__(self,owner,res):
+                self.res=res
+                ReportColumn.__init__(self,owner,
+                                      width=10,
+                                      label=res.getLabel())
+            def getValue(self,row):
+                return self.res.usages_by_resource.child(
+                    date=row.item)
+            def format(self,qry):
+                return ", ".join([u.short() for u in qry])
         
         for res in sess.query(Resources,orderBy="id"):
-            def val(row):
-                #qry=sess.query(Usages,
-                #               date=row.cells[0].value,
-                #               resource=res)
-                return res.usages_by_resource.child(
-                    date=row.cells[0].value)
-                #print qry.getSqlSelect()
-                #return qry.lister
-            def fmt(qry):
-                return ", ".join([u.short() for u in qry])
-            rpt.addColumn(val,
-                          label=res.getLabel(),
-                          formatter=fmt)
+##             def val(row):
+##                 #qry=sess.query(Usages,
+##                 #               date=row.cells[0].value,
+##                 #               resource=res)
+##                 return res.usages_by_resource.child(
+##                     date=row.cells[0].value)
+##                 #print qry.getSqlSelect()
+##                 #return qry.lister
+##             def fmt(qry):
+##                 return ", ".join([u.short() for u in qry])
+##             rpt.addColumn(val,
+##                           label=res.getLabel(),
+##                           formatter=fmt)
+##             rpt.addColumn(val,
+            rpt.addColumn(ResourceColumn(rpt,res))
 
         sess.report(rpt)
         

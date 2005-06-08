@@ -1,4 +1,8 @@
 #coding: latin1
+
+# This is abandoned. I chose another way.
+
+
 # based on a snippet from David Mertz's article
 # "Developing a Full-Text Indexer in Python"
 # http://www-106.ibm.com/developerworks/xml/library/l-pyind.html
