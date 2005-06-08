@@ -166,7 +166,7 @@ class Timings(Schema):
 
         return filenames
 
-    def writeMonthCalendar(self,sess,year=2005,month=6):
+    def showMonthCalendar(self,sess,year=2005,month=6):
         ds=sess.query(Days, orderBy="date")
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
@@ -190,20 +190,6 @@ class Timings(Schema):
                 return ", ".join([u.short() for u in qry])
         
         for res in sess.query(Resources,orderBy="id"):
-##             def val(row):
-##                 #qry=sess.query(Usages,
-##                 #               date=row.cells[0].value,
-##                 #               resource=res)
-##                 return res.usages_by_resource.child(
-##                     date=row.cells[0].value)
-##                 #print qry.getSqlSelect()
-##                 #return qry.lister
-##             def fmt(qry):
-##                 return ", ".join([u.short() for u in qry])
-##             rpt.addColumn(val,
-##                           label=res.getLabel(),
-##                           formatter=fmt)
-##             rpt.addColumn(val,
             rpt.addColumn(ResourceColumn(rpt,res))
 
         sess.report(rpt)
@@ -227,6 +213,8 @@ This is the Timings main menu.
         m = frm.addMenu("reports","&Reports")
         m.addItem("s",label="&Static HTML").setHandler(
             self.writeStaticSite,sess)
+        m.addItem("m",label="&Monthly Calendar").setHandler(
+            self.showMonthCalendar,sess)
         
         self.addProgramMenu(sess,frm)
 

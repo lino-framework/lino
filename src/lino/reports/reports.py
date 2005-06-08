@@ -161,7 +161,7 @@ class BaseReport(Describable):
         return col
     
     def addVurtColumn(self,meth,**kw):
-        return self.addColumn(VurtReportColumn(self,meth,**kw))
+        return self.addColumn(VurtReportColumn(meth,**kw))
 
     def onEach(self,meth):
         self._onRowEvents.append(meth)
@@ -319,18 +319,14 @@ class DataReport(BaseReport):
     def beginReport(self,doc):
         if len(self.columns) == 0:
             for dc in self.ds.getVisibleColumns():
-                col = DataReportColumn(self,dc,
-                                       #width=dc.getMaxWidth(),
-                                       label=dc.getLabel())
+                col = DataReportColumn(dc,label=dc.getLabel())
                 self.columns.append(col)
                                    
         BaseReport.beginReport(self,doc)
             
     def addDataColumn(self,colName,**kw):
         dc=self.ds.findColumn(colName)
-        col = DataReportColumn(self,dc,**kw)
-        self.columns.append(col)
-        return col
+        return self.addColumn(DataReportColumn(dc,**kw))
 
     def doesShow(self,qry):
         #used in lino.gendoc.html
@@ -366,13 +362,13 @@ class DictReport(BaseReport):
         
     def beginReport(self,doc):
         if len(self.columns) == 0:
-            self.addVurtColumn(meth=lambda row: str(row[0]),
+            self.addVurtColumn(meth=lambda row: str(row.item[0]),
                                label="key",
                                width=12)
-            self.addVurtColumn(meth=lambda row: repr(row[1]),
+            self.addVurtColumn(meth=lambda row: str(row.item[1]),
                                label="value",
                                width=40)
-        Report.beginReport(self,doc)
+        BaseReport.beginReport(self,doc)
         
     
         

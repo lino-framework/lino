@@ -6,21 +6,21 @@ sess = demo.startup(populate=False)
 
 rpt=Report(sess.db.app.getTableList())
 
-rpt.addColumn(
-    meth=lambda row: row.item.getTableName(),
+rpt.addVurtColumn(
     label="TableName",
+    meth=lambda row: row.item.getTableName(),
     width=15)
-rpt.addColumn(
+rpt.addVurtColumn(
+    label="Fields",
     meth=lambda row:\
     ", ".join([fld.name for fld in row.item.getFields()
                if isinstance(fld,Field)]),
-    label="Fields",
     width=30)
-rpt.addColumn(
+rpt.addVurtColumn(
+    label="Details",
     meth=lambda row:\
     ", ".join([fld.name for fld in row.item.getFields()
                if isinstance(fld,Detail)]),
-    label="Details",
     width=35)
 
 rpt.show()
