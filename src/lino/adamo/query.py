@@ -32,6 +32,33 @@ from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField
 #MS_COLUMN=1
 #MS_MASTER=1
 
+
+class Datasource:
+    # abstract base for Query and Report
+    def __xml__(self,wr):
+        raise NotImplementedError
+    
+    def setupMenu(self,navigator):
+        raise NotImplementedError
+    
+    def __len__(self):
+        raise NotImplementedError
+
+    def __getitem__(self,i):
+        raise NotImplementedError
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    def canWrite(self):
+        return False
+    
+    def canSort(self):
+        return False
+
+    def getVisibleColumns(self):
+        raise NotImplementedError
+
 class QueryColumn:
     
     def __init__(self,owner,index,name,rowAttr,
@@ -437,7 +464,40 @@ class DetailColumn(QueryColumn):
 
 
 
-class BaseColumnList: 
+class Calendar:
+    def __init__(self,session,columnNames,
+                 year=None,
+                 month=None,
+                 week=None):
+        self._session=session
+        self._columns = []
+        if columnNames is None:
+            self.visibleColumns=[]
+        else:
+            self.setVisibleColumns(columnNames)
+
+    def getContext(self):
+        return self._session
+    
+    def getDatabase(self):
+        return self._session.db
+
+    def setVisibleColumns(self,columnNames):
+        l = []
+        assert type(columnNames) in (str,unicode) #is types.StringType
+        for colName in columnNames.split():
+            if colName == "*":
+                for fld in self.getLeadTable().getFields():
+                    col = self.findColumn(fld.getName())
+                    if col is None:
+                        col = self._addColumn(fld.getName(),fld)
+                    l.append(col)
+            else:
+                l.append(self.provideColumn(colName))
+        self.visibleColumns = tuple(l)
+            
+
+class BaseColumnList(Datasource): 
     
     #ANY_VALUE = types.NoneType
     
@@ -813,6 +873,9 @@ class LeadTableColumnList(BaseColumnList):
     def getLeadTable(self):
         return self._store._table
 
+    def setupMenu(self,navigator):
+        self._store._table.setupMenu(navigator)
+
     def mtime(self):
         return self._store.mtime()
     
@@ -882,7 +945,7 @@ class SimpleQuery(LeadTableColumnList):
         self._connection = store._connection # shortcut
 
         for m in ('startDump','stopDump'):
-            setattr(self,m,getattr(store._connection,m))
+            setattr(self,m,getattr(store,m))
         self.rowcount = None
 
         
@@ -954,6 +1017,9 @@ class SimpleQuery(LeadTableColumnList):
 
     def getMaster(self,name):
         return self._masters[name]
+
+    def canSort(self):
+        return True
 
             
     def setMasters(self,*masters,**kw):
@@ -1310,7 +1376,7 @@ class SimpleQuery(LeadTableColumnList):
 ##                for (name,type) in self._table.getPrimaryAtoms()]
 
     def executePeek(self,id):
-        return self._connection.executePeek(self, id, self.session)
+        return self._store.executePeek(self, id)
 
     def commit(self):
         self._store.unlockDatasource(self)
@@ -1385,9 +1451,7 @@ class SimpleQuery(LeadTableColumnList):
         return self.atoms2row(atomicRow,False)
 
     def csr2atoms(self,sqlatoms):
-        return self._connection.csr2atoms(self,
-                                          sqlatoms,
-                                          self.session)
+        return self._store.csr2atoms(self,sqlatoms)
     
     def peek(self,*id):
         assert len(id) == len(self._pkColumns),\
@@ -1482,6 +1546,9 @@ class SimpleQuery(LeadTableColumnList):
 
 ##  def setCsvSamples(self,**kw):
 ##      self._query.setCsvSamples(self._area,**kw)
+
+    def rows(self,doc):
+        return DataIterator(self)
         
     def __iter__(self):
         return DataIterator(self)
@@ -1501,12 +1568,11 @@ class SimpleQuery(LeadTableColumnList):
     
     def __len__(self):
         if self.rowcount is None:
-            self.rowcount = self._connection.executeCount(self)
+            self.rowcount = self._store.executeCount(self)
         return self.rowcount
         
     def executeSelect(self,**kw):
-        # overridden by Report
-        return self._connection.executeSelect(self, **kw )
+        return self._store.executeSelect(self, **kw )
 
 
 
@@ -1608,10 +1674,10 @@ class Query(SimpleQuery):
         if limit is None:
             limit = self.pageLen
         
-        return self._connection.executeSelect(self,
-                                              limit=limit,
-                                              offset=offset,
-                                              **kw )
+        return self._store.executeSelect(self,
+                                         limit=limit,
+                                         offset=offset,
+                                         **kw )
 
     
 
@@ -1748,7 +1814,7 @@ class DataIterator:
         self.ds = ds
         self.csr = ds.executeSelect(**kw)
         self.recno = 0
-        self.ds._connection.addIterator(self)
+        self.ds._store.addIterator(self)
         self._calledfrom = calledfrom()
         
         
@@ -1761,7 +1827,7 @@ class DataIterator:
     def next(self):
         sqlatoms = self.csr.fetchone()
         if sqlatoms == None:
-            self.ds._connection.removeIterator(self)
+            self.ds._store.removeIterator(self)
             raise StopIteration
         atomicRow = self.ds.csr2atoms(sqlatoms)
         row=self.ds.atoms2row(atomicRow,new=False)

@@ -251,9 +251,8 @@ class StoredDataRow(DataRow):
         
         # print "makeComplete() : %s" % repr(self)
         id = self.getRowId()
-        atomicRow = self._query._connection.executePeek(
-            self._query._store._peekQuery,id,
-            self._query.getSession())
+        atomicRow = self._query._store.executePeek(
+            self._query._store._peekQuery,id)
         if self._new:
             if atomicRow is not None:
                 raise DataVeto("Cannot create another %s row %s" \

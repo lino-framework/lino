@@ -19,7 +19,6 @@
 
 from twisted.web.html import escape
 
-from lino.ui import console
 from lino.textprinter.textprinter import TextPrinter
 from lino.misc.txt2html import txt2html
 

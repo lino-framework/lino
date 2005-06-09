@@ -252,7 +252,7 @@ class MenuBar(Component):
 class Navigator:
     # mixin to be used with Component
     def __init__(self,ds):
-        self.ds = ds
+        self.ds = ds # a Query or a Report
         #assert len(ds._lockedRows) == 0
         
     def setupMenu(self):
@@ -291,15 +291,16 @@ class Navigator:
                   label="Print &List",
                   action=self.printList,
                   accel="Shift-F7")
-        m.addItem("delete",
-                  label="&Delete this row",
-                  action=self.deleteSelectedRows,
-                  accel="DEL")
-        m.addItem("insert",
-                  label="&Insert new row",
-                  action=self.insertRow,
-                  accel="INS")
-        self.ds.getLeadTable().setupMenu(self)
+        if self.ds.canWrite():
+            m.addItem("delete",
+                      label="&Delete this row",
+                      action=self.deleteSelectedRows,
+                      accel="DEL")
+            m.addItem("insert",
+                      label="&Insert new row",
+                      action=self.insertRow,
+                      accel="INS")
+        self.ds.setupMenu(self)
 
         def f():
             l = self.getSelectedRows()
@@ -313,7 +314,13 @@ class Navigator:
             frm.session.status(s)
         frm.addIdleEvent(f)
 
+    def insertRow(self):
+        assert self.ds.canWrite()
+        row = self.ds.appendRow()
+        self.refresh()
+    
     def deleteSelectedRows(self):
+        assert self.ds.canWrite()
         if not self.getForm().confirm(
             "Delete %d rows. Are you sure?" % \
             len(self.getSelectedRows())):
@@ -322,10 +329,6 @@ class Navigator:
             row = self.ds[i].delete()
         self.refresh()
 
-    def insertRow(self):
-        row = self.ds.appendRow()
-        self.refresh()
-    
     def printRow(self):
         #print "printSelectedRows()", self.getSelectedRows()
         #workdir = "c:\\temp"
@@ -342,6 +345,7 @@ class Navigator:
     def printList(self):
         #ui = self.getForm()
         #workdir = self.getForm().toolkit.app.tempDir
+        raise "must rewrite"
         from lino.oogen import SpreadsheetDocument
         doc = SpreadsheetDocument("printList")
         rows = self.getSelectedRows()
@@ -371,7 +375,8 @@ class Navigator:
         meth(r,*args,**kw)
         
     def onClose(self):
-        self.ds.unlock()
+        if self.ds.canWrite():
+            self.ds.unlock()
 
 
 class DataGrid(Navigator,Component):
@@ -392,10 +397,29 @@ class DataGrid(Navigator,Component):
         
 
 
+## class ReportGrid(Navigator,Component):
+##     def __init__(self,owner,rpt,*args,**kw):
+##         Component.__init__(self,owner,*args,**kw)
+##         Navigator.__init__(self,rpt)
+##         self.choosing = False
+##         self.chosenRow = None
+
+##     def setModeChoosing(self):
+##         self.choosing = True
+
+##     def getChosenRow(self):
+##         return self.chosenRow
+    
+##     def setChosenRow(self,row):
+##         self.chosenRow = row
+        
+
+
 def nop(x):
     pass
 
 class DataNavigator(Navigator,Component):
+    
     def __init__(self,owner,ds,afterSkip=nop,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
         Navigator.__init__(self,ds)
@@ -468,6 +492,15 @@ class Container(Component):
         if name is not None:
             frm.tables.define(name,e)
         return e
+        
+##     def addReportGrid(self,ds,name=None,*args,**kw):
+##         frm = self.getForm()
+##         c = frm.session.toolkit.reportGridFactory(self,ds,*args,**kw)
+##         self._components.append(c)
+##         frm.setMenuController(c)
+##         if name is not None:
+##             frm.tables.define(name,c)
+##         return c
         
     def addNavigator(self,ds,afterSkip=None,*args,**kw):
         frm = self.getForm()
@@ -653,8 +686,11 @@ class Form(Describable,MenuContainer):
         raise NotImplementedError
     
     def onIdle(self):
-        for e in self._idleEvents:
-            e()
+        try:
+            for e in self._idleEvents:
+                e()
+        except Exception,e:
+            pass
     
     def onShow(self):
         self.mainComp.onShow()
@@ -708,6 +744,7 @@ class Toolkit:
     panelFactory = Panel
     viewerFactory = TextViewer
     dataGridFactory = DataGrid
+    #reportGridFactory = ReportGrid
     navigatorFactory = DataNavigator
     formFactory = Form
     jobFactory=Job

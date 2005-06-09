@@ -62,7 +62,7 @@ class TestPopulator(Populator):
 
 
 class Case(TestCase):
-    
+    todo="Weiter mit Timings wenn Calendar fertig"
     def test01(self):
         app=Timings()
         sess=app.quickStartup() #,dump=True)

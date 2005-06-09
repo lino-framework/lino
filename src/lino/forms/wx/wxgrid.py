@@ -32,11 +32,13 @@ class MyDataTable(wx.grid.PyGridTableBase):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
         self.columns = self.editor.ds.getVisibleColumns()
-        self.rows = [ row for row in self.editor.ds ]
+        self.rows = [ row for row
+                      in self.editor.ds.rows(editor.getForm()) ]
 
     def refresh(self,grid):
         before = self.GetNumberRows()
-        self.rows = [ row for row in self.editor.ds ]
+        self.rows = [ row for row
+                      in self.editor.ds.rows(editor.getForm()) ]
         self.resetRows(grid,before)
         self.updateValues(grid)
 
@@ -122,6 +124,8 @@ class MyDataTable(wx.grid.PyGridTableBase):
     def SetValue(self, rowIndex, colIndex, value):
         "required"
         #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
+        if not self.editor.ds.canWrite():
+            return
         if rowIndex == len(self.rows):
             args = [None] * len(self.columns)
             args[colIndex] = value

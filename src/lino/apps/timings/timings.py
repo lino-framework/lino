@@ -42,9 +42,9 @@ DAY = datetime.timedelta(1)
 
 def everyday(d1,d2):
     #return xrange(itod(d1),itod(d2),DAY)
-    return urange(itod(d1),itod(d2),DAY)
+    return anyrange(itod(d1),itod(d2),DAY)
 
-class urange:
+class anyrange:
 
     def __init__(self, start, stop, step=DAY):
         self.start = start
@@ -55,9 +55,9 @@ class urange:
         return self.start <= obj <= self.stop
 
     def __iter__(self):
-        return uiter(self)
+        return anyiter(self)
 
-class uiter:
+class anyiter:
     def __init__(self,rng):
         self.rng=rng
         self.current=None # rng.start
@@ -183,7 +183,7 @@ class Timings(Schema):
                 ReportColumn.__init__(self,owner,
                                       width=10,
                                       label=res.getLabel())
-            def getValue(self,row):
+            def getCellValue(self,row):
                 return self.res.usages_by_resource.child(
                     date=row.item)
             def format(self,qry):
@@ -192,7 +192,8 @@ class Timings(Schema):
         for res in sess.query(Resources,orderBy="id"):
             rpt.addColumn(ResourceColumn(rpt,res))
 
-        sess.report(rpt)
+        sess.showReport(rpt)
+        #sess.report(rpt)
         
 
     def showMainForm(self,sess):

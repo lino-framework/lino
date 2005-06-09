@@ -44,6 +44,8 @@ class Store:
     
     def __init__(self,conn,db,table):
         self._connection = conn 
+        for m in ('startDump','stopDump'):
+            setattr(self,m,getattr(conn,m))
         self._mtime = conn.getModificationTime(table)
         self._dirty = False
         self._virgin=None
@@ -54,6 +56,7 @@ class Store:
         # self._schema = db.schema # shortcut
         
         #self._datasources = []
+        self._iterators=[]
         self._lockedRows = {}
         
         if len(self._table.getPrimaryAtoms()) == 1:
@@ -90,6 +93,27 @@ class Store:
         #for ds in self._datasources:
         #    ds.onStoreUpdate()
 
+    def addIterator(self,i):
+        self._iterators.append(i)
+        
+    def removeIterator(self,i):
+        self._iterators.remove(i)
+        
+
+    def executeCount(self,qry):
+        return self._connection.executeCount(qry)
+    
+    def executePeek(self,qry,id):
+        return self._connection.executePeek(qry,id)
+
+    def executeSelect(self,qry,**kw):
+        return self._connection.executeSelect(qry, **kw )
+
+    def csr2atoms(self,qry,sqlatoms):
+        return self._connection.csr2atoms(qry,sqlatoms)
+    
+    
+
     def onStartup(self,sess):
         #print "%s.createTable()" % self.__class__
         if self._virgin is None: # == self.SST_MUSTCHECK:
@@ -109,6 +133,26 @@ class Store:
         return self._virgin
         #return self._status == self.SST_VIRGIN
                 
+    def view(self,sess,viewName,columnNames=None,**kw):
+        view = self._table.getView(viewName)
+        if view is None:
+            raise KeyError,viewName+": no such view"
+            
+        for k,v in view.items():
+            kw.setdefault(k,v)
+        kw['viewName'] = viewName
+        if columnNames is not None:
+            kw['columnNames'] = columnNames
+        return self.query(sess,**kw)
+        
+            
+    def query(self,sess,columnNames=None,**kw):
+        #return Query(self._peekQuery,self,sess,
+        #             columnNames=columnNames,**kw)
+        return Query(None,self,sess,columnNames,**kw)
+
+    
+        
     def populate(self,sess,populator):
          #assert self._status == self.SST_VIRGIN
          populator.populateStore(self,sess)
@@ -134,24 +178,6 @@ class Store:
             job.done()
             
         #self._status = self.SST_READY
-        
-    def view(self,sess,viewName,columnNames=None,**kw):
-        view = self._table.getView(viewName)
-        if view is None:
-            raise KeyError,viewName+": no such view"
-            
-        for k,v in view.items():
-            kw.setdefault(k,v)
-        kw['viewName'] = viewName
-        if columnNames is not None:
-            kw['columnNames'] = columnNames
-        return self.query(sess,**kw)
-        
-            
-    def query(self,sess,columnNames=None,**kw):
-        #return Query(self._peekQuery,self,sess,
-        #             columnNames=columnNames,**kw)
-        return Query(None,self,sess,columnNames,**kw)
         
     def lockRow(self,row,ds):
         k = tuple(row.getRowId())
@@ -217,6 +243,8 @@ class Store:
 ##             row.writeToStore()
             
     def close(self):
+        if len(self._iterators):
+            print self._iterators
         self.unlockAll()
         #for ds in self._datasources:
         #    ds.close()

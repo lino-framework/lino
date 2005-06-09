@@ -26,7 +26,8 @@ from lino.misc import tsttools
 #sys.path.append(scriptsPath)
 from lino.scripts.prnprint import PrnPrint
 
-dataPath = os.path.join(os.path.dirname(__file__),'testdata')
+dataPath = os.path.join(os.path.dirname(__file__),
+                        'testdata','textprinter')
 dataPath = os.path.abspath(dataPath)
 
 

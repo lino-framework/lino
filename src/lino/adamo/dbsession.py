@@ -190,6 +190,11 @@ class DbSession(Session,Context):
         frm.addOkButton()
         frm.show()
         
+    def showReport(self,rpt,**kw):
+        frm = self.form(label=rpt.getLabel(),**kw)
+        frm.addDataGrid(rpt)
+        frm.show()
+        
     def showDataGrid(self,ds,**kw):
         frm = self.form(label=ds.getLabel(),**kw)
         frm.addDataGrid(ds)

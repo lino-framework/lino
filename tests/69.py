@@ -13,6 +13,7 @@ from lino.misc.restify import inspect
 
 class Case(tsttools.TestCase):
     ""
+    todo="restify.inspect() doesn't use filename"
 
     def test01(self):
         doc = inspect(os.path.join("testdata","webman","index.txt"))

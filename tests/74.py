@@ -20,7 +20,7 @@ class Case(tsttools.TestCase):
     ""
 
     def test01(self):
-        spoolFile = self.addTempFile("2.ps",showOutput=True)
+        spoolFile = self.addTempFile("74.ps",showOutput=True)
         dc = win32ui.CreateDC()
         dc.CreatePrinterDC(self.win32_printerName_PS)
         dc.StartDoc("my print job",spoolFile)

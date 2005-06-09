@@ -23,8 +23,8 @@ opj = os.path.join
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.apps.pinboard import demo
+from lino.apps.pinboard.tables import *
 
 from lino.gendoc.html import HtmlDocument
 from lino.reports.reports import DataReport
@@ -35,7 +35,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup(big=True,withJokes=True)
+        self.sess = demo.startup(withJokes=True)
 
     def tearDown(self):
         self.sess.shutdown()

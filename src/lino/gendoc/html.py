@@ -337,19 +337,19 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.writeDocument(fd.write)
         fd.close()
         
-        
-        for rpt in self._reports:
-            for col in rpt.columns:
-                for pg in range(rpt.ds.lastPage):
-                    if pg != 0 or \
-                       col.datacol != rpt.ds.sortColumns[0]:
-                        e=ReportElement(rpt,pg+1,col.datacol)
-                        ch=self.addChild(
-                            name=rptname(rpt,
-                                         pageNum=pg+1,
-                                         sortColumn=col.datacol),
-                            title=rpt.getLabel(),
-                            content=e)
+        if rpt.ds.canSort() > 0:
+            for rpt in self._reports:
+                for col in rpt.columns:
+                    for pg in range(rpt.ds.lastPage):
+                        if pg != 0 or \
+                           col.datacol != rpt.ds.sortColumns[0]:
+                            e=ReportElement(rpt,pg+1,col.datacol)
+                            ch=self.addChild(
+                                name=rptname(rpt,
+                                             pageNum=pg+1,
+                                             sortColumn=col.datacol),
+                                title=rpt.getLabel(),
+                                content=e)
                 
         
         #print len(subdocs)
@@ -385,11 +385,15 @@ class H:
 
 
 def rptname(rpt,sortColumn=None,pageNum=None):
-    if sortColumn is None: sortColumn=rpt.ds.sortColumns[0]
     if pageNum is None: pageNum=rpt.pageNum
-    if pageNum==1 and sortColumn==rpt.ds.sortColumns[0]:
-        return rpt.name
-    return str(pageNum)+"_"+sortColumn.name
+    if rpt.ds.canSort():
+        if sortColumn is None: sortColumn=rpt.ds.sortColumns[0]
+        if pageNum==1 and sortColumn==rpt.ds.sortColumns[0]:
+            return rpt.name
+        return str(pageNum)+"_"+sortColumn.name
+    elif pageNum==1: return rpt.name
+    return str(pageNum)
+    
                     
 
 
@@ -431,16 +435,17 @@ class ReportElement:
     def __init__(self,rpt,pageNum=1,sortColumn=None):
         self.rpt=rpt
         self.pageNum=pageNum
-        if sortColumn is None:
-            #print rpt.columns
-            #print rpt.iterator.sortColumns
-            sortColumn=rpt.ds.sortColumns[0]
-        else:
-            assert isinstance(sortColumn,QueryColumn)
-        self.sortColumn=sortColumn
+        if rpt.canSort():
+            if sortColumn is None:
+                sortColumn=rpt.ds.sortColumns[0]
+            else:
+                assert isinstance(sortColumn,QueryColumn)
+            self.sortColumn=sortColumn
 
     def rptname(self):
-        return str(self.pageNum)+"_"+self.sortColumn.name
+        if self.rpt.canSort():
+            return str(self.pageNum)+"_"+self.sortColumn.name
+        return str(self.pageNum)
     
     def render(self,doc):
         rpt=self.rpt

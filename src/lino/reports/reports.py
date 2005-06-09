@@ -69,7 +69,20 @@ class BaseReport(Describable):
         
     def getTitle(self):
         return self.getLabel()
+
+    def setupMenu(self,navigator):
+        self.ds.setupMenu(navigator)
     
+    def __xml__(self,wr):
+        return self.ds.__xml__(wr)
+
+    def canWrite(self):
+        return self.ds.canWrite()
+
+    def getVisibleColumns(self):
+        return self.columns
+
+
 
 ##     def __getattr__(self,name):
 ##         # forwards "everything else" to the iterator...
@@ -197,8 +210,8 @@ class ReportColumn(Describable):
     def getMaxnWidth(self):
         return self.width
 
-    def getValue(self,row):
-        raise NotImplementedError
+    def getCellValue(self,row):
+        raise NotImplementedError,str(self.__class__)
 
     def format(self,v):
         return self._formatter(v)
@@ -220,7 +233,7 @@ class DataReportColumn(ReportColumn):
         #assert self.name != "DataReportColumn"
         self.datacol = datacol
 
-    def getValue(self,row):
+    def getCellValue(self,row):
         #return self.datacol.getCellValue(self._owner.crow)
         return self.datacol.getCellValue(row.item)
 
@@ -246,7 +259,7 @@ class VurtReportColumn(ReportColumn):
         ReportColumn.__init__(self,formatter,**kw)
         self.meth = meth
 
-    def getValue(self,row):
+    def getCellValue(self,row):
         #return self.meth(self._owner.crow)
         return self.meth(row)
     
@@ -279,7 +292,7 @@ class ReportRow:
             if col.when and not col.when(self):
                 v = None
             else:
-                v = col.getValue(self)
+                v = col.getCellValue(self)
             self.cells.append(Cell(self,col,v))
             
 

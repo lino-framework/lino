@@ -22,7 +22,8 @@ import os
 opj=os.path.join
 from lino.misc.tsttools import TestCase, main
 
-dataPath = os.path.join(os.path.dirname(__file__),'testdata')
+dataPath = os.path.join(os.path.dirname(__file__),
+                        'testdata','textprinter')
 dataPath = os.path.abspath(dataPath)
 
 class Case(TestCase):

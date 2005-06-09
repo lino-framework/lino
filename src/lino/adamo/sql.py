@@ -415,8 +415,8 @@ class SqlConnection(Connection):
             return " WHERE " + " AND ".join(where)
         return ""
 
-    def executeSelect(self,ds,**kw):
-        sql = self.getSqlSelect(ds,sqlColumnNames=None, **kw)
+    def executeSelect(self,qry,**kw):
+        sql = self.getSqlSelect(qry,sqlColumnNames=None, **kw)
         #print sql
         csr = self.sql_exec(sql)
 ##         if self.DEBUG:
@@ -430,8 +430,8 @@ class SqlConnection(Connection):
         return csr
         # return SQLiteCursor(self,query)
 
-    def executeCount(self,ds):
-        sql = self.getSqlSelect(ds,sqlColumnNames='COUNT()' )
+    def executeCount(self,qry):
+        sql = self.getSqlSelect(qry,sqlColumnNames='COUNT()' )
         csr = self.sql_exec(sql)
         #assert csr.rowcount is None or csr.rowcount == 1
         result=csr.fetchall()
@@ -476,7 +476,7 @@ class SqlConnection(Connection):
 
         
         
-    def executePeek(self,qry,id,sess):
+    def executePeek(self,qry,id):
         table = qry.getLeadTable()
         assert len(id) == len(table.getPrimaryAtoms()),\
                  "len(%s) != len(%s)" % (repr(id),
@@ -509,7 +509,7 @@ class SqlConnection(Connection):
         #assert csr.fetchone() is None, \
         #       "%s.peek(%r) found more than one row" % (
         #    table.getName(), id)
-        return self.csr2atoms(qry,atomicRow,sess)
+        return self.csr2atoms(qry,atomicRow)
     
 ##         if False: 
 ##             print "%s -> %d rows" % (sql,csr.rowcount)
@@ -522,14 +522,14 @@ class SqlConnection(Connection):
 ##                                                 csr.rowcount)
 ##         return self.csr2atoms(clist,csr.fetchone(),sess)
     
-    def csr2atoms(self,qry,sqlatoms,sess):
+    def csr2atoms(self,qry,sqlatoms):
         l = []
         i = 0
         for a in qry.getAtoms():
             try:
                 v = self.sql2value(sqlatoms[i],a.type)
             except Exception,e:
-                sess.handleException(
+                qry.getSession().handleException(
                     e, details="""\
 Could not convert raw atomic value %s in %s.%s (expected %s).""" \
                     % (repr(sqlatoms[i]),

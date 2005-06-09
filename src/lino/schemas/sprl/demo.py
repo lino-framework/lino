@@ -78,17 +78,13 @@ def startup(filename=None, langs=None,
             populate=True,
             big=False,
             withDemoData=True,
-            withJokes=False,
             **kw):
     schema = Sprl(**kw)
     #if ui is None:
     #    ui = console.getSystemConsole()
     sess=schema.quickStartup(langs=langs, filename=filename)
     if populate:
-        if withJokes:
-            sess.populate(JokesPopulator(big=big,
-                                         label="Weisheiten"))
-        elif withDemoData:
+        if withDemoData:
             sess.populate(DemoPopulator(big=big,
                                         label="StandardDemo"))
         else:

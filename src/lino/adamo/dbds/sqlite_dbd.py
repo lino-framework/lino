@@ -87,7 +87,6 @@ class Connection(SqlConnection):
         except sqlite.DatabaseError,e:
             raise DatabaseError(filename + ":" +str(e))
         
-        self._iterators=[]
 
 
     def __str__(self):
@@ -120,13 +119,6 @@ class Connection(SqlConnection):
         except sqlite.DatabaseError,e:
             raise DatabaseError(sql + "\n" + str(e))
 
-    def addIterator(self,i):
-        self._iterators.append(i)
-        
-    def removeIterator(self,i):
-        self._iterators.remove(i)
-        
-
         
     def commit(self):
         #print "commit"
@@ -140,8 +132,6 @@ class Connection(SqlConnection):
             return
         if self._status == self.CST_CLOSING:
             return
-        if len(self._iterators):
-            print self._iterators
         self._status = self.CST_CLOSING
         self.commit()
         if self._dirty:

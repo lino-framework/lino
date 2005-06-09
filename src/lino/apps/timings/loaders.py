@@ -46,6 +46,9 @@ class UsagesMirrorLoader(DbfMirrorLoader):
         sess = q.getSession()
         usageType = sess.peek(UsageTypes,row['TYPE'])
         resource = sess.peek(Resources,row['IDRES'])
+        if resource is None:
+            sess.warning("ignored PTL with empty IDRES: %r",row)
+            return
         day=sess.query(Days).peek(self.dbfdate(row['DATE']))
         if day is None:
             day=sess.query(Days).appendRow(
