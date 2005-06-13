@@ -443,7 +443,7 @@ class DetailColumn(QueryColumn):
     def format(self,v):
         if self.depth == 0:
             return str(len(v))+" "+v.getLeadTable().getName()
-        return ", ".join([r.getLabel() for r in v])
+        return ", ".join([r.__str__() for r in v])
 
 
 

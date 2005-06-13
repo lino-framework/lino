@@ -42,7 +42,7 @@ class Case(TestCase):
         l1 = []
         l2 = []
         for nation in NATIONS.query(orderBy="name"):
-            lbl = nation.getLabel()
+            lbl = nation.__str__()
             if lbl is None:
                 l1.append(nation)
             else:

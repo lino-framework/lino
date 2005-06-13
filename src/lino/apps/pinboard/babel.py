@@ -23,9 +23,9 @@ from lino.adamo import *
 class Languages(Table):
     def init(self):
         self.addField('id',STRING(width=2))
-        self.addBabelField('name',STRING)
+        self.addBabelField('name',STRING).setMandatory()
     
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
 

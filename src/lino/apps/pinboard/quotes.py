@@ -25,10 +25,11 @@ from tables import Persons, Cities, Languages
 #from babel import Language
 #from web import MemoMixin, MemoTreeMixin, TreeMixin
 
-class Quotes(MemoTable):
+class Quotes(Table):
     def init(self):
-        MemoTable.init(self)
+        #MemoTable.init(self)
         self.addField('id',ROWID)
+        self.addField('quote',MEMO)
         self.addPointer('author',Authors).setDetail('quotesByAuthor')
         self.addPointer('lang',Languages)
         
@@ -36,7 +37,7 @@ class Quotes(MemoTable):
         #self.pub = Pointer("PUBLICATIONS")
         
     class Instance(MemoTable.Instance):
-        def getLabel(self):
+        def __str__(self):
             return "[q"+str(self.id)+"]"
 
 class Publications(MemoTreeTable):
@@ -73,7 +74,7 @@ class Topics(TreeTable):
         self.addView('simple',"name url super children")
         
     class Instance(TreeTable.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
     
 
@@ -106,8 +107,8 @@ class AuthorEvents(BabelTable):
         self.setPrimaryKey('author seq')
         
     class Instance(BabelTable.Instance):
-        def getLabel(self):
-            s = self.type.getLabel()
+        def __str__(self):
+            s = str(self.type)
             if self.date is not None:
                 s += " " + str(self.date)
             return s

@@ -25,7 +25,7 @@ class Events(Pages):
 
 	class Instance(Pages.Instance):
 		
-		def getLabel(self):
+		def __str__(self):
 			s = ''
 			if self.title is None:
 				s = self.type.title
@@ -45,6 +45,6 @@ class EventTypes(MemoTable):
 		#table.addDetail('eventsByType',Event)
 		
 	class Instance(Table.Instance):
-		def getLabel(self):
+		def __str__(self):
 			return self.title
 		

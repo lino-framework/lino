@@ -182,12 +182,12 @@ class Timings(Schema):
                 self.res=res
                 ReportColumn.__init__(self,owner,
                                       width=10,
-                                      label=res.getLabel())
+                                      label=str(res))
             def getCellValue(self,row):
                 return self.res.usages_by_resource.child(
                     date=row.item)
             def format(self,qry):
-                return ", ".join([u.short() for u in qry])
+                return ", ".join([str(u) for u in qry])
         
         for res in sess.query(Resources,orderBy="id"):
             rpt.addColumn(ResourceColumn(rpt,res))

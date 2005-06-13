@@ -41,7 +41,7 @@ class Resources(Table):
                   accel="ENTER")
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             if self.name is not None: return self.name
             return self.id
         
@@ -67,12 +67,18 @@ class Usages(Table):
         self.addPointer('resource',Resources).setMandatory()
 
     class Instance(Table.Instance):
-        def getLabel(self):
-            return self.short()
-        def short(self):
+        
+        def __str__(self):
+            s=""
+            if self.remark is not None:
+                s+=self.remark+" "
+            if self.type is not None:
+                s+= self.type.id + " "
             if self.start is None and self.stop is None:
-                return self.type.id
-            return "%s (%s-%s)" % (self.type.id,self.start,self.stop)
+                return s
+            s += " %s-%s" % (self.start,self.stop)
+            return s
+        
         
 
 class UsageTypes(Table):
@@ -81,7 +87,7 @@ class UsageTypes(Table):
         self.addField('name',STRING)
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
 class Days(Table):
@@ -91,7 +97,7 @@ class Days(Table):
         self.setPrimaryKey("date")
         
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return str(self.date)
 
 

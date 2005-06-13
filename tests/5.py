@@ -44,7 +44,7 @@ class Case(TestCase):
                           "firstName name",
                           orderBy='name')
         q.setSqlFilters('name LIKE "B%"')
-        s = "\n".join([row.getLabel() for row in q])
+        s = "\n".join([str(row) for row in q])
         self.assertEqual(s,"""\
 Donald Bisset
 Georges Brassens

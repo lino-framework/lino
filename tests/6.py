@@ -78,7 +78,7 @@ class Case(TestCase):
                 return res.usages_by_resource.child(date=day)
             def fmt(qry):
                 #s="Resource %s has %d usages on %s: " % (
-                #    qry.getMaster("resource").getLabel(),
+                #    qry.getMaster("resource").__str__(),
                 #    len(qry),
                 #    qry.getMaster("date"))
                 s = ", ".join([u.short() for u in qry])

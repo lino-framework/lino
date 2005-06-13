@@ -39,7 +39,7 @@ class Customers(Table):
         self.addField('city',STRING)
         
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
 
      

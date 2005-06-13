@@ -49,15 +49,15 @@ class Case(TestCase):
                                         orderBy="name firstName",
                                         nation=be):
             #if p.currency is None:
-            #   s += p.getLabel() + " : currency remains None\n"
+            #   s += p.__str__() + " : currency remains None\n"
             if p.currency != EUR:
                 # print p, p.currency.id
-                s += p.getLabel() + " : currency %s updated to EUR\n" % str(p.currency)
+                s += p.__str__() + " : currency %s updated to EUR\n" % str(p.currency)
                 p.lock()
                 p.currency = EUR
                 p.unlock()
             else:
-                s += p.getLabel() + " : currency was already EUR\n"
+                s += p.__str__() + " : currency was already EUR\n"
 
         #print s
         self.assertEqual(s,"""\

@@ -23,11 +23,11 @@ from addrbook import Partners
 class Journals(Table):
 	def init(self):
 		self.addField('id',STRING(width=3))
-		self.addField('name',STRING)
+		self.addField('name',STRING).setMandatory()
 		self.addField('tableName', STRING)
 		
 	class Instance(Table.Instance):
-		def getLabel(self):
+		def __str__(self):
 			return self.name
 		
 
@@ -50,7 +50,7 @@ class Documents(Table):
 		self.setPrimaryKey("jnl seq")
 
 	class Instance(Table.Instance):
-		def getLabel(self):
+		def __str__(self):
 			return self.jnl.id+"-"+str(self.seq)
 		
 ##		def getNextId(self,jnl):

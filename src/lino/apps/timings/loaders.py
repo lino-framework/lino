@@ -35,7 +35,7 @@ class ResourcesMirrorLoader(DbfMirrorLoader):
     def appendFromDBF(self,q,row):
         q.appendRow(
             id=row['IDRES'],
-            name=row['NOM1'],
+            name=self.dbfstring(row['NOM1'])
             )
 
 
@@ -59,7 +59,7 @@ class UsagesMirrorLoader(DbfMirrorLoader):
             stop=self.dbftime(row['QTE2']),
             resource=resource,
             type=usageType,
-            remark=row['REMARQ'],
+            remark=self.dbfstring(row['REMARQ'])
             )
 
 LOADERS = (

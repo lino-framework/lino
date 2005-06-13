@@ -62,7 +62,7 @@ class Case(TestCase):
         mnu.addLink(doc)
 
         if True:
-            ds = self.sess.query(Quotes,"abstract author.name id",
+            ds = self.sess.query(Quotes,"quote author.name id",
                                  pageLen=50,
                                  orderBy="id")
             rpt = DataReport(ds)

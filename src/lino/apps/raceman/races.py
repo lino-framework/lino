@@ -35,7 +35,7 @@ class Events(Table):
         self.addView( "std","date name races")
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
         def printRow(self,doc):
@@ -49,10 +49,10 @@ class Events(Table):
             q = self.races[0].participants.query(columnNames)
             q.setupReport( rpt, columnWidths=columnWidths)
             rpt.beginReport()
-            rpt.table.h(1,self.getLabel())
+            rpt.table.h(1,self.__str__())
             
             for race in self.races:
-                rpt.table.h(2,race.getLabel())
+                rpt.table.h(2,race.__str__())
                 q = race.participants.query( columnNames,
                                              orderBy="place")
                 for prt in q:
@@ -99,7 +99,7 @@ class Races(Table):
 
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name1
 
         def showArrivalEntry(self,ui):
@@ -328,7 +328,7 @@ class RaceTypes(Table):
         self.addField('name',NAME)
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
 class Clubs(Table):
@@ -337,7 +337,7 @@ class Clubs(Table):
         self.addField('name',NAME)
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
 class Categories(Table):
@@ -352,7 +352,7 @@ class Categories(Table):
         self.setPrimaryKey('type id')
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.id + " ("+self.name+")"
         
 class Participants(Table):

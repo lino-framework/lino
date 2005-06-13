@@ -589,7 +589,7 @@ Zwei im Büro, und einer arbeitet? Ein Beamter und ein Ventilator."""
 
     #LANGS = sess.query(Languages)
     #de = LANGS.peek('de')
-    q = q.query('lang abstract')
+    q = q.query('lang quote')
     for line in s.split('\n'):
         q.appendRow(de,line)
     #return s.split('\n')

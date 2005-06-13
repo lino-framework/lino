@@ -46,7 +46,7 @@ class Volumes(Table):
                   accel="F6")
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             if self.name is not None: return self.name
             return self.path
         
@@ -71,7 +71,7 @@ class Directories(Table):
         #self.setPrimaryKey("volume parent name")
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         def path(self):
             if self.parent is None:
@@ -93,7 +93,7 @@ class Directories(Table):
 class Files(Table):
     def init(self):
         #self.addField('id',ROWID) 
-        self.addField('name',STRING)
+        self.addField('name',STRING).setMandatory()
         #self.addField('mtime',TIMESTAMP)
         self.addField('meta',MEMO(width=50,height=5))
         self.addPointer('dir',Directories).setDetail(
@@ -104,7 +104,7 @@ class Files(Table):
 
     class Instance(Table.Instance):
         
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
         def path(self):
@@ -116,7 +116,7 @@ class FileTypes(Table):
         self.addField('name',STRING)
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
 class Words(Table):
@@ -129,7 +129,7 @@ class Words(Table):
 
     class Instance(Table.Instance):
         pass
-        #def getLabel(self):
+        #def __str__(self):
         #    return self.id
 
 class Occurences(Table):

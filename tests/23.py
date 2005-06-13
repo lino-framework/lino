@@ -54,7 +54,7 @@ class Case(TestCase):
         
         """get the partner # 1 and Journal."""
         p = PARTNERS.peek(1)
-        self.assertEqual(p.getLabel(),"Luc Saffre")
+        self.assertEqual(p.__str__(),"Luc Saffre")
 
         jnl = JOURNALS.peek("OUT")
         self.assertEqual(jnl.id,"OUT")

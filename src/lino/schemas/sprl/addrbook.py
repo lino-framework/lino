@@ -38,7 +38,7 @@ class Contacts(Table):
         self.addField('website',URL, doc="web site")
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
 class Addresses(Table):
@@ -85,7 +85,7 @@ class Persons(Table): #(Contact,Address):
         self.addView('std',columnNames="name firstName id")
 
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             if self.firstName is None:
                 return self.name
             return self.firstName+" "+self.name
@@ -176,9 +176,9 @@ class Users(Persons):
 ##              return sess.errorMessage("%s  : no such user" % uid)
 ##          if user.password != pwd:
 ##              return sess.errorMessage("invalid password for "+\
-##                                               user.getLabel())
+##                                               user.__str__())
 ##          sess.login(user)
-##          sess.info("Hello, "+user.getLabel())
+##          sess.info("Hello, "+user.__str__())
 ##          return True
             
 ## class LoginForm(Form):
@@ -206,9 +206,9 @@ class Users(Persons):
 ##         if user is None:
 ##             raise DataVeto("%s : no such user" % uid)
 ##         if user.password != pwd:
-##             raise DataVeto("invalid password for "+user.getLabel())
+##             raise DataVeto("invalid password for "+user.__str__())
 ##         sess.login(user)
-##         sess.info("Hello, "+user.getLabel())
+##         sess.info("Hello, "+user.__str__())
             
 
 class Partners(Contacts,Addresses):
@@ -235,7 +235,7 @@ class Partners(Contacts,Addresses):
             if self.name is None:
                 raise("name must be specified")
 
-        def getLabel(self):
+        def __str__(self):
             if self.firstName is None:
                 return self.name
             return self.firstName+" "+self.name
@@ -248,14 +248,14 @@ class Partners(Contacts,Addresses):
         
 ##      # print "on_org"
 ##      if self.org is not None:
-##          self.name = self.org.getLabel() 
+##          self.name = self.org.__str__() 
 ##          #if self.phone is None:
 ##          #   self.phone = self.org.phone 
 ##  def on_person(self):
 ##      # print "on_person"
 ##      if self.person is not None:
 ##          # row.name = row.person.fname + row.person.name
-##          self.name = self.person.getLabel() 
+##          self.name = self.person.__str__() 
 ##          #if self.phone is None:
 ##          #   self.phone = self.person.phone 
                 
@@ -328,7 +328,7 @@ class Cities(Table):
         self.addView('std',columnNames="name nation zipCode")
         
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             if self.nation is None:
                 return self.name
             return self.name + " (%s)" % self.nation.id

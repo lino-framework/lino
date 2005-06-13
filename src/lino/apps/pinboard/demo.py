@@ -143,7 +143,7 @@ class DemoPopulator(Populator):
         p1322 = q.appendRow(title="Project 1.3.2.2",super=p132)
     
     def populateQuotes(self,q):
-        q = q.query('lang abstract author')
+        q = q.query('lang quote author')
 
         q.appendRow(self.fr, """\
 Entre nous soit dit, bonnes gens:
@@ -179,7 +179,7 @@ time it takes. """,self.anon)
 Don't believe everything you hear or anything you say.""",
                     self.anon)
 
-        q = self.mencken.quotesByAuthor.query('lang abstract')
+        q = self.mencken.quotesByAuthor.query('lang quote')
         quote = q.appendRow(self.en,"""\
 An idealist is one who, on noticing that a rose smells better than a
 cabbage, concludes that it will also make better soup.
@@ -188,7 +188,7 @@ cabbage, concludes that it will also make better soup.
         quote = q.appendRow(self.en,"""\
 Conscience is the inner voice that warns us that someone may be looking.        
 """)
-        q = self.churchill.quotesByAuthor.query('lang abstract')
+        q = self.churchill.quotesByAuthor.query('lang quote')
         quote = q.appendRow(self.en,"""\
 A fanatic is one who can't change his mind and won't change the subject.
 """)
@@ -198,7 +198,7 @@ A fanatic is one who can't change his mind and won't change the subject.
 
         if False:
             # cannot appendRow with value outside of leadTable:
-            q = q.query('lang abstract author.firstName author.name')
+            q = q.query('lang quote author.firstName author.name')
             q.appendRow(self.en,
                         """\
 Trusting a scientist on questions of metaphysics is like paying

@@ -75,7 +75,7 @@ CashFlowItems ProfitAndLossItems Accounts Bookings
         
         ae(row.id,1)
         ae(row.name,"Saffre")
-        ae(row.getLabel(),"Luc Saffre")
+        ae(str(row),"Luc Saffre")
 
         tallinn = CITIES.findone(name="Tallinn")
         

@@ -40,13 +40,13 @@ class Case(TestCase):
         QUOTES = self.db.query(Quotes)
         s = ""
         de = LANGS.peek('de')
-        q = QUOTES.query("abstract author.name id",
+        q = QUOTES.query("quote author.name id",
                          orderBy="id",
                          lang=de)
-        q.setSqlFilters("abstract LIKE '%Dummheit%'")
+        q.setSqlFilters("quote LIKE '%Dummheit%'")
         self.assertEquivalent(q.getSqlSelect(),"""\
         SELECT lead.id,
-          lead.abstract,
+          lead.quote,
           lead.author_id,
           author.id,
           author.name, lead.lang_id
@@ -54,12 +54,12 @@ class Case(TestCase):
         LEFT JOIN Authors AS author
           ON (lead.author_id = author.id)
         WHERE lang_id = 'de'
-          AND abstract LIKE '%Dummheit%'
+          AND quote LIKE '%Dummheit%'
         ORDER BY lead.id
         """)
         
         for quote in q:
-            s += quote.abstract + "\n"
+            s += quote.quote + "\n"
 
         self.assertEqual(s,"""\
 Alles hat Grenzen, nur die Dummheit ist unendlich.
@@ -69,12 +69,12 @@ Lieber natürliche Dummheit als künstliche Intelligenz.
 """)
 
         s = ""
-        q = QUOTES.query("abstract",
-                         orderBy="abstract",
+        q = QUOTES.query("quote",
+                         orderBy="quote",
                          lang=de)
-        q.setSqlFilters("abstract LIKE '%Klügere%'")
+        q.setSqlFilters("quote LIKE '%Klügere%'")
         for quote in q:
-            s += quote.abstract + "\n"
+            s += quote.quote + "\n"
 
         #print s
         self.assertEqual(s,"""\

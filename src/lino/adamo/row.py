@@ -193,7 +193,7 @@ class StoredDataRow(DataRow):
 ##         return self._ds.getContext()
     
     def printRow(self,doc):
-        rpt = doc.report(label=self.getLabel())
+        rpt = doc.report(label=str(self))
         for c in self:
             rpt.addColumn(lambda cell: cell.col.getLabel(),
                           width=20,
@@ -218,9 +218,15 @@ class StoredDataRow(DataRow):
             col.row2atoms(self,id)
         return id
         
-    def getLabel(self):
+##     def __str__(self):
+##         return str(self.getLabel())
+
+##     def getLabel(self):
+##         return str(tuple(self.getRowId()))
+##         #return self._ds._table.getRowLabel(self)
+        
+    def __str__(self):
         return str(tuple(self.getRowId()))
-        #return self._ds._table.getRowLabel(self)
         
     def getFieldValue(self,name):
         try:
@@ -311,12 +317,8 @@ class StoredDataRow(DataRow):
                      + str(self._values)+")"
         #return self._query.getName() \
         #       + "Row(" + str(self._values)+")"
-        return self._query.getName() + "Row" + repr(tuple(self.getRowId()))
-
-    def __str__(self):
-        return str(self.getLabel())
-
-
+        return self._query.getName() + "Row" + repr(
+            tuple(self.getRowId()))
 
 
 

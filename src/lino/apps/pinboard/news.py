@@ -48,10 +48,10 @@ class News(MemoTable):
                          orderBy="date")
         
     class Instance(MemoTable.Instance):
-        def getLabel(self):
+        def __str__(self):
             s = str(self.date)
             if self.newsgroup is not None:
-                s += ' (%s)' % self.newsgroup.getLabel()
+                s += ' (%s)' % self.newsgroup
             if self.title:
                 s += " " + self.title
             return s
@@ -59,10 +59,10 @@ class News(MemoTable):
 class Newsgroups(Table):
     def init(self):
         self.addField('id',STRING)
-        self.addField('name',STRING)
+        self.addField('name',STRING).setMandatory()
         
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
         
 ##  def asPage(self,renderer):

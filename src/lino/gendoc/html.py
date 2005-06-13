@@ -337,8 +337,8 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.writeDocument(fd.write)
         fd.close()
         
-        if rpt.ds.canSort() > 0:
-            for rpt in self._reports:
+        for rpt in self._reports:
+            if rpt.ds.canSort() > 0:
                 for col in rpt.columns:
                     for pg in range(rpt.ds.lastPage):
                         if pg != 0 or \

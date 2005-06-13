@@ -54,7 +54,7 @@ class Cities(Table):
         self.setPrimaryKey("nation id")
         
     class Instance(Table.Instance):
-        def getLabel(self):     
+        def __str__(self):     
             if self.nation is None:
                 return self.name
             return self.name + " (%s)" % self.nation.id

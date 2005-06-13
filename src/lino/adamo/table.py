@@ -339,13 +339,13 @@ class LinkTable(Table):
 class MemoTable(Table):
         
     def init(self):
-        self.addField('title',datatypes.STRING)
+        self.addField('title',datatypes.STRING).setMandatory()
         self.addField('abstract',datatypes.MEMO)
         self.addField('body',datatypes.MEMO)
 
     class Instance(Table.Instance):
         
-        def getLabel(self):
+        def __str__(self):
             return self.title
 
     
@@ -371,7 +371,7 @@ class MemoTreeTable(MemoTable,TreeTable):
         TreeTable.init(self)
 
     class Instance(MemoTable.Instance,TreeTable.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.title
 
         
@@ -380,10 +380,10 @@ class MemoTreeTable(MemoTable,TreeTable):
 class BabelTable(Table):
     
     def init(self):
-        self.addBabelField('name',datatypes.STRING)
+        self.addBabelField('name',datatypes.STRING).setMandatory()
         
     class Instance(Table.Instance):
-        def getLabel(self):
+        def __str__(self):
             return self.name
 
 
@@ -414,6 +414,12 @@ class DbfMirrorLoader:
     def __init__(self,dbfpath=".",severe=True):
         self.dbfpath = dbfpath
         self.severe=severe
+    
+    def dbfstring(self,s):
+        s=s.strip()
+        if len(s) == 0:
+            return None
+        return s
     
     def dbfdate(self,s):
         if len(s.strip()) == 0:

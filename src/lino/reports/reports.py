@@ -350,6 +350,9 @@ class DataReport(BaseReport):
         #    return False
         return True
 
+    def canSort(self):
+        return True
+        
     #def execute(self,ds):
     #    rpt.configure(**kw)
 
@@ -382,6 +385,9 @@ class DictReport(BaseReport):
                                label="value",
                                width=40)
         BaseReport.beginReport(self,doc)
+
+    def canSort(self):
+        return False
         
     
         

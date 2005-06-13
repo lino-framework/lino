@@ -56,10 +56,10 @@ class Case(TestCase):
         self.assertEqual(xx,None)
         
         self.assertEqual(len(LANGS),5)
-        xx = LANGS.appendRow(id='xx')
+        xx = LANGS.appendRow(id='xx',name="Xyphoxolian")
         self.assertEqual(xx.id,'xx')
         xx.lock()
-        xx.name='Xytoxolian'
+        xx.name='Xyphhoxolian'
         xx.unlock()
         self.assertEqual(len(LANGS),6)
 
