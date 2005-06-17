@@ -29,18 +29,6 @@ from lino.guessenc.guesser import EncodingGuesser
 from lupy.index.documentwriter import standardTokenizer
 
 
-from time import sleep
-
-class BugDemo(Task):
-    
-    def start(self):
-        for i in range(10,0,-1):
-            self.status("%d seconds left",i)
-            sleep(1)
-            
-    def getLabel(self):
-        return "Let's see what happens if an exception occurs..."
-    
 class VolumeVisitor(Task):
     
     def __init__(self,vol):

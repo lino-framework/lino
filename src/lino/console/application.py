@@ -28,10 +28,33 @@ from lino.console import syscon
 
 from lino.forms.session import Session
 
+
 class UsageError(Exception):
     pass
 class ApplicationError(Exception):
     pass
+
+
+
+from lino.misc.jobs import Task
+from time import sleep
+
+class BugDemo(Task):
+
+    def __init__(self,maxval=10):
+        Task.__init__(self,maxval=10)
+    
+    def start(self):
+        for i in range(self.maxval,0,-1):
+            self.status("%d seconds left",i)
+            sleep(1)
+            
+        self.thisWontWork()
+            
+    def getLabel(self):
+        return "Let's see what happens if an exception occurs..."
+
+
 
 #class Application(CLI):
 class Application:
@@ -102,6 +125,8 @@ class Application:
         m = frm.addMenu("system","&Programm")
         m.addItem("logout",label="&Beenden",action=frm.close)
         m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
+        m.addItem("bug",label="&Bug demo").setHandler(BugDemo().run,
+                                                      sess)
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
 

@@ -37,7 +37,7 @@ try:
 except ImportError,e:
     sound = False
 
-from lino.misc.jobs import Job #, PurzelConsoleJob
+from lino.misc.jobs import Job, JobAborted #, PurzelConsoleJob
 
 ## class UI:
 ##     pass
@@ -68,7 +68,7 @@ from lino.misc.jobs import Job #, PurzelConsoleJob
 
             
 #class Console(UI,CLI):
-class Console: #(Toolkit):
+class Console: # (Toolkit):
 
     purzelMann = "|/-\\"
     jobFactory = Job
@@ -85,6 +85,9 @@ class Console: #(Toolkit):
         # UI.__init__(self)
         self.set(**kw)
 
+    def closeSession(self,sess):
+        pass
+    
     def redirect(self,stdout,stderr):
         old = (self._stdout, self._stderr)
         self._stdout = stdout
@@ -394,8 +397,8 @@ class Console: #(Toolkit):
         self._display_job(job)
         if self.abortRequested():
             if job.confirmAbort():
-                job.abort()
-                #raise JobAborted()
+                #job.abort()
+                raise JobAborted(job)
                 
     def _display_job(self,job):
         if job.maxval == 0:

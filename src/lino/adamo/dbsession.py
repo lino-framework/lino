@@ -137,6 +137,7 @@ class DbSession(Session,Context):
 
     def close(self):
         self.db.removeSession(self)
+        Session.close(self)
         
     def shutdown(self):
         # called in many TestCases during tearDown()

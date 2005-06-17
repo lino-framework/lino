@@ -767,7 +767,8 @@ class Toolkit:
         # non-overridable forwarding
         for funcname in (
             'debug', 'notice','warning',
-            'verbose', 'error','critical',
+            'verbose', 'error',
+            #'critical',
             'job',
             'report','textprinter',
             ):
@@ -776,6 +777,12 @@ class Toolkit:
     def status(self,*args,**kw):
         # overridable forwarding
         return self.console.status(*args,**kw)
+
+    def critical(self,sess,msg,*args,**kw):
+        if msg is not None:
+            self.error(sess,msg,*args,**kw)
+        sess.close()
+        self.stopRunning()
 
 
     def onJobRefresh(self,*args,**kw):
@@ -947,7 +954,7 @@ class Toolkit:
                          "&Details",
                          "&Send"))
             if i == 0:
-                sess.stopRunning(s)
+                sess.critical(s)
                 return
             
             elif i == 1:
@@ -973,7 +980,7 @@ class Toolkit:
     def run_awhile(self):
         raise NotImplementedError
 
-    def stopRunning(self,s):
+    def stopRunning(self):
         raise NotImplementedError
         
 

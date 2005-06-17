@@ -36,10 +36,9 @@ itr("Aborted",
 
 
 
-## class JobAborted(Exception):
-##     pass
-##     def __init__(self, job):
-##         self.job = job
+class JobAborted(Exception):
+    def __init__(self, job):
+        self.job = job
 
 
 
@@ -195,13 +194,14 @@ class Task:
     def run(self,session,*args,**kw):
         # don't override
         #self.reconfigure(*args,**kw)
-        self.job = session.job(self.getLabel())
+        self.job = session.job(self.getLabel(),self.maxval)
         try:
             self.start()
             self.job.done()
-        #except JobAborted,e:
-        #    # Job ot Task called itself abort()
-        #    assert e.job == self.job
+        except JobAborted,e:
+            # may raise during Toolkit.onJobRefresh
+            assert e.job == self.job
+            self.job.abort()
         except Exception,e:
             session.exception(e)
             self.job.abort()
@@ -210,8 +210,9 @@ class Task:
 ##             self.job.abort(repr(e))
             
             
-    def configure(self):
+    def configure(self,maxval=None):
         # may override
+        self.maxval=maxval
         self.count_errors = 0
         self.count_warnings = 0
 
@@ -226,6 +227,7 @@ class Task:
         s = _("%d warnings") % (self.count_warnings) 
         s += ". " + _("%d errors") % (self.count_errors) + "."
         return s
+
 
     def summary(self):
         # may override

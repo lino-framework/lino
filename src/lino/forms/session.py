@@ -33,9 +33,9 @@ class Session:
             return
         self.toolkit.showException(self,e,details)
 
-    def stopRunning(self,msg):
-        self.error(msg)
-        self.toolkit.stopRunning(self)
+##     def stopRunning(self,msg):
+##         self.error(msg)
+##         self.toolkit.stopRunning(self)
         
     def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"
@@ -120,3 +120,5 @@ class Session:
     def isInteractive(self):
         return self.toolkit.isInteractive()
         
+    def close(self):
+        self.toolkit.closeSession(self)

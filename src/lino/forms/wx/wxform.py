@@ -688,8 +688,8 @@ class Toolkit(base.Toolkit):
             return
         if not job.wxctrl.Update(pc,job.getStatus()):
             if job.confirmAbort():
-                #raise jobs.JobAborted()
-                job.abort()
+                raise jobs.JobAborted(job)
+                #job.abort()
             else:
                 job.wxctrl.Resume()
 
@@ -721,7 +721,7 @@ class Toolkit(base.Toolkit):
 ##         self._setup = True
 ##         self.init()
         
-    def stopRunning(self,sess):
+    def stopRunning(self):
         wx.Exit()
         
     def run_forever(self):
