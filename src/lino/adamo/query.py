@@ -388,7 +388,7 @@ class PointerColumn(QueryColumn):
         #return pointedRow._query.child(**d)
         
     def getValueClass(self):
-        return self.rowAttr._toClass
+        return self.rowAttr.type # _toClass
     
         
         

@@ -18,12 +18,11 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-#from lino.ui import console
+from lino.console import syscon
 from lino.misc import tsttools
 from lino.oogen import TextDocument, elements
 
 class Case(tsttools.TestCase):
-    todo="Migrate oogen to gendoc.openoffice"
     
     def test01(self):
         "First styles"
@@ -42,7 +41,7 @@ class Case(tsttools.TestCase):
         doc.p("This is a right-aligned paragraph.",styleName="Rechts")
         doc.p("Here is a standard paragraph.")
     
-        doc.save(console)
+        doc.save(syscon)
         
 if __name__ == "__main__":
     tsttools.main()

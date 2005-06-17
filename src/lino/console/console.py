@@ -70,6 +70,7 @@ from lino.misc.jobs import Job #, PurzelConsoleJob
 #class Console(UI,CLI):
 class Console: #(Toolkit):
 
+    purzelMann = "|/-\\"
     jobFactory = Job
 
     def __init__(self, stdout, stderr,**kw):
@@ -134,8 +135,10 @@ class Console: #(Toolkit):
             self._logfile.write(t+" "+msg+"\n")
             self._logfile.flush()
             
-    def status(self,*args,**kw):
-        self.verbose(*args,**kw)
+    def status(self,sess,msg, *args,**kw):
+        if msg is not None:
+            assert type(msg) == type('')
+            self.verbose(sess,msg,*args,**kw)
 
     def error(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
@@ -192,6 +195,7 @@ class Console: #(Toolkit):
             self.notice(job.session,job._label)
 
     def onJobDone(self,job,msg):
+        self._display_job(job)
         self.status(job.session,None)
         job.summary()
         if msg is not None:
@@ -368,20 +372,22 @@ class Console: #(Toolkit):
     
 
 
-    def abortRequested(self):
-        return False
+##     def abortRequested(self):
+##         return False
         
-
-class TtyConsole(Console):
-
-    width = 78  # 
-    purzelMann = "|/-\\"
-
-    
-
-    def __init__(self,*args,**kw):
-        self._status = None
-        Console.__init__(self,*args,**kw)
+    def abortRequested(self):
+        if not msvcrt: return False
+        # print "abortRequested"
+        while msvcrt.kbhit():
+            ch = msvcrt.getch()
+            #print ch
+            if ord(ch) == 0: #'\000':
+                ch = msvcrt.getch()
+                if ord(ch) == 27:
+                    return True
+            elif ord(ch) == 27:
+                return True
+        return False
 
 
     def onJobRefresh(self,job):
@@ -401,19 +407,17 @@ class TtyConsole(Console):
                 s = "[%3d%%] " % job.pc
         self.status(job.session,s+job.getStatus())
     
-    def abortRequested(self):
-        if not msvcrt: return False
-        # print "abortRequested"
-        while msvcrt.kbhit():
-            ch = msvcrt.getch()
-            #print ch
-            if ord(ch) == 0: #'\000':
-                ch = msvcrt.getch()
-                if ord(ch) == 27:
-                    return True
-            elif ord(ch) == 27:
-                return True
-        return False
+
+
+class TtyConsole(Console):
+
+    width = 78  # 
+
+
+    def __init__(self,*args,**kw):
+        self._status = None
+        Console.__init__(self,*args,**kw)
+
 
     def warning(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)

@@ -22,7 +22,7 @@
 from lino.misc.descr import Describable
 from lino.console import syscon
 from lino.adamo.datatypes import STRING
-from lino.adamo.query import Query
+#from lino.adamo.query import Query
 
 class ConfigError(Exception):
     pass
@@ -71,10 +71,16 @@ class BaseReport(Describable):
         return self.getLabel()
 
     def setupMenu(self,navigator):
-        self.ds.setupMenu(navigator)
+        pass
     
     def __xml__(self,wr):
         return self.ds.__xml__(wr)
+
+    def __len__(self):
+        return len(self.ds)
+
+    def __getitem__(self,i):
+        return self.ds.__getitem__(i)
 
     def canWrite(self):
         return self.ds.canWrite()
@@ -186,7 +192,9 @@ class BaseReport(Describable):
 
 class ReportColumn(Describable):
     
-    def __init__(self,formatter=str,
+    def __init__(self,
+                 formatter=str,
+                 selector=None,
                  name=None,label=None,doc=None,
                  when=None,
                  halign=LEFT,
@@ -203,6 +211,9 @@ class ReportColumn(Describable):
         self.halign = halign
         self.when = when
         self._formatter=formatter
+        if selector is None:
+            selector=self.showSelector
+        self._selector=selector
         
         
     def getMinWidth(self):
@@ -216,18 +227,23 @@ class ReportColumn(Describable):
     def format(self,v):
         return self._formatter(v)
     
+    def showSelector(self,frm,row):
+        return self._selector(frm,row)
 
 class DataReportColumn(ReportColumn):
     def __init__(self,datacol,
                  name=None,label=None,doc=None,
                  formatter=None,
+                 selector=None,
                  **kw):
         if name is None: name=datacol.name
         if formatter is None: formatter=datacol.format
+        if selector is None: selector=datacol.showSelector
         #assert name != "DataReportColumn"
         if label is None: label=datacol.rowAttr.label
         if doc is None: label=datacol.rowAttr.doc
-        ReportColumn.__init__(self,formatter,
+        ReportColumn.__init__(self,
+                              formatter,selector,
                               name,label,doc,
                               **kw)
         #assert self.name != "DataReportColumn"
@@ -312,23 +328,26 @@ class ReportIterator:
 
 class DataReport(BaseReport):
     
-    def __init__(self,ds,
+    def __init__(self,qry,
                  columnWidths=None,width=None,rowHeight=None,
                  name=None,label=None,doc=None,**kw):
 
         if name is None:
-            name=ds.getLeadTable().getName()+"Report"
-        if label is None: label=ds.getLabel()
+            name=qry.getLeadTable().getName()+"Report"
+        if label is None: label=qry.getLabel()
         #if doc is None: doc=ds.getDoc()
         
         if len(kw):
             # forward keywords to the Query
-            ds=ds.child(**kw)
+            qry=qry.child(**kw)
             
-        BaseReport.__init__(self,None,ds,
+        BaseReport.__init__(self,None,qry,
                             columnWidths,width,rowHeight,
                             name=name,label=label,doc=doc)
     
+    def setupMenu(self,navigator):
+        self.ds.setupMenu(navigator)
+        
     def beginReport(self,doc):
         if len(self.columns) == 0:
             for dc in self.ds.getVisibleColumns():

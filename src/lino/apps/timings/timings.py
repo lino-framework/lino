@@ -17,7 +17,6 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.forms import gui
 
 from lino.apps.timings.tables import *
 from lino.apps.timings.tables import TABLES
@@ -31,14 +30,6 @@ from lino.reports.reports import DataReport, ReportColumn
 import datetime
 
 DAY = datetime.timedelta(1)
-
-## def everyday(d1,d2):
-##     l=[]
-##     d=d1
-##     while d <= d2:
-##         l.append(d)
-##         d += DAY
-##     return l
 
 def everyday(d1,d2):
     #return xrange(itod(d1),itod(d2),DAY)
@@ -160,7 +151,7 @@ class Timings(Schema):
             for x in sess.query(cl):
                 ch=root.__class__(parent=root,
                                   name=rs.i2name(x),
-                                  title=x.getLabel(),
+                                  title=str(x),
                                   content=DataRowElement(x))
                 filenames += ch.save(sess,targetRoot)
 
@@ -225,6 +216,7 @@ This is the Timings main menu.
 
 
 if __name__ == '__main__':
+    from lino.forms import gui
     app=Timings()
     app.quickStartup()
     #app.main()

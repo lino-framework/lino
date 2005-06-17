@@ -16,9 +16,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo import Schema
+from lino.adamo.ddl import Schema, DATE, TIME
 from lino.misc.tsttools import TestCase, main
-from lino.adamo.datatypes import DATE, TIME
+#from lino.adamo.datatypes import 
 
 from lino.apps.raceman.raceman import Raceman
 from lino.apps.raceman.races import Races, Participants

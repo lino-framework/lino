@@ -21,6 +21,7 @@ from lino.adamo import InvalidRequestError
 #from lino.ui import console
 from lino.forms.session import Session
 #from lino.adamo import center
+from lino.reports.reports import DataReport
 
 class BabelLang:
     def __init__(self,index,id):
@@ -196,8 +197,9 @@ class DbSession(Session,Context):
         frm.show()
         
     def showDataGrid(self,ds,**kw):
-        frm = self.form(label=ds.getLabel(),**kw)
-        frm.addDataGrid(ds)
+        rpt=DataReport(ds)
+        frm = self.form(label=rpt.getLabel(),**kw)
+        frm.addDataGrid(rpt)
         frm.show()
 
     def showTableGrid(self,tc,*args,**kw):

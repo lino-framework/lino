@@ -36,8 +36,8 @@ itr("Aborted",
 
 
 
-class JobAborted(Exception):
-    pass
+## class JobAborted(Exception):
+##     pass
 ##     def __init__(self, job):
 ##         self.job = job
 
@@ -109,7 +109,8 @@ class BaseJob:
             #self.pc = 100
             #self.onInc()
             #self.onDone(msg)
-        raise JobAborted(msg)
+            
+        #raise JobAborted(msg)
 
             
 ##     def onInc(self):
@@ -198,13 +199,15 @@ class Task:
         try:
             self.start()
             self.job.done()
-        except JobAborted,e:
-            # Job ot Task called itself abort()
-            assert e.job == self.job
+        #except JobAborted,e:
+        #    # Job ot Task called itself abort()
+        #    assert e.job == self.job
         except Exception,e:
-            # some uncaught exception occured
-            print e
-            self.job.abort(repr(e))
+            session.exception(e)
+            self.job.abort()
+##             # some uncaught exception occured
+##             print e
+##             self.job.abort(repr(e))
             
             
     def configure(self):

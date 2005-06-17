@@ -32,6 +32,10 @@ class Session:
         if e.__class__ in self._ignoreExceptions:
             return
         self.toolkit.showException(self,e,details)
+
+    def stopRunning(self,msg):
+        self.error(msg)
+        self.toolkit.stopRunning(self)
         
     def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"
@@ -58,6 +62,7 @@ class Session:
 
     def error(self,*args,**kw):
         return self.toolkit.error(self,*args,**kw)
+    
     def critical(self,*args,**kw):
         return self.toolkit.critical(self,*args,**kw)
 

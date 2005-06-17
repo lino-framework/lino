@@ -19,7 +19,7 @@
 
 import os
 
-from lino.misc.tsttools import TestCase, main
+from lino.misc.tsttools import TestCase, main, Toolkit
 
 from lino.console import syscon
 
@@ -27,13 +27,13 @@ from lino.apps.keeper.keeper import Keeper
 from lino.apps.keeper.tables import *
 
 TESTDATA = os.path.join(
-    os.path.dirname(__file__),"..","etc","testdata")
+    os.path.dirname(__file__),"testdata")
 
 class Case(TestCase):
-    todo="VolumeVisitor instance has no attribute 'reloading'"
+    #todo="VolumeVisitor instance has no attribute 'reloading'"
     def test01(self):
         app=Keeper()
-        sess=app.quickStartup()
+        sess=app.quickStartup() # toolkit=Toolkit())
         
         q=sess.query(Volumes)
         vol=q.appendRow(name="test",path=TESTDATA)

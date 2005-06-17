@@ -23,16 +23,14 @@
 
 class GenericDocument:
     
-##     def formatReportCell(self,col,value):
-##         if value is None:
-##             return ""
-##         return col.format(value)
-
     def beginDocument(self):
         pass
     
     def endDocument(self):
         pass
+
+
+    # USER METHODS
 
     def report(self,rpt):
         raise NotImplementedError
@@ -42,8 +40,16 @@ class GenericDocument:
     
     def getColumnSepWidth(self):
         raise NotImplementedError
-        
     
+    def table(self,*args,**kw):
+        raise NotImplementedError
+
+    def p(self,*args,**kw):
+        raise NotImplementedError
+
+    def h(self,*args,**kw):
+        raise NotImplementedError
+        
 
 
 class WriterDocument(GenericDocument):

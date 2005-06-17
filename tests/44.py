@@ -55,11 +55,13 @@ class Case(TestCase):
         
         csr.execute("SELECT date from Days")
         s=" ".join([str(l[0]) for l in csr.fetchall()])
-        print s
+        #print s
+        self.assertEqual(s,"732098 732099 732100 732101 732102")
         
         csr.execute("SELECT date from Days WHERE month(date) = 6")
         s=" ".join([str(l[0]) for l in csr.fetchall()])
-        print s
+        #print s
+        self.assertEqual(s,"732098 732099 732100 732101 732102")
         
         # don't do anything with the cursor
         try:

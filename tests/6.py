@@ -62,50 +62,24 @@ class TestPopulator(Populator):
 
 
 class Case(TestCase):
-    todo="Weiter mit Timings wenn Calendar fertig"
-    def test01(self):
+    verbosity=0
+    def setUp(self):
+        TestCase.setUp(self)
         app=Timings()
-        sess=app.quickStartup() #,dump=True)
-        sess.populate(TestPopulator())
+        self.sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
+        self.sess.populate(TestPopulator())
 
-        #res=sess.peek(Resources,"luc")
-        #q1=res.usages_by_resource.
-        
-        l=[]
-        for res in sess.query(Resources,orderBy="id"):
-            #print res,":"
-            def val(day):
-                return res.usages_by_resource.child(date=day)
-            def fmt(qry):
-                #s="Resource %s has %d usages on %s: " % (
-                #    qry.getMaster("resource").__str__(),
-                #    len(qry),
-                #    qry.getMaster("date"))
-                s = ", ".join([u.short() for u in qry])
-                return s
-            l.append((val,fmt))
-        rng=everyday(20050624,20050703)
-        for day in sess.query(Days, orderBy="date"):
-            if day.date in rng:
-                print day,":",
-                for val,fmt in l:
-                    value=val(day)
-                    print fmt(value),
-                print
-                
-        sess.shutdown()
-        
-    def test02(self):
-        app=Timings()
-        sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
+    def tearDown(self):
+        self.sess.shutdown()
+
+    def test01(self):
         #center.startDump()
-        sess.populate(TestPopulator())
         #s=center.stopDump()
         #print s
         #self.assertEquivalent(s,""" """)        
         
         #center.startDump()
-        app.showMonthlyCalendar(sess,2005,6)
+        self.sess.db.app.showMonthlyCalendar(self.sess,2005,6)
         #s=center.stopDump()
         #print s
 ##         self.assertEquivalent(s,"""
@@ -113,16 +87,22 @@ class Case(TestCase):
 ## SELECT date, remark FROM Days WHERE year(date)=2005 AND month(date)=6 ORDER BY date;
 ## """)        
         s=self.getConsoleOutput()
-        print s
-        self.assertEquivalent(s,"")
+        #print s
+        self.assertEquivalent(s,"""
+show(modal=False) Days
+VPanel
+- DataGrid
+)
+""")
         
-        files=app._writeStaticSite(sess,r"c:\temp\timings")
+    def test02(self):
+        files=self.sess.db.app._writeStaticSite(
+            self.sess,r"c:\temp\timings")
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"")
-        self.assertEqual(len(files),58)
+        self.assertEqual(len(files),94)
         #print sess.db._connections[0].stopDump()
-        sess.shutdown()
         #print files
 
 

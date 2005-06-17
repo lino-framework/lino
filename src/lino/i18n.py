@@ -19,12 +19,6 @@
 _userLang = None
 _messages = {}
 
-import locale
-_userLang = locale.getdefaultlocale()[0][:2]
-if _userLang == "en":
-    _userLang = None
-#print _userLang
-
 def _(text_en):
     if _userLang is None:
         return text_en
@@ -42,7 +36,15 @@ def _(text_en):
 def setUserLang(lang):
     global _userLang
     _userLang = lang
+    if _userLang == "en":
+        _userLang = None
     
 def itr(text_en,**kw):
     _messages[text_en] = kw
 
+
+
+
+import locale
+setUserLang(locale.getdefaultlocale()[0][:2])
+#print _userLang

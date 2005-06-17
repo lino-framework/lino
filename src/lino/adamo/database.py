@@ -25,7 +25,7 @@ from lino.adamo import InvalidRequestError
 
 #from lino.adamo.dbds.sqlite_dbd import Connection
 
-from lino.adamo.session import Context, BabelLang
+from lino.adamo.dbsession import Context, BabelLang
 
 #from query import DatasourceColumnList
 from lino.adamo.tim2lino import TimMemoParser

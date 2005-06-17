@@ -29,6 +29,17 @@ from lino.guessenc.guesser import EncodingGuesser
 from lupy.index.documentwriter import standardTokenizer
 
 
+from time import sleep
+
+class BugDemo(Task):
+    
+    def start(self):
+        for i in range(10,0,-1):
+            self.status("%d seconds left",i)
+            sleep(1)
+            
+    def getLabel(self):
+        return "Let's see what happens if an exception occurs..."
     
 class VolumeVisitor(Task):
     
@@ -48,7 +59,7 @@ class VolumeVisitor(Task):
             self.load(self.volume.path,"")
 
     def getLabel(self):
-        return "Loading "+self.volume.getLabel()
+        return "Loading "+str(self.volume)
 
     def freshen(self,fullname,shortname,dir=None):
         self.status(fullname)
@@ -71,25 +82,25 @@ class VolumeVisitor(Task):
     def load(self,fullname,shortname,dir=None):
         self.status(fullname)
         if os.path.isfile(fullname):
-            if self.reloading:
-                row = self.files.peek(dir,shortname)
-            else:
-                row=None
-            if row is None:
-                row = self.files.appendRow(name=shortname,dir=dir)
+            #if self.reloading:
+            #    row = self.files.peek(dir,shortname)
+            #else:
+            #    row=None
+            #if row is None:
+            row = self.files.appendRow(name=shortname,dir=dir)
             #self.visit_file(row,fullname)
             self.readTimeStamp(row,fullname)
         elif os.path.isdir(fullname):
             #print "findone(",dict(parent=dir,name=shortname),")"
-            if self.reloading:
-                row = self.dirs.findone(parent=dir,name=shortname)
-            else:
-                row=None
-            if row is None:
-                row = self.dirs.appendRow(name=shortname,
-                                          parent=dir,
-                                          volume=self.volume)
-                assert row.parent == dir
+            #if self.reloading:
+            #    row = self.dirs.findone(parent=dir,name=shortname)
+            #else:
+            #    row=None
+            #if row is None:
+            row = self.dirs.appendRow(name=shortname,
+                                      parent=dir,
+                                      volume=self.volume)
+            assert row.parent == dir
             self.visit_dir(row,fullname)
         else:
             self.error("%s : no such file or directory",fullname)

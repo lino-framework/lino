@@ -251,9 +251,11 @@ class MenuBar(Component):
 
 class Navigator:
     # mixin to be used with Component
-    def __init__(self,ds):
-        self.ds = ds # a Query or a Report
+    def __init__(self,rpt):
+        self.rpt = rpt # a Query or a Report
         #assert len(ds._lockedRows) == 0
+        self.rpt.beginReport(self)
+        #print len(self.rpt.getVisibleColumns())
         
     def setupMenu(self):
         frm = self.getForm()
@@ -269,7 +271,7 @@ class Navigator:
         def copy():
             from cStringIO import StringIO
             out = StringIO()
-            self.ds.__xml__(out.write)
+            self.rpt.__xml__(out.write)
             f = frm.session.form("Text Editor")
             f.addEntry(type=MEMO(width=80,height=10),
                        value=out.getvalue())
@@ -291,7 +293,7 @@ class Navigator:
                   label="Print &List",
                   action=self.printList,
                   accel="Shift-F7")
-        if self.ds.canWrite():
+        if self.rpt.canWrite():
             m.addItem("delete",
                       label="&Delete this row",
                       action=self.deleteSelectedRows,
@@ -300,14 +302,14 @@ class Navigator:
                       label="&Insert new row",
                       action=self.insertRow,
                       accel="INS")
-        self.ds.setupMenu(self)
+        self.rpt.setupMenu(self)
 
         def f():
             l = self.getSelectedRows()
             if len(l) == 1:
-                s = "Row %d of %d" % (l[0]+1,len(self.ds))
+                s = "Row %d of %d" % (l[0]+1,len(self.rpt))
             else:
-                s = "Selected %s of %d rows" % (len(l), len(self.ds))
+                s = "Selected %s of %d rows" % (len(l), len(self.rpt))
                 
             #if len(self.ds._lockedRows) > 0:
             #    s += " (%d locked)" % len(self.ds._lockedRows)
@@ -315,18 +317,18 @@ class Navigator:
         frm.addIdleEvent(f)
 
     def insertRow(self):
-        assert self.ds.canWrite()
-        row = self.ds.appendRow()
+        assert self.rpt.canWrite()
+        row = self.rpt.appendRow()
         self.refresh()
     
     def deleteSelectedRows(self):
-        assert self.ds.canWrite()
+        assert self.rpt.canWrite()
         if not self.getForm().confirm(
             "Delete %d rows. Are you sure?" % \
             len(self.getSelectedRows())):
             return
         for i in self.getSelectedRows():
-            row = self.ds[i].delete()
+            row = self.rpt[i].delete()
         self.refresh()
 
     def printRow(self):
@@ -337,7 +339,7 @@ class Navigator:
         from lino.oogen import SpreadsheetDocument
         doc = SpreadsheetDocument("printRow")
         for i in self.getSelectedRows():
-            row = self.ds[i]
+            row = self.rpt[i]
             row.printRow(doc)
         #outFile = opj(workdir,"raceman_report.sxc")
         doc.save(self.getForm(),showOutput=True)
@@ -350,9 +352,9 @@ class Navigator:
         doc = SpreadsheetDocument("printList")
         rows = self.getSelectedRows()
         if len(rows) == 1:
-            rows = self.ds
+            rows = self.rpt
         rpt = doc.report()
-        self.ds.setupReport(rpt)
+        self.rpt.setupReport(rpt)
         rpt.execute(rows)
         #outFile = opj(workdir,self.ds.getName()+".sxc")
         doc.save(self.getForm(),showOutput=True)
@@ -365,19 +367,24 @@ class Navigator:
         if len(l) != 1:
             raise InvalidRequestError("more than one row selected!")
         i = l[0]
-        if i == len(self.ds):
+        if i == len(self.rpt):
             raise InvalidRequestError(\
                 "you cannot select the after-last row!")
-        return self.ds[i]
+        return self.rpt[i]
 
     def withCurrentRow(self,meth,*args,**kw):
         r = self.getCurrentRow()
         meth(r,*args,**kw)
         
     def onClose(self):
-        if self.ds.canWrite():
-            self.ds.unlock()
+        if self.rpt.canWrite():
+            self.rpt.unlock()
 
+    def getLineWidth(self):
+        return 80
+    def getColumnSepWidth(self):
+        return 0
+                
 
 class DataGrid(Navigator,Component):
     def __init__(self,owner,ds,*args,**kw):
@@ -429,7 +436,7 @@ class DataNavigator(Navigator,Component):
     def skip(self,n):
         #print __name__, n
         if n > 0:
-            if self.currentPos + n < len(self.ds):
+            if self.currentPos + n < len(self.rpt):
                 self.currentPos += n
                 self.afterSkip(self)
                 self.getForm().refresh()
@@ -768,17 +775,17 @@ class Toolkit:
 
     def status(self,*args,**kw):
         # overridable forwarding
-        return self.console.status(self,*args,**kw)
+        return self.console.status(*args,**kw)
 
 
     def onJobRefresh(self,*args,**kw):
-        return self.console.onJobRefresh(self,*args,**kw)
+        return self.console.onJobRefresh(*args,**kw)
     def onJobInit(self,*args,**kw):
-        return self.console.onJobInit(self,*args,**kw)
+        return self.console.onJobInit(*args,**kw)
     def onJobDone(self,*args,**kw):
-        return self.console.onJobDone(self,*args,**kw)
+        return self.console.onJobDone(*args,**kw)
     def onJobAbort(self,*args,**kw):
-        return self.console.onJobAbort(self,*args,**kw)
+        return self.console.onJobAbort(*args,**kw)
     
             
    
@@ -935,18 +942,21 @@ class Toolkit:
             i = sess.decide(
                 msg,
                 title="Oops, an error occured!",
-                answers=("&Raise exception",
+                answers=("&End",
                          "&Ignore",
                          "&Details",
                          "&Send"))
             if i == 0:
-                raise
+                sess.stopRunning(s)
+                return
+            
             elif i == 1:
                 return
             elif i == 2:
                 frm = sess.form(label="Details")
                 frm.addEntry(type=MEMO,value=s)
-                frm.show()
+                frm.showModal()
+                #return
                 
 
 
@@ -963,7 +973,7 @@ class Toolkit:
     def run_awhile(self):
         raise NotImplementedError
 
-    def stopRunning(self):
+    def stopRunning(self,s):
         raise NotImplementedError
         
 

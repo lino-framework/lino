@@ -140,7 +140,7 @@ class DataGrid(base.DataGrid):
 
     def getSelectedRows(self):
         return self.wxctrl.getSelectedRows()
-                
+
         
 class DataNavigator(base.DataNavigator):
     
@@ -174,7 +174,7 @@ class DataNavigator(base.DataNavigator):
                                    #EventCaller(self.skip,1))
         
     def getStatus(self):
-        return "%d/%d" % (self.currentPos,len(self.ds))
+        return "%d/%d" % (self.currentPos,len(self.rpt))
     
     def refresh(self):
         self.statusLabel.SetLabel(self.getStatus())
@@ -356,9 +356,6 @@ class EntryMixin:
             self.setValueFromEditor(s)
         
         
-
-##     def OnKillFocus(self,evt):
-##         print "OnKillFocus() "+self.getLabel()
         
 ##         # on MS-Windows:
 ##         # killfocus can accur after the windows have been destroyed
@@ -458,6 +455,8 @@ class Form(base.Form):
 
                 self.wxctrl.SetMenuBar(wxMenuBar)
             
+        self.wxctrl.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
+        self.wxctrl.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
 
         wx.EVT_CHAR(self.wxctrl, self.OnChar)
         wx.EVT_IDLE(self.wxctrl, self.OnIdle)
@@ -579,6 +578,13 @@ class Form(base.Form):
         self.wxctrl.Destroy()
         self.wxctrl = None
 
+    def OnKillFocus(self,evt):
+        pass
+        #self.session.toolkit._activeForm = self._parent
+        
+    def OnSetFocus(self,evt):
+        self.session.toolkit._activeForm = self
+
 
     def OnChar(self, evt):
         self.session.debug("OnChar "+str(evt))
@@ -649,6 +655,7 @@ class Toolkit(base.Toolkit):
         self._running = False
         self.wxapp = None
         #self._abortRequested = False
+        self._activeForm=None
 
 
 
@@ -713,6 +720,9 @@ class Toolkit(base.Toolkit):
 ##     def setup(self):
 ##         self._setup = True
 ##         self.init()
+        
+    def stopRunning(self,sess):
+        wx.Exit()
         
     def run_forever(self):
         #if not self._setup:

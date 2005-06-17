@@ -19,17 +19,17 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-#from lino.ui import console
-from lino.misc import tsttools
+from lino.console import syscon
+from lino.misc.tsttools  import TestCase, main
 from lino.oogen import TextDocument
 
-class Case(tsttools.TestCase):
-    todo="Migrate oogen to gendoc.openoffice"
+class Case(TestCase):
+    #todo="Migrate oogen to gendoc.openoffice"
     
     def test01(self):
         "First styles"
 
-        fn = self.addTempFile("4.sxw", showOutput=True)
+        fn = self.addTempFile("66.sxw", showOutput=True)
         doc = TextDocument(fn)
         
         s = doc.addStyle(name="Rechts",
@@ -54,7 +54,7 @@ class Case(tsttools.TestCase):
         doc.p("Alle Preise in €.")
         doc.p("Zahlungsbedingungen: ...")
 
-        doc.save(console)
+        doc.save(syscon)
         
 if __name__ == "__main__":
-    tsttools.main()
+    main()

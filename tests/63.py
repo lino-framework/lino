@@ -19,20 +19,18 @@
 
 
 """
-
-this was my first oogen testcase.
-
+first oogen testcase
 """
 
 import os
 import unittest
 #from lino.ui import console
+from lino.console import syscon
 from lino.misc import tsttools
 from lino.oogen import SpreadsheetDocument, TextDocument
 
 
 class Case(tsttools.TestCase):
-    todo="Migrate oogen to gendoc.openoffice"
     def test01(self):
 
         fn = self.addTempFile("1.sxw", showOutput=True)
@@ -47,7 +45,7 @@ class Case(tsttools.TestCase):
         t.row("Kunz","2004-11-17")
     
         doc.p("Here is another paragraph.")
-        doc.save(console)
+        doc.save(syscon)
         
     def test02(self):
 
@@ -68,7 +66,7 @@ class Case(tsttools.TestCase):
         t.row("Hinz","2004-11-16")
         t.row("Kunz","2004-11-17")
     
-        doc.save(console)
+        doc.save(syscon)
         
 
 ##         for ext in (".sxw", ".sxc"):

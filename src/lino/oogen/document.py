@@ -390,7 +390,6 @@ class Document:
         t = self.table(name=name)
         for col in rpt.columns:
             t.column()
-        #rpt.renderHeader(self)
         
         l = [ col.getLabel() for col in rpt.columns ]
         self.table.headerRow(*l)
@@ -404,7 +403,6 @@ class Document:
                 else:
                     l.append(c.col.format(c.value))
             self.table.row(*l)
-        #rpt.renderFooter(self)
         
         rpt.endReport(self)
 

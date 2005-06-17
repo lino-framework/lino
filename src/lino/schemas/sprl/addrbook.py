@@ -15,12 +15,14 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo import *
-from lino.adamo import datatypes
+#from lino.adamo import *
+#from lino.adamo import datatypes
+from lino.adamo.ddl import *
+
 
 from babel import Languages
 
-SEX = datatypes.StringType(width=1)
+SEX = STRING(width=1) # datatypes.StringType(width=1)
 
 
 class Contacts(Table):

@@ -261,7 +261,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
                 rs=self.findResolver(cl)
                 if rs is not None:
                     href=rs.href(self,value)
-                    label=value.getLabel()
+                    label=str(value)
                     self.writeLink(href,label)
                     return
 
@@ -316,7 +316,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.endDocument()
 
     
-    def save(self,ui,targetRoot=".",simulate=False):
+    def save(self,sess,targetRoot=".",simulate=False):
         filenames = []
         dirname = opj(targetRoot,
                       self.location.replace("/",os.path.sep))
@@ -324,13 +324,13 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         filenames.append(fn)
         #print fn
         if simulate:
-            ui.status("Would write %s...",fn)
+            sess.status("Would write %s...",fn)
             fd = StringIO()
         else:
-            ui.status("Writing %s...",fn)
+            sess.status("Writing %s...",fn)
             if not os.path.isdir(dirname):
                 os.makedirs(dirname)
-                ui.notice("Created directory %s",dirname)
+                sess.notice("Created directory %s",dirname)
             
             fd = file(fn,"wt")
             
@@ -366,7 +366,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
 ##                 filenames += ch.save(ui,targetRoot,simulate)
                 
         for ch in self.children:
-            filenames += ch.save(ui,targetRoot,simulate)
+            filenames += ch.save(sess,targetRoot,simulate)
         return filenames
 
 

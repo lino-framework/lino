@@ -16,80 +16,81 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+
+raise "replaced by lino.forms.session"
+
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from lino.ui import console
 
-class BabelLang:
-    def __init__(self,index,id):
-        self.index = index
-        self.id = id
+## class BabelLang:
+##     def __init__(self,index,id):
+##         self.index = index
+##         self.id = id
 
-    def __repr__(self):
-        return "<BabelLang %s(%d)>" % (self.id,self.index)
+##     def __repr__(self):
+##         return "<BabelLang %s(%d)>" % (self.id,self.index)
 
 
 
-class Context:
-    "interface implemented by Session and Database"
-    def getBabelLangs(self):
-        raise NotImplementedError
+## class Context:
+##     "interface implemented by Session and Database"
+##     def getBabelLangs(self):
+##         raise NotImplementedError
 
-    def getLangs(self):
-        return " ".join([lng.id for lng in self.getBabelLangs()])
+##     def getLangs(self):
+##         return " ".join([lng.id for lng in self.getBabelLangs()])
 
-    def supportsLang(self,lngId):
-        for lng in self.getBabelLangs():
-            if lng.id == lngId:
-                return True
-        return False
+##     def supportsLang(self,lngId):
+##         for lng in self.getBabelLangs():
+##             if lng.id == lngId:
+##                 return True
+##         return False
     
 
-class Session(Context):
+class Session: # (Context):
     
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
     def __init__(self,toolkit,ui): #,**kw):
         self.toolkit = toolkit
-        # Toolkit.addSession(will set another toolkit)
-        #self.app = app
         assert ui is not None
         self.ui = ui
-        #self._user = None
-        #self.db = None
-        #self.schema = None
-        
-##         if ui is None:
-##             ui = console.getSystemConsole()
-        
-        
-##         for m in (
-##             'message', 'confirm','decide', 'form'
-##             'debug','warning', 'info', 'job',
-##             'error','critical',
-##             'report','textprinter',
-##             ):
-##             setattr(self,m,getattr(ui,m))
-            
-##         for m in (
-##             'startDump','stopDump'
-##             ):
-##             setattr(self,m,getattr(console,m))
-        
-        #self._setcon(console)
         self._ignoreExceptions = []
-        
-        #self.use(**kw)
 
+    def hasAuth(self,*args,**kw):
+        return True
+            
+    def handleException(self,e,details=None):
+        if e.__class__ in self._ignoreExceptions:
+            return
+        raise e
+        #self.ui.showException(e,details)
+        
+    def shutdown(self):
+        # called in many TestCases during tearDown()
+        # supposted to close all connections
+        #
+        self.end()
+        self.toolkit.shutdown()
+
+
+
+
+
+
+
+
+
+
+        
+        
 ##     def _setcon(self,console):
 ##         self.console = console
 ##         for m in console.forwardables:
 ##             setattr(self,m,getattr(console,m))
 
-    def hasAuth(self,*args,**kw):
-        return True
-            
 ##     def warning(self,msg):
 ##         """Log a warning message.  If interactive, make sure that she
 ##         has seen this message before returning.
@@ -127,12 +128,6 @@ class Session(Context):
 ##         self.setBabelLangs(self.db.getDefaultLanguage())
         
         
-    def handleException(self,e,details=None):
-        if e.__class__ in self._ignoreExceptions:
-            return
-        raise e
-        #self.ui.showException(e,details)
-        
 
 ##  def spawn(self,**kw):
 ##      kw.setdefault('db',self.db)
@@ -142,12 +137,6 @@ class Session(Context):
 ##     def commit(self):
 ##         return self.db.commit()
 
-    def shutdown(self):
-        # called in many TestCases during tearDown()
-        # supposted to close all connections
-        #
-        self.end()
-        self.toolkit.shutdown()
 
 ##     def setBabelLangs(self,langs):
         

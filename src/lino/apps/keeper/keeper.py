@@ -17,12 +17,15 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.forms import gui
 
 from lino.apps.keeper.tables import *
 from lino.apps.keeper.tables import TABLES
-from lino.adamo.ddl import Schema
+from lino.adamo.ddl import Schema, Populator
 
+class TestPopulator(Populator):
+    def populateVolumes(self,q):
+        q.appendRow(path=r"c:\temp")
+        
 class Keeper(Schema):
     
     years='2005'
@@ -97,7 +100,8 @@ This is the Keeper main menu.
 
 
 if __name__ == '__main__':
+    from lino.forms import gui
     app=Keeper()
-    app.quickStartup()
-    #app.main()
-    gui.run(app)
+    sess=app.quickStartup()
+    sess.populate(TestPopulator())
+    gui.run(sess)

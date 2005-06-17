@@ -28,7 +28,7 @@ supported.
 """
 
 from lino.misc.tsttools import TestCase, main
-from lino.adamo import *
+from lino.adamo.ddl import *
 #from lino.adamo.exceptions import InvalidRequestError
 from lino import adamo
 

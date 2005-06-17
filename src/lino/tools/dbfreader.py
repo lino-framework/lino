@@ -190,6 +190,7 @@ class DBFRecord:
         self._recno = dbf.recno
         self._values = values
         self._deleted = deleted
+        self._dbf=dbf
 
     def deleted(self):
         return self._deleted
@@ -199,6 +200,9 @@ class DBFRecord:
 
     def __getitem__(self,name):
         return self._values[name]
+
+    def __repr__(self):
+        return self._dbf.filename+"#"+str(self._recno)
     
 # --- A class for a single field
 

@@ -19,47 +19,37 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import types
-from lino.misc.tsttools import TestCase, main
+from lino.misc.tsttools import TestCase, main, Toolkit
 from lino.console import syscon
 
-from lino.reports import Report
+from lino.forms.session import Session
+
+from lino import i18n
+i18n.setUserLang(None)
 
 class Case(TestCase):
-    skip=True # now covered by docs/examples/reports1.py
 
+    verbosity=1
+    
     def test01(self):
         #
-        d = dict(
-            name="Ausdemwald",
-            firstName="Norbert",
-            size=12,
-            description="""Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in Eupen."""
-            )
-        
-        #console.startDump()
-        #rpt = self.ui.report()
-        rpt=Report(d.items())
-        rpt.addVurtColumn(meth=lambda row: str(row.item[0]),
-                      label="key",
-                      width=12)
-        rpt.addColumn(meth=lambda row: repr(row.item[1]),
-                      label="value",
-                      width=40)
-        syscon.report(rpt)
-        #rpt.execute(d.items())
-        s = self.getConsoleOutput()
+        sess=Session(Toolkit())
+        job=sess.job("Testing uncomplete jobs",10)
+        for i in range(5):
+            job.increment()
+        job.done("done in only 5 steps.")
+        s=self.getConsoleOutput()
         #print s
-        self.assertEqual(s,"""\
-key         |value                                   
-------------+----------------------------------------
-size        |12                                      
-name        |'Ausdemwald'                            
-firstName   |'Norbert'                               
-description |'Norbert ist unser treuer Mitarbeiter im
-            |Vurt. Er wohnt in der Fremereygasse in  
-            |Eupen.'                                 
-""")        
-        
+        self.assertEquivalent(s,"""
+Testing uncomplete jobs
+[ 10%] Working
+[ 20%] Working
+[ 30%] Working
+[ 40%] Working
+[ 50%] Working
+[100%] Working
+Testing uncomplete jobs: done in only 5 steps.
+""")
         
 
 if __name__ == '__main__':

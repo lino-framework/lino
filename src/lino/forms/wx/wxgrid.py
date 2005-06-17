@@ -31,14 +31,16 @@ class MyDataTable(wx.grid.PyGridTableBase):
     def __init__(self, editor):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
-        self.columns = self.editor.ds.getVisibleColumns()
+        self.columns = self.editor.rpt.getVisibleColumns()
+        self._load()
+        
+    def _load(self):
         self.rows = [ row for row
-                      in self.editor.ds.rows(editor.getForm()) ]
+                      in self.editor.rpt.rows(self.editor.getForm()) ]
 
     def refresh(self,grid):
         before = self.GetNumberRows()
-        self.rows = [ row for row
-                      in self.editor.ds.rows(editor.getForm()) ]
+        self._load()
         self.resetRows(grid,before)
         self.updateValues(grid)
 
@@ -124,12 +126,12 @@ class MyDataTable(wx.grid.PyGridTableBase):
     def SetValue(self, rowIndex, colIndex, value):
         "required"
         #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
-        if not self.editor.ds.canWrite():
+        if not self.editor.rpt.canWrite():
             return
         if rowIndex == len(self.rows):
             args = [None] * len(self.columns)
             args[colIndex] = value
-            row = self.editor.ds.appendRowForEditing(*args)
+            row = self.editor.rpt.appendRowForEditing(*args)
             self.rows.append(row)
         else:
             row = self.rows[rowIndex]
@@ -209,7 +211,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
         #print __name__, colIndexes
         cn = " ".join([self.columns[i].name for i in colIndexes])
         #print __name__,cn
-        self.editor.ds.configure(orderBy=cn)
+        self.editor.rpt.configure(orderBy=cn)
         self.loadData()
 
 
@@ -410,13 +412,13 @@ class DataGridCtrl(wx.grid.Grid):
         if evt.KeyCode() == wx.WXK_RETURN:
             if evt.ControlDown():
                 frm = self.table.editor.getForm()
-                frm.showDataForm(self.table.editor.ds)
+                frm.showDataForm(self.table.editor.rpt)
                 #evt.Skip()
                 return
 
             if self.table.editor.choosing:
                 frm = self.table.editor.getForm()
-                ds = self.table.editor.ds
+                ds = self.table.editor.rpt
                 l = self.getSelectedRows()
                 if len(l) == 1:
                     self.table.editor.setChosenRow(ds[l[0]])

@@ -105,6 +105,7 @@ def setSystemConsole(c):
         'notice','status','warning',
         'verbose', 'error','critical',
         'job',
+        'exception',
         'message','confirm',
         'report','textprinter',
         ):

@@ -38,7 +38,7 @@ class Volumes(Table):
         m = frm.addMenu("&Volume")
         def f():
             vol = nav.getCurrentRow()
-            vol.load(frm)
+            vol.load(frm.session)
             
         m.addItem("load",
                   label="&Load",
