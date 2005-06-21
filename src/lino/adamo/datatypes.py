@@ -24,6 +24,9 @@ another attempt to create a universal datatype definition model...
 """
 
 import datetime
+from time import mktime, ctime
+
+import types
 
 from lino.misc.descr import Describable
 #from lino.adamo.exceptions import RefuseValue
@@ -38,8 +41,8 @@ class Type(Describable):
 
     # sizes are given in "characters" or "lines"
     
-##     minHeight = 1
-##     maxHeight = 1
+    minHeight = 1
+    maxHeight = 1
     
 ##     minWidth = 5
 ##     maxWidth = 40
@@ -172,8 +175,34 @@ class MemoType(StringType):
         self.minHeight = minHeight
         self.maxHeight = maxHeight
     
-
         
+class TimeStampType(Type):
+    maxWidth = 10
+    minWidth = 10
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        l=s.split()
+        if len(l) == 2:
+            d=DATE.parse(l[0])
+            t=TIME.parse(l[1])
+            dt=datetime.datetime.combine(d,t)
+            ts_tuple=dt.timetuple()
+            return mktime(ts_tuple)
+        raise ValueError, repr(s)
+    
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        return ctime(v)
+    
+    def validate(self,value):
+        if value.__class__ in (types.FloatType, types.IntType):
+            return
+        raise DataVeto("not a date")
+##         if not isinstance(value,types.FloatType):
+##             #raise repr(value)+" is not a date"
+##             raise DataVeto("not a date")
+
+    
 class DateType(Type):
     maxWidth = 10
     minWidth = 10
@@ -289,6 +318,7 @@ PASSWORD = PasswordType()
 MEMO = MemoType()     
 DATE = DateType()     
 TIME = TimeType() # StringType(width=8)
+TIMESTAMP = TimeStampType() 
 DURATION = DurationType() 
 INT = IntType() 
 BOOL = BoolType()

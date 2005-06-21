@@ -5,4 +5,4 @@ sess=demo.startup()
 be=sess.query(Nations).peek("be")
 qry=be.cities.query("name inhabitants", orderBy="inhabitants")
 
-qry.report(width=50)
+sess.showQuery(qry,width=50)

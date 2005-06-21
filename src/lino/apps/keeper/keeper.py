@@ -20,7 +20,8 @@
 
 from lino.apps.keeper.tables import *
 from lino.apps.keeper.tables import TABLES
-from lino.adamo.ddl import Schema, Populator
+from lino.adamo.ddl import Schema, Populator, STRING
+from lino.reports import DataReport
 
 class TestPopulator(Populator):
     def populateVolumes(self,q):
@@ -39,7 +40,7 @@ class Keeper(Schema):
         
         frm = sess.form(label="Search")
 
-        searchString = frm.addEntry("searchString",adamo.STRING,
+        searchString = frm.addEntry("searchString",STRING,
                                     label="Words to look for",
                                     value="")
         def search():
@@ -63,8 +64,8 @@ class Keeper(Schema):
         #bbox.addButton("exit",
         #               label="&Exit",
         #               action=frm.close)
-
-        bbox.addDataGrid(searchData)
+        rpt=DataReport(searchData)
+        bbox.addDataGrid(rpt)
 
         frm.show()
         #frm.showModal()
@@ -75,7 +76,7 @@ class Keeper(Schema):
         frm = sess.form(
             label="Main menu",
             doc="""\
-This is the Keeper main menu.                                     
+This is the Keeper main menu.                                    
 """+("\n"*10))
 
         m = frm.addMenu("search","&Suchen")

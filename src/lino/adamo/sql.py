@@ -18,6 +18,7 @@
 
 import types
 import datetime
+#from time import mktime
 
 from lino.adamo import datatypes 
 #from lino.adamo.rowattrs import Field, Pointer, Detail
@@ -107,6 +108,9 @@ class SqlConnection(Connection):
             return "'" + type.format(val).replace("'", "''") + "'"
         elif isinstance(type, datatypes.IntType):
             return "%s" % str(val)
+        elif isinstance(type, datatypes.TimeStampType):
+            #return "%f" % mktime(val)
+            return "%f" % val
         #elif isinstance(val, DateTime):
         #   return "'%s'" % str(val)
         elif isinstance(val, types.StringType):
@@ -128,6 +132,9 @@ class SqlConnection(Connection):
             return datetime.date.fromordinal(s)
         elif isinstance(type, datatypes.IntType):
             return int(s)
+        elif isinstance(type, datatypes.TimeStampType):
+            #return localtime(float(s))
+            return float(s)
         elif isinstance(type, datatypes.TimeType):
             return type.parse(s)
         elif isinstance(type, datatypes.DurationType):
@@ -143,6 +150,8 @@ class SqlConnection(Connection):
             return 'BIGINT'
         elif isinstance(type, datatypes.PriceType):
             return 'BIGINT'
+        elif isinstance(type, datatypes.TimeStampType):
+            return 'FLOAT'
         elif isinstance(type, datatypes.DateType):
             return 'INT'
         elif isinstance(type, datatypes.MemoType):

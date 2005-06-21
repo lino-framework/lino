@@ -243,7 +243,8 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._views[viewName] = kw
         
     def getView(self,viewName):
-        return self._views.get(viewName,None)
+        return self._views[viewName]
+        #return self._views.get(viewName,None)
 
 
 ##  def initDatasource(self,ds):

@@ -1,8 +1,9 @@
+from lino.apps.pizzeria.pizzeria import Products, OrderLines
 from lino.apps.pizzeria.services import \
-     makeSchema, populate, Products, OrderLines
+     ServicePizzeria, populate
 
-schema = makeSchema()
-sess = schema.quickStartup()
+app = ServicePizzeria()
+sess = app.quickStartup()
 populate(sess)
 
 p=sess.query(Products).peek(1)

@@ -43,14 +43,15 @@ class Case(TestCase):
 
     def test01(self):
         "report with a Pointer"
-        ds =self.sess.query(Cities,"id name nation",
-                           orderBy="name",
-                           pageLen=10)
+        qry =self.sess.query(Cities,"id name nation",
+                             orderBy="name",
+                             pageLen=10)
                            
         # print [col.name for col in rpt._clist.visibleColumns]
         #self.sess.startDump()
         #q.executeReport(columnWidths="5 50 10")
-        ds.report(columnWidths="5 50 10")
+        rpt=self.sess.createDataReport(qry,columnWidths="5 50 10")
+        self.sess.report(rpt)
 
         s = self.getConsoleOutput()
         #print s
@@ -73,9 +74,11 @@ id   |name                                              |nation
         
     def test02(self):
         "report with a BabelField"
-        ds = self.sess.query(Nations,"id name")
+        qry = self.sess.query(Nations,"id name")
         #self.sess.startDump()
-        ds.report(columnWidths="2 25")
+        #ds.report(columnWidths="2 25")
+        rpt=self.sess.createDataReport(qry,columnWidths="2 25")
+        self.sess.report(rpt)
         #self.ui.report(rpt)
         #q.executeReport(columnWidths="2 25")
         s = self.getConsoleOutput()

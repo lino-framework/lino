@@ -38,7 +38,8 @@ class Case(TestCase):
         q=sess.query(Volumes)
         vol=q.appendRow(name="test",path=TESTDATA)
         vol.load(syscon)
-        vol.directories.report(
+        sess.showQuery(
+            vol.directories,
             columnNames="id name parent files subdirs",
             width=70)
         s=self.getConsoleOutput()

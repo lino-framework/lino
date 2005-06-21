@@ -133,17 +133,17 @@ class Store:
         return self._virgin
         #return self._status == self.SST_VIRGIN
                 
-    def view(self,sess,viewName,columnNames=None,**kw):
-        view = self._table.getView(viewName)
-        if view is None:
-            raise KeyError,viewName+": no such view"
+##     def view(self,sess,viewName,columnNames=None,**kw):
+##         view = self._table.getView(viewName)
+##         if view is None:
+##             raise KeyError,viewName+": no such view"
             
-        for k,v in view.items():
-            kw.setdefault(k,v)
-        kw['viewName'] = viewName
-        if columnNames is not None:
-            kw['columnNames'] = columnNames
-        return self.query(sess,**kw)
+##         for k,v in view.items():
+##             kw.setdefault(k,v)
+##         kw['viewName'] = viewName
+##         if columnNames is not None:
+##             kw['columnNames'] = columnNames
+##         return self.query(sess,**kw)
         
             
     def query(self,sess,columnNames=None,**kw):

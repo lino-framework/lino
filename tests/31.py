@@ -76,7 +76,9 @@ class Case(TestCase):
             orderBy="duration dossard",
             pageLen=10)
         
-        q.report(columnWidths="d d 20 15")
+        rpt=sess.createDataReport(q,columnWidths="d d 20 15")
+        sess.report(rpt)
+        #q.report(columnWidths="d d 20 15")
         #self.ui.report(rpt)
         #q.executeReport(columnWidths="d d 20 15")
         s = self.getConsoleOutput()

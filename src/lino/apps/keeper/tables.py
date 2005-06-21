@@ -64,9 +64,9 @@ class Directories(Table):
         #self.addField('mtime',TIMESTAMP)
         self.addField('meta',MEMO(width=50,height=5))
         self.addPointer('parent',Directories).setDetail(
-            "subdirs",viewName="std")
+            "subdirs")#,viewName="std")
         self.addPointer('volume',Volumes).setDetail(
-            "directories",parent=None,viewName="std")
+            "directories",parent=None)#,viewName="std")
         self.addView("std","parent name subdirs files meta volume")
         #self.setPrimaryKey("volume parent name")
 
@@ -94,13 +94,14 @@ class Files(Table):
     def init(self):
         #self.addField('id',ROWID) 
         self.addField('name',STRING).setMandatory()
-        #self.addField('mtime',TIMESTAMP)
+        self.addField('mtime',TIMESTAMP)
+        self.addField('size',INT)
         self.addField('meta',MEMO(width=50,height=5))
         self.addPointer('dir',Directories).setDetail(
             "files",orderBy="name")
         self.addPointer('type',FileTypes)
         self.setPrimaryKey("dir name")
-        self.addView("std","dir name type meta")
+        self.addView("std","dir name type mtime size meta")
 
     class Instance(Table.Instance):
         

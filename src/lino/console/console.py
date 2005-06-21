@@ -194,8 +194,8 @@ class Console: # (Toolkit):
         pass
     
     def onJobInit(self,job):
-        if job._label is not None:
-            self.notice(job.session,job._label)
+        if job.getLabel() is not None:
+            self.notice(job.session,job.getLabel())
 
     def onJobDone(self,job,msg):
         self._display_job(job)

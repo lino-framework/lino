@@ -153,8 +153,8 @@ class DbSession(Session,Context):
         except KeyError,e:
             raise InvalidRequestError("no such table: "+str(leadTable))
     
-    def view(self,leadTable,*args,**kw):
-        return self.getStore(leadTable).view(self,*args,**kw)
+##     def view(self,leadTable,*args,**kw):
+##         return self.getStore(leadTable).view(self,*args,**kw)
     
     def query(self,leadTable,columnNames=None,**kw):
         if columnNames is None:
@@ -197,20 +197,26 @@ class DbSession(Session,Context):
         frm.addDataGrid(rpt)
         frm.show()
         
-    def showDataGrid(self,ds,**kw):
-        rpt=DataReport(ds)
-        frm = self.form(label=rpt.getLabel(),**kw)
-        frm.addDataGrid(rpt)
-        frm.show()
-
-    def showTableGrid(self,tc,*args,**kw):
-        q = self.query(tc,*args,**kw)
-        return self.showDataGrid(q)
+    def showViewGrid(self,tc,*args,**kw):
+        rpt=self.getViewReport(tc,*args,**kw)
+        return self.showReport(rpt)
     
-    def showViewGrid(self,tc,viewName="std",*args,**kw):
-        q = self.view(tc,viewName,*args,**kw)
-        return self.showDataGrid(q)
+    def getViewReport(self,tc,viewName="std",**kw):
+        qry = self.query(tc)
+        view=qry.getView(viewName)
+        kw.update(view)
+        return self.createDataReport(qry,**kw)
 
+##     def showDataGrid(self,ds,**kw):
+##         rpt=DataReport(ds)
+##         frm = self.form(label=rpt.getLabel(),**kw)
+##         frm.addDataGrid(rpt)
+##         frm.show()
+
+##     def showTableGrid(self,tc,*args,**kw):
+##         q = self.query(tc,*args,**kw)
+##         return self.showDataGrid(q)
+    
     def showDataForm(self,ds,**kw):
         frm = self.form(label=ds.getLabel(),**kw)
         ds.setupForm(frm)
@@ -226,3 +232,15 @@ class DbSession(Session,Context):
     def runLoader(self,loader):
         store=self.getStore(loader.tableClass)
         loader.load(self,store)
+
+    def createDataReport(self,qry,*args,**kw):
+        return DataReport(qry,*args,**kw)
+
+    def showQuery(self,qry,*args,**kw):
+        rpt=self.createDataReport(qry,*args,**kw)
+        self.report(rpt)
+
+##     def report(self,*args,**kw):
+##         rpt=self.createReport(*args,**kw)
+##         self.session.report(rpt)
+    

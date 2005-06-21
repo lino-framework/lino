@@ -57,8 +57,11 @@ class Case(TestCase):
     def test01(self):
         sess = demo.startup()
         be = sess.query(Nations).peek("be")
-        q = sess.query(Partners,"title firstName name",nation=be)
-        q.report(columnWidths="6 10 20")
+        qry = sess.query(Partners,
+                         "title firstName name",
+                         nation=be)
+        rpt=sess.createDataReport(qry,columnWidths="6 10 20")
+        sess.report(rpt)
         s = self.getConsoleOutput()
         
         #print s

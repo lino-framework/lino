@@ -939,6 +939,7 @@ class Toolkit:
 
     def showException(self,sess,e,details=None):
         msg = str(e)
+        #msg = e.getMessage()
         out = StringIO()
         traceback.print_exc(None,out)
         s = out.getvalue()

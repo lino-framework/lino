@@ -36,8 +36,8 @@ class VolumeVisitor(Task):
         self.volume = vol
 
     def start(self):
-        from lino.apps.keeper import tables 
-        sess = self.volume.getSession()
+        from lino.apps.keeper import tables
+        sess = self.job.session # volume.getSession()
         self.ftypes = sess.query(tables.FileTypes)
         self.files = sess.query(tables.Files)
         self.dirs = sess.query(tables.Directories)
@@ -63,7 +63,9 @@ class VolumeVisitor(Task):
                                           parent=dir,
                                           volume=self.volume)
                 
-            self.visit_dir(row,fullname)
+            #self.visit_dir(row,fullname)
+            for fn in os.listdir(fullname):
+                self.freshen(os.path.join(fullname,fn), fn, row)
         else:
             self.error("%s : no such file or directory",fullname)
 
@@ -89,27 +91,31 @@ class VolumeVisitor(Task):
                                       parent=dir,
                                       volume=self.volume)
             assert row.parent == dir
-            self.visit_dir(row,fullname)
+            #self.visit_dir(row,fullname)
+            for fn in os.listdir(fullname):
+                self.load(os.path.join(fullname,fn), fn, row)
         else:
             self.error("%s : no such file or directory",fullname)
 
-    def visit_dir(self,dirRow,fullname):
-        #self.status("visit_dir " + fullname)
-        for fn in os.listdir(fullname):
-            self.visit(
-                os.path.join(fullname,fn),
-                fn,
-                dirRow)
+##     def visit_dir(self,dirRow,fullname):
+##         #self.status("visit_dir " + fullname)
+##         for fn in os.listdir(fullname):
+##             self.visit(os.path.join(fullname,fn), fn, dirRow)
         
-    def readTimeStamp(self,fileRow,fullname):
+    def readTimeStamp(self,row,fullname):
         try:
             st = os.stat(fullname)
-            sz = st.st_size
-            mt = st.st_mtime
         except OSError,e:
             self.error("os.stat('%s') failed" % fullname)
             return
-        row.mtime = x
+        sz = st.st_size
+        mt = st.st_mtime
+        if row.mtime == mt and row.size == sz:
+            return
+        row.lock()
+        row.mtime = mt
+        row.size=sz
+        row.unlock()
 
 class FileVisitor(Task):
     

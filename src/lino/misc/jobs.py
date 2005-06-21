@@ -47,6 +47,7 @@ class BaseJob:
     
     def init(self,sess,maxval=0):
         self.session = sess
+        assert maxval is not None
         self.maxval = maxval
         self.curval = 0
         self.pc = None
@@ -183,6 +184,11 @@ class Job(BaseJob):
         self._status = self.session.buildMessage(msg,*args,**kw)
         self.refresh()
 
+class TaskJob(BaseJob):
+    def init(self,sess,task):
+        self.getStatus = task.getStatus
+        self.getLabel = task.getLabel
+        BaseJob.init(self,sess,maxval=task.maxval)
 
 
 class Task:
@@ -194,7 +200,9 @@ class Task:
     def run(self,session,*args,**kw):
         # don't override
         #self.reconfigure(*args,**kw)
-        self.job = session.job(self.getLabel(),self.maxval)
+        self.job=TaskJob()
+        self.job.init(session,self)
+        #self.job = session.job(self.getLabel(),self.maxval)
         try:
             self.start()
             self.job.done()
@@ -210,7 +218,7 @@ class Task:
 ##             self.job.abort(repr(e))
             
             
-    def configure(self,maxval=None):
+    def configure(self,maxval=0):
         # may override
         self.maxval=maxval
         self.count_errors = 0

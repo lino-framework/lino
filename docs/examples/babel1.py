@@ -8,11 +8,11 @@ ccy=qry.peek("EEK")
 
 #sess.setBabelLangs("en")
 print "Your currency: %s (%s)" % (ccy.name,ccy.id)
-qry.report()
+sess.showQuery(qry)
 
 print
 sess.setBabelLangs("fr")
 print "Votre monnaie: %s (%s)" % (ccy.name,ccy.id)
-qry.report()
+sess.showQuery(qry)
 
 

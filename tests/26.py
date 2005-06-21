@@ -45,9 +45,10 @@ class Case(TestCase):
 
     def test01(self):
         PROJECTS = self.sess.query(Projects)
-        ds = PROJECTS.query("id super.id title")
-        self.assertEqual(len(ds),10)
-        ds.report(columnWidths="5 5 20")
+        qry = PROJECTS.query("id super.id title")
+        self.assertEqual(len(qry),10)
+        rpt=self.sess.createDataReport(qry,columnWidths="5 5 20")
+        self.sess.report(rpt)
         
         s = self.getConsoleOutput()
         #print s
@@ -75,9 +76,10 @@ id   |super|title
         For example, specifying super=None will select only the
         top-level projects (whose super is NULL): """
         
-        ds = self.sess.query(Projects,"id title", super=None)
-        self.assertEqual(len(ds),3)
-        ds.report(columnWidths="5 20")
+        qry = self.sess.query(Projects,"id title", super=None)
+        self.assertEqual(len(qry),3)
+        rpt=self.sess.createDataReport(qry,columnWidths="5 20")
+        self.sess.report(rpt)
         
         s = self.getConsoleOutput()
         #print s
@@ -115,13 +117,15 @@ id   |title
         must show only the projects with super=None
         """
 
-        ds = self.sess.view(Projects,"std")
-        self.assertEqual(len(ds),3)
+        rpt=self.sess.getViewReport(Projects,"std")
+        #ds = self.sess.view(Projects,"std")
+        self.assertEqual(len(rpt),3)
 
         
 
         try:
-            ds = self.sess.view(Projects,"nonExistingViewName")
+            rpt=self.sess.getViewReport(Projects,"nonExistingViewName")
+            #ds = self.sess.view(Projects,"nonExistingViewName")
             self.fail("failed to raise exception for bad viewName")
         except KeyError:
             pass

@@ -872,6 +872,9 @@ class LeadTableColumnList(BaseColumnList):
 
     def getLeadTable(self):
         return self._store._table
+    
+    def getView(self,name):
+        return self._store._table.getView(name)
 
     def setupMenu(self,navigator):
         self._store._table.setupMenu(navigator)
@@ -922,7 +925,7 @@ class SimpleQuery(LeadTableColumnList):
 ##                     }
     def __init__(self, _parent, store, sess,
                  columnNames=None,
-                 viewName=None,
+                 #viewName=None,
                  orderBy=None,
                  sortColumns=None,
                  sqlFilters=None,
@@ -952,7 +955,7 @@ class SimpleQuery(LeadTableColumnList):
         
         #print "Datasource.configure()", self
         
-        self._viewName = viewName
+        #self._viewName = viewName
         if label is not None:
             assert type(label) == type(""),\
                    "%s not a string" % repr(label)
@@ -1092,14 +1095,10 @@ class SimpleQuery(LeadTableColumnList):
     def getContext(self):
         return self.session
 
-    def createReport(self,**kw):
-        from lino.reports.reports import DataReport
-        return DataReport(self,**kw)
-
+    def createReport(self,name=None,**kw):
+        raise "moved to dbsession"
     def report(self,**kw):
-        rpt=self.createReport(**kw)
-        self.session.report(rpt)
-    
+        raise "moved to dbsession"
 
     def zap(self):
         self._store.zap()

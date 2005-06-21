@@ -4,10 +4,10 @@ from lino.adamo.filters import NotEmpty
 
 sess = demo.beginSession(big=True)
         
-q=sess.query(Nations,"id name")
-q.addColumn("cities").addFilter(NotEmpty)
-q.report(columnWidths="2 15 20")
-#q.report(pageLen=5,pageNum=1,columnWidths="2 15 20")
+qry=sess.query(Nations,"id name")
+qry.addColumn("cities").addFilter(NotEmpty)
+rpt=sess.createDataReport(qry,columnWidths="2 15 20")
+sess.report(rpt)
 
 print
-print q.getSqlSelect()
+print qry.getSqlSelect()
