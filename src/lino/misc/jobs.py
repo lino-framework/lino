@@ -113,20 +113,6 @@ class BaseJob:
         #raise JobAborted(msg)
 
             
-##     def onInc(self):
-##         pass
-    
-##     def onInit(self):
-##         if self._label is not None:
-##             self.ui.notice(self._label)
-        
-##     def onDone(self,msg):
-##         if msg is None:
-##             self.ui.status("")
-##         else:
-##             self.ui.status(msg)
-        
-
 
     def warning(self,*args,**kw):
         self.session.warning(*args,**kw)

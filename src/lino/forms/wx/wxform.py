@@ -24,7 +24,7 @@ import wx
 from lino.adamo.datatypes import MEMO
 from lino.forms import base, gui
 from lino.forms.wx import wxgrid
-from lino.console import syscon
+#from lino.console import syscon
 #from lino.forms.wx.showevents import showEvents
 from lino.misc import jobs
 
@@ -662,7 +662,8 @@ class Toolkit(base.Toolkit):
     def status(self,sess,msg,*args,**kw):
         frm=sess._activeForm
         if frm is None or frm.modal:
-            syscon.status(msg,*args,**kw)
+            Toolkit.status(self,sess,msg,*args,**kw)
+            #syscon.status(msg,*args,**kw)
         else:
             frm.wxctrl.SetStatusText(msg)
 

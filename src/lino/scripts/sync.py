@@ -447,11 +447,3 @@ consoleApplicationClass = Sync
 if __name__ == '__main__':
     consoleApplicationClass().main() # console,sys.argv[1:])
     
-##     try:
-##         sys.exit(main(sys.argv[1:]))
-##         #main(sys.argv[1:])
-##     except SyncError,e:
-##         console.error(str(e))
-##         sys.exit(-1)
-        
-

@@ -16,7 +16,6 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-#import os
 
 import traceback
 from cStringIO import StringIO
@@ -30,15 +29,11 @@ from lino.misc.jobs import Job
 
 
 from lino.adamo.exceptions import InvalidRequestError
-#from lino.ui import console
-#from lino.forms.application import BaseApplication
 from lino.forms import gui
 from lino.console import syscon
 
-#from lino.console import syscon
-#from lino.console.application import Application
-#from lino.console.console import CLI
-#from lino.console.console import CaptureConsole
+from lino.forms.progresser import Progresser
+
 
 class Component(Describable):
     def __init__(self,owner,*args,**kw):
@@ -583,32 +578,6 @@ class Panel(Container):
         self.direction = direction
 
 
-## class GuiProgressBar(jobs.ProgressBar):
-    
-##     def __init__(self,gui,label=None,**kw):
-##         if label is None:
-##             label = "Progress Bar"
-##         self.frm = gui.form(label=label)
-##         self.entry = self.frm.addEntry("progress",
-##                                        value="0%",
-##                                        enabled=False)
-##         jobs.ProgressBar.__init__(self,gui,label=label,**kw)
-
-##     def onInit(self):
-##         self.frm.show()
-        
-## ##     def onDone(self,job):
-## ##         self.frm.close()
-        
-##     def onStatus(self,job):
-##         self.onInc(job)
-        
-        
-##     def onInc(self,job):
-##         self.entry.setValue(job._status+" "+str(job.pc)+"%")
-
-
-
     
 
 class MenuContainer:
@@ -639,11 +608,7 @@ class Form(Describable,MenuContainer):
                  *args,**kw):
         Describable.__init__(self,None,*args,**kw)
         MenuContainer.__init__(self)
-        #GUI.__init__(self)
-        #assert isinstance(app,Application)
         self.session=sess
-        #self.toolkit=sess.toolkit
-        #self.app = sess.app
         self._parent = parent
         self.data = data
         self.entries = AttrDict()
@@ -755,6 +720,7 @@ class Toolkit:
     navigatorFactory = DataNavigator
     formFactory = Form
     jobFactory=Job
+    progresserFactory=Progress
     
     def __init__(self,console=None):
         self._sessions = []
@@ -795,16 +761,6 @@ class Toolkit:
         return self.console.onJobAbort(*args,**kw)
     
             
-   
-
-##     def setApplication(self,app):
-##         self.app = app
-
-##     def check(self):
-##         if self.app is None:
-##             self.app = Application(name="Automagic GUI application")
-    
-
     def unused_setupOptionParser(self,parser):
         self.console.setupOptionParser(parser)
         parser.add_option(
@@ -823,28 +779,6 @@ class Toolkit:
         self.console.applyOptions(options,args)
         self.showConsole = options.showConsole
     
-##     def get OptionParser(self,**kw):
-##         parser = self.console.getOptionParser(**kw)
-##         parser.add_option(
-##             "--console",
-##             help="open separate window for console output",
-##             action="store_true",
-##             dest="showConsole",
-##             default=True)
-##         parser.add_option(
-##             "--no-console",
-##             help="no console window",
-##             action="store_false",
-##             dest="showConsole")
-##         return parser
-
-##     def parse_args(self,argv=None,**kw):
-##         parser = self.getOptionParser(**kw)
-##         (options, args) = parser.parse_args(argv)
-##         self.showConsole = options.showConsole
-##         return (options, args)
-    
-        
     def createForm(self,sess,parent,*args,**kw):
         return self.formFactory(sess,parent,*args,**kw)
     
@@ -929,13 +863,6 @@ class Toolkit:
     
     def isInteractive(self):
         return True
-
-##     def job(self,*args,**kw):
-##         return console.job(*args,**kw)
-
-##     def make_progressbar(self,*args,**kw):
-##         return ProgressBar(self,*args,**kw)
-##         # return GuiProgressBar(self,*args,**kw)
 
     def showException(self,sess,e,details=None):
         msg = str(e)
