@@ -14,7 +14,7 @@ Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in E
             )
 
         rpt = DictReport(d)
-        sess.report(rpt)
+        sess.showReport(rpt)
         
 if __name__ == "__main__":
     MyReport().main()

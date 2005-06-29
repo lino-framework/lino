@@ -416,10 +416,10 @@ class Form(base.Form):
         assert self.wxctrl is None
         base.Form.setParent(self,parent)
         
-##     def job(self,*args,**kw):
-##         job = Job()
-##         job.init(self,*args,**kw)
-##         return job
+    def job(self,*args,**kw):
+        job = Job()
+        job.init(self,*args,**kw)
+        return job
     
     def setup(self):
         assert self.wxctrl is None
@@ -647,6 +647,7 @@ class Toolkit(base.Toolkit):
     navigatorFactory = DataNavigator
     formFactory = Form
     jobFactory=Job
+    #progresserFactory=Progresser
     
     def __init__(self,*args,**kw):
         base.Toolkit.__init__(self,*args,**kw)
@@ -676,7 +677,8 @@ class Toolkit(base.Toolkit):
         job.wxctrl = wx.ProgressDialog(
             job.getLabel(),
             job.getStatus(),
-            100, self._activeForm.wxctrl,
+            100,
+            self._activeForm.wxctrl,
             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
         #return self.app.toolkit.console.onJobInit(job)
 

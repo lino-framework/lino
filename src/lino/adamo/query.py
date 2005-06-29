@@ -1097,8 +1097,9 @@ class SimpleQuery(LeadTableColumnList):
 
     def createReport(self,name=None,**kw):
         raise "moved to dbsession"
-    def report(self,**kw):
-        raise "moved to dbsession"
+    
+    def showReport(self,**kw):
+        self.session.showQuery(self,**kw)
 
     def zap(self):
         self._store.zap()

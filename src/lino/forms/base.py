@@ -22,17 +22,15 @@ from cStringIO import StringIO
 
 
 from lino.adamo.datatypes import STRING, MEMO
-from lino.misc import jobs
+#from lino.misc import jobs
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-from lino.misc.jobs import Job
-
+from lino.console.console import AbstractToolkit
 
 from lino.adamo.exceptions import InvalidRequestError
 from lino.forms import gui
-from lino.console import syscon
 
-from lino.forms.progresser import Progresser
+#from lino.forms.progresser import Progresser
 
 
 class Component(Describable):
@@ -707,7 +705,8 @@ class Form(Describable,MenuContainer):
 
 
 
-class Toolkit:
+    
+class Toolkit(AbstractToolkit):
     
     labelFactory = Label
     entryFactory = Entry
@@ -719,13 +718,12 @@ class Toolkit:
     #reportGridFactory = ReportGrid
     navigatorFactory = DataNavigator
     formFactory = Form
-    jobFactory=Job
-    progresserFactory=Progress
     
     def __init__(self,console=None):
-        self._sessions = []
+        AbstractToolkit.__init__(self)
         #self.consoleForm = None
         if console is None:
+            from lino.console import syscon
             console=syscon.getSystemConsole()
             #console=CaptureConsole(
             #    verbosity=syscon._syscon._verbosity)
@@ -736,19 +734,13 @@ class Toolkit:
             'verbose', 'error',
             #'critical',
             'job',
-            'report','textprinter',
+            'showReport','textprinter',
             ):
             setattr(self,funcname,getattr(console,funcname))
 
     def status(self,*args,**kw):
         # overridable forwarding
         return self.console.status(*args,**kw)
-
-    def critical(self,sess,msg,*args,**kw):
-        if msg is not None:
-            self.error(sess,msg,*args,**kw)
-        sess.close()
-        self.stopRunning()
 
 
     def onJobRefresh(self,*args,**kw):
@@ -779,14 +771,6 @@ class Toolkit:
         self.console.applyOptions(options,args)
         self.showConsole = options.showConsole
     
-    def createForm(self,sess,parent,*args,**kw):
-        return self.formFactory(sess,parent,*args,**kw)
-    
-    def addSession(self,sess):
-        #app.setToolkit(self)
-        sess.toolkit = self
-        self._sessions.append(sess)
-        
     def init(self):
         
         """ the console window must be visible during
@@ -810,15 +794,6 @@ class Toolkit:
         #frm.show()
         #self.wxctrl.SetTopWindow(frm.wxctrl)
         
-    def closeSession(self,sess):
-        self._sessions.remove(sess)
-        if len(self._sessions) == 0:
-            self.stopRunning()
-            #if self.consoleForm is not None:
-            #    self.consoleForm.close()
-        
-
-
 
 
 
@@ -895,25 +870,12 @@ class Toolkit:
                 
 
 
-
-
-
-
-    def running(self):
-        raise NotImplementedError
-        
-    def run_forever(self):
-        raise NotImplementedError
-    
-    def run_awhile(self):
-        raise NotImplementedError
-
-    def stopRunning(self):
-        raise NotImplementedError
+    def showReport(self,sess,rpt,**kw):
+        frm = sess.form(label=rpt.getLabel(),**kw)
+        frm.addDataGrid(rpt)
+        frm.show()
         
 
-    def main(self,app,argv=None):
-        app.parse_args(argv)
-        self.addSession(sess)
-        self.run_forever()
-        
+
+
+

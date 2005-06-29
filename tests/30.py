@@ -51,7 +51,7 @@ class Case(TestCase):
         #self.sess.startDump()
         #q.executeReport(columnWidths="5 50 10")
         rpt=self.sess.createDataReport(qry,columnWidths="5 50 10")
-        self.sess.report(rpt)
+        self.sess.showReport(rpt)
 
         s = self.getConsoleOutput()
         #print s
@@ -78,7 +78,7 @@ id   |name                                              |nation
         #self.sess.startDump()
         #ds.report(columnWidths="2 25")
         rpt=self.sess.createDataReport(qry,columnWidths="2 25")
-        self.sess.report(rpt)
+        self.sess.showReport(rpt)
         #self.ui.report(rpt)
         #q.executeReport(columnWidths="2 25")
         s = self.getConsoleOutput()

@@ -26,7 +26,7 @@ from lino import __version__, __author__
 #from lino.console.console import CLI
 from lino.console import syscon
 
-from lino.forms.session import Session
+#from lino.forms.session import Session
 
 
 class UsageError(Exception):

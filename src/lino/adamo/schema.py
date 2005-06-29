@@ -302,25 +302,6 @@ class Schema(Application):
         if dump:
             conn.startDump()
         return db.startup(**kw) #syscon.getSystemConsole())
-        #return DbSession(db,syscon.getSystemConsole())
-        #assert len(self._sessions) == 1
-        #return self._sessions[0]
-    
-        #sess.setDefaultLanguage()
-        #return self._sessions
-
-##     def openSession(self,db):
-##         sess = DbSession(db,toolkit)
-##         self._sessions.append(sess)
-##         self.onOpenSession(sess)
-##         return sess
-
-        
-##     def start_gui(self,toolkit):
-##         for db in self._databases:
-##             sess=DbSession(db,toolkit)
-##             self.run(sess)
-##             self.addSession(sess)
     
     
     def run(self,sess):

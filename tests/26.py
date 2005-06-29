@@ -48,7 +48,7 @@ class Case(TestCase):
         qry = PROJECTS.query("id super.id title")
         self.assertEqual(len(qry),10)
         rpt=self.sess.createDataReport(qry,columnWidths="5 5 20")
-        self.sess.report(rpt)
+        self.sess.showReport(rpt)
         
         s = self.getConsoleOutput()
         #print s
@@ -79,7 +79,7 @@ id   |super|title
         qry = self.sess.query(Projects,"id title", super=None)
         self.assertEqual(len(qry),3)
         rpt=self.sess.createDataReport(qry,columnWidths="5 20")
-        self.sess.report(rpt)
+        self.sess.showReport(rpt)
         
         s = self.getConsoleOutput()
         #print s

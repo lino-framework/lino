@@ -34,7 +34,7 @@ class PrnPrint(Application):
     description="""\
 where FILE is a plain text file to be printed on the Default Printer.
 It must be in OEM charset and may contain simple formatting printer
-control sequences, see http://lsaffre.dyndns.org/lino/prn2pdf.html
+control sequences, see http://lino.berlios.de/prn2pdf.html
 """ 
     
     def setupOptionParser(self,parser):
@@ -48,6 +48,14 @@ print on PRINTERNAME rather than on Default Printer.""",
                           dest="printerName",
                           default=None)
     
+        parser.add_option("-c", "--copies",
+                          help="""\
+print NUM copies.""",
+                          action="store",
+                          type="int",
+                          dest="copies",
+                          default=1)
+    
         parser.add_option("-o", "--output",
                           help="""\
 write to SPOOLFILE rather than really printing.""",
@@ -59,15 +67,23 @@ write to SPOOLFILE rather than really printing.""",
     def run(self,sess):
         if len(self.args) == 0:
             raise UsageError("no arguments specified")
+        if self.options.copies < 0:
+            raise UsageError("wrong value for --copies")
         for inputfile in self.args:
-            d = winprn.Win32TextPrinter(
-                self.options.printerName,
-                self.options.spoolFile,
-                coding=sys.stdin.encoding)
-                #charset=winprn.OEM_CHARSET)
-            d.readfile(inputfile)
-            d.endDoc()
-            sess.notice("%s : %d pages(s)",inputfile,d.page)
+            for cp in range(self.options.copies):
+                d = winprn.Win32TextPrinter(
+                    self.options.printerName,
+                    self.options.spoolFile,
+                    coding=sys.stdin.encoding)
+                    #charset=winprn.OEM_CHARSET)
+                d.readfile(inputfile)
+                d.endDoc()
+                if d.page == 1:
+                    sess.notice("%s : 1 page has been printed",
+                                inputfile)
+                else:
+                    sess.notice("%s : %d pages have been printed",
+                                inputfile,d.page)
 
 consoleApplicationClass = PrnPrint
     

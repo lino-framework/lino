@@ -35,11 +35,8 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup() # self.ui)
+        self.sess = demo.startup()
         
-        #self.db = demo.beginSession()
-        #self.db.installto(globals())
-
     def tearDown(self):
         self.sess.shutdown()
 

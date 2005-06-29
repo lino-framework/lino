@@ -192,11 +192,6 @@ class DbSession(Session,Context):
         frm.addOkButton()
         frm.show()
         
-    def showReport(self,rpt,**kw):
-        frm = self.form(label=rpt.getLabel(),**kw)
-        frm.addDataGrid(rpt)
-        frm.show()
-        
     def showViewGrid(self,tc,*args,**kw):
         rpt=self.getViewReport(tc,*args,**kw)
         return self.showReport(rpt)
@@ -238,7 +233,7 @@ class DbSession(Session,Context):
 
     def showQuery(self,qry,*args,**kw):
         rpt=self.createDataReport(qry,*args,**kw)
-        self.report(rpt)
+        self.showReport(rpt)
 
 ##     def report(self,*args,**kw):
 ##         rpt=self.createReport(*args,**kw)

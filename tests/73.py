@@ -21,9 +21,6 @@ import sys
 import os
 
 from lino.misc import tsttools
-
-#scriptsPath = os.path.join("..","..","scripts")
-#sys.path.append(scriptsPath)
 from lino.scripts.prnprint import PrnPrint
 
 dataPath = os.path.join(os.path.dirname(__file__),

@@ -26,7 +26,14 @@ class Session:
         self._activeForm=None
         self._forms=[]
         self._ignoreExceptions = []
+        self.toolkit.openSession(self)
         
+        
+##     def open(self):
+##         self.toolkit.openSession(self)
+        
+    def close(self):
+        self.toolkit.closeSession(self)
         
     def exception(self,e,details=None):
         if e.__class__ in self._ignoreExceptions:
@@ -66,8 +73,8 @@ class Session:
     def critical(self,*args,**kw):
         return self.toolkit.critical(self,*args,**kw)
 
-    def report(self,*args,**kw):
-        return self.toolkit.report(self,*args,**kw)
+    def showReport(self,*args,**kw):
+        return self.toolkit.showReport(self,*args,**kw)
 
     def textprinter(self,*args,**kw):
         return self.toolkit.textprinter(self,*args,**kw)
@@ -75,23 +82,10 @@ class Session:
     
     
     def job(self,*args,**kw):
-        job=self.toolkit.jobFactory()
-        job.init(self,*args,**kw)
-        return job
+        #job=self.toolkit.progresserFactory(self,*args,**kw)
+        #job=self.toolkit.jobFactory(self,*args,**kw)
+        return self.toolkit.createJob(self,*args,**kw)
 
-##     def onJobIncremented(self,*args,**kw):
-##         return self.toolkit.onJobIncremented(*args,**kw)
-
-##     def onJobInit(self,*args,**kw):
-##         return self.toolkit.onJobInit(*args,**kw)
-
-##     def onJobDone(self,*args,**kw):
-##         return self.toolkit.onJobDone(*args,**kw)
-
-##     def onJobAbort(self,*args,**kw):
-##         return self.toolkit.onJobAbort(*args,**kw)
-
-        
         
         
     def message(self,*args,**kw):
@@ -120,5 +114,3 @@ class Session:
     def isInteractive(self):
         return self.toolkit.isInteractive()
         
-    def close(self):
-        self.toolkit.closeSession(self)

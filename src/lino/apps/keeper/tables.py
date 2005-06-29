@@ -50,8 +50,8 @@ class Volumes(Table):
             if self.name is not None: return self.name
             return self.path
         
-        def load(self,ui):
-            VolumeVisitor(self).run(ui)
+        def load(self,sess):
+            VolumeVisitor(self).run(sess)
 
         def delete(self):
             self.directories.deleteAll()

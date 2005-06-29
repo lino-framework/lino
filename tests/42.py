@@ -37,7 +37,7 @@ class Case(TestCase):
         
         q=sess.query(Volumes)
         vol=q.appendRow(name="test",path=TESTDATA)
-        vol.load(syscon)
+        vol.load(sess)
         sess.showQuery(
             vol.directories,
             columnNames="id name parent files subdirs",
@@ -49,7 +49,7 @@ Directories (volume=testparent=None)
 ====================================
 id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
-1      |              |              |6 Files       |1 Directories
+1      |              |              |17 Files      |4 Directories
 """)
         sess.shutdown()
         

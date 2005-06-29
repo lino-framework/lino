@@ -7,10 +7,12 @@ usage: lino prnprint [options] FILE [FILE ...]
 
 where FILE is a plain text file to be printed on the Default Printer. It must
 be in OEM charset and may contain simple formatting printer control sequences,
-see http://lsaffre.dyndns.org/lino/prn2pdf.html
+see http://lino.berlios.de/prn2pdf.html
 options:
   -h, --help            show this help message and exit
   -pPRINTERNAME, --printer=PRINTERNAME
                         print on PRINTERNAME rather than on Default Printer.
+  -cCOPIES, --copies=COPIES
+                        print NUM copies.
   -oSPOOLFILE, --output=SPOOLFILE
                         write to SPOOLFILE rather than really printing.

@@ -77,7 +77,7 @@ class Case(TestCase):
             pageLen=10)
         
         rpt=sess.createDataReport(q,columnWidths="d d 20 15")
-        sess.report(rpt)
+        sess.showReport(rpt)
         #q.report(columnWidths="d d 20 15")
         #self.ui.report(rpt)
         #q.executeReport(columnWidths="d d 20 15")

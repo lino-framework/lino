@@ -162,17 +162,17 @@ class Timings(Schema):
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
         rpt = DataReport(ds)
-        rpt.addDataColumn("date",formatter=fmt).addFilter(
-            DateEquals,year,month)
+        rpt.addDataColumn(
+            "date",width=12,
+            formatter=fmt).addFilter(DateEquals,year,month)
         
         rpt.addVurtColumn(lambda row:str(row.item.date),
-                      label="ISO")
+                          label="ISO",width=10)
 
         class ResourceColumn(ReportColumn):
             def __init__(self,owner,res):
                 self.res=res
                 ReportColumn.__init__(self,owner,
-                                      width=10,
                                       label=str(res))
             def getCellValue(self,row):
                 return self.res.usages_by_resource.child(

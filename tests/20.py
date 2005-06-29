@@ -61,7 +61,7 @@ class Case(TestCase):
                          "title firstName name",
                          nation=be)
         rpt=sess.createDataReport(qry,columnWidths="6 10 20")
-        sess.report(rpt)
+        sess.showReport(rpt)
         s = self.getConsoleOutput()
         
         #print s

@@ -46,6 +46,7 @@ class JobAborted(Exception):
 class BaseJob:
     
     def init(self,sess,maxval=0):
+        #raise "replaced by Progresser"
         self.session = sess
         assert maxval is not None
         self.maxval = maxval

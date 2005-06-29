@@ -80,8 +80,6 @@ def startup(filename=None, langs=None,
             withDemoData=True,
             **kw):
     schema = Sprl(**kw)
-    #if ui is None:
-    #    ui = console.getSystemConsole()
     sess=schema.quickStartup(langs=langs, filename=filename)
     if populate:
         if withDemoData:

@@ -24,7 +24,8 @@ import time
 
 from optparse import OptionParser
 from cStringIO import StringIO
-#from lino.forms.base import Toolkit
+#from lino.forms.base import AbstractToolkit
+from lino.misc.jobs import Job
 
 
 try:
@@ -37,7 +38,8 @@ try:
 except ImportError,e:
     sound = False
 
-from lino.misc.jobs import Job, JobAborted #, PurzelConsoleJob
+from lino.misc.jobs import JobAborted, Job #, PurzelConsoleJob
+#from lino.forms.progresser import Progresser
 
 ## class UI:
 ##     pass
@@ -66,15 +68,76 @@ from lino.misc.jobs import Job, JobAborted #, PurzelConsoleJob
 ##     def setupOptionParser(self,parser):
 ##         pass
 
+
+
+class AbstractToolkit:
+    
+    jobFactory=Job
+    #progresserFactory=Progresser
+    
+    def __init__(self):
+        self._sessions = []
+        
+    def critical(self,sess,msg,*args,**kw):
+        if msg is not None:
+            self.error(sess,msg,*args,**kw)
+        sess.close()
+        self.stopRunning()
+
+    def createForm(self,sess,parent,*args,**kw):
+        return self.formFactory(sess,parent,*args,**kw)
+    
+    def createJob(self,sess,*args,**kw):
+        job=self.jobFactory()
+        job.init(sess,*args,**kw)
+        return job
+    
+##     def createProgresser(self,sess,*args,**kw):
+##         return self.progresserFactory(sess,*args,**kw)
+    
+    def openSession(self,sess):
+        #app.setToolkit(self)
+        #sess.toolkit = self
+        assert sess.toolkit is self
+        self._sessions.append(sess)
+        
+    def closeSession(self,sess):
+        self._sessions.remove(sess)
+        if len(self._sessions) == 0:
+            self.stopRunning()
+            #if self.consoleForm is not None:
+            #    self.consoleForm.close()
+        
+
+    def running(self):
+        raise NotImplementedError
+        
+    def run_forever(self):
+        raise NotImplementedError
+    
+    def run_awhile(self):
+        raise NotImplementedError
+
+    def stopRunning(self):
+        pass
+        
+
+##     def main(self,app,argv=None):
+##         app.parse_args(argv)
+##         self.addSession(sess)
+##         self.run_forever()
+        
+
+
             
 #class Console(UI,CLI):
-class Console: # (Toolkit):
+class Console(AbstractToolkit):
 
     purzelMann = "|/-\\"
-    jobFactory = Job
+    jobFactory = Job #progresserFactory = Progresser
 
     def __init__(self, stdout, stderr,**kw):
-        #Toolkit.__init__(self,self)
+        AbstractToolkit.__init__(self)
         self._stdout = stdout
         self._stderr = stderr
         self._logfile = None
@@ -85,8 +148,8 @@ class Console: # (Toolkit):
         # UI.__init__(self)
         self.set(**kw)
 
-    def closeSession(self,sess):
-        pass
+##     def closeSession(self,sess):
+##         pass
     
     def redirect(self,stdout,stderr):
         old = (self._stdout, self._stderr)
@@ -366,7 +429,7 @@ class Console: # (Toolkit):
 ##         return Report(writer=self._stdout,**kw)
 
 
-    def report(self,sess,rpt,*args,**kw):
+    def showReport(self,sess,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
         gd = PlainDocument(writer=self._stdout)
         gd.beginDocument()

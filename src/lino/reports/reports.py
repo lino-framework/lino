@@ -136,7 +136,8 @@ class BaseReport(Describable):
             
             autoWidth = int((available - used) / len(waiting))
             for col in waiting:
-                if col.getMaxWidth() < autoWidth:
+                if col.getMaxWidth() is not None \
+                      and col.getMaxWidth() < autoWidth:
                     col.width = col.getMaxWidth()
                     used += col.width
                 else:
@@ -186,7 +187,7 @@ class BaseReport(Describable):
         self._onRowEvents.append(meth)
 
     def show(self,**kw):
-        syscon.report(self,**kw)
+        syscon.showReport(self,**kw)
 
 
 
@@ -218,7 +219,7 @@ class ReportColumn(Describable):
         
     def getMinWidth(self):
         return self.width
-    def getMaxnWidth(self):
+    def getMaxWidth(self):
         return self.width
 
     def getCellValue(self,row):

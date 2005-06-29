@@ -107,7 +107,8 @@ def setSystemConsole(c):
         'job',
         'exception',
         'message','confirm',
-        'report','textprinter',
+        'showReport',
+        'textprinter',
         ):
         g[funcname] = getattr(sess,funcname)
         

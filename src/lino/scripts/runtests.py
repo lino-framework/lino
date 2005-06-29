@@ -80,8 +80,8 @@ continue testing even if failures or errors occur""",
             if len(prefix):
                 prefix+="."
             #print dirpath
-            job.status(dirpath)
             for filename in filenames:
+                job.status(os.path.join(dirpath,filename))
                 modname,ext = os.path.splitext(filename)
                 if ext == '.py':
                     doit = (len(argv) == 0)
@@ -154,7 +154,7 @@ continue testing even if failures or errors occur""",
 consoleApplicationClass = Runtests
 
 if __name__ == '__main__':
-    consoleApplicationClass().main() # console,sys.argv[1:])
+    consoleApplicationClass().main() 
     
 
 
