@@ -19,7 +19,7 @@
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from lino.ui import console
-from lino.forms.session import Session
+#from lino.forms.session import Session
 #from lino.adamo import center
 from lino.reports.reports import DataReport
 
@@ -34,7 +34,7 @@ class BabelLang:
 
 
 class Context:
-    "interface implemented by Session and Database"
+    "interface implemented by DbSession and Database"
     def getBabelLangs(self):
         raise NotImplementedError
 
@@ -47,18 +47,26 @@ class Context:
                 return True
         return False
     
-class DbSession(Session,Context):
+class DbSession(Context):
     
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,db,toolkit,user=None,pwd=None,*args,**kw):
+    #def __init__(self,db,toolkit,user=None,pwd=None,*args,**kw):
+    def __init__(self,db,sess,user=None,pwd=None):
+        #assert isinstance(sess,Session)
         self.db = db
+        self.session=sess
         self.user=user
         self.pwd=pwd
-        Session.__init__(self,toolkit,*args,**kw)
+        #Session.__init__(self,toolkit,*args,**kw)
         self.setDefaultLanguage()
-        db.addSession(self)
+        #db.addSession(self)
+        #for m in ('showReport',):
+        #    setattr(self,m,getattr(sess,m))
+            
+        db.addSession(sess)
+        
 
     def setDefaultLanguage(self):
         self.setBabelLangs(self.db.getDefaultLanguage())
@@ -125,6 +133,9 @@ class DbSession(Session,Context):
         self.db.populate(self,p)
         self.setSessionStatus(status)
 
+    def getSession(self):
+        return self.session
+    
     def getSessionStatus(self):
         return (self.getBabelLangs(),)
         
@@ -136,8 +147,9 @@ class DbSession(Session,Context):
         return self.db.commit(self)
 
     def close(self):
-        self.db.removeSession(self)
-        Session.close(self)
+        self.db.removeSession(self.session)
+        self.session.close()
+        #Session.close(self)
         
     def shutdown(self):
         # called in many TestCases during tearDown()
@@ -194,7 +206,7 @@ class DbSession(Session,Context):
         
     def showViewGrid(self,tc,*args,**kw):
         rpt=self.getViewReport(tc,*args,**kw)
-        return self.showReport(rpt)
+        return self.session.showReport(rpt)
     
     def getViewReport(self,tc,viewName="std",**kw):
         qry = self.query(tc)
@@ -233,7 +245,7 @@ class DbSession(Session,Context):
 
     def showQuery(self,qry,*args,**kw):
         rpt=self.createDataReport(qry,*args,**kw)
-        self.showReport(rpt)
+        self.session.showReport(rpt)
 
 ##     def report(self,*args,**kw):
 ##         rpt=self.createReport(*args,**kw)

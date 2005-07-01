@@ -25,13 +25,12 @@ from lino.adamo import InvalidRequestError
 
 #from lino.adamo.dbds.sqlite_dbd import Connection
 
-from lino.adamo.dbsession import Context, BabelLang
+from lino.adamo.dbsession import Context, BabelLang, DbSession
 
 #from query import DatasourceColumnList
 from lino.adamo.tim2lino import TimMemoParser
 from lino.adamo.store import Store
 #from lino.adamo import center 
-from lino.adamo.dbsession import DbSession
 
 
 class Database(Context,Describable):
@@ -52,15 +51,9 @@ class Database(Context,Describable):
         self._stores = {}
         self._sessions=[]
         self._connections=[]
-        #self._populators = []
         self._startupDone= False
-        #print self, "__init__():", self.getSupportedLangs()
 
-##     def addPopulator(self,p):
-##         #if self._startupDone:
-##         #    raise TooLate("Cannot addPopulator() after startup()")
-##         self._populators.append(p)
-        
+
     def addSession(self,s):
         self._sessions.append(s)
         
@@ -184,22 +177,25 @@ class Database(Context,Describable):
 ##          self.__dict__['conn'] = conn
 
 
-    def startup(self,toolkit=None):
+    def startup(self,sess=None):
         #print "%s.startup()" % self.__class__
         #if ui is None:
         #    ui = syscon.getSystemConsole()
         #sess=center.openSession(syscon.getSystemConsole())
         assert not self._startupDone,\
                  "Cannot startup() again " + repr(self)
-        if toolkit is None:
-            toolkit=syscon.getSystemConsole()
+        #if toolkit is None:
+        #    toolkit=syscon.getSystemConsole()
+
+        if sess is None:
+            sess=syscon._session
             
-        sess=DbSession(self,toolkit)
+        dbs=DbSession(self,sess)
         for store in self.getStoresById():
             store.onStartup(sess)
                 
         self._startupDone=True
-        return sess
+        return dbs
         
 
     def commit(self,sess):

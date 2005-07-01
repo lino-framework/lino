@@ -37,7 +37,8 @@ class VolumeVisitor(Task):
 
     def start(self):
         from lino.apps.keeper import tables
-        sess = self.job.session # volume.getSession()
+        #sess = self.job.session #
+        sess=self.volume.getSession()
         self.ftypes = sess.query(tables.FileTypes)
         self.files = sess.query(tables.Files)
         self.dirs = sess.query(tables.Directories)

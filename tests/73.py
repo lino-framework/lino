@@ -21,6 +21,7 @@ import sys
 import os
 
 from lino.misc import tsttools
+
 from lino.scripts.prnprint import PrnPrint
 
 dataPath = os.path.join(os.path.dirname(__file__),

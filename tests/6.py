@@ -66,7 +66,8 @@ class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         app=Timings()
-        self.sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
+        #self.sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
+        self.sess=app.quickStartup()
         self.sess.populate(TestPopulator())
 
     def tearDown(self):

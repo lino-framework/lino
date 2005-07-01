@@ -115,33 +115,6 @@ def setSystemConsole(c):
     g['_syscon'] = c
     g['_session'] = sess
 
-## def setSystemConsole(c):
-##     g = globals()
-    
-##     for funcname in (
-##         'isInteractive','isVerbose',
-##         #'run',
-##         'set', #'parse_args',
-##         ):
-##         g[funcname] = getattr(c,funcname)
-        
-##     g['_syscon'] = c
-##     setSystemSession(Session(c))
-
-## def setSystemSession(sess):
-##     g = globals()
-##     for funcname in (
-##         'debug',
-##         'notice','status','warning',
-##         'verbose', 'error','critical',
-##         'job',
-##         'message','confirm',
-##         'report','textprinter',
-##         ):
-##         g[funcname] = getattr(sess,funcname)
-        
-##     g['_session'] = sess
-
 
 def getSystemConsole():
     return _syscon

@@ -17,33 +17,29 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-class Session:
-    
-    
-    def __init__(self,toolkit=None,**kw):
+class BaseSession:
+    def __init__(self,toolkit):
+        self._ignoreExceptions = []
         assert toolkit is not None
         self.toolkit = toolkit
-        self._activeForm=None
-        self._forms=[]
-        self._ignoreExceptions = []
         self.toolkit.openSession(self)
-        
-        
-##     def open(self):
-##         self.toolkit.openSession(self)
         
     def close(self):
         self.toolkit.closeSession(self)
         
+##     def open(self):
+##         self.toolkit.openSession(self)
+        
+##     def stopRunning(self,msg):
+##         self.error(msg)
+##         self.toolkit.stopRunning(self)
+        
+    
     def exception(self,e,details=None):
         if e.__class__ in self._ignoreExceptions:
             return
         self.toolkit.showException(self,e,details)
 
-##     def stopRunning(self,msg):
-##         self.error(msg)
-##         self.toolkit.stopRunning(self)
-        
     def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"
         if len(args) == 0:
@@ -95,8 +91,20 @@ class Session:
     def decide(self,*args,**kw):
         return self.toolkit.decide(self,*args,**kw)
 
+    def isInteractive(self):
+        return self.toolkit.isInteractive()
+        
+    def runTask(self,taskClass):
+        taskClass().run(self)
 
+class Session(BaseSession):
     
+    def __init__(self,toolkit=None):
+        self._activeForm=None
+        self._forms=[]
+        BaseSession.__init__(self,toolkit)
+        
+        
     
     def form(self,*args,**kw):
         frm=self.toolkit.createForm(
@@ -111,6 +119,3 @@ class Session:
         frm.show()
 
 
-    def isInteractive(self):
-        return self.toolkit.isInteractive()
-        

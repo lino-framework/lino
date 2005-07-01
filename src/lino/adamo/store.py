@@ -19,7 +19,7 @@
 from time import time
 
 from lino.misc.descr import Describable
-from lino.console import syscon
+#from lino.console import syscon
 
 from lino.adamo.exceptions import DataVeto, InvalidRequestError
 #from lino.adamo.datasource import Datasource
@@ -117,11 +117,11 @@ class Store:
     def onStartup(self,sess):
         #print "%s.createTable()" % self.__class__
         if self._virgin is None: # == self.SST_MUSTCHECK:
-            syscon.debug("mustCheck " + self._table.name)
+            sess.debug("mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
                 #self.createTable(sess)
-                syscon.debug("create table " + \
-                              self._table.getTableName())
+                sess.debug("create table " + \
+                           self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
                 #self._status = self.SST_VIRGIN
                 self._virgin=True

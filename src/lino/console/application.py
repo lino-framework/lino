@@ -86,10 +86,6 @@ class Application:
     def __init__(self): #,console=None):
         if self.name is None:
             self.name=self.__class__.__name__
-##         if console is None:
-##             console = syscon.getSystemConsole()
-##         self.console = console
-        #self.toolkit=console
         self._sessions = []
             
 
@@ -143,12 +139,6 @@ distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information.""" % (
             name, version, years, author))
 
-##     def setToolkit(self,tk):
-##         self.toolkit=tk
-        
-##     def form(self,parent=None,*args,**kw):
-##         return self.toolkit.form(self,parent,*args,**kw)
-    
         
     def aboutString(self):
         s = self.name

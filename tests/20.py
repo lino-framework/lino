@@ -55,13 +55,14 @@ from lino.schemas.sprl.tables import Nations,Partners
 class Case(TestCase):
     
     def test01(self):
-        sess = demo.startup()
-        be = sess.query(Nations).peek("be")
-        qry = sess.query(Partners,
-                         "title firstName name",
-                         nation=be)
-        rpt=sess.createDataReport(qry,columnWidths="6 10 20")
-        sess.showReport(rpt)
+        dbc = demo.startup()
+        be = dbc.query(Nations).peek("be")
+        qry = dbc.query(Partners,
+                        "title firstName name",
+                        nation=be)
+        qry.showReport(columnWidths="6 10 20")
+        #dbc.showQuery(qry,columnWidths="6 10 20")
+        #sess.showReport(rpt)
         s = self.getConsoleOutput()
         
         #print s

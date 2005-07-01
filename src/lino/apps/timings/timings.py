@@ -142,7 +142,7 @@ class Timings(Schema):
             root.addReportChild(DataReport(
                 r.usages_by_resource,orderBy="date start"))
 
-        filenames=root.save(sess,targetRoot)
+        filenames=root.save(sess.getSession(),targetRoot)
 
         from lino.gendoc.html import DataRowElement
         
@@ -153,7 +153,7 @@ class Timings(Schema):
                                   name=rs.i2name(x),
                                   title=str(x),
                                   content=DataRowElement(x))
-                filenames += ch.save(sess,targetRoot)
+                filenames += ch.save(sess.getSession(),targetRoot)
 
         return filenames
 
@@ -183,7 +183,7 @@ class Timings(Schema):
         for res in sess.query(Resources,orderBy="id"):
             rpt.addColumn(ResourceColumn(rpt,res))
 
-        sess.showReport(rpt)
+        sess.getSession().showReport(rpt)
         #sess.report(rpt)
         
 

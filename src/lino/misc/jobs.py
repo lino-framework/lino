@@ -53,7 +53,7 @@ class BaseJob:
         self.curval = 0
         self.pc = None
         self._done = False
-        self.session.toolkit.onJobInit(self)
+        sess.toolkit.onJobInit(self)
 
     def setMaxValue(self,n):
         self.maxval = n
@@ -186,6 +186,7 @@ class Task:
 
     def run(self,session,*args,**kw):
         # don't override
+        assert session.toolkit is not None
         #self.reconfigure(*args,**kw)
         self.job=TaskJob()
         self.job.init(session,self)

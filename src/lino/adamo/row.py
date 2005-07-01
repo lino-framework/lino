@@ -140,6 +140,18 @@ class DataRow:
     def makeComplete(self):
         pass
 
+    def getSession(self):
+        return self._query.getSession()
+
+    def getDatabase(self):
+        return self._query.getDatabase()
+
+    def getTableName(self):
+        return self._query.getTableName()
+    
+##     def getContext(self):
+##         return self._ds.getContext()
+    
 
 class StoredDataRow(DataRow):
     # base class for Table.Row
@@ -179,18 +191,6 @@ class StoredDataRow(DataRow):
 ##                                    parentResponder._writer)
 ##      #assert rsp.request is self.request
 ##      rsp.writeParagraph()
-    
-    def getSession(self):
-        return self._query.getSession()
-
-    def getDatabase(self):
-        return self._query.getDatabase()
-
-    def getTableName(self):
-        return self._query.getTableName()
-    
-##     def getContext(self):
-##         return self._ds.getContext()
     
     def printRow(self,doc):
         rpt = doc.report(label=str(self))

@@ -52,34 +52,18 @@ class SchemaPlugin(SchemaComponent,Describable):
 
 
 class Schema(Application):
-##     usage="usage: %prog [options] DBFILE"
-##     description="""\
-## where DBFILE is the name of the sqlite database file"""
 
     HK_CHAR = '&'
     defaultLangs = ('en',)
     tables=[]
 
-    #toolkits="wx console"
-    
-    #_sessionFactory=DbSession
-    
-    def __init__(self,#filename=None,
+    def __init__(self,
                  checkIntegrityOnStartup=False,
                  tempDir=".",
-                 #populate=False,
                  langs=None,**kw):
         Application.__init__(self,**kw)
-        #self.schema = Schema()
-        #self.filename = filename
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup
-        #self.populate=populate
-        #self.sess = None
-##     def __init__(self,name=None,label=None,doc=None,
-##                  langs=None,
-##                  **kw):
-##         Describable.__init__(self,None,name,label,doc)
         self._initDone= False
         self._datasourceRenderer= None
         self._contextRenderer= None
