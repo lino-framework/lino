@@ -163,12 +163,12 @@ class TestCase(unittest.TestCase):
         self._showFiles = []
         self.keepTemporaryFiles = False
         #self.ui = console.CaptureConsole(verbosity=-2,batch=True)
-        self.syscon=syscon.getSystemConsole()
-        syscon.setSystemConsole(
+        self._toolkit=syscon.getToolkit()
+        syscon.setToolkit(
             CaptureConsole(verbosity=self.verbosity,batch=True))
 
     def tearDown(self):
-        syscon.setSystemConsole(self.syscon)
+        syscon.setToolkit(self._toolkit)
         for fn in self._showFiles:
             self.failUnless(os.path.exists(fn))
             if syscon.confirm("Okay to start %s ?" % fn,\
@@ -181,7 +181,7 @@ class TestCase(unittest.TestCase):
                     os.remove(fn)
 
     def getConsoleOutput(self):
-        return syscon.getSystemConsole().getConsoleOutput()
+        return syscon.getToolkit().getConsoleOutput()
         #return self.ui.getConsoleOutput()
         
     def assertEquivalent(self,observed,expected,msg=None):

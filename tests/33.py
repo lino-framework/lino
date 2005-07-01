@@ -33,8 +33,9 @@ class Case(TestCase):
     
     def test01(self):
         #
-        sess=Session(Toolkit())
-        job=sess.job("Testing uncomplete jobs",10)
+        #sess=Session(Toolkit())
+        #sess=syscon._session
+        job=syscon.job("Testing uncomplete jobs",10)
         for i in range(5):
             job.increment()
         job.done("done in only 5 steps.")

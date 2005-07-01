@@ -58,9 +58,8 @@ try:
 except ImportError,e:
     sound = False
 
-from lino.misc.jobs import Job #, PurzelConsoleJob
+#from lino.misc.jobs import Job #, PurzelConsoleJob
 
-_syscon = None
 
 
 # rewriter() inspired by a snippet in Marc-André Lemburg's Python
@@ -89,40 +88,63 @@ def rewriter(to_stream):
 
     return StreamRewriter(unicode_to_fs)
 
-def setSystemConsole(c):
-    g = globals()
+
+
+
+## _syscon = None
+
+
+## def setSystemConsole(c):
+##     g = globals()
     
-    for funcname in (
-        'isInteractive','isVerbose',
-        #'run',
-        'set', #'parse_args',
-        ):
-        g[funcname] = getattr(c,funcname)
+##     for funcname in (
+##         #'isInteractive','isVerbose',
+##         #'run',
+##         'set', #'parse_args',
+##         ):
+##         g[funcname] = getattr(c,funcname)
         
-    sess = Session(c)
-    for funcname in (
-        'debug',
-        'notice','status','warning',
-        'verbose', 'error','critical',
-        'job',
-        'exception',
-        'message','confirm',
-        'showReport',
-        'textprinter',
-        ):
-        g[funcname] = getattr(sess,funcname)
+##     sess = Session(c)
+##     for funcname in (
+##         'debug',
+##         'notice','status','warning',
+##         'verbose', 'error','critical',
+##         'job',
+##         'isInteractive','isVerbose',
+##         'exception',
+##         'message','confirm',
+##         'showReport',
+##         'textprinter',
+##         ):
+##         g[funcname] = getattr(sess,funcname)
         
-    g['_syscon'] = c
-    g['_session'] = sess
+##     g['_syscon'] = c
+##     g['_session'] = sess
 
 
+def getToolkit():
+    return _session.toolkit
+
+def setToolkit(toolkit):
+    assert toolkit.__class__.__name__.endswith("Console"), \
+           toolkit.__class__.__name__
+    _session.toolkit=toolkit
+
+    
 def getSystemConsole():
-    return _syscon
+    #return _syscon
+    return _session
+
+def setSystemConsole(toolkit):
+    setToolkit(toolkit)
 
 
 def shutdown():
-    if _syscon is not None:
-        _syscon.shutdown()
+    #if _syscon is not None:
+    #    _syscon.shutdown()
+
+    if _session is not None:
+        _session.toolkit.shutdown()
 
 
 if hasattr(sys.stdout,"encoding") \
@@ -131,7 +153,27 @@ if hasattr(sys.stdout,"encoding") \
     #sys.stderr = rewriter(sys.stderr)
 
 
-setSystemConsole(TtyConsole(sys.stdout.write, sys.stderr.write))
+
+_session=Session(TtyConsole(sys.stdout.write, sys.stderr.write))
+
+g = globals()
+    
+for funcname in (
+    'debug',
+    'notice','status','warning',
+    'verbose', 'error','critical',
+    'job',
+    'isInteractive','isVerbose',
+    'exception',
+    'message','confirm',
+    'showReport',
+    'textprinter',
+    ):
+    g[funcname] = getattr(_session,funcname)
+        
+
+
+#setSystemConsole(TtyConsole(sys.stdout.write, sys.stderr.write))
 
 atexit.register(shutdown)
 

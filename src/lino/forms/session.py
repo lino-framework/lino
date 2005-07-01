@@ -22,10 +22,11 @@ class BaseSession:
         self._ignoreExceptions = []
         assert toolkit is not None
         self.toolkit = toolkit
-        self.toolkit.openSession(self)
+        #self.toolkit.openSession(self)
         
     def close(self):
-        self.toolkit.closeSession(self)
+        #self.toolkit.closeSession(self)
+        pass
         
 ##     def open(self):
 ##         self.toolkit.openSession(self)
@@ -93,6 +94,9 @@ class BaseSession:
 
     def isInteractive(self):
         return self.toolkit.isInteractive()
+        
+    def isVerbose(self):
+        return self.toolkit.isVerbose()
         
     def runTask(self,taskClass):
         taskClass().run(self)
