@@ -16,13 +16,22 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from lino.console.console import AbstractToolkit
 
 class BaseSession:
     def __init__(self,toolkit):
         self._ignoreExceptions = []
-        assert toolkit is not None
+        self.setToolkit(toolkit)
+        
+        
+    def setToolkit(self,toolkit):
+        #assert toolkit is not None
+        assert isinstance(toolkit,AbstractToolkit),\
+               repr(toolkit)+" is not a toolkit"
         self.toolkit = toolkit
         #self.toolkit.openSession(self)
+        #assert toolkit.__class__.__name__.endswith("Console"), \
+        #       toolkit.__class__.__name__
         
     def close(self):
         #self.toolkit.closeSession(self)
@@ -71,6 +80,7 @@ class BaseSession:
         return self.toolkit.critical(self,*args,**kw)
 
     def showReport(self,*args,**kw):
+        #print self.toolkit
         return self.toolkit.showReport(self,*args,**kw)
 
     def textprinter(self,*args,**kw):

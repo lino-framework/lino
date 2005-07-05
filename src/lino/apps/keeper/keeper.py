@@ -17,15 +17,17 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
 
 from lino.apps.keeper.tables import *
 from lino.apps.keeper.tables import TABLES
 from lino.adamo.ddl import Schema, Populator, STRING
 from lino.reports import DataReport
+from lino.misc.tsttools import TESTDATA
 
 class TestPopulator(Populator):
     def populateVolumes(self,q):
-        q.appendRow(path=r"c:\temp")
+        q.appendRow(path=TESTDATA)
         
 class Keeper(Schema):
     
@@ -38,7 +40,7 @@ class Keeper(Schema):
         searchData = sess.query(Files,"name")
         occs=searchData.addColumn("occurences")
         
-        frm = sess.form(label="Search")
+        frm = sess.session.form(label="Search")
 
         searchString = frm.addEntry("searchString",STRING,
                                     label="Words to look for",
@@ -72,8 +74,8 @@ class Keeper(Schema):
 
 
 
-    def showMainForm(self,sess):
-        frm = sess.form(
+    def showMainForm(self,dbsess):
+        frm = dbsess.session.form(
             label="Main menu",
             doc="""\
 This is the Keeper main menu.                                    
@@ -81,21 +83,21 @@ This is the Keeper main menu.
 
         m = frm.addMenu("search","&Suchen")
         m.addItem("search",label="&Suchen").setHandler(
-            self.showSearchForm,sess)
+            self.showSearchForm,dbsess)
     
         m = frm.addMenu("db","&Datenbank")
         m.addItem("volumes",label="&Volumes").setHandler(
-            sess.showViewGrid, Volumes)
+            dbsess.showViewGrid, Volumes)
         m.addItem("files",label="&Files").setHandler(
-            sess.showViewGrid, Files)
+            dbsess.showViewGrid, Files)
         m.addItem("dirs",label="&Directories").setHandler(
-            sess.showViewGrid, Directories)
+            dbsess.showViewGrid, Directories)
         m.addItem("words",label="&Words").setHandler(
-            sess.showViewGrid, Words)
+            dbsess.showViewGrid, Words)
         
-        self.addProgramMenu(sess,frm)
+        self.addProgramMenu(dbsess,frm)
 
-        frm.addOnClose(sess.close)
+        frm.addOnClose(dbsess.close)
 
         frm.show()
 
@@ -103,6 +105,6 @@ This is the Keeper main menu.
 if __name__ == '__main__':
     from lino.forms import gui
     app=Keeper()
-    sess=app.quickStartup()
-    sess.populate(TestPopulator())
-    gui.run(sess)
+    ctx=app.quickStartup()
+    ctx.populate(TestPopulator())
+    gui.run(ctx)

@@ -525,7 +525,7 @@ class Form(base.Form):
     def show(self,modal=False):
 ##         if not self.app.toolkit._setup:
 ##             self.app.toolkit.setup()
-            
+
         if not self.session.toolkit.running():
             self.session.toolkit.run_forever()
             #if self.app.mainForm == self:
@@ -627,7 +627,8 @@ class WxApp(wx.App):
         # class version in the derived class OnInit().
         
         wx.InitAllImageHandlers()
-        self.toolkit.init()
+        #self.toolkit.init()
+        self.toolkit.showMainForm()
         return True
 
     def OnExit(self):
@@ -653,7 +654,8 @@ class Toolkit(base.Toolkit):
         base.Toolkit.__init__(self,*args,**kw)
         #self.consoleForm = None
         #self._setup = False
-        self._running = False
+        #self._running = False
+        self._session=None
         self.wxapp = None
         #self._abortRequested = False
         self._activeForm=None
@@ -663,7 +665,7 @@ class Toolkit(base.Toolkit):
     def status(self,sess,msg,*args,**kw):
         frm=sess._activeForm
         if frm is None or frm.modal:
-            Toolkit.status(self,sess,msg,*args,**kw)
+            base.Toolkit.status(self,sess,msg,*args,**kw)
             #syscon.status(msg,*args,**kw)
         else:
             frm.wxctrl.SetStatusText(msg)
@@ -697,6 +699,8 @@ class Toolkit(base.Toolkit):
                 job.wxctrl.Resume()
 
     def onJobDone(self,job,msg):
+        if msg is None:
+            msg=""
         job.wxctrl.Update(100,msg)
         job.wxctrl.Destroy()
         job.wxctrl = None
@@ -710,7 +714,8 @@ class Toolkit(base.Toolkit):
     
             
     def running(self):
-        return self._running # self.wxapp is not None
+        #return self._running # self.wxapp is not None
+        return self._session is not None
 
     def run_awhile(self):
         assert self.running()
@@ -727,10 +732,15 @@ class Toolkit(base.Toolkit):
     def stopRunning(self):
         wx.Exit()
         
-    def run_forever(self):
+    def run_forever(self,sess):
         #if not self._setup:
         #    self.setup()
         assert not self.running()
-        self._running = True
+        #self._running = True
+        self._session=sess
         self.wxapp = WxApp(self)
         self.wxapp.MainLoop()
+
+    def showMainForm(self):
+        self._session.showMainForm()
+        #sess.db.app.showMainForm(sess)

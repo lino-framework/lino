@@ -251,3 +251,7 @@ class DbSession(Context):
 ##         rpt=self.createReport(*args,**kw)
 ##         self.session.report(rpt)
     
+
+    def showMainForm(self):
+        self.db.app.showMainForm(self)
+

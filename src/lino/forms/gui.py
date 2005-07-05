@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #from lino.ui.console import ConsoleApplication
+from lino.console import syscon
 
 LEFT = 1
 RIGHT = 2
@@ -79,10 +80,11 @@ def check():
 ##     #assert _app is not None, "only for use with automagicApp"
 ##     return _toolkit.parse_args(*args,**kw)
 
-def run(sess):
+def run(context):
     check()
-    _toolkit.addSession(sess)
-    _toolkit.run_forever()
+    syscon.setToolkit(_toolkit)
+    #_toolkit.addSession(sess)
+    _toolkit.run_forever(context)
     #_toolkit.main(app)
 
 

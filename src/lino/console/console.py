@@ -76,7 +76,48 @@ class AbstractToolkit:
     #progresserFactory=Progresser
     
     def __init__(self):
+        self._logfile = None
         self._sessions = []
+        
+    def configure(self, logfile=None):
+        if logfile is not None:
+            if self._logfile is not None:
+                self._logfile.close()
+            self._logfile = open(logfile,"a")
+        
+    def writelog(self,msg):
+        if self._logfile:
+            #t = strftime("%a %Y-%m-%d %H:%M:%S")
+            t = time.strftime("%H:%M:%S")
+            self._logfile.write(t+" "+msg+"\n")
+            self._logfile.flush()
+
+            
+    def setupOptionParser(self,p):
+        def set_logfile(option, opt_str, value, parser,**kw):
+            self.configure(logfile=value)
+        p.add_option("-l", "--logfile",
+                     help="log a report to FILE",
+                     type="string",
+                     dest="logFile",
+                     action="callback",
+                     callback=set_logfile)
+
+        
+    def shutdown(self):
+        #self.verbose("Done after %f seconds.",
+        #             time.time() - self._started)
+##         if sys.platform == "win32":
+##             utime, stime, cutime, cstime, elapsed_time = os.times()
+##             syscon.verbose("%.2f+%.2f=%.2f seconds used",
+##                            utime,stime,utime+stime)
+##         else:
+##             syscon.verbose( "+".join([str(x) for x in os.times()])
+##                           + " seconds used")
+        if self._logfile:
+            self._logfile.close()
+
+
         
     def critical(self,sess,msg,*args,**kw):
         if msg is not None:
@@ -140,7 +181,6 @@ class Console(AbstractToolkit):
         AbstractToolkit.__init__(self)
         self._stdout = stdout
         self._stderr = stderr
-        self._logfile = None
         self._verbosity = 0
         self._batch = False
         #self._started = time.time()
@@ -157,16 +197,13 @@ class Console(AbstractToolkit):
         self._stderr = stderr
         return old
 
-    def set(self, verbosity=None, batch=None, logfile=None):
+    def set(self, verbosity=None, batch=None, **kw):
         if verbosity is not None:
             self._verbosity += verbosity
             #print "verbositiy %d" % self._verbosity
         if batch is not None:
             self._batch = batch
-        if logfile is not None:
-            if self._logfile is not None:
-                self._logfile.close()
-            self._logfile = open(logfile,"a")
+        AbstractToolkit.configure(self,**kw)
 ##         if ui is not None:
 ##             self._ui = ui
         #if debug is not None:
@@ -194,12 +231,6 @@ class Console(AbstractToolkit):
     def writeout(self,msg):
         self._stdout(msg+"\n")
 
-    def writelog(self,msg):
-        if self._logfile:
-            #t = strftime("%a %Y-%m-%d %H:%M:%S")
-            t = time.strftime("%H:%M:%S")
-            self._logfile.write(t+" "+msg+"\n")
-            self._logfile.flush()
             
     def status(self,sess,msg, *args,**kw):
         if msg is not None:
@@ -293,12 +324,10 @@ class Console(AbstractToolkit):
 ##          if self.verbose:
 ##              self.notify(msg)
             
+
     def setupOptionParser(self,p):
         def call_set(option, opt_str, value, parser,**kw):
             self.set(**kw)
-
-        def set_logfile(option, opt_str, value, parser,**kw):
-            self.set(logfile=value)
 
         p.add_option("-v",
                      "--verbose",
@@ -324,12 +353,7 @@ class Console(AbstractToolkit):
                      callback=call_set,
                      callback_kwargs=dict(batch=True)
                      )
-        p.add_option("-l", "--logfile",
-                     help="log a report to FILE",
-                     type="string",
-                     dest="logFile",
-                     action="callback",
-                     callback=set_logfile)
+        AbstractToolkit.setupOptionParser(self,p)
 
     def message(self,sess,msg,**kw):
         #msg=sess.buildMessage(msg,**kw)
@@ -401,19 +425,6 @@ class Console(AbstractToolkit):
                 return s
             self.warning("wrong answer: "+s)
 
-    def shutdown(self):
-        #self.verbose("Done after %f seconds.",
-        #             time.time() - self._started)
-##         if sys.platform == "win32":
-##             utime, stime, cutime, cstime, elapsed_time = os.times()
-##             syscon.verbose("%.2f+%.2f=%.2f seconds used",
-##                            utime,stime,utime+stime)
-##         else:
-##             syscon.verbose( "+".join([str(x) for x in os.times()])
-##                           + " seconds used")
-        if self._logfile:
-            self._logfile.close()
-        
 
     def job(self,*args,**kw):
         job = Job()

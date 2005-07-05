@@ -126,9 +126,9 @@ def getToolkit():
     return _session.toolkit
 
 def setToolkit(toolkit):
-    assert toolkit.__class__.__name__.endswith("Console"), \
-           toolkit.__class__.__name__
-    _session.toolkit=toolkit
+    #assert toolkit.__class__.__name__.endswith("Console"), \
+    #       toolkit.__class__.__name__
+    _session.setToolkit(toolkit)
 
     
 def getSystemConsole():

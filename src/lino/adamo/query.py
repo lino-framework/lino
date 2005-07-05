@@ -449,7 +449,8 @@ class DetailColumn(QueryColumn):
 
     def showSelector(self,frm,row):
         ds = self.getCellValue(row)
-        frm.session.showDataGrid(ds)
+        ds.showReport()
+        #frm.session.showDataGrid(ds)
         return True
 
 

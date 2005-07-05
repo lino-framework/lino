@@ -724,7 +724,8 @@ class Toolkit(AbstractToolkit):
         #self.consoleForm = None
         if console is None:
             from lino.console import syscon
-            console=syscon.getSystemConsole()
+            #console=syscon.getSystemConsole()
+            console=syscon.getToolkit()
             #console=CaptureConsole(
             #    verbosity=syscon._syscon._verbosity)
         self.console = console
@@ -734,7 +735,7 @@ class Toolkit(AbstractToolkit):
             'verbose', 'error',
             #'critical',
             'job',
-            'showReport','textprinter',
+            'textprinter',
             ):
             setattr(self,funcname,getattr(console,funcname))
 
@@ -771,28 +772,28 @@ class Toolkit(AbstractToolkit):
         self.console.applyOptions(options,args)
         self.showConsole = options.showConsole
     
-    def init(self):
+##     def init(self):
         
-        """ the console window must be visible during
-        application.init()"""
+##         """ the console window must be visible during
+##         application.init()"""
         
-##         if self.showConsole:
-##             if self.consoleForm is None:
-##                 self.consoleForm = frm = self._apps[0].form(
-##                     None, label="Console",
-##                     halign=gui.RIGHT, valign=gui.BOTTOM)
-##                 frm.addViewer()
-##                 frm.show()
-        for sess in self._sessions:
-            sess.db.app.showMainForm(sess)
-            #for sess in app.startup(self):
-            #    app.showMainForm(sess)
+## ##         if self.showConsole:
+## ##             if self.consoleForm is None:
+## ##                 self.consoleForm = frm = self._apps[0].form(
+## ##                     None, label="Console",
+## ##                     halign=gui.RIGHT, valign=gui.BOTTOM)
+## ##                 frm.addViewer()
+## ##                 frm.show()
+##         for sess in self._sessions:
+##             sess.db.app.showMainForm(sess)
+##             #for sess in app.startup(self):
+##             #    app.showMainForm(sess)
             
-        #frm = app.getMainForm(self)
-        #self.consoleForm.setParent(frm)
-        #self.app.setMainForm(frm)
-        #frm.show()
-        #self.wxctrl.SetTopWindow(frm.wxctrl)
+##         #frm = app.getMainForm(self)
+##         #self.consoleForm.setParent(frm)
+##         #self.app.setMainForm(frm)
+##         #frm.show()
+##         #self.wxctrl.SetTopWindow(frm.wxctrl)
         
 
 
