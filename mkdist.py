@@ -28,7 +28,7 @@ from distutils.core import setup
 import py2exe
 
 
-from lino.ui import console 
+from lino.console import syscon
 from lino.misc.rdir import rdirlist
 
 from lino import __version__, __url__
@@ -135,7 +135,7 @@ if len(args) == 0:
 
 msg = "mkdist (%s) version %s" % (' '.join(args),__version__)
 
-if not console.confirm(msg):
+if not syscon.confirm(msg):
     sys.exit(-1)
  
 ## distlog = file('dist.log','a')
