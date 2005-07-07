@@ -33,12 +33,12 @@ class Case(TestCase):
     #todo="VolumeVisitor instance has no attribute 'reloading'"
     def test01(self):
         app=Keeper()
-        dbc=app.quickStartup() # toolkit=Toolkit())
+        sess=app.quickStartup() # toolkit=Toolkit())
         
-        q=dbc.query(Volumes)
+        q=sess.query(Volumes)
         vol=q.appendRow(name="test",path=TESTDATA)
-        vol.load(dbc.getSession())
-        dbc.showQuery(
+        vol.load(sess)
+        sess.showQuery(
             vol.directories,
             columnNames="id name parent files subdirs",
             width=70)
@@ -51,7 +51,7 @@ id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
 1      |              |              |17 Files      |4 Directories
 """)
-        dbc.shutdown()
+        sess.shutdown()
         
         
 if __name__ == '__main__':

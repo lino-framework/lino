@@ -563,8 +563,8 @@ class Win32TextPrinter(TextPrinter):
 
     def drawDebugRaster(self):
         DELTA=10
-        print "org:", self.org
-        print "ext:", self.ext
+        #print "org:", self.org
+        #print "ext:", self.ext
         self.dc.MoveTo((self.org[0]+DELTA,-self.org[1]-DELTA))
         # to upper right
         self.dc.LineTo((self.ext[0]+DELTA,-self.org[1]-DELTA))

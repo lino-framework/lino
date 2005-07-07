@@ -19,7 +19,7 @@
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from lino.ui import console
-#from lino.forms.session import Session
+from lino.forms.session import Session
 #from lino.adamo import center
 from lino.reports.reports import DataReport
 
@@ -47,25 +47,25 @@ class Context:
                 return True
         return False
     
-class DbSession(Context):
+class DbSession(Session,Context):
     
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    #def __init__(self,db,toolkit,user=None,pwd=None,*args,**kw):
-    def __init__(self,db,sess,user=None,pwd=None):
+    def __init__(self,db,toolkit,user=None,pwd=None,*args,**kw):
+    #def __init__(self,db,sess,user=None,pwd=None):
         #assert isinstance(sess,Session)
         self.db = db
-        self.session=sess
+        #self.session=sess
         self.user=user
         self.pwd=pwd
-        #Session.__init__(self,toolkit,*args,**kw)
+        Session.__init__(self,toolkit,*args,**kw)
         self.setDefaultLanguage()
-        #db.addSession(self)
+        db.addSession(self)
         #for m in ('showReport',):
         #    setattr(self,m,getattr(sess,m))
             
-        db.addSession(sess)
+        #db.addSession(sess)
         
 
     def setDefaultLanguage(self):
@@ -133,8 +133,8 @@ class DbSession(Context):
         self.db.populate(self,p)
         self.setSessionStatus(status)
 
-    def getSession(self):
-        return self.session
+    #def getSession(self):
+    #    return self.session
     
     def getSessionStatus(self):
         return (self.getBabelLangs(),)
@@ -147,9 +147,10 @@ class DbSession(Context):
         return self.db.commit(self)
 
     def close(self):
-        self.db.removeSession(self.session)
-        self.session.close()
-        #Session.close(self)
+        #self.db.removeSession(self.session)
+        self.db.removeSession(self)
+        #self.session.close()
+        Session.close(self)
         
     def shutdown(self):
         # called in many TestCases during tearDown()
@@ -206,7 +207,7 @@ class DbSession(Context):
         
     def showViewGrid(self,tc,*args,**kw):
         rpt=self.getViewReport(tc,*args,**kw)
-        return self.session.showReport(rpt)
+        return self.showReport(rpt)
     
     def getViewReport(self,tc,viewName="std",**kw):
         qry = self.query(tc)
@@ -245,7 +246,7 @@ class DbSession(Context):
 
     def showQuery(self,qry,*args,**kw):
         rpt=self.createDataReport(qry,*args,**kw)
-        self.session.showReport(rpt)
+        self.showReport(rpt)
 
 ##     def report(self,*args,**kw):
 ##         rpt=self.createReport(*args,**kw)

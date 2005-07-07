@@ -74,7 +74,7 @@ class Case(TestCase):
                 
 
             
-        files=root.save(self.sess.getSession(),
+        files=root.save(self.sess,
                         opj(self.tempDir,"gendoc","2"))
         self.addTempFile(files[0],showOutput=True)
         for fn in files[1:]:

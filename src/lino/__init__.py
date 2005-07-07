@@ -1,13 +1,12 @@
-__all__ = []
+#__all__ = []
 
 __docformat__ = 'reStructuredText'
 
-__version__ = "0.6.10"
+__version__ = "0.6.11"
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
 __url__ = "http://lino.berlios.de"
-
 
 __copyright__ = """\
 Lino version %s.

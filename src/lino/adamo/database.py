@@ -177,7 +177,8 @@ class Database(Context,Describable):
 ##          self.__dict__['conn'] = conn
 
 
-    def startup(self,sess=None):
+    def startup(self,toolkit=None):
+    #def startup(self,sess=None):
         #print "%s.startup()" % self.__class__
         #if ui is None:
         #    ui = syscon.getSystemConsole()
@@ -187,15 +188,18 @@ class Database(Context,Describable):
         #if toolkit is None:
         #    toolkit=syscon.getSystemConsole()
 
-        if sess is None:
-            sess=syscon._session
+        #if sess is None:
+        #    sess=syscon._session
+        if toolkit is None:
+            toolkit=syscon.getToolkit()
             
-        dbs=DbSession(self,sess)
+        sess=DbSession(self,toolkit)
+        #dbs=DbSession(self,sess)
         for store in self.getStoresById():
             store.onStartup(sess)
                 
         self._startupDone=True
-        return dbs
+        return sess
         
 
     def commit(self,sess):
