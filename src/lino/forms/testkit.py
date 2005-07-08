@@ -18,7 +18,7 @@
 
 
 from lino.forms import base
-from lino.misc import jobs
+#from lino.misc import jobs
 
 class Label(base.Label):
     pass
@@ -59,10 +59,10 @@ class Form(base.Form):
         base.Form.__init__(self,*args,**kw)
 
 
-    def job(self,*args,**kw):
-        job = jobs.Job()
-        job.init(self,*args,**kw)
-        return job
+##     def job(self,*args,**kw):
+##         job = jobs.Job()
+##         job.init(self,*args,**kw)
+##         return job
     
     def status(self,msg,*args,**kw):
         self.app.toolkit.console.status(msg,*args,**kw)

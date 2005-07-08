@@ -734,8 +734,13 @@ class Toolkit(AbstractToolkit):
             'debug', 'notice','warning',
             'verbose', 'error',
             #'critical',
-            'job',
+            #'job',
             'textprinter',
+            #'onTaskBegin',
+            #'onTaskDone',
+            #'onTaskAbort',
+            #'onTaskIncrement',
+            #'onTaskBreathe',
             ):
             setattr(self,funcname,getattr(console,funcname))
 
@@ -744,33 +749,44 @@ class Toolkit(AbstractToolkit):
         return self.console.status(*args,**kw)
 
 
-    def onJobRefresh(self,*args,**kw):
-        return self.console.onJobRefresh(*args,**kw)
-    def onJobInit(self,*args,**kw):
-        return self.console.onJobInit(*args,**kw)
-    def onJobDone(self,*args,**kw):
-        return self.console.onJobDone(*args,**kw)
-    def onJobAbort(self,*args,**kw):
-        return self.console.onJobAbort(*args,**kw)
+    def onTaskBegin(self,*args,**kw):
+        return self.console.onTaskBegin(*args,**kw)
+    def onTaskDone(self,*args,**kw):
+        return self.console.onTaskDone(*args,**kw)
+    def onTaskAbort(self,*args,**kw):
+        return self.console.onTaskAbort(*args,**kw)
+    def onTaskIncrement(self,*args,**kw):
+        return self.console.onTaskIncrement(*args,**kw)
+    def onTaskBreathe(self,*args,**kw):
+        return self.console.onTaskBreathe(*args,**kw)
+    
+##     def onJobRefresh(self,*args,**kw):
+##         return self.console.onJobRefresh(*args,**kw)
+##     def onJobInit(self,*args,**kw):
+##         return self.console.onJobInit(*args,**kw)
+##     def onJobDone(self,*args,**kw):
+##         return self.console.onJobDone(*args,**kw)
+##     def onJobAbort(self,*args,**kw):
+##         return self.console.onJobAbort(*args,**kw)
     
             
-    def unused_setupOptionParser(self,parser):
-        self.console.setupOptionParser(parser)
-        parser.add_option(
-            "--console",
-            help="open separate window for console output",
-            action="store_true",
-            dest="showConsole",
-            default=True)
-        parser.add_option(
-            "--no-console",
-            help="no console window",
-            action="store_false",
-            dest="showConsole")
+##     def unused_setupOptionParser(self,parser):
+##         self.console.setupOptionParser(parser)
+##         parser.add_option(
+##             "--console",
+##             help="open separate window for console output",
+##             action="store_true",
+##             dest="showConsole",
+##             default=True)
+##         parser.add_option(
+##             "--no-console",
+##             help="no console window",
+##             action="store_false",
+##             dest="showConsole")
 
-    def unused_applyOptions(self,options,args):
-        self.console.applyOptions(options,args)
-        self.showConsole = options.showConsole
+##     def unused_applyOptions(self,options,args):
+##         self.console.applyOptions(options,args)
+##         self.showConsole = options.showConsole
     
 ##     def init(self):
         

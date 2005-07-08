@@ -31,7 +31,8 @@ except:
 from lino.console.application import Application, UsageError, ApplicationError
 
 #from lino.ui import console
-from lino.misc.jobs import Task
+#from lino.misc.jobs import Task
+from lino.console.task import Task
 
 
 
@@ -89,7 +90,8 @@ itr("%d files up-to-date", de="%d Dateien unverändert")
 
 class SynchronizerTask(Task):
     
-    def configure(self,src,target,simulate,showProgress):
+    def __init__(self,src,target,simulate,showProgress=True):
+        Task.__init__(self)
         self.src = src
         self.target = target
         self.simulate = simulate
@@ -105,7 +107,6 @@ class SynchronizerTask(Task):
         self.count_delete_dir = 0
         self.count_update_dir = 0
         self.count_copy_dir = 0
-        Task.configure(self)
         
 
     def getLabel(self):
@@ -113,36 +114,31 @@ class SynchronizerTask(Task):
         if self.simulate:
             s += " (Simulation)"
         return s
+
+    def getMaxVal(self):
+        if not self.showProgress: return 0
+        self.session.status(_("Counting directories..."))
+        n = 0
+        for root, dirs, files in os.walk(self.src):
+            n += len(dirs)
+            n += len(files)
+        self.session.status(_("Found %d directories.") % n)
+        return n
     
-    def start(self):
+    def run(self):
         if not os.path.exists(self.src):
             raise ApplicationError(
                 _("Source directory '%s' doesn't exist."))
 
-        if self.showProgress:
-            self.status(_("Counting directories..."))
-            n = 0
-            for root, dirs, files in os.walk(self.src):
-                n += len(dirs)
-                n += len(files)
-            self.status(_("Found %d directories.") % n)
-            self.setMaxValue(n)
-            
         if os.path.exists(self.target):
-            #self.schedule(self.update,self.src,self.target)
             self.update_it(self.src,self.target)
         else:
-            #self.schedule(self.copy,self.src,self.target)
             self.copy(self.src,self.target)
 
-
-##     def purzel(self):
-##         #self.job.inc()
-##         pass
         
     def utime(self,src,target):
         # Note: The utime api of the 2.3 version of python is
-        # not unicode compliant.    
+        # not unicode compliant.
         try:
             s = os.stat(src)
         except OSError,e:
@@ -156,7 +152,7 @@ class SynchronizerTask(Task):
 
                 
     def copy(self,src,target):
-        self.job.increment()
+        self.increment()
         if os.path.isfile(src):
             self.copy_file(src,target)
         elif os.path.isdir(src):
@@ -166,7 +162,7 @@ class SynchronizerTask(Task):
                 "%s is neither file nor directory" % src)
 
     def update_it(self,src,target):
-        self.job.increment()
+        self.increment()
         if os.path.isfile(src):
             self.update_file(src,target)
         elif os.path.isdir(src):
@@ -176,7 +172,7 @@ class SynchronizerTask(Task):
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
-        self.job.refresh()
+        self.breathe()
         if os.path.isfile(name):
             self.delete_file(name)
         elif os.path.isdir(name):
@@ -253,11 +249,11 @@ class SynchronizerTask(Task):
         
         if not doit:
             self.count_uptodate += 1
-            self.job.verbose(_("%s is up-to-date") % target)
+            self.session.verbose(_("%s is up-to-date") % target)
             return
         self.count_update_file += 1
         if self.simulate:
-            self.job.notice("update %s to %s" % (src,target))
+            self.session.notice("update %s to %s" % (src,target))
             return
         if win32file:
             filemode = win32file.GetFileAttributesW(target)
@@ -281,7 +277,7 @@ class SynchronizerTask(Task):
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.job.notice(_("create directory %s") %target)
+        self.session.notice(_("create directory %s") %target)
         if not self.simulate:
             try:
                 os.mkdir(target)
@@ -291,15 +287,12 @@ class SynchronizerTask(Task):
             self.utime(src,target)
             
         for fn in os.listdir(src):
-##             self.schedule(self.copy,
-##                           os.path.join(src,fn),
-##                           os.path.join(target,fn))
             self.copy(os.path.join(src,fn),
                       os.path.join(target,fn))
         
     def copy_file(self,src,target):
         self.count_copy_file += 1
-        self.job.notice(_("copy file %s to %s") % (src,target))
+        self.session.notice(_("copy file %s to %s") % (src,target))
         if self.simulate:
             return
         try:
@@ -311,7 +304,7 @@ class SynchronizerTask(Task):
 
     def delete_dir(self,name):
         self.count_delete_dir += 1
-        self.job.notice(_("remove directory %s") % name)
+        self.session.notice(_("remove directory %s") % name)
         if self.simulate:
             return
         
@@ -325,7 +318,7 @@ class SynchronizerTask(Task):
             
     def delete_file(self,name):
         self.count_delete_file += 1
-        self.job.notice(_("remove file %s") % name)
+        self.session.notice(_("remove file %s") % name)
         if self.simulate:
             return
 
@@ -352,38 +345,35 @@ class SynchronizerTask(Task):
             s += _("would have been removed")
         else:
             s += _("were removed")
-        self.job.notice(s,
-                  self.count_delete_file,
-                  self.count_delete_dir)
+        self.session.notice(s,
+                            self.count_delete_file,
+                            self.count_delete_dir)
         
         s = _("%d files and %d directories ")
         if self.simulate:
             s += _("would have been updated")
         else:
             s += _("were updated")
-        self.job.notice(s,
-                  self.count_update_file,
-                  self.count_update_dir,
-                  )
+        self.session.notice(s,
+                            self.count_update_file,
+                            self.count_update_dir,
+                            )
         
         s = _("%d files and %d directories ")
         if self.simulate:
             s += _("would have been copied")
         else:
             s += _("were copied")
-        self.job.notice(s,
-                  self.count_copy_file,
-                  self.count_copy_dir,
-                  )
+        self.session.notice(s,
+                            self.count_copy_file,
+                            self.count_copy_dir,
+                            )
         
-        self.job.notice(_("%d files up-to-date"),self.count_uptodate)
+        self.session.notice(
+            _("%d files up-to-date"),self.count_uptodate)
         Task.summary(self)
 
     def getStatus(self):
-##         if self._done:
-##             return "done"
-##         if self._aborted:
-##             return "aborted"
         s = _("keep %d, update %d, copy %d, delete %d files.") % (
             self.count_uptodate,
             self.count_update_file,
@@ -418,7 +408,7 @@ where SRC and DEST are two directories to be synchronized.
             dest="showProgress",
             default=False)
     
-    def run(self,ui):
+    def run(self,sess):
          
         if len(self.args) != 2:
             raise UsageError("needs 2 arguments")
@@ -432,13 +422,12 @@ where SRC and DEST are two directories to be synchronized.
             showProgress=self.options.showProgress)
 
         if not task.simulate:
-            if not ui.confirm(task.getLabel()+"\n"+_("Start?")):
+            if not sess.confirm(task.getLabel()+"\n"+_("Start?")):
                 return
         
-        task.run(ui)
-
-##     for l in sync.summary():
-##         console.notice(l)
+        #task.run(sess)
+        
+        sess.runTask(task)
 
 
 # lino.runscript expects a name consoleApplicationClass

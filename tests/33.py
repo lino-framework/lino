@@ -22,10 +22,25 @@ import types
 from lino.misc.tsttools import TestCase, main, Toolkit
 from lino.console import syscon
 
-from lino.forms.session import Session
+#from lino.forms.session import Session
+from lino.console.task import Task
 
 from lino import i18n
 i18n.setUserLang(None)
+
+class TestTask(Task):
+    
+    def getMaxVal(self):
+        return 10
+    
+    def getLabel(self):
+        return "Testing uncomplete tasks"
+    
+    def run(self):
+        for i in range(5):
+            self.increment()
+        self.done("done in only 5 steps.")
+        
 
 class Case(TestCase):
 
@@ -35,21 +50,24 @@ class Case(TestCase):
         #
         #sess=Session(Toolkit())
         #sess=syscon._session
-        job=syscon.job("Testing uncomplete jobs",10)
-        for i in range(5):
-            job.increment()
-        job.done("done in only 5 steps.")
+        syscon.runTask(TestTask())
+        #job=syscon.job("Testing uncomplete jobs",10)
+        #for i in range(5):
+        #    job.increment()
+        #job.done("done in only 5 steps.")
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""
-Testing uncomplete jobs
-[ 10%] Working
-[ 20%] Working
-[ 30%] Working
-[ 40%] Working
-[ 50%] Working
-[100%] Working
-Testing uncomplete jobs: done in only 5 steps.
+Testing uncomplete tasks
+[ 10%] 0 warnings. 0 errors.
+[ 20%] 0 warnings. 0 errors.
+[ 30%] 0 warnings. 0 errors.
+[ 40%] 0 warnings. 0 errors.
+[ 50%] 0 warnings. 0 errors.
+[100%] 0 warnings. 0 errors.
+0 warnings
+0 errors
+Testing uncomplete tasks: done in only 5 steps.
 """)
         
 

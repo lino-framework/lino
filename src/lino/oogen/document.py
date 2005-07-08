@@ -365,8 +365,8 @@ class Document:
 ##         return OoText(self,filename)
         
                 
-    def save(self,ui,showOutput=False):
-        job = ui.job("Writing "+self.filename)
+    def save(self,sess,showOutput=False):
+        sess.status("Writing "+self.filename)
         for f in self.ifiles:
             f.writeFile()
         zf = zipfile.ZipFile(self.filename,'w', zipfile.ZIP_DEFLATED)
@@ -374,14 +374,14 @@ class Document:
             zf.write(os.path.join(self.tempDir,f.filename),
                      f.filename)
         zf.close()
-        job.done()
+        sess.status()
 
-        if showOutput and ui.isInteractive():
+        if showOutput and sess.isInteractive():
             if sys.platform == "win32":
                 os.system("start %s" % self.filename)
             else:
-                ui.message("but how to start %s ?" % \
-                           self.filename)
+                sess.warning("Don't know how to start %s", \
+                             self.filename)
 
     
     def report(self,rpt,name=None,*args,**kw):

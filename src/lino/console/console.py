@@ -25,7 +25,7 @@ import time
 from optparse import OptionParser
 from cStringIO import StringIO
 #from lino.forms.base import AbstractToolkit
-from lino.misc.jobs import Job
+#from lino.misc.jobs import Job
 
 
 try:
@@ -38,7 +38,10 @@ try:
 except ImportError,e:
     sound = False
 
-from lino.misc.jobs import JobAborted, Job #, PurzelConsoleJob
+
+from lino.console.task import TaskAborted    
+
+#from lino.misc.jobs import JobAborted, Job #, PurzelConsoleJob
 #from lino.forms.progresser import Progresser
 
 ## class UI:
@@ -72,12 +75,13 @@ from lino.misc.jobs import JobAborted, Job #, PurzelConsoleJob
 
 class AbstractToolkit:
     
-    jobFactory=Job
+    #jobFactory=Job
     #progresserFactory=Progresser
     
     def __init__(self):
         self._logfile = None
         self._sessions = []
+        self._currentProgresser=None
         
     def configure(self, logfile=None):
         if logfile is not None:
@@ -127,11 +131,16 @@ class AbstractToolkit:
 
     def createForm(self,sess,parent,*args,**kw):
         return self.formFactory(sess,parent,*args,**kw)
+
+
+    def beginProgresser(self,sess,*args,**kw):
+        self._currentProgresser=Progresser(self._currentProgresser)
+        
     
-    def createJob(self,sess,*args,**kw):
-        job=self.jobFactory()
-        job.init(sess,*args,**kw)
-        return job
+##     def createJob(self,sess,*args,**kw):
+##         job=self.jobFactory()
+##         job.init(sess,*args,**kw)
+##         return job
     
 ##     def createProgresser(self,sess,*args,**kw):
 ##         return self.progresserFactory(sess,*args,**kw)
@@ -175,7 +184,7 @@ class AbstractToolkit:
 class Console(AbstractToolkit):
 
     purzelMann = "|/-\\"
-    jobFactory = Job #progresserFactory = Progresser
+    #jobFactory = Job #progresserFactory = Progresser
 
     def __init__(self, stdout, stderr,**kw):
         AbstractToolkit.__init__(self)
@@ -232,7 +241,7 @@ class Console(AbstractToolkit):
         self._stdout(msg+"\n")
 
             
-    def status(self,sess,msg, *args,**kw):
+    def status(self,sess,msg=None, *args,**kw):
         if msg is not None:
             assert type(msg) == type('')
             self.verbose(sess,msg,*args,**kw)
@@ -284,24 +293,99 @@ class Console(AbstractToolkit):
             
 
 
-    def onJobRefresh(self,job):
+    def onTaskBegin(self,task):
+        if task.getLabel() is not None:
+            task.session.notice(task.getLabel())
+
+    def onTaskDone(self,task,msg):
+        self._display_task(task)
+        task.session.status(None)
+        task.summary()
+        if msg is not None:
+            task.session.notice(task.getLabel() + ": " + msg)
+    
+    def onTaskAbort(self,task,msg):
+        task.session.status(None)
+        task.summary()
+        task.session.error(task.getLabel() + ": " + msg)
+
+    def onTaskIncrement(self,task):
+        self._display_task(task)
+        
+    def onTaskBreathe(self,task):
         pass
     
-    def onJobInit(self,job):
-        if job.getLabel() is not None:
-            self.notice(job.session,job.getLabel())
-
-    def onJobDone(self,job,msg):
-        self._display_job(job)
-        self.status(job.session,None)
-        job.summary()
-        if msg is not None:
-            self.notice(job.session,job.getLabel() + ": " + msg)
+    def _display_task(self,task):
+        if task.maxval == 0:
+            s = '[' + self.purzelMann[task.curval % 4] + "] "
+        else:
+            if task.percentCompleted is None:
+                s = "[    ] " 
+            else:
+                s = "[%3d%%] " % task.percentCompleted
+        task.session.status(s+task.getStatus())
+        
     
-    def onJobAbort(self,job,msg):
-        self.status(job.session,None)
-        job.summary()
-        self.error(job.session,job.getLabel() + ": " + msg)
+        
+
+            
+##     def onJobRefresh(self,job):
+##         pass
+    
+##     def onJobInit(self,job):
+##         if job.getLabel() is not None:
+##             self.notice(job.session,job.getLabel())
+
+##     def onJobDone(self,job,msg):
+##         self._display_job(job)
+##         self.status(job.session,None)
+##         job.summary()
+##         if msg is not None:
+##             self.notice(job.session,job.getLabel() + ": " + msg)
+    
+##     def onJobAbort(self,job,msg):
+##         self.status(job.session,None)
+##         job.summary()
+##         self.error(job.session,job.getLabel() + ": " + msg)
+
+
+
+##     def onJobRefresh(self,job):
+##         self._display_job(job)
+##         if self.abortRequested():
+##             if job.confirmAbort():
+##                 #job.abort()
+##                 raise JobAborted(job)
+                
+##     def _display_job(self,job):
+##         if job.maxval == 0:
+##             s = '[' + self.purzelMann[job.curval % 4] + "] "
+##         else:
+##             if job.pc is None:
+##                 s = "[    ] " 
+##             else:
+##                 s = "[%3d%%] " % job.pc
+##         self.status(job.session,s+job.getStatus())
+    
+
+        
+##     def abortRequested(self):
+##         return False
+        
+    def abortRequested(self):
+        if not msvcrt: return False
+        # print "abortRequested"
+        while msvcrt.kbhit():
+            ch = msvcrt.getch()
+            #print ch
+            if ord(ch) == 0: #'\000':
+                ch = msvcrt.getch()
+                if ord(ch) == 27:
+                    return True
+            elif ord(ch) == 27:
+                return True
+        return False
+
 
             
         
@@ -365,7 +449,11 @@ class Console(AbstractToolkit):
         self.writeout(msg)
         #self.alert(msg)
         if not self._batch:
-            raw_input("Press ENTER to continue...")
+            self.readkey("Press ENTER to continue...")
+
+
+    def readkey(self,msg):
+        return raw_input(msg)
             
             
     def confirm(self,sess,prompt,default="y"):
@@ -387,7 +475,7 @@ class Console(AbstractToolkit):
             assert default == "n"
             prompt += " [y,N]"
         while True:
-            s = raw_input(prompt)
+            s = self.readkey(prompt)
             if s == "":
                 s = default
             s = s.lower()
@@ -416,7 +504,7 @@ class Console(AbstractToolkit):
         if sound:
             sound.asterisk()
         while True:
-            s = raw_input(prompt+(" [%s]" % ",".join(answers)))
+            s = self.readkey(prompt+(" [%s]" % ",".join(answers)))
             if s == "":
                 s = default
             if ignoreCase:
@@ -426,10 +514,10 @@ class Console(AbstractToolkit):
             self.warning("wrong answer: "+s)
 
 
-    def job(self,*args,**kw):
-        job = Job()
-        job.init(self,*args,**kw)
-        return job
+##     def job(self,*args,**kw):
+##         job = Job()
+##         job.init(self,*args,**kw)
+##         return job
     
     def textprinter(self,sess,**kw):
         from lino.textprinter.plain import PlainTextPrinter
@@ -448,42 +536,6 @@ class Console(AbstractToolkit):
         gd.endDocument()
     
 
-
-##     def abortRequested(self):
-##         return False
-        
-    def abortRequested(self):
-        if not msvcrt: return False
-        # print "abortRequested"
-        while msvcrt.kbhit():
-            ch = msvcrt.getch()
-            #print ch
-            if ord(ch) == 0: #'\000':
-                ch = msvcrt.getch()
-                if ord(ch) == 27:
-                    return True
-            elif ord(ch) == 27:
-                return True
-        return False
-
-
-    def onJobRefresh(self,job):
-        self._display_job(job)
-        if self.abortRequested():
-            if job.confirmAbort():
-                #job.abort()
-                raise JobAborted(job)
-                
-    def _display_job(self,job):
-        if job.maxval == 0:
-            s = '[' + self.purzelMann[job.curval % 4] + "] "
-        else:
-            if job.pc is None:
-                s = "[    ] " 
-            else:
-                s = "[%3d%%] " % job.pc
-        self.status(job.session,s+job.getStatus())
-    
 
 
 class TtyConsole(Console):
@@ -527,7 +579,7 @@ class TtyConsole(Console):
         self._refresh()
         
         
-    def status(self,sess,msg,*args,**kw):
+    def status(self,sess,msg=None,*args,**kw):
         if msg is None:
             self._status = None
         else:
@@ -539,6 +591,10 @@ class TtyConsole(Console):
         if self._status is not None:
             self._stdout(self._status+"\r")
 
+    def readkey(self,msg):
+        if self._status is not None:
+            self._stdout(self._status+"\n")
+        return raw_input(msg)
 
 
 class CaptureConsole(Console):

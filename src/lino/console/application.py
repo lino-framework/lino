@@ -36,24 +36,9 @@ class ApplicationError(Exception):
 
 
 
-from lino.misc.jobs import Task
+#from lino.misc.jobs import Task
+from task import Task, BugDemo
 from time import sleep
-
-class BugDemo(Task):
-
-    def __init__(self,maxval=10):
-        Task.__init__(self,maxval=10)
-    
-    def start(self):
-        for i in range(self.maxval,0,-1):
-            self.status("%d seconds left",i)
-            sleep(1)
-            
-        self.thisWontWork()
-            
-    def getLabel(self):
-        return "Let's see what happens if an exception occurs..."
-
 
 
 #class Application(CLI):
@@ -121,8 +106,8 @@ class Application:
         m = frm.addMenu("system","&Programm")
         m.addItem("logout",label="&Beenden",action=frm.close)
         m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
-        m.addItem("bug",label="&Bug demo").setHandler(BugDemo().run,
-                                                      sess)
+        m.addItem("bug",label="&Bug demo").setHandler(sess.runTask,
+                                                      BugDemo())
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
 

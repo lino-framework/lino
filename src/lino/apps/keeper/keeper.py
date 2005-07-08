@@ -40,7 +40,7 @@ class Keeper(Schema):
         searchData = sess.query(Files,"name")
         occs=searchData.addColumn("occurences")
         
-        frm = sess.session.form(label="Search")
+        frm = sess.form(label="Search")
 
         searchString = frm.addEntry("searchString",STRING,
                                     label="Words to look for",
@@ -74,8 +74,8 @@ class Keeper(Schema):
 
 
 
-    def showMainForm(self,dbsess):
-        frm = dbsess.session.form(
+    def showMainForm(self,sess):
+        frm = sess.form(
             label="Main menu",
             doc="""\
 This is the Keeper main menu.                                    
@@ -83,21 +83,21 @@ This is the Keeper main menu.
 
         m = frm.addMenu("search","&Suchen")
         m.addItem("search",label="&Suchen").setHandler(
-            self.showSearchForm,dbsess)
+            self.showSearchForm,sess)
     
         m = frm.addMenu("db","&Datenbank")
         m.addItem("volumes",label="&Volumes").setHandler(
-            dbsess.showViewGrid, Volumes)
+            sess.showViewGrid, Volumes)
         m.addItem("files",label="&Files").setHandler(
-            dbsess.showViewGrid, Files)
+            sess.showViewGrid, Files)
         m.addItem("dirs",label="&Directories").setHandler(
-            dbsess.showViewGrid, Directories)
+            sess.showViewGrid, Directories)
         m.addItem("words",label="&Words").setHandler(
-            dbsess.showViewGrid, Words)
+            sess.showViewGrid, Words)
         
-        self.addProgramMenu(dbsess,frm)
+        self.addProgramMenu(sess,frm)
 
-        frm.addOnClose(dbsess.close)
+        frm.addOnClose(sess.close)
 
         frm.show()
 
@@ -105,6 +105,6 @@ This is the Keeper main menu.
 if __name__ == '__main__':
     from lino.forms import gui
     app=Keeper()
-    ctx=app.quickStartup()
-    ctx.populate(TestPopulator())
-    gui.run(ctx)
+    sess=app.quickStartup()
+    sess.populate(TestPopulator())
+    gui.run(sess)

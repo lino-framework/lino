@@ -18,6 +18,13 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+
+
+raise """
+Task moved to lino.console.task
+Job no longer used
+"""
+
 from lino.i18n import itr,_
 
 itr("Working",
@@ -180,42 +187,42 @@ class TaskJob(BaseJob):
 
 class Task:
 
-    def __init__(self,*args,**kw):
-        self.configure(*args,**kw)
+    def __init__(self,sess):
+        assert sess.toolkit is not None
+        self.session=sess
+        #self.maxval=maxval
+        self.count_errors = 0
+        self.count_warnings = 0
+
+    def getMaxVal(self):
+        return 0
 
 
-    def run(self,session,*args,**kw):
+    def run_in_session(self,sess):
         # don't override
-        assert session.toolkit is not None
-        #self.reconfigure(*args,**kw)
-        self.job=TaskJob()
-        self.job.init(session,self)
+        pgr=self.session.beginProgresser(maxval=self.getMaxVal())
+        #self.job=TaskJob()
+        #self.job.init(session,self)
         #self.job = session.job(self.getLabel(),self.maxval)
         try:
             self.start()
-            self.job.done()
+            pgr.done()
         except JobAborted,e:
             # may raise during Toolkit.onJobRefresh
-            assert e.job == self.job
-            self.job.abort()
+            assert e.job == pgr
+            pgr.abort()
         except Exception,e:
-            session.exception(e)
-            self.job.abort()
+            self.session.exception(e)
+            pgr.abort()
 ##             # some uncaught exception occured
 ##             print e
 ##             self.job.abort(repr(e))
             
             
-    def configure(self,maxval=0):
-        # may override
-        self.maxval=maxval
-        self.count_errors = 0
-        self.count_warnings = 0
-
 ##     def reconfigure(self,*args,**kw):
 ##         self.configure(*args,**kw)
 
-    def start(self):
+    def run(self):
         raise NotImplementedError
 
     def getStatus(self):
@@ -227,21 +234,18 @@ class Task:
 
     def summary(self):
         # may override
-        self.notice(_("%d warnings"),self.count_warnings)
-        self.notice(_("%d errors"), self.count_errors)
+        self.session.notice(_("%d warnings"),self.count_warnings)
+        self.session.notice(_("%d errors"), self.count_errors)
 
         
 
     def error(self,*args,**kw):
         self.count_errors += 1
-        self.job.error(*args,**kw)
+        self.session.error(*args,**kw)
 
     def warning(self,*args,**kw):
         self.count_warnings += 1
-        self.job.warning(*args,**kw)
-        
-    def status(self,*args,**kw):
-        self.job.status(*args,**kw)
+        self.session.warning(*args,**kw)
         
 
 

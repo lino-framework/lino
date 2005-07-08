@@ -162,12 +162,13 @@ for funcname in (
     'debug',
     'notice','status','warning',
     'verbose', 'error','critical',
-    'job',
+    #'job',
     'isInteractive','isVerbose',
     'exception',
     'message','confirm',
     'showReport',
     'textprinter',
+    'runTask'
     ):
     g[funcname] = getattr(_session,funcname)
         

@@ -51,7 +51,7 @@ class Volumes(Table):
             return self.path
         
         def load(self,sess):
-            VolumeVisitor(self).run(sess)
+            sess.runTask(VolumeVisitor(self))
 
         def delete(self):
             self.directories.deleteAll()

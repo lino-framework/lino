@@ -88,10 +88,10 @@ class BaseSession:
 
     
     
-    def job(self,*args,**kw):
-        #job=self.toolkit.progresserFactory(self,*args,**kw)
-        #job=self.toolkit.jobFactory(self,*args,**kw)
-        return self.toolkit.createJob(self,*args,**kw)
+##     def job(self,*args,**kw):
+##         #job=self.toolkit.progresserFactory(self,*args,**kw)
+##         #job=self.toolkit.jobFactory(self,*args,**kw)
+##         return self.toolkit.createJob(self,*args,**kw)
 
         
         
@@ -108,8 +108,8 @@ class BaseSession:
     def isVerbose(self):
         return self.toolkit.isVerbose()
         
-    def runTask(self,taskClass):
-        taskClass().run(self)
+    def runTask(self,task):
+        task.run_in_session(self)
 
 class Session(BaseSession):
     

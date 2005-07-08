@@ -80,11 +80,12 @@ def check():
 ##     #assert _app is not None, "only for use with automagicApp"
 ##     return _toolkit.parse_args(*args,**kw)
 
-def run(context):
+def run(sess):
     check()
-    syscon.setToolkit(_toolkit)
+    sess.setToolkit(_toolkit)
+    #print _toolkit
     #_toolkit.addSession(sess)
-    _toolkit.run_forever(context)
+    _toolkit.run_forever(sess)
     #_toolkit.main(app)
 
 

@@ -70,7 +70,7 @@ continue testing even if failures or errors occur""",
     
     def makeSuite(self,sess,argv,root='.'):
 
-        job = sess.job("Collecting test cases")
+        sess.status("Collecting test cases")
         suites=[]
         cases = []
         #skipped=[]
@@ -81,7 +81,7 @@ continue testing even if failures or errors occur""",
                 prefix+="."
             #print dirpath
             for filename in filenames:
-                job.status(os.path.join(dirpath,filename))
+                sess.status(os.path.join(dirpath,filename))
                 modname,ext = os.path.splitext(filename)
                 if ext == '.py':
                     doit = (len(argv) == 0)
@@ -100,18 +100,18 @@ continue testing even if failures or errors occur""",
                             if modname == a[0]:
                                 doit = True
                         else:
-                            job.warning("Unrecognized argument %s",
-                                        arg)
+                            sess.warning("Unrecognized argument %s",
+                                         arg)
                     if doit:
                         modname=prefix+modname
-                        job.verbose("Loading cases from %s...",
-                                   modname)
+                        sess.verbose("Loading cases from %s...",
+                                     modname)
                         
                         self.findTestCases(sess,modname,cases,suites)
         sys.path.remove(root)
 
-        job.done("found %d cases and %d suites.",
-                 len(cases),len(suites))
+        sess.notice("found %d cases and %d suites.",
+                    len(cases),len(suites))
         for tcl in cases:
             if hasattr(tcl,"todo"):
                 sess.notice("Todo %s : %s", tcl.__module__,tcl.todo)
@@ -142,7 +142,7 @@ continue testing even if failures or errors occur""",
     
     def run(self,sess):
         suite = self.makeSuite(sess,self.args)
-        
+        sess.status("")
         if self.options.ignore:
             runner = unittest.TextTestRunner()
         else:
