@@ -192,6 +192,7 @@ class Console(AbstractToolkit):
         self._stderr = stderr
         self._verbosity = 0
         self._batch = False
+        #self._status = None
         #self._started = time.time()
         #self._dumping = None
         # UI.__init__(self)
@@ -241,10 +242,9 @@ class Console(AbstractToolkit):
         self._stdout(msg+"\n")
 
             
-    def status(self,sess,msg=None, *args,**kw):
+    def showStatus(self,sess,msg):
         if msg is not None:
-            assert type(msg) == type('')
-            self.verbose(sess,msg,*args,**kw)
+            sess.verbose(msg)
 
     def error(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
@@ -297,25 +297,32 @@ class Console(AbstractToolkit):
         if task.getLabel() is not None:
             task.session.notice(task.getLabel())
 
-    def onTaskDone(self,task,msg):
-        self._display_task(task)
-        task.session.status(None)
-        task.summary()
-        if msg is not None:
-            task.session.notice(task.getLabel() + ": " + msg)
+    def onTaskDone(self,task):
+        self.onTaskStatus(task)
+        task.session.status()
+        #task.summary()
+        #if msg is not None:
+        #    task.session.notice(task.getLabel() + ": " + msg)
     
-    def onTaskAbort(self,task,msg):
-        task.session.status(None)
-        task.summary()
-        task.session.error(task.getLabel() + ": " + msg)
+    def onTaskAbort(self,task):
+        self.onTaskStatus(task)
+        task.session.status()
+        #task.summary()
+        #if task.getLabel() is not None:
+        #    msg = task.getLabel() + ": " + msg
+        #task.session.error(msg)
 
     def onTaskIncrement(self,task):
-        self._display_task(task)
+        self.onTaskStatus(task)
         
     def onTaskBreathe(self,task):
+        if self.abortRequested():
+            task.requestAbort()
+    
+    def onTaskResume(self,task):
         pass
     
-    def _display_task(self,task):
+    def onTaskStatus(self,task):
         if task.maxval == 0:
             s = '[' + self.purzelMann[task.curval % 4] + "] "
         else:
@@ -323,7 +330,11 @@ class Console(AbstractToolkit):
                 s = "[    ] " 
             else:
                 s = "[%3d%%] " % task.percentCompleted
-        task.session.status(s+task.getStatus())
+        if task.session.statusMessage is None:
+            self.showStatus(task.session,s)
+        else:
+            self.showStatus(task.session,
+                            s+task.session.statusMessage)
         
     
         
@@ -449,10 +460,10 @@ class Console(AbstractToolkit):
         self.writeout(msg)
         #self.alert(msg)
         if not self._batch:
-            self.readkey("Press ENTER to continue...")
+            self.readkey(sess,"Press ENTER to continue...")
 
 
-    def readkey(self,msg):
+    def readkey(self,sess,msg):
         return raw_input(msg)
             
             
@@ -475,7 +486,7 @@ class Console(AbstractToolkit):
             assert default == "n"
             prompt += " [y,N]"
         while True:
-            s = self.readkey(prompt)
+            s = self.readkey(sess,prompt)
             if s == "":
                 s = default
             s = s.lower()
@@ -504,7 +515,7 @@ class Console(AbstractToolkit):
         if sound:
             sound.asterisk()
         while True:
-            s = self.readkey(prompt+(" [%s]" % ",".join(answers)))
+            s = self.readkey(sess,prompt+(" [%s]" % ",".join(answers)))
             if s == "":
                 s = default
             if ignoreCase:
@@ -543,57 +554,53 @@ class TtyConsole(Console):
     width = 78  # 
 
 
-    def __init__(self,*args,**kw):
-        self._status = None
-        Console.__init__(self,*args,**kw)
-
 
     def warning(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         Console.warning(self,sess,msg.ljust(self.width))
-        self._refresh()
+        self._refresh(sess)
         
     def message(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         Console.message(self,sess,msg.ljust(self.width))
-        self._refresh()
+        self._refresh(sess)
         
     def notice(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         Console.notice(self,sess,msg.ljust(self.width))
-        self._refresh()
+        self._refresh(sess)
         
     def verbose(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         Console.verbose(self,sess,msg.ljust(self.width))
-        self._refresh()
+        self._refresh(sess)
         
     def error(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         Console.error(self,sess,msg.ljust(self.width))
-        self._refresh()
+        self._refresh(sess)
         
     def critical(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         Console.critical(self,sess,msg.ljust(self.width))
-        self._refresh()
+        self._refresh(sess)
         
         
-    def status(self,sess,msg=None,*args,**kw):
+    def showStatus(self,sess,msg):
         if msg is None:
-            self._status = None
+            msg=''
         else:
-            msg = sess.buildMessage(msg,*args,**kw)
-            self._status = msg[:self.width]
-            self._stdout(self._status.ljust(self.width)+"\r")
+            msg = msg[:self.width]
+        self._stdout(msg.ljust(self.width)+"\r")
 
-    def _refresh(self):
-        if self._status is not None:
-            self._stdout(self._status+"\r")
+    def _refresh(self,sess):
+        self.showStatus(sess,sess.statusMessage)
+        #if sess._status is not None:
+        #    self._stdout(sess._status+"\r")
 
-    def readkey(self,msg):
-        if self._status is not None:
-            self._stdout(self._status+"\n")
+    def readkey(self,sess,msg):
+        if sess.statusMessage is not None:
+            self._stdout(sess.statusMessage.ljust(self.width)+"\n")
         return raw_input(msg)
 
 

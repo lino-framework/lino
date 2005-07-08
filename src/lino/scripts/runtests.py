@@ -142,7 +142,7 @@ continue testing even if failures or errors occur""",
     
     def run(self,sess):
         suite = self.makeSuite(sess,self.args)
-        sess.status("")
+        sess.status()
         if self.options.ignore:
             runner = unittest.TextTestRunner()
         else:

@@ -26,7 +26,7 @@ from lino.forms import base, gui
 from lino.forms.wx import wxgrid
 #from lino.console import syscon
 #from lino.forms.wx.showevents import showEvents
-from lino.misc import jobs
+#from lino.misc import jobs
 
 WEIGHT = 1
 
@@ -416,10 +416,10 @@ class Form(base.Form):
         assert self.wxctrl is None
         base.Form.setParent(self,parent)
         
-    def job(self,*args,**kw):
-        job = jobs.Job()
-        job.init(self,*args,**kw)
-        return job
+##     def job(self,*args,**kw):
+##         job = jobs.Job()
+##         job.init(self,*args,**kw)
+##         return job
     
     def setup(self):
         assert self.wxctrl is None
@@ -583,7 +583,7 @@ class Form(base.Form):
         #self.session.toolkit._activeForm = self._parent
         
     def OnSetFocus(self,evt):
-        self.session.toolkit._activeForm = self
+        self.session.setActiveForm(self)
 
 
     def OnChar(self, evt):
@@ -647,7 +647,7 @@ class Toolkit(base.Toolkit):
     dataGridFactory = DataGrid
     navigatorFactory = DataNavigator
     formFactory = Form
-    jobFactory=jobs.Job
+    #jobFactory=jobs.Job
     #progresserFactory=Progresser
     
     def __init__(self,*args,**kw):
@@ -657,49 +657,47 @@ class Toolkit(base.Toolkit):
         #self._running = False
         self._session=None
         self.wxapp = None
-        self._abortRequested = False
-        self._activeForm=None
+        #self._activeForm=None
 
 
 
-    def status(self,sess,msg,*args,**kw):
+    def showStatus(self,sess,msg):
         frm=sess._activeForm
         if frm is None or frm.modal:
-            base.Toolkit.status(self,sess,msg,*args,**kw)
+            base.Toolkit.showStatus(self,sess,msg)
             #syscon.status(msg,*args,**kw)
         else:
             frm.wxctrl.SetStatusText(msg)
 
-    def abortRequested(self):
-        return self._abortRequested
-
     def onTaskBegin(self,task):
         #assert self.progressDialog is None
         #print job
-        assert self._activeForm is not None
+        assert task.session._activeForm is not None
         task.wxctrl = wx.ProgressDialog(
             task.getLabel(),
             task.getStatus(),
             100,
-            self._activeForm.wxctrl,
+            task.session._activeForm.wxctrl,
             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
         #return self.app.toolkit.console.onJobInit(job)
+
+    def onTaskStatus(self,task):
+        if task.wxctrl is None: return
+        pc = task.percentCompleted
+        if pc is None: pc = 0
+        msg=task.session.statusMessage
+        if msg is None: msg=''
+        if not task.wxctrl.Update(pc,msg):
+            task.requestAbort()
+        
+    def onTaskIncrement(self,task):
+        self.onTaskStatus(task)
 
     def onTaskBreathe(self,task):
         self.run_awhile()
         
-    def onTaskIncrement(self,task):
-        pc = task.percentCompleted
-        if pc is None:
-            pc = 0
-        if task.wxctrl is None:
-            return
-        if not task.wxctrl.Update(pc,task.getStatus()):
-            self._abortRequested=True
-
     def onTaskResume(self,task):
-        if task.wxctrl is None:
-            return
+        if task.wxctrl is None: return
         task.wxctrl.Resume()
         
     def onTaskDone(self,task,msg):

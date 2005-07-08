@@ -67,7 +67,7 @@ itr("remove file %s",de=u"Lösche Datei %s")
 itr("create directory %s",de="Erstelle Ordner %s")
 itr("copy file %s to %s",de=u"Kopiere Datei %s nach %s")
 itr("keep %d, update %d, copy %d, delete %d files.",
-    de=u"%d belassen, %d+%d kopieren, %d löschen")
+    de=u"%d belassen, %d+%d kopieren, %d löschen.")
 itr( "%d files and %d directories ",
      de="%d Dateien in %d Ordnern ",
      fr=u"%d fichiers das %d répertoires ")
@@ -117,12 +117,12 @@ class SynchronizerTask(Task):
 
     def getMaxVal(self):
         if not self.showProgress: return 0
-        self.session.status(_("Counting directories..."))
+        self.status(_("Counting directories..."))
         n = 0
         for root, dirs, files in os.walk(self.src):
             n += len(dirs)
             n += len(files)
-        self.session.status(_("Found %d directories.") % n)
+        self.status(_("Found %d directories.") % n)
         return n
     
     def run(self):
@@ -133,7 +133,7 @@ class SynchronizerTask(Task):
         if os.path.exists(self.target):
             self.update_it(self.src,self.target)
         else:
-            self.copy(self.src,self.target)
+            self.copy_it(self.src,self.target)
 
         
     def utime(self,src,target):
@@ -151,7 +151,8 @@ class SynchronizerTask(Task):
             self.error("os.utime() failed: %s",e)
 
                 
-    def copy(self,src,target):
+    def copy_it(self,src,target):
+        self.setStatus()
         self.increment()
         if os.path.isfile(src):
             self.copy_file(src,target)
@@ -162,6 +163,7 @@ class SynchronizerTask(Task):
                 "%s is neither file nor directory" % src)
 
     def update_it(self,src,target):
+        self.setStatus()
         self.increment()
         if os.path.isfile(src):
             self.update_file(src,target)
@@ -172,6 +174,7 @@ class SynchronizerTask(Task):
                 "%s is neither file nor directory" % src)
         
     def delete(self,name):
+        self.setStatus()
         self.breathe()
         if os.path.isfile(name):
             self.delete_file(name)
@@ -211,7 +214,7 @@ class SynchronizerTask(Task):
         del destnames
 
         for s,t in mustCopy:
-            self.copy(s,t)
+            self.copy_it(s,t)
         del mustCopy
             
         for s,t in mustUpdate:
@@ -287,8 +290,8 @@ class SynchronizerTask(Task):
             self.utime(src,target)
             
         for fn in os.listdir(src):
-            self.copy(os.path.join(src,fn),
-                      os.path.join(target,fn))
+            self.copy_it(os.path.join(src,fn),
+                         os.path.join(target,fn))
         
     def copy_file(self,src,target):
         self.count_copy_file += 1
@@ -340,38 +343,32 @@ class SynchronizerTask(Task):
             self.error("os.remove('%s') failed",name)
             
     def summary(self):
+        l=[]
+        l.append( _("%d files up-to-date") % self.count_uptodate)
         s = _("%d files and %d directories ")
         if self.simulate:
             s += _("would have been removed")
         else:
             s += _("were removed")
-        self.session.notice(s,
-                            self.count_delete_file,
-                            self.count_delete_dir)
+
+        l.append(s % (self.count_delete_file,self.count_delete_dir))
         
         s = _("%d files and %d directories ")
         if self.simulate:
             s += _("would have been updated")
         else:
             s += _("were updated")
-        self.session.notice(s,
-                            self.count_update_file,
-                            self.count_update_dir,
-                            )
+        l.append(s % (self.count_update_file, self.count_update_dir))
         
         s = _("%d files and %d directories ")
         if self.simulate:
             s += _("would have been copied")
         else:
             s += _("were copied")
-        self.session.notice(s,
-                            self.count_copy_file,
-                            self.count_copy_dir,
-                            )
+        l.append(s % (self.count_copy_file, self.count_copy_dir))
         
-        self.session.notice(
-            _("%d files up-to-date"),self.count_uptodate)
-        Task.summary(self)
+        l += Task.summary(self)
+        return l
 
     def getStatus(self):
         s = _("keep %d, update %d, copy %d, delete %d files.") % (

@@ -731,7 +731,7 @@ class Toolkit(AbstractToolkit):
         self.console = console
         # non-overridable forwarding
         for funcname in (
-            'debug', 'notice','warning',
+            'debug', 'warning',
             'verbose', 'error',
             #'critical',
             #'job',
@@ -744,6 +744,9 @@ class Toolkit(AbstractToolkit):
             ):
             setattr(self,funcname,getattr(console,funcname))
 
+    def notice(self,*args,**kw):
+        self.message(*args,**kw)
+        
     def status(self,*args,**kw):
         # overridable forwarding
         return self.console.status(*args,**kw)

@@ -71,7 +71,7 @@ class VolumeVisitor(Task):
             self.error("%s : no such file or directory",fullname)
 
     def load(self,fullname,shortname,dir=None):
-        self.session.status(fullname)
+        self.status(fullname)
         if os.path.isfile(fullname):
             #if self.reloading:
             #    row = self.files.peek(dir,shortname)
@@ -145,10 +145,10 @@ class FileVisitor(Task):
         base,ext = os.path.splitext(name)
         #
         if ext.lower() == ".txt":
-            self.session.status(name)
+            self.status(name)
             s = open(name).read()
             coding = self.encodingGuesser.guess(name,s)
-            self.session.status("%s: %s", name,coding)
+            self.status("%s: %s", name,coding)
             #print name,":",coding
             if coding:
                 tokens = standardTokenizer(s.decode(coding))
@@ -166,12 +166,12 @@ class FileVisitor(Task):
 ##                     count += 1
 ##             self.verbose("%s contains %d words.", name, count)
         elif ext == ".doc":
-            self.session.status("Ignoring MS-Word %s.", name)
+            self.status("Ignoring MS-Word %s.", name)
             #msdoc = MsWordDocument(name)
             #fileRow.title = msdoc.title
             #self.loadWords(fileRow,msdoc.content.split())
         else:
-            self.session.status("Ignoring unknown file %s.", name)
+            self.status("Ignoring unknown file %s.", name)
                     
     def loadWords(self,fileRow,tokens):
         #self.status("%s : %d words",fileRow.name,len(tokens))
@@ -181,7 +181,7 @@ class FileVisitor(Task):
         pos = 0
         for token in tokens:
             pos += 1
-            self.session.status(fileRow.path()+": "+token)
+            self.status(fileRow.path()+": "+token)
             word = self.words.peek(token)
             if word is None:
                 word = self.words.appendRow(id=token)

@@ -37,9 +37,12 @@ class TestTask(Task):
         return "Testing uncomplete tasks"
     
     def run(self):
+        self.status("Running...")
         for i in range(5):
+            for c in "abc":
+                self.status("Performing step %d%s)",i+1,c)
             self.increment()
-        self.done("done in only 5 steps.")
+        self.status("Done in only 5 steps.")
         
 
 class Case(TestCase):
@@ -59,15 +62,31 @@ class Case(TestCase):
         #print s
         self.assertEquivalent(s,"""
 Testing uncomplete tasks
-[ 10%] 0 warnings. 0 errors.
-[ 20%] 0 warnings. 0 errors.
-[ 30%] 0 warnings. 0 errors.
-[ 40%] 0 warnings. 0 errors.
-[ 50%] 0 warnings. 0 errors.
-[100%] 0 warnings. 0 errors.
+[  0%] Running...
+[  0%] Performing step 1a)
+[  0%] Performing step 1b)
+[  0%] Performing step 1c)
+[ 10%] Performing step 1c)
+[ 10%] Performing step 2a)
+[ 10%] Performing step 2b)
+[ 10%] Performing step 2c)
+[ 20%] Performing step 2c)
+[ 20%] Performing step 3a)
+[ 20%] Performing step 3b)
+[ 20%] Performing step 3c)
+[ 30%] Performing step 3c)
+[ 30%] Performing step 4a)
+[ 30%] Performing step 4b)
+[ 30%] Performing step 4c)
+[ 40%] Performing step 4c)
+[ 40%] Performing step 5a)
+[ 40%] Performing step 5b)
+[ 40%] Performing step 5c)
+[ 50%] Performing step 5c)
+[100%] Performing step 5c)
 0 warnings
 0 errors
-Testing uncomplete tasks: done in only 5 steps.
+Testing uncomplete tasks: Done in only 5 steps.
 """)
         
 

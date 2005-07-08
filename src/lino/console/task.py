@@ -19,6 +19,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+from time import sleep
+
 from lino.i18n import itr,_
 
 itr("Working",
@@ -50,28 +52,74 @@ class Task:
         self.count_errors = 0
         self.count_warnings = 0
         self._done = False
+        self._abortRequested = False
 
 
     def run_in_session(self,sess):
         # don't override. Called by Session.runTask()
         assert self.session is None
         self.session=sess
+        self._done=False
+        self._abortRequested=False
         self.maxval=self.getMaxVal()
         self.percentCompleted=0
         
         self.session.toolkit.onTaskBegin(self)
+        showSummary=True
+        
         try:
             self.run()
-            self.done()
+            self._done = True
+            self.percentCompleted = 100
+            self.session.toolkit.onTaskDone(self)
+            
         except TaskAborted,e:
             # may raise during Toolkit.onTaskBreathe
             assert e.task == self
-            self.abort()
+            #self.abort()
+            self._done = True
+            self.session.toolkit.onTaskAbort(self)
+            
         except Exception,e:
             # some uncaught exception occured
+            #self.abort()
+            self._done = True
+            self.session.toolkit.onTaskAbort(self)
             self.session.exception(e)
-            self.abort()
+            showSummary=False
+
+        if showSummary:
+            l=self.summary()
+            if len(l):
+                sess.notice("\n".join(l))
+
+        self.session=None
         
+    def requestAbort(self):
+        self._abortRequested=True
+            
+##     def abortRequested(self):
+##         return self._abortRequested
+
+
+    def sleep(self,n=1.0):
+        sleepStep=0.1
+        while n > 0:
+            self.breathe()
+            n-=sleepStep
+            if n == 0: return
+            sleep(sleepStep)
+
+        
+    def breathe(self):
+        self.session.toolkit.onTaskBreathe(self)
+        if self._abortRequested:
+            if self.session.confirm(
+                _("Are you sure you want to abort?")):
+                raise TaskAborted(self)
+            self._abortRequested=False
+            self.session.toolkit.onTaskResume(self)
+
 
     def increment(self,n=1):
         self.curval += n
@@ -85,21 +133,17 @@ class Task:
         self.session.toolkit.onTaskIncrement(self)
         self.breathe()
 
-    def breathe(self):
-        if self.session.toolkit.abortRequested():
-            if self.session.confirm(
-                _("Are you sure you want to abort?")):
-                raise TaskAborted(self)
-            self.session.toolkit.onTaskResume(self)
-        self.session.toolkit.onTaskBreathe(self)
-
-    def done(self,msg=None,*args,**kw):
-        if self._done: return
+    def status(self,msg,*args,**kw):
         if msg is not None:
             msg = self.session.buildMessage(msg,*args,**kw)
-        self._done = True
-        self.percentCompleted = 100
-        self.session.toolkit.onTaskDone(self,msg)
+        self.session.setStatusMessage(msg)
+        self.session.toolkit.onTaskStatus(self)
+        self.breathe()
+        
+##     def done(self,msg=None,*args,**kw):
+##         if self._done: return
+##         if msg is not None:
+##             msg = self.session.buildMessage(msg,*args,**kw)
 
     def abort(self,msg=None):
         if msg is None:
@@ -121,17 +165,23 @@ class Task:
         # may override
         return 0
 
+    def setStatus(self):
+        self.session.setStatusMessage(self.getStatus())
+
     def getStatus(self):
         # may override
         s = _("%d warnings") % (self.count_warnings) 
         s += ". " + _("%d errors") % (self.count_errors) + "."
         return s
 
+    
+
 
     def summary(self):
         # may override
-        self.session.notice(_("%d warnings"),self.count_warnings)
-        self.session.notice(_("%d errors"), self.count_errors)
+        return [
+            _("%d warnings") % self.count_warnings,
+            _("%d errors") % self.count_errors ]
 
         
     def run(self):
@@ -141,20 +191,17 @@ class Task:
 
 class BugDemo(Task):
 
-##     def __init__(self):
-##         Task.__init__(self)
-        
+    def getLabel(self):
+        return "Let's see what happens if an exception occurs..."
+
     def getMaxVal(self):
         return 10
     
     def run(self):
         for i in range(self.getMaxVal(),0,-1):
-            self.session.status("%d seconds left",i)
-            sleep(1)
+            self.status("%d seconds left",i)
+            self.sleep(1)
             
         self.thisWontWork()
             
-    def getLabel(self):
-        return "Let's see what happens if an exception occurs..."
-
 

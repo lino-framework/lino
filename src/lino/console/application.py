@@ -38,7 +38,6 @@ class ApplicationError(Exception):
 
 #from lino.misc.jobs import Task
 from task import Task, BugDemo
-from time import sleep
 
 
 #class Application(CLI):

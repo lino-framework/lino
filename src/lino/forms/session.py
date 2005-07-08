@@ -19,7 +19,9 @@
 from lino.console.console import AbstractToolkit
 
 class BaseSession:
+    
     def __init__(self,toolkit):
+        self.statusMessage=None
         self._ignoreExceptions = []
         self.setToolkit(toolkit)
         
@@ -57,9 +59,16 @@ class BaseSession:
         return msg % args
     
 
+    def status(self,msg=None,*args,**kw):
+        if msg is not None:
+            assert type(msg) == type('')
+            msg=self.buildMessage(msg,*args,**kw)
+        self.statusMessage=msg
+        return self.toolkit.showStatus(self,self.statusMessage)
 
-    def status(self,*args,**kw):
-        return self.toolkit.status(self,*args,**kw)
+    def setStatusMessage(self,msg):
+        self.statusMessage=msg
+    
         
     def debug(self,*args,**kw):
         return self.toolkit.debug(self,*args,**kw)
@@ -132,4 +141,6 @@ class Session(BaseSession):
         self._activeForm=frm
         frm.show()
 
+    def setActiveForm(self,frm):
+        self._activeForm = frm
 
