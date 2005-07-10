@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -15,8 +15,6 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-"""
-"""
 
 from lino.adamo.ddl import *
 
@@ -31,10 +29,12 @@ class News(MemoTable):
         MemoTable.init(self)
         self.addField('id',ROWID)
         self.addField('date',DATE)
+        self.addField('time',TIME)
         self.addPointer('newsgroup',Newsgroups).setDetail(
             'newsByGroup', orderBy='date')
         self.addPointer('author',Users).setDetail('newsByAuthor')
         self.addPointer('lang',Languages)
+        #self.addField('lang',LANG)
         self.addPointer('project',Projects)
         self.addPointer('page',Pages)
 
@@ -42,8 +42,8 @@ class News(MemoTable):
 
         #table.setColumnList('date title newsgroup abstract id lang')
         self.setOrderBy("date")
-        self.addView("simple","date title abstract",
-                         orderBy="date")
+        self.addView("std","date title abstract",
+                     orderBy="date")
         self.addView("list","date writeParagraph",
                          orderBy="date")
         
@@ -60,6 +60,8 @@ class Newsgroups(Table):
     def init(self):
         self.addField('id',STRING)
         self.addField('name',STRING).setMandatory()
+        
+        self.addView("std","id name")
         
     class Instance(Table.Instance):
         def __str__(self):

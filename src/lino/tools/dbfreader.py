@@ -305,6 +305,7 @@ class DBTFile:
     def __init__(self,dbf):
         self.dbf = dbf
         self.filename=dbf.filename[:-4]+".DBT"
+        #print "DBTFile", self.filename
         self.blocksize = 512
 
     def get_block(self,number):
@@ -317,15 +318,14 @@ class DBTFile:
 ##                 print str(number)+":"+str(len(buf))
 ##                 data += buf
 ##                 break
-            pos = buf.find("\x1A\x1A")
-            if pos == -1:
-                data += buf
-            else:
-                data += buf[:pos]
+            data+=buf
+            pos = data.find("\x1A")
+            #pos = data.find("\x1A\x1A")
+            if pos != -1:
+                data = data[:pos]
                 break
 
         infile.close()
-        
         if not self.dbf.codepage is None:
             data = data.decode(self.dbf.codepage)
         # clipper adds "soft CR's" to memo texts. we convert them to

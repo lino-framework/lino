@@ -406,20 +406,26 @@ from lino.adamo.datatypes import TIME, DURATION
 from lino.adamo.exceptions import DataVeto, DatabaseError
 #from lino.ui import console
 from lino.tools import dbfreader
+from lino.console.task import Task
 
-class DbfMirrorLoader:
+class DbfMirrorLoader(Task):
 
     tableClass = NotImplementedError  # subclass of adamo.tables.Table
     tableName = NotImplementedError   # name of external .DBF file
 
     def __init__(self,dbfpath=".",severe=True):
+        Task.__init__(self)
         self.dbfpath = dbfpath
         self.severe=severe
+        
+    def getLabel(self):
+        return "Loading "+ self.sourceFilename()
     
     def dbfstring(self,s):
         s=s.strip()
         if len(s) == 0:
             return None
+        #s=s.replace(chr(255),' ')
         return s
     
     def dbfdate(self,s):
@@ -439,9 +445,11 @@ class DbfMirrorLoader:
         if s == "X":
             return None
         return datatypes.DURATION.parse(s.replace(':','.'))
-    
-    def load(self,sess,store):
 
+    #def load(self,sess,store):
+    def run(self):
+        sess=self.session
+        store=sess.getStore(self.tableClass)
         if self.mtime() <= store.mtime():
             sess.debug("No need to load %s.",self.sourceFilename())
             return
@@ -449,31 +457,32 @@ class DbfMirrorLoader:
         f = dbfreader.DBFFile(self.sourceFilename(),
                               codepage="cp850")
         f.open()
-        job = sess.job("Loading "+ self.sourceFilename(),len(f))
+        self.setMaxVal(len(f))
         
         q=store.query(sess,"*")
         q.zap()
         for dbfrow in f:
-            job.increment()
+            self.increment()
             if self.severe:
                 self.appendFromDBF(q,dbfrow)
             else:
                 try:
                     self.appendFromDBF(q,dbfrow)
                 except DataVeto,e:
-                    job.error(str(e))
+                    self.error(str(e))
                 except DatabaseError,e:
-                    job.error(str(e))
+                    self.error(str(e))
                 except UnicodeError,e:
                     raise
                 except ValueError,e:
-                    job.error(str(e))
+                    self.error(str(e))
                     #job.error(str(e))
                 except Exception,e:
-                    if str(e).startswith("'ascii' codec can't encode character"):
+                    if str(e).startswith(
+                        "'ascii' codec can't encode character"):
                         raise
-                    job.error(repr(e))
-        job.done()
+                    self.error(repr(e))
+        #self.done()
         f.close()
         q.commit()
 

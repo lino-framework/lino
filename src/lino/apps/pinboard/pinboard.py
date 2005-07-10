@@ -42,15 +42,17 @@ This is the Timings main menu.
 
         m = frm.addMenu("db","&Datenbank")
         m.addItem("authors",label="&Authors").setHandler(
-            sess.showTableGrid, Authors)
+            sess.showViewGrid, Authors)
         m.addItem("pages",label="&Pages").setHandler(
-            sess.showTableGrid, Pages)
-        m.addItem("usageTypes",label="Usage &Types").setHandler(
-            sess.showTableGrid, UsageTypes)
+            sess.showViewGrid, Pages)
+        m.addItem("news",label="&News").setHandler(
+            sess.showViewGrid, News)
+        m.addItem("newsgroups",label="News&groups").setHandler(
+            sess.showViewGrid, Newsgroups)
         
-        m = frm.addMenu("reports","&Reports")
-        m.addItem("s",label="&Static HTML").setHandler(
-            self.writeStaticSite,sess)
+##         m = frm.addMenu("reports","&Reports")
+##         m.addItem("s",label="&Static HTML").setHandler(
+##             self.writeStaticSite,sess)
         
         self.addProgramMenu(sess,frm)
 

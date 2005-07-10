@@ -30,8 +30,7 @@ i18n.setUserLang(None)
 
 class TestTask(Task):
     
-    def getMaxVal(self):
-        return 10
+    maxval=10
     
     def getLabel(self):
         return "Testing uncomplete tasks"
@@ -50,14 +49,7 @@ class Case(TestCase):
     verbosity=1
     
     def test01(self):
-        #
-        #sess=Session(Toolkit())
-        #sess=syscon._session
         syscon.runTask(TestTask())
-        #job=syscon.job("Testing uncomplete jobs",10)
-        #for i in range(5):
-        #    job.increment()
-        #job.done("done in only 5 steps.")
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""
@@ -83,10 +75,10 @@ Testing uncomplete tasks
 [ 40%] Performing step 5b)
 [ 40%] Performing step 5c)
 [ 50%] Performing step 5c)
-[100%] Performing step 5c)
+[ 50%] Done in only 5 steps.
+[100%] Done in only 5 steps.
 0 warnings
 0 errors
-Testing uncomplete tasks: Done in only 5 steps.
 """)
         
 

@@ -26,6 +26,8 @@ from lino.adamo.exceptions import *
 from lino.adamo.store import Populator
 #from lino.adamo.row import DataRow
 
+LANG=STRING(2)
+
 __all__ = filter(lambda x: x[0] != "_", dir())
 
 ## __all__ = ['Table','LinkTable',

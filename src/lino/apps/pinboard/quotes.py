@@ -19,11 +19,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.ddl import *
-#from babel import Languages
+# from babel import Languages
 
 from tables import Persons, Cities, Languages
-#from babel import Language
-#from web import MemoMixin, MemoTreeMixin, TreeMixin
 
 class Quotes(Table):
     def init(self):
@@ -32,6 +30,7 @@ class Quotes(Table):
         self.addField('quote',MEMO)
         self.addPointer('author',Authors).setDetail('quotesByAuthor')
         self.addPointer('lang',Languages)
+        #self.addField('lang',LANG)
         
         #self.pubRef = Field(STRING)
         #self.pub = Pointer("PUBLICATIONS")
@@ -50,6 +49,8 @@ class Publications(MemoTreeTable):
         self.addPointer('type', PubTypes)
         self.addPointer('author',Authors)
         self.addPointer('lang',Languages)
+        #self.addField('lang',LANG)
+        self.addField('url',URL)
 
 class PubTypes(BabelTable):
     def init(self):

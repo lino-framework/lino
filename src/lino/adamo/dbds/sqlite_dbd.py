@@ -117,7 +117,8 @@ class Connection(SqlConnection):
             csr.execute(sql)
             return csr
         except sqlite.DatabaseError,e:
-            raise DatabaseError(sql + "\n" + str(e))
+            #print sql
+            raise DatabaseError(repr(sql) + "\n" + str(e))
 
         
     def commit(self):

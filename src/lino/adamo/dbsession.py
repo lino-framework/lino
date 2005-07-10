@@ -237,9 +237,13 @@ class DbSession(Session,Context):
         frm.showModal()
         return grid.getChosenRow()
         
-    def runLoader(self,loader):
-        store=self.getStore(loader.tableClass)
-        loader.load(self,store)
+##     def runLoader(self,loader): #lc,*args,**kw):
+##         #store=self.getStore(loader.tableClass)
+##         #loader.load(self,store)
+##         #store=self.getStore(lc.tableClass)
+##         #loader=lc(self,*args,**kw)
+##         loader.run(self)
+        
 
     def createDataReport(self,qry,*args,**kw):
         return DataReport(qry,*args,**kw)

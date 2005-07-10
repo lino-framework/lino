@@ -43,12 +43,13 @@ class TaskAborted(Exception):
         self.task = task
 
 class Task:
+    maxval=0
 
     def __init__(self):
         self.session=None
         self.percentCompleted=None
         self.curval=0
-        self.maxval=0
+        #self.maxval=0
         self.count_errors = 0
         self.count_warnings = 0
         self._done = False
@@ -61,7 +62,7 @@ class Task:
         self.session=sess
         self._done=False
         self._abortRequested=False
-        self.maxval=self.getMaxVal()
+        #self.maxval=self.getMaxVal()
         self.percentCompleted=0
         
         self.session.toolkit.onTaskBegin(self)
@@ -88,6 +89,9 @@ class Task:
             self.session.exception(e)
             showSummary=False
 
+        if self.count_errors+self.count_warnings != 0:
+            pass
+        
         if showSummary:
             l=self.summary()
             if len(l):
@@ -123,8 +127,7 @@ class Task:
 
     def increment(self,n=1):
         self.curval += n
-        if self._done:
-            return
+        if self._done: return
         if self.maxval != 0:
             pc = int(100*self.curval/self.maxval)
             if pc == self.percentCompleted:
@@ -161,9 +164,12 @@ class Task:
         self.session.warning(*args,**kw)
         
 
-    def getMaxVal(self):
-        # may override
-        return 0
+##     def getMaxVal(self):
+##         # may override
+##         return 0
+
+    def setMaxVal(self,n):
+        self.maxval=n
 
     def setStatus(self):
         self.session.setStatusMessage(self.getStatus())
@@ -184,21 +190,25 @@ class Task:
             _("%d errors") % self.count_errors ]
 
         
+    def getLabel(self):
+        raise NotImplementedError
+
     def run(self):
         raise NotImplementedError
 
     
 
-class BugDemo(Task):
+    
 
+class BugDemo(Task):
+    maxval=10
+    
     def getLabel(self):
         return "Let's see what happens if an exception occurs..."
 
-    def getMaxVal(self):
-        return 10
-    
     def run(self):
-        for i in range(self.getMaxVal(),0,-1):
+        for i in range(self.maxval,0,-1):
+            self.increment()
             self.status("%d seconds left",i)
             self.sleep(1)
             

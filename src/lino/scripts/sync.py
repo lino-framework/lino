@@ -95,7 +95,7 @@ class SynchronizerTask(Task):
         self.src = src
         self.target = target
         self.simulate = simulate
-        self.showProgress = showProgress
+        #self.showProgress = showProgress
         
         self.ignore_times = False
         self.modify_window = 2
@@ -108,23 +108,21 @@ class SynchronizerTask(Task):
         self.count_update_dir = 0
         self.count_copy_dir = 0
         
-
+        if showProgress:
+            self.status(_("Counting directories..."))
+            n = 0
+            for root, dirs, files in os.walk(self.src):
+                n += len(dirs)
+                n += len(files)
+            self.status(_("Found %d directories.") % n)
+            self.maxval=n
+    
     def getLabel(self):
         s = _("Synchronize %s to %s") % (self.src, self.target)
         if self.simulate:
             s += " (Simulation)"
         return s
 
-    def getMaxVal(self):
-        if not self.showProgress: return 0
-        self.status(_("Counting directories..."))
-        n = 0
-        for root, dirs, files in os.walk(self.src):
-            n += len(dirs)
-            n += len(files)
-        self.status(_("Found %d directories.") % n)
-        return n
-    
     def run(self):
         if not os.path.exists(self.src):
             raise ApplicationError(
