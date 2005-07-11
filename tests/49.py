@@ -45,7 +45,7 @@ class Case(TestCase):
             observed=fd.read()
             msg="lino %s failed" % scr
             self.assertEqual(fd.close(),None,msg)
-            outfile=os.path.join("testdata","timtools",scr)+".hlp"
+            outfile=os.path.join("testdata","timtools",scr)+".help.txt"
             expected=open(outfile).read()
             self.assertEquivalent(observed,expected,msg)
 

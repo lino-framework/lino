@@ -225,9 +225,9 @@ class DbSession(Session,Context):
 ##         q = self.query(tc,*args,**kw)
 ##         return self.showDataGrid(q)
     
-    def showDataForm(self,ds,**kw):
-        frm = self.form(label=ds.getLabel(),**kw)
-        ds.setupForm(frm)
+    def showDataForm(self,rpt,**kw):
+        frm = self.form(label=rpt.getLabel(),**kw)
+        rpt.setupForm(frm)
         frm.show()
         
     def chooseDataRow(self,ds,currentRow,**kw):

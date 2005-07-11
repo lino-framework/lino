@@ -50,7 +50,7 @@ class Application:
     usage = None
     description = None
 
-    toolkits="console"
+    #toolkits="console"
     
     #_sessionFactory=Session
     
@@ -74,23 +74,23 @@ class Application:
             
 
         
-    def parse_args(self,argv=None): #,**kw):
-        if self.author is not None:
-            self.copyleft(name=self.name,
-                          years=self.years,
-                          author=self.author)
-        p = OptionParser(
-            usage=self.usage,
-            description=self.description)
+##     def parse_args(self,argv=None): #,**kw):
+##         if self.author is not None:
+##             self.copyleft(name=self.name,
+##                           years=self.years,
+##                           author=self.author)
+##         p = OptionParser(
+##             usage=self.usage,
+##             description=self.description)
             
-        self.setupOptionParser(p)
+##         self.setupOptionParser(p)
         
-        if argv is None:
-            argv = sys.argv[1:]
+##         if argv is None:
+##             argv = sys.argv[1:]
         
-        options,args = p.parse_args(argv)
-        self.applyOptions(options,args)
-        return p
+##         options,args = p.parse_args(argv)
+##         self.applyOptions(options,args)
+##         return p
         
 
     
@@ -169,23 +169,28 @@ See file COPYING.txt for more information.""" % (
         
         """
 
-##         p = OptionParser(
-##             usage=self.usage,
-##             description=self.description)
+        if self.author is not None:
+            self.copyleft(name=self.name,
+                          years=self.years,
+                          author=self.author)
             
-##         self.setupOptionParser(p)
+        p = OptionParser(
+            usage=self.usage,
+            description=self.description)
         
-        #toolkit=syscon.getSystemConsole()
+        syscon.getToolkit().setupOptionParser(p)
+        
+        self.setupOptionParser(p)
+        
+        if argv is None:
+            argv = sys.argv[1:]
+        
         try:
-            #toolkit=syscon.getSystemConsole()
-            #toolkit.addApplication(self)
-            #sess = Session(toolkit)
-            #self.openSession(sess)
-            #raise "... was wenn Schema mehr als eine db hat?"
-            #self.startup(toolkit)
-            #syscon.setSystemSession(self._sessions[0])
-            #syscon.setSystemSession(sess)
-            p=self.parse_args(argv)
+            
+            options,args = p.parse_args(argv)
+            self.applyOptions(options,args)
+            
+            #p=self.parse_args(argv)
             return self.run(syscon._session)
         
         except UsageError,e:

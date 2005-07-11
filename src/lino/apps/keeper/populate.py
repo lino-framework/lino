@@ -50,6 +50,9 @@ class VolumeVisitor(Task):
     def getLabel(self):
         return "Loading "+str(self.volume)
 
+    def prune_dir(self,dirname):
+        return dirname in ('.svn',)
+            
     def freshen(self,fullname,shortname,dir=None):
         self.status(fullname)
         if os.path.isfile(fullname):
@@ -58,6 +61,7 @@ class VolumeVisitor(Task):
                 row = self.files.appendRow(name=shortname,dir=dir)
             self.readTimeStamp(row,fullname)
         elif os.path.isdir(fullname):
+            if self.prune_dir(shortname): return
             row = self.dirs.findone(parent=dir,name=shortname)
             if row is None:
                 row = self.dirs.appendRow(name=shortname,
@@ -82,6 +86,7 @@ class VolumeVisitor(Task):
             #self.visit_file(row,fullname)
             self.readTimeStamp(row,fullname)
         elif os.path.isdir(fullname):
+            if self.prune_dir(shortname): return
             #print "findone(",dict(parent=dir,name=shortname),")"
             #if self.reloading:
             #    row = self.dirs.findone(parent=dir,name=shortname)

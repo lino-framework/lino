@@ -102,8 +102,7 @@ class BaseEntry(Component):
     def getValueForEditor(self):
         "return current value as string"
         v = self.getValue()
-        if v is None:
-            return ""
+        if v is None: return ""
         return self.format(v)
 
     def setValueFromEditor(self,s):
@@ -168,6 +167,7 @@ class Entry(BaseEntry):
 
 
 class DataEntry(BaseEntry):
+    
     def __init__(self,owner,dc, *args,**kw):
         Component.__init__(self,owner, dc.name, *args,**kw)
         self.enabled = dc.canWrite(None)
@@ -175,24 +175,24 @@ class DataEntry(BaseEntry):
         
     def setValue(self,v):
         frm = self.getForm()
-        self.dc.setCellValue(frm.data,v)
+        self.dc.datacol.setCellValue(frm.getLeadRow(),v)
         
     def parse(self,s):
-        return self.dc.rowAttr.parse(s)
+        return self.dc.datacol.rowAttr.parse(s)
     
     def format(self,v):
-        return self.dc.rowAttr.format(v)
+        return self.dc.format(v)
 
     def getType(self):
-        return self.dc.rowAttr.getType()
+        return self.dc.getType()
     
     def getValue(self):
         frm = self.getForm()
-        return self.dc.getCellValue(frm.data)
+        return self.dc.getCellValue(frm.getLeadRow())
 
     def refresh(self):
         frm = self.getForm()
-        self.enabled = self.dc.canWrite(frm.data)
+        self.enabled = self.dc.canWrite(frm.getLeadRow())
         #self.refresh()
         
         
@@ -420,9 +420,9 @@ def nop(x):
 
 class DataNavigator(Navigator,Component):
     
-    def __init__(self,owner,ds,afterSkip=nop,*args,**kw):
+    def __init__(self,owner,rpt,afterSkip=nop,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
-        Navigator.__init__(self,ds)
+        Navigator.__init__(self,rpt)
         self.afterSkip = afterSkip
         self.currentPos = 0
 
@@ -502,10 +502,10 @@ class Container(Component):
 ##             frm.tables.define(name,c)
 ##         return c
         
-    def addNavigator(self,ds,afterSkip=None,*args,**kw):
+    def addNavigator(self,rpt,afterSkip=None,*args,**kw):
         frm = self.getForm()
         e = frm.session.toolkit.navigatorFactory(
-            self, ds,afterSkip,*args,**kw)
+            self, rpt,afterSkip,*args,**kw)
         self._components.append(e)
         frm.setMenuController(e)
         
@@ -630,6 +630,9 @@ class Form(Describable,MenuContainer):
             setattr(self,m,getattr(self.mainComp,m))
         if self.doc is not None:
             self.addLabel(self.doc)
+
+    def getLeadRow(self):
+        return self.data
 
     def getForm(self):
         return self

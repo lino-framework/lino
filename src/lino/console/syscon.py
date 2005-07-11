@@ -21,6 +21,7 @@
 import sys
 import atexit
 import codecs
+from optparse import OptionParser
 
 from lino.console.console import TtyConsole
 from lino.forms.session import Session
@@ -129,6 +130,23 @@ def setToolkit(toolkit):
     #assert toolkit.__class__.__name__.endswith("Console"), \
     #       toolkit.__class__.__name__
     _session.setToolkit(toolkit)
+
+
+
+
+def parse_args(argv=None): #,**kw):
+    p = OptionParser()
+    _session.toolkit.setupOptionParser(p)
+        
+    if argv is None:
+        argv = sys.argv[1:]
+
+    return p.parse_args(argv)
+
+    #options,args = p.parse_args(argv)
+    #_session.toolkit.applyOptions(options,args)
+    #return p
+        
 
     
 def getSystemConsole():

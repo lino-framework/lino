@@ -36,11 +36,12 @@ class Case(TestCase):
                 if ext == '.py':
                     examples.append(base)
                     
-        self.assertEqual(len(examples),12)
+        self.assertEqual(len(examples),13)
         
         for base in examples:
             filename = base+".py"
             cmd="python "+os.path.join(examplesDir,filename)
+            cmd += " --batch"
             fd=os.popen(cmd,"r")
             observed=fd.read()
             msg="Example %s failed" % filename

@@ -22,7 +22,7 @@ from lino.textprinter.textprinter import TextPrinter
 class PlainTextPrinter(TextPrinter):
     def __init__(self,writer,cpl=72,frameStyle="+-+|+-+|"):
         self.writer = writer
-        TextPrinter.__init__(self,cpl=cpl)
+        TextPrinter.__init__(self,pageSize=(cpl,0),cpl=cpl)
         assert len(frameStyle) == 8
         self.topLeft = frameStyle[0]
         self.topBorder = frameStyle[1]
@@ -33,8 +33,8 @@ class PlainTextPrinter(TextPrinter):
         self.bottomLeft = frameStyle[6]
         self.leftBorder = frameStyle[7]
         
-    def createTextObject(self):
-        return ""
+##     def createTextObject(self):
+##         return ""
         
     def onBeginPage(self):
         self.writer(
@@ -42,6 +42,7 @@ class PlainTextPrinter(TextPrinter):
             self.topBorder*self.getCpl()
             +self.topRight
             +"\n")
+        self.textobject=""
         
     def onEndPage(self):
         self.writer(
@@ -51,6 +52,7 @@ class PlainTextPrinter(TextPrinter):
             "\n")
     
     def write(self,text):
+        #self.writer(text)
         self.textobject += text
             
     def newline(self):

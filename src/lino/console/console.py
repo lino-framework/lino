@@ -22,7 +22,7 @@ import os
 import sys
 import time
 
-from optparse import OptionParser
+#from optparse import OptionParser
 from cStringIO import StringIO
 #from lino.forms.base import AbstractToolkit
 #from lino.misc.jobs import Job
@@ -464,31 +464,32 @@ class Console(AbstractToolkit):
 
 
     def readkey(self,sess,msg):
+        if self._batch:
+            sess.notice(msg)
+            return ""
         return raw_input(msg)
             
             
-    def confirm(self,sess,prompt,default="y"):
+    def confirm(self,sess,prompt,default=True):
         """Ask user a yes/no question and return only when she has
         given her answer. returns True or False.
         
         """
+        assert type(default) is type(False)
         #print self._stdout
 ##         if self.app is not None:
 ##             return self.app.confirm(prompt,default)
-        if self._batch:
-            return (default=='y')
-        
         if sound:
             sound.asterisk()
-        if default == "y":
+        if default:
             prompt += " [Y,n]"
         else:
-            assert default == "n"
+            #assert default == "n"
             prompt += " [y,N]"
         while True:
             s = self.readkey(sess,prompt)
             if s == "":
-                s = default
+                return default
             s = s.lower()
             if s == "y":
                 return True
@@ -599,6 +600,9 @@ class TtyConsole(Console):
         #    self._stdout(sess._status+"\r")
 
     def readkey(self,sess,msg):
+        if self._batch:
+            sess.notice(msg)
+            return ""
         if sess.statusMessage is not None:
             self._stdout(sess.statusMessage.ljust(self.width)+"\n")
         return raw_input(msg)

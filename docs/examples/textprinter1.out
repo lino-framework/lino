@@ -1,0 +1,14 @@
++------------------------------------------------------------------------+
+|                                                                        |
+|lino.textprinter Test page                                              |
+|                                                                        |
+|         1         2         3         4         5         6         7  |
+|123456789012345678901234567890123456789012345678901234567890123456789012|
+|                                                                        |
+|Here is some bold text.                                                 |
+|Here is some underlined text.                                           |
+|Here is some italic text.                                               |
++------------------------------------------------------------------------+
+print it on default Windows printer? [y,N]                                    
+                                                                              start Acrobat Reader on test.pdf? [y,N]                                       
+                                                                              

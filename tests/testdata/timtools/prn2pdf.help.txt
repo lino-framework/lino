@@ -3,11 +3,16 @@ Copyright (c) 2002-2005 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information.
-usage: lino prn2pdf [options] FILE
+                                                                              usage: lino prn2pdf [options] FILE
 
 where FILE is the file to be converted to a pdf file. It may contain plain text
 and simple formatting printer control sequences.
 options:
   -h, --help            show this help message and exit
+  -v, --verbose         increase verbosity
+  -q, --quiet           decrease verbosity
+  -b, --batch           not interactive (don't ask anything)
+  -lLOGFILE, --logfile=LOGFILE
+                        log a report to FILE
   -oOUTFILE, --output=OUTFILE
                         write to OUTFILE rather than FILE.pdf

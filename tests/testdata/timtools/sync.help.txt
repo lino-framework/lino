@@ -1,0 +1,17 @@
+Lino/sync version 0.6.11.
+Copyright (c) 2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information.
+                                                                              usage: lino sync [options] SRC DEST
+
+where SRC and DEST are two directories to be synchronized.
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         increase verbosity
+  -q, --quiet           decrease verbosity
+  -b, --batch           not interactive (don't ask anything)
+  -lLOGFILE, --logfile=LOGFILE
+                        log a report to FILE
+  -s, --simulate        simulate only, don't do it
+  -p, --progress        show progress bar

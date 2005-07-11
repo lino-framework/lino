@@ -189,6 +189,33 @@ class BaseReport(Describable):
     def show(self,**kw):
         syscon.showReport(self,**kw)
 
+    def setupForm(self,frm,row=None,**kw):
+        if row is None:
+            row = self[0]
+        for dc in self.getVisibleColumns():
+            frm.addDataEntry(dc)
+##         for cell in row:
+##             dc = cell.col
+##             frm.addDataEntry(dcname=dc.name,
+##                          label=dc.getLabel(),
+##                          enabled=cell.canWrite(),
+##                          getter=cell.__str__,
+##                          setter=cell.setValueFromString)
+
+        def afterSkip(nav):
+            row = self[nav.currentPos]
+            frm.data = row
+            #frm.refresh()
+##             for cell in row:
+##                 setattr(frm.entries,cell.col.name,cell.format())
+        frm.addNavigator(self,afterSkip=afterSkip)
+        kw.setdefault('data',row)
+        kw.setdefault('name',self.getName())
+        kw.setdefault('label',self.getLabel())
+        kw.setdefault('doc',self.getDoc())
+        frm.configure(**kw)
+
+    
 
 
 class ReportColumn(Describable):
@@ -231,6 +258,9 @@ class ReportColumn(Describable):
     def showSelector(self,frm,row):
         return self._selector(frm,row)
 
+    def canWrite(self,row):
+        return False
+
 class DataReportColumn(ReportColumn):
     def __init__(self,datacol,
                  name=None,label=None,doc=None,
@@ -251,7 +281,6 @@ class DataReportColumn(ReportColumn):
         self.datacol = datacol
 
     def getCellValue(self,row):
-        #return self.datacol.getCellValue(self._owner.crow)
         return self.datacol.getCellValue(row.item)
 
     def getMinWidth(self):
@@ -262,6 +291,11 @@ class DataReportColumn(ReportColumn):
     def addFilter(self,*args):
         self.datacol.addFilter(*args)
         
+    def canWrite(self,row):
+        return self.datacol.canWrite(row.item)
+    def getType(self):
+        return self.datacol.rowAttr.getType()
+    
 ##     def format(self,v):
 ##         return self.datacol.format(v)
     
@@ -284,6 +318,8 @@ class VurtReportColumn(ReportColumn):
         return self.type.minWidth
     def getMaxWidth(self):
         return self.type.maxWidth
+    def getType(self):
+        return self.type
         
 ##     def format(self,v):
 ##         return self.type.format(v)

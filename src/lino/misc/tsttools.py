@@ -178,7 +178,7 @@ class TestCase(unittest.TestCase):
         for fn in self._showFiles:
             self.failUnless(os.path.exists(fn))
             if syscon.confirm("Okay to start %s ?" % fn,\
-                              default="n"):
+                              default=False):
                 os.system('start ' + fn)
         if len(self._tempFiles) > 0:
             if syscon.confirm("Okay to delete %d temporary files ?" \

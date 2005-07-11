@@ -1,0 +1,15 @@
+Lino openurl version 0.6.11.
+Copyright (c) 2002-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information.
+                                                                              usage: Usage: lino openurl URL [URL...]
+
+Starts the default browser on the specified URL(s).
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         increase verbosity
+  -q, --quiet           decrease verbosity
+  -b, --batch           not interactive (don't ask anything)
+  -lLOGFILE, --logfile=LOGFILE
+                        log a report to FILE

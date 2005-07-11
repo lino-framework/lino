@@ -411,8 +411,10 @@ class DataGridCtrl(wx.grid.Grid):
         
         if evt.KeyCode() == wx.WXK_RETURN:
             if evt.ControlDown():
+                rpt=self.table.editor.rpt
                 frm = self.table.editor.getForm()
-                frm.showDataForm(self.table.editor.rpt)
+                frm.session.showDataForm(rpt)
+                #frm.showDataForm(self.table.editor.rpt)
                 #evt.Skip()
                 return
 

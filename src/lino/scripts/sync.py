@@ -132,6 +132,7 @@ class SynchronizerTask(Task):
             self.update_it(self.src,self.target)
         else:
             self.copy_it(self.src,self.target)
+            
 
         
     def utime(self,src,target):

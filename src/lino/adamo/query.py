@@ -1204,32 +1204,6 @@ class SimpleQuery(LeadTableColumnList):
         wr("</datasource>")
 
 
-    def setupForm(self,frm,row=None,**kw):
-        if row is None:
-            row = self[0]
-        for dc in self.getVisibleColumns():
-            frm.addDataEntry(dc)
-##         for cell in row:
-##             dc = cell.col
-##             frm.addDataEntry(dcname=dc.name,
-##                          label=dc.getLabel(),
-##                          enabled=cell.canWrite(),
-##                          getter=cell.__str__,
-##                          setter=cell.setValueFromString)
-
-        def afterSkip(nav):
-            row = self[nav.currentPos]
-            frm.data = row
-            #frm.refresh()
-##             for cell in row:
-##                 setattr(frm.entries,cell.col.name,cell.format())
-        frm.addNavigator(self,afterSkip=afterSkip)
-        kw.setdefault('data',row)
-        kw.setdefault('name',self.getLeadTable().getName())
-        kw.setdefault('label',self.getLeadTable().getLabel())
-        kw.setdefault('doc',self.getLeadTable().getDoc())
-        frm.configure(**kw)
-
         
     
 ##  def child(self,cl,**kw):
