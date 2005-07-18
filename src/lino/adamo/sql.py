@@ -31,8 +31,10 @@ from lino.adamo.connection import Connection
 
 #from mx.DateTime import DateTime
 
-from lino.adamo.filters import NotEmpty, IsEqual, DateEquals
+from lino.adamo.filters import NotEmpty, IsEqual, DateEquals, Contains
 
+#class SqlError(Exception):
+#    pass
 
 class Master:
     def __init__(self,ds):
@@ -113,12 +115,12 @@ class SqlConnection(Connection):
             return "%f" % val
         #elif isinstance(val, DateTime):
         #   return "'%s'" % str(val)
-        elif isinstance(val, types.StringType):
+        elif val.__class__ in (types.StringType, types.UnicodeType):
             return "'%s'" % val.replace("'", "''") 
-        #elif isinstance(type, StringType):
-        #    return "'%s'" % val.replace("'", "''") 
-        elif isinstance(val, types.UnicodeType):
-            return "'%s'" % val.replace("'", "''") 
+##         elif isinstance(val, types.StringType):
+##             return "'%s'" % val.replace("'", "''") 
+##         elif isinstance(val, types.UnicodeType):
+##             return "'%s'" % val.replace("'", "''") 
         #elif type == self.schema.areaType:
         #   return "'%s'" % val._table.getName()
         raise TypeError, repr(val)
@@ -128,12 +130,16 @@ class SqlConnection(Connection):
         #print "sql.sql2value() :", s, type
         if s is None:
             return None
-        elif isinstance(type, datatypes.DateType):
+        
+        if isinstance(type, datatypes.DateType):
             return datetime.date.fromordinal(s)
+        elif isinstance(type, datatypes.BoolType):
+            return bool(s)
+        elif isinstance(type, datatypes.LongType):
+            return long(s)
         elif isinstance(type, datatypes.IntType):
-            return int(s)
+            return s
         elif isinstance(type, datatypes.TimeStampType):
-            #return localtime(float(s))
             return float(s)
         elif isinstance(type, datatypes.TimeType):
             return type.parse(s)
@@ -141,9 +147,15 @@ class SqlConnection(Connection):
             return type.parse(s)
         elif isinstance(type, datatypes.PriceType):
             return int(s)
-        #elif type == self.schema.areaType:
-        #   return type.parse(val)
-        return s
+        
+        if not s.__class__ in (types.StringType,
+                               types.UnicodeType):
+            raise SqlError("%r is not a string" % s)
+        
+        if len(s) == 0:
+            return None
+            
+        return type.parse(s)
         
     def type2sql(self,type):
         if isinstance(type, datatypes.IntType):
@@ -323,11 +335,6 @@ class SqlConnection(Connection):
             else:
                 raise NotImplementedError
                 
-##         elif isinstance(flt,Master):
-##             assert isinstance(flt.col,DetailColumn)
-##             print flt.slave
-##             raise "hier"
-        
         elif isinstance(flt,DateEquals):
             if isinstance(flt.col,FieldColumn):
                 a=flt.col.getAtoms()
@@ -342,6 +349,17 @@ class SqlConnection(Connection):
                     l.append("DAY("+a.name+")="+str(flt.day))
             else:
                 raise NotImplementedError
+            
+        elif isinstance(flt,Contains):
+            if isinstance(flt.col,FieldColumn):
+                raise NotImplementedError
+            elif isinstance(flt.col,DetailColumn):
+                raise NotImplementedError
+                #if flt.value is not None:
+                #    l.append()
+            else:
+                raise NotImplementedError
+            
         elif isinstance(flt,NotEmpty):
             if isinstance(flt.col,FieldColumn):
                 for a in flt.col.getAtoms():
@@ -349,27 +367,9 @@ class SqlConnection(Connection):
             elif isinstance(flt.col,DetailColumn):
                 master=Master(ds)
                 slave=flt.col.getCellValue(master)
-                #print "slave search:", slave._search
-                #master=flt.col.rowAttr._owner
-                #slave=flt.col.rowAttr.pointer._owner
-                #print "Master:", master.getTableName()
-                #print "Slave:", slave.getTableName()
                 s = "EXISTS ("
                 s += self.getSqlSelect(slave,"*")
                 s += ")"
-##                 s += slave.getTableName()
-##                 s += " WHERE "
-##                 l2=[]
-##                 i=0
-##                 pka=flt.col.rowAttr.pointer.getNeededAtoms(None)
-##                 for name,t in master.getPrimaryAtoms():
-##                     s2=master.getTableName()+"."+name
-##                     s2+="="
-##                     s2+=slave.getTableName()+"."+pka[i][0]
-##                     l2.append(s2)
-##                     i+=1
-##                 s+=" AND ".join(l2)
-##                 s += ")"
                 l.append(s)
             else:
                 raise NotImplementedError
@@ -538,7 +538,7 @@ class SqlConnection(Connection):
             try:
                 v = self.sql2value(sqlatoms[i],a.type)
             except Exception,e:
-                qry.getSession().handleException(
+                qry.getSession().exception(
                     e, details="""\
 Could not convert raw atomic value %s in %s.%s (expected %s).""" \
                     % (repr(sqlatoms[i]),

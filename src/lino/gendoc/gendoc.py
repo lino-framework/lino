@@ -50,6 +50,9 @@ class GenericDocument:
     def h(self,*args,**kw):
         raise NotImplementedError
         
+    def form(self,frm):
+        frm.gendoc_render(self)
+        
 
 
 class WriterDocument(GenericDocument):

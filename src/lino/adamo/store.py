@@ -183,12 +183,12 @@ class Store:
         k = tuple(row.getRowId())
         if self._lockedRows.has_key(k):
             raise RowLockFailed("Row is locked by another process")
-        self._lockedRows[k] = ds
+        self._lockedRows[k] = row
 
-    def unlockRow(self,row,ds):
+    def unlockRow(self,row,qry):
         k = tuple(row.getRowId())
         x = self._lockedRows.pop(k)
-        assert x == ds
+        assert x._query == qry
         #self.touch()
         #if row.isDirty():
         #    self._dirtyRows[k] = row
@@ -340,7 +340,7 @@ class Populator(Describable):
         except AttributeError:
             return
         if not store.isVirgin():
-            print self,"not virgin"
+            sess.verbose("Not populating %s",store) 
             return
         qry=store.query(sess,"*")
         m(qry)

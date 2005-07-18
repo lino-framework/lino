@@ -51,7 +51,7 @@ class Database(Context,Describable):
         self._stores = {}
         self._sessions=[]
         self._connections=[]
-        self._startupDone= False
+        self._startupSession=None
 
 
     def addSession(self,s):
@@ -183,7 +183,7 @@ class Database(Context,Describable):
         #if ui is None:
         #    ui = syscon.getSystemConsole()
         #sess=center.openSession(syscon.getSystemConsole())
-        assert not self._startupDone,\
+        assert self._startupSession is None,\
                  "Cannot startup() again " + repr(self)
         #if toolkit is None:
         #    toolkit=syscon.getSystemConsole()
@@ -194,11 +194,10 @@ class Database(Context,Describable):
             toolkit=syscon.getToolkit()
             
         sess=DbSession(self,toolkit)
-        #dbs=DbSession(self,sess)
         for store in self.getStoresById():
             store.onStartup(sess)
                 
-        self._startupDone=True
+        self._startupSession=sess
         return sess
         
 
@@ -217,7 +216,8 @@ class Database(Context,Describable):
         for store in self.getStoresById():
             store.close()
         self._stores = {}
-        self._startupDone=False
+        #self._startupSession.close()
+        self._startupSession=None
             
         
     def shutdown(self):

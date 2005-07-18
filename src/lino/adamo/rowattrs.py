@@ -19,6 +19,7 @@
 #import types
 #from copy import copy
 
+import types
 from lino.adamo import datatypes
 from lino.misc.compat import *
 from lino.misc.etc import issequence
@@ -57,6 +58,7 @@ class RowAttribute(Describable):
         one.    """
 
     def format(self,v):
+        #print repr(v)
         return str(v)
         
     def parse(self,s):
@@ -117,12 +119,13 @@ class RowAttribute(Describable):
             v(row,value)
         #self.canSetValue(row,value)
         row._values[self.name] = value
+        #print self.name, "=", value
         
 ##     def getCellValue(self,row,col):
 ##         # overridden by BabelField and Detail
 ##         return row.getFieldValue(self.name)
 
-    def setValueFromString(self,row,s):
+    def setCellValueFromString(self,row,s):
         # does not setDirty() !
         if len(s) == 0:
             self.setCellValue(row,None)
@@ -200,15 +203,19 @@ class Field(RowAttribute):
     def setType(self,type):
         self.type = type
 
-    def getType(self):
-        return self.type
+##     def getType(self):
+##         return self.type
 
     def format(self,v):
         return self.type.format(v)
         
+    def validate(self,value):
+        return self.type.validate(value)
+    
     def setCellValue(self,row,value):
         if value is not None:
             self.type.validate(value)
+            #print self, repr(value)
         RowAttribute.setCellValue(self,row,value)
         
 ##     def canSetValue(self,row,value):
@@ -245,6 +252,10 @@ class Field(RowAttribute):
         return self.type.minWidth
     def getMaxWidth(self):
         return self.type.maxWidth
+    def getMinHeight(self):
+        return self.type.minHeight
+    def getMaxHeight(self):
+        return self.type.maxHeight
 
 
 
@@ -259,6 +270,9 @@ class BabelField(Field):
         return l
 
 
+    def validate(self,value):
+        return type(value) == types.TupleType
+    
 ##     def getSupportedLangs(self):
 ##         return self._owner._schema.getSupportedLangs()
 
@@ -505,6 +519,10 @@ class Pointer(RowAttribute):
         #for pk in self._toTable.getPrimaryKey():
         #   w += pk.getPreferredWidth()
         #return w
+    def getMinHeight(self):
+        return 1
+    def getMaxHeight(self):
+        return 1
 
         
 ##     def _findToTable(self,tableId):
@@ -597,8 +615,15 @@ class Pointer(RowAttribute):
                 atomicValues = atomicValues[pklen:]
         raise "invalid tableId %d" % tableId
     
-    def getType(self):
-        return datatypes.STRING
+    def validate(self,value):
+        for toTable in self._toTables:
+            if not isinstance(value,toTable.Instance):
+                raise DataVeto("%r is not a %s instance" % \
+                               (value,toTable.getTableName()))
+        
+##     def getType(self):
+##         return self.type
+##         #return datatypes.STRING
 
     def getTargetSource(self,row): 
         return row.getSession().query(self.type)
@@ -622,11 +647,14 @@ class Detail(RowAttribute):
 ##         raise "cannot set value of a detail"
     
     def getMinWidth(self):
-        # TODO: 
         return 20
     def getMaxWidth(self):
-        # TODO: 
         return 40
+    def getMinHeight(self):
+        return 1
+    def getMaxHeight(self):
+        return 4
+    
 
 ##     def onAreaInit(self,area):
 ##         area.defineQuery(self.name,self._queryParams)
@@ -663,8 +691,11 @@ class Detail(RowAttribute):
 ##             row._values[self.name] = ds
 ##         return ds
         
-    def getType(self):
-        return datatypes.STRING
+    def validate(self,value):
+        pass
+    
+##     def getType(self):
+##         return datatypes.STRING
 
 class Vurt(Field):
     """

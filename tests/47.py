@@ -20,42 +20,90 @@
 from lino.misc.tsttools import TestCase, main
 #from lino.ui.console import CaptureConsole
 
+from lino.adamo.ddl import *
+
+class Foos(Table):
+    def init(self):
+        self.addField('value',INT)
+        self.addField('name',STRING)
+        self.addField('ok',BOOL)
+
+class MySchema(Schema):
+    tables=[Foos]
+
 class Case(TestCase):
     
-    skip=True
-    
     def test01(self):
+        sess = MySchema().quickStartup()
+        q=sess.query(Foos)
         
-        def f(con,maxval):
-            job = con.job("Gonna do it", maxval=maxval*2)
-            job.notice("First part")
-            for i in range(maxval):
-                job.increment()
-            job.notice("Second part")
-            for i in range(maxval):
-                job.increment()
-            job.done()
-            return con.getConsoleOutput()
+        try:
+            q.appendRow(value=17,ok="no")
+            self.fail("failed to raise DataVeto")
+        except DataVeto,e:
+            pass
+        
+        try:
+            q.appendRow(value=17,name="")
+            self.fail("failed to raise DataVeto")
+        except DataVeto,e:
+            pass
+        
+        try:
+            q.appendRow(value=17,name=" ")
+            self.fail("failed to raise DataVeto")
+        except DataVeto,e:
+            pass
+        
+        try:
+            # strings may not end with a space
+            q.appendRow(value=17,name="Foo ")
+            self.fail("failed to raise DataVeto")
+        except DataVeto,e:
+            pass
+        
+        r1=q.appendRow()
+        r2=q.appendRow(value=2,ok=False,name="foofoo")
+        r3=q.appendRow(value=3,ok=True,name=None)
+        r4=q.appendRow(value=4)
 
-        # very quiet console:
-        c = CaptureConsole()
-        c.parse_args('-qq'.split())
-        #self.assertEqual(f(c,3),"")
-        
-        # quiet console:
-        c = CaptureConsole()
-        c.parse_args('-q'.split())
-        #self.assertEqual(f(c,3),"Gonna do it...")
-        
-        # normal console:
-        c = CaptureConsole()
-        self.assertEquivalent(f(c,3),"""\
-Gonna do it...
-First part... [100%]
-Second part... [100%]
-""")
+        self.assertEqual(r1,q.peek(1))
+        self.assertEqual(r2,q.peek(2))
+        self.assertEqual(r3,q.peek(3))
+        self.assertEqual(r4,q.peek(4))
 
-        # "verbose" and "debug" are same as "normal"
+        s= str([ r.ok for r in q])
+        #print s
+        self.assertEqual(s,"[None, False, True, None]")
+
+        r1.lock()
+        self.assertEqual(r1.name,None)
+        try:
+            r1.name=''
+            self.fail("failed to raise DataVeto")
+        except DataVeto,e:
+            pass
+        r1.name=None
+        self.assertEqual(r1.name,None)
+        r1.name="foo"
+        self.assertEqual(r1.name,"foo")
+        r1.unlock()
+        
+        #self.assertEqual(r4.name,None)
+        
+        q.showReport(width=66)
+        s=self.getConsoleOutput()
+        #print s
+        self.assertEquivalent(s,"""\
+Foos
+====
+value  |name                                      |ok     |id     
+-------+------------------------------------------+-------+-------
+       |foo                                       |       |1      
+2      |foofoo                                    |-      |2      
+3      |                                          |X      |3      
+4      |                                          |       |4      
+        """)
         
 
 if __name__ == '__main__':

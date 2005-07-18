@@ -87,8 +87,17 @@ def run(sess):
     #_toolkit.addSession(sess)
     _toolkit.run_forever(sess)
     #_toolkit.main(app)
-
-
+    
+def install():
+    check()
+    syscon.setToolkit(_toolkit)
+    
+def runApplication(app):
+    check()
+    syscon.setToolkit(_toolkit)
+    syscon._session.app = app
+    _toolkit.run_forever(syscon._session)
+    
 ## def main(*args,**kw):
 ##     check()
 ##     return _toolkit.main(*args,**kw)

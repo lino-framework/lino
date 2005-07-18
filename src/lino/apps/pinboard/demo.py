@@ -68,18 +68,18 @@ class StdPopulator(Populator):
         q = q.query('id name typeRefPrefix pubRefLabel')
         q.appendRow("book",
                     ('Book','Buch')        ,
-                    'ISBN: ',
+                    'ISBN:',
                     ('page','Seite')  )
         q.appendRow("url" , ('Web Page','Webseite')    ,
                     'http:' , ( None, None)   )
-        q.appendRow("cd"  , ('CompactDisc', 'CD') , 'cddb: ',
+        q.appendRow("cd"  , ('CompactDisc', 'CD') , 'cddb:',
                     ('track','Stück') )
         q.appendRow("art" , ('Article','Artikel')     ,
-                    ''      , ('page','Seite')  )
+                    None      , ('page','Seite')  )
         q.appendRow("mag" , ('Magazine','Zeitschrift')    ,
-                    ''      , ('page','Seite')  )
+                    None      , ('page','Seite')  )
         q.appendRow("sw"  , ('Software','Software')    ,
-                    ''      , (None,None)    )
+                    None      , (None,None)    )
 
 
     def populateAuthorEventTypes(self,q):
@@ -148,7 +148,7 @@ class DemoPopulator(Populator):
         q.appendRow(self.fr, """\
 Entre nous soit dit, bonnes gens:
 pour reconnaître que l'on est pas intelligent il faudrait
-l'être. """, self.brassens)
+l'être.""", self.brassens)
 
         q.appendRow(self.de, """\
 Körper, Geist und Seele sind die drei Bereiche des Menschen. Der
@@ -173,7 +173,7 @@ Carelessly planned projects take
 three times longer to complete than expected.  Carefully planned
 projects take four times longer to complete than expected,
 mostly because the planners expect their planning to reduce the
-time it takes. """,self.anon)
+time it takes.""",self.anon)
 
         q.appendRow(self.en, """\
 Don't believe everything you hear or anything you say.""",

@@ -49,56 +49,74 @@ Directories (volume=testparent=None)
 ====================================
 id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
-1      |              |              |16 Files      |3 Directories
+1      |              |              |15 Files      |3 Directories
 """)
         q=sess.query(Files,
                      orderBy="mtime",
-                     columnNames="dir name mtime size")
-        q.showReport(columnWidths="15 20 24 8")
+                     columnNames="dir name size mustParse occurences")
+        q.showReport(columnWidths="20 18 8 5 15")
         s=self.getConsoleOutput()
         #print s
         
         self.assertEquivalent(s,"""\
 Files
 =====
-dir            |name                |mtime                   |size
----------------+--------------------+------------------------+--------
-               |README.TXT          |Wed Jun 08 06:34:14 2005|2254
-               |cp850b.txt          |Wed Jun 08 06:34:14 2005|23
-               |cp1252b.txt         |Wed Jun 08 06:34:14 2005|23
-               |cp1252a.txt         |Wed Jun 08 06:34:14 2005|372
-               |gnosis-readme       |Wed Jun 08 06:34:15 2005|1662
-               |cp850a.txt          |Wed Jun 08 06:34:15 2005|372
-               |cp850box.txt        |Wed Jun 08 09:54:21 2005|50
-               |NAT.DBF             |Wed Jun 08 10:05:21 2005|1735
-               |PAR.DBF             |Wed Jun 08 10:10:15 2005|43411
-               |PAR.DBT             |Wed Jun 08 10:10:19 2005|4481
-               |5.pds               |Wed Jun 08 10:17:59 2005|500
-               |5b.pds              |Wed Jun 08 10:18:06 2005|676
-               |5c.pds              |Wed Jun 08 10:18:10 2005|2027
-               |5d.pds              |Wed Jun 08 10:18:15 2005|850
-webman         |init.wmi            |Wed Jun 08 10:32:44 2005|917
-webman         |index.txt           |Wed Jun 08 10:32:44 2005|182
-2              |init.wmi            |Wed Jun 08 10:32:44 2005|975
-2              |index.txt           |Wed Jun 08 10:32:44 2005|193
-2              |1.txt               |Wed Jun 08 10:32:44 2005|150
-2              |.cvsignore          |Wed Jun 08 10:32:44 2005|28
-webman         |1.txt               |Wed Jun 08 10:32:44 2005|138
-               |ee_de.txt~          |Wed Jun 08 16:57:54 2005|72
-               |PLZ.DBF             |Thu Jun 09 09:33:22 2005|25246
-textprinter    |logo.jpg            |Thu Jun 09 10:21:04 2005|10126
-textprinter    |5.prn~              |Thu Jun 09 10:21:04 2005|792
-textprinter    |5.PRN               |Thu Jun 09 10:21:04 2005|794
-textprinter    |2.prn               |Thu Jun 09 10:21:04 2005|1798
-textprinter    |1.prn               |Thu Jun 09 10:21:05 2005|2387
-timtools       |pds2pdf.help.txt    |Mon Jul 11 17:07:13 2005|953
-timtools       |prn2pdf.help.txt    |Mon Jul 11 17:07:46 2005|868
-timtools       |prnprint.help.txt   |Mon Jul 11 17:09:06 2005|1154
-timtools       |sync.help.txt       |Mon Jul 11 17:09:18 2005|791
-timtools       |diag.help.txt       |Mon Jul 11 17:09:37 2005|673
-timtools       |openmail.help.txt   |Mon Jul 11 17:09:54 2005|955
-timtools       |openurl.help.txt    |Mon Jul 11 17:10:03 2005|701
+dir                 |name              |size    |mustP|occurences     
+                    |                  |        |arse |               
+--------------------+------------------+--------+-----+---------------
+test:               |README.TXT        |2254    |X    |263 Occurences 
+test:               |cp850b.txt        |23      |X    |1 Occurences   
+test:               |cp1252b.txt       |23      |X    |1 Occurences   
+test:               |cp1252a.txt       |372     |X    |53 Occurences  
+test:               |gnosis-readme     |1662    |X    |0 Occurences   
+test:               |cp850a.txt        |372     |X    |53 Occurences  
+test:               |cp850box.txt      |50      |X    |0 Occurences   
+test:               |NAT.DBF           |1735    |X    |0 Occurences   
+test:               |PAR.DBF           |43411   |X    |0 Occurences   
+test:               |PAR.DBT           |4481    |X    |0 Occurences   
+test:               |5.pds             |500     |X    |0 Occurences   
+test:               |5b.pds            |676     |X    |0 Occurences   
+test:               |5c.pds            |2027    |X    |0 Occurences   
+test:               |5d.pds            |850     |X    |0 Occurences   
+test:webman         |init.wmi          |917     |X    |0 Occurences   
+test:webman         |index.txt         |182     |X    |15 Occurences  
+test:2              |init.wmi          |975     |X    |0 Occurences   
+test:2              |index.txt         |193     |X    |21 Occurences  
+test:2              |1.txt             |150     |X    |19 Occurences  
+test:2              |.cvsignore        |28      |X    |0 Occurences   
+test:webman         |1.txt             |138     |X    |19 Occurences  
+test:               |PLZ.DBF           |25246   |X    |0 Occurences   
+test:textprinter    |logo.jpg          |10126   |X    |0 Occurences   
+test:textprinter    |5.PRN             |794     |X    |0 Occurences   
+test:textprinter    |2.prn             |1798    |X    |0 Occurences   
+test:textprinter    |1.prn             |2387    |X    |0 Occurences   
+test:timtools       |pds2pdf.help.txt  |953     |X    |122 Occurences 
+test:timtools       |prn2pdf.help.txt  |868     |X    |109 Occurences 
+test:timtools       |prnprint.help.txt |1154    |X    |139 Occurences 
+test:timtools       |sync.help.txt     |791     |X    |99 Occurences  
+test:timtools       |diag.help.txt     |673     |X    |80 Occurences  
+test:timtools       |openmail.help.txt |955     |X    |126 Occurences 
+test:timtools       |openurl.help.txt  |701     |X    |86 Occurences  
 """)
+
+        app.showSearchForm(sess)
+        sess._activeForm.entries.searchString.setValue("lino")
+        sess._activeForm.buttons.search.click()
+        s=self.getConsoleOutput()
+        #print s
+        self.assertEquivalent(s,"""\
+Files where 'occurences' not empty
+==================================
+name                          |occurences     
+------------------------------+---------------
+diag.help.txt                 |2 Occurences   
+openmail.help.txt             |2 Occurences   
+openurl.help.txt              |2 Occurences   
+pds2pdf.help.txt              |2 Occurences   
+prn2pdf.help.txt              |2 Occurences   
+prnprint.help.txt             |3 Occurences   
+sync.help.txt                 |2 Occurences   
+        """)        
         sess.shutdown()
         
         

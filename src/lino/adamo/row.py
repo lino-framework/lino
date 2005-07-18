@@ -47,27 +47,15 @@ class DataRow:
         #return rowattr.getCellValue(self)
     
     def __setattr__(self,name,value):
-      #def setAtomicValue(self,name,value)
-        if self.__dict__.has_key(name):
-            self.__dict__[name] = value
-            return
+        #if self.__dict__.has_key(name):
+        #    self.__dict__[name] = value
+        #    return
         if not self.isLocked():
             raise InvalidRequestError("row is not locked")
-        #assert self._locked
         col=self._query.findColumn(name)
         if col is None:
             col=self._query._store._peekQuery.getColumnByName(name)
-        #col=self._query.getColumnByName(name)
         col.setCellValue(self,value)
-        #rowattr = self._fc.getRowAttr(name)
-        #rowattr.setCellValue(self,value)
-##      try:
-##          rowattr.acceptTrigger(self,value)
-##          rowattr.setCellValue(self,value)
-##      except DataVeto,e:
-##          self.getSession().errorMessage(str(e))
-##          return
-        #rowattr.afterSetAttr(self)
         self.__dict__['_dirty'] = True
 
     def getFieldValue(self,name):
@@ -77,9 +65,9 @@ class DataRow:
             raise NoSuchField,name
 
 
-    def makeDataCell(self,colIndex,col):
-        #return self.getSession()._dataCellFactory(self,colIndex,col)
-        return DataCell(self,colIndex,col)
+##     def makeDataCell(self,colIndex,col):
+##         #return self.getSession()._dataCellFactory(self,colIndex,col)
+##         return DataCell(self,colIndex,col)
 
 
     def setDirty(self):
@@ -101,14 +89,14 @@ class DataRow:
         col.setCellValue(self,value)
         self.__dict__["_dirty"] = True
         
-    def __iter__(self):
-        return RowIterator(self,self._query.visibleColumns)
+    #def __iter__(self):
+    #    return RowIterator(self,self._query.visibleColumns)
     
     def __len__(self):
         return len(self._query.visibleColumns)
     
-    def getCells(self,columnNames=None):
-        return RowIterator(self,self._query.getColumns(columnNames))
+    #def getCells(self,columnNames=None):
+    #    return RowIterator(self,self._query.getColumns(columnNames))
         
     def update(self,**kw):
         self.lock()
@@ -122,6 +110,7 @@ class DataRow:
         return True
     
     def validate(self):
+        # may override
         pass
 
     def lock(self):
@@ -246,9 +235,10 @@ class StoredDataRow(DataRow):
         make this row complete using a single database lookup
         """
         assert not self._pseudo,\
-                 "%s : readFromStore() called for a pseudo row" % repr(self)
+               "%s : readFromStore() called for a pseudo row" \
+               % repr(self)
         assert not self._complete,\
-                 "%s : readFromStore() called a second time" % repr(self)
+               "%s : readFromStore() called a second time" % repr(self)
         assert not self._isCompleting
         
         # but what if atoms2row() causes __getattr__ to be called
@@ -353,6 +343,13 @@ class StoredDataRow(DataRow):
         if not self._dirty:
             return
         #print "writeToStore()", self
+        for rowattr in self._query.getLeadTable()._mandatoryColumns:
+            if self.getFieldValue(rowattr.name) is None:
+                raise DataVeto("Column '%s.%s' may not be empty"\
+                               % (self._query.getTableName(),
+                                  rowattr.name))
+            
+        
         try:
             self.validate()
         except DataVeto,e:
@@ -409,68 +406,68 @@ class StoredDataRow(DataRow):
 ##             if msg: return msg
 
 
-class RowIterator:
+## class RowIterator:
 
-    def __init__(self,row,columns):
-        self.row = row
-        self.colIndex = 0
-        self._columns = columns
+##     def __init__(self,row,columns):
+##         self.row = row
+##         self.colIndex = 0
+##         self._columns = columns
         
-    def __iter__(self):
-        return self
+##     def __iter__(self):
+##         return self
     
-    def next(self):
-        if self.colIndex == len(self._columns):
-            raise StopIteration
-        col = self._columns[self.colIndex]
-        self.colIndex += 1
-        return self.row.makeDataCell(self.colIndex,col) 
+##     def next(self):
+##         if self.colIndex == len(self._columns):
+##             raise StopIteration
+##         col = self._columns[self.colIndex]
+##         self.colIndex += 1
+##         return self.row.makeDataCell(self.colIndex,col) 
 
 
-class DataCell:
-    def __init__(self,row,colIndex,col):
-        #self.colIndex = colIndex
-        self.row = row
-        self.col = col
+## class DataCell:
+##     def __init__(self,row,colIndex,col):
+##         #self.colIndex = colIndex
+##         self.row = row
+##         self.col = col
 
-    def getValue(self):
-        return self.col.getCellValue(self.row)
+##     def getValue(self):
+##         return self.col.getCellValue(self.row)
         
-##     def __str__(self):
-##         return str(self.col.getCellValue(self.row))
+## ##     def __str__(self):
+## ##         return str(self.col.getCellValue(self.row))
+## ##         #~ v = self.col.getCellValue(self.row)
+## ##         #~ if v is None:
+## ##             #~ return "None"
+## ##         #~ return self.col.rowAttr.format(v)
+    
+## ##     def format(self):
+## ##         v = self.col.getCellValue(self.row)
+## ##         if v is None:
+## ##             return ""
+## ##         return self.col.rowAttr.format(v)
+
+##     def canWrite(self):
+##         if self.row.canWrite():
+##             return self.col.canWrite(self.row)
+##         return False
+    
+##     def __repr__(self):
+##         return repr(self.col.getCellValue(self.row))
 ##         #~ v = self.col.getCellValue(self.row)
 ##         #~ if v is None:
 ##             #~ return "None"
 ##         #~ return self.col.rowAttr.format(v)
     
-##     def format(self):
+##     def __str__(self):
 ##         v = self.col.getCellValue(self.row)
 ##         if v is None:
 ##             return ""
 ##         return self.col.rowAttr.format(v)
-
-    def canWrite(self):
-        if self.row.canWrite():
-            return self.col.canWrite(self.row)
-        return False
     
-    def __repr__(self):
-        return repr(self.col.getCellValue(self.row))
-        #~ v = self.col.getCellValue(self.row)
-        #~ if v is None:
-            #~ return "None"
-        #~ return self.col.rowAttr.format(v)
-    
-    def __str__(self):
-        v = self.col.getCellValue(self.row)
-        if v is None:
-            return ""
-        return self.col.rowAttr.format(v)
-    
-    #def parseAndSet(self,s):
-    def setValueFromString(self,s):
-        self.col.rowAttr.setValueFromString(self.row,s)
+##     #def parseAndSet(self,s):
+##     def setValueFromString(self,s):
+##         self.col.rowAttr.setValueFromString(self.row,s)
         
-    def setValue(self,value):
-        self.col.setCellValue(self.row,value)
+##     def setValue(self,value):
+##         self.col.setCellValue(self.row,value)
 

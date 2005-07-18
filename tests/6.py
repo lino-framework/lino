@@ -27,11 +27,12 @@ from lino.adamo.datatypes import itot
 from lino.adamo import center
 
 class TestPopulator(Populator):
+    
     def populateUsageTypes(self,q):
-        self.a=q.appendRow(id="A ",name="Arbeit")
-        self.u=q.appendRow(id="U ",name="Urlaub")
-        self.m=q.appendRow(id="M ",name="Mission")
-        self.k=q.appendRow(id="K ",name="Krank")
+        self.a=q.appendRow(id="A",name="Arbeit")
+        self.u=q.appendRow(id="U",name="Urlaub")
+        self.m=q.appendRow(id="M",name="Mission")
+        self.k=q.appendRow(id="K",name="Krank")
         self.types=(self.a,self.u,self.m,self.k)
 
     def populateResources(self,q):

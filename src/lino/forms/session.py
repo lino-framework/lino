@@ -16,7 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.console.console import AbstractToolkit
+from lino.forms.base import AbstractToolkit
 
 class BaseSession:
     
@@ -122,9 +122,10 @@ class BaseSession:
 
 class Session(BaseSession):
     
-    def __init__(self,toolkit=None):
+    def __init__(self,toolkit,app=None):
         self._activeForm=None
-        self._forms=[]
+        self.app=app
+        #self._forms=[]
         BaseSession.__init__(self,toolkit)
         
         
@@ -132,15 +133,21 @@ class Session(BaseSession):
     def form(self,*args,**kw):
         frm=self.toolkit.createForm(
             self,self._activeForm,*args,**kw)
-        self._forms.append(frm)
+        #self._forms.append(frm)
         return frm
     
 
-    def show(self,frm):
-        assert frm in self._forms
-        self._activeForm=frm
-        frm.show()
+##     def showForm(self,frm):
+##         #assert frm in self._forms
+##         self._activeForm=frm
+##         #frm.show()
 
     def setActiveForm(self,frm):
         self._activeForm = frm
 
+    def showMainForm(self):
+        self.app.showMainForm(self)
+
+    def setApplication(self,app):
+        #assert self.app is None
+        self.app = app

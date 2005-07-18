@@ -412,7 +412,8 @@ class DataRowElement:
             
         # iterate...
         rowno = 0
-        for cell in self.row:
+        for col in self.row._query.getVisibleColumns():
+        #for cell in self.row:
             rowno += 1
             if rowno % 2 == 0:
                 wr("<tr class=''>\n")
@@ -420,11 +421,11 @@ class DataRowElement:
                 wr("<tr class='alternate'>\n")
 
             wr('<td>')
-            doc.writeText(cell.col.getLabel())
+            doc.writeText(col.getLabel())
             wr("</td>")
             
             wr('<td>')
-            doc.writeColValue(cell.col,cell.getValue())
+            doc.writeColValue(col,col.getCellValue(self.row))
             wr("</td>")
             wr("</tr>\n")
         
@@ -559,13 +560,18 @@ class ReportElement:
             else:
                 wr("<tr class='alternate'>\n")
             
-            rptrow = rpt.processItem(doc,datarow)
-
-            for cell in rptrow.cells:
+            #rptrow = rpt.processItem(doc,datarow)
+            rptrow = rpt.processItem(datarow)
+            
+            i=0
+            for col in rpt.columns:
+            #for cell in rptrow.cells:
                 wr('<td>')
-                doc.writeColValue(cell.col.datacol,cell.value)
+                doc.writeColValue(col.datacol,rptrow.values[i])
+                # cell.value)
                 #wr('<th scope="row">')
                 wr("</td>")
+                i+=1
             wr("</tr>\n")
             
             

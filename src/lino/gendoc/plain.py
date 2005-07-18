@@ -87,11 +87,13 @@ class PlainDocument(GenericDocument):
 
             wrappedCells = []
             i = 0
-            for cell in row.cells:
-                if cell.value is None:
+            for value in row.values:
+                col=rpt.columns[i]
+                #if cell.value is None:
+                if value is None:
                     s = ""
                 else:
-                    s = cell.col.format(cell.value)
+                    s = col.format(value)
                     
                 l = wrappers[i].wrap(s)
                 if len(l) == 0:

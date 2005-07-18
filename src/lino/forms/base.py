@@ -25,10 +25,9 @@ from lino.adamo.datatypes import STRING, MEMO
 #from lino.misc import jobs
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
-from lino.console.console import AbstractToolkit
 
 from lino.adamo.exceptions import InvalidRequestError
-from lino.forms import gui
+#from lino.forms import gui
 
 #from lino.forms.progresser import Progresser
 
@@ -54,6 +53,9 @@ class Component(Describable):
         pass
     
     def onShow(self):
+        pass
+    
+    def gendoc_render(self,doc):
         pass
     
         
@@ -114,7 +116,7 @@ class BaseEntry(Component):
             
     def store(self):
         "store data from widget"
-        raise NotImplementedError
+        pass
     
     def getValue(self):
         "return current raw value"
@@ -135,7 +137,7 @@ class BaseEntry(Component):
 class Entry(BaseEntry):
     def __init__(self,owner, name=None, type=None,
                  enabled=True,
-                 value="",
+                 value=None,
                  *args,**kw):
 
         Component.__init__(self,owner, name, *args,**kw)
@@ -151,8 +153,9 @@ class Entry(BaseEntry):
 
     def getValue(self):
         return self._value
-    def getType(self):
-        return self._type
+    
+##     def getType(self):
+##         return self._type
     
     def format(self,v):
         return self._type.format(self._value)
@@ -161,40 +164,61 @@ class Entry(BaseEntry):
         return self._type.parse(s)
 
     def setValue(self,v):
-        self._type.validate(v)
+        if v is not None:
+            self._type.validate(v)
         self._value = v
         self.refresh()
+    def getMinWidth(self):
+        return self._type.minWidth
+    def getMaxWidth(self):
+        return self._type.maxWidth
+    def getMinHeight(self):
+        return self._type.minHeight
+    def getMaxHeight(self):
+        return self._type.maxHeight
 
 
 class DataEntry(BaseEntry):
     
-    def __init__(self,owner,dc, *args,**kw):
-        Component.__init__(self,owner, dc.name, *args,**kw)
-        self.enabled = dc.canWrite(None)
-        self.dc = dc
+    def __init__(self,frm,col, *args,**kw):
+        Component.__init__(self,frm, col.name, *args,**kw)
+        self.enabled = col.canWrite(frm.data)
+        self.col = col
         
     def setValue(self,v):
         frm = self.getForm()
-        self.dc.datacol.setCellValue(frm.getLeadRow(),v)
+        self.col.datacol.setCellValue(frm.getLeadRow(),v)
         
     def parse(self,s):
-        return self.dc.datacol.rowAttr.parse(s)
+        return self.col.datacol.rowAttr.parse(s)
     
     def format(self,v):
-        return self.dc.format(v)
+        return self.col.format(v)
 
-    def getType(self):
-        return self.dc.getType()
+##     def getType(self):
+##         return self.col.getType()
+
+    def getMaxWidth(self):
+        return self.col.datacol.getMaxWidth()
+    def getMinWidth(self):
+        return self.col.datacol.getMinWidth()
+    def getMaxHeight(self):
+        return self.col.datacol.getMaxHeight()
+    def getMinHeight(self):
+        return self.col.datacol.getMinHeight()
     
     def getValue(self):
         frm = self.getForm()
-        return self.dc.getCellValue(frm.getLeadRow())
+        return self.col.getCellValue(frm.getLeadRow())
 
     def refresh(self):
         frm = self.getForm()
-        self.enabled = self.dc.canWrite(frm.getLeadRow())
+        self.enabled = self.col.canWrite(frm.getLeadRow())
         #self.refresh()
         
+    def gendoc_render(self,doc):
+        if self.enabled:
+            doc.p(self.name)
         
 
 class Label(Component):
@@ -242,13 +266,16 @@ class MenuBar(Component):
         return i
 
 
-class Navigator:
+class ReportMixin:
     # mixin to be used with Component
     def __init__(self,rpt):
         self.rpt = rpt # a Query or a Report
         #assert len(ds._lockedRows) == 0
         self.rpt.beginReport(self)
         #print len(self.rpt.getVisibleColumns())
+        
+    def setupGoMenu(self):
+        pass
         
     def setupMenu(self):
         frm = self.getForm()
@@ -260,6 +287,8 @@ class Navigator:
                   label="&Refresh",
                   action=frm.refresh,
                   accel="Alt-F5")
+
+        self.setupGoMenu()
 
         def copy():
             from cStringIO import StringIO
@@ -371,7 +400,7 @@ class Navigator:
         
     def onClose(self):
         if self.rpt.canWrite():
-            self.rpt.unlock()
+            self.rpt.ds.unlock()
 
     def getLineWidth(self):
         return 80
@@ -379,12 +408,13 @@ class Navigator:
         return 0
                 
 
-class DataGrid(Navigator,Component):
+class DataGrid(ReportMixin,Component):
     def __init__(self,owner,ds,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
-        Navigator.__init__(self,ds)
+        ReportMixin.__init__(self,ds)
         self.choosing = False
         self.chosenRow = None
+        self.enabled=True
 
     def setModeChoosing(self):
         self.choosing = True
@@ -396,33 +426,20 @@ class DataGrid(Navigator,Component):
         self.chosenRow = row
         
 
+    def gendoc_render(self,doc):
+        if self.enabled:
+            doc.report(self.rpt)
 
-## class ReportGrid(Navigator,Component):
-##     def __init__(self,owner,rpt,*args,**kw):
-##         Component.__init__(self,owner,*args,**kw)
-##         Navigator.__init__(self,rpt)
-##         self.choosing = False
-##         self.chosenRow = None
-
-##     def setModeChoosing(self):
-##         self.choosing = True
-
-##     def getChosenRow(self):
-##         return self.chosenRow
-    
-##     def setChosenRow(self,row):
-##         self.chosenRow = row
-        
 
 
 def nop(x):
     pass
 
-class DataNavigator(Navigator,Component):
+class DataNavigator(ReportMixin,Component):
     
     def __init__(self,owner,rpt,afterSkip=nop,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
-        Navigator.__init__(self,rpt)
+        ReportMixin.__init__(self,rpt)
         self.afterSkip = afterSkip
         self.currentPos = 0
 
@@ -444,6 +461,15 @@ class DataNavigator(Navigator,Component):
         return [self.currentPos]
         
 
+    def setupGoMenu(self):
+        frm = self.getForm()
+        m = frm.addMenu("go",label="&Go")
+        m.addItem("next",
+                  label="&Next",
+                  accel="PgDn").setHandler(self.skip,1)
+        m.addItem("previous",
+                  label="&Previous",
+                  accel="PgUp").setHandler(self.skip,-1)
 
         
 
@@ -456,6 +482,27 @@ class Container(Component):
         Component.__init__(self,owner,*args,**kw)
         self._components = []
 
+
+    def refresh(self):
+        for c in self._components:
+            c.refresh()
+        
+    def store(self):
+        for c in self._components:
+            c.store()
+        
+    def onClose(self):
+        for c in self._components:
+            c.onClose()
+
+    def onShow(self):
+        for c in self._components:
+            c.onShow()
+
+    def gendoc_render(self,doc):
+        for c in self._components:
+            c.gendoc_render(doc)
+        
 
     def __repr__(self):
         s = Component.__repr__(self)
@@ -493,15 +540,6 @@ class Container(Component):
             frm.tables.define(name,e)
         return e
         
-##     def addReportGrid(self,ds,name=None,*args,**kw):
-##         frm = self.getForm()
-##         c = frm.session.toolkit.reportGridFactory(self,ds,*args,**kw)
-##         self._components.append(c)
-##         frm.setMenuController(c)
-##         if name is not None:
-##             frm.tables.define(name,c)
-##         return c
-        
     def addNavigator(self,rpt,afterSkip=None,*args,**kw):
         frm = self.getForm()
         e = frm.session.toolkit.navigatorFactory(
@@ -515,17 +553,17 @@ class Container(Component):
         self._components.append(btn)
         return btn
     
+    def addVPanel(self):
+        return self.addPanel(self.VERTICAL)
+    def addHPanel(self):
+        return self.addPanel(self.HORIZONTAL)
+
     def addViewer(self): 
         frm = self.getForm()
         c = frm.session.toolkit.viewerFactory(self)
         self._components.append(c)
         return c
     
-    def addVPanel(self):
-        return self.addPanel(self.VERTICAL)
-    def addHPanel(self):
-        return self.addPanel(self.HORIZONTAL)
-
     def addButton(self,name=None,*args,**kw): 
         frm = self.getForm()
         btn = frm.session.toolkit.buttonFactory(
@@ -546,22 +584,6 @@ class Container(Component):
         return self.addButton(name="cancel",
                               label="&Cancel",
                               action=self.getForm().cancel)
-
-    def refresh(self):
-        for c in self._components:
-            c.refresh()
-        
-    def store(self):
-        for c in self._components:
-            c.store()
-        
-    def onClose(self):
-        for c in self._components:
-            c.onClose()
-
-    def onShow(self):
-        for c in self._components:
-            c.onShow()
 
 
 class Panel(Container):
@@ -634,6 +656,12 @@ class Form(Describable,MenuContainer):
     def getLeadRow(self):
         return self.data
 
+    def configure(self,data=None,**kw):
+        if data is not None:
+            from lino.reports.reports import ReportRow
+            assert isinstance(data,ReportRow)
+        Describable.configure(self,data=data,**kw)
+
     def getForm(self):
         return self
 
@@ -651,12 +679,32 @@ class Form(Describable,MenuContainer):
         assert self._parent is None
         #self._parent = parent
 
+    def setup(self):
+        pass
+
     def show(self,modal=False):
-        # overridden by implementors
-        self.session.notice("show(%s)",self.getLabel())
+        #self.session.notice("show(%s)",self.getLabel())
+
+        if not self.session.toolkit.running():
+            self.session.toolkit.run_forever(self.session)
+            #if self.app.mainForm == self:
+            #    return
+            # todo: uergh...
+
+        if self.isShown():
+            raise InvalidRequestError("form is already shown")
+            
+        self.modal = modal
+        #self.session.debug("show(modal=%s) %s",modal,self.getLabel())
+        self.setup()
+        #self.session.debug(repr(self.mainComp))
+        self.onShow()
+        self.session.setActiveForm(self)
+        self.session.toolkit.showForm(self)
+        
     
     def isShown(self):
-        raise NotImplementedError
+        return False
     
     def onIdle(self):
         try:
@@ -687,6 +735,10 @@ class Form(Describable,MenuContainer):
             
     def refresh(self):
         self.mainComp.refresh()
+        self.session.toolkit.refreshForm(self)
+        
+    def gendoc_render(self,doc):
+        self.mainComp.gendoc_render(doc)
         
     def store(self):
         self.mainComp.store()
@@ -707,9 +759,7 @@ class Form(Describable,MenuContainer):
 
 
 
-
-    
-class Toolkit(AbstractToolkit):
+class AbstractToolkit:
     
     labelFactory = Label
     entryFactory = Entry
@@ -721,6 +771,115 @@ class Toolkit(AbstractToolkit):
     #reportGridFactory = ReportGrid
     navigatorFactory = DataNavigator
     formFactory = Form
+    
+    #jobFactory=Job
+    #progresserFactory=Progresser
+    
+    def __init__(self):
+        self._logfile = None
+        self._sessions = []
+        self._currentProgresser=None
+        
+    def configure(self, logfile=None):
+        if logfile is not None:
+            if self._logfile is not None:
+                self._logfile.close()
+            self._logfile = open(logfile,"a")
+        
+    def writelog(self,msg):
+        if self._logfile:
+            #t = strftime("%a %Y-%m-%d %H:%M:%S")
+            t = time.strftime("%H:%M:%S")
+            self._logfile.write(t+" "+msg+"\n")
+            self._logfile.flush()
+
+            
+    def setupOptionParser(self,p):
+        def set_logfile(option, opt_str, value, parser,**kw):
+            self.configure(logfile=value)
+        p.add_option("-l", "--logfile",
+                     help="log a report to FILE",
+                     type="string",
+                     dest="logFile",
+                     action="callback",
+                     callback=set_logfile)
+
+        
+    def shutdown(self):
+        #self.verbose("Done after %f seconds.",
+        #             time.time() - self._started)
+##         if sys.platform == "win32":
+##             utime, stime, cutime, cstime, elapsed_time = os.times()
+##             syscon.verbose("%.2f+%.2f=%.2f seconds used",
+##                            utime,stime,utime+stime)
+##         else:
+##             syscon.verbose( "+".join([str(x) for x in os.times()])
+##                           + " seconds used")
+        if self._logfile:
+            self._logfile.close()
+
+
+        
+    def critical(self,sess,msg,*args,**kw):
+        if msg is not None:
+            self.error(sess,msg,*args,**kw)
+        sess.close()
+        self.stopRunning()
+
+    def createForm(self,sess,parent,*args,**kw):
+        return self.formFactory(sess,parent,*args,**kw)
+
+
+    def beginProgresser(self,sess,*args,**kw):
+        self._currentProgresser=Progresser(self._currentProgresser)
+        
+    
+##     def createJob(self,sess,*args,**kw):
+##         job=self.jobFactory()
+##         job.init(sess,*args,**kw)
+##         return job
+    
+##     def createProgresser(self,sess,*args,**kw):
+##         return self.progresserFactory(sess,*args,**kw)
+    
+    def openSession(self,sess):
+        #app.setToolkit(self)
+        #sess.toolkit = self
+        assert sess.toolkit is self
+        self._sessions.append(sess)
+        
+    def closeSession(self,sess):
+        self._sessions.remove(sess)
+        if len(self._sessions) == 0:
+            self.stopRunning()
+            #if self.consoleForm is not None:
+            #    self.consoleForm.close()
+        
+
+    def running(self):
+        return True
+        
+    def run_forever(self):
+        pass
+        #raise NotImplementedError
+    
+    def run_awhile(self):
+        pass
+        #raise NotImplementedError
+
+    def stopRunning(self):
+        pass
+        
+
+##     def main(self,app,argv=None):
+##         app.parse_args(argv)
+##         self.addSession(sess)
+##         self.run_forever()
+        
+
+
+    
+class Toolkit(AbstractToolkit):
     
     def __init__(self,console=None):
         AbstractToolkit.__init__(self)
@@ -766,61 +925,10 @@ class Toolkit(AbstractToolkit):
     def onTaskBreathe(self,*args,**kw):
         return self.console.onTaskBreathe(*args,**kw)
     
-##     def onJobRefresh(self,*args,**kw):
-##         return self.console.onJobRefresh(*args,**kw)
-##     def onJobInit(self,*args,**kw):
-##         return self.console.onJobInit(*args,**kw)
-##     def onJobDone(self,*args,**kw):
-##         return self.console.onJobDone(*args,**kw)
-##     def onJobAbort(self,*args,**kw):
-##         return self.console.onJobAbort(*args,**kw)
-    
-            
-##     def unused_setupOptionParser(self,parser):
-##         self.console.setupOptionParser(parser)
-##         parser.add_option(
-##             "--console",
-##             help="open separate window for console output",
-##             action="store_true",
-##             dest="showConsole",
-##             default=True)
-##         parser.add_option(
-##             "--no-console",
-##             help="no console window",
-##             action="store_false",
-##             dest="showConsole")
 
-##     def unused_applyOptions(self,options,args):
-##         self.console.applyOptions(options,args)
-##         self.showConsole = options.showConsole
-    
-##     def init(self):
-        
-##         """ the console window must be visible during
-##         application.init()"""
-        
-## ##         if self.showConsole:
-## ##             if self.consoleForm is None:
-## ##                 self.consoleForm = frm = self._apps[0].form(
-## ##                     None, label="Console",
-## ##                     halign=gui.RIGHT, valign=gui.BOTTOM)
-## ##                 frm.addViewer()
-## ##                 frm.show()
-##         for sess in self._sessions:
-##             sess.db.app.showMainForm(sess)
-##             #for sess in app.startup(self):
-##             #    app.showMainForm(sess)
-            
-##         #frm = app.getMainForm(self)
-##         #self.consoleForm.setParent(frm)
-##         #self.app.setMainForm(frm)
-##         #frm.show()
-##         #self.wxctrl.SetTopWindow(frm.wxctrl)
-        
-
-
-
-    def message(self,sess,msg):
+    def message(self,sess,msg,*args):
+        if len(args):
+            msg=sess.buildMessage(msg,*args)
         frm = sess.form(label="Message")
         frm.addLabel(msg)
         frm.addOkButton()

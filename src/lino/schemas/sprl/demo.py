@@ -473,14 +473,14 @@ class DemoPopulator(Populator):
         q = q.query('name zip street house box city')
 
         rumma = q.appendRow(
-            'Rumma & Ko OÜ','10115', 'Tartu mnt.','71','5',
+            'Rumma & Ko OÜ','10115', 'Tartu mnt.',71,'5',
             self.tallinn)
         girf = q.appendRow(
-            'Girf OÜ','10621','Laki',"16", None, self.tallinn)
+            'Girf OÜ','10621','Laki',16, None, self.tallinn)
         pac = q.appendRow(
-            'PAC Systems PGmbH','4700','Hütte',"79" , None, self.eupen)
+            'PAC Systems PGmbH','4700','Hütte',79 , None, self.eupen)
         q.appendRow(
-            'Eesti Telefon','13415','Sõpruse pst.',"193", None,
+            'Eesti Telefon','13415','Sõpruse pst.',193, None,
             self.tallinn)
 
         assert rumma.name == "Rumma & Ko OÜ"

@@ -36,6 +36,14 @@ class IsEqual(Filter):
     def getLabel(self):
         return "'%s' == %r" % (self.col.getLabel(),self.value)
 
+class Contains(Filter):
+    def __init__(self,col,value):
+        self.col=col
+        self.value=value
+    
+    def getLabel(self):
+        return "'%s' contains %r" % (self.col.getLabel(),self.value)
+
 class DateEquals(Filter):
     def __init__(self,col,year=None,month=None,day=None):
         self.col=col

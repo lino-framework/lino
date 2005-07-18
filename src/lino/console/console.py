@@ -72,111 +72,7 @@ from lino.console.task import TaskAborted
 ##         pass
 
 
-
-class AbstractToolkit:
-    
-    #jobFactory=Job
-    #progresserFactory=Progresser
-    
-    def __init__(self):
-        self._logfile = None
-        self._sessions = []
-        self._currentProgresser=None
-        
-    def configure(self, logfile=None):
-        if logfile is not None:
-            if self._logfile is not None:
-                self._logfile.close()
-            self._logfile = open(logfile,"a")
-        
-    def writelog(self,msg):
-        if self._logfile:
-            #t = strftime("%a %Y-%m-%d %H:%M:%S")
-            t = time.strftime("%H:%M:%S")
-            self._logfile.write(t+" "+msg+"\n")
-            self._logfile.flush()
-
-            
-    def setupOptionParser(self,p):
-        def set_logfile(option, opt_str, value, parser,**kw):
-            self.configure(logfile=value)
-        p.add_option("-l", "--logfile",
-                     help="log a report to FILE",
-                     type="string",
-                     dest="logFile",
-                     action="callback",
-                     callback=set_logfile)
-
-        
-    def shutdown(self):
-        #self.verbose("Done after %f seconds.",
-        #             time.time() - self._started)
-##         if sys.platform == "win32":
-##             utime, stime, cutime, cstime, elapsed_time = os.times()
-##             syscon.verbose("%.2f+%.2f=%.2f seconds used",
-##                            utime,stime,utime+stime)
-##         else:
-##             syscon.verbose( "+".join([str(x) for x in os.times()])
-##                           + " seconds used")
-        if self._logfile:
-            self._logfile.close()
-
-
-        
-    def critical(self,sess,msg,*args,**kw):
-        if msg is not None:
-            self.error(sess,msg,*args,**kw)
-        sess.close()
-        self.stopRunning()
-
-    def createForm(self,sess,parent,*args,**kw):
-        return self.formFactory(sess,parent,*args,**kw)
-
-
-    def beginProgresser(self,sess,*args,**kw):
-        self._currentProgresser=Progresser(self._currentProgresser)
-        
-    
-##     def createJob(self,sess,*args,**kw):
-##         job=self.jobFactory()
-##         job.init(sess,*args,**kw)
-##         return job
-    
-##     def createProgresser(self,sess,*args,**kw):
-##         return self.progresserFactory(sess,*args,**kw)
-    
-    def openSession(self,sess):
-        #app.setToolkit(self)
-        #sess.toolkit = self
-        assert sess.toolkit is self
-        self._sessions.append(sess)
-        
-    def closeSession(self,sess):
-        self._sessions.remove(sess)
-        if len(self._sessions) == 0:
-            self.stopRunning()
-            #if self.consoleForm is not None:
-            #    self.consoleForm.close()
-        
-
-    def running(self):
-        raise NotImplementedError
-        
-    def run_forever(self):
-        raise NotImplementedError
-    
-    def run_awhile(self):
-        raise NotImplementedError
-
-    def stopRunning(self):
-        pass
-        
-
-##     def main(self,app,argv=None):
-##         app.parse_args(argv)
-##         self.addSession(sess)
-##         self.run_forever()
-        
+from lino.forms.base import AbstractToolkit
 
 
             
@@ -262,6 +158,8 @@ class Console(AbstractToolkit):
 ##         self.error(str(e))
     
     def showException(self,sess,e,details=None):
+        if details is not None:
+            print details
         raise
 
     def warning(self,sess,msg,*args,**kw):
@@ -338,7 +236,6 @@ class Console(AbstractToolkit):
         
     
         
-
             
 ##     def onJobRefresh(self,job):
 ##         pass
@@ -548,6 +445,16 @@ class Console(AbstractToolkit):
         gd.endDocument()
     
 
+    def showForm(self,frm):
+        from lino.gendoc.plain import PlainDocument
+        #gd = PlainDocument()
+        gd = PlainDocument(writer=self._stdout)
+        gd.beginDocument()
+        gd.form(frm)
+        gd.endDocument()
+
+    def refreshForm(self,frm):
+        self.showForm(frm)
 
 
 class TtyConsole(Console):

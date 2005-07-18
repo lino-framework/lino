@@ -39,11 +39,11 @@ class Introduction(TestCase):
         PAGES.appendRow(match="index",
                         title="Main page",
                         abstract="Welcome",
-                        body="bla bla "*50)
+                        body="bla bla"*50)
         PAGES.appendRow(match="copyright",
                         title="Copyright",
                         abstract="Legal notes for this site.",
-                        body="BLA BLA "*50)
+                        body="BLA BLA"*50)
         # PAGES.commit()
         # PAGES.query("id match title",match="index").report()
         row = PAGES.findone(match="index")

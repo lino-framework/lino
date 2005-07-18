@@ -35,34 +35,25 @@ from lino.adamo.exceptions import DataVeto
 ERR_FORMAT_NONE = "caller must handle None values"
 ERR_PARSE_EMPTY = "caller must handle empty strings"
 
+def iif(test,x,y):
+    if test: return x
+    return y
+
+#def itself(x): return x
 
 class Type(Describable):
     "base class for containers of data-type specific meta information"
+    
+    parser=lambda x: x # itself
+    formatter=str
+    
+    allowedClasses=None # None or list of allowed classes for value
 
     # sizes are given in "characters" or "lines"
     
     minHeight = 1
     maxHeight = 1
     
-##     minWidth = 5
-##     maxWidth = 40
-    
-##     def __init__(self,parent,
-##                  minHeight=None,
-##                  maxHeight=None,
-##                  minWidth=None,
-##                  maxWidth=None,
-##                  **kw):
-##         Describable.__init__(self,parent,**kw)
-        
-##         if minHeight is not None:
-##             self.minHeight = minHeight
-##         if maxHeight is not None:
-##             self.maxHeight = maxHeight
-##         if minWidth is not None:
-##             self.minWidth = minWidth
-##         if maxWidth is not None:
-##             self.maxWidth = maxWidth
         
     def __call__(self,*args,**kw):
         return self.child(*args,**kw)
@@ -74,14 +65,18 @@ class Type(Describable):
 
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
-        return repr(v)
+        return self.formatter(v)
+        #return repr(v)
 
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
-        return s
+        return self.parser(s)
 
     def validate(self,value):
-        pass
+        if self.allowedClasses is None: return
+        if value.__class__ in self.allowedClasses: return
+        raise DataVeto("%r is not a valid %s" % (value,self))
+            
     
 ##     def getPreferredWidth(self):
 ##         #note: for StringType, self.width is an instance variable, for
@@ -91,12 +86,12 @@ class Type(Describable):
 ##     def getMinSize(self):
 ##         return (self.minWidth
         
-    
         
 class WidthType(Type):
     defaultWidth=50
     minWidth=15
     maxWidth=50
+    
     def __init__(self,parent=None,
                  width=None,minWidth=None,maxWidth=None,
                  **kw):
@@ -116,20 +111,58 @@ class WidthType(Type):
             if self.minWidth != parent.minWidth:
                 self.minWidth = parent.minWidth
                 
+##     def parse(self,s):
+##         assert len(s), ERR_PARSE_EMPTY
+##         return int(s)
     
+            
 class IntType(WidthType):
     defaultWidth=5
     minWidth=3
     maxWidth=7
-    def parse(self,s):
-        assert len(s), ERR_PARSE_EMPTY
-        return int(s)
+    parser=int
+    allowedClasses=(types.IntType,)
+    
+##     def parse(self,s):
+##         assert len(s), ERR_PARSE_EMPTY
+##         return int(s)
 
+##     def validate(self,value):
+##         if value.__class__ is types.IntType:
+##             return
+##         raise DataVeto("not an integer")
+    
+
+
+class BoolType(IntType):
+    parser=bool
+    formatter=lambda s,x: iif(x,'X','-')
+    allowedClasses=(types.BooleanType,)
+
+##     def validate(self,value):
+##         #print __name__,value
+##         Type.validate(self,value)
+        
+class AutoIncType(IntType):
+    pass
+
+
+
+#class AreaType(IntType):
+#    pass
+
+    
+    
+class LongType(IntType):
+    parser=long
+    allowedClasses=(types.LongType,)
     
 class StringType(WidthType):
     defaultWidth=50
     minWidth=15
     maxWidth=50
+    allowedClasses=(types.StringType,types.UnicodeType)
+    
 ##     def __init__(self,parent=None,**kw):
 ##         WidthType.__init__(self,parent,**kw)
 ##         if self.minWidth > 20:
@@ -141,7 +174,25 @@ class StringType(WidthType):
     
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
-        return str(v)
+        #return v
+        return v.encode("cp1252",'replace')
+##         if isinstance(s,UnicodeType):
+##             return s.decode(None,'replace')
+##         return str(v)
+        
+    def validate(self,value):
+        Type.validate(self,value)
+        if len(value) == 0:
+            raise DataVeto("Cannot store empty string.")
+        if value.endswith(' '):
+            raise DataVeto("%r ends with a space" % value)
+            
+##         if len(value) > self.maxWidth:
+##             raise DataVeto("%r is longer than %d characters" % \
+##                            (value, self.maxWidth))
+##         if len(value) > self.minWidth:
+##             raise DataVeto("%r is shorter than %d characters" % \
+##                            (value, self.minWidth))
         
     
 class PasswordType(StringType):
@@ -285,15 +336,7 @@ class DurationType(Type):
             #raise DataVeto(repr(value)+" is not a timedelta")
             raise DataVeto("not a timedelta")
 
-class AutoIncType(IntType):
-    pass
 
-class BoolType(IntType):
-    pass
-
-
-class AreaType(IntType):
-    pass
 
 class UrlType(StringType):
     pass
@@ -321,13 +364,14 @@ TIME = TimeType() # StringType(width=8)
 TIMESTAMP = TimeStampType() 
 DURATION = DurationType() 
 INT = IntType() 
+LONG = LongType() 
 BOOL = BoolType()
 AMOUNT = AmountType()
 PRICE = PriceType()
 ROWID = AutoIncType()
 URL = UrlType(width=200)
 EMAIL = EmailType(width=60)
-AREA = AreaType()
+#AREA = AreaType()
 IMAGE = ImageType()
 LOGO = LogoType()
 

@@ -181,7 +181,8 @@ class Task:
         return s
 
     
-
+    def query(self,*args,**kw):
+        return self.session.query(*args,**kw)
 
     def summary(self):
         # may override

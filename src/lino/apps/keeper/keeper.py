@@ -23,12 +23,8 @@ from lino.apps.keeper.tables import *
 from lino.apps.keeper.tables import TABLES
 from lino.adamo.ddl import Schema, Populator, STRING
 from lino.reports import DataReport
-from lino.misc.tsttools import TESTDATA
+from lino.adamo.filters import Contains, NotEmpty
 
-class TestPopulator(Populator):
-    def populateVolumes(self,q):
-        q.appendRow(path=TESTDATA)
-        
 class Keeper(Schema):
     
     years='2005'
@@ -37,24 +33,34 @@ class Keeper(Schema):
     tables = TABLES
 
     def showSearchForm(self,sess):
-        searchData = sess.query(Files,"name")
-        occs=searchData.addColumn("occurences")
+        words = sess.query(Words)
+        files = sess.query(Files,"name")
+        grid=None # referenced in search(), defined later
+        col=files.addColumn("occurences")
+        col.addFilter(NotEmpty)
+        occs=col.getDetailQuery()
+        occs.setSearchColumns("word.id")
+        #files.addColumn("content")
+        
+        #rpt=DataReport(files,columnWidths="30 30 15")
+        rpt=DataReport(files,columnWidths="30 15")
         
         frm = sess.form(label="Search")
 
         searchString = frm.addEntry("searchString",STRING,
-                                    label="Words to look for",
-                                    value="")
+                                    label="Words to look for")
+                                    #value="")
         def search():
-            #self.searchData.setSarch(searchString.getValue())
-            occs._queryParams["search"]=searchString.getValue()
+            #files.clearFilters()
+            #for word in searchString.getValue().split():
+            #    w=words.peek(word)
+            #    occs.addFilter(Contains,w)
+                
+            #files.setSearch(searchString.getValue())
+            #occs._queryParams["search"]=searchString.getValue()
+            occs.setSearch(searchString.getValue())
+            grid.enabled=searchString.getValue() is not None
             frm.refresh()
-            #a = self.arrivals.appendRow(
-            #    dossard=frm.entries.dossard.getValue(),
-            #    time=now.time())
-            #frm.status("%s arrived at %s" % (a.dossard,a.time))
-            #searchString.setValue('')
-            #frm.entries.dossard.setFocus()
 
 
 
@@ -66,8 +72,8 @@ class Keeper(Schema):
         #bbox.addButton("exit",
         #               label="&Exit",
         #               action=frm.close)
-        rpt=DataReport(searchData)
-        bbox.addDataGrid(rpt)
+        grid=bbox.addDataGrid(rpt)
+        grid.enabled=False
 
         frm.show()
         #frm.showModal()
@@ -102,9 +108,9 @@ This is the Keeper main menu.
         frm.show()
 
 
-if __name__ == '__main__':
-    from lino.forms import gui
-    app=Keeper()
-    sess=app.quickStartup()
-    sess.populate(TestPopulator())
-    gui.run(sess)
+## if __name__ == '__main__':
+##     from lino.forms import gui
+##     app=Keeper()
+##     sess=app.quickStartup()
+##     sess.populate(TestPopulator())
+##     gui.run(sess)

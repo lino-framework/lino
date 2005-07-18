@@ -30,8 +30,6 @@ except:
 
 from lino.console.application import Application, UsageError, ApplicationError
 
-#from lino.ui import console
-#from lino.misc.jobs import Task
 from lino.console.task import Task
 
 

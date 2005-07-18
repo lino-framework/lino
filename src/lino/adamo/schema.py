@@ -288,11 +288,8 @@ class Schema(Application):
         return db.startup(**kw) #syscon.getSystemConsole())
     
     
-    def run(self,sess):
-        self.showMainForm(sess)
-        
-    def showMainForm(self,sess):
-        pass
+##     def showMainForm(self,sess):
+##         pass
         
 ##     def shutdown(self):
 ##         syscon.debug("Schema.shutdown()")

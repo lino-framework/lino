@@ -108,7 +108,7 @@ class Connection(SqlConnection):
 ##             return
         #csr = sqlite.Cursor(self._dbconn,TupleType)
         csr=self._dbconn.cursor()
-        # print "sqlite_dbd.py:" + sql
+        #print "sqlite_dbd.py:" + sql
         if type(sql) == StringType:
             sql=sql.decode("latin1")
         try:

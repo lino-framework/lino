@@ -17,7 +17,7 @@ app=Timings()
 sess=app.quickStartup()
 sess.populate(CpasPopulator())
 for lc in LOADERS:
-    sess.runLoader(lc(loadfrom))
+    sess.runTask(lc(loadfrom))
 gui.run(sess)
 
 

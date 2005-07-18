@@ -35,8 +35,12 @@ class MyDataTable(wx.grid.PyGridTableBase):
         self._load()
         
     def _load(self):
-        self.rows = [ row for row
-                      in self.editor.rpt.rows(self.editor.getForm()) ]
+        if self.editor.enabled:
+            self.rows = [
+                row for row
+                in self.editor.rpt.rows(self.editor.getForm()) ]
+        else:
+            self.rows=[]
 
     def refresh(self,grid):
         before = self.GetNumberRows()
@@ -117,9 +121,9 @@ class MyDataTable(wx.grid.PyGridTableBase):
         if rowIndex == len(self.rows):
             return "."
         col = self.columns[colIndex]
-        v = col.getCellValue(self.rows[rowIndex])
-        if v is None:
-            return ""
+        v = self.rows[rowIndex].values[colIndex]
+        #v = col.getCellValue(self.rows[rowIndex])
+        if v is None: return ""
         return col.format(v)
         #return str(self.rows[rowIndex][colIndex])
 

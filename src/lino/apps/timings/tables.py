@@ -26,6 +26,7 @@ class Resources(Table):
     def init(self):
         self.addField('id',STRING) 
         self.addField('name',STRING)
+        self.addView("std", "id name")
         
 
     def setupMenu(self,nav):
@@ -65,6 +66,7 @@ class Usages(Table):
         self.addField('remark',STRING)
         #self.addField('mtime',TIMESTAMP)
         self.addPointer('resource',Resources).setMandatory()
+        self.addView("std", "id date start stop type remark")
 
     class Instance(Table.Instance):
         
@@ -85,6 +87,7 @@ class UsageTypes(Table):
     def init(self):
         self.addField('id',STRING(width=2))
         self.addField('name',STRING)
+        self.addView("std", "id name")
 
     class Instance(Table.Instance):
         def __str__(self):
@@ -95,6 +98,7 @@ class Days(Table):
         self.addField('date',DATE)
         self.addField('remark',STRING)
         self.setPrimaryKey("date")
+        self.addView("std", "date remark")
         
     class Instance(Table.Instance):
         def __str__(self):

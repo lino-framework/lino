@@ -80,7 +80,8 @@ class BaseReport(Describable):
         return len(self.ds)
 
     def __getitem__(self,i):
-        return self.ds.__getitem__(i)
+        #return self.ds.__getitem__(i)
+        return ReportRow(self,self.ds.__getitem__(i))
 
     def canWrite(self):
         return self.ds.canWrite()
@@ -165,8 +166,10 @@ class BaseReport(Describable):
     def rows(self,doc):
         return ReportIterator(self,doc)
         
-    def processItem(self,doc,item):
-        return ReportRow(self,doc,item)
+    #def processItem(self,doc,item):
+    def processItem(self,item):
+        return ReportRow(self,item)
+        #return ReportRow(self,doc,item)
         #row = Row(item)
 
         #return row
@@ -190,10 +193,18 @@ class BaseReport(Describable):
         syscon.showReport(self,**kw)
 
     def setupForm(self,frm,row=None,**kw):
+        
         if row is None:
             row = self[0]
-        for dc in self.getVisibleColumns():
-            frm.addDataEntry(dc)
+            
+        kw.setdefault('data',row)
+        kw.setdefault('name',self.getName())
+        kw.setdefault('label',self.getLabel())
+        kw.setdefault('doc',self.getDoc())
+        frm.configure(**kw)
+        
+        for col in self.getVisibleColumns():
+            frm.addDataEntry(col,label=col.getLabel())
 ##         for cell in row:
 ##             dc = cell.col
 ##             frm.addDataEntry(dcname=dc.name,
@@ -209,16 +220,14 @@ class BaseReport(Describable):
 ##             for cell in row:
 ##                 setattr(frm.entries,cell.col.name,cell.format())
         frm.addNavigator(self,afterSkip=afterSkip)
-        kw.setdefault('data',row)
-        kw.setdefault('name',self.getName())
-        kw.setdefault('label',self.getLabel())
-        kw.setdefault('doc',self.getDoc())
-        frm.configure(**kw)
+        
 
     
 
 
 class ReportColumn(Describable):
+    
+    type=STRING
     
     def __init__(self,
                  formatter=str,
@@ -254,12 +263,19 @@ class ReportColumn(Describable):
 
     def format(self,v):
         return self._formatter(v)
+
+    def validate(self,value):
+        pass
     
     def showSelector(self,frm,row):
         return self._selector(frm,row)
 
     def canWrite(self,row):
         return False
+    
+##     def getType(self):
+##         return self.type
+
 
 class DataReportColumn(ReportColumn):
     def __init__(self,datacol,
@@ -292,16 +308,20 @@ class DataReportColumn(ReportColumn):
         self.datacol.addFilter(*args)
         
     def canWrite(self,row):
+        if row is None:
+            return self.datacol.canWrite(None)
         return self.datacol.canWrite(row.item)
-    def getType(self):
-        return self.datacol.rowAttr.getType()
+    
+    def validate(self,value):
+        return self.datacol.rowAttr.validate(value)
+        
+##     def getType(self):
+##         return self.datacol.rowAttr.getType()
     
 ##     def format(self,v):
 ##         return self.datacol.format(v)
     
 class VurtReportColumn(ReportColumn):
-    
-    type = STRING
     
     def __init__(self,meth,type=None,formatter=None,**kw):
         if type is not None:
@@ -311,33 +331,35 @@ class VurtReportColumn(ReportColumn):
         self.meth = meth
 
     def getCellValue(self,row):
-        #return self.meth(self._owner.crow)
         return self.meth(row)
     
     def getMinWidth(self):
         return self.type.minWidth
     def getMaxWidth(self):
         return self.type.maxWidth
-    def getType(self):
-        return self.type
         
 ##     def format(self,v):
 ##         return self.type.format(v)
 
 
-class Cell:
-    def __init__(self,row,col,value):
-        self.row = row
-        self.col = col
-        self.value = value
+## class Cell:
+##     def __init__(self,row,col,value):
+##         self.row = row
+##         self.col = col
+##         self.value = value
+
 
 class ReportRow:
-    def __init__(self,rpt,doc,item):
+    def __init__(self,rpt,item):
         self.item = item
-        self.cells = []
+        #self.cells = []
+        self.values = []
         
         for e in rpt._onRowEvents:
             e(self)
+            
+            # onEach event may do some lookup or computing and store
+            # the result in the ReportRow instance.
             
 
         # compute all cell values
@@ -346,7 +368,11 @@ class ReportRow:
                 v = None
             else:
                 v = col.getCellValue(self)
-            self.cells.append(Cell(self,col,v))
+                if v is not None:
+                    #col.getType().validate(v)
+                    col.validate(v)
+            #self.cells.append(Cell(self,col,v))
+            self.values.append(v) 
             
 
 
@@ -361,7 +387,8 @@ class ReportIterator:
         return self
 
     def next(self):
-        return self.rpt.processItem(self.doc,self.iterator.next())
+        return self.rpt.processItem(self.iterator.next())
+        #return self.rpt.processItem(self.doc,self.iterator.next())
 
 class DataReport(BaseReport):
     

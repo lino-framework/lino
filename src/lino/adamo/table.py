@@ -111,9 +111,9 @@ class FieldContainer:
 class Table(FieldContainer,SchemaComponent,Describable):
     """
     
-    Holds meta-information about a data table. There is one instance of
-    each database table in a Schema.  Note that the Table does not
-    worry about how the data is stored.
+    Holds meta-information about a data table. There is one instance
+    of each database table in a Schema.  The Table does not worry
+    about how the data is stored.
     
     
     """

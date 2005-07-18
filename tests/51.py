@@ -20,47 +20,14 @@
 import os
 import sys
 
-from lino.misc.tsttools import TestCase, main, catch_output
-from lino.tools import textsplitter
-from lino.tools import guesscoding 
+from lino.misc.tsttools import TestCase, main
 
-
-TESTDATA = os.path.join(os.path.dirname(__file__),"testdata")
 
 class Case(TestCase):
-    skip=True # textsplitter is frozen
+    skip=True # not used
     def test01(self):
-
-
-        for coding in ("cp850","cp1252"):
-
-            sp = textsplitter.TextSplitter(coding)
-
-            #print sp.xalphas.encode("ascii","replace")
-            s = sp.xalphas.decode(coding)
-            print coding, ":", s.encode(sys.getdefaultencoding(),"replace")
+        pass
         
-##         ustrings = []
-##         for coding in ("cp850","cp1252"):
-##             # cp850b.txt contains all non-ascii alphabetic chars I have
-##             # ever encountered in cp850:
-##             s = open(os.path.join(TESTDATA,enc+"b.txt")).read().strip()
-
-##             l = map(ord,[ch for ch in s])
-
-##             # print l
-        
-##             self.assertEqual(textsplitter.xalphas[enc], s)
-
-##             ustrings.append(s.decode(coding))
-
-##         for us in ustrings:
-##             for ch in us:
-##                 self.failUnless(ch.isalpha())
-
-        boxchar = chr(179).decode("cp850")
-        # print repr(boxchar)
-        self.failIf(boxchar.isalpha())
     
 if __name__ == '__main__':
     main()

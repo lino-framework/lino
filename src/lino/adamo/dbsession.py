@@ -52,14 +52,13 @@ class DbSession(Session,Context):
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
-    def __init__(self,db,toolkit,user=None,pwd=None,*args,**kw):
-    #def __init__(self,db,sess,user=None,pwd=None):
+    def __init__(self,db,toolkit,user=None,pwd=None):
         #assert isinstance(sess,Session)
         self.db = db
         #self.session=sess
         self.user=user
         self.pwd=pwd
-        Session.__init__(self,toolkit,*args,**kw)
+        Session.__init__(self,toolkit,db.app)
         self.setDefaultLanguage()
         db.addSession(self)
         #for m in ('showReport',):
@@ -257,6 +256,6 @@ class DbSession(Session,Context):
 ##         self.session.report(rpt)
     
 
-    def showMainForm(self):
-        self.db.app.showMainForm(self)
+##     def showMainForm(self):
+##         self.db.app.showMainForm(self)
 

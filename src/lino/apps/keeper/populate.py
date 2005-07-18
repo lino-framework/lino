@@ -25,7 +25,6 @@ import codecs
 from lino.adamo.ddl import *
 from lino.console.task import Task
 #from lino.tools.msword import MsWordDocument
-from lino.guessenc.guesser import EncodingGuesser
 from lupy.index.documentwriter import standardTokenizer
 
 
@@ -43,25 +42,25 @@ class VolumeVisitor(Task):
         self.files = sess.query(tables.Files)
         self.dirs = sess.query(tables.Directories)
         if len(self.volume.directories) > 0:
-            self.freshen(self.volume.path,"")
+            self.freshen(self.volume.path)
         else:
-            self.load(self.volume.path,"")
+            self.load(self.volume.path)
 
     def getLabel(self):
         return "Loading "+str(self.volume)
 
-    def prune_dir(self,dirname):
-        return dirname in ('.svn',)
+##     def prune_dir(self,dirname):
+##         return dirname in ('.svn',)
             
-    def freshen(self,fullname,shortname,dir=None):
+    def freshen(self,fullname,shortname=None,dir=None):
         self.status(fullname)
+        if self.volume.ignoreByName(shortname): return
         if os.path.isfile(fullname):
             row = self.files.peek(dir,shortname)
             if row is None:
                 row = self.files.appendRow(name=shortname,dir=dir)
-            self.readTimeStamp(row,fullname)
+            row.readTimeStamp(self,fullname)
         elif os.path.isdir(fullname):
-            if self.prune_dir(shortname): return
             row = self.dirs.findone(parent=dir,name=shortname)
             if row is None:
                 row = self.dirs.appendRow(name=shortname,
@@ -74,8 +73,9 @@ class VolumeVisitor(Task):
         else:
             self.error("%s : no such file or directory",fullname)
 
-    def load(self,fullname,shortname,dir=None):
+    def load(self,fullname,shortname=None,dir=None):
         self.status(fullname)
+        if self.volume.ignoreByName(shortname): return
         if os.path.isfile(fullname):
             #if self.reloading:
             #    row = self.files.peek(dir,shortname)
@@ -84,9 +84,8 @@ class VolumeVisitor(Task):
             #if row is None:
             row = self.files.appendRow(name=shortname,dir=dir)
             #self.visit_file(row,fullname)
-            self.readTimeStamp(row,fullname)
+            row.readTimeStamp(self,fullname)
         elif os.path.isdir(fullname):
-            if self.prune_dir(shortname): return
             #print "findone(",dict(parent=dir,name=shortname),")"
             #if self.reloading:
             #    row = self.dirs.findone(parent=dir,name=shortname)
@@ -108,20 +107,6 @@ class VolumeVisitor(Task):
 ##         for fn in os.listdir(fullname):
 ##             self.visit(os.path.join(fullname,fn), fn, dirRow)
         
-    def readTimeStamp(self,row,fullname):
-        try:
-            st = os.stat(fullname)
-        except OSError,e:
-            self.error("os.stat('%s') failed" % fullname)
-            return
-        sz = st.st_size
-        mt = st.st_mtime
-        if row.mtime == mt and row.size == sz:
-            return
-        row.lock()
-        row.mtime = mt
-        row.size=sz
-        row.unlock()
 
 class FileVisitor(Task):
     
@@ -195,6 +180,42 @@ class FileVisitor(Task):
             fileRow.occurences.appendRow(word=word, pos=pos)
 
     
+from lino.guessenc.guesser import EncodingGuesser
+
+encodingGuesser = EncodingGuesser()
+
+def get_reader(fullname):
+    base,ext = os.path.splitext(fullname)
+    try:
+        return readers[ext.lower()]
+    except KeyError,e:
+        return non_reader
+
+    
+def read_content(sess,fileInstance,fullname):
+    r=get_reader(fullname)
+    return r(sess,fileInstance,fullname)
+    
+    
+def non_reader(sess,fileInstance,fullname):
+    sess.status("Not reading %s",fullname)
+    
+def doc_reader(sess,fileInstance,fullname):
+    sess.status("Not yet reading %s",fullname)
+    
+def txt_reader(sess,fileInstance,fullname):
+    
+    s = open(fullname).read()
+    coding = encodingGuesser.guess(fullname,s)
+    sess.status("%s: %s", fullname,coding)
+    if coding:
+        s=s.decode(coding)
+    return s
+
+readers = {
+    '.txt' : txt_reader,
+    '.doc' : doc_reader,
+    }
 
 
         

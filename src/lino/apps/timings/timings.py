@@ -22,7 +22,7 @@ from lino.apps.timings.tables import *
 from lino.apps.timings.tables import TABLES
 from lino.adamo.ddl import Schema
 from lino.adamo.filters import DateEquals
-from lino.adamo.datatypes import itod
+from lino.adamo.datatypes import itod, iif
 
 from lino.gendoc.html import HtmlDocument
 from lino.reports.reports import DataReport, ReportColumn
@@ -65,10 +65,6 @@ class anyiter:
             raise StopIteration
         return self.current
 
-def iif(test,x,y):
-    if test: return x
-    return y
-        
 class Timings(Schema):
     #name="Lino/Timings"
     years='2005'
@@ -196,11 +192,11 @@ This is the Timings main menu.
 
         m = frm.addMenu("db","&Datenbank")
         m.addItem("resources",label="&Resources").setHandler(
-            sess.showTableGrid, Resources)
+            sess.showViewGrid, Resources)
         m.addItem("usages",label="&Usages").setHandler(
-            sess.showTableGrid, Usages)
+            sess.showViewGrid, Usages)
         m.addItem("usageTypes",label="Usage &Types").setHandler(
-            sess.showTableGrid, UsageTypes)
+            sess.showViewGrid, UsageTypes)
         
         m = frm.addMenu("reports","&Reports")
         m.addItem("s",label="&Static HTML").setHandler(

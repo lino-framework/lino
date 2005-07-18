@@ -177,8 +177,12 @@ See file COPYING.txt for more information.""" % (
         p = OptionParser(
             usage=self.usage,
             description=self.description)
+
+        sess=syscon._session
         
-        syscon.getToolkit().setupOptionParser(p)
+        sess.setApplication(self)
+        
+        sess.toolkit.setupOptionParser(p)
         
         self.setupOptionParser(p)
         
@@ -189,9 +193,7 @@ See file COPYING.txt for more information.""" % (
             
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
-            
-            #p=self.parse_args(argv)
-            return self.run(syscon._session)
+            return self.run(sess)
         
         except UsageError,e:
             p.print_help()
@@ -200,6 +202,9 @@ See file COPYING.txt for more information.""" % (
             syscon.error(str(e))
             return -1
 
+    def run(self,sess):
+        self.showMainForm(sess)
+        
     def showMainForm(self,sess):
         pass
 
@@ -227,6 +232,4 @@ See file COPYING.txt for more information.""" % (
             #syscon.debug("Killing session %r",sess)
             sess.close()
         
-    def run(self,sess):
-        raise NotImplementedError
-    
+        

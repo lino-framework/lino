@@ -28,7 +28,11 @@ from lino.forms.wx import wxgrid
 #from lino.forms.wx.showevents import showEvents
 #from lino.misc import jobs
 
-WEIGHT = 1
+STRETCH = 1
+DONTSTRETCH=0
+
+BORDER=10
+NOBORDER=0
 
 ENTRY_PANEL_BACKGROUND = wx.GREEN
 ENTRY_LABEL_BACKGROUND = wx.GREEN
@@ -38,21 +42,24 @@ docWrapper = TextWrapper(30)
 
 
 def _setEditorSize(editor,type):
+
+    #print type
     #LINEHEIGHT = 10
     #CHARWIDTH = 10
         
     #CHARWIDTH = LINEHEIGHT = editor.GetFont().GetPointSize()
     CHARWIDTH, LINEHEIGHT = editor.GetTextExtent("M")
-
+    #print editor.GetFullTextExtent("M"), editor.GetTextExtent("M")
+    #print editor.GetBestSize()
+    
     CHARWIDTH *= 2
-    #LINEHEIGHT *= 2
-        
-    #print CHARWIDTH, LINEHEIGHT
         
     #editor.SetMaxSize( (type.maxWidth*CHARWIDTH,
     #                    type.maxHeight*LINEHEIGHT) )
-    editor.SetMinSize( (type.minWidth*CHARWIDTH,
-                        type.minHeight*LINEHEIGHT) )
+    #editor.SetMinSize( (type.minWidth*CHARWIDTH,
+    #                    type.minHeight*LINEHEIGHT) )
+    
+    editor.SetMinSize(editor.GetBestSize())
 
 
 class EventCaller:
@@ -101,7 +108,7 @@ class Label(base.Label):
         if self.getDoc() is not None:
             text += '\n' + self.getDoc()
         ctrl = wx.StaticText(panel,-1, text)
-        box.Add(ctrl, WEIGHT, wx.EXPAND|wx.ALL, 10)
+        box.Add(ctrl, DONTSTRETCH, wx.EXPAND|wx.ALL, BORDER)
         self.wxctrl = ctrl
                 
 class Button(base.Button):
@@ -123,7 +130,7 @@ class Button(base.Button):
         if self.doc is not None:
             btn.SetToolTipString(self.doc)
 
-        box.Add(btn) #, 0, wx.CENTER,10)
+        box.Add(btn,DONTSTRETCH,0,NOBORDER) #, 0, wx.CENTER,10)
         self.wxctrl = btn
 
     def setFocus(self):
@@ -133,7 +140,7 @@ class DataGrid(base.DataGrid):
     
     def setup(self,parent,box):
         self.wxctrl = wxgrid.DataGridCtrl(parent,self)
-        box.Add(self.wxctrl, 1, wx.EXPAND,10)
+        box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
         
     def refresh(self):
         self.wxctrl.refresh()
@@ -145,39 +152,41 @@ class DataGrid(base.DataGrid):
 class DataNavigator(base.DataNavigator):
     
     def setup(self,parent,box):
-        frm = self.getForm()
-                
-        mypanel = wx.Panel(parent,-1)
-        box.Add(mypanel, WEIGHT, wx.EXPAND|wx.ALL,10)
-        
-        hbox = wx.BoxSizer(wx.HORIZONTAL)
-        mypanel.SetSizer(hbox)
-        self.wxctrl = mypanel
+        if False:
+            frm = self.getForm()
+
+            mypanel = wx.Panel(parent,-1)
+            box.Add(mypanel, STRETCH, wx.EXPAND|wx.ALL,BORDER)
+
+            hbox = wx.BoxSizer(wx.HORIZONTAL)
+            mypanel.SetSizer(hbox)
+            self.wxctrl = mypanel
 
 
-        self.statusLabel = wx.StaticText( mypanel, -1,
-                                          self.getStatus())
-        hbox.Add(self.statusLabel, WEIGHT, wx.EXPAND, border=10 )
-        
-        hbox.Add( (10,1), 0)
-        
-        btn = wx.Button( mypanel, -1, "<")
-        hbox.Add(btn, WEIGHT, wx.EXPAND, border=10 )
-        self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                   lambda e:self.skip(-1), btn)
-                                   #EventCaller(self.skip,-1))
-        
-        btn = wx.Button( mypanel, -1, ">")
-        hbox.Add(btn, WEIGHT, wx.EXPAND, border=10 )
-        self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                   lambda e:self.skip(1), btn)
-                                   #EventCaller(self.skip,1))
-        
+            self.statusLabel = wx.StaticText( mypanel, -1,
+                                              self.getStatus())
+            hbox.Add(self.statusLabel, STRETCH, wx.EXPAND, BORDER )
+
+            hbox.Add( (10,1), DONTSTRETCH,0,NOBORDER)
+
+            btn = wx.Button(mypanel, -1, "<")
+            hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
+            self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
+                                       lambda e:self.skip(-1), btn)
+                                       #EventCaller(self.skip,-1))
+
+            btn = wx.Button(mypanel, -1, ">")
+            hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
+            self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
+                                       lambda e:self.skip(1), btn)
+                                       #EventCaller(self.skip,1))
+
     def getStatus(self):
         return "%d/%d" % (self.currentPos,len(self.rpt))
     
     def refresh(self):
-        self.statusLabel.SetLabel(self.getStatus())
+        if False:
+            self.statusLabel.SetLabel(self.getStatus())
         
         
 
@@ -209,9 +218,9 @@ class TextViewer(base.TextViewer):
         e.SetBackgroundColour('BLACK')
         e.SetForegroundColour('WHITE')
         e.SetEditable(False)
-        _setEditorSize(e,MEMO(width=80,height=10))
+        _setEditorSize(e,MEMO(width=50,height=10))
         #e.SetEnabled(False)
-        box.Add(e, 1, wx.EXPAND|wx.ALL,0)
+        box.Add(e, STRETCH, wx.EXPAND|wx.ALL,NOBORDER)
         self.wxctrl = e
         self.wxctrl.SetInsertionPointEnd()
         #self.wxctrl.ShowPosition(-1)
@@ -243,7 +252,7 @@ class Panel(base.Panel):
     
     def setup(self,parent,box):
         mypanel = wx.Panel(parent,-1)
-        box.Add(mypanel, WEIGHT, wx.ALL|wx.EXPAND,0)
+        box.Add(mypanel, DONTSTRETCH, wx.ALL|wx.EXPAND,NOBORDER)
         if self.direction == self.VERTICAL:
             mybox = wx.BoxSizer(wx.VERTICAL)
         else:
@@ -255,6 +264,7 @@ class Panel(base.Panel):
         
         for c in self._components:
             c.setup(mypanel,mybox)
+
             
 class EntryMixin:
 
@@ -262,7 +272,7 @@ class EntryMixin:
         if self.hasLabel():
             mypanel = wx.Panel(panel,-1)
             mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
-            box.Add(mypanel, WEIGHT, wx.EXPAND|wx.ALL,10)
+            box.Add(mypanel, DONTSTRETCH, wx.EXPAND|wx.ALL,BORDER)
 
             hbox = wx.BoxSizer(wx.HORIZONTAL)
             mypanel.SetSizer(hbox)
@@ -277,7 +287,7 @@ class EntryMixin:
                                           self.getLabel(),
                                           style=wx.ALIGN_RIGHT)
                 labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer.Add(labelCtrl,1,wx.EXPAND,10)
+                labelSizer.Add(labelCtrl,DONTSTRETCH,wx.EXPAND,BORDER)
 
                 #ENTRY_DOC_FONT = wx.Font(pointSize=8,
                 #                         family=wx.DEFAULT)
@@ -288,7 +298,7 @@ class EntryMixin:
                     style=wx.ALIGN_LEFT)
                 docCtrl.SetFont(ENTRY_DOC_FONT)
                 docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer.Add(docCtrl,1,wx.EXPAND,10)
+                labelSizer.Add(docCtrl,DONTSTRETCH,wx.EXPAND,BORDER)
 
             else:
                 label = wx.StaticText(mypanel, -1,
@@ -296,12 +306,11 @@ class EntryMixin:
                                       style=wx.ALIGN_RIGHT)
                 label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
 
-            hbox.Add(label, WEIGHT,
+            hbox.Add(label, STRETCH,
                      wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
-                     border=10,
-                     )
+                     BORDER)
 
-            hbox.Add( (10,1), 0) # spacer
+            hbox.Add( (10,1), DONTSTRETCH,0,NOBORDER) # spacer
             
         else:
             mypanel = panel
@@ -309,8 +318,10 @@ class EntryMixin:
 
 
         style=0
-        type = self.getType()
-        if type.maxHeight > 1:
+##         type = self.getType()
+##         if type.maxHeight > 1:
+##             style = style|wx.TE_MULTILINE
+        if self.getMaxHeight() > 1:
             style = style|wx.TE_MULTILINE
         editor = wx.TextCtrl(mypanel,-1,
                              self.getValueForEditor(),
@@ -319,7 +330,7 @@ class EntryMixin:
                              #style=wx.TE_PROCESS_ENTER)
 
         
-        _setEditorSize(editor,type)
+        _setEditorSize(editor,self)
         #print editor.GetMinSize(), editor.GetMaxSize()
         #print mypanel.GetMinSize(), editor.GetMaxSize()
         
@@ -332,12 +343,12 @@ class EntryMixin:
         self.editor = editor 
         if self.hasLabel():
             hbox.Add(editor,
-                     WEIGHT,
+                     STRETCH,
                      wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
-                     10)
+                     BORDER)
             self.wxctrl = mypanel
         else:
-            hbox.Add(editor,wx.EXPAND|wx.ALL)
+            hbox.Add(editor,DONTSTRETCH,wx.EXPAND|wx.ALL,NOBORDER)
             self.wxctrl = editor
 
     def refresh(self):
@@ -446,8 +457,6 @@ class Form(base.Form):
             self.wxctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
             
             if self.menuBar is not None:
-                # todo: won't work
-                # todo: put following code to frm._menu.installto(self)
                 wxMenuBar = wx.MenuBar()
                 for mnu in self.menuBar.menus:
                     wxm = self._createMenuWidget(mnu)
@@ -522,41 +531,6 @@ class Form(base.Form):
         return wxMenu
 
     
-    def show(self,modal=False):
-##         if not self.app.toolkit._setup:
-##             self.app.toolkit.setup()
-
-        if not self.session.toolkit.running():
-            self.session.toolkit.run_forever()
-            #if self.app.mainForm == self:
-            #    return
-            # todo: uergh...
-
-        if self.isShown():
-            raise InvalidRequestError("form is already open")
-            
-        self.modal = modal
-        self.session.debug("show(modal=%s) %s",modal,self.getLabel())
-        self.setup()
-        self.session.debug(repr(self.mainComp))
-        self.onShow()
-        if self.modal:
-            self.wxctrl.ShowModal()
-        else:
-            self.wxctrl.Show()
-            #if self.toolkit.mainForm is None:
-            #    #print "automagic app.main() call"
-            #    self.app.main(self)
-            
-
-##     def showModal(self):
-##         assert self._parent is not None
-##         self.setup()
-##         #self.afterShow()
-##         #self._wxFrame.MakeModal(True)
-##         #self.show()
-##         return self.lastEvent == self.buttons.ok
-
     def close(self):
         if self.isShown():
             self.wxctrl.Close()
@@ -700,10 +674,8 @@ class Toolkit(base.Toolkit):
         if task.wxctrl is None: return
         task.wxctrl.Resume()
         
-    def onTaskDone(self,task,msg):
-        if msg is None:
-            msg=""
-        task.wxctrl.Update(100,msg)
+    def onTaskDone(self,task):
+        task.wxctrl.Update(100,'')
         task.wxctrl.Destroy()
         task.wxctrl = None
 
@@ -783,3 +755,13 @@ class Toolkit(base.Toolkit):
     def showMainForm(self):
         self._session.showMainForm()
         #sess.db.app.showMainForm(sess)
+
+    def showForm(self,frm):
+        if frm.modal:
+            frm.wxctrl.ShowModal()
+        else:
+            frm.wxctrl.Show()
+
+        
+    def refreshForm(self,frm):
+        pass

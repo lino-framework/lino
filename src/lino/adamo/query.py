@@ -127,8 +127,8 @@ class QueryColumn:
             raise DataVeto(repr(value)+": "+str(e))
         self.rowAttr.afterSetAttr(row)
 
-    def setValueFromString(self,row,s):
-        self.rowAttr.setValueFromString(row,s)
+    def setCellValueFromString(self,row,s):
+        self.rowAttr.setCellValueFromString(row,s)
         self.rowAttr.afterSetAttr(row)
         
     def getFltAtoms(self,context):
@@ -201,10 +201,16 @@ class QueryColumn:
             i+=1
         
     def getAtoms(self): return self._atoms
+    
     def getMaxWidth(self):
         return self.rowAttr.getMaxWidth()
     def getMinWidth(self):
         return self.rowAttr.getMinWidth()
+    def getMaxHeight(self):
+        return self.rowAttr.getMaxHeight()
+    def getMinHeight(self):
+        return self.rowAttr.getMinHeight()
+    
     def getLabel(self):
         return self.rowAttr.getLabel()
 
@@ -419,7 +425,9 @@ class DetailColumn(QueryColumn):
         return self.detailQuery.child(**kw)
         #return self.detailQuery.child(masters=(row,))
 
-    
+    def getDetailQuery(self):
+        self.prepare()
+        return self.detailQuery
 
 
     def vetoDeleteRow(self,row):
@@ -517,12 +525,17 @@ class BaseColumnList(Datasource):
                 self._atoms = tuple(_parent._atoms)
                 self._pkColumns = _parent._pkColumns
                 self.visibleColumns=tuple(_parent.visibleColumns)
+                if _parent._searchAtoms is None:
+                    self._searchAtoms = None
+                else:
+                    self._searchAtoms = tuple(_parent._searchAtoms)
                 return
         
         self._frozen=False
         self._columns = []
         self._joins = []
         self._atoms = []
+        self._searchAtoms = None
 
         l = []
         for name in self.getLeadTable().getPrimaryKey():
@@ -723,9 +736,9 @@ class BaseColumnList(Datasource):
 
 
 
-
-
-
+    def canWrite(self):
+        return True
+    
     def updateRow(self,row,*args,**kw):
         i = 0
         for col in self.visibleColumns:
@@ -738,15 +751,7 @@ class BaseColumnList(Datasource):
         for k,v in kw.items():
             col = self.getColumnByName(k)
             col.setCellValue(row,v)
-            #rowattr = self.leadTable.getRowAttr(k)
-            #row._values[rowattr._name] = v
-            #rowattr.setCellValue(row,v)
 
-        for rowattr in self.getLeadTable()._mandatoryColumns:
-            if row.getFieldValue(rowattr.name) is None:
-                raise DataVeto("Column '%s.%s' may not be empty"\
-                               % (self.getTableName(),rowattr.name))
-            
         row.setDirty()
             
     
@@ -905,6 +910,9 @@ class PeekQuery(LeadTableColumnList):
 
     def getContext(self):
         return self._store._db
+
+    def getSession(self):
+        return self._store._db._startupSession
         
 
 
@@ -1105,6 +1113,9 @@ class SimpleQuery(LeadTableColumnList):
     def zap(self):
         self._store.zap()
 
+    def clearFilters(self):
+        self._filters=None
+        
     def addFilter(self,flt): # cls,*args,**kw):
         #flt=cls(self,*args,**kw)
         if self._filters is None:
@@ -1322,19 +1333,31 @@ class SimpleQuery(LeadTableColumnList):
                 self._search = (self._search,)
             # search is a tuple of strings to search for
             atoms = self.getSearchAtoms()
+            assert len(atoms) > 0
             for expr in self._search:
                 l.append(" OR ".join(
                     [a.name+" LIKE '%"+expr+"%'" for a in atoms]))
                 
         self.filterExpressions = tuple(l)
         
-    def getSearchAtoms(self):
+    def setSearchColumns(self,columnNames):
         l = []
-        for col in self.visibleColumns:
-            if hasattr(col.rowAttr,'type'):
-                if isinstance(col.rowAttr.type,datatypes.StringType):
-                    l += col.getAtoms()
-        return tuple(l)
+        for colName in columnNames.split():
+            col=self.provideColumn(colName)
+            l += col.getAtoms()
+        assert len(l) > 0
+        self._searchAtoms=tuple(l)
+        
+    def getSearchAtoms(self):
+        if self._searchAtoms is None:
+            l = []
+            for col in self.visibleColumns:
+                if hasattr(col.rowAttr,'type'):
+                    if isinstance(col.rowAttr.type,
+                                  datatypes.StringType):
+                        l += col.getAtoms()
+            self._searchAtoms=tuple(l)
+        return self._searchAtoms
         
     
 
