@@ -402,7 +402,7 @@ class DataReport(BaseReport):
         #if doc is None: doc=ds.getDoc()
         
         if len(kw):
-            # forward keywords to the Query
+            # DataReport forwards unknown keyword arguments to its query
             qry=qry.child(**kw)
             
         BaseReport.__init__(self,None,qry,

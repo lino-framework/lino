@@ -28,6 +28,7 @@ from time import mktime, ctime
 
 import types
 
+from lino.tools.months import Month
 from lino.misc.descr import Describable
 #from lino.adamo.exceptions import RefuseValue
 from lino.adamo.exceptions import DataVeto
@@ -257,6 +258,7 @@ class TimeStampType(Type):
 class DateType(Type):
     maxWidth = 10
     minWidth = 10
+    
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         s = s.replace(".","-")
@@ -276,6 +278,34 @@ class DateType(Type):
         assert v is not None, ERR_FORMAT_NONE
         #return repr(v) # "[-]yyyymmdd"
         return v.isoformat()
+    
+    def validate(self,value):
+        if not isinstance(value,datetime.date):
+            #raise repr(value)+" is not a date"
+            raise DataVeto("not a date")
+
+class MonthType(Type):
+    maxWidth = 7
+    minWidth = 7
+    
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        s = s.replace(".","-")
+        s = s.replace("/","-")
+        l = s.split("-")
+        if len(l) == 2:
+            l = map(int,l)
+            return Month(*l)
+        elif len(l) == 1:
+            assert len(s) == 6, repr(s)
+            y = int(s[0:4])
+            m = int(s[4:6])
+            return Month(y,m)
+        else:
+            raise ValueError, repr(s)
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        return str(s)
     
     def validate(self,value):
         if not isinstance(value,datetime.date):
@@ -360,6 +390,7 @@ STRING = StringType()
 PASSWORD = PasswordType()
 MEMO = MemoType()     
 DATE = DateType()     
+MONTH = MonthType()     
 TIME = TimeType() # StringType(width=8)
 TIMESTAMP = TimeStampType() 
 DURATION = DurationType() 
@@ -375,25 +406,6 @@ EMAIL = EmailType(width=60)
 IMAGE = ImageType()
 LOGO = LogoType()
 
-
-## __all__ = [
-##     'STRING',
-##     'PASSWORD',
-##     'MEMO',
-##     'DATE',
-##     'TIME',
-##     'DURATION',
-##     'INT',
-##     'BOOL',
-##     'AMOUNT',
-##     'PRICE',
-##     'ROWID',
-##     'URL',
-##     'EMAIL',
-##     'AREA',
-##     'IMAGE',
-##     'LOGO',
-##     ]
 
 def itot(i):
     return stot(str(i))
@@ -418,5 +430,12 @@ def itod(i):
 
 def stod(s):
     return DATE.parse(s)
+
+def itom(i):
+    return stom(str(i))
+
+def stom(s):
+    return MONTH.parse(s)
+
 
 __all__ = filter(lambda x: x[0] != "_", dir())

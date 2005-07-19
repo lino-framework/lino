@@ -272,7 +272,6 @@ class ReportMixin:
         self.rpt = rpt # a Query or a Report
         #assert len(ds._lockedRows) == 0
         self.rpt.beginReport(self)
-        #print len(self.rpt.getVisibleColumns())
         
     def setupGoMenu(self):
         pass
@@ -287,9 +286,19 @@ class ReportMixin:
                   label="&Refresh",
                   action=frm.refresh,
                   accel="Alt-F5")
-
+        m.addItem("printRow",
+                  label="Print &Row",
+                  action=self.printRow,
+                  accel="F7")
+        m.addItem("printList",
+                  label="Print &List",
+                  action=self.printList,
+                  accel="Shift-F7")
+        
         self.setupGoMenu()
+        
 
+        m = frm.addMenu("edit",label="&Edit")
         def copy():
             from cStringIO import StringIO
             out = StringIO()
@@ -299,32 +308,23 @@ class ReportMixin:
                        value=out.getvalue())
             f.show()
         
-        
-        
-        m = frm.addMenu("edit",label="&Edit")
         m.addItem("copy",
                   label="&Copy",
                   action=copy)
         
-        m = frm.addMenu("row",label="&Row")
-        m.addItem("printRow",
-                  label="Print &Row",
-                  action=self.printRow,
-                  accel="F7")
-        m.addItem("printList",
-                  label="Print &List",
-                  action=self.printList,
-                  accel="Shift-F7")
+        #m = frm.addMenu("row",label="&Row")
         if self.rpt.canWrite():
             m.addItem("delete",
-                      label="&Delete this row",
+                      label="&Delete selected row(s)",
                       action=self.deleteSelectedRows,
                       accel="DEL")
             m.addItem("insert",
                       label="&Insert new row",
                       action=self.insertRow,
                       accel="INS")
+            
         self.rpt.setupMenu(self)
+        
 
         def f():
             l = self.getSelectedRows()
@@ -333,9 +333,8 @@ class ReportMixin:
             else:
                 s = "Selected %s of %d rows" % (len(l), len(self.rpt))
                 
-            #if len(self.ds._lockedRows) > 0:
-            #    s += " (%d locked)" % len(self.ds._lockedRows)
             frm.session.status(s)
+            
         frm.addIdleEvent(f)
 
     def insertRow(self):
@@ -435,7 +434,7 @@ class DataGrid(ReportMixin,Component):
 def nop(x):
     pass
 
-class DataNavigator(ReportMixin,Component):
+class DataForm(ReportMixin,Component):
     
     def __init__(self,owner,rpt,afterSkip=nop,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
@@ -769,7 +768,7 @@ class AbstractToolkit:
     viewerFactory = TextViewer
     dataGridFactory = DataGrid
     #reportGridFactory = ReportGrid
-    navigatorFactory = DataNavigator
+    navigatorFactory = DataForm
     formFactory = Form
     
     #jobFactory=Job

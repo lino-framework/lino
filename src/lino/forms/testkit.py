@@ -29,7 +29,7 @@ class Button(base.Button):
 class DataGrid(base.DataGrid):
     pass
         
-class DataNavigator(base.DataNavigator):
+class DataForm(base.DataForm):
     pass
         
     def getStatus(self):
@@ -109,7 +109,7 @@ class Toolkit(base.Toolkit):
     viewerFactory = TextViewer
     panelFactory = Panel
     dataGridFactory = DataGrid
-    navigatorFactory = DataNavigator
+    navigatorFactory = DataForm
     formFactory = Form
     
 ##     def __init__(self,*args,**kw):

@@ -18,6 +18,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+import datetime
+
 from lino.apps.timings.tables import *
 from lino.apps.timings.tables import TABLES
 from lino.adamo.ddl import Schema
@@ -27,43 +29,12 @@ from lino.adamo.datatypes import itod, iif
 from lino.gendoc.html import HtmlDocument
 from lino.reports.reports import DataReport, ReportColumn
 
-import datetime
+from lino.tools.anyrange import anyrange
 
 DAY = datetime.timedelta(1)
 
 def everyday(d1,d2):
-    #return xrange(itod(d1),itod(d2),DAY)
     return anyrange(itod(d1),itod(d2),DAY)
-
-class anyrange:
-
-    def __init__(self, start, stop, step=DAY):
-        self.start = start
-        self.stop = stop
-        self.step = step
-        
-    def __contains__(self, obj):
-        return self.start <= obj <= self.stop
-
-    def __iter__(self):
-        return anyiter(self)
-
-class anyiter:
-    def __init__(self,rng):
-        self.rng=rng
-        self.current=None # rng.start
-
-    def __iter__(self):
-        return self
-    
-    def next(self):
-        if self.current is None:
-            self.current = self.rng.start
-        else:
-            self.current += self.rng.step
-        if self.current > self.rng.stop:
-            raise StopIteration
-        return self.current
 
 class Timings(Schema):
     #name="Lino/Timings"

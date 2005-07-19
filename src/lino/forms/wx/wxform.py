@@ -149,7 +149,7 @@ class DataGrid(base.DataGrid):
         return self.wxctrl.getSelectedRows()
 
         
-class DataNavigator(base.DataNavigator):
+class DataForm(base.DataForm):
     
     def setup(self,parent,box):
         if False:
@@ -619,7 +619,7 @@ class Toolkit(base.Toolkit):
     viewerFactory = TextViewer
     panelFactory = Panel
     dataGridFactory = DataGrid
-    navigatorFactory = DataNavigator
+    navigatorFactory = DataForm
     formFactory = Form
     #jobFactory=jobs.Job
     #progresserFactory=Progresser
