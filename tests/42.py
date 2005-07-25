@@ -49,7 +49,7 @@ Directories (volume=testparent=None)
 ====================================
 id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
-1      |              |              |15 Files      |3 Directories
+1      |              |              |17 Files      |3 Directories
 """)
         q=sess.query(Files,
                      orderBy="mtime",
@@ -97,6 +97,8 @@ test:timtools       |sync.help.txt     |791     |X    |99 Occurences
 test:timtools       |diag.help.txt     |673     |X    |80 Occurences  
 test:timtools       |openmail.help.txt |955     |X    |126 Occurences 
 test:timtools       |openurl.help.txt  |701     |X    |86 Occurences  
+test:               |eupen.pdf         |232672  |X    |799 Occurences 
+test:               |jona.txt          |7803    |X    |1382 Occurences
 """)
 
         app.showSearchForm(sess)

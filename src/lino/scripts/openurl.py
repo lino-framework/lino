@@ -37,6 +37,7 @@ Starts the default browser on the specified URL(s).
             raise UsageError("no arguments specified")
         for url in self.args:
             # webbrowser.open(url,new=1)
+            print url
             webbrowser.open_new(url)
 
 consoleApplicationClass = OpenURL
