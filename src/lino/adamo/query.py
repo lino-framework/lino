@@ -491,20 +491,6 @@ class Calendar:
     def getDatabase(self):
         return self._session.db
 
-    def setVisibleColumns(self,columnNames):
-        l = []
-        assert type(columnNames) in (str,unicode) #is types.StringType
-        for colName in columnNames.split():
-            if colName == "*":
-                for fld in self.getLeadTable().getFields():
-                    col = self.findColumn(fld.getName())
-                    if col is None:
-                        col = self._addColumn(fld.getName(),fld)
-                    l.append(col)
-            else:
-                l.append(self.provideColumn(colName))
-        self.visibleColumns = tuple(l)
-            
 
 class BaseColumnList(Datasource): 
     
@@ -558,18 +544,24 @@ class BaseColumnList(Datasource):
         raise NotImplementedError
 
     def setVisibleColumns(self,columnNames):
-        l = []
         assert type(columnNames) in (str,unicode) #is types.StringType
-        for colName in columnNames.split():
-            if colName == "*":
-                for fld in self.getLeadTable().getFields():
-                    col = self.findColumn(fld.getName())
-                    if col is None:
-                        col = self._addColumn(fld.getName(),fld)
-                    l.append(col)
-            else:
-                l.append(self.provideColumn(colName))
+        l = []
+        groups = []
+        for ln in columnNames.splitlines():
+            grp=[]
+            for colName in columnNames.split():
+                if colName == "*":
+                    for fld in self.getLeadTable().getFields():
+                        col = self.findColumn(fld.getName())
+                        if col is None:
+                            col = self._addColumn(fld.getName(),fld)
+                        grp.append(col)
+                else:
+                    grp.append(self.provideColumn(colName))
+            l += grp
+            groups.append(grp)
         self.visibleColumns = tuple(l)
+        self.formColumnGroups = tuple(groups)
             
 
     def getName(self):
@@ -771,20 +763,6 @@ class BaseColumnList(Datasource):
             atomicTuple[a.index] = v
         return atomicTuple
     
-##  def at2d(self,atomicTuple):
-##      "atomic tuple to dict"
-##      joinedRows = {}
-##      d = {}
-##      i = 0
-##      for a in self._atoms:
-##          if a.join is None:
-##              d[a.name] = atomicTuple[i]
-##          else:
-##              pointedRow = a.join.pointer
-##              joinedRows.setdefault(a.join.name,a.join.pointer)
-##              joinedRows[a.join.name][a.name] = atomicTuple[i]
-##          i += 1
-##      return d
 
     def makeAtomicRow(self,context=None,*args,**kw):
         atomicRow = [None] * len(self._atoms) 
@@ -792,7 +770,6 @@ class BaseColumnList(Datasource):
         for col in self.visibleColumns:
             if i == len(args):
                 break
-            #col.setCellValue(row,args[i])
             col.value2atoms(args[i],atomicRow,context)
             i += 1
             

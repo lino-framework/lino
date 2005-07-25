@@ -125,8 +125,14 @@ class Files(Table):
         self.setPrimaryKey("dir name")
         self.addView(
             "std",
-            "dir name type mtime size mustParse content meta")
+            """\
+dir name type
+mtime size mustParse
+content
+meta
+""")
 
+        
     class Instance(Table.Instance):
         
         def __str__(self):

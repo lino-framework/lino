@@ -161,6 +161,10 @@ class Table(FieldContainer,SchemaComponent,Describable):
         "override this to insert specific actions to a form's menu"
         pass
     
+    def fillReportForm(self,rpt,frm):
+        for col in rpt.getVisibleColumns():
+            frm.addDataEntry(col,label=col.getLabel())
+        
     def init1(self):
         #print "%s : init1()" % self._tableName
         self.init()

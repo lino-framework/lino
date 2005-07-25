@@ -51,7 +51,7 @@ class BaseReport(Describable):
         self.groups = []
         self.totals = []
         self._onRowEvents=[]
-
+        #self.formColumnGroups = []
 
         Describable.__init__(self,parent,**kw)
         if parent is not None:
@@ -60,7 +60,6 @@ class BaseReport(Describable):
             if columnWidths is None: columnWidths=parent.columnWidths
             if width is None: width=parent.width
             if rowHeight is None: rowHeight=parent.rowHeight
-        #self._iterator = iterator.__iter__()
         self.ds = ds
         self.rowHeight = rowHeight
         self.columnWidths = columnWidths
@@ -192,34 +191,53 @@ class BaseReport(Describable):
     def show(self,**kw):
         syscon.showReport(self,**kw)
 
-    def setupForm(self,frm,row=None,**kw):
-        
-        if row is None:
-            row = self[0]
-            
-        kw.setdefault('data',row)
-        kw.setdefault('name',self.getName())
-        kw.setdefault('label',self.getLabel())
-        kw.setdefault('doc',self.getDoc())
-        frm.configure(**kw)
-        
-        for col in self.getVisibleColumns():
-            frm.addDataEntry(col,label=col.getLabel())
-##         for cell in row:
-##             dc = cell.col
-##             frm.addDataEntry(dcname=dc.name,
-##                          label=dc.getLabel(),
-##                          enabled=cell.canWrite(),
-##                          getter=cell.__str__,
-##                          setter=cell.setValueFromString)
+    def showFormNavigator(self,sess,**kw):
+        frm=sess.form(label=self.getLabel(),
+                      name=self.getName(),
+                      data=self[0])
 
+        self.fillReportForm(frm)
+        
         def afterSkip(nav):
             row = self[nav.currentPos]
             frm.data = row
             #frm.refresh()
 ##             for cell in row:
 ##                 setattr(frm.entries,cell.col.name,cell.format())
+            
         frm.addNavigator(self,afterSkip=afterSkip)
+
+        frm.show()
+
+    def fillReportForm(self,frm):
+        if len(self.ds.formColumnGroups) <= 1:
+            for col in self.getVisibleColumns():
+                frm.addDataEntry(col,label=col.getLabel())
+        else:
+            for grp in self.ds.formColumnGroups:
+                p=frm.addHPanel()
+                for col in grp:
+                    p.addDataEntry(col,label=col.getLabel())
+        
+        
+##     def setupForm(self,frm,row=None,**kw):
+        
+##         if row is None:
+##             row = self[0]
+            
+##         kw.setdefault('data',row)
+##         kw.setdefault('name',self.getName())
+##         kw.setdefault('label',self.getLabel())
+##         kw.setdefault('doc',self.getDoc())
+##         frm.configure(**kw)
+        
+##         for col in self.getVisibleColumns():
+##             frm.addDataEntry(col,label=col.getLabel())
+
+##         def afterSkip(nav):
+##             row = self[nav.currentPos]
+##             frm.data = row
+##         frm.addNavigator(self,afterSkip=afterSkip)
         
 
     
@@ -399,10 +417,12 @@ class DataReport(BaseReport):
         if name is None:
             name=qry.getLeadTable().getName()+"Report"
         if label is None: label=qry.getLabel()
-        #if doc is None: doc=ds.getDoc()
         
         if len(kw):
-            # DataReport forwards unknown keyword arguments to its query
+            
+            # DataReport.__init__() forwards unknown keyword arguments
+            # to its query
+            
             qry=qry.child(**kw)
             
         BaseReport.__init__(self,None,qry,
@@ -435,6 +455,9 @@ class DataReport(BaseReport):
 
     def canSort(self):
         return True
+
+##     def fillReportForm(self,frm):
+##         self.ds.getLeadTable().fillReportForm(self,frm)
         
     #def execute(self,ds):
     #    rpt.configure(**kw)
