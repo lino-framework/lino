@@ -51,7 +51,7 @@ class BaseReport(Describable):
         self.groups = []
         self.totals = []
         self._onRowEvents=[]
-        #self.formColumnGroups = []
+        self.formColumnGroups = None
 
         Describable.__init__(self,parent,**kw)
         if parent is not None:
@@ -85,8 +85,8 @@ class BaseReport(Describable):
     def canWrite(self):
         return self.ds.canWrite()
 
-    def getVisibleColumns(self):
-        return self.columns
+    #def getVisibleColumns(self):
+    #    return self.columns
 
 
 
@@ -173,6 +173,39 @@ class BaseReport(Describable):
 
         #return row
 
+##     def updateRow(self,row,*args):
+##         i = 0
+##         for col in self.getVisibleColumns():
+##             if i == len(args):
+##                 break
+##             col.setCellValue(row,args[i])
+##             #row._values[col.rowAttr._name] = args[i]
+##             i += 1
+
+##     def appendRowForEditing(self,*args):
+##         item=self.ds._appendRow()
+##         row=ReportRow(self,item)
+##         self.updateRow(row,*args)
+##         return row
+            
+##     def appendRow(self,*args):
+##         row=self.appendRowForEditing(*args)
+##         row.item.commit()
+##         self.ds._store.fireUpdate()
+##         return row.item
+    
+##     def find(self,*args,**knownValues):
+##         assert len(args) == 0
+##         i=0
+##         for arg in args:
+##             col = self.visibleColumns[i]
+##             col.addFilter(IsEqual,arg)
+##             i+=1
+##         return self.ds.find(**knownValues)
+            
+##     def findone(self,*args,**knownValues):
+##         assert len(args) == 0
+##         return self.ds.findone(**knownValues)
     
     ##
     ## public methods for user code
@@ -210,11 +243,11 @@ class BaseReport(Describable):
         frm.show()
 
     def fillReportForm(self,frm):
-        if len(self.ds.formColumnGroups) <= 1:
-            for col in self.getVisibleColumns():
+        if self.formColumnGroups == None:
+            for col in self.columns: #getVisibleColumns():
                 frm.addDataEntry(col,label=col.getLabel())
         else:
-            for grp in self.ds.formColumnGroups:
+            for grp in self.formColumnGroups:
                 p=frm.addHPanel()
                 for col in grp:
                     p.addDataEntry(col,label=col.getLabel())
@@ -279,6 +312,9 @@ class ReportColumn(Describable):
     def getCellValue(self,row):
         raise NotImplementedError,str(self.__class__)
 
+    def setCellValue(self,row,value):
+        raise NotImplementedError,str(self.__class__)
+
     def format(self,v):
         return self._formatter(v)
 
@@ -316,14 +352,17 @@ class DataReportColumn(ReportColumn):
 
     def getCellValue(self,row):
         return self.datacol.getCellValue(row.item)
+    
+    def setCellValue(self,row,value):
+        return self.datacol.setCellValue(row.item,value)
 
     def getMinWidth(self):
         return self.datacol.getMinWidth()
     def getMaxWidth(self):
         return self.datacol.getMaxWidth()
 
-    def addFilter(self,*args):
-        self.datacol.addFilter(*args)
+##     def addFilter(self,*args):
+##         self.datacol.addFilter(*args)
         
     def canWrite(self,row):
         if row is None:
@@ -410,24 +449,26 @@ class ReportIterator:
 
 class DataReport(BaseReport):
     
-    def __init__(self,qry,
-                 columnWidths=None,width=None,rowHeight=None,
+    def __init__(self,qry,columnSpec=None,
+                 columnWidths=None,
+                 width=None,rowHeight=None,
                  name=None,label=None,doc=None,**kw):
 
         if name is None:
             name=qry.getLeadTable().getName()+"Report"
-        if label is None: label=qry.getLabel()
         
         if len(kw):
-            
             # DataReport.__init__() forwards unknown keyword arguments
             # to its query
-            
             qry=qry.child(**kw)
+            
+        if label is None: label=qry.getLabel()
             
         BaseReport.__init__(self,None,qry,
                             columnWidths,width,rowHeight,
                             name=name,label=label,doc=doc)
+        if columnSpec is not None:
+            self.setColumnSpec(columnSpec)
     
     def setupMenu(self,navigator):
         self.ds.setupMenu(navigator)
@@ -437,7 +478,7 @@ class DataReport(BaseReport):
             for dc in self.ds.getVisibleColumns():
                 col = DataReportColumn(dc,label=dc.getLabel())
                 self.columns.append(col)
-                                   
+            self.formColumnGroups=None
         BaseReport.beginReport(self,doc)
             
     def addDataColumn(self,colName,**kw):
@@ -455,6 +496,44 @@ class DataReport(BaseReport):
 
     def canSort(self):
         return True
+
+    def setColumnSpec(self,columnSpec):
+        assert type(columnSpec) in (str,unicode) #is types.StringType
+        #l = []
+        groups = []
+        for ln in columnSpec.splitlines():
+            grp=[]
+            for colName in columnSpec.split():
+                x = colName.split(':')
+                if len(x) == 1:
+                    w=None
+                elif len(x) == 2:
+                    colName=x[0]
+                    w=int(x[1])
+                if colName == "*":
+                    for datacol in self.ds.getColumns():
+                    #for fld in self.ds.getLeadTable().getFields():
+                    #    datacol = self.ds.findColumn(fld.getName())
+                    #    if datacol is None:
+                    #        datacol = self.ds._addColumn(
+                    #            fld.getName(),fld)
+                        col=DataReportColumn(datacol,width=w)
+                        self.addColumn(col)
+                        grp.append(col)
+                else:
+                    dc=self.ds.provideColumn(colName)
+                    col=DataReportColumn(dc,width=w)
+                    self.addColumn(col)
+                    grp.append(col)
+            #l += grp
+            groups.append(grp)
+        #self.visibleColumns = tuple(l)
+        if len(groups) <= 1:
+            self.formColumnGroups = None
+        else:
+            self.formColumnGroups = tuple(groups)
+            
+    
 
 ##     def fillReportForm(self,frm):
 ##         self.ds.getLeadTable().fillReportForm(self,frm)

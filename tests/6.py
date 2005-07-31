@@ -84,8 +84,8 @@ class Case(TestCase):
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
-Days
-====
+Days where 'date' == 2005-6-None
+================================
 date        |ISO       |Gerd                       |Luc
 ------------+----------+---------------------------+---------------------------
 [2005-06-01]|2005-06-01|                           |

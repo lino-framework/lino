@@ -144,7 +144,11 @@ class Users(Persons):
     "People who can access this database"
     def init(self):
         Persons.init(self)
-        self.addField('id',STRING,label="Username")
+        #self.addField('id',STRING,label="Username")
+        i=self.getRowAttr('id')
+        i.setType(STRING)
+        i.setLabel("Username")
+        #self.setField('id',STRING,label="Username")
         self.addField('password',PASSWORD)
 
     class Instance(Persons.Instance):

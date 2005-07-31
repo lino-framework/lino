@@ -80,13 +80,14 @@ class Topics(TreeTable):
     
 
 class Authors(Persons):
-    def init(self):
-        self.addField('id',STRING)
-        Persons.init(self)
-        #self.birthDate = Field(DATE)
-        #self.birthPlace = Pointer(City)
-        #self.deathDate = Field(DATE)
-        #self.deathPlace = Pointer(City)
+##     def init(self):
+##         #self.addField('id',STRING)
+##         Persons.init(self)
+##         self.getRowAttr('id').setType(STRING)
+##         #self.birthDate = Field(DATE)
+##         #self.birthPlace = Pointer(City)
+##         #self.deathDate = Field(DATE)
+##         #self.deathPlace = Pointer(City)
     class Instance(Persons.Instance):
         pass
 

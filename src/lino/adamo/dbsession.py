@@ -171,6 +171,7 @@ class DbSession(Session,Context):
     def query(self,leadTable,columnNames=None,**kw):
         if columnNames is None:
             columnNames="*"
+        #return self.getStore(leadTable).query(self,**kw)
         return self.getStore(leadTable).query(self,columnNames,**kw)
 
     def peek(self,tableClass,*args):

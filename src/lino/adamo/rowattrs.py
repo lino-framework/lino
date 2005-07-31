@@ -80,9 +80,6 @@ class RowAttribute(Describable):
 ##     def onAreaInit(self,area):
 ##         pass
     
-    #def setSticky(self):
-    #    self.sticky = True
-
     def setMandatory(self):
         self._isMandatory = True
 
@@ -111,6 +108,9 @@ class RowAttribute(Describable):
 
     def setCellValue(self,row,value):
         # does not setDirty() !
+        if value is not None:
+            self.validate(value)
+        
 ##         if value is None:
 ##             if self._isMandatory:
 ##                 raise RefuseValue("may not be empty")
@@ -203,6 +203,10 @@ class Field(RowAttribute):
     def setType(self,type):
         self.type = type
 
+##     def configure(self,type=None,label=None):
+##         if type is not None:
+##             self.
+
 ##     def getType(self):
 ##         return self.type
 
@@ -212,11 +216,11 @@ class Field(RowAttribute):
     def validate(self,value):
         return self.type.validate(value)
     
-    def setCellValue(self,row,value):
-        if value is not None:
-            self.type.validate(value)
-            #print self, repr(value)
-        RowAttribute.setCellValue(self,row,value)
+##     def setCellValue(self,row,value):
+##         if value is not None:
+##             self.validate(value)
+##             #print self, repr(value)
+##         RowAttribute.setCellValue(self,row,value)
         
 ##     def canSetValue(self,row,value):
 ##         if value is not None:
@@ -418,21 +422,20 @@ class Pointer(RowAttribute):
         RowAttribute.__init__(self,owner,name,**kw)
         self.type = toClass
         
-        #self.sticky = True # joins are sticky by default
-        
         self.detailName = detailName
-        #self.dtlColumnNames = None
+        self.dtlColumnNames = None
         self.dtlKeywords = {}
         self._neededAtoms = None
 
-    def setDetail(self,name,columnNames=None,**kw):
-        self.detailName = name
-        #self.dtlColumnNames = columnNames
+    def setDetail(self,detailName,columnNames=None,**kw):
+        self.detailName = detailName
+        self.dtlColumnNames = columnNames
         if columnNames is not None:
             kw['columnNames'] = columnNames
         self.dtlKeywords = kw
         
     def onTableInit1(self,owner,name):
+        assert owner == self._owner
         if self.detailName is None:
             self.setDetail(
                 owner.getTableName().lower()+'_by_'+self.name)
@@ -452,11 +455,14 @@ class Pointer(RowAttribute):
 
     def onTableInit3(self,owner,schema):
         RowAttribute.onTableInit3(self,owner,schema)
+        #print '%s.%s' % (owner,self.name), ':', self._toTables
         for toTable in self._toTables:
-            toTable.addDetail( self.detailName,
-                               self,
-                               #self.dtlColumnNames,
-                               **self.dtlKeywords)
+            #if self.detailName == 'children':
+            #    print toTable, owner
+            toTable.addDetail(self.detailName,
+                              self,
+                              self.dtlColumnNames,
+                              **self.dtlKeywords)
             
 ##     def getTestEqual(self,ds,colAtoms,value):
 ##         av = self.value2atoms(value,ds.getSession())
@@ -616,6 +622,7 @@ class Pointer(RowAttribute):
         raise "invalid tableId %d" % tableId
     
     def validate(self,value):
+        #print value
         for toTable in self._toTables:
             if not isinstance(value,toTable.Instance):
                 raise DataVeto("%r is not a %s instance" % \

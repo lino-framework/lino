@@ -1,7 +1,7 @@
 TableName      |Fields                        |Details                            
 ---------------+------------------------------+-----------------------------------
 Users          |id, name, firstName, sex,     |                                   
-               |birthDate, id, password       |                                   
+               |birthDate, password           |                                   
 Currencies     |id, name                      |partners_by_currency               
 Nations        |id, name, area, population,   |cities, organisations_by_nation,   
                |curr, isocode                 |partners_by_nation                 

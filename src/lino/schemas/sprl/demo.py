@@ -110,7 +110,7 @@ class Populator(adamo.Populator):
         #self.withJokes = withJokes
         
     def populateUsers(self,q):
-        q = q.child('id firstName name')
+        q = q.query('id firstName name')
         q.appendRow("luc", "Luc", "Saffre")
         q.appendRow("james", "James", "Bond")
         
@@ -131,16 +131,6 @@ class Populator(adamo.Populator):
             id="EEK",name=("Estonian kroon","Estnische Krone",
                            "Couronne estonienne","Eesti kroon"))
     
-    def populatePartnerTypes(self,q):
-        q = q.query('id name')
-        q.setBabelLangs('en de fr')
-        q.appendRow('c',('Customer', 'Kunde', 'Client'))
-        q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
-        q.appendRow('m',('Member', 'Mitglied', "Membre"))
-        q.appendRow('e',('Employee', 'Angestellter', "Employé"))
-        q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
-	
-        
     
     def populateNations(self,q):
         if self.big:
@@ -151,13 +141,13 @@ class Populator(adamo.Populator):
                 nations_de.populate(q)
             
         else:
-            q = q.query('id name cities')
             q.setBabelLangs('en')
-            q.appendRow("ee","Estonia")
-            q.appendRow("be","Belgium")
-            q.appendRow("de","Germany")
-            q.appendRow("fr","France")
-            q.appendRow("us","United States of America")
+            qr = q.query('id name cities')
+            qr.appendRow("ee","Estonia")
+            qr.appendRow("be","Belgium")
+            qr.appendRow("de","Germany")
+            qr.appendRow("fr","France")
+            qr.appendRow("us","United States of America")
 
         self.belgique = q.peek('be')
         self.eesti = q.peek('ee')
@@ -171,17 +161,17 @@ class Populator(adamo.Populator):
             from lino.schemas.sprl.data import cities_be
             cities_be.populate(q)
         else:
-            q = self.belgique.cities.query('name inhabitants')
-            q.appendRow("Bruxelles",1004239)
-            q.appendRow("Brugge",116848)
-            q.appendRow("Eupen",17872)
-            #q.appendRow("Kettenis")
-            q.appendRow("Kelmis",10175)
-            q.appendRow("Raeren",9933)
-            q.appendRow("Mons",90992)
-            q.appendRow("Liège",185608)
-            q.appendRow("Charleroi",200983)
-            q.appendRow("Verviers",52739)
+            r = self.belgique.cities.query('name inhabitants')
+            r.appendRow("Bruxelles",1004239)
+            r.appendRow("Brugge",116848)
+            r.appendRow("Eupen",17872)
+            #r.appendRow("Kettenis")
+            r.appendRow("Kelmis",10175)
+            r.appendRow("Raeren",9933)
+            r.appendRow("Mons",90992)
+            r.appendRow("Liège",185608)
+            r.appendRow("Charleroi",200983)
+            r.appendRow("Verviers",52739)
 
         self.eupen = q.findone(name="Eupen")
         self.verviers = q.findone(name="Verviers")
@@ -216,6 +206,16 @@ class Populator(adamo.Populator):
     
 
             
+    def populatePartnerTypes(self,q):
+        q.setBabelLangs('en de fr')
+        q = q.query('id name')
+        q.appendRow('c',('Customer', 'Kunde', 'Client'))
+        q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
+        q.appendRow('m',('Member', 'Mitglied', "Membre"))
+        q.appendRow('e',('Employee', 'Angestellter', "Employé"))
+        q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
+	
+        
 
 
 ##     def populateStatements(self,q):
@@ -370,7 +370,8 @@ class Populator(adamo.Populator):
         for ln in s.splitlines():
             a=ln.split(None,1)
             assert len(a) == 2
-            q.appendRow(id=a[0].strip(), name=a[1].strip(),dc="C")
+            q.appendRow(id=a[0].strip(),
+                        name=a[1].strip(),dc="C")
 
         # Rahavoogude aruanne
         """
@@ -435,10 +436,10 @@ class DemoPopulator(Populator):
 ##             name="Aachen")
 
 
-        q = q.query(
+        qr = q.query(
             'name firstName title email phone city currency')
 
-        self.luc = q.appendRow(
+        self.luc = qr.appendRow(
             'Saffre','Luc','Herrn',
             'luc.saffre@gmx.net', '6376783', self.tallinn)
 ##         assert luc.id == 1 # "Saffre"
@@ -453,33 +454,33 @@ class DemoPopulator(Populator):
         #assert luc.city == tallinn
 
         # fictive persons
-        q.appendRow('Arens'   ,'Andreas'  , "Herrn",
+        qr.appendRow('Arens'   ,'Andreas'  , "Herrn",
                     'andreas@arens.be', '087.55.66.77',
                     self.eupen, self.BEF)
-        self.anton = q.appendRow(
+        self.anton = qr.appendRow(
             'Ausdemwald','Anton'      , "Herrn",
             'ausdem@hotmail.com', None, self.aachen, self.EUR)
-        q.appendRow('Bodard'      ,'Henri'    , "Dr.",
+        qr.appendRow('Bodard'      ,'Henri'    , "Dr.",
                     None, None,self.verviers, self.BEF)
-        q.appendRow('Eierschal' ,'Emil'   , "Herrn",
+        qr.appendRow('Eierschal' ,'Emil'   , "Herrn",
                     None, None,self.eupen, self.EUR)
-        q.appendRow('Eierschal' ,'Erna'   , "Frau",
+        qr.appendRow('Eierschal' ,'Erna'   , "Frau",
                     None, None,self.eupen,self.EUR)
-        q.appendRow('Großmann'  ,'Gerd'   , "Herrn",
+        qr.appendRow('Großmann'  ,'Gerd'   , "Herrn",
                     None, None,self.eupen,self.EUR)
-        q.appendRow('Freitag'     ,'Frédéric' , "Herrn",
+        qr.appendRow('Freitag'     ,'Frédéric' , "Herrn",
                     None, None,self.eupen)
 
-        q = q.query('name zip street house box city')
+        qr = q.query('name zip street house box city')
 
-        rumma = q.appendRow(
+        rumma = qr.appendRow(
             'Rumma & Ko OÜ','10115', 'Tartu mnt.',71,'5',
             self.tallinn)
-        girf = q.appendRow(
+        girf = qr.appendRow(
             'Girf OÜ','10621','Laki',16, None, self.tallinn)
-        pac = q.appendRow(
+        pac = qr.appendRow(
             'PAC Systems PGmbH','4700','Hütte',79 , None, self.eupen)
-        q.appendRow(
+        qr.appendRow(
             'Eesti Telefon','13415','Sõpruse pst.',193, None,
             self.tallinn)
 

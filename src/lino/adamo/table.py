@@ -79,6 +79,10 @@ class FieldContainer:
 
     def addRowAttr(self,attr):
         assert attr._owner == self
+        assert not self._rowAttrs.has_key(attr.name),\
+               "Duplicate field definition %s.%s" % \
+               (self.getTableName(),attr.name)
+        #print self.getTableName()+':'+str(attr)
         self._fields.append(attr)
         self._rowAttrs[attr.name] = attr
         i = self.Instance
@@ -144,6 +148,12 @@ class Table(FieldContainer,SchemaComponent,Describable):
         pass
 
 
+    def __str__(self):
+        return self.__class__.__name__
+    
+    def __repr__(self):
+        return self.__class__.__name__
+    
 ##     def peek(self,sess,*args):
 ##         return sess.peek(self.__class__,*args)
 
@@ -359,7 +369,7 @@ class TreeTable(Table):
         
     def init(self):
         self.addField('seq',datatypes.INT)
-        self.addPointer('super',self.__class__).setDetail('children')
+        self.addPointer('super',self.__class__) #.setDetail('children')
 
     class Instance(Table.Instance):
         def getUpTree(self):

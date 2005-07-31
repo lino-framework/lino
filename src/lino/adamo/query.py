@@ -59,6 +59,7 @@ class Datasource:
     def getVisibleColumns(self):
         raise NotImplementedError
 
+
 class QueryColumn:
     
     def __init__(self,owner,index,name,rowAttr,
@@ -68,12 +69,7 @@ class QueryColumn:
         self.name = name
         self.rowAttr = rowAttr
         self.join = join
-        #self.sticky = False
-        #self.isVisible = isVisible
-        #self.width = rowAttr.width
-        
         self._atoms = atoms
-
         # self._atoms is list of those atoms in ColumnList which have
         # been requested by this column
 
@@ -82,8 +78,9 @@ class QueryColumn:
         return self.name
 
     def __repr__(self):
-        return "<column %d:%s in %s>" % (self.index,self.name,
-                                         repr(self._owner))
+        return "<column %d:%s in %r>" % (self.index,self.name,
+                                         self._owner)
+    
     def canWrite(self,row):
         return self.rowAttr.canWrite(row)
 
@@ -114,9 +111,9 @@ class QueryColumn:
     def vetoDeleteRow(self,row):
         pass
 
-    def addFilter(self,fcl,*args,**kw):
-        flt=fcl(self,*args,**kw)
-        self._owner.addFilter(flt)
+##     def addFilter(self,fcl,*args,**kw):
+##         flt=fcl(self,*args,**kw)
+##         self._owner.addFilter(flt)
 
 
     def setCellValue(self,row,value):
@@ -473,25 +470,6 @@ class DetailColumn(QueryColumn):
 
 
 
-class Calendar:
-    def __init__(self,session,columnNames,
-                 year=None,
-                 month=None,
-                 week=None):
-        self._session=session
-        self._columns = []
-        if columnNames is None:
-            self.visibleColumns=[]
-        else:
-            self.setVisibleColumns(columnNames)
-
-    def getContext(self):
-        return self._session
-    
-    def getDatabase(self):
-        return self._session.db
-
-
 class BaseColumnList(Datasource): 
     
     #ANY_VALUE = types.NoneType
@@ -503,6 +481,7 @@ class BaseColumnList(Datasource):
     
     
     def __init__(self,_parent,columnNames):
+        #if _parent is not None:
         if _parent is not None and columnNames is None:
             if _parent.getContext() == self.getContext():
                 self._frozen=True
@@ -546,22 +525,16 @@ class BaseColumnList(Datasource):
     def setVisibleColumns(self,columnNames):
         assert type(columnNames) in (str,unicode) #is types.StringType
         l = []
-        groups = []
-        for ln in columnNames.splitlines():
-            grp=[]
-            for colName in columnNames.split():
-                if colName == "*":
-                    for fld in self.getLeadTable().getFields():
-                        col = self.findColumn(fld.getName())
-                        if col is None:
-                            col = self._addColumn(fld.getName(),fld)
-                        grp.append(col)
-                else:
-                    grp.append(self.provideColumn(colName))
-            l += grp
-            groups.append(grp)
+        for colName in columnNames.split():
+            if colName == "*":
+                for fld in self.getLeadTable().getFields():
+                    col = self.findColumn(fld.getName())
+                    if col is None:
+                        col = self._addColumn(fld.getName(),fld)
+                    l.append(col)
+            else:
+                l.append(self.provideColumn(colName))
         self.visibleColumns = tuple(l)
-        self.formColumnGroups = tuple(groups)
             
 
     def getName(self):
@@ -598,6 +571,7 @@ class BaseColumnList(Datasource):
 
     
     def addColumn(self,*args,**kw):
+        # used in docs/examples/filters2.py
         col=self._addColumn(*args,**kw)
         self.visibleColumns= self.visibleColumns + (col,)
         return col
@@ -628,6 +602,8 @@ class BaseColumnList(Datasource):
     def getColumns(self,columnNames=None):
         if columnNames is None:
             return self._columns
+        
+        # raise "visibleColumns moved to Report"
         l = []
         for name in columnNames.split():
             col = self.findColumn(name)
@@ -655,13 +631,13 @@ class BaseColumnList(Datasource):
         #print "query.py: ", [col.name for col in self._columns]
         return None
 
-##     def getColumn(self,i):
-##         return self.visibleColumns[i]
+    def getColumn(self,i):
+        return self.visibleColumns[i]
     
     def getColumnByName(self,name):
         col = self.findColumn(name)
         if col is None:
-            msg = "No column '%s' in %s (%s)" % (
+            msg = "No column '%s' in %sQuery(%s)" % (
                 name,
                 self.getLeadTable().getTableName(),
                 ', '.join([col.name for col in self._columns]))
@@ -675,13 +651,16 @@ class BaseColumnList(Datasource):
 
     def provideAtom(self,name,type,joinName=None):
         
-        """Return the atom with specified name if already present.  type
-        must match in this case.  Create the atom if not present. """
+        """Return the atom with specified name if already present.
+        type must match in this case.
+        Create the atom if not present. """
 
         a = self.findAtom(joinName,name)
         if a is not None:
             assert a.type == type,\
-                     "%s is not type %s" % (repr(a),str(type))
+                   "%s: %r is type %s but %s is required" \
+                   % (self.getLeadTable().getTableName(),
+                      a,a.type,type)
             return a
         a = Atom(joinName,name,type,len(self._atoms))
         self._atoms.append(a)
@@ -730,24 +709,20 @@ class BaseColumnList(Datasource):
 
     def canWrite(self):
         return True
-    
-    def updateRow(self,row,*args,**kw):
-        i = 0
-        for col in self.visibleColumns:
-            if i == len(args):
-                break
-            col.setCellValue(row,args[i])
-            #row._values[col.rowAttr._name] = args[i]
-            i += 1
-            
-        for k,v in kw.items():
-            col = self.getColumnByName(k)
-            col.setCellValue(row,v)
 
-        row.setDirty()
+
+
+##     def updateRow(self,row,**kw):
+##         for k,v in kw.items():
+##             col = self.getColumnByName(k)
+##             col.setCellValue(row,v)
+
+##         row.setDirty()
             
     
 
+    
+    
 
     def atoms2dict(self,atomicRow,rowValues,area):
         for col in self._columns:
@@ -764,19 +739,19 @@ class BaseColumnList(Datasource):
         return atomicTuple
     
 
-    def makeAtomicRow(self,context=None,*args,**kw):
-        atomicRow = [None] * len(self._atoms) 
-        i = 0
-        for col in self.visibleColumns:
-            if i == len(args):
-                break
-            col.value2atoms(args[i],atomicRow,context)
-            i += 1
+##     def makeAtomicRow(self,context=None,*args,**kw):
+##         atomicRow = [None] * len(self._atoms) 
+##         i = 0
+##         for col in self.visibleColumns:
+##             if i == len(args):
+##                 break
+##             col.value2atoms(args[i],atomicRow,context)
+##             i += 1
             
-        for k,v in kw.items():
-            col = self.getColumnByName(k)
-            col.value2atoms(v,atomicRow,context)
-        return atomicRow
+##         for k,v in kw.items():
+##             col = self.getColumnByName(k)
+##             col.value2atoms(v,atomicRow,context)
+##         return atomicRow
 
         
     def row2atoms(self,row,atomicRow=None):
@@ -793,11 +768,21 @@ class BaseColumnList(Datasource):
 class LeadTableColumnList(BaseColumnList):
     
     def __init__(self,_parent,store,columnNames):
+    #def __init__(self,_parent,store):
 
         assert store.__class__.__name__ == "Store", \
                store.__class__.__name__+" is not a Store"
         self._store=store
+        #BaseColumnList.__init__(self,_parent)
         BaseColumnList.__init__(self,_parent,columnNames)
+
+##         if not self._frozen:
+##             for fld in store._table.getFields():
+##                 if not fld in store._table._pk:
+##                     self._addColumn(fld.getName(),fld)
+                    
+##         assert len(self._columns) > 1
+        
 
         #self.leadTable = store._table 
         
@@ -883,7 +868,9 @@ class LeadTableColumnList(BaseColumnList):
 class PeekQuery(LeadTableColumnList):
     def __init__(self,store):
         LeadTableColumnList.__init__(self,None,store,"*")
-        assert len(self._columns) > 1
+        #print self.getLeadTable().getTableName(),\
+        #      ','.join([col.name for col in self._columns])
+        self._frozen=True
 
     def getContext(self):
         return self._store._db
@@ -905,13 +892,9 @@ class SimpleQuery(LeadTableColumnList):
                     BabelFieldColumn,
                     FieldColumn,
                     )
-##     columnClasses={ Detail: DetailColumn,
-##                     Pointer: PointerColumn,
-##                     Field: FieldColumn,
-##                     }
+
     def __init__(self, _parent, store, sess,
                  columnNames=None,
-                 #viewName=None,
                  orderBy=None,
                  sortColumns=None,
                  sqlFilters=None,
@@ -923,25 +906,19 @@ class SimpleQuery(LeadTableColumnList):
                  **kw):
         self.session = sess
         LeadTableColumnList.__init__(self,_parent,store,columnNames)
+        #LeadTableColumnList.__init__(self,_parent,store)
         self.rowcount = None
         
         for m in ('setBabelLangs','getLangs'):
             setattr(self,m,getattr(sess,m))
         
-
-        #self._table = store._table # shortcut
         self.app = store._db.app # shortcut
         self._connection = store._connection # shortcut
 
         for m in ('startDump','stopDump'):
             setattr(self,m,getattr(store,m))
         self.rowcount = None
-
         
-        
-        #print "Datasource.configure()", self
-        
-        #self._viewName = viewName
         if label is not None:
             assert type(label) == type(""),\
                    "%s not a string" % repr(label)
@@ -1047,27 +1024,6 @@ class SimpleQuery(LeadTableColumnList):
 ##                     return
 ##             self._masters.append( (col,master) ) # MS_COLUMN, MS_MASTER
             
-##     def setSamples(self,**kw):
-##         "each value is a Python object"
-##         self._samples.update(kw)
-##         for (name,value) in self._samples.items():
-##             if value == self.ANY_VALUE:
-##                 del self._samples[name]
-##             else:
-##                 col = self.provideColumn(name)
-    
-    
-##     def getAtomicSamples(self):
-##         l = []
-##         atomicRow = self.makeAtomicRow() 
-##         for (name,value) in self._samples.items():
-##             col = self.getColumnByName(name)
-##             col.value2atoms(value,atomicRow,self.getDatabase())
-##             # 20050110
-##             # col.value2atoms(value,atomicRow,self.getContext())
-##             for atom in col.getAtoms():
-##                 l.append((atom,atomicRow[atom.index]))
-##         return l
 
 
     def __repr__(self):
@@ -1086,6 +1042,12 @@ class SimpleQuery(LeadTableColumnList):
     
     def showReport(self,**kw):
         self.session.showQuery(self,**kw)
+
+    def report(self,*args,**kw):
+        rpt=self.session.createDataReport(self,*args,**kw)
+        #rpt.beginReport(None)
+        return rpt
+        
 
     def zap(self):
         self._store.zap()
@@ -1108,121 +1070,28 @@ class SimpleQuery(LeadTableColumnList):
         #
         
 
-##     def apply_GET(self,**kw):
-##         """
-##         apply a (Twisted) GET dict to self
-##         """
-##         qryParams = {}
-##         #csvSamples = {}
-##         for k,v in kw.items():
-##             if k == 'ob':
-##                 qryParams['orderBy'] = " ".join(v)
-##             elif k == 'v':
-##                 viewName = v[0]
-##                 if viewName == '':
-##                     viewName = None
-##                 qryParams['viewName'] = viewName
-##             elif k == 'search':
-##                 qryParams['search'] = v[0]
-##             elif k == 'flt':
-##                 qryParams['sqlFilters'] = v
-##                 #qryParams['sqlFilters'] = (v[0],)
-##                 #qryParams['filters'] = tuple(l)
-
-##             else:
-##                 #csvSamples[k] = v[0]
-##                 col = self.provideColumn(k)
-##                 qryParams[k] = col.parse(v[0],self)
-                
-##         self.configure(**qryParams)
-        #if len(csvSamples) > 0:
-        #   self.setCsvSamples(**csvSamples)
-            
-##  def setCsvSamples(self,**kw):
-##      "each value is a string to be parsed by column"
-##      #self._samples.update(kw)
-##      for (name,value) in kw.items():
-##          if value == self.ANY_VALUE:
-##              del self._samples[name]
-##          else:
-##              col = self._clist.provideColumn(name)
-##              self._samples[name] = col.parse(value,self)
-##      return
-
-##     def get_GET(self):
-##         p = {}
-##         if self._orderBy != None:
-##             p['ob'] = self._orderBy
-##         if self._viewName != None:
-##             p['v'] = self._viewName
-##         if self._search != None:
-##             p['search'] = self._search
-##         if self._sqlFilters != None:
-##             p['flt'] = self._sqlFilters
-##         for (key,value) in self._samples.items():
-##             col = self.getColumnByName(key)
-##             p[key] = col.format(value,self)
-##         return p
-        
-        
-    def getColumn(self,i):
-        return self.visibleColumns[i]
-        
-        
-    def child(self,columnNames=None,**kw):
+    def child(self,*args,**kw):
         #self.setdefaults(kw)
-        return self.__class__(self,self._store,self.session,
-                              columnNames=columnNames,
-                              **kw)
+        return self.__class__(self,self._store,self.session,*args,**kw)
+    
     # alias for child() of a Query:
     query=child
 
 
-    def __xml__(self,wr):
-        wr("<datasource>")
-        for row in self:
-            wr("<row>")
-            for col in self.getVisibleColumns():
-                wr("<td>")
-                v = v = col.getCellValue(row)
-                if v is not None:
-                    wr(col.format(v))
-                wr("</td>")
-            wr("</row>")
-        wr("</datasource>")
+##     def __xml__(self,wr):
+##         wr("<datasource>")
+##         for row in self:
+##             wr("<row>")
+##             for col in self.getVisibleColumns():
+##                 wr("<td>")
+##                 v = v = col.getCellValue(row)
+##                 if v is not None:
+##                     wr(col.format(v))
+##                 wr("</td>")
+##             wr("</row>")
+##         wr("</datasource>")
 
 
-        
-    
-##  def child(self,cl,**kw):
-        
-##      """creates a child (a detached copy) of this.  Modifying the
-##      child won't affect the parent.  columnNames can optionally be
-##      specified as first (non-keyword) argument.  if arguments are
-##      given, then they override the corresponding value in the parent.
-        
-##      """
-##      self.setdefaults(kw)
-##      return cl( self._session,
-##                    self._store,
-##                    self._clist,
-##                    **kw)
-
-##     def setdefaults(self,kw):
-##         if not kw.has_key('orderBy'):
-##             kw.setdefault('sortColumns',self.sortColumns)
-##         kw.setdefault('search',self._search)
-##         if self._label is not None:
-##             kw.setdefault('label',self._label)
-##         if self._sqlFilters is not None:
-##             kw.setdefault('sqlFilters',tuple(self._sqlFilters))
-##         if self._filters is not None:
-##             kw.setdefault('filters',list(self._filters))
-##             #print self._filters
-##         #if samples is None:
-##         #kw.setdefault('samples',self._samples)
-##         for k,v in self._samples.items():
-##             kw.setdefault(k,v)
         
 
 
@@ -1328,7 +1197,7 @@ class SimpleQuery(LeadTableColumnList):
     def getSearchAtoms(self):
         if self._searchAtoms is None:
             l = []
-            for col in self.visibleColumns:
+            for col in self._columns: # visibleColumns:
                 if hasattr(col.rowAttr,'type'):
                     if isinstance(col.rowAttr.type,
                                   datatypes.StringType):
@@ -1389,16 +1258,27 @@ class SimpleQuery(LeadTableColumnList):
     def _appendRow(self,*args,**kw):
         row = self.getLeadTable().Instance(self,{},True)
         for mc in self._masterColumns:
-            #v = mc.getCellValue(self._masters[mc.name])
-            #kw[mc.name] = v
-            #kw[mc.name] = self._masters[mc.name]
             mc.setCellValue(row,self._masters[mc.name])
-        #kw.update(self._samples)
         self.updateRow(row,*args,**kw)
         self.rowcount = None
         self._store.setAutoRowId(row)
         return row
         
+    def updateRow(self,row,*args,**kw):
+        i = 0
+        for col in self.visibleColumns:
+            if i == len(args):
+                break
+            col.setCellValue(row,args[i])
+            i += 1
+            
+        for k,v in kw.items():
+            col = self.getColumnByName(k)
+            col.setCellValue(row,v)
+
+        row.setDirty()
+            
+    
 
 
     def __getitem__(self,offset):
@@ -1479,8 +1359,10 @@ class SimpleQuery(LeadTableColumnList):
 ##                                                            atomicRow[a.index]))
 ##      ds = self.query(sqlFilters=(' AND '.join(flt),))
 ##      return ds
+
         
     def find(self,*args,**knownValues):
+        #raise QueryColumn._owner muss weg
         flt = []
         i = 0
         for arg in args:
@@ -1490,11 +1372,11 @@ class SimpleQuery(LeadTableColumnList):
         for k,v in knownValues.items():
             col = self.getColumnByName(k)
             flt.append(col.getTestEqual(self,v))
-        ds = self.query(sqlFilters=(' AND '.join(flt),))
+        ds = self.child(sqlFilters=(' AND '.join(flt),))
         return ds
         
-    def findone(self,**knownValues):
-        ds = self.find(**knownValues)
+    def findone(self,*args,**knownValues):
+        ds = self.find(*args,**knownValues)
         #print [a.name for a in ds.query._atoms]
         #q = self._table.query(filters=' AND'.join(flt))
         #csr = self._connection.executeSelect(q)
@@ -1538,7 +1420,7 @@ class SimpleQuery(LeadTableColumnList):
         return DataIterator(self,**kw)
 
     def onStoreUpdate(self):
-        print __file__,"onStoreUpdate()"
+        #print __file__,"onStoreUpdate()"
         self.rowcount = None
     
     def __len__(self):
@@ -1561,6 +1443,7 @@ class Query(SimpleQuery):
                  **kw):
         
         
+        #SimpleQuery.__init__(self, _parent,store,sess,**kw)
         SimpleQuery.__init__(
             self, _parent,store,sess,columnNames,**kw)
         if _parent is not None:

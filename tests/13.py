@@ -23,6 +23,7 @@ from lino.misc.tsttools import TestCase, main
 from lino.apps.pinboard import demo
 from lino.apps.pinboard.tables import Pages
 
+
 class Introduction(TestCase):
 
     def setUp(self):

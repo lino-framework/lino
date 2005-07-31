@@ -7,7 +7,8 @@ sess = demo.beginSession(big=True)
 qry=sess.query(
     Nations,"id name",
     label="Nations and their Cities containing search string 'dre'")
-qry.addColumn("cities",search="dre",depth=1).addFilter(NotEmpty)
+cities=qry.addColumn("cities",search="dre",depth=1)
+qry.addFilter(NotEmpty(cities))
 sess.showQuery(qry,columnWidths="2 15 *")
 
 print

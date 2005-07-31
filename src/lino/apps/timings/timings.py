@@ -126,12 +126,11 @@ class Timings(Schema):
 
     def showMonthlyCalendar(self,sess,year=2005,month=6):
         ds=sess.query(Days, orderBy="date")
+        ds.addFilter(DateEquals(ds.findColumn('date'),year,month))
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
         rpt = DataReport(ds)
-        rpt.addDataColumn(
-            "date",width=12,
-            formatter=fmt).addFilter(DateEquals,year,month)
+        rpt.addDataColumn("date",width=12,formatter=fmt)
         
         rpt.addVurtColumn(lambda row:str(row.item.date),
                           label="ISO",width=10)

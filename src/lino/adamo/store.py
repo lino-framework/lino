@@ -147,9 +147,10 @@ class Store:
         
             
     def query(self,sess,columnNames=None,**kw):
-        #return Query(self._peekQuery,self,sess,
-        #             columnNames=columnNames,**kw)
-        return Query(None,self,sess,columnNames,**kw)
+       return Query(None,self,sess,columnNames,**kw)
+    
+##     def query(self,sess,**kw):
+##         return Query(None,self,sess,**kw)
 
     
         
@@ -297,7 +298,8 @@ class Store:
             # x is now the bottom-level dict
             i = front[-1]
             if not x.has_key(i):
-                x[i] = self._connection.executeGetLastId(self._table,front)
+                x[i] = self._connection.executeGetLastId(
+                    self._table,front)
                 if x[i] is None:
                     x[i] = 0
             if tail is None:

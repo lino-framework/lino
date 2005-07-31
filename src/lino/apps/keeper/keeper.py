@@ -37,7 +37,7 @@ class Keeper(Schema):
         files = sess.query(Files,"name")
         grid=None # referenced in search(), defined later
         col=files.addColumn("occurences")
-        col.addFilter(NotEmpty)
+        files.addFilter(NotEmpty(col))
         occs=col.getDetailQuery()
         occs.setSearchColumns("word.id")
         #files.addColumn("content")

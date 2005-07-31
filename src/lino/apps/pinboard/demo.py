@@ -50,7 +50,8 @@ class StdPopulator(Populator):
         
     def populateLanguages(self,q):
         if len(q): return # done by LangsPopulator
-        q.setVisibleColumns('id name')
+        #q.setVisibleColumns('id name')
+        q=q.query('id name')
         q.setBabelLangs('en de fr')
         q.appendRow(
             'en',('English','Englisch','Anglais')     )

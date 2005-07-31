@@ -34,7 +34,7 @@ from lino.apps.pizzeria.pizzeria import Customers,\
 
 class Case(TestCase):
     """
-    Tests about switching pointers, using the pizzeria2 example
+    Tests switching pointers
     """
 
     def setUp(self):
@@ -53,14 +53,11 @@ class Case(TestCase):
         SERV.startDump()
         s1 = SERV.appendRow(name="bring home",price=99)
         sql = SERV.stopDump()
-        #SELECT MAX(id) FROM Services;
         self.assertEquivalent(sql,"""\
 INSERT INTO Services (
-id,
-name, price,
-responsible
+  id, name, price, responsible
 )
-         VALUES  ( 3,  'bring home', 99, NULL );
+  VALUES  ( 3,  'bring home', 99, NULL );
 """)
         
     def test02(self):
