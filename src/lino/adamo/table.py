@@ -253,7 +253,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
 
     def addView(self,viewName,columnNames=None,**kw):
         if columnNames is not None:
-            kw['columnNames'] = columnNames
+            kw['columnSpec'] = columnNames
         self._views[viewName] = kw
         
     def getView(self,viewName):

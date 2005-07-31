@@ -359,6 +359,7 @@ class ContactsPlugin(SchemaPlugin):
         schema.addTable(Nations, label="Nations" )
         schema.addTable(Cities, label="Cities")
         schema.addTable(Organisations,label="Organisations")
+        schema.addTable(Persons,label="Persons")
         schema.addTable(Partners, label="Partners")
         schema.addTable(PartnerTypes,
                         label="Partner Types")

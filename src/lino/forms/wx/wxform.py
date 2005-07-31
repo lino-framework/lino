@@ -34,8 +34,10 @@ DONTSTRETCH=0
 BORDER=10
 NOBORDER=0
 
-ENTRY_PANEL_BACKGROUND = wx.GREEN
-ENTRY_LABEL_BACKGROUND = wx.GREEN
+ENTRY_PANEL_BACKGROUND = None
+ENTRY_LABEL_BACKGROUND = None
+#ENTRY_PANEL_BACKGROUND = wx.BLUE
+#ENTRY_LABEL_BACKGROUND = wx.GREEN
 
 from textwrap import TextWrapper
 docWrapper = TextWrapper(30)
@@ -48,11 +50,11 @@ def _setEditorSize(editor,type):
     #CHARWIDTH = 10
         
     #CHARWIDTH = LINEHEIGHT = editor.GetFont().GetPointSize()
-    CHARWIDTH, LINEHEIGHT = editor.GetTextExtent("M")
+    #CHARWIDTH, LINEHEIGHT = editor.GetTextExtent("M")
     #print editor.GetFullTextExtent("M"), editor.GetTextExtent("M")
     #print editor.GetBestSize()
     
-    CHARWIDTH *= 2
+    #CHARWIDTH *= 2
         
     #editor.SetMaxSize( (type.maxWidth*CHARWIDTH,
     #                    type.maxHeight*LINEHEIGHT) )
@@ -218,7 +220,8 @@ class TextViewer(base.TextViewer):
         e.SetBackgroundColour('BLACK')
         e.SetForegroundColour('WHITE')
         e.SetEditable(False)
-        _setEditorSize(e,MEMO(width=50,height=10))
+        e.SetMinSize(e.GetBestSize())
+        #_setEditorSize(e,MEMO(width=50,height=10))
         #e.SetEnabled(False)
         box.Add(e, STRETCH, wx.EXPAND|wx.ALL,NOBORDER)
         self.wxctrl = e
@@ -252,7 +255,7 @@ class Panel(base.Panel):
     
     def setup(self,parent,box):
         mypanel = wx.Panel(parent,-1)
-        box.Add(mypanel, DONTSTRETCH, wx.ALL|wx.EXPAND,NOBORDER)
+        box.Add(mypanel, self.weight, wx.ALL|wx.EXPAND,NOBORDER)
         if self.direction == self.VERTICAL:
             mybox = wx.BoxSizer(wx.VERTICAL)
         else:
@@ -272,7 +275,7 @@ class EntryMixin:
         if self.hasLabel():
             mypanel = wx.Panel(panel,-1)
             mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
-            box.Add(mypanel, DONTSTRETCH, wx.EXPAND|wx.ALL,BORDER)
+            box.Add(mypanel, self.weight, wx.EXPAND|wx.ALL,BORDER)
 
             hbox = wx.BoxSizer(wx.HORIZONTAL)
             mypanel.SetSizer(hbox)
@@ -330,7 +333,8 @@ class EntryMixin:
                              #style=wx.TE_PROCESS_ENTER)
 
         
-        _setEditorSize(editor,self)
+        editor.SetMinSize(editor.GetBestSize())
+        #_setEditorSize(editor,self)
         #print editor.GetMinSize(), editor.GetMaxSize()
         #print mypanel.GetMinSize(), editor.GetMaxSize()
         
@@ -342,13 +346,13 @@ class EntryMixin:
 
         self.editor = editor 
         if self.hasLabel():
-            hbox.Add(editor,
-                     STRETCH,
+            hbox.Add(editor,STRETCH,
                      wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
                      BORDER)
             self.wxctrl = mypanel
         else:
-            hbox.Add(editor,DONTSTRETCH,wx.EXPAND|wx.ALL,NOBORDER)
+            hbox.Add(editor,STRETCH,
+                     wx.EXPAND|wx.ALL,NOBORDER)
             self.wxctrl = editor
 
     def refresh(self):

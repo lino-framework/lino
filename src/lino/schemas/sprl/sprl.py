@@ -140,6 +140,35 @@ class Sprl(Schema):
         #self.addPlugin(WebPlugin(withWeb))
         #self.addPlugin(ProjectPlugin(withProjects))
         #self.addPlugin(NewsPlugin(withNews))
+
+
+
+
+
+    def showMainForm(self,sess):
+        frm = sess.form(
+            label="Main menu",
+            doc="""\
+This is the Sprl main menu.                                    
+"""+("\n"*10))
+
+        m = frm.addMenu("master","&Stammdaten")
+        m.addItem("nations",label="&Nations").setHandler(
+            sess.showViewGrid, Nations)
+        m.addItem("cities",label="&Cities").setHandler(
+            sess.showViewGrid, Cities)
+        m.addItem("partners",label="&Partners").setHandler(
+            sess.showViewGrid, Partners)
+        m.addItem("persons",label="&Persons").setHandler(
+            sess.showViewGrid, Persons)
+        
+        self.addProgramMenu(sess,frm)
+
+        frm.addOnClose(sess.close)
+
+        frm.show()
+
+        
         
 ##     def getContentRoot(self,db):
 ##         return db.tables.PAGES.findone(match="index")

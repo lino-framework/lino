@@ -33,9 +33,12 @@ from lino.adamo.exceptions import InvalidRequestError
 
 
 class Component(Describable):
-    def __init__(self,owner,*args,**kw):
-        Describable.__init__(self,None,*args,**kw)
+    def __init__(self,owner,
+                 name=None,label=None,doc=None,
+                 weight=0):
+        Describable.__init__(self,None,name,label,doc)
         self.owner = owner
+        self.weight=weight
 
     def __repr__(self):
         return self.getName()
@@ -180,8 +183,8 @@ class Entry(BaseEntry):
 
 class DataEntry(BaseEntry):
     
-    def __init__(self,frm,col, *args,**kw):
-        Component.__init__(self,frm, col.name, *args,**kw)
+    def __init__(self,frm,col,*args,**kw):
+        Component.__init__(self,frm, col.name,*args,**kw)
         self.enabled = col.canWrite(frm.data)
         self.col = col
         
@@ -546,16 +549,16 @@ class Container(Component):
         self._components.append(e)
         frm.setMenuController(e)
         
-    def addPanel(self,direction): 
+    def addPanel(self,direction,**kw): 
         frm = self.getForm()
-        btn = frm.session.toolkit.panelFactory(self,direction)
+        btn = frm.session.toolkit.panelFactory(self,direction,**kw)
         self._components.append(btn)
         return btn
     
-    def addVPanel(self):
-        return self.addPanel(self.VERTICAL)
-    def addHPanel(self):
-        return self.addPanel(self.HORIZONTAL)
+    def addVPanel(self,**kw):
+        return self.addPanel(self.VERTICAL,**kw)
+    def addHPanel(self,**kw):
+        return self.addPanel(self.HORIZONTAL,**kw)
 
     def addViewer(self): 
         frm = self.getForm()

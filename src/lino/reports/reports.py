@@ -248,9 +248,11 @@ class BaseReport(Describable):
                 frm.addDataEntry(col,label=col.getLabel())
         else:
             for grp in self.formColumnGroups:
-                p=frm.addHPanel()
+                p=frm.addHPanel(weight=1)
                 for col in grp:
-                    p.addDataEntry(col,label=col.getLabel())
+                    p.addDataEntry(col,
+                                   label=col.getLabel(),
+                                   weight=1/len(grp))
         
         
 ##     def setupForm(self,frm,row=None,**kw):
@@ -498,12 +500,12 @@ class DataReport(BaseReport):
         return True
 
     def setColumnSpec(self,columnSpec):
-        assert type(columnSpec) in (str,unicode) #is types.StringType
+        assert type(columnSpec) in (str,unicode) 
         #l = []
         groups = []
         for ln in columnSpec.splitlines():
             grp=[]
-            for colName in columnSpec.split():
+            for colName in ln.split():
                 x = colName.split(':')
                 if len(x) == 1:
                     w=None
@@ -526,7 +528,7 @@ class DataReport(BaseReport):
                     self.addColumn(col)
                     grp.append(col)
             #l += grp
-            groups.append(grp)
+            groups.append(tuple(grp))
         #self.visibleColumns = tuple(l)
         if len(groups) <= 1:
             self.formColumnGroups = None

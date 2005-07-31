@@ -31,7 +31,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
     def __init__(self, editor):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
-        self.columns = self.editor.rpt.getVisibleColumns()
+        self.columns = self.editor.rpt.columns
         self._load()
         
     def _load(self):
