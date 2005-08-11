@@ -107,7 +107,8 @@ class Database(Context,Describable):
         l = []
         for table in self.app.getTableList():
             try:
-                l.append(self._stores[table.__class__])
+                #l.append(self._stores[table.__class__])
+                l.append(self._stores[table._instanceClass])
             except KeyError:
                 pass
         return l
@@ -115,8 +116,10 @@ class Database(Context,Describable):
     def connect(self,conn,tableClasses=None):
         self._connections.append(conn)
         for t in self.app.getTableList(tableClasses):
-            if not self._stores.has_key(t.__class__):
-                self._stores[t.__class__] = Store(conn,self,t)
+            if not self._stores.has_key(t._instanceClass):
+                self._stores[t._instanceClass] = Store(conn,self,t)
+            #if not self._stores.has_key(t.__class__):
+                #self._stores[t.__class__] = Store(conn,self,t)
 
 
     def getContentRoot(self):

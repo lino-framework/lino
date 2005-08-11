@@ -18,14 +18,14 @@
 
 
 
-from addrbook import Persons
-from addrbook import Partners
-from addrbook import Organisations
-from addrbook import PartnerTypes
-from addrbook import Nations
-from addrbook import Cities
-from addrbook import Users
-from addrbook import Currencies
+from addrbook import Person
+from addrbook import Partner
+from addrbook import Organisation
+from addrbook import PartnerType
+from addrbook import Nation
+from addrbook import City
+from addrbook import User
+from addrbook import Currency
 
 #from addrbook import LoginForm
 #from addrbook import MainForm

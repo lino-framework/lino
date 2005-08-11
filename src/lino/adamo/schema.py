@@ -26,7 +26,7 @@ from lino.console import syscon
 from lino.console.application import Application
 
 #from lino.adamo.forms import Form
-from lino.adamo.table import Table, LinkTable, SchemaComponent
+from lino.adamo.table import Table, SchemaComponent
 from lino.adamo.exceptions import StartupDelay
 from lino.adamo.query import Query
 from lino.adamo import center
@@ -107,11 +107,12 @@ class Schema(Application):
 ##             self.filename=os.path.join(self.tempDir,
 ##                                        self.name+".db")
         
-    def addTable(self,tableClass,**kw):
+    def addTable(self,instanceClass,**kw):
         #print tableClass
-        table = tableClass(None,**kw)
-        assert isinstance(table,Table),\
-                 repr(table)+" is not a Table"
+        table=Table(instanceClass,**kw)
+        #table = tableClass(None,**kw)
+        #assert isinstance(table,Table),\
+        #         repr(table)+" is not a Table"
         assert not self._initDone,\
                  "Too late to declare new tables in " + repr(self)
         table.registerInSchema(self,len(self._tables))
@@ -219,7 +220,8 @@ class Schema(Application):
     def findImplementingTables(self,toClass):
         l = []
         for t in self._tables:
-            if isinstance(t,toClass):
+            #if isinstance(t,toClass):
+            if issubclass(t._instanceClass,toClass):
                 l.append(t)
                 #break
         return l

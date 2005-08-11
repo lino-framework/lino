@@ -18,14 +18,25 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo import *
+from lino.adamo.ddl import *
 
-class Languages(Table):
-    def init(self):
-        self.addField('id',STRING(width=2))
-        self.addBabelField('name',STRING).setMandatory()
+class Language(StoredDataRow):
     
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    tableName="Languages"
+    
+    def initTable(self,table):
+        table.addField('id',STRING(width=2))
+        table.addBabelField('name',STRING).setMandatory()
+    
+    def __str__(self):
+        return self.name
+
+## class Languages(Table):
+##     def init(self):
+##         self.addField('id',STRING(width=2))
+##         self.addBabelField('name',STRING).setMandatory()
+    
+##     class Instance(Table.Instance):
+##         def __str__(self):
+##             return self.name
 

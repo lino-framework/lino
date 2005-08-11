@@ -33,8 +33,11 @@ optional options :
 
 """
 
-from lino.ui.console import ConsoleApplication, \
+from lino.console.application import Application, \
      UsageError, ApplicationError
+
+#from lino.ui.console import ConsoleApplication, \
+#     UsageError, ApplicationError
 #from lino import __version__
 
 
@@ -53,7 +56,7 @@ import mimetypes
 
 
 
-class Sendmail(ConsoleApplication):
+class Sendmail(Application):
     
     name="Lino/sendmail"
     years='2002-2005'
@@ -68,7 +71,7 @@ FILE is the input file (can be text or html).
 """
     
     def setupOptionParser(self,parser):
-        ConsoleApplication.setupOptionParser(self,parser)
+        Application.setupOptionParser(self,parser)
     
         parser.add_option("-s", "--subject",
                           help="the Subjet: line of the mail",
@@ -116,7 +119,7 @@ Taken from addrlist.txt if not given.
                           default=None)
     
 
-    def run(self,ui):
+    def run(self,sess):
         if len(self.args) == 0:
             raise UsageError("needs 1 argument")
 
@@ -130,30 +133,30 @@ Taken from addrlist.txt if not given.
         if self.options.host is None:
             raise UsageError("--host must be specified")
 
-        self.connect()
+        self.connect(sess)
         
         for pattern in self.args:
             l = glob.glob(pattern)
             self.count_todo = len(l)
             if self.count_todo > 0:
                 i = 1
-                self.ui.notice(
+                sess.notice(
                     "Sending %d messages.",self.count_todo)
                 for filename in l:
-                    self.processFile(filename,i)
+                    self.processFile(sess,filename,i)
                     i += 1
 
         self.server.quit()
         
-        self.ui.notice("Sent %d messages.", self.count_ok)
+        sess.notice("Sent %d messages.", self.count_ok)
         if self.count_nok != 0:
-            self.ui.notice("(%d failures)",self.count_nok)
+            sess.notice("(%d failures)",self.count_nok)
 
         
-    def connect(self):
+    def connect(self,sess):
 
         try:
-            self.ui.notice("Connecting to %s",self.options.host)
+            sess.notice("Connecting to %s",self.options.host)
             self.server = smtplib.SMTP(self.options.host)
         except socket.error,e:
             raise ApplicationError(
@@ -167,7 +170,7 @@ Taken from addrlist.txt if not given.
         # server.set_debuglevel(1)
 
         if self.options.user is None:
-            self.ui.notice("Using anonymous SMTP")
+            sess.notice("Using anonymous SMTP")
             return 
 
         if self.options.password is None:
@@ -192,8 +195,8 @@ Taken from addrlist.txt if not given.
 ##             self.ui.error(str(e))
 ##         return False
 
-    def processFile(self,filename,i):
-        self.ui.notice("%s (%d/%d)",filename,i,self.count_todo)
+    def processFile(self,sess,filename,i):
+        sess.notice("%s (%d/%d)",filename,i,self.count_todo)
         self.dataDir = os.path.dirname(filename)
         if len(self.dataDir) == 0:
             self.dataDir = "."
@@ -202,7 +205,7 @@ Taken from addrlist.txt if not given.
         
         ctype, encoding = mimetypes.guess_type(filename)
         if ctype is None:
-            self.ui.warning(
+            sess.warning(
                 "ignored file %s : could not guess mimetype", s)
             return
         maintype, subtype = ctype.split('/', 1)
@@ -270,15 +273,15 @@ Taken from addrlist.txt if not given.
             for toAddr in addrlist.xreadlines():
                 toAddr = toAddr.strip()
                 if len(toAddr) != 0 and toAddr[0] != "#":
-                    self.sendto(msg,toAddr)
+                    self.sendto(sess,msg,toAddr)
 
         else:
             # msg["To"] = self.recipient
-            self.sendto(msg,self.options.recipient)
+            self.sendto(sess,msg,self.options.recipient)
                     
 
 
-    def sendto(self,msg,toAddr):
+    def sendto(self,sess,msg,toAddr):
 
         # note : simply setting a header does not overwrite an existing
         # header with the same key! 
@@ -304,26 +307,26 @@ Taken from addrlist.txt if not given.
         try:
             self.server.sendmail(sender, (toAddr,), body)
             # self.ToUserLog("%s : ok" % toAddr)
-            self.ui.notice(
+            sess.notice(
                 "Sent '%s' at %s to %s",
                 msg["Subject"], msg["Date"], toAddr)
             self.count_ok += 1
-            self.ui.debug("=" * 80)
-            self.ui.debug(body)
-            self.ui.debug("=" * 80)
+            sess.debug("=" * 80)
+            sess.debug(body)
+            sess.debug("=" * 80)
             return 
         
         except smtplib.SMTPRecipientsRefused,e:
-            self.ui.error("%s : %s", toAddr,e)
+            sess.error("%s : %s", toAddr,e)
             # All recipients were refused. Nobody got the mail.
         except smtplib.SMTPHeloError,e:
-            self.ui.error("%s : %s", toAddr,e)
+            sess.error("%s : %s", toAddr,e)
         except smtplib.SMTPServerDisconnected,e:
-            self.ui.error("%s : %s", toAddr,e)
+            sess.error("%s : %s", toAddr,e)
         except smtplib.SMTPSenderRefused,e:
-            self.ui.error("%s : %s", toAddr,e)
+            sess.error("%s : %s", toAddr,e)
         except smtplib.SMTPDataError,e:
-            self.ui.error("%s : %s", toAddr,e)
+            sess.error("%s : %s", toAddr,e)
             
         self.count_nok += 1
         return 

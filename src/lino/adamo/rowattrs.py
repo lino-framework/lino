@@ -574,12 +574,12 @@ class Pointer(RowAttribute):
             atomicValues = self._reduceAtoms(toTable.getTableId(),
                                                         atomicValues)
             #toArea = getattr(sess.tables,toTable.getTableName())
-            toArea = sess.query(toTable.__class__)
+            toArea = sess.query(toTable._instanceClass)
         else:
             #toTable = self._toTables[0]
             #areaName = toTable.getTableName()
             #toArea = getattr(sess.tables,areaName)
-            toArea = sess.query(self._toTables[0].__class__)
+            toArea = sess.query(self._toTables[0]._instanceClass)
         
         if None in atomicValues:
             return None
@@ -624,7 +624,7 @@ class Pointer(RowAttribute):
     def validate(self,value):
         #print value
         for toTable in self._toTables:
-            if not isinstance(value,toTable.Instance):
+            if not isinstance(value,toTable._instanceClass):
                 raise DataVeto("%r is not a %s instance" % \
                                (value,toTable.getTableName()))
         

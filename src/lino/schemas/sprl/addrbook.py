@@ -20,139 +20,176 @@
 from lino.adamo.ddl import *
 
 
-from babel import Languages
+from lino.apps.pinboard.babel import Language
 
 SEX = STRING(width=1) # datatypes.StringType(width=1)
 
 
-class Contacts(Table):
-    "abstract"
-    def init(self):
-        self.addField('email',EMAIL,
-                      label="e-mail",
-                      doc="Primary e-mail address")
-        self.addField('phone',STRING,
-                      doc="phone number")
-        self.addField('gsm',STRING,
-                      label="mobile phone",
-                      doc="mobile phone number")
-        self.addField('fax',STRING, doc="fax number")
-        self.addField('website',URL, doc="web site")
+## class Contacts(Table):
+##     "abstract"
+##     def init(self):
+##         self.addField('email',EMAIL,
+##                        label="e-mail",
+##                        doc="Primary e-mail address")
+##         self.addField('phone',STRING,
+##                        doc="phone number")
+##         self.addField('gsm',STRING,
+##                        label="mobile phone",
+##                        doc="mobile phone number")
+##         self.addField('fax',STRING, doc="fax number")
+##         self.addField('website',URL, doc="web site")
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+##     class Instance(Table.Instance):
+##         def __str__(self):
+##             return self.name
         
-class Addresses(Table):
-    "abstract"
-    def init(self):
-        self.addPointer('nation',Nations)
-        self.addPointer('city',Cities)
-        self.addField('zip',STRING)
-        self.addField('street',STRING)
-        self.addField('house',INT)
-        self.addField('box',STRING)
+## class Addresses(Table):
+##     "abstract"
+##     def init(self):
+##         self.addPointer('nation',Nations)
+##         self.addPointer('city',Cities)
+##         self.addField('zip',STRING)
+##         self.addField('street',STRING)
+##         self.addField('house',INT)
+##         self.addField('box',STRING)
         
-    class Instance(Table.Instance):
-        def after_city(self):
-            if self.city is not None:
-                self.nation = self.city.nation
+##     class Instance(Table.Instance):
+##         def after_city(self):
+##             if self.city is not None:
+##                 self.nation = self.city.nation
 
-class Organisations(Contacts,Addresses):
+## class Organisations(Contacts,Addresses):
+##     "An Organisation is any named group of people."
+##     def init(self):
+##         self.addField('id',ROWID,\
+##                       doc="the internal id number")
+##         Contacts.init(self)
+##         Addresses.init(self)
+##         self.addField('name',STRING)
+##         self.addView('std',columnNames="name email phone website")
+
+##     class Instance(Addresses.Instance):
+##         pass
+
+## class Persons(Table): #(Contact,Address):
+##     "A Person describes a specific physical human."
+##     def init(self):
+##         self.addField('id',ROWID)
+##         self.addField('name',STRING)
+##         self.addField('firstName',STRING)
+##         self.addField('sex',SEX)
+##         self.addField('birthDate',STRING(width=8))
+        
+##         # table.setFindColumns("name firstName")
+
+##         #self.setColumnList("name firstName id")
+##         self.setOrderBy('name firstName')
+##         self.addView('std',columnNames="name firstName id")
+
+##     class Instance(Table.Instance):
+##         def __str__(self):
+##             if self.firstName is None:
+##                 return self.name
+##             return self.firstName+" "+self.name
+
+##         def validate(self):
+##             if (self.firstName is None) and (self.name is None):
+##                 raise DataVeto(
+##                     "Either name or firstName must be specified")
+
+    
+class Contact(StoredDataRow):
+    "abstract"
+    def initTable(self,table):
+        table.addField('email',EMAIL,
+                       label="e-mail",
+                       doc="Primary e-mail address")
+        table.addField('phone',STRING,
+                       doc="phone number")
+        table.addField('gsm',STRING,
+                       label="mobile phone",
+                       doc="mobile phone number")
+        table.addField('fax',STRING, doc="fax number")
+        table.addField('website',URL, doc="web site")
+
+    def __str__(self):
+        return self.name
+        
+class Address(StoredDataRow):
+    "abstract"
+    def initTable(self,table):
+        table.addPointer('nation',Nation)
+        table.addPointer('city',City)
+        table.addField('zip',STRING)
+        table.addField('street',STRING)
+        table.addField('house',INT)
+        table.addField('box',STRING)
+        
+    def after_city(self):
+        if self.city is not None:
+            self.nation = self.city.nation
+
+class Organisation(Contact,Address):
     "An Organisation is any named group of people."
-    def init(self):
-        self.addField('id',ROWID,\
+    def initTable(self,table):
+        table.addField('id',ROWID,\
                       doc="the internal id number")
-        Contacts.init(self)
-        Addresses.init(self)
-        self.addField('name',STRING)
-        self.addView('std',columnNames="name email phone website")
+        Contact.initTable(self,table)
+        Addresse.initTable(self,table)
+        table.addField('name',STRING)
+        table.addView('std',columnNames="name email phone website")
 
-    class Instance(Addresses.Instance):
-        pass
-
-class Persons(Table): #(Contact,Address):
+class Person(StoredDataRow): #(Contact,Address):
     "A Person describes a specific physical human."
-    def init(self):
-        self.addField('id',ROWID)
-        self.addField('name',STRING)
-        self.addField('firstName',STRING)
-        self.addField('sex',SEX)
-        self.addField('birthDate',STRING(width=8))
+    def initTable(self,table):
+        table.addField('id',ROWID)
+        table.addField('name',STRING)
+        table.addField('firstName',STRING)
+        table.addField('sex',SEX)
+        table.addField('birthDate',STRING(width=8))
         
         # table.setFindColumns("name firstName")
 
         #self.setColumnList("name firstName id")
-        self.setOrderBy('name firstName')
-        self.addView('std',columnNames="name firstName id")
+        table.setOrderBy('name firstName')
+        table.addView('std',columnNames="name firstName id")
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            if self.firstName is None:
-                return self.name
-            return self.firstName+" "+self.name
+    def __str__(self):
+        if self.firstName is None:
+            return self.name
+        return self.firstName+" "+self.name
 
-        def validate(self):
-            if (self.firstName is None) and (self.name is None):
-                raise DataVeto(
-                    "Either name or firstName must be specified")
+    def validate(self):
+        if (self.firstName is None) and (self.name is None):
+            raise DataVeto(
+                "Either name or firstName must be specified")
 
     
 
-## class Users(Table):
-##  "People who can access this database"
-##  def init(self):
-##      #Persons.init(self)
-##      self.id = Field(STRING)
-##      self.person = Pointer(Persons)
-
-##  class Instance(Table.Instance):
-##      pass
-
-
-## class MainForm(FormTemplate):
-    
-##  def init(self):
-##      self.master = Menu("&Master")
-##      self.master.partners = self._schema.tables.PARTNERS.cmd_show()
-##      self.master.orgs = self._schema.tables.ORGS.cmd_show()
-        
-##      self.system = Menu("&System")
-##      self.system.logout = Command(lambda sess: sess.logout,
-##                                            label="&Logout"
-##                                            )
-        
-            
-## class MainForm(Form):
-##     name = "main"
-##     label="User menu"
+## class Users(Persons):
+##     "People who can access this database"
 ##     def init(self):
-##         sess = self.getSession()
-##         mnu = self.addMenu("&Master")
-##         mnu.addCommand(
-##             "&Partners",
-##             sess.showReport,
-##             sess.tables.PARTNERS.report(columnNames="name firstName id"))
-##         mnu.addCommand("&Organisations",sess.showReport,sess.tables.ORGS)
-        
-##         mnu = self.addMenu("&System")
-##         mnu.addCommand("&Logout",sess.logout)
-        
-            
+##         Persons.init(self)
+##         #self.addField('id',STRING,label="Username")
+##         i=self.getRowAttr('id')
+##         i.setType(STRING)
+##         i.setLabel("Username")
+##         #self.setField('id',STRING,label="Username")
+##         self.addField('password',PASSWORD)
 
-class Users(Persons):
+##     class Instance(Persons.Instance):
+##         pass
+
+class User(Person):
     "People who can access this database"
-    def init(self):
-        Persons.init(self)
+    def initTable(self,table):
+        Person.initTable(self,table)
         #self.addField('id',STRING,label="Username")
-        i=self.getRowAttr('id')
+        i=table.getRowAttr('id')
         i.setType(STRING)
         i.setLabel("Username")
         #self.setField('id',STRING,label="Username")
-        self.addField('password',PASSWORD)
-
-    class Instance(Persons.Instance):
-        pass
+        table.addField('password',PASSWORD)
 
 
 ## class LoginForm(FormTemplate):
@@ -217,152 +254,239 @@ class Users(Persons):
 ##         sess.info("Hello, "+user.__str__())
             
 
-class Partners(Contacts,Addresses):
+class Partner(Contact,Address):
     """A Person or Organisation with whom I have business contacts.
     """
-    def init(self):
-        self.addField('name',STRING)
-        self.addField('firstName',STRING)
-        Contacts.init(self)
-        Addresses.init(self)
-        self.addField('id',ROWID)
-        self.addPointer('type',PartnerTypes).setDetail(
+    def initTable(self,table):
+        table.addField('name',STRING)
+        table.addField('firstName',STRING)
+        Contact.initTable(self,table)
+        Address.init(self.table)
+        table.addField('id',ROWID)
+        table.addPointer('type',PartnerType).setDetail(
             'partnersByType',orderBy='name firstName')
-        self.addField('title',STRING)
-        self.addPointer('currency',Currencies)
-        self.addField('logo',LOGO)
+        table.addField('title',STRING)
+        table.addPointer('currency',Currency)
+        table.addField('logo',LOGO)
         #self.addPointer('org',Organisation)
         #self.addPointer('person',Person)
-        self.addPointer('lang',Languages)
-        self.addView("std","name firstName email phone gsm")
+        table.addPointer('lang',Language)
+        table.addView("std","name firstName email phone gsm")
         
-    class Instance(Contacts.Instance,Addresses.Instance):
-        def validate(self):
-            if self.name is None:
-                raise("name must be specified")
+    def validate(self):
+        if self.name is None:
+            raise("name must be specified")
 
-        def __str__(self):
-            if self.firstName is None:
-                return self.name
-            return self.firstName+" "+self.name
+    def __str__(self):
+        if self.firstName is None:
+            return self.name
+        return self.firstName+" "+self.name
     
-##  def on_org(self):
+## class Partners(Contacts,Addresses):
+##     """A Person or Organisation with whom I have business contacts.
+##     """
+##     def init(self):
+##         self.addField('name',STRING)
+##         self.addField('firstName',STRING)
+##         Contacts.init(self)
+##         Addresses.init(self)
+##         self.addField('id',ROWID)
+##         self.addPointer('type',PartnerTypes).setDetail(
+##             'partnersByType',orderBy='name firstName')
+##         self.addField('title',STRING)
+##         self.addPointer('currency',Currencies)
+##         self.addField('logo',LOGO)
+##         #self.addPointer('org',Organisation)
+##         #self.addPointer('person',Person)
+##         self.addPointer('lang',Languages)
+##         self.addView("std","name firstName email phone gsm")
         
-##      """Setting `org`of a Partner will also adapt the `name`.     Some
-##      other fields are taken over from the Organisation only if they
-##      were None so far.    """
+##     class Instance(Contacts.Instance,Addresses.Instance):
+##         def validate(self):
+##             if self.name is None:
+##                 raise("name must be specified")
+
+##         def __str__(self):
+##             if self.firstName is None:
+##                 return self.name
+##             return self.firstName+" "+self.name
+    
+## ##  def on_org(self):
         
-##      # print "on_org"
-##      if self.org is not None:
-##          self.name = self.org.__str__() 
-##          #if self.phone is None:
-##          #   self.phone = self.org.phone 
-##  def on_person(self):
-##      # print "on_person"
-##      if self.person is not None:
-##          # row.name = row.person.fname + row.person.name
-##          self.name = self.person.__str__() 
-##          #if self.phone is None:
-##          #   self.phone = self.person.phone 
+## ##      """Setting `org`of a Partner will also adapt the `name`.     Some
+## ##      other fields are taken over from the Organisation only if they
+## ##      were None so far.    """
+        
+## ##      # print "on_org"
+## ##      if self.org is not None:
+## ##          self.name = self.org.__str__() 
+## ##          #if self.phone is None:
+## ##          #   self.phone = self.org.phone 
+## ##  def on_person(self):
+## ##      # print "on_person"
+## ##      if self.person is not None:
+## ##          # row.name = row.person.fname + row.person.name
+## ##          self.name = self.person.__str__() 
+## ##          #if self.phone is None:
+## ##          #   self.phone = self.person.phone 
                 
 
-class Currencies(BabelTable):
+## class Currencies(BabelTable):
     
-    def init(self):
-        self.addField('id',STRING(width=3))
-        BabelTable.init(self)
+##     def init(self):
+##         self.addField('id',STRING(width=3))
+##         BabelTable.init(self)
         
-    class Instance(BabelTable.Instance):
-        def __str__(self):
-            return self.id
+##     class Instance(BabelTable.Instance):
+##         def __str__(self):
+##             return self.id
         
-class PartnerTypes(BabelTable):
+## class PartnerTypes(BabelTable):
     
-    def init(self):
-        self.addField('id',STRING)
-        BabelTable.init(self)
+##     def init(self):
+##         self.addField('id',STRING)
+##         BabelTable.init(self)
         
 
-    class Instance(BabelTable.Instance):
-        def validatePartner(self,partner):
-            pass
+##     class Instance(BabelTable.Instance):
+##         def validatePartner(self,partner):
+##             pass
     
 
     
-class Nations(BabelTable):
-    """List of Nations (countries) .
+## class Nations(BabelTable):
+##     """List of Nations (countries) .
     
-    ISO 2-letter country codes."""
-    def init(self):
+##     ISO 2-letter country codes."""
+##     def init(self):
         
-        self.addField('id',STRING(width=2))
-        BabelTable.init(self)
-        self.addField('area',INT(width=8))
-        self.addField('population',INT)
-        self.addField('curr',STRING)
-        self.addField('isocode',STRING)
+##         self.addField('id',STRING(width=2))
+##         BabelTable.init(self)
+##         self.addField('area',INT(width=8))
+##         self.addField('population',INT)
+##         self.addField('curr',STRING)
+##         self.addField('isocode',STRING)
         
-        self.addView('std',columnNames="name isocode id")
+##         self.addView('std',columnNames="name isocode id")
 
-    class Instance(BabelTable.Instance):
-        def validate_id(self,value):
-            if len(value) != 2:
-                raise DataVeto("Nation.id must be 2 chars")
-                #raise DataVeto("Nation.id must be 2 chars")
+##     class Instance(BabelTable.Instance):
+##         def validate_id(self,value):
+##             if len(value) != 2:
+##                 raise DataVeto("Nation.id must be 2 chars")
+##                 #raise DataVeto("Nation.id must be 2 chars")
         
-        def validate(self):
-            if len(self.id) != 2:
-                #return "Nation.id must be 2 chars"
-                raise DataVeto("Nation.id must be 2 chars")
+##         def validate(self):
+##             if len(self.id) != 2:
+##                 #return "Nation.id must be 2 chars"
+##                 raise DataVeto("Nation.id must be 2 chars")
         
 
         
-class Cities(Table):
-    """One record for each city.
-    """
-    def init(self):
-        self.addField('id',ROWID)
-        self.addPointer('nation',Nations).setDetail('cities',
+## class Cities(Table):
+##     """One record for each city.
+##     """
+##     def init(self):
+##         self.addField('id',ROWID)
+##         self.addPointer('nation',Nations).setDetail('cities',
+##                                                     orderBy='name')
+        
+##         self.addField('name',STRING)
+##         self.addField('zipCode',STRING)
+##         self.addField('inhabitants',INT(minWidth=5,maxWidth=9))
+        
+##         self.setPrimaryKey("nation id")
+##         # complex primary key used by test cases
+##         self.addView('std',columnNames="name nation zipCode")
+        
+##     class Instance(Table.Instance):
+##         def __str__(self):
+##             if self.nation is None:
+##                 return self.name
+##             return self.name + " (%s)" % self.nation.id
+        
+    
+## class Org2Pers(LinkTable):
+##     def init(self,table):
+##         self.note = Field(STRING)
+        
+
+        
+class Currency(BabelRow):
+    
+    def initTable(self,table):
+        table.addField('id',STRING(width=3))
+        BabelRow.initTable(self,table)
+        
+    def __str__(self):
+        return self.id
+        
+class PartnerType(BabelRow):
+    
+    def initTable(self,table):
+        table.addField('id',STRING)
+        BabelRow.initTable(self,table)
+        
+
+    def validatePartner(self,partner):
+        pass
+    
+
+    
+class Nation(BabelRow):
+    def initTable(self,table):
+        
+        table.addField('id',STRING(width=2))
+        BabelRow.initTable(self,table)
+        table.addField('area',INT(width=8))
+        table.addField('population',INT)
+        table.addField('curr',STRING)
+        table.addField('isocode',STRING)
+        
+        table.addView('std',columnNames="name isocode id")
+
+    def validate_id(self,value):
+        if len(value) != 2:
+            raise DataVeto("Nation.id must be 2 chars")
+        
+    def validate(self):
+        if len(self.id) != 2:
+            #return "Nation.id must be 2 chars"
+            raise DataVeto("Nation.id must be 2 chars")
+        
+
+        
+class City(StoredDataRow):
+    def initTable(self,table):
+        table.addField('id',ROWID)
+        table.addPointer('nation',Nation).setDetail('cities',
                                                     orderBy='name')
         
-        self.addField('name',STRING)
-        self.addField('zipCode',STRING)
-        self.addField('inhabitants',INT(minWidth=5,maxWidth=9))
+        table.addField('name',STRING)
+        table.addField('zipCode',STRING)
+        table.addField('inhabitants',INT(minWidth=5,maxWidth=9))
         
-        self.setPrimaryKey("nation id")
+        table.setPrimaryKey("nation id")
         # complex primary key used by test cases
-        self.addView('std',columnNames="name nation zipCode")
+        table.addView('std',columnNames="name nation zipCode")
         
-    class Instance(Table.Instance):
-        def __str__(self):
-            if self.nation is None:
-                return self.name
-            return self.name + " (%s)" % self.nation.id
-        
+    def __str__(self):
+        if self.nation is None:
+            return self.name
+        return self.name + " (%s)" % self.nation.id
+
+
+
+## class ContactsPlugin(SchemaPlugin):
     
-class Org2Pers(LinkTable):
-##      def __init__(self):
-##          LinkTable.__init__(self,
-##                                   tables.ORGS,"persons",
-##                                   tables.PERSONS,"orgs")
-    def init(self,table):
-        self.note = Field(STRING)
-        
-
-        
-
-
-class ContactsPlugin(SchemaPlugin):
-    
-    def defineTables(self,schema):
-        schema.addTable(Currencies)
-        schema.addTable(Nations, label="Nations" )
-        schema.addTable(Cities, label="Cities")
-        schema.addTable(Organisations,label="Organisations")
-        schema.addTable(Persons,label="Persons")
-        schema.addTable(Partners, label="Partners")
-        schema.addTable(PartnerTypes,
-                        label="Partner Types")
+##     def defineTables(self,schema):
+##         schema.addTable(Currencies)
+##         schema.addTable(Nations, label="Nations" )
+##         schema.addTable(Cities, label="Cities")
+##         schema.addTable(Organisations,label="Organisations")
+##         schema.addTable(Persons,label="Persons")
+##         schema.addTable(Partners, label="Partners")
+##         schema.addTable(PartnerTypes,
+##                         label="Partner Types")
 
 
 

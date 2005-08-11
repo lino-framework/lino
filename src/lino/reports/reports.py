@@ -248,11 +248,14 @@ class BaseReport(Describable):
                 frm.addDataEntry(col,label=col.getLabel())
         else:
             for grp in self.formColumnGroups:
+                w=0
                 p=frm.addHPanel(weight=1)
                 for col in grp:
                     p.addDataEntry(col,
                                    label=col.getLabel(),
                                    weight=1/len(grp))
+                    w+= col.datacol.getMaxHeight() - 1
+                p.weight=w
         
         
 ##     def setupForm(self,frm,row=None,**kw):

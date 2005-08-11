@@ -410,7 +410,7 @@ class DetailColumn(QueryColumn):
         # lazy instanciation for self.detailQuery 
         if self.detailQuery is None:
             self.detailQuery=self._owner.getSession().query(
-                self.rowAttr.pointer._owner.__class__,
+                self.rowAttr.pointer._owner._instanceClass,
                 **self._queryParams)
             #print "DetailColumn created ", self.detailQuery,\
             #      self.detailQuery._search
@@ -851,7 +851,8 @@ class LeadTableColumnList(BaseColumnList):
         return self._store.mtime()
     
     def atoms2row(self,atomicRow,new):
-        row = self.getLeadTable().Instance(self,{},new)
+        row = self.getLeadTable()._instanceClass(self,{},new)
+        #row = self.getLeadTable().Instance(self,{},new)
         self.atoms2row1(atomicRow,row)
         return row
     
@@ -1256,7 +1257,8 @@ class SimpleQuery(LeadTableColumnList):
         
         
     def _appendRow(self,*args,**kw):
-        row = self.getLeadTable().Instance(self,{},True)
+        row = self.getLeadTable()._instanceClass(self,{},True)
+        #row = self.getLeadTable().Instance(self,{},True)
         for mc in self._masterColumns:
             mc.setCellValue(row,self._masters[mc.name])
         self.updateRow(row,*args,**kw)
@@ -1335,7 +1337,8 @@ class SimpleQuery(LeadTableColumnList):
         return self.atoms2row(atomicRow,False)
 
     def getInstance(self,atomicId,new):
-        row = self.getLeadTable().Instance(self,{},new)
+        #row = self.getLeadTable().Instance(self,{},new)
+        row = self.getLeadTable()._instanceClass(self,{},new)
         i = 0
         for col in self._pkColumns:
             col.atoms2row(atomicId,row)

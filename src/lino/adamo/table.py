@@ -62,7 +62,7 @@ class SchemaComponent:
 
 
 class FieldContainer:
-    # inherited by Table and FormTemplate
+    # inherited by Table 
     def __init__(self):
         self.__dict__['_fields'] = []
         self.__dict__['_rowAttrs'] = {}
@@ -85,15 +85,16 @@ class FieldContainer:
         #print self.getTableName()+':'+str(attr)
         self._fields.append(attr)
         self._rowAttrs[attr.name] = attr
-        i = self.Instance
+        #i = self.Instance
+        ic=self._instanceClass
         try:
-            meth = getattr(i,"validate_"+attr.name)
+            meth = getattr(ic,"validate_"+attr.name)
             attr._onValidate.append(meth)
         except AttributeError:
             pass
         
         try:
-            meth = getattr(i,"after_"+attr.name)
+            meth = getattr(ic,"after_"+attr.name)
             attr.afterSetAttr = meth
         except AttributeError:
             pass
@@ -122,19 +123,23 @@ class Table(FieldContainer,SchemaComponent,Describable):
     
     """
     
-    class Instance(StoredDataRow):
-        pass
+    #class Instance(StoredDataRow):
+    #    pass
+    _instanceClass=StoredDataRow
 
-    def __init__(self,parent,name=None,label=None,doc=None):
+    def __init__(self,instanceClass,
+                 name=None,label=None,doc=None):
         if name is None:
-            name = self.__class__.__name__
+            name = instanceClass.tableName
+            #name = self.__class__.__name__
         if label is None:
             label = name
 
-        Describable.__init__(self,parent,name,label,doc)
+        self._instanceClass=instanceClass
+        
+        Describable.__init__(self,None,name,label,doc)
         SchemaComponent.__init__(self)
         FieldContainer.__init__(self)
-        
         self._pk = None
         self._mandatoryColumns = None
         self._views = {}
@@ -144,15 +149,17 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._defaultView = None
 
 
-    def init(self):
-        pass
+##     def init(self):
+##         pass
 
 
     def __str__(self):
-        return self.__class__.__name__
+        #return self.__class__.__name__
+        return self.name
     
     def __repr__(self):
-        return self.__class__.__name__
+        #return self.__class__.__name__
+        return "Table(%s)" % self.name
     
 ##     def peek(self,sess,*args):
 ##         return sess.peek(self.__class__,*args)
@@ -177,7 +184,8 @@ class Table(FieldContainer,SchemaComponent,Describable):
         
     def init1(self):
         #print "%s : init1()" % self._tableName
-        self.init()
+        dummy = self._instanceClass(None,{},False)
+        dummy.initTable(self)
         
         #for (name,attr) in self.__dict__.items():
         #    if isinstance(attr,RowAttribute):
@@ -196,7 +204,8 @@ class Table(FieldContainer,SchemaComponent,Describable):
             attr.onOwnerInit1(self,name)
             attr.onTableInit1(self,name)
             try:
-                um = getattr(self.Instance,"after_"+name)
+                #um = getattr(self.Instance,"after_"+name)
+                um = getattr(self._instanceClass,"after_"+name)
                 attr.afterSetAttr = um
             except AttributeError:
                 pass
@@ -335,7 +344,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
 
 
 
-class LinkTable(Table):
+class LinkingRow(StoredDataRow):
     def __init__(self, parent, fromClass, toClass,*args,**kw):
         Table.__init__(self,parent,*args,**kw)
         self._fromClass = fromClass
@@ -351,55 +360,119 @@ class LinkTable(Table):
         del self._toClass
 
 
-class MemoTable(Table):
+class MemoRow(StoredDataRow):
         
-    def init(self):
-        self.addField('title',datatypes.STRING).setMandatory()
-        self.addField('abstract',datatypes.MEMO)
-        self.addField('body',datatypes.MEMO)
+    def initTable(self,table):
+        table.addField('title',datatypes.STRING).setMandatory()
+        table.addField('abstract',datatypes.MEMO)
+        table.addField('body',datatypes.MEMO)
 
-    class Instance(Table.Instance):
-        
-        def __str__(self):
-            return self.title
+    def __str__(self):
+        return self.title
 
     
 
-class TreeTable(Table):
+class TreeRow(StoredDataRow):
         
-    def init(self):
-        self.addField('seq',datatypes.INT)
-        self.addPointer('super',self.__class__) #.setDetail('children')
+    def initTable(self,table):
+        table.addField('seq',datatypes.INT)
+        table.addPointer('super',self.__class__)
 
-    class Instance(Table.Instance):
-        def getUpTree(self):
-            l = []
-            super = self.super
-            while super:
-                l.insert(0,super)
-                super = super.super
-            return l
+    def getUpTree(self):
+        l = []
+        super = self.super
+        while super:
+            l.insert(0,super)
+            super = super.super
+        return l
 
-class MemoTreeTable(MemoTable,TreeTable):
-    def init(self):
-        MemoTable.init(self)
-        TreeTable.init(self)
+class MemoTreeRow(MemoRow,TreeRow):
+    def initTable(self,table):
+        MemoRow.initTable(self,table)
+        TreeRow.initTable(self,table)
 
-    class Instance(MemoTable.Instance,TreeTable.Instance):
-        def __str__(self):
-            return self.title
+    def __str__(self):
+        return self.title
 
         
         
 
-class BabelTable(Table):
+class BabelRow(StoredDataRow):
     
-    def init(self):
-        self.addBabelField('name',datatypes.STRING).setMandatory()
+    def initTable(self,table):
+        table.addBabelField('name',datatypes.STRING).setMandatory()
         
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
+
+
+
+
+## class LinkTable(Table):
+##     def __init__(self, parent, fromClass, toClass,*args,**kw):
+##         Table.__init__(self,parent,*args,**kw)
+##         self._fromClass = fromClass
+##         self._toClass = toClass 
+        
+
+##     def init(self):
+##         # Table.init(self)
+##         self.addPointer('p',self._fromClass)
+##         self.addPointer('c',self._toClass)
+##         self.setPrimaryKey("p c")
+##         del self._fromClass
+##         del self._toClass
+
+
+## class MemoTable(Table):
+        
+##     def init(self):
+##         self.addField('title',datatypes.STRING).setMandatory()
+##         self.addField('abstract',datatypes.MEMO)
+##         self.addField('body',datatypes.MEMO)
+
+##     class Instance(Table.Instance):
+        
+##         def __str__(self):
+##             return self.title
+
+    
+
+## class TreeTable(Table):
+        
+##     def init(self):
+##         self.addField('seq',datatypes.INT)
+##         self.addPointer('super',self.__class__) #.setDetail('children')
+
+##     class Instance(Table.Instance):
+##         def getUpTree(self):
+##             l = []
+##             super = self.super
+##             while super:
+##                 l.insert(0,super)
+##                 super = super.super
+##             return l
+
+## class MemoTreeTable(MemoTable,TreeTable):
+##     def init(self):
+##         MemoTable.init(self)
+##         TreeTable.init(self)
+
+##     class Instance(MemoTable.Instance,TreeTable.Instance):
+##         def __str__(self):
+##             return self.title
+
+        
+        
+
+## class BabelTable(Table):
+    
+##     def init(self):
+##         self.addBabelField('name',datatypes.STRING).setMandatory()
+        
+##     class Instance(Table.Instance):
+##         def __str__(self):
+##             return self.name
 
 
 

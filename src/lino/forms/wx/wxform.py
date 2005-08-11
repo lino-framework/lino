@@ -34,6 +34,7 @@ DONTSTRETCH=0
 BORDER=10
 NOBORDER=0
 
+ENTRY_DOC_FONT = wx.SMALL_FONT
 ENTRY_PANEL_BACKGROUND = None
 ENTRY_LABEL_BACKGROUND = None
 #ENTRY_PANEL_BACKGROUND = wx.BLUE
@@ -160,7 +161,8 @@ class DataForm(base.DataForm):
             mypanel = wx.Panel(parent,-1)
             box.Add(mypanel, STRETCH, wx.EXPAND|wx.ALL,BORDER)
 
-            hbox = wx.BoxSizer(wx.HORIZONTAL)
+            #hbox = wx.BoxSizer(wx.HORIZONTAL)
+            hbox=SwappedBoxSizer(box)
             mypanel.SetSizer(hbox)
             self.wxctrl = mypanel
 
@@ -268,7 +270,13 @@ class Panel(base.Panel):
         for c in self._components:
             c.setup(mypanel,mybox)
 
-            
+
+def SwappedBoxSizer(box):
+    if box.GetOrientation() == wx.VERTICAL:
+        return wx.BoxSizer(wx.HORIZONTAL)
+    else:
+        return wx.BoxSizer(wx.VERTICAL)
+
 class EntryMixin:
 
     def setup(self,panel,box):
@@ -276,25 +284,21 @@ class EntryMixin:
             mypanel = wx.Panel(panel,-1)
             mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
             box.Add(mypanel, self.weight, wx.EXPAND|wx.ALL,BORDER)
-
-            hbox = wx.BoxSizer(wx.HORIZONTAL)
+            #hbox = wx.BoxSizer(wx.HORIZONTAL)
+            hbox = SwappedBoxSizer(box)
             mypanel.SetSizer(hbox)
 
             if self.doc is not None:
                 label = wx.Panel(mypanel,-1)
                 label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer = wx.BoxSizer(wx.VERTICAL)
+                labelSizer = SwappedBoxSizer(hbox)
                 label.SetSizer(labelSizer)
 
-                labelCtrl = wx.StaticText(label, -1,
-                                          self.getLabel(),
-                                          style=wx.ALIGN_RIGHT)
+                labelCtrl = wx.StaticText(
+                    label,-1,self.getLabel(),style=wx.ALIGN_RIGHT)
                 labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
                 labelSizer.Add(labelCtrl,DONTSTRETCH,wx.EXPAND,BORDER)
 
-                #ENTRY_DOC_FONT = wx.Font(pointSize=8,
-                #                         family=wx.DEFAULT)
-                ENTRY_DOC_FONT = wx.SMALL_FONT
                 docCtrl = wx.StaticText(
                     label, -1,
                     "\n".join(docWrapper.wrap(self.doc)),
@@ -309,9 +313,16 @@ class EntryMixin:
                                       style=wx.ALIGN_RIGHT)
                 label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
 
-            hbox.Add(label, STRETCH,
-                     wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
-                     BORDER)
+            if hbox.GetOrientation() == wx.HORIZONTAL:
+                hbox.Add(
+                    label, STRETCH,
+                    wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
+                    BORDER)
+            else:
+                hbox.Add(
+                    label, DONTSTRETCH,
+                    wx.ALIGN_LEFT,
+                    BORDER)
 
             hbox.Add( (10,1), DONTSTRETCH,0,NOBORDER) # spacer
             
@@ -346,9 +357,14 @@ class EntryMixin:
 
         self.editor = editor 
         if self.hasLabel():
-            hbox.Add(editor,STRETCH,
-                     wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
-                     BORDER)
+            if hbox.GetOrientation() == wx.HORIZONTAL:
+                hbox.Add(editor,STRETCH,
+                         wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
+                         BORDER)
+            else:
+                hbox.Add(editor,DONTSTRETCH,
+                         wx.ALIGN_LEFT,
+                         BORDER)
             self.wxctrl = mypanel
         else:
             hbox.Add(editor,STRETCH,

@@ -27,9 +27,10 @@ from lino import __version__
 import __builtin__
 import sys
 
-from lino.adamo.table import Table, LinkTable,\
-     MemoTable, TreeTable, MemoTreeTable,\
-     BabelTable
+## from lino.adamo.table import Table, LinkTable,\
+##      MemoTable, TreeTable, MemoTreeTable,\
+##      BabelTable
+
 #from lino.adamo.forms import Form
 #from widgets import Menu, Command
 from lino.adamo.datatypes import *

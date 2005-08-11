@@ -16,9 +16,13 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.table import Table, LinkTable,\
-     MemoTable, TreeTable, MemoTreeTable,\
-     BabelTable
+from lino.adamo.table import \
+     StoredDataRow, LinkingRow,\
+     MemoRow, TreeRow, MemoTreeRow,\
+     BabelRow
+## from lino.adamo.table import Table, LinkTable,\
+##      MemoTable, TreeTable, MemoTreeTable,\
+##      BabelTable
 from lino.adamo.schema import SchemaPlugin, Schema, \
      MirrorLoaderApplication
 from lino.adamo.datatypes import *
