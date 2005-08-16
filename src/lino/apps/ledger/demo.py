@@ -21,41 +21,29 @@
 
 import os
 from lino import adamo
-#from lino.schemas.sprl.sprl import makeSchema
-#from lino.schemas.sprl import tables 
-from lino.tools.normalDate import ND
 from lino.adamo.datatypes import itod
-#from lino.ui import console
-from lino.schemas.sprl.sprl import Sprl
+from lino.apps.ledger.ledger import Ledger
+from lino.apps.ledger import tables
 
 def startup(filename=None, langs=None,
             populate=True,
-            big=False,
             withDemoData=True,
             **kw):
     schema = Ledger(**kw)
     sess=schema.quickStartup(langs=langs, filename=filename)
     if populate:
         if withDemoData:
-            sess.populate(DemoPopulator(big=big,
-                                        label="StandardDemo"))
+            sess.populate(DemoPopulator(label="StandardDemo"))
         else:
-            sess.populate(Populator(big=big,
-                                    label="Standard"))
+            sess.populate(Populator(label="Standard"))
 
     return sess
 
 
 class Populator(adamo.Populator):
-    def __init__(self,
-                 big=False,**kw
-                 #withDemoData=False,
-                 #withJokes=False,
-                 ):
-        self.big = big
+    def __init__(self, **kw):
         adamo.Populator.__init__(self,None,**kw)
-        #self.withDemoData = withDemoData
-        #self.withJokes = withJokes
+
         
     def populateCurrencies(self,q):
         q.setBabelLangs('en de fr et')
@@ -265,7 +253,8 @@ class DemoPopulator(Populator):
         self.table = q.appendRow(id=16,name="Table",price=56)
         
     def populateInvoices(self,q):
-        anton=q.
+        anton=q.getSession().query(
+            tables.Partner).findone(firstName="Anton")
         self.invoice = q.appendRow(jnl=self.OUT,
                                    partner=anton,
                                    date=itod(20030822))

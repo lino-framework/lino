@@ -212,7 +212,8 @@ class DbSession(Session,Context):
     def getViewReport(self,tc,viewName="std",**kw):
         qry = self.query(tc)
         view=qry.getView(viewName)
-        kw.update(view)
+        if view is not None:
+            kw.update(view)
         return self.createDataReport(qry,**kw)
 
 ##     def showDataGrid(self,ds,**kw):

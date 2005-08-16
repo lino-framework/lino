@@ -25,14 +25,14 @@
 import os
 from lino import adamo
 from lino.adamo.datatypes import itod
-from lino.apps.addrbook.addrbook import Addressbook
+from lino.apps.addrbook.addrbook import AddressBook
 
 def startup(filename=None, langs=None,
             populate=True,
             big=False,
             withDemoData=True,
             **kw):
-    schema = Addressbook(**kw)
+    schema = AddressBook(**kw)
     sess=schema.quickStartup(langs=langs, filename=filename)
     if populate:
         if withDemoData:
@@ -56,23 +56,6 @@ class Populator(adamo.Populator):
         q.appendRow("luc", "Luc", "Saffre")
         q.appendRow("james", "James", "Bond")
         
-    def populateCurrencies(self,q):
-        q.setBabelLangs('en de fr et')
-        self.EUR = q.appendRow(
-            id="EUR",
-            name=("Euro","Euro","Euro","Euro"))
-        self.BEF = q.appendRow(
-            id="BEF",
-            name=("Belgian Francs","Belgischer Franken",
-                  "Franc belge","Belgia frank"))
-        self.USD = q.appendRow(
-            id="USD",
-            name=("US Dollar","US-Dollar",
-                  "Dollar US","USA dollar"))
-        self.EEK = q.appendRow(
-            id="EEK",name=("Estonian kroon","Estnische Krone",
-                           "Couronne estonienne","Eesti kroon"))
-    
     
     def populateNations(self,q):
         if self.big:
@@ -166,7 +149,7 @@ class DemoPopulator(Populator):
     def populatePartners(self,q):
 
         qr = q.query(
-            'name firstName title email phone city currency')
+            'name firstName title email phone city')
 
         self.luc = qr.appendRow(
             'Saffre','Luc','Herrn',
@@ -175,18 +158,18 @@ class DemoPopulator(Populator):
         # fictive persons
         qr.appendRow('Arens'   ,'Andreas'  , "Herrn",
                     'andreas@arens.be', '087.55.66.77',
-                    self.eupen, self.BEF)
+                    self.eupen)
         self.anton = qr.appendRow(
             'Ausdemwald','Anton'      , "Herrn",
-            'ausdem@hotmail.com', None, self.aachen, self.EUR)
+            'ausdem@hotmail.com', None, self.aachen)
         qr.appendRow('Bodard'      ,'Henri'    , "Dr.",
-                    None, None,self.verviers, self.BEF)
+                    None, None,self.verviers)
         qr.appendRow('Eierschal' ,'Emil'   , "Herrn",
-                    None, None,self.eupen, self.EUR)
+                    None, None,self.eupen)
         qr.appendRow('Eierschal' ,'Erna'   , "Frau",
-                    None, None,self.eupen,self.EUR)
+                    None, None,self.eupen)
         qr.appendRow('Großmann'  ,'Gerd'   , "Herrn",
-                    None, None,self.eupen,self.EUR)
+                    None, None,self.eupen)
         qr.appendRow('Freitag'     ,'Frédéric' , "Herrn",
                     None, None,self.eupen)
 

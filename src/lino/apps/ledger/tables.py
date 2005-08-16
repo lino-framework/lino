@@ -19,7 +19,8 @@
 
 from lino.adamo.ddl import *
 
-from lino.apps.addrbook import Partner as PartnerBase
+from lino.apps.addrbook.tables import Partner as PartnerBase
+from lino.apps.addrbook.tables import User
 
 
 class Currency(BabelRow):
@@ -44,52 +45,52 @@ class Partner(PartnerBase):
 
 class Journal(StoredDataRow):
     tableName="Journals"
-	def initTable(self,table):
-		table.addField('id',STRING(width=3))
-		table.addField('name',STRING).setMandatory()
-		table.addField('tableName', STRING)
-		
-	def __str__(self):
+    def initTable(self,table):
+        table.addField('id',STRING(width=3))
+        table.addField('name',STRING).setMandatory()
+        table.addField('tableName', STRING)
+        
+    def __str__(self):
         return self.name
-		
+        
 
 
 
 class Document(StoredDataRow):
-	def initTable(self,table):
-		table.addField('seq',ROWID)
-		table.addField('date',DATE)
-		table.addField('closed',BOOL)
+    def initTable(self,table):
+        table.addField('seq',ROWID)
+        table.addField('date',DATE)
+        table.addField('closed',BOOL)
 
-		table.addPointer('jnl',Journals).setDetail("documents")
-		table.setPrimaryKey("jnl seq")
+        table.addPointer('jnl',Journal)#.setDetail("documents")
+        table.setPrimaryKey("jnl seq")
 
-	def __str__(self):
+    def __str__(self):
         return self.jnl.id+"-"+str(self.seq)
-		
-		
+        
+        
 class FinancialDocument(Document):
-	def initTable(self,table):
-		Document.initTable(self,table)
-		table.addField('remark',STRING)
-		
+    def initTable(self,table):
+        Document.initTable(self,table)
+        table.addField('remark',STRING)
+        
 class BankStatement(FinancialDocument):
     tableName="BankStatements"
-	def initTable(self,table):
-		FinancialDocument.initTable(self,table)
-		table.addField('balance1',AMOUNT)
-		table.addField('balance2',AMOUNT)
-		
+    def initTable(self,table):
+        FinancialDocument.initTable(self,table)
+        table.addField('balance1',AMOUNT)
+        table.addField('balance2',AMOUNT)
+        
 class MiscOperation(FinancialDocument):
     tableName="MiscOperations"
     
 class PartnerDocument(Document):
-	def initTable(self,table):
-		Document.initTable(self,table)
-		table.addField('remark',STRING)
-		table.addPointer('partner',Partner)
+    def initTable(self,table):
+        Document.initTable(self,table)
+        table.addField('remark',STRING)
+        table.addPointer('partner',Partner)
 
-		
+        
 
         
 
@@ -129,13 +130,11 @@ class InvoiceLine(StoredDataRow):
     def initTable(self,table):
         table.addField('line',ROWID)
         table.addField('amount',AMOUNT)
-        table.addField('unitPrice',AMOUNT)
-        table.addField('qty',INT)
         table.addField('remark',STRING)
         
         table.addPointer('invoice',Invoice).setDetail('lines')
         
-        self.setPrimaryKey("invoice line")
+        table.setPrimaryKey("invoice line")
 
 class ProductInvoiceLine(InvoiceLine):
     
@@ -146,7 +145,10 @@ class ProductInvoiceLine(InvoiceLine):
         table.addPointer('product',Product).setDetail('invoiceLines')
         
     def after_product(self):
+        if self.product is None: return
         self.unitPrice = self.product.price
+        if self.qty is None:
+            self.qty = 1
         self.amount = self.product.price * self.qty
 
 
@@ -215,7 +217,7 @@ Source: [url http://en.wikipedia.org/wiki/Profit_and_loss_statement]
     tableName="ProfitAndLossItems"
     
 
-class CashFlowItem(StatementItems):
+class CashFlowItem(StatementItem):
     """
 
     "Cash flow statement",
@@ -238,7 +240,7 @@ Source: [url http://en.wikipedia.org/wiki/Cash_flow_statement]
 class Account(BabelRow):
     tableName="Accounts"
     def initTable(self,table):
-        BabelRow.init(self,table)
+        BabelRow.initTable(self,table)
         #table.addField('label',STRING)
         table.addField('pcmn',STRING)
         table.addPointer('parent',Account)
@@ -268,12 +270,13 @@ class Booking(StoredDataRow):
 
     
         
-TABLES = (Partner,
+TABLES = (User,
           Currency,
+          Partner,
           Product,
           Journal,
           BankStatement, MiscOperation,
-          Invoice, InvoiceLine,
+          Invoice, ProductInvoiceLine,
           BalanceItem,CashFlowItem,ProfitAndLossItem,
           Account,Booking
           )

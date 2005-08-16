@@ -1,3 +1,5 @@
+#coding: latin1
+
 ## Copyright 2003-2005 Luc Saffre
 ## This file is part of the Lino project.
 
@@ -35,7 +37,13 @@ This is the Ledger main menu.
         m.addItem("products",label="&Products").setHandler(
             sess.showViewGrid, Product)
         m.addItem("gen",label="&GL accounts").setHandler(
-            sess.showViewGrid, Ledger)
+            sess.showViewGrid, Account)
+        m.addItem("ccy",label="&Currencies").setHandler(
+            sess.showViewGrid, Currency)
+        
+        m = frm.addMenu("sales","&Verkauf")
+        m.addItem("invoices",label="&Invoices").setHandler(
+            sess.showViewGrid, Invoice)
         
         self.addProgramMenu(sess,frm)
 
