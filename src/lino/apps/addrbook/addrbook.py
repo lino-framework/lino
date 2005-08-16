@@ -18,7 +18,7 @@
 from lino.adamo.ddl import Schema
 from lino.apps.addrbook.tables import *
 
-class Addressbook(Schema):
+class AddressBook(Schema):
     
     tables=TABLES
     
@@ -26,7 +26,7 @@ class Addressbook(Schema):
         frm = sess.form(
             label="Main menu",
             doc="""\
-This is the Addressbook main menu.                                    
+This is the AddressBook main menu.                                    
 """+("\n"*10))
 
         m = frm.addMenu("master","&Stammdaten")

@@ -33,8 +33,8 @@ class Keeper(Schema):
     tables = TABLES
 
     def showSearchForm(self,sess):
-        words = sess.query(Words)
-        files = sess.query(Files,"name")
+        words = sess.query(Word)
+        files = sess.query(File,"name")
         grid=None # referenced in search(), defined later
         col=files.addColumn("occurences")
         files.addFilter(NotEmpty(col))
@@ -93,13 +93,13 @@ This is the Keeper main menu.
     
         m = frm.addMenu("db","&Datenbank")
         m.addItem("volumes",label="&Volumes").setHandler(
-            sess.showViewGrid, Volumes)
+            sess.showViewGrid, Volume)
         m.addItem("files",label="&Files").setHandler(
-            sess.showViewGrid, Files)
+            sess.showViewGrid, File)
         m.addItem("dirs",label="&Directories").setHandler(
-            sess.showViewGrid, Directories)
+            sess.showViewGrid, Directory)
         m.addItem("words",label="&Words").setHandler(
-            sess.showViewGrid, Words)
+            sess.showViewGrid, Word)
         
         self.addProgramMenu(sess,frm)
 

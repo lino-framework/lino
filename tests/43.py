@@ -21,7 +21,7 @@
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.timings.timings import Timings
-from lino.apps.timings.tables import *
+from lino.apps.timings import tables
 
 from lino.adamo.ddl import DataVeto, itod
 
@@ -38,7 +38,7 @@ class Case(TestCase):
 
     def test01(self):
         
-        days = self.sess.query(Days)
+        days = self.sess.query(tables.Day)
         
         try:
             days.appendRow()
@@ -50,7 +50,7 @@ class Case(TestCase):
 
         today=days.appendRow(date=itod(20050607))
             
-        resources = self.sess.query(Resources)
+        resources = self.sess.query(tables.Resource)
 
         try:
             luc=resources.appendRow(name="Luc Saffre")
@@ -62,7 +62,7 @@ class Case(TestCase):
             
         luc=resources.appendRow(id="LS",name="Luc Saffre")
         
-        usages = self.sess.query(Usages)
+        usages = self.sess.query(tables.Usage)
         
         try:
             usages.appendRow(date=today)

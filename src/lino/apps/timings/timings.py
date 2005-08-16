@@ -56,17 +56,17 @@ class Timings(Schema):
                             stylesheet="wp-admin.css")
 
         root.addResolver(
-            Resources,
+            Resource,
             lambda row: "resources/"+row.id.strip()
             )
         root.addResolver(
-            UsageTypes, lambda x: "types/"+x.id.strip()
+            UsageType, lambda x: "types/"+x.id.strip()
             )
         root.addResolver(
-            Usages, lambda x: "days/"+str(x.date)
+            Usage, lambda x: "days/"+str(x.date)
             )
         root.addResolver(
-            Days, lambda x: "days/"+str(x.date)
+            Day, lambda x: "days/"+str(x.date)
             )
 
 ##         def query2name(q):
@@ -82,7 +82,7 @@ class Timings(Schema):
         mnu = root.addMenu()
 
         
-        ds = sess.query(Resources,
+        ds = sess.query(Resource,
                         pageLen=50,
                         orderBy="name")
         rpt = DataReport(ds)
@@ -91,21 +91,21 @@ class Timings(Schema):
         
             
         
-        ds = sess.query(UsageTypes,
+        ds = sess.query(UsageType,
                         pageLen=50,
                         orderBy="id")
         rpt = DataReport(ds)
         doc=root.addReportChild(rpt)
         mnu.addLink(doc)
         
-        ds = sess.query(Days,
+        ds = sess.query(Day,
                         pageLen=50,
                         orderBy="date")
         rpt = DataReport(ds)
         doc=root.addReportChild(rpt)
         mnu.addLink(doc)
 
-        for r in sess.query(Resources):
+        for r in sess.query(Resource):
             root.addReportChild(DataReport(
                 r.usages_by_resource,orderBy="date start"))
 
@@ -113,7 +113,7 @@ class Timings(Schema):
 
         from lino.gendoc.html import DataRowElement
         
-        for cl in (Resources, UsageTypes, Days):
+        for cl in (Resource, UsageType, Day):
             rs=root.findResolver(cl)
             for x in sess.query(cl):
                 ch=root.__class__(parent=root,
@@ -125,7 +125,7 @@ class Timings(Schema):
         return filenames
 
     def showMonthlyCalendar(self,sess,year=2005,month=6):
-        ds=sess.query(Days, orderBy="date")
+        ds=sess.query(Day, orderBy="date")
         ds.addFilter(DateEquals(ds.findColumn('date'),year,month))
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
@@ -146,7 +146,7 @@ class Timings(Schema):
             def format(self,qry):
                 return ", ".join([str(u) for u in qry])
         
-        for res in sess.query(Resources,orderBy="id"):
+        for res in sess.query(Resource,orderBy="id"):
             rpt.addColumn(ResourceColumn(rpt,res))
 
         sess.showReport(rpt)
@@ -162,11 +162,11 @@ This is the Timings main menu.
 
         m = frm.addMenu("db","&Datenbank")
         m.addItem("resources",label="&Resources").setHandler(
-            sess.showViewGrid, Resources)
+            sess.showViewGrid, Resource)
         m.addItem("usages",label="&Usages").setHandler(
-            sess.showViewGrid, Usages)
+            sess.showViewGrid, Usage)
         m.addItem("usageTypes",label="Usage &Types").setHandler(
-            sess.showViewGrid, UsageTypes)
+            sess.showViewGrid, UsageType)
         
         m = frm.addMenu("reports","&Reports")
         m.addItem("s",label="&Static HTML").setHandler(

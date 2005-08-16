@@ -21,12 +21,12 @@ import os
 
 from lino.adamo.ddl import *
 
-class Resources(Table):
-    
-    def init(self):
-        self.addField('id',STRING) 
-        self.addField('name',STRING)
-        self.addView("std", "id name")
+class Resource(StoredDataRow):
+    tableName="Resources"
+    def initTable(self,table):
+        table.addField('id',STRING) 
+        table.addField('name',STRING)
+        table.addView("std", "id name")
         
 
     def setupMenu(self,nav):
@@ -41,75 +41,68 @@ class Resources(Table):
                   action=f,
                   accel="ENTER")
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            if self.name is not None: return self.name
-            return self.id
-        
-        def delete(self):
-            self.usages.deleteAll()
+    def __str__(self):
+        if self.name is not None: return self.name
+        return self.id
 
-##         def daily(self,day):
-##             qry=self.usages_by_resource.child(date=day)
-##             print qry.getSqlSelect()
-##             return ", ".join([u.short() for u in qry])
-            
+    def delete(self):
+        self.usages.deleteAll()
+
             
         
-class Usages(Table):
-    def init(self):
-        self.addField('id',ROWID) 
-        self.addPointer('date',Days).setMandatory()
-        self.addField('start',TIME)
-        self.addField('stop',TIME)
-        self.addPointer('type',UsageTypes)
-        self.addField('remark',STRING)
-        #self.addField('mtime',TIMESTAMP)
-        self.addPointer('resource',Resources).setMandatory()
-        self.addView("std", "id date start stop type remark")
+class Usage(StoredDataRow):
+    tableName="Usages"
+    def initTable(self,table):
+        table.addField('id',ROWID) 
+        table.addPointer('date',Day).setMandatory()
+        table.addField('start',TIME)
+        table.addField('stop',TIME)
+        table.addPointer('type',UsageType)
+        table.addField('remark',STRING)
+        #table.addField('mtime',TIMESTAMP)
+        table.addPointer('resource',Resource).setMandatory()
+        table.addView("std", "id date start stop type remark")
 
-    class Instance(Table.Instance):
-        
-        def __str__(self):
-            s=""
-            if self.remark is not None:
-                s+=self.remark+" "
-            if self.type is not None:
-                s+= self.type.id + " "
-            if self.start is None and self.stop is None:
-                return s
-            s += " %s-%s" % (self.start,self.stop)
+    def __str__(self):
+        s=""
+        if self.remark is not None:
+            s+=self.remark+" "
+        if self.type is not None:
+            s+= self.type.id + " "
+        if self.start is None and self.stop is None:
             return s
-        
+        s += " %s-%s" % (self.start,self.stop)
+        return s
+
         
 
-class UsageTypes(Table):
-    def init(self):
-        self.addField('id',STRING(width=2))
-        self.addField('name',STRING)
-        self.addView("std", "id name")
+class UsageType(StoredDataRow):
+    tableName="UsageTypes"
+    def initTable(self,table):
+        table.addField('id',STRING(width=2))
+        table.addField('name',STRING)
+        table.addView("std", "id name")
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
         
-class Days(Table):
-    def init(self):
-        self.addField('date',DATE)
-        self.addField('remark',STRING)
-        self.setPrimaryKey("date")
-        self.addView("std", "date remark")
+class Day(StoredDataRow):
+    tableName="Days"
+    def initTable(self,table):
+        table.addField('date',DATE)
+        table.addField('remark',STRING)
+        table.setPrimaryKey("date")
+        table.addView("std", "date remark")
         
-    class Instance(Table.Instance):
-        def __str__(self):
-            return str(self.date)
+    def __str__(self):
+        return str(self.date)
 
 
 TABLES = (
-    Days,
-    UsageTypes,
-    Resources,
-    Usages,
+    Day,
+    UsageType,
+    Resource,
+    Usage,
     )
 
 __all__ = [t.__name__ for t in TABLES]

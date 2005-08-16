@@ -22,7 +22,7 @@ from lino.misc.tsttools import TestCase, main, Toolkit
 from lino.adamo.store import Populator
 
 from lino.apps.timings.timings import Timings, everyday
-from lino.apps.timings.tables import *
+from lino.apps.timings import tables
 from lino.adamo.datatypes import itot
 from lino.adamo import center
 
@@ -44,7 +44,7 @@ class TestPopulator(Populator):
             q.appendRow(date=d)
 
     def populateUsages(self,q):
-        days=q.getSession().query(Days)
+        days=q.getSession().query(tables.Day)
         for d in everyday(20050620,20050624):
             q.appendRow(resource=self.luc,
                         date=days.peek(d),

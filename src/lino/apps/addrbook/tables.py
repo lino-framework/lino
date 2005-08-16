@@ -119,7 +119,6 @@ class Partner(Contact,Address):
         table.addPointer('type',PartnerType).setDetail(
             'partnersByType',orderBy='name firstName')
         table.addField('title',STRING)
-        table.addPointer('currency',Currency)
         table.addField('logo',LOGO)
         #self.addPointer('org',Organisation)
         #self.addPointer('person',Person)
@@ -135,16 +134,6 @@ class Partner(Contact,Address):
             return self.name
         return self.firstName+" "+self.name
     
-        
-class Currency(BabelRow):
-    tableName="Currencies"
-    
-    def initTable(self,table):
-        table.addField('id',STRING(width=3))
-        BabelRow.initTable(self,table)
-        
-    def __str__(self):
-        return self.id
         
 class PartnerType(BabelRow):
     
@@ -212,7 +201,6 @@ class City(StoredDataRow):
 
 
 TABLES = (Language,
-          Currency,
           Nation, City,
           Organisation, Person,
           Partner, PartnerType)        

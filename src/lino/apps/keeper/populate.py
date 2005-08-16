@@ -38,9 +38,9 @@ class VolumeVisitor(Task):
         from lino.apps.keeper import tables
         #sess = self.job.session #
         sess=self.volume.getSession()
-        self.ftypes = sess.query(tables.FileTypes)
-        self.files = sess.query(tables.Files)
-        self.dirs = sess.query(tables.Directories)
+        self.ftypes = sess.query(tables.FileType)
+        self.files = sess.query(tables.File)
+        self.dirs = sess.query(tables.Directory)
         if len(self.volume.directories) > 0:
             self.freshen(self.volume.path)
         else:
@@ -118,11 +118,11 @@ class FileVisitor(Task):
     def run(self):
         sess = self.volume.getSession()
         from lino.apps.keeper import tables 
-        self.ftypes = sess.query(tables.FileTypes)
-        self.files = sess.query(tables.Files)
-        self.dirs = sess.query(tables.Directories)
-        self.words = sess.query(tables.Words)
-        self.occurences = sess.query(tables.Occurences)
+        self.ftypes = sess.query(tables.FileType)
+        self.files = sess.query(tables.File)
+        self.dirs = sess.query(tables.Directory)
+        self.words = sess.query(tables.Word)
+        self.occurences = sess.query(tables.Occurence)
         self.volume.directories.deleteAll()
         #for row in self.dirs.query(volume=self.volume):
         #    row.delete()

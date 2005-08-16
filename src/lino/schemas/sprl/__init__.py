@@ -17,6 +17,37 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+
+
+
+
+
+
+
+
+raise """
+schemas.sprl split and moved to:
+- apps.addrbook
+- apps.pinboard
+
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 """
 
 `sprl` is a "schema environment", that is, set of tables that are

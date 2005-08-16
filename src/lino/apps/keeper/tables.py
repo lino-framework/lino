@@ -24,15 +24,15 @@ from lino.apps.keeper.populate import VolumeVisitor, read_content
 
 from lupy.index.documentwriter import standardTokenizer
 
-class Volumes(Table):
-    
-    def init(self):
-        self.addField('id',ROWID) 
-        self.addField('name',STRING).setMandatory()
-        self.addField('meta',MEMO(width=50,height=5))
-        self.addField('path',STRING).setMandatory()
-        #self.addDetail('directories',Directories,parent=None)
-        self.addView("std", "id name path directories meta")
+class Volume(StoredDataRow):
+    tableName="Volumes"
+    def initTable(self,table):
+        table.addField('id',ROWID) 
+        table.addField('name',STRING).setMandatory()
+        table.addField('meta',MEMO(width=50,height=5))
+        table.addField('path',STRING).setMandatory()
+        #table.addDetail('directories',Directories,parent=None)
+        table.addView("std", "id name path directories meta")
         
 
     def setupMenu(self,nav):
@@ -47,83 +47,76 @@ class Volumes(Table):
                   action=f,
                   accel="F6")
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
-            #if self.name is not None: return self.name
-            #return self.path
+    def __str__(self):
+        return self.name
         
-        def load(self,sess):
-            sess.runTask(VolumeVisitor(self))
+    def load(self,sess):
+        sess.runTask(VolumeVisitor(self))
 
-        def delete(self):
-            self.directories.deleteAll()
+    def delete(self):
+        self.directories.deleteAll()
 
-        def ignoreByName(self,name):
-            if name is None: return False
-            if name.endswith('~'): return True
-            return name in ('.svn',)
+    def ignoreByName(self,name):
+        if name is None: return False
+        if name.endswith('~'): return True
+        return name in ('.svn',)
             
         
-class Directories(Table):
-    def init(self):
-        self.addField('id',ROWID) 
-        self.addField('name',STRING) # .setMandatory()
-        #self.addField('mtime',TIMESTAMP)
-        self.addField('meta',MEMO(width=50,height=5))
-        self.addPointer('parent',Directories).setDetail(
+class Directory(StoredDataRow):
+    tableName="Directories"
+    def initTable(self,table):
+        table.addField('id',ROWID) 
+        table.addField('name',STRING) # .setMandatory()
+        #table.addField('mtime',TIMESTAMP)
+        table.addField('meta',MEMO(width=50,height=5))
+        table.addPointer('parent',Directory).setDetail(
             "subdirs")#,viewName="std")
-        self.addPointer('volume',Volumes).setDetail(
+        table.addPointer('volume',Volume).setDetail(
             "directories",parent=None)#,viewName="std")
-        self.addView("std","parent name subdirs files meta volume")
+        table.addView("std","parent name subdirs files meta volume")
         #self.setPrimaryKey("volume parent name")
 
-    class Instance(Table.Instance):
-        
-        def __str__(self):
-            s=str(self.volume) +":"
-            if self.name is not None:
-                s += self.name
-            return s
-        
-        def path(self):
-            if self.parent is None:
-                if self.name is None:
-                    return self.volume.path
-                return os.path.join(self.volume.path,self.name)
+    def __str__(self):
+        s=str(self.volume) +":"
+        if self.name is not None:
+            s += self.name
+        return s
+
+    def path(self):
+        if self.parent is None:
+            if self.name is None:
+                return self.volume.path
+            return os.path.join(self.volume.path,self.name)
+        else:
+            if self.name is None:
+                return self.parent.path()
             else:
-                if self.name is None:
-                    return self.parent.path()
-                else:
-                    return os.path.join(self.parent.path(),self.name)
-        
-        def delete(self):
-            #print "Delete entry for ",self
-            assert not self in self.subdirs
-            self.files.deleteAll()
-            self.subdirs.deleteAll()
-##             for row in self.files:
-##                 row.delete()
-##             for row in self.subdirs:
-##                 row.delete()
-            Table.Instance.delete(self)
+                return os.path.join(self.parent.path(),self.name)
+
+    def delete(self):
+        #print "Delete entry for ",self
+        assert not self in self.subdirs
+        self.files.deleteAll()
+        self.subdirs.deleteAll()
+        StoredDataRow.delete(self)
                 
 
-class Files(Table):
-    def init(self):
-        #self.addField('id',ROWID) 
-        self.addField('name',STRING).setMandatory()
-        self.addField('mtime',TIMESTAMP)
-        self.addField('size',LONG)
-        self.addField('content',MEMO(width=50,height=5))
-        self.addField('meta',MEMO(width=50,height=5))
-        self.addPointer('dir',Directories).setDetail(
+class File(StoredDataRow):
+    tableName="Files"
+    def initTable(self,table):
+        #table.addField('id',ROWID) 
+        table.addField('name',STRING).setMandatory()
+        table.addField('mtime',TIMESTAMP)
+        table.addField('size',LONG)
+        table.addField('content',MEMO(width=50,height=5))
+        table.addField('meta',MEMO(width=50,height=5))
+        table.addPointer('dir',Directory).setDetail(
             "files",orderBy="name")
-        self.addPointer('type',FileTypes)
-        self.addField('mustParse',BOOL)
+        table.addPointer('type',FileType)
+        table.addField('mustParse',BOOL)
         
-        self.setPrimaryKey("dir name")
-        self.addView(
+        table.setPrimaryKey("dir name")
+        table.addView(
             "std",
             """\
 dir name type
@@ -133,93 +126,84 @@ meta
 """)
 
         
-    class Instance(Table.Instance):
+    def __str__(self):
+        assert self.name is not None
+        return self.name
+
+    def path(self):
+        return os.path.join(self.dir.path(),self.name)
+
+    def readTimeStamp(self,sess,fullname):
+        #assert fullname == self.path(), \
+        #       "%r != %r" % (fullname,self.path())
+        try:
+            st = os.stat(fullname)
+        except OSError,e:
+            sess.error("os.stat('%s') failed" % fullname)
+            return
+        sz = st.st_size
+        mt = st.st_mtime
+        if self.mtime == mt and self.size == sz:
+            return
+        self.lock()
+        self.content=read_content(sess,self,fullname)
+        self.mtime = mt
+        self.size=sz
+        self.mustParse=True
+        self.parseContent(sess)
+        self.unlock()
+
+    def parseContent(self,sess):
+        if self.content is None:
+            return
+        tokens = standardTokenizer(self.content)
+        self.occurences.deleteAll()
+        words=sess.query(Word)
+        pos = 0
+        for token in tokens:
+            pos += 1
+            sess.status(self.path()+": "+token)
+            word = words.peek(token)
+            if word is None:
+                word = words.appendRow(id=token)
+            #elif word.ignore:
+            #    continue
+            self.occurences.appendRow(word=word, pos=pos)
         
-        def __str__(self):
-            assert self.name is not None
-            return self.name
+class FileType(StoredDataRow):
+    tableName="FileTypes"
+    def initTable(self,table):
+        table.addField('id',STRING(width=5))
+        table.addField('name',STRING)
+
+    def __str__(self):
+        return self.name
         
-        def path(self):
-            return os.path.join(self.dir.path(),self.name)
-        
-        def readTimeStamp(self,sess,fullname):
-            #assert fullname == self.path(), \
-            #       "%r != %r" % (fullname,self.path())
-            try:
-                st = os.stat(fullname)
-            except OSError,e:
-                sess.error("os.stat('%s') failed" % fullname)
-                return
-            sz = st.st_size
-            mt = st.st_mtime
-            if self.mtime == mt and self.size == sz:
-                return
-            self.lock()
-            self.content=read_content(sess,self,fullname)
-            self.mtime = mt
-            self.size=sz
-            self.mustParse=True
-            self.parseContent(sess)
-            self.unlock()
+class Word(StoredDataRow):
+    tableName="Words"
+    def initTable(self,table):
+        table.addField('id',STRING)
+        #table.addField('word',STRING)
+        table.addPointer('synonym',Word)
+        #table.addField('ignore',BOOL)
+        table.addView("std","id synonym occurences")
 
-        def parseContent(self,sess):
-            if self.content is None:
-                return
-            tokens = standardTokenizer(self.content)
-            self.occurences.deleteAll()
-            words=sess.query(Words)
-            pos = 0
-            for token in tokens:
-                pos += 1
-                sess.status(self.path()+": "+token)
-                word = words.peek(token)
-                if word is None:
-                    word = words.appendRow(id=token)
-                #elif word.ignore:
-                #    continue
-                self.occurences.appendRow(word=word, pos=pos)
-        
-class FileTypes(Table):
-    def init(self):
-        self.addField('id',STRING(width=5))
-        self.addField('name',STRING)
-
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
-        
-class Words(Table):
-    def init(self):
-        self.addField('id',STRING)
-        #self.addField('word',STRING)
-        self.addPointer('synonym',Words)
-        #self.addField('ignore',BOOL)
-        self.addView("std","id synonym occurences")
-
-    class Instance(Table.Instance):
-        pass
-        #def __str__(self):
-        #    return self.id
-
-class Occurences(Table):
-    def init(self):
-        self.addPointer('word',Words).setDetail("occurences")
-        self.addPointer('file',Files).setDetail("occurences")
-        self.addField('pos',INT)
-        self.setPrimaryKey("word file pos")
-
-    class Instance(Table.Instance):
-        pass
-
+class Occurence(StoredDataRow):
+    tableName="Occurences"
+    def initTable(self,table):
+        table.addPointer('word',Word).setDetail("occurences")
+        table.addPointer('file',File).setDetail("occurences")
+        table.addField('pos',INT)
+        table.setPrimaryKey("word file pos")
 
 
 TABLES = (
-    Volumes,
-    Files,
-    Directories,
-    FileTypes,
-    Words,
-    Occurences,
+    Volume,
+    File,
+    Directory,
+    FileType,
+    Word,
+    Occurence,
     )
 
 __all__ = [t.__name__ for t in TABLES]

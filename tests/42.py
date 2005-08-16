@@ -35,7 +35,7 @@ class Case(TestCase):
         app=Keeper()
         sess=app.quickStartup() # toolkit=Toolkit())
         
-        q=sess.query(Volumes)
+        q=sess.query(Volume)
         vol=q.appendRow(name="test",path=TESTDATA)
         vol.load(sess)
         sess.showQuery(
@@ -51,7 +51,7 @@ id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
 1      |              |              |17 Files      |3 Directories
 """)
-        q=sess.query(Files,
+        q=sess.query(File,
                      orderBy="mtime",
                      columnNames="dir name size mustParse occurences")
         q.showReport(columnWidths="20 18 8 5 15")
