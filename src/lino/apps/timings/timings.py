@@ -42,8 +42,12 @@ class Timings(Schema):
     author="Luc Saffre"
     htmlRoot="gendoc_html"
     
-    tables = TABLES
+    #tables = TABLES
 
+    def setupSchema(self):
+        for cl in TABLES:
+            self.addTable(cl)
+    
     def writeStaticSite(self,sess):
         if not sess.confirm("Generate HTML in %s" % self.htmlRoot):
             return

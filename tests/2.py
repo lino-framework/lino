@@ -21,8 +21,10 @@
 import os, types
 
 from lino.misc.tsttools import TestCase
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.apps.ledger import demo
+from lino.apps.ledger.tables import *
+#from lino.schemas.sprl import demo
+#from lino.schemas.sprl.tables import *
 
 """
 Here we test how a query translates to SQL.
@@ -48,14 +50,14 @@ class Case(TestCase):
         single column whose name is the pointer's name with the pointed
         table's primary key suffixed, usually "_id". """
         
-        q = self.db.query(Organisations,"id name city nation")
+        q = self.db.query(Organisation,"id name city nation")
         assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """\
 SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         """)
 
-        q = self.db.query(Invoices,"seq date jnl remark partner")
+        q = self.db.query(Invoice,"seq date jnl remark partner")
         assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """
@@ -80,7 +82,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         
         """
         
-        q = self.db.query(Organisations,
+        q = self.db.query(Organisation,
                           "id name city.name nation.id nation.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
@@ -106,7 +108,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         assert q.getJoinList() == "city nation"
 
 
-        q = self.db.query(Invoices,"seq date jnl remark partner.name")
+        q = self.db.query(Invoice,"seq date jnl remark partner.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
             lead.jnl_id,
@@ -132,7 +134,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         in a InvoiceLines query will be expanded to the 3 columns that
         make up the primary key.  """
         
-        q = self.db.query(InvoiceLines,
+        q = self.db.query(ProductInvoiceLine,
                           "invoice product unitPrice")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
@@ -146,7 +148,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
 
         self.assertEqual(q.getJoinList(),"")
         
-        q = self.db.query(InvoiceLines,
+        q = self.db.query(ProductInvoiceLine,
                           "invoice.date product.name unitPrice")
         self.assertEqual(q.getJoinList(),"invoice product")
         self.assertEquivalent(q.getSqlSelect(), """
@@ -187,7 +189,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         
         """
         
-        q = self.db.query(InvoiceLines,
+        q = self.db.query(ProductInvoiceLine,
             "invoice.partner.name product.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
@@ -224,9 +226,9 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         `invoice.invoice_partner_id`
         """
 
-        CITIES = self.db.query(Cities)
+        CITIES = self.db.query(City)
         eupen = CITIES.findone(name="Eupen")
-        q = self.db.query(Partners,
+        q = self.db.query(Partner,
                           "name", city=eupen)
         assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """

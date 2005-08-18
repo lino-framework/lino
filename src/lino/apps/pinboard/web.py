@@ -18,25 +18,26 @@
 
 from lino.adamo.ddl import *
 
-from babel import Languages
-from lino.schemas.sprl.addrbook import Users
+from babel import Language
+from lino.apps.addrbook.tables import User
 
         
 #   def getChildren(self):
 #       return self._area.instances( orderBy='seq',
 #                                             samples={'super':self})
 
-class Pages(MemoTreeTable):
-    def init(self):
-        MemoTreeTable.init(self)
-        self.addField('id',ROWID)
-        self.addField('created',DATE)
-        self.addField('modified',DATE)
-        self.addPointer('author',Users)
-        self.addPointer('lang',Languages)
-        #self.addField('lang',LANG)
-        self.addField('match',STRING)
-        self.addField('subtitle',STRING)
+class Page(MemoTreeRow):
+    tableName="Pages"
+    def initTable(self,table):
+        MemoTreeRow.initTable(self,table)
+        table.addField('id',ROWID)
+        table.addField('created',DATE)
+        table.addField('modified',DATE)
+        table.addPointer('author',User)
+        table.addPointer('lang',Language)
+        #table.addField('lang',LANG)
+        table.addField('match',STRING)
+        table.addField('subtitle',STRING)
         
         #self.addField('pubRef',STRING)
         #table.addPointer("pub","PUBLICATIONS")
@@ -45,12 +46,10 @@ class Pages(MemoTreeTable):
         #table.setColumnList('title abstract id created lang')
         #rpt.setLabel('Pages')
 
-        self.addView(
+        table.addView(
             'std',
             "title subtitle match created id modified author lang")
 
-    class Instance(MemoTreeTable.Instance):
-        pass
     
 ##  def validate(self):
 ##      if self.match is not None:
@@ -78,8 +77,8 @@ class Pages(MemoTreeTable):
 ##                                          label=self.getLabel())
         
             
-class Page2Page(Table):
-    def init(self):
-        self.addField('seq',ROWID)
+## class Page2Page(StoredDataRow):
+##     def initTable(self,table):
+##         table.addField('seq',ROWID)
         
-        self.setPrimaryKey(tuple())
+##         table.setPrimaryKey(tuple())

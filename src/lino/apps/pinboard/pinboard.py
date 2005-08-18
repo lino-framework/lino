@@ -31,24 +31,28 @@ class Pinboard(Schema):
     years='2005'
     author="Luc Saffre"
     
-    tables = TABLES
+    
+    def setupSchema(self):
+        for cl in TABLES:
+            self.addTable(cl)
+    
 
     def showMainForm(self,sess):
         frm = sess.form(
             label="Main menu",
             doc="""\
-This is the Timings main menu.                                     
+This is the Pinboard main menu.                                     
 """+("\n"*10))
 
         m = frm.addMenu("db","&Datenbank")
         m.addItem("authors",label="&Authors").setHandler(
-            sess.showViewGrid, Authors)
+            sess.showViewGrid, Author)
         m.addItem("pages",label="&Pages").setHandler(
-            sess.showViewGrid, Pages)
+            sess.showViewGrid, Page)
         m.addItem("news",label="&News").setHandler(
-            sess.showViewGrid, News)
+            sess.showViewGrid, NewsItem)
         m.addItem("newsgroups",label="News&groups").setHandler(
-            sess.showViewGrid, Newsgroups)
+            sess.showViewGrid, Newsgroup)
         
 ##         m = frm.addMenu("reports","&Reports")
 ##         m.addItem("s",label="&Static HTML").setHandler(

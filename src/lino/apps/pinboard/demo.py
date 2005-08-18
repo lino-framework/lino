@@ -42,7 +42,7 @@ def startup(filename=None, langs=None,
         
         if withDemoData:
             sess.populate(DemoPopulator())
-            assert len(sess.query(Projects))==10
+            assert len(sess.query(Project))==10
 
     return sess
 
@@ -212,7 +212,7 @@ class JokesPopulator(Populator):
 
         
     def populateQuotes(self,q):
-        de=q.getSession().peek(Languages,"de")
+        de=q.getSession().peek(Language,"de")
         from lino.apps.pinboard import quotes_de
         quotes_de.populate(q,de)
         #print "%d Weisheiten" % len(q)

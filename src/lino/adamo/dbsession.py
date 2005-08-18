@@ -159,20 +159,11 @@ class DbSession(Session,Context):
         self.db.shutdown()
         #center.shutdown()
 
-    def getStore(self,leadTable):
-        try:
-            return self.db._stores[leadTable]
-        except KeyError,e:
-            raise InvalidRequestError("no such table: "+str(leadTable))
-    
-##     def view(self,leadTable,*args,**kw):
-##         return self.getStore(leadTable).view(self,*args,**kw)
-    
     def query(self,leadTable,columnNames=None,**kw):
         if columnNames is None:
             columnNames="*"
         #return self.getStore(leadTable).query(self,**kw)
-        return self.getStore(leadTable).query(self,columnNames,**kw)
+        return self.db.getStore(leadTable).query(self,columnNames,**kw)
 
     def peek(self,tableClass,*args):
         # used in raceman/report.py, cities_be.py...

@@ -48,9 +48,7 @@ class Case(TestCase):
 
         #print s
         self.assertEquivalent(s, """\
-Users Currencies Nations Cities Organisations Partners PartnerTypes
-Journals Years Products Invoices InvoiceLines BalanceItems
-CashFlowItems ProfitAndLossItems Accounts Bookings
+Currencies Languages Nations Cities Organisations Persons Partners PartnerTypes Products Journals BankStatements MiscOperations Invoices InvoiceLines BalanceItems CashFlowItems ProfitAndLossItems Accounts Bookings
 """)
         
 
@@ -58,8 +56,8 @@ CashFlowItems ProfitAndLossItems Accounts Bookings
     def test03(self):
         "logical primary key versus atomic primary key"
 
-        INVOICES = self.sess.query(Invoices)
-        INVOICELINES = self.sess.query(InvoiceLines)
+        INVOICES = self.sess.query(Invoice)
+        INVOICELINES = self.sess.query(ProductInvoiceLine)
         self.assertEqual(INVOICES.getLeadTable().getPrimaryKey(),
                               ("jnl","seq"))
         self.assertEqual(

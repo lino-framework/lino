@@ -19,39 +19,37 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.ddl import *
-from tables import Users, Partners
+from tables import User, Partner
 #from web import MemoMixin, MemoTreeMixin
 
 
-class Projects(MemoTreeTable):
-    
-    def init(self):
-        MemoTreeTable.init(self)
-        self.addField('id',ROWID)
-        self.addField('date',DATE)
-        self.addField('stopDate',DATE)
+class Project(MemoTreeRow):
+    tableName="Projects"
+    def initTable(self,table):
+        MemoTreeRow.initTable(self,table)
+        table.addField('id',ROWID)
+        table.addField('date',DATE)
+        table.addField('stopDate',DATE)
 
-        self.addPointer('responsible',Users).setDetail("projects")
-        self.addPointer('sponsor', Partners) 
-        self.addPointer('status', ProjectStati).setDetail("projects")
+        table.addPointer('responsible',User).setDetail("projects")
+        table.addPointer('sponsor', Partner) 
+        table.addPointer('status', ProjectStatus).setDetail("projects")
         
         #from sdk import Version
         #self.version = Pointer(Version,"projects")
 
-        self.addView("std",
+        table.addView("std",
                      columnNames="title abstract status",
                      label="Top-level projects",
                      super=None)
 
-    class Instance(MemoTreeTable.Instance):
-        pass
 
-
-class ProjectStati(BabelTable):
+class ProjectStatus(BabelRow):
     "list of codes used to formulate how far a project is"
-    def init(self):
-        BabelTable.init(self)
-        self.addField('id',STRING)
+    tableName="ProjectStati"
+    def initTable(self,table):
+        BabelRow.initTable(self,table)
+        table.addField('id',STRING)
         #self.name = BabelField(STRING)
 
 

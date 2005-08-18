@@ -20,10 +20,11 @@
 
 
 import os
-from lino import adamo
+#from lino import adamo
 from lino.adamo.datatypes import itod
 from lino.apps.ledger.ledger import Ledger
 from lino.apps.ledger import tables
+from lino.apps.addrbook import demo as addrdemo
 
 def startup(filename=None, langs=None,
             populate=True,
@@ -40,9 +41,9 @@ def startup(filename=None, langs=None,
     return sess
 
 
-class Populator(adamo.Populator):
+class Populator(addrdemo.Populator):
     def __init__(self, **kw):
-        adamo.Populator.__init__(self,None,**kw)
+        addrdemo.Populator.__init__(self,None,**kw)
 
         
     def populateCurrencies(self,q):

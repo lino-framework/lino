@@ -103,6 +103,13 @@ class Database(Context,Describable):
         #return self.memoParser.html
 
         
+    def getStore(self,leadTable):
+        try:
+            return self._stores[leadTable]
+        except KeyError,e:
+            raise InvalidRequestError("no such table: "+str(leadTable))
+    
+    
     def getStoresById(self):
         l = []
         for table in self.app.getTableList():

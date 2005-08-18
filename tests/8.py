@@ -19,8 +19,8 @@
 
 
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Partners
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import Partner
 
 class Case(TestCase):
 
@@ -28,7 +28,7 @@ class Case(TestCase):
     def test01(self):
         db = demo.startup()
         s1 = ''
-        q = db.query(Partners,\
+        q = db.query(Partner,\
                      "name street city.name",
                      orderBy="name")
         for row in q:

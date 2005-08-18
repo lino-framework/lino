@@ -21,109 +21,104 @@
 from lino.adamo.ddl import *
 # from babel import Languages
 
-from tables import Persons, Cities, Languages
+from tables import Person, City, Language
 
-class Quotes(Table):
-    def init(self):
+class Quote(StoredDataRow):
+    tableName="Quotes"
+    def initTable(self,table):
         #MemoTable.init(self)
-        self.addField('id',ROWID)
-        self.addField('quote',MEMO)
-        self.addPointer('author',Authors).setDetail('quotesByAuthor')
-        self.addPointer('lang',Languages)
-        #self.addField('lang',LANG)
+        table.addField('id',ROWID)
+        table.addField('quote',MEMO)
+        table.addPointer('author',Author).setDetail('quotesByAuthor')
+        table.addPointer('lang',Language)
+        #table.addField('lang',LANG)
         
         #self.pubRef = Field(STRING)
         #self.pub = Pointer("PUBLICATIONS")
         
-    class Instance(MemoTable.Instance):
-        def __str__(self):
-            return "[q"+str(self.id)+"]"
+    def __str__(self):
+        return "[q"+str(self.id)+"]"
 
-class Publications(MemoTreeTable):
-    def init(self):
-        MemoTreeTable.init(self)
-        self.addField('id',ROWID)
-        self.addField('year',INT)
-        self.addField('subtitle',STRING)
-        self.addField('typeRef',STRING)
-        self.addPointer('type', PubTypes)
-        self.addPointer('author',Authors)
-        self.addPointer('lang',Languages)
-        #self.addField('lang',LANG)
-        self.addField('url',URL)
+class Publication(MemoTreeRow):
+    tableName="Publications"
+    def initTable(self,table):
+        MemoTreeRow.initTable(self,table)
+        table.addField('id',ROWID)
+        table.addField('year',INT)
+        table.addField('subtitle',STRING)
+        table.addField('typeRef',STRING)
+        table.addPointer('type', PubType)
+        table.addPointer('author',Author)
+        table.addPointer('lang',Language)
+        #table.addField('lang',LANG)
+        table.addField('url',URL)
 
-class PubTypes(BabelTable):
-    def init(self):
-        self.addField('id',STRING)
-        BabelTable.init(self)
-        self.addField('typeRefPrefix',STRING)
-        self.addBabelField('pubRefLabel',STRING)
+class PubType(BabelRow):
+    tableName="PubTypes"
+    def initTable(self,table):
+        table.addField('id',STRING)
+        BabelRow.initTable(self,table)
+        table.addField('typeRefPrefix',STRING)
+        table.addBabelField('pubRefLabel',STRING)
         
 
-class Topics(TreeTable):
-    def init(self):
-        TreeTable.init(self)
-        self.addField('id',ROWID)
-        self.addBabelField('name',STRING)
-        #self.addPointer('lang',Languages)
-        self.addField('dewey',STRING)
-        self.addField('cdu',STRING)
-        self.addField('dmoz',URL)
-        self.addField('wikipedia',URL)
-        self.addBabelField('url',URL)
+class Topic(TreeRow):
+    tableName="Topics"
+    def initTable(self,table):
+        TreeRow.initTable(self,table)
+        table.addField('id',ROWID)
+        table.addBabelField('name',STRING)
+        #table.addPointer('lang',Language)
+        table.addField('dewey',STRING)
+        table.addField('cdu',STRING)
+        table.addField('dmoz',URL)
+        table.addField('wikipedia',URL)
+        table.addBabelField('url',URL)
         
-        self.addView('simple',"name url super children")
+        table.addView('simple',"name url super children")
         
-    class Instance(TreeTable.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
     
 
-class Authors(Persons):
-##     def init(self):
-##         #self.addField('id',STRING)
-##         Persons.init(self)
-##         self.getRowAttr('id').setType(STRING)
-##         #self.birthDate = Field(DATE)
-##         #self.birthPlace = Pointer(City)
-##         #self.deathDate = Field(DATE)
-##         #self.deathPlace = Pointer(City)
-    class Instance(Persons.Instance):
-        pass
-
-class PubByAuth(LinkTable):
-    def __init__(self,parent,**kw):
-        LinkTable.__init__(self,parent,Publications,Authors,**kw)
+class Author(Person):
+    tableName="Authors"
 
 
-class AuthorEvents(BabelTable):
+class PubByAuth(LinkingRow):
+    tableName="PubByAuth"
+    fromClass=Publication
+    toClass=Author
+    
+##     def __init__(self,parent,**kw):
+##         LinkingRow.__init__(self,parent,Publication,Author,**kw)
+
+
+class AuthorEvent(BabelRow):
     "Birth, diplom, marriage, death..."
-    def init(self):
-        BabelTable.init(self)
-        self.addField('seq',ROWID)
-        self.addPointer('type',AuthorEventTypes)
-        self.addPointer('author',Authors)
-        self.addField('date',DATE)
-        self.addPointer('place',Cities)
-        #self.remark = Field(STRING)
-        self.setPrimaryKey('author seq')
+    tableName="AuthorEvents"
+    def initTable(self,table):
+        BabelRow.initTable(self,table)
+        table.addField('seq',ROWID)
+        table.addPointer('type',AuthorEventType)
+        table.addPointer('author',Author)
+        table.addField('date',DATE)
+        table.addPointer('place',City)
+        table.setPrimaryKey('author seq')
         
-    class Instance(BabelTable.Instance):
-        def __str__(self):
-            s = str(self.type)
-            if self.date is not None:
-                s += " " + str(self.date)
-            return s
+    def __str__(self):
+        s = str(self.type)
+        if self.date is not None:
+            s += " " + str(self.date)
+        return s
         
-class AuthorEventTypes(BabelTable):
+class AuthorEventType(BabelRow):
     "Birth, diplom, marriage, death..."
-    def init(self):
-        BabelTable.init(self)
-        self.addField('id',ROWID,\
+    tableName="AuthorEventTypes"
+    def initTable(self,table):
+        BabelRow.initTable(self,table)
+        table.addField('id',ROWID,\
                       doc="the internal id" )
         #self.name = BabelField(STRING)
         
-
-    class Instance(BabelTable.Instance):
-        pass
 

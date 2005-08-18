@@ -55,7 +55,7 @@ class Schema(Application):
 
     HK_CHAR = '&'
     defaultLangs = ('en',)
-    tables=[]
+    #tables=[]
 
     def __init__(self,
                  checkIntegrityOnStartup=False,
@@ -72,10 +72,11 @@ class Schema(Application):
         self._possibleLangs = tuple(langs.split())
         
         #self._databases = []
-        self._plugins = []
+        #self._plugins = []
         self._tables = []
         
-        self.plugins = AttrDict()
+        #self.plugins = AttrDict()
+        self.tables = AttrDict()
         #self.forms = AttrDict()
         #self.options = AttrDict(d=kw)
         
@@ -109,27 +110,36 @@ class Schema(Application):
         
     def addTable(self,instanceClass,**kw):
         #print tableClass
+        assert not self._initDone,\
+               "Too late to declare new table %s in %r" \
+               % (instanceClass,self)
         table=Table(instanceClass,**kw)
         #table = tableClass(None,**kw)
         #assert isinstance(table,Table),\
         #         repr(table)+" is not a Table"
-        assert not self._initDone,\
-                 "Too late to declare new tables in " + repr(self)
-        table.registerInSchema(self,len(self._tables))
-        self._tables.append(table)
+        name = table.getTableName()
+        if self.tables.has_key(name):
+            oldTable=self.tables.get(name)
+            self._tables[oldTable._id] = table
+            table.registerInSchema(self,oldTable._id)
+            setattr(self.tables,name,table)
+        else:
+            #if name == "Partners":
+            #    print "new table Partners in %s" % self.tables.keys()
+            table.registerInSchema(self,len(self._tables))
+            self._tables.append(table)
+            self.tables.define(name,table)
         return table
-        #name = table.getTableName()
-        #self.tables.define(name,table)
         
-    def addPlugin(self,plugin):
-        assert isinstance(plugin,SchemaPlugin),\
-                 repr(plugin)+" is not a SchemaPlugin"
-        assert not self._initDone,\
-                 "Too late to declare new plugins in " + repr(self)
-        plugin.registerInSchema(self,len(self._plugins))
-        self._plugins.append(plugin)
-        name = plugin.getName()
-        self.plugins.define(name,plugin)
+##     def addPlugin(self,plugin):
+##         assert isinstance(plugin,SchemaPlugin),\
+##                  repr(plugin)+" is not a SchemaPlugin"
+##         assert not self._initDone,\
+##                  "Too late to declare new plugins in " + repr(self)
+##         plugin.registerInSchema(self,len(self._plugins))
+##         self._plugins.append(plugin)
+##         name = plugin.getName()
+##         self.plugins.define(name,plugin)
 
 
 
@@ -264,11 +274,14 @@ class Schema(Application):
 ##         return db
 
     def setupSchema(self):
-        #print "%s.setupSchema()" % self.__class__
-        for t in self.tables:
-            self.addTable(t)
-        for p in self._plugins:
-            p.defineTables(self)
+        raise NotImplementedError
+    
+##     def setupSchema(self):
+##         #print "%s.setupSchema()" % self.__class__
+##         for t in self.tables:
+##             self.addTable(t)
+##         for p in self._plugins:
+##             p.defineTables(self)
     
     def quickStartup(self,
                      #toolkit=None,

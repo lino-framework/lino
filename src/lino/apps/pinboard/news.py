@@ -18,54 +18,53 @@
 
 from lino.adamo.ddl import *
 
-from babel import Languages
-from web import Pages
-from lino.schemas.sprl.addrbook import Users
-from projects import Projects
+from babel import Language
+from web import Page
+from lino.apps.addrbook.tables import User
+from projects import Project
 
-class News(MemoTable):
-    
-    def init(self):
-        MemoTable.init(self)
-        self.addField('id',ROWID)
-        self.addField('date',DATE)
-        self.addField('time',TIME)
-        self.addPointer('newsgroup',Newsgroups).setDetail(
+class NewsItem(MemoRow):
+    tableName="News"
+    def initTable(self,table):
+        MemoRow.initTable(self,table)
+        table.addField('id',ROWID)
+        table.addField('date',DATE)
+        table.addField('time',TIME)
+        table.addPointer('newsgroup',Newsgroup).setDetail(
             'newsByGroup', orderBy='date')
-        self.addPointer('author',Users).setDetail('newsByAuthor')
-        self.addPointer('lang',Languages)
-        #self.addField('lang',LANG)
-        self.addPointer('project',Projects)
-        self.addPointer('page',Pages)
+        table.addPointer('author',User).setDetail('newsByAuthor')
+        table.addPointer('lang',Language)
+        #table.addField('lang',LANG)
+        table.addPointer('project',Project)
+        table.addPointer('page',Page)
 
         #self.writeParagraph = Vurt(self.Instance.writeParagraph,MEMO)
 
         #table.setColumnList('date title newsgroup abstract id lang')
-        self.setOrderBy("date")
-        self.addView("std","date title abstract",
+        #table.setOrderBy("date")
+        table.addView("std","date title abstract",
                      orderBy="date")
-        self.addView("list","date writeParagraph",
+        table.addView("list","date writeParagraph",
                          orderBy="date")
         
-    class Instance(MemoTable.Instance):
-        def __str__(self):
-            s = str(self.date)
-            if self.newsgroup is not None:
-                s += ' (%s)' % self.newsgroup
-            if self.title:
-                s += " " + self.title
-            return s
+    def __str__(self):
+        s = str(self.date)
+        if self.newsgroup is not None:
+            s += ' (%s)' % self.newsgroup
+        if self.title:
+            s += " " + self.title
+        return s
     
-class Newsgroups(Table):
-    def init(self):
-        self.addField('id',STRING)
-        self.addField('name',STRING).setMandatory()
+class Newsgroup(StoredDataRow):
+    tableName="Newsgroups"
+    def initTable(self,table):
+        table.addField('id',STRING)
+        table.addField('name',STRING).setMandatory()
         
-        self.addView("std","id name")
+        table.addView("std","id name")
         
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
         
 ##  def asPage(self,renderer):
 ##      body = ''

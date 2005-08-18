@@ -18,49 +18,48 @@
 
 from lino.adamo.ddl import *
 
-from lino.schemas.sprl.addrbook import Partners
-from web import Pages
+from lino.apps.addrbook.tables import Partner
+from web import Page
 
 
-class Events(Pages):
-    def init(self):
+class Event(Page):
+    tableName="Events"
+    def initTable(self,table):
         #MemoMixin.init(self,table)
-        Pages.init(self)
-        self.getRowAttr('id').setType(ROWID)
-        self.addField('date', DATE)
-        self.addField('time', STRING)
-        self.addPointer('type', EventTypes).setDetail("eventsByType")
+        Page.initTable(self,table)
+        table.getRowAttr('id').setType(ROWID)
+        table.addField('date', DATE)
+        table.addField('time', STRING)
+        table.addPointer('type', EventType).setDetail("eventsByType")
         
-        self.addPointer('responsible',Partners).setDetail(
+        table.addPointer('responsible',Partner).setDetail(
             'eventsByResponsible')
-        self.addPointer('place',Partners).setDetail('eventsByPlace')
+        table.addPointer('place',Partner).setDetail('eventsByPlace')
         
 
-        #self.setColumnList('date time place title abstract')
-        self.setOrderBy("date time")
+        #table.setColumnList('date time place title abstract')
+        table.setOrderBy("date time")
 
-    class Instance(Pages.Instance):
-        
-        def __str__(self):
-            s = ''
-            if self.title is None:
-                s = self.type.title
-            else:
-                s = self.title
-            s += " (" + str(self.date)
-            if self.time is not None:
-                s += ' ' + self.time + ' Uhr'
-            s += ')'
-            return s
+    def __str__(self):
+        s = ''
+        if self.title is None:
+            s = self.type.title
+        else:
+            s = self.title
+        s += " (" + str(self.date)
+        if self.time is not None:
+            s += ' ' + self.time + ' Uhr'
+        s += ')'
+        return s
     
-class EventTypes(MemoTable):
-    def init(self):
-        MemoTable.init(self)
-        self.addField('id',STRING)
-        self.addBabelField('name',STRING)
+class EventType(MemoRow):
+    tableName="EventTypes"
+    def initTable(self,table):
+        MemoRow.initTable(self,table)
+        table.addField('id',STRING)
+        table.addBabelField('name',STRING)
         #table.addDetail('eventsByType',Event)
         
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.title
+    def __str__(self):
+        return self.title
         

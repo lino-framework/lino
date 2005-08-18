@@ -20,8 +20,16 @@ from lino.apps.addrbook.tables import *
 
 class AddressBook(Schema):
     
-    tables=TABLES
+    #tables=TABLES
     
+    def setupSchema(self):
+        for cl in (Language,
+                   Nation, City,
+                   Organisation, Person,
+                   Partner, PartnerType):
+            self.addTable(cl)
+    
+        
     def showMainForm(self,sess):
         frm = sess.form(
             label="Main menu",

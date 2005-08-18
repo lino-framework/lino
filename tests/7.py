@@ -26,8 +26,8 @@ In the following test, p[2] returned the same row as the previous p[1]
 
 """
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo #.sprl import Schema
-from lino.schemas.sprl.tables import *
+from lino.apps.addrbook import demo #.sprl import Schema
+from lino.apps.addrbook.tables import Partner
 #from lino.adamo import center
 
 class Case(TestCase):
@@ -36,7 +36,7 @@ class Case(TestCase):
         "Accessing data that has not been inserted using adamo"
         sess = demo.startup(populate=False)
         
-        assert len(sess.query(Partners)) == 0, \
+        assert len(sess.query(Partner)) == 0, \
                "db not empty: previous test run didn't shutdown"
         
         db = sess.db
@@ -53,7 +53,7 @@ class Case(TestCase):
                VALUES (2, "Ly");
         """)
 
-        PARTNERS = sess.query(Partners)
+        PARTNERS = sess.query(Partner)
 
         luc = PARTNERS.peek(1)
         self.assertEqual(luc.id,1)

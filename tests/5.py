@@ -40,7 +40,7 @@ class Case(TestCase):
 
     def test01(self):
         "Simple query with a filter"
-        q = self.db.query(Authors,
+        q = self.db.query(Author,
                           "firstName name",
                           orderBy='name')
         q.setSqlFilters('name LIKE "B%"')
@@ -52,7 +52,7 @@ Jacques Brel""")
 
     def test02(self):
         "Finding Georges Brassens"
-        AUTHORS = self.db.query(Authors)
+        AUTHORS = self.db.query(Author)
         p = AUTHORS.findone(firstName="Georges",
                             name="Brassens")
         # self.assertNotEqual(p,None)

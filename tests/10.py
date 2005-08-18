@@ -30,14 +30,14 @@ pre-build query of CITIES from this nation.
 """
 
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Nations
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import Nation
 
 
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.beginSession(big=True)
+        self.db = demo.startup(big=True)
         #self.db = demo.beginSession(populator=None,big=True)
         #demo.populate(self.db,big=True)
         
@@ -45,7 +45,7 @@ class Case(TestCase):
         self.db.shutdown()
         
     def test01(self):
-        be = self.db.query(Nations).peek('be')
+        be = self.db.query(Nation).peek('be')
         s = ''
         
         #cities=be.cities

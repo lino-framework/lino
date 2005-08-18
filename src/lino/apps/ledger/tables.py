@@ -1,3 +1,5 @@
+#coding: latin1
+
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -19,9 +21,10 @@
 
 from lino.adamo.ddl import *
 
-from lino.apps.addrbook.tables import Partner as PartnerBase
-from lino.apps.addrbook.tables import User
-
+from lino.apps.addrbook import tables as addrtables
+#from lino.apps.addrbook.tables import Partner as PartnerBase
+#from lino.apps.addrbook.tables import User
+from lino.apps.addrbook.tables import *
 
 class Currency(BabelRow):
     
@@ -36,10 +39,10 @@ class Currency(BabelRow):
 
 
 
-class Partner(PartnerBase):
+class Partner(addrtables.Partner):
     
     def initTable(self,table):
-        PartnerBase.initTable(self,table)
+        addrtables.Partner.initTable(self,table)
         table.addPointer('currency',Currency)
 
 
@@ -270,7 +273,7 @@ class Booking(StoredDataRow):
 
     
         
-TABLES = (User,
+TABLES = (
           Currency,
           Partner,
           Product,
@@ -279,7 +282,8 @@ TABLES = (User,
           Invoice, ProductInvoiceLine,
           BalanceItem,CashFlowItem,ProfitAndLossItem,
           Account,Booking
-          )
+          ) + addrtables.TABLES
+
 __all__ = [t.__name__ for t in TABLES]
 __all__.append('TABLES')
 

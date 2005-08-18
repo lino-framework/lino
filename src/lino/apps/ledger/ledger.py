@@ -17,12 +17,30 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.ddl import Schema
+#from lino.adamo.ddl import Schema
+from lino.apps.addrbook.addrbook import AddressBook
 from lino.apps.ledger.tables import *
 
-class Ledger(Schema):
+
+class Ledger(AddressBook):
     
-    tables=TABLES
+    #tables=TABLES
+    
+    def setupSchema(self):
+        self.addTable(Currency)
+        AddressBook.setupSchema(self)
+        for cl in (
+            Partner,
+            Product,
+            Journal,
+            BankStatement, MiscOperation,
+            Invoice, ProductInvoiceLine,
+            BalanceItem,CashFlowItem,ProfitAndLossItem,
+            Account,Booking
+          ):
+
+            self.addTable(cl)
+            
     
     def showMainForm(self,sess):
         frm = sess.form(
@@ -31,9 +49,7 @@ class Ledger(Schema):
 This is the Ledger main menu.                                    
 """+("\n"*10))
 
-        m = frm.addMenu("master","&Stammdaten")
-        m.addItem("partners",label="&Partners").setHandler(
-            sess.showViewGrid, Partner)
+        m = frm.addMenu("ledger","&Ledger")
         m.addItem("products",label="&Products").setHandler(
             sess.showViewGrid, Product)
         m.addItem("gen",label="&GL accounts").setHandler(

@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -25,8 +25,11 @@ Logical columns (row attributes) versus physical columns (atoms)
 import types
 
 from lino.misc.tsttools import TestCase
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.apps.ledger import demo
+from lino.apps.ledger.tables import *
+
+#from lino.schemas.sprl import demo
+#from lino.schemas.sprl.tables import *
 
 class Case(TestCase):
 
@@ -40,7 +43,7 @@ class Case(TestCase):
 
     def test02(self):
         ""
-        q = self.db.query(Products,"name price", orderBy="name")
+        q = self.db.query(Product,"name price", orderBy="name")
         l = []
         for prod in q:
             l.append("a %s costs %s." % (prod.name,str(prod.price)))

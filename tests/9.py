@@ -19,10 +19,10 @@
 
 from lino.misc.tsttools import TestCase, main
 from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Partners,\
-     Quotes, Authors, Languages
+from lino.apps.pinboard.tables import Partner,\
+     Quote, Author, Language
 
-from lino.schemas.sprl.data import quotes_de
+from lino.apps.pinboard import quotes_de
 
 class Case(TestCase):
     def setUp(self):
@@ -36,8 +36,8 @@ class Case(TestCase):
         
     def test01(self):
         "new style to specify samples for a query using **kw"
-        LANGS = self.db.query(Languages)
-        QUOTES = self.db.query(Quotes)
+        LANGS = self.db.query(Language)
+        QUOTES = self.db.query(Quote)
         s = ""
         de = LANGS.peek('de')
         q = QUOTES.query("quote author.name id",

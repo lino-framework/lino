@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -19,12 +19,13 @@
 import types
 
 class AttrDict(dict):
+    
     def __init__(self,d=None,factory=None):
         if d is None:
             d = {}
         self.__dict__["_values"] = d
         self.__dict__["_factory"] = factory
-        for m in ('values','__len__','keys','items','get'):
+        for m in ('values','__len__','keys','items','get','has_key'):
             self.__dict__[m] = getattr(d,m)
 
     def __getattr__(self,name):
@@ -49,6 +50,7 @@ class AttrDict(dict):
         assert not self._values.has_key(name), \
                "duplicate key %s" % repr(name)
         self._values[name] = value
+
 
     def installto(self,d):
         d.update(self._values)

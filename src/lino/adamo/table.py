@@ -345,19 +345,19 @@ class Table(FieldContainer,SchemaComponent,Describable):
 
 
 class LinkingRow(StoredDataRow):
-    def __init__(self, parent, fromClass, toClass,*args,**kw):
-        Table.__init__(self,parent,*args,**kw)
-        self._fromClass = fromClass
-        self._toClass = toClass 
+##     def __init__(self, parent, fromClass, toClass,*args,**kw):
+##         Table.__init__(self,parent,*args,**kw)
+##         self._fromClass = fromClass
+##         self._toClass = toClass 
         
 
-    def init(self):
+    def initTable(self,table):
         # Table.init(self)
-        self.addPointer('p',self._fromClass)
-        self.addPointer('c',self._toClass)
-        self.setPrimaryKey("p c")
-        del self._fromClass
-        del self._toClass
+        table.addPointer('p',self.fromClass)
+        table.addPointer('c',self.toClass)
+        table.setPrimaryKey("p c")
+        #del self._fromClass
+        #del self._toClass
 
 
 class MemoRow(StoredDataRow):
