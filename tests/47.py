@@ -22,20 +22,23 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.ddl import *
 
-class Foos(Table):
-    def init(self):
-        self.addField('value',INT)
-        self.addField('name',STRING)
-        self.addField('ok',BOOL)
+class Foo(StoredDataRow):
+    tableName="Foos"
+    def initTable(self,table):
+        table.addField('value',INT)
+        table.addField('name',STRING)
+        table.addField('ok',BOOL)
 
 class MySchema(Schema):
-    tables=[Foos]
+    def setupSchema(self):
+        self.addTable(Foo)
+    #tables=[Foo]
 
 class Case(TestCase):
     
     def test01(self):
         sess = MySchema().quickStartup()
-        q=sess.query(Foos)
+        q=sess.query(Foo)
         
         try:
             q.appendRow(value=17,ok="no")

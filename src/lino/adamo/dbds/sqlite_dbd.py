@@ -118,15 +118,11 @@ class Connection(SqlConnection):
             return csr
         except sqlite.DatabaseError,e:
             #print sql
-            raise DatabaseError(repr(sql) + "\n" + str(e))
+            raise DatabaseError('"%s" in sql_exec(%s)' % (e,sql))
 
         
-    def commit(self):
-        #print "commit"
-        if self._dirty:
-            #print "COMMIT", __file__
-            self._dbconn.commit()
-        self._dirty=False
+    def commit_really(self):
+        self._dbconn.commit()
 
     def close(self):
         if self._status == self.CST_CLOSED:

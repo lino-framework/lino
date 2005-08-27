@@ -242,10 +242,12 @@ class Store:
             raise InvalidRequestError("unlock first, then commit!")
 ##         for row in self._lockedRows:
 ##             row.writeToStore()
+        self._connection.commit()
             
     def close(self):
-        if len(self._iterators):
-            print self._iterators
+        for i in self._iterators:
+            print "Forced Cursor.close() for %r" % i
+            i.close()
         self.unlockAll()
         #for ds in self._datasources:
         #    ds.close()
@@ -346,6 +348,7 @@ class Populator(Describable):
             return
         qry=store.query(sess,"*")
         m(qry)
+        store.commit(sess)
     
 
 

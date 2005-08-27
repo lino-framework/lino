@@ -27,59 +27,63 @@ from lino.adamo.datatypes import itod
 
 # 1. Define the database schema
 
-class Products(Table):
-    def init(self):
-        self.addField('name',STRING)
-        self.addField('price',PRICE)
+class Product(StoredDataRow):
+    tableName="Products"
+    def initTable(self,table):
+        table.addField('name',STRING)
+        table.addField('price',PRICE)
 
-class Customers(Table):
-    def init(self):
-        self.addField('name',STRING)
-        self.addField('street',STRING)
-        self.addField('city',STRING)
+class Customer(StoredDataRow):
+    tableName="Customers"
+    def initTable(self,table):
+        table.addField('name',STRING)
+        table.addField('street',STRING)
+        table.addField('city',STRING)
         
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
 
      
-class Orders(Table):
-    def init(self):
-        self.addField('date',DATE)
-        self.addPointer('customer',Customers)
-        self.addField('totalPrice',PRICE)
-        self.addField('isRegistered',BOOL)
+class Order(StoredDataRow):
+    tableName="Orders"
+    def initTable(self,table):
+        table.addField('date',DATE)
+        table.addPointer('customer',Customer)
+        table.addField('totalPrice',PRICE)
+        table.addField('isRegistered',BOOL)
         
-    class Instance(Table.Instance):
-        def register(self):
-            self.lock()
-            totalPrice = 0
-            for line in self.lines:
-                #print line
-                assert line.ordr.id == self.id
-                totalPrice += (line.qty * line.product.price)
-            self.totalPrice = totalPrice
-            self.isRegistered = True
-            self.unlock()
+    def register(self):
+        self.lock()
+        totalPrice = 0
+        for line in self.lines:
+            #print line
+            assert line.ordr.id == self.id
+            totalPrice += (line.qty * line.product.price)
+        self.totalPrice = totalPrice
+        self.isRegistered = True
+        self.unlock()
       
      
-class OrderLines(Table):
-    def init(self):
-        self.addPointer('ordr',Orders,detailName='lines')
-        #self.ordr.setDetail('lines')
-        self.addPointer('product',Products)
-        self.addField('qty',INT)
+class OrderLine(StoredDataRow):
+    tableName="OrderLines"
+    def initTable(self,table):
+        table.addPointer('ordr',Order,detailName='lines')
+        #table.ordr.setDetail('lines')
+        table.addPointer('product',Product)
+        table.addField('qty',INT)
         
-    class Instance(Table.Instance):
-        def validate(self):
-            if self.ordr is None:
-                return "order is mandatory"
-            if self.product is None:
-                return "product is mandatory"
+    def validate(self):
+        if self.ordr is None:
+            return "order is mandatory"
+        if self.product is None:
+            return "product is mandatory"
 
 
 class Pizzeria(Schema):
-    tables=Products, Customers, Orders, OrderLines
+
+    def setupSchema(self):
+        for cl in Product, Customer, Order, OrderLine:
+            self.addTable(cl)
 
 
         
@@ -88,10 +92,10 @@ def populate(sess):
     Create some data and play with it
     """
 
-    CUST = sess.query(Customers)
-    PROD = sess.query(Products)
-    ORDERS = sess.query(Orders)
-    LINES = sess.query(OrderLines)
+    CUST = sess.query(Customer)
+    PROD = sess.query(Product)
+    ORDERS = sess.query(Order)
+    LINES = sess.query(OrderLine)
     
     c1 = CUST.appendRow(name="Henri")
     c2 = CUST.appendRow(name="James")
@@ -117,7 +121,7 @@ def query(sess):
     Create some data and play with it
     """
     
-    ORDERS = sess.query(Orders)
+    ORDERS = sess.query(Order)
 ##  q = ORDERS.query("customer totalPrice")
 ##  for (customer,totalPrice) in q:
 ##      print "%s must pay %d EUR" % (customer.name,totalPrice)
@@ -129,8 +133,6 @@ def main():
     app = Pizzeria() #label="Luc's Pizza Restaurant")
 
     sess = schema.quickStartup()
-    #print sess.ui
-    #raw_input("ok")
     
     populate(sess)
 
@@ -139,6 +141,4 @@ def main():
     sess.shutdown()
     
 if __name__ == "__main__":
-##     from lino.ui import console
-##     console.parse_args()
     main()

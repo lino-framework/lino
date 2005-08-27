@@ -21,7 +21,7 @@ from lino.misc.tsttools import TestCase, main
 #from lino.adamo.datatypes import 
 
 from lino.apps.raceman.raceman import Raceman
-from lino.apps.raceman.races import Races, Participants
+from lino.apps.raceman.races import Race, Participant
 
 class Case(TestCase):
 
@@ -29,8 +29,8 @@ class Case(TestCase):
         app=Raceman()
         sess = app.quickStartup()
 
-        R = sess.query(Races)
-        P = sess.query(Participants)
+        R = sess.query(Race)
+        P = sess.query(Participant)
 
         heute = DATE.parse("2005-01-28")
         jetzt = TIME.parse("17:38:59")

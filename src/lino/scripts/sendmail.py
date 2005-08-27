@@ -202,12 +202,14 @@ Taken from addrlist.txt if not given.
             self.dataDir = "."
 
         (root,ext) = os.path.splitext(filename)
+
         
         ctype, encoding = mimetypes.guess_type(filename)
         if ctype is None:
             sess.warning(
                 "ignored file %s : could not guess mimetype", s)
             return
+        
         maintype, subtype = ctype.split('/', 1)
         if maintype == "image": 
             from email.MIMEImage import MIMEImage
@@ -215,7 +217,7 @@ Taken from addrlist.txt if not given.
             msg = MIMEBase("multipart", "mixed")
             if self.options.subject is None:
                 msg['Subject'] = ("%s (%d/%d)" % (filename,i,
-                                                             self.count_todo))
+                                                  self.count_todo))
             else:
                 msg['Subject'] = self.options.subject
 
@@ -245,8 +247,8 @@ Taken from addrlist.txt if not given.
                 # subtype = ext[1:]
                 img = MIMEImage(fp.read(),subtype,name=filename)
                 img.add_header('Content-Disposition',
-                                    'inline',
-                                    filename=filename)
+                               'inline',
+                               filename=filename)
             except TypeError,e:
                 # Could not guess image MIME subtype
                 raise
@@ -267,6 +269,8 @@ Taken from addrlist.txt if not given.
         #print "Subject: ", msg["Subject"]
         #print "From: ", msg["From"]
 
+        sess.beginLog(root+".log")
+        
         if self.options.recipient is None:
             addrlist = open(opj(self.dataDir,"addrlist.txt"))
 
@@ -278,6 +282,8 @@ Taken from addrlist.txt if not given.
         else:
             # msg["To"] = self.recipient
             self.sendto(sess,msg,self.options.recipient)
+
+        sess.endLog()
                     
 
 

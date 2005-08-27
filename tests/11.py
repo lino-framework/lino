@@ -27,9 +27,9 @@ from lino import adamo #import quickdb, beginQuickSession
 from lino.adamo.datatypes import itod
 from lino.misc.tsttools import TestCase, main
 from lino.apps.pizzeria import pizzeria, services
-from lino.apps.pizzeria.services import Services
-from lino.apps.pizzeria.pizzeria import Customers,\
-     Products, Orders, OrderLines
+from lino.apps.pizzeria.services import Service
+from lino.apps.pizzeria.pizzeria import Customer,\
+     Product, Order, OrderLine
 
 
 class Case(TestCase):
@@ -49,7 +49,7 @@ class Case(TestCase):
 
     def test01(self):
         # testing whether INSERT INTO is correctly done
-        SERV = self.sess.query(Services)
+        SERV = self.sess.query(Service)
         SERV.startDump()
         s1 = SERV.appendRow(name="bring home",price=99)
         sql = SERV.stopDump()
@@ -62,11 +62,11 @@ INSERT INTO Services (
         
     def test02(self):
         #pizzeria2.populate(self.db)
-        SERV = self.sess.query(Services)
-        CUST = self.sess.query(Customers)
-        PROD = self.sess.query(Products)
-        ORDERS = self.sess.query(Orders)
-        LINES = self.sess.query(OrderLines)
+        SERV = self.sess.query(Service)
+        CUST = self.sess.query(Customer)
+        PROD = self.sess.query(Product)
+        ORDERS = self.sess.query(Order)
+        LINES = self.sess.query(OrderLine)
         c = CUST.appendRow(name="Henri")
         p = PROD.appendRow(name="Pizza Margerita",price=599)
         self.assertEqual(c.id,4)
@@ -138,11 +138,11 @@ SELECT id, name, price FROM Products WHERE id = 1;
         
 
     def test03(self):
-        SERV = self.sess.query(Services)
-        CUST = self.sess.query(Customers)
-        PROD = self.sess.query(Products)
-        ORDERS = self.sess.query(Orders)
-        LINES = self.sess.query(OrderLines)
+        SERV = self.sess.query(Service)
+        CUST = self.sess.query(Customer)
+        PROD = self.sess.query(Product)
+        ORDERS = self.sess.query(Order)
+        LINES = self.sess.query(OrderLine)
         q = LINES.query("product.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
@@ -161,11 +161,11 @@ SELECT id, name, price FROM Products WHERE id = 1;
         """)
 
     def test04(self):
-        SERV = self.sess.query(Services)
-        CUST = self.sess.query(Customers)
-        PROD = self.sess.query(Products)
-        ORDERS = self.sess.query(Orders)
-        LINES = self.sess.query(OrderLines)
+        SERV = self.sess.query(Service)
+        CUST = self.sess.query(Customer)
+        PROD = self.sess.query(Product)
+        ORDERS = self.sess.query(Order)
+        LINES = self.sess.query(OrderLine)
         #db = self.db
         pizzeria.populate(self.sess)
         
@@ -205,11 +205,11 @@ SELECT id, name, price FROM Products WHERE id = 1;
         
     def test05(self):
         return
-        SERV = self.sess.query(Services)
-        CUST = self.sess.query(Customers)
-        PROD = self.sess.query(Products)
-        ORDERS = self.sess.query(Orders)
-        LINES = self.sess.query(OrderLines)
+        SERV = self.sess.query(Service)
+        CUST = self.sess.query(Customer)
+        PROD = self.sess.query(Product)
+        ORDERS = self.sess.query(Order)
+        LINES = self.sess.query(OrderLine)
         services.populate(self.sess)
         q = LINES.query("ordr.date ordr.customer.name",
                              product=PROD[1])

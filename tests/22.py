@@ -20,8 +20,8 @@
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Nations
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import Nation
 
 class Case(TestCase):
     "Does the big demo database startup()"
@@ -35,7 +35,7 @@ class Case(TestCase):
 
 
     def test01(self):
-        NATIONS = self.db.query(Nations)
+        NATIONS = self.db.query(Nation)
         self.assertEqual(NATIONS.peek('ee').area,45226)
         self.assertEqual(NATIONS.peek('be').area,30510)
         self.assertEqual(NATIONS.peek('ee').population,1408556)

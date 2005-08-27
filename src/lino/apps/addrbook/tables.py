@@ -202,7 +202,7 @@ class City(StoredDataRow):
 
 TABLES = (Language,
           Nation, City,
-          Organisation, Person,
+          Organisation, Person, User,
           Partner, PartnerType)        
     
 

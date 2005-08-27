@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
 import os
 import types
 
@@ -231,7 +232,8 @@ class Schema(Application):
         l = []
         for t in self._tables:
             #if isinstance(t,toClass):
-            if issubclass(t._instanceClass,toClass):
+            if issubclass(t._instanceClass,toClass) \
+                  or t._instanceClass == toClass:
                 l.append(t)
                 #break
         return l
@@ -299,7 +301,8 @@ class Schema(Application):
         conn = center.connection(filename=filename)
         db.connect(conn)
         if dump:
-            conn.startDump()
+            #conn.startDump(syscon.notice)
+            conn.startDump(sys.stdout)
         return db.startup(**kw) #syscon.getSystemConsole())
     
     

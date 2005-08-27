@@ -32,20 +32,20 @@ from lino.misc.tsttools import TestCase, main
 from lino.adamo import center
 from lino.adamo.database import Database
 #from lino.adamo.dbds.sqlite_dbd import Connection
-from lino.schemas.sprl.sprl import Sprl
-from lino.schemas.sprl.tables import *
-from lino.schemas.sprl import demo
+from lino.apps.ledger.ledger import Ledger
+from lino.apps.ledger.tables import *
+from lino.apps.ledger import demo
 
-sharedTables = (Nations, 
-                PartnerTypes, Currencies,
-                Users) 
+sharedTables = (Nation, 
+                PartnerType, Currency,
+                User) 
 
 class Case(TestCase):
     todo="shared tables with different babelLangs"
 
     def test01(self):
 
-        app = Sprl()
+        app = Ledger()
     
         app.setupSchema()
         
@@ -79,7 +79,7 @@ class Case(TestCase):
         
 
 
-        q = sess1.query(Nations,"id name area",pageLen=10,
+        q = sess1.query(Nation,"id name area",pageLen=10,
                         search="%be%")
         self.assertEqual(q.getLangs(),"de")
         self.assertEqual(q.getDatabase().getLangs(),"en de fr et")

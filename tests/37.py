@@ -18,8 +18,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import *
 
 
 class Case(TestCase):
@@ -33,7 +33,7 @@ class Case(TestCase):
 
 
     def test01(self):
-        NATIONS = self.sess.query(Nations)
+        NATIONS = self.sess.query(Nation)
         
         n = NATIONS.peek('al')
         self.assertEqual(n.name, 'Albania')

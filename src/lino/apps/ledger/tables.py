@@ -40,7 +40,7 @@ class Currency(BabelRow):
 
 
 class Partner(addrtables.Partner):
-    
+    # no tableName because this overrides addrtables.Partners
     def initTable(self,table):
         addrtables.Partner.initTable(self,table)
         table.addPointer('currency',Currency)

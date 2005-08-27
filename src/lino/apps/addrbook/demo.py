@@ -26,6 +26,8 @@ import os
 from lino import adamo
 from lino.adamo.datatypes import itod
 from lino.apps.addrbook.addrbook import AddressBook
+from lino.apps.addrbook import tables
+#, City, Nation
 
 def startup(filename=None, langs=None,
             populate=True,
@@ -35,18 +37,29 @@ def startup(filename=None, langs=None,
     schema = AddressBook(**kw)
     sess=schema.quickStartup(langs=langs, filename=filename)
     if populate:
+        sess.populate(StandardPopulator(big=big,
+                                        label="Standard"))
         if withDemoData:
-            sess.populate(DemoPopulator(big=big,
-                                        label="StandardDemo"))
-        else:
-            sess.populate(Populator(big=big,
-                                    label="Standard"))
+            sess.populate(DemoPopulator(label="StandardDemo"))
+
+##     if populate:
+##         if withDemoData:
+##             sess.populate(DemoPopulator(big=big,
+##                                         label="StandardDemo"))
+##         else:
+##             sess.populate(Populator(big=big,
+##                                     label="Standard"))
 
     return sess
 
 
 
-class Populator(adamo.Populator):
+class StandardPopulator(adamo.Populator):
+    
+    dataRoot=os.path.join(
+        os.path.dirname(__file__),
+        "..","..","..","..","data")
+    
     def __init__(self, big=False,**kw):
         self.big = big
         adamo.Populator.__init__(self,None,**kw)
@@ -59,11 +72,16 @@ class Populator(adamo.Populator):
     
     def populateNations(self,q):
         if self.big:
-            from lino.schemas.sprl.data import nations
-            nations.populate(q)
-            if q.getDatabase().supportsLang("de"):
-                from lino.schemas.sprl.data import nations_de
-                nations_de.populate(q)
+            #q.startDump()
+            q.appendfrom(os.path.join(self.dataRoot,"nations.txt"))
+            #print q.stopDump()
+            #q.query("id population area name").appendfrom(
+            #    os.path.join(self.dataRoot,"nations.txt"))
+            #from lino.data import nations
+            #nations.populate(q)
+            #if q.getDatabase().supportsLang("de"):
+            #    from lino.schemas.sprl.data import nations_de
+            #    nations_de.populate(q)
             
         else:
             q.setBabelLangs('en')
@@ -81,10 +99,16 @@ class Populator(adamo.Populator):
     
     def populateCities(self,q):
         if self.big:
-            from lino.schemas.sprl.data import cities_de
-            cities_de.populate(q)
-            from lino.schemas.sprl.data import cities_be
-            cities_be.populate(q)
+            self.deutschland.cities.appendfrom(
+                os.path.join(self.dataRoot,"cities_de.txt"))
+
+            self.belgique.cities.appendfrom(
+                os.path.join(self.dataRoot,"cities_be.txt"))
+
+            #from lino.schemas.sprl.data import cities_de
+            #cities_de.populate(q)
+            #from lino.schemas.sprl.data import cities_be
+            #cities_be.populate(q)
         else:
             r = self.belgique.cities.query('name inhabitants')
             r.appendRow("Bruxelles",1004239)
@@ -98,11 +122,19 @@ class Populator(adamo.Populator):
             r.appendRow("Charleroi",200983)
             r.appendRow("Verviers",52739)
 
-        self.eupen = q.findone(name="Eupen")
-        self.verviers = q.findone(name="Verviers")
+            q = self.deutschland.cities.query('name') 
+            q.appendRow("Aachen")
+            q.appendRow("Köln")
+            q.appendRow("Berlin")
+            q.appendRow("Bonn")
+            q.appendRow("München")
+            q.appendRow("Eschweiler")
+            q.appendRow("Alfter-Oedekoven")
+    
             
+
         q = q.query('name inhabitants', nation=self.eesti)
-        self.tallinn = q.appendRow("Tallinn",442000)
+        q.appendRow("Tallinn",442000)
 ##         assert tallinn.inhabitants == 442000
 ##         assert tallinn.nation == self.eesti
 ##         assert tallinn.nation.id == "ee"
@@ -120,15 +152,6 @@ class Populator(adamo.Populator):
         q.appendRow("Vigala",1858)
         q.appendRow("Kohtla-Järve",70800)
 
-        q = self.deutschland.cities.query('name') 
-        self.aachen = q.appendRow("Aachen")
-        q.appendRow("Köln")
-        q.appendRow("Berlin")
-        q.appendRow("Bonn")
-        q.appendRow("München")
-        q.appendRow("Eschweiler")
-        q.appendRow("Alfter-Oedekoven")
-    
 
             
     def populatePartnerTypes(self,q):
@@ -143,15 +166,28 @@ class Populator(adamo.Populator):
         
 
 
-class DemoPopulator(Populator):
+class DemoPopulator(adamo.Populator):
     
         
     def populatePartners(self,q):
 
+        cities = q.getSession().query(tables.City)
+        self.eupen = cities.findone(name="Eupen")
+        self.verviers = cities.findone(name="Verviers")
+        self.tallinn = cities.findone(name="Tallinn")
+        self.aachen = cities.findone(name="Aachen")
+
+        #nations = q.getSession().query(tables.Nation)
+        #self.belgique = nations.peek('be')
+        #self.eesti = nations.peek('ee')
+        #self.deutschland = nations.peek('de')
+
+        
+            
         qr = q.query(
             'name firstName title email phone city')
 
-        self.luc = qr.appendRow(
+        luc = qr.appendRow(
             'Saffre','Luc','Herrn',
             'luc.saffre@gmx.net', '6376783', self.tallinn)
 
@@ -159,9 +195,9 @@ class DemoPopulator(Populator):
         qr.appendRow('Arens'   ,'Andreas'  , "Herrn",
                     'andreas@arens.be', '087.55.66.77',
                     self.eupen)
-        self.anton = qr.appendRow(
+        anton = qr.appendRow(
             'Ausdemwald','Anton'      , "Herrn",
-            'ausdem@hotmail.com', None, self.aachen)
+            'ausdem@kotmail.com', None, self.aachen)
         qr.appendRow('Bodard'      ,'Henri'    , "Dr.",
                     None, None,self.verviers)
         qr.appendRow('Eierschal' ,'Emil'   , "Herrn",
@@ -178,6 +214,9 @@ class DemoPopulator(Populator):
         rumma = qr.appendRow(
             'Rumma & Ko OÜ','10115', 'Tartu mnt.',71,'5',
             self.tallinn)
+        assert rumma.name == "Rumma & Ko OÜ"
+        assert rumma.nation.id == "ee", "%r!='ee'" % rumma.nation
+
         girf = qr.appendRow(
             'Girf OÜ','10621','Laki',16, None, self.tallinn)
         pac = qr.appendRow(
@@ -185,10 +224,6 @@ class DemoPopulator(Populator):
         qr.appendRow(
             'Eesti Telefon','13415','Sõpruse pst.',193, None,
             self.tallinn)
-
-        assert rumma.name == "Rumma & Ko OÜ"
-        assert rumma.nation == self.eesti, \
-               "%s != %s" % (repr(rumma.nation), repr(self.eesti))
 
             
             

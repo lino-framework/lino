@@ -232,7 +232,7 @@ class SynchronizerTask(Task):
             target_sz = target_st.st_size
             target_mt = target_st.st_mtime
         except OSError,e:
-            self.error("os.stat() failed: ",e)
+            self.error("os.stat() failed: %s",e)
             return False
 
         doit = False

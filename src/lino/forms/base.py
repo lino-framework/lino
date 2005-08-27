@@ -778,35 +778,10 @@ class AbstractToolkit:
     #progresserFactory=Progresser
     
     def __init__(self):
-        self._logfile = None
         self._sessions = []
         self._currentProgresser=None
         
-    def configure(self, logfile=None):
-        if logfile is not None:
-            if self._logfile is not None:
-                self._logfile.close()
-            self._logfile = open(logfile,"a")
-        
-    def writelog(self,msg):
-        if self._logfile:
-            #t = strftime("%a %Y-%m-%d %H:%M:%S")
-            t = time.strftime("%H:%M:%S")
-            self._logfile.write(t+" "+msg+"\n")
-            self._logfile.flush()
-
             
-    def setupOptionParser(self,p):
-        def set_logfile(option, opt_str, value, parser,**kw):
-            self.configure(logfile=value)
-        p.add_option("-l", "--logfile",
-                     help="log a report to FILE",
-                     type="string",
-                     dest="logFile",
-                     action="callback",
-                     callback=set_logfile)
-
-        
     def shutdown(self):
         #self.verbose("Done after %f seconds.",
         #             time.time() - self._started)
@@ -817,9 +792,11 @@ class AbstractToolkit:
 ##         else:
 ##             syscon.verbose( "+".join([str(x) for x in os.times()])
 ##                           + " seconds used")
-        if self._logfile:
-            self._logfile.close()
+        for sess in self._sessions:
+            sess.close()
 
+    def setupOptionParser(self,p):
+        pass
 
         
     def critical(self,sess,msg,*args,**kw):

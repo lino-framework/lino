@@ -29,7 +29,7 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.datatypes import itod
 from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Languages,News
+from lino.apps.pinboard.tables import Language,NewsItem
 
 class Case(TestCase):
     def setUp(self):
@@ -41,8 +41,8 @@ class Case(TestCase):
         
     def test01(self):
         
-        NEWS = self.db.query(News)
-        LANGS = self.db.query(Languages)
+        NEWS = self.db.query(NewsItem)
+        LANGS = self.db.query(Language)
         
         n = NEWS.appendRow(date=itod(20040428),title="test")
         self.assertEqual(str(n.date),'2004-04-28')

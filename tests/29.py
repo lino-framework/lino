@@ -26,8 +26,8 @@
 """
 
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import *
 from lino.adamo.exceptions import DataVeto, InvalidRequestError
 
 class Case(TestCase):
@@ -42,7 +42,7 @@ class Case(TestCase):
 
 
     def test01(self):
-        NATIONS = self.sess.query(Nations)
+        NATIONS = self.sess.query(Nation)
         try:
             NATIONS.appendRow(id="foo",name="Fooland")
             self.fail("expected DataVeto")

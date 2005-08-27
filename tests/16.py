@@ -22,7 +22,7 @@
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Languages
+from lino.apps.pinboard.tables import Language
 
 class Case(TestCase):
     def setUp(self):
@@ -33,7 +33,7 @@ class Case(TestCase):
         self.db.shutdown()
         
     def test01(self):
-        LANGS = self.db.query(Languages)
+        LANGS = self.db.query(Language)
         #LANGS.setBabelLangs('en')
         de = LANGS.peek('de')
         #print LANGS._table.getAttrList()
@@ -50,7 +50,7 @@ class Case(TestCase):
         self.assertEqual(et.vetoDelete(),None)
         
     def test02(self):
-        LANGS = self.db.query(Languages)
+        LANGS = self.db.query(Language)
         #LANGS.setBabelLangs('en')
         xx = LANGS.peek('xx')
         self.assertEqual(xx,None)

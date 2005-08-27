@@ -1,5 +1,6 @@
 # coding: latin1
-## Copyright 2003-2005 Luc Saffre
+
+## Copyright 2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,32 +18,50 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.misc.tsttools import TestCase, main
-#from lino.ui import console
+import pysqlite2.dbapi2 as sqlite
 
+from unittest import TestCase, main
 
 class Case(TestCase):
-    skip=True
-    # now covered by docs/examples/reports1.py
-
+    
     def test01(self):
-        from lino.examples.reports1 import MyReport
-        MyReport(self.ui).main()
-        #console.startDump()
-        #reports1.main()
-        s = self.getConsoleOutput()
-        #print s
-        self.assertEqual(s,"""\
-key         |value                                   
-------------+----------------------------------------
-size        |12                                      
-name        |'Ausdemwald'                            
-firstName   |'Norbert'                               
-description |'Norbert ist unser treuer Mitarbeiter im
-            |Vurt. Er wohnt in der Fremereygasse in  
-            |Eupen.'                                 
-""")
+
+        self.assertEqual(sqlite.version,'2.0.3')
+
+        conn = sqlite.connect(':memory:')
+        csr = conn.cursor()
+
+        csr.execute("""CREATE TABLE Partners (
+        id BIGINT,
+        name VARCHAR(50),
+        PRIMARY KEY (id)
+        );""")
+        
+        #conn.commit()
+        
+        csr.execute("""INSERT INTO Partners (id, name)
+        VALUES ( 2, 'Andreas Arens')""")
+
+        #conn.commit()
+        
+##         csr.execute("""SELECT id, name FROM Partners;""")
+##         self.assertEqual(len(csr.fetchall()),1)
+
+        csr.execute("""
+        UPDATE Partners SET name = 'Arens, Andreas'
+        WHERE id = 2; """)
+        
+        csr.close()
+        
+        conn.commit()
+
+        conn.close()
+        
 
 if __name__ == '__main__':
     main()
+
+
+
+
 

@@ -26,10 +26,8 @@
 
 from lino.misc.tsttools import main, TestCase
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import *
-from lino.adamo import DataVeto, InvalidRequestError
-#from lino.reports import DataReport
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import *
 
 class Case(TestCase):
 

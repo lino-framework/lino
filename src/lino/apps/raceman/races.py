@@ -20,67 +20,68 @@
 
 from datetime import datetime
 
-from lino.adamo import *
-from lino.schemas.sprl.babel import Languages
-from lino.schemas.sprl.addrbook import Persons, SEX
+from lino.adamo.ddl import *
+#from lino.schemas.sprl.babel import Languages
+from lino.apps.addrbook.tables import Language, Person, SEX
 
 NAME = STRING(width=30)
 DOSSARD = STRING(width=4)
 
 
-class Events(Table):
-    def init(self):
-        self.addField('date',DATE)
-        self.addField('name',NAME)
-        self.addView( "std","date name races")
+class Event(StoredDataRow):
+    tableName="Events"
+    def initTable(self,table):
+        table.addField('date',DATE)
+        table.addField('name',NAME)
+        table.addView( "std","date name races")
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
         
-        def printRow(self,doc):
-            #print self.races
-            if len(self.races) == 0:
-                doc.p("no races")
-                return
-            columnNames = "place duration person.name cat dossard"
-            columnWidths = "4 20 3 8 4"
-            rpt = doc.report()
-            q = self.races[0].participants.query(columnNames)
-            q.setupReport( rpt, columnWidths=columnWidths)
-            rpt.beginReport()
-            rpt.table.h(1,self.__str__())
-            
-            for race in self.races:
-                rpt.table.h(2,race.__str__())
-                q = race.participants.query( columnNames,
-                                             orderBy="place")
-                for prt in q:
-                    rpt.processRow(prt)
-                
-            rpt.endReport()
+    def printRow(self,doc):
+        #print self.races
+        if len(self.races) == 0:
+            doc.p("no races")
+            return
+        columnNames = "place duration person.name cat dossard"
+        columnWidths = "4 20 3 8 4"
+        rpt = doc.report()
+        q = self.races[0].participants.query(columnNames)
+        q.setupReport( rpt, columnWidths=columnWidths)
+        rpt.beginReport()
+        rpt.table.h(1,self.__str__())
+
+        for race in self.races:
+            rpt.table.h(2,race.__str__())
+            q = race.participants.query( columnNames,
+                                         orderBy="place")
+            for prt in q:
+                rpt.processRow(prt)
+
+        rpt.endReport()
 
 
-class Races(Table):
-    def init(self):
-        self.addField('id',ROWID) #STRING(width=6))
-        self.addField('name1',NAME)
-        self.addField('name2',NAME)
-        self.addField('date',DATE)
-        self.addField('status',STRING(width=1))
-        self.addField('tpl',STRING(width=6))
-        self.addPointer('type',RaceTypes)
-        self.addField('startTime',TIME)
-        self.addField('known',INT)
-        self.addField('unknown',INT)
-        self.addField('invalid',INT)
-        self.addField('missing',INT)
-        self.addPointer('event',Events).setDetail("races")
-        self.addView( "std",
-                      "date event name1 status startTime "
-                      "arrivals participants "
-                      "known unknown invalid missing "
-                      "tpl type name2 id")
+class Race(StoredDataRow):
+    tableName="Races"
+    def initTable(self,table):
+        table.addField('id',ROWID) #STRING(width=6))
+        table.addField('name1',NAME)
+        table.addField('name2',NAME)
+        table.addField('date',DATE)
+        table.addField('status',STRING(width=1))
+        table.addField('tpl',STRING(width=6))
+        table.addPointer('type',RaceTypes)
+        table.addField('startTime',TIME)
+        table.addField('known',INT)
+        table.addField('unknown',INT)
+        table.addField('invalid',INT)
+        table.addField('missing',INT)
+        table.addPointer('event',Events).setDetail("races")
+        table.addView( "std",
+                       "date event name1 status startTime "
+                       "arrivals participants "
+                       "known unknown invalid missing "
+                       "tpl type name2 id")
 
     def setupMenu(self,nav):
         frm = nav.getForm()
@@ -98,298 +99,294 @@ class Races(Table):
             nav.withCurrentRow,self.Instance.computeResults,frm)
 
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name1
+    def __str__(self):
+        return self.name1
 
-        def showArrivalEntry(self,ui):
-            #self.lock()
-            frm = ui.form(
-                label="Arrivals for "+str(self),
-                doc="""\
-    Ankunftszeiten an der Ziellinie erfassen.
-    Jedesmal wenn einer ankommt, ENTER drücken.
-        """)
+    def showArrivalEntry(self,ui):
+        #self.lock()
+        frm = ui.form(
+            label="Arrivals for "+str(self),
+            doc="""\
+Ankunftszeiten an der Ziellinie erfassen.
+Jedesmal wenn einer ankommt, ENTER drücken.
+    """)
 
-            frm.addEntry("dossard",STRING,
-                         label="Dossard",
-                         value="*",
-                         doc="""Hier die Dossardnummer des ankommenden Läufers eingeben, oder '*' wenn sie später erfasst werden soll.""")
-
-
-##             def startNow():
-##                 self.startTime = datetime.datetime.now().time()
-##                 frm.message("started at " + str(self.startTime))
-##                 #parent.buttons.arrive.setFocus()
-##                 frm.entries.dossard.setFocus()
-
-            def arriveNow():
-                if self.startTime is None:
-                    frm.buttons.start.setFocus()
-                    raise InvalidRequestError(
-                        "cannot arrive before start")
-                now = datetime.now()
-                #assert now.date() == self.date,\
-                #       "%s != %s" % (repr(now.date()),repr(self.date))
-                #duration = now - datetime.datetime.combine(
-                #    now.date(), self.startTime)
-                a = self.arrivals.appendRow(
-                    dossard=frm.entries.dossard.getValue(),
-                    time=now.time())
-                frm.status("%s arrived at %s" % (a.dossard,a.time))
-                frm.entries.dossard.setValue('*')
-                frm.entries.dossard.setFocus()
-                
+        frm.addEntry("dossard",STRING,
+                     label="Dossard",
+                     value="*",
+                     doc="""Hier die Dossardnummer des
+                     ankommenden Läufers eingeben,
+                     oder '*' wenn sie später
+                     erfasst werden soll.""")
 
 
-            #bbox = frm.addHPanel()
-            bbox = frm
-##             bbox.addButton(name="start",
-##                           label="&Start",
-##                           action=startNow)
-            bbox.addButton(name="arrive",
-                          label="&Arrive",
-                          action=arriveNow).setDefault()
-            #bbox.addButton("write",
-            #               label="&Write",
-            #               action=self.writedata)
-            bbox.addButton("exit",label="&Exit",action=frm.close)
 
-    ##         fileMenu  = frm.addMenu("&File")
-    ##         fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")
-    ##         fileMenu.addButton(frm.buttons.exit,accel="Ctrl-Q")
+        def arriveNow():
+            if self.startTime is None:
+                frm.buttons.start.setFocus()
+                raise InvalidRequestError(
+                    "cannot arrive before start")
+            now = datetime.now()
+            #assert now.date() == self.date,\
+            #       "%s != %s" % (repr(now.date()),repr(self.date))
+            #duration = now - datetime.datetime.combine(
+            #    now.date(), self.startTime)
+            a = self.arrivals.appendRow(
+                dossard=frm.entries.dossard.getValue(),
+                time=now.time())
+            frm.status("%s arrived at %s" % (a.dossard,a.time))
+            frm.entries.dossard.setValue('*')
+            frm.entries.dossard.setFocus()
 
-    ##         fileMenu  = frm.addMenu("&Edit")
-    ##         fileMenu.addButton(frm.buttons.start)
-    ##         fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
-            #self.frm = frm
-            frm.show()
-            #frm.showModal()
-            #self.unlock()
 
-        def computeResults(self,ui):
-            ui.status("go")
-            self.lock()
-            #    return
-            self.unknown = 0
-            self.known = 0
-            self.invalid = 0
-            self.missing = 0
-            ui.status("scanning %d arrivals" % len(self.arrivals))
-            for a in self.arrivals:
-                if a.dossard == '*':
-                    self.unknown += 1
+
+        #bbox = frm.addHPanel()
+        bbox = frm
+        bbox.addButton(name="arrive",
+                      label="&Arrive",
+                      action=arriveNow).setDefault()
+        #bbox.addButton("write",
+        #               label="&Write",
+        #               action=self.writedata)
+        bbox.addButton("exit",label="&Exit",action=frm.close)
+
+##         fileMenu  = frm.addMenu("&File")
+##         fileMenu.addButton(frm.buttons.write,accel="Ctrl-S")
+##         fileMenu.addButton(frm.buttons.exit,accel="Ctrl-Q")
+
+##         fileMenu  = frm.addMenu("&Edit")
+##         fileMenu.addButton(frm.buttons.start)
+##         fileMenu.addButton(frm.buttons.arrive,accel="Ctrl-A")
+        #self.frm = frm
+        frm.show()
+        #frm.showModal()
+        #self.unlock()
+
+    def computeResults(self,ui):
+        ui.status("go")
+        self.lock()
+        #    return
+        self.unknown = 0
+        self.known = 0
+        self.invalid = 0
+        self.missing = 0
+        ui.status("scanning %d arrivals" % len(self.arrivals))
+        for a in self.arrivals:
+            if a.dossard == '*':
+                self.unknown += 1
+            else:
+                p = self.participants.peek(self,a.dossard)
+                if p is None:
+                    self.invalid += 1
+                elif p.lock():
+                    p.duration = a.time - datetime.combine(
+                        self.date, self.startTime)
+                    p.unlock()
+                    self.known += 1
                 else:
-                    p = self.participants.peek(self,a.dossard)
-                    if p is None:
-                        self.invalid += 1
-                    elif p.lock():
-                        p.duration = a.time - datetime.combine(
-                            self.date, self.startTime)
-                        p.unlock()
-                        self.known += 1
-                    else:
-                        raise RowLockFailed
+                    raise RowLockFailed
 
-##             ui.status(
-##                 "%d recognized, %d unknown and %d invalid arrivals"\
-##                 % (self.known, self.unknown, invalid))
-            ui.status("scanning %d participants" % \
-                      len(self.participants))
-            place = 0
-            for p in self.participants.query(
-                orderBy='duration'):
-                if p.duration is None:
-                    self.missing  += 1
+        #ui.status(
+        #    "%d recognized, %d unknown and %d invalid arrivals"\
+        #    % (self.known, self.unknown, invalid))
+        ui.status("scanning %d participants" % \
+                  len(self.participants))
+        place = 0
+        for p in self.participants.query(
+            orderBy='duration'):
+            if p.duration is None:
+                self.missing  += 1
+            else:
+                place += 1
+                if p.lock():
+                    print p, place
+                    p.place = place
+                    p.unlock()
                 else:
+                    raise RowLockFailed
+
+        ui.status("scanning %d participants" % \
+                  len(self.participants))
+        place = 0
+        cat = None
+        for p in self.participants.query(
+            orderBy='cat duration'):
+            if p.duration is not None:
+                if cat == p.cat:
                     place += 1
-                    if p.lock():
-                        print p, place
-                        p.place = place
-                        p.unlock()
-                    else:
-                        raise RowLockFailed
-                
-            ui.status("scanning %d participants" % \
-                      len(self.participants))
-            place = 0
-            cat = None
-            for p in self.participants.query(
-                orderBy='cat duration'):
-                if p.duration is not None:
-                    if cat == p.cat:
-                        place += 1
-                    else:
-                        place = 1
-                        cat = p.cat
-                    if p.lock():
-                        p.place = place
-                        p.unlock()
-                    else:
-                        raise RowLockFailed
-                
-            self.unlock()
-                
+                else:
+                    place = 1
+                    cat = p.cat
+                if p.lock():
+                    p.place = place
+                    p.unlock()
+                else:
+                    raise RowLockFailed
 
-        def printRow(self,prn):
-            sess = self.getSession()
-            q = self.participants.query(
-                "person.name cat time dossard",
-                orderBy="person.name")
-            q.executeReport(prn.report(),
-                            label="First report",
-                            columnWidths="20 3 8 4")
+        self.unlock()
 
-            q = sess.query(Participants,"time person.name cat dossard",
-                           orderBy="time",
-                           race=self)
-            q.executeReport(prn.report(),
-                            label="Another report",
-                            columnWidths="8 20 3 4")
 
-            self.ralGroupList(prn,
-                              xcKey="club",
-                              nGroupSize=3)
-            self.ralGroupList(prn, xcKey="club",
-                              nGroupSize=5,
-                              sex="M")
-            self.ralGroupList(prn,
-                              xcKey="club",
-                              nGroupSize=5,
-                              sex="F")
+    def printRow(self,prn):
+        sess = self.getSession()
+        q = self.participants.query(
+            "person.name cat time dossard",
+            orderBy="person.name")
+        q.executeReport(prn.report(),
+                        label="First report",
+                        columnWidths="20 3 8 4")
 
-        def ralGroupList(self,prn,
-                         xcKey="club",
-                         xnValue="place",
-                         nGroupSize=3,
-                         sex=None,
-                         xcName=None,
-                         maxGroups=10):
-            class Group:
-                def __init__(self,id):
-                    self.id = id
-                    self.values = []
-                    self.sum = 0
-                    self.names = []
+        q = sess.query(Participants,"time person.name cat dossard",
+                       orderBy="time",
+                       race=self)
+        q.executeReport(prn.report(),
+                        label="Another report",
+                        columnWidths="8 20 3 4")
 
-            groups = []
+        self.ralGroupList(prn,
+                          xcKey="club",
+                          nGroupSize=3)
+        self.ralGroupList(prn, xcKey="club",
+                          nGroupSize=5,
+                          sex="M")
+        self.ralGroupList(prn,
+                          xcKey="club",
+                          nGroupSize=5,
+                          sex="F")
 
-            def collectPos(groups,key):
-                for g in groups:
-                    if g.id == key:
-                        if len(g.values) < nGroupSize:
-                            return g
-                g = Group(key)
-                groups.append(g)
-                return g
+    def ralGroupList(self,prn,
+                     xcKey="club",
+                     xnValue="place",
+                     nGroupSize=3,
+                     sex=None,
+                     xcName=None,
+                     maxGroups=10):
+        class Group:
+            def __init__(self,id):
+                self.id = id
+                self.values = []
+                self.sum = 0
+                self.names = []
 
-            for pos in self.participants_by_race.query( \
-                orderBy="duration"):
-                if pos.duration != None:
-                    if sex is None or pos.person.sex == sex:
-                        key = getattr(pos,xcKey)
-                        if key is not None:
-                            v = getattr(pos,xnValue)
-                            g = collectPos(groups,key)
-                            g.values.append(v)
-                            g.sum += v
-                            if xcName is None:
-                                g.names.append(str(v))
-                            else:
-                                g.names.append(xcName(pos))
+        groups = []
 
-            groups = filter(lambda g: len(g.values) == nGroupSize,
-                            groups)
-            groups.sort(lambda a,b: a.sum - b.sum)
+        def collectPos(groups,key):
+            for g in groups:
+                if g.id == key:
+                    if len(g.values) < nGroupSize:
+                        return g
+            g = Group(key)
+            groups.append(g)
+            return g
 
-            rpt = prn.report(label="inter %s %s by %d" % (xcKey,
-                                                          sex,
-                                                          nGroupSize))
-            rpt.addColumn(meth=lambda g: str(g.id),
-                          label=xcKey,
-                          width=20)
-            rpt.addColumn(meth=lambda g: str(g.sum),
-                          label=xnValue,
-                          width=5)
-            rpt.addColumn(
-                meth=lambda g: " + ".join(g.names)+" = " +str(g.sum),
-                label="values",
-                width=40)
-            rpt.execute(groups[:maxGroups])
+        for pos in self.participants_by_race.query( \
+            orderBy="duration"):
+            if pos.duration != None:
+                if sex is None or pos.person.sex == sex:
+                    key = getattr(pos,xcKey)
+                    if key is not None:
+                        v = getattr(pos,xnValue)
+                        g = collectPos(groups,key)
+                        g.values.append(v)
+                        g.sum += v
+                        if xcName is None:
+                            g.names.append(str(v))
+                        else:
+                            g.names.append(xcName(pos))
 
-            
+        groups = filter(lambda g: len(g.values) == nGroupSize,
+                        groups)
+        groups.sort(lambda a,b: a.sum - b.sum)
+
+        rpt = prn.report(label="inter %s %s by %d" % (xcKey,
+                                                      sex,
+                                                      nGroupSize))
+        rpt.addColumn(meth=lambda g: str(g.id),
+                      label=xcKey,
+                      width=20)
+        rpt.addColumn(meth=lambda g: str(g.sum),
+                      label=xnValue,
+                      width=5)
+        rpt.addColumn(
+            meth=lambda g: " + ".join(g.names)+" = " +str(g.sum),
+            label="values",
+            width=40)
+        rpt.execute(groups[:maxGroups])
+
+
 
 
         
         
-class RaceTypes(Table):
-    def init(self):
-        self.addField('id',STRING(width=5))
-        self.addField('name',NAME)
+class RaceType(StoredDataRow):
+    tableName="RaceTypes"
+    def initTable(self,table):
+        table.addField('id',STRING(width=5))
+        table.addField('name',NAME)
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
         
-class Clubs(Table):
-    def init(self):
-        self.addField('id',STRING(width=5))
-        self.addField('name',NAME)
+class Club(StoredDataRow):
+    tableName="Clubs"
+    def initTable(self,table):
+        table.addField('id',STRING(width=5))
+        table.addField('name',NAME)
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.name
+    def __str__(self):
+        return self.name
         
-class Categories(Table):
-    def init(self):
-        self.addPointer('type',RaceTypes)
-        self.addField('id',STRING(width=3))
-        self.addField('seq',ROWID)
-        self.addField('name',STRING(width=30))
-        self.addField('sex',SEX)
-        self.addField('ageLimit',INT)
+class Category(StoredDataRow):
+    tableName="Categories"
+    def initTable(self,table):
+        table.addPointer('type',RaceType)
+        table.addField('id',STRING(width=3))
+        table.addField('seq',ROWID)
+        table.addField('name',STRING(width=30))
+        table.addField('sex',SEX)
+        table.addField('ageLimit',INT)
         
-        self.setPrimaryKey('type id')
+        table.setPrimaryKey('type id')
 
-    class Instance(Table.Instance):
-        def __str__(self):
-            return self.id + " ("+self.name+")"
+    def __str__(self):
+        return self.id + " ("+self.name+")"
         
-class Participants(Table):
-    def init(self):
-        self.setPrimaryKey("race dossard")
+class Participant(StoredDataRow):
+    tableName="Participants"
+    def initTable(self,table):
+        table.setPrimaryKey("race dossard")
         
-        self.addPointer('race',Races).setDetail('participants')
-        self.addField('dossard',DOSSARD)
-        self.addPointer('person',Persons)
-        self.addPointer('club',Clubs)
-        self.addField('duration',DURATION)
-        self.addPointer('cat',Categories)
-        self.addField('payment',STRING(width=1))
-        self.addField('place',INT)
-        self.addField('catPlace',INT)
+        table.addPointer('race',Race).setDetail('participants')
+        table.addField('dossard',DOSSARD)
+        table.addPointer('person',Person)
+        table.addPointer('club',Club)
+        table.addField('duration',DURATION)
+        table.addPointer('cat',Category)
+        table.addField('payment',STRING(width=1))
+        table.addField('place',INT)
+        table.addField('catPlace',INT)
         
 
-class Arrivals(Table):
-    def init(self):
-        self.addPointer('race',Races).setDetail('arrivals')
-        self.addField('dossard',DOSSARD)
-        self.addField('time',TIME)
-        #self.addField('duration',DURATION)
-        self.addField('ok',BOOL)
+class Arrival(StoredDataRow):
+    tableName="Arrivals"
+    def initTable(self,table):
+        table.addPointer('race',Race).setDetail('arrivals')
+        table.addField('dossard',DOSSARD)
+        table.addField('time',TIME)
+        #table.addField('duration',DURATION)
+        table.addField('ok',BOOL)
         
 
 
 # order of tables is important: tables will be populated in this order
 TABLES = (
-    Events,
-    Clubs,
-    Persons,
-    RaceTypes,
-    Categories,
-    Races,
-    Participants,
-    Arrivals,
+    Event,
+    Club,
+    Person,
+    RaceType,
+    Category,
+    Race,
+    Participant,
+    Arrival,
     )
 
 

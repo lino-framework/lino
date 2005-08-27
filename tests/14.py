@@ -24,7 +24,7 @@ from lino.misc.tsttools import TestCase, main
 from lino.adamo.datatypes import itod
 
 from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Events
+from lino.apps.pinboard.tables import Event
 
 class Case(TestCase):
     def setUp(self):
@@ -35,7 +35,7 @@ class Case(TestCase):
         self.db.shutdown()
         
     def test01(self):
-        EVENTS = self.db.query(Events)
+        EVENTS = self.db.query(Event)
         d = itod(20040413)
         for i in range(100):
             EVENTS.appendRow(date=d,

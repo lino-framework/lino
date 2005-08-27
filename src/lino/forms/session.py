@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import time
 from lino.forms.base import AbstractToolkit
 
 class BaseSession:
@@ -24,7 +25,45 @@ class BaseSession:
         self.statusMessage=None
         self._ignoreExceptions = []
         self.setToolkit(toolkit)
+        self._logfile = None
+        self._logfile_stack = []
         
+    def configure(self, logfile=None):
+        if logfile is not None:
+            if self._logfile is not None:
+                self._logfile.close()
+            self._logfile = open(logfile,"a")
+
+    def beginLog(self,filename):
+        self._logfile_stack.append(self._logfile)
+        self._logfile = open(filename,"a")
+
+    def endLog(self):
+        assert len(self._logfile_stack) > 0
+        if self._logfile is not None:
+            self._logfile.close()
+        self._logfile = self._logfile_stack.pop()
+            
+    #def writelog(self,msg):
+    def logmessage(self,msg):
+        if self._logfile:
+            #t = strftime("%a %Y-%m-%d %H:%M:%S")
+            t = time.strftime("%H:%M:%S")
+            self._logfile.write(t+" "+msg+"\n")
+            self._logfile.flush()
+
+        
+    def setupOptionParser(self,p):
+        self.toolkit.setupOptionParser(p)
+        def set_logfile(option, opt_str, value, parser,**kw):
+            self.configure(logfile=value)
+        p.add_option("-l", "--logfile",
+                     help="log a report to FILE",
+                     type="string",
+                     dest="logFile",
+                     action="callback",
+                     callback=set_logfile)
+
         
     def setToolkit(self,toolkit):
         #assert toolkit is not None
@@ -36,8 +75,9 @@ class BaseSession:
         #       toolkit.__class__.__name__
         
     def close(self):
-        #self.toolkit.closeSession(self)
-        pass
+        assert len(self._logfile_stack) == 0
+        if self._logfile:
+            self._logfile.close()
         
 ##     def open(self):
 ##         self.toolkit.openSession(self)

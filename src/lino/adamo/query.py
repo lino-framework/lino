@@ -18,6 +18,7 @@
 
 
 import types
+import codecs
 
 from lino.adamo.exceptions import DataVeto, \
      NoSuchField, InvalidRequestError
@@ -32,32 +33,6 @@ from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField
 #MS_COLUMN=1
 #MS_MASTER=1
 
-
-class Datasource:
-    # abstract base for Query and Report
-    def __xml__(self,wr):
-        raise NotImplementedError
-    
-    def setupMenu(self,navigator):
-        raise NotImplementedError
-    
-    def __len__(self):
-        raise NotImplementedError
-
-    def __getitem__(self,i):
-        raise NotImplementedError
-
-    def __iter__(self):
-        raise NotImplementedError
-
-    def canWrite(self):
-        return False
-    
-    def canSort(self):
-        return False
-
-    def getVisibleColumns(self):
-        raise NotImplementedError
 
 
 class QueryColumn:
@@ -155,7 +130,7 @@ class QueryColumn:
         return row.getFieldValue(self.rowAttr.name)
 
 
-    def atoms2row(self,atomicRow,row):
+    def col_atoms2row(self,atomicRow,row):
         if self.join is None:
             self.rowAttr.atoms2row(atomicRow,self._atoms,row)
         else:
@@ -259,7 +234,7 @@ class BabelFieldColumn(FieldColumn):
     def atomize(self,value,ctx):
         # value is a sequence with all langs of db
         dblangs = ctx.getBabelLangs()
-        values = [None] * len(dblangs)
+        atomicValues = [None] * len(dblangs)
         if value is not None:
             assert issequence(value), \
                    "%s is not a sequence" % repr(value)
@@ -268,9 +243,9 @@ class BabelFieldColumn(FieldColumn):
                    (len(dblangs), repr(value))
             i = 0
             for lang in dblangs:
-                values[lang.index] = value[i]
+                atomicValues[lang.index] = value[i]
                 i += 1
-        return values
+        return atomicValues
         
         
     def row2atoms(self,row,atomicRow):
@@ -469,10 +444,38 @@ class DetailColumn(QueryColumn):
 
 
 
+class Datasource:
+    # abstract base for Query and Report
+    def __xml__(self,wr):
+        raise NotImplementedError
+    
+    def setupMenu(self,navigator):
+        raise NotImplementedError
+    
+    def __len__(self):
+        raise NotImplementedError
+
+    def __getitem__(self,i):
+        raise NotImplementedError
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    def canWrite(self):
+        return False
+    
+    def canSort(self):
+        return False
+
+    def getVisibleColumns(self):
+        raise NotImplementedError
+
+
+
+
+
 
 class BaseColumnList(Datasource): 
-    
-    #ANY_VALUE = types.NoneType
     
     columnClasses=( PointerColumn,
                     BabelFieldColumn,
@@ -481,7 +484,7 @@ class BaseColumnList(Datasource):
     
     
     def __init__(self,_parent,columnNames):
-        #if _parent is not None:
+        self.rowcount = None
         if _parent is not None and columnNames is None:
             if _parent.getContext() == self.getContext():
                 self._frozen=True
@@ -514,14 +517,6 @@ class BaseColumnList(Datasource):
 
                 
 
-    def getContext(self):
-        # a context is either a session or a database
-        raise NotImplementedError
-    
-    def getLeadTable(self):
-        # the leadTable 
-        raise NotImplementedError
-
     def setVisibleColumns(self,columnNames):
         assert type(columnNames) in (str,unicode) #is types.StringType
         l = []
@@ -537,12 +532,6 @@ class BaseColumnList(Datasource):
         self.visibleColumns = tuple(l)
             
 
-    def getName(self):
-        return self.name
-
-
-##     def mustSetup(self):
-##         return self._atoms is None
 
     def provideColumn(self,name):#,isVisible=False):
         col = self.findColumn(name)
@@ -582,28 +571,19 @@ class BaseColumnList(Datasource):
                 "Cannot append columns to frozen %r" % self)
         if rowAttr is None:
             rowAttr=self.getLeadTable().getRowAttr(name)
-        #    visible=True
-        #else:
-        #    visible=False
         for ccl in self.columnClasses:
             if isinstance(rowAttr,ccl.fieldClass):
                 col=ccl(self,len(self._columns),
                         name, rowAttr, join,**kw)
                 self._columns.append(col)
                 col.setupColAtoms(self.getDatabase())
-                #if visible:
-                #    self.visibleColumns.append(col)
                 return col
-##         print "%s ignores addColumn for %r" % (
-##             self.__class__.__name__,
-##             rowAttr)
 
             
     def getColumns(self,columnNames=None):
         if columnNames is None:
             return self._columns
         
-        # raise "visibleColumns moved to Report"
         l = []
         for name in columnNames.split():
             col = self.findColumn(name)
@@ -618,17 +598,31 @@ class BaseColumnList(Datasource):
         return l
 
     
+    def getContext(self):
+        # a context is either a session or a database
+        raise NotImplementedError
+    def getLeadTable(self):
+        # the leadTable 
+        raise NotImplementedError
+    def getName(self):
+        return self.name
     def getAtomicNames(self):
-        #assert self.isSetup()
-        #? self.initQuery()
         return " ".join([a.name for a in self.getAtoms()])
+    def getJoinList(self):
+        return " ".join([j.name for j in self._joins])
+    def getAtoms(self):
+        return self._atoms
+    def hasJoins(self):
+        return len(self._joins) != 0
+    def canWrite(self):
+        return True
+    
 
 
     def findColumn(self,name):
         for col in self._columns:
             if col.name == name:
                 return col
-        #print "query.py: ", [col.name for col in self._columns]
         return None
 
     def getColumn(self,i):
@@ -644,10 +638,6 @@ class BaseColumnList(Datasource):
             raise DataVeto(msg)
         return col
 
-
-    def getAtoms(self):
-        return self._atoms
-    
 
     def provideAtom(self,name,type,joinName=None):
         
@@ -667,13 +657,6 @@ class BaseColumnList(Datasource):
         return a
 
         
-    #def getJoins(self): return self._joins
-
-  
-    def getJoinList(self):
-        l = [j.name for j in self._joins]
-        return " ".join(l)
-
         
     def _provideJoin(self,name,pointer,parent):
         for j in self._joins:
@@ -689,8 +672,7 @@ class BaseColumnList(Datasource):
 
 
             
-    def hasJoins(self):
-        return len(self._joins) != 0
+
 
 
     def findAtom(self,joinName,name):
@@ -707,24 +689,9 @@ class BaseColumnList(Datasource):
 
 
 
-    def canWrite(self):
-        return True
-
-
-
-##     def updateRow(self,row,**kw):
-##         for k,v in kw.items():
-##             col = self.getColumnByName(k)
-##             col.setCellValue(row,v)
-
-##         row.setDirty()
-            
-    
-
-    
-    
 
     def atoms2dict(self,atomicRow,rowValues,area):
+        raise "not used?"
         for col in self._columns:
             if col.join is None:
                 col.atoms2dict(atomicRow,rowValues,area)
@@ -732,6 +699,7 @@ class BaseColumnList(Datasource):
 
     def ad2t(self,d):
         "atomic dict to tuple"
+        raise "not used?"
         atomicTuple = [None] * len(self._atoms)
         for k,v in d.items():
             a = self.getAtom(k)
@@ -768,33 +736,17 @@ class BaseColumnList(Datasource):
 class LeadTableColumnList(BaseColumnList):
     
     def __init__(self,_parent,store,columnNames):
-    #def __init__(self,_parent,store):
 
         assert store.__class__.__name__ == "Store", \
                store.__class__.__name__+" is not a Store"
         self._store=store
-        #BaseColumnList.__init__(self,_parent)
         BaseColumnList.__init__(self,_parent,columnNames)
 
-##         if not self._frozen:
-##             for fld in store._table.getFields():
-##                 if not fld in store._table._pk:
-##                     self._addColumn(fld.getName(),fld)
-                    
-##         assert len(self._columns) > 1
-        
-
-        #self.leadTable = store._table 
-        
-        
-
-
-##     def getFieldContainer(self):
-##         return self._store._table # self.leadTable
 
     
     def atoms2instance(self,atomicRow,area):
-
+        raise "is this still used?"
+    
         """returns a leadTable row instance which contains the values of
         the specified atomic row. """
 
@@ -823,6 +775,7 @@ class LeadTableColumnList(BaseColumnList):
 
 
     def values2id(self,knownValues):
+        raise "used?"
         "convert dict of knownValues to sequence of pk atoms"
         #print knownValues
         #pka = self.leadTable.getPrimaryAtoms()
@@ -833,6 +786,15 @@ class LeadTableColumnList(BaseColumnList):
         for col in self._pkColumns:
             col.dict2atoms(knownValues,id)
         return id
+    
+    #def atoms2row1(self,atomicRow,row):
+    def atoms2row(self,atomicRow,row):
+        #for join in self._joins:
+        #   join.atoms2row(atomicRow,row)
+        for col in self._columns:
+            col.col_atoms2row(atomicRow,row)
+            
+
 
 
     def getDatabase(self):
@@ -849,20 +811,6 @@ class LeadTableColumnList(BaseColumnList):
 
     def mtime(self):
         return self._store.mtime()
-    
-    def atoms2row(self,atomicRow,new):
-        row = self.getLeadTable()._instanceClass(self,{},new)
-        #row = self.getLeadTable().Instance(self,{},new)
-        self.atoms2row1(atomicRow,row)
-        return row
-    
-    def atoms2row1(self,atomicRow,row):
-        #for join in self._joins:
-        #   join.atoms2row(atomicRow,row)
-        for col in self._columns:
-            col.atoms2row(atomicRow,row)
-            
-
     
 
     
@@ -907,8 +855,6 @@ class SimpleQuery(LeadTableColumnList):
                  **kw):
         self.session = sess
         LeadTableColumnList.__init__(self,_parent,store,columnNames)
-        #LeadTableColumnList.__init__(self,_parent,store)
-        self.rowcount = None
         
         for m in ('setBabelLangs','getLangs'):
             setattr(self,m,getattr(sess,m))
@@ -1064,12 +1010,14 @@ class SimpleQuery(LeadTableColumnList):
         self.rowcount=None
 
     def deleteAll(self):
+        
+        """cannot use self._connection.executeDeleteAll(self) here
+        because volume.directories.deleteAll() did not delete the
+        files in each directory."""
+        
         for row in self:
             row.delete()
-        # volume.directories.deleteAll() did not delete the files in each directory. 
-        #self._connection.executeDeleteAll(self)
-        #
-        
+            
 
     def child(self,*args,**kw):
         #self.setdefaults(kw)
@@ -1079,21 +1027,6 @@ class SimpleQuery(LeadTableColumnList):
     query=child
 
 
-##     def __xml__(self,wr):
-##         wr("<datasource>")
-##         for row in self:
-##             wr("<row>")
-##             for col in self.getVisibleColumns():
-##                 wr("<td>")
-##                 v = v = col.getCellValue(row)
-##                 if v is not None:
-##                     wr(col.format(v))
-##                 wr("</td>")
-##             wr("</row>")
-##         wr("</datasource>")
-
-
-        
 
 
     def getRenderer(self,rsc,req,writer=None):
@@ -1209,16 +1142,9 @@ class SimpleQuery(LeadTableColumnList):
     
 
 
-##  def __str__(self,):
-##      return self._table.__class__.__name__+"Datasource"
-
-
     def getName(self):
         return self.getLeadTable().getTableName()+"Query"
 
-##  def getRowId(self,values):
-##      return [values.get(name,None)
-##                for (name,type) in self._table.getPrimaryAtoms()]
 
     def executePeek(self,id):
         return self._store.executePeek(self, id)
@@ -1226,34 +1152,31 @@ class SimpleQuery(LeadTableColumnList):
     def commit(self):
         self._store.unlockDatasource(self)
         
-##     def commit(self):
-##         for row in self._lockedRows:
-##             row.writeToStore()
-        
-##     def close(self):
-##         #print "close()", self
-##         self.unlockAll()
-##         assert len(self._lockedRows) == 0
-##         self._store.removeDatasource(self)
-
-##     def __del__(self):
-##         if len(self._lockedRows):
-##             print "%s had %d locked rows" % (
-##                 str(self),
-##                 len(self._lockedRows))
-##         #self.close()
-
     def unlock(self):
         return self._store.unlockDatasource(self)
-        
+
+    
+    
+    #def atoms2row(self,atomicRow,new):
+    def appendRowFromAtoms(self,atomicRow):
+        #row = self.getLeadTable()._instanceClass(self,{},new)
+        row = self._appendRow()
+        self.atoms2row(atomicRow,row)
+        row.commit()
+        return row
+    
+    
     def appendRow(self,*args,**kw):
         row = self._appendRow(*args,**kw)
+        self.updateRow(row,*args,**kw)
         row.commit()
-        self._store.fireUpdate()
+        #self._store.fireUpdate()
         return row
 
     def appendRowForEditing(self,*args,**kw):
-        return self._appendRow(*args,**kw)
+        row = self._appendRow(*args,**kw)
+        self.updateRow(row,*args,**kw)
+        return row
         
         
     def _appendRow(self,*args,**kw):
@@ -1261,9 +1184,8 @@ class SimpleQuery(LeadTableColumnList):
         #row = self.getLeadTable().Instance(self,{},True)
         for mc in self._masterColumns:
             mc.setCellValue(row,self._masters[mc.name])
-        self.updateRow(row,*args,**kw)
         self.rowcount = None
-        self._store.setAutoRowId(row)
+        #self._store.setAutoRowId(row)
         return row
         
     def updateRow(self,row,*args,**kw):
@@ -1279,6 +1201,48 @@ class SimpleQuery(LeadTableColumnList):
             col.setCellValue(row,v)
 
         row.setDirty()
+
+
+    def appendfrom(self,filename):
+        #f=open(filename)
+        f=codecs.open(filename,encoding="cp1252")
+        #print filename,":",f.encoding
+        atomicNames=f.readline().strip().split('\t')
+        atoms=[]
+        for name in atomicNames:
+            a=self.findAtom(None,name)
+            
+            #if a is None:
+            #    print "Note: no atom '%s' in %s" % (name,self)
+            
+            # note: if findAtom returns None we simply ignore values
+            # in this column
+            
+            atoms.append(a)
+        #self.setBabelLangs()
+        for ln in f:
+            
+            row = self._appendRow()
+            
+            #atomicRow=[None]*len(self._atoms)
+            
+            #row=self.appendRowFromAtoms(atomicRow)
+            atomicRow=self.row2atoms(row)
+            i=0
+            #d={}
+            for s in ln.split('\t'):
+                a=atoms[i]
+                i+=1
+                if a is not None:
+                    s=s.strip()
+                    if s == '':
+                        atomicRow[a.index]=None
+                    else:
+                        atomicRow[a.index]=a.type.parse(s)
+            self.atoms2row(atomicRow,row)
+            row.commit()
+            #if filename.endswith("nations.txt"):
+            #    print atomicRow
             
     
 
@@ -1293,19 +1257,6 @@ class SimpleQuery(LeadTableColumnList):
         
         return row
 
-    def getRowAt(self,offset):
-        assert type(offset) is types.IntType
-        if offset < 0:
-            offset = len(self) + offset 
-        csr = self.executeSelect(offset=offset,limit=1)
-        sqlatoms=csr.fetchone()
-        if sqlatoms is None:
-            return None
-        assert csr.fetchone() is None, \
-               "Datasource.getRowAt() got more than one row"
-        
-        atomicRow = self.csr2atoms(sqlatoms)
-        return self.atoms2row(atomicRow,False)
 
     def csr2atoms(self,sqlatoms):
         return self._store.csr2atoms(self,sqlatoms)
@@ -1334,14 +1285,17 @@ class SimpleQuery(LeadTableColumnList):
             return None
         #d = self._clist.at2d(atomicRow)
         #return self._table.Row(self,d,False)
-        return self.atoms2row(atomicRow,False)
+        row = self.getLeadTable()._instanceClass(self,{},False)
+        self.atoms2row(atomicRow,row)
+        return row
+        #return self.atoms2row(atomicRow,False)
 
     def getInstance(self,atomicId,new):
         #row = self.getLeadTable().Instance(self,{},new)
         row = self.getLeadTable()._instanceClass(self,{},new)
         i = 0
         for col in self._pkColumns:
-            col.atoms2row(atomicId,row)
+            col.col_atoms2row(atomicId,row)
             #col.setCellValue(row,atomicId[i])
             i+=1
         return row
@@ -1387,16 +1341,37 @@ class SimpleQuery(LeadTableColumnList):
         
         sqlatoms = csr.fetchone()
         if sqlatoms is None:
+            csr.close()
             return None
 
         assert csr.fetchone() is None, \
-               "Datasource.findone() found more than one row"
-               #"%s.findone(%r) found more than one row" % (
-               #    self._table.getTableName(), knownValues)
+               "Query.findone() found more than one row"
         
+        csr.close()
         atomicRow = self.csr2atoms(sqlatoms)
-        return self.atoms2row(atomicRow,False)
+        row = self.getLeadTable()._instanceClass(self,{},False)
+        self.atoms2row(atomicRow,row)
+        return row
+        #return self.atoms2row(atomicRow,False)
     
+    def getRowAt(self,offset):
+        assert type(offset) is types.IntType
+        if offset < 0:
+            offset = len(self) + offset 
+        csr = self.executeSelect(offset=offset,limit=1)
+        sqlatoms=csr.fetchone()
+        if sqlatoms is None:
+            csr.close()
+            return None
+        
+        assert csr.fetchone() is None, \
+               "Query.getRowAt() got more than one row"
+        csr.close()
+        atomicRow = self.csr2atoms(sqlatoms)
+        row = self.getLeadTable()._instanceClass(self,{},False)
+        self.atoms2row(atomicRow,row)
+        return row
+        #return self.atoms2row(atomicRow,False)
 
         
 
@@ -1684,14 +1659,21 @@ class DataIterator:
             self.recno,self.ds.getSqlSelect(),self._calledfrom)
     def __iter__(self):
         return self
+
+    def close(self):
+        self.ds._store.removeIterator(self)
+        self.csr.close()
+        
     
     def next(self):
         sqlatoms = self.csr.fetchone()
         if sqlatoms == None:
-            self.ds._store.removeIterator(self)
+            self.close()
             raise StopIteration
         atomicRow = self.ds.csr2atoms(sqlatoms)
-        row=self.ds.atoms2row(atomicRow,new=False)
+        #row=self.ds.atoms2row(atomicRow,False)
+        row = self.ds.getLeadTable()._instanceClass(self.ds,{},False)
+        self.ds.atoms2row(atomicRow,row)
         self.recno += 1
         return row
 

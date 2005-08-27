@@ -1,8 +1,8 @@
-from lino.schemas.sprl import demo, Currencies
+from lino.apps.ledger import demo, tables
 
 sess=demo.startup(langs="en fr")
 
-qry=sess.query(Currencies)
+qry=sess.query(tables.Currency)
 
 ccy=qry.peek("EEK")
 

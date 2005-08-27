@@ -27,10 +27,10 @@ Logical columns (row attributes) versus physical columns (atoms)
 
 from lino.misc.tsttools import TestCase, main
 from lino.adamo.datatypes import itod
-from lino.schemas.sprl import demo
+from lino.apps.ledger import demo
 
-from lino.schemas.sprl.tables import \
-     Partners, Journals, Invoices, Products
+from lino.apps.ledger.tables import \
+     Partner, Journal, Invoice, Product
 
 
 
@@ -47,10 +47,10 @@ class Case(TestCase):
     def test01(self):
         "create an invoice"
 
-        PARTNERS = self.db.query(Partners)
-        JOURNALS = self.db.query(Journals)
-        INVOICES = self.db.query(Invoices)
-        PRODUCTS = self.db.query(Products)
+        PARTNERS = self.db.query(Partner)
+        JOURNALS = self.db.query(Journal)
+        INVOICES = self.db.query(Invoice)
+        PRODUCTS = self.db.query(Product)
         
         """get the partner # 1 and Journal."""
         p = PARTNERS.peek(1)

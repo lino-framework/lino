@@ -48,16 +48,16 @@ values or in a dict of complex values...
 """
 from lino.misc.tsttools import TestCase, main
 
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Nations,Partners
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import Nation,Partner
 #from lino.reports import DataReport
 
 class Case(TestCase):
     
     def test01(self):
         dbc = demo.startup()
-        be = dbc.query(Nations).peek("be")
-        qry = dbc.query(Partners,
+        be = dbc.query(Nation).peek("be")
+        qry = dbc.query(Partner,
                         "title firstName name",
                         nation=be)
         qry.showReport(columnWidths="6 10 20")

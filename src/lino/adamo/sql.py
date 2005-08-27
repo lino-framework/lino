@@ -19,6 +19,8 @@
 import types
 import datetime
 #from time import mktime
+from cStringIO import StringIO
+import codecs
 
 from lino.adamo import datatypes 
 #from lino.adamo.rowattrs import Field, Pointer, Detail
@@ -60,30 +62,40 @@ class SqlConnection(Connection):
     CST_CLOSING = 4
     CST_CLOSED = 5
     
-    def __init__(self,*args,**kw):
-        Connection.__init__(self,*args,**kw)
-        self._dump = None
+    def __init__(self,ui=None,dump=None,*args,**kw):
+        Connection.__init__(self,ui,*args,**kw)
+        self._dump = dump
         self._status = self.CST_NEW
         self._dirty=False
         
     def getModificationTime(self,table):
         raise NotImplementedError
-    
     def sql_exec_really(self,sql):
+        raise NotImplementedError
+    def commit_really(self):
         raise NotImplementedError
     
     def sql_exec(self,sql):
         if self._dump is not None:
-            self._dump += sql + ";\n"
+            #self._dump += sql + ";\n"
+            self._dump.write(sql+";\n")
         return self.sql_exec_really(sql)
         
-    def startDump(self):
-        self._dump = ""
+    def startDump(self,writer=None):
+        assert self._dump is None
+        #self._dump = ""
+        if writer is None:
+            #writer=sys.stdout
+            writer=StringIO()
+        #else:
+        #    assert hasattr(writer,"__call__")
+        self._dump = writer
+        
 
     def stopDump(self):
-        s = self._dump 
+        dump = self._dump
         self._dump = None
-        return s
+        return dump.getvalue()
 
     def testEqual(self,colName,type,value):
         if value is None:
@@ -222,7 +234,8 @@ class SqlConnection(Connection):
      
         sql += "\n)"
         self._dirty=True
-        self.sql_exec(sql)
+        self.sql_exec(sql).close()
+        #self.commit()
 
 
 
@@ -444,6 +457,7 @@ class SqlConnection(Connection):
         csr = self.sql_exec(sql)
         #assert csr.rowcount is None or csr.rowcount == 1
         result=csr.fetchall()
+        csr.close()
         assert len(result) == 1, "more than one row?!"
         atomicRow=result[0]
         #atomicRow = csr.fetchone()
@@ -478,6 +492,7 @@ class SqlConnection(Connection):
         #assert csr.rowcount is None or csr.rowcount == 1
         #assert csr.rowcount == 1
         result=csr.fetchall()
+        csr.close()
         assert len(result) == 1, "more than one row?!"
         val=result[0][0]
         #val = csr.fetchone()[0]
@@ -505,6 +520,7 @@ class SqlConnection(Connection):
         csr = self.sql_exec(sql)
         
         result=csr.fetchall()
+        csr.close()
         if len(result) == 0:
             return None
         assert len(result) == 1, \
@@ -562,15 +578,17 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
 
         atomicRow = query.row2atoms(row)
         
-        sql = "INSERT INTO %s (\n" % table.getTableName()
+        sql = "INSERT INTO %s ( " % table.getTableName()
         l = []
-        for atom in query.getFltAtoms(context): 
+        #for atom in query.getFltAtoms(context): 
+        for atom in query.getAtoms(): 
             l.append(atom.name) 
             
         sql += ", ".join(l)
         sql += " ) VALUES ( "
         l = []
-        for atom in query.getFltAtoms(context):
+        #for atom in query.getFltAtoms(context):
+        for atom in query.getAtoms():
             l.append(
                 self.value2sql(atomicRow[atom.index],
                                atom.type))
@@ -580,8 +598,9 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         #    raise Exception(repr(l) + "\n" + str(e))
         
         sql += " )"
-        self.sql_exec(sql)
+        self.sql_exec(sql).close()
         self._dirty=True
+        #self.commit()
         
     def executeUpdate(self,row):
         query = row._query._store._peekQuery
@@ -590,15 +609,20 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
 
         atomicRow = query.row2atoms(row)
 
-        sql = "UPDATE %s SET \n" % table.getTableName()
+        sql = "UPDATE %s SET " % table.getTableName()
         
         l = []
-        for atom in query.getFltAtoms(context): 
+        #for atom in query.getFltAtoms(context): 
+        for atom in query.getAtoms(): 
             l.append("%s = %s" % (
                 atom.name,
                 self.value2sql(atomicRow[atom.index],atom.type)))
-            
         sql += ", ".join(l)
+
+        # note: primary atoms are also set although their value never
+        # changes. As long as this doesn't disturb I'll leave it
+        # because filtering them out would be another test here.
+        
         sql += " WHERE "
 
         l = []
@@ -610,8 +634,9 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
             i += 1
         sql += " AND ".join(l)
 
-        self.sql_exec(sql)
+        self.sql_exec(sql).close()
         self._dirty=True
+        #self.commit()
 
     def executeDelete(self,row):
         table = row._query.getLeadTable()
@@ -627,7 +652,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
                                   self.value2sql(id[i],type)))
             i += 1
         sql += " AND ".join(l)
-        self.sql_exec(sql)
+        self.sql_exec(sql).close()
         self._dirty=True
 
     def executeDeleteAll(self,ds):
@@ -639,7 +664,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         sql = "DELETE FROM " + ds.getLeadTable().getTableName()
         sql += self.whereClause(ds)
         #print sql
-        self.sql_exec(sql)
+        self.sql_exec(sql).close()
         self._dirty=True
 
 ##     def executeDeleteRows(self,ds):
@@ -647,6 +672,15 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
 ##         sql += self.whereClause(ds)
 ##         self.sql_exec(sql)
 
+    def commit(self):
+        #print "commit"
+        if not self._dirty:
+            return
+        if self._dump is not None:
+            self._dump.write("/* commit */\n")
+        #print "COMMIT", __file__
+        self.commit_really()
+        self._dirty=False
         
 
 #class SqlQuery(Query):     

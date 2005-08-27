@@ -23,8 +23,8 @@ bug 20040724 : setting a sample on a query modifies the
 
 """
 from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.schemas.sprl.tables import Cities, Nations
+from lino.apps.addrbook import demo
+from lino.apps.addrbook.tables import City, Nation
 
 
 class Case(TestCase):
@@ -38,8 +38,8 @@ class Case(TestCase):
 
 
     def test01(self):
-        CITIES = self.db.query(Cities)
-        NATIONS = self.db.query(Nations)
+        CITIES = self.db.query(City)
+        NATIONS = self.db.query(Nation)
         
         q = CITIES.query()
         l = len(q)

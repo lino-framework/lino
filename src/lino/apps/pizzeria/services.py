@@ -21,26 +21,28 @@ from lino.adamo.datatypes import itod
 from lino.apps.pizzeria import pizzeria
 #from lino.apps.pizzeria.pizzeria import Orders, Products, OrderLines, Customers
 
-class Services(pizzeria.Products):
-    
-    def init(self):
-        pizzeria.Products.init(self)
-        self.addField('responsible',STRING)
+class Service(pizzeria.Product):
+    tableName="Services"
+    def initTable(self,table):
+        pizzeria.Product.initTable(self,table)
+        table.addField('responsible',STRING)
 
 
 class ServicePizzeria(pizzeria.Pizzeria):
-
-    tables = pizzeria.Pizzeria.tables + (Services,)
+    
+    def setupSchema(self):
+        pizzeria.Pizzeria.setupSchema(self)
+        self.addTable(Service)
 
 
 def populate(sess):
     
     pizzeria.populate(sess)
     
-    SERV = sess.query(Services)
-    CUST = sess.query(pizzeria.Customers)
-    ORDERS = sess.query(pizzeria.Orders)
-    PROD = sess.query(pizzeria.Products)
+    SERV = sess.query(Service)
+    CUST = sess.query(pizzeria.Customer)
+    ORDERS = sess.query(pizzeria.Order)
+    PROD = sess.query(pizzeria.Product)
     
     s1 = SERV.appendRow(name="bring home",price=1)
     s2 = SERV.appendRow(name="organize party",price=100)

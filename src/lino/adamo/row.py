@@ -59,6 +59,7 @@ class DataRow:
         self.__dict__['_dirty'] = True
 
     def getFieldValue(self,name):
+        # overridden by StoredDataRow
         try:
             return self._values[name]
         except KeyError:
@@ -218,6 +219,7 @@ class StoredDataRow(DataRow):
         return str(tuple(self.getRowId()))
         
     def getFieldValue(self,name):
+        # overrides DataRow
         try:
             return self._values[name]
         except KeyError:
@@ -260,7 +262,7 @@ class StoredDataRow(DataRow):
                 raise DataVeto(
                     "Cannot find %s row %s" \
                     % (self._query.getLeadTable().getTableName(), id))
-            self._query._store._peekQuery.atoms2row1(atomicRow,self)
+            self._query._store._peekQuery.atoms2row(atomicRow,self)
                 
         
         """maybe a third argument `fillMode` to atoms2dict() which
@@ -355,6 +357,7 @@ class StoredDataRow(DataRow):
         except DataVeto,e:
             raise DataVeto(repr(self) + ': ' + str(e))
         if self._new:
+            self._query._store.setAutoRowId(self)
             self._query._connection.executeInsert(self)
             self.__dict__["_new"] = False
         else:

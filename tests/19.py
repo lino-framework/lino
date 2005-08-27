@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -33,63 +33,64 @@ from lino.adamo.ddl import *
 from lino import adamo
 
 
-class Nations(Table):
-    def init(self):
-        self.addField('id',STRING(width=2))
-        self.addBabelField('name',STRING)
-        self.addField('area',INT)
-        self.addField('population',INT)
-        self.addField('curr',STRING)
-        self.addField('isocode',STRING)
+class Nation(StoredDataRow):
+    tableName="Nations"
+    def initTable(self,table):
+        table.addField('id',STRING(width=2))
+        table.addBabelField('name',STRING)
+        table.addField('area',INT)
+        table.addField('population',INT)
+        table.addField('curr',STRING)
+        table.addField('isocode',STRING)
 
-class Cities(Table):
+class City(StoredDataRow):
+    tableName="Cities"
     
-    def init(self):
-        self.addField('id',ROWID)
-        self.addPointer('nation',Nations).setDetail('cities',
+    def initTable(self,table):
+        table.addField('id',ROWID)
+        table.addPointer('nation',Nation).setDetail('cities',
                                                     orderBy='name')
-        self.addField('name',STRING)
-        self.addField('zipCode',STRING)
-        self.addField('inhabitants',INT)
-        self.setPrimaryKey("nation id")
+        table.addField('name',STRING)
+        table.addField('zipCode',STRING)
+        table.addField('inhabitants',INT)
+        table.setPrimaryKey("nation id")
         
-    class Instance(Table.Instance):
-        def __str__(self):     
-            if self.nation is None:
-                return self.name
-            return self.name + " (%s)" % self.nation.id
+    def __str__(self):     
+        if self.nation is None:
+            return self.name
+        return self.name + " (%s)" % self.nation.id
         
 
-class Contacts:
-    def init(self):
-        self.addField('email',EMAIL)
-        self.addField('phone',STRING)
+## class Contacts:
+##     def init(self):
+##         self.addField('email',EMAIL)
+##         self.addField('phone',STRING)
 
-class Addresses:
-    def init(self):
-        self.addPointer('nation',Nations)
-        self.addPointer('city',Cities)
-        self.addField('street',STRING)
+## class Addresses:
+##     def init(self):
+##         self.addPointer('nation',Nations)
+##         self.addPointer('city',Cities)
+##         self.addField('street',STRING)
 
-    def after_city(self,row):
-        if row.city is not None:
-            row.nation = row.city.nation
+##     def after_city(self,row):
+##         if row.city is not None:
+##             row.nation = row.city.nation
 
-class Organisations(Table,Contacts,Addresses):
-    "An Organisation is any named group of people."
-    def init(self):
-        self.addField('id',ROWID, doc="the internal id number")
-        self.addField('name',STRING)
-        Contacts.init(self)
-        Addresses.init(self)
+## class Organisations(Table,Contacts,Addresses):
+##     "An Organisation is any named group of people."
+##     def init(self):
+##         self.addField('id',ROWID, doc="the internal id number")
+##         self.addField('name',STRING)
+##         Contacts.init(self)
+##         Addresses.init(self)
 
 
-class MyPlugin(SchemaPlugin):
+class MySchema(Schema):
     
-    def defineTables(self,schema):
-        schema.addTable(Nations)
-        schema.addTable(Cities)
-        schema.addTable(Organisations)
+    def setupSchema(self):
+        self.addTable(Nation)
+        self.addTable(City)
+        #self.addTable(Organisation)
         
 
 
@@ -97,14 +98,13 @@ class Case(TestCase):
     
     def test01(self):
 
-        schema = Schema()
-        schema.addPlugin(MyPlugin())
+        schema = MySchema()
 
         sess = schema.quickStartup(langs='en de fr')
 
         #sess.setBabelLangs('en')
         
-        ds = sess.query(Nations)
+        ds = sess.query(Nation)
 
         be = ds.appendRow(id="be", name="Belgium")
 
@@ -121,10 +121,10 @@ class Case(TestCase):
         be.unlock()
         
         
-        be = sess.query(Nations).peek('be')
+        be = sess.query(Nation).peek('be')
 
         
-        eupen = sess.query(Cities).appendRow(nation=be,name="Eupen")
+        eupen = sess.query(City).appendRow(nation=be,name="Eupen")
         
         sess.setBabelLangs('de')
         self.assertEqual(be.name,'Belgien')

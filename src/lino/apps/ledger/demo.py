@@ -19,7 +19,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import os
+import os, sys
 #from lino import adamo
 from lino.adamo.datatypes import itod
 from lino.apps.ledger.ledger import Ledger
@@ -27,25 +27,31 @@ from lino.apps.ledger import tables
 from lino.apps.addrbook import demo as addrdemo
 
 def startup(filename=None, langs=None,
+            dump=False,
             populate=True,
             withDemoData=True,
             **kw):
     schema = Ledger(**kw)
-    sess=schema.quickStartup(langs=langs, filename=filename)
+    sess=schema.quickStartup(langs=langs,
+                             filename=filename,
+                             dump=dump)
+
     if populate:
+        sess.populate(StandardPopulator(label="Standard"))
         if withDemoData:
             sess.populate(DemoPopulator(label="StandardDemo"))
-        else:
-            sess.populate(Populator(label="Standard"))
+    
+##     if populate:
+##         if withDemoData:
+##             sess.populate(DemoPopulator(label="StandardDemo"))
+##         else:
+##             sess.populate(Populator(label="Standard"))
 
     return sess
 
 
-class Populator(addrdemo.Populator):
-    def __init__(self, **kw):
-        addrdemo.Populator.__init__(self,None,**kw)
-
-        
+class StandardPopulator(addrdemo.StandardPopulator):
+    
     def populateCurrencies(self,q):
         q.setBabelLangs('en de fr et')
         self.EUR = q.appendRow(
@@ -242,9 +248,23 @@ class Populator(addrdemo.Populator):
 
 
 
-class DemoPopulator(Populator):
+class DemoPopulator(addrdemo.DemoPopulator):
     
 
+    def populatePartners(self,q):
+        addrdemo.DemoPopulator.populatePartners(self,q)
+        #return 
+        NAT=q.getSession().query(tables.Nation)
+        CCY=q.getSession().query(tables.Currency)
+        BEF=CCY.peek("BEF")
+        be=NAT.peek('be')
+        for p in be.partners_by_nation:
+            p.lock()
+            p.currency=BEF
+            p.unlock()
+
+        # the Belgians will switch to EUR in tests/21.py
+        
     def populateJournals(self,q):
         q = q.query("id name tableName")
         self.OUT = q.appendRow("OUT","outgoing invoices","INVOICES")

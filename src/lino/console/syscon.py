@@ -23,7 +23,7 @@ import atexit
 import codecs
 from optparse import OptionParser
 
-from lino.console.console import TtyConsole
+from lino.console.console import TtyConsole, Console
 from lino.forms.session import Session
 
 # if frozen (with py2exe or McMillan), sys.setdefaultencoding() has
@@ -136,7 +136,7 @@ def setToolkit(toolkit):
 
 def parse_args(argv=None): #,**kw):
     p = OptionParser()
-    _session.toolkit.setupOptionParser(p)
+    _session.setupOptionParser(p)
         
     if argv is None:
         argv = sys.argv[1:]
@@ -171,8 +171,12 @@ if hasattr(sys.stdout,"encoding") \
     #sys.stderr = rewriter(sys.stderr)
 
 
-
-_session=Session(TtyConsole(sys.stdout.write, sys.stderr.write))
+if sys.stdout.isatty():
+    console=TtyConsole(sys.stdout.write, sys.stderr.write)
+else:
+    console=Console(sys.stdout.write, sys.stderr.write)
+    
+_session=Session(console)
 
 g = globals()
     

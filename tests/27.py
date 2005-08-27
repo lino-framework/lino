@@ -1,62 +1,84 @@
 # coding: latin1
 
-"""
-forms
-"""
-import types
+## Copyright 2005 Luc Saffre
 
-from lino.misc.tsttools import TestCase, main
-from lino.schemas.sprl import demo
-from lino.adamo import DataVeto
-"todo: use lino.forms now"
+## This file is part of the Lino project.
 
-## class Case(TestCase):
-## 	"""
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
 
-## 	"""
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
 
-## 	def setUp(self):
-## 		self.sess = demo.beginSession()
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-## 	def tearDown(self):
-## 		self.sess.shutdown()
+import os
+import codecs
+import pysqlite2.dbapi2 as sqlite
+
+from unittest import TestCase, main
 
 
-## 	def test01(self):
-## 		self.sess.startDump(verbosity=1)
-## 		frm = self.sess.openForm('login')
-## 		self.assertEqual(frm.getFormName(),"login")
-## 		self.assertEqual(frm.password,None)
-## 		self.assertEqual(frm.uid,None)
-## 		frm.uid = "luc"
-## 		frm.ok()
-## 		usr = self.sess.getUser()
-## 		self.assertEqual(usr.getLabel(),"Luc Saffre")
-## 		self.assertEqual(usr.password,None)
-## 		s = self.sess.stopDump()
-## 		self.assertEquivalent(s,"Hello, Luc Saffre")
-		
-## 		frm.password = "random password"
-## 		try:
-## 			frm.ok()
-## 			self.fail("failed to complain about wrong password for luc")
-## 		except DataVeto,e:
-## 			self.assertEqual(str(e),"invalid password for Luc Saffre")
+filename=os.path.join(os.path.dirname(__file__),"27.sql")
 
-## 		try:
-## 			frm.uid = "!luc"
-## 			self.fail("failed to complain about invalid username")
-## 		except DataVeto,e:
-## 			self.assertEqual(str(e),"!luc : invalid username")
-			
-## 		frm.uid = "foo"
-## 		try:
-## 			frm.ok()
-## 			self.fail("failed to complain about non-existing user")
-## 		except DataVeto,e:
-## 			self.assertEqual(str(e),"foo : no such user")
+class Case(TestCase):
+    
+    def test01(self):
 
-		
-## if __name__ == '__main__':
-## 	main()
+        conn = sqlite.connect(':memory:')
+        csr = conn.cursor()
+        
+        f=codecs.open(filename,encoding="cp1252")
+        sql=""
+        lengths=[]
+        for ln in f:
+            ln=ln.strip()
+            if not ln.startswith('#'):
+                if ln.endswith(";"):
+                    sql += ln[:-1]
+                    csr.execute(sql)
+                    #conn.commit()
+                    
+                    #print sql
+                    #print
+                    
+                    if sql.startswith("SELECT "):
+                        # use the cursor up to avoid work around
+                        # pysqlite bug
+                        
+                        #for t in csr:
+                        #    print t
+                        lengths.append(len(csr.fetchall()))
+                        
+                        #print "--> %d rows" % len(csr.fetchall())
+                    csr.close()
+                    
+                    #else:
+                    #    conn.commit()
+                    #    print "(conn.commit())"
+                    sql=""
+                else:
+                    sql+=ln
+                
+        conn.close()
+        #print lengths
+        self.assertEqual(lengths,
+                         [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                         0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 7])
+                         
+        
+
+if __name__ == '__main__':
+    main()
+
+
+
+
 

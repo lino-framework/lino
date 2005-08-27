@@ -21,7 +21,7 @@
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Pages
+from lino.apps.pinboard.tables import Page
 
 
 class Introduction(TestCase):
@@ -35,7 +35,7 @@ class Introduction(TestCase):
 
 
     def test01(self):
-        PAGES = self.db.query(Pages)
+        PAGES = self.db.query(Page)
         #print [a.name for a in PAGES._table.peekQuery._atoms]
         PAGES.appendRow(match="index",
                         title="Main page",

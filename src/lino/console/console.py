@@ -92,7 +92,7 @@ class Console(AbstractToolkit):
         #self._started = time.time()
         #self._dumping = None
         # UI.__init__(self)
-        self.set(**kw)
+        self.configure(**kw)
 
 ##     def closeSession(self,sess):
 ##         pass
@@ -103,13 +103,13 @@ class Console(AbstractToolkit):
         self._stderr = stderr
         return old
 
-    def set(self, verbosity=None, batch=None, **kw):
+    def configure(self, verbosity=None, batch=None, **kw):
         if verbosity is not None:
             self._verbosity += verbosity
             #print "verbositiy %d" % self._verbosity
         if batch is not None:
             self._batch = batch
-        AbstractToolkit.configure(self,**kw)
+        #AbstractToolkit.configure(self,**kw)
 ##         if ui is not None:
 ##             self._ui = ui
         #if debug is not None:
@@ -145,7 +145,7 @@ class Console(AbstractToolkit):
     def error(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         self._stderr(msg + "\n")
-        self.writelog(msg)
+        sess.logmessage(msg)
 
     def critical(self,sess,msg,*args,**kw):
         "Something terrible has happened..."
@@ -165,14 +165,16 @@ class Console(AbstractToolkit):
     def warning(self,sess,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
         msg = sess.buildMessage(msg,*args,**kw)
-        self.writelog(msg)
+        sess.logmessage(msg)
+        #self.writelog(msg)
         if self._verbosity >= 0:
             self.writeout(msg)
 
     def notice(self,sess,msg,*args,**kw):
-        "Display message if verbosity is normal. Not logged."
+        "Display message if verbosity is normal. Logged."
         if self._verbosity >= 0:
             msg = sess.buildMessage(msg,*args,**kw)
+            sess.logmessage(msg)
             self.writeout(msg)
 
     def verbose(self,sess,msg,*args,**kw):

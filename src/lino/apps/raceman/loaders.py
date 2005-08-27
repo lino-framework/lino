@@ -32,7 +32,7 @@ from lino.adamo.table import DbfMirrorLoader
 
 
 class PersonsMirrorLoader(DbfMirrorLoader):
-    tableClass = Persons
+    tableClass = Person
     tableName = "PAR"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -44,7 +44,7 @@ class PersonsMirrorLoader(DbfMirrorLoader):
 
 
 class ClubsMirrorLoader(DbfMirrorLoader):
-    tableClass = Clubs
+    tableClass = Club
     tableName = "CLB"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -53,7 +53,7 @@ class ClubsMirrorLoader(DbfMirrorLoader):
             )
 
 class RaceTypesMirrorLoader(DbfMirrorLoader):
-    tableClass = RaceTypes
+    tableClass = RaceType
     tableName = "CTY"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -63,7 +63,7 @@ class RaceTypesMirrorLoader(DbfMirrorLoader):
 
 
 class CategoriesMirrorLoader(DbfMirrorLoader):
-    tableClass = Categories
+    tableClass = Category
     tableName = "CAT"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -77,7 +77,7 @@ class CategoriesMirrorLoader(DbfMirrorLoader):
         
 
 class RacesMirrorLoader(DbfMirrorLoader):
-    tableClass = Races
+    tableClass = Race
     tableName = "RAL"
     #def init(self):
     #    Races.init(self)
@@ -96,7 +96,7 @@ class RacesMirrorLoader(DbfMirrorLoader):
         
 
 class ParticipantsMirrorLoader(DbfMirrorLoader):
-    tableClass = Participants
+    tableClass = Participant
     tableName = "POS"
     def appendFromDBF(self,q,row):
         sess = q.getSession()

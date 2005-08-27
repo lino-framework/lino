@@ -362,7 +362,7 @@ class BabelField(Field):
 ##         return rv
             
     def atoms2row(self,atomicRow,colAtoms,row):
-        langs = row.getSession().getBabelLangs()
+        #langs = row.getSession().getBabelLangs()
         dblangs = row.getDatabase().getBabelLangs()
         assert len(dblangs) == len(colAtoms)
         # 35.py dblangs = row._ds._session.getBabelLangs()
@@ -624,9 +624,11 @@ class Pointer(RowAttribute):
     def validate(self,value):
         #print value
         for toTable in self._toTables:
-            if not isinstance(value,toTable._instanceClass):
-                raise DataVeto("%r is not a %s instance" % \
-                               (value,toTable.getTableName()))
+            if isinstance(value,toTable._instanceClass):
+                return
+            
+        raise DataVeto("%r is not a %s instance" % \
+                       (value,toTable.getTableName()))
         
 ##     def getType(self):
 ##         return self.type

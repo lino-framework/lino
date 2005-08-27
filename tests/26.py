@@ -26,7 +26,7 @@ import types
 
 from lino.misc.tsttools import TestCase, main
 from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Projects
+from lino.apps.pinboard.tables import Project
 #from lino.reports import DataReport
 
 
@@ -44,7 +44,7 @@ class Case(TestCase):
 
 
     def test01(self):
-        PROJECTS = self.sess.query(Projects)
+        PROJECTS = self.sess.query(Project)
         qry = PROJECTS.query("id super.id title")
         self.assertEqual(len(qry),10)
         self.sess.showQuery(qry,columnWidths="5 5 20")
