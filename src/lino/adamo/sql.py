@@ -569,7 +569,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         
     def executeZap(self,table):
         sql = "DELETE FROM " + table.getTableName()
-        self.sql_exec(sql)
+        self.sql_exec(sql).close()
         
     def executeInsert(self,row):
         query = row._query._store._peekQuery

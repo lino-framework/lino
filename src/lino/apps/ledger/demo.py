@@ -258,6 +258,8 @@ class DemoPopulator(addrdemo.DemoPopulator):
         CCY=q.getSession().query(tables.Currency)
         BEF=CCY.peek("BEF")
         be=NAT.peek('be')
+        #be.partners_by_nation.showReport()
+        #return
         for p in be.partners_by_nation:
             p.lock()
             p.currency=BEF

@@ -26,31 +26,30 @@
 from lino.misc.tsttools import TestCase, main
 from lino.apps.ledger import demo
 from lino.apps.ledger.tables import Nation,Partner, Currency
-#from lino.schemas.sprl import demo
-#from lino.schemas.sprl.tables import Partners, Currencies, Nations
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(dump=True)
+        self.sess = demo.startup() #dump=True)
 
     def tearDown(self):
-        self.db.shutdown()
+        self.sess.shutdown()
 
 
     def test01(self):
-        NATIONS = self.db.query(Nation)
-        CURR = self.db.query(Currency)
-        PARTNERS = self.db.query(Partner)
+        NATIONS = self.sess.query(Nation)
+        CURR = self.sess.query(Currency)
+        PARTNERS = self.sess.query(Partner)
         be = NATIONS.peek("be")
         BEF = CURR.peek('BEF')
         EUR = CURR.peek('EUR')
+        q=PARTNERS.query("currency",
+                         orderBy="name firstName",
+                         nation=be)
         s = ""
         print self.getConsoleOutput()
-        for p in PARTNERS.query("currency",
-                                orderBy="name firstName",
-                                nation=be):
+        for p in q:
             #if p.currency is None:
             #   s += p.__str__() + " : currency remains None\n"
             if p.currency != EUR:
