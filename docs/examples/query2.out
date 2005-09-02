@@ -12,3 +12,5 @@ Brugge                                  |116848
 Liège                                   |185608   
 Charleroi                               |200983   
 Bruxelles                               |1004239  
+
+SELECT nation_id, id, name, inhabitants FROM Cities WHERE nation_id = 'be' ORDER BY inhabitants

@@ -1,4 +1,4 @@
-from lino.schemas.sprl import demo
+from lino.apps.ledger import demo
 from lino.reports import Report, RIGHT
 from lino.adamo.datatypes import INT
 
@@ -7,7 +7,8 @@ sess = demo.startup()
 rpt=Report(sess.db.app.getTableList())
 
 def onEach(row):
-    row.count=len(sess.query(row.item.__class__))
+    row.qry=sess.query(row.item._instanceClass)
+    
 rpt.onEach(onEach)
 
 rpt.addVurtColumn(
@@ -16,19 +17,19 @@ rpt.addVurtColumn(
     width=20)
 rpt.addVurtColumn(
     label="Count",
-    meth=lambda row: row.count,
+    meth=lambda row: len(row.qry),
     type=INT,
     width=5, halign=RIGHT
     )
 rpt.addVurtColumn(
     label="First",
-    meth=lambda row: str(sess.query(row.item.__class__)[0]),
-    when=lambda row: row.count>0,
+    meth=lambda row: str(row.qry[0]),
+    when=lambda row: len(row.qry)>0,
     width=20)
 rpt.addVurtColumn(
     label="Last",
-    meth=lambda row: str(sess.query(row.item.__class__)[-1]),
-    when=lambda row: row.count>0,
+    meth=lambda row: str(row.qry[-1]),
+    when=lambda row: len(row.qry)>0,
     width=20)
 
 rpt.show()

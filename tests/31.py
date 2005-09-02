@@ -49,7 +49,7 @@ class Case(TestCase):
 
         sess = app.quickStartup()
 
-        PERSONS = sess.query(races.Persons)
+        PERSONS = sess.query(races.Person)
         norbert = PERSONS.appendRow( name="Ausdemwald",
                                      firstName="Norbert",
                                      sex="M",
@@ -59,7 +59,7 @@ class Case(TestCase):
                                    sex="M",
                                    birthDate="19800505")
 
-        RACES = sess.query(races.Races)
+        RACES = sess.query(races.Race)
         race = RACES.appendRow(date=itod(20040112),name1="test race")
         race.participants.appendRow(
             person=norbert,

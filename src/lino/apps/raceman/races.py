@@ -70,13 +70,13 @@ class Race(StoredDataRow):
         table.addField('date',DATE)
         table.addField('status',STRING(width=1))
         table.addField('tpl',STRING(width=6))
-        table.addPointer('type',RaceTypes)
+        table.addPointer('type',RaceType)
         table.addField('startTime',TIME)
         table.addField('known',INT)
         table.addField('unknown',INT)
         table.addField('invalid',INT)
         table.addField('missing',INT)
-        table.addPointer('event',Events).setDetail("races")
+        table.addPointer('event',Event).setDetail("races")
         table.addView( "std",
                        "date event name1 status startTime "
                        "arrivals participants "

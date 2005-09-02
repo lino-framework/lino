@@ -20,8 +20,7 @@
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import *
+from lino.apps.pinboard import demo, tables
 
 
 class Case(TestCase):
@@ -53,7 +52,7 @@ Users Partners Nations Cities Languages ProjectStati Projects EventTypes Events 
         
     def test02(self):
         "2 successive appendRow() without specifying id"
-        AUTHORS = self.sess.query(Authors)
+        AUTHORS = self.sess.query(tables.Author)
         pot = AUTHORS.appendRow(firstName="Harry",name="Potter")
         bel = AUTHORS.appendRow(firstName="Harry",name="Bellafonte")
         self.assertEqual(pot.id, bel.id-1)

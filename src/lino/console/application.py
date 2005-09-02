@@ -182,7 +182,8 @@ See file COPYING.txt for more information.""" % (
         
         sess.setApplication(self)
         
-        sess.toolkit.setupOptionParser(p)
+        #sess.toolkit.setupOptionParser(p)
+        sess.setupOptionParser(p)
         
         self.setupOptionParser(p)
         

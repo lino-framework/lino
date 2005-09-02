@@ -26,9 +26,12 @@ from lino.apps.addrbook import tables as addrtables
 #from lino.apps.addrbook.tables import User
 from lino.apps.addrbook.tables import *
 
+#from lino.i18n import BabelString
+
 class Currency(BabelRow):
     
     tableName="Currencies"
+    #tableLabel=BabelString("Currencies",de="Währungen",fr="Devises")
     
     def initTable(self,table):
         table.addField('id',STRING(width=3))
@@ -152,7 +155,8 @@ class ProductInvoiceLine(InvoiceLine):
         self.unitPrice = self.product.price
         if self.qty is None:
             self.qty = 1
-        self.amount = self.product.price * self.qty
+        self.amount = self.unitPrice * self.qty
+        #print self.amount
 
 
 
@@ -270,7 +274,6 @@ class Booking(StoredDataRow):
 
 
 
-
     
         
 TABLES = (
@@ -286,4 +289,5 @@ TABLES = (
 
 __all__ = [t.__name__ for t in TABLES]
 __all__.append('TABLES')
+
 

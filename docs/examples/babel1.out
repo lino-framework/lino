@@ -1,19 +1,17 @@
-Your currency: Estonian kroon (EEK)
 Currencies
 ==========
-id |name                                 |partners_by_currency                 
----+-------------------------------------+-------------------------------------
-EUR|Euro                                 |4 Partners                           
-BEF|Belgian Francs                       |2 Partners                           
-USD|US Dollar                            |0 Partners                           
-EEK|Estonian kroon                       |0 Partners                           
+id |name                                                                       
+---+---------------------------------------------------------------------------
+EUR|Euro                                                                       
+BEF|Belgian Francs                                                             
+USD|US Dollar                                                                  
+EEK|Estonian kroon                                                             
 
-Votre monnaie: Couronne estonienne (EEK)
 Currencies
 ==========
-id |name                                 |partners_by_currency                 
----+-------------------------------------+-------------------------------------
-EUR|Euro                                 |4 Partners                           
-BEF|Franc belge                          |2 Partners                           
-USD|Dollar US                            |0 Partners                           
-EEK|Couronne estonienne                  |0 Partners                           
+id |name                                                                       
+---+---------------------------------------------------------------------------
+EUR|Euro                                                                       
+BEF|Franc belge                                                                
+USD|Dollar US                                                                  
+EEK|Couronne estonienne                                                        

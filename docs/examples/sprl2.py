@@ -1,8 +1,8 @@
-from lino.schemas.sprl import demo
+from lino.apps.ledger import demo
 from lino.reports import Report
 from lino.adamo.rowattrs import Field, Detail
 
-sess = demo.startup(populate=False)
+sess=demo.startup(populate=False)
 
 rpt=Report(sess.db.app.getTableList())
 

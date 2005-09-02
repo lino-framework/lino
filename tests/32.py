@@ -45,7 +45,9 @@ class Case(TestCase):
             fd=os.popen(cmd,"r")
             observed=fd.read()
             msg="Example %s failed" % filename
-            self.assertEqual(fd.close(),None,msg)
+            cr=fd.close()
+            self.assertEqual(
+                cr,None,msg+" (close() returned %r)"%cr)
             outfile=os.path.join(examplesDir,base)+".out"
             expected=open(outfile).read()
             self.assertEquivalent(observed,expected,msg)

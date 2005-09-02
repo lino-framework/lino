@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -24,11 +24,12 @@ from lino.apps.addrbook import demo
 from lino.apps.addrbook.tables import Nation
 
 class Case(TestCase):
-    "Does the big demo database startup()"
+    "Does the big demo database startup?"
+    todo="Crash in big addrbook demo"
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(langs="en fr",big=True)
+        self.db = demo.startup(langs="de en fr",big=True)
 
     def tearDown(self):
         self.db.shutdown()

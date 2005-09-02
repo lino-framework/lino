@@ -33,8 +33,12 @@ class Raceman(MirrorLoaderApplication):
     
     name="Raceman"
     years='2005'
-    tables = races.TABLES
+    #tables = races.TABLES
     
+    def setupSchema(self):
+        for cl in races.TABLES:
+            self.addTable(cl)
+            
     def getLoaders(self):
         return [lc(self.loadfrom) for lc in loaders.LOADERS]
 

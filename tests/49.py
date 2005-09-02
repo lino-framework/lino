@@ -24,14 +24,6 @@ from lino.apps import timtools
 
 # same list as in mkdist.py
 console_targets = timtools.console_targets()
-## [
-##     'pds2pdf',
-##     'pds2sxw', 'pds2sxc',
-##     'prn2pdf', 'prnprint',
-##     'sync', 'diag',
-##     'openmail', 'openurl'
-##     ]
-
 
 class Case(TestCase):
     def test01(self):
@@ -49,16 +41,6 @@ class Case(TestCase):
             expected=open(outfile).read()
             self.assertEquivalent(observed,expected,msg)
 
-##             mod = my_import("lino.scripts." + scr)
-##             self.failUnless(hasattr(mod,"consoleApplicationClass"),scr)
-##             main=mod.consoleApplicationClass.main
-##             s += catch_output(mod.main,[])
-            #mod.main(["--help"])
-
-        #s = self.getConsoleOutput()
-        #print s
-        #self.assertEquivalent(s,"")
-        
     
     
 if __name__ == '__main__':

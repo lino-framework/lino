@@ -20,11 +20,6 @@
 
 
 
-"""
-Logical columns (row attributes) versus physical columns (atoms)
-
-"""
-
 from lino.misc.tsttools import TestCase, main
 from lino.adamo.datatypes import itod
 from lino.apps.ledger import demo
@@ -35,6 +30,10 @@ from lino.apps.ledger.tables import \
 
 
 class Case(TestCase):
+    
+    "Create an invoice for a table and 4 chairs"
+    
+    todo="updateRow() must first store all values, then validate"
 
     def setUp(self):
         TestCase.setUp(self)
@@ -54,7 +53,7 @@ class Case(TestCase):
         
         """get the partner # 1 and Journal."""
         p = PARTNERS.peek(1)
-        self.assertEqual(p.__str__(),"Luc Saffre")
+        self.assertEqual(str(p),"Luc Saffre")
 
         jnl = JOURNALS.peek("OUT")
         self.assertEqual(jnl.id,"OUT")
@@ -80,53 +79,28 @@ class Case(TestCase):
         self.assertEqual(i.seq,2)
 
         
-        #i.commit()
-
-        # self.db.commit()
-
-        """the following should be equivalent :
-        i = p.invoices.appendRow()
-        """
-
-
         """ len(p.invoices) is increased because an invoice for this
         partner has been created:"""
 
         """create two rows in this invoice :"""
 
-        #lines = INVOICELINES.query("line product qty",invoice=i)
-        #lines.setSamples(invoice=i)
-
         lines = i.lines.query("line product qty")
 
-        lines.appendRow(1,PRODUCTS.peek(3), 2) # price is 12
-        lines.appendRow(2,PRODUCTS.peek(16), 3) # price is 56
+        lines.appendRow(1,PRODUCTS.peek(3), 4) # price is 12
+        lines.appendRow(2,PRODUCTS.peek(16), 1) # price is 56
 
-        # INVOICELINES.commit()
+        i.lines.query(
+            "line product.name qty unitPrice amount").showReport()
 
-        l = []
-        for line in lines:
-            l.append(str(line.product.name))
-        s = " ".join(l)
-        self.assertEqual(s,"Chair Table")
-            
+        s=self.getConsoleOutput()
+        print s
+        self.assertEquivalent(s,"""\
+        """)
+
         # register() the invoice :
         i.close()
         
         self.assertEqual(i.amount, 2*12 + 3*56 )
-
-##          # get a cursor on BOOKINGS :
-##          q = BOOKINGS.query("invoice")
-
-##          # we want only the bookings for one invoice
-##          q.setSlice(q.invoice,i)
-
-##          """first invocation of len() will silently execute a query to
-##          find out the number of rows. There must be 2 rows"""
-
-##          # bc.executeCount()
-
-##          self.assertEqual(len(q),2)
 
 
 

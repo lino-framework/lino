@@ -321,7 +321,7 @@ class Console(AbstractToolkit):
 
     def setupOptionParser(self,p):
         def call_set(option, opt_str, value, parser,**kw):
-            self.set(**kw)
+            self.configure(**kw)
 
         p.add_option("-v",
                      "--verbose",

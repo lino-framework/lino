@@ -56,9 +56,9 @@ def startup(filename=None, langs=None,
 
 class StandardPopulator(adamo.Populator):
     
-    dataRoot=os.path.join(
+    dataRoot=os.path.abspath(os.path.join(
         os.path.dirname(__file__),
-        "..","..","..","..","data")
+        "..","..","..","..","data"))
     
     def __init__(self, big=False,**kw):
         self.big = big
@@ -102,6 +102,7 @@ class StandardPopulator(adamo.Populator):
             self.deutschland.cities.appendfrom(
                 os.path.join(self.dataRoot,"cities_de.txt"))
 
+            
             self.belgique.cities.appendfrom(
                 os.path.join(self.dataRoot,"cities_be.txt"))
 

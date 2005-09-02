@@ -41,7 +41,7 @@ class Case(TestCase):
 
     def test01(self):
         "report with a Pointer"
-        qry =self.sess.query(Cities,"id name nation",
+        qry =self.sess.query(City,"id name nation",
                              orderBy="name",
                              pageLen=10)
                            
@@ -73,7 +73,7 @@ id   |name                                              |nation
         
     def test02(self):
         "report with a BabelField"
-        qry = self.sess.query(Nations,"id name")
+        qry = self.sess.query(Nation,"id name")
         #self.sess.startDump()
         #ds.report(columnWidths="2 25")
         qry.showReport(columnWidths="2 25")

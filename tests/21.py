@@ -66,11 +66,11 @@ class Case(TestCase):
         self.assertEqual(s,"""\
 Andreas Arens : currency BEF updated to EUR
 Henri Bodard : currency BEF updated to EUR
-Emil Eierschal : currency was already EUR
-Erna Eierschal : currency was already EUR
-Frédéric Freitag : currency None updated to EUR
-Gerd Großmann : currency was already EUR
-PAC Systems PGmbH : currency None updated to EUR
+Emil Eierschal : currency BEF updated to EUR
+Erna Eierschal : currency BEF updated to EUR
+Frédéric Freitag : currency BEF updated to EUR
+Gerd Großmann : currency BEF updated to EUR
+PAC Systems PGmbH : currency BEF updated to EUR
 """)
         
         

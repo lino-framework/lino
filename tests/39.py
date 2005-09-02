@@ -42,19 +42,21 @@ class Case(TestCase):
 
         s = "\n".join(l)
 
-        # print s
+        #print s
 
         self.assertEquivalent(s,"""\
-Users: id(StringType)
 Currencies: id(StringType)
+Languages: id(StringType)
 Nations: id(StringType)
 Cities: nation_id(StringType), id(AutoIncType)
 Organisations: id(AutoIncType)
+Persons: id(AutoIncType)
 Partners: id(AutoIncType)
 PartnerTypes: id(StringType)
-Journals: id(StringType)
-Years: id(IntType)
 Products: id(AutoIncType)
+Journals: id(StringType)
+BankStatements: jnl_id(StringType), seq(AutoIncType)
+MiscOperations: jnl_id(StringType), seq(AutoIncType)
 Invoices: jnl_id(StringType), seq(AutoIncType)
 InvoiceLines: invoice_jnl_id(StringType), invoice_seq(AutoIncType), line(AutoIncType)
 BalanceItems: id(StringType)

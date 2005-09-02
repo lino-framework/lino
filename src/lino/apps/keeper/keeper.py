@@ -19,8 +19,9 @@
 
 import os
 
-from lino.apps.keeper.tables import *
-from lino.apps.keeper.tables import TABLES
+#from lino.apps.keeper.tables import *
+#from lino.apps.keeper.tables import TABLES
+from lino.apps.keeper import tables
 from lino.adamo.ddl import Schema, Populator, STRING
 from lino.reports import DataReport
 from lino.adamo.filters import Contains, NotEmpty
@@ -30,11 +31,15 @@ class Keeper(Schema):
     years='2005'
     author="Luc Saffre"
     
-    tables = TABLES
+    #tables = TABLES
+
+    def setupSchema(self):
+        for cl in tables.TABLES:
+            self.addTable(cl)
 
     def showSearchForm(self,sess):
-        words = sess.query(Word)
-        files = sess.query(File,"name")
+        words = sess.query(tables.Word)
+        files = sess.query(tables.File,"name")
         grid=None # referenced in search(), defined later
         col=files.addColumn("occurences")
         files.addFilter(NotEmpty(col))
@@ -93,13 +98,13 @@ This is the Keeper main menu.
     
         m = frm.addMenu("db","&Datenbank")
         m.addItem("volumes",label="&Volumes").setHandler(
-            sess.showViewGrid, Volume)
+            sess.showViewGrid, tables.Volume)
         m.addItem("files",label="&Files").setHandler(
-            sess.showViewGrid, File)
+            sess.showViewGrid, tables.File)
         m.addItem("dirs",label="&Directories").setHandler(
-            sess.showViewGrid, Directory)
+            sess.showViewGrid, tables.Directory)
         m.addItem("words",label="&Words").setHandler(
-            sess.showViewGrid, Word)
+            sess.showViewGrid, tables.Word)
         
         self.addProgramMenu(sess,frm)
 

@@ -257,13 +257,14 @@ class DemoPopulator(addrdemo.DemoPopulator):
         NAT=q.getSession().query(tables.Nation)
         CCY=q.getSession().query(tables.Currency)
         BEF=CCY.peek("BEF")
-        be=NAT.peek('be')
+        #be=NAT.peek('be')
         #be.partners_by_nation.showReport()
         #return
-        for p in be.partners_by_nation:
-            p.lock()
-            p.currency=BEF
-            p.unlock()
+        for p in NAT.peek('be').partners_by_nation.fetchall():
+            p.update(currency=BEF)
+            #p.lock()
+            #p.currency=BEF
+            #p.unlock()
 
         # the Belgians will switch to EUR in tests/21.py
         

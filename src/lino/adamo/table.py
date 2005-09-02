@@ -132,6 +132,8 @@ class Table(FieldContainer,SchemaComponent,Describable):
         if name is None:
             name = instanceClass.tableName
             #name = self.__class__.__name__
+        #if label is None:
+        #    label = instanceClass.tableLabel
         if label is None:
             label = name
 

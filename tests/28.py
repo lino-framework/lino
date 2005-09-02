@@ -43,7 +43,7 @@ class Case(TestCase):
     def test01(self):
         #for lang in self.sess.tables.LANGS:
         #   print lang
-        self.assertEqual(len(self.sess.query(Languages)),5)
+        self.assertEqual(len(self.sess.query(Language)),5)
         
 
 if __name__ == '__main__':

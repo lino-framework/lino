@@ -1,8 +1,7 @@
 TableName      |Fields                        |Details                            
 ---------------+------------------------------+-----------------------------------
-Users          |id, name, firstName, sex,     |                                   
-               |birthDate, password           |                                   
 Currencies     |id, name                      |partners_by_currency               
+Languages      |id, name                      |partners_by_lang                   
 Nations        |id, name, area, population,   |cities, organisations_by_nation,   
                |curr, isocode                 |partners_by_nation                 
 Cities         |id, name, zipCode, inhabitants|organisations_by_city,             
@@ -10,23 +9,30 @@ Cities         |id, name, zipCode, inhabitants|organisations_by_city,
 Organisations  |id, email, phone, gsm, fax,   |                                   
                |website, zip, street, house,  |                                   
                |box, name                     |                                   
+Persons        |id, name, firstName, sex,     |                                   
+               |birthDate                     |                                   
 Partners       |name, firstName, email, phone,|invoices, bookings_by_partner      
                |gsm, fax, website, zip,       |                                   
                |street, house, box, id, title,|                                   
                |logo                          |                                   
 PartnerTypes   |id, name                      |partnersByType                     
-Journals       |id, name, tableName           |documents                          
-Years          |id, name                      |                                   
 Products       |id, name, price               |invoiceLines                       
+Journals       |id, name, tableName           |bankstatements_by_jnl,             
+               |                              |miscoperations_by_jnl,             
+               |                              |invoices_by_jnl                    
+BankStatements |seq, date, closed, remark,    |                                   
+               |balance1, balance2            |                                   
+MiscOperations |seq, date, closed, remark     |                                   
 Invoices       |seq, date, closed, remark,    |lines, bookings_by_invoice         
                |zziel, amount, inverted       |                                   
-InvoiceLines   |line, unitPrice, qty, remark  |                                   
+InvoiceLines   |line, amount, remark,         |                                   
+               |unitPrice, qty                |                                   
 BalanceItems   |name, id, attrib, dc, type,   |accounts_by_balance                
                |doc                           |                                   
 CashFlowItems  |name, id, attrib, dc, type,   |accounts_by_cash                   
                |doc                           |                                   
 ProfitAndLossIt|name, id, attrib, dc, type,   |accounts_by_profit                 
 ems            |doc                           |                                   
-Accounts       |name, pcmn, id                |accounts_by_parent, bookings_by_db,
-               |                              |bookings_by_cr                     
-Bookings       |date, amount, label, id       |                                   
+Accounts       |name, pcmn, id                |accounts_by_parent,                
+               |                              |bookings_by_account                
+Bookings       |date, amount, dc, label, id   |                                   

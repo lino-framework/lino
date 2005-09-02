@@ -1200,7 +1200,7 @@ class SimpleQuery(LeadTableColumnList):
             col = self.getColumnByName(k)
             col.setCellValue(row,v)
 
-        row.setDirty()
+        row.setDirty() # statt row.setDirty() muessen die 
 
 
     def appendfrom(self,filename):
@@ -1241,7 +1241,7 @@ class SimpleQuery(LeadTableColumnList):
                         atomicRow[a.index]=a.type.parse(s)
             self.atoms2row(atomicRow,row)
             row.commit()
-            #if filename.endswith("nations.txt"):
+            #if filename.endswith("cities_de.txt"):
             #    print atomicRow
             
     
@@ -1396,6 +1396,9 @@ class SimpleQuery(LeadTableColumnList):
         """
         
         return DataIterator(self,**kw)
+
+    def fetchall(self):
+        return [x for x in self]
 
     def onStoreUpdate(self):
         #print __file__,"onStoreUpdate()"

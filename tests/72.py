@@ -23,8 +23,7 @@ opj = os.path.join
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import *
+from lino.apps.pinboard import demo, tables
 
 from lino.gendoc.html import HtmlDocument
 from lino.reports.reports import DataReport
@@ -51,7 +50,7 @@ class Case(TestCase):
         mnu = root.addMenu()
                             
         
-        ds = self.sess.query(Nations,
+        ds = self.sess.query(tables.Nation,
                              pageLen=50,
                              orderBy="name")
         rpt = DataReport(ds)
@@ -62,7 +61,7 @@ class Case(TestCase):
         mnu.addLink(doc)
 
         if True:
-            ds = self.sess.query(Quotes,"quote author.name id",
+            ds = self.sess.query(tables.Quote,"quote author.name id",
                                  pageLen=50,
                                  orderBy="id")
             rpt = DataReport(ds)

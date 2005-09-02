@@ -52,9 +52,9 @@ class DataRow:
         #    return
         if not self.isLocked():
             raise InvalidRequestError("row is not locked")
-        col=self._query.findColumn(name)
-        if col is None:
-            col=self._query._store._peekQuery.getColumnByName(name)
+        #col=self._query.findColumn(name)
+        #if col is None:
+        col=self._query._store._peekQuery.getColumnByName(name)
         col.setCellValue(self,value)
         self.__dict__['_dirty'] = True
 
@@ -340,11 +340,13 @@ class StoredDataRow(DataRow):
         self.commit()
         
 
-    #def writeToStore(self):
     def commit(self):
         if not self._dirty:
             return
         #print "writeToStore()", self
+        if self._new:
+            self._query._store.setAutoRowId(self)
+            
         for rowattr in self._query.getLeadTable()._mandatoryColumns:
             if self.getFieldValue(rowattr.name) is None:
                 raise DataVeto("Column '%s.%s' may not be empty"\
@@ -356,8 +358,8 @@ class StoredDataRow(DataRow):
             self.validate()
         except DataVeto,e:
             raise DataVeto(repr(self) + ': ' + str(e))
+        
         if self._new:
-            self._query._store.setAutoRowId(self)
             self._query._connection.executeInsert(self)
             self.__dict__["_new"] = False
         else:

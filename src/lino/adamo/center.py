@@ -39,16 +39,19 @@ class Center:
         #self._checkIntegrity = False
 
     def connection(self,*args,**kw):
-        try:
-            from lino.adamo.dbds.sqlite_dbd import Connection
-        except ImportError:
-            try:
-                from lino.adamo.dbds.mysql_dbd import Connection
-            except ImportError:
-                try:
-                    from lino.adamo.dbds.gadfly_dbd import Connection
-                except ImportError:
-                    raise DatabaseError("no database driver available")
+        #from lino.adamo.dbds.firebird import Connection
+        from lino.adamo.dbds.sqlite_dbd import Connection
+        
+##         try:
+##             from lino.adamo.dbds.sqlite_dbd import Connection
+##         except ImportError:
+##             try:
+##                 from lino.adamo.dbds.mysql_dbd import Connection
+##             except ImportError:
+##                 try:
+##                     from lino.adamo.dbds.gadfly_dbd import Connection
+##                 except ImportError:
+##                     raise DatabaseError("no database driver available")
                 
         conn = Connection(syscon,*args,**kw)
         self._connections.append(conn)

@@ -6,3 +6,5 @@ ordr.date |ordr.customer
 2003-08-16|James        
 2004-03-18|Bernard      
 2004-03-19|Henri        
+
+SELECT lead.id, lead.ordr_id, ordr.id, ordr.date, ordr.customer_id, lead.productProducts_id, lead.productServices_id FROM OrderLines AS lead LEFT JOIN Orders AS ordr ON (lead.ordr_id = ordr.id) WHERE productProducts_id = 1 AND productServices_id ISNULL
