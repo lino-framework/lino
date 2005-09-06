@@ -28,8 +28,8 @@ class NewsItem(MemoRow):
     def initTable(self,table):
         MemoRow.initTable(self,table)
         table.addField('id',ROWID)
-        table.addField('date',DATE)
-        table.addField('time',TIME)
+        table.addField('ndate',DATE)
+        table.addField('ntime',TIME)
         table.addPointer('newsgroup',Newsgroup).setDetail(
             'newsByGroup', orderBy='date')
         table.addPointer('author',User).setDetail('newsByAuthor')
@@ -42,10 +42,10 @@ class NewsItem(MemoRow):
 
         #table.setColumnList('date title newsgroup abstract id lang')
         #table.setOrderBy("date")
-        table.addView("std","date title abstract",
-                     orderBy="date")
-        table.addView("list","date writeParagraph",
-                         orderBy="date")
+        table.addView("std","ndate title abstract",
+                     orderBy="ndate")
+        table.addView("list","ndate writeParagraph",
+                         orderBy="ndate")
         
     def __str__(self):
         s = str(self.date)

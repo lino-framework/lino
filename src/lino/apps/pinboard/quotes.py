@@ -44,10 +44,10 @@ class Publication(MemoTreeRow):
     def initTable(self,table):
         MemoTreeRow.initTable(self,table)
         table.addField('id',ROWID)
-        table.addField('year',INT)
+        table.addField('pubYear',INT)
         table.addField('subtitle',STRING)
         table.addField('typeRef',STRING)
-        table.addPointer('type', PubType)
+        table.addPointer('pubType', PubType)
         table.addPointer('author',Author)
         table.addPointer('lang',Language)
         #table.addField('lang',LANG)
@@ -100,9 +100,9 @@ class AuthorEvent(BabelRow):
     def initTable(self,table):
         BabelRow.initTable(self,table)
         table.addField('seq',ROWID)
-        table.addPointer('type',AuthorEventType)
+        table.addPointer('aetype',AuthorEventType)
         table.addPointer('author',Author)
-        table.addField('date',DATE)
+        table.addField('aedate',DATE)
         table.addPointer('place',City)
         table.setPrimaryKey('author seq')
         

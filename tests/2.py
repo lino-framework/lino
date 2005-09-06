@@ -57,14 +57,14 @@ class Case(TestCase):
 SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         """)
 
-        q = self.db.query(Invoice,"seq date jnl remark partner")
+        q = self.db.query(Invoice,"seq dateIssued jnl remark partner")
         assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
             jnl_id, 
             seq,
-            date, 
+            dateIssued, 
             remark,
             partner_id
         FROM Invoices 
@@ -108,12 +108,12 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         assert q.getJoinList() == "city nation"
 
 
-        q = self.db.query(Invoice,"seq date jnl remark partner.name")
+        q = self.db.query(Invoice,"seq dateIssued jnl remark partner.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
             lead.jnl_id,
             lead.seq,
-            lead.date,
+            lead.dateIssued,
             lead.remark,
             lead.partner_id,
             partner.id,
@@ -149,7 +149,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         self.assertEqual(q.getJoinList(),"")
         
         q = self.db.query(ProductInvoiceLine,
-                          "invoice.date product.name unitPrice")
+                          "invoice.dateIssued product.name unitPrice")
         self.assertEqual(q.getJoinList(),"invoice product")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
@@ -158,7 +158,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
           lead.line,
           invoice.jnl_id,
           invoice.seq,
-          invoice.date,
+          invoice.dateIssued,
           lead.product_id,
           product.id,
           product.name,

@@ -47,25 +47,27 @@ class Connection(SqlConnection):
     def __init__(self,ui,filename=None):
         SqlConnection.__init__(self,ui)
         self.dbapi = kinterbasdb
-        self._mtime = 0.0
         if filename is None:
-            filename=r"c:\temp\tmp.fdb"
-            if os.path.exists(filename):
-                os.remove(filename)
-                
-        self._filename = filename
-        if os.path.exists(filename):
-            self._mtime = os.stat(filename).st_mtime
-            self._status = self.CST_OPENED
-            self._dbconn = kinterbasdb.connect(
-                host='localhost',
-                database=filename,
-                user='sysdba',
-                password='masterkey')
+            self._filename=r"c:\temp\tmp.fdb"
+            if os.path.exists(self._filename):
+                os.remove(self._filename)
         else:
-            self._dbconn = kinterbasdb.create_database(
-                "create database '%s' user 'sysdba' password 'masterkey'" \
-                % filename)
+            self._filename = filename
+            if os.path.exists(filename):
+                self._mtime = os.stat(filename).st_mtime
+                self._status = self.CST_OPENED
+                self._dbconn = kinterbasdb.connect(
+                    host='localhost',
+                    database=filename,
+                    user='sysdba',
+                    password='masterkey')
+                return
+        
+        
+        self._mtime = 0.0
+        self._dbconn = kinterbasdb.create_database(
+            "create database '%s' user 'sysdba' password 'masterkey'" \
+            % self._filename)
             
 ##         try:
 

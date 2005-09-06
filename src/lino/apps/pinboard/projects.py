@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 
 ## Copyright 2003-2005 Luc Saffre
 
@@ -28,7 +28,7 @@ class Project(MemoTreeRow):
     def initTable(self,table):
         MemoTreeRow.initTable(self,table)
         table.addField('id',ROWID)
-        table.addField('date',DATE)
+        table.addField('startDate',DATE)
         table.addField('stopDate',DATE)
 
         table.addPointer('responsible',User).setDetail("projects")

@@ -179,7 +179,7 @@ class SqlConnection(Connection):
         elif isinstance(type, datatypes.DateType):
             return 'INT'
         elif isinstance(type, datatypes.MemoType):
-            return 'TEXT'
+            return 'BLOB'
         elif isinstance(type, datatypes.BoolType):
             return 'INT'
         #elif type == self.schema.areaType:
@@ -212,9 +212,10 @@ class SqlConnection(Connection):
         sql = 'CREATE TABLE ' + table.getTableName() + " (\n     "
         sep = ' '
         l = []
+        pka_names = [ n for (n,t) in table.getPrimaryAtoms()]
         for atom in query.getAtoms():
             s = atom.name + " " + self.type2sql(atom.type)
-            if atom in table.getPrimaryKey():
+            if atom.name in pka_names:
                 s += " NOT NULL"
             l.append(s)
             

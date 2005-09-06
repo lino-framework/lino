@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 
 ## Copyright 2003-2005 Luc Saffre
 
@@ -38,7 +38,13 @@ from lino.adamo.row import StoredDataRow
 
 
 reservedWords = """\
+pages
 order
+date
+time
+year
+type
+password
 null
 isnull
 notnull
@@ -82,6 +88,8 @@ class FieldContainer:
         assert not self._rowAttrs.has_key(attr.name),\
                "Duplicate field definition %s.%s" % \
                (self.getTableName(),attr.name)
+        assert not attr.name.lower() in reservedWords,\
+               "'%s' is a reserved word in some databases" % attr.name
         #print self.getTableName()+':'+str(attr)
         self._fields.append(attr)
         self._rowAttrs[attr.name] = attr
@@ -134,6 +142,11 @@ class Table(FieldContainer,SchemaComponent,Describable):
         if name is None:
             name = instanceClass.tableName
             #name = self.__class__.__name__
+
+
+        assert not name.lower() in reservedWords,\
+               "'%s' is a reserved word in some databases" % name
+            
         #if label is None:
         #    label = instanceClass.tableLabel
         if label is None:

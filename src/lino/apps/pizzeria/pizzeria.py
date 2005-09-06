@@ -47,7 +47,7 @@ class Customer(StoredDataRow):
 class Order(StoredDataRow):
     tableName="Orders"
     def initTable(self,table):
-        table.addField('date',DATE)
+        table.addField('orderDate',DATE)
         table.addPointer('customer',Customer)
         table.addField('totalPrice',PRICE)
         table.addField('isRegistered',BOOL)
@@ -104,11 +104,11 @@ def populate(sess):
     p2 = PROD.appendRow(name="Pizza Marinara",price=7)
 
     o1 = ORDERS.appendRow(customer=c1,
-                          date=itod(20030816))
+                          orderDate=itod(20030816))
     LINES.appendRow(ordr=o1,product=p1,qty=2)
 
 
-    o2 = ORDERS.appendRow(customer=c2,date=itod(20030816))
+    o2 = ORDERS.appendRow(customer=c2,orderDate=itod(20030816))
     LINES.appendRow(ordr=o2,product=p1,qty=3)
     LINES.appendRow(ordr=o2,product=p2,qty=5)
 
