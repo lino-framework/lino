@@ -89,13 +89,15 @@ class FieldContainer:
         ic=self._instanceClass
         try:
             meth = getattr(ic,"validate_"+attr.name)
-            attr._onValidate.append(meth)
+            attr.setValidator(meth)
+            #attr._onValidate.append(meth)
         except AttributeError:
             pass
         
         try:
             meth = getattr(ic,"after_"+attr.name)
-            attr.afterSetAttr = meth
+            #attr.afterSetAttr = meth
+            attr.setTrigger(meth)
         except AttributeError:
             pass
         return attr
@@ -205,12 +207,15 @@ class Table(FieldContainer,SchemaComponent,Describable):
         for name,attr in self._rowAttrs.items():
             attr.onOwnerInit1(self,name)
             attr.onTableInit1(self,name)
-            try:
-                #um = getattr(self.Instance,"after_"+name)
-                um = getattr(self._instanceClass,"after_"+name)
-                attr.afterSetAttr = um
-            except AttributeError:
-                pass
+            
+##             try:
+##                 #um = getattr(self.Instance,"after_"+name)
+##                 um = getattr(self._instanceClass,"after_"+name)
+##                 #attr.afterSetAttr = um
+##                 attr.addTrigger(um)
+##             except AttributeError:
+##                 pass
+            
             if attr._isMandatory or name in self._pk:
                 if not isinstance(attr.type,datatypes.AutoIncType):
                     mandatoryColumns.append(attr)

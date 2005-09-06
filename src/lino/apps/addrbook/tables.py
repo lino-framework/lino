@@ -162,14 +162,15 @@ class Nation(BabelRow):
         
         table.addView('std',columnNames="name isocode id")
 
-    def validate_id(self,value):
+    def validate_id(value):
         if len(value) != 2:
-            raise DataVeto("Nation.id must be 2 chars")
+            raise DataVeto("must be 2 chars")
+    validate_id = staticmethod(validate_id)
         
-    def validate(self):
-        if len(self.id) != 2:
-            #return "Nation.id must be 2 chars"
-            raise DataVeto("Nation.id must be 2 chars")
+##     def validate(self):
+##         if len(self.id) != 2:
+##             #return "Nation.id must be 2 chars"
+##             raise DataVeto("Nation.id must be 2 chars")
         
 
         
@@ -203,8 +204,8 @@ class City(StoredDataRow):
 TABLES = (Language,
           Nation, City,
           Organisation, Person, User,
-          Partner, PartnerType)        
-    
+          Partner, PartnerType)
+
 
 __all__ = [t.__name__ for t in TABLES]
 __all__.append('TABLES')

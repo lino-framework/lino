@@ -25,7 +25,7 @@ import pysqlite2.dbapi2 as sqlite
 from unittest import TestCase, main
 
 
-filename=os.path.join(os.path.dirname(__file__),"27.sql")
+filename=os.path.join(os.path.dirname(__file__),"27b.sql")
 
 class Case(TestCase):
     
@@ -37,6 +37,7 @@ class Case(TestCase):
         f=codecs.open(filename,encoding="cp1252")
         sql=""
         lengths=[]
+        inserts=0
         for ln in f:
             ln=ln.strip()
             if not ln.startswith('#'):
@@ -57,6 +58,8 @@ class Case(TestCase):
                         lengths.append(len(csr.fetchall()))
                         
                         #print "--> %d rows" % len(csr.fetchall())
+                    elif sql.startswith("INSERT "):
+                        inserts+=1
                     csr.close()
                     
                     #else:
@@ -68,11 +71,32 @@ class Case(TestCase):
                 
         conn.close()
         #print lengths
-        self.assertEqual(lengths,
-                         [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                         0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 7])
+        #print "%d INSERT statements" % inserts
+        
+##         self.assertEqual(lengths,
+##                          [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+##                          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+##                          0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 7])
+
+        self.assertEqual(
+            lengths,
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+             1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 15, 1, 5]
+            )
                          
+        self.assertEqual(inserts,5191)
         
 
 if __name__ == '__main__':

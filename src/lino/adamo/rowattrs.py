@@ -33,7 +33,8 @@ class RowAttribute(Describable):
         Describable.__init__(self,None,name,label,doc)
         self._owner = owner
         self._isMandatory = False
-        self._onValidate = []
+        self._validator = None
+        self._trigger = None
         self._deleted=False
         
     def child(self,*args,**kw):
@@ -50,12 +51,22 @@ class RowAttribute(Describable):
 ##             msg=v(row,value)
 ##             if msg is not None: return msg
     
-    def afterSetAttr(self,row):
-        pass
-        """called after setting this value for this attribute in this
-        row. Automatically replaced by after_xxx table method.
-        Override this to modify other attributes who depend on this
-        one.    """
+##     def afterSetAttr(self,row):
+##         pass
+##         """called after setting this value for this attribute in this
+##         row. Automatically replaced by after_xxx table method.
+##         Override this to modify other attributes who depend on this
+##         one.    """
+
+        
+    def trigger(self,row):
+        if self._trigger is not None:
+            self._trigger(row)
+        #for t in self._triggers:
+        #    t(row)
+
+
+        
 
     def format(self,v):
         #print repr(v)
@@ -75,7 +86,15 @@ class RowAttribute(Describable):
         #self.owner = table
         
     def onTableInit3(self,owner,schema):
-        self._onValidate = tuple(self._onValidate)
+        pass
+        #self._validators = tuple(self._validators)
+        #self._triggers = tuple(self._triggers)
+
+    def setValidator(self,meth):
+        self._validator = meth
+
+    def setTrigger(self,meth):
+        self._trigger=meth
 
 ##     def onAreaInit(self,area):
 ##         pass
@@ -86,8 +105,14 @@ class RowAttribute(Describable):
     def onAppend(self,row):
         pass
 
-##     def validate(self,row,value):
-##         return value
+    def validate(self,value):
+        if value is not None:
+            self.validateType(value)
+        #for v in self._validators:
+        #    v(value)
+        if self._validator is not None:
+            self._validator(value)
+
 
     def checkIntegrity(self,row):
         pass
@@ -105,18 +130,11 @@ class RowAttribute(Describable):
 
     def getDefaultValue(self,row):
         return None
+    
 
     def setCellValue(self,row,value):
         # does not setDirty() !
-        if value is not None:
-            self.validate(value)
-        
-##         if value is None:
-##             if self._isMandatory:
-##                 raise RefuseValue("may not be empty")
-##         else:
-        for v in self._onValidate:
-            v(row,value)
+        self.validate(value)
         #self.canSetValue(row,value)
         row._values[self.name] = value
         #print self.name, "=", value
@@ -125,15 +143,6 @@ class RowAttribute(Describable):
 ##         # overridden by BabelField and Detail
 ##         return row.getFieldValue(self.name)
 
-    def setCellValueFromString(self,row,s):
-        # does not setDirty() !
-        if len(s) == 0:
-            self.setCellValue(row,None)
-        else:
-            v=self.parse(s)
-            self.setCellValue(row,v)
-    
-    
     def getFltAtoms(self,colAtoms,context):
         return colAtoms
 
@@ -160,6 +169,7 @@ class RowAttribute(Describable):
         atomicValues = [atomicRow[atom.index] for atom in colAtoms]
         row._values[self.name] = self.atoms2value(atomicValues,
                                                   row.getSession())
+        #row.setDirtyRowAttr(self)
 
     #
     # change atoms2value(self,atomicRow,colAtoms,context)
@@ -213,7 +223,7 @@ class Field(RowAttribute):
     def format(self,v):
         return self.type.format(v)
         
-    def validate(self,value):
+    def validateType(self,value):
         return self.type.validate(value)
     
 ##     def setCellValue(self,row,value):
@@ -274,7 +284,7 @@ class BabelField(Field):
         return l
 
 
-    def validate(self,value):
+    def validateType(self,value):
         return type(value) == types.TupleType
     
 ##     def getSupportedLangs(self):
@@ -376,6 +386,7 @@ class BabelField(Field):
             value = atomicRow[colAtoms[lang.index].index]
             values[lang.index] = value
         #row._values[self.name] = l
+        #row.setDirtyRowAttr(self)
     
     
     def getFltAtoms(self,colAtoms,context):
@@ -621,7 +632,7 @@ class Pointer(RowAttribute):
                 atomicValues = atomicValues[pklen:]
         raise "invalid tableId %d" % tableId
     
-    def validate(self,value):
+    def validateType(self,value):
         #print value
         for toTable in self._toTables:
             if isinstance(value,toTable._instanceClass):
@@ -674,6 +685,7 @@ class Detail(RowAttribute):
     
     def atoms2row(self,atomicRow,colAtoms,row):
         row._values[self.name] = None
+        #row.setDirtyRowAttr(self)
     
     def atoms2value(self,atomicRow,colAtoms,sess):
         assert len(colAtoms) == 0
@@ -700,7 +712,8 @@ class Detail(RowAttribute):
 ##             row._values[self.name] = ds
 ##         return ds
         
-    def validate(self,value):
+    def validateType(self,value):
+        #raise "should never be called"
         pass
     
 ##     def getType(self):

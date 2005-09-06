@@ -398,7 +398,7 @@ class Console(AbstractToolkit):
             
 
     def decide(self,sess,prompt,answers,
-               default=None,
+               dfault=None,
                ignoreCase=True):
         
         """Ask user a question and return only when she has given her
@@ -406,18 +406,18 @@ class Console(AbstractToolkit):
         refused to answer.
         
         """
-        if default is None:
-            default = answers[0]
-            
+        if dfault is None:
+            dfault = answers[0]
+
         if self._batch:
-            return default
-        
+            return dfault
+
         if sound:
             sound.asterisk()
         while True:
             s = self.readkey(sess,prompt+(" [%s]" % ",".join(answers)))
             if s == "":
-                s = default
+                s = dfault
             if ignoreCase:
                 s = s.lower()
             if s in answers:

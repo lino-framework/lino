@@ -33,7 +33,7 @@ class Case(TestCase):
     
     "Create an invoice for a table and 4 chairs"
     
-    todo="updateRow() must first store all values, then validate"
+    #todo="updateRow() must first store all values, then validate"
 
     def setUp(self):
         TestCase.setUp(self)
@@ -90,17 +90,25 @@ class Case(TestCase):
         lines.appendRow(2,PRODUCTS.peek(16), 1) # price is 56
 
         i.lines.query(
-            "line product.name qty unitPrice amount").showReport()
+            "line product.name qty unitPrice amount")\
+            .showReport(width=60)
 
         s=self.getConsoleOutput()
-        print s
+        #print s
         self.assertEquivalent(s,"""\
-        """)
+InvoiceLines (invoice=OUT-2)
+============================
+line   |product.name                |qty    |unitPri|amount
+       |                            |       |ce     |
+-------+----------------------------+-------+-------+-------
+1      |Chair                       |4      |12     |48
+2      |Table                       |1      |56     |56        
+""")
 
         # register() the invoice :
         i.close()
         
-        self.assertEqual(i.amount, 2*12 + 3*56 )
+        self.assertEqual(i.amount, 4*12 + 1*56 )
 
 
 

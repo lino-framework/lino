@@ -96,12 +96,25 @@ class QueryColumn:
         try:
             self.rowAttr.setCellValue(row,value)
         except DataVeto,e:
-            raise DataVeto(repr(value)+": "+str(e))
-        self.rowAttr.afterSetAttr(row)
+            raise DataVeto("%s.%s=%r: %s" % (
+                self._owner.getTableName(),self.name,value,e))
+        #self.rowAttr.afterSetAttr(row)
+        #self.rowAttr.trigger(row)
+        row.setDirtyRowAttr(self.rowAttr)
 
     def setCellValueFromString(self,row,s):
-        self.rowAttr.setCellValueFromString(row,s)
-        self.rowAttr.afterSetAttr(row)
+        # does not setDirty() !
+        if len(s) == 0:
+            self.setCellValue(row,None)
+        else:
+            v=self.parse(s)
+            self.setCellValue(row,v)
+    
+    
+##     def setCellValueFromString(self,row,s):
+##         self.rowAttr.setCellValueFromString(row,s)
+##         #self.rowAttr.afterSetAttr(row)
+##         self.rowAttr.trigger(row)
         
     def getFltAtoms(self,context):
         return self.rowAttr.getFltAtoms(self._atoms,context)
@@ -354,7 +367,7 @@ class PointerColumn(QueryColumn):
         if selectedRow is not None:
             sess.notice("you selected: "+str(row))
             self.setCellValue(row,selectedRow)
-            row.setDirty()
+            #row.setDirty()
         row.unlock()
         return True
 
@@ -803,6 +816,9 @@ class LeadTableColumnList(BaseColumnList):
     def getLeadTable(self):
         return self._store._table
     
+    def getTableName(self):
+        return self._store._table.getTableName()
+    
     def getView(self,name):
         return self._store._table.getView(name)
 
@@ -1037,9 +1053,6 @@ class SimpleQuery(LeadTableColumnList):
     def getSession(self):
         return self.session
 
-    def getTableName(self):
-        return self.getLeadTable().getTableName()
-    
     def getLabel(self):
         if self._label is None:
             lbl = self.getLeadTable().getLabel()
@@ -1200,7 +1213,7 @@ class SimpleQuery(LeadTableColumnList):
             col = self.getColumnByName(k)
             col.setCellValue(row,v)
 
-        row.setDirty() # statt row.setDirty() muessen die 
+        #row.setDirty() # statt row.setDirty() muessen die 
 
 
     def appendfrom(self,filename):
@@ -1631,10 +1644,10 @@ class Join:
 
 
 
-def trigger(events,*args):
-    for e in events:
-        if not e(*args): return False
-    return True
+## def trigger(events,*args):
+##     for e in events:
+##         if not e(*args): return False
+##     return True
 
 
 from traceback import print_stack

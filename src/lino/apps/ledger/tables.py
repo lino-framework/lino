@@ -82,10 +82,10 @@ class FinancialDocument(Document):
         
 class BankStatement(FinancialDocument):
     tableName="BankStatements"
-    def initTable(self,table):
-        FinancialDocument.initTable(self,table)
-        table.addField('balance1',AMOUNT)
-        table.addField('balance2',AMOUNT)
+    def initTable(self,tbl):
+        FinancialDocument.initTable(self,tbl)
+        tbl.addField('balance1',AMOUNT)
+        tbl.addField('balance2',AMOUNT)
         
 class MiscOperation(FinancialDocument):
     tableName="MiscOperations"

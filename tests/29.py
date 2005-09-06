@@ -47,7 +47,7 @@ class Case(TestCase):
             NATIONS.appendRow(id="foo",name="Fooland")
             self.fail("expected DataVeto")
         except DataVeto,e:
-            self.assertEqual(str(e),"'foo': Nation.id must be 2 chars")
+            self.assertEqual(str(e),"Nations.id='foo': must be 2 chars")
 
 
         be = NATIONS.peek('be')

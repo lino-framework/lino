@@ -64,8 +64,7 @@ This is the Ledger main menu.
         self.addProgramMenu(sess,frm)
 
         frm.addOnClose(sess.close)
-
         frm.show()
 
-        
-    
+
+

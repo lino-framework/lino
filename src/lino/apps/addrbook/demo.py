@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -23,7 +23,7 @@
 
 
 import os
-from lino import adamo
+from lino import rtlib_path, adamo
 from lino.adamo.datatypes import itod
 from lino.apps.addrbook.addrbook import AddressBook
 from lino.apps.addrbook import tables
@@ -31,11 +31,12 @@ from lino.apps.addrbook import tables
 
 def startup(filename=None, langs=None,
             populate=True,
+            dump=None,
             big=False,
             withDemoData=True,
             **kw):
     schema = AddressBook(**kw)
-    sess=schema.quickStartup(langs=langs, filename=filename)
+    sess=schema.quickStartup(langs=langs, filename=filename, dump=dump)
     if populate:
         sess.populate(StandardPopulator(big=big,
                                         label="Standard"))
@@ -56,9 +57,11 @@ def startup(filename=None, langs=None,
 
 class StandardPopulator(adamo.Populator):
     
-    dataRoot=os.path.abspath(os.path.join(
-        os.path.dirname(__file__),
-        "..","..","..","..","data"))
+    #dataRoot=os.path.abspath(os.path.join(
+    #    os.path.dirname(__file__),
+    #    "..","..","..","..","data"))
+
+    #dataRoot = lino.rtlib_path
     
     def __init__(self, big=False,**kw):
         self.big = big
@@ -73,7 +76,8 @@ class StandardPopulator(adamo.Populator):
     def populateNations(self,q):
         if self.big:
             #q.startDump()
-            q.appendfrom(os.path.join(self.dataRoot,"nations.txt"))
+            q.appendfrom(os.path.join(rtlib_path,
+                                      "data","nations.txt"))
             #print q.stopDump()
             #q.query("id population area name").appendfrom(
             #    os.path.join(self.dataRoot,"nations.txt"))
@@ -100,11 +104,13 @@ class StandardPopulator(adamo.Populator):
     def populateCities(self,q):
         if self.big:
             self.deutschland.cities.appendfrom(
-                os.path.join(self.dataRoot,"cities_de.txt"))
+                os.path.join(rtlib_path,
+                             "data","cities_de.txt"))
 
             
             self.belgique.cities.appendfrom(
-                os.path.join(self.dataRoot,"cities_be.txt"))
+                os.path.join(rtlib_path,
+                             "data","cities_be.txt"))
 
             #from lino.schemas.sprl.data import cities_de
             #cities_de.populate(q)

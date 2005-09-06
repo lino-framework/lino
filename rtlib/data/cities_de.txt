@@ -1,0 +1,2073 @@
+name	bundesland_name
+Aach 	Baden-Württemberg
+Aachen 	Nordrhein-Westfalen
+Aalen 	Baden-Württemberg
+Abenberg 	Bayern
+Abensberg 	Bayern
+Achern 	Baden-Württemberg
+Achim 	Niedersachsen
+Adelsheim 	Baden-Württemberg
+Adenau 	Rheinland-Pfalz
+Adorf 	Sachsen
+Ahaus 	Nordrhein-Westfalen
+Ahlen 	Nordrhein-Westfalen
+Ahrensburg 	Schleswig-Holstein
+Aichach 	Bayern
+Aichtal 	Baden-Württemberg
+Aken (Elbe) 	Sachsen-Anhalt
+Albstadt 	Baden-Württemberg
+Alfeld (Leine) 	Niedersachsen
+Allendorf (Lumda) 	Hessen
+Allstedt 	Sachsen-Anhalt
+Alpirsbach 	Baden-Württemberg
+Alsfeld 	Hessen
+Alsdorf 	Nordrhein-Westfalen
+Alsleben (Saale) 	Sachsen-Anhalt
+Altdorf bei Nürnberg 	Bayern
+Altena 	Nordrhein-Westfalen
+Altenau, Bergstadt 	Niedersachsen
+Altenberg 	Sachsen
+Altenburg 	Thüringen
+Altenkirchen (Westerwald) 	Rheinl.-Pfalz
+Altensteig 	Baden-Württemberg
+Altentreptow 	Mecklenburg-Vorpommern
+Altlandsberg 	Brandenburg
+Altötting 	Bayern
+Alzenau in Unterfranken 	Bayern
+Alzey 	Rheinland-Pfalz
+Amberg 	Bayern
+Amöneburg 	Hessen
+Amorbach 	Bayern
+Andernach 	Rheinland-Pfalz
+Angermünde 	Brandenburg
+Anklam 	Mecklenburg-Vorpommern
+Annaberg-Buchholz 	Sachsen
+Annaburg 	Sachsen-Anhalt
+Annweiler am Trifels 	Rheinland-Pfalz
+Ansbach 	Bayern
+Apolda 	Thüringen
+Arendsee (Altmark) 	Sachsen-Anhalt
+Arneburg 	Sachsen-Anhalt
+Arnis 	Schleswig-Holstein
+Arnsberg 	Nordrhein-Westfalen
+Arnstadt 	Thüringen
+Arnstein 	Bayern
+Artern/Unstrut 	Thüringen
+Arzberg 	Bayern
+Aschaffenburg 	Bayern
+Aschersleben 	Sachsen-Anhalt
+Asperg 	Baden-Württemberg
+Aßlar 	Hessen
+Attendorn 	Nordrhein-Westfalen
+Aub 	Bayern
+Aue 	Sachsen
+Auerbach in der Oberpfalz 	Bayern
+Auerbach/Vogtl. 	Sachsen
+Augsburg 	Bayern
+Augustusburg 	Sachsen
+Aulendorf 	Baden-Württemberg
+Auma 	Thüringen
+Aurich 	Niedersachsen
+Babenhausen 	Hessen
+Bacharach 	Rheinland-Pfalz
+Backnang 	Baden-Württemberg
+Bad Aibling 	Bayern
+Bad Arolsen 	Hessen
+Bad Bentheim 	Niedersachsen
+Bad Bergzabern 	Rheinland-Pfalz
+Bad Berka 	Thüringen
+Bad Berleburg 	Nordrhein-Westfalen
+Bad Berneck im Fichtelgebirge 	Bayern
+Bad Bevensen 	Niedersachsen
+Bad Bibra 	Sachsen-Anhalt
+Bad Blankenburg 	Thüringen
+Bad Bramstedt 	Schleswig-Holstein
+Bad Breisig 	Rheinland-Pfalz
+Bad Brückenau 	Bayern
+Bad Buchau 	Baden-Württemberg
+Bad Camberg 	Hessen
+Bad Colberg-Heldburg 	Thüringen
+Bad Doberan 	Mecklenburg-Vorp.
+Bad Driburg 	Nordrhein-Westfalen
+Bad Düben 	Sachsen
+Bad Dürkheim 	Rheinland-Pfalz
+Bad Dürrenberg 	Sachsen-Anhalt
+Bad Dürrheim 	Baden-Württemberg
+Bad Elster 	Sachsen
+Bad Ems 	Rheinland-Pfalz
+Baden-Baden 	Baden-Württemberg
+Bad Fallingbostel 	Niedersachsen
+Bad Frankenhausen/Kyffhäuser 	Thür.
+Bad Freienwalde (Oder) 	Brandenburg
+Bad Friedrichshall 	Baden-Württ.
+Bad Gandersheim 	Niedersachsen
+Bad Gottleuba-Berggießhübel 	Sachs.
+Bad Griesbach im Rottal 	Bayern
+Bad Grund (Harz) 	Niedersachsen
+Bad Harzburg 	Niedersachsen
+Bad Herrenalb 	Baden-Württemberg
+Bad Hersfeld 	Hessen
+Bad Homburg vor der Höhe 	Hessen
+Bad Honnef 	Nordrhein-Westfalen
+Bad Hönningen 	Rheinland-Pfalz
+Bad Iburg 	Niedersachsen
+Bad Karlshafen 	Hessen
+Bad Kissingen 	Bayern
+Bad König 	Hessen
+Bad Königshofen im Grabfeld 	Bayern
+Bad Kösen 	Sachsen-Anhalt
+Bad Köstritz 	Thüringen
+Bad Kreuznach 	Rheinland-Pfalz
+Bad Laasphe 	Nordrhein-Westfalen
+Bad Langensalza 	Thüringen
+Bad Lauchstädt 	Sachsen-Anhalt
+Bad Lausick 	Sachsen
+Bad Lauterberg im Harz 	Nieders.
+Bad Liebenstein 	Thüringen
+Bad Liebenwerda 	Brandenburg
+Bad Liebenzell 	Baden-Württemberg
+Bad Lippspringe 	Nordrhein-Westfalen
+Bad Lobenstein 	Thüringen
+Bad Marienberg 	Rheinl.-Pf.
+Bad Mergentheim 	Baden-Württ.
+Bad Münder am Deister 	Nieders.
+Bad Münster am Stein-Ebernburg 	R.P.
+Bad Münstereifel 	Nordrhein-Westfalen
+Bad Muskau 	Sachsen
+Bad Nauheim 	Hessen
+Bad Nenndorf 	Niedersachsen
+Bad Neuenahr-Ahrweiler 	Rheinl.-Pfalz
+Bad Neustadt an der Saale 	Bayern
+Bad Oeynhausen 	Nordrhein-Westfalen
+Bad Oldesloe 	Schleswig-Holstein
+Bad Orb 	Hessen
+Bad Pyrmont 	Niedersachsen
+Bad Rappenau 	Baden-Württemberg
+Bad Reichenhall 	Bayern
+Bad Rodach 	Bayern
+Bad Sachsa 	Niedersachsen
+Bad Säckingen 	Baden-Württ.
+Bad Salzdetfurth 	Niedersachsen
+Bad Salzuflen 	Nordrhein-Westf.
+Bad Salzungen 	Thüringen
+Bad Saulgau 	Baden-Württemberg
+Bad Schandau 	Sachsen
+Bad Schmiedeberg 	Sachsen-Anh.
+Bad Schussenried 	Baden-Württ.
+Bad Schwalbach 	Hessen
+Bad Schwartau 	Schleswig-Holst.
+Bad Segeberg 	Schleswig-Holstein
+Bad Sobernheim 	Rheinland-Pfalz
+Bad Soden am Taunus 	Hessen
+Bad Soden-Salmünster 	Hessen
+Bad Sooden-Allendorf 	Hessen
+Bad Staffelstein 	Bayern
+Bad Sulza 	Thüringen
+Bad Sülze 	Mecklenburg-Vorp.
+Bad Teinach-Zavelstein 	Baden-W.
+Bad Tennstedt 	Thüringen
+Bad Tölz 	Bayern
+Bad Urach 	Baden-Württemberg
+Bad Vilbel 	Hessen
+Bad Waldsee 	Baden-Württember
+Bad Wildbad 	Baden-Württemberg
+Bad Wildungen 	Hessen
+Bad Wilsnack 	Brandenburg
+Bad Wimpfen 	Baden-Württemberg
+Bad Windsheim 	Bayern
+Bad Wörishofen 	Bayern
+Bad Wünnenberg 	Nordrh.-Westf.
+Bad Wurzach 	Baden-Württemberg
+Baesweiler 	Nordrhein-Westfalen
+Baiersdorf 	Bayern
+Balingen 	Baden-Württemberg
+Ballenstedt 	Sachsen-Anhalt
+Balve 	Nordrhein-Westfalen
+Bamberg 	Bayern
+Barby (Elbe) 	Sachsen-Anhalt
+Bargteheide 	Schleswig-Holstein
+Barmstedt 	Schleswig-Holstein
+Bärnau 	Bayern
+Barntrup 	Nordrhein-Westfalen
+Barsinghausen 	Niedersachsen
+Barth 	Mecklenburg-Vorpommern
+Baruth/Mark 	Brandenburg
+Bassum 	Niedersachsen
+Battenberg (Eder) 	Hessen
+Baumholder 	Rheinland-Pfalz
+Baunach 	Bayern
+Baunatal 	Hessen
+Bautzen 	Sachsen
+Bayreuth 	Bayern
+Bebra 	Hessen
+Beckum 	Nordrhein-Westfalen
+Bedburg 	Nordrhein-Westfalen
+Beelitz 	Brandenburg
+Beerfelden 	Hessen
+Beeskow 	Brandenburg
+Beilngries 	Bayern
+Beilstein 	Baden-Württemberg
+Belgern 	Sachsen
+Belzig 	Brandenburg
+Bendorf 	Rheinland-Pfalz
+Benneckenstein (Harz) 	Sachsen-Anhalt
+Bensheim 	Hessen
+Berching 	Bayern
+Berga/Elster 	Thüringen
+Bergen 	Niedersachsen
+Bergen auf Rügen 	Mecklenburg-Vorp.
+Bergheim 	Nordrhein-Wedtfalen
+Bergisch Gladbach 	Nordrhein-Westf.
+Bergkamen 	Nordrhein-Westfalen
+Bergneustadt 	Nordrhein-Westfalen
+Berka/Werra 	Thüringen
+Berlin 	Land Berlin / Bundeshauptstadt
+Bernau bei Berlin 	Brandenburg
+Bernburg (Saale) 	Sachsen-Anhalt
+Bernkastel-Kues 	Rheinland-Pfalz
+Bernsdorf 	Sachsen
+Bernstadt a. d. Eigen 	Sachsen
+Bersenbrück 	Niedersachsen
+Besigheim 	Baden-Württemberg
+Betzdorf 	Rheinland-Pfalz
+Betzenstein 	Bayern
+Beverungen 	Nordrhein-Westfalen
+Bexbach 	Saarland
+Biberach an der Riß 	Baden-Württ.
+Biedenkopf 	Hessen
+Bielefeld 	Nordrhein-Westfalen
+Biesenthal 	Brandenburg
+Bietigheim-Bissingen 	Baden-Württ.
+Billerbeck 	Nordrhein-Westfalen
+Bingen am Rhein 	Rheinland-Pfalz
+Birkenfeld 	Rheinland-Pfalz
+Bischofsheim an der Rhön 	Bayern
+Bischofswerda 	Sachsen
+Bismark (Altmark) 	Sachsen-Anhalt
+Bitburg 	Rheinland-Pfalz
+Bitterfeld 	Sachsen-Anhalt
+Blankenburg (Harz) 	Sachsen-Anhalt
+Blankenhain 	Thüringen
+Blaubeuren 	Baden-Württemberg
+Bleckede 	Niedersachsen
+Bleicherode 	Thüringen
+Blieskastel 	Saarland
+Blomberg 	Nordrhein-Westfalen
+Blumberg 	Baden-Württemberg
+Bobingen 	Bayern
+Böblingen 	Baden-Württemberg
+Bocholt 	Nordrhein-Westfalen
+Bochum 	Nordrhein-Westfalen
+Bockenem 	Niedersachsen
+Bodenwerder 	Niedersachsen
+Bogen 	Bayern
+Böhlen 	Sachsen
+Boizenburg/ Elbe 	Mecklenburg-Vorp.
+Bonn 	Nordrhein-Westfalen
+Bonndorf im Schwarzwald 	Baden-W.
+Bönnigheim 	Baden-Württemberg
+Bopfingen 	Baden-Württemberg
+Boppard 	Rheinland-Pfalz
+Borgentreich 	Nordrhein-Westfalen
+Borgholzhausen 	Nordrhein-Westfalen
+Borken 	Nordrhein-Westfalen
+Borken (Hessen) 	Hessen
+Borkum 	Niedersachsen
+Borna 	Sachsen
+Bornheim 	Nordrhein-Westfalen
+Bottrop 	Nordrhein-Westfalen
+Boxberg 	Baden-Württemberg
+Brackenheim 	Baden-Württemberg
+Brake (Unterweser) 	Niedersachsen
+Brakel 	Nordrhein-Westfalen
+Bramsche 	Niedersachsen
+Brandenburg an der Havel 	Brandenb.
+Brand-Erbisdorf 	Sachsen
+Brandis 	Sachsen
+Braubach 	Rheinland-Pfalz
+Braunfels 	Hessen
+Braunlage 	Niedersachsen
+Bräunlingen 	Baden-Württemberg
+Braunsbedra 	Sachsen-Anhalt
+Braunschweig 	Niedersachsen
+Breckerfeld 	Nordrhein-Westfalen
+Bredstedt 	Schleswig-Holstein
+Brehna 	Sachsen-Anhalt
+Breisach am Rhein 	Baden-Württemb.
+Bremen 	Land Bremen / Hansestadt
+Bremerhaven 	Land Bremen
+Bremervörde 	Niedersachsen
+Bretten 	Baden-Württemberg
+Breuberg 	Hessen
+Brilon 	Nordrhein-Westfalen
+Brotterode 	Thüringen
+Bruchköbel 	Hessen
+Bruchsal 	Baden-Württemberg
+Brück 	Brandenburg
+Brüel 	Mecklenburg-Vorpommern
+Brühl 	Nordrhein-Westfalen
+Brunsbüttel 	Schleswig-Holstein
+Brüssow 	Brandenburg
+Buchen (Odenwald) 	Baden-Württ.
+Buchholz in der Nordheide 	Nieders.
+Buchloe 	Bayern
+Bückeburg 	Niedersachsen
+Buckow 	Brandenburg
+Büdelsdorf 	Schleswig-Holstein
+Büdingen 	Hessen
+Bühl 	Baden-Württemberg
+Bünde 	Nordrhein-Westfalen
+Büren 	Nordrhein-Westfalen
+Burg 	Sachsen-Anhalt
+Burgau 	Bayern
+Burgbernheim 	Bayern
+Burgdorf 	Niedersachsen
+Bürgel 	Thüringen
+Burghausen 	Bayern
+Burgkunstadt 	Bayern
+Burglengenfeld 	Bayern
+Burgstädt 	Sachsen
+Burg Stargard 	Mecklenburg-Vorp.
+Burgwedel 	Niedersachsen
+Burladingen 	Baden-Württemberg
+Burscheid 	Nordrhein-Westfalen
+Bürstadt 	Hessen
+Buttelstedt 	Thüringen
+Buttstädt 	Thüringen
+Butzbach 	Hessen
+Bützow 	Mecklenburg-Vorpommern
+Buxtehude 	Niedersachsen
+Calau 	Brandenburg
+Calbe (Saale) 	Sachsen-Anhalt
+Calw 	Baden-Württemberg
+Camburg 	Thüringen
+Castrop-Rauxel 	Nordrhein-Westfalen
+Celle 	Niedersachsen
+Cham 	Bayern
+Chemnitz 	Sachsen
+Clausthal-Zellerfeld 	Nieders.
+Clingen 	Thüringen
+Cloppenburg 	Niedersachsen
+Coburg 	Bayern
+Cochem 	Rheinland-Pfalz
+Coesfeld 	Nordrhein-Westfalen
+Colditz 	Sachsen
+Coswig 	Sachsen
+Coswig (Anhalt) 	Sachsen-Anhalt
+Cottbus 	Brandenburg
+Crailsheim 	Baden-Württemberg
+Creglingen 	Baden-Württemberg
+Creußen 	Bayern
+Creuzburg 	Thüringen
+Crimmitschau 	Sachsen
+Crivitz 	Mecklenburg-Vorpommern
+Cuxhaven 	Niedersachsen
+Dachau 	Bayern
+Dahlen 	Sachsen
+Dahme/Mark 	Brandenburg
+Dahn 	Rheinland-Pfalz
+Damme 	Niedersachsen
+Dannenberg (Elbe) 	Niedersachsen
+Dargun 	Mecklenburg-Vorpommern
+Darmstadt 	Hessen
+Dassel 	Niedersachsen
+Dassow 	Mecklenburg-Vorpommern
+Datteln 	Nordrhein-Westfalen
+Daun 	Rheinland-Pfalz
+Deggendorf 	Bayern
+Deidesheim 	Rheinland-Pfalz
+Delbrück 	Nordrhein-Westfalen
+Delitzsch 	Sachsen
+Delmenhorst 	Niedersachsen
+Demmin 	Mecklenburg-Vorpommern
+Derenburg 	Sachsen-Anhalt
+Dessau 	Sachsen-Anhalt
+Detmold 	Nordrhein-Westfalen
+Dettelbach 	Bayern
+Dieburg 	Hessen
+Diemelstadt 	Hessen
+Diepholz 	Niedersachsen
+Dierdorf 	Rheinland-Pfalz
+Dietenheim 	Baden-Württemberg
+Dietfurt an der Altmühl 	Bayern
+Dietzenbach 	Hessen
+Diez 	Rheinland-Pfalz
+Dillenburg 	Hessen
+Dillingen an der Donau 	Bayern
+Dillingen/ Saar 	Saarland
+Dingelstädt 	Thüringen
+Dingolfing 	Bayern
+Dinkelsbühl 	Bayern
+Dinklage 	Niedersachsen
+Dinslaken 	Nordrhein-Westfalen
+Dippoldiswalde 	Sachsen
+Dissen am Teutoburger Wald 	Nieders.
+Ditzingen 	Baden-Württemberg
+Döbeln 	Sachsen
+Doberlug-Kirchhain 	Brandenburg
+Döbern 	Brandenburg
+Dohna 	Sachsen
+Dömitz 	Mecklenburg-Vorpommern
+Dommitzsch 	Sachsen
+Donaueschingen 	Baden-Württemberg
+Donauwörth 	Bayern
+Donzdorf 	Baden-Württemberg
+Dorfen 	Bayern
+Dormagen 	Nordrhein-Westfalen
+Dornburg/Saale 	Thüringen
+Dornhan 	Baden-Württemberg
+Dornstetten 	Baden-Württemberg
+Dorsten 	Nordrhein-Westfalen
+Dortmund 	Nordrhein-Westfalen
+Dransfeld 	Niedersachsen
+Drebkau 	Brandenburg
+Dreieich 	Hessen
+Drensteinfurt 	Nordrhein-Westfalen
+Dresden 	Landeshauptstadt von Sachsen
+Drolshagen 	Nordrhein-Westfalen
+Duderstadt 	Niedersachsen
+Duisburg 	Nordrhein-Westfalen
+Dülmen 	Nordrhein-Westfalen
+Düren 	Nordrhein-Westfalen
+Düsseldorf 	Landeshauptstadt von NRW
+Ebeleben 	Thüringen
+Eberbach Baden-Württemberg)
+Ebermannstadt 	Bayern
+Ebern 	Bayern
+Ebersbach an der Fils 	Baden-Württ.
+Ebersbach/Sa. 	Sachsen
+Ebersberg 	Bayern
+Eberswalde 	Brandenburg
+Eckartsberga 	Sachsen-Anhalt
+Eckernförde 	Schleswig-Holstein
+Edenkoben 	Rheinland-Pfalz
+Egeln 	Sachsen-Anhalt
+Eggenfelden 	Bayern
+Eggesin 	Mecklenburg-Vorpommern
+Ehingen (Donau) 	Baden-Württemberg
+Ehrenfriedersdorf 	Sachsen
+Eibelstadt 	Bayern
+Eibenstock 	Sachsen
+Eichstätt 	Bayern
+Eilenburg 	Sachsen
+Einbeck 	Niedersachsen
+Eisenach 	Thüringen
+Eisenberg 	Thüringen
+Eisenberg (Pfalz) 	Rheinland-Pfalz
+Eisenhüttenstadt 	Brandenburg
+Eisfeld 	Thüringen
+Eisleben 	Sachsen-Anhalt
+Eislingen/Fils 	Baden-Württemberg
+Elbingerode (Harz) 	Sachsen-Anhalt
+Ellingen 	Bayern
+Ellrich 	Thüringen
+Ellwangen (Jagst) 	Baden-Württemberg
+Elmshorn 	Schleswig-Holstein
+Elsfleth 	Niedersachsen
+Elsterberg 	Sachsen
+Elsterwerda 	Brandenburg
+Elstra 	Sachsen
+Elterlein 	Sachsen
+Eltmann 	Bayern
+Eltville am Rhein 	Hessen
+Elzach 	Baden-Württemberg
+Elze 	Niedersachsen
+Emden 	Niedersachsen
+Emmendingen 	Baden-Württemberg
+Emmerich am Rhein 	Nordrhein-Westf.
+Emsdetten 	Nordrhein-Westfalen
+Endingen am Kaiserstuhl 	Baden-Württ.
+Engen 	Baden-Württemberg
+Enger 	Nordrhein-Westfalen
+Ennepetal 	Nordrhein-Westfalen
+Ennigerloh 	Nordrhein-Westfalen
+Eppelheim 	Baden-Württemberg
+Eppingen 	Baden-Württemberg
+Eppstein 	Hessen
+Erbach 	Baden-Württemberg
+Erbach (Odenwald) 	Hessen
+Erbendorf 	Bayern
+Erding 	Bayern
+Erftstadt 	Nordrhein-Westfalen
+Erfurt 	Landeshauptstadt von Thüringen
+Erkelenz 	Nordrhein-Westfalen
+Erkner 	Brandenburg
+Erkrath 	Nordrhein-Westfalen
+Erlangen 	Bayern
+Erlenbach am Main 	Bayern
+Erwitte 	Nordrhein-Westfalen
+Eschborn 	Hessen
+Eschenbach in der Oberpfalz 	Bayern
+Eschershausen 	Niedersachsen
+Eschwege 	Hessen
+Eschweiler 	Nordrhein-Westfalen
+Esens 	Niedersachsen
+Espelkamp 	Nordrhein-Westfalen
+Essen 	Nordrhein-Westfalen
+Esslingen am Neckar 	Baden-Württ.
+Ettenheim 	Baden-Württemberg
+Ettlingen 	Baden-Württemberg
+Euskirchen 	Nordrhein-Westfalen
+Eutin 	Schleswig-Holstein
+Falkenberg/Elster 	Brandenburg
+Falkensee 	Brandenburg
+Falkenstein/Harz 	Sachsen-Anhalt
+Falkenstein/Vogtl. 	Sachsen
+Fehmarn 	Schleswig-Holstein
+Fellbach 	Baden-Württemberg
+Felsberg 	Hessen)
+Feuchtwangen 	Bayern
+Filderstadt 	Baden-Württemberg
+Finsterwalde 	Brandenburg
+Fladungen 	Bayern
+Flensburg 	Schleswig-Holstein
+Flöha 	Sachsen
+Flörsheim am Main 	Hessen
+Forchheim 	Bayern
+Forchtenberg 	Baden-Württemberg
+Forst (Lausitz) 	Brandenburg
+Frankenau 	Hessen
+Frankenberg (Eder) 	Hessen
+Frankenberg/Sa. 	Sachsen
+Frankenthal (Pfalz) 	Rheinland-Pfalz
+Frankfurt am Main 	Hessen
+Frankfurt (Oder) 	Brandenburg
+Franzburg 	Mecklenburg-Vorpommern
+Frauenstein 	Sachsen
+Frechen 	Nordrhein-Westfalen
+Freiberg am Neckar 	Baden-Württemb.
+Freiberg 	Sachsen
+Freiburg im Breisgau 	Baden-Württemb.
+Freilassing 	Bayern
+Freinsheim 	Rheinland-Pfalz
+Freising 	Bayern
+Freital 	Sachsen
+Freren 	Niedersachsen
+Freudenberg 	Baden-Württemberg
+Freudenberg 	Nordrhein-Westfalen
+Freudenstadt 	Baden-Württemberg
+Freyburg (Unstrut) 	Sachsen-Anhalt
+Freystadt 	Bayern
+Freyung 	Bayern
+Fridingen an der Donau 	Baden-Württ.
+Friedberg 	Bayern
+Friedberg (Hessen) 	Hessen
+Friedland 	Mecklenburg-Vorpommern
+Friedland 	Brandenburg
+Friedrichroda 	Thüringen
+Friedrichsdorf 	Hessen
+Friedrichshafen 	Baden-Württemberg
+Friedrichstadt 	Schleswig-Holstein
+Friedrichsthal 	Saarland
+Friesack 	Brandenburg
+Friesoythe 	Niedersachsen
+Fritzlar 	Hessen
+Frohburg 	Sachsen
+Fröndenberg/Ruhr 	Nordrhein-Westfalen
+Fulda 	Hessen
+Fürstenau 	Niedersachsen
+Fürstenberg/Havel 	Brandenburg
+Fürstenfeldbruck 	Bayern
+Fürstenwalde/Spree 	Brandenburg
+Fürth 	Bayern
+Furth im Wald 	Bayern
+Furtwangen im Schwarzwald 	Baden-W.
+Füssen 	Bayern
+Gadebusch 	Mecklenburg-Vorpommern
+Gaggenau 	Baden-Württemberg
+Gaildorf 	Baden-Württemberg
+Gammertingen 	Baden-Württemberg
+Garbsen 	Niedersachsen
+Garching bei München 	Bayern
+Gardelegen 	Sachsen-Anhalt
+Garding 	Schleswig-Holstein
+Gartz (Oder) 	Brandenburg
+Garz/Rügen 	Mecklenburg-Vorpomm.
+Gau-Algesheim 	Rheinland-Pfalz
+Gebesee 	Thüringen
+Gedern 	Hessen
+Geesthacht 	Schleswig-Holstein
+Gefell 	Thüringen
+Gefrees 	Bayern
+Gehrden 	Niedersachsen
+Gehren 	Thüringen
+Geilenkirchen 	Nordrhein-Westfalen
+Geisa 	Thüringen
+Geiselhöring 	Bayern
+Geisenfeld 	Bayern
+Geisenheim 	Hessen
+Geising 	Sachsen
+Geisingen 	Baden-Württemberg
+Geislingen 	Baden-Württemberg
+Geislingen an der Steige 	Baden-Württ.
+Geithain 	Sachsen
+Geldern 	Nordrhein-Westfalen
+Gelnhausen 	Hessen
+Gelsenkirchen 	Nordrhein-Westfalen
+Gemünden am Main 	Bayern
+Gemünden (Wohra) 	Hessen
+Gengenbach 	Baden-Württemberg
+Genthin 	Sachsen-Anhalt
+Georgsmarienhütte 	Niedersachsen
+Gera 	Thüringen
+Gerabronn 	Baden-Württemberg
+Gerbstedt 	Sachsen-Anhalt
+Geretsried 	Bayern
+Geringswalde 	Sachsen
+Gerlingen 	Baden-Württemberg
+Germering 	Bayern
+Germersheim 	Rheinland-Pfalz
+Gernrode 	Sachsen-Anhalt
+Gernsbach 	Baden-Württemberg
+Gernsheim 	Hessen
+Gerolstein 	Rheinland-Pfalz
+Gerolzhofen 	Bayern
+Gersfeld (Rhön) 	Hessen
+Gersthofen 	Bayern
+Gescher 	Nordrhein-Westfalen
+Geseke 	Nordrhein-Westfalen
+Gevelsberg 	Nordrhein-Westfalen
+Geyer 	Sachsen
+Giengen an der Brenz 	Baden-Württ.
+Gießen 	Hessen
+Gifhorn 	Niedersachsen
+Gladbeck 	Nordrhein-Westfalen
+Gladenbach 	Hessen
+Glashütte 	Sachsen
+Glauchau 	Sachsen
+Glinde 	Schleswig-Holstein
+Glücksburg (Ostsee) 	Schleswig-Holst.
+Glückstadt 	Schleswig-Holstein
+Gnoien 	Mecklenburg-Vorpommern
+Goch 	Nordrhein-Westfalen
+Goldberg 	Mecklenburg-Vorpommern
+Goldkronach 	Bayern
+Golßen 	Brandenburg
+Gommern 	Sachsen-Anhalt
+Göppingen 	Baden-Württemberg
+Görlitz 	Sachsen
+Goslar 	Niedersachsen
+Gößnitz 	Thüringen
+Gotha 	Thüringen
+Göttingen 	Niedersachsen
+Grabow 	Mecklenburg-Vorpommern
+Grafenau 	Bayern
+Gräfenberg 	Bayern
+Gräfenhainichen 	Sachsen-Anhalt
+Gräfenthal 	Thüringen
+Grafenwöhr 	Bayern
+Grafing bei München 	Bayern
+Gransee 	Brandenburg
+Grebenau 	Hessen
+Grebenstein 	Hessen
+Greding 	Bayern)
+Greifswald 	Meckl.-Vorp. / Hansestadt
+Greiz Thüringen)
+Greußen 	Thüringen
+Greven 	Nordrhein-Westfalen
+Grevenbroich 	Nordrhein-Westfalen
+Grevesmühlen 	Mecklenburg-Vorp.
+Griesheim 	Hessen
+Grimma 	Sachsen
+Grimmen 	Mecklenburg-Vorpommern
+Gröbzig 	Sachsen-Anhalt
+Gröditz 	Sachsen
+Groitzsch 	Sachsen
+Gronau (Leine) 	Niedersachsen
+Gronau (Westf.) 	Nordrhein-Westfalen
+Gröningen 	Sachsen-Anhalt
+Großalmerode 	Hessen
+Groß-Bieberau 	Hessen
+Großbottwar 	Baden-Württemberg
+Großbreitenbach 	Thüringen
+Großenehrich 	Thüringen
+Großenhain 	Sachsen
+Groß-Gerau 	Hessen
+Großräschen 	Brandenburg
+Großröhrsdorf 	Sachsen
+Großschirma 	Sachsen
+Groß-Umstadt 	Hessen
+Grünberg 	Hessen
+Grünhain-Beierfeld 	Sachsen
+Grünsfeld 	Baden-Württemberg
+Grünstadt 	Rheinland-Pfalz
+Guben 	Brandenburg
+Gudensberg 	Hessen
+Güglingen 	Baden-Württemberg
+Gummersbach 	Nordrhein-Westfalen
+Gundelfingen an der Donau 	Bayern
+Gundelsheim 	Baden-Württemberg
+Güntersberge 	Sachsen-Anhalt
+Günzburg 	Bayern
+Gunzenhausen 	Bayern
+Güsten 	Sachsen-Anhalt
+Güstrow 	Mecklenburg-Vorpommern
+Gütersloh 	Nordrhein-Westfalen
+Gützkow 	Mecklenburg-Vorpommern
+Haan 	Nordrhein-Westfalen
+Hachenburg 	Rheinland-Pfalz
+Hadamar 	Hessen
+Hadmersleben 	Sachsen-Anhalt
+Hagen 	Nordrhein-Westfalen
+Hagenow 	Mecklenburg-Vorpommern
+Haiger 	Hessen
+Haigerloch 	Baden-Württemberg
+Hainichen 	Sachsen
+Haiterbach 	Baden-Württemberg
+Halberstadt 	Sachsen-Anhalt
+Haldensleben 	Sachsen-Anhalt
+Halle (Saale) 	Sachsen-Anhalt
+Halle (Westf.) 	Nordrhein-Westfalen
+Hallenberg 	Nordrhein-Westfalen
+Hallstadt 	Bayern
+Haltern am See 	Nordrhein-Westfalen
+Halver 	Nordrhein-Westfalen
+Hamburg 	Freie und Hansestadt
+Hameln 	Niedersachsen
+Hamm 	Nordrhein-Westfalen
+Hammelburg 	Bayern
+Hamminkeln 	Nordrhein-Westfalen
+Hanau 	Hessen
+Hannover 	Landeshauptst. von Nieders.
+Hann. Münden 	Niedersachsen
+Harburg (Schwaben) 	Bayern
+Hardegsen 	Niedersachsen
+Haren (Ems) 	Niedersachsen
+Harsewinkel 	Nordrhein-Westfalen
+Hartenstein 	Sachsen
+Hartha 	Sachsen
+Harzgerode 	Sachsen-Anhalt
+Haselünne 	Niedersachsen
+Haslach im Kinzigtal 	Baden-Württ.
+Hasselfelde 	Sachsen-Anhalt
+Haßfurt 	Bayern
+Hattersheim am Main 	Hessen
+Hattingen 	Nordrhein-Westfalen
+Hatzfeld (Eder) 	Hessen
+Hausach 	Baden-Württemberg
+Hauzenberg 	Bayern
+Havelberg 	Sachsen-Anhalt
+Havelsee 	Brandenburg
+Hayingen 	Baden-Württemberg
+Hechingen 	Baden-Württemberg
+Hecklingen 	Sachsen-Anhalt
+Heide 	Schleswig-Holstein
+Heideck 	Bayern
+Heidelberg 	Baden-Württemberg
+Heidenau 	Sachsen
+Heidenheim an der Brenz 	Baden-Württ.
+Heilbad Heiligenstadt 	Thüringen
+Heilbronn 	Baden-Württemberg
+Heiligenhafen 	Schleswig-Holstein
+Heiligenhaus 	Nordrhein-Westfalen
+Heilsbronn 	Bayern
+Heimbach 	Nordrhein-Westfalen
+Heimsheim 	Baden-Württemberg
+Heinsberg 	Nordrhein-Westfalen
+Heitersheim 	Baden-Württemberg
+Heldrungen 	Thüringen
+Helmbrechts 	Bayern
+Helmstedt 	Niedersachsen
+Hemau 	Bayern
+Hemer 	Nordrhein-Westfalen
+Hemmingen 	Niedersachsen
+Hemmoor 	Niedersachsen
+Hemsbach 	Baden-Württemberg
+Hennef (Sieg) 	Nordrhein-Westfalen
+Hennigsdorf 	Brandenburg
+Heppenheim (Bergstraße) 	Hessen
+Herbolzheim 	Baden-Württemberg
+Herborn 	Hessen
+Herbrechtingen 	Baden-Württemberg
+Herbstein 	Hessen
+Herdecke 	Nordrhein-Westfalen
+Herdorf 	Rheinland-Pfalz
+Herford 	Nordrhein-Westfalen
+Heringen/Helme 	Thüringen
+Heringen (Werra) 	Hessen
+Hermeskeil 	Rheinland-Pfalz
+Hermsdorf 	Thüringen
+Herne 	Nordrhein-Westfalen
+Herrenberg 	Baden-Württemberg
+Herrieden 	Bayern
+Herrnhut 	Sachsen
+Hersbruck 	Bayern
+Herten 	Nordrhein-Westfalen
+Herzberg am Harz 	Niedersachsen
+Herzberg (Elster) 	Brandenburg
+Herzogenaurach 	Bayern
+Herzogenrath 	Nordrhein-Westfalen
+Hessisch Lichtenau 	Hessen
+Hessisch Oldendorf 	Niedersachsen
+Hettingen 	Baden-Württemberg
+Hettstedt 	Sachsen-Anhalt
+Heubach 	Baden-Württemberg
+Heusenstamm 	Hessen
+Hilchenbach 	Nordrhein-Westfalen
+Hildburghausen 	Thüringen
+Hilden 	Nordrhein-Westfalen
+Hildesheim 	Niedersachsen
+Hillesheim 	Rheinland-Pfalz
+Hilpoltstein 	Bayern
+Hirschau 	Bayern
+Hirschberg 	Thüringen
+Hirschhorn (Neckar) 	Hessen
+Hitzacker (Elbe) 	Niedersachsen
+Hochheim am Main 	Hessen
+Höchstadt an der Aisch 	Bayern
+Höchstädt an der Donau 	Bayern
+Hockenheim 	Baden-Württemberg
+Hof 	Bayern
+Hofgeismar 	Hessen
+Hofheim am Taunus 	Hessen
+Hofheim in Unterfranken 	Bayern
+Hohenberg an der Eger 	Bayern
+Hohenleuben 	Thüringen
+Hohenmölsen 	Sachsen-Anhalt
+Hohen Neuendorf 	Brandenburg
+Hohenstein-Ernstthal 	Sachsen
+Hohnstein 	Sachsen
+Höhr-Grenzhausen 	Rheinland-Pfalz
+Hollfeld 	Bayern
+Holzgerlingen 	Baden-Württemberg
+Holzminden 	Niedersachsen
+Homberg (Efze) 	Hessen
+Homberg (Ohm) 	Hessen
+Homburg (Saar) 	Saarland
+Horb am Neckar 	Baden-Württemberg
+Hornbach 	Rheinland-Pfalz
+Horn-Bad Meinberg 	Nordrhein-Westf.
+Hornberg 	Baden-Württemberg
+Hornburg 	Niedersachsen
+Hörstel 	Nordrhein-Westfalen
+Horstmar 	Nordrhein-Westfalen
+Höxter 	Nordrhein-Westfalen
+Hoya 	Niedersachsen
+Hoyerswerda 	Sachsen
+Hoym 	Sachsen-Anhalt
+Hückelhoven 	Nordrhein-Westfalen
+Hückeswagen 	Nordrhein-Westfalen
+Hüfingen 	Baden-Württemberg
+Hünfeld 	Hessen
+Hungen 	Hessen
+Hürth 	Nordrhein-Westfalen
+Husum 	Schleswig-Holstein
+Ibbenbüren 	Nordrhein-Westfalen
+Ichenhausen 	Bayern
+Idar-Oberstein 	Rheinland-Pfalz
+Idstein 	Hessen
+Illertissen 	Bayern
+Ilmenau 	Thüringen
+Ilsenburg (Harz) 	Sachsen-Anhalt
+Ilshofen 	Baden-Württemberg
+Immenhausen 	Hessen
+Immenstadt im Allgäu 	Bayern
+Ingelfingen 	Baden-Württemberg
+Ingelheim am Rhein 	Rheinland-Pfalz
+Ingolstadt 	Bayern
+Iphofen 	Bayern
+Iserlohn 	Nordrhein-Westfalen
+Isny im Allgäu 	Baden-Württemberg
+Isselburg 	Nordrhein-Westfalen
+Itzehoe 	Schleswig-Holstein
+Jarmen 	Mecklenburg-Vorpommern
+Jena 	Thüringen
+Jerichow 	Sachsen-Anhalt
+Jessen (Elster) 	Sachsen-Anhalt
+Jeßnitz (Anhalt) 	Sachsen-Anhalt
+Jever 	Niedersachsen
+Joachimsthal 	Brandenburg
+Johanngeorgenstadt 	Sachsen
+Jöhstadt 	Sachsen
+Jülich 	Nordrhein-Westfalen
+Jüterbog 	Brandenburg
+Kaarst 	Nordrhein-Westfalen
+Kahla 	Thüringen
+Kaisersesch 	Rheinland-Pfalz
+Kaiserslautern 	Rheinland-Pfalz
+Kalbe (Milde) 	Sachsen-Anhalt
+Kalkar 	Nordrhein-Westfalen
+Kaltenkirchen 	Schleswig-Holstein
+Kaltennordheim 	Thüringen
+Kamen 	Nordrhein-Westfalen
+Kamenz 	Sachsen
+Kamp-Lintfort 	Nordrhein-Westfalen
+Kandel 	Rheinland-Pfalz
+Kandern 	Baden-Württemberg
+Kappeln 	Schleswig-Holstein
+Karben 	Hessen
+Karlsruhe 	Baden-Württemberg
+Karlstadt 	Bayern
+Kassel 	Hessen
+Kastellaun 	Rheinland-Pfalz
+Katzenelnbogen 	Rheinland-Pfalz
+Kaub 	Rheinland-Pfalz
+Kaufbeuren 	Bayern
+Kehl 	Baden-Württemberg
+Kelbra (Kyffhäuser) 	Sachsen-Anhalt
+Kelheim 	Bayern
+Kelkheim (Taunus) 	Hessen
+Kellinghusen 	Schleswig-Holstein
+Kelsterbach 	Hessen
+Kemberg 	Sachsen-Anhalt
+Kemnath 	Bayern
+Kempen 	Nordrhein-Westfalen
+Kempten (Allgäu) 	Bayern
+Kenzingen 	Baden-Württemberg
+Kerpen 	Nordrhein-Westfalen
+Ketzin 	Brandenburg
+Kevelaer 	Nordrhein-Westfalen
+Kiel 	Landeshauptstadt von Schl.-Holst.
+Kierspe 	Nordrhein-Westfalen
+Kindelbrück 	Thüringen
+Kirchberg 	Sachsen
+Kirchberg an der Jagst 	Baden-Württ.
+Kirchberg (Hunsrück) 	Rheinland-Pfalz
+Kirchen (Sieg) 	Rheinland-Pfalz
+Kirchenlamitz 	Bayern
+Kirchhain 	Hessen
+Kirchheimbolanden 	Rheinland-Pfalz
+Kirchheim unter Teck 	Baden-Württemb.
+Kirn 	Rheinland-Pfalz
+Kirtorf 	Hessen
+Kitzingen 	Bayern
+Kitzscher 	Sachsen
+Kleve 	Nordrhein-Westfalen
+Klingenberg am Main 	Bayern
+Klingenthal/Sa. 	Sachsen
+Klötze 	Sachsen-Anhalt
+Klütz 	Mecklenburg-Vorpommern
+Knittlingen 	Baden-Württemberg
+Koblenz 	Rheinland-Pfalz
+Kohren-Sahlis 	Sachsen
+Kolbermoor 	Bayern
+Kölleda 	Thüringen
+Köln 	Nordrhein-Westfalen
+Königsberg in Bayern 	Bayern
+Königsbrück 	Sachsen
+Königsbrunn 	Bayern
+Königsee 	Thüringen
+Königslutter am Elm 	Niedersachsen
+Königstein im Taunus 	Hessen
+Königstein/Sächs. Schw. 	Sachsen
+Königswinter 	Nordrhein-Westfalen
+Königs Wusterhausen 	Brandenburg
+Könnern 	Sachsen-Anhalt
+Konstanz (Baden-Württemberg 	
+Konz 	Rheinland-Pfalz
+Korbach 	Hessen
+Korntal-Münchingen 	Baden-Württemb.
+Kornwestheim 	Baden-Württemberg
+Korschenbroich 	Nordrhein-Westfalen
+Köthen (Anhalt) 	Sachsen-Anhalt
+Kötzting 	Bayern
+Kraichtal 	Baden-Württemberg
+Krakow am See 	Mecklenb.-Vorpomm.
+Kranichfeld 	Thüringen
+Krautheim 	Baden-Württemberg
+Krefeld 	Nordrhein-Westfalen
+Kremmen 	Brandenburg
+Krempe 	Schleswig-Holstein
+Kreuztal 	Nordrhein-Westfalen
+Kronach 	Bayern
+Kronberg im Taunus 	Hessen
+Kröpelin 	Mecklenburg-Vorpommern
+Kroppenstedt 	Sachsen-Anhalt
+Krumbach (Schwaben) 	Bayern
+Kühlungsborn 	Mecklenb.-Vorpommern
+Kulmbach 	Bayern
+Külsheim 	Baden-Württemberg
+Künzelsau 	Baden-Württemberg
+Kupferberg 	Bayern
+Kuppenheim 	Baden-Württemberg
+Kusel 	Rheinland-Pfalz
+Kyllburg 	Rheinland-Pfalz
+Kyritz 	Brandenburg
+Laage 	Mecklenburg-Vorpommern
+Laatzen 	Niedersachsen
+Ladenburg 	Baden-Württemberg
+Lage 	Nordrhein-Westfalen
+Lahnstein 	Rheinland-Pfalz
+Lahr/Schwarzwald 	Baden-Württemberg
+Laichingen 	Baden-Württemberg
+Lambrecht (Pfalz) 	Rheinland-Pfalz
+Lampertheim 	Hessen
+Landau an der Isar 	Bayern
+Landau in der Pfalz 	Rheinland-Pfalz
+Landsberg am Lech 	Bayern
+Landsberg 	Sachsen-Anhalt
+Landshut 	Bayern
+Landstuhl 	Rheinland-Pfalz
+Langelsheim 	Niedersachsen
+Langen 	Niedersachsen
+Langen (Hessen) 	Hessen
+Langenau 	Baden-Württemberg
+Langenburg 	Baden-Württemberg
+Langenfeld (Rheinland) 	Nordrhein-Westf.
+Langenhagen 	Niedersachsen
+Langenselbold 	Hessen
+Langenzenn 	Bayern
+Langewiesen 	Thüringen
+Lassan 	Mecklenburg-Vorpommern
+Laubach 	Hessen
+Laucha an der Unstrut 	Sachsen-Anhalt
+Lauchhammer 	Brandenburg
+Lauchheim 	Baden-Württemberg
+Lauda-Königshofen 	Baden-Württemberg
+Lauenburg/Elbe 	Schleswig-Holstein
+Lauf an der Pegnitz 	Bayern
+Laufen 	Bayern
+Laufenburg (Baden) 	Baden-Württemberg
+Lauffen am Neckar 	Baden-Württemberg
+Lauingen (Donau) 	Bayern
+Laupheim 	Baden-Württemberg
+Lauscha 	Thüringen
+Lauta 	Sachsen
+Lauter/Sa. 	Sachsen
+Lauterbach (Hessen) 	Hessen
+Lauterecken 	Rheinland-Pfalz
+Lauterstein 	Baden-Württemberg
+Lebach 	Saarland
+Lebus 	Brandenburg
+Leer (Ostfriesland) 	Niedersachsen
+Lehesten 	Thüringen
+Lehrte 	Niedersachsen
+Leichlingen (Rheinland) 	Nordrh.-Westf.
+Leimen (Baden) 	Baden-Württemberg
+Leinefelde-Worbis 	Thüringen
+Leinfelden-Echterdingen 	Baden-Württ.
+Leipheim 	Bayern
+Leipzig 	Sachsen
+Leisnig 	Sachsen
+Lemgo 	Nordrhein-Westfalen
+Lengefeld 	Sachsen
+Lengenfeld 	Sachsen
+Lengerich 	Nordrhein-Westfalen
+Lennestadt 	Nordrhein-Westfalen
+Lenzen 	Brandenburg
+Leonberg 	Baden-Württemberg
+Leun 	Hessen
+Leuna 	Sachsen-Anhalt
+Leutenberg 	Thüringen
+Leutershausen 	Bayern
+Leutkirch im Allgäu 	Baden-Württemb.
+Leverkusen 	Nordrhein-Westfalen
+Lich 	Hessen
+Lichtenau 	Baden-Württemberg
+Lichtenau 	Nordrhein-Westfalen
+Lichtenberg 	Bayern
+Lichtenfels 	Bayern
+Lichtenfels 	Hessen
+Lichtenstein/Sa. 	Sachsen
+Liebenau 	Hessen
+Liebenwalde 	Brandenburg
+Lieberose 	Brandenburg
+Liebstadt 	Sachsen
+Limbach-Oberfrohna 	Sachsen
+Limburg an der Lahn 	Hessen
+Lindau 	Sachsen-Anhalt
+Lindau (Bodensee) 	Bayern
+Linden 	Hessen
+Lindenberg im Allgäu 	Bayern
+Lindenfels 	Hessen
+Lindow (Mark) 	Brandenburg
+Lingen (Ems) 	Niedersachsen
+Linnich 	Nordrhein-Westfalen
+Linz am Rhein 	Rheinland-Pfalz
+Lippstadt 	Nordrhein-Westfalen
+Löbau 	Sachsen
+Löbejün 	Sachsen-Anhalt
+Loburg 	Sachsen-Anhalt
+Löffingen 	Baden-Württemberg
+Lohmar 	Nordrhein-Westfalen
+Lohne (Oldenburg) 	Niedersachsen
+Löhne 	Nordrhein-Westfalen
+Lohr am Main 	Bayern
+Loitz 	Mecklenburg-Vorpommern
+Lollar 	Hessen
+Lommatzsch 	Sachsen
+Löningen 	Niedersachsen
+Lorch 	Baden-Württemberg
+Lorch 	Hessen
+Lörrach 	Baden-Württemberg
+Lorsch 	Hessen
+Lößnitz 	Sachsen
+Löwenstein 	Baden-Württemberg
+Lübbecke 	Nordrhein-Westfalen
+Lübben (Spreewald) 	Brandenburg
+Lübbenau/Spreewald 	Brandenburg
+Lübeck 	Schleswig-Holst. / Hansestadt
+Lübtheen 	Mecklenburg-Vorpommern
+Lübz 	Mecklenburg-Vorpommern
+Lüchow (Wendland) 	Niedersachsen
+Lucka 	Thüringen
+Luckau 	Brandenburg
+Luckenwalde 	Brandenburg
+Lüdenscheid 	Nordrhein-Westfalen
+Lüdinghausen 	Nordrhein-Westfalen
+Ludwigsburg 	Baden-Württemberg
+Ludwigsfelde 	Brandenburg
+Ludwigshafen am Rhein 	Rheinland-Pfalz
+Ludwigslust 	Mecklenburg-Vorpommern
+Ludwigsstadt 	Bayern
+Lugau/Erzgeb. 	Sachsen
+Lügde 	Nordrhein-Westfalen
+Lüneburg 	Niedersachsen
+Lünen 	Nordrhein-Westfalen
+Lunzenau 	Sachsen
+Lütjenburg 	Schleswig-Holstein
+Lützen 	Sachsen-Anhalt
+Lychen 	Brandenburg
+Magdala 	Thüringen
+Magdeburg 	Landeshauptst. Sachs.-A.
+Mahlberg 	Baden-Württemberg
+Mainbernheim 	Bayern
+Mainburg 	Bayern
+Maintal 	Hessen
+Mainz 	Landeshauptst. von Rheinl.-Pfalz
+Malchin 	Mecklenburg-Vorpommern
+Malchow 	Mecklenburg-Vorpommern
+Mannheim 	Baden-Württemberg
+Manderscheid 	Rheinland-Pfalz
+Mansfeld 	Sachsen-Anhalt
+Marbach am Neckar 	Baden-Württ.
+Marburg 	Hessen
+Marienberg 	Sachsen
+Marienmünster 	Nordrhein-Westfalen
+Markdorf 	Baden-Württemberg
+Markgröningen 	Baden-Württemberg
+Märkisch Buchholz 	Brandenburg
+Markkleeberg 	Sachsen
+Markneukirchen 	Sachsen
+Markranstädt 	Sachsen
+Marktbreit 	Bayern
+Marktheidenfeld 	Bayern
+Marktleuthen 	Bayern
+Marktoberdorf 	Bayern
+Marktredwitz 	Bayern
+Marktsteft 	Bayern
+Marl 	Nordrhein-Westfalen
+Marlow 	Mecklenburg-Vorpommern
+Marne 	Schleswig-Holstein
+Marsberg 	Nordrhein-Westfalen
+Maulbronn 	Baden-Württemberg
+Maxhütte-Haidhof 	Bayern
+Mayen 	Rheinland-Pfalz
+Mechernich 	Nordrhein-Westfalen
+Meckenheim 	Nordrhein-Westfalen
+Medebach 	Nordrhein-Westfalen
+Meerane 	Sachsen
+Meerbusch 	Nordrhein-Westfalen
+Meersburg 	Baden-Württemberg
+Meinerzhagen 	Nordrhein-Westfalen
+Meiningen 	Thüringen
+Meisenheim 	Rheinland-Pfalz
+Meißen 	Sachsen
+Meldorf 	Schleswig-Holstein
+Melle 	Niedersachsen
+Mellrichstadt 	Bayern
+Melsungen 	Hessen
+Memmingen 	Bayern
+Menden (Sauerland) 	Nordrh.-Westf.
+Mendig 	Rheinland-Pfalz
+Mengen 	Baden-Württemberg
+Meppen 	Niedersachsen
+Merkendorf 	Bayern
+Merseburg 	Sachsen-Anhalt
+Merzig 	Saarland
+Meschede 	Nordrhein-Westfalen
+Meßkirch 	Baden-Württemberg
+Meßstetten 	Baden-Württemberg
+Mettmann 	Nordrhein-Westfalen
+Metzingen 	Baden-Württemberg
+Meuselwitz 	Thüringen
+Meyenburg 	Brandenburg
+Michelstadt 	Hessen
+Miesbach 	Bayern
+Miltenberg 	Bayern
+Mindelheim 	Bayern
+Minden 	Nordrhein-Westfalen
+Mirow 	Mecklenburg-Vorpommern
+Mittenwalde 	Brandenburg
+Mitterteich 	Bayern
+Mittweida 	Sachsen
+Möckern 	Sachsen-Anhalt
+Möckmühl 	Baden-Württemberg
+Moers 	Nordrhein-Westfalen
+Mölln 	Schleswig-Holstein
+Mönchengladbach 	Nordrhein-Westfalen
+Monheim am Rhein 	Nordrhein-Westf.
+Monheim 	Bayern
+Monschau 	Nordrhein-Westfalen
+Montabaur 	Rheinland-Pfalz
+Moosburg an der Isar 	Bayern
+Mörfelden-Walldorf 	Hessen
+Moringen 	Niedersachsen
+Mosbach 	Baden-Württemberg
+Mössingen 	Baden-Württemberg
+Mücheln (Geiseltal) 	Sachsen-Anhalt
+Mügeln 	Sachsen
+Mühlacker 	Baden-Württemberg
+Mühlberg/Elbe 	Brandenburg
+Mühldorf am Inn 	Bayern
+Mühlhausen/Thüringen 	Thüringen
+Mühlheim am Main 	Hessen
+Mühlheim an der Donau 	Baden-Württ.
+Mühltroff 	Sachsen
+Mülheim an der Ruhr 	Nordrhein-Westfalen
+Mülheim-Kärlich 	Rheinland-Pfalz
+Müllheim 	Baden-Württemberg
+Müllrose 	Brandenburg
+Münchberg 	Bayern
+Müncheberg 	Brandenburg
+München 	Landeshauptstadt von Bayern
+Münchenbernsdorf 	Thüringen
+Munderkingen 	Baden-Württemberg
+Münnerstadt 	Bayern
+Münsingen 	Baden-Württemberg
+Munster 	Niedersachsen
+Münster 	Nordrhein-Westfalen
+Münstermaifeld 	Rheinland-Pfalz
+Münzenberg 	Hessen
+Murrhardt 	Baden-Württemberg
+Mutzschen 	Sachsen
+Mylau 	Sachsen
+Nabburg 	Bayern
+Nagold 	Baden-Württemberg
+Naila 	Bayern
+Nassau 	Rheinland-Pfalz
+Nastätten 	Rheinland-Pfalz
+Nauen 	Brandenburg
+Naumburg 	Hessen
+Naumburg (Saale) 	Sachsen-Anhalt
+Naunhof 	Sachsen
+Nebra (Unstrut) 	Sachsen-Anhalt
+Neckarbischofsheim 	Baden-Württemberg
+Neckargemünd 	Baden-Württemberg
+Neckarsteinach 	Hessen
+Neckarsulm 	Baden-Württemberg
+Nerchau 	Sachsen
+Neresheim 	Baden-Württemberg
+Netphen 	Nordrhein-Westfalen
+Nettetal 	Nordrhein-Westfalen
+Netzschkau 	Sachsen
+Neubrandenburg 	Mecklenburg-Vorpomm.
+Neubukow 	Mecklenburg-Vorpommern
+Neubulach 	Baden-Württemberg
+Neuburg an der Donau 	Bayern
+Neudenau 	Baden-Württemberg
+Neuenbürg 	Baden-Württemberg
+Neuenburg am Rhein 	Baden-Württemb.
+Neuenhaus 	Niedersachsen
+Neuenrade 	Nordrhein-Westfalen
+Neuenstadt am Kocher 	Baden-Württemb.
+Neuenstein 	Baden-Württemberg
+Neuerburg 	Rheinland-Pfalz
+Neuffen 	Baden-Württemberg
+Neugersdorf 	Sachsen
+Neuhaus am Rennweg 	Thüringen
+Neu-Isenburg 	Hessen
+Neukalen 	Mecklenburg-Vorpommern
+Neukirchen 	Hessen
+Neukirchen-Vluyn 	Nordrhein-Westfalen
+Neukloster 	Mecklenburg-Vorpommern
+Neumark 	Thüringen
+Neumarkt in der Oberpfalz 	Bayern
+Neumarkt-Sankt Veit 	Bayern
+Neumünster 	Schleswig-Holstein
+Neunburg vorm Wald 	Bayern
+Neunkirchen 	Saarland
+Neuötting 	Bayern
+Neuruppin 	Brandenburg
+Neusalza-Spremberg 	Sachsen
+Neusäß 	Bayern
+Neuss 	Nordrhein-Westfalen
+Neustadt an der Aisch 	Bayern
+Neustadt an der Donau 	Bayern
+Neustadt an der Waldnaab 	Bayern
+Neustadt am Kulm 	Bayern
+Neustadt am Rübenberge 	Nieders.
+Neustadt an der Orla 	Thüringen
+Neustadt an der Weinstraße 	Rh.-Pfalz
+Neustadt bei Coburg 	Bayern
+Neustadt (Dosse) 	Brandenburg
+Neustadt-Glewe 	Mecklenburg-Vorp.
+Neustadt (Hessen) 	Hessen
+Neustadt in Holstein 	Schlesw.-Holst.
+Neustadt in Sachsen 	Sachsen
+Neustrelitz 	Mecklenburg-Vorpommern
+Neutraubling 	Bayern
+Neu-Ulm 	Bayern
+Neuwied 	Rheinland-Pfalz
+Nidda 	Hessen
+Niddatal 	Hessen
+Nidderau 	Hessen
+Nideggen 	Nordrhein-Westfalen
+Niebüll 	Schleswig-Holstein
+Niedenstein 	Hessen
+Niederkassel 	Nordrhein-Westfalen
+Niedernhall 	Baden-Württemberg
+Niederstetten 	Baden-Württemberg
+Niederstotzingen 	Baden-Württemb.
+Nieheim 	Nordrhein-Westfalen
+Niemegk 	Brandenburg
+Nienburg (Saale) 	Sachsen-Anhalt
+Nienburg (Weser) 	Niedersachsen
+Niesky 	Sachsen
+Nittenau 	Bayern
+Norden 	Niedersachsen
+Nordenham 	Niedersachsen
+Norderney 	Niedersachsen
+Norderstedt 	Schleswig-Holstein
+Nordhausen 	Thüringen
+Nordhorn 	Niedersachsen
+Nördlingen 	Bayern
+Northeim 	Niedersachsen
+Nortorf 	Schleswig-Holstein
+Nossen 	Sachsen
+Nürnberg 	Bayern
+Nürtingen 	Baden-Württemberg
+Oberasbach 	Bayern
+Oberhausen 	Nordrhein-Westfalen
+Oberhof 	Thüringen
+Oberkirch 	Baden-Württemberg
+Oberkochen 	Baden-Württemberg
+Oberlungwitz 	Sachsen
+Obermoschel 	Rheinland-Pfalz
+Obernburg am Main 	Bayern
+Oberndorf am Neckar 	Baden-Württ.
+Obernkirchen 	Niedersachsen
+Ober-Ramstadt 	Hessen
+Oberriexingen 	Baden-Württemberg
+Obertshausen 	Hessen
+Oberursel (Taunus) 	Hessen
+Oberviechtach 	Bayern
+Oberweißbach/Thür. Wald 	Thüringen
+Oberwesel 	Rheinland-Pfalz
+Oberwiesenthal, Kurort 	Sachsen
+Ochsenfurt 	Bayern
+Ochsenhausen 	Baden-Württemberg
+Ochtrup 	Nordrhein-Westfalen
+Oderberg 	Brandenburg
+Oebisfelde 	Sachsen-Anhalt
+Oederan 	Sachsen
+Oelde 	Nordrhein-Westfalen
+Oelsnitz 	Sachsen
+Oelsnitz/Erzgeb. 	Sachsen
+Oer-Erkenschwick 	Nordrhein-Westfalen
+Oerlinghausen 	Nordrhein-Westfalen
+Oestrich-Winkel 	Hessen
+Oettingen in Bayern 	Bayern
+Offenbach am Main 	Hessen
+Offenburg 	Baden-Württemberg
+Ohrdruf 	Thüringen
+Öhringen 	Baden-Württemberg
+Olbernhau 	Sachsen
+Oldenburg (Oldb) 	Niedersachsen
+Oldenburg in Holstein 	Schleswig-Holst.
+Olfen 	Nordrhein-Westfalen
+Olpe 	Nordrhein-Westfalen
+Olsberg 	Nordrhein-Westfalen
+Oppenau 	Baden-Württemberg
+Oppenheim 	Rheinland-Pfalz
+Oranienbaum 	Sachsen-Anhalt
+Oranienburg 	Brandenburg
+Orlamünde 	Thüringen
+Ornbau 	Bayern
+Ortenberg 	Hessen
+Ortrand 	Brandenburg
+Oschatz 	Sachsen
+Oschersleben (Bode) 	Sachsen-Anhalt
+Osnabrück 	Niedersachsen
+Osterburg (Altmark) 	Sachsen-Anhalt
+Osterburken 	Baden-Württemberg
+Osterfeld 	Sachsen-Anhalt
+Osterhofen 	Bayern
+Osterholz-Scharmbeck 	Niedersachsen
+Osterode am Harz 	Niedersachsen
+Osterwieck 	Sachsen-Anhalt
+Ostfildern 	Baden-Württemberg
+Ostheim vor der Rhön 	Bayern
+Osthofen 	Rheinland-Pfalz
+Östringen 	Baden-Württemberg
+Ostritz 	Sachsen
+Otterberg 	Rheinland-Pfalz
+Otterndorf 	Niedersachsen
+Ottweiler 	Saarland
+Overath 	Nordrhein-Westfalen
+Owen 	Baden-Württemberg
+Paderborn 	Nordrhein-Westfalen
+Papenburg 	Niedersachsen
+Pappenheim 	Bayern
+Parchim 	Mecklenburg-Vorpommern
+Parsberg 	Bayern
+Pasewalk 	Mecklenburg-Vorpommern
+Passau 	Bayern
+Pattensen 	Niedersachsen
+Pausa/Vogtl. 	Sachsen
+Pegau 	Sachsen
+Pegnitz 	Bayern
+Peine 	Niedersachsen
+Peitz 	Brandenburg
+Penig 	Sachsen
+Penkun Mecklenburg-Vorpommern)
+Penzberg 	Bayern
+Penzlin 	Mecklenburg-Vorpommern
+Perleberg 	Brandenburg
+Petershagen 	Nordrhein-Westfalen
+Pfaffenhofen an der Ilm 	Bayern
+Pfarrkirchen 	Bayern
+Pforzheim 	Baden-Württemberg
+Pfreimd 	Bayern
+Pfullendorf 	Baden-Württemberg
+Pfullingen 	Baden-Württemberg
+Pfungstadt 	Hessen
+Philippsburg 	Baden-Württemberg
+Pinneberg 	Schleswig-Holstein
+Pirmasens 	Rheinland-Pfalz
+Pirna 	Sachsen
+Plattling 	Bayern
+Plau am See 	Mecklenburg-Vorpomm.
+Plaue 	Thüringen
+Plauen 	Sachsen
+Plettenberg 	Nordrhein-Westfalen
+Pleystein 	Bayern
+Plochingen 	Baden-Württemberg
+Plön 	Schleswig-Holstein
+Pocking 	Bayern
+Pohlheim 	Hessen
+Polch Rheinland-Pfalz)
+Porta Westfalica 	Nordrhein-Westfalen
+Pößneck 	Thüringen
+Potsdam 	Landeshauptst. Brandenburg
+Pottenstein 	Bayern
+Preetz 	Schleswig-Holstein
+Premnitz 	Brandenburg
+Prenzlau 	Brandenburg
+Pressath 	Bayern
+Prettin 	Sachsen-Anhalt
+Pretzsch (Elbe) 	Sachsen-Anhalt
+Preußisch Oldendorf 	Nordrhein-Westf.
+Prichsenstadt 	Bayern
+Pritzwalk 	Brandenburg
+Prüm 	Rheinland-Pfalz
+Pulheim 	Nordrhein-Westfalen
+Pulsnitz 	Sachsen
+Putbus 	Mecklenburh-Vorpommern
+Putlitz 	Brandenburg
+Püttlingen 	Saarland
+Quakenbrück 	Niedersachsen
+Quedlinburg 	Sachsen-Anhalt
+Querfurt 	Sachsen-Anhalt
+Quickborn 	Schleswig-Holstein
+Rabenau 	Sachsen
+Radeberg 	Sachsen
+Radebeul 	Sachsen
+Radeburg 	Sachsen
+Radegast 	Sachsen-Anhalt
+Radevormwald 	Nordrhein-Westfalen
+Radolfzell am Bodensee 	Baden-Württ.
+Raguhn 	Sachsen-Anhalt
+Rahden 	Nordrhein-Westfalen
+Rain 	Bayern
+Ramstein-Miesenbach 	Rheinland-Pfalz
+Ranis 	Thüringen
+Ransbach-Baumbach 	Rheinland-Pfalz
+Rastatt 	Baden-Württemberg
+Rastenberg 	Thüringen
+Rathenow 	Brandenburg
+Ratingen 	Nordrhein-Westfalen
+Ratzeburg 	Schleswig-Holstein
+Rauenberg 	Baden-Württemberg
+Raunheim 	Hessen
+Rauschenberg 	Hessen
+Ravensburg 	Baden-Württemberg
+Ravenstein 	Baden-Württemberg
+Recklinghausen 	Nordrhein-Westfalen
+Rees 	Nordrhein-Westfalen
+Regen 	Bayern
+Regensburg 	Bayern
+Regis-Breitingen 	Sachsen
+Rehau 	Bayern
+Rehburg-Loccum 	Niedersachsen
+Rehna 	Mecklenburg-Vorpommern
+Reichelsheim (Wetterau) 	Hessen
+Reichenbach im Vogtland 	Sachsen
+Reichenbach/O.L. 	Sachsen
+Reinbek 	Schleswig-Holstein
+Reinfeld (Holstein) 	Schleswig-Holstein
+Reinheim 	Hessen
+Remagen 	Rheinland-Pfalz
+Remda-Teichel 	Thüringen
+Remscheid 	Nordrhein-Westfalen
+Remseck am Neckar 	Baden-Württemb.
+Renchen 	Baden-Württemberg
+Rendsburg 	Schleswig-Holstein
+Rennerod 	Rheinland-Pfalz
+Renningen 	Baden-Württemberg
+Rerik 	Mecklenburg-Vorpommern
+Rethem (Aller) 	Niedersachsen
+Reutlingen 	Baden-Württemberg
+Rheda-Wiedenbrück 	Nordrhein-Westf.
+Rhede 	Nordrhein-Westfalen
+Rheinau 	Baden-Württemberg
+Rheinbach 	Nordrhein-Westfalen
+Rheinberg 	Nordrhein-Westfalen
+Rheine 	Nordrhein-Westfalen
+Rheinfelden (Baden) 	Baden-Württemb.
+Rheinsberg 	Brandenburg
+Rheinstetten 	Baden-Württemberg
+Rhens 	Rheinland-Pfalz
+Rhinow 	Brandenburg
+Ribnitz-Damgarten 	Mecklenburg-Vorp.
+Richtenberg 	Mecklenburg-Vorpommern
+Riedenburg 	Bayern
+Riedlingen 	Baden-Württemberg
+Rieneck 	Bayern
+Riesa 	Sachsen
+Rietberg 	Nordrhein-Westfalen
+Rinteln 	Niedersachsen
+Röbel/Müritz 	Mecklenburg-Vorpommern
+Rochlitz 	Sachsen
+Rockenhausen 	Rheinland-Pfalz
+Rodalben 	Rheinland-Pfalz
+Rodenberg 	Niedersachsen
+Rödental 	Bayern
+Rödermark 	Hessen
+Rodewisch 	Sachsen
+Rodgau 	Hessen
+Roding 	Bayern
+Römhild 	Thüringen
+Romrod 	Hessen
+Ronneburg 	Thüringen
+Ronnenberg 	Niedersachsen
+Rosbach vor der Höhe 	Hessen
+Rosenfeld 	Baden-Württemberg
+Rosenheim 	Bayern
+Rosenthal 	Hessen
+Rösrath 	Nordrhein-Westfalen
+Roßlau (Elbe) 	Sachsen-Anhalt
+Roßleben 	Thüringen
+Roßwein 	Sachsen
+Rostock 	Mecklenb.-Vorp. / Hansestadt
+Rotenburg an der Fulda 	Hessen
+Rotenburg (Wümme) 	Niedersachsen
+Roth 	Bayern
+Rötha 	Sachsen
+Röthenbach an der Pegnitz 	Bayern
+Rothenburg/O.L. 	Sachsen
+Rothenburg ob der Tauber 	Bayern
+Rothenfels 	Bayern
+Rottenburg am Neckar 	Baden-Württ.
+Rottenburg a.d.Laaber 	Bayern
+Röttingen 	Bayern
+Rottweil 	Baden-Württemberg
+Rötz 	Bayern
+Rüdesheim am Rhein 	Hessen
+Rudolstadt 	Thüringen
+Ruhla 	Thüringen
+Ruhland 	Brandenburg
+Runkel 	Hessen
+Rüsselsheim 	Hessen
+Rüthen 	Nordrhein-Westfalen
+Saalburg-Ebersdorf 	Thüringen
+Saalfeld/Saale 	Thüringen
+Saarbrücken 	Landeshauptst. Saarland
+Saarburg 	Rheinland-Pfalz
+Saarlouis 	Saarland
+Sachsenhagen 	Niedersachsen
+Sachsenheim 	Baden-Württemberg
+Salzgitter 	Niedersachsen
+Salzkotten 	Nordrhein-Westfalen
+Salzwedel 	Sachsen-Anhalt
+Sandau (Elbe) 	Sachsen-Anhalt
+Sandersleben 	Sachsen-Anhalt
+Sangerhausen 	Sachsen-Anhalt
+Sankt Andreasberg, Bergstadt 	Nieders.
+Sankt Augustin 	Nordrhein-Westfalen
+Sankt Goar 	Rheinland-Pfalz
+Sankt Goarshausen 	Rheinland-Pfalz
+Sarstedt 	Niedersachsen
+Sassenberg 	Nordrhein-Westfalen
+Sassnitz 	Mecklenburg-Vorpommern
+Sayda 	Sachsen
+Schafstädt 	Sachsen-Anhalt
+Schalkau 	Thüringen
+Schauenstein 	Bayern
+Scheer 	Baden-Württemberg
+Scheibenberg 	Sachsen
+Scheinfeld 	Bayern
+Schelklingen 	Baden-Württemberg
+Schenefeld 	Schleswig-Holstein
+Scheßlitz 	Bayern
+Schieder-Schwalenberg 	Nordrh.-Westf.
+Schifferstadt 	Rheinland-Pfalz
+Schildau, Gneisenaustadt 	Sachsen
+Schillingsfürst 	Bayern
+Schiltach 	Baden-Württemberg
+Schirgiswalde 	Sachsen
+Schkeuditz 	Sachsen
+Schkölen 	Thüringen
+Schleiden 	Nordrhein-Westfalen
+Schleiz 	Thüringen
+Schleswig 	Schleswig-Holstein
+Schlettau 	Sachsen
+Schleusingen 	Thüringen
+Schlieben 	Brandenburg
+Schlitz 	Hessen
+Schloß Holte-Stukenbrock 	N.-Westf.
+Schlotheim 	Thüringen
+Schlüchtern 	Hessen
+Schlüsselfeld 	Bayern
+Schmalkalden 	Thüringen
+Schmallenberg 	Nordrhein-Westfalen
+Schmölln 	Thüringen
+Schnackenburg 	Niedersachsen
+Schnaittenbach 	Bayern
+Schneeberg 	Sachsen
+Schneverdingen 	Niedersachsen
+Schömberg 	Baden-Württemberg
+Schönau 	Baden-Württemberg
+Schönau im Schwarzwald 	Baden-W.
+Schönberg 	Mecklenburg-Vorp.
+Schönebeck (Elbe) 	Sachsen-Anhalt
+Schöneck/Vogtl. 	Sachsen
+Schönewalde 	Brandenburg
+Schongau 	Bayern
+Schöningen 	Niedersachsen
+Schönsee 	Bayern
+Schönwald 	Bayern
+Schopfheim 	Baden-Württemberg
+Schöppenstedt 	Niedersachsen
+Schorndorf 	Baden-Württemberg
+Schortens 	Niedersachsen
+Schotten 	Hessen
+Schramberg 	Baden-Württemberg
+Schraplau 	Sachsen-Anhalt
+Schriesheim 	Baden-Württemberg
+Schrobenhausen 	Bayern
+Schrozberg 	Baden-Württemberg
+Schüttorf 	Niedersachsen
+Schwaan 	Mecklenburg-Vorpommern
+Schwabach 	Bayern
+Schwäbisch Gmünd 	Baden-Württemb.
+Schwäbisch Hall 	Baden-Württemberg
+Schwabmünchen 	Bayern
+Schwaigern 	Baden-Württemberg
+Schwalbach am Taunus 	Hessen
+Schwalmstadt 	Hessen
+Schwandorf 	Bayern
+Schwanebeck 	Sachsen-Anhalt
+Schwarzenbach am Wald 	Bayern
+Schwarzenbach an der Saale 	Bayern
+Schwarzenbek 	Schleswig-Holstein
+Schwarzenberg/Erzgeb. 	Sachsen
+Schwarzenborn 	Hessen
+Schwarzheide 	Brandenburg
+Schwedt/Oder 	Brandenburg
+Schweich 	Rheinland-Pfalz
+Schweinfurt 	Bayern
+Schwelm 	Nordrhein-Westfalen
+Schwerin 	Landeshauptstadt Meckl.-Vorp.
+Schwerte 	Nordrhein-Westfalen
+Schwetzingen 	Baden-Württemberg
+Sebnitz 	Sachsen
+Seehausen 	Sachsen-Anhalt
+Seehausen (Altmark) 	Sachsen-Anhalt
+Seelow 	Brandenburg
+Seelze 	Niedersachsen
+Seesen 	Niedersachsen
+Sehnde 	Niedersachsen
+Seifhennersdorf 	Sachsen
+Selb 	Bayern
+Selbitz 	Bayern
+Seligenstadt 	Hessen
+Selm 	Nordrhein-Westfalen
+Selters (Westerwald) 	Rheinland-Pfalz
+Senden 	Bayern
+Sendenhorst 	Nordrhein-Westfalen
+Senftenberg 	Brandenburg
+Seßlach 	Bayern
+Siegburg 	Nordrhein-Westfalen
+Siegen 	Nordrhein-Westfalen
+Sigmaringen 	Baden-Württemberg
+Simbach am Inn 	Bayern
+Simmern/ Hunsrück 	Rheinland-Pfalz
+Sindelfingen 	Baden-Württemberg
+Singen (Hohentwiel) 	Baden-Württemb.
+Sinsheim 	Baden-Württemberg
+Sinzig 	Rheinland-Pfalz
+Soest 	Nordrhein-Westfalen
+Solingen 	Nordrhein-Westfalen
+Solms 	Hessen
+Soltau 	Niedersachsen
+Sömmerda 	Thüringen
+Sondershausen 	Thüringen
+Sonneberg 	Thüringen
+Sonnewalde 	Brandenburg
+Sonthofen 	Bayern
+Sontra 	Hessen
+Spaichingen 	Baden-Württemberg
+Spalt 	Bayern
+Spangenberg 	Hessen
+Spenge 	Nordrhein-Westfalen
+Speyer 	Rheinland-Pfalz
+Spremberg 	Brandenburg
+Springe 	Niedersachsen
+Sprockhövel 	Nordrhein-Westfalen
+Stade 	Niedersachsen
+Stadtallendorf 	Hessen
+Stadthagen 	Niedersachsen
+Stadtilm 	Thüringen
+Stadtlengsfeld 	Thüringen
+Stadtlohn 	Nordrhein-Westfalen
+Stadtoldendorf 	Niedersachsen
+Stadtprozelten 	Bayern
+Stadtroda 	Thüringen
+Stadtsteinach 	Bayern
+Stadt Wehlen 	Sachsen
+Starnberg 	Bayern
+Staßfurt 	Sachsen-Anhalt
+Staufen im Breisgau 	Baden-Württ.
+Staufenberg 	Hessen
+Stavenhagen, Reuterstadt 	Meckl.-V.
+St. Blasien 	Baden-Württemberg
+Stein 	Bayern
+Steinach 	Thüringen
+Steinau an der Straße 	Hessen
+Steinbach-Hallenberg 	Thüringen
+Steinbach (Taunus) 	Hessen
+Steinfurt 	Nordrhein-Westfalen
+Steinheim an der Murr 	Baden-Württ.
+Steinheim 	Nordrhein-Westfalen
+Stendal 	Sachsen-Anhalt
+Sternberg 	Mecklenburg-Vorpommern
+St. Ingbert 	Saarland
+St. Georgen im Schwarzwald 	BW
+Stockach 	Baden-Württemberg
+Stolberg (Harz) 	Sachsen-Anhalt
+Stolberg (Rhld.) 	Nordrhein-Westfalen
+Stollberg/Erzgeb. 	Sachsen
+Stolpen 	Sachsen
+Storkow (Mark) 	Brandenburg
+Stößen 	Sachsen-Anhalt
+Straelen 	Nordrhein-Westfalen
+Stralsund, Hansestadt 	Meckl.-Vorp.
+Strasburg (Uckermark) 	Meckl.-Vorp.
+Straubing 	Bayern
+Strausberg 	Brandenburg
+Strehla 	Sachsen
+Stromberg 	Rheinland-Pfalz
+Stühlingen 	Baden-Württemberg
+Stutensee 	Baden-Württemberg
+Stuttgart 	Landeshauptst. Baden-W.
+St. Wendel 	Saarland
+Suhl 	Thüringen
+Sulingen 	Niedersachsen
+Sulz am Neckar 	Baden-Württemberg
+Sulzbach/ Saar 	Saarland
+Sulzbach-Rosenberg 	Bayern
+Sulzburg 	Baden-Württemberg
+Sundern (Sauerland) 	Nordrh.-Westf.
+Süßen 	Baden-Württemberg
+Syke 	Niedersachsen
+Tambach-Dietharz/Thür. Wald 	Thüringen
+Tangerhütte 	Sachsen-Anhalt
+Tangermünde 	Sachsen-Anhalt
+Tann (Rhön) 	Hessen
+Tanna 	Thüringen
+Tauberbischofsheim 	Baden-Württemb.
+Taucha 	Sachsen
+Taunusstein 	Hessen
+Tecklenburg Nordrhein-Westfalen)
+Tegernsee 	Bayern
+Telgte 	Nordrhein-Westfalen
+Teltow 	Brandenburg
+Templin 	Brandenburg
+Tengen 	Baden-Württemberg
+Tessin 	Mecklenburg-Vorpommern
+Teterow 	Mecklenburg-Vorpommern
+Tettnang 	Baden-Württemberg
+Teublitz 	Bayern
+Teuchern 	Sachsen-Anhalt
+Teupitz 	Brandenburg
+Teuschnitz 	Bayern
+Thale 	Sachsen-Anhalt
+Thalheim/Erzgeb. 	Sachsen
+Thannhausen 	Bayern
+Tharandt 	Sachsen
+Themar 	Thüringen
+Thum 	Sachsen
+Tirschenreuth 	Bayern
+Titisee-Neustadt 	Baden-Württemberg
+Tittmoning 	Bayern
+Todtnau 	Baden-Württemberg
+Töging am Inn 	Bayern
+Tönisvorst 	Nordrhein-Westfalen
+Tönning 	Schleswig-Holstein
+Torgau 	Sachsen
+Torgelow 	Mecklenburg-Vorpommern
+Tornesch 	Schleswig-Holstein
+Traben-Trarbach 	Rheinland-Pfalz
+Traunreut 	Bayern
+Traunstein 	Bayern
+Trebbin 	Brandenburg
+Trebsen/Mulde 	Sachsen
+Treffurt 	Thüringen
+Trendelburg 	Hessen
+Treuchtlingen 	Bayern
+Treuen 	Sachsen
+Treuenbrietzen 	Brandenburg
+Triberg im Schwarzwald 	Baden-Württ.
+Tribsees 	Mecklenburg-Vorpommern
+Triebes 	Thüringen
+Trier 	Rheinland-Pfalz
+Triptis 	Thüringen
+Trochtelfingen 	Baden-Württemberg
+Troisdorf 	Nordrhein-Westfalen
+Trossingen 	Baden-Württemberg
+Trostberg 	Bayern
+Tübingen 	Baden-Württemberg
+Tuttlingen 	Baden-Württemberg
+Twistringen 	Niedersachsen
+Übach-Palenberg 	Nordrhein-Westfalen
+Überlingen 	Baden-Württemberg
+Uebigau-Wahrenbrück 	Brandenburg
+Ueckermünde 	Mecklenburg-Vorpommern
+Uelzen 	Niedersachsen
+Uetersen 	Schleswig-Holstein
+Uffenheim 	Bayern
+Uhingen 	Baden-Württemberg
+Ulm 	Baden-Württemberg
+Ulrichstein 	Hessen
+Ummerstadt 	Thüringen
+Unkel 	Rheinland-Pfalz
+Unna 	Nordrhein-Westfalen
+Unterschleißheim 	Bayern
+Usedom 	Mecklenburg-Vorpommern
+Usingen 	Hessen
+Uslar 	Niedersachsen
+Vacha 	Thüringen
+Vaihingen an der Enz 	Baden-Württemb.
+Vallendar 	Rheinland-Pfalz
+Varel 	Niedersachsen
+Vechta 	Niedersachsen
+Velbert 	Nordrhein-Westfalen
+Velburg 	Bayern
+Velden 	Bayern
+Vellberg 	Baden-Württemberg
+Vellmar 	Hessen
+Velten 	Brandenburg
+Verden (Aller) 	Niedersachsen
+Veringenstadt 	Baden-Württemberg
+Versmold 	Nordrhein-Westfalen
+Vetschau/Spreewald 	Brandenburg
+Viechtach 	Bayern
+Vienenburg 	Niedersachsen
+Viernheim 	Hessen
+Viersen 	Nordrhein-Westfalen
+Villingen-Schwenningen 	Baden-Württemb.
+Vilsbiburg 	Bayern
+Vilseck 	Bayern
+Vilshofen 	Bayern
+Visselhövede 	Niedersachsen
+Vlotho 	Nordrhein-Westfalen
+Voerde (Niederrhein) 	Nordrhein-Westf.
+Vogtsburg im Kaiserstuhl 	B.-Württ.
+Vohburg an der Donau 	Bayern
+Vohenstrauß 	Bayern
+Vöhrenbach 	Baden-Württemberg
+Vöhringen 	Bayern
+Volkach 	Bayern
+Völklingen 	Saarland
+Volkmarsen 	Hessen
+Vreden 	Nordrhein-Westfalen
+Wachenheim an der Weinstraße 	Rhl.-Pf.
+Wächtersbach 	Hessen
+Wadern 	Saarland
+Waghäusel 	Baden-Württemberg
+Wahlstedt 	Schleswig-Holstein
+Waiblingen 	Baden-Württemberg
+Waibstadt 	Baden-Württemberg
+Waischenfeld 	Bayern
+Waldbröl 	Nordrhein-Westfalen
+Waldeck 	Hessen
+Waldenbuch 	Baden-Württemberg
+Waldenburg 	Sachsen
+Waldenburg 	Baden-Württemberg
+Waldershof 	Bayern
+Waldheim 	Sachsen
+Waldkappel 	Hessen
+Waldkirch 	Baden-Württemberg
+Waldkirchen 	Bayern
+Waldkraiburg 	Bayern
+Waldmünchen 	Bayern
+Waldsassen 	Bayern
+Waldshut-Tiengen 	Baden-Württemberg
+Walldorf 	Baden-Württemberg
+Walldürn 	Baden-Württemberg
+Wallenfels 	Bayern
+Walsrode 	Niedersachsen
+Waltershausen 	Thüringen
+Waltrop 	Nordrhein-Westfalen
+Wanfried 	Hessen
+Wangen im Allgäu 	Baden-Württemberg
+Wanzleben 	Sachsen-Anhalt
+Warburg 	Nordrhein-Westfalen
+Waren (Müritz) 	Mecklenburg-Vorp.
+Warendorf 	Nordrhein-Westfalen
+Warin 	Mecklenburg-Vorpommern
+Warstein 	Nordrhein-Westfalen
+Wassenberg 	Nordrhein-Westfalen
+Wasserburg am Inn 	Bayern
+Wassertrüdingen 	Bayern
+Wasungen 	Thüringen
+Wedel 	Schleswig-Holstein
+Weener 	Niedersachsen
+Wegberg 	Nordrhein-Westfalen
+Wegeleben 	Sachsen-Anhalt
+Wehr 	Baden-Württemberg
+Weida 	Thüringen
+Weiden in der Oberpfalz 	Bayern
+Weikersheim 	Baden-Württemberg
+Weil am Rhein 	Baden-Württemberg
+Weilburg 	Hessen
+Weil der Stadt 	Baden-Württemberg
+Weilheim an der Teck 	Baden-Württ.
+Weilheim in Oberbayern 	Bayern
+Weimar 	Thüringen
+Weingarten 	Baden-Württemberg
+Weinheim 	Baden-Württemberg
+Weinsberg 	Baden-Württemberg
+Weinstadt 	Baden-Württemberg
+Weismain 	Bayern
+Weißenberg 	Sachsen
+Weißenburg in Bayern 	Bayern
+Weißenfels 	Sachsen-Anhalt
+Weißenhorn 	Bayern
+Weißensee 	Thüringen
+Weißenstadt 	Bayern
+Weißenthurm 	Rheinland-Pfalz
+Weißwasser/O.L. 	Sachsen
+Weiterstadt 	Hessen
+Welzheim 	Baden-Württemberg
+Welzow 	Brandenburg
+Wemding 	Bayern
+Wendlingen am Neckar 	Baden-Württ.
+Werben (Elbe) 	Sachsen-Anhalt
+Werdau 	Sachsen
+Werder (Havel) 	Brandenburg
+Werdohl 	Nordrhein-Westfalen
+Werl 	Nordrhein-Westfalen
+Wermelskirchen 	Nordrhein-Westfalen
+Wernau (Neckar) 	Baden-Württemberg
+Werne 	Nordrhein-Westfalen
+Werneuchen 	Brandenburg
+Wernigerode 	Sachsen-Anhalt
+Wertheim 	Baden-Württemberg
+Werther (Westf.) 	Nordrhein-Westfalen
+Wertingen 	Bayern
+Wesel 	Nordrhein-Westfalen
+Wesenberg 	Mecklenburg-Vorpommern
+Wesselburen 	Schleswig-Holstein
+Wesseling 	Nordrhein-Westfalen
+Westerburg 	Rheinland-Pfalz
+Westerland 	Schleswig-Holstein
+Westerstede 	Niedersachsen
+Wetter (Ruhr) 	Nordrhein-Westfalen
+Wetter (Hessen) 	Hessen
+Wettin 	Sachsen-Anhalt
+Wetzlar 	Hessen
+Widdern 	Baden-Württemberg
+Wiehe 	Thüringen
+Wiehl 	Nordrhein-Westfalen
+Wiesbaden 	Landeshauptstadt Hessen
+Wiesensteig 	Baden-Württemberg
+Wiesloch 	Baden-Württemberg
+Wildberg 	Baden-Württemberg
+Wildemann 	Niedersachsen
+Wildenfels 	Sachsen
+Wildeshausen 	Niedersachsen
+Wilhelmshaven 	Niedersachsen
+Wilkau-Haßlau 	Sachsen
+Willebadessen 	Nordrhein-Westfalen
+Willich 	Nordrhein-Westfalen
+Wilsdruff 	Sachsen
+Wilster 	Schleswig-Holstein
+Wilthen 	Sachsen
+Windischeschenbach 	Bayern
+Windsbach 	Bayern
+Winnenden 	Baden-Württemberg
+Winsen (Luhe) 	Niedersachsen
+Winterberg 	Nordrhein-Westfalen
+Wipperfürth 	Nordrhein-Westfalen
+Wirges 	Rheinland-Pfalz
+Wismar 	Mecklenb.-Vorp. / Hansestadt
+Wissen 	Rheinland-Pfalz
+Witten 	Nordrhein-Westfalen
+Wittenberg, Lutherstadt 	Sachsen-Anhalt
+Wittenberge 	Brandenburg
+Wittenburg 	Mecklenburg-Vorpommern
+Wittichenau 	Sachsen
+Wittlich 	Rheinland-Pfalz
+Wittingen 	Niedersachsen
+Wittmund 	Niedersachsen
+Wittstock/Dosse 	Brandenburg
+Witzenhausen 	Hessen
+Woldegk 	Mecklenburg-Vorpommern
+Wolfach 	Baden-Württemberg
+Wolfen 	Sachsen-Anhalt
+Wolfenbüttel 	Niedersachsen
+Wolfhagen 	Hessen
+Wolframs-Eschenbach 	Bayern
+Wolfratshausen 	Bayern
+Wolfsburg 	Niedersachsen
+Wolfstein 	Rheinland-Pfalz
+Wolgast 	Mecklenburg-Vorpommern
+Wolkenstein 	Sachsen
+Wolmirstedt 	Sachsen-Anhalt
+Wörlitz 	Sachsen-Anhalt
+Worms 	Rheinland-Pfalz
+Wörth am Rhein 	Rheinland-Pfalz
+Wörth an der Donau 	Bayern
+Wörth am Main 	Bayern
+Wriezen 	Brandenburg
+Wülfrath 	Nordrhein-Westfalen
+Wunsiedel 	Bayern
+Wunstorf 	Niedersachsen
+Wuppertal 	Nordrhein-Westfalen
+Würselen 	Nordrhein-Westfalen
+Wurzbach 	Thüringen
+Würzburg 	Bayern
+Wurzen 	Sachsen
+Wustrow (Wendland) 	Niedersachsen
+Wyk auf Föhr 	Schleswig-Holstein
+Xanten 	Nordrhein-Westfalen
+Zahna 	Sachsen-Anhalt
+Zarrentin am Schaalsee 	Meckl.-Vorp.
+Zehdenick 	Brandenburg
+Zeil am Main 	Bayern
+Zeitz 	Sachsen-Anhalt
+Zell am Harmersbach 	Baden-Württemb.
+Zell im Wiesental 	Baden-Württemberg
+Zell (Mosel) 	Rheinland-Pfalz
+Zella-Mehlis 	Thüringen
+Zerbst 	Sachsen-Anhalt
+Zeulenroda 	Thüringen
+Zeven 	Niedersachsen
+Ziegenrück 	Thüringen
+Zierenberg 	Hessen
+Ziesar 	Brandenburg
+Zirndorf 	Bayern
+Zittau 	Sachsen
+Zöblitz 	Sachsen
+Zörbig 	Sachsen-Anhalt
+Zossen 	Brandenburg
+Zschopau 	Sachsen
+Zülpich 	Nordrhein-Westfalen
+Zweibrücken 	Rheinland-Pfalz
+Zwenkau 	Sachsen
+Zwickau 	Sachsen
+Zwiesel 	Bayern
+Zwingenberg 	Hessen
+Zwönitz 	Sachsen

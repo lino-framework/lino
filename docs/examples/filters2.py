@@ -1,3 +1,11 @@
+import sys
+print """
+TODO: Crash in big addrbook demo.
+This example is currently not tested.
+See http://lino.berlios.de/news/198.html for more information.
+"""
+sys.exit()
+
 from lino.apps.addrbook import demo, tables
 from lino.adamo.filters import NotEmpty
 

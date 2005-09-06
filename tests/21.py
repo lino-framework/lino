@@ -48,7 +48,7 @@ class Case(TestCase):
                          orderBy="name firstName",
                          nation=be)
         s = ""
-        print self.getConsoleOutput()
+        #print self.getConsoleOutput()
         for p in q:
             #if p.currency is None:
             #   s += p.__str__() + " : currency remains None\n"

@@ -1,0 +1,247 @@
+id	population	area	name_en	name_de	name_fr	name_nl
+af	28717213	647500	Afghanistan (Islamic State of)	Afghanistan 	Afghanistan	Afghanistan
+al	3582205	28748	Albania	Albanien 	Albanie	Albanië
+dz	32818500	2381740	Algeria	Algerien	Algérie	Algerije
+as	70260	199	American Samoa	Amerikanisch Samoa 	Samoa américaine	Amerikaans-Samoa
+ad	69150	468	Andorra, Principality of	Andorra 	Andorre (Principauté)	Andorra (Vorstendom)
+ao	10766471	1246700	Angola	Angola 	Angola	Angola
+ai	12738	102	Anguilla	Anguilla 	Anguilla	Anguilla
+aq			Antarctica	Antarktis 		
+ag	67897	443	Antigua and Barbuda	Antigua und Barbuda 	Antigua et Barbuda	Antigua en Barbuda
+ar	38740807	2766890	Argentina	Argentinien 	Argentine	Argentinië
+am	3326448	29800	Armenia	Armenien 	Arménie (République)	Armenië (Republiek)
+aw	70844	193	Aruba	Aruba 	Aruba	Aruba
+ac			Ascension Island 	Ascension (Himmelfahrtsinsel)		
+au	19731984	7686850	Australia	Australien	Australie	Australië
+at	8188207	83858	Austria	Österreich 	Autriche	Oostenrijk
+az	7830764	86600	Azerbaidjan	Aserbaidschan	Azerbaidjan (République)	Azerbeidzjan (Republiek)
+bs	297477	13940	Bahamas	Bahamas	Bahamas	Bahama's
+bh	667238	665	Bahrain	Bahrain	Bahrein	Bahrein
+bd	138448210	144000	Bangladesh	Bangladesch	Bangladesh	Bangladesh
+bb	277264	431	Barbados	Barbados	Barbade	Barbados
+by	10322151	207600	Belarus	Belarus	Bélarus	Belarus
+be	10289088	30510	Belgium	Belgien	Belgique	België
+bz	266440	22966	Belize	Belize	Belize	Belize
+bj	7041490	112620	Benin	Benin	Bénin (République)	Benin (Republiek)
+bm	64482	53	Bermuda	Bermuda	Bermudes	Bermuda
+bt	2139549	47000	Bhutan	Bhutan	Bhoutan	Bhutan
+bo	8586443	1098580	Bolivia	Bolivien	Bolivie	Bolivië
+ba	3989018	51129	Bosnia-Herzegovina	Bosnien-Herzegowina	Bosnie-Herzégovine (République)	Bosnië-Herzegovina (Republiek)
+bw	1573267	600370	Botswana	Botswana	Botswana	Botswana
+bv	182032604	8511965	Bouvet Island	Bouvet Island		
+br	21730	153	Brazil	Brasilien	Brésil	Brazilië
+io	358098	5770	British Indian Ocean Territory	British Indian Ocean Territory	Océan Indien Britannique	Brits Indische oceaan
+bn	7537929	110910	Brunei Darussalam	Brunei Darussalam	Brunei	Brunei
+bg	13228460	274200	Bulgaria	Bulgarien	Bulgarie	Bulgarije
+bf	42510537	678500	Burkina Faso	Burkina Faso	Burkina Faso	Burkina Faso
+bi	6096156	27830	Burundi	Burundi	Burundi	Burundi
+kh	13124764	181040	Cambodia, Kingdom of	Kambodscha	Cambodge (Royaume)	Cambodja (Koninkrijk)
+cm	15746179	475440	Cameroon	Kamerun	Cameroun	Kameroen
+ca	32207113	9984670	Canada	Kanada	Canada	Canada
+cv	412137	4033	Cape Verde	Kap Verde	Cap-Vert (République)	Kaapverdië (Republiek)
+ky	41934	262	Cayman Islands	Kayman-Inseln	Caïmanes	Caymaneilanden
+cf	3683538	622984	Central African Republic	Zentralafrikanische Republik	Centrafricaine (République)	Centraal-Afrikaanse Republiek
+td	9253493	1284000	Chad	Tschad	Tchad	Tsjaad
+cl	15665216	756950	Chile	Chile	Chili	Chili
+cn	1286975468	9596960	China	China	Chine (République populaire)	China (Volksrepubliek)
+cx	433	135	Christmas Island	Weihnachtsinseln	Christmas	Christmas
+cc	630	6	Cocos (Keeling) Islands	Cocos (Keeling) Islands	Cocos	Cocos
+co	41662073	14	Colombia	Kolumbien	Colombie	Colombia
+km	632948	1138910	Comoros	Komoren	Comores (Union)	Comoren (Unie)
+cg	56625039	2170	Congo	Kongo	Congo (République populaire)	Congo (Volksrepubliek)
+cd	2954258	2345410	Congo (Democratic Republic)	Demokratische Republik Kongo (früher zr)	Congo (République démocratique)	Congo (Democratische Republiek)
+ck	21008	342000	Cook Islands	Cook-Inseln	Cook	Cook
+cr	3896092	51100	Costa Rica	Costa Rica	Costa Rica	Costa Rica
+hr	4422248	56542	Croatia	Kroatien (Hrvatska)	Croatie (République)	Kroatië (Republiek)
+cu	11263429	110860	Cuba	Kuba	Cuba	Cuba
+cy	771657	9250	Cyprus	Zypern	Chypre	Cyprus
+cz	10249216	78866	Czech Republic	Tschechien	Tchéquie (République tchèque)	Tsjechië (Tsjechische Republiek)
+dk	5384384	43094	Denmark	Dänemark	Danemark	Denemarken
+dj	457130	23000	Djibouti	Djibouti	Djibouti (République)	Djibouti (Republiek)
+dm	69655	754	Dominica	Dominika	Dominique (République)	Dominica (Republiek)
+do	8715602	48730	Dominican Republic	Dominikanische Republik	Dominicaine (République)	Dominicaanse Republiek
+tp	997853	15007	East Timor	Osttimor	Timor oriental	Oosttimor
+ec	13710234	283560	Ecuador	Ecuador	Équateur	Ecuador
+eg	74718797	1001450	Egypt	Ägypten	Égypte (République arabe)	Egypte (Arabische Republiek)
+sv	6470379	21040	El Salvador	El Salvador	El Salvador	El Salvador
+gq	510473	28051	Equatorial Guinea	Äquatorialguinea	Guinée équatoriale	Equatoriaal-Guinea
+er	4362254	121320	Eritrea	Eritrea	Érythrée	Eritrea
+ee	1408556	45226	Estonia	Estland	Estonie (République)	Estland (Republiek)
+et	66557553	1127127	Ethiopia	Äthiopien	Éthiopie	Ethiopië
+fk	2967	12173	Falkland Islands	Falkland-Inseln (Malvinas)	Falkland	Falkland
+fo	46345	1399	Faroe Islands	Färöer	Féroé	Faeröer 
+fj	868531	18270	Fiji	Fidschi	Fidji	Fiji
+fi	5190785	337030	Finland	Finnland	Finlande	Finland
+cs			Former Czechoslovakia	Tschechoslowakei (ehemalige)	Serbie et Monténégro	Servië en Montenegro
+su			Former USSR	Ehemalige UdSSR		
+fr	60180529	547030	France	Frankreich	France	Frankrijk
+gf	186917	91000	French Guyana	Französisch-Guyana	Guyane française	Frans-Guyana
+tf			French Southern Territories	Französische Süd- und Antarktisgebiete	Togo	Togo
+ga	1321560	267667	Gabon	Gabun	Gabon	Gabon
+gm	1501050	11300	Gambia	Gambia	Gambie	Gambia
+ge	4934413	69700	Georgia	Georgien	Géorgie (République)	Georgië (Republiek)
+de	82398326	357021	Germany	Deutschland	Allemagne (République fédérale)	Duitsland (Bondsrepubliek)
+gh	20467747	239460	Ghana	Ghana	Ghana	Ghana
+gi	27776	7	Gibraltar	Gibraltar	Gibraltar	Gibraltar
+gb	10665989	131940	Great Britain	Großbritannien (UK)	Royaume-Uni	Verenigd Koninkrijk
+gr	56385	2166086	Greece	Griechenland	Grèce	Griekenland
+gl	89258	344	Greenland	Grönland	Groenland	Groenland
+gd	440189	1780	Grenada	Grenada	Grenade	Grenada
+gp	163941	549	Guadeloupe (French)	Guadeloupe	Guadeloupe	Guadeloupe
+gu	13909384	108890	Guam (USA)	Guam	Guam	Guam
+gt	64818	78	Guatemala	Guatemala	Guatemala	Guatemala
+gn	9030220	245857	Guinea	Guinea	Guinée	Guinea
+gw	1360827	36120	Guinea Bissau	Guinea-Bissau	Guinée-Bissau	Guinee-Bissau
+gy	702100	214970	Guyana	Guyana	Guyana	Guyana
+ht	7527817	27750	Haiti	Haiti	Haïti	Haïti
+hm		412	Heard and McDonald Islands	Heard and McDonald Inseln	Heard et McDonald	Heard en McDonald
+va	911	0	Holy See (Vatican City State)	Vatikan (Heiliger Stuhl)	Saint-Siège	Heilige Stoel
+hn	6669789	112090	Honduras	Honduras	Honduras	Honduras
+hk	7394170	1092	Hong Kong	Hong Kong	Hongkong	Hongkong
+hu	10045407	93030	Hungary	Ungarn	Hongrie (République)	Hongarije (Republiek)
+is	280798	103000	Iceland	Island	Islande	IJsland
+in	1049700118	3287590	India	Indien	Inde	India
+id	234893453	1919440	Indonesia	Indonesien	Indonésie	Indonesië
+ir	68278826	1648000	Iran	Iran	Iran	Iran
+iq	24683313	437072	Iraq	Irak	Irak	Irak
+ie	3924140	70280	Ireland	Irland	Irlande	Ierland
+im	74261	572	Isle of Man	Insel Man	Île de Man	Man (eiland)
+il	6116533	20770	Israel	Israel	Israël	Israël
+it	57998353	301230	Italy	Italien	Italie	Italië
+ci	16962491	322460	Ivory Coast (Cote D'Ivoire)	Elfenbeinküste	Côte-d'Ivoire	Ivoorkust
+jm	2695867	10991	Jamaica	Jamaika	Jamaïque	Jamaica
+jp	127214499	377835	Japan	Japan	Japon	Japan
+je	90156	116	Jersey 	Jersey 	Jersey 	Jersey 
+jo	5460265	92300	Jordan	Jordanien	Jordanie	Jordanië
+kz	16763795	2717300	Kazakhstan	Kasachstan	Kazakhstan (République)	Kazachstan (Republiek)
+ke	31639091	582650	Kenya	Kenia	Kenya	Kenia
+ki	98549	811	Kiribati	Kiribati	Kiribati (République)	Kiribati (Republiek)
+kw	2183161	17820	Kuwait	Kuwait	Koweit	Koeweit
+kg	4892808	198500	Kyrgyz Republic (Kyrgyzstan)	Kirgisien	Kirghistan (République)	Kirgizstan (Republiek)
+la	5921545	236800	Laos	Laos	Laos	Laos
+lv	2348784	64589	Latvia	Lettland	Lettonie (République)	Letland (Republiek)
+lb	3727703	10400	Lebanon	Libanon	Liban	Libanon
+ls	1861959	30355	Lesotho	Lesotho	Lesotho	Lesotho
+lr	3317176	111370	Liberia	Liberia	Libéria	Liberia
+ly	5499074	1759540	Libya	Libyen	Libye	Libië
+li	33145	160	Liechtenstein	Liechtenstein	Liechtenstein	Liechtenstein
+lt	3592561	65200	Lithuania	Litauen	Lituanie (République)	Litouwen (Republiek)
+lu	454157	2586	Luxembourg	Luxemburg	Luxembourg (Grand-Duché)	Luxemburg (Groot-Hertogdom)
+mo	469903	25	Macau	Macao	Macao	Macao
+mk	2063122	25333	Macedonia	Ehemalige Jugoslawische Republik Mazedonien Siehe [2b]	Macédoine (Ex-République yougoslave)	Macedonië (Ex-Joegoslavische Republiek)
+mg	16979744	587040	Madagascar	Madagaskar	Madagascar (République démocratique)	Madagaskar (Democratische Republiek)
+mw	11651239	118480	Malawi	Malawi	Malawi	Malawi
+my	23092940	329750	Malaysia	Malaysia	Malaisie	Maleisië
+mv	329684	300	Maldives	Malediven	Maldives	Maldiven
+ml	11626219	1240000	Mali	Mali	Mali	Mali
+mt	400420	316	Malta	Malta	Malte	Malta
+mh	56429	181	Marshall Islands	Marshall Inseln	Marshall (République)	Marshall (Republiek)
+mq	425966	1100	Martinique (French)	Martinique	Martinique	Martinique
+mr	2912584	1030700	Mauritania	Mauretanien	Mauritanie (République islamique)	Mauritanië (Islamitische Republiek)
+mu	1210447	2040	Mauritius	Mauritius	Maurice	Mauritius
+yt	178437	374	Mayotte	Mayotte	Mayotte	Mayotte
+mx	104907991	1972550	Mexico	Mexiko	Mexique	Mexico
+fm	108143	702	Micronesia	Mikronesien	Micronésie (États fédérés)	Micronesië (Federale Staten)
+md	4439502	33843	Moldavia	Moldavien	Moldavie (République)	Moldavië (Republiek)
+mc	32130	2	Monaco	Monaco	Monaco (Principauté)	Monaco (Vorstendom)
+mn	2712315	1565000	Mongolia	Mongolei	Mongolie (République pop.)	Mongolië (Volksrepubliek)
+ms	8995	102	Montserrat	Montserrat	Montserrat	Montserrat
+ma	31689265	446550	Morocco	Marokko	Maroc	Marokko
+mz	17479266	801590	Mozambique	Mosambik	Mozambique	Mozambique
+mm			Myanmar	Myanmar	Myanmar (Union)	Myanmar (Unie)
+na	1927447	825418	Namibia	Namibia	Namibie	Namibië
+nr	12570	21	Nauru	Nauru	Nauru	Nauru
+np	26469569	140800	Nepal	Nepal	Népal	Nepal
+nl	16150511	41526	Netherlands	Niederlande	Pays-Bas	Nederland
+an	216226	960	Netherlands Antilles	Niederländische Antillen 	Antilles néerlandaises	Nederlandse Antillen
+nt			Neutral zone	Neutrale Zone	Zone neutre	
+nc	210798	19060	New Caledonia (French)	Neukaledonien	Nouvelle-Calédonie	Nieuw-Caledonië
+nz	3951307	268680	New Zealand	Neuseeland (Aotearoa)	Nouvelle-Zélande	Nieuw-Zeeland
+ni	5128517	129494	Nicaragua	Nicaragua	Nicaragua	Nicaragua
+ne	11058590	1267000	Niger	Niger	Niger	Niger
+ng	133881703	923768	Nigeria	Nigeria	Nigéria (République fédérale)	Nigeria (Federale Republiek)
+nu	2145	260	Niue	Niue	Niué	Niue
+nf	1853	35	Norfolk Island	Norfolk Inseln	Norfolk	Norfolk
+kp	22466481	120540	North Korea	Nordkorea	Corée du Nord (République populaire démocratique)	Noord-Korea (Democratische Volksrepubliek)
+mp	80006	477	Northern Mariana Islands	Northern Mariana Islands	Mariannes du Nord	Noordelijke Marianen
+no	4546123	324220	Norway	Norwegen	Norvège	Noorwegen
+om	2807125	212460	Oman	Oman	Oman (Sultanat)	Oman (Sultanaat)
+pk	150694740	803940	Pakistan	Pakistan	Pakistan	Pakistan
+pw	19717	458	Palau	Palau	Palau	Palau
+ps			Palestine	Palästina (okkupierte Gebiete)	Palestine	Palestina
+pa	2960784	78200	Panama	Panama	Panama	Panama
+pg	5295816	462840	Papua New Guinea	Papua-Neuguinea	Papouasie-Nouvelle-Guinée	Papoea-Nieuw-Guinea
+py	6036900	406750	Paraguay	Paraguay	Paraguay	Paraguay
+pe	28409897	1285220	Peru	Peru	Pérou	Peru
+ph	84619974	300000	Philippines	Philippinen	Philippines	Filipijnen
+pn	47	47	Pitcairn Island	Pitcairn	Pitcairn	Pitcairn
+pl	38622660	312685	Poland	Polen	Pologne (République)	Polen (Republiek)
+pf	262125	4167	Polynesia (French)	Französisch Polynesien	Polynésie française	Frans-Polynesië
+pt	10102022	92391	Portugal	Portugal	Portugal	Portugal
+pr	3885877	9104	Puerto Rico	Puerto Rico	Porto Rico	Puerto Rico
+qa	817052	11437	Qatar	Katar	Qatar	Qatar
+re	755171	2517	Reunion (French)	Reunion	Réunion	Réunion
+ro	22271839	237500	Romania	Rumänien	Roumanie	Roemenië
+ru	144526278	17075200	Russian Federation	Russland	Russie (Fédération)	Rusland (Federatie)
+rw	7810056	26338	Rwanda	Ruanda	Rwanda (République)	Rwanda (Republiek)
+gs			S. Georgia & S. Sandwich Isls.	S. Georgia and S. Sandwich Islands		
+sh	7367	410	Saint Helena	St. Helena	Sainte-Hélène	Saint Helena
+kn	38763	261	Saint Kitts & Nevis Anguilla	Saint Kitts und Nevis	Saint-Kitts et Nevis (Fédération)	Sint-Kitts en Nevis (Federatie)
+lc	162157	616	Saint Lucia	Saint Lucia	Sainte-Lucie	Saint Lucia
+pm	6976	242	Saint Pierre and Miquelon	St. Pierre und Miquelon	Saint-Pierre et Miquelon	Saint-Pierre en Miquelon
+st			Saint Tome (Sao Tome) and Principe	São Tomé und Principe	São Tomé et Principe (République démocratique)	São Tomé en Principe (Democratische Republiek)
+vc	116812	389	Saint Vincent & Grenadines	Saint Vincent und die Grenadinen	Saint-Vincent et les Grenadines	Saint Vincent en de Grenadines
+ws	178173	2944	Samoa	Samoa	Samoa	Samoa
+sm	28119	61	San Marino	San Marino	Saint-Marin (République)	San Marino (Republiek)
+sa	24293844	1960582	Saudi Arabia	Saudi Arabien	Arabie Saoudite	Saudi-Arabië
+sn	10580307	196190	Senegal	Senegal	Sénégal	Senegal
+yu	10655774	102350	Serbia and Montenegro 	Serbien und Montenegro	Serbie et Monténégro	Servië en Montenegro
+sc	80469	455	Seychelles	Seychellen	Seychelles (République)	Seychellen (Republiek)
+sl	5732681	71740	Sierra Leone	Sierra Leone	Sierra Leone	Sierra Leone
+sg	4608595	693	Singapore	Singapur	Singapour	Singapore
+sk	5430033	48845	Slovak Republic	Slowakei	Slovaquie (République slovaque)	Slowakije (Slovaakse Republiek)
+si	1935677	20273	Slovenia	Slowenien	Slovénie (République)	Slovenië (Republiek)
+sb	509190	28450	Solomon Islands	Salomonen	Iles Salomon	Salomon
+so	8025190	637657	Somalia	Somalia	Somalie (République)	Somalië (Republiek)
+za	42768678	1219912	South Africa	Südafrika	Afrique du Sud (République)	Zuid-Afrika (Republiek)
+kr	48289037	98480	South Korea	Südkorea	Corée du Sud (République)	Zuid-Korea (Republiek)
+es	40217413	504782	Spain	Spanien	Espagne	Spanje
+lk	19742439	65610	Sri Lanka	Sri Lanka	Sri Lanka	Sri Lanka
+sd	38114160	2505810	Sudan	Sudan	Soudan	Soedan
+sr	435449	163270	Suriname	Surinam	Suriname	Suriname
+sj	2811	62049	Svalbard and Jan Mayen Islands	Svalbard und Jan Mayen Islands		
+sz	1161219	17363	Swaziland	Swasiland	Ngwane (Royaume du Swaziland)	Ngwane (Koninkrijk Swaziland)
+se	8878085	449964	Sweden	Schweden	Suède	Zweden
+ch	7318638	41290	Switzerland	Schweiz (Confoederatio Helvetica)	Suisse	Zwitserland
+sy	17585540	185180	Syria	Syrien	Syrie (République arabe)	Syrië (Arabische Republiek)
+tj	22603001	35980	Tadjikistan	Tadschikistan	Tadjikistan (République)	Tadzjikistan (Republiek)
+tw	6863752	143100	Taiwan	Taiwan	Taïwan	Taiwan
+tz	35922454	945087	Tanzania	Tansania	Tanzanie (République unie)	Tanzania (Verenigde Republiek)
+th	64265276	514000	Thailand	Thailand	Thaïlande	Thailand
+tg	5429299	56785	Togo	Togo	Togo	Togo
+tk	1418	10	Tokelau	Tokelau	Tokelau	Tokelau
+to	108141	748	Tonga	Tonga	Tonga	Tonga
+tt	1104209	5128	Trinidad and Tobago	Trinidad und Tobago	Trinidad et Tobago	Trinidad en Tobago
+tn	9924742	1	Tunisia	Tunesien	Tunisie	Tunesië
+tr	68109469	163610	Turkey	Türkei	Turquie	Turkije
+tm	4775544	780580	Turkmenistan	Turkmenistan	Turkménistan (République)	Turkmenistan (Republiek)
+tc	19350	488100	Turks and Caicos Islands	Turks and Caicos Islands	Turks et Caicos	Turks- en Caicoseilanden
+tv	11305	430	Tuvalu	Tuvalu	Tuvalu	Tuvalu
+ug	25632794	26	Uganda	Uganda	Ouganda	Uganda
+ua	48055439	236040	Ukraine	Ukraine	Ukraine (République)	Oekraïne (Republiek)
+ae	2484818	603700	United Arab Emirates	Vereinigte Arabische Emirate 	Émirats arabes unis	Verenigde Arabische Emiraten
+uk	60094648	82880	United Kingdom	Vereinigtes Königreich		
+us	290342554	244820	United States	Vereinigte Staaten von Amerika	États-Unis d'Amérique	Verenigde Staten van Amerika
+uy	3413329	9629091	Uruguay	Uruguay	Uruguay	Uruguay
+uz	25981647	447400	Uzbekistan	Usbekistan	Ouzbékistan (République)	Oezbekistan (Republiek)
+vu	199414	12200	Vanuatu	Vanuatu	Vanuatu (République)	Vanuatu (Republiek)
+ve	24654694	912050	Venezuela	Venezuela	Venezuela	Venezuela
+vn	81624716	329560	Vietnam	Vietnam	Vietnam (République socialiste)	Vietnam (Socialistische Republiek)
+vg	124778	352	Virgin Islands (British)	Jungferninseln (Britisch)	Îles vierges britanniques	Britse Maagdeneilanden
+vi		7	Virgin Islands (USA)	Jungferninseln (U.S.A.)	Îles vierges américaines	Amerikaanse Maagdeneilanden
+wf	15734	274	Wallis and Futuna Islands	Wallis und Futuna	Wallis et Futuna	Wallis en Futuna
+eh	261794	266000	Western Sahara	Westsahara	Sahara occidental	Westelijke Sahara
+ye	19349881	527970	Yemen	Jemen	Yémen (République)	Jemen (Republiek)
+zr			Zaire	Zaire (jetzt cd)		
+zm	10307333	752614	Zambia	Sambia	Zambie	Zambia
+zw	12576742	390580	Zimbabwe	Simbabwe	Zimbabwe	Zimbabwe

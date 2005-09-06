@@ -453,7 +453,7 @@ class SqlConnection(Connection):
         # return SQLiteCursor(self,query)
 
     def executeCount(self,qry):
-        sql = self.getSqlSelect(qry,sqlColumnNames='COUNT()' )
+        sql = self.getSqlSelect(qry,sqlColumnNames='COUNT(*)' )
         csr = self.sql_exec(sql)
         #assert csr.rowcount is None or csr.rowcount == 1
         result=csr.fetchall()

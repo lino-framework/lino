@@ -39,8 +39,10 @@ class Center:
         #self._checkIntegrity = False
 
     def connection(self,*args,**kw):
-        #from lino.adamo.dbds.firebird import Connection
-        from lino.adamo.dbds.sqlite_dbd import Connection
+        from lino.adamo.dbds.firebird import Connection
+        #from lino.adamo.dbds.sqlite_dbd import Connection
+        #from lino.adamo.dbds.mysql_dbd import Connection
+        #from lino.adamo.dbds.gadfly_dbd import Connection
         
 ##         try:
 ##             from lino.adamo.dbds.sqlite_dbd import Connection

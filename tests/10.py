@@ -1,5 +1,5 @@
-# coding: latin1
-## Copyright Luc Saffre 2003-2005
+# coding: iso-8859-1
+## Copyright 2003-2005 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -33,8 +33,8 @@ from lino.misc.tsttools import TestCase, main
 from lino.apps.addrbook import demo
 from lino.apps.addrbook.tables import Nation
 
-
 class Case(TestCase):
+    
     todo="Crash in big addrbook demo"
     def setUp(self):
         TestCase.setUp(self)

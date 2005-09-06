@@ -34,7 +34,8 @@ class DataRow:
         self.__dict__["_query"] = query
         #self.__dict__["_fc"] = fc
         #self.__dict__["_clist"] = clist
-        self.__dict__["_dirty"] = dirty
+        #self.__dict__["_dirty"] = dirty
+        self.__dict__['_dirtyRowAttrs']={}
         
     def __getattr__(self,name):
         #assert self.__dict__.has_key("_fc")
@@ -56,7 +57,7 @@ class DataRow:
         #if col is None:
         col=self._query._store._peekQuery.getColumnByName(name)
         col.setCellValue(self,value)
-        self.__dict__['_dirty'] = True
+        #self.__dict__['_dirty'] = True
 
     def getFieldValue(self,name):
         # overridden by StoredDataRow
@@ -71,9 +72,13 @@ class DataRow:
 ##         return DataCell(self,colIndex,col)
 
 
-    def setDirty(self):
+##     def setDirty(self):
+##         assert self.isLocked(), "row is not locked"
+##         self.__dict__["_dirty"] = True
+
+    def setDirtyRowAttr(self,rowattr):
         assert self.isLocked(), "row is not locked"
-        self.__dict__["_dirty"] = True
+        self.__dict__['_dirtyRowAttrs'][rowattr.name]=rowattr
 
     def __getitem__(self,i):
         col = self._query.visibleColumns[i]
@@ -88,7 +93,7 @@ class DataRow:
         col = self._query.visibleColumns[i]
         assert self._pseudo or self._locked or self._new
         col.setCellValue(self,value)
-        self.__dict__["_dirty"] = True
+        #self.__dict__["_dirty"] = True
         
     #def __iter__(self):
     #    return RowIterator(self,self._query.visibleColumns)
@@ -125,7 +130,10 @@ class DataRow:
         return True
 
     def isDirty(self):
-        return self.__dict__['_dirty']
+        if self._new:
+            return True
+        return len(self._dirtyRowAttrs)>0
+        #return self.__dict__['_dirty']
 
     def makeComplete(self):
         pass
@@ -341,9 +349,12 @@ class StoredDataRow(DataRow):
         
 
     def commit(self):
-        if not self._dirty:
+        if not self.isDirty():
             return
         #print "writeToStore()", self
+        for a in self._dirtyRowAttrs.values():
+            a.trigger(self)
+            
         if self._new:
             self._query._store.setAutoRowId(self)
             
@@ -363,9 +374,10 @@ class StoredDataRow(DataRow):
             self._query._connection.executeInsert(self)
             self.__dict__["_new"] = False
         else:
-            if not self._dirty: return
+            if not self.isDirty(): return
             self._query._connection.executeUpdate(self)
-        self.__dict__["_dirty"] = False
+        #self.__dict__["_dirty"] = False
+        self.__dict__["_dirtyRowAttrs"] = {}
         self._query._store.touch()
         
 
