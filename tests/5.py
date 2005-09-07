@@ -20,8 +20,8 @@
     
 from lino.misc.tsttools import TestCase, main
 #import unittest
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import *
+from lino.apps.pinboard import demo, tables
+#from lino.apps.pinboard.tables import *
 
 
 class Case(TestCase):
@@ -31,7 +31,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup()
+        self.db = demo.startup(dump=True)
         
         #self.db = demo.beginSession()
 
@@ -40,7 +40,7 @@ class Case(TestCase):
 
     def test01(self):
         "Simple query with a filter"
-        q = self.db.query(Author,
+        q = self.db.query(tables.Author,
                           "firstName name",
                           orderBy='name')
         q.setSqlFilters('name LIKE "B%"')
@@ -52,7 +52,7 @@ Jacques Brel""")
 
     def test02(self):
         "Finding Georges Brassens"
-        AUTHORS = self.db.query(Author)
+        AUTHORS = self.db.query(tables.Author)
         p = AUTHORS.findone(firstName="Georges",
                             name="Brassens")
         # self.assertNotEqual(p,None)

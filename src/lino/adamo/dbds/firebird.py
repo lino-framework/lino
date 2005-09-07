@@ -44,30 +44,44 @@ def day(s):
 
 class Connection(SqlConnection):
     
-    def __init__(self,ui,filename=None):
+    def __init__(self,ui,
+                 filename=None, dsn=None, host=None,
+                 user="sysdba",pwd="masterkey"):
         SqlConnection.__init__(self,ui)
         self.dbapi = kinterbasdb
+        self._user=user
+        self._pwd=pwd
+        if dsn is not None:
+            assert host is None
+            assert filename is None
+            host,filename=dsn.split(':',1)
+        self._host=host
+        
         if filename is None:
             self._filename=r"c:\temp\tmp.fdb"
+            self._host="localhost"
             if os.path.exists(self._filename):
                 os.remove(self._filename)
         else:
             self._filename = filename
             if os.path.exists(filename):
                 self._mtime = os.stat(filename).st_mtime
-                self._status = self.CST_OPENED
-                self._dbconn = kinterbasdb.connect(
-                    host='localhost',
-                    database=filename,
-                    user='sysdba',
-                    password='masterkey')
-                return
+                
+            self._status = self.CST_OPENED
+            self._dbconn = kinterbasdb.connect(
+                host=self._host,
+                database=filename,
+                user=self._user,
+                password=self._pwd)
+            return
         
         
         self._mtime = 0.0
         self._dbconn = kinterbasdb.create_database(
-            "create database '%s' user 'sysdba' password 'masterkey'" \
-            % self._filename)
+        "create database '%s:%s' user '%s' password '%s'" % (
+            self._host,self._filename,
+            self._user,self._pwd))
+            
             
 ##         try:
 

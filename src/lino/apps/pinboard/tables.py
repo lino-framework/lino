@@ -1,4 +1,3 @@
-#coding: latin1
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -17,49 +16,54 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-#from lino.adamo.ddl import *
-
 from lino.apps.addrbook.tables import User
 from lino.apps.addrbook.tables import Partner, Nation, City, Person
 
-from babel import Language
+from lino.apps.pinboard.babel import Language
 
-from web import Page
+from lino.apps.pinboard.web import Page
 
-from events import Event
-from events import EventType
+from lino.apps.pinboard.events import Event
+from lino.apps.pinboard.events import EventType
 
-from projects import Project
-from projects import ProjectStatus
+from lino.apps.pinboard.projects import Project
+from lino.apps.pinboard.projects import ProjectStatus
 
-from news import NewsItem
-from news import Newsgroup
+from lino.apps.pinboard.news import NewsItem
+from lino.apps.pinboard.news import Newsgroup
 
-from quotes import Author
-from quotes import AuthorEvent
-from quotes import AuthorEventType
-from quotes import Topic
-from quotes import Publication
-from quotes import PubType
-from quotes import PubByAuth
-from quotes import Quote
+from lino.apps.pinboard.quotes import Author, \
+     AuthorEvent, \
+     AuthorEventType, \
+     Topic, \
+     Publication, \
+     PubType, \
+     PubByAuth, \
+     Quote
+
+## from lino.apps.pinboard import babel, web, events, \
+##      projects, news, quotes
 
 
 
 TABLES=(
-        User,Partner,
+        User,
+        Partner,
         Nation,
         City,
         Language,
-        ProjectStatus,Project,
+        ProjectStatus, Project,
         EventType, Event,
         Page,
         Newsgroup, NewsItem, 
         AuthorEventType,
         AuthorEvent,
         Author,
-        Topic, Publication,
-        Quote, PubType, PubByAuth)
+        Topic,
+        Publication,
+        Quote,
+        PubType,
+        PubByAuth)
 
 #__all__ = filter(lambda x: x[0] != "_", dir())
 

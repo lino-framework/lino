@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -25,12 +25,15 @@ from lino.adamo.ddl import Schema, Populator
 
 def startup(filename=None, langs=None,
             populate=True,
+            dump=None,
             withDemoData=True,
             withLangs=False,
             withJokes=False,
             **kw):
     schema = Pinboard(**kw)
-    sess=schema.quickStartup(langs=langs, filename=filename)
+    sess=schema.quickStartup(langs=langs,
+                             filename=filename,
+                             dump=dump)
     if populate:
         if withLangs:
             sess.populate(LangsPopulator())

@@ -71,15 +71,7 @@ class Connection(SqlConnection):
             
         try:
             self._dbconn = sqlite.connect(filename)
-                                          #client_encoding='latin1'
-##             def month(d):
-##                 return d.month
-##             def year(d):
-##                 raise "foo"
-##                 print d
-##                 return d.year
-##             def day(d):
-##                 return d.day
+            
             self._dbconn.create_function("month",1,month)
             self._dbconn.create_function("year",1,year)
             self._dbconn.create_function("day",1,day)

@@ -62,9 +62,9 @@ class SqlConnection(Connection):
     CST_CLOSING = 4
     CST_CLOSED = 5
     
-    def __init__(self,ui=None,dump=None,*args,**kw):
+    def __init__(self,ui=None,*args,**kw):
         Connection.__init__(self,ui,*args,**kw)
-        self._dump = dump
+        self._dumpWriter = None
         self._status = self.CST_NEW
         self._dirty=False
         
@@ -76,26 +76,26 @@ class SqlConnection(Connection):
         raise NotImplementedError
     
     def sql_exec(self,sql):
-        if self._dump is not None:
-            #self._dump += sql + ";\n"
-            self._dump.write(sql+";\n")
+        if self._dumpWriter is not None:
+            #self._dumpWriter += sql + ";\n"
+            self._dumpWriter.write(sql+";\n")
         return self.sql_exec_really(sql)
         
     def startDump(self,writer=None):
-        assert self._dump is None
-        #self._dump = ""
+        assert self._dumpWriter is None
+        #self._dumpWriter = ""
         if writer is None:
             #writer=sys.stdout
             writer=StringIO()
         #else:
         #    assert hasattr(writer,"__call__")
-        self._dump = writer
+        self._dumpWriter = writer
         
 
     def stopDump(self):
-        dump = self._dump
-        self._dump = None
-        return dump.getvalue()
+        dumpWriter = self._dumpWriter
+        self._dumpWriter = None
+        return dumpWriter.getvalue()
 
     def testEqual(self,colName,type,value):
         if value is None:
@@ -236,7 +236,7 @@ class SqlConnection(Connection):
         sql += "\n)"
         self._dirty=True
         self.sql_exec(sql).close()
-        #self.commit()
+        self.commit()
 
 
 
@@ -253,6 +253,7 @@ class SqlConnection(Connection):
         elif sqlColumnNames != "*":
             sqlColumnNames += ", " +", ".join(
                 [a.getNameInQuery(ds) for a in ds.getAtoms()])
+            
         sql = "SELECT " + sqlColumnNames
         
         sql += " FROM " + leadTable.getTableName()
@@ -677,8 +678,8 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         #print "commit"
         if not self._dirty:
             return
-        if self._dump is not None:
-            self._dump.write("/* commit */\n")
+        if self._dumpWriter is not None:
+            self._dumpWriter.write("/* commit */\n")
         #print "COMMIT", __file__
         self.commit_really()
         self._dirty=False

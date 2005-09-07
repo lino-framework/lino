@@ -37,20 +37,141 @@ from lino.adamo.rowattrs import RowAttribute,\
 from lino.adamo.row import StoredDataRow
 
 
+## reservedWords = """\
+## pages
+## order
+## date
+## time
+## year
+## type
+## password
+## null
+## isnull notnull
+## """.split()
+
+
+
+# source: kinterbase languqge reference, keywords list
 reservedWords = """\
-pages
-order
-date
-time
-year
-type
-password
-null
-isnull
-notnull
-""".splitlines()
+ACTION ACTIVE ADD
+ADMIN AFTER ALL
+ALTER AND ANY
+AS ASC ASCENDING
+AT AUTO AUTODDL
+AVG BASED BASENAME
+BASE_NAME BEFORE BEGIN
+BETWEEN BLOB BLOBEDIT
+BUFFER BY CACHE
+CASCADE CAST CHAR
+CHARACTER CHARACTER_LENGTH CHAR_LENGTH
+CHECK CHECK_POINT_LEN CHECK_POINT_LENGTH
+COLLATE COLLATION COLUMN
+COMMIT COMMITTED COMPILETIME
+COMPUTED CLOSE CONDITIONAL
+CONNECT CONSTRAINT CONTAINING
+CONTINUE COUNT CREATE
+CSTRING CURRENT CURRENT_DATE
+CURRENT_TIME CURRENT_TIMESTAMP CURSOR
+DATABASE DATE DAY
+DB_KEY DEBUG DEC
+DECIMAL DECLARE DEFAULT
+DELETE DESC DESCENDING
+DESCRIBE DESCRIPTOR DISCONNECT
+DISPLAY DISTINCT DO
+DOMAIN DOUBLE DROP
+ECHO EDIT ELSE
+END ENTRY_POINT ESCAPE
+EVENT EXCEPTION EXECUTE
+EXISTS EXIT EXTERN
+EXTERNAL EXTRACT FETCH
+FILE FILTER FLOAT
+FOR FOREIGN FOUND
+FREE_IT FROM FULL
+FUNCTION GDSCODE GENERATOR
+GEN_ID GLOBAL GOTO
+GRANT GROUP GROUP_COMMIT_WAIT
+GROUP_COMMIT_ WAIT_TIME HAVING
+HELP HOUR IF
+IMMEDIATE IN INACTIVE
+INDEX INDICATOR INIT
+INNER INPUT INPUT_TYPE
+INSERT INT INTEGER
+INTO IS ISOLATION
+ISQL JOIN KEY
+LC_MESSAGES LC_TYPE LEFT
+LENGTH LEV LEVEL
+LIKE LOGFILE LOG_BUFFER_SIZE
+LOG_BUF_SIZE LONG MANUAL
+MAX MAXIMUM MAXIMUM_SEGMENT
+MAX_SEGMENT MERGE MESSAGE
+MIN MINIMUM MINUTE
+MODULE_NAME MONTH NAMES
+NATIONAL NATURAL NCHAR
+NO NOAUTO NOT
+NULL NUMERIC NUM_LOG_BUFS
+NUM_LOG_BUFFERS OCTET_LENGTH OF
+ON ONLY OPEN
+OPTION OR ORDER
+OUTER OUTPUT OUTPUT_TYPE
+OVERFLOW PAGE PAGELENGTH
+PAGES PAGE_SIZE PARAMETER
+PASSWORD PLAN POSITION
+POST_EVENT PRECISION PREPARE
+PROCEDURE PROTECTED PRIMARY
+PRIVILEGES PUBLIC QUIT
+RAW_PARTITIONS RDB$DB_KEY READ
+REAL RECORD_VERSION REFERENCES
+RELEASE RESERV RESERVING
+RESTRICT RETAIN RETURN
+RETURNING_VALUES RETURNS REVOKE
+RIGHT ROLE ROLLBACK
+RUNTIME SCHEMA SECOND
+SEGMENT SELECT SET
+SHADOW SHARED SHELL
+SHOW SINGULAR SIZE
+SMALLINT SNAPSHOT SOME
+SORT SQLCODE SQLERROR
+SQLWARNING STABILITY STARTING
+STARTS STATEMENT STATIC
+STATISTICS SUB_TYPE SUM
+SUSPEND TABLE TERMINATOR
+THEN TIME TIMESTAMP
+TO TRANSACTION TRANSLATE
+TRANSLATION TRIGGER TRIM
+TYPE UNCOMMITTED UNION
+UNIQUE UPDATE UPPER
+USER USING VALUE
+VALUES VARCHAR VARIABLE
+VARYING VERSION VIEW
+WAIT WEEKDAY WHEN
+WHENEVER WHERE WHILE
+WITH WORK WRITE
+YEAR YEARDAY
+isnull notnull
+""".split()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 DEFAULT_PRIMARY_KEY = 'id'
+#DEFAULT_PRIMARY_KEY = 'key'
+#DEFAULT_PRIMARY_KEY = 'rowId'
 
 class SchemaComponent:
     
@@ -66,6 +187,9 @@ class SchemaComponent:
     def getSchema(self):
         return self._schema
 
+def check_reserved(name):
+    if name.upper() in reservedWords:
+        raise "'%s' is a reserved keyword" % name
 
 class FieldContainer:
     # inherited by Table 
@@ -88,8 +212,7 @@ class FieldContainer:
         assert not self._rowAttrs.has_key(attr.name),\
                "Duplicate field definition %s.%s" % \
                (self.getTableName(),attr.name)
-        assert not attr.name.lower() in reservedWords,\
-               "'%s' is a reserved word in some databases" % attr.name
+        check_reserved(attr.name)
         #print self.getTableName()+':'+str(attr)
         self._fields.append(attr)
         self._rowAttrs[attr.name] = attr
@@ -144,8 +267,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
             #name = self.__class__.__name__
 
 
-        assert not name.lower() in reservedWords,\
-               "'%s' is a reserved word in some databases" % name
+        check_reserved(name)
             
         #if label is None:
         #    label = instanceClass.tableLabel

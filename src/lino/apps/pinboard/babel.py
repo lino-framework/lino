@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 
 ## Copyright 2003-2005 Luc Saffre
 
@@ -25,7 +25,7 @@ class Language(StoredDataRow):
     tableName="Languages"
     
     def initTable(self,table):
-        table.addField('id',STRING(width=2))
+        table.addField(DEFAULT_PRIMARY_KEY,STRING(width=2))
         table.addBabelField('name',STRING).setMandatory()
     
     def __str__(self):

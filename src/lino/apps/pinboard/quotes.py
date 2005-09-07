@@ -19,9 +19,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.ddl import *
-# from babel import Languages
+#from lino.apps.pinboard.babel import Language
 
-from tables import Person, City, Language
+from lino.apps.pinboard.tables import Person, City, Language
 
 class Quote(StoredDataRow):
     tableName="Quotes"

@@ -19,7 +19,7 @@
 from lino.adamo.table import \
      StoredDataRow, LinkingRow,\
      MemoRow, TreeRow, MemoTreeRow,\
-     BabelRow
+     BabelRow, DEFAULT_PRIMARY_KEY
 ## from lino.adamo.table import Table, LinkTable,\
 ##      MemoTable, TreeTable, MemoTreeTable,\
 ##      BabelTable

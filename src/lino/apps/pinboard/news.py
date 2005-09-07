@@ -36,7 +36,7 @@ class NewsItem(MemoRow):
         table.addPointer('lang',Language)
         #table.addField('lang',LANG)
         table.addPointer('project',Project)
-        table.addPointer('page',Page)
+        table.addPointer('webPage',Page)
 
         #self.writeParagraph = Vurt(self.Instance.writeParagraph,MEMO)
 

@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -19,7 +19,7 @@
 
 from lino.forms import gui
 
-from lino.apps.pinboard.tables import *
+from lino.apps.pinboard import tables 
 from lino.adamo.ddl import Schema
 
 from lino.gendoc.html import HtmlDocument
@@ -33,7 +33,7 @@ class Pinboard(Schema):
     
     
     def setupSchema(self):
-        for cl in TABLES:
+        for cl in tables.TABLES:
             self.addTable(cl)
     
 
@@ -46,13 +46,13 @@ This is the Pinboard main menu.
 
         m = frm.addMenu("db","&Datenbank")
         m.addItem("authors",label="&Authors").setHandler(
-            sess.showViewGrid, Author)
+            sess.showViewGrid, tables.Author)
         m.addItem("pages",label="&Pages").setHandler(
-            sess.showViewGrid, Page)
+            sess.showViewGrid, tables.Page)
         m.addItem("news",label="&News").setHandler(
-            sess.showViewGrid, NewsItem)
+            sess.showViewGrid, tables.NewsItem)
         m.addItem("newsgroups",label="News&groups").setHandler(
-            sess.showViewGrid, Newsgroup)
+            sess.showViewGrid, tables.Newsgroup)
         
 ##         m = frm.addMenu("reports","&Reports")
 ##         m.addItem("s",label="&Static HTML").setHandler(
