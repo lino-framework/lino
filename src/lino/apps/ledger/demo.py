@@ -281,7 +281,7 @@ class DemoPopulator(addrdemo.DemoPopulator):
             tables.Partner).findone(firstName="Anton")
         self.invoice = q.appendRow(jnl=self.OUT,
                                    partner=anton,
-                                   dateIssued=itod(20030822))
+                                   date=itod(20030822))
     def populateInvoiceLines(self,q):
         q.appendRow(invoice=self.invoice,product=self.chair,qty=4)
         q.appendRow(invoice=self.invoice,product=self.table,qty=1)

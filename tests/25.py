@@ -48,9 +48,11 @@ class Case(TestCase):
         # don't do anything with the cursor
         try:
             conn.close()
+            self.fail("failed to raise OperationalError")
         except sqlite.OperationalError:
+            pass
             # known bug in pysqlite 2.0.3
-            self.assertEqual(sqlite.version,'2.0.3')
+            # self.assertEqual(sqlite.version,'2.0.3')
         
 
 if __name__ == '__main__':

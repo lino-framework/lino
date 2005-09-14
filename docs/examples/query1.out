@@ -3,13 +3,13 @@ Cities
 nation             |name               |inhabitan
                    |                   |ts       
 -------------------+-------------------+---------
-Germany            |Alfter-Oedekoven   |         
-Germany            |Eschweiler         |         
-Germany            |München            |         
-Germany            |Bonn               |         
-Germany            |Berlin             |         
-Germany            |Köln               |         
 Germany            |Aachen             |         
+Germany            |Köln               |         
+Germany            |Berlin             |         
+Germany            |Bonn               |         
+Germany            |München            |         
+Germany            |Eschweiler         |         
+Germany            |Alfter-Oedekoven   |         
 Estonia            |Ruhnu              |58       
 Estonia            |Vigala             |1858     
 Estonia            |Kilingi-Nõmme      |2490     

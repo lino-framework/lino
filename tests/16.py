@@ -37,7 +37,7 @@ class Case(TestCase):
         #LANGS.setBabelLangs('en')
         de = LANGS.peek('de')
         #print LANGS._table.getAttrList()
-        for p in de.pages_by_lang:
+        for p in de.nodes_by_lang:
             self.assertEqual(p.title,'Bullshit Bingo')
             
         #print len(de.listof_PAGES)

@@ -65,7 +65,7 @@ class Journal(StoredDataRow):
 class Document(StoredDataRow):
     def initTable(self,table):
         table.addField('seq',ROWID)
-        table.addField('dateIssued',DATE)
+        table.addField('date',DATE)
         table.addField('closed',BOOL)
 
         table.addPointer('jnl',Journal)#.setDetail("documents")

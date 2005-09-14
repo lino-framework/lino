@@ -28,9 +28,9 @@ class Event(Page):
         #MemoMixin.init(self,table)
         Page.initTable(self,table)
         table.getRowAttr('id').setType(ROWID)
-        table.addField('edate', DATE)
-        table.addField('etime', STRING)
-        table.addPointer('etype', EventType).setDetail("eventsByType")
+        table.addField('date', DATE)
+        table.addField('time', STRING)
+        table.addPointer('type', EventType).setDetail("eventsByType")
         
         table.addPointer('responsible',Partner).setDetail(
             'eventsByResponsible')
@@ -38,7 +38,7 @@ class Event(Page):
         
 
         #table.setColumnList('date time place title abstract')
-        table.setOrderBy("edate etime")
+        table.setOrderBy("date time")
 
     def __str__(self):
         s = ''

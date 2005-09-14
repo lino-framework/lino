@@ -28,7 +28,8 @@ from lino.misc.etc import issequence
 
 from lino.adamo import datatypes
 
-from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField
+from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField, \
+     is_reserved
 
 #MS_COLUMN=1
 #MS_MASTER=1
@@ -67,7 +68,7 @@ class QueryColumn:
         #assert self._atoms is None
         atoms = []
         if self.join:
-            joinName = self.join.name
+            joinName = self.join._sqlName
         else:
             joinName = None
         for (name,type) in self.rowAttr.getNeededAtoms(db):
@@ -1546,12 +1547,11 @@ class Atom:
     An Atom represents one SQL column
     """
     def __init__(self,joinName,name,atype,index):
-        #self.join = join
+        self.joinName = joinName
+        assert (joinName is None) or type(joinName) in (str, unicode) 
         self.type = atype
         self.index = index
         self.name = name
-        self.joinName = joinName
-        assert (joinName is None) or type(joinName) in (str, unicode) # is types.StringType
         
 
     def getNameInQuery(self,query):
@@ -1589,6 +1589,10 @@ class Join:
         self.pointer = pointer
         self._joinedTables = []
         self._atoms = None
+        if is_reserved(name):
+            self._sqlName = "x"+name
+        else:
+            self._sqlName = name
         
         """self._atoms is a list of (a,b) couples where a and b are
         atoms used for the join.  """
@@ -1601,16 +1605,16 @@ class Join:
         if self.parent is None:
             parentJoinName = None
         else:
-            parentJoinName = self.parent.name
+            parentJoinName = self.parent._sqlName
             
         if len(self.pointer._toTables) == 1:
             for (name,type) in self.pointer._toTables[0].getPrimaryAtoms():
-                a = self._owner.provideAtom( shortJoinName+"_"+name,
+                a = self._owner.provideAtom(shortJoinName+"_"+name,
                                             type,
                                             parentJoinName)
-                b = self._owner.provideAtom( name,
+                b = self._owner.provideAtom(name,
                                             type,
-                                            self.name)
+                                            self._sqlName)
                 self._atoms.append((a,b))
         else:
             for toTable in self.pointer._toTables:
@@ -1622,7 +1626,7 @@ class Join:
                     b = self._owner.provideAtom(
                         name,
                         type,
-                        self.name+toTable.getTableName())
+                        self._sqlName+toTable.getTableName())
                     self._atoms.append((a,b))
 
     def getJoinAtoms(self):

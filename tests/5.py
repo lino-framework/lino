@@ -31,7 +31,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(dump=True)
+        self.db = demo.startup() # dump=True)
         
         #self.db = demo.beginSession()
 
@@ -43,7 +43,7 @@ class Case(TestCase):
         q = self.db.query(tables.Author,
                           "firstName name",
                           orderBy='name')
-        q.setSqlFilters('name LIKE "B%"')
+        q.setSqlFilters("name LIKE 'B%'")
         s = "\n".join([str(row) for row in q])
         self.assertEqual(s,"""\
 Donald Bisset

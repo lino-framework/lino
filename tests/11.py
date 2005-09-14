@@ -80,7 +80,7 @@ INSERT INTO Services (
         o = ORDERS.appendRow(date=itod(20040322),customer = c)
         #SELECT MAX(id) FROM ORDERS;
         self.assertEquivalent(ORDERS.stopDump(),"""\
-INSERT INTO Orders ( id, date, customer_id, totalPrice, isRegistered )
+INSERT INTO Orders ( id, xdate, customer_id, totalPrice, isRegistered )
             VALUES ( 5, 731662, 4, NULL, NULL );
 """)
         
@@ -96,13 +96,13 @@ INSERT INTO Orders ( id, date, customer_id, totalPrice, isRegistered )
         
         self.assertEquivalent(s,"""\
 INSERT INTO OrderLines (
-id, ordr_id, productProducts_id, productServices_id, qty )
+id, xorder_id, productProducts_id, productServices_id, qty )
 VALUES ( 8, 5, 3, NULL, 2 );
 """)
-        q = LINES.query(ordr=ORDERS.peek(1))
+        q = LINES.query(order=ORDERS.peek(1))
         self.assertEqual(len(q),1)
         for line in q:
-            self.assertEqual(line.ordr.id,1)
+            self.assertEqual(line.order.id,1)
         #self.db.flush()
 
         
@@ -123,7 +123,7 @@ SELECT id, name, price FROM Products WHERE id = 1;
         line = LINES.peek(1)
         #self.assertEquivalent(self.db.conn.stopDump(),"")
         self.assertEquivalent(LINES.stopDump(),"""\
-SELECT id, ordr_id, productProducts_id, productServices_id, qty FROM OrderLines WHERE id = 1;        
+SELECT id, xorder_id, productProducts_id, productServices_id, qty FROM OrderLines WHERE id = 1;        
 """)
 
         PROD.startDump()
@@ -181,7 +181,8 @@ SELECT id, name, price FROM Products WHERE id = 1;
         q.appendRow(product=s1,qty=1)
         q.appendRow(product=p1,qty=1)
 
-        o2 = ORDERS.appendRow(customer=CUST[1],date=itod(20040319))
+        o2 = ORDERS.appendRow(customer=CUST[1],
+                              date=itod(20040319))
         q = o2.lines.query()
         q.appendRow(product=p1,qty=2)
         q.appendRow(product=p2,qty=3)
@@ -211,21 +212,21 @@ SELECT id, name, price FROM Products WHERE id = 1;
         ORDERS = self.sess.query(Order)
         LINES = self.sess.query(OrderLine)
         services.populate(self.sess)
-        q = LINES.query("ordr.date ordr.customer.name",
+        q = LINES.query("order.date order.customer.name",
                              product=PROD[1])
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
-          lead.id, lead.ordr_id, ordr.id, ordr.customer_id,
-          ordr_customer.id,
+          lead.id, lead.xorder_id, xorder.id, xorder.customer_id,
+          xorder_customer.id,
           lead.productProducts_id,
           lead.productServices_id,
-          ordr.date,
-          ordr_customer.name
+          xorder.xdate,
+          xorder_customer.name
         FROM OrderLines AS lead
-          LEFT JOIN Orders AS ordr
-            ON (lead.ordr_id = ordr.id)
-          LEFT JOIN Customers AS ordr_customer
-            ON (ordr.customer_id = ordr_customer.id)
+          LEFT JOIN Orders AS xorder
+            ON (lead.xorder_id = xorder.id)
+          LEFT JOIN Customers AS xorder_customer
+            ON (xorder.customer_id = xorder_customer.id)
         WHERE AND product_id ISNULL
                 AND productProducts_id = 1""")
 

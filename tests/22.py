@@ -25,7 +25,7 @@ from lino.apps.addrbook.tables import Nation
 
 class Case(TestCase):
     "Does the big demo database startup?"
-    todo="Crash in big addrbook demo"
+    #todo="Crash in big addrbook demo"
 
     def setUp(self):
         TestCase.setUp(self)

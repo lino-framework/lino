@@ -25,7 +25,7 @@ from lino.apps.addrbook.tables import *
 class Case(TestCase):
     "do the German country names get installed with big=True?"
     
-    todo="Crash in big addrbook demo"
+    #todo="Crash in big addrbook demo"
     
     def setUp(self):
         TestCase.setUp(self)

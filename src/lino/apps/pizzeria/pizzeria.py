@@ -47,7 +47,7 @@ class Customer(StoredDataRow):
 class Order(StoredDataRow):
     tableName="Orders"
     def initTable(self,table):
-        table.addField('orderDate',DATE)
+        table.addField('date',DATE)
         table.addPointer('customer',Customer)
         table.addField('totalPrice',PRICE)
         table.addField('isRegistered',BOOL)
@@ -57,7 +57,7 @@ class Order(StoredDataRow):
         totalPrice = 0
         for line in self.lines:
             #print line
-            assert line.ordr.id == self.id
+            assert line.order.id == self.id
             totalPrice += (line.qty * line.product.price)
         self.totalPrice = totalPrice
         self.isRegistered = True
@@ -67,13 +67,13 @@ class Order(StoredDataRow):
 class OrderLine(StoredDataRow):
     tableName="OrderLines"
     def initTable(self,table):
-        table.addPointer('ordr',Order,detailName='lines')
-        #table.ordr.setDetail('lines')
+        table.addPointer('order',Order,detailName='lines')
+        #table.order.setDetail('lines')
         table.addPointer('product',Product)
         table.addField('qty',INT)
         
     def validate(self):
-        if self.ordr is None:
+        if self.order is None:
             return "order is mandatory"
         if self.product is None:
             return "product is mandatory"
@@ -104,13 +104,13 @@ def populate(sess):
     p2 = PROD.appendRow(name="Pizza Marinara",price=7)
 
     o1 = ORDERS.appendRow(customer=c1,
-                          orderDate=itod(20030816))
-    LINES.appendRow(ordr=o1,product=p1,qty=2)
+                          date=itod(20030816))
+    LINES.appendRow(order=o1,product=p1,qty=2)
 
 
-    o2 = ORDERS.appendRow(customer=c2,orderDate=itod(20030816))
-    LINES.appendRow(ordr=o2,product=p1,qty=3)
-    LINES.appendRow(ordr=o2,product=p2,qty=5)
+    o2 = ORDERS.appendRow(customer=c2,date=itod(20030816))
+    LINES.appendRow(order=o2,product=p1,qty=3)
+    LINES.appendRow(order=o2,product=p2,qty=5)
 
     o1.register()
     o2.register()

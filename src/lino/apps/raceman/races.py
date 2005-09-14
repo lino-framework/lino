@@ -70,7 +70,7 @@ class Race(StoredDataRow):
         table.addField('date',DATE)
         table.addField('status',STRING(width=1))
         table.addField('tpl',STRING(width=6))
-        table.addPointer('type',RaceType)
+        table.addPointer('raceType',RaceType)
         table.addField('startTime',TIME)
         table.addField('known',INT)
         table.addField('unknown',INT)
@@ -81,7 +81,7 @@ class Race(StoredDataRow):
                        "date event name1 status startTime "
                        "arrivals participants "
                        "known unknown invalid missing "
-                       "tpl type name2 id")
+                       "tpl raceType name2 id")
 
     def setupMenu(self,nav):
         frm = nav.getForm()
@@ -338,14 +338,14 @@ class Club(StoredDataRow):
 class Category(StoredDataRow):
     tableName="Categories"
     def initTable(self,table):
-        table.addPointer('type',RaceType)
+        table.addPointer('raceType',RaceType)
         table.addField('id',STRING(width=3))
         table.addField('seq',ROWID)
         table.addField('name',STRING(width=30))
         table.addField('sex',SEX)
         table.addField('ageLimit',INT)
         
-        table.setPrimaryKey('type id')
+        table.setPrimaryKey('raceType id')
 
     def __str__(self):
         return self.id + " ("+self.name+")"

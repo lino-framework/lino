@@ -27,7 +27,8 @@ from lino.apps.addrbook.tables import User
 #                                             samples={'super':self})
 
 class Page(MemoTreeRow):
-    tableName="WebPages"
+    #tableName="WebPages"
+    tableName="Nodes"
     def initTable(self,table):
         MemoTreeRow.initTable(self,table)
         table.addField('id',ROWID)

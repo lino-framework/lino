@@ -35,6 +35,10 @@ from lino.adamo.connection import Connection
 
 from lino.adamo.filters import NotEmpty, IsEqual, DateEquals, Contains
 
+
+
+
+
 #class SqlError(Exception):
 #    pass
 
@@ -250,9 +254,10 @@ class SqlConnection(Connection):
         if sqlColumnNames is None:
             sqlColumnNames = ", ".join([a.getNameInQuery(ds)
                                         for a in ds.getAtoms()])
-        elif sqlColumnNames != "*":
-            sqlColumnNames += ", " +", ".join(
-                [a.getNameInQuery(ds) for a in ds.getAtoms()])
+##      dont delete. 
+##         elif sqlColumnNames != "*":
+##             sqlColumnNames += ", " +", ".join(
+##                 [a.getNameInQuery(ds) for a in ds.getAtoms()])
             
         sql = "SELECT " + sqlColumnNames
         
@@ -266,7 +271,7 @@ class SqlConnection(Connection):
                 if len(join.pointer._toTables) == 1:
                     toTable = join.pointer._toTables[0]
                     sql += ' LEFT JOIN ' + toTable.getTableName()
-                    sql += ' AS ' + join.name 
+                    sql += ' AS ' + join._sqlName 
                     sql += ' ON ('
                     l = []
                     for (a,b) in join.getJoinAtoms():
@@ -281,12 +286,12 @@ class SqlConnection(Connection):
                         else:
                             parentJoinName = ""
                     else:
-                        parentJoinName = join.parent.name+"."
+                        parentJoinName = join.parent._sqlName+"."
                     i = 0
                     for toTable in join.pointer._toTables:
                         sql += ' LEFT JOIN ' + toTable.getTableName()
-                        sql += ' AS ' + join.name + \
-                               toTable.getTableName()
+                        sql += ' AS ' + join._sqlName \
+                               + toTable._sqlName
                         sql += ' ON ('
                         l = []
                         for (name,type) in toTable.getPrimaryAtoms():
@@ -455,7 +460,8 @@ class SqlConnection(Connection):
         # return SQLiteCursor(self,query)
 
     def executeCount(self,qry):
-        sql = self.getSqlSelect(qry,sqlColumnNames='COUNT(*)' )
+        sql = self.getSqlSelect(qry,sqlColumnNames='COUNT (*)' )
+        #sql = "SELECT COUNT(*) FROM (%s)" % self.getSqlSelect(qry)
         csr = self.sql_exec(sql)
         #assert csr.rowcount is None or csr.rowcount == 1
         result=csr.fetchall()

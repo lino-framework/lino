@@ -21,14 +21,11 @@ from types import StringType
 import datetime
 
 import kinterbasdb
+import kinterbasdb.typeconv_datetime_stdlib as tc_dt
 
 from lino.adamo.sql import SqlConnection
 from lino.adamo import DatabaseError
 
-
-# from lino.ui import console
-# import console to make sure that sys.setdefaultencoding() is done
-# because sqlite.Connection() will use this as default encoding.
 
 def month(s):
     d=datetime.date.fromordinal(s)
@@ -40,7 +37,8 @@ def day(s):
     d=datetime.date.fromordinal(s)
     return d.day
 
-# TEMP_DBNAME 
+# TEMP_DBNAME
+
 
 class Connection(SqlConnection):
     
@@ -73,6 +71,7 @@ class Connection(SqlConnection):
                 database=filename,
                 user=self._user,
                 password=self._pwd)
+            self.setup_connection()
             return
         
         
@@ -81,6 +80,7 @@ class Connection(SqlConnection):
         "create database '%s:%s' user '%s' password '%s'" % (
             self._host,self._filename,
             self._user,self._pwd))
+        self.setup_connection()
             
             
 ##         try:
@@ -91,6 +91,38 @@ class Connection(SqlConnection):
                                           
 ##         except kinterbasdb.DatabaseError,e:
 ##             raise DatabaseError(filename + ":" +str(e))
+
+
+    def setup_connection(self):
+        
+        """
+        from http://kinterbasdb.sourceforge.net/dist_docs/usage.html
+
+        use the datetime module (which entered the standard library in
+        Python 2.3) for both input and output of DATE, TIME, and
+        TIMESTAMP database fields.  This wrapper simply registers
+        kinterbasdb's official date/time translators for the datetime
+        module, which reside in the
+        kinterbasdb.typeconv_datetime_stdlib module.  An equivalent
+        set of translators for mx.DateTime (which kinterbasdb uses by
+        default for backward compatibility) resides in the
+        kinterbasdb.typeconv_datetime_mx module.  Note that because
+        cursors inherit their connection's dynamic type translation
+        settings, cursors created upon connections returned by this
+        function will also use the datetime module.  """
+
+        self._dbconn.set_type_trans_in({
+            'DATE':             tc_dt.date_conv_in,
+            'TIME':             tc_dt.time_conv_in,
+            'TIMESTAMP':        tc_dt.timestamp_conv_in,
+            })
+
+        self._dbconn.set_type_trans_out({
+            'DATE':             tc_dt.date_conv_out,
+            'TIME':             tc_dt.time_conv_out,
+            'TIMESTAMP':        tc_dt.timestamp_conv_out,
+            })
+        
         
 
 

@@ -66,6 +66,11 @@ class DataRow:
         except KeyError:
             raise NoSuchField,name
 
+    def format(v):
+        #print repr(v)
+        return str(v)
+    format=staticmethod(format)
+        
 
 ##     def makeDataCell(self,colIndex,col):
 ##         #return self.getSession()._dataCellFactory(self,colIndex,col)

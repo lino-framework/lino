@@ -26,6 +26,130 @@ from lino.misc.etc import issequence
 from lino.adamo.exceptions import DataVeto, StartupDelay, NoSuchField
 from lino.misc.descr import Describable, setdefaults
 
+## reservedWords = """\
+## pages
+## order
+## date
+## time
+## year
+## type
+## password
+## null
+## isnull notnull
+## """.split()
+
+
+
+# source: kinterbase language reference, keywords list
+reservedWords = tuple("""\
+ACTION ACTIVE ADD
+ADMIN AFTER ALL
+ALTER AND ANY
+AS ASC ASCENDING
+AT AUTO AUTODDL
+AVG BASED BASENAME
+BASE_NAME BEFORE BEGIN
+BETWEEN BLOB BLOBEDIT
+BUFFER BY CACHE
+CASCADE CAST CHAR
+CHARACTER CHARACTER_LENGTH CHAR_LENGTH
+CHECK CHECK_POINT_LEN CHECK_POINT_LENGTH
+COLLATE COLLATION COLUMN
+COMMIT COMMITTED COMPILETIME
+COMPUTED CLOSE CONDITIONAL
+CONNECT CONSTRAINT CONTAINING
+CONTINUE COUNT CREATE
+CSTRING CURRENT CURRENT_DATE
+CURRENT_TIME CURRENT_TIMESTAMP CURSOR
+DATABASE DATE DAY
+DB_KEY DEBUG DEC
+DECIMAL DECLARE DEFAULT
+DELETE DESC DESCENDING
+DESCRIBE DESCRIPTOR DISCONNECT
+DISPLAY DISTINCT DO
+DOMAIN DOUBLE DROP
+ECHO EDIT ELSE
+END ENTRY_POINT ESCAPE
+EVENT EXCEPTION EXECUTE
+EXISTS EXIT EXTERN
+EXTERNAL EXTRACT FETCH
+FILE FILTER FLOAT
+FOR FOREIGN FOUND
+FREE_IT FROM FULL
+FUNCTION GDSCODE GENERATOR
+GEN_ID GLOBAL GOTO
+GRANT GROUP GROUP_COMMIT_WAIT
+GROUP_COMMIT_ WAIT_TIME HAVING
+HELP HOUR IF
+IMMEDIATE IN INACTIVE
+INDEX INDICATOR INIT
+INNER INPUT INPUT_TYPE
+INSERT INT INTEGER
+INTO IS ISOLATION
+ISQL JOIN KEY
+LC_MESSAGES LC_TYPE LEFT
+LENGTH LEV LEVEL
+LIKE LOGFILE LOG_BUFFER_SIZE
+LOG_BUF_SIZE LONG MANUAL
+MAX MAXIMUM MAXIMUM_SEGMENT
+MAX_SEGMENT MERGE MESSAGE
+MIN MINIMUM MINUTE
+MODULE_NAME MONTH NAMES
+NATIONAL NATURAL NCHAR
+NO NOAUTO NOT
+NULL NUMERIC NUM_LOG_BUFS
+NUM_LOG_BUFFERS OCTET_LENGTH OF
+ON ONLY OPEN
+OPTION OR ORDER
+OUTER OUTPUT OUTPUT_TYPE
+OVERFLOW PAGE PAGELENGTH
+PAGES PAGE_SIZE PARAMETER
+PASSWORD PLAN POSITION
+POST_EVENT PRECISION PREPARE
+PROCEDURE PROTECTED PRIMARY
+PRIVILEGES PUBLIC QUIT
+RAW_PARTITIONS RDB$DB_KEY READ
+REAL RECORD_VERSION REFERENCES
+RELEASE RESERV RESERVING
+RESTRICT RETAIN RETURN
+RETURNING_VALUES RETURNS REVOKE
+RIGHT ROLE ROLLBACK
+RUNTIME SCHEMA SECOND
+SEGMENT SELECT SET
+SHADOW SHARED SHELL
+SHOW SINGULAR SIZE
+SMALLINT SNAPSHOT SOME
+SORT SQLCODE SQLERROR
+SQLWARNING STABILITY STARTING
+STARTS STATEMENT STATIC
+STATISTICS SUB_TYPE SUM
+SUSPEND TABLE TERMINATOR
+THEN TIME TIMESTAMP
+TO TRANSACTION TRANSLATE
+TRANSLATION TRIGGER TRIM
+TYPE UNCOMMITTED UNION
+UNIQUE UPDATE UPPER
+USER USING VALUE
+VALUES VARCHAR VARIABLE
+VARYING VERSION VIEW
+WAIT WEEKDAY WHEN
+WHENEVER WHERE WHILE
+WITH WORK WRITE
+YEAR YEARDAY
+ISNULL NOTNULL
+""".split())
+
+
+def is_reserved(name):
+    # raise "'%s' is a reserved keyword" % name
+    return name.upper() in reservedWords
+       
+
+
+
+
+
+
 
 class RowAttribute(Describable):
     def __init__(self,owner, name,
@@ -207,6 +331,11 @@ class Field(RowAttribute):
     def __init__(self,owner,name,type,**kw):
         RowAttribute.__init__(self,owner,name,**kw)
         self.type = type
+        if is_reserved(name):
+            self._sqlName = "x"+name
+        else:
+            self._sqlName = name
+        
         #self.visibility = 0
         #self.format = format
 
@@ -244,7 +373,7 @@ class Field(RowAttribute):
 ##      renderer.renderValue(value,self.type,size)
         
     def getNeededAtoms(self,ctx):
-        return ((self.name, self.type),)
+        return ((self._sqlName, self.type),)
         #return (query.provideAtom(self.name, self.type),)
 
 ##     def value2atoms(self,value,ctx):
@@ -280,7 +409,7 @@ class BabelField(Field):
                  "tried to use BabelField for primary key?"
         l = []
         for lang in ctx.getBabelLangs(): 
-            l.append( (self.name+"_"+lang.id, self.type) )
+            l.append( (self._sqlName+"_"+lang.id, self.type) )
         return l
 
 
@@ -419,9 +548,7 @@ class BabelField(Field):
 ##  def getCellValue(self,row):
 ##      return self._func(row)
     
-
-
-class Pointer(RowAttribute):
+class Pointer(Field):
     """
     
     A Pointer links from this to another table.
@@ -430,13 +557,15 @@ class Pointer(RowAttribute):
     def __init__(self, owner, name, toClass,
                  detailName=None,
                  **kw):
-        RowAttribute.__init__(self,owner,name,**kw)
-        self.type = toClass
-        
+        Field.__init__(self,owner,name,toClass,**kw)
+        #self.type = toClass
         self.detailName = detailName
         self.dtlColumnNames = None
         self.dtlKeywords = {}
         self._neededAtoms = None
+        
+    def setType(self,tp):
+        raise "not on Pointers"
 
     def setDetail(self,detailName,columnNames=None,**kw):
         self.detailName = detailName
@@ -502,7 +631,7 @@ class Pointer(RowAttribute):
                 for toTable in self._toTables:
                     for (name,type) in toTable.getPrimaryAtoms():
                         neededAtoms.append(
-                            (self.name + toTable.getTableName()
+                            (self.name + toTable._sqlName
                              + "_" + name,
                              type) )
                     #i += 1

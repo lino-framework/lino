@@ -67,10 +67,10 @@ class Timings(Schema):
             UsageType, lambda x: "types/"+x.id.strip()
             )
         root.addResolver(
-            Usage, lambda x: "days/"+str(x.date)
+            Usage, lambda x: "days/"+str(x.ddate)
             )
         root.addResolver(
-            Day, lambda x: "days/"+str(x.date)
+            Day, lambda x: "days/"+str(x.ddate)
             )
 
 ##         def query2name(q):
@@ -104,14 +104,14 @@ class Timings(Schema):
         
         ds = sess.query(Day,
                         pageLen=50,
-                        orderBy="date")
+                        orderBy="ddate")
         rpt = DataReport(ds)
         doc=root.addReportChild(rpt)
         mnu.addLink(doc)
 
         for r in sess.query(Resource):
             root.addReportChild(DataReport(
-                r.usages_by_resource,orderBy="date start"))
+                r.usages_by_resource,orderBy="ddate start"))
 
         filenames=root.save(sess,targetRoot)
 
@@ -129,14 +129,14 @@ class Timings(Schema):
         return filenames
 
     def showMonthlyCalendar(self,sess,year=2005,month=6):
-        ds=sess.query(Day, orderBy="date")
-        ds.addFilter(DateEquals(ds.findColumn('date'),year,month))
+        ds=sess.query(Day, orderBy="ddate")
+        ds.addFilter(DateEquals(ds.findColumn('ddate'),year,month))
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
         rpt = DataReport(ds)
-        rpt.addDataColumn("date",width=12,formatter=fmt)
+        rpt.addDataColumn("ddate",width=12,formatter=fmt)
         
-        rpt.addVurtColumn(lambda row:str(row.item.date),
+        rpt.addVurtColumn(lambda row:str(row.item.ddate),
                           label="ISO",width=10)
 
         class ResourceColumn(ReportColumn):
@@ -146,7 +146,7 @@ class Timings(Schema):
                                       label=str(res))
             def getCellValue(self,row):
                 return self.res.usages_by_resource.child(
-                    date=row.item)
+                    ddate=row.item)
             def format(self,qry):
                 return ", ".join([str(u) for u in qry])
         

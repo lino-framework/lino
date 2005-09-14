@@ -41,25 +41,25 @@ class TestPopulator(Populator):
         
     def populateDays(self,q):
         for d in everyday(20050601,20050731):
-            q.appendRow(date=d)
+            q.appendRow(ddate=d)
 
     def populateUsages(self,q):
         days=q.getSession().query(tables.Day)
         for d in everyday(20050620,20050624):
             q.appendRow(resource=self.luc,
-                        date=days.peek(d),
+                        ddate=days.peek(d),
                         start=itot(530),
                         stop=itot(2145),
-                        type=self.a)
+                        utype=self.a)
         for d in everyday(20050625,20050628):
             q.appendRow(resource=self.luc,
-                        date=days.peek(d),
-                        type=self.k)
+                        ddate=days.peek(d),
+                        utype=self.k)
             
         for d in everyday(20050628,20050702):
             q.appendRow(resource=self.gerd,
-                        date=days.peek(d),
-                        type=self.k)
+                        ddate=days.peek(d),
+                        utype=self.k)
 
 
 class Case(TestCase):
@@ -68,7 +68,7 @@ class Case(TestCase):
         TestCase.setUp(self)
         app=Timings()
         #self.sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
-        self.sess=app.quickStartup()
+        self.sess=app.quickStartup() # dump=True)
         self.sess.populate(TestPopulator())
 
     def tearDown(self):
@@ -84,9 +84,9 @@ class Case(TestCase):
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
-Days where 'date' == 2005-6-None
-================================
-date        |ISO       |Gerd                       |Luc
+Days where 'ddate' == 2005-6-None
+=================================
+ddate       |ISO       |Gerd                       |Luc
 ------------+----------+---------------------------+---------------------------
 [2005-06-01]|2005-06-01|                           |
 [2005-06-02]|2005-06-02|                           |
