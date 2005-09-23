@@ -1,15 +1,8 @@
-Cities
-======
+Cities where 'inhabitants' not empty
+====================================
 nation             |name               |inhabitan
                    |                   |ts       
 -------------------+-------------------+---------
-Germany            |Aachen             |         
-Germany            |Köln               |         
-Germany            |Berlin             |         
-Germany            |Bonn               |         
-Germany            |München            |         
-Germany            |Eschweiler         |         
-Germany            |Alfter-Oedekoven   |         
 Estonia            |Ruhnu              |58       
 Estonia            |Vigala             |1858     
 Estonia            |Kilingi-Nõmme      |2490     
@@ -30,4 +23,4 @@ Belgium            |Charleroi          |200983
 Estonia            |Tallinn            |442000   
 Belgium            |Bruxelles          |1004239  
 
-SELECT nation_id, id, name, inhabitants FROM Cities ORDER BY inhabitants
+SELECT nation_id, id, name, inhabitants FROM Cities WHERE inhabitants NOT NULL ORDER BY inhabitants

@@ -54,21 +54,21 @@ class Usage(StoredDataRow):
     tableName="Usages"
     def initTable(self,table):
         table.addField('id',ROWID) 
-        table.addPointer('ddate',Day).setMandatory()
+        table.addPointer('date',Day).setMandatory()
         table.addField('start',TIME)
         table.addField('stop',TIME)
-        table.addPointer('utype',UsageType)
+        table.addPointer('type',UsageType)
         table.addField('remark',STRING)
         #table.addField('mtime',TIMESTAMP)
         table.addPointer('resource',Resource).setMandatory()
-        table.addView("std", "id ddate start stop utype remark")
+        table.addView("std", "id date start stop type remark")
 
     def __str__(self):
         s=""
         if self.remark is not None:
             s+=self.remark+" "
-        if self.utype is not None:
-            s+= self.utype.id + " "
+        if self.type is not None:
+            s+= self.type.id + " "
         if self.start is None and self.stop is None:
             return s
         s += " %s-%s" % (self.start,self.stop)
@@ -89,13 +89,13 @@ class UsageType(StoredDataRow):
 class Day(StoredDataRow):
     tableName="Days"
     def initTable(self,table):
-        table.addField('ddate',DATE)
+        table.addField('date',DATE)
         table.addField('remark',STRING)
-        table.setPrimaryKey("ddate")
-        table.addView("std", "ddate remark")
+        table.setPrimaryKey("date")
+        table.addView("std", "date remark")
         
     def __str__(self):
-        return str(self.ddate)
+        return str(self.date)
 
 
 TABLES = (

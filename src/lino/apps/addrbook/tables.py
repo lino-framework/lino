@@ -116,7 +116,7 @@ class Partner(Contact,Address):
         Contact.initTable(self,table)
         Address.initTable(self,table)
         table.addField('id',ROWID)
-        table.addPointer('partnerType',PartnerType).setDetail(
+        table.addPointer('type',PartnerType).setDetail(
             'partnersByType',orderBy='name firstName')
         table.addField('title',STRING)
         table.addField('logo',LOGO)

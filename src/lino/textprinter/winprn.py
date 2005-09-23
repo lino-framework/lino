@@ -30,10 +30,14 @@ import pywintypes
 
 from PIL import Image, ImageWin
 
-# thanks to
-# http://starship.python.net/crew/theller/moin.cgi/PIL_20and_20py2exe
-# for the following trick to avoid "IOError: cannot identify image
-# file" when exefied with py2exe
+SUPPORT_LANDSCAPE = False
+
+"""
+thanks to
+http://starship.python.net/crew/theller/moin.cgi/PIL_20and_20py2exe
+for the following trick to avoid "IOError: cannot identify image
+file" when exefied with py2exe
+"""
 
 #from PIL import PngImagePlugin
 from PIL import JpegImagePlugin
@@ -51,7 +55,8 @@ charsets = {
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
 
 from lino.console import syscon
-from lino.textprinter.textprinter import TextPrinter, PrinterNotReady, ParserError
+from lino.textprinter.textprinter import TextPrinter, \
+     PrinterNotReady, ParserError
 
 pt = 20
 inch = 1440.0
@@ -60,13 +65,21 @@ A4 = (210*mm, 297*mm)
 
 RATIO=1.7
 
-# Note that in all modes, the point 0,0 is the upper left corner of
+# Note that in all modes, the point 0,0 is the top left corner of
 # the page, and the units increase as you go down and across the
 # page.
 # We work in twips: self.dc.SetMapMode(win32con.MM_TWIPS)
-# A Twip is 1/20 of a typesetting Point. A Point is 1/72 of an
-# inch, so a Twip is 1/1440 of an inch.
 
+# A Twip is 1/20 of a typesetting Point. A typesetting Point is 1/72
+# of an inch, so a Twip is 1/1440 of an inch. (0,0) is the bottom left
+# corner.
+
+# MS doc about SetMapMode() and MM_TWIPS: The mapping mode defines the
+# unit of measure used to transform page-space units into device-space
+# units, and also defines the orientation of the device's x and y
+# axes.  [with MM_TWIPS] each logical unit is mapped to one twentieth
+# of a printer's point (1/1440 inch, also called a twip). Positive x
+# is to the right; positive y is up. (http://msdn.microsoft.com/library)
 
 # setLpi(6): 6 lines per inch means that leading must be 240.  If I
 # ask height=240, then (for Courier New) I get a leading of 240+17=257
@@ -164,9 +177,10 @@ class Win32TextPrinter(TextPrinter):
         TextPrinter.__init__(self,pageSize=A4,margin=5*mm,
                              coding=coding,**kw)
 
-        self.fontDict = {
-            'name' : fontName
-            }
+        self.fontDict = dict(
+            name=fontName,
+            orientation=50
+            )
         
         
         self.fontDict['charset'] = charsets[coding]
@@ -215,9 +229,12 @@ class Win32TextPrinter(TextPrinter):
             self.dc.StartDoc(jobName,spoolFile)
         except win32ui.error,e:
             raise PrinterNotReady("StartDoc() failed")
+        
+        # using SetWorldTransform() requires advanced graphics mode
+        if SUPPORT_LANDSCAPE:
+            self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
+        
         self.dc.SetMapMode(win32con.MM_TWIPS)
-        # for SetWorldTransform():
-        self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
         
         #self.org = self.dc.GetViewportOrg()
         #self.ext = self.dc.GetViewportExt()
@@ -246,34 +263,41 @@ class Win32TextPrinter(TextPrinter):
         self.x = self.org[0] + self.margin
         self.y = self.org[1] + self.margin
         self._images=[]
-        #self.drawDebugRaster()
 
         if self.pageHeight < self.pageWidth:
+            # landscape orientation
             # see http://lino.berlios.de/176.html
-            
-            r=0
-            # shifts to right:
-            #r=self.dc.SetWorldTransform(1,0, 0,1, 200,0)
-            
-            r=self.dc.SetWorldTransform(
-                0,1,
-                -1,0,
-                0, -int(self.pageWidth-2*self.margin))
-            if r == 0:
-                raise PrinterNotReady("SetWorldTransform() failed")
+
+            if SUPPORT_LANDSCAPE:
+                r=0
+                # shifts to right:
+                #r=self.dc.SetWorldTransform(1,0, 0,1, 200,0)
+                #print "Landscape"
+                r=self.dc.SetWorldTransform(
+                    0,1, -1,0,
+                    0, -int(self.pageWidth-2*self.margin))
+                if r == 0:
+                    raise PrinterNotReady("SetWorldTransform() failed")
+##         else:
+##             #print "Portrait"
+##             r=self.dc.SetWorldTransform(1,0,0,1,0,0)
+##             if r == 0:
+##                 raise PrinterNotReady("SetWorldTransform() failed")
         
         r = self.dc.StartPage()
-        # seems to be always None
-        #if r <= 0:
-        #    raise PrinterNotReady("StartPage() returned %d",r)
+        # r seems to be always None
+        # if r <= 0:
+        #     raise PrinterNotReady("StartPage() returned %d",r)
     
     def onEndPage(self):
         for dib,destination in self._images:
             dib.draw(self.dc.GetHandleOutput(),destination)
                  
+        #self.drawDebugRaster()
+        
         r=self.dc.EndPage()
         # seems to be always None
-        #if r <= 0:
+        # if r <= 0:
         #    raise PrinterNotReady("EndPage() returned %d",r)
 
     def onSetPageSize(self):
@@ -366,6 +390,8 @@ class Win32TextPrinter(TextPrinter):
 
         if self.font is None:
             self.font = win32ui.CreateFont(self.fontDict)
+            #print "CreateFont(%r)" % self.fontDict
+            #print "CreateFont() returned %r" % self.font
         
             # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
         
@@ -562,6 +588,12 @@ class Win32TextPrinter(TextPrinter):
 
 
     def drawDebugRaster(self):
+        fontDict=dict(name="Courier New",
+                      height=100)
+        font = win32ui.CreateFont(fontDict)
+        self.dc.SelectObject(font)
+        print "CreateFont(%r)" % fontDict
+        
         DELTA=10
         #print "org:", self.org
         #print "ext:", self.ext

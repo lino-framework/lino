@@ -46,7 +46,7 @@ class Case(TestCase):
         #print s
 
         self.assertEquivalent(s, """\
-Users Partners Nations Cities Languages ProjectStati Projects EventTypes Events Pages Newsgroups News AuthorEventTypes AuthorEvents Authors Topics Publications Quotes PubTypes PubByAuth
+Users Partners Nations Cities Languages ProjectStati Projects EventTypes Events Nodes Newsgroups News AuthorEventTypes AuthorEvents Authors Topics Publications Quotes PubTypes PubByAuth
 """)
         
         

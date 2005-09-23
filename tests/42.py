@@ -52,7 +52,7 @@ id     |name          |parent        |files         |subdirs
 1      |              |              |17 Files      |3 Directories
 """)
         q=sess.query(File,
-                     orderBy="mtime",
+                     orderBy="size",
                      columnNames="dir name size mustParse occurences")
         q.showReport(columnWidths="20 18 8 5 15")
         s=self.getConsoleOutput()
@@ -64,41 +64,41 @@ Files
 dir                 |name              |size    |mustP|occurences     
                     |                  |        |arse |               
 --------------------+------------------+--------+-----+---------------
-test:               |README.TXT        |2254    |X    |263 Occurences 
-test:               |cp850b.txt        |23      |X    |1 Occurences   
 test:               |cp1252b.txt       |23      |X    |1 Occurences   
-test:               |cp1252a.txt       |372     |X    |53 Occurences  
-test:               |gnosis-readme     |1662    |X    |0 Occurences   
-test:               |cp850a.txt        |372     |X    |53 Occurences  
-test:               |cp850box.txt      |50      |X    |0 Occurences   
-test:               |NAT.DBF           |1735    |X    |0 Occurences   
-test:               |PAR.DBF           |43411   |X    |0 Occurences   
-test:               |PAR.DBT           |4481    |X    |0 Occurences   
-test:               |5.pds             |500     |X    |0 Occurences   
-test:               |5b.pds            |676     |X    |0 Occurences   
-test:               |5c.pds            |2027    |X    |0 Occurences   
-test:               |5d.pds            |850     |X    |0 Occurences   
-test:webman         |init.wmi          |917     |X    |0 Occurences   
-test:webman         |index.txt         |182     |X    |15 Occurences  
-test:2              |init.wmi          |975     |X    |0 Occurences   
-test:2              |index.txt         |193     |X    |21 Occurences  
-test:2              |1.txt             |150     |X    |19 Occurences  
+test:               |cp850b.txt        |23      |X    |1 Occurences   
 test:2              |.cvsignore        |28      |X    |0 Occurences   
+test:               |cp850box.txt      |50      |X    |0 Occurences   
 test:webman         |1.txt             |138     |X    |19 Occurences  
-test:               |PLZ.DBF           |25246   |X    |0 Occurences   
-test:textprinter    |logo.jpg          |10126   |X    |0 Occurences   
-test:textprinter    |5.PRN             |794     |X    |0 Occurences   
-test:textprinter    |2.prn             |1798    |X    |0 Occurences   
-test:textprinter    |1.prn             |2387    |X    |0 Occurences   
-test:timtools       |pds2pdf.help.txt  |953     |X    |122 Occurences 
-test:timtools       |prn2pdf.help.txt  |868     |X    |109 Occurences 
-test:timtools       |prnprint.help.txt |1154    |X    |139 Occurences 
-test:timtools       |sync.help.txt     |791     |X    |99 Occurences  
+test:2              |1.txt             |150     |X    |19 Occurences  
+test:webman         |index.txt         |182     |X    |15 Occurences  
+test:2              |index.txt         |193     |X    |21 Occurences  
+test:               |cp1252a.txt       |372     |X    |53 Occurences  
+test:               |cp850a.txt        |372     |X    |53 Occurences  
+test:               |5.pds             |500     |X    |0 Occurences   
 test:timtools       |diag.help.txt     |673     |X    |80 Occurences  
-test:timtools       |openmail.help.txt |955     |X    |126 Occurences 
+test:               |5b.pds            |676     |X    |0 Occurences   
 test:timtools       |openurl.help.txt  |701     |X    |86 Occurences  
-test:               |eupen.pdf         |232672  |X    |799 Occurences 
+test:timtools       |sync.help.txt     |791     |X    |99 Occurences  
+test:textprinter    |5.PRN             |794     |X    |0 Occurences   
+test:               |5d.pds            |850     |X    |0 Occurences   
+test:timtools       |prn2pdf.help.txt  |868     |X    |109 Occurences 
+test:webman         |init.wmi          |917     |X    |0 Occurences   
+test:timtools       |pds2pdf.help.txt  |953     |X    |122 Occurences 
+test:timtools       |openmail.help.txt |955     |X    |126 Occurences 
+test:2              |init.wmi          |975     |X    |0 Occurences   
+test:timtools       |prnprint.help.txt |1154    |X    |139 Occurences 
+test:               |gnosis-readme     |1662    |X    |0 Occurences   
+test:               |NAT.DBF           |1735    |X    |0 Occurences   
+test:textprinter    |2.prn             |1798    |X    |0 Occurences   
+test:               |5c.pds            |2027    |X    |0 Occurences   
+test:               |README.TXT        |2254    |X    |263 Occurences 
+test:textprinter    |1.prn             |2387    |X    |0 Occurences   
+test:               |PAR.DBT           |4481    |X    |0 Occurences   
 test:               |jona.txt          |7803    |X    |1382 Occurences
+test:textprinter    |logo.jpg          |10126   |X    |0 Occurences   
+test:               |PLZ.DBF           |25246   |X    |0 Occurences   
+test:               |PAR.DBF           |43411   |X    |0 Occurences   
+test:               |eupen.pdf         |232672  |X    |799 Occurences 
 """)
 
         app.showSearchForm(sess)

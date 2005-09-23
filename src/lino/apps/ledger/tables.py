@@ -173,7 +173,7 @@ class StatementItem(BabelRow):
         table.addField('id',STRING)
         table.addField('attrib',STRING)
         table.addField('dc',STRING(1))
-        table.addField('itemType',STRING(2))
+        table.addField('type',STRING(2))
         table.addField('doc',MEMO)
         #table.setPrimaryKey("stmt id")
 
@@ -258,7 +258,7 @@ class Account(BabelRow):
 class Booking(StoredDataRow):
     tableName="Bookings"
     def initTable(self,table):
-        table.addField('dateBooked',DATE)
+        table.addField('date',DATE)
         #table.addField('seq',ROWID)
         table.addField('amount',AMOUNT)
         table.addField('dc',BOOL)

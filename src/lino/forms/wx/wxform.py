@@ -21,7 +21,8 @@ import wx
 
 #from lino.ui import console
 
-from lino.adamo.datatypes import MEMO
+from lino.adamo import datatypes
+#from lino.adamo.datatypes import MEMO
 from lino.forms import base, gui
 from lino.forms.wx import wxgrid
 #from lino.console import syscon
@@ -330,22 +331,21 @@ class EntryMixin:
             mypanel = panel
             hbox = box
 
+        type = self._type
+        if isinstance(type,datatypes.StringType):
+            style=0
+            if self.getMaxHeight() > 1:
+                style = style|wx.TE_MULTILINE
+            editor = wx.TextCtrl(mypanel,-1,
+                                 self.getValueForEditor(),
+                                 style=style)
+                                 #validator=EntryValidator(self))
+                                 #style=wx.TE_PROCESS_ENTER)
 
-        style=0
-##         type = self.getType()
-##         if type.maxHeight > 1:
-##             style = style|wx.TE_MULTILINE
-        if self.getMaxHeight() > 1:
-            style = style|wx.TE_MULTILINE
-        editor = wx.TextCtrl(mypanel,-1,
-                             self.getValueForEditor(),
-                             style=style)
-                             #validator=EntryValidator(self))
-                             #style=wx.TE_PROCESS_ENTER)
-
-        
-        editor.SetMinSize(editor.GetBestSize())
-        #_setEditorSize(editor,self)
+            editor.SetMinSize(editor.GetBestSize())
+            #_setEditorSize(editor,self)
+        elif isinstance(type,datatypes.BoolType):
+            editor=wx.CheckBox(mypanel,-1)
         #print editor.GetMinSize(), editor.GetMaxSize()
         #print mypanel.GetMinSize(), editor.GetMaxSize()
         

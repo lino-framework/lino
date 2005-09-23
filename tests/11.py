@@ -96,7 +96,7 @@ INSERT INTO Orders ( id, xdate, customer_id, totalPrice, isRegistered )
         
         self.assertEquivalent(s,"""\
 INSERT INTO OrderLines (
-id, xorder_id, productProducts_id, productServices_id, qty )
+id, order_id, productProducts_id, productServices_id, qty )
 VALUES ( 8, 5, 3, NULL, 2 );
 """)
         q = LINES.query(order=ORDERS.peek(1))
@@ -123,7 +123,7 @@ SELECT id, name, price FROM Products WHERE id = 1;
         line = LINES.peek(1)
         #self.assertEquivalent(self.db.conn.stopDump(),"")
         self.assertEquivalent(LINES.stopDump(),"""\
-SELECT id, xorder_id, productProducts_id, productServices_id, qty FROM OrderLines WHERE id = 1;        
+SELECT id, order_id, productProducts_id, productServices_id, qty FROM OrderLines WHERE id = 1;        
 """)
 
         PROD.startDump()
@@ -216,7 +216,7 @@ SELECT id, name, price FROM Products WHERE id = 1;
                              product=PROD[1])
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
-          lead.id, lead.xorder_id, xorder.id, xorder.customer_id,
+          lead.id, lead.order_id, xorder.id, xorder.customer_id,
           xorder_customer.id,
           lead.productProducts_id,
           lead.productServices_id,
@@ -224,7 +224,7 @@ SELECT id, name, price FROM Products WHERE id = 1;
           xorder_customer.name
         FROM OrderLines AS lead
           LEFT JOIN Orders AS xorder
-            ON (lead.xorder_id = xorder.id)
+            ON (lead.order_id = xorder.id)
           LEFT JOIN Customers AS xorder_customer
             ON (xorder.customer_id = xorder_customer.id)
         WHERE AND product_id ISNULL

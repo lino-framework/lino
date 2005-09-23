@@ -40,9 +40,10 @@ class Describable(Configurable):
     def __init__(self,parent=None,name=None,label=None,doc=None):
         
         if name is None:
-            if parent is not None:
-                name=parent.name
-            name = self.__class__.__name__
+            if parent is None:
+                name=self.__class__.__name__
+            else:
+                name=parent.name+'+'
         else:
             assert not " " in name
             

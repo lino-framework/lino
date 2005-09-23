@@ -30,7 +30,7 @@ from lino.adamo.table import DbfMirrorLoader
 
 
 class ResourcesMirrorLoader(DbfMirrorLoader):
-    tableClass = Resources
+    tableClass = Resource
     tableName = "RES"
     def appendFromDBF(self,q,row):
         q.appendRow(
@@ -40,7 +40,7 @@ class ResourcesMirrorLoader(DbfMirrorLoader):
 
 
 class UsagesMirrorLoader(DbfMirrorLoader):
-    tableClass = Usages
+    tableClass = Usage
     tableName = "PTL"
     def appendFromDBF(self,q,row):
         sess = q.getSession()

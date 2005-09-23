@@ -87,9 +87,9 @@ class QueryColumn:
     def vetoDeleteRow(self,row):
         pass
 
-##     def addFilter(self,fcl,*args,**kw):
-##         flt=fcl(self,*args,**kw)
-##         self._owner.addFilter(flt)
+    def addFilter(self,fcl,*args,**kw):
+        flt=fcl(self,*args,**kw)
+        self._owner.addFilter(flt)
 
 
     def setCellValue(self,row,value):

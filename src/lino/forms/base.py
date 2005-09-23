@@ -519,12 +519,14 @@ class Container(Component):
         self._components.append(e)
         return e
         
-    def addEntry(self,name=None,*args,**kw):
+    # def addEntry(self,name=None,*args,**kw):
+    def addEntry(self,*args,**kw):
         frm = self.getForm()
-        e = frm.session.toolkit.entryFactory(frm,name,*args,**kw)
+        #e = frm.session.toolkit.entryFactory(frm,name,*args,**kw)
+        e = frm.session.toolkit.entryFactory(frm,None,*args,**kw)
         self._components.append(e)
-        if name is not None:
-            frm.entries.define(name,e)
+        #if name is not None:
+        #    frm.entries.define(name,e)
         return e
     
     def addDataEntry(self,dc,*args,**kw):
@@ -633,7 +635,7 @@ class Form(Describable,MenuContainer):
         self.session=sess
         self._parent = parent
         self.data = data
-        self.entries = AttrDict()
+        #self.entries = AttrDict()
         self.buttons = AttrDict()
         self.tables = AttrDict()
         self.defaultButton = None
@@ -730,7 +732,8 @@ class Form(Describable,MenuContainer):
     
             
     def validate(self):
-        for e in self.entries:
+        #for e in self.entries:
+        for e in self._components:
             msg = e.validate()
             if msg is not None:
                 return msg

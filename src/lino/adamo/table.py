@@ -544,7 +544,7 @@ class DbfMirrorLoader(Task):
     #def load(self,sess,store):
     def run(self):
         sess=self.session
-        store=sess.getStore(self.tableClass)
+        store=sess.db.getStore(self.tableClass)
         if self.mtime() <= store.mtime():
             sess.debug("No need to load %s.",self.sourceFilename())
             return

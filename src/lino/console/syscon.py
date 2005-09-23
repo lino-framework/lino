@@ -166,7 +166,9 @@ def shutdown():
 
 
 if hasattr(sys.stdout,"encoding") \
+      and sys.stdout.encoding is not None \
       and sys.getdefaultencoding() != sys.stdout.encoding:
+    #print sys.stdout.encoding
     sys.stdout = rewriter(sys.stdout)
     #sys.stderr = rewriter(sys.stderr)
 

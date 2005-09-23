@@ -22,7 +22,7 @@ import os
 #from lino.apps.keeper.tables import *
 #from lino.apps.keeper.tables import TABLES
 from lino.apps.keeper import tables
-from lino.adamo.ddl import Schema, Populator, STRING
+from lino.adamo.ddl import Schema, Populator, STRING, BOOL
 from lino.reports import DataReport
 from lino.adamo.filters import Contains, NotEmpty
 
@@ -45,21 +45,26 @@ class Keeper(Schema):
         files.addFilter(NotEmpty(col))
         occs=col.getDetailQuery()
         occs.setSearchColumns("word.id")
-        #files.addColumn("content")
+        files.addColumn("content")
         
-        #rpt=DataReport(files,columnWidths="30 30 15")
-        rpt=DataReport(files,columnWidths="30 15")
+        rpt=DataReport(files,columnWidths="30 30 15")
+        #rpt=DataReport(files,columnWidths="30 15")
         
         frm = sess.form(label="Search")
 
-        searchString = frm.addEntry("searchString",STRING,
-                                    label="Words to look for")
+        searchString = frm.addEntry(STRING,
+                                    label="&Words to look for")
                                     #value="")
+        anyWord = frm.addEntry(BOOL,label="&any word (OR)")
+        
         def search():
-            #files.clearFilters()
-            #for word in searchString.getValue().split():
-            #    w=words.peek(word)
-            #    occs.addFilter(Contains,w)
+##             files.clearFilters()
+##             for word in searchString.getValue().split():
+##                 w=words.peek(word)
+##                 if w is None:
+##                     sess.notice("ignored '%s'"%w)
+##                 else:
+##                     occs.addFilter(Contains,w)
                 
             #files.setSearch(searchString.getValue())
             #occs._queryParams["search"]=searchString.getValue()

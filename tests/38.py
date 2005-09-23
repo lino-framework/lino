@@ -43,7 +43,7 @@ class Case(TestCase):
         #print sql
         self.assertEquivalent(sql,"""\
 SELECT MAX(id) FROM Races; INSERT INTO Races (
-id, name1, name2, date, status, tpl, type_id,
+id, name1, name2, xdate, status, tpl, type_id,
 startTime, known, unknown, invalid, missing, event_id
 ) VALUES
 ( 1, 'test a', NULL, 731974, NULL, NULL, NULL,
@@ -55,7 +55,7 @@ startTime, known, unknown, invalid, missing, event_id
         sql = R.stopDump()
         #print sql
         self.assertEquivalent(sql,"""\
-SELECT id, name1, name2, date, status, tpl, type_id, startTime, known, unknown, invalid, missing, event_id
+SELECT id, name1, name2, xdate, status, tpl, type_id, startTime, known, unknown, invalid, missing, event_id
 FROM Races WHERE id = 1;        
         """)
         self.assertEqual(race.startTime,jetzt)

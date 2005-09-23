@@ -41,25 +41,25 @@ class TestPopulator(Populator):
         
     def populateDays(self,q):
         for d in everyday(20050601,20050731):
-            q.appendRow(ddate=d)
+            q.appendRow(date=d)
 
     def populateUsages(self,q):
         days=q.getSession().query(tables.Day)
         for d in everyday(20050620,20050624):
             q.appendRow(resource=self.luc,
-                        ddate=days.peek(d),
+                        date=days.peek(d),
                         start=itot(530),
                         stop=itot(2145),
-                        utype=self.a)
+                        type=self.a)
         for d in everyday(20050625,20050628):
             q.appendRow(resource=self.luc,
-                        ddate=days.peek(d),
-                        utype=self.k)
+                        date=days.peek(d),
+                        type=self.k)
             
         for d in everyday(20050628,20050702):
             q.appendRow(resource=self.gerd,
-                        ddate=days.peek(d),
-                        utype=self.k)
+                        date=days.peek(d),
+                        type=self.k)
 
 
 class Case(TestCase):
@@ -84,9 +84,9 @@ class Case(TestCase):
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
-Days where 'ddate' == 2005-6-None
-=================================
-ddate       |ISO       |Gerd                       |Luc
+Days where 'date' == 2005-6-None
+================================
+date        |ISO       |Gerd                       |Luc
 ------------+----------+---------------------------+---------------------------
 [2005-06-01]|2005-06-01|                           |
 [2005-06-02]|2005-06-02|                           |

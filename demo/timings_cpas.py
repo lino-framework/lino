@@ -8,9 +8,9 @@ loadfrom=r".\CPAS"
 
 class CpasPopulator(Populator):
     def populateUsageTypes(self,q):
-        q.appendRow(id="A ",name="Arbeit")
-        q.appendRow(id="U ",name="Urlaub")
-        q.appendRow(id="M ",name="Mission")
+        q.appendRow(id="A",name="Arbeit")
+        q.appendRow(id="U",name="Urlaub")
+        q.appendRow(id="M",name="Mission")
 
 
 app=Timings()
