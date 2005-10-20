@@ -36,7 +36,7 @@ CENTER = 3
 TOP = 4
 BOTTOM = 5
     
-class BaseReport(Describable):
+class BaseReport: #(Describable):
 
 
     def __init__(self, parent,
@@ -44,7 +44,7 @@ class BaseReport(Describable):
                  columnWidths=None,
                  width=None,
                  rowHeight=None,
-                 **kw
+                 title=None
                  ):
 
         self.columns = []
@@ -53,9 +53,10 @@ class BaseReport(Describable):
         self._onRowEvents=[]
         self.formColumnGroups = None
 
-        Describable.__init__(self,parent,**kw)
+        #Describable.__init__(self,parent,**kw)
         if parent is not None:
             #if iterator is None: iterator=parent._iterator
+            if title is None: title=parent.title
             if ds is None: ds=parent.ds
             if columnWidths is None: columnWidths=parent.columnWidths
             if width is None: width=parent.width
@@ -64,11 +65,20 @@ class BaseReport(Describable):
         self.rowHeight = rowHeight
         self.columnWidths = columnWidths
         self.width = width
-        
-        
-    def getTitle(self):
-        return self.getLabel()
+        self.title=title
 
+    def child(self,**kw):
+        assert not kw.has_key('parent'),\
+               "rpt.child(parent=x) is nonsense"
+        return self.__class__(parent=self,**kw)
+        
+        
+
+    def getTitle(self):
+        # overridden by DataReport
+        if self.title is not None: return self.title
+        return str(self)
+    
     def setupMenu(self,navigator):
         pass
     
@@ -154,7 +164,11 @@ class BaseReport(Describable):
         #    self.width = totalWidth
 
 
+    def setupReport(self):
+        pass
+    
     def beginReport(self,doc):
+        self.setupReport()
         if self.width is None:
             self.width=doc.getLineWidth()
         self.computeWidths(doc)
@@ -225,7 +239,7 @@ class BaseReport(Describable):
         syscon.showReport(self,**kw)
 
     def showFormNavigator(self,sess,**kw):
-        frm=sess.form(label=self.getLabel(),
+        frm=sess.form(label=self.getTitle(),
                       name=self.getName(),
                       data=self[0])
 
@@ -457,35 +471,41 @@ class DataReport(BaseReport):
     def __init__(self,qry,columnSpec=None,
                  columnWidths=None,
                  width=None,rowHeight=None,
-                 name=None,label=None,doc=None,**kw):
+                 title=None,
+                 #name=None,label=None,doc=None,
+                 **kw):
 
-        if name is None:
-            name=qry.getLeadTable().getName()+"Report"
+        #if name is None:
+        #    name=qry.getLeadTable().getName()+"Report"
         
         if len(kw):
             # DataReport.__init__() forwards unknown keyword arguments
             # to its query
             qry=qry.child(**kw)
             
-        if label is None: label=qry.getLabel()
+        #if label is None: label=qry.getLabel()
             
         BaseReport.__init__(self,None,qry,
                             columnWidths,width,rowHeight,
-                            name=name,label=label,doc=doc)
+                            title=title)
+                            #name=name,label=label,doc=doc)
         if columnSpec is not None:
             self.setColumnSpec(columnSpec)
     
+    def getTitle(self):
+        if self.title is not None: return self.title
+        return self.ds.buildTitle()
+    
     def setupMenu(self,navigator):
         self.ds.setupMenu(navigator)
-        
-    def beginReport(self,doc):
+
+    def setupReport(self):
         if len(self.columns) == 0:
             for dc in self.ds.getVisibleColumns():
                 col = DataReportColumn(dc,label=dc.getLabel())
                 self.columns.append(col)
             self.formColumnGroups=None
-        BaseReport.beginReport(self,doc)
-            
+        
     def addDataColumn(self,colName,**kw):
         dc=self.ds.findColumn(colName)
         return self.addColumn(DataReportColumn(dc,**kw))
@@ -566,7 +586,7 @@ class DictReport(BaseReport):
     def __init__(self,d,**kw):
         BaseReport.__init__(self,None, d.items(), **kw)
         
-    def beginReport(self,doc):
+    def setupReport(self):
         if len(self.columns) == 0:
             self.addVurtColumn(meth=lambda row: str(row.item[0]),
                                label="key",
@@ -574,7 +594,6 @@ class DictReport(BaseReport):
             self.addVurtColumn(meth=lambda row: str(row.item[1]),
                                label="value",
                                width=40)
-        BaseReport.beginReport(self,doc)
 
     def canSort(self):
         return False

@@ -78,6 +78,7 @@ class Button(Component):
     def setDefault(self):
         "set this button as default button for its form"
         self.getForm().defaultButton = self
+        return self
         
     def click(self):
         "execute the button's handler"

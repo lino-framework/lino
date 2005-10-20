@@ -26,6 +26,78 @@ from lino.adamo.ddl import Schema, Populator, STRING, BOOL
 from lino.reports import DataReport
 from lino.adamo.filters import Contains, NotEmpty
 
+
+
+def preview(s):
+    if len(s) < 100: return s
+    return s[:100]+" (...)"
+
+
+class SearchFormCtrl:
+    
+    formLabel="Search"
+    
+    def setupForm(self,frm):
+        sess=frm.session
+        words = sess.query(tables.Word)
+        files = sess.query(tables.File) #,"name")
+        grid=None # referenced in search(), defined later
+        
+        #files.addColumn("content")
+        
+        rpt=DataReport(files,width=70)#,columnWidths="30 15 30")
+        #rpt=DataReport(files,columnWidths="30 15")
+
+        #rpt.setupReport() # 
+        rpt.addDataColumn("name",width=20)
+        occsColumn=rpt.addDataColumn("occurences",
+                                     width=15)
+        rpt.addDataColumn("content",
+                          formatter=lambda x: preview(x))
+
+        col=occsColumn.datacol
+        files.addFilter(NotEmpty(col))
+        occs=col.getDetailQuery()
+        occs.setSearchColumns("word.id")
+        
+        
+        #frm = sess.form(label="Search")
+
+        self.searchString = frm.addEntry(STRING,
+                                         label="&Words to look for")
+                                    #value="")
+        self.anyWord = frm.addEntry(BOOL,label="&any word (OR)")
+        
+        def search():
+##             files.clearFilters()
+##             for word in searchString.getValue().split():
+##                 w=words.peek(word)
+##                 if w is None:
+##                     sess.notice("ignored '%s'"%w)
+##                 else:
+##                     occs.addFilter(Contains,w)
+                
+            #files.setSearch(searchString.getValue())
+            #occs._queryParams["search"]=searchString.getValue()
+            occs.setSearch(self.searchString.getValue())
+            grid.enabled=self.searchString.getValue() is not None
+            frm.refresh()
+
+
+
+        #bbox = frm.addHPanel()
+        bbox = frm
+        self.go = bbox.addButton("search",
+                                 label="&Search",
+                                 action=search).setDefault()
+        #bbox.addButton("exit",
+        #               label="&Exit",
+        #               action=frm.close)
+        grid=bbox.addDataGrid(rpt)
+        grid.enabled=False
+
+
+
 class Keeper(Schema):
     
     years='2005'
@@ -38,6 +110,7 @@ class Keeper(Schema):
             self.addTable(cl)
 
     def showSearchForm(self,sess):
+        raise "no longer used"
         words = sess.query(tables.Word)
         files = sess.query(tables.File,"name")
         grid=None # referenced in search(), defined later
@@ -98,8 +171,10 @@ This is the Keeper main menu.
 """+("\n"*10))
 
         m = frm.addMenu("search","&Suchen")
+        #m.addItem("search",label="&Suchen").setHandler(
+        #    self.showSearchForm,sess)
         m.addItem("search",label="&Suchen").setHandler(
-            self.showSearchForm,sess)
+            sess.showForm,SearchFormCtrl())
     
         m = frm.addMenu("db","&Datenbank")
         m.addItem("volumes",label="&Volumes").setHandler(

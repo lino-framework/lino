@@ -36,7 +36,7 @@ class Case(TestCase):
         l = []
         for t in self.sess.db.app.getTableList():
             s = t.getTableName() + ": "
-            s += ", ".join(["%s(%s)"%a
+            s += ", ".join(["%s(%s)" % a
                            for a in t.getPrimaryAtoms()])
             l.append(s)
 
@@ -45,20 +45,20 @@ class Case(TestCase):
         #print s
 
         self.assertEquivalent(s,"""\
-Currencies: id(StringType)
-Languages: id(StringType)
-Nations: id(StringType)
-Cities: nation_id(StringType), id(AutoIncType)
+Currencies: id(StringType+)
+Languages: id(StringType+)
+Nations: id(StringType+)
+Cities: nation_id(StringType+), id(AutoIncType)
 Organisations: id(AutoIncType)
 Persons: id(AutoIncType)
 Partners: id(AutoIncType)
 PartnerTypes: id(StringType)
 Products: id(AutoIncType)
-Journals: id(StringType)
-BankStatements: jnl_id(StringType), seq(AutoIncType)
-MiscOperations: jnl_id(StringType), seq(AutoIncType)
-Invoices: jnl_id(StringType), seq(AutoIncType)
-InvoiceLines: invoice_jnl_id(StringType), invoice_seq(AutoIncType), line(AutoIncType)
+Journals: id(StringType+)
+BankStatements: jnl_id(StringType+), seq(AutoIncType)
+MiscOperations: jnl_id(StringType+), seq(AutoIncType)
+Invoices: jnl_id(StringType+), seq(AutoIncType)
+InvoiceLines: invoice_jnl_id(StringType+), invoice_seq(AutoIncType), line(AutoIncType)
 BalanceItems: id(StringType)
 CashFlowItems: id(StringType)
 ProfitAndLossItems: id(StringType)

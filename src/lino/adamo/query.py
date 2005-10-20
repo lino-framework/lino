@@ -868,7 +868,7 @@ class SimpleQuery(LeadTableColumnList):
                  search=None,
                  masterColumns=None,
                  masters=[],
-                 label=None,
+                 #label=None,
                  **kw):
         self.session = sess
         LeadTableColumnList.__init__(self,_parent,store,columnNames)
@@ -883,10 +883,10 @@ class SimpleQuery(LeadTableColumnList):
             setattr(self,m,getattr(store,m))
         self.rowcount = None
         
-        if label is not None:
-            assert type(label) == type(""),\
-                   "%s not a string" % repr(label)
-        self._label = label
+##         if label is not None:
+##             assert type(label) == type(""),\
+##                    "%s not a string" % repr(label)
+##         self._label = label
             
         if orderBy is not None:
             assert sortColumns is None
@@ -1055,24 +1055,40 @@ class SimpleQuery(LeadTableColumnList):
         return self.session
 
     def getLabel(self):
-        if self._label is None:
-            lbl = self.getLeadTable().getLabel()
-            if len(self._masterColumns) > 0:
-                lbl += " ("
-                for mc in self._masterColumns:
-                    v=self._masters[mc.name]
-                    lbl += mc.name + "=" \
-                           + mc.rowAttr.format(v)
-                lbl += ")"
-            if self._filters is not None:
-                lbl += " where "
-                lbl += " and ".join(
-                    [f.getLabel() for f in self._filters])
-            return lbl
-        if callable(self._label):
-            raise "not yet tested"
-            return self._label(self)
-        return self._label
+        raise "replaced by buildLabel"
+##         if self._label is None:
+##             lbl = self.getLeadTable().getLabel()
+##             if len(self._masterColumns) > 0:
+##                 lbl += " ("
+##                 for mc in self._masterColumns:
+##                     v=self._masters[mc.name]
+##                     lbl += mc.name + "=" \
+##                            + mc.rowAttr.format(v)
+##                 lbl += ")"
+##             if self._filters is not None:
+##                 lbl += " where "
+##                 lbl += " and ".join(
+##                     [f.getLabel() for f in self._filters])
+##             return lbl
+##         if callable(self._label):
+##             raise "not yet tested"
+##             return self._label(self)
+##         return self._label
+    
+    def buildTitle(self):
+        lbl = self.getLeadTable().getLabel()
+        if len(self._masterColumns) > 0:
+            lbl += " ("
+            for mc in self._masterColumns:
+                v=self._masters[mc.name]
+                lbl += mc.name + "=" \
+                       + mc.rowAttr.format(v)
+            lbl += ")"
+        if self._filters is not None:
+            lbl += " where "
+            lbl += " and ".join(
+                [f.getLabel() for f in self._filters])
+        return lbl
             
 
     def setOrderBy(self,orderBy):

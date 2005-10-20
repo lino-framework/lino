@@ -20,7 +20,7 @@ import os
 
 __docformat__ = 'reStructuredText'
 
-__version__ = "0.6.11"
+__version__ = "0.6.12"
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 

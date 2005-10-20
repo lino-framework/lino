@@ -21,36 +21,36 @@ import os
 import sys
 
 
-from lino.apps.pinboard.tables import *
+from lino.apps.pinboard import tables
 
 from lino.adamo.table import DbfMirrorLoader
 
 
 def tim2lang(q,idLng):
-    if idLng == " ": return None
-    if idLng == "D": return q.getSession().peek(Languages,"de")
-    if idLng == "F": return q.getSession().peek(Languages,"fr")
-    if idLng == "E": return q.getSession().peek(Languages,"en")
-    if idLng == "N": return q.getSession().peek(Languages,"nl")
-    if idLng == "K": return q.getSession().peek(Languages,"et")
+    if idLng is None: return None
+    if idLng == "D": return q.getSession().peek(tables.Language,"de")
+    if idLng == "F": return q.getSession().peek(tables.Language,"fr")
+    if idLng == "E": return q.getSession().peek(tables.Language,"en")
+    if idLng == "N": return q.getSession().peek(tables.Language,"nl")
+    if idLng == "K": return q.getSession().peek(tables.Language,"et")
     raise ValueError("invalid language code %r" % idLng)
 
 class AuthorsMirrorLoader(DbfMirrorLoader):
-    tableClass = Authors
+    tableClass = tables.Author
     tableName = "AUT"
     def appendFromDBF(self,q,row):
         q.appendRow(
-            id=row['IDAUT'],
+            id=int(row['IDAUT']),
             name=row['NAME'],
             firstName=row['VORNAME'],
             )
 
-class PagesMirrorLoader(DbfMirrorLoader):
-    tableClass = Pages
+class NodesMirrorLoader(DbfMirrorLoader):
+    tableClass = tables.Node
     tableName = "MSX"
     def appendFromDBF(self,q,row):
         q.appendRow(
-            id=row['IDMSX'],
+            id=int(row['IDMSX']),
             title=row['TITLE'],
             subtitle=row['SUBTITLE'],
             abstract=row['ABSTRACT'],
@@ -61,18 +61,19 @@ class PagesMirrorLoader(DbfMirrorLoader):
             )
 
 class NewsMirrorLoader(DbfMirrorLoader):
-    tableClass = News
+    tableClass = tables.NewsItem
     tableName = "NEW"
     def appendFromDBF(self,q,row):
         sess = q.getSession()
-        if len(row['IDMSX'].strip()) == 0:
-            page=None
+        #if len(row['IDMSX'].strip()) == 0:
+        if row['IDMSX'] is None:
+            node=None
         else:
-            page = sess.peek(Pages,int(row['IDMSX']))
+            node = sess.peek(tables.Node,int(row['IDMSX']))
         q.appendRow(
             id=int(row['IDNEW']),
             title=row['TITLE'],
-            page=page,
+            node=node,
             abstract=row['ABSTRACT'],
             body=row['BODY'],
             date=self.dbfdate(row['DATE']),
@@ -81,14 +82,15 @@ class NewsMirrorLoader(DbfMirrorLoader):
             )
 
 class PublicationsMirrorLoader(DbfMirrorLoader):
-    tableClass = Publications
+    tableClass = tables.Publication
     tableName = "PUB"
     def appendFromDBF(self,q,row):
         sess = q.getSession()
-        if len(row['IDAUT'].strip()) == 0:
+        #if len(row['IDAUT'].strip()) == 0:
+        if row['IDAUT'] is None:
             author=None
         else:
-            author = sess.peek(Authors,int(row['IDAUT']))
+            author = sess.peek(tables.Author,int(row['IDAUT']))
         q.appendRow(
             id=int(row['IDPUB']),
             title=row['TITLE'],
@@ -169,7 +171,7 @@ class PublicationsMirrorLoader(DbfMirrorLoader):
     
 
 LOADERS = (
-    PagesMirrorLoader,
+    NodesMirrorLoader,
     NewsMirrorLoader,
     AuthorsMirrorLoader,
     PublicationsMirrorLoader,

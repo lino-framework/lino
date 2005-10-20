@@ -47,8 +47,8 @@ This is the Pinboard main menu.
         m = frm.addMenu("db","&Datenbank")
         m.addItem("authors",label="&Authors").setHandler(
             sess.showViewGrid, tables.Author)
-        m.addItem("pages",label="&Pages").setHandler(
-            sess.showViewGrid, tables.Page)
+        m.addItem("nodes",label="&Nodes").setHandler(
+            sess.showViewGrid, tables.Node)
         m.addItem("news",label="&News").setHandler(
             sess.showViewGrid, tables.NewsItem)
         m.addItem("newsgroups",label="News&groups").setHandler(

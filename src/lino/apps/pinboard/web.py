@@ -26,7 +26,7 @@ from lino.apps.addrbook.tables import User
 #       return self._area.instances( orderBy='seq',
 #                                             samples={'super':self})
 
-class Page(MemoTreeRow):
+class Node(MemoTreeRow):
     #tableName="WebPages"
     tableName="Nodes"
     def initTable(self,table):

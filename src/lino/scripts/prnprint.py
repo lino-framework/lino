@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 
 ## Copyright 2004-2005 Luc Saffre
 

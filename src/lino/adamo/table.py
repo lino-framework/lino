@@ -371,7 +371,7 @@ class LinkingRow(StoredDataRow):
 class MemoRow(StoredDataRow):
         
     def initTable(self,table):
-        table.addField('title',datatypes.STRING).setMandatory()
+        table.addField('title',datatypes.STRING) # .setMandatory()
         table.addField('abstract',datatypes.MEMO)
         table.addField('body',datatypes.MEMO)
 
@@ -524,12 +524,13 @@ class DbfMirrorLoader(Task):
         return s
     
     def dbfdate(self,s):
-        if len(s.strip()) == 0:
+        if s is None: # len(s.strip()) == 0:
+        #if len(s.strip()) == 0:
             return None
         return datatypes.DATE.parse(s)
 
     def dbftime(self,s):
-        if len(s.strip()) == 0:
+        if s is None: # len(s.strip()) == 0:
             return None
         return datatypes.TIME.parse(s.replace('.',':'))
     

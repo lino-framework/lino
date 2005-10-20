@@ -44,8 +44,8 @@ class Case(TestCase):
         NEWS = self.db.query(NewsItem)
         LANGS = self.db.query(Language)
         
-        n = NEWS.appendRow(ndate=itod(20040428),title="test")
-        self.assertEqual(str(n.ndate),'2004-04-28')
+        n = NEWS.appendRow(date=itod(20040428),title="test")
+        self.assertEqual(str(n.date),'2004-04-28')
 
         q = LANGS.query(orderBy="name")
         

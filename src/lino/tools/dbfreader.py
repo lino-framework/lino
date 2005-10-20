@@ -248,6 +248,8 @@ class DBFField:
         if self.field_type=="C":
             if not self.dbf.codepage is None:
                 data = data.decode(self.dbf.codepage)
+            data=data.strip()
+            if len(data) == 0: return None
             return data
         elif self.field_type=="L":
             return data=="Y" or data=="y" or data=="T" or data=="t"
@@ -256,7 +258,7 @@ class DBFField:
                 num = string.atoi(data)
             except ValueError:
                 if len(data.strip()) == 0:
-                    return ""
+                    return None
                 raise "bad memo block number %s" % repr(data)
             return self.dbf.blockfile.get_block(num)
             
@@ -295,9 +297,11 @@ class FPTFile:
         
         length=infile.read(4)
         length=unpack_long_rev(length)
-        data=infile.read(length)        
+        data=infile.read(length)
         infile.close()
 
+        data=data.strip()
+        if len(data) == 0: return None
         return data
     
 class DBTFile:
@@ -334,7 +338,9 @@ class DBTFile:
         
         # convert CR/LF to simple LF:
         data = data.replace("\r\n","\n")
-        
+
+        data=data.strip()
+        if len(data) == 0: return None
         return data
 
 # --- A class that stores the contents of a DBF file as a hash of the

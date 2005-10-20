@@ -23,7 +23,7 @@ from lino.misc.tsttools import TestCase, main, Toolkit
 
 from lino.console import syscon
 
-from lino.apps.keeper.keeper import Keeper
+from lino.apps.keeper.keeper import Keeper, SearchFormCtrl
 from lino.apps.keeper.tables import *
 
 TESTDATA = os.path.join(
@@ -101,23 +101,50 @@ test:               |PAR.DBF           |43411   |X    |0 Occurences
 test:               |eupen.pdf         |232672  |X    |799 Occurences 
 """)
 
-        app.showSearchForm(sess)
-        sess._activeForm.entries.searchString.setValue("lino")
-        sess._activeForm.buttons.search.click()
+        ctrl=SearchFormCtrl()
+        sess.showForm(ctrl)
+        ctrl.searchString.setValue("lino")
+        ctrl.go.click()
+        
+##         app.showSearchForm(sess)
+##         sess._activeForm.entries.searchString.setValue("lino")
+##         sess._activeForm.buttons.search.click()
+        
         s=self.getConsoleOutput()
+        
         #print s
         self.assertEquivalent(s,"""\
 Files where 'occurences' not empty
 ==================================
-name                          |occurences     
-------------------------------+---------------
-diag.help.txt                 |2 Occurences   
-openmail.help.txt             |2 Occurences   
-openurl.help.txt              |2 Occurences   
-pds2pdf.help.txt              |2 Occurences   
-prn2pdf.help.txt              |2 Occurences   
-prnprint.help.txt             |3 Occurences   
-sync.help.txt                 |2 Occurences   
+name                |occurences     |content                            
+--------------------+---------------+-----------------------------------
+diag.help.txt       |2 Occurences   |Lino/diag version 0.6.11. Copyright
+                    |               |(c) 2005 Luc Saffre. This software 
+                    |               |comes with ABSOLUTELY NO WARR (...)
+openmail.help.txt   |2 Occurences   |Lino openmail version 0.6.11.      
+                    |               |Copyright (c) 2002-2005 Luc Saffre.
+                    |               |This software comes with ABSOLUTEL 
+                    |               |(...)                              
+openurl.help.txt    |2 Occurences   |Lino openurl version 0.6.11.       
+                    |               |Copyright (c) 2002-2005 Luc Saffre.
+                    |               |This software comes with ABSOLUTELY
+                    |               |(...)                              
+pds2pdf.help.txt    |2 Occurences   |Lino/pds2pdf version 0.6.11.       
+                    |               |Copyright (c) 2002-2005 Luc Saffre.
+                    |               |This software comes with ABSOLUTELY
+                    |               |(...)                              
+prn2pdf.help.txt    |2 Occurences   |Lino/prn2pdf version 0.6.11.       
+                    |               |Copyright (c) 2002-2005 Luc Saffre.
+                    |               |This software comes with ABSOLUTELY
+                    |               |(...)                              
+prnprint.help.txt   |3 Occurences   |Lino prnprint version 0.6.11.      
+                    |               |Copyright (c) 2004-2005 Luc Saffre.
+                    |               |This software comes with ABSOLUTEL 
+                    |               |(...)                              
+sync.help.txt       |2 Occurences   |Lino/sync version 0.6.11. Copyright
+                    |               |(c) 2005 Luc Saffre. This software 
+                    |               |comes with ABSOLUTELY NO WARR (...)
+
         """)        
         sess.shutdown()
         

@@ -19,14 +19,14 @@
 from lino.adamo.ddl import *
 
 from lino.apps.addrbook.tables import Partner
-from web import Page
+from web import Node
 
 
-class Event(Page):
+class Event(Node):
     tableName="Events"
     def initTable(self,table):
         #MemoMixin.init(self,table)
-        Page.initTable(self,table)
+        Node.initTable(self,table)
         table.getRowAttr('id').setType(ROWID)
         table.addField('date', DATE)
         table.addField('time', STRING)

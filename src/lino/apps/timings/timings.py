@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 ## Copyright 2005 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -27,6 +27,8 @@ from lino.adamo.filters import DateEquals
 from lino.adamo.datatypes import itod, iif
 
 from lino.gendoc.html import HtmlDocument
+from lino.gendoc.html import DataRowElement
+
 from lino.reports.reports import DataReport, ReportColumn
 
 from lino.tools.anyrange import anyrange
@@ -59,29 +61,20 @@ class Timings(Schema):
         root = HtmlDocument(title="Timings",
                             stylesheet="wp-admin.css")
 
-        root.addResolver(
+        root.site.addResolver(
             Resource,
-            lambda row: "resources/"+row.id.strip()
+            lambda x: "resources/"+x.id.strip()
             )
-        root.addResolver(
+        root.site.addResolver(
             UsageType, lambda x: "types/"+x.id.strip()
             )
-        root.addResolver(
-            Usage, lambda x: "days/"+str(x.date)
+        root.site.addResolver(
+            Usage, lambda x: "usages/"+str(x.date)
             )
-        root.addResolver(
+        root.site.addResolver(
             Day, lambda x: "days/"+str(x.date)
             )
 
-##         def query2name(q):
-##             if q.getLeadTable().__class__ == Resources:
-##                 return "resources"
-##         root.addResolver(Query, query2name)
-##         root.addResolver(
-##             Days,
-##             lambda x: str(x.date.year)+str(x.date.month)
-        
-        
 
         mnu = root.addMenu()
 
@@ -102,6 +95,7 @@ class Timings(Schema):
         doc=root.addReportChild(rpt)
         mnu.addLink(doc)
         
+        
         ds = sess.query(Day,
                         pageLen=50,
                         orderBy="date")
@@ -110,15 +104,15 @@ class Timings(Schema):
         mnu.addLink(doc)
 
         for r in sess.query(Resource):
-            root.addReportChild(DataReport(
-                r.usages_by_resource,orderBy="date start"))
+            rpt=DataReport(r.usages_by_resource,
+                           orderBy="date start")
+            root.addReportChild(rpt)
 
         filenames=root.save(sess,targetRoot)
 
-        from lino.gendoc.html import DataRowElement
         
-        for cl in (Resource, UsageType, Day):
-            rs=root.findResolver(cl)
+        for cl in (Resource, UsageType, Usage, Day):
+            rs=root.site.findResolver(cl)
             for x in sess.query(cl):
                 ch=root.__class__(parent=root,
                                   name=rs.i2name(x),
@@ -127,6 +121,7 @@ class Timings(Schema):
                 filenames += ch.save(sess,targetRoot)
 
         return filenames
+    
 
     def showMonthlyCalendar(self,sess,year=2005,month=6):
         ds=sess.query(Day, orderBy="date")

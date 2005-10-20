@@ -88,7 +88,7 @@ class Describable(Configurable):
         return self.name 
 
     def __str__(self):
-        if self.name == self.__class__.__name__:
+        if self.name.startswith(self.__class__.__name__):
             return self.name
         return self.__class__.__name__ + " " + str(self.name) 
 

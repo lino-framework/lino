@@ -1,4 +1,4 @@
-#coding: latin1
+#coding: iso-8859-1
 
 ## Copyright 2003-2005 Luc Saffre 
 
@@ -78,11 +78,6 @@ class Resolver:
 
     
         
-def rpt2name(rpt):
-    qry=rpt.ds
-    return "/".join(
-        [rpt.name]+[col.name for col in qry._masterColumns])+"/index"
-                            
 
 
 class Locatable:
@@ -150,6 +145,28 @@ class StyleSheet(Locatable):
     extension=".css"
 
 
+def rpt2name(rpt):
+    raise "must go away"
+    qry=rpt.ds
+    return "/".join(
+        [rpt.name] + [col.name for col in qry._masterColumns]) \
+        +"/index"
+                            
+class StaticSite:
+    def __init__(self,root):
+        self.root = root
+        self._resolvers=[]
+        #self.addResolver(DataReport, rpt2name)
+        
+    def addResolver(self,tc,i2name):
+        self._resolvers.append(Resolver(self,tc,i2name))
+
+    def findResolver(self,cl):
+        for rs in self._resolvers:
+            if rs.cl == cl: return rs
+
+        
+    
 class HtmlDocument(WriterDocument,MenuContainer,Locatable):
     extension=".html"
     def __init__(self,
@@ -188,13 +205,18 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
             title = self.filename()
         self.title = title
         self.date = date
-        self._reports=[]
-        self._resolvers=[]
+        #self._reports=[]
         if content is not None:
             assert hasattr(content,"render")
             self._body=[content]
         else:
             self._body=[]
+            
+        if parent is None:
+            self.site=StaticSite(self)
+        else:
+            self.site = parent.site
+        
 
     def addChild(self,**kw):
         c = self.__class__(parent=self,**kw)
@@ -203,15 +225,6 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         #self.childrenByName[c.name] = c
         return c
     
-    def addResolver(self,tc,i2name):
-        self._resolvers.append(Resolver(self,tc,i2name))
-
-    def addReportChild(self,rpt):
-        doc=self.addChild(name=rpt2name(rpt),
-                          title=rpt.getLabel())
-        doc.report(rpt)
-        return doc
-        
     
     def getLineWidth(self):
         return 100
@@ -227,24 +240,19 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.writeText(label)
         self.write('</a>')
 
-    def findResolver(self,cl):
-        root=self.getRoot()
-        for rs in root._resolvers:
-            if rs.cl == cl: return rs
-
     def writeColValue(self,col,value):
         if value is None:
             s = ""
         else:
-            root=self.getRoot()
+            #root=self.getRoot()
             cl=col.getValueClass()
-            if cl is Query:
-                for rpt in root._reports:
-                    if rpt.doesShow(value):
-                        name=rpt2name(rpt)
-                        href=self.urlto(name)
-                        self.writeLink(href,str(value)) 
-                        return
+##             if cl is Query:
+##                 for rpt in root._reports:
+##                     if rpt.doesShow(value):
+##                         name=rpt2name(rpt)
+##                         href=self.urlto(name)
+##                         self.writeLink(href,str(value)) 
+##                         return
                 #print "no report for", value
 ##                 cl=value.getLeadTable().__class__
 ##                 #print cl
@@ -257,13 +265,13 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
 ##                         self.writeLink(href,label) 
 ##                         self.writeText(", ")
 ##                     return
-            else:
-                rs=self.findResolver(cl)
-                if rs is not None:
-                    href=rs.href(self,value)
-                    label=str(value)
-                    self.writeLink(href,label)
-                    return
+##             else:
+            rs=self.findResolver(cl)
+            if rs is not None:
+                href=rs.href(self,value)
+                label=col.format(value)
+                self.writeLink(href,label)
+                return
 
             self.writeText(col.format(value))
 
@@ -271,8 +279,31 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self._body.append(H(level,txt))
 
     def report(self,rpt):
-        self._reports.append(rpt)
+        #self._reports.append(rpt)
         self._body.append(ReportElement(rpt))
+
+        if rpt.ds.canSort() > 0:
+            for col in rpt.columns:
+                for pg in range(rpt.ds.lastPage):
+                    if pg != 0 \
+                          or col.datacol != rpt.ds.sortColumns[0]:
+                        e=ReportElement(rpt,pg+1,col.datacol)
+                        self.addChild(
+                            name=rptname(self,
+                                         rpt,
+                                         pageNum=pg+1,
+                                         sortColumn=col.datacol),
+                            title=rpt.getTitle(),
+                            content=e)
+
+        
+    def addReportChild(self,rpt):
+        raise "must go away"
+        doc=self.addChild(name=rpt2name(rpt),
+                          title=rpt.getLabel())
+        doc.report(rpt)
+        return doc
+        
 
     def beginDocument(self,wr):
         self.writer = wr
@@ -337,26 +368,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.writeDocument(fd.write)
         fd.close()
         
-        for rpt in self._reports:
-            if rpt.ds.canSort() > 0:
-                for col in rpt.columns:
-                    for pg in range(rpt.ds.lastPage):
-                        if pg != 0 or \
-                           col.datacol != rpt.ds.sortColumns[0]:
-                            e=ReportElement(rpt,pg+1,col.datacol)
-                            ch=self.addChild(
-                                name=rptname(rpt,
-                                             pageNum=pg+1,
-                                             sortColumn=col.datacol),
-                                title=rpt.getLabel(),
-                                content=e)
-                
         
-        #print len(subdocs)
-        #raise "hier"
-        #for ch in subdocs:
-        #    filenames += ch.save(ui,targetRoot,simulate)
-
 ##         for rs in self._resolvers:
 ##             for x in ui.query(rs.cl):
 ##                 ch=self.__class__(parent=self,
@@ -384,15 +396,15 @@ class H:
         doc.write("</%s>\n" % tag)
 
 
-def rptname(rpt,sortColumn=None,pageNum=None):
+def rptname(doc,rpt,sortColumn=None,pageNum=None):
     if pageNum is None: pageNum=rpt.pageNum
     if rpt.ds.canSort():
         if sortColumn is None: sortColumn=rpt.ds.sortColumns[0]
         if pageNum==1 and sortColumn==rpt.ds.sortColumns[0]:
-            return rpt.name
-        return str(pageNum)+"_"+sortColumn.name
-    elif pageNum==1: return rpt.name
-    return str(pageNum)
+            return doc.name
+        return doc.name+"_"+str(pageNum)+"_"+sortColumn.name
+    elif pageNum==1: return doc.name
+    return doc.name+"_"+str(pageNum)
     
                     
 
@@ -431,6 +443,14 @@ class DataRowElement:
         
         wr("</table>")
 
+
+class HtmlPage:
+    def __init__(self,doc,cloneElement,cloneOptions):
+        self.doc=doc
+        self.cloneElement=cloneElement
+        self.cloneOptions=cloneOptions
+
+    def filename(self):    
         
 class ReportElement:
     def __init__(self,rpt,pageNum=1,sortColumn=None):
@@ -481,13 +501,13 @@ class ReportElement:
             else:
 
                 doc.writeLink(
-                    href=rptname(rpt,
+                    href=rptname(doc,rpt,
                                  sortColumn=sortColumn,
                                  pageNum=1)+doc.extension,
                     label=firstPageButton)
                 
                 doc.writeLink(
-                    href=rptname(rpt,
+                    href=rptname(doc,rpt,
                                  sortColumn=sortColumn,
                                  pageNum=pageNum-1)+doc.extension,
                     label=prevPageButton)
@@ -505,12 +525,12 @@ class ReportElement:
                 wr(lastPageButton)
             else:
                 doc.writeLink(
-                    href=rptname(rpt,
+                    href=rptname(doc,rpt,
                                  sortColumn=sortColumn,
                                  pageNum=pageNum+1)+doc.extension,
                     label=nextPageButton)
                 doc.writeLink(
-                    href=rptname(rpt,
+                    href=rptname(doc,rpt,
                                  sortColumn=sortColumn,
                                  pageNum=ds.lastPage)+doc.extension,
                     label=lastPageButton)
@@ -538,7 +558,7 @@ class ReportElement:
             if col.datacol == sortColumn:
                 doc.writeText(col.getLabel())
             else:
-                url=rptname(rpt,
+                url=rptname(doc,rpt,
                             pageNum=pageNum,
                             sortColumn=col.datacol)+doc.extension
                 doc.writeLink(
@@ -579,7 +599,7 @@ class ReportElement:
         
         wr("</table>")
         
-        rpt.endReport(self)
+        rpt.endReport(doc)
 
     
                     

@@ -124,29 +124,8 @@ class TextPrinter:
 ##         return (self.textobject is not None)
         
 
-    def writechars(self,text):
-        if not self._pageStarted:
-            self.beginPage()
 
-        pos=text.find("#python ")
-
-        if pos != -1:
-            if pos > 0:
-                self.write(text[:pos])
-                text=text[pos+1:]
-            a=text.split(None,1)
-            if len(a)==2:
-                #eval("self."+line[1:])
-                eval(a[1])
-                #m = getattr(self,v)
-                #m(a[1])
-                return
-            raise "foo, a=%r" % a
-        
-        self.write(text)
-        
-
-    def FindFirstCtrl(self,line):
+    def findFirstCtrl(self,line):
         firstpos = None
         firstctrl = None
         for ctrl in self.commands.keys():
@@ -176,6 +155,10 @@ class TextPrinter:
 
     def writeln(self,line):
         
+        """ The final newline is printed only if the line really has
+        text.  Or if it is empty. For lines containing only
+        instructions the final newline is ignored.  """
+        
         line = line.rstrip()
         
 ##         for k,v in self.lineCommands.items():
@@ -183,22 +166,29 @@ class TextPrinter:
 ##                 m = getattr(self,v)
 ##                 m(line[len(k):])
 ##                 return
-            
-        (pos,ctrl) = self.FindFirstCtrl(line)
-        while pos != None:
-            if pos > 0:
-                self.writechars(line[0:pos])
+        if line.endswith("\r\n"):
+            line=line[:-2]
+        elif line.endswith("\n"):
+            line=line[:-1]
+        if len(line) > 0:
+            hasText = False
+            (pos,ctrl) = self.findFirstCtrl(line)
+            while pos != None:
+                if pos > 0:
+                    self.writechars(line[0:pos])
+                    hasText = True
 
-            line = line[pos+len(ctrl):]
-            meth = self.commands[ctrl]
-            nbytes = meth(line)
-            if nbytes > 0:
-                line = line[nbytes:]
-            #print "len(%s) is %d" % (repr(ctrl),len(ctrl))
-            (pos,ctrl) = self.FindFirstCtrl(line)
+                line = line[pos+len(ctrl):]
+                meth = self.commands[ctrl]
+                nbytes = meth(line)
+                if nbytes > 0:
+                    line = line[nbytes:]
+                #print "len(%s) is %d" % (repr(ctrl),len(ctrl))
+                (pos,ctrl) = self.findFirstCtrl(line)
 
-        if line == "\r\n": return
-        #if len(line) == 0: return
+            #if line == "\r\n": return
+            if len(line) == 0 and not hasText:
+                return
         
         self.writechars(line)
         self.newline()
@@ -210,6 +200,29 @@ class TextPrinter:
     def printLine(self,line):
         # deprecated alias for writeln
         self.writeln(line)
+
+    def writechars(self,text):
+        if not self._pageStarted:
+            self.beginPage()
+
+        pos=text.find("#python ")
+
+        if pos != -1:
+            if pos > 0:
+                self.write(text[:pos])
+                text=text[pos+1:]
+            a=text.split(None,1)
+            if len(a)==2:
+                #eval("self."+line[1:])
+                eval(a[1])
+                #m = getattr(self,v)
+                #m(a[1])
+                return
+            raise "foo, a=%r" % a
+        
+        self.write(text)
+        #self._lineHasText = True
+        
         
         
     def parse_L(self,line):

@@ -416,17 +416,20 @@ class Win32TextPrinter(TextPrinter):
         #self.doc.dc.TextOut(self.line)
         syscon.debug("self.dc.TextOut(%d,%d,%r)",
                      int(self.x),-int(self.y),self.line)
-        self.dc.TextOut(int(self.x),-int(self.y),self.line)
-        (dx,dy) = self.dc.GetTextExtent(self.line)
+        if len(self.line) == 0:
+            (dx,dy) = self.dc.GetTextExtent(" ")
+        else:
+            self.dc.TextOut(int(self.x),-int(self.y),self.line)
+            (dx,dy) = self.dc.GetTextExtent(self.line)
+            self.x += dx
         
         # GetTextExtent() returns the dimensions of the string in
         # logical units (twips)
         
-        self.x += dx
         #console.debug("TextOut(%d,%d,%s)" % \
         #              (int(self.x),-int(self.y),repr(self.line)))
-        if dy != 0:
-            self.leading = dy
+        #if dy != 0:
+        self.leading = dy
         self.line = ""
             
 ##         tm = self.doc.dc.GetTextMetrics()

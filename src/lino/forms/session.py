@@ -177,6 +177,11 @@ class Session(BaseSession):
         return frm
     
 
+    def showForm(self,ctrl):
+        frm=self.form(label=ctrl.formLabel)
+        ctrl.setupForm(frm)
+        frm.show()
+        
 ##     def showForm(self,frm):
 ##         #assert frm in self._forms
 ##         self._activeForm=frm

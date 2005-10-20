@@ -21,7 +21,7 @@ from lino.apps.addrbook.tables import Partner, Nation, City, Person
 
 from lino.apps.pinboard.babel import Language
 
-from lino.apps.pinboard.web import Page
+from lino.apps.pinboard.web import Node
 
 from lino.apps.pinboard.events import Event
 from lino.apps.pinboard.events import EventType
@@ -54,7 +54,7 @@ TABLES=(
         Language,
         ProjectStatus, Project,
         EventType, Event,
-        Page,
+        Node,
         Newsgroup, NewsItem, 
         AuthorEventType,
         AuthorEvent,
