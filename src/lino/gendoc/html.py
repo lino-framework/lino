@@ -450,7 +450,8 @@ class HtmlPage:
         self.cloneElement=cloneElement
         self.cloneOptions=cloneOptions
 
-    def filename(self):    
+    def filename(self):
+        raise NotImplemented
         
 class ReportElement:
     def __init__(self,rpt,pageNum=1,sortColumn=None):

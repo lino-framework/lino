@@ -54,32 +54,60 @@ class Case(TestCase):
         #print s
         self.assertEquivalent(s,"""
 Testing uncomplete tasks
-[  0%] Running...
-[  0%] Performing step 1a)
-[  0%] Performing step 1b)
-[  0%] Performing step 1c)
-[ 10%] Performing step 1c)
-[ 10%] Performing step 2a)
-[ 10%] Performing step 2b)
-[ 10%] Performing step 2c)
-[ 20%] Performing step 2c)
-[ 20%] Performing step 3a)
-[ 20%] Performing step 3b)
-[ 20%] Performing step 3c)
-[ 30%] Performing step 3c)
-[ 30%] Performing step 4a)
-[ 30%] Performing step 4b)
-[ 30%] Performing step 4c)
-[ 40%] Performing step 4c)
-[ 40%] Performing step 5a)
-[ 40%] Performing step 5b)
-[ 40%] Performing step 5c)
-[ 50%] Performing step 5c)
-[ 50%] Done in only 5 steps.
-[100%] Done in only 5 steps.
+Running...
+Performing step 1a)
+Performing step 1b)
+Performing step 1c)
+Performing step 1c)
+Performing step 2a)
+Performing step 2b)
+Performing step 2c)
+Performing step 2c)
+Performing step 3a)
+Performing step 3b)
+Performing step 3c)
+Performing step 3c)
+Performing step 4a)
+Performing step 4b)
+Performing step 4c)
+Performing step 4c)
+Performing step 5a)
+Performing step 5b)
+Performing step 5c)
+Performing step 5c)
+Done in only 5 steps.
+Done in only 5 steps.
 0 warnings
 0 errors
 """)
+##         self.assertEquivalent(s,"""
+## Testing uncomplete tasks
+## [  0%] Running...
+## [  0%] Performing step 1a)
+## [  0%] Performing step 1b)
+## [  0%] Performing step 1c)
+## [ 10%] Performing step 1c)
+## [ 10%] Performing step 2a)
+## [ 10%] Performing step 2b)
+## [ 10%] Performing step 2c)
+## [ 20%] Performing step 2c)
+## [ 20%] Performing step 3a)
+## [ 20%] Performing step 3b)
+## [ 20%] Performing step 3c)
+## [ 30%] Performing step 3c)
+## [ 30%] Performing step 4a)
+## [ 30%] Performing step 4b)
+## [ 30%] Performing step 4c)
+## [ 40%] Performing step 4c)
+## [ 40%] Performing step 5a)
+## [ 40%] Performing step 5b)
+## [ 40%] Performing step 5c)
+## [ 50%] Performing step 5c)
+## [ 50%] Done in only 5 steps.
+## [100%] Done in only 5 steps.
+## 0 warnings
+## 0 errors
+## """)
         
 
 if __name__ == '__main__':

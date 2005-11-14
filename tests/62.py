@@ -128,11 +128,11 @@ GSM: Character (18)""")
         s = "\n".join([fmt % rec for rec in rows[10:15]])
         #print s
         ae(s,u"""\
-|000008|Ausdemwald                         |
-|000012|Müller AG                          |
-|000013|Bodard                             |
-|000014|Mendelssohn GmbH                   |
-|000015|INTERMOBIL s.a.                    |""")
+|000008|Ausdemwald|
+|000012|Müller AG|
+|000013|Bodard|
+|000014|Mendelssohn GmbH|
+|000015|INTERMOBIL s.a.|""")
 
         norbert = rows[10]
         ae(norbert['FIRME'].strip(),"Ausdemwald")

@@ -37,7 +37,8 @@ class ApplicationError(Exception):
 
 
 #from lino.misc.jobs import Task
-from task import Task, BugDemo
+#from task import Task, BugDemo
+from task import BugDemo
 
 
 #class Application(CLI):
@@ -111,17 +112,18 @@ class Application:
         return m
 
 
-    def copyleft(self,name="Lino",
-                 version=__version__,
-                 years="2002-2005",
-                 author=__author__):
-        syscon.notice("""\
+##     def copyleft(self,name="Lino",
+##                  version=__version__,
+##                  years="2002-2005",
+##                  author=__author__):
+    def copyleft(self):#,name, version, copyright):
+        return """\
 %s version %s.
 Copyright (c) %s %s.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information.""" % (
-            name, version, years, author))
+See file COPYING.txt for more information.
+""" % ( self.name, self.version, self.years, self.author)
 
         
     def aboutString(self):
@@ -169,10 +171,8 @@ See file COPYING.txt for more information.""" % (
         
         """
 
-        if self.author is not None:
-            self.copyleft(name=self.name,
-                          years=self.years,
-                          author=self.author)
+##                 name=self.name,
+##                 version=self.version,
             
         p = OptionParser(
             usage=self.usage,
@@ -194,6 +194,9 @@ See file COPYING.txt for more information.""" % (
             
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
+            if self.author is not None:
+                if syscon.isInteractive():
+                    syscon.notice(self.copyleft())
             return self.run(sess)
         
         except UsageError,e:

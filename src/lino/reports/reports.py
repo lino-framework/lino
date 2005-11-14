@@ -76,8 +76,12 @@ class BaseReport: #(Describable):
 
     def getTitle(self):
         # overridden by DataReport
-        if self.title is not None: return self.title
-        return str(self)
+        """
+        returns None if this report has no title
+        """
+        return self.title
+        # if self.title is not None: return self.title
+        # return str(self)
     
     def setupMenu(self,navigator):
         pass

@@ -40,7 +40,7 @@ class Project(MemoTreeRow):
 
         table.addView("std",
                      columnNames="title abstract status",
-                     label="Top-level projects",
+                     #label="Top-level projects",
                      super=None)
 
 

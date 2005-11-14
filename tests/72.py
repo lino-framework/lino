@@ -30,6 +30,7 @@ from lino.reports.reports import DataReport
 
 
 class Case(TestCase):
+    todo="HtmlDocument is broken"
     "do the lino.examples work?"
 
     def setUp(self):

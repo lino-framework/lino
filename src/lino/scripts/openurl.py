@@ -25,7 +25,7 @@ class OpenURL(Application):
     name="Lino openurl"
     years='2002-2005'
     author='Luc Saffre'
-    usage="Usage: lino openurl URL [URL...]"
+    usage="lino openurl URL [URL...]"
     description="""\
 Starts the default browser on the specified URL(s).
 

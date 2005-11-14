@@ -72,21 +72,21 @@ test:webman         |1.txt             |138     |X    |19 Occurences
 test:2              |1.txt             |150     |X    |19 Occurences  
 test:webman         |index.txt         |182     |X    |15 Occurences  
 test:2              |index.txt         |193     |X    |21 Occurences  
+test:timtools       |diag.help.txt     |371     |X    |43 Occurences  
 test:               |cp1252a.txt       |372     |X    |53 Occurences  
 test:               |cp850a.txt        |372     |X    |53 Occurences  
+test:timtools       |openurl.help.txt  |384     |X    |47 Occurences  
+test:timtools       |sync.help.txt     |489     |X    |62 Occurences  
 test:               |5.pds             |500     |X    |0 Occurences   
-test:timtools       |diag.help.txt     |673     |X    |80 Occurences  
+test:timtools       |prn2pdf.help.txt  |558     |X    |71 Occurences  
+test:timtools       |pds2pdf.help.txt  |643     |X    |84 Occurences  
+test:timtools       |openmail.help.txt |644     |X    |88 Occurences  
 test:               |5b.pds            |676     |X    |0 Occurences   
-test:timtools       |openurl.help.txt  |701     |X    |86 Occurences  
-test:timtools       |sync.help.txt     |791     |X    |99 Occurences  
 test:textprinter    |5.PRN             |794     |X    |0 Occurences   
+test:timtools       |prnprint.help.txt |843     |X    |101 Occurences 
 test:               |5d.pds            |850     |X    |0 Occurences   
-test:timtools       |prn2pdf.help.txt  |868     |X    |109 Occurences 
 test:webman         |init.wmi          |917     |X    |0 Occurences   
-test:timtools       |pds2pdf.help.txt  |953     |X    |122 Occurences 
-test:timtools       |openmail.help.txt |955     |X    |126 Occurences 
 test:2              |init.wmi          |975     |X    |0 Occurences   
-test:timtools       |prnprint.help.txt |1154    |X    |139 Occurences 
 test:               |gnosis-readme     |1662    |X    |0 Occurences   
 test:               |NAT.DBF           |1735    |X    |0 Occurences   
 test:textprinter    |2.prn             |1798    |X    |0 Occurences   
@@ -118,34 +118,35 @@ Files where 'occurences' not empty
 ==================================
 name                |occurences     |content                            
 --------------------+---------------+-----------------------------------
-diag.help.txt       |2 Occurences   |Lino/diag version 0.6.11. Copyright
-                    |               |(c) 2005 Luc Saffre. This software 
-                    |               |comes with ABSOLUTELY NO WARR (...)
-openmail.help.txt   |2 Occurences   |Lino openmail version 0.6.11.      
-                    |               |Copyright (c) 2002-2005 Luc Saffre.
-                    |               |This software comes with ABSOLUTEL 
+diag.help.txt       |1 Occurences   |usage: lino diag [options]  writes 
+                    |               |some diagnostics about your        
+                    |               |computer. options:   -h, --help    
                     |               |(...)                              
-openurl.help.txt    |2 Occurences   |Lino openurl version 0.6.11.       
-                    |               |Copyright (c) 2002-2005 Luc Saffre.
-                    |               |This software comes with ABSOLUTELY
+openmail.help.txt   |1 Occurences   |usage: lino openmail FILE  Start   
+                    |               |the user's default mail client with
+                    |               |a ready-to-send message whose c    
                     |               |(...)                              
-pds2pdf.help.txt    |2 Occurences   |Lino/pds2pdf version 0.6.11.       
-                    |               |Copyright (c) 2002-2005 Luc Saffre.
-                    |               |This software comes with ABSOLUTELY
+openurl.help.txt    |1 Occurences   |usage: lino openurl URL [URL...]   
+                    |               |Starts the default browser on the  
+                    |               |specified URL(s). options:   -h,   
                     |               |(...)                              
-prn2pdf.help.txt    |2 Occurences   |Lino/prn2pdf version 0.6.11.       
-                    |               |Copyright (c) 2002-2005 Luc Saffre.
-                    |               |This software comes with ABSOLUTELY
+pds2pdf.help.txt    |1 Occurences   |usage: lino pds2pdf [options] FILE 
+                    |               |pds2pdf converts the Python        
+                    |               |Document Script FILE (extension    
+                    |               |`.pd (...)                         
+prn2pdf.help.txt    |1 Occurences   |usage: lino prn2pdf [options] FILE 
+                    |               |where FILE is the file to be       
+                    |               |converted to a pdf file. It may con
                     |               |(...)                              
-prnprint.help.txt   |3 Occurences   |Lino prnprint version 0.6.11.      
-                    |               |Copyright (c) 2004-2005 Luc Saffre.
-                    |               |This software comes with ABSOLUTEL 
+prnprint.help.txt   |2 Occurences   |usage: lino prnprint [options] FILE
+                    |               |[FILE ...]  where FILE is a plain  
+                    |               |text file to be printed on the     
                     |               |(...)                              
-sync.help.txt       |2 Occurences   |Lino/sync version 0.6.11. Copyright
-                    |               |(c) 2005 Luc Saffre. This software 
-                    |               |comes with ABSOLUTELY NO WARR (...)
-
-        """)        
+sync.help.txt       |1 Occurences   |usage: lino sync [options] SRC DEST
+                    |               |where SRC and DEST are two         
+                    |               |directories to be synchronized.    
+                    |               |opti (...)                         
+        """)
         sess.shutdown()
         
         

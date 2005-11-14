@@ -54,10 +54,10 @@ class PlainDocument(GenericDocument):
 
         # renderHeader
 
-        label=rpt.getLabel()
-        if label is not None:
-            self.write(label+"\n")
-            self.write("="*len(label)+"\n")
+        title=rpt.getTitle()
+        if title is not None:
+            self.write(title+"\n")
+            self.write("="*len(title)+"\n")
             
         # wrap header labels:
         headerCells = []

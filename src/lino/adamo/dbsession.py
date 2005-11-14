@@ -204,6 +204,7 @@ class DbSession(Session,Context):
         qry = self.query(tc)
         view=qry.getView(viewName)
         if view is not None:
+            assert not view.has_key('label')
             kw.update(view)
         return self.createDataReport(qry,**kw)
 

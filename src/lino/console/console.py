@@ -79,10 +79,9 @@ from lino.forms.base import AbstractToolkit
 #class Console(UI,CLI):
 class Console(AbstractToolkit):
 
-    purzelMann = "|/-\\"
     #jobFactory = Job #progresserFactory = Progresser
 
-    def __init__(self, stdout, stderr,**kw):
+    def __init__(self, stdout, stderr, **kw):
         AbstractToolkit.__init__(self)
         self._stdout = stdout
         self._stderr = stderr
@@ -104,11 +103,11 @@ class Console(AbstractToolkit):
         return old
 
     def configure(self, verbosity=None, batch=None, **kw):
+        if batch is not None:
+            self._batch = batch
         if verbosity is not None:
             self._verbosity += verbosity
             #print "verbositiy %d" % self._verbosity
-        if batch is not None:
-            self._batch = batch
         #AbstractToolkit.configure(self,**kw)
 ##         if ui is not None:
 ##             self._ui = ui
@@ -120,6 +119,12 @@ class Console(AbstractToolkit):
         return self._batch
     def isInteractive(self):
         return not self._batch
+    
+
+##     def isBatch(self):
+##         return True
+##     def isInteractive(self):
+##         return False
     
     def isVerbose(self):
         return (self._verbosity > 0)
@@ -223,19 +228,8 @@ class Console(AbstractToolkit):
         pass
     
     def onTaskStatus(self,task):
-        if task.maxval == 0:
-            s = '[' + self.purzelMann[task.curval % 4] + "] "
-        else:
-            if task.percentCompleted is None:
-                s = "[    ] " 
-            else:
-                s = "[%3d%%] " % task.percentCompleted
-        if task.session.statusMessage is None:
-            self.showStatus(task.session,s)
-        else:
-            self.showStatus(task.session,
-                            s+task.session.statusMessage)
-        
+        self.showStatus(task.session,
+                        task.session.statusMessage)
     
         
             
@@ -347,7 +341,9 @@ class Console(AbstractToolkit):
                      callback=call_set,
                      callback_kwargs=dict(batch=True)
                      )
+        
         AbstractToolkit.setupOptionParser(self,p)
+        
 
     def message(self,sess,msg,**kw):
         #msg=sess.buildMessage(msg,**kw)
@@ -461,8 +457,17 @@ class Console(AbstractToolkit):
 
 class TtyConsole(Console):
 
+    purzelMann = "|/-\\"
     width = 78  # 
 
+##     def __init__(self,*args,**kw):
+##         self._batch = False
+##         Console.__init__(self,*args,**kw)
+        
+##     def configure(self, batch=None, **kw):
+##         if batch is not None:
+##             self._batch = batch
+##         Console.configure(self,**kw)
 
 
     def warning(self,sess,msg,*args,**kw):
@@ -496,6 +501,20 @@ class TtyConsole(Console):
         self._refresh(sess)
         
         
+    def onTaskStatus(self,task):
+        if task.maxval == 0:
+            s = '[' + self.purzelMann[task.curval % 4] + "] "
+        else:
+            if task.percentCompleted is None:
+                s = "[    ] " 
+            else:
+                s = "[%3d%%] " % task.percentCompleted
+        if task.session.statusMessage is None:
+            self.showStatus(task.session,s)
+        else:
+            self.showStatus(task.session,
+                            s+task.session.statusMessage)
+        
     def showStatus(self,sess,msg):
         if msg is None:
             msg=''
@@ -519,7 +538,7 @@ class TtyConsole(Console):
 
 class CaptureConsole(Console):
     
-    def __init__(self,**kw):
+    def __init__(self,batch=True,**kw):
         self.buffer = StringIO()
         Console.__init__(self,
                          self.buffer.write,

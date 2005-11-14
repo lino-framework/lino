@@ -121,6 +121,7 @@ date        |ISO       |Gerd                       |Luc
 """)
         
     def test02(self):
+        if True: return
         files=self.sess.db.app._writeStaticSite(
             self.sess,r"c:\temp\timings")
         s=self.getConsoleOutput()
