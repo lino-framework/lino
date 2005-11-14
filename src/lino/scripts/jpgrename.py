@@ -37,6 +37,9 @@ def dt2filename(s):
     if len(t) != 3: return None
     return '_'.join(d)+'-'+'_'.join(t)+'.jpg'
 
+def avinewname(root,name):
+    pass
+
 def jpgnewname(root,name):
     filename=os.path.join(root, name)
     try:
@@ -66,7 +69,11 @@ class JpgRenamer(Application):
     usage="usage: lino jpgrename [options] [DIR]"
     description="""\
 where DIR (default .) is a directory with .jpg files to rename.
-""" 
+"""
+    converters = {
+        '.jpg' : jpgnewname,
+        '.avi' : jpgnewname,
+        }
     
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
@@ -89,18 +96,23 @@ where DIR (default .) is a directory with .jpg files to rename.
             for root, dirs, files in os.walk(dirname):
                 filenames = {}
                 for name in files:
-                    if name.lower().endswith('.jpg'):
+                    base,ext = os.path.splitext(name)
+                    cv = self.converters.get(ext.lower(),None)
+                    if cv is not None:
                         try:
-                            nfn=jpgnewname(root,name)
+                            nfn=cv(root,name)
                         except MyException,e:
                             sess.warning(str(e))
                         else:
-                            if filenames.has_key(nfn):
+                            if nfn is None: pass
+                            elif nfn == name: pass
+                            elif filenames.has_key(nfn):
                                 sess.warning(
                                     '%s: duplicate time %s in directory %s' \
                                     ,name,nfn,root)
                             else:
                                 filenames[nfn] = name
+                                
                 for nfn,ofn in filenames.items():
                     o=os.path.join(root,ofn)
                     n=os.path.join(root,nfn)
