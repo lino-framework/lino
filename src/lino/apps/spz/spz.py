@@ -24,8 +24,12 @@ from lino.apps.spz import tables
 
 class SPZ(Schema):
     name="Lino/SPZ"
-    years='2005'
-    author="Luc Saffre"
+    version="0.0.1"
+    copyright="""\
+Copyright (c) 2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
     
     
     def setupSchema(self):

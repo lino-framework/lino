@@ -28,8 +28,13 @@ from lino.console.application import Application, UsageError
 class Prn2pdf(Application):
 
     name="Lino/prn2pdf"
-    years='2002-2005'
-    author='Luc Saffre'
+    copyright="""\
+Copyright (c) 2002-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://www.saffre-rumma.ee/lino/prn2pdf.html"
+    
     usage="usage: lino prn2pdf [options] FILE"
     description="""\
 where FILE is the file to be converted to a pdf file.

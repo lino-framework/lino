@@ -31,8 +31,14 @@ from lino.console.application import Application, UsageError
 class Pds2pdf(Application):
 
     name="Lino/pds2pdf"
-    years='2002-2005'
-    author='Luc Saffre'
+
+    copyright="""\
+Copyright (c) 2002-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://www.saffre-rumma.ee/lino/pds2pdf.html"
+    
     
     usage="usage: lino pds2pdf [options] FILE"
     description="""\

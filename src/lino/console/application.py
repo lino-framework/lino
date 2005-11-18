@@ -20,8 +20,10 @@
 
 import sys
 from optparse import OptionParser
+import textwrap
 
-from lino import __version__, __author__
+import lino
+#from lino import __version__, __author__, __copyright__, __url__
 
 #from lino.console.console import CLI
 from lino.console import syscon
@@ -45,9 +47,11 @@ from task import BugDemo
 class Application:
     
     name = None
-    years = None
+    version=lino.__version__
+    copyright=None
+    url=None
+    #years = None
     author=None
-    version=__version__
     usage = None
     description = None
 
@@ -116,45 +120,69 @@ class Application:
 ##                  version=__version__,
 ##                  years="2002-2005",
 ##                  author=__author__):
-    def copyleft(self):#,name, version, copyright):
-        return """\
-%s version %s.
-Copyright (c) %s %s.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information.
-""" % ( self.name, self.version, self.years, self.author)
+##     def copyleft(self):
+##         return """\
+## %s version %s.
+## Copyright (c) %s %s.
+## This software comes with ABSOLUTELY NO WARRANTY and is
+## distributed under the terms of the GNU General Public License.
+## See file COPYING.txt for more information.
+## """ % ( self.name, self.version, self.years, self.author)
 
         
     def aboutString(self):
-        s = self.name
+        if self.name is None:
+            s = self.__class__.__name__
+        else:
+            s = self.name
+            
         if self.version is not None:
             s += " version " + self.version
         if self.author is not None:
-            s += "\nCopyright (c) %s %s." % (self.years, self.author)
-        from lino import __copyright__,  __url__
-        s += "\n\n" + __copyright__
-        s += "\n\nHomepage:\n" + __url__
-        s += "\n\nCredits:\n"
-        s += "Python %d.%d.%d %s\n" % sys.version_info[0:4]
+            s += "\nAuthor: " +  self.author
+        if self.copyright is not None:
+            s += "\n"+self.copyright
+            # "\nCopyright (c) %s %s." % (self.years, self.author)
+            
+        #from lino import __copyright__,  __url__
+        #s += "\n\n" + __copyright__
+        if self.url is not None:
+            s += "\nHomepage: " + self.url
+            
+        credits = []
+        credits.append("Python %d.%d.%d %s" % sys.version_info[0:4])
+        credits.append('Lino ' + lino.__version__)
 
         if sys.modules.has_key('wx'):
             wx = sys.modules['wx']
-            s += "wxPython " + wx.__version__ + "\n"
+            credits.append("wxPython " + wx.__version__)
     
-        if sys.modules.has_key('sqlite'):
-            sqlite = sys.modules['sqlite']
-            s += "PySQLLite " + sqlite.version + "\n"
+        if sys.modules.has_key('pysqlite2'):
+            from pysqlite2.dbapi2 import version
+            #sqlite = sys.modules['pysqlite2']
+            credits.append("PySQLLite " + version)
     
         if sys.modules.has_key('reportlab'):
             reportlab = sys.modules['reportlab']
-            s += "The Reportlab PDF generation library " + \
-                           reportlab.Version + "\n"
+            credits.append("Reportlab PDF library "+reportlab.Version)
 
         if sys.modules.has_key('win32print'):
             win32print = sys.modules['win32print']
-            s += "Python Windows Extensions " + "\n"
+            credits.append("Python Windows Extensions")
         
+        if sys.modules.has_key('cherrypy'):
+            win32print = sys.modules['cherrypy']
+            credits.append("CherryPy " + cherrypy.__version__)
+
+        s += "\nCredits: " + "\n".join(
+            textwrap.wrap(", ".join(credits),76))
+        
+        if False:
+            s += "\n".join(
+                textwrap.wrap(
+                " ".join([ k for k in sys.modules.keys()
+                           if not k.startswith("lino.")]),76))
+            
         return s
     
         
@@ -194,9 +222,10 @@ See file COPYING.txt for more information.
             
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
-            if self.author is not None:
-                if syscon.isInteractive():
-                    syscon.notice(self.copyleft())
+            if syscon.isInteractive():
+                syscon.notice(self.aboutString())
+                #if self.copyright is not None:
+                #    syscon.notice(self.copyright)
             return self.run(sess)
         
         except UsageError,e:

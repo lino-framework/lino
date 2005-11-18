@@ -35,8 +35,8 @@ def quote(x):
         return '"'+x+'"'
     raise InvalidRequest("%s not handled" % str(type(x)))
     
-def makedict(**kw): 
-    return kw
+## def makedict(**kw): 
+##     return kw
 
 class CDATA:
     def __init__(self,text):
@@ -218,7 +218,7 @@ class Time(Text):
 class P(Container):
     allowedChildren = (CDATA,TextElement,TextContainer)
     elementname = "text:p"
-    allowedAttribs = makedict(
+    allowedAttribs = dict(
         styleName='text:style-name')
         
     #~ def __init__(self,style="Default",*content,**kw):
@@ -229,7 +229,7 @@ class P(Container):
 class H(P):
     allowedChildren = (CDATA,)
     elementname = "text:h"
-    allowedAttribs = makedict(
+    allowedAttribs = dict(
         level='text:level',
         **P.allowedAttribs)
         
@@ -357,14 +357,14 @@ class PageLayout(Properties):
     (all, left, right, mirrored.)
     """
     elementname = "style:page-layout"
-    allowedAttribs = makedict(
+    allowedAttribs = dict(
         name="style:name",
         pageUsage="style:page-usage")
         
         
 class FootnoteSep(Element):
         elementname = "style:footnote-sep"
-        allowedAttribs  = makedict(
+        allowedAttribs  = dict(
             width="style:width",
             distanceBeforeSep="style:distance-before-sep",
             distanceAfterSep="style:distance-after-sep",
@@ -385,7 +385,7 @@ class BackgroundImage(Element):
 
 class Number(Element):
     elementname="number:number"
-    allowedAttribs=makedict(
+    allowedAttribs=dict(
     minIntegerDigits="min-integer-digits",
     decimalPlaces="number:decimal-places",
     grouping="number:grouping",
@@ -395,7 +395,7 @@ class Number(Element):
 class CurrencySymbol(Text):
     # <number:currency-symbol number:language="fr" number:country="BE">EUR</number:currency-symbol>
     elementname = "number:currency-symbol"
-    allowedAttribs=makedict(
+    allowedAttribs=dict(
         language="number:language",
         country="number:country",
     )
@@ -404,7 +404,7 @@ class CurrencySymbol(Text):
 class Style(Container):
     elementname = "style:style"
     allowedChildren = (Properties,)
-    allowedAttribs=makedict(
+    allowedAttribs=dict(
         name="style:name",
         family="style:family",
         className="style:class",
@@ -615,7 +615,7 @@ class Table(Container):
 class Font(Element):
     elementname = "style:font-decl"
     #def __init__(self,name=None,fontFamily=None,fontFamilyGeneric=None,fontPitch=None):
-    allowedAttribs = makedict(
+    allowedAttribs = dict(
         name="style:name",
         fontFamily="fo:font-family",  
         fontFamilyGeneric="style:font-family-generic", # e.g. "modern", "roman"
@@ -644,7 +644,7 @@ class MasterPage(Container):
     
     """
     elementname = "style:master-page"
-    allowedAttribs = makedict(
+    allowedAttribs = dict(
         name="style:name",
         pageMasterName="style:page-master-name"
     )
@@ -691,7 +691,7 @@ class RegionRight(Region):
     
 class HeaderOrFooter(Story):
     allowedChildren = (CDATA, Region, P, Table)
-    allowedAttribs = makedict(display="style:display")
+    allowedAttribs = dict(display="style:display")
     
     
 class Header(HeaderOrFooter):

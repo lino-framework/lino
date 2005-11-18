@@ -99,9 +99,13 @@ class SearchFormCtrl:
 
 
 class Keeper(Schema):
-    
-    years='2005'
-    author="Luc Saffre"
+    name="Lino/Keeper"
+    version="0.0.1"
+    copyright="""\
+Copyright (c) 2004-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
     
     #tables = TABLES
 

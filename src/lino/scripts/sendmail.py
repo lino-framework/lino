@@ -59,8 +59,12 @@ import mimetypes
 class Sendmail(Application):
     
     name="Lino/sendmail"
-    years='2002-2005'
-    author='Luc Saffre'
+    copyright="""\
+Copyright (c) 2002-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://www.saffre-rumma.ee/lino/sendmail.html"
     
     usage="usage: lino sendmail [options] FILE"
     

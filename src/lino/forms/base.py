@@ -985,7 +985,7 @@ class Toolkit(AbstractToolkit):
 
 
     def showReport(self,sess,rpt,**kw):
-        frm = sess.form(label=rpt.getLabel(),**kw)
+        frm = sess.form(label=rpt.getTitle(),**kw)
         frm.addDataGrid(rpt)
         frm.show()
         

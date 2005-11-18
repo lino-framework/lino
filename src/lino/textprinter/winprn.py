@@ -48,7 +48,8 @@ Image._initialized=2
 #OEM_CHARSET = win32con.OEM_CHARSET
 
 charsets = {
-    "cp850" : win32con.OEM_CHARSET
+    "cp850" : win32con.OEM_CHARSET,
+    "cp437" : win32con.OEM_CHARSET
     }
 
 # OEM_FIXED_FONT = win32con.OEM_FIXED_FONT
@@ -182,8 +183,10 @@ class Win32TextPrinter(TextPrinter):
             orientation=50
             )
         
-        
-        self.fontDict['charset'] = charsets[coding]
+        try:
+            self.fontDict['charset'] = charsets[coding]
+        except KeyError,e:
+            pass
 
         self.font = None
         

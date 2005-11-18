@@ -159,6 +159,12 @@ class DbSession(Session,Context):
         self.db.shutdown()
         #center.shutdown()
 
+    def getTableClass(self,tableName):
+        for table in self.db.app.getTableList():
+            if table.getTableName() == tableName:
+                return table._instanceClass
+        
+
     def query(self,leadTable,columnNames=None,**kw):
         if columnNames is None:
             columnNames="*"
@@ -191,11 +197,6 @@ class DbSession(Session,Context):
         self._user = None
 
 
-    def showAbout(self):
-        frm = self.form(label="About",doc=self.db.app.aboutString())
-        frm.addOkButton()
-        frm.show()
-        
     def showViewGrid(self,tc,*args,**kw):
         rpt=self.getViewReport(tc,*args,**kw)
         return self.showReport(rpt)

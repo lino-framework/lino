@@ -182,6 +182,11 @@ class Session(BaseSession):
         ctrl.setupForm(frm)
         frm.show()
         
+    def showAbout(self):
+        frm = self.form(label="About",doc=self.app.aboutString())
+        frm.addOkButton()
+        frm.show()
+        
 ##     def showForm(self,frm):
 ##         #assert frm in self._forms
 ##         self._activeForm=frm

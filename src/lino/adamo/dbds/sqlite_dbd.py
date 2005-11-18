@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import threading
 #import time
 from types import StringType
 import datetime
@@ -57,8 +58,10 @@ def day(s):
 class Connection(SqlConnection):
     
     def __init__(self,ui,filename=None):
+        self.threadLock = threading.Lock()
         SqlConnection.__init__(self,ui)
         self.dbapi = sqlite
+        
         #self._isTemporary = isTemporary
         self._mtime = 0.0
         self._filename = filename
@@ -70,7 +73,8 @@ class Connection(SqlConnection):
             self._status = self.CST_OPENED
             
         try:
-            self._dbconn = sqlite.connect(filename)
+            self._dbconn = sqlite.connect(filename,
+                                          check_same_thread=False)
             
             self._dbconn.create_function("month",1,month)
             self._dbconn.create_function("year",1,year)
@@ -95,20 +99,21 @@ class Connection(SqlConnection):
 ##         return self._filename is None
 
     def sql_exec_really(self,sql):
-##         if self._filename is None:
-##             print sql+";"
-##             return
-        #csr = sqlite.Cursor(self._dbconn,TupleType)
-        csr=self._dbconn.cursor()
-        #print "sqlite_dbd.py:" + sql
         if type(sql) == StringType:
             sql=sql.decode("latin1")
+            
+        self.threadLock.acquire()
+        csr=self._dbconn.cursor()
+        #print "sqlite_dbd.py:" + sql
+            
         try:
 ##              if "PARTNERS" in sql:
 ##                  print "sqlite_dbd.py:" + sql
             csr.execute(sql)
+            self.threadLock.release()
             return csr
         except sqlite.DatabaseError,e:
+            self.threadLock.release()
             #print sql
             raise DatabaseError('"%s" in sql_exec(%s)' % (e,sql))
 

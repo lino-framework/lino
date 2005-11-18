@@ -107,7 +107,7 @@ class Database(Context,Describable):
         try:
             return self._stores[leadTable]
         except KeyError,e:
-            raise InvalidRequestError("no such table: "+str(leadTable))
+            raise InvalidRequestError("no such table: "+repr(leadTable))
     
     
     def getStoresById(self):

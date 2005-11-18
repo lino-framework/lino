@@ -61,11 +61,17 @@ def jpgnewname(root,name):
 
 
 
-class JpgRenamer(Application):
+class JpgRename(Application):
 
     name="Lino/jpgrename"
-    years='2005'
-    author='Luc Saffre'
+
+    copyright="""\
+Copyright (c) 2002-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://www.saffre-rumma.ee/lino/jpgrename.html"
+    
     usage="usage: lino jpgrename [options] [DIR]"
     description="""\
 where DIR (default .) is a directory with .jpg files to rename.
@@ -123,7 +129,7 @@ where DIR (default .) is a directory with .jpg files to rename.
                                    
 
 # lino.runscript expects a name consoleApplicationClass
-consoleApplicationClass = JpgRenamer
+consoleApplicationClass = JpgRename
 
 if __name__ == '__main__':
     consoleApplicationClass().main() 

@@ -21,9 +21,15 @@ from lino.console.application import Application, UsageError
 from lino.tools.mail import readmail, openmail
 
 class OpenMail(Application):
-    name="Lino openmail"
-    years='2002-2005'
-    author='Luc Saffre'
+    name="Lino/openmail"
+
+    copyright="""\
+Copyright (c) 2002-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://www.saffre-rumma.ee/lino/openmail.html"
+    
     usage="usage: lino openmail FILE"
     description="""\
 Start the user's default mail client with a ready-to-send message

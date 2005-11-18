@@ -23,7 +23,13 @@ from lino.apps.ledger.tables import *
 
 
 class Ledger(AddressBook):
-    
+    version="0.0.1"
+    copyright="""\
+Copyright (c) 2002-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://www.saffre-rumma.ee/lino/ledger.html"
     #tables=TABLES
     
     def setupSchema(self):

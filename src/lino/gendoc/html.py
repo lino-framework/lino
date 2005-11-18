@@ -59,11 +59,6 @@ beginNavigator = '''
 endNavigator = "</p>"
 
 
-END_PAGE = """
-  </body>
-  </html>
-"""
-
 
 class Resolver:
     def __init__(self,root,cl,i2name):
@@ -165,10 +160,11 @@ class StaticSite:
         for rs in self._resolvers:
             if rs.cl == cl: return rs
 
-        
+
+
     
 class HtmlDocument(WriterDocument,MenuContainer,Locatable):
-    extension=".html"
+    extension=""
     def __init__(self,
                  content=None,
                  title=None,
@@ -207,7 +203,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.date = date
         #self._reports=[]
         if content is not None:
-            assert hasattr(content,"render")
+            assert hasattr(content,"__html__")
             self._body=[content]
         else:
             self._body=[]
@@ -235,10 +231,12 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
     def writeText(self,txt):
         self.write(escape(txt))
         
-    def writeLink(self,href,label,doc=None):
-        self.write('<a href="'+href+'">')
-        self.writeText(label)
-        self.write('</a>')
+##     def writeLink(self,href,label=None,doc=None):
+##         raise "replaced by renderLink()"
+##         if label is None: label=href
+##         self.write('<a href="'+href+'">')
+##         self.writeText(label)
+##         self.write('</a>')
 
     def writeColValue(self,col,value):
         if value is None:
@@ -275,6 +273,9 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
 
             self.writeText(col.format(value))
 
+    def p(self,txt):
+        self._body.append(P(txt))
+
     def h(self,level,txt):
         self._body.append(H(level,txt))
 
@@ -306,9 +307,8 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         
 
     def beginDocument(self,wr):
-        self.writer = wr
         wr("<html><head><title>")
-        self.writeText(self.title)
+        wr(escape(self.title))
         wr("""</title>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 """)
@@ -320,68 +320,39 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         wr('<meta name="author" content="">\n')
         wr('<meta name="date" content="%s">')
         wr("<head><body>\n")
-        
-    
-    def endDocument(self):
-        self.write(END_PAGE)
-        self.writer = None
 
-
-    def writeDocument(self,wr):
-        self.beginDocument(wr)
         if self.menuBar is not None:
             for menu in self.menuBar.menus:
-                self.write('<ul id="adminmenu">')
+                wr('<ul id="adminmenu">')
                 for mi in menu.items:
                     #assert mi.action is not None
-                    self.write('<li>')
+                    wr('<li>')
                     self.writeLink(
                         href=mi.action,
                         label=mi.getLabel())
-                    self.write('</li>')
-                self.write('</ul>')
+                    wr('</li>')
+                wr('</ul>')
 
 
+        
+        
+    
+    def endDocument(self,wr):
+        wr("""\
+        </body>
+        </html>
+        """)
+
+
+    def writeDocument(self,wr):
+        self.writer = wr
+        self.beginDocument(wr)
         for elem in self._body:
-            elem.render(self)
-        self.endDocument()
+            elem.__html__(self,wr)
+        self.endDocument(wr)
+        self.writer = None
 
     
-    def save(self,sess,targetRoot=".",simulate=False):
-        filenames = []
-        dirname = opj(targetRoot,
-                      self.location.replace("/",os.path.sep))
-        fn = opj(dirname, self.filename())
-        filenames.append(fn)
-        #print fn
-        if simulate:
-            sess.status("Would write %s...",fn)
-            fd = StringIO()
-        else:
-            sess.status("Writing %s...",fn)
-            if not os.path.isdir(dirname):
-                os.makedirs(dirname)
-                sess.notice("Created directory %s",dirname)
-            
-            fd = file(fn,"wt")
-            
-        self.writeDocument(fd.write)
-        fd.close()
-        
-        
-##         for rs in self._resolvers:
-##             for x in ui.query(rs.cl):
-##                 ch=self.__class__(parent=self,
-##                                   name=rs.i2name(x),
-##                                   title=x.getLabel(),
-##                                   content=DataRowElement(x))
-##                 filenames += ch.save(ui,targetRoot,simulate)
-                
-        for ch in self.children:
-            filenames += ch.save(sess,targetRoot,simulate)
-        return filenames
-
-
         
 class H:
     def __init__(self,level,txt):
@@ -389,11 +360,31 @@ class H:
         self.level=level
         self.text=txt
         
-    def render(self,doc):
+    def __html__(self,doc,wr):
         tag = "H"+str(self.level)
-        doc.write("<%s>" % tag)
-        doc.writeText(self.text)
-        doc.write("</%s>\n" % tag)
+        wr("<%s>" % tag)
+        wr(escape(self.text))
+        wr("</%s>\n" % tag)
+
+class P:
+    def __init__(self,txt):
+        self.text=txt
+        
+    def __html__(self,doc,wr):
+        wr("<P>"+self.text+"</P>")
+
+class A:
+    def __init__(self,href=None,label=None,doc=None):
+        if label is None: label=href
+        self.href=href
+        self.label=label
+        self.doc=doc
+        
+    def __html__(self,doc,wr):
+        wr('<a href="'+self.href+'">')
+        wr(escape(self.label))
+        wr('</a>')
+        
 
 
 def rptname(doc,rpt,sortColumn=None,pageNum=None):
@@ -416,7 +407,7 @@ class DataRowElement:
     def __init__(self,row):
         self.row=row
         
-    def render(self,doc):
+    def __html__(self,doc):
         wr=doc.write
         
         wr('<table width="100%" cellpadding="3" cellspacing="3">')
@@ -469,7 +460,7 @@ class ReportElement:
             return str(self.pageNum)+"_"+self.sortColumn.name
         return str(self.pageNum)
     
-    def render(self,doc):
+    def __html__(self,doc):
         rpt=self.rpt
         ds=rpt.ds
         pageNum=self.pageNum
@@ -604,3 +595,40 @@ class ReportElement:
 
     
                     
+class StaticHtmlDocument(HtmlDocument):
+    extension=".html"
+    def save(self,sess,targetRoot=".",simulate=False):
+        filenames = []
+        dirname = opj(targetRoot,
+                      self.location.replace("/",os.path.sep))
+        fn = opj(dirname, self.filename())
+        filenames.append(fn)
+        #print fn
+        if simulate:
+            sess.status("Would write %s...",fn)
+            fd = StringIO()
+        else:
+            sess.status("Writing %s...",fn)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname)
+                sess.notice("Created directory %s",dirname)
+            
+            fd = file(fn,"wt")
+            
+        self.writeDocument(fd.write)
+        fd.close()
+        
+        
+##         for rs in self._resolvers:
+##             for x in ui.query(rs.cl):
+##                 ch=self.__class__(parent=self,
+##                                   name=rs.i2name(x),
+##                                   title=x.getLabel(),
+##                                   content=DataRowElement(x))
+##                 filenames += ch.save(ui,targetRoot,simulate)
+                
+        for ch in self.children:
+            filenames += ch.save(sess,targetRoot,simulate)
+        return filenames
+
+

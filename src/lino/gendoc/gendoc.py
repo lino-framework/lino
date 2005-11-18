@@ -65,5 +65,5 @@ class WriterDocument(GenericDocument):
         self.writer(txt)
         
 
-
+        
 
