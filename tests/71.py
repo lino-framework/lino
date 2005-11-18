@@ -22,14 +22,14 @@ opj = os.path.join
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.gendoc.html import HtmlDocument
+from lino.gendoc.html import StaticHtmlDocument
 
 
 class Case(TestCase):
 
     def test01(self):
         "Location arithmetics"
-        root = HtmlDocument()
+        root = StaticHtmlDocument()
         self.assertEqual(root.location,"")
         self.assertEqual(root.filename(),"index.html")
         
