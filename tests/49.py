@@ -18,7 +18,8 @@
 
 import os
 
-from lino.misc.tsttools import TestCase, main, catch_output
+#from lino.misc.tsttools import TestCase, main, catch_output
+from lino.misc.tsttools import TestCase, main, TESTDATA
 from lino.misc.my_import import my_import
 from lino.apps import timtools
 
@@ -28,17 +29,15 @@ console_targets = timtools.console_targets()
 class Case(TestCase):
     def test01(self):
         s = ""
-        for scr in console_targets:
+        for script in console_targets:
 
-
-
-            cmd="lino "+scr+" --help"
+            cmd="lino "+script+" --help"
             fd=os.popen(cmd,"r")
             observed=fd.read()
-            msg="lino %s failed" % scr
+            fn=os.path.join(TESTDATA,"timtools",script)+".help.txt"
+            msg="output of `%s` differs from content of %s" % (cmd,fn)
             self.assertEqual(fd.close(),None,msg)
-            outfile=os.path.join("testdata","timtools",scr)+".help.txt"
-            expected=open(outfile).read()
+            expected=open(fn).read()
             self.assertEquivalent(observed,expected,msg)
 
     

@@ -16,6 +16,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from lino.console import syscon
+
 _userLang = None
 _messages = {}
 
@@ -25,8 +27,7 @@ def _(text_en):
     try:
         return _messages[text_en][_userLang]
     except KeyError:
-        from lino.ui import console
-        console.warning(
+        syscon.warning(
             "No translation to %s for %s." % (
             _userLang,
             repr(text_en)))

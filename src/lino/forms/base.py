@@ -703,11 +703,16 @@ class Form(Describable,MenuContainer):
         #self.session.debug("show(modal=%s) %s",modal,self.getLabel())
         self.setup()
         #self.session.debug(repr(self.mainComp))
+        self.mainComp.onShow()
         self.onShow()
         self.session.setActiveForm(self)
-        self.session.toolkit.showForm(self)
+        self.session.toolkit.onShowForm(self)
         
     
+    def refresh(self):
+        self.mainComp.refresh()
+        self.session.toolkit.onRefreshForm(self)
+        
     def isShown(self):
         return False
     
@@ -719,7 +724,7 @@ class Form(Describable,MenuContainer):
             pass
     
     def onShow(self):
-        self.mainComp.onShow()
+        pass
         
     def onClose(self):
         self.mainComp.onClose()
@@ -739,10 +744,6 @@ class Form(Describable,MenuContainer):
             if msg is not None:
                 return msg
             
-    def refresh(self):
-        self.mainComp.refresh()
-        self.session.toolkit.refreshForm(self)
-        
     def gendoc_render(self,doc):
         self.mainComp.gendoc_render(doc)
         
@@ -812,6 +813,11 @@ class AbstractToolkit:
     def createForm(self,sess,parent,*args,**kw):
         return self.formFactory(sess,parent,*args,**kw)
 
+    def onShowForm(self,frm):
+        raise NotImplementedError
+
+    def onRefreshForm(self,frm):
+        raise NotImplementedError
 
     def beginProgresser(self,sess,*args,**kw):
         self._currentProgresser=Progresser(self._currentProgresser)

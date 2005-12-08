@@ -12,5 +12,3 @@ app=Keeper()
 sess=app.quickStartup(filename="keeper.db")
 sess.populate(TestPopulator())
 gui.run(sess)
-
-

@@ -27,6 +27,7 @@ from cStringIO import StringIO
 #from lino.forms.base import AbstractToolkit
 #from lino.misc.jobs import Job
 
+from lino.forms.base import AbstractToolkit
 
 try:
     import msvcrt
@@ -39,7 +40,9 @@ except ImportError,e:
     sound = False
 
 
-from lino.console.task import TaskAborted    
+class TaskAborted(Exception):
+    def __init__(self, task):
+        self.task = task
 
 #from lino.misc.jobs import JobAborted, Job #, PurzelConsoleJob
 #from lino.forms.progresser import Progresser
@@ -72,7 +75,6 @@ from lino.console.task import TaskAborted
 ##         pass
 
 
-from lino.forms.base import AbstractToolkit
 
 
             

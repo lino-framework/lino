@@ -99,8 +99,11 @@ class SearchFormCtrl:
 
 
 class Keeper(Schema):
+    
     name="Lino/Keeper"
+    
     version="0.0.1"
+    
     copyright="""\
 Copyright (c) 2004-2005 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is

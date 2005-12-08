@@ -18,36 +18,40 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+
+
+raise """
+TODO:
+
+Each Form gets one URL. Will this work?
+
+Forms instantiated only once? Or for each request?
+
+"""
+
 import os
 import sys
 import time
 
 from cStringIO import StringIO
 
-
-#from lino.forms.base import AbstractToolkit
-from lino.forms.base import Toolkit
-
-
-
-## from HTMLgen import HTMLgen as html
-## def Page(title):
-##     doc = html.SimpleDocument(title=title)
-##     doc.append(html.Heading(1,doc.title))
-##     p = html.Para("Menu:")
-##     p.append(html.BR())
-##     p.append(html.Href(url="/",text="home"))
-##     p.append(html.BR())
-##     p.append(html.Href(url="foo/bar/baz",text="foo"))
-##     p.append(html.BR())
-##     p.append(html.Href(url="report",text="report"))
-##     doc.append(p)
-##     doc.append(html.HR())
-
-##     return doc
+from lino.forms import base
 
 from HyperText.Documents import Document
 from HyperText import HTML as html
+
+def text2html(s):
+    s2=""
+    for c in s:
+        o=ord(c)
+        if o <= 127:
+            s2 += c
+        else:
+            s2 += '&#%d;' % o
+    return s2
+    
+
+
 def Page(title):
     doc = Document(title=title)
     doc.append(html.H1(title))
@@ -61,13 +65,120 @@ def Page(title):
     doc.append(p)
     doc.append(html.HR())
     return doc
+
+
+class MyRoot(PositionalParametersAware):
+    
+    def __init__(self,dbsess):
+        self.dbsess=dbsess
+        self.beginResponse = dbsess.toolkit.beginResponse
+        self.endResponse = dbsess.toolkit.endResponse
+        
+    def index(self, *args,**kw):
+        doc=self.beginResponse(title="index()")
+        doc.append(html.P("This is the top-level page"))
+        return self.endResponse()
+    index.exposed=True
+    
+    def report(self, *args,**kw):
+        doc=self.beginResponse(title="report()")
+        if len(args) > 0:
+            tcl=self.dbsess.getTableClass(args[0])
+            if tcl is not None:
+                self.dbsess.showViewGrid(tcl,*args[1:],**kw)
+            else:
+                self.dbsess.warning("%s : no such table",args[0])
+                #doc.append(html.P(args[0]+" : no such table"))
+                
+            return self.endResponse()
+        list=html.UL(); doc.append(list)
+        for table in self.dbsess.db.app.getTableList():
+            li=html.LI() ; list.append(li)
+            li.append(html.A(table.getLabel(),
+                             href="report/"+table.getTableName()))
+            li.append(" (%d rows)" %
+                len(self.dbsess.query(table._instanceClass)))
+
+        return self.endResponse()
+
+    report.exposed=True
+
+
+class Label(base.Label):
+    def __html__(self,wr):
+        wr(text2html(self.getLabel()))
+    
+class Button(base.Button):
+    def __html__(self,wr):
+        url=self.name
+        wr(html.A(text2html(self.getLabel()),href=url))
+
+class DataGrid(base.DataGrid):
+    def __html__(self,wr):
+        wr(self.__class__.__name__)
+        
+class DataForm(base.DataForm):
+    def __html__(self,wr):
+        wr(self.__class__.__name__)
+
+class TextViewer(base.TextViewer):
+    def __html__(self,wr):
+        wr(self.__class__.__name__)
             
-class HtmlServer(Toolkit):
+class Panel(base.Panel):
+    def __html__(self,wr):
+        wr(self.__class__.__name__)
 
+class Entry(EntryMixin,base.Entry):
+    def __html__(self,wr):
+        wr(self.__class__.__name__)
+
+class DataEntry(EntryMixin,base.DataEntry):
+    def __html__(self,wr):
+        wr(self.__class__.__name__)
+
+class Form(base.Form):
+    def __html__(self,wr):
+        wr(self.__class__.__name__)
+        if self.menuBar is not None:
+            for mnu in self.menuBar.menus:
+                mnu.__html__(wr)
+                for mi in mnu.items:
+                    mi.__html__(wr)
+        self.mainComp.__html__(wr)
+
+    
+class Toolkit(base.Toolkit):
+    labelFactory = Label
+    entryFactory = Entry
+    dataEntryFactory = DataEntry
+    buttonFactory = Button
+    viewerFactory = TextViewer
+    panelFactory = Panel
+    dataGridFactory = DataGrid
+    navigatorFactory = DataNavigator
+    formFactory = Form
+    
     def __init__(self,*args,**kw):
+        base.Toolkit.__init__(self,*args,**kw)
+        self._session = None
         self.response=None
-        Toolkit.__init__(self,*args,**kw)
+        self._actions={} # URL : (method, args,kw)
 
+    def running(self):
+        return self._session is not None
+
+    def run_awhile(self):
+        assert self.running()
+        pass
+    
+    def run_forever(self,sess):
+        assert not self.running()
+        self._session=sess
+        sess.showMainForm()
+        cherrypy.root = MyRoot(sess)
+        cherrypy.server.start()
+        
 
     def write(self,msg):
         #self.response.append(html.Para(msg))
@@ -210,9 +321,19 @@ class HtmlServer(Toolkit):
         from lino.textprinter.plain import PlainTextPrinter
         return PlainTextPrinter(self._stdout,**kw)
         
+
+    def onShowForm(self,frm):
+        frm...
+        self._forms.append(frm)
+
+    def onRefreshForm(self,frm):
+        self.onShowForm(frm)
+
+
     def beginResponse(self,title):
         doc = Page(title=title)
         self.response=doc
+        self._forms=[]
         return doc
 
     def endResponse(self):
@@ -221,26 +342,23 @@ class HtmlServer(Toolkit):
         return s
     
 
-    def showReport(self,sess,rpt,*args,**kw):
-        from lino.gendoc.plain import PlainDocument
-        fd=StringIO()
-        gd = PlainDocument(writer=fd.write)
-        gd.beginDocument()
-        gd.report(rpt)
-        gd.endDocument()
-        s=fd.getvalue()
-        self.response.append(html.PRE(s))
+    def showReport(self,sess,rpt):
+        doc=self.response
+        rpt.setupReport()
+        table=html.TABLE(title=rpt.getTitle()); doc.append(table)
+
+        tr=html.TR(); table.append(tr)
+        for col in rpt.columns:
+            tr.append(html.TH(col.getLabel()))
+
+        for row in rpt:
+            tr=html.TR() ; table.append(tr)
+            for col in rpt.columns:
+                v=col.getCellValue(row)
+                if v is None:
+                    tr.append(html.TD("&nbsp;"))
+                else:
+                    s=text2html(col.format(v).decode())
+                    tr.append(html.TD(s))
     
-
-    def showForm(self,frm):
-        from lino.gendoc.plain import PlainDocument
-        #gd = PlainDocument()
-        gd = PlainDocument(writer=self._stdout)
-        gd.beginDocument()
-        gd.form(frm)
-        gd.endDocument()
-
-    def refreshForm(self,frm):
-        self.showForm(frm)
-
-
+        

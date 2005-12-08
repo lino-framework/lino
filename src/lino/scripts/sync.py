@@ -17,6 +17,20 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+"""
+20051207
+SynchronizerTask again subclass of Task.
+
+maybe Task should become subclass of Session? because self.session and
+because self.warning.
+
+safe mode: first run all tasks with .simulate=True, then display
+summaries and suggest:
+- abort if warnings or errors
+- otherwise do it
+
+"""
+
 import sys, os
 import shutil
 import stat
@@ -28,7 +42,8 @@ try:
 except:
     win32file = None
 
-from lino.console.application import Application, UsageError, ApplicationError
+from lino.console.application import Application, \
+     UsageError, ApplicationError
 
 from lino.console.task import Task
 
@@ -49,14 +64,16 @@ itr("Start?",
    de="Arbeitsvorgang starten?",
    fr=u"Démarrer?")
 
-itr("Counting directories...",
-    de=u"Ordner zählen..."
+itr("Counting files...",
+    de=u"Dateien zählen..."
     )
 itr("Synchronize %s to %s",
     de=u"Synchronisiere %s nach %s")
 itr("Source directory '%s' doesn't exist.",
     de="Ursprungsordner '%s' existiert nicht.")
-itr("Found %d directories.",de="%d Ordner gefunden.")
+itr("Target directory '%s' doesn't exist.",
+    de="Zielordner '%s' existiert nicht.")
+itr("Found %d files.",de="%d Dateien gefunden.")
 itr("Overwrite newer target %s",
     de=u"Jüngere Zieldatei %s überschreiben")
 itr("%s is up-to-date",de="%s ist unverändert")
@@ -83,17 +100,14 @@ itr("would have been copied", de="wären kopiert worden")
 itr("%d files up-to-date", de="%d Dateien unverändert")
         
 
-#class SyncError(Exception):
-#    pass
-
 class SynchronizerTask(Task):
     
-    def __init__(self,src,target,simulate,showProgress=True):
+    def __init__(self,app,src,target,simulate,recurse):
         Task.__init__(self)
         self.src = src
         self.target = target
         self.simulate = simulate
-        #self.showProgress = showProgress
+        self.recurse = recurse
         
         self.ignore_times = False
         self.modify_window = 2
@@ -106,13 +120,21 @@ class SynchronizerTask(Task):
         self.count_update_dir = 0
         self.count_copy_dir = 0
         
-        if showProgress:
-            self.status(_("Counting directories..."))
+        if not os.path.exists(self.src):
+            raise ApplicationError(
+                _("Source directory '%s' doesn't exist.") % self.src)
+
+        if not os.path.exists(self.target):
+            raise ApplicationError(
+                _("Target directory '%s' doesn't exist.") % self.target)
+
+        if app.options.showProgress:
+            self.status(_("Counting files..."))
             n = 0
             for root, dirs, files in os.walk(self.src):
                 n += len(dirs)
                 n += len(files)
-            self.status(_("Found %d directories.") % n)
+            self.status(_("Found %d files.") % n)
             self.maxval=n
     
     def getLabel(self):
@@ -122,66 +144,13 @@ class SynchronizerTask(Task):
         return s
 
     def run(self):
-        if not os.path.exists(self.src):
-            raise ApplicationError(
-                _("Source directory '%s' doesn't exist."))
-
-        if os.path.exists(self.target):
-            self.update_it(self.src,self.target)
-        else:
-            self.copy_it(self.src,self.target)
+        #if os.path.exists(self.target):
+        self.update_dir(self.src,self.target)
+        #else:
+        #    self.copy_dir(self.src,self.target)
             
 
         
-    def utime(self,src,target):
-        # Note: The utime api of the 2.3 version of python is
-        # not unicode compliant.
-        try:
-            s = os.stat(src)
-        except OSError,e:
-            self.error("os.stat() failed: %s",e)
-            return
-        
-        try:
-            os.utime(target, (s.st_atime, s.st_mtime))
-        except OSError,e:
-            self.error("os.utime() failed: %s",e)
-
-                
-    def copy_it(self,src,target):
-        self.setStatus()
-        self.increment()
-        if os.path.isfile(src):
-            self.copy_file(src,target)
-        elif os.path.isdir(src):
-            self.copy_dir(src,target)
-        else:
-            raise ApplicationError(
-                "%s is neither file nor directory" % src)
-
-    def update_it(self,src,target):
-        self.setStatus()
-        self.increment()
-        if os.path.isfile(src):
-            self.update_file(src,target)
-        elif os.path.isdir(src):
-            self.update_dir(src,target)
-        else:
-            raise ApplicationError(
-                "%s is neither file nor directory" % src)
-        
-    def delete(self,name):
-        self.setStatus()
-        self.breathe()
-        if os.path.isfile(name):
-            self.delete_file(name)
-        elif os.path.isdir(name):
-            self.delete_dir(name)
-        else:
-            raise ApplicationError(
-                "%s is neither file nor directory" % name)
-
-            
     def update_dir(self,src,target):
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
@@ -207,7 +176,7 @@ class SynchronizerTask(Task):
         """
                 
         for name in destnames:
-            self.delete(os.path.join(target,name))
+            self.delete_it(os.path.join(target,name))
         del destnames
 
         for s,t in mustCopy:
@@ -244,7 +213,7 @@ class SynchronizerTask(Task):
             doit = True
             if target_mt > src_mt:
                 self.warning(_("Overwrite newer target %s")
-                             %target)
+                             % target)
 
         
         if not doit:
@@ -277,7 +246,7 @@ class SynchronizerTask(Task):
 
     def copy_dir(self,src,target):
         self.count_copy_dir += 1
-        self.session.notice(_("create directory %s") %target)
+        self.session.notice(_("create directory %s") % target)
         if not self.simulate:
             try:
                 os.mkdir(target)
@@ -309,7 +278,7 @@ class SynchronizerTask(Task):
             return
         
         for fn in os.listdir(name):
-            self.delete(os.path.join(name,fn))
+            self.delete_it(os.path.join(name,fn))
             
         try:
             os.rmdir(name)
@@ -338,7 +307,63 @@ class SynchronizerTask(Task):
         #    console.error(str(e))
         except IOError,e:
             self.error("os.remove('%s') failed",name)
+
+
+
+    def copy_it(self,src,target):
+        self.setStatus()
+        self.increment()
+        if os.path.isfile(src):
+            self.copy_file(src,target)
+        elif os.path.isdir(src):
+            if self.recurse:
+                self.copy_dir(src,target)
+        else:
+            raise ApplicationError(
+                "%s is neither file nor directory" % src)
+
+    def update_it(self,src,target):
+        self.setStatus()
+        self.increment()
+        if os.path.isfile(src):
+            self.update_file(src,target)
+        elif os.path.isdir(src):
+            if self.recurse:
+                self.update_dir(src,target)
+        else:
+            raise ApplicationError(
+                "%s is neither file nor directory" % src)
+
+        
+    def delete_it(self,name):
+        self.setStatus()
+        self.breathe()
+        if os.path.isfile(name):
+            self.delete_file(name)
+        elif os.path.isdir(name):
+            self.delete_dir(name)
+        else:
+            raise ApplicationError(
+                "%s is neither file nor directory" % name)
+
             
+            
+            
+    def utime(self,src,target):
+        # Note: The utime api of the 2.3 version of python is
+        # not unicode compliant.
+        try:
+            s = os.stat(src)
+        except OSError,e:
+            self.error("os.stat() failed: %s",e)
+            return
+        
+        try:
+            os.utime(target, (s.st_atime, s.st_mtime))
+        except OSError,e:
+            self.error("os.utime() failed: %s",e)
+
+                
     def summary(self):
         l=[]
         l.append( _("%d files up-to-date") % self.count_uptodate)
@@ -378,9 +403,17 @@ class SynchronizerTask(Task):
 class Sync(Application):
 
     name="Lino/sync"
-    years='2005'
-    author='Luc Saffre'
+    
+    copyright="""\
+Copyright (c) 2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    
+    url="http://www.saffre-rumma.ee/lino/sync.html"
+    
     usage="usage: lino sync [options] SRC DEST"
+    
     description="""\
 where SRC and DEST are two directories to be synchronized.
 """ 
@@ -394,6 +427,13 @@ where SRC and DEST are two directories to be synchronized.
             action="store_true",
             dest="simulate",
             default=False)
+        
+        parser.add_option(
+            "-r", "--recurse",
+            help="recurse into subdirs",
+            action="store_true",
+            dest="recurse",
+            default=False)
 
         parser.add_option(
             "-p", "--progress",
@@ -404,24 +444,41 @@ where SRC and DEST are two directories to be synchronized.
     
     def run(self,sess):
          
-        if len(self.args) != 2:
-            raise UsageError("needs 2 arguments")
-            #parser.print_help() 
-            #return -1
+        if len(self.args) == 2:
+            tasks = [SynchronizerTask(self,
+                                     self.args[0],
+                                     self.args[1],
+                                     self.options.simulate,
+                                     self.options.recurse
+                                     )]
 
-        task = SynchronizerTask(
-            src=self.args[0],
-            target=self.args[1],
-            simulate=self.options.simulate,
-            showProgress=self.options.showProgress)
+        
+        elif len(self.args) == 1:
+            tasks=[]
+            for ln in open(self.args[0]).readlines():
+                ln=ln.strip()
+                if len(ln):
+                    if not ln.startswith("#"):
+                        a=ln.split()
+                        assert len(a) == 2
+                        tasks.append(
+                            SynchronizerTask(self,
+                                            a[0],
+                                            a[1],
+                                            self.options.simulate,
+                                            self.options.recurse
+                                            ))
+                        
+        else:
+            raise UsageError("needs 1 or 2 arguments")
 
-        if not task.simulate:
-            if not sess.confirm(task.getLabel()+"\n"+_("Start?")):
-                return
         
-        #task.run(sess)
-        
-        sess.runTask(task)
+
+        for task in tasks:
+            if not task.simulate:
+                if not sess.confirm(task.getLabel()+"\n"+_("Start?")):
+                    return
+            sess.runTask(task)
 
 
 # lino.runscript expects a name consoleApplicationClass

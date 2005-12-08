@@ -21,6 +21,7 @@
 
 from time import sleep
 
+from lino.console.console import TaskAborted
 from lino.i18n import itr,_
 
 itr("Working",
@@ -38,9 +39,6 @@ itr("Are you sure you want to abort?",
     de="Arbeitsvorgang abbrechen?",
     fr="Interrompre le travail en cours?")
 
-class TaskAborted(Exception):
-    def __init__(self, task):
-        self.task = task
 
 class Task:
     maxval=0

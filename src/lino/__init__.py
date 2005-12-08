@@ -20,7 +20,9 @@ import os
 
 __docformat__ = 'reStructuredText'
 
-__version__ = "0.6.13"   # released 17.11.2005
+__micro__ = 14   # released 28.11.2005
+
+__version__ = "0.6.%d" % __micro__
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 

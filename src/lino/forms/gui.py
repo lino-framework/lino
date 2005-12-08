@@ -50,7 +50,8 @@ def choose(wishlist="wx"):
             _toolkit = Toolkit()
             return _toolkit
         if tkname == "cherrypy": 
-            from lino.forms.cherrypy import Toolkit
+            from lino.console.htmlgen_toolkit import Toolkit
+            #from lino.forms.cherrypy import Toolkit
             _toolkit = Toolkit()
             return _toolkit
     raise "no toolkit found"

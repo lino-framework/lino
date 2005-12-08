@@ -9,4 +9,5 @@ options:
   -lLOGFILE, --logfile=LOGFILE
                         log a report to FILE
   -s, --simulate        simulate only, don't do it
+  -r, --recurse         recurse into subdirs
   -p, --progress        show progress bar

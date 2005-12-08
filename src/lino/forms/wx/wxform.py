@@ -776,12 +776,14 @@ class Toolkit(base.Toolkit):
         self._session.showMainForm()
         #sess.db.app.showMainForm(sess)
 
-    def showForm(self,frm):
+    def onShowForm(self,frm):
         if frm.modal:
             frm.wxctrl.ShowModal()
         else:
             frm.wxctrl.Show()
 
         
-    def refreshForm(self,frm):
+    def onRefreshForm(self,frm):
         pass
+
+    

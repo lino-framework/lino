@@ -48,8 +48,14 @@ class StoppingTestRunner(unittest.TextTestRunner):
 class Runtests(Application):
 
     name="Lino/runtests"
-    years='2004-2005'
-    author='Luc Saffre'
+    #years='2004-2005'
+    #author='Luc Saffre'
+    
+    copyright="""\
+Copyright (c) 2004-2005 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
     
     usage="usage: %prog [options] [TESTS]"
     
