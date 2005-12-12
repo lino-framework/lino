@@ -17,7 +17,10 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import time
+import types
+
 from lino.forms.base import AbstractToolkit
+from lino.console.task import Task
 
 class BaseSession:
     
@@ -101,7 +104,9 @@ class BaseSession:
 
     def status(self,msg=None,*args,**kw):
         if msg is not None:
-            assert type(msg) == type('')
+            #ssert type(msg) == type('')
+            assert msg.__class__ in (types.StringType,
+                                     types.UnicodeType)
             msg=self.buildMessage(msg,*args,**kw)
         self.statusMessage=msg
         return self.toolkit.showStatus(self,self.statusMessage)
@@ -157,8 +162,21 @@ class BaseSession:
     def isVerbose(self):
         return self.toolkit.isVerbose()
         
-    def runTask(self,task):
-        task.run_in_session(self)
+##     def runTask(self,task):
+##         raise "replaced by runJob"
+
+    #def runTask(self,task):
+    #    task.run_in_session(self
+
+    def run(self,sessfunc,*args,**kw):
+        return sessfunc(self,*args,**kw)
+
+    def loop(self,func,label,maxval=0,*args,**kw):
+        task=Task(self,label,maxval)
+        task.loop(func,*args,**kw)
+        return task
+    
+    
 
 class Session(BaseSession):
     

@@ -667,9 +667,13 @@ class Toolkit(base.Toolkit):
         #assert self.progressDialog is None
         #print job
         assert task.session._activeForm is not None
+        if task.session.statusMessage is None:
+            stm=""
+        else:
+            stm=task.session.statusMessage
+            
         task.wxctrl = wx.ProgressDialog(
-            task.getLabel(),
-            task.getStatus(),
+            task.label,stm,
             100,
             task.session._activeForm.wxctrl,
             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
@@ -776,14 +780,14 @@ class Toolkit(base.Toolkit):
         self._session.showMainForm()
         #sess.db.app.showMainForm(sess)
 
-    def onShowForm(self,frm):
+    def showForm(self,frm):
         if frm.modal:
             frm.wxctrl.ShowModal()
         else:
             frm.wxctrl.Show()
 
         
-    def onRefreshForm(self,frm):
+    def refreshForm(self,frm):
         pass
 
     

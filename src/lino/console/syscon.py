@@ -192,7 +192,7 @@ for funcname in (
     'message','confirm',
     'showReport',
     'textprinter',
-    'runTask'
+    'run', 'loop'
     ):
     g[funcname] = getattr(_session,funcname)
         

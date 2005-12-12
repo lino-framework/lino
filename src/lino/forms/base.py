@@ -706,12 +706,13 @@ class Form(Describable,MenuContainer):
         self.mainComp.onShow()
         self.onShow()
         self.session.setActiveForm(self)
-        self.session.toolkit.onShowForm(self)
+        #self.session.toolkit.onShowForm(self)
+        self.session.toolkit.showForm(self)
         
     
     def refresh(self):
         self.mainComp.refresh()
-        self.session.toolkit.onRefreshForm(self)
+        self.session.toolkit.refreshForm(self)
         
     def isShown(self):
         return False
@@ -813,10 +814,11 @@ class AbstractToolkit:
     def createForm(self,sess,parent,*args,**kw):
         return self.formFactory(sess,parent,*args,**kw)
 
-    def onShowForm(self,frm):
+    #def onShowForm(self,frm):
+    def showForm(self,frm):
         raise NotImplementedError
 
-    def onRefreshForm(self,frm):
+    def refreshForm(self,frm):
         raise NotImplementedError
 
     def beginProgresser(self,sess,*args,**kw):
@@ -884,14 +886,7 @@ class Toolkit(AbstractToolkit):
         for funcname in (
             'debug', 'warning',
             'verbose', 'error',
-            #'critical',
-            #'job',
             'textprinter',
-            #'onTaskBegin',
-            #'onTaskDone',
-            #'onTaskAbort',
-            #'onTaskIncrement',
-            #'onTaskBreathe',
             ):
             setattr(self,funcname,getattr(console,funcname))
 

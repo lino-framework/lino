@@ -23,33 +23,39 @@ from lino.misc.tsttools import TestCase, main, Toolkit
 from lino.console import syscon
 
 #from lino.forms.session import Session
+#from lino.console.task import Task
 from lino.console.task import Task
 
-from lino import i18n
-i18n.setUserLang(None)
+#from lino import i18n
+#i18n.setUserLang(None)
 
-class TestTask(Task):
+## class TestTask(Task):
     
-    maxval=10
+##     maxval=10
     
-    def getLabel(self):
-        return "Testing uncomplete tasks"
+##     def getLabel(self):
+##         return "Testing uncomplete tasks"
     
-    def run(self):
-        self.status("Running...")
-        for i in range(5):
-            for c in "abc":
-                self.status("Performing step %d%s)",i+1,c)
-            self.increment()
-        self.status("Done in only 5 steps.")
-        
 
 class Case(TestCase):
 
     verbosity=1
     
     def test01(self):
-        syscon.runTask(TestTask())
+
+        def func(task):
+            task.session.notice("Running...")
+            for i in range(5):
+                for c in "abc":
+                    task.session.notice("Performing step %d%s)",i+1,c)
+                task.increment()
+            task.session.notice("Done in only 5 steps.")
+
+        syscon.loop(func,"Testing uncomplete tasks",10)
+        
+
+        
+        #syscon.runTask(TestTask())
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""
@@ -58,27 +64,19 @@ Running...
 Performing step 1a)
 Performing step 1b)
 Performing step 1c)
-Performing step 1c)
 Performing step 2a)
 Performing step 2b)
-Performing step 2c)
 Performing step 2c)
 Performing step 3a)
 Performing step 3b)
 Performing step 3c)
-Performing step 3c)
 Performing step 4a)
 Performing step 4b)
-Performing step 4c)
 Performing step 4c)
 Performing step 5a)
 Performing step 5b)
 Performing step 5c)
-Performing step 5c)
 Done in only 5 steps.
-Done in only 5 steps.
-0 warnings
-0 errors
 """)
 ##         self.assertEquivalent(s,"""
 ## Testing uncomplete tasks

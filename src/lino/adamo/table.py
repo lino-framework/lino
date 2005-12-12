@@ -501,21 +501,73 @@ from lino.adamo.datatypes import TIME, DURATION
 from lino.adamo.exceptions import DataVeto, DatabaseError
 #from lino.ui import console
 from lino.tools import dbfreader
-from lino.console.task import Task
+#from lino.console.task import Task
+from lino.console.task import Job
 
-class DbfMirrorLoader(Task):
+
+#class DbfMirrorLoader(Task):
+class DbfMirrorLoader(Job):
 
     tableClass = NotImplementedError  # subclass of adamo.tables.Table
     tableName = NotImplementedError   # name of external .DBF file
 
     def __init__(self,dbfpath=".",severe=True):
-        Task.__init__(self)
         self.dbfpath = dbfpath
         self.severe=severe
+        # self.label="Loading "+ self.sourceFilename()
+        # Task.__init__(self,"Loading "+ self.sourceFilename())
         
     def getLabel(self):
         return "Loading "+ self.sourceFilename()
     
+    #def load(self,sess,store):
+    def run(self,sess):
+        store=sess.db.getStore(self.tableClass)
+        # task.setLabel("Loading "+ self.sourceFilename())
+        if self.mtime() <= store.mtime():
+            sess.debug("No need to load %s.",self.sourceFilename())
+            return
+
+        f = dbfreader.DBFFile(self.sourceFilename(),codepage="cp850")
+        f.open()
+        #task.setMaxVal(len(f))
+        def looper(task):
+            q=store.query(sess,"*")
+            q.zap()
+            for dbfrow in f:
+                task.increment()
+                if self.severe:
+                    self.appendFromDBF(q,dbfrow)
+                else:
+                    try:
+                        self.appendFromDBF(q,dbfrow)
+                    except DataVeto,e:
+                        sess.error(str(e))
+                    except DatabaseError,e:
+                        sess.error(str(e))
+                    except UnicodeError,e:
+                        raise
+                    except ValueError,e:
+                        sess.error(str(e))
+                    except Exception,e:
+                        if str(e).startswith(
+                            "'ascii' codec can't encode character"):
+                            raise
+                        sess.error(repr(e))
+            q.commit()
+            
+        sess.loop(looper,
+                  "Loading "+ self.sourceFilename(),
+                  maxval=len(f))
+        f.close()
+
+    def sourceFilename(self):
+        return os.path.join(self.dbfpath, self.tableName+".DBF")
+        
+    def mtime(self):
+        return os.stat(self.sourceFilename()).st_mtime
+
+
     def dbfstring(self,s):
         s=s.strip()
         if len(s) == 0:
@@ -541,51 +593,4 @@ class DbfMirrorLoader(Task):
         if s == "X":
             return None
         return datatypes.DURATION.parse(s.replace(':','.'))
-
-    #def load(self,sess,store):
-    def run(self):
-        sess=self.session
-        store=sess.db.getStore(self.tableClass)
-        if self.mtime() <= store.mtime():
-            sess.debug("No need to load %s.",self.sourceFilename())
-            return
-        
-        f = dbfreader.DBFFile(self.sourceFilename(),
-                              codepage="cp850")
-        f.open()
-        self.setMaxVal(len(f))
-        
-        q=store.query(sess,"*")
-        q.zap()
-        for dbfrow in f:
-            self.increment()
-            if self.severe:
-                self.appendFromDBF(q,dbfrow)
-            else:
-                try:
-                    self.appendFromDBF(q,dbfrow)
-                except DataVeto,e:
-                    self.error(str(e))
-                except DatabaseError,e:
-                    self.error(str(e))
-                except UnicodeError,e:
-                    raise
-                except ValueError,e:
-                    self.error(str(e))
-                    #job.error(str(e))
-                except Exception,e:
-                    if str(e).startswith(
-                        "'ascii' codec can't encode character"):
-                        raise
-                    self.error(repr(e))
-        #self.done()
-        f.close()
-        q.commit()
-
-    def sourceFilename(self):
-        return os.path.join(self.dbfpath, self.tableName+".DBF")
-        
-    def mtime(self):
-        return os.stat(self.sourceFilename()).st_mtime
-
 

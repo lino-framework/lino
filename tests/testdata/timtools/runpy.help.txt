@@ -1,6 +1,6 @@
-usage: lino sync [options] SRC DEST
+usage: runpy [options] PYFILE
 
-where SRC and DEST are two directories to be synchronized.
+where PYFILE is a Python script to execute.
 options:
   -h, --help            show this help message and exit
   -v, --verbose         increase verbosity
@@ -8,6 +8,3 @@ options:
   -b, --batch           not interactive (don't ask anything)
   -lLOGFILE, --logfile=LOGFILE
                         log a report to FILE
-  -u, --unsafely        skip safety loop
-  -r, --recurse         recurse into subdirs
-  -p, --progress        show progress bar

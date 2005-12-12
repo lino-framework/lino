@@ -33,10 +33,15 @@ from lino.console.console import CaptureConsole
 from lino.forms.testkit import Toolkit
 
 
-TESTDATA = os.path.join(os.path.dirname(__file__),
-                        '..','..','..','tests','testdata')
+TESTDATA = os.path.normpath( os.path.join(
+    os.path.dirname(__file__),
+    '..','..','..','tests','testdata')
 
-TESTDATA=os.path.normpath(TESTDATA)
+DOCROOT = os.path.normpath( os.path.join(
+    os.path.dirname(__file__),
+    '..','..','..','docs'))
+
+
 
 ## class TestConsole(console.CaptureConsole):
 ##     pass

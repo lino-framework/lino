@@ -20,9 +20,11 @@
 import os
 
 from lino.adamo.ddl import *
+from lino.forms.session import Session
 from lino.apps.keeper.populate import VolumeVisitor, read_content
 
 from lupy.index.documentwriter import standardTokenizer
+
 
 class Volume(StoredDataRow):
     tableName="Volumes"
@@ -51,7 +53,8 @@ class Volume(StoredDataRow):
         return self.name
         
     def load(self,sess):
-        sess.runTask(VolumeVisitor(self))
+        vv=VolumeVisitor(self)
+        sess.loop(vv.looper,"Loading %s" % self.name)
 
     def delete(self):
         self.directories.deleteAll()
@@ -134,6 +137,10 @@ meta
         return os.path.join(self.dir.path(),self.name)
 
     def readTimeStamp(self,sess,fullname):
+        assert isinstance(sess,Session), \
+               "%s is not a Session" % sess.__class__
+        #assert sess.__class__.__name__ == 'Session', \
+        #       "%s is not a Session" % sess.__class__
         #assert fullname == self.path(), \
         #       "%r != %r" % (fullname,self.path())
         try:

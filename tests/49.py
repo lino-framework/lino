@@ -19,7 +19,7 @@
 import os
 
 #from lino.misc.tsttools import TestCase, main, catch_output
-from lino.misc.tsttools import TestCase, main, TESTDATA
+from lino.misc.tsttools import TestCase, main, DOCROOT
 from lino.misc.my_import import my_import
 from lino.apps import timtools
 
@@ -34,7 +34,7 @@ class Case(TestCase):
             cmd="lino "+script+" --help"
             fd=os.popen(cmd,"r")
             observed=fd.read()
-            fn=os.path.join(TESTDATA,"timtools",script)+".help.txt"
+            fn=os.path.join(DOCROOT,"help",script)+".help.txt"
             msg="output of `%s` differs from content of %s" % (cmd,fn)
             self.assertEqual(fd.close(),None,msg)
             expected=open(fn).read()

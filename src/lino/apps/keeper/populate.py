@@ -23,20 +23,20 @@ opj = os.path.join
 import codecs
 
 from lino.adamo.ddl import *
-from lino.console.task import Task
+#from lino.console.task import Task
 #from lino.tools.msword import MsWordDocument
 from lupy.index.documentwriter import standardTokenizer
 
 
-class VolumeVisitor(Task):
+class VolumeVisitor: #(Task):
     
     def __init__(self,vol):
-        Task.__init__(self)
+        #Task.__init__(self)
         self.volume = vol
 
-    def run(self):
+    def looper(self,task):
+        self.task=task
         from lino.apps.keeper import tables
-        #sess = self.job.session #
         sess=self.volume.getSession()
         self.ftypes = sess.query(tables.FileType)
         self.files = sess.query(tables.File)
@@ -46,14 +46,14 @@ class VolumeVisitor(Task):
         else:
             self.load(self.volume.path)
 
-    def getLabel(self):
-        return "Loading "+str(self.volume)
+##     def getLabel(self):
+##         return "Loading "+str(self.volume)
 
 ##     def prune_dir(self,dirname):
 ##         return dirname in ('.svn',)
             
     def freshen(self,fullname,shortname=None,dir=None):
-        self.status(fullname)
+        self.task.status(fullname)
         if self.volume.ignoreByName(shortname): return
         if os.path.isfile(fullname):
             row = self.files.peek(dir,shortname)
@@ -74,7 +74,7 @@ class VolumeVisitor(Task):
             self.error("%s : no such file or directory",fullname)
 
     def load(self,fullname,shortname=None,dir=None):
-        self.status(fullname)
+        self.task.status(fullname)
         if self.volume.ignoreByName(shortname): return
         if os.path.isfile(fullname):
             #if self.reloading:
@@ -84,7 +84,7 @@ class VolumeVisitor(Task):
             #if row is None:
             row = self.files.appendRow(name=shortname,dir=dir)
             #self.visit_file(row,fullname)
-            row.readTimeStamp(self,fullname)
+            row.readTimeStamp(self.task.session,fullname)
         elif os.path.isdir(fullname):
             #print "findone(",dict(parent=dir,name=shortname),")"
             #if self.reloading:
@@ -108,14 +108,15 @@ class VolumeVisitor(Task):
 ##             self.visit(os.path.join(fullname,fn), fn, dirRow)
         
 
-class FileVisitor(Task):
-    
+class FileVisitor: # (Task):
+    # used?
     def __init__(self,vol):
-        Task.__init__(self)
+        #Task.__init__(self)
         self.volume = vol
         self.encodingGuesser = EncodingGuesser()
 
-    def run(self):
+    def looper(self,task):
+        self.task=task
         sess = self.volume.getSession()
         from lino.apps.keeper import tables 
         self.ftypes = sess.query(tables.FileType)
@@ -128,14 +129,14 @@ class FileVisitor(Task):
         #    row.delete()
         self.visit(self.volume.path,"")
 
-    def getLabel(self):
-        return "Loading "+self.volume.getLabel()
+##     def getLabel(self):
+##         return "Loading "+self.volume.getLabel()
 
     def visit_file(self,fileRow,name):
         base,ext = os.path.splitext(name)
         #
         if ext.lower() == ".txt":
-            self.status(name)
+            self.task.status(name)
             s = open(name).read()
             coding = self.encodingGuesser.guess(name,s)
             self.status("%s: %s", name,coding)

@@ -76,8 +76,8 @@ test:timtools       |diag.help.txt     |371     |X    |43 Occurences
 test:               |cp1252a.txt       |372     |X    |53 Occurences  
 test:               |cp850a.txt        |372     |X    |53 Occurences  
 test:timtools       |openurl.help.txt  |384     |X    |47 Occurences  
-test:timtools       |sync.help.txt     |489     |X    |62 Occurences  
 test:               |5.pds             |500     |X    |0 Occurences   
+test:timtools       |sync.help.txt     |525     |X    |64 Occurences  
 test:timtools       |prn2pdf.help.txt  |558     |X    |71 Occurences  
 test:timtools       |pds2pdf.help.txt  |643     |X    |84 Occurences  
 test:timtools       |openmail.help.txt |644     |X    |88 Occurences  
@@ -105,10 +105,6 @@ test:               |eupen.pdf         |232672  |X    |799 Occurences
         sess.showForm(ctrl)
         ctrl.searchString.setValue("lino")
         ctrl.go.click()
-        
-##         app.showSearchForm(sess)
-##         sess._activeForm.entries.searchString.setValue("lino")
-##         sess._activeForm.buttons.search.click()
         
         s=self.getConsoleOutput()
         

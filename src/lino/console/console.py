@@ -40,9 +40,15 @@ except ImportError,e:
     sound = False
 
 
-class TaskAborted(Exception):
-    def __init__(self, task):
-        self.task = task
+class UserAborted(Exception):
+    pass
+
+class OperationFailed(Exception):
+    pass
+
+#class TaskAborted(Exception):
+#    def __init__(self, task):
+#        self.task = task
 
 #from lino.misc.jobs import JobAborted, Job #, PurzelConsoleJob
 #from lino.forms.progresser import Progresser

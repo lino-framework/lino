@@ -22,5 +22,6 @@ def console_targets():
         #'pds2sxw', 'pds2sxc',
         'prn2pdf', 'prnprint',
         'sync', 'diag',
-        'openmail','openurl'
+        'openmail','openurl',
+        'runpy'
         ]

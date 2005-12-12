@@ -17,7 +17,8 @@ app=Pinboard()
 sess=app.quickStartup()
 sess.populate(MyPopulator())
 for lc in LOADERS:
-    sess.runTask(lc(loadfrom))
+    loader=lc(loadfrom)
+    sess.run(loader.run)
 gui.run(sess)
 
 
