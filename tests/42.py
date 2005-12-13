@@ -49,7 +49,7 @@ Directories (volume=testparent=None)
 ====================================
 id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
-1      |              |              |17 Files      |3 Directories
+1      |              |              |17 Files      |2 Directories
 """)
         q=sess.query(File,
                      orderBy="size",
@@ -72,18 +72,11 @@ test:webman         |1.txt             |138     |X    |19 Occurences
 test:2              |1.txt             |150     |X    |19 Occurences  
 test:webman         |index.txt         |182     |X    |15 Occurences  
 test:2              |index.txt         |193     |X    |21 Occurences  
-test:timtools       |diag.help.txt     |371     |X    |43 Occurences  
 test:               |cp1252a.txt       |372     |X    |53 Occurences  
 test:               |cp850a.txt        |372     |X    |53 Occurences  
-test:timtools       |openurl.help.txt  |384     |X    |47 Occurences  
 test:               |5.pds             |500     |X    |0 Occurences   
-test:timtools       |sync.help.txt     |525     |X    |64 Occurences  
-test:timtools       |prn2pdf.help.txt  |558     |X    |71 Occurences  
-test:timtools       |pds2pdf.help.txt  |643     |X    |84 Occurences  
-test:timtools       |openmail.help.txt |644     |X    |88 Occurences  
 test:               |5b.pds            |676     |X    |0 Occurences   
 test:textprinter    |5.PRN             |794     |X    |0 Occurences   
-test:timtools       |prnprint.help.txt |843     |X    |101 Occurences 
 test:               |5d.pds            |850     |X    |0 Occurences   
 test:webman         |init.wmi          |917     |X    |0 Occurences   
 test:2              |init.wmi          |975     |X    |0 Occurences   
@@ -103,7 +96,7 @@ test:               |eupen.pdf         |232672  |X    |799 Occurences
 
         ctrl=SearchFormCtrl()
         sess.showForm(ctrl)
-        ctrl.searchString.setValue("lino")
+        ctrl.searchString.setValue("Stadt")
         ctrl.go.click()
         
         s=self.getConsoleOutput()
@@ -114,34 +107,14 @@ Files where 'occurences' not empty
 ==================================
 name                |occurences     |content                            
 --------------------+---------------+-----------------------------------
-diag.help.txt       |1 Occurences   |usage: lino diag [options]  writes 
-                    |               |some diagnostics about your        
-                    |               |computer. options:   -h, --help    
+eupen.pdf           |8 Occurences   |Eupen aus Wikipedia, der freien    
+                    |               |Enzyklopädie Eupen ( altfranzösisch
+                    |               |Néau ) ist die "Hauptstadt" der    
                     |               |(...)                              
-openmail.help.txt   |1 Occurences   |usage: lino openmail FILE  Start   
-                    |               |the user's default mail client with
-                    |               |a ready-to-send message whose c    
-                    |               |(...)                              
-openurl.help.txt    |1 Occurences   |usage: lino openurl URL [URL...]   
-                    |               |Starts the default browser on the  
-                    |               |specified URL(s). options:   -h,   
-                    |               |(...)                              
-pds2pdf.help.txt    |1 Occurences   |usage: lino pds2pdf [options] FILE 
-                    |               |pds2pdf converts the Python        
-                    |               |Document Script FILE (extension    
-                    |               |`.pd (...)                         
-prn2pdf.help.txt    |1 Occurences   |usage: lino prn2pdf [options] FILE 
-                    |               |where FILE is the file to be       
-                    |               |converted to a pdf file. It may con
-                    |               |(...)                              
-prnprint.help.txt   |2 Occurences   |usage: lino prnprint [options] FILE
-                    |               |[FILE ...]  where FILE is a plain  
-                    |               |text file to be printed on the     
-                    |               |(...)                              
-sync.help.txt       |1 Occurences   |usage: lino sync [options] SRC DEST
-                    |               |where SRC and DEST are two         
-                    |               |directories to be synchronized.    
-                    |               |opti (...)                         
+jona.txt            |8 Occurences   |# source: http://theol.uibk.ac.at/l
+                    |               |eseraum/bibel/jona1.html  Die      
+                    |               |Berufung Jonas: 1,1- 2             
+                    |               |Jona 1,1         (...)             
         """)
         sess.shutdown()
         

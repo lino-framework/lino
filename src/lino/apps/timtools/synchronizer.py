@@ -88,8 +88,8 @@ itr("Found %d files.",de="%d Dateien gefunden.")
 itr("Overwrite newer target %s",
     de=u"Jüngere Zieldatei %s überschreiben")
 itr("%s is up-to-date",de="%s ist unverändert")
-itr("remove directory %s", de=u"Lösche Ordner %s")
-itr("remove file %s",de=u"Lösche Datei %s")
+itr("remove directory %s", de=u"Ordner %s löschen")
+itr("remove file %s",de=u"Datei %s löschen")
 itr("create directory %s",de="Erstelle Ordner %s")
 itr("copy file %s to %s",de=u"Kopiere Datei %s nach %s")
 

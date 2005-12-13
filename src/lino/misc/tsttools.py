@@ -35,7 +35,7 @@ from lino.forms.testkit import Toolkit
 
 TESTDATA = os.path.normpath( os.path.join(
     os.path.dirname(__file__),
-    '..','..','..','tests','testdata')
+    '..','..','..','tests','testdata'))
 
 DOCROOT = os.path.normpath( os.path.join(
     os.path.dirname(__file__),

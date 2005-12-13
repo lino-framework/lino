@@ -153,7 +153,9 @@ meta
         if self.mtime == mt and self.size == sz:
             return
         self.lock()
-        self.content=read_content(sess,self,fullname)
+        s=read_content(sess,self,fullname)
+        if s and len(s.strip()) > 0: 
+            self.content=s
         self.mtime = mt
         self.size=sz
         self.mustParse=True
