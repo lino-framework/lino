@@ -382,6 +382,8 @@ class EntryMixin:
 
 
     def store(self):
+        #type = self._type
+        #if isinstance(type,datatypes.StringType):
         if self.editor.IsModified():
             s = self.editor.GetValue()
             self.setValueFromEditor(s)

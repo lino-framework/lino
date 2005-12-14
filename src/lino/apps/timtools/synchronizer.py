@@ -169,6 +169,8 @@ class Synchronizer:
         #self.session=task.session
         #self.task=task
         self.maxval=0
+        for p in self.projects:
+            sess.notice(str(p))
         if showProgress:
             def f(task):
                 for prj in self.projects:
@@ -194,11 +196,14 @@ class Synchronizer:
                 return
             
                     
-        if self.count_newer > 0:
-            if not sess.confirm(
-                _("%d target files are NEWER! Are you sure?") \
-                % self.count_newer, default=False):
-                return
+            if self.count_newer > 0:
+                if not sess.confirm(
+                    _("%d target files are NEWER! Are you sure?") \
+                    % self.count_newer, default=False):
+                    return
+        else:
+            sess.notice(self.getSummary())
+            
 
 
         if not sess.confirm(_("Start?")):
@@ -240,7 +245,8 @@ class Synchronizer:
 
     def getSummary(self):
         l=[]
-        l.append( _("%d files up-to-date") % self.count_same)
+        if self.count_same:
+            l.append( _("%d files up-to-date") % self.count_same)
         if self.count_delete_file or self.count_delete_dir:
             s = _("%d files and %d directories ")
             if self.simulate:
@@ -309,6 +315,11 @@ class SyncProject:
                 n += len(files)
             return n
         return len(os.listdir(self.src))
+
+    def __str__(self):
+        s="sync '"+self.src+"' '"+self.target+"'"
+        if self.recurse: s += " -r"
+        return s
 
     def doit(self,task):
         self.task=task
@@ -462,7 +473,7 @@ class SyncProject:
         self.job.done_delete_dir += 1
             
     def delete_file(self,name):
-        self.task.session.notice(_("remove file %s") % name)
+        self.task.session.verbose(_("remove file %s") % name)
         if self.job.simulate:
             self.job.count_delete_file += 1
             return
