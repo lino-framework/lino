@@ -29,7 +29,7 @@ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 __url__ = "http://lino.berlios.de"
 
 __copyright__ = """\
-Copyright (c) 2002-2005 Luc Saffre.
+Copyright (c) 2002-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information.""" 

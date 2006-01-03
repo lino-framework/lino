@@ -31,12 +31,16 @@ _toolkit = None
 
 
 
-def choose(wishlist="wx"):
+def choose(wishlist="tix"):
     global _toolkit
     
     assert _toolkit is None, "cannot choose a second time"
     
     for tkname in wishlist.split():
+        if tkname == "tix": 
+            from lino.forms.tix.tixform import Toolkit
+            _toolkit = Toolkit()
+            return _toolkit
         if tkname == "wx": 
             from lino.forms.wx.wxform import Toolkit
             _toolkit = Toolkit()

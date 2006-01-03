@@ -67,6 +67,13 @@ write to SPOOLFILE rather than really printing.""",
                           type="string",
                           dest="spoolFile",
                           default=None)
+        
+        parser.add_option(
+            "-u", "--useWorldTransform",
+            help="use SetWorldTransform() to implement landscape",
+            action="store_true",
+            dest="useWorldTransform",
+            default=False)
     
     def run(self,sess):
         if len(self.args) == 0:
@@ -78,6 +85,7 @@ write to SPOOLFILE rather than really printing.""",
                 d = winprn.Win32TextPrinter(
                     self.options.printerName,
                     self.options.spoolFile,
+                    useWorldTransform=self.options.useWorldTransform,
                     coding=sys.stdin.encoding)
                     #charset=winprn.OEM_CHARSET)
                 d.readfile(inputfile)

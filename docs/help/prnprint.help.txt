@@ -16,3 +16,5 @@ options:
                         print NUM copies.
   -oSPOOLFILE, --output=SPOOLFILE
                         write to SPOOLFILE rather than really printing.
+  -u, --useWorldTransform
+                        use SetWorldTransform() to implement landscape

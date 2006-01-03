@@ -17,17 +17,17 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import wx
+import Tkinter
+#from Tkconstants import *
+import tkSimpleDialog
+
 
 #from lino.ui import console
 
 from lino.adamo import datatypes
-#from lino.adamo.datatypes import MEMO
 from lino.forms import base, gui
-from lino.forms.wx import wxgrid
-#from lino.console import syscon
-#from lino.forms.wx.showevents import showEvents
-#from lino.misc import jobs
+#from lino.forms.tix import tixgrid
+
 
 STRETCH = 1
 DONTSTRETCH=0
@@ -35,7 +35,7 @@ DONTSTRETCH=0
 BORDER=10
 NOBORDER=0
 
-ENTRY_DOC_FONT = wx.SMALL_FONT
+#ENTRY_DOC_FONT = wx.SMALL_FONT
 ENTRY_PANEL_BACKGROUND = None
 ENTRY_LABEL_BACKGROUND = None
 #ENTRY_PANEL_BACKGROUND = wx.BLUE
@@ -44,76 +44,22 @@ ENTRY_LABEL_BACKGROUND = None
 from textwrap import TextWrapper
 docWrapper = TextWrapper(30)
 
-
-def _setEditorSize(editor,type):
-
-    #print type
-    #LINEHEIGHT = 10
-    #CHARWIDTH = 10
-        
-    #CHARWIDTH = LINEHEIGHT = editor.GetFont().GetPointSize()
-    #CHARWIDTH, LINEHEIGHT = editor.GetTextExtent("M")
-    #print editor.GetFullTextExtent("M"), editor.GetTextExtent("M")
-    #print editor.GetBestSize()
+def menulabel(lbl):
+    underline=lbl.index('&')
+    lbl=lbl.replace('&','')
+    return (lbl,underline)
     
-    #CHARWIDTH *= 2
-        
-    #editor.SetMaxSize( (type.maxWidth*CHARWIDTH,
-    #                    type.maxHeight*LINEHEIGHT) )
-    #editor.SetMinSize( (type.minWidth*CHARWIDTH,
-    #                    type.minHeight*LINEHEIGHT) )
-    
-    editor.SetMinSize(editor.GetBestSize())
 
-
-class EventCaller:
-    def __init__(self,meth,*args,**kw):
-        self.meth = meth
-        self.args = args
-        self.kw = kw
-    def __call__(self,event):
-        return self.meth(*self.args, **self.kw)
-
-
-## class EntryValidator(wx.PyValidator):
-    
-##     def __init__(self,entry):
-##         wx.PyValidator.__init__(self)
-##         self._entry = entry
-        
-##     def Clone(self):
-##         print "Clone"
-##         return self.__class__(self._entry)
-
-##     def TransferToWindow(self):
-##         s = self._entry.getValue()
-##         self.GetWindow().SetValue(s)
-##         return True
-
-##     def TransferFromWindow( self ): 
-##         s = self.GetWindow().GetValue()
-##         self._entry.setValue(s)
-##         return True     
-
-            
-## class Component:
-    
-##     def __repr__(self):
-##         return "%s %s at %s" % (
-##             self.getName(),
-##             repr(self.wxctrl.GetSize()),
-##             repr(self.wxctrl.GetPosition()))
-        
 
 class Label(base.Label):
     
-    def setup(self,panel,box):
+    def setupTkinter(self,parent):
         text = self.getLabel()
         if self.getDoc() is not None:
             text += '\n' + self.getDoc()
-        ctrl = wx.StaticText(panel,-1, text)
-        box.Add(ctrl, DONTSTRETCH, wx.EXPAND|wx.ALL, BORDER)
-        self.wxctrl = ctrl
+        ctrl = Tkinter.Label(parent, text=text)
+        ctrl.pack()
+        self.tixctrl = ctrl
                 
 class Button(base.Button):
     
@@ -123,39 +69,41 @@ class Button(base.Button):
 ##             repr(self.wxctrl.GetSize()),
 ##             repr(self.wxctrl.GetPosition()))
         
-    def setup(self,parentCtrl,box):
-        parentFormCtrl = self.getForm().wxctrl
-        #winId = wx.NewId()
-        btn = wx.Button(parentCtrl,-1,self.getLabel(),
-                        wx.DefaultPosition,
-                        wx.DefaultSize)
-        #btn.SetBackgroundColour('YELLOW')
-        parentFormCtrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
+    def setupTkinter(self,parentCtrl):
+        #parentFormCtrl = self.getForm().tixctrl
+        lbl,underline=menulabel(self.getLabel())
+        btn = Tkinter.Button(parentCtrl,
+                             text=lbl,underline=underline,
+                             command=self.click)
         if self.doc is not None:
             btn.SetToolTipString(self.doc)
 
-        box.Add(btn,DONTSTRETCH,0,NOBORDER) #, 0, wx.CENTER,10)
-        self.wxctrl = btn
+        btn.pack()
+        self.tixctrl = btn
 
     def setFocus(self):
-        self.wxctrl.SetFocus()
+        self.tixctrl.SetFocus()
 
 class DataGrid(base.DataGrid):
     
-    def setup(self,parent,box):
-        self.wxctrl = wxgrid.DataGridCtrl(parent,self)
-        box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
+    def setupTkinter(self,parent):
+        ctrl = Tix.TList(parent,exportselection=0,
+                         selectmode=Tkinter.EXTENDED)
+        
+        ctrl.pack(expand=Tkinter.ALL)
+        
+        self.tixctrl=ctrl
         
     def refresh(self):
-        self.wxctrl.refresh()
+        self.tixctrl.refresh()
 
     def getSelectedRows(self):
-        return self.wxctrl.getSelectedRows()
+        return self.tixctrl.curselection()
 
         
 class DataForm(base.DataForm):
     
-    def setup(self,parent,box):
+    def setupTkinter(self,parent):
         if False:
             frm = self.getForm()
 
@@ -215,7 +163,7 @@ class TextViewer(base.TextViewer):
         #self._buffer = ""
         #raise "it is no good idea to close this window"
     
-    def setup(self,parentCtrl,box):
+    def setupTkinter(self,parentCtrl):
         parentFormCtrl = self.getForm().wxctrl
         console = self.getForm().session.toolkit.console
         e = wx.TextCtrl(parentCtrl,-1,console.getConsoleOutput(),
@@ -245,31 +193,13 @@ class TextViewer(base.TextViewer):
     
 class Panel(base.Panel):
 
-##     def __repr__(self):
-##         s = "%s %s at %s (" % (
-##             self.getName(),
-##             repr(self.wxctrl.GetSize()),
-##             repr(self.wxctrl.GetPosition()))
-        
-##         for c in self._components:
-##             s += "\n- " + ("\n  ".join(repr(c).splitlines()))
-##         s += "\n)"
-##         return s
-    
-    def setup(self,parent,box):
-        mypanel = wx.Panel(parent,-1)
-        box.Add(mypanel, self.weight, wx.ALL|wx.EXPAND,NOBORDER)
-        if self.direction == self.VERTICAL:
-            mybox = wx.BoxSizer(wx.VERTICAL)
-        else:
-            mybox = wx.BoxSizer(wx.HORIZONTAL)
-        mypanel.SetSizer(mybox)
-        
-        self.mybox = mybox # store reference to avoid crash?
-        self.wxctrl = mypanel
+    def setupTkinter(self,parent):
+        self.tixctrl = Tkinter.Frame(parent)
         
         for c in self._components:
-            c.setup(mypanel,mybox)
+            c.setupTkinter(self.tixctrl)
+            
+        self.tixctrl.pack()
 
 
 def SwappedBoxSizer(box):
@@ -280,12 +210,11 @@ def SwappedBoxSizer(box):
 
 class EntryMixin:
 
-    def setup(self,panel,box):
+    def setupTkinter(self,panel):
         if self.hasLabel():
             mypanel = wx.Panel(panel,-1)
             mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
             box.Add(mypanel, self.weight, wx.EXPAND|wx.ALL,BORDER)
-            #hbox = wx.BoxSizer(wx.HORIZONTAL)
             hbox = SwappedBoxSizer(box)
             mypanel.SetSizer(hbox)
 
@@ -406,7 +335,7 @@ class Entry(EntryMixin,base.Entry):
 
 class DataEntry(EntryMixin,base.DataEntry):
     
-    def setup(self,panel,box):
+    def setupTkinter(self,panel):
         EntryMixin.setup(self,panel,box)
         self.editor.SetEditable(self.enabled)
         
@@ -424,124 +353,171 @@ class DataEntry(EntryMixin,base.DataEntry):
 ##     def status(self,msg,*args,**kw):
 ##         self._status = self.session.buildMessage(msg,*args,**kw)
 ##         self.refresh()
+
+class Dialog(tkSimpleDialog.Dialog):
+    pass
+
+class NonmodalDialog(Tkinter.Toplevel):
+    """
+    A non-modal tkSimpleDialog.Dialog.
+    Modified copy from tkSimpleDialog.py (Python 2.4):
+    - does not grab focus
+    - buttonbox is empty by default
+    """
+    def __init__(self, parent, title=None):
+        Tkinter.Toplevel.__init__(self, parent)
+        #self.transient(parent)
+
+        if title:
+            self.title(title)
+
+        self.parent = parent
+        self.result=None
+
+        body = Tkinter.Frame(self)
+        self.initial_focus = self.body(body)
+        body.pack(padx=5, pady=5)
+
+        self.buttonbox()
+
+        if not self.initial_focus:
+            self.initial_focus = self
+
+        self.protocol("WM_DELETE_WINDOW", self.cancel)
+
+        if self.parent is not None:
+            self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
+                                      parent.winfo_rooty()+50))
+
+        # self.initial_focus.focus_set()
+
+        # self.mainloop()
+
+    def buttonbox(self):
+        pass
     
+    def destroy(self):
+        '''Destroy the window'''
+        self.initial_focus = None
+        Tkinter.Toplevel.destroy(self)
+
+    def cancel(self, event=None):
+        # put focus back to the parent window
+        if self.parent is not None:
+            self.parent.focus_set()
+        self.destroy()
+
+    def body(self, master):
+        '''create dialog body.
+
+        return widget that should have initial focus.
+        This method should be overridden, and is called
+        by the __init__ method.
+        '''
+        pass
         
 
 class Form(base.Form):
 
-##     def afterShow(self):
-##         console.debug(repr(self.mainComp))
-##         #for ctrl in self._wxFrame.GetChildren():
-##         #    print repr(ctrl)
-##             #print ctrl.GetSize()
-##             #print ctrl.GetPosition()
-##         if self._parent is None:
-##             self.app.SetTopWindow(self.wxctrl)
-##             self.app.MainLoop()
 
     def __init__(self,*args,**kw):
-        #self.progressDialog = None
-        self.wxctrl = None
+        self.tixctrl = None
         base.Form.__init__(self,*args,**kw)
 
 
     def setParent(self,parent):
-        assert self.wxctrl is None
+        assert self.tixctrl is None
         base.Form.setParent(self,parent)
         
-##     def job(self,*args,**kw):
-##         job = jobs.Job()
-##         job.init(self,*args,**kw)
-##         return job
     
-    def setup(self):
-        assert self.wxctrl is None
-        base.Form.setup(self)
-        #self.setupMenu()
+    def setupTkinter(self):
+        assert self.tixctrl is None
         if self._parent is None:
-            #self.app = WxApp()
-            wxparent = None
+            parent = None
         else:
-            #self.app = self._parent.app
-            wxparent = self._parent.wxctrl
-            
-        #self.dying = False
-        
+            parent = self._parent.tixctrl
+
         if self.modal:
-            self.wxctrl = wx.Dialog(wxparent,-1,self.getLabel(),
-                                    style=wx.DEFAULT_FRAME_STYLE|
-                                    wx.NO_FULL_REPAINT_ON_RESIZE)
+            ctrl = Dialog(parent,title=self.getLabel())
         else:
-            self.wxctrl = wx.Frame(wxparent,-1,self.getLabel(),
-                                   style=wx.DEFAULT_FRAME_STYLE|
-                                   wx.NO_FULL_REPAINT_ON_RESIZE|
-                                   wx.TAB_TRAVERSAL)
-                                   
-            self.wxctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
-            
-            if self.menuBar is not None:
-                wxMenuBar = wx.MenuBar()
-                for mnu in self.menuBar.menus:
-                    wxm = self._createMenuWidget(mnu)
-                    wxMenuBar.Append(wxm,mnu.getLabel())
+            ctrl = NonmodalDialog(parent,
+                                  title=self.getLabel())
 
-                self.wxctrl.SetMenuBar(wxMenuBar)
+        #self.tixctrl.title(self.getLabel())
+        
+        #print ctrl.__class__,'"%s"'%self.getLabel()
+        
+        if self.menuBar is not None:
+            mbar = Tkinter.Menu(ctrl)
+            ctrl.config(menu=mbar)
             
-        self.wxctrl.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
-        self.wxctrl.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+            for mnu in self.menuBar.menus:
+                self._createMenuWidget(mbar,mnu)
 
-        wx.EVT_CHAR(self.wxctrl, self.OnChar)
-        wx.EVT_IDLE(self.wxctrl, self.OnIdle)
+        self.tixctrl=ctrl
+        
+        self.mainComp.setupTkinter(ctrl)
+        
+        
+        #self.tixctrl.size(fill=BOTH,expand=1) 
+            
+        #self.wxctrl.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
+        #self.wxctrl.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+
+        #wx.EVT_CHAR(self.wxctrl, self.OnChar)
+        #wx.EVT_IDLE(self.wxctrl, self.OnIdle)
         #wx.EVT_SIZE(self.wxctrl, self.OnSize)
-        wx.EVT_CLOSE(self.wxctrl, self.OnCloseWindow)
+        #wx.EVT_CLOSE(self.wxctrl, self.OnCloseWindow)
         #wx.EVT_ICONIZE(self.wxctrl, self.OnIconfiy)
         #wx.EVT_MAXIMIZE(self.wxctrl, self.OnMaximize)
 
         
         #self.SetBackgroundColour(wx.RED)
         
-        mainBox = wx.BoxSizer(wx.VERTICAL)
+        #mainBox = wx.BoxSizer(wx.VERTICAL)
+        #mainBox=None
         
-        self.mainComp.setup(self.wxctrl,mainBox)
         
-        if self.defaultButton is not None:
-            self.defaultButton.wxctrl.SetDefault()
+        #if self.defaultButton is not None:
+        #    self.defaultButton.wxctrl.SetDefault()
 
-        self.wxctrl.SetSizerAndFit(mainBox)
+        #self.wxctrl.SetSizerAndFit(mainBox)
+        
         #self.mainBox = mainBox
         #self.wxctrl.SetAutoLayout(True) 
         #self.wxctrl.Layout()
 
-        if self.halign is gui.CENTER:
-            self.wxctrl.Centre(wx.HORIZONTAL)
-        if self.valign is gui.CENTER:
-            self.wxctrl.Centre(wx.VERTICAL)
+##         if self.halign is gui.CENTER:
+##             self.wxctrl.Centre(wx.HORIZONTAL)
+##         if self.valign is gui.CENTER:
+##             self.wxctrl.Centre(wx.VERTICAL)
             
-        x,y = self.wxctrl.GetPositionTuple()
+##         x,y = self.wxctrl.GetPositionTuple()
 
-        if self.halign is gui.LEFT:
-            x = 0
-        elif self.halign is gui.RIGHT:
-            x = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_X)
-            x -= self.wxctrl.GetSizeTuple()[0]
+##         if self.halign is gui.LEFT:
+##             x = 0
+##         elif self.halign is gui.RIGHT:
+##             x = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_X)
+##             x -= self.wxctrl.GetSizeTuple()[0]
             
-        if self.valign is gui.TOP:
-            y = 0
-        elif self.halign is gui.RIGHT:
-            y = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_Y)
-            y -= self.wxctrl.GetSizeTuple()[1]
+##         if self.valign is gui.TOP:
+##             y = 0
+##         elif self.halign is gui.RIGHT:
+##             y = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_Y)
+##             y -= self.wxctrl.GetSizeTuple()[1]
 
-        self.wxctrl.SetPosition((x,y))
-
-
+##         self.wxctrl.SetPosition((x,y))
 
 
-    def _createMenuWidget(self,mnu):
-        wxMenu = wx.Menu()
+
+    def _createMenuWidget(self,mbar,mnu):
+        tixMenu = Tkinter.Menu(mbar)
+        lbl,underline=menulabel(mnu.getLabel())
+        mbar.add_cascade(label=lbl,menu=tixMenu,
+                         underline=underline)
         for mi in mnu.items:
-            #print repr(mi.getLabel())
-            #"%s must be a String" % repr(mi.getLabel())
-            winId = wx.NewId()
+            lbl=mi.getLabel()
+            
             doc = mi.getDoc()
             if doc is None:
                 doc=""
@@ -549,17 +525,23 @@ class Form(base.Form):
             lbl = mi.getLabel()
             if mi.accel is not None:
                 lbl += "\t" + mi.accel
-            wxMenu.Append(winId,lbl,doc)
-            wx.EVT_MENU(self.wxctrl, winId, EventCaller(mi.click))
-        return wxMenu
+                
+            lbl,underline=menulabel(lbl)
+            #underline=lbl.index('&')
+            #lbl=lbl.replace('&','')
+            tixMenu.add_command(label=lbl,
+                                command=mi.click,
+                                underline=underline)
+                
+
 
     
     def close(self):
         if self.isShown():
-            self.wxctrl.Close()
+            self.tixctrl.destroy()
 
     def isShown(self):
-        return (self.wxctrl is not None)
+        return (self.tixctrl is not None)
 
 
     def OnCloseWindow(self, event):
@@ -572,67 +554,18 @@ class Form(base.Form):
         #if hasattr(self, "tbicon"):
         #   del self.tbicon
         self.onClose()
-        self.wxctrl.Destroy()
-        self.wxctrl = None
-
-    def OnKillFocus(self,evt):
-        pass
-        #self.session.toolkit._activeForm = self._parent
-        
-    def OnSetFocus(self,evt):
-        self.session.setActiveForm(self)
-
-
-    def OnChar(self, evt):
-        self.session.debug("OnChar "+str(evt))
-
-
-    def OnIdle(self, evt):
-        self.onIdle()
-        #wx.LogMessage("OnIdle")
-        evt.Skip()
-
-##     def OnIconfiy(self, evt):
-##         wx.LogMessage("OnIconfiy")
-##         evt.Skip()
-
-##     def OnMaximize(self, evt):
-##         wx.LogMessage("OnMaximize")
-##         evt.Skip()
-        
-    def OnSize(self, evt):
-        wx.LogMessage("OnSize")
-        evt.Skip()
+        self.tixctrl.destroy()
+        self.tixctrl = None
 
     def refresh(self):
         base.Form.refresh(self)
-        self.wxctrl.Refresh()
+        self.tixctrl.refresh()
 
 
-class WxApp(wx.App):
-
-    def __init__(self,toolkit):
-        self.toolkit = toolkit
-        wx.App.__init__(self,0)
-
-
-    def OnInit(self):
-        
-        # wx.App.OnInit(self)        
-        # Notice that if you want to to use the command line
-        # processing provided by wxWidgets you have to call the base
-        # class version in the derived class OnInit().
-        
-        wx.InitAllImageHandlers()
-        #self.toolkit.init()
-        self.toolkit.showMainForm()
-        return True
-
-    def OnExit(self):
-        #center.shutdown()
-        pass
-
-
+#tx -> tix
+#Toolkit.wxapp -> root
+#.wxctrl -> tixctrl
+#Task.wxctrl -> tixMeter
 
 class Toolkit(base.Toolkit):
     labelFactory = Label
@@ -644,16 +577,11 @@ class Toolkit(base.Toolkit):
     dataGridFactory = DataGrid
     navigatorFactory = DataForm
     formFactory = Form
-    #jobFactory=jobs.Job
-    #progresserFactory=Progresser
     
     def __init__(self,*args,**kw):
         base.Toolkit.__init__(self,*args,**kw)
-        #self.consoleForm = None
-        #self._setup = False
-        #self._running = False
         self._session=None
-        self.wxapp = None
+        #self.root = None
         #self._activeForm=None
 
 
@@ -664,31 +592,29 @@ class Toolkit(base.Toolkit):
             base.Toolkit.showStatus(self,sess,msg)
             #syscon.status(msg,*args,**kw)
         else:
-            frm.wxctrl.SetStatusText(msg)
+            frm.tixctrl.SetStatusText(msg)
 
     def onTaskBegin(self,task):
-        #assert self.progressDialog is None
-        #print job
         assert task.session._activeForm is not None
         if task.session.statusMessage is None:
             stm=""
         else:
             stm=task.session.statusMessage
             
-        task.wxctrl = wx.ProgressDialog(
-            task.label,stm,
-            100,
-            task.session._activeForm.wxctrl,
-            wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
-        #return self.app.toolkit.console.onJobInit(job)
+        task.tixMeter = Tix.Meter(
+            task.session._activeForm.tixctrl,
+            label=task.label,
+            text=stm,
+            value=100)
+
 
     def onTaskStatus(self,task):
-        if task.wxctrl is None: return
+        if task.tixMeter is None: return
         pc = task.percentCompleted
         if pc is None: pc = 0
         msg=task.session.statusMessage
         if msg is None: msg=''
-        if not task.wxctrl.Update(pc,msg):
+        if not task.tixMeter.Update(value=pc,text=msg):
             task.requestAbort()
         
     def onTaskIncrement(self,task):
@@ -698,58 +624,18 @@ class Toolkit(base.Toolkit):
         self.run_awhile()
         
     def onTaskResume(self,task):
-        if task.wxctrl is None: return
-        task.wxctrl.Resume()
+        if task.tixMeter is None: return
+        task.tixMeter.Resume()
         
     def onTaskDone(self,task):
-        task.wxctrl.Update(100,'')
-        task.wxctrl.Destroy()
-        task.wxctrl = None
+        task.tixMeter.Update(value=100,text='')
+        #task.tixMeter.Destroy()
+        task.tixMeter = None
 
     def onTaskAbort(self,task,*args,**kw):
-        task.wxctrl.Destroy()
-        task.wxctrl = None
+        #task.wxctrl.Destroy()
+        task.tixMeter = None
 
-##     def onJobInit(self,job):
-##         #assert self.progressDialog is None
-##         #print job
-##         assert self._activeForm is not None
-##         job.wxctrl = wx.ProgressDialog(
-##             job.getLabel(),
-##             job.getStatus(),
-##             100,
-##             self._activeForm.wxctrl,
-##             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
-##         #return self.app.toolkit.console.onJobInit(job)
-
-##     def onJobRefresh(self,job):
-##         self.run_awhile()
-##         pc = job.pc
-##         if pc is None:
-##             pc = 0
-##         if job.wxctrl is None:
-##             return
-##         if not job.wxctrl.Update(pc,job.getStatus()):
-##             if job.confirmAbort():
-##                 raise jobs.JobAborted(job)
-##                 #job.abort()
-##             else:
-##                 job.wxctrl.Resume()
-
-##     def onJobDone(self,job,msg):
-##         if msg is None:
-##             msg=""
-##         job.wxctrl.Update(100,msg)
-##         job.wxctrl.Destroy()
-##         job.wxctrl = None
-##         #return self.app.toolkit.console.onJobDone(*args,**kw)
-
-##     def onJobAbort(self,job,*args,**kw):
-##         job.wxctrl.Destroy()
-##         job.wxctrl = None
-##         #return self.app.toolkit.console.onJobAbort(*args,**kw)
-
-    
             
     def running(self):
         #return self._running # self.wxapp is not None
@@ -757,18 +643,12 @@ class Toolkit(base.Toolkit):
 
     def run_awhile(self):
         assert self.running()
-        while self.wxapp.Pending():
-            self.wxapp.Dispatch()
+        pass
+        #while self.wxapp.Pending():
+        #    self.wxapp.Dispatch()
 
-            #print self.wxctrl.Yield(False)
-        #return self._abortRequested
-
-##     def setup(self):
-##         self._setup = True
-##         self.init()
-        
     def stopRunning(self):
-        wx.Exit()
+        Tkinter._tkroot.destroy()
         
     def run_forever(self,sess):
         #if not self._setup:
@@ -776,18 +656,19 @@ class Toolkit(base.Toolkit):
         assert not self.running()
         #self._running = True
         self._session=sess
-        self.wxapp = WxApp(self)
-        self.wxapp.MainLoop()
+        self.root = Tkinter.Tk()
+        self.root.title("console")
+        self.root.iconify()
+        self.showMainForm()
+        #self.root.mainloop()
+        Tkinter.mainloop()
 
     def showMainForm(self):
         self._session.showMainForm()
         #sess.db.app.showMainForm(sess)
 
     def showForm(self,frm):
-        if frm.modal:
-            frm.wxctrl.ShowModal()
-        else:
-            frm.wxctrl.Show()
+        frm.setupTkinter()
 
         
     def refreshForm(self,frm):

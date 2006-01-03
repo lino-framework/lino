@@ -30,7 +30,7 @@ import pywintypes
 
 from PIL import Image, ImageWin
 
-SUPPORT_LANDSCAPE = False
+#SUPPORT_LANDSCAPE = False
 
 """
 thanks to
@@ -173,6 +173,7 @@ class Win32TextPrinter(TextPrinter):
                  fontName="Courier New",
                  coding=sys.stdin.encoding,
                  jobName="Win32PrinterDocument",
+                 useWorldTransform=False,
                  **kw):
         
         TextPrinter.__init__(self,pageSize=A4,margin=5*mm,
@@ -189,6 +190,7 @@ class Win32TextPrinter(TextPrinter):
             pass
 
         self.font = None
+        self.useWorldTransform=useWorldTransform
         
         self.dc = win32ui.CreateDC()
         self.dc.CreatePrinterDC(printerName)
@@ -234,7 +236,7 @@ class Win32TextPrinter(TextPrinter):
             raise PrinterNotReady("StartDoc() failed")
         
         # using SetWorldTransform() requires advanced graphics mode
-        if SUPPORT_LANDSCAPE:
+        if self.useWorldTransform: #SUPPORT_LANDSCAPE:
             self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
         
         self.dc.SetMapMode(win32con.MM_TWIPS)
@@ -271,7 +273,7 @@ class Win32TextPrinter(TextPrinter):
             # landscape orientation
             # see http://lino.berlios.de/176.html
 
-            if SUPPORT_LANDSCAPE:
+            if self.useWorldTransform: # SUPPORT_LANDSCAPE:
                 r=0
                 # shifts to right:
                 #r=self.dc.SetWorldTransform(1,0, 0,1, 200,0)

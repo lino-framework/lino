@@ -685,7 +685,7 @@ class Form(Describable,MenuContainer):
         #self._parent = parent
 
     def setup(self):
-        pass
+        self.setupMenu()
 
     def show(self,modal=False):
         #self.session.notice("show(%s)",self.getLabel())
@@ -702,6 +702,7 @@ class Form(Describable,MenuContainer):
         self.modal = modal
         #self.session.debug("show(modal=%s) %s",modal,self.getLabel())
         self.setup()
+        #self.session.toolkit.setupForm(self)
         #self.session.debug(repr(self.mainComp))
         self.mainComp.onShow()
         self.onShow()
