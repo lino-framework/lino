@@ -98,33 +98,44 @@ where DIR (default .) is a directory with .jpg files to rename.
             dirs=self.args
 
         for dirname in dirs:
-            for root, dirs, files in os.walk(dirname):
-                filenames = {}
-                for name in files:
-                    base,ext = os.path.splitext(name)
-                    cv = self.converters.get(ext.lower(),None)
-                    if cv is not None:
-                        try:
-                            nfn=cv(root,name)
-                        except MyException,e:
-                            sess.warning(str(e))
+            self.walk(sess,dirname)
+            
+    def walk(self,sess,dirname):
+        for root, dirs, files in os.walk(dirname):
+            okay=True
+            filenames = {}
+            for name in files:
+                base,ext = os.path.splitext(name)
+                cv = self.converters.get(ext.lower(),None)
+                if cv is not None:
+                    try:
+                        nfn=cv(root,name)
+                    except MyException,e:
+                        sess.warning(str(e))
+                    else:
+                        if nfn is None: pass
+                        elif nfn == name: pass
+                        elif filenames.has_key(nfn):
+                            okay=False
+                            sess.warning(
+                                '%s/%s: duplicate time %s', \
+                                root,name,nfn)
                         else:
-                            if nfn is None: pass
-                            elif nfn == name: pass
-                            elif filenames.has_key(nfn):
-                                sess.warning(
-                                    '%s: duplicate time %s in directory %s' \
-                                    ,name,nfn,root)
-                            else:
-                                filenames[nfn] = name
-                                
-                for nfn,ofn in filenames.items():
-                    o=os.path.join(root,ofn)
-                    n=os.path.join(root,nfn)
-                    if self.options.simulate:
-                        sess.notice("Would rename %s to %s", o,n)
-                    elif sess.confirm("Rename %s to %s ?" % (o,n)):
-                        os.rename(o,n)
+                            filenames[nfn] = name
+            if not okay: return 
+            if not sess.confirm(
+                "Rename %d files in directory %s ?" % \
+                (len(filenames),root)):
+                return
+            
+            for nfn,ofn in filenames.items():
+                o=os.path.join(root,ofn)
+                n=os.path.join(root,nfn)
+                if self.options.simulate:
+                    sess.notice("Would rename %s to %s", o,n)
+                else:
+                    sess.notice("Rename %s to %s", o,n)
+                    os.rename(o,n)
                                    
 
 # lino.runscript expects a name consoleApplicationClass

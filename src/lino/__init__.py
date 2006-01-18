@@ -20,7 +20,7 @@ import os
 
 __docformat__ = 'reStructuredText'
 
-__micro__ = 14   # released 28.11.2005
+__micro__ = 15
 
 __version__ = "0.6.%d" % __micro__
 
