@@ -1,5 +1,5 @@
 #coding: iso-8859-1
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -28,7 +28,7 @@ from lino.reports.reports import DataReport
 
 class Pinboard(Schema):
     name="Lino/Pinboard"
-    years='2005'
+    years='2005-2006'
     author="Luc Saffre"
     
     

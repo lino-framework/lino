@@ -200,10 +200,6 @@ class DbSession(Session,Context):
         self._user = None
 
 
-    def showViewGrid(self,tc,*args,**kw):
-        rpt=self.getViewReport(tc,*args,**kw)
-        return self.showReport(rpt)
-    
     def getViewReport(self,tc,viewName="std",**kw):
         qry = self.query(tc)
         view=qry.getView(viewName)
@@ -211,6 +207,9 @@ class DbSession(Session,Context):
             assert not view.has_key('label')
             kw.update(view)
         return self.createDataReport(qry,**kw)
+
+    def createDataReport(self,qry,*args,**kw):
+        return DataReport(qry,*args,**kw)
 
 ##     def showDataGrid(self,ds,**kw):
 ##         rpt=DataReport(ds)
@@ -221,6 +220,10 @@ class DbSession(Session,Context):
 ##     def showTableGrid(self,tc,*args,**kw):
 ##         q = self.query(tc,*args,**kw)
 ##         return self.showDataGrid(q)
+    
+    def showViewGrid(self,tc,*args,**kw):
+        rpt=self.getViewReport(tc,*args,**kw)
+        return self.showReport(rpt)
     
     def showDataForm(self,rpt,**kw):
         rpt.showFormNavigator(self,**kw)
@@ -244,9 +247,6 @@ class DbSession(Session,Context):
 ##         #loader=lc(self,*args,**kw)
 ##         loader.run(self)
         
-
-    def createDataReport(self,qry,*args,**kw):
-        return DataReport(qry,*args,**kw)
 
     def showQuery(self,qry,*args,**kw):
         rpt=self.createDataReport(qry,*args,**kw)

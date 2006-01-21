@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -23,12 +23,8 @@ from optparse import OptionParser
 import textwrap
 
 import lino
-#from lino import __version__, __author__, __copyright__, __url__
 
-#from lino.console.console import CLI
 from lino.console import syscon
-
-#from lino.forms.session import Session
 
 
 class UsageError(Exception):
@@ -37,13 +33,6 @@ class ApplicationError(Exception):
     pass
 
 
-
-#from lino.misc.jobs import Task
-#from task import Task, BugDemo
-from task import BugDemo
-
-
-#class Application(CLI):
 class Application:
     
     name = None
@@ -125,20 +114,6 @@ class Application:
         return m
 
 
-##     def copyleft(self,name="Lino",
-##                  version=__version__,
-##                  years="2002-2005",
-##                  author=__author__):
-##     def copyleft(self):
-##         return """\
-## %s version %s.
-## Copyright (c) %s %s.
-## This software comes with ABSOLUTELY NO WARRANTY and is
-## distributed under the terms of the GNU General Public License.
-## See file COPYING.txt for more information.
-## """ % ( self.name, self.version, self.years, self.author)
-
-        
     def aboutString(self):
         if self.name is None:
             s = self.__class__.__name__
@@ -180,8 +155,11 @@ class Application:
             credits.append("Python Windows Extensions")
         
         if sys.modules.has_key('cherrypy'):
-            win32print = sys.modules['cherrypy']
+            cherrypy = sys.modules['cherrypy']
             credits.append("CherryPy " + cherrypy.__version__)
+
+        if sys.modules.has_key('PIL'):
+            credits.append("PIL")
 
         s += "\nCredits: " + "\n".join(
             textwrap.wrap(", ".join(credits),76))
