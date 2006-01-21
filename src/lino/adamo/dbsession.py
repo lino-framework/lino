@@ -69,6 +69,9 @@ class DbSession(Session,Context):
 
     def setDefaultLanguage(self):
         self.setBabelLangs(self.db.getDefaultLanguage())
+
+    def __str__(self):
+        return "%s on %s" % (self.user,self.db)
         
     def hasAuth(self,*args,**kw):
         return True
