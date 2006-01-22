@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -177,3 +177,5 @@ class PlainDocument(GenericDocument):
                 
 
 
+    def p(self,txt):
+        self.write(txt+"\n")

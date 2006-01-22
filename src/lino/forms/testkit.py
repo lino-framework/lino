@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -18,7 +18,6 @@
 
 
 from lino.forms import base
-#from lino.misc import jobs
 
 class Label(base.Label):
     pass
@@ -58,46 +57,43 @@ class Form(base.Form):
         self._isShown = False
         base.Form.__init__(self,*args,**kw)
 
-
-##     def job(self,*args,**kw):
-##         job = jobs.Job()
-##         job.init(self,*args,**kw)
-##         return job
     
     def status(self,msg,*args,**kw):
         self.app.toolkit.console.status(msg,*args,**kw)
 
 
-    def onJobInit(self,job):
-        pass
+##     def onJobInit(self,job):
+##         pass
 
 
-    def onJobRefresh(self,job):
-        pass
+##     def onJobRefresh(self,job):
+##         pass
 
-    def onJobDone(self,job,msg):
-        pass
+##     def onJobDone(self,job,msg):
+##         pass
 
-    def onJobAbort(self,*args,**kw):
-        pass
+##     def onJobAbort(self,*args,**kw):
+##         pass
 
     def isShown(self):
         return self._isShown
     
-            
-    def show(self,modal=False):
-        
-        if self.isShown():
-            raise InvalidRequestError("form is already open")
-
+    def onShow(self):
         self._isShown=True
             
-        self.modal = modal
-        #print "show(modal=%s) %s" % (modal, self.getLabel())
-        self.session.notice(
-            "show(modal=%s) %s", modal, self.getLabel())
-        self.session.notice(repr(self.mainComp))
-        self.onShow()
+##     def show(self,modal=False):
+        
+##         if self.isShown():
+##             raise InvalidRequestError("form is already open")
+
+##         self._isShown=True
+            
+##         self.modal = modal
+##         #print "show(modal=%s) %s" % (modal, self.getLabel())
+##         self.session.notice(
+##             "show(modal=%s) %s", modal, self.getLabel())
+##         self.session.notice(repr(self.mainComp))
+##         self.onShow()
 
 
 

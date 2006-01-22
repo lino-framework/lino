@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -27,6 +27,7 @@ from lino.misc.compat import *
 from lino.misc.etc import issequence
 
 from lino.adamo import datatypes
+from lino.adamo.row import DataRow
 
 from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField, \
      is_reserved
@@ -141,6 +142,8 @@ class QueryColumn:
         
     def extractCellValue(self,row):
         # overridden by BabelField and Detail
+        assert isinstance(row, DataRow),\
+            "%s.extractCellValue() : %r is not a DataRow" % (self,row)
         return row.getFieldValue(self.rowAttr.name)
 
 

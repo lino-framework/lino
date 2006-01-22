@@ -1,5 +1,5 @@
 #coding: iso-8859-1
-## Copyright 2004-2005 Luc Saffre 
+## Copyright 2004-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -600,7 +600,7 @@ class Win32TextPrinter(TextPrinter):
                       height=100)
         font = win32ui.CreateFont(fontDict)
         self.dc.SelectObject(font)
-        print "CreateFont(%r)" % fontDict
+        #print "CreateFont(%r)" % fontDict
         
         DELTA=10
         #print "org:", self.org

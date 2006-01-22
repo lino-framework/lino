@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,26 +17,29 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from cherrypy import cpg
+import cherrypy
+from HyperText.Documents import Document as HyperTextDocument
+from HyperText import HTML as html
 
 from lino.forms import base
-from lino.misc import jobs
+
+
+
 
 class Label(base.Label):
     pass
+    
                 
 class Button(base.Button):
     pass
     
+    
 class DataGrid(base.DataGrid):
     pass
         
-class DataNavigator(base.DataNavigator):
+class DataForm(base.DataForm):
     pass
         
-    def getStatus(self):
-        return "%d/%d" % (self.currentPos,len(self.ds))
-    
 
 class TextViewer(base.TextViewer):
 
@@ -44,58 +47,15 @@ class TextViewer(base.TextViewer):
         self.getForm().notice(s)
     
 class Panel(base.Panel):
-
     pass
+    #def render(self,doc):
+    #    pass
             
 class Entry(base.Entry):
     pass
 
 class DataEntry(base.DataEntry):
     pass
-
-
-
-class Page:
-    def __init__(self,app):
-        self._app = app
-
-    def header(self,title):
-        return '''
-            <html>
-            <head>
-                <title>%s</title>
-            <head>
-            <body>
-            <h2>%s</h2>
-        ''' % (title, title)
-
-    def footer(self):
-        return '''
-            </body>
-            </html>
-        '''
-
-    def index(self):
-        yield self.header(self._app.getLabel())
-        yield "Welcome. This ist the main page"
-        for mnu in self._app.
-        return '''
-            <p>
-            Isn't this exciting? There's
-            <a href="./another/">another page</a>, too!
-            </p>
-        '''
-
-    index.exposed = True
-    def default(self,mnu,cmd=None):
-        
-    default.exposed = True
-
-
-
-
-
-
 
 
 
@@ -109,10 +69,6 @@ class Form(base.Form):
         base.Form.__init__(self,*args,**kw)
 
 
-    def job(self,*args,**kw):
-        job = jobs.Job()
-        job.init(self,*args,**kw)
-        return job
     
     def status(self,msg,*args,**kw):
         self.app.toolkit.console.status(msg,*args,**kw)
@@ -133,21 +89,12 @@ class Form(base.Form):
 
     def isShown(self):
         return self._isShown
+
+    def close(self):
+        self.session.toolkit.closeForm(self)
+        base.Form.close(self)
     
             
-    def show(self,modal=False):
-        
-        if self.isShown():
-            raise InvalidRequestError("form is already open")
-
-        self._isShown=True
-            
-        self.modal = modal
-        print "show(modal=%s) %s" % (modal, self.getLabel())
-        self.notice("show(modal=%s) %s" % (modal, self.getLabel()))
-        self.notice(repr(self.mainComp))
-        self.onShow()
-
 
 
 class Toolkit(base.Toolkit):
@@ -158,12 +105,14 @@ class Toolkit(base.Toolkit):
     viewerFactory = TextViewer
     panelFactory = Panel
     dataGridFactory = DataGrid
-    navigatorFactory = DataNavigator
+    navigatorFactory = DataForm
     formFactory = Form
     
-    def __init__(self,*args,**kw):
-        base.Toolkit.__init__(self,*args,**kw)
+    def __init__(self,file=None,**kw):
+        base.Toolkit.__init__(self,**kw)
         self._running = False
+        self._formStack=[]
+        self.configFile=file
 
     def running(self):
         return self._running 
@@ -172,12 +121,143 @@ class Toolkit(base.Toolkit):
         assert self.running()
         pass
     
-    def run_forever(self):
+    def run_forever(self,sess):
         assert not self.running()
         self._running = True
-        self.init()
-        cpg.root = Page(self)
-        cpg.server.start()
+        cherrypy.root = Page(self,sess)
+        if self.configFile is not None:
+            cherrypy.config.update(file=self.configFile)
+        cherrypy.server.start()
         
+    def showForm(self,frm):
+        self._formStack.append(frm)
+
+    def closeForm(self,frm):
+        self._formStack.remove(frm)
+
+    
+
 ##     def addApplication(self,app):
 ##         base.Toolkit.addApplication(self,app)
+
+
+
+
+
+class Document(HyperTextDocument):
+    """
+    implements lino.gendoc.Document used e.g. by lino.reports.Report
+    """
+    def getLineWidth(self):
+        return 100
+    def getColumnSepWidth(self):
+        return 0
+
+    def p(self,txt):
+        self.append(html.P(txt))
+    
+    def renderLabel(self,lbl):
+        self.append(html.P(lbl.getLabel()))
+        
+    def renderButton(self,btn):
+        if btn.enabled:
+            self.append(html.A(btn.getLabel(),href=cherrypy.request.path+"/"+btn.name))
+        else:
+            self.append(btn.getLabel())
+            
+    def renderEntry(self,e):
+        if e.enabled:
+            self.p(e.name)
+        
+    def renderDataGrid(self,grid):
+        if grid.enabled:
+            self.report(grid.rpt)
+            
+    def report(self,rpt):
+        self.append(html.H2(rpt.getTitle()))
+        t=html.TABLE()
+        self.append(t)
+
+        tr=html.TR()
+        t.append(tr)
+        for col in rpt.columns:
+            tr.append(html.TH(col.getLabel()))
+
+        for row in rpt.rows(self):
+            tr=html.TR()
+            t.append(tr)
+            i=0
+            for col in rpt.columns:
+                tr.append( html.TD(
+                    self.cell2html(col.datacol,row.values[i])
+                    ))
+                i+=1
+
+        
+    def cell2html(self,col,value):
+        if value is None: return ""
+        return col.format(value)
+
+
+class Page:
+    def __init__(self,toolkit,dbsess):
+        self.dbsess = dbsess
+        self.toolkit=toolkit
+        self.dbsess.db.app.showMainForm(self.dbsess)
+        self.mainForm=self.toolkit._formStack.pop()
+
+
+    def default(self,*args,**kw):
+        frm=self.mainForm
+        if len(args) >= 2:
+            mnu=frm.menuBar.findMenu(args[0])
+            mi=mnu.findItem(args[1])
+            mi.click()
+            frm=self.toolkit._formStack[-1]
+        if len(args) >= 3:
+            m=getattr(frm,args[2])
+            m(*args[3:])
+            frm=self.toolkit._formStack[-1]
+            
+        title=str(frm.getLabel())
+        doc=Document(title=html.TITLE(title))
+        
+        div = html.DIV(klass="title")
+        doc.append(div)
+        div.append(html.H1(title))
+        
+        div = html.DIV(klass="menu")
+        doc.append(div)
+        
+        p = html.P("Menu:")
+        div.append(p)
+
+        if frm.menuBar is not None:
+            for mnu in frm.menuBar.menus:
+                p.append(html.BR())
+                p.append(html.A(mnu.getLabel(),href=mnu.name))
+                for mi in mnu.items:
+                    p.append(html.BR())
+                    p.append(" &middot; &nbsp;",
+                             html.A(mi.getLabel(),
+                                    href=mnu.name+"/"+mi.name))
+        frm.mainComp.render(doc)
+        #doc.append(html.HR())
+        #doc.append(html.P(self.dbsess.app.aboutString()))
+        #doc.append(html.P('args='+repr(args)))
+        #doc.append(html.P('kw='+repr(kw)))
+        #
+        div = html.DIV(klass="footer")
+        doc.append(div)
+        div.append(html.P("foo "+cherrypy.request.base + " bar"))
+        return str(doc)
+        
+    default.exposed = True
+
+        
+
+
+
+
+
+

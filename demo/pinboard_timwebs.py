@@ -19,6 +19,7 @@ sess.populate(MyPopulator())
 for lc in LOADERS:
     loader=lc(loadfrom)
     sess.run(loader.run)
+gui.choose("cherrypy")
 gui.run(sess)
 
 

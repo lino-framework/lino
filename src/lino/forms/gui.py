@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -54,6 +54,11 @@ def choose(wishlist="tix"):
             _toolkit = Toolkit()
             return _toolkit
         if tkname == "cherrypy": 
+            from lino.forms.cherrygui import Toolkit
+            _toolkit = Toolkit()
+            return _toolkit
+        
+        if tkname == "htmlgen":
             from lino.console.htmlgen_toolkit import Toolkit
             #from lino.forms.cherrypy import Toolkit
             _toolkit = Toolkit()

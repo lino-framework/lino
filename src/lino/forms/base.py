@@ -35,10 +35,12 @@ from lino.adamo.exceptions import InvalidRequestError
 class Component(Describable):
     def __init__(self,owner,
                  name=None,label=None,doc=None,
+                 enabled=True,
                  weight=0):
         Describable.__init__(self,None,name,label,doc)
         self.owner = owner
         self.weight=weight
+        self.enabled=enabled
 
     def __repr__(self):
         return self.getName()
@@ -58,9 +60,8 @@ class Component(Describable):
     def onShow(self):
         pass
     
-    def gendoc_render(self,doc):
-        pass
-    
+    def render(self,doc):
+        doc.p(self.getLabel())
         
 class Button(Component):
     def __init__(self,owner,name=None,action=None,*args,**kw):
@@ -95,6 +96,9 @@ class Button(Component):
                 self.getLabel(),frm.getLabel()))
         #except Exception,e:
         #    frm.error(str(e))
+        
+    def render(self,doc):
+        doc.renderButton(self)
 
 class TextViewer(Component):
     
@@ -133,6 +137,9 @@ class BaseEntry(Component):
     def format(self,v):
         "convert raw value to string"
         raise NotImplementedError
+
+    def render(self,doc):
+        doc.renderEntry(self)
     
     def parse(self,s):
         "convert the non-empty string to a raw value"
@@ -140,7 +147,6 @@ class BaseEntry(Component):
         
 class Entry(BaseEntry):
     def __init__(self,owner, name=None, type=None,
-                 enabled=True,
                  value=None,
                  *args,**kw):
 
@@ -150,8 +156,6 @@ class Entry(BaseEntry):
             type = STRING
             
         self._type = type
-        
-        self.enabled=enabled
         
         self.setValue(value)
 
@@ -220,15 +224,13 @@ class DataEntry(BaseEntry):
         self.enabled = self.col.canWrite(frm.getLeadRow())
         #self.refresh()
         
-    def gendoc_render(self,doc):
-        if self.enabled:
-            doc.p(self.name)
-        
 
 class Label(Component):
     def __init__(self,owner,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
 
+    def render(self,doc):
+        doc.renderLabel(self)
 
 
 
@@ -257,6 +259,11 @@ class Menu(Component):
         kw.setdefault("label",htdoc.title)
         kw.setdefault("action",self.owner.urlto(htdoc))
         return self.addItem(htdoc.name,**kw)
+    
+    def findItem(self,name):
+        for mi in self.items:
+            if mi.name == name: return mi
+
 
 class MenuBar(Component):
     
@@ -268,6 +275,10 @@ class MenuBar(Component):
         i = Menu(self.owner,*args,**kw)
         self.menus.append(i)
         return i
+    
+    def findMenu(self,name):
+        for mnu in self.menus:
+            if mnu.name == name: return mnu
 
 
 class ReportMixin:
@@ -417,7 +428,6 @@ class DataGrid(ReportMixin,Component):
         ReportMixin.__init__(self,ds)
         self.choosing = False
         self.chosenRow = None
-        self.enabled=True
 
     def setModeChoosing(self):
         self.choosing = True
@@ -428,10 +438,13 @@ class DataGrid(ReportMixin,Component):
     def setChosenRow(self,row):
         self.chosenRow = row
         
+    def render(self,doc):
+        doc.renderDataGrid(self)
+            
 
-    def gendoc_render(self,doc):
-        if self.enabled:
-            doc.report(self.rpt)
+##     def render(self,doc):
+##         if self.enabled:
+##             doc.report(self.rpt)
 
 
 
@@ -474,6 +487,9 @@ class DataForm(ReportMixin,Component):
                   label="&Previous",
                   accel="PgUp").setHandler(self.skip,-1)
 
+    def getStatus(self):
+        return "%d/%d" % (self.currentPos,len(self.rpt))
+    
         
 
 class Container(Component):
@@ -502,9 +518,10 @@ class Container(Component):
         for c in self._components:
             c.onShow()
 
-    def gendoc_render(self,doc):
+    def render(self,doc):
+        # used by cherrygui. sorry for ugliness.
         for c in self._components:
-            c.gendoc_render(doc)
+            c.render(doc)
         
 
     def __repr__(self):
@@ -746,8 +763,8 @@ class Form(Describable,MenuContainer):
             if msg is not None:
                 return msg
             
-    def gendoc_render(self,doc):
-        self.mainComp.gendoc_render(doc)
+    def render(self,doc):
+        self.mainComp.render(doc)
         
     def store(self):
         self.mainComp.store()
@@ -820,7 +837,7 @@ class AbstractToolkit:
         raise NotImplementedError
 
     def refreshForm(self,frm):
-        raise NotImplementedError
+        pass
 
     def beginProgresser(self,sess,*args,**kw):
         self._currentProgresser=Progresser(self._currentProgresser)

@@ -19,7 +19,7 @@
 
 import os
 
-from lino.misc.tsttools import TestCase, main, Toolkit
+from lino.misc.tsttools import TestCase, main
 
 from lino.console import syscon
 
@@ -33,7 +33,7 @@ class Case(TestCase):
     #todo="VolumeVisitor instance has no attribute 'reloading'"
     def test01(self):
         app=Keeper()
-        sess=app.quickStartup() # toolkit=Toolkit())
+        sess=app.quickStartup() 
         
         q=sess.query(Volume)
         vol=q.appendRow(name="test",path=TESTDATA)
@@ -96,13 +96,24 @@ test:               |eupen.pdf         |232672  |X    |799 Occurences
 
         ctrl=SearchFormCtrl()
         sess.showForm(ctrl)
+        
+        s=self.getConsoleOutput()
+        # print s
+        self.assertEquivalent(s,"""\
+&Words to look for: [None]
+&any word (OR): [None]
+[&Search]        
+        """)
+        
         ctrl.searchString.setValue("Stadt")
         ctrl.go.click()
         
         s=self.getConsoleOutput()
-        
-        #print s
+        # print s
         self.assertEquivalent(s,"""\
+&Words to look for: [Stadt]
+&any word (OR): [None]
+[&Search]        
 Files where 'occurences' not empty
 ==================================
 name                |occurences     |content                            

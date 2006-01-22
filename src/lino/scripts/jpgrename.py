@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 

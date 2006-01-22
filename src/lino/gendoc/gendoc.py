@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -29,8 +29,34 @@ class GenericDocument:
     def endDocument(self):
         pass
 
+    def renderLabel(self,lbl):
+        if lbl.enabled:
+            self.p(lbl.getLabel())
+        
+    def renderButton(self,btn):
+        if btn.enabled:
+            self.p("["+btn.getLabel()+"]")
+            
+    def renderEntry(self,e):
+        if e.enabled:
+            v=e.getValue()
+            if v is None:
+                self.p(e.getLabel()+": [None]")
+            else:
+                self.p(e.getLabel()+": ["+e.format(v)+"]")
+        
+    def renderDataGrid(self,grid):
+        if grid.enabled:
+            self.report(grid.rpt)
+            
+    def renderForm(self,frm):
+        frm.render(self)
+        
+    
+
 
     # USER METHODS
+    
 
     def report(self,rpt):
         raise NotImplementedError
@@ -45,13 +71,10 @@ class GenericDocument:
         raise NotImplementedError
 
     def p(self,*args,**kw):
-        raise NotImplementedError
+        raise NotImplementedError, repr(self)
 
     def h(self,*args,**kw):
         raise NotImplementedError
-        
-    def form(self,frm):
-        frm.gendoc_render(self)
         
 
 

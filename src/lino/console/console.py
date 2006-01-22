@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -456,7 +456,7 @@ class Console(AbstractToolkit):
         #gd = PlainDocument()
         gd = PlainDocument(writer=self._stdout)
         gd.beginDocument()
-        gd.form(frm)
+        gd.renderForm(frm)
         gd.endDocument()
 
     def refreshForm(self,frm):
@@ -550,7 +550,8 @@ class CaptureConsole(Console):
         self.buffer = StringIO()
         Console.__init__(self,
                          self.buffer.write,
-                         self.buffer.write,**kw)
+                         self.buffer.write,
+                         batch=batch,**kw)
 
     def getConsoleOutput(self):
         s = self.buffer.getvalue()

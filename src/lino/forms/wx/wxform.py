@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -186,8 +186,8 @@ class DataForm(base.DataForm):
                                        lambda e:self.skip(1), btn)
                                        #EventCaller(self.skip,1))
 
-    def getStatus(self):
-        return "%d/%d" % (self.currentPos,len(self.rpt))
+    #def getStatus(self):
+    #    return "%d/%d" % (self.currentPos,len(self.rpt))
     
     def refresh(self):
         if False:
@@ -790,7 +790,4 @@ class Toolkit(base.Toolkit):
             frm.wxctrl.Show()
 
         
-    def refreshForm(self,frm):
-        pass
-
     
