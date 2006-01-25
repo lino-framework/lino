@@ -23,7 +23,10 @@ import wx
 
 from lino.adamo import datatypes
 #from lino.adamo.datatypes import MEMO
-from lino.forms import base, gui
+from lino import forms
+from lino.forms import base
+
+#from lino.forms import constants gui
 from lino.forms.wx import wxgrid
 #from lino.console import syscon
 #from lino.forms.wx.showevents import showEvents
@@ -458,12 +461,13 @@ class Form(base.Form):
         assert self.wxctrl is None
         base.Form.setup(self)
         #self.setupMenu()
-        if self._parent is None:
-            #self.app = WxApp()
+        parent=self._parent
+        if parent is None:
+            parent=self.session.toolkit._activeForm
+        if parent is None:
             wxparent = None
         else:
-            #self.app = self._parent.app
-            wxparent = self._parent.wxctrl
+            wxparent = parent.wxctrl
             
         #self.dying = False
         
@@ -512,22 +516,22 @@ class Form(base.Form):
         #self.wxctrl.SetAutoLayout(True) 
         #self.wxctrl.Layout()
 
-        if self.halign is gui.CENTER:
+        if self.halign is forms.CENTER:
             self.wxctrl.Centre(wx.HORIZONTAL)
-        if self.valign is gui.CENTER:
+        if self.valign is forms.CENTER:
             self.wxctrl.Centre(wx.VERTICAL)
             
         x,y = self.wxctrl.GetPositionTuple()
 
-        if self.halign is gui.LEFT:
+        if self.halign is forms.LEFT:
             x = 0
-        elif self.halign is gui.RIGHT:
+        elif self.halign is forms.RIGHT:
             x = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_X)
             x -= self.wxctrl.GetSizeTuple()[0]
             
-        if self.valign is gui.TOP:
+        if self.valign is forms.TOP:
             y = 0
-        elif self.halign is gui.RIGHT:
+        elif self.halign is forms.RIGHT:
             y = wx.SystemSettings_GetMetric(wx.SYS_SCREEN_Y)
             y -= self.wxctrl.GetSizeTuple()[1]
 
@@ -576,11 +580,10 @@ class Form(base.Form):
         self.wxctrl = None
 
     def OnKillFocus(self,evt):
-        pass
-        #self.session.toolkit._activeForm = self._parent
+        self.session.toolkit._activeForm = self._parent
         
     def OnSetFocus(self,evt):
-        self.session.setActiveForm(self)
+        self.session.toolkit.setActiveForm(self)
 
 
     def OnChar(self, evt):
@@ -652,24 +655,29 @@ class Toolkit(base.Toolkit):
         #self.consoleForm = None
         #self._setup = False
         #self._running = False
+        self._activeForm=None
         self._session=None
         self.wxapp = None
         #self._activeForm=None
 
 
+    def setActiveForm(self,frm):
+        self._activeForm = frm
+
 
     def showStatus(self,sess,msg):
-        frm=sess._activeForm
+        #frm=sess._activeForm
+        frm=self._activeForm
         if frm is None or frm.modal:
-            base.Toolkit.showStatus(self,sess,msg)
-            #syscon.status(msg,*args,**kw)
+            #base.Toolkit.showStatus(self,sess,msg)
+            self.console.showStatus(sess,msg)
         else:
             frm.wxctrl.SetStatusText(msg)
 
     def onTaskBegin(self,task):
         #assert self.progressDialog is None
         #print job
-        assert task.session._activeForm is not None
+        assert self._activeForm is not None
         if task.session.statusMessage is None:
             stm=""
         else:
@@ -678,7 +686,7 @@ class Toolkit(base.Toolkit):
         task.wxctrl = wx.ProgressDialog(
             task.label,stm,
             100,
-            task.session._activeForm.wxctrl,
+            self._activeForm.wxctrl,
             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
         #return self.app.toolkit.console.onJobInit(job)
 

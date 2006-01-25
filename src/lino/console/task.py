@@ -129,7 +129,7 @@ class Task:
             #self.abort()
             self._done = True
             self.session.toolkit.onTaskAbort(self)
-            raise OperationFailed(str(e))
+            raise #OperationFailed(str(e))
             
         except Exception,e:
             # some uncaught exception occured
@@ -138,7 +138,7 @@ class Task:
             self.session.toolkit.onTaskAbort(self)
             self.session.exception(e)
             #self=False
-            raise OperationFailed(str(e))
+            raise #OperationFailed(str(e))
 
         #if not success:
         #    raise OperationFailed(self)

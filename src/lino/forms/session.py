@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -109,7 +109,7 @@ class BaseSession:
                                      types.UnicodeType)
             msg=self.buildMessage(msg,*args,**kw)
         self.statusMessage=msg
-        return self.toolkit.showStatus(self,self.statusMessage)
+        return self.toolkit.showStatus(self,msg)
 
     def setStatusMessage(self,msg):
         self.statusMessage=msg
@@ -181,7 +181,7 @@ class BaseSession:
 class Session(BaseSession):
     
     def __init__(self,toolkit,app=None):
-        self._activeForm=None
+        #self._activeForm=None
         self.app=app
         #self._forms=[]
         BaseSession.__init__(self,toolkit)
@@ -189,8 +189,9 @@ class Session(BaseSession):
         
     
     def form(self,*args,**kw):
-        frm=self.toolkit.createForm(
-            self,self._activeForm,*args,**kw)
+        frm=self.toolkit.createForm(self,*args,**kw)
+        #frm=self.toolkit.createForm(
+        #    self,self._activeForm,*args,**kw)
         #self._forms.append(frm)
         return frm
     
@@ -209,9 +210,6 @@ class Session(BaseSession):
 ##         #assert frm in self._forms
 ##         self._activeForm=frm
 ##         #frm.show()
-
-    def setActiveForm(self,frm):
-        self._activeForm = frm
 
     def showMainForm(self):
         self.app.showMainForm(self)

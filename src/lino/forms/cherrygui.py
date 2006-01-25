@@ -24,6 +24,10 @@ from HyperText import HTML as html
 from lino.forms import base, HK_CHAR
 
 
+def label2txt(s):
+    return s.replace(HK_CHAR,'')
+
+
 class Label(base.Label):
     pass
     
@@ -54,10 +58,6 @@ class Entry(base.Entry):
 
 class DataEntry(base.DataEntry):
     pass
-
-
-def label2txt(s):
-    return s.replace(HK_CHAR,'')
 
 
 
@@ -129,6 +129,9 @@ class Toolkit(base.Toolkit):
         cherrypy.server.start()
         
     def showForm(self,frm):
+        if frm.modal:
+            sess.notice("modal forms are not supported")
+            return
         self._formStack.append(frm)
 
     def closeForm(self,frm):

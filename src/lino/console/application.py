@@ -26,9 +26,12 @@ import lino
 
 from lino.console import syscon
 
+from lino.console.console import UserAborted, OperationFailed
+
 
 class UsageError(Exception):
     pass
+
 class ApplicationError(Exception):
     pass
 
@@ -100,16 +103,19 @@ class Application:
         m.addItem("logout",label="&Beenden",action=frm.close)
         m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
 
-        def buggy(task):
-            for i in range(10,0,-1):
-                task.increment()
-                sess.status("%d seconds left",i)
-                task.sleep(1)
+        def bugdemo(task):
+            try:
+                for i in range(5,0,-1):
+                    task.increment()
+                    sess.status("%d seconds left",i)
+                    task.sleep(1)
 
-            thisWontWork()
+                thisWontWork()
+            except OperationFailed,e:
+                sess.notice("You see? now it happened: %s" % e)
         
         m.addItem("bug",label="&Bug demo").setHandler(
-            sess.loop,buggy,"Bug demo")
+            sess.loop,bugdemo,"Bug demo")
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
 

@@ -645,13 +645,13 @@ class MenuContainer:
 
 class Form(Describable,MenuContainer):
 
-    def __init__(self,sess,parent,data=None,
+    def __init__(self,sess,data=None,
                  halign=None, valign=None,
                  *args,**kw):
         Describable.__init__(self,None,*args,**kw)
         MenuContainer.__init__(self)
         self.session=sess
-        self._parent = parent
+        self._parent = None # parent
         self.data = data
         #self.entries = AttrDict()
         self.buttons = AttrDict()
@@ -723,7 +723,7 @@ class Form(Describable,MenuContainer):
         #self.session.debug(repr(self.mainComp))
         self.mainComp.onShow()
         self.onShow()
-        self.session.setActiveForm(self)
+        #self.session.setActiveForm(self)
         #self.session.toolkit.onShowForm(self)
         self.session.toolkit.showForm(self)
         
@@ -829,8 +829,8 @@ class AbstractToolkit:
         sess.close()
         self.stopRunning()
 
-    def createForm(self,sess,parent,*args,**kw):
-        return self.formFactory(sess,parent,*args,**kw)
+    def createForm(self,sess,*args,**kw):
+        return self.formFactory(sess,*args,**kw)
 
     #def onShowForm(self,frm):
     def showForm(self,frm):
