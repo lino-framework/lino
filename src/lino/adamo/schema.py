@@ -54,7 +54,6 @@ class SchemaPlugin(SchemaComponent,Describable):
 
 class Schema(Application):
 
-    HK_CHAR = '&'
     defaultLangs = ('en',)
     #tables=[]
 

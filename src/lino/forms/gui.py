@@ -19,13 +19,6 @@
 #from lino.ui.console import ConsoleApplication
 from lino.console import syscon
 
-LEFT = 1
-RIGHT = 2
-TOP = 3
-BOTTOM = 4
-CENTER = 5
-
-
 _toolkit = None
 #_app = None
 

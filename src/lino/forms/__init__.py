@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,6 +17,14 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino import __version__, __author__, __copyright__, __url__
+
+HK_CHAR = '&'
+    
+LEFT = 1
+RIGHT = 2
+TOP = 3
+BOTTOM = 4
+CENTER = 5
 
 __all__ = []
 

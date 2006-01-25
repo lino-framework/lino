@@ -21,9 +21,7 @@ import cherrypy
 from HyperText.Documents import Document as HyperTextDocument
 from HyperText import HTML as html
 
-from lino.forms import base
-
-
+from lino.forms import base, HK_CHAR
 
 
 class Label(base.Label):
@@ -58,7 +56,8 @@ class DataEntry(base.DataEntry):
     pass
 
 
-
+def label2txt(s):
+    return s.replace(HK_CHAR,'')
 
 
 
@@ -157,13 +156,15 @@ class Document(HyperTextDocument):
         self.append(html.P(txt))
     
     def renderLabel(self,lbl):
-        self.append(html.P(lbl.getLabel()))
+        #self.append(html.P(lbl.getLabel()))
+        self.append(label2txt(lbl.getLabel()))
         
     def renderButton(self,btn):
         if btn.enabled:
-            self.append(html.A(btn.getLabel(),href=cherrypy.request.path+"/"+btn.name))
+            self.append(html.A(label2txt(btn.getLabel()),
+                               href=cherrypy.request.path+"/"+btn.name))
         else:
-            self.append(btn.getLabel())
+            self.append(btn.label2txt(getLabel()))
             
     def renderEntry(self,e):
         if e.enabled:
@@ -235,11 +236,12 @@ class Page:
         if frm.menuBar is not None:
             for mnu in frm.menuBar.menus:
                 p.append(html.BR())
-                p.append(html.A(mnu.getLabel(),href=mnu.name))
+                #p.append(html.A(mnu.getLabel(),href=mnu.name))
+                p.append(label2txt(mnu.getLabel()))
                 for mi in mnu.items:
                     p.append(html.BR())
                     p.append(" &middot; &nbsp;",
-                             html.A(mi.getLabel(),
+                             html.A(label2txt(mi.getLabel()),
                                     href=mnu.name+"/"+mi.name))
         frm.mainComp.render(doc)
         #doc.append(html.HR())

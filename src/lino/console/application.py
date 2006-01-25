@@ -134,8 +134,8 @@ class Application:
             s += "\nHomepage: " + self.url
             
         credits = []
-        credits.append("Python %d.%d.%d %s" % sys.version_info[0:4])
         credits.append('Lino ' + lino.__version__)
+        credits.append("Python %d.%d.%d %s" % sys.version_info[0:4])
 
         if sys.modules.has_key('wx'):
             wx = sys.modules['wx']
