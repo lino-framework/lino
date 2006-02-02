@@ -127,7 +127,11 @@ continue testing even if failures or errors occur""",
         return unittest.TestSuite(suites)
      
     def findTestCases(self,sess,modname,cases,suites):
-        mod = my_import(modname)
+        try:
+            mod = my_import(modname)
+        except ImportError,e:
+            sess.notice("could not import %s : %s",modname,e)
+            return
         #cases=[]
         if hasattr(mod,"suite"):
             #print modname + ".suite()"
