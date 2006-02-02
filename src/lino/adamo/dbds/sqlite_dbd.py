@@ -22,16 +22,18 @@ import threading
 from types import StringType
 import datetime
 
-if True:
+try:
     import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
-else:
-    import warnings
-    warnings.filterwarnings("ignore",
-                            "DB-API extension",
-                            UserWarning,
-                            "sqlite")
-
+except ImportError,e:
     import sqlite # pysqlite 0.4.3
+    
+##     import warnings
+##     warnings.filterwarnings("ignore",
+##                             "DB-API extension",
+##                             UserWarning,
+##                             "sqlite")
+
+##     import sqlite # pysqlite 0.4.3
 
 from types import TupleType
 
