@@ -1,4 +1,4 @@
-## Copyright 2004-2005 Luc Saffre 
+## Copyright 2004-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -34,9 +34,40 @@ The auto-generated file lino.bat uses this wrapper
 
 import sys
 
+from lino import scripts
 from lino.misc.my_import import my_import
+
+
+def usage():
+##     import os
+    import lino
+    
+    print "Lino", lino.__version__
+    print lino.__copyright__
+    print "usage: lino COMMAND [...]"
+    print "where COMMAND is one of:", ", ".join(scripts.__all__)
+    
+##     for fn in os.listdir(scripts.__path__):
+##         if fn.endswith('.py'):
+##             modname=fn[:-2]
+##             mod = my_import("lino.scripts." + modname)
+##             if mod.hasattr('consoleApplicationClass'):
+##                 print modname
+
+                
+            
+            
+
+
+if len(sys.argv) <= 1:
+    usage()
+    sys.exit(-1)
+
+if not sys.argv[1] in scripts.__all__:
+    #usage()
+    print "error: unknown command '%s'" % sys.argv[1]
+    sys.exit(-1)
 
 mod = my_import("lino.scripts." + sys.argv[1])
 app = mod.consoleApplicationClass()
-
 sys.exit(app.main(sys.argv[2:]))
