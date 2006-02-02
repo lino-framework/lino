@@ -22,6 +22,7 @@ __all__ = (
     'prn2pdf', 'prnprint',
     'sync', 'diag',
     'openmail','openurl',
-    'runpy', 'jpgrename'
+    'runpy',
+    'jpgrename', 'runtests'
     )
 
