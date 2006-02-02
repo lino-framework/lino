@@ -292,7 +292,6 @@ class Schema(Application):
                      **kw):
         #print "%s.quickStartup()" % self.__class__
         self.setupSchema()
-        #job = ui.job("quickStartup()")
         syscon.debug("Initialize Schema")
         self.initialize()
         db = self.database(langs=langs)
@@ -304,21 +303,6 @@ class Schema(Application):
             conn.startDump(sys.stdout)
         return db.startup(**kw) #syscon.getSystemConsole())
     
-    
-##     def showMainForm(self,sess):
-##         pass
-        
-##     def shutdown(self):
-##         syscon.debug("Schema.shutdown()")
-##         for db in self._databases:
-##             db.close()
-##         self._databases = []
-        
-##     def init(self,ui): 
-##         # called from Toolkit.main()
-##         sess = self.startup(ui)
-##         self.showMainForm(ui)
-
     
 
 ##  def onStartUI(self,sess):

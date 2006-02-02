@@ -86,16 +86,16 @@ class Button(Component):
         frm = self.getForm()
         frm.store()
         frm.lastEvent = self
-        try:
-            self.action(*(self._args),**(self._kw))
-        except InvalidRequestError,e:
-            frm.session.status(str(e))
-        except Exception,e:
-            frm.session.exception(
-                e,"after clicking '%s' in '%s'" % (
-                self.getLabel(),frm.getLabel()))
-        #except Exception,e:
-        #    frm.error(str(e))
+        self.action(*(self._args),**(self._kw))
+##         try:
+##             self.action(*(self._args),**(self._kw))
+##         except InvalidRequestError,e:
+##             frm.session.status(str(e))
+##         except Exception,e:
+##             frm.session.exception(
+##                 e,"after clicking '%s' in '%s'" % (
+##                 self.getLabel(),frm.getLabel()))
+
         
     def render(self,doc):
         doc.renderButton(self)
@@ -645,12 +645,13 @@ class MenuContainer:
 
 class Form(Describable,MenuContainer):
 
-    def __init__(self,sess,data=None,
+    def __init__(self,toolkit,sess,data=None,
                  halign=None, valign=None,
                  *args,**kw):
         Describable.__init__(self,None,*args,**kw)
         MenuContainer.__init__(self)
         self.session=sess
+        self.toolkit=toolkit
         self._parent = None # parent
         self.data = data
         #self.entries = AttrDict()
@@ -707,8 +708,8 @@ class Form(Describable,MenuContainer):
     def show(self,modal=False):
         #self.session.notice("show(%s)",self.getLabel())
 
-        if not self.session.toolkit.running():
-            self.session.toolkit.run_forever(self.session)
+        if not self.toolkit.running():
+            self.toolkit.run_forever(self.session)
             #if self.app.mainForm == self:
             #    return
             # todo: uergh...
@@ -725,12 +726,12 @@ class Form(Describable,MenuContainer):
         self.onShow()
         #self.session.setActiveForm(self)
         #self.session.toolkit.onShowForm(self)
-        self.session.toolkit.showForm(self)
+        self.toolkit.showForm(self)
         
     
     def refresh(self):
         self.mainComp.refresh()
-        self.session.toolkit.refreshForm(self)
+        self.toolkit.refreshForm(self)
         
     def isShown(self):
         return False
@@ -830,7 +831,7 @@ class AbstractToolkit:
         self.stopRunning()
 
     def createForm(self,sess,*args,**kw):
-        return self.formFactory(sess,*args,**kw)
+        return self.formFactory(self,sess,*args,**kw)
 
     #def onShowForm(self,frm):
     def showForm(self,frm):

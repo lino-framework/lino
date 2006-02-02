@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -81,12 +81,10 @@ class Job:
     
     
 class Task:
-    #maxval=0
 
     """
 
-    This represents a progress bar in a GUI.  But it works also in a
-    console UI.
+    This represents a progress bar or some other progress indicator.
     
     task.begin()
     task.increment()
@@ -97,10 +95,6 @@ class Task:
         if label is None:
             label=_("Working")
         self.label=label
-        #sess.status(label)
-        #if maxval is not None:
-        #self.job=job
-        #self._label=label
         self.maxval=maxval
         self._done=False
         self._abortRequested=False
@@ -136,7 +130,7 @@ class Task:
             #self.abort()
             self._done = True
             self.session.toolkit.onTaskAbort(self)
-            self.session.exception(e)
+            #self.session.exception(e)
             #self=False
             raise #OperationFailed(str(e))
 
@@ -192,13 +186,17 @@ class Task:
         self.session.toolkit.onTaskIncrement(self)
         self.breathe()
 
-    #def taskStatus(self,msg,*args,**kw):
     def status(self,msg,*args,**kw):
-        if msg is not None:
-            msg = self.session.buildMessage(msg,*args,**kw)
-        self.session.setStatusMessage(msg)
-        self.session.toolkit.onTaskStatus(self)
-        self.breathe()
+        
+        raise """replace task.status() with sess.status() and
+        task.breathe()"""
+    
+##     def status(self,msg,*args,**kw):
+##         if msg is not None:
+##             msg = self.session.buildMessage(msg,*args,**kw)
+##         self.session.setStatusMessage(msg)
+##         self.session.toolkit.onTaskStatus(self)
+##         self.breathe()
         
 ##     def done(self,msg=None,*args,**kw):
 ##         if self._done: return
@@ -206,7 +204,6 @@ class Task:
 ##             msg = self.session.buildMessage(msg,*args,**kw)
 
     def abort(self,msg=None):
-    #def taskAbort(self,msg=None):
         if msg is None:
             msg = _("Aborted")
         if not self._done:

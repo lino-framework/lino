@@ -104,15 +104,12 @@ class Application:
         m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
 
         def bugdemo(task):
-            try:
-                for i in range(5,0,-1):
-                    task.increment()
-                    sess.status("%d seconds left",i)
-                    task.sleep(1)
-
-                thisWontWork()
-            except OperationFailed,e:
-                sess.notice("You see? now it happened: %s" % e)
+            for i in range(5,0,-1):
+                sess.status("%d seconds left",i)
+                task.increment()
+                task.sleep()
+            thisWontWork()
+            
         
         m.addItem("bug",label="&Bug demo").setHandler(
             sess.loop,bugdemo,"Bug demo")
@@ -139,36 +136,36 @@ class Application:
         if self.url is not None:
             s += "\nHomepage: " + self.url
             
-        credits = []
-        credits.append('Lino ' + lino.__version__)
-        credits.append("Python %d.%d.%d %s" % sys.version_info[0:4])
+        using = []
+        using.append('Lino ' + lino.__version__)
+        using.append("Python %d.%d.%d %s" % sys.version_info[0:4])
 
         if sys.modules.has_key('wx'):
             wx = sys.modules['wx']
-            credits.append("wxPython " + wx.__version__)
+            using.append("wxPython " + wx.__version__)
     
         if sys.modules.has_key('pysqlite2'):
             from pysqlite2.dbapi2 import version
             #sqlite = sys.modules['pysqlite2']
-            credits.append("PySQLLite " + version)
+            using.append("PySQLLite " + version)
     
         if sys.modules.has_key('reportlab'):
             reportlab = sys.modules['reportlab']
-            credits.append("Reportlab PDF library "+reportlab.Version)
+            using.append("Reportlab PDF library "+reportlab.Version)
 
         if sys.modules.has_key('win32print'):
             win32print = sys.modules['win32print']
-            credits.append("Python Windows Extensions")
+            using.append("Python Windows Extensions")
         
         if sys.modules.has_key('cherrypy'):
             cherrypy = sys.modules['cherrypy']
-            credits.append("CherryPy " + cherrypy.__version__)
+            using.append("CherryPy " + cherrypy.__version__)
 
         if sys.modules.has_key('PIL'):
-            credits.append("PIL")
+            using.append("PIL")
 
-        s += "\nCredits: " + "\n".join(
-            textwrap.wrap(", ".join(credits),76))
+        s += "\nUsing " + "\n".join(
+            textwrap.wrap(", ".join(using),76))
         
         if False:
             s += "\n".join(

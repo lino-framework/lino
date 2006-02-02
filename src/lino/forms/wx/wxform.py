@@ -70,12 +70,22 @@ def _setEditorSize(editor,type):
 
 
 class EventCaller:
+    
     def __init__(self,meth,*args,**kw):
         self.meth = meth
         self.args = args
         self.kw = kw
+        
     def __call__(self,event):
-        return self.meth(*self.args, **self.kw)
+        try:
+            return self.meth(*self.args, **self.kw)
+        except InvalidRequestError,e:
+            frm.session.status(str(e))
+        except Exception,e:
+            frm.session.exception(
+                e,"after clicking '%s' in '%s'" % (
+                self.getLabel(),frm.getLabel()))
+        
 
 
 ## class EntryValidator(wx.PyValidator):
@@ -133,7 +143,10 @@ class Button(base.Button):
                         wx.DefaultPosition,
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
-        parentFormCtrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
+        #parentFormCtrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
+        parentFormCtrl.Bind(wx.EVT_BUTTON,
+                            EventCaller(self.click),
+                            btn)
         if self.doc is not None:
             btn.SetToolTipString(self.doc)
 
@@ -180,14 +193,17 @@ class DataForm(base.DataForm):
             btn = wx.Button(mypanel, -1, "<")
             hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
             self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                       lambda e:self.skip(-1), btn)
-                                       #EventCaller(self.skip,-1))
+                                       EventCaller(self.skip,-1),
+                                       btn)
 
             btn = wx.Button(mypanel, -1, ">")
             hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
             self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                       lambda e:self.skip(1), btn)
-                                       #EventCaller(self.skip,1))
+                                       EventCaller(self.skip,1),
+                                       btn)
+##             self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
+##                                        lambda e:self.skip(1), btn)
+##                                        #EventCaller(self.skip,1))
 
     #def getStatus(self):
     #    return "%d/%d" % (self.currentPos,len(self.rpt))
@@ -554,7 +570,8 @@ class Form(base.Form):
             if mi.accel is not None:
                 lbl += "\t" + mi.accel
             wxMenu.Append(winId,lbl,doc)
-            wx.EVT_MENU(self.wxctrl, winId, EventCaller(mi.click))
+            wx.EVT_MENU(self.wxctrl, winId,
+                        EventCaller(mi.click))
         return wxMenu
 
     
@@ -668,7 +685,9 @@ class Toolkit(base.Toolkit):
     def showStatus(self,sess,msg):
         #frm=sess._activeForm
         frm=self._activeForm
-        if frm is None or frm.modal:
+        while frm is not None and frm.modal:
+            frm=frm._parent
+        if frm is None:
             #base.Toolkit.showStatus(self,sess,msg)
             self.console.showStatus(sess,msg)
         else:
@@ -690,7 +709,7 @@ class Toolkit(base.Toolkit):
             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
         #return self.app.toolkit.console.onJobInit(job)
 
-    def onTaskStatus(self,task):
+    def onTaskBreathe(self,task):
         if task.wxctrl is None: return
         pc = task.percentCompleted
         if pc is None: pc = 0
@@ -698,13 +717,26 @@ class Toolkit(base.Toolkit):
         if msg is None: msg=''
         if not task.wxctrl.Update(pc,msg):
             task.requestAbort()
-        
-    def onTaskIncrement(self,task):
-        self.onTaskStatus(task)
-
-    def onTaskBreathe(self,task):
         self.run_awhile()
         
+    def onTaskIncrement(self,task):
+        self.onTaskBreathe(task)
+
+##     def onTaskStatus(self,task):
+##         if task.wxctrl is None: return
+##         pc = task.percentCompleted
+##         if pc is None: pc = 0
+##         msg=task.session.statusMessage
+##         if msg is None: msg=''
+##         if not task.wxctrl.Update(pc,msg):
+##             task.requestAbort()
+        
+##     def onTaskBreathe(self,task):
+##         self.run_awhile()
+        
+##     def onTaskIncrement(self,task):
+##         self.onTaskStatus(task)
+
     def onTaskResume(self,task):
         if task.wxctrl is None: return
         task.wxctrl.Resume()

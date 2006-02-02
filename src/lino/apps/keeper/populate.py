@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -33,14 +33,14 @@ class VolumeVisitor: #(Task):
     def __init__(self,vol):
         #Task.__init__(self)
         self.volume = vol
+        from lino.apps.keeper import tables
+        self.session=self.volume.getSession()
+        self.ftypes = self.session.query(tables.FileType)
+        self.files = self.session.query(tables.File)
+        self.dirs = self.session.query(tables.Directory)
 
     def looper(self,task):
         self.task=task
-        from lino.apps.keeper import tables
-        sess=self.volume.getSession()
-        self.ftypes = sess.query(tables.FileType)
-        self.files = sess.query(tables.File)
-        self.dirs = sess.query(tables.Directory)
         if len(self.volume.directories) > 0:
             self.freshen(self.volume.path)
         else:
@@ -51,9 +51,14 @@ class VolumeVisitor: #(Task):
 
 ##     def prune_dir(self,dirname):
 ##         return dirname in ('.svn',)
+
+    def status(self,msg,*args):
+        self.session.status(msg,*args)
+        self.task.breathe()
+
             
     def freshen(self,fullname,shortname=None,dir=None):
-        self.task.status(fullname)
+        self.status(fullname)
         if self.volume.ignoreByName(shortname): return
         if os.path.isfile(fullname):
             row = self.files.peek(dir,shortname)
@@ -74,7 +79,7 @@ class VolumeVisitor: #(Task):
             self.error("%s : no such file or directory",fullname)
 
     def load(self,fullname,shortname=None,dir=None):
-        self.task.status(fullname)
+        self.status(fullname)
         if self.volume.ignoreByName(shortname): return
         if os.path.isfile(fullname):
             #if self.reloading:
@@ -136,7 +141,7 @@ class FileVisitor: # (Task):
         base,ext = os.path.splitext(name)
         #
         if ext.lower() == ".txt":
-            self.task.status(name)
+            self.status(name)
             s = open(name).read()
             coding = self.encodingGuesser.guess(name,s)
             self.status("%s: %s", name,coding)
