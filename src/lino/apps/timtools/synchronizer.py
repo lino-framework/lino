@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005 Luc Saffre.
+## Copyright 2005-2006 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -497,7 +497,8 @@ class SyncProject:
         self.job.done_delete_file += 1
 
     def showStatus(self):
-        self.task.status(self.job.getStatus())
+        self.task.session.status(self.job.getStatus())
+        self.task.breathe()
 
     def error(self,*args,**kw):
         self.task.session.error(*args,**kw)
