@@ -87,21 +87,28 @@ class PlainDocument(GenericDocument):
         #    row=rpt.processItem(self,item)
 
             wrappedCells = []
-            i = 0
-            for value in row.values:
-                col=rpt.columns[i]
-                #if cell.value is None:
-                if value is None:
-                    s = ""
-                else:
-                    s = col.format(value)
-                    
-                l = wrappers[i].wrap(s)
+            for col,s in row.cells():
+                l = wrappers[col.index].wrap(s)
                 if len(l) == 0:
                     wrappedCells.append([''])
                 else:
                     wrappedCells.append(l)
-                i += 1
+            
+##             i = 0
+##             for value in row.values:
+##                 col=rpt.columns[i]
+##                 #if cell.value is None:
+##                 if value is None:
+##                     s = ""
+##                 else:
+##                     s = col.format(value)
+                    
+##                 l = wrappers[i].wrap(s)
+##                 if len(l) == 0:
+##                     wrappedCells.append([''])
+##                 else:
+##                     wrappedCells.append(l)
+##                 i += 1
             
             # find out rowHeight for this row
             if rpt.rowHeight is None:

@@ -26,7 +26,7 @@ import tkSimpleDialog
 
 from lino.adamo import datatypes
 from lino.forms import base, gui
-#from lino.forms.tix import tixgrid
+from lino.forms.tix import tixtable
 
 
 STRETCH = 1
@@ -87,10 +87,17 @@ class Button(base.Button):
 class DataGrid(base.DataGrid):
     
     def setupTkinter(self,parent):
-        ctrl = Tix.TList(parent,exportselection=0,
-                         selectmode=Tkinter.EXTENDED)
+        coldefs=[ (col.getLabel(),col.width)
+                  for col in self.rpt.columns]
+        ctrl = tixtable.MultiListbox(parent,coldefs)
+
+        for row in self.rpt.rows(self):
+            ctrl.insert(Tkinter.END, [ s for col,s in row.cells()])
+##         ctrl = Tix.TList(parent,
+##                          exportselection=0,
+##                          selectmode=Tkinter.EXTENDED)
         
-        ctrl.pack(expand=Tkinter.ALL)
+        ctrl.pack(expand=Tkinter.YES,fill=Tkinter.BOTH)
         
         self.tixctrl=ctrl
         
