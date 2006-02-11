@@ -187,9 +187,14 @@ class Task:
         self.breathe()
 
     def status(self,msg,*args,**kw):
-        
-        raise """replace task.status() with sess.status() and
-        task.breathe()"""
+        #self.session.status(msg,*args,**kw)
+        #self.breathe()
+        raise """\
+please replace "task.status()"
+with:
+  task.session.status() 
+  task.breathe()
+"""
     
 ##     def status(self,msg,*args,**kw):
 ##         if msg is not None:

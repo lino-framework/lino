@@ -126,19 +126,19 @@ class Timings(Schema):
     def showMonthlyCalendar(self,sess,year=2005,month=6):
         ds=sess.query(Day, orderBy="date")
         ds.addFilter(DateEquals(ds.findColumn('date'),year,month))
+        rpt = DataReport(ds)
+        
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
-        rpt = DataReport(ds)
         rpt.addDataColumn("date",width=12,formatter=fmt)
         
         rpt.addVurtColumn(lambda row:str(row.item.date),
                           label="ISO",width=10)
 
         class ResourceColumn(ReportColumn):
-            def __init__(self,owner,res):
+            def __init__(self,res):
                 self.res=res
-                ReportColumn.__init__(self,owner,
-                                      label=str(res))
+                ReportColumn.__init__(self,label=str(res))
             def getCellValue(self,row):
                 return self.res.usages_by_resource.child(
                     date=row.item)
@@ -146,7 +146,7 @@ class Timings(Schema):
                 return ", ".join([str(u) for u in qry])
         
         for res in sess.query(Resource,orderBy="id"):
-            rpt.addColumn(ResourceColumn(rpt,res))
+            rpt.addColumn(ResourceColumn(res))
 
         sess.showReport(rpt)
         #sess.report(rpt)

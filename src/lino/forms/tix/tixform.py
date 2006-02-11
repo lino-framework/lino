@@ -87,19 +87,24 @@ class Button(base.Button):
 class DataGrid(base.DataGrid):
     
     def setupTkinter(self,parent):
+        self.rpt.beginReport(self)
         coldefs=[ (col.getLabel(),col.width)
                   for col in self.rpt.columns]
         ctrl = tixtable.MultiListbox(parent,coldefs)
 
         for row in self.rpt.rows(self):
-            ctrl.insert(Tkinter.END, [ s for col,s in row.cells()])
-##         ctrl = Tix.TList(parent,
-##                          exportselection=0,
-##                          selectmode=Tkinter.EXTENDED)
+            ctrl.insert(Tkinter.END,
+                        [ s for col,s in row.cells()])
+        self.rpt.endReport(self)
         
         ctrl.pack(expand=Tkinter.YES,fill=Tkinter.BOTH)
         
         self.tixctrl=ctrl
+        
+    def report(self,rpt):
+        #print __file__, rpt.iterator._filters
+        # initialize...
+        rpt.beginReport(self)
         
     def refresh(self):
         self.tixctrl.refresh()

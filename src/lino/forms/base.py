@@ -25,6 +25,7 @@ from lino.adamo.datatypes import STRING, MEMO
 #from lino.misc import jobs
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
+from lino.gendoc.gendoc import GenericDocument
 
 from lino.adamo.exceptions import InvalidRequestError
 #from lino.forms import gui
@@ -422,7 +423,7 @@ class ReportMixin:
         return 0
                 
 
-class DataGrid(ReportMixin,Component):
+class DataGrid(ReportMixin,Component,GenericDocument):
     def __init__(self,owner,ds,*args,**kw):
         Component.__init__(self,owner,*args,**kw)
         ReportMixin.__init__(self,ds)
@@ -441,6 +442,10 @@ class DataGrid(ReportMixin,Component):
     def render(self,doc):
         doc.renderDataGrid(self)
             
+    # implements GenericDocument
+    def getLineWidth(self):
+        return 100
+
 
 ##     def render(self,doc):
 ##         if self.enabled:

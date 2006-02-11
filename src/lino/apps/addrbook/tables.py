@@ -158,7 +158,7 @@ class Nation(BabelRow):
         table.addField('area',INT(width=8))
         table.addField('population',INT)
         table.addField('curr',STRING)
-        table.addField('isocode',STRING)
+        table.addField('isocode',STRING(3))
         
         table.addView('std',columnNames="name isocode id")
 

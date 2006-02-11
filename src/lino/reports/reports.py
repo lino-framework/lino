@@ -230,12 +230,12 @@ class BaseReport: #(Describable):
     ##
 
     def addColumn(self,col):
+        col.setupReportColumn(self,len(self.columns))
         self.columns.append(col)
         return col
     
     def addVurtColumn(self,meth,**kw):
-        return self.addColumn(VurtReportColumn(len(self.columns),
-                                               meth,**kw))
+        return self.addColumn(VurtReportColumn(meth,**kw))
 
     def onEach(self,meth):
         self._onRowEvents.append(meth)
@@ -302,10 +302,9 @@ class BaseReport: #(Describable):
 
 class ReportColumn(Describable):
     
-    type=STRING
+    datatype=STRING
     
     def __init__(self,
-                 index,
                  formatter=str,
                  selector=None,
                  name=None,label=None,doc=None,
@@ -318,7 +317,6 @@ class ReportColumn(Describable):
         if label is None:
             label = name
         Describable.__init__(self, None, name,label,doc)
-
         self.width = width
         self.valign = valign
         self.halign = halign
@@ -327,6 +325,10 @@ class ReportColumn(Describable):
         if selector is None:
             selector=self.showSelector
         self._selector=selector
+
+    def setupReportColumn(self,rpt,index):
+        assert type(index) == type(1)
+        self.index=index
         
         
     def getMinWidth(self):
@@ -357,7 +359,7 @@ class ReportColumn(Describable):
 
 
 class DataReportColumn(ReportColumn):
-    def __init__(self,index,datacol,
+    def __init__(self,datacol,
                  name=None,label=None,doc=None,
                  formatter=None,
                  selector=None,
@@ -368,7 +370,7 @@ class DataReportColumn(ReportColumn):
         #assert name != "DataReportColumn"
         if label is None: label=datacol.rowAttr.label
         if doc is None: label=datacol.rowAttr.doc
-        ReportColumn.__init__(self,index,
+        ReportColumn.__init__(self,
                               formatter,selector,
                               name,label,doc,
                               **kw)
@@ -405,20 +407,21 @@ class DataReportColumn(ReportColumn):
     
 class VurtReportColumn(ReportColumn):
     
-    def __init__(self,index,meth,type=None,formatter=None,**kw):
-        if type is not None:
-            self.type=type
-        if formatter is None: formatter=self.type.format
-        ReportColumn.__init__(self,index,formatter,**kw)
+    def __init__(self,meth,datatype=None,formatter=None,**kw):
+        if datatype is not None:
+            self.datatype=datatype
+        if formatter is None:
+            formatter=self.datatype.format
+        ReportColumn.__init__(self,formatter,**kw)
         self.meth = meth
 
     def getCellValue(self,row):
         return self.meth(row)
     
     def getMinWidth(self):
-        return self.type.minWidth
+        return self.datatype.minWidth
     def getMaxWidth(self):
-        return self.type.maxWidth
+        return self.datatype.maxWidth
         
 ##     def format(self,v):
 ##         return self.type.format(v)
@@ -521,15 +524,13 @@ class DataReport(BaseReport):
     def setupReport(self):
         if len(self.columns) == 0:
             for dc in self.ds.getVisibleColumns():
-                col = DataReportColumn(len(self.columns),
-                                       dc,label=dc.getLabel())
-                self.columns.append(col)
+                col = DataReportColumn(dc,label=dc.getLabel())
+                self.addColumn(col)
             self.formColumnGroups=None
         
     def addDataColumn(self,colName,**kw):
         dc=self.ds.findColumn(colName)
-        return self.addColumn(DataReportColumn(len(self.columns),
-                                               dc,**kw))
+        return self.addColumn(DataReportColumn(dc,**kw))
 
     def doesShow(self,qry):
         #used in lino.gendoc.html
@@ -563,14 +564,12 @@ class DataReport(BaseReport):
                     #    if datacol is None:
                     #        datacol = self.ds._addColumn(
                     #            fld.getName(),fld)
-                        col=DataReportColumn(len(self.columns),
-                                             datacol,width=w)
+                        col=DataReportColumn(datacol,width=w)
                         self.addColumn(col)
                         grp.append(col)
                 else:
                     dc=self.ds.provideColumn(colName)
-                    col=DataReportColumn(len(self.columns),
-                                         dc,width=w)
+                    col=DataReportColumn(dc,width=w)
                     self.addColumn(col)
                     grp.append(col)
             #l += grp

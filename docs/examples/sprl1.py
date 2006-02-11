@@ -18,7 +18,7 @@ rpt.addVurtColumn(
 rpt.addVurtColumn(
     label="Count",
     meth=lambda row: len(row.qry),
-    type=INT,
+    datatype=INT,
     width=5, halign=RIGHT
     )
 rpt.addVurtColumn(
