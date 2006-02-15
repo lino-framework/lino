@@ -36,16 +36,16 @@ class NewsItem(ddl.MemoRow):
         table.addPointer('lang',Language)
         #table.addField('lang',LANG)
         table.addPointer('project',Project)
-        table.addPointer('node',Node)
+        #table.addPointer('node',Node)
 
         #self.writeParagraph = Vurt(self.Instance.writeParagraph,MEMO)
 
         #table.setColumnList('date title newsgroup abstract id lang')
         #table.setOrderBy("date")
-        table.addView("std","date title abstract",
-                     orderBy="date")
-        table.addView("list","date writeParagraph",
-                         orderBy="date")
+        #table.addView("std","date title abstract",
+        #             orderBy="date")
+        #table.addView("list","date writeParagraph",
+        #                 orderBy="date")
         
     def __str__(self):
         s = str(self.date)
@@ -54,14 +54,25 @@ class NewsItem(ddl.MemoRow):
         if self.title:
             s += " " + self.title
         return s
+
+class NewsItemsReport(ddl.DataReport):
+    leadTable=NewsItem
+    columnNames="date title abstract"
+    orderBy="date"
+    
+class NewsItemsList(ddl.DataReport):
+    leadTable=NewsItem
+    columnNames="date writeParagraph"
+    orderBy="date"
     
 class Newsgroup(ddl.StoredDataRow):
     tableName="Newsgroups"
     def initTable(self,table):
         table.addField('id',ddl.STRING)
         table.addField('name',ddl.STRING).setMandatory()
+        table.addPointer('node',Node)
         
-        table.addView("std","id name")
+        #table.addView("std","id name")
         
     def __str__(self):
         return self.name
@@ -69,3 +80,7 @@ class Newsgroup(ddl.StoredDataRow):
 ##  def asPage(self,renderer):
 ##      body = ''
 ##      newsByGroup = NEWS
+
+class NewsgroupsReport(ddl.DataReport):
+    leadTable=Newsgroup
+    columnNames="id name node"

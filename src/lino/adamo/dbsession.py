@@ -21,7 +21,7 @@ from lino.adamo import InvalidRequestError
 #from lino.ui import console
 from lino.forms.session import Session
 #from lino.adamo import center
-from lino.reports.reports import DataReport
+from lino.adamo.dbreports import QueryReport
 
 class BabelLang:
     def __init__(self,index,id):
@@ -201,25 +201,27 @@ class DbSession(Session,Context):
 
 
     def getViewReport(self,tc,viewName="std",**kw):
+        raise "should be replaced"
         qry = self.query(tc)
         view=qry.getView(viewName)
         if view is not None:
             assert not view.has_key('label')
             kw.update(view)
-        return self.createDataReport(qry,**kw)
+        return self.createQueryReport(qry,**kw)
 
-    def createDataReport(self,qry,*args,**kw):
-        return DataReport(qry,*args,**kw)
+    def createQueryReport(self,qry,*args,**kw):
+        return QueryReport(qry,*args,**kw)
+    
+    def createReport(self,rptclass,**kw):
+        "rptclass is expected to be a DataReport"
+        return rptclass(self,**kw)
 
-##     def showDataGrid(self,ds,**kw):
-##         rpt=DataReport(ds)
-##         frm = self.form(label=rpt.getLabel(),**kw)
-##         frm.addDataGrid(rpt)
-##         frm.show()
+    def addReportItem(self,menu,name,rptclass,label=None,**kw):
+        rpt=self.createReport(rptclass)
+        if label is None: label=rpt.getTitle()
+        mi=menu.addItem(name,label=label,**kw)
+        mi.setHandler(self.showReport,rpt)
 
-##     def showTableGrid(self,tc,*args,**kw):
-##         q = self.query(tc,*args,**kw)
-##         return self.showDataGrid(q)
     
     def showViewGrid(self,tc,*args,**kw):
         rpt=self.getViewReport(tc,*args,**kw)
@@ -249,7 +251,7 @@ class DbSession(Session,Context):
         
 
     def showQuery(self,qry,*args,**kw):
-        rpt=self.createDataReport(qry,*args,**kw)
+        rpt=self.createQueryReport(qry,*args,**kw)
         self.showReport(rpt)
 
 ##     def report(self,*args,**kw):

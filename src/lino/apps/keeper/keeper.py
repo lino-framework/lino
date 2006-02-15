@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -23,7 +23,7 @@ import os
 #from lino.apps.keeper.tables import TABLES
 from lino.apps.keeper import tables
 from lino.adamo.ddl import Schema, Populator, STRING, BOOL
-from lino.reports import DataReport
+from lino.adamo.dbreports import DataReport
 from lino.adamo.filters import Contains, NotEmpty
 
 
@@ -31,6 +31,24 @@ from lino.adamo.filters import Contains, NotEmpty
 def preview(s):
     if len(s) < 100: return s
     return s[:100]+" (...)"
+
+class FoundFilesReport(DataReport):
+    leadTable=tables.File
+    width=70
+    
+    def setupReport(self):
+        files = self.query.session.query(tables.File) #,"name")
+        self.addDataColumn("name",width=20)
+        occsColumn=self.addDataColumn("occurences",
+                                      width=15)
+        self.addDataColumn("content",
+                           formatter=lambda x: preview(x))
+
+        col=occsColumn.datacol
+        files.addFilter(NotEmpty(col))
+        occs=col.getDetailQuery()
+        occs.setSearchColumns("word.id")
+        
 
 
 class SearchFormCtrl:
@@ -40,33 +58,32 @@ class SearchFormCtrl:
     def setupForm(self,frm):
         sess=frm.session
         words = sess.query(tables.Word)
-        files = sess.query(tables.File) #,"name")
+        #files = sess.query(tables.File) #,"name")
         grid=None # referenced in search(), defined later
         
         #files.addColumn("content")
+        rpt=FoundFilesReport(sess)
         
-        rpt=DataReport(files,width=70)#,columnWidths="30 15 30")
-        #rpt=DataReport(files,columnWidths="30 15")
+##         rpt=DataReport(files,width=70)
 
-        #rpt.setupReport() # 
-        rpt.addDataColumn("name",width=20)
-        occsColumn=rpt.addDataColumn("occurences",
-                                     width=15)
-        rpt.addDataColumn("content",
-                          formatter=lambda x: preview(x))
+##         rpt.addDataColumn("name",width=20)
+##         occsColumn=rpt.addDataColumn("occurences",
+##                                      width=15)
+##         rpt.addDataColumn("content",
+##                           formatter=lambda x: preview(x))
 
-        col=occsColumn.datacol
-        files.addFilter(NotEmpty(col))
-        occs=col.getDetailQuery()
-        occs.setSearchColumns("word.id")
+##         col=occsColumn.datacol
+##         files.addFilter(NotEmpty(col))
+##         occs=col.getDetailQuery()
+##         occs.setSearchColumns("word.id")
         
         
         #frm = sess.form(label="Search")
 
-        self.searchString = frm.addEntry(STRING,
-                                         label="&Words to look for")
+        self.searchString=frm.addEntry(STRING,
+                                       label="&Words to look for")
                                     #value="")
-        self.anyWord = frm.addEntry(BOOL,label="&any word (OR)")
+        self.anyWord=frm.addEntry(BOOL,label="&any word (OR)")
         
         def search():
 ##             files.clearFilters()
@@ -182,16 +199,19 @@ This is the Keeper main menu.
         #    self.showSearchForm,sess)
         m.addItem("search",label="&Suchen").setHandler(
             sess.showForm,SearchFormCtrl())
+
+        
     
         m = frm.addMenu("db","&Datenbank")
-        m.addItem("volumes",label="&Volumes").setHandler(
-            sess.showViewGrid, tables.Volume)
-        m.addItem("files",label="&Files").setHandler(
-            sess.showViewGrid, tables.File)
-        m.addItem("dirs",label="&Directories").setHandler(
-            sess.showViewGrid, tables.Directory)
-        m.addItem("words",label="&Words").setHandler(
-            sess.showViewGrid, tables.Word)
+
+        m.addReportItem("volumes",tables.VolumesReport,
+                        label="&Authors")
+        m.addReportItem("files",tables.FilesReport,
+                        label="&Files")
+        m.addReportItem("dirs",tables.DirectoriesReport,
+                        label="&Directories")
+        m.addReportItem("words",tables.WordsReport,
+                        label="&Words")
         
         self.addProgramMenu(sess,frm)
 

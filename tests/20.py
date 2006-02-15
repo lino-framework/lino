@@ -55,11 +55,11 @@ from lino.apps.addrbook.tables import Nation,Partner
 class Case(TestCase):
     
     def test01(self):
-        dbc = demo.startup()
-        be = dbc.query(Nation).peek("be")
-        qry = dbc.query(Partner,
-                        "title firstName name",
-                        nation=be)
+        dbsess = demo.startup()
+        be = dbsess.query(Nation).peek("be")
+        qry = dbsess.query(Partner,
+                           "title firstName name",
+                           nation=be)
         qry.showReport(columnWidths="6 10 20")
         #dbc.showQuery(qry,columnWidths="6 10 20")
         #sess.showReport(rpt)

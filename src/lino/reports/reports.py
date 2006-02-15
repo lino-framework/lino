@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -36,11 +36,15 @@ CENTER = 3
 TOP = 4
 BOTTOM = 5
     
-class BaseReport: #(Describable):
+class BaseReport:
+    
+    title=None
+    width=None
+    columnWidths=None
+    rowHeight=None
+    
 
-
-    def __init__(self, parent,
-                 ds,
+    def __init__(self, parent, 
                  columnWidths=None,
                  width=None,
                  rowHeight=None,
@@ -53,19 +57,18 @@ class BaseReport: #(Describable):
         self._onRowEvents=[]
         self.formColumnGroups = None
 
-        #Describable.__init__(self,parent,**kw)
         if parent is not None:
             #if iterator is None: iterator=parent._iterator
             if title is None: title=parent.title
-            if ds is None: ds=parent.ds
+            #if ds is None: ds=parent.ds
             if columnWidths is None: columnWidths=parent.columnWidths
             if width is None: width=parent.width
             if rowHeight is None: rowHeight=parent.rowHeight
-        self.ds = ds
-        self.rowHeight = rowHeight
-        self.columnWidths = columnWidths
-        self.width = width
-        self.title=title
+        #self.ds = ds
+        if rowHeight is not None: self.rowHeight = rowHeight
+        if columnWidths is not None: self.columnWidths=columnWidths
+        if width is not None: self.width=width
+        if title is not None: self.title=title
 
     def child(self,**kw):
         assert not kw.has_key('parent'),\
@@ -86,18 +89,18 @@ class BaseReport: #(Describable):
     def setupMenu(self,navigator):
         pass
     
-    def __xml__(self,wr):
-        return self.ds.__xml__(wr)
+    def getIterator(self):
+        raise NotImplementedError
 
     def __len__(self):
-        return len(self.ds)
+        return len(self.getIterator())
 
     def __getitem__(self,i):
         #return self.ds.__getitem__(i)
-        return ReportRow(self,self.ds.__getitem__(i))
+        return ReportRow(self,self.getIterator().__getitem__(i))
 
     def canWrite(self):
-        return self.ds.canWrite()
+        return self.getIterator().canWrite()
 
     #def getVisibleColumns(self):
     #    return self.columns
@@ -358,53 +361,6 @@ class ReportColumn(Describable):
 ##         return self.type
 
 
-class DataReportColumn(ReportColumn):
-    def __init__(self,datacol,
-                 name=None,label=None,doc=None,
-                 formatter=None,
-                 selector=None,
-                 **kw):
-        if name is None: name=datacol.name
-        if formatter is None: formatter=datacol.format
-        if selector is None: selector=datacol.showSelector
-        #assert name != "DataReportColumn"
-        if label is None: label=datacol.rowAttr.label
-        if doc is None: label=datacol.rowAttr.doc
-        ReportColumn.__init__(self,
-                              formatter,selector,
-                              name,label,doc,
-                              **kw)
-        #assert self.name != "DataReportColumn"
-        self.datacol = datacol
-
-    def getCellValue(self,row):
-        return self.datacol.getCellValue(row.item)
-    
-    def setCellValue(self,row,value):
-        return self.datacol.setCellValue(row.item,value)
-
-    def getMinWidth(self):
-        return self.datacol.getMinWidth()
-    def getMaxWidth(self):
-        return self.datacol.getMaxWidth()
-
-##     def addFilter(self,*args):
-##         self.datacol.addFilter(*args)
-        
-    def canWrite(self,row):
-        if row is None:
-            return self.datacol.canWrite(None)
-        return self.datacol.canWrite(row.item)
-    
-    def validate(self,value):
-        return self.datacol.rowAttr.validate(value)
-        
-##     def getType(self):
-##         return self.datacol.rowAttr.getType()
-    
-##     def format(self,v):
-##         return self.datacol.format(v)
-    
 class VurtReportColumn(ReportColumn):
     
     def __init__(self,meth,datatype=None,formatter=None,**kw):
@@ -477,7 +433,7 @@ class ReportRow:
 
 class ReportIterator:
     def __init__(self,rpt,doc):
-        self.iterator=rpt.ds.__iter__()
+        self.iterator=rpt.getIterator().__iter__()
         self.rpt=rpt
         self.doc=doc
         
@@ -488,125 +444,15 @@ class ReportIterator:
         return self.rpt.processItem(self.iterator.next())
         #return self.rpt.processItem(self.doc,self.iterator.next())
 
-class DataReport(BaseReport):
-    
-    def __init__(self,qry,columnSpec=None,
-                 columnWidths=None,
-                 width=None,rowHeight=None,
-                 title=None,
-                 #name=None,label=None,doc=None,
-                 **kw):
-
-        #if name is None:
-        #    name=qry.getLeadTable().getName()+"Report"
-        
-        if len(kw):
-            # DataReport.__init__() forwards unknown keyword arguments
-            # to its query
-            qry=qry.child(**kw)
-            
-        #if label is None: label=qry.getLabel()
-            
-        BaseReport.__init__(self,None,qry,
-                            columnWidths,width,rowHeight,
-                            title=title)
-                            #name=name,label=label,doc=doc)
-        if columnSpec is not None:
-            self.setColumnSpec(columnSpec)
-    
-    def getTitle(self):
-        if self.title is not None: return self.title
-        return self.ds.buildTitle()
-    
-    def setupMenu(self,navigator):
-        self.ds.setupMenu(navigator)
-
-    def setupReport(self):
-        if len(self.columns) == 0:
-            for dc in self.ds.getVisibleColumns():
-                col = DataReportColumn(dc,label=dc.getLabel())
-                self.addColumn(col)
-            self.formColumnGroups=None
-        
-    def addDataColumn(self,colName,**kw):
-        dc=self.ds.findColumn(colName)
-        return self.addColumn(DataReportColumn(dc,**kw))
-
-    def doesShow(self,qry):
-        #used in lino.gendoc.html
-        myqry=self.ds
-        if myqry.getLeadTable().name != qry.getLeadTable().name:
-            return False
-        #if myqry._masters != qry._masters:
-        #    return False
-        return True
-
-    def canSort(self):
-        return True
-
-    def setColumnSpec(self,columnSpec):
-        assert type(columnSpec) in (str,unicode) 
-        #l = []
-        groups = []
-        for ln in columnSpec.splitlines():
-            grp=[]
-            for colName in ln.split():
-                x = colName.split(':')
-                if len(x) == 1:
-                    w=None
-                elif len(x) == 2:
-                    colName=x[0]
-                    w=int(x[1])
-                if colName == "*":
-                    for datacol in self.ds.getColumns():
-                    #for fld in self.ds.getLeadTable().getFields():
-                    #    datacol = self.ds.findColumn(fld.getName())
-                    #    if datacol is None:
-                    #        datacol = self.ds._addColumn(
-                    #            fld.getName(),fld)
-                        col=DataReportColumn(datacol,width=w)
-                        self.addColumn(col)
-                        grp.append(col)
-                else:
-                    dc=self.ds.provideColumn(colName)
-                    col=DataReportColumn(dc,width=w)
-                    self.addColumn(col)
-                    grp.append(col)
-            #l += grp
-            groups.append(tuple(grp))
-        #self.visibleColumns = tuple(l)
-        if len(groups) <= 1:
-            self.formColumnGroups = None
-        else:
-            self.formColumnGroups = tuple(groups)
-            
-    
-
-##     def fillReportForm(self,frm):
-##         self.ds.getLeadTable().fillReportForm(self,frm)
-        
-    #def execute(self,ds):
-    #    rpt.configure(**kw)
-
-##     def child(self,**kw):
-##         fwd={}
-##         c = copy.copy(self)
-##         for k,v in kw.items():
-##             if hasattr(self,k):
-##                 setattr(self,k,v)
-##             else:
-##                 fwd[k]=v
-##         if len(fwd):
-##             assert c.iterator is self.iterator
-##             #print "fwd %s to %s" % (fwd,c.iterator)
-##             c.iterator = c.iterator.child(**fwd)
-##         return c
-
 
 class DictReport(BaseReport):
     
     def __init__(self,d,**kw):
-        BaseReport.__init__(self,None, d.items(), **kw)
+        BaseReport.__init__(self,None, **kw)
+        self.dict=d
+
+    def getIterator(self):
+        return self.dict.items()
         
     def setupReport(self):
         if len(self.columns) == 0:
@@ -623,13 +469,15 @@ class DictReport(BaseReport):
     
         
 class Report(BaseReport):
-    def __init__(self,ds,**kw):
-        BaseReport.__init__(self,None, ds, **kw)
+    def __init__(self,**kw):
+        BaseReport.__init__(self,None, **kw)
 
-        
-## def createReport(iterator,**kw):
-##     if isinstance(iterator,Query):
-##         return DataReport(None,iterator,**kw)
-##     if isinstance(iterator,dict):
-##         return DictReport(iterator,**kw)
-##     return Report(None,iterator,**kw)
+
+
+
+
+
+
+
+
+

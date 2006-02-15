@@ -98,24 +98,6 @@ class Application:
         self.options=options
         self.args=args
 
-    def addProgramMenu(self,sess,frm):
-        m = frm.addMenu("system","&Programm")
-        m.addItem("logout",label="&Beenden",action=frm.close)
-        m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
-
-        def bugdemo(task):
-            for i in range(5,0,-1):
-                sess.status("%d seconds left",i)
-                task.increment()
-                task.sleep()
-            thisWontWork()
-            
-        
-        m.addItem("bug",label="&Bug demo").setHandler(
-            sess.loop,bugdemo,"Bug demo")
-        #m.addItem(label="show &Console").setHandler(self.showConsole)
-        return m
-
 
     def aboutString(self):
         if self.name is None:
@@ -225,6 +207,26 @@ class Application:
             syscon.error(str(e))
             return -1
 
+class GuiApplication(Application):
+    
+    def addProgramMenu(self,sess,frm):
+        m = frm.addMenu("system","&Programm")
+        m.addItem("logout",label="&Beenden",action=frm.close)
+        m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
+
+        def bugdemo(task):
+            for i in range(5,0,-1):
+                sess.status("%d seconds left",i)
+                task.increment()
+                task.sleep()
+            thisWontWork()
+            
+        
+        m.addItem("bug",label="&Bug demo").setHandler(
+            sess.loop,bugdemo,"Bug demo")
+        #m.addItem(label="show &Console").setHandler(self.showConsole)
+        return m
+
     def run(self,sess):
         self.showMainForm(sess)
         
@@ -256,3 +258,4 @@ class Application:
             sess.close()
         
         
+    

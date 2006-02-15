@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -28,6 +28,7 @@ from lino.adamo.schema import SchemaPlugin, Schema, \
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
 from lino.adamo.store import Populator
+from lino.adamo.dbreports import DataReport
 #from lino.adamo.row import DataRow
 
 LANG=STRING(2)

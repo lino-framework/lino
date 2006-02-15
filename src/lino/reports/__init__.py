@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,4 +17,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.reports.reports import Report, DataReport, DictReport, RIGHT
+from lino.reports.reports import \
+     ReportColumn,\
+     BaseReport, Report, DictReport, RIGHT

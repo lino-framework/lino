@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -38,14 +38,18 @@ This is the AddressBook main menu.
 """+("\n"*10))
 
         m = frm.addMenu("master","&Stammdaten")
-        m.addItem("nations",label="&Nations").setHandler(
-            sess.showViewGrid, Nation)
-        m.addItem("cities",label="&Cities").setHandler(
-            sess.showViewGrid, City)
-        m.addItem("partners",label="&Partners").setHandler(
-            sess.showViewGrid, Partner)
-        m.addItem("persons",label="&Persons").setHandler(
-            sess.showViewGrid, Person)
+        #m.addItem("nations",label="&Nations").setHandler(
+        #    sess.showViewGrid, Nation)
+##         m.addItem("cities",label="&Cities").setHandler(
+##             sess.showViewGrid, City)
+##         m.addItem("partners",label="&Partners").setHandler(
+##             sess.showViewGrid, Partner)
+##         m.addItem("persons",label="&Persons").setHandler(
+##             sess.showViewGrid, Person)
+        m.addReportItem("nations",NationsReport,label="&Nations")
+        m.addReportItem("cities",CitiesReport,label="&Cities")
+        m.addReportItem("partners",PartnersReport,label="&Partners")
+        m.addReportItem("persons",PersonsReport,label="&Persons")
         
         self.addProgramMenu(sess,frm)
 

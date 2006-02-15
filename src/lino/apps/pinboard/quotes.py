@@ -1,6 +1,4 @@
-#coding: latin1
-
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -39,6 +37,10 @@ class Quote(StoredDataRow):
     def __str__(self):
         return "[q"+str(self.id)+"]"
 
+class QuotesReport(DataReport):
+    leadTable=Quote
+
+
 class Publication(MemoTreeRow):
     tableName="Publications"
     def initTable(self,table):
@@ -47,20 +49,25 @@ class Publication(MemoTreeRow):
         table.addField('pubYear',INT)
         table.addField('subtitle',STRING)
         table.addField('typeRef',STRING)
-        table.addPointer('pubType', PubType)
+        table.addPointer('pubType', Pubtype)
         table.addPointer('author',Author)
         table.addPointer('lang',Language)
         #table.addField('lang',LANG)
         table.addField('url',URL)
 
-class PubType(BabelRow):
-    tableName="PubTypes"
+class PublicationsReport(DataReport):
+    leadTable=Publication
+
+class Pubtype(BabelRow):
+    tableName="Pubtypes"
     def initTable(self,table):
         table.addField('id',STRING)
         BabelRow.initTable(self,table)
         table.addField('typeRefPrefix',STRING)
         table.addBabelField('pubRefLabel',STRING)
         
+class PubtypesReport(DataReport):
+    leadTable=Pubtype
 
 class Topic(TreeRow):
     tableName="Topics"
@@ -75,23 +82,35 @@ class Topic(TreeRow):
         table.addField('wikipedia',URL)
         table.addBabelField('url',URL)
         
-        table.addView('simple',"name url super children")
+        #table.addView('simple',"name url super children")
         
     def __str__(self):
         return self.name
     
+class TopicsReport(DataReport):
+    leadTable=Topic
+    columnNames="name url super children"
+
 
 class Author(Person):
     tableName="Authors"
 
+class AuthorsReport(DataReport):
+    leadTable=Author
+    
+
 
 class PubByAuth(LinkingRow):
-    tableName="PubByAuth"
+    tableName="PubsByAuth"
     fromClass=Publication
     toClass=Author
     
 ##     def __init__(self,parent,**kw):
 ##         LinkingRow.__init__(self,parent,Publication,Author,**kw)
+    
+class PubByAuthReport(DataReport):
+    leadTable=PubByAuth
+    
 
 
 class AuthorEvent(BabelRow):
@@ -112,6 +131,9 @@ class AuthorEvent(BabelRow):
             s += " " + str(self.date)
         return s
         
+class AuthorEventsReport(DataReport):
+    leadTable=AuthorEvent
+    
 class AuthorEventType(BabelRow):
     "Birth, diplom, marriage, death..."
     tableName="AuthorEventTypes"
@@ -122,3 +144,6 @@ class AuthorEventType(BabelRow):
         #self.name = BabelField(STRING)
         
 
+class AuthorEventTypesReport(DataReport):
+    leadTable=AuthorEventType
+    

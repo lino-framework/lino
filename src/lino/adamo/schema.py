@@ -24,7 +24,7 @@ from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
 #from lino.ui import console
 from lino.console import syscon
-from lino.console.application import Application
+from lino.console.application import GuiApplication
 
 #from lino.adamo.forms import Form
 from lino.adamo.table import Table, SchemaComponent
@@ -52,7 +52,7 @@ class SchemaPlugin(SchemaComponent,Describable):
 ##         pass
 
 
-class Schema(Application):
+class Schema(GuiApplication):
 
     defaultLangs = ('en',)
     #tables=[]
@@ -61,7 +61,7 @@ class Schema(Application):
                  checkIntegrityOnStartup=False,
                  tempDir=".",
                  langs=None,**kw):
-        Application.__init__(self,**kw)
+        GuiApplication.__init__(self,**kw)
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup
         self._initDone= False

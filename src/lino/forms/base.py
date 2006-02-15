@@ -261,6 +261,9 @@ class Menu(Component):
         kw.setdefault("action",self.owner.urlto(htdoc))
         return self.addItem(htdoc.name,**kw)
     
+    def addReportItem(self,*args,**kw):
+        return self.getForm().session.addReportItem(self,*args,**kw)
+    
     def findItem(self,name):
         for mi in self.items:
             if mi.name == name: return mi

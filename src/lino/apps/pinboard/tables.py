@@ -29,17 +29,18 @@ from lino.apps.pinboard.events import EventType
 from lino.apps.pinboard.projects import Project
 from lino.apps.pinboard.projects import ProjectStatus
 
-from lino.apps.pinboard.news import NewsItem
-from lino.apps.pinboard.news import Newsgroup
+from lino.apps.pinboard.news import NewsItem, NewsItemsReport
+from lino.apps.pinboard.news import Newsgroup, NewsgroupsReport
 
 from lino.apps.pinboard.quotes import Author, \
      AuthorEvent, \
      AuthorEventType, \
      Topic, \
      Publication, \
-     PubType, \
+     Pubtype, \
      PubByAuth, \
-     Quote
+     Quote,\
+     AuthorsReport
 
 ## from lino.apps.pinboard import babel, web, events, \
 ##      projects, news, quotes
@@ -62,7 +63,7 @@ TABLES=(
         Topic,
         Publication,
         Quote,
-        PubType,
+        Pubtype,
         PubByAuth)
 
 #__all__ = filter(lambda x: x[0] != "_", dir())

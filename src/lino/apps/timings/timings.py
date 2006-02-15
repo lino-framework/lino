@@ -20,8 +20,8 @@
 
 import datetime
 
-from lino.apps.timings.tables import *
-from lino.apps.timings.tables import TABLES
+from lino.apps.timings import tables 
+#from lino.apps.timings.tables import TABLES
 from lino.adamo.ddl import Schema
 from lino.adamo.filters import DateEquals
 from lino.adamo.datatypes import itod, iif
@@ -29,7 +29,8 @@ from lino.adamo.datatypes import itod, iif
 from lino.gendoc.html import HtmlDocument
 from lino.gendoc.html import DataRowElement
 
-from lino.reports.reports import DataReport, ReportColumn
+from lino.reports.reports import ReportColumn
+from lino.adamo.dbreports import DataReport
 
 from lino.tools.anyrange import anyrange
 
@@ -37,6 +38,41 @@ DAY = datetime.timedelta(1)
 
 def everyday(d1,d2):
     return anyrange(itod(d1),itod(d2),DAY)
+
+
+class MonthlyCalendar(DataReport):
+    
+    leadTable=tables.Day
+    orderBy="date"
+    
+    def setupReport(self):
+        sess=self.query.session
+        year=2005
+        month=6
+
+        self.addFilter(DateEquals(self.query.findColumn('date'),
+                                  year,month))
+        def fmt(d):
+            return "["+str(d)+"]" # "%d-%d-%d"
+        self.addDataColumn("date",width=12,formatter=fmt)
+        
+        self.addVurtColumn(lambda row:str(row.item.date),
+                           label="ISO",width=10)
+
+        class ResourceColumn(ReportColumn):
+            def __init__(self,res):
+                self.res=res
+                ReportColumn.__init__(self,label=str(res))
+            def getCellValue(self,row):
+                return self.res.usages_by_resource.child(
+                    date=row.item)
+            def format(self,qry):
+                return ", ".join([str(u) for u in qry])
+        
+        for res in sess.query(tables.Resource,orderBy="id"):
+            self.addColumn(ResourceColumn(res))
+
+
 
 class Timings(Schema):
     #name="Lino/Timings"
@@ -47,7 +83,7 @@ class Timings(Schema):
     #tables = TABLES
 
     def setupSchema(self):
-        for cl in TABLES:
+        for cl in tables.TABLES:
             self.addTable(cl)
     
     def writeStaticSite(self,sess):
@@ -62,24 +98,25 @@ class Timings(Schema):
                             stylesheet="wp-admin.css")
 
         root.site.addResolver(
-            Resource,
+            tables.Resource,
             lambda x: "resources/"+x.id.strip()
             )
         root.site.addResolver(
-            UsageType, lambda x: "types/"+x.id.strip()
+            tables.UsageType, lambda x: "types/"+x.id.strip()
             )
         root.site.addResolver(
-            Usage, lambda x: "usages/"+str(x.date)
+            tables.Usage, lambda x: "usages/"+str(x.date)
             )
         root.site.addResolver(
-            Day, lambda x: "days/"+str(x.date)
+            tables.Day, lambda x: "days/"+str(x.date)
             )
 
 
         mnu = root.addMenu()
 
-        
-        ds = sess.query(Resource,
+        class ResourcesReport(tables.ResourcesReport):
+            pageLen=50
+        ds = sess.query(tables.Resource,
                         pageLen=50,
                         orderBy="name")
         rpt = DataReport(ds)
@@ -88,7 +125,7 @@ class Timings(Schema):
         
             
         
-        ds = sess.query(UsageType,
+        ds = sess.query(tables.UsageType,
                         pageLen=50,
                         orderBy="id")
         rpt = DataReport(ds)
@@ -96,14 +133,14 @@ class Timings(Schema):
         mnu.addLink(doc)
         
         
-        ds = sess.query(Day,
+        ds = sess.query(tables.Day,
                         pageLen=50,
                         orderBy="date")
         rpt = DataReport(ds)
         doc=root.addReportChild(rpt)
         mnu.addLink(doc)
 
-        for r in sess.query(Resource):
+        for r in sess.query(tables.Resource):
             rpt=DataReport(r.usages_by_resource,
                            orderBy="date start")
             root.addReportChild(rpt)
@@ -111,7 +148,7 @@ class Timings(Schema):
         filenames=root.save(sess,targetRoot)
 
         
-        for cl in (Resource, UsageType, Usage, Day):
+        for cl in (tables.Resource, UsageType, Usage, Day):
             rs=root.site.findResolver(cl)
             for x in sess.query(cl):
                 ch=root.__class__(parent=root,
@@ -123,33 +160,33 @@ class Timings(Schema):
         return filenames
     
 
-    def showMonthlyCalendar(self,sess,year=2005,month=6):
-        ds=sess.query(Day, orderBy="date")
-        ds.addFilter(DateEquals(ds.findColumn('date'),year,month))
-        rpt = DataReport(ds)
+##     def showMonthlyCalendar(self,sess,year=2005,month=6):
+##         ds=sess.query(Day, orderBy="date")
+##         ds.addFilter(DateEquals(ds.findColumn('date'),year,month))
+##         rpt = DataReport(ds)
         
-        def fmt(d):
-            return "["+str(d)+"]" # "%d-%d-%d"
-        rpt.addDataColumn("date",width=12,formatter=fmt)
+##         def fmt(d):
+##             return "["+str(d)+"]" # "%d-%d-%d"
+##         rpt.addDataColumn("date",width=12,formatter=fmt)
         
-        rpt.addVurtColumn(lambda row:str(row.item.date),
-                          label="ISO",width=10)
+##         rpt.addVurtColumn(lambda row:str(row.item.date),
+##                           label="ISO",width=10)
 
-        class ResourceColumn(ReportColumn):
-            def __init__(self,res):
-                self.res=res
-                ReportColumn.__init__(self,label=str(res))
-            def getCellValue(self,row):
-                return self.res.usages_by_resource.child(
-                    date=row.item)
-            def format(self,qry):
-                return ", ".join([str(u) for u in qry])
+##         class ResourceColumn(ReportColumn):
+##             def __init__(self,res):
+##                 self.res=res
+##                 ReportColumn.__init__(self,label=str(res))
+##             def getCellValue(self,row):
+##                 return self.res.usages_by_resource.child(
+##                     date=row.item)
+##             def format(self,qry):
+##                 return ", ".join([str(u) for u in qry])
         
-        for res in sess.query(Resource,orderBy="id"):
-            rpt.addColumn(ResourceColumn(res))
+##         for res in sess.query(Resource,orderBy="id"):
+##             rpt.addColumn(ResourceColumn(res))
 
-        sess.showReport(rpt)
-        #sess.report(rpt)
+##         sess.showReport(rpt)
+##         #sess.report(rpt)
         
 
     def showMainForm(self,sess):
@@ -160,18 +197,21 @@ This is the Timings main menu.
 """+("\n"*10))
 
         m = frm.addMenu("db","&Datenbank")
-        m.addItem("resources",label="&Resources").setHandler(
-            sess.showViewGrid, Resource)
-        m.addItem("usages",label="&Usages").setHandler(
-            sess.showViewGrid, Usage)
-        m.addItem("usageTypes",label="Usage &Types").setHandler(
-            sess.showViewGrid, UsageType)
+
+        m.addReportItem("resources",tables.ResourcesReport,
+                        label="&Resources")
+        
+        m.addReportItem("usages",tables.UsagesReport,
+                        label="&Usages")
+        
+        m.addReportItem("usageTypes",tables.UsageTypesReport,
+                        label="Usage &Types")
         
         m = frm.addMenu("reports","&Reports")
         m.addItem("s",label="&Static HTML").setHandler(
             self.writeStaticSite,sess)
-        m.addItem("m",label="&Monthly Calendar").setHandler(
-            self.showMonthlyCalendar,sess)
+        m.addReportItem("monthly",MonthlyCalendar,
+                        label="&Monthly Calendar")
         
         self.addProgramMenu(sess,frm)
 

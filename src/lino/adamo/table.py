@@ -269,11 +269,13 @@ class Table(FieldContainer,SchemaComponent,Describable):
 ##         #setattr(self,ame,dtl)
 
     def addView(self,viewName,columnNames=None,**kw):
+        raise "no longer used"
         if columnNames is not None:
             kw['columnSpec'] = columnNames
         self._views[viewName] = kw
         
     def getView(self,viewName):
+        raise "no longer used"
         #return self._views[viewName]
         return self._views.get(viewName,None)
 

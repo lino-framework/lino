@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -64,7 +64,12 @@ class Organisation(Contact,Address):
         Contact.initTable(self,table)
         Address.initTable(self,table)
         table.addField('name',STRING)
-        table.addView('std',columnNames="name email phone website")
+        #table.addView('std',columnNames="name email phone website")
+
+class OrganisationsReport(DataReport):
+    "former std view"
+    leadTable=Organisation
+    columnNames="name email phone website"
 
 class Person(StoredDataRow): #(Contact,Address):
     "A Person describes a specific physical human."
@@ -80,7 +85,7 @@ class Person(StoredDataRow): #(Contact,Address):
 
         #self.setColumnList("name firstName id")
         table.setOrderBy('name firstName')
-        table.addView('std',columnNames="name firstName id")
+        #table.addView('std',columnNames="name firstName id")
 
     def __str__(self):
         if self.firstName is None:
@@ -92,7 +97,12 @@ class Person(StoredDataRow): #(Contact,Address):
             raise DataVeto(
                 "Either name or firstName must be specified")
 
+class PersonsReport(DataReport):
+    "former std view"
+    leadTable=Person
+    columnNames="name firstName id"
     
+
 class User(Person):
     "People who can access this database"
     tableName="Users"
@@ -105,6 +115,9 @@ class User(Person):
         #self.setField('id',STRING,label="Username")
         table.addField('pwd',PASSWORD)
 
+class UsersReport(DataReport):
+    leadTable=User
+    
 
 class Partner(Contact,Address):
     """A Person or Organisation with whom I have business contacts.
@@ -123,7 +136,7 @@ class Partner(Contact,Address):
         #self.addPointer('org',Organisation)
         #self.addPointer('person',Person)
         table.addPointer('lang',Language)
-        table.addView("std","name firstName email phone gsm")
+        #table.addView("std","name firstName email phone gsm")
         
     def validate(self):
         if self.name is None:
@@ -135,6 +148,11 @@ class Partner(Contact,Address):
         return self.firstName+" "+self.name
     
         
+class PartnersReport(DataReport):
+    "former std view"
+    leadTable=Partner
+    columnNames="name firstName email phone gsm"
+    
 class PartnerType(BabelRow):
     
     tableName="PartnerTypes"
@@ -147,7 +165,8 @@ class PartnerType(BabelRow):
     def validatePartner(self,partner):
         pass
     
-
+class PartnerTypesReport(DataReport):
+    leadTable=PartnerType
     
 class Nation(BabelRow):
     tableName="Nations"
@@ -160,7 +179,7 @@ class Nation(BabelRow):
         table.addField('curr',STRING)
         table.addField('isocode',STRING(3))
         
-        table.addView('std',columnNames="name isocode id")
+        #table.addView('std',columnNames="name isocode id")
 
     def validate_id(value):
         if len(value) != 2:
@@ -172,7 +191,9 @@ class Nation(BabelRow):
 ##             #return "Nation.id must be 2 chars"
 ##             raise DataVeto("Nation.id must be 2 chars")
         
-
+class NationsReport(DataReport):
+    leadTable=Nation
+    columnNames="name isocode id"
         
 class City(StoredDataRow):
     
@@ -189,7 +210,7 @@ class City(StoredDataRow):
         
         table.setPrimaryKey("nation id")
         # complex primary key used by test cases
-        table.addView('std',columnNames="name nation zipCode")
+        #table.addView('std',columnNames="name nation zipCode")
         
     def __str__(self):
         if self.nation is None:
@@ -197,6 +218,9 @@ class City(StoredDataRow):
         return self.name + " (%s)" % self.nation.id
 
 
+class CitiesReport(DataReport):
+    leadTable=City
+    columnNames="name nation zipCode"
 
 
 
@@ -206,9 +230,16 @@ TABLES = (Language,
           Organisation, Person, User,
           Partner, PartnerType)
 
+REPORTS = (NationsReport, CitiesReport, OrganisationsReport,
+           PersonsReport, UsersReport, PartnersReport,
+           PartnerTypesReport)
+
 
 __all__ = [t.__name__ for t in TABLES]
 __all__.append('TABLES')
+
+__all__ += [t.__name__ for t in REPORTS]
+__all__.append('REPORTS')
 
 
 #__all__ = filter(lambda x: x[0] != "_", dir())

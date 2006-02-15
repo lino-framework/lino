@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -47,9 +47,13 @@ class Node(MemoTreeRow):
         #table.setColumnList('title abstract id created lang')
         #rpt.setLabel('Pages')
 
-        table.addView(
-            'std',
-            "title subtitle match created id modified author lang")
+##         table.addView(
+##             'std',
+##             "title subtitle match created id modified author lang")
+
+class NodesReport(DataReport):
+    leadTable=Node
+    columnNames="title subtitle match created id modified author lang"
 
     
 ##  def validate(self):

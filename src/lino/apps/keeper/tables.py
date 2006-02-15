@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -34,7 +34,7 @@ class Volume(StoredDataRow):
         table.addField('meta',MEMO(width=50,height=5))
         table.addField('path',STRING).setMandatory()
         #table.addDetail('directories',Directories,parent=None)
-        table.addView("std", "id name path directories meta")
+        #table.addView("std", "id name path directories meta")
         
 
     def setupMenu(self,nav):
@@ -63,6 +63,10 @@ class Volume(StoredDataRow):
         if name is None: return False
         if name.endswith('~'): return True
         return name in ('.svn',)
+
+class VolumesReport(DataReport):
+    leadTable=Volume
+    columnNames="id name path directories meta"
             
         
 class Directory(StoredDataRow):
@@ -76,7 +80,7 @@ class Directory(StoredDataRow):
             "subdirs")#,viewName="std")
         table.addPointer('volume',Volume).setDetail(
             "directories",parent=None)#,viewName="std")
-        table.addView("std","parent name subdirs files meta volume")
+        #table.addView("std","parent name subdirs files meta volume")
         #self.setPrimaryKey("volume parent name")
 
     def __str__(self):
@@ -103,6 +107,10 @@ class Directory(StoredDataRow):
         self.subdirs.deleteAll()
         StoredDataRow.delete(self)
                 
+class DiretoriesReport(DataReport):
+    leadTable=Directory
+    columnNames="parent name subdirs files meta volume"
+            
 
 class File(StoredDataRow):
     tableName="Files"
@@ -119,14 +127,14 @@ class File(StoredDataRow):
         table.addField('mustParse',BOOL)
         
         table.setPrimaryKey("dir name")
-        table.addView(
-            "std",
-            """\
-dir name type
-mtime size mustParse
-content
-meta
-""")
+##         table.addView(
+##             "std",
+##             """\
+## dir name type
+## mtime size mustParse
+## content
+## meta
+## """)
 
         
     def __str__(self):
@@ -179,6 +187,15 @@ meta
             #    continue
             self.occurences.appendRow(word=word, pos=pos)
         
+class FilesReport(DataReport):
+    leadTable=File
+    columnNames="""\
+dir name type
+mtime size mustParse
+content
+meta
+"""
+            
 class FileType(StoredDataRow):
     tableName="FileTypes"
     def initTable(self,table):
@@ -188,6 +205,9 @@ class FileType(StoredDataRow):
     def __str__(self):
         return self.name
         
+class FileTypesReport(DataReport):
+    leadTable=FileType
+    
 class Word(StoredDataRow):
     tableName="Words"
     def initTable(self,table):
@@ -195,8 +215,12 @@ class Word(StoredDataRow):
         #table.addField('word',STRING)
         table.addPointer('synonym',Word)
         #table.addField('ignore',BOOL)
-        table.addView("std","id synonym occurences")
+        #table.addView("std","id synonym occurences")
 
+class WordsReport(DataReport):
+    leadTable=Word
+    columnNames="id synonym occurences"
+    
 class Occurence(StoredDataRow):
     tableName="Occurences"
     def initTable(self,table):
@@ -205,6 +229,9 @@ class Occurence(StoredDataRow):
         table.addField('pos',INT)
         table.setPrimaryKey("word file pos")
 
+class OccurencesReport(DataReport):
+    leadTable=Occurence
+    
 
 TABLES = (
     Volume,

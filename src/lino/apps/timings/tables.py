@@ -48,6 +48,8 @@ class Resource(StoredDataRow):
     def delete(self):
         self.usages.deleteAll()
 
+class ResourcesReport        
+
             
         
 class Usage(StoredDataRow):

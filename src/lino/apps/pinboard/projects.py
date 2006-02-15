@@ -1,6 +1,4 @@
-#coding: iso-8859-1
-
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -38,10 +36,16 @@ class Project(MemoTreeRow):
         #from sdk import Version
         #self.version = Pointer(Version,"projects")
 
-        table.addView("std",
-                     columnNames="title abstract status",
-                     #label="Top-level projects",
-                     super=None)
+##         table.addView("std",
+##                      columnNames="title abstract status",
+##                      #label="Top-level projects",
+##                      super=None)
+
+class ProjectsReport(DataReport):
+    leadTable=Project
+    columnNames="title abstract status"
+    orderBy="title"
+    masters={'super': None}
 
 
 class ProjectStatus(BabelRow):
@@ -53,3 +57,6 @@ class ProjectStatus(BabelRow):
         #self.name = BabelField(STRING)
 
 
+class ProjectStatiReport(DataReport):
+    leadTable=ProjectStatus
+    

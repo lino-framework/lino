@@ -856,11 +856,11 @@ class PeekQuery(LeadTableColumnList):
 
 class SimpleQuery(LeadTableColumnList):
 
-    columnClasses=( PointerColumn,
-                    DetailColumn,
-                    BabelFieldColumn,
-                    FieldColumn,
-                    )
+    columnClasses=(PointerColumn,
+                   DetailColumn,
+                   BabelFieldColumn,
+                   FieldColumn
+                   )
 
     def __init__(self, _parent, store, sess,
                  columnNames=None,

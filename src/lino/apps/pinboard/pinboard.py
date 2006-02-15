@@ -1,4 +1,3 @@
-#coding: iso-8859-1
 ## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -20,10 +19,10 @@
 from lino.forms import gui
 
 from lino.apps.pinboard import tables 
-from lino.adamo.ddl import Schema
+from lino.adamo.ddl import Schema, DataReport
 
 from lino.gendoc.html import HtmlDocument
-from lino.reports.reports import DataReport
+#from lino.reports.reports import DataReport
 
 
 class Pinboard(Schema):
@@ -44,15 +43,25 @@ class Pinboard(Schema):
 This is the Pinboard main menu.                                     
 """+("\n"*10))
 
-        m = frm.addMenu("db","&Datenbank")
-        m.addItem("authors",label="&Authors").setHandler(
-            sess.showViewGrid, tables.Author)
-        m.addItem("nodes",label="&Nodes").setHandler(
-            sess.showViewGrid, tables.Node)
-        m.addItem("news",label="&News").setHandler(
-            sess.showViewGrid, tables.NewsItem)
-        m.addItem("newsgroups",label="News&groups").setHandler(
-            sess.showViewGrid, tables.Newsgroup)
+        m = frm.addMenu("db","&Database")
+        
+##         m.addItem("authors",label="&Authors").setHandler(
+##             sess.showViewGrid, tables.Author)
+##         m.addItem("nodes",label="&Nodes").setHandler(
+##             sess.showViewGrid, tables.Node)
+##         m.addItem("news",label="&News").setHandler(
+##             sess.showViewGrid, tables.NewsItem)
+##         m.addItem("newsgroups",label="News&groups").setHandler(
+##             sess.showViewGrid, tables.Newsgroup)
+        
+        m.addReportItem("authors",tables.AuthorsReport,
+                        label="&Authors")
+        m.addReportItem("nodes",tables.NodesReport,
+                        label="&Nodes")
+        m.addReportItem("news",tables.NewsItemsReport,
+                        label="&News")
+        m.addReportItem("newsgroups",tables.NewsgroupsReport,
+                        label="&Newsgroups")
         
 ##         m = frm.addMenu("reports","&Reports")
 ##         m.addItem("s",label="&Static HTML").setHandler(
