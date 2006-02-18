@@ -1,5 +1,4 @@
-# coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -26,7 +25,7 @@ from lino.misc.tsttools import TestCase, main
 from lino.apps.pinboard import demo, tables
 
 from lino.gendoc.html import HtmlDocument
-from lino.reports.reports import DataReport
+from lino.adamo.dbreports import QueryReport
 
 
 class Case(TestCase):
@@ -54,7 +53,7 @@ class Case(TestCase):
         ds = self.sess.query(tables.Nation,
                              pageLen=50,
                              orderBy="name")
-        rpt = DataReport(ds)
+        rpt = QueryReport(ds)
         doc=root.addChild(location="nations",
                           name=rpt.name,
                           title=rpt.getLabel())
@@ -65,7 +64,7 @@ class Case(TestCase):
             ds = self.sess.query(tables.Quote,"quote author.name id",
                                  pageLen=50,
                                  orderBy="id")
-            rpt = DataReport(ds)
+            rpt = QueryReport(ds)
             doc=root.addChild(location="quotes",
                               name=rpt.name,
                               title=rpt.getLabel())

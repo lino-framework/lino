@@ -1,6 +1,4 @@
-#coding: latin1
-
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -91,44 +89,10 @@ def rewriter(to_stream):
 
 
 
-
-## _syscon = None
-
-
-## def setSystemConsole(c):
-##     g = globals()
-    
-##     for funcname in (
-##         #'isInteractive','isVerbose',
-##         #'run',
-##         'set', #'parse_args',
-##         ):
-##         g[funcname] = getattr(c,funcname)
-        
-##     sess = Session(c)
-##     for funcname in (
-##         'debug',
-##         'notice','status','warning',
-##         'verbose', 'error','critical',
-##         'job',
-##         'isInteractive','isVerbose',
-##         'exception',
-##         'message','confirm',
-##         'showReport',
-##         'textprinter',
-##         ):
-##         g[funcname] = getattr(sess,funcname)
-        
-##     g['_syscon'] = c
-##     g['_session'] = sess
-
-
 def getToolkit():
     return _session.toolkit
 
 def setToolkit(toolkit):
-    #assert toolkit.__class__.__name__.endswith("Console"), \
-    #       toolkit.__class__.__name__
     _session.setToolkit(toolkit)
 
 

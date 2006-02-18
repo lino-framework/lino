@@ -114,15 +114,15 @@ id   |title
 ##         self.assertEqual(len(ds),10)
 
         
-        """
-        Calling
-        http://localhost:8080/lino/db/PROJECTS?v=std
-        must show only the projects with super=None
-        """
+##         """
+##         Calling
+##         http://localhost:8080/lino/db/PROJECTS?v=std
+##         must show only the projects with super=None
+##         """
 
-        rpt=self.sess.getViewReport(Project,"std")
-        #ds = self.sess.view(Project,"std")
-        self.assertEqual(len(rpt),3)
+##         rpt=self.sess.getViewReport(Project,"std")
+##         #ds = self.sess.view(Project,"std")
+##         self.assertEqual(len(rpt),3)
 
         
         

@@ -1,5 +1,4 @@
-#coding: latin1
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -26,7 +25,7 @@ class Resource(StoredDataRow):
     def initTable(self,table):
         table.addField('id',STRING) 
         table.addField('name',STRING)
-        table.addView("std", "id name")
+        #table.addView("std", "id name")
         
 
     def setupMenu(self,nav):
@@ -48,7 +47,9 @@ class Resource(StoredDataRow):
     def delete(self):
         self.usages.deleteAll()
 
-class ResourcesReport        
+class ResourcesReport(DataReport):
+    leadTable=Resource
+    columnNames="id name"
 
             
         
@@ -63,7 +64,7 @@ class Usage(StoredDataRow):
         table.addField('remark',STRING)
         #table.addField('mtime',TIMESTAMP)
         table.addPointer('resource',Resource).setMandatory()
-        table.addView("std", "id date start stop type remark")
+        #table.addView("std", "id date start stop type remark")
 
     def __str__(self):
         s=""
@@ -77,27 +78,39 @@ class Usage(StoredDataRow):
         return s
 
         
+class UsagesReport(DataReport):
+    leadTable=Usage
+    columnNames="id date start stop type remark"
+
 
 class UsageType(StoredDataRow):
     tableName="UsageTypes"
     def initTable(self,table):
         table.addField('id',STRING(width=2))
         table.addField('name',STRING)
-        table.addView("std", "id name")
+        #table.addView("std", "id name")
 
     def __str__(self):
         return self.name
         
+class UsageTypesReport(DataReport):
+    leadTable=UsageType
+    columnNames="id name"
+
 class Day(StoredDataRow):
     tableName="Days"
     def initTable(self,table):
         table.addField('date',DATE)
         table.addField('remark',STRING)
         table.setPrimaryKey("date")
-        table.addView("std", "date remark")
+        #table.addView("std", "date remark")
         
     def __str__(self):
         return str(self.date)
+
+class DaysReport(DataReport):
+    leadTable=Day
+    columnNames="date remark"
 
 
 TABLES = (
