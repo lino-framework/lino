@@ -44,7 +44,7 @@ class BaseReport:
     rowHeight=None
     
 
-    def __init__(self, parent, 
+    def __init__(self, parent=None, 
                  columnWidths=None,
                  width=None,
                  rowHeight=None,
@@ -54,7 +54,7 @@ class BaseReport:
         self.columns = []
         self.groups = []
         self.totals = []
-        self._onRowEvents=[]
+        #self._onRowEvents=[]
         self.formColumnGroups = None
 
         if parent is not None:
@@ -240,9 +240,13 @@ class BaseReport:
     def addVurtColumn(self,meth,**kw):
         return self.addColumn(VurtReportColumn(meth,**kw))
 
-    def onEach(self,meth):
-        self._onRowEvents.append(meth)
+##     def onEach(self,meth):
+##         self._onRowEvents.append(meth)
 
+    def setupRow(self,row):
+        # overridable
+        pass
+    
     def show(self,**kw):
         syscon.showReport(self,**kw)
 
@@ -396,9 +400,11 @@ class ReportRow:
         #self.cells = []
         self.values = []
         self.rpt=rpt
+
+        rpt.setupRow(self)
         
-        for e in rpt._onRowEvents:
-            e(self)
+        #for e in rpt._onRowEvents:
+        #    e(self)
             
             # onEach event may do some lookup or computing and store
             # the result in the ReportRow instance.

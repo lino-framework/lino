@@ -871,7 +871,6 @@ class SimpleQuery(LeadTableColumnList):
                  search=None,
                  masterColumns=None,
                  masters=[],
-                 #label=None,
                  **kw):
         self.session = sess
         LeadTableColumnList.__init__(self,_parent,store,columnNames)

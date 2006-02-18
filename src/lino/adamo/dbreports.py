@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.reports import BaseReport, ReportColumn
+from lino.adamo.query import Query
 
 
 class DataReportColumn(ReportColumn):
@@ -173,7 +174,6 @@ class QueryReport(BaseReport):
             
             
 
-
 class DataReport(QueryReport):
     
     leadTable=None
@@ -183,8 +183,9 @@ class DataReport(QueryReport):
     orderBy=None
     pageLen=None
     masters={}
+    masterColumns=None
     
-    def __init__(self,sess,
+    def __init__(self,sessionOrQuery,
                  leadTable=None,
                  columnSpec=None,
                  columnWidths=None,
@@ -201,11 +202,20 @@ class DataReport(QueryReport):
             
         if len(kw): self.masters=kw
         
-        q=sess.query(self.leadTable,
-                     orderBy=self.orderBy,
-                     columnNames=self.columnNames,
-                     pageLen=self.pageLen
-                     **self.masters)
+        if isinstance(sessionOrQuery,Query):
+            q=sessionOrQuery.child(
+                orderBy=self.orderBy,
+                columnNames=self.columnNames,
+                masterColumns=self.masterColumns,
+                pageLen=self.pageLen
+                **self.masters)
+            assert q.getLeadTable().__class__ is self.leadTable
+        else:
+            q=sess.query(self.leadTable,
+                         orderBy=self.orderBy,
+                         columnNames=self.columnNames,
+                         pageLen=self.pageLen
+                         **self.masters)
         
         QueryReport.__init__(self,q,columnSpec=self.columnSpec)
         

@@ -33,12 +33,21 @@ class Event(StoredDataRow):
     def initTable(self,table):
         table.addField('date',DATE)
         table.addField('name',NAME)
-        table.addView( "std","date name races")
+        #table.addView( "std","date name races")
 
     def __str__(self):
         return self.name
         
     def printRow(self,doc):
+        if len(self.races) == 0:
+            doc.p("no races")
+            return
+        
+        for race in self.races:
+            rpt=ParticipantsByEventReport(race.participants)
+            doc,report(rpt)
+        
+    def printRowUnused(self,doc):
         #print self.races
         if len(self.races) == 0:
             doc.p("no races")
@@ -60,6 +69,10 @@ class Event(StoredDataRow):
 
         rpt.endReport()
 
+class EventsReport(DataReport):
+    leadTable=Event
+    columnNames="date name races"
+
 
 class Race(StoredDataRow):
     tableName="Races"
@@ -77,11 +90,11 @@ class Race(StoredDataRow):
         table.addField('invalid',INT)
         table.addField('missing',INT)
         table.addPointer('event',Event).setDetail("races")
-        table.addView( "std",
-                       "date event name1 status startTime "
-                       "arrivals participants "
-                       "known unknown invalid missing "
-                       "tpl type name2 id")
+##         table.addView( "std",
+##                        "date event name1 status startTime "
+##                        "arrivals participants "
+##                        "known unknown invalid missing "
+##                        "tpl type name2 id")
 
     def setupMenu(self,nav):
         frm = nav.getForm()
@@ -227,6 +240,7 @@ Jedesmal wenn einer ankommt, ENTER drücken.
 
 
     def printRow(self,prn):
+        raise "not converted after 20060213"
         sess = self.getSession()
         q = self.participants.query(
             "person.name cat time dossard",
@@ -260,6 +274,8 @@ Jedesmal wenn einer ankommt, ENTER drücken.
                      sex=None,
                      xcName=None,
                      maxGroups=10):
+        raise "not converted after 20060213"
+    
         class Group:
             def __init__(self,id):
                 self.id = id
@@ -314,6 +330,13 @@ Jedesmal wenn einer ankommt, ENTER drücken.
 
 
 
+class RacesReport(DataReport):
+    leadTable=Race
+    columnNames="date event name1 status startTime "\
+                 "arrivals participants "\
+                 "known unknown invalid missing "\
+                 "tpl type name2 id"
+
 
         
         
@@ -325,6 +348,9 @@ class RaceType(StoredDataRow):
 
     def __str__(self):
         return self.name
+
+class RaceTypesReport(DataReport):
+    leadTable=RaceType
         
 class Club(StoredDataRow):
     tableName="Clubs"
@@ -335,6 +361,9 @@ class Club(StoredDataRow):
     def __str__(self):
         return self.name
         
+class ClubsReport(DataReport):
+    leadTable=Club
+    
 class Category(StoredDataRow):
     tableName="Categories"
     def initTable(self,table):
@@ -349,6 +378,9 @@ class Category(StoredDataRow):
 
     def __str__(self):
         return self.id + " ("+self.name+")"
+
+class CategoriesReport(DataReport):
+    leadTable=Category
         
 class Participant(StoredDataRow):
     tableName="Participants"
@@ -366,6 +398,17 @@ class Participant(StoredDataRow):
         table.addField('catPlace',INT)
         
 
+class ParticipantsReport(DataReport):
+    leadTable=Participant
+    
+class ParticipantsByEventReport(DataReport):
+    leadTable=Participant
+    columnNames = "place duration person.name cat dossard"
+    columnWidths = "4 20 3 8 4"
+    orderBy="place"
+    masterColumns="event"
+    
+    
 class Arrival(StoredDataRow):
     tableName="Arrivals"
     def initTable(self,table):
@@ -376,6 +419,8 @@ class Arrival(StoredDataRow):
         table.addField('ok',BOOL)
         
 
+class ArrivalsReport(DataReport):
+    leadTable=Arrival
 
 # order of tables is important: tables will be populated in this order
 TABLES = (

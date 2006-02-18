@@ -56,16 +56,17 @@ This is the Ledger main menu.
 """+("\n"*10))
 
         m = frm.addMenu("ledger","&Ledger")
-        m.addItem("products",label="&Products").setHandler(
-            sess.showViewGrid, Product)
-        m.addItem("gen",label="&GL accounts").setHandler(
-            sess.showViewGrid, Account)
-        m.addItem("ccy",label="&Currencies").setHandler(
-            sess.showViewGrid, Currency)
+        
+        m.addReportItem("products",tables.ProductsReport,
+                        label="&Products")
+        m.addReportItem("gl",tables.AccountsReport,
+                        label="&GL accounts")
+        m.addReportItem("ccy",tables.CurrenciesReport,
+                        label="&Currencies")
         
         m = frm.addMenu("sales","&Verkauf")
-        m.addItem("invoices",label="&Invoices").setHandler(
-            sess.showViewGrid, Invoice)
+        m.addReportItem("invoices",tables.InvoicesReport,
+                        label="&Invoices")
         
         self.addProgramMenu(sess,frm)
 

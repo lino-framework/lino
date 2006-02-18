@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2004-2005 Luc Saffre 
+## Copyright 2004-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -32,7 +32,7 @@ from lino.adamo.schema import MirrorLoaderApplication
 class Raceman(MirrorLoaderApplication):
     
     name="Raceman"
-    years='2005'
+    years='2005-2006'
     #tables = races.TABLES
     
     def setupSchema(self):
@@ -60,21 +60,18 @@ This is the Raceman main menu.
 
         m = frm.addMenu("&Stammdaten")
         
-        m.addItem(label="&Events").setHandler(
-            self.showViewGrid,frm,
-            races.Events,"std")
+        m.addReportItem("events",races.EventsReport,
+                        label="&Events")
         
-        m.addItem(label="&Races").setHandler(
-            self.showViewGrid,frm,
-            races.Races,"std")
-
-        m.addItem(label="&Clubs").setHandler(
-            self.showTableGrid,frm,
-            races.Clubs)
-        m.addItem(label="&Personen").setHandler(
-            self.showTableGrid,frm,
-            races.Persons)
-    
+        m.addReportItem("races",races.RacesReport,
+                        label="&Races")
+        
+        m.addReportItem("clubs",races.ClubsReport,
+                        label="&Clubs")
+        
+        m.addReportItem("persons",races.PersonsReport,
+                        label="&Persons")
+        
         #m = frm.addMenu("&Arrivals")
         #m.addItem(label="&Erfassen").setHandler(self.arrivals)
         

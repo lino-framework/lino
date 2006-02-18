@@ -61,7 +61,7 @@ except ImportError,e:
 
 
 
-# rewriter() inspired by a snippet in Marc-André Lemburg's Python
+# rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
 # Unicode Tutorial
 # (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
 

@@ -40,10 +40,11 @@ class Currency(BabelRow):
     def __str__(self):
         return self.id
 
-
+class CurrenciesReport(DataReport):
+    leadTable=Currency
 
 class Partner(addrtables.Partner):
-    # no tableName because this overrides addrtables.Partners
+    # no tableName because this overrides addrbook.tables.Partners
     def initTable(self,table):
         addrtables.Partner.initTable(self,table)
         table.addPointer('currency',Currency)
@@ -59,10 +60,14 @@ class Journal(StoredDataRow):
     def __str__(self):
         return self.name
         
+class JournalsReport(DataReport):
+    leadTable=Journal
+
 
 
 
 class Document(StoredDataRow):
+    #abstract
     def initTable(self,table):
         table.addField('seq',ROWID)
         table.addField('date',DATE)
@@ -86,10 +91,17 @@ class BankStatement(FinancialDocument):
         FinancialDocument.initTable(self,tbl)
         tbl.addField('balance1',AMOUNT)
         tbl.addField('balance2',AMOUNT)
+
+class BankStatementsReport(DataReport):
+    leadTable=BankStatement
+
         
 class MiscOperation(FinancialDocument):
     tableName="MiscOperations"
     
+class MiscOperationsReport(DataReport):
+    leadTable=MiscOperation
+
 class PartnerDocument(Document):
     def initTable(self,table):
         Document.initTable(self,table)
@@ -108,6 +120,9 @@ class Product(StoredDataRow):
         table.addField('name',STRING)
         table.addField('price',PRICE)
 
+
+class ProductsReport(DataReport):
+    leadTable=Product
 
 
 
@@ -130,6 +145,9 @@ class Invoice(PartnerDocument):
         self.amount = total
         self.unlock()
         
+class InvoicesReport(DataReport):
+    leadTable=Invoice
+
 
 class InvoiceLine(StoredDataRow):
     tableName="InvoiceLines"
@@ -159,6 +177,10 @@ class ProductInvoiceLine(InvoiceLine):
         #print self.amount
 
 
+
+class InvoiceContentReport(DataReport):
+    leadTable=InvoiceLine
+    masterColumns="invoice"
 
 
 
@@ -206,6 +228,9 @@ class BalanceItem(StatementItem):
     
     tableName="BalanceItems"
     #pass
+
+class BalanceReport(DataReport):
+    leadTable=BalanceItem
 
 class ProfitAndLossItem(StatementItem):
     """
