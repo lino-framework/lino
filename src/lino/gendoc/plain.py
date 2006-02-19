@@ -24,11 +24,12 @@ from lino.reports import reports
 
 class PlainDocument(GenericDocument):
     def __init__(self,
-                 writer=sys.stdout.write,
+                 writer=sys.stdout,
                  columnSep='|',
                  columnHeaderSep='-',
                  **kw):
-        self.writer = writer
+        assert hasattr(writer,'write')
+        self._writer = writer
         self.columnSep = columnSep
         self.columnHeaderSep = columnHeaderSep
     
@@ -39,7 +40,11 @@ class PlainDocument(GenericDocument):
         return len(self.columnSep)
     
     def write(self,txt):
-        self.writer(txt)
+        self._writer.write(txt)
+##         try:
+##             self._writer.write(txt)
+##         except UnicodeEncodeError,e:
+##             raise "FooException: %s" % self._writer.encoding
         
     def report(self,rpt):
         #print __file__, rpt.iterator._filters

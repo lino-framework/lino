@@ -21,7 +21,7 @@ from lino.textprinter.textprinter import TextPrinter
 
 class PlainTextPrinter(TextPrinter):
     def __init__(self,writer,cpl=72,frameStyle="+-+|+-+|"):
-        self.writer = writer
+        self._writer = writer
         TextPrinter.__init__(self,pageSize=(cpl,0),cpl=cpl)
         assert len(frameStyle) == 8
         self.topLeft = frameStyle[0]
@@ -37,7 +37,7 @@ class PlainTextPrinter(TextPrinter):
 ##         return ""
         
     def onBeginPage(self):
-        self.writer(
+        self._writer.write(
             self.topLeft+
             self.topBorder*self.getCpl()
             +self.topRight
@@ -45,7 +45,7 @@ class PlainTextPrinter(TextPrinter):
         self.textobject=""
         
     def onEndPage(self):
-        self.writer(
+        self._writer.write(
             self.bottomLeft+
             self.bottomBorder*self.getCpl()+
             self.bottomRight+
@@ -58,7 +58,7 @@ class PlainTextPrinter(TextPrinter):
     def newline(self):
         ln = self.textobject.ljust(self.getCpl())
         ln = ln[:self.getCpl()]
-        self.writer(self.leftBorder+ln+self.rightBorder+"\n")
+        self._writer.write(self.leftBorder+ln+self.rightBorder+"\n")
         self.textobject = ""
         
     def insertImage(self,line):

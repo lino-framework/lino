@@ -1,4 +1,3 @@
-#coding: latin1
 ## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -34,7 +33,7 @@ def preview(s):
 
 class FoundFilesReport(DataReport):
     leadTable=tables.File
-    width=70
+    #width=70
     
     def setupReport(self):
         files = self.query.session.query(tables.File) #,"name")
@@ -42,13 +41,16 @@ class FoundFilesReport(DataReport):
         occsColumn=self.addDataColumn("occurences",
                                       width=15)
         self.addDataColumn("content",
+                           width=40,
                            formatter=lambda x: preview(x))
 
         col=occsColumn.datacol
         files.addFilter(NotEmpty(col))
-        occs=col.getDetailQuery()
-        occs.setSearchColumns("word.id")
+        self.occs=col.getDetailQuery()
+        self.occs.setSearchColumns("word.id")
         
+    def setSearch(self,s):
+        self.occs.setSearch(s)
 
 
 class SearchFormCtrl:
@@ -96,7 +98,7 @@ class SearchFormCtrl:
                 
             #files.setSearch(searchString.getValue())
             #occs._queryParams["search"]=searchString.getValue()
-            occs.setSearch(self.searchString.getValue())
+            rpt.setSearch(self.searchString.getValue())
             grid.enabled=self.searchString.getValue() is not None
             frm.refresh()
 

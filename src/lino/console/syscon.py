@@ -138,9 +138,9 @@ if hasattr(sys.stdout,"encoding") \
 
 
 if sys.stdout.isatty():
-    console=TtyConsole(sys.stdout.write, sys.stderr.write)
+    console=TtyConsole(sys.stdout, sys.stderr)
 else:
-    console=Console(sys.stdout.write, sys.stderr.write)
+    console=Console(sys.stdout, sys.stderr)
     
 _session=Session(console)
 

@@ -163,6 +163,7 @@ class BaseReport:
         if len(l) > 0:
             # second loop: 
             w = int((available - used) / len(l))
+            assert w > 0
             for col in l:
                 col.width = w
                 used += w

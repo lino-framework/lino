@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -46,7 +46,10 @@ class Case(TestCase):
         #print s
 
         self.assertEquivalent(s, """\
-Users Partners Nations Cities Languages ProjectStati Projects EventTypes Events Nodes Newsgroups News AuthorEventTypes AuthorEvents Authors Topics Publications Quotes PubTypes PubByAuth
+Users Partners Nations Cities
+Languages ProjectStati Projects EventTypes Events Nodes Newsgroups
+News AuthorEventTypes AuthorEvents Authors Topics Publications Quotes
+PubTypes PubAuthors
 """)
         
         

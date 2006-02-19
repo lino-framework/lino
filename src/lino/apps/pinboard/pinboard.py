@@ -56,6 +56,8 @@ This is the Pinboard main menu.
         
         m.addReportItem("authors",tables.AuthorsReport,
                         label="&Authors")
+        m.addReportItem("publications",tables.PublicationsReport,
+                        label="&Publications")
         m.addReportItem("nodes",tables.NodesReport,
                         label="&Nodes")
         m.addReportItem("news",tables.NewsItemsReport,

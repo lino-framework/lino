@@ -1,4 +1,3 @@
-#coding: iso-8859-1
 ## Copyright 2004-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -514,13 +513,13 @@ class Win32TextPrinter(TextPrinter):
         """
         HORZRES	: Breite des Bildscchirms, angegeben in Pixeln.
         
-        VERTRES	: Höhe des Bildschorms, angegeben in Rasterzeilen.
+        VERTRES	: Hoehe des Bildschirms, angegeben in Rasterzeilen.
         
-        LOGPIXELSX : Anzahl der Pixel pro logischen Inch über die
+        LOGPIXELSX : Anzahl der Pixel pro logischen Inch ueber die
         Bildschirmbreite.
         
-        LOGPIXELSY: Anzahl der Pixel pro logischen Inch über die
-        Bildschirmhöhe.
+        LOGPIXELSY: Anzahl der Pixel pro logischen Inch ueber die
+        Bildschirmhoehe.
         
 
         """

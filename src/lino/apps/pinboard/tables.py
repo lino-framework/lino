@@ -37,8 +37,8 @@ from lino.apps.pinboard.quotes import Author, \
      AuthorEventType, \
      Topic, \
      Publication, \
-     Pubtype, \
-     PubByAuth, \
+     PubType, \
+     PubAuthor, \
      Quote,\
      AuthorsReport
 
@@ -63,8 +63,8 @@ TABLES=(
         Topic,
         Publication,
         Quote,
-        Pubtype,
-        PubByAuth)
+        PubType,
+        PubAuthor)
 
 #__all__ = filter(lambda x: x[0] != "_", dir())
 

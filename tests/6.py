@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -21,7 +21,8 @@ from lino.misc.tsttools import TestCase, main, Toolkit
 
 from lino.adamo.store import Populator
 
-from lino.apps.timings.timings import Timings, everyday
+from lino.apps.timings.timings import Timings, everyday, \
+     MonthlyCalendar
 from lino.apps.timings import tables
 from lino.adamo.datatypes import itot
 from lino.adamo import center
@@ -79,8 +80,9 @@ class Case(TestCase):
         #s=center.stopDump()
         #print s
         #self.assertEquivalent(s,""" """)        
-        
-        self.sess.db.app.showMonthlyCalendar(self.sess,2005,6)
+        rpt=MonthlyCalendar(self.sess,2005,6)
+        self.sess.showReport(rpt)
+        #self.sess.db.app.showMonthlyCalendar(self.sess,2005,6)
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\

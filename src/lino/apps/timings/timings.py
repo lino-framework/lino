@@ -44,13 +44,17 @@ class MonthlyCalendar(DataReport):
     leadTable=tables.Day
     orderBy="date"
     
-    def setupReport(self):
-        sess=self.query.session
-        year=2005
-        month=6
+    def __init__(self,dbsess,year=2005, month=6):
+        DataReport.__init__(self,dbsess)
+        self.year=year
+        self.month=month
 
-        self.addFilter(DateEquals(self.query.findColumn('date'),
-                                  year,month))
+    def setupReport(self,*args,**kw):
+        sess=self.query.session
+
+        self.query.addFilter(
+            DateEquals(self.query.findColumn('date'),
+                       self.year,self.month))
         def fmt(d):
             return "["+str(d)+"]" # "%d-%d-%d"
         self.addDataColumn("date",width=12,formatter=fmt)
@@ -75,7 +79,7 @@ class MonthlyCalendar(DataReport):
 
 class Timings(Schema):
     #name="Lino/Timings"
-    years='2005'
+    years='2005-2006'
     author="Luc Saffre"
     htmlRoot="gendoc_html"
     

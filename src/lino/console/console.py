@@ -91,6 +91,8 @@ class Console(AbstractToolkit):
 
     def __init__(self, stdout, stderr, **kw):
         AbstractToolkit.__init__(self)
+        assert hasattr(stdout,'write')
+        assert hasattr(stderr,'write')
         self._stdout = stdout
         self._stderr = stderr
         self._verbosity = 0
@@ -105,6 +107,8 @@ class Console(AbstractToolkit):
 ##         pass
     
     def redirect(self,stdout,stderr):
+        assert hasattr(stdout,'write')
+        assert hasattr(stderr,'write')
         old = (self._stdout, self._stderr)
         self._stdout = stdout
         self._stderr = stderr
@@ -145,10 +149,10 @@ class Console(AbstractToolkit):
     
 
     def write(self,msg):
-        self._stdout(msg)
+        self._stdout.write(msg)
         
     def writeout(self,msg):
-        self._stdout(msg+"\n")
+        self._stdout.write(msg+"\n")
 
             
     def showStatus(self,sess,msg):
@@ -445,7 +449,7 @@ class Console(AbstractToolkit):
 
     def showReport(self,sess,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
-        gd = PlainDocument(writer=self._stdout)
+        gd = PlainDocument(self._stdout)
         gd.beginDocument()
         gd.report(rpt)
         gd.endDocument()
@@ -454,7 +458,7 @@ class Console(AbstractToolkit):
     def showForm(self,frm):
         from lino.gendoc.plain import PlainDocument
         #gd = PlainDocument()
-        gd = PlainDocument(writer=self._stdout)
+        gd = PlainDocument(self._stdout)
         gd.beginDocument()
         gd.renderForm(frm)
         gd.endDocument()
@@ -528,7 +532,7 @@ class TtyConsole(Console):
             msg=''
         else:
             msg = msg[:self.width]
-        self._stdout(msg.ljust(self.width)+"\r")
+        self._stdout.write(msg.ljust(self.width)+"\r")
 
     def _refresh(self,sess):
         self.showStatus(sess,sess.statusMessage)
@@ -540,7 +544,8 @@ class TtyConsole(Console):
             sess.notice(msg)
             return ""
         if sess.statusMessage is not None:
-            self._stdout(sess.statusMessage.ljust(self.width)+"\n")
+            self._stdout.write(
+                sess.statusMessage.ljust(self.width)+"\n")
         return raw_input(msg)
 
 
@@ -549,14 +554,14 @@ class CaptureConsole(Console):
     def __init__(self,batch=True,**kw):
         self.buffer = StringIO()
         Console.__init__(self,
-                         self.buffer.write,
-                         self.buffer.write,
+                         self.buffer,
+                         self.buffer,
                          batch=batch,**kw)
 
     def getConsoleOutput(self):
         s = self.buffer.getvalue()
         self.buffer.close()
         self.buffer = StringIO()
-        self.redirect(self.buffer.write,self.buffer.write)
+        self.redirect(self.buffer,self.buffer)
         return s
     

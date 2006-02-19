@@ -185,25 +185,26 @@ class DataReport(QueryReport):
     masters={}
     masterColumns=None
     
-    def __init__(self,sessionOrQuery,
-                 leadTable=None,
-                 columnSpec=None,
-                 columnWidths=None,
-                 orderBy=None,
-                 width=None,rowHeight=None,
-                 title=None,
-                 #name=None,label=None,doc=None,
-                 **kw):
-        if leadTable is not None: self.leadTable=leadTable
-        if columnSpec is not None: self.columnSpec=columnSpec
-        #if columnNames is not None: self.columnNames=columnNames
-        if orderBy is not None: self.orderBy=orderBy
-        if columnWidths is not None: self.columnWidths=columnWidths
+##     def __init__(self,sessionOrQuery,
+##                  leadTable=None,
+##                  columnSpec=None,
+##                  columnWidths=None,
+##                  orderBy=None,
+##                  width=None,rowHeight=None,
+##                  title=None,
+##                  #name=None,label=None,doc=None,
+##                  **kw):
+##         if leadTable is not None: self.leadTable=leadTable
+##         if columnSpec is not None: self.columnSpec=columnSpec
+##         #if columnNames is not None: self.columnNames=columnNames
+##         if orderBy is not None: self.orderBy=orderBy
+##         if columnWidths is not None: self.columnWidths=columnWidths
             
-        if len(kw): self.masters=kw
+##         if len(kw): self.masters=kw
         
-        if isinstance(sessionOrQuery,Query):
-            q=sessionOrQuery.child(
+    def __init__(self,dataProvider):
+        if isinstance(dataProvider,Query):
+            q=dataProvider.child(
                 orderBy=self.orderBy,
                 columnNames=self.columnNames,
                 masterColumns=self.masterColumns,
@@ -211,12 +212,12 @@ class DataReport(QueryReport):
                 **self.masters)
             assert q.getLeadTable().__class__ is self.leadTable
         else:
-            q=sess.query(self.leadTable,
-                         orderBy=self.orderBy,
-                         columnNames=self.columnNames,
-                         pageLen=self.pageLen
-                         **self.masters)
-        
+            q=dataProvider.query(
+                self.leadTable,
+                orderBy=self.orderBy,
+                columnNames=self.columnNames,
+                pageLen=self.pageLen,
+                **self.masters)
         QueryReport.__init__(self,q,columnSpec=self.columnSpec)
         
             

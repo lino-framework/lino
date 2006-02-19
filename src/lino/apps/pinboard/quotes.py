@@ -49,7 +49,7 @@ class Publication(MemoTreeRow):
         table.addField('pubYear',INT)
         table.addField('subtitle',STRING)
         table.addField('typeRef',STRING)
-        table.addPointer('pubType', Pubtype)
+        table.addPointer('pubType', PubType)
         table.addPointer('author',Author)
         table.addPointer('lang',Language)
         #table.addField('lang',LANG)
@@ -58,16 +58,16 @@ class Publication(MemoTreeRow):
 class PublicationsReport(DataReport):
     leadTable=Publication
 
-class Pubtype(BabelRow):
-    tableName="Pubtypes"
+class PubType(BabelRow):
+    tableName="PubTypes"
     def initTable(self,table):
         table.addField('id',STRING)
         BabelRow.initTable(self,table)
         table.addField('typeRefPrefix',STRING)
         table.addBabelField('pubRefLabel',STRING)
         
-class PubtypesReport(DataReport):
-    leadTable=Pubtype
+class PubTypesReport(DataReport):
+    leadTable=PubType
 
 class Topic(TreeRow):
     tableName="Topics"
@@ -100,16 +100,16 @@ class AuthorsReport(DataReport):
     
 
 
-class PubByAuth(LinkingRow):
-    tableName="PubsByAuth"
+class PubAuthor(LinkingRow):
+    tableName="PubAuthors"
     fromClass=Publication
     toClass=Author
     
 ##     def __init__(self,parent,**kw):
 ##         LinkingRow.__init__(self,parent,Publication,Author,**kw)
     
-class PubByAuthReport(DataReport):
-    leadTable=PubByAuth
+class PubAuthorsReport(DataReport):
+    leadTable=PubAuthor
     
 
 
