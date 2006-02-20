@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005 Luc Saffre.
+## Copyright 2005-2006 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -23,35 +23,14 @@ import locale
 
 from lino.console.application import Application, UsageError
 
-class Diag(Application):
-    name="Lino/diag"
-    copyright="""\
-Copyright (c) 2005 Luc Saffre.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information."""
-    url="http://www.saffre-rumma.ee/lino/diag.html"
-    
-    usage="usage: lino diag [options]"
-    description="""\
-writes some diagnostics about your computer.
-""" 
-    
-    def run(self,sess):
-        if len(self.args) != 0:
-            raise UsageError("no arguments please")
-
-        diag(sys.stdout)
-        sess.message("")
-
-def diag(out):    
+def diag(out):
 
     out.write("""
 Some sentences in different languages:
     
     Ännchen Müller machte große Augen.
-    Cède à César les pâtes reçues.
-    Tõesti, ma ütlen teile, see pole ükskõik.
+    Cède à César les pâturages reçues.
+    Tõesti, ma ütlen teile, see ei ole ükskõik.
 
 Overview table with all accented characters:
     
@@ -75,23 +54,23 @@ Some system settings related to encodings:
               + sys.getfilesystemencoding())
     out.write("\n    sys.stdout.encoding : ")
     try:
-        out.write(sys.stdout.encoding)
+        out.write(str(sys.stdout.encoding))
     except AttributeError:
         out.write("(undefined)")
     out.write("\n    sys.stdin.encoding : ")
     try:
-        out.write(sys.stdin.encoding)
+        out.write(str(sys.stdin.encoding))
     except AttributeError:
         out.write("(undefined)")
     out.write("\n")
 
-    out.write("""
-Miscellaneous system settings:
-""")
-    l = sys.modules.keys()
-    l.sort()
+##     out.write("""
+## Miscellaneous system settings:
+## """)
+##     l = sys.modules.keys()
+##     l.sort()
     
-    out.write("modules: " + ' '.join(l)+"\n")
+##     out.write("modules: " + ' '.join(l)+"\n")
 
 ##     rpt = console.report()
 ##     rpt.addColumn(meth=lambda row: str(row[0]),
@@ -102,6 +81,27 @@ Miscellaneous system settings:
 ##                   width=40)
 ##     rpt.execute(d.items())    
     
+
+class Diag(Application):
+    name="Lino/diag"
+    copyright="""\
+Copyright (c) 2005-2006 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://lino.saffre-rumma.ee/diag.html"
+    
+    usage="usage: lino diag [options]"
+    description="""\
+writes some diagnostics about your computer.
+""" 
+    
+    def run(self,sess):
+        if len(self.args) != 0:
+            raise UsageError("no arguments please")
+
+        diag(sys.stdout)
+        sess.message("")
 
 
 consoleApplicationClass = Diag

@@ -21,6 +21,7 @@
 import os
 import sys
 import time
+import codecs
 
 #from optparse import OptionParser
 from cStringIO import StringIO
@@ -467,10 +468,25 @@ class Console(AbstractToolkit):
         self.showForm(frm)
 
 
+
+
 class TtyConsole(Console):
 
     purzelMann = "|/-\\"
     width = 78  # 
+
+
+##     def __init__(self, stdout, stderr, **kw):
+##         stdout=rewriter(stdout)
+## ##         try:
+## ##             if stdout.encoding != sys.getdefaultencoding():
+## ##                 stdout=rewriter(stdout)
+## ##             else:
+## ##                 print "foo"
+## ##         except AttributError,e:
+## ##             print "oops: ", e
+        
+##         Console.__init__(self,stdout,stderr,**kw)
 
 ##     def __init__(self,*args,**kw):
 ##         self._batch = False

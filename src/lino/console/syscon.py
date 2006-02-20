@@ -18,30 +18,16 @@
 
 import sys
 import atexit
-import codecs
 from optparse import OptionParser
 
 from lino.console.console import TtyConsole, Console
 from lino.forms.session import Session
 
-# if frozen (with py2exe or McMillan), sys.setdefaultencoding() has
-# not been deleted.  And site.py and sitecustomize.py haven't been
-# executed.
-
-if hasattr(sys,'setdefaultencoding'):
-
-    import locale
-    loc = locale.getdefaultlocale()
-    if loc[1]:
-        #print "sys.setdefaultencoding(%s)" % repr(loc[1])
-        sys.setdefaultencoding(loc[1])
-    
-
 
 #class JobAborted(Exception):
 #    pass
 
-
+DEBUG=False
 
 
 
@@ -58,34 +44,6 @@ except ImportError,e:
     sound = False
 
 #from lino.misc.jobs import Job #, PurzelConsoleJob
-
-
-
-# rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
-# Unicode Tutorial
-# (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
-
-def rewriter(to_stream):
-    if to_stream.encoding is None:
-        return to_stream
-    if to_stream.encoding == sys.getdefaultencoding():
-        return to_stream
-
-    (e,d,sr,sw) = codecs.lookup(to_stream.encoding)
-    unicode_to_fs = sw(to_stream)
-
-    (e,d,sr,sw) = codecs.lookup(sys.getdefaultencoding())
-    class StreamRewriter(codecs.StreamWriter):
-
-        encode = e
-        decode = d
-
-        def write(self,object):
-            data,consumed = self.decode(object,self.errors)
-            self.stream.write(data)
-            return len(data)
-
-    return StreamRewriter(unicode_to_fs)
 
 
 
@@ -128,13 +86,17 @@ def shutdown():
     if _session is not None:
         _session.toolkit.shutdown()
 
+    if DEBUG:
+        l = sys.modules.keys()
+        l.sort()
+        print "used modules: " + ' '.join(l)
 
-if hasattr(sys.stdout,"encoding") \
-      and sys.stdout.encoding is not None \
-      and sys.getdefaultencoding() != sys.stdout.encoding:
-    #print sys.stdout.encoding
-    sys.stdout = rewriter(sys.stdout)
-    #sys.stderr = rewriter(sys.stderr)
+## if hasattr(sys.stdout,"encoding") \
+##       and sys.stdout.encoding is not None \
+##       and sys.getdefaultencoding() != sys.stdout.encoding:
+##     #print sys.stdout.encoding
+##     sys.stdout = rewriter(sys.stdout)
+##     #sys.stderr = rewriter(sys.stderr)
 
 
 if sys.stdout.isatty():
