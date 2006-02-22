@@ -98,12 +98,6 @@
 ;(add-hook 'python-mode-hook (setq indent-tabs-mode t))
 ;(add-hook 'python-mode-hook (setq py-smart-indentation nil))
 
-(load-library "lilypond-mode.el")
-(setq auto-mode-alist
-      (cons '("\\.ly$" . LilyPond-mode) auto-mode-alist))
-(add-hook 'LilyPond-mode-hook (lambda () (turn-on-font-lock)))
-
-
 
 (setq auto-mode-alist
       (append
@@ -164,3 +158,12 @@
 
 
 ; (require 'emacs-wiki)
+
+
+
+(load-library "lilypond-mode.el")
+(setq auto-mode-alist
+      (cons '("\\.ly$" . LilyPond-mode) auto-mode-alist))
+(add-hook 'LilyPond-mode-hook (lambda () (turn-on-font-lock)))
+
+
