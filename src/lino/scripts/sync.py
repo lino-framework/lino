@@ -27,12 +27,12 @@ class Sync(Application):
     name="Lino/sync"
     
     copyright="""\
-Copyright (c) 2005 Luc Saffre.
+Copyright (c) 2005-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     
-    url="http://www.saffre-rumma.ee/lino/sync.html"
+    url="http://lino.saffre-rumma.ee/sync.html"
     
     usage="usage: lino sync [options] SRC DEST"
     

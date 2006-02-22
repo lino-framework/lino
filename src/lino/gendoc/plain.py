@@ -21,13 +21,16 @@ from textwrap import TextWrapper
 
 from lino.gendoc.gendoc import GenericDocument
 from lino.reports import reports
+from lino.console import syscon
 
 class PlainDocument(GenericDocument):
     def __init__(self,
-                 writer=sys.stdout,
+                 writer=None,
                  columnSep='|',
                  columnHeaderSep='-',
                  **kw):
+        if writer is None:
+            writer=syscon.getSystemConsole().toolkit.stdout
         assert hasattr(writer,'write')
         self._writer = writer
         self.columnSep = columnSep
@@ -40,11 +43,11 @@ class PlainDocument(GenericDocument):
         return len(self.columnSep)
     
     def write(self,txt):
-        self._writer.write(txt)
-##         try:
-##             self._writer.write(txt)
-##         except UnicodeEncodeError,e:
-##             raise "FooException: %s" % self._writer.encoding
+        try:
+            self._writer.write(txt)
+        except UnicodeEncodeError,e:
+            raise "FooException: could not write %r to %r" % (
+                txt, self._writer)
         
     def report(self,rpt):
         #print __file__, rpt.iterator._filters

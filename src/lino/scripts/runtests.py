@@ -1,4 +1,4 @@
-## Copyright 2004-2005 Luc Saffre
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -52,7 +52,7 @@ class Runtests(Application):
     #author='Luc Saffre'
     
     copyright="""\
-Copyright (c) 2004-2005 Luc Saffre.
+Copyright (c) 2004-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""

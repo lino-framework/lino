@@ -141,14 +141,6 @@ class BaseSession:
         return self.toolkit.textprinter(self,*args,**kw)
 
     
-    
-##     def job(self,*args,**kw):
-##         #job=self.toolkit.progresserFactory(self,*args,**kw)
-##         #job=self.toolkit.jobFactory(self,*args,**kw)
-##         return self.toolkit.createJob(self,*args,**kw)
-
-        
-        
     def message(self,*args,**kw):
         return self.toolkit.message(self,*args,**kw)
     def confirm(self,*args,**kw):

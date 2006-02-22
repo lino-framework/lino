@@ -110,20 +110,20 @@ itr( "%d files and %d directories ",
 
 
 itr("to remove",
-    de="zu löschen")
+    de=u"zu löschen")
 itr("to update",
     de="zu aktualisieren")
 itr("to copy",
     de="zu kopieren")
 itr("were removed",
-    de="wurden gelöscht")
+    de=u"wurden gelöscht")
 itr( "were updated", de="wurden aktualisiert")
 itr("were copied", de=u"wurden kopiert")
 
 itr("would have been removed", de=u"wären gelöscht worden")
-itr("would have been updated", de="wären aktualisiert worden")
-itr("would have been copied", de="wären kopiert worden")
-itr("%d files up-to-date", de="%d Dateien unverändert")
+itr("would have been updated", de=u"wären aktualisiert worden")
+itr("would have been copied", de=u"wären kopiert worden")
+itr("%d files up-to-date", de=u"%d Dateien unverändert")
 itr("%d files ", de="%d Dateien ")
         
 

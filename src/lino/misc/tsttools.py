@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -53,17 +53,17 @@ DOCROOT = os.path.normpath( os.path.join(
    #~ runner.run(suite)
 
 
-def catch_output(f,*args,**kw):
-    out = sys.stdout
-    sys.stdout = StringIO()
-    try:
-        f(*args,**kw)
-    #except Exception,e:
-    #    raise e
-    finally:
-        r = sys.stdout.getvalue()
-        sys.stdout = out
-        return r
+## def catch_output(f,*args,**kw):
+##     out = sys.stdout
+##     sys.stdout = StringIO()
+##     try:
+##         f(*args,**kw)
+##     #except Exception,e:
+##     #    raise e
+##     finally:
+##         r = sys.stdout.getvalue()
+##         sys.stdout = out
+##         return r
 
 
    

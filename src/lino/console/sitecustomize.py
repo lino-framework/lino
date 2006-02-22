@@ -27,18 +27,17 @@ from lino.console import sitecustomize
 
 """
 
-# inspired by:
-# http://pythonfacile.free.fr/python/unicode.html
-# http://www.faqs.org/docs/diveintopython/kgp_unicode.html
-
-
-# the function setdefaultencoding() is deleted from module sys
-# after executing sitecustomize.py
+# In a normal Python installation the function setdefaultencoding() is
+# deleted from module sys after executing sitecustomize.py
 
 # If the Python process is "frozen" (running from a binary
 # distribution produced by with py2exe or McMillan),
 # sys.setdefaultencoding() has not been deleted, and site.py and
 # sitecustomize.py haven't been executed.
+
+# inspired by:
+# http://pythonfacile.free.fr/python/unicode.html
+# http://www.faqs.org/docs/diveintopython/kgp_unicode.html
 
 if hasattr(sys,'setdefaultencoding'):
     import locale
@@ -50,35 +49,9 @@ if hasattr(sys,'setdefaultencoding'):
     else:
         encoding = 'cp850'
         #encoding = 'iso-8859-1'
+        print "sitecustomize sets default encoding to ",encoding
+        sys.setdefaultencoding(encoding)
 
 
 
-# rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
-# Unicode Tutorial
-# (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
-
-def rewriter(to_stream):
-    if to_stream.encoding is None:
-        return to_stream
-    if to_stream.encoding == sys.getdefaultencoding():
-        return to_stream
-
-    (e,d,sr,sw) = codecs.lookup(to_stream.encoding)
-    unicode_to_fs = sw(to_stream)
-
-    (e,d,sr,sw) = codecs.lookup(sys.getdefaultencoding())
-    
-    class StreamRewriter(codecs.StreamWriter):
-
-        encode = e
-        decode = d
-
-        def write(self,object):
-            data,consumed = self.decode(object,self.errors)
-            self.stream.write(data)
-            return len(data)
-
-    return StreamRewriter(unicode_to_fs)
-
-
-sys.stdout=rewriter(sys.stdout)
+#sys.stdout=rewriter(sys.stdout)

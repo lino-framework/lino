@@ -67,7 +67,7 @@ class Case(TestCase):
         
         #print s
         
-        self.assertEquivalent(s,"""\
+        self.assertEquivalent(s,u"""\
 Partners (nation=Belgium)
 =========================
 title |firstName |name                

@@ -178,9 +178,9 @@ class Application:
             usage=self.usage,
             description=self.description)
 
-        sess=syscon._session
-        
-        sess.setApplication(self)
+        sess=syscon.getSystemConsole()
+
+        #sess.setApplication(self)
         
         #sess.toolkit.setupOptionParser(p)
         sess.setupOptionParser(p)

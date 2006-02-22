@@ -1,0 +1,214 @@
+2001-11-12  David Ponce  <david@dponce.com>
+
+	* recentf.el (recentf-auto-cleanup-timer): New variable.  Timer used to
+	automatically cleanup the `recentf-list'.
+	(recentf-auto-cleanup): New option.  Define how to automatically
+	cleanup the `recentf-list'.
+	(recentf-cancel-cleanup-timer): New function.  Cancel the auto cleanup
+	timer.
+	(recentf-mode): When the mode is turned on cleanup the `recentf-list'
+	depending on `recentf-auto-cleanup' setting.  When the mode is turned
+	off cancel the auto cleanup timer.
+	Thanks to "Klaus Berndl" <klaus.berndl@sdm.de> for providing the
+	initial implementation of the "auto cleanup" feature.
+
+2001-08-03  David Ponce  <david@dponce.com>
+
+	* recentf.el (recentf-menu-filter, recentf-arrange-by-rule-subfilter):
+	Made
+	consistent with the version in Emacs 21 distribution.
+	(recentf-string-equal, recentf-string-lessp, recentf-string-member):
+	New functions which take care of `recentf-case-fold-search' value.
+	(recentf-push): New function used to push a file path in the
+	`recentf-list'.
+	(recentf-add-file, recentf-remove-if-non-readable,
+	recentf-sort-ascending, recentf-sort-descending,
+	recentf-sort-basenames-ascending, recentf-sort-basenames-descending,
+	recentf-directory-compare, recentf-show-basenames,
+	recentf-build-dir-rules): Use above new functions.
+	(recentf-windows-nt-virtual-drives): XEmacs 21.4 compatibility
+	changes.
+	(recentf-find-file): Use `recentf-remove-if-non-readable'.
+
+2001-04-04  David Ponce  <david@dponce.com>
+
+	* recentf.el (recentf-expand-file-name):
+	Xemacs compatibility.  New function used
+	to canonicalize file names.
+	(recentf-menu-customization-changed, recentf-save-file,
+	recentf-menu-path, recentf-menu-before,
+	recentf-keep-non-readable-files-p, recentf-add-file,
+	recentf-apply-menu-filter, recentf-relative-filter, recentf-edit-list,
+	recentf-open-files-item, recentf-open-files, recentf-mode): Added
+	XEmacs compatibility.
+	(recentf-button-keymap): Xemacs compatibility.  New variable.  Keymap
+	used inside push-buttons.
+	(recentf-virtual-pathes-handler, recentf-link-behavior): New options
+	to handle virtual pathes and links.
+	(recentf-virtual-pathes-alist): New variable to store virtual pathes.
+	(recentf-windows-nt-virtual-drives, recentf-rebuild-virtual-pathes,
+	recentf-file-truename): New functions to handle virtual pathes and
+	links.
+	(recentf-add-file): Handle virtual pathes and links.
+	(recentf-mode): Handle virtual pathes.
+	Thanks to "Klaus Berndl" <klaus.berndl@sdm.de> for providing the first
+	implementation of the "virtual pathes" and "link behaviour" feature.
+	Some checkdoc related fixes.
+
+2000-10-19  David Ponce  <david@dponce.com>
+
+	* recentf.el: Doc fixes.
+
+2000-08-11  David Ponce  <david@dponce.com>
+
+	* recentf.el: down-mouse-1 binded to `widget-button-click' in
+	`recentf-dialog-mode-map'. So can use left mouse button to click on
+	dialog buttons.
+
+2000-07-17  David Ponce  <david@dponce.com>
+
+	* recentf.el: New `recentf-open-files' command that works like
+	`recentf-open-more-files', but shows the whole list of files (not just
+	those omitted from the menu). Useful if you don't use a menu-bar!
+	Minor improvement of open [more] files and edit list dialogs. You can
+	now just type "q" to cancel them.
+
+2000-07-04  David Ponce  <david@dponce.com>
+
+	* recentf.el: First public beta version of recentf.el 1.17.
+	This is a major update of recentf.el. It adds new features to better
+	organize the recentf menu and "More..." buffer.
+	Using new provided menu filtering functions you can now organize the
+	recent files list:
+	- by major modes
+	- by directories
+	- by user defined rules
+	Finally, with the new `recentf-filter-changer' customizable filter you
+	can define a ring of filters and dynamically (via the menu) cycle on
+	each menu organization in the ring (a la msb).
+
+2000-06-08  David Ponce  <david@dponce.com>
+
+	* recentf.el: Copyright update.
+
+2000-05-30  David Ponce  <david@dponce.com>
+
+	* recentf.el:
+	FIXED: `recentf-edit-list' and `recentf-open-more-files' commands
+	issued "Symbol's function definition is void: widget-insert".
+	When recentf mode is enabled the wid-edit package (not required at
+	runtime) is missing. So, I have replaced the following:
+	(require 'widget)
+	(eval-when-compile
+	  (require 'wid-edit))
+	by:
+	(require 'wid-edit)
+
+2000-05-25  David Ponce  <david@dponce.com>
+
+	* recentf.el: Added some "Commentary".
+	Minor changes in `recentf-open-more-files' and `recentf-edit-list' to
+	move the point at the top of the file list. This behaviour is
+	consistent with the menu one when the list contains a lot of files.
+	`recentf-cleanup' now displays the number of items removed from the
+	list.
+	New `recentf-relative-filter' to show filenames relative to
+	`default-directory'.
+
+2000-03-08  ebat311  <ebat311@EBAT311>
+
+	* recentf.el:
+	Added :set, :require to `recentf-keep-non-readable-files-p' defcustom.
+	Fix submitted by Dave Love  <fx@gnu.org> to enable autoload
+	processing to work.
+
+2000-02-16  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: Version submitted to the FSF.
+
+2000-01-17  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: Unreleased intermediate version.
+
+1999-12-06  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: Version submitted to the FSF.
+	This version improves menu filtering to allow writing of more
+	sofisticated filters without modifying the core functions.
+	Some new predefined menu filters are provided too.
+	Thanks to <klaus.berndl@sdm.de> who has suggested these improvements.
+
+1999-10-21  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: Recentf is now part of GNU Emacs!
+	Richard Stallman <rms@gnu.org> and Gerd Moellmann <gerd@gnu.org>
+	have made changes in formatting, doc strings, etc..
+	To enable the package it is now necessary to use M-x recentf-mode.
+	To enable recentf at Emacs startup use M-x customize-variable RET recentf-mode.
+
+1999-09-30  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: New features:
+	  - Command items can be appended to the menu depending of
+	    a new customizable option `recentf-menu-append-commands-p'.
+	  - Non readable files are not kept in `recentf-list' depending
+	    of a new customizable option `recentf-keep-non-readable-files-p'.
+	  - New command `recentf-cleanup' to remove all non-readable
+	    files from `recentf-list'.
+	Fixes:
+	  - In some Emacs/XEmacs version the `custom-set-default' function
+	    is missing. A workaround is included.
+	  - When the `recentf-list' is empty a disabled "No files" item
+	    is displayed on the menu.
+
+1999-08-24  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: FIXED:
+	  When vm-mail is called, emacs started beeping and was hanging.
+	  So `recentf-update-menu-hook' is changed to use `menu-bar-update-hook'
+	  instead of `activate-menubar-hook'.
+	  `recentf-update-menu-hook' also causes an error when called while
+	  vm-mode is the major-mode, since under vm the layout
+	  of the menus is changed and there is no Files menu in the menubar.
+	  This caused menu-bar-update-hook to be set to nil.
+	  Possible errors are now catched during the menu update.
+	  Thanks to "Diego Calvanese" <calvanese@dis.uniroma1.it>
+	  who has reported and fixed thess bugs.
+
+	* recentf.el: NEW FEATURE:
+	  The `recentf-menu-filter' customizable variable can be set to a function
+	  used to filter the menu items. If its value is nil (default) the list will not change.
+	  Two predefined functions are provided:
+	     - `recentf-sort-ascending' to sort the menu items in ascending order.
+	     - `recentf-sort-descending' to sort the menu items in descending order.
+
+1999-07-27  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: FIXED:
+	  Typo error. The `recentf-menu-customization-changed' function
+	  was incorrectly named `recentf-menu-cutomization-changed'.
+	  Thanks to "Remo Badii" <badii@psicl0.psi.ch> who has reported this bug.
+
+1999-07-23  ebat311  <ebat311@EBAT311>
+
+	* recentf.el:
+	As recommended by "Richard Stallman" <rms@gnu.org>, replaced
+	the `remove' function by `delete' to avoid recentf depending on cl.
+
+1999-07-21  ebat311  <ebat311@EBAT311>
+
+	* recentf.el: FIXED:
+	  User customization of the recentf menu was not correctly handled.
+	  Thanks to "Steve Kemp" <stevek@epc.co.uk> who has reported this bug.
+
+1999-07-20  ebat311  <ebat311@EBAT311>
+
+	* recentf.el:
+	New default function `recentf-find-file' to invoke with an filename item of
+	the recentf menu. It calls `find-file' to edit an existing file and removes the
+	name of a non existing file from the list of recently opened files.
+	Custom variable `recentf-menu-command' renamed to `recentf-menu-action'
+	because its value is not necessarily a command.
+
+	* recentf.el: New file.
+

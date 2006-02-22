@@ -25,7 +25,7 @@ from lino.console.application import Application, UsageError
 
 def diag(out):
 
-    out.write("""
+    out.write(u"""
 Some sentences in different languages:
     
     Ännchen Müller machte große Augen.
@@ -35,7 +35,7 @@ Some sentences in different languages:
 Overview table with all accented characters:
     
         A E I O U   a e i o u            
-    ¨   Ä . Ï Ö Ü   ä ë ï ö ü
+    ¨   Ä \xcb Ï Ö Ü   ä ë ï ö ü
     ~   Ã . . Õ .   ã . . õ .            
     ´   Á É Í Ó Ú   á é í ó ú            
     `   À È Ì Ò Ù   à è ì ò ù
@@ -48,9 +48,9 @@ Some system settings related to encodings:
     out.write("\n    locale.getdefaultlocale(): "
               + repr(locale.getdefaultlocale()))
 
-    out.write("\n    getdefaultencoding() : "
+    out.write("\n    sys.getdefaultencoding() : "
               + sys.getdefaultencoding())
-    out.write("\n    getfilesystemencoding() : "
+    out.write("\n    sys.getfilesystemencoding() : "
               + sys.getfilesystemencoding())
     out.write("\n    sys.stdout.encoding : ")
     try:
@@ -100,7 +100,8 @@ writes some diagnostics about your computer.
         if len(self.args) != 0:
             raise UsageError("no arguments please")
 
-        diag(sys.stdout)
+        #diag(sys.stdout)
+        diag(sess.toolkit.stdout)
         sess.message("")
 
 

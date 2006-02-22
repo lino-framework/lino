@@ -82,6 +82,35 @@ class OperationFailed(Exception):
 ##         pass
 
 
+# rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
+# Unicode Tutorial
+# (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
+
+def rewriter(to_stream,encoding):
+    if encoding is None:
+        encoding=to_stream.encoding
+    if encoding is None: return to_stream
+    if encoding == sys.getdefaultencoding(): return to_stream
+
+    (e,d,sr,sw) = codecs.lookup(encoding)
+    unicode_to_fs = sw(to_stream)
+
+    (e,d,sr,sw) = codecs.lookup(sys.getdefaultencoding())
+    
+    class StreamRewriter(codecs.StreamWriter):
+
+        encode = e
+        decode = d
+        #errors='replace'
+
+        def write(self,object):
+            data,consumed = self.decode(object,self.errors)
+            self.stream.write(data)
+            return len(data)
+
+    return StreamRewriter(unicode_to_fs)
+
+
 
 
             
@@ -90,12 +119,14 @@ class Console(AbstractToolkit):
 
     #jobFactory = Job #progresserFactory = Progresser
 
-    def __init__(self, stdout, stderr, **kw):
+    def __init__(self, stdout, stderr, encoding=None,**kw):
         AbstractToolkit.__init__(self)
         assert hasattr(stdout,'write')
         assert hasattr(stderr,'write')
-        self._stdout = stdout
-        self._stderr = stderr
+        #self._stdout = stdout
+        #self._stderr = stderr
+        self.stdout=rewriter(stdout,encoding)
+        self.stderr=rewriter(stderr,encoding)
         self._verbosity = 0
         self._batch = False
         #self._status = None
@@ -107,15 +138,17 @@ class Console(AbstractToolkit):
 ##     def closeSession(self,sess):
 ##         pass
     
-    def redirect(self,stdout,stderr):
+    def redirect(self,stdout,stderr,encoding=None):
         assert hasattr(stdout,'write')
         assert hasattr(stderr,'write')
-        old = (self._stdout, self._stderr)
-        self._stdout = stdout
-        self._stderr = stderr
-        return old
+        #old = (self.stdout, self.stderr)
+        self.stdout=rewriter(stdout,encoding)
+        self.stderr=rewriter(stderr,encoding)
+        #self.stdout = stdout
+        #self.stderr = stderr
+        #return old
 
-    def configure(self, verbosity=None, batch=None, **kw):
+    def configure(self, verbosity=None, batch=None):
         if batch is not None:
             self._batch = batch
         if verbosity is not None:
@@ -150,10 +183,10 @@ class Console(AbstractToolkit):
     
 
     def write(self,msg):
-        self._stdout.write(msg)
+        self.stdout.write(msg)
         
-    def writeout(self,msg):
-        self._stdout.write(msg+"\n")
+    def writeln(self,msg):
+        self.stdout.write(msg+"\n")
 
             
     def showStatus(self,sess,msg):
@@ -186,26 +219,26 @@ class Console(AbstractToolkit):
         sess.logmessage(msg)
         #self.writelog(msg)
         if self._verbosity >= 0:
-            self.writeout(msg)
+            self.writeln(msg)
 
     def notice(self,sess,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
         if self._verbosity >= 0:
             msg = sess.buildMessage(msg,*args,**kw)
             sess.logmessage(msg)
-            self.writeout(msg)
+            self.writeln(msg)
 
     def verbose(self,sess,msg,*args,**kw):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
             msg = sess.buildMessage(msg,*args,**kw)
-            self.writeout(msg)
+            self.writeln(msg)
         
     def debug(self,sess,msg,*args,**kw):
         "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
             msg = sess.buildMessage(msg,*args,**kw)
-            self.writeout(msg)
+            self.writeln(msg)
             #self.out.write(msg + "\n")
 
             
@@ -365,7 +398,7 @@ class Console(AbstractToolkit):
         
         #if sound:
         #    sound.asterisk()
-        self.writeout(msg)
+        self.writeln(msg)
         #self.alert(msg)
         if not self._batch:
             self.readkey(sess,"Press ENTER to continue...")
@@ -384,7 +417,7 @@ class Console(AbstractToolkit):
         
         """
         assert type(default) is type(False)
-        #print self._stdout
+        #print self.stdout
 ##         if self.app is not None:
 ##             return self.app.confirm(prompt,default)
         if sound:
@@ -441,16 +474,16 @@ class Console(AbstractToolkit):
     
     def textprinter(self,sess,**kw):
         from lino.textprinter.plain import PlainTextPrinter
-        return PlainTextPrinter(self._stdout,**kw)
+        return PlainTextPrinter(self.stdout,**kw)
         
 ##     def report(self,**kw):
 ##         from lino.reports.plain import Report
-##         return Report(writer=self._stdout,**kw)
+##         return Report(writer=self.stdout,**kw)
 
 
     def showReport(self,sess,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
-        gd = PlainDocument(self._stdout)
+        gd = PlainDocument(self.stdout)
         gd.beginDocument()
         gd.report(rpt)
         gd.endDocument()
@@ -459,7 +492,7 @@ class Console(AbstractToolkit):
     def showForm(self,frm):
         from lino.gendoc.plain import PlainDocument
         #gd = PlainDocument()
-        gd = PlainDocument(self._stdout)
+        gd = PlainDocument(self.stdout)
         gd.beginDocument()
         gd.renderForm(frm)
         gd.endDocument()
@@ -548,36 +581,39 @@ class TtyConsole(Console):
             msg=''
         else:
             msg = msg[:self.width]
-        self._stdout.write(msg.ljust(self.width)+"\r")
+        self.stdout.write(msg.ljust(self.width)+"\r")
 
     def _refresh(self,sess):
         self.showStatus(sess,sess.statusMessage)
         #if sess._status is not None:
-        #    self._stdout(sess._status+"\r")
+        #    self.stdout(sess._status+"\r")
 
     def readkey(self,sess,msg):
         if self._batch:
             sess.notice(msg)
             return ""
         if sess.statusMessage is not None:
-            self._stdout.write(
+            self.stdout.write(
                 sess.statusMessage.ljust(self.width)+"\n")
         return raw_input(msg)
 
 
 class CaptureConsole(Console):
     
-    def __init__(self,batch=True,**kw):
+    def __init__(self,batch=True,encoding="utf8",**kw):
         self.buffer = StringIO()
+        self.encoding=encoding
         Console.__init__(self,
                          self.buffer,
                          self.buffer,
-                         batch=batch,**kw)
+                         batch=batch,
+                         encoding=self.encoding,
+                         **kw)
 
     def getConsoleOutput(self):
         s = self.buffer.getvalue()
         self.buffer.close()
         self.buffer = StringIO()
-        self.redirect(self.buffer,self.buffer)
+        self.redirect(self.buffer,self.buffer,self.encoding)
         return s
     
