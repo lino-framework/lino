@@ -41,7 +41,6 @@
   (load-library "support-w32.el")
   (load-library "support-gnuserv.el")
   ; only on w32 because I use DOS-Emacs only for TIM files
-  (load-library "c-x_c-r.el")
   ;(standard-display-european 1 1)
   (standard-display-8bit 128 255)
   )
@@ -49,6 +48,8 @@
   (activate-cp850)
   )
  )
+
+(load-library "c-x_c-r.el")
 
 ; diese Zeile ja eigentlich nur auf win32... aber wie testen?
 (if (eq system-type 'windows-nt)
