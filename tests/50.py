@@ -17,25 +17,25 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.misc.tsttools import TestCase, main, catch_output
+from lino.misc.tsttools import TestCase, main
 from lino.tools.guesslang import guesslang
 
 
 class Case(TestCase):
     def test01(self):
         
-        self.assertEqual("de",guesslang("""
+        self.assertEqual("de",guesslang(u"""
         Laut Kundenaussagen ist XYZ unter Windows 95 A und B sowie
         unter Windows NT einsatzf‰hig. Leider kann von unserer Seite
         aus unter diesen Betriebssystemen kein umfassender Support
         gew‰hrleistet werden."""))
         
-        self.assertEqual("en",guesslang("""
+        self.assertEqual("en",guesslang(u"""
         Now that you are all excited about Python, you'll want to
         examine it in some more detail. Since the best way to learn a
         language is using it, you are invited here to do so.  """))
         
-        self.assertEqual("et",guesslang("""
+        self.assertEqual("et",guesslang(u"""
         Paavstivalimine on Vatikani jaoks ‰‰rmiselt t‰hendusrikas
         protseduur, kuid l‰bi sajandite on ikka ja j‰lle ette tulnud,
         et konklaav toob palju lisasekeldusi vıi midagi l‰heb viltu.

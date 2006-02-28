@@ -125,16 +125,16 @@ class StandardPopulator(adamo.Populator):
             r.appendRow("Kelmis",10175)
             r.appendRow("Raeren",9933)
             r.appendRow("Mons",90992)
-            r.appendRow("Liège",185608)
+            r.appendRow(u"Liège",185608)
             r.appendRow("Charleroi",200983)
             r.appendRow("Verviers",52739)
 
             q = self.deutschland.cities.query('name') 
             q.appendRow("Aachen")
-            q.appendRow("Köln")
+            q.appendRow(u"Köln")
             q.appendRow("Berlin")
             q.appendRow("Bonn")
-            q.appendRow("München")
+            q.appendRow(u"München")
             q.appendRow("Eschweiler")
             q.appendRow("Alfter-Oedekoven")
     
@@ -149,15 +149,15 @@ class StandardPopulator(adamo.Populator):
 ##                  "%s != ['ee',1]" % repr(tallinn.getRowId())
 
         q.appendRow("Tartu",109100)
-        #q.appendRow("Otepää")
+        #q.appendRow(u"Otepää")
         q.appendRow("Narva",80300)
-        q.appendRow("Kilingi-Nõmme",2490)
-        q.appendRow("Pärnu",52000)
+        q.appendRow(u"Kilingi-Nõmme",2490)
+        q.appendRow(u"Pärnu",52000)
         q.appendRow("Rakvere",18096)
         q.appendRow("Viljandi",20756)
         q.appendRow("Ruhnu",58)
         q.appendRow("Vigala",1858)
-        q.appendRow("Kohtla-Järve",70800)
+        q.appendRow(u"Kohtla-Järve",70800)
 
 
             
@@ -167,7 +167,7 @@ class StandardPopulator(adamo.Populator):
         q.appendRow('c',('Customer', 'Kunde', 'Client'))
         q.appendRow('s',('Supplier', 'Lieferant', 'Fournisseur'))
         q.appendRow('m',('Member', 'Mitglied', "Membre"))
-        q.appendRow('e',('Employee', 'Angestellter', "Employé"))
+        q.appendRow('e',('Employee', 'Angestellter', u"Employé"))
         q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
 	
         
@@ -211,25 +211,25 @@ class DemoPopulator(adamo.Populator):
                     None, None,self.eupen)
         qr.appendRow('Eierschal' ,'Erna'   , "Frau",
                     None, None,self.eupen)
-        qr.appendRow('Großmann'  ,'Gerd'   , "Herrn",
+        qr.appendRow(u'Großmann'  ,'Gerd'   , "Herrn",
                     None, None,self.eupen)
-        qr.appendRow('Freitag'     ,'Frédéric' , "Herrn",
+        qr.appendRow('Freitag'     ,u'Frédéric' , "Herrn",
                     None, None,self.eupen)
 
         qr = q.query('name zip street house box city')
 
         rumma = qr.appendRow(
-            'Rumma & Ko OÜ','10115', 'Tartu mnt.',71,'5',
+            u'Rumma & Ko OÜ','10115', 'Tartu mnt.',71,'5',
             self.tallinn)
-        assert rumma.name == "Rumma & Ko OÜ"
+        assert rumma.name == u"Rumma & Ko OÜ"
         assert rumma.nation.id == "ee", "%r!='ee'" % rumma.nation
 
         girf = qr.appendRow(
-            'Girf OÜ','10621','Laki',16, None, self.tallinn)
+            u'Girf OÜ','10621','Laki',16, None, self.tallinn)
         pac = qr.appendRow(
-            'PAC Systems PGmbH','4700','Hütte',79 , None, self.eupen)
+            'PAC Systems PGmbH','4700',u'Hütte',79 , None, self.eupen)
         qr.appendRow(
-            'Eesti Telefon','13415','Sõpruse pst.',193, None,
+            'Eesti Telefon','13415',u'Sõpruse pst.',193, None,
             self.tallinn)
 
             

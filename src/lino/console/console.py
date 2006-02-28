@@ -195,7 +195,7 @@ class Console(AbstractToolkit):
 
     def error(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
-        self._stderr(msg + "\n")
+        self.stderr.write(msg + "\n")
         sess.logmessage(msg)
 
     def critical(self,sess,msg,*args,**kw):
@@ -615,5 +615,7 @@ class CaptureConsole(Console):
         self.buffer.close()
         self.buffer = StringIO()
         self.redirect(self.buffer,self.buffer,self.encoding)
+        if self.encoding is not None:
+            s=s.decode(self.encoding)
         return s
     

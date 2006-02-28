@@ -53,5 +53,5 @@ if hasattr(sys,'setdefaultencoding'):
         sys.setdefaultencoding(encoding)
 
 
-
+#print sys.getdefaultencoding()
 #sys.stdout=rewriter(sys.stdout)

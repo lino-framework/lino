@@ -58,7 +58,8 @@
 (defun my-split ()
   "splits frame if size allows it"
   (interactive)
-  (message (number-to-string (frame-parameter (selected-frame) 'width)))
+  (message
+   (number-to-string (frame-parameter (selected-frame) 'width)))
 
   (cond
    ((> (frame-parameter (selected-frame) 'width) 120)

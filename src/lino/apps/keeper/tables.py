@@ -18,6 +18,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+from types import StringType
 
 from lino.adamo.ddl import *
 from lino.forms.session import Session
@@ -162,7 +163,11 @@ class File(StoredDataRow):
             return
         self.lock()
         s=read_content(sess,self,fullname)
-        if s and len(s.strip()) > 0: 
+        if s and len(s.strip()) > 0:
+            #"assert UnicodeString if not pure ascii"
+            #assert ispure(s)
+            #if type(s) == StringType:
+            #    s=s.decode('ascii')
             self.content=s
         self.mtime = mt
         self.size=sz

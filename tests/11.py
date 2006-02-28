@@ -47,7 +47,7 @@ class Case(TestCase):
     def tearDown(self):
         self.sess.shutdown()
 
-    def test01(self):
+    def test01b(self):
         # testing whether INSERT INTO is correctly done
         SERV = self.sess.query(Service)
         SERV.startDump()

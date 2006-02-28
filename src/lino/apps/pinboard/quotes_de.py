@@ -3,7 +3,7 @@
 # manually added and deleted
 
 def populate(q,de):
-    s = """\
+    s = u"""\
 Abgeordnete sind immer zu tausend Spesen aufgelegt.
 Alle können denken; nur bleibt es den meisten erspart.
 Alle Menschen werden [noch!] als Original geboren, die meisten sterben als Kopie.

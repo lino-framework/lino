@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -30,12 +30,15 @@ class DataRow:
         #assert isinstance(fc,FieldContainer)
         #assert isinstance(clist,BaseColumnList)
         assert type(values) == types.DictType
-        self.__dict__["_values"] = values 
+        self.__dict__["_values"] = values
         self.__dict__["_query"] = query
         #self.__dict__["_fc"] = fc
         #self.__dict__["_clist"] = clist
         #self.__dict__["_dirty"] = dirty
         self.__dict__['_dirtyRowAttrs']={}
+        #if query is not None:
+        #    for col in query._store._peekQuery.getVisibleColumns():
+        #        values.setdefault(col.name)
         
     def __getattr__(self,name):
         #assert self.__dict__.has_key("_fc")
@@ -121,14 +124,19 @@ class DataRow:
         return True
     
     def validate(self):
-        # may override
-        pass
+        #print "Row.validate()"
+        for col in self._query._store._peekQuery._columns:
+            v=col.getCellValue(self)
+            col.validate(v)
+##     def validate(self):
+##         # may override
+##         pass
 
-    def lock(self):
-        return False
+##     def lock(self):
+##         return False
     
-    def unlock(self):
-        pass
+##     def unlock(self):
+##         pass
     
     
     def isLocked(self):
@@ -139,9 +147,6 @@ class DataRow:
             return True
         return len(self._dirtyRowAttrs)>0
         #return self.__dict__['_dirty']
-
-    def makeComplete(self):
-        pass
 
     def getSession(self):
         return self._query.getSession()
@@ -171,6 +176,7 @@ class StoredDataRow(DataRow):
         self.__dict__["_complete"] = False #ds.isComplete()
         self.__dict__["_locked"] = False
         self.__dict__["_isCompleting"] = False
+        
 
     def __eq__(self, other):
         if (other is None):# or (other is self._query.ANY_VALUE):
@@ -236,7 +242,7 @@ class StoredDataRow(DataRow):
         try:
             return self._values[name]
         except KeyError:
-            if self._isCompleting:
+            if self._isCompleting or self._new:
                 return None
             self.makeComplete()
             try:
@@ -332,10 +338,10 @@ class StoredDataRow(DataRow):
             raise RowLockFailed("Cannot lock a new row")
         if self._locked:
             raise RowLockFailed("Tried another record lock")
-            #, "already locked"
-            return True
+            # , "already locked"
+            # return True
         self.__dict__["_locked"] = True
-        return self._query._store.lockRow(self,self._query)
+        self._query._store.lockRow(self,self._query)
             
 
     def unlock(self):
@@ -390,10 +396,9 @@ class StoredDataRow(DataRow):
         self._query._connection.executeDelete(self)
 
     def makeComplete(self):
-        if self._pseudo or self._complete or self._isCompleting:
-            return False
+        if self._new or self._pseudo or self._complete \
+              or self._isCompleting: return 
         self._readFromStore()
-        return True
 
     def exists(self):
         if not self._complete:

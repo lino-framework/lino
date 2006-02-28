@@ -30,6 +30,7 @@ import types
 
 from lino.tools.months import Month
 from lino.misc.descr import Describable
+from lino.misc.etc import ispure
 #from lino.adamo.exceptions import RefuseValue
 from lino.adamo.exceptions import DataVeto
 
@@ -187,6 +188,8 @@ class StringType(WidthType):
             raise DataVeto("Cannot store empty string.")
         if value.endswith(' '):
             raise DataVeto("%r ends with a space" % value)
+        if not ispure(value):
+            raise DataVeto("%r is not pure" % value)
             
 ##         if len(value) > self.maxWidth:
 ##             raise DataVeto("%r is longer than %d characters" % \

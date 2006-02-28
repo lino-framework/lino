@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -120,8 +120,19 @@ class Case(TestCase):
         be.name = "Belgique"
         be.unlock()
         
+
+        NAT=sess.query(Nation)
+        NAT.startDump()
+        be=NAT.peek('be')
+        sql=NAT.stopDump()
+        #print sql
+        self.assertEquivalent(sql,"""\
+        SELECT id, name_en, name_de, name_fr, area,
+               population, curr, isocode
+        FROM Nations
+        WHERE id = 'be';
+        """)
         
-        be = sess.query(Nation).peek('be')
 
         
         eupen = sess.query(City).appendRow(nation=be,name="Eupen")

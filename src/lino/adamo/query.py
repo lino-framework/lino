@@ -93,6 +93,13 @@ class QueryColumn:
         self._owner.addFilter(flt)
 
 
+    def validate(self,value):
+        try:
+            self.rowAttr.validate(value)
+        except DataVeto,e:
+            raise DataVeto("%s.%s=%r: %s" % (
+                self._owner.getTableName(),self.name,value,e))
+        
     def setCellValue(self,row,value):
         #self.rowAttr.canSetValue(row,value)
         try:
@@ -543,7 +550,9 @@ class BaseColumnList(Datasource):
                     col = self.findColumn(fld.getName())
                     if col is None:
                         col = self._addColumn(fld.getName(),fld)
-                    l.append(col)
+                    # may still be None if Detail field is ignored
+                    if col is not None:
+                        l.append(col)
             else:
                 l.append(self.provideColumn(colName))
         self.visibleColumns = tuple(l)
@@ -595,6 +604,7 @@ class BaseColumnList(Datasource):
                 self._columns.append(col)
                 col.setupColAtoms(self.getDatabase())
                 return col
+        #raise InvalidRequestError("No columnClass")
 
             
     def getColumns(self,columnNames=None):
@@ -608,6 +618,9 @@ class BaseColumnList(Datasource):
                 l.append(col)
         return l
 
+    def getVisibleColumns(self):
+        return self.visibleColumns
+    
     def getFltAtoms(self,context):
         l = []
         for col in self._columns:
@@ -1117,9 +1130,6 @@ class SimpleQuery(LeadTableColumnList):
     def setSearch(self,search):
         self.setFilterExpressions(self._sqlFilters,search)
         
-    def getVisibleColumns(self):
-        return self.visibleColumns
-    
     def getAttrList(self):
         return self.getLeadTable().getAttrList()
     

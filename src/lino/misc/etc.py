@@ -5,6 +5,19 @@ def issequence(u):
 def isnumber(n):
    return type(n) in (types.IntType,types.FloatType)
 
+def ispure(s):
+    if s is None: return True 
+    if type(s) == types.UnicodeType:
+        return True
+    if type(s) == types.StringType:
+        try:
+            s.decode('ascii')
+        except UnicodeDecodeError,e:
+            return False
+        return True
+    return False
+
+
 
 class LinoError(Exception):
    def __init__(self,msg):

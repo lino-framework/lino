@@ -203,7 +203,6 @@ class TestCase(unittest.TestCase):
         difference)
 
         """
-
         l1 = observed.strip().split()
         l2 = expected.strip().split()
 
@@ -213,9 +212,9 @@ class TestCase(unittest.TestCase):
         if msg is not None:
             a.write(msg+":")
         a.write("\n--- observed --- :\n")
-        a.write(" ".join(l1)) # txt1)
+        a.write(repr(" ".join(l1))) # txt1)
         a.write("\n--- expected --- :\n")
-        a.write(" ".join(l2)) # txt1)
+        a.write(repr(" ".join(l2))) # txt1)
         a.write("\n")
 
         if False:

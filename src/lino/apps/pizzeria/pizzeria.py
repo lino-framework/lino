@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -58,6 +58,8 @@ class Order(StoredDataRow):
         for line in self.lines:
             #print line
             assert line.order.id == self.id
+            assert line.product.price is not None, \
+                   "%r : price is None!" % (line.product)
             totalPrice += (line.qty * line.product.price)
         self.totalPrice = totalPrice
         self.isRegistered = True
@@ -101,17 +103,23 @@ def populate(sess):
     c2 = CUST.appendRow(name="James")
 
     p1 = PROD.appendRow(name="Pizza Margerita",price=6)
+    assert p1.price == 6
     p2 = PROD.appendRow(name="Pizza Marinara",price=7)
 
     o1 = ORDERS.appendRow(customer=c1,
                           date=itod(20030816))
-    LINES.appendRow(order=o1,product=p1,qty=2)
+    l1=LINES.appendRow(order=o1,product=p1,qty=2)
+    assert l1.product.price == 6
 
 
     o2 = ORDERS.appendRow(customer=c2,date=itod(20030816))
     LINES.appendRow(order=o2,product=p1,qty=3)
     LINES.appendRow(order=o2,product=p2,qty=5)
 
+    p=PROD.peek(1)
+    assert p.price == 6
+
+    
     o1.register()
     o2.register()
     

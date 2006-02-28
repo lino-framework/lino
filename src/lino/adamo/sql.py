@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -27,6 +27,7 @@ from lino.adamo import datatypes
 from lino.adamo.query import DetailColumn, FieldColumn, PointerColumn
 from lino.adamo.row import DataRow
 #from query import Query, QueryColumn
+from lino.misc.etc import ispure
 
 from lino.adamo.connection import Connection
 #from lino.ui import console
@@ -34,9 +35,6 @@ from lino.adamo.connection import Connection
 #from mx.DateTime import DateTime
 
 from lino.adamo.filters import NotEmpty, IsEqual, DateEquals, Contains
-
-
-
 
 
 #class SqlError(Exception):
@@ -513,6 +511,7 @@ class SqlConnection(Connection):
         assert len(id) == len(table.getPrimaryAtoms()),\
                  "len(%s) != len(%s)" % (repr(id),
                                          repr(table.getPrimaryAtoms()))
+        #for i in id: assert ispure(i)
         sql = "SELECT "
         l = [a.name for a in qry.getAtoms()]
         sql += ", ".join(l)

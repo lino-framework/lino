@@ -101,8 +101,16 @@ class Connection(SqlConnection):
 ##         return self._filename is None
 
     def sql_exec_really(self,sql):
+        
+        """sql must be a unicode strings if it contains non-ascii
+            characters:"""
+        
         if type(sql) == StringType:
-            sql=sql.decode("latin1")
+            try:
+                #sql=sql.decode("latin1")
+                sql=sql.decode("ascii")
+            except UnicodeDecodeError,e:
+                raise "r%s : %s" % (sql,e)
             
         self.threadLock.acquire()
         csr=self._dbconn.cursor()

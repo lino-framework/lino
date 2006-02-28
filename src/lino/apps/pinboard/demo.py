@@ -63,9 +63,9 @@ class StdPopulator(Populator):
         q.appendRow(
             'et',('Estonian','Estnisch','Estonien')   )
         q.appendRow(
-            'fr',('French','Französisch','Français')  )
+            'fr',('French',u'Französisch',u'Français')  )
         q.appendRow(
-            'nl',('Dutch','Niederländisch','Neerlandais'))
+            'nl',('Dutch',u'Niederländisch','Neerlandais'))
 
     def populatePubTypes(self,q):
         q.setBabelLangs('en de')
@@ -77,7 +77,7 @@ class StdPopulator(Populator):
         q.appendRow("url" , ('Web Page','Webseite')    ,
                     'http:' , ( None, None)   )
         q.appendRow("cd"  , ('CompactDisc', 'CD') , 'cddb:',
-                    ('track','Stück') )
+                    ('track',u'Stück') )
         q.appendRow("art" , ('Article','Artikel')     ,
                     None      , ('page','Seite')  )
         q.appendRow("mag" , ('Magazine','Zeitschrift')    ,
@@ -113,7 +113,7 @@ class DemoPopulator(Populator):
         self.brassens = q.appendRow(
             'Brassens' ,'Georges') #    ,belgique)
         q.appendRow( 'Lorenz'    ,'Konrad') #     ,deutschland)
-        q.appendRow( 'Zink'      ,'Jörg') #       ,deutschland)
+        q.appendRow( 'Zink'      ,u'Jörg') #       ,deutschland)
         # q.appendRow( 'Robinson'   ,'Larry H.'  ,None, None, None)
         self.anon = q.appendRow('Anonymus' ,None) #   ,None)
         self.lauster = q.appendRow( 'Lauster'  ,'Peter') 
@@ -131,7 +131,7 @@ class DemoPopulator(Populator):
         q.appendRow('D',('done','erledigt'))
         q.appendRow('W',('waiting','wartet'))
         q.appendRow('A',('abandoned','storniert'))
-        q.appendRow('S',('sleeping','schläft'))
+        q.appendRow('S',('sleeping',u'schläft'))
 
         
     def populateProjects(self,q):
@@ -149,12 +149,12 @@ class DemoPopulator(Populator):
     def populateQuotes(self,q):
         q = q.query('lang quote author')
 
-        q.appendRow(self.fr, """\
+        q.appendRow(self.fr, u"""\
 Entre nous soit dit, bonnes gens:
 pour reconnaître que l'on est pas intelligent il faudrait
 l'être.""", self.brassens)
 
-        q.appendRow(self.de, """\
+        q.appendRow(self.de, u"""\
 Körper, Geist und Seele sind die drei Bereiche des Menschen. Der
 Körper sollte gesund sein, der Geist intelligent, und die Seele - das
 Kostbarste und Wichtigste - sollte frei sein. Dann kann das Leben

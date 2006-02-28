@@ -143,7 +143,7 @@ class StandardPopulator(addrdemo.StandardPopulator):
     def populateBalanceLines(self,q):
         #q.setBabelLangs("en de fr ee")
         # Bilans
-        s="""\
+        s=u"""\
 1          Aktiva                                        
 11         Käibevara                                      
 1111       Raha ja pangakontod                            
@@ -173,7 +173,7 @@ class StandardPopulator(addrdemo.StandardPopulator):
             q.appendRow(id=a[0].strip(), name=a[1].strip(),dc="D")
             
         
-        s="""\
+        s=u"""\
 2          PASSIVA (kohustused ja omakapital)            
 21         Kohustused                                    
 211        Lühiajalised kohustused                       
@@ -200,7 +200,7 @@ class StandardPopulator(addrdemo.StandardPopulator):
     def populateProfitAndLossItems(self,q):
         q.setBabelLangs("en")
         # Kasumiaruanne
-        s="""\
+        s=u"""\
 4          TULUD                       
 41         Äritulud                    
 411        Realiseerimise netokäive    
