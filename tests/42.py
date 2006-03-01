@@ -109,23 +109,23 @@ test:               |eupen.pdf         |232672  |X    |799 Occurences
         ctrl.go.click()
         
         s=self.getConsoleOutput()
-        # print s
-        self.assertEquivalent(s,"""\
+        #print s
+        self.assertEquivalent(s,u"""\
 &Words to look for: [Stadt]
 &any word (OR): [None]
-[&Search]        
+[&Search]
 Files where 'occurences' not empty
 ==================================
-name                |occurences     |content                            
---------------------+---------------+-----------------------------------
-eupen.pdf           |8 Occurences   |Eupen aus Wikipedia, der freien    
-                    |               |Enzyklopädie Eupen ( altfranzösisch
-                    |               |Néau ) ist die "Hauptstadt" der    
-                    |               |(...)                              
-jona.txt            |8 Occurences   |# source: http://theol.uibk.ac.at/l
-                    |               |eseraum/bibel/jona1.html  Die      
-                    |               |Berufung Jonas: 1,1- 2             
-                    |               |Jona 1,1         (...)             
+name                |occur|content                                 
+                    |ences|                                        
+--------------------+-----+----------------------------------------
+eupen.pdf           |8    |Eupen aus Wikipedia, der freien         
+                    |     |Enzyklopädie Eupen ( altfranzösisch Néau
+                    |     |) ist die "Hauptstadt" der  (...)       
+jona.txt            |8    |# source: http://theol.uibk.ac.at/lesera
+                    |     |um/bibel/jona1.html  Die Berufung Jonas:
+                    |     |1,1- 2          Jona 1,1         (...)  
+
         """)
         sess.shutdown()
         

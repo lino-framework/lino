@@ -212,9 +212,11 @@ class TestCase(unittest.TestCase):
         if msg is not None:
             a.write(msg+":")
         a.write("\n--- observed --- :\n")
-        a.write(repr(" ".join(l1))) # txt1)
+        a.write(observed)
+        #a.write(repr(" ".join(l1))) # txt1)
         a.write("\n--- expected --- :\n")
-        a.write(repr(" ".join(l2))) # txt1)
+        a.write(expected)
+        #a.write(repr(" ".join(l2))) # txt1)
         a.write("\n")
 
         if False:

@@ -242,7 +242,7 @@ class StoredDataRow(DataRow):
         try:
             return self._values[name]
         except KeyError:
-            if self._isCompleting or self._new:
+            if self._isCompleting:
                 return None
             self.makeComplete()
             try:
@@ -261,6 +261,7 @@ class StoredDataRow(DataRow):
         assert not self._complete,\
                "%s : readFromStore() called a second time" % repr(self)
         assert not self._isCompleting
+        #assert not self._new
         
         # but what if atoms2row() causes __getattr__ to be called
         # again? maybe a switch _isCompleting to check this.
@@ -268,15 +269,17 @@ class StoredDataRow(DataRow):
         
         # print "makeComplete() : %s" % repr(self)
         id = self.getRowId()
-        atomicRow = self._query._store.executePeek(
-            self._query._store._peekQuery,id)
         if self._new:
-            if atomicRow is not None:
-                raise DataVeto("Cannot create another %s row %s" \
-                                    % (self.__class__.__name__, id))
+##             atomicRow = self._query._store.executePeek(
+##                 self._query._store._peekQuery,id)
+##             if atomicRow is not None:
+##                 raise DataVeto("Cannot create another %s row %s" \
+##                                     % (self.__class__.__name__, id))
             for attrname in self._query.getLeadTable().getAttrList():
                 self._values.setdefault(attrname,None)
         else:
+            atomicRow = self._query._store.executePeek(
+                self._query._store._peekQuery,id)
             if atomicRow is None:
                 raise DataVeto(
                     "Cannot find %s row %s" \
@@ -396,8 +399,8 @@ class StoredDataRow(DataRow):
         self._query._connection.executeDelete(self)
 
     def makeComplete(self):
-        if self._new or self._pseudo or self._complete \
-              or self._isCompleting: return 
+        if self._pseudo or self._complete or self._isCompleting:
+            return 
         self._readFromStore()
 
     def exists(self):

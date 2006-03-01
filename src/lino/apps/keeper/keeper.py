@@ -36,16 +36,20 @@ class FoundFilesReport(DataReport):
     #width=70
     
     def setupReport(self):
-        files = self.query.session.query(tables.File) #,"name")
+        assert len(self.columns) == 0
+        #files = self.query.session.query(tables.File) #,"name")
         self.addDataColumn("name",width=20)
-        occsColumn=self.addDataColumn("occurences",
-                                      width=15)
+        occsColumn=self.addDataColumn(
+            "occurences",
+            formatter=lambda q: str(len(q)),\
+            label="occs",
+            width=5)
         self.addDataColumn("content",
                            width=40,
                            formatter=lambda x: preview(x))
 
         col=occsColumn.datacol
-        files.addFilter(NotEmpty(col))
+        self.query.addFilter(NotEmpty(col))
         self.occs=col.getDetailQuery()
         self.occs.setSearchColumns("word.id")
         
