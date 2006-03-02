@@ -155,6 +155,7 @@ class QueryColumn:
 
 
     def col_atoms2row(self,atomicRow,row):
+        print "col_atoms2row()", self.name
         if self.join is None:
             self.rowAttr.atoms2row(atomicRow,self._atoms,row)
         else:
@@ -1321,14 +1322,17 @@ class SimpleQuery(LeadTableColumnList):
 ##         for col in self._pkColumns:
 ##             l += col.rowAttr.value2atoms(id[i],self.getDatabase())
 ##             i+=1
-            
+        print "foo"    
         atomicRow = self.executePeek(l)
         if atomicRow is None:
             return None
         #d = self._clist.at2d(atomicRow)
         #return self._table.Row(self,d,False)
+        print "bar"    
         row = self.getLeadTable()._instanceClass(self,{},False)
+        print "baz"
         self.atoms2row(atomicRow,row)
+        print "brr"
         return row
         #return self.atoms2row(atomicRow,False)
 
