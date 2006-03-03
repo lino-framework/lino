@@ -102,6 +102,12 @@ uz|Uzbekistan                            |447400
 """)        
 
         
+        # some other cases (for example 80.py) would fail if run
+        # together with this case in one suite and if the following
+        # lines were not:
+        
+        sess1.shutdown()
+        sess2.shutdown()
 
 if __name__ == '__main__':
     main()

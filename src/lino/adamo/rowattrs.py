@@ -422,7 +422,8 @@ class BabelField(Field):
     
     def setCellValue(self,row,value):
         langs = row.getSession().getBabelLangs()
-        values = row.getFieldValue(self.name)
+        #values = row.getFieldValue(self.name)
+        values = row._values.get(self.name)
         if values is None:
             #if self._isMandatory:
             #    raise DataVeto("may not be empty")
@@ -501,11 +502,14 @@ class BabelField(Field):
 ##         return rv
             
     def atoms2row(self,atomicRow,colAtoms,row):
+        #print "BabelField.atoms2row()", self.name
         #langs = row.getSession().getBabelLangs()
         dblangs = row.getDatabase().getBabelLangs()
         assert len(dblangs) == len(colAtoms)
         # 35.py dblangs = row._ds._session.getBabelLangs()
-        values = row.getFieldValue(self.name)
+        #values = row.getFieldValue(self.name)
+        values = row._values.get(self.name)
+        #print "poop"
         if values is None:
             values = [None] * len(dblangs)
             row._values[self.name] = values

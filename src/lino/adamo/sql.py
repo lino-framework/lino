@@ -78,7 +78,7 @@ class SqlConnection(Connection):
         raise NotImplementedError
     
     def sql_exec(self,sql):
-        print sql
+        #print sql
         if self._dumpWriter is not None:
             #self._dumpWriter += sql + ";\n"
             self._dumpWriter.write(sql+";\n")
@@ -99,6 +99,10 @@ class SqlConnection(Connection):
         dumpWriter = self._dumpWriter
         self._dumpWriter = None
         return dumpWriter.getvalue()
+    def peekDump(self):
+        s=self.stopDump()
+        self.startDump()
+        return s
 
     def testEqual(self,colName,type,value):
         if value is None:

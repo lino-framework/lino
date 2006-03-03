@@ -155,7 +155,7 @@ class QueryColumn:
 
 
     def col_atoms2row(self,atomicRow,row):
-        print "col_atoms2row()", self.name
+        #print "col_atoms2row()", self.name
         if self.join is None:
             self.rowAttr.atoms2row(atomicRow,self._atoms,row)
         else:
@@ -761,6 +761,41 @@ class BaseColumnList(Datasource):
         return atomicRow
 
 
+    def peek(self,*id):
+        assert len(id) == len(self._pkColumns),\
+                 "expected %d values but got %s" % \
+                 ( len(self._pkColumns), repr(id))
+        
+        # atomize the id :
+        l = [None] * len(self.getLeadTable().getPrimaryAtoms())
+        i=0
+        for col in self._pkColumns:
+            col.value2atoms(id[i],l,self.getDatabase())
+            i+=1
+            
+        #print "foo"
+        atomicRow = self.executePeek(l)
+        if atomicRow is None:
+            return None
+        #print "bar"    
+        row = self.getLeadTable()._instanceClass(self,{},False)
+        # complete=None: don't know whether it's complete
+        # new=False: it certainly exists
+        #print "baz"
+        self.atoms2row(atomicRow,row)
+        #print "brr"
+        return row
+
+    def getInstance(self,atomicId,new):
+        #row = self.getLeadTable().Instance(self,{},new)
+        row = self.getLeadTable()._instanceClass(self,{},new)
+        i = 0
+        for col in self._pkColumns:
+            col.col_atoms2row(atomicId,row)
+            #col.setCellValue(row,atomicId[i])
+            i+=1
+        return row
+            
 
 
 
@@ -846,6 +881,63 @@ class LeadTableColumnList(BaseColumnList):
     def mtime(self):
         return self._store.mtime()
     
+
+    def executePeek(self,id):
+        return self._store.executePeek(self, id)
+
+    def commit(self):
+        self._store.unlockDatasource(self)
+        
+    def unlock(self):
+        return self._store.unlockDatasource(self)
+
+    
+    
+    #def atoms2row(self,atomicRow,new):
+    def appendRowFromAtoms(self,atomicRow):
+        #row = self.getLeadTable()._instanceClass(self,{},new)
+        row = self._appendRow()
+        self.atoms2row(atomicRow,row)
+        row.commit()
+        return row
+    
+    
+    def appendRow(self,*args,**kw):
+        row = self._appendRow(*args,**kw)
+        self.updateRow(row,*args,**kw)
+        row.commit()
+        #self._store.fireUpdate()
+        return row
+
+    def appendRowForEditing(self,*args,**kw):
+        row = self._appendRow(*args,**kw)
+        self.updateRow(row,*args,**kw)
+        return row
+        
+        
+    def _appendRow(self,*args,**kw):
+        row = self.getLeadTable()._instanceClass(self,{},True)
+        #row = self.getLeadTable().Instance(self,{},True)
+        for mc in self._masterColumns:
+            mc.setCellValue(row,self._masters[mc.name])
+        self.rowcount = None
+        #self._store.setAutoRowId(row)
+        return row
+        
+    def updateRow(self,row,*args,**kw):
+        i = 0
+        for col in self.visibleColumns:
+            if i == len(args):
+                break
+            col.setCellValue(row,args[i])
+            i += 1
+            
+        for k,v in kw.items():
+            col = self.getColumnByName(k)
+            col.setCellValue(row,v)
+
+        #row.setDirty() # statt row.setDirty() muessen die 
+
 
     
 class PeekQuery(LeadTableColumnList):
@@ -1189,63 +1281,6 @@ class SimpleQuery(LeadTableColumnList):
         return self.getLeadTable().getTableName()+"Query"
 
 
-    def executePeek(self,id):
-        return self._store.executePeek(self, id)
-
-    def commit(self):
-        self._store.unlockDatasource(self)
-        
-    def unlock(self):
-        return self._store.unlockDatasource(self)
-
-    
-    
-    #def atoms2row(self,atomicRow,new):
-    def appendRowFromAtoms(self,atomicRow):
-        #row = self.getLeadTable()._instanceClass(self,{},new)
-        row = self._appendRow()
-        self.atoms2row(atomicRow,row)
-        row.commit()
-        return row
-    
-    
-    def appendRow(self,*args,**kw):
-        row = self._appendRow(*args,**kw)
-        self.updateRow(row,*args,**kw)
-        row.commit()
-        #self._store.fireUpdate()
-        return row
-
-    def appendRowForEditing(self,*args,**kw):
-        row = self._appendRow(*args,**kw)
-        self.updateRow(row,*args,**kw)
-        return row
-        
-        
-    def _appendRow(self,*args,**kw):
-        row = self.getLeadTable()._instanceClass(self,{},True)
-        #row = self.getLeadTable().Instance(self,{},True)
-        for mc in self._masterColumns:
-            mc.setCellValue(row,self._masters[mc.name])
-        self.rowcount = None
-        #self._store.setAutoRowId(row)
-        return row
-        
-    def updateRow(self,row,*args,**kw):
-        i = 0
-        for col in self.visibleColumns:
-            if i == len(args):
-                break
-            col.setCellValue(row,args[i])
-            i += 1
-            
-        for k,v in kw.items():
-            col = self.getColumnByName(k)
-            col.setCellValue(row,v)
-
-        #row.setDirty() # statt row.setDirty() muessen die 
-
-
     def appendfrom(self,filename):
         #f=open(filename)
         f=codecs.open(filename,encoding="cp1252")
@@ -1304,48 +1339,6 @@ class SimpleQuery(LeadTableColumnList):
     def csr2atoms(self,sqlatoms):
         return self._store.csr2atoms(self,sqlatoms)
     
-    def peek(self,*id):
-        assert len(id) == len(self._pkColumns),\
-                 "expected %d values but got %s" % \
-                 ( len(self._pkColumns), repr(id))
-        
-        # atomize the id :
-        l = [None] * len(self.getLeadTable().getPrimaryAtoms())
-        i=0
-        for col in self._pkColumns:
-            col.value2atoms(id[i],l,self.getDatabase())
-            i+=1
-            
-##         # atomize the id :
-##         l = []
-##         i = 0
-##         for col in self._pkColumns:
-##             l += col.rowAttr.value2atoms(id[i],self.getDatabase())
-##             i+=1
-        print "foo"    
-        atomicRow = self.executePeek(l)
-        if atomicRow is None:
-            return None
-        #d = self._clist.at2d(atomicRow)
-        #return self._table.Row(self,d,False)
-        print "bar"    
-        row = self.getLeadTable()._instanceClass(self,{},False)
-        print "baz"
-        self.atoms2row(atomicRow,row)
-        print "brr"
-        return row
-        #return self.atoms2row(atomicRow,False)
-
-    def getInstance(self,atomicId,new):
-        #row = self.getLeadTable().Instance(self,{},new)
-        row = self.getLeadTable()._instanceClass(self,{},new)
-        i = 0
-        for col in self._pkColumns:
-            col.col_atoms2row(atomicId,row)
-            #col.setCellValue(row,atomicId[i])
-            i+=1
-        return row
-            
         
 
 ##  def find(self,**knownValues):
@@ -1364,7 +1357,7 @@ class SimpleQuery(LeadTableColumnList):
 ##      return ds
 
         
-    def find(self,*args,**knownValues):
+    def filter(self,*args,**knownValues):
         #raise QueryColumn._owner muss weg
         flt = []
         i = 0
@@ -1375,11 +1368,12 @@ class SimpleQuery(LeadTableColumnList):
         for k,v in knownValues.items():
             col = self.getColumnByName(k)
             flt.append(col.getTestEqual(self,v))
-        ds = self.child(sqlFilters=(' AND '.join(flt),))
-        return ds
+        if len(flt):
+            return self.child(sqlFilters=(' AND '.join(flt),))
+        return self
         
     def findone(self,*args,**knownValues):
-        ds = self.find(*args,**knownValues)
+        ds = self.filter(*args,**knownValues)
         #print [a.name for a in ds.query._atoms]
         #q = self._table.query(filters=' AND'.join(flt))
         #csr = self._connection.executeSelect(q)

@@ -147,7 +147,9 @@ class Store:
         
             
     def query(self,sess,columnNames=None,**kw):
-       return Query(None,self,sess,columnNames,**kw)
+        if columnNames is None and len(kw) == 0:
+            return self._peekQuery
+        return Query(None,self,sess,columnNames,**kw)
     
 ##     def query(self,sess,**kw):
 ##         return Query(None,self,sess,**kw)

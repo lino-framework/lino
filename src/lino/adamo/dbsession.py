@@ -176,7 +176,7 @@ class DbSession(Session,Context):
 
     def peek(self,tableClass,*args):
         # used in raceman/report.py, cities_be.py...
-        return self.query(tableClass).peek(*args)
+        return self.db.getStore(tableClass).query(self).peek(*args)
 
 
 ##     def end(self):
@@ -262,3 +262,13 @@ class DbSession(Session,Context):
 ##     def showMainForm(self):
 ##         self.db.app.showMainForm(self)
 
+
+    def startDump(self):
+        assert len(self.db._connections) == 1
+        self.db._connections[0].startDump()
+    def stopDump(self):
+        assert len(self.db._connections) == 1
+        return self.db._connections[0].stopDump()
+    def peekDump(self):
+        assert len(self.db._connections) == 1
+        return self.db._connections[0].peekDump()

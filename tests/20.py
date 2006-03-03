@@ -81,7 +81,12 @@ Herrn |Frédéric  |Freitag
       |          |PAC Systems PGmbH   
 """)
                          
-                
+
+        # some other cases (for example 80.py) would fail if run
+        # together with this case in one suite and if the following
+        # line were not:
+        
+        dbsess.shutdown()
 
 if __name__ == '__main__':
     main()

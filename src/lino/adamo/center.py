@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -72,6 +72,10 @@ class Center:
     def stopDump(self):
         assert len(self._connections) == 1
         return self._connections[0].stopDump()
+    
+    def peekDump(self):
+        assert len(self._connections) == 1
+        return self._connections[0].peekDump()
         
 ##     def set(self,checkIntegrity=None):
 ##         if checkIntegrity is not None:
@@ -147,7 +151,7 @@ atexit.register(_center.shutdown)
 
 for m in ( #'openSession',#'getOptionParser',
           'shutdown','database',
-          'startDump', 'stopDump',
+          'startDump', 'stopDump', 'peekDump',
           #'doCheckIntegrity', 
           #'addSchema',
           'connection'

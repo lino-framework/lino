@@ -65,7 +65,10 @@ class Case(TestCase):
         self.failIf(luc.isDirty())
         self.failIf(ly.isDirty())
         
-        #db.close()
+        # some other cases (for example 80.py) would fail if run
+        # together with this case in one suite and if the following
+        # lines were not:
+        
         sess.shutdown()
 
     def test02(self):

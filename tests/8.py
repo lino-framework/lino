@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -76,6 +76,10 @@ Rumma & Ko OÜ Tartu mnt. Tallinn
 Saffre None Tallinn
 """)
 
+        # some other cases (for example 80.py) would fail if run
+        # together with this case in one suite and if the following
+        # lines were not:
+        
         db.shutdown()
 
 if __name__ == '__main__':
