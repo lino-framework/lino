@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -115,7 +115,7 @@ class Case(TestCase):
         
         be = NATIONS.peek("be")
         q = CITIES.query(nation=be)
-        q = be.cities #.query('id name')
+        q = be.cities() #.query('id name')
         stv = q.appendRow(name='Sankt-Vith')
         # print row.getValues()
         self.assertEqual(stv.nation,be)

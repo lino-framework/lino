@@ -85,10 +85,8 @@ class QueryColumn:
 
         self._atoms = tuple(atoms)
 
-    def vetoDeleteRow(self,row):
-        pass
-
     def addFilter(self,fcl,*args,**kw):
+        # deprecated : modifies the owner
         flt=fcl(self,*args,**kw)
         self._owner.addFilter(flt)
 
@@ -148,7 +146,7 @@ class QueryColumn:
         return self.extractCellValue(row)
         
     def extractCellValue(self,row):
-        # overridden by BabelField and Detail
+        # overridden by BabelFieldColumn and DetailColumn
         assert isinstance(row, DataRow),\
             "%s.extractCellValue() : %r is not a DataRow" % (self,row)
         return row.getFieldValue(self.rowAttr.name)
@@ -393,7 +391,26 @@ class PointerColumn(QueryColumn):
     def getValueClass(self):
         return self.rowAttr.type # _toClass
     
+class DetailValue:
+    def __init__(self,row,col):
+        self.row=row
+        self.col=col
+        #self.detailQuery=None # lazily instanciated in __call__ 
+
+    def __call__(self,*args,**kw):
+        for k,v in self.col._queryParams.items():
+            kw.setdefault(k,v)
+        kw[self.col.rowAttr.pointerName]=self.row
+        return self.row.getSession().query(
+            self.col.rowAttr.tcl,*args,**kw)
         
+##         if self.detailQuery is None:
+##             assert len(kw) == 1
+##             self.detailQuery=self.row.getSession().query(
+##                 self.col.rowAttr.tcl,
+##                 **kw)
+##         return self.detailQuery.child(**kw)
+
         
 class DetailColumn(QueryColumn):
     fieldClass=Detail
@@ -403,37 +420,36 @@ class DetailColumn(QueryColumn):
         for k,v in self.rowAttr._queryParams.items():
             kw.setdefault(k,v)
         self._queryParams=kw
-        self.detailQuery=None
+        #self.detailQuery=None
         self.depth=depth
 
-    def prepare(self):
-        # lazy instanciation for self.detailQuery 
-        if self.detailQuery is None:
-            self.detailQuery=self._owner.getSession().query(
-                self.rowAttr.pointer._owner._instanceClass,
-                **self._queryParams)
-            #print "DetailColumn created ", self.detailQuery,\
-            #      self.detailQuery._search
+##     def prepare(self):
+##         # lazy instanciation of self.detailQuery 
+##         if self.detailQuery is None:
+##             self.detailQuery=self._owner.getSession().query(
+##                 self.rowAttr.pointer._owner._instanceClass,
+##                 **self._queryParams)
+##             #print "DetailColumn created ", self.detailQuery,\
+##             #      self.detailQuery._search
         
 
-    def extractCellValue(self,row,**kw):
-        self.prepare()
-        kw[self.rowAttr.pointer.name]=row
-        return self.detailQuery.child(**kw)
+    def extractCellValue(self,row):
+        #self.prepare()
+        return DetailValue(row,self)
         #return self.detailQuery.child(masters=(row,))
 
-    def getDetailQuery(self):
-        self.prepare()
-        return self.detailQuery
+##     def getDetailQuery(self):
+##         self.prepare()
+##         return self.detailQuery
 
 
-    def vetoDeleteRow(self,row):
-        detailDs = self.getCellValue(row)
-        if len(detailDs) == 0:
-            return 
-        #return "%s : %s not empty (contains %d rows)" % (
-        #   str(row),self.name,len(ds))
-        return "%s : %s not empty" % (str(row),self.name)
+##     def vetoDeleteRow(self,row):
+##         detailDs = self.getCellValue(row)
+##         if len(detailDs) == 0:
+##             return 
+##         #return "%s : %s not empty (contains %d rows)" % (
+##         #   str(row),self.name,len(ds))
+##         return "%s : %s not empty" % (str(row),self.name)
             
         
 
@@ -446,9 +462,10 @@ class DetailColumn(QueryColumn):
         pass
 
     def format(self,v):
+        q=v()
         if self.depth == 0:
-            return str(len(v))+" "+v.getLeadTable().getName()
-        return ", ".join([r.__str__() for r in v])
+            return str(len(q))+" "+q.getLeadTable().getName()
+        return ", ".join([r.__str__() for r in q])
 
 
 
@@ -504,6 +521,7 @@ class BaseColumnList(Datasource):
     
     columnClasses=( PointerColumn,
                     BabelFieldColumn,
+                    DetailColumn,
                     FieldColumn,
                     )
     
@@ -627,6 +645,9 @@ class BaseColumnList(Datasource):
         for col in self._columns:
             l += col.getFltAtoms(context)
         return l
+
+##     def vetoDeleteRow(self,row):
+##         return self.getLeadTable().vetoDeleteRow(row)
 
     
     def getContext(self):
@@ -962,11 +983,11 @@ class PeekQuery(LeadTableColumnList):
 
 class SimpleQuery(LeadTableColumnList):
 
-    columnClasses=(PointerColumn,
-                   DetailColumn,
-                   BabelFieldColumn,
-                   FieldColumn
-                   )
+##     columnClasses=(PointerColumn,
+##                    DetailColumn,
+##                    BabelFieldColumn,
+##                    FieldColumn
+##                    )
 
     def __init__(self, _parent, store, sess,
                  columnNames=None,
@@ -975,6 +996,7 @@ class SimpleQuery(LeadTableColumnList):
                  sqlFilters=None,
                  filters=None,
                  search=None,
+                 searchColumns=None,
                  masterColumns=None,
                  masters=[],
                  **kw):
@@ -1023,6 +1045,9 @@ class SimpleQuery(LeadTableColumnList):
                 if _parent._filters is not None:
                     filters=list(_parent._filters)
 
+        if searchColumns is not None:
+            self.setSearchColumns(searchColumns)
+            
         self._filters=filters
         self.setFilterExpressions(sqlFilters,search)
         
@@ -1126,6 +1151,10 @@ class SimpleQuery(LeadTableColumnList):
 
     def clearFilters(self):
         self._filters=None
+        
+    def addColFilter(self,colName,fcl,*args,**kw):
+        col=self.getColumnByName(colName)
+        self.addFilter(fcl(col,*args,**kw))
         
     def addFilter(self,flt): # cls,*args,**kw):
         #flt=cls(self,*args,**kw)

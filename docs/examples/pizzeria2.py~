@@ -1,4 +1,4 @@
-from lino.apps.pizzeria.pizzeria import Orders
+from lino.apps.pizzeria.pizzeria import Order
 from lino.apps.pizzeria.services import ServicePizzeria, populate
 
 app = ServicePizzeria() # label="Luc's Pizza Service")
@@ -7,7 +7,7 @@ sess = app.quickStartup()
     
 populate(sess)
 
-orders = sess.query(Orders)
+orders = sess.query(Order)
 
 o = orders.peek(3)
 

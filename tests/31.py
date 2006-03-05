@@ -61,17 +61,18 @@ class Case(TestCase):
 
         RACES = sess.query(races.Race)
         race = RACES.appendRow(date=itod(20040112),name1="test race")
-        race.participants.appendRow(
+        qry=race.participants()
+        qry.appendRow(
             person=norbert,
             dossard="0012",
             duration=DURATION.parse("00.55.10"))
-        race.participants.appendRow(
+        qry.appendRow(
             person=edgar,
             dossard="0013",
             duration=DURATION.parse("01.10.50"))
 
         #sess.startDump()
-        q = race.participants.query(
+        q = qry.query(
             "duration dossard person.name person.firstName",
             orderBy="duration dossard",
             pageLen=10)

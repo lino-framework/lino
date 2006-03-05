@@ -178,6 +178,8 @@ class Nation(BabelRow):
         table.addField('population',INT)
         table.addField('curr',STRING)
         table.addField('isocode',STRING(3))
+        table.addDetail('cities',City,'nation')
+        table.addDetail('partners_by_nation',Partner,'nation')
         
         #table.addView('std',columnNames="name isocode id")
 
@@ -185,6 +187,20 @@ class Nation(BabelRow):
         if len(value) != 2:
             raise DataVeto("must be 2 chars")
     validate_id = staticmethod(validate_id)
+
+##     def cities(self,columnNames=None,orderBy='name',**kw):
+##         kw['nation']=self
+##         return self.detail(City,columnNames,
+##                            orderBy=orderBy,
+##                            **kw)
+    
+##     def cities(self,*args,**kw):
+##         kw['nation']=self
+##         return self.detail(City,*args,**kw)
+    
+##     def partners_by_nation(self,*args,**kw):
+##         kw['nation']=self
+##         return self.detail(Partner,*args,**kw)
         
 ##     def validate(self):
 ##         if len(self.id) != 2:
@@ -201,8 +217,9 @@ class City(StoredDataRow):
     
     def initTable(self,table):
         table.addField('id',ROWID)
-        table.addPointer('nation',Nation).setDetail('cities',
-                                                    orderBy='name')
+        table.addPointer('nation',Nation)
+##         table.addPointer('nation',Nation).setDetail('cities',
+##                                                     orderBy='name')
         
         table.addField('name',STRING)
         table.addField('zipCode',STRING)

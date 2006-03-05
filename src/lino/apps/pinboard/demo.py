@@ -102,7 +102,8 @@ class DemoPopulator(Populator):
             setattr(self,lng,q.peek(lng))
             
     def populateAuthors(self,q):
-        q = q.query('name firstName quotesByAuthor' )
+        #q = q.query('name firstName quotesByAuthor' )
+        q = q.query('name firstName' )
         q.appendRow( 'Gates'         ,'Bill') #       ,usa)
         q.appendRow( 'Huxley'    ,'Aldous') #     ,None)
         q.appendRow( 'Tolkien'   ,'J.R.R.') #     ,None)
@@ -183,7 +184,7 @@ time it takes.""",self.anon)
 Don't believe everything you hear or anything you say.""",
                     self.anon)
 
-        q = self.mencken.quotesByAuthor.query('lang quote')
+        q = self.mencken.quotesByAuthor('lang quote')
         quote = q.appendRow(self.en,"""\
 An idealist is one who, on noticing that a rose smells better than a
 cabbage, concludes that it will also make better soup.
@@ -192,7 +193,7 @@ cabbage, concludes that it will also make better soup.
         quote = q.appendRow(self.en,"""\
 Conscience is the inner voice that warns us that someone may be looking.        
 """)
-        q = self.churchill.quotesByAuthor.query('lang quote')
+        q = self.churchill.quotesByAuthor('lang quote')
         quote = q.appendRow(self.en,"""\
 A fanatic is one who can't change his mind and won't change the subject.
 """)

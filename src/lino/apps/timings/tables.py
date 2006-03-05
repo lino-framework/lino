@@ -26,6 +26,7 @@ class Resource(StoredDataRow):
         table.addField('id',STRING) 
         table.addField('name',STRING)
         #table.addView("std", "id name")
+        table.addDetail('usages_by_resource',Usage,'resource')
         
 
     def setupMenu(self,nav):
@@ -46,6 +47,10 @@ class Resource(StoredDataRow):
 
     def delete(self):
         self.usages.deleteAll()
+
+##     def usages_by_resource(self,*args,**kw):
+##         kw['resource']=self
+##         return self.detail(Usage,*args,**kw)
 
 class ResourcesReport(DataReport):
     leadTable=Resource

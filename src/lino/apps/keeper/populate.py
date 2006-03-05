@@ -41,7 +41,7 @@ class VolumeVisitor: #(Task):
 
     def looper(self,task):
         self.task=task
-        if len(self.volume.directories) > 0:
+        if len(self.volume.directories()) > 0:
             self.freshen(self.volume.path)
         else:
             self.load(self.volume.path)
@@ -76,7 +76,7 @@ class VolumeVisitor: #(Task):
             for fn in os.listdir(fullname):
                 self.freshen(os.path.join(fullname,fn), fn, row)
         else:
-            self.error("%s : no such file or directory",fullname)
+            self.session.error("%s : no such file or directory",fullname)
 
     def load(self,fullname,shortname=None,dir=None):
         self.status(fullname)
@@ -105,7 +105,7 @@ class VolumeVisitor: #(Task):
             for fn in os.listdir(fullname):
                 self.load(os.path.join(fullname,fn), fn, row)
         else:
-            self.error("%s : no such file or directory",fullname)
+            self.session.error("%s : no such file or directory",fullname)
 
 ##     def visit_dir(self,dirRow,fullname):
 ##         #self.status("visit_dir " + fullname)
@@ -129,7 +129,7 @@ class FileVisitor: # (Task):
         self.dirs = sess.query(tables.Directory)
         self.words = sess.query(tables.Word)
         self.occurences = sess.query(tables.Occurence)
-        self.volume.directories.deleteAll()
+        self.volume.directories().deleteAll()
         #for row in self.dirs.query(volume=self.volume):
         #    row.delete()
         self.visit(self.volume.path,"")

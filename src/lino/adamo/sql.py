@@ -24,7 +24,8 @@ import codecs
 
 from lino.adamo import datatypes 
 #from lino.adamo.rowattrs import Field, Pointer, Detail
-from lino.adamo.query import DetailColumn, FieldColumn, PointerColumn
+from lino.adamo.query import FieldColumn, PointerColumn, DetailColumn
+#from lino.adamo.rowattrs import Detail
 from lino.adamo.row import DataRow
 #from query import Query, QueryColumn
 from lino.misc.etc import ispure
@@ -41,6 +42,7 @@ from lino.adamo.filters import NotEmpty, IsEqual, DateEquals, Contains
 #    pass
 
 class Master:
+    # pseudo row for a Detail
     def __init__(self,ds):
         self.ds=ds
 
@@ -50,6 +52,9 @@ class Master:
             for a in col.getAtoms():
                 l.append(self.ds.getTableName()+"."+a.name)
         return l
+    
+    def getSession(self):
+        return self.ds.getSession()
 
 
 class SqlConnection(Connection):
@@ -391,7 +396,7 @@ class SqlConnection(Connection):
                 master=Master(ds)
                 slave=flt.col.getCellValue(master)
                 s = "EXISTS ("
-                s += self.getSqlSelect(slave,"*")
+                s += self.getSqlSelect(slave(),"*")
                 s += ")"
                 l.append(s)
             else:

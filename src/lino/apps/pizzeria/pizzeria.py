@@ -51,11 +51,16 @@ class Order(StoredDataRow):
         table.addPointer('customer',Customer)
         table.addField('totalPrice',PRICE)
         table.addField('isRegistered',BOOL)
+        table.addDetail('lines',OrderLine,'order')
+
+##     def lines(self,*args,**kw):
+##         kw['order']=self
+##         return self.detail(OrderLine,*args,**kw)
         
     def register(self):
         self.lock()
         totalPrice = 0
-        for line in self.lines:
+        for line in self.lines():
             #print line
             assert line.order.id == self.id
             assert line.product.price is not None, \

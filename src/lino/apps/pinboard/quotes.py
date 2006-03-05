@@ -94,6 +94,14 @@ class TopicsReport(DataReport):
 
 class Author(Person):
     tableName="Authors"
+    
+    def initTable(self,table):
+        Person.initTable(self,table)
+        table.addDetail('quotesByAuthor',Quote,'author')
+    
+##     def quotesByAuthor(self,*args,**kw):
+##         kw['author']=self
+##         return self.detail(Quote,*args,**kw)
 
 class AuthorsReport(DataReport):
     leadTable=Author

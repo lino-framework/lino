@@ -152,6 +152,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
         #self._mirrorLoader = None
         self._initStatus = 0
         self._defaultView = None
+        self._pointers=[]
 
 
 ##     def init(self):
@@ -177,6 +178,9 @@ class Table(FieldContainer,SchemaComponent,Describable):
 
     #def getLabel(self):
     #   return self.getTableName()
+
+    def registerPointer(self,ptr):
+        self._pointers.append(ptr)
 
 
     def setupMenu(self,nav):
@@ -256,8 +260,17 @@ class Table(FieldContainer,SchemaComponent,Describable):
         if self._defaultView is None:
             if self._views.has_key('std'):
                 self._defaultView = 'std'
+        self._pointers=tuple(self._pointers)
         self._initStatus = 4
 
+    def vetoDeleteRow(self,row):
+        sess=row.getSession()
+        for ptr in self._pointers:
+            kw = { ptr.name : row }
+            q=sess.query(ptr._owner._instanceClass,**kw)
+            if len(q):
+                return "%s is used by %d rows in %s" % (
+                    row,len(q),q.getLeadTable())
             
 ##     def addDetail(self,name,ptr,**kw):
 ##         # used by Pointer. onTableInit3()

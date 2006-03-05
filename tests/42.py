@@ -39,7 +39,7 @@ class Case(TestCase):
         vol=q.appendRow(name="test",path=TESTDATA)
         vol.load(sess)
         sess.showQuery(
-            vol.directories,
+            vol.directories(),
             columnNames="id name parent files subdirs",
             width=70)
         s=self.getConsoleOutput()

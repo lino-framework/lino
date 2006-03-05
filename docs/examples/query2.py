@@ -3,7 +3,7 @@ from lino.apps.addrbook import demo, tables
 
 sess=demo.startup()
 be=sess.query(tables.Nation).peek("be")
-qry=be.cities.query("name inhabitants", orderBy="inhabitants")
+qry=be.cities("name inhabitants",orderBy="inhabitants")
 
 sess.showQuery(qry,width=50)
 

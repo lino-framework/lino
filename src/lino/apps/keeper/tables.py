@@ -36,6 +36,7 @@ class Volume(StoredDataRow):
         table.addField('path',STRING).setMandatory()
         #table.addDetail('directories',Directories,parent=None)
         #table.addView("std", "id name path directories meta")
+        table.addDetail('directories',Directory,'volume',parent=None)
         
 
     def setupMenu(self,nav):
@@ -58,7 +59,7 @@ class Volume(StoredDataRow):
         sess.loop(vv.looper,"Loading %s" % self.name)
 
     def delete(self):
-        self.directories.deleteAll()
+        self.directories().deleteAll()
 
     def ignoreByName(self,name):
         if name is None: return False
@@ -83,6 +84,8 @@ class Directory(StoredDataRow):
             "directories",parent=None)#,viewName="std")
         #table.addView("std","parent name subdirs files meta volume")
         #self.setPrimaryKey("volume parent name")
+        table.addDetail('files',File,'dir')
+        table.addDetail('subdirs',Directory,'parent')
 
     def __str__(self):
         s=str(self.volume) +":"
@@ -104,11 +107,11 @@ class Directory(StoredDataRow):
     def delete(self):
         #print "Delete entry for ",self
         assert not self in self.subdirs
-        self.files.deleteAll()
-        self.subdirs.deleteAll()
+        self.files().deleteAll()
+        self.subdirs().deleteAll()
         StoredDataRow.delete(self)
                 
-class DiretoriesReport(DataReport):
+class DirectoriesReport(DataReport):
     leadTable=Directory
     columnNames="parent name subdirs files meta volume"
             
@@ -128,6 +131,7 @@ class File(StoredDataRow):
         table.addField('mustParse',BOOL)
         
         table.setPrimaryKey("dir name")
+        table.addDetail('occurences',Occurence,'file')
 ##         table.addView(
 ##             "std",
 ##             """\
@@ -179,7 +183,8 @@ class File(StoredDataRow):
         if self.content is None:
             return
         tokens = standardTokenizer(self.content)
-        self.occurences.deleteAll()
+        occs=self.occurences()
+        occs.deleteAll()
         words=sess.query(Word)
         pos = 0
         for token in tokens:
@@ -190,7 +195,7 @@ class File(StoredDataRow):
                 word = words.appendRow(id=token)
             #elif word.ignore:
             #    continue
-            self.occurences.appendRow(word=word, pos=pos)
+            occs.appendRow(word=word, pos=pos)
         
 class FilesReport(DataReport):
     leadTable=File
@@ -221,6 +226,7 @@ class Word(StoredDataRow):
         table.addPointer('synonym',Word)
         #table.addField('ignore',BOOL)
         #table.addView("std","id synonym occurences")
+        table.addDetail('occurences',Occurence,'word')
 
 class WordsReport(DataReport):
     leadTable=Word

@@ -168,11 +168,19 @@ class DbSession(Session,Context):
                 return table._instanceClass
         
 
-    def query(self,leadTable,columnNames=None,**kw):
-        if columnNames is None:
-            columnNames="*"
-        #return self.getStore(leadTable).query(self,**kw)
-        return self.db.getStore(leadTable).query(self,columnNames,**kw)
+    def query(self,tcl,columnNames=None,**kw):
+        tables=self.db.app.findImplementingTables(tcl)
+        if len(tables) == 1:
+            tcl=tables[0]._instanceClass
+##             for t in tables:
+##                 if t._instanceClass is leadTable
+##                 leadTable= 
+        if columnNames is None: columnNames="*"
+        return self.db.getStore(tcl).query(self,columnNames,**kw)
+        #return self.db.getStore(
+        #    tables[0]._instanceClass).query(
+        #    self,columnNames,**kw)
+        #return tables[0]._store.query(self,columnNames,**kw)
 
     def peek(self,tableClass,*args):
         # used in raceman/report.py, cities_be.py...

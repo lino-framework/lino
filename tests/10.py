@@ -1,5 +1,4 @@
-# coding: iso-8859-1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -54,8 +53,7 @@ class Case(TestCase):
         #cities=be.cities.query(orderBy="name",
         #                       search="eup")
         #print cities.getSqlSelect()
-        for city in be.cities.query(orderBy="name",
-                                    search="eup"):
+        for city in be.cities(orderBy="name",search="eup"):
             s += city.zipCode + " "+ city.name + "\n"
         # print s
         self.assertEqual(s,"""\

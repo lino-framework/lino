@@ -1,47 +1,45 @@
 TableName      |Fields              |Pointers       |Details                  
 ---------------+--------------------+---------------+-------------------------
-Currencies     |id, name            |               |partners_by_currency     
-Languages      |id, name            |               |partners_by_lang         
+Currencies     |id, name            |               |                         
+Languages      |id, name            |               |                         
 Nations        |id, name, area,     |               |cities,                  
-               |population, curr,   |               |organisations_by_nation, 
-               |isocode             |               |partners_by_nation       
-Cities         |id, name, zipCode,  |nation         |organisations_by_city,   
-               |inhabitants         |               |partners_by_city         
+               |population, curr,   |               |partners_by_nation       
+               |isocode             |               |                         
+Cities         |id, name, zipCode,  |nation         |                         
+               |inhabitants         |               |                         
 Organisations  |id, email, phone,   |nation, city   |                         
                |gsm, fax, website,  |               |                         
                |zip, street, house, |               |                         
                |box, name           |               |                         
 Persons        |id, name, firstName,|               |                         
                |sex, birthDate      |               |                         
-Partners       |name, firstName,    |nation, city,  |invoices,                
-               |email, phone, gsm,  |type, lang,    |bookings_by_partner      
+Partners       |name, firstName,    |nation, city,  |                         
+               |email, phone, gsm,  |type, lang,    |                         
                |fax, website, zip,  |currency       |                         
                |street, house, box, |               |                         
                |id, title, logo     |               |                         
-PartnerTypes   |id, name            |               |partnersByType           
-Products       |id, name, price     |               |invoiceLines             
-Journals       |id, name, tableName |               |bankstatements_by_jnl,   
-               |                    |               |miscoperations_by_jnl,   
-               |                    |               |invoices_by_jnl          
+PartnerTypes   |id, name            |               |                         
+Products       |id, name, price     |               |                         
+Journals       |id, name, tableName |               |                         
 BankStatements |seq, date, closed,  |jnl            |                         
                |remark, balance1,   |               |                         
                |balance2            |               |                         
 MiscOperations |seq, date, closed,  |jnl            |                         
                |remark              |               |                         
-Invoices       |seq, date, closed,  |jnl, partner   |lines,                   
-               |remark, zziel,      |               |bookings_by_invoice      
+Invoices       |seq, date, closed,  |jnl, partner   |lines                    
+               |remark, zziel,      |               |                         
                |amount, inverted    |               |                         
 InvoiceLines   |line, amount,       |invoice,       |                         
                |remark, unitPrice,  |product        |                         
                |qty                 |               |                         
-BalanceItems   |name, id, attrib,   |               |accounts_by_balance      
+BalanceItems   |name, id, attrib,   |               |                         
                |dc, type, doc       |               |                         
-CashFlowItems  |name, id, attrib,   |               |accounts_by_cash         
+CashFlowItems  |name, id, attrib,   |               |                         
                |dc, type, doc       |               |                         
-ProfitAndLossIt|name, id, attrib,   |               |accounts_by_profit       
+ProfitAndLossIt|name, id, attrib,   |               |                         
 ems            |dc, type, doc       |               |                         
-Accounts       |name, pcmn, id      |parent,        |accounts_by_parent,      
-               |                    |balance,       |bookings_by_account      
+Accounts       |name, pcmn, id      |parent,        |                         
+               |                    |balance,       |                         
                |                    |profit, cash   |                         
 Bookings       |date, amount, dc,   |account,       |                         
                |label, id           |invoice,       |                         

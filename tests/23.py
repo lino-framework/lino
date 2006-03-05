@@ -60,7 +60,7 @@ class Case(TestCase):
 
         "create a query"
         
-        invoices = INVOICES.query("jnl date remark lines",
+        invoices = INVOICES.query("jnl date remark",
                                   partner=p)
         #invoices.setSamples(partner=p)
         #csr = invoices.executeSelect()
@@ -84,12 +84,12 @@ class Case(TestCase):
 
         """create two rows in this invoice :"""
 
-        lines = i.lines.query("line product qty")
+        lines = i.lines("line product qty")
 
         lines.appendRow(1,PRODUCTS.peek(3), 4) # price is 12
         lines.appendRow(2,PRODUCTS.peek(16), 1) # price is 56
 
-        i.lines.query(
+        i.lines(
             "line product.name qty unitPrice amount")\
             .showReport(width=60)
 

@@ -49,12 +49,12 @@ def populate(sess):
     c3 = CUST.appendRow(name="Bernard")
 
     o1 = ORDERS.appendRow(customer=c3,date=itod(20040318))
-    q = o1.lines 
+    q = o1.lines()
     q.appendRow(product=PROD.peek(1),qty=1)
     q.appendRow(product=s1,qty=1)
     
     o2 = ORDERS.appendRow(customer=CUST.peek(1),date=itod(20040319))
-    q = o2.lines 
+    q = o2.lines()
     q.appendRow(product=PROD.peek(1),qty=2)
     q.appendRow(product=PROD.peek(2),qty=3)
 

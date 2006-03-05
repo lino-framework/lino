@@ -1,5 +1,4 @@
-# coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,7 +21,7 @@
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Language
+from lino.apps.pinboard.tables import Language, Node
 
 class Case(TestCase):
     def setUp(self):
@@ -37,14 +36,16 @@ class Case(TestCase):
         #LANGS.setBabelLangs('en')
         de = LANGS.peek('de')
         #print LANGS._table.getAttrList()
-        for p in de.nodes_by_lang:
+        for p in self.db.query(Node,lang=de):
+        #for p in de.nodes_by_lang:
             self.assertEqual(p.title,'Bullshit Bingo')
             
         #print len(de.listof_PAGES)
         #print de.listof_PAGES[0]
 
         msg = de.vetoDelete()
-        self.assertEqual(msg,"German : quotes_by_lang not empty")
+        self.assertEqual(msg,"German is used by 1 rows in Quotes")
+        #("German : quotes_by_lang not empty")
         
         et = LANGS.peek('et')
         self.assertEqual(et.vetoDelete(),None)

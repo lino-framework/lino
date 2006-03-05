@@ -15,7 +15,7 @@ print "Order #:", o.id
 print "Date:", o.date
 print "Customer:", o.customer.name
 print "-" * 40
-for line in o.lines:
+for line in o.lines():
     print "%-20s %3d %5d" % (line.product.name,
                              line.qty,
                              line.product.price*line.qty)

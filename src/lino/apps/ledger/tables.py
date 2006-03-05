@@ -135,16 +135,21 @@ class Invoice(PartnerDocument):
         table.addField('inverted',BOOL)
         #table.addPointer('partner',Partners).setDetail('invoices')
         table.getRowAttr('partner').setDetail('invoices')
+        table.addDetail('lines',InvoiceLine,'invoice')
 
     def close(self):
         #print "Invoices.close() : %s lines" % len(self.lines)
         self.lock()
         total = 0
-        for line in self.lines:
+        for line in self.lines():
             total += line.amount
         self.amount = total
         self.unlock()
         
+##     def lines(self,*args,**kw):
+##         kw['invoice']=self
+##         return self.detail(InvoiceLine,*args,**kw)
+    
 class InvoicesReport(DataReport):
     leadTable=Invoice
 
@@ -156,7 +161,7 @@ class InvoiceLine(StoredDataRow):
         table.addField('amount',AMOUNT)
         table.addField('remark',STRING)
         
-        table.addPointer('invoice',Invoice).setDetail('lines')
+        table.addPointer('invoice',Invoice)#.setDetail('lines')
         
         table.setPrimaryKey("invoice line")
 

@@ -67,8 +67,7 @@ class MonthlyCalendar(DataReport):
                 self.res=res
                 ReportColumn.__init__(self,label=str(res))
             def getCellValue(self,row):
-                return self.res.usages_by_resource.child(
-                    date=row.item)
+                return self.res.usages_by_resource(date=row.item)
             def format(self,qry):
                 return ", ".join([str(u) for u in qry])
         
@@ -144,8 +143,7 @@ class Timings(Schema):
         mnu.addLink(doc)
 
         for r in sess.query(tables.Resource):
-            rpt=DataReport(r.usages_by_resource,
-                           orderBy="date start")
+            rpt=DataReport(r.usages_by_resource(orderBy="date start"))
             root.addReportChild(rpt)
 
         filenames=root.save(sess,targetRoot)

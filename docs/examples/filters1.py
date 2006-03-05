@@ -4,7 +4,7 @@ from lino.adamo.filters import NotEmpty
 sess = demo.startup() # big=True)
         
 qry=sess.query(tables.Nation,"id name cities")
-qry.addFilter(NotEmpty(qry.findColumn('cities')))
+qry.addColFilter('cities',NotEmpty)
 qry.showReport(columnWidths="2 15 20")
 
 print

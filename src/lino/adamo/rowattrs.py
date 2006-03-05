@@ -563,15 +563,17 @@ class Pointer(Field):
                  **kw):
         Field.__init__(self,owner,name,toClass,**kw)
         #self.type = toClass
-        self.detailName = detailName
-        self.dtlColumnNames = None
-        self.dtlKeywords = {}
+        #self.detailName = detailName
+        #self.dtlColumnNames = None
+        #self.dtlKeywords = {}
         self._neededAtoms = None
         
     def setType(self,tp):
         raise "not on Pointers"
 
     def setDetail(self,detailName,columnNames=None,**kw):
+        return
+        "no longer used"
         self.detailName = detailName
         self.dtlColumnNames = columnNames
         if columnNames is not None:
@@ -580,6 +582,7 @@ class Pointer(Field):
         
     def onTableInit1(self,owner,name):
         assert owner == self._owner
+        return
         if self.detailName is None:
             self.setDetail(
                 owner.getTableName().lower()+'_by_'+self.name)
@@ -587,26 +590,32 @@ class Pointer(Field):
     def onTableInit2(self,owner,schema):
         self._toTables = schema.findImplementingTables(self.type)
         if len(self._toTables) == 0:
+            # no Partner.type if PartnerTypes not implemented
             self.delete()
             return
-        assert len(self._toTables) > 0, \
-                 "%s.%s : found no tables implementing %s" % \
-                 (owner.getName(),
-                  str(self),
-                  str(self.type))
+        for toTable in self._toTables:
+            toTable.registerPointer(self)
+            
+##         assert len(self._toTables) > 0, \
+##                  "%s.%s : found no tables implementing %s" % \
+##                  (owner.getName(),
+##                   str(self),
+##                   str(self.type))
         #if len(self._toTables) > 1:
         #   print "rowattrs.py:", repr(self)
 
-    def onTableInit3(self,owner,schema):
-        RowAttribute.onTableInit3(self,owner,schema)
-        #print '%s.%s' % (owner,self.name), ':', self._toTables
-        for toTable in self._toTables:
-            #if self.detailName == 'children':
-            #    print toTable, owner
-            toTable.addDetail(self.detailName,
-                              self,
-                              self.dtlColumnNames,
-                              **self.dtlKeywords)
+##     def onTableInit3(self,owner,schema):
+##         RowAttribute.onTableInit3(self,owner,schema)
+##         #print '%s.%s' % (owner,self.name), ':', self._toTables
+##         for toTable in self._toTables:
+##             #if self.detailName == 'children':
+##             #    print toTable, owner
+##             toTable.registerPointer(self)
+##             return
+##             toTable.addDetail(self.detailName,
+##                               self,
+##                               self.dtlColumnNames,
+##                               **self.dtlKeywords)
             
 ##     def getTestEqual(self,ds,colAtoms,value):
 ##         av = self.value2atoms(value,ds.getSession())
@@ -784,13 +793,31 @@ class Pointer(Field):
         
 class Detail(RowAttribute):
     def __init__(self,owner,
-                 name,pointer,label=None,doc=None,**kw):
-        
-        self.pointer = pointer
+                 name,tcl,pointerName,
+                 label=None,doc=None,
+                 **kw):
+        self.pointerName = pointerName
+        self.tcl=tcl
+        #self.pointer = pointer
         RowAttribute.__init__(self,owner,
                               name,label=label,doc=doc)
-        kw[self.pointer.name] = None
+        #kw[pointerName] = None
         self._queryParams = kw
+        
+    def onTableInit3(self,owner,schema):
+        RowAttribute.onTableInit3(self,owner,schema)
+        itables=schema.findImplementingTables(self.tcl)
+        if self.pointerName is None:
+            pn=None
+            for t in itables:
+                for f in t._fields:
+                    pass
+                for ptr in t._pointers:
+                    if ptr.type == self.tcl:
+                        pass
+        for t in itables:
+            self.pointer=t.getRowAttr(self.pointerName)
+        self._queryParams[self.pointerName] = None
         
     def format(self,ds):
         return str(len(ds))+" "+ds.getLeadTable().getName()
@@ -809,6 +836,7 @@ class Detail(RowAttribute):
         return 4
     
 
+        
 ##     def onAreaInit(self,area):
 ##         area.defineQuery(self.name,self._queryParams)
         

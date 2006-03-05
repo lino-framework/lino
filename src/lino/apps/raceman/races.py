@@ -90,6 +90,7 @@ class Race(StoredDataRow):
         table.addField('invalid',INT)
         table.addField('missing',INT)
         table.addPointer('event',Event).setDetail("races")
+        table.addDetail('participants',Participant,'race')
 ##         table.addView( "std",
 ##                        "date event name1 status startTime "
 ##                        "arrivals participants "
@@ -115,6 +116,10 @@ class Race(StoredDataRow):
     def __str__(self):
         return self.name1
 
+##     def participants(self,*args,**kw):
+##         kw['race']=self
+##         return self.detail(Participant,*args,**kw)
+    
     def showArrivalEntry(self,ui):
         #self.lock()
         frm = ui.form(
@@ -188,7 +193,7 @@ Jedesmal wenn einer ankommt, ENTER drücken.
             if a.dossard == '*':
                 self.unknown += 1
             else:
-                p = self.participants.peek(self,a.dossard)
+                p = self.participants().peek(self,a.dossard)
                 if p is None:
                     self.invalid += 1
                 elif p.lock():
@@ -202,11 +207,11 @@ Jedesmal wenn einer ankommt, ENTER drücken.
         #ui.status(
         #    "%d recognized, %d unknown and %d invalid arrivals"\
         #    % (self.known, self.unknown, invalid))
+        q=self.participants()
         ui.status("scanning %d participants" % \
-                  len(self.participants))
+                  len(q))
         place = 0
-        for p in self.participants.query(
-            orderBy='duration'):
+        for p in q.query(orderBy='duration'):
             if p.duration is None:
                 self.missing  += 1
             else:
@@ -219,11 +224,10 @@ Jedesmal wenn einer ankommt, ENTER drücken.
                     raise RowLockFailed
 
         ui.status("scanning %d participants" % \
-                  len(self.participants))
+                  len(q))
         place = 0
         cat = None
-        for p in self.participants.query(
-            orderBy='cat duration'):
+        for p in q.query(orderBy='cat duration'):
             if p.duration is not None:
                 if cat == p.cat:
                     place += 1
@@ -242,7 +246,7 @@ Jedesmal wenn einer ankommt, ENTER drücken.
     def printRow(self,prn):
         raise "not converted after 20060213"
         sess = self.getSession()
-        q = self.participants.query(
+        q = self.participants(
             "person.name cat time dossard",
             orderBy="person.name")
         q.executeReport(prn.report(),
@@ -294,7 +298,7 @@ Jedesmal wenn einer ankommt, ENTER drücken.
             groups.append(g)
             return g
 
-        for pos in self.participants_by_race.query( \
+        for pos in self.participants( \
             orderBy="duration"):
             if pos.duration != None:
                 if sex is None or pos.person.sex == sex:
@@ -333,9 +337,9 @@ Jedesmal wenn einer ankommt, ENTER drücken.
 class RacesReport(DataReport):
     leadTable=Race
     columnNames="date event name1 status startTime "\
-                 "arrivals participants "\
-                 "known unknown invalid missing "\
-                 "tpl type name2 id"
+                "arrivals participants "\
+                "known unknown invalid missing "\
+                "tpl type name2 id"
 
 
         

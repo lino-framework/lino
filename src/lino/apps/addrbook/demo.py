@@ -89,7 +89,8 @@ class StandardPopulator(adamo.Populator):
             
         else:
             q.setBabelLangs('en')
-            qr = q.query('id name cities')
+            #qr = q.query('id name cities')
+            qr = q.query('id name')
             qr.appendRow("ee","Estonia")
             qr.appendRow("be","Belgium")
             qr.appendRow("de","Germany")
@@ -103,21 +104,20 @@ class StandardPopulator(adamo.Populator):
     
     def populateCities(self,q):
         if self.big:
-            self.deutschland.cities.appendfrom(
-                os.path.join(rtlib_path,
-                             "data","cities_de.txt"))
+            self.deutschland.cities().appendfrom(
+                os.path.join(rtlib_path,"data","cities_de.txt"))
 
             
-            self.belgique.cities.appendfrom(
-                os.path.join(rtlib_path,
-                             "data","cities_be.txt"))
+            self.belgique.cities().appendfrom(
+                os.path.join(rtlib_path,"data","cities_be.txt"))
 
             #from lino.schemas.sprl.data import cities_de
             #cities_de.populate(q)
             #from lino.schemas.sprl.data import cities_be
             #cities_be.populate(q)
         else:
-            r = self.belgique.cities.query('name inhabitants')
+            #r = self.belgique.cities.query('name inhabitants')
+            r = self.belgique.cities('name inhabitants')
             r.appendRow("Bruxelles",1004239)
             r.appendRow("Brugge",116848)
             r.appendRow("Eupen",17872)
@@ -129,7 +129,7 @@ class StandardPopulator(adamo.Populator):
             r.appendRow("Charleroi",200983)
             r.appendRow("Verviers",52739)
 
-            q = self.deutschland.cities.query('name') 
+            q = self.deutschland.cities('name') 
             q.appendRow("Aachen")
             q.appendRow(u"Köln")
             q.appendRow("Berlin")

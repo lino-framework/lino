@@ -260,7 +260,9 @@ class DemoPopulator(addrdemo.DemoPopulator):
         #be=NAT.peek('be')
         #be.partners_by_nation.showReport()
         #return
-        for p in NAT.peek('be').partners_by_nation.fetchall():
+        # must fetchall() because we update
+        for p in NAT.peek('be').partners_by_nation().fetchall():
+        #for p in NAT.peek('be').partners_by_nation():
             p.update(currency=BEF)
             #p.lock()
             #p.currency=BEF

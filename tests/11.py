@@ -85,7 +85,7 @@ INSERT INTO Orders ( id, xdate, customer_id, totalPrice, isRegistered )
 """)
         
         LINES.startDump()
-        q = o.lines.query()
+        q = o.lines()
         q.appendRow(product=p,qty=2)
         s=LINES.stopDump()
         #print s
@@ -177,20 +177,20 @@ SELECT id, name, price FROM Products WHERE id = 1;
         p2 = PROD.peek(2)
 
         o1 = ORDERS.appendRow(customer=c3,date=itod(20040318))
-        q = o1.lines.query()
+        q = o1.lines()
         q.appendRow(product=s1,qty=1)
         q.appendRow(product=p1,qty=1)
 
         o2 = ORDERS.appendRow(customer=CUST[1],
                               date=itod(20040319))
-        q = o2.lines.query()
+        q = o2.lines()
         q.appendRow(product=p1,qty=2)
         q.appendRow(product=p2,qty=3)
         #LINES.appendRow(order=o1,product=s2,qty=1)
 
         #db.commit()
 
-        q = o1.lines.query("product qty")
+        q = o1.lines("product qty")
         
         totalPrice = 0
         for line in q:

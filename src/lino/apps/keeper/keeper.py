@@ -41,20 +41,21 @@ class FoundFilesReport(DataReport):
         self.addDataColumn("name",width=20)
         occsColumn=self.addDataColumn(
             "occurences",
-            formatter=lambda q: str(len(q)),\
+            formatter=lambda pq: str(len(pq())),\
+            #searchColumns="words.id",
             label="occs",
             width=5)
         self.addDataColumn("content",
                            width=40,
                            formatter=lambda x: preview(x))
 
-        col=occsColumn.datacol
-        self.query.addFilter(NotEmpty(col))
-        self.occs=col.getDetailQuery()
-        self.occs.setSearchColumns("word.id")
+        self.occsColumn=occsColumn.datacol
+        self.query.addFilter(NotEmpty(self.occsColumn))
+        #self.occs=col.getDetailQuery()
+        self.occsColumn._queryParams['searchColumns']="word.id"
         
     def setSearch(self,s):
-        self.occs.setSearch(s)
+        self.occsColumn._queryParams['search'] = s
 
 
 class SearchFormCtrl:

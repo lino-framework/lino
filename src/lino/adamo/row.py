@@ -43,9 +43,10 @@ class DataRow:
     def __getattr__(self,name):
         #assert self.__dict__.has_key("_fc")
         #print repr(self._fc)
-        col=self._query.findColumn(name)
-        if col is None:
-            col=self._query._store._peekQuery.getColumnByName(name)
+        #col=self._query.findColumn(name)
+        #if col is None:
+        #    col=self._query._store._peekQuery.getColumnByName(name)
+        col=self._query._store._peekQuery.getColumnByName(name)
         return col.getCellValue(self)
         #rowattr = self.__dict__['_fc'].getRowAttr(name)
         #return rowattr.getCellValue(self)
@@ -68,6 +69,9 @@ class DataRow:
             return self._values[name]
         except KeyError:
             raise NoSuchField,name
+        
+##     def detail(self,tcl,*args,**kw):
+##         return self.getSession().query(tcl,*args,**kw)
 
     def format(v):
         #print repr(v)
@@ -93,19 +97,12 @@ class DataRow:
         # 20050222 return self.makeDataCell(i,col)
         return col.getCellValue(self)
         
-##  def __getitem__(self,i):
-##      col = self._clist.visibleColumns[i]
-##      return col.getCellValue(self)
-        
     def __setitem__(self,i,value):
         col = self._query.visibleColumns[i]
         assert self._pseudo or self._locked or self._new
         col.setCellValue(self,value)
         #self.__dict__["_dirty"] = True
         
-    #def __iter__(self):
-    #    return RowIterator(self,self._query.visibleColumns)
-    
     def __len__(self):
         return len(self._query.visibleColumns)
     
@@ -427,9 +424,10 @@ class StoredDataRow(DataRow):
         pass
 
     def vetoDelete(self):
-        for col in self._query._columns:
-            msg=col.vetoDeleteRow(self)
-            if msg: return msg
+        return self._query.getLeadTable().vetoDeleteRow(self)
+        #for col in self._query._columns:
+        #    msg=col.vetoDeleteRow(self)
+        #    if msg: return msg
             
 ##         for name,attr in self._query.getLeadTable()._rowAttrs.items():
 ##             msg = attr.vetoDeleteIn(self)
