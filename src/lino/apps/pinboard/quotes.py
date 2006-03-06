@@ -27,7 +27,8 @@ class Quote(StoredDataRow):
         #MemoTable.init(self)
         table.addField('id',ROWID)
         table.addField('quote',MEMO)
-        table.addPointer('author',Author).setDetail('quotesByAuthor')
+        table.addPointer('author',Author)
+        #.setDetail('quotesByAuthor')
         table.addPointer('lang',Language)
         #table.addField('lang',LANG)
         

@@ -48,8 +48,8 @@ class City(StoredDataRow):
     
     def initTable(self,table):
         table.addField('id',ROWID)
-        table.addPointer('nation',Nation).setDetail('cities',
-                                                    orderBy='name')
+        table.addPointer('nation',Nation)
+        #.setDetail('cities',orderBy='name')
         table.addField('name',STRING)
         table.addField('zipCode',STRING)
         table.addField('inhabitants',INT)

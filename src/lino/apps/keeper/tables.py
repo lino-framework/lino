@@ -78,10 +78,10 @@ class Directory(StoredDataRow):
         table.addField('name',STRING) # .setMandatory()
         #table.addField('mtime',TIMESTAMP)
         table.addField('meta',MEMO(width=50,height=5))
-        table.addPointer('parent',Directory).setDetail(
-            "subdirs")#,viewName="std")
-        table.addPointer('volume',Volume).setDetail(
-            "directories",parent=None)#,viewName="std")
+        table.addPointer('parent',Directory)
+        #.setDetail("subdirs")#,viewName="std")
+        table.addPointer('volume',Volume)
+        #.setDetail("directories",parent=None)#,viewName="std")
         #table.addView("std","parent name subdirs files meta volume")
         #self.setPrimaryKey("volume parent name")
         table.addDetail('files',File,'dir')
@@ -125,8 +125,8 @@ class File(StoredDataRow):
         table.addField('size',LONG)
         table.addField('content',MEMO(width=50,height=5))
         table.addField('meta',MEMO(width=50,height=5))
-        table.addPointer('dir',Directory).setDetail(
-            "files",orderBy="name")
+        table.addPointer('dir',Directory)
+        #.setDetail("files",orderBy="name")
         table.addPointer('type',FileType)
         table.addField('mustParse',BOOL)
         
@@ -235,8 +235,10 @@ class WordsReport(DataReport):
 class Occurence(StoredDataRow):
     tableName="Occurences"
     def initTable(self,table):
-        table.addPointer('word',Word).setDetail("occurences")
-        table.addPointer('file',File).setDetail("occurences")
+        table.addPointer('word',Word)
+        #.setDetail("occurences")
+        table.addPointer('file',File)
+        #.setDetail("occurences")
         table.addField('pos',INT)
         table.setPrimaryKey("word file pos")
 

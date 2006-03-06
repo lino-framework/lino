@@ -20,6 +20,7 @@
 import wx
 
 #from lino.ui import console
+from lino.adamo.exceptions import InvalidRequestError
 
 from lino.adamo import datatypes
 #from lino.adamo.datatypes import MEMO
@@ -77,14 +78,15 @@ class EventCaller:
         self.kw = kw
         
     def __call__(self,event):
-        try:
-            return self.meth(*self.args, **self.kw)
-        except InvalidRequestError,e:
-            frm.session.status(str(e))
-        except Exception,e:
-            frm.session.exception(
-                e,"after clicking '%s' in '%s'" % (
-                self.getLabel(),frm.getLabel()))
+        return self.meth(*self.args, **self.kw)
+##         try:
+##             return self.meth(*self.args, **self.kw)
+##         except InvalidRequestError,e:
+##             frm.session.status(str(e))
+##         except Exception,e:
+##             frm.session.exception(
+##                 e,"after clicking '%s' in '%s'" % (
+##                 self.getLabel(),frm.getLabel()))
         
 
 

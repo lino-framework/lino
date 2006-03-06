@@ -16,17 +16,20 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import lino
 from lino.console import syscon
 
 _toolkit = None
 
 
-def choose(wishlist="tix"):
+def choose(wishlist=None):
+    if wishlist is None:
+        wishlist=lino.config.get('forms','wishlist')
     global _toolkit
     
     assert _toolkit is None, "cannot choose a second time"
-    
     for tkname in wishlist.split():
+        print tkname
         if tkname == "tix": 
             from lino.forms.tix.tixform import Toolkit
             _toolkit = Toolkit()

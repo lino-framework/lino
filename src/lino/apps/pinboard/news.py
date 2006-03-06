@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -30,9 +30,10 @@ class NewsItem(ddl.MemoRow):
         table.addField('id',ddl.ROWID)
         table.addField('date',ddl.DATE)
         table.addField('time',ddl.TIME)
-        table.addPointer('newsgroup',Newsgroup).setDetail(
-            'newsByGroup', orderBy='date')
-        table.addPointer('author',User).setDetail('newsByAuthor')
+        table.addPointer('newsgroup',Newsgroup)
+        #.setDetail('newsByGroup', orderBy='date')
+        table.addPointer('author',User)
+        #.setDetail('newsByAuthor')
         table.addPointer('lang',Language)
         #table.addField('lang',LANG)
         table.addPointer('project',Project)

@@ -29,9 +29,9 @@ class Project(MemoTreeRow):
         table.addField('startDate',DATE)
         table.addField('stopDate',DATE)
 
-        table.addPointer('responsible',User).setDetail("projects")
+        table.addPointer('responsible',User)#.setDetail("projects")
         table.addPointer('sponsor', Partner) 
-        table.addPointer('status', ProjectStatus).setDetail("projects")
+        table.addPointer('status', ProjectStatus)#.setDetail("projects")
         
         #from sdk import Version
         #self.version = Pointer(Version,"projects")

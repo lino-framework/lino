@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -30,11 +30,11 @@ class Event(Node):
         table.getRowAttr('id').setType(ROWID)
         table.addField('date', DATE)
         table.addField('time', STRING)
-        table.addPointer('type', EventType).setDetail("eventsByType")
+        table.addPointer('type', EventType)#.setDetail("eventsByType")
         
-        table.addPointer('responsible',Partner).setDetail(
-            'eventsByResponsible')
-        table.addPointer('place',Partner).setDetail('eventsByPlace')
+        table.addPointer('responsible',Partner)
+        #.setDetail('eventsByResponsible')
+        table.addPointer('place',Partner)#.setDetail('eventsByPlace')
         
 
         #table.setColumnList('date time place title abstract')

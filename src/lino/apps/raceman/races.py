@@ -89,7 +89,8 @@ class Race(StoredDataRow):
         table.addField('unknown',INT)
         table.addField('invalid',INT)
         table.addField('missing',INT)
-        table.addPointer('event',Event).setDetail("races")
+        table.addPointer('event',Event)
+        #.setDetail("races")
         table.addDetail('participants',Participant,'race')
 ##         table.addView( "std",
 ##                        "date event name1 status startTime "
@@ -391,7 +392,8 @@ class Participant(StoredDataRow):
     def initTable(self,table):
         table.setPrimaryKey("race dossard")
         
-        table.addPointer('race',Race).setDetail('participants')
+        table.addPointer('race',Race)
+        #.setDetail('participants')
         table.addField('dossard',DOSSARD)
         table.addPointer('person',Person)
         table.addPointer('club',Club)
@@ -416,7 +418,8 @@ class ParticipantsByEventReport(DataReport):
 class Arrival(StoredDataRow):
     tableName="Arrivals"
     def initTable(self,table):
-        table.addPointer('race',Race).setDetail('arrivals')
+        table.addPointer('race',Race)
+        #.setDetail('arrivals')
         table.addField('dossard',DOSSARD)
         table.addField('time',TIME)
         #table.addField('duration',DURATION)

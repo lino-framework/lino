@@ -417,8 +417,7 @@ class ReportMixin:
         meth(r,*args,**kw)
         
     def onClose(self):
-        if self.rpt.canWrite():
-            self.rpt.ds.unlock()
+        self.rpt.onClose()
 
     def getLineWidth(self):
         return 80

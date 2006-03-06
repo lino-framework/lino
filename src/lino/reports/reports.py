@@ -76,7 +76,10 @@ class BaseReport:
                "rpt.child(parent=x) is nonsense"
         return self.__class__(parent=self,**kw)
         
-        
+
+    def onClose(self):
+        # overridden in dbreports.py
+        pass
 
     def getTitle(self):
         # overridden by DataReport

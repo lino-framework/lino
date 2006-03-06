@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -134,7 +134,7 @@ class Invoice(PartnerDocument):
         table.addField('amount',AMOUNT)
         table.addField('inverted',BOOL)
         #table.addPointer('partner',Partners).setDetail('invoices')
-        table.getRowAttr('partner').setDetail('invoices')
+        table.getRowAttr('partner')#.setDetail('invoices')
         table.addDetail('lines',InvoiceLine,'invoice')
 
     def close(self):
@@ -171,7 +171,8 @@ class ProductInvoiceLine(InvoiceLine):
         InvoiceLine.initTable(self,table)
         table.addField('unitPrice',AMOUNT)
         table.addField('qty',INT)
-        table.addPointer('product',Product).setDetail('invoiceLines')
+        table.addPointer('product',Product)
+        #.setDetail('invoiceLines')
         
     def after_product(self):
         if self.product is None: return

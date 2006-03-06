@@ -60,7 +60,7 @@ class DataReportColumn(ReportColumn):
     
     def validate(self,value):
         return self.datacol.rowAttr.validate(value)
-        
+
 ##     def getType(self):
 ##         return self.datacol.rowAttr.getType()
     
@@ -101,7 +101,10 @@ class QueryReport(BaseReport):
     def __xml__(self,wr):
         return self.query.__xml__(wr)
     
-    
+    def onClose(self):
+        BaseReport.onClose(self)
+        self.query.unlock()
+        
     def getTitle(self):
         "may override"
         if self.title is not None: return self.title

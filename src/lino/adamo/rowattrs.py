@@ -571,21 +571,21 @@ class Pointer(Field):
     def setType(self,tp):
         raise "not on Pointers"
 
-    def setDetail(self,detailName,columnNames=None,**kw):
-        return
-        "no longer used"
-        self.detailName = detailName
-        self.dtlColumnNames = columnNames
-        if columnNames is not None:
-            kw['columnNames'] = columnNames
-        self.dtlKeywords = kw
+##     def setDetail(self,detailName,columnNames=None,**kw):
+##         return
+##         "no longer used"
+##         self.detailName = detailName
+##         self.dtlColumnNames = columnNames
+##         if columnNames is not None:
+##             kw['columnNames'] = columnNames
+##         self.dtlKeywords = kw
         
-    def onTableInit1(self,owner,name):
-        assert owner == self._owner
-        return
-        if self.detailName is None:
-            self.setDetail(
-                owner.getTableName().lower()+'_by_'+self.name)
+##     def onTableInit1(self,owner,name):
+##         assert owner == self._owner
+##         return
+##         if self.detailName is None:
+##             self.setDetail(
+##                 owner.getTableName().lower()+'_by_'+self.name)
             
     def onTableInit2(self,owner,schema):
         self._toTables = schema.findImplementingTables(self.type)
