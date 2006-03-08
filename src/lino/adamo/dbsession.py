@@ -19,9 +19,10 @@
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
 #from lino.ui import console
-from lino.forms.session import Session
+#from lino.forms.session import Session
 #from lino.adamo import center
 from lino.adamo.dbreports import QueryReport
+from lino.console import Application
 
 class BabelLang:
     def __init__(self,index,id):
@@ -47,18 +48,19 @@ class Context:
                 return True
         return False
     
-class DbSession(Session,Context):
+class DbSession(Application,Context):
     
     #_dataCellFactory = DataCell
     #_windowFactory = lambda x: x
     
     def __init__(self,db,toolkit,user=None,pwd=None):
+        Application.__init__(self,toolkit)
         #assert isinstance(sess,Session)
         self.db = db
         #self.session=sess
         self.user=user
         self.pwd=pwd
-        Session.__init__(self,toolkit,db.app)
+        #Session.__init__(self,toolkit,db.app)
         self.setDefaultLanguage()
         db.addSession(self)
         #for m in ('showReport',):
@@ -152,7 +154,7 @@ class DbSession(Session,Context):
         #self.db.removeSession(self.session)
         self.db.removeSession(self)
         #self.session.close()
-        Session.close(self)
+        Application.close(self)
         
     def shutdown(self):
         # called in many TestCases during tearDown()
@@ -163,13 +165,13 @@ class DbSession(Session,Context):
         #center.shutdown()
 
     def getTableClass(self,tableName):
-        for table in self.db.app.getTableList():
+        for table in self.db.schema.getTableList():
             if table.getTableName() == tableName:
                 return table._instanceClass
         
 
     def query(self,tcl,columnNames=None,**kw):
-        tables=self.db.app.findImplementingTables(tcl)
+        tables=self.db.schema.findImplementingTables(tcl)
         if len(tables) == 1:
             tcl=tables[0]._instanceClass
 ##             for t in tables:
@@ -193,7 +195,7 @@ class DbSession(Session,Context):
 
 
     def onLogin(self):
-        return self.db.app.onLogin(self)
+        return self.db.schema.onLogin(self)
     
     def getUser(self):
         return self._user
@@ -280,3 +282,36 @@ class DbSession(Session,Context):
     def peekDump(self):
         assert len(self.db._connections) == 1
         return self.db._connections[0].peekDump()
+
+
+
+
+class MirrorLoaderApplication(DbSession):
+
+    def __init__(self,loadfrom=".",**kw):
+        DbSession.__init__(self,**kw)
+        self.loadfrom = loadfrom
+    
+    def registerLoaders(self,loaders):
+        for l in loaders:
+            it = self.findImplementingTables(l.tableClass)
+            assert len(it) == 1
+            it[0].setMirrorLoader(l)
+
+            
+    def setupOptionParser(self,parser):
+        Schema.setupOptionParser(self,parser)
+        
+        parser.add_option("--loadfrom",
+                          help="""\
+directory containing mirror source files""",
+                          action="store",
+                          type="string",
+                          dest="loadfrom",
+                          default=".")
+    
+##     def applyOptions(self,options,args):
+##         Application.applyOptions(self,options,args)
+##         self.loadfrom = options.loadfrom
+
+

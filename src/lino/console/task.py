@@ -90,8 +90,9 @@ class Task:
     task.increment()
     """
     
-    def __init__(self,sess,label=None,maxval=0):
-        self.session=sess
+    def __init__(self,app,label=None,maxval=0):
+        #self.session=sess
+        self.session=app # todo: rename task.session to task.app
         if label is None:
             label=_("Working")
         self.label=label

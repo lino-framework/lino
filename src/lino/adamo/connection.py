@@ -20,11 +20,11 @@
 
 class Connection:
 
-    def __init__(self,ui):
-        #self.schema = schema
-        ui.debug("Connection.__init__()")
-        self.ui = ui
-        #center.addConnection(self)
+##     def __init__(self,ui):
+##         #self.schema = schema
+##         ui.debug("Connection.__init__()")
+##         self.ui = ui
+##         #center.addConnection(self)
         
 
     def onTableSetup(self,table):

@@ -1,6 +1,4 @@
-#coding: latin1
-
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -18,12 +16,22 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-## import sys
 
-## import lino
+from lino.forms import toolkit
 
-## from lino.console import syscon
+class DataForm(toolkit.DataForm):
+        
+    def getStatus(self):
+        return "%d/%d" % (self.currentPos,len(self.ds))
+    
 
-## from lino.console.console import UserAborted, OperationFailed
+class TextViewer(toolkit.TextViewer):
 
+    def addText(self,s):
+        self.getForm().notice(s)
+    
 
+class Toolkit(toolkit.Toolkit):
+    viewerFactory = TextViewer
+    navigatorFactory = DataForm
+    

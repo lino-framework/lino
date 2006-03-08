@@ -59,9 +59,9 @@ def day(s):
 
 class Connection(SqlConnection):
     
-    def __init__(self,ui,filename=None):
+    def __init__(self,filename=None):
         self.threadLock = threading.Lock()
-        SqlConnection.__init__(self,ui)
+        SqlConnection.__init__(self)
         self.dbapi = sqlite
         
         #self._isTemporary = isTemporary

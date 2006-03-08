@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre
+## Copyright 2005-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -70,20 +70,31 @@ class Case(TestCase):
         # http://www.snp-aes.be/AES_CDML/DefaultFr.htm
         # or
         # http://mineco.fgov.be/informations/statistics/indicators/rent_fr.asp
-        base=itom(200208)
+
+        def check(base,now,p1,p2):
+            p=indexed_price(p1,base,now)
+            self.assertEqual(round(p,2),round(p2,2))
+        
+        base=itom(200208) # base 1996
+        
         now=itom(200505)
-        p=indexed_price(400,base,now)
-        self.assertEqual(int(p*100),42065)
-        p=indexed_price(500,base,now)
-        self.assertEqual(int(p*100),52581)
-        p=indexed_price(600,base,now)
-        self.assertEqual(int(p*100),63098)
-        p=indexed_price(750,base,now)
-        self.assertEqual(int(p*100),78872)
-        p=indexed_price(2200,base,now)
-        self.assertEqual(int(p*100),231359)
+
+        check(base,now, 400, 420.65)
+        check(base,now, 500, 525.82)
+        check(base,now, 600, 630.98)
+        check(base,now, 750, 788.73)
+        check(base,now, 2200, 2313.60)
         
+        now=itom(200601)
         
+        check(base,now, 400, 423.88)
+        check(base,now, 500, 529.85)
+        check(base,now, 600, 635.82)
+        check(base,now, 750, 794.77)
+        check(base,now, 2200, 2331.33)
+        
+        #base 1988
+        check(itom(199203),itom(200601), 100, 126.21)
         
     
 if __name__ == '__main__':

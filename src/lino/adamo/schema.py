@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -23,8 +23,8 @@ import types
 from lino.misc.descr import Describable
 from lino.misc.attrdict import AttrDict
 #from lino.ui import console
-from lino.console import syscon
-from lino.console.application import GuiApplication
+#from lino.console import syscon
+#from lino.console.application import GuiApplication
 
 #from lino.adamo.forms import Form
 from lino.adamo.table import Table, SchemaComponent
@@ -32,36 +32,16 @@ from lino.adamo.exceptions import StartupDelay
 from lino.adamo.query import Query
 from lino.adamo import center
 
-class TooLate(Exception):
-    pass
-
-class SchemaPlugin(SchemaComponent,Describable):
-    def __init__(self,isActive=True,*args,**kw):
-        SchemaComponent.__init__(self)
-        Describable.__init__(self,None,*args,**kw)
-        self._isActive = isActive
-
-    def isActive(self):
-        return self._isActive
-        
-    def defineTables(self,schema):
-        pass
-    def defineMenus(self,schema,context,win):
-        pass
-##     def populate(self,sess):
-##         pass
-
-
-class Schema(GuiApplication):
-
+class Schema: #(GuiApplication):
+    tableClasses=None
     defaultLangs = ('en',)
     #tables=[]
 
     def __init__(self,
                  checkIntegrityOnStartup=False,
                  tempDir=".",
-                 langs=None,**kw):
-        GuiApplication.__init__(self,**kw)
+                 langs=None):
+        #GuiApplication.__init__(self,**kw)
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup
         self._initDone= False
@@ -163,8 +143,8 @@ class Schema(GuiApplication):
         if self._initDone:
             return
 
-        syscon.debug(
-            "Initializing %d tables..." % len(self._tables))
+        #self.console.debug(
+        #    "Initializing %d tables..." % len(self._tables))
 
         # loop 1
         for table in self._tables:
@@ -181,7 +161,7 @@ class Schema(GuiApplication):
                     table.init2()
                     somesuccess = True
                 except StartupDelay, e:
-                    syscon.debug("StartupDelay:"+repr(e))
+                    #self.console.debug("StartupDelay:"+repr(e))
                     tryagain.append(table)
             if not somesuccess:
                 "not supported: primary key with pointer to self"
@@ -203,7 +183,7 @@ class Schema(GuiApplication):
         self.onInitialize()
         
         self._initDone = True
-        syscon.debug("Schema initialized")
+        #self.console.debug("Schema initialized")
 
     def onInitialize(self):
         pass
@@ -275,7 +255,12 @@ class Schema(GuiApplication):
 ##         return db
 
     def setupSchema(self):
-        raise NotImplementedError
+        #print "setupSchema", self.tableClasses
+        for cl in self.tableClasses:
+            self.addTable(cl)
+    
+##     def setupSchema(self):
+##         raise NotImplementedError
     
 ##     def setupSchema(self):
 ##         #print "%s.setupSchema()" % self.__class__
@@ -292,15 +277,17 @@ class Schema(GuiApplication):
                      **kw):
         #print "%s.quickStartup()" % self.__class__
         self.setupSchema()
-        syscon.debug("Initialize Schema")
+        #self.console.debug("Initialize Schema")
         self.initialize()
         db = self.database(langs=langs)
-        syscon.debug("Connect")
+        #self.console.debug("Connect")
         conn = center.connection(filename=filename)
         db.connect(conn)
         if dump:
             #conn.startDump(syscon.notice)
-            conn.startDump(sys.stdout)
+            #conn.startDump(self.console.stdout)
+            assert hasattr(dump,'write')
+            conn.startDump(dump)
         return db.startup(**kw) #syscon.getSystemConsole())
     
     
@@ -635,30 +622,24 @@ class LayoutFactory:
 ##  return cl(row)
         
 
-class MirrorLoaderApplication(Schema):
 
-    def __init__(self,loadfrom=".",**kw):
-        Schema.__init__(self,**kw)
-        self.loadfrom = loadfrom
-    
-    def registerLoaders(self,loaders):
-        for l in loaders:
-            it = self.findImplementingTables(l.tableClass)
-            assert len(it) == 1
-            it[0].setMirrorLoader(l)
+## class TooLate(Exception):
+##     pass
 
-            
-    def setupOptionParser(self,parser):
-        Schema.setupOptionParser(self,parser)
+## class SchemaPlugin(SchemaComponent,Describable):
+##     def __init__(self,isActive=True,*args,**kw):
+##         SchemaComponent.__init__(self)
+##         Describable.__init__(self,None,*args,**kw)
+##         self._isActive = isActive
+
+##     def isActive(self):
+##         return self._isActive
         
-        parser.add_option("--loadfrom",
-                          help="""\
-directory containing mirror source files""",
-                          action="store",
-                          type="string",
-                          dest="loadfrom",
-                          default=".")
-    
-##     def applyOptions(self,options,args):
-##         Application.applyOptions(self,options,args)
-##         self.loadfrom = options.loadfrom
+##     def defineTables(self,schema):
+##         pass
+##     def defineMenus(self,schema,context,win):
+##         pass
+##     def populate(self,sess):
+##         pass
+
+

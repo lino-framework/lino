@@ -136,9 +136,9 @@ See file COPYING.txt for more information."""
     
     #tables = TABLES
 
-    def setupSchema(self):
+    def setupSchema(self,schema):
         for cl in tables.TABLES:
-            self.addTable(cl)
+            schema.addTable(cl)
 
     def showSearchForm(self,sess):
         raise "no longer used"

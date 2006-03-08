@@ -15,47 +15,42 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.ddl import Schema
+from lino.adamo.ddl import Schema, DbSession
+from lino.forms import MainForm
+#from lino.console import Application
+
 from lino.apps.addrbook.tables import *
 
-class AddressBook(Schema):
+class MySchema(Schema):
+    tableClasses = ( Language,
+                     Nation, City,
+                     Organisation, Person,
+                     Partner, PartnerType)
     
-    #tables=TABLES
-    
-    def setupSchema(self):
-        for cl in (Language,
-                   Nation, City,
-                   Organisation, Person,
-                   Partner, PartnerType):
-            self.addTable(cl)
-    
-        
-    def showMainForm(self,sess):
-        frm = sess.form(
-            label="Main menu",
-            doc="""\
-This is the AddressBook main menu.                                    
-"""+("\n"*10))
+##     def setupSchema(self):
+##         for cl in ( Language,
+##                     Nation, City,
+##                     Organisation, Person,
+##                     Partner, PartnerType):
+##             self.addTable(cl)
 
-        m = frm.addMenu("master","&Stammdaten")
-        #m.addItem("nations",label="&Nations").setHandler(
-        #    sess.showViewGrid, Nation)
-##         m.addItem("cities",label="&Cities").setHandler(
-##             sess.showViewGrid, City)
-##         m.addItem("partners",label="&Partners").setHandler(
-##             sess.showViewGrid, Partner)
-##         m.addItem("persons",label="&Persons").setHandler(
-##             sess.showViewGrid, Person)
+class MyMainForm(MainForm):
+    """Welcome to AddressBook, a Lino Application for
+    demonstration purposes."""
+    
+    def setupMenu(self):
+        m = self.addMenu("master","&Master")
         m.addReportItem("nations",NationsReport,label="&Nations")
         m.addReportItem("cities",CitiesReport,label="&Cities")
         m.addReportItem("partners",PartnersReport,label="&Partners")
         m.addReportItem("persons",PersonsReport,label="&Persons")
         
-        self.addProgramMenu(sess,frm)
+        self.addProgramMenu()
+    
+class AddressBook(DbSession):
 
-        frm.addOnClose(sess.close)
-
-        frm.show()
-
+    def run(self):
+        MyMainForm(self).show()
+    
         
     

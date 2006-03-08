@@ -35,7 +35,7 @@ from lino.adamo.store import Store
 
 class Database(Context,Describable):
     
-    def __init__(self, app, langs=None, **kw):
+    def __init__(self, schema, langs=None, **kw):
         
         self._supportedLangs = []
         if langs is None:
@@ -47,7 +47,7 @@ class Database(Context,Describable):
         
         self._memoParser = TimMemoParser(self)
 
-        self.app = app
+        self.schema = schema
         self._stores = {}
         self._sessions=[]
         self._connections=[]
@@ -82,10 +82,10 @@ class Database(Context,Describable):
             if lang.id == lang_id:
                 return lang
             
-        if not lang_id in self.app._possibleLangs:
+        if not lang_id in self.schema._possibleLangs:
             raise InvalidRequestError(
                 "%r : impossible language (must be one of %r)" % (
-                lang_id, self.app._possibleLangs))
+                lang_id, self.schema._possibleLangs))
             
         """
         index -1 means that values in this language should be ignored
@@ -112,7 +112,7 @@ class Database(Context,Describable):
     
     def getStoresById(self):
         l = []
-        for table in self.app.getTableList():
+        for table in self.schema.getTableList():
             try:
                 #l.append(self._stores[table.__class__])
                 l.append(self._stores[table._instanceClass])
@@ -122,7 +122,7 @@ class Database(Context,Describable):
 
     def connect(self,conn,tableClasses=None):
         self._connections.append(conn)
-        for t in self.app.getTableList(tableClasses):
+        for t in self.schema.getTableList(tableClasses):
             if not self._stores.has_key(t._instanceClass):
                 self._stores[t._instanceClass] = Store(conn,self,t)
             #if not self._stores.has_key(t.__class__):
@@ -130,7 +130,7 @@ class Database(Context,Describable):
 
 
     def getContentRoot(self):
-        return self.app.getContentRoot(self)
+        return self.schema.getContentRoot(self)
 
     def update(self,otherdb):
         
@@ -201,7 +201,7 @@ class Database(Context,Describable):
         #if sess is None:
         #    sess=syscon._session
         if toolkit is None:
-            toolkit=syscon.getToolkit()
+            toolkit=syscon.getSystemConsole()
             
         sess=DbSession(self,toolkit)
         for store in self.getStoresById():
@@ -231,7 +231,7 @@ class Database(Context,Describable):
             
         
     def shutdown(self):
-        syscon.debug("Closing database "+ str(self))
+        #syscon.debug("Closing database "+ str(self))
         self.close()
         for conn in self._connections:
             conn.close()

@@ -23,7 +23,9 @@ import atexit
 from lino.adamo.database import Database
 from lino.adamo import DatabaseError
 #from lino.ui import console
-from lino.console import syscon
+#from lino.console import syscon
+from lino.console import Application
+
 
 class Center:
     """
@@ -31,12 +33,16 @@ class Center:
     """
 
     def __init__(self):
+        #assert isinstance(app,Application)
         #self.ui = None
         #self._schemas = []
         self._connections = []
         self._databases = []
         #self._sessionFactory = Session
         #self._checkIntegrity = False
+        #if toolkit is None:
+        #    toolkit=syscon.getSystemConsole()
+        #self.toolkit=toolkit
 
     def connection(self,*args,**kw):
         #from lino.adamo.dbds.firebird import Connection
@@ -55,14 +61,14 @@ class Center:
 ##                 except ImportError:
 ##                     raise DatabaseError("no database driver available")
                 
-        conn = Connection(syscon,*args,**kw)
+        conn = Connection(*args,**kw)
         self._connections.append(conn)
         return conn
 
-    def database(self,app,name=None,**kw):
+    def database(self,schema,name=None,**kw):
         if name is None:
-            name = app.name+str(len(self._databases)+1)
-        db = Database(app,name=name,**kw)
+            name = str(schema)+str(len(self._databases)+1)
+        db = Database(schema,name=name,**kw)
         self._databases.append(db)
         return db
 
@@ -110,7 +116,7 @@ class Center:
         # were run (because previous startups remained open.
         #if self.ui is None:
         #    return
-        syscon.debug("Center.shutdown()")
+        #self.app.debug("Center.shutdown()")
 ##         for sch in self._schemas:
 ##             sch.shutdown(syscon)
 ##         self._schemas = []

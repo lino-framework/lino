@@ -22,13 +22,12 @@ import os
 import sys
 import time
 import codecs
+import textwrap
+import types
 
-#from optparse import OptionParser
 from cStringIO import StringIO
-#from lino.forms.base import AbstractToolkit
-#from lino.misc.jobs import Job
 
-from lino.forms.base import AbstractToolkit
+import lino
 
 try:
     import msvcrt
@@ -47,55 +46,20 @@ class UserAborted(Exception):
 class OperationFailed(Exception):
     pass
 
-#class TaskAborted(Exception):
-#    def __init__(self, task):
-#        self.task = task
-
-#from lino.misc.jobs import JobAborted, Job #, PurzelConsoleJob
-#from lino.forms.progresser import Progresser
-
-## class UI:
-##     pass
-    
-## class CLI:
-##     usage = None
-##     description = None
-    
-##     def parse_args(self,argv=None): #,**kw):
-##         p = OptionParser(
-##             usage=self.usage,
-##             description=self.description)
-            
-##         self.setupOptionParser(p)
-        
-##         if argv is None:
-##             argv = sys.argv[1:]
-        
-##         options,args = p.parse_args(argv)
-##         self.applyOptions(options,args)
-        
-
-##     def applyOptions(self,options,args):
-##         pass
-    
-##     def setupOptionParser(self,parser):
-##         pass
-
-
 # rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
 # Unicode Tutorial
 # (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
 
-def rewriter(to_stream,encoding):
+def rewriter(from_encoding,to_stream,encoding):
     if encoding is None:
         encoding=to_stream.encoding
     if encoding is None: return to_stream
-    if encoding == sys.getdefaultencoding(): return to_stream
+    if encoding == from_encoding: return to_stream
 
     (e,d,sr,sw) = codecs.lookup(encoding)
     unicode_to_fs = sw(to_stream)
 
-    (e,d,sr,sw) = codecs.lookup(sys.getdefaultencoding())
+    (e,d,sr,sw) = codecs.lookup(from_encoding)
     
     class StreamRewriter(codecs.StreamWriter):
 
@@ -115,62 +79,63 @@ def rewriter(to_stream,encoding):
 
             
 #class Console(UI,CLI):
-class Console(AbstractToolkit):
-
-    #jobFactory = Job #progresserFactory = Progresser
+class Console: # (AbstractToolkit):
 
     def __init__(self, stdout, stderr, encoding=None,**kw):
-        AbstractToolkit.__init__(self)
-        assert hasattr(stdout,'write')
-        assert hasattr(stderr,'write')
-        #self._stdout = stdout
-        #self._stderr = stderr
-        self.stdout=rewriter(stdout,encoding)
-        self.stderr=rewriter(stderr,encoding)
         self._verbosity = 0
         self._batch = False
-        #self._status = None
-        #self._started = time.time()
-        #self._dumping = None
-        # UI.__init__(self)
+        self._logfile = None
+        self._logfile_stack = []
+        self.redirect(stdout,stderr,encoding)
         self.configure(**kw)
 
-##     def closeSession(self,sess):
-##         pass
-    
     def redirect(self,stdout,stderr,encoding=None):
         assert hasattr(stdout,'write')
         assert hasattr(stderr,'write')
-        #old = (self.stdout, self.stderr)
-        self.stdout=rewriter(stdout,encoding)
-        self.stderr=rewriter(stderr,encoding)
-        #self.stdout = stdout
-        #self.stderr = stderr
-        #return old
+        self.stdout=rewriter(sys.getdefaultencoding(),stdout,encoding)
+        self.stderr=rewriter(sys.getdefaultencoding(),stderr,encoding)
 
-    def configure(self, verbosity=None, batch=None):
+
+    def configure(self, verbosity=None, batch=None, logfile=None):
         if batch is not None:
             self._batch = batch
         if verbosity is not None:
             self._verbosity += verbosity
             #print "verbositiy %d" % self._verbosity
-        #AbstractToolkit.configure(self,**kw)
-##         if ui is not None:
-##             self._ui = ui
-        #if debug is not None:
-        #    self._debug = debug
+        if logfile is not None:
+            if self._logfile is not None:
+                self._logfile.close()
+            self._logfile = open(logfile,"a")
 
+    def beginLog(self,filename):
+        self._logfile_stack.append(self._logfile)
+        self._logfile = open(filename,"a")
+
+    def endLog(self):
+        assert len(self._logfile_stack) > 0
+        if self._logfile is not None:
+            self._logfile.close()
+        self._logfile = self._logfile_stack.pop()
+            
+    #def writelog(self,msg):
+    def logmessage(self,app,msg):
+        if self._logfile:
+            #t = strftime("%a %Y-%m-%d %H:%M:%S")
+            t = time.strftime("%Y-%m-%d %H:%M:%S")
+            self._logfile.write(t+" "+str(app)+" "+msg+"\n")
+            self._logfile.flush()
+            
+    def readkey(self,msg,default=""):
+        if self._batch:
+            self.logmessage(msg)
+            return default
+        return raw_input(msg)
+            
         
     def isBatch(self):
         return self._batch
     def isInteractive(self):
         return not self._batch
-    
-
-##     def isBatch(self):
-##         return True
-##     def isInteractive(self):
-##         return False
     
     def isVerbose(self):
         return (self._verbosity > 0)
@@ -193,6 +158,77 @@ class Console(AbstractToolkit):
         if msg is not None:
             sess.verbose(msg)
 
+    def message(self,sess,msg,**kw):
+        msg=sess.buildMessage(msg,**kw)
+##         if self.app is not None:
+##             return self.app.warning(msg)
+        
+        #if sound:
+        #    sound.asterisk()
+        self.writeln(msg)
+        #self.alert(msg)
+        if not self._batch:
+            self.readkey("Press ENTER to continue...")
+
+            
+    def confirm(self,app,prompt,default=True):
+        """Ask user a yes/no question and return only when she has
+        given her answer. returns True or False.
+        
+        """
+        assert type(default) is type(False)
+        #print self.stdout
+##         if self.app is not None:
+##             return self.app.confirm(prompt,default)
+        if sound:
+            sound.asterisk()
+        if default:
+            prompt += " [Y,n]"
+        else:
+            #assert default == "n"
+            prompt += " [y,N]"
+        while True:
+            s = self.readkey(prompt)
+            if s == "":
+                return default
+            s = s.lower()
+            if s == "y":
+                return True
+            if s == "n":
+                return False
+            self.notice(app,"wrong answer, must be 'y' or 'n': "+s)
+            
+
+    def decide(self,prompt,answers,
+               dfault=None,
+               ignoreCase=True):
+        
+        """Ask user a question and return only when she has given her
+        answer. Returns the index of chosen answer or -1 if user
+        refused to answer.
+        
+        """
+        if dfault is None:
+            dfault = answers[0]
+
+        if self._batch:
+            return dfault
+
+        if sound:
+            sound.asterisk()
+        while True:
+            s = self.readkey(
+                prompt+(" [%s]" % ",".join(answers)))
+            if s == "":
+                s = dfault
+            if ignoreCase:
+                s = s.lower()
+            if s in answers:
+                return s
+            self.warning("wrong answer: "+s)
+
+
+            
     def error(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
         self.stderr.write(msg + "\n")
@@ -242,6 +278,10 @@ class Console(AbstractToolkit):
             #self.out.write(msg + "\n")
 
             
+    def shutdown(self):
+        assert len(self._logfile_stack) == 0
+        if self._logfile:
+            self._logfile.close()
 
 
     def onTaskBegin(self,task):
@@ -363,6 +403,14 @@ class Console(AbstractToolkit):
         def call_set(option, opt_str, value, parser,**kw):
             self.configure(**kw)
 
+        p.add_option("-l", "--logfile",
+                     help="log a report to FILE",
+                     type="string",
+                     dest="logFile",
+                     action="callback",
+                     callback=call_set,
+                     callback_kwargs=dict(logfile=1)
+                     )
         p.add_option("-v",
                      "--verbose",
                      help="increase verbosity",
@@ -388,83 +436,8 @@ class Console(AbstractToolkit):
                      callback_kwargs=dict(batch=True)
                      )
         
-        AbstractToolkit.setupOptionParser(self,p)
+        #AbstractToolkit.setupOptionParser(self,p)
         
-
-    def message(self,sess,msg,**kw):
-        #msg=sess.buildMessage(msg,**kw)
-##         if self.app is not None:
-##             return self.app.warning(msg)
-        
-        #if sound:
-        #    sound.asterisk()
-        self.writeln(msg)
-        #self.alert(msg)
-        if not self._batch:
-            self.readkey(sess,"Press ENTER to continue...")
-
-
-    def readkey(self,sess,msg):
-        if self._batch:
-            sess.notice(msg)
-            return ""
-        return raw_input(msg)
-            
-            
-    def confirm(self,sess,prompt,default=True):
-        """Ask user a yes/no question and return only when she has
-        given her answer. returns True or False.
-        
-        """
-        assert type(default) is type(False)
-        #print self.stdout
-##         if self.app is not None:
-##             return self.app.confirm(prompt,default)
-        if sound:
-            sound.asterisk()
-        if default:
-            prompt += " [Y,n]"
-        else:
-            #assert default == "n"
-            prompt += " [y,N]"
-        while True:
-            s = self.readkey(sess,prompt)
-            if s == "":
-                return default
-            s = s.lower()
-            if s == "y":
-                return True
-            if s == "n":
-                return False
-            self.error("wrong answer, must be 'y' or 'n': "+s)
-            
-
-    def decide(self,sess,prompt,answers,
-               dfault=None,
-               ignoreCase=True):
-        
-        """Ask user a question and return only when she has given her
-        answer. Returns the index of chosen answer or -1 if user
-        refused to answer.
-        
-        """
-        if dfault is None:
-            dfault = answers[0]
-
-        if self._batch:
-            return dfault
-
-        if sound:
-            sound.asterisk()
-        while True:
-            s = self.readkey(sess,prompt+(" [%s]" % ",".join(answers)))
-            if s == "":
-                s = dfault
-            if ignoreCase:
-                s = s.lower()
-            if s in answers:
-                return s
-            self.warning("wrong answer: "+s)
 
 
 ##     def job(self,*args,**kw):
@@ -588,14 +561,14 @@ class TtyConsole(Console):
         #if sess._status is not None:
         #    self.stdout(sess._status+"\r")
 
-    def readkey(self,sess,msg):
-        if self._batch:
-            sess.notice(msg)
-            return ""
-        if sess.statusMessage is not None:
-            self.stdout.write(
-                sess.statusMessage.ljust(self.width)+"\n")
-        return raw_input(msg)
+##     def readkey(self,sess,msg,default=""):
+##         if self._batch:
+##             self.logfile(msg)
+##             return default
+##         if sess.statusMessage is not None:
+##             self.stdout.write(
+##                 sess.statusMessage.ljust(self.width)+"\n")
+##         return raw_input(msg)
 
 
 class CaptureConsole(Console):
@@ -618,4 +591,211 @@ class CaptureConsole(Console):
         if self.encoding is not None:
             s=s.decode(self.encoding)
         return s
+    
+
+
+
+class Application:
+    
+    name = None
+    version=lino.__version__
+    copyright=None
+    url=None
+    #years = None
+    author=None
+    usage = None
+    description = None
+
+    #toolkits="console"
+    
+    #_sessionFactory=Session
+    
+    """
+    
+    vocabulary:
+    
+    main() processes command-line arguments ("get the
+    instructions") runs the application and returns a system error
+    code (usually forwarded to sys.exit())
+
+    run() expects that all instructions are known and performs the
+    actual task.
+    
+    
+    """
+    def __init__(self,toolkit): 
+        #if session is None:
+        #    session=syscon.getSystemConsole()
+        if self.name is None:
+            self.name=self.__class__.__name__
+        #self._sessions = []
+        #self.session=session
+            
+        self.statusMessage=None
+        self._ignoreExceptions = []
+        self.setToolkit(toolkit)
+        
+
+        
+##     def parse_args(self,argv=None): #,**kw):
+##         if self.author is not None:
+##             self.copyleft(name=self.name,
+##                           years=self.years,
+##                           author=self.author)
+##         p = OptionParser(
+##             usage=self.usage,
+##             description=self.description)
+            
+##         self.setupOptionParser(p)
+        
+##         if argv is None:
+##             argv = sys.argv[1:]
+        
+##         options,args = p.parse_args(argv)
+##         self.applyOptions(options,args)
+##         return p
+        
+    def close(self):
+        pass
+    
+    def setupOptionParser(self,parser):
+        pass
+
+    def applyOptions(self,options,args):
+        self.options=options
+        self.args=args
+
+
+    def aboutString(self):
+        if self.name is None:
+            s = self.__class__.__name__
+        else:
+            s = self.name
+            
+        if self.version is not None:
+            s += " version " + self.version
+        if self.author is not None:
+            s += "\nAuthor: " +  self.author
+        if self.copyright is not None:
+            s += "\n"+self.copyright
+            # "\nCopyright (c) %s %s." % (self.years, self.author)
+            
+        #from lino import __copyright__,  __url__
+        #s += "\n\n" + __copyright__
+        if self.url is not None:
+            s += "\nHomepage: " + self.url
+            
+        using = []
+        using.append('Lino ' + lino.__version__)
+        using.append("Python %d.%d.%d %s" % sys.version_info[0:4])
+
+        if sys.modules.has_key('wx'):
+            wx = sys.modules['wx']
+            using.append("wxPython " + wx.__version__)
+    
+        if sys.modules.has_key('pysqlite2'):
+            from pysqlite2.dbapi2 import version
+            #sqlite = sys.modules['pysqlite2']
+            using.append("PySQLLite " + version)
+    
+        if sys.modules.has_key('reportlab'):
+            reportlab = sys.modules['reportlab']
+            using.append("Reportlab PDF library "+reportlab.Version)
+
+        if sys.modules.has_key('win32print'):
+            win32print = sys.modules['win32print']
+            using.append("Python Windows Extensions")
+        
+        if sys.modules.has_key('cherrypy'):
+            cherrypy = sys.modules['cherrypy']
+            using.append("CherryPy " + cherrypy.__version__)
+
+        if sys.modules.has_key('PIL'):
+            using.append("PIL")
+
+        s += "\nUsing " + "\n".join(
+            textwrap.wrap(", ".join(using),76))
+        
+        if False:
+            s += "\n".join(
+                textwrap.wrap(
+                " ".join([ k for k in sys.modules.keys()
+                           if not k.startswith("lino.")]),76))
+            
+        return s
+    
+        
+        
+    
+            
+    def confirm(self,*args,**kw):
+        self.toolkit.confirm(self,*args,**kw)
+    def decide(self,*args,**kw):
+        self.toolkit.decide(self,*args,**kw)
+    def message(self,*args,**kw):
+        self.toolkit.message(self,*args,**kw)
+
+    def debug(self,*args,**kw):
+        return self.toolkit.debug(self,*args,**kw)
+        
+    def warning(self,*args,**kw):
+        return self.toolkit.warning(self,*args,**kw)
+
+    def verbose(self,*args,**kw):
+        return self.toolkit.verbose(self,*args,**kw)
+
+    def notice(self,*args,**kw):
+        return self.toolkit.notice(self,*args,**kw)
+
+    def error(self,*args,**kw):
+        return self.toolkit.error(self,*args,**kw)
+    
+    def critical(self,*args,**kw):
+        return self.toolkit.critical(self,*args,**kw)
+    
+    def logmessage(self,*args,**kw):
+        return self.toolkit.logmessage(self,*args,**kw)
+
+    def showReport(self,*args,**kw):
+        #print self.toolkit
+        return self.toolkit.showReport(self,*args,**kw)
+
+    def textprinter(self,*args,**kw):
+        return self.toolkit.textprinter(self,*args,**kw)
+
+    def readkey(self,*args,**kw):
+        return self.toolkit.readkey(self,*args,**kw)
+    
+    def loop(self,func,label,maxval=0,*args,**kw):
+        task=Task(self,label,maxval)
+        task.loop(func,*args,**kw)
+        return task
+    
+    def buildMessage(self,msg,*args,**kw):
+        assert len(kw) == 0, "kwargs not yet implemented"
+        if len(args) == 0:
+            return msg
+        return msg % args
+    
+    def setToolkit(self,toolkit):
+        #assert isinstance(toolkit,AbstractToolkit),\
+        #       repr(toolkit)+" is not a toolkit"
+        self.toolkit = toolkit
+
+    def exception(self,e,details=None):
+        if e.__class__ in self._ignoreExceptions:
+            return
+        self.toolkit.showException(self,e,details)
+
+    def status(self,msg=None,*args,**kw):
+        if msg is not None:
+            #ssert type(msg) == type('')
+            assert msg.__class__ in (types.StringType,
+                                     types.UnicodeType)
+            msg=self.buildMessage(msg,*args,**kw)
+        self.statusMessage=msg
+        return self.toolkit.showStatus(self,msg)
+
+    def setStatusMessage(self,msg):
+        self.statusMessage=msg
     

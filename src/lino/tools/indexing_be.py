@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -23,10 +23,10 @@ Belgian price indexing
 Example:
 
     Price January 2003 (200301) was 200,-
-    How much is the indexed price in June 2004 (200306)?
+    How much is the indexed price in June 2004 (200406)?
     Anwer:
     - oldIndex = index in 200301 = 110,94
-    - newIndex = index in 200306 = 111.85
+    - newIndex = index in 200406 = 111.85
     - newPrice = oldPrice * newIndex / oldIndex
 
 
@@ -39,7 +39,10 @@ http://mineco.fgov.be/informations/indexes/indint1xls_2003_2005_22_fr.htm
   http://www.notaire.be/info/location/304_indexation_du_loyer.htm
 
 - Tableau des indices
-  http://www.snp-aes.be/indextabelFR.htm  
+  http://www.snp-aes.be/indextabelFR.htm
+
+
+File lino/tests/51.py contains test cases.
 
 """
 
@@ -79,16 +82,16 @@ sante1988 = Index(stom('198212'), (
 96.51, 96.51, 96.71, 96.66, 96.89, 96.92,
 
 # 1986:
-97.03, 97.11, 96.96, 97.26, 97.04, 97.17, 97.16, 97.25, 97.59, 97.48,
-97.40, 97.49,
+97.03, 97.11, 96.96, 97.26, 97.04, 97.17,
+97.16, 97.25, 97.59, 97.48, 97.40, 97.49,
 
 # 1987:
-97.89, 98.08, 98.19, 98.64, 98.68, 98.79, 99.14, 99.45, 99.27, 99.17,
-98.87, 98.90,
+97.89, 98.08, 98.19, 98.64, 98.68, 98.79,
+99.14, 99.45, 99.27, 99.17, 98.87, 98.90,
 
 # 1988
-98.82, 99.10, 99.13, 99.58, 99.67, 99.84, 100.15, 100.36, 100.47,
-100.50, 100.44, 100.80,
+ 98.82,  99.10,  99.13,  99.58,  99.67,  99.84,
+100.15, 100.36, 100.47, 100.50, 100.44, 100.80,
 
 # 1989
 101.18, 101.63, 101.87, 102.56, 102.65, 102.84,
@@ -155,9 +158,18 @@ sante1988 = Index(stom('198212'), (
 137.45, 137.49, 137.55, 138.04, 138.03, 137.75,
 
 # 2005
-138.27, 99, 139.74, 139.70, 139.97, 140.21,
+138.27, 138.99, 139.74, 139.70, 139.97, 140.21,
+140.78, 140.80, 140.64, 140.42, 140.85, 140.96,
+
+# 2006
+	
+141.04, 141.71
 
 ))
+
+
+
+
 
 
 sante1996 = Index( stom('199401'), (
@@ -220,10 +232,25 @@ sante1996 = Index( stom('199401'), (
 # 2005:
 	
 114.68, 115.28, 115.90, 115.87, 116.09, 116.29,
+116.76, 116.78, 116.65, 116.46, 116.82, 116.91,
 	
+# 2006:
+
+116.98, 117.54
+
 ))
 
-SANTE = (sante1996, sante1988)
+
+sante2004 = Index( stom('200601'), (
+    
+# 2006:
+    
+102.82, 103.31
+
+))
+
+
+SANTE = (sante1996, sante1988, sante2004)
 
 	
 def indexed_price(basePrice,baseMonth,targetMonth):

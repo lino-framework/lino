@@ -69,8 +69,8 @@ class SqlConnection(Connection):
     CST_CLOSING = 4
     CST_CLOSED = 5
     
-    def __init__(self,ui=None,*args,**kw):
-        Connection.__init__(self,ui,*args,**kw)
+    def __init__(self): # ,*args,**kw):
+        #Connection.__init__(self,ui,*args,**kw)
         self._dumpWriter = None
         self._status = self.CST_NEW
         self._dirty=False
@@ -209,7 +209,7 @@ class SqlConnection(Connection):
             raise TypeError, repr(type)
 
     def mustCreateTables(self):
-        self.ui.debug('mustCreateTables '+str(self._status))
+        #self.ui.debug('mustCreateTables '+str(self._status))
         if self._status == self.CST_NEW:
             return True
         return False

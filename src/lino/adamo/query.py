@@ -1006,7 +1006,7 @@ class SimpleQuery(LeadTableColumnList):
         for m in ('setBabelLangs','getLangs'):
             setattr(self,m,getattr(sess,m))
         
-        self.app = store._db.app # shortcut
+        #self.app = store._db.schema # shortcut
         self._connection = store._connection # shortcut
 
         for m in ('startDump','stopDump'):
@@ -1183,10 +1183,10 @@ class SimpleQuery(LeadTableColumnList):
 
 
 
-    def getRenderer(self,rsc,req,writer=None):
-        return self.app._datasourceRenderer(rsc,req,
-                                            self.query(),
-                                            writer)
+##     def getRenderer(self,rsc,req,writer=None):
+##         return self.app._datasourceRenderer(rsc,req,
+##                                             self.query(),
+##                                             writer)
     
     def getSession(self):
         return self.session

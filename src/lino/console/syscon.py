@@ -21,7 +21,7 @@ import atexit
 from optparse import OptionParser
 
 from lino.console.console import TtyConsole, Console
-from lino.forms.session import Session
+#from lino.console.session import Session
 
 
 #class JobAborted(Exception):
@@ -29,62 +29,93 @@ from lino.forms.session import Session
 
 DEBUG=False
 
+class UsageError(Exception):
+    pass
 
-
-"""
-
-A Console instance represents the console and encapsulates some
-often-used things that have to do with the console.
-
-"""
-
-try:
-    import sound
-except ImportError,e:
-    sound = False
-
-#from lino.misc.jobs import Job #, PurzelConsoleJob
-
-
-
-def getToolkit():
-    return _session.toolkit
-
-def setToolkit(toolkit):
-    _session.setToolkit(toolkit)
+class ApplicationError(Exception):
+    pass
 
 
 
 
-def parse_args(argv=None): #,**kw):
-    p = OptionParser()
-    _session.setupOptionParser(p)
+
+if sys.stdout.isatty():
+    _syscon=TtyConsole(sys.stdout, sys.stderr)
+else:
+    _syscon=Console(sys.stdout, sys.stderr)
+    
+
+
+
+## def parse_args(argv=None): #,**kw):
+##     p = OptionParser()
+##     _session.setupOptionParser(p)
         
-    if argv is None:
-        argv = sys.argv[1:]
+##     if argv is None:
+##         argv = sys.argv[1:]
 
-    return p.parse_args(argv)
+##     return p.parse_args(argv)
 
-    #options,args = p.parse_args(argv)
-    #_session.toolkit.applyOptions(options,args)
-    #return p
+##     #options,args = p.parse_args(argv)
+##     #_session.toolkit.applyOptions(options,args)
+##     #return p
         
 
     
 def getSystemConsole():
-    #return _syscon
-    return _session
+    return _syscon
+    #return _session
 
-def setSystemConsole(toolkit):
-    setToolkit(toolkit)
+def setSystemConsole(con):
+    #setToolkit(toolkit)
+    global _syscon
+    _syscon=con
 
+def run(appClass,argv=None):
+    """
+    meant to be called
+    
+    if __name__ == '__main__':
+        syscon.run(MyApplication)
+                
+    but lino.runscript calls it with args=sys.argv[:2] (command-line
+    arguments are shifted by one)
+        
+    """
+    app=appClass(_syscon)
+    p = OptionParser(
+        usage=app.usage,
+        description=app.description)
+    
+    _syscon.setupOptionParser(p)
+    app.setupOptionParser(p)
 
+    if argv is None:
+        argv = sys.argv[1:]
+
+    try:
+        options,args = p.parse_args(argv)
+        app.applyOptions(options,args)
+        if _syscon.isInteractive():
+            _syscon.writeln(app.aboutString())
+        return app.run()
+
+    except UsageError,e:
+        p.print_help()
+        return -1
+    except ApplicationError,e:
+        _syscon.error(str(e))
+        return -1
+
+    
+    
+    
 def shutdown():
     #if _syscon is not None:
     #    _syscon.shutdown()
 
-    if _session is not None:
-        _session.toolkit.shutdown()
+    if _syscon is not None:
+        _syscon.shutdown()
 
     if DEBUG:
         l = sys.modules.keys()
@@ -99,32 +130,38 @@ def shutdown():
 ##     #sys.stderr = rewriter(sys.stderr)
 
 
-if sys.stdout.isatty():
-    console=TtyConsole(sys.stdout, sys.stderr)
-else:
-    console=Console(sys.stdout, sys.stderr)
-    
-_session=Session(console)
+## _session=Session(console)
 
-g = globals()
+## g = globals()
     
-for funcname in (
-    'debug',
-    'notice','status','warning',
-    'verbose', 'error','critical',
-    #'job',
-    'isInteractive','isVerbose',
-    'exception',
-    'message','confirm',
-    'showReport',
-    'textprinter',
-    'run', 'loop'
-    ):
-    g[funcname] = getattr(_session,funcname)
+## for funcname in (
+##     'debug',
+##     'notice','status','warning',
+##     'verbose', 'error','critical',
+##     #'job',
+##     'isInteractive','isVerbose',
+##     'exception',
+##     #'message','confirm',
+##     'showReport',
+##     'textprinter',
+##     #'run',
+##     'loop'
+##     ):
+##     g[funcname] = getattr(_session,funcname)
         
 
 
 #setSystemConsole(TtyConsole(sys.stdout.write, sys.stderr.write))
+
+## def getToolkit():
+##     #return _session.toolkit
+##     return _syscon
+
+
+## def setToolkit(con):
+##     #_session.setToolkit(toolkit)
+##     _syscon=con
+
 
 atexit.register(shutdown)
 

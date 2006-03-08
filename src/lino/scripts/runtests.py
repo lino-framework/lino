@@ -24,7 +24,7 @@ import unittest
 from lino.misc import tsttools
 from lino.misc.my_import import my_import
 
-from lino.console.application import Application
+from lino.console import Application
 
 from lino.forms import gui
 gui.choose("testkit")
@@ -74,15 +74,15 @@ continue testing even if failures or errors occur""",
                           dest="ignore",
                           default=False)
     
-    def makeSuite(self,sess,argv,root='.'):
+    def makeSuite(self,argv,root='.'):
 
-        sess.status("Collecting test cases")
+        self.status("Collecting test cases")
         suites=[]
         cases = []
         #skipped=[]
         sys.path.append(root)
         for filename in os.listdir(root):
-            sess.status(os.path.join(root,filename))
+            self.status(os.path.join(root,filename))
             modname,ext = os.path.splitext(filename)
             if ext == '.py':
                 doit = (len(argv) == 0)
@@ -101,20 +101,20 @@ continue testing even if failures or errors occur""",
                         if modname == a[0]:
                             doit = True
                     else:
-                        sess.warning("Unrecognized argument %s",
+                        self.warning("Unrecognized argument %s",
                                      arg)
                 if doit:
-                    sess.verbose("Loading cases from %s...",
+                    self.verbose("Loading cases from %s...",
                                  modname)
 
-                    self.findTestCases(sess,modname,cases,suites)
+                    self.findTestCases(modname,cases,suites)
         sys.path.remove(root)
 
-        sess.notice("found %d cases and %d suites.",
+        self.notice("found %d cases and %d suites.",
                     len(cases),len(suites))
         for tcl in cases:
             if hasattr(tcl,"todo"):
-                sess.notice("Todo %s : %s", tcl.__module__,tcl.todo)
+                self.notice("Todo %s : %s", tcl.__module__,tcl.todo)
             else:
                 suites.append(unittest.makeSuite(tcl))
                 
@@ -173,11 +173,11 @@ continue testing even if failures or errors occur""",
                 
 ##         return unittest.TestSuite(suites)
      
-    def findTestCases(self,sess,modname,cases,suites):
+    def findTestCases(self,modname,cases,suites):
         try:
             mod = my_import(modname)
         except ImportError,e:
-            sess.notice("could not import %s : %s",modname,e)
+            self.notice("could not import %s : %s",modname,e)
             return
         #cases=[]
         if hasattr(mod,"suite"):
@@ -190,18 +190,18 @@ continue testing even if failures or errors occur""",
                       and v != unittest.TestCase \
                       and v != tsttools.TestCase:
                     if hasattr(v,"skip") and v.skip:
-                        sess.notice("Skipping %s.%s",
+                        self.notice("Skipping %s.%s",
                                     modname,v.__name__)
                     else:
                         cases.append(v)
         return cases
     
     
-    def run(self,sess):
-        suite = self.makeSuite(sess,self.args)
-        sess.status()
+    def run(self):
+        suite = self.makeSuite(self.args)
+        self.status()
         stream=sys.stdout
-        stream=sess.toolkit.stdout
+        stream=self.toolkit.stdout
         if self.options.ignore:
             runner = unittest.TextTestRunner(stream=stream)
         else:
@@ -213,7 +213,7 @@ continue testing even if failures or errors occur""",
 consoleApplicationClass = Runtests
 
 if __name__ == '__main__':
-    consoleApplicationClass().main() 
+    syscon.run(consoleApplicationClass)
     
 
 

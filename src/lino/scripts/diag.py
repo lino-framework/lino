@@ -21,7 +21,7 @@ import sys
 import os
 import locale
 
-from lino.console.application import Application, UsageError
+from lino.console import syscon, Application
 
 def diag(out):
 
@@ -96,19 +96,18 @@ See file COPYING.txt for more information."""
 writes some diagnostics about your computer.
 """ 
     
-    def run(self,sess):
+    def run(self):
         if len(self.args) != 0:
-            raise UsageError("no arguments please")
-
+            raise syscon.UsageError("no arguments please")
         #diag(sys.stdout)
-        diag(sess.toolkit.stdout)
-        sess.message("")
+        diag(self.toolkit.stdout)
+        self.message("")
 
 
 consoleApplicationClass = Diag
 
 if __name__ == '__main__':
-    consoleApplicationClass().main() 
+    syscon.run(consoleApplicationClass)
     
         
 

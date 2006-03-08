@@ -1,5 +1,3 @@
-#coding: latin1
-
 ## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -18,12 +16,25 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-## import sys
+from lino import __version__, __author__, __copyright__, __url__
 
-## import lino
+HK_CHAR = '&'
+    
+LEFT = 1
+RIGHT = 2
+TOP = 3
+BOTTOM = 4
+CENTER = 5
 
-## from lino.console import syscon
 
-## from lino.console.console import UserAborted, OperationFailed
+__all__ = []
+
+__docformat__ = 'reStructuredText'
+
+from lino.forms.forms import Form, VERTICAL, HORIZONTAL, \
+     YES, NO, MessageDialog, ConfirmDialog, \
+     ReportForm, MainForm
+
+#from lino.forms.toolkit import Application
 
 

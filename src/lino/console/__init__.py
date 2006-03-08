@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2004.
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -16,6 +16,5 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"""
-This package contains the different User Interface modules
-"""
+
+from lino.console.console import Application

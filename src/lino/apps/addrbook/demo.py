@@ -25,7 +25,7 @@
 import os
 from lino import rtlib_path, adamo
 from lino.adamo.datatypes import itod
-from lino.apps.addrbook.addrbook import AddressBook
+from lino.apps.addrbook.addrbook import MySchema
 from lino.apps.addrbook import tables
 #, City, Nation
 
@@ -35,13 +35,15 @@ def startup(filename=None, langs=None,
             big=False,
             withDemoData=True,
             **kw):
-    schema = AddressBook(**kw)
-    sess=schema.quickStartup(langs=langs, filename=filename, dump=dump)
+    schema = MySchema(**kw)
+    app=schema.quickStartup(langs=langs,
+                            filename=filename,
+                            dump=dump)
     if populate:
-        sess.populate(StandardPopulator(big=big,
-                                        label="Standard"))
+        app.populate(StandardPopulator(big=big,
+                                       label="Standard"))
         if withDemoData:
-            sess.populate(DemoPopulator(label="StandardDemo"))
+            app.populate(DemoPopulator(label="StandardDemo"))
 
 ##     if populate:
 ##         if withDemoData:
@@ -51,7 +53,7 @@ def startup(filename=None, langs=None,
 ##             sess.populate(Populator(big=big,
 ##                                     label="Standard"))
 
-    return sess
+    return app
 
 
 
