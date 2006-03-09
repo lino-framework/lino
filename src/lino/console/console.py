@@ -89,6 +89,12 @@ class Console: # (AbstractToolkit):
         self.redirect(stdout,stderr,encoding)
         self.configure(**kw)
 
+    def buildMessage(self,msg,*args,**kw):
+        assert len(kw) == 0, "kwargs not yet implemented"
+        if len(args) == 0:
+            return msg
+        return msg % args
+    
     def redirect(self,stdout,stderr,encoding=None):
         assert hasattr(stdout,'write')
         assert hasattr(stderr,'write')
@@ -118,11 +124,11 @@ class Console: # (AbstractToolkit):
         self._logfile = self._logfile_stack.pop()
             
     #def writelog(self,msg):
-    def logmessage(self,app,msg):
+    def logmessage(self,msg):
         if self._logfile:
             #t = strftime("%a %Y-%m-%d %H:%M:%S")
             t = time.strftime("%Y-%m-%d %H:%M:%S")
-            self._logfile.write(t+" "+str(app)+" "+msg+"\n")
+            self._logfile.write(t+" "+msg+"\n")
             self._logfile.flush()
             
     def readkey(self,msg,default=""):
@@ -154,15 +160,11 @@ class Console: # (AbstractToolkit):
         self.stdout.write(msg+"\n")
 
             
-    def showStatus(self,sess,msg):
+    def showStatus(self,msg):
         if msg is not None:
-            sess.verbose(msg)
+            self.verbose(msg)
 
-    def message(self,sess,msg,**kw):
-        msg=sess.buildMessage(msg,**kw)
-##         if self.app is not None:
-##             return self.app.warning(msg)
-        
+    def message(self,msg):
         #if sound:
         #    sound.asterisk()
         self.writeln(msg)
@@ -171,7 +173,7 @@ class Console: # (AbstractToolkit):
             self.readkey("Press ENTER to continue...")
 
             
-    def confirm(self,app,prompt,default=True):
+    def confirm(self,prompt,default=True):
         """Ask user a yes/no question and return only when she has
         given her answer. returns True or False.
         
@@ -196,7 +198,7 @@ class Console: # (AbstractToolkit):
                 return True
             if s == "n":
                 return False
-            self.notice(app,"wrong answer, must be 'y' or 'n': "+s)
+            self.notice("wrong answer, must be 'y' or 'n': "+s)
             
 
     def decide(self,prompt,answers,
@@ -229,51 +231,51 @@ class Console: # (AbstractToolkit):
 
 
             
-    def error(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
+    def error(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
         self.stderr.write(msg + "\n")
-        sess.logmessage(msg)
+        self.logmessage(msg)
 
-    def critical(self,sess,msg,*args,**kw):
+    def critical(self,msg,*args,**kw):
         "Something terrible has happened..."
         #self.writelog(msg)
         #if sound:
         #    sound.asterisk()
-        self.error(sess,"critical: " + msg,*args,**kw)
+        self.error("critical: " + msg,*args,**kw)
 
 ##     def handleException(self,e):
 ##         self.error(str(e))
     
-    def showException(self,sess,e,details=None):
+    def showException(self,e,details=None):
         if details is not None:
             print details
         raise
 
-    def warning(self,sess,msg,*args,**kw):
+    def warning(self,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
-        msg = sess.buildMessage(msg,*args,**kw)
-        sess.logmessage(msg)
+        msg = self.buildMessage(msg,*args,**kw)
+        self.logmessage(msg)
         #self.writelog(msg)
         if self._verbosity >= 0:
             self.writeln(msg)
 
-    def notice(self,sess,msg,*args,**kw):
+    def notice(self,msg):
         "Display message if verbosity is normal. Logged."
         if self._verbosity >= 0:
-            msg = sess.buildMessage(msg,*args,**kw)
-            sess.logmessage(msg)
+            #msg = sess.buildMessage(msg,*args,**kw)
+            self.logmessage(msg)
             self.writeln(msg)
 
-    def verbose(self,sess,msg,*args,**kw):
+    def verbose(self,msg,*args,**kw):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
-            msg = sess.buildMessage(msg,*args,**kw)
+            msg = self.buildMessage(msg,*args,**kw)
             self.writeln(msg)
         
-    def debug(self,sess,msg,*args,**kw):
+    def debug(self,msg,*args,**kw):
         "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
-            msg = sess.buildMessage(msg,*args,**kw)
+            msg = self.buildMessage(msg,*args,**kw)
             self.writeln(msg)
             #self.out.write(msg + "\n")
 
@@ -286,7 +288,7 @@ class Console: # (AbstractToolkit):
 
     def onTaskBegin(self,task):
         if task.getLabel() is not None:
-            task.session.notice(task.getLabel())
+            self.notice(task.getLabel())
 
     def onTaskDone(self,task):
         self.onTaskStatus(task)
@@ -314,8 +316,8 @@ class Console: # (AbstractToolkit):
         pass
     
     def onTaskStatus(self,task):
-        self.showStatus(task.session,
-                        task.session.statusMessage)
+        pass
+        #self.showStatus(task.session.statusMessage)
     
         
             
@@ -454,7 +456,7 @@ class Console: # (AbstractToolkit):
 ##         return Report(writer=self.stdout,**kw)
 
 
-    def showReport(self,sess,rpt,*args,**kw):
+    def showReport(self,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
         gd = PlainDocument(self.stdout)
         gd.beginDocument()
@@ -482,6 +484,10 @@ class TtyConsole(Console):
     width = 78  # 
 
 
+    def __init__(self,*args,**kw):
+        self.statusMessage=None
+        Console.__init__(self,*args,**kw)
+
 ##     def __init__(self, stdout, stderr, **kw):
 ##         stdout=rewriter(stdout)
 ## ##         try:
@@ -504,36 +510,35 @@ class TtyConsole(Console):
 ##         Console.configure(self,**kw)
 
 
-    def warning(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.warning(self,sess,msg.ljust(self.width))
-        self._refresh(sess)
+    def warning(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
+        Console.warning(self,msg.ljust(self.width))
+        self._refresh()
         
-    def message(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.message(self,sess,msg.ljust(self.width))
-        self._refresh(sess)
+    def message(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
+        Console.message(self,msg.ljust(self.width))
+        self._refresh()
         
-    def notice(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.notice(self,sess,msg.ljust(self.width))
-        self._refresh(sess)
+    def verbose(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
+        Console.verbose(self,msg.ljust(self.width))
+        self._refresh()
         
-    def verbose(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.verbose(self,sess,msg.ljust(self.width))
-        self._refresh(sess)
+    def error(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
+        Console.error(self,msg.ljust(self.width))
+        self._refresh()
         
-    def error(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.error(self,sess,msg.ljust(self.width))
-        self._refresh(sess)
+    def critical(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
+        Console.critical(self,msg.ljust(self.width))
+        self._refresh()
         
-    def critical(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.critical(self,sess,msg.ljust(self.width))
-        self._refresh(sess)
         
+    def notice(self,msg):
+        Console.notice(self,msg.ljust(self.width))
+        self._refresh()
         
     def onTaskStatus(self,task):
         if task.maxval == 0:
@@ -543,21 +548,20 @@ class TtyConsole(Console):
                 s = "[    ] " 
             else:
                 s = "[%3d%%] " % task.percentCompleted
-        if task.session.statusMessage is None:
-            self.showStatus(task.session,s)
+        if self.statusMessage is None:
+            self.showStatus(s)
         else:
-            self.showStatus(task.session,
-                            s+task.session.statusMessage)
+            self.showStatus(s+self.statusMessage)
         
-    def showStatus(self,sess,msg):
+    def showStatus(self,msg):
         if msg is None:
             msg=''
         else:
             msg = msg[:self.width]
         self.stdout.write(msg.ljust(self.width)+"\r")
 
-    def _refresh(self,sess):
-        self.showStatus(sess,sess.statusMessage)
+    def _refresh(self):
+        self.showStatus(self.statusMessage)
         #if sess._status is not None:
         #    self.stdout(sess._status+"\r")
 
@@ -623,7 +627,7 @@ class Application:
     
     
     """
-    def __init__(self,toolkit): 
+    def __init__(self):
         #if session is None:
         #    session=syscon.getSystemConsole()
         if self.name is None:
@@ -631,9 +635,9 @@ class Application:
         #self._sessions = []
         #self.session=session
             
-        self.statusMessage=None
         self._ignoreExceptions = []
-        self.setToolkit(toolkit)
+        self.toolkit=None
+        #self.setToolkit(toolkit)
         
 
         
@@ -729,11 +733,14 @@ class Application:
     
             
     def confirm(self,*args,**kw):
-        self.toolkit.confirm(self,*args,**kw)
+        self.toolkit.confirm(*args,**kw)
     def decide(self,*args,**kw):
-        self.toolkit.decide(self,*args,**kw)
+        self.toolkit.decide(*args,**kw)
     def message(self,*args,**kw):
-        self.toolkit.message(self,*args,**kw)
+        self.toolkit.message(*args,**kw)
+    def notice(self,*args,**kw):
+        return self.toolkit.notice(*args,**kw)
+
 
     def debug(self,*args,**kw):
         return self.toolkit.debug(self,*args,**kw)
@@ -743,9 +750,6 @@ class Application:
 
     def verbose(self,*args,**kw):
         return self.toolkit.verbose(self,*args,**kw)
-
-    def notice(self,*args,**kw):
-        return self.toolkit.notice(self,*args,**kw)
 
     def error(self,*args,**kw):
         return self.toolkit.error(self,*args,**kw)
@@ -758,8 +762,11 @@ class Application:
 
     def showReport(self,*args,**kw):
         #print self.toolkit
-        return self.toolkit.showReport(self,*args,**kw)
+        return self.toolkit.showReport(*args,**kw)
 
+    def showAbout(self):
+        self.message(self.app.aboutString(),title="About")
+        
     def textprinter(self,*args,**kw):
         return self.toolkit.textprinter(self,*args,**kw)
 
@@ -770,12 +777,6 @@ class Application:
         task=Task(self,label,maxval)
         task.loop(func,*args,**kw)
         return task
-    
-    def buildMessage(self,msg,*args,**kw):
-        assert len(kw) == 0, "kwargs not yet implemented"
-        if len(args) == 0:
-            return msg
-        return msg % args
     
     def setToolkit(self,toolkit):
         #assert isinstance(toolkit,AbstractToolkit),\

@@ -266,9 +266,6 @@ class Menu(Component):
         kw.setdefault("action",self.owner.urlto(htdoc))
         return self.addItem(htdoc.name,**kw)
     
-    def addReportItem(self,*args,**kw):
-        return self.getForm().app.addReportItem(self,*args,**kw)
-    
     def findItem(self,name):
         for mi in self.items:
             if mi.name == name: return mi
@@ -656,19 +653,16 @@ class AbstractToolkit:
         pass
 
 
-    def message(self,app,msg,*args):
-        #assert app.mainForm is not None
-        if len(args):
-            msg=app.buildMessage(msg,*args)
-        return MessageDialog(app,msg).show()
+    def message(self,msg):
+        return MessageDialog(self,msg).show()
         
 ##         frm = sess.form(label="Message")
 ##         frm.addLabel(msg)
 ##         frm.addOkButton()
 ##         frm.showModal()
 
-    def confirm(self,app,*args,**kw):
-        return ConfirmDialog(app,*args,**kw).show()
+    def confirm(self,*args,**kw):
+        return ConfirmDialog(self,*args,**kw).show()
         
 ##         frm = sess.form(label="Confirmation",doc=prompt)
 ##         #frm.addLabel(prompt)

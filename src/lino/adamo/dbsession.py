@@ -22,7 +22,6 @@ from lino.adamo import InvalidRequestError
 #from lino.forms.session import Session
 #from lino.adamo import center
 from lino.adamo.dbreports import QueryReport
-from lino.console import Application
 
 class BabelLang:
     def __init__(self,index,id):
@@ -48,27 +47,16 @@ class Context:
                 return True
         return False
     
-class DbSession(Application,Context):
-    
-    #_dataCellFactory = DataCell
-    #_windowFactory = lambda x: x
-    
-    def __init__(self,db,toolkit,user=None,pwd=None):
-        Application.__init__(self,toolkit)
-        #assert isinstance(sess,Session)
+class DbContext(Context):
+    def __init__(self,app,db,user=None,pwd=None):
+        self.app=app
         self.db = db
-        #self.session=sess
         self.user=user
         self.pwd=pwd
-        #Session.__init__(self,toolkit,db.app)
         self.setDefaultLanguage()
         db.addSession(self)
-        #for m in ('showReport',):
-        #    setattr(self,m,getattr(sess,m))
-            
-        #db.addSession(sess)
         
-
+    
     def setDefaultLanguage(self):
         self.setBabelLangs(self.db.getDefaultLanguage())
 
@@ -78,32 +66,6 @@ class DbSession(Application,Context):
     def hasAuth(self,*args,**kw):
         return True
             
-        
-##     def use(self,db=None): # ,langs=None):
-##         # if necessary, stop using current db
-##         if db != self.db and self.db is not None:
-##             self.db.commit()
-##             #self.db.removeSession(self)
-##             if self._user is not None:
-##                 self.logout()
-##         if db is None:
-##             #self.schema = None
-##             #self.tables = None
-##             #self.forms = None
-##             self.db = None
-##         else:
-##             # start using new db
-##             #self.schema = db.schema # shortcut
-##             self.db = db
-##             # self.tables = AttrDict(factory=self.openTable)
-##             #self.forms = AttrDict(factory=self.openForm)
-##             #if langs is None:
-##             #    langs = db.getDefaultLanguage()
-##             #self.setBabelLangs(langs)
-##             self.setDefaultLanguage()
-        
-##         #self._formStack = []
-
     def setBabelLangs(self,langs):
         
         """langs is a string containing a space-separated list of babel
@@ -124,6 +86,8 @@ class DbSession(Application,Context):
 
     def getBabelLangs(self):
         return self._babelLangs
+    
+
 
     def checkIntegrity(self):
         self.status("Checking %s", self.db.getLabel())
@@ -131,7 +95,6 @@ class DbSession(Application,Context):
             store.checkIntegrity(self)
         self.status("Checking %s", self.db.getLabel())
         
-            
     def populate(self,p):
         status=self.getSessionStatus()
         self.db.populate(self,p)
@@ -154,7 +117,7 @@ class DbSession(Application,Context):
         #self.db.removeSession(self.session)
         self.db.removeSession(self)
         #self.session.close()
-        Application.close(self)
+        self.app.close(self)
         
     def shutdown(self):
         # called in many TestCases during tearDown()
@@ -168,6 +131,14 @@ class DbSession(Application,Context):
         for table in self.db.schema.getTableList():
             if table.getTableName() == tableName:
                 return table._instanceClass
+
+
+    def notice(self,*args,**kw):
+        return self.app.notice(*args,**kw)
+    def message(self,*args,**kw):
+        return self.app.message(*args,**kw)
+    def confirm(self,*args,**kw):
+        return self.app.confirm(*args,**kw)
         
 
     def query(self,tcl,columnNames=None,**kw):
@@ -230,12 +201,12 @@ class DbSession(Application,Context):
         rpt=self.createReport(rptclass)
         if label is None: label=rpt.getTitle()
         mi=menu.addItem(name,label=label,**kw)
-        mi.setHandler(self.showReport,rpt)
+        mi.setHandler(self.app.showReport,rpt)
 
     
     def showViewGrid(self,tc,*args,**kw):
         rpt=self.getViewReport(tc,*args,**kw)
-        return self.showReport(rpt)
+        return self.app.showReport(rpt)
     
     def showDataForm(self,rpt,**kw):
         rpt.showFormNavigator(self,**kw)
@@ -262,7 +233,7 @@ class DbSession(Application,Context):
 
     def showQuery(self,qry,*args,**kw):
         rpt=self.createQueryReport(qry,*args,**kw)
-        self.showReport(rpt)
+        self.app.showReport(rpt)
 
 ##     def report(self,*args,**kw):
 ##         rpt=self.createReport(*args,**kw)
@@ -286,32 +257,9 @@ class DbSession(Application,Context):
 
 
 
-class MirrorLoaderApplication(DbSession):
 
-    def __init__(self,loadfrom=".",**kw):
-        DbSession.__init__(self,**kw)
-        self.loadfrom = loadfrom
-    
-    def registerLoaders(self,loaders):
-        for l in loaders:
-            it = self.findImplementingTables(l.tableClass)
-            assert len(it) == 1
-            it[0].setMirrorLoader(l)
 
-            
-    def setupOptionParser(self,parser):
-        Schema.setupOptionParser(self,parser)
-        
-        parser.add_option("--loadfrom",
-                          help="""\
-directory containing mirror source files""",
-                          action="store",
-                          type="string",
-                          dest="loadfrom",
-                          default=".")
-    
-##     def applyOptions(self,options,args):
-##         Application.applyOptions(self,options,args)
-##         self.loadfrom = options.loadfrom
+
+
 
 

@@ -5,6 +5,6 @@ sess=demo.startup() # filename="addrbook.db",big=False)
 #gui.choose("cherrypy")
 #gui.choose("wx")
 #gui.choose("tix")
-gui.run(sess)
+gui.run(sess.app,sess)
 
 

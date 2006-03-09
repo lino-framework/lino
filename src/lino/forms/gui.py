@@ -64,10 +64,10 @@ def check():
         #GuiConsole(toolkit=_toolkit)
 
     
-def run(app):
+def run(app,*args,**kw):
     check()
     _toolkit.startApplication(app)
-    _toolkit.run_forever()
+    _toolkit.run_forever(*args,**kw)
     
 ## def run(sess):
 ##     check()

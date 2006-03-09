@@ -39,7 +39,7 @@ class MenuContainer:
         
     def addMenu(self,*args,**kw):
         if self.menuBar is None:
-            self.menuBar = self.app.session.toolkit.menuBarFactory(
+            self.menuBar = self.toolkit.menuBarFactory(
                 self)
         return self.menuBar.addMenu(*args,**kw)
 
@@ -98,7 +98,7 @@ class Container:
     
     def addLabel(self,label,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.labelFactory(self,label=label,**kw)
+        e = frm.toolkit.labelFactory(self,label=label,**kw)
         #self._components.append(e)
         return self.addComponent(e)
         #return e
@@ -106,7 +106,7 @@ class Container:
     def addEntry(self,*args,**kw):
         frm = self.getForm()
         #e = frm.session.toolkit.entryFactory(frm,name,*args,**kw)
-        e = frm.app.toolkit.entryFactory(frm,None,*args,**kw)
+        e = frm.toolkit.entryFactory(frm,None,*args,**kw)
         return self.addComponent(e)
         #self._components.append(e)
         #if name is not None:
@@ -115,14 +115,14 @@ class Container:
     
     def addDataEntry(self,dc,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.dataEntryFactory(frm,dc,*args,**kw)
+        e = frm.toolkit.dataEntryFactory(frm,dc,*args,**kw)
         return self.addComponent(e)
         #self._components.append(e)
         #return e
 
     def addDataGrid(self,ds,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.dataGridFactory(self,ds,*args,**kw)
+        e = frm.toolkit.dataGridFactory(self,ds,*args,**kw)
         #self._components.append(e)
         frm.setMenuController(e)
         #if name is not None:
@@ -132,7 +132,7 @@ class Container:
         
     def addNavigator(self,rpt,afterSkip=None,*args,**kw):
         frm = self.getForm()
-        e = frm.app.toolkit.navigatorFactory(
+        e = frm.toolkit.navigatorFactory(
             self, rpt,afterSkip,*args,**kw)
         #self._components.append(e)
         frm.setMenuController(e)
@@ -140,7 +140,7 @@ class Container:
         
     def addPanel(self,direction,**kw): 
         frm = self.getForm()
-        btn = frm.app.toolkit.panelFactory(self,direction,**kw)
+        btn = frm.toolkit.panelFactory(self,direction,**kw)
         return self.addComponent(btn)
         #self._components.append(btn)
         #return btn
@@ -152,14 +152,14 @@ class Container:
 
     def addViewer(self): 
         frm = self.getForm()
-        c = frm.app.toolkit.viewerFactory(self)
+        c = frm.toolkit.viewerFactory(self)
         return self.addComponent(c)
         #self._components.append(c)
         #return c
     
     def addButton(self,name=None,*args,**kw): 
         frm = self.getForm()
-        btn = frm.app.toolkit.buttonFactory(
+        btn = frm.toolkit.buttonFactory(
             frm,name=name,*args,**kw)
         #self._components.append(btn)
         #if name is not None:
@@ -187,7 +187,7 @@ class Form(MenuContainer,Container):
     modal=False
     doc=None
     
-    def __init__(self,app,data=None,
+    def __init__(self,toolkit,data=None,
                  halign=None, valign=None,
                  title=None,
                  *args,**kw):
@@ -196,11 +196,11 @@ class Form(MenuContainer,Container):
         #assert isinstance(app,Application)
         #assert app.mainForm is not None
         MenuContainer.__init__(self)
-        self.app=app
+        #self.app=app
+        self.toolkit=toolkit
         if title is not None:
             self.title=title
         #self.session=sess
-        #self.toolkit=toolkit
         self._parent = None # parent
         self.data = data
         #self.entries = AttrDict()
@@ -212,7 +212,7 @@ class Form(MenuContainer,Container):
         self._boxes = []
         self.lastEvent = None
         self.ctrl=None
-        self.mainComp = app.toolkit.panelFactory(self, VERTICAL)
+        self.mainComp = toolkit.panelFactory(self, VERTICAL)
 ##         for m in ('addLabel','addViewer',
 ##                   'addEntry', 'addDataEntry',
 ##                   'addDataGrid','addNavigator',
@@ -238,6 +238,9 @@ class Form(MenuContainer,Container):
 
     def getTitle(self):
         # may override to provide dynamic title
+        assert self.title is not None,\
+               "%s.title is None and getTitle() not defined" \
+               % self.__class__
         return self.title
 
     def configure(self,data=None,**kw):
@@ -284,17 +287,17 @@ class Form(MenuContainer,Container):
         self.setup()
         #self.session.toolkit.setupForm(self)
         #self.session.debug(repr(self.mainComp))
-        self.ctrl = self.app.toolkit.createFormCtrl(self)
+        self.ctrl = self.toolkit.createFormCtrl(self)
         #self.mainComp.onShow()
         self.onShow()
         #self.session.setActiveForm(self)
         #self.session.toolkit.onShowForm(self)
-        self.app.toolkit.showForm(self)
+        self.toolkit.showForm(self)
         
     
     def refresh(self):
         self.mainComp.refresh()
-        self.app.toolkit.refreshForm(self)
+        self.toolkit.refreshForm(self)
         
     def isShown(self):
         return False
@@ -303,25 +306,25 @@ class Form(MenuContainer,Container):
         pass
     
     def onKillFocus(self,evt):
-        self.app.toolkit.setActiveForm(self._parent)
+        self.toolkit.setActiveForm(self._parent)
         
     def onSetFocus(self,evt):
-        self.app.toolkit.setActiveForm(self)
+        self.toolkit.setActiveForm(self)
 
     def close(self,evt=None):
         #if not self.isShown(): return
         #self.mainComp.onClose()
         self.onClose()
-        self.app.toolkit.closeForm(self,evt)
+        self.toolkit.closeForm(self,evt)
         self.ctrl=None
     
     
     def notice(self,*args,**kw):
-        return self.app.toolkit.notice(self.app,*args,**kw)
+        return self.toolkit.notice(*args,**kw)
     def message(self,*args,**kw):
-        return self.app.toolkit.message(self.app,*args,**kw)
+        return self.toolkit.message(*args,**kw)
     def confirm(self,*args,**kw):
-        return self.app.toolkit.confirm(self.app,*args,**kw)
+        return self.toolkit.confirm(*args,**kw)
             
 ##     def render(self,doc):
 ##         self.mainComp.render(doc)
@@ -338,10 +341,16 @@ class Form(MenuContainer,Container):
 
 class MainForm(Form):
 
+    def __init__(self,toolkit,dbc,*args,**kw):
+        self.dbc=dbc
+        Form.__init__(self,toolkit,*args,**kw)
+
     def addProgramMenu(self):
-        m = self.addMenu("system","&Programm")
-        m.addItem("logout",label="&Beenden",action=self.close)
-        m.addItem("about",label="Inf&o",action=self.app.showAbout)
+        m = self.addMenu("app","&Programm")
+        m.addItem("logout",label="&Beenden",
+                  action=self.close)
+        m.addItem("about",label="Inf&o",
+                  action=self.dbc.app.showAbout)
 
         def bugdemo(task):
             for i in range(5,0,-1):
@@ -352,13 +361,19 @@ class MainForm(Form):
             
         
         m.addItem("bug",label="&Bug demo").setHandler(
-            self.app.loop,bugdemo,"Bug demo")
+            self.dbc.app.loop,bugdemo,"Bug demo")
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
     
+    def addReportItem(self,*args,**kw):
+        return self.dbc.addReportItem(*args,**kw)
+    
     def onClose(self):
-        self.app.close()
+        self.dbc.close()
 
+    def getTitle(self):
+        return str(self.dbc)
+    
 class MemoViewer(Form):
     title="Text Editor"
     def __init__(self,app,txt,**kw):
@@ -373,8 +388,8 @@ class MemoViewer(Form):
 
 
 class ReportForm(Form):
-    def __init__(self,app,rpt,**kw):
-        Form.__init__(self,app,**kw)
+    def __init__(self,dbc,rpt,**kw):
+        Form.__init__(self,dbc,**kw)
         self.rpt=rpt
 
     def setupForm(self):
@@ -584,8 +599,8 @@ class Dialog(Form):
 
 class MessageDialog(Dialog):
     title="Message"
-    def __init__(self,app,msg,**kw):
-        Dialog.__init__(self,app,**kw)
+    def __init__(self,tk,msg,**kw):
+        Dialog.__init__(self,tk,**kw)
         self.msg=msg
         
     def setupForm(self):
@@ -594,8 +609,8 @@ class MessageDialog(Dialog):
         
 class ConfirmDialog(Dialog):
     title="Confirmation"
-    def __init__(self,app,prompt,default=YES,**kw):
-        Dialog.__init__(self,app,**kw)
+    def __init__(self,tk,prompt,default=YES,**kw):
+        Dialog.__init__(self,tk,**kw)
         self.prompt=prompt
         self.default=default
         

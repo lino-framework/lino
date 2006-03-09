@@ -269,26 +269,26 @@ class Schema: #(GuiApplication):
 ##         for p in self._plugins:
 ##             p.defineTables(self)
     
-    def quickStartup(self,
-                     #toolkit=None,
-                     langs=None,
-                     dump=False,
-                     filename=None,
-                     **kw):
-        #print "%s.quickStartup()" % self.__class__
-        self.setupSchema()
-        #self.console.debug("Initialize Schema")
-        self.initialize()
-        db = self.database(langs=langs)
-        #self.console.debug("Connect")
-        conn = center.connection(filename=filename)
-        db.connect(conn)
-        if dump:
-            #conn.startDump(syscon.notice)
-            #conn.startDump(self.console.stdout)
-            assert hasattr(dump,'write')
-            conn.startDump(dump)
-        return db.startup(**kw) #syscon.getSystemConsole())
+##     def quickStartup(self,
+##                      #toolkit=None,
+##                      langs=None,
+##                      dump=False,
+##                      filename=None,
+##                      **kw):
+##         #print "%s.quickStartup()" % self.__class__
+##         self.setupSchema()
+##         #self.console.debug("Initialize Schema")
+##         self.initialize()
+##         db = self.database(langs=langs)
+##         #self.console.debug("Connect")
+##         conn = center.connection(filename=filename)
+##         db.connect(conn)
+##         if dump:
+##             #conn.startDump(syscon.notice)
+##             #conn.startDump(self.console.stdout)
+##             assert hasattr(dump,'write')
+##             conn.startDump(dump)
+##         return db.startup(**kw) #syscon.getSystemConsole())
     
     
 

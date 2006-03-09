@@ -806,7 +806,9 @@ class Toolkit(toolkit.Toolkit):
 ##         self._setup = True
 ##         self.init()
         
-    def run_forever(self):
+    def run_forever(self,*args,**kw):
+        self.args=args
+        self.kw=kw
         #if not self._setup:
         #    self.setup()
         assert not self.running()
@@ -818,7 +820,7 @@ class Toolkit(toolkit.Toolkit):
     #def showMainForm(self):
     def wxinit(self):
         for a in self.apps:
-            a.run()
+            a.run(*self.args,**self.kw)
         #sess.db.app.showMainForm(sess)
 
         

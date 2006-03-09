@@ -114,14 +114,14 @@ class Store:
     
     
 
-    def onStartup(self,sess):
+    def onStartup(self):
         #print "%s.createTable()" % self.__class__
         if self._virgin is None: # == self.SST_MUSTCHECK:
-            sess.debug("mustCheck " + self._table.name)
+            #sess.debug("mustCheck " + self._table.name)
             if self._connection.mustCreateTables():
                 #self.createTable(sess)
-                sess.debug("create table " + \
-                           self._table.getTableName())
+                #sess.debug("create table " + \
+                #           self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
                 #self._status = self.SST_VIRGIN
                 self._virgin=True

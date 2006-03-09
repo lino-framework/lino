@@ -24,7 +24,7 @@ from lino.adamo.database import Database
 from lino.adamo import DatabaseError
 #from lino.ui import console
 #from lino.console import syscon
-from lino.console import Application
+#from lino.console import Application
 
 
 class Center:

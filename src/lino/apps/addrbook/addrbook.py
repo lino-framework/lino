@@ -15,17 +15,13 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.ddl import Schema, DbSession
+from lino.adamo.ddl import Schema, DbApplication
 from lino.forms import MainForm
 #from lino.console import Application
 
 from lino.apps.addrbook.tables import *
 
-class MySchema(Schema):
-    tableClasses = ( Language,
-                     Nation, City,
-                     Organisation, Person,
-                     Partner, PartnerType)
+## class MySchema(Schema):
     
 ##     def setupSchema(self):
 ##         for cl in ( Language,
@@ -37,20 +33,30 @@ class MySchema(Schema):
 class MyMainForm(MainForm):
     """Welcome to AddressBook, a Lino Application for
     demonstration purposes."""
-    
+
     def setupMenu(self):
         m = self.addMenu("master","&Master")
-        m.addReportItem("nations",NationsReport,label="&Nations")
-        m.addReportItem("cities",CitiesReport,label="&Cities")
-        m.addReportItem("partners",PartnersReport,label="&Partners")
-        m.addReportItem("persons",PersonsReport,label="&Persons")
+        self.addReportItem(
+            m,"nations",NationsReport,label="&Nations")
+        self.addReportItem(
+            m,"cities",CitiesReport,label="&Cities")
+        self.addReportItem(
+            m,"partners",PartnersReport,label="&Partners")
+        self.addReportItem(
+            m,"persons",PersonsReport,label="&Persons")
         
         self.addProgramMenu()
     
-class AddressBook(DbSession):
+class AddressBook(DbApplication):
+    tableClasses = ( Language,
+                     Nation, City,
+                     Organisation, Person,
+                     Partner, PartnerType)
 
-    def run(self):
-        MyMainForm(self).show()
+    def run(self,dbc=None):
+        if dbc is None:
+            dbc=self.quickStartup()
+        MyMainForm(self.toolkit,dbc).show()
     
         
     

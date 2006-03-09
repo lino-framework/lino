@@ -25,7 +25,7 @@ from lino.adamo import InvalidRequestError
 
 #from lino.adamo.dbds.sqlite_dbd import Connection
 
-from lino.adamo.dbsession import Context, BabelLang, DbSession
+from lino.adamo.dbsession import Context, BabelLang, DbContext
 
 #from query import DatasourceColumnList
 from lino.adamo.tim2lino import TimMemoParser
@@ -56,6 +56,8 @@ class Database(Context,Describable):
 
     def addSession(self,s):
         self._sessions.append(s)
+        if len(self._sessions) == 1:
+            self.startup(s)
         
 
     def removeSession(self,s):
@@ -187,7 +189,7 @@ class Database(Context,Describable):
 ##          self.__dict__['conn'] = conn
 
 
-    def startup(self,toolkit=None):
+    def startup(self,dbc):
     #def startup(self,sess=None):
         #print "%s.startup()" % self.__class__
         #if ui is None:
@@ -200,15 +202,15 @@ class Database(Context,Describable):
 
         #if sess is None:
         #    sess=syscon._session
-        if toolkit is None:
-            toolkit=syscon.getSystemConsole()
+        #if toolkit is None:
+        #    toolkit=syscon.getSystemConsole()
             
-        sess=DbSession(self,toolkit)
+        #sess=DbSession(self,toolkit)
         for store in self.getStoresById():
-            store.onStartup(sess)
+            store.onStartup()
                 
-        self._startupSession=sess
-        return sess
+        self._startupSession=dbc
+        #return DbContext(app,self)
         
 
     def commit(self,sess):

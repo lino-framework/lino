@@ -107,7 +107,7 @@ writes some diagnostics about your computer.
 consoleApplicationClass = Diag
 
 if __name__ == '__main__':
-    syscon.run(consoleApplicationClass)
+    syscon.run(consoleApplicationClass())
     
         
 

@@ -71,7 +71,7 @@ def setSystemConsole(con):
     global _syscon
     _syscon=con
 
-def run(appClass,argv=None):
+def run(app,argv=None):
     """
     meant to be called
     
@@ -82,7 +82,9 @@ def run(appClass,argv=None):
     arguments are shifted by one)
         
     """
-    app=appClass(_syscon)
+    #app=appClass(_syscon)
+    app.setToolkit(_syscon)
+    #_syscon.startApplication(app)
     p = OptionParser(
         usage=app.usage,
         description=app.description)
