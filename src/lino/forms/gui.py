@@ -25,6 +25,9 @@ _toolkit = None
 def choose(wishlist=None):
     if wishlist is None:
         wishlist=lino.config.get('forms','wishlist')
+    #if console is None:
+    #    console=syscon.getSystemConsole()
+        
     global _toolkit
     
     assert _toolkit is None, "cannot choose a second time"

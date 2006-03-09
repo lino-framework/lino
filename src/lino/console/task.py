@@ -22,7 +22,7 @@
 from time import sleep
 
 #from lino.console.console import TaskAborted
-from lino.console.console import UserAborted, OperationFailed
+from lino.adamo.exceptions import UserAborted
 
 if False:
     
@@ -90,12 +90,13 @@ class Task:
     task.increment()
     """
     
-    def __init__(self,app,label=None,maxval=0):
+    def __init__(self,toolkit,label=None,maxval=0):
         #self.session=sess
-        self.session=app # todo: rename task.session to task.app
+        #self.session=app # todo: rename task.session to task.app
         if label is None:
             label=_("Working")
         self.label=label
+        self.toolkit=toolkit
         self.maxval=maxval
         self._done=False
         self._abortRequested=False
@@ -106,7 +107,7 @@ class Task:
     def loop(self,looper,*args,**kw):
         # called from BaseSession.run_task()
         
-        self.session.toolkit.onTaskBegin(self)
+        self.toolkit.onTaskBegin(self)
         #okay=True
         #retval=None
         #success=False
@@ -115,7 +116,7 @@ class Task:
             self._done = True
             #success=True
             self.percentCompleted = 100
-            self.session.toolkit.onTaskDone(self)
+            self.toolkit.onTaskDone(self)
             return retval
             
         except UserAborted,e:
@@ -123,14 +124,14 @@ class Task:
             #assert e.task == self
             #self.abort()
             self._done = True
-            self.session.toolkit.onTaskAbort(self)
+            self.toolkit.onTaskAbort(self)
             raise #OperationFailed(str(e))
             
         except Exception,e:
             # some uncaught exception occured
             #self.abort()
             self._done = True
-            self.session.toolkit.onTaskAbort(self)
+            self.toolkit.onTaskAbort(self)
             #self.session.exception(e)
             #self=False
             raise #OperationFailed(str(e))
@@ -167,13 +168,13 @@ class Task:
 
         
     def breathe(self):
-        self.session.toolkit.onTaskBreathe(self)
+        self.toolkit.onTaskBreathe(self)
         if self._abortRequested:
-            if self.session.confirm(
+            if self.toolkit.confirm(
                 _("Are you sure you want to abort?")):
                 raise UserAborted()
             self._abortRequested=False
-            self.session.toolkit.onTaskResume(self)
+            self.toolkit.onTaskResume(self)
 
 
     def increment(self,n=1):
@@ -184,7 +185,7 @@ class Task:
             if pc == self.percentCompleted:
                 return
             self.percentCompleted = pc
-        self.session.toolkit.onTaskIncrement(self)
+        self.toolkit.onTaskIncrement(self)
         self.breathe()
 
     def status(self,msg,*args,**kw):
@@ -192,9 +193,7 @@ class Task:
         #self.breathe()
         raise """\
 please replace "task.status()"
-with:
-  task.session.status() 
-  task.breathe()
+with task.toolkit.status() and/or task.breathe()
 """
     
 ##     def status(self,msg,*args,**kw):
@@ -214,7 +213,7 @@ with:
             msg = _("Aborted")
         if not self._done:
             self._done = True
-            self.session.toolkit.onTaskAbort(self,msg)
+            self.toolkit.onTaskAbort(self,msg)
             
 ##     def error(self,*args,**kw):
 ##     #def taskError(self,*args,**kw):

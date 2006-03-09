@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -35,7 +35,8 @@ import sys
 #from widgets import Menu, Command
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
-from lino.adamo.rowattrs import Field, Pointer, BabelField, Vurt #, Match#, Button
+from lino.adamo.rowattrs import Field, Pointer, BabelField, Vurt
+#, Match#, Button
 #from lino.adamo.schema import Schema, SchemaPlugin
 from lino.adamo.store import Populator
 #from session import ConsoleSession

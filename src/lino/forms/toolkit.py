@@ -22,7 +22,7 @@ from cStringIO import StringIO
 
 from lino.misc.descr import Describable
 from lino.adamo.datatypes import STRING, MEMO
-from lino.console import console # import Application
+from lino.console.console import AbstractToolkit # import Application
 #from lino.console.session import Session
 from lino.gendoc.gendoc import GenericDocument
 
@@ -598,7 +598,8 @@ class Panel(Container,Component):
         
         
 
-class AbstractToolkit:
+
+class Toolkit(AbstractToolkit):
     
     labelFactory = Label
     entryFactory = Entry
@@ -611,15 +612,33 @@ class AbstractToolkit:
     #formFactory = Form
     menuBarFactory = MenuBar
     
-    #jobFactory=Job
-    #progresserFactory=Progresser
-    
-    def __init__(self):
+    def __init__(self,console=None):
         self.apps = []
-        #self._sessions = []
-        #self._currentProgresser=None
-        
-            
+        #AbstractToolkit.__init__(self)
+        #self.consoleForm = None
+        if console is None:
+            from lino.console import syscon
+            console=syscon.getSystemConsole()
+            #console=syscon.getToolkit()
+            #console=CaptureConsole(
+            #    verbosity=syscon._syscon._verbosity)
+        self.console = console
+        # non-overridable forwarding
+        for funcname in (
+            'debug', 'warning',
+            'verbose', 'error',
+            'textprinter',
+            ):
+            setattr(self,funcname,getattr(console,funcname))
+
+        self._activeForm=None
+
+    def setActiveForm(self,frm):
+        self._activeForm = frm
+
+    def getActiveForm(self):
+        return self._activeForm
+
     def shutdown(self):
         #self.verbose("Done after %f seconds.",
         #             time.time() - self._started)
@@ -648,13 +667,72 @@ class AbstractToolkit:
             #    self.consoleForm.close()
     
             
+        
+    def notice(self,app,*args,**kw):
+        #assert app.mainForm is not None
+        if self._activeForm is not None:
+            self._activeForm.status(*args,**kw)
+        else: self.message(app,*args,**kw)
+        
+    def status(self,*args,**kw):
+        # overridable forwarding
+        return self.console.status(*args,**kw)
 
-    def setupOptionParser(self,p):
-        pass
+
+    def onTaskBegin(self,*args,**kw):
+        return self.console.onTaskBegin(*args,**kw)
+    def onTaskDone(self,*args,**kw):
+        return self.console.onTaskDone(*args,**kw)
+    def onTaskAbort(self,*args,**kw):
+        return self.console.onTaskAbort(*args,**kw)
+    def onTaskIncrement(self,*args,**kw):
+        return self.console.onTaskIncrement(*args,**kw)
+    def onTaskBreathe(self,*args,**kw):
+        return self.console.onTaskBreathe(*args,**kw)
+    
+
+    
+    def showException(self,sess,e,details=None):
+        msg = str(e)
+        #msg = e.getMessage()
+        out = StringIO()
+        traceback.print_exc(None,out)
+        s = out.getvalue()
+        del out
+        if details is not None:
+            msg += "\n" + details
+        while True:
+            i = sess.decide(
+                msg,
+                title="Oops, an error occured!",
+                answers=("&End",
+                         "&Ignore",
+                         "&Details",
+                         "&Send"))
+            if i == 0:
+                sess.critical(s)
+                return
+            
+            elif i == 1:
+                return
+            elif i == 2:
+                frm = sess.form(label="Details")
+                frm.addEntry(type=MEMO,value=s)
+                frm.showModal()
+                #return
+                
 
 
-    def message(self,msg):
-        return MessageDialog(self,msg).show()
+    def showReport(self,rpt,**kw):
+        ReportForm(self,rpt).show()
+        #frm = sess.form(label=rpt.getTitle(),**kw)
+        #frm.addDataGrid(rpt)
+        #frm.show()
+        
+
+
+    def message(self,msg,**kw):
+        return MessageDialog(self,msg,**kw).show()
         
 ##         frm = sess.form(label="Message")
 ##         frm.addLabel(msg)
@@ -746,111 +824,4 @@ class AbstractToolkit:
     def stopRunning(self):
         pass
         
-
-##     def main(self,app,argv=None):
-##         app.parse_args(argv)
-##         self.addSession(sess)
-##         self.run_forever()
-        
-
-
-    
-
-class Toolkit(AbstractToolkit):
-    
-    def __init__(self,console=None):
-        AbstractToolkit.__init__(self)
-        #self.consoleForm = None
-        if console is None:
-            from lino.console import syscon
-            console=syscon.getSystemConsole()
-            #console=syscon.getToolkit()
-            #console=CaptureConsole(
-            #    verbosity=syscon._syscon._verbosity)
-        self.console = console
-        # non-overridable forwarding
-        for funcname in (
-            'debug', 'warning',
-            'verbose', 'error',
-            'textprinter',
-            ):
-            setattr(self,funcname,getattr(console,funcname))
-
-        self._activeForm=None
-
-    def setActiveForm(self,frm):
-        self._activeForm = frm
-
-    def getActiveForm(self):
-        return self._activeForm
-
-        
-    def notice(self,app,*args,**kw):
-        #assert app.mainForm is not None
-        if self._activeForm is not None:
-            self._activeForm.status(*args,**kw)
-        else: self.message(app,*args,**kw)
-        
-    def status(self,*args,**kw):
-        # overridable forwarding
-        return self.console.status(*args,**kw)
-
-
-    def onTaskBegin(self,*args,**kw):
-        return self.console.onTaskBegin(*args,**kw)
-    def onTaskDone(self,*args,**kw):
-        return self.console.onTaskDone(*args,**kw)
-    def onTaskAbort(self,*args,**kw):
-        return self.console.onTaskAbort(*args,**kw)
-    def onTaskIncrement(self,*args,**kw):
-        return self.console.onTaskIncrement(*args,**kw)
-    def onTaskBreathe(self,*args,**kw):
-        return self.console.onTaskBreathe(*args,**kw)
-    
-
-    def abortRequested(self):
-        return False
-    
-    def isInteractive(self):
-        return True
-
-    def showException(self,sess,e,details=None):
-        msg = str(e)
-        #msg = e.getMessage()
-        out = StringIO()
-        traceback.print_exc(None,out)
-        s = out.getvalue()
-        del out
-        if details is not None:
-            msg += "\n" + details
-        while True:
-            i = sess.decide(
-                msg,
-                title="Oops, an error occured!",
-                answers=("&End",
-                         "&Ignore",
-                         "&Details",
-                         "&Send"))
-            if i == 0:
-                sess.critical(s)
-                return
-            
-            elif i == 1:
-                return
-            elif i == 2:
-                frm = sess.form(label="Details")
-                frm.addEntry(type=MEMO,value=s)
-                frm.showModal()
-                #return
-                
-
-
-    def showReport(self,app,rpt,**kw):
-        ReportForm(app,rpt).show()
-        #frm = sess.form(label=rpt.getTitle(),**kw)
-        #frm.addDataGrid(rpt)
-        #frm.show()
-        
-
-
 

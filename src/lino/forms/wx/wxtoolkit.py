@@ -160,7 +160,7 @@ class Button(toolkit.Button):
 
 class DataGrid(toolkit.DataGrid):
     
-    def wxsetup(self,parent,box):
+    def wxsetup(self,form,parent,box):
         self.wxctrl = wxgrid.DataGridCtrl(parent,self)
         box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
         
@@ -173,10 +173,8 @@ class DataGrid(toolkit.DataGrid):
         
 class DataForm(toolkit.DataForm):
     
-    def wxsetup(self,parent,box):
+    def wxsetup(self,frm,parent,box):
         if False:
-            frm = self.getForm()
-
             mypanel = wx.Panel(parent,-1)
             box.Add(mypanel, STRETCH, wx.EXPAND|wx.ALL,BORDER)
 
@@ -230,7 +228,7 @@ class TextViewer(toolkit.TextViewer):
         
     def onClose(self):
 ##         console.pop()
-        console = self.getForm().session.toolkit.console
+        console = self.getForm().toolkit.console
         console.redirect(*self.redirect)
         self.wxctrl = None
         #self._buffer = ""
@@ -238,7 +236,7 @@ class TextViewer(toolkit.TextViewer):
     
     def wxsetup(self,form,panel,box):
         #parentFormCtrl = self.getForm().wxctrl
-        console = self.getForm().session.toolkit.console
+        console = form.toolkit.console
         e = wx.TextCtrl(panel,-1,console.getConsoleOutput(),
                         style=wx.TE_MULTILINE|wx.HSCROLL)
         e.SetBackgroundColour('BLACK')

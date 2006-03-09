@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -19,15 +19,8 @@
 class StartupDelay(Exception):
     pass
 
-
 class InvalidRequestError(Exception):
     "The requested action was refused"
-
-class NoSuchField(InvalidRequestError):
-    "no such field"
-
-class DataVeto(Exception):
-    "Invalid data submitted"
 
 class RefuseValue(Exception):
     "Invalid data submitted"
@@ -38,8 +31,19 @@ class RowLockFailed(Exception):
 class DatabaseError(Exception):
     "dbd-specific exception was raised"
 
+class DataVeto(Exception):
+    "Invalid data submitted"
+
 class NoSuchField(DataVeto):
     pass
+
+class UserAborted(Exception):
+    pass
+
+class OperationFailed(Exception):
+    pass
+
+
     
 
 __all__ = [
@@ -47,4 +51,5 @@ __all__ = [
     'InvalidRequestError',
     'RowLockFailed',
     'DataVeto',
-    'DatabaseError']
+    'DatabaseError',
+    'UserAborted','OperationFailed']

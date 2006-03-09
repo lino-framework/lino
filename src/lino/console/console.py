@@ -22,12 +22,9 @@ import os
 import sys
 import time
 import codecs
-import textwrap
-import types
+#import types
 
 from cStringIO import StringIO
-
-import lino
 
 try:
     import msvcrt
@@ -39,12 +36,7 @@ try:
 except ImportError,e:
     sound = False
 
-
-class UserAborted(Exception):
-    pass
-
-class OperationFailed(Exception):
-    pass
+from lino.console.task import Task
 
 # rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
 # Unicode Tutorial
@@ -76,10 +68,30 @@ def rewriter(from_encoding,to_stream,encoding):
 
 
 
+class AbstractToolkit:
+    
+    
+    def isInteractive(self):
+        return True
+
+    def setupOptionParser(self,p):
+        pass
+
+    def abortRequested(self):
+        return False
+
+    def loop(self,func,label,maxval=0,*args,**kw):
+        "run func with a progressbar"
+        task=Task(self,label,maxval)
+        task.loop(func,*args,**kw)
+        return task
+    
+
+
+    
 
             
-#class Console(UI,CLI):
-class Console: # (AbstractToolkit):
+class Console(AbstractToolkit):
 
     def __init__(self, stdout, stderr, encoding=None,**kw):
         self._verbosity = 0
@@ -160,10 +172,10 @@ class Console: # (AbstractToolkit):
         self.stdout.write(msg+"\n")
 
             
-    def showStatus(self,msg):
+    def status(self,*args,**kw):
         if msg is not None:
-            self.verbose(msg)
-
+            self.verbose(*args,**kw)
+        
     def message(self,msg):
         #if sound:
         #    sound.asterisk()
@@ -259,10 +271,10 @@ class Console: # (AbstractToolkit):
         if self._verbosity >= 0:
             self.writeln(msg)
 
-    def notice(self,msg):
+    def notice(self,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
         if self._verbosity >= 0:
-            #msg = sess.buildMessage(msg,*args,**kw)
+            msg = self.buildMessage(msg,*args,**kw)
             self.logmessage(msg)
             self.writeln(msg)
 
@@ -509,6 +521,18 @@ class TtyConsole(Console):
 ##             self._batch = batch
 ##         Console.configure(self,**kw)
 
+    def status(self,msg=None,*args,**kw):
+        if msg is not None:
+            #ssert type(msg) == type('')
+            #assert msg.__class__ in (types.StringType,
+            #                         types.UnicodeType)
+            msg=self.buildMessage(msg,*args,**kw)
+        self.statusMessage=msg
+        return self.showStatus(msg)
+
+    def setStatusMessage(self,msg):
+        self.statusMessage=msg
+    
 
     def warning(self,msg,*args,**kw):
         msg = self.buildMessage(msg,*args,**kw)
@@ -536,7 +560,8 @@ class TtyConsole(Console):
         self._refresh()
         
         
-    def notice(self,msg):
+    def notice(self,msg,*args,**kw):
+        msg = self.buildMessage(msg,*args,**kw)
         Console.notice(self,msg.ljust(self.width))
         self._refresh()
         
@@ -599,204 +624,3 @@ class CaptureConsole(Console):
 
 
 
-class Application:
-    
-    name = None
-    version=lino.__version__
-    copyright=None
-    url=None
-    #years = None
-    author=None
-    usage = None
-    description = None
-
-    #toolkits="console"
-    
-    #_sessionFactory=Session
-    
-    """
-    
-    vocabulary:
-    
-    main() processes command-line arguments ("get the
-    instructions") runs the application and returns a system error
-    code (usually forwarded to sys.exit())
-
-    run() expects that all instructions are known and performs the
-    actual task.
-    
-    
-    """
-    def __init__(self):
-        #if session is None:
-        #    session=syscon.getSystemConsole()
-        if self.name is None:
-            self.name=self.__class__.__name__
-        #self._sessions = []
-        #self.session=session
-            
-        self._ignoreExceptions = []
-        self.toolkit=None
-        #self.setToolkit(toolkit)
-        
-
-        
-##     def parse_args(self,argv=None): #,**kw):
-##         if self.author is not None:
-##             self.copyleft(name=self.name,
-##                           years=self.years,
-##                           author=self.author)
-##         p = OptionParser(
-##             usage=self.usage,
-##             description=self.description)
-            
-##         self.setupOptionParser(p)
-        
-##         if argv is None:
-##             argv = sys.argv[1:]
-        
-##         options,args = p.parse_args(argv)
-##         self.applyOptions(options,args)
-##         return p
-        
-    def close(self):
-        pass
-    
-    def setupOptionParser(self,parser):
-        pass
-
-    def applyOptions(self,options,args):
-        self.options=options
-        self.args=args
-
-
-    def aboutString(self):
-        if self.name is None:
-            s = self.__class__.__name__
-        else:
-            s = self.name
-            
-        if self.version is not None:
-            s += " version " + self.version
-        if self.author is not None:
-            s += "\nAuthor: " +  self.author
-        if self.copyright is not None:
-            s += "\n"+self.copyright
-            # "\nCopyright (c) %s %s." % (self.years, self.author)
-            
-        #from lino import __copyright__,  __url__
-        #s += "\n\n" + __copyright__
-        if self.url is not None:
-            s += "\nHomepage: " + self.url
-            
-        using = []
-        using.append('Lino ' + lino.__version__)
-        using.append("Python %d.%d.%d %s" % sys.version_info[0:4])
-
-        if sys.modules.has_key('wx'):
-            wx = sys.modules['wx']
-            using.append("wxPython " + wx.__version__)
-    
-        if sys.modules.has_key('pysqlite2'):
-            from pysqlite2.dbapi2 import version
-            #sqlite = sys.modules['pysqlite2']
-            using.append("PySQLLite " + version)
-    
-        if sys.modules.has_key('reportlab'):
-            reportlab = sys.modules['reportlab']
-            using.append("Reportlab PDF library "+reportlab.Version)
-
-        if sys.modules.has_key('win32print'):
-            win32print = sys.modules['win32print']
-            using.append("Python Windows Extensions")
-        
-        if sys.modules.has_key('cherrypy'):
-            cherrypy = sys.modules['cherrypy']
-            using.append("CherryPy " + cherrypy.__version__)
-
-        if sys.modules.has_key('PIL'):
-            using.append("PIL")
-
-        s += "\nUsing " + "\n".join(
-            textwrap.wrap(", ".join(using),76))
-        
-        if False:
-            s += "\n".join(
-                textwrap.wrap(
-                " ".join([ k for k in sys.modules.keys()
-                           if not k.startswith("lino.")]),76))
-            
-        return s
-    
-        
-        
-    
-            
-    def confirm(self,*args,**kw):
-        self.toolkit.confirm(*args,**kw)
-    def decide(self,*args,**kw):
-        self.toolkit.decide(*args,**kw)
-    def message(self,*args,**kw):
-        self.toolkit.message(*args,**kw)
-    def notice(self,*args,**kw):
-        return self.toolkit.notice(*args,**kw)
-
-
-    def debug(self,*args,**kw):
-        return self.toolkit.debug(self,*args,**kw)
-        
-    def warning(self,*args,**kw):
-        return self.toolkit.warning(self,*args,**kw)
-
-    def verbose(self,*args,**kw):
-        return self.toolkit.verbose(self,*args,**kw)
-
-    def error(self,*args,**kw):
-        return self.toolkit.error(self,*args,**kw)
-    
-    def critical(self,*args,**kw):
-        return self.toolkit.critical(self,*args,**kw)
-    
-    def logmessage(self,*args,**kw):
-        return self.toolkit.logmessage(self,*args,**kw)
-
-    def showReport(self,*args,**kw):
-        #print self.toolkit
-        return self.toolkit.showReport(*args,**kw)
-
-    def showAbout(self):
-        self.message(self.app.aboutString(),title="About")
-        
-    def textprinter(self,*args,**kw):
-        return self.toolkit.textprinter(self,*args,**kw)
-
-    def readkey(self,*args,**kw):
-        return self.toolkit.readkey(self,*args,**kw)
-    
-    def loop(self,func,label,maxval=0,*args,**kw):
-        task=Task(self,label,maxval)
-        task.loop(func,*args,**kw)
-        return task
-    
-    def setToolkit(self,toolkit):
-        #assert isinstance(toolkit,AbstractToolkit),\
-        #       repr(toolkit)+" is not a toolkit"
-        self.toolkit = toolkit
-
-    def exception(self,e,details=None):
-        if e.__class__ in self._ignoreExceptions:
-            return
-        self.toolkit.showException(self,e,details)
-
-    def status(self,msg=None,*args,**kw):
-        if msg is not None:
-            #ssert type(msg) == type('')
-            assert msg.__class__ in (types.StringType,
-                                     types.UnicodeType)
-            msg=self.buildMessage(msg,*args,**kw)
-        self.statusMessage=msg
-        return self.toolkit.showStatus(self,msg)
-
-    def setStatusMessage(self,msg):
-        self.statusMessage=msg
-    

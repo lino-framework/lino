@@ -26,16 +26,20 @@ from lino.misc.attrdict import AttrDict
 #from lino.console import syscon
 #from lino.console.application import GuiApplication
 
+from lino.console import Application
+
 #from lino.adamo.forms import Form
 from lino.adamo.table import Table, SchemaComponent
 from lino.adamo.exceptions import StartupDelay
 from lino.adamo.query import Query
+from lino.adamo.dbsession import DbContext
 from lino.adamo import center
 
-class Schema: #(GuiApplication):
-    tableClasses=None
+class Schema(Application):
+    
+    mainForm=NotImplementedError
+    tableClasses=NotImplementedError
     defaultLangs = ('en',)
-    #tables=[]
 
     def __init__(self,
                  checkIntegrityOnStartup=False,
@@ -258,6 +262,38 @@ class Schema: #(GuiApplication):
         #print "setupSchema", self.tableClasses
         for cl in self.tableClasses:
             self.addTable(cl)
+    
+    def quickStartup(self,
+                     langs=None,
+                     dump=False,
+                     filename=None,
+                     schema=None,
+                     **kw):
+        #print "%s.quickStartup()" % self.__class__
+        if schema is None:
+            schema=Schema()
+            for cl in self.tableClasses:
+                schema.addTable(cl)
+            schema.initialize()
+        #schema.setupSchema()
+        #self.console.debug("Initialize Schema")
+        db = schema.database(langs=langs)
+        #self.console.debug("Connect")
+        conn = center.connection(filename=filename)
+        db.connect(conn)
+        if dump:
+            #conn.startDump(syscon.notice)
+            #conn.startDump(self.console.stdout)
+            assert hasattr(dump,'write')
+            conn.startDump(dump)
+        #return db.startup(self,**kw)
+        return DbContext(self,db)
+    
+    def run(self,dbc=None):
+        if dbc is None:
+            dbc=self.quickStartup()
+        self.mainForm(self.toolkit,dbc).show()
+        
     
 ##     def setupSchema(self):
 ##         raise NotImplementedError
@@ -641,5 +677,36 @@ class LayoutFactory:
 ##         pass
 ##     def populate(self,sess):
 ##         pass
+
+
+
+
+class MirrorSchema(Schema):
+
+    def __init__(self,loadfrom=".",**kw):
+        Schema.__init__(self,**kw)
+        self.loadfrom = loadfrom
+    
+    def registerLoaders(self,loaders):
+        for l in loaders:
+            it = self.findImplementingTables(l.tableClass)
+            assert len(it) == 1
+            it[0].setMirrorLoader(l)
+
+            
+    def setupOptionParser(self,parser):
+        Schema.setupOptionParser(self,parser)
+        
+        parser.add_option("--loadfrom",
+                          help="""\
+directory containing mirror source files""",
+                          action="store",
+                          type="string",
+                          dest="loadfrom",
+                          default=".")
+    
+##     def applyOptions(self,options,args):
+##         Application.applyOptions(self,options,args)
+##         self.loadfrom = options.loadfrom
 
 

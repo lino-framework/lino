@@ -339,41 +339,6 @@ class Form(MenuContainer,Container):
 ##         return self.lastEvent == self.defaultButton
 
 
-class MainForm(Form):
-
-    def __init__(self,toolkit,dbc,*args,**kw):
-        self.dbc=dbc
-        Form.__init__(self,toolkit,*args,**kw)
-
-    def addProgramMenu(self):
-        m = self.addMenu("app","&Programm")
-        m.addItem("logout",label="&Beenden",
-                  action=self.close)
-        m.addItem("about",label="Inf&o",
-                  action=self.dbc.app.showAbout)
-
-        def bugdemo(task):
-            for i in range(5,0,-1):
-                self.status("%d seconds left",i)
-                task.increment()
-                task.sleep()
-            thisWontWork()
-            
-        
-        m.addItem("bug",label="&Bug demo").setHandler(
-            self.dbc.app.loop,bugdemo,"Bug demo")
-        #m.addItem(label="show &Console").setHandler(self.showConsole)
-        return m
-    
-    def addReportItem(self,*args,**kw):
-        return self.dbc.addReportItem(*args,**kw)
-    
-    def onClose(self):
-        self.dbc.close()
-
-    def getTitle(self):
-        return str(self.dbc)
-    
 class MemoViewer(Form):
     title="Text Editor"
     def __init__(self,app,txt,**kw):
@@ -385,8 +350,6 @@ class MemoViewer(Form):
             type=MEMO(width=80,height=10),
             value=self.txt)
                     
-
-
 class ReportForm(Form):
     def __init__(self,dbc,rpt,**kw):
         Form.__init__(self,dbc,**kw)
@@ -395,8 +358,11 @@ class ReportForm(Form):
     def setupForm(self):
         self.addDataGrid(self.rpt)
 
+    def getTitle(self):
+        return self.rpt.getTitle()
 
     
+
 ## class ReportForm(Form):
 ##     def __init__(self,app,rpt):
 ##         Form.__init__(self,app)

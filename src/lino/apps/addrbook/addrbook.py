@@ -15,22 +15,11 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.ddl import Schema, DbApplication
-from lino.forms import MainForm
-#from lino.console import Application
+from lino.adamo.ddl import Schema, DbMainForm
 
 from lino.apps.addrbook.tables import *
 
-## class MySchema(Schema):
-    
-##     def setupSchema(self):
-##         for cl in ( Language,
-##                     Nation, City,
-##                     Organisation, Person,
-##                     Partner, PartnerType):
-##             self.addTable(cl)
-
-class MyMainForm(MainForm):
+class MyMainForm(DbMainForm):
     """Welcome to AddressBook, a Lino Application for
     demonstration purposes."""
 
@@ -47,16 +36,14 @@ class MyMainForm(MainForm):
         
         self.addProgramMenu()
     
-class AddressBook(DbApplication):
+class AddressBook(Schema):
+    
     tableClasses = ( Language,
                      Nation, City,
                      Organisation, Person,
                      Partner, PartnerType)
 
-    def run(self,dbc=None):
-        if dbc is None:
-            dbc=self.quickStartup()
-        MyMainForm(self.toolkit,dbc).show()
+    mainForm=MyMainForm
     
         
     

@@ -17,6 +17,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+raise "no longer used"
+
 from lino.adamo.schema import Schema
 from lino.console import Application
 from lino.adamo import center
@@ -103,7 +105,7 @@ class MirrorLoaderApplication(DbApplication):
 
             
     def setupOptionParser(self,parser):
-        Schema.setupOptionParser(self,parser)
+        DbApplication.setupOptionParser(self,parser)
         
         parser.add_option("--loadfrom",
                           help="""\
