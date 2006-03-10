@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.forms import DbMainForm
+from lino.console import Application
 
 from lino.apps.addrbook.tables import *
 
@@ -42,3 +43,4 @@ demonstration purposes.
         
         self.addProgramMenu()
     
+class

@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -20,10 +20,6 @@ import wx
 import wx.grid
 
 from lino.adamo.exceptions import RowLockFailed
-
-#from lino.adamo.rowattrs import Pointer
-
-#pointerDataType = "Pointer"
 
 
 class MyDataTable(wx.grid.PyGridTableBase):
