@@ -185,19 +185,18 @@ class Form(MenuContainer,Container):
     
     title=None
     modal=False
-    doc=None
+    #doc=None
+    returnValue=None
     
-    def __init__(self,toolkit,data=None,
+    def __init__(self,data=None,
                  halign=None, valign=None,
-                 title=None,
-                 *args,**kw):
+                 title=None,*args,**kw):
         #if self.title is None:
         #Describable.__init__(self,None,*args,**kw)
         #assert isinstance(app,Application)
         #assert app.mainForm is not None
         MenuContainer.__init__(self)
         #self.app=app
-        self.toolkit=toolkit
         if title is not None:
             self.title=title
         #self.session=sess
@@ -212,6 +211,12 @@ class Form(MenuContainer,Container):
         self._boxes = []
         self.lastEvent = None
         self.ctrl=None
+        self.toolkit=None
+        self.mainComp=None
+
+
+    def setup(self,toolkit):
+        self.toolkit=toolkit
         self.mainComp = toolkit.panelFactory(self, VERTICAL)
 ##         for m in ('addLabel','addViewer',
 ##                   'addEntry', 'addDataEntry',
@@ -221,10 +226,20 @@ class Form(MenuContainer,Container):
 ##                   #'VERTICAL', 'HORIZONTAL',
 ##                   'addOkButton', 'addCancelButton'):
 ##             setattr(self,m,getattr(self.mainComp,m))
-        if self.doc is not None:
-            self.addLabel(self.doc)
-
-
+        if self.ctrl is not None:
+            #assert not hasattr(frm,'tkctrl')
+            raise InvalidRequestError("cannot setup() again")
+            
+        if self.__doc__ is not None:
+            self.addLabel(self.__doc__)
+            
+        self.setupMenu()
+        
+        self.setupForm()
+        self.mainComp.setup()
+        self.ctrl = self.toolkit.createFormCtrl(self)
+        
+        
     def getComponents(self):
         # implements Container
         return ( self.mainComp, )
@@ -265,43 +280,15 @@ class Form(MenuContainer,Container):
         assert self._parent is None
         #self._parent = parent
 
-    def setup(self):
-        self.setupMenu()
-        self.setupForm()
-        self.mainComp.setup()
-
     def isShown(self):
         #return hasattr(self,'ctrl')
         return (self.ctrl is not None)
 
-    def show(self): #,modal=None):
-        #self.session.notice("show(%s)",self.getLabel())
-
-        
-        if self.isShown():
-            #assert not hasattr(frm,'tkctrl')
-            raise InvalidRequestError("form is already shown")
-            
-        #self.modal = modal
-        #self.session.debug("show(modal=%s) %s",modal,self.getLabel())
-        self.setup()
-        #self.session.toolkit.setupForm(self)
-        #self.session.debug(repr(self.mainComp))
-        self.ctrl = self.toolkit.createFormCtrl(self)
-        #self.mainComp.onShow()
-        self.onShow()
-        #self.session.setActiveForm(self)
-        #self.session.toolkit.onShowForm(self)
-        self.toolkit.showForm(self)
-        
     
     def refresh(self):
         self.mainComp.refresh()
-        self.toolkit.refreshForm(self)
+        self.toolkit.executeRefresh(self)
         
-    def isShown(self):
-        return False
-    
     def onIdle(self,evt):
         pass
     
@@ -351,8 +338,8 @@ class MemoViewer(Form):
             value=self.txt)
                     
 class ReportForm(Form):
-    def __init__(self,dbc,rpt,**kw):
-        Form.__init__(self,dbc,**kw)
+    def __init__(self,rpt,**kw):
+        Form.__init__(self,rpt,**kw)
         self.rpt=rpt
 
     def setupForm(self):
@@ -362,6 +349,102 @@ class ReportForm(Form):
         return self.rpt.getTitle()
 
     
+class DbMainForm(Form):
+    
+    schemaClass=NotImplementedError
+    
+    def __init__(self,dbc,*args,**kw):
+        if dbc is None:
+            dbc=self.schemaClass().quickStartup()
+        else:
+            assert isinstance(dbc.db.schema,self.schemaClass),\
+                   "%s is not a %s" % (dbc.db.schema,self.schemaClass)
+            
+        self.dbc=dbc
+        Form.__init__(self,*args,**kw)
+
+    def addProgramMenu(self):
+        m = self.addMenu("app","&Programm")
+        m.addItem("logout",label="&Beenden",
+                  action=self.close)
+##         m.addItem("about",label="Inf&o").setHandler(
+##             lambda : self.dbc.message(
+##             self.dbc.app.aboutString(), title="About"))
+
+        def bugdemo(task):
+            for i in range(5,0,-1):
+                self.status("%d seconds left",i)
+                task.increment()
+                task.sleep()
+            thisWontWork()
+            
+        
+        m.addItem("bug",label="&Bug demo").setHandler(
+            self.toolkit.loop,bugdemo,"Bug demo")
+        #m.addItem(label="show &Console").setHandler(self.showConsole)
+        return m
+    
+    
+    def onClose(self):
+        self.dbc.close()
+
+    def getTitle(self):
+        return str(self.dbc)
+    
+
+    def addReportItem(self,menu,name,rptclass,label=None,**kw):
+        rpt=self.dbc.createReport(rptclass)
+        if label is None: label=rpt.getTitle()
+        mi=menu.addItem(name,label=label,**kw)
+        mi.setHandler(self.toolkit.showReport,rpt)
+
+    
+    def showViewGrid(self,tc,*args,**kw):
+        rpt=self.getViewReport(tc,*args,**kw)
+        return self.toolkit.showReport(rpt)
+    
+    def showDataForm(self,rpt,**kw):
+        rpt.showFormNavigator(self,**kw)
+        
+##     def showDataForm(self,rpt,**kw):
+##         frm = self.form(label=rpt.getLabel(),**kw)
+##         rpt.setupForm(frm)
+##         frm.show()
+        
+    def chooseDataRow(self,ds,currentRow,**kw):
+        frm = self.form(label="Select from " + ds.getLabel(),**kw)
+        grid = frm.addDataGrid(ds)
+        grid.setModeChoosing()
+        frm.showModal()
+        return grid.getChosenRow()
+        
+##     def runLoader(self,loader): #lc,*args,**kw):
+##         #store=self.getStore(loader.tableClass)
+##         #loader.load(self,store)
+##         #store=self.getStore(lc.tableClass)
+##         #loader=lc(self,*args,**kw)
+##         loader.run(self)
+        
+
+    def showQuery(self,qry,*args,**kw):
+        rpt=self.createQueryReport(qry,*args,**kw)
+        self.toolkit.showReport(rpt)
+
+##     def report(self,*args,**kw):
+##         rpt=self.createReport(*args,**kw)
+##         self.session.report(rpt)
+    
+
+##     def showMainForm(self):
+##         self.db.app.showMainForm(self)
+
+
+
+
+
+
+
+
 
 ## class ReportForm(Form):
 ##     def __init__(self,app,rpt):
@@ -541,32 +624,22 @@ class ReportForm(Form):
         
 
 class Dialog(Form):
+    
     modal=True
     
-    def __init__(self,*args,**kw):
-        Form.__init__(self,*args,**kw)
-        self.retValue=None
-        
     def ok(self):
-        self.retValue=YES
+        self.returnValue=YES
         self.close()
 
     def cancel(self):
-        self.retValue=NO
+        self.returnValue=NO
         self.close()
-
-    def show(self):
-        Form.show(self)
-        return self.retValue
-
-    def setup(self):
-        self.setupForm()
 
 
 class MessageDialog(Dialog):
     title="Message"
-    def __init__(self,tk,msg,**kw):
-        Dialog.__init__(self,tk,**kw)
+    def __init__(self,msg,**kw):
+        Dialog.__init__(self,**kw)
         self.msg=msg
         
     def setupForm(self):
@@ -575,8 +648,8 @@ class MessageDialog(Dialog):
         
 class ConfirmDialog(Dialog):
     title="Confirmation"
-    def __init__(self,tk,prompt,default=YES,**kw):
-        Dialog.__init__(self,tk,**kw)
+    def __init__(self,prompt,default=YES,**kw):
+        Dialog.__init__(self,**kw)
         self.prompt=prompt
         self.default=default
         

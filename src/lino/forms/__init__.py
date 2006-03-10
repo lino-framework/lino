@@ -32,7 +32,7 @@ __all__ = []
 __docformat__ = 'reStructuredText'
 
 from lino.forms.forms import Form, VERTICAL, HORIZONTAL, \
-     YES, NO, MessageDialog, ConfirmDialog, ReportForm
+     YES, NO, MessageDialog, ConfirmDialog, ReportForm, DbMainForm
 
 #from lino.forms.toolkit import Application
 

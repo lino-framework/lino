@@ -241,6 +241,16 @@ class CitiesReport(DataReport):
 
 
 
+class AddressBook(Schema):
+    
+    tableClasses = ( Language,
+                     Nation, City,
+                     Organisation, Person,
+                     Partner, PartnerType)
+
+    
+        
+    
 
 TABLES = (Language,
           Nation, City,
@@ -257,6 +267,7 @@ __all__.append('TABLES')
 
 __all__ += [t.__name__ for t in REPORTS]
 __all__.append('REPORTS')
+__all__.append('AddressBook')
 
 
 #__all__ = filter(lambda x: x[0] != "_", dir())

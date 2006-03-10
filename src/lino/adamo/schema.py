@@ -26,7 +26,7 @@ from lino.misc.attrdict import AttrDict
 #from lino.console import syscon
 #from lino.console.application import GuiApplication
 
-from lino.console import Application
+#from lino.console import Application
 
 #from lino.adamo.forms import Form
 from lino.adamo.table import Table, SchemaComponent
@@ -35,9 +35,9 @@ from lino.adamo.query import Query
 from lino.adamo.dbsession import DbContext
 from lino.adamo import center
 
-class Schema(Application):
+class Schema: #(Application):
     
-    mainForm=NotImplementedError
+    #mainForm=NotImplementedError
     tableClasses=NotImplementedError
     defaultLangs = ('en',)
 
@@ -267,17 +267,16 @@ class Schema(Application):
                      langs=None,
                      dump=False,
                      filename=None,
-                     schema=None,
                      **kw):
         #print "%s.quickStartup()" % self.__class__
-        if schema is None:
-            schema=Schema()
-            for cl in self.tableClasses:
-                schema.addTable(cl)
-            schema.initialize()
-        #schema.setupSchema()
+##         if schema is None:
+##             schema=Schema()
+##             for cl in self.tableClasses:
+##                 schema.addTable(cl)
+        self.setupSchema()
+        self.initialize()
         #self.console.debug("Initialize Schema")
-        db = schema.database(langs=langs)
+        db = self.database(langs=langs)
         #self.console.debug("Connect")
         conn = center.connection(filename=filename)
         db.connect(conn)
@@ -287,12 +286,12 @@ class Schema(Application):
             assert hasattr(dump,'write')
             conn.startDump(dump)
         #return db.startup(self,**kw)
-        return DbContext(self,db)
+        return DbContext(db)
     
-    def run(self,dbc=None):
-        if dbc is None:
-            dbc=self.quickStartup()
-        self.mainForm(self.toolkit,dbc).show()
+##     def run(self,dbc=None):
+##         if dbc is None:
+##             dbc=self.quickStartup()
+##         self.mainForm(self.toolkit,dbc).show()
         
     
 ##     def setupSchema(self):

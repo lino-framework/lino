@@ -640,13 +640,13 @@ class Toolkit(toolkit.Toolkit):
         return wxMenu
 
     
-    def showForm(self,frm):
+    def executeShow(self,frm):
         if frm.modal:
             frm.ctrl.ShowModal()
         else:
             frm.ctrl.Show()
 
-    def refreshForm(self,frm):
+    def executeRefresh(self,frm):
         frm.ctrl.Refresh()
 
     def closeForm(self,frm,evt):
@@ -819,6 +819,8 @@ class Toolkit(toolkit.Toolkit):
     def wxinit(self):
         for a in self.apps:
             a.run(*self.args,**self.kw)
+        for frm in self._submitted:
+            self.show(frm)
         #sess.db.app.showMainForm(sess)
 
         

@@ -67,9 +67,14 @@ def check():
         #GuiConsole(toolkit=_toolkit)
 
     
-def run(app,*args,**kw):
+## def run(app,*args,**kw):
+##     check()
+##     _toolkit.startApplication(app)
+##     _toolkit.run_forever(*args,**kw)
+    
+def show(frm,*args,**kw):
     check()
-    _toolkit.startApplication(app)
+    _toolkit.submit(frm)
     _toolkit.run_forever(*args,**kw)
     
 ## def run(sess):

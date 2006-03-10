@@ -613,6 +613,7 @@ class Toolkit(AbstractToolkit):
     menuBarFactory = MenuBar
     
     def __init__(self,console=None):
+        self._submitted=[]
         self.apps = []
         #AbstractToolkit.__init__(self)
         #self.consoleForm = None
@@ -721,10 +722,19 @@ class Toolkit(AbstractToolkit):
                 frm.showModal()
                 #return
                 
-
+    def submit(self,frm):
+        self._submitted.append(frm)
+        
+    def show(self,frm):
+        frm.setup(self)
+        frm.onShow()
+        self.executeShow(frm)
+        return frm.returnValue
+        
+        
 
     def showReport(self,rpt,**kw):
-        ReportForm(self,rpt).show()
+        return self.show(ReportForm(rpt))
         #frm = sess.form(label=rpt.getTitle(),**kw)
         #frm.addDataGrid(rpt)
         #frm.show()
@@ -732,7 +742,7 @@ class Toolkit(AbstractToolkit):
 
 
     def message(self,msg,**kw):
-        return MessageDialog(self,msg,**kw).show()
+        return self.show(MessageDialog(msg,**kw))
         
 ##         frm = sess.form(label="Message")
 ##         frm.addLabel(msg)
@@ -740,7 +750,7 @@ class Toolkit(AbstractToolkit):
 ##         frm.showModal()
 
     def confirm(self,*args,**kw):
-        return ConfirmDialog(self,*args,**kw).show()
+        return self.show(ConfirmDialog(*args,**kw))
         
 ##         frm = sess.form(label="Confirmation",doc=prompt)
 ##         #frm.addLabel(prompt)
@@ -785,10 +795,10 @@ class Toolkit(AbstractToolkit):
 ##         return self.formFactory(self,sess,*args,**kw)
 
     #def onShowForm(self,frm):
-    def showForm(self,frm):
+    def executeShow(self,frm):
         raise NotImplementedError
 
-    def refreshForm(self,frm):
+    def executeRefresh(self,frm):
         pass
 
 ##     def beginProgresser(self,sess,*args,**kw):

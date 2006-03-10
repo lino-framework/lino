@@ -44,7 +44,7 @@ class Case(TestCase):
     def test01(self):
         
         s = " ".join([str(t.getTableName())
-              for t in self.sess.db.app.getTableList()])
+              for t in self.sess.db.schema.getTableList()])
 
         #print s
         self.assertEquivalent(s, """\

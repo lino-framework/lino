@@ -48,8 +48,8 @@ class Context:
         return False
     
 class DbContext(Context):
-    def __init__(self,app,db,user=None,pwd=None):
-        self.app=app
+    def __init__(self,db,user=None,pwd=None):
+        #self.app=app
         self.db = db
         self.user=user
         self.pwd=pwd
@@ -117,7 +117,7 @@ class DbContext(Context):
         #self.db.removeSession(self.session)
         self.db.removeSession(self)
         #self.session.close()
-        self.app.close()
+        #self.app.close()
         
     def shutdown(self):
         # called in many TestCases during tearDown()
@@ -133,12 +133,12 @@ class DbContext(Context):
                 return table._instanceClass
 
 
-    def notice(self,*args,**kw):
-        return self.app.notice(*args,**kw)
-    def message(self,*args,**kw):
-        return self.app.message(*args,**kw)
-    def confirm(self,*args,**kw):
-        return self.app.confirm(*args,**kw)
+##     def notice(self,*args,**kw):
+##         return self.app.notice(*args,**kw)
+##     def message(self,*args,**kw):
+##         return self.app.message(*args,**kw)
+##     def confirm(self,*args,**kw):
+##         return self.app.confirm(*args,**kw)
         
 
     def query(self,tcl,columnNames=None,**kw):
@@ -196,52 +196,6 @@ class DbContext(Context):
     def createReport(self,rptclass,**kw):
         "rptclass is expected to be a DataReport"
         return rptclass(self,**kw)
-
-    def addReportItem(self,menu,name,rptclass,label=None,**kw):
-        rpt=self.createReport(rptclass)
-        if label is None: label=rpt.getTitle()
-        mi=menu.addItem(name,label=label,**kw)
-        mi.setHandler(self.app.showReport,rpt)
-
-    
-    def showViewGrid(self,tc,*args,**kw):
-        rpt=self.getViewReport(tc,*args,**kw)
-        return self.app.showReport(rpt)
-    
-    def showDataForm(self,rpt,**kw):
-        rpt.showFormNavigator(self,**kw)
-        
-##     def showDataForm(self,rpt,**kw):
-##         frm = self.form(label=rpt.getLabel(),**kw)
-##         rpt.setupForm(frm)
-##         frm.show()
-        
-    def chooseDataRow(self,ds,currentRow,**kw):
-        frm = self.form(label="Select from " + ds.getLabel(),**kw)
-        grid = frm.addDataGrid(ds)
-        grid.setModeChoosing()
-        frm.showModal()
-        return grid.getChosenRow()
-        
-##     def runLoader(self,loader): #lc,*args,**kw):
-##         #store=self.getStore(loader.tableClass)
-##         #loader.load(self,store)
-##         #store=self.getStore(lc.tableClass)
-##         #loader=lc(self,*args,**kw)
-##         loader.run(self)
-        
-
-    def showQuery(self,qry,*args,**kw):
-        rpt=self.createQueryReport(qry,*args,**kw)
-        self.app.showReport(rpt)
-
-##     def report(self,*args,**kw):
-##         rpt=self.createReport(*args,**kw)
-##         self.session.report(rpt)
-    
-
-##     def showMainForm(self):
-##         self.db.app.showMainForm(self)
 
 
     def startDump(self):

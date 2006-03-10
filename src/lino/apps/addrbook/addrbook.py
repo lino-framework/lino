@@ -1,4 +1,5 @@
 ## Copyright 2003-2006 Luc Saffre
+
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -15,14 +16,19 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.ddl import Schema, DbMainForm
+from lino.forms import DbMainForm
 
 from lino.apps.addrbook.tables import *
 
 class MyMainForm(DbMainForm):
-    """Welcome to AddressBook, a Lino Application for
-    demonstration purposes."""
-
+    
+    """\
+Welcome to AddressBook, a Lino Forms Application for
+demonstration purposes.
+"""
+    
+    schemaClass=AddressBook
+    
     def setupMenu(self):
         m = self.addMenu("master","&Master")
         self.addReportItem(
@@ -35,15 +41,4 @@ class MyMainForm(DbMainForm):
             m,"persons",PersonsReport,label="&Persons")
         
         self.addProgramMenu()
-    
-class AddressBook(Schema):
-    
-    tableClasses = ( Language,
-                     Nation, City,
-                     Organisation, Person,
-                     Partner, PartnerType)
-
-    mainForm=MyMainForm
-    
-        
     
