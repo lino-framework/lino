@@ -603,10 +603,11 @@ class Toolkit(BaseToolkit):
     menuBarFactory = MenuBar
     
     def __init__(self,console=None):
-        self._submitted=[]
-        self.apps = []
+        #self._submitted=[]
+        #self.apps = []
         #AbstractToolkit.__init__(self)
         #self.consoleForm = None
+        self.root=None
         if console is None:
             from lino.console import syscon
             console=syscon.getSystemConsole()
@@ -614,13 +615,13 @@ class Toolkit(BaseToolkit):
             #console=CaptureConsole(
             #    verbosity=syscon._syscon._verbosity)
         self.console = console
-        # non-overridable forwarding
-        for funcname in (
-            'debug', 'warning',
-            'verbose', 'error',
-            'textprinter',
-            ):
-            setattr(self,funcname,getattr(console,funcname))
+##         # non-overridable forwarding
+##         for funcname in (
+##             'debug', 'warning',
+##             'verbose', 'error',
+##             'textprinter',
+##             ):
+##             setattr(self,funcname,getattr(console,funcname))
 
         self._activeForm=None
 
@@ -634,6 +635,8 @@ class Toolkit(BaseToolkit):
         return self._activeForm
 
     def shutdown(self):
+        pass
+    
         #self.verbose("Done after %f seconds.",
         #             time.time() - self._started)
 ##         if sys.platform == "win32":
@@ -643,22 +646,22 @@ class Toolkit(BaseToolkit):
 ##         else:
 ##             syscon.verbose( "+".join([str(x) for x in os.times()])
 ##                           + " seconds used")
-        for a in self.apps:
-            a.close()
+        #for a in self.apps:
+        #    a.close()
 
 
-    def startApplication(self,app):
-        #sess=Session(self)
-        #app=appClass(self)
-        app.setToolkit(self)
-        self.apps.append(app)
+##     def startApplication(self,app):
+##         #sess=Session(self)
+##         #app=appClass(self)
+##         app.setToolkit(self)
+##         self.apps.append(app)
         
-    def stopApplication(self,app):
-        self.apps.remove(app)
-        if len(self.apps) == 0:
-            self.stopRunning()
-            #if self.consoleForm is not None:
-            #    self.consoleForm.close()
+##     def stopApplication(self,app):
+##         self.apps.remove(app)
+##         if len(self.apps) == 0:
+##             self.stopRunning()
+##             #if self.consoleForm is not None:
+##             #    self.consoleForm.close()
     
             
         
@@ -704,11 +707,11 @@ class Toolkit(BaseToolkit):
                 frm.showModal()
                 #return
                 
-    def submit(self,frm):
-        self._submitted.append(frm)
+##     def submit(self,frm):
+##         self._submitted.append(frm)
         
-    def show_form(self,frm):
-        frm.setup(self)
+    def show_form(self,sess,frm):
+        frm.setup(sess)
         frm.onShow()
         self.executeShow(frm)
         return frm.returnValue
@@ -722,29 +725,29 @@ class Toolkit(BaseToolkit):
         #frm.show()
         
 
-    def show_notice(self,app,*args,**kw):
+    def show_notice(self,sess,*args,**kw):
         #assert app.mainForm is not None
         if self._activeForm is not None:
             self._activeForm.status(*args,**kw)
-        else: self.message(app,*args,**kw)
+        else: self.show_message(sess,*args,**kw)
         
     def show_status(self,*args,**kw):
         # overridable forwarding
-        return self.console.status(*args,**kw)
+        return self.root.status(*args,**kw)
 
 
 
-    def show_message(self,msg,*args,**kw):
-        msg=self.buildMessage(msg,*args)
-        return self.show_form(MessageDialog(msg,**kw))
+    def show_message(self,sess,msg,*args,**kw):
+        msg=sess.buildMessage(msg,*args)
+        return self.show_form(sess,MessageDialog(msg,**kw))
         
 ##         frm = sess.form(label="Message")
 ##         frm.addLabel(msg)
 ##         frm.addOkButton()
 ##         frm.showModal()
 
-    def show_confirm(self,*args,**kw):
-        return self.show_form(ConfirmDialog(*args,**kw))
+    def show_confirm(self,sess,*args,**kw):
+        return self.show_form(sess,ConfirmDialog(*args,**kw))
         
 ##         frm = sess.form(label="Confirmation",doc=prompt)
 ##         #frm.addLabel(prompt)
@@ -779,12 +782,12 @@ class Toolkit(BaseToolkit):
         
     
         
-    def critical(self,sess,msg,*args,**kw):
-        raise "not used"
-        if msg is not None:
-            self.error(sess,msg,*args,**kw)
-        sess.close()
-        self.stopRunning()
+##     def critical(self,sess,msg,*args,**kw):
+##         raise "not used"
+##         if msg is not None:
+##             self.error(sess,msg,*args,**kw)
+##         sess.close()
+##         self.stop_running()
 
 ##     def createForm(self,sess,*args,**kw):
 ##         return self.formFactory(self,sess,*args,**kw)
@@ -816,9 +819,11 @@ class Toolkit(BaseToolkit):
         
         
 
-    def running(self):
-        return True
         
+    def running(self):
+        #return self._running # self.wxapp is not None
+        return self.root is not None
+
     def run_forever(self):
         raise NotImplementedError
     
@@ -826,8 +831,12 @@ class Toolkit(BaseToolkit):
         pass
         #raise NotImplementedError
 
-    def stopRunning(self):
+    def stop_running(self):
         pass
+    
+    def start_running(self,app):
+        assert not self.running()
+        self.root=app
         
 
 

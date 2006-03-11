@@ -146,10 +146,14 @@ class Console(BaseToolkit):
     def writeln(self,msg):
         self.stdout.write(msg+"\n")
 
+    def start_running(self,app):
+        if self.isInteractive():
+            app.notice(app.aboutString())
+
             
-    def show_status(self,*args,**kw):
+    def show_status(self,sess,msg=None,*args,**kw):
         if msg is not None:
-            self.show_verbose(*args,**kw)
+            self.show_verbose(sess,msg,*args,**kw)
         
     def show_message(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)

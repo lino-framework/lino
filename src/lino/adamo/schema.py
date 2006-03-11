@@ -42,12 +42,11 @@ class Schema: #(Application):
     defaultLangs = ('en',)
 
     def __init__(self,
-                 toolkit,
                  checkIntegrityOnStartup=False,
                  tempDir=".",
                  langs=None):
         #GuiApplication.__init__(self,**kw)
-        self.toolkit=toolkit
+        #self.toolkit=toolkit
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup
         self._initDone= False
@@ -146,6 +145,8 @@ class Schema: #(Application):
         """ initialize will be called exactly once, after having
         declared all tables of the database.  """
     
+        assert not self._initDone
+        
         if self._initDone:
             return
 
@@ -249,6 +250,8 @@ class Schema: #(Application):
 
 
     def database(self,*args,**kw):
+        assert self._initDone, \
+               "database() before initialize()"
         return center.database(self,*args,**kw)
     
 ##     def addDatabase(self,name=None,**kw): #langs=None,label=None):

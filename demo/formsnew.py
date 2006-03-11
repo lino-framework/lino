@@ -50,6 +50,7 @@ You can trust us.
         
     def cancel(self):
         if self.confirm("This will end our relation. Are you sure?"):
+            print "bla"
             self.close()
 
 if __name__ == '__main__':

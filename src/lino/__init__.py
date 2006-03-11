@@ -34,6 +34,6 @@ distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
 
 from lino import config as m
-config = m
+config = m.config
 
 

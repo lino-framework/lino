@@ -167,18 +167,17 @@ class Store:
         if self._connection.mustCheckTables():
             q = self.query()
             l = len(q)
-            job = sess.ui.job("Checking Table %s : %d rows" % \
-                              q._table.getTableName(),
-                              maxval=l)
-            for row in q:
-                job.increment()
-                msg = row.checkIntegrity()
-                if msg is not None:
-                    job.error("%s[%s] : %s",
-                              q._table.getTableName(),
-                              str(row.getRowId()),
-                              msg)
-            job.done()
+            def f(task):
+                for row in q:
+                    task.increment()
+                    msg = row.checkIntegrity()
+                    if msg is not None:
+                        task.error("%s[%s] : %s",
+                                  q._table.getTableName(),
+                                  str(row.getRowId()),
+                                  msg)
+            sess.loop(f, "Checking Table %s : %d rows" % (
+                q._table.getTableName(),l),maxval=l)
             
         #self._status = self.SST_READY
         

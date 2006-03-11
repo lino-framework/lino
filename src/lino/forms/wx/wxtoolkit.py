@@ -449,8 +449,8 @@ class DataEntry(EntryMixin,toolkit.DataEntry):
 
 class WxApp(wx.App):
 
-    def __init__(self,toolkit):
-        self.toolkit = toolkit
+    def __init__(self,app):
+        self.app = app
         wx.App.__init__(self,0)
 
 
@@ -462,7 +462,7 @@ class WxApp(wx.App):
         # class version in the derived class OnInit().
         
         wx.InitAllImageHandlers()
-        self.toolkit.wxinit()
+        #self.toolkit.wxinit()
         #self.toolkit.showMainForm()
         return True
 
@@ -485,14 +485,14 @@ class Toolkit(toolkit.Toolkit):
     #jobFactory=jobs.Job
     #progresserFactory=Progresser
     
-    def __init__(self,*args,**kw):
-        toolkit.Toolkit.__init__(self,*args,**kw)
-        #self.consoleForm = None
-        #self._setup = False
-        #self._running = False
-        self.applicationBeingRun=None
-        self.wxapp = None
-        #self._activeForm=None
+##     def __init__(self,*args,**kw):
+##         toolkit.Toolkit.__init__(self,*args,**kw)
+##         #self.consoleForm = None
+##         #self._setup = False
+##         #self._running = False
+##         #self.applicationBeingRun=None
+##         self.wxapp = None
+##         #self._activeForm=None
 
 
 
@@ -788,14 +788,10 @@ class Toolkit(toolkit.Toolkit):
 
     
             
-    def running(self):
-        #return self._running # self.wxapp is not None
-        return self.wxapp is not None
-
     def run_awhile(self):
         assert self.running()
-        while self.wxapp.Pending():
-            self.wxapp.Dispatch()
+        while self.root.ctrl.Pending():
+            self.root.ctrl.Dispatch()
 
             #print self.wxctrl.Yield(False)
         #return self._abortRequested
@@ -804,27 +800,32 @@ class Toolkit(toolkit.Toolkit):
 ##         self._setup = True
 ##         self.init()
         
+    def start_running(self,app):
+        toolkit.Toolkit.start_running(self,app)
+        self.root.ctrl = WxApp(self)
+        #wx.EVT_IDLE(self.wxapp, self.onIdle)
+        
     def run_forever(self,*args,**kw):
-        self.args=args
-        self.kw=kw
+        assert self.running()
+        #self.args=args
+        #self.kw=kw
         #if not self._setup:
         #    self.setup()
-        assert not self.running()
+        #assert not self.running()
         #self._running = True
-        self.wxapp = WxApp(self)
-        wx.EVT_IDLE(self.wxapp, self.onIdle)
-        self.wxapp.MainLoop()
+        self.root.ctrl.MainLoop()
 
     #def showMainForm(self):
-    def wxinit(self):
-        for a in self.apps:
-            a.run(*self.args,**self.kw)
-        for frm in self._submitted:
-            self.show_form(frm)
-        #sess.db.app.showMainForm(sess)
+##     def wxinit(self):
+##         raise "no longer used"
+##         for a in self.apps:
+##             a.run(*self.args,**self.kw)
+##         for frm in self._submitted:
+##             self.show_form(frm)
+##         #sess.db.app.showMainForm(sess)
 
         
     
-    def stopRunning(self):
+    def stop_running(self):
         wx.Exit()
         

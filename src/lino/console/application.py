@@ -48,7 +48,7 @@ has chosen a toolkit and who runs some code (usually an application)
         self.user=user
         self.pwd=pwd
         self._ignoreExceptions = []
-        self.toolkit=self.getToolkit()
+        self.toolkit=self.createToolkit()
     
     def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"
@@ -113,6 +113,8 @@ has chosen a toolkit and who runs some code (usually an application)
         return self.toolkit.show_status(self,*args,**kw)
     def logmessage(self,*args,**kw):
         return self.toolkit.logmessage(self,*args,**kw)
+    def showForm(self,*args,**kw):
+        self.toolkit.show_form(self,*args,**kw)
     def showReport(self,*args,**kw):
         return self.toolkit.showReport(self,*args,**kw)
     def textprinter(self,*args,**kw):
@@ -257,7 +259,7 @@ class Application(Session):
 ##         #       repr(toolkit)+" is not a toolkit"
 ##         self.toolkit = toolkit
 
-    def getToolkit(self):
+    def createToolkit(self):
         return syscon.getSystemConsole()
 
 ##     def beginSession(self,*args,**kw):
@@ -288,9 +290,7 @@ class Application(Session):
         try:
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
-            
-            if self.isInteractive():
-                self.notice(self.aboutString())
+            self.toolkit.start_running(self)
             return self.run()
 
         except UsageError,e:

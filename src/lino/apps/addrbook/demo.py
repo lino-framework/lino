@@ -23,10 +23,12 @@
 
 
 import os
-from lino import rtlib_path, adamo
+from lino import config
+from lino.adamo import ddl
 from lino.adamo.datatypes import itod
-from lino.apps.addrbook.addrbook_schema import AddressBookSchema
-from lino.apps.addrbook import tables
+#from lino.apps.addrbook.addrbook_schema import AddressBookSchema, City
+#from lino.apps.addrbook import tables
+from lino.apps import addrbook
 #, City, Nation
 
 def startup(filename=None, langs=None,
@@ -35,7 +37,7 @@ def startup(filename=None, langs=None,
             big=False,
             withDemoData=True,
             **kw):
-    schema=AddressBookSchema(**kw)
+    schema=addrbook.AddressBookSchema(**kw)
     ctx=schema.quickStartup(langs=langs,
                             filename=filename,
                             dump=dump)
@@ -57,7 +59,7 @@ def startup(filename=None, langs=None,
 
 
 
-class StandardPopulator(adamo.Populator):
+class StandardPopulator(ddl.Populator):
     
     #dataRoot=os.path.abspath(os.path.join(
     #    os.path.dirname(__file__),
@@ -67,7 +69,7 @@ class StandardPopulator(adamo.Populator):
     
     def __init__(self, big=False,**kw):
         self.big = big
-        adamo.Populator.__init__(self,None,**kw)
+        ddl.Populator.__init__(self,None,**kw)
         
     def populateUsers(self,q):
         q = q.query('id firstName name')
@@ -78,7 +80,7 @@ class StandardPopulator(adamo.Populator):
     def populateNations(self,q):
         if self.big:
             #q.startDump()
-            q.appendfrom(os.path.join(rtlib_path,
+            q.appendfrom(os.path.join(config.rtlib_path,
                                       "data","nations.txt"))
             #print q.stopDump()
             #q.query("id population area name").appendfrom(
@@ -107,11 +109,12 @@ class StandardPopulator(adamo.Populator):
     def populateCities(self,q):
         if self.big:
             self.deutschland.cities().appendfrom(
-                os.path.join(rtlib_path,"data","cities_de.txt"))
+                os.path.join(config.rtlib_path,
+                             "data","cities_de.txt"))
 
             
             self.belgique.cities().appendfrom(
-                os.path.join(rtlib_path,"data","cities_be.txt"))
+                os.path.join(config.rtlib_path,"data","cities_be.txt"))
 
             #from lino.schemas.sprl.data import cities_de
             #cities_de.populate(q)
@@ -175,18 +178,18 @@ class StandardPopulator(adamo.Populator):
         
 
 
-class DemoPopulator(adamo.Populator):
+class DemoPopulator(ddl.Populator):
     
         
     def populatePartners(self,q):
 
-        cities = q.getSession().query(tables.City)
+        cities = q.getSession().query(addrbook.City)
         self.eupen = cities.findone(name="Eupen")
         self.verviers = cities.findone(name="Verviers")
         self.tallinn = cities.findone(name="Tallinn")
         self.aachen = cities.findone(name="Aachen")
 
-        #nations = q.getSession().query(tables.Nation)
+        #nations = q.getSession().query(Nation)
         #self.belgique = nations.peek('be')
         #self.eesti = nations.peek('ee')
         #self.deutschland = nations.peek('de')

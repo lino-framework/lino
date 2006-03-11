@@ -19,16 +19,6 @@
 import lino
 from lino.console import Application
 
-## _toolkit = None
-
-## def choose(wishlist=None):
-##     #if console is None:
-##     #    console=syscon.getSystemConsole()
-##     global _toolkit
-##     assert _toolkit is None, "cannot choose a second time"
-##     _toolkit=createToolkit(wishlist)
-##     return _toolkit
-    
 def createToolkit(wishlist=None):
 
     if wishlist is None:
@@ -57,6 +47,18 @@ def createToolkit(wishlist=None):
         
     raise "no toolkit found for wishlist %r" % wishlist
 
+
+## _toolkit = None
+
+## def choose(wishlist=None):
+##     #if console is None:
+##     #    console=syscon.getSystemConsole()
+##     global _toolkit
+##     assert _toolkit is None, "cannot choose a second time"
+##     _toolkit=createToolkit(wishlist)
+##     return _toolkit
+    
+
 ## def check():
 ##     if _toolkit is None:
 ##         choose()
@@ -67,14 +69,6 @@ def createToolkit(wishlist=None):
 ##     check()
 ##     _toolkit.startApplication(app)
 ##     _toolkit.run_forever(*args,**kw)
-    
-def show(frm,*args,**kw):
-    toolkit=createToolkit(*args,**kw)
-    #app=GuiApplication(frm)
-    #app.main(*args,**kw)
-    #check()
-    toolkit.submit(frm)
-    toolkit.run_forever(*args,**kw)
     
 ## def run(sess):
 ##     check()
@@ -107,7 +101,7 @@ class GuiApplication(Application):
         Application.__init__(self,*args,**kw)
     
 
-    def getToolkit(self):
+    def createToolkit(self):
         return createToolkit(wishlist=self.wishlist)
     
 ##     def main(self,*args,**kw):
@@ -118,8 +112,18 @@ class GuiApplication(Application):
     def run(self,*args,**kw):
         if self.mainForm is None:
             self.mainForm=self.mainFormClass(*args,**kw)
-        return self.toolkit.show_form(self.mainForm)
+        self.showForm(self.mainForm)
+        self.toolkit.run_forever()
         
 
 
+def show(frm):#,*args,**kw):
+    app=GuiApplication(frm)
+    #toolkit=createToolkit(*args,**kw)
+    #app.main(*args,**kw)
+    #check()
+    app.main()
+    #toolkit.submit(frm)
+    #toolkit.run_forever(*args,**kw)
+    
 

@@ -260,7 +260,7 @@ REPORTS = (NationsReport, CitiesReport, OrganisationsReport,
            PartnerTypesReport)
 
 
-__all__ = [t.__name__ for t in AddressBook.tableClasses]
+__all__ = [t.__name__ for t in AddressBookSchema.tableClasses]
 #__all__.append('TABLES')
 
 __all__ += [t.__name__ for t in REPORTS]

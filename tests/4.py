@@ -21,7 +21,7 @@
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import *
+from lino.apps.addrbook import *
 
 
 class Case(TestCase):

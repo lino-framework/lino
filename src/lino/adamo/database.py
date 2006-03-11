@@ -105,11 +105,14 @@ class Database(Context,Describable):
         #return self.memoParser.html
 
         
-    def getStore(self,leadTable):
+    def getStore(self,tcl):
         try:
-            return self._stores[leadTable]
+            return self._stores[tcl]
         except KeyError,e:
-            raise InvalidRequestError("no such table: "+repr(leadTable))
+            raise InvalidRequestError(
+                "No Store for %s in (%s)" %
+                (tcl,', '.join([str(tcl) for tcl in
+                                self._stores.keys()])))
     
     
     def getStoresById(self):
@@ -130,7 +133,7 @@ class Database(Context,Describable):
             #if not self._stores.has_key(t.__class__):
                 #self._stores[t.__class__] = Store(conn,self,t)
 
-    def startup(self,s):
+    def startup(self,dbc):
     #def startup(self,sess=None):
         #print "%s.startup()" % self.__class__
         #if ui is None:

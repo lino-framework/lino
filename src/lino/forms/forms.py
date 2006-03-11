@@ -23,7 +23,6 @@ from lino.misc.attrdict import AttrDict
 from lino.gendoc.gendoc import GenericDocument
 
 from lino.adamo.exceptions import InvalidRequestError
-#from lino.forms.toolkit import Application
 
 VERTICAL = 1
 HORIZONTAL = 2
@@ -32,7 +31,7 @@ YES=True
 NO=False
 
 
-class MenuContainer:
+class MenuContainer2:
     def __init__(self):
         self.menuBar = None
         self._menuController = None
@@ -181,7 +180,7 @@ class Container:
 
 
 #class Form(Describable,MenuContainer):
-class Form(MenuContainer,Container):
+class Form(MenuContainer2,Container):
     
     title=None
     modal=False
@@ -195,7 +194,7 @@ class Form(MenuContainer,Container):
         #Describable.__init__(self,None,*args,**kw)
         #assert isinstance(app,Application)
         #assert app.mainForm is not None
-        MenuContainer.__init__(self)
+        MenuContainer2.__init__(self)
         #self.app=app
         if title is not None:
             self.title=title
@@ -216,6 +215,7 @@ class Form(MenuContainer,Container):
 
 
     def setup(self,sess):
+        assert self.session is None
         self.session=sess
         self.toolkit=sess.toolkit
         self.mainComp = sess.toolkit.panelFactory(self, VERTICAL)
@@ -267,9 +267,6 @@ class Form(MenuContainer,Container):
     def getForm(self):
         return self
 
-    def show_form(self,frm):
-        self.toolkit.show_form(frm)
-
 
     def setupMenu(self):
         if self._menuController is not None:
@@ -308,13 +305,15 @@ class Form(MenuContainer,Container):
         self.toolkit.closeForm(self,evt)
         self.ctrl=None
     
-    
+    # just forward to self.session:
+    def show_form(self,frm):
+        return self.session.show_form(frm)
     def notice(self,*args,**kw):
-        return self.toolkit.notice(*args,**kw)
+        return self.session.notice(*args,**kw)
     def message(self,*args,**kw):
-        return self.toolkit.message(*args,**kw)
+        return self.session.message(*args,**kw)
     def confirm(self,*args,**kw):
-        return self.toolkit.confirm(*args,**kw)
+        return self.session.confirm(*args,**kw)
             
 ##     def render(self,doc):
 ##         self.mainComp.render(doc)
