@@ -19,34 +19,6 @@
 import lino
 from lino.console import Application
 
-def createToolkit(wishlist=None):
-
-    if wishlist is None:
-        wishlist=lino.config.get('forms','wishlist')
-    
-    for tkname in wishlist.split():
-        #print tkname
-        if tkname == "tix": 
-            from lino.forms.tix.tixform import Toolkit
-            return Toolkit()
-        if tkname == "wx": 
-            from lino.forms.wx.wxtoolkit import Toolkit
-            return Toolkit()
-        if tkname == "testkit": 
-            from lino.forms.testkit import Toolkit
-            return Toolkit()
-        if tkname == "console": 
-            from lino.forms.console import Toolkit
-            return Toolkit()
-        if tkname == "cherrypy": 
-            from lino.forms.cherrygui import Toolkit
-            return Toolkit()
-        if tkname == "htmlgen":
-            from lino.console.htmlgen_toolkit import Toolkit
-            return Toolkit()
-        
-    raise "no toolkit found for wishlist %r" % wishlist
-
 
 ## _toolkit = None
 
@@ -102,8 +74,33 @@ class GuiApplication(Application):
     
 
     def createToolkit(self):
-        return createToolkit(wishlist=self.wishlist)
-    
+        wishlist=self.wishlist
+        if wishlist is None:
+            wishlist=lino.config.get('forms','wishlist')
+
+        for tkname in wishlist.split():
+            #print tkname
+            if tkname == "tix": 
+                from lino.forms.tix.tixform import Toolkit
+                return Toolkit()
+            if tkname == "wx": 
+                from lino.forms.wx.wxtoolkit import Toolkit
+                return Toolkit()
+            if tkname == "testkit": 
+                from lino.forms.testkit import Toolkit
+                return Toolkit()
+            if tkname == "console": 
+                from lino.forms.console import Toolkit
+                return Toolkit()
+            if tkname == "cherrypy": 
+                from lino.forms.cherrygui import Toolkit
+                return Toolkit()
+            if tkname == "htmlgen":
+                from lino.console.htmlgen_toolkit import Toolkit
+                return Toolkit()
+
+        raise "no toolkit found for wishlist %r" % wishlist
+
 ##     def main(self,*args,**kw):
 ##         kw['toolkit']=createToolkit(wishlist=self.wishlist)
 ##         Application.main(self,*args,**kw)
@@ -117,13 +114,13 @@ class GuiApplication(Application):
         
 
 
-def show(frm):#,*args,**kw):
-    app=GuiApplication(frm)
-    #toolkit=createToolkit(*args,**kw)
-    #app.main(*args,**kw)
-    #check()
-    app.main()
-    #toolkit.submit(frm)
-    #toolkit.run_forever(*args,**kw)
+## def show(frm):#,*args,**kw):
+##     app=GuiApplication(frm)
+##     #toolkit=createToolkit(*args,**kw)
+##     #app.main(*args,**kw)
+##     #check()
+##     app.main()
+##     #toolkit.submit(frm)
+##     #toolkit.run_forever(*args,**kw)
     
 

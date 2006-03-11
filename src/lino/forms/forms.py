@@ -23,6 +23,7 @@ from lino.misc.attrdict import AttrDict
 from lino.gendoc.gendoc import GenericDocument
 
 from lino.adamo.exceptions import InvalidRequestError
+from lino.forms.gui import GuiApplication
 
 VERTICAL = 1
 HORIZONTAL = 2
@@ -314,6 +315,11 @@ class Form(MenuContainer2,Container):
         return self.session.message(*args,**kw)
     def confirm(self,*args,**kw):
         return self.session.confirm(*args,**kw)
+
+    def main(self,*args,**kw):
+        app=GuiApplication(self)
+        app.main(*args,**kw)
+        
             
 ##     def render(self,doc):
 ##         self.mainComp.render(doc)

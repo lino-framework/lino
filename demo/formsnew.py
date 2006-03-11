@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.forms import gui, Form
+from lino.forms import Form
 
 class MyForm(Form):
     
@@ -54,4 +54,4 @@ You can trust us.
             self.close()
 
 if __name__ == '__main__':
-    gui.show(MyForm())
+    MyForm().main()
