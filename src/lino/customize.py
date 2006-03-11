@@ -41,18 +41,28 @@ setlocalencoding()
 # http://pythonfacile.free.fr/python/unicode.html
 # http://www.faqs.org/docs/diveintopython/kgp_unicode.html
 
-def setlocalencoding(encoding='cp850'):
-    if not hasattr(sys,'setdefaultencoding'):
-        return
+## def setlocalencoding(encoding='cp850'):
+##     if not hasattr(sys,'setdefaultencoding'):
+##         return
+##     import locale
+##     loc = locale.getdefaultlocale()
+##     if loc[1]:
+##         print 'yes'
+##         encoding=loc[1]
+##     if sys.getdefaultencoding() != encoding:
+##         #print "sys.setdefaultencoding(%s)" % repr(loc[1])
+##         print "setting defaultencoding from", \
+##               sys.getdefaultencoding(),"to",encoding
+##         sys.setdefaultencoding(encoding)
+
+def setlocalencoding():
+    if sys.getdefaultencoding() != 'ascii': return
+    if not hasattr(sys,'setdefaultencoding'): return
     import locale
     loc = locale.getdefaultlocale()
-    if loc[1]:
-        print 'yes'
-        encoding=loc[1]
-    if sys.getdefaultencoding() != encoding:
-        #print "sys.setdefaultencoding(%s)" % repr(loc[1])
+    if loc[1] and sys.getdefaultencoding() != loc[1]:
         print "setting defaultencoding from", \
-              sys.getdefaultencoding(),"to",encoding
+              sys.getdefaultencoding(),"to",loc[1]
         sys.setdefaultencoding(loc[1])
 
 
