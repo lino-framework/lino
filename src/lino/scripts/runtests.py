@@ -25,9 +25,9 @@ from lino.misc import tsttools
 from lino.misc.my_import import my_import
 
 from lino.console import Application
-
-from lino.forms import gui
-gui.choose("testkit")
+from lino.console import syscon
+from lino.forms.testkit import Toolkit
+#gui.choose("testkit")
 
 class StoppingTestResult(unittest._TextTestResult):
 
@@ -46,7 +46,6 @@ class StoppingTestRunner(unittest.TextTestRunner):
 
 
 class Runtests(Application):
-
     name="Lino/runtests"
     #years='2004-2005'
     #author='Luc Saffre'
@@ -64,6 +63,9 @@ scans a directory tree for .py files containing test cases and run
 them.  TESTS specifies the tests to run. Default is all. Other
 possible values e.g. `1` or `1-7`.
 """
+    def getToolkit(self):
+        return Toolkit(syscon.getSystemConsole())
+    
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
     

@@ -211,13 +211,14 @@ class Form(MenuContainer,Container):
         self._boxes = []
         self.lastEvent = None
         self.ctrl=None
-        self.toolkit=None
+        self.session=None
         self.mainComp=None
 
 
-    def setup(self,toolkit):
-        self.toolkit=toolkit
-        self.mainComp = toolkit.panelFactory(self, VERTICAL)
+    def setup(self,sess):
+        self.session=sess
+        self.toolkit=sess.toolkit
+        self.mainComp = sess.toolkit.panelFactory(self, VERTICAL)
 ##         for m in ('addLabel','addViewer',
 ##                   'addEntry', 'addDataEntry',
 ##                   'addDataGrid','addNavigator',
@@ -232,10 +233,9 @@ class Form(MenuContainer,Container):
             
         if self.__doc__ is not None:
             self.addLabel(self.__doc__)
-            
-        self.setupMenu()
         
         self.setupForm()
+        self.setupMenu()
         self.mainComp.setup()
         self.ctrl = self.toolkit.createFormCtrl(self)
         
@@ -266,6 +266,9 @@ class Form(MenuContainer,Container):
 
     def getForm(self):
         return self
+
+    def show_form(self,frm):
+        self.toolkit.show_form(frm)
 
 
     def setupMenu(self):
@@ -328,9 +331,9 @@ class Form(MenuContainer,Container):
 
 class MemoViewer(Form):
     title="Text Editor"
-    def __init__(self,app,txt,**kw):
-        Form.__init__(self,app,**kw)
+    def __init__(self,txt,**kw):
         self.txt=txt
+        Form.__init__(self,**kw)
                     
     def setupForm(self):
         self.addEntry(
@@ -353,23 +356,27 @@ class DbMainForm(Form):
     
     schemaClass=NotImplementedError
     
-    def __init__(self,dbc,*args,**kw):
-        if dbc is None:
-            dbc=self.schemaClass().quickStartup()
-        else:
-            assert isinstance(dbc.db.schema,self.schemaClass),\
-                   "%s is not a %s" % (dbc.db.schema,self.schemaClass)
+    def __init__(self,dbsess,*args,**kw):
+        if dbsess is not None:
+            assert isinstance(dbsess.db.schema,self.schemaClass),\
+                   "%s is not a %s" % (dbsess.db.schema,
+                                       self.schemaClass)
             
-        self.dbc=dbc
+        self.dbsess=dbsess
         Form.__init__(self,*args,**kw)
+
+    def setupForm(self):
+        if self.dbsess is None:
+            self.dbsess=self.schemaClass(self.toolkit).quickStartup()
 
     def addProgramMenu(self):
         m = self.addMenu("app","&Programm")
         m.addItem("logout",label="&Beenden",
                   action=self.close)
-##         m.addItem("about",label="Inf&o").setHandler(
-##             lambda : self.dbc.message(
-##             self.dbc.app.aboutString(), title="About"))
+        if self.dbsess.app is not None:
+            m.addItem("about",label="Inf&o").setHandler(
+                lambda : self.dbsess.message(
+                self.dbsess.app.aboutString(), title="About"))
 
         def bugdemo(task):
             for i in range(5,0,-1):
@@ -380,28 +387,28 @@ class DbMainForm(Form):
             
         
         m.addItem("bug",label="&Bug demo").setHandler(
-            self.toolkit.loop,bugdemo,"Bug demo")
+            self.dbsess.loop,bugdemo,"Bug demo")
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
     
     
     def onClose(self):
-        self.dbc.close()
+        self.dbsess.close()
 
     def getTitle(self):
-        return str(self.dbc)
+        return str(self.dbsess)
     
 
     def addReportItem(self,menu,name,rptclass,label=None,**kw):
-        rpt=self.dbc.createReport(rptclass)
+        rpt=self.dbsess.createReport(rptclass)
         if label is None: label=rpt.getTitle()
         mi=menu.addItem(name,label=label,**kw)
         mi.setHandler(self.toolkit.showReport,rpt)
 
     
-    def showViewGrid(self,tc,*args,**kw):
-        rpt=self.getViewReport(tc,*args,**kw)
-        return self.toolkit.showReport(rpt)
+##     def showViewGrid(self,tc,*args,**kw):
+##         rpt=self.getViewReport(tc,*args,**kw)
+##         return self.toolkit.showReport(rpt)
     
     def showDataForm(self,rpt,**kw):
         rpt.showFormNavigator(self,**kw)
@@ -427,7 +434,7 @@ class DbMainForm(Form):
         
 
     def showQuery(self,qry,*args,**kw):
-        rpt=self.createQueryReport(qry,*args,**kw)
+        rpt=self.dbsess.createQueryReport(qry,*args,**kw)
         self.toolkit.showReport(rpt)
 
 ##     def report(self,*args,**kw):

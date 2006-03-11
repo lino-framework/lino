@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -25,7 +25,7 @@
 import os
 from lino import rtlib_path, adamo
 from lino.adamo.datatypes import itod
-from lino.apps.addrbook.addrbook import AddressBook
+from lino.apps.addrbook.addrbook_schema import AddressBookSchema
 from lino.apps.addrbook import tables
 #, City, Nation
 
@@ -35,15 +35,15 @@ def startup(filename=None, langs=None,
             big=False,
             withDemoData=True,
             **kw):
-    app=AddressBook(**kw)
-    dbc=app.quickStartup(langs=langs,
-                         filename=filename,
-                         dump=dump)
+    schema=AddressBookSchema(**kw)
+    ctx=schema.quickStartup(langs=langs,
+                            filename=filename,
+                            dump=dump)
     if populate:
-        dbc.populate(StandardPopulator(big=big,
+        ctx.populate(StandardPopulator(big=big,
                                        label="Standard"))
         if withDemoData:
-            dbc.populate(DemoPopulator(label="StandardDemo"))
+            ctx.populate(DemoPopulator(label="StandardDemo"))
 
 ##     if populate:
 ##         if withDemoData:
@@ -53,7 +53,7 @@ def startup(filename=None, langs=None,
 ##             sess.populate(Populator(big=big,
 ##                                     label="Standard"))
 
-    return dbc
+    return ctx
 
 
 

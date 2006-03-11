@@ -34,6 +34,8 @@ __docformat__ = 'reStructuredText'
 from lino.forms.forms import Form, VERTICAL, HORIZONTAL, \
      YES, NO, MessageDialog, ConfirmDialog, ReportForm, DbMainForm
 
+from lino.forms.gui import GuiApplication
+
 #from lino.forms.toolkit import Application
 
 

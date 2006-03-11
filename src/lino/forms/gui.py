@@ -17,54 +17,50 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import lino
-from lino.console import syscon
+from lino.console import Application
 
-_toolkit = None
+## _toolkit = None
 
+## def choose(wishlist=None):
+##     #if console is None:
+##     #    console=syscon.getSystemConsole()
+##     global _toolkit
+##     assert _toolkit is None, "cannot choose a second time"
+##     _toolkit=createToolkit(wishlist)
+##     return _toolkit
+    
+def createToolkit(wishlist=None):
 
-def choose(wishlist=None):
     if wishlist is None:
         wishlist=lino.config.get('forms','wishlist')
-    #if console is None:
-    #    console=syscon.getSystemConsole()
-        
-    global _toolkit
     
-    assert _toolkit is None, "cannot choose a second time"
     for tkname in wishlist.split():
-        print tkname
+        #print tkname
         if tkname == "tix": 
             from lino.forms.tix.tixform import Toolkit
-            _toolkit = Toolkit()
-            return _toolkit
+            return Toolkit()
         if tkname == "wx": 
             from lino.forms.wx.wxtoolkit import Toolkit
-            _toolkit = Toolkit()
-            return _toolkit
+            return Toolkit()
         if tkname == "testkit": 
             from lino.forms.testkit import Toolkit
-            _toolkit = Toolkit()
-            return _toolkit
+            return Toolkit()
         if tkname == "console": 
             from lino.forms.console import Toolkit
-            _toolkit = Toolkit()
-            return _toolkit
+            return Toolkit()
         if tkname == "cherrypy": 
             from lino.forms.cherrygui import Toolkit
-            _toolkit = Toolkit()
-            return _toolkit
-        
+            return Toolkit()
         if tkname == "htmlgen":
             from lino.console.htmlgen_toolkit import Toolkit
-            #from lino.forms.cherrypy import Toolkit
-            _toolkit = Toolkit()
-            return _toolkit
-    raise "no toolkit found"
+            return Toolkit()
+        
+    raise "no toolkit found for wishlist %r" % wishlist
 
-def check():
-    if _toolkit is None:
-        choose()
-        #GuiConsole(toolkit=_toolkit)
+## def check():
+##     if _toolkit is None:
+##         choose()
+##         #GuiConsole(toolkit=_toolkit)
 
     
 ## def run(app,*args,**kw):
@@ -73,9 +69,12 @@ def check():
 ##     _toolkit.run_forever(*args,**kw)
     
 def show(frm,*args,**kw):
-    check()
-    _toolkit.submit(frm)
-    _toolkit.run_forever(*args,**kw)
+    toolkit=createToolkit(*args,**kw)
+    #app=GuiApplication(frm)
+    #app.main(*args,**kw)
+    #check()
+    toolkit.submit(frm)
+    toolkit.run_forever(*args,**kw)
     
 ## def run(sess):
 ##     check()
@@ -95,4 +94,32 @@ def show(frm,*args,**kw):
 ##     syscon._session.app = app
 ##     _toolkit.run_forever(syscon._session)
     
+
+class GuiApplication(Application):
+    wishlist="wx"
+    mainFormClass=None
+
+    def __init__(self,mainForm=None,*args,**kw):
+        if mainForm is None:
+            assert self.mainFormClass is not None
+            
+        self.mainForm=mainForm
+        Application.__init__(self,*args,**kw)
+    
+
+    def getToolkit(self):
+        return createToolkit(wishlist=self.wishlist)
+    
+##     def main(self,*args,**kw):
+##         kw['toolkit']=createToolkit(wishlist=self.wishlist)
+##         Application.main(self,*args,**kw)
+
+        
+    def run(self,*args,**kw):
+        if self.mainForm is None:
+            self.mainForm=self.mainFormClass(*args,**kw)
+        return self.toolkit.show_form(self.mainForm)
+        
+
+
 

@@ -22,6 +22,7 @@ from lino.adamo import InvalidRequestError
 #from lino.forms.session import Session
 #from lino.adamo import center
 from lino.adamo.dbreports import QueryReport
+#from lino.console.console import Session
 
 class BabelLang:
     def __init__(self,index,id):
@@ -34,7 +35,8 @@ class BabelLang:
 
 
 class Context:
-    "interface implemented by DbSession and Database"
+    "interface implemented by DbContext and Database"
+    
     def getBabelLangs(self):
         raise NotImplementedError
 
@@ -48,13 +50,12 @@ class Context:
         return False
     
 class DbContext(Context):
-    def __init__(self,db,user=None,pwd=None):
+    def __init__(self,db,*args,**kw):
+        #Session.__init__(self,toolkit,*args,**kw)
         #self.app=app
         self.db = db
-        self.user=user
-        self.pwd=pwd
         self.setDefaultLanguage()
-        db.addSession(self)
+        db.addContext(self)
         
     
     def setDefaultLanguage(self):
@@ -63,9 +64,6 @@ class DbContext(Context):
     def __str__(self):
         return "%s on %s" % (self.user,self.db)
         
-    def hasAuth(self,*args,**kw):
-        return True
-            
     def setBabelLangs(self,langs):
         
         """langs is a string containing a space-separated list of babel
@@ -115,7 +113,7 @@ class DbContext(Context):
 
     def close(self):
         #self.db.removeSession(self.session)
-        self.db.removeSession(self)
+        self.db.removeContext(self)
         #self.session.close()
         #self.app.close()
         
@@ -168,19 +166,6 @@ class DbContext(Context):
     def onLogin(self):
         return self.db.schema.onLogin(self)
     
-    def getUser(self):
-        return self._user
-
-    def login(self,user):
-        if self._user is not None:
-            self.logout()
-        self._user = user
-        
-    def logout(self):
-        assert self._user is not None
-        self._user = None
-
-
     def getViewReport(self,tc,viewName="std",**kw):
         raise "should be replaced"
         qry = self.query(tc)

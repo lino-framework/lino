@@ -43,7 +43,11 @@ class UserAborted(Exception):
 class OperationFailed(Exception):
     pass
 
+class UsageError(Exception):
+    pass
 
+class ApplicationError(Exception):
+    pass
     
 
 __all__ = [

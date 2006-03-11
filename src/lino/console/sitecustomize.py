@@ -40,18 +40,17 @@ from lino.console import sitecustomize
 # http://www.faqs.org/docs/diveintopython/kgp_unicode.html
 
 if hasattr(sys,'setdefaultencoding'):
+    encoding='cp850'
     import locale
     loc = locale.getdefaultlocale()
     if loc[1]:
+        encoding=loc[1]
+    if sys.getdefaultencoding() != encoding:
         #print "sys.setdefaultencoding(%s)" % repr(loc[1])
+        print "sitecustomize.py sets defaultencoding from", \
+              sys.getdefaultencoding(),"to",encoding
         sys.setdefaultencoding(loc[1])
     
-    else:
-        encoding = 'cp850'
-        #encoding = 'iso-8859-1'
-        print "sitecustomize sets default encoding to ",encoding
-        sys.setdefaultencoding(encoding)
-
 
 #print sys.getdefaultencoding()
 #sys.stdout=rewriter(sys.stdout)

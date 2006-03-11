@@ -70,6 +70,6 @@ if not sys.argv[1] in scripts.__all__:
     sys.exit(-1)
 
 mod = my_import("lino.scripts." + sys.argv[1])
-sys.exit(syscon.run(mod.consoleApplicationClass(),sys.argv[2:]))
+sys.exit(mod.consoleApplicationClass().main(sys.argv[2:]))
 #app = mod.consoleApplicationClass()
 #sys.exit(app.main(sys.argv[2:]))

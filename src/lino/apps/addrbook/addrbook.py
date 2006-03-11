@@ -16,10 +16,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.forms import DbMainForm
-from lino.console import Application
 
-from lino.apps.addrbook.tables import *
+from lino.apps.addrbook.addrbook_schema import *
+from lino.forms import DbMainForm, GuiApplication
 
 class MyMainForm(DbMainForm):
     
@@ -28,7 +27,7 @@ Welcome to AddressBook, a Lino Forms Application for
 demonstration purposes.
 """
     
-    schemaClass=AddressBook
+    schemaClass=AddressBookSchema
     
     def setupMenu(self):
         m = self.addMenu("master","&Master")
@@ -43,4 +42,4 @@ demonstration purposes.
         
         self.addProgramMenu()
     
-class
+

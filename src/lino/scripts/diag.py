@@ -21,7 +21,7 @@ import sys
 import os
 import locale
 
-from lino.console import syscon, Application
+from lino.console.application import Application, UsageError
 
 def diag(out):
 
@@ -32,7 +32,7 @@ Some sentences in different languages:
     Cède à César les pâturages reçues.
     Tõesti, ma ütlen teile, see ei ole ükskõik.
 
-Overview table with all accented characters:
+Overview table with some accented characters:
     
         A E I O U   a e i o u            
     ¨   Ä \xcb Ï Ö Ü   ä ë ï ö ü
@@ -98,7 +98,7 @@ writes some diagnostics about your computer.
     
     def run(self):
         if len(self.args) != 0:
-            raise syscon.UsageError("no arguments please")
+            raise UsageError("no arguments please")
         #diag(sys.stdout)
         diag(self.toolkit.stdout)
         self.message("")
@@ -107,7 +107,8 @@ writes some diagnostics about your computer.
 consoleApplicationClass = Diag
 
 if __name__ == '__main__':
-    syscon.run(consoleApplicationClass())
+    #syscon.run(consoleApplicationClass())
+    consoleApplicationClass().main()
     
         
 

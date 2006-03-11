@@ -820,7 +820,7 @@ class Toolkit(toolkit.Toolkit):
         for a in self.apps:
             a.run(*self.args,**self.kw)
         for frm in self._submitted:
-            self.show(frm)
+            self.show_form(frm)
         #sess.db.app.showMainForm(sess)
 
         

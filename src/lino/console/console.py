@@ -45,6 +45,7 @@ from lino.console.task import Task
 def rewriter(from_encoding,to_stream,encoding):
     if encoding is None:
         encoding=to_stream.encoding
+    print 'rewriter(%r,%r)' % (from_encoding, encoding)
     if encoding is None: return to_stream
     if encoding == from_encoding: return to_stream
 
@@ -67,31 +68,11 @@ def rewriter(from_encoding,to_stream,encoding):
     return StreamRewriter(unicode_to_fs)
 
 
-
-class AbstractToolkit:
-    
-    
-    def isInteractive(self):
-        return True
-
-    def setupOptionParser(self,p):
-        pass
-
-    def abortRequested(self):
-        return False
-
-    def loop(self,func,label,maxval=0,*args,**kw):
-        "run func with a progressbar"
-        task=Task(self,label,maxval)
-        task.loop(func,*args,**kw)
-        return task
-    
+class BaseToolkit:
+    pass
 
 
-    
-
-            
-class Console(AbstractToolkit):
+class Console(BaseToolkit):
 
     def __init__(self, stdout, stderr, encoding=None,**kw):
         self._verbosity = 0
@@ -101,12 +82,6 @@ class Console(AbstractToolkit):
         self.redirect(stdout,stderr,encoding)
         self.configure(**kw)
 
-    def buildMessage(self,msg,*args,**kw):
-        assert len(kw) == 0, "kwargs not yet implemented"
-        if len(args) == 0:
-            return msg
-        return msg % args
-    
     def redirect(self,stdout,stderr,encoding=None):
         assert hasattr(stdout,'write')
         assert hasattr(stderr,'write')
@@ -172,11 +147,12 @@ class Console(AbstractToolkit):
         self.stdout.write(msg+"\n")
 
             
-    def status(self,*args,**kw):
+    def show_status(self,*args,**kw):
         if msg is not None:
-            self.verbose(*args,**kw)
+            self.show_verbose(*args,**kw)
         
-    def message(self,msg):
+    def show_message(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
         #if sound:
         #    sound.asterisk()
         self.writeln(msg)
@@ -185,7 +161,7 @@ class Console(AbstractToolkit):
             self.readkey("Press ENTER to continue...")
 
             
-    def confirm(self,prompt,default=True):
+    def show_confirm(self,sess,prompt,default=True):
         """Ask user a yes/no question and return only when she has
         given her answer. returns True or False.
         
@@ -210,12 +186,13 @@ class Console(AbstractToolkit):
                 return True
             if s == "n":
                 return False
-            self.notice("wrong answer, must be 'y' or 'n': "+s)
+            self.show_notice(sess,
+                             "wrong answer, must be 'y' or 'n': "+s)
             
 
-    def decide(self,prompt,answers,
-               dfault=None,
-               ignoreCase=True):
+    def show_decide(self,sess,prompt,answers,
+                    dfault=None,
+                    ignoreCase=True):
         
         """Ask user a question and return only when she has given her
         answer. Returns the index of chosen answer or -1 if user
@@ -243,13 +220,13 @@ class Console(AbstractToolkit):
 
 
             
-    def error(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
+    def show_error(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
         self.stderr.write(msg + "\n")
         self.logmessage(msg)
 
     def critical(self,msg,*args,**kw):
-        "Something terrible has happened..."
+        raise "Something terrible has happened..."
         #self.writelog(msg)
         #if sound:
         #    sound.asterisk()
@@ -263,31 +240,31 @@ class Console(AbstractToolkit):
             print details
         raise
 
-    def warning(self,msg,*args,**kw):
+    def show_warning(self,sess,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
-        msg = self.buildMessage(msg,*args,**kw)
+        msg = sess.buildMessage(msg,*args,**kw)
         self.logmessage(msg)
         #self.writelog(msg)
         if self._verbosity >= 0:
             self.writeln(msg)
 
-    def notice(self,msg,*args,**kw):
+    def show_notice(self,sess,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
         if self._verbosity >= 0:
-            msg = self.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args,**kw)
             self.logmessage(msg)
             self.writeln(msg)
 
-    def verbose(self,msg,*args,**kw):
+    def show_verbose(self,sess,msg,*args,**kw):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
-            msg = self.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args,**kw)
             self.writeln(msg)
         
-    def debug(self,msg,*args,**kw):
+    def show_debug(self,sess,msg,*args,**kw):
         "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
-            msg = self.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args,**kw)
             self.writeln(msg)
             #self.out.write(msg + "\n")
 
@@ -476,7 +453,7 @@ class Console(AbstractToolkit):
         gd.endDocument()
     
 
-    def showForm(self,frm):
+    def show_form(self,frm):
         from lino.gendoc.plain import PlainDocument
         #gd = PlainDocument()
         gd = PlainDocument(self.stdout)

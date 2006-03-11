@@ -49,20 +49,20 @@ class Database(Context,Describable):
 
         self.schema = schema
         self._stores = {}
-        self._sessions=[]
+        self._contexts=[]
         self._connections=[]
-        self._startupSession=None
+        self._startupContext=None
 
 
-    def addSession(self,s):
-        self._sessions.append(s)
-        if len(self._sessions) == 1:
+    def addContext(self,s):
+        self._contexts.append(s)
+        if len(self._contexts) == 1:
             self.startup(s)
         
 
-    def removeSession(self,s):
-        self._sessions.remove(s)
-        #if len(self._sessions) == 0:
+    def removeContext(self,s):
+        self._contexts.remove(s)
+        #if len(self._contexts) == 0:
         #    self.close()
         
     def populate(self,sess,p):
@@ -130,6 +130,31 @@ class Database(Context,Describable):
             #if not self._stores.has_key(t.__class__):
                 #self._stores[t.__class__] = Store(conn,self,t)
 
+    def startup(self,s):
+    #def startup(self,sess=None):
+        #print "%s.startup()" % self.__class__
+        #if ui is None:
+        #    ui = syscon.getSystemConsole()
+        #sess=center.openSession(syscon.getSystemConsole())
+        assert self._startupContext is None,\
+                 "Cannot startup() again " + repr(self)
+        #if toolkit is None:
+        #    toolkit=syscon.getSystemConsole()
+
+        #if sess is None:
+        #    sess=syscon._session
+        #if toolkit is None:
+        #    toolkit=syscon.getSystemConsole()
+            
+        #sess=DbSession(self,toolkit)
+        for store in self.getStoresById():
+            store.onStartup()
+                
+        self._startupContext=dbc
+        
+    def getContext(self):
+        return DbContext(self)
+        
 
     def getContentRoot(self):
         return self.schema.getContentRoot(self)
@@ -189,30 +214,6 @@ class Database(Context,Describable):
 ##          self.__dict__['conn'] = conn
 
 
-    def startup(self,dbc):
-    #def startup(self,sess=None):
-        #print "%s.startup()" % self.__class__
-        #if ui is None:
-        #    ui = syscon.getSystemConsole()
-        #sess=center.openSession(syscon.getSystemConsole())
-        assert self._startupSession is None,\
-                 "Cannot startup() again " + repr(self)
-        #if toolkit is None:
-        #    toolkit=syscon.getSystemConsole()
-
-        #if sess is None:
-        #    sess=syscon._session
-        #if toolkit is None:
-        #    toolkit=syscon.getSystemConsole()
-            
-        #sess=DbSession(self,toolkit)
-        for store in self.getStoresById():
-            store.onStartup()
-                
-        self._startupSession=dbc
-        #return DbContext(app,self)
-        
-
     def commit(self,sess):
         for store in self.getStoresById():
             store.commit(sess)
@@ -229,7 +230,7 @@ class Database(Context,Describable):
             store.close()
         self._stores = {}
         #self._startupSession.close()
-        self._startupSession=None
+        self._startupContext=None
             
         
     def shutdown(self):

@@ -42,10 +42,12 @@ class Schema: #(Application):
     defaultLangs = ('en',)
 
     def __init__(self,
+                 toolkit,
                  checkIntegrityOnStartup=False,
                  tempDir=".",
                  langs=None):
         #GuiApplication.__init__(self,**kw)
+        self.toolkit=toolkit
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup
         self._initDone= False
@@ -285,8 +287,7 @@ class Schema: #(Application):
             #conn.startDump(self.console.stdout)
             assert hasattr(dump,'write')
             conn.startDump(dump)
-        #return db.startup(self,**kw)
-        return DbContext(db)
+        return DbContext(db,**kw)
     
 ##     def run(self,dbc=None):
 ##         if dbc is None:

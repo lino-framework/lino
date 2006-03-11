@@ -17,7 +17,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.console import Application
 from lino.forms import gui, Form
 
 class MyForm(Form):
@@ -53,10 +52,5 @@ You can trust us.
         if self.confirm("This will end our relation. Are you sure?"):
             self.close()
 
-class MyApplication(Application):
-
-    def run(self):
-        MyForm(self).show()
-    
 if __name__ == '__main__':
-    gui.run(MyApplication())
+    gui.show(MyForm())

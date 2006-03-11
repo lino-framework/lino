@@ -22,7 +22,7 @@ from cStringIO import StringIO
 
 from lino.misc.descr import Describable
 from lino.adamo.datatypes import STRING, MEMO
-from lino.console.console import AbstractToolkit # import Application
+from lino.console.console import BaseToolkit # import Application
 #from lino.console.session import Session
 from lino.gendoc.gendoc import GenericDocument
 
@@ -335,15 +335,7 @@ class ReportMixin:
             #from cStringIO import StringIO
             out = StringIO()
             self.rpt.__xml__(out.write)
-            
-            class MemoViewer(Form):
-                title="Text Editor"
-                def setupForm(self):
-                    self.addEntry(
-                        type=MEMO(width=80,height=10),
-                        value=out.getvalue())
-                    
-            MemoViewer(self).show()
+            frm.show_form(MemoViewer(out.getvalue()))
         
         m.addItem("copy",
                   label="&Copy",
@@ -597,9 +589,7 @@ class Panel(Container,Component):
 ##             app.close()
         
         
-
-
-class Toolkit(AbstractToolkit):
+class Toolkit(BaseToolkit):
     
     labelFactory = Label
     entryFactory = Entry
@@ -634,6 +624,9 @@ class Toolkit(AbstractToolkit):
 
         self._activeForm=None
 
+    def setupOptionParser(self,p):
+        self.console.setupOptionParser(p)
+        
     def setActiveForm(self,frm):
         self._activeForm = frm
 
@@ -669,17 +662,6 @@ class Toolkit(AbstractToolkit):
     
             
         
-    def notice(self,app,*args,**kw):
-        #assert app.mainForm is not None
-        if self._activeForm is not None:
-            self._activeForm.status(*args,**kw)
-        else: self.message(app,*args,**kw)
-        
-    def status(self,*args,**kw):
-        # overridable forwarding
-        return self.console.status(*args,**kw)
-
-
     def onTaskBegin(self,*args,**kw):
         return self.console.onTaskBegin(*args,**kw)
     def onTaskDone(self,*args,**kw):
@@ -725,7 +707,7 @@ class Toolkit(AbstractToolkit):
     def submit(self,frm):
         self._submitted.append(frm)
         
-    def show(self,frm):
+    def show_form(self,frm):
         frm.setup(self)
         frm.onShow()
         self.executeShow(frm)
@@ -740,17 +722,29 @@ class Toolkit(AbstractToolkit):
         #frm.show()
         
 
+    def show_notice(self,app,*args,**kw):
+        #assert app.mainForm is not None
+        if self._activeForm is not None:
+            self._activeForm.status(*args,**kw)
+        else: self.message(app,*args,**kw)
+        
+    def show_status(self,*args,**kw):
+        # overridable forwarding
+        return self.console.status(*args,**kw)
 
-    def message(self,msg,**kw):
-        return self.show(MessageDialog(msg,**kw))
+
+
+    def show_message(self,msg,*args,**kw):
+        msg=self.buildMessage(msg,*args)
+        return self.show_form(MessageDialog(msg,**kw))
         
 ##         frm = sess.form(label="Message")
 ##         frm.addLabel(msg)
 ##         frm.addOkButton()
 ##         frm.showModal()
 
-    def confirm(self,*args,**kw):
-        return self.show(ConfirmDialog(*args,**kw))
+    def show_confirm(self,*args,**kw):
+        return self.show_form(ConfirmDialog(*args,**kw))
         
 ##         frm = sess.form(label="Confirmation",doc=prompt)
 ##         #frm.addLabel(prompt)
@@ -766,7 +760,7 @@ class Toolkit(AbstractToolkit):
 
 
 
-    def decide(self,sess,prompt,answers,
+    def show_decide(self,sess,prompt,answers,
                title="Decision",
                default=0):
         raise "must be converted like message and confirm"
@@ -786,6 +780,7 @@ class Toolkit(AbstractToolkit):
     
         
     def critical(self,sess,msg,*args,**kw):
+        raise "not used"
         if msg is not None:
             self.error(sess,msg,*args,**kw)
         sess.close()
@@ -834,4 +829,5 @@ class Toolkit(AbstractToolkit):
     def stopRunning(self):
         pass
         
+
 

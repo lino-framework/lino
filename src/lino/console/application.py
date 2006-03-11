@@ -27,26 +27,116 @@
 ## from lino.console.console import UserAborted, OperationFailed
 
 import sys
+from optparse import OptionParser
 import textwrap
 
 import lino
 
+from lino.console import syscon
+from lino.adamo.exceptions import UsageError, ApplicationError
 
-class Application:
+class Session:
+    """
+    
+represents a user (usually a human sitting in front of a computer) who
+has chosen a toolkit and who runs some code (usually an application)
+
+    
+    """
+    def __init__(self,user=None,pwd=None):
+        #self.toolkit=None
+        self.user=user
+        self.pwd=pwd
+        self._ignoreExceptions = []
+        self.toolkit=self.getToolkit()
+    
+    def buildMessage(self,msg,*args,**kw):
+        assert len(kw) == 0, "kwargs not yet implemented"
+        if len(args) == 0:
+            return msg
+        return msg % args
+    
+    def isInteractive(self):
+        return True
+
+    def abortRequested(self):
+        return self.toolkit.abortRequested()
+
+    def loop(self,func,label,maxval=0,*args,**kw):
+        "run func with a progressbar"
+        task=Task(self,label,maxval)
+        task.loop(func,*args,**kw)
+        return task
+
+    def hasAuth(self,*args,**kw):
+        return True
+            
+    def onLogin(self):
+        pass
+    
+    def getUser(self):
+        return self.user
+
+    def login(self,user):
+        if self.user is not None:
+            self.logout()
+        self.user = user
+        self.onLogin()
+        
+    def logout(self):
+        assert self.user is not None
+        self.user = None
+
+
+    def close(self):
+        pass
+
+    def confirm(self,*args,**kw):
+        self.toolkit.show_confirm(self,*args,**kw)
+    def decide(self,*args,**kw):
+        self.toolkit.show_decide(self,*args,**kw)
+    def message(self,*args,**kw):
+        self.toolkit.show_message(self,*args,**kw)
+    def notice(self,*args,**kw):
+        return self.toolkit.show_notice(self,*args,**kw)
+    def debug(self,*args,**kw):
+        return self.toolkit.show_debug(self,*args,**kw)
+    def warning(self,*args,**kw):
+        return self.toolkit.show_warning(self,*args,**kw)
+    def verbose(self,*args,**kw):
+        return self.toolkit.show_verbose(self,*args,**kw)
+    def error(self,*args,**kw):
+        return self.toolkit.show_error(self,*args,**kw)
+##     def critical(self,*args,**kw):
+##         return self.toolkit.show_critical(*args,**kw)
+    def status(self,*args,**kw):
+        return self.toolkit.show_status(self,*args,**kw)
+    def logmessage(self,*args,**kw):
+        return self.toolkit.logmessage(self,*args,**kw)
+    def showReport(self,*args,**kw):
+        return self.toolkit.showReport(self,*args,**kw)
+    def textprinter(self,*args,**kw):
+        return self.toolkit.textprinter(self,*args,**kw)
+    
+    def exception(self,e,details=None):
+        if e.__class__ in self._ignoreExceptions:
+            return
+        self.toolkit.showException(self,e,details)
+
+
+            
+
+
+class Application(Session):
     
     name = None
     version=lino.__version__
     copyright=None
     url=None
-    #years = None
     author=None
     usage = None
     description = None
 
-    #toolkits="console"
-    
-    #_sessionFactory=Session
-    
     """
     
     vocabulary:
@@ -65,11 +155,9 @@ class Application:
         #    session=syscon.getSystemConsole()
         if self.name is None:
             self.name=self.__class__.__name__
-        #self._sessions = []
-        #self.session=session
+
+        Session.__init__(self)
             
-        self._ignoreExceptions = []
-        self.toolkit=None
         #self.setToolkit(toolkit)
         
 
@@ -162,49 +250,56 @@ class Application:
         return s
     
         
-        
-    
             
-    def confirm(self,*args,**kw):
-        self.toolkit.confirm(*args,**kw)
-    def decide(self,*args,**kw):
-        self.toolkit.decide(*args,**kw)
-    def message(self,*args,**kw):
-        self.toolkit.message(*args,**kw)
-    def notice(self,*args,**kw):
-        return self.toolkit.notice(*args,**kw)
-    def debug(self,*args,**kw):
-        return self.toolkit.debug(*args,**kw)
-    def warning(self,*args,**kw):
-        return self.toolkit.warning(*args,**kw)
-    def verbose(self,*args,**kw):
-        return self.toolkit.verbose(*args,**kw)
-    def error(self,*args,**kw):
-        return self.toolkit.error(*args,**kw)
-    def critical(self,*args,**kw):
-        return self.toolkit.critical(*args,**kw)
-    def status(self,*args,**kw):
-        return self.toolkit.status(*args,**kw)
-    def logmessage(self,*args,**kw):
-        return self.toolkit.logmessage(*args,**kw)
-    def showReport(self,*args,**kw):
-        return self.toolkit.showReport(*args,**kw)
-    def loop(self,*args,**kw):
-        return self.toolkit.loop(*args,**kw)
 
-##     def showAbout(self):
-##         self.message(self.app.aboutString(),title="About")
-        
-    def textprinter(self,*args,**kw):
-        return self.toolkit.textprinter(self,*args,**kw)
+##     def setToolkit(self,toolkit):
+##         #assert isinstance(toolkit,AbstractToolkit),\
+##         #       repr(toolkit)+" is not a toolkit"
+##         self.toolkit = toolkit
 
-    def setToolkit(self,toolkit):
-        #assert isinstance(toolkit,AbstractToolkit),\
-        #       repr(toolkit)+" is not a toolkit"
-        self.toolkit = toolkit
+    def getToolkit(self):
+        return syscon.getSystemConsole()
 
-    def exception(self,e,details=None):
-        if e.__class__ in self._ignoreExceptions:
-            return
-        self.toolkit.showException(self,e,details)
+##     def beginSession(self,*args,**kw):
+##         # to be overridden by Adamo Applications
+##         return Session(*args,**kw)
+
+    def main(self,argv=None,*args):
+        """
+        meant to be called
+
+        if __name__ == '__main__':
+            MyApplication().main()
+
+        but lino.runscript calls it with argv=sys.argv[:2]
+        (command-line arguments are shifted by one)
+
+        """
+        p = OptionParser(
+            usage=self.usage,
+            description=self.description)
+
+        self.toolkit.setupOptionParser(p)
+        self.setupOptionParser(p)
+
+        if argv is None:
+            argv = sys.argv[1:]
+
+        try:
+            options,args = p.parse_args(argv)
+            self.applyOptions(options,args)
+            
+            if self.isInteractive():
+                self.notice(self.aboutString())
+            return self.run()
+
+        except UsageError,e:
+            p.print_help()
+            return -1
+        except ApplicationError,e:
+            sess.error(str(e))
+            return -1
+
+    def run(self,*args,**kw):
+        raise NotImplementedError
 
