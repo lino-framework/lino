@@ -17,13 +17,15 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
-import codecs
 
 """
 
-This module is intended to be used from your sitecustomize.py.
+This module is intended to be used from your sitecustomize.py as
+follows:
 
-from lino.console import sitecustomize
+site.addsitedir(r"xxx\svnwork\lino\trunk\src")
+from lino.customize import setlocalencoding
+setlocalencoding()
 
 """
 
@@ -39,18 +41,20 @@ from lino.console import sitecustomize
 # http://pythonfacile.free.fr/python/unicode.html
 # http://www.faqs.org/docs/diveintopython/kgp_unicode.html
 
-if hasattr(sys,'setdefaultencoding'):
-    encoding='cp850'
+def setlocalencoding(encoding='cp850'):
+    if not hasattr(sys,'setdefaultencoding'):
+        return
     import locale
     loc = locale.getdefaultlocale()
     if loc[1]:
+        print 'yes'
         encoding=loc[1]
     if sys.getdefaultencoding() != encoding:
         #print "sys.setdefaultencoding(%s)" % repr(loc[1])
-        print "sitecustomize.py sets defaultencoding from", \
+        print "setting defaultencoding from", \
               sys.getdefaultencoding(),"to",encoding
         sys.setdefaultencoding(loc[1])
-    
+
 
 #print sys.getdefaultencoding()
 #sys.stdout=rewriter(sys.stdout)

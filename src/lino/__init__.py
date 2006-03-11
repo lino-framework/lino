@@ -16,9 +16,6 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
-import ConfigParser
-
 
 __docformat__ = 'reStructuredText'
 
@@ -34,23 +31,9 @@ __copyright__ = """\
 Copyright (c) 2002-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information.""" 
+See file COPYING.txt for more information."""
+
+from lino import config as m
+config = m
 
 
-lino_home = os.path.abspath(
-    os.path.join( os.path.dirname(__file__),"..",".."))
-
-rtlib_path = os.path.join(lino_home, "rtlib")
-
-defaults={
-    'lino_home' : lino_home,
-    'rtlib_path' : rtlib_path,
-    }
-config = ConfigParser.ConfigParser()
-config.add_section('forms')
-config.set('forms','wishlist','wx tix cherrypy console')
-
-#config.readfp(open('defaults.cfg'))
-config.read( [
-    os.path.join(lino_home,'lino.cfg'),
-    os.path.expanduser('~/.lino.cfg')])

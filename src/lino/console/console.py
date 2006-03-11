@@ -45,7 +45,7 @@ from lino.console.task import Task
 def rewriter(from_encoding,to_stream,encoding):
     if encoding is None:
         encoding=to_stream.encoding
-    print 'rewriter(%r,%r)' % (from_encoding, encoding)
+    #print 'rewriter(%r,%r)' % (from_encoding, encoding)
     if encoding is None: return to_stream
     if encoding == from_encoding: return to_stream
 
