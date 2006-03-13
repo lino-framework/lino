@@ -353,18 +353,17 @@ class ReportMixin:
                       accel="INS")
             
         self.rpt.setupMenu(self)
-        
 
-        def f():
-            l = self.getSelectedRows()
-            if len(l) == 1:
-                s = "Row %d of %d" % (l[0]+1,len(self.rpt))
-            else:
-                s = "Selected %s of %d rows" % (len(l), len(self.rpt))
+##         def f():
+##             l = self.getSelectedRows()
+##             if len(l) == 1:
+##                 s = "Row %d of %d" % (l[0]+1,len(self.rpt))
+##             else:
+##                 s = "Selected %s of %d rows" % (len(l), len(self.rpt))
                 
-            frm.status(s)
+##             frm.status(s)
             
-        frm.addIdleEvent(f)
+##         frm.addIdleEvent(f)
 
     def insertRow(self):
         assert self.rpt.canWrite()
@@ -637,6 +636,10 @@ class Toolkit(BaseToolkit):
     def shutdown(self):
         pass
     
+    def show_status(self,*args,**kw):
+        self.console.show_status(*args,**kw)
+        
+        
         #self.verbose("Done after %f seconds.",
         #             time.time() - self._started)
 ##         if sys.platform == "win32":
@@ -718,8 +721,8 @@ class Toolkit(BaseToolkit):
         
         
 
-    def showReport(self,rpt,**kw):
-        return self.show(ReportForm(rpt))
+    def show_report(self,sess,rpt,**kw):
+        return self.show_form(sess,ReportForm(rpt))
         #frm = sess.form(label=rpt.getTitle(),**kw)
         #frm.addDataGrid(rpt)
         #frm.show()
@@ -731,9 +734,9 @@ class Toolkit(BaseToolkit):
             self._activeForm.status(*args,**kw)
         else: self.show_message(sess,*args,**kw)
         
-    def show_status(self,*args,**kw):
-        # overridable forwarding
-        return self.root.status(*args,**kw)
+##     def show_status(self,*args,**kw):
+##         # overridable forwarding
+##         return self.root.status(*args,**kw)
 
 
 

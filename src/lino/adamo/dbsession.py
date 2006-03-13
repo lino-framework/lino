@@ -62,7 +62,8 @@ class DbContext(Context):
         self.setBabelLangs(self.db.getDefaultLanguage())
 
     def __str__(self):
-        return "%s on %s" % (self.user,self.db)
+        #return "%s on %s" % (self.user,self.db)
+        return str(self.db)
         
     def setBabelLangs(self,langs):
         

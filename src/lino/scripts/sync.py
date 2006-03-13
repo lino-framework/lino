@@ -18,6 +18,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.console.application import Application, UsageError
+from lino.console.task import UserAborted
 
 from lino.tools.synchronizer import Synchronizer, OperationFailed
 
@@ -98,7 +99,11 @@ where SRC and DEST are two directories to be synchronized.
                 self,
                 showProgress=self.options.showProgress,
                 safely=self.options.safely)
+        except UserAborted,e:
+            self.notice(str(e))
+            return
         except OperationFailed,e:
+            self.error(str(e))
             return
 
 Sync().main()

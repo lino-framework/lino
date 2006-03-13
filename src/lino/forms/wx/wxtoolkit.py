@@ -192,15 +192,15 @@ class DataForm(toolkit.DataForm):
 
             btn = wx.Button(mypanel, -1, "<")
             hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
-            self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                       EventCaller(self.skip,-1),
-                                       btn)
+            self.getForm().ctrl.Bind(wx.EVT_BUTTON,
+                                     EventCaller(self.skip,-1),
+                                     btn)
 
             btn = wx.Button(mypanel, -1, ">")
             hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
-            self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
-                                       EventCaller(self.skip,1),
-                                       btn)
+            self.getForm().ctrl.Bind(wx.EVT_BUTTON,
+                                     EventCaller(self.skip,1),
+                                     btn)
 ##             self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
 ##                                        lambda e:self.skip(1), btn)
 ##                                        #EventCaller(self.skip,1))
@@ -679,39 +679,40 @@ class Toolkit(toolkit.Toolkit):
 
 
 
-    def showStatus(self,sess,msg):
+    def show_status(self,sess,msg):
         #frm=sess._activeForm
         frm=self.getActiveForm()
         while frm is not None and frm.modal:
             frm=frm._parent
         if frm is None:
             #base.Toolkit.showStatus(self,sess,msg)
-            self.console.showStatus(sess,msg)
+            self.console.show_status(sess,msg)
         else:
-            frm.wxctrl.SetStatusText(msg)
+            frm.ctrl.SetStatusText(msg)
 
     def onTaskBegin(self,task):
         #assert self.progressDialog is None
         #print job
         assert self._activeForm is not None
-        if task.session.statusMessage is None:
-            stm=""
-        else:
-            stm=task.session.statusMessage
+        title=""
+##         if task.statusMessage is None:
+##             stm=""
+##         else:
+##             stm=task.statusMessage
             
         task.wxctrl = wx.ProgressDialog(
-            task.label,stm,
+            title,task.getStatusLine(),
             100,
-            self._activeForm.wxctrl,
+            self._activeForm.ctrl,
             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
         #return self.app.toolkit.console.onJobInit(job)
 
     def onTaskBreathe(self,task):
         if task.wxctrl is None: return
         pc = task.percentCompleted
-        if pc is None: pc = 0
-        msg=task.statusMessage
-        if msg is None: msg=''
+        #if pc is None: pc = 0
+        msg=task.getStatusLine()
+        #if msg is None: msg=''
         if not task.wxctrl.Update(pc,msg):
             task.requestAbort()
         self.run_awhile()

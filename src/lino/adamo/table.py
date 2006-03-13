@@ -516,12 +516,12 @@ from lino.adamo.datatypes import TIME, DURATION
 from lino.adamo.exceptions import DataVeto, DatabaseError
 #from lino.ui import console
 from lino.tools import dbfreader
-#from lino.console.task import Task
-from lino.console.task import Job
+from lino.console.task import Task
+#from lino.console.task import Job
 
 
 #class DbfMirrorLoader(Task):
-class DbfMirrorLoader(Job):
+class DbfMirrorLoader(Task):
 
     tableClass = NotImplementedError  # subclass of adamo.tables.Table
     tableName = NotImplementedError   # name of external .DBF file

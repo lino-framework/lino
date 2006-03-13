@@ -88,6 +88,7 @@ class UI:
         if len(args) == 0:
             return msg
         return msg % args
+    
     def isInteractive(self):
         return True
 
@@ -130,29 +131,62 @@ class UI:
     def showForm(self,*args,**kw):
         self.toolkit.show_form(self,*args,**kw)
     def showReport(self,*args,**kw):
-        return self.toolkit.showReport(self,*args,**kw)
+        return self.toolkit.show_report(self,*args,**kw)
     def textprinter(self,*args,**kw):
         return self.toolkit.textprinter(self,*args,**kw)
     
-    def runfrom(self,ui,*args,**kw):
-        assert ui.toolkit is not None
-        self.toolkit=ui.toolkit
-        self.run(*args,**kw)
+##     def runfrom(self,ui,*args,**kw):
+##         assert ui.toolkit is not None
+##         self.toolkit=ui.toolkit
+##         try:
+##             self.run(*args,**kw)
+##         except UserAborted,e:
+##             bla
 
     def breathe(self):
         return self.toolkit.on_breathe(self)
 
-
+    def runfrom(self,ui,*args,**kw):
+        self.toolkit=ui.toolkit
+        return self.run(*args,**kw)
+        
 
 
     
     
 class Task(UI):
+    title=None
     label="Working"
+    percentCompleted=0
     def __init__(self,label=None):
+        #self._abortRequested=False
         if label is not None:
             self.label=label
 
+    def requestAbort(self):
+        if self.confirm( _("Are you sure you want to abort?"),
+                         default=False):
+            raise UserAborted()
+        #self._abortRequested=False
+        self.toolkit.onTaskResume(self)
+        #self._abortRequested=True
+
+    def getStatusLine(self):
+        # may override but caution: called frequently
+        return self.label
+    
+    def status(self,msg,*args,**kw):
+        if msg is None:
+            msg=''
+        else:
+            msg=self.buildMessage(msg,*args,**kw)
+        self.label=msg
+        return self.toolkit.show_status(self,msg)
+
+    def getTitle(self):
+        if self.title is None:
+            return self.__class__.__name__
+        return self.title
 
 class Looper(Task):
     
@@ -178,38 +212,38 @@ class Progresser(Task):
         Task.__init__(self,label)
         if maxval is not None:
             self.maxval=maxval
-        self._done=False
-        self._abortRequested=False
+        #self._done=False
         self.percentCompleted=0
         self.curval=0
 
 
     def runfrom(self,ui,*args,**kw):
         self.toolkit=ui.toolkit
+        
         self.toolkit.onTaskBegin(self)
         #okay=True
         #retval=None
         #success=False
         try:
             retval=self.run(*args,**kw)
-            self._done = True
+            #self._done = True
             #success=True
             self.percentCompleted = 100
             self.toolkit.onTaskDone(self)
             return retval
             
-        except UserAborted,e:
-            # may raise during Toolkit.onTaskBreathe
-            #assert e.task == self
-            #self.abort()
-            self._done = True
-            self.toolkit.onTaskAbort(self)
-            raise #OperationFailed(str(e))
+##         except UserAborted,e:
+##             # may raise during Toolkit.onTaskBreathe
+##             #assert e.task == self
+##             #self.abort()
+##             #self._done = True
+##             self.toolkit.onTaskAbort(self)
+##             raise #OperationFailed(str(e))
             
         except Exception,e:
             # some uncaught exception occured
             #self.abort()
-            self._done = True
+            #self._done = True
             self.toolkit.onTaskAbort(self)
             #self.session.exception(e)
             #self=False
@@ -230,8 +264,6 @@ class Progresser(Task):
 
         #self.session=None
         
-    def requestAbort(self):
-        self._abortRequested=True
             
 ##     def abortRequested(self):
 ##         return self._abortRequested
@@ -247,18 +279,18 @@ class Progresser(Task):
 
         
     def breathe(self):
-        self.toolkit.onTaskBreathe(self)
-        if self._abortRequested:
-            if self.confirm(
-                _("Are you sure you want to abort?")):
-                raise UserAborted()
-            self._abortRequested=False
-            self.toolkit.onTaskResume(self)
+        self.toolkit.on_breathe(self)
+        #self.toolkit.onTaskBreathe(self)
+##         if self._abortRequested:
+##             if self.confirm(_("Are you sure you want to abort?")):
+##                 raise UserAborted()
+##             self._abortRequested=False
+##             self.toolkit.onTaskResume(self)
 
 
     def increment(self,n=1):
         self.curval += n
-        if self._done: return
+        #if self._done: return
         if self.maxval != 0:
             pc = int(100*self.curval/self.maxval)
             if pc == self.percentCompleted:
@@ -287,12 +319,12 @@ class Progresser(Task):
 ##         if msg is not None:
 ##             msg = self.session.buildMessage(msg,*args,**kw)
 
-    def abort(self,msg=None):
-        if msg is None:
-            msg = _("Aborted")
-        if not self._done:
-            self._done = True
-            self.toolkit.onTaskAbort(self,msg)
+##     def abort(self,msg=None):
+##         if msg is None:
+##             msg = _("Aborted")
+##         if not self._done:
+##             self._done = True
+##             self.toolkit.onTaskAbort(self,msg)
             
 ##     def error(self,*args,**kw):
 ##     #def taskError(self,*args,**kw):
@@ -320,23 +352,20 @@ class Progresser(Task):
     #    self.label=s
 
     #def setStatus(self):
-    def showStatus(self):
-        raise "eine Task soll keinen Job haben"
+##     def showStatus(self):
+##         raise "eine Task soll keinen Job haben"
     
 ##     def showStatus(self):
 ##         self.session.setStatusMessage(self.job.getStatus())
 
 
         
-    def query(self,*args,**kw):
-        raise "Is this still used?"
+##     def query(self,*args,**kw):
+##         raise "Is this still used?"
         #return self.session.query(*args,**kw)
 
     #def getLabel(self):
     #    return self.job.getLabel(self)
-    
-    def getLabel(self):
-        return self.label
     
 ##     def getLabel(self):
 ##         raise NotImplementedError
@@ -348,7 +377,8 @@ class Progresser(Task):
 
     
 
-class BugDemo(Task):
+class BugDemo(Progresser):
+    title="&Bug demo"
     maxval=10
     label="Let's see what happens if an exception occurs..."
     

@@ -1,4 +1,4 @@
-# project 28: slow startup qfter upgrade
+# project 28: slow startup after upgrade
 
 import sys
 

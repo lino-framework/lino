@@ -63,14 +63,15 @@ from lino.console import Application
 
 class GuiApplication(Application):
     wishlist="wx"
-    mainFormClass=None
+    #mainFormClass=None
 
     def __init__(self,mainForm=None,*args,**kw):
+        Application.__init__(self,*args,**kw)
         if mainForm is None:
-            assert self.mainFormClass is not None
+            #assert self.mainFormClass is not None
+            mainForm=self.createMainForm()
             
         self.mainForm=mainForm
-        Application.__init__(self,*args,**kw)
     
 
     def createToolkit(self):
@@ -105,10 +106,12 @@ class GuiApplication(Application):
 ##         kw['toolkit']=createToolkit(wishlist=self.wishlist)
 ##         Application.main(self,*args,**kw)
 
+    def createMainForm(self):
+        raise NotImplementedError
         
     def run(self,*args,**kw):
-        if self.mainForm is None:
-            self.mainForm=self.mainFormClass(*args,**kw)
+##         if self.mainForm is None:
+##             self.mainForm=self.mainFormClass(*args,**kw)
         self.showForm(self.mainForm)
         self.toolkit.run_forever()
         

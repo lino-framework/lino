@@ -27,7 +27,10 @@ Welcome to AddressBook, a Lino Forms Application for
 demonstration purposes.
 """
     
-    schemaClass=AddressBookSchema
+    #schemaClass=AddressBookSchema
+
+    def createContext(self):
+        return AddressBookSchema().quickStartup()
     
     def setupMenu(self):
         m = self.addMenu("master","&Master")

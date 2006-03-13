@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2002-2005 Luc Saffre.
+## Copyright 2002-2006 Luc Saffre.
 
 ## This file is part of the Lino project.
 
@@ -29,7 +29,7 @@ class Prn2pdf(Application):
 
     name="Lino/prn2pdf"
     copyright="""\
-Copyright (c) 2002-2005 Luc Saffre.
+Copyright (c) 2002-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -52,7 +52,7 @@ write to OUTFILE rather than FILE.pdf""",
                           default=None)
     
 
-    def run(self,sess):
+    def run(self):
         
         if len(self.args) != 1:
             raise UsageError("needs 1 argument")
@@ -68,21 +68,23 @@ write to OUTFILE rather than FILE.pdf""",
         try:
             d.readfile(inputfile)#,coding=sys.stdin.encoding)
         except Exception,e:
-            sess.error(str(e))
+            self.error(str(e))
             ok = False
 
         d.endDoc()
         if not ok:
             return -1
 
-        if sys.platform == "win32" and sess.isInteractive():
+        if sys.platform == "win32" and self.isInteractive():
             os.system("start %s" % self.options.outFile)
 
-    
-# lino.runscript expects a name consoleApplicationClass
-consoleApplicationClass = Prn2pdf
 
-if __name__ == '__main__':
-    consoleApplicationClass().main() # console,sys.argv[1:])
-    #sys.exit(main(sys.argv[1:]))
+Prn2pdf().main()    
+
+## # lino.runscript expects a name consoleApplicationClass
+## consoleApplicationClass = Prn2pdf
+
+## if __name__ == '__main__':
+##     consoleApplicationClass().main() # console,sys.argv[1:])
+##     #sys.exit(main(sys.argv[1:]))
 

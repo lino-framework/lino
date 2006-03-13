@@ -44,7 +44,7 @@ except:
 
 #from lino.console.application import ApplicationError
 from lino.adamo.exceptions import OperationFailed
-from lino.console.task import Progresser, UI
+from lino.console.task import Progresser, Task
 
 class NeitherFileNorDirectory(Exception): pass
 
@@ -285,7 +285,7 @@ class Synchronizer(Progresser):
     
     
 #class SyncTask(Task):
-class SyncProject(UI):
+class SyncProject(Task):
     
     #summaryClass=SyncSummary
     
@@ -509,7 +509,7 @@ class SyncProject(UI):
         self.breathe()
 
     def error(self,*args,**kw):
-        self.error(*args,**kw)
+        Task.error(self,*args,**kw)
         self.job.count_errors += 1
         
     #def warning(self,*args,**kw):

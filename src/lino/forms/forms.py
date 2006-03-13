@@ -24,6 +24,7 @@ from lino.gendoc.gendoc import GenericDocument
 
 from lino.adamo.exceptions import InvalidRequestError
 from lino.forms.gui import GuiApplication
+from lino.console.task import BugDemo
 
 VERTICAL = 1
 HORIZONTAL = 2
@@ -217,6 +218,7 @@ class Form(MenuContainer2,Container):
 
     def setup(self,sess):
         assert self.session is None
+        #assert not isinstance(sess,Toolkit)
         self.session=sess
         self.toolkit=sess.toolkit
         self.mainComp = sess.toolkit.panelFactory(self, VERTICAL)
@@ -349,53 +351,77 @@ class ReportForm(Form):
     def __init__(self,rpt,**kw):
         Form.__init__(self,rpt,**kw)
         self.rpt=rpt
+        self.grid=None
 
     def setupForm(self):
-        self.addDataGrid(self.rpt)
+        self.grid=self.addDataGrid(self.rpt)
 
     def getTitle(self):
         return self.rpt.getTitle()
 
+    def onIdle(self):
+        if self.grid is None: return
+        l = self.grid.getSelectedRows()
+        if len(l) == 1:
+            s = "Row %d of %d" % (l[0]+1,len(self.rpt))
+        else:
+            s = "Selected %s of %d rows" % (len(l), len(self.rpt))
+                
+        self.session.status(s)
     
 class DbMainForm(Form):
     
-    schemaClass=NotImplementedError
+    #schemaClass=NotImplementedError
     
     def __init__(self,dbsess,*args,**kw):
-        if dbsess is not None:
-            assert isinstance(dbsess.db.schema,self.schemaClass),\
-                   "%s is not a %s" % (dbsess.db.schema,
-                                       self.schemaClass)
+        if dbsess is None:
+            dbsess=self.createContext()
+##         if dbsess is not None:
+##             assert isinstance(dbsess.db.schema,self.schemaClass),\
+##                    "%s is not a %s" % (dbsess.db.schema,
+##                                        self.schemaClass)
             
         self.dbsess=dbsess
         Form.__init__(self,*args,**kw)
 
-    def setupForm(self):
-        if self.dbsess is None:
-            self.dbsess=self.schemaClass(self.toolkit).quickStartup()
+    def createContext(self):
+        raise NotImplementedError
+
+##     def setupForm(self):
+##         if self.dbsess is None:
+##             self.dbsess=self.schemaClass(self.toolkit).quickStartup()
 
     def addProgramMenu(self):
         m = self.addMenu("app","&Programm")
         m.addItem("logout",label="&Beenden",
                   action=self.close)
-        if self.dbsess.app is not None:
-            m.addItem("about",label="Inf&o").setHandler(
-                lambda : self.dbsess.message(
-                self.dbsess.app.aboutString(), title="About"))
+        #if self.toolkit.app is not None:
+        m.addItem("about",label="Inf&o").setHandler(
+            lambda : self.session.message(
+            self.toolkit.app.aboutString(), title="About"))
 
-        def bugdemo(task):
-            for i in range(5,0,-1):
-                self.status("%d seconds left",i)
-                task.increment()
-                task.sleep()
-            thisWontWork()
+##         def bugdemo(task):
+##             for i in range(5,0,-1):
+##                 self.session.status("%d seconds left",i)
+##                 task.increment()
+##                 task.sleep()
+##             thisWontWork()
             
         
-        m.addItem("bug",label="&Bug demo").setHandler(
-            self.dbsess.loop,bugdemo,"Bug demo")
+##         m.addItem("bug",label="&Bug demo").setHandler(
+##             self.session.loop,bugdemo,"Bug demo")
+
+        self.addTaskItem(m,"bug",BugDemo())
+
+        
         #m.addItem(label="show &Console").setHandler(self.showConsole)
         return m
     
+    def addTaskItem(self,menu,name,task,label=None,**kw):
+        if label is None: label=task.getTitle()
+        mi=menu.addItem(name,label=label,**kw)
+        mi.setHandler(task.runfrom,self.session)
+
     
     def onClose(self):
         self.dbsess.close()
@@ -408,7 +434,7 @@ class DbMainForm(Form):
         rpt=self.dbsess.createReport(rptclass)
         if label is None: label=rpt.getTitle()
         mi=menu.addItem(name,label=label,**kw)
-        mi.setHandler(self.toolkit.showReport,rpt)
+        mi.setHandler(self.toolkit.show_report,self.session,rpt)
 
     
 ##     def showViewGrid(self,tc,*args,**kw):

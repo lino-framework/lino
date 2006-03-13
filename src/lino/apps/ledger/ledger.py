@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -18,18 +18,20 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #from lino.adamo.ddl import Schema
-from lino.apps.addrbook.addrbook import AddressBook
-from lino.apps.ledger.tables import *
+from lino.apps.addrbook.addrbook import AddressBookSchema
+from lino.apps.ledger.tables import LedgerSchema
 
 
+class LedgerSchema(AddressBookSchema):
+    
 class Ledger(AddressBook):
     version="0.0.1"
     copyright="""\
-Copyright (c) 2002-2005 Luc Saffre.
+Copyright (c) 2002-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-    url="http://www.saffre-rumma.ee/lino/ledger.html"
+    url="http://lino.saffre-rumma.ee/ledger.html"
     #tables=TABLES
     
     def setupSchema(self):

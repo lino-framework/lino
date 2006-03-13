@@ -70,9 +70,9 @@ def rewriter(from_encoding,to_stream,encoding):
 
 class BaseToolkit:
 
-    def on_breathe(self,ui):
+    def on_breathe(self,task):
         if self.abortRequested():
-            ui.requestAbort()
+            task.requestAbort()
     
     def abortRequested(self):
         return False
@@ -157,8 +157,8 @@ class Console(BaseToolkit):
 
             
     def show_status(self,sess,msg=None,*args,**kw):
-        if msg is not None:
-            self.show_verbose(sess,msg,*args,**kw)
+        #if msg is not None:
+        self.show_verbose(sess,msg,*args,**kw)
         
     def show_message(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
@@ -285,19 +285,21 @@ class Console(BaseToolkit):
 
 
     def onTaskBegin(self,task):
-        if task.getLabel() is not None:
-            task.notice(task.getLabel())
+        #if task.getLabel() is not None:
+        task.notice(task.getStatusLine())
 
     def onTaskDone(self,task):
-        self.onTaskStatus(task)
-        task.status()
+        pass
+        ##self.onTaskStatus(task)
+        ##task.status()
         #task.summary()
         #if msg is not None:
         #    task.session.notice(task.getLabel() + ": " + msg)
     
     def onTaskAbort(self,task):
-        self.onTaskStatus(task)
-        task.status()
+        pass
+        ##self.onTaskStatus(task)
+        ##task.status()
         #task.summary()
         #if task.getLabel() is not None:
         #    msg = task.getLabel() + ": " + msg
@@ -364,15 +366,16 @@ class Console(BaseToolkit):
         
     def abortRequested(self):
         if not msvcrt: return False
-        # print "abortRequested"
         while msvcrt.kbhit():
             ch = msvcrt.getch()
             #print ch
             if ord(ch) == 0: #'\000':
                 ch = msvcrt.getch()
                 if ord(ch) == 27:
+                    #print "abortRequested"
                     return True
             elif ord(ch) == 27:
+                #print "abortRequested"
                 return True
         return False
 
@@ -454,7 +457,7 @@ class Console(BaseToolkit):
 ##         return Report(writer=self.stdout,**kw)
 
 
-    def showReport(self,rpt,*args,**kw):
+    def show_report(self,sess,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
         gd = PlainDocument(self.stdout)
         gd.beginDocument()
@@ -507,38 +510,29 @@ class TtyConsole(Console):
 ##             self._batch = batch
 ##         Console.configure(self,**kw)
 
-    def show_status(self,sess,msg=None,*args,**kw):
-        if msg is not None:
-            #ssert type(msg) == type('')
-            #assert msg.__class__ in (types.StringType,
-            #                         types.UnicodeType)
-            msg=sess.buildMessage(msg,*args,**kw)
-        self.statusMessage=msg
-        return self.showStatus(msg)
+##     def show_confirm(self,sess,msg,*args,**kw):
+##         self._refresh()
+##         return Console.show_confirm(self,sess,msg.ljust(self.width))
 
-    def setStatusMessage(self,msg):
-        self.statusMessage=msg
-    
-
-    def show_warning(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.show_warning(self,sess,msg.ljust(self.width))
-        self._refresh()
+##     def show_warning(self,sess,msg,*args,**kw):
+##         msg = sess.buildMessage(msg,*args,**kw)
+##         Console.show_warning(self,sess,msg.ljust(self.width))
+##         self._refresh()
         
-    def show_message(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.show_message(self,sess,msg.ljust(self.width))
-        self._refresh()
+##     def show_message(self,sess,msg,*args,**kw):
+##         msg = sess.buildMessage(msg,*args,**kw)
+##         Console.show_message(self,sess,msg.ljust(self.width))
+##         self._refresh()
         
-    def show_verbose(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.show_verbose(self,sess,msg.ljust(self.width))
-        self._refresh()
+##     def show_verbose(self,sess,msg,*args,**kw):
+##         msg = sess.buildMessage(msg,*args,**kw)
+##         Console.show_verbose(self,sess,msg.ljust(self.width))
+##         self._refresh()
         
-    def show_error(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.show_error(self,sess,msg.ljust(self.width))
-        self._refresh()
+##     def show_error(self,sess,msg,*args,**kw):
+##         msg = sess.buildMessage(msg,*args,**kw)
+##         Console.show_error(self,sess,msg.ljust(self.width))
+##         self._refresh()
         
 ##     def critical(self,msg,*args,**kw):
 ##         msg = self.buildMessage(msg,*args,**kw)
@@ -546,11 +540,25 @@ class TtyConsole(Console):
 ##         self._refresh()
         
         
-    def show_notice(self,sess,msg,*args,**kw):
-        msg = sess.buildMessage(msg,*args,**kw)
-        Console.show_notice(self,sess,msg.ljust(self.width))
-        self._refresh()
+##     def show_notice(self,sess,msg,*args,**kw):
+##         if self._verbosity >= 0:
+##         msg = sess.buildMessage(msg,*args,**kw)
+##         Console.show_notice(self,sess,msg.ljust(self.width))
+##         self._refresh()
         
+    def writeln(self,msg):
+        self.stdout.write("".ljust(self.width)+"\r")
+        self.stdout.write(msg+"\n")
+        #self.stdout.write(msg.ljust(self.width)+"\n")
+        #self._refresh()
+        
+    def readkey(self,msg,default=""):
+        if self._batch:
+            self.logmessage(msg)
+            return default
+        self.stdout.write("".ljust(self.width)+"\r")
+        return raw_input(msg)
+    
     def onTaskStatus(self,task):
         if task.maxval == 0:
             s = '[' + self.purzelMann[task.curval % 4] + "] "
@@ -564,11 +572,25 @@ class TtyConsole(Console):
         else:
             self.showStatus(s+self.statusMessage)
         
+    def show_status(self,sess,msg=None,*args,**kw):
+        #if msg is not None:
+            #ssert type(msg) == type('')
+            #assert msg.__class__ in (types.StringType,
+            #                         types.UnicodeType)
+        msg=sess.buildMessage(msg,*args,**kw)
+        self.statusMessage=msg
+        return self.showStatus(msg)
+
+    def setStatusMessage(self,msg):
+        self.statusMessage=msg
+    
     def showStatus(self,msg):
-        if msg is None:
-            msg=''
-        else:
-            msg = msg[:self.width]
+        "does not store"
+##         if msg is None:
+##             msg=''
+##         else:
+##             msg = msg[:self.width]
+        msg = msg[:self.width]
         self.stdout.write(msg.ljust(self.width)+"\r")
 
     def _refresh(self):

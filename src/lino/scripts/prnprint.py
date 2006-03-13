@@ -1,6 +1,6 @@
 #coding: iso-8859-1
 
-## Copyright 2004-2005 Luc Saffre
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -28,7 +28,7 @@ class PrnPrint(Application):
     
     name="Lino/prnprint"
     copyright="""\
-Copyright (c) 2004-2005 Luc Saffre.
+Copyright (c) 2004-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -75,7 +75,7 @@ write to SPOOLFILE rather than really printing.""",
             dest="useWorldTransform",
             default=False)
     
-    def run(self,sess):
+    def run(self):
         if len(self.args) == 0:
             raise UsageError("no arguments specified")
         if self.options.copies < 0:
@@ -91,15 +91,17 @@ write to SPOOLFILE rather than really printing.""",
                 d.readfile(inputfile)
                 d.endDoc()
                 if d.page == 1:
-                    sess.notice("%s : 1 page has been printed",
+                    self.notice("%s : 1 page has been printed",
                                 inputfile)
                 else:
-                    sess.notice("%s : %d pages have been printed",
+                    self.notice("%s : %d pages have been printed",
                                 inputfile,d.page)
 
-consoleApplicationClass = PrnPrint
+PrnPrint().main()
+
+## consoleApplicationClass = PrnPrint
     
         
-if __name__ == '__main__':
-    consoleApplicationClass().main() # console,sys.argv[1:])
+## if __name__ == '__main__':
+##     consoleApplicationClass().main() # console,sys.argv[1:])
     

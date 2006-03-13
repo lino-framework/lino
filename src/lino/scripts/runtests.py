@@ -201,7 +201,7 @@ continue testing even if failures or errors occur""",
     
     def run(self):
         suite = self.makeSuite(self.args)
-        self.status()
+        self.status("") 
         stream=sys.stdout
         stream=self.toolkit.stdout
         if self.options.ignore:
