@@ -37,7 +37,7 @@ def startup(filename=None, langs=None,
             big=False,
             withDemoData=True,
             **kw):
-    schema=addrbook.AddressBookSchema(**kw)
+    schema=addrbook.ContactsSchema(**kw)
     ctx=schema.quickStartup(langs=langs,
                             filename=filename,
                             dump=dump)

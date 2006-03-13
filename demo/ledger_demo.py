@@ -1,7 +1,7 @@
 from lino.apps.ledger import demo
-from lino.forms import gui
+from lino.apps.ledger.ledger import Ledger
 
-sess=demo.startup() # filename="ledger.db")
-gui.run(sess)
+dbsess=demo.startup() # filename="ledger.db")
+Ledger(dbsess).main()
 
 

@@ -22,8 +22,6 @@ from lino.apps.addrbook.addrbook import AddressBookSchema
 from lino.apps.ledger.tables import LedgerSchema
 
 
-class LedgerSchema(AddressBookSchema):
-    
 class Ledger(AddressBook):
     version="0.0.1"
     copyright="""\

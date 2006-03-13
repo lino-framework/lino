@@ -393,12 +393,11 @@ class DbMainForm(Form):
 
     def addProgramMenu(self):
         m = self.addMenu("app","&Programm")
-        m.addItem("logout",label="&Beenden",
-                  action=self.close)
+        m.addItem("close",label="&Beenden",action=self.close)
         #if self.toolkit.app is not None:
         m.addItem("about",label="Inf&o").setHandler(
             lambda : self.session.message(
-            self.toolkit.app.aboutString(), title="About"))
+            self.toolkit.root.aboutString(), title="About"))
 
 ##         def bugdemo(task):
 ##             for i in range(5,0,-1):
@@ -466,7 +465,7 @@ class DbMainForm(Form):
 
     def showQuery(self,qry,*args,**kw):
         rpt=self.dbsess.createQueryReport(qry,*args,**kw)
-        self.toolkit.showReport(rpt)
+        self.toolkit.show_report(self,rpt)
 
 ##     def report(self,*args,**kw):
 ##         rpt=self.createReport(*args,**kw)

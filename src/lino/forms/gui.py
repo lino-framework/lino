@@ -63,14 +63,9 @@ from lino.console import Application
 
 class GuiApplication(Application):
     wishlist="wx"
-    #mainFormClass=None
 
-    def __init__(self,mainForm=None,*args,**kw):
+    def __init__(self,mainForm,*args,**kw):
         Application.__init__(self,*args,**kw)
-        if mainForm is None:
-            #assert self.mainFormClass is not None
-            mainForm=self.createMainForm()
-            
         self.mainForm=mainForm
     
 
@@ -106,9 +101,6 @@ class GuiApplication(Application):
 ##         kw['toolkit']=createToolkit(wishlist=self.wishlist)
 ##         Application.main(self,*args,**kw)
 
-    def createMainForm(self):
-        raise NotImplementedError
-        
     def run(self,*args,**kw):
 ##         if self.mainForm is None:
 ##             self.mainForm=self.mainFormClass(*args,**kw)
@@ -127,3 +119,23 @@ class GuiApplication(Application):
 ##     #toolkit.run_forever(*args,**kw)
     
 
+class DbApplication(GuiApplication):
+    
+    mainFormClass=None
+    schemaClass=None
+
+    def __init__(self,dbsess=None,mainForm=None,*args,**kw):
+        
+        if dbsess is None:
+            dbsess=self.createContext()
+        self.dbsess=dbsess
+        if mainForm is None:
+            mainForm=self.createMainForm()
+        GuiApplication.__init__(self,mainForm)
+            
+    def createContext(self):
+        return self.schemaClass().quickStartup()
+    
+    def createMainForm(self):
+        return self.mainFormClass(self.dbsess)
+        

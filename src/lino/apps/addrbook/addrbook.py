@@ -18,22 +18,17 @@
 
 
 from lino.apps.addrbook.addrbook_schema import *
-from lino.forms import DbMainForm, GuiApplication
+from lino.forms import DbMainForm, DbApplication
 
-class MyMainForm(DbMainForm):
+class ContactsMainForm(DbMainForm):
     
     """\
 Welcome to AddressBook, a Lino Forms Application for
 demonstration purposes.
 """
-    
-    #schemaClass=AddressBookSchema
 
-    def createContext(self):
-        return AddressBookSchema().quickStartup()
-    
-    def setupMenu(self):
-        m = self.addMenu("master","&Master")
+    def setupContactsMenu(self):
+        m = self.addMenu("contacts","&Contacts")
         self.addReportItem(
             m,"nations",NationsReport,label="&Nations")
         self.addReportItem(
@@ -41,8 +36,18 @@ demonstration purposes.
         self.addReportItem(
             m,"partners",PartnersReport,label="&Partners")
         self.addReportItem(
+            m,"orgs",OrganisationsReport,label="&Organisations")
+        self.addReportItem(
             m,"persons",PersonsReport,label="&Persons")
         
+    def setupMenu(self):
+        self.setupContactsMenu()
         self.addProgramMenu()
     
 
+class Contacts(DbApplication):
+    name="Lino AdressBook"
+    version="0.0.1"
+    author="Luc Saffre"
+    mainFormClass=ContactsMainForm
+    schemaClass=ContactsSchema

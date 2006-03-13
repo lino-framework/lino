@@ -227,6 +227,7 @@ class City(StoredDataRow):
         
         table.setPrimaryKey("nation id")
         # complex primary key used by test cases
+        
         #table.addView('std',columnNames="name nation zipCode")
         
     def __str__(self):
@@ -241,7 +242,7 @@ class CitiesReport(DataReport):
 
 
 
-class AddressBookSchema(Schema):
+class ContactsSchema(Schema):
     
     tableClasses = ( Language,
                      Nation, City,
@@ -260,12 +261,12 @@ REPORTS = (NationsReport, CitiesReport, OrganisationsReport,
            PartnerTypesReport)
 
 
-__all__ = [t.__name__ for t in AddressBookSchema.tableClasses]
+__all__ = [t.__name__ for t in ContactsSchema.tableClasses]
 #__all__.append('TABLES')
 
 __all__ += [t.__name__ for t in REPORTS]
 __all__.append('REPORTS')
-__all__.append('AddressBookSchema')
+__all__.append('ContactsSchema')
 
 
 #__all__ = filter(lambda x: x[0] != "_", dir())

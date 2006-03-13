@@ -305,20 +305,37 @@ class Booking(StoredDataRow):
 
 
 
+class LedgerSchema(AddressBookSchema):
+    
+    tableClasses = ( 
+        Currency,
+        Partner,
+        Product,
+        Journal,
+        BankStatement, MiscOperation,
+        Invoice, ProductInvoiceLine,
+        BalanceItem,CashFlowItem,ProfitAndLossItem,
+        Account,Booking
+        ) + AddressBookSchema.tableClasses
     
         
-TABLES = (
-          Currency,
-          Partner,
-          Product,
-          Journal,
-          BankStatement, MiscOperation,
-          Invoice, ProductInvoiceLine,
-          BalanceItem,CashFlowItem,ProfitAndLossItem,
-          Account,Booking
-          ) + addrtables.TABLES
+__all__ = [t.__name__ for t in LedgerSchema.tableClasses]
 
-__all__ = [t.__name__ for t in TABLES]
-__all__.append('TABLES')
+## TABLES = (
+##           Currency,
+##           Language,
+##           Nation, City,
+##           Organisation, Person, 
+##           Partner, PartnerType,
+##           Product,
+##           Journal,
+##           BankStatement, MiscOperation,
+##           Invoice, ProductInvoiceLine,
+##           BalanceItem,CashFlowItem,ProfitAndLossItem,
+##           Account,Booking
+##           ) 
+
+## __all__ = [t.__name__ for t in TABLES]
+## __all__.append('TABLES')
 
 
