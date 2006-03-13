@@ -36,21 +36,17 @@ import stat
 from time import strftime
 
 
+
 try:
     import win32file
 except:
     win32file = None
 
 #from lino.console.application import ApplicationError
-from lino.console.console import OperationFailed
+from lino.adamo.exceptions import OperationFailed
+from lino.console.task import Progresser, UI
 
 class NeitherFileNorDirectory(Exception): pass
-
-
-#from lino.console.console import TaskAborted
-
-#from lino.console.task import Task, TaskSummary
-#from lino.console.task import run_task, Job
 
 
 
@@ -127,9 +123,10 @@ itr("%d files up-to-date", de=u"%d Dateien unverändert")
 itr("%d files ", de="%d Dateien ")
         
 
-class Synchronizer:
+class Synchronizer(Progresser):
     
     def __init__(self):
+        Progresser.__init__(self)
         #Job.__init__(self)
         self.simulate=True
         self.count_errors = 0
@@ -165,56 +162,63 @@ class Synchronizer:
         
 
 
-    def run(self,sess,showProgress=False,safely=True):
+    def run(self,showProgress=False,safely=True):
         #self.session=task.session
         #self.task=task
         self.maxval=0
         for p in self.projects:
-            sess.notice(str(p))
+            self.notice(str(p))
         if showProgress:
-            def f(task):
+##             class CountingFiles(Task):
+##                 label="Counting files..."
+##                 def run(myself):
+##                     for prj in self.projects:
+##                         self.maxval += prj.countFiles(myself)
+            
+            def f():
                 for prj in self.projects:
-                    self.maxval += prj.countFiles(task)
-            sess.loop(f,_("Counting files..."))
-            sess.notice(_("Found %d files."), self.maxval)
+                    self.maxval += prj.countFiles(self)
+            Looper(f,_("Counting files...")).runfrom(self)
+            #sess.loop(f,_("Counting files..."))
+            self.notice(_("Found %d files."), self.maxval)
             
                 
         if safely:
             self.simulate=True
             def f(task):
                 for p in self.projects:
-                    p.doit(task)
-            sess.loop(f,_("Analyzing..."),self.maxval)
-            sess.notice(self.getSummary())
+                    p.runfrom(task)
+            self.loop(f,_("Analyzing..."),self.maxval)
+            self.notice(self.getSummary())
             
             if not (self.count_delete_dir \
                  or self.count_delete_file \
                  or self.count_copy_file \
                  or self.count_copy_dir \
                  or self.count_update_file) :
-                sess.notice(_("Nothing to do"))
+                self.notice(_("Nothing to do"))
                 return
             
                     
             if self.count_newer > 0:
-                if not sess.confirm(
+                if not self.confirm(
                     _("%d target files are NEWER! Are you sure?") \
                     % self.count_newer, default=False):
                     return
         else:
-            sess.notice(self.getSummary())
+            self.notice(self.getSummary())
             
 
 
-        if not sess.confirm(_("Start?")):
+        if not self.confirm(_("Start?")):
             return
         
         self.simulate=False
         def f(task):
             for p in self.projects:
-                p.doit(task)
-        sess.loop(f,"Synchronizing",self.maxval)
-        sess.notice(self.getSummary())
+                p.runfrom(task)
+        self.loop(f,"Synchronizing",self.maxval)
+        self.notice(self.getSummary())
         
                 
 ##     def getLabel(self):
@@ -281,7 +285,7 @@ class Synchronizer:
     
     
 #class SyncTask(Task):
-class SyncProject:
+class SyncProject(UI):
     
     #summaryClass=SyncSummary
     
@@ -307,12 +311,13 @@ class SyncProject:
                 _("Target directory '%s' doesn't exist.") % self.target)
 
     
-    def countFiles(self,task):
+    def countFiles(self,ui):
         if self.recurse:
             n = 0
             for root, dirs, files in os.walk(self.src):
                 # n += len(dirs)
                 n += len(files)
+                ui.breathe()
             return n
         return len(os.listdir(self.src))
 
@@ -321,8 +326,11 @@ class SyncProject:
         if self.recurse: s += " -r"
         return s
 
-    def doit(self,task):
-        self.task=task
+##     def doit(self,task):
+##         self.task=task
+##         self.update_dir(self.src,self.target)
+        
+    def run(self):
         self.update_dir(self.src,self.target)
         
     def update_dir(self,src,target):
@@ -387,7 +395,7 @@ class SyncProject:
             doit = True
             if target_mt > src_mt:
                 self.job.count_newer += 1
-                self.task.session.warning(
+                self.warning(
                     _("Overwrite newer target %s") % target)
 
         
@@ -396,12 +404,12 @@ class SyncProject:
                 self.job.count_same += 1
             else:
                 self.job.done_same += 1
-            self.task.session.verbose(_("%s is up-to-date") % target)
+            self.verbose(_("%s is up-to-date") % target)
             return
         
         if self.job.simulate:
             self.job.count_update_file += 1
-            self.task.session.verbose("update %s to %s" % (src,target))
+            self.verbose("update %s to %s" % (src,target))
             return
         
         if win32file:
@@ -430,7 +438,7 @@ class SyncProject:
         if self.job.simulate:
             self.job.count_copy_dir += 1
         else:
-            self.task.session.notice(_("create directory %s") % target)
+            self.notice(_("create directory %s") % target)
             try:
                 os.mkdir(target)
             except OSError,e:
@@ -447,7 +455,7 @@ class SyncProject:
         if self.job.simulate:
             self.job.count_copy_file += 1
             return
-        self.task.session.notice(_("copy file %s to %s") % (src,target))
+        self.notice(_("copy file %s to %s") % (src,target))
         try:
             shutil.copyfile(src, target)
         except IOError,e:
@@ -458,7 +466,7 @@ class SyncProject:
         self.job.done_copy_file += 1
 
     def delete_dir(self,name):
-        self.task.session.notice(_("remove directory %s") % name)
+        self.notice(_("remove directory %s") % name)
         if self.job.simulate:
             self.job.count_delete_dir += 1
             return
@@ -473,7 +481,7 @@ class SyncProject:
         self.job.done_delete_dir += 1
             
     def delete_file(self,name):
-        self.task.session.verbose(_("remove file %s") % name)
+        self.verbose(_("remove file %s") % name)
         if self.job.simulate:
             self.job.count_delete_file += 1
             return
@@ -497,18 +505,18 @@ class SyncProject:
         self.job.done_delete_file += 1
 
     def showStatus(self):
-        self.task.session.status(self.job.getStatus())
-        self.task.breathe()
+        self.status(self.job.getStatus())
+        self.breathe()
 
     def error(self,*args,**kw):
-        self.task.session.error(*args,**kw)
+        self.error(*args,**kw)
         self.job.count_errors += 1
         
     #def warning(self,*args,**kw):
 
     def copy_it(self,src,target):
         self.showStatus()
-        self.task.increment()
+        self.job.increment()
         if os.path.isfile(src):
             self.copy_file(src,target)
         elif os.path.isdir(src):
@@ -524,7 +532,7 @@ class SyncProject:
     def update_it(self,src,target):
         self.showStatus()
         #self.setStatus()
-        self.task.increment()
+        self.job.increment()
         if os.path.isfile(src):
             self.update_file(src,target)
         elif os.path.isdir(src):
@@ -540,7 +548,7 @@ class SyncProject:
     def delete_it(self,name):
         #self.setStatus()
         self.showStatus()
-        self.task.breathe()
+        self.breathe()
         if os.path.isfile(name):
             self.delete_file(name)
         elif os.path.isdir(name):

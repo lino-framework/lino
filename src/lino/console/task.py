@@ -29,7 +29,7 @@ if False:
     from lino.i18n import itr,_
 
     itr("Working",
-       de="Arbeitsvorgang läuft",
+       de=u"Arbeitsvorgang läuft",
        fr="Travail en cours")
     itr("%d warnings",
         de="%d Warnungen",
@@ -49,38 +49,121 @@ def _(s):
 
 #class TaskSummary:
     
-class Job:
+## class Job:
     
-    #summaryClass=TaskSummary
+##     #summaryClass=TaskSummary
 
-    def __init__(self):
-        self.count_errors = 0
-        self.count_warnings = 0
+##     def __init__(self):
+##         self.count_errors = 0
+##         self.count_warnings = 0
         
-    def getStatus(self):
-        # may override
-        s = _("%d warnings") % (self.count_warnings) 
-        s += ". " + _("%d errors") % (self.count_errors) + "."
-        return s
+##     def getStatus(self):
+##         # may override
+##         s = _("%d warnings") % (self.count_warnings) 
+##         s += ". " + _("%d errors") % (self.count_errors) + "."
+##         return s
 
     
-    #def summary(self):
-    #def lines(self):
-    def getSummary(self):
-        # may override
-        return [
-            _("%d warnings") % self.count_warnings,
-            _("%d errors") % self.count_errors ]
+##     #def summary(self):
+##     #def lines(self):
+##     def getSummary(self):
+##         # may override
+##         return [
+##             _("%d warnings") % self.count_warnings,
+##             _("%d errors") % self.count_errors ]
 
-    def getLabel(self):
-        raise NotImplementedError
+##     def getLabel(self):
+##         raise NotImplementedError
 
-    def run(self,sess,*args,**kw):
-        raise NotImplementedError
+##     def run(self,sess,*args,**kw):
+##         raise NotImplementedError
+
+
+class UI:
+    #def __init__(self,toolkit):
+    #    self.toolkit=toolkit
+        
+    def buildMessage(self,msg,*args,**kw):
+        assert len(kw) == 0, "kwargs not yet implemented"
+        if len(args) == 0:
+            return msg
+        return msg % args
+    def isInteractive(self):
+        return True
+
+    
+    def loop(self,func,label,maxval=0,*args,**kw):
+        "run func with a progressbar"
+        if maxval == 0:
+            task=Task(label)
+        else:
+            task=Progresser(label,maxval)
+        task.toolkit=self.toolkit
+        func(task,*args,**kw)
+        #task.runfrom(self,*args,**kw)
+        #task=Task(self,label,maxval)
+        #task.loop(func,*args,**kw)
+        return task
+
+    def confirm(self,*args,**kw):
+        return self.toolkit.show_confirm(self,*args,**kw)
+    def decide(self,*args,**kw):
+        return self.toolkit.show_decide(self,*args,**kw)
+    def message(self,*args,**kw):
+        return self.toolkit.show_message(self,*args,**kw)
+    def notice(self,*args,**kw):
+        return self.toolkit.show_notice(self,*args,**kw)
+    def debug(self,*args,**kw):
+        return self.toolkit.show_debug(self,*args,**kw)
+    def warning(self,*args,**kw):
+        return self.toolkit.show_warning(self,*args,**kw)
+    def verbose(self,*args,**kw):
+        return self.toolkit.show_verbose(self,*args,**kw)
+    def error(self,*args,**kw):
+        return self.toolkit.show_error(self,*args,**kw)
+##     def critical(self,*args,**kw):
+##         return self.toolkit.show_critical(*args,**kw)
+    def status(self,*args,**kw):
+        return self.toolkit.show_status(self,*args,**kw)
+    def logmessage(self,*args,**kw):
+        return self.toolkit.logmessage(self,*args,**kw)
+    def showForm(self,*args,**kw):
+        self.toolkit.show_form(self,*args,**kw)
+    def showReport(self,*args,**kw):
+        return self.toolkit.showReport(self,*args,**kw)
+    def textprinter(self,*args,**kw):
+        return self.toolkit.textprinter(self,*args,**kw)
+    
+    def runfrom(self,ui,*args,**kw):
+        assert ui.toolkit is not None
+        self.toolkit=ui.toolkit
+        self.run(*args,**kw)
+
+    def breathe(self):
+        return self.toolkit.on_breathe(self)
+
+
+
 
     
     
-class Task:
+class Task(UI):
+    label="Working"
+    def __init__(self,label=None):
+        if label is not None:
+            self.label=label
+
+
+class Looper(Task):
+    
+    def __init__(self,f,label=None):
+        Task.__init__(self,label)
+        self.func=func
+        
+    def run(self,*args,**kw):
+        return self.func(*args,**kw)
+    
+class Progresser(Task):
 
     """
 
@@ -89,30 +172,26 @@ class Task:
     task.begin()
     task.increment()
     """
+    maxval=0
     
-    def __init__(self,toolkit,label=None,maxval=0):
-        #self.session=sess
-        #self.session=app # todo: rename task.session to task.app
-        if label is None:
-            label=_("Working")
-        self.label=label
-        self.toolkit=toolkit
-        self.maxval=maxval
+    def __init__(self,label=None,maxval=None):
+        Task.__init__(self,label)
+        if maxval is not None:
+            self.maxval=maxval
         self._done=False
         self._abortRequested=False
         self.percentCompleted=0
         self.curval=0
-        
 
-    def loop(self,looper,*args,**kw):
-        # called from BaseSession.run_task()
-        
+
+    def runfrom(self,ui,*args,**kw):
+        self.toolkit=ui.toolkit
         self.toolkit.onTaskBegin(self)
         #okay=True
         #retval=None
         #success=False
         try:
-            retval=looper(self,*args,**kw)
+            retval=self.run(*args,**kw)
             self._done = True
             #success=True
             self.percentCompleted = 100
@@ -142,7 +221,7 @@ class Task:
         #if self.count_errors+self.count_warnings != 0:
         #    pass
 
-        return self
+        #return self
         
 ##         if showSummary:
 ##             l=job.getSummary(self)
@@ -170,7 +249,7 @@ class Task:
     def breathe(self):
         self.toolkit.onTaskBreathe(self)
         if self._abortRequested:
-            if self.toolkit.confirm(
+            if self.confirm(
                 _("Are you sure you want to abort?")):
                 raise UserAborted()
             self._abortRequested=False
@@ -186,15 +265,15 @@ class Task:
                 return
             self.percentCompleted = pc
         self.toolkit.onTaskIncrement(self)
-        self.breathe()
-
-    def status(self,msg,*args,**kw):
-        #self.session.status(msg,*args,**kw)
         #self.breathe()
-        raise """\
-please replace "task.status()"
-with task.toolkit.status() and/or task.breathe()
-"""
+
+##     def status(self,msg,*args,**kw):
+##         #self.session.status(msg,*args,**kw)
+##         #self.breathe()
+##         raise """\
+## please replace "task.status()"
+## with task.toolkit.status() and/or task.breathe()
+## """
     
 ##     def status(self,msg,*args,**kw):
 ##         if msg is not None:
@@ -226,9 +305,9 @@ with task.toolkit.status() and/or task.breathe()
 ##         self.session.warning(*args,**kw)
         
 
-##     def getMaxVal(self):
-##         # may override
-##         return 0
+##    def getMaxVal(self):
+##        # may override
+##        return 0
 
 ##     def begin(self,label=None,maxval=0):
 ##         self._label=label

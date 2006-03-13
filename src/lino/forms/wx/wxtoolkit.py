@@ -710,7 +710,7 @@ class Toolkit(toolkit.Toolkit):
         if task.wxctrl is None: return
         pc = task.percentCompleted
         if pc is None: pc = 0
-        msg=task.session.statusMessage
+        msg=task.statusMessage
         if msg is None: msg=''
         if not task.wxctrl.Update(pc,msg):
             task.requestAbort()

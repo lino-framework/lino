@@ -70,7 +70,7 @@ where SRC and DEST are two directories to be synchronized.
             dest="showProgress",
             default=False)
     
-    def run(self,sess):
+    def run(self):
 
         job=Synchronizer()
         
@@ -94,8 +94,8 @@ where SRC and DEST are two directories to be synchronized.
             raise UsageError("needs 1 or 2 arguments")
 
         try:
-            job.run(
-                sess,
+            job.runfrom(
+                self,
                 showProgress=self.options.showProgress,
                 safely=self.options.safely)
         except OperationFailed,e:

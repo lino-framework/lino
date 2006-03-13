@@ -34,8 +34,10 @@ import lino
 
 from lino.console import syscon
 from lino.adamo.exceptions import UsageError, ApplicationError
+from lino.console.task import UI
 
-class Session:
+    
+class Session(UI):
     """
     
 represents a user (usually a human sitting in front of a computer) who
@@ -44,29 +46,16 @@ has chosen a toolkit and who runs some code (usually an application)
     
     """
     def __init__(self,user=None,pwd=None):
+        #UI.__init__(self,self.createToolkit())
         #self.toolkit=None
         self.user=user
         self.pwd=pwd
         self._ignoreExceptions = []
-        self.toolkit=self.createToolkit()
     
-    def buildMessage(self,msg,*args,**kw):
-        assert len(kw) == 0, "kwargs not yet implemented"
-        if len(args) == 0:
-            return msg
-        return msg % args
-    
-    def isInteractive(self):
-        return True
+
 
     def abortRequested(self):
         return self.toolkit.abortRequested()
-
-    def loop(self,func,label,maxval=0,*args,**kw):
-        "run func with a progressbar"
-        task=Task(self,label,maxval)
-        task.loop(func,*args,**kw)
-        return task
 
     def hasAuth(self,*args,**kw):
         return True
@@ -91,40 +80,10 @@ has chosen a toolkit and who runs some code (usually an application)
     def close(self):
         pass
 
-    def confirm(self,*args,**kw):
-        self.toolkit.show_confirm(self,*args,**kw)
-    def decide(self,*args,**kw):
-        self.toolkit.show_decide(self,*args,**kw)
-    def message(self,*args,**kw):
-        self.toolkit.show_message(self,*args,**kw)
-    def notice(self,*args,**kw):
-        return self.toolkit.show_notice(self,*args,**kw)
-    def debug(self,*args,**kw):
-        return self.toolkit.show_debug(self,*args,**kw)
-    def warning(self,*args,**kw):
-        return self.toolkit.show_warning(self,*args,**kw)
-    def verbose(self,*args,**kw):
-        return self.toolkit.show_verbose(self,*args,**kw)
-    def error(self,*args,**kw):
-        return self.toolkit.show_error(self,*args,**kw)
-##     def critical(self,*args,**kw):
-##         return self.toolkit.show_critical(*args,**kw)
-    def status(self,*args,**kw):
-        return self.toolkit.show_status(self,*args,**kw)
-    def logmessage(self,*args,**kw):
-        return self.toolkit.logmessage(self,*args,**kw)
-    def showForm(self,*args,**kw):
-        self.toolkit.show_form(self,*args,**kw)
-    def showReport(self,*args,**kw):
-        return self.toolkit.showReport(self,*args,**kw)
-    def textprinter(self,*args,**kw):
-        return self.toolkit.textprinter(self,*args,**kw)
-    
     def exception(self,e,details=None):
         if e.__class__ in self._ignoreExceptions:
             return
         self.toolkit.showException(self,e,details)
-
 
             
 
@@ -157,11 +116,14 @@ class Application(Session):
         #    session=syscon.getSystemConsole()
         if self.name is None:
             self.name=self.__class__.__name__
-
+        self.toolkit=self.createToolkit()
         Session.__init__(self)
             
         #self.setToolkit(toolkit)
         
+
+    def createToolkit(self):
+        return syscon.getSystemConsole()
 
         
 ##     def parse_args(self,argv=None): #,**kw):
@@ -259,9 +221,6 @@ class Application(Session):
 ##         #       repr(toolkit)+" is not a toolkit"
 ##         self.toolkit = toolkit
 
-    def createToolkit(self):
-        return syscon.getSystemConsole()
-
 ##     def beginSession(self,*args,**kw):
 ##         # to be overridden by Adamo Applications
 ##         return Session(*args,**kw)
@@ -297,7 +256,7 @@ class Application(Session):
             p.print_help()
             return -1
         except ApplicationError,e:
-            sess.error(str(e))
+            self.error(str(e))
             return -1
 
     def run(self,*args,**kw):

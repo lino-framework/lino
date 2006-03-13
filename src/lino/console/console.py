@@ -69,8 +69,13 @@ def rewriter(from_encoding,to_stream,encoding):
 
 
 class BaseToolkit:
-    pass
 
+    def on_breathe(self,ui):
+        if self.abortRequested():
+            ui.requestAbort()
+    
+    def abortRequested(self):
+        return False
 
 class Console(BaseToolkit):
 
@@ -281,18 +286,18 @@ class Console(BaseToolkit):
 
     def onTaskBegin(self,task):
         if task.getLabel() is not None:
-            self.notice(task.getLabel())
+            task.notice(task.getLabel())
 
     def onTaskDone(self,task):
         self.onTaskStatus(task)
-        task.session.status()
+        task.status()
         #task.summary()
         #if msg is not None:
         #    task.session.notice(task.getLabel() + ": " + msg)
     
     def onTaskAbort(self,task):
         self.onTaskStatus(task)
-        task.session.status()
+        task.status()
         #task.summary()
         #if task.getLabel() is not None:
         #    msg = task.getLabel() + ": " + msg
@@ -502,12 +507,12 @@ class TtyConsole(Console):
 ##             self._batch = batch
 ##         Console.configure(self,**kw)
 
-    def status(self,msg=None,*args,**kw):
+    def show_status(self,sess,msg=None,*args,**kw):
         if msg is not None:
             #ssert type(msg) == type('')
             #assert msg.__class__ in (types.StringType,
             #                         types.UnicodeType)
-            msg=self.buildMessage(msg,*args,**kw)
+            msg=sess.buildMessage(msg,*args,**kw)
         self.statusMessage=msg
         return self.showStatus(msg)
 
@@ -515,35 +520,35 @@ class TtyConsole(Console):
         self.statusMessage=msg
     
 
-    def warning(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.warning(self,msg.ljust(self.width))
+    def show_warning(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.show_warning(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def message(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.message(self,msg.ljust(self.width))
+    def show_message(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.show_message(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def verbose(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.verbose(self,msg.ljust(self.width))
+    def show_verbose(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.show_verbose(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def error(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.error(self,msg.ljust(self.width))
+    def show_error(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.show_error(self,sess,msg.ljust(self.width))
         self._refresh()
         
-    def critical(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.critical(self,msg.ljust(self.width))
-        self._refresh()
+##     def critical(self,msg,*args,**kw):
+##         msg = self.buildMessage(msg,*args,**kw)
+##         Console.critical(self,msg.ljust(self.width))
+##         self._refresh()
         
         
-    def notice(self,msg,*args,**kw):
-        msg = self.buildMessage(msg,*args,**kw)
-        Console.notice(self,msg.ljust(self.width))
+    def show_notice(self,sess,msg,*args,**kw):
+        msg = sess.buildMessage(msg,*args,**kw)
+        Console.show_notice(self,sess,msg.ljust(self.width))
         self._refresh()
         
     def onTaskStatus(self,task):
