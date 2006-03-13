@@ -21,10 +21,10 @@
 
 from lino.adamo.ddl import *
 
-from lino.apps.addrbook import tables as addrtables
+from lino.apps.addrbook import addrbook_schema as addrtables
 #from lino.apps.addrbook.tables import Partner as PartnerBase
 #from lino.apps.addrbook.tables import User
-from lino.apps.addrbook.tables import *
+from lino.apps.addrbook.addrbook_schema import *
 
 #from lino.i18n import BabelString
 

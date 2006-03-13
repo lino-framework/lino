@@ -104,11 +104,13 @@ writes some diagnostics about your computer.
         self.message("")
 
 
-consoleApplicationClass = Diag
+Diag().main()
 
-if __name__ == '__main__':
-    #syscon.run(consoleApplicationClass())
-    consoleApplicationClass().main()
+## consoleApplicationClass = Diag
+
+## if __name__ == '__main__':
+##     #syscon.run(consoleApplicationClass())
+##     consoleApplicationClass().main()
     
         
 

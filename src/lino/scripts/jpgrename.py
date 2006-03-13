@@ -90,7 +90,7 @@ where DIR (default .) is a directory with .jpg files to rename.
             dest="simulate",
             default=False)
 
-    def run(self,sess):
+    def run(self):
          
         if len(self.args) == 0:
             dirs=['.']
@@ -98,9 +98,9 @@ where DIR (default .) is a directory with .jpg files to rename.
             dirs=self.args
 
         for dirname in dirs:
-            self.walk(sess,dirname)
+            self.walk(dirname)
             
-    def walk(self,sess,dirname):
+    def walk(self,dirname):
         for root, dirs, files in os.walk(dirname):
             okay=True
             filenames = {}
@@ -111,19 +111,23 @@ where DIR (default .) is a directory with .jpg files to rename.
                     try:
                         nfn=cv(root,name)
                     except MyException,e:
-                        sess.warning(str(e))
+                        self.warning(str(e))
                     else:
                         if nfn is None: pass
                         elif nfn == name: pass
                         elif filenames.has_key(nfn):
                             okay=False
-                            sess.warning(
+                            self.warning(
                                 '%s/%s: duplicate time %s', \
                                 root,name,nfn)
                         else:
                             filenames[nfn] = name
-            if not okay: return 
-            if not sess.confirm(
+            if not okay: return
+            if len(filenames) == 0:
+                self.notice("Nothing to do.")
+                return
+            
+            if not self.confirm(
                 "Rename %d files in directory %s ?" % \
                 (len(filenames),root)):
                 return
@@ -132,15 +136,17 @@ where DIR (default .) is a directory with .jpg files to rename.
                 o=os.path.join(root,ofn)
                 n=os.path.join(root,nfn)
                 if self.options.simulate:
-                    sess.notice("Would rename %s to %s", o,n)
+                    self.notice("Would rename %s to %s", o,n)
                 else:
-                    sess.notice("Rename %s to %s", o,n)
+                    self.notice("Rename %s to %s", o,n)
                     os.rename(o,n)
                                    
 
-# lino.runscript expects a name consoleApplicationClass
-consoleApplicationClass = JpgRename
+JpgRename().main()
 
-if __name__ == '__main__':
-    consoleApplicationClass().main() 
+## # lino.runscript expects a name consoleApplicationClass
+## consoleApplicationClass = JpgRename
+
+## if __name__ == '__main__':
+##     consoleApplicationClass().main() 
     

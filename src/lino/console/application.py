@@ -132,7 +132,7 @@ has chosen a toolkit and who runs some code (usually an application)
 class Application(Session):
     
     name = None
-    version=lino.__version__
+    version=None # lino.__version__
     copyright=None
     url=None
     author=None

@@ -69,7 +69,9 @@ if not sys.argv[1] in scripts.__all__:
     print "error: unknown command '%s'" % sys.argv[1]
     sys.exit(-1)
 
-mod = my_import("lino.scripts." + sys.argv[1])
-sys.exit(mod.consoleApplicationClass().main(sys.argv[2:]))
-#app = mod.consoleApplicationClass()
-#sys.exit(app.main(sys.argv[2:]))
+scriptName=sys.argv[1]
+del sys.argv[1]
+my_import("lino.scripts." + scriptName)
+
+#mod = my_import("lino.scripts." + sys.argv[1])
+#sys.exit(mod.consoleApplicationClass().main(sys.argv[2:]))

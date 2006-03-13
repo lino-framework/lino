@@ -19,8 +19,7 @@
 
 from lino.console.application import Application, UsageError
 
-from lino.apps.timtools.synchronizer import Synchronizer, \
-     OperationFailed
+from lino.tools.synchronizer import Synchronizer, OperationFailed
 
 class Sync(Application):
 
@@ -102,10 +101,11 @@ where SRC and DEST are two directories to be synchronized.
         except OperationFailed,e:
             return
 
+Sync().main()
 
-# lino.runscript expects a name consoleApplicationClass
-consoleApplicationClass = Sync
+## # lino.runscript expects a name consoleApplicationClass
+## consoleApplicationClass = Sync
 
-if __name__ == '__main__':
-    consoleApplicationClass().main() # console,sys.argv[1:])
+## if __name__ == '__main__':
+##     consoleApplicationClass().main() # console,sys.argv[1:])
     

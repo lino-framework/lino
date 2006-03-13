@@ -47,7 +47,7 @@ class StoppingTestRunner(unittest.TextTestRunner):
 
 class Runtests(Application):
     name="Lino/runtests"
-    #years='2004-2005'
+    years='2004-2006'
     #author='Luc Saffre'
     
     copyright="""\
@@ -209,13 +209,16 @@ continue testing even if failures or errors occur""",
         else:
             runner = StoppingTestRunner(stream=stream)
         runner.run(suite)
+
+
+Runtests().main()
         
 
-# lino.runscript expects a name consoleApplicationClass
-consoleApplicationClass = Runtests
+## # lino.runscript expects a name consoleApplicationClass
+## consoleApplicationClass = Runtests
 
-if __name__ == '__main__':
-    syscon.run(consoleApplicationClass)
+## if __name__ == '__main__':
+##     syscon.run(consoleApplicationClass)
     
 
 
