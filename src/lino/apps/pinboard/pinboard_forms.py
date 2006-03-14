@@ -16,68 +16,45 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.forms import gui
+from lino.adamo.ddl import Schema
+from lino.forms import DbMainForm, DbApplication
 
-from lino.apps.pinboard import tables 
-from lino.adamo.ddl import Schema, DataReport
-
-from lino.gendoc.html import HtmlDocument
-#from lino.reports.reports import DataReport
+import pinboard_tables as tables
 
 
-class Pinboard(Schema):
-    name="Lino/Pinboard"
-    years='2005-2006'
-    author="Luc Saffre"
     
+class PinboardMainForm(DbMainForm):
     
-    def setupSchema(self):
-        for cl in tables.TABLES:
-            self.addTable(cl)
-    
-
-    def showMainForm(self,sess):
-        frm = sess.form(
-            label="Main menu",
-            doc="""\
-This is the Pinboard main menu.                                     
-"""+("\n"*10))
-
-        m = frm.addMenu("db","&Database")
+    def setupMenu(self):
+        m = self.addMenu("pinboard","&Pinboard")
         
-##         m.addItem("authors",label="&Authors").setHandler(
-##             sess.showViewGrid, tables.Author)
-##         m.addItem("nodes",label="&Nodes").setHandler(
-##             sess.showViewGrid, tables.Node)
-##         m.addItem("news",label="&News").setHandler(
-##             sess.showViewGrid, tables.NewsItem)
-##         m.addItem("newsgroups",label="News&groups").setHandler(
-##             sess.showViewGrid, tables.Newsgroup)
-        
-        m.addReportItem("authors",tables.AuthorsReport,
+        self.addReportItem(m,"authors",tables.AuthorsReport,
                         label="&Authors")
-        m.addReportItem("publications",tables.PublicationsReport,
+        self.addReportItem(m,"publications",tables.PublicationsReport,
                         label="&Publications")
-        m.addReportItem("nodes",tables.NodesReport,
+        self.addReportItem(m,"nodes",tables.NodesReport,
                         label="&Nodes")
-        m.addReportItem("news",tables.NewsItemsReport,
+        self.addReportItem(m,"news",tables.NewsItemsReport,
                         label="&News")
-        m.addReportItem("newsgroups",tables.NewsgroupsReport,
+        self.addReportItem(m,"newsgroups",tables.NewsgroupsReport,
                         label="&Newsgroups")
         
 ##         m = frm.addMenu("reports","&Reports")
 ##         m.addItem("s",label="&Static HTML").setHandler(
 ##             self.writeStaticSite,sess)
         
-        self.addProgramMenu(sess,frm)
+        self.addProgramMenu()
 
-        frm.addOnClose(sess.close)
 
-        frm.show()
 
+class Pinboard(DbApplication):
+    name="Lino Pinboard"
+    years='2005-2006'
+    author="Luc Saffre"
+    schemaClass=tables.PinboardSchema
+    
+    
+    
 
 if __name__ == '__main__':
-    app=Pinboard()
-    app.quickStartup()
-    #app.main()
-    gui.run(app)
+    Pinboard().main()

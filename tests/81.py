@@ -20,7 +20,6 @@
 """
 from lino.misc.tsttools import TestCase, main
 
-
 class Case(TestCase):
 
     def getDeleteVetos(self,sess):
@@ -34,8 +33,8 @@ class Case(TestCase):
         return vetos
     
     def test01(self):
-        from lino.apps.addrbook import demo
-        sess = demo.startup()
+        from lino.apps.contacts.contacts_demo import startup
+        sess = startup()
         vetos=self.getDeleteVetos(sess)
         self.assertEqual(len(vetos),7)
         self.assertEquivalent("\n".join(vetos),"""

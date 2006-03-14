@@ -18,23 +18,24 @@
 
 from lino.adamo.ddl import *
 
-from lino.apps.addrbook.tables import Partner
-from web import Node
+#from lino.apps.addrbook.tables import Partner
+#from web import Node
+import pinboard_tables as tables
 
 
-class Event(Node):
+class Event(tables.Node):
     tableName="Events"
     def initTable(self,table):
         #MemoMixin.init(self,table)
-        Node.initTable(self,table)
+        tables.Node.initTable(self,table)
         table.getRowAttr('id').setType(ROWID)
         table.addField('date', DATE)
         table.addField('time', STRING)
         table.addPointer('type', EventType)#.setDetail("eventsByType")
         
-        table.addPointer('responsible',Partner)
+        table.addPointer('responsible',tables.Partner)
         #.setDetail('eventsByResponsible')
-        table.addPointer('place',Partner)#.setDetail('eventsByPlace')
+        table.addPointer('place',tables.Partner)#.setDetail('eventsByPlace')
         
 
         #table.setColumnList('date time place title abstract')

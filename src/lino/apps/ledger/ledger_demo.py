@@ -22,8 +22,8 @@
 import os, sys
 #from lino import adamo
 from lino.adamo.datatypes import itod
-from lino.apps.ledger.ledger_tables import *
 from lino.apps.contacts import contacts_demo as addrdemo
+from ledger_tables import *
 
 def startup(filename=None, langs=None,
             dump=False,

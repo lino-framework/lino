@@ -19,8 +19,9 @@
 
 #from lino.adamo.ddl import Schema
 
-from lino.apps.contacts.contacts_data import Contacts
-from ledger_data import *
+from lino.apps.contacts.contacts_forms import \
+     Contacts, ContactsMainForm
+from ledger_tables import *
 
 class LedgerMainForm(ContactsMainForm):
     """

@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -16,8 +16,11 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.apps.addrbook.tables import User
-from lino.apps.addrbook.tables import Partner, Nation, City, Person
+from lino.adamo.ddl import Schema
+
+from lino.apps.contacts.contacts_tables import User
+from lino.apps.contacts.contacts_tables import Partner
+from lino.apps.contacts.contacts_tables import Nation, City
 
 from lino.apps.pinboard.babel import Language
 
@@ -46,8 +49,8 @@ from lino.apps.pinboard.quotes import Author, \
 ##      projects, news, quotes
 
 
-
-TABLES=(
+class PinboardSchema(Schema):
+    tableClasses = (
         User,
         Partner,
         Nation,
@@ -66,7 +69,6 @@ TABLES=(
         PubType,
         PubAuthor)
 
-#__all__ = filter(lambda x: x[0] != "_", dir())
+__all__ = [t.__name__ for t in PinboardSchema.tableClasses]
 
-__all__ = [t.__name__ for t in TABLES]
-__all__.append('TABLES')
+__all__.append('PinboardSchema')

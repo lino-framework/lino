@@ -26,14 +26,16 @@
 
 from lino.misc.tsttools import main, TestCase
 
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import *
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import *
+#from lino.apps.addrbook import demo
+#from lino.apps.addrbook.tables import *
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup()
+        self.sess = startup()
 
     def tearDown(self):
         self.sess.shutdown()

@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright Luc Saffre 2003-2006
 
 ## This file is part of the Lino project.
 
@@ -23,15 +23,15 @@ bug 20040724 : setting a sample on a query modifies the
 
 """
 from lino.misc.tsttools import TestCase, main
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import City, Nation
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import City, Nation
 
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup()
+        self.db = startup()
 
     def tearDown(self):
         self.db.shutdown()

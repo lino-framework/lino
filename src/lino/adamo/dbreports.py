@@ -83,13 +83,13 @@ class SchemaOverview(Report):
             meth=lambda row:\
             ", ".join([fld.name for fld in row.item.getFields()
                        if isinstance(fld,Pointer)]),
-            width=15)
+            width=13)
         self.addVurtColumn(
             label="Details",
             meth=lambda row:\
             ", ".join([fld.name for fld in row.item.getFields()
                        if isinstance(fld,Detail)]),
-            width=25)
+            width=20)
 
 
 

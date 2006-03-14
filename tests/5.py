@@ -1,5 +1,5 @@
 #coding: iso-8859-1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -19,9 +19,8 @@
 
     
 from lino.misc.tsttools import TestCase, main
-#import unittest
-from lino.apps.pinboard import demo, tables
-#from lino.apps.pinboard.tables import *
+from lino.apps.pinboard.pinboard_demo import startup
+from lino.apps.pinboard import pinboard_tables as tables
 
 
 class Case(TestCase):
@@ -31,7 +30,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup() # dump=True)
+        self.db = startup() # dump=True)
         
         #self.db = demo.beginSession()
 

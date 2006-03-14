@@ -18,13 +18,15 @@
 
 
 from lino.misc.tsttools import TestCase, main
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import City
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import *
+#from lino.apps.addrbook import demo
+#from lino.apps.addrbook.tables import City
 #from lino.adamo import center
 
 class Case(TestCase):
     def test01(self):
-        sess = demo.startup()
+        sess = startup()
         sess.startDump()
 
         # method 1 needs

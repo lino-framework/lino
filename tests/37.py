@@ -18,8 +18,11 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc.tsttools import TestCase, main
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import *
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import *
+
+#from lino.apps.addrbook import demo
+#from lino.apps.addrbook.tables import *
 
 
 class Case(TestCase):
@@ -29,7 +32,7 @@ class Case(TestCase):
     
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup(langs="en de", big=True)
+        self.sess = startup(langs="en de", big=True)
 
     def tearDown(self):
         self.sess.shutdown()

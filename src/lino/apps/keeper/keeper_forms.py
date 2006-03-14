@@ -18,7 +18,7 @@
 
 import os
 
-from lino.apps.keeper import tables
+import keeper_tables as tables
 #from lino.apps.keeper.tables import TABLES
 #from lino.apps.keeper.tables import *
 from lino.adamo.ddl import STRING, BOOL

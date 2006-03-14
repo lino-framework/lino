@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.apps.addrbook.addrbook_schema import *
+from contacts_tables import *
 from lino.forms import DbMainForm, DbApplication
 
 class ContactsMainForm(DbMainForm):

@@ -1,5 +1,5 @@
 #coding: iso-8859-1
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,11 +17,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.apps.pinboard.pinboard import Pinboard
-from lino.apps.pinboard.tables import *
-from lino.apps.pinboard.tables import TABLES
+from pinboard_tables import *
 
-from lino.adamo.ddl import Schema, Populator
+from lino.adamo.ddl import Populator
 
 def startup(filename=None, langs=None,
             populate=True,
@@ -30,7 +28,7 @@ def startup(filename=None, langs=None,
             withLangs=False,
             withJokes=False,
             **kw):
-    schema = Pinboard(**kw)
+    schema = PinboardSchema(**kw)
     sess=schema.quickStartup(langs=langs,
                              filename=filename,
                              dump=dump)

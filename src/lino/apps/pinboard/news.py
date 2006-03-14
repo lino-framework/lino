@@ -18,10 +18,13 @@
 
 from lino.adamo import ddl # import *
 
-from babel import Language
-from web import Node
-from lino.apps.addrbook.tables import User
-from projects import Project
+import pinboard_tables as tables
+
+
+#from babel import Language
+#from web import Node
+#from lino.apps.addrbook.tables import User
+#from projects import Project
 
 class NewsItem(ddl.MemoRow):
     tableName="News"
@@ -32,11 +35,11 @@ class NewsItem(ddl.MemoRow):
         table.addField('time',ddl.TIME)
         table.addPointer('newsgroup',Newsgroup)
         #.setDetail('newsByGroup', orderBy='date')
-        table.addPointer('author',User)
+        table.addPointer('author',tables.User)
         #.setDetail('newsByAuthor')
-        table.addPointer('lang',Language)
+        table.addPointer('lang',tables.Language)
         #table.addField('lang',LANG)
-        table.addPointer('project',Project)
+        table.addPointer('project',tables.Project)
         #table.addPointer('node',Node)
 
         #self.writeParagraph = Vurt(self.Instance.writeParagraph,MEMO)
@@ -71,7 +74,7 @@ class Newsgroup(ddl.StoredDataRow):
     def initTable(self,table):
         table.addField('id',ddl.STRING)
         table.addField('name',ddl.STRING).setMandatory()
-        table.addPointer('node',Node)
+        table.addPointer('node',tables.Node)
         
         #table.addView("std","id name")
         

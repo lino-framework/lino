@@ -19,7 +19,9 @@
 from lino.adamo.ddl import *
 #from lino.apps.pinboard.babel import Language
 
-from lino.apps.pinboard.tables import Person, City, Language
+#from lino.apps.pinboard.tables import Person, City, Language
+import pinboard_tables as tables
+from lino.apps.contacts.contacts_tables import Person
 
 class Quote(StoredDataRow):
     tableName="Quotes"
@@ -29,7 +31,7 @@ class Quote(StoredDataRow):
         table.addField('quote',MEMO)
         table.addPointer('author',Author)
         #.setDetail('quotesByAuthor')
-        table.addPointer('lang',Language)
+        table.addPointer('lang',tables.Language)
         #table.addField('lang',LANG)
         
         #self.pubRef = Field(STRING)
@@ -52,7 +54,7 @@ class Publication(MemoTreeRow):
         table.addField('typeRef',STRING)
         table.addPointer('pubType', PubType)
         table.addPointer('author',Author)
-        table.addPointer('lang',Language)
+        table.addPointer('lang',tables.Language)
         #table.addField('lang',LANG)
         table.addField('url',URL)
 
@@ -131,7 +133,7 @@ class AuthorEvent(BabelRow):
         table.addPointer('aetype',AuthorEventType)
         table.addPointer('author',Author)
         table.addField('aedate',DATE)
-        table.addPointer('place',City)
+        table.addPointer('place',tables.City)
         table.setPrimaryKey('author seq')
         
     def __str__(self):

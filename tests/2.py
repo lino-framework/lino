@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -21,8 +21,8 @@
 import os, types
 
 from lino.misc.tsttools import TestCase
-from lino.apps.ledger import demo
-from lino.apps.ledger.tables import *
+from lino.apps.ledger.ledger_demo import startup
+from lino.apps.ledger.ledger_tables import *
 #from lino.schemas.sprl import demo
 #from lino.schemas.sprl.tables import *
 
@@ -34,7 +34,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup()
+        self.db = startup()
         self.db.setBabelLangs('en')
 
     def tearDown(self):

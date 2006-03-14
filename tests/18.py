@@ -23,14 +23,14 @@
 
 """
 from lino.misc.tsttools import TestCase, main
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import Nation
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import Nation
 
 class Case(TestCase):
     #todo="Crash in big addrbook demo"
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(langs='en de fr',big=True)
+        self.db = startup(langs='en de fr',big=True)
         
     def tearDown(self):
         self.db.shutdown()

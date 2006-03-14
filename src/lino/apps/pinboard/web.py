@@ -18,8 +18,8 @@
 
 from lino.adamo.ddl import *
 
-from babel import Language
-from lino.apps.addrbook.tables import User
+#from babel import Language
+import pinboard_tables as tables
 
         
 #   def getChildren(self):
@@ -34,8 +34,8 @@ class Node(MemoTreeRow):
         table.addField('id',ROWID)
         table.addField('created',DATE)
         table.addField('modified',DATE)
-        table.addPointer('author',User)
-        table.addPointer('lang',Language)
+        table.addPointer('author',tables.User)
+        table.addPointer('lang',tables.Language)
         #table.addField('lang',LANG)
         table.addField('match',STRING)
         table.addField('subtitle',STRING)

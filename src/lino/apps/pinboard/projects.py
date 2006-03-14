@@ -17,8 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.ddl import *
-from tables import User, Partner
+#from tables import User, Partner
 #from web import MemoMixin, MemoTreeMixin
+import pinboard_tables as tables
 
 
 class Project(MemoTreeRow):
@@ -29,8 +30,8 @@ class Project(MemoTreeRow):
         table.addField('startDate',DATE)
         table.addField('stopDate',DATE)
 
-        table.addPointer('responsible',User)#.setDetail("projects")
-        table.addPointer('sponsor', Partner) 
+        table.addPointer('responsible',tables.User)#.setDetail("projects")
+        table.addPointer('sponsor', tables.Partner) 
         table.addPointer('status', ProjectStatus)#.setDetail("projects")
         
         #from sdk import Version

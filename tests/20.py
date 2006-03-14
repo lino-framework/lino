@@ -48,14 +48,14 @@ values or in a dict of complex values...
 """
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import Nation,Partner
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import Nation,Partner
 #from lino.reports import DataReport
 
 class Case(TestCase):
     
     def test01(self):
-        dbsess = demo.startup()
+        dbsess = startup()
         be = dbsess.query(Nation).peek("be")
         qry = dbsess.query(Partner,
                            "title firstName name",

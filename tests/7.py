@@ -26,15 +26,18 @@ In the following test, p[2] returned the same row as the previous p[1]
 
 """
 from lino.misc.tsttools import TestCase, main
-from lino.apps.addrbook import demo #.sprl import Schema
-from lino.apps.addrbook.tables import Partner
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import *
+
+#from lino.apps.addrbook import demo #.sprl import Schema
+#from lino.apps.addrbook.tables import Partner
 #from lino.adamo import center
 
 class Case(TestCase):
 
     def test01(self):
         "Accessing data that has not been inserted using adamo"
-        sess = demo.startup(populate=False)
+        sess = startup(populate=False)
         
         assert len(sess.query(Partner)) == 0, \
                "db not empty: previous test run didn't shutdown"

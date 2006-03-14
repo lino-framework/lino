@@ -19,14 +19,16 @@
 
 
 from lino.misc.tsttools import TestCase, main
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import Partner
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import *
+#from lino.apps.addrbook import demo
+#from lino.apps.addrbook.tables import Partner
 
 class Case(TestCase):
 
         
     def test01(self):
-        db = demo.startup()
+        db = startup()
         s1 = ''
         q = db.query(Partner,\
                      "name street city.name",

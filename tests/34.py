@@ -27,33 +27,33 @@ class Case(TestCase):
 
     
     def test01(self):
-        from lino.apps.addrbook.addrbook import Contacts
+        from lino.apps.contacts.contacts_forms import Contacts
         app = Contacts()
         
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
-TableName      |Fields              |Pointers       |Details
----------------+--------------------+---------------+-------------------------
-Languages      |id, name            |               |
-Nations        |id, name, area,     |               |cities,
-               |population, curr,   |               |partners_by_nation
-               |isocode             |               |
-Cities         |id, name, zipCode,  |nation         |
-               |inhabitants         |               |
-Organisations  |id, email, phone,   |nation, city   |
-               |gsm, fax, website,  |               |
-               |zip, street, house, |               |
-               |box, name           |               |
-Persons        |id, name, firstName,|               |
-               |sex, birthDate      |               |
-Partners       |name, firstName,    |nation, city,  |
-               |email, phone, gsm,  |type, lang     |
-               |fax, website, zip,  |               |
-               |street, house, box, |               |
-               |id, title, logo     |               |
-PartnerTypes   |id, name            |               |        
+TableName      |Fields              |Pointers     |Details             
+---------------+--------------------+-------------+--------------------
+Languages      |id, name            |             |                    
+Nations        |id, name, area,     |             |cities,             
+               |population, curr,   |             |partners_by_nation  
+               |isocode             |             |                    
+Cities         |id, name, zipCode,  |nation       |                    
+               |inhabitants         |             |                    
+Organisations  |id, email, phone,   |nation, city |                    
+               |gsm, fax, website,  |             |                    
+               |zip, street, house, |             |                    
+               |box, name           |             |                    
+Persons        |id, name, firstName,|             |                    
+               |sex, birthDate      |             |                    
+Partners       |name, firstName,    |nation, city,|                    
+               |email, phone, gsm,  |type, lang   |                    
+               |fax, website, zip,  |             |                    
+               |street, house, box, |             |                    
+               |id, title, logo     |             |                    
+PartnerTypes   |id, name            |             |                    
         """)
         
         DatabaseOverview(app.dbsess).show()
@@ -70,25 +70,31 @@ Persons             |    0|                    |
 Partners            |    0|                    |
 PartnerTypes        |    0|                    |
 """)
+        #app.main()
+        s=self.getConsoleOutput()
+        #print s
+        self.assertEquivalent(s,"""\
+        """)
         app.close()
         
     def test02(self):
-        from lino.apps.keeper.keeper import Keeper
+        from lino.apps.keeper.keeper_forms import Keeper
         app = Keeper()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""
-TableName      |Fields              |Pointers       |Details
----------------+--------------------+---------------+-------------------------
-Volumes        |id, name, meta, path|               |directories
-Files          |name, mtime, size,  |dir, type      |occurences
-               |content, meta,      |               |
-               |mustParse           |               |
-Directories    |id, name, meta      |parent, volume |files, subdirs
-FileTypes      |id, name            |               |
-Words          |id                  |synonym        |occurences
-Occurences     |pos                 |word, file     |        
+TableName      |Fields              |Pointers     |Details
+---------------+--------------------+-------------+--------------------
+Volumes        |id, name, meta, path|             |directories
+Files          |name, mtime, size,  |dir, type    |occurences
+               |content, meta,      |             |
+               |mustParse           |             |
+Directories    |id, name, meta      |parent,      |files, subdirs
+               |                    |volume       |
+FileTypes      |id, name            |             |
+Words          |id                  |synonym      |occurences
+Occurences     |pos                 |word, file   |
         """)
         DatabaseOverview(app.dbsess).show()
         s=self.getConsoleOutput()
@@ -107,58 +113,58 @@ Occurences          |    0|                    |
         
         
     def test03(self):
-        from lino.apps.ledger.ledger import Ledger
+        from lino.apps.ledger.ledger_forms import Ledger
         app = Ledger()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
-        #print s
+        # print s
         self.assertEquivalent(s,"""
-TableName      |Fields              |Pointers       |Details                  
----------------+--------------------+---------------+-------------------------
-Currencies     |id, name            |               |                         
-Products       |id, name, price     |               |                         
-Journals       |id, name, tableName |               |                         
-BankStatements |seq, date, closed,  |jnl            |                         
-               |remark, balance1,   |               |                         
-               |balance2            |               |                         
-MiscOperations |seq, date, closed,  |jnl            |                         
-               |remark              |               |                         
-Invoices       |seq, date, closed,  |jnl, partner   |lines                    
-               |remark, zziel,      |               |                         
-               |amount, inverted    |               |                         
-InvoiceLines   |line, amount,       |invoice,       |                         
-               |remark, unitPrice,  |product        |                         
-               |qty                 |               |                         
-BalanceItems   |name, id, attrib,   |               |                         
-               |dc, type, doc       |               |                         
-CashFlowItems  |name, id, attrib,   |               |                         
-               |dc, type, doc       |               |                         
-ProfitAndLossIt|name, id, attrib,   |               |                         
-ems            |dc, type, doc       |               |                         
-Accounts       |name, pcmn, id      |parent,        |                         
-               |                    |balance,       |                         
-               |                    |profit, cash   |                         
-Bookings       |date, amount, dc,   |account,       |                         
-               |label, id           |invoice,       |                         
-               |                    |partner        |                         
-Languages      |id, name            |               |                         
-Nations        |id, name, area,     |               |cities,                  
-               |population, curr,   |               |partners_by_nation       
-               |isocode             |               |                         
-Cities         |id, name, zipCode,  |nation         |                         
-               |inhabitants         |               |                         
-Organisations  |id, email, phone,   |nation, city   |                         
-               |gsm, fax, website,  |               |                         
-               |zip, street, house, |               |                         
-               |box, name           |               |                         
-Persons        |id, name, firstName,|               |                         
-               |sex, birthDate      |               |                         
-Partners       |name, firstName,    |nation, city,  |                         
-               |email, phone, gsm,  |type, lang,    |                         
-               |fax, website, zip,  |currency       |                         
-               |street, house, box, |               |                         
-               |id, title, logo     |               |                         
-PartnerTypes   |id, name            |               |                         
+TableName      |Fields              |Pointers     |Details
+---------------+--------------------+-------------+--------------------
+Currencies     |id, name            |             |
+Products       |id, name, price     |             |
+Journals       |id, name, tableName |             |
+BankStatements |seq, date, closed,  |jnl          |
+               |remark, balance1,   |             |
+               |balance2            |             |
+MiscOperations |seq, date, closed,  |jnl          |
+               |remark              |             |
+Invoices       |seq, date, closed,  |jnl, partner |lines
+               |remark, zziel,      |             |
+               |amount, inverted    |             |
+InvoiceLines   |line, amount,       |invoice,     |
+               |remark, unitPrice,  |product      |
+               |qty                 |             |
+BalanceItems   |name, id, attrib,   |             |
+               |dc, type, doc       |             |
+CashFlowItems  |name, id, attrib,   |             |
+               |dc, type, doc       |             |
+ProfitAndLossIt|name, id, attrib,   |             |
+ems            |dc, type, doc       |             |
+Accounts       |name, pcmn, id      |parent,      |
+               |                    |balance,     |
+               |                    |profit, cash |
+Bookings       |date, amount, dc,   |account,     |
+               |label, id           |invoice,     |
+               |                    |partner      |
+Languages      |id, name            |             |
+Nations        |id, name, area,     |             |cities,
+               |population, curr,   |             |partners_by_nation
+               |isocode             |             |
+Cities         |id, name, zipCode,  |nation       |
+               |inhabitants         |             |
+Organisations  |id, email, phone,   |nation, city |
+               |gsm, fax, website,  |             |
+               |zip, street, house, |             |
+               |box, name           |             |
+Persons        |id, name, firstName,|             |
+               |sex, birthDate      |             |
+Partners       |name, firstName,    |nation, city,|
+               |email, phone, gsm,  |type, lang,  |
+               |fax, website, zip,  |currency     |
+               |street, house, box, |             |
+               |id, title, logo     |             |
+PartnerTypes   |id, name            |             |        
         """)
         DatabaseOverview(app.dbsess).show()
         s=self.getConsoleOutput()

@@ -29,15 +29,15 @@ pre-build query of CITIES from this nation.
 """
 
 from lino.misc.tsttools import TestCase, main
-from lino.apps.addrbook import demo
-from lino.apps.addrbook.tables import Nation
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import Nation
 
 class Case(TestCase):
     
-    #todo="Crash in big addrbook demo"
+    #todo="Crash in big contacts demo"
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(big=True)
+        self.db = startup(big=True)
         #self.db = demo.beginSession(populator=None,big=True)
         #demo.populate(self.db,big=True)
         

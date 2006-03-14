@@ -16,19 +16,21 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-"Does the addrbook demo database startup()"
+"Does the contacts demo database startup()"
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.addrbook import demo
-from lino.apps.addrbook import *
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import *
+#from lino.apps.addrbook import demo
+#from lino.apps.addrbook import *
 
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup()
+        self.sess = startup()
 
     def tearDown(self):
         self.sess.shutdown()

@@ -28,7 +28,7 @@ from lino.adamo import ddl
 from lino.adamo.datatypes import itod
 #from lino.apps.addrbook.addrbook_schema import AddressBookSchema, City
 #from lino.apps.addrbook import tables
-from lino.apps import addrbook
+from contacts_tables import *
 #, City, Nation
 
 def startup(filename=None, langs=None,
@@ -37,7 +37,7 @@ def startup(filename=None, langs=None,
             big=False,
             withDemoData=True,
             **kw):
-    schema=addrbook.ContactsSchema(**kw)
+    schema=ContactsSchema(**kw)
     ctx=schema.quickStartup(langs=langs,
                             filename=filename,
                             dump=dump)
@@ -183,7 +183,7 @@ class DemoPopulator(ddl.Populator):
         
     def populatePartners(self,q):
 
-        cities = q.getSession().query(addrbook.City)
+        cities = q.getSession().query(City)
         self.eupen = cities.findone(name="Eupen")
         self.verviers = cities.findone(name="Verviers")
         self.tallinn = cities.findone(name="Tallinn")

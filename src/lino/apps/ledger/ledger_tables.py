@@ -329,6 +329,7 @@ class LedgerSchema(contacts.ContactsSchema):
     
         
 __all__ = [t.__name__ for t in LedgerSchema.tableClasses]
+__all__.append('LedgerSchema')
 
 ## TABLES = (
 ##           Currency,
