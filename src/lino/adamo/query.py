@@ -1134,11 +1134,15 @@ class SimpleQuery(LeadTableColumnList):
     def getContext(self):
         return self.session
 
-    def createReport(self,name=None,**kw):
-        raise "moved to dbsession"
+##     def createReport(self,name=None,**kw):
+##         raise "moved to dbsession"
     
-    def showReport(self,**kw):
-        self.session.showQuery(self,**kw)
+    def show(self,**kw):
+        from lino.adamo.dbreports import QueryReport
+        QueryReport(self,**kw).show()
+
+##     def showReport(self,**kw):
+##         self.session.showQuery(self,**kw)
 
     def report(self,*args,**kw):
         rpt=self.session.createDataReport(self,*args,**kw)

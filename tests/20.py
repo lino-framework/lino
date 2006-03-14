@@ -60,7 +60,7 @@ class Case(TestCase):
         qry = dbsess.query(Partner,
                            "title firstName name",
                            nation=be)
-        qry.showReport(columnWidths="6 10 20")
+        qry.show(columnWidths="6 10 20")
         #dbc.showQuery(qry,columnWidths="6 10 20")
         #sess.showReport(rpt)
         s = self.getConsoleOutput()

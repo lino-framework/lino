@@ -31,6 +31,9 @@ from lino.adamo.datatypes import itod
 from contacts_tables import *
 #, City, Nation
 
+rtlib_path=config.get(config.DEFAULTSECT,'rtlib_path')
+
+
 def startup(filename=None, langs=None,
             populate=True,
             dump=None,
@@ -58,7 +61,6 @@ def startup(filename=None, langs=None,
     return ctx
 
 
-
 class StandardPopulator(ddl.Populator):
     
     #dataRoot=os.path.abspath(os.path.join(
@@ -80,7 +82,7 @@ class StandardPopulator(ddl.Populator):
     def populateNations(self,q):
         if self.big:
             #q.startDump()
-            q.appendfrom(os.path.join(config.rtlib_path,
+            q.appendfrom(os.path.join(rtlib_path,
                                       "data","nations.txt"))
             #print q.stopDump()
             #q.query("id population area name").appendfrom(
@@ -109,12 +111,12 @@ class StandardPopulator(ddl.Populator):
     def populateCities(self,q):
         if self.big:
             self.deutschland.cities().appendfrom(
-                os.path.join(config.rtlib_path,
+                os.path.join(rtlib_path,
                              "data","cities_de.txt"))
 
             
             self.belgique.cities().appendfrom(
-                os.path.join(config.rtlib_path,"data","cities_be.txt"))
+                os.path.join(rtlib_path,"data","cities_be.txt"))
 
             #from lino.schemas.sprl.data import cities_de
             #cities_de.populate(q)

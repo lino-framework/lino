@@ -22,22 +22,20 @@ from lino.misc.tsttools import TestCase, main
 
 class Case(TestCase):
 
-    def getDeleteVetos(self,sess):
+    def doit(self,sess,expected):
         vetos=[]
-        for t in sess.db.app.getTableList():
+        for t in sess.db.schema.getTableList():
             q=sess.query(t._instanceClass)
             for row in q:
                 msg=row.vetoDelete()
                 if msg:
                     vetos.append(msg)
-        return vetos
+        self.assertEquivalent("\n".join(vetos),expected)
+        sess.shutdown()
     
     def test01(self):
         from lino.apps.contacts.contacts_demo import startup
-        sess = startup()
-        vetos=self.getDeleteVetos(sess)
-        self.assertEqual(len(vetos),7)
-        self.assertEquivalent("\n".join(vetos),"""
+        self.doit(startup(), """
 Estonia is used by 10 rows in Cities
 Belgium is used by 9 rows in Cities
 Germany is used by 7 rows in Cities
@@ -46,14 +44,10 @@ Verviers (be) is used by 1 rows in Partners
 Aachen (de) is used by 1 rows in Partners
 Tallinn (ee) is used by 4 rows in Partners        
         """)
-        sess.shutdown()
         
     def test02(self):
-        from lino.apps.pinboard import demo
-        sess = demo.startup()
-        vetos=self.getDeleteVetos(sess)
-        self.assertEqual(len(vetos),11)
-        self.assertEquivalent("\n".join(vetos),"""
+        from lino.apps.pinboard.pinboard_demo import startup
+        self.doit(startup(), """\
 English is used by 7 rows in Quotes
 German is used by 1 rows in Quotes
 French is used by 1 rows in Quotes
@@ -66,15 +60,15 @@ Peter Lauster is used by 1 rows in Quotes
 Henry Louis Mencken is used by 2 rows in Quotes
 Winston Churchill is used by 1 rows in Quotes        
         """)
-        sess.shutdown()
         
     def test03(self):
-        from lino.apps.ledger import demo
-        sess = demo.startup()
-        vetos=self.getDeleteVetos(sess)
-        self.assertEqual(len(vetos),13)
-        self.assertEquivalent("\n".join(vetos),"""
+        from lino.apps.ledger.ledger_demo import startup
+        self.doit(startup(), """\
 BEF is used by 7 rows in Partners
+(3,) is used by 1 rows in InvoiceLines
+(16,) is used by 1 rows in InvoiceLines
+outgoing invoices is used by 1 rows in Invoices
+OUT-1 is used by 2 rows in InvoiceLines
 Estonia is used by 10 rows in Cities
 Belgium is used by 9 rows in Cities
 Germany is used by 7 rows in Cities
@@ -82,14 +76,7 @@ Eupen (be) is used by 6 rows in Partners
 Verviers (be) is used by 1 rows in Partners
 Aachen (de) is used by 1 rows in Partners
 Tallinn (ee) is used by 4 rows in Partners
-Anton Ausdemwald is used by 1 rows in Invoices
-(3,) is used by 1 rows in InvoiceLines
-(16,) is used by 1 rows in InvoiceLines
-outgoing invoices is used by 1 rows in Invoices
-OUT-1 is used by 2 rows in InvoiceLines
-""")
-        sess.shutdown()
-        
+        """)
         
 if __name__ == '__main__':
     main()

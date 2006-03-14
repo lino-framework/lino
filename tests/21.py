@@ -24,14 +24,14 @@
 
 """
 from lino.misc.tsttools import TestCase, main
-from lino.apps.ledger import demo
-from lino.apps.ledger.tables import Nation,Partner, Currency
+from lino.apps.ledger.ledger_demo import startup
+from lino.apps.ledger.ledger_tables import Nation,Partner, Currency
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup() #dump=True)
+        self.sess = startup() #dump=True)
 
     def tearDown(self):
         self.sess.shutdown()

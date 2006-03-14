@@ -18,18 +18,27 @@
 
 """
 
+This is to test whether the schema of each application initializes
+correctly.
+
+see also :
+test 81 does a demo.startup() of all these applications
+
 """
 
 from lino.misc.tsttools import TestCase, main
 from lino.adamo.dbreports import DatabaseOverview, SchemaOverview
+from lino.apps.contacts.pinboard_forms import Pinboard
+from lino.apps.contacts.contacts_forms import Contacts
+from lino.apps.keeper.keeper_forms import Keeper
+from lino.apps.ledger.ledger_forms import Ledger
+
 
 class Case(TestCase):
 
     
     def test01(self):
-        from lino.apps.contacts.contacts_forms import Contacts
         app = Contacts()
-        
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
         #print s
@@ -78,7 +87,6 @@ PartnerTypes        |    0|                    |
         app.close()
         
     def test02(self):
-        from lino.apps.keeper.keeper_forms import Keeper
         app = Keeper()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
@@ -113,7 +121,6 @@ Occurences          |    0|                    |
         
         
     def test03(self):
-        from lino.apps.ledger.ledger_forms import Ledger
         app = Ledger()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()

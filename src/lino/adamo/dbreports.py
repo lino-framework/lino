@@ -17,7 +17,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.reports import Report, BaseReport, ReportColumn, RIGHT
-from lino.adamo.query import Query
 from lino.adamo.datatypes import INT
 from lino.adamo.rowattrs import Field, Pointer, Detail
 
@@ -249,6 +248,7 @@ class QueryReport(BaseReport):
             self.formColumnGroups = tuple(groups)
             
             
+from lino.adamo.query import Query
 
 class DataReport(QueryReport):
     
@@ -261,23 +261,6 @@ class DataReport(QueryReport):
     masters={}
     masterColumns=None
     
-##     def __init__(self,sessionOrQuery,
-##                  leadTable=None,
-##                  columnSpec=None,
-##                  columnWidths=None,
-##                  orderBy=None,
-##                  width=None,rowHeight=None,
-##                  title=None,
-##                  #name=None,label=None,doc=None,
-##                  **kw):
-##         if leadTable is not None: self.leadTable=leadTable
-##         if columnSpec is not None: self.columnSpec=columnSpec
-##         #if columnNames is not None: self.columnNames=columnNames
-##         if orderBy is not None: self.orderBy=orderBy
-##         if columnWidths is not None: self.columnWidths=columnWidths
-            
-##         if len(kw): self.masters=kw
-        
     def __init__(self,dataProvider):
         if isinstance(dataProvider,Query):
             q=dataProvider.child(

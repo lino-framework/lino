@@ -1,6 +1,6 @@
 #coding: iso-8859-1
 
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -24,7 +24,7 @@ opj = os.path.join
 from cStringIO import StringIO
 
 from lino.gendoc.gendoc import WriterDocument
-from lino.forms.base import MenuContainer
+from lino.forms.forms import MenuContainer
 
 from lino.adamo.query import QueryColumn
 from lino.adamo.query import Query

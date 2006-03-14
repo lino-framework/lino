@@ -81,7 +81,8 @@ class Case(TestCase):
         #print s
         #self.assertEquivalent(s,""" """)        
         rpt=MonthlyCalendar(self.sess,2005,6)
-        self.sess.showReport(rpt)
+        #self.sess.showReport(rpt)
+        rpt.show()
         #self.sess.db.app.showMonthlyCalendar(self.sess,2005,6)
         s=self.getConsoleOutput()
         #print s

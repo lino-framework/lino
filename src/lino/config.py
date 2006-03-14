@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-import ConfigParser
+from ConfigParser import ConfigParser, DEFAULTSECT
 
 
 lino_home = os.path.abspath(
@@ -29,7 +29,7 @@ defaults={
     'lino_home' : lino_home,
     'rtlib_path' : rtlib_path,
     }
-config = ConfigParser.ConfigParser()
+config = ConfigParser(defaults)
 config.add_section('forms')
 config.set('forms','wishlist','wx tix cherrypy console')
 
@@ -37,3 +37,5 @@ config.set('forms','wishlist','wx tix cherrypy console')
 config.read( [
     os.path.join(lino_home,'lino.cfg'),
     os.path.expanduser('~/.lino.cfg')])
+
+get=config.get

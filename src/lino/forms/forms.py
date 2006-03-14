@@ -34,7 +34,8 @@ YES=True
 NO=False
 
 
-class MenuContainer2:
+class MenuContainer:
+    # also used by gendoc.html.HtmlDocument
     def __init__(self):
         self.menuBar = None
         self._menuController = None
@@ -184,7 +185,7 @@ class Container:
 
 
 #class Form(Describable,MenuContainer):
-class Form(MenuContainer2,Container):
+class Form(MenuContainer,Container):
     
     title=None
     modal=False
@@ -198,7 +199,7 @@ class Form(MenuContainer2,Container):
         #Describable.__init__(self,None,*args,**kw)
         #assert isinstance(app,Application)
         #assert app.mainForm is not None
-        MenuContainer2.__init__(self)
+        MenuContainer.__init__(self)
         #self.app=app
         if title is not None:
             self.title=title

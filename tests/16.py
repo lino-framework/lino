@@ -20,13 +20,13 @@
 """
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Language, Node
+from lino.apps.pinboard.pinboard_demo import startup
+from lino.apps.pinboard.pinboard_tables import Language, Node
 
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup()
+        self.db = startup()
         
     def tearDown(self):
         self.db.shutdown()

@@ -1,5 +1,4 @@
 from lino.apps.keeper.keeper import Keeper
-#from lino.misc.tsttools import TESTDATA
 from lino.adamo.store import Populator
 from lino.forms import gui
 

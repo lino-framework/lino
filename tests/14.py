@@ -21,13 +21,13 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.datatypes import itod
 
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Event
+from lino.apps.pinboard.pinboard_demo import startup
+from lino.apps.pinboard.pinboard_tables import Event
 
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(populate=False)
+        self.db = startup(populate=False)
         
     def tearDown(self):
         self.db.shutdown()

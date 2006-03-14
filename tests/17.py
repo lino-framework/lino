@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -28,13 +28,13 @@ The first multi-language database
 from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.datatypes import itod
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Language,NewsItem
+from lino.apps.pinboard.pinboard_demo import startup
+from lino.apps.pinboard.pinboard_tables import Language,NewsItem
 
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(langs="en de fr")
+        self.db = startup(langs="en de fr")
         
     def tearDown(self):
         self.db.shutdown()

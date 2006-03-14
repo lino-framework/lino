@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,8 +18,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.misc.tsttools import TestCase, main
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Partner,\
+from lino.apps.pinboard.pinboard_demo import startup
+from lino.apps.pinboard.pinboard_tables import Partner,\
      Quote, Author, Language
 
 from lino.apps.pinboard import quotes_de
@@ -27,7 +27,7 @@ from lino.apps.pinboard import quotes_de
 class Case(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup(withJokes=True)
+        self.db = startup(withJokes=True)
         #quotes_de.populate(self.db)
         #self.db.commit()
         
@@ -61,7 +61,7 @@ class Case(TestCase):
         for quote in q:
             s += quote.quote + "\n"
 
-        self.assertEqual(s,"""\
+        self.assertEqual(s,u"""\
 Alles hat Grenzen, nur die Dummheit ist unendlich.
 Alter schützt nicht vor Torheit, aber Dummheit vor Intelligenz.
 Dummheit, verlass ihn nicht, sonst steht er ganz allein.
@@ -77,7 +77,7 @@ Lieber natürliche Dummheit als künstliche Intelligenz.
             s += quote.quote + "\n"
 
         #print s
-        self.assertEqual(s,"""\
+        self.assertEqual(s,u"""\
 Der Klügere gibt so lange nach, bis er der Dumme ist.
 Der Klügere gibt vor, nachzugeben.
 Der Klügere zählt nach.
