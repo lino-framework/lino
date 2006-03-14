@@ -16,8 +16,81 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.reports import BaseReport, ReportColumn
+from lino.reports import Report, BaseReport, ReportColumn, RIGHT
 from lino.adamo.query import Query
+from lino.adamo.datatypes import INT
+from lino.adamo.rowattrs import Field, Pointer, Detail
+
+
+class DatabaseOverview(Report):
+    # originally copied from sprl1.py
+    def __init__(self,dbsess):
+        self.dbsess=dbsess
+        Report.__init__(self)
+        
+    def setupRow(self,row):
+        row.qry=self.dbsess.query(row.item._instanceClass)
+        
+    def getIterator(self):
+        return self.dbsess.db.schema.getTableList()
+        
+    def setupReport(self):
+        self.addVurtColumn(
+            label="TableName",
+            meth=lambda row: row.item.getTableName(),
+            width=20)
+        self.addVurtColumn(
+            label="Count",
+            meth=lambda row: len(row.qry),
+            datatype=INT,
+            width=5, halign=RIGHT
+            )
+        self.addVurtColumn(
+            label="First",
+            meth=lambda row: str(row.qry[0]),
+            when=lambda row: len(row.qry)>0,
+            width=20)
+        self.addVurtColumn(
+            label="Last",
+            meth=lambda row: str(row.qry[-1]),
+            when=lambda row: len(row.qry)>0,
+            width=20)
+
+
+class SchemaOverview(Report):
+    def __init__(self,schema):
+        self.schema=schema
+        Report.__init__(self)
+        
+    def getIterator(self):
+        return self.schema.getTableList()
+        
+    def setupReport(self):
+
+        self.addVurtColumn(
+            label="TableName",
+            meth=lambda row: row.item.getTableName(),
+            width=15)
+        self.addVurtColumn(
+            label="Fields",
+            meth=lambda row:\
+            ", ".join([fld.name for fld in row.item.getFields()
+                       if isinstance(fld,Field) \
+                       and not isinstance(fld,Pointer)]),
+            width=20)
+        self.addVurtColumn(
+            label="Pointers",
+            meth=lambda row:\
+            ", ".join([fld.name for fld in row.item.getFields()
+                       if isinstance(fld,Pointer)]),
+            width=15)
+        self.addVurtColumn(
+            label="Details",
+            meth=lambda row:\
+            ", ".join([fld.name for fld in row.item.getFields()
+                       if isinstance(fld,Detail)]),
+            width=25)
+
 
 
 class DataReportColumn(ReportColumn):

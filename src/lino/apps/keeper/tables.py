@@ -21,7 +21,7 @@ import os
 from types import StringType
 
 from lino.adamo.ddl import *
-from lino.forms.session import Session
+#from lino.forms.session import Session
 from lino.apps.keeper.populate import VolumeVisitor, read_content
 
 from lupy.index.documentwriter import standardTokenizer
@@ -150,8 +150,8 @@ class File(StoredDataRow):
         return os.path.join(self.dir.path(),self.name)
 
     def readTimeStamp(self,sess,fullname):
-        assert isinstance(sess,Session), \
-               "%s is not a Session" % sess.__class__
+        #assert isinstance(sess,Session), \
+        #       "%s is not a Session" % sess.__class__
         #assert sess.__class__.__name__ == 'Session', \
         #       "%s is not a Session" % sess.__class__
         #assert fullname == self.path(), \
@@ -245,15 +245,16 @@ class Occurence(StoredDataRow):
 class OccurencesReport(DataReport):
     leadTable=Occurence
     
+class KeeperSchema(Schema):
+    tableClasses = ( 
+        Volume,
+        File,
+        Directory,
+        FileType,
+        Word,
+        Occurence
+        )
 
-TABLES = (
-    Volume,
-    File,
-    Directory,
-    FileType,
-    Word,
-    Occurence,
-    )
-
-__all__ = [t.__name__ for t in TABLES]
+__all__ = [t.__name__ for t in KeeperSchema.tableClasses]
+__all__.append('KeeperSchema')
 

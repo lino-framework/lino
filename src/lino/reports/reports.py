@@ -255,7 +255,7 @@ class BaseReport:
         pass
     
     def show(self,**kw):
-        syscon.showReport(self,**kw)
+        syscon.getSystemConsole().show_report(self,**kw)
 
     def showFormNavigator(self,sess,**kw):
         frm=sess.form(label=self.getTitle(),

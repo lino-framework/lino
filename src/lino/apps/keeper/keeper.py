@@ -18,12 +18,14 @@
 
 import os
 
-#from lino.apps.keeper.tables import *
-#from lino.apps.keeper.tables import TABLES
 from lino.apps.keeper import tables
-from lino.adamo.ddl import Schema, Populator, STRING, BOOL
+#from lino.apps.keeper.tables import TABLES
+#from lino.apps.keeper.tables import *
+from lino.adamo.ddl import STRING, BOOL
 from lino.adamo.dbreports import DataReport
 from lino.adamo.filters import Contains, NotEmpty
+from lino.forms.forms import ReportForm, DbMainForm
+from lino.forms.gui import DbApplication
 
 
 
@@ -58,39 +60,22 @@ class FoundFilesReport(DataReport):
         self.occsColumn._queryParams['search'] = s
 
 
-class SearchFormCtrl:
+class SearchForm(ReportForm):
     
-    formLabel="Search"
+    title="Search"
     
-    def setupForm(self,frm):
-        sess=frm.session
-        words = sess.query(tables.Word)
+    def setupForm(self):
+        
+        dbsess=self.rpt.query.session
+        #words = sess.query(tables.Word)
         #files = sess.query(tables.File) #,"name")
-        grid=None # referenced in search(), defined later
+        #grid=None # referenced in search(), defined later
         
-        #files.addColumn("content")
-        rpt=FoundFilesReport(sess)
-        
-##         rpt=DataReport(files,width=70)
 
-##         rpt.addDataColumn("name",width=20)
-##         occsColumn=rpt.addDataColumn("occurences",
-##                                      width=15)
-##         rpt.addDataColumn("content",
-##                           formatter=lambda x: preview(x))
-
-##         col=occsColumn.datacol
-##         files.addFilter(NotEmpty(col))
-##         occs=col.getDetailQuery()
-##         occs.setSearchColumns("word.id")
-        
-        
-        #frm = sess.form(label="Search")
-
-        self.searchString=frm.addEntry(STRING,
-                                       label="&Words to look for")
-                                    #value="")
-        self.anyWord=frm.addEntry(BOOL,label="&any word (OR)")
+        self.searchString=self.addEntry(
+            STRING,
+            label="&Words to look for")
+        self.anyWord=self.addEntry(BOOL,label="&any word (OR)")
         
         def search():
 ##             files.clearFilters()
@@ -103,9 +88,9 @@ class SearchFormCtrl:
                 
             #files.setSearch(searchString.getValue())
             #occs._queryParams["search"]=searchString.getValue()
-            rpt.setSearch(self.searchString.getValue())
-            grid.enabled=self.searchString.getValue() is not None
-            frm.refresh()
+            self.rpt.setSearch(self.searchString.getValue())
+            self.grid.enabled=self.searchString.getValue() is not None
+            self.refresh()
 
 
 
@@ -117,114 +102,59 @@ class SearchFormCtrl:
         #bbox.addButton("exit",
         #               label="&Exit",
         #               action=frm.close)
-        grid=bbox.addDataGrid(rpt)
-        grid.enabled=False
+        self.grid=bbox.addDataGrid(rpt)
+        #ReportForm.setupForm(self)
+        self.grid.enabled=False
 
 
 
-class Keeper(Schema):
+class KeeperMainForm(DbMainForm):
+    """
+
+This is the Keeper main menu.
+
+
+    """
+    def setupMenu(self):
+
+        m = self.addMenu("search","&Suchen")
+        m.addItem("search",label="&Suchen").setHandler(
+            self.showForm,
+            SearchForm(FoundFilesReport(self.dbsess)))
+
+        
     
-    name="Lino/Keeper"
+        m = self.addMenu("db","&Datenbank")
+
+        self.addReportItem(
+            m,"volumes",tables.VolumesReport,
+            label="&Authors")
+        self.addReportItem(
+            m,"files",tables.FilesReport,
+            label="&Files")
+        self.addReportItem(
+            m,"dirs",tables.DirectoriesReport,
+            label="&Directories")
+        self.addReportItem(
+            m, "words",tables.WordsReport,
+            label="&Words")
+        
+        self.addProgramMenu()
+
+
+class Keeper(DbApplication):
     
+    name="Lino Keeper"
     version="0.0.1"
-    
     copyright="""\
-Copyright (c) 2004-2005 Luc Saffre.
+Copyright (c) 2004-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-    
-    #tables = TABLES
-
-    def setupSchema(self,schema):
-        for cl in tables.TABLES:
-            schema.addTable(cl)
-
-    def showSearchForm(self,sess):
-        raise "no longer used"
-        words = sess.query(tables.Word)
-        files = sess.query(tables.File,"name")
-        grid=None # referenced in search(), defined later
-        col=files.addColumn("occurences")
-        files.addFilter(NotEmpty(col))
-        occs=col.getDetailQuery()
-        occs.setSearchColumns("word.id")
-        files.addColumn("content")
-        
-        rpt=DataReport(files,columnWidths="30 30 15")
-        #rpt=DataReport(files,columnWidths="30 15")
-        
-        frm = sess.form(label="Search")
-
-        searchString = frm.addEntry(STRING,
-                                    label="&Words to look for")
-                                    #value="")
-        anyWord = frm.addEntry(BOOL,label="&any word (OR)")
-        
-        def search():
-##             files.clearFilters()
-##             for word in searchString.getValue().split():
-##                 w=words.peek(word)
-##                 if w is None:
-##                     sess.notice("ignored '%s'"%w)
-##                 else:
-##                     occs.addFilter(Contains,w)
-                
-            #files.setSearch(searchString.getValue())
-            #occs._queryParams["search"]=searchString.getValue()
-            occs.setSearch(searchString.getValue())
-            grid.enabled=searchString.getValue() is not None
-            frm.refresh()
-
-
-
-        #bbox = frm.addHPanel()
-        bbox = frm
-        bbox.addButton("search",
-                       label="&Search",
-                       action=search).setDefault()
-        #bbox.addButton("exit",
-        #               label="&Exit",
-        #               action=frm.close)
-        grid=bbox.addDataGrid(rpt)
-        grid.enabled=False
-
-        frm.show()
-        #frm.showModal()
-
-
-
-    def showMainForm(self,sess):
-        frm = sess.form(
-            label="Main menu",
-            doc="""\
-This is the Keeper main menu.                                    
-"""+("\n"*10))
-
-        m = frm.addMenu("search","&Suchen")
-        #m.addItem("search",label="&Suchen").setHandler(
-        #    self.showSearchForm,sess)
-        m.addItem("search",label="&Suchen").setHandler(
-            sess.showForm,SearchFormCtrl())
+    schemaClass=tables.KeeperSchema
+    mainFormClass=KeeperMainForm
 
         
-    
-        m = frm.addMenu("db","&Datenbank")
-
-        m.addReportItem("volumes",tables.VolumesReport,
-                        label="&Authors")
-        m.addReportItem("files",tables.FilesReport,
-                        label="&Files")
-        m.addReportItem("dirs",tables.DirectoriesReport,
-                        label="&Directories")
-        m.addReportItem("words",tables.WordsReport,
-                        label="&Words")
-        
-        self.addProgramMenu(sess,frm)
-
-        frm.addOnClose(sess.close)
-
-        frm.show()
 
 
 ## if __name__ == '__main__':

@@ -21,10 +21,14 @@
 
 from lino.adamo.ddl import *
 
-from lino.apps.addrbook import addrbook_schema as addrtables
+from lino.apps.addrbook import addrbook_schema as contacts
+from lino.apps.addrbook.addrbook_schema import Language
+from lino.apps.addrbook.addrbook_schema import City, Nation
+from lino.apps.addrbook.addrbook_schema import Organisation, Person
+from lino.apps.addrbook.addrbook_schema import PartnerType
 #from lino.apps.addrbook.tables import Partner as PartnerBase
 #from lino.apps.addrbook.tables import User
-from lino.apps.addrbook.addrbook_schema import *
+#from lino.apps.addrbook.addrbook_schema import *
 
 #from lino.i18n import BabelString
 
@@ -43,10 +47,10 @@ class Currency(BabelRow):
 class CurrenciesReport(DataReport):
     leadTable=Currency
 
-class Partner(addrtables.Partner):
-    # no tableName because this overrides addrbook.tables.Partners
+class Partner(contacts.Partner):
+    # no tableName because this overrides contacts.Partner
     def initTable(self,table):
-        addrtables.Partner.initTable(self,table)
+        contacts.Partner.initTable(self,table)
         table.addPointer('currency',Currency)
 
 
@@ -305,18 +309,23 @@ class Booking(StoredDataRow):
 
 
 
-class LedgerSchema(AddressBookSchema):
+class LedgerSchema(contacts.ContactsSchema):
     
     tableClasses = ( 
         Currency,
-        Partner,
+        #Partner,
         Product,
         Journal,
         BankStatement, MiscOperation,
         Invoice, ProductInvoiceLine,
         BalanceItem,CashFlowItem,ProfitAndLossItem,
-        Account,Booking
-        ) + AddressBookSchema.tableClasses
+        Account,Booking,
+        Language,
+        Nation, City,
+        Organisation, Person,
+        Partner,
+        PartnerType        
+        ) #+ ContactsSchema.tableClasses
     
         
 __all__ = [t.__name__ for t in LedgerSchema.tableClasses]

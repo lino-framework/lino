@@ -132,6 +132,9 @@ class DbApplication(GuiApplication):
         if mainForm is None:
             mainForm=self.createMainForm()
         GuiApplication.__init__(self,mainForm)
+
+    def quickStartup(self,*args,**kw):
+        raise "use app.dbsess"
             
     def createContext(self):
         return self.schemaClass().quickStartup()

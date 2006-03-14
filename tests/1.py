@@ -41,15 +41,15 @@ class Case(TestCase):
         self.sess.shutdown()
 
 
-    def test01(self):
+##     def test01(self):
         
-        s = " ".join([str(t.getTableName())
-              for t in self.sess.db.schema.getTableList()])
+##         s = " ".join([str(t.getTableName())
+##               for t in self.sess.db.schema.getTableList()])
 
-        #print s
-        self.assertEquivalent(s, """\
-Currencies Languages Nations Cities Organisations Persons Partners PartnerTypes Products Journals BankStatements MiscOperations Invoices InvoiceLines BalanceItems CashFlowItems ProfitAndLossItems Accounts Bookings
-""")
+##         #print s
+##         self.assertEquivalent(s, """\
+## Currencies Languages Nations Cities Organisations Persons Partners PartnerTypes Products Journals BankStatements MiscOperations Invoices InvoiceLines BalanceItems CashFlowItems ProfitAndLossItems Accounts Bookings
+## """)
         
 
 

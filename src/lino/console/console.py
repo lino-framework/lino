@@ -448,7 +448,7 @@ class Console(BaseToolkit):
 ##         job.init(self,*args,**kw)
 ##         return job
     
-    def textprinter(self,sess,**kw):
+    def textprinter(self,**kw):
         from lino.textprinter.plain import PlainTextPrinter
         return PlainTextPrinter(self.stdout,**kw)
         
@@ -457,7 +457,7 @@ class Console(BaseToolkit):
 ##         return Report(writer=self.stdout,**kw)
 
 
-    def show_report(self,sess,rpt,*args,**kw):
+    def show_report(self,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
         gd = PlainDocument(self.stdout)
         gd.beginDocument()

@@ -246,8 +246,8 @@ class Form(MenuContainer2,Container):
         self.ctrl = self.toolkit.createFormCtrl(self)
 
 
-    def addAccelerator(self,key,btn):
-        self.accelerators.append((key,btn))
+    def addAccelerator(self,hotkey,btn):
+        self.accelerators.append((hotkey,btn))
         
         
     def getComponents(self):

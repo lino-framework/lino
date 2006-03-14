@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,7 +22,6 @@
 import os, sys
 #from lino import adamo
 from lino.adamo.datatypes import itod
-from lino.apps.ledger.ledger import Ledger
 from lino.apps.ledger import tables
 from lino.apps.addrbook import demo as addrdemo
 
@@ -31,7 +30,7 @@ def startup(filename=None, langs=None,
             populate=True,
             withDemoData=True,
             **kw):
-    schema = Ledger(**kw)
+    schema = tables.LedgerSchema(**kw)
     sess=schema.quickStartup(langs=langs,
                              filename=filename,
                              dump=dump)

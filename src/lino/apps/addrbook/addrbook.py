@@ -22,12 +22,14 @@ from lino.forms import DbMainForm, DbApplication
 
 class ContactsMainForm(DbMainForm):
     
-    """\
-Welcome to AddressBook, a Lino Forms Application for
-demonstration purposes.
+    """
+    
+Welcome to Contacts, a Lino Forms Application just for demonstration
+purposes.
+
 """
 
-    def setupContactsMenu(self):
+    def addContactsMenu(self):
         m = self.addMenu("contacts","&Contacts")
         self.addReportItem(
             m,"nations",NationsReport,label="&Nations")
@@ -41,7 +43,7 @@ demonstration purposes.
             m,"persons",PersonsReport,label="&Persons")
         
     def setupMenu(self):
-        self.setupContactsMenu()
+        self.addContactsMenu()
         self.addProgramMenu()
     
 
