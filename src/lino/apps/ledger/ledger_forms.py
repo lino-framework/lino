@@ -19,7 +19,8 @@
 
 #from lino.adamo.ddl import Schema
 from lino.apps.addrbook.addrbook import *
-from lino.apps.ledger.tables import LedgerSchema
+
+from ledger_data import LedgerSchema
 
 class LedgerMainForm(ContactsMainForm):
     """
