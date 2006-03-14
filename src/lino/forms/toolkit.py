@@ -70,9 +70,15 @@ class Component(Describable):
         doc.p(self.getLabel())
         
 class Button(Component):
-    def __init__(self,owner,name=None,action=None,*args,**kw):
-        Component.__init__(self,owner,name,*args,**kw)
+    def __init__(self,owner,name=None,label=None,
+                 action=None,hotkey=None,
+                 *args,**kw):
+        if hotkey is not None:
+            label += " [" + hotkey.__name__ + "]"
+        Component.__init__(self,owner,name,label,*args,**kw)
         self.action = action
+        if hotkey is not None:
+            self.getForm().addAccelerator(hotkey,self)
         self._args = []
         self._kw = {}
 

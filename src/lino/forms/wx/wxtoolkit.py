@@ -146,14 +146,25 @@ class Button(toolkit.Button):
                         wx.DefaultSize)
         #btn.SetBackgroundColour('YELLOW')
         #parentFormCtrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
-        form.Bind(wx.EVT_BUTTON,
-                  EventCaller(self.click),
-                  btn)
+        panel.Bind(wx.EVT_BUTTON,
+                   EventCaller(self.click),
+                   btn)
+##         if self.hotkey is not None:
+##             #print 'Button.wxsetup', self.hotkey
+##             wx.EVT_CHAR(panel, self.EVT_CHAR)
+##             #form.Bind(wx.EVT_KEY_DOWN,self.EVT_CHAR)
         if self.doc is not None:
             btn.SetToolTipString(self.doc)
 
         box.Add(btn,DONTSTRETCH,0,NOBORDER) #, 0, wx.CENTER,10)
         self.wxctrl = btn
+
+##     def EVT_CHAR(self,evt):
+##         print "Button.EVT_CHAR"
+##         if self.hotkey.match_wx(evt):
+##             self.click()
+##             return
+##         evt.Skip()
 
     def setFocus(self):
         self.wxctrl.SetFocus()
@@ -369,7 +380,9 @@ class EntryMixin:
         #print mypanel.GetMinSize(), editor.GetMaxSize()
         
         #self.Bind(wx.EVT_TEXT, self.EvtText, t1)
-        #editor.Bind(wx.EVT_CHAR, self.EvtChar)
+        #editor.Bind(wx.EVT_CHAR, self.EVT_CHAR)
+        #editor.Bind(wx.EVT_KEY_DOWN, self.EVT_CHAR)
+        #editor.Bind(wx.EVT_KEY_UP, self.EVT_CHAR)
         #editor.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
         #editor.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
@@ -389,6 +402,11 @@ class EntryMixin:
             hbox.Add(editor,STRETCH,
                      wx.EXPAND|wx.ALL,NOBORDER)
             self.wxctrl = editor
+
+##     def EVT_CHAR(self, evt):
+##         print "EVT_CHAR ", self, evt.GetKeyCode()
+##         if evt.GetKeyCode() == 27: return
+##         evt.Skip()
 
     def refresh(self):
         if hasattr(self,'editor'):
@@ -570,11 +588,19 @@ class Toolkit(toolkit.Toolkit):
                     wxMenuBar.Append(wxm,mnu.getLabel())
 
                 ctrl.SetMenuBar(wxMenuBar)
+
             
         ctrl.Bind(wx.EVT_SET_FOCUS, frm.onSetFocus)
         ctrl.Bind(wx.EVT_KILL_FOCUS, frm.onKillFocus)
 
-        wx.EVT_CHAR(ctrl, self.OnChar)
+        def flags(key):
+            if key.shift: return wx.ACCEL_SHIFT
+            if key.alt: return wx.ACCEL_ALT
+            if key.ctrl: return wx.ACCEL_CTRL
+            return wx.ACCEL_NORMAL
+
+
+        #wx.EVT_CHAR(ctrl, self.EVT_CHAR)
         #wx.EVT_SIZE(ctrl, self.OnSize)
         wx.EVT_CLOSE(ctrl, frm.close)
         #wx.EVT_ICONIZE(ctrl, self.OnIconfiy)
@@ -590,6 +616,14 @@ class Toolkit(toolkit.Toolkit):
         
         if frm.defaultButton is not None:
             frm.defaultButton.wxctrl.SetDefault()
+
+        if len(frm.accelerators):
+            l=[ (flags(key),
+                 key.keycode,
+                 btn.wxctrl.GetId()) for key,btn in frm.accelerators]
+            ctrl.SetAcceleratorTable(wx.AcceleratorTable(l))
+
+            
 
         ctrl.SetSizerAndFit(mainBox)
         #self.mainBox = mainBox
@@ -650,12 +684,13 @@ class Toolkit(toolkit.Toolkit):
         frm.ctrl.Refresh()
 
     def closeForm(self,frm,evt):
-        print "closeForm()"
+        #print "closeForm()"
         frm.ctrl.Destroy()
 
 
-    def OnChar(self, evt):
-        print "OnChar "+str(evt)
+##     def EVT_CHAR(self, evt):
+##         print "OnChar "+str(evt)
+##         evt.Skip()
 
 
     def onIdle(self, evt):

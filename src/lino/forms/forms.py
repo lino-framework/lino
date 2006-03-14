@@ -24,6 +24,7 @@ from lino.gendoc.gendoc import GenericDocument
 
 from lino.adamo.exceptions import InvalidRequestError
 from lino.forms.gui import GuiApplication
+from lino.forms import keyboard
 from lino.console.task import BugDemo
 
 VERTICAL = 1
@@ -177,6 +178,7 @@ class Container:
     def addCancelButton(self,*args,**kw):
         return self.addButton(name="cancel",
                               label="&Cancel",
+                              hotkey=keyboard.ESC,
                               action=self.getForm().cancel)
 
 
@@ -201,6 +203,7 @@ class Form(MenuContainer2,Container):
         if title is not None:
             self.title=title
         #self.session=sess
+        self.accelerators=[]
         self._parent = None # parent
         self.data = data
         #self.entries = AttrDict()
@@ -241,6 +244,10 @@ class Form(MenuContainer2,Container):
         self.setupMenu()
         self.mainComp.setup()
         self.ctrl = self.toolkit.createFormCtrl(self)
+
+
+    def addAccelerator(self,key,btn):
+        self.accelerators.append((key,btn))
         
         
     def getComponents(self):
@@ -309,8 +316,8 @@ class Form(MenuContainer2,Container):
         self.ctrl=None
     
     # just forward to self.session:
-    def show_form(self,frm):
-        return self.session.show_form(frm)
+    def showForm(self,frm):
+        return self.session.showForm(frm)
     def notice(self,*args,**kw):
         return self.session.notice(*args,**kw)
     def message(self,*args,**kw):

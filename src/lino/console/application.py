@@ -118,7 +118,7 @@ class Application(Session):
             self.name=self.__class__.__name__
         self.toolkit=self.createToolkit()
         Session.__init__(self)
-            
+        #print "Application.__init__()", self    
         #self.setToolkit(toolkit)
         
 

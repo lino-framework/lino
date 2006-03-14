@@ -61,8 +61,8 @@ def setlocalencoding():
     import locale
     loc = locale.getdefaultlocale()
     if loc[1] and sys.getdefaultencoding() != loc[1]:
-        print "setting defaultencoding from", \
-              sys.getdefaultencoding(),"to",loc[1]
+        #print "setting defaultencoding from", \
+        #      sys.getdefaultencoding(),"to",loc[1]
         sys.setdefaultencoding(loc[1])
 
 
