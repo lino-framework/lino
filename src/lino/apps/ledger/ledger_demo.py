@@ -22,15 +22,15 @@
 import os, sys
 #from lino import adamo
 from lino.adamo.datatypes import itod
-from lino.apps.ledger import tables
-from lino.apps.addrbook import demo as addrdemo
+from lino.apps.ledger.ledger_tables import *
+from lino.apps.contacts import contacts_demo as addrdemo
 
 def startup(filename=None, langs=None,
             dump=False,
             populate=True,
             withDemoData=True,
             **kw):
-    schema = tables.LedgerSchema(**kw)
+    schema = LedgerSchema(**kw)
     sess=schema.quickStartup(langs=langs,
                              filename=filename,
                              dump=dump)
@@ -253,8 +253,8 @@ class DemoPopulator(addrdemo.DemoPopulator):
     def populatePartners(self,q):
         addrdemo.DemoPopulator.populatePartners(self,q)
         #return 
-        NAT=q.getSession().query(tables.Nation)
-        CCY=q.getSession().query(tables.Currency)
+        NAT=q.getSession().query(Nation)
+        CCY=q.getSession().query(Currency)
         BEF=CCY.peek("BEF")
         #be=NAT.peek('be')
         #be.partners_by_nation.showReport()
@@ -279,7 +279,7 @@ class DemoPopulator(addrdemo.DemoPopulator):
         
     def populateInvoices(self,q):
         anton=q.getSession().query(
-            tables.Partner).findone(firstName="Anton")
+            Partner).findone(firstName="Anton")
         self.invoice = q.appendRow(jnl=self.OUT,
                                    partner=anton,
                                    date=itod(20030822))

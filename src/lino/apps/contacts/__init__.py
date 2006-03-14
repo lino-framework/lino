@@ -1,1 +1,1 @@
-from lino.apps.addrbook.addrbook_schema import *
+from contacts_tables import *

@@ -21,11 +21,11 @@
 
 from lino.adamo.ddl import *
 
-from lino.apps.contacts import contacts_data as contacts
-from lino.apps.contacts.contacts_data import Language
-from lino.apps.contacts.contacts_data import City, Nation
-from lino.apps.contacts.contacts_data import Organisation, Person
-from lino.apps.contacts.contacts_data import PartnerType
+from lino.apps.contacts import contacts_tables as contacts
+from lino.apps.contacts.contacts_tables import Language
+from lino.apps.contacts.contacts_tables import City, Nation
+from lino.apps.contacts.contacts_tables import Organisation, Person
+from lino.apps.contacts.contacts_tables import PartnerType
 #from lino.apps.contacts.tables import Partner as PartnerBase
 #from lino.apps.contacts.tables import User
 #from lino.apps.contacts.contacts_data import *

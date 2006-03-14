@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -25,17 +25,18 @@ Some tests on getDemoDB()
 #import types
 #import unittest
 
+from lino.misc.tsttools import TestCase, main
+
 from lino.adamo.exceptions import DataVeto
 
-from lino.apps.ledger import demo
-from lino.apps.ledger.tables import *
-from lino.misc.tsttools import TestCase, main
+from lino.apps.ledger import ledger_demo
+from lino.apps.ledger.ledger_tables import *
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup()
+        self.sess = ledger_demo.startup()
         
     def tearDown(self):
         self.sess.shutdown()

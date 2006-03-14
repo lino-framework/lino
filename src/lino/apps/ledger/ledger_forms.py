@@ -18,9 +18,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #from lino.adamo.ddl import Schema
-from lino.apps.addrbook.addrbook import *
 
-from ledger_data import LedgerSchema
+from lino.apps.contacts.contacts_data import Contacts
+from ledger_data import *
 
 class LedgerMainForm(ContactsMainForm):
     """
