@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre 
+## Copyright 2005-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,10 +17,13 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #from lino.ui import console
+import sys
 from lino.textprinter.textprinter import TextPrinter
 
 class PlainTextPrinter(TextPrinter):
-    def __init__(self,writer,cpl=72,frameStyle="+-+|+-+|"):
+    def __init__(self,writer=None,cpl=72,frameStyle="+-+|+-+|"):
+        if writer is None:
+            writer=sys.stdout
         self._writer = writer
         TextPrinter.__init__(self,pageSize=(cpl,0),cpl=cpl)
         assert len(frameStyle) == 8

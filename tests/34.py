@@ -28,7 +28,7 @@ test 81 does a demo.startup() of all these applications
 
 from lino.misc.tsttools import TestCase, main
 from lino.adamo.dbreports import DatabaseOverview, SchemaOverview
-from lino.apps.contacts.pinboard_forms import Pinboard
+from lino.apps.pinboard.pinboard_forms import Pinboard
 from lino.apps.contacts.contacts_forms import Contacts
 from lino.apps.keeper.keeper_forms import Keeper
 from lino.apps.ledger.ledger_forms import Ledger

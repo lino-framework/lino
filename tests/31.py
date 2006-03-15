@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -32,8 +32,8 @@ from lino.adamo.datatypes import itod
 #from lino.ui import console
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.raceman.raceman import Raceman
-from lino.apps.raceman import races
+from lino.apps.raceman.raceman_forms import Raceman
+from lino.apps.raceman import raceman_tables as tables
 
 #from lino.reports import DataReport
 
@@ -47,9 +47,9 @@ class Case(TestCase):
         app = Raceman() # label="Raceman Report Tester")
         #races.setupSchema(schema)
 
-        sess = app.quickStartup()
+        sess = app.dbsess # quickStartup()
 
-        PERSONS = sess.query(races.Person)
+        PERSONS = sess.query(tables.Person)
         norbert = PERSONS.appendRow( name="Ausdemwald",
                                      firstName="Norbert",
                                      sex="M",
@@ -59,7 +59,7 @@ class Case(TestCase):
                                    sex="M",
                                    birthDate="19800505")
 
-        RACES = sess.query(races.Race)
+        RACES = sess.query(tables.Race)
         race = RACES.appendRow(date=itod(20040112),name1="test race")
         qry=race.participants()
         qry.appendRow(
@@ -77,7 +77,7 @@ class Case(TestCase):
             orderBy="duration dossard",
             pageLen=10)
         
-        q.showReport(columnWidths="d d 20 15")
+        q.show(columnWidths="d d 20 15")
         #rpt=sess.createDataReport(q,columnWidths="d d 20 15")
         #sess.showReport(rpt)
         #q.report(columnWidths="d d 20 15")

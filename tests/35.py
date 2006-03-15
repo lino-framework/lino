@@ -31,51 +31,48 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.adamo import center
 from lino.adamo.database import Database
+from lino.adamo.dbsession import DbContext
 #from lino.adamo.dbds.sqlite_dbd import Connection
-from lino.apps.ledger.ledger import Ledger
-from lino.apps.ledger.tables import *
-from lino.apps.ledger import demo
+from lino.apps.contacts.contacts_tables import *
+from lino.apps.contacts import contacts_demo as demo
+#from lino.apps.ledger.ledger_tables import *
 
-sharedTables = (Nation, 
-                PartnerType, Currency,
-                User) 
 
 class Case(TestCase):
     todo="shared tables with different babelLangs"
 
     def test01(self):
+        sharedTables = (Nation, 
+                        PartnerType,
+                        #Currency,
+                        #User
+                        ) 
 
-        app = Ledger()
+        sch = ContactsSchema()
     
-        app.setupSchema()
-        
-        app.initialize()
-        
-        # print app._tables
-        
         conn = center.connection()
         
-        stddb = app.database("std",
+        stddb = sch.database("std",
                              langs="en de fr et",
                              label="shared data")
 
         stddb.connect(conn,sharedTables)
 
 
-        db = app.database(langs="de")
+        db = sch.database(langs="de")
         db.update(stddb)
         conn = center.connection()
         db.connect(conn)
-        sess1=db.startup()
-        sess1.populate(demo.Populator(big=True))
+        sess1=DbContext(db)
+        sess1.populate(demo.StandardPopulator(big=True))
         
         
-        db = app.database(langs="en")
+        db = sch.database(langs="en")
         db.update(stddb)
         conn = center.connection()
         db.connect(conn)
-        sess2=db.startup()
-        sess2.populate(demo.Populator(big=True))
+        sess2=DbContext(db)
+        sess2.populate(demo.StandardPopulator(big=True))
         
 
 
@@ -83,7 +80,7 @@ class Case(TestCase):
                         search="%be%")
         self.assertEqual(q.getLangs(),"de")
         self.assertEqual(q.getDatabase().getLangs(),"en de fr et")
-        q.report(width=50)
+        q.show(width=50)
         s = self.getConsoleOutput()
         #print s
         self.assertEqual(s,"""\

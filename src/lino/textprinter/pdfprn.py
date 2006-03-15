@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2004-2005 Luc Saffre
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -186,7 +186,7 @@ class PdfTextPrinter(TextPrinter):
         for k,v in HACK_BOXCHARS.items():
             text = text.replace(k,v)
 
-        syscon.debug("write(%r)",text)
+        #print "write(%r)" % text
         #text = text.encode("iso-8859-1","replace")
         try:
             text = text.encode("iso-8859-1","strict")

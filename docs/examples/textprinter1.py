@@ -1,8 +1,3 @@
-import os
-
-from lino.console import syscon
-from lino.textprinter.winprn import Win32TextPrinter
-from lino.textprinter.pdfprn import PdfTextPrinter
 
 def doit(d):
     d.writeln("")
@@ -16,26 +11,22 @@ def doit(d):
     d.writeln("Here is some \033u1underlined\033u0 text.")
     d.writeln("Here is some \033i1italic\033i0 text.")
     d.endDoc()
-        
-syscon.parse_args()
 
-# first on console:
-d = syscon.textprinter()
+# doit() on sys.stdout:
+from lino.textprinter.plain import PlainTextPrinter
+d = PlainTextPrinter()
 doit(d)
 
-# now on the printer:
-if syscon.confirm("print it on default Windows printer?",
-                  default=False):
+# doit() on a PDF document:
+from lino.textprinter.pdfprn import PdfTextPrinter
+filename = "textprinter1.pdf"
+d = PdfTextPrinter(filename)
+doit(d)
+
+# doit() on the default printer:
+if False:
+    from lino.textprinter.winprn import Win32TextPrinter
     d = Win32TextPrinter()
     doit(d)
-
-# and now on a PDF document:
-filename = "test.pdf"
-if syscon.confirm("start Acrobat Reader on %s?" % filename,
-                  default=False):
-    d = PdfTextPrinter(filename)
-    doit(d)
-    os.system("start "+filename)
-        
 
 

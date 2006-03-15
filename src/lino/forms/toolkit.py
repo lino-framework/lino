@@ -73,8 +73,8 @@ class Button(Component):
     def __init__(self,owner,name=None,label=None,
                  action=None,hotkey=None,
                  *args,**kw):
-        if hotkey is not None:
-            label += " [" + hotkey.__name__ + "]"
+        #if hotkey is not None:
+        #    label += " [" + hotkey.__name__ + "]"
         Component.__init__(self,owner,name,label,*args,**kw)
         self.action = action
         if hotkey is not None:

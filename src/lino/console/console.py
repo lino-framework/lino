@@ -36,8 +36,6 @@ try:
 except ImportError,e:
     sound = False
 
-from lino.console.task import Task
-
 # rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
 # Unicode Tutorial
 # (http://www.reportlab.com/i18n/python_unicode_tutorial.html)

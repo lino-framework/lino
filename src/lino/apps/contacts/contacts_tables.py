@@ -262,11 +262,10 @@ REPORTS = (NationsReport, CitiesReport, OrganisationsReport,
 
 
 __all__ = [t.__name__ for t in ContactsSchema.tableClasses]
-#__all__.append('TABLES')
+__all__.append('ContactsSchema')
 
 __all__ += [t.__name__ for t in REPORTS]
 __all__.append('REPORTS')
-__all__.append('ContactsSchema')
 
 
 #__all__ = filter(lambda x: x[0] != "_", dir())

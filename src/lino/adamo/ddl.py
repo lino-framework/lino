@@ -25,7 +25,7 @@ from lino.adamo.table import \
 ##      BabelTable
 #from lino.adamo.schema import SchemaPlugin, Schema, \
 #     MirrorLoaderApplication
-from lino.adamo.schema import Schema, MirrorSchema
+from lino.adamo.schema import Schema
 #from lino.adamo.dbforms import DbMainForm
 #from lino.adamo.dbapplication import DbApplication,\
 from lino.adamo.datatypes import *

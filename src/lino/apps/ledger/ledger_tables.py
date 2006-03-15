@@ -311,7 +311,7 @@ class Booking(StoredDataRow):
 
 class LedgerSchema(contacts.ContactsSchema):
     
-    tableClasses = ( 
+    tableClasses = (
         Currency,
         #Partner,
         Product,

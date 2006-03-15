@@ -1,24 +1,6 @@
 TableName      |Fields              |Pointers       |Details                  
 ---------------+--------------------+---------------+-------------------------
 Currencies     |id, name            |               |                         
-Languages      |id, name            |               |                         
-Nations        |id, name, area,     |               |cities,                  
-               |population, curr,   |               |partners_by_nation       
-               |isocode             |               |                         
-Cities         |id, name, zipCode,  |nation         |                         
-               |inhabitants         |               |                         
-Organisations  |id, email, phone,   |nation, city   |                         
-               |gsm, fax, website,  |               |                         
-               |zip, street, house, |               |                         
-               |box, name           |               |                         
-Persons        |id, name, firstName,|               |                         
-               |sex, birthDate      |               |                         
-Partners       |name, firstName,    |nation, city,  |                         
-               |email, phone, gsm,  |type, lang,    |                         
-               |fax, website, zip,  |currency       |                         
-               |street, house, box, |               |                         
-               |id, title, logo     |               |                         
-PartnerTypes   |id, name            |               |                         
 Products       |id, name, price     |               |                         
 Journals       |id, name, tableName |               |                         
 BankStatements |seq, date, closed,  |jnl            |                         
@@ -44,3 +26,21 @@ Accounts       |name, pcmn, id      |parent,        |
 Bookings       |date, amount, dc,   |account,       |                         
                |label, id           |invoice,       |                         
                |                    |partner        |                         
+Languages      |id, name            |               |                         
+Nations        |id, name, area,     |               |cities,                  
+               |population, curr,   |               |partners_by_nation       
+               |isocode             |               |                         
+Cities         |id, name, zipCode,  |nation         |                         
+               |inhabitants         |               |                         
+Organisations  |id, email, phone,   |nation, city   |                         
+               |gsm, fax, website,  |               |                         
+               |zip, street, house, |               |                         
+               |box, name           |               |                         
+Persons        |id, name, firstName,|               |                         
+               |sex, birthDate      |               |                         
+Partners       |name, firstName,    |nation, city,  |                         
+               |email, phone, gsm,  |type, lang,    |                         
+               |fax, website, zip,  |currency       |                         
+               |street, house, box, |               |                         
+               |id, title, logo     |               |                         
+PartnerTypes   |id, name            |               |                         

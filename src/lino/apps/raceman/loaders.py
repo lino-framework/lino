@@ -1,4 +1,4 @@
-## Copyright 2004-2005 Luc Saffre 
+## Copyright 2004-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -24,7 +24,7 @@ import sys
 
 from lino import adamo
 
-from lino.apps.raceman.races import *
+from raceman_tables import *
 #Races, RaceTypes, Categories, \
 #     Participants, Persons, Clubs
 

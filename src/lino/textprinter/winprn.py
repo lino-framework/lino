@@ -400,7 +400,7 @@ class Win32TextPrinter(TextPrinter):
             # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
         
             self.dc.SelectObject(self.font)
-            syscon.debug("select font %s",self.fontDict)
+            #print "select font",self.fontDict
             
         #console.debug(repr(tm))
 ##         console.info(repr(self.dc.GetTextFace()))
@@ -418,8 +418,8 @@ class Win32TextPrinter(TextPrinter):
         # 
         #self.leading = max(self.leading,self.doc.status.leading)
         #self.doc.dc.TextOut(self.line)
-        syscon.debug("self.dc.TextOut(%d,%d,%r)",
-                     int(self.x),-int(self.y),self.line)
+        #print "self.dc.TextOut(%d,%d,%r)"%\
+        #(int(self.x),-int(self.y),self.line)
         if len(self.line) == 0:
             (dx,dy) = self.dc.GetTextExtent(" ")
         else:
@@ -452,7 +452,7 @@ class Win32TextPrinter(TextPrinter):
         self.x = self.org[0] + self.margin
         self.y += self.leading
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
-        syscon.debug("self.y += %d" % self.leading)
+        #syscon.debug("self.y += %d" % self.leading)
 
 
     def length2i(self,s):

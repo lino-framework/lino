@@ -23,6 +23,7 @@ from time import sleep
 
 #from lino.console.console import TaskAborted
 from lino.adamo.exceptions import UserAborted
+from lino.console import syscon
 
 if False:
     
@@ -146,8 +147,8 @@ class UI:
     def breathe(self):
         return self.toolkit.on_breathe(self)
 
-    def runfrom(self,ui,*args,**kw):
-        self.toolkit=ui.toolkit
+    def runfrom(self,toolkit,*args,**kw):
+        self.toolkit=toolkit
         return self.run(*args,**kw)
         
 
@@ -188,6 +189,11 @@ class Task(UI):
             return self.__class__.__name__
         return self.title
 
+    def main(self,toolkit=None,*args,**kw):
+        if toolkit is None:
+            toolkit=syscon.getSystemConsole()
+        self.runfrom(toolkit,*args,**kw)
+
 class Looper(Task):
     
     def __init__(self,f,label=None):
@@ -217,8 +223,8 @@ class Progresser(Task):
         self.curval=0
 
 
-    def runfrom(self,ui,*args,**kw):
-        self.toolkit=ui.toolkit
+    def runfrom(self,toolkit,*args,**kw):
+        self.toolkit=toolkit
         
         self.toolkit.onTaskBegin(self)
         #okay=True

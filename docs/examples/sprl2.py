@@ -1,4 +1,4 @@
-from lino.apps.ledger import demo
+from lino.apps.ledger.ledger_tables import LedgerSchema
 from lino.reports import Report
 from lino.adamo.rowattrs import Field, Pointer, Detail
 
@@ -37,6 +37,6 @@ class SchemaOverview(Report):
             width=25)
 
 
-sess=demo.startup(populate=False)
-rpt=SchemaOverview(sess.db.app)
+sch=LedgerSchema()
+rpt=SchemaOverview(sch)
 rpt.show()

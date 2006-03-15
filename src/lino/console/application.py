@@ -121,6 +121,9 @@ class Application(Session):
         #print "Application.__init__()", self    
         #self.setToolkit(toolkit)
         
+    def setupApplication(self):
+        pass
+        
 
     def createToolkit(self):
         return syscon.getSystemConsole()
@@ -249,6 +252,7 @@ class Application(Session):
         try:
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
+            self.setupApplication()
             self.toolkit=self.createToolkit()
             self.toolkit.start_running(self)
             return self.run()

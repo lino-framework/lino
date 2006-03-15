@@ -17,48 +17,22 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import sys
 import os
-opj = os.path.join
 
-from lino import adamo
-from lino.forms import gui
+from lino.forms.gui import DbApplication
+from lino.forms.forms import DbMainForm
 
-from lino.apps.raceman import races, loaders
+from lino.apps.raceman import loaders
+from lino.apps.raceman.raceman_tables import *
 
-# from lino.adamo.application import MirrorLoaderApplication
-from lino.adamo.schema import MirrorLoaderApplication
-
-class Raceman(MirrorLoaderApplication):
-    
-    name="Raceman"
-    years='2005-2006'
-    #tables = races.TABLES
-    
-    def setupSchema(self):
-        for cl in races.TABLES:
-            self.addTable(cl)
-            
-    def getLoaders(self):
-        return [lc(self.loadfrom) for lc in loaders.LOADERS]
-
-    def init(self):
-        self.registerLoaders(self.getLoaders())
-        
-        self.sess = self.schema.quickStartup(
-            ui=self.toolkit.console,
-            filename=self.filename)
-        
-        #assert self.mainForm is None
-        
-        #self.mainForm = frm = self.form(
-        frm = self.form(
-            label="Main menu",
-            doc="""\
+class RacemanMainForm(DbMainForm):
+    """\
 This is the Raceman main menu.                                     
-"""+("\n"*10))
+    """
+    
+    def setupMenu(self):
 
-        m = frm.addMenu("&Stammdaten")
+        m = self.addMenu("master","&Stammdaten")
         
         m.addReportItem("events",races.EventsReport,
                         label="&Events")
@@ -72,30 +46,47 @@ This is the Raceman main menu.
         m.addReportItem("persons",races.PersonsReport,
                         label="&Persons")
         
-        #m = frm.addMenu("&Arrivals")
-        #m.addItem(label="&Erfassen").setHandler(self.arrivals)
-        
-        self.addProgramMenu(frm)
-        
-        frm.addOnClose(self.close)
-        
-        frm.show()
-
+        self.addProgramMenu()
         
 
-def main(argv):
-    app = Raceman()
-    app.parse_args(argv)
-    gui.run(app)
-    #app.run()
+
+    
+class Raceman(DbApplication):
+    
+    name="Raceman"
+    years='2005-2006'
+    #tables = races.TABLES
+    schemaClass=RacemanSchema
+    mainFormClass=RacemanMainForm
+    loadMirrorsFrom="."
+    
+
+    def setupApplication(self):
+        l=[lc(self.loadfrom) for lc in loaders.LOADERS]
+        self.registerLoaders(l)
 
 
+    def registerLoaders(self,loaders):
+        for l in loaders:
+            it = self.dbsess.schema.findImplementingTables(
+                l.tableClass)
+            assert len(it) == 1
+            it[0].setMirrorLoader(l)
 
-
+    def setupOptionParser(self,parser):
+        DbApplication.setupOptionParser(self,parser)
+        parser.add_option("--loadfrom",
+                          help="""\
+directory containing mirror source files""",
+                          action="store",
+                          type="string",
+                          dest="loadfrom",
+                          default=".")
+        
+        
 
 if __name__ == '__main__':
-    #main(sys.argv[1:])
-    main(sys.argv[1:])
+    Raceman().main()
 
 
 

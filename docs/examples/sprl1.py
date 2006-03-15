@@ -1,4 +1,4 @@
-from lino.apps.ledger import demo
+from lino.apps.ledger.ledger_demo import startup
 from lino.reports import Report, RIGHT
 from lino.adamo.datatypes import INT
 
@@ -11,7 +11,7 @@ class DatabaseOverview(Report):
         row.qry=self.dbsess.query(row.item._instanceClass)
         
     def getIterator(self):
-        return self.dbsess.db.app.getTableList()
+        return self.dbsess.db.schema.getTableList()
         
     def setupReport(self):
         self.addVurtColumn(
@@ -36,7 +36,7 @@ class DatabaseOverview(Report):
             width=20)
 
     
-sess = demo.startup()
+sess = startup()
 rpt=DatabaseOverview(sess)
 rpt.show()
 

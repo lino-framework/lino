@@ -66,6 +66,8 @@ class Schema: #(Application):
         #self.options = AttrDict(d=kw)
         
         #center.addSchema(self)
+        
+        self.initialize()
 
         """ Note: for plugins and tables it is important to keep also a
         sequential list.  """
@@ -150,6 +152,8 @@ class Schema: #(Application):
         if self._initDone:
             return
 
+        self.setupSchema()
+        
         #self.console.debug(
         #    "Initializing %d tables..." % len(self._tables))
 
@@ -278,8 +282,6 @@ class Schema: #(Application):
 ##             schema=Schema()
 ##             for cl in self.tableClasses:
 ##                 schema.addTable(cl)
-        self.setupSchema()
-        self.initialize()
         #self.console.debug("Initialize Schema")
         db = self.database(langs=langs)
         #self.console.debug("Connect")
@@ -684,29 +686,29 @@ class LayoutFactory:
 
 
 
-class MirrorSchema(Schema):
+## class MirrorSchema(Schema):
 
-    def __init__(self,loadfrom=".",**kw):
-        Schema.__init__(self,**kw)
-        self.loadfrom = loadfrom
+##     def __init__(self,loadfrom=".",**kw):
+##         Schema.__init__(self,**kw)
+##         self.loadfrom = loadfrom
     
-    def registerLoaders(self,loaders):
-        for l in loaders:
-            it = self.findImplementingTables(l.tableClass)
-            assert len(it) == 1
-            it[0].setMirrorLoader(l)
+##     def registerLoaders(self,loaders):
+##         for l in loaders:
+##             it = self.findImplementingTables(l.tableClass)
+##             assert len(it) == 1
+##             it[0].setMirrorLoader(l)
 
             
-    def setupOptionParser(self,parser):
-        Schema.setupOptionParser(self,parser)
+##     def setupOptionParser(self,parser):
+##         Schema.setupOptionParser(self,parser)
         
-        parser.add_option("--loadfrom",
-                          help="""\
-directory containing mirror source files""",
-                          action="store",
-                          type="string",
-                          dest="loadfrom",
-                          default=".")
+##         parser.add_option("--loadfrom",
+##                           help="""\
+## directory containing mirror source files""",
+##                           action="store",
+##                           type="string",
+##                           dest="loadfrom",
+##                           default=".")
     
 ##     def applyOptions(self,options,args):
 ##         Application.applyOptions(self,options,args)

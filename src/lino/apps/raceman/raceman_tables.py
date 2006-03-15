@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2004-2005 Luc Saffre
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,7 +22,7 @@ from datetime import datetime
 
 from lino.adamo.ddl import *
 #from lino.schemas.sprl.babel import Languages
-from lino.apps.addrbook.tables import Language, Person, SEX
+from lino.apps.contacts.contacts_tables import Language, Person, SEX
 
 NAME = STRING(width=30)
 DOSSARD = STRING(width=4)
@@ -429,20 +429,19 @@ class Arrival(StoredDataRow):
 class ArrivalsReport(DataReport):
     leadTable=Arrival
 
-# order of tables is important: tables will be populated in this order
-TABLES = (
-    Event,
-    Club,
-    Person,
-    RaceType,
-    Category,
-    Race,
-    Participant,
-    Arrival,
-    )
+
+class RacemanSchema(Schema):
+    tableClasses=(
+        Event,
+        Club,
+        Person,
+        RaceType,
+        Category,
+        Race,
+        Participant,
+        Arrival,
+        )
 
 
-def setupSchema(schema):
-    for t in TABLES:
-        schema.addTable(t)
-
+__all__ = [t.__name__ for t in RacemanSchema.tableClasses]
+__all__.append('RacemanSchema')
