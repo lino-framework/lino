@@ -3,7 +3,7 @@ from lino.reports.reports import DictReport
 
 class MyReport(Application):
     
-    def run(self,sess):
+    def run(self):
 
         d = dict(
             name="Ausdemwald",
@@ -14,7 +14,7 @@ Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in E
             )
 
         rpt = DictReport(d)
-        sess.showReport(rpt)
+        self.showReport(rpt)
         
 if __name__ == "__main__":
     MyReport().main()

@@ -30,8 +30,8 @@ defaults={
     'rtlib_path' : rtlib_path,
     }
 config = ConfigParser(defaults)
-config.add_section('forms')
-config.set('forms','wishlist','wx tix cherrypy console')
+#config.add_section('forms')
+#config.set('forms','wishlist','wx tix cherrypy console')
 
 #config.readfp(open('defaults.cfg'))
 config.read( [

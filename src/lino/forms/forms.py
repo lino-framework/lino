@@ -92,12 +92,13 @@ class Container:
         
 
     def __repr__(self):
-        s = Component.__repr__(self)
+        s = self.__class__.__name__
         for c in self.getComponents():
         #for c in self._components:
             s += "\n- " + ("\n  ".join(repr(c).splitlines()))
         s += "\n)"
         return s
+    
     
     def addLabel(self,label,**kw):
         frm = self.getForm()
@@ -330,6 +331,12 @@ class Form(MenuContainer,Container):
         app=GuiApplication(self)
         app.main(*args,**kw)
         
+##     def __xml__(self,xml):
+##         xml.begin_tag("form",title=self.getTitle())
+##         xml.end_tag("form")
+        
+    
+##         for c in self.getComponents():
             
 ##     def render(self,doc):
 ##         self.mainComp.render(doc)

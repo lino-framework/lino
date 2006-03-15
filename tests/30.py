@@ -50,7 +50,7 @@ class Case(TestCase):
         # print [col.name for col in rpt._clist.visibleColumns]
         #self.sess.startDump()
         #q.executeReport(columnWidths="5 50 10")
-        self.sess.showQuery(qry,columnWidths="5 50 10")
+        qry.show(columnWidths="5 50 10")
         #rpt=self.sess.createDataReport(qry,columnWidths="5 50 10")
         #self.sess.showReport(rpt)
 
@@ -78,7 +78,7 @@ id   |name                                              |nation
         qry = self.sess.query(Nation,"id name")
         #self.sess.startDump()
         #ds.report(columnWidths="2 25")
-        qry.showReport(columnWidths="2 25")
+        qry.show(columnWidths="2 25")
         #rpt=self.sess.createDataReport(qry,columnWidths="2 25")
         #self.sess.showReport(rpt)
         #self.ui.report(rpt)

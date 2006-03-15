@@ -131,7 +131,7 @@ class UI:
     def showForm(self,*args,**kw):
         self.toolkit.show_form(self,*args,**kw)
     def showReport(self,*args,**kw):
-        return self.toolkit.show_report(self,*args,**kw)
+        return self.toolkit.show_report(*args,**kw)
     def textprinter(self,*args,**kw):
         return self.toolkit.textprinter(self,*args,**kw)
     

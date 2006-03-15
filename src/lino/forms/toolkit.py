@@ -801,7 +801,9 @@ class Toolkit(BaseToolkit):
 ##     def createForm(self,sess,*args,**kw):
 ##         return self.formFactory(self,sess,*args,**kw)
 
-    #def onShowForm(self,frm):
+    def createFormCtrl(self,frm):
+        return 1
+
     def executeShow(self,frm):
         raise NotImplementedError
 
@@ -834,7 +836,7 @@ class Toolkit(BaseToolkit):
         return self.root is not None
 
     def run_forever(self):
-        raise NotImplementedError
+        pass
     
     def run_awhile(self):
         pass

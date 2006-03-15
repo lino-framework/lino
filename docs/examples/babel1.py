@@ -1,12 +1,15 @@
-from lino.apps.ledger import demo, tables
+from lino.apps.ledger.ledger_demo import startup
+from lino.apps.ledger.ledger_tables import Currency
 
-sess=demo.startup(langs="en fr")
-qry=sess.query(tables.Currency,"id name")
+sess=startup(langs="en fr")
+qry=sess.query(Currency,"id name")
 # show in default language:
-sess.showQuery(qry)
+qry.show()
+#sess.showQuery(qry)
 print
 # switch to FR and show again:
 sess.setBabelLangs("fr")
-sess.showQuery(qry)
+#sess.showQuery(qry)
+qry.show()
 
 

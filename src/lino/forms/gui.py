@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import lino
-from lino.console import Application
+from lino.console import Application, syscon
 
 
 ## _toolkit = None
@@ -62,7 +62,7 @@ from lino.console import Application
     
 
 class GuiApplication(Application):
-    wishlist="wx"
+    wishlist="wx tix cp console"
 
     def __init__(self,mainForm,*args,**kw):
         Application.__init__(self,*args,**kw)
@@ -70,9 +70,14 @@ class GuiApplication(Application):
     
 
     def createToolkit(self):
-        wishlist=self.wishlist
-        if wishlist is None:
-            wishlist=lino.config.get('forms','wishlist')
+        console=syscon.getSystemConsole()
+        if console.isInteractive():
+            wishlist=self.wishlist
+        else:
+            wishlist="testkit"
+            
+        #if wishlist is None:
+        #    wishlist=lino.config.get('forms','wishlist')
 
         for tkname in wishlist.split():
             #print tkname
@@ -85,10 +90,11 @@ class GuiApplication(Application):
             if tkname == "testkit": 
                 from lino.forms.testkit import Toolkit
                 return Toolkit()
-            if tkname == "console": 
-                from lino.forms.console import Toolkit
-                return Toolkit()
-            if tkname == "cherrypy": 
+            if tkname == "console":
+                return console
+                #from lino.forms.console import Toolkit
+                #return Toolkit()
+            if tkname == "cp": 
                 from lino.forms.cherrygui import Toolkit
                 return Toolkit()
             if tkname == "htmlgen":
@@ -96,6 +102,9 @@ class GuiApplication(Application):
                 return Toolkit()
 
         raise "no toolkit found for wishlist %r" % wishlist
+
+    
+    
 
 ##     def main(self,*args,**kw):
 ##         kw['toolkit']=createToolkit(wishlist=self.wishlist)

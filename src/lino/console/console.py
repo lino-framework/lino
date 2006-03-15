@@ -478,12 +478,10 @@ class Console(BaseToolkit):
 
 
 
-
 class TtyConsole(Console):
 
     purzelMann = "|/-\\"
     width = 78  # 
-
 
     def __init__(self,*args,**kw):
         self.statusMessage=None

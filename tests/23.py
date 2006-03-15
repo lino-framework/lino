@@ -22,9 +22,9 @@
 
 from lino.misc.tsttools import TestCase, main
 from lino.adamo.datatypes import itod
-from lino.apps.ledger import demo
+from lino.apps.ledger.ledger_demo import startup
 
-from lino.apps.ledger.tables import \
+from lino.apps.ledger.ledger_tables import \
      Partner, Journal, Invoice, Product
 
 
@@ -37,7 +37,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.db = demo.startup()
+        self.db = startup()
 
     def tearDown(self):
         self.db.shutdown()
@@ -91,7 +91,7 @@ class Case(TestCase):
 
         i.lines(
             "line product.name qty unitPrice amount")\
-            .showReport(width=60)
+            .show(width=60)
 
         s=self.getConsoleOutput()
         #print s

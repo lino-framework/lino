@@ -116,7 +116,7 @@ class Application(Session):
         #    session=syscon.getSystemConsole()
         if self.name is None:
             self.name=self.__class__.__name__
-        self.toolkit=self.createToolkit()
+        self.toolkit=None # self.createToolkit()
         Session.__init__(self)
         #print "Application.__init__()", self    
         #self.setToolkit(toolkit)
@@ -239,8 +239,8 @@ class Application(Session):
         p = OptionParser(
             usage=self.usage,
             description=self.description)
-
-        self.toolkit.setupOptionParser(p)
+        console=syscon.getSystemConsole()
+        console.setupOptionParser(p)
         self.setupOptionParser(p)
 
         if argv is None:
@@ -249,12 +249,13 @@ class Application(Session):
         try:
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
+            self.toolkit=self.createToolkit()
             self.toolkit.start_running(self)
             return self.run()
 
         except UsageError,e:
-            p.print_help()
             return -1
+            p.print_help()
         except ApplicationError,e:
             self.error(str(e))
             return -1

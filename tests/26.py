@@ -25,8 +25,8 @@ Logical columns (row attributes) versus physical columns (atoms)
 import types
 
 from lino.misc.tsttools import TestCase, main
-from lino.apps.pinboard import demo
-from lino.apps.pinboard.tables import Project
+from lino.apps.pinboard.pinboard_demo import startup
+from lino.apps.pinboard.pinboard_tables import Project
 #from lino.reports import DataReport
 
 
@@ -37,7 +37,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup()
+        self.sess = startup()
 
     def tearDown(self):
         self.sess.shutdown()
@@ -47,7 +47,7 @@ class Case(TestCase):
         PROJECTS = self.sess.query(Project)
         qry = PROJECTS.query("id super.id title")
         self.assertEqual(len(qry),10)
-        self.sess.showQuery(qry,columnWidths="5 5 20")
+        qry.show(columnWidths="5 5 20")
         #rpt=self.sess.createDataReport(qry,columnWidths="5 5 20")
         #self.sess.showReport(rpt)
         
@@ -79,7 +79,7 @@ id   |super|title
         
         qry = self.sess.query(Project,"id title", super=None)
         self.assertEqual(len(qry),3)
-        qry.showReport(columnWidths="5 20")
+        qry.show(columnWidths="5 20")
         #self.sess.showQuery(qry,columnWidths="5 20")
         #rpt=self.sess.createDataReport(qry,columnWidths="5 20")
         #self.sess.showReport(rpt)

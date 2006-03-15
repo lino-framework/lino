@@ -35,3 +35,5 @@ class Toolkit(toolkit.Toolkit):
     viewerFactory = TextViewer
     navigatorFactory = DataForm
     
+    def executeShow(self,frm):
+        self.console.writeln(repr(frm))
