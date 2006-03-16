@@ -307,7 +307,7 @@ class Form(MenuContainer,Container):
 
             
     def set_parent(self,parent):
-        assert self._parent is None
+        #assert self._parent is None
         self._parent = parent
 
     def isShown(self):

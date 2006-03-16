@@ -27,6 +27,10 @@ from lino.apps.keeper.populate import VolumeVisitor, read_content
 
 from lupy.index.documentwriter import standardTokenizer
 
+def preview(s):
+    if len(s) < 100: return s
+    return s[:100]+" (...)"
+
 
 class Volume(StoredDataRow):
     tableName="Volumes"

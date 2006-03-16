@@ -46,6 +46,7 @@ def iif(test,x,y):
 class Type(Describable):
     "base class for containers of data-type specific meta information"
     
+    defaultValue=None
     parser=lambda x: x # itself
     formatter=str
     
@@ -119,6 +120,7 @@ class WidthType(Type):
     
             
 class IntType(WidthType):
+    defaultValue=0
     defaultWidth=5
     minWidth=3
     maxWidth=7
@@ -137,6 +139,7 @@ class IntType(WidthType):
 
 
 class BoolType(IntType):
+    defaultValue=False
     parser=bool
     formatter=lambda s,x: iif(x,'X','-')
     allowedClasses=(types.BooleanType,)
@@ -160,6 +163,7 @@ class LongType(IntType):
     allowedClasses=(types.LongType,)
     
 class StringType(WidthType):
+    defaultValue=""
     defaultWidth=50
     minWidth=15
     maxWidth=50

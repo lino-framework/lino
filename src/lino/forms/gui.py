@@ -164,9 +164,6 @@ class DbApplication(GuiApplication):
         self.dbsess=dbc
         GuiApplication.__init__(self,mainForm)
 
-    def quickStartup(self,*args,**kw):
-        raise "use app.dbsess"
-            
     def createContext(self,*args,**kw):
         if self.dbsess is None:
             self.dbsess=self.schemaClass(self).quickStartup(*args,**kw)

@@ -102,7 +102,7 @@ class DbContext(Context):
         status=self.getSessionStatus()
         #self.db.populate(self,p)
         for store in self.db.getStoresById():
-            p.runfrom(self.db.schema.session,self,store)
+            p.runfrom(self.db.schema.session.toolkit,self,store)
             #store.populate(sess,p)
 
 

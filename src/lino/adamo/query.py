@@ -910,7 +910,7 @@ class LeadTableColumnList(BaseColumnList):
         self._store.unlockQuery(self)
         
     def unlock(self):
-        return self._store.unlockDatasource(self)
+        return self._store.unlockQuery(self)
 
     
     

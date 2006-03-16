@@ -397,6 +397,11 @@ class EntryMixin:
             #_setEditorSize(editor,self)
         elif isinstance(type,datatypes.BoolType):
             editor=wx.CheckBox(mypanel,-1)
+            v=self.getValue()
+            if v is None:
+                v=self._type.defaultValue
+            editor.SetValue(v)
+            
         #print editor.GetMinSize(), editor.GetMaxSize()
         #print mypanel.GetMinSize(), editor.GetMaxSize()
         
@@ -429,20 +434,43 @@ class EntryMixin:
 ##         if evt.GetKeyCode() == 27: return
 ##         evt.Skip()
 
+    def getValueForEditor(self):
+        "return current value as string"
+        v = self.getValue()
+        if v is None:
+            return self._type.defaultValue
+        if isinstance(self._type,datatypes.StringType):
+            return self.format(v)
+        return v
+
+    def setValueFromEditor(self,x):
+        "convert the string and store it as raw value"
+        if isinstance(self._type,datatypes.StringType):
+            if len(x) == 0:
+                self.setValue(None)
+            else:
+                self.setValue(self.parse(x))
+        else:
+            self.setValue(x)
+            
     def refresh(self):
         if hasattr(self,'editor'):
-            s = self.getValueForEditor()
-            self.editor.SetValue(s)
+            x = self.getValueForEditor()
+            self.editor.SetValue(x)
         
     def setFocus(self):
         self.editor.SetFocus()
         self.editor.SetSelection(-1,-1)
-
+        
+    def isDirty(self):
+        if isinstance(self._type,datatypes.StringType):
+            return self.editor.IsModified()
+        return False
 
     def store(self):
         #type = self._type
         #if isinstance(type,datatypes.StringType):
-        if self.editor.IsModified():
+        if self.isDirty():
             s = self.editor.GetValue()
             self.setValueFromEditor(s)
         

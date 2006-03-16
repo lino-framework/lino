@@ -55,6 +55,8 @@ class Schema: #(Application):
         #self.toolkit=toolkit
         if session is None:
             session=Session()
+        else:
+            assert isinstance(session,Session)
         self.session=session
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup

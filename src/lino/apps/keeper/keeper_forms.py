@@ -28,10 +28,6 @@ from lino.forms.gui import DbApplication
 
 
 
-def preview(s):
-    if len(s) < 100: return s
-    return s[:100]+" (...)"
-
 class SearchForm(ReportForm):
     
     title="Search"

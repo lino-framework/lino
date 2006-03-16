@@ -34,15 +34,28 @@ from lino.forms.forms import Container
 
 
 
-class Component(Describable):
+class Component: #(Describable):
     def __init__(self,owner,
-                 name=None,label=None,doc=None,
+                 unusedName=None,label=None,doc=None,
                  enabled=True,
                  weight=0):
-        Describable.__init__(self,None,name,label,doc)
+        #Describable.__init__(self,None,name,label,doc)
+        self.label=label
+        self.doc=doc
         self.owner = owner
         self.weight=weight
         self.enabled=enabled
+
+    def getLabel(self):
+        if self.label is None:
+            return self.__class__.__name__
+        return self.label
+    
+    def getDoc(self):
+        return self.doc
+
+    def hasLabel(self):
+        return self.label is not None
 
     def __repr__(self):
         s=self.__class__.__name__+"("
@@ -127,19 +140,6 @@ class TextViewer(Component):
 
 class BaseEntry(Component):
 
-    def getValueForEditor(self):
-        "return current value as string"
-        v = self.getValue()
-        if v is None: return ""
-        return self.format(v)
-
-    def setValueFromEditor(self,s):
-        "convert the string and store it as raw value"
-        if len(s) == 0:
-            self.setValue(None)
-        else:
-            self.setValue(self.parse(s))
-            
     def store(self):
         "store data from widget"
         pass
@@ -174,14 +174,10 @@ class Entry(BaseEntry):
             type = STRING
             
         self._type = type
-        
         self.setValue(value)
 
     def getValue(self):
         return self._value
-    
-##     def getType(self):
-##         return self._type
     
     def format(self,v):
         return self._type.format(self._value)

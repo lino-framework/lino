@@ -92,6 +92,7 @@ has chosen a toolkit and who runs some code (usually an application)
         if toolkit is None:
             toolkit=syscon.getSystemConsole()
         self.toolkit=toolkit
+        self.debug(self.__class__.__name__+".__init__()")
         
     def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"

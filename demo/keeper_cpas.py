@@ -12,4 +12,4 @@ class MyPopulator(Populator):
 app=Keeper()
 dbc=app.createContext(filename="keeper.db")
 dbc.populate(MyPopulator())
-app.main(dbc)
+app.main()
