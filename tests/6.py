@@ -21,9 +21,9 @@ from lino.misc.tsttools import TestCase, main, Toolkit
 
 from lino.adamo.store import Populator
 
-from lino.apps.timings.timings import Timings, everyday, \
+from lino.apps.timings.timings_tables import TimingsSchema, everyday, \
      MonthlyCalendar
-from lino.apps.timings import tables
+from lino.apps.timings import timings_tables as tables
 from lino.adamo.datatypes import itot
 from lino.adamo import center
 
@@ -67,7 +67,7 @@ class Case(TestCase):
     verbosity=0
     def setUp(self):
         TestCase.setUp(self)
-        app=Timings()
+        app=TimingsSchema()
         #self.sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
         self.sess=app.quickStartup() # dump=True)
         self.sess.populate(TestPopulator())
@@ -80,9 +80,7 @@ class Case(TestCase):
         #s=center.stopDump()
         #print s
         #self.assertEquivalent(s,""" """)        
-        rpt=MonthlyCalendar(self.sess,2005,6)
-        #self.sess.showReport(rpt)
-        rpt.show()
+        MonthlyCalendar(self.sess,2005,6).show()
         #self.sess.db.app.showMonthlyCalendar(self.sess,2005,6)
         s=self.getConsoleOutput()
         #print s

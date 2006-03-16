@@ -21,6 +21,7 @@ import os
 from types import StringType
 
 from lino.adamo.ddl import *
+from lino.adamo.filters import Contains, NotEmpty
 #from lino.forms.session import Session
 from lino.apps.keeper.populate import VolumeVisitor, read_content
 
@@ -54,9 +55,9 @@ class Volume(StoredDataRow):
     def __str__(self):
         return self.name
         
-    def load(self,sess):
-        vv=VolumeVisitor(self)
-        sess.loop(vv.looper,"Loading %s" % self.name)
+    def load(self):
+        VolumeVisitor(self).main()
+        #sess.loop(vv.looper,"Loading %s" % self.name)
 
     def delete(self):
         self.directories().deleteAll()
@@ -149,24 +150,18 @@ class File(StoredDataRow):
     def path(self):
         return os.path.join(self.dir.path(),self.name)
 
-    def readTimeStamp(self,sess,fullname):
-        #assert isinstance(sess,Session), \
-        #       "%s is not a Session" % sess.__class__
-        #assert sess.__class__.__name__ == 'Session', \
-        #       "%s is not a Session" % sess.__class__
-        #assert fullname == self.path(), \
-        #       "%r != %r" % (fullname,self.path())
+    def readTimeStamp(self,ui,fullname):
         try:
             st = os.stat(fullname)
         except OSError,e:
-            sess.error("os.stat('%s') failed" % fullname)
+            ui.error("os.stat('%s') failed" % fullname)
             return
         sz = st.st_size
         mt = st.st_mtime
         if self.mtime == mt and self.size == sz:
             return
         self.lock()
-        s=read_content(sess,self,fullname)
+        s=read_content(ui,self,fullname)
         if s and len(s.strip()) > 0:
             #"assert UnicodeString if not pure ascii"
             #assert ispure(s)
@@ -176,20 +171,20 @@ class File(StoredDataRow):
         self.mtime = mt
         self.size=sz
         self.mustParse=True
-        self.parseContent(sess)
+        self.parseContent(ui)
         self.unlock()
 
-    def parseContent(self,sess):
+    def parseContent(self,ui):
         if self.content is None:
             return
         tokens = standardTokenizer(self.content)
         occs=self.occurences()
         occs.deleteAll()
-        words=sess.query(Word)
+        words=self.getSession().query(Word)
         pos = 0
         for token in tokens:
             pos += 1
-            sess.status(self.path()+": "+token)
+            ui.status(self.path()+": "+token)
             word = words.peek(token)
             if word is None:
                 word = words.appendRow(id=token)
@@ -244,6 +239,36 @@ class Occurence(StoredDataRow):
 
 class OccurencesReport(DataReport):
     leadTable=Occurence
+
+
+class FoundFilesReport(DataReport):
+    leadTable=File
+    #width=70
+    
+    def setupReport(self):
+        assert len(self.columns) == 0
+        #files = self.query.session.query(tables.File) #,"name")
+        self.addDataColumn("name",width=20)
+        occsColumn=self.addDataColumn(
+            "occurences",
+            formatter=lambda pq: str(len(pq())),\
+            #searchColumns="words.id",
+            label="occs",
+            width=5)
+        self.addDataColumn("content",
+                           width=40,
+                           formatter=lambda x: preview(x))
+
+        self.occsColumn=occsColumn.datacol
+        self.query.addFilter(NotEmpty(self.occsColumn))
+        #self.occs=col.getDetailQuery()
+        self.occsColumn._queryParams['searchColumns']="word.id"
+        
+    def setSearch(self,s):
+        self.occsColumn._queryParams['search'] = s
+
+
+    
     
 class KeeperSchema(Schema):
     tableClasses = ( 
@@ -257,4 +282,5 @@ class KeeperSchema(Schema):
 
 __all__ = [t.__name__ for t in KeeperSchema.tableClasses]
 __all__.append('KeeperSchema')
+__all__.append('FoundFilesReport')
 

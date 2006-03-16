@@ -26,13 +26,13 @@ from lino.console.application import Application, UsageError
 
 class PrnPrint(Application):
     
-    name="Lino/prnprint"
+    name="Lino prnprint"
     copyright="""\
 Copyright (c) 2004-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-    url="http://www.saffre-rumma.ee/lino/prnprint.html"
+    url="http://lino.saffre-rumma.ee/prnprint.html"
     
     usage="usage: lino prnprint [options] FILE [FILE ...]"
     description="""\

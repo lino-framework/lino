@@ -23,24 +23,25 @@ opj = os.path.join
 import codecs
 
 from lino.adamo.ddl import *
-#from lino.console.task import Task
+from lino.console.task import Progresser
 #from lino.tools.msword import MsWordDocument
 from lupy.index.documentwriter import standardTokenizer
+import keeper_tables as tables
+from lino.guessenc.guesser import EncodingGuesser
 
 
-class VolumeVisitor: #(Task):
+class VolumeVisitor(Progresser):
     
     def __init__(self,vol):
-        #Task.__init__(self)
+        Progresser.__init__(self)
         self.volume = vol
-        from lino.apps.keeper import tables
         self.session=self.volume.getSession()
         self.ftypes = self.session.query(tables.FileType)
         self.files = self.session.query(tables.File)
         self.dirs = self.session.query(tables.Directory)
 
-    def looper(self,task):
-        self.task=task
+    def run(self):
+        #self.task=task
         if len(self.volume.directories()) > 0:
             self.freshen(self.volume.path)
         else:
@@ -52,9 +53,9 @@ class VolumeVisitor: #(Task):
 ##     def prune_dir(self,dirname):
 ##         return dirname in ('.svn',)
 
-    def status(self,msg,*args):
-        self.session.status(msg,*args)
-        self.task.breathe()
+##     def status(self,msg,*args):
+##         self.session.status(msg,*args)
+##         self.breathe()
 
             
     def freshen(self,fullname,shortname=None,dir=None):
@@ -89,7 +90,7 @@ class VolumeVisitor: #(Task):
             #if row is None:
             row = self.files.appendRow(name=shortname,dir=dir)
             #self.visit_file(row,fullname)
-            row.readTimeStamp(self.task.session,fullname)
+            row.readTimeStamp(self,fullname)
         elif os.path.isdir(fullname):
             #print "findone(",dict(parent=dir,name=shortname),")"
             #if self.reloading:
@@ -123,7 +124,7 @@ class FileVisitor: # (Task):
     def looper(self,task):
         self.task=task
         sess = self.volume.getSession()
-        from lino.apps.keeper import tables 
+        #from lino.apps.keeper import tables 
         self.ftypes = sess.query(tables.FileType)
         self.files = sess.query(tables.File)
         self.dirs = sess.query(tables.Directory)
@@ -186,7 +187,6 @@ class FileVisitor: # (Task):
             fileRow.occurences.appendRow(word=word, pos=pos)
 
     
-from lino.guessenc.guesser import EncodingGuesser
 
 encodingGuesser = EncodingGuesser()
 

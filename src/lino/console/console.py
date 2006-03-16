@@ -463,7 +463,7 @@ class Console(BaseToolkit):
         gd.endDocument()
     
 
-    def show_form(self,frm):
+    def executeShow(self,frm):
         from lino.gendoc.plain import PlainDocument
         #gd = PlainDocument()
         gd = PlainDocument(self.stdout)

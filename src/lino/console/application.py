@@ -34,56 +34,56 @@ import lino
 
 from lino.console import syscon
 from lino.adamo.exceptions import UsageError, ApplicationError
-from lino.console.task import UI
+from lino.console.task import Session
 
     
-class Session(UI):
-    """
+## class Session(UI):
+##     """
     
-represents a user (usually a human sitting in front of a computer) who
-has chosen a toolkit and who runs some code (usually an application)
+## represents a user (usually a human sitting in front of a computer) who
+## has chosen a toolkit and who runs some code (usually an application)
 
     
-    """
-    def __init__(self,user=None,pwd=None):
-        #UI.__init__(self,self.createToolkit())
-        #self.toolkit=None
-        self.user=user
-        self.pwd=pwd
-        self._ignoreExceptions = []
+##     """
+##     def __init__(self,user=None,pwd=None):
+##         #UI.__init__(self,self.createToolkit())
+##         #self.toolkit=None
+##         self.user=user
+##         self.pwd=pwd
+##         self._ignoreExceptions = []
     
 
 
-    def abortRequested(self):
-        return self.toolkit.abortRequested()
+##     def abortRequested(self):
+##         return self.toolkit.abortRequested()
 
-    def hasAuth(self,*args,**kw):
-        return True
+##     def hasAuth(self,*args,**kw):
+##         return True
             
-    def onLogin(self):
-        pass
+##     def onLogin(self):
+##         pass
     
-    def getUser(self):
-        return self.user
+##     def getUser(self):
+##         return self.user
 
-    def login(self,user):
-        if self.user is not None:
-            self.logout()
-        self.user = user
-        self.onLogin()
+##     def login(self,user):
+##         if self.user is not None:
+##             self.logout()
+##         self.user = user
+##         self.onLogin()
         
-    def logout(self):
-        assert self.user is not None
-        self.user = None
+##     def logout(self):
+##         assert self.user is not None
+##         self.user = None
 
 
-    def close(self):
-        pass
+##     def close(self):
+##         pass
 
-    def exception(self,e,details=None):
-        if e.__class__ in self._ignoreExceptions:
-            return
-        self.toolkit.showException(self,e,details)
+##     def exception(self,e,details=None):
+##         if e.__class__ in self._ignoreExceptions:
+##             return
+##         self.toolkit.showException(self,e,details)
 
             
 
@@ -116,8 +116,9 @@ class Application(Session):
         #    session=syscon.getSystemConsole()
         if self.name is None:
             self.name=self.__class__.__name__
-        self.toolkit=None # self.createToolkit()
-        Session.__init__(self)
+        #self.toolkit=None 
+        self.toolkit=syscon.getSystemConsole()
+        #Session.__init__(self)
         #print "Application.__init__()", self    
         #self.setToolkit(toolkit)
         
@@ -125,8 +126,8 @@ class Application(Session):
         pass
         
 
-    def createToolkit(self):
-        return syscon.getSystemConsole()
+##     def createToolkit(self):
+##         return syscon.getSystemConsole()
 
         
 ##     def parse_args(self,argv=None): #,**kw):
@@ -228,7 +229,11 @@ class Application(Session):
 ##         # to be overridden by Adamo Applications
 ##         return Session(*args,**kw)
 
-    def main(self,argv=None,*args):
+##     def on_main(self):
+##         # GuiApplication overrides this to launch the GUI toolkit
+##         pass
+    
+    def main(self,argv=None):
         """
         meant to be called
 
@@ -242,8 +247,8 @@ class Application(Session):
         p = OptionParser(
             usage=self.usage,
             description=self.description)
-        console=syscon.getSystemConsole()
-        console.setupOptionParser(p)
+        
+        self.toolkit.setupOptionParser(p)
         self.setupOptionParser(p)
 
         if argv is None:
@@ -252,9 +257,8 @@ class Application(Session):
         try:
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
+            #self.on_main()
             self.setupApplication()
-            self.toolkit=self.createToolkit()
-            self.toolkit.start_running(self)
             return self.run()
 
         except UsageError,e:

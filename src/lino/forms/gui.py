@@ -17,10 +17,25 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import lino
-from lino.console import Application, syscon
+from lino.console import Application
 
 
-## _toolkit = None
+## _root = None
+
+## #_toolkit = None
+
+## def getRoot():
+##     return _root
+
+## def getToolkit():
+##     return _toolkit
+
+## def setToolkit(wishlist):
+##     global _toolkit
+##     _toolkit=createToolkit(wishlist)
+
+    
+
 
 ## def choose(wishlist=None):
 ##     #if console is None:
@@ -67,11 +82,33 @@ class GuiApplication(Application):
     def __init__(self,mainForm,*args,**kw):
         Application.__init__(self,*args,**kw)
         self.mainForm=mainForm
+        self.console=None
+        #if _root is None:
+        #    setRoot(self)
+    
+##     def on_main(self):
+##         pass
     
 
+    def init(self):
+        """
+        This is sepaarated from run() because testcases
+        """
+        if self.console is not None:
+            assert self.toolkit is not None
+            return
+            
+    def run(self,*args,**kw):
+        assert self.console is None
+        self.console=self.toolkit
+        self.toolkit=self.createToolkit()
+        self.toolkit.start_running(self)
+        #self.init()
+        self.showForm(self.mainForm)
+        self.toolkit.run_forever()
+        
     def createToolkit(self):
-        console=syscon.getSystemConsole()
-        if console.isInteractive():
+        if self.console.isInteractive():
             wishlist=self.wishlist
         else:
             wishlist="testkit"
@@ -103,19 +140,13 @@ class GuiApplication(Application):
 
         raise "no toolkit found for wishlist %r" % wishlist
 
-    
+    def showForm(self,frm):
+        frm.setup(self)
+        return frm.show()
     
 
-##     def main(self,*args,**kw):
-##         kw['toolkit']=createToolkit(wishlist=self.wishlist)
-##         Application.main(self,*args,**kw)
 
-    def run(self,*args,**kw):
-##         if self.mainForm is None:
-##             self.mainForm=self.mainFormClass(*args,**kw)
-        self.showForm(self.mainForm)
-        self.toolkit.run_forever()
-        
+
 
 
 ## def show(frm):#,*args,**kw):

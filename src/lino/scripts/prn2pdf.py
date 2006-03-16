@@ -27,13 +27,13 @@ from lino.console.application import Application, UsageError
 
 class Prn2pdf(Application):
 
-    name="Lino/prn2pdf"
+    name="Lino prn2pdf"
     copyright="""\
 Copyright (c) 2002-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-    url="http://www.saffre-rumma.ee/lino/prn2pdf.html"
+    url="http://lino.saffre-rumma.ee/prn2pdf.html"
     
     usage="usage: lino prn2pdf [options] FILE"
     description="""\

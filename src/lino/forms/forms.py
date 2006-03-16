@@ -23,7 +23,7 @@ from lino.misc.attrdict import AttrDict
 from lino.gendoc.gendoc import GenericDocument
 
 from lino.adamo.exceptions import InvalidRequestError
-from lino.forms.gui import GuiApplication
+from lino.forms import gui
 from lino.forms import keyboard
 from lino.console.task import BugDemo
 
@@ -93,10 +93,12 @@ class Container:
 
     def __repr__(self):
         s = self.__class__.__name__
+        if self.getTitle() is not None:
+            s += '("%s")' % self.getTitle()
+        s += ":"
         for c in self.getComponents():
-        #for c in self._components:
             s += "\n- " + ("\n  ".join(repr(c).splitlines()))
-        s += "\n)"
+        #s += "\n)"
         return s
     
     
@@ -142,18 +144,26 @@ class Container:
         frm.setMenuController(e)
         return self.addComponent(e)
         
-    def addPanel(self,direction,**kw): 
-        frm = self.getForm()
-        btn = frm.toolkit.panelFactory(self,direction,**kw)
-        return self.addComponent(btn)
-        #self._components.append(btn)
-        #return btn
+##     def addPanel(self,direction,**kw): 
+##         frm = self.getForm()
+##         btn = frm.toolkit.panelFactory(self,direction,**kw)
+##         return self.addComponent(btn)
+##         #self._components.append(btn)
+##         #return btn
+    
+##     def addVPanel(self,**kw):
+##         return self.addPanel(VERTICAL,**kw)
+##     def addHPanel(self,**kw):
+##         return self.addPanel(HORIZONTAL,**kw)
+
+    def addHPanel(self,**kw):
+        c = frm.toolkit.hpanelFactory(self,**kw)
+        return self.addComponent(c)
     
     def addVPanel(self,**kw):
-        return self.addPanel(VERTICAL,**kw)
-    def addHPanel(self,**kw):
-        return self.addPanel(HORIZONTAL,**kw)
-
+        c = frm.toolkit.vpanelFactory(self,**kw)
+        return self.addComponent(c)
+    
     def addViewer(self): 
         frm = self.getForm()
         c = frm.toolkit.viewerFactory(self)
@@ -170,6 +180,11 @@ class Container:
         #    frm.buttons.define(name,btn)
         return self.addComponent(btn)
 
+    def addFormButton(self,frm,*args,**kw):
+        b=self.addButton(label=frm.getTitle())
+        b.setHandler(self.getForm().showForm,frm)
+        return b
+    
     def addOkButton(self,*args,**kw):
         b = self.addButton(name="ok",
                            label="&OK",
@@ -185,7 +200,6 @@ class Container:
 
 
 
-#class Form(Describable,MenuContainer):
 class Form(MenuContainer,Container):
     
     title=None
@@ -193,7 +207,8 @@ class Form(MenuContainer,Container):
     #doc=None
     returnValue=None
     
-    def __init__(self,data=None,
+    def __init__(self,
+                 data=None,
                  halign=None, valign=None,
                  title=None,*args,**kw):
         #if self.title is None:
@@ -206,7 +221,7 @@ class Form(MenuContainer,Container):
             self.title=title
         #self.session=sess
         self.accelerators=[]
-        self._parent = None # parent
+        self._parent = None
         self.data = data
         #self.entries = AttrDict()
         #self.buttons = AttrDict()
@@ -226,7 +241,7 @@ class Form(MenuContainer,Container):
         #assert not isinstance(sess,Toolkit)
         self.session=sess
         self.toolkit=sess.toolkit
-        self.mainComp = sess.toolkit.panelFactory(self, VERTICAL)
+        self.mainComp = sess.toolkit.vpanelFactory(self)
 ##         for m in ('addLabel','addViewer',
 ##                   'addEntry', 'addDataEntry',
 ##                   'addDataGrid','addNavigator',
@@ -246,6 +261,7 @@ class Form(MenuContainer,Container):
         self.setupMenu()
         self.mainComp.setup()
         self.ctrl = self.toolkit.createFormCtrl(self)
+        self.onShow()
 
 
     def addAccelerator(self,hotkey,btn):
@@ -254,6 +270,8 @@ class Form(MenuContainer,Container):
         
     def getComponents(self):
         # implements Container
+        assert self.mainComp is not None, \
+               "Form %s was not setup()" % self.getTitle()
         return ( self.mainComp, )
 
     def addComponent(self,c):
@@ -288,14 +306,20 @@ class Form(MenuContainer,Container):
         pass
 
             
-    def setParent(self,parent):
+    def set_parent(self,parent):
         assert self._parent is None
-        #self._parent = parent
+        self._parent = parent
 
     def isShown(self):
         #return hasattr(self,'ctrl')
         return (self.ctrl is not None)
 
+    def show(self):
+        #assert not self.isShown(), \
+        #       "Form %s already isShown()" % self.getTitle()
+        self.toolkit.executeShow(self)
+        return self.returnValue
+        
     
     def refresh(self):
         self.mainComp.refresh()
@@ -310,6 +334,9 @@ class Form(MenuContainer,Container):
     def onSetFocus(self,evt):
         self.toolkit.setActiveForm(self)
 
+    def ok(self):
+        self.close()
+        
     def close(self,evt=None):
         #if not self.isShown(): return
         #self.mainComp.onClose()
@@ -319,6 +346,7 @@ class Form(MenuContainer,Container):
     
     # just forward to self.session:
     def showForm(self,frm):
+        frm.set_parent(self)
         return self.session.showForm(frm)
     def notice(self,*args,**kw):
         return self.session.notice(*args,**kw)
@@ -328,8 +356,13 @@ class Form(MenuContainer,Container):
         return self.session.confirm(*args,**kw)
 
     def main(self,*args,**kw):
-        app=GuiApplication(self)
+        app=gui.GuiApplication(self)
         app.main(*args,**kw)
+
+##     def show(self):
+##         assert self.session is None
+##         return gui.getRoot().showForm(self)
+        
         
 ##     def __xml__(self,xml):
 ##         xml.begin_tag("form",title=self.getTitle())
@@ -708,7 +741,8 @@ class ConfirmDialog(Dialog):
     def setupForm(self):
         self.addLabel(self.prompt)
         
-        p=self.addPanel(HORIZONTAL)
+        #p=self.addPanel(HORIZONTAL)
+        p=self.addHPanel()
         ok=p.addOkButton()
         cancel = p.addCancelButton()
         if self.default == YES:

@@ -45,7 +45,9 @@ class Component(Describable):
         self.enabled=enabled
 
     def __repr__(self):
-        return self.getName()
+        return self.__class__.__name__ + '("%s")' \
+               % self.getLabel().strip()
+        #return self.getName()
         
     def setFocus(self):
         pass
@@ -516,17 +518,21 @@ class DataForm(ReportMixin,Component):
 
 class Panel(Container,Component):
     
-    def __init__(self,owner,direction,name=None,*args,**kw):
-        assert direction in (VERTICAL,HORIZONTAL)
-        if name is None:
-            if direction is VERTICAL:
-                name = "VPanel"
-            else:
-                name = "HPanel"
-        #Container.__init__(self,name,*args,**kw)
-        Component.__init__(self,owner,*args,**kw)
-        self.direction = direction
+    def __init__(self,*args,**kw):
+        Component.__init__(self,*args,**kw)
         self._components = []
+
+##     def __init__(self,owner,direction,name=None,*args,**kw):
+##         assert direction in (VERTICAL,HORIZONTAL)
+##         if name is None:
+##             if direction is VERTICAL:
+##                 name = "VPanel"
+##             else:
+##                 name = "HPanel"
+##         #Container.__init__(self,name,*args,**kw)
+##         Component.__init__(self,owner,*args,**kw)
+##         self.direction = direction
+##         self._components = []
 
     def getComponents(self):
         return self._components
@@ -534,6 +540,16 @@ class Panel(Container,Component):
     def addComponent(self,c):
         self._components.append(c)
         return c
+
+    def getTitle(self):
+        return None
+
+class VPanel(Panel):
+    direction=VERTICAL
+    
+class HPanel(Panel):
+    direction=HORIZONTAL
+    
 
 
     
@@ -600,7 +616,8 @@ class Toolkit(BaseToolkit):
     entryFactory = Entry
     dataEntryFactory = DataEntry
     buttonFactory = Button
-    panelFactory = Panel
+    vpanelFactory = VPanel
+    hpanelFactory = HPanel
     viewerFactory = TextViewer
     dataGridFactory = DataGrid
     navigatorFactory = DataForm
@@ -719,12 +736,11 @@ class Toolkit(BaseToolkit):
 ##     def submit(self,frm):
 ##         self._submitted.append(frm)
         
-    def show_form(self,sess,frm):
-        frm.setup(sess)
-        frm.onShow()
-        self.executeShow(frm)
-        return frm.returnValue
-        
+##     def show_form(self,sess,frm):
+##         #frm.setup(sess)
+##         #frm.onShow()
+##         self.executeShow(frm)
+##         return frm.returnValue
         
 
     def show_report(self,sess,rpt,**kw):
@@ -777,7 +793,8 @@ class Toolkit(BaseToolkit):
                default=0):
         raise "must be converted like message and confirm"
         frm = sess.form(label=title,doc=prompt)
-        p = frm.addPanel(HORIZONTAL)
+        #p = frm.addPanel(HORIZONTAL)
+        p = frm.addHPanel()
         buttons = []
         for i in range(len(answers)):
             btn = p.addButton(label=answers[i])

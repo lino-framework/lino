@@ -17,66 +17,17 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import datetime
 
-from lino.apps.timings import tables 
+import timings_tables as tables 
 #from lino.apps.timings.tables import TABLES
 from lino.adamo.ddl import Schema
-from lino.adamo.filters import DateEquals
-from lino.adamo.datatypes import itod, iif
 
 from lino.gendoc.html import HtmlDocument
 from lino.gendoc.html import DataRowElement
 
-from lino.reports.reports import ReportColumn
-from lino.adamo.dbreports import DataReport
-
-from lino.tools.anyrange import anyrange
-
-DAY = datetime.timedelta(1)
-
-def everyday(d1,d2):
-    return anyrange(itod(d1),itod(d2),DAY)
 
 
-class MonthlyCalendar(DataReport):
-    
-    leadTable=tables.Day
-    orderBy="date"
-    
-    def __init__(self,dbsess,year=2005, month=6):
-        DataReport.__init__(self,dbsess)
-        self.year=year
-        self.month=month
-
-    def setupReport(self,*args,**kw):
-        sess=self.query.session
-
-        self.query.addFilter(
-            DateEquals(self.query.findColumn('date'),
-                       self.year,self.month))
-        def fmt(d):
-            return "["+str(d)+"]" # "%d-%d-%d"
-        self.addDataColumn("date",width=12,formatter=fmt)
-        
-        self.addVurtColumn(lambda row:str(row.item.date),
-                           label="ISO",width=10)
-
-        class ResourceColumn(ReportColumn):
-            def __init__(self,res):
-                self.res=res
-                ReportColumn.__init__(self,label=str(res))
-            def getCellValue(self,row):
-                return self.res.usages_by_resource(date=row.item)
-            def format(self,qry):
-                return ", ".join([str(u) for u in qry])
-        
-        for res in sess.query(tables.Resource,orderBy="id"):
-            self.addColumn(ResourceColumn(res))
-
-
-
-class Timings(Schema):
+class Timings(DbApplication):
     #name="Lino/Timings"
     years='2005-2006'
     author="Luc Saffre"
@@ -211,7 +162,7 @@ This is the Timings main menu.
         m = frm.addMenu("reports","&Reports")
         m.addItem("s",label="&Static HTML").setHandler(
             self.writeStaticSite,sess)
-        m.addReportItem("monthly",MonthlyCalendar,
+        m.addReportItem("monthly",tables.MonthlyCalendar,
                         label="&Monthly Calendar")
         
         self.addProgramMenu(sess,frm)

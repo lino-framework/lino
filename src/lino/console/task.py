@@ -80,7 +80,14 @@ def _(s):
 ##         raise NotImplementedError
 
 
-class UI:
+class Session:
+    """
+    
+represents a user (usually a human sitting in front of a computer) who
+has chosen a toolkit and who runs some code (usually an application)
+
+    
+    """
     #def __init__(self,toolkit):
     #    self.toolkit=toolkit
         
@@ -129,8 +136,7 @@ class UI:
         return self.toolkit.show_status(self,*args,**kw)
     def logmessage(self,*args,**kw):
         return self.toolkit.logmessage(self,*args,**kw)
-    def showForm(self,*args,**kw):
-        self.toolkit.show_form(self,*args,**kw)
+    
     def showReport(self,*args,**kw):
         return self.toolkit.show_report(*args,**kw)
     def textprinter(self,*args,**kw):
@@ -155,7 +161,7 @@ class UI:
 
     
     
-class Task(UI):
+class Task(Session):
     title=None
     label="Working"
     percentCompleted=0
@@ -194,24 +200,17 @@ class Task(UI):
             toolkit=syscon.getSystemConsole()
         self.runfrom(toolkit,*args,**kw)
 
-class Looper(Task):
+## class Looper(Task):
     
-    def __init__(self,f,label=None):
-        Task.__init__(self,label)
-        self.func=func
+##     def __init__(self,f,label=None):
+##         Task.__init__(self,label)
+##         self.func=func
         
-    def run(self,*args,**kw):
-        return self.func(*args,**kw)
+##     def run(self,*args,**kw):
+##         return self.func(*args,**kw)
     
 class Progresser(Task):
 
-    """
-
-    This represents a progress bar or some other progress indicator.
-    
-    task.begin()
-    task.increment()
-    """
     maxval=0
     
     def __init__(self,label=None,maxval=None):

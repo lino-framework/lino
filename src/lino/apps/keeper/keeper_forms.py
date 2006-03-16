@@ -23,7 +23,6 @@ import keeper_tables as tables
 #from lino.apps.keeper.tables import *
 from lino.adamo.ddl import STRING, BOOL
 from lino.adamo.dbreports import DataReport
-from lino.adamo.filters import Contains, NotEmpty
 from lino.forms.forms import ReportForm, DbMainForm
 from lino.forms.gui import DbApplication
 
@@ -32,33 +31,6 @@ from lino.forms.gui import DbApplication
 def preview(s):
     if len(s) < 100: return s
     return s[:100]+" (...)"
-
-class FoundFilesReport(DataReport):
-    leadTable=tables.File
-    #width=70
-    
-    def setupReport(self):
-        assert len(self.columns) == 0
-        #files = self.query.session.query(tables.File) #,"name")
-        self.addDataColumn("name",width=20)
-        occsColumn=self.addDataColumn(
-            "occurences",
-            formatter=lambda pq: str(len(pq())),\
-            #searchColumns="words.id",
-            label="occs",
-            width=5)
-        self.addDataColumn("content",
-                           width=40,
-                           formatter=lambda x: preview(x))
-
-        self.occsColumn=occsColumn.datacol
-        self.query.addFilter(NotEmpty(self.occsColumn))
-        #self.occs=col.getDetailQuery()
-        self.occsColumn._queryParams['searchColumns']="word.id"
-        
-    def setSearch(self,s):
-        self.occsColumn._queryParams['search'] = s
-
 
 class SearchForm(ReportForm):
     
@@ -95,14 +67,14 @@ class SearchForm(ReportForm):
 
 
         #bbox = frm.addHPanel()
-        bbox = frm
+        bbox = self
         self.go = bbox.addButton("search",
                                  label="&Search",
                                  action=search).setDefault()
         #bbox.addButton("exit",
         #               label="&Exit",
         #               action=frm.close)
-        self.grid=bbox.addDataGrid(rpt)
+        self.grid=bbox.addDataGrid(self.rpt)
         #ReportForm.setupForm(self)
         self.grid.enabled=False
 
@@ -120,7 +92,7 @@ This is the Keeper main menu.
         m = self.addMenu("search","&Suchen")
         m.addItem("search",label="&Suchen").setHandler(
             self.showForm,
-            SearchForm(FoundFilesReport(self.dbsess)))
+            SearchForm(tables.FoundFilesReport(self.dbsess)))
 
         
     

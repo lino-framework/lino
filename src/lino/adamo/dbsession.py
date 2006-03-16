@@ -126,6 +126,9 @@ class DbContext(Context):
         self.db.shutdown()
         #center.shutdown()
 
+    def getTableList(self):
+        return self.db.schema.getTableList()
+    
     def getTableClass(self,tableName):
         for table in self.db.schema.getTableList():
             if table.getTableName() == tableName:

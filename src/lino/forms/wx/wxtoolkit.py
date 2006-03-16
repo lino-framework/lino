@@ -273,7 +273,7 @@ class TextViewer(toolkit.TextViewer):
 ##         else:
 ##             self._buffer += s
     
-class Panel(toolkit.Panel):
+## class Panel(toolkit.Panel):
 
 ##     def __repr__(self):
 ##         s = "%s %s at %s (" % (
@@ -286,6 +286,23 @@ class Panel(toolkit.Panel):
 ##         s += "\n)"
 ##         return s
     
+##     def wxsetup(self,form,parent,box):
+##         mypanel = wx.Panel(parent,-1)
+##         box.Add(mypanel, self.weight, wx.ALL|wx.EXPAND,NOBORDER)
+##         if self.direction == forms.VERTICAL:
+##             mybox = wx.BoxSizer(wx.VERTICAL)
+##         else:
+##             mybox = wx.BoxSizer(wx.HORIZONTAL)
+##         mypanel.SetSizer(mybox)
+        
+##         self.mybox = mybox # store reference to avoid crash?
+##         self.wxctrl = mypanel
+        
+##         for c in self._components:
+##             c.wxsetup(form,mypanel,mybox)
+
+class Panel(toolkit.Panel):
+
     def wxsetup(self,form,parent,box):
         mypanel = wx.Panel(parent,-1)
         box.Add(mypanel, self.weight, wx.ALL|wx.EXPAND,NOBORDER)
@@ -301,6 +318,10 @@ class Panel(toolkit.Panel):
         for c in self._components:
             c.wxsetup(form,mypanel,mybox)
 
+class VPanel(Panel):
+    direction=forms.VERTICAL
+class HPanel(Panel):
+    direction=forms.HORIZONTAL
 
 def SwappedBoxSizer(box):
     if box.GetOrientation() == wx.VERTICAL:
@@ -496,7 +517,8 @@ class Toolkit(toolkit.Toolkit):
     dataEntryFactory = DataEntry
     buttonFactory = Button
     viewerFactory = TextViewer
-    panelFactory = Panel
+    hpanelFactory = HPanel
+    vpanelFactory = VPanel
     dataGridFactory = DataGrid
     navigatorFactory = DataForm
     #formFactory = Form

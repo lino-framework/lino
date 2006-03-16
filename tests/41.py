@@ -20,14 +20,15 @@
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.pinboard import demo, tables
+from lino.apps.pinboard.pinboard_demo import startup
+from lino.apps.pinboard.pinboard_tables import Author
 
 
 class Case(TestCase):
     
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup(populate=False)
+        self.sess = startup(populate=False)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -38,7 +39,7 @@ class Case(TestCase):
         ae = self.assertEqual
         
         l1 = [str(t.getTableName())
-              for t in self.sess.db.app.getTableList()]
+              for t in self.sess.getTableList()]
         #l1.sort()
 
         s=" ".join(l1)
@@ -55,7 +56,7 @@ PubTypes PubAuthors
         
     def test02(self):
         "2 successive appendRow() without specifying id"
-        AUTHORS = self.sess.query(tables.Author)
+        AUTHORS = self.sess.query(Author)
         pot = AUTHORS.appendRow(firstName="Harry",name="Potter")
         bel = AUTHORS.appendRow(firstName="Harry",name="Bellafonte")
         self.assertEqual(pot.id, bel.id-1)

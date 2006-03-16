@@ -24,7 +24,7 @@ class Case(TestCase):
 
     def doit(self,sess,expected):
         vetos=[]
-        for t in sess.db.schema.getTableList():
+        for t in sess.getTableList():
             q=sess.query(t._instanceClass)
             for row in q:
                 msg=row.vetoDelete()

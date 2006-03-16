@@ -247,10 +247,10 @@ class Schema: #(Application):
         
     
     def __repr__(self):
-        return str(self.__class__)
+        return repr(self.__class__)
     
     def __str__(self):
-        return str(self.__class__)
+        return self.__class__.__name__
 
 
     def database(self,*args,**kw):

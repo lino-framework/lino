@@ -33,9 +33,9 @@ from lino.adamo.store import Store
 #from lino.adamo import center 
 
 
-class Database(Context,Describable):
+class Database(Context): #,Describable):
     
-    def __init__(self, schema, langs=None, **kw):
+    def __init__(self, schema, langs=None,name=None): #, **kw):
         
         self._supportedLangs = []
         if langs is None:
@@ -43,7 +43,7 @@ class Database(Context,Describable):
         for lang_id in langs.split():
             self._supportedLangs.append(
                 BabelLang(len(self._supportedLangs), lang_id) )
-        Describable.__init__(self,**kw)
+        #Describable.__init__(self,**kw)
         
         self._memoParser = TimMemoParser(self)
 
@@ -52,6 +52,15 @@ class Database(Context,Describable):
         self._contexts=[]
         self._connections=[]
         self._startupContext=None
+        if name is None:
+            name=self.__class__.__name__
+        self.name=name
+
+    def __str__(self):
+        return self.name+"("+str(self.schema)+")"
+
+    def getSession(self):
+        return self._startupContext
 
 
     def addContext(self,s):

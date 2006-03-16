@@ -972,7 +972,7 @@ class PeekQuery(LeadTableColumnList):
         return self._store._db
 
     def getSession(self):
-        return self._store._db._startupSession
+        return self._store._db.getSession()
         
 
 

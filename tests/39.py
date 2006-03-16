@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,14 +18,14 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.apps.ledger import demo
+from lino.apps.ledger.ledger_demo import startup
 from lino.misc.tsttools import TestCase, main
 
 class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = demo.startup()
+        self.sess = startup()
         
     def tearDown(self):
         self.sess.shutdown()
@@ -34,7 +34,7 @@ class Case(TestCase):
     def test01(self):
         
         l = []
-        for t in self.sess.db.app.getTableList():
+        for t in self.sess.getTableList():
             s = t.getTableName() + ": "
             s += ", ".join(["%s(%s)" % a
                            for a in t.getPrimaryAtoms()])
@@ -46,13 +46,6 @@ class Case(TestCase):
 
         self.assertEquivalent(s,"""\
 Currencies: id(StringType+)
-Languages: id(StringType+)
-Nations: id(StringType+)
-Cities: nation_id(StringType+), id(AutoIncType)
-Organisations: id(AutoIncType)
-Persons: id(AutoIncType)
-Partners: id(AutoIncType)
-PartnerTypes: id(StringType)
 Products: id(AutoIncType)
 Journals: id(StringType+)
 BankStatements: jnl_id(StringType+), seq(AutoIncType)
@@ -64,6 +57,13 @@ CashFlowItems: id(StringType)
 ProfitAndLossItems: id(StringType)
 Accounts: id(AutoIncType)
 Bookings: id(AutoIncType)
+Languages: id(StringType+)
+Nations: id(StringType+)
+Cities: nation_id(StringType+), id(AutoIncType)
+Organisations: id(AutoIncType)
+Persons: id(AutoIncType)
+Partners: id(AutoIncType)
+PartnerTypes: id(StringType)
 """)
 
         

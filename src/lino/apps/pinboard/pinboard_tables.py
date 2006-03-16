@@ -43,7 +43,8 @@ from lino.apps.pinboard.quotes import Author, \
      PubType, \
      PubAuthor, \
      Quote,\
-     AuthorsReport
+     AuthorsReport,\
+     QuotesReport
 
 ## from lino.apps.pinboard import babel, web, events, \
 ##      projects, news, quotes

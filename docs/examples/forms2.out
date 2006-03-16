@@ -1,0 +1,10 @@
+MyForm
+- Panel
+  - Label
+  - Entry
+  - Entry
+  - Button
+  - ok
+  - cancel
+  )
+)

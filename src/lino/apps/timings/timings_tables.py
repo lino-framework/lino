@@ -17,8 +17,22 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import datetime
+
+from lino.tools.anyrange import anyrange
+from lino.adamo.datatypes import itod, iif
+
+from lino.reports.reports import ReportColumn
+#from lino.adamo.dbreports import DataReport
 
 from lino.adamo.ddl import *
+from lino.adamo.filters import DateEquals
+
+DAY = datetime.timedelta(1)
+
+def everyday(d1,d2):
+    return anyrange(itod(d1),itod(d2),DAY)
+
 
 class Resource(StoredDataRow):
     tableName="Resources"
@@ -118,12 +132,53 @@ class DaysReport(DataReport):
     columnNames="date remark"
 
 
-TABLES = (
-    Day,
-    UsageType,
-    Resource,
-    Usage,
-    )
 
-__all__ = [t.__name__ for t in TABLES]
+class MonthlyCalendar(DataReport):
+    
+    leadTable=Day
+    orderBy="date"
+    
+    def __init__(self,dbsess,year=2005, month=6):
+        DataReport.__init__(self,dbsess)
+        self.year=year
+        self.month=month
+
+    def setupReport(self,*args,**kw):
+        sess=self.query.getSession()
+
+        self.query.addFilter(
+            DateEquals(self.query.findColumn('date'),
+                       self.year,self.month))
+        def fmt(d):
+            return "["+str(d)+"]" # "%d-%d-%d"
+        self.addDataColumn("date",width=12,formatter=fmt)
+        
+        self.addVurtColumn(lambda row:str(row.item.date),
+                           label="ISO",width=10)
+
+        class ResourceColumn(ReportColumn):
+            def __init__(self,res):
+                self.res=res
+                ReportColumn.__init__(self,label=str(res))
+            def getCellValue(self,row):
+                return self.res.usages_by_resource(date=row.item)
+            def format(self,qry):
+                return ", ".join([str(u) for u in qry])
+        
+        for res in sess.query(Resource,orderBy="id"):
+            self.addColumn(ResourceColumn(res))
+
+
+    
+
+class TimingsSchema(Schema):
+    tableClasses=(
+        Day,
+        UsageType,
+        Resource,
+        Usage,
+        )
+
+__all__ = [t.__name__ for t in TimingsSchema.tableClasses]
+__all__.append('TimingsSchema')
 

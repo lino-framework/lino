@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -23,8 +23,8 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.console import syscon
 
-from lino.apps.keeper.keeper import Keeper, SearchFormCtrl
-from lino.apps.keeper.tables import *
+from lino.apps.keeper.keeper_forms import Keeper,SearchForm
+from lino.apps.keeper.keeper_tables import *
 
 TESTDATA = os.path.join(
     os.path.dirname(__file__),"testdata")
@@ -32,14 +32,25 @@ TESTDATA = os.path.join(
 class Case(TestCase):
     #todo="VolumeVisitor instance has no attribute 'reloading'"
     def test01(self):
+
         app=Keeper()
-        sess=app.quickStartup() 
+        app.run()
+        s=self.getConsoleOutput()
+        # print s
+        self.assertEquivalent(s,"""\
+KeeperMainForm("KeeperSchema1(KeeperSchema)"):
+- VPanel:
+  - Label("This is the Keeper main menu.")        
+        """)
+        
+        #schema=KeeperSchema()
+        #sess=schema.quickStartup()
+        sess=app.dbsess
         
         q=sess.query(Volume)
         vol=q.appendRow(name="test",path=TESTDATA)
-        vol.load(sess)
-        sess.showQuery(
-            vol.directories(),
+        vol.load()
+        vol.directories().show(
             columnNames="id name parent files subdirs",
             width=70)
         s=self.getConsoleOutput()
@@ -54,7 +65,7 @@ id     |name          |parent        |files         |subdirs
         q=sess.query(File,
                      orderBy="size",
                      columnNames="dir name size mustParse occurences")
-        q.showReport(columnWidths="20 18 8 5 15")
+        q.show(columnWidths="20 18 8 5 15")
         s=self.getConsoleOutput()
         #print s
         
@@ -94,19 +105,24 @@ test:               |PAR.DBF           |43411   |X    |0 Occurences
 test:               |eupen.pdf         |232672  |X    |799 Occurences 
 """)
 
-        ctrl=SearchFormCtrl()
-        sess.showForm(ctrl)
+        frm=SearchForm(FoundFilesReport(sess))
+        app.showForm(frm)
+        #ctrl=SearchForm()
+        #sess.showForm(ctrl)
         
         s=self.getConsoleOutput()
         # print s
         self.assertEquivalent(s,"""\
-&Words to look for: [None]
-&any word (OR): [None]
-[&Search]        
+SearchForm("Files where 'occurences' not empty"):
+- VPanel:
+  - Entry("&Words to look for")
+  - Entry("&any word (OR)")
+  - Button("&Search")
+  - DataGrid("DataGrid")
         """)
         
-        ctrl.searchString.setValue("Stadt")
-        ctrl.go.click()
+        frm.searchString.setValue("Stadt")
+        frm.go.click()
         
         s=self.getConsoleOutput()
         #print s
