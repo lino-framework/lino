@@ -6,8 +6,8 @@ a simplified pseudo RFC822 format.  Supported message header fields are "to",
 "subject", and the "body".  "to" is mandatory, the other fields are optional.
 options:
   -h, --help            show this help message and exit
+  -lLOGFILE, --logfile=LOGFILE
+                        log a report to FILE
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity
   -b, --batch           not interactive (don't ask anything)
-  -lLOGFILE, --logfile=LOGFILE
-                        log a report to FILE

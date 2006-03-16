@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -30,7 +30,8 @@ def quote(x):
         return '"'+str(x)+'"'
     if type(x) == types.BooleanType:
         return '"'+str(x).lower()+'"'
-    if type(x) == types.StringType:
+    #if type(x) == types.StringType:
+    if isinstance(x,basestring):
         assert not '"' in x
         return '"'+x+'"'
     raise InvalidRequest("%s not handled" % str(type(x)))
@@ -40,10 +41,11 @@ def quote(x):
 
 class CDATA:
     def __init__(self,text):
-        self.text = text
+        self.text = unicode(text)
     def __xml__(self,wr):
         s = self.text.replace("&","&amp;")
-        wr(s.decode().encode("utf-8"))
+        #wr(s.decode().encode("utf-8"))
+        wr(s.encode("utf-8"))
         
 class Element:
     elementname = None
@@ -96,7 +98,8 @@ class Container(Element):
         Element.__init__(self,**kw)
         self.children = []
         for elem in content:
-            if type(elem) == types.StringType:
+            #if type(elem) == types.StringType:
+            if isinstance(elem,basestring):
                 self.append(self.allowedChildren[0](elem))  
             else:
                 self.append(elem)   

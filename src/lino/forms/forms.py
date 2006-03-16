@@ -91,17 +91,6 @@ class Container:
             
         
 
-    def __repr__(self):
-        s = self.__class__.__name__
-        if self.getTitle() is not None:
-            s += '("%s")' % self.getTitle()
-        s += ":"
-        for c in self.getComponents():
-            s += "\n- " + ("\n  ".join(repr(c).splitlines()))
-        #s += "\n)"
-        return s
-    
-    
     def addLabel(self,label,**kw):
         frm = self.getForm()
         e = frm.toolkit.labelFactory(self,label=label,**kw)
@@ -157,10 +146,12 @@ class Container:
 ##         return self.addPanel(HORIZONTAL,**kw)
 
     def addHPanel(self,**kw):
+        frm = self.getForm()
         c = frm.toolkit.hpanelFactory(self,**kw)
         return self.addComponent(c)
     
     def addVPanel(self,**kw):
+        frm = self.getForm()
         c = frm.toolkit.vpanelFactory(self,**kw)
         return self.addComponent(c)
     
@@ -264,6 +255,15 @@ class Form(MenuContainer,Container):
         self.onShow()
 
 
+    def __repr__(self):
+        s = self.__class__.__name__
+        s += '(title=%r)' % self.getTitle()
+        s += ":\n"
+        s += "\n  ".join(repr(self.mainComp).splitlines())
+        #s += "\n)"
+        return s
+    
+    
     def addAccelerator(self,hotkey,btn):
         self.accelerators.append((hotkey,btn))
         

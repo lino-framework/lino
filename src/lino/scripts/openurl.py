@@ -1,4 +1,4 @@
-## Copyright 2004-2005 Luc Saffre.
+## Copyright 2004-2006 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -37,7 +37,7 @@ Starts the default browser on the specified URL(s).
 """
 
     
-    def run(self,sess):
+    def run(self):
         if len(self.args) != 1:
             raise UsageError("no arguments specified")
         for url in self.args:
@@ -45,8 +45,10 @@ Starts the default browser on the specified URL(s).
             print url
             webbrowser.open_new(url)
 
-consoleApplicationClass = OpenURL
+OpenURL().main()
 
-if __name__ == '__main__':
-    consoleApplicationClass().main() 
+## consoleApplicationClass = OpenURL
+
+## if __name__ == '__main__':
+##     consoleApplicationClass().main() 
 

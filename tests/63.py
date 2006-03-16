@@ -1,5 +1,4 @@
-#coding: latin1
-## Copyright Luc Saffre 2004.
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -23,14 +22,11 @@ first oogen testcase
 """
 
 import os
-import unittest
-#from lino.ui import console
-from lino.console import syscon
-from lino.misc import tsttools
+from lino.misc.tsttools import TestCase, main
 from lino.oogen import SpreadsheetDocument, TextDocument
 
 
-class Case(tsttools.TestCase):
+class Case(TestCase):
     def test01(self):
 
         fn = self.addTempFile("1.sxw", showOutput=True)
@@ -45,7 +41,7 @@ class Case(tsttools.TestCase):
         t.row("Kunz","2004-11-17")
     
         doc.p("Here is another paragraph.")
-        doc.save(syscon)
+        doc.save()
         
     def test02(self):
 
@@ -66,7 +62,7 @@ class Case(tsttools.TestCase):
         t.row("Hinz","2004-11-16")
         t.row("Kunz","2004-11-17")
     
-        doc.save(syscon)
+        doc.save()
         
 
 ##         for ext in (".sxw", ".sxc"):
@@ -77,4 +73,4 @@ class Case(tsttools.TestCase):
             
 
 if __name__ == "__main__":
-    unittest.main()
+    main()

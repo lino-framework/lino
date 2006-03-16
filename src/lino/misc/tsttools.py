@@ -182,14 +182,14 @@ class TestCase(unittest.TestCase):
         syscon.setSystemConsole(self._toolkit)
         for fn in self._showFiles:
             self.failUnless(os.path.exists(fn))
-            if syscon.confirm("Okay to start %s ?" % fn,\
-                              default=False):
-                os.system('start ' + fn)
+            #if syscon.confirm("Okay to start %s ?" % fn,\
+            #                  default=False):
+            #    os.system('start ' + fn)
         if len(self._tempFiles) > 0:
-            if syscon.confirm("Okay to delete %d temporary files ?" \
-                              % len(self._tempFiles)):
-                for fn in self._tempFiles:
-                    os.remove(fn)
+            #if syscon.confirm("Okay to delete %d temporary files ?" \
+            #                  % len(self._tempFiles)):
+            for fn in self._tempFiles:
+                os.remove(fn)
 
     def getConsoleOutput(self):
         return syscon.getSystemConsole().getConsoleOutput()

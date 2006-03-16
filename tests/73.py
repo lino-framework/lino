@@ -1,4 +1,6 @@
-## Copyright Luc Saffre 2004. This file is part of the Lino project.
+## Copyright 2004-2006 Luc Saffre
+
+## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
@@ -22,25 +24,36 @@ import os
 
 from lino.misc import tsttools
 
-from lino.scripts.prnprint import PrnPrint
+#from lino.scripts.prnprint import PrnPrint
 
-dataPath = os.path.join(os.path.dirname(__file__),
-                        'testdata','textprinter')
-dataPath = os.path.abspath(dataPath)
+#dataPath = os.path.join(os.path.dirname(__file__),
+#                        'testdata','textprinter')
+
+dataPath = os.path.join(tsttools.TESTDATA,'textprinter')
+#dataPath = os.path.abspath(dataPath)
 
 
 class Case(tsttools.TestCase):
     ""
 
     def test01(self):
-        app=PrnPrint()
+        #app=PrnPrint()
         for i in ('1','2'):
             spoolFile = self.addTempFile(i+".ps",showOutput=True)
             inputFile = os.path.join(dataPath,i)+".prn"
-            app.main([ "-p", self.win32_printerName_PS,
-                       "-o", spoolFile,
-                       inputFile] )
-        
+
+            cmd='lino prnprint -p "%s" -o "%s" "%s"' % (
+                self.win32_printerName_PS,spoolFile,inputFile)
+            
+            fd=os.popen(cmd,"r")
+            observed=fd.read()
+            cr=fd.close()
+            
+            #print "observed", observed
+            
+            msg=repr(cmd)+" failed"
+            self.assertEqual(
+                cr,None,msg+" (close() returned %r)"%cr)
             
 
 if __name__ == '__main__':

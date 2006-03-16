@@ -97,11 +97,13 @@ write to SPOOLFILE rather than really printing.""",
                     self.notice("%s : %d pages have been printed",
                                 inputfile,d.page)
 
-PrnPrint().main()
 
 ## consoleApplicationClass = PrnPrint
+
+PrnPrint().main()
     
         
 ## if __name__ == '__main__':
+##    PrnPrint().main()
 ##     consoleApplicationClass().main() # console,sys.argv[1:])
     

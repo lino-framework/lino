@@ -259,11 +259,15 @@ class Application(Session):
             self.applyOptions(options,args)
             #self.on_main()
             self.setupApplication()
+
+            if self.toolkit.isInteractive():
+                self.notice(self.aboutString())
+            
             return self.run()
 
         except UsageError,e:
-            return -1
             p.print_help()
+            return -1
         except ApplicationError,e:
             self.error(str(e))
             return -1

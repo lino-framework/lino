@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,7 +18,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-from lino.console import syscon
 from lino.misc import tsttools
 from lino.oogen import TextDocument, elements
 
@@ -41,7 +40,7 @@ class Case(tsttools.TestCase):
         doc.p("This is a right-aligned paragraph.",styleName="Rechts")
         doc.p("Here is a standard paragraph.")
     
-        doc.save(syscon)
+        doc.save()
         
 if __name__ == "__main__":
     tsttools.main()

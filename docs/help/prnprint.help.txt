@@ -5,11 +5,11 @@ be in OEM charset and may contain simple formatting printer control sequences,
 see http://lino.berlios.de/prn2pdf.html
 options:
   -h, --help            show this help message and exit
+  -lLOGFILE, --logfile=LOGFILE
+                        log a report to FILE
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity
   -b, --batch           not interactive (don't ask anything)
-  -lLOGFILE, --logfile=LOGFILE
-                        log a report to FILE
   -pPRINTERNAME, --printer=PRINTERNAME
                         print on PRINTERNAME rather than on Default Printer.
   -cCOPIES, --copies=COPIES

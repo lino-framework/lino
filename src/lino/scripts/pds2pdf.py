@@ -61,7 +61,7 @@ write to OUTFILE rather than FILE.pdf""",
     
 
 
-    def run(self,sess):
+    def run(self):
         if len(self.args) != 1:
             raise UsageError("needs 1 argument")
     
@@ -70,7 +70,7 @@ write to OUTFILE rather than FILE.pdf""",
         renderer=PdfRenderer()
         
         ofname=self.options.outFile
-        showOutput=sess.isInteractive()
+        showOutput=self.isInteractive()
 
 
         (root,ext) = os.path.splitext(ifname)
@@ -85,9 +85,10 @@ write to OUTFILE rather than FILE.pdf""",
 
         try:
             commands.beginDocument(ofname,renderer,ifname)
-            job = sess.job(
-                "%s --> %s..." % (commands.getSourceFileName(),
-                                  commands.getOutputFileName()))
+            self.status(
+                "%s --> %s...",
+                commands.getSourceFileName(),
+                commands.getOutputFileName())
             namespace = {}
             namespace.update(globals())
             namespace['pds'] = commands
@@ -96,7 +97,7 @@ write to OUTFILE rather than FILE.pdf""",
                     execfile(initfile,namespace,namespace) 
                 execfile(ifname,namespace,namespace)
                 commands.endDocument(showOutput)
-                job.done("%d pages." % commands.getPageNumber())
+                self.notice("%d pages." % commands.getPageNumber())
             except ParseError,e:
                 raise
                 #traceback.print_exc(2)
@@ -112,12 +113,13 @@ write to OUTFILE rather than FILE.pdf""",
 
 
         
+Pds2pdf().main()
 
-# lino.runscript expects a name consoleApplicationClass
-consoleApplicationClass = Pds2pdf
+## # lino.runscript expects a name consoleApplicationClass
+## consoleApplicationClass = Pds2pdf
 
-if __name__ == '__main__':
-    consoleApplicationClass().main() # console,sys.argv[1:])
+## if __name__ == '__main__':
+##     consoleApplicationClass().main() # console,sys.argv[1:])
     
 
 

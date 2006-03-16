@@ -149,9 +149,9 @@ class Console(BaseToolkit):
     def writeln(self,msg):
         self.stdout.write(msg+"\n")
 
-    def start_running(self,app):
-        if self.isInteractive():
-            app.notice(app.aboutString())
+##     def start_running(self,app):
+##         if self.isInteractive():
+##             app.notice(app.aboutString())
 
             
     def show_status(self,sess,msg=None,*args,**kw):

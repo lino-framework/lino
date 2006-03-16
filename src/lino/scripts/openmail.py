@@ -1,4 +1,4 @@
-## Copyright 2004-2005 Luc Saffre.
+## Copyright 2004-2006 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -41,7 +41,7 @@ RFC822 format.  Supported message header fields are "to",
 optional.
 """
     
-    def run(self,sess):
+    def run(self):
         if len(self.args) != 1:
             raise UsageError("exactly 1 argument required")
 
@@ -50,9 +50,11 @@ optional.
         openmail(msg)
         
 
-consoleApplicationClass = OpenMail
+OpenMail().main()
 
-if __name__ == '__main__':
-    consoleApplicationClass().main() 
+## consoleApplicationClass = OpenMail
+
+## if __name__ == '__main__':
+##     consoleApplicationClass().main() 
 
 

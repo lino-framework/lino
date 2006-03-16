@@ -3,11 +3,11 @@ usage: lino sync [options] SRC DEST
 where SRC and DEST are two directories to be synchronized.
 options:
   -h, --help            show this help message and exit
+  -lLOGFILE, --logfile=LOGFILE
+                        log a report to FILE
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity
   -b, --batch           not interactive (don't ask anything)
-  -lLOGFILE, --logfile=LOGFILE
-                        log a report to FILE
   -u, --unsafely        skip safety loop
   -r, --recurse         recurse into subdirs
   -p, --progress        show progress bar

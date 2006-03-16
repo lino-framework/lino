@@ -3,8 +3,8 @@ usage: lino diag [options]
 writes some diagnostics about your computer.
 options:
   -h, --help            show this help message and exit
+  -lLOGFILE, --logfile=LOGFILE
+                        log a report to FILE
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity
   -b, --batch           not interactive (don't ask anything)
-  -lLOGFILE, --logfile=LOGFILE
-                        log a report to FILE

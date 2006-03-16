@@ -63,6 +63,7 @@ class DbContext(Context):
 
     def __str__(self):
         #return "%s on %s" % (self.user,self.db)
+        #return self.__class__.__name__+
         return str(self.db)
         
     def setBabelLangs(self,langs):

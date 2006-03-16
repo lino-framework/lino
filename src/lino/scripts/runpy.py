@@ -1,6 +1,4 @@
-#coding: latin1
-
-## Copyright 2005 Luc Saffre.
+## Copyright 2005-2006 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -19,17 +17,17 @@
 
 from lino.console.application import Application
 
-class Lino(Application):
+class RunPy(Application):
 
-    name="Lino/runpy"
+    name="Lino runpy"
     
     copyright="""\
-Copyright (c) 2005 Luc Saffre.
+Copyright (c) 2005-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     
-    url="http://www.saffre-rumma.ee/lino/runpy.html"
+    url="http://lino.berlios.de/runpy.html"
     
     usage="usage: runpy [options] PYFILE"
     
@@ -42,9 +40,12 @@ where PYFILE is a Python script to execute.
         for arg in self.args:
             execfile(arg)
 
-# lino.runscript expects a name consoleApplicationClass
-consoleApplicationClass = Lino
 
-if __name__ == '__main__':
-    consoleApplicationClass().main()
+RunPy().main()
+
+## # lino.runscript expects a name consoleApplicationClass
+## consoleApplicationClass = Lino
+
+## if __name__ == '__main__':
+##     consoleApplicationClass().main()
     

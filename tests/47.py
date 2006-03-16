@@ -94,7 +94,7 @@ class Case(TestCase):
         
         #self.assertEqual(r4.name,None)
         
-        q.showReport(width=66)
+        q.show(width=66)
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\

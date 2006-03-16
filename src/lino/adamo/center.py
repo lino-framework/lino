@@ -66,8 +66,8 @@ class Center:
         return conn
 
     def database(self,schema,name=None,**kw):
-        if name is None:
-            name = str(schema)+str(len(self._databases)+1)
+        #if name is None:
+        #    name = str(schema)+str(len(self._databases)+1)
         db = Database(schema,name=name,**kw)
         self._databases.append(db)
         return db

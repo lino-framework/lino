@@ -45,8 +45,12 @@ class Component(Describable):
         self.enabled=enabled
 
     def __repr__(self):
-        return self.__class__.__name__ + '("%s")' \
-               % self.getLabel().strip()
+        s=self.__class__.__name__+"("
+        if self.label is not None:
+            s += 'label=%r' % self.getLabel().strip()
+        if not self.enabled:
+            s += 'enabled=%r' % self.enabled
+        return s+")"
         #return self.getName()
         
     def setFocus(self):
@@ -313,6 +317,14 @@ class ReportMixin:
         #assert len(ds._lockedRows) == 0
         self.rpt.beginReport(self)
         
+    def __repr__(self):
+        s=Component.__repr__(self)
+        s += " of " + self.rpt.__class__.__name__
+        if self.enabled:
+            s += " with %d rows" % len(self.rpt)
+        return s
+                  
+    
     def setupGoMenu(self):
         pass
         
@@ -343,7 +355,7 @@ class ReportMixin:
             #from cStringIO import StringIO
             out = StringIO()
             self.rpt.__xml__(out.write)
-            frm.show_form(MemoViewer(out.getvalue()))
+            frm.showForm(MemoViewer(out.getvalue()))
         
         m.addItem("copy",
                   label="&Copy",
@@ -541,8 +553,12 @@ class Panel(Container,Component):
         self._components.append(c)
         return c
 
-    def getTitle(self):
-        return None
+    def __repr__(self):
+        s = self.__class__.__name__
+        s += ":"
+        for c in self._components:
+            s += "\n- " + ("\n  ".join(repr(c).splitlines()))
+        return s
 
 class VPanel(Panel):
     direction=VERTICAL
@@ -744,7 +760,7 @@ class Toolkit(BaseToolkit):
         
 
     def show_report(self,sess,rpt,**kw):
-        return self.show_form(sess,ReportForm(rpt))
+        return sess.showForm(ReportForm(rpt))
         #frm = sess.form(label=rpt.getTitle(),**kw)
         #frm.addDataGrid(rpt)
         #frm.show()
@@ -764,7 +780,7 @@ class Toolkit(BaseToolkit):
 
     def show_message(self,sess,msg,*args,**kw):
         msg=sess.buildMessage(msg,*args)
-        return self.show_form(sess,MessageDialog(msg,**kw))
+        return sess.showForm(MessageDialog(msg,**kw))
         
 ##         frm = sess.form(label="Message")
 ##         frm.addLabel(msg)
@@ -772,7 +788,7 @@ class Toolkit(BaseToolkit):
 ##         frm.showModal()
 
     def show_confirm(self,sess,*args,**kw):
-        return self.show_form(sess,ConfirmDialog(*args,**kw))
+        return sess.showForm(ConfirmDialog(*args,**kw))
         
 ##         frm = sess.form(label="Confirmation",doc=prompt)
 ##         #frm.addLabel(prompt)

@@ -20,8 +20,9 @@
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.timings.timings import Timings
-from lino.apps.timings import tables
+from lino.apps.timings import timings_tables as tables
+#import TimingsSchema
+#from lino.apps.timings import tables
 
 from lino.adamo.ddl import DataVeto, itod
 
@@ -30,7 +31,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = Timings().quickStartup() 
+        self.sess = tables.TimingsSchema().quickStartup() 
 
     def tearDown(self):
         self.sess.shutdown()

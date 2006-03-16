@@ -19,7 +19,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-from lino.console import syscon
+#from lino.console import syscon
 from lino.misc.tsttools  import TestCase, main
 from lino.oogen import TextDocument
 
@@ -47,14 +47,14 @@ class Case(TestCase):
         t.column()
         t.column()
         t.column()
-        t.row("Bezeichnung", "Menge", "Stückpreis", "Preis")
+        t.row("Bezeichnung", "Menge", u"Stückpreis", "Preis")
         t.row("Tisch","1","15","15")
         t.row("Stuhl","4","10","40")
         
-        doc.p("Alle Preise in €.")
+        doc.p(u"Alle Preise in €.")
         doc.p("Zahlungsbedingungen: ...")
 
-        doc.save(syscon)
+        doc.save()
         
 if __name__ == "__main__":
     main()

@@ -1,6 +1,4 @@
-# coding: latin1
-
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -34,7 +32,7 @@ class Case(TestCase):
             for filename in filenames:
                 base,ext = os.path.splitext(filename)
                 if ext == '.py':
-                    examples.append(base)
+                    examples.append(os.path.join(dirpath,base))
                     
         #self.assertEqual(len(examples),13)
         

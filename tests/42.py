@@ -38,9 +38,9 @@ class Case(TestCase):
         s=self.getConsoleOutput()
         # print s
         self.assertEquivalent(s,"""\
-KeeperMainForm("KeeperSchema1(KeeperSchema)"):
-- VPanel:
-  - Label("This is the Keeper main menu.")        
+KeeperMainForm(title='Database(KeeperSchema)'):
+VPanel:
+  - Label(label='This is the Keeper main menu.')
         """)
         
         #schema=KeeperSchema()
@@ -113,12 +113,12 @@ test:               |eupen.pdf         |232672  |X    |799 Occurences
         s=self.getConsoleOutput()
         # print s
         self.assertEquivalent(s,"""\
-SearchForm("Files where 'occurences' not empty"):
-- VPanel:
-  - Entry("&Words to look for")
-  - Entry("&any word (OR)")
-  - Button("&Search")
-  - DataGrid("DataGrid")
+SearchForm(title="Files where 'occurences' not empty"):
+VPanel:
+  - Entry(label='&Words to look for')
+  - Entry(label='&any word (OR)')
+  - Button(label='&Search')
+  - DataGrid(enabled=False) of FoundFilesReport
         """)
         
         frm.searchString.setValue("Stadt")
@@ -127,21 +127,12 @@ SearchForm("Files where 'occurences' not empty"):
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,u"""\
-&Words to look for: [Stadt]
-&any word (OR): [None]
-[&Search]
-Files where 'occurences' not empty
-==================================
-name                |occur|content                                 
-                    |ences|                                        
---------------------+-----+----------------------------------------
-eupen.pdf           |8    |Eupen aus Wikipedia, der freien         
-                    |     |Enzyklopädie Eupen ( altfranzösisch Néau
-                    |     |) ist die "Hauptstadt" der  (...)       
-jona.txt            |8    |# source: http://theol.uibk.ac.at/lesera
-                    |     |um/bibel/jona1.html  Die Berufung Jonas:
-                    |     |1,1- 2          Jona 1,1         (...)  
-
+SearchForm(title="Files where 'occurences' not empty"):
+VPanel:
+  - Entry(label='&Words to look for')
+  - Entry(label='&any word (OR)')
+  - Button(label='&Search')
+  - DataGrid() of FoundFilesReport with 2 rows        
         """)
         sess.shutdown()
         

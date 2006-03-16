@@ -1,5 +1,3 @@
-ReportForm
-- Panel
-  - DataGrid
-  )
-)
+ReportForm(title='Partners'):
+VPanel:
+  - DataGrid() of PartnersReport with 12 rows

@@ -1,9 +1,7 @@
-MyForm
-- Panel
-  - Label
-  - Entry
-  - Entry
-  - ok
-  - cancel
-  )
-)
+MyForm(title='The First Lino Form'):
+VPanel:
+  - Label(label="Please enter your personal data.\nDon't worry about your privacy.\nYou can trust us.")
+  - Entry(label='First name')
+  - Entry(label='Name')
+  - Button(label='&OK')
+  - Button(label='&Cancel')

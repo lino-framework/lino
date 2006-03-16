@@ -19,21 +19,24 @@
 
 from lino.forms import toolkit
 
-class DataForm(toolkit.DataForm):
+## class DataForm(toolkit.DataForm):
         
-    def getStatus(self):
-        return "%d/%d" % (self.currentPos,len(self.ds))
+##     def getStatus(self):
+##         return "%d/%d" % (self.currentPos,len(self.ds))
     
 
 class TextViewer(toolkit.TextViewer):
 
     def addText(self,s):
-        self.getForm().notice(s)
+        self.console.writeln(s)
     
 
 class Toolkit(toolkit.Toolkit):
     viewerFactory = TextViewer
-    navigatorFactory = DataForm
+    #navigatorFactory = DataForm
     
     def executeShow(self,frm):
+        self.console.writeln(repr(frm))
+
+    def executeRefresh(self,frm):
         self.console.writeln(repr(frm))
