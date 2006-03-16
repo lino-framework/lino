@@ -36,9 +36,9 @@ def startup(filename=None, langs=None,
                              dump=dump)
 
     if populate:
-        sess.populate(StandardPopulator(label="Standard"))
+        sess.populate(StandardPopulator())
         if withDemoData:
-            sess.populate(DemoPopulator(label="StandardDemo"))
+            sess.populate(DemoPopulator())
     
 ##     if populate:
 ##         if withDemoData:

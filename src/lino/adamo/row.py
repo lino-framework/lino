@@ -32,6 +32,7 @@ class DataRow:
         assert type(values) == types.DictType
         self.__dict__["_values"] = values
         self.__dict__["_query"] = query
+        #self.__dict__["_store"] = store
         #self.__dict__["_fc"] = fc
         #self.__dict__["_clist"] = clist
         #self.__dict__["_dirty"] = dirty
@@ -92,19 +93,19 @@ class DataRow:
         assert self.isLocked(), "row is not locked"
         self.__dict__['_dirtyRowAttrs'][rowattr.name]=rowattr
 
-    def __getitem__(self,i):
-        col = self._query.visibleColumns[i]
-        # 20050222 return self.makeDataCell(i,col)
-        return col.getCellValue(self)
+##     def __getitem__(self,i):
+##         col = self._query.visibleColumns[i]
+##         # 20050222 return self.makeDataCell(i,col)
+##         return col.getCellValue(self)
         
-    def __setitem__(self,i,value):
-        col = self._query.visibleColumns[i]
-        assert self._pseudo or self._locked or self._new
-        col.setCellValue(self,value)
-        #self.__dict__["_dirty"] = True
+##     def __setitem__(self,i,value):
+##         col = self._query.visibleColumns[i]
+##         assert self._pseudo or self._locked or self._new
+##         col.setCellValue(self,value)
+##         #self.__dict__["_dirty"] = True
         
-    def __len__(self):
-        return len(self._query.visibleColumns)
+##     def __len__(self):
+##         return len(self._query.visibleColumns)
     
     #def getCells(self,columnNames=None):
     #    return RowIterator(self,self._query.getColumns(columnNames))
@@ -337,7 +338,7 @@ class StoredDataRow(DataRow):
         if self._new:
             raise RowLockFailed("Cannot lock a new row")
         if self._locked:
-            raise RowLockFailed("Tried another record lock")
+            raise RowLockFailed("Already locked")
             # , "already locked"
             # return True
         self.__dict__["_locked"] = True
@@ -346,8 +347,7 @@ class StoredDataRow(DataRow):
 
     def unlock(self):
         #print "unlock()", self
-        assert self._locked, "this row was not locked"
-        
+        assert self._locked, "Row was not locked"
             
 ##          msg = self.validate()
 ##          if msg:
@@ -355,7 +355,8 @@ class StoredDataRow(DataRow):
             
         #assert not None in self.getRowId(), "incomplete pk"
         self.__dict__["_locked"] = False
-        self._query._store.unlockRow(self,self._query)
+        #self._query._store.unlockRow(self,self._query)
+        self._query._store.unlockRow(*self.getRowId())
         self.commit()
         
 

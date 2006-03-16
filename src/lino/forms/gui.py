@@ -78,8 +78,9 @@ from lino.console import Application
 
 class GuiApplication(Application):
     wishlist="wx tix cp console"
+    mainFormClass=None
 
-    def __init__(self,mainForm,*args,**kw):
+    def __init__(self,mainForm=None,*args,**kw):
         Application.__init__(self,*args,**kw)
         self.mainForm=mainForm
         self.console=None
@@ -90,20 +91,13 @@ class GuiApplication(Application):
 ##         pass
     
 
-    def init(self):
-        """
-        This is sepaarated from run() because testcases
-        """
-        if self.console is not None:
-            assert self.toolkit is not None
-            return
-            
     def run(self,*args,**kw):
         assert self.console is None
         self.console=self.toolkit
         self.toolkit=self.createToolkit()
         self.toolkit.start_running(self)
-        #self.init()
+        if self.mainForm is None:
+            self.mainForm=self.createMainForm()
         self.showForm(self.mainForm)
         self.toolkit.run_forever()
         
@@ -140,6 +134,9 @@ class GuiApplication(Application):
 
         raise "no toolkit found for wishlist %r" % wishlist
 
+    def createMainForm(self):
+        return self.mainFormClass()
+    
     def showForm(self,frm):
         frm.setup(self)
         return frm.show()
@@ -161,24 +158,26 @@ class GuiApplication(Application):
 
 class DbApplication(GuiApplication):
     
-    mainFormClass=None
     schemaClass=None
 
-    def __init__(self,dbsess=None,mainForm=None,*args,**kw):
-        
-        if dbsess is None:
-            dbsess=self.createContext()
-        self.dbsess=dbsess
-        if mainForm is None:
-            mainForm=self.createMainForm()
+    def __init__(self,dbc=None,mainForm=None,*args,**kw):
+        self.dbsess=dbc
         GuiApplication.__init__(self,mainForm)
 
     def quickStartup(self,*args,**kw):
         raise "use app.dbsess"
             
-    def createContext(self):
-        return self.schemaClass().quickStartup()
+    def createContext(self,*args,**kw):
+        if self.dbsess is None:
+            self.dbsess=self.schemaClass(self).quickStartup(*args,**kw)
+        return self.dbsess
     
     def createMainForm(self):
         return self.mainFormClass(self.dbsess)
+    
+    def run(self,dbc=None,*args,**kw):
+        if dbc is None:
+            dbc=self.createContext()
+        self.dbsess=dbc
+        GuiApplication.run(self,*args,**kw)
         

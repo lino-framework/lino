@@ -33,26 +33,26 @@ class Case(TestCase):
         q = db.query(Partner,\
                      "name street city.name",
                      orderBy="name")
-        for row in q:
-            #print row[0]
-            s1 += str(row[0]) + " "
-            s1 += str(row[1]) + " "
-            s1 += str(row[2]) + "\n"
-        #print s1
-        self.assertEqual(s1,"""\
-Arens None Eupen
-Ausdemwald None Aachen
-Bodard None Verviers
-Eesti Telefon Sõpruse pst. Tallinn
-Eierschal None Eupen
-Eierschal None Eupen
-Freitag None Eupen
-Girf OÜ Laki Tallinn
-Großmann None Eupen
-PAC Systems PGmbH Hütte Eupen
-Rumma & Ko OÜ Tartu mnt. Tallinn
-Saffre None Tallinn
-""")
+##         for row in q:
+##             #print row[0]
+##             s1 += str(row[0]) + " "
+##             s1 += str(row[1]) + " "
+##             s1 += str(row[2]) + "\n"
+##         #print s1
+##         self.assertEqual(s1,"""\
+## Arens None Eupen
+## Ausdemwald None Aachen
+## Bodard None Verviers
+## Eesti Telefon Sõpruse pst. Tallinn
+## Eierschal None Eupen
+## Eierschal None Eupen
+## Freitag None Eupen
+## Girf OÜ Laki Tallinn
+## Großmann None Eupen
+## PAC Systems PGmbH Hütte Eupen
+## Rumma & Ko OÜ Tartu mnt. Tallinn
+## Saffre None Tallinn
+## """)
 
         
         s2 = ''

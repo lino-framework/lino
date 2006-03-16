@@ -156,10 +156,11 @@ class Store:
 
     
         
-    def populate(self,sess,populator):
-         #assert self._status == self.SST_VIRGIN
-         populator.populateStore(self,sess)
-         #self._status = self.SST_READY
+##     def populate(self,sess,populator):
+##          #assert self._status == self.SST_VIRGIN
+##          populator.(self)
+##          populator.populateStore(self)
+##          #self._status = self.SST_READY
         
     def checkIntegrity(self,sess):
         #if self._status != self.SST_MUSTCHECK:
@@ -187,10 +188,11 @@ class Store:
             raise RowLockFailed("Row is locked by another process")
         self._lockedRows[k] = row
 
-    def unlockRow(self,row,qry):
-        k = tuple(row.getRowId())
-        x = self._lockedRows.pop(k)
-        assert x._query == qry
+    def unlockRow(self,*k):
+        #k = tuple(row.getRowId())
+        return self._lockedRows.pop(k)
+        #assert x._locked == dbc
+        #assert x._query == qry
         #self.touch()
         #if row.isDirty():
         #    self._dirtyRows[k] = row
@@ -217,9 +219,9 @@ class Store:
             row.unlock()
 ##         #assert len(self._lockedRows) == 0
         
-    def unlockDatasource(self,ds):
+    def unlockQuery(self,qry):
         for row in self._lockedRows.values():
-            if row._query == ds:
+            if row._query == qry:
                 print "forced unlock:", row
                 row.unlock()
 ##         #print "Datasource.unlockAll()",self
@@ -237,7 +239,7 @@ class Store:
     def addToCache(self,row):
         pass
 
-    def commit(self,sess):
+    def commit(self):
         ""
         if len(self._lockedRows) > 0:
             raise InvalidRequestError("unlock first, then commit!")
@@ -335,21 +337,23 @@ class Store:
 
 
 
+from lino.console.task import Task
 
-class Populator(Describable):
+class Populator(Task):
     
-    def populateStore(self,store,sess):
+    #def populateStore(self,store):
+    def run(self,dbc,store):
         name = "populate"+store.getTable().name
         try:
             m = getattr(self,name)
         except AttributeError:
             return
         if not store.isVirgin():
-            sess.verbose("Not populating %s",store) 
+            self.debug("Not populating %s",store) 
             return
-        qry=store.query(sess,"*")
+        qry=store.query(dbc,"*")
         m(qry)
-        store.commit(sess)
+        store.commit()
     
 
 

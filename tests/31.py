@@ -46,14 +46,13 @@ class Case(TestCase):
     def test01(self):
         app = Raceman() # label="Raceman Report Tester")
         #races.setupSchema(schema)
-
-        sess = app.dbsess # quickStartup()
+        sess = app.createContext() # quickStartup()
 
         PERSONS = sess.query(tables.Person)
-        norbert = PERSONS.appendRow( name="Ausdemwald",
-                                     firstName="Norbert",
-                                     sex="M",
-                                     birthDate="19800506")
+        norbert = PERSONS.appendRow(name="Ausdemwald",
+                                    firstName="Norbert",
+                                    sex="M",
+                                    birthDate="19800506")
         edgar = PERSONS.appendRow( name="Ausdemwald",
                                    firstName="Edgar",
                                    sex="M",

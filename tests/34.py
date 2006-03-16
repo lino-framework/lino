@@ -39,6 +39,7 @@ class Case(TestCase):
     
     def test01(self):
         app = Contacts()
+        app.createContext()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
         #print s
@@ -88,6 +89,7 @@ PartnerTypes        |    0|                    |
         
     def test02(self):
         app = Keeper()
+        app.createContext()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
         #print s
@@ -122,6 +124,7 @@ Occurences          |    0|                    |
         
     def test03(self):
         app = Ledger()
+        app.createContext()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
         # print s

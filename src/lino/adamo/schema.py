@@ -26,7 +26,7 @@ from lino.misc.attrdict import AttrDict
 #from lino.console import syscon
 #from lino.console.application import GuiApplication
 
-#from lino.console import Application
+from lino.console.task import Session
 
 #from lino.adamo.forms import Form
 from lino.adamo.table import Table, SchemaComponent
@@ -35,6 +35,11 @@ from lino.adamo.query import Query
 from lino.adamo.dbsession import DbContext
 from lino.adamo import center
 
+#class StartupSession(Session):
+#    pass
+    #def run(self):
+    #    pass
+
 class Schema: #(Application):
     
     #mainForm=NotImplementedError
@@ -42,11 +47,15 @@ class Schema: #(Application):
     defaultLangs = ('en',)
 
     def __init__(self,
+                 session=None,
                  checkIntegrityOnStartup=False,
                  tempDir=".",
                  langs=None):
         #GuiApplication.__init__(self,**kw)
         #self.toolkit=toolkit
+        if session is None:
+            session=Session()
+        self.session=session
         self.tempDir=tempDir
         self.checkIntegrityOnStartup = checkIntegrityOnStartup
         self._initDone= False
@@ -292,7 +301,10 @@ class Schema: #(Application):
             #conn.startDump(self.console.stdout)
             assert hasattr(dump,'write')
             conn.startDump(dump)
-        return DbContext(db,**kw)
+        return db.startup()
+        #dbc=DbContext(db,**kw)
+        #dbc.startup()
+        #return dbc
     
 ##     def run(self,dbc=None):
 ##         if dbc is None:

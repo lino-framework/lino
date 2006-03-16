@@ -1,15 +1,15 @@
-from lino.apps.keeper.keeper import Keeper
-from lino.adamo.store import Populator
-from lino.forms import gui
+from lino.apps.keeper.keeper_tables import KeeperSchema
+from lino.apps.keeper.keeper_forms import Keeper
+from lino.adamo.ddl import Populator
 
-class TestPopulator(Populator):
+class MyPopulator(Populator):
     def populateVolumes(self,q):
-        tv=q.appendRow(name="test",path="test")
-        tv.load(q.getSession())
-        tv=q.appendRow(name="f",path="f")
-        tv.load(q.getSession())
+        vol=q.appendRow(name="test",path="test")
+        vol.load()
+        vol=q.appendRow(name="f",path="f")
+        vol.load()
         
 app=Keeper()
-sess=app.quickStartup(filename="keeper.db")
-sess.populate(TestPopulator())
-gui.run(sess)
+dbc=app.createContext(filename="keeper.db")
+dbc.populate(MyPopulator())
+app.main(dbc)

@@ -88,8 +88,10 @@ has chosen a toolkit and who runs some code (usually an application)
 
     
     """
-    #def __init__(self,toolkit):
-    #    self.toolkit=toolkit
+    def __init__(self,toolkit=None):
+        if toolkit is None:
+            toolkit=syscon.getSystemConsole()
+        self.toolkit=toolkit
         
     def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"
@@ -153,9 +155,6 @@ has chosen a toolkit and who runs some code (usually an application)
     def breathe(self):
         return self.toolkit.on_breathe(self)
 
-    def runfrom(self,toolkit,*args,**kw):
-        self.toolkit=toolkit
-        return self.run(*args,**kw)
         
 
 
@@ -166,6 +165,7 @@ class Task(Session):
     label="Working"
     percentCompleted=0
     def __init__(self,label=None):
+        Session.__init__(self)
         #self._abortRequested=False
         if label is not None:
             self.label=label
@@ -200,6 +200,10 @@ class Task(Session):
             toolkit=syscon.getSystemConsole()
         self.runfrom(toolkit,*args,**kw)
 
+    def runfrom(self,toolkit,*args,**kw):
+        self.toolkit=toolkit
+        return self.run(*args,**kw)
+    
 ## class Looper(Task):
     
 ##     def __init__(self,f,label=None):

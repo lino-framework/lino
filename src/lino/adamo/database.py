@@ -65,8 +65,8 @@ class Database(Context): #,Describable):
 
     def addContext(self,s):
         self._contexts.append(s)
-        if len(self._contexts) == 1:
-            self.startup(s)
+        #if len(self._contexts) == 1:
+        #    self.startup(s)
         
 
     def removeContext(self,s):
@@ -74,10 +74,6 @@ class Database(Context): #,Describable):
         #if len(self._contexts) == 0:
         #    self.close()
         
-    def populate(self,sess,p):
-        for store in self.getStoresById():
-            store.populate(sess,p)
-
     def getBabelLangs(self):
         "implements Context.getBabelLangs()"
         return self._supportedLangs
@@ -142,7 +138,7 @@ class Database(Context): #,Describable):
             #if not self._stores.has_key(t.__class__):
                 #self._stores[t.__class__] = Store(conn,self,t)
 
-    def startup(self,dbc):
+    def startup(self):
     #def startup(self,sess=None):
         #print "%s.startup()" % self.__class__
         #if ui is None:
@@ -150,6 +146,7 @@ class Database(Context): #,Describable):
         #sess=center.openSession(syscon.getSystemConsole())
         assert self._startupContext is None,\
                  "Cannot startup() again " + repr(self)
+        dbc=DbContext(self)
         #if toolkit is None:
         #    toolkit=syscon.getSystemConsole()
 
@@ -163,9 +160,10 @@ class Database(Context): #,Describable):
             store.onStartup()
                 
         self._startupContext=dbc
+        return dbc
         
     def getContext(self):
-        return DbContext(self)
+        return self._startupContext
         
 
     def getContentRoot(self):
@@ -226,9 +224,9 @@ class Database(Context): #,Describable):
 ##          self.__dict__['conn'] = conn
 
 
-    def commit(self,sess):
+    def commit(self):
         for store in self.getStoresById():
-            store.commit(sess)
+            store.commit()
             
     #def flush(self):
     #   for store in self._stores:

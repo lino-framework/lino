@@ -907,7 +907,7 @@ class LeadTableColumnList(BaseColumnList):
         return self._store.executePeek(self, id)
 
     def commit(self):
-        self._store.unlockDatasource(self)
+        self._store.unlockQuery(self)
         
     def unlock(self):
         return self._store.unlockDatasource(self)
@@ -1000,7 +1000,7 @@ class SimpleQuery(LeadTableColumnList):
                  masterColumns=None,
                  masters=[],
                  **kw):
-        self.session = sess
+        self.session = sess # a DbContext, not a session
         LeadTableColumnList.__init__(self,_parent,store,columnNames)
         
         for m in ('setBabelLangs','getLangs'):

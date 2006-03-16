@@ -71,7 +71,7 @@ class DbContext(Context):
         """langs is a string containing a space-separated list of babel
         language codes"""
         
-        self.db.commit(self)
+        self.db.commit()
         self._babelLangs = []
         for lang_id in langs.split():
             self._babelLangs.append(self.db.findBabelLang(lang_id))
@@ -86,6 +86,9 @@ class DbContext(Context):
 
     def getBabelLangs(self):
         return self._babelLangs
+
+    def startup(self):
+        self.db.startup(self)
     
 
 
@@ -97,7 +100,13 @@ class DbContext(Context):
         
     def populate(self,p):
         status=self.getSessionStatus()
-        self.db.populate(self,p)
+        #self.db.populate(self,p)
+        for store in self.db.getStoresById():
+            p.runfrom(self.db.schema.session,self,store)
+            #store.populate(sess,p)
+
+
+        
         self.setSessionStatus(status)
 
     #def getSession(self):
@@ -111,7 +120,7 @@ class DbContext(Context):
         self._babelLangs = status[0]
         
     def commit(self):
-        return self.db.commit(self)
+        return self.db.commit()
 
     def close(self):
         #self.db.removeSession(self.session)

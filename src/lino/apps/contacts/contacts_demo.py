@@ -34,7 +34,8 @@ from contacts_tables import *
 rtlib_path=config.get(config.DEFAULTSECT,'rtlib_path')
 
 
-def startup(filename=None, langs=None,
+def startup(filename=None,
+            langs=None,
             populate=True,
             dump=None,
             big=False,
@@ -45,10 +46,9 @@ def startup(filename=None, langs=None,
                             filename=filename,
                             dump=dump)
     if populate:
-        ctx.populate(StandardPopulator(big=big,
-                                       label="Standard"))
+        ctx.populate(StandardPopulator(big=big))
         if withDemoData:
-            ctx.populate(DemoPopulator(label="StandardDemo"))
+            ctx.populate(DemoPopulator())
 
 ##     if populate:
 ##         if withDemoData:
