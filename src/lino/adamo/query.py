@@ -1367,6 +1367,26 @@ class SimpleQuery(LeadTableColumnList):
             raise IndexError,msg
         
         return row
+    
+    def getRowAt(self,offset):
+        assert type(offset) is types.IntType
+        if offset < 0:
+            offset += len(self) 
+        csr = self.executeSelect(offset=offset,limit=1)
+        sqlatoms=csr.fetchone()
+        if sqlatoms is None:
+            csr.close()
+            return None
+        
+        assert csr.fetchone() is None, \
+               "Query.getRowAt() got more than one row"
+        csr.close()
+        atomicRow = self.csr2atoms(sqlatoms)
+        row = self.getLeadTable()._instanceClass(self,{},False)
+        self.atoms2row(atomicRow,row)
+        return row
+        #return self.atoms2row(atomicRow,False)
+
 
 
     def csr2atoms(self,sqlatoms):
@@ -1427,25 +1447,6 @@ class SimpleQuery(LeadTableColumnList):
         return row
         #return self.atoms2row(atomicRow,False)
     
-    def getRowAt(self,offset):
-        assert type(offset) is types.IntType
-        if offset < 0:
-            offset = len(self) + offset 
-        csr = self.executeSelect(offset=offset,limit=1)
-        sqlatoms=csr.fetchone()
-        if sqlatoms is None:
-            csr.close()
-            return None
-        
-        assert csr.fetchone() is None, \
-               "Query.getRowAt() got more than one row"
-        csr.close()
-        atomicRow = self.csr2atoms(sqlatoms)
-        row = self.getLeadTable()._instanceClass(self,{},False)
-        self.atoms2row(atomicRow,row)
-        return row
-        #return self.atoms2row(atomicRow,False)
-
         
 
     def getSqlSelect(self,**kw):

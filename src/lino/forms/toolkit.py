@@ -47,7 +47,7 @@ class Component: #(Describable):
         self.doc=doc
         self.form = form
         self.weight=weight
-        self.enabled=enabled
+        self.enabled=enabled and form.enabled
 
     def getLabel(self):
         if self.label is None:
@@ -75,6 +75,7 @@ class Component: #(Describable):
         return self.form.getForm()
     def refresh(self):
         pass
+    
     def store(self):
         pass
     
@@ -194,6 +195,9 @@ class Entry(BaseEntry):
         self._value = v
         self.refresh()
         
+    def refresh(self):
+        self.enabled = self.getForm().enabled
+        
     def getMinWidth(self):
         return self._type.minWidth
     def getMaxWidth(self):
@@ -208,7 +212,6 @@ class DataEntry(BaseEntry):
     
     def __init__(self,frm,col,*args,**kw):
         BaseEntry.__init__(self,frm, col.name,*args,**kw)
-        self.enabled = col.canWrite(frm.getCurrentRow())
         self.col = col
         
     def setValue(self,v):
@@ -239,8 +242,8 @@ class DataEntry(BaseEntry):
 
     def refresh(self):
         frm = self.getForm()
-        self.enabled = self.col.canWrite(frm.getCurrentRow())
-        #self.refresh()
+        self.enabled = frm.enabled and self.col.canWrite(
+            frm.getCurrentRow())
         
 
 class Label(Component):

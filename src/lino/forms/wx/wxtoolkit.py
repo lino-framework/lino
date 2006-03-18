@@ -385,10 +385,18 @@ class EntryMixin:
             hbox = box
 
         type = self.getType()
-        if isinstance(type,datatypes.StringType):
+        if isinstance(type,datatypes.BoolType):
+            editor=wx.CheckBox(mypanel,-1)
+            v=self.getValue()
+            if v is None:
+                v=self.getType().defaultValue
+            editor.SetValue(v)
+        else:
             style=0
             if self.getMaxHeight() > 1:
                 style = style|wx.TE_MULTILINE
+            if isinstance(type,datatypes.IntType):
+                print __builtins__['type'](self.getValueForEditor())
             editor = wx.TextCtrl(mypanel,-1,
                                  self.getValueForEditor(),
                                  style=style)
@@ -397,12 +405,11 @@ class EntryMixin:
 
             editor.SetMinSize(editor.GetBestSize())
             #_setEditorSize(editor,self)
-        elif isinstance(type,datatypes.BoolType):
-            editor=wx.CheckBox(mypanel,-1)
-            v=self.getValue()
-            if v is None:
-                v=self.getType().defaultValue
-            editor.SetValue(v)
+        
+        if self.enabled:
+            editor.Enable()
+        else:
+            editor.Disable()
             
         #print editor.GetMinSize(), editor.GetMaxSize()
         #print mypanel.GetMinSize(), editor.GetMaxSize()
@@ -439,21 +446,23 @@ class EntryMixin:
     def getValueForEditor(self):
         "return current value as string"
         v = self.getValue()
-        if v is None:
-            return self.getType().defaultValue
-        if isinstance(self.getType(),datatypes.StringType):
-            return self.format(v)
-        return v
+        if isinstance(self.getType(),datatypes.BoolType):
+            if v is None:
+                return False
+            return v
+        if v is None: return ""
+        return self.format(v)
+        
 
     def setValueFromEditor(self,x):
         "convert the string and store it as raw value"
-        if isinstance(self.getType(),datatypes.StringType):
+        if isinstance(self.getType(),datatypes.BoolType):
+            self.setValue(x)
+        else:
             if len(x) == 0:
                 self.setValue(None)
             else:
                 self.setValue(self.parse(x))
-        else:
-            self.setValue(x)
             
     def refresh(self):
         if hasattr(self,'editor'):
@@ -465,9 +474,9 @@ class EntryMixin:
         self.editor.SetSelection(-1,-1)
         
     def isDirty(self):
-        if isinstance(self.getType(),datatypes.StringType):
-            return self.editor.IsModified()
-        return False
+        if isinstance(self.getType(),datatypes.BoolType):
+            return False
+        return self.editor.IsModified()
 
     def store(self):
         #type = self._type
@@ -496,12 +505,20 @@ class DataEntry(EntryMixin,toolkit.DataEntry):
     
     def wxsetup(self,form,panel,box):
         EntryMixin.wxsetup(self,form,panel,box)
-        self.editor.SetEditable(self.enabled)
+        #self.editor.SetEditable(self.enabled)
+        if self.enabled:
+            self.editor.Enable()
+        else:
+            self.editor.Disable()
         
     def refresh(self):
         EntryMixin.refresh(self)
         toolkit.DataEntry.refresh(self)
-        self.editor.SetEditable(self.enabled)
+        if self.enabled:
+            self.editor.Enable()
+        else:
+            self.editor.Disable()
+        #self.editor.SetEditable(self.enabled)
         #if not self.enabled:
         #    print str(self), "is read-only"
     
@@ -734,6 +751,8 @@ class Toolkit(toolkit.Toolkit):
 
     def executeRefresh(self,frm):
         frm.ctrl.Refresh()
+        # forms4.py : pgup/pgdn changes the title
+        frm.ctrl.SetTitle(frm.getTitle())
 
     def closeForm(self,frm,evt):
         #print "closeForm()"

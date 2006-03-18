@@ -201,11 +201,14 @@ class Form(MenuContainer,Container):
     modal=False
     #doc=None
     returnValue=None
+    enabled=True
     
     def __init__(self,
                  #data=None,
                  halign=None, valign=None,
-                 title=None,*args,**kw):
+                 title=None,
+                 enabled=None,
+                 *args,**kw):
         #if self.title is None:
         #Describable.__init__(self,None,*args,**kw)
         #assert isinstance(app,Application)
@@ -214,6 +217,8 @@ class Form(MenuContainer,Container):
         #self.app=app
         if title is not None:
             self.title=title
+        if enabled is not None:
+            self.enabled=enabled
         #self.session=sess
         self.accelerators=[]
         self._parent = None
@@ -401,6 +406,11 @@ class ReportForm(Form,GenericDocument):
         self.rpt.beginReport(self)
 
     def setupMenu(self):
+        self.setupFileMenu()
+        self.setupEditMenu()
+        self.rpt.setupMenu(self)
+        
+    def setupFileMenu(self):
         m = self.addMenu("file",label="&File")
         m.addItem("exit",label="&Exit",
                   action=self.close,
@@ -418,9 +428,8 @@ class ReportForm(Form,GenericDocument):
                   action=self.printList,
                   accel="Shift-F7")
         
-        self.setupGoMenu()
-        
 
+    def setupEditMenu(self):
         m = self.addMenu("edit",label="&Edit")
         def copy():
             #from cStringIO import StringIO
@@ -443,7 +452,6 @@ class ReportForm(Form,GenericDocument):
                       action=self.insertRow,
                       accel="INS")
             
-        self.rpt.setupMenu(self)
 
     def setupGoMenu(self):
         pass
@@ -458,10 +466,10 @@ class ReportForm(Form,GenericDocument):
         assert self.rpt.canWrite()
         if not self.session.confirm(
             "Delete %d rows. Are you sure?" % \
-            len(self.getSelectedRows())):
+            len(self.grid.getSelectedRows())):
             return
-        for i in self.getSelectedRows():
-            row = self.rpt[i].delete()
+        for i in self.grid.getSelectedRows():
+            row = self.rpt[i].item.delete()
         self.refresh()
 
     def printRow(self):
@@ -471,7 +479,7 @@ class ReportForm(Form,GenericDocument):
         #workdir = self.getForm().toolkit.app.tempDir
         from lino.oogen import SpreadsheetDocument
         doc = SpreadsheetDocument("printRow")
-        for i in self.getSelectedRows():
+        for i in self.grid.getSelectedRows():
             row = self.rpt[i]
             row.printRow(doc)
         #outFile = opj(workdir,"raceman_report.sxc")
@@ -483,7 +491,7 @@ class ReportForm(Form,GenericDocument):
         raise "must rewrite"
         from lino.oogen import SpreadsheetDocument
         doc = SpreadsheetDocument("printList")
-        rows = self.getSelectedRows()
+        rows = self.grid.getSelectedRows()
         if len(rows) == 1:
             rows = self.rpt
         rpt = doc.report()
@@ -540,48 +548,117 @@ class ReportRowForm(ReportForm):
         if recno < 0:
             recno+=len(self.rpt)
         self.recno=recno
+        self.beforeRow()
 
-    def setupForm(self):
-        for col in self.rpt.columns:
-            self.addDataEntry(col,label=col.getLabel())
+    def beforeRow(self):
+        self.currentRow=self.rpt[self.recno]
+        if self.enabled:
+            self.currentRow.item.lock()
+            
+    def afterRow(self):
+        if self.enabled:
+            self.store()
+            self.currentRow.item.unlock()
+            
+    def onClose(self):
+        self.afterRow()
+        ReportForm.onClose(self)
         
+    def setupForm(self):
+        self.rpt.setupReportForm(self)
+            
     def getCurrentRow(self):
-        if self.recno is None:
-            return None
-        return self.rpt[self.recno]
+        return self.currentRow
+        #if self.recno is None:
+        #    return None
+        #return self.rpt[self.recno]
+
+    def toggleEditing(self):
+        self.afterRow()
+        #if self.enabled:
+        #    self.store()
+            #self.currentRow.item.unlock()
+        self.enabled=not self.enabled
+        self.beforeRow()
+        self.refresh()
+            
     
     def getTitle(self):
-        return str(self.getCurrentRow())
+        return str(self.currentRow.item)
 
     def onIdle(self):
         s = "Row %d of %d" % (self.recno,len(self.rpt))
+        self.session.status(s)
 
-    def setupGoMenu(self):
-        frm = self.getForm()
-        m = frm.addMenu("go",label="&Go")
+    def setupMenu(self):
+        self.setupFileMenu()
+        self.setupEditMenu()        
+        m = self.addMenu("row",label="&Row")
         m.addItem("next",
                   label="&Next",
                   accel="PgDn").setHandler(self.skip,1)
         m.addItem("previous",
                   label="&Previous",
                   accel="PgUp").setHandler(self.skip,-1)
+        m.addItem("edit",
+                  label="&Edit",
+                  accel="F2").setHandler(self.toggleEditing)
+        
+        self.rpt.setupMenu(self)
 
+    def setupEditMenu(self):
+        m = self.addMenu("edit",label="&Edit")
+        def copy():
+            #from cStringIO import StringIO
+            out = StringIO()
+            self.rpt.__xml__(out.write)
+            self.showForm(MemoViewer(out.getvalue()))
+        
+        m.addItem("copy",
+                  label="&Copy",
+                  action=copy)
+        
+        #m = frm.addMenu("row",label="&Row")
+        if self.rpt.canWrite():
+            m.addItem("delete",
+                      label="&Delete selected row(s)",
+                      action=self.deleteCurrentRow,
+                      accel="DEL")
+            m.addItem("insert",
+                      label="&Insert new row",
+                      action=self.insertRow,
+                      accel="INS")
+
+            
     def skip(self,n):
-        #print __name__, n
+        self.afterRow()
         if n > 0:
             if self.recno + n < len(self.rpt):
                 self.recno += n
-                #self.afterSkip(self)
-                self.refresh()
+            else:
+                return
         else:
             if self.recno + n >= 0:
                 self.recno += n
-                #self.afterSkip(self)
-                self.refresh()
+            else:
+                return
+        self.beforeRow()
+        self.refresh()
 
 
-    def getSelectedRows(self):
-        return [self.getCurrentRow()]
+    def deleteCurrentRow(self):
+        assert self.rpt.canWrite()
+        row=self.getCurrentRow()
+        if row is None:
+            return
+        if not self.session.confirm(
+            "Delete this row. Are you sure?"):
+            return
+        row.item.delete()
+        self.refresh()
+        
+    #def getSelectedRows(self):
+    #    return [self.getCurrentRow()]
         
 
     def getStatus(self):

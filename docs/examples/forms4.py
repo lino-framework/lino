@@ -5,7 +5,19 @@ from lino.apps.contacts.contacts_tables import PartnersReport
 from lino.forms.forms import ReportRowForm
 
 dbc=startup()
+
+class MyPartnersReport(PartnersReport):
+    columnSpec="""
+    firstName name
+    email phone gsm fax
+    website
+    street house box
+    nation city zip
+    id type lang
+    """
+
 #rpt=QuotesReport(dbc)
 rpt=PartnersReport(dbc)
-ReportRowForm(rpt).main()
-    
+rpt=MyPartnersReport(dbc)
+
+ReportRowForm(rpt,enabled=False).main()

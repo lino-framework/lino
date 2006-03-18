@@ -262,25 +262,25 @@ class BaseReport:
     def show(self,**kw):
         syscon.getSystemConsole().show_report(self,**kw)
 
-    def showFormNavigator(self,sess,**kw):
-        frm=sess.form(label=self.getTitle(),
-                      name=self.getName(),
-                      data=self[0])
+##     def showFormNavigator(self,sess,**kw):
+##         frm=sess.form(label=self.getTitle(),
+##                       name=self.getName(),
+##                       data=self[0])
 
-        self.fillReportForm(frm)
+##         self.fillReportForm(frm)
         
-        def afterSkip(nav):
-            row = self[nav.currentPos]
-            frm.data = row
-            #frm.refresh()
-##             for cell in row:
-##                 setattr(frm.entries,cell.col.name,cell.format())
+##         def afterSkip(nav):
+##             row = self[nav.currentPos]
+##             frm.data = row
+##             #frm.refresh()
+## ##             for cell in row:
+## ##                 setattr(frm.entries,cell.col.name,cell.format())
             
-        frm.addNavigator(self,afterSkip=afterSkip)
+##         frm.addNavigator(self,afterSkip=afterSkip)
 
-        frm.show()
+##         frm.show()
 
-    def fillReportForm(self,frm):
+    def setupReportForm(self,frm):
         if self.formColumnGroups == None:
             for col in self.columns: #getVisibleColumns():
                 frm.addDataEntry(col,label=col.getLabel())
