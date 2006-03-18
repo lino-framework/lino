@@ -52,6 +52,10 @@ class MenuContainer:
         else:
             self.debug("ignored menuController %s" % str(c))
 
+##     def setupMenu(self):
+##         if self._menuController is not None:
+##             self._menuController.setupMenu()
+            
 
 
 class Container:
@@ -115,23 +119,23 @@ class Container:
         #self._components.append(e)
         #return e
 
-    def addDataGrid(self,ds,name=None,*args,**kw):
+    def addDataGrid(self,rpt,name=None,*args,**kw):
         frm = self.getForm()
-        e = frm.toolkit.dataGridFactory(self,ds,*args,**kw)
+        e = frm.toolkit.dataGridFactory(self,rpt,*args,**kw)
         #self._components.append(e)
-        frm.setMenuController(e)
+        #frm.setMenuController(e)
         #if name is not None:
         #    frm.tables.define(name,e)
         return self.addComponent(e)
         #return e
         
-    def addNavigator(self,rpt,afterSkip=None,*args,**kw):
-        frm = self.getForm()
-        e = frm.toolkit.navigatorFactory(
-            self, rpt,afterSkip,*args,**kw)
-        #self._components.append(e)
-        frm.setMenuController(e)
-        return self.addComponent(e)
+##     def addNavigator(self,afterSkip=None,*args,**kw):
+##         frm = self.getForm()
+##         e = frm.toolkit.navigatorFactory(
+##             self, frm.rpt,afterSkip,*args,**kw)
+##         #self._components.append(e)
+##         #frm.setMenuController(e)
+##         return self.addComponent(e)
         
 ##     def addPanel(self,direction,**kw): 
 ##         frm = self.getForm()
@@ -199,7 +203,7 @@ class Form(MenuContainer,Container):
     returnValue=None
     
     def __init__(self,
-                 data=None,
+                 #data=None,
                  halign=None, valign=None,
                  title=None,*args,**kw):
         #if self.title is None:
@@ -213,7 +217,7 @@ class Form(MenuContainer,Container):
         #self.session=sess
         self.accelerators=[]
         self._parent = None
-        self.data = data
+        #self.data = data
         #self.entries = AttrDict()
         #self.buttons = AttrDict()
         #self.tables = AttrDict()
@@ -278,9 +282,6 @@ class Form(MenuContainer,Container):
         # implements Container
         return self.mainComp.addComponent(c)
         
-    def getLeadRow(self):
-        return self.data
-
     def getTitle(self):
         # may override to provide dynamic title
         assert self.title is not None,\
@@ -288,23 +289,21 @@ class Form(MenuContainer,Container):
                % self.__class__
         return self.title
 
-    def configure(self,data=None,**kw):
-        if data is not None:
-            from lino.reports.reports import ReportRow
-            assert isinstance(data,ReportRow)
-        Describable.configure(self,data=data,**kw)
+##     def configure(self,data=None,**kw):
+##         if data is not None:
+##             from lino.reports.reports import ReportRow
+##             assert isinstance(data,ReportRow)
+##         Describable.configure(self,data=data,**kw)
 
     def getForm(self):
         return self
 
 
-    def setupMenu(self):
-        if self._menuController is not None:
-            self._menuController.setupMenu()
-            
     def setupForm(self):
         pass
 
+    def setupMenu(self):
+        pass
             
     def set_parent(self,parent):
         #assert self._parent is None
@@ -395,10 +394,122 @@ class MemoViewer(Form):
             type=MEMO(width=80,height=10),
             value=self.txt)
                     
-class ReportForm(Form):
+class ReportForm(Form,GenericDocument):
     def __init__(self,rpt,**kw):
-        Form.__init__(self,rpt,**kw)
+        Form.__init__(self,**kw)
         self.rpt=rpt
+        self.rpt.beginReport(self)
+
+    def setupMenu(self):
+        m = self.addMenu("file",label="&File")
+        m.addItem("exit",label="&Exit",
+                  action=self.close,
+                  accel="ESC")
+        m.addItem("refresh",
+                  label="&Refresh",
+                  action=self.refresh,
+                  accel="Alt-F5")
+        m.addItem("printRow",
+                  label="Print &Row",
+                  action=self.printRow,
+                  accel="F7")
+        m.addItem("printList",
+                  label="Print &List",
+                  action=self.printList,
+                  accel="Shift-F7")
+        
+        self.setupGoMenu()
+        
+
+        m = self.addMenu("edit",label="&Edit")
+        def copy():
+            #from cStringIO import StringIO
+            out = StringIO()
+            self.rpt.__xml__(out.write)
+            self.showForm(MemoViewer(out.getvalue()))
+        
+        m.addItem("copy",
+                  label="&Copy",
+                  action=copy)
+        
+        #m = frm.addMenu("row",label="&Row")
+        if self.rpt.canWrite():
+            m.addItem("delete",
+                      label="&Delete selected row(s)",
+                      action=self.deleteSelectedRows,
+                      accel="DEL")
+            m.addItem("insert",
+                      label="&Insert new row",
+                      action=self.insertRow,
+                      accel="INS")
+            
+        self.rpt.setupMenu(self)
+
+    def setupGoMenu(self):
+        pass
+
+
+    def insertRow(self):
+        assert self.rpt.canWrite()
+        row = self.rpt.appendRow()
+        self.refresh()
+    
+    def deleteSelectedRows(self):
+        assert self.rpt.canWrite()
+        if not self.session.confirm(
+            "Delete %d rows. Are you sure?" % \
+            len(self.getSelectedRows())):
+            return
+        for i in self.getSelectedRows():
+            row = self.rpt[i].delete()
+        self.refresh()
+
+    def printRow(self):
+        #print "printSelectedRows()", self.getSelectedRows()
+        #workdir = "c:\\temp"
+        #ui = self.getForm()
+        #workdir = self.getForm().toolkit.app.tempDir
+        from lino.oogen import SpreadsheetDocument
+        doc = SpreadsheetDocument("printRow")
+        for i in self.getSelectedRows():
+            row = self.rpt[i]
+            row.printRow(doc)
+        #outFile = opj(workdir,"raceman_report.sxc")
+        doc.save(self.getForm(),showOutput=True)
+
+    def printList(self):
+        #ui = self.getForm()
+        #workdir = self.getForm().toolkit.app.tempDir
+        raise "must rewrite"
+        from lino.oogen import SpreadsheetDocument
+        doc = SpreadsheetDocument("printList")
+        rows = self.getSelectedRows()
+        if len(rows) == 1:
+            rows = self.rpt
+        rpt = doc.report()
+        self.rpt.setupReport(rpt)
+        rpt.execute(rows)
+        #outFile = opj(workdir,self.ds.getName()+".sxc")
+        doc.save(self,showOutput=True)
+
+    def onClose(self):
+        self.rpt.onClose()
+
+    
+
+    # implements GenericDocument
+    def getLineWidth(self):
+        return 100
+    def getLineWidth(self):
+        return 80
+    def getColumnSepWidth(self):
+        return 0
+                
+        
+    
+class ReportGridForm(ReportForm):
+    def __init__(self,*args,**kw):
+        ReportForm.__init__(self,*args,**kw)
         self.grid=None
 
     def setupForm(self):
@@ -416,6 +527,67 @@ class ReportForm(Form):
             s = "Selected %s of %d rows" % (len(l), len(self.rpt))
                 
         self.session.status(s)
+        
+    def getCurrentRow(self):
+        if self.grid is None:
+            return None
+        return self.grid.getCurrentRow()
+
+
+class ReportRowForm(ReportForm):
+    def __init__(self,rpt,recno=0,**kw):
+        ReportForm.__init__(self,rpt,**kw)
+        if recno < 0:
+            recno+=len(self.rpt)
+        self.recno=recno
+
+    def setupForm(self):
+        for col in self.rpt.columns:
+            self.addDataEntry(col,label=col.getLabel())
+        
+    def getCurrentRow(self):
+        if self.recno is None:
+            return None
+        return self.rpt[self.recno]
+    
+    def getTitle(self):
+        return str(self.getCurrentRow())
+
+    def onIdle(self):
+        s = "Row %d of %d" % (self.recno,len(self.rpt))
+
+    def setupGoMenu(self):
+        frm = self.getForm()
+        m = frm.addMenu("go",label="&Go")
+        m.addItem("next",
+                  label="&Next",
+                  accel="PgDn").setHandler(self.skip,1)
+        m.addItem("previous",
+                  label="&Previous",
+                  accel="PgUp").setHandler(self.skip,-1)
+
+    def skip(self,n):
+        #print __name__, n
+        if n > 0:
+            if self.recno + n < len(self.rpt):
+                self.recno += n
+                #self.afterSkip(self)
+                self.refresh()
+        else:
+            if self.recno + n >= 0:
+                self.recno += n
+                #self.afterSkip(self)
+                self.refresh()
+
+
+    def getSelectedRows(self):
+        return [self.getCurrentRow()]
+        
+
+    def getStatus(self):
+        return "%d/%d" % (self.recno,len(self.rpt))
+    
+        
     
 class DbMainForm(Form):
     
@@ -488,8 +660,8 @@ class DbMainForm(Form):
 ##         rpt=self.getViewReport(tc,*args,**kw)
 ##         return self.toolkit.showReport(rpt)
     
-    def showDataForm(self,rpt,**kw):
-        rpt.showFormNavigator(self,**kw)
+##     def showDataForm(self,rpt,**kw):
+##         rpt.showFormNavigator(self,**kw)
         
 ##     def showDataForm(self,rpt,**kw):
 ##         frm = self.form(label=rpt.getLabel(),**kw)

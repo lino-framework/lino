@@ -172,6 +172,7 @@ class Button(toolkit.Button):
 class DataGrid(toolkit.DataGrid):
     
     def wxsetup(self,form,parent,box):
+        #print "wxsetup()", self
         self.wxctrl = wxgrid.DataGridCtrl(parent,self)
         box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
         
@@ -182,36 +183,36 @@ class DataGrid(toolkit.DataGrid):
         return self.wxctrl.getSelectedRows()
 
         
-class DataForm(toolkit.DataForm):
+## class DataForm(toolkit.DataForm):
     
-    def wxsetup(self,frm,parent,box):
-        if False:
-            mypanel = wx.Panel(parent,-1)
-            box.Add(mypanel, STRETCH, wx.EXPAND|wx.ALL,BORDER)
+##     def wxsetup(self,frm,parent,box):
+##         if False:
+##             mypanel = wx.Panel(parent,-1)
+##             box.Add(mypanel, STRETCH, wx.EXPAND|wx.ALL,BORDER)
 
-            #hbox = wx.BoxSizer(wx.HORIZONTAL)
-            hbox=SwappedBoxSizer(box)
-            mypanel.SetSizer(hbox)
-            self.wxctrl = mypanel
+##             #hbox = wx.BoxSizer(wx.HORIZONTAL)
+##             hbox=SwappedBoxSizer(box)
+##             mypanel.SetSizer(hbox)
+##             self.wxctrl = mypanel
 
 
-            self.statusLabel = wx.StaticText( mypanel, -1,
-                                              self.getStatus())
-            hbox.Add(self.statusLabel, STRETCH, wx.EXPAND, BORDER )
+##             self.statusLabel = wx.StaticText( mypanel, -1,
+##                                               self.getStatus())
+##             hbox.Add(self.statusLabel, STRETCH, wx.EXPAND, BORDER )
 
-            hbox.Add( (10,1), DONTSTRETCH,0,NOBORDER)
+##             hbox.Add( (10,1), DONTSTRETCH,0,NOBORDER)
 
-            btn = wx.Button(mypanel, -1, "<")
-            hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
-            self.getForm().ctrl.Bind(wx.EVT_BUTTON,
-                                     EventCaller(self.skip,-1),
-                                     btn)
+##             btn = wx.Button(mypanel, -1, "<")
+##             hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
+##             self.getForm().ctrl.Bind(wx.EVT_BUTTON,
+##                                      EventCaller(self.skip,-1),
+##                                      btn)
 
-            btn = wx.Button(mypanel, -1, ">")
-            hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
-            self.getForm().ctrl.Bind(wx.EVT_BUTTON,
-                                     EventCaller(self.skip,1),
-                                     btn)
+##             btn = wx.Button(mypanel, -1, ">")
+##             hbox.Add(btn, STRETCH, wx.EXPAND, BORDER )
+##             self.getForm().ctrl.Bind(wx.EVT_BUTTON,
+##                                      EventCaller(self.skip,1),
+##                                      btn)
 ##             self.getForm().wxctrl.Bind(wx.EVT_BUTTON,
 ##                                        lambda e:self.skip(1), btn)
 ##                                        #EventCaller(self.skip,1))
@@ -219,9 +220,9 @@ class DataForm(toolkit.DataForm):
     #def getStatus(self):
     #    return "%d/%d" % (self.currentPos,len(self.rpt))
     
-    def refresh(self):
-        if False:
-            self.statusLabel.SetLabel(self.getStatus())
+##     def refresh(self):
+##         if False:
+##             self.statusLabel.SetLabel(self.getStatus())
         
         
 
@@ -304,6 +305,7 @@ class TextViewer(toolkit.TextViewer):
 class Panel(toolkit.Panel):
 
     def wxsetup(self,form,parent,box):
+        #print self,"wxsetup()"
         mypanel = wx.Panel(parent,-1)
         box.Add(mypanel, self.weight, wx.ALL|wx.EXPAND,NOBORDER)
         if self.direction == forms.VERTICAL:
@@ -382,7 +384,7 @@ class EntryMixin:
             mypanel = panel
             hbox = box
 
-        type = self._type
+        type = self.getType()
         if isinstance(type,datatypes.StringType):
             style=0
             if self.getMaxHeight() > 1:
@@ -399,7 +401,7 @@ class EntryMixin:
             editor=wx.CheckBox(mypanel,-1)
             v=self.getValue()
             if v is None:
-                v=self._type.defaultValue
+                v=self.getType().defaultValue
             editor.SetValue(v)
             
         #print editor.GetMinSize(), editor.GetMaxSize()
@@ -438,14 +440,14 @@ class EntryMixin:
         "return current value as string"
         v = self.getValue()
         if v is None:
-            return self._type.defaultValue
-        if isinstance(self._type,datatypes.StringType):
+            return self.getType().defaultValue
+        if isinstance(self.getType(),datatypes.StringType):
             return self.format(v)
         return v
 
     def setValueFromEditor(self,x):
         "convert the string and store it as raw value"
-        if isinstance(self._type,datatypes.StringType):
+        if isinstance(self.getType(),datatypes.StringType):
             if len(x) == 0:
                 self.setValue(None)
             else:
@@ -463,7 +465,7 @@ class EntryMixin:
         self.editor.SetSelection(-1,-1)
         
     def isDirty(self):
-        if isinstance(self._type,datatypes.StringType):
+        if isinstance(self.getType(),datatypes.StringType):
             return self.editor.IsModified()
         return False
 
@@ -480,7 +482,7 @@ class EntryMixin:
 ##         # killfocus can accur after the windows have been destroyed
 ##         # note: looks as if this is not necessary anymore
         
-##         #if self.owner.dying: return
+##         #if self.form.dying: return
 ##         if self.editor.IsModified():
 ##             s = self.editor.GetValue()
 ##             self.setValueFromEditor(s)
@@ -548,7 +550,7 @@ class Toolkit(toolkit.Toolkit):
     hpanelFactory = HPanel
     vpanelFactory = VPanel
     dataGridFactory = DataGrid
-    navigatorFactory = DataForm
+    #navigatorFactory = DataForm
     #formFactory = Form
     #jobFactory=jobs.Job
     #progresserFactory=Progresser

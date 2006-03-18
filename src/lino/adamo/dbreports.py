@@ -21,76 +21,6 @@ from lino.adamo.datatypes import INT
 from lino.adamo.rowattrs import Field, Pointer, Detail
 
 
-class DatabaseOverview(Report):
-    # originally copied from sprl1.py
-    def __init__(self,dbsess):
-        self.dbsess=dbsess
-        Report.__init__(self)
-        
-    def setupRow(self,row):
-        row.qry=self.dbsess.query(row.item._instanceClass)
-        
-    def getIterator(self):
-        return self.dbsess.db.schema.getTableList()
-        
-    def setupReport(self):
-        self.addVurtColumn(
-            label="TableName",
-            meth=lambda row: row.item.getTableName(),
-            width=20)
-        self.addVurtColumn(
-            label="Count",
-            meth=lambda row: len(row.qry),
-            datatype=INT,
-            width=5, halign=RIGHT
-            )
-        self.addVurtColumn(
-            label="First",
-            meth=lambda row: str(row.qry[0]),
-            when=lambda row: len(row.qry)>0,
-            width=20)
-        self.addVurtColumn(
-            label="Last",
-            meth=lambda row: str(row.qry[-1]),
-            when=lambda row: len(row.qry)>0,
-            width=20)
-
-
-class SchemaOverview(Report):
-    def __init__(self,schema):
-        self.schema=schema
-        Report.__init__(self)
-        
-    def getIterator(self):
-        return self.schema.getTableList()
-        
-    def setupReport(self):
-
-        self.addVurtColumn(
-            label="TableName",
-            meth=lambda row: row.item.getTableName(),
-            width=15)
-        self.addVurtColumn(
-            label="Fields",
-            meth=lambda row:\
-            ", ".join([fld.name for fld in row.item.getFields()
-                       if isinstance(fld,Field) \
-                       and not isinstance(fld,Pointer)]),
-            width=20)
-        self.addVurtColumn(
-            label="Pointers",
-            meth=lambda row:\
-            ", ".join([fld.name for fld in row.item.getFields()
-                       if isinstance(fld,Pointer)]),
-            width=13)
-        self.addVurtColumn(
-            label="Details",
-            meth=lambda row:\
-            ", ".join([fld.name for fld in row.item.getFields()
-                       if isinstance(fld,Detail)]),
-            width=20)
-
-
 
 class DataReportColumn(ReportColumn):
     def __init__(self,datacol,
@@ -133,11 +63,12 @@ class DataReportColumn(ReportColumn):
     def validate(self,value):
         return self.datacol.rowAttr.validate(value)
 
-##     def getType(self):
-##         return self.datacol.rowAttr.getType()
+    def getType(self):
+        #return self.datacol.rowAttr.getType()
+        return self.datacol.rowAttr.type
     
-##     def format(self,v):
-##         return self.datacol.format(v)
+    def format(self,v):
+        return self.datacol.format(v)
     
 
 
@@ -246,6 +177,79 @@ class QueryReport(BaseReport):
             self.formColumnGroups = None
         else:
             self.formColumnGroups = tuple(groups)
+
+
+class DatabaseOverview(Report):
+    # originally copied from sprl1.py
+    def __init__(self,dbsess):
+        self.dbsess=dbsess
+        Report.__init__(self)
+        
+    def setupRow(self,row):
+        row.qry=self.dbsess.query(row.item._instanceClass)
+        
+    def getIterator(self):
+        return self.dbsess.db.schema.getTableList()
+        
+    def setupReport(self):
+        self.addVurtColumn(
+            label="TableName",
+            meth=lambda row: row.item.getTableName(),
+            width=20)
+        self.addVurtColumn(
+            label="Count",
+            meth=lambda row: len(row.qry),
+            datatype=INT,
+            width=5, halign=RIGHT
+            )
+        self.addVurtColumn(
+            label="First",
+            meth=lambda row: str(row.qry[0]),
+            when=lambda row: len(row.qry)>0,
+            width=20)
+        self.addVurtColumn(
+            label="Last",
+            meth=lambda row: str(row.qry[-1]),
+            when=lambda row: len(row.qry)>0,
+            width=20)
+
+
+class SchemaOverview(Report):
+    def __init__(self,schema):
+        self.schema=schema
+        Report.__init__(self)
+        
+    def getIterator(self):
+        return self.schema.getTableList()
+        
+    def setupReport(self):
+
+        self.addVurtColumn(
+            label="TableName",
+            meth=lambda row: row.item.getTableName(),
+            width=15)
+        self.addVurtColumn(
+            label="Fields",
+            meth=lambda row:\
+            ", ".join([fld.name for fld in row.item.getFields()
+                       if isinstance(fld,Field) \
+                       and not isinstance(fld,Pointer)]),
+            width=20)
+        self.addVurtColumn(
+            label="Pointers",
+            meth=lambda row:\
+            ", ".join([fld.name for fld in row.item.getFields()
+                       if isinstance(fld,Pointer)]),
+            width=13)
+        self.addVurtColumn(
+            label="Details",
+            meth=lambda row:\
+            ", ".join([fld.name for fld in row.item.getFields()
+                       if isinstance(fld,Detail)]),
+            width=20)
+
+
+            
             
             
 from lino.adamo.query import Query

@@ -257,6 +257,7 @@ class RowAttribute(Describable):
     
 
     def setCellValue(self,row,value):
+        assert isinstance(row,self._owner._instanceClass)
         # does not setDirty() !
         self.validate(value)
         #self.canSetValue(row,value)
@@ -421,6 +422,7 @@ class BabelField(Field):
 
     
     def setCellValue(self,row,value):
+        assert isinstance(row,self._owner._instanceClass)
         langs = row.getSession().getBabelLangs()
         #values = row.getFieldValue(self.name)
         values = row._values.get(self.name)

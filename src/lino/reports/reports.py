@@ -51,7 +51,8 @@ class BaseReport:
                  title=None
                  ):
 
-        self._mustSetup=True
+        #self._mustSetup=True
+        self._setupDone=None
         self.columns = []
         self.groups = []
         self.totals = []
@@ -180,12 +181,16 @@ class BaseReport:
         pass
     
     def beginReport(self,doc):
-        if self._mustSetup:
+        #if self._mustSetup:
+        if self._setupDone is None:
+            self._setupDone=doc
             self.setupReport()
             if self.width is None:
                 self.width=doc.getLineWidth()
             self.computeWidths(doc)
-            self._mustSetup=False
+            #self._mustSetup=False
+        else:
+            assert self._setupDone is doc
         
     def endReport(self,doc):
         pass

@@ -1,6 +1,6 @@
 #from lino.forms import GuiApplication
-from lino.apps.addrbook.addrbook import Contacts
-from lino.apps.addrbook import demo
+from lino.apps.contacts.contacts_forms import Contacts
+from lino.apps.contacts.contacts_demo import startup
 
 ## class AddressBook(GuiApplication):
 ##     name="Lino AdressBook"
@@ -14,4 +14,4 @@ from lino.apps.addrbook import demo
 ##     def beginSession(self,*args,**kw):
 ##         return demo.startup(*args,**kw)
     
-Contacts(demo.startup()).main()
+Contacts(startup()).main()

@@ -114,8 +114,8 @@ class Application(Session):
     def __init__(self):
         #if session is None:
         #    session=syscon.getSystemConsole()
-        if self.name is None:
-            self.name=self.__class__.__name__
+        #if self.name is None:
+        #    self.name=self.__class__.__name__
         #self.toolkit=None 
         self.toolkit=syscon.getSystemConsole()
         #Session.__init__(self)
@@ -260,7 +260,7 @@ class Application(Session):
             #self.on_main()
             self.setupApplication()
 
-            if self.toolkit.isInteractive():
+            if self.name is not None and self.toolkit.isInteractive():
                 self.notice(self.aboutString())
             
             return self.run()

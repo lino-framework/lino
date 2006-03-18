@@ -26,23 +26,26 @@ from lino.console.console import BaseToolkit # import Application
 #from lino.console.session import Session
 from lino.gendoc.gendoc import GenericDocument
 
-from lino.forms import VERTICAL, HORIZONTAL,\
-     Form, MessageDialog, ConfirmDialog, ReportForm
+from lino.forms.forms import VERTICAL, HORIZONTAL,\
+     Form, MessageDialog, ConfirmDialog, ReportGridForm
 
 from lino.forms.forms import Container
+
+def nop(x):
+    pass
 
 
 
 
 class Component: #(Describable):
-    def __init__(self,owner,
+    def __init__(self,form,
                  unusedName=None,label=None,doc=None,
                  enabled=True,
                  weight=0):
         #Describable.__init__(self,None,name,label,doc)
         self.label=label
         self.doc=doc
-        self.owner = owner
+        self.form = form
         self.weight=weight
         self.enabled=enabled
 
@@ -69,7 +72,7 @@ class Component: #(Describable):
     def setFocus(self):
         pass
     def getForm(self):
-        return self.owner.getForm()
+        return self.form.getForm()
     def refresh(self):
         pass
     def store(self):
@@ -89,12 +92,12 @@ class Component: #(Describable):
         doc.p(self.getLabel())
         
 class Button(Component):
-    def __init__(self,owner,name=None,label=None,
+    def __init__(self,form,name=None,label=None,
                  action=None,hotkey=None,
                  *args,**kw):
         #if hotkey is not None:
         #    label += " [" + hotkey.__name__ + "]"
-        Component.__init__(self,owner,name,label,*args,**kw)
+        Component.__init__(self,form,name,label,*args,**kw)
         self.action = action
         if hotkey is not None:
             self.getForm().addAccelerator(hotkey,self)
@@ -164,11 +167,11 @@ class BaseEntry(Component):
         raise NotImplementedError
         
 class Entry(BaseEntry):
-    def __init__(self,owner, name=None, type=None,
+    def __init__(self,form, name=None, type=None,
                  value=None,
                  *args,**kw):
 
-        Component.__init__(self,owner, name, *args,**kw)
+        Component.__init__(self,form, name, *args,**kw)
         
         if type is None:
             type = STRING
@@ -190,6 +193,7 @@ class Entry(BaseEntry):
             self._type.validate(v)
         self._value = v
         self.refresh()
+        
     def getMinWidth(self):
         return self._type.minWidth
     def getMaxWidth(self):
@@ -203,13 +207,13 @@ class Entry(BaseEntry):
 class DataEntry(BaseEntry):
     
     def __init__(self,frm,col,*args,**kw):
-        Component.__init__(self,frm, col.name,*args,**kw)
-        self.enabled = col.canWrite(frm.data)
+        BaseEntry.__init__(self,frm, col.name,*args,**kw)
+        self.enabled = col.canWrite(frm.getCurrentRow())
         self.col = col
         
     def setValue(self,v):
         frm = self.getForm()
-        self.col.datacol.setCellValue(frm.getLeadRow(),v)
+        self.col.setCellValue(frm.getCurrentRow(),v)
         
     def parse(self,s):
         return self.col.datacol.rowAttr.parse(s)
@@ -217,8 +221,8 @@ class DataEntry(BaseEntry):
     def format(self,v):
         return self.col.format(v)
 
-##     def getType(self):
-##         return self.col.getType()
+    def getType(self):
+        return self.col.getType()
 
     def getMaxWidth(self):
         return self.col.datacol.getMaxWidth()
@@ -231,17 +235,17 @@ class DataEntry(BaseEntry):
     
     def getValue(self):
         frm = self.getForm()
-        return self.col.getCellValue(frm.getLeadRow())
+        return self.col.getCellValue(frm.getCurrentRow())
 
     def refresh(self):
         frm = self.getForm()
-        self.enabled = self.col.canWrite(frm.getLeadRow())
+        self.enabled = self.col.canWrite(frm.getCurrentRow())
         #self.refresh()
         
 
 class Label(Component):
-    def __init__(self,owner,*args,**kw):
-        Component.__init__(self,owner,*args,**kw)
+    def __init__(self,form,*args,**kw):
+        Component.__init__(self,form,*args,**kw)
 
     def render(self,doc):
         doc.renderLabel(self)
@@ -249,8 +253,8 @@ class Label(Component):
 
 
 class MenuItem(Button):
-    def __init__(self,owner,name,accel,*args,**kw):
-        Button.__init__(self,owner,name,*args,**kw)
+    def __init__(self,form,name,accel,*args,**kw):
+        Button.__init__(self,form,name,*args,**kw)
         self.accel = accel
 
 class Menu(Component):
@@ -259,7 +263,7 @@ class Menu(Component):
         self.items = []
 
     def addItem(self,name,accel=None,**kw):
-        i = MenuItem(self.owner,name,accel,**kw)
+        i = MenuItem(self.form,name,accel,**kw)
         self.items.append(i)
         return i
     
@@ -271,7 +275,7 @@ class Menu(Component):
     def addLink(self,htdoc,**kw):
         # used by gendoc.html
         kw.setdefault("label",htdoc.title)
-        kw.setdefault("action",self.owner.urlto(htdoc))
+        kw.setdefault("action",self.form.urlto(htdoc))
         return self.addItem(htdoc.name,**kw)
     
     def findItem(self,name):
@@ -297,7 +301,7 @@ class MenuBar(Component):
         self.menus = []
 
     def addMenu(self,*args,**kw):
-        i = Menu(self.owner,*args,**kw)
+        i = Menu(self.form,*args,**kw)
         self.menus.append(i)
         return i
     
@@ -306,69 +310,62 @@ class MenuBar(Component):
             if mnu.name == name: return mnu
 
 
-class ReportMixin:
-    # mixin for Component
-    def __init__(self,rpt):
-        self.rpt = rpt # a Query or a Report
-        #assert len(ds._lockedRows) == 0
-        self.rpt.beginReport(self)
+## class ReportMixin: #(GenericDocument):
+##     # mixin for Component
+##     def __init__(self,rpt):
+##         raise "no longer used"
+##         self.rpt = rpt # a Query or a Report
+##         #assert len(ds._lockedRows) == 0
+##         self.rpt.beginReport(self)
+##         assert isinstance(self,Component)
         
-    def __repr__(self):
-        s=Component.__repr__(self)
-        s += " of " + self.rpt.__class__.__name__
-        if self.enabled:
-            s += " with %d rows" % len(self.rpt)
-        return s
-                  
     
-    def setupGoMenu(self):
-        pass
+##     def setupMenu(self):
+##         raise "moved to ReportForm"
+##         frm = self.getForm()
+##         m = frm.addMenu("file",label="&File")
+##         m.addItem("exit",label="&Exit",
+##                   action=frm.close,
+##                   accel="ESC")
+##         m.addItem("refresh",
+##                   label="&Refresh",
+##                   action=frm.refresh,
+##                   accel="Alt-F5")
+##         m.addItem("printRow",
+##                   label="Print &Row",
+##                   action=self.printRow,
+##                   accel="F7")
+##         m.addItem("printList",
+##                   label="Print &List",
+##                   action=self.printList,
+##                   accel="Shift-F7")
         
-    def setupMenu(self):
-        frm = self.getForm()
-        m = frm.addMenu("file",label="&File")
-        m.addItem("exit",label="&Exit",
-                  action=frm.close,
-                  accel="ESC")
-        m.addItem("refresh",
-                  label="&Refresh",
-                  action=frm.refresh,
-                  accel="Alt-F5")
-        m.addItem("printRow",
-                  label="Print &Row",
-                  action=self.printRow,
-                  accel="F7")
-        m.addItem("printList",
-                  label="Print &List",
-                  action=self.printList,
-                  accel="Shift-F7")
-        
-        self.setupGoMenu()
+##         self.setupGoMenu()
         
 
-        m = frm.addMenu("edit",label="&Edit")
-        def copy():
-            #from cStringIO import StringIO
-            out = StringIO()
-            self.rpt.__xml__(out.write)
-            frm.showForm(MemoViewer(out.getvalue()))
+##         m = frm.addMenu("edit",label="&Edit")
+##         def copy():
+##             #from cStringIO import StringIO
+##             out = StringIO()
+##             self.rpt.__xml__(out.write)
+##             frm.showForm(MemoViewer(out.getvalue()))
         
-        m.addItem("copy",
-                  label="&Copy",
-                  action=copy)
+##         m.addItem("copy",
+##                   label="&Copy",
+##                   action=copy)
         
-        #m = frm.addMenu("row",label="&Row")
-        if self.rpt.canWrite():
-            m.addItem("delete",
-                      label="&Delete selected row(s)",
-                      action=self.deleteSelectedRows,
-                      accel="DEL")
-            m.addItem("insert",
-                      label="&Insert new row",
-                      action=self.insertRow,
-                      accel="INS")
+##         #m = frm.addMenu("row",label="&Row")
+##         if self.rpt.canWrite():
+##             m.addItem("delete",
+##                       label="&Delete selected row(s)",
+##                       action=self.deleteSelectedRows,
+##                       accel="DEL")
+##             m.addItem("insert",
+##                       label="&Insert new row",
+##                       action=self.insertRow,
+##                       accel="INS")
             
-        self.rpt.setupMenu(self)
+##         self.rpt.setupMenu(self)
 
 ##         def f():
 ##             l = self.getSelectedRows()
@@ -381,82 +378,36 @@ class ReportMixin:
             
 ##         frm.addIdleEvent(f)
 
-    def insertRow(self):
-        assert self.rpt.canWrite()
-        row = self.rpt.appendRow()
-        self.refresh()
-    
-    def deleteSelectedRows(self):
-        assert self.rpt.canWrite()
-        if not self.getForm().confirm(
-            "Delete %d rows. Are you sure?" % \
-            len(self.getSelectedRows())):
-            return
-        for i in self.getSelectedRows():
-            row = self.rpt[i].delete()
-        self.refresh()
+##     def getCurrentRow(self):
+##         l = self.getSelectedRows()
+##         if len(l) != 1:
+##             raise InvalidRequestError("more than one row selected!")
+##         i = l[0]
+##         if i == len(self.rpt):
+##             raise InvalidRequestError(\
+##                 "you cannot select the after-last row!")
+##         return self.rpt[i]
 
-    def printRow(self):
-        #print "printSelectedRows()", self.getSelectedRows()
-        #workdir = "c:\\temp"
-        #ui = self.getForm()
-        #workdir = self.getForm().toolkit.app.tempDir
-        from lino.oogen import SpreadsheetDocument
-        doc = SpreadsheetDocument("printRow")
-        for i in self.getSelectedRows():
-            row = self.rpt[i]
-            row.printRow(doc)
-        #outFile = opj(workdir,"raceman_report.sxc")
-        doc.save(self.getForm(),showOutput=True)
-
-    def printList(self):
-        #ui = self.getForm()
-        #workdir = self.getForm().toolkit.app.tempDir
-        raise "must rewrite"
-        from lino.oogen import SpreadsheetDocument
-        doc = SpreadsheetDocument("printList")
-        rows = self.getSelectedRows()
-        if len(rows) == 1:
-            rows = self.rpt
-        rpt = doc.report()
-        self.rpt.setupReport(rpt)
-        rpt.execute(rows)
-        #outFile = opj(workdir,self.ds.getName()+".sxc")
-        doc.save(self.getForm(),showOutput=True)
-
-    def getSelectedRows(self):
-        raise NotImplementedError
-
-    def getCurrentRow(self):
-        l = self.getSelectedRows()
-        if len(l) != 1:
-            raise InvalidRequestError("more than one row selected!")
-        i = l[0]
-        if i == len(self.rpt):
-            raise InvalidRequestError(\
-                "you cannot select the after-last row!")
-        return self.rpt[i]
-
-    def withCurrentRow(self,meth,*args,**kw):
-        r = self.getCurrentRow()
-        meth(r,*args,**kw)
+##     def withCurrentRow(self,meth,*args,**kw):
+##         r = self.getCurrentRow()
+##         meth(r,*args,**kw)
         
-    def onClose(self):
-        self.rpt.onClose()
 
-    def getLineWidth(self):
-        return 80
-    def getColumnSepWidth(self):
-        return 0
-                
-
-class DataGrid(ReportMixin,Component,GenericDocument):
-    def __init__(self,owner,ds,*args,**kw):
-        Component.__init__(self,owner,*args,**kw)
-        ReportMixin.__init__(self,ds)
+class DataGrid(Component):
+    def __init__(self,form,rpt,*args,**kw):
+        Component.__init__(self,form,*args,**kw)
+        #ReportMixin.__init__(self,rpt)
+        self.rpt = rpt # a Query or a Report
         self.choosing = False
         self.chosenRow = None
 
+    def __repr__(self):
+        s=Component.__repr__(self)
+        s += " of " + self.getForm().rpt.__class__.__name__
+        if self.enabled:
+            s += " with %d rows" % len(self.getForm().rpt)
+        return s
+                  
     def setModeChoosing(self):
         self.choosing = True
 
@@ -469,59 +420,24 @@ class DataGrid(ReportMixin,Component,GenericDocument):
     def render(self,doc):
         doc.renderDataGrid(self)
             
-    # implements GenericDocument
-    def getLineWidth(self):
-        return 100
-
 
     def render(self,doc):
         if self.enabled:
             doc.report(self.rpt)
 
-
-
-def nop(x):
-    pass
-
-class DataForm(ReportMixin,Component):
-    
-    def __init__(self,owner,rpt,afterSkip=nop,*args,**kw):
-        Component.__init__(self,owner,*args,**kw)
-        ReportMixin.__init__(self,rpt)
-        self.afterSkip = afterSkip
-        self.currentPos = 0
-
-    def skip(self,n):
-        #print __name__, n
-        if n > 0:
-            if self.currentPos + n < len(self.rpt):
-                self.currentPos += n
-                self.afterSkip(self)
-                self.getForm().refresh()
-        else:
-            if self.currentPos + n >= 0:
-                self.currentPos += n
-                self.afterSkip(self)
-                self.getForm().refresh()
-
-
     def getSelectedRows(self):
-        return [self.currentPos]
-        
+        raise NotImplementedError
 
-    def setupGoMenu(self):
-        frm = self.getForm()
-        m = frm.addMenu("go",label="&Go")
-        m.addItem("next",
-                  label="&Next",
-                  accel="PgDn").setHandler(self.skip,1)
-        m.addItem("previous",
-                  label="&Previous",
-                  accel="PgUp").setHandler(self.skip,-1)
 
-    def getStatus(self):
-        return "%d/%d" % (self.currentPos,len(self.rpt))
+
+## class DataForm(ReportMixin,Component):
     
+##     def __init__(self,form,rpt,afterSkip=nop,*args,**kw):
+##         Component.__init__(self,form,*args,**kw)
+##         ReportMixin.__init__(self,rpt)
+##         self.afterSkip = afterSkip
+##         self.currentPos = 0
+
         
 
 class Panel(Container,Component):
@@ -530,7 +446,7 @@ class Panel(Container,Component):
         Component.__init__(self,*args,**kw)
         self._components = []
 
-##     def __init__(self,owner,direction,name=None,*args,**kw):
+##     def __init__(self,form,direction,name=None,*args,**kw):
 ##         assert direction in (VERTICAL,HORIZONTAL)
 ##         if name is None:
 ##             if direction is VERTICAL:
@@ -538,7 +454,7 @@ class Panel(Container,Component):
 ##             else:
 ##                 name = "HPanel"
 ##         #Container.__init__(self,name,*args,**kw)
-##         Component.__init__(self,owner,*args,**kw)
+##         Component.__init__(self,form,*args,**kw)
 ##         self.direction = direction
 ##         self._components = []
 
@@ -632,7 +548,7 @@ class Toolkit(BaseToolkit):
     hpanelFactory = HPanel
     viewerFactory = TextViewer
     dataGridFactory = DataGrid
-    navigatorFactory = DataForm
+    #navigatorFactory = DataForm
     #formFactory = Form
     menuBarFactory = MenuBar
     
@@ -756,7 +672,7 @@ class Toolkit(BaseToolkit):
         
 
     def show_report(self,sess,rpt,**kw):
-        return sess.showForm(ReportForm(rpt))
+        return sess.showForm(ReportGridForm(rpt))
         #frm = sess.form(label=rpt.getTitle(),**kw)
         #frm.addDataGrid(rpt)
         #frm.show()
