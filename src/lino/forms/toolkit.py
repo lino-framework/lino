@@ -60,13 +60,22 @@ class Component: #(Describable):
     def hasLabel(self):
         return self.label is not None
 
+    def interesting(self,**kw):
+        l=[]
+        if self.label is not None:
+            l.append(('label',self.getLabel().strip()))
+        if not self.enabled:
+            l.append( ('enabled',self.enabled))
+        return l
+
     def __repr__(self):
         s=self.__class__.__name__+"("
-        if self.label is not None:
-            s += 'label=%r' % self.getLabel().strip()
-        if not self.enabled:
-            s += 'enabled=%r' % self.enabled
+        
+        s += ', '.join([
+            k+"="+repr(v) for k,v in self.interesting()])
+            
         return s+")"
+    
         #return self.getName()
         
     def setFocus(self):
@@ -214,6 +223,11 @@ class DataEntry(BaseEntry):
         BaseEntry.__init__(self,frm, col.name,*args,**kw)
         self.col = col
         
+    def interesting(self,**kw):
+        l=Component.interesting(self)
+        l.insert(0,('name',self.col.name))
+        return l
+    
     def setValue(self,v):
         frm = self.getForm()
         self.col.setCellValue(frm.getCurrentRow(),v)

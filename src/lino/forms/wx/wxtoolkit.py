@@ -395,8 +395,8 @@ class EntryMixin:
             style=0
             if self.getMaxHeight() > 1:
                 style = style|wx.TE_MULTILINE
-            if isinstance(type,datatypes.IntType):
-                print __builtins__['type'](self.getValueForEditor())
+            #if isinstance(type,datatypes.IntType):
+            #    print __builtins__['type'](self.getValueForEditor())
             editor = wx.TextCtrl(mypanel,-1,
                                  self.getValueForEditor(),
                                  style=style)
@@ -423,12 +423,13 @@ class EntryMixin:
         #editor.Bind(wx.EVT_WINDOW_DESTROY, self.OnWindowDestroy)
 
         self.editor = editor 
-        if self.hasLabel():
+        if not self.hasLabel():
             if hbox.GetOrientation() == wx.HORIZONTAL:
                 hbox.Add(editor,STRETCH,
                          wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
                          BORDER)
             else:
+                #print "dont stretch:",self
                 hbox.Add(editor,DONTSTRETCH,
                          wx.ALIGN_LEFT,
                          BORDER)

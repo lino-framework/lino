@@ -9,8 +9,8 @@ dbc=startup()
 class MyPartnersReport(PartnersReport):
     columnSpec="""
     firstName name
-    email phone gsm fax
-    website
+    phone gsm fax
+    email website
     street house box
     nation city zip
     id type lang

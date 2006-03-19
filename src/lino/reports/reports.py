@@ -291,7 +291,7 @@ class BaseReport:
                 for col in grp:
                     p.addDataEntry(col,
                                    label=col.getLabel(),
-                                   weight=1/len(grp))
+                                   weight=100/len(grp))
                     w+= col.datacol.getMaxHeight() - 1
                 p.weight=w
         
