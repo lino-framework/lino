@@ -113,7 +113,7 @@ test:               |eupen.pdf         |232672  |X    |799 Occurences
         s=self.getConsoleOutput()
         # print s
         self.assertEquivalent(s,"""\
-SearchForm(title="Files where 'occurences' not empty"):
+SearchForm(title='Search'):
 VPanel:
   - Entry(label='&Words to look for')
   - Entry(label='&any word (OR)')
@@ -127,7 +127,7 @@ VPanel:
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,u"""\
-SearchForm(title="Files where 'occurences' not empty"):
+SearchForm(title='Search'):
 VPanel:
   - Entry(label='&Words to look for')
   - Entry(label='&any word (OR)')

@@ -237,7 +237,8 @@ class Form(MenuContainer,Container):
 
 
     def setup(self,sess):
-        assert self.session is None
+        if self.session is not None:
+            assert self.session is sess
         #assert not isinstance(sess,Toolkit)
         self.session=sess
         self.toolkit=sess.toolkit
@@ -347,6 +348,7 @@ class Form(MenuContainer,Container):
         self.onClose()
         self.toolkit.closeForm(self,evt)
         self.ctrl=None
+        #self.session=None
     
     # just forward to self.session:
     def showForm(self,frm):
@@ -457,6 +459,7 @@ class ReportForm(Form,GenericDocument):
         pass
 
     def getTitle(self):
+        if self.title is not None: return self.title
         return self.rpt.getTitle()
 
 

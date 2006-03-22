@@ -195,6 +195,9 @@ class Entry(BaseEntry):
     def format(self,v):
         return self._type.format(self._value)
     
+    def getType(self):
+        return self._type
+    
     def parse(self,s):
         return self._type.parse(s)
 
