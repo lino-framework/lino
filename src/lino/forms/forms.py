@@ -456,6 +456,9 @@ class ReportForm(Form,GenericDocument):
     def setupGoMenu(self):
         pass
 
+    def getTitle(self):
+        return self.rpt.getTitle()
+
 
     def insertRow(self):
         assert self.rpt.canWrite()
@@ -522,9 +525,6 @@ class ReportGridForm(ReportForm):
 
     def setupForm(self):
         self.grid=self.addDataGrid(self.rpt)
-
-    def getTitle(self):
-        return self.rpt.getTitle()
 
     def onIdle(self):
         if self.grid is None: return

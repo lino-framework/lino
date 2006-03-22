@@ -67,8 +67,9 @@ class DataReportColumn(ReportColumn):
         #return self.datacol.rowAttr.getType()
         return self.datacol.rowAttr.type
     
-    def format(self,v):
-        return self.datacol.format(v)
+    #def format(self,v):
+    #    return self.formatter(v)
+        #return self.datacol.format(v)
     
 
 

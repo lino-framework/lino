@@ -203,8 +203,8 @@ class TestCase(unittest.TestCase):
         difference)
 
         """
-        l1 = observed.strip().split()
-        l2 = expected.strip().split()
+        l1 = observed.split()
+        l2 = expected.split()
 
         if l1 == l2: return
 

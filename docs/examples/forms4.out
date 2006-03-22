@@ -1,0 +1,26 @@
+ReportRowForm(title='Luc Saffre'):
+VPanel:
+  - HPanel:
+  - HPanel:
+    - DataEntry(name='firstName', label='firstName', enabled=False)
+    - DataEntry(name='name', label='name', enabled=False)
+  - HPanel:
+    - DataEntry(name='phone', label='phone number', enabled=False)
+    - DataEntry(name='gsm', label='mobile phone number', enabled=False)
+    - DataEntry(name='fax', label='fax number', enabled=False)
+  - HPanel:
+    - DataEntry(name='email', label='Primary e-mail address', enabled=False)
+    - DataEntry(name='website', label='web site', enabled=False)
+  - HPanel:
+    - DataEntry(name='street', label='street', enabled=False)
+    - DataEntry(name='house', label='house', enabled=False)
+    - DataEntry(name='box', label='box', enabled=False)
+  - HPanel:
+    - DataEntry(name='nation', label='nation', enabled=False)
+    - DataEntry(name='city', label='city', enabled=False)
+    - DataEntry(name='zip', label='zip', enabled=False)
+  - HPanel:
+    - DataEntry(name='id', label='id', enabled=False)
+    - DataEntry(name='type', label='type', enabled=False)
+    - DataEntry(name='lang', label='lang', enabled=False)
+  - HPanel:
