@@ -25,6 +25,8 @@ The auto-generated file lino.bat uses this wrapper
 
 
   python -c "from lino import runscript" %*
+
+  (or)
   
   python -c "from lino import runscript" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
@@ -34,8 +36,8 @@ The auto-generated file lino.bat uses this wrapper
 
 import sys
 
-from lino import scripts
-from lino.console import syscon
+#from lino import scripts
+#from lino.console import syscon
 from lino.misc.my_import import my_import
 
 
@@ -64,14 +66,18 @@ if len(sys.argv) <= 1:
     usage()
     sys.exit(-1)
 
-if not sys.argv[1] in scripts.__all__:
-    #usage()
-    print "error: unknown command '%s'" % sys.argv[1]
-    sys.exit(-1)
+## if not sys.argv[1] in scripts.__all__:
+##     #usage()
+##     print "error: unknown command '%s'" % sys.argv[1]
+##     sys.exit(-1)
 
 scriptName=sys.argv[1]
 del sys.argv[1]
-my_import("lino.scripts." + scriptName)
+try:
+    my_import("lino.scripts." + scriptName)
+except ImportError,e:
+    print "error: unknown lino script '%s'" % scriptName
+    sys.exit(-1)
 
 #mod = my_import("lino.scripts." + sys.argv[1])
 #sys.exit(mod.consoleApplicationClass().main(sys.argv[2:]))

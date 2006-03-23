@@ -64,6 +64,12 @@ class DataRow:
         col.setCellValue(self,value)
         #self.__dict__['_dirty'] = True
 
+    def initTable(self,table):
+        raise NotImplementedError
+    
+    def setupMenu(self,frm):
+        pass
+    
     def getFieldValue(self,name):
         # overridden by StoredDataRow
         try:

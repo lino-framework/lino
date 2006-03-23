@@ -114,9 +114,9 @@ class QueryReport(BaseReport):
         if self.title is not None: return self.title
         return self.query.buildTitle()
     
-    def setupMenu(self,navigator):
+    def setupMenu(self,frm):
         "may override"
-        self.query.setupMenu(navigator)
+        self.query.setupMenu(frm)
 
     def setupReport(self):
         "may override"

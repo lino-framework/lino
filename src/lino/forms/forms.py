@@ -542,7 +542,11 @@ class ReportGridForm(ReportForm):
     def getCurrentRow(self):
         if self.grid is None:
             return None
-        return self.grid.getCurrentRow()
+        l = self.grid.getSelectedRows()
+        if len(l) == 1:
+            return self.rpt[l[0]]
+        raise "There is more than one row selected"
+        #return self.grid.getCurrentRow()
 
 
 class ReportRowForm(ReportForm):
@@ -551,20 +555,20 @@ class ReportRowForm(ReportForm):
         if recno < 0:
             recno+=len(self.rpt)
         self.recno=recno
-        self.beforeRow()
+        self.beforeRowEdit()
 
-    def beforeRow(self):
+    def beforeRowEdit(self):
         self.currentRow=self.rpt[self.recno]
         if self.enabled:
             self.currentRow.item.lock()
             
-    def afterRow(self):
+    def afterRowEdit(self):
         if self.enabled:
             self.store()
             self.currentRow.item.unlock()
             
     def onClose(self):
-        self.afterRow()
+        self.afterRowEdit()
         ReportForm.onClose(self)
         
     def setupForm(self):
@@ -577,12 +581,12 @@ class ReportRowForm(ReportForm):
         #return self.rpt[self.recno]
 
     def toggleEditing(self):
-        self.afterRow()
+        self.afterRowEdit()
         #if self.enabled:
         #    self.store()
             #self.currentRow.item.unlock()
         self.enabled=not self.enabled
-        self.beforeRow()
+        self.beforeRowEdit()
         self.refresh()
             
     
@@ -634,7 +638,7 @@ class ReportRowForm(ReportForm):
 
             
     def skip(self,n):
-        self.afterRow()
+        self.afterRowEdit()
         if n > 0:
             if self.recno + n < len(self.rpt):
                 self.recno += n
@@ -645,7 +649,7 @@ class ReportRowForm(ReportForm):
                 self.recno += n
             else:
                 return
-        self.beforeRow()
+        self.beforeRowEdit()
         self.refresh()
 
 

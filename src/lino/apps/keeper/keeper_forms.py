@@ -79,24 +79,26 @@ class SearchForm(ReportForm):
 class KeeperMainForm(DbMainForm):
     """
 
-This is the Keeper main menu.
+Keeper keeps an eye on your files. He knows your files and helps you
+to find them back even if they are archived on external media.
+(But please note that Keeper is not yet in a usable state.)
 
 
     """
     def setupMenu(self):
 
-        m = self.addMenu("search","&Suchen")
-        m.addItem("search",label="&Suchen").setHandler(
+        m = self.addMenu("search","&Search")
+        m.addItem("search",label="&Search").setHandler(
             self.showForm,
             SearchForm(tables.FoundFilesReport(self.dbsess)))
 
         
     
-        m = self.addMenu("db","&Datenbank")
+        m = self.addMenu("db","&Database")
 
         self.addReportItem(
             m,"volumes",tables.VolumesReport,
-            label="&Authors")
+            label="&Volumes")
         self.addReportItem(
             m,"files",tables.FilesReport,
             label="&Files")

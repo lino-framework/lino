@@ -24,3 +24,5 @@ VPanel:
     - DataEntry(name='type', label='type', enabled=False)
     - DataEntry(name='lang', label='lang', enabled=False)
   - HPanel:
+    - DataEntry(name='memo', label='memo', enabled=False)
+  - HPanel:

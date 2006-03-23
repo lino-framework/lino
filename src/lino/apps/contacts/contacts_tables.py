@@ -137,6 +137,7 @@ class Partner(Contact,Address):
         #self.addPointer('person',Person)
         table.addPointer('lang',Language)
         #table.addView("std","name firstName email phone gsm")
+        table.addField('memo',MEMO)
         
     def validate(self):
         if self.name is None:

@@ -63,6 +63,7 @@ class Center:
                 
         conn = Connection(*args,**kw)
         self._connections.append(conn)
+        #print conn
         return conn
 
     def database(self,schema,name=None,**kw):

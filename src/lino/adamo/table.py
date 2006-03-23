@@ -183,9 +183,10 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._pointers.append(ptr)
 
 
-    def setupMenu(self,nav):
-        "override this to insert specific actions to a form's menu"
-        pass
+    def setupMenu(self,frm):
+        return self.dummy.setupMenu(frm)
+        #"override this to insert specific actions to a form's menu"
+        #pass
     
     def fillReportForm(self,rpt,frm):
         for col in rpt.getVisibleColumns():
@@ -193,8 +194,8 @@ class Table(FieldContainer,SchemaComponent,Describable):
         
     def init1(self):
         #print "%s : init1()" % self._tableName
-        dummy = self._instanceClass(None,{},False)
-        dummy.initTable(self)
+        self.dummy = self._instanceClass(None,{},False)
+        self.dummy.initTable(self)
         
         #for (name,attr) in self.__dict__.items():
         #    if isinstance(attr,RowAttribute):

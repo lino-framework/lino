@@ -43,9 +43,9 @@ class VolumeVisitor(Progresser):
     def run(self):
         #self.task=task
         if len(self.volume.directories()) > 0:
-            self.freshen(self.volume.path)
+            self.freshen(unicode(self.volume.path))
         else:
-            self.load(self.volume.path)
+            self.load(unicode(self.volume.path))
 
 ##     def getLabel(self):
 ##         return "Loading "+str(self.volume)
@@ -67,7 +67,8 @@ class VolumeVisitor(Progresser):
                 row = self.files.appendRow(name=shortname,dir=dir)
             row.readTimeStamp(self,fullname)
         elif os.path.isdir(fullname):
-            row = self.dirs.findone(parent=dir,name=shortname)
+            row = self.dirs.findone(volume=self.volume,
+                                    parent=dir,name=shortname)
             if row is None:
                 row = self.dirs.appendRow(name=shortname,
                                           parent=dir,
@@ -77,42 +78,25 @@ class VolumeVisitor(Progresser):
             for fn in os.listdir(fullname):
                 self.freshen(os.path.join(fullname,fn), fn, row)
         else:
-            self.session.error("%s : no such file or directory",fullname)
+            self.session.error("%s : no such file or directory",
+                               fullname)
 
     def load(self,fullname,shortname=None,dir=None):
         self.status(fullname)
         if self.volume.ignoreByName(shortname): return
         if os.path.isfile(fullname):
-            #if self.reloading:
-            #    row = self.files.peek(dir,shortname)
-            #else:
-            #    row=None
-            #if row is None:
             row = self.files.appendRow(name=shortname,dir=dir)
-            #self.visit_file(row,fullname)
             row.readTimeStamp(self,fullname)
         elif os.path.isdir(fullname):
-            #print "findone(",dict(parent=dir,name=shortname),")"
-            #if self.reloading:
-            #    row = self.dirs.findone(parent=dir,name=shortname)
-            #else:
-            #    row=None
-            #if row is None:
             row = self.dirs.appendRow(name=shortname,
                                       parent=dir,
                                       volume=self.volume)
             assert row.parent == dir
-            #self.visit_dir(row,fullname)
             for fn in os.listdir(fullname):
                 self.load(os.path.join(fullname,fn), fn, row)
         else:
             self.session.error("%s : no such file or directory",fullname)
 
-##     def visit_dir(self,dirRow,fullname):
-##         #self.status("visit_dir " + fullname)
-##         for fn in os.listdir(fullname):
-##             self.visit(os.path.join(fullname,fn), fn, dirRow)
-        
 
 class FileVisitor: # (Task):
     # used?

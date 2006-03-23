@@ -91,7 +91,7 @@ class BaseReport:
         # if self.title is not None: return self.title
         # return str(self)
     
-    def setupMenu(self,navigator):
+    def setupMenu(self,frm):
         pass
     
     def getIterator(self):

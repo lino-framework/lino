@@ -62,7 +62,8 @@ Partners       |name, firstName,    |nation, city,|
                |email, phone, gsm,  |type, lang   |                    
                |fax, website, zip,  |             |                    
                |street, house, box, |             |                    
-               |id, title, logo     |             |                    
+               |id, title, logo,    |             |
+               |memo                |             |
 PartnerTypes   |id, name            |             |                    
         """)
         
@@ -173,7 +174,8 @@ Partners       |name, firstName,    |nation, city,|
                |email, phone, gsm,  |type, lang,  |
                |fax, website, zip,  |currency     |
                |street, house, box, |             |
-               |id, title, logo     |             |
+               |id, title, logo,    |             |
+               |memo                |             |
 PartnerTypes   |id, name            |             |        
         """)
         DatabaseOverview(app.dbsess).show()

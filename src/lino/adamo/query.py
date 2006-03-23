@@ -896,8 +896,8 @@ class LeadTableColumnList(BaseColumnList):
     def getView(self,name):
         return self._store._table.getView(name)
 
-    def setupMenu(self,navigator):
-        self._store._table.setupMenu(navigator)
+    def setupMenu(self,frm):
+        self._store._table.setupMenu(frm)
 
     def mtime(self):
         return self._store.mtime()
@@ -973,6 +973,9 @@ class PeekQuery(LeadTableColumnList):
 
     def getSession(self):
         return self._store._db.getSession()
+
+    def child(self,*args,**kw):
+        raise InvalidRequestError("Cannot child() a PeekQuery!")
         
 
 
@@ -989,7 +992,7 @@ class SimpleQuery(LeadTableColumnList):
 ##                    FieldColumn
 ##                    )
 
-    def __init__(self, _parent, store, sess,
+    def __init__(self, _parent, _store, _sess,
                  columnNames=None,
                  orderBy=None,
                  sortColumns=None,
@@ -1000,17 +1003,17 @@ class SimpleQuery(LeadTableColumnList):
                  masterColumns=None,
                  masters=[],
                  **kw):
-        self.session = sess # a DbContext, not a session
-        LeadTableColumnList.__init__(self,_parent,store,columnNames)
+        self.session = _sess # a DbContext, not a session
+        LeadTableColumnList.__init__(self,_parent,_store,columnNames)
         
         for m in ('setBabelLangs','getLangs'):
-            setattr(self,m,getattr(sess,m))
+            setattr(self,m,getattr(_sess,m))
         
         #self.app = store._db.schema # shortcut
-        self._connection = store._connection # shortcut
+        self._connection = _store._connection # shortcut
 
         for m in ('startDump','stopDump'):
-            setattr(self,m,getattr(store,m))
+            setattr(self,m,getattr(_store,m))
         self.rowcount = None
         
 ##         if label is not None:
@@ -1124,12 +1127,13 @@ class SimpleQuery(LeadTableColumnList):
 
 
     def __repr__(self):
-        return self.__class__.__name__+\
-               "(%s,'%s',masterColumns='%s')" % (\
+        s=self.__class__.__name__+\
+               "(%s,columnNames='%s'" % (\
                self.getLeadTable().getTableName(),\
-               " ".join([col.name for col in self._columns]),
-               " ".join([col.name for col in self._masterColumns]),
-               )
+               " ".join([col.name for col in self._columns]))
+        if len(self._masters) > 0:
+            s += ", masters="+repr(self._masters)
+        return s+')'
 
     def getContext(self):
         return self.session
@@ -1418,27 +1422,32 @@ class SimpleQuery(LeadTableColumnList):
             col = self.visibleColumns[i]
             flt.append(col.getTestEqual(self,arg))
             i+=1
-        for k,v in knownValues.items():
-            col = self.getColumnByName(k)
-            flt.append(col.getTestEqual(self,v))
+##         for k,v in knownValues.items():
+##             col = self.getColumnByName(k)
+##             flt.append(col.getTestEqual(self,v))
+##         if len(flt):
+##             return self.child(sqlFilters=(' AND '.join(flt),))
+        
         if len(flt):
-            return self.child(sqlFilters=(' AND '.join(flt),))
+            return self.child(
+                sqlFilters=' AND '.join(flt),**knownValues)
+        if len(knownValues): return self.child(**knownValues)
         return self
         
     def findone(self,*args,**knownValues):
-        ds = self.filter(*args,**knownValues)
-        #print [a.name for a in ds.query._atoms]
-        #q = self._table.query(filters=' AND'.join(flt))
-        #csr = self._connection.executeSelect(q)
-        csr = ds.executeSelect()
+        
+        qry = self.filter(*args,**knownValues)
+        csr = qry.executeSelect()
         
         sqlatoms = csr.fetchone()
         if sqlatoms is None:
             csr.close()
             return None
 
-        assert csr.fetchone() is None, \
-               "Query.findone() found more than one row"
+        if csr.fetchone() is not None:
+            print knownValues
+            raise InvalidRequestError(
+                "findone() found more than one row in %s" % qry)
         
         csr.close()
         atomicRow = self.csr2atoms(sqlatoms)
@@ -1491,16 +1500,15 @@ class SimpleQuery(LeadTableColumnList):
 
 class Query(SimpleQuery):
 
-    def __init__(self, _parent, store, sess,
+    def __init__(self, _parent, _store, _sess,
                  columnNames=None,
                  pageNum=None,
                  pageLen=None,
                  **kw):
         
         
-        #SimpleQuery.__init__(self, _parent,store,sess,**kw)
         SimpleQuery.__init__(
-            self, _parent,store,sess,columnNames,**kw)
+            self, _parent,_store,_sess,columnNames,**kw)
         if _parent is not None:
             if pageNum is None: pageNum=_parent.pageNum
             if pageLen is None: pageLen=_parent.pageLen

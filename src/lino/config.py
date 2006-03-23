@@ -17,7 +17,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-from ConfigParser import ConfigParser, DEFAULTSECT
+import tempfile
+from ConfigParser import SafeConfigParser, DEFAULTSECT
 
 
 lino_home = os.path.abspath(
@@ -27,15 +28,23 @@ rtlib_path = os.path.join(lino_home, "rtlib")
 
 defaults={
     'lino_home' : lino_home,
+    'tempdir' : tempfile.gettempdir(),
     'rtlib_path' : rtlib_path,
     }
-config = ConfigParser(defaults)
+config = SafeConfigParser(defaults)
 #config.add_section('forms')
 #config.set('forms','wishlist','wx tix cherrypy console')
 
 #config.readfp(open('defaults.cfg'))
 config.read( [
     os.path.join(lino_home,'lino.cfg'),
-    os.path.expanduser('~/.lino.cfg')])
+    os.path.expanduser('~/lino.cfg')
+    ])
 
 get=config.get
+
+def tempdirfilename(name):
+    fn=os.path.join(config.get(DEFAULTSECT,'tempdir'),name)
+    #print "tempdirfilename", fn
+    return fn
+

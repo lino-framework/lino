@@ -44,12 +44,12 @@ class Volume(StoredDataRow):
         table.addDetail('directories',Directory,'volume',parent=None)
         
 
-    def setupMenu(self,nav):
-        frm = nav.getForm()
-        m = frm.addMenu("&Volume")
+    def setupMenu(self,frm):
+        #frm = nav.getForm()
+        m = frm.addMenu("volume",label="&Volume")
         def f():
-            vol = nav.getCurrentRow()
-            vol.item.load(frm.session)
+            vol = frm.getCurrentRow()
+            vol.item.load()
             
         m.addItem("load",
                   label="&Load",
@@ -84,13 +84,10 @@ class Directory(StoredDataRow):
         #table.addField('mtime',TIMESTAMP)
         table.addField('meta',MEMO(width=50,height=5))
         table.addPointer('parent',Directory)
-        #.setDetail("subdirs")#,viewName="std")
         table.addPointer('volume',Volume)
-        #.setDetail("directories",parent=None)#,viewName="std")
-        #table.addView("std","parent name subdirs files meta volume")
-        #self.setPrimaryKey("volume parent name")
         table.addDetail('files',File,'dir')
         table.addDetail('subdirs',Directory,'parent')
+        #self.setPrimaryKey("volume parent name")
 
     def __str__(self):
         s=str(self.volume) +":"
