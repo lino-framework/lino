@@ -181,7 +181,7 @@ class File(StoredDataRow):
         tokens = standardTokenizer(self.content)
         occs=self.occurences()
         occs.deleteAll()
-        words=self.getSession().query(Word)
+        words=self.getContext().query(Word)
         pos = 0
         for token in tokens:
             pos += 1

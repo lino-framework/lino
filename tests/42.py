@@ -36,11 +36,11 @@ class Case(TestCase):
         app=Keeper()
         app.run()
         s=self.getConsoleOutput()
-        # print s
-        self.assertEquivalent(s,"""\
+        #print s
+        self.assertEquivalent(s,r"""
 KeeperMainForm(title='Database(KeeperSchema)'):
 VPanel:
-  - Label(label='This is the Keeper main menu.')
+  - Label(label='Keeper keeps an eye on your files. He knows your files and helps you\nto find them back even if they are archived on external media.\n(But please note that Keeper is not yet in a usable state.)')
         """)
         
         #schema=KeeperSchema()

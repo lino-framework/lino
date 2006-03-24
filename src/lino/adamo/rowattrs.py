@@ -293,14 +293,14 @@ class RowAttribute(Describable):
     def atoms2row(self,atomicRow,colAtoms,row):
         atomicValues = [atomicRow[atom.index] for atom in colAtoms]
         row._values[self.name] = self.atoms2value(atomicValues,
-                                                  row.getSession())
+                                                  row.getContext())
         #row.setDirtyRowAttr(self)
 
     #
     # change atoms2value(self,atomicRow,colAtoms,context)
     # to atoms2value(self,atomicValues,context)
     #
-    def atoms2value(self,atomicValues,session):
+    def atoms2value(self,atomicValues,dbc):
         raise NotImplementedError
 
         
@@ -387,7 +387,7 @@ class Field(RowAttribute):
 ##         return ds._connection.testEqual(a.name,a.type,value)
 
         
-    def atoms2value(self,atomicValues,session):
+    def atoms2value(self,atomicValues,dbc):
         assert len(atomicValues) == 1
         return atomicValues[0]
         
@@ -423,7 +423,7 @@ class BabelField(Field):
     
     def setCellValue(self,row,value):
         assert isinstance(row,self._owner._instanceClass)
-        langs = row.getSession().getBabelLangs()
+        langs = row.getContext().getBabelLangs()
         #values = row.getFieldValue(self.name)
         values = row._values.get(self.name)
         if values is None:
@@ -718,7 +718,7 @@ class Pointer(Field):
 ##                     i += len(toTable.getPrimaryAtoms())
 
 
-    def atoms2value(self,atomicValues,sess):
+    def atoms2value(self,atomicValues,dbc):
         #ctx = row._ds._context
         if self._deleted:
             return None
@@ -729,12 +729,12 @@ class Pointer(Field):
             atomicValues = self._reduceAtoms(toTable.getTableId(),
                                                         atomicValues)
             #toArea = getattr(sess.tables,toTable.getTableName())
-            toArea = sess.query(toTable._instanceClass)
+            toArea = dbc.query(toTable._instanceClass)
         else:
             #toTable = self._toTables[0]
             #areaName = toTable.getTableName()
             #toArea = getattr(sess.tables,areaName)
-            toArea = sess.query(self._toTables[0]._instanceClass)
+            toArea = dbc.query(self._toTables[0]._instanceClass)
         
         if None in atomicValues:
             return None
@@ -790,7 +790,7 @@ class Pointer(Field):
 ##         #return datatypes.STRING
 
     def getTargetSource(self,row): 
-        return row.getSession().query(self.type)
+        return row.getContext().query(self.type)
     
         
 class Detail(RowAttribute):
@@ -850,7 +850,7 @@ class Detail(RowAttribute):
         row._values[self.name] = None
         #row.setDirtyRowAttr(self)
     
-    def atoms2value(self,atomicRow,colAtoms,sess):
+    def atoms2value(self,atomicRow,colAtoms,dbc):
         assert len(colAtoms) == 0
         raise "cannot"
         

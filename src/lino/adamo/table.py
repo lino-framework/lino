@@ -265,10 +265,10 @@ class Table(FieldContainer,SchemaComponent,Describable):
         self._initStatus = 4
 
     def vetoDeleteRow(self,row):
-        sess=row.getSession()
+        dbc=row.getContext()
         for ptr in self._pointers:
             kw = { ptr.name : row }
-            q=sess.query(ptr._owner._instanceClass,**kw)
+            q=dbc.query(ptr._owner._instanceClass,**kw)
             if len(q):
                 return "%s is used by %d rows in %s" % (
                     row,len(q),q.getLeadTable())

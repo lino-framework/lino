@@ -185,7 +185,7 @@ class DemoPopulator(ddl.Populator):
         
     def populatePartners(self,q):
 
-        cities = q.getSession().query(City)
+        cities = q.getContext().query(City)
         self.eupen = cities.findone(name="Eupen")
         self.verviers = cities.findone(name="Verviers")
         self.tallinn = cities.findone(name="Tallinn")

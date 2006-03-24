@@ -34,7 +34,7 @@ class SearchForm(ReportForm):
     
     def setupForm(self):
         
-        dbsess=self.rpt.query.session
+        #dbsess=self.rpt.query.getContext()
         #words = sess.query(tables.Word)
         #files = sess.query(tables.File) #,"name")
         #grid=None # referenced in search(), defined later

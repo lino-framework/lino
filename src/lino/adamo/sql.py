@@ -53,8 +53,8 @@ class Master:
                 l.append(self.ds.getTableName()+"."+a.name)
         return l
     
-    def getSession(self):
-        return self.ds.getSession()
+    def getContext(self):
+        return self.ds.getContext()
 
 
 class SqlConnection(Connection):
@@ -314,7 +314,7 @@ class SqlConnection(Connection):
                 
         l = []
         for col in ds.sortColumns:
-            for atom in col.getFltAtoms(ds.getSession()):
+            for atom in col.getFltAtoms(ds.getContext()):
                 l.append(atom.getNameInQuery(clist))
         if len(l) >  0 :
             sql += " ORDER BY " + ", ".join(l)
@@ -571,7 +571,7 @@ class SqlConnection(Connection):
             try:
                 v = self.sql2value(sqlatoms[i],a.type)
             except Exception,e:
-                qry.getSession().exception(
+                qry.getDatabase().schema.session.exception(
                     e, details="""\
 Could not convert raw atomic value %s in %s.%s (expected %s).""" \
                     % (repr(sqlatoms[i]),
@@ -591,7 +591,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
     def executeInsert(self,row):
         query = row._query._store._peekQuery
         table = row._query.getLeadTable()
-        context = row.getSession()
+        #context = row.getContext()
 
         atomicRow = query.row2atoms(row)
         
@@ -622,7 +622,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
     def executeUpdate(self,row):
         query = row._query._store._peekQuery
         table = row._query.getLeadTable()
-        context = row.getSession()
+        #context = row.getContext()
 
         atomicRow = query.row2atoms(row)
 

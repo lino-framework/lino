@@ -144,7 +144,7 @@ class MonthlyCalendar(DataReport):
         self.month=month
 
     def setupReport(self,*args,**kw):
-        sess=self.query.getSession()
+        sess=self.query.getContext()
 
         self.query.addFilter(
             DateEquals(self.query.findColumn('date'),

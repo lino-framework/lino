@@ -35,10 +35,10 @@ class VolumeVisitor(Progresser):
     def __init__(self,vol):
         Progresser.__init__(self)
         self.volume = vol
-        self.session=self.volume.getSession()
-        self.ftypes = self.session.query(tables.FileType)
-        self.files = self.session.query(tables.File)
-        self.dirs = self.session.query(tables.Directory)
+        dbc=self.volume.getContext()
+        self.ftypes = dbc.query(tables.FileType)
+        self.files = dbc.query(tables.File)
+        self.dirs = dbc.query(tables.Directory)
 
     def run(self):
         #self.task=task
@@ -107,7 +107,7 @@ class FileVisitor: # (Task):
 
     def looper(self,task):
         self.task=task
-        sess = self.volume.getSession()
+        sess = self.volume.getContext()
         #from lino.apps.keeper import tables 
         self.ftypes = sess.query(tables.FileType)
         self.files = sess.query(tables.File)

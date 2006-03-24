@@ -214,7 +214,7 @@ class JokesPopulator(Populator):
 
         
     def populateQuotes(self,q):
-        de=q.getSession().peek(Language,"de")
+        de=q.getContext().peek(Language,"de")
         from lino.apps.pinboard import quotes_de
         quotes_de.populate(q,de)
         #print "%d Weisheiten" % len(q)

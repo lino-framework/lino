@@ -24,6 +24,7 @@ from lino.apps.contacts.contacts_demo import startup
 from lino.apps.contacts.contacts_tables import *
 #from lino.apps.addrbook import demo
 #from lino.apps.addrbook import *
+from lino.adamo.exceptions import InvalidRequestError
 
 
 class Case(TestCase):
@@ -86,8 +87,9 @@ class Case(TestCase):
 
     def test05(self):
         
-        """ If you are going to create several rows and don't want to
-        specify the field names each time, then you can create a Query:
+        """ If you append several rows and don't want to specify the
+        field names each time, then you can create a custom Query:
+        
         """
 
         PARTNERS = self.sess.query(Partner)
@@ -108,8 +110,8 @@ class Case(TestCase):
         "Samples"
         
         """ If you tell a Query of Cities that you want only cities in
-        Belgium, then use this query to create a city row, then this row
-        will automatically know that it's nation is Belgium.    """
+        Belgium, then use this query to create a city row, then this
+        row will automatically know that it's nation is Belgium.  """
 
         NATIONS = self.sess.query(Nation)
         PARTNERS = self.sess.query(Partner)
@@ -123,6 +125,20 @@ class Case(TestCase):
         self.assertEqual(stv.nation,be)
         self.assertEqual(stv.name,"Sankt-Vith")
         # q.appendRow(21,'Eynatten')
+
+        # moving Sankt-Vith to Germany won't work because City.nation
+        # is part of the primary key:
+
+        stv.lock()
+        try:
+            stv.nation=NATIONS.peek('de')
+            self.fail("Failed to raise InvalidRequestError")
+        except InvalidRequestError,e:
+            pass
+        stv.unlock()
+        
+        
+        
         
 
 if __name__ == '__main__':

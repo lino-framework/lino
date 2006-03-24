@@ -217,7 +217,7 @@ class TestCase(unittest.TestCase):
         a.write("\n--- expected --- :\n")
         a.write(expected)
         #a.write(repr(" ".join(l2))) # txt1)
-        a.write("\n")
+        a.write("\n---\n")
 
         if False:
             from difflib import ndiff

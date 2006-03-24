@@ -253,8 +253,8 @@ class DemoPopulator(addrdemo.DemoPopulator):
     def populatePartners(self,q):
         addrdemo.DemoPopulator.populatePartners(self,q)
         #return 
-        NAT=q.getSession().query(Nation)
-        CCY=q.getSession().query(Currency)
+        NAT=q.getContext().query(Nation)
+        CCY=q.getContext().query(Currency)
         BEF=CCY.peek("BEF")
         #be=NAT.peek('be')
         #be.partners_by_nation.showReport()
@@ -278,7 +278,7 @@ class DemoPopulator(addrdemo.DemoPopulator):
         self.table = q.appendRow(id=16,name="Table",price=56)
         
     def populateInvoices(self,q):
-        anton=q.getSession().query(
+        anton=q.getContext().query(
             Partner).findone(firstName="Anton")
         self.invoice = q.appendRow(jnl=self.OUT,
                                    partner=anton,

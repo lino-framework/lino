@@ -38,12 +38,6 @@ class Contact(StoredDataRow):
         table.addField('fax',STRING, doc="fax number")
         table.addField('website',URL, doc="web site")
 
-    def __str__(self):
-        return self.name
-        
-class Address(StoredDataRow):
-    "abstract"
-    def initTable(self,table):
         table.addPointer('nation',Nation)
         table.addPointer('city',City)
         table.addField('zip',STRING)
@@ -51,18 +45,20 @@ class Address(StoredDataRow):
         table.addField('house',INT)
         table.addField('box',STRING)
         
+    def __str__(self):
+        return self.name
+        
     def after_city(self):
         if self.city is not None:
             self.nation = self.city.nation
 
-class Organisation(Contact,Address):
+class Organisation(Contact):
     "An Organisation is any named group of people."
     tableName="Organisations"
     def initTable(self,table):
         table.addField('id',ROWID,\
                       doc="the internal id number")
         Contact.initTable(self,table)
-        Address.initTable(self,table)
         table.addField('name',STRING)
         #table.addView('std',columnNames="name email phone website")
 
@@ -119,7 +115,7 @@ class UsersReport(DataReport):
     leadTable=User
     
 
-class Partner(Contact,Address):
+class Partner(Contact):
     """A Person or Organisation with whom I have business contacts.
     """
     tableName="Partners"
@@ -127,7 +123,6 @@ class Partner(Contact,Address):
         table.addField('name',STRING)
         table.addField('firstName',STRING)
         Contact.initTable(self,table)
-        Address.initTable(self,table)
         table.addField('id',ROWID)
         table.addPointer('type',PartnerType)
         #.setDetail('partnersByType',orderBy='name firstName')

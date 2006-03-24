@@ -167,11 +167,11 @@ class QueryColumn:
         """Fill rowValues with values from atomicRow"""
         self.rowAttr.atoms2dict(atomicRow,valueDict,self._atoms,area)
 
-    def atoms2value(self,atomicValues,sess):
+    def atoms2value(self,atomicValues,dbc):
         #return self.rowAttr.atoms2value(atomicRow,self._atoms,area)
         #atomicValues = [atomicRow[atom.index]
         #                    for atom in self._atoms]
-        return self.rowAttr.atoms2value(atomicValues,sess)
+        return self.rowAttr.atoms2value(atomicValues,dbc)
     
 
     def value2atoms(self,value,atomicRow,context):
@@ -209,12 +209,12 @@ class QueryColumn:
     def getLabel(self):
         return self.rowAttr.getLabel()
 
-    def parse(self,s,ds):
+    def parse(self,s,qry):
         l1 = s.split(',')
         assert len(l1) == len(self._atoms)
         atomicValues = [a.type.parse(s1)
                              for a,s1 in zip(self._atoms,l1)]
-        return self.atoms2value(atomicValues,ds._session)
+        return self.atoms2value(atomicValues,qry.getContext())
         
     def format(self,v):
         return self.rowAttr.format(v)
@@ -283,7 +283,7 @@ class BabelFieldColumn(FieldColumn):
 
 
     def extractCellValue(self,row):
-        langs = row.getSession().getBabelLangs()
+        langs = row.getContext().getBabelLangs()
         dblangs = row.getDatabase().getBabelLangs()
         values = row.getFieldValue(self.rowAttr.name)
         if values is None:
@@ -305,16 +305,16 @@ class BabelFieldColumn(FieldColumn):
             return l
         else:
             assert langs[0].index != -1,\
-                   "Session language %r not supported by %s" \
+                   "Context language %r not supported by %s" \
                    % (langs[0].id,row.getDatabase().getSupportedLangs())
             #print __name__, values[index], langs
             return values[langs[0].index]
         
-    def getTestEqual(self,ds,value):
-        langs = ds.getSession().getBabelLangs()
+    def getTestEqual(self,qry,value):
+        langs = qry.getContext().getBabelLangs()
         lang = langs[0] # ignore secondary languages
         a = self._atoms[lang.index]
-        return ds._connection.testEqual(a.name,a.type,value)
+        return qry._connection.testEqual(a.name,a.type,value)
         
         
         
@@ -365,10 +365,10 @@ class PointerColumn(QueryColumn):
 
     def getTestEqual(self,ds,value):
         av = [None] * len(ds.getAtoms()) 
-        self.value2atoms(value,av,ds.getSession())
+        self.value2atoms(value,av,ds.getContext())
         i = 0
         l = []
-        for (n,t) in self.rowAttr.getNeededAtoms(ds.getSession()):
+        for (n,t) in self.rowAttr.getNeededAtoms(ds.getContext()):
             l.append(ds._connection.testEqual(n,t,av[i]))
             i += 1
         return " AND ".join(l)
@@ -408,7 +408,7 @@ class DetailValue:
         for k,v in self.col._queryParams.items():
             kw.setdefault(k,v)
         kw[self.col.rowAttr.pointerName]=self.row
-        return self.row.getSession().query(
+        return self.row.getContext().query(
             self.col.rowAttr.tcl,*args,**kw)
         
 ##         if self.detailQuery is None:
@@ -975,11 +975,14 @@ class PeekQuery(LeadTableColumnList):
         #      ','.join([col.name for col in self._columns])
         self._frozen=True
 
-    def getContext(self):
-        return self._store._db
+    #def getContext(self):
+    #    return self._store._db
 
-    def getSession(self):
-        return self._store._db.getSession()
+    def getContext(self):
+        return self._store._db._startupContext
+
+##     def getSession(self):
+##         return self._store._db.getSession()
 
     def child(self,*args,**kw):
         raise InvalidRequestError("Cannot child() a PeekQuery!")
@@ -999,7 +1002,7 @@ class SimpleQuery(LeadTableColumnList):
 ##                    FieldColumn
 ##                    )
 
-    def __init__(self, _parent, _store, _sess,
+    def __init__(self, _parent, _store, _dbc,
                  columnNames=None,
                  orderBy=None,
                  sortColumns=None,
@@ -1010,11 +1013,11 @@ class SimpleQuery(LeadTableColumnList):
                  masterColumns=None,
                  masters=[],
                  **kw):
-        self.session = _sess # a DbContext, not a session
+        self.dbc = _dbc # a DbContext, not a session
         LeadTableColumnList.__init__(self,_parent,_store,columnNames)
         
         for m in ('setBabelLangs','getLangs'):
-            setattr(self,m,getattr(_sess,m))
+            setattr(self,m,getattr(_dbc,m))
         
         #self.app = store._db.schema # shortcut
         self._connection = _store._connection # shortcut
@@ -1142,8 +1145,8 @@ class SimpleQuery(LeadTableColumnList):
             s += ", masters="+repr(self._masters)
         return s+')'
 
-    def getContext(self):
-        return self.session
+##     def getContext(self):
+##         return self.session
 
 ##     def createReport(self,name=None,**kw):
 ##         raise "moved to dbsession"
@@ -1156,7 +1159,7 @@ class SimpleQuery(LeadTableColumnList):
 ##         self.session.showQuery(self,**kw)
 
     def report(self,*args,**kw):
-        rpt=self.session.createDataReport(self,*args,**kw)
+        rpt=self.dbc.createDataReport(self,*args,**kw)
         #rpt.beginReport(None)
         return rpt
         
@@ -1190,7 +1193,7 @@ class SimpleQuery(LeadTableColumnList):
 
     def child(self,*args,**kw):
         #self.setdefaults(kw)
-        return self.__class__(self,self._store,self.session,*args,**kw)
+        return self.__class__(self,self._store,self.dbc,*args,**kw)
     
     # alias for child() of a Query:
     query=child
@@ -1203,8 +1206,11 @@ class SimpleQuery(LeadTableColumnList):
 ##                                             self.query(),
 ##                                             writer)
     
-    def getSession(self):
-        return self.session
+##     def getSession(self):
+##         return self.session
+
+    def getContext(self):
+        return self.dbc
 
     def getLabel(self):
         raise "replaced by buildLabel"
@@ -1507,7 +1513,7 @@ class SimpleQuery(LeadTableColumnList):
 
 class Query(SimpleQuery):
 
-    def __init__(self, _parent, _store, _sess,
+    def __init__(self, _parent, _store, _dbc,
                  columnNames=None,
                  pageNum=None,
                  pageLen=None,
@@ -1515,7 +1521,7 @@ class Query(SimpleQuery):
         
         
         SimpleQuery.__init__(
-            self, _parent,_store,_sess,columnNames,**kw)
+            self, _parent,_store,_dbc,columnNames,**kw)
         if _parent is not None:
             if pageNum is None: pageNum=_parent.pageNum
             if pageLen is None: pageLen=_parent.pageLen

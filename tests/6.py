@@ -45,7 +45,7 @@ class TestPopulator(Populator):
             q.appendRow(date=d)
 
     def populateUsages(self,q):
-        days=q.getSession().query(tables.Day)
+        days=q.getContext().query(tables.Day)
         for d in everyday(20050620,20050624):
             q.appendRow(resource=self.luc,
                         date=days.peek(d),

@@ -26,9 +26,9 @@ from lino.adamo.exceptions import DataVeto, InvalidRequestError
 from lino.adamo.query import PeekQuery, Query
 from lino.adamo import datatypes 
 
-class Lock:
-    def __init__(self,row):
-        self._row = row
+## class Lock:
+##     def __init__(self,row):
+##         self._row = row
         
 
 class Store:
@@ -187,13 +187,13 @@ class Store:
         if self._lockedRows.has_key(k):
             raise RowLockFailed("Row is locked by another process")
         self._lockedRows[k] = row
-        print self,"lock row", row
+        #print self,"lock row", row
 
     def unlockRow(self,*k):
         #k = tuple(row.getRowId())
-        row=self._lockedRows.pop(k)
-        print self,"unlock row", row
-        return row
+        return self._lockedRows.pop(k)
+        #print self,"unlock row", row
+        #return row
         #assert x._locked == dbc
         #assert x._query == qry
         #self.touch()

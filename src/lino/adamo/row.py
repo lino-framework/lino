@@ -29,6 +29,10 @@ class DataRow:
     def __init__(self,query,values,dirty=False):
         #assert isinstance(fc,FieldContainer)
         #assert isinstance(clist,BaseColumnList)
+        #instance=self._query._store._peekQuery._instanceClass()
+        #self.__dict__["_instance"] = 
+        #for k,v in values.items():
+            
         assert type(values) == types.DictType
         self.__dict__["_values"] = values
         self.__dict__["_query"] = query
@@ -61,6 +65,8 @@ class DataRow:
         #col=self._query.findColumn(name)
         #if col is None:
         col=self._query._store._peekQuery.getColumnByName(name)
+        if col in self._query._store._peekQuery._pkColumns:
+            raise InvalidRequestError("Cannot change the primary key")
         col.setCellValue(self,value)
         #self.__dict__['_dirty'] = True
 
@@ -152,8 +158,8 @@ class DataRow:
         return len(self._dirtyRowAttrs)>0
         #return self.__dict__['_dirty']
 
-    def getSession(self):
-        return self._query.getSession()
+    def getContext(self):
+        return self._query.getContext()
 
     def getDatabase(self):
         return self._query.getDatabase()
