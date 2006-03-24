@@ -24,8 +24,8 @@ class ContactsMainForm(DbMainForm):
     
     """
     
-Welcome to Contacts, a Lino Forms Application just for demonstration
-purposes.
+Welcome to Contacts, a Lino demo application to manage your contacts.
+Note that this application is not stable and there are no known users.
 
 """
 
@@ -48,7 +48,7 @@ purposes.
     
 
 class Contacts(DbApplication):
-    name="Lino AdressBook"
+    name="Lino Contacts"
     version="0.0.1"
     author="Luc Saffre"
     mainFormClass=ContactsMainForm

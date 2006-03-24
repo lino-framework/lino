@@ -30,7 +30,7 @@ class DataReportColumn(ReportColumn):
                  **kw):
         if name is None: name=datacol.name
         if formatter is None: formatter=datacol.format
-        if selector is None: selector=datacol.showSelector
+        #if selector is None: selector=datacol.showSelector
         #assert name != "DataReportColumn"
         if label is None: label=datacol.rowAttr.label
         if doc is None: label=datacol.rowAttr.doc

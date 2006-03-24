@@ -14,4 +14,6 @@ from lino.apps.contacts.contacts_demo import startup
 ##     def beginSession(self,*args,**kw):
 ##         return demo.startup(*args,**kw)
     
-Contacts(startup()).main()
+dbc=startup(filename="contacts.db")
+app=Contacts(dbc)
+app.main()

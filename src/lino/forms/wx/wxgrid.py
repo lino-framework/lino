@@ -439,23 +439,27 @@ class DataGridCtrl(wx.grid.Grid):
                     self.MakeCellVisible(newRow, 0)
                 else:
                     pass
-        elif evt.KeyCode() == wx.WXK_F1:
-            if evt.ControlDown() or evt.ShiftDown() or evt.AltDown():
-                evt.Skip()
-                return
-            colIndex = self.GetGridCursorCol()
-            col = self.table.columns[colIndex]
-            frm = self.table.editor.getForm()
-            row = frm.getCurrentRow()
+##         elif evt.KeyCode() == wx.WXK_F1:
+##             if evt.ControlDown() or evt.ShiftDown() or evt.AltDown():
+##                 evt.Skip()
+##                 return
+##             colIndex = self.GetGridCursorCol()
+##             col = self.table.columns[colIndex]
+##             frm = self.table.editor.getForm()
+##             row = frm.getCurrentRow()
             
-            if col.showSelector(frm,row):
-                self.refresh()
-                return
-            #print "F1 in column", col.name
-            evt.Skip()
+##             if col.showSelector(frm,row.item):
+##                 self.refresh()
+##                 return
+##             #print "F1 in column", col.name
+##             evt.Skip()
         else:
             evt.Skip()
             return
+
+    def getSelectedCol(self):
+        colIndex = self.GetGridCursorCol()
+        return self.table.columns[colIndex]
             
     def getSelectedRows(self):
         lt = self.GetSelectionBlockTopLeft()

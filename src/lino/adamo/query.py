@@ -218,9 +218,13 @@ class QueryColumn:
         
     def format(self,v):
         return self.rowAttr.format(v)
-        
-    def showSelector(self,frm,row):
-        return False
+    
+    def getAllowedValues(self,row):
+        return None
+    # None means that there is no explicit list of allowed values
+    
+##     def showSelector(self,frm,row):
+##         return False
 
 
 class FieldColumn(QueryColumn):
@@ -369,17 +373,20 @@ class PointerColumn(QueryColumn):
             i += 1
         return " AND ".join(l)
 
-    def showSelector(self,frm,row):
-        sess=frm.session
-        row.lock()
-        ds = self.rowAttr.getTargetSource(row)
-        selectedRow = sess.chooseDataRow(ds,row)
-        if selectedRow is not None:
-            sess.notice("you selected: "+str(row))
-            self.setCellValue(row,selectedRow)
-            #row.setDirty()
-        row.unlock()
-        return True
+    def getAllowedValues(self,row):
+        return self.rowAttr.getTargetSource(row)
+    
+##     def showSelector(self,frm,row):
+##         sess=frm.session
+##         row.lock()
+##         ds = self.rowAttr.getTargetSource(row)
+##         selectedRow = sess.chooseDataRow(ds,row)
+##         if selectedRow is not None:
+##             sess.notice("you selected: "+str(row))
+##             self.setCellValue(row,selectedRow)
+##             #row.setDirty()
+##         row.unlock()
+##         return True
 
     def getReachableData(self,row):
         pointedRow = self.getCellValue(row)

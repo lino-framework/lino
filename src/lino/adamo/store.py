@@ -187,10 +187,13 @@ class Store:
         if self._lockedRows.has_key(k):
             raise RowLockFailed("Row is locked by another process")
         self._lockedRows[k] = row
+        print self,"lock row", row
 
     def unlockRow(self,*k):
         #k = tuple(row.getRowId())
-        return self._lockedRows.pop(k)
+        row=self._lockedRows.pop(k)
+        print self,"unlock row", row
+        return row
         #assert x._locked == dbc
         #assert x._query == qry
         #self.touch()

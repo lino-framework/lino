@@ -26,6 +26,7 @@ from lino.adamo.exceptions import InvalidRequestError
 from lino.forms import gui
 from lino.forms import keyboard
 from lino.console.task import BugDemo
+from lino.adamo.dbreports import QueryReport
 
 VERTICAL = 1
 HORIZONTAL = 2
@@ -407,6 +408,21 @@ class ReportForm(Form,GenericDocument):
         self.rpt=rpt
         self.rpt.beginReport(self)
 
+    def beforeRowEdit(self):
+        self.currentRow=self.getCurrentRow()
+        if self.currentRow is None: return
+        if self.isEditing():
+            self.currentRow.item.lock()
+            
+    def afterRowEdit(self):
+        if self.currentRow is None: return
+        if self.isEditing():
+            self.store()
+            self.currentRow.item.unlock()
+
+    def isEditing(self):
+        return False
+            
     def setupMenu(self):
         self.setupFileMenu()
         self.setupEditMenu()
@@ -429,6 +445,7 @@ class ReportForm(Form,GenericDocument):
                   label="Print &List",
                   action=self.printList,
                   accel="Shift-F7")
+        return m
         
 
     def setupEditMenu(self):
@@ -445,6 +462,14 @@ class ReportForm(Form,GenericDocument):
         
         #m = frm.addMenu("row",label="&Row")
         if self.rpt.canWrite():
+            m.addItem("pickCellValue",
+                      label="&Pick cell value...",
+                      action=self.pickCellValue,
+                      accel="F1")
+            m.addItem("editCellValue",
+                      label="&Edit cell value",
+                      action=self.editCellValue,
+                      accel="F2")
             m.addItem("delete",
                       label="&Delete selected row(s)",
                       action=self.deleteSelectedRows,
@@ -453,7 +478,38 @@ class ReportForm(Form,GenericDocument):
                       label="&Insert new row",
                       action=self.insertRow,
                       accel="INS")
+        return m
+
+    def editCellValue(self):
+        print "forms.py.editCell()"
+
+    
+    def pickCellValue(self):
+        #self.beforeRowEdit()
+        col=self.getSelectedCol()
+        row=self.getCurrentRow()
+        if row is None: return
+        #value=col.getCellValue(row)
+        allowedValues=col.datacol.getAllowedValues(row.item)
+        #rpt=self.dbsess.createQueryReport(allowedValues)
+        rpt=QueryReport(allowedValues)
+        #print value
+        #print allowedValues
+        #rpt.show()
+        def onpick(pickedRow):
+            print 1, row.item
+            row.item.lock()
+            print 2, row.item
+            col.setCellValue(row,pickedRow.item)
+            print 3, row.item
+            row.item.unlock()
+            print 4, row.item
+            self.refresh()
+            print 5, row.item
             
+        self.showForm(ReportGridPickForm(rpt,onpick))
+        #self.afterRowEdit()
+        #self.refresh()
 
     def setupGoMenu(self):
         pass
@@ -507,6 +563,7 @@ class ReportForm(Form,GenericDocument):
         doc.save(self,showOutput=True)
 
     def onClose(self):
+        self.rpt.endReport(self)
         self.rpt.onClose()
 
     
@@ -514,8 +571,6 @@ class ReportForm(Form,GenericDocument):
     # implements GenericDocument
     def getLineWidth(self):
         return 100
-    def getLineWidth(self):
-        return 80
     def getColumnSepWidth(self):
         return 0
                 
@@ -525,6 +580,7 @@ class ReportGridForm(ReportForm):
     def __init__(self,*args,**kw):
         ReportForm.__init__(self,*args,**kw)
         self.grid=None
+        #self.pickedRow=None
 
     def setupForm(self):
         self.grid=self.addDataGrid(self.rpt)
@@ -539,16 +595,42 @@ class ReportGridForm(ReportForm):
                 
         self.session.status(s)
         
-    def getCurrentRow(self):
+    def getSelectedCol(self):
         if self.grid is None:
             return None
+        return self.grid.getSelectedCol()
+        
+    def getCurrentRow(self):
+        if self.grid is None: return None
         l = self.grid.getSelectedRows()
         if len(l) == 1:
             return self.rpt[l[0]]
-        raise "There is more than one row selected"
+        #raise "There is more than one row selected"
         #return self.grid.getCurrentRow()
 
+class ReportGridPickForm(ReportGridForm):
+    #modal=True
+    def __init__(self,rpt,onpick,*args,**kw):
+        ReportGridForm.__init__(self,rpt,*args,**kw)
+        self.onpick=onpick
+        #self.pickedRow=None
+        
+    def setupFileMenu(self):
+        m=ReportGridForm.setupFileMenu(self)
+        m.addItem("pick",
+                  label="&Pick this row",
+                  accel="ENTER",
+                  action=self.pick)
+    def pick(self):
+        #self.pickedRow=self.getCurrentRow()
+        pickedRow=self.getCurrentRow()
+        if pickedRow is not None:
+            self.onpick(pickedRow)
+            self.close()
+        else:
+            self.session.notice("Cannot pick Nothing")
 
+    
 class ReportRowForm(ReportForm):
     def __init__(self,rpt,recno=0,**kw):
         ReportForm.__init__(self,rpt,**kw)
@@ -557,16 +639,9 @@ class ReportRowForm(ReportForm):
         self.recno=recno
         self.beforeRowEdit()
 
-    def beforeRowEdit(self):
-        self.currentRow=self.rpt[self.recno]
-        if self.enabled:
-            self.currentRow.item.lock()
-            
-    def afterRowEdit(self):
-        if self.enabled:
-            self.store()
-            self.currentRow.item.unlock()
-            
+    def isEditing(self):
+        return self.enabled
+
     def onClose(self):
         self.afterRowEdit()
         ReportForm.onClose(self)
@@ -575,7 +650,8 @@ class ReportRowForm(ReportForm):
         self.rpt.setupReportForm(self)
             
     def getCurrentRow(self):
-        return self.currentRow
+        return self.rpt[self.recno]        
+        #return self.currentRow
         #if self.recno is None:
         #    return None
         #return self.rpt[self.recno]
@@ -656,8 +732,7 @@ class ReportRowForm(ReportForm):
     def deleteCurrentRow(self):
         assert self.rpt.canWrite()
         row=self.getCurrentRow()
-        if row is None:
-            return
+        if row is None: return
         if not self.session.confirm(
             "Delete this row. Are you sure?"):
             return

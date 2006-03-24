@@ -182,6 +182,8 @@ class DataGrid(toolkit.DataGrid):
     def getSelectedRows(self):
         return self.wxctrl.getSelectedRows()
 
+    def getSelectedCol(self):
+        return self.wxctrl.getSelectedCol()
         
 ## class DataForm(toolkit.DataForm):
     

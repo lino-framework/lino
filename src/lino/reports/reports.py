@@ -190,10 +190,14 @@ class BaseReport:
             self.computeWidths(doc)
             #self._mustSetup=False
         else:
-            assert self._setupDone is doc
+            assert self._setupDone is doc,\
+                   "%r being used by %s" % (self, self._setupDone)
         
     def endReport(self,doc):
-        pass
+        assert self._setupDone is doc,\
+               "%r being used by %s" % (self, self._setupDone)
+        self._setupDone=None
+        #pass
 
     def rows(self,doc):
         return ReportIterator(self,doc)
@@ -341,9 +345,9 @@ class ReportColumn(Describable):
         self.halign = halign
         self.when = when
         self._formatter=formatter
-        if selector is None:
-            selector=self.showSelector
-        self._selector=selector
+##         if selector is None:
+##             selector=self.showSelector
+##         self._selector=selector
 
     def setupReportColumn(self,rpt,index):
         assert type(index) == type(1)
@@ -367,8 +371,8 @@ class ReportColumn(Describable):
     def validate(self,value):
         pass
     
-    def showSelector(self,frm,row):
-        return self._selector(frm,row)
+##     def showSelector(self,frm,row):
+##         return self._selector(frm,row)
 
     def canWrite(self,row):
         return False
