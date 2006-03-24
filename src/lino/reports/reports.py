@@ -328,7 +328,7 @@ class ReportColumn(Describable):
     datatype=STRING
     
     def __init__(self,
-                 formatter=str,
+                 formatter=unicode,
                  selector=None,
                  name=None,label=None,doc=None,
                  when=None,
@@ -478,10 +478,10 @@ class DictReport(BaseReport):
         
     def setupReport(self):
         if len(self.columns) == 0:
-            self.addVurtColumn(meth=lambda row: str(row.item[0]),
+            self.addVurtColumn(meth=lambda row: unicode(row.item[0]),
                                label="key",
                                width=12)
-            self.addVurtColumn(meth=lambda row: str(row.item[1]),
+            self.addVurtColumn(meth=lambda row: unicode(row.item[1]),
                                label="value",
                                width=40)
 

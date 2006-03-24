@@ -49,7 +49,7 @@ values or in a dict of complex values...
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.contacts.contacts_demo import startup
-from lino.apps.contacts.contacts_tables import Nation,Partner
+from lino.apps.contacts.contacts_tables import Nation,Contact
 #from lino.reports import DataReport
 
 class Case(TestCase):
@@ -57,10 +57,10 @@ class Case(TestCase):
     def test01(self):
         dbsess = startup()
         be = dbsess.query(Nation).peek("be")
-        qry = dbsess.query(Partner,
-                           "title firstName name",
+        qry = dbsess.query(Contact,
+                           "title name",
                            nation=be)
-        qry.show(columnWidths="6 10 20")
+        qry.show(columnWidths="6 20")
         #dbc.showQuery(qry,columnWidths="6 10 20")
         #sess.showReport(rpt)
         s = self.getConsoleOutput()
@@ -68,17 +68,17 @@ class Case(TestCase):
         #print s
         
         self.assertEquivalent(s,u"""\
-Partners (nation=Belgium)
+Contacts (nation=Belgium)
 =========================
-title |firstName |name                
-------+----------+--------------------
-Herrn |Andreas   |Arens               
-Dr.   |Henri     |Bodard              
-Herrn |Emil      |Eierschal           
-Frau  |Erna      |Eierschal           
-Herrn |Gerd      |Großmann            
-Herrn |Frédéric  |Freitag             
-      |          |PAC Systems PGmbH   
+title |name
+------+--------------------
+Herrn |Andreas Arens
+Dr.   |Henri Bodard
+Herrn |Emil Eierschal
+Frau  |Erna Eierschal
+Herrn |Gerd Großmann
+Herrn |Frédéric Freitag
+      |PAC Systems PGmbH       
 """)
                          
 

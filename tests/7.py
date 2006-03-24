@@ -39,7 +39,7 @@ class Case(TestCase):
         "Accessing data that has not been inserted using adamo"
         sess = startup(populate=False)
         
-        assert len(sess.query(Partner)) == 0, \
+        assert len(sess.query(Contact)) == 0, \
                "db not empty: previous test run didn't shutdown"
         
         db = sess.db
@@ -47,21 +47,21 @@ class Case(TestCase):
         connection = db._connections[0]
         
         connection.sql_exec("""
-        INSERT INTO PARTNERS (id,name)
+        INSERT INTO Contacts (id,name)
                VALUES (1, "Luc");
         """)
 
         connection.sql_exec("""
-        INSERT INTO PARTNERS (id,name)
+        INSERT INTO Contacts (id,name)
                VALUES (2, "Ly");
         """)
 
-        PARTNERS = sess.query(Partner)
+        CONTACTS = sess.query(Contact)
 
-        luc = PARTNERS.peek(1)
+        luc = CONTACTS.peek(1)
         self.assertEqual(luc.id,1)
         self.assertEqual(luc.name,"Luc")
-        ly = PARTNERS.peek(2)
+        ly = CONTACTS.peek(2)
         self.assertEqual(ly.id,2)
         self.assertEqual(ly.name,"Ly")
 

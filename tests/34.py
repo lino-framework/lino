@@ -48,38 +48,33 @@ TableName      |Fields              |Pointers     |Details
 ---------------+--------------------+-------------+--------------------
 Languages      |id, name            |             |                    
 Nations        |id, name, area,     |             |cities,             
-               |population, curr,   |             |partners_by_nation  
+               |population, curr,   |             |contacts_by_nation  
                |isocode             |             |                    
 Cities         |id, name, zipCode,  |nation       |                    
                |inhabitants         |             |                    
-Organisations  |id, email, phone,   |nation, city |                    
-               |gsm, fax, website,  |             |                    
-               |zip, street, house, |             |                    
-               |box, name           |             |                    
+Organisations  |id, name, logo, memo|             |                    
 Persons        |id, name, firstName,|             |                    
-               |sex, birthDate      |             |                    
-Partners       |name, firstName,    |nation, city,|                    
-               |email, phone, gsm,  |type, lang   |                    
-               |fax, website, zip,  |             |                    
-               |street, house, box, |             |                    
-               |id, title, logo,    |             |
-               |memo                |             |
-PartnerTypes   |id, name            |             |                    
+               |sex, birthDate, memo|             |                    
+Functions      |id, name            |             |                    
+Contacts       |id, name, title,    |org, person, |                    
+               |email, phone, gsm,  |function,    |                    
+               |fax, website, zip,  |lang, nation,|                    
+               |street, house, box  |city         |                    
         """)
         
         DatabaseOverview(app.dbsess).show()
         s=self.getConsoleOutput()
         #print s
-        self.assertEquivalent(s,"""\
-TableName           |Count|First               |Last
+        self.assertEquivalent(s,"""
+TableName           |Count|First               |Last                
 --------------------+-----+--------------------+--------------------
-Languages           |    0|                    |
-Nations             |    0|                    |
-Cities              |    0|                    |
-Organisations       |    0|                    |
-Persons             |    0|                    |
-Partners            |    0|                    |
-PartnerTypes        |    0|                    |
+Languages           |    0|                    |                    
+Nations             |    0|                    |                    
+Cities              |    0|                    |                    
+Organisations       |    0|                    |                    
+Persons             |    0|                    |                    
+Functions           |    0|                    |                    
+Contacts            |    0|                    |                    
 """)
         #app.main()
         s=self.getConsoleOutput()
@@ -128,55 +123,51 @@ Occurences          |    0|                    |
         app.createContext()
         SchemaOverview(app.dbsess.db.schema).show()
         s=self.getConsoleOutput()
-        # print s
+        #print s
         self.assertEquivalent(s,"""
-TableName      |Fields              |Pointers     |Details
+TableName      |Fields              |Pointers     |Details             
 ---------------+--------------------+-------------+--------------------
-Currencies     |id, name            |             |
-Products       |id, name, price     |             |
-Journals       |id, name, tableName |             |
-BankStatements |seq, date, closed,  |jnl          |
-               |remark, balance1,   |             |
-               |balance2            |             |
-MiscOperations |seq, date, closed,  |jnl          |
-               |remark              |             |
-Invoices       |seq, date, closed,  |jnl, partner |lines
-               |remark, zziel,      |             |
-               |amount, inverted    |             |
-InvoiceLines   |line, amount,       |invoice,     |
-               |remark, unitPrice,  |product      |
-               |qty                 |             |
-BalanceItems   |name, id, attrib,   |             |
-               |dc, type, doc       |             |
-CashFlowItems  |name, id, attrib,   |             |
-               |dc, type, doc       |             |
-ProfitAndLossIt|name, id, attrib,   |             |
-ems            |dc, type, doc       |             |
-Accounts       |name, pcmn, id      |parent,      |
-               |                    |balance,     |
-               |                    |profit, cash |
-Bookings       |date, amount, dc,   |account,     |
-               |label, id           |invoice,     |
-               |                    |partner      |
-Languages      |id, name            |             |
-Nations        |id, name, area,     |             |cities,
-               |population, curr,   |             |partners_by_nation
-               |isocode             |             |
-Cities         |id, name, zipCode,  |nation       |
-               |inhabitants         |             |
-Organisations  |id, email, phone,   |nation, city |
-               |gsm, fax, website,  |             |
-               |zip, street, house, |             |
-               |box, name           |             |
-Persons        |id, name, firstName,|             |
-               |sex, birthDate      |             |
-Partners       |name, firstName,    |nation, city,|
-               |email, phone, gsm,  |type, lang,  |
-               |fax, website, zip,  |currency     |
-               |street, house, box, |             |
-               |id, title, logo,    |             |
-               |memo                |             |
-PartnerTypes   |id, name            |             |        
+Currencies     |id, name            |             |                    
+Products       |id, name, price     |             |                    
+Journals       |id, name, tableName |             |                    
+BankStatements |seq, date, closed,  |jnl          |                    
+               |remark, balance1,   |             |                    
+               |balance2            |             |                    
+MiscOperations |seq, date, closed,  |jnl          |                    
+               |remark              |             |                    
+Invoices       |seq, date, closed,  |jnl, contact |lines               
+               |remark, zziel,      |             |                    
+               |amount, inverted    |             |                    
+InvoiceLines   |line, amount,       |invoice,     |                    
+               |remark, unitPrice,  |product      |                    
+               |qty                 |             |                    
+BalanceItems   |name, id, attrib,   |             |                    
+               |dc, type, doc       |             |                    
+CashFlowItems  |name, id, attrib,   |             |                    
+               |dc, type, doc       |             |                    
+ProfitAndLossIt|name, id, attrib,   |             |                    
+ems            |dc, type, doc       |             |                    
+Accounts       |name, pcmn, id      |parent,      |                    
+               |                    |balance,     |                    
+               |                    |profit, cash |                    
+Bookings       |date, amount, dc,   |account,     |                    
+               |label, id           |invoice,     |                    
+               |                    |contact      |                    
+Languages      |id, name            |             |                    
+Nations        |id, name, area,     |             |cities,             
+               |population, curr,   |             |contacts_by_nation  
+               |isocode             |             |                    
+Cities         |id, name, zipCode,  |nation       |                    
+               |inhabitants         |             |                    
+Organisations  |id, name, logo, memo|             |                    
+Persons        |id, name, firstName,|             |                    
+               |sex, birthDate, memo|             |                    
+Contacts       |id, name, title,    |org, person, |                    
+               |email, phone, gsm,  |function,    |                    
+               |fax, website, zip,  |lang, nation,|                    
+               |street, house, box  |city,        |                    
+               |                    |currency     |                    
+Functions      |id, name            |             |                    
         """)
         DatabaseOverview(app.dbsess).show()
         s=self.getConsoleOutput()
@@ -201,8 +192,8 @@ Nations             |    0|                    |
 Cities              |    0|                    |                    
 Organisations       |    0|                    |                    
 Persons             |    0|                    |                    
-Partners            |    0|                    |                    
-PartnerTypes        |    0|                    |                    
+Contacts            |    0|                    |                    
+Functions           |    0|                    |                    
         """)
         app.close()
         

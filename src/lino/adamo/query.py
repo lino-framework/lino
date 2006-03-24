@@ -472,7 +472,7 @@ class DetailColumn(QueryColumn):
         q=v()
         if self.depth == 0:
             return str(len(q))+" "+q.getLeadTable().getName()
-        return ", ".join([r.__str__() for r in q])
+        return ", ".join([unicode(r) for r in q])
 
 
 

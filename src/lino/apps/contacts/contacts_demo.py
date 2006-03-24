@@ -168,6 +168,14 @@ class StandardPopulator(ddl.Populator):
 
 
             
+    def populateFunctions(self,q):
+        q.setBabelLangs('en de fr')
+        q = q.query('id name')
+        q.appendRow('dir', ('Director', 'Direktor', 'Directeur'))
+        q.appendRow('mbr', ('Member', 'Mitglied', 'Membre'))
+        q.appendRow('sales', ('Sales representant', 'Vertreter',
+                              u'Représentant'))
+        
     def populatePartnerTypes(self,q):
         q.setBabelLangs('en de fr')
         q = q.query('id name')
@@ -178,12 +186,49 @@ class StandardPopulator(ddl.Populator):
         q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
 	
         
+MALE='m'
+FEMALE='f'
 
 
 class DemoPopulator(ddl.Populator):
     
         
-    def populatePartners(self,q):
+    def populatePersons(self,q):
+        #self.luc=q.appendRow(firstName="Luc",name="Saffre",sex=MALE)
+        self.andreas=q.appendRow(firstName="Andreas",name="Arens",
+                                 sex=MALE)
+        self.anton=q.appendRow(firstName="Anton",name="Ausdemwald",
+                               sex=MALE)
+        self.emil=q.appendRow(firstName="Emil",name="Eierschal",
+                              sex=MALE)
+        self.henri=q.appendRow(firstName="Henri",name="Bodard",
+                              sex=MALE)
+        self.erna=q.appendRow(firstName="Erna",name="Eierschal",
+                              sex=FEMALE)
+        self.gerd=q.appendRow(firstName="Gerd",name=u"Großmann",
+                              sex=MALE)
+        self.fred=q.appendRow(firstName=u"Frédéric",name="Freitag",
+                              sex=MALE)
+        self.tonu=q.appendRow(firstName=u"Tõnu",name="Tamm",
+                              sex=MALE)
+        self.kati=q.appendRow(firstName="Kati",name="Kask",
+                              sex=FEMALE)
+        self.jean=q.appendRow(firstName="Jean",name="Dupont",
+                              sex=MALE)
+        self.joseph=q.appendRow(firstName="Joseph",name="Dupont",
+                                sex=MALE)
+        self.julie=q.appendRow(firstName="Julie",name="Dupont",
+                                sex=FEMALE)
+        
+    def populateOrganisations(self,q):
+        self.rumma = q.appendRow(name=u'Rumma & Ko OÜ')
+
+        self.girf = q.appendRow(name=u'Girf OÜ')
+        
+        self.pac = q.appendRow(name=u'PAC Systems PGmbH')
+        self.elion = q.appendRow(name=u'Elion')
+
+    def populateContacts(self,q):
 
         cities = q.getContext().query(City)
         self.eupen = cities.findone(name="Eupen")
@@ -191,53 +236,45 @@ class DemoPopulator(ddl.Populator):
         self.tallinn = cities.findone(name="Tallinn")
         self.aachen = cities.findone(name="Aachen")
 
-        #nations = q.getSession().query(Nation)
-        #self.belgique = nations.peek('be')
-        #self.eesti = nations.peek('ee')
-        #self.deutschland = nations.peek('de')
 
-        
-            
-        qr = q.query(
-            'name firstName title email phone city')
+        qr = q.query('person title email phone city')
 
-        luc = qr.appendRow(
-            'Saffre','Luc','Herrn',
-            'luc.saffre@gmx.net', '6376783', self.tallinn)
+        qr.appendRow(self.andreas, "Herrn",
+                     'andreas@arens.be',
+                     '087.55.66.77', self.eupen)
+        qr.appendRow(self.anton , "Herrn",
+                     'ausdem@kotmail.com',
+                     None, self.aachen)
+        qr.appendRow(self.henri, "Dr.", None, None,self.verviers)
+        qr.appendRow(self.emil, "Herrn", None, None,self.eupen)
+        qr.appendRow(self.erna  , "Frau", None, None,self.eupen)
+        qr.appendRow(self.gerd  , "Herrn",None, None,self.eupen)
+        qr.appendRow(self.fred, "Herrn", None, None,self.eupen)
+        qr.appendRow(self.tonu, "Lp.", None, None,self.tallinn)
+        qr.appendRow(self.kati, "Lp.", None, None,self.tallinn)
 
-        # fictive persons
-        qr.appendRow('Arens'   ,'Andreas'  , "Herrn",
-                    'andreas@arens.be', '087.55.66.77',
-                    self.eupen)
-        anton = qr.appendRow(
-            'Ausdemwald','Anton'      , "Herrn",
-            'ausdem@kotmail.com', None, self.aachen)
-        qr.appendRow('Bodard'      ,'Henri'    , "Dr.",
-                    None, None,self.verviers)
-        qr.appendRow('Eierschal' ,'Emil'   , "Herrn",
-                    None, None,self.eupen)
-        qr.appendRow('Eierschal' ,'Erna'   , "Frau",
-                    None, None,self.eupen)
-        qr.appendRow(u'Großmann'  ,'Gerd'   , "Herrn",
-                    None, None,self.eupen)
-        qr.appendRow('Freitag'     ,u'Frédéric' , "Herrn",
-                    None, None,self.eupen)
-
-        qr = q.query('name zip street house box city')
+        qr = q.query('org zip street house box city website')
 
         rumma = qr.appendRow(
-            u'Rumma & Ko OÜ','10115', 'Tartu mnt.',71,'5',
-            self.tallinn)
+            self.rumma,'10115', 'Tartu mnt.',71,'5',
+            self.tallinn,
+            "http://www.saffre-rumma.ee")
+
         assert rumma.name == u"Rumma & Ko OÜ"
         assert rumma.nation.id == "ee", "%r!='ee'" % rumma.nation
 
-        girf = qr.appendRow(
-            u'Girf OÜ','10621','Laki',16, None, self.tallinn)
-        pac = qr.appendRow(
-            'PAC Systems PGmbH','4700',u'Hütte',79 , None, self.eupen)
         qr.appendRow(
-            'Eesti Telefon','13415',u'Sõpruse pst.',193, None,
-            self.tallinn)
+            self.girf,'10621','Laki',16, None, self.tallinn,
+            "http://www.girf.ee"
+            )
+        qr.appendRow(self.pac,'4700',u'Hütte',79 , None, self.eupen,
+                     "http://www.pacsystems.be"
+                     )
+        qr.appendRow(
+            self.elion,'13415',u'Sõpruse pst.',193, None,
+            self.tallinn,
+            "http://www.elion.ee"
+            )
 
             
             

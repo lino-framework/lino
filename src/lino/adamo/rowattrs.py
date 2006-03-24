@@ -194,7 +194,7 @@ class RowAttribute(Describable):
 
     def format(self,v):
         #print repr(v)
-        return str(v)
+        return unicode(v)
         
     def parse(self,s):
         return s

@@ -271,7 +271,7 @@ class Table(FieldContainer,SchemaComponent,Describable):
             q=dbc.query(ptr._owner._instanceClass,**kw)
             if len(q):
                 return "%s is used by %d rows in %s" % (
-                    row,len(q),q.getLeadTable())
+                    unicode(row),len(q),q.getLeadTable())
             
 ##     def addDetail(self,name,ptr,**kw):
 ##         # used by Pointer. onTableInit3()

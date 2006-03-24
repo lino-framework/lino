@@ -24,50 +24,28 @@ from lino.apps.pinboard.babel import Language
 SEX = STRING(width=1)
 
 
-class Contact(StoredDataRow):
-    "abstract"
-    def initTable(self,table):
-        table.addField('email',EMAIL,
-                       label="e-mail",
-                       doc="Primary e-mail address")
-        table.addField('phone',STRING,
-                       doc="phone number")
-        table.addField('gsm',STRING,
-                       label="mobile phone",
-                       doc="mobile phone number")
-        table.addField('fax',STRING, doc="fax number")
-        table.addField('website',URL, doc="web site")
-
-        table.addPointer('nation',Nation)
-        table.addPointer('city',City)
-        table.addField('zip',STRING)
-        table.addField('street',STRING)
-        table.addField('house',INT)
-        table.addField('box',STRING)
-        
-    def __str__(self):
-        return self.name
-        
-    def after_city(self):
-        if self.city is not None:
-            self.nation = self.city.nation
-
-class Organisation(Contact):
+class Organisation(StoredDataRow):
     "An Organisation is any named group of people."
     tableName="Organisations"
     def initTable(self,table):
         table.addField('id',ROWID,\
                       doc="the internal id number")
-        Contact.initTable(self,table)
+        #Contact.initTable(self,table)
         table.addField('name',STRING)
         #table.addView('std',columnNames="name email phone website")
+        table.addField('logo',LOGO)
+        table.addField('memo',MEMO)
+        
+    def __unicode__(self):
+        return self.name
 
 class OrganisationsReport(DataReport):
     "former std view"
     leadTable=Organisation
-    columnNames="name email phone website"
+    columnNames="name id logo memo"
+    orderBy='name id'
 
-class Person(StoredDataRow): #(Contact,Address):
+class Person(StoredDataRow):
     "A Person describes a specific physical human."
     tableName="Persons"
     def initTable(self,table):
@@ -76,14 +54,15 @@ class Person(StoredDataRow): #(Contact,Address):
         table.addField('firstName',STRING)
         table.addField('sex',SEX)
         table.addField('birthDate',STRING(width=8))
+        table.addField('memo',MEMO)
         
         # table.setFindColumns("name firstName")
 
         #self.setColumnList("name firstName id")
-        table.setOrderBy('name firstName')
+        #table.setOrderBy('name firstName')
         #table.addView('std',columnNames="name firstName id")
 
-    def __str__(self):
+    def __unicode__(self):
         if self.firstName is None:
             return self.name
         return self.firstName+" "+self.name
@@ -97,6 +76,7 @@ class PersonsReport(DataReport):
     "former std view"
     leadTable=Person
     columnNames="name firstName id"
+    orderBy='name firstName sex birthDate id memo'
     
 
 class User(Person):
@@ -115,54 +95,121 @@ class UsersReport(DataReport):
     leadTable=User
     
 
-class Partner(Contact):
-    """A Person or Organisation with whom I have business contacts.
-    """
-    tableName="Partners"
-    def initTable(self,table):
-        table.addField('name',STRING)
-        table.addField('firstName',STRING)
-        Contact.initTable(self,table)
-        table.addField('id',ROWID)
-        table.addPointer('type',PartnerType)
-        #.setDetail('partnersByType',orderBy='name firstName')
-        table.addField('title',STRING)
-        table.addField('logo',LOGO)
-        #self.addPointer('org',Organisation)
-        #self.addPointer('person',Person)
-        table.addPointer('lang',Language)
-        #table.addView("std","name firstName email phone gsm")
-        table.addField('memo',MEMO)
-        
-    def validate(self):
-        if self.name is None:
-            raise("name must be specified")
-
-    def __str__(self):
-        if self.firstName is None:
-            return self.name
-        return self.firstName+" "+self.name
+class Function(BabelRow):
     
-        
-class PartnersReport(DataReport):
-    "former std view"
-    leadTable=Partner
-    columnNames="name firstName email phone gsm"
-    
-class PartnerType(BabelRow):
-    
-    tableName="PartnerTypes"
+    tableName="Functions"
     
     def initTable(self,table):
         table.addField('id',STRING)
         BabelRow.initTable(self,table)
         
+class FunctionsReport(DataReport):
+    leadTable=Function
 
-    def validatePartner(self,partner):
-        pass
+class Contact(StoredDataRow):
+    tableName="Contacts"
     
-class PartnerTypesReport(DataReport):
-    leadTable=PartnerType
+    def initTable(self,table):
+        table.addField('id',ROWID)
+        table.addField('name',STRING)
+        
+        table.addPointer('org',Organisation)
+        table.addPointer('person',Person)
+
+        table.addPointer('function',Function)
+        table.addField('title',STRING)
+        table.addPointer('lang',Language)
+        
+        
+        table.addField('email',EMAIL,
+                       label="e-mail",
+                       doc="Primary e-mail address")
+        table.addField('phone',STRING,
+                       doc="phone number")
+        table.addField('gsm',STRING,
+                       label="mobile phone",
+                       doc="mobile phone number")
+        table.addField('fax',STRING, doc="fax number")
+        table.addField('website',URL, doc="web site")
+
+        table.addPointer('nation',Nation)
+        table.addPointer('city',City)
+        table.addField('zip',STRING)
+        table.addField('street',STRING)
+        table.addField('house',INT)
+        table.addField('box',STRING)
+        
+    def __unicode__(self):
+        return self.name
+        
+    def after_city(self):
+        if self.city is not None:
+            self.nation = self.city.nation
+
+    def setname(self):
+        if self.org is not None:
+            if self.person is not None:
+                self.name=u"%s (%s)" % (unicode(self.org),
+                                        unicode(self.person))
+            else:
+                self.name=unicode(self.org)
+        else:
+            self.name=unicode(self.person)
+        #print "setname()", self.name
+            
+    def after_org(self):
+        self.setname()
+    def after_person(self):
+        self.setname()
+        
+class ContactsReport(DataReport):
+    leadTable=Contact
+    #columnNames="id org person function title lang email phone"
+    orderBy='name id'
+    
+    
+        
+## class Partner(Contact):
+##     """A Person or Organisation with whom I have business contacts.
+##     """
+##     tableName="Partners"
+##     def initTable(self,table):
+##         table.addField('name',STRING)
+##         table.addField('firstName',STRING)
+##         Contact.initTable(self,table)
+##         table.addPointer('type',PartnerType)
+##         #.setDetail('partnersByType',orderBy='name firstName')
+        
+##     def validate(self):
+##         if self.name is None:
+##             raise("name must be specified")
+
+##     def __str__(self):
+##         if self.firstName is None:
+##             return self.name
+##         return self.firstName+" "+self.name
+
+## class PartnersReport(DataReport):
+##     "former std view"
+##     leadTable=Partner
+##     columnNames="name firstName email phone gsm"
+    
+
+## class PartnerType(BabelRow):
+    
+##     tableName="PartnerTypes"
+    
+##     def initTable(self,table):
+##         table.addField('id',STRING)
+##         BabelRow.initTable(self,table)
+        
+
+##     def validatePartner(self,partner):
+##         pass
+
+
+## class PartnerTypesReport(DataReport):
+##     leadTable=PartnerType
     
 class Nation(BabelRow):
     tableName="Nations"
@@ -175,7 +222,8 @@ class Nation(BabelRow):
         table.addField('curr',STRING)
         table.addField('isocode',STRING(3))
         table.addDetail('cities',City,'nation')
-        table.addDetail('partners_by_nation',Partner,'nation')
+        #table.addDetail('partners_by_nation',Partner,'nation')
+        table.addDetail('contacts_by_nation',Contact,'nation')
         
         #table.addView('std',columnNames="name isocode id")
 
@@ -226,7 +274,7 @@ class City(StoredDataRow):
         
         #table.addView('std',columnNames="name nation zipCode")
         
-    def __str__(self):
+    def __unicode__(self):
         if self.nation is None:
             return self.name
         return self.name + " (%s)" % self.nation.id
@@ -243,7 +291,8 @@ class ContactsSchema(Schema):
     tableClasses = ( Language,
                      Nation, City,
                      Organisation, Person,
-                     Partner, PartnerType)
+                     Function, Contact)
+                     #Partner, PartnerType)
 
     
 
@@ -253,8 +302,11 @@ class ContactsSchema(Schema):
 ##           Partner, PartnerType)
 
 REPORTS = (NationsReport, CitiesReport, OrganisationsReport,
-           PersonsReport, UsersReport, PartnersReport,
-           PartnerTypesReport)
+           PersonsReport, UsersReport,
+           FunctionsReport, ContactsReport,
+           #PartnersReport,
+           #PartnerTypesReport
+           )
 
 
 __all__ = [t.__name__ for t in ContactsSchema.tableClasses]

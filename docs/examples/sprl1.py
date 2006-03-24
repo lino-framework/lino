@@ -26,12 +26,12 @@ class DatabaseOverview(Report):
             )
         self.addVurtColumn(
             label="First",
-            meth=lambda row: str(row.qry[0]),
+            meth=lambda row: unicode(row.qry[0]),
             when=lambda row: len(row.qry)>0,
             width=20)
         self.addVurtColumn(
             label="Last",
-            meth=lambda row: str(row.qry[-1]),
+            meth=lambda row: unicode(row.qry[-1]),
             when=lambda row: len(row.qry)>0,
             width=20)
 

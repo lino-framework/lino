@@ -19,7 +19,7 @@
 
 from lino.misc.tsttools import TestCase, main
 from lino.apps.pinboard.pinboard_demo import startup
-from lino.apps.pinboard.pinboard_tables import Partner,\
+from lino.apps.pinboard.pinboard_tables import Contact,\
      Quote, Author, Language
 
 from lino.apps.pinboard import quotes_de

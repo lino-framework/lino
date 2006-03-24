@@ -1,9 +1,14 @@
-ReportRowForm(title='Luc Saffre'):
+ReportRowForm(title='(1,)'):
 VPanel:
   - HPanel:
   - HPanel:
-    - DataEntry(name='firstName', label='firstName', enabled=False)
     - DataEntry(name='name', label='name', enabled=False)
+  - HPanel:
+    - DataEntry(name='org', label='org', enabled=False)
+  - HPanel:
+    - DataEntry(name='title', label='title', enabled=False)
+    - DataEntry(name='person', label='person', enabled=False)
+    - DataEntry(name='function', label='function', enabled=False)
   - HPanel:
     - DataEntry(name='phone', label='phone number', enabled=False)
     - DataEntry(name='gsm', label='mobile phone number', enabled=False)
@@ -21,8 +26,5 @@ VPanel:
     - DataEntry(name='zip', label='zip', enabled=False)
   - HPanel:
     - DataEntry(name='id', label='id', enabled=False)
-    - DataEntry(name='type', label='type', enabled=False)
     - DataEntry(name='lang', label='lang', enabled=False)
-  - HPanel:
-    - DataEntry(name='memo', label='memo', enabled=False)
   - HPanel:

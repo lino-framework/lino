@@ -8,7 +8,7 @@ BankStatements |seq, date, closed,  |jnl            |
                |balance2            |               |                         
 MiscOperations |seq, date, closed,  |jnl            |                         
                |remark              |               |                         
-Invoices       |seq, date, closed,  |jnl, partner   |lines                    
+Invoices       |seq, date, closed,  |jnl, contact   |lines                    
                |remark, zziel,      |               |                         
                |amount, inverted    |               |                         
 InvoiceLines   |line, amount,       |invoice,       |                         
@@ -25,23 +25,18 @@ Accounts       |name, pcmn, id      |parent,        |
                |                    |profit, cash   |                         
 Bookings       |date, amount, dc,   |account,       |                         
                |label, id           |invoice,       |                         
-               |                    |partner        |                         
+               |                    |contact        |                         
 Languages      |id, name            |               |                         
 Nations        |id, name, area,     |               |cities,                  
-               |population, curr,   |               |partners_by_nation       
+               |population, curr,   |               |contacts_by_nation       
                |isocode             |               |                         
 Cities         |id, name, zipCode,  |nation         |                         
                |inhabitants         |               |                         
-Organisations  |id, email, phone,   |nation, city   |                         
-               |gsm, fax, website,  |               |                         
-               |zip, street, house, |               |                         
-               |box, name           |               |                         
+Organisations  |id, name, logo, memo|               |                         
 Persons        |id, name, firstName,|               |                         
-               |sex, birthDate      |               |                         
-Partners       |name, firstName,    |nation, city,  |                         
-               |email, phone, gsm,  |type, lang,    |                         
-               |fax, website, zip,  |currency       |                         
-               |street, house, box, |               |                         
-               |id, title, logo,    |               |                         
-               |memo                |               |                         
-PartnerTypes   |id, name            |               |                         
+               |sex, birthDate, memo|               |                         
+Contacts       |id, name, title,    |org, person,   |                         
+               |email, phone, gsm,  |function, lang,|                         
+               |fax, website, zip,  |nation, city,  |                         
+               |street, house, box  |currency       |                         
+Functions      |id, name            |               |                         

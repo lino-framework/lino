@@ -33,9 +33,8 @@ class Event(tables.Node):
         table.addField('time', STRING)
         table.addPointer('type', EventType)#.setDetail("eventsByType")
         
-        table.addPointer('responsible',tables.Partner)
-        #.setDetail('eventsByResponsible')
-        table.addPointer('place',tables.Partner)#.setDetail('eventsByPlace')
+        table.addPointer('responsible',tables.Contact)
+        table.addPointer('place',tables.Contact)
         
 
         #table.setColumnList('date time place title abstract')

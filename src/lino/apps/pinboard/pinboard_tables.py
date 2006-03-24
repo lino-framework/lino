@@ -19,7 +19,7 @@
 from lino.adamo.ddl import Schema
 
 from lino.apps.contacts.contacts_tables import User
-from lino.apps.contacts.contacts_tables import Partner
+from lino.apps.contacts.contacts_tables import Contact
 from lino.apps.contacts.contacts_tables import Nation, City
 
 from lino.apps.pinboard.babel import Language
@@ -53,7 +53,7 @@ from lino.apps.pinboard.quotes import Author, \
 class PinboardSchema(Schema):
     tableClasses = (
         User,
-        Partner,
+        Contact,
         Nation,
         City,
         Language,

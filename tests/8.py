@@ -30,7 +30,7 @@ class Case(TestCase):
     def test01(self):
         db = startup()
         s1 = ''
-        q = db.query(Partner,\
+        q = db.query(Contact,\
                      "name street city.name",
                      orderBy="name")
 ##         for row in q:
@@ -57,25 +57,27 @@ class Case(TestCase):
         
         s2 = ''
         for row in q:
-            s2 += str(row.name) + " "
-            s2 += str(row.street) + " "
-            s2 += str(row.city.name) + "\n"
+            s2 += unicode(row.name) + " "
+            if row.street is not None:
+                s2 += unicode(row.street) + " "
+            s2 += unicode(row.city.name) + "\n"
 
         #print s2
         
         self.assertEqual(s2,"""\
-Arens None Eupen
-Ausdemwald None Aachen
-Bodard None Verviers
-Eesti Telefon Sõpruse pst. Tallinn
-Eierschal None Eupen
-Eierschal None Eupen
-Freitag None Eupen
+Andreas Arens Eupen
+Anton Ausdemwald Aachen
+Elion Sõpruse pst. Tallinn
+Emil Eierschal Eupen
+Erna Eierschal Eupen
+Frédéric Freitag Eupen
+Gerd Großmann Eupen
 Girf OÜ Laki Tallinn
-Großmann None Eupen
+Henri Bodard Verviers
+Kati Kask Tallinn
 PAC Systems PGmbH Hütte Eupen
 Rumma & Ko OÜ Tartu mnt. Tallinn
-Saffre None Tallinn
+Tõnu Tamm Tallinn
 """)
 
         # some other cases (for example 80.py) would fail if run

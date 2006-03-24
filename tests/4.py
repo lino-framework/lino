@@ -59,9 +59,9 @@ class Case(TestCase):
 
     def test02(self):
         self.sess.setBabelLangs("en")
-        PARTNERS = self.sess.query(Partner)
+        #PARTNERS = self.sess.query(Partner)
         CITIES = self.sess.query(City)
-        row = PARTNERS.peek(1)
+        row = self.sess.query(Contact).peek(1)
 
         # print "foobar " + repr(row.getValues())
 
@@ -73,37 +73,37 @@ class Case(TestCase):
         ae = self.assertEqual
         
         ae(row.id,1)
-        ae(row.name,"Saffre")
-        ae(str(row),"Luc Saffre")
+        ae(row.name,"Andreas Arens")
+        ae(unicode(row),"Andreas Arens")
 
-        tallinn = CITIES.findone(name="Tallinn")
+        city = CITIES.findone(name="Eupen")
         
-        ae(row.city,tallinn)
+        ae(row.city,city)
         
-        ae(row.city.name,"Tallinn")
-        ae(row.nation.name,"Estonia")
+        ae(row.city.name,"Eupen")
+        ae(row.nation.name,"Belgium")
         
 
 
-    def test05(self):
+##     def test05(self):
         
-        """ If you append several rows and don't want to specify the
-        field names each time, then you can create a custom Query:
+##         """ If you append several rows and don't want to specify the
+##         field names each time, then you can create a custom Query:
         
-        """
+##         """
 
-        PARTNERS = self.sess.query(Partner)
-        CITIES = self.sess.query(City)
+##         PARTNERS = self.sess.query(Partner)
+##         CITIES = self.sess.query(City)
         
-        q = PARTNERS.query('id firstName name')
+##         q = PARTNERS.query('id firstName name')
         
-        row = q.appendRow(1000,"Jean","Dupont")
-        self.assertEqual(row.id,1000)
-        self.assertEqual(row.firstName,"Jean")
-        self.assertEqual(row.name,"Dupont")
+##         row = q.appendRow(1000,"Jean","Dupont")
+##         self.assertEqual(row.id,1000)
+##         self.assertEqual(row.firstName,"Jean")
+##         self.assertEqual(row.name,"Dupont")
         
-        q.appendRow(1001,"Joseph","Dupont")
-        q.appendRow(1002,"Juliette","Dupont")
+##         q.appendRow(1001,"Joseph","Dupont")
+##         q.appendRow(1002,"Juliette","Dupont")
         
 
     def test06(self):
@@ -114,7 +114,7 @@ class Case(TestCase):
         row will automatically know that it's nation is Belgium.  """
 
         NATIONS = self.sess.query(Nation)
-        PARTNERS = self.sess.query(Partner)
+        #PARTNERS = self.sess.query(Partner)
         CITIES = self.sess.query(City)
         
         be = NATIONS.peek("be")

@@ -1,3 +1,4 @@
+#coding: latin1
 ## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
@@ -35,14 +36,27 @@ class Case(TestCase):
     
     def test01(self):
         from lino.apps.contacts.contacts_demo import startup
-        self.doit(startup(), """
+        self.doit(startup(), u"""
 Estonia is used by 10 rows in Cities
 Belgium is used by 9 rows in Cities
 Germany is used by 7 rows in Cities
-Eupen (be) is used by 6 rows in Partners
-Verviers (be) is used by 1 rows in Partners
-Aachen (de) is used by 1 rows in Partners
-Tallinn (ee) is used by 4 rows in Partners        
+Eupen (be) is used by 6 rows in Contacts
+Verviers (be) is used by 1 rows in Contacts
+Aachen (de) is used by 1 rows in Contacts
+Tallinn (ee) is used by 5 rows in Contacts
+Rumma & Ko OÜ is used by 1 rows in Contacts
+Girf OÜ is used by 1 rows in Contacts
+PAC Systems PGmbH is used by 1 rows in Contacts
+Elion is used by 1 rows in Contacts
+Andreas Arens is used by 1 rows in Contacts
+Anton Ausdemwald is used by 1 rows in Contacts
+Emil Eierschal is used by 1 rows in Contacts
+Henri Bodard is used by 1 rows in Contacts
+Erna Eierschal is used by 1 rows in Contacts
+Gerd Großmann is used by 1 rows in Contacts
+Frédéric Freitag is used by 1 rows in Contacts
+Tõnu Tamm is used by 1 rows in Contacts
+Kati Kask is used by 1 rows in Contacts        
         """)
         
     def test02(self):
@@ -63,19 +77,32 @@ Winston Churchill is used by 1 rows in Quotes
         
     def test03(self):
         from lino.apps.ledger.ledger_demo import startup
-        self.doit(startup(), """\
-BEF is used by 7 rows in Partners
-(3,) is used by 1 rows in InvoiceLines
-(16,) is used by 1 rows in InvoiceLines
+        self.doit(startup(), u"""\
+BEF is used by 7 rows in Contacts
+Chair is used by 1 rows in InvoiceLines
+Table is used by 1 rows in InvoiceLines
 outgoing invoices is used by 1 rows in Invoices
 OUT-1 is used by 2 rows in InvoiceLines
 Estonia is used by 10 rows in Cities
 Belgium is used by 9 rows in Cities
 Germany is used by 7 rows in Cities
-Eupen (be) is used by 6 rows in Partners
-Verviers (be) is used by 1 rows in Partners
-Aachen (de) is used by 1 rows in Partners
-Tallinn (ee) is used by 4 rows in Partners
+Eupen (be) is used by 6 rows in Contacts
+Verviers (be) is used by 1 rows in Contacts
+Aachen (de) is used by 1 rows in Contacts
+Tallinn (ee) is used by 5 rows in Contacts
+Rumma & Ko OÜ is used by 1 rows in Contacts
+Girf OÜ is used by 1 rows in Contacts
+PAC Systems PGmbH is used by 1 rows in Contacts
+Elion is used by 1 rows in Contacts
+Andreas Arens is used by 1 rows in Contacts
+Anton Ausdemwald is used by 1 rows in Contacts
+Emil Eierschal is used by 1 rows in Contacts
+Henri Bodard is used by 1 rows in Contacts
+Erna Eierschal is used by 1 rows in Contacts
+Gerd Großmann is used by 1 rows in Contacts
+Frédéric Freitag is used by 1 rows in Contacts
+Tõnu Tamm is used by 1 rows in Contacts
+Kati Kask is used by 1 rows in Contacts        
         """)
         
 if __name__ == '__main__':

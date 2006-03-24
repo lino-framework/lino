@@ -88,7 +88,7 @@ class DataRow:
 
     def format(v):
         #print repr(v)
-        return str(v)
+        return unicode(v)
     format=staticmethod(format)
         
 

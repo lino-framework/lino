@@ -250,8 +250,8 @@ class StandardPopulator(addrdemo.StandardPopulator):
 class DemoPopulator(addrdemo.DemoPopulator):
     
 
-    def populatePartners(self,q):
-        addrdemo.DemoPopulator.populatePartners(self,q)
+    def populateContacts(self,q):
+        addrdemo.DemoPopulator.populateContacts(self,q)
         #return 
         NAT=q.getContext().query(Nation)
         CCY=q.getContext().query(Currency)
@@ -260,7 +260,7 @@ class DemoPopulator(addrdemo.DemoPopulator):
         #be.partners_by_nation.showReport()
         #return
         # must fetchall() because we update
-        for p in NAT.peek('be').partners_by_nation().fetchall():
+        for p in NAT.peek('be').contacts_by_nation().fetchall():
         #for p in NAT.peek('be').partners_by_nation():
             p.update(currency=BEF)
             #p.lock()
@@ -279,9 +279,9 @@ class DemoPopulator(addrdemo.DemoPopulator):
         
     def populateInvoices(self,q):
         anton=q.getContext().query(
-            Partner).findone(firstName="Anton")
+            Contact).findone(name="Anton Ausdemwald")
         self.invoice = q.appendRow(jnl=self.OUT,
-                                   partner=anton,
+                                   contact=anton,
                                    date=itod(20030822))
     def populateInvoiceLines(self,q):
         q.appendRow(invoice=self.invoice,product=self.chair,qty=4)

@@ -50,14 +50,14 @@ class Case(TestCase):
         single column whose name is the pointer's name with the pointed
         table's primary key suffixed, usually "_id". """
         
-        q = self.db.query(Organisation,"id name city nation")
+        q = self.db.query(Contact,"id name city nation")
         assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """\
-SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
+SELECT id, name, city_nation_id, city_id, nation_id FROM Contacts
         """)
 
-        q = self.db.query(Invoice,"seq date jnl remark partner")
+        q = self.db.query(Invoice,"seq date jnl remark contact")
         assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """
@@ -66,7 +66,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
             seq,
             xdate, 
             remark,
-            partner_id
+            contact_id
         FROM Invoices 
         """)
 
@@ -82,7 +82,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         
         """
         
-        q = self.db.query(Organisation,
+        q = self.db.query(Contact,
                           "id name city.name nation.id nation.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
@@ -96,7 +96,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
             lead.nation_id,
             nation.id,
             nation.name_en
-        FROM Organisations AS lead
+        FROM Contacts AS lead
             LEFT JOIN Cities AS city
                   ON (lead.city_nation_id = city.nation_id
                   AND lead.city_id = city.id)
@@ -108,25 +108,25 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         assert q.getJoinList() == "city nation"
 
 
-        q = self.db.query(Invoice,"seq date jnl remark partner.name")
+        q = self.db.query(Invoice,"seq date jnl remark contact.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
             lead.jnl_id,
             lead.seq,
             lead.xdate,
             lead.remark,
-            lead.partner_id,
-            partner.id,
-            partner.name
+            lead.contact_id,
+            contact.id,
+            contact.name
         FROM Invoices AS lead
-            LEFT JOIN Partners AS partner
-                ON (lead.partner_id = partner.id)
+            LEFT JOIN Contacts AS contact
+                ON (lead.contact_id = contact.id)
         """)
 
 
         # atom city_id has automatically been added because necessary
         # for the join
-        self.assertEqual(q.getJoinList(),"partner")
+        self.assertEqual(q.getJoinList(),"contact")
 
         
 
@@ -190,7 +190,7 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
         """
         
         q = self.db.query(ProductInvoiceLine,
-            "invoice.partner.name product.name")
+            "invoice.contact.name product.name")
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT
           lead.invoice_jnl_id,
@@ -198,9 +198,9 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
           lead.line,
           invoice.jnl_id,
           invoice.seq,
-          invoice.partner_id,
-          invoice_partner.id,
-          invoice_partner.name,
+          invoice.contact_id,
+          invoice_contact.id,
+          invoice_contact.name,
           lead.product_id,
           product.id,
           product.name
@@ -208,33 +208,33 @@ SELECT id, name, city_nation_id, city_id, nation_id FROM Organisations
           LEFT JOIN Invoices AS invoice
              ON (lead.invoice_jnl_id = invoice.jnl_id
                 AND lead.invoice_seq = invoice.seq)
-          LEFT JOIN Partners AS invoice_partner
-             ON (invoice.partner_id = invoice_partner.id)
+          LEFT JOIN Contacts AS invoice_contact
+             ON (invoice.contact_id = invoice_contact.id)
           LEFT JOIN Products AS product
              ON (lead.product_id = product.id)
         """)
-        assert q.getJoinList() == "invoice invoice_partner product"
+        assert q.getJoinList() == "invoice invoice_contact product"
         
         """
         - invoice is a pointer from InvoiceLines to Invoices 
-        - invoice_partner is a pointer from Invoices to Partners
+        - invoice_contact is a pointer from Invoices to Contacts
         - product is a pointer from InvoiceLines to Products
         """
 
         
-        """ Note : `invoice.partner_id` and not
-        `invoice.invoice_partner_id`
+        """ Note : `invoice.contact_id` and not
+        `invoice.invoice_contact_id`
         """
 
         CITIES = self.db.query(City)
         eupen = CITIES.findone(name="Eupen")
-        q = self.db.query(Partner,
+        q = self.db.query(Contact,
                           "name", city=eupen)
         assert q.getJoinList() == ""
         #self.assertEquivalent(q.getSqlSelect(), """
         self.assertEquivalent(q.getSqlSelect(), """
         SELECT id, name, city_nation_id, city_id        
-        FROM Partners
+        FROM Contacts
         WHERE city_nation_id = 'be'
         AND city_id = %d
         """ % eupen.id)

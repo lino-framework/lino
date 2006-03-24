@@ -25,7 +25,7 @@
 """
 from lino.misc.tsttools import TestCase, main
 from lino.apps.ledger.ledger_demo import startup
-from lino.apps.ledger.ledger_tables import Nation,Partner, Currency
+from lino.apps.ledger.ledger_tables import Nation,Contact, Currency
 
 class Case(TestCase):
 
@@ -40,12 +40,12 @@ class Case(TestCase):
     def test01(self):
         NATIONS = self.sess.query(Nation)
         CURR = self.sess.query(Currency)
-        PARTNERS = self.sess.query(Partner)
+        PARTNERS = self.sess.query(Contact)
         be = NATIONS.peek("be")
         BEF = CURR.peek('BEF')
         EUR = CURR.peek('EUR')
         q=PARTNERS.query("currency",
-                         orderBy="name firstName",
+                         orderBy="name",
                          nation=be)
         s = ""
         #print self.getConsoleOutput()
@@ -54,22 +54,23 @@ class Case(TestCase):
             #   s += p.__str__() + " : currency remains None\n"
             if p.currency != EUR:
                 # print p, p.currency.id
-                s += p.__str__() + \
-                     " : currency %s updated to EUR\n" % p.currency
+                s += unicode(p) + \
+                     " : currency %s updated to EUR\n" % \
+                     p.currency.id
                 p.lock()
                 p.currency = EUR
                 p.unlock()
             else:
-                s += str(p) + " : currency was already EUR\n"
+                s += unicode(p) + " : currency was already EUR\n"
 
         #print s
-        self.assertEqual(s,"""\
+        self.assertEqual(s,u"""\
 Andreas Arens : currency BEF updated to EUR
-Henri Bodard : currency BEF updated to EUR
 Emil Eierschal : currency BEF updated to EUR
 Erna Eierschal : currency BEF updated to EUR
 Frédéric Freitag : currency BEF updated to EUR
 Gerd Großmann : currency BEF updated to EUR
+Henri Bodard : currency BEF updated to EUR
 PAC Systems PGmbH : currency BEF updated to EUR
 """)
         

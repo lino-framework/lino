@@ -25,7 +25,7 @@ from lino.adamo.datatypes import itod
 from lino.apps.ledger.ledger_demo import startup
 
 from lino.apps.ledger.ledger_tables import \
-     Partner, Journal, Invoice, Product
+     Contact, Journal, Invoice, Product
 
 
 
@@ -46,14 +46,14 @@ class Case(TestCase):
     def test01(self):
         "create an invoice"
 
-        PARTNERS = self.db.query(Partner)
+        PARTNERS = self.db.query(Contact)
         JOURNALS = self.db.query(Journal)
         INVOICES = self.db.query(Invoice)
         PRODUCTS = self.db.query(Product)
         
         """get the partner # 1 and Journal."""
         p = PARTNERS.peek(1)
-        self.assertEqual(str(p),"Luc Saffre")
+        self.assertEqual(unicode(p),"Andreas Arens")
 
         jnl = JOURNALS.peek("OUT")
         self.assertEqual(jnl.id,"OUT")
@@ -61,7 +61,7 @@ class Case(TestCase):
         "create a query"
         
         invoices = INVOICES.query("jnl date remark",
-                                  partner=p)
+                                  contact=p)
         #invoices.setSamples(partner=p)
         #csr = invoices.executeSelect()
         #count = csr.rowcount
@@ -79,8 +79,10 @@ class Case(TestCase):
         self.assertEqual(i.seq,2)
 
         
-        """ len(p.invoices) is increased because an invoice for this
-        partner has been created:"""
+        """ len(p.invoices()) is increased because an invoice for this
+        contact has been created:"""
+
+        self.assertEqual(len(invoices),count+1)
 
         """create two rows in this invoice :"""
 

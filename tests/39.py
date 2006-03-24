@@ -44,7 +44,7 @@ class Case(TestCase):
 
         #print s
 
-        self.assertEquivalent(s,"""\
+        self.assertEquivalent(s,"""
 Currencies: id(StringType+)
 Products: id(AutoIncType)
 Journals: id(StringType+)
@@ -62,8 +62,8 @@ Nations: id(StringType+)
 Cities: nation_id(StringType+), id(AutoIncType)
 Organisations: id(AutoIncType)
 Persons: id(AutoIncType)
-Partners: id(AutoIncType)
-PartnerTypes: id(StringType)
+Contacts: id(AutoIncType)
+Functions: id(StringType)        
 """)
 
         

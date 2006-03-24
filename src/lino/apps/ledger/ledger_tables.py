@@ -25,7 +25,8 @@ from lino.apps.contacts import contacts_tables as contacts
 from lino.apps.contacts.contacts_tables import Language
 from lino.apps.contacts.contacts_tables import City, Nation
 from lino.apps.contacts.contacts_tables import Organisation, Person
-from lino.apps.contacts.contacts_tables import PartnerType
+from lino.apps.contacts.contacts_tables import Contact, Function
+#from lino.apps.contacts.contacts_tables import PartnerType
 #from lino.apps.contacts.tables import Partner as PartnerBase
 #from lino.apps.contacts.tables import User
 #from lino.apps.contacts.contacts_data import *
@@ -41,16 +42,16 @@ class Currency(BabelRow):
         table.addField('id',STRING(width=3))
         BabelRow.initTable(self,table)
         
-    def __str__(self):
+    def __unicode__(self):
         return self.id
 
 class CurrenciesReport(DataReport):
     leadTable=Currency
 
-class Partner(contacts.Partner):
+class Contact(contacts.Contact):
     # no tableName because this overrides contacts.Partner
     def initTable(self,table):
-        contacts.Partner.initTable(self,table)
+        contacts.Contact.initTable(self,table)
         table.addPointer('currency',Currency)
 
 
@@ -110,7 +111,7 @@ class PartnerDocument(Document):
     def initTable(self,table):
         Document.initTable(self,table)
         table.addField('remark',STRING)
-        table.addPointer('partner',Partner)
+        table.addPointer('contact',Contact)
 
         
 
@@ -123,6 +124,9 @@ class Product(StoredDataRow):
         table.addField('id',ROWID)
         table.addField('name',STRING)
         table.addField('price',PRICE)
+        
+    def __unicode__(self):
+        return self.name
 
 
 class ProductsReport(DataReport):
@@ -138,7 +142,7 @@ class Invoice(PartnerDocument):
         table.addField('amount',AMOUNT)
         table.addField('inverted',BOOL)
         #table.addPointer('partner',Partners).setDetail('invoices')
-        table.getRowAttr('partner')#.setDetail('invoices')
+        #table.getRowAttr('partner')#.setDetail('invoices')
         table.addDetail('lines',InvoiceLine,'invoice')
 
     def close(self):
@@ -302,7 +306,7 @@ class Booking(StoredDataRow):
         table.addField('label',STRING)
         
         table.addPointer('invoice',Invoice)
-        table.addPointer('partner',Partner)
+        table.addPointer('contact',Contact)
       
         #table.setPrimaryKey("date seq")
    
@@ -323,8 +327,9 @@ class LedgerSchema(contacts.ContactsSchema):
         Language,
         Nation, City,
         Organisation, Person,
-        Partner,
-        PartnerType        
+        Contact, Function,
+        #Partner,
+        #PartnerType        
         ) #+ ContactsSchema.tableClasses
     
         
