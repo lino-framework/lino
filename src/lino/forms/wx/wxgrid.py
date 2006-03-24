@@ -445,8 +445,8 @@ class DataGridCtrl(wx.grid.Grid):
                 return
             colIndex = self.GetGridCursorCol()
             col = self.table.columns[colIndex]
-            row = self.table.editor.getCurrentRow()
             frm = self.table.editor.getForm()
+            row = frm.getCurrentRow()
             
             if col.showSelector(frm,row):
                 self.refresh()
