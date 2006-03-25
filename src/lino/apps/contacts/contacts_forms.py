@@ -36,7 +36,7 @@ Note that this application is not stable and there are no known users.
         self.addReportItem(
             m,"cities",CitiesReport,label="&Cities")
         self.addReportItem(
-            m,"partners",PartnersReport,label="&Partners")
+            m,"contacts",ContactsReport,label="&Contacts")
         self.addReportItem(
             m,"orgs",OrganisationsReport,label="&Organisations")
         self.addReportItem(

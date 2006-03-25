@@ -683,7 +683,6 @@ class Toolkit(toolkit.Toolkit):
         
         mainBox = wx.BoxSizer(wx.VERTICAL)
         
-        #self.createCompCtrl(frm.mainComp,ctrl,mainBox)
         frm.mainComp.wxsetup(ctrl,ctrl,mainBox)
         
         if frm.defaultButton is not None:
@@ -699,7 +698,7 @@ class Toolkit(toolkit.Toolkit):
 
         ctrl.SetSizerAndFit(mainBox)
         #self.mainBox = mainBox
-        #self.wxctrl.SetAutoLayout(True) 
+        #ctrl.SetAutoLayout(True) 
         #self.wxctrl.Layout()
 
         if frm.halign is forms.CENTER:

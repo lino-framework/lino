@@ -243,7 +243,7 @@ class Form(MenuContainer,Container):
         #assert not isinstance(sess,Toolkit)
         self.session=sess
         self.toolkit=sess.toolkit
-        self.mainComp = sess.toolkit.vpanelFactory(self)
+        self.mainComp = sess.toolkit.vpanelFactory(self,weight=1)
 ##         for m in ('addLabel','addViewer',
 ##                   'addEntry', 'addDataEntry',
 ##                   'addDataGrid','addNavigator',
@@ -409,14 +409,14 @@ class ReportForm(Form,GenericDocument):
         self.rpt.beginReport(self)
 
     def beforeRowEdit(self):
-        self.currentRow=self.getCurrentRow()
+        #self.currentRow=self.getCurrentRow()
         if self.currentRow is None: return
         if self.isEditing():
             self.currentRow.item.lock()
             
     def afterRowEdit(self):
         if self.currentRow is None: return
-        if self.isEditing():
+        if self.currentRow.item.isLocked():
             self.store()
             self.currentRow.item.unlock()
 
@@ -458,7 +458,8 @@ class ReportForm(Form,GenericDocument):
         
         m.addItem("copy",
                   label="&Copy",
-                  action=copy)
+                  action=copy,
+                  accel="Ctrl-C")
         
         #m = frm.addMenu("row",label="&Row")
         if self.rpt.canWrite():
@@ -511,8 +512,8 @@ class ReportForm(Form,GenericDocument):
         #self.afterRowEdit()
         #self.refresh()
 
-    def setupGoMenu(self):
-        pass
+    #def setupGoMenu(self):
+    #    pass
 
     def getTitle(self):
         if self.title is not None: return self.title
@@ -585,6 +586,19 @@ class ReportGridForm(ReportForm):
     def setupForm(self):
         self.grid=self.addDataGrid(self.rpt)
 
+    def setupEditMenu(self):
+        m=ReportForm.setupEditMenu(self)
+        m.addItem("formView",
+                  label="&Form view",
+                  action=self.formView,
+                  accel="Ctrl-ENTER")
+        
+    def formView(self):
+        #self.pickedRow=self.getCurrentRow()
+        row=self.getCurrentRow()
+        self.showForm(ReportRowForm(self.rpt,row.index))
+        
+
     def onIdle(self):
         if self.grid is None: return
         l = self.grid.getSelectedRows()
@@ -634,9 +648,10 @@ class ReportGridPickForm(ReportGridForm):
 class ReportRowForm(ReportForm):
     def __init__(self,rpt,recno=0,**kw):
         ReportForm.__init__(self,rpt,**kw)
-        if recno < 0:
-            recno+=len(self.rpt)
-        self.recno=recno
+        self.currentRow=self.rpt[recno]
+        #if recno < 0:
+        #    recno+=len(self.rpt)
+        #self.recno=recno
         self.beforeRowEdit()
 
     def isEditing(self):
@@ -650,8 +665,8 @@ class ReportRowForm(ReportForm):
         self.rpt.setupReportForm(self)
             
     def getCurrentRow(self):
-        return self.rpt[self.recno]        
-        #return self.currentRow
+        #return self.rpt[self.recno]        
+        return self.currentRow
         #if self.recno is None:
         #    return None
         #return self.rpt[self.recno]
@@ -667,10 +682,13 @@ class ReportRowForm(ReportForm):
             
     
     def getTitle(self):
-        return str(self.currentRow.item)
+        return "[%d/%d] " % (self.currentRow.index+1,len(self.rpt)) \
+               +unicode(self.currentRow.item)
 
     def onIdle(self):
-        s = "Row %d of %d" % (self.recno,len(self.rpt))
+        if self.currentRow is None: return
+        s = "Row %d of %d" % (self.currentRow.index,
+                              len(self.rpt))
         self.session.status(s)
 
     def setupMenu(self):
@@ -715,16 +733,18 @@ class ReportRowForm(ReportForm):
             
     def skip(self,n):
         self.afterRowEdit()
+        recno=self.currentRow.index
         if n > 0:
-            if self.recno + n < len(self.rpt):
-                self.recno += n
+            if recno + n < len(self.rpt):
+                recno += n
             else:
                 return
         else:
-            if self.recno + n >= 0:
-                self.recno += n
+            if recno + n >= 0:
+                recno += n
             else:
                 return
+        self.currentRow=self.rpt[recno]
         self.beforeRowEdit()
         self.refresh()
 
@@ -744,7 +764,7 @@ class ReportRowForm(ReportForm):
         
 
     def getStatus(self):
-        return "%d/%d" % (self.recno,len(self.rpt))
+        return "%d/%d" % (self.currentRow.index,len(self.rpt))
     
         
     

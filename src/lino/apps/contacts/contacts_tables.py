@@ -164,7 +164,10 @@ class Contact(StoredDataRow):
         
 class ContactsReport(DataReport):
     leadTable=Contact
-    #columnNames="id org person function title lang email phone"
+    columnSpec="""
+    id org person
+    function title lang
+    email phone"""
     orderBy='name id'
     
     

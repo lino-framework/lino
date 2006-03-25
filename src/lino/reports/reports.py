@@ -102,7 +102,9 @@ class BaseReport:
 
     def __getitem__(self,i):
         #return self.ds.__getitem__(i)
-        return ReportRow(self,self.getIterator().__getitem__(i))
+        if i < 0:
+            i+=len(self)
+        return ReportRow(self,i,self.getIterator().__getitem__(i))
 
     def canWrite(self):
         return self.getIterator().canWrite()
@@ -188,23 +190,23 @@ class BaseReport:
             if self.width is None:
                 self.width=doc.getLineWidth()
             self.computeWidths(doc)
-            #self._mustSetup=False
-        else:
-            assert self._setupDone is doc,\
-                   "%r being used by %s" % (self, self._setupDone)
+##         else:
+##             assert self._setupDone is doc,\
+##                    "%r being used by %s" % (self, self._setupDone)
         
     def endReport(self,doc):
-        assert self._setupDone is doc,\
-               "%r being used by %s" % (self, self._setupDone)
-        self._setupDone=None
+        pass
+##         assert self._setupDone is doc,\
+##                "%r being used by %s" % (self, self._setupDone)
+##         self._setupDone=None
         #pass
 
     def rows(self,doc):
         return ReportIterator(self,doc)
         
     #def processItem(self,doc,item):
-    def processItem(self,item):
-        return ReportRow(self,item)
+    def processItem(self,rowno,item):
+        return ReportRow(self,rowno,item)
         #return ReportRow(self,doc,item)
         #row = Row(item)
 
@@ -411,8 +413,9 @@ class VurtReportColumn(ReportColumn):
 
 
 class ReportRow:
-    def __init__(self,rpt,item):
+    def __init__(self,rpt,index,item):
         self.item = item
+        self.index=index
         #self.cells = []
         self.values = []
         self.rpt=rpt
@@ -458,12 +461,14 @@ class ReportIterator:
         self.iterator=rpt.getIterator().__iter__()
         self.rpt=rpt
         self.doc=doc
+        self.rowno=0
         
     def __iter__(self):
         return self
 
     def next(self):
-        return self.rpt.processItem(self.iterator.next())
+        self.rowno+=1
+        return self.rpt.processItem(self.rowno,self.iterator.next())
         #return self.rpt.processItem(self.doc,self.iterator.next())
 
 
