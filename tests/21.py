@@ -64,14 +64,15 @@ class Case(TestCase):
                 s += unicode(p) + " : currency was already EUR\n"
 
         #print s
-        self.assertEqual(s,u"""\
+        self.assertEquivalent(s,u"""
 Andreas Arens : currency BEF updated to EUR
 Emil Eierschal : currency BEF updated to EUR
 Erna Eierschal : currency BEF updated to EUR
 Frédéric Freitag : currency BEF updated to EUR
 Gerd Großmann : currency BEF updated to EUR
 Henri Bodard : currency BEF updated to EUR
-PAC Systems PGmbH : currency BEF updated to EUR
+Kurtz & Büntig : currency BEF updated to EUR
+Reisebüro Freitag : currency BEF updated to EUR        
 """)
         
         

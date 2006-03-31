@@ -12,7 +12,7 @@ class MyContactsReport(ContactsReport):
     columnSpec="""
     name
     org 
-    title person function
+    person function
     phone gsm fax
     email website
     street house box

@@ -32,11 +32,13 @@ Nations        |id, name, area,     |               |cities,
                |isocode             |               |                         
 Cities         |id, name, zipCode,  |nation         |                         
                |inhabitants         |               |                         
-Organisations  |id, name, logo, memo|               |                         
-Persons        |id, name, firstName,|               |                         
-               |sex, birthDate, memo|               |                         
-Contacts       |id, name, title,    |org, person,   |                         
-               |email, phone, gsm,  |function, lang,|                         
-               |fax, website, zip,  |nation, city,  |                         
+Organisations  |id, name, name2,    |               |                         
+               |logo, memo          |               |                         
+Persons        |id, name, firstName,|               |contacts                 
+               |sex, birthDate,     |               |                         
+               |memo, title         |               |                         
+Contacts       |id, name, email,    |org, person,   |                         
+               |phone, gsm, fax,    |function, lang,|                         
+               |website, zip,       |nation, city,  |                         
                |street, house, box  |currency       |                         
 Functions      |id, name            |               |                         

@@ -318,7 +318,7 @@ class BabelFieldColumn(FieldColumn):
         
         
         
-class PointerColumn(QueryColumn):
+class PointerColumn(FieldColumn):
     fieldClass=Pointer
         
     def row2atoms(self,row,atomicRow):
@@ -1171,7 +1171,8 @@ class SimpleQuery(LeadTableColumnList):
         self._filters=None
         
     def addColFilter(self,colName,fcl,*args,**kw):
-        col=self.getColumnByName(colName)
+        col=self.provideColumn(colName)
+        #col=self.getColumnByName(colName)
         self.addFilter(fcl(col,*args,**kw))
         
     def addFilter(self,flt): # cls,*args,**kw):

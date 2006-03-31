@@ -1,4 +1,4 @@
-ReportRowForm(title='(1,)'):
+ReportRowForm(title=u'[1/19] Andreas Arens'):
 VPanel:
   - HPanel:
   - HPanel:
@@ -6,7 +6,6 @@ VPanel:
   - HPanel:
     - DataEntry(name='org', label='org', enabled=False)
   - HPanel:
-    - DataEntry(name='title', label='title', enabled=False)
     - DataEntry(name='person', label='person', enabled=False)
     - DataEntry(name='function', label='function', enabled=False)
   - HPanel:

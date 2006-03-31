@@ -40,23 +40,29 @@ class Case(TestCase):
 Estonia is used by 10 rows in Cities
 Belgium is used by 9 rows in Cities
 Germany is used by 7 rows in Cities
-Eupen (be) is used by 6 rows in Contacts
+Eupen (be) is used by 7 rows in Contacts
 Verviers (be) is used by 1 rows in Contacts
 Aachen (de) is used by 1 rows in Contacts
-Tallinn (ee) is used by 5 rows in Contacts
-Rumma & Ko OÜ is used by 1 rows in Contacts
-Girf OÜ is used by 1 rows in Contacts
-PAC Systems PGmbH is used by 1 rows in Contacts
-Elion is used by 1 rows in Contacts
+München (de) is used by 1 rows in Contacts
+Tallinn (ee) is used by 3 rows in Contacts
+Kurtz & Büntig is used by 3 rows in Contacts
+Reisebüro Freitag is used by 2 rows in Contacts
+Bäckerei Ausdemwald is used by 1 rows in Contacts
+Hans Flott is used by 2 rows in Contacts
+Mets & puu OÜ is used by 2 rows in Contacts
 Andreas Arens is used by 1 rows in Contacts
-Anton Ausdemwald is used by 1 rows in Contacts
+Anton Ausdemwald is used by 2 rows in Contacts
 Emil Eierschal is used by 1 rows in Contacts
 Henri Bodard is used by 1 rows in Contacts
 Erna Eierschal is used by 1 rows in Contacts
 Gerd Großmann is used by 1 rows in Contacts
-Frédéric Freitag is used by 1 rows in Contacts
+Frédéric Freitag is used by 2 rows in Contacts
 Tõnu Tamm is used by 1 rows in Contacts
-Kati Kask is used by 1 rows in Contacts        
+Kati Kask is used by 2 rows in Contacts
+Klaus Kurtz is used by 1 rows in Contacts
+Bruno Büntig is used by 1 rows in Contacts
+Hans Flott is used by 1 rows in Contacts
+Director is used by 6 rows in Contacts        
         """)
         
     def test02(self):
@@ -78,7 +84,7 @@ Winston Churchill is used by 1 rows in Quotes
     def test03(self):
         from lino.apps.ledger.ledger_demo import startup
         self.doit(startup(), u"""\
-BEF is used by 7 rows in Contacts
+BEF is used by 8 rows in Contacts
 Chair is used by 1 rows in InvoiceLines
 Table is used by 1 rows in InvoiceLines
 outgoing invoices is used by 1 rows in Invoices
@@ -86,23 +92,29 @@ OUT-1 is used by 2 rows in InvoiceLines
 Estonia is used by 10 rows in Cities
 Belgium is used by 9 rows in Cities
 Germany is used by 7 rows in Cities
-Eupen (be) is used by 6 rows in Contacts
+Eupen (be) is used by 7 rows in Contacts
 Verviers (be) is used by 1 rows in Contacts
 Aachen (de) is used by 1 rows in Contacts
-Tallinn (ee) is used by 5 rows in Contacts
-Rumma & Ko OÜ is used by 1 rows in Contacts
-Girf OÜ is used by 1 rows in Contacts
-PAC Systems PGmbH is used by 1 rows in Contacts
-Elion is used by 1 rows in Contacts
+München (de) is used by 1 rows in Contacts
+Tallinn (ee) is used by 3 rows in Contacts
+Kurtz & Büntig is used by 3 rows in Contacts
+Reisebüro Freitag is used by 2 rows in Contacts
+Bäckerei Ausdemwald is used by 1 rows in Contacts
+Hans Flott is used by 2 rows in Contacts
+Mets & puu OÜ is used by 2 rows in Contacts
 Andreas Arens is used by 1 rows in Contacts
-Anton Ausdemwald is used by 1 rows in Contacts
+Anton Ausdemwald is used by 2 rows in Contacts
 Emil Eierschal is used by 1 rows in Contacts
 Henri Bodard is used by 1 rows in Contacts
 Erna Eierschal is used by 1 rows in Contacts
 Gerd Großmann is used by 1 rows in Contacts
-Frédéric Freitag is used by 1 rows in Contacts
+Frédéric Freitag is used by 2 rows in Contacts
 Tõnu Tamm is used by 1 rows in Contacts
-Kati Kask is used by 1 rows in Contacts        
+Kati Kask is used by 2 rows in Contacts
+Klaus Kurtz is used by 1 rows in Contacts
+Bruno Büntig is used by 1 rows in Contacts
+Hans Flott is used by 1 rows in Contacts
+Director is used by 6 rows in Contacts        
         """)
         
 if __name__ == '__main__':

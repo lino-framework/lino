@@ -18,49 +18,22 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-"""
-
-Deciding whether to store values of a DataRow in a tuple of atomic
-values or in a dict of complex values...
-
-1. I iterate over a PARTNERS query with only the "currency" column
-   (because this is the only one I am going to use. Plus the implicit
-   "nation" column.
-
-   The "print p" statement will do a call to Partners.getRowLabel()
-   which will access row.name --- a field that was not included in my
-   columnNames!
-
-   Or if I modify the row, then the validateRow() action will be
-   triggered and it will ask for the partner's name.
-
-   If a field was not part of the initial query, it will silently be
-   looked up.
-
-2. Accessing p.nation.name means that an attribute "p.nation" exists
-   and has a Nations row as value.
-
-3. (new:) Iterating over a row returns the cell value for each visible
-   column of its query.
-
-
-
-"""
 from lino.misc.tsttools import TestCase, main
 
 from lino.apps.contacts.contacts_demo import startup
 from lino.apps.contacts.contacts_tables import Nation,Contact
 #from lino.reports import DataReport
+from lino.adamo.filters import NotEmpty
 
 class Case(TestCase):
     
     def test01(self):
         dbsess = startup()
-        be = dbsess.query(Nation).peek("be")
-        qry = dbsess.query(Contact,
-                           "title name",
-                           nation=be)
-        qry.show(columnWidths="6 20")
+        be=dbsess.query(Nation).peek("be")
+        #qry=be.contacts_by_nation("")
+        qry = dbsess.query(Contact,"person.title name",nation=be)
+        qry.addColFilter('person',NotEmpty)
+        qry.show(columnWidths="12 20")
         #dbc.showQuery(qry,columnWidths="6 10 20")
         #sess.showReport(rpt)
         s = self.getConsoleOutput()
@@ -68,24 +41,19 @@ class Case(TestCase):
         #print s
         
         self.assertEquivalent(s,u"""\
-Contacts (nation=Belgium)
-=========================
-title |name
-------+--------------------
-Herrn |Andreas Arens
-Dr.   |Henri Bodard
-Herrn |Emil Eierschal
-Frau  |Erna Eierschal
-Herrn |Gerd Großmann
-Herrn |Frédéric Freitag
-      |PAC Systems PGmbH       
+Contacts (nation=Belgium) where 'person' not empty
+==================================================
+person.title|name
+------------+--------------------
+Herrn       |Andreas Arens
+Monsieur    |Henri Bodard
+Herrn       |Emil Eierschal
+Frau        |Erna Eierschal
+Herrn       |Gerd Großmann
+Herrn       |Frédéric Freitag
 """)
                          
 
-        # some other cases (for example 80.py) would fail if run
-        # together with this case in one suite and if the following
-        # line were not:
-        
         dbsess.shutdown()
 
 if __name__ == '__main__':

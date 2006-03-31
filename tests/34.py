@@ -35,7 +35,7 @@ from lino.apps.ledger.ledger_forms import Ledger
 
 
 class Case(TestCase):
-
+    skip=True # now covered by docs/examples/schema1.py
     
     def test01(self):
         app = Contacts()

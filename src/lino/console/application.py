@@ -150,6 +150,16 @@ class Application(Session):
         
     def close(self):
         pass
+
+    def __str__(self):
+        if self.name is None:
+            s = self.__class__.__name__
+        else:
+            s = self.name
+            
+        if self.version is not None:
+            s += " version " + self.version
+        return s
     
     def setupOptionParser(self,parser):
         pass
@@ -160,13 +170,7 @@ class Application(Session):
 
 
     def aboutString(self):
-        if self.name is None:
-            s = self.__class__.__name__
-        else:
-            s = self.name
-            
-        if self.version is not None:
-            s += " version " + self.version
+        s = str(self)
         if self.author is not None:
             s += "\nAuthor: " +  self.author
         if self.copyright is not None:

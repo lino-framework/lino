@@ -192,89 +192,142 @@ FEMALE='f'
 
 class DemoPopulator(ddl.Populator):
     
+    def populateCities(self,q):
+        #cities = q.getContext().query(City)
+        self.eupen = q.findone(name="Eupen")
+        self.verviers = q.findone(name="Verviers")
+        self.tallinn = q.findone(name="Tallinn")
+        self.aachen = q.findone(name="Aachen")
+        self.munchen = q.findone(name=u"München")
         
     def populatePersons(self,q):
         #self.luc=q.appendRow(firstName="Luc",name="Saffre",sex=MALE)
         self.andreas=q.appendRow(firstName="Andreas",name="Arens",
+                                 title="Herrn",
                                  sex=MALE)
         self.anton=q.appendRow(firstName="Anton",name="Ausdemwald",
+                               title="Herrn",
                                sex=MALE)
         self.emil=q.appendRow(firstName="Emil",name="Eierschal",
+                              title="Herrn",
                               sex=MALE)
         self.henri=q.appendRow(firstName="Henri",name="Bodard",
+                              title="Monsieur",
                               sex=MALE)
         self.erna=q.appendRow(firstName="Erna",name="Eierschal",
+                              title="Frau",
                               sex=FEMALE)
         self.gerd=q.appendRow(firstName="Gerd",name=u"Großmann",
+                              title="Herrn",
                               sex=MALE)
         self.fred=q.appendRow(firstName=u"Frédéric",name="Freitag",
+                              title="Herrn",
                               sex=MALE)
         self.tonu=q.appendRow(firstName=u"Tõnu",name="Tamm",
                               sex=MALE)
         self.kati=q.appendRow(firstName="Kati",name="Kask",
                               sex=FEMALE)
         self.jean=q.appendRow(firstName="Jean",name="Dupont",
+                              title="Monsieur",
                               sex=MALE)
         self.joseph=q.appendRow(firstName="Joseph",name="Dupont",
+                                title="Monsieur",
                                 sex=MALE)
         self.julie=q.appendRow(firstName="Julie",name="Dupont",
-                                sex=FEMALE)
+                               title="Madame",
+                               sex=FEMALE)
+        self.klaus=q.appendRow(firstName="Klaus",name="Kurtz",
+                               title="Herrn",
+                               sex=MALE)
+        self.bruno=q.appendRow(firstName="Bruno",
+                               title="Herrn",
+                               name=u"Büntig",
+                               sex=MALE)
+        self.hans=q.appendRow(firstName="Hans",
+                              title="Herrn",
+                              name="Flott",
+                              sex=MALE)
         
     def populateOrganisations(self,q):
-        self.rumma = q.appendRow(name=u'Rumma & Ko OÜ')
+##         self.rumma = q.appendRow(name=u'Rumma & Ko OÜ')
 
-        self.girf = q.appendRow(name=u'Girf OÜ')
+##         self.girf = q.appendRow(name=u'Girf OÜ')
         
-        self.pac = q.appendRow(name=u'PAC Systems PGmbH')
-        self.elion = q.appendRow(name=u'Elion')
+##         self.pac = q.appendRow(name=u'PAC Systems PGmbH')
+##         self.elion = q.appendRow(name='Elion')
+        self.kurtz = q.appendRow(name=u'Kurtz & Büntig',
+                                 name2="Steuer- und Finanzberatung")
+        self.freitag = q.appendRow(name=u'Reisebüro Freitag')
+        self.ausdemwald = q.appendRow(name=u'Bäckerei Ausdemwald')
+        self.flott = q.appendRow(name='Hans Flott',
+                                 name2=u"Überseetransporte")
+        self.mets = q.appendRow(name=u'Mets & puu OÜ')
 
     def populateContacts(self,q):
 
-        cities = q.getContext().query(City)
-        self.eupen = cities.findone(name="Eupen")
-        self.verviers = cities.findone(name="Verviers")
-        self.tallinn = cities.findone(name="Tallinn")
-        self.aachen = cities.findone(name="Aachen")
+        functions = q.getContext().query(Function)
 
 
-        qr = q.query('person title email phone city')
+        #qr = q.query('person title email phone city')
 
-        qr.appendRow(self.andreas, "Herrn",
-                     'andreas@arens.be',
-                     '087.55.66.77', self.eupen)
-        qr.appendRow(self.anton , "Herrn",
-                     'ausdem@kotmail.com',
-                     None, self.aachen)
-        qr.appendRow(self.henri, "Dr.", None, None,self.verviers)
-        qr.appendRow(self.emil, "Herrn", None, None,self.eupen)
-        qr.appendRow(self.erna  , "Frau", None, None,self.eupen)
-        qr.appendRow(self.gerd  , "Herrn",None, None,self.eupen)
-        qr.appendRow(self.fred, "Herrn", None, None,self.eupen)
-        qr.appendRow(self.tonu, "Lp.", None, None,self.tallinn)
-        qr.appendRow(self.kati, "Lp.", None, None,self.tallinn)
-
+        q.appendRow(person=self.andreas, 
+                    email='andreas@arens.be',
+                    phone='087.55.66.77',
+                    city=self.eupen)
+        q.appendRow(person=self.anton,
+                    email='ausdem@kotmail.com',
+                    city=self.aachen)
+        q.appendRow(person=self.henri,
+                    city=self.verviers)
+        q.appendRow(person=self.emil,
+                    city=self.eupen)
+        q.appendRow(person=self.erna,
+                    city=self.eupen)
+        q.appendRow(person=self.gerd,
+                    city=self.eupen)
+        q.appendRow(person=self.fred, 
+                    city=self.eupen)
+        q.appendRow(person=self.tonu, 
+                    city=self.tallinn)
+        q.appendRow(person=self.kati, 
+                    city=self.tallinn)
+        
         qr = q.query('org zip street house box city website')
 
-        rumma = qr.appendRow(
-            self.rumma,'10115', 'Tartu mnt.',71,'5',
+        mets = qr.appendRow(
+            self.mets,'10115', 'Tartu mnt.',71,'7',
             self.tallinn,
-            "http://www.saffre-rumma.ee")
+            "http://www.metsjapuu.ee")
 
-        assert rumma.name == u"Rumma & Ko OÜ"
-        assert rumma.nation.id == "ee", "%r!='ee'" % rumma.nation
+        assert mets.name == u"Mets & puu OÜ"
+        assert mets.nation.id == "ee", "%r!='ee'" % mets.nation
 
         qr.appendRow(
-            self.girf,'10621','Laki',16, None, self.tallinn,
-            "http://www.girf.ee"
+            self.flott,'10621','Laki',123, None, self.munchen,
+            "http://www.hansflott.de"
             )
-        qr.appendRow(self.pac,'4700',u'Hütte',79 , None, self.eupen,
-                     "http://www.pacsystems.be"
+        qr.appendRow(self.freitag,
+                     '4700',u'Hütte',79 , None, self.eupen,
+                     "http://www.freitag.be"
                      )
         qr.appendRow(
-            self.elion,'13415',u'Sõpruse pst.',193, None,
-            self.tallinn,
-            "http://www.elion.ee"
+            self.kurtz,'4700',u'Bergstraße',23, None,
+            self.eupen,
+            "http://www.kb.be"
             )
+
+        q.appendRow(person=self.kati,org=self.mets,
+                    function=functions.peek('dir'))
+        q.appendRow(person=self.hans,org=self.flott,
+                    function=functions.peek('dir'))
+        q.appendRow(person=self.klaus,org=self.kurtz,
+                    function=functions.peek('dir'))
+        q.appendRow(person=self.bruno,org=self.kurtz,
+                    function=functions.peek('dir'))
+        q.appendRow(person=self.fred,org=self.freitag,
+                    function=functions.peek('dir'))
+        q.appendRow(person=self.anton,org=self.ausdemwald,
+                    function=functions.peek('dir'))
 
             
             

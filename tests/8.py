@@ -21,6 +21,7 @@
 from lino.misc.tsttools import TestCase, main
 from lino.apps.contacts.contacts_demo import startup
 from lino.apps.contacts.contacts_tables import *
+from lino.adamo.filters import NotEmpty
 #from lino.apps.addrbook import demo
 #from lino.apps.addrbook.tables import Partner
 
@@ -33,6 +34,7 @@ class Case(TestCase):
         q = db.query(Contact,\
                      "name street city.name",
                      orderBy="name")
+        q.addColFilter('city',NotEmpty)
 ##         for row in q:
 ##             #print row[0]
 ##             s1 += str(row[0]) + " "
@@ -64,20 +66,20 @@ class Case(TestCase):
 
         #print s2
         
-        self.assertEqual(s2,"""\
+        self.assertEquivalent(s2,"""\
 Andreas Arens Eupen
 Anton Ausdemwald Aachen
-Elion Sõpruse pst. Tallinn
 Emil Eierschal Eupen
 Erna Eierschal Eupen
 Frédéric Freitag Eupen
 Gerd Großmann Eupen
-Girf OÜ Laki Tallinn
+Hans Flott Laki München
 Henri Bodard Verviers
 Kati Kask Tallinn
-PAC Systems PGmbH Hütte Eupen
-Rumma & Ko OÜ Tartu mnt. Tallinn
-Tõnu Tamm Tallinn
+Kurtz & Büntig Bergstraße Eupen
+Mets & puu OÜ Tartu mnt. Tallinn
+Reisebüro Freitag Hütte Eupen
+Tõnu Tamm Tallinn        
 """)
 
         # some other cases (for example 80.py) would fail if run

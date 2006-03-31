@@ -32,6 +32,7 @@ class Organisation(StoredDataRow):
                       doc="the internal id number")
         #Contact.initTable(self,table)
         table.addField('name',STRING)
+        table.addField('name2',STRING)
         #table.addView('std',columnNames="name email phone website")
         table.addField('logo',LOGO)
         table.addField('memo',MEMO)
@@ -42,7 +43,7 @@ class Organisation(StoredDataRow):
 class OrganisationsReport(DataReport):
     "former std view"
     leadTable=Organisation
-    columnNames="name id logo memo"
+    columnNames="name name2 id logo memo"
     orderBy='name id'
 
 class Person(StoredDataRow):
@@ -55,12 +56,14 @@ class Person(StoredDataRow):
         table.addField('sex',SEX)
         table.addField('birthDate',STRING(width=8))
         table.addField('memo',MEMO)
+        table.addField('title',STRING)
         
         # table.setFindColumns("name firstName")
 
         #self.setColumnList("name firstName id")
         #table.setOrderBy('name firstName')
         #table.addView('std',columnNames="name firstName id")
+        table.addDetail('contacts',Contact,'person')
 
     def __unicode__(self):
         if self.firstName is None:
@@ -76,7 +79,7 @@ class PersonsReport(DataReport):
     "former std view"
     leadTable=Person
     columnNames="name firstName id"
-    orderBy='name firstName sex birthDate id memo'
+    orderBy='name firstName title sex birthDate id memo'
     
 
 class User(Person):
@@ -117,7 +120,6 @@ class Contact(StoredDataRow):
         table.addPointer('person',Person)
 
         table.addPointer('function',Function)
-        table.addField('title',STRING)
         table.addPointer('lang',Language)
         
         
@@ -165,9 +167,14 @@ class Contact(StoredDataRow):
 class ContactsReport(DataReport):
     leadTable=Contact
     columnSpec="""
-    id org person
-    function title lang
-    email phone"""
+    id name lang
+    org
+    person function
+    email website
+    phone gsm fax
+    nation city zip
+    street house box
+    """
     orderBy='name id'
     
     

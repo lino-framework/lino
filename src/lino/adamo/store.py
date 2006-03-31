@@ -354,6 +354,7 @@ class Populator(Task):
         if not store.isVirgin():
             self.debug("Not populating %s",store) 
             return
+        self.status("Populating %s",store) 
         qry=store.query(dbc,"*")
         m(qry)
         store.commit()

@@ -330,11 +330,7 @@ class SqlConnection(Connection):
     def filterWhere(self,flt,ds):
         l=[]
         if isinstance(flt,IsEqual):
-            if isinstance(flt.col,FieldColumn):
-                assert len(flt.col.getAtoms()) == 1
-                a=flt.col.getAtoms()[0]
-                l.append(self.testEqual(a.name,a.type,flt.value))
-            elif isinstance(flt.col,PointerColumn):
+            if isinstance(flt.col,PointerColumn):
                 if flt.value is None:
                     for a in flt.col.getAtoms():
                         l.append(a.name+" ISNULL")
@@ -360,6 +356,10 @@ class SqlConnection(Connection):
                             flt.value.ds.getTableName()+\
                             "."+masterAtoms[i].name)
                         i+=1
+            elif isinstance(flt.col,FieldColumn):
+                assert len(flt.col.getAtoms()) == 1
+                a=flt.col.getAtoms()[0]
+                l.append(self.testEqual(a.name,a.type,flt.value))
             else:
                 raise NotImplementedError
                 
@@ -400,7 +400,7 @@ class SqlConnection(Connection):
                 s += ")"
                 l.append(s)
             else:
-                raise NotImplementedError
+                raise NotImplementedError, str(flt.col.__class__)
                     
         return l
     

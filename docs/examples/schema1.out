@@ -1,0 +1,80 @@
+
+Lino Contacts version 0.0.1
+TableName      |Fields              |Pointers     |Details             
+---------------+--------------------+-------------+--------------------
+Languages      |id, name            |             |                    
+Nations        |id, name, area,     |             |cities,             
+               |population, curr,   |             |contacts_by_nation  
+               |isocode             |             |                    
+Cities         |id, name, zipCode,  |nation       |                    
+               |inhabitants         |             |                    
+Organisations  |id, name, name2,    |             |                    
+               |logo, memo          |             |                    
+Persons        |id, name, firstName,|             |contacts            
+               |sex, birthDate,     |             |                    
+               |memo, title         |             |                    
+Functions      |id, name            |             |                    
+Contacts       |id, name, email,    |org, person, |                    
+               |phone, gsm, fax,    |function,    |                    
+               |website, zip,       |lang, nation,|                    
+               |street, house, box  |city         |                    
+
+Lino Keeper version 0.0.1
+TableName      |Fields              |Pointers     |Details             
+---------------+--------------------+-------------+--------------------
+Volumes        |id, name, meta, path|             |directories         
+Files          |name, mtime, size,  |dir, type    |occurences          
+               |content, meta,      |             |                    
+               |mustParse           |             |                    
+Directories    |id, name, meta      |parent,      |files, subdirs      
+               |                    |volume       |                    
+FileTypes      |id, name            |             |                    
+Words          |id                  |synonym      |occurences          
+Occurences     |pos                 |word, file   |                    
+
+Lino Contacts version 0.0.1
+TableName      |Fields              |Pointers     |Details             
+---------------+--------------------+-------------+--------------------
+Currencies     |id, name            |             |                    
+Products       |id, name, price     |             |                    
+Journals       |id, name, tableName |             |                    
+BankStatements |seq, date, closed,  |jnl          |                    
+               |remark, balance1,   |             |                    
+               |balance2            |             |                    
+MiscOperations |seq, date, closed,  |jnl          |                    
+               |remark              |             |                    
+Invoices       |seq, date, closed,  |jnl, contact |lines               
+               |remark, zziel,      |             |                    
+               |amount, inverted    |             |                    
+InvoiceLines   |line, amount,       |invoice,     |                    
+               |remark, unitPrice,  |product      |                    
+               |qty                 |             |                    
+BalanceItems   |name, id, attrib,   |             |                    
+               |dc, type, doc       |             |                    
+CashFlowItems  |name, id, attrib,   |             |                    
+               |dc, type, doc       |             |                    
+ProfitAndLossIt|name, id, attrib,   |             |                    
+ems            |dc, type, doc       |             |                    
+Accounts       |name, pcmn, id      |parent,      |                    
+               |                    |balance,     |                    
+               |                    |profit, cash |                    
+Bookings       |date, amount, dc,   |account,     |                    
+               |label, id           |invoice,     |                    
+               |                    |contact      |                    
+Languages      |id, name            |             |                    
+Nations        |id, name, area,     |             |cities,             
+               |population, curr,   |             |contacts_by_nation  
+               |isocode             |             |                    
+Cities         |id, name, zipCode,  |nation       |                    
+               |inhabitants         |             |                    
+Organisations  |id, name, name2,    |             |                    
+               |logo, memo          |             |                    
+Persons        |id, name, firstName,|             |contacts            
+               |sex, birthDate,     |             |                    
+               |memo, title         |             |                    
+Contacts       |id, name, email,    |org, person, |                    
+               |phone, gsm, fax,    |function,    |                    
+               |website, zip,       |lang, nation,|                    
+               |street, house, box  |city,        |                    
+               |                    |currency     |                    
+Functions      |id, name            |             |                    
