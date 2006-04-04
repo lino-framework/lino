@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -23,6 +23,7 @@ __all__ = (
     'sync', 'diag',
     'openmail','openurl',
     'runpy',
-    'jpgrename', 'runtests'
+    'jpgrename', 'runtests',
+    'contacts', 'ledger'
     )
 

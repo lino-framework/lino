@@ -294,6 +294,9 @@ class Account(BabelRow):
         table.addPointer('profit',ProfitAndLossItem)
         table.addPointer('cash',CashFlowItem)
         
+class AccountsReport(DataReport):
+    leadTable=Account
+    
 class Booking(StoredDataRow):
     tableName="Bookings"
     def initTable(self,table):
@@ -310,6 +313,9 @@ class Booking(StoredDataRow):
       
         #table.setPrimaryKey("date seq")
    
+class BookingsReport(DataReport):
+    leadTable=Booking
+    
 
 
 

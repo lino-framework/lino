@@ -26,177 +26,19 @@ test 81 does a demo.startup() of all these applications
 
 """
 
+import os
 from lino.misc.tsttools import TestCase, main
-from lino.adamo.dbreports import DatabaseOverview, SchemaOverview
-from lino.apps.pinboard.pinboard_forms import Pinboard
-from lino.apps.contacts.contacts_forms import Contacts
-from lino.apps.keeper.keeper_forms import Keeper
-from lino.apps.ledger.ledger_forms import Ledger
+from lino import scripts
 
 
 class Case(TestCase):
-    skip=True # now covered by docs/examples/schema1.py
     
     def test01(self):
-        app = Contacts()
-        app.createContext()
-        SchemaOverview(app.dbsess.db.schema).show()
-        s=self.getConsoleOutput()
-        #print s
-        self.assertEquivalent(s,"""\
-TableName      |Fields              |Pointers     |Details             
----------------+--------------------+-------------+--------------------
-Languages      |id, name            |             |                    
-Nations        |id, name, area,     |             |cities,             
-               |population, curr,   |             |contacts_by_nation  
-               |isocode             |             |                    
-Cities         |id, name, zipCode,  |nation       |                    
-               |inhabitants         |             |                    
-Organisations  |id, name, logo, memo|             |                    
-Persons        |id, name, firstName,|             |                    
-               |sex, birthDate, memo|             |                    
-Functions      |id, name            |             |                    
-Contacts       |id, name, title,    |org, person, |                    
-               |email, phone, gsm,  |function,    |                    
-               |fax, website, zip,  |lang, nation,|                    
-               |street, house, box  |city         |                    
-        """)
-        
-        DatabaseOverview(app.dbsess).show()
-        s=self.getConsoleOutput()
-        #print s
-        self.assertEquivalent(s,"""
-TableName           |Count|First               |Last                
---------------------+-----+--------------------+--------------------
-Languages           |    0|                    |                    
-Nations             |    0|                    |                    
-Cities              |    0|                    |                    
-Organisations       |    0|                    |                    
-Persons             |    0|                    |                    
-Functions           |    0|                    |                    
-Contacts            |    0|                    |                    
-""")
-        #app.main()
-        s=self.getConsoleOutput()
-        #print s
-        self.assertEquivalent(s,"""\
-        """)
-        app.close()
-        
-    def test02(self):
-        app = Keeper()
-        app.createContext()
-        SchemaOverview(app.dbsess.db.schema).show()
-        s=self.getConsoleOutput()
-        #print s
-        self.assertEquivalent(s,"""
-TableName      |Fields              |Pointers     |Details
----------------+--------------------+-------------+--------------------
-Volumes        |id, name, meta, path|             |directories
-Files          |name, mtime, size,  |dir, type    |occurences
-               |content, meta,      |             |
-               |mustParse           |             |
-Directories    |id, name, meta      |parent,      |files, subdirs
-               |                    |volume       |
-FileTypes      |id, name            |             |
-Words          |id                  |synonym      |occurences
-Occurences     |pos                 |word, file   |
-        """)
-        DatabaseOverview(app.dbsess).show()
-        s=self.getConsoleOutput()
-        #print s
-        self.assertEquivalent(s,"""
-TableName           |Count|First               |Last
---------------------+-----+--------------------+--------------------
-Volumes             |    0|                    |
-Files               |    0|                    |
-Directories         |    0|                    |
-FileTypes           |    0|                    |
-Words               |    0|                    |
-Occurences          |    0|                    |        
-        """)
-        app.close()
-        
-        
-    def test03(self):
-        app = Ledger()
-        app.createContext()
-        SchemaOverview(app.dbsess.db.schema).show()
-        s=self.getConsoleOutput()
-        #print s
-        self.assertEquivalent(s,"""
-TableName      |Fields              |Pointers     |Details             
----------------+--------------------+-------------+--------------------
-Currencies     |id, name            |             |                    
-Products       |id, name, price     |             |                    
-Journals       |id, name, tableName |             |                    
-BankStatements |seq, date, closed,  |jnl          |                    
-               |remark, balance1,   |             |                    
-               |balance2            |             |                    
-MiscOperations |seq, date, closed,  |jnl          |                    
-               |remark              |             |                    
-Invoices       |seq, date, closed,  |jnl, contact |lines               
-               |remark, zziel,      |             |                    
-               |amount, inverted    |             |                    
-InvoiceLines   |line, amount,       |invoice,     |                    
-               |remark, unitPrice,  |product      |                    
-               |qty                 |             |                    
-BalanceItems   |name, id, attrib,   |             |                    
-               |dc, type, doc       |             |                    
-CashFlowItems  |name, id, attrib,   |             |                    
-               |dc, type, doc       |             |                    
-ProfitAndLossIt|name, id, attrib,   |             |                    
-ems            |dc, type, doc       |             |                    
-Accounts       |name, pcmn, id      |parent,      |                    
-               |                    |balance,     |                    
-               |                    |profit, cash |                    
-Bookings       |date, amount, dc,   |account,     |                    
-               |label, id           |invoice,     |                    
-               |                    |contact      |                    
-Languages      |id, name            |             |                    
-Nations        |id, name, area,     |             |cities,             
-               |population, curr,   |             |contacts_by_nation  
-               |isocode             |             |                    
-Cities         |id, name, zipCode,  |nation       |                    
-               |inhabitants         |             |                    
-Organisations  |id, name, logo, memo|             |                    
-Persons        |id, name, firstName,|             |                    
-               |sex, birthDate, memo|             |                    
-Contacts       |id, name, title,    |org, person, |                    
-               |email, phone, gsm,  |function,    |                    
-               |fax, website, zip,  |lang, nation,|                    
-               |street, house, box  |city,        |                    
-               |                    |currency     |                    
-Functions      |id, name            |             |                    
-        """)
-        DatabaseOverview(app.dbsess).show()
-        s=self.getConsoleOutput()
-        #print s
-        self.assertEquivalent(s,"""
-TableName           |Count|First               |Last                
---------------------+-----+--------------------+--------------------
-Currencies          |    0|                    |                    
-Products            |    0|                    |                    
-Journals            |    0|                    |                    
-BankStatements      |    0|                    |                    
-MiscOperations      |    0|                    |                    
-Invoices            |    0|                    |                    
-InvoiceLines        |    0|                    |                    
-BalanceItems        |    0|                    |                    
-CashFlowItems       |    0|                    |                    
-ProfitAndLossItems  |    0|                    |                    
-Accounts            |    0|                    |                    
-Bookings            |    0|                    |                    
-Languages           |    0|                    |                    
-Nations             |    0|                    |                    
-Cities              |    0|                    |                    
-Organisations       |    0|                    |                    
-Persons             |    0|                    |                    
-Contacts            |    0|                    |                    
-Functions           |    0|                    |                    
-        """)
-        app.close()
-        
+        scriptsdir=scripts.__path__[0]
+        for fn in scripts.__all__:
+            pfn= os.path.join(scriptsdir,fn)+".py"
+            if not os.path.exists(pfn):
+                self.fail(pfn+" : no such file")
         
 
 if __name__ == '__main__':
