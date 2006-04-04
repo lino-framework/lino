@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -29,33 +29,14 @@ from lino.adamo import datatypes
 ## class Lock:
 ##     def __init__(self,row):
 ##         self._row = row
-        
 
-class Store:
-    """
-    One instance per Database and Table.
-    Distributes auto-incrementing keys for new rows.
-    """
-
-    SST_MUSTCHECK = 1
-    SST_VIRGIN = 2 # must populate with default data?
-    #SST_MUSTLOAD = 3 # must load mirror?
-    SST_READY = 3
-    
-    def __init__(self,conn,db,table):
-        self._connection = conn 
-        for m in ('startDump','stopDump'):
-            setattr(self,m,getattr(conn,m))
-        self._mtime = conn.getModificationTime(table)
+class BaseStore:
+    def __init__(self,db,table):
+        self._mtime=None
         self._dirty = False
-        self._virgin=None
         self._db = db
         self._table = table
-        #self._status = self.SST_MUSTCHECK
         
-        # self._schema = db.schema # shortcut
-        
-        #self._datasources = []
         self._iterators=[]
         self._lockedRows = {}
         
@@ -66,7 +47,7 @@ class Store:
 
         self._peekQuery = PeekQuery(self)
 
-
+    
     def __repr__(self):
         return "Store(%s.%s)"%(self._db.name,self._table)
 
@@ -84,88 +65,32 @@ class Store:
         return self._table
         #return self.schema.getTable(self._table.getTableId())
     
-    def zap(self):
-        self._connection.executeZap(self._table)
-        self.touch()
-
+    def onStartup(self):
+        pass
+    
     def fireUpdate(self):
         pass
         #for ds in self._datasources:
         #    ds.onStoreUpdate()
+
+        
 
     def addIterator(self,i):
         self._iterators.append(i)
         
     def removeIterator(self,i):
         self._iterators.remove(i)
-        
 
-    def executeCount(self,qry):
-        return self._connection.executeCount(qry)
-    
-    def executePeek(self,qry,id):
-        return self._connection.executePeek(qry,id)
-
-    def executeSelect(self,qry,**kw):
-        return self._connection.executeSelect(qry, **kw )
-
-    def csr2atoms(self,qry,sqlatoms):
-        return self._connection.csr2atoms(qry,sqlatoms)
-    
-    
-
-    def onStartup(self):
-        #print "%s.createTable()" % self.__class__
-        if self._virgin is None: # == self.SST_MUSTCHECK:
-            #sess.debug("mustCheck " + self._table.name)
-            if self._connection.mustCreateTables():
-                #self.createTable(sess)
-                #sess.debug("create table " + \
-                #           self._table.getTableName())
-                self._connection.executeCreateTable(self._peekQuery)
-                #self._status = self.SST_VIRGIN
-                self._virgin=True
-            else:
-                self._virgin=False
-            #self._table.loadMirror(self,sess)
-
-    def isVirgin(self):
-        return self._virgin
-        #return self._status == self.SST_VIRGIN
-                
-##     def view(self,sess,viewName,columnNames=None,**kw):
-##         view = self._table.getView(viewName)
-##         if view is None:
-##             raise KeyError,viewName+": no such view"
-            
-##         for k,v in view.items():
-##             kw.setdefault(k,v)
-##         kw['viewName'] = viewName
-##         if columnNames is not None:
-##             kw['columnNames'] = columnNames
-##         return self.query(sess,**kw)
-        
-            
     def query(self,sess,columnNames=None,**kw):
         if columnNames is None and len(kw) == 0:
             return self._peekQuery
         return Query(None,self,sess,columnNames,**kw)
-    
-##     def query(self,sess,**kw):
-##         return Query(None,self,sess,**kw)
 
-    
-        
-##     def populate(self,sess,populator):
-##          #assert self._status == self.SST_VIRGIN
-##          populator.(self)
-##          populator.populateStore(self)
-##          #self._status = self.SST_READY
-        
+
     def checkIntegrity(self,sess):
         #if self._status != self.SST_MUSTCHECK:
         #    return
-        if self._connection.mustCheckTables():
+        if self.mustCheckTables():
             q = self.query()
             l = len(q)
             def f(task):
@@ -233,7 +158,113 @@ class Store:
 ##                 row.unlock()
     
         
+        
+    def csr2atoms(self,qry,sqlatoms):
+        raise NotImplementedError
+    
+    def zap(self):
+        raise NotImplementedError
+
+    def executeCount(self,qry):
+        raise NotImplementedError
+    
+    def executePeek(self,qry,id):
+        raise NotImplementedError
+
+    def executeSelect(self,qry,**kw):
+        raise NotImplementedError
+
+
+        
+
+class Store(BaseStore):
+    """
+    One instance per Database and Table.
+    Distributes auto-incrementing keys for new rows.
+    """
+
+    SST_MUSTCHECK = 1
+    SST_VIRGIN = 2 # must populate with default data?
+    #SST_MUSTLOAD = 3 # must load mirror?
+    SST_READY = 3
+    
+    def __init__(self,conn,db,table):
+        self._connection = conn 
+        for m in ('startDump','stopDump'):
+            setattr(self,m,getattr(conn,m))
+        self._mtime = conn.getModificationTime(table)
+        self._virgin=None
+        BaseStore.__init__(self,db,table)
+
+    def zap(self):
+        self._connection.executeZap(self._table)
+        self.touch()
+
+    def executeCount(self,qry):
+        return self._connection.executeCount(qry)
+    
+    def executePeek(self,qry,id):
+        return self._connection.executePeek(qry,id)
+
+    def executeSelect(self,qry,**kw):
+        return self._connection.executeSelect(qry, **kw )
+
+    def csr2atoms(self,qry,sqlatoms):
+        return self._connection.csr2atoms(qry,sqlatoms)
+    
+    def mustCheckTables(self):
+        return self._connection.mustCheckTables()
+    
+
+    def onStartup(self):
+        #print "%s.createTable()" % self.__class__
+        if self._virgin is None: # == self.SST_MUSTCHECK:
+            #sess.debug("mustCheck " + self._table.name)
+            if self._connection.mustCreateTables():
+                #self.createTable(sess)
+                #sess.debug("create table " + \
+                #           self._table.getTableName())
+                self._connection.executeCreateTable(self._peekQuery)
+                #self._status = self.SST_VIRGIN
+                self._virgin=True
+            else:
+                self._virgin=False
+            #self._table.loadMirror(self,sess)
+
+    def isVirgin(self):
+        return self._virgin
+        #return self._status == self.SST_VIRGIN
                 
+##     def view(self,sess,viewName,columnNames=None,**kw):
+##         view = self._table.getView(viewName)
+##         if view is None:
+##             raise KeyError,viewName+": no such view"
+            
+##         for k,v in view.items():
+##             kw.setdefault(k,v)
+##         kw['viewName'] = viewName
+##         if columnNames is not None:
+##             kw['columnNames'] = columnNames
+##         return self.query(sess,**kw)
+        
+            
+##     def query(self,sess,**kw):
+##         return Query(None,self,sess,**kw)
+
+    
+        
+##     def populate(self,sess,populator):
+##          #assert self._status == self.SST_VIRGIN
+##          populator.(self)
+##          populator.populateStore(self)
+##          #self._status = self.SST_READY
+
+
+
+
+
+        
+        
         
         
     def removeFromCache(self,row):
@@ -338,7 +369,28 @@ class Store:
         #return tuple(id)
 
 
+class VolatileStore(BaseStore):
+    def __init__(self,lst,db,table):
+        BaseStore.__init__(self,db,table)
+        self._list=lst # a list of tuples of atomic values
+        raise "not yet usable (maybe never)"
 
+    def csr2atoms(self,qry,sqlatoms):
+        return sqlatoms
+    
+    def zap(self):
+        raise NotImplementedError
+
+    def executeCount(self,qry):
+        raise NotImplementedError
+    
+    def executePeek(self,qry,id):
+        raise NotImplementedError
+
+    def executeSelect(self,qry,**kw):
+        raise NotImplementedError
+
+    
 
 from lino.console.task import Task
 

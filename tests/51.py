@@ -79,6 +79,7 @@ class Case(TestCase):
         
         now=itom(200505)
 
+        check(base,now, 300, 315.49)
         check(base,now, 400, 420.65)
         check(base,now, 500, 525.82)
         check(base,now, 600, 630.98)
@@ -87,6 +88,7 @@ class Case(TestCase):
         
         now=itom(200601)
         
+        check(base,now, 300, 317.91)
         check(base,now, 400, 423.88)
         check(base,now, 500, 529.85)
         check(base,now, 600, 635.82)

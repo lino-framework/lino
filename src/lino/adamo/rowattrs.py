@@ -194,6 +194,7 @@ class RowAttribute(Describable):
 
     def format(self,v):
         #print repr(v)
+        assert v is not None, datatypes.ERR_FORMAT_NONE
         return unicode(v)
         
     def parse(self,s):
@@ -351,6 +352,7 @@ class Field(RowAttribute):
 ##         return self.type
 
     def format(self,v):
+        #assert v is not None, datatypes.ERR_FORMAT_NONE
         return self.type.format(v)
         
     def validateType(self,value):

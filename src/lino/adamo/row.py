@@ -20,6 +20,7 @@ import types
 
 from lino.adamo.exceptions import DataVeto, InvalidRequestError, \
      NoSuchField
+from lino.adamo import datatypes
 
 ## from lino.adamo.rowattrs import RowAttribute,\
 ##      Field, BabelField, Pointer, Detail, FieldContainer
@@ -87,8 +88,12 @@ class DataRow:
 ##         return self.getSession().query(tcl,*args,**kw)
 
     def format(v):
+        assert v is not None, datatypes.ERR_FORMAT_NONE
         #print repr(v)
-        return unicode(v)
+        try:
+            return unicode(v)
+        except Exception,e:
+            print e,repr(v)
     format=staticmethod(format)
         
 

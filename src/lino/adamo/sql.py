@@ -674,8 +674,10 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
 
     def executeDeleteAll(self,ds):
         
-        # no longer used because each row's delete() method must
-        # indiviually be called
+        raise """
+        no longer used because each row's delete() method must
+        indiviually be called
+        """
         
         assert ds._filters is None
         sql = "DELETE FROM " + ds.getLeadTable().getTableName()
