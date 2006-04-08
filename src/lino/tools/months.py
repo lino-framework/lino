@@ -53,3 +53,18 @@ class Month:
         return 0
     
         
+    def parse(s):
+        s = s.replace(".","-")
+        s = s.replace("/","-")
+        l = s.split("-")
+        if len(l) == 2:
+            l = map(int,l)
+            return Month(*l)
+        elif len(l) == 1:
+            assert len(s) == 6, repr(s)
+            y = int(s[0:4])
+            m = int(s[4:6])
+            return Month(y,m)
+        else:
+            raise ValueError, repr(s)
+    parse=staticmethod(parse)

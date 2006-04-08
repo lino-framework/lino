@@ -21,8 +21,7 @@ from lino.adamo.ddl import Schema
 from lino.apps.contacts.contacts_tables import User
 from lino.apps.contacts.contacts_tables import Contact
 from lino.apps.contacts.contacts_tables import Nation, City
-
-from lino.apps.pinboard.babel import Language
+from lino.apps.contacts.contacts_tables import Language
 
 from lino.apps.pinboard.web import Node
 

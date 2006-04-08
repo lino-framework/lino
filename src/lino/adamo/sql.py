@@ -201,10 +201,9 @@ class SqlConnection(Connection):
         elif isinstance(type, datatypes.DurationType):
             return 'CHAR(%d)' % type.maxWidth
         elif isinstance(type, datatypes.StringType):
-            if type.maxWidth < 20:
-                return 'CHAR(%d)' % type.maxWidth
-            else:
-                return 'VARCHAR(%d)' % type.maxWidth
+            return 'VARCHAR(%d)' % type.maxWidth
+        elif isinstance(type, datatypes.AsciiType):
+            return 'CHAR(%d)' % type.maxWidth
         else:
             raise TypeError, repr(type)
 
@@ -267,7 +266,7 @@ class SqlConnection(Connection):
 ##             sqlColumnNames += ", " +", ".join(
 ##                 [a.getNameInQuery(ds) for a in ds.getAtoms()])
             
-        sql = "SELECT " + sqlColumnNames
+        sql = u"SELECT " + sqlColumnNames
         
         sql += " FROM " + leadTable.getTableName()
         

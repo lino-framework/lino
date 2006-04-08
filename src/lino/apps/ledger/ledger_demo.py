@@ -169,7 +169,7 @@ class StandardPopulator(addrdemo.StandardPopulator):
         for ln in s.splitlines():
             a=ln.split(None,1)
             assert len(a) == 2
-            q.appendRow(id=a[0].strip(), name=a[1].strip(),dc="D")
+            q.appendRow(id=str(a[0].strip()), name=a[1].strip(),dc="D")
             
         
         s=u"""\
@@ -194,7 +194,7 @@ class StandardPopulator(addrdemo.StandardPopulator):
         for ln in s.splitlines():
             a=ln.split(None,1)
             assert len(a) == 2
-            q.appendRow(id=a[0].strip(), name=a[1].strip(),dc="C")
+            q.appendRow(id=str(a[0].strip()), name=a[1].strip(),dc="C")
             
     def populateProfitAndLossItems(self,q):
         q.setBabelLangs("en")
@@ -222,7 +222,7 @@ class StandardPopulator(addrdemo.StandardPopulator):
         for ln in s.splitlines():
             a=ln.split(None,1)
             assert len(a) == 2
-            q.appendRow(id=a[0].strip(),
+            q.appendRow(id=str(a[0].strip()),
                         name=a[1].strip(),dc="C")
 
         # Rahavoogude aruanne

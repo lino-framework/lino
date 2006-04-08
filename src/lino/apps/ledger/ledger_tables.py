@@ -39,7 +39,7 @@ class Currency(BabelRow):
     #tableLabel=BabelString("Currencies",de="Währungen",fr="Devises")
     
     def initTable(self,table):
-        table.addField('id',STRING(width=3))
+        table.addField('id',ASTRING(width=3))
         BabelRow.initTable(self,table)
         
     def __unicode__(self):
@@ -58,9 +58,9 @@ class Contact(contacts.Contact):
 class Journal(StoredDataRow):
     tableName="Journals"
     def initTable(self,table):
-        table.addField('id',STRING(width=3))
+        table.addField('id',ASTRING(width=3))
         table.addField('name',STRING).setMandatory()
-        table.addField('tableName', STRING)
+        table.addField('tableName', ASTRING)
         
     def __str__(self):
         return self.name
@@ -206,7 +206,7 @@ class StatementItem(BabelRow):
     #abstract
     def initTable(self,table):
         BabelRow.initTable(self,table)
-        table.addField('id',STRING)
+        table.addField('id',ASTRING)
         table.addField('attrib',STRING)
         table.addField('dc',STRING(1))
         table.addField('type',STRING(2))

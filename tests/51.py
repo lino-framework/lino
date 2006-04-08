@@ -24,8 +24,7 @@ from lino.misc.tsttools import TestCase, main
 from lino.tools.months import Month
 from lino.tools.anyrange import anyrange
 from lino.tools.indexing_be import indexed_price
-from lino.adamo.datatypes import stom, itom
-
+from lino.tools.fixedpoint import FixedPoint
 
 class Case(TestCase):
 
@@ -66,37 +65,34 @@ class Case(TestCase):
         
         
     def test02(self):
+        
         # same results as with
         # http://www.snp-aes.be/AES_CDML/DefaultFr.htm
         # or
         # http://mineco.fgov.be/informations/statistics/indicators/rent_fr.asp
 
-        def check(base,now,p1,p2):
-            p=indexed_price(p1,base,now)
-            self.assertEqual(round(p,2),round(p2,2))
+        def check(base,target,p1,p2):
+            p=indexed_price(base,target,p1)
+            self.assertEqual(p,FixedPoint(p2))
         
-        base=itom(200208) # base 1996
+        # base 1996
         
-        now=itom(200505)
-
-        check(base,now, 300, 315.49)
-        check(base,now, 400, 420.65)
-        check(base,now, 500, 525.82)
-        check(base,now, 600, 630.98)
-        check(base,now, 750, 788.73)
-        check(base,now, 2200, 2313.60)
+        check(200208,200505, 300, 315.49)
+        check(200208,200505, 400, 420.65)
+        check(200208,200505, 500, 525.82)
+        check(200208,200505, 600, 630.98)
+        check(200208,200505, 750, 788.73)
+        check(200208,200505, 2200, 2313.60)
         
-        now=itom(200601)
-        
-        check(base,now, 300, 317.91)
-        check(base,now, 400, 423.88)
-        check(base,now, 500, 529.85)
-        check(base,now, 600, 635.82)
-        check(base,now, 750, 794.77)
-        check(base,now, 2200, 2331.33)
+        check(200208,200601, 300, 317.91)
+        check(200208,200601, 400, 423.88)
+        check(200208,200601, 500, 529.85)
+        check(200208,200601, 600, 635.82)
+        check(200208,200601, 750, 794.77)
+        check(200208,200601, 2200, 2331.33)
         
         #base 1988
-        check(itom(199203),itom(200601), 100, 126.21)
+        check(199203,200601, 100, 126.21)
         
     
 if __name__ == '__main__':

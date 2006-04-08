@@ -243,6 +243,12 @@ class Table(FieldContainer,SchemaComponent,Describable):
         for attrname in self._pk:
             attr = self._rowAttrs[attrname]
             for (name,type) in attr.getNeededAtoms(None):
+                assert isinstance(type,datatypes.IntType) \
+                       or isinstance(type,datatypes.DateType)\
+                       or isinstance(type,datatypes.AsciiType),\
+                       "%s cannot be primary key because type is %s" \
+                       % (name,type)
+                
                 atoms.append((name,type))
         self._primaryAtoms = tuple(atoms)
         

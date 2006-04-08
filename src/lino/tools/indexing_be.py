@@ -29,6 +29,8 @@ Example:
     - newIndex = index in 200406 = 111.85
     - newPrice = oldPrice * newIndex / oldIndex
 
+>>> print indexed_price(200301,200405,200)
+204.92
 
 Sources:
 
@@ -42,12 +44,14 @@ http://mineco.fgov.be/informations/indexes/indint1xls_2003_2005_22_fr.htm
   http://www.snp-aes.be/indextabelFR.htm
 
 
-File lino/tests/51.py contains test cases.
+File lino/tests/51.py contains more test cases.
 
 """
 
 from lino.tools.months import Month
-from lino.adamo.datatypes import stom
+from lino.tools.fixedpoint import FixedPoint
+
+
 
 class Index:
     def __init__(self,start,values):
@@ -67,7 +71,7 @@ class Index:
         return newIndex / baseIndex
         
 
-sante1988 = Index(stom('198212'), (
+sante1988 = Index(Month.parse('198212'), (
 # 1982:    
 82.53, 
 # 1983:
@@ -172,7 +176,7 @@ sante1988 = Index(stom('198212'), (
 
 
 
-sante1996 = Index( stom('199401'), (
+sante1996 = Index( Month.parse('199401'), (
 	
 # 1994:
     
@@ -241,7 +245,7 @@ sante1996 = Index( stom('199401'), (
 ))
 
 
-sante2004 = Index( stom('200601'), (
+sante2004 = Index( Month.parse('200601'), (
     
 # 2006:
     
@@ -253,10 +257,15 @@ sante2004 = Index( stom('200601'), (
 SANTE = (sante1996, sante1988, sante2004)
 
 	
-def indexed_price(basePrice,baseMonth,targetMonth):
+def indexed_price(base,target,basePrice,**kw):
+    baseMonth=Month.parse(str(base))
+    targetMonth=Month.parse(str(target))
     for i in SANTE:
         if i.start <= baseMonth:
-            return basePrice * i.coeff(baseMonth,targetMonth)
+            return FixedPoint(
+                basePrice * i.coeff(baseMonth,targetMonth),**kw)
 
 
-
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

@@ -32,7 +32,7 @@ FileTypes      |id, name            |             |
 Words          |id                  |synonym      |occurences          
 Occurences     |pos                 |word, file   |                    
 
-Lino Contacts version 0.0.1
+Lino Ledger version 0.0.1
 TableName      |Fields              |Pointers     |Details             
 ---------------+--------------------+-------------+--------------------
 Currencies     |id, name            |             |                    

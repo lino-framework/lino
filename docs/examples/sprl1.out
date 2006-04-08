@@ -6,7 +6,8 @@ Journals            |    1|outgoing invoices   |outgoing invoices
 BankStatements      |    0|                    |                    
 MiscOperations      |    0|                    |                    
 Invoices            |    1|OUT-1               |OUT-1               
-InvoiceLines        |    2|(u'OUT', 1, 1)      |(u'OUT', 1, 2)      
+InvoiceLines        |    2|ProductInvoiceLine(O|ProductInvoiceLine(O
+                    |     |UT,1,1)             |UT,1,2)             
 BalanceItems        |    0|                    |                    
 CashFlowItems       |    0|                    |                    
 ProfitAndLossItems  |   17|TULUD               |Ärikasum (-kahjum)  

@@ -1,6 +1,6 @@
 #coding: iso-8859-1
 
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,18 +18,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+raise "no longer used"
+
 from lino.adamo.ddl import *
 
-class Language(StoredDataRow):
-    
-    tableName="Languages"
-    
-    def initTable(self,table):
-        table.addField(DEFAULT_PRIMARY_KEY,STRING(width=2))
-        table.addBabelField('name',STRING).setMandatory()
-    
-    def __str__(self):
-        return self.name
 
 ## class Languages(Table):
 ##     def init(self):

@@ -19,7 +19,7 @@
 
 """
 
-another attempt to create a universal datatype definition model...
+yet another attempt to create a universal set of datatypes...
 
 """
 
@@ -162,18 +162,36 @@ class LongType(IntType):
     parser=long
     allowedClasses=(types.LongType,)
     
-class StringType(WidthType):
+class AsciiType(WidthType):
+    defaultValue=""
+    defaultWidth=20
+    minWidth=1
+    maxWidth=50
+    allowedClasses=(types.StringType,)
+    
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        return str(s)
+    
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        return v
+        
+    def validate(self,value):
+        Type.validate(self,value)
+        if len(value) == 0:
+            raise DataVeto("Cannot store empty string.")
+        if value.endswith(' '):
+            raise DataVeto("%r ends with a space" % value)
+            
+    
+class StringType(AsciiType):
     defaultValue=""
     defaultWidth=50
     minWidth=15
     maxWidth=50
     allowedClasses=(types.StringType,types.UnicodeType)
     
-##     def __init__(self,parent=None,**kw):
-##         WidthType.__init__(self,parent,**kw)
-##         if self.minWidth > 20:
-##             self.minWidth = 20
-
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
         return s
@@ -182,25 +200,12 @@ class StringType(WidthType):
         assert v is not None, ERR_FORMAT_NONE
         #return v
         return v.encode("cp1252",'replace')
-##         if isinstance(s,UnicodeType):
-##             return s.decode(None,'replace')
-##         return str(v)
         
     def validate(self,value):
-        Type.validate(self,value)
-        if len(value) == 0:
-            raise DataVeto("Cannot store empty string.")
-        if value.endswith(' '):
-            raise DataVeto("%r ends with a space" % value)
+        AsciiType.validate(self,value)
         if not ispure(value):
             raise DataVeto("%r is not pure" % value)
             
-##         if len(value) > self.maxWidth:
-##             raise DataVeto("%r is longer than %d characters" % \
-##                            (value, self.maxWidth))
-##         if len(value) > self.minWidth:
-##             raise DataVeto("%r is shorter than %d characters" % \
-##                            (value, self.minWidth))
         
     
 class PasswordType(StringType):
@@ -297,19 +302,21 @@ class MonthType(Type):
     
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
-        s = s.replace(".","-")
-        s = s.replace("/","-")
-        l = s.split("-")
-        if len(l) == 2:
-            l = map(int,l)
-            return Month(*l)
-        elif len(l) == 1:
-            assert len(s) == 6, repr(s)
-            y = int(s[0:4])
-            m = int(s[4:6])
-            return Month(y,m)
-        else:
-            raise ValueError, repr(s)
+        return Month.parse(s)
+##         s = s.replace(".","-")
+##         s = s.replace("/","-")
+##         l = s.split("-")
+##         if len(l) == 2:
+##             l = map(int,l)
+##             return Month(*l)
+##         elif len(l) == 1:
+##             assert len(s) == 6, repr(s)
+##             y = int(s[0:4])
+##             m = int(s[4:6])
+##             return Month(y,m)
+##         else:
+##             raise ValueError, repr(s)
+    
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
         return str(s)
@@ -393,11 +400,12 @@ class AmountType(IntType):
 class PriceType(IntType):
     pass
 
+ASTRING = AsciiType()
 STRING = StringType()
 PASSWORD = PasswordType()
 MEMO = MemoType()     
 DATE = DateType()     
-MONTH = MonthType()     
+MONTH = MonthType()
 TIME = TimeType() # StringType(width=8)
 TIMESTAMP = TimeStampType() 
 DURATION = DurationType() 
@@ -412,6 +420,7 @@ EMAIL = EmailType(width=60)
 #AREA = AreaType()
 IMAGE = ImageType()
 LOGO = LogoType()
+LANG=STRING(2)
 
 
 def itot(i):
@@ -439,7 +448,7 @@ def stod(s):
     return DATE.parse(s)
 
 def itom(i):
-    return stom(str(i))
+    return MONTH.parse(str(i))
 
 def stom(s):
     return MONTH.parse(s)

@@ -19,16 +19,27 @@
 
 from lino.adamo.ddl import *
 
-from lino.apps.pinboard.babel import Language
+#from lino.apps.pinboard.babel import Language
 
 SEX = STRING(width=1)
 
+
+class Language(StoredDataRow):
+    
+    tableName="Languages"
+    
+    def initTable(self,table):
+        table.addField(DEFAULT_PRIMARY_KEY,ASTRING(width=2))
+        table.addBabelField('name',STRING).setMandatory()
+    
+    def __str__(self):
+        return self.name
 
 class Organisation(StoredDataRow):
     "An Organisation is any named group of people."
     tableName="Organisations"
     def initTable(self,table):
-        table.addField('id',ROWID,\
+        table.addField(DEFAULT_PRIMARY_KEY,ROWID,\
                       doc="the internal id number")
         #Contact.initTable(self,table)
         table.addField('name',STRING)
@@ -50,7 +61,7 @@ class Person(StoredDataRow):
     "A Person describes a specific physical human."
     tableName="Persons"
     def initTable(self,table):
-        table.addField('id',ROWID)
+        table.addField(DEFAULT_PRIMARY_KEY,ROWID)
         table.addField('name',STRING)
         table.addField('firstName',STRING)
         table.addField('sex',SEX)
@@ -88,8 +99,8 @@ class User(Person):
     def initTable(self,table):
         Person.initTable(self,table)
         #self.addField('id',STRING,label="Username")
-        i=table.getRowAttr('id')
-        i.setType(STRING)
+        i=table.getRowAttr(DEFAULT_PRIMARY_KEY)
+        i.setType(ASTRING)
         i.setLabel("Username")
         #self.setField('id',STRING,label="Username")
         table.addField('pwd',PASSWORD)
@@ -103,7 +114,7 @@ class Function(BabelRow):
     tableName="Functions"
     
     def initTable(self,table):
-        table.addField('id',STRING)
+        table.addField(DEFAULT_PRIMARY_KEY,ASTRING)
         BabelRow.initTable(self,table)
         
 class FunctionsReport(DataReport):
@@ -113,7 +124,7 @@ class Contact(StoredDataRow):
     tableName="Contacts"
     
     def initTable(self,table):
-        table.addField('id',ROWID)
+        table.addField(DEFAULT_PRIMARY_KEY,ROWID)
         table.addField('name',STRING)
         
         table.addPointer('org',Organisation)
@@ -225,7 +236,7 @@ class Nation(BabelRow):
     tableName="Nations"
     def initTable(self,table):
         
-        table.addField('id',STRING(width=2))
+        table.addField(DEFAULT_PRIMARY_KEY,ASTRING(width=2))
         BabelRow.initTable(self,table)
         table.addField('area',INT(width=8))
         table.addField('population',INT)
@@ -270,7 +281,7 @@ class City(StoredDataRow):
     tableName="Cities"
     
     def initTable(self,table):
-        table.addField('id',ROWID)
+        table.addField(DEFAULT_PRIMARY_KEY,ROWID)
         table.addPointer('nation',Nation)
 ##         table.addPointer('nation',Nation).setDetail('cities',
 ##                                                     orderBy='name')

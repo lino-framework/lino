@@ -91,9 +91,10 @@ class DataRow:
         assert v is not None, datatypes.ERR_FORMAT_NONE
         #print repr(v)
         try:
-            return unicode(v)
+            return str(v)
         except Exception,e:
-            print e,repr(v)
+            print repr(v)
+            raise
     format=staticmethod(format)
         
 
@@ -250,7 +251,9 @@ class StoredDataRow(DataRow):
 ##         #return self._ds._table.getRowLabel(self)
         
     def __str__(self):
-        return str(tuple(self.getRowId()))
+        #if self._complete:
+        return self.__class__.__name__+'('\
+               +','.join([str(i) for i in self.getRowId()])+')'
         
     def getFieldValue(self,name):
         # overrides DataRow
@@ -342,12 +345,9 @@ class StoredDataRow(DataRow):
     
     def __repr__(self):
         if self._isCompleting:
-            return "Uncomplete " + repr(self._query) + "Row(" \
-                     + str(self._values)+")"
-        #return self._query.getName() \
-        #       + "Row(" + str(self._values)+")"
-        return self._query.getName() + "Row" + repr(
-            tuple(self.getRowId()))
+            return "Uncomplete "+self.__class__.__name__\
+                   +'('+str(self._values)+")"
+        return self.__class__.__name__+repr(tuple(self.getRowId()))
 
 
 

@@ -1240,8 +1240,11 @@ class SimpleQuery(LeadTableColumnList):
             lbl += " ("
             for mc in self._masterColumns:
                 v=self._masters[mc.name]
-                lbl += mc.name + "=" \
-                       + mc.rowAttr.format(v)
+                if v is None:
+                    lbl += mc.name + "=None"
+                else:
+                    lbl += mc.name + "=" \
+                           + mc.rowAttr.format(v)
             lbl += ")"
         if self._filters is not None:
             lbl += " where "
@@ -1332,10 +1335,10 @@ class SimpleQuery(LeadTableColumnList):
         return self.getLeadTable().getTableName()+"Query"
 
 
-    def appendfrom(self,filename):
-        #f=open(filename)
-        f=codecs.open(filename,encoding="cp1252")
-        #print filename,":",f.encoding
+    def appendfrom(self,filename,encoding=None):
+        if encoding is None:
+            encoding="cp1252"
+        f=codecs.open(filename,encoding=encoding)
         atomicNames=f.readline().strip().split('\t')
         atoms=[]
         for name in atomicNames:
@@ -1352,10 +1355,6 @@ class SimpleQuery(LeadTableColumnList):
         for ln in f:
             
             row = self._appendRow()
-            
-            #atomicRow=[None]*len(self._atoms)
-            
-            #row=self.appendRowFromAtoms(atomicRow)
             atomicRow=self.row2atoms(row)
             i=0
             #d={}
