@@ -41,13 +41,56 @@ class Case(TestCase):
         et konklaav toob palju lisasekeldusi või midagi läheb viltu.
         """))
         
-##         Rooma suvekuumuses on konklaavi sisenenud kardinalid
-##         vedelikupuuduse tõttu minestanud ja mõned on saanud
-##         südamerabanduse. Uudiste-agentuuri AP järgi otsustati
-##         1274. aastal, et kardinalid võivad konklaavis nii hääletada
-##         kui ka süüa ja magada, sest eelmise paavsti valimised olid
-##         kestnud enam kui kolm aastat.  """))
-    
+        self.assertEqual("et",guesslang(u"""
+        Rooma suvekuumuses on konklaavi sisenenud kardinalid
+        vedelikupuuduse tõttu minestanud ja mõned on saanud
+        südamerabanduse. Uudiste-agentuuri AP järgi otsustati
+        1274. aastal, et kardinalid võivad konklaavis nii hääletada
+        kui ka süüa ja magada, sest eelmise paavsti valimised olid
+        kestnud enam kui kolm aastat.  
+        """))
+
+        # source: http://www.france.attac.org/IMG/pdf/attacinfo545.pdf
+        self.assertEqual("fr",guesslang(u"""
+
+1.- LES ROIS SOIGNAIENT LES ECROUELLES
+
+à propos du Chikungunya, par Raphaël Monticelli, 14 mars 2006 Les
+épidémies sont choses terribles. Et notre époque a les siennes qui
+nous laissent trop souvent aussi démunis que les pestes, grippes ou
+choléras du passé. Les efforts que nous faisons pour lutter contre
+elles sont souvent dérisoires. Parfois ils sont tragiques. Des
+populations entières souffrent. On annonce des milliers, des centaines
+de milliers de morts. On sait que la souffrance des mourants est
+multipliée par celle des survivants, par la douleur et l'angoisse
+des familles, des proches, et de nous tous, amis, connus et inconnus,
+dans la simple solidarité des hommes et des femmes. Et nous avons bien
+conscience que nous devons tout faire pour lutter contre ces
+fléaux. Et nous avons bien conscience que nous ne faisons pas tout. Et
+il faut tout faire, bien sûr, du raisonnable, en gardant raison. Il
+faut tout faire, sans pourtant ajouter un mal à un mal.
+
+Voici ce qu'on pouvait lire dans la presse ces jours-ci : Chikungunya
+: une élue niçoise faxe son remède aux habitants de La Réunion 09-03
+19:07:09 Une élue communiste de la ville de Nice suscite la polémique
+pour avoir inondé l'Ile de la Réunion de fax vantant un traitement
+personnel contre le chikungunya et avoir provoqué une ruée des
+patients sur ce remède contesté par certains médecins, a-t-on appris
+jeudi de sources concordantes.
+        
+        """))
+        
+        self.assertEqual("fr",guesslang(u"""
+        Encore un essai.
+        Il ne faut pas des textes trop courts.
+        """))
+        self.assertEqual("de",guesslang(u"Und noch ein Versuch."))
+        self.assertEqual("et",guesslang(u"""
+        Veel üks katse.
+        Tekstid tõesti ei tohi olla liiga lühikesed.
+        Muidu ta ütleb valesti.
+        """))
+        self.assertEqual("en",guesslang(u"Another test."))
     
 if __name__ == '__main__':
     main()
