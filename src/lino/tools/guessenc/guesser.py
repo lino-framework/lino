@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre
+## Copyright 2005-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -29,7 +29,7 @@ import os
 encodings=('cp850','cp1252')
 
 try:
-    from lino.guessenc import gen_selectors
+    from lino.tools.guessenc import gen_selectors
 except ImportError:
     selectors = {}
     dirname = os.path.dirname(__file__)
@@ -49,7 +49,7 @@ except ImportError:
     f.write("selectors = %s\n" % repr(selectors))
     f.close()
     
-    from lino.guessenc import gen_selectors
+    from lino.tools.guessenc import gen_selectors
     
 selectors = gen_selectors.selectors
 

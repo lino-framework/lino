@@ -22,7 +22,7 @@ import sys
 
 from lino.misc.tsttools import TestCase, main
 #from lino.tools.guesscoding import EncodingGuesser
-from lino.guessenc.guesser import EncodingGuesser
+from lino.tools.guessenc.guesser import EncodingGuesser
 
 
 TESTDATA = os.path.join(os.path.dirname(__file__),"testdata")

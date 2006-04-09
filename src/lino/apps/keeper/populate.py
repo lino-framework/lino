@@ -27,7 +27,7 @@ from lino.console.task import Progresser
 #from lino.tools.msword import MsWordDocument
 from lupy.index.documentwriter import standardTokenizer
 import keeper_tables as tables
-from lino.guessenc.guesser import EncodingGuesser
+from lino.tools.guessenc.guesser import EncodingGuesser
 
 
 class VolumeVisitor(Progresser):
