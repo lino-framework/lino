@@ -28,9 +28,9 @@ class MyDataTable(wx.grid.PyGridTableBase):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
         self.columns = self.editor.rpt.columns
-        self._load()
+        self.reload()
         
-    def _load(self):
+    def reload(self):
         if self.editor.enabled:
             self.rows = [
                 row for row
@@ -40,7 +40,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
 
     def refresh(self,grid):
         before = self.GetNumberRows()
-        self._load()
+        #self._load()
         self.resetRows(grid,before)
         self.updateValues(grid)
 
@@ -485,8 +485,11 @@ class DataGridCtrl(wx.grid.Grid):
 ##             return [self.GetGridCursorRow()]
 ##         return l
 
-    def refresh(self):
-        self.table.refresh(self)
+##     def refresh(self):
+##         self.table.refresh(self)
+        
+##     def reload(self):
+##         self.table.reload(self)
         
     def OnLeftDClick(self, evt):
         # start cell editor on doubleclick, not only on second click.

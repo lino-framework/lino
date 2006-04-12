@@ -24,6 +24,7 @@ from time import sleep
 #from lino.console.console import TaskAborted
 from lino.adamo.exceptions import UserAborted
 from lino.console import syscon
+from lino.console.console import BaseToolkit 
 
 if False:
     
@@ -88,7 +89,14 @@ has chosen a toolkit and who runs some code (usually an application)
 
     
     """
+    #label="Working"
+    label=None
+    maxval=0
+    #curval=0
+    #percentCompleted=0
+    
     def __init__(self,toolkit=None):
+        self.curval=0
         if toolkit is None:
             toolkit=syscon.getSystemConsole()
         self.toolkit=toolkit
@@ -103,9 +111,17 @@ has chosen a toolkit and who runs some code (usually an application)
     def isInteractive(self):
         return True
 
+    def getStatus(self):
+        # may override 
+        return self.label
+
+    def setStatus(self,s):
+        self.label=s
+        self.breathe()
+
     
     def loop(self,func,label,maxval=0,*args,**kw):
-        "run func with a progressbar"
+        "run func with a Task or Progresser"
         if maxval == 0:
             task=Task(label)
         else:
@@ -116,6 +132,11 @@ has chosen a toolkit and who runs some code (usually an application)
         #task=Task(self,label,maxval)
         #task.loop(func,*args,**kw)
         return task
+
+    def runtask(self,task,*args,**kw):
+        # used by lino.scripts.sync.Sync.run()
+        return task.runfrom(self.toolkit,*args,**kw)
+
 
     def confirm(self,*args,**kw):
         return self.toolkit.show_confirm(self,*args,**kw)
@@ -135,8 +156,8 @@ has chosen a toolkit and who runs some code (usually an application)
         return self.toolkit.show_error(self,*args,**kw)
 ##     def critical(self,*args,**kw):
 ##         return self.toolkit.show_critical(*args,**kw)
-    def status(self,*args,**kw):
-        return self.toolkit.show_status(self,*args,**kw)
+##     def status(self,*args,**kw):
+##         return self.toolkit.show_status(self,*args,**kw)
     def logmessage(self,*args,**kw):
         return self.toolkit.logmessage(self,*args,**kw)
     
@@ -154,17 +175,19 @@ has chosen a toolkit and who runs some code (usually an application)
 ##             bla
 
     def breathe(self):
+        self.curval += 1
         return self.toolkit.on_breathe(self)
 
+    def setMaxVal(self,n):
+        self.maxval=n
         
 
 
     
     
 class Task(Session):
-    title=None
-    label="Working"
-    percentCompleted=0
+    #title=None
+    
     def __init__(self,label=None):
         Session.__init__(self)
         #self._abortRequested=False
@@ -179,30 +202,44 @@ class Task(Session):
         self.toolkit.onTaskResume(self)
         #self._abortRequested=True
 
-    def getStatusLine(self):
-        # may override but caution: called frequently
-        return self.label
+##     def getStatusLine(self):
+##         # may override but caution: called frequently
+##         return self.label
     
-    def status(self,msg,*args,**kw):
-        if msg is None:
-            msg=''
-        else:
-            msg=self.buildMessage(msg,*args,**kw)
-        self.label=msg
-        return self.toolkit.show_status(self,msg)
+##     def status(self,msg,*args,**kw):
+##         if msg is None:
+##             msg=''
+##         else:
+##             msg=self.buildMessage(msg,*args,**kw)
+##         self.label=msg
+##         return self.toolkit.show_status(self,msg)
 
     def getTitle(self):
-        if self.title is None:
-            return self.__class__.__name__
-        return self.title
+        return str(self)
+##         if self.title is None:
+##             return self.__class__.__name__
+##         return self.title
 
-    def main(self,toolkit=None,*args,**kw):
-        if toolkit is None:
-            toolkit=syscon.getSystemConsole()
-        self.runfrom(toolkit,*args,**kw)
+##     def main(self,toolkit=None,*args,**kw):
+##         if toolkit is None:
+##             toolkit=syscon.getSystemConsole()
+##         #self.runfrom(toolkit,*args,**kw)
+##         try:
+##             return self.runfrom(toolkit,*args,**kw)
+##         except UserAborted,e:
+##             self.notice(str(e))
+##             return -1
+##         except OperationFailed,e:
+##             self.error(str(e))
+##             return -2
+    
+        
 
     def runfrom(self,toolkit,*args,**kw):
+        # overridden by Progresser
+        assert isinstance(toolkit,BaseToolkit)
         self.toolkit=toolkit
+        self.curval=0
         return self.run(*args,**kw)
     
 ## class Looper(Task):
@@ -216,19 +253,18 @@ class Task(Session):
     
 class Progresser(Task):
 
-    maxval=0
-    
     def __init__(self,label=None,maxval=None):
         Task.__init__(self,label)
         if maxval is not None:
             self.maxval=maxval
         #self._done=False
-        self.percentCompleted=0
-        self.curval=0
+        #self.percentCompleted=0
 
 
     def runfrom(self,toolkit,*args,**kw):
+        assert isinstance(toolkit,BaseToolkit)
         self.toolkit=toolkit
+        self.curval=0
         
         self.toolkit.onTaskBegin(self)
         #okay=True
@@ -238,45 +274,14 @@ class Progresser(Task):
             retval=self.run(*args,**kw)
             #self._done = True
             #success=True
-            self.percentCompleted = 100
+            #self.percentCompleted = 100
             self.toolkit.onTaskDone(self)
             return retval
             
-##         except UserAborted,e:
-##             # may raise during Toolkit.onTaskBreathe
-##             #assert e.task == self
-##             #self.abort()
-##             #self._done = True
-##             self.toolkit.onTaskAbort(self)
-##             raise #OperationFailed(str(e))
-            
         except Exception,e:
-            # some uncaught exception occured
-            #self.abort()
-            #self._done = True
+            # cleanup, then forward the exception 
             self.toolkit.onTaskAbort(self)
-            #self.session.exception(e)
-            #self=False
-            raise #OperationFailed(str(e))
-
-        #if not success:
-        #    raise OperationFailed(self)
-
-        #if self.count_errors+self.count_warnings != 0:
-        #    pass
-
-        #return self
-        
-##         if showSummary:
-##             l=job.getSummary(self)
-##             if len(l):
-##                 sess.notice("\n".join(l))
-
-        #self.session=None
-        
-            
-##     def abortRequested(self):
-##         return self._abortRequested
+            raise 
 
 
     def sleep(self,n=1.0):
@@ -288,25 +293,24 @@ class Progresser(Task):
             sleep(sleepStep)
 
         
-    def breathe(self):
-        self.toolkit.on_breathe(self)
-        #self.toolkit.onTaskBreathe(self)
-##         if self._abortRequested:
-##             if self.confirm(_("Are you sure you want to abort?")):
-##                 raise UserAborted()
-##             self._abortRequested=False
-##             self.toolkit.onTaskResume(self)
+##     def breathe(self):
+##         self.toolkit.onTaskBreathe(self)
+## ##         if self._abortRequested:
+## ##             if self.confirm(_("Are you sure you want to abort?")):
+## ##                 raise UserAborted()
+## ##             self._abortRequested=False
+## ##             self.toolkit.onTaskResume(self)
 
 
     def increment(self,n=1):
-        self.curval += n
+        self.breathe()
         #if self._done: return
-        if self.maxval != 0:
-            pc = int(100*self.curval/self.maxval)
-            if pc == self.percentCompleted:
-                return
-            self.percentCompleted = pc
-        self.toolkit.onTaskIncrement(self)
+##         if self.maxval != 0:
+##             pc = int(100*self.curval/self.maxval)
+##             if pc == self.percentCompleted:
+##                 return
+##             self.percentCompleted = pc
+##         self.toolkit.onTaskIncrement(self)
         #self.breathe()
 
 ##     def status(self,msg,*args,**kw):
@@ -355,8 +359,6 @@ class Progresser(Task):
 ##         self._label=label
 ##         self.maxval=maxval
         
-    def setMaxVal(self,n):
-        self.maxval=n
 
     #def setLabel(self,s):
     #    self.label=s
@@ -388,17 +390,20 @@ class Progresser(Task):
     
 
 class BugDemo(Progresser):
-    title="&Bug demo"
+    name="&Bug demo"
     maxval=10
     label="Let's see what happens if an exception occurs..."
     
+    
 ##     def getLabel(self):
 ##         return "Let's see what happens if an exception occurs..."
-
+    
+    def getStatus(self):
+        return "%d seconds left" % self.curval
+    
     def run(self):
         for i in range(self.maxval,0,-1):
             self.increment()
-            self.status("%d seconds left",i)
             self.sleep(1)
             
         self.thisWontWork()

@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005 Luc Saffre.
+## Copyright 2005-2006 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -20,7 +20,7 @@
 from lino.console.application import Application, UsageError
 from lino.console.task import UserAborted
 
-from lino.tools.synchronizer import Synchronizer, OperationFailed
+from lino.tools.synchronizer import Synchronizer
 
 class Sync(Application):
 
@@ -94,17 +94,10 @@ where SRC and DEST are two directories to be synchronized.
         else:
             raise UsageError("needs 1 or 2 arguments")
 
-        try:
-            job.runfrom(
-                self,
-                showProgress=self.options.showProgress,
-                safely=self.options.safely)
-        except UserAborted,e:
-            self.notice(str(e))
-            return
-        except OperationFailed,e:
-            self.error(str(e))
-            return
+        self.runtask(job,
+                     showProgress=self.options.showProgress,
+                     safely=self.options.safely)
+                     
 
 Sync().main()
 

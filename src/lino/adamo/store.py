@@ -395,7 +395,6 @@ class VolatileStore(BaseStore):
 from lino.console.task import Task
 
 class Populator(Task):
-    
     #def populateStore(self,store):
     def run(self,dbc,store):
         name = "populate"+store.getTable().name
@@ -406,7 +405,7 @@ class Populator(Task):
         if not store.isVirgin():
             self.debug("Not populating %s",store) 
             return
-        self.status("Populating %s",store) 
+        self.setStatus("Populating %s" % store)
         qry=store.query(dbc,"*")
         m(qry)
         store.commit()

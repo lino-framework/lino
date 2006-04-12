@@ -27,6 +27,7 @@ from lino.forms import gui
 from lino.forms import keyboard
 from lino.console.task import BugDemo
 from lino.adamo.dbreports import QueryReport
+from lino.reports.reports import ReportRow
 
 VERTICAL = 1
 HORIZONTAL = 2
@@ -407,6 +408,7 @@ class ReportForm(Form,GenericDocument):
         Form.__init__(self,**kw)
         self.rpt=rpt
         self.rpt.beginReport(self)
+        self.currentRow=None
 
     def beforeRowEdit(self):
         #self.currentRow=self.getCurrentRow()
@@ -520,10 +522,49 @@ class ReportForm(Form,GenericDocument):
         return self.rpt.getTitle()
 
 
+##     def insertRow(self):
+##         assert self.rpt.canWrite()
+##         row = self.rpt.appendRow()
+##         self.refresh()
+
+
+
     def insertRow(self):
         assert self.rpt.canWrite()
-        row = self.rpt.appendRow()
+        self.afterRowEdit()
+        self.enabled=True
+        item=self.rpt.query._appendRow()
+        self.currentRow=ReportRow(self.rpt,len(self.rpt),item)
+        #self.onInsertRow()
+        #row.item.commit()
+        #self.rpt.query._store.fireUpdate()
+        self.beforeRowEdit()
         self.refresh()
+        #return row.item
+    
+##     def updateRow(self,row,*args):
+##         i = 0
+##         for col in self.columns:
+##             if i == len(args):
+##                 break
+##             col.setCellValue(row,args[i])
+##             #row._values[col.rowAttr._name] = args[i]
+##             i += 1
+
+##     def appendRowForEditing(self,*args):
+##         item=self.query._appendRow()
+##         row=ReportRow(self,item)
+##         self.updateRow(row,*args)
+##         return row
+            
+##     def appendRow(self,*args):
+##         row=self.appendRowForEditing(*args)
+##         row.item.commit()
+##         self.query._store.fireUpdate()
+##         return row.item
+    
+            
+        
     
     def deleteSelectedRows(self):
         assert self.rpt.canWrite()
@@ -576,74 +617,6 @@ class ReportForm(Form,GenericDocument):
         return 0
                 
         
-    
-class ReportGridForm(ReportForm):
-    def __init__(self,*args,**kw):
-        ReportForm.__init__(self,*args,**kw)
-        self.grid=None
-        #self.pickedRow=None
-
-    def setupForm(self):
-        self.grid=self.addDataGrid(self.rpt)
-
-    def setupEditMenu(self):
-        m=ReportForm.setupEditMenu(self)
-        m.addItem("formView",
-                  label="&Form view",
-                  action=self.formView,
-                  accel="Ctrl-ENTER")
-        
-    def formView(self):
-        #self.pickedRow=self.getCurrentRow()
-        row=self.getCurrentRow()
-        self.showForm(ReportRowForm(self.rpt,row.index))
-        
-
-    def onIdle(self):
-        if self.grid is None: return
-        l = self.grid.getSelectedRows()
-        if len(l) == 1:
-            s = "Row %d of %d" % (l[0]+1,len(self.rpt))
-        else:
-            s = "Selected %s of %d rows" % (len(l), len(self.rpt))
-                
-        self.session.status(s)
-        
-    def getSelectedCol(self):
-        if self.grid is None:
-            return None
-        return self.grid.getSelectedCol()
-        
-    def getCurrentRow(self):
-        if self.grid is None: return None
-        l = self.grid.getSelectedRows()
-        if len(l) == 1:
-            return self.rpt[l[0]]
-        #raise "There is more than one row selected"
-        #return self.grid.getCurrentRow()
-
-class ReportGridPickForm(ReportGridForm):
-    #modal=True
-    def __init__(self,rpt,onpick,*args,**kw):
-        ReportGridForm.__init__(self,rpt,*args,**kw)
-        self.onpick=onpick
-        #self.pickedRow=None
-        
-    def setupFileMenu(self):
-        m=ReportGridForm.setupFileMenu(self)
-        m.addItem("pick",
-                  label="&Pick this row",
-                  accel="ENTER",
-                  action=self.pick)
-    def pick(self):
-        #self.pickedRow=self.getCurrentRow()
-        pickedRow=self.getCurrentRow()
-        if pickedRow is not None:
-            self.onpick(pickedRow)
-            self.close()
-        else:
-            self.session.notice("Cannot pick Nothing")
-
     
 class ReportRowForm(ReportForm):
     def __init__(self,rpt,recno=0,**kw):
@@ -766,6 +739,88 @@ class ReportRowForm(ReportForm):
     def getStatus(self):
         return "%d/%d" % (self.currentRow.index,len(self.rpt))
     
+##     def insertRow(self):
+##         self.afterRowEdit()
+##         assert self.rpt.canWrite()
+##         self.currentRow=self.rpt.appendRow()
+##         self.beforeRowEdit()
+##         self.refresh()
+
+
+class ReportGridForm(ReportForm):
+    
+    rowForm=ReportRowForm
+    
+    def __init__(self,*args,**kw):
+        ReportForm.__init__(self,*args,**kw)
+        self.grid=None
+        #self.pickedRow=None
+
+    def setupForm(self):
+        self.grid=self.addDataGrid(self.rpt)
+
+    def setupEditMenu(self):
+        m=ReportForm.setupEditMenu(self)
+        m.addItem("showRowForm",
+                  label="&Form view",
+                  action=self.showRowForm,
+                  accel="Ctrl-ENTER")
+
+        
+    def showRowForm(self):
+        #self.pickedRow=self.getCurrentRow()
+        row=self.getCurrentRow()
+        frm=self.rowForm(self.rpt,row.index)
+        self.showForm(frm)
+        
+
+    def onIdle(self):
+        if self.grid is None: return
+        l = self.grid.getSelectedRows()
+        if len(l) == 1:
+            s = "Row %d of %d" % (l[0]+1,len(self.rpt))
+        else:
+            s = "Selected %s of %d rows" % (len(l), len(self.rpt))
+                
+        self.session.status(s)
+        
+    def getSelectedCol(self):
+        if self.grid is None:
+            return None
+        return self.grid.getSelectedCol()
+        
+    def getCurrentRow(self):
+        if self.grid is None: return None
+        l = self.grid.getSelectedRows()
+        if len(l) == 1:
+            return self.rpt[l[0]]
+        #raise "There is more than one row selected"
+        #return self.grid.getCurrentRow()
+
+class ReportGridPickForm(ReportGridForm):
+    #modal=True
+    def __init__(self,rpt,onpick,*args,**kw):
+        ReportGridForm.__init__(self,rpt,*args,**kw)
+        self.onpick=onpick
+        #self.pickedRow=None
+        
+    def setupFileMenu(self):
+        m=ReportGridForm.setupFileMenu(self)
+        m.addItem("pick",
+                  label="&Pick this row",
+                  accel="ENTER",
+                  action=self.pick)
+    def pick(self):
+        #self.pickedRow=self.getCurrentRow()
+        pickedRow=self.getCurrentRow()
+        if pickedRow is not None:
+            self.onpick(pickedRow)
+            self.close()
+        else:
+            self.session.notice("Cannot pick Nothing")
+
+    
+        
         
     
 class DbMainForm(Form):

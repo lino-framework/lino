@@ -177,7 +177,10 @@ class DataGrid(toolkit.DataGrid):
         box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
         
     def refresh(self):
-        self.wxctrl.refresh()
+        self.wxctrl.table.refresh()
+
+    def reload(self):
+        self.wxctrl.table.reload()
 
     def getSelectedRows(self):
         return self.wxctrl.getSelectedRows()
@@ -787,16 +790,16 @@ class Toolkit(toolkit.Toolkit):
 
 
 
-    def show_status(self,sess,msg):
-        #frm=sess._activeForm
-        frm=self.getActiveForm()
-        while frm is not None and frm.modal:
-            frm=frm._parent
-        if frm is None:
-            #base.Toolkit.showStatus(self,sess,msg)
-            self.console.show_status(sess,msg)
-        else:
-            frm.ctrl.SetStatusText(msg)
+##     def show_status(self,sess,msg):
+##         #frm=sess._activeForm
+##         frm=self.getActiveForm()
+##         while frm is not None and frm.modal:
+##             frm=frm._parent
+##         if frm is None:
+##             #base.Toolkit.showStatus(self,sess,msg)
+##             self.console.show_status(sess,msg)
+##         else:
+##             frm.ctrl.SetStatusText(msg)
 
     def onTaskBegin(self,task):
         #assert self.progressDialog is None
@@ -807,26 +810,28 @@ class Toolkit(toolkit.Toolkit):
 ##             stm=""
 ##         else:
 ##             stm=task.statusMessage
-            
-        task.wxctrl = wx.ProgressDialog(
-            title,task.getStatusLine(),
-            100,
-            self._activeForm.ctrl,
-            wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
-        #return self.app.toolkit.console.onJobInit(job)
+        if task.maxval == 0:
+            task.wxctrl=None
+        else:
+            task.wxctrl = wx.ProgressDialog(
+                title,task.getStatusLine(),
+                100,
+                self._activeForm.ctrl,
+                wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
 
-    def onTaskBreathe(self,task):
+    def on_breathe(self,task):
         if task.wxctrl is None: return
-        pc = task.percentCompleted
+        #pc = task.percentCompleted
+        pc=int(100*task.curval/task.maxval)
         #if pc is None: pc = 0
-        msg=task.getStatusLine()
-        #if msg is None: msg=''
+        msg=task.getStatus()
+        if msg is None: msg=''
         if not task.wxctrl.Update(pc,msg):
             task.requestAbort()
         self.run_awhile()
         
-    def onTaskIncrement(self,task):
-        self.onTaskBreathe(task)
+##     def onTaskIncrement(self,task):
+##         self.onTaskBreathe(task)
 
 ##     def onTaskStatus(self,task):
 ##         if task.wxctrl is None: return

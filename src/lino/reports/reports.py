@@ -212,27 +212,6 @@ class BaseReport:
 
         #return row
 
-##     def updateRow(self,row,*args):
-##         i = 0
-##         for col in self.getVisibleColumns():
-##             if i == len(args):
-##                 break
-##             col.setCellValue(row,args[i])
-##             #row._values[col.rowAttr._name] = args[i]
-##             i += 1
-
-##     def appendRowForEditing(self,*args):
-##         item=self.ds._appendRow()
-##         row=ReportRow(self,item)
-##         self.updateRow(row,*args)
-##         return row
-            
-##     def appendRow(self,*args):
-##         row=self.appendRowForEditing(*args)
-##         row.item.commit()
-##         self.ds._store.fireUpdate()
-##         return row.item
-    
 ##     def find(self,*args,**knownValues):
 ##         assert len(args) == 0
 ##         i=0

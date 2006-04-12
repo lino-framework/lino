@@ -46,8 +46,8 @@ class OperationFailed(Exception):
 class UsageError(Exception):
     pass
 
-class ApplicationError(Exception):
-    pass
+#class ApplicationError(Exception):
+#    pass
     
 
 __all__ = [
@@ -56,4 +56,5 @@ __all__ = [
     'RowLockFailed',
     'DataVeto',
     'DatabaseError',
-    'UserAborted','OperationFailed']
+    'UserAborted',
+    'OperationFailed']

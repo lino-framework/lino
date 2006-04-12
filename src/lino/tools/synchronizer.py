@@ -70,12 +70,12 @@ itr("%d target files are NEWER! Are you sure?",
 itr("Counting files...",
     de=u"Dateien zählen..."
     )
-itr("Analyzing...",
-    de=u"Analysiere..."
+itr("Analyzing %s ...",
+    de=u"Analysiere %s ..."
     )
 itr("Nothing to do",de="Nichts zu tun")
-itr("Synchronize %s to %s",
-    de=u"Synchronisiere %s nach %s")
+itr("Synchronizing %s ...",
+    de=u"Synchronisiere %s ...")
 itr("Source directory '%s' doesn't exist.",
     de="Ursprungsordner '%s' existiert nicht.")
 itr("Target directory '%s' doesn't exist.",
@@ -165,30 +165,32 @@ class Synchronizer(Progresser):
     def run(self,showProgress=False,safely=True):
         #self.session=task.session
         #self.task=task
-        self.maxval=0
-        for p in self.projects:
-            self.notice(str(p))
-        if showProgress:
-##             class CountingFiles(Task):
-##                 label="Counting files..."
-##                 def run(myself):
-##                     for prj in self.projects:
-##                         self.maxval += prj.countFiles(myself)
+        #self.maxval=0
+        #for p in self.projects:
+        #    self.notice(str(p))
             
-            def f():
-                for prj in self.projects:
-                    self.maxval += prj.countFiles(self)
-            Looper(f,_("Counting files...")).runfrom(self)
-            #sess.loop(f,_("Counting files..."))
-            self.notice(_("Found %d files."), self.maxval)
+##         if showProgress:
+##             def f():
+##                 for prj in self.projects:
+##                     self.maxval += prj.countFiles(self)
+##             Looper(f,_("Counting files...")).runfrom(self)
+##             #sess.loop(f,_("Counting files..."))
+##             self.notice(_("Found %d files."), self.maxval)
             
                 
         if safely:
             self.simulate=True
-            def f(task):
-                for p in self.projects:
-                    p.runfrom(task)
-            self.loop(f,_("Analyzing..."),self.maxval)
+            
+##             def f(task):
+##                 for p in self.projects:
+##                     task.runtask(p)
+##             self.loop(f,_("Analyzing..."),self.maxval)
+
+            for p in self.projects:
+                self.notice(_("Analyzing %s ..."),p)
+                self.runtask(p)
+                p.setMaxVal(p.curval)
+            
             self.notice(self.getSummary())
             
             if not (self.count_delete_dir \
@@ -214,10 +216,16 @@ class Synchronizer(Progresser):
             return
         
         self.simulate=False
-        def f(task):
-            for p in self.projects:
-                p.runfrom(task)
-        self.loop(f,"Synchronizing",self.maxval)
+        
+##         def f(task):
+##             for p in self.projects:
+##                 task.runtask(p)
+##         self.loop(f,"Synchronizing",self.maxval)
+
+        for p in self.projects:
+            self.notice(_("Synchronizing %s ..."),p)
+            self.runtask(p)
+        
         self.notice(self.getSummary())
         
                 
@@ -291,7 +299,7 @@ class SyncProject(Task):
     
     #def __init__(self,app,src,target,simulate,recurse,summary=None):
     def __init__(self,job,src,target,recurse=False):
-        #Task.__init__(self,summary)
+        Task.__init__(self)
         #self.app=app
         self.job=job
         self.src = src
@@ -310,6 +318,8 @@ class SyncProject(Task):
             raise OperationFailed(
                 _("Target directory '%s' doesn't exist.") % self.target)
 
+    def getStatus(self):
+        return self.job.getStatus()
     
     def countFiles(self,ui):
         if self.recurse:
@@ -331,7 +341,7 @@ class SyncProject(Task):
 ##         self.update_dir(self.src,self.target)
         
     def run(self):
-        self.update_dir(self.src,self.target)
+        return self.update_dir(self.src,self.target)
         
     def update_dir(self,src,target):
         srcnames = os.listdir(src)
@@ -504,9 +514,9 @@ class SyncProject(Task):
             self.error("os.remove('%s') failed",name)
         self.job.done_delete_file += 1
 
-    def showStatus(self):
-        self.status(self.job.getStatus())
-        self.breathe()
+##     def showStatus(self):
+##         self.status(self.job.getStatus())
+##         self.breathe()
 
     def error(self,*args,**kw):
         Task.error(self,*args,**kw)
@@ -515,7 +525,8 @@ class SyncProject(Task):
     #def warning(self,*args,**kw):
 
     def copy_it(self,src,target):
-        self.showStatus()
+        #self.showStatus()
+        self.breathe()
         self.job.increment()
         if os.path.isfile(src):
             self.copy_file(src,target)
@@ -530,7 +541,8 @@ class SyncProject(Task):
             #    "%s is neither file nor directory" % src)
 
     def update_it(self,src,target):
-        self.showStatus()
+        #self.showStatus()
+        self.breathe()
         #self.setStatus()
         self.job.increment()
         if os.path.isfile(src):
@@ -547,8 +559,8 @@ class SyncProject(Task):
         
     def delete_it(self,name):
         #self.setStatus()
-        self.showStatus()
         self.breathe()
+        #self.showStatus()
         if os.path.isfile(name):
             self.delete_file(name)
         elif os.path.isdir(name):

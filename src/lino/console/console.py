@@ -71,10 +71,15 @@ class BaseToolkit:
     def on_breathe(self,task):
         if self.abortRequested():
             task.requestAbort()
+##         else:
+##             self.showStatus(task.getStatus())
     
     def abortRequested(self):
         return False
 
+##     def showStatus(self,msg):
+##         pass
+    
 class Console(BaseToolkit):
 
     def __init__(self, stdout, stderr, encoding=None,**kw):
@@ -154,9 +159,10 @@ class Console(BaseToolkit):
 ##             app.notice(app.aboutString())
 
             
-    def show_status(self,sess,msg=None,*args,**kw):
-        #if msg is not None:
-        self.show_verbose(sess,msg,*args,**kw)
+##     def show_status(self,sess,msg=None,*args,**kw):
+##         #if msg is not None:
+##         self.show_verbose(sess,msg,*args,**kw)
+        
         
     def show_message(self,sess,msg,*args,**kw):
         msg = sess.buildMessage(msg,*args,**kw)
@@ -254,6 +260,9 @@ class Console(BaseToolkit):
         #self.writelog(msg)
         if self._verbosity >= 0:
             self.writeln(msg)
+            self.last_updated=0.0 # redisplay status
+            self.on_breathe(sess)
+            #sess.breathe()
 
     def show_notice(self,sess,msg,*args,**kw):
         "Display message if verbosity is normal. Logged."
@@ -261,12 +270,17 @@ class Console(BaseToolkit):
             msg = sess.buildMessage(msg,*args,**kw)
             self.logmessage(msg)
             self.writeln(msg)
+            self.last_updated=0.0 # redisplay status
+            self.on_breathe(sess)
+            #sess.breathe()
 
     def show_verbose(self,sess,msg,*args,**kw):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
             msg = sess.buildMessage(msg,*args,**kw)
             self.writeln(msg)
+            self.last_updated=0.0 # redisplay status
+            self.on_breathe(sess)
         
     def show_debug(self,sess,msg,*args,**kw):
         "Display message if verbosity is very high. Not logged."
@@ -274,6 +288,9 @@ class Console(BaseToolkit):
             msg = sess.buildMessage(msg,*args,**kw)
             self.writeln(msg)
             #self.out.write(msg + "\n")
+            self.last_updated=0.0 # redisplay status
+            self.on_breathe(sess)
+            #sess.breathe()
 
             
     def shutdown(self):
@@ -284,7 +301,8 @@ class Console(BaseToolkit):
 
     def onTaskBegin(self,task):
         #if task.getLabel() is not None:
-        task.notice(task.getStatusLine())
+        #task.notice(task.getTitle())
+        pass
 
     def onTaskDone(self,task):
         pass
@@ -303,19 +321,20 @@ class Console(BaseToolkit):
         #    msg = task.getLabel() + ": " + msg
         #task.session.error(msg)
 
-    def onTaskIncrement(self,task):
-        self.onTaskStatus(task)
+##     def onTaskIncrement(self,task):
+##         self.on_breathe(task)
+##         #self.onTaskStatus(task)
         
-    def onTaskBreathe(self,task):
-        if self.abortRequested():
-            task.requestAbort()
+##     def onTaskBreathe(self,task):
+##         if self.abortRequested():
+##             task.requestAbort()
     
     def onTaskResume(self,task):
         pass
     
-    def onTaskStatus(self,task):
-        pass
-        #self.showStatus(task.session.statusMessage)
+##     def onTaskStatus(self,task):
+##         pass
+##         #self.showStatus(task.session.statusMessage)
     
         
             
@@ -476,13 +495,48 @@ class Console(BaseToolkit):
 
 
 
+
+
+
+class CaptureConsole(Console):
+    
+    def __init__(self,batch=True,encoding="utf8",**kw):
+        self.buffer = StringIO()
+        self.encoding=encoding
+        Console.__init__(self,
+                         self.buffer,
+                         self.buffer,
+                         batch=batch,
+                         encoding=self.encoding,
+                         **kw)
+
+    def getConsoleOutput(self):
+        s = self.buffer.getvalue()
+        self.buffer.close()
+        self.buffer = StringIO()
+        self.redirect(self.buffer,self.buffer,self.encoding)
+        if self.encoding is not None:
+            s=s.decode(self.encoding)
+        return s
+
+
+
+
+
+
+
+
+
 class TtyConsole(Console):
 
-    purzelMann = "|/-\\"
-    width = 78  # 
+    purzelPos=0
+    purzelMann = r"/-\|"
+    width = 78  #
+    update_interval=0.1
 
     def __init__(self,*args,**kw):
         self.statusMessage=None
+        self.last_updated=0.0
         Console.__init__(self,*args,**kw)
 
 ##     def __init__(self, stdout, stderr, **kw):
@@ -554,43 +608,63 @@ class TtyConsole(Console):
             return default
         self.stdout.write("".ljust(self.width)+"\r")
         return raw_input(msg)
-    
-    def onTaskStatus(self,task):
-        if task.maxval == 0:
-            s = '[' + self.purzelMann[task.curval % 4] + "] "
-        else:
-            if task.percentCompleted is None:
-                s = "[    ] " 
-            else:
-                s = "[%3d%%] " % task.percentCompleted
-        if self.statusMessage is None:
-            self.showStatus(s)
-        else:
-            self.showStatus(s+self.statusMessage)
-        
-    def show_status(self,sess,msg=None,*args,**kw):
-        #if msg is not None:
-            #ssert type(msg) == type('')
-            #assert msg.__class__ in (types.StringType,
-            #                         types.UnicodeType)
-        msg=sess.buildMessage(msg,*args,**kw)
-        self.statusMessage=msg
-        return self.showStatus(msg)
 
-    def setStatusMessage(self,msg):
-        self.statusMessage=msg
+    #def onTaskStatus(self,task):
+    def on_breathe(self,task):
+        if self.abortRequested():
+            task.requestAbort()
+            return
+        if time.clock() - self.last_updated < self.update_interval:
+            return
+        self.last_updated=time.clock()
+        
+        if task.maxval == 0:
+            s = '[' + self.purzelMann[self.purzelPos] + "] "
+            self.purzelPos+=1
+            if self.purzelPos == len(self.purzelMann):
+                self.purzelPos=0
+                
+            
+        else:
+            s = "[%d%%] " % int(100*task.curval/task.maxval)
+##             if task.percentCompleted is None:
+##                 s = "[    ] " 
+##             else:
+##                 s = "[%3d%%] " % task.percentCompleted
+
+                
+##         if self.statusMessage is None:
+##             self.showStatus(s)
+##         else:
+##             self.showStatus(s+self.statusMessage)
+        msg=task.getStatus()
+        if msg is not None:
+            s += msg
+            s = s[:self.width]
+        self.stdout.write(s.ljust(self.width)+"\r")
+        
+##     def show_status(self,sess,msg=None,*args,**kw):
+##         #if msg is not None:
+##             #ssert type(msg) == type('')
+##             #assert msg.__class__ in (types.StringType,
+##             #                         types.UnicodeType)
+##         msg=sess.buildMessage(msg,*args,**kw)
+##         self.statusMessage=msg
+##         return self.showStatus(msg)
+
+##     def setStatusMessage(self,msg):
+##         self.statusMessage=msg
     
-    def showStatus(self,msg):
-        "does not store"
+##     def showStatus(self,msg):
+##         "does not store"
 ##         if msg is None:
 ##             msg=''
 ##         else:
 ##             msg = msg[:self.width]
-        msg = msg[:self.width]
-        self.stdout.write(msg.ljust(self.width)+"\r")
 
-    def _refresh(self):
-        self.showStatus(self.statusMessage)
+##     def _refresh(self):
+##         self.showStatus(self.statusMessage)
+            
         #if sess._status is not None:
         #    self.stdout(sess._status+"\r")
 
@@ -604,26 +678,6 @@ class TtyConsole(Console):
 ##         return raw_input(msg)
 
 
-class CaptureConsole(Console):
-    
-    def __init__(self,batch=True,encoding="utf8",**kw):
-        self.buffer = StringIO()
-        self.encoding=encoding
-        Console.__init__(self,
-                         self.buffer,
-                         self.buffer,
-                         batch=batch,
-                         encoding=self.encoding,
-                         **kw)
-
-    def getConsoleOutput(self):
-        s = self.buffer.getvalue()
-        self.buffer.close()
-        self.buffer = StringIO()
-        self.redirect(self.buffer,self.buffer,self.encoding)
-        if self.encoding is not None:
-            s=s.decode(self.encoding)
-        return s
     
 
 

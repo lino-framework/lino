@@ -19,7 +19,7 @@
 import types
 
 from lino.adamo.exceptions import DataVeto, InvalidRequestError, \
-     NoSuchField
+     NoSuchField, RowLockFailed
 from lino.adamo import datatypes
 
 ## from lino.adamo.rowattrs import RowAttribute,\
@@ -232,7 +232,8 @@ class StoredDataRow(DataRow):
         return self._complete
     
     def isLocked(self):
-        return (self._locked or self._new or self._pseudo)
+        #return (self._locked or self._new or self._pseudo)
+        return self._locked
 
     def isNew(self):
         return self._new
@@ -352,8 +353,8 @@ class StoredDataRow(DataRow):
 
 
     def lock(self):
-        if self._new:
-            raise RowLockFailed("Cannot lock a new row")
+        #if self._new:
+        #    raise RowLockFailed("Cannot lock a new row")
         if self._locked:
             raise RowLockFailed("Already locked")
             # , "already locked"

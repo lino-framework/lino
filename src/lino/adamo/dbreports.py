@@ -180,6 +180,7 @@ class QueryReport(BaseReport):
             self.formColumnGroups = tuple(groups)
 
 
+
 class DatabaseOverview(Report):
     # originally copied from sprl1.py
     def __init__(self,dbsess):

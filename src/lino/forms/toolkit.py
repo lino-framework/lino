@@ -22,7 +22,7 @@ from cStringIO import StringIO
 
 from lino.misc.descr import Describable
 from lino.adamo.datatypes import STRING, MEMO
-from lino.console.console import BaseToolkit # import Application
+from lino.console.console import BaseToolkit 
 #from lino.console.session import Session
 from lino.gendoc.gendoc import GenericDocument
 

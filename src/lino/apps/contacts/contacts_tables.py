@@ -89,7 +89,11 @@ class Person(StoredDataRow):
 class PersonsReport(DataReport):
     "former std view"
     leadTable=Person
-    columnNames="name firstName id"
+    columnSpec="""
+    title name firstName 
+    sex birthDate id
+    memo
+    """
     orderBy='name firstName title sex birthDate id memo'
     
 

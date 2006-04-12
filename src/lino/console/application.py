@@ -24,16 +24,16 @@
 
 ## from lino.console import syscon
 
-## from lino.console.console import UserAborted, OperationFailed
-
 import sys
 from optparse import OptionParser
 import textwrap
 
 import lino
 
+from lino.adamo.exceptions import UserAborted, OperationFailed
+from lino.adamo.exceptions import UsageError #, ApplicationError
+
 from lino.console import syscon
-from lino.adamo.exceptions import UsageError, ApplicationError
 from lino.console.task import Session
 
     
@@ -111,16 +111,16 @@ class Application(Session):
     
     
     """
-    def __init__(self):
-        #if session is None:
-        #    session=syscon.getSystemConsole()
-        #if self.name is None:
-        #    self.name=self.__class__.__name__
-        #self.toolkit=None 
-        self.toolkit=syscon.getSystemConsole()
-        #Session.__init__(self)
-        #print "Application.__init__()", self    
-        #self.setToolkit(toolkit)
+##     def __init__(self):
+##         #if session is None:
+##         #    session=syscon.getSystemConsole()
+##         #if self.name is None:
+##         #    self.name=self.__class__.__name__
+##         #self.toolkit=None 
+##         self.toolkit=syscon.getSystemConsole()
+##         #Session.__init__(self)
+##         #print "Application.__init__()", self    
+##         #self.setToolkit(toolkit)
         
     def setupApplication(self):
         pass
@@ -248,6 +248,8 @@ class Application(Session):
         (command-line arguments are shifted by one)
 
         """
+        self.toolkit=syscon.getSystemConsole()
+        
         p = OptionParser(
             usage=self.usage,
             description=self.description)
@@ -272,9 +274,15 @@ class Application(Session):
         except UsageError,e:
             p.print_help()
             return -1
-        except ApplicationError,e:
-            self.error(str(e))
+        except UserAborted,e:
+            self.verbose(str(e))
             return -1
+        except OperationFailed,e:
+            self.error(str(e))
+            return -2
+##         except ApplicationError,e:
+##             self.error(str(e))
+##             return -1
 
     def run(self,*args,**kw):
         raise NotImplementedError
