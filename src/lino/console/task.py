@@ -89,6 +89,7 @@ has chosen a toolkit and who runs some code (usually an application)
 
     
     """
+    name=None
     #label="Working"
     label=None
     maxval=0
@@ -102,6 +103,13 @@ has chosen a toolkit and who runs some code (usually an application)
         self.toolkit=toolkit
         self.debug(self.__class__.__name__+".__init__()")
         
+    def __str__(self):
+        if self.name is None:
+            s = self.__class__.__name__
+        else:
+            s = self.name
+        return s
+    
     def buildMessage(self,msg,*args,**kw):
         assert len(kw) == 0, "kwargs not yet implemented"
         if len(args) == 0:
@@ -115,8 +123,9 @@ has chosen a toolkit and who runs some code (usually an application)
         # may override 
         return self.label
 
-    def setStatus(self,s):
-        self.label=s
+    def status(self,msg,*args,**kw):
+        msg=self.buildMessage(msg,*args,**kw)
+        self.label=msg
         self.breathe()
 
     

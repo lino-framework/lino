@@ -1,5 +1,5 @@
 
-Lino Contacts version 0.0.1
+Lino Contacts
 TableName      |Fields              |Pointers     |Details             
 ---------------+--------------------+-------------+--------------------
 Languages      |id, name            |             |                    
@@ -19,7 +19,7 @@ Contacts       |id, name, email,    |org, person, |
                |website, zip,       |lang, nation,|                    
                |street, house, box  |city         |                    
 
-Lino Keeper version 0.0.1
+Lino Keeper
 TableName      |Fields              |Pointers     |Details             
 ---------------+--------------------+-------------+--------------------
 Volumes        |id, name, meta, path|             |directories         
@@ -32,7 +32,7 @@ FileTypes      |id, name            |             |
 Words          |id                  |synonym      |occurences          
 Occurences     |pos                 |word, file   |                    
 
-Lino Ledger version 0.0.1
+Lino Ledger
 TableName      |Fields              |Pointers     |Details             
 ---------------+--------------------+-------------+--------------------
 Currencies     |id, name            |             |                    

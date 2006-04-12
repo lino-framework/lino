@@ -49,7 +49,7 @@ VPanel:
         
         q=sess.query(Volume)
         vol=q.appendRow(name="test",path=TESTDATA)
-        vol.load()
+        vol.load(self.toolkit)
         vol.directories().show(
             columnNames="id name parent files subdirs",
             width=70)

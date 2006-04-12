@@ -256,18 +256,11 @@ class DemoPopulator(addrdemo.DemoPopulator):
         NAT=q.getContext().query(Nation)
         CCY=q.getContext().query(Currency)
         BEF=CCY.peek("BEF")
-        #be=NAT.peek('be')
-        #be.partners_by_nation.showReport()
-        #return
         # must fetchall() because we update
         for p in NAT.peek('be').contacts_by_nation().fetchall():
-        #for p in NAT.peek('be').partners_by_nation():
             p.update(currency=BEF)
-            #p.lock()
-            #p.currency=BEF
-            #p.unlock()
 
-        # the Belgians will switch to EUR in tests/21.py
+        # note: the Belgians will switch to EUR in tests/21.py
         
     def populateJournals(self,q):
         q = q.query("id name tableName")

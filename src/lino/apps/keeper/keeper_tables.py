@@ -59,8 +59,8 @@ class Volume(StoredDataRow):
     def __str__(self):
         return self.name
         
-    def load(self):
-        VolumeVisitor(self).main()
+    def load(self,toolkit):
+        toolkit.runtask(VolumeVisitor(self))
         #sess.loop(vv.looper,"Loading %s" % self.name)
 
     def delete(self):

@@ -28,6 +28,9 @@ class RefuseValue(Exception):
 class RowLockFailed(Exception):
     "Failed to get a lock for a row"
 
+class LockRequired(InvalidRequestError):
+    "Tried to update a row that is not locked"
+
 class DatabaseError(Exception):
     "dbd-specific exception was raised"
 

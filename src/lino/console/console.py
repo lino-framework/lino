@@ -298,11 +298,13 @@ class Console(BaseToolkit):
         if self._logfile:
             self._logfile.close()
 
+    def runtask(self,task,*args,**kw):
+        # used by test 33
+        return task.runfrom(self,*args,**kw)
 
     def onTaskBegin(self,task):
-        #if task.getLabel() is not None:
-        #task.notice(task.getTitle())
-        pass
+        if task.name is not None:
+            task.notice(task.name)
 
     def onTaskDone(self,task):
         pass
@@ -537,6 +539,7 @@ class TtyConsole(Console):
     def __init__(self,*args,**kw):
         self.statusMessage=None
         self.last_updated=0.0
+        self._empty_line="".ljust(self.width)
         Console.__init__(self,*args,**kw)
 
 ##     def __init__(self, stdout, stderr, **kw):
@@ -597,10 +600,15 @@ class TtyConsole(Console):
 ##         self._refresh()
         
     def writeln(self,msg):
+        self.stdout.write(self._empty_line+"\r")
         self.stdout.write("".ljust(self.width)+"\r")
         self.stdout.write(msg+"\n")
         #self.stdout.write(msg.ljust(self.width)+"\n")
         #self._refresh()
+        
+    def onTaskDone(self,task):
+        # clear the status line
+        self.stdout.write(self._empty_line) 
         
     def readkey(self,msg,default=""):
         if self._batch:

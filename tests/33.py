@@ -25,7 +25,7 @@ from lino.console.task import Progresser
 class TestTask(Progresser):
     
     maxval=10
-    label="Testing uncomplete tasks"
+    name="Testing uncomplete tasks"
     
     def run(self):
         self.notice("Running...")
@@ -42,7 +42,7 @@ class Case(TestCase):
     
     def test01(self):
 
-        TestTask().main()
+        self.toolkit.runtask(TestTask())
 
         #syscon.runTask(TestTask())
         s=self.getConsoleOutput()

@@ -90,7 +90,6 @@ from lino.console.task import Session
 
 class Application(Session):
     
-    name = None
     version=None # lino.__version__
     copyright=None
     url=None
@@ -111,56 +110,14 @@ class Application(Session):
     
     
     """
-##     def __init__(self):
-##         #if session is None:
-##         #    session=syscon.getSystemConsole()
-##         #if self.name is None:
-##         #    self.name=self.__class__.__name__
-##         #self.toolkit=None 
-##         self.toolkit=syscon.getSystemConsole()
-##         #Session.__init__(self)
-##         #print "Application.__init__()", self    
-##         #self.setToolkit(toolkit)
         
     def setupApplication(self):
         pass
         
 
-##     def createToolkit(self):
-##         return syscon.getSystemConsole()
-
-        
-##     def parse_args(self,argv=None): #,**kw):
-##         if self.author is not None:
-##             self.copyleft(name=self.name,
-##                           years=self.years,
-##                           author=self.author)
-##         p = OptionParser(
-##             usage=self.usage,
-##             description=self.description)
-            
-##         self.setupOptionParser(p)
-        
-##         if argv is None:
-##             argv = sys.argv[1:]
-        
-##         options,args = p.parse_args(argv)
-##         self.applyOptions(options,args)
-##         return p
-        
     def close(self):
         pass
 
-    def __str__(self):
-        if self.name is None:
-            s = self.__class__.__name__
-        else:
-            s = self.name
-            
-        if self.version is not None:
-            s += " version " + self.version
-        return s
-    
     def setupOptionParser(self,parser):
         pass
 
@@ -171,6 +128,8 @@ class Application(Session):
 
     def aboutString(self):
         s = str(self)
+        if self.version is not None:
+            s += " version " + self.version
         if self.author is not None:
             s += "\nAuthor: " +  self.author
         if self.copyright is not None:

@@ -100,6 +100,7 @@ class QueryColumn:
         
     def setCellValue(self,row,value):
         #self.rowAttr.canSetValue(row,value)
+        row.setDirtyRowAttr(self.rowAttr)
         try:
             self.rowAttr.setCellValue(row,value)
         except DataVeto,e:
@@ -107,7 +108,6 @@ class QueryColumn:
                 self._owner.getTableName(),self.name,value,e))
         #self.rowAttr.afterSetAttr(row)
         #self.rowAttr.trigger(row)
-        row.setDirtyRowAttr(self.rowAttr)
 
     def setCellValueFromString(self,row,s):
         # does not setDirty() !

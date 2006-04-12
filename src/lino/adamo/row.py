@@ -19,7 +19,7 @@
 import types
 
 from lino.adamo.exceptions import DataVeto, InvalidRequestError, \
-     NoSuchField, RowLockFailed
+     NoSuchField, RowLockFailed, LockRequired
 from lino.adamo import datatypes
 
 ## from lino.adamo.rowattrs import RowAttribute,\
@@ -61,8 +61,8 @@ class DataRow:
         #if self.__dict__.has_key(name):
         #    self.__dict__[name] = value
         #    return
-        if not self.isLocked():
-            raise InvalidRequestError("row is not locked")
+        #if self.mustlock() and not self.isLocked():
+        #    raise LockRequired()
         #col=self._query.findColumn(name)
         #if col is None:
         col=self._query._store._peekQuery.getColumnByName(name)
@@ -108,7 +108,8 @@ class DataRow:
 ##         self.__dict__["_dirty"] = True
 
     def setDirtyRowAttr(self,rowattr):
-        assert self.isLocked(), "row is not locked"
+        if self.mustlock() and not self._locked:
+            raise LockRequired()
         self.__dict__['_dirtyRowAttrs'][rowattr.name]=rowattr
 
 ##     def __getitem__(self,i):
@@ -128,13 +129,6 @@ class DataRow:
     #def getCells(self,columnNames=None):
     #    return RowIterator(self,self._query.getColumns(columnNames))
         
-    def update(self,**kw):
-        self.lock()
-        for (k,v) in kw.items():
-            setattr(self,k,v)
-        self.validate()
-        self.unlock()
-
 
     def canWrite(self):
         return True
@@ -350,11 +344,12 @@ class StoredDataRow(DataRow):
                    +'('+str(self._values)+")"
         return self.__class__.__name__+repr(tuple(self.getRowId()))
 
-
+    def mustlock(self):
+        return not (self._new or self._pseudo)
 
     def lock(self):
-        #if self._new:
-        #    raise RowLockFailed("Cannot lock a new row")
+        if not self.mustlock():
+            return #raise RowLockFailed("Cannot lock a new row")
         if self._locked:
             raise RowLockFailed("Already locked")
             # , "already locked"
@@ -364,19 +359,27 @@ class StoredDataRow(DataRow):
             
 
     def unlock(self):
+        if not self.mustlock():
+            return #raise RowLockFailed("Cannot lock a new row")
         #print "unlock()", self
-        assert self._locked, "Row was not locked"
+        if not self._locked:
+            raise InvalidRequestError("Row was not locked")
             
 ##          msg = self.validate()
 ##          if msg:
 ##              raise DataVeto(repr(self) + ': ' + msg)
             
         #assert not None in self.getRowId(), "incomplete pk"
-        self.__dict__["_locked"] = False
         #self._query._store.unlockRow(self,self._query)
+        self.__dict__["_locked"] = False
         self._query._store.unlockRow(*self.getRowId())
         self.commit()
         
+    def makeComplete(self):
+        if self._pseudo or self._complete or self._isCompleting:
+            return 
+        self._readFromStore()
+
 
     def commit(self):
         if not self.isDirty():
@@ -411,13 +414,16 @@ class StoredDataRow(DataRow):
         self._query._store.touch()
         
 
+    def update(self,**kw):
+        self.lock()
+        for (k,v) in kw.items():
+            #print "update %s.%s = %r" % (self,k,v)
+            setattr(self,k,v)
+        self.validate()
+        self.unlock()
+
     def delete(self):        
         self._query._connection.executeDelete(self)
-
-    def makeComplete(self):
-        if self._pseudo or self._complete or self._isCompleting:
-            return 
-        self._readFromStore()
 
     def exists(self):
         if not self._complete:
@@ -452,69 +458,4 @@ class StoredDataRow(DataRow):
 ##             msg = attr.vetoDeleteIn(self)
 ##             if msg: return msg
 
-
-## class RowIterator:
-
-##     def __init__(self,row,columns):
-##         self.row = row
-##         self.colIndex = 0
-##         self._columns = columns
-        
-##     def __iter__(self):
-##         return self
-    
-##     def next(self):
-##         if self.colIndex == len(self._columns):
-##             raise StopIteration
-##         col = self._columns[self.colIndex]
-##         self.colIndex += 1
-##         return self.row.makeDataCell(self.colIndex,col) 
-
-
-## class DataCell:
-##     def __init__(self,row,colIndex,col):
-##         #self.colIndex = colIndex
-##         self.row = row
-##         self.col = col
-
-##     def getValue(self):
-##         return self.col.getCellValue(self.row)
-        
-## ##     def __str__(self):
-## ##         return str(self.col.getCellValue(self.row))
-## ##         #~ v = self.col.getCellValue(self.row)
-## ##         #~ if v is None:
-## ##             #~ return "None"
-## ##         #~ return self.col.rowAttr.format(v)
-    
-## ##     def format(self):
-## ##         v = self.col.getCellValue(self.row)
-## ##         if v is None:
-## ##             return ""
-## ##         return self.col.rowAttr.format(v)
-
-##     def canWrite(self):
-##         if self.row.canWrite():
-##             return self.col.canWrite(self.row)
-##         return False
-    
-##     def __repr__(self):
-##         return repr(self.col.getCellValue(self.row))
-##         #~ v = self.col.getCellValue(self.row)
-##         #~ if v is None:
-##             #~ return "None"
-##         #~ return self.col.rowAttr.format(v)
-    
-##     def __str__(self):
-##         v = self.col.getCellValue(self.row)
-##         if v is None:
-##             return ""
-##         return self.col.rowAttr.format(v)
-    
-##     #def parseAndSet(self,s):
-##     def setValueFromString(self,s):
-##         self.col.rowAttr.setValueFromString(self.row,s)
-        
-##     def setValue(self,value):
-##         self.col.setCellValue(self.row,value)
 

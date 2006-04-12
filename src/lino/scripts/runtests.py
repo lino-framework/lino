@@ -78,13 +78,13 @@ continue testing even if failures or errors occur""",
     
     def makeSuite(self,argv,root='.'):
 
-        self.setStatus("Collecting test cases")
+        self.status("Collecting test cases")
         suites=[]
         cases = []
         #skipped=[]
         sys.path.append(root)
         for filename in os.listdir(root):
-            self.setStatus(os.path.join(root,filename))
+            self.status(os.path.join(root,filename))
             modname,ext = os.path.splitext(filename)
             if ext == '.py':
                 doit = (len(argv) == 0)

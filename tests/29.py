@@ -28,7 +28,7 @@
 from lino.misc.tsttools import TestCase, main
 from lino.apps.contacts.contacts_demo import startup
 from lino.apps.contacts.contacts_tables import *
-from lino.adamo.exceptions import DataVeto, InvalidRequestError
+from lino.adamo.exceptions import DataVeto, LockRequired
 
 class Case(TestCase):
 
@@ -53,9 +53,9 @@ class Case(TestCase):
         be = NATIONS.peek('be')
         try:
             be.name = "België"
-            self.fail("expected DataVeto")
-        except InvalidRequestError,e:
-            self.assertEqual(str(e),"row is not locked")
+            self.fail("expected LockRequired")
+        except LockRequired,e:
+            pass
         
             
 

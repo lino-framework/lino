@@ -109,8 +109,8 @@ class BaseStore:
         
     def lockRow(self,row,ds):
         k = tuple(row.getRowId())
-        if self._lockedRows.has_key(k):
-            raise RowLockFailed("Row is locked by another process")
+        assert not self._lockedRows.has_key(k)
+        #raise RowLockFailed("Row is locked by another process")
         self._lockedRows[k] = row
         #print self,"lock row", row
 
@@ -405,7 +405,7 @@ class Populator(Task):
         if not store.isVirgin():
             self.debug("Not populating %s",store) 
             return
-        self.setStatus("Populating %s" % store)
+        self.status("Populating %s" % store)
         qry=store.query(dbc,"*")
         m(qry)
         store.commit()
