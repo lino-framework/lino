@@ -38,7 +38,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
         else:
             self.rows=[]
 
-    def refresh(self,grid):
+    def refresh_grid(self,grid):
         before = self.GetNumberRows()
         #self._load()
         self.resetRows(grid,before)

@@ -177,7 +177,7 @@ class DataGrid(toolkit.DataGrid):
         box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
         
     def refresh(self):
-        self.wxctrl.table.refresh()
+        self.wxctrl.table.refresh_grid(self.wxctrl)
 
     def reload(self):
         self.wxctrl.table.reload()

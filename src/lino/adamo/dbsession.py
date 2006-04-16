@@ -212,7 +212,29 @@ class DbContext(Context):
 
 
 
+class Change:
+    pass
+
+class Update(Change):
+    def __init__(self,row,attr,old,new):
+        self.row=row
+        self.attr=attr
+        self.old=old
+        self.new=new
+
+class Insert(Change):        
+    def __init__(self,row):
+        self.row=row
+
+
+class Delete(Change):        
+    def __init__(self,row):
+        self.row=row
 
 
 
+class ChangeManager:
+    def __init__(self):
+        self.changes=[]
 
+    

@@ -359,6 +359,8 @@ class StoredDataRow(DataRow):
             
 
     def unlock(self):
+        if self.isDirty():
+            self.commit()
         if not self.mustlock():
             return #raise RowLockFailed("Cannot lock a new row")
         #print "unlock()", self
@@ -373,7 +375,6 @@ class StoredDataRow(DataRow):
         #self._query._store.unlockRow(self,self._query)
         self.__dict__["_locked"] = False
         self._query._store.unlockRow(*self.getRowId())
-        self.commit()
         
     def makeComplete(self):
         if self._pseudo or self._complete or self._isCompleting:
@@ -382,8 +383,8 @@ class StoredDataRow(DataRow):
 
 
     def commit(self):
-        if not self.isDirty():
-            return
+        #if not self.isDirty():
+        #    return
         #print "writeToStore()", self
         for a in self._dirtyRowAttrs.values():
             a.trigger(self)
@@ -434,19 +435,19 @@ class StoredDataRow(DataRow):
     
 
 
-    def defineMenus(self,win):
-        #self.initQuery()
-        mb = win.addMenuBar("row","&Row menu")
-        mnu = mb.addMenu("&Row")
-        mnu.addItem("&Edit",self.mnu_toggleEdit,win)
-        # mnu.addItem("&Delete",self.mnu_deleteRow)
-        # w.addGrid(self)
-        # return mb
-        mnu = mb.addMenu("&File")
-        mnu.addItem("E&xit",win.close)
+##     def defineMenus(self,win):
+##         #self.initQuery()
+##         mb = win.addMenuBar("row","&Row menu")
+##         mnu = mb.addMenu("&Row")
+##         mnu.addItem("&Edit",self.mnu_toggleEdit,win)
+##         # mnu.addItem("&Delete",self.mnu_deleteRow)
+##         # w.addGrid(self)
+##         # return mb
+##         mnu = mb.addMenu("&File")
+##         mnu.addItem("E&xit",win.close)
 
-    def mnu_toggleEdit(self,win):
-        pass
+##     def mnu_toggleEdit(self,win):
+##         pass
 
     def vetoDelete(self):
         return self._query.getLeadTable().vetoDeleteRow(self)
