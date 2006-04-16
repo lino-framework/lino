@@ -588,8 +588,8 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         self.sql_exec(sql).close()
         
     def executeInsert(self,row):
-        query = row._query._store._peekQuery
-        table = row._query.getLeadTable()
+        query = row._store._peekQuery
+        table = query.getLeadTable()
         #context = row.getContext()
 
         atomicRow = query.row2atoms(row)
@@ -619,8 +619,8 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         #self.commit()
         
     def executeUpdate(self,row):
-        query = row._query._store._peekQuery
-        table = row._query.getLeadTable()
+        query = row._store._peekQuery
+        table = query.getLeadTable()
         #context = row.getContext()
 
         atomicRow = query.row2atoms(row)
@@ -655,7 +655,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         #self.commit()
 
     def executeDelete(self,row):
-        table = row._query.getLeadTable()
+        table = row._store.getTable()
 
         sql = "DELETE FROM " + table.getTableName()
         sql += " WHERE "

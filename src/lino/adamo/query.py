@@ -337,7 +337,7 @@ class PointerColumn(FieldColumn):
         
         values = [None] * len(self._atoms)
         i = 0
-        tableId = value._query.getLeadTable().getTableId()
+        tableId = value._store.getTable().getTableId()
         rid = value.getRowId()
         for toTable in self.rowAttr._toTables:
             if toTable.getTableId() == tableId:
@@ -806,7 +806,7 @@ class BaseColumnList(Datasource):
         if atomicRow is None:
             return None
         #print "bar"    
-        row = self.getLeadTable()._instanceClass(self,{},False)
+        row = self.createRow({},False)
         # complete=None: don't know whether it's complete
         # new=False: it certainly exists
         #print "baz"
@@ -816,7 +816,7 @@ class BaseColumnList(Datasource):
 
     def getInstance(self,atomicId,new):
         #row = self.getLeadTable().Instance(self,{},new)
-        row = self.getLeadTable()._instanceClass(self,{},new)
+        row = self.createRow({},new)
         i = 0
         for col in self._pkColumns:
             col.col_atoms2row(atomicId,row)
@@ -920,7 +920,10 @@ class LeadTableColumnList(BaseColumnList):
         return self._store.unlockQuery(self)
 
     
-    
+    def createRow(self,*args,**kw):
+        return self._store._table._instanceClass(
+            self.getContext(),self._store,*args,**kw)
+
     #def atoms2row(self,atomicRow,new):
     def appendRowFromAtoms(self,atomicRow):
         #row = self.getLeadTable()._instanceClass(self,{},new)
@@ -944,7 +947,7 @@ class LeadTableColumnList(BaseColumnList):
         
         
     def _appendRow(self,*args,**kw):
-        row = self.getLeadTable()._instanceClass(self,{},True)
+        row = self.createRow({},True)
         #row = self.getLeadTable().Instance(self,{},True)
         for mc in self._masterColumns:
             mc.setCellValue(row,self._masters[mc.name])
@@ -1148,9 +1151,6 @@ class SimpleQuery(LeadTableColumnList):
 ##     def getContext(self):
 ##         return self.session
 
-##     def createReport(self,name=None,**kw):
-##         raise "moved to dbsession"
-    
     def show(self,**kw):
         from lino.adamo.dbreports import QueryReport
         QueryReport(self,**kw).show()
@@ -1399,7 +1399,7 @@ class SimpleQuery(LeadTableColumnList):
                "Query.getRowAt() got more than one row"
         csr.close()
         atomicRow = self.csr2atoms(sqlatoms)
-        row = self.getLeadTable()._instanceClass(self,{},False)
+        row = self.createRow({},False)
         self.atoms2row(atomicRow,row)
         return row
         #return self.atoms2row(atomicRow,False)
@@ -1464,7 +1464,7 @@ class SimpleQuery(LeadTableColumnList):
         
         csr.close()
         atomicRow = self.csr2atoms(sqlatoms)
-        row = self.getLeadTable()._instanceClass(self,{},False)
+        row = self.createRow({},False)
         self.atoms2row(atomicRow,row)
         return row
         #return self.atoms2row(atomicRow,False)
@@ -1773,7 +1773,7 @@ class DataIterator:
             raise StopIteration
         atomicRow = self.ds.csr2atoms(sqlatoms)
         #row=self.ds.atoms2row(atomicRow,False)
-        row = self.ds.getLeadTable()._instanceClass(self.ds,{},False)
+        row = self.ds.createRow({},False)
         self.ds.atoms2row(atomicRow,row)
         self.recno += 1
         return row

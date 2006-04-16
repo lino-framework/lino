@@ -107,7 +107,7 @@ class BaseStore:
             
         #self._status = self.SST_READY
         
-    def lockRow(self,row,ds):
+    def lockRow(self,row):
         k = tuple(row.getRowId())
         assert not self._lockedRows.has_key(k)
         #raise RowLockFailed("Row is locked by another process")
