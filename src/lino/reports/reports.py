@@ -104,7 +104,7 @@ class BaseReport:
         #return self.ds.__getitem__(i)
         if i < 0:
             i+=len(self)
-        return ReportRow(self,i,self.getIterator().__getitem__(i))
+        return ReportRow(self,self.getIterator().__getitem__(i),i)
 
     def canWrite(self):
         return self.getIterator().canWrite()
@@ -205,10 +205,14 @@ class BaseReport:
         return ReportIterator(self,doc)
         
     #def processItem(self,doc,item):
-    def processItem(self,rowno,item):
-        return ReportRow(self,rowno,item)
+    #def processItem(self,rowno,item):
+    def processItem(self,item,rowno=None):
+        if rowno is None:
+            rowno=len(self)
+        return ReportRow(self,item,rowno)
         #return ReportRow(self,doc,item)
         #row = Row(item)
+
 
         #return row
 
@@ -392,7 +396,7 @@ class VurtReportColumn(ReportColumn):
 
 
 class ReportRow:
-    def __init__(self,rpt,index,item):
+    def __init__(self,rpt,item,index):
         self.item = item
         self.index=index
         #self.cells = []
@@ -417,7 +421,6 @@ class ReportRow:
                 if v is not None:
                     #col.getType().validate(v)
                     col.validate(v)
-            #self.cells.append(Cell(self,col,v))
             self.values.append(v)
 
     def cells(self):
@@ -431,7 +434,9 @@ class ReportRow:
             i+=1
                     
         
-            
+    def __repr__(self):
+        return self.__class__.__name__+"("\
+               +",".join([repr(x) for x in self.values])+")"
 
 
 
@@ -447,8 +452,7 @@ class ReportIterator:
 
     def next(self):
         self.rowno+=1
-        return self.rpt.processItem(self.rowno,self.iterator.next())
-        #return self.rpt.processItem(self.doc,self.iterator.next())
+        return self.rpt.processItem(self.iterator.next(),self.rowno)
 
 
 class DictReport(BaseReport):

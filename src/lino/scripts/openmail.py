@@ -24,11 +24,11 @@ class OpenMail(Application):
     name="Lino/openmail"
 
     copyright="""\
-Copyright (c) 2002-2005 Luc Saffre.
+Copyright (c) 2002-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-    url="http://www.saffre-rumma.ee/lino/openmail.html"
+    url="http://lino.saffre-rumma.ee/openmail.html"
     
     usage="usage: lino openmail FILE"
     description="""\

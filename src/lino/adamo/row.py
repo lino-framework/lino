@@ -111,8 +111,9 @@ class DataRow:
 ##         self.__dict__["_dirty"] = True
 
     def setDirtyRowAttr(self,rowattr):
-        if self.mustlock() and not self._locked:
-            raise LockRequired()
+        #print self,self.mustlock(),self._locked
+        if self.mustlock() and not self.isLocked():
+            raise LockRequired("%r is not locked" % self)
         self.__dict__['_dirtyRowAttrs'][rowattr.name]=rowattr
 
 ##     def __getitem__(self,i):
@@ -189,7 +190,7 @@ class StoredDataRow(DataRow):
         self.__dict__["_new"] = new
         self.__dict__["_pseudo"] = pseudo
         self.__dict__["_complete"] = False #ds.isComplete()
-        self.__dict__["_locked"] = False
+        #self.__dict__["_locked"] = False
         self.__dict__["_isCompleting"] = False
         
 
@@ -230,10 +231,6 @@ class StoredDataRow(DataRow):
     def isComplete(self):
         return self._complete
     
-    def isLocked(self):
-        #return (self._locked or self._new or self._pseudo)
-        return self._locked
-
     def isNew(self):
         return self._new
     
@@ -353,24 +350,27 @@ class StoredDataRow(DataRow):
         return not (self._new or self._pseudo)
 
     def lock(self):
+        #print "Row.lock()",repr(self)
         if not self.mustlock():
             return #raise RowLockFailed("Cannot lock a new row")
-        if self._locked:
-            raise RowLockFailed("Already locked")
+        #if self._locked:
+        #    raise RowLockFailed("Already locked")
             # , "already locked"
             # return True
-        self.__dict__["_locked"] = True
+        #self.__dict__["_locked"] = True
         self._store.lockRow(self)
+        #print "Row.lock()",self,self._locked, self.mustlock()
             
 
     def unlock(self):
+        #print "Row.unlock()",self,self._locked, self.mustlock()
         if self.isDirty():
             self.commit()
         if not self.mustlock():
             return #raise RowLockFailed("Cannot lock a new row")
         #print "unlock()", self
-        if not self._locked:
-            raise InvalidRequestError("Row was not locked")
+        #if not self._locked:
+        #    raise InvalidRequestError("Row was not locked")
             
 ##          msg = self.validate()
 ##          if msg:
@@ -378,8 +378,15 @@ class StoredDataRow(DataRow):
             
         #assert not None in self.getRowId(), "incomplete pk"
         #self._query._store.unlockRow(self,self._query)
-        self.__dict__["_locked"] = False
+        #self.__dict__["_locked"] = False
         self._store.unlockRow(*self.getRowId())
+
+    def isLocked(self):
+        return self._store.isLockedRow(*self.getRowId())
+        #return (self._locked or self._new or self._pseudo)
+        #return self._locked
+
+        
         
     def makeComplete(self):
         if self._pseudo or self._complete or self._isCompleting:

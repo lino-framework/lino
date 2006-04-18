@@ -21,7 +21,8 @@ from time import time
 from lino.misc.descr import Describable
 #from lino.console import syscon
 
-from lino.adamo.exceptions import DataVeto, InvalidRequestError
+from lino.adamo.exceptions import \
+     DataVeto, InvalidRequestError, RowLockFailed
 #from lino.adamo.datasource import Datasource
 from lino.adamo.query import PeekQuery, Query
 from lino.adamo import datatypes 
@@ -109,11 +110,14 @@ class BaseStore:
         
     def lockRow(self,row):
         k = tuple(row.getRowId())
-        assert not self._lockedRows.has_key(k)
-        #raise RowLockFailed("Row is locked by another process")
+        if self._lockedRows.has_key(k):
+            raise RowLockFailed("Row is locked by another process")
         self._lockedRows[k] = row
         #print self,"lock row", row
 
+    def isLockedRow(self,*k):
+        return self._lockedRows.has_key(k)
+    
     def unlockRow(self,*k):
         #k = tuple(row.getRowId())
         return self._lockedRows.pop(k)
@@ -147,9 +151,10 @@ class BaseStore:
             row.unlock()
 ##         #assert len(self._lockedRows) == 0
         
-    def unlockQuery(self,qry):
+    #def unlockQuery(self,dbc):
+    def unlockContext(self,dbc):
         for row in self._lockedRows.values():
-            if row._query == qry:
+            if row._context == dbc:
                 print "forced unlock:", row
                 row.unlock()
 ##         #print "Datasource.unlockAll()",self

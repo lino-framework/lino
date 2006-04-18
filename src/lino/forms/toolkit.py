@@ -437,13 +437,12 @@ class DataGrid(Component):
     def setChosenRow(self,row):
         self.chosenRow = row
         
-    def render(self,doc):
-        doc.renderDataGrid(self)
-            
+##     def render(self,doc):
+##         doc.renderDataGrid(self)
 
-    def render(self,doc):
-        if self.enabled:
-            doc.report(self.rpt)
+##     def render(self,doc):
+##         if self.enabled:
+##             doc.report(self.rpt)
 
     def getSelectedRows(self):
         raise NotImplementedError

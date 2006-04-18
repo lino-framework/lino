@@ -180,8 +180,16 @@ class DataGrid(toolkit.DataGrid):
         self.wxctrl.table.refresh_grid(self.wxctrl)
 
     def reload(self):
+        if self.isDirty():
+            self.commit()
         self.wxctrl.table.reload()
 
+    def onInsertRow(self,frm):
+        row=frm.getCurrentRow()
+        oldlen=self.wxctrl.table.GetNumberRows()
+        self.wxctrl.table.cells.append([s for col,s in row.cells()])
+        self.wxctrl.table.refresh_grid(self.wxctrl,oldlen)
+            
     def getSelectedRows(self):
         return self.wxctrl.getSelectedRows()
 

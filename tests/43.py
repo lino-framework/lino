@@ -45,7 +45,7 @@ class Case(TestCase):
             days.appendRow()
         except DataVeto,e:
             self.assertEqual(
-                str(e), "Column 'Days.date' may not be empty")
+                str(e), "Column 'Days.date' is mandatory")
         else:
             self.fail('Failed to raise DataVeto')
 
@@ -57,7 +57,7 @@ class Case(TestCase):
             luc=resources.appendRow(name="Luc Saffre")
         except DataVeto,e:
             self.assertEqual(
-                str(e), "Column 'Resources.id' may not be empty")
+                str(e), "Column 'Resources.id' is mandatory")
         else:
             self.fail('Failed to raise DataVeto')
             
@@ -69,7 +69,7 @@ class Case(TestCase):
             usages.appendRow(date=today)
         except DataVeto,e:
             self.assertEqual(
-                str(e), "Column 'Usages.resource' may not be empty")
+                str(e), "Column 'Usages.resource' is mandatory")
         else:
             self.fail('Failed to raise DataVeto')
             

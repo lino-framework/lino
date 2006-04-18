@@ -27,7 +27,6 @@ from lino.forms import gui
 from lino.forms import keyboard
 from lino.console.task import BugDemo
 from lino.adamo.dbreports import QueryReport
-from lino.reports.reports import ReportRow
 
 VERTICAL = 1
 HORIZONTAL = 2
@@ -404,6 +403,7 @@ class MemoViewer(Form):
             value=self.txt)
                     
 class ReportForm(Form,GenericDocument):
+    # used by ReportRowForm and ReportGridForm
     def __init__(self,rpt,**kw):
         Form.__init__(self,**kw)
         self.rpt=rpt
@@ -411,6 +411,7 @@ class ReportForm(Form,GenericDocument):
         self.currentRow=None
 
     def beforeRowEdit(self):
+        #print "beforeRowEdit()",repr(self.currentRow)
         #self.currentRow=self.getCurrentRow()
         if self.currentRow is None: return
         if self.isEditing():
@@ -418,9 +419,24 @@ class ReportForm(Form,GenericDocument):
             
     def afterRowEdit(self):
         if self.currentRow is None: return
+        #print "afterRowEdit()",repr(self.currentRow.item)
         if self.currentRow.item.isLocked():
             self.store()
             self.currentRow.item.unlock()
+
+
+    def getCurrentRow(self):
+        #return self.rpt[self.recno]        
+        return self.currentRow
+        #if self.recno is None:
+        #    return None
+        #return self.rpt[self.recno]
+
+    def setCurrentRow(self,row):
+        self.afterRowEdit()
+        self.currentRow=row
+        self.beforeRowEdit()
+
 
     def isEditing(self):
         return False
@@ -484,7 +500,7 @@ class ReportForm(Form,GenericDocument):
         return m
 
     def editCellValue(self):
-        print "forms.py.editCell()"
+        print self.__class__.__name__+".editCell() not yet implemented"
 
     
     def pickCellValue(self):
@@ -527,6 +543,12 @@ class ReportForm(Form,GenericDocument):
 ##         row = self.rpt.appendRow()
 ##         self.refresh()
 
+    def goto(self,recno):
+        if recno == len(self.rpt):
+            self.insertRow()
+        else:
+            self.setCurrentRow(self.rpt[recno])
+    
 
 
     def insertRow(self):
@@ -534,8 +556,8 @@ class ReportForm(Form,GenericDocument):
         self.afterRowEdit()
         self.enabled=True
         item=self.rpt.query._appendRow()
-        self.currentRow=ReportRow(self.rpt,len(self.rpt),item)
-        #self.onInsertRow()
+        self.currentRow=self.rpt.processItem(item)
+        self.onInsertRow()
         #row.item.commit()
         #self.rpt.query._store.fireUpdate()
         self.beforeRowEdit()
@@ -606,7 +628,7 @@ class ReportForm(Form,GenericDocument):
 
     def onClose(self):
         self.rpt.endReport(self)
-        self.rpt.onClose()
+        #self.rpt.query.getContext().unlock()
 
     
 
@@ -630,6 +652,9 @@ class ReportRowForm(ReportForm):
     def isEditing(self):
         return self.enabled
 
+    def onInsertRow(self):
+        pass
+    
     def onClose(self):
         self.afterRowEdit()
         ReportForm.onClose(self)
@@ -637,18 +662,8 @@ class ReportRowForm(ReportForm):
     def setupForm(self):
         self.rpt.setupReportForm(self)
             
-    def getCurrentRow(self):
-        #return self.rpt[self.recno]        
-        return self.currentRow
-        #if self.recno is None:
-        #    return None
-        #return self.rpt[self.recno]
-
     def toggleEditing(self):
         self.afterRowEdit()
-        #if self.enabled:
-        #    self.store()
-            #self.currentRow.item.unlock()
         self.enabled=not self.enabled
         self.beforeRowEdit()
         self.refresh()
@@ -670,10 +685,12 @@ class ReportRowForm(ReportForm):
         m = self.addMenu("row",label="&Row")
         m.addItem("next",
                   label="&Next",
-                  accel="PgDn").setHandler(self.skip,1)
+                  action=lambda u: (self.skip(1), self.refresh()),
+                  accel="PgDn")#.setHandler(self.skip,1)
         m.addItem("previous",
                   label="&Previous",
-                  accel="PgUp").setHandler(self.skip,-1)
+                  action=lambda u: (self.skip(-1), self.refresh()),
+                  accel="PgUp")#.setHandler(self.skip,-1)
         m.addItem("edit",
                   label="&Edit",
                   accel="F2").setHandler(self.toggleEditing)
@@ -705,7 +722,6 @@ class ReportRowForm(ReportForm):
 
             
     def skip(self,n):
-        self.afterRowEdit()
         recno=self.currentRow.index
         if n > 0:
             if recno + n < len(self.rpt):
@@ -717,10 +733,9 @@ class ReportRowForm(ReportForm):
                 recno += n
             else:
                 return
-        self.currentRow=self.rpt[recno]
-        self.beforeRowEdit()
+        self.goto(recno)
         self.refresh()
-
+        
 
     def deleteCurrentRow(self):
         assert self.rpt.canWrite()
@@ -755,6 +770,7 @@ class ReportGridForm(ReportForm):
         ReportForm.__init__(self,*args,**kw)
         self.grid=None
         #self.pickedRow=None
+        self.editing=False
 
     def setupForm(self):
         self.grid=self.addDataGrid(self.rpt)
@@ -773,6 +789,8 @@ class ReportGridForm(ReportForm):
         frm=self.rowForm(self.rpt,row.index)
         self.showForm(frm)
         
+    def isEditing(self):
+        return self.editing
 
     def onIdle(self):
         if self.grid is None: return
@@ -784,6 +802,9 @@ class ReportGridForm(ReportForm):
                 
         self.session.status(s)
         
+    def onInsertRow(self):
+        self.grid.onInsertRow(self)
+    
     def getSelectedCol(self):
         if self.grid is None:
             return None

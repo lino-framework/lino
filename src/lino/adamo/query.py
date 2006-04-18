@@ -913,11 +913,11 @@ class LeadTableColumnList(BaseColumnList):
     def executePeek(self,id):
         return self._store.executePeek(self, id)
 
-    def commit(self):
-        self._store.unlockQuery(self)
+##     def unlock(self):
+##         self._store.unlockQuery(self)
         
-    def unlock(self):
-        return self._store.unlockQuery(self)
+##     def unlock(self):
+##         return self._store.unlockQuery(self)
 
     
     def createRow(self,*args,**kw):

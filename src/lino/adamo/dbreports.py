@@ -105,9 +105,9 @@ class QueryReport(BaseReport):
     def __xml__(self,wr):
         return self.query.__xml__(wr)
     
-    def onClose(self):
-        BaseReport.onClose(self)
-        self.query.unlock()
+##     def onClose(self):
+##         BaseReport.onClose(self)
+##         self.query.unlock()
         
     def getTitle(self):
         "may override"

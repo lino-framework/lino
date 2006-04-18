@@ -22,6 +22,21 @@ import wx.grid
 from lino.adamo.exceptions import RowLockFailed
 
 
+class GridRow:
+    
+    def __init__(self,table,rptrow):
+        self.reportRow=rptrow
+        self.strings=[]
+        for col in table.columns:
+            col = self.columns[colIndex]
+            v=col.getCellValue(rptrow)
+            if v is None:
+                self.strings.append("")
+            else:
+                self.strings.append(col.format(v))
+        
+
+
 class MyDataTable(wx.grid.PyGridTableBase):
 
     def __init__(self, editor):
@@ -32,19 +47,21 @@ class MyDataTable(wx.grid.PyGridTableBase):
         
     def reload(self):
         if self.editor.enabled:
-            self.rows = [
-                row for row
-                in self.editor.rpt.rows(self.editor.getForm()) ]
+            doc=self.editor.getForm()
+            self.cells = [
+                [s for col,s in row.cells()]
+                for row in self.editor.rpt.rows(doc)]
         else:
-            self.rows=[]
+            self.cells=[]
 
-    def refresh_grid(self,grid):
-        before = self.GetNumberRows()
+    def refresh_grid(self,grid,oldlen=None):
+        if oldlen is None:
+            oldlen = self.GetNumberRows()
         #self._load()
-        self.resetRows(grid,before)
+        self.resetRows(grid,oldlen)
         self.updateValues(grid)
 
-    def GetNumberRows(self): return len(self.rows) + 1
+    def GetNumberRows(self): return len(self.cells) + 1
     def GetNumberCols(self): return len(self.columns)
 
     def updateValues(self, grid):
@@ -114,37 +131,37 @@ class MyDataTable(wx.grid.PyGridTableBase):
     # C++ version.
     def GetValue(self, rowIndex, colIndex):
         "required"
-        if rowIndex == len(self.rows):
-            return "."
-        col = self.columns[colIndex]
-        v = self.rows[rowIndex].values[colIndex]
-        #v = col.getCellValue(self.rows[rowIndex])
-        if v is None: return ""
-        return col.format(v)
-        #return str(self.rows[rowIndex][colIndex])
+        if rowIndex == len(self.cells): return "."
+        return self.cells[rowIndex][colIndex]
 
     def SetValue(self, rowIndex, colIndex, value):
         "required"
         #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
-        if not self.editor.rpt.canWrite():
-            return
-        if rowIndex == len(self.rows):
-            args = [None] * len(self.columns)
-            args[colIndex] = value
-            row = self.editor.rpt.appendRowForEditing(*args)
-            self.rows.append(row)
+        frm=self.editor.getForm()
+        if not frm.editing:
+            frm.editing=True
+        
+##         if not self.editor.rpt.canWrite():
+##             return
+        
+##         if rowIndex == len(self.cells):
+##             raise "not yet done"
+## ##             args = [None] * len(self.columns)
+## ##             args[colIndex] = value
+## ##             row = self.editor.rpt.appendRowForEditing(*args)
+## ##             self.rows.append(row)
+##         else:
+##             row = self.cells[rowIndex]
+
+        col = self.columns[colIndex]
+        if len(value) == 0:
+            v=None
         else:
-            row = self.rows[rowIndex]
-        try:
-            row.lock()
-            col = self.columns[colIndex]
-            col.setValueFromString(row,value)
-            row.setDirty()
-            row.unlock()
-        except RowLockFailed,e:
-            self.editor.getForm().message(str(e))
-        #row.setCellFromString(colIndex,value)
-        #self._lockedRows.append(row)
+            v=col.datacol.parse(value,self.editor.rpt.query)
+            
+        frm.goto(rowIndex)
+        col.setCellValue(frm.getCurrentRow(),v)
+        frm.afterRowEdit()
         
 ##     def GetTypeName(self,row,col):
 ##         rowAttr = self.columns[col].rowAttr
@@ -389,6 +406,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
 
 
 class DataGridCtrl(wx.grid.Grid):
+    # used by lino.forms.wx.wxtoolkit.DataGrid
     def __init__(self, parent, editor):
         wx.grid.Grid.__init__(self, parent, -1)
         self.table = MyDataTable(editor)
@@ -459,7 +477,7 @@ class DataGridCtrl(wx.grid.Grid):
     def getSelectedCol(self):
         colIndex = self.GetGridCursorCol()
         return self.table.columns[colIndex]
-            
+
     def getSelectedRows(self):
         lt = self.GetSelectionBlockTopLeft()
         lb = self.GetSelectionBlockBottomRight()
