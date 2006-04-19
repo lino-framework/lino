@@ -21,13 +21,22 @@ import sys
 import os
 opj = os.path.join
 import codecs
+import re
 
 from lino.adamo.ddl import *
 from lino.console.task import Progresser
 #from lino.tools.msword import MsWordDocument
-from lupy.index.documentwriter import standardTokenizer
+#from lupy.index.documentwriter import standardTokenizer
 import keeper_tables as tables
 from lino.tools.guessenc.guesser import EncodingGuesser
+
+def standardTokenizer(string):
+    """Yield a stream of downcased words from a string."""
+    # copied from lupy.index.documentwriter
+    r = re.compile("\\w+", re.U)
+    tokenstream = re.finditer(r, string)
+    for m in tokenstream:
+        yield m.group().lower() 
 
 
 class VolumeVisitor(Progresser):

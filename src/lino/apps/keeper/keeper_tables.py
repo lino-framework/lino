@@ -23,9 +23,11 @@ from types import StringType
 from lino.adamo.ddl import *
 from lino.adamo.filters import Contains, NotEmpty
 #from lino.forms.session import Session
-from lino.apps.keeper.populate import VolumeVisitor, read_content
+from lino.apps.keeper.populate import \
+     VolumeVisitor, read_content,\
+     standardTokenizer
 
-from lupy.index.documentwriter import standardTokenizer
+#from lupy.index.documentwriter import standardTokenizer
 
 def preview(s):
     if len(s) < 100: return s

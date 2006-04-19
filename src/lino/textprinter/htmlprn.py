@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,8 +17,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from twisted.web.html import escape
-
+#from twisted.web.html import escape
+from lino.gendoc.html import escape
 from lino.textprinter.textprinter import TextPrinter
 from lino.misc.txt2html import txt2html
 
