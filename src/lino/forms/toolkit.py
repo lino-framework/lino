@@ -427,6 +427,9 @@ class DataGrid(Component):
         if self.enabled:
             s += " with %d rows" % len(self.getForm().rpt)
         return s
+
+    def __len__(self):
+        return len(self.rpt)
                   
     def setModeChoosing(self):
         self.choosing = True

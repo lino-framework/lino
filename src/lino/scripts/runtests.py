@@ -84,9 +84,9 @@ continue testing even if failures or errors occur""",
         #skipped=[]
         sys.path.append(root)
         for filename in os.listdir(root):
-            self.status(os.path.join(root,filename))
             modname,ext = os.path.splitext(filename)
             if ext == '.py':
+                self.status(filename)
                 doit = (len(argv) == 0)
                 for arg in argv:
                     a = arg.split('-')

@@ -507,7 +507,8 @@ class ReportForm(Form,GenericDocument):
         #self.beforeRowEdit()
         col=self.getSelectedCol()
         row=self.getCurrentRow()
-        if row is None: return
+        if row is None:
+            return
         #value=col.getCellValue(row)
         allowedValues=col.datacol.getAllowedValues(row.item)
         #rpt=self.dbsess.createQueryReport(allowedValues)
@@ -517,11 +518,11 @@ class ReportForm(Form,GenericDocument):
         #rpt.show()
         def onpick(pickedRow):
             print 1, row.item
-            row.item.lock()
+            row.lock()
             print 2, row.item
             col.setCellValue(row,pickedRow.item)
             print 3, row.item
-            row.item.unlock()
+            row.unlock()
             print 4, row.item
             self.refresh()
             print 5, row.item
@@ -543,11 +544,11 @@ class ReportForm(Form,GenericDocument):
 ##         row = self.rpt.appendRow()
 ##         self.refresh()
 
-    def goto(self,recno):
-        if recno == len(self.rpt):
-            self.insertRow()
-        else:
-            self.setCurrentRow(self.rpt[recno])
+##     def goto(self,recno):
+##         if recno == len(self.rpt):
+##             self.insertRow()
+##         else:
+##             self.setCurrentRow(self.rpt[recno])
     
 
 
@@ -733,14 +734,16 @@ class ReportRowForm(ReportForm):
                 recno += n
             else:
                 return
-        self.goto(recno)
+        self.setCurrentRow(self.rpt[recno])
         self.refresh()
         
 
     def deleteCurrentRow(self):
         assert self.rpt.canWrite()
         row=self.getCurrentRow()
-        if row is None: return
+        if row is None:
+            print "no current row"
+            return
         if not self.session.confirm(
             "Delete this row. Are you sure?"):
             return
@@ -812,11 +815,11 @@ class ReportGridForm(ReportForm):
         
     def getCurrentRow(self):
         if self.grid is None: return None
-        l = self.grid.getSelectedRows()
-        if len(l) == 1:
-            return self.rpt[l[0]]
-        #raise "There is more than one row selected"
-        #return self.grid.getCurrentRow()
+##         l = self.grid.getSelectedRows()
+##         if len(l) == 1:
+##             return self.rpt[l[0]]
+##         #raise "There is more than one row selected"
+        return self.grid.getCurrentRow()
 
 class ReportGridPickForm(ReportGridForm):
     #modal=True

@@ -118,9 +118,12 @@ class BaseStore:
     def isLockedRow(self,*k):
         return self._lockedRows.has_key(k)
     
-    def unlockRow(self,*k):
-        #k = tuple(row.getRowId())
-        return self._lockedRows.pop(k)
+    def unlockRow(self,row):
+        k = tuple(row.getRowId())
+        try:
+            return self._lockedRows.pop(k)
+        except KeyError,e:
+            raise RowLockFailed("Row was not locked")
         #print self,"unlock row", row
         #return row
         #assert x._locked == dbc
@@ -219,7 +222,6 @@ class Store(BaseStore):
     
     def mustCheckTables(self):
         return self._connection.mustCheckTables()
-    
 
     def onStartup(self):
         #print "%s.createTable()" % self.__class__
@@ -281,7 +283,10 @@ class Store(BaseStore):
     def commit(self):
         ""
         if len(self._lockedRows) > 0:
-            raise InvalidRequestError("unlock first, then commit!")
+            #print [id for id in self._lockedRows.keys()]
+            raise InvalidRequestError(
+                "Cannot commit %s while %d rows are locked" \
+                % (self,len(self._lockedRows)))
 ##         for row in self._lockedRows:
 ##             row.writeToStore()
         self._connection.commit()

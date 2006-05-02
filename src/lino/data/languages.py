@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -61,11 +61,11 @@ def populate(q):
             name_fr = a[4]
             #print (name_en,name_fr)
             if len(alpha2):
-                try:
-                    q.appendRow(id=alpha2,
-                                name=(name_en,name_fr))
-                except DataVeto,e:
-                    print e
+                #try:
+                q.appendRow(id=alpha2.encode('ascii'),
+                            name=(name_en,name_fr))
+                #except DataVeto,e:
+                #    print e
         elif len(line.strip()):
             print "ignored:", line
 

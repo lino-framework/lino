@@ -37,8 +37,8 @@ Organisations  |id, name, name2,    |               |
 Persons        |id, name, firstName,|               |contacts                 
                |sex, birthDate,     |               |                         
                |memo, title         |               |                         
+Functions      |id, name            |               |                         
 Contacts       |id, name, email,    |org, person,   |                         
                |phone, gsm, fax,    |function, lang,|                         
                |website, zip,       |nation, city,  |                         
                |street, house, box  |currency       |                         
-Functions      |id, name            |               |                         

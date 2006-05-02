@@ -18,6 +18,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from pinboard_tables import *
+from lino.apps.contacts import contacts_demo 
 
 from lino.adamo.ddl import Populator
 
@@ -25,7 +26,6 @@ def startup(filename=None, langs=None,
             populate=True,
             dump=None,
             withDemoData=True,
-            withLangs=False,
             withJokes=False,
             **kw):
     schema = PinboardSchema(**kw)
@@ -33,38 +33,19 @@ def startup(filename=None, langs=None,
                              filename=filename,
                              dump=dump)
     if populate:
-        if withLangs:
-            sess.populate(LangsPopulator())
-            
-        sess.populate(StdPopulator())
-        
-        if withJokes:
-            sess.populate(JokesPopulator())
         
         if withDemoData:
             sess.populate(DemoPopulator())
-            assert len(sess.query(Project))==10
+        else:
+            sess.populate(StdPopulator())
 
+        if withJokes:
+            sess.populate(JokesPopulator())
+        
     return sess
 
-class StdPopulator(Populator):
+class StdPopulator(contacts_demo.StandardPopulator):
         
-    def populateLanguages(self,q):
-        if len(q): return # done by LangsPopulator
-        #q.setVisibleColumns('id name')
-        q=q.query('id name')
-        q.setBabelLangs('en de fr')
-        q.appendRow(
-            'en',('English','Englisch','Anglais')     )
-        q.appendRow(
-            'de',('German','Deutsch', 'Allemand')     )
-        q.appendRow(
-            'et',('Estonian','Estnisch','Estonien')   )
-        q.appendRow(
-            'fr',('French',u'Französisch',u'Français')  )
-        q.appendRow(
-            'nl',('Dutch',u'Niederländisch','Neerlandais'))
-
     def populatePubTypes(self,q):
         q.setBabelLangs('en de')
         q = q.query('id name typeRefPrefix pubRefLabel')
@@ -93,11 +74,7 @@ class StdPopulator(Populator):
         q.appendRow(4,('school','Schulabschluss'))
         q.appendRow(5,('other','Sonstige'))	
 
-class DemoPopulator(Populator):
-            
-    def populateLanguages(self,q):
-        for lng in ('en','de','et','fr'):
-            setattr(self,lng,q.peek(lng))
+class DemoPopulator(contacts_demo.DemoPopulator):
             
     def populateAuthors(self,q):
         #q = q.query('name firstName quotesByAuthor' )
@@ -144,6 +121,10 @@ class DemoPopulator(Populator):
         p132 = q.appendRow(title="Project 1.3.2",super=p13)
         p1321 = q.appendRow(title="Project 1.3.2.1",super=p132)
         p1322 = q.appendRow(title="Project 1.3.2.2",super=p132)
+
+    def populateContacts(self,q):
+        #don't used inherited method  because Pinboard doesn't have a Functions table
+        pass
     
     def populateQuotes(self,q):
         q = q.query('lang quote author')
@@ -221,7 +202,3 @@ class JokesPopulator(Populator):
             
 
 
-class LangsPopulator(Populator):
-    def populateLanguages(self,q):
-        from lino.schemas.sprl.data import languages
-        languages.populate(q)

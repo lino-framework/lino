@@ -42,7 +42,7 @@ class Currency(BabelRow):
         table.addField('id',ASTRING(width=3))
         BabelRow.initTable(self,table)
         
-    def __unicode__(self):
+    def getLabel(self):
         return self.id
 
 class CurrenciesReport(DataReport):
@@ -62,7 +62,7 @@ class Journal(StoredDataRow):
         table.addField('name',STRING).setMandatory()
         table.addField('tableName', ASTRING)
         
-    def __str__(self):
+    def getLabel(self):
         return self.name
         
 class JournalsReport(DataReport):
@@ -81,7 +81,7 @@ class Document(StoredDataRow):
         table.addPointer('jnl',Journal)#.setDetail("documents")
         table.setPrimaryKey("jnl seq")
 
-    def __str__(self):
+    def getLabel(self):
         return self.jnl.id+"-"+str(self.seq)
         
         
@@ -125,7 +125,7 @@ class Product(StoredDataRow):
         table.addField('name',STRING)
         table.addField('price',PRICE)
         
-    def __unicode__(self):
+    def getLabel(self):
         return self.name
 
 
@@ -333,7 +333,7 @@ class LedgerSchema(contacts.ContactsSchema):
         Language,
         Nation, City,
         Organisation, Person,
-        Contact, Function,
+        Function, Contact, 
         #Partner,
         #PartnerType        
         ) #+ ContactsSchema.tableClasses

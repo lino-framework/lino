@@ -397,7 +397,7 @@ class MemoRow(StoredDataRow):
         table.addField('abstract',datatypes.MEMO)
         table.addField('body',datatypes.MEMO)
 
-    def __str__(self):
+    def getLabel(self):
         return self.title
 
     
@@ -421,7 +421,7 @@ class MemoTreeRow(MemoRow,TreeRow):
         MemoRow.initTable(self,table)
         TreeRow.initTable(self,table)
 
-    def __str__(self):
+    def getLabel(self):
         return self.title
 
         
@@ -432,7 +432,7 @@ class BabelRow(StoredDataRow):
     def initTable(self,table):
         table.addBabelField('name',datatypes.STRING).setMandatory()
         
-    def __str__(self):
+    def getLabel(self):
         return self.name
 
 

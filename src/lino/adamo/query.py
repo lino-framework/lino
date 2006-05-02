@@ -543,12 +543,14 @@ class BaseColumnList(Datasource):
                 self._atoms = tuple(_parent._atoms)
                 self._pkColumns = _parent._pkColumns
                 self.visibleColumns=tuple(_parent.visibleColumns)
+                self._columnsByName=dict(_parent._columnsByName)
                 if _parent._searchAtoms is None:
                     self._searchAtoms = None
                 else:
                     self._searchAtoms = tuple(_parent._searchAtoms)
                 return
         
+        self._columnsByName={}
         self._frozen=False
         self._columns = []
         self._joins = []
@@ -568,7 +570,8 @@ class BaseColumnList(Datasource):
                 
 
     def setVisibleColumns(self,columnNames):
-        assert type(columnNames) in (str,unicode) #is types.StringType
+        assert type(columnNames) is types.StringType
+        #assert type(columnNames) in (str,unicode) 
         l = []
         for colName in columnNames.split():
             if colName == "*":
@@ -629,6 +632,7 @@ class BaseColumnList(Datasource):
                         name, rowAttr, join,**kw)
                 self._columns.append(col)
                 col.setupColAtoms(self.getDatabase())
+                self._columnsByName[name]=col
                 return col
         #raise InvalidRequestError("No columnClass")
 
@@ -677,12 +681,17 @@ class BaseColumnList(Datasource):
         return True
     
 
-
     def findColumn(self,name):
-        for col in self._columns:
-            if col.name == name:
-                return col
-        return None
+        try:
+            return self._columnsByName[name]
+        except KeyError,e:
+            return None
+
+##     def findColumn(self,name):
+##         for col in self._columns:
+##             if col.name == name:
+##                 return col
+##         return None
 
     def getColumn(self,i):
         return self.visibleColumns[i]
@@ -694,7 +703,7 @@ class BaseColumnList(Datasource):
                 name,
                 self.getLeadTable().getTableName(),
                 ', '.join([col.name for col in self._columns]))
-            raise DataVeto(msg)
+            raise NoSuchField(msg)
         return col
 
 
@@ -929,14 +938,14 @@ class LeadTableColumnList(BaseColumnList):
         #row = self.getLeadTable()._instanceClass(self,{},new)
         row = self._appendRow()
         self.atoms2row(atomicRow,row)
-        row.commit()
+        row.unlock()
         return row
     
     
     def appendRow(self,*args,**kw):
         row = self._appendRow(*args,**kw)
         self.updateRow(row,*args,**kw)
-        row.commit()
+        row.unlock()
         #self._store.fireUpdate()
         return row
 
@@ -974,9 +983,12 @@ class LeadTableColumnList(BaseColumnList):
 class PeekQuery(LeadTableColumnList):
     def __init__(self,store):
         LeadTableColumnList.__init__(self,None,store,"*")
+        self._frozen=True
         #print self.getLeadTable().getTableName(),\
         #      ','.join([col.name for col in self._columns])
-        self._frozen=True
+        #for col in self._columns:
+        #    self._columnsByName[col.name]=col
+
 
     #def getContext(self):
     #    return self._store._db
@@ -1238,13 +1250,15 @@ class SimpleQuery(LeadTableColumnList):
         lbl = self.getLeadTable().getLabel()
         if len(self._masterColumns) > 0:
             lbl += " ("
+            sep=""
             for mc in self._masterColumns:
+                lbl+=sep
+                sep=","
                 v=self._masters[mc.name]
                 if v is None:
                     lbl += mc.name + "=None"
                 else:
-                    lbl += mc.name + "=" \
-                           + mc.rowAttr.format(v)
+                    lbl += mc.name + "=" + mc.rowAttr.format(v)
             lbl += ")"
         if self._filters is not None:
             lbl += " where "
@@ -1368,7 +1382,7 @@ class SimpleQuery(LeadTableColumnList):
                     else:
                         atomicRow[a.index]=a.type.parse(s)
             self.atoms2row(atomicRow,row)
-            row.commit()
+            row.unlock()
             #if filename.endswith("cities_de.txt"):
             #    print atomicRow
             

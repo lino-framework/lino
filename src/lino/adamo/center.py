@@ -66,6 +66,14 @@ class Center:
         #print conn
         return conn
 
+    def debug(self):
+        print "Connections:"
+        for c in self._connections: print c
+        print "Databases:"
+        for c in self._databases: print c
+        
+            
+
     def database(self,schema,name=None,**kw):
         #if name is None:
         #    name = str(schema)+str(len(self._databases)+1)
@@ -159,6 +167,7 @@ atexit.register(_center.shutdown)
 for m in ( #'openSession',#'getOptionParser',
           'shutdown','database',
           'startDump', 'stopDump', 'peekDump',
+          'debug',
           #'doCheckIntegrity', 
           #'addSchema',
           'connection'

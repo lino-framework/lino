@@ -68,6 +68,9 @@ Director is used by 6 rows in Contacts
     def test02(self):
         from lino.apps.pinboard.pinboard_demo import startup
         self.doit(startup(), """\
+Estonia is used by 10 rows in Cities
+Belgium is used by 9 rows in Cities
+Germany is used by 7 rows in Cities
 English is used by 7 rows in Quotes
 German is used by 1 rows in Quotes
 French is used by 1 rows in Quotes

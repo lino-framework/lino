@@ -35,7 +35,7 @@ class Event(StoredDataRow):
         table.addField('name',NAME)
         #table.addView( "std","date name races")
 
-    def __str__(self):
+    def getLabel(self):
         return self.name
         
     def printRow(self,doc):
@@ -58,10 +58,10 @@ class Event(StoredDataRow):
         q = self.races[0].participants.query(columnNames)
         q.setupReport( rpt, columnWidths=columnWidths)
         rpt.beginReport()
-        rpt.table.h(1,self.__str__())
+        rpt.table.h(1,__unicode__(self))
 
         for race in self.races:
-            rpt.table.h(2,race.__str__())
+            rpt.table.h(2,unicode(race))
             q = race.participants.query( columnNames,
                                          orderBy="place")
             for prt in q:
@@ -114,7 +114,7 @@ class Race(StoredDataRow):
             nav.withCurrentRow,self.Instance.computeResults,frm)
 
 
-    def __str__(self):
+    def getLabel(self):
         return self.name1
 
 ##     def participants(self,*args,**kw):
@@ -351,7 +351,7 @@ class RaceType(StoredDataRow):
         table.addField('id',STRING(width=5))
         table.addField('name',NAME)
 
-    def __str__(self):
+    def getLabel(self):
         return self.name
 
 class RaceTypesReport(DataReport):
@@ -363,7 +363,7 @@ class Club(StoredDataRow):
         table.addField('id',STRING(width=5))
         table.addField('name',NAME)
 
-    def __str__(self):
+    def getLabel(self):
         return self.name
         
 class ClubsReport(DataReport):
@@ -381,7 +381,7 @@ class Category(StoredDataRow):
         
         table.setPrimaryKey('type id')
 
-    def __str__(self):
+    def getLabel(self):
         return self.id + " ("+self.name+")"
 
 class CategoriesReport(DataReport):

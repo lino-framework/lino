@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre
+## Copyright 2005-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -27,7 +27,7 @@ def _(text_en):
     try:
         return _messages[text_en][_userLang]
     except KeyError:
-        print "No translation to %s for %r." % (_userLang,text_en)
+        #print "No translation to %s for %r." % (_userLang,text_en)
         return text_en
 
 def setUserLang(lang):

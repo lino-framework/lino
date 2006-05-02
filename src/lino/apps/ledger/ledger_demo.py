@@ -26,6 +26,7 @@ from lino.apps.contacts import contacts_demo as addrdemo
 from ledger_tables import *
 
 def startup(filename=None, langs=None,
+            big=False,
             dump=False,
             populate=True,
             withDemoData=True,
@@ -36,21 +37,16 @@ def startup(filename=None, langs=None,
                              dump=dump)
 
     if populate:
-        sess.populate(StandardPopulator())
         if withDemoData:
-            sess.populate(DemoPopulator())
-    
-##     if populate:
-##         if withDemoData:
-##             sess.populate(DemoPopulator(label="StandardDemo"))
-##         else:
-##             sess.populate(Populator(label="Standard"))
+            sess.populate(DemoPopulator(big=big))
+        else:
+            sess.populate(StandardPopulator(big=big))
 
     return sess
 
 
 class StandardPopulator(addrdemo.StandardPopulator):
-    
+
     def populateCurrencies(self,q):
         q.setBabelLangs('en de fr et')
         self.EUR = q.appendRow(
@@ -247,18 +243,20 @@ class StandardPopulator(addrdemo.StandardPopulator):
 
 
 
-class DemoPopulator(addrdemo.DemoPopulator):
+class DemoPopulator(addrdemo.DemoPopulator,StandardPopulator):
     
 
     def populateContacts(self,q):
         addrdemo.DemoPopulator.populateContacts(self,q)
+        #StandardPopulator.populateContacts(self,q)
+        #q._store.commit()
         #return 
         NAT=q.getContext().query(Nation)
-        CCY=q.getContext().query(Currency)
-        BEF=CCY.peek("BEF")
+        #CCY=q.getContext().query(Currency)
+        #BEF=CCY.peek("BEF")
         # must fetchall() because we update
         for p in NAT.peek('be').contacts_by_nation().fetchall():
-            p.update(currency=BEF)
+            p.update(currency=self.BEF)
 
         # note: the Belgians will switch to EUR in tests/21.py
         

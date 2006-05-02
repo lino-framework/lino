@@ -23,6 +23,8 @@
 
 
 """
+import sys
+from lino.adamo import center
 from lino.misc.tsttools import TestCase, main
 from lino.apps.ledger.ledger_demo import startup
 from lino.apps.ledger.ledger_tables import Nation,Contact, Currency
@@ -31,7 +33,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = startup() #dump=True)
+        self.sess = startup() # dump=sys.stdout)
 
     def tearDown(self):
         self.sess.shutdown()
@@ -47,6 +49,9 @@ class Case(TestCase):
         q=PARTNERS.query("currency",
                          orderBy="name",
                          nation=be)
+        q.show(columnNames="name id currency")
+        #print self.getConsoleOutput()
+        #center.debug()
         s = ""
         #print self.getConsoleOutput()
         for p in q:

@@ -43,25 +43,27 @@ class MyDataTable(wx.grid.PyGridTableBase):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
         self.columns = self.editor.rpt.columns
-        self.reload()
+        self.rows=[]
         
-    def reload(self):
+    def refresh(self):
+        oldlen=len(self.rows)
+        self.rows=[]
         if self.editor.enabled:
             doc=self.editor.getForm()
-            self.cells = [
-                [s for col,s in row.cells()]
-                for row in self.editor.rpt.rows(doc)]
-        else:
-            self.cells=[]
+            #self.cells = []
+            self.rows = [row for row in self.editor.rpt.rows(doc)]
+            self.rows.append(self.editor.rpt.appendRow())
+        self.resetRows(self.editor.wxctrl,oldlen)
+        self.updateValues(self.editor.wxctrl)
 
-    def refresh_grid(self,grid,oldlen=None):
-        if oldlen is None:
-            oldlen = self.GetNumberRows()
-        #self._load()
-        self.resetRows(grid,oldlen)
-        self.updateValues(grid)
+##     def refresh(self,oldlen=None):
+##         if oldlen is None:
+##             oldlen = self.GetNumberRows()
+##         #self._load()
+##         self.resetRows(self.editor.wxctrl,oldlen)
+##         self.updateValues(self.editor.wxctrl)
 
-    def GetNumberRows(self): return len(self.cells) + 1
+    def GetNumberRows(self): return len(self.rows)
     def GetNumberCols(self): return len(self.columns)
 
     def updateValues(self, grid):
@@ -131,13 +133,16 @@ class MyDataTable(wx.grid.PyGridTableBase):
     # C++ version.
     def GetValue(self, rowIndex, colIndex):
         "required"
-        if rowIndex == len(self.cells): return "."
-        return self.cells[rowIndex][colIndex]
+        #if rowIndex == len(self.cells): return "."
+        v=self.rows[rowIndex].values[colIndex]
+        if v is None: return ""
+        return self.columns[colIndex].format(v)
 
     def SetValue(self, rowIndex, colIndex, value):
         "required"
         #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
         frm=self.editor.getForm()
+        assert self.editor.enabled
         if not frm.editing:
             frm.editing=True
         
@@ -158,10 +163,11 @@ class MyDataTable(wx.grid.PyGridTableBase):
             v=None
         else:
             v=col.datacol.parse(value,self.editor.rpt.query)
-            
-        frm.goto(rowIndex)
-        col.setCellValue(frm.getCurrentRow(),v)
-        frm.afterRowEdit()
+
+        row=self.rows[rowIndex]
+        row.lock()
+        col.setCellValue(row,v)
+        row.unlock()
         
 ##     def GetTypeName(self,row,col):
 ##         rowAttr = self.columns[col].rowAttr
@@ -223,13 +229,6 @@ class MyDataTable(wx.grid.PyGridTableBase):
 ##          # we need to advance the delete count
 ##          # to make sure we delete the right rows
 ##          deleteCount += 1
-
-    def setOrderBy(self,colIndexes):
-        #print __name__, colIndexes
-        cn = " ".join([self.columns[i].name for i in colIndexes])
-        #print __name__,cn
-        self.editor.rpt.configure(orderBy=cn)
-        self.loadData()
 
 
 
@@ -478,6 +477,9 @@ class DataGridCtrl(wx.grid.Grid):
         colIndex = self.GetGridCursorCol()
         return self.table.columns[colIndex]
 
+    def getCurrentRow(self):
+        return self.table.rows[self.GetGridCursorRow()]
+
     def getSelectedRows(self):
         lt = self.GetSelectionBlockTopLeft()
         lb = self.GetSelectionBlockBottomRight()
@@ -552,7 +554,7 @@ class DataGridCtrl(wx.grid.Grid):
 
         def setSortColumn(event, self=self):
             #print "setSortColumn"
-            self.table.setOrderBy(self.GetSelectedCols())
+            self.setOrderBy(self.GetSelectedCols())
             self.ForceRefresh()
             #print "ForceRefresh"
 
@@ -562,6 +564,19 @@ class DataGridCtrl(wx.grid.Grid):
         self.PopupMenu(menu, wx.Point(xo, 0))
         menu.Destroy()
              
+    def setOrderBy(self,colIndexes):
+        #print __name__, colIndexes
+        cols=[self.columns[i] for i in colIndexes]
+        #print __name__,cn
+        self.rpt.sortColumns=tuple(cols)
+        self.refresh()
+##     def setOrderBy(self,colIndexes):
+##         #print __name__, colIndexes
+##         cn = " ".join([self.columns[i].name for i in colIndexes])
+##         #print __name__,cn
+##         self.editor.rpt.setOrderBy(cn)
+##         self.reload()
+
     def rowPopup(self, row, evt):
         
         """display a popup menu when a row label is right clicked"""

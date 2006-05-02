@@ -37,7 +37,7 @@ class DatabaseError(Exception):
 class DataVeto(Exception):
     "Invalid data submitted"
 
-class NoSuchField(DataVeto):
+class NoSuchField(DataVeto,AttributeError):
     pass
 
 class UserAborted(Exception):

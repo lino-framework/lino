@@ -58,7 +58,7 @@ class Case(TestCase):
         """)
         s = ""
         for row in q:
-            s += str(row) + "\n"
+            s += row.name + "\n"
         #print s
         self.assertEquivalent(s,"""\
 Dutch
@@ -77,7 +77,7 @@ German
         """)
         s = ""
         for row in LANGS.query(orderBy="name"):
-            s += row.__str__() + "\n"
+            s += row.name + "\n"
         #print s
         self.assertEquivalent(s,"""\
 Allemand

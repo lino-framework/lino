@@ -72,9 +72,9 @@ Organisations  |id, name, name2,    |             |
 Persons        |id, name, firstName,|             |contacts            
                |sex, birthDate,     |             |                    
                |memo, title         |             |                    
+Functions      |id, name            |             |                    
 Contacts       |id, name, email,    |org, person, |                    
                |phone, gsm, fax,    |function,    |                    
                |website, zip,       |lang, nation,|                    
                |street, house, box  |city,        |                    
                |                    |currency     |                    
-Functions      |id, name            |             |                    

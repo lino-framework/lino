@@ -120,18 +120,24 @@ class Case(TestCase):
         be = NATIONS.peek("be")
         q = CITIES.query(nation=be)
         q = be.cities() #.query('id name')
+
+        
+        # moving Sankt-Vith to Germany isn't allowed because
+        # City.nation is part of the primary key:
+
         stv = q.appendRow(name='Sankt-Vith')
         # print row.getValues()
         self.assertEqual(stv.nation,be)
         self.assertEqual(stv.name,"Sankt-Vith")
         # q.appendRow(21,'Eynatten')
 
-        # moving Sankt-Vith to Germany won't work because City.nation
-        # is part of the primary key:
+        germany=NATIONS.peek('de')
 
         stv.lock()
         try:
-            stv.nation=NATIONS.peek('de')
+            stv.nation=germany
+            #print repr(stv._store._peekQuery._pkColumns[0])
+            #print repr(stv._store._peekQuery.getColumnByName('nation'))
             self.fail("Failed to raise InvalidRequestError")
         except InvalidRequestError,e:
             pass

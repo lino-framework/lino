@@ -175,14 +175,17 @@ class DataGrid(toolkit.DataGrid):
         #print "wxsetup()", self
         self.wxctrl = wxgrid.DataGridCtrl(parent,self)
         box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
+        self.refresh()
         
     def refresh(self):
-        self.wxctrl.table.refresh_grid(self.wxctrl)
+##         if self.isDirty():
+##             self.commit()
+        self.wxctrl.table.refresh()
 
-    def reload(self):
-        if self.isDirty():
-            self.commit()
-        self.wxctrl.table.reload()
+##     def reload(self):
+##         if self.isDirty():
+##             self.commit()
+##         self.wxctrl.table.reload()
 
     def onInsertRow(self,frm):
         row=frm.getCurrentRow()
@@ -192,6 +195,9 @@ class DataGrid(toolkit.DataGrid):
             
     def getSelectedRows(self):
         return self.wxctrl.getSelectedRows()
+
+    def getCurrentRow(self):
+        return self.wxctrl.getCurrentRow()
 
     def getSelectedCol(self):
         return self.wxctrl.getSelectedCol()

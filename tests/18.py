@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright Luc Saffre 2003-2005
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -43,7 +43,7 @@ class Case(TestCase):
         l1 = []
         l2 = []
         for nation in NATIONS.query(orderBy="name"):
-            lbl = str(nation)
+            lbl = unicode(nation)
             if lbl is None:
                 l1.append(nation)
             else:
@@ -54,7 +54,7 @@ class Case(TestCase):
         s = " ".join(l2)
         #print s
         
-        self.assertEquivalent(s,"""\
+        self.assertEquivalent(s,u"""\
         Afghanistan Albanien Algerien Amerikanisch Samoa Andorra
         Angola Anguilla Antarktis Antigua und Barbuda Argentinien
         Armenien Aruba Ascension (Himmelfahrtsinsel) Aserbaidschan

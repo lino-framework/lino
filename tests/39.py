@@ -62,8 +62,8 @@ Nations: id(AsciiType+)
 Cities: nation_id(AsciiType+), id(AutoIncType)
 Organisations: id(AutoIncType)
 Persons: id(AutoIncType)
-Contacts: id(AutoIncType)
 Functions: id(AsciiType)
+Contacts: id(AutoIncType)
 """)
 
         

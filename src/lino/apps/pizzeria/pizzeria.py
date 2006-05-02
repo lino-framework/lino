@@ -40,7 +40,7 @@ class Customer(StoredDataRow):
         table.addField('street',STRING)
         table.addField('city',STRING)
         
-    def __str__(self):
+    def getLabel(self):
         return self.name
 
      

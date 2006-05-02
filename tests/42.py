@@ -56,8 +56,8 @@ VPanel:
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
-Directories (volume=testparent=None)
-====================================
+Directories (volume=test,parent=None)
+=====================================
 id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
 1      |              |              |17 Files      |2 Directories

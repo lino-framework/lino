@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.reports import Report, BaseReport, ReportColumn, RIGHT
+from lino.reports.reports import ReportRow
 from lino.adamo.datatypes import INT
 from lino.adamo.rowattrs import Field, Pointer, Detail
 
@@ -73,9 +74,17 @@ class DataReportColumn(ReportColumn):
     
 
 
-
+class DataReportRow(ReportRow):
+    def lock(self):
+        ReportRow.lock(self)
+        self.item.lock()
+        
+    def unlock(self):
+        self.item.unlock()
+        ReportRow.unlock(self)
 
 class QueryReport(BaseReport):
+    rowClass=DataReportRow
     # instanciated from DbSession.createQueryReport()
     def __init__(self,qry,
                  columnSpec=None,
@@ -142,6 +151,13 @@ class QueryReport(BaseReport):
 
     def canSort(self):
         return True
+
+    def appendRow(self):
+        row=self.query.appendRowForEditing()
+        return self.rowClass(self,row,None)
+
+    def setOrderBy(self,*args,**kw):
+        return self.query.setOrderBy(*args,**kw)
 
     def setColumnSpec(self,columnSpec):
         assert type(columnSpec) in (str,unicode) 

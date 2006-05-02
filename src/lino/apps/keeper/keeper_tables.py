@@ -58,7 +58,7 @@ class Volume(StoredDataRow):
                   action=f,
                   accel="F6")
 
-    def __str__(self):
+    def getLabel(self):
         return self.name
         
     def load(self,toolkit):
@@ -91,8 +91,8 @@ class Directory(StoredDataRow):
         table.addDetail('subdirs',Directory,'parent')
         #self.setPrimaryKey("volume parent name")
 
-    def __str__(self):
-        s=str(self.volume) +":"
+    def getLabel(self):
+        s=self.volume.getLabel() +":"
         if self.name is not None:
             s += self.name
         return s
@@ -146,7 +146,7 @@ class File(StoredDataRow):
 ## """)
 
         
-    def __str__(self):
+    def getLabel(self):
         assert self.name is not None
         return self.name
 
@@ -210,7 +210,7 @@ class FileType(StoredDataRow):
         table.addField('id',STRING(width=5))
         table.addField('name',STRING)
 
-    def __str__(self):
+    def getLabel(self):
         return self.name
         
 class FileTypesReport(DataReport):

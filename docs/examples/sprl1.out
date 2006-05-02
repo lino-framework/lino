@@ -13,12 +13,12 @@ CashFlowItems       |    0|                    |
 ProfitAndLossItems  |   17|TULUD               |Ärikasum (-kahjum)  
 Accounts            |    0|                    |                    
 Bookings            |    0|                    |                    
-Languages           |    0|                    |                    
+Languages           |    5|English             |Dutch               
 Nations             |    5|Estonia             |United States of    
                     |     |                    |America             
 Cities              |   26|Bruxelles (be)      |Kohtla-Järve (ee)   
 Organisations       |    5|Kurtz & Büntig      |Mets & puu OÜ       
 Persons             |   15|Andreas Arens       |Hans Flott          
+Functions           |    3|Director            |Sales representant  
 Contacts            |   19|Andreas Arens       |Bäckerei Ausdemwald 
                     |     |                    |(Anton Ausdemwald)  
-Functions           |    3|Director            |Sales representant  

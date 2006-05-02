@@ -35,6 +35,54 @@ RIGHT = 2
 CENTER = 3
 TOP = 4
 BOTTOM = 5
+
+class ReportRow:
+    def __init__(self,rpt,item,index):
+        self.item = item # may be None
+        self.index=index
+        self.rpt=rpt
+        self.computeValues()
+
+    def computeValues(self):
+        self.values = []
+        self.rpt.setupRow(self)
+        # compute all cell values
+        for col in self.rpt.columns:
+            if col.when and not col.when(self):
+                v = None
+            elif self.item is None:
+                v = None
+            else:
+                v = col.getCellValue(self)
+                if v is not None:
+                    #col.getType().validate(v)
+                    col.validate(v)
+            self.values.append(v)
+
+    def lock(self):
+        pass
+    
+    def unlock(self):
+        self.computeValues()
+
+    def cells(self):
+        "yields (col,formattedCellValue) for each column"
+        i = 0
+        for value in self.values:
+            col=self.rpt.columns[i]
+            if value is None:
+                yield (col,"")
+            else:
+                yield (col,col.format(value))
+            i+=1
+                    
+        
+    def __repr__(self):
+        return self.__class__.__name__+"("\
+               +",".join([repr(x) for x in self.values])+")"
+
+
+
     
 class BaseReport:
     
@@ -42,7 +90,7 @@ class BaseReport:
     width=None
     columnWidths=None
     rowHeight=None
-    
+    rowClass=ReportRow
 
     def __init__(self, parent=None, 
                  columnWidths=None,
@@ -104,7 +152,7 @@ class BaseReport:
         #return self.ds.__getitem__(i)
         if i < 0:
             i+=len(self)
-        return ReportRow(self,self.getIterator().__getitem__(i),i)
+        return self.rowClass(self,self.getIterator().__getitem__(i),i)
 
     def canWrite(self):
         return self.getIterator().canWrite()
@@ -203,13 +251,17 @@ class BaseReport:
 
     def rows(self,doc):
         return ReportIterator(self,doc)
+
+    def appendRow(self):
+        # overridden by DataReportRow
+        return self.rowClass(self,None,None)
         
     #def processItem(self,doc,item):
     #def processItem(self,rowno,item):
     def processItem(self,item,rowno=None):
         if rowno is None:
             rowno=len(self)
-        return ReportRow(self,item,rowno)
+        return self.rowClass(self,item,rowno)
         #return ReportRow(self,doc,item)
         #row = Row(item)
 
@@ -393,50 +445,6 @@ class VurtReportColumn(ReportColumn):
 ##         self.row = row
 ##         self.col = col
 ##         self.value = value
-
-
-class ReportRow:
-    def __init__(self,rpt,item,index):
-        self.item = item
-        self.index=index
-        #self.cells = []
-        self.values = []
-        self.rpt=rpt
-
-        rpt.setupRow(self)
-        
-        #for e in rpt._onRowEvents:
-        #    e(self)
-            
-            # onEach event may do some lookup or computing and store
-            # the result in the ReportRow instance.
-            
-
-        # compute all cell values
-        for col in rpt.columns:
-            if col.when and not col.when(self):
-                v = None
-            else:
-                v = col.getCellValue(self)
-                if v is not None:
-                    #col.getType().validate(v)
-                    col.validate(v)
-            self.values.append(v)
-
-    def cells(self):
-        i = 0
-        for value in self.values:
-            col=self.rpt.columns[i]
-            if value is None:
-                yield (col,"")
-            else:
-                yield (col,col.format(value))
-            i+=1
-                    
-        
-    def __repr__(self):
-        return self.__class__.__name__+"("\
-               +",".join([repr(x) for x in self.values])+")"
 
 
 

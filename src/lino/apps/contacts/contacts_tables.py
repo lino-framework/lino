@@ -24,16 +24,19 @@ from lino.adamo.ddl import *
 SEX = STRING(width=1)
 
 
-class Language(StoredDataRow):
+class Language(BabelRow):
     
     tableName="Languages"
     
     def initTable(self,table):
         table.addField(DEFAULT_PRIMARY_KEY,ASTRING(width=2))
-        table.addBabelField('name',STRING).setMandatory()
+        #table.addBabelField('name',STRING).setMandatory()
+        BabelRow.initTable(self,table)
     
-    def __str__(self):
-        return self.name
+##     def getLabel(self):
+##         #if self.name is None: return str(self.id)
+##         return self.name
+    
 
 class Organisation(StoredDataRow):
     "An Organisation is any named group of people."
@@ -48,7 +51,7 @@ class Organisation(StoredDataRow):
         table.addField('logo',LOGO)
         table.addField('memo',MEMO)
         
-    def __unicode__(self):
+    def getLabel(self):
         return self.name
 
 class OrganisationsReport(DataReport):
@@ -76,7 +79,7 @@ class Person(StoredDataRow):
         #table.addView('std',columnNames="name firstName id")
         table.addDetail('contacts',Contact,'person')
 
-    def __unicode__(self):
+    def getLabel(self):
         if self.firstName is None:
             return self.name
         return self.firstName+" "+self.name
@@ -156,7 +159,7 @@ class Contact(StoredDataRow):
         table.addField('house',INT)
         table.addField('box',STRING)
         
-    def __unicode__(self):
+    def getLabel(self):
         return self.name
         
     def after_city(self):
@@ -299,7 +302,7 @@ class City(StoredDataRow):
         
         #table.addView('std',columnNames="name nation zipCode")
         
-    def __unicode__(self):
+    def getLabel(self):
         if self.nation is None:
             return self.name
         return self.name + " (%s)" % self.nation.id
@@ -316,7 +319,8 @@ class ContactsSchema(Schema):
     tableClasses = ( Language,
                      Nation, City,
                      Organisation, Person,
-                     Function, Contact)
+                     Function,
+                     Contact)
                      #Partner, PartnerType)
 
     

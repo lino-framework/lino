@@ -90,8 +90,8 @@ class Connection(SqlConnection):
     def __str__(self):
         filename = self._filename
         if filename is None:
-            filename = '(stdout)'
-        return "%s (SQLite)" % filename
+            filename = ':memory:'
+        return "SQLiteConnection(%r)" % filename
         
         
         #print "SQLite database : " + os.path.abspath(filename)

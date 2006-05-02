@@ -28,51 +28,29 @@ from lino.adamo import datatypes
 
 class DataRow:
     def __init__(self,dbc,store,values,dirty=False):
-    #def __init__(self,query,values,dirty=False):
-        #assert isinstance(fc,FieldContainer)
-        #assert isinstance(clist,BaseColumnList)
-        #instance=self._query._store._peekQuery._instanceClass()
-        #self.__dict__["_instance"] = 
-        #for k,v in values.items():
-            
         assert type(values) == types.DictType
         self.__dict__["_values"] = values
-        #self.__dict__["_query"] = query
         self.__dict__["_context"] = dbc
         self.__dict__["_store"] = store
-        #self.__dict__["_fc"] = fc
-        #self.__dict__["_clist"] = clist
-        #self.__dict__["_dirty"] = dirty
         self.__dict__['_dirtyRowAttrs']={}
-        #if query is not None:
-        #    for col in query._store._peekQuery.getVisibleColumns():
-        #        values.setdefault(col.name)
-        
+       
+##     def __getattr__(self,name):
+##         attr=self._store._table.getRowAttr(name)
+##         return attr.getCellValue(self)
+    
+##     def __setattr__(self,name,value):
+##         attr=self._store._table.getRowAttr(name)
+##         attr.setCellValue(self,value)
+    
     def __getattr__(self,name):
-        #assert self.__dict__.has_key("_fc")
-        #print repr(self._fc)
-        #col=self._query.findColumn(name)
-        #if col is None:
-        #    col=self._query._store._peekQuery.getColumnByName(name)
-        #col=self._query._store._peekQuery.getColumnByName(name)
         col=self._store._peekQuery.getColumnByName(name)
         return col.getCellValue(self)
-        #rowattr = self.__dict__['_fc'].getRowAttr(name)
-        #return rowattr.getCellValue(self)
     
     def __setattr__(self,name,value):
-        #if self.__dict__.has_key(name):
-        #    self.__dict__[name] = value
-        #    return
-        #if self.mustlock() and not self.isLocked():
-        #    raise LockRequired()
-        #col=self._query.findColumn(name)
-        #if col is None:
         col=self._store._peekQuery.getColumnByName(name)
         if col in self._store._peekQuery._pkColumns:
             raise InvalidRequestError("Cannot change the primary key")
         col.setCellValue(self,value)
-        #self.__dict__['_dirty'] = True
 
     def initTable(self,table):
         raise NotImplementedError
@@ -94,7 +72,7 @@ class DataRow:
         assert v is not None, datatypes.ERR_FORMAT_NONE
         #print repr(v)
         try:
-            return str(v)
+            return unicode(v)
         except Exception,e:
             print repr(v)
             raise
@@ -247,11 +225,23 @@ class StoredDataRow(DataRow):
 ##         return str(tuple(self.getRowId()))
 ##         #return self._ds._table.getRowLabel(self)
         
-    def __str__(self):
-        #if self._complete:
+    def __repr__(self):
+        if self._isCompleting:
+            return "Uncomplete "+self.__class__.__name__\
+                   +'('+str(self._values)+")"
         return self.__class__.__name__+'('\
                +','.join([str(i) for i in self.getRowId()])+')'
+
+    def __unicode__(self):
+        s=self.getLabel()
+        if s is None:
+            return repr(self)
+        return s
+
+    def getLabel(self):
+        return None
         
+
     def getFieldValue(self,name):
         # overrides DataRow
         try:
@@ -340,12 +330,6 @@ class StoredDataRow(DataRow):
 ##         return tuple(l)
         
     
-    def __repr__(self):
-        if self._isCompleting:
-            return "Uncomplete "+self.__class__.__name__\
-                   +'('+str(self._values)+")"
-        return self.__class__.__name__+repr(tuple(self.getRowId()))
-
     def mustlock(self):
         return not (self._new or self._pseudo)
 
@@ -363,38 +347,15 @@ class StoredDataRow(DataRow):
             
 
     def unlock(self):
+        self.commit(unlock=True)
         #print "Row.unlock()",self,self._locked, self.mustlock()
-        if self.isDirty():
-            self.commit()
-        if not self.mustlock():
-            return #raise RowLockFailed("Cannot lock a new row")
-        #print "unlock()", self
-        #if not self._locked:
-        #    raise InvalidRequestError("Row was not locked")
-            
-##          msg = self.validate()
-##          if msg:
-##              raise DataVeto(repr(self) + ': ' + msg)
-            
-        #assert not None in self.getRowId(), "incomplete pk"
-        #self._query._store.unlockRow(self,self._query)
-        #self.__dict__["_locked"] = False
-        self._store.unlockRow(*self.getRowId())
+##         if self.isDirty():
+##             self.commit()
+##         if not self.mustlock():
+##             return #raise RowLockFailed("Cannot lock a new row")
+##         self._store.unlockRow(self)
 
-    def isLocked(self):
-        return self._store.isLockedRow(*self.getRowId())
-        #return (self._locked or self._new or self._pseudo)
-        #return self._locked
-
-        
-        
-    def makeComplete(self):
-        if self._pseudo or self._complete or self._isCompleting:
-            return 
-        self._readFromStore()
-
-
-    def commit(self):
+    def commit(self,unlock=False):
         #if not self.isDirty():
         #    return
         #print "writeToStore()", self
@@ -420,12 +381,32 @@ class StoredDataRow(DataRow):
         if self._new:
             self._store._connection.executeInsert(self)
             self.__dict__["_new"] = False
+            if not unlock:
+                self._store.lockRow(self)
         else:
-            if not self.isDirty(): return
+            if unlock:
+                self._store.unlockRow(self)
+            if not self.isDirty():
+                return
             self._store._connection.executeUpdate(self)
         #self.__dict__["_dirty"] = False
         self.__dict__["_dirtyRowAttrs"] = {}
         self._store.touch()
+
+
+    def isLocked(self):
+        return self._store.isLockedRow(*self.getRowId())
+        #return (self._locked or self._new or self._pseudo)
+        #return self._locked
+
+        
+        
+    def makeComplete(self):
+        if self._pseudo or self._complete or self._isCompleting:
+            return 
+        self._readFromStore()
+
+
         
 
     def update(self,**kw):

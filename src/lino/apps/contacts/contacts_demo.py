@@ -33,6 +33,9 @@ from contacts_tables import *
 
 rtlib_path=config.get(config.DEFAULTSECT,'rtlib_path')
 
+MALE='m'
+FEMALE='f'
+
 
 def startup(filename=None,
             langs=None,
@@ -46,9 +49,10 @@ def startup(filename=None,
                             filename=filename,
                             dump=dump)
     if populate:
-        ctx.populate(StandardPopulator(big=big))
         if withDemoData:
-            ctx.populate(DemoPopulator())
+            ctx.populate(DemoPopulator(big=big))
+        else:
+            ctx.populate(StandardPopulator(big=big))
 
 ##     if populate:
 ##         if withDemoData:
@@ -63,12 +67,6 @@ def startup(filename=None,
 
 class StandardPopulator(ddl.Populator):
     
-    #dataRoot=os.path.abspath(os.path.join(
-    #    os.path.dirname(__file__),
-    #    "..","..","..","..","data"))
-
-    #dataRoot = lino.rtlib_path
-    
     def __init__(self, big=False,**kw):
         self.big = big
         ddl.Populator.__init__(self,None,**kw)
@@ -79,6 +77,24 @@ class StandardPopulator(ddl.Populator):
         q.appendRow("james", "James", "Bond")
         
     
+    def populateLanguages(self,q):
+        if self.big:
+            from lino.data import languages
+            return languages.populate(q)
+
+        q=q.query('id name')
+        q.setBabelLangs('en de fr')
+        q.appendRow(
+            'en',('English','Englisch','Anglais')     )
+        q.appendRow(
+            'de',('German','Deutsch', 'Allemand')     )
+        q.appendRow(
+            'et',('Estonian','Estnisch','Estonien')   )
+        q.appendRow(
+            'fr',('French',u'Französisch',u'Français')  )
+        q.appendRow(
+            'nl',('Dutch',u'Niederländisch','Neerlandais'))
+
     def populateNations(self,q):
         if self.big:
             #q.startDump()
@@ -186,13 +202,16 @@ class StandardPopulator(ddl.Populator):
         q.appendRow('d',('Sponsor', 'Sponsor', "Sponsor"))
 	
         
-MALE='m'
-FEMALE='f'
 
-
-class DemoPopulator(ddl.Populator):
+class DemoPopulator(StandardPopulator):
     
+    def populateLanguages(self,q):
+        StandardPopulator.populateLanguages(self,q)
+        for lng in ('en','de','et','fr'):
+            setattr(self,lng,q.peek(lng))
+            
     def populateCities(self,q):
+        StandardPopulator.populateCities(self,q)
         #cities = q.getContext().query(City)
         self.eupen = q.findone(name="Eupen")
         self.verviers = q.findone(name="Verviers")
