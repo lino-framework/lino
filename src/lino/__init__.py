@@ -19,13 +19,13 @@
 
 __docformat__ = 'reStructuredText'
 
-__micro__ = 15
+__micro__ = 16
 
 __version__ = "0.6.%d" % __micro__
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
-__url__ = "http://lino.berlios.de"
+__url__ = "http://lino.saffre-rumma.ee"
 
 __copyright__ = """\
 Copyright (c) 2002-2006 Luc Saffre.

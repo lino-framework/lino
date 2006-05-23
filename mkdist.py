@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -134,9 +134,10 @@ if len(args) == 0:
     args = ['timtools', 'raceman', 'keeper', 'sdist']
 
 msg = "mkdist (%s) version %s" % (' '.join(args),__version__)
+print msg
 
-if not syscon.confirm(msg):
-    sys.exit(-1)
+## if not syscon.confirm(msg):
+##     sys.exit(-1)
  
 ## distlog = file('dist.log','a')
 ## distlog.write("%s started at %s...\n" % (msg, ctime()))
