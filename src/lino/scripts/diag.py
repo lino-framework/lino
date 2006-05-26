@@ -23,7 +23,7 @@ import locale
 
 from lino.console.application import Application, UsageError
 
-def diag(out):
+def diag_encoding(out):
 
     out.write(u"""
 Some sentences in different languages:
@@ -100,7 +100,7 @@ writes some diagnostics about your computer.
         if len(self.args) != 0:
             raise UsageError("no arguments please")
         #diag(sys.stdout)
-        diag(self.toolkit.stdout)
+        diag_encoding(self.toolkit.stdout)
         self.message("")
 
 

@@ -193,7 +193,7 @@ class Win32TextPrinter(TextPrinter):
         
         if printerName is None:
             printerName=win32print.GetDefaultPrinter()
-        self.phandle=win32print.OpenPrinter(printerName)
+        #self.phandle=win32print.OpenPrinter(printerName)
         self.dc = win32ui.CreateDC()
         self.dc.CreatePrinterDC(printerName)
 
@@ -313,7 +313,7 @@ class Win32TextPrinter(TextPrinter):
 
     def onEndDoc(self):
         self.dc.EndDoc()
-        win32print.ClosePrinter(self.phandle)
+        #win32print.ClosePrinter(self.phandle)
         del self.dc
             
     def setLpi(self,lpi):

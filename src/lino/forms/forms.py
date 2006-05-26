@@ -57,46 +57,12 @@ class MenuContainer:
 ##         if self._menuController is not None:
 ##             self._menuController.setupMenu()
             
+class Document:
 
+    def __init__(self,toolkit):
+        self.toolkit=toolkit
 
-class Container:
-    
-
-    def refresh(self):
-        for c in self.getComponents():
-            c.refresh()
-        
-    def store(self):
-        for c in self.getComponents():
-        #for c in self._components:
-            c.store()
-        
-    def onClose(self):
-        for c in self.getComponents():
-        #for c in self._components:
-            c.onClose()
-
-    def onShow(self):
-        for c in self.getComponents():
-        #for c in self._components:
-            c.onShow()
-
-    def render(self,doc):
-        # used by cherrygui. sorry for ugliness.
-        for c in self.getComponents():
-        #for c in self._components:
-            c.render(doc)
-            
-    def validate(self):
-        #for e in self.entries:
-        for e in self.getComponents():
-            msg = e.validate()
-            if msg is not None:
-                return msg
-            
-        
-
-    def addLabel(self,label,**kw):
+    def label(self,label,**kw):
         frm = self.getForm()
         e = frm.toolkit.labelFactory(self,label=label,**kw)
         #self._components.append(e)
@@ -195,6 +161,37 @@ class Container:
                               action=self.getForm().cancel)
 
 
+class Container:
+    
+    def refresh(self):
+        for c in self.getComponents():
+            c.refresh()
+        
+    def store(self):
+        for c in self.getComponents():
+            c.store()
+        
+    def onClose(self):
+        for c in self.getComponents():
+            c.onClose()
+
+    def onShow(self):
+        for c in self.getComponents():
+            c.onShow()
+
+    def render(self,doc):
+        # used by cherrygui. sorry for ugliness.
+        for c in self.getComponents():
+            c.render(doc)
+            
+    def validate(self):
+        for e in self.getComponents():
+            msg = e.validate()
+            if msg is not None:
+                return msg
+            
+        
+
 
 class Form(MenuContainer,Container):
     
@@ -238,23 +235,15 @@ class Form(MenuContainer,Container):
 
 
     def setup(self,sess):
+        if self.ctrl is not None:
+            raise InvalidRequestError("cannot setup() again")
         if self.session is not None:
             assert self.session is sess
         #assert not isinstance(sess,Toolkit)
         self.session=sess
         self.toolkit=sess.toolkit
+        self.doc=Document(sess.toolkit)
         self.mainComp = sess.toolkit.vpanelFactory(self,weight=1)
-##         for m in ('addLabel','addViewer',
-##                   'addEntry', 'addDataEntry',
-##                   'addDataGrid','addNavigator',
-##                   'addPanel','addVPanel','addHPanel',
-##                   'addButton',
-##                   #'VERTICAL', 'HORIZONTAL',
-##                   'addOkButton', 'addCancelButton'):
-##             setattr(self,m,getattr(self.mainComp,m))
-        if self.ctrl is not None:
-            #assert not hasattr(frm,'tkctrl')
-            raise InvalidRequestError("cannot setup() again")
             
         if self.__doc__ is not None:
             self.addLabel(self.__doc__)

@@ -22,7 +22,7 @@
 import cherrypy
 from cherrypy.lib.cptools import PositionalParametersAware 
 from HyperText import HTML as html
-from lino.apps.pinboard import demo
+from lino.apps.pinboard import pinboard_demo 
 from lino.console.htmlgen_toolkit import HtmlServer
 from lino.console import syscon
 from lino.reports.reports import Report
@@ -99,7 +99,7 @@ class MyRoot(PositionalParametersAware):
 
     
 syscon.setToolkit(HtmlServer())
-sess = demo.startup()
+sess = pinboard_demo.startup()
 cherrypy.root = MyRoot(sess)
 
 cherrypy.server.start()

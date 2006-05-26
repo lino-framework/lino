@@ -273,22 +273,24 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
 
             self.writeText(col.format(value))
 
-    def p(self,txt):
-        self._body.append(P(txt))
+    def par(self,*args,**kw):
+        self._body.append(P(*args,**kw))
 
-    def h(self,level,txt):
-        self._body.append(H(level,txt))
+    def pre(self,,*args,**kw):
+        self._body.append(PRE(*args,**kw))
+
+    def header(self,level,,*args,**kw):
+        self._body.append(H(level,*args,**kw))
 
     def report(self,rpt):
-        #self._reports.append(rpt)
-        self._body.append(ReportElement(rpt))
+        self._body.append(ReportElement(self,rpt))
 
         if rpt.ds.canSort() > 0:
             for col in rpt.columns:
                 for pg in range(rpt.ds.lastPage):
                     if pg != 0 \
                           or col.datacol != rpt.ds.sortColumns[0]:
-                        e=ReportElement(rpt,pg+1,col.datacol)
+                        e=ReportElement(self,rpt,pg+1,col.datacol)
                         self.addChild(
                             name=rptname(self,
                                          rpt,
@@ -298,12 +300,12 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
                             content=e)
 
         
-    def addReportChild(self,rpt):
-        raise "must go away"
-        doc=self.addChild(name=rpt2name(rpt),
-                          title=rpt.getLabel())
-        doc.report(rpt)
-        return doc
+##     def addReportChild(self,rpt):
+##         raise "must go away"
+##         doc=self.addChild(name=rpt2name(rpt),
+##                           title=rpt.getLabel())
+##         doc.report(rpt)
+##         return doc
         
 
     def beginDocument(self,wr):
@@ -323,7 +325,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
 
         if self.menuBar is not None:
             for menu in self.menuBar.menus:
-                wr('<ul id="adminmenu">')
+                wr('<ul class="adminmenu">')
                 for mi in menu.items:
                     #assert mi.action is not None
                     wr('<li>')
@@ -352,38 +354,61 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
         self.endDocument(wr)
         self.writer = None
 
+## class PCDATA:
+##     def __init__(self,txt):
+##         self.text=txt
+##     def __html__(self,doc,wr):
+##         wr(escape(self.text))
+
     
-        
-class H:
-    def __init__(self,level,txt):
-        assert level > 0 and level <= 9
-        self.level=level
-        self.text=txt
-        
-    def __html__(self,doc,wr):
-        tag = "H"+str(self.level)
-        wr("<%s>" % tag)
-        wr(escape(self.text))
-        wr("</%s>\n" % tag)
+## class Container:
+##     def __init__(self,content=None):
+##         if content is None:
+##             self.content=[]
+##         elif type(content) in (UnicodeType,StringType):
+##             self.content=[ PCDATA(content) ]
+##         else:
+##             self.content=content
+    
+##     def tag(self):
+##         return self.__class__.__name__
+    
+##     def __html__(self,doc,wr):
+##         tag = self.tag()
+##         wr("<%s>" % tag)
+##         for c in self.content:
+##             c.__html__(doc,wr)
+##         wr("</%s>\n" % tag)
 
-class P:
-    def __init__(self,txt):
-        self.text=txt
         
-    def __html__(self,doc,wr):
-        wr("<P>"+self.text+"</P>")
+## class H(Container):
+##     def __init__(self,level,content):
+##         assert level > 0 and level <= 9
+##         self.level=level
+##         Container.__init__(self,content)
+        
+##     def tag(self):
+##         return self.__class__.__name__+str(self.level)
+        
 
-class A:
-    def __init__(self,href=None,label=None,doc=None):
-        if label is None: label=href
-        self.href=href
-        self.label=label
-        self.doc=doc
+
+## class P(Container): pass
+## class PRE(Container): pass
+
+## class A(Container):
+##     attrs=()
+##     def __init__(self,href=None,label=None,doc=None):
+##         if label is None: label=href
+##         self.href=href
+##         self.label=label
+##         self.doc=doc
         
-    def __html__(self,doc,wr):
-        wr('<a href="'+self.href+'">')
-        wr(escape(self.label))
-        wr('</a>')
+##     def __html__(self,doc,wr):
+##         wr('<a href="'+self.href+'">')
+##         wr(escape(self.label))
+##         wr('</a>')
+
+## class UL:        
         
 
 
@@ -403,36 +428,36 @@ def rptname(doc,rpt,sortColumn=None,pageNum=None):
 
         
         
-class DataRowElement:
-    def __init__(self,row):
-        self.row=row
+## class DataRowElement:
+##     def __init__(self,row):
+##         self.row=row
         
-    def __html__(self,doc):
-        wr=doc.write
+##     def __html__(self,doc):
+##         wr=doc.write
         
-        wr('<table width="100%" cellpadding="3" cellspacing="3">')
+##         wr('<table width="100%" cellpadding="3" cellspacing="3">')
             
             
-        # iterate...
-        rowno = 0
-        for col in self.row._query.getVisibleColumns():
-        #for cell in self.row:
-            rowno += 1
-            if rowno % 2 == 0:
-                wr("<tr class=''>\n")
-            else:
-                wr("<tr class='alternate'>\n")
+##         # iterate...
+##         rowno = 0
+##         for col in self.row._query.getVisibleColumns():
+##         #for cell in self.row:
+##             rowno += 1
+##             if rowno % 2 == 0:
+##                 wr("<tr class=''>\n")
+##             else:
+##                 wr("<tr class='alternate'>\n")
 
-            wr('<td>')
-            doc.writeText(col.getLabel())
-            wr("</td>")
+##             wr('<td>')
+##             doc.writeText(col.getLabel())
+##             wr("</td>")
             
-            wr('<td>')
-            doc.writeColValue(col,col.getCellValue(self.row))
-            wr("</td>")
-            wr("</tr>\n")
+##             wr('<td>')
+##             doc.writeColValue(col,col.getCellValue(self.row))
+##             wr("</td>")
+##             wr("</tr>\n")
         
-        wr("</table>")
+##         wr("</table>")
 
 
 class HtmlPage:
@@ -445,7 +470,8 @@ class HtmlPage:
         raise NotImplemented
         
 class ReportElement:
-    def __init__(self,rpt,pageNum=1,sortColumn=None):
+    def __init__(self,doc,rpt,pageNum=1,sortColumn=None):
+        self.doc=doc
         self.rpt=rpt
         self.pageNum=pageNum
         if rpt.canSort():
@@ -465,9 +491,12 @@ class ReportElement:
         ds=rpt.ds
         pageNum=self.pageNum
         sortColumn=self.sortColumn
-        wr=doc.write
+        #wr=self.doc.write
         # initialize...
-        rpt.beginReport(doc)
+        rpt.beginReport(self.doc)
+        s=''
+        def wr(s2):
+            s+=s2
 
         # title
 
@@ -632,3 +661,77 @@ class StaticHtmlDocument(HtmlDocument):
         return filenames
 
 
+
+from HyperText import HTML as html
+from HyperText.Documents import Document
+
+class BaseContainer:
+    def report(self,rpt):
+        rpt.beginReport(self.getDocument())
+        header=[html.TH(col.getLabel()) for col in rpt.columns]
+        t=html.TABLE(html.TR(*header))
+        self.append(t)
+        for row in rpt.rows(self.getDocument()):
+            line=[html.TD(s) for (c,s) in row.cells()]
+            t.append(html.TR(*line))
+
+        rpt.endReport(self.getDocument())
+        
+
+    def table(self,*args,**kw):
+        t=TABLE(self,*args,**kw)
+        self.append(t)
+        return t
+
+    def par(self,*args,**kw):
+        e=html.P(*args,**kw)
+        self.append(e)
+        return e
+
+    def pre(self,*args,**kw):
+        e=html.PRE(*args,**kw)
+        self.append(e)
+        return e
+
+    def header(self,level,*args,**kw):
+        cl=getattr(html,'H'+str(level))
+        e=cl(*args,**kw)
+        self.append(e)
+        return e
+        
+    def ul(self,*args,**kw):
+        e=UL(self.getDocument(),*args,**kw)
+        self.append(e)
+        return e
+    
+    def li(self,*args,**kw):
+        e=html.LI(*args,**kw)
+        self.append(e)
+        return e
+    
+class Container(BaseContainer):
+    def __init__(self,doc):
+        self.doc=doc
+        
+        
+    def getDocument(self):
+        return self.doc
+        
+    
+class UL(html.UL,Container): pass
+class TABLE(html.TABLE,Container): pass
+
+## class SimpleHtmlDocument(Container):
+##     def __init__(self,*args,**kw):
+##         self.doc=Document(*args,**kw)
+
+
+class SimpleHtmlDocument(Document,BaseContainer):
+    def getLineWidth(self):
+        return 100
+    
+    def getColumnSepWidth(self):
+        return 0
+    
+    def getDocument(self):
+        return self

@@ -24,6 +24,7 @@ __all__ = (
     'openmail','openurl',
     'runpy',
     'jpgrename', 'runtests',
-    'contacts', 'ledger'
+    'contacts', 'ledger',
+    'sysinfo'
     )
 

@@ -330,89 +330,6 @@ class MenuBar(Component):
             if mnu.name == name: return mnu
 
 
-## class ReportMixin: #(GenericDocument):
-##     # mixin for Component
-##     def __init__(self,rpt):
-##         raise "no longer used"
-##         self.rpt = rpt # a Query or a Report
-##         #assert len(ds._lockedRows) == 0
-##         self.rpt.beginReport(self)
-##         assert isinstance(self,Component)
-        
-    
-##     def setupMenu(self):
-##         raise "moved to ReportForm"
-##         frm = self.getForm()
-##         m = frm.addMenu("file",label="&File")
-##         m.addItem("exit",label="&Exit",
-##                   action=frm.close,
-##                   accel="ESC")
-##         m.addItem("refresh",
-##                   label="&Refresh",
-##                   action=frm.refresh,
-##                   accel="Alt-F5")
-##         m.addItem("printRow",
-##                   label="Print &Row",
-##                   action=self.printRow,
-##                   accel="F7")
-##         m.addItem("printList",
-##                   label="Print &List",
-##                   action=self.printList,
-##                   accel="Shift-F7")
-        
-##         self.setupGoMenu()
-        
-
-##         m = frm.addMenu("edit",label="&Edit")
-##         def copy():
-##             #from cStringIO import StringIO
-##             out = StringIO()
-##             self.rpt.__xml__(out.write)
-##             frm.showForm(MemoViewer(out.getvalue()))
-        
-##         m.addItem("copy",
-##                   label="&Copy",
-##                   action=copy)
-        
-##         #m = frm.addMenu("row",label="&Row")
-##         if self.rpt.canWrite():
-##             m.addItem("delete",
-##                       label="&Delete selected row(s)",
-##                       action=self.deleteSelectedRows,
-##                       accel="DEL")
-##             m.addItem("insert",
-##                       label="&Insert new row",
-##                       action=self.insertRow,
-##                       accel="INS")
-            
-##         self.rpt.setupMenu(self)
-
-##         def f():
-##             l = self.getSelectedRows()
-##             if len(l) == 1:
-##                 s = "Row %d of %d" % (l[0]+1,len(self.rpt))
-##             else:
-##                 s = "Selected %s of %d rows" % (len(l), len(self.rpt))
-                
-##             frm.status(s)
-            
-##         frm.addIdleEvent(f)
-
-##     def getCurrentRow(self):
-##         l = self.getSelectedRows()
-##         if len(l) != 1:
-##             raise InvalidRequestError("more than one row selected!")
-##         i = l[0]
-##         if i == len(self.rpt):
-##             raise InvalidRequestError(\
-##                 "you cannot select the after-last row!")
-##         return self.rpt[i]
-
-##     def withCurrentRow(self,meth,*args,**kw):
-##         r = self.getCurrentRow()
-##         meth(r,*args,**kw)
-        
-
 class DataGrid(Component):
     def __init__(self,form,rpt,*args,**kw):
         Component.__init__(self,form,*args,**kw)
@@ -440,45 +357,17 @@ class DataGrid(Component):
     def setChosenRow(self,row):
         self.chosenRow = row
         
-##     def render(self,doc):
-##         doc.renderDataGrid(self)
-
-##     def render(self,doc):
-##         if self.enabled:
-##             doc.report(self.rpt)
-
     def getSelectedRows(self):
         raise NotImplementedError
 
 
 
-## class DataForm(ReportMixin,Component):
-    
-##     def __init__(self,form,rpt,afterSkip=nop,*args,**kw):
-##         Component.__init__(self,form,*args,**kw)
-##         ReportMixin.__init__(self,rpt)
-##         self.afterSkip = afterSkip
-##         self.currentPos = 0
-
-        
 
 class Panel(Container,Component):
     
     def __init__(self,*args,**kw):
         Component.__init__(self,*args,**kw)
         self._components = []
-
-##     def __init__(self,form,direction,name=None,*args,**kw):
-##         assert direction in (VERTICAL,HORIZONTAL)
-##         if name is None:
-##             if direction is VERTICAL:
-##                 name = "VPanel"
-##             else:
-##                 name = "HPanel"
-##         #Container.__init__(self,name,*args,**kw)
-##         Component.__init__(self,form,*args,**kw)
-##         self.direction = direction
-##         self._components = []
 
     def getComponents(self):
         return self._components
@@ -504,62 +393,6 @@ class HPanel(Panel):
 
     
 
-
-
-
-## class Application(console.Application):
-    
-##     mainForm=None
-    
-##     def addProgramMenu(self,sess,frm):
-##         m = frm.addMenu("system","&Programm")
-##         m.addItem("logout",label="&Beenden",action=frm.close)
-##         m.addItem("about",label="Inf&o").setHandler(sess.showAbout)
-
-##         def bugdemo(task):
-##             for i in range(5,0,-1):
-##                 sess.status("%d seconds left",i)
-##                 task.increment()
-##                 task.sleep()
-##             thisWontWork()
-            
-        
-##         m.addItem("bug",label="&Bug demo").setHandler(
-##             sess.loop,bugdemo,"Bug demo")
-##         #m.addItem(label="show &Console").setHandler(self.showConsole)
-##         return m
-
-##     def run(self):
-##         frm=self.mainForm(self)
-##         frm.show()
-##         #self.session.toolkit.showForm(frm)
-
-
-##     def addSession(self,sess):
-##         #sess = self._sessionFactory(self,toolkit,**kw)
-##         #sess = Session(toolkit)
-##         self._sessions.append(sess)
-##         #self.onOpenSession(sess)
-##         #return sess
-
-##     def removeSession(self,sess):
-##         #self.onCloseSession(sess)
-##         self._sessions.remove(sess)
-
-##     def onOpenSession(self,sess):
-##         self.showMainForm(sess)
-
-##     def onCloseSession(self,sess):
-##         pass
-
-
-##     def close(self):
-##         pass
-##         for app in self.apps:
-##             #syscon.debug("Killing session %r",sess)
-##             app.close()
-        
-        
 class Toolkit(BaseToolkit):
     
     labelFactory = Label
@@ -570,30 +403,14 @@ class Toolkit(BaseToolkit):
     hpanelFactory = HPanel
     viewerFactory = TextViewer
     dataGridFactory = DataGrid
-    #navigatorFactory = DataForm
-    #formFactory = Form
     menuBarFactory = MenuBar
     
     def __init__(self,console=None):
-        #self._submitted=[]
-        #self.apps = []
-        #AbstractToolkit.__init__(self)
-        #self.consoleForm = None
         self.root=None
         if console is None:
             from lino.console import syscon
             console=syscon.getSystemConsole()
-            #console=syscon.getToolkit()
-            #console=CaptureConsole(
-            #    verbosity=syscon._syscon._verbosity)
         self.console = console
-##         # non-overridable forwarding
-##         for funcname in (
-##             'debug', 'warning',
-##             'verbose', 'error',
-##             'textprinter',
-##             ):
-##             setattr(self,funcname,getattr(console,funcname))
 
         self._activeForm=None
 
@@ -612,34 +429,6 @@ class Toolkit(BaseToolkit):
     def show_status(self,*args,**kw):
         self.console.show_status(*args,**kw)
         
-        
-        #self.verbose("Done after %f seconds.",
-        #             time.time() - self._started)
-##         if sys.platform == "win32":
-##             utime, stime, cutime, cstime, elapsed_time = os.times()
-##             syscon.verbose("%.2f+%.2f=%.2f seconds used",
-##                            utime,stime,utime+stime)
-##         else:
-##             syscon.verbose( "+".join([str(x) for x in os.times()])
-##                           + " seconds used")
-        #for a in self.apps:
-        #    a.close()
-
-
-##     def startApplication(self,app):
-##         #sess=Session(self)
-##         #app=appClass(self)
-##         app.setToolkit(self)
-##         self.apps.append(app)
-        
-##     def stopApplication(self,app):
-##         self.apps.remove(app)
-##         if len(self.apps) == 0:
-##             self.stopRunning()
-##             #if self.consoleForm is not None:
-##             #    self.consoleForm.close()
-    
-            
         
     def onTaskBegin(self,*args,**kw):
         return self.console.onTaskBegin(*args,**kw)
@@ -683,21 +472,9 @@ class Toolkit(BaseToolkit):
                 frm.showModal()
                 #return
                 
-##     def submit(self,frm):
-##         self._submitted.append(frm)
-        
-##     def show_form(self,sess,frm):
-##         #frm.setup(sess)
-##         #frm.onShow()
-##         self.executeShow(frm)
-##         return frm.returnValue
-        
 
     def show_report(self,sess,rpt,**kw):
         return sess.showForm(ReportGridForm(rpt))
-        #frm = sess.form(label=rpt.getTitle(),**kw)
-        #frm.addDataGrid(rpt)
-        #frm.show()
         
 
     def show_notice(self,sess,*args,**kw):
@@ -706,36 +483,15 @@ class Toolkit(BaseToolkit):
             self._activeForm.status(*args,**kw)
         else: self.show_message(sess,*args,**kw)
         
-##     def show_status(self,*args,**kw):
-##         # overridable forwarding
-##         return self.root.status(*args,**kw)
-
-
 
     def show_message(self,sess,msg,*args,**kw):
         msg=sess.buildMessage(msg,*args)
         return sess.showForm(MessageDialog(msg,**kw))
         
-##         frm = sess.form(label="Message")
-##         frm.addLabel(msg)
-##         frm.addOkButton()
-##         frm.showModal()
 
     def show_confirm(self,sess,*args,**kw):
         return sess.showForm(ConfirmDialog(*args,**kw))
         
-##         frm = sess.form(label="Confirmation",doc=prompt)
-##         #frm.addLabel(prompt)
-##         p = frm.addPanel(HORIZONTAL)
-##         ok = p.addOkButton()
-##         cancel = p.addCancelButton()
-##         if default == "y":
-##             ok.setDefault()
-##         else:
-##             cancel.setDefault()
-##         frm.showModal()
-##         return frm.lastEvent == ok
-
 
 
     def show_decide(self,sess,prompt,answers,
@@ -757,17 +513,6 @@ class Toolkit(BaseToolkit):
         raise "internal error: no button clicked?"
         
     
-        
-##     def critical(self,sess,msg,*args,**kw):
-##         raise "not used"
-##         if msg is not None:
-##             self.error(sess,msg,*args,**kw)
-##         sess.close()
-##         self.stop_running()
-
-##     def createForm(self,sess,*args,**kw):
-##         return self.formFactory(self,sess,*args,**kw)
-
     def createFormCtrl(self,frm):
         return 1
 
@@ -777,23 +522,6 @@ class Toolkit(BaseToolkit):
     def executeRefresh(self,frm):
         pass
 
-##     def beginProgresser(self,sess,*args,**kw):
-##         self._currentProgresser=Progresser(self._currentProgresser)
-        
-    
-##     def createJob(self,sess,*args,**kw):
-##         job=self.jobFactory()
-##         job.init(sess,*args,**kw)
-##         return job
-    
-##     def createProgresser(self,sess,*args,**kw):
-##         return self.progresserFactory(sess,*args,**kw)
-    
-##     def openSession(self,sess):
-##         #app.setToolkit(self)
-##         #sess.toolkit = self
-##         assert sess.toolkit is self
-##         self._sessions.append(sess)
         
         
 

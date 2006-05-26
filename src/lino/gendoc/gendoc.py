@@ -73,7 +73,13 @@ class GenericDocument:
     def p(self,*args,**kw):
         raise NotImplementedError, repr(self)
 
+    def pre(self,*args,**kw):
+        raise NotImplementedError, repr(self)
+
     def h(self,*args,**kw):
+        raise NotImplementedError
+        
+    def ul(self,*args,**kw):
         raise NotImplementedError
         
 
