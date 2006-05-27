@@ -4,17 +4,17 @@ class MyForm(Form):
     
     title = "The First Lino Form"
     
-    def layout(self,doc):
+    def layout(self,panel):
     
-        doc.label("""\
+        panel.label("""\
 Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
     """)
-        self.firstName = doc.entry(label="First name")
-        self.name = doc.entry(label="Name")
-        doc.okButton()
-        doc.cancelButton()
+        self.firstName = panel.entry(label="First name")
+        self.name = panel.entry(label="Name")
+        panel.okButton()
+        panel.cancelButton()
 
     def ok(self):
         if not self.firstName.getValue():

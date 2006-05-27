@@ -57,143 +57,9 @@ class MenuContainer:
 ##         if self._menuController is not None:
 ##             self._menuController.setupMenu()
             
-class Document:
-
-    def __init__(self,toolkit):
-        self.toolkit=toolkit
-
-    def label(self,label,**kw):
-        frm = self.getForm()
-        e = frm.toolkit.labelFactory(self,label=label,**kw)
-        #self._components.append(e)
-        return self.addComponent(e)
-        #return e
-        
-    def addEntry(self,*args,**kw):
-        frm = self.getForm()
-        #e = frm.session.toolkit.entryFactory(frm,name,*args,**kw)
-        e = frm.toolkit.entryFactory(frm,None,*args,**kw)
-        return self.addComponent(e)
-        #self._components.append(e)
-        #if name is not None:
-        #    frm.entries.define(name,e)
-        #return e
-    
-    def addDataEntry(self,dc,*args,**kw):
-        frm = self.getForm()
-        e = frm.toolkit.dataEntryFactory(frm,dc,*args,**kw)
-        return self.addComponent(e)
-        #self._components.append(e)
-        #return e
-
-    def addDataGrid(self,rpt,name=None,*args,**kw):
-        frm = self.getForm()
-        e = frm.toolkit.dataGridFactory(self,rpt,*args,**kw)
-        #self._components.append(e)
-        #frm.setMenuController(e)
-        #if name is not None:
-        #    frm.tables.define(name,e)
-        return self.addComponent(e)
-        #return e
-        
-##     def addNavigator(self,afterSkip=None,*args,**kw):
-##         frm = self.getForm()
-##         e = frm.toolkit.navigatorFactory(
-##             self, frm.rpt,afterSkip,*args,**kw)
-##         #self._components.append(e)
-##         #frm.setMenuController(e)
-##         return self.addComponent(e)
-        
-##     def addPanel(self,direction,**kw): 
-##         frm = self.getForm()
-##         btn = frm.toolkit.panelFactory(self,direction,**kw)
-##         return self.addComponent(btn)
-##         #self._components.append(btn)
-##         #return btn
-    
-##     def addVPanel(self,**kw):
-##         return self.addPanel(VERTICAL,**kw)
-##     def addHPanel(self,**kw):
-##         return self.addPanel(HORIZONTAL,**kw)
-
-    def addHPanel(self,**kw):
-        frm = self.getForm()
-        c = frm.toolkit.hpanelFactory(self,**kw)
-        return self.addComponent(c)
-    
-    def addVPanel(self,**kw):
-        frm = self.getForm()
-        c = frm.toolkit.vpanelFactory(self,**kw)
-        return self.addComponent(c)
-    
-    def addViewer(self): 
-        frm = self.getForm()
-        c = frm.toolkit.viewerFactory(self)
-        return self.addComponent(c)
-        #self._components.append(c)
-        #return c
-    
-    def addButton(self,name=None,*args,**kw): 
-        frm = self.getForm()
-        btn = frm.toolkit.buttonFactory(
-            frm,name=name,*args,**kw)
-        #self._components.append(btn)
-        #if name is not None:
-        #    frm.buttons.define(name,btn)
-        return self.addComponent(btn)
-
-    def addFormButton(self,frm,*args,**kw):
-        b=self.addButton(label=frm.getTitle())
-        b.setHandler(self.getForm().showForm,frm)
-        return b
-    
-    def addOkButton(self,*args,**kw):
-        b = self.addButton(name="ok",
-                           label="&OK",
-                           action=self.getForm().ok)
-        b.setDefault()
-        return b
-
-    def addCancelButton(self,*args,**kw):
-        return self.addButton(name="cancel",
-                              label="&Cancel",
-                              hotkey=keyboard.ESC,
-                              action=self.getForm().cancel)
 
 
-class Container:
-    
-    def refresh(self):
-        for c in self.getComponents():
-            c.refresh()
-        
-    def store(self):
-        for c in self.getComponents():
-            c.store()
-        
-    def onClose(self):
-        for c in self.getComponents():
-            c.onClose()
-
-    def onShow(self):
-        for c in self.getComponents():
-            c.onShow()
-
-    def render(self,doc):
-        # used by cherrygui. sorry for ugliness.
-        for c in self.getComponents():
-            c.render(doc)
-            
-    def validate(self):
-        for e in self.getComponents():
-            msg = e.validate()
-            if msg is not None:
-                return msg
-            
-        
-
-
-class Form(MenuContainer,Container):
+class Form(MenuContainer):
     
     title=None
     modal=False
@@ -205,8 +71,7 @@ class Form(MenuContainer,Container):
                  #data=None,
                  halign=None, valign=None,
                  title=None,
-                 enabled=None,
-                 *args,**kw):
+                 enabled=None): # *args,**kw):
         #if self.title is None:
         #Describable.__init__(self,None,*args,**kw)
         #assert isinstance(app,Application)
@@ -242,13 +107,12 @@ class Form(MenuContainer,Container):
         #assert not isinstance(sess,Toolkit)
         self.session=sess
         self.toolkit=sess.toolkit
-        self.doc=Document(sess.toolkit)
         self.mainComp = sess.toolkit.vpanelFactory(self,weight=1)
             
         if self.__doc__ is not None:
-            self.addLabel(self.__doc__)
-        
-        self.setupForm()
+            self.mainComp.label(self.__doc__)
+            
+        self.layout(self.mainComp)
         self.setupMenu()
         self.mainComp.setup()
         self.ctrl = self.toolkit.createFormCtrl(self)
@@ -268,15 +132,15 @@ class Form(MenuContainer,Container):
         self.accelerators.append((hotkey,btn))
         
         
-    def getComponents(self):
-        # implements Container
-        assert self.mainComp is not None, \
-               "Form %s was not setup()" % self.getTitle()
-        return ( self.mainComp, )
+##     def getComponents(self):
+##         # implements Container
+##         assert self.mainComp is not None, \
+##                "Form %s was not setup()" % self.getTitle()
+##         return ( self.mainComp, )
 
-    def addComponent(self,c):
-        # implements Container
-        return self.mainComp.addComponent(c)
+##     def addComponent(self,c):
+##         # implements Container
+##         return self.mainComp.addComponent(c)
         
     def getTitle(self):
         # may override to provide dynamic title
@@ -291,11 +155,14 @@ class Form(MenuContainer,Container):
 ##             assert isinstance(data,ReportRow)
 ##         Describable.configure(self,data=data,**kw)
 
-    def getForm(self):
-        return self
+##     def getForm(self):
+##         return self
 
 
-    def setupForm(self):
+##     def setupForm(self):
+##         raise "replaced by layout()"
+
+    def layout(self,panel):
         pass
 
     def setupMenu(self):
@@ -316,6 +183,10 @@ class Form(MenuContainer,Container):
         return self.returnValue
         
     
+    def onShow(self): self.mainComp.onShow()
+    def store(self): self.mainComp.store()        
+    def onClose(self): self.mainComp.onClose()
+        
     def refresh(self):
         self.mainComp.refresh()
         self.toolkit.executeRefresh(self)
@@ -386,8 +257,8 @@ class MemoViewer(Form):
         self.txt=txt
         Form.__init__(self,**kw)
                     
-    def setupForm(self):
-        self.addEntry(
+    def layout(self,add):
+        add.entry(
             type=MEMO(width=80,height=10),
             value=self.txt)
                     
@@ -439,19 +310,19 @@ class ReportForm(Form,GenericDocument):
         m = self.addMenu("file",label="&File")
         m.addItem("exit",label="&Exit",
                   action=self.close,
-                  accel="ESC")
+                  hotkey=keyboard.ESCAPE) # accel="ESC")
         m.addItem("refresh",
                   label="&Refresh",
                   action=self.refresh,
-                  accel="Alt-F5")
+                  hotkey=keyboard.ALT_F5) # accel="Alt-F5")
         m.addItem("printRow",
                   label="Print &Row",
                   action=self.printRow,
-                  accel="F7")
+                  hotkey=keyboard.F7) # accel="F7")
         m.addItem("printList",
                   label="Print &List",
                   action=self.printList,
-                  accel="Shift-F7")
+                  hotkey=keyboard.SHIFT_F7) #accel="Shift-F7")
         return m
         
 
@@ -466,26 +337,26 @@ class ReportForm(Form,GenericDocument):
         m.addItem("copy",
                   label="&Copy",
                   action=copy,
-                  accel="Ctrl-C")
+                  hotkey=keyboard.CTRL_C) # accel="Ctrl-C")
         
         #m = frm.addMenu("row",label="&Row")
         if self.rpt.canWrite():
             m.addItem("pickCellValue",
                       label="&Pick cell value...",
                       action=self.pickCellValue,
-                      accel="F1")
+                      hotkey=keyboard.F1) # accel="F1")
             m.addItem("editCellValue",
                       label="&Edit cell value",
                       action=self.editCellValue,
-                      accel="F2")
+                      hotkey=keyboard.F2) # accel="F2")
             m.addItem("delete",
                       label="&Delete selected row(s)",
                       action=self.deleteSelectedRows,
-                      accel="DEL")
+                      hotkey=keyboard.DELETE) # accel="DEL")
             m.addItem("insert",
                       label="&Insert new row",
                       action=self.insertRow,
-                      accel="INS")
+                      hotkey=keyboard.INSERT) # accel="INS")
         return m
 
     def editCellValue(self):
@@ -500,21 +371,22 @@ class ReportForm(Form,GenericDocument):
             return
         #value=col.getCellValue(row)
         allowedValues=col.datacol.getAllowedValues(row.item)
-        #rpt=self.dbsess.createQueryReport(allowedValues)
+        if allowedValues is None:
+            return
         rpt=QueryReport(allowedValues)
         #print value
         #print allowedValues
         #rpt.show()
         def onpick(pickedRow):
-            print 1, row.item
+            #print 1, row.item
             row.lock()
-            print 2, row.item
+            #print 2, row.item
             col.setCellValue(row,pickedRow.item)
-            print 3, row.item
+            #print 3, row.item
             row.unlock()
-            print 4, row.item
+            #print 4, row.item
             self.refresh()
-            print 5, row.item
+            #print 5, row.item
             
         self.showForm(ReportGridPickForm(rpt,onpick))
         #self.afterRowEdit()
@@ -649,8 +521,8 @@ class ReportRowForm(ReportForm):
         self.afterRowEdit()
         ReportForm.onClose(self)
         
-    def setupForm(self):
-        self.rpt.setupReportForm(self)
+    def layout(self,panel):
+        self.rpt.layoutReportForm(self,panel)
             
     def toggleEditing(self):
         self.afterRowEdit()
@@ -675,15 +547,15 @@ class ReportRowForm(ReportForm):
         m = self.addMenu("row",label="&Row")
         m.addItem("next",
                   label="&Next",
-                  action=lambda u: (self.skip(1), self.refresh()),
-                  accel="PgDn")#.setHandler(self.skip,1)
+                  action=lambda : (self.skip(1), self.refresh()),
+                  hotkey=keyboard.PGDN) # "PgDn")
         m.addItem("previous",
                   label="&Previous",
-                  action=lambda u: (self.skip(-1), self.refresh()),
-                  accel="PgUp")#.setHandler(self.skip,-1)
+                  action=lambda : (self.skip(-1), self.refresh()),
+                  hotkey=keyboard.PGUP) # "PgUp")
         m.addItem("edit",
                   label="&Edit",
-                  accel="F2").setHandler(self.toggleEditing)
+                  hotkey=keyboard.F2).setHandler(self.toggleEditing)
         
         self.rpt.setupMenu(self)
 
@@ -704,11 +576,11 @@ class ReportRowForm(ReportForm):
             m.addItem("delete",
                       label="&Delete selected row(s)",
                       action=self.deleteCurrentRow,
-                      accel="DEL")
+                      hotkey=keyboard.DELETE) # accel="DEL")
             m.addItem("insert",
                       label="&Insert new row",
                       action=self.insertRow,
-                      accel="INS")
+                      hotkey=keyboard.INSERT) # accel="INS")
 
             
     def skip(self,n):
@@ -764,15 +636,15 @@ class ReportGridForm(ReportForm):
         #self.pickedRow=None
         self.editing=False
 
-    def setupForm(self):
-        self.grid=self.addDataGrid(self.rpt)
+    def layout(self,panel):
+        self.grid=panel.datagrid(self.rpt)
 
     def setupEditMenu(self):
         m=ReportForm.setupEditMenu(self)
         m.addItem("showRowForm",
                   label="&Form view",
                   action=self.showRowForm,
-                  accel="Ctrl-ENTER")
+                  hotkey=keyboard.CTRL_RETURN) # accel="Ctrl-ENTER")
 
         
     def showRowForm(self):
@@ -821,8 +693,8 @@ class ReportGridPickForm(ReportGridForm):
         m=ReportGridForm.setupFileMenu(self)
         m.addItem("pick",
                   label="&Pick this row",
-                  accel="ENTER",
-                  action=self.pick)
+                  action=self.pick,
+                  hotkey=keyboard.RETURN) # accel="ENTER"
     def pick(self):
         #self.pickedRow=self.getCurrentRow()
         pickedRow=self.getCurrentRow()
@@ -1146,9 +1018,9 @@ class MessageDialog(Dialog):
         Dialog.__init__(self,**kw)
         self.msg=msg
         
-    def setupForm(self):
-        self.addLabel(self.msg)
-        self.addOkButton()
+    def layout(self,p):
+        p.label(self.msg)
+        p.okButton()
         
 class ConfirmDialog(Dialog):
     title="Confirmation"
@@ -1157,13 +1029,13 @@ class ConfirmDialog(Dialog):
         self.prompt=prompt
         self.default=default
         
-    def setupForm(self):
-        self.addLabel(self.prompt)
+    def layout(self,panel):
+        panel.label(self.prompt)
         
         #p=self.addPanel(HORIZONTAL)
-        p=self.addHPanel()
-        ok=p.addOkButton()
-        cancel = p.addCancelButton()
+        p=panel.hpanel()
+        ok=p.okButton()
+        cancel = p.cancelButton()
         if self.default == YES:
             ok.setDefault()
         else:

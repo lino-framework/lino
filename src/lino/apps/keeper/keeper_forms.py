@@ -32,7 +32,7 @@ class SearchForm(ReportForm):
     
     title="Search"
     
-    def setupForm(self):
+    def layout(self,panel):
         
         #dbsess=self.rpt.query.getContext()
         #words = sess.query(tables.Word)
@@ -40,10 +40,10 @@ class SearchForm(ReportForm):
         #grid=None # referenced in search(), defined later
         
 
-        self.searchString=self.addEntry(
+        self.searchString=panel.entry(
             STRING,
             label="&Words to look for")
-        self.anyWord=self.addEntry(BOOL,label="&any word (OR)")
+        self.anyWord=panel.entry(BOOL,label="&any word (OR)")
         
         def search():
 ##             files.clearFilters()
@@ -62,15 +62,15 @@ class SearchForm(ReportForm):
 
 
 
-        #bbox = frm.addHPanel()
-        bbox = self
-        self.go = bbox.addButton("search",
-                                 label="&Search",
-                                 action=search).setDefault()
+        #bbox = panel.hpanel()
+        bbox = panel
+        self.go = bbox.button("search",
+                              label="&Search",
+                              action=search).setDefault()
         #bbox.addButton("exit",
         #               label="&Exit",
         #               action=frm.close)
-        self.grid=bbox.addDataGrid(self.rpt)
+        self.grid=panel.datagrid(self.rpt)
         #ReportForm.setupForm(self)
         self.grid.enabled=False
 

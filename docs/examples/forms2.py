@@ -12,25 +12,25 @@ so you don't need to close it if you want to continue registering.
     
     title = "Privacy statement"
     
-    def setupForm(self):
-        self.addOkButton()
+    def layout(self,panel):
+        panel.okButton()
         
 class MyForm(Form):
     
     title = "The First Lino Form"
 
-    def setupForm(self):
+    def layout(self,panel):
     
-        self.addLabel("""\
+        panel.label("""\
 Please enter your personal data.
 Don't worry about your privacy.
 You can trust us.
     """)
-        self.firstName = self.addEntry(label="First name")
-        self.name = self.addEntry(label="Name")
-        self.addFormButton(PrivacyForm())
-        self.addOkButton()
-        self.addCancelButton()
+        self.firstName = panel.entry(label="First name")
+        self.name = panel.entry(label="Name")
+        panel.formButton(PrivacyForm())
+        panel.okButton()
+        panel.cancelButton()
 
     def ok(self):
         if not self.firstName.getValue():

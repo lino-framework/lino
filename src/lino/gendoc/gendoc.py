@@ -38,6 +38,7 @@ class GenericDocument:
             self.p("["+btn.getLabel()+"]")
             
     def renderEntry(self,e):
+        raise
         if e.enabled:
             v=e.getValue()
             if v is None:
@@ -55,8 +56,7 @@ class GenericDocument:
     
 
 
-    # USER METHODS
-    
+#class DocumentContext:
 
     def report(self,rpt):
         raise NotImplementedError
@@ -70,13 +70,13 @@ class GenericDocument:
     def table(self,*args,**kw):
         raise NotImplementedError
 
-    def p(self,*args,**kw):
+    def par(self,*args,**kw):
         raise NotImplementedError, repr(self)
 
     def pre(self,*args,**kw):
         raise NotImplementedError, repr(self)
 
-    def h(self,*args,**kw):
+    def header(self,*args,**kw):
         raise NotImplementedError
         
     def ul(self,*args,**kw):

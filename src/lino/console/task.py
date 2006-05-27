@@ -190,6 +190,14 @@ has chosen a toolkit and who runs some code (usually an application)
     def setMaxVal(self,n):
         self.maxval=n
         
+    def requestAbort(self):
+        if self.confirm( _("Are you sure you want to abort?"),
+                         default=False):
+            raise UserAborted()
+        #self._abortRequested=False
+        self.toolkit.onTaskResume(self)
+        #self._abortRequested=True
+
 
 
     
@@ -202,14 +210,6 @@ class Task(Session):
         #self._abortRequested=False
         if label is not None:
             self.label=label
-
-    def requestAbort(self):
-        if self.confirm( _("Are you sure you want to abort?"),
-                         default=False):
-            raise UserAborted()
-        #self._abortRequested=False
-        self.toolkit.onTaskResume(self)
-        #self._abortRequested=True
 
 ##     def getStatusLine(self):
 ##         # may override but caution: called frequently

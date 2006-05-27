@@ -705,10 +705,16 @@ class Toolkit(toolkit.Toolkit):
         if frm.defaultButton is not None:
             frm.defaultButton.wxctrl.SetDefault()
 
+        # MenuItems have no .wxctrl, the are automagically bound if
+        # the lbl passed to wxMenu.Append(winId,lbl,doc) contains a \t
+        # and a key name...
+
         if len(frm.accelerators):
             l=[ (flags(key),
                  key.keycode,
-                 btn.wxctrl.GetId()) for key,btn in frm.accelerators]
+                 btn.wxctrl.GetId())
+                for key,btn
+                in frm.accelerators if hasattr(btn,'wxctrl')]
             ctrl.SetAcceleratorTable(wx.AcceleratorTable(l))
 
             
@@ -754,8 +760,12 @@ class Toolkit(toolkit.Toolkit):
                 doc=""
             assert type(doc) == type(""), repr(mi)
             lbl = mi.getLabel()
-            if mi.accel is not None:
-                lbl += "\t" + mi.accel
+            #if mi.accel is not None:
+            #    lbl += "\t" + mi.accel
+            # automagically
+            if mi.hotkey is not None:
+                hotkey=mi.hotkey.__name__.replace("_","-")
+                lbl += "\t" + hotkey
             wxMenu.Append(winId,lbl,doc)
             wx.EVT_MENU(ctrl, winId,
                         EventCaller(mi.click))

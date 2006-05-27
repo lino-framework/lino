@@ -276,10 +276,10 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
     def par(self,*args,**kw):
         self._body.append(P(*args,**kw))
 
-    def pre(self,,*args,**kw):
+    def pre(self,*args,**kw):
         self._body.append(PRE(*args,**kw))
 
-    def header(self,level,,*args,**kw):
+    def header(self,level,*args,**kw):
         self._body.append(H(level,*args,**kw))
 
     def report(self,rpt):

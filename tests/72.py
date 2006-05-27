@@ -31,7 +31,6 @@ from lino.adamo.dbreports import QueryReport
 
 class Case(TestCase):
     todo="HtmlDocument is broken"
-    "do the lino.examples work?"
 
     def setUp(self):
         TestCase.setUp(self)

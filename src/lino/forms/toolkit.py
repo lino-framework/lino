@@ -26,10 +26,11 @@ from lino.console.console import BaseToolkit
 #from lino.console.session import Session
 from lino.gendoc.gendoc import GenericDocument
 
+from lino.forms import keyboard
 from lino.forms.forms import VERTICAL, HORIZONTAL,\
      Form, MessageDialog, ConfirmDialog, ReportGridForm
 
-from lino.forms.forms import Container
+#from lino.forms.forms import Container
 
 def nop(x):
     pass
@@ -37,36 +38,27 @@ def nop(x):
 
 
 
-class Component: #(Describable):
+class Component:
     def __init__(self,form,
                  unusedName=None,label=None,doc=None,
                  enabled=True,
                  weight=0):
-        #Describable.__init__(self,None,name,label,doc)
-        self.label=label
-        self.doc=doc
         self.form = form
+        self._label=label
+        self.doc=doc
         self.weight=weight
         self.enabled=enabled and form.enabled
 
     def getLabel(self):
-        if self.label is None:
+        if self._label is None:
             return self.__class__.__name__
-        return self.label
+        return self._label
     
+    def hasLabel(self):
+        return self._label is not None
+
     def getDoc(self):
         return self.doc
-
-    def hasLabel(self):
-        return self.label is not None
-
-    def interesting(self,**kw):
-        l=[]
-        if self.label is not None:
-            l.append(('label',self.getLabel().strip()))
-        if not self.enabled:
-            l.append( ('enabled',self.enabled))
-        return l
 
     def __repr__(self):
         s=self.__class__.__name__+"("
@@ -76,12 +68,18 @@ class Component: #(Describable):
             
         return s+")"
     
-        #return self.getName()
-        
+    def interesting(self,**kw):
+        l=[]
+        if self._label is not None:
+            l.append(('label',self.getLabel().strip()))
+        if not self.enabled:
+            l.append( ('enabled',self.enabled))
+        return l
+
     def setFocus(self):
         pass
-    def getForm(self):
-        return self.form.getForm()
+##     def getForm(self):
+##         return self.form.getForm()
     def refresh(self):
         pass
     
@@ -100,6 +98,112 @@ class Component: #(Describable):
     
     def render(self,doc):
         doc.p(self.getLabel())
+
+
+class Adder:
+
+    def __init__(self,frm,cnt):
+        self.form=frm
+        self.container=cnt
+
+
+
+class Container(Component):
+
+    def label(self,label,**kw):
+        e = self.form.toolkit.labelFactory(self.form,
+                                           label=label,**kw)
+        return self.addComponent(e)
+        
+    def entry(self,*args,**kw):
+        e = self.form.toolkit.entryFactory(self.form,
+                                           None,*args,**kw)
+        return self.addComponent(e)
+    
+    def dataentry(self,dc,*args,**kw):
+        e = self.form.toolkit.dataEntryFactory(self.form,
+                                               dc,*args,**kw)
+        return self.addComponent(e)
+
+    def datagrid(self,rpt,name=None,*args,**kw):
+        e = self.form.toolkit.dataGridFactory(self.form,
+                                              rpt,*args,**kw)
+        return self.addComponent(e)
+        
+    def hpanel(self,**kw):
+        c = self.form.toolkit.hpanelFactory(self.form,**kw)
+        return self.addComponent(c)
+    
+    def vpanel(self,**kw):
+        c = self.form.toolkit.vpanelFactory(self.form,**kw)
+        return self.addComponent(c)
+    
+    def addViewer(self): 
+        frm = self.getForm()
+        c = frm.toolkit.viewerFactory(self.form)
+        return self.addComponent(c)
+        #self._components.append(c)
+        #return c
+    
+    def button(self,name=None,*args,**kw): 
+        btn = self.form.toolkit.buttonFactory(
+            self.form,name=name,*args,**kw)
+        return self.addComponent(btn)
+
+    def formButton(self,frm,*args,**kw):
+        b=self.button(label=frm.getTitle())
+        b.setHandler(self.form.showForm,frm)
+        return b
+    
+    def okButton(self,*args,**kw):
+        b = self.button(name="ok",
+                        label="&OK",
+                        action=self.form.ok)
+        b.setDefault()
+        return b
+
+    def cancelButton(self,*args,**kw):
+        return self.button(name="cancel",
+                           label="&Cancel",
+                           hotkey=keyboard.ESCAPE,
+                           action=self.form.cancel)
+
+
+
+    
+    
+    def refresh(self):
+        for c in self.getComponents():
+            c.refresh()
+        
+    def store(self):
+        for c in self.getComponents():
+            c.store()
+        
+    def onClose(self):
+        for c in self.getComponents():
+            c.onClose()
+
+    def onShow(self):
+        for c in self.getComponents():
+            c.onShow()
+
+    def render(self,doc):
+        # used by cherrygui. sorry for ugliness.
+        for c in self.getComponents():
+            c.render(doc)
+            
+    def validate(self):
+        for e in self.getComponents():
+            msg = e.validate()
+            if msg is not None:
+                return msg
+
+
+            
+            
+        
+        
         
 class Button(Component):
     def __init__(self,form,name=None,label=None,
@@ -108,9 +212,10 @@ class Button(Component):
         #if hotkey is not None:
         #    label += " [" + hotkey.__name__ + "]"
         Component.__init__(self,form,name,label,*args,**kw)
-        self.action = action
+        self.action=action
+        self.hotkey=hotkey
         if hotkey is not None:
-            self.getForm().addAccelerator(hotkey,self)
+            form.addAccelerator(hotkey,self)
         self._args = []
         self._kw = {}
 
@@ -122,14 +227,13 @@ class Button(Component):
 
     def setDefault(self):
         "set this button as default button for its form"
-        self.getForm().defaultButton = self
+        self.form.defaultButton = self
         return self
         
     def click(self):
         "execute the button's handler"
-        frm = self.getForm()
-        frm.store()
-        frm.lastEvent = self
+        self.form.store()
+        self.form.lastEvent = self
         self.action(*(self._args),**(self._kw))
 ##         try:
 ##             self.action(*(self._args),**(self._kw))
@@ -208,7 +312,7 @@ class Entry(BaseEntry):
         self.refresh()
         
     def refresh(self):
-        self.enabled = self.getForm().enabled
+        self.enabled = self.form.enabled
         
     def getMinWidth(self):
         return self._type.minWidth
@@ -232,8 +336,7 @@ class DataEntry(BaseEntry):
         return l
     
     def setValue(self,v):
-        frm = self.getForm()
-        self.col.setCellValue(frm.getCurrentRow(),v)
+        self.col.setCellValue(self.form.getCurrentRow(),v)
         
     def parse(self,s):
         return self.col.datacol.rowAttr.parse(s)
@@ -254,11 +357,10 @@ class DataEntry(BaseEntry):
         return self.col.datacol.getMinHeight()
     
     def getValue(self):
-        frm = self.getForm()
-        return self.col.getCellValue(frm.getCurrentRow())
+        return self.col.getCellValue(self.form.getCurrentRow())
 
     def refresh(self):
-        frm = self.getForm()
+        frm = self.form
         self.enabled = frm.enabled and self.col.canWrite(
             frm.getCurrentRow())
         
@@ -273,24 +375,25 @@ class Label(Component):
 
 
 class MenuItem(Button):
-    def __init__(self,form,name,accel,*args,**kw):
-        Button.__init__(self,form,name,*args,**kw)
-        self.accel = accel
+    pass
+##     def __init__(self,form,name,accel,*args,**kw):
+##         Button.__init__(self,form,name,*args,**kw)
+##         self.accel = accel
 
 class Menu(Component):
     def __init__(self,*args,**kw):
         Component.__init__(self,*args,**kw)
         self.items = []
 
-    def addItem(self,name,accel=None,**kw):
-        i = MenuItem(self.form,name,accel,**kw)
+    def addItem(self,name,**kw):
+        i = MenuItem(self.form,name,**kw)
         self.items.append(i)
         return i
     
-    def addButton(self,btn,accel=None,**kw):
+    def addButton(self,btn,**kw):
         kw.setdefault("label",btn.getLabel())
         kw.setdefault("action",btn.action)
-        return self.addItem(accel=accel,**kw)
+        return self.addItem(**kw)
     
     def addLink(self,htdoc,**kw):
         # used by gendoc.html
@@ -331,18 +434,19 @@ class MenuBar(Component):
 
 
 class DataGrid(Component):
-    def __init__(self,form,rpt,*args,**kw):
+    def __init__(self,form,rpt,pageNum=1,*args,**kw):
         Component.__init__(self,form,*args,**kw)
         #ReportMixin.__init__(self,rpt)
         self.rpt = rpt # a Query or a Report
         self.choosing = False
         self.chosenRow = None
+        self.pageNum=pageNum
 
     def __repr__(self):
         s=Component.__repr__(self)
-        s += " of " + self.getForm().rpt.__class__.__name__
+        s += " of " + self.form.rpt.__class__.__name__
         if self.enabled:
-            s += " with %d rows" % len(self.getForm().rpt)
+            s += " with %d rows" % len(self.form.rpt)
         return s
 
     def __len__(self):
@@ -363,7 +467,7 @@ class DataGrid(Component):
 
 
 
-class Panel(Container,Component):
+class Panel(Container):
     
     def __init__(self,*args,**kw):
         Component.__init__(self,*args,**kw)

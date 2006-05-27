@@ -321,19 +321,19 @@ class BaseReport:
 
 ##         frm.show()
 
-    def setupReportForm(self,frm):
+    def layoutReportForm(self,frm,panel):
         if self.formColumnGroups == None:
             for col in self.columns: #getVisibleColumns():
-                frm.addDataEntry(col,label=col.getLabel())
+                panel.dataentry(col,label=col.getLabel())
         else:
             for grp in self.formColumnGroups:
                 w=0
-                p=frm.addHPanel(weight=1)
+                p=panel.hpanel(weight=1)
                 for col in grp:
-                    p.addDataEntry(col,
-                                   label=col.getLabel(),
-                                   weight=100/len(grp))
-                    w+= col.datacol.getMaxHeight() - 1
+                    p.dataentry(col,
+                                label=col.getLabel(),
+                                weight=100/len(grp))
+                    w += col.datacol.getMaxHeight() - 1
                 p.weight=w
         
         

@@ -190,5 +190,5 @@ class PlainDocument(GenericDocument):
                 
 
 
-    def p(self,txt):
+    def par(self,txt):
         self.write(txt+"\n")

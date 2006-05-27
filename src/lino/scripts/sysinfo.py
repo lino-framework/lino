@@ -77,7 +77,7 @@ distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     url="http://lino.saffre-rumma.ee/sysinfo.html"
     
-    usage="usage: lino diag [options]"
+    usage="usage: lino countdown [options]"
     description="""\
 writes some diagnostics about your computer.
 """ 
