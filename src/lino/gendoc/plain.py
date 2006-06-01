@@ -27,6 +27,7 @@ class PlainDocument(GenericDocument):
     def __init__(self,
                  writer=None,
                  columnSep='|',
+                 lineWidth=79,
                  columnHeaderSep='-',
                  **kw):
         if writer is None:
@@ -35,12 +36,13 @@ class PlainDocument(GenericDocument):
         self._writer = writer
         self.columnSep = columnSep
         self.columnHeaderSep = columnHeaderSep
+        self.lineWidth=lineWidth
     
-    def getLineWidth(self):
-        return 79
+##     def getLineWidth(self):
+##         return 79
 
-    def getColumnSepWidth(self):
-        return len(self.columnSep)
+##     def getColumnSepWidth(self):
+##         return len(self.columnSep)
     
     def write(self,txt):
         try:
@@ -52,7 +54,8 @@ class PlainDocument(GenericDocument):
     def report(self,rpt):
         #print __file__, rpt.iterator._filters
         # initialize...
-        rpt.beginReport(self)
+        rpt.beginReport(lineWidth=self.lineWidth,
+                        columnSepWidth=len(self.columnSep))
         wrappers = []
         for col in rpt.columns:
             wrappers.append(TextWrapper(col.width))
@@ -88,7 +91,7 @@ class PlainDocument(GenericDocument):
         #print __file__,rpt.iterator._filters
         # iterate...
 
-        for row in rpt.rows(self):
+        for row in rpt.rows():
         #for item in rpt._iterator:
         #    row=rpt.processItem(self,item)
 
@@ -138,7 +141,7 @@ class PlainDocument(GenericDocument):
             
         # renderFooter
         
-        rpt.endReport(self)
+        rpt.endReport()
 
     
 ##     def formatReportCell(self,col,value):
@@ -191,4 +194,4 @@ class PlainDocument(GenericDocument):
 
 
     def par(self,txt):
-        self.write(txt+"\n")
+        self.write("\n"+txt+"\n")

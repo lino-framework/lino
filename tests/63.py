@@ -31,16 +31,16 @@ class Case(TestCase):
 
         fn = self.addTempFile("1.sxw", showOutput=True)
         doc = TextDocument(fn)
-        doc.h(1,"Generating OpenOffice documents")
-        doc.p("Here is a table:")
-        t = doc.table()
+        doc.body.header(1,"Generating OpenOffice documents")
+        doc.body.par("Here is a table:")
+        t = doc.body.table()
         t.column()
         t.column()
         t.row("Kunde","Datum")
         t.row("Hinz","2004-11-16")
         t.row("Kunz","2004-11-17")
     
-        doc.p("Here is another paragraph.")
+        doc.body.par("Here is another paragraph.")
         doc.save()
         
     def test02(self):
@@ -48,14 +48,14 @@ class Case(TestCase):
         fn = self.addTempFile("1.sxc", showOutput=True)
         doc = SpreadsheetDocument(fn)
         
-        t = doc.table(name="Kunden")
+        t = doc.body.table(name="Kunden")
         t.column()
         t.column()
         t.row("Kunde","Datum")
         t.row("Hinz","2004-11-16")
         t.row("Kunz","2004-11-17")
         
-        t = doc.table(name="Freunde")
+        t = doc.body.table(name="Freunde")
         t.column()
         t.column()
         t.row("Freund","Datum")

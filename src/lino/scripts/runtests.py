@@ -30,6 +30,14 @@ from lino.forms.testkit import Toolkit
 #gui.choose("testkit")
 
 class StoppingTestResult(unittest._TextTestResult):
+    
+##     def __init__(self,runner):
+##         self.runner=runner
+##         unittest._TextTestResult.__init__(
+##             runner.stream,
+##             runner.descriptions,
+##             runner.verbosity)
+    
 
     def stopTest(self, test):
         "Called when the given test has been run"
@@ -38,6 +46,10 @@ class StoppingTestResult(unittest._TextTestResult):
 
 
 class StoppingTestRunner(unittest.TextTestRunner):
+
+##     def __init__(self,sess,*args,**kw):
+##         self.session=sess
+##         unittest.TextTestRunner.__init__(*args,**kw)
     
     def _makeResult(self):
         return StoppingTestResult(self.stream,
@@ -208,7 +220,18 @@ continue testing even if failures or errors occur""",
             runner = unittest.TextTestRunner(stream=stream)
         else:
             runner = StoppingTestRunner(stream=stream)
-        runner.run(suite)
+        result=runner.run(suite)
+        
+        def tests(case):
+            if hasattr(case,'_tests'):
+                for c in case._tests:
+                    for d in tests(c):
+                        yield d
+            yield case
+            
+        for case in tests(suite):
+            if hasattr(case,'afterRun'):
+                case.afterRun(self)
 
 
 Runtests().main()

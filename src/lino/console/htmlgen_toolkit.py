@@ -323,7 +323,7 @@ class Toolkit(base.Toolkit):
         
 
     def onShowForm(self,frm):
-        frm...
+        #frm...
         self._forms.append(frm)
 
     def onRefreshForm(self,frm):

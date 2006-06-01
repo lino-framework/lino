@@ -35,7 +35,7 @@ class Document:
     #bodyClass = NotImplementedError
     
     def __init__(self,filename):
-        self.body = elements.Body() # self.bodyClass(self)
+        self.body = elements.Body(self) # self.bodyClass(self)
             
         self.fonts = elements.Fonts()
         self.styles = elements.Styles()
@@ -308,7 +308,7 @@ class Document:
         mp = elements.MasterPage(name="Default",pageMasterName="pm1")
         self.masterStyles.append(mp)
         
-        h = elements.Header()
+        h = elements.Header(self)
         self.headerContent = h
         mp.append(h)
         #h.append(elements.P(elements.SheetName("???")))
@@ -319,14 +319,14 @@ class Document:
 ##             h.append(elements.RegionCenter(elements.P("center header")))
 ##             h.append(elements.RegionRight(elements.P("right header")))
         
-        mp.append(elements.HeaderLeft(display=False))
+        mp.append(elements.HeaderLeft(self,display=False))
         
-        f = elements.Footer()
+        f = elements.Footer(self)
         self.footerContent = f
         mp.append(f)
         #f.append(elements.P("Page ",elements.PageNumber("1")))
         
-        mp.append(elements.FooterLeft(display=False))
+        mp.append(elements.FooterLeft(self,display=False))
 
         if False:
         
@@ -424,14 +424,14 @@ class TextDocument(Document):
         return self.tables
     
     def table(self,*args,**kw):
-        t = self.body.table(self,*args,**kw)
+        t = self.body.table(*args,**kw)
         self.tables.append(t)
         return t
 
-    def p(self,*args,**kw):
-        return self.body.p(*args,**kw)
-    def h(self,*args,**kw):
-        return self.body.h(*args,**kw)
+    def par(self,*args,**kw):
+        return self.body.par(*args,**kw)
+    def header(self,*args,**kw):
+        return self.body.header(*args,**kw)
         
 
 class SpreadsheetDocument(Document):
@@ -443,16 +443,16 @@ class SpreadsheetDocument(Document):
     
 
     def getTables(self):
-        return self.body.children
+        return self.body.content
 
     def table(self,*args,**kw):
-        return self.body.table(self,*args,**kw)
+        return self.body.table(*args,**kw)
         
-    def p(self,*args,**kw):
+    def par(self,*args,**kw):
         raise element.InvalidRequest(
             "Spreadsheet body contains only tables")
     
-    def h(self,*args,**kw):
+    def header(self,*args,**kw):
         raise elements.InvalidRequest(
             "Spreadsheet body contains only tables")
     

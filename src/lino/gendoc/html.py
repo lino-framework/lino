@@ -23,7 +23,7 @@ import os
 opj = os.path.join
 from cStringIO import StringIO
 
-from lino.gendoc.gendoc import WriterDocument
+from lino.gendoc import gendoc # import WriterDocument
 from lino.forms.forms import MenuContainer
 
 from lino.adamo.query import QueryColumn
@@ -163,7 +163,7 @@ class StaticSite:
 
 
     
-class HtmlDocument(WriterDocument,MenuContainer,Locatable):
+class HtmlDocument(gendoc.WriterDocument,MenuContainer,Locatable):
     extension=""
     def __init__(self,
                  content=None,
@@ -179,7 +179,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
             name="index"
         
         Locatable.__init__(self,name,location,parent)
-        WriterDocument.__init__(self)
+        gendoc.WriterDocument.__init__(self)
         MenuContainer.__init__(self)
         
         
@@ -353,65 +353,7 @@ class HtmlDocument(WriterDocument,MenuContainer,Locatable):
             elem.__html__(self,wr)
         self.endDocument(wr)
         self.writer = None
-
-## class PCDATA:
-##     def __init__(self,txt):
-##         self.text=txt
-##     def __html__(self,doc,wr):
-##         wr(escape(self.text))
-
-    
-## class Container:
-##     def __init__(self,content=None):
-##         if content is None:
-##             self.content=[]
-##         elif type(content) in (UnicodeType,StringType):
-##             self.content=[ PCDATA(content) ]
-##         else:
-##             self.content=content
-    
-##     def tag(self):
-##         return self.__class__.__name__
-    
-##     def __html__(self,doc,wr):
-##         tag = self.tag()
-##         wr("<%s>" % tag)
-##         for c in self.content:
-##             c.__html__(doc,wr)
-##         wr("</%s>\n" % tag)
-
         
-## class H(Container):
-##     def __init__(self,level,content):
-##         assert level > 0 and level <= 9
-##         self.level=level
-##         Container.__init__(self,content)
-        
-##     def tag(self):
-##         return self.__class__.__name__+str(self.level)
-        
-
-
-## class P(Container): pass
-## class PRE(Container): pass
-
-## class A(Container):
-##     attrs=()
-##     def __init__(self,href=None,label=None,doc=None):
-##         if label is None: label=href
-##         self.href=href
-##         self.label=label
-##         self.doc=doc
-        
-##     def __html__(self,doc,wr):
-##         wr('<a href="'+self.href+'">')
-##         wr(escape(self.label))
-##         wr('</a>')
-
-## class UL:        
-        
-
-
 def rptname(doc,rpt,sortColumn=None,pageNum=None):
     if pageNum is None: pageNum=rpt.pageNum
     if rpt.ds.canSort():
@@ -421,9 +363,6 @@ def rptname(doc,rpt,sortColumn=None,pageNum=None):
         return doc.name+"_"+str(pageNum)+"_"+sortColumn.name
     elif pageNum==1: return doc.name
     return doc.name+"_"+str(pageNum)
-    
-                    
-
 
 
         
@@ -624,6 +563,10 @@ class ReportElement:
 
     
                     
+
+
+
+
 class StaticHtmlDocument(HtmlDocument):
     extension=".html"
     def save(self,sess,targetRoot=".",simulate=False):
@@ -662,76 +605,186 @@ class StaticHtmlDocument(HtmlDocument):
 
 
 
-from HyperText import HTML as html
-from HyperText.Documents import Document
 
-class BaseContainer:
+
+
+
+
+
+
+
+    
+                    
+
+from lino.oogen.elements import CDATA, Element, Container, Story
+
+## class CDATA:
+##     def __init__(self,txt):
+##         self.text=txt
+##     def __html__(self,wr):
+##         wr(escape(self.text))
+
+    
+## class Element:
+##     allowedAttribs=dict(klass="class",
+##                         id='id')
+##     def __init__(self,**kw):
+##         for k,v in kw.items():
+##             assert k in self.attribs
+##     def tag(self):
+##         return self.__class__.__name__
+    
+## class Container:
+##     def __init__(self,*content):
+##         def x(u):
+##             if type(u) in (UnicodeType,StringType): return CDATA(u)
+##             return u
+##         self.content=[x(u) for u in content]
+
+            
+    
+##     def __html__(self,doc,wr):
+##         tag = self.tag()
+##         wr("<%s>" % tag)
+##         for c in self.content:
+##             c.__html__(doc,wr)
+##         wr("</%s>\n" % tag)
+
+class Fragment(Container):
+    allowedContent = (CDATA,)
+    allowedAttribs=dict(klass='class',
+                        id='id',
+                        style='style',
+                        title='title')
+class SPAN(Fragment):
+    allowedContent = (CDATA,Fragment)
+
+class B(SPAN): pass    
+class EM(SPAN): pass    
+class TT(SPAN): pass    
+class FONT(SPAN): pass    
+    
+class P(Container):
+    allowedContent = (CDATA,SPAN)
+    allowedAttribs = dict(
+        align="align",
+        **SPAN.allowedAttribs)
+    
+class H(P):
+    def __init__(self,level,*args,**kw):
+        assert level > 0 and level <= 9
+        self.level=level
+        Container.__init__(self,*args,**kw)
+        
+    def tag(self):
+        return self.__class__.__name__+str(self.level)
+        
+
+
+class PRE(P): pass
+class LI(P):pass
+
+class UL(Container): 
+    allowedContent = (LI,)
+
+class A(SPAN):
+    allowedAttribs=dict(href="href",
+                        **SPAN.allowedAttribs)
+    
+##     def __init__(self,href=None,label=None,doc=None):
+##         if label is None: label=href
+##         self.href=href
+##         self.label=label
+##         self.doc=doc
+        
+##     def __html__(self,doc,wr):
+##         wr('<a href="'+self.href+'">')
+##         wr(escape(self.label))
+##         wr('</a>')
+
+class TD(P): pass
+class TH(P): pass
+class TR(Container):
+    allowedContent=(TD,TH)
+class TABLE(Container):
+    allowedContent=(TR,)
+
+
+
+class HtmlStory(Story):
+        
     def report(self,rpt):
-        rpt.beginReport(self.getDocument())
-        header=[html.TH(col.getLabel()) for col in rpt.columns]
-        t=html.TABLE(html.TR(*header))
-        self.append(t)
-        for row in rpt.rows(self.getDocument()):
-            line=[html.TD(s) for (c,s) in row.cells()]
-            t.append(html.TR(*line))
+        rpt.beginReport() # self.getDocument())
+        header=[TH(col.getLabel()) for col in rpt.columns]
+        t=TABLE(TR(*header))
+        for row in rpt.rows(): # self.getDocument()):
+            line=[TD(s) for (c,s) in row.cells()]
+            t.append(TR(*line))
 
-        rpt.endReport(self.getDocument())
+        rpt.endReport()
+        return self.append(t)
         
 
     def table(self,*args,**kw):
-        t=TABLE(self,*args,**kw)
-        self.append(t)
-        return t
+        return self.append(TABLE(*args,**kw))
 
     def par(self,*args,**kw):
-        e=html.P(*args,**kw)
-        self.append(e)
-        return e
+        return self.append(P(*args,**kw))
 
     def pre(self,*args,**kw):
-        e=html.PRE(*args,**kw)
-        self.append(e)
-        return e
+        return self.append(PRE(*args,**kw))
 
     def header(self,level,*args,**kw):
-        cl=getattr(html,'H'+str(level))
-        e=cl(*args,**kw)
-        self.append(e)
-        return e
+        return self.append(H(level,*args,**kw))
         
     def ul(self,*args,**kw):
-        e=UL(self.getDocument(),*args,**kw)
-        self.append(e)
-        return e
+        return self.append(UL(*args,**kw))
     
-    def li(self,*args,**kw):
-        e=html.LI(*args,**kw)
-        self.append(e)
-        return e
-    
-class Container(BaseContainer):
-    def __init__(self,doc):
-        self.doc=doc
-        
-        
+##     def li(self,*args,**kw):
+##         return self.append(LI(*args,**kw))
+
     def getDocument(self):
-        return self.doc
+        return None
+    
+    
+
+class Document:
+
+    def __init__(self,
+                 title="Untitled",
+                 date=None,
+                 stylesheet=None):
+
+        self.title = title
+        self.date = date
+        self.stylesheet = stylesheet
+        self.body=HtmlStory(self)
         
-    
-class UL(html.UL,Container): pass
-class TABLE(html.TABLE,Container): pass
-
-## class SimpleHtmlDocument(Container):
-##     def __init__(self,*args,**kw):
-##         self.doc=Document(*args,**kw)
+        
+    def saveas(self,filename):
+        f=file(filename,"wt")
+        self.__xml__(f.write)
+        f.close()
 
 
-class SimpleHtmlDocument(Document,BaseContainer):
-    def getLineWidth(self):
-        return 100
-    
-    def getColumnSepWidth(self):
-        return 0
-    
-    def getDocument(self):
-        return self
+    def __xml__(self,wr):
+        wr("<html><head><title>")
+        wr(escape(self.title))
+        wr("""</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+""")
+        if self.stylesheet is not None:
+            wr('<link rel=stylesheet type="text/css" href="%s">\n'
+               % self.urlto(self.stylesheet))
+        wr('<meta name="KEYWORDS" content="">\n')
+        wr('<meta name="GENERATOR" content="Lino">\n')
+        wr('<meta name="author" content="">\n')
+        wr('<meta name="date" content="%s">')
+        wr("<head><body>\n")
+        self.body.__xml__(wr)
+        wr("""\
+        </body>
+        </html>
+        """)
+
+            

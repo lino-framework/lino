@@ -478,10 +478,10 @@ class Console(BaseToolkit):
 
     def show_report(self,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
-        gd = PlainDocument(self.stdout)
-        gd.beginDocument()
-        gd.report(rpt)
-        gd.endDocument()
+        doc = PlainDocument(self.stdout)
+        doc.beginDocument()
+        doc.report(rpt)
+        doc.endDocument()
     
 
     def executeShow(self,frm):

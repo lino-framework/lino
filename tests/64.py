@@ -36,9 +36,10 @@ class Case(tsttools.TestCase):
                         justifySingleWord=False)
         
         
-        doc.h(1,"Defining custom styles")
-        doc.p("This is a right-aligned paragraph.",styleName="Rechts")
-        doc.p("Here is a standard paragraph.")
+        doc.body.header(1,"Defining custom styles")
+        doc.body.par("This is a right-aligned paragraph.",
+                     styleName="Rechts")
+        doc.body.par("Here is a standard paragraph.")
     
         doc.save()
         

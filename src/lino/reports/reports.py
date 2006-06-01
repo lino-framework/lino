@@ -18,7 +18,7 @@
 
 
 #import copy
-
+import types
 from lino.misc.descr import Describable
 from lino.console import syscon
 from lino.adamo.datatypes import STRING
@@ -166,7 +166,7 @@ class BaseReport:
 ##         # forwards "everything else" to the iterator...
 ##         return getattr(self.iterator,name)
 
-    def computeWidths(self,doc):
+    def computeWidths(self,columnSepWidth):
         
         """set total width or distribute available width to columns
         without width. Note that these widths are to be interpreted as
@@ -194,8 +194,7 @@ class BaseReport:
             else:
                 used += col.width
                 
-        available=self.width - \
-                   doc.getColumnSepWidth()*(len(self.columns)-1)
+        available=self.width - columnSepWidth*(len(self.columns)-1)
 
         if available <= 0:
             raise NotEnoughSpace()
@@ -230,27 +229,28 @@ class BaseReport:
     def setupReport(self):
         pass
     
-    def beginReport(self,doc):
+    def beginReport(self,lineWidth=100,columnSepWidth=0):
+        assert type(lineWidth) is types.IntType
         #if self._mustSetup:
         if self._setupDone is None:
-            self._setupDone=doc
+            self._setupDone=True
             self.setupReport()
             if self.width is None:
-                self.width=doc.getLineWidth()
-            self.computeWidths(doc)
+                self.width=lineWidth
+            self.computeWidths(columnSepWidth)
 ##         else:
 ##             assert self._setupDone is doc,\
 ##                    "%r being used by %s" % (self, self._setupDone)
         
-    def endReport(self,doc):
+    def endReport(self):
         pass
 ##         assert self._setupDone is doc,\
 ##                "%r being used by %s" % (self, self._setupDone)
 ##         self._setupDone=None
         #pass
 
-    def rows(self,doc):
-        return ReportIterator(self,doc)
+    def rows(self):
+        return ReportIterator(self)
 
     def appendRow(self):
         # overridden by DataReportRow
@@ -449,10 +449,10 @@ class VurtReportColumn(ReportColumn):
 
 
 class ReportIterator:
-    def __init__(self,rpt,doc):
+    def __init__(self,rpt):
         self.iterator=rpt.getIterator().__iter__()
         self.rpt=rpt
-        self.doc=doc
+        #self.doc=doc
         self.rowno=0
         
     def __iter__(self):

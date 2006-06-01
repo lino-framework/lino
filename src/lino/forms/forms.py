@@ -267,7 +267,7 @@ class ReportForm(Form,GenericDocument):
     def __init__(self,rpt,**kw):
         Form.__init__(self,**kw)
         self.rpt=rpt
-        self.rpt.beginReport(self)
+        self.rpt.beginReport()
         self.currentRow=None
 
     def beforeRowEdit(self):
@@ -489,16 +489,16 @@ class ReportForm(Form,GenericDocument):
         doc.save(self,showOutput=True)
 
     def onClose(self):
-        self.rpt.endReport(self)
+        self.rpt.endReport()
         #self.rpt.query.getContext().unlock()
 
     
 
-    # implements GenericDocument
-    def getLineWidth(self):
-        return 100
-    def getColumnSepWidth(self):
-        return 0
+##     # implements GenericDocument
+##     def getLineWidth(self):
+##         return 100
+##     def getColumnSepWidth(self):
+##         return 0
                 
         
     

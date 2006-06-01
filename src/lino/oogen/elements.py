@@ -36,16 +36,13 @@ def quote(x):
         return '"'+x+'"'
     raise InvalidRequest("%s not handled" % str(type(x)))
     
-## def makedict(**kw): 
-##     return kw
-
 class CDATA:
     def __init__(self,text):
-        self.text = unicode(text)
+        self.text = unicode(text
+                            .replace("&","&amp;")
+                            .replace("<","&lt;"))
     def __xml__(self,wr):
-        s = self.text.replace("&","&amp;")
-        #wr(s.decode().encode("utf-8"))
-        wr(s.encode("utf-8"))
+        wr(self.text) # .encode("utf-8"))
         
 class Element:
     elementname = None
@@ -53,9 +50,10 @@ class Element:
     #defaultAttribs = {}
     def __init__(self,**kw):
         if self.elementname is None:
-            raise InvalidRequest(
-                "Cannot instantiate %s : no elementname" %
-                str(self.__class__))
+            self.elementname=self.__class__.__name__
+            #raise InvalidRequest(
+            #    "Cannot instantiate %s : no elementname" %
+            #    str(self.__class__))
         self._attribs = {}
         self.setAttribs(**kw)
         
@@ -78,38 +76,35 @@ class Element:
                 "%s instance has no attribute '%s'" % (
                 self.__class__.__name__, name))
         
+    def tag(self):
+        return self.elementname
+    
     def __xml__(self,wr):
-        wr("<"+self.elementname)
-        #for k,v in self.defaultAttribs.items():
-        #    wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
+        wr("<"+self.tag())
         for k,v in self._attribs.items():
             wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
-        #wr('/>')
         wr('/>\n')
         
-class TextElement(Element):
-    "any element that may appear besides CDATA in a paragraph context"
-    pass
-
 class Container(Element):
-    allowedChildren = (CDATA,Element)
+    allowedContent = (CDATA,Element)
     primaryKey = None
     def __init__(self,*content,**kw):
         Element.__init__(self,**kw)
-        self.children = []
+        self.content = []
         for elem in content:
             #if type(elem) == types.StringType:
-            if isinstance(elem,basestring):
-                self.append(self.allowedChildren[0](elem))  
-            else:
-                self.append(elem)   
+            self.append(elem)   
         
     def append(self,elem):
-        #print self.allowedChildren
-        for cl in self.allowedChildren:
+        #print self.allowedContent
+        if isinstance(elem,basestring):
+            e=self.allowedContent[0](elem)
+            self.content.append(e)
+            return e
+        for cl in self.allowedContent:
             if isinstance(elem,cl):
-                self.children.append(elem)
-                return
+                self.content.append(elem)
+                return elem
         raise InvalidRequest(
             "%s not allowed in %s" %
             (str(elem.__class__),repr(self)))
@@ -122,7 +117,7 @@ class Container(Element):
             raise InvalidRequest(
                 "Expected %d key elements but got %d" %
                 len(self.primaryKey),len(key))
-        for ch in self.children:
+        for ch in self.content:
             i = 0
             found = True
             for k in key:
@@ -135,17 +130,21 @@ class Container(Element):
         
         
     def __xml__(self,wr):
-        wr("<"+self.elementname)
+        wr("<"+self.tag())
         if len(self._attribs) > 0:
             for k,v in self._attribs.items():
                 wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
-        if len(self.children) == 0:
+        if len(self.content) == 0:
             wr('/>\n')
         else:
             wr('>')
-            for child in self.children:
-                child.__xml__(wr)
-            wr("</"+self.elementname+">\n" )
+            for e in self.content:
+                e.__xml__(wr)
+            wr("</"+self.tag()+">\n" )
+
+class TextElement(Element):
+    "any element that may appear besides CDATA in a paragraph context"
+    pass
 
 class TextContainer(Container):
     
@@ -154,38 +153,19 @@ class TextContainer(Container):
     
     pass
 
-class Story(Container):            
+class Story(Container):
+    def __init__(self,doc,*args,**kw):
+        self.doc=doc
+        Container.__init__(self,*args,**kw)
             
-    def table(self,doc,*args,**kw):
-        t = Table(doc,*args,**kw)
-        self.append(t)
-        return t
+    def table(self,*args,**kw):
+        return self.append(Table(self.doc,*args,**kw))
 
-##     def table(self,doc,name=None,styleName=None,**kw):
-##         if name is None:
-##             name = "Table"+str(len(doc.getTables())+1)
-##         if styleName is None:
-##             styleName = name
-##             s = doc.addAutoStyle(name=styleName, family="table")
-##         else:
-##             s = doc.getStyle(styleName,"table")
-##             # just to check existence
-                                 
-##         t = Table(doc,name=name, styleName=styleName)
-##         if len(kw)>0:
-##             s.addProperties(**kw)
-##         self.append(t)
-##         return t
+    def par(self,*args,**kw):
+        return self.append(P(*args,**kw))
         
-    def p(self,*args,**kw):
-        p = P(*args,**kw)
-        self.append(p)
-        return p
-        
-    def h(self,level,text,**kw):
-        h = H(level,text,**kw)
-        self.append(h)
-        return h
+    def header(self,level,text,**kw):
+        return self.append(H(level,text,**kw))
     
 
 class LineBreak(TextElement):
@@ -194,7 +174,7 @@ class LineBreak(TextElement):
 
 class Text(TextContainer):
     elementname = "number:text"
-    allowedChildren = (CDATA,)
+    allowedContent = (CDATA,)
 
 class Span(Text):
     elementname = "text:span"
@@ -219,7 +199,7 @@ class Time(Text):
         
         
 class P(Container):
-    allowedChildren = (CDATA,TextElement,TextContainer)
+    allowedContent = (CDATA,TextElement,TextContainer)
     elementname = "text:p"
     allowedAttribs = dict(
         styleName='text:style-name')
@@ -230,7 +210,7 @@ class P(Container):
         
     
 class H(P):
-    allowedChildren = (CDATA,)
+    allowedContent = (CDATA,)
     elementname = "text:h"
     allowedAttribs = dict(
         level='text:level',
@@ -406,7 +386,7 @@ class CurrencySymbol(Text):
 
 class Style(Container):
     elementname = "style:style"
-    allowedChildren = (Properties,)
+    allowedContent = (Properties,)
     allowedAttribs=dict(
         name="style:name",
         family="style:family",
@@ -424,7 +404,7 @@ class Style(Container):
     
 class NumberStyle(Style):
     elementname = "number:number-style"
-    allowedChildren = (Properties,Number,Text)
+    allowedContent = (Properties,Number,Text)
     
 class DefaultStyle(Style):
     """
@@ -440,7 +420,7 @@ on the style family.
     """
     elementname = "style:default-style"
     allowedAttribs=dict(family="style:family")
-    allowedChildren=(Properties,)
+    allowedContent=(Properties,)
 
 class FooterStyle(Style):
     elementname = "style:footer-style"
@@ -483,7 +463,7 @@ class TableColumn(Element):
     
     
 class TableCell(Container):
-    allowedChildren = (P,Span,Container)
+    allowedContent = (P,Span,Container)
     elementname = "table:table-cell"
     allowedAttribs = dict(
         valueType="table:value-type",
@@ -491,14 +471,14 @@ class TableCell(Container):
         )
     
 class TableRow(Container):
-    allowedChildren = (TableCell,)
+    allowedContent = (TableCell,)
     elementname = "table:table-row"
     def __init__(self,table,*args,**kw):
         Container.__init__(self,*args,**kw)
         self._table = table
 
     def cell(self,*content,**kw):
-        if len(self.children) == len(self._table.columns):
+        if len(self.content) == len(self._table.columns):
             s = self._table.column()
         elem = TableCell(valueType="string",*content,**kw)
 ##         for x in content:
@@ -516,14 +496,14 @@ class TableRow(Container):
         return elem
 
 class TableHeaderRows(Container):
-    allowedChildren = (TableRow,)
+    allowedContent = (TableRow,)
     elementname = "table:table-header-rows"
 
     
 
 class Table(Container):
     elementname = "table:table"
-    allowedChildren = (TableHeaderRows,TableColumn,TableRow)
+    allowedContent = (TableHeaderRows,TableColumn,TableRow)
     allowedAttribs = dict(
         name="table:name",
         styleName='table:style-name',
@@ -556,10 +536,10 @@ class Table(Container):
         self.columns = []
         self._headerRows = None
 
-    def h(self,level,text,**kw):
-        return self.p(text,styleName="Heading",**kw)
+    def header(self,level,text,**kw):
+        return self.p(text,styleName="Heading"+str(level),**kw)
     
-    def p(self,text,**kw):
+    def par(self,text,**kw):
         r = self.row()
         p = P(text,**kw)
         r.cell(p,numberColumnsSpanned=str(len(self.columns)))
@@ -632,7 +612,7 @@ properties of the page and two optional elements that specify the properties of 
 footers.
     """
     elementname = "style:page-master"
-    allowedChildren = (Properties,FootnoteSep,HeaderStyle,FooterStyle)
+    allowedContent = (Properties,FootnoteSep,HeaderStyle,FooterStyle)
     
     
 class MasterPage(Container):
@@ -682,7 +662,7 @@ The content of headers and footers is either:
 """
 
 class Region(Container):
-    allowedChildren = (P, Table)
+    allowedContent = (P, Table)
     
     
 class RegionLeft(Region):
@@ -693,7 +673,7 @@ class RegionRight(Region):
     elementname = "style:region-right"
     
 class HeaderOrFooter(Story):
-    allowedChildren = (CDATA, Region, P, Table)
+    allowedContent = (CDATA, Region, P, Table)
     allowedAttribs = dict(display="style:display")
     
     
@@ -714,19 +694,19 @@ class FooterLeft(Footer):
 # second-level elements used in ifiles.py
 class Fonts(Container):
         elementname = "office:font-decls"
-        allowedChildren = (Font,)
+        allowedContent = (Font,)
 
 class Styles(Container):
         elementname = "office:styles"
-        allowedChildren = (Style,)
+        allowedContent = (Style,)
         
 class AutoStyles(Container):
         elementname = "office:automatic-styles"
-        allowedChildren = (Style,)
+        allowedContent = (Style,)
         
 class MasterStyles(Container):
         elementname = "office:master-styles"
-        allowedChildren = (Style,MasterPage)
+        allowedContent = (Style,MasterPage)
         
             
 class Body(Story):

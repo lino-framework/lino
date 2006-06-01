@@ -39,10 +39,10 @@ class Case(TestCase):
         s.addProperties(textAlign="end",
                         justifySingleWord=False)
         
-        doc.h(1,"Rechnung Nr. 040235")
-        doc.p("Datum: 10. Dezember 2004",styleName="Rechts")
+        doc.body.header(1,"Rechnung Nr. 040235")
+        doc.body.par("Datum: 10. Dezember 2004",styleName="Rechts")
         
-        t = doc.table()
+        t = doc.body.table()
         t.column()
         t.column()
         t.column()
@@ -51,8 +51,8 @@ class Case(TestCase):
         t.row("Tisch","1","15","15")
         t.row("Stuhl","4","10","40")
         
-        doc.p(u"Alle Preise in €.")
-        doc.p("Zahlungsbedingungen: ...")
+        doc.body.par(u"Alle Preise in €.")
+        doc.body.par("Zahlungsbedingungen: ...")
 
         doc.save()
         

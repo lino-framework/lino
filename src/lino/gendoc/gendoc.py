@@ -56,16 +56,19 @@ class GenericDocument:
     
 
 
-#class DocumentContext:
+class Story: # better name? Content Area Body ?
 
-    def report(self,rpt):
-        raise NotImplementedError
-
-    def getLineWidth(self):
-        raise NotImplementedError
+    def __init__(self,doc):
+        self.doc=doc
+        
+    def getDocument(self):
+        return self.doc
+        
+##     def getLineWidth(self):
+##         return 100
     
-    def getColumnSepWidth(self):
-        raise NotImplementedError
+##     def getColumnSepWidth(self):
+##         return 0
     
     def table(self,*args,**kw):
         raise NotImplementedError
@@ -82,6 +85,9 @@ class GenericDocument:
     def ul(self,*args,**kw):
         raise NotImplementedError
         
+    def report(self,rpt):
+        raise NotImplementedError
+
 
 
 class WriterDocument(GenericDocument):

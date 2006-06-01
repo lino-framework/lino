@@ -181,16 +181,25 @@ class TestCase(unittest.TestCase):
 
     def tearDown(self):
         syscon.setSystemConsole(self._oldToolkit)
-        for fn in self._showFiles:
-            self.failUnless(os.path.exists(fn))
-            #if syscon.confirm("Okay to start %s ?" % fn,\
-            #                  default=False):
-            #    os.system('start ' + fn)
         if len(self._tempFiles) > 0:
-            #if syscon.confirm("Okay to delete %d temporary files ?" \
-            #                  % len(self._tempFiles)):
             for fn in self._tempFiles:
-                os.remove(fn)
+                self.failUnless(os.path.exists(fn))
+
+    def afterRun(self,sess):
+        # called by runtests.py
+        if not hasattr(self,"_showFiles"):
+            return # happens if test was never run because a
+                   # previous test failed
+        for fn in self._showFiles:
+            #self.failUnless(os.path.exists(fn))
+            if sess.confirm(
+                "Okay to start %s ?" % fn, default=False):
+                os.system('start ' + fn)
+        if len(self._tempFiles) > 0:
+            if sess.confirm("Okay to delete %d temporary files ?" \
+                            % len(self._tempFiles)):
+                for fn in self._tempFiles:
+                    os.remove(fn)
 
     def getConsoleOutput(self):
         return self.toolkit.getConsoleOutput()

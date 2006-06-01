@@ -139,15 +139,15 @@ class QueryReport(BaseReport):
         dc=self.query.findColumn(colName)
         return self.addColumn(DataReportColumn(dc,**kw))
 
-    def doesShow(self,qry):
-        #used in lino.gendoc.html
-        raise "is this necessary?"
-        myqry=self.query
-        if myqry.getLeadTable().name != qry.getLeadTable().name:
-            return False
-        #if myqry._masters != qry._masters:
-        #    return False
-        return True
+##     def doesShow(self,qry):
+##         #used in lino.gendoc.html
+##         raise "is this necessary?"
+##         myqry=self.query
+##         if myqry.getLeadTable().name != qry.getLeadTable().name:
+##             return False
+##         #if myqry._masters != qry._masters:
+##         #    return False
+##         return True
 
     def canSort(self):
         return True

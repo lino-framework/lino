@@ -49,9 +49,9 @@ class MyDataTable(wx.grid.PyGridTableBase):
         oldlen=len(self.rows)
         self.rows=[]
         if self.editor.enabled:
-            doc=self.editor.form
+            #doc=self.editor.form
             #self.cells = []
-            self.rows = [row for row in self.editor.rpt.rows(doc)]
+            self.rows = [row for row in self.editor.rpt.rows()]
             self.rows.append(self.editor.rpt.appendRow())
         self.resetRows(self.editor.wxctrl,oldlen)
         self.updateValues(self.editor.wxctrl)

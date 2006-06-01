@@ -27,7 +27,7 @@ This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     
-    url="http://lino.berlios.de/runpy.html"
+    url="http://lino.saffre-rumma.ee/runpy.html"
     
     usage="usage: runpy [options] PYFILE"
     
@@ -35,7 +35,7 @@ See file COPYING.txt for more information."""
 where PYFILE is a Python script to execute.
 """ 
     
-    def run(self,sess):
+    def run(self):
 
         for arg in self.args:
             execfile(arg)
