@@ -87,7 +87,8 @@ itr("%s is up-to-date",de="%s ist unverändert")
 itr("remove directory %s", de=u"Ordner %s löschen")
 itr("remove file %s",de=u"Datei %s löschen")
 itr("create directory %s",de="Erstelle Ordner %s")
-itr("copy file %s to %s",de=u"Kopiere Datei %s nach %s")
+#itr("copy file %s to %s",de=u"Kopiere Datei %s nach %s")
+itr("copy %s",de=u"Kopiere %s")
 
 itr("keep %d, update %d (%d newer), copy %d, delete %d files.",
     de=u"%d gleich, %d aktualisieren (%d neuer), %d kopieren, %d löschen."
@@ -414,12 +415,12 @@ class SyncProject(Task):
                 self.job.count_same += 1
             else:
                 self.job.done_same += 1
-            self.verbose(_("%s is up-to-date") % target)
+            self.debug(_("%s is up-to-date") % target)
             return
         
         if self.job.simulate:
             self.job.count_update_file += 1
-            self.verbose("update %s to %s" % (src,target))
+            self.verbose("update %s" % target)
             return
         
         if win32file:
@@ -433,7 +434,17 @@ class SyncProject(Task):
         else:
             os.chmod(target, stat.S_IWUSR)
 
-        self.copy_file(src,target)
+        #self.copy_file(src,target)
+
+        self.notice(_("copy file %s") % target)
+        try:
+            shutil.copyfile(src, target)
+        except IOError,e:
+            self.error("copyfile('%s','%s') failed",src,target)
+            return
+        
+        self.utime(src,target)
+        #self.job.done_copy_file += 1        
 
         if win32file:
             win32file.SetFileAttributesW(target, filemode)
@@ -462,14 +473,16 @@ class SyncProject(Task):
                          os.path.join(target,fn))
         
     def copy_file(self,src,target):
+        self.verbose(_("copy %s") % target)
+        #self.verbose(_("copy file %s to %s") % (src,target))
         if self.job.simulate:
             self.job.count_copy_file += 1
             return
-        self.notice(_("copy file %s to %s") % (src,target))
+        #self.notice(_("copy file %s to %s") % (src,target))
         try:
             shutil.copyfile(src, target)
         except IOError,e:
-            self.error("copy_file('%s','%s') failed",src,target)
+            self.error("copyfile('%s','%s') failed",src,target)
             return
         
         self.utime(src,target)

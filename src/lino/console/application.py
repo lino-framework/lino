@@ -37,57 +37,6 @@ from lino.console import syscon
 from lino.console.task import Session
 
     
-## class Session(UI):
-##     """
-    
-## represents a user (usually a human sitting in front of a computer) who
-## has chosen a toolkit and who runs some code (usually an application)
-
-    
-##     """
-##     def __init__(self,user=None,pwd=None):
-##         #UI.__init__(self,self.createToolkit())
-##         #self.toolkit=None
-##         self.user=user
-##         self.pwd=pwd
-##         self._ignoreExceptions = []
-    
-
-
-##     def abortRequested(self):
-##         return self.toolkit.abortRequested()
-
-##     def hasAuth(self,*args,**kw):
-##         return True
-            
-##     def onLogin(self):
-##         pass
-    
-##     def getUser(self):
-##         return self.user
-
-##     def login(self,user):
-##         if self.user is not None:
-##             self.logout()
-##         self.user = user
-##         self.onLogin()
-        
-##     def logout(self):
-##         assert self.user is not None
-##         self.user = None
-
-
-##     def close(self):
-##         pass
-
-##     def exception(self,e,details=None):
-##         if e.__class__ in self._ignoreExceptions:
-##             return
-##         self.toolkit.showException(self,e,details)
-
-            
-
-
 class Application(Session):
     
     version=None # lino.__version__
@@ -225,7 +174,7 @@ class Application(Session):
             #self.on_main()
             self.setupApplication()
 
-            if self.name is not None and self.toolkit.isInteractive():
+            if self.name and self.toolkit.isInteractive():
                 self.notice(self.aboutString())
             
             return self.run()

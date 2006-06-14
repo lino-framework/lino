@@ -224,53 +224,16 @@ class Store(BaseStore):
         return self._connection.mustCheckTables()
 
     def onStartup(self):
-        #print "%s.createTable()" % self.__class__
-        if self._virgin is None: # == self.SST_MUSTCHECK:
-            #sess.debug("mustCheck " + self._table.name)
+        if self._virgin is None:
             if self._connection.mustCreateTables():
-                #self.createTable(sess)
-                #sess.debug("create table " + \
-                #           self._table.getTableName())
                 self._connection.executeCreateTable(self._peekQuery)
-                #self._status = self.SST_VIRGIN
                 self._virgin=True
             else:
                 self._virgin=False
-            #self._table.loadMirror(self,sess)
 
     def isVirgin(self):
         return self._virgin
-        #return self._status == self.SST_VIRGIN
                 
-##     def view(self,sess,viewName,columnNames=None,**kw):
-##         view = self._table.getView(viewName)
-##         if view is None:
-##             raise KeyError,viewName+": no such view"
-            
-##         for k,v in view.items():
-##             kw.setdefault(k,v)
-##         kw['viewName'] = viewName
-##         if columnNames is not None:
-##             kw['columnNames'] = columnNames
-##         return self.query(sess,**kw)
-        
-            
-##     def query(self,sess,**kw):
-##         return Query(None,self,sess,**kw)
-
-    
-        
-##     def populate(self,sess,populator):
-##          #assert self._status == self.SST_VIRGIN
-##          populator.(self)
-##          populator.populateStore(self)
-##          #self._status = self.SST_READY
-
-
-
-
-
-        
         
         
         
@@ -402,23 +365,23 @@ class VolatileStore(BaseStore):
 
     
 
-from lino.console.task import Task
+## from lino.console.task import Task
 
-class Populator(Task):
-    #def populateStore(self,store):
-    def run(self,dbc,store):
-        name = "populate"+store.getTable().name
-        try:
-            m = getattr(self,name)
-        except AttributeError:
-            return
-        if not store.isVirgin():
-            self.debug("Not populating %s",store) 
-            return
-        self.status("Populating %s" % store)
-        qry=store.query(dbc,"*")
-        m(qry)
-        store.commit()
+## class Populator(Task):
+##     #def populateStore(self,store):
+##     def run(self,dbc,store):
+##         name = "populate"+store.getTable().name
+##         try:
+##             m = getattr(self,name)
+##         except AttributeError:
+##             return
+##         if not store.isVirgin():
+##             self.debug("Not populating %s",store) 
+##             return
+##         self.status("Populating %s" % store)
+##         qry=store.query(dbc,"*")
+##         m(qry)
+##         store.commit()
     
 
 

@@ -98,15 +98,21 @@ class DbContext(Context):
             store.checkIntegrity(self)
         self.status("Checking %s", self.db.getLabel())
         
-    def populate(self,p):
+    def populate(self):
         status=self.getSessionStatus()
-        #self.db.populate(self,p)
+        schema=self.db.schema
         for store in self.db.getStoresById():
-            p.runfrom(self.db.schema.session.toolkit,self,store)
-            #store.populate(sess,p)
-
-
-        
+            #p.runfrom(self.db.schema.session.toolkit,self,store)
+            name = "populate"+store.getTable().name
+            try:
+                m = getattr(schema,name)
+                if store.isVirgin():
+                    self.status("Populating %s" % store)
+                    qry=store.query(self,"*")
+                    m(qry)
+                    store.commit()
+            except AttributeError:
+                pass
         self.setSessionStatus(status)
 
     #def getSession(self):

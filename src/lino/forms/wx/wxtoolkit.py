@@ -587,64 +587,6 @@ class Toolkit(toolkit.Toolkit):
     hpanelFactory = HPanel
     vpanelFactory = VPanel
     dataGridFactory = DataGrid
-    #navigatorFactory = DataForm
-    #formFactory = Form
-    #jobFactory=jobs.Job
-    #progresserFactory=Progresser
-    
-##     def __init__(self,*args,**kw):
-##         toolkit.Toolkit.__init__(self,*args,**kw)
-##         #self.consoleForm = None
-##         #self._setup = False
-##         #self._running = False
-##         #self.applicationBeingRun=None
-##         self.wxapp = None
-##         #self._activeForm=None
-
-
-
-
-
-##     def createCompCtrl(self,comp,parent,box):
-        
-##         if comp.__class__ is toolkit.Label:
-##             text = comp.getLabel()
-##             if comp.getDoc() is not None:
-##                 text += '\n' + comp.getDoc()
-##             ctrl = wx.StaticText(parent,-1, text)
-##             box.Add(ctrl, DONTSTRETCH, wx.EXPAND|wx.ALL, BORDER)
-##             comp.ctrl = ctrl
-##             return
-        
-##         if comp.__class__ is toolkit.Button:
-##             def setFocus(self):
-##                 self.wxctrl.SetFocus()
-##                 # where to put this?
-
-##             formCtrl = comp.getForm().ctrl
-##             btn = wx.Button(parent,-1,comp.getLabel(),
-##                             wx.DefaultPosition,
-##                             wx.DefaultSize)
-##             #btn.SetBackgroundColour('YELLOW')
-##             #formCtrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
-##             formCtrl.Bind(wx.EVT_BUTTON,
-##                           EventCaller(comp.click),
-##                           btn)
-##             if comp.doc is not None:
-##                 btn.SetToolTipString(comp.doc)
-
-##             box.Add(btn,DONTSTRETCH,0,NOBORDER) #, 0, wx.CENTER,10)
-##             comp.ctrl = btn
-##             return
-
-
-
-
-
-
-
-
-
             
         
     def createFormCtrl(self,frm):
@@ -813,18 +755,6 @@ class Toolkit(toolkit.Toolkit):
 
 
 
-
-##     def show_status(self,sess,msg):
-##         #frm=sess._activeForm
-##         frm=self.getActiveForm()
-##         while frm is not None and frm.modal:
-##             frm=frm._parent
-##         if frm is None:
-##             #base.Toolkit.showStatus(self,sess,msg)
-##             self.console.show_status(sess,msg)
-##         else:
-##             frm.ctrl.SetStatusText(msg)
-
     def onTaskBegin(self,task):
         #assert self.progressDialog is None
         #print job
@@ -854,23 +784,6 @@ class Toolkit(toolkit.Toolkit):
             task.requestAbort()
         self.run_awhile()
         
-##     def onTaskIncrement(self,task):
-##         self.onTaskBreathe(task)
-
-##     def onTaskStatus(self,task):
-##         if task.wxctrl is None: return
-##         pc = task.percentCompleted
-##         if pc is None: pc = 0
-##         msg=task.session.statusMessage
-##         if msg is None: msg=''
-##         if not task.wxctrl.Update(pc,msg):
-##             task.requestAbort()
-        
-##     def onTaskBreathe(self,task):
-##         self.run_awhile()
-        
-##     def onTaskIncrement(self,task):
-##         self.onTaskStatus(task)
 
     def onTaskResume(self,task):
         if task.wxctrl is None: return
@@ -885,47 +798,6 @@ class Toolkit(toolkit.Toolkit):
         task.wxctrl.Destroy()
         task.wxctrl = None
 
-##     def onJobInit(self,job):
-##         #assert self.progressDialog is None
-##         #print job
-##         assert self._activeForm is not None
-##         job.wxctrl = wx.ProgressDialog(
-##             job.getLabel(),
-##             job.getStatus(),
-##             100,
-##             self._activeForm.wxctrl,
-##             wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
-##         #return self.app.toolkit.console.onJobInit(job)
-
-##     def onJobRefresh(self,job):
-##         self.run_awhile()
-##         pc = job.pc
-##         if pc is None:
-##             pc = 0
-##         if job.wxctrl is None:
-##             return
-##         if not job.wxctrl.Update(pc,job.getStatus()):
-##             if job.confirmAbort():
-##                 raise jobs.JobAborted(job)
-##                 #job.abort()
-##             else:
-##                 job.wxctrl.Resume()
-
-##     def onJobDone(self,job,msg):
-##         if msg is None:
-##             msg=""
-##         job.wxctrl.Update(100,msg)
-##         job.wxctrl.Destroy()
-##         job.wxctrl = None
-##         #return self.app.toolkit.console.onJobDone(*args,**kw)
-
-##     def onJobAbort(self,job,*args,**kw):
-##         job.wxctrl.Destroy()
-##         job.wxctrl = None
-##         #return self.app.toolkit.console.onJobAbort(*args,**kw)
-
-    
-            
     def run_awhile(self):
         assert self.running()
         while self.root.ctrl.Pending():
@@ -934,10 +806,6 @@ class Toolkit(toolkit.Toolkit):
             #print self.wxctrl.Yield(False)
         #return self._abortRequested
 
-##     def setup(self):
-##         self._setup = True
-##         self.init()
-        
     def start_running(self,app):
         toolkit.Toolkit.start_running(self,app)
         self.root.ctrl = WxApp(self)
@@ -945,25 +813,8 @@ class Toolkit(toolkit.Toolkit):
         
     def run_forever(self,*args,**kw):
         assert self.running()
-        #self.args=args
-        #self.kw=kw
-        #if not self._setup:
-        #    self.setup()
-        #assert not self.running()
-        #self._running = True
         self.root.ctrl.MainLoop()
 
-    #def showMainForm(self):
-##     def wxinit(self):
-##         raise "no longer used"
-##         for a in self.apps:
-##             a.run(*self.args,**self.kw)
-##         for frm in self._submitted:
-##             self.show_form(frm)
-##         #sess.db.app.showMainForm(sess)
-
-        
-    
     def stop_running(self):
         wx.Exit()
         

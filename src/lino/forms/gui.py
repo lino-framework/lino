@@ -20,62 +20,6 @@ import lino
 from lino.console import Application
 
 
-## _root = None
-
-## #_toolkit = None
-
-## def getRoot():
-##     return _root
-
-## def getToolkit():
-##     return _toolkit
-
-## def setToolkit(wishlist):
-##     global _toolkit
-##     _toolkit=createToolkit(wishlist)
-
-    
-
-
-## def choose(wishlist=None):
-##     #if console is None:
-##     #    console=syscon.getSystemConsole()
-##     global _toolkit
-##     assert _toolkit is None, "cannot choose a second time"
-##     _toolkit=createToolkit(wishlist)
-##     return _toolkit
-    
-
-## def check():
-##     if _toolkit is None:
-##         choose()
-##         #GuiConsole(toolkit=_toolkit)
-
-    
-## def run(app,*args,**kw):
-##     check()
-##     _toolkit.startApplication(app)
-##     _toolkit.run_forever(*args,**kw)
-    
-## def run(sess):
-##     check()
-##     sess.setToolkit(_toolkit)
-##     #print _toolkit
-##     #_toolkit.addSession(sess)
-##     _toolkit.run_forever(sess)
-##     #_toolkit.main(app)
-    
-## def install():
-##     check()
-##     syscon.setToolkit(_toolkit)
-    
-## def runApplication(app):
-##     check()
-##     syscon.setToolkit(_toolkit)
-##     syscon._session.app = app
-##     _toolkit.run_forever(syscon._session)
-    
-
 class GuiApplication(Application):
     wishlist="wx tix cp console"
     mainFormClass=None
@@ -83,21 +27,14 @@ class GuiApplication(Application):
     def __init__(self,mainForm=None,*args,**kw):
         Application.__init__(self,*args,**kw)
         self.mainForm=mainForm
-        self.console=None
-        #if _root is None:
-        #    setRoot(self)
-    
-##     def on_main(self):
-##         pass
-    
+        #self.console=None
+        self.console=self.toolkit
 
     def run(self,*args,**kw):
-        assert self.console is None
-        self.console=self.toolkit
+        #assert self.console is None
         self.toolkit=self.createToolkit()
         self.toolkit.start_running(self)
-        if self.mainForm is None:
-            self.mainForm=self.createMainForm()
+        self.createMainForm()
         self.showForm(self.mainForm)
         self.toolkit.run_forever()
         
@@ -135,7 +72,8 @@ class GuiApplication(Application):
         raise "no toolkit found for wishlist %r" % wishlist
 
     def createMainForm(self):
-        return self.mainFormClass()
+        if self.mainForm is None:
+            self.mainForm=self.mainFormClass()
     
     def showForm(self,frm):
         frm.setup(self)
@@ -156,25 +94,20 @@ class GuiApplication(Application):
 ##     #toolkit.run_forever(*args,**kw)
     
 
-class DbApplication(GuiApplication):
+## class DbApplication(GuiApplication):
     
-    schemaClass=None
+##     schemaClass=None
 
-    def __init__(self,dbc=None,mainForm=None,*args,**kw):
-        self.dbsess=dbc
-        GuiApplication.__init__(self,mainForm)
+##     def __init__(self,dbc=None,mainForm=None,*args,**kw):
+##         self.dbsess=dbc
+##         GuiApplication.__init__(self,mainForm)
 
-    def createContext(self,*args,**kw):
-        if self.dbsess is None:
-            self.dbsess=self.schemaClass(self).quickStartup(*args,**kw)
-        return self.dbsess
-    
-    def createMainForm(self):
-        return self.mainFormClass(self.dbsess)
-    
-    def run(self,dbc=None,*args,**kw):
-        if dbc is None:
-            dbc=self.createContext()
-        self.dbsess=dbc
-        GuiApplication.run(self,*args,**kw)
+##     def createMainForm(self):
+##         return self.mainFormClass(self.dbsess)
+
+##     def run(self,dbc=None,*args,**kw):
+##         if dbc is None:
+##             dbc=self.createContext()
+##         self.dbsess=dbc
+##         GuiApplication.run(self,*args,**kw)
         

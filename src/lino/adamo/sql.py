@@ -61,7 +61,7 @@ class SqlConnection(Connection):
     
     "base class for SQL connections"
     
-    DEBUG = False
+    #DEBUG = False
     
     CST_NEW = 1       # just created, must create tables and populate
     CST_OPENED = 2    # just opened, must check integrity

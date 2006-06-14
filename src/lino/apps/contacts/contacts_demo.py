@@ -44,32 +44,47 @@ def startup(filename=None,
             big=False,
             withDemoData=True,
             **kw):
-    schema=ContactsSchema(**kw)
-    ctx=schema.quickStartup(langs=langs,
-                            filename=filename,
-                            dump=dump)
     if populate:
         if withDemoData:
-            ctx.populate(DemoPopulator(big=big))
+            app=DemoPopulator(big=big,**kw)
         else:
-            ctx.populate(StandardPopulator(big=big))
-
-##     if populate:
-##         if withDemoData:
-##             sess.populate(DemoPopulator(big=big,
-##                                         label="StandardDemo"))
-##         else:
-##             sess.populate(Populator(big=big,
-##                                     label="Standard"))
+            app=StandardPopulator(big=big,**kw)
+    else:
+        app=Contacts(**kw)
+    app.createMainForm()
+    app.mainForm.dbsess.
+    ctx=app.quickStartup(langs=langs,
+                         filename=filename,
+                         dump=dump)
+        
 
     return ctx
 
+## def startup(filename=None,
+##             langs=None,
+##             populate=True,
+##             dump=None,
+##             big=False,
+##             withDemoData=True,
+##             **kw):
+##     schema=ContactsSchema(**kw)
+##     ctx=schema.quickStartup(langs=langs,
+##                             filename=filename,
+##                             dump=dump)
+##     if populate:
+##         if withDemoData:
+##             ctx.populate(DemoPopulator(big=big))
+##         else:
+##             ctx.populate(StandardPopulator(big=big))
 
-class StandardPopulator(ddl.Populator):
+##     return ctx
+
+
+class StandardPopulator(Contacts):
     
     def __init__(self, big=False,**kw):
         self.big = big
-        ddl.Populator.__init__(self,None,**kw)
+        Contacts.__init__(self,None,**kw)
         
     def populateUsers(self,q):
         q = q.query('id firstName name')

@@ -72,23 +72,13 @@ class Form(MenuContainer):
                  halign=None, valign=None,
                  title=None,
                  enabled=None): # *args,**kw):
-        #if self.title is None:
-        #Describable.__init__(self,None,*args,**kw)
-        #assert isinstance(app,Application)
-        #assert app.mainForm is not None
         MenuContainer.__init__(self)
-        #self.app=app
         if title is not None:
             self.title=title
         if enabled is not None:
             self.enabled=enabled
-        #self.session=sess
         self.accelerators=[]
         self._parent = None
-        #self.data = data
-        #self.entries = AttrDict()
-        #self.buttons = AttrDict()
-        #self.tables = AttrDict()
         self.defaultButton = None
         self.valign = valign
         self.halign = halign
@@ -281,6 +271,7 @@ class ReportForm(Form,GenericDocument):
         if self.currentRow is None: return
         #print "afterRowEdit()",repr(self.currentRow.item)
         if self.currentRow.item.isLocked():
+            print "isLocked()"
             self.store()
             self.currentRow.item.unlock()
 
@@ -710,25 +701,44 @@ class ReportGridPickForm(ReportGridForm):
     
 class DbMainForm(Form):
     
-    #schemaClass=NotImplementedError
+    schemaClass=NotImplementedError
     
-    def __init__(self,dbsess,*args,**kw):
-        if dbsess is None:
-            dbsess=self.createContext()
-##         if dbsess is not None:
-##             assert isinstance(dbsess.db.schema,self.schemaClass),\
-##                    "%s is not a %s" % (dbsess.db.schema,
-##                                        self.schemaClass)
+##     def __init__(self,dbsess,*args,**kw):
+##         self.dbsess=dbsess
+##         Form.__init__(self,*args,**kw)
+
+    def __init__(self,filename=None,langs=None,dump=False,**kw):
+        self.dbsess=None
+        self.filename=filename
+        self.langs=langs
+        self.dump=dump
+        #DbMainForm.__init__(self,**kw)
+        Form.__init__(self,**kw)
+        
+##     def createContext(self,*args,**kw):
+##         return self.schemaClass(self).quickStartup(*args,**kw)
+    
+    def createContext(self,*args,**kw):
+        schema=self.schemaClass(self)
+        db = schema.database(langs=langs)
+        conn = center.connection(filename=filename)
+        db.connect(conn)
+        if self.dump:
+            #conn.startDump(syscon.notice)
+            #conn.startDump(self.console.stdout)
+            assert hasattr(self.dump,'write')
+            conn.startDump(self.dump)
+        return db.startup()
+        
+        
+
+    def onShow(self):
+        if self.dbsess is None:
+            self.dbsess=self.createContext()
             
-        self.dbsess=dbsess
-        Form.__init__(self,*args,**kw)
-
-    def createContext(self):
-        raise NotImplementedError
-
-##     def setupForm(self):
-##         if self.dbsess is None:
-##             self.dbsess=self.schemaClass(self.toolkit).quickStartup()
+    def onClose(self):
+        if self.dbsess is not None:
+            self.dbsess.close()
 
     def addProgramMenu(self):
         m = self.addMenu("app","&Programm")
@@ -761,9 +771,6 @@ class DbMainForm(Form):
         mi.setHandler(task.runfrom,self.session)
 
     
-    def onClose(self):
-        self.dbsess.close()
-
     def getTitle(self):
         return str(self.dbsess)
     
@@ -775,17 +782,6 @@ class DbMainForm(Form):
         mi.setHandler(self.toolkit.show_report,self.session,rpt)
 
     
-##     def showViewGrid(self,tc,*args,**kw):
-##         rpt=self.getViewReport(tc,*args,**kw)
-##         return self.toolkit.showReport(rpt)
-    
-##     def showDataForm(self,rpt,**kw):
-##         rpt.showFormNavigator(self,**kw)
-        
-##     def showDataForm(self,rpt,**kw):
-##         frm = self.form(label=rpt.getLabel(),**kw)
-##         rpt.setupForm(frm)
-##         frm.show()
         
     def chooseDataRow(self,ds,currentRow,**kw):
         frm = self.form(label="Select from " + ds.getLabel(),**kw)
@@ -794,211 +790,15 @@ class DbMainForm(Form):
         frm.showModal()
         return grid.getChosenRow()
         
-##     def runLoader(self,loader): #lc,*args,**kw):
-##         #store=self.getStore(loader.tableClass)
-##         #loader.load(self,store)
-##         #store=self.getStore(lc.tableClass)
-##         #loader=lc(self,*args,**kw)
-##         loader.run(self)
-        
 
     def showQuery(self,qry,*args,**kw):
         rpt=self.dbsess.createQueryReport(qry,*args,**kw)
         self.toolkit.show_report(self,rpt)
 
-##     def report(self,*args,**kw):
-##         rpt=self.createReport(*args,**kw)
-##         self.session.report(rpt)
-    
-
-##     def showMainForm(self):
-##         self.db.app.showMainForm(self)
-
-
-
-
-
-
-
-
-
-## class ReportForm(Form):
-##     def __init__(self,app,rpt):
-##         Form.__init__(self,app)
-##         self.rpt = rpt # a Query or a Report
-##         #assert len(ds._lockedRows) == 0
-##         self.rpt.beginReport(self)
-        
-        
-##     def setupGoMenu(self):
-##         pass
-        
-##     def setupMenu(self):
-##         m = self.addMenu("file",label="&File")
-##         m.addItem("exit",label="&Exit",
-##                   action=self.close,
-##                   accel="ESC")
-##         m.addItem("refresh",
-##                   label="&Refresh",
-##                   action=self.refresh,
-##                   accel="Alt-F5")
-##         m.addItem("printRow",
-##                   label="Print &Row",
-##                   action=self.printRow,
-##                   accel="F7")
-##         m.addItem("printList",
-##                   label="Print &List",
-##                   action=self.printList,
-##                   accel="Shift-F7")
-        
-##         self.setupGoMenu()
-        
-
-##         m = self.addMenu("edit",label="&Edit")
-##         def copy():
-##             #from cStringIO import StringIO
-##             out = StringIO()
-##             self.rpt.__xml__(out.write)
-##             MemoViewer(self,out.getvalue()).show()
-        
-##         m.addItem("copy",
-##                   label="&Copy",
-##                   action=copy)
-        
-##         #m = frm.addMenu("row",label="&Row")
-##         if self.rpt.canWrite():
-##             m.addItem("delete",
-##                       label="&Delete selected row(s)",
-##                       action=self.deleteSelectedRows,
-##                       accel="DEL")
-##             m.addItem("insert",
-##                       label="&Insert new row",
-##                       action=self.insertRow,
-##                       accel="INS")
-            
-##         self.rpt.setupMenu(self)
-
-##     def onIdle(self):
-##         l = self.getSelectedRows()
-##         if len(l) == 1:
-##             s = "Row %d of %d" % (l[0]+1,len(self.rpt))
-##         else:
-##             s = "Selected %s of %d rows" % (len(l), len(self.rpt))
-##         self.status(s)
-
-##     def insertRow(self):
-##         assert self.rpt.canWrite()
-##         row = self.rpt.appendRow()
-##         self.refresh()
-    
-##     def deleteSelectedRows(self):
-##         assert self.rpt.canWrite()
-##         if not self.confirm(
-##             "Delete %d rows. Are you sure?" % \
-##             len(self.getSelectedRows())):
-##             return
-##         for i in self.getSelectedRows():
-##             row = self.rpt[i].delete()
-##         self.refresh()
-
-##     def printRow(self):
-##         #print "printSelectedRows()", self.getSelectedRows()
-##         #workdir = "c:\\temp"
-##         #ui = self.getForm()
-##         #workdir = self.getForm().toolkit.app.tempDir
-##         from lino.oogen import SpreadsheetDocument
-##         doc = SpreadsheetDocument("printRow")
-##         for i in self.getSelectedRows():
-##             row = self.rpt[i]
-##             row.printRow(doc)
-##         #outFile = opj(workdir,"raceman_report.sxc")
-##         doc.save(self,showOutput=True)
-
-##     def printList(self):
-##         #ui = self.getForm()
-##         #workdir = self.getForm().toolkit.app.tempDir
-##         raise "must rewrite"
-##         from lino.oogen import SpreadsheetDocument
-##         doc = SpreadsheetDocument("printList")
-##         rows = self.getSelectedRows()
-##         if len(rows) == 1:
-##             rows = self.rpt
-##         rpt = doc.report()
-##         self.rpt.setupReport(rpt)
-##         rpt.execute(rows)
-##         #outFile = opj(workdir,self.ds.getName()+".sxc")
-##         doc.save(self.getForm(),showOutput=True)
-
-##     def getSelectedRows(self):
-##         raise NotImplementedError
-
-##     def getCurrentRow(self):
-##         l = self.getSelectedRows()
-##         if len(l) != 1:
-##             raise InvalidRequestError("more than one row selected!")
-##         i = l[0]
-##         if i == len(self.rpt):
-##             raise InvalidRequestError(\
-##                 "you cannot select the after-last row!")
-##         return self.rpt[i]
-
-##     def withCurrentRow(self,meth,*args,**kw):
-##         r = self.getCurrentRow()
-##         meth(r,*args,**kw)
-        
-##     def onClose(self):
-##         self.rpt.onClose()
-
-##     def getLineWidth(self):
-##         return 80
-##     def getColumnSepWidth(self):
-##         return 0
-
-## def nop(x):
-##     pass
-
-## class ReportRowForm(ReportForm):
-    
-##     def __init__(self,app,rpt,afterSkip=nop,*args,**kw):
-##         ReportForm.__init__(app,rpt)
-##         self.afterSkip = afterSkip
-##         self.currentPos = 0
-
-##     def skip(self,n):
-##         #print __name__, n
-##         if n > 0:
-##             if self.currentPos + n < len(self.rpt):
-##                 self.currentPos += n
-##                 self.afterSkip(self)
-##                 self.refresh()
-##         else:
-##             if self.currentPos + n >= 0:
-##                 self.currentPos += n
-##                 self.afterSkip(self)
-##                 self.refresh()
-
-
-##     def getSelectedRows(self):
-##         return [self.currentPos]
-        
-
-##     def setupGoMenu(self):
-##         frm = self.getForm()
-##         m = frm.addMenu("go",label="&Go")
-##         m.addItem("next",
-##                   label="&Next",
-##                   accel="PgDn").setHandler(self.skip,1)
-##         m.addItem("previous",
-##                   label="&Previous",
-##                   accel="PgUp").setHandler(self.skip,-1)
-
-##     def getStatus(self):
-##         return "%d/%d" % (self.currentPos,len(self.rpt))
-    
-    
                 
-        
+#class SimpleDbMainForm(DbMainForm):
 
+        
 class Dialog(Form):
     
     modal=True

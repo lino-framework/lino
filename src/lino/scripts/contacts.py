@@ -1,19 +1,12 @@
-#from lino.forms import GuiApplication
-from lino.apps.contacts.contacts_forms import Contacts
-from lino.apps.contacts.contacts_demo import startup
+## from lino.apps.contacts.contacts_forms import Contacts
+## from lino.apps.contacts.contacts_demo import startup
 
-## class AddressBook(GuiApplication):
-##     name="Lino AdressBook"
-##     version="0.0.1"
-##     author="Luc"
-## ##     mainFormClass=MyMainForm
-        
-##     def createMainForm(self):
-##         return AddressBookMainForm(demo.startup())
-    
-##     def beginSession(self,*args,**kw):
-##         return demo.startup(*args,**kw)
-    
-dbc=startup(filename="contacts.db")
-app=Contacts(dbc)
+## dbc=startup(filename="contacts.db")
+## app=Contacts(dbc)
+## app.main()
+
+from lino.apps.contacts.contacts_demo import DemoContacts
+app=DemoContacts(filename="contacts.db")
+app.quickStartup(filename="contacts.db")
+app.setFilename("contacts.db")
 app.main()

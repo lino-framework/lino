@@ -17,6 +17,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+from lino.forms.gui import GuiApplication
+from lino.forms import DbMainForm
 from lino.adamo.ddl import *
 
 #from lino.apps.pinboard.babel import Language
@@ -322,6 +324,41 @@ class ContactsSchema(Schema):
                      Function,
                      Contact)
                      #Partner, PartnerType)
+
+class ContactsMainForm(DbMainForm):
+    
+    schemaClass=ContactsSchema
+    
+    """
+    
+Welcome to Contacts, a Lino demo application to manage your contacts.
+Note that this application is not stable and there are no known users.
+
+"""
+
+    def addContactsMenu(self):
+        m = self.addMenu("contacts","&Contacts")
+        self.addReportItem(
+            m,"nations",NationsReport,label="&Nations")
+        self.addReportItem(
+            m,"cities",CitiesReport,label="&Cities")
+        self.addReportItem(
+            m,"contacts",ContactsReport,label="&Contacts")
+        self.addReportItem(
+            m,"orgs",OrganisationsReport,label="&Organisations")
+        self.addReportItem(
+            m,"persons",PersonsReport,label="&Persons")
+        
+    def setupMenu(self):
+        self.addContactsMenu()
+        self.addProgramMenu()
+    
+
+class Contacts(GuiApplication):
+    name="Lino Contacts"
+    version="0.0.1"
+    author="Luc Saffre"
+    mainFormClass=ContactsMainForm
 
     
 

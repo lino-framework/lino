@@ -40,9 +40,8 @@ from lino.adamo import center
     #def run(self):
     #    pass
 
-class Schema: #(Application):
+class Schema:
     
-    #mainForm=NotImplementedError
     tableClasses=NotImplementedError
     defaultLangs = ('en',)
 
@@ -51,8 +50,6 @@ class Schema: #(Application):
                  checkIntegrityOnStartup=False,
                  tempDir=".",
                  langs=None):
-        #GuiApplication.__init__(self,**kw)
-        #self.toolkit=toolkit
         if session is None:
             session=Session()
         else:
@@ -67,21 +64,12 @@ class Schema: #(Application):
             langs="en de fr nl et"
         self._possibleLangs = tuple(langs.split())
         
-        #self._databases = []
-        #self._plugins = []
         self._tables = []
         
-        #self.plugins = AttrDict()
         self.tables = AttrDict()
-        #self.forms = AttrDict()
-        #self.options = AttrDict(d=kw)
-        
-        #center.addSchema(self)
         
         self.initialize()
 
-        """ Note: for plugins and tables it is important to keep also a
-        sequential list.  """
         
 ##     def setupOptionParser(self,parser):
 ##         Application.setupOptionParser(self,parser)

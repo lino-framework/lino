@@ -135,16 +135,19 @@ class MyDataTable(wx.grid.PyGridTableBase):
         "required"
         #if rowIndex == len(self.cells): return "."
         v=self.rows[rowIndex].values[colIndex]
+        #if colIndex==1 and rowIndex == 0:
+        #    print "GetValue()",v
         if v is None: return ""
         return self.columns[colIndex].format(v)
 
     def SetValue(self, rowIndex, colIndex, value):
         "required"
-        #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
-        frm=self.editor.getForm()
+        print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(value))
         assert self.editor.enabled
-        if not frm.editing:
-            frm.editing=True
+        # wieso frm.editing=True ?
+        #frm=self.editor.getForm()
+        #if not frm.editing:
+        #    frm.editing=True
         
 ##         if not self.editor.rpt.canWrite():
 ##             return
@@ -163,7 +166,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
             v=None
         else:
             v=col.datacol.parse(value,self.editor.rpt.query)
-
+            
         row=self.rows[rowIndex]
         row.lock()
         col.setCellValue(row,v)

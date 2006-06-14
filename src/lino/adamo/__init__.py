@@ -35,13 +35,13 @@ import sys
 #from widgets import Menu, Command
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
-from lino.adamo.rowattrs import Field, Pointer, BabelField, Vurt
+#from lino.adamo.rowattrs import Field, Pointer, BabelField, Vurt
 #, Match#, Button
 #from lino.adamo.schema import Schema, SchemaPlugin
-from lino.adamo.store import Populator
+#from lino.adamo.store import Populator
 #from session import ConsoleSession
 #from session import Application
-from lino.adamo.row import DataRow
+#from lino.adamo.row import DataRow
 #from database import QuickDatabase 
 #from center import Center
 
@@ -78,17 +78,18 @@ __all__ = [#'Table','LinkTable',
            #'Field','Pointer','BabelField','Vurt',
            #'Match',#'Button',
            'DataVeto','InvalidRequestError',
-           'DataRow',
+           #'DataRow',
            #'Form',
            #'Menu','Command',
            #'Schema','SchemaPlugin',
-           'Populator',
+           #'Populator',
            #'ConsoleSession',
            #'Application',
            #'quickdb',
-           'INT', 'BOOL', 'ROWID', 'STRING',
-           'DATE', 'TIME', 'DURATION',
-           'MEMO',
-           'EMAIL', 'URL',
-           'PRICE', 'AMOUNT', 
-           'IMAGE', 'LOGO', 'PASSWORD']
+##            'INT', 'BOOL', 'ROWID', 'STRING',
+##            'DATE', 'TIME', 'DURATION',
+##            'MEMO',
+##            'EMAIL', 'URL',
+##            'PRICE', 'AMOUNT', 
+##            'IMAGE', 'LOGO', 'PASSWORD'
+           ]

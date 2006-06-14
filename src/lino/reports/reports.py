@@ -63,7 +63,9 @@ class ReportRow:
         pass
     
     def unlock(self):
+        print "unlock() before computeValues()", self
         self.computeValues()
+        print "unlock() after computeValues()", self
 
     def cells(self):
         "yields (col,formattedCellValue) for each column"
