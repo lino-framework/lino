@@ -98,14 +98,14 @@ class DbContext(Context):
             store.checkIntegrity(self)
         self.status("Checking %s", self.db.getLabel())
         
-    def populate(self):
+    def populate(self,p):
         status=self.getSessionStatus()
-        schema=self.db.schema
+        #schema=self.db.schema
         for store in self.db.getStoresById():
             #p.runfrom(self.db.schema.session.toolkit,self,store)
             name = "populate"+store.getTable().name
             try:
-                m = getattr(schema,name)
+                m = getattr(p,name)
                 if store.isVirgin():
                     self.status("Populating %s" % store)
                     qry=store.query(self,"*")

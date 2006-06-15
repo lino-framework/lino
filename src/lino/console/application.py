@@ -60,8 +60,8 @@ class Application(Session):
     
     """
         
-    def setupApplication(self):
-        pass
+##     def setupApplication(self):
+##         pass
         
 
     def close(self):
@@ -172,7 +172,7 @@ class Application(Session):
             options,args = p.parse_args(argv)
             self.applyOptions(options,args)
             #self.on_main()
-            self.setupApplication()
+            #self.setupApplication()
 
             if self.name and self.toolkit.isInteractive():
                 self.notice(self.aboutString())
