@@ -24,25 +24,56 @@ import os, sys
 from lino.adamo.datatypes import itod
 from lino.apps.contacts import contacts_demo as addrdemo
 from ledger_tables import *
+from ledger_forms import Ledger
 
-def startup(filename=None, langs=None,
-            big=False,
-            dump=False,
-            populate=True,
-            withDemoData=True,
-            **kw):
-    schema = LedgerSchema(**kw)
-    sess=schema.quickStartup(langs=langs,
-                             filename=filename,
-                             dump=dump)
 
-    if populate:
-        if withDemoData:
-            sess.populate(DemoPopulator(big=big))
-        else:
-            sess.populate(StandardPopulator(big=big))
+def startup(**kw):
+    app=DemoLedger(**kw)
+    return app.createContext()
 
-    return sess
+class DemoLedger(Ledger):
+
+    def __init__(self,
+                 populate=True,big=False, withDemoData=True,
+                 **kw):
+        self.populate=populate
+        self.big=big
+        self.withDemoData=withDemoData
+        Ledger.__init__(self,**kw)
+    
+    def createContext(self):
+        ctx=Ledger.createContext(self)
+        if self.populate:
+            if self.withDemoData:
+                self.runtask(DemoPopulator(big=self.big),ctx)
+                #ctx.populate(DemoPopulator(big=self.big))
+            else:
+                self.runtask(StandardPopulator(big=self.big),ctx)
+                #ctx.populate(StandardPopulator(big=self.big))
+        return ctx
+        
+
+
+
+
+## def startup(filename=None, langs=None,
+##             big=False,
+##             dump=False,
+##             populate=True,
+##             withDemoData=True,
+##             **kw):
+##     schema = LedgerSchema(**kw)
+##     sess=schema.quickStartup(langs=langs,
+##                              filename=filename,
+##                              dump=dump)
+
+##     if populate:
+##         if withDemoData:
+##             sess.populate(DemoPopulator(big=big))
+##         else:
+##             sess.populate(StandardPopulator(big=big))
+
+##     return sess
 
 
 class StandardPopulator(addrdemo.StandardPopulator):

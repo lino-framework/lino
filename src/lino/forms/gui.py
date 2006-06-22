@@ -130,8 +130,6 @@ class GuiApplication(Application):
 
 
 
-
-
 ## def show(frm):#,*args,**kw):
 ##     app=GuiApplication(frm)
 ##     #toolkit=createToolkit(*args,**kw)

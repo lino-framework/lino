@@ -25,7 +25,7 @@
 import os
 from lino import config
 from lino.adamo import ddl
-from lino.adamo.store import Populator
+#from lino.adamo.store import Populator
 from lino.adamo.datatypes import itod
 #from lino.apps.addrbook.addrbook_schema import AddressBookSchema, City
 #from lino.apps.addrbook import tables
@@ -60,6 +60,10 @@ FEMALE='f'
         
 
 ##     return ctx
+
+def startup(**kw):
+    app=DemoContacts(**kw)
+    return app.createContext()
 
 class DemoContacts(Contacts):
 
@@ -103,11 +107,11 @@ class DemoContacts(Contacts):
 ##     return ctx
 
 
-class StandardPopulator(Populator):
+class StandardPopulator(ddl.Populator):
     
     def __init__(self, big=False,*args,**kw):
         self.big = big
-        Populator.__init__(self,*args,**kw)
+        ddl.Populator.__init__(self,*args,**kw)
         
     def populateUsers(self,q):
         q = q.query('id firstName name')

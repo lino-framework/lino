@@ -380,12 +380,13 @@ class Populator(Progresser):
                 try:
                     m = getattr(self,name)
                 except AttributeError:
-                    pass
+                    self.debug("No method %s.%s",self.__class__,name) 
                 else:
                     self.status("Populating %s" % store)
                     qry=store.query(dbc,"*")
                     m(qry)
                     store.commit()
+        dbc.setSessionStatus(status)
     
 
 

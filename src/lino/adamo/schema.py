@@ -27,6 +27,7 @@ from lino.misc.attrdict import AttrDict
 #from lino.console.application import GuiApplication
 
 from lino.console.task import Session
+from lino.forms.gui import GuiApplication
 
 #from lino.adamo.forms import Form
 from lino.adamo.table import Table, SchemaComponent
@@ -271,30 +272,30 @@ class Schema:
         for cl in self.tableClasses:
             self.addTable(cl)
     
-    def quickStartup(self,
-                     langs=None,
-                     dump=False,
-                     filename=None,
-                     **kw):
-        #print "%s.quickStartup()" % self.__class__
-##         if schema is None:
-##             schema=Schema()
-##             for cl in self.tableClasses:
-##                 schema.addTable(cl)
-        #self.console.debug("Initialize Schema")
-        db = self.database(langs=langs)
-        #self.console.debug("Connect")
-        conn = center.connection(filename=filename)
-        db.connect(conn)
-        if dump:
-            #conn.startDump(syscon.notice)
-            #conn.startDump(self.console.stdout)
-            assert hasattr(dump,'write')
-            conn.startDump(dump)
-        return db.startup()
-        #dbc=DbContext(db,**kw)
-        #dbc.startup()
-        #return dbc
+##     def quickStartup(self,
+##                      langs=None,
+##                      dump=False,
+##                      filename=None,
+##                      **kw):
+##         #print "%s.quickStartup()" % self.__class__
+## ##         if schema is None:
+## ##             schema=Schema()
+## ##             for cl in self.tableClasses:
+## ##                 schema.addTable(cl)
+##         #self.console.debug("Initialize Schema")
+##         db = self.database(langs=langs)
+##         #self.console.debug("Connect")
+##         conn = center.connection(filename=filename)
+##         db.connect(conn)
+##         if dump:
+##             #conn.startDump(syscon.notice)
+##             #conn.startDump(self.console.stdout)
+##             assert hasattr(dump,'write')
+##             conn.startDump(dump)
+##         return db.startup()
+##         #dbc=DbContext(db,**kw)
+##         #dbc.startup()
+##         #return dbc
     
 ##     def run(self,dbc=None):
 ##         if dbc is None:
@@ -716,4 +717,35 @@ class LayoutFactory:
 ##         Application.applyOptions(self,options,args)
 ##         self.loadfrom = options.loadfrom
 
+
+class DbApplication(GuiApplication):
+    #wishlist=None
+    #mainFormClass=None
+    #dbname=None
+
+    def __init__(self,filename=None,langs=None,dump=False,**kw):
+        GuiApplication.__init__(self,**kw)
+        #if filename is None:
+        #    filename=self.dbname+".db"
+        self.filename=filename
+        self.langs=langs
+        self.dump=dump
+
+    def createMainForm(self):
+        dbc=self.createContext()
+        return self.mainFormClass(dbc)
+
+    def createContext(self):
+        schema=self.mainFormClass.schemaClass(self)
+        db = schema.database(langs=self.langs)
+        conn = center.connection(filename=self.filename)
+        db.connect(conn)
+        if self.dump:
+            #conn.startDump(syscon.notice)
+            conn.startDump(self.console.stdout)
+            #assert hasattr(self.dump,'write')
+            #conn.startDump(self.dump)
+        return db.startup()
+        
+        
 

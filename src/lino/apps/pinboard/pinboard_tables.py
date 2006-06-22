@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.ddl import Schema
+from lino.adamo.ddl import DbMainForm, DbApplication
 
 from lino.apps.contacts.contacts_tables import User
 from lino.apps.contacts.contacts_tables import Contact
@@ -69,6 +70,42 @@ class PinboardSchema(Schema):
         PubType,
         PubAuthor)
 
+
+
+class PinboardMainForm(DbMainForm):
+    schemaClass=PinboardSchema
+    
+    def setupMenu(self):
+        m = self.addMenu("pinboard","&Pinboard")
+        
+        self.addReportItem(m,"authors",tables.AuthorsReport,
+                        label="&Authors")
+        self.addReportItem(m,"publications",tables.PublicationsReport,
+                        label="&Publications")
+        self.addReportItem(m,"nodes",tables.NodesReport,
+                        label="&Nodes")
+        self.addReportItem(m,"news",tables.NewsItemsReport,
+                        label="&News")
+        self.addReportItem(m,"newsgroups",tables.NewsgroupsReport,
+                        label="&Newsgroups")
+        
+##         m = frm.addMenu("reports","&Reports")
+##         m.addItem("s",label="&Static HTML").setHandler(
+##             self.writeStaticSite,sess)
+        
+        self.addProgramMenu()
+
+
+
+class Pinboard(DbApplication):
+    name="Lino Pinboard"
+    years='2005-2006'
+    author="Luc Saffre"
+    mainFormClass=PinboardMainForm
+    
+    
+
 __all__ = [t.__name__ for t in PinboardSchema.tableClasses]
 
 __all__.append('PinboardSchema')
+__all__.append('Pinboard')

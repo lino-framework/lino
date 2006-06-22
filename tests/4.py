@@ -40,6 +40,8 @@ class Case(TestCase):
     def test01(self):
         NATIONS = self.sess.query(Nation)
         n = NATIONS.peek('ee')
+        self.assertEqual( str(NATIONS.getContext().getBabelLangs()),
+                          "[<BabelLang en(0)>]")
         self.assertEqual(n.name, 'Estonia')
         
         try:

@@ -19,7 +19,7 @@
 
 #from lino.adamo.ddl import Schema
 
-from lino.apps.contacts.contacts_forms import \
+from lino.apps.contacts.contacts_tables import \
      Contacts, ContactsMainForm
 import ledger_tables as tables
 

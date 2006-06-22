@@ -30,9 +30,11 @@ from lino.adamo.schema import Schema
 #from lino.adamo.dbapplication import DbApplication,\
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
-#from lino.adamo.store import Populator
+from lino.adamo.store import Populator
 from lino.adamo.dbreports import DataReport
 #from lino.adamo.row import DataRow
+from lino.adamo.schema import DbApplication
+from lino.forms.forms import DbMainForm
 
 __all__ = filter(lambda x: x[0] != "_", dir())
 

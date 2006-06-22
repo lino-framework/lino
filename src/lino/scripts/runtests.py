@@ -214,7 +214,7 @@ continue testing even if failures or errors occur""",
     def run(self):
         suite = self.makeSuite(self.args)
         #self.status("") 
-        stream=sys.stdout
+        #stream=sys.stdout
         stream=self.toolkit.stdout
         if self.options.ignore:
             runner = unittest.TextTestRunner(stream=stream)

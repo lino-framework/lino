@@ -17,10 +17,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.forms.gui import GuiApplication
 from lino.forms import DbMainForm
 from lino.adamo.ddl import *
-from lino.adamo import center
 
 #from lino.apps.pinboard.babel import Language
 
@@ -354,45 +352,14 @@ Note that this application is not stable and there are no known users.
         self.addContactsMenu()
         self.addProgramMenu()
     
-#from lino.console import Application
-from lino.forms.gui import GuiApplication
+from lino.adamo.schema import DbApplication
 
-class DbGuiApplication(GuiApplication):
-    #wishlist=None
-    #mainFormClass=None
-    dbname=None
-
-    def __init__(self,filename=None,langs=None,dump=False,**kw):
-        GuiApplication.__init__(self,**kw)
-        if filename is None:
-            filename=self.dbname+".db"
-        self.filename=filename
-        self.langs=langs
-        self.dump=dump
-
-    def createMainForm(self):
-        dbc=self.createContext()
-        return self.mainFormClass(dbc)
-
-    def createContext(self):
-        schema=self.mainFormClass.schemaClass(self)
-        db = schema.database(langs=self.langs)
-        conn = center.connection(filename=self.filename)
-        db.connect(conn)
-        if self.dump:
-            #conn.startDump(syscon.notice)
-            conn.startDump(self.console.stdout)
-            #assert hasattr(self.dump,'write')
-            #conn.startDump(self.dump)
-        return db.startup()
-        
-        
-class Contacts(DbGuiApplication):
+class Contacts(DbApplication):
     name="Lino Contacts"
     version="0.0.1"
     author="Luc Saffre"
     mainFormClass=ContactsMainForm
-    dbname="contacts"
+    #dbname="contacts"
 
     
 

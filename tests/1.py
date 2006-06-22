@@ -33,7 +33,7 @@ from lino.apps.ledger import ledger_demo
 from lino.apps.ledger.ledger_tables import *
 
 class Case(TestCase):
-
+    verbosity=2
     def setUp(self):
         TestCase.setUp(self)
         self.sess = ledger_demo.startup()

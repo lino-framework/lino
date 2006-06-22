@@ -18,31 +18,66 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from pinboard_tables import *
+#from pinboard_forms import Pinboard
 from lino.apps.contacts import contacts_demo 
 
 from lino.adamo.ddl import Populator
 
-def startup(filename=None, langs=None,
-            populate=True,
-            dump=None,
-            withDemoData=True,
-            withJokes=False,
-            **kw):
-    schema = PinboardSchema(**kw)
-    sess=schema.quickStartup(langs=langs,
-                             filename=filename,
-                             dump=dump)
-    if populate:
-        
-        if withDemoData:
-            sess.populate(DemoPopulator())
-        else:
-            sess.populate(StdPopulator())
 
-        if withJokes:
-            sess.populate(JokesPopulator())
+def startup(**kw):
+    app=DemoPinbord(**kw)
+    return app.createContext()
+
+class DemoPinbord(Pinboard):
+
+    def __init__(self,
+                 populate=True,big=False, withDemoData=True,
+                 withJokes=False,
+                 **kw):
+        self.populate=populate
+        self.big=big
+        self.withDemoData=withDemoData
+        self.withJokes=withJokes
+        Pinboard.__init__(self,**kw)
+    
+    def createContext(self):
+        ctx=Pinboard.createContext(self)
+        if self.populate:
+            if self.withDemoData:
+                self.runtask(DemoPopulator(),ctx)
+                #ctx.populate(DemoPopulator(big=self.big))
+            else:
+                self.runtask(StdPopulator(),ctx)
+                #ctx.populate(StandardPopulator(big=self.big))
+            if self.withJokes:
+                self.runtask(JokesPopulator(),ctx)
+                
+        return ctx
         
-    return sess
+
+
+
+## def startup(filename=None, langs=None,
+##             populate=True,
+##             dump=None,
+##             withDemoData=True,
+##             withJokes=False,
+##             **kw):
+##     schema = PinboardSchema(**kw)
+##     sess=schema.quickStartup(langs=langs,
+##                              filename=filename,
+##                              dump=dump)
+##     if populate:
+        
+##         if withDemoData:
+##             sess.populate(DemoPopulator())
+##         else:
+##             sess.populate(StdPopulator())
+
+##         if withJokes:
+##             sess.populate(JokesPopulator())
+        
+##     return sess
 
 class StdPopulator(contacts_demo.StandardPopulator):
         
