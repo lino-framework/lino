@@ -707,34 +707,22 @@ class DbMainForm(Form):
 ##         self.dbsess=dbsess
 ##         Form.__init__(self,*args,**kw)
 
-    def __init__(self,filename=None,langs=None,dump=False,**kw):
-        self.dbsess=None
-        self.filename=filename
-        self.langs=langs
-        self.dump=dump
+    #def __init__(self,filename=None,langs=None,dump=False,**kw):
+    def __init__(self,dbcontext,**kw):
+        self.dbsess=dbcontext
+        #self.filename=filename
+        #self.langs=langs
+        #self.dump=dump
         #DbMainForm.__init__(self,**kw)
         Form.__init__(self,**kw)
         
 ##     def createContext(self,*args,**kw):
 ##         return self.schemaClass(self).quickStartup(*args,**kw)
     
-    def createContext(self,*args,**kw):
-        schema=self.schemaClass(self)
-        db = schema.database(langs=langs)
-        conn = center.connection(filename=filename)
-        db.connect(conn)
-        if self.dump:
-            #conn.startDump(syscon.notice)
-            #conn.startDump(self.console.stdout)
-            assert hasattr(self.dump,'write')
-            conn.startDump(self.dump)
-        return db.startup()
-        
-        
 
-    def onShow(self):
-        if self.dbsess is None:
-            self.dbsess=self.createContext()
+##     def onShow(self):
+##         if self.dbsess is None:
+##             self.dbsess=self.createContext()
             
     def onClose(self):
         if self.dbsess is not None:

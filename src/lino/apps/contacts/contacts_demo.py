@@ -25,6 +25,7 @@
 import os
 from lino import config
 from lino.adamo import ddl
+from lino.adamo.store import Populator
 from lino.adamo.datatypes import itod
 #from lino.apps.addrbook.addrbook_schema import AddressBookSchema, City
 #from lino.apps.addrbook import tables
@@ -60,31 +61,53 @@ FEMALE='f'
 
 ##     return ctx
 
-def startup(filename=None,
-            langs=None,
-            populate=True,
-            dump=None,
-            big=False,
-            withDemoData=True,
-            **kw):
-    schema=ContactsSchema(**kw)
-    ctx=schema.quickStartup(langs=langs,
-                            filename=filename,
-                            dump=dump)
-    if populate:
-        if withDemoData:
-            ctx.populate(DemoPopulator(big=big))
-        else:
-            ctx.populate(StandardPopulator(big=big))
+class DemoContacts(Contacts):
 
-    return ctx
+    def __init__(self,
+                 populate=True,big=False, withDemoData=True,
+                 **kw):
+        self.populate=populate
+        self.big=big
+        self.withDemoData=withDemoData
+        Contacts.__init__(self,**kw)
+    
+    def createContext(self):
+        ctx=Contacts.createContext(self)
+        if self.populate:
+            if self.withDemoData:
+                self.runtask(DemoPopulator(big=self.big),ctx)
+                #ctx.populate(DemoPopulator(big=self.big))
+            else:
+                self.runtask(StandardPopulator(big=self.big),ctx)
+                #ctx.populate(StandardPopulator(big=self.big))
+        return ctx
+        
+
+## def startup(filename=None,
+##             langs=None,
+##             populate=True,
+##             dump=None,
+##             big=False,
+##             withDemoData=True,
+##             **kw):
+##     schema=ContactsSchema(**kw)
+##     ctx=schema.quickStartup(langs=langs,
+##                             filename=filename,
+##                             dump=dump)
+##     if populate:
+##         if withDemoData:
+##             ctx.populate(DemoPopulator(big=big))
+##         else:
+##             ctx.populate(StandardPopulator(big=big))
+
+##     return ctx
 
 
 class StandardPopulator(Populator):
     
-    def __init__(self, big=False,**kw):
+    def __init__(self, big=False,*args,**kw):
         self.big = big
-        Populator.__init__(self,None,**kw)
+        Populator.__init__(self,*args,**kw)
         
     def populateUsers(self,q):
         q = q.query('id firstName name')

@@ -18,6 +18,51 @@
 
 import lino
 from lino.console import Application
+from lino.console import syscon
+
+## _toolkit=None
+
+## def start_toolkit(wishlist=None):
+##     global _toolkit
+##     assert _toolkit is None
+##     _toolkit=create_toolkit(*args,**kw)
+##     _toolkit.run_forever()
+    
+## def create_toolkit(*args,**kw):
+##     if wishlist is None:
+##         if syscon.getSystemConsole().isInteractive():
+##             wishlist="wx tix cp console"
+##             wishlist=self.wishlist
+##         else:
+##             wishlist="testkit"
+            
+##         #if wishlist is None:
+##         #    wishlist=lino.config.get('forms','wishlist')
+
+##         for tkname in wishlist.split():
+##             #print tkname
+##             if tkname == "tix": 
+##                 from lino.forms.tix.tixform import Toolkit
+##                 return Toolkit()
+##             if tkname == "wx": 
+##                 from lino.forms.wx.wxtoolkit import Toolkit
+##                 return Toolkit()
+##             if tkname == "testkit": 
+##                 from lino.forms.testkit import Toolkit
+##                 return Toolkit()
+##             if tkname == "console":
+##                 return console
+##                 #from lino.forms.console import Toolkit
+##                 #return Toolkit()
+##             if tkname == "cp": 
+##                 from lino.forms.cherrygui import Toolkit
+##                 return Toolkit()
+##             if tkname == "htmlgen":
+##                 from lino.console.htmlgen_toolkit import Toolkit
+##                 return Toolkit()
+
+##         raise "no toolkit found for wishlist %r" % wishlist
+
 
 
 class GuiApplication(Application):
@@ -34,7 +79,9 @@ class GuiApplication(Application):
         #assert self.console is None
         self.toolkit=self.createToolkit()
         self.toolkit.start_running(self)
-        self.createMainForm()
+        if self.mainForm is None:
+            self.mainForm=self.createMainForm()
+        #self.createMainForm()
         self.showForm(self.mainForm)
         self.toolkit.run_forever()
         
@@ -72,8 +119,9 @@ class GuiApplication(Application):
         raise "no toolkit found for wishlist %r" % wishlist
 
     def createMainForm(self):
-        if self.mainForm is None:
-            self.mainForm=self.mainFormClass()
+        #if self.mainForm is None:
+        #    self.mainForm=self.mainFormClass()
+        return self.mainFormClass()
     
     def showForm(self,frm):
         frm.setup(self)

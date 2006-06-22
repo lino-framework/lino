@@ -48,6 +48,7 @@ def rewriter(from_encoding,to_stream,encoding):
     if encoding == from_encoding: return to_stream
 
     (e,d,sr,sw) = codecs.lookup(encoding)
+    #unicode_to_fs = sw(to_stream)
     unicode_to_fs = sw(to_stream,errors='replace')
 
     (e,d,sr,sw) = codecs.lookup(from_encoding)

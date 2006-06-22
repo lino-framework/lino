@@ -511,6 +511,7 @@ class Toolkit(BaseToolkit):
     
     def __init__(self,console=None):
         self.root=None
+        self._running=False
         if console is None:
             from lino.console import syscon
             console=syscon.getSystemConsole()
@@ -532,6 +533,9 @@ class Toolkit(BaseToolkit):
     
     def show_status(self,*args,**kw):
         self.console.show_status(*args,**kw)
+        
+    def show_debug(self,*args,**kw):
+        self.console.show_debug(*args,**kw)
         
         
     def onTaskBegin(self,*args,**kw):
@@ -644,9 +648,11 @@ class Toolkit(BaseToolkit):
     def stop_running(self):
         pass
     
+    #def start_running(self):
     def start_running(self,app):
         assert not self.running()
         self.root=app
+        #self._running=true
         
 
 

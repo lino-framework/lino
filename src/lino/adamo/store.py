@@ -365,22 +365,27 @@ class VolatileStore(BaseStore):
 
     
 
-from lino.console.task import Task
+#from lino.console.task import Task
+from lino.console.task import Progresser
 
-class Populator(Task):
-    def run(self,dbc,store):
-        name = "populate"+store.getTable().name
-        try:
-            m = getattr(self,name)
-        except AttributeError:
-            return
-        if not store.isVirgin():
-            self.debug("Not populating %s",store) 
-            return
-        self.status("Populating %s" % store)
-        qry=store.query(dbc,"*")
-        m(qry)
-        store.commit()
+#class Populator(Task):
+class Populator(Progresser):
+    def run(self,dbc):
+        status=dbc.getSessionStatus()
+        for store in dbc.db.getStoresById():
+            if not store.isVirgin():
+                self.debug("Not populating %s",store.getTable().name) 
+            else:
+                name = "populate"+store.getTable().name
+                try:
+                    m = getattr(self,name)
+                except AttributeError:
+                    pass
+                else:
+                    self.status("Populating %s" % store)
+                    qry=store.query(dbc,"*")
+                    m(qry)
+                    store.commit()
     
 
 

@@ -588,6 +588,9 @@ class Toolkit(toolkit.Toolkit):
     vpanelFactory = VPanel
     dataGridFactory = DataGrid
             
+##     def __init__(self,*args,**kw):
+##         toolkit.Toolkit.__init__(self,*args,**kw)
+##         self.wxapp=None
         
     def createFormCtrl(self,frm):
         parent=frm._parent
@@ -758,7 +761,11 @@ class Toolkit(toolkit.Toolkit):
     def onTaskBegin(self,task):
         #assert self.progressDialog is None
         #print job
-        assert self._activeForm is not None
+        #assert self._activeForm is not None
+        if self._activeForm is None:
+            parent=None
+        else:
+            parent=self._activeForm.ctrl
         title=""
 ##         if task.statusMessage is None:
 ##             stm=""
@@ -770,7 +777,7 @@ class Toolkit(toolkit.Toolkit):
             task.wxctrl = wx.ProgressDialog(
                 title,task.getStatusLine(),
                 100,
-                self._activeForm.ctrl,
+                parent,
                 wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
 
     def on_breathe(self,task):
@@ -790,11 +797,13 @@ class Toolkit(toolkit.Toolkit):
         task.wxctrl.Resume()
         
     def onTaskDone(self,task):
+        if task.wxctrl is None: return
         task.wxctrl.Update(100,'')
         task.wxctrl.Destroy()
         task.wxctrl = None
 
     def onTaskAbort(self,task,*args,**kw):
+        if task.wxctrl is None: return
         task.wxctrl.Destroy()
         task.wxctrl = None
 
@@ -809,6 +818,7 @@ class Toolkit(toolkit.Toolkit):
     def start_running(self,app):
         toolkit.Toolkit.start_running(self,app)
         self.root.ctrl = WxApp(self)
+        #self.wxapp = WxApp(self)
         #wx.EVT_IDLE(self.wxapp, self.onIdle)
         
     def run_forever(self,*args,**kw):
