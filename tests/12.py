@@ -30,8 +30,8 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        app=services.ServicePizzeria()
-        self.sess=app.quickStartup()
+        app=services.MyPizzeria()
+        self.sess=app.createContext()
         services.populate(self.sess)
 
     def tearDown(self):

@@ -17,6 +17,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+raise "moved to raceman_tables.py"
+
 import os
 
 from lino.forms.gui import DbApplication
@@ -25,65 +27,6 @@ from lino.forms.forms import DbMainForm
 from lino.apps.raceman import loaders
 from lino.apps.raceman.raceman_tables import *
 
-class RacemanMainForm(DbMainForm):
-    """\
-This is the Raceman main menu.                                     
-    """
-    
-    def setupMenu(self):
-
-        m = self.addMenu("master","&Stammdaten")
-        
-        m.addReportItem("events",races.EventsReport,
-                        label="&Events")
-        
-        m.addReportItem("races",races.RacesReport,
-                        label="&Races")
-        
-        m.addReportItem("clubs",races.ClubsReport,
-                        label="&Clubs")
-        
-        m.addReportItem("persons",races.PersonsReport,
-                        label="&Persons")
-        
-        self.addProgramMenu()
-        
-
-
-    
-class Raceman(DbApplication):
-    
-    name="Raceman"
-    years='2005-2006'
-    #tables = races.TABLES
-    schemaClass=RacemanSchema
-    mainFormClass=RacemanMainForm
-    loadMirrorsFrom="."
-    
-
-    def setupApplication(self):
-        l=[lc(self.loadfrom) for lc in loaders.LOADERS]
-        self.registerLoaders(l)
-
-
-    def registerLoaders(self,loaders):
-        for l in loaders:
-            it = self.dbsess.schema.findImplementingTables(
-                l.tableClass)
-            assert len(it) == 1
-            it[0].setMirrorLoader(l)
-
-    def setupOptionParser(self,parser):
-        DbApplication.setupOptionParser(self,parser)
-        parser.add_option("--loadfrom",
-                          help="""\
-directory containing mirror source files""",
-                          action="store",
-                          type="string",
-                          dest="loadfrom",
-                          default=".")
-        
-        
 
 if __name__ == '__main__':
     Raceman().main()

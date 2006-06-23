@@ -23,51 +23,8 @@ from lino.apps.contacts.contacts_tables import \
      Contacts, ContactsMainForm
 import ledger_tables as tables
 
-class LedgerMainForm(ContactsMainForm):
-    """
-    
-Ledger is the general accounting suite that comes with Lino.
-Ledger will be great, but it is not ready for use.
+raise "moved to ledger_tables.py"
 
-
-"""
-    def addLedgerMenu(self):
-        m = self.addMenu("ledger","&Ledger")
-        
-        self.addReportItem(m,
-            "products",tables.ProductsReport,
-            label="&Products")
-        self.addReportItem(m,
-            "gl",tables.AccountsReport,
-            label="&GL accounts")
-        self.addReportItem(m,
-            "ccy",tables.CurrenciesReport,
-            label="&Currencies")
-        
-        m = self.addMenu("sales","&Verkauf")
-        self.addReportItem(
-            m,
-            "invoices",tables.InvoicesReport,
-            label="&Invoices")
-        
-    def setupMenu(self):
-        self.addContactsMenu()
-        self.addLedgerMenu()
-        self.addProgramMenu()
-    
-    
-class Ledger(Contacts):
-    name="Lino Ledger"
-    version="0.0.1"
-    copyright="""\
-Copyright (c) 2002-2006 Luc Saffre.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information."""
-    url="http://lino.saffre-rumma.ee/ledger.html"
-    schemaClass=tables.LedgerSchema
-    mainFormClass=LedgerMainForm
-    
 ##     def setupSchema(self):
 ##         self.addTable(Currency)
 ##         AddressBook.setupSchema(self)

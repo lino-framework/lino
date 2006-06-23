@@ -27,12 +27,12 @@ tests wrapped header labels and "d" or "*" as item in columnWidths
 import os
 
 from lino.adamo import *
-from lino.adamo.datatypes import itod
+from lino.adamo.datatypes import itod, DURATION
 #from lino.tools.normalDate import ND
 #from lino.ui import console
 from lino.misc.tsttools import TestCase, main
 
-from lino.apps.raceman.raceman_forms import Raceman
+from lino.apps.raceman.raceman_tables import Raceman
 from lino.apps.raceman import raceman_tables as tables
 
 #from lino.reports import DataReport

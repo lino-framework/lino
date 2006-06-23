@@ -31,7 +31,11 @@ from lino.apps.contacts.contacts_tables import Contact, Function
 #from lino.apps.contacts.tables import User
 #from lino.apps.contacts.contacts_data import *
 
+from lino.apps.contacts.contacts_tables import \
+     Contacts, ContactsMainForm
+
 #from lino.i18n import BabelString
+
 
 class Currency(BabelRow):
     
@@ -337,10 +341,59 @@ class LedgerSchema(contacts.ContactsSchema):
         #Partner,
         #PartnerType        
         ) #+ ContactsSchema.tableClasses
+
+
+class LedgerMainForm(ContactsMainForm):
+    """
+    
+Ledger is the general accounting suite that comes with Lino.
+Ledger will be great, but it is not ready for use.
+
+
+"""
+    schemaClass=LedgerSchema
+    def addLedgerMenu(self):
+        m = self.addMenu("ledger","&Ledger")
+        
+        self.addReportItem(m,
+            "products",ProductsReport,
+            label="&Products")
+        self.addReportItem(m,
+            "gl",AccountsReport,
+            label="&GL accounts")
+        self.addReportItem(m,
+            "ccy",CurrenciesReport,
+            label="&Currencies")
+        
+        m = self.addMenu("sales","&Verkauf")
+        self.addReportItem(
+            m,
+            "invoices",InvoicesReport,
+            label="&Invoices")
+        
+    def setupMenu(self):
+        self.addContactsMenu()
+        self.addLedgerMenu()
+        self.addProgramMenu()
+    
+    
+class Ledger(Contacts):
+    name="Lino Ledger"
+    version="0.0.1"
+    copyright="""\
+Copyright (c) 2002-2006 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    url="http://lino.saffre-rumma.ee/ledger.html"
+    mainFormClass=LedgerMainForm
+    
+    
     
         
 __all__ = [t.__name__ for t in LedgerSchema.tableClasses]
 __all__.append('LedgerSchema')
+__all__.append('Ledger')
 
 ## TABLES = (
 ##           Currency,

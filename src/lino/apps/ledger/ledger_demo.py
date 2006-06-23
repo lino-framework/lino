@@ -24,7 +24,7 @@ import os, sys
 from lino.adamo.datatypes import itod
 from lino.apps.contacts import contacts_demo as addrdemo
 from ledger_tables import *
-from ledger_forms import Ledger
+#from ledger_forms import Ledger
 
 
 def startup(**kw):

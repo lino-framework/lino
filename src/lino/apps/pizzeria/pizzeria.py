@@ -86,11 +86,52 @@ class OrderLine(StoredDataRow):
             return "product is mandatory"
 
 
-class Pizzeria(Schema):
 
-    def setupSchema(self):
-        for cl in Product, Customer, Order, OrderLine:
-            self.addTable(cl)
+class ProductsReport(DataReport):
+    leadTable=Product
+
+
+class CustomersReport(DataReport):
+    leadTable=Customer
+
+class OrdersReport(DataReport):
+    leadTable=Order
+
+
+class PizzeriaSchema(Schema):
+    
+    tableClasses = (Product, Customer, Order, OrderLine)
+
+
+class PizzeriaMain(DbMainForm):
+    
+    schemaClass=PizzeriaSchema
+    
+    """
+    
+Welcome to Pizzeria, the most simple Lino demo application.
+Note that this application is not stable and there are no known users.
+
+"""
+
+    def setupMenu(self):
+        m = self.addMenu("pizzeria","&Pizzeria")
+        self.addReportItem(
+            m,"products",ProductsReport,label="&Products")
+        self.addReportItem(
+            m,"customers",CustomersReport,label="&Customers")
+        self.addReportItem(
+            m,"orders",OrdersReport,label="&Orders")
+        self.addProgramMenu()
+
+
+class Pizzeria(DbApplication):
+    name="Lino Pizzeria"
+    mainFormClass=PizzeriaMain
+
+##     def setupSchema(self):
+##         for cl in Product, Customer, Order, OrderLine:
+##             self.addTable(cl)
 
 
         

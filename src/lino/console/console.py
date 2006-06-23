@@ -102,8 +102,9 @@ class Console(BaseToolkit):
         if batch is not None:
             self._batch = batch
         if verbosity is not None:
-            self._verbosity += verbosity
-            #print "verbositiy %d" % self._verbosity
+            self._verbosity=verbosity
+            #self._verbosity += verbosity
+            #print "%s.verbositiy %d" % (self,self._verbosity)
         if logfile is not None:
             if self._logfile is not None:
                 self._logfile.close()
@@ -292,6 +293,8 @@ class Console(BaseToolkit):
             self.last_updated=0.0 # redisplay status
             self.on_breathe(sess)
             #sess.breathe()
+##         else:
+##             print "%s.verbositiy %d" % (self,self._verbosity)
 
             
     def shutdown(self):

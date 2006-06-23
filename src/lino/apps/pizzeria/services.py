@@ -27,12 +27,49 @@ class Service(pizzeria.Product):
         pizzeria.Product.initTable(self,table)
         table.addField('responsible',STRING)
 
+class ServicesReport(DataReport):
+    leadTable=Service
 
-class ServicePizzeria(pizzeria.Pizzeria):
+
+
+        
+class MyPizzeriaSchema(pizzeria.PizzeriaSchema):
     
-    def setupSchema(self):
-        pizzeria.Pizzeria.setupSchema(self)
-        self.addTable(Service)
+    tableClasses = (pizzeria.Product,
+                    Service,
+                    pizzeria.Customer,
+                    pizzeria.Order, pizzeria.OrderLine)
+
+
+class MyPizzeriaMain(pizzeria.PizzeriaMain):
+    
+    schemaClass=MyPizzeriaSchema
+    
+    """
+    
+Welcome to MyPizzeria, a customization of the most simple Lino demo
+application.  Note that this application is not stable and there are
+no known users.
+
+"""
+
+    def setupMenu(self):
+        m = self.addMenu("my","&My Pizzeria")
+        self.addReportItem(
+            m,"services",ServicesReport,label="&Services")
+        pizzeria.PizzeriaMain.setupMenu(self)
+
+class MyPizzeria(pizzeria.Pizzeria):
+    name="Lino My Pizzeria"
+    mainFormClass=MyPizzeriaMain
+    
+
+
+## class ServicePizzeria(pizzeria.Pizzeria):
+    
+##     def setupSchema(self):
+##         pizzeria.Pizzeria.setupSchema(self)
+##         self.addTable(Service)
 
 
 def populate(sess):

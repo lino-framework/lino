@@ -374,15 +374,19 @@ class Populator(Progresser):
         status=dbc.getSessionStatus()
         for store in dbc.db.getStoresById():
             if not store.isVirgin():
-                self.debug("Not populating %s",store.getTable().name) 
+                self.debug("%s is not virgin",
+                           store.getTable().name) 
             else:
                 name = "populate"+store.getTable().name
                 try:
                     m = getattr(self,name)
                 except AttributeError:
-                    self.debug("No method %s.%s",self.__class__,name) 
+                    self.debug("No method %s.%s()",
+                               self.__class__,name) 
                 else:
-                    self.status("Populating %s" % store)
+                    self.debug("Running %s.%s()",
+                               self.__class__,name) 
+                    self.status("Populating %s." % store)
                     qry=store.query(dbc,"*")
                     m(qry)
                     store.commit()

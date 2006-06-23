@@ -180,7 +180,11 @@ class TestCase(unittest.TestCase):
         syscon.setSystemConsole(self.toolkit)
 
     def tearDown(self):
+        if self._oldToolkit.isVerbose(): # called with -v or -vv
+            print self.getConsoleOutput()
         syscon.setSystemConsole(self._oldToolkit)
+        #print s
+        #raise "blabla"
         if len(self._tempFiles) > 0:
             for fn in self._tempFiles:
                 self.failUnless(os.path.exists(fn))

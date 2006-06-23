@@ -352,8 +352,6 @@ Note that this application is not stable and there are no known users.
         self.addContactsMenu()
         self.addProgramMenu()
     
-from lino.adamo.schema import DbApplication
-
 class Contacts(DbApplication):
     name="Lino Contacts"
     version="0.0.1"

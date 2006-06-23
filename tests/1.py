@@ -34,53 +34,33 @@ from lino.apps.ledger.ledger_tables import *
 
 class Case(TestCase):
     verbosity=2
-    def setUp(self):
-        TestCase.setUp(self)
-        self.sess = ledger_demo.startup()
-        
-    def tearDown(self):
-        self.sess.shutdown()
-
-
-##     def test01(self):
-        
-##         s = " ".join([str(t.getTableName())
-##               for t in self.sess.getTableList()])
-
-##         #print s
-##         self.assertEquivalent(s, """\
-## Currencies Languages Nations Cities Organisations Persons Partners PartnerTypes Products Journals BankStatements MiscOperations Invoices InvoiceLines BalanceItems CashFlowItems ProfitAndLossItems Accounts Bookings
-## """)
-        
-
 
     def test03(self):
         "logical primary key versus atomic primary key"
 
-        INVOICES = self.sess.query(Invoice)
-        INVOICELINES = self.sess.query(ProductInvoiceLine)
+        db=ledger_demo.startup()
+
+        INVOICES = db.query(Invoice)
+        INVOICELINES = db.query(ProductInvoiceLine)
         self.assertEqual(INVOICES.getLeadTable().getPrimaryKey(),
-                              ("jnl","seq"))
+                         ("jnl","seq"))
         self.assertEqual(
             tuple(map(lambda (n,t) : n,
-                         INVOICES.getLeadTable().getPrimaryAtoms())),
+                      INVOICES.getLeadTable().getPrimaryAtoms())),
             ("jnl_id","seq")
             )
         
         self.assertEqual(INVOICELINES.getLeadTable().getPrimaryKey(),
-                              ("invoice","line"))
+                         ("invoice","line"))
         self.assertEqual(
             tuple(map(lambda (n,t) : n,
-                         INVOICELINES.getLeadTable().getPrimaryAtoms())),
+                      INVOICELINES.getLeadTable().getPrimaryAtoms())),
             ("invoice_jnl_id","invoice_seq","line")
             )
+        db.shutdown()
         
 
 
         
-## if __name__ == "__main__":
-##      from lino.misc import tsttools
-##      tsttools.run("1")
-
 if __name__ == '__main__':
     main()
