@@ -326,14 +326,15 @@ class ContactsSchema(Schema):
 
 class ContactsMainForm(DbMainForm):
     
-    schemaClass=ContactsSchema
-    
     """
     
 Welcome to Contacts, a Lino demo application to manage your contacts.
-Note that this application is not stable and there are no known users.
 
-"""
+Warning: This application is not stable and there are no known users.
+
+"""+("\n"*10)
+    
+    schemaClass=ContactsSchema
 
     def addContactsMenu(self):
         m = self.addMenu("contacts","&Contacts")

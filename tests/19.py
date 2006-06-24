@@ -29,7 +29,6 @@ supported.
 
 from lino.misc.tsttools import TestCase, main
 from lino.adamo.ddl import *
-#from lino.adamo.exceptions import InvalidRequestError
 from lino import adamo
 
 
@@ -61,36 +60,8 @@ class City(StoredDataRow):
         return self.name + " (%s)" % self.nation.id
         
 
-## class Contacts:
-##     def init(self):
-##         self.addField('email',EMAIL)
-##         self.addField('phone',STRING)
-
-## class Addresses:
-##     def init(self):
-##         self.addPointer('nation',Nations)
-##         self.addPointer('city',Cities)
-##         self.addField('street',STRING)
-
-##     def after_city(self,row):
-##         if row.city is not None:
-##             row.nation = row.city.nation
-
-## class Organisations(Table,Contacts,Addresses):
-##     "An Organisation is any named group of people."
-##     def init(self):
-##         self.addField('id',ROWID, doc="the internal id number")
-##         self.addField('name',STRING)
-##         Contacts.init(self)
-##         Addresses.init(self)
-
-
 class MySchema(Schema):
-    
-    def setupSchema(self):
-        self.addTable(Nation)
-        self.addTable(City)
-        #self.addTable(Organisation)
+    tableClasses=(Nation, City)
         
 
 
@@ -100,7 +71,7 @@ class Case(TestCase):
 
         schema = MySchema()
 
-        sess = schema.quickStartup(langs='en de fr')
+        sess = schema.createContext(langs='en de fr')
 
         #sess.setBabelLangs('en')
         

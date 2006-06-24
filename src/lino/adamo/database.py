@@ -67,7 +67,6 @@ class Database(Context): #,Describable):
         self._contexts.append(s)
         #if len(self._contexts) == 1:
         #    self.startup(s)
-        
 
     def removeContext(self,s):
         self._contexts.remove(s)

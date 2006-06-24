@@ -28,7 +28,7 @@ class Case(TestCase):
 
     def test01(self):
         schema=RacemanSchema()
-        sess = schema.quickStartup()
+        sess = schema.createContext()
 
         R = sess.query(Race)
         P = sess.query(Participant)

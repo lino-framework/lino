@@ -1,12 +1,12 @@
-from lino.apps.pizzeria.pizzeria import Pizzeria, populate, Orders
+from lino.apps.pizzeria.pizzeria import Pizzeria, populate, Order
 
-app = Pizzeria() #label="Luc's Pizza Restaurant")
+app = Pizzeria() 
 
 sess = app.quickStartup()
     
 populate(sess)
 
-orders = sess.query(Orders,"customer totalPrice")
+orders = sess.query(Order,"customer totalPrice")
 
 for o in orders:
     print "%s must pay %d EUR" % (o.customer.name, o.totalPrice)

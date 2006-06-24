@@ -272,6 +272,17 @@ class Schema:
         for cl in self.tableClasses:
             self.addTable(cl)
     
+    def createContext(self,filename=None,langs=None,dump=False):
+        db = self.database(langs=langs)
+        conn = center.connection(filename=filename)
+        db.connect(conn)
+        if dump:
+            #conn.startDump(syscon.notice)
+            conn.startDump(self.session.console.stdout)
+            #assert hasattr(self.dump,'write')
+            #conn.startDump(self.dump)
+        return db.startup()
+        
 ##     def quickStartup(self,
 ##                      langs=None,
 ##                      dump=False,
@@ -737,15 +748,10 @@ class DbApplication(GuiApplication):
 
     def createContext(self):
         schema=self.mainFormClass.schemaClass(self)
-        db = schema.database(langs=self.langs)
-        conn = center.connection(filename=self.filename)
-        db.connect(conn)
-        if self.dump:
-            #conn.startDump(syscon.notice)
-            conn.startDump(self.console.stdout)
-            #assert hasattr(self.dump,'write')
-            #conn.startDump(self.dump)
-        return db.startup()
-        
+        return schema.createContext(langs=self.langs,
+                                    filename=self.filename,
+                                    dump=self.dump)
+
+    
         
 

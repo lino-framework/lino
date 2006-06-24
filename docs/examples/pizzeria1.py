@@ -2,7 +2,7 @@ from lino.apps.pizzeria.pizzeria import Pizzeria, populate, Order
 
 app = Pizzeria() 
 
-sess = app.quickStartup()
+sess = app.createContext()
     
 populate(sess)
 

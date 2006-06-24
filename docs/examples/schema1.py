@@ -1,13 +1,13 @@
 from lino.adamo.dbreports import DatabaseOverview, SchemaOverview
-from lino.apps.contacts.contacts_forms import Contacts
-from lino.apps.keeper.keeper_forms import Keeper
-from lino.apps.ledger.ledger_forms import Ledger
+from lino.apps.contacts.contacts_tables import Contacts
+from lino.apps.keeper.keeper_tables import Keeper
+from lino.apps.ledger.ledger_tables import Ledger
 
 
 for appclass in Contacts, Keeper, Ledger:
     app=appclass()
-    app.createContext()
+    db=app.createContext()
     print
     print app
-    SchemaOverview(app.dbsess.db.schema).show()
+    SchemaOverview(db.getSchema()).show()
     

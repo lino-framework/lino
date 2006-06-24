@@ -23,7 +23,7 @@ from lino.misc.tsttools import TestCase, main
 
 from lino.console import syscon
 
-from lino.apps.keeper.keeper_forms import Keeper,SearchForm
+#from lino.apps.keeper.keeper_forms import Keeper,SearchForm
 from lino.apps.keeper.keeper_tables import *
 
 TESTDATA = os.path.join(
@@ -45,7 +45,7 @@ VPanel:
         
         #schema=KeeperSchema()
         #sess=schema.quickStartup()
-        sess=app.dbsess
+        sess=app.mainForm.dbsess
         
         q=sess.query(Volume)
         vol=q.appendRow(name="test",path=TESTDATA)

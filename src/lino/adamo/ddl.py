@@ -34,7 +34,7 @@ from lino.adamo.store import Populator
 from lino.adamo.dbreports import DataReport
 #from lino.adamo.row import DataRow
 from lino.adamo.schema import DbApplication
-from lino.forms.forms import DbMainForm
+from lino.forms.forms import DbMainForm, ReportForm
 
 __all__ = filter(lambda x: x[0] != "_", dir())
 

@@ -51,8 +51,6 @@ class Context:
     
 class DbContext(Context):
     def __init__(self,db,*args,**kw):
-        #Session.__init__(self,toolkit,*args,**kw)
-        #self.app=app
         self.db = db
         self.setDefaultLanguage()
         db.addContext(self)
@@ -86,6 +84,9 @@ class DbContext(Context):
 
     def getBabelLangs(self):
         return self._babelLangs
+
+    def getSchema(self):
+        return self.db.schema
 
     def startup(self):
         self.db.startup(self)

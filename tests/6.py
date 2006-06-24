@@ -21,8 +21,8 @@ from lino.misc.tsttools import TestCase, main, Toolkit
 
 from lino.adamo.store import Populator
 
-from lino.apps.timings.timings_tables import TimingsSchema, everyday, \
-     MonthlyCalendar
+#from lino.apps.timings.timings_tables import Timings
+     
 from lino.apps.timings import timings_tables as tables
 from lino.adamo.datatypes import itot
 from lino.adamo import center
@@ -41,23 +41,23 @@ class TestPopulator(Populator):
         self.gerd=q.appendRow(id="gerd",name="Gerd")
         
     def populateDays(self,q):
-        for d in everyday(20050601,20050731):
+        for d in tables.everyday(20050601,20050731):
             q.appendRow(date=d)
 
     def populateUsages(self,q):
         days=q.getContext().query(tables.Day)
-        for d in everyday(20050620,20050624):
+        for d in tables.everyday(20050620,20050624):
             q.appendRow(resource=self.luc,
                         date=days.peek(d),
                         start=itot(530),
                         stop=itot(2145),
                         type=self.a)
-        for d in everyday(20050625,20050628):
+        for d in tables.everyday(20050625,20050628):
             q.appendRow(resource=self.luc,
                         date=days.peek(d),
                         type=self.k)
             
-        for d in everyday(20050628,20050702):
+        for d in tables.everyday(20050628,20050702):
             q.appendRow(resource=self.gerd,
                         date=days.peek(d),
                         type=self.k)
@@ -67,21 +67,21 @@ class Case(TestCase):
     verbosity=0
     def setUp(self):
         TestCase.setUp(self)
-        app=TimingsSchema()
-        #self.sess=app.quickStartup(toolkit=Toolkit()) #,dump=True)
-        self.sess=app.quickStartup() # dump=True)
-        self.sess.populate(TestPopulator())
+        app=tables.Timings()
+        #self.dbc=app.quickStartup(toolkit=Toolkit()) #,dump=True)
+        self.dbc=app.createContext() # dump=True)
+        app.runtask(TestPopulator(self.dbc))
 
     def tearDown(self):
-        self.sess.shutdown()
+        self.dbc.shutdown()
 
     def test01(self):
         #center.startDump()
         #s=center.stopDump()
         #print s
         #self.assertEquivalent(s,""" """)        
-        MonthlyCalendar(self.sess,2005,6).show()
-        #self.sess.db.app.showMonthlyCalendar(self.sess,2005,6)
+        tables.MonthlyCalendar(self.dbc,2005,6).show()
+        #self.dbc.db.app.showMonthlyCalendar(self.dbc,2005,6)
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"""\
@@ -123,8 +123,8 @@ date        |ISO       |Gerd                       |Luc
         
     def test02(self):
         if True: return
-        files=self.sess.db.app._writeStaticSite(
-            self.sess,r"c:\temp\timings")
+        files=self.dbc.db.app._writeStaticSite(
+            self.dbc,r"c:\temp\timings")
         s=self.getConsoleOutput()
         #print s
         self.assertEquivalent(s,"")

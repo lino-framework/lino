@@ -35,6 +35,7 @@ class Case(TestCase):
     
     def test01(self):
 
+        if sqlite.version != '2.0.3': return
         conn = sqlite.connect(':memory:')
         csr = conn.cursor()
         
@@ -52,7 +53,6 @@ class Case(TestCase):
         except sqlite.OperationalError:
             pass
             # known bug in pysqlite 2.0.3
-            # self.assertEqual(sqlite.version,'2.0.3')
         
 
 if __name__ == '__main__':

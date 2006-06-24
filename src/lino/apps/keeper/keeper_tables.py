@@ -283,7 +283,112 @@ class KeeperSchema(Schema):
         Occurence
         )
 
+
+class SearchForm(ReportForm):
+    
+    title="Search"
+    
+    def layout(self,panel):
+        
+        #dbsess=self.rpt.query.getContext()
+        #words = sess.query(tables.Word)
+        #files = sess.query(tables.File) #,"name")
+        #grid=None # referenced in search(), defined later
+        
+
+        self.searchString=panel.entry(
+            STRING,
+            label="&Words to look for")
+        self.anyWord=panel.entry(BOOL,label="&any word (OR)")
+        
+        def search():
+##             files.clearFilters()
+##             for word in searchString.getValue().split():
+##                 w=words.peek(word)
+##                 if w is None:
+##                     sess.notice("ignored '%s'"%w)
+##                 else:
+##                     occs.addFilter(Contains,w)
+                
+            #files.setSearch(searchString.getValue())
+            #occs._queryParams["search"]=searchString.getValue()
+            self.rpt.setSearch(self.searchString.getValue())
+            self.grid.enabled=self.searchString.getValue() is not None
+            self.refresh()
+
+
+
+        #bbox = panel.hpanel()
+        bbox = panel
+        self.go = bbox.button("search",
+                              label="&Search",
+                              action=search).setDefault()
+        #bbox.addButton("exit",
+        #               label="&Exit",
+        #               action=frm.close)
+        self.grid=panel.datagrid(self.rpt)
+        #ReportForm.setupForm(self)
+        self.grid.enabled=False
+
+
+
+class KeeperMainForm(DbMainForm):
+    """
+
+Keeper keeps an eye on your files. He knows your files and helps you
+to find them back even if they are archived on external media.
+(But please note that Keeper is not yet in a usable state.)
+
+
+    """
+    schemaClass=KeeperSchema
+    
+    def setupMenu(self):
+
+        m = self.addMenu("search","&Search")
+        m.addItem("search",label="&Search").setHandler(
+            self.showForm,
+            SearchForm(FoundFilesReport(self.dbsess)))
+
+        
+    
+        m = self.addMenu("db","&Database")
+
+        self.addReportItem(
+            m,"volumes",VolumesReport,
+            label="&Volumes")
+        self.addReportItem(
+            m,"files",FilesReport,
+            label="&Files")
+        self.addReportItem(
+            m,"dirs",DirectoriesReport,
+            label="&Directories")
+        self.addReportItem(
+            m, "words",WordsReport,
+            label="&Words")
+        
+        self.addProgramMenu()
+
+
+class Keeper(DbApplication):
+    
+    name="Lino Keeper"
+    version="0.0.1"
+    copyright="""\
+Copyright (c) 2004-2006 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    mainFormClass=KeeperMainForm
+
+        
+
+
+    
+
 __all__ = [t.__name__ for t in KeeperSchema.tableClasses]
+__all__.append('Keeper')
 __all__.append('KeeperSchema')
 __all__.append('FoundFilesReport')
+__all__.append('SearchForm')
 
