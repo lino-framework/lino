@@ -81,9 +81,16 @@ distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     url="http://lino.saffre-rumma.ee/sysinfo.html"
     
-    usage="usage: lino countdown [options]"
-    description="""\
-writes some diagnostics about your computer.
+    usage="usage: lino sysinfo [options] [FILE]"
+    
+    description="""
+    
+Writes some diagnostics about your computer to FILE and starts your
+browser to view the result.  'sysinfo.html' is default value for FILE.
+The generated content is always in HTML, independantly of the
+filename. If you specify the special filename "-", no file is created
+and output is sent to stdout.
+
 """ 
     
     def run(self):
@@ -108,9 +115,11 @@ writes some diagnostics about your computer.
         if False:
             doc.body.header(2,"sys.modules")
             doc.body.report(DictReport(sys.modules))
-        
-        doc.saveas(filename)
-        os.system(filename)
+        if filename == "-":
+            doc.__xml__(self.toolkit.console.stdout.write)
+        else:
+            doc.saveas(filename)
+            os.system(filename)
         
 
 

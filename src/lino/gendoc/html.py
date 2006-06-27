@@ -618,38 +618,6 @@ class StaticHtmlDocument(HtmlDocument):
 
 from lino.oogen.elements import CDATA, Element, Container, Story
 
-## class CDATA:
-##     def __init__(self,txt):
-##         self.text=txt
-##     def __html__(self,wr):
-##         wr(escape(self.text))
-
-    
-## class Element:
-##     allowedAttribs=dict(klass="class",
-##                         id='id')
-##     def __init__(self,**kw):
-##         for k,v in kw.items():
-##             assert k in self.attribs
-##     def tag(self):
-##         return self.__class__.__name__
-    
-## class Container:
-##     def __init__(self,*content):
-##         def x(u):
-##             if type(u) in (UnicodeType,StringType): return CDATA(u)
-##             return u
-##         self.content=[x(u) for u in content]
-
-            
-    
-##     def __html__(self,doc,wr):
-##         tag = self.tag()
-##         wr("<%s>" % tag)
-##         for c in self.content:
-##             c.__html__(doc,wr)
-##         wr("</%s>\n" % tag)
-
 class Fragment(Container):
     allowedContent = (CDATA,)
     allowedAttribs=dict(klass='class',

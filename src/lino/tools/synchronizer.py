@@ -489,7 +489,7 @@ class SyncProject(Task):
         self.job.done_copy_file += 1
 
     def delete_dir(self,name):
-        self.notice(_("remove directory %s") % name)
+        self.verbose(_("remove directory %s") % name)
         if self.job.simulate:
             self.job.count_delete_dir += 1
             return
@@ -511,11 +511,14 @@ class SyncProject(Task):
 
         if win32file:
             filemode = win32file.GetFileAttributesW(name)
-            win32file.SetFileAttributesW(
-                name, filemode & \
-                ~win32file.FILE_ATTRIBUTE_READONLY & \
-                ~win32file.FILE_ATTRIBUTE_HIDDEN & \
-                ~win32file.FILE_ATTRIBUTE_SYSTEM)
+            try:
+                win32file.SetFileAttributesW(
+                    name, filemode & \
+                    ~win32file.FILE_ATTRIBUTE_READONLY & \
+                    ~win32file.FILE_ATTRIBUTE_HIDDEN & \
+                    ~win32file.FILE_ATTRIBUTE_SYSTEM)
+            except win32file.error,e:
+                self.error(name+" : SetFileAttributesW() failed")
         else:
             os.chmod(name, stat.S_IWUSR)
 

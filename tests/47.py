@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre
+## Copyright 2005-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -37,7 +37,7 @@ class MySchema(Schema):
 class Case(TestCase):
     
     def test01(self):
-        sess = MySchema().quickStartup()
+        sess = MySchema().createContext()
         q=sess.query(Foo)
         
         try:

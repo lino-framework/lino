@@ -31,7 +31,7 @@ class Case(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
-        self.sess = tables.TimingsSchema().quickStartup() 
+        self.sess = tables.TimingsSchema().createContext() 
 
     def tearDown(self):
         self.sess.shutdown()
