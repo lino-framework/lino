@@ -19,10 +19,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import sys, getopt, os
+import sys, os
 import traceback
-
-#from lino.ui import console
 
 from lino.sdoc.pdf import PdfRenderer
 from lino.sdoc.environment import ParseError
@@ -64,39 +62,28 @@ write to OUTFILE rather than FILE.pdf""",
     
 
 
-    def run(self,body=None,ofname=None,ifname=None):
+    def run(self):
+        ofname=self.options.outFile
+            
+        if len(self.args) != 1:
+            raise UsageError("needs 1 argument")
+
+        ifname = self.args[0]
+
+        (root,ext) = os.path.splitext(ifname)
+        if ext == '':
+            ifname += ".pds"
+
         if ofname is None:
-            ofname=self.options.outFile
-            
-        if body is None:
-            if ifname is None:
-                if len(self.args) != 1:
-                    raise UsageError("needs 1 argument")
-    
-                ifname = self.args[0]
-            
-            (root,ext) = os.path.splitext(ifname)
-            if ext == '':
-                ifname += ".pds"
+            ofname = root 
 
-            if ofname is None:
-                ofname = root 
+        (head,tail) = os.path.split(ifname)
+        initfile = os.path.join(head,'__init__.pds')
 
-            (head,tail) = os.path.split(ifname)
-            initfile = os.path.join(head,'__init__.pds')
-            
-            namespace = {}
-            namespace.update(globals())
-            namespace['pds'] = commands
+        namespace = {}
+        namespace.update(globals())
+        namespace['pds'] = commands
 
-            def body():
-                if os.path.exists(initfile):
-                    execfile(initfile,namespace,namespace) 
-                execfile(ifname,namespace,namespace)
-        else:
-            if len(self.args) != 0:
-                raise UsageError("needs 0 argument")
-            
         renderer=PdfRenderer()
 
         try:
@@ -106,7 +93,10 @@ write to OUTFILE rather than FILE.pdf""",
                 commands.getSourceFileName(),
                 commands.getOutputFileName())
             try:
-                body()
+                if os.path.exists(initfile):
+                    execfile(initfile,namespace,namespace) 
+                execfile(ifname,namespace,namespace)
+                
                 commands.endDocument(
                     showOutput=self.isInteractive())
                 self.notice("%d pages." % commands.getPageNumber())
