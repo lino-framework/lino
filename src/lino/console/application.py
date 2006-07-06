@@ -145,7 +145,8 @@ class Application(Session):
 ##         # GuiApplication overrides this to launch the GUI toolkit
 ##         pass
     
-    def main(self,argv=None):
+    #def main(self,argv=None):
+    def main(self,*args,**kw):
         """
         meant to be called
 
@@ -165,21 +166,22 @@ class Application(Session):
         self.toolkit.setupOptionParser(p)
         self.setupOptionParser(p)
 
-        if argv is None:
-            argv = sys.argv[1:]
+        #if argv is None:
+        argv = sys.argv[1:]
 
         try:
-            options,args = p.parse_args(argv)
-            self.applyOptions(options,args)
+            poptions,pargs = p.parse_args(argv)
+            self.applyOptions(poptions,pargs)
             #self.on_main()
             #self.setupApplication()
 
             if self.name and self.toolkit.isInteractive():
                 self.notice(self.aboutString())
             
-            return self.run()
+            return self.run(*args,**kw)
 
         except UsageError,e:
+            self.error("Usage error: "+str(e))
             p.print_help()
             return -1
         except UserAborted,e:

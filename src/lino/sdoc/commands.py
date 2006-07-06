@@ -1,4 +1,4 @@
-## Copyright Luc Saffre 2003-2004.
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -38,6 +38,7 @@ from lino.sdoc import styles
 
 
 document = None
+stylesheet=None
 #renderer = None
 #outputfile = None
 #inputfile = None

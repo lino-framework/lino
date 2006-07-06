@@ -1,4 +1,6 @@
-## Copyright 2004-2005 Luc Saffre
+#encoding: cp850
+
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -33,11 +35,12 @@ class Pds2pdf(Application):
     name="Lino/pds2pdf"
 
     copyright="""\
-Copyright (c) 2002-2005 Luc Saffre.
+Copyright (c) 2002-2006 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-    url="http://www.saffre-rumma.ee/lino/pds2pdf.html"
+    
+    url="http://lino.saffre-rumma.ee/pds2pdf.html"
     
     
     usage="usage: lino pds2pdf [options] FILE"
@@ -61,27 +64,40 @@ write to OUTFILE rather than FILE.pdf""",
     
 
 
-    def run(self):
-        if len(self.args) != 1:
-            raise UsageError("needs 1 argument")
-    
-        ifname = self.args[0]
-
-        renderer=PdfRenderer()
-        
-        ofname=self.options.outFile
-        showOutput=self.isInteractive()
-
-
-        (root,ext) = os.path.splitext(ifname)
-        if ext == '':
-            ifname += ".pds"
-
+    def run(self,body=None,ofname=None,ifname=None):
         if ofname is None:
-            ofname = root 
+            ofname=self.options.outFile
+            
+        if body is None:
+            if ifname is None:
+                if len(self.args) != 1:
+                    raise UsageError("needs 1 argument")
+    
+                ifname = self.args[0]
+            
+            (root,ext) = os.path.splitext(ifname)
+            if ext == '':
+                ifname += ".pds"
 
-        (head,tail) = os.path.split(ifname)
-        initfile = os.path.join(head,'__init__.pds')
+            if ofname is None:
+                ofname = root 
+
+            (head,tail) = os.path.split(ifname)
+            initfile = os.path.join(head,'__init__.pds')
+            
+            namespace = {}
+            namespace.update(globals())
+            namespace['pds'] = commands
+
+            def body():
+                if os.path.exists(initfile):
+                    execfile(initfile,namespace,namespace) 
+                execfile(ifname,namespace,namespace)
+        else:
+            if len(self.args) != 0:
+                raise UsageError("needs 0 argument")
+            
+        renderer=PdfRenderer()
 
         try:
             commands.beginDocument(ofname,renderer,ifname)
@@ -89,14 +105,10 @@ write to OUTFILE rather than FILE.pdf""",
                 "%s --> %s...",
                 commands.getSourceFileName(),
                 commands.getOutputFileName())
-            namespace = {}
-            namespace.update(globals())
-            namespace['pds'] = commands
             try:
-                if os.path.exists(initfile):
-                    execfile(initfile,namespace,namespace) 
-                execfile(ifname,namespace,namespace)
-                commands.endDocument(showOutput)
+                body()
+                commands.endDocument(
+                    showOutput=self.isInteractive())
                 self.notice("%d pages." % commands.getPageNumber())
             except ParseError,e:
                 raise
@@ -111,9 +123,7 @@ write to OUTFILE rather than FILE.pdf""",
             return -1
 
 
-
-        
-Pds2pdf().main()
+#Pds2pdf().main()
 
 ## # lino.runscript expects a name consoleApplicationClass
 ## consoleApplicationClass = Pds2pdf
@@ -123,4 +133,7 @@ Pds2pdf().main()
     
 
 
+def main(*args,**kw):
+    Pds2pdf().main(*args,**kw)
 
+if __name__ == '__main__': main()

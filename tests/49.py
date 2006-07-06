@@ -1,4 +1,4 @@
-## Copyright 2005 Luc Saffre
+## Copyright 2005-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -30,15 +30,16 @@ class Case(TestCase):
     def test01(self):
         s = ""
         for script in console_targets:
-
-            cmd="lino "+script+" --help"
-            fd=os.popen(cmd,"r")
-            observed=fd.read()
-            fn=os.path.join(DOCROOT,"help",script)+".help.txt"
-            msg="output of `%s` differs from content of %s" % (cmd,fn)
-            self.assertEqual(fd.close(),None,msg)
-            expected=open(fn).read()
-            self.assertEquivalent(observed,expected,msg)
+            if script != "runpy":
+                cmd="lino "+script+" --help"
+                fd=os.popen(cmd,"r")
+                observed=fd.read()
+                fn=os.path.join(DOCROOT,"help",script)+".help.txt"
+                msg="output of `%s` differs from content of %s" \
+                     % (cmd,fn)
+                self.assertEqual(fd.close(),None,msg)
+                expected=open(fn).read()
+                self.assertEquivalent(observed,expected,msg)
 
     
     

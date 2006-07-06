@@ -25,7 +25,7 @@ from lino.console.application import Application, UsageError
 from lino.reports.reports import DictReport
 #from lino.gendoc.html import StaticHtmlDocument
 from lino.gendoc.html import Document
-from HyperText import HTML as html
+#from HyperText import HTML as html
 #from HyperText.Documents import Document
 
 def diag_encoding(ct):
@@ -123,8 +123,8 @@ and output is sent to stdout.
         
 
 
-
-SysInfo().main()
+def main(*args,**kw):
+    SysInfo().main(*args,**kw)
 
         
 

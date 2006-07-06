@@ -84,8 +84,11 @@ class BaseEnvironment(Writer):
 
 
    def p(self,txt,style=None):
-      assert type(txt) == types.StringType, \
-             "%s is not a string" % repr(txt)
+      if type(txt) == types.UnicodeType:
+          txt=txt.encode('utf8')
+      else:
+          assert type(txt) == types.StringType, \
+                 "%s is not a string" % repr(txt)
       if style is None:
          style = self.getDefaultParaStyle()
       txt = self.document.feeder(txt)

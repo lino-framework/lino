@@ -99,11 +99,10 @@ where SRC and DEST are two directories to be synchronized.
                      safely=self.options.safely)
                      
 
-Sync().main()
-
-## # lino.runscript expects a name consoleApplicationClass
-## consoleApplicationClass = Sync
+# Sync().main()
 
 ## if __name__ == '__main__':
 ##     consoleApplicationClass().main() # console,sys.argv[1:])
     
+def main(*args,**kw):
+    Sync().main(*args,**kw)

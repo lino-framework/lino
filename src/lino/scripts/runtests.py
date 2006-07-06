@@ -233,16 +233,8 @@ continue testing even if failures or errors occur""",
             if hasattr(case,'afterRun'):
                 case.afterRun(self)
 
-
-Runtests().main()
-        
-
-## # lino.runscript expects a name consoleApplicationClass
-## consoleApplicationClass = Runtests
-
-## if __name__ == '__main__':
-##     syscon.run(consoleApplicationClass)
-    
+def main(*args,**kw):
+    Runtests().main(*args,**kw)
 
 
-
+if __name__ == '__main__': main()

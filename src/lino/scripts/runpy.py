@@ -15,37 +15,49 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.console.application import Application
+## from lino.console.application import Application
 
-class RunPy(Application):
+## class RunPy(Application):
 
-    name="Lino runpy"
+##     name="Lino runpy"
     
-    copyright="""\
-Copyright (c) 2005-2006 Luc Saffre.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information."""
+##     copyright="""\
+## Copyright (c) 2005-2006 Luc Saffre.
+## This software comes with ABSOLUTELY NO WARRANTY and is
+## distributed under the terms of the GNU General Public License.
+## See file COPYING.txt for more information."""
     
-    url="http://lino.saffre-rumma.ee/runpy.html"
+##     url="http://lino.saffre-rumma.ee/runpy.html"
     
-    usage="usage: runpy [options] PYFILE"
+##     usage="usage: runpy [options] PYFILE"
     
-    description="""\
-where PYFILE is a Python script to execute.
-""" 
+##     description="""\
+## where PYFILE is a Python script to execute.
+## """ 
     
-    def run(self):
+##     def run(self):
 
-        for arg in self.args:
-            execfile(arg)
+##         for arg in self.args:
+##             execfile(arg)
 
 
-RunPy().main()
+## #RunPy().main()
 
-## # lino.runscript expects a name consoleApplicationClass
-## consoleApplicationClass = Lino
+## ## # lino.runscript expects a name consoleApplicationClass
+## ## consoleApplicationClass = Lino
 
-## if __name__ == '__main__':
-##     consoleApplicationClass().main()
+## ## if __name__ == '__main__':
+## ##     consoleApplicationClass().main()
     
+## def main(*args,**kw):
+##     RunPy().main(*args,**kw)
+
+import sys
+
+def main():
+    #print sys.argv
+    filename=sys.argv[1]
+    del sys.argv[1]
+    execfile(filename,{})
+
+if __name__ == '__main__': main()

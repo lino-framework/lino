@@ -142,7 +142,7 @@ where DIR (default .) is a directory with .jpg files to rename.
                     os.rename(o,n)
                                    
 
-JpgRename().main()
+#JpgRename().main()
 
 ## # lino.runscript expects a name consoleApplicationClass
 ## consoleApplicationClass = JpgRename
@@ -150,3 +150,5 @@ JpgRename().main()
 ## if __name__ == '__main__':
 ##     consoleApplicationClass().main() 
     
+def main(*args,**kw):
+    JpgRename().main(*args,**kw)

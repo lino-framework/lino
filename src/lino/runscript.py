@@ -73,9 +73,12 @@ if not sys.argv[1] in scripts.__all__:
     print "error: unknown Lino script '%s'" % sys.argv[1]
     sys.exit(-1)
 
+#print sys.argv
+#del sys.argv[0]
 scriptName=sys.argv[1]
 del sys.argv[1]
-my_import("lino.scripts." + scriptName)
+m=my_import("lino.scripts." + scriptName)
+m.main()
 
 ## try:
 ##     my_import("lino.scripts." + scriptName)

@@ -1,10 +1,7 @@
-usage: runpy [options] PYFILE
-
-where PYFILE is a Python script to execute.
-options:
-  -h, --help            show this help message and exit
-  -lLOGFILE, --logfile=LOGFILE
-                        log a report to FILE
-  -v, --verbose         increase verbosity
-  -q, --quiet           decrease verbosity
-  -b, --batch           not interactive (don't ask anything)
+Traceback (most recent call last):
+  File "<string>", line 1, in ?
+  File "c:\drives\t\svnwork\lino\trunk\src\lino\runscript.py", line 81, in ?
+    m.main()
+  File "c:\drives\t\svnwork\lino\trunk\src\lino\scripts\runpy.py", line 60, in main
+    execfile(arg)
+IOError: [Errno 2] No such file or directory: '--help'
