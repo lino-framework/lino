@@ -43,11 +43,15 @@ class CDATA:
                             .replace("<","&lt;"))
     def __xml__(self,wr):
         wr(self.text) # .encode("utf-8"))
+
+    def __str__(self):
+        return self.text
         
 class Element:
     elementname = None
     allowedAttribs = {}
     #defaultAttribs = {}
+    parent=None
     def __init__(self,**kw):
         if self.elementname is None:
             self.elementname=self.__class__.__name__
@@ -56,6 +60,9 @@ class Element:
             #    str(self.__class__))
         self._attribs = {}
         self.setAttribs(**kw)
+
+    def setParent(self,parent):
+        self.parent=parent
         
     def setAttribs(self,**kw):
         for k,v in kw.items():
@@ -72,6 +79,8 @@ class Element:
         try:
             return self._attribs[name]
         except KeyError:
+            if self.allowedAttribs.has_key(name):
+                return None
             raise AttributeError(
                 "%s instance has no attribute '%s'" % (
                 self.__class__.__name__, name))
@@ -83,7 +92,14 @@ class Element:
         wr("<"+self.tag())
         for k,v in self._attribs.items():
             wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
-        wr('/>\n')
+        wr('/>')
+        
+    def toxml(self):
+        from cStringIO import StringIO
+        b=StringIO()
+        self.__xml__(b.write)
+        return b.getvalue()
+
         
 class Container(Element):
     allowedContent = (CDATA,Element)
@@ -100,10 +116,12 @@ class Container(Element):
         if isinstance(elem,basestring):
             e=self.allowedContent[0](elem)
             self.content.append(e)
+            e.setParent=self
             return e
         for cl in self.allowedContent:
             if isinstance(elem,cl):
                 self.content.append(elem)
+                elem.setParent=self
                 return elem
         raise InvalidRequest(
             "%s not allowed in %s" %
@@ -135,12 +153,12 @@ class Container(Element):
             for k,v in self._attribs.items():
                 wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
         if len(self.content) == 0:
-            wr('/>\n')
+            wr('/>')
         else:
             wr('>')
             for e in self.content:
                 e.__xml__(wr)
-            wr("</"+self.tag()+">\n" )
+            wr("</"+self.tag()+">" )
 
 class TextElement(Element):
     "any element that may appear besides CDATA in a paragraph context"
@@ -164,8 +182,12 @@ class Story(Container):
     def par(self,*args,**kw):
         return self.append(P(*args,**kw))
         
-    def header(self,level,text,**kw):
+    def heading(self,level,text,**kw):
         return self.append(H(level,text,**kw))
+    def h1(self,txt,**kw): self.heading(1,txt,**kw)
+    def h2(self,txt,**kw): self.heading(2,txt,**kw)
+    def h3(self,txt,**kw): self.heading(3,txt,**kw)
+    
     
 
 class LineBreak(TextElement):
@@ -536,7 +558,7 @@ class Table(Container):
         self.columns = []
         self._headerRows = None
 
-    def header(self,level,text,**kw):
+    def heading(self,level,text,**kw):
         return self.p(text,styleName="Heading"+str(level),**kw)
     
     def par(self,text,**kw):

@@ -50,26 +50,36 @@ from lino.misc.pset import PropertySet, StyleSheet
 
 
 
-class ParagraphStyle(PropertySet):
-    defaults = {
-        'fontName':'Times-Roman',
-        'fontSize':10,
-        'leading':12,
-        'leftIndent':0,
-        'rightIndent':0,
-        'firstLineIndent':0,
-        'alignment':TA_LEFT,
-        'spaceBefore':0,
-        'spaceAfter':0,
-        'keepWithNext':False,    # added by LS
-        'allowSplitting' : True,
-        'bulletFontName':'Times-Roman',
-        'bulletFontSize':10,
-        'bulletIndent':0,
-        'textColor': colors.black,
-        'backColor':None,
-        'wrap':True # added by LS
-        }
+class FlowStyle(PropertySet):
+    defaults = dict(
+        leftIndent=0,
+        rightIndent=0,
+        spaceBefore=0,
+        spaceAfter=0,
+        backColor=None,
+        keepWithNext=False,    # added by LS
+        )
+    
+class CharacterStyle(PropertySet):
+    defaults = dict(
+        fontName='Times-Roman',
+        fontSize=10,
+        textColor=colors.black,
+        rise=False,
+        underline=False,
+        )
+        
+class ParagraphStyle(FlowStyle):
+    defaults = dict(dict(
+        leading=12,
+        firstLineIndent=0,
+        textStyle=None,
+        alignment=TA_LEFT,
+        allowSplitting = True,
+        bulletFontName='Times-Roman',
+        bulletFontSize=10,
+        bulletIndent=0,
+        **FlowStyle.defaults),**CharacterStyle.defaults)
 
 
 class LineStyle(PropertySet):
@@ -83,8 +93,58 @@ class LineStyle(PropertySet):
         canvas.setLineWidth(1)
         #etc. etc.
 
-# added by LS
 
+
+
+class ListStyle(PropertySet):
+    defaults = {
+        'bulletWidth' : 12,
+        'bulletText' : '-'
+        }
+    def getBulletText(self,listInstance):
+        return self.bulletText
+      
+class NumberedListStyle(ListStyle):
+    defaults =  {
+        'bulletWidth' : 12,
+        'bulletText' : '-',
+        'showParent' : False
+        }
+      
+    def getBulletText(self,listInstance):
+        text = str(listInstance.itemCount)+'.'
+        if self.showParent:
+            parent = listInstance.getParent()
+            if parent is not None:
+                text = parent.getBulletText() + text
+        return text
+
+
+class TableStyle(FlowStyle):
+	defaults = dict(
+		flowStyle=None,
+		paraStyle=None,
+		dataCellFormats=[],
+		headerCellFormats= [],
+		showHeaders=False,
+		isgrowing=True,
+		**FlowStyle.defaults)
+	
+	def formatTable(self,cmdName,*params):
+		# self.dataCellFormats = list(self.dataCellFormats)
+		addCellFormats(self.dataCellFormats,
+							cmdName,
+							(0,0),
+							(-1,-1),
+							*params)
+		
+	def formatHeader(self,cmdName,*params):
+		# self.headerCellFormats = list(self.headerCellFormats)
+		addCellFormats(self.headerCellFormats,
+							cmdName,
+							(0,0),
+							(-1,0),
+							*params)
 
 
 class DocumentStyle(PropertySet):
@@ -125,7 +185,7 @@ class DocumentStyle(PropertySet):
 def getDefaultStyleSheet():
    sheet = StyleSheet()
    sheet.define("Document",DocumentStyle())
-   sheet.define("Normal",ParagraphStyle(
+   sheet.define("P",ParagraphStyle(
       fontName='Times-Roman',
       fontSize=10,
       spaceBefore=2,
@@ -133,28 +193,27 @@ def getDefaultStyleSheet():
       leading=12
       ))
 
-   sheet.define("Number",sheet.Normal.child(alignment=TA_RIGHT))
-   sheet.define("Heading1",sheet.Normal.child(
+   sheet.define("Number",sheet.P.child(alignment=TA_RIGHT))
+   sheet.define("H1",sheet.P.child(
       fontName = 'Times-Bold',
+      keepWithNext=True,
       fontSize=18,
       leading=22,
       spaceAfter=6))
 
-   sheet.define("Heading2",sheet.Normal.child(
-      fontName = 'Times-Bold',
+   sheet.define("H2",sheet.H1.child(
       fontSize=14,
       leading=18,
       spaceBefore=12,
       spaceAfter=6))
 
-   sheet.define("Heading3",sheet.Normal.child(
-      fontName = 'Times-BoldItalic',
+   sheet.define("H3",sheet.H2.child(
       fontSize=12,
       leading=14,
       spaceBefore=12,
       spaceAfter=6))
 
-   sheet.define("Code",sheet.Normal.child(
+   sheet.define("PRE",sheet.P.child(
       fontName='Courier',
       wrap=False,
       fontSize=8,
@@ -162,8 +221,44 @@ def getDefaultStyleSheet():
       firstLineIndent=0,
       leftIndent=36))
 
-   #sheet.define("Wrapped",sheet.Normal.child(wrap=False,
+   #sheet.define("Wrapped",sheet.P.child(wrap=False,
    #                                          alignment=TA_LEFT))
+   
+   sheet.define('UL', ListStyle(bulletWidth=12))
+   sheet.define('OL', NumberedListStyle(bulletWidth=12))
+
+   sheet.define("LI",sheet.P.child(
+       spaceBefore=1,
+       spaceAfter=1,
+       leftIndent=30,
+       firstLineIndent=0,
+       bulletText="\xe2\x80\xa2",
+       bulletIndent=0))
+
+   sheet.define("TABLE", TableStyle(
+       leftIndent=20,
+       rightIndent=50,
+       dataCellFormats=[
+       ('ALIGN',(0,0),(-1,-1),'LEFT'),
+       ('VALIGN',(0,0),(-1,-1),'TOP'),
+       ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+       ]))
+
+   sheet.define("EmptyTable", TableStyle( dataCellFormats=[
+       ('ALIGN',(0,0),(-1,-1),'LEFT'),
+       ('VALIGN',(0,0),(-1,-1),'TOP'),
+       ]))
+		
+   sheet.define("DataTable",TableStyle(dataCellFormats=[
+       ('ALIGN',(0,0),(-1,-1),'LEFT'),
+       ('VALIGN',(0,0),(-1,-1),'TOP'),
+       ('LINEBELOW', (0,0), (-1,-1), 0.25, colors.black),
+       ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+       # ('BACKGROUND', (0,0), (-1,-1), colors.grey),
+       ]))
+
+   
    return sheet
 
 

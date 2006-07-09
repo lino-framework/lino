@@ -83,7 +83,7 @@ class BaseEnvironment(Writer):
 
 
 
-   def p(self,txt,style=None):
+   def p(self,txt,style=None,wrap=True):
       if type(txt) == types.UnicodeType:
           txt=txt.encode('utf8')
       else:
@@ -94,7 +94,7 @@ class BaseEnvironment(Writer):
       txt = self.document.feeder(txt)
       # self.getRenderer().renderPara(txt, style)
       # print "p() : style is %s" % str(style)
-      elem = self.document.renderer.compilePara(txt, style)
+      elem = self.document.renderer.compilePara(txt,style,wrap)
       self.toStory(elem)
       
       """ note that the toStory() called from p() is perhaps not the
@@ -102,17 +102,15 @@ class BaseEnvironment(Writer):
 
    def memo(self,txt):
       parseMemo(self.document,txt)
-      # parseMemo(self.document,txt)
 
+   def header(lvl,txt,**kw):
+       self.p(txt,
+              style=self.document.stylesheet["Heading"+str(lvl)],
+              **kw)
+   def h1(self,txt,**kw): self.header(1,txt,**kw)
+   def h2(self,txt,**kw): self.header(2,txt,**kw)
+   def h3(self,txt,**kw): self.header(3,txt,**kw)
 
-   def h1(self,txt):
-      self.p(txt,self.document.stylesheet.Heading1)
-      
-   def h2(self,txt):
-      self.p(txt,self.document.stylesheet.Heading2)
-      
-   def h3(self,txt):
-      self.p(txt,self.document.stylesheet.Heading3)
       
          
    def pre(self,txt,style=None):
