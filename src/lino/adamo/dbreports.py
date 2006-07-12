@@ -132,12 +132,12 @@ class QueryReport(BaseReport):
         if len(self.columns) == 0:
             for dc in self.query.getVisibleColumns():
                 col = DataReportColumn(dc,label=dc.getLabel())
-                self.addColumn(col)
+                self.add_column(col)
             self.formColumnGroups=None
         
     def addDataColumn(self,colName,**kw):
         dc=self.query.findColumn(colName)
-        return self.addColumn(DataReportColumn(dc,**kw))
+        return self.add_column(DataReportColumn(dc,**kw))
 
 ##     def doesShow(self,qry):
 ##         #used in lino.gendoc.html
@@ -180,12 +180,12 @@ class QueryReport(BaseReport):
                     #        datacol = self.ds._addColumn(
                     #            fld.getName(),fld)
                         col=DataReportColumn(datacol,width=w)
-                        self.addColumn(col)
+                        self.add_column(col)
                         grp.append(col)
                 else:
                     dc=self.query.provideColumn(colName)
                     col=DataReportColumn(dc,width=w)
-                    self.addColumn(col)
+                    self.add_column(col)
                     grp.append(col)
             #l += grp
             groups.append(tuple(grp))

@@ -55,7 +55,6 @@ class ReportRow:
             else:
                 v = col.getCellValue(self)
                 if v is not None:
-                    #col.getType().validate(v)
                     col.validate(v)
             self.values.append(v)
 
@@ -260,7 +259,7 @@ class BaseReport:
         
     #def processItem(self,doc,item):
     #def processItem(self,rowno,item):
-    def processItem(self,item,rowno=None):
+    def process_item(self,item,rowno=None):
         if rowno is None:
             rowno=len(self)
         return self.rowClass(self,item,rowno)
@@ -287,13 +286,16 @@ class BaseReport:
     ## public methods for user code
     ##
 
-    def addColumn(self,col):
+    def add_column(self,col):
         col.setupReportColumn(self,len(self.columns))
         self.columns.append(col)
         return col
     
+    def addColumn(self,*args,**kw):
+        return self.add_column(ListReportColumn(*args,**kw))
+        
     def addVurtColumn(self,meth,**kw):
-        return self.addColumn(VurtReportColumn(meth,**kw))
+        return self.add_column(VurtReportColumn(meth,**kw))
 
 ##     def onEach(self,meth):
 ##         self._onRowEvents.append(meth)
@@ -392,17 +394,18 @@ class ReportColumn(Describable):
         assert type(index) == type(1)
         self.index=index
         
-        
-    def getMinWidth(self):
-        return self.width
-    def getMaxWidth(self):
-        return self.width
-
     def getCellValue(self,row):
         raise NotImplementedError,str(self.__class__)
 
     def setCellValue(self,row,value):
         raise NotImplementedError,str(self.__class__)
+
+        
+        
+    def getMinWidth(self):
+        return self.width
+    def getMaxWidth(self):
+        return self.width
 
     def format(self,v):
         return self._formatter(v)
@@ -419,6 +422,19 @@ class ReportColumn(Describable):
 ##     def getType(self):
 ##         return self.type
 
+
+class ListReportColumn(ReportColumn):
+    
+    def setupReportColumn(self,rpt,index):
+        ReportColumn.setupReportColumn(self,rpt,index)
+        self.rpt=rpt
+        
+    def getCellValue(self,row):
+        return self.rpt.getCellValue(row.index-1,self.index)
+
+    def setCellValue(self,row,value):
+        return self.rpt.setCellValue(row.index-1,self.index,value)
+        
 
 class VurtReportColumn(ReportColumn):
     
@@ -462,7 +478,7 @@ class ReportIterator:
 
     def next(self):
         self.rowno+=1
-        return self.rpt.processItem(self.iterator.next(),self.rowno)
+        return self.rpt.process_item(self.iterator.next(),self.rowno)
 
 
 class DictReport(BaseReport):
@@ -486,7 +502,20 @@ class DictReport(BaseReport):
     def canSort(self):
         return False
         
+class ListReport(BaseReport):
     
+    data=NotImplementedError
+    
+    def getIterator(self):
+        return self.data
+    
+    def getCellValue(self,ri,ci):
+        try:
+            return self.data[ri][ci]
+        except IndexError:
+            return
+    def setCellValue(self,ri,ci,v):
+        self.data[ri][ci]=v
         
 class Report(BaseReport):
     def __init__(self,**kw):

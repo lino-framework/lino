@@ -20,7 +20,7 @@ This is an alternative for reportlab/lib/styles.py
 The original version of styles.py is copyright ReportLab Inc. 2000
 v 1.15 2002/07/24 19:56:37 andy_robinson Exp $
 
-Changes made by Luc Saffre <luc.saffre@gmx.net> 
+Changes made by Luc Saffre:
 
 - I rewrote PropertySet because I wanted true inheritance.
 
@@ -36,6 +36,8 @@ Changes made by Luc Saffre <luc.saffre@gmx.net>
 
 - keepWithNext was missing in defaults attribute list
 
+- many more changes in 2006
+
 
 """
 
@@ -43,6 +45,11 @@ from reportlab.lib import colors
 from reportlab.lib import pagesizes
 from reportlab.lib.units import inch,mm
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
+
+VA_MIDDLE=0
+VA_CENTER=0
+VA_TOP=1
+VA_BOTTOM=2
 
 from lino.misc.pset import PropertySet, StyleSheet
 # from sdoc.lists import ListStyle, NumberedListStyle
@@ -57,7 +64,9 @@ class FlowStyle(PropertySet):
         spaceBefore=0,
         spaceAfter=0,
         backColor=None,
-        keepWithNext=False,    # added by LS
+        keepWithNext=False,    
+        pageBreakBefore=False, 
+        pageBreakAfter=False,  
         )
     
 class CharacterStyle(PropertySet):
@@ -79,6 +88,7 @@ class ParagraphStyle(FlowStyle):
         bulletFontName='Times-Roman',
         bulletFontSize=10,
         bulletIndent=0,
+        wrap=True,
         **FlowStyle.defaults),**CharacterStyle.defaults)
 
 
@@ -96,21 +106,20 @@ class LineStyle(PropertySet):
 
 
 
-class ListStyle(PropertySet):
-    defaults = {
-        'bulletWidth' : 12,
-        'bulletText' : '-'
-        }
+class ListStyle(FlowStyle):
+    defaults = dict(
+        bulletWidth=12,
+        bulletText= '-',
+        **FlowStyle.defaults)
+        
     def getBulletText(self,listInstance):
         return self.bulletText
       
 class NumberedListStyle(ListStyle):
-    defaults =  {
-        'bulletWidth' : 12,
-        'bulletText' : '-',
-        'showParent' : False
-        }
-      
+    defaults = dict(
+        showParent=False,
+        **ListStyle.defaults)
+        
     def getBulletText(self,listInstance):
         text = str(listInstance.itemCount)+'.'
         if self.showParent:
@@ -148,20 +157,24 @@ class TableStyle(FlowStyle):
 
 
 class DocumentStyle(PropertySet):
-    defaults = {
-        'pagesize':pagesizes.A4,
-        'showBoundary':0,
-        'leftMargin':inch,
-        'rightMargin':inch,
-        'rightMargin':inch,
-        'topMargin':inch,
-        'bottomMargin':inch,
-        'header':None,
-        'footer':None,
-        'innerMargin':None,
-        'outerMargin':None,
-        }
+    defaults = dict(
+        pagesize=pagesizes.A4,
+        showBoundary=0,
+        leftMargin=inch,
+        rightMargin=inch,
+        topMargin=inch,
+        bottomMargin=inch,
+        header=None,
+        footer=None,
+        innerMargin=None,
+        outerMargin=None,
+        )
 
+class FrameStyle(PropertySet):
+    defaults = dict(
+        vAlign=VA_BOTTOM,
+        )
+    
 ## class DocumentTool:
 ##    def __init__(self,doc):
 ##       self.doc = doc
@@ -184,16 +197,23 @@ class DocumentStyle(PropertySet):
 
 def getDefaultStyleSheet():
    sheet = StyleSheet()
-   sheet.define("Document",DocumentStyle())
+   sheet.define("BODY",DocumentStyle())
+   sheet.define("Header",FrameStyle())
+   sheet.define("Footer",FrameStyle(vAlign=VA_TOP))
    sheet.define("P",ParagraphStyle(
       fontName='Times-Roman',
       fontSize=10,
-      spaceBefore=2,
-      spaceAfter=2,
+      spaceBefore=3,
+      spaceAfter=3,
       leading=12
       ))
 
-   sheet.define("Number",sheet.P.child(alignment=TA_RIGHT))
+   sheet.define("TH",sheet.P.child(alignment=TA_CENTER))
+   sheet.define("TD",sheet.P.child())
+   sheet.define("TR",sheet.P.child())
+   sheet.define("Verses",sheet.P.child(wrap=False))
+   sheet.define("Right",sheet.P.child(alignment=TA_RIGHT))
+   sheet.define("Center",sheet.P.child(alignment=TA_CENTER))
    sheet.define("H1",sheet.P.child(
       fontName = 'Times-Bold',
       keepWithNext=True,

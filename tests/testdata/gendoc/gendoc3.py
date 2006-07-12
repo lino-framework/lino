@@ -1,9 +1,9 @@
-from lino.gendoc.html import PdfMaker
+from lino.gendoc.pdf import PdfMaker
 
 def body(doc):
-    doc.h1("Third Test")
+    doc.h1("Third Example")
     doc.memo("""\
-A test is a <em>test</em> and not a <em>final document</em>.
+This example is going to explain three important truths:
 
 <ul>
 <li>foo</li>
@@ -11,38 +11,13 @@ A test is a <em>test</em> and not a <em>final document</em>.
 <li>baz</li>
 </ul>
 
-A test is a <em>test</em> and not a <em>final document</em>.
+<ol>
+<li>foo</li>
+<li>bar</li>
+<li>baz</li>
+</ol>
 
-<table>
-<tr>
-<td>foo</td>
-<td>bar</td>
-<td>baz</td>
-</tr>
-<tr>
-<td>A</td>
-<td>B</td>
-<td>C</td>
-</tr>
-</table>
-
-A test is a <em>test</em> and not a <em>final document</em>.
-
-About character formatting:
-
-<em>emphasized</em> is same as <i>italic</i>.
-
-<i>italic</i>, <b>bold</b> and <b><i>bold-italic</i></b>
-are implemented using separate fonts.
-
-Now the same text in underlined:
-<u><i>italic</i>, <b>bold</b> and <b><i>bold-italic</i></b>
-are implemented with a different font.</u>
-
-And finally the same again in superscript:
-<sup><i>italic</i>, <b>bold</b> and <b><i>bold-italic</i></b>
-are implemented with a different font.</sup>
-
+Lists aren't yet well implemented...
 
 """)
 

@@ -111,6 +111,9 @@ class PropertySet:
     def items(self):
         return self._props.items()
     
+    def update(self,**kw):
+        return self._props.update(kw)
+    
     def values(self):
         return self._props.values()
 

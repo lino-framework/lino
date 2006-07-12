@@ -38,11 +38,10 @@ def quote(x):
     
 class CDATA:
     def __init__(self,text):
-        self.text = unicode(text
-                            .replace("&","&amp;")
-                            .replace("<","&lt;"))
+        self.text = unicode(text)
+        
     def __xml__(self,wr):
-        wr(self.text) # .encode("utf-8"))
+        wr(self.text.replace("&","&amp;").replace("<","&lt;"))
 
     def __str__(self):
         return self.text
@@ -91,7 +90,8 @@ class Element:
     def __xml__(self,wr):
         wr("<"+self.tag())
         for k,v in self._attribs.items():
-            wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
+            if v is not None:
+                wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
         wr('/>')
         
     def toxml(self):
@@ -151,7 +151,8 @@ class Container(Element):
         wr("<"+self.tag())
         if len(self._attribs) > 0:
             for k,v in self._attribs.items():
-                wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
+                if v is not None:
+                    wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
         if len(self.content) == 0:
             wr('/>')
         else:
@@ -175,7 +176,7 @@ class Story(Container):
     def __init__(self,doc,*args,**kw):
         self.doc=doc
         Container.__init__(self,*args,**kw)
-            
+
     def table(self,*args,**kw):
         return self.append(Table(self.doc,*args,**kw))
 
