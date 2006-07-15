@@ -18,7 +18,7 @@
 
 
 #from twisted.web.html import escape
-from lino.gendoc.html import escape
+from lino.gendoc.elements import escape
 from lino.textprinter.textprinter import TextPrinter
 from lino.misc.txt2html import txt2html
 

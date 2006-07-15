@@ -211,7 +211,8 @@ class PdfDocument(html.Document):
             yield t
         
         #elif isinstance(elem,html.Fragment):
-        elif isinstance(elem,html.P):
+        #elif isinstance(elem,html.P):
+        elif elem.fragmentable:
             frags=[]
             for e in elem.content:
                 if e.__class__ is html.IMG:

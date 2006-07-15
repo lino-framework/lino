@@ -38,6 +38,7 @@ class IMG(Element):
 
 
 class Fragment(Container):
+    fragmentable=True
     flowable=False
 ##     allowedAttribs=dict(id='id',
 ##                         lang='lang',

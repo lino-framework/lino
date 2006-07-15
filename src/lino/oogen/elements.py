@@ -21,7 +21,8 @@
 import sys
 import types
 
-from lino.gendoc.xml import CDATA, Element, Container, InvalidRequest
+from lino.gendoc.elements import \
+     CDATA, Element, Container, InvalidRequest
 
 class TextElement(Element):
     "any element that may appear besides CDATA in a paragraph context"

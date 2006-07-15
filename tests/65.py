@@ -34,22 +34,19 @@ class Case(unittest.TestCase):
 		s = StringIO()
 		e.__xml__(s.write)
 		self.assertEqual(s.getvalue(),"""\
-<text:p>This is a paragraph</text:p>
-""")
+<text:p>This is a paragraph</text:p>""")
 		
 		e = P("This is a paragraph",styleName="Standard")
 		s = StringIO()
 		e.__xml__(s.write)
 		self.assertEqual(s.getvalue(),"""\
-<text:p text:style-name="Standard">This is a paragraph</text:p>
-""")
+<text:p text:style-name="Standard">This is a paragraph</text:p>""")
 
 		e = H(1,"This is a header")
 		s = StringIO()
 		e.__xml__(s.write)
 		self.assertEqual(s.getvalue(),"""\
-<text:h text:style-name="Heading 1" text:level="1">This is a header</text:h>
-""")
+<text:h text:style-name="Heading 1" text:level="1">This is a header</text:h>""")
 
 if __name__ == '__main__':
 	unittest.main()

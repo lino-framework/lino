@@ -39,7 +39,7 @@ class Case(TestCase):
         s.addProperties(textAlign="end",
                         justifySingleWord=False)
         
-        doc.body.header(1,"Rechnung Nr. 040235")
+        doc.body.heading(1,"Rechnung Nr. 040235")
         doc.body.par("Datum: 10. Dezember 2004",styleName="Rechts")
         
         t = doc.body.table()

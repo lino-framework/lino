@@ -31,7 +31,7 @@ class Case(TestCase):
 
         fn = self.addTempFile("1.sxw", showOutput=True)
         doc = TextDocument(fn)
-        doc.body.header(1,"Generating OpenOffice documents")
+        doc.body.h1("Generating OpenOffice documents")
         doc.body.par("Here is a table:")
         t = doc.body.table()
         t.column()
