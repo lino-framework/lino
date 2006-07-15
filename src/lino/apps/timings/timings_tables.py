@@ -28,8 +28,8 @@ from lino.reports.reports import ReportColumn
 from lino.adamo.ddl import *
 from lino.adamo.filters import DateEquals
 
-from lino.gendoc.html import HtmlDocument
-from lino.gendoc.html import DataRowElement
+from lino.gendoc.html_site import HtmlDocument
+from lino.gendoc.html_site import DataRowElement
 
 
 

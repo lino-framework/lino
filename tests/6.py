@@ -28,7 +28,6 @@ from lino.adamo.datatypes import itot
 from lino.adamo import center
 
 class TestPopulator(Populator):
-    
     def populateUsageTypes(self,q):
         self.a=q.appendRow(id="A",name="Arbeit")
         self.u=q.appendRow(id="U",name="Urlaub")
@@ -65,12 +64,13 @@ class TestPopulator(Populator):
 
 class Case(TestCase):
     verbosity=0
+    todo="Timings needs gendoc.html_site which is broken"
     def setUp(self):
         TestCase.setUp(self)
         app=tables.Timings()
         #self.dbc=app.quickStartup(toolkit=Toolkit()) #,dump=True)
         self.dbc=app.createContext() # dump=True)
-        app.runtask(TestPopulator(self.dbc))
+        app.runtask(TestPopulator(),self.dbc)
 
     def tearDown(self):
         self.dbc.shutdown()

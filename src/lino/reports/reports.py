@@ -30,11 +30,11 @@ class ConfigError(Exception):
 class NotEnoughSpace(Exception):
     pass
 
-LEFT = 1
-RIGHT = 2
-CENTER = 3
-TOP = 4
-BOTTOM = 5
+LEFT = "LEFT"
+RIGHT = "RIGHT"
+CENTER = "CENTER"
+TOP = "TOP"
+BOTTOM = "BOTTOM"
 
 class ReportRow:
     def __init__(self,rpt,item,index):

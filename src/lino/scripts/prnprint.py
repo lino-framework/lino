@@ -100,10 +100,12 @@ write to SPOOLFILE rather than really printing.""",
 
 ## consoleApplicationClass = PrnPrint
 
-PrnPrint().main()
+# PrnPrint().main()
     
         
 ## if __name__ == '__main__':
 ##    PrnPrint().main()
 ##     consoleApplicationClass().main() # console,sys.argv[1:])
     
+def main(*args,**kw):
+    PrnPrint().main(*args,**kw)

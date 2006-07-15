@@ -79,7 +79,7 @@ write to OUTFILE rather than FILE.pdf""",
             os.system("start %s" % self.options.outFile)
 
 
-Prn2pdf().main()    
+# Prn2pdf().main()    
 
 ## # lino.runscript expects a name consoleApplicationClass
 ## consoleApplicationClass = Prn2pdf
@@ -88,3 +88,5 @@ Prn2pdf().main()
 ##     consoleApplicationClass().main() # console,sys.argv[1:])
 ##     #sys.exit(main(sys.argv[1:]))
 
+def main(*args,**kw):
+    Prn2pdf().main(*args,**kw)

@@ -46,10 +46,10 @@ from reportlab.lib import pagesizes
 from reportlab.lib.units import inch,mm
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
 
-VA_MIDDLE=0
-VA_CENTER=0
-VA_TOP=1
-VA_BOTTOM=2
+VA_MIDDLE="MIDDLE"
+VA_CENTER="MIDDLE"
+VA_TOP="TOP"
+VA_BOTTOM="BOTTOM"
 
 from lino.misc.pset import PropertySet, StyleSheet
 # from sdoc.lists import ListStyle, NumberedListStyle
@@ -172,8 +172,21 @@ class DocumentStyle(PropertySet):
 
 class FrameStyle(PropertySet):
     defaults = dict(
-        vAlign=VA_BOTTOM,
+        halign=TA_LEFT,
+        valign=VA_TOP,
+        borderStyle=LineStyle(),
+        borderStyleTop=None,
+        borderStyleBottom=None,
+        borderStyleRight=None,
+        borderStyleLeft=None,
+        padding=0,
+        paddingTop=None,
+        paddingBottom=None,
+        paddingRight=None,
+        paddingLeft=None,
         )
+    
+    
     
 ## class DocumentTool:
 ##    def __init__(self,doc):
@@ -198,8 +211,8 @@ class FrameStyle(PropertySet):
 def getDefaultStyleSheet():
    sheet = StyleSheet()
    sheet.define("BODY",DocumentStyle())
-   sheet.define("Header",FrameStyle())
-   sheet.define("Footer",FrameStyle(vAlign=VA_TOP))
+   sheet.define("Header",FrameStyle(valign=VA_BOTTOM))
+   sheet.define("Footer",FrameStyle(valign=VA_TOP))
    sheet.define("P",ParagraphStyle(
       fontName='Times-Roman',
       fontSize=10,
@@ -280,7 +293,6 @@ def getDefaultStyleSheet():
 
    
    return sheet
-
 
    #tool = DocumentTool(doc)
 

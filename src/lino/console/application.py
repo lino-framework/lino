@@ -74,6 +74,9 @@ class Application(Session):
         self.options=options
         self.args=args
 
+    def isInteractive(self):
+        return self.toolkit.isInteractive()
+
 
     def aboutString(self):
         s = str(self)
@@ -175,7 +178,7 @@ class Application(Session):
             #self.on_main()
             #self.setupApplication()
 
-            if self.name and self.toolkit.isInteractive():
+            if self.name and self.isInteractive():
                 self.notice(self.aboutString())
             
             return self.run(*args,**kw)

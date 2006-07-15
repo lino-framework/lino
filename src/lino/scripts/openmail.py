@@ -50,7 +50,7 @@ optional.
         openmail(msg)
         
 
-OpenMail().main()
+#OpenMail().main()
 
 ## consoleApplicationClass = OpenMail
 
@@ -58,3 +58,5 @@ OpenMail().main()
 ##     consoleApplicationClass().main() 
 
 
+def main(*args,**kw):
+    OpenMail().main(*args,**kw)

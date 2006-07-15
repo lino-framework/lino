@@ -31,88 +31,11 @@ epsilon = 0.001
 
 
 class TableColumn:
-    def __init__(self,label=None,width=None,style=None,**kw):
+    def __init__(self,label=None,width=None,style=None,weight=1):
         self.label = label
         self.width = width
         self.style = style
-
-
-def html2pdf_table(element,width,style):
-    
-    rows=[]
-    columns=[]
-    colCount=0
-    for elem in element.content:
-        if elem.__class__ is html.TR:
-            row=[]
-            i=0 # column index
-            for td in elem.content:
-                i+=1
-                if len(td.content) == 1:
-                    row.append(str(td.content[0]))
-                else:
-                    row.append([str(e) for e in td.content])
-            colCount=max(i,colCount)
-            rows.append(row)
-        elif elem.__class__ is html.COL:
-            columns.append(TableColumn())
-
-    if len(columns) == 0:
-        for i in range(colCount):
-            columns.append(TableColumn())
-    else:
-        assert colCount <= len(columns)
-
-        
-    # distribute free space to all columns whose width is None
-    remainingWidth = width - style.leftIndent - style.rightIndent
-    freeCount = 0   # number of columns whose width is None
-    for col in columns:
-        if col.width is None:
-            freeCount += 1
-        else:
-            remainingWidth -= col.width
-    if remainingWidth < 0:
-        raise "remainingWidth %s is < 0" % repr(remainingWidth)
-
-    if freeCount > 0:
-        w = remainingWidth / freeCount
-
-    colWidths = [] 
-    for col in columns:
-        if col.width is None:
-            assert freeCount > 0 # of course
-            colWidths.append(w-epsilon)
-        else:
-            colWidths.append(col.width-epsilon)
-
-    cellFormats = style.headerCellFormats \
-                  + style.dataCellFormats
-
-    if style.showHeaders:
-        headerData = []
-        for col in columns:
-            if col.label is None:
-                headerData.append("")
-            else:
-                headerData.append(col.label)
-        rows.insert(0,headerData)
-
-    if len(rows) == 0:
-        return
-
-    t = platypus.Table(rows,colWidths)
-
-    # note that Reportlab's TableStyle is only one part of gendoc's
-    # TableStyle:
-
-    # style of the table as a flowable:
-    t.style = style
-    # border formatting :
-    t.setStyle(platypus.TableStyle(cellFormats))
-
-    return t
-
+        self.weight=weight
 
 ## class PdfTable:
     
@@ -195,11 +118,17 @@ def html2pdf_table(element,width,style):
 ##         return t
 
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
+from lino.gendoc.styles import VA_MIDDLE, VA_TOP, VA_BOTTOM
     
 def html2pdf(k,v):
     if k == "align":
+        if v.lower() == "left": return "alignment",TA_LEFT
         if v.lower() == "right": return "alignment",TA_RIGHT
         if v.lower() == "center" : return "alignment",TA_CENTER
+    elif k == "valign":
+        if v.lower() == "top": return "vAlign",VA_TOP
+        if v.lower() == "bottom": return "vAlign",VA_BOTTOM
+        if v.lower() == "center": return "vAlign",VA_MIDDLE
     raise "html2pdf(%r,%r)" % (k,v)
 
 class PdfDocument(html.Document):
@@ -210,22 +139,24 @@ class PdfDocument(html.Document):
         html.Document.__init__(self,stylesheet=stylesheet,**kw)
             
     def saveas(self,filename,header=None,footer=None):
+        #print "BODY:\n",self.body.toxml(),"\n"
         self.rldoc = platypus.SimpleDocTemplate(filename)
         #self.stylesheet=getSampleStyleSheet()
         # overwrites the default UL 
         #self.stylesheet.UL = BulletListStyle(bulletWidth=12)
         self.header=header
         self.footer=footer
-        for k,v in self.getStyle(self.body).items():
+        for k,v in self.getElementStyle(self.body).items():
             setattr(self.rldoc,k,v)
         
         story=[]
         for e in self.body.content:
-            style=self.getStyle(e)
+            style=self.getElementStyle(e)
             if style.pageBreakBefore:
                 if len(story) \
                    and story[-1].__class__ != platypus.PageBreak:
                     story.append(platypus.PageBreak())
+            #print str(e)
             story += self.elem2flow(e,style,self.getDocumentWidth())
             if style.pageBreakAfter:
                 if len(story) \
@@ -236,7 +167,7 @@ class PdfDocument(html.Document):
                          onFirstPage=self.onEveryPage,
                          onLaterPages=self.onEveryPage)
 
-    def getStyle(self,elem,parent=None):
+    def getElementStyle(self,elem,parent=None):
         stName=elem.xclass 
         if stName is None:
             stName=elem.tag()
@@ -257,7 +188,7 @@ class PdfDocument(html.Document):
         return platypus.XPreformatted(txt,style,**kw)
         
     def elem2flow(self,elem,style,width):
-        #print "elem2flow()",elem
+        #print "elem2flow(%r)" % elem.toxml()
         if isinstance(elem,html.PRE):
             assert len(elem.content) == 1
             yield platypus.Preformatted(
@@ -265,13 +196,21 @@ class PdfDocument(html.Document):
             
         elif isinstance(elem,html.UL):
             for li in elem.content:
-                istyle=self.getStyle(li,elem)
+                istyle=self.getElementStyle(li,elem)
                 for fl in self.elem2flow(li,istyle,width):
                     yield fl
             
         elif isinstance(elem,html.LI):
             yield self.makepar(elem.toxml(),style)
             
+        elif isinstance(elem,html.TABLE):
+            t=self.pdftable(elem,width,style)
+            #pt=PdfTable(elem)
+            #t=pt.buildTable(width,style)
+            if t is None: return
+            yield t
+        
+        #elif isinstance(elem,html.Fragment):
         elif isinstance(elem,html.P):
             frags=[]
             for e in elem.content:
@@ -284,18 +223,13 @@ class PdfDocument(html.Document):
                         frags.append(f)
             yield self.makepar("",style,frags=frags)
             
-        elif isinstance(elem,html.TABLE):
-            t=html2pdf_table(elem,width,style)
-            #pt=PdfTable(elem)
-            #t=pt.buildTable(width,style)
-            if t is None: return
-            yield t
-        
             #yield platypus.Table(data)
-##         else:
+        else:
+            raise "Cannot flow %r" % elem
 ##             yield self.makepar(str(elem),style)
         
     def elem2frags(self,elem,style):
+        #print "elem2frags(%s)" % elem
         frag=ParaFrag()
         frag.text=''
         frag.fontName=style.fontName
@@ -346,7 +280,7 @@ class PdfDocument(html.Document):
 
 
     def getDocumentWidth(self):
-        docstyle=self.getStyle(self.body)
+        docstyle=self.getElementStyle(self.body)
         return docstyle.pagesize[0] \
                  - docstyle.rightMargin \
                  - docstyle.leftMargin \
@@ -360,7 +294,7 @@ class PdfDocument(html.Document):
         
     def onEveryPage(self, canvas, rldoc):
         assert rldoc == self.rldoc
-        style = self.getStyle(self.body)
+        style = self.getElementStyle(self.body)
         textWidth = self.getDocumentWidth()
 
         x = style.leftMargin
@@ -390,7 +324,8 @@ class PdfDocument(html.Document):
         #if story is not None:
         pdfstory=[]
         for e in story.content:
-            pdfstory += self.elem2flow(e,self.getStyle(e),textWidth)
+            pdfstory += self.elem2flow(e,self.getElementStyle(e),
+                                       textWidth)
             
         height = 0
         for e in pdfstory:
@@ -398,11 +333,11 @@ class PdfDocument(html.Document):
             height += h
             availableHeight -= h
 
-        if style.vAlign == styles.VA_BOTTOM:
+        if style.valign == styles.VA_BOTTOM:
             pass
-        elif style.vAlign == styles.VA_MIDDLE:
+        elif style.valign == styles.VA_MIDDLE:
             y -= (height/2)
-        elif style.vAlign == styles.VA_TOP:
+        elif style.valign == styles.VA_TOP:
             y -= height
 
         canvas.saveState()
@@ -413,7 +348,114 @@ class PdfDocument(html.Document):
                            bottomPadding=0,
                            topPadding=0) #showBoundary=True)
         f.addFromList(pdfstory,canvas)
-        canvas.restoreState() 
+        canvas.restoreState()
+
+
+    def pdftable(self,element,width,style):
+        assert element.__class__ is html.TABLE
+        rows=[]
+        columns=[]
+        colCount=0
+        for tr in html.tablerows(element,2): # table body
+            row=[]
+            i=0 # column index
+            for td in tr.content:
+                i+=1
+                if len(td.content) == 1:
+                    row.append(str(td.content[0]))
+                else:
+                    l=[]
+                    for e in td.content:
+                        for fl in self.elem2flow(e):
+                            l.append(fl)
+                    row.append(l)
+            colCount=max(i,colCount)
+            rows.append(row)
+
+        for elem in element.content:
+            if elem.__class__ is html.COLGROUP:
+                for col in elem.content:
+                    if col.width[-1] == "*":
+                        columns.append(TableColumn(
+                            weight=int(col.width[:-1])))
+                    elif col.width is not None:
+                        raise NotImplementedError,"non-relative width"
+                    else:
+                        columns.append(TableColumn())
+
+        if len(columns) == 0:
+            for i in range(colCount):
+                columns.append(TableColumn())
+        else:
+            assert colCount <= len(columns)
+
+        # distribute free space to all columns whose width is None
+        remainingWidth = width - style.leftIndent - style.rightIndent
+        freeCount = 0   # number of columns whose width is None
+        for col in columns:
+            if col.width is None:
+                freeCount += col.weight
+            else:
+                remainingWidth -= col.width
+        if remainingWidth < 0:
+            raise "remainingWidth %s is < 0" % repr(remainingWidth)
+
+        if freeCount > 0:
+            w = remainingWidth / freeCount
+
+        colWidths = [] 
+        for col in columns:
+            if col.width is None:
+                assert freeCount > 0 # of course
+                colWidths.append(col.weight * w - epsilon)
+            else:
+                colWidths.append(col.width-epsilon)
+
+        showHeaders=False
+        i=0
+        for tr in html.tablerows(element,0): # table header
+            for th in tr.content:
+                col=columns[i]
+                col.label=[e for e in
+                           self.elem2flow(th,self.getElementStyle(th),
+                                          col.width)]
+                if len(col.label)>0:
+                    showHeaders=True
+                    #print col.label
+                i += 1
+
+
+
+        cellFormats = style.headerCellFormats \
+                      + style.dataCellFormats
+
+
+        if showHeaders:
+            headerData = []
+            for col in columns:
+                if col.label is None:
+                    headerData.append("")
+                else:
+                    headerData.append(col.label)
+            rows.insert(0,headerData)
+
+        if len(rows) == 0:
+            return
+
+        t = platypus.Table(rows,colWidths)
+
+        # note that Reportlab's TableStyle is only one part of gendoc's
+        # TableStyle:
+
+        # style of the table as a flowable:
+        t.style = style
+        # border formatting :
+        t.setStyle(platypus.TableStyle(cellFormats))
+
+        return t
+
+
+        
         
 
 class PdfMaker(Application):
@@ -428,7 +470,7 @@ See file COPYING.txt for more information."""
     
     url="http://lino.saffre-rumma.ee/pdfmake.html"
     
-    usage="usage: lino pdfmake [options] [FILE]"
+    usage="usage: %s [options] [FILE]"
     
     description="""\
 

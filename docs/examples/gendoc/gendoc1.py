@@ -1,3 +1,4 @@
+import sys
 import os
 from lino.gendoc.pdf import PdfDocument
 
@@ -13,4 +14,5 @@ A test is a test and not a final document.
 
 d.saveas("test.pdf")
 
-os.system("start test.pdf")
+if not "--batch" in sys.argv:
+    os.system("start test.pdf")

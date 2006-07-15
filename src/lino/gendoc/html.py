@@ -1,5 +1,3 @@
-#coding: iso-8859-1
-
 ## Copyright 2003-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
@@ -18,42 +16,21 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import sys
-import os
-opj = os.path.join
-from cStringIO import StringIO
 from HTMLParser import HTMLParser
+from htmlentitydefs import name2codepoint
 
 
-from lino.gendoc import gendoc # import WriterDocument
+#from lino.gendoc import gendoc # import WriterDocument
 
-# from twisted.web.microdom
-ESCAPE_CHARS = (('&', '&amp;'),
-                ('<', '&lt;'),
-                ('>', '&gt;'),
-                ('"', '&quot;'))
+from lino.gendoc.elements import \
+     CDATA, Element, Container, InvalidRequest
 
-def unescape(text):
-    "Perform the exact opposite of 'escape'."
-    for ch, h in ESCAPE_CHARS:
-        text = text.replace(h, ch)
-    return text
-
-def escape(text):
-    "replace a few special chars with HTML entities."
-    for ch, h in ESCAPE_CHARS:
-        text = text.replace(ch, h)
-    return text 
-
-
-                    
-
-from lino.oogen.elements import CDATA, Element, Container, InvalidRequest
 
 class BR(Element):
     pass
 
 class IMG(Element):
+    flowable=True
     allowedAttribs=dict(src="src",
                         width="width",
                         height="height")
@@ -61,11 +38,16 @@ class IMG(Element):
 
 
 class Fragment(Container):
+    flowable=False
+##     allowedAttribs=dict(id='id',
+##                         lang='lang',
+##                         title='title')
     allowedAttribs=dict(xclass='class',
                         id='id',
                         lang='lang',
                         style='style',
                         title='title')
+
 class SPAN(Fragment):
     allowedContent = (CDATA,Fragment)
 
@@ -82,12 +64,14 @@ class TT(SPAN): pass
 class FONT(SPAN): pass
 
 class LI(Fragment):
+    flowable=True
     
     """Maybe P must be the first element because MemoParser wouln't
     otherwise handle empty lines inside a LI correctly.  To be
     tested."""
 
 class UL(Fragment): 
+    flowable=True
     allowedContent = (LI,)
     def li(self,*args,**kw):
         return self.append(LI(*args,**kw))
@@ -97,10 +81,15 @@ class OL(UL):
 
 
 
-class TD(Fragment):
+class Cell(Fragment):
+    allowedAttribs=dict(
+        align="align",
+        valign="valign",
+        **Fragment.allowedAttribs)
+class TD(Cell):
     pass
     
-class TH(Fragment):
+class TH(Cell):
     pass
     
 class TR(Fragment):
@@ -113,14 +102,53 @@ class COLGROUP(Fragment):
     allowedContent=(COL,)
     allowedAttribs=dict(span="span",width="width")
 
-class TABLE(Fragment):
-    allowedContent=(TR,COLGROUP,COL)
+class THEAD(Fragment):
+    allowedContent=(TR,)
+class TFOOT(Fragment):
+    allowedContent=(TR,)
+class TBODY(Fragment):
+    allowedContent=(TR,)
     
+class TABLE(Fragment):
+    flowable=True
+    allowedContent=(TR,COLGROUP,THEAD,TFOOT,TBODY)
+    
+def tablerows(table,area):
+    """
+    area is one of 0:THEAD, 1:TFOOT, 2:TBODY
+
+    subdividing a table into areas is optional. if present, it must be
+    in the specified order. if no areas specified, all TR elements are
+    considered part of the TBODY.
+    
+    """
+    for elem in table.content:
+        if elem.__class__ is THEAD:
+            if area == 0:
+                for cell in elem.content:
+                    yield cell
+        elif elem.__class__ is TFOOT:
+            if area == 1:
+                for cell in elem.content:
+                    yield cell
+        elif elem.__class__ is TBODY:
+            if area == 2:
+                for cell in elem.content:
+                    yield cell
+        elif elem.__class__ is TR:
+            if area == 2:
+                yield elem
+        elif elem.__class__ is COLGROUP:
+            pass
+        else:
+            raise "unhandled element %s" % elem
+        
+
 
 
 
 class P(Fragment):
-    autoClosedBy=(UL,OL,TABLE)
+    flowable=True
     allowedContent = (CDATA,SPAN,BR,IMG)
     allowedAttribs = dict(
         align="align",
@@ -164,146 +192,10 @@ class Story(Container):
     def h1(self,txt,**kw): self.heading(1,txt,**kw)
     def h2(self,txt,**kw): self.heading(2,txt,**kw)
     def h3(self,txt,**kw): self.heading(3,txt,**kw)
+    def getStyle(self):
+        return self.document.getElementStyle(self)
     
     
-
-
-
-TD.autoClosedBy=(TD,TH,TR,TABLE)
-TH.autoClosedBy=(TD,TH,TR,TABLE)
-TR.autoClosedBy=(TR,TABLE)
-LI.autoClosedBy=(LI,TABLE)
-LI.allowedContent = TD.allowedContent \
-                    = TH.allowedContent \
-                    = (CDATA,P,SPAN,IMG)
-    
-
-    
-    
-##     def __init__(self,href=None,label=None,doc=None):
-##         if label is None: label=href
-##         self.href=href
-##         self.label=label
-##         self.doc=doc
-        
-##     def __html__(self,doc,wr):
-##         wr('<a href="'+self.href+'">')
-##         wr(escape(self.label))
-##         wr('</a>')
-
-
-class MemoParser(HTMLParser):
-
-    def __init__(self,story,style,**kw):
-        HTMLParser.__init__(self)
-        self.story=story
-        self.style=style
-        self.kw=kw
-        self.stack=[]
-        self.buffer=""
-        self.newpar=False # "start new par on next data"
-
-##     def reset(self):
-##         HTMLParser.reset(self)
-
-    def autopar(self,txt=''):
-        p=P(txt,xclass=self.style,**self.kw)
-        self.stack.append(p)
-        return self.story.append(p)
-        
-    def handle_data(self,data):
-        """process arbitrary data."""
-        if len(self.stack) == 0:
-            self.autopar()
-        tail=self.stack[-1]
-        #print self.story.toxml()
-        #print "%r -> %r" % (data, tail)
-        #raw_input()
-        if tail.__class__ is P:
-            a = [ line for line in data.split('\n\n')
-                  if len(line.strip()) > 0]
-            if len(a):
-                tail.append(a[0])
-                for line in a[1:]:
-                    self.autopar(line)
-        elif tail.__class__ is BR:
-            pass
-        elif CDATA in tail.__class__.allowedContent:
-            tail.append(data)
-        elif len(data.strip()) > 0:
-            raise "cannot handle %r inside <%s>" % (data,tail.tag())
-##         elif self.newpar:
-##             if self.stack[-1].__class__==P:
-##                 popped=pop(self.stack)
-##                 #print "popped",popped
-##             self.stack.append(self.story.par())
-##         self.newpar=False
-
-    def handle_charref(self,name):
-        """process a character reference of the form "&#ref;"."""
-        print "handle_charref", name
-        raise NotImplemented
-        
-    def handle_entityref(self,name):
-        """process a general entity reference of the form "&name;"."""
-        print "handle_entityref", name
-        raise NotImplemented
-
-    def _append(self,elem):
-        self.stack[-1].append(elem)
-        
-    def starttag(self,tag,attrs):
-        tag=tag.upper()
-        cl=globals()[tag]
-        #print attrs
-        d={}
-        for hk,hv in attrs:
-            for k,v in cl.allowedAttribs.items():
-                if v == hk:
-                    d[k]=hv
-                    break
-        return cl(**d)
-        
-    def handle_startendtag(self,tag, attrs):
-        elem=self.starttag(tag,attrs)
-        self._append(elem)
-
-    def handle_starttag(self, tag, attrs):
-        elem=self.starttag(tag,attrs)
-        try:
-            self._append(elem)
-        except InvalidRequest,e:
-            if elem.__class__ in self.stack[-1].autoClosedBy:
-                popped=self.stack.pop()
-                print "<%s> autoClosedBy <%s>" % (
-                    popped.tag(),elem.tag())
-                self.story.append(elem)
-##             if self.stack[-1].__class__ is P \
-##                and elem.__class__ in(UL,OL,TABLE):
-##                 popped=self.stack.pop()
-##                 #print "popped",popped
-##                 self.story.append(elem)
-            else:
-                raise
-        self.stack.append(elem)
-        
-
-    def handle_endtag(self, tag):
-        while True:
-            if len(self.stack) == 0:
-                raise "stack underflow"
-            popped=self.stack.pop()
-            if tag.upper() == popped.tag():
-                return
-            cl=globals()[tag.upper()]
-            if cl in popped.autoClosedBy:
-                print "<%s> autoClosedBy </%s>" % (
-                    popped.tag(),tag.upper())
-            else:
-                raise "Found </%s> where </%s> expected" % (
-                    tag.upper(), popped.tag())
-
-
 class BODY(Story):
     allowedAttribs= dict(
         bgcolor='bgcolor',
@@ -311,13 +203,24 @@ class BODY(Story):
         
     def report(self,rpt):
         rpt.beginReport()
-        header=[TH(col.getLabel()) for col in rpt.columns]
-        t=TABLE(TR(*header))
+        header=[TH(col.getLabel(),align=col.halign,valign=col.valign)
+                for col in rpt.columns]
+        t=TABLE()
+        cols=[]
+        for col in rpt.columns:
+            cols.append(COL(width=str(col.width)+"*"))
+        t.append(COLGROUP(*cols))
+        t.append(THEAD(TR(*header)))
+        # TFOOT if present must come before TBODY
+        tbody=t.append(TBODY())
         for row in rpt.rows():
-            line=[TD(s) for (c,s) in row.cells()]
-            t.append(TR(*line))
-
+            line=[TD(s, align=col.halign,
+                     valign=col.valign)
+                  for (col,s) in row.cells()]
+            tbody.append(TR(*line))
+            
         rpt.endReport()
+        #print t.toxml()
         return self.append(t)
 
     def par(self,txt,style=None,**kw):
@@ -368,6 +271,196 @@ class BODY(Story):
     
     def getDocument(self):
         return None
+
+
+
+
+P.autoClosedBy=(P,LI,UL,OL,TABLE)
+TD.autoClosedBy=(TD,TH,TR,TABLE)
+TH.autoClosedBy=(TD,TH,TR,TABLE)
+TR.autoClosedBy=(TR,TABLE)
+LI.autoClosedBy=(LI,UL)
+LI.allowedContent = TD.allowedContent \
+                    = TH.allowedContent \
+                    = (CDATA,P,SPAN,IMG)
+    
+
+    
+    
+##     def __init__(self,href=None,label=None,doc=None):
+##         if label is None: label=href
+##         self.href=href
+##         self.label=label
+##         self.doc=doc
+        
+##     def __html__(self,doc,wr):
+##         wr('<a href="'+self.href+'">')
+##         wr(escape(self.label))
+##         wr('</a>')
+
+
+class MemoParser(HTMLParser):
+
+    def __init__(self,story,style,**kw):
+        HTMLParser.__init__(self)
+        self.story=story
+        self.style=style
+        self.kw=kw
+        self.stack=[]
+        self.parsep=False
+
+##     def reset(self):
+##         HTMLParser.reset(self)
+
+##     def autopar(self,elem):
+##         print "autopar()"
+        
+    def handle_data(self,data):
+        """process arbitrary data."""
+        #print "handle_data(%r) to %s"%(
+        #    data,[e.tag() for e in self.stack])
+        if len(self.stack) == 0:
+            if len(data.strip()) == 0:
+                return
+            p=P(xclass=self.style,**self.kw)
+            self._append(p)
+            #self.autopar()
+        tail=self.stack[-1]
+        #print self.story.toxml()
+        #print "%r -> %r" % (data, tail)
+        #raw_input()
+        if CDATA in tail.__class__.allowedContent:
+            #print data.split('\n\n'), "to", \
+            #      [e.tag() for e in self.stack],\
+            #      self.parsep
+            first=True
+            #newpar=False
+            for chunk in data.split('\n\n'):
+                if first:
+                    first=False
+                else:
+                    self.parsep=True
+                if len(chunk.strip()) > 0:
+                    if self.parsep:
+                        self.parsep=False
+                        self._append(P(chunk,
+                                       xclass=self.style,**self.kw))
+                    else:
+                        tail.append(chunk)
+                elif not self.parsep:
+                    tail.append(chunk)
+                #newpar=True
+
+        elif len(data.strip()) > 0:
+            raise "cannot handle %r inside <%s>" % (data,tail.tag())
+##         elif self.newpar:
+##             if self.stack[-1].__class__==P:
+##                 popped=pop(self.stack)
+##                 #print "popped",popped
+##             self.stack.append(self.story.par())
+##         self.newpar=False
+
+    def handle_charref(self,name):
+        """process a character reference of the form "&#ref;"."""
+        print "handle_charref", name
+        raise NotImplemented
+    
+        
+    def handle_entityref(self,name):
+        """process a general entity reference of the form "&name;"."""
+        self.handle_data(unichr(name2codepoint[name]))
+        #print "handle_entityref", name
+        #raise NotImplemented
+
+    def _append(self,elem):
+        while True:
+            #print "_append(%s) to %s" % (
+            #    elem.__class__.__name__,
+            #    [e.__class__.__name__ for e in self.stack])
+            if len(self.stack) == 0:
+                if elem.flowable:
+                    self.stack.append(elem)
+                    self.story.append(elem)
+                    return
+                # e.g. memo starts with "<tt>"
+                p=P(xclass=self.style,**self.kw)
+                self._append(p)
+                # don't return
+            try:
+                self.stack[-1].append(elem)
+                self.stack.append(elem)
+                return 
+            except InvalidRequest,e:
+                #print "could not append <%s> to <%s>" % (
+                #    elem.tag(),
+                #    self.stack[-1].tag())
+                if elem.__class__ in self.stack[-1].autoClosedBy:
+                    popped=self.stack.pop()
+                    #print "<%s> automagically closes <%s>" % (
+                    #    elem.tag(),
+                    #    popped.tag())
+                    #self.story.append(elem)
+                    #self.stack.append(elem)
+                else:
+                    raise
+        
+        #print "<%s> was added to <%s>" %(elem.tag(),self.stack[-1].tag())
+        
+    def do_starttag(self,tag,attrs):
+        tag=tag.upper()
+        cl=globals()[tag]
+        #print attrs
+        d={}
+        for hk,hv in attrs:
+            found=False
+            for k,v in cl.allowedAttribs.items():
+                if v == hk:
+                    d[k]=hv
+                    found=True
+                    break
+            if not found:
+                raise "unhandled attribute %s" % k
+        elem=cl(**d)
+        if self.parsep: 
+            self.parsep=False
+            if not elem.flowable:
+            #if not elem.__class__ in (P,UL,OL,TABLE):
+                self._append(P(xclass=self.style,**self.kw))
+        self._append(elem)
+        return elem
+        
+        
+        
+    def handle_startendtag(self,tag, attrs):
+        elem=self.do_starttag(tag,attrs)
+        self.stack.pop()
+
+    def handle_starttag(self, tag, attrs):
+        #print "<%s>" % tag
+        #print "handle_starttag(%s)"%tag
+        elem=self.do_starttag(tag,attrs)
+        if not isinstance(elem,Container):
+            # tolerate <img> or <br> without endtag
+            self.stack.pop()
+
+    def handle_endtag(self, tag):
+        #print "</%s>" % tag
+        while True:
+            if len(self.stack) == 0:
+                raise "stack underflow"
+            popped=self.stack.pop()
+            if tag.upper() == popped.tag():
+                return
+            cl=globals()[tag.upper()]
+            if cl in popped.autoClosedBy:
+                pass
+                #print "<%s> autoClosedBy </%s>" % (
+                #    popped.tag(),tag.upper())
+            else:
+                raise "Found </%s>, expected </%s> (stack was %s)" % (
+                    tag.upper(), popped.tag(),
+                    [e.tag() for e in self.stack]+[popped.tag()]
+                    )
 
 
 

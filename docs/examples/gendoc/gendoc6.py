@@ -22,8 +22,8 @@ def header(story):
     """)
 
 def body(story):
-    story.document.stylesheet.BODY.update(
-        showBoundary=True,
+    story.getStyle().update(
+        #showBoundary=True,
         leftMargin=60*mm,
         rightMargin=30*mm,
         topMargin=40*mm,

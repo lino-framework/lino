@@ -45,10 +45,12 @@ Starts the default browser on the specified URL(s).
             print url
             webbrowser.open_new(url)
 
-OpenURL().main()
+#OpenURL().main()
 
 ## consoleApplicationClass = OpenURL
 
 ## if __name__ == '__main__':
 ##     consoleApplicationClass().main() 
 
+def main(*args,**kw):
+    OpenURL().main(*args,**kw)

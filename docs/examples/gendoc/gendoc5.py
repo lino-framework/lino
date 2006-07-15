@@ -5,9 +5,9 @@ def body(doc):
     doc.h2("Tables")
 
     doc.example("""
-    
-The following table summarizes the relationship between foo, bar and
-baz:
+
+The markup language of <tt>memo()</tt> supports tables using the same
+markup syntax as HTML:
 
     ""","""
 <table>
@@ -25,8 +25,8 @@ baz:
 
     """)
     doc.example("""
-    
-The same table using the DataTable style:
+
+You can specify the name of a table style as the <tt>class</tt> attribute of the <tt>&lt;table></tt> tag:
 
     ""","""
 <table class="DataTable">
@@ -44,11 +44,13 @@ The same table using the DataTable style:
 
     """)
     doc.example("""
-    
-Now an almost illegally simple table.
-This is valid HTML, though not very modern:
+
+You can omit closing tags if the parser can close them automatically.
+This was valid HTML in the beginnings of the Internet, and modern
+browsers still render it correctly:
 
     ""","""
+    
 <table>
 <tr>
 <td>foo
@@ -59,7 +61,7 @@ This is valid HTML, though not very modern:
 <td>B
 <td>C
 </table>
-
+    
     """)
 
     

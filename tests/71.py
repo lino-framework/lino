@@ -22,7 +22,7 @@ opj = os.path.join
 
 from lino.misc.tsttools import TestCase, main
 
-from lino.gendoc.html import StaticHtmlDocument
+from lino.gendoc.html_site import StaticHtmlDocument
 
 
 class Case(TestCase):

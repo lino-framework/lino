@@ -19,6 +19,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.forms.forms import MenuContainer
+from lino.gendoc import gendoc
 
 from lino.adamo.query import QueryColumn
 from lino.adamo.query import Query
@@ -341,36 +342,36 @@ def rptname(doc,rpt,sortColumn=None,pageNum=None):
 
         
         
-## class DataRowElement:
-##     def __init__(self,row):
-##         self.row=row
+class DataRowElement:
+    def __init__(self,row):
+        self.row=row
         
-##     def __html__(self,doc):
-##         wr=doc.write
+    def __html__(self,doc):
+        wr=doc.write
         
-##         wr('<table width="100%" cellpadding="3" cellspacing="3">')
+        wr('<table width="100%" cellpadding="3" cellspacing="3">')
             
             
-##         # iterate...
-##         rowno = 0
-##         for col in self.row._query.getVisibleColumns():
-##         #for cell in self.row:
-##             rowno += 1
-##             if rowno % 2 == 0:
-##                 wr("<tr class=''>\n")
-##             else:
-##                 wr("<tr class='alternate'>\n")
+        # iterate...
+        rowno = 0
+        for col in self.row._query.getVisibleColumns():
+        #for cell in self.row:
+            rowno += 1
+            if rowno % 2 == 0:
+                wr("<tr class=''>\n")
+            else:
+                wr("<tr class='alternate'>\n")
 
-##             wr('<td>')
-##             doc.writeText(col.getLabel())
-##             wr("</td>")
+            wr('<td>')
+            doc.writeText(col.getLabel())
+            wr("</td>")
             
-##             wr('<td>')
-##             doc.writeColValue(col,col.getCellValue(self.row))
-##             wr("</td>")
-##             wr("</tr>\n")
+            wr('<td>')
+            doc.writeColValue(col,col.getCellValue(self.row))
+            wr("</td>")
+            wr("</tr>\n")
         
-##         wr("</table>")
+        wr("</table>")
 
 
 class HtmlPage:
