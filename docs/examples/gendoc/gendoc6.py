@@ -12,12 +12,10 @@ def footer(story):
 def header(story):
     story.memo("""
     <table class="EmptyTable">
-    <tr><td>
-    Bla, blabla, blablabla. Bla.
-    </td>
-    <td>
-    Bla, blabla, blablabla. Bla.
-    </td></tr>
+    <tr><td align="left">
+    (Left header)
+    <td align="right">
+    (Right header)
     </table>
     """)
 
@@ -36,11 +34,10 @@ def body(story):
     story.h2("Page setup")
     story.memo("""
 
-    This document has non-standard page margins,
-    a header and a footer.
-
+This document has non-standard page margins, a header and a footer.
 
     """)
-    story.par("Tallinn, 10. juuni 2006. a.",align="RIGHT")
+    story.par("This paragraph is aligned right",align="RIGHT")
+    story.memo("Here is anoter paragraph.")
     
 PdfMaker().main(body)

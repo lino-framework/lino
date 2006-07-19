@@ -730,23 +730,38 @@ class LayoutFactory:
 
 
 class DbApplication(GuiApplication):
-    #wishlist=None
-    #mainFormClass=None
-    #dbname=None
 
     def __init__(self,filename=None,langs=None,dump=False,**kw):
         GuiApplication.__init__(self,**kw)
-        #if filename is None:
-        #    filename=self.dbname+".db"
         self.filename=filename
         self.langs=langs
         self.dump=dump
+
+    def configure(self,filename=None,langs=None,dump=False):
+        #print "configure"
+        if dump is not None:
+            self.dump=dump
+        if langs is not None:
+            self.langs=langs
+        if filename is not None:
+            self.filename=filename
+        
+    def setupOptionParser(self,parser):
+        def call_set(option, opt_str, value, parser,**kw):
+            self.configure(**kw)
+        parser.add_option("-d","--dump",
+                          help="dump all SQL commands to stdout",
+                          action="callback",
+                          callback=call_set,
+                          default=self.dump,
+                          callback_kwargs=dict(dump=True))
 
     def createMainForm(self):
         dbc=self.createContext()
         return self.mainFormClass(dbc)
 
     def createContext(self):
+        #print "createContext"
         schema=self.mainFormClass.schemaClass(self)
         return schema.createContext(langs=self.langs,
                                     filename=self.filename,

@@ -6,7 +6,11 @@
 ## app.main()
 
 from lino.apps.contacts.contacts_demo import DemoContacts
-app=DemoContacts(filename="contacts.db",dump=True)
-#app.quickStartup(filename="contacts.db")
-#app.setFilename("contacts.db")
-app.main()
+
+def main(*args,**kw):
+    app=DemoContacts(filename="contacts.db") #,dump=True)
+    #app.quickStartup(filename="contacts.db")
+    #app.setFilename("contacts.db")
+    app.main()
+
+    

@@ -185,17 +185,19 @@ class TimingsSchema(Schema):
         )
 
 class TimingsMainForm(DbMainForm):
-    """
-        
+
+    schemaClass=TimingsSchema
+    
+    def layout(self,panel):
+        panel.label("""
+    
 Welcome to Timings, a Lino application to to manage your resources and
 their usage.
 
 Warning: This application is not stable and there are no known users.
 
+        """)
 
-"""+("\n"*10)
-
-    schemaClass=TimingsSchema
 
     def setupMenu(self):
         m = frm.addMenu("db","&Datenbank")

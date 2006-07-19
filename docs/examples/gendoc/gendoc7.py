@@ -13,23 +13,21 @@ def footer(story):
 def header(story):
     story.memo("""
     <table class="EmptyTable">
-    <tr><td>
-    Bla, blabla, blablabla. Bla.
-    </td>
+    <tr><td align="left">
+    (Left header)
     <td align="right">
-    (Coucou)
-    </td></tr>
+    (Right header)
     </table>
     """)
-
 
 
 class InvoiceReport(ListReport):
     width=50
     data=(
-        ("pcd.fsc","Fujitsu-Siemens Esprimo","756,50"),
-        ("mon.lcd.fsc",'Fujitsu-Siemens Monitor 19"',"370,80"),
-        ("acc.cdr",'CDRW 10 pcs',"12,20"),
+        ("pcd.fsc",     "Fujitsu-Siemens Esprimo",     "756,50"),
+        ("mon.lcd.fsc", 'Fujitsu-Siemens Monitor 19"', "370,80"),
+        ("acc.cdr",     'CDRW 10 pcs',                 "12,20"),
+        ("",            'Total',                       "1239,50"),
         )
     def setupReport(self):
         self.addColumn(label="Item no.",width=11)
@@ -42,7 +40,7 @@ def body(story):
     story.getStyle().update(header=header,footer=footer)
     #story.document.stylesheet.define()
     story.h1("Seventh Example")
-    story.h2("Reports")
+    story.h2("Invoice")
     story.memo("""
 
 

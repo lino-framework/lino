@@ -333,15 +333,17 @@ class SearchForm(ReportForm):
 
 
 class KeeperMainForm(DbMainForm):
-    """
+
+    schemaClass=KeeperSchema
+    
+    def layout(self,panel):
+        panel.label("""
 
 Keeper keeps an eye on your files. He knows your files and helps you
 to find them back even if they are archived on external media.
 (But please note that Keeper is not yet in a usable state.)
 
-
-    """
-    schemaClass=KeeperSchema
+        """)
     
     def setupMenu(self):
 

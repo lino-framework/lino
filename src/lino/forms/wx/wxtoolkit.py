@@ -664,10 +664,35 @@ class Toolkit(toolkit.Toolkit):
 
             
 
+        CHARWIDTH, LINEHEIGHT = ctrl.GetTextExtent("M")
+
+        if frm.minWidth is None:
+            minW=-1
+        else:
+            minW=frm.minWidth * CHARWIDTH
+        if frm.minHeight is None:
+            minH=-1
+        else:
+            minH=frm.minHeight * LINEHEIGHT
+            
+        if frm.maxWidth is None:
+            maxW=-1
+        else:
+            maxW=frm.maxWidth * CHARWIDTH
+        if frm.maxHeight is None:
+            maxH=-1
+        else:
+            maxH=frm.maxHeight * LINEHEIGHT
+            
+        ctrl.SetSizeHints(minW,minH,maxW,maxH)
+
+
         ctrl.SetSizerAndFit(mainBox)
         #self.mainBox = mainBox
         #ctrl.SetAutoLayout(True) 
         #self.wxctrl.Layout()
+
+            
 
         if frm.halign is forms.CENTER:
             ctrl.Centre(wx.HORIZONTAL)

@@ -67,10 +67,16 @@ class Form(MenuContainer):
     returnValue=None
     enabled=True
     
+    minWidth=None
+    maxWidth=None
+    minHeight=None
+    maxHeight=None
+    
     def __init__(self,
-                 #data=None,
-                 halign=None, valign=None,
                  title=None,
+                 halign=None, valign=None,
+                 width=None,minWidth=None,maxWidth=None,
+                 height=None,minHeight=None,maxHeight=None,
                  enabled=None): # *args,**kw):
         MenuContainer.__init__(self)
         if title is not None:
@@ -88,6 +94,20 @@ class Form(MenuContainer):
         self.session=None
         self.mainComp=None
 
+        if width is not None:
+            minWidth = maxWidth = width
+        if maxWidth is not None:
+            self.maxWidth = maxWidth
+        if minWidth is not None:
+            self.minWidth = minWidth
+        if height is not None:
+            minHeight = maxHeight = height
+        if maxHeight is not None:
+            self.maxHeight = maxHeight
+        if minHeight is not None:
+            self.minHeight = minHeight
+        
+
 
     def setup(self,sess):
         if self.ctrl is not None:
@@ -99,8 +119,8 @@ class Form(MenuContainer):
         self.toolkit=sess.toolkit
         self.mainComp = sess.toolkit.vpanelFactory(self,weight=1)
             
-        if self.__doc__ is not None:
-            self.mainComp.label(self.__doc__)
+        #if self.__doc__ is not None:
+        #    self.mainComp.label(self.__doc__)
             
         self.layout(self.mainComp)
         self.setupMenu()
@@ -113,6 +133,10 @@ class Form(MenuContainer):
         s = self.__class__.__name__
         s += '(title=%r)' % self.getTitle()
         s += ":\n"
+##         if True:
+##             s += str(self.__doc__)
+##         elif self.mainComp is None:
+##             s += str(self.__doc__)
         s += "\n  ".join(repr(self.mainComp).splitlines())
         #s += "\n)"
         return s
@@ -271,7 +295,7 @@ class ReportForm(Form,GenericDocument):
         if self.currentRow is None: return
         #print "afterRowEdit()",repr(self.currentRow.item)
         if self.currentRow.item.isLocked():
-            print "isLocked()"
+            #print "isLocked()"
             self.store()
             self.currentRow.item.unlock()
 
@@ -703,12 +727,16 @@ class DbMainForm(Form):
     
     schemaClass=NotImplementedError
     
+    minWidth=80
+    minHeight=20
+    
 ##     def __init__(self,dbsess,*args,**kw):
 ##         self.dbsess=dbsess
 ##         Form.__init__(self,*args,**kw)
 
     #def __init__(self,filename=None,langs=None,dump=False,**kw):
     def __init__(self,dbcontext,**kw):
+        #print self.__doc__
         self.dbsess=dbcontext
         #self.filename=filename
         #self.langs=langs

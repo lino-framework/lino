@@ -113,42 +113,42 @@ class Container(Component):
     def label(self,label,**kw):
         e = self.form.toolkit.labelFactory(self.form,
                                            label=label,**kw)
-        return self.addComponent(e)
+        return self.add_component(e)
         
     def entry(self,*args,**kw):
         e = self.form.toolkit.entryFactory(self.form,
                                            None,*args,**kw)
-        return self.addComponent(e)
+        return self.add_component(e)
     
     def dataentry(self,dc,*args,**kw):
         e = self.form.toolkit.dataEntryFactory(self.form,
                                                dc,*args,**kw)
-        return self.addComponent(e)
+        return self.add_component(e)
 
     def datagrid(self,rpt,name=None,*args,**kw):
         e = self.form.toolkit.dataGridFactory(self.form,
                                               rpt,*args,**kw)
-        return self.addComponent(e)
+        return self.add_component(e)
         
     def hpanel(self,**kw):
         c = self.form.toolkit.hpanelFactory(self.form,**kw)
-        return self.addComponent(c)
+        return self.add_component(c)
     
     def vpanel(self,**kw):
         c = self.form.toolkit.vpanelFactory(self.form,**kw)
-        return self.addComponent(c)
+        return self.add_component(c)
     
     def addViewer(self): 
         frm = self.getForm()
         c = frm.toolkit.viewerFactory(self.form)
-        return self.addComponent(c)
+        return self.add_component(c)
         #self._components.append(c)
         #return c
     
     def button(self,name=None,*args,**kw): 
         btn = self.form.toolkit.buttonFactory(
             self.form,name=name,*args,**kw)
-        return self.addComponent(btn)
+        return self.add_component(btn)
 
     def formButton(self,frm,*args,**kw):
         b=self.button(label=frm.getTitle())
@@ -198,6 +198,34 @@ class Container(Component):
             msg = e.validate()
             if msg is not None:
                 return msg
+
+
+class Panel(Container):
+    
+    def __init__(self,*args,**kw):
+        Component.__init__(self,*args,**kw)
+        self._components = []
+
+    def getComponents(self):
+        return self._components
+
+    def add_component(self,c):
+        self._components.append(c)
+        return c
+
+    def __repr__(self):
+        s = self.__class__.__name__
+        s += ":"
+        for c in self._components:
+            s += "\n- " + ("\n  ".join(repr(c).splitlines()))
+        return s
+
+class VPanel(Panel):
+    direction=VERTICAL
+    
+class HPanel(Panel):
+    direction=HORIZONTAL
+    
 
 
             
@@ -253,6 +281,42 @@ class TextViewer(Component):
     def addText(self,v):
         raise NotImplementedError
 
+class TypedMixin:    
+    def __init__(self,type):
+        if type is None:
+            type = STRING
+        self._type = type
+        
+    def format(self,v):
+        return self._type.format(self._value)
+    
+    def getType(self):
+        return self._type
+    
+    def parse(self,s):
+        return self._type.parse(s)
+
+    def getMinWidth(self):
+        return self._type.minWidth
+    def getMaxWidth(self):
+        return self._type.maxWidth
+    def getMinHeight(self):
+        return self._type.minHeight
+    def getMaxHeight(self):
+        return self._type.maxHeight
+
+
+
+class Label(Component,TypedMixin):
+    
+    def __init__(self,form, type=None,*args,**kw):
+        Component.__init__(self,form,*args,**kw)
+        TypedMixin.__init__(self,type)
+
+    def render(self,doc):
+        doc.renderLabel(self)
+
+
     
 
 class BaseEntry(Component):
@@ -280,31 +344,19 @@ class BaseEntry(Component):
         "convert the non-empty string to a raw value"
         raise NotImplementedError
         
-class Entry(BaseEntry):
+
+class Entry(BaseEntry,TypedMixin):
     def __init__(self,form, name=None, type=None,
                  value=None,
                  *args,**kw):
 
         Component.__init__(self,form, name, *args,**kw)
-        
-        if type is None:
-            type = STRING
-            
-        self._type = type
+        TypedMixin.__init__(self,type)
         self.setValue(value)
 
     def getValue(self):
         return self._value
     
-    def format(self,v):
-        return self._type.format(self._value)
-    
-    def getType(self):
-        return self._type
-    
-    def parse(self,s):
-        return self._type.parse(s)
-
     def setValue(self,v):
         if v is not None:
             self._type.validate(v)
@@ -314,15 +366,6 @@ class Entry(BaseEntry):
     def refresh(self):
         self.enabled = self.form.enabled
         
-    def getMinWidth(self):
-        return self._type.minWidth
-    def getMaxWidth(self):
-        return self._type.maxWidth
-    def getMinHeight(self):
-        return self._type.minHeight
-    def getMaxHeight(self):
-        return self._type.maxHeight
-
 
 class DataEntry(BaseEntry):
     
@@ -364,14 +407,6 @@ class DataEntry(BaseEntry):
         self.enabled = frm.enabled and self.col.canWrite(
             frm.getCurrentRow())
         
-
-class Label(Component):
-    def __init__(self,form,*args,**kw):
-        Component.__init__(self,form,*args,**kw)
-
-    def render(self,doc):
-        doc.renderLabel(self)
-
 
 
 class MenuItem(Button):
@@ -465,34 +500,6 @@ class DataGrid(Component):
         raise NotImplementedError
 
 
-
-
-class Panel(Container):
-    
-    def __init__(self,*args,**kw):
-        Component.__init__(self,*args,**kw)
-        self._components = []
-
-    def getComponents(self):
-        return self._components
-
-    def addComponent(self,c):
-        self._components.append(c)
-        return c
-
-    def __repr__(self):
-        s = self.__class__.__name__
-        s += ":"
-        for c in self._components:
-            s += "\n- " + ("\n  ".join(repr(c).splitlines()))
-        return s
-
-class VPanel(Panel):
-    direction=VERTICAL
-    
-class HPanel(Panel):
-    direction=HORIZONTAL
-    
 
 
     

@@ -66,22 +66,32 @@ from lino.console import syscon
 
 
 class GuiApplication(Application):
+    """An Application that runs in a GUI and has a main form.
+
+    wishlist is a space-separated list of GUI toolkits, in order of
+    preference.
+
+    If mainFormClass is not None, this class will be used to
+    instanciate the main form.
+    
+    """
     wishlist="wx tix cp console"
     mainFormClass=None
 
     def __init__(self,mainForm=None,*args,**kw):
         Application.__init__(self,*args,**kw)
         self.mainForm=mainForm
-        #self.console=None
-        self.console=self.toolkit
+        self.console=None
 
     def run(self,*args,**kw):
         #assert self.console is None
+        self.console=self.toolkit
         self.toolkit=self.createToolkit()
         self.toolkit.start_running(self)
         if self.mainForm is None:
             self.mainForm=self.createMainForm()
         #self.createMainForm()
+        #print self.mainForm
         self.showForm(self.mainForm)
         self.toolkit.run_forever()
         
@@ -124,6 +134,7 @@ class GuiApplication(Application):
         return self.mainFormClass()
     
     def showForm(self,frm):
+        #print frm
         frm.setup(self)
         return frm.show()
     

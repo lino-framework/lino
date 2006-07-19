@@ -115,11 +115,6 @@ class DataRow:
     def canWrite(self):
         return True
     
-    def validate(self):
-        #print "Row.validate()"
-        for col in self._store._peekQuery._columns:
-            v=col.getCellValue(self)
-            col.validate(v)
 ##     def validate(self):
 ##         # may override
 ##         pass
@@ -212,6 +207,14 @@ class StoredDataRow(DataRow):
     def isNew(self):
         return self._new
     
+    def validate(self):
+        #print "Row.validate()"
+        assert self._complete or self._new, \
+               "seems that lock() did not makeComplete() "
+        for col in self._store._peekQuery._columns:
+            v=col.getCellValue(self)
+            col.validate(v)
+            
     def getRowId(self):
         id = [None] * len(self._store.getTable().getPrimaryAtoms())
         for col in self._store._peekQuery._pkColumns:
@@ -337,6 +340,7 @@ class StoredDataRow(DataRow):
         #print "Row.lock()",repr(self)
         if not self.mustlock():
             return #raise RowLockFailed("Cannot lock a new row")
+        self.makeComplete()
         #if self._locked:
         #    raise RowLockFailed("Already locked")
             # , "already locked"

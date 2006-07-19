@@ -325,17 +325,24 @@ class ContactsSchema(Schema):
                      #Partner, PartnerType)
 
 class ContactsMainForm(DbMainForm):
+
+    schemaClass=ContactsSchema
     
-    """
+    def layout(self,panel):
+
+        panel.label("""
     
 Welcome to Contacts, a Lino demo application to manage your contacts.
 
 Warning: This application is not stable and there are no known users.
 
-"""+("\n"*10)
+""")
     
-    schemaClass=ContactsSchema
 
+    def setupMenu(self):
+        self.addContactsMenu()
+        self.addProgramMenu()
+        
     def addContactsMenu(self):
         m = self.addMenu("contacts","&Contacts")
         self.addReportItem(
@@ -349,9 +356,6 @@ Warning: This application is not stable and there are no known users.
         self.addReportItem(
             m,"persons",PersonsReport,label="&Persons")
         
-    def setupMenu(self):
-        self.addContactsMenu()
-        self.addProgramMenu()
     
 class Contacts(DbApplication):
     name="Lino Contacts"

@@ -157,8 +157,29 @@ item.</P></LI><LI>This is the second list item.
 <tt>This</tt> memo starts with formatted text.
         
         ""","""
+        
 <BODY><P><TT>This</TT> memo starts with formatted text.
-</P></BODY>       
+</P></BODY>
+
+        """)
+        
+        self.memo2xml("""
+        
+<table class="EmptyTable">
+<tr><td align="left">
+(Left header)
+<td align="right">
+(Right header)
+</table>
+    
+        ""","""
+        
+<BODY><TABLE class="EmptyTable"><TR><TD align="left">
+(Left header)
+</TD><TD align="right">
+(Right header)
+</TD></TR></TABLE></BODY>
+    
         """)
         
         self.memo2xml("""

@@ -75,6 +75,11 @@ class PinboardSchema(Schema):
 class PinboardMainForm(DbMainForm):
     schemaClass=PinboardSchema
     
+##     def layout(self,panel):
+##         panel.label("""
+
+##         """)
+    
     def setupMenu(self):
         m = self.addMenu("pinboard","&Pinboard")
         

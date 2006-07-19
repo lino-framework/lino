@@ -27,7 +27,6 @@ from lino.adamo.table import \
 #     MirrorLoaderApplication
 from lino.adamo.schema import Schema
 #from lino.adamo.dbforms import DbMainForm
-#from lino.adamo.dbapplication import DbApplication,\
 from lino.adamo.datatypes import *
 from lino.adamo.exceptions import *
 from lino.adamo.store import Populator
