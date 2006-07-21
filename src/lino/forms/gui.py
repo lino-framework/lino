@@ -133,12 +133,6 @@ class GuiApplication(Application):
         #    self.mainForm=self.mainFormClass()
         return self.mainFormClass()
     
-    def showForm(self,frm):
-        #print frm
-        frm.setup(self)
-        return frm.show()
-    
-
 
 
 ## def show(frm):#,*args,**kw):

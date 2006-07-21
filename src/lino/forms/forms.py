@@ -109,15 +109,20 @@ class Form(MenuContainer):
         
 
 
-    def setup(self,sess):
+    #def setup(self,sess):
+    def show(self,sess):
         if self.ctrl is not None:
             raise InvalidRequestError("cannot setup() again")
-        if self.session is not None:
-            assert self.session is sess
-        #assert not isinstance(sess,Toolkit)
+        assert self.session is None
+##         if self.session is not None:
+##             assert self.session is sess
+##         else:
         self.session=sess
         self.toolkit=sess.toolkit
+        self._parent=sess.toolkit.getActiveForm()
+        
         self.mainComp = sess.toolkit.vpanelFactory(self,weight=1)
+        sess.toolkit.setActiveForm(self)
             
         #if self.__doc__ is not None:
         #    self.mainComp.label(self.__doc__)
@@ -127,6 +132,9 @@ class Form(MenuContainer):
         self.mainComp.setup()
         self.ctrl = self.toolkit.createFormCtrl(self)
         self.onShow()
+        
+        self.toolkit.executeShow(self)
+        return self.returnValue
 
 
     def __repr__(self):
@@ -182,19 +190,19 @@ class Form(MenuContainer):
     def setupMenu(self):
         pass
             
-    def set_parent(self,parent):
-        #assert self._parent is None
-        self._parent = parent
+##     def set_parent(self,parent):
+##         #assert self._parent is None
+##         self._parent = parent
 
     def isShown(self):
         #return hasattr(self,'ctrl')
         return (self.ctrl is not None)
 
-    def show(self):
-        #assert not self.isShown(), \
-        #       "Form %s already isShown()" % self.getTitle()
-        self.toolkit.executeShow(self)
-        return self.returnValue
+##     def show(self):
+##         #assert not self.isShown(), \
+##         #       "Form %s already isShown()" % self.getTitle()
+##         self.toolkit.executeShow(self)
+##         return self.returnValue
         
     
     def onShow(self): self.mainComp.onShow()
@@ -209,7 +217,8 @@ class Form(MenuContainer):
         pass
     
     def onKillFocus(self,evt):
-        self.toolkit.setActiveForm(self._parent)
+        pass
+        #self.toolkit.setActiveForm(self._parent)
         
     def onSetFocus(self,evt):
         self.toolkit.setActiveForm(self)
@@ -227,7 +236,7 @@ class Form(MenuContainer):
     
     # just forward to self.session:
     def showForm(self,frm):
-        frm.set_parent(self)
+        #frm.set_parent(self)
         return self.session.showForm(frm)
     def notice(self,*args,**kw):
         return self.session.notice(*args,**kw)
@@ -277,7 +286,19 @@ class MemoViewer(Form):
             value=self.txt)
                     
 class ReportForm(Form,GenericDocument):
-    # used by ReportRowForm and ReportGridForm
+    
+    """A Form used to display and edit the rows of a Report.
+    
+    This is the abstract base class for ReportRowForm and
+    ReportGridForm.
+
+    Vocabulary: Note that the *current* row is not necessarily the
+    same as the *selected* row. In a ReportGridForm the user may start
+    to edit a cell (whose row becomes current row and gets locked),
+    then clicks on another row.
+    
+    """
+    
     def __init__(self,rpt,**kw):
         Form.__init__(self,**kw)
         self.rpt=rpt
@@ -294,7 +315,8 @@ class ReportForm(Form,GenericDocument):
     def afterRowEdit(self):
         if self.currentRow is None: return
         #print "afterRowEdit()",repr(self.currentRow.item)
-        if self.currentRow.item.isLocked():
+        if self.currentRow.item.isNew() \
+              or self.currentRow.item.isLocked():
             #print "isLocked()"
             self.store()
             self.currentRow.item.unlock()
@@ -432,13 +454,22 @@ class ReportForm(Form,GenericDocument):
         assert self.rpt.canWrite()
         self.afterRowEdit()
         self.enabled=True
-        item=self.rpt.query._appendRow()
-        self.currentRow=self.rpt.processItem(item)
-        self.onInsertRow()
+##         item=self.rpt.query._appendRow()
+##         self.currentRow=self.rpt.process_item(item)
+        sel=self.getSelectedRow()
+        print "forms.insertRow()", sel
+        if sel is None:
+            index=0
+        else:
+            index=sel.index
+        print index
+        #print id(self.currentRow)
+        self.currentRow=self.rpt.createRow(index)
+        #print id(self.currentRow)
         #row.item.commit()
         #self.rpt.query._store.fireUpdate()
-        self.beforeRowEdit()
-        self.refresh()
+        #self.beforeRowEdit()
+        self.onRowInserted()
         #return row.item
     
 ##     def updateRow(self,row,*args):
@@ -467,12 +498,16 @@ class ReportForm(Form,GenericDocument):
     
     def deleteSelectedRows(self):
         assert self.rpt.canWrite()
-        if not self.session.confirm(
-            "Delete %d rows. Are you sure?" % \
-            len(self.grid.getSelectedRows())):
+        l=self.getSelectedRows()
+        if len(l) == 1:
+            if not self.confirm(
+                "Delete row '%s'. Are you sure?" % self.rpt[l[0]]):
+                return
+        elif not self.confirm(
+            "Delete %d rows. Are you sure?" % len(l)):
             return
-        for i in self.grid.getSelectedRows():
-            row = self.rpt[i].item.delete()
+        for i in l:
+            self.rpt[i].item.delete()
         self.refresh()
 
     def printRow(self):
@@ -494,7 +529,7 @@ class ReportForm(Form,GenericDocument):
         raise "must rewrite"
         from lino.oogen import SpreadsheetDocument
         doc = SpreadsheetDocument("printList")
-        rows = self.grid.getSelectedRows()
+        rows = self.getSelectedRows()
         if len(rows) == 1:
             rows = self.rpt
         rpt = doc.report()
@@ -518,6 +553,11 @@ class ReportForm(Form,GenericDocument):
         
     
 class ReportRowForm(ReportForm):
+    """A ReportForm who displays one row at a time.
+
+    The user can browse the rows of the report using PGUP and PGDN.
+
+    """
     def __init__(self,rpt,recno=0,**kw):
         ReportForm.__init__(self,rpt,**kw)
         self.currentRow=self.rpt[recno]
@@ -529,8 +569,11 @@ class ReportRowForm(ReportForm):
     def isEditing(self):
         return self.enabled
 
-    def onInsertRow(self):
-        pass
+    def onRowInserted(self):
+        self.refresh()
+    
+    def getSelectedRow(self):
+        return self.currentRow
     
     def onClose(self):
         self.afterRowEdit()
@@ -587,15 +630,15 @@ class ReportRowForm(ReportForm):
                   action=copy)
         
         #m = frm.addMenu("row",label="&Row")
-        if self.rpt.canWrite():
-            m.addItem("delete",
-                      label="&Delete selected row(s)",
-                      action=self.deleteCurrentRow,
-                      hotkey=keyboard.DELETE) # accel="DEL")
-            m.addItem("insert",
-                      label="&Insert new row",
-                      action=self.insertRow,
-                      hotkey=keyboard.INSERT) # accel="INS")
+##         if self.rpt.canWrite():
+##             m.addItem("delete",
+##                       label="&Delete selected row(s)",
+##                       action=self.deleteCurrentRow,
+##                       hotkey=keyboard.DELETE) # accel="DEL")
+##             m.addItem("insert",
+##                       label="&Insert new row",
+##                       action=self.insertRow,
+##                       hotkey=keyboard.INSERT) # accel="INS")
 
             
     def skip(self,n):
@@ -614,20 +657,20 @@ class ReportRowForm(ReportForm):
         self.refresh()
         
 
-    def deleteCurrentRow(self):
-        assert self.rpt.canWrite()
-        row=self.getCurrentRow()
-        if row is None:
-            print "no current row"
-            return
-        if not self.session.confirm(
-            "Delete this row. Are you sure?"):
-            return
-        row.item.delete()
-        self.refresh()
+##     def deleteCurrentRow(self):
+##         assert self.rpt.canWrite()
+##         row=self.getCurrentRow()
+##         if row is None:
+##             print "no current row"
+##             return
+##         if not self.session.confirm(
+##             "Delete this row. Are you sure?"):
+##             return
+##         row.item.delete()
+##         self.refresh()
         
-    #def getSelectedRows(self):
-    #    return [self.getCurrentRow()]
+    def getSelectedRows(self):
+        return [self.currentRow.index]
         
 
     def getStatus(self):
@@ -642,6 +685,9 @@ class ReportRowForm(ReportForm):
 
 
 class ReportGridForm(ReportForm):
+    
+    """A ReportForm whose main component is a datagrid on the Report.
+    """
     
     rowForm=ReportRowForm
     
@@ -665,6 +711,7 @@ class ReportGridForm(ReportForm):
     def showRowForm(self):
         #self.pickedRow=self.getCurrentRow()
         row=self.getCurrentRow()
+        print row.index
         frm=self.rowForm(self.rpt,row.index)
         self.showForm(frm)
         
@@ -681,21 +728,27 @@ class ReportGridForm(ReportForm):
                 
         self.session.status(s)
         
-    def onInsertRow(self):
-        self.grid.onInsertRow(self)
+    def onRowInserted(self):
+        print "forms.onRowInserted()", self.currentRow.index
+        self.grid.onRowInserted(self,self.currentRow)
     
     def getSelectedCol(self):
         if self.grid is None:
             return None
         return self.grid.getSelectedCol()
         
-    def getCurrentRow(self):
+    def getSelectedRow(self):
         if self.grid is None: return None
 ##         l = self.grid.getSelectedRows()
 ##         if len(l) == 1:
 ##             return self.rpt[l[0]]
 ##         #raise "There is more than one row selected"
-        return self.grid.getCurrentRow()
+        return self.grid.getSelectedRow()
+
+    def getSelectedRows(self):
+        if self.grid is None: return []
+        return self.grid.getSelectedRows()
+    
 
 class ReportGridPickForm(ReportGridForm):
     #modal=True

@@ -43,7 +43,7 @@ class Application(Session):
     copyright=None
     url=None
     author=None
-    usage = None
+    usage=None
     description = None
 
     """
@@ -150,21 +150,27 @@ class Application(Session):
     
     #def main(self,argv=None):
     def main(self,*args,**kw):
-        """
-        meant to be called
+        """Process command-line arguments and run the application.
+
+        This is meant to be called
 
         if __name__ == '__main__':
             MyApplication().main()
 
-        but lino.runscript calls it with argv=sys.argv[:2]
-        (command-line arguments are shifted by one)
-
         """
         self.toolkit=syscon.getSystemConsole()
         
+        desc=self.description
+        if desc is not None:
+            desc=" ".join(desc.split())
+##             paras=[]
+##             for para in self.description.split('\n\n'):
+##                 paras.append(" ".join(para.split()))
+##             desc="\n\n".join(paras)
+        
         p = OptionParser(
             usage=self.usage,
-            description=self.description)
+            description=desc)
         
         self.toolkit.setupOptionParser(p)
         self.setupOptionParser(p)

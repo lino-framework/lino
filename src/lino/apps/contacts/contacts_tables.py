@@ -363,6 +363,13 @@ class Contacts(DbApplication):
     author="Luc Saffre"
     mainFormClass=ContactsMainForm
     #dbname="contacts"
+    description="""A Lino demo application to manage your contacts.
+
+    The most visible feature is that Lino Contacts doesn't lump
+    together persons and organizations.
+
+    """
+    
 
     
 

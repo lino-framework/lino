@@ -731,6 +731,10 @@ class LayoutFactory:
 
 class DbApplication(GuiApplication):
 
+    """Abstract base class for a single-database GUI application."""
+
+    usage=""
+
     def __init__(self,filename=None,langs=None,dump=False,**kw):
         GuiApplication.__init__(self,**kw)
         self.filename=filename

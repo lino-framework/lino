@@ -175,29 +175,43 @@ class DataGrid(toolkit.DataGrid):
         #print "wxsetup()", self
         self.wxctrl = wxgrid.DataGridCtrl(parent,self)
         box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
-        self.refresh()
+        #self.refresh()
         
     def refresh(self):
 ##         if self.isDirty():
 ##             self.commit()
-        self.wxctrl.table.refresh()
+        #self.wxctrl.table._load()
+        self.wxctrl.table._refresh()
+##         for row in self.wxctrl.table.rows:
+##             print id(row)
 
 ##     def reload(self):
 ##         if self.isDirty():
 ##             self.commit()
 ##         self.wxctrl.table.reload()
 
-    def onInsertRow(self,frm):
-        row=frm.getCurrentRow()
+    def onRowInserted(self,frm,row):
+        #l=self.getSelectedRows()
+        print "wxtoolkit.onRowInserted()"
+        print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
+                         for r in self.wxctrl.table.rows])
+        #row=frm.currentRow
+        print row.index
         oldlen=self.wxctrl.table.GetNumberRows()
-        self.wxctrl.table.cells.append([s for col,s in row.cells()])
-        self.wxctrl.table.refresh_grid(self.wxctrl,oldlen)
+        self.wxctrl.table.rows.insert(row.index,row)
+        for tr in self.wxctrl.table.rows[row.index+2:]:
+            tr.index += 1
+            #print tr.index
+        print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
+                         for r in self.wxctrl.table.rows])
+        #self.wxctrl.table.cells.append([s for col,s in row.cells()])
+        self.wxctrl.table.resetRows(self.wxctrl,oldlen)
             
     def getSelectedRows(self):
         return self.wxctrl.getSelectedRows()
 
-    def getCurrentRow(self):
-        return self.wxctrl.getCurrentRow()
+    def getSelectedRow(self):
+        return self.wxctrl.getSelectedRow()
 
     def getSelectedCol(self):
         return self.wxctrl.getSelectedCol()
@@ -593,13 +607,16 @@ class Toolkit(toolkit.Toolkit):
 ##         self.wxapp=None
         
     def createFormCtrl(self,frm):
+        #print "createFormCtrl()",frm
         parent=frm._parent
-        if parent is None:
-            parent=self.getActiveForm()
+        #print parent
+        #if parent is None:
+        #    parent=self.getActiveForm()
         if parent is None:
             wxparent = None
         else:
             wxparent = parent.ctrl
+
             
         #self.dying = False
         
@@ -644,7 +661,8 @@ class Toolkit(toolkit.Toolkit):
         #self.SetBackgroundColour(wx.RED)
         
         mainBox = wx.BoxSizer(wx.VERTICAL)
-        
+        #ctrl.SetSizer(mainBox)
+
         frm.mainComp.wxsetup(ctrl,ctrl,mainBox)
         
         if frm.defaultButton is not None:
@@ -663,6 +681,10 @@ class Toolkit(toolkit.Toolkit):
             ctrl.SetAcceleratorTable(wx.AcceleratorTable(l))
 
             
+        
+
+        
+        
 
         CHARWIDTH, LINEHEIGHT = ctrl.GetTextExtent("M")
 
@@ -685,14 +707,16 @@ class Toolkit(toolkit.Toolkit):
             maxH=frm.maxHeight * LINEHEIGHT
             
         ctrl.SetSizeHints(minW,minH,maxW,maxH)
-
-
         ctrl.SetSizerAndFit(mainBox)
+        #ctrl.Fit()
+
+
+
+        
         #self.mainBox = mainBox
         #ctrl.SetAutoLayout(True) 
         #self.wxctrl.Layout()
 
-            
 
         if frm.halign is forms.CENTER:
             ctrl.Centre(wx.HORIZONTAL)
@@ -743,6 +767,7 @@ class Toolkit(toolkit.Toolkit):
 
     
     def executeShow(self,frm):
+        #self.setActiveForm(frm)
         if frm.modal:
             frm.ctrl.ShowModal()
         else:

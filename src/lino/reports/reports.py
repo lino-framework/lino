@@ -253,9 +253,10 @@ class BaseReport:
     def rows(self):
         return ReportIterator(self)
 
-    def appendRow(self):
-        # overridden by DataReportRow
-        return self.rowClass(self,None,None)
+    def createRow(self,index):
+        """overridden by DataReportRow"""
+        raise NotImplementedError
+        #return self.rowClass(self,None,index)
         
     #def processItem(self,doc,item):
     #def processItem(self,rowno,item):
@@ -430,10 +431,10 @@ class ListReportColumn(ReportColumn):
         self.rpt=rpt
         
     def getCellValue(self,row):
-        return self.rpt.getCellValue(row.index-1,self.index)
+        return self.rpt.getCellValue(row.index,self.index)
 
     def setCellValue(self,row,value):
-        return self.rpt.setCellValue(row.index-1,self.index,value)
+        return self.rpt.setCellValue(row.index,self.index,value)
         
 
 class VurtReportColumn(ReportColumn):
@@ -477,8 +478,9 @@ class ReportIterator:
         return self
 
     def next(self):
+        row=self.rpt.process_item(self.iterator.next(),self.rowno)
         self.rowno+=1
-        return self.rpt.process_item(self.iterator.next(),self.rowno)
+        return row
 
 
 class DictReport(BaseReport):

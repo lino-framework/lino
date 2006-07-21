@@ -152,9 +152,10 @@ class QueryReport(BaseReport):
     def canSort(self):
         return True
 
-    def appendRow(self):
+    def createRow(self,index):
         row=self.query.appendRowForEditing()
-        return self.rowClass(self,row,None)
+        #print "dbreports createRow()",row
+        return self.rowClass(self,row,index)
 
     def setOrderBy(self,*args,**kw):
         return self.query.setOrderBy(*args,**kw)

@@ -170,6 +170,10 @@ has chosen a toolkit and who runs some code (usually an application)
     def logmessage(self,*args,**kw):
         return self.toolkit.logmessage(self,*args,**kw)
     
+    def showForm(self,frm):
+        #print frm
+        #frm.setup(self)
+        return frm.show(self)
     def showReport(self,*args,**kw):
         return self.toolkit.show_report(*args,**kw)
     def textprinter(self,*args,**kw):

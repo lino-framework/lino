@@ -22,18 +22,18 @@ import wx.grid
 from lino.adamo.exceptions import RowLockFailed
 
 
-class GridRow:
+## class GridRow:
     
-    def __init__(self,table,rptrow):
-        self.reportRow=rptrow
-        self.strings=[]
-        for col in table.columns:
-            col = self.columns[colIndex]
-            v=col.getCellValue(rptrow)
-            if v is None:
-                self.strings.append("")
-            else:
-                self.strings.append(col.format(v))
+##     def __init__(self,table,rptrow):
+##         self.reportRow=rptrow
+##         self.strings=[]
+##         for col in table.columns:
+##             col = self.columns[colIndex]
+##             v=col.getCellValue(rptrow)
+##             if v is None:
+##                 self.strings.append("")
+##             else:
+##                 self.strings.append(col.format(v))
         
 
 
@@ -43,18 +43,24 @@ class MyDataTable(wx.grid.PyGridTableBase):
         wx.grid.PyGridTableBase.__init__(self)
         self.editor = editor
         self.columns = self.editor.rpt.columns
-        self.rows=[]
-        
-    def refresh(self):
-        oldlen=len(self.rows)
+        self._load()
+
+    def _load(self):
+        print "wxgrid._load()"
         self.rows=[]
         if self.editor.enabled:
             #doc=self.editor.form
             #self.cells = []
             self.rows = [row for row in self.editor.rpt.rows()]
-            self.rows.append(self.editor.rpt.appendRow())
+            self.rows.append(self.editor.rpt.createRow(len(self.rows)))
+            print "loaded %d rows" % len(self.rows)
+        
+    def _refresh(self):
+        print "wxgrid._refresh()"
+        oldlen=len(self.rows)
+        #self._load()
         self.resetRows(self.editor.wxctrl,oldlen)
-        self.updateValues(self.editor.wxctrl)
+        #self._updateValues(self.editor.wxctrl)
 
 ##     def refresh(self,oldlen=None):
 ##         if oldlen is None:
@@ -66,15 +72,17 @@ class MyDataTable(wx.grid.PyGridTableBase):
     def GetNumberRows(self): return len(self.rows)
     def GetNumberCols(self): return len(self.columns)
 
-    def updateValues(self, grid):
-        """Update all displayed values"""
+    def _updateValues(self, grid):
+        """Update all displayed values.
         
-        # This sends an event to the grid table to update all of the
-        # values
+        Send an event to the grid to redisplay all of the cells
+
+        """
+        print "wxgrid._updateValues()"
+        
         
         msg = wx.grid.GridTableMessage(
-            self,
-            wx.grid.GRIDTABLE_REQUEST_VIEW_GET_VALUES)
+            self, wx.grid.GRIDTABLE_REQUEST_VIEW_GET_VALUES)
         grid.ProcessTableMessage(msg)
 
 
@@ -86,6 +94,8 @@ class MyDataTable(wx.grid.PyGridTableBase):
         grid.BeginBatch()
 
         current = self.GetNumberRows()
+
+        print "wxgrid.resetRows(%d,%d)" % (before,current)
              
         if current < before:
             msg = wx.grid.GridTableMessage(
@@ -99,7 +109,8 @@ class MyDataTable(wx.grid.PyGridTableBase):
                 wx.grid.GRIDTABLE_NOTIFY_ROWS_APPENDED,
                 current-before)
             grid.ProcessTableMessage(msg)
-            self.updateValues(grid)
+            
+        self._updateValues(grid)
 
         grid.EndBatch()
 
@@ -109,6 +120,14 @@ class MyDataTable(wx.grid.PyGridTableBase):
         # update the scrollbars and the displayed part of the grid
         grid.AdjustScrollbars()
         grid.ForceRefresh()
+
+
+##         # The scroll bars aren't resized (at least on windows)
+##         # Jiggling the size of the window rescales the scrollbars
+##         h,w = grid.GetSize()
+##         grid.SetSize((h+1, w))
+##         grid.SetSize((h, w))
+##         grid.ForceRefresh()
     
         
     def IsEmptyCell(self, row, col):
@@ -133,8 +152,11 @@ class MyDataTable(wx.grid.PyGridTableBase):
     # C++ version.
     def GetValue(self, rowIndex, colIndex):
         "required"
+        if rowIndex == 0 and colIndex == 0:
+            print "wxgrid.GetValue(0,0)"
         #if rowIndex == len(self.cells): return "."
-        v=self.rows[rowIndex].values[colIndex]
+        r=self.rows[rowIndex]
+        v=r.values[colIndex]
         #if colIndex==1 and rowIndex == 0:
         #    print "GetValue()",v
         if v is None: return ""
@@ -166,7 +188,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
         else:
             v=col.datacol.parse(value,self.editor.rpt.query)
             
-        print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(v))
+        #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(v))
         
         row=self.rows[rowIndex]
         row.lock()
@@ -481,7 +503,7 @@ class DataGridCtrl(wx.grid.Grid):
         colIndex = self.GetGridCursorCol()
         return self.table.columns[colIndex]
 
-    def getCurrentRow(self):
+    def getSelectedRow(self):
         return self.table.rows[self.GetGridCursorRow()]
 
     def getSelectedRows(self):
@@ -573,7 +595,8 @@ class DataGridCtrl(wx.grid.Grid):
         cols=[self.columns[i] for i in colIndexes]
         #print __name__,cn
         self.rpt.sortColumns=tuple(cols)
-        self.refresh()
+        self._load()
+        self._refresh()
 ##     def setOrderBy(self,colIndexes):
 ##         #print __name__, colIndexes
 ##         cn = " ".join([self.columns[i].name for i in colIndexes])
