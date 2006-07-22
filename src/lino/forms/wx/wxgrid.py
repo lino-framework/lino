@@ -46,17 +46,17 @@ class MyDataTable(wx.grid.PyGridTableBase):
         self._load()
 
     def _load(self):
-        print "wxgrid._load()"
+        #print "wxgrid._load()"
         self.rows=[]
         if self.editor.enabled:
             #doc=self.editor.form
             #self.cells = []
             self.rows = [row for row in self.editor.rpt.rows()]
             self.rows.append(self.editor.rpt.createRow(len(self.rows)))
-            print "loaded %d rows" % len(self.rows)
+            #print "loaded %d rows" % len(self.rows)
         
     def _refresh(self):
-        print "wxgrid._refresh()"
+        #print "wxgrid._refresh()"
         oldlen=len(self.rows)
         #self._load()
         self.resetRows(self.editor.wxctrl,oldlen)
@@ -78,7 +78,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
         Send an event to the grid to redisplay all of the cells
 
         """
-        print "wxgrid._updateValues()"
+        #print "wxgrid._updateValues()"
         
         
         msg = wx.grid.GridTableMessage(
@@ -95,7 +95,7 @@ class MyDataTable(wx.grid.PyGridTableBase):
 
         current = self.GetNumberRows()
 
-        print "wxgrid.resetRows(%d,%d)" % (before,current)
+        #print "wxgrid.resetRows(%d,%d)" % (before,current)
              
         if current < before:
             msg = wx.grid.GridTableMessage(
@@ -152,8 +152,8 @@ class MyDataTable(wx.grid.PyGridTableBase):
     # C++ version.
     def GetValue(self, rowIndex, colIndex):
         "required"
-        if rowIndex == 0 and colIndex == 0:
-            print "wxgrid.GetValue(0,0)"
+        #if rowIndex == 0 and colIndex == 0:
+        #    print "wxgrid.GetValue(0,0)"
         #if rowIndex == len(self.cells): return "."
         r=self.rows[rowIndex]
         v=r.values[colIndex]
@@ -181,12 +181,13 @@ class MyDataTable(wx.grid.PyGridTableBase):
 ## ##             self.rows.append(row)
 ##         else:
 ##             row = self.cells[rowIndex]
+        col=self.columns[colIndex]
 
-        col = self.columns[colIndex]
         if len(value) == 0:
             v=None
         else:
-            v=col.datacol.parse(value,self.editor.rpt.query)
+            #v=col.parse(value,self.editor.rpt.query)
+            v=col.parse(value)
             
         #print "SetValue(%d,%d,%s)" % (rowIndex, colIndex, repr(v))
         

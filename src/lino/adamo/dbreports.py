@@ -21,8 +21,6 @@ from lino.reports.reports import ReportRow
 from lino.adamo.datatypes import INT
 from lino.adamo.rowattrs import Field, Pointer, Detail
 
-
-
 class DataReportColumn(ReportColumn):
     def __init__(self,datacol,
                  name=None,label=None,doc=None,
@@ -46,7 +44,10 @@ class DataReportColumn(ReportColumn):
         return self.datacol.getCellValue(row.item)
     
     def setCellValue(self,row,value):
-        return self.datacol.setCellValue(row.item,value)
+        #print "dbreports:setCellValue()",row.item,value
+        self.datacol.setCellValue(row.item,value)
+        row.values[self.index]=value
+        #print row.item
 
     def getMinWidth(self):
         return self.datacol.getMinWidth()
@@ -56,6 +57,9 @@ class DataReportColumn(ReportColumn):
 ##     def addFilter(self,*args):
 ##         self.datacol.addFilter(*args)
         
+    def isMandatory(self):
+        return self.datacol.isMandatory()
+    
     def canWrite(self,row):
         if row is None:
             return self.datacol.canWrite(None)
@@ -63,6 +67,9 @@ class DataReportColumn(ReportColumn):
     
     def validate(self,value):
         return self.datacol.rowAttr.validate(value)
+    
+    def parse(self,s):
+        return self.datacol.parse(s)
 
     def getType(self):
         #return self.datacol.rowAttr.getType()
@@ -85,7 +92,6 @@ class DataReportRow(ReportRow):
 
 class QueryReport(BaseReport):
     rowClass=DataReportRow
-    # instanciated from DbSession.createQueryReport()
     def __init__(self,qry,
                  columnSpec=None,
                  columnWidths=None,

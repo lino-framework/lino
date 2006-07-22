@@ -155,6 +155,7 @@ class RowAttribute(Describable):
     def __init__(self,owner, name,
                  label=None,doc=None):
         Describable.__init__(self,None,name,label,doc)
+        #assert owner.__class__ is Table
         self._owner = owner
         self._isMandatory = False
         self._validator = None
@@ -324,10 +325,7 @@ class RowAttribute(Describable):
         
 
 class Field(RowAttribute):
-    """
-    
-    A Field is a component which represents an atomic piece of data.
-    A field is a storable atomic value of a certain type.
+    """A storable atomic value of a known and constant type.
     
     """
     def __init__(self,owner,name,type,**kw):
@@ -370,6 +368,7 @@ class Field(RowAttribute):
 ##         RowAttribute.canSetValue(self,row,value)
         
     def parse(self,s):
+        #print self.type
         return self.type.parse(s)
         
 ##  def asFormCell(self,renderer,value,size=None):
@@ -557,19 +556,13 @@ class BabelField(Field):
 ##      return self._func(row)
     
 class Pointer(Field):
-    """
-    
-    A Pointer links from this to another table.
+    """A pointer to a row in another table.
     
     """
     def __init__(self, owner, name, toClass,
                  detailName=None,
                  **kw):
         Field.__init__(self,owner,name,toClass,**kw)
-        #self.type = toClass
-        #self.detailName = detailName
-        #self.dtlColumnNames = None
-        #self.dtlKeywords = {}
         self._neededAtoms = None
         
     def setType(self,tp):
@@ -722,8 +715,7 @@ class Pointer(Field):
 
     def atoms2value(self,atomicValues,dbc):
         #ctx = row._ds._context
-        if self._deleted:
-            return None
+        if self._deleted: return None
         elif len(self._toTables) > 1:
             toTable = self._findUsedToTable(atomicValues)
             if toTable is None:
@@ -791,8 +783,11 @@ class Pointer(Field):
 ##         return self.type
 ##         #return datatypes.STRING
 
-    def getTargetSource(self,row): 
-        return row.getContext().query(self.type)
+##     def getTargetSource(self,row): 
+##         return row.getContext().query(self.type)
+    
+##     def getTargetSource(self,dbc): 
+##         return dbc.query(self.type)
     
         
 class Detail(RowAttribute):

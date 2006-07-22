@@ -192,21 +192,28 @@ class DataGrid(toolkit.DataGrid):
 
     def onRowInserted(self,frm,row):
         #l=self.getSelectedRows()
-        print "wxtoolkit.onRowInserted()"
-        print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
-                         for r in self.wxctrl.table.rows])
+        #print "wxtoolkit.onRowInserted()"
+        #print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
+        #                 for r in self.wxctrl.table.rows])
         #row=frm.currentRow
-        print row.index
+        #print row.index
         oldlen=self.wxctrl.table.GetNumberRows()
         self.wxctrl.table.rows.insert(row.index,row)
         for tr in self.wxctrl.table.rows[row.index+2:]:
             tr.index += 1
             #print tr.index
-        print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
-                         for r in self.wxctrl.table.rows])
+        #print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
+        #                 for r in self.wxctrl.table.rows])
         #self.wxctrl.table.cells.append([s for col,s in row.cells()])
         self.wxctrl.table.resetRows(self.wxctrl,oldlen)
             
+    def onRowsDeleted(self,frm,indexes):
+        oldlen=len(self.wxctrl.table.rows)
+        indexes.reverse()
+        for i in indexes:
+            del self.wxctrl.table.rows[i]
+        self.wxctrl.table.resetRows(self.wxctrl,oldlen)
+        
     def getSelectedRows(self):
         return self.wxctrl.getSelectedRows()
 
@@ -489,7 +496,9 @@ class EntryMixin:
         
 
     def setValueFromEditor(self,x):
-        "convert the string and store it as raw value"
+        """convert the string and store it as raw value.
+
+        """
         if isinstance(self.getType(),datatypes.BoolType):
             self.setValue(x)
         else:
@@ -517,6 +526,7 @@ class EntryMixin:
         #if isinstance(type,datatypes.StringType):
         if self.isDirty():
             s = self.editor.GetValue()
+            #print "wxtoolkit:store()",self,s
             self.setValueFromEditor(s)
         
         
@@ -823,6 +833,7 @@ class Toolkit(toolkit.Toolkit):
 ##             stm=task.statusMessage
         if task.maxval == 0:
             task.wxctrl=None
+            return self.console.onTaskBegin(task)
         else:
             task.wxctrl = wx.ProgressDialog(
                 title,task.getStatusLine(),
@@ -831,11 +842,12 @@ class Toolkit(toolkit.Toolkit):
                 wx.PD_CAN_ABORT)#|wx.PD_ELAPSED_TIME)
 
     def on_breathe(self,task):
-        if task.wxctrl is None: return
+        if task.wxctrl is None:
+            return self.console.on_breathe(task)
+        msg=task.getStatus()
         #pc = task.percentCompleted
         pc=int(100*task.curval/task.maxval)
         #if pc is None: pc = 0
-        msg=task.getStatus()
         if msg is None: msg=''
         if not task.wxctrl.Update(pc,msg):
             task.requestAbort()
@@ -843,17 +855,20 @@ class Toolkit(toolkit.Toolkit):
         
 
     def onTaskResume(self,task):
-        if task.wxctrl is None: return
+        if task.wxctrl is None:
+            return self.console.onTaskResume(task)
         task.wxctrl.Resume()
         
     def onTaskDone(self,task):
-        if task.wxctrl is None: return
+        if task.wxctrl is None:
+            return self.console.onTaskDone(task)
         task.wxctrl.Update(100,'')
         task.wxctrl.Destroy()
         task.wxctrl = None
 
     def onTaskAbort(self,task,*args,**kw):
-        if task.wxctrl is None: return
+        if task.wxctrl is None:
+            return self.console.onTaskAbort(task)
         task.wxctrl.Destroy()
         task.wxctrl = None
 

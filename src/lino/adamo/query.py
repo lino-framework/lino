@@ -32,10 +32,6 @@ from lino.adamo.row import DataRow
 from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField, \
      is_reserved
 
-#MS_COLUMN=1
-#MS_MASTER=1
-
-
 
 class QueryColumn:
     
@@ -64,6 +60,10 @@ class QueryColumn:
     def getValueClass(self):
         raise NotImplementedError
     
+    def isMandatory(self):
+        return self.rowAttr in \
+               self._owner.getLeadTable()._mandatoryColumns
+
 
     def setupColAtoms(self,db):
         #assert self._atoms is None
@@ -209,15 +209,18 @@ class QueryColumn:
     def getLabel(self):
         return self.rowAttr.getLabel()
 
-    def parse(self,s,qry):
-        l1 = s.split(',')
-        assert len(l1) == len(self._atoms)
-        atomicValues = [a.type.parse(s1)
-                             for a,s1 in zip(self._atoms,l1)]
-        return self.atoms2value(atomicValues,qry.getContext())
+##     def parse(self,s,qry):
+##         l1 = s.split(',')
+##         assert len(l1) == len(self._atoms)
+##         atomicValues = [a.type.parse(s1)
+##                         for a,s1 in zip(self._atoms,l1)]
+##         return self.atoms2value(atomicValues,qry.getContext())
         
     def format(self,v):
         return self.rowAttr.format(v)
+    
+    def parse(self,s):
+        return self.rowAttr.parse(s)
     
     def getAllowedValues(self,row):
         return None
@@ -374,8 +377,20 @@ class PointerColumn(FieldColumn):
         return " AND ".join(l)
 
     def getAllowedValues(self,row):
-        return self.rowAttr.getTargetSource(row)
+        dbc=row.getContext()
+        return dbc.query(self.rowAttr.type)
+        #return self.rowAttr.getTargetSource(row.getContext())
     
+    def parse(self,s):
+        dbc=self._owner.getContext()
+        qry=dbc.query(self.rowAttr.type)
+        return qry.parse(s)
+##         if self._deleted: return None
+##         elif len(self._toTables) > 1:
+##             raise NotImplementedError
+##         else:
+        
+
 ##     def showSelector(self,frm,row):
 ##         sess=frm.session
 ##         row.lock()
@@ -979,6 +994,35 @@ class LeadTableColumnList(BaseColumnList):
         #row.setDirty() # statt row.setDirty() muessen die 
 
 
+    def parse(self,s):
+        strings = s.split(',')
+        i=0
+        rowid=[]
+        for col in self._pkColumns:
+            rowid.append(col.parse(strings[i]))
+            i+=1
+        return self.peek(*rowid)
+    
+##         pka=self.getLeadTable().getPrimaryAtoms()
+##         atomicValues=[]
+##         for name,type in pka:
+##             atomicValues.append(type.parse(strings[i]))
+##             i+=1
+##         return self.atoms2value(atomicValues,self.getContext())
+        
+##         id = [None] * len(pka)
+##         for col in self._pkColumns:
+##             col.dict2atoms(knownValues,id)
+##         return id
+        
+##         l1 = s.split(',')
+##         assert len(l1) == len(self._pkaLen)
+##         atomicValues = [a.type.parse(s1)
+##                         for a,s1 in zip(self._atoms,l1)]
+##         return self.atoms2value(atomicValues,qry.getContext())
+
+
+    
     
 class PeekQuery(LeadTableColumnList):
     def __init__(self,store):

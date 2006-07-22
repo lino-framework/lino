@@ -58,6 +58,9 @@ class ReportRow:
                     col.validate(v)
             self.values.append(v)
 
+    def isMandatory(self):
+        return True
+    
     def lock(self):
         pass
     
@@ -328,7 +331,7 @@ class BaseReport:
 
     def layoutReportForm(self,frm,panel):
         if self.formColumnGroups == None:
-            for col in self.columns: #getVisibleColumns():
+            for col in self.columns:
                 panel.dataentry(col,label=col.getLabel())
         else:
             for grp in self.formColumnGroups:

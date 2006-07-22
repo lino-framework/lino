@@ -28,7 +28,9 @@ from lino.gendoc.gendoc import GenericDocument
 
 from lino.forms import keyboard
 from lino.forms.forms import VERTICAL, HORIZONTAL,\
-     Form, MessageDialog, ConfirmDialog, ReportGridForm
+     Form, MessageDialog, ConfirmDialog
+
+from lino.forms.dbforms import ReportGridForm
 
 #from lino.forms.forms import Container
 
@@ -248,18 +250,24 @@ class Button(Component):
         self._kw = {}
 
     def setHandler(self,action,*args,**kw):
-        "set a handler with optional args and keyword parameters"
+        """set a handler with optional args and keyword parameters.
+
+        """
         self.action = action
         self._args = args
         self._kw = kw
 
     def setDefault(self):
-        "set this button as default button for its form"
+        """set this as the default button for its form.
+
+        """
         self.form.defaultButton = self
         return self
         
     def click(self):
-        "execute the button's handler"
+        """execute this button's handler.
+
+        """
         self.form.store()
         self.form.lastEvent = self
         self.action(*(self._args),**(self._kw))
@@ -379,10 +387,12 @@ class DataEntry(BaseEntry):
         return l
     
     def setValue(self,v):
-        self.col.setCellValue(self.form.getCurrentRow(),v)
+        row=self.form.getCurrentRow()
+        self.col.setCellValue(row,v)
+        #print "toolkit:setValue()",v,row
         
     def parse(self,s):
-        return self.col.datacol.rowAttr.parse(s)
+        return self.col.datacol.parse(s)
     
     def format(self,v):
         return self.col.format(v)
@@ -595,10 +605,11 @@ class Toolkit(BaseToolkit):
         
 
     def show_notice(self,sess,*args,**kw):
+        self.console.show_notice(sess,*args,**kw)
         #assert app.mainForm is not None
-        if self._activeForm is not None:
-            self._activeForm.status(*args,**kw)
-        else: self.show_message(sess,*args,**kw)
+##         if self._activeForm is not None:
+##             self._activeForm.status(*args,**kw)
+##         else: self.show_message(sess,*args,**kw)
         
 
     def show_message(self,sess,msg,*args,**kw):
@@ -661,6 +672,7 @@ class Toolkit(BaseToolkit):
     def start_running(self,app):
         assert not self.running()
         self.root=app
+        self.onTaskBegin(app)
         #self._running=true
         
 

@@ -27,7 +27,6 @@ from lino.misc.attrdict import AttrDict
 #from lino.console.application import GuiApplication
 
 from lino.console.task import Session
-from lino.forms.gui import GuiApplication
 
 #from lino.adamo.forms import Form
 from lino.adamo.table import Table, SchemaComponent
@@ -728,49 +727,4 @@ class LayoutFactory:
 ##         Application.applyOptions(self,options,args)
 ##         self.loadfrom = options.loadfrom
 
-
-class DbApplication(GuiApplication):
-
-    """Abstract base class for a single-database GUI application."""
-
-    usage=""
-
-    def __init__(self,filename=None,langs=None,dump=False,**kw):
-        GuiApplication.__init__(self,**kw)
-        self.filename=filename
-        self.langs=langs
-        self.dump=dump
-
-    def configure(self,filename=None,langs=None,dump=False):
-        #print "configure"
-        if dump is not None:
-            self.dump=dump
-        if langs is not None:
-            self.langs=langs
-        if filename is not None:
-            self.filename=filename
-        
-    def setupOptionParser(self,parser):
-        def call_set(option, opt_str, value, parser,**kw):
-            self.configure(**kw)
-        parser.add_option("-d","--dump",
-                          help="dump all SQL commands to stdout",
-                          action="callback",
-                          callback=call_set,
-                          default=self.dump,
-                          callback_kwargs=dict(dump=True))
-
-    def createMainForm(self):
-        dbc=self.createContext()
-        return self.mainFormClass(dbc)
-
-    def createContext(self):
-        #print "createContext"
-        schema=self.mainFormClass.schemaClass(self)
-        return schema.createContext(langs=self.langs,
-                                    filename=self.filename,
-                                    dump=self.dump)
-
-    
-        
 

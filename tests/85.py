@@ -16,21 +16,23 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.adamo.table import DEFAULT_PRIMARY_KEY
+from lino.misc.tsttools import TestCase, main
 
-from lino.adamo.row import StoredDataRow, LinkingRow,\
-     MemoRow, TreeRow, MemoTreeRow,\
-     BabelRow
+from lino.apps.contacts.contacts_demo import startup
+from lino.apps.contacts.contacts_tables import Nation
 
-from lino.adamo.schema import Schema
-#from lino.adamo.dbforms import DbMainForm
-from lino.adamo.datatypes import *
-from lino.adamo.exceptions import *
-from lino.adamo.store import Populator
-from lino.adamo.dbreports import DataReport
-#from lino.adamo.row import DataRow
-#from lino.adamo.schema import DbApplication
-from lino.forms.dbforms import ReportForm, DbMainForm, ReportForm, DbApplication
 
-__all__ = filter(lambda x: x[0] != "_", dir())
+class Case(TestCase):
+
+    def test01(self):
+        dbc=startup()
+        NATIONS = dbc.query(Nation)
+        be=NATIONS.parse("be")
+        self.assertEqual(be.name,"Belgium")
+        dbc.shutdown()
+        
+        
+
+if __name__ == '__main__':
+    main()
 

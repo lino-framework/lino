@@ -3,7 +3,7 @@
 #from lino.config import tempdirfilename
 from lino.apps.contacts.contacts_demo import startup
 from lino.apps.contacts.contacts_tables import ContactsReport
-from lino.forms.forms import ReportRowForm
+from lino.forms.dbforms import ReportRowForm
 
 #dbc=startup(filename=tempdirfilename("tmp.db"))
 dbc=startup()

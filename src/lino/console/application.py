@@ -82,16 +82,14 @@ class Application(Session):
         s = str(self)
         if self.version is not None:
             s += " version " + self.version
+        if self.description is not None:
+            s += "\n" +  self.description.strip()
+        if self.url is not None:
+            s += "\nHomepage: " + self.url
         if self.author is not None:
             s += "\nAuthor: " +  self.author
         if self.copyright is not None:
             s += "\n"+self.copyright
-            # "\nCopyright (c) %s %s." % (self.years, self.author)
-            
-        #from lino import __copyright__,  __url__
-        #s += "\n\n" + __copyright__
-        if self.url is not None:
-            s += "\nHomepage: " + self.url
             
         using = []
         using.append('Lino ' + lino.__version__)

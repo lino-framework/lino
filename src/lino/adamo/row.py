@@ -77,6 +77,15 @@ class DataRow:
             print repr(v)
             raise
     format=staticmethod(format)
+
+##     def parse(self,s):
+##         """Return the row instance represented by string s.
+
+##         """
+##         return self._store._peekQuery.parse(s)
+##         l=s.split(",")
+##         i=0
+##         for col in self._store._peekQuery._pkColumns:
         
 
 ##     def makeDataCell(self,colIndex,col):
@@ -456,5 +465,60 @@ class StoredDataRow(DataRow):
 ##         for name,attr in self._query.getLeadTable()._rowAttrs.items():
 ##             msg = attr.vetoDeleteIn(self)
 ##             if msg: return msg
+
+
+class LinkingRow(StoredDataRow):
+
+    def initTable(self,table):
+        table.addPointer('p',self.fromClass)
+        table.addPointer('c',self.toClass)
+        table.setPrimaryKey("p c")
+
+
+class MemoRow(StoredDataRow):
+        
+    def initTable(self,table):
+        table.addField('title',datatypes.STRING)
+        table.addField('abstract',datatypes.MEMO)
+        table.addField('body',datatypes.MEMO)
+
+    def getLabel(self):
+        return self.title
+
+    
+
+class TreeRow(StoredDataRow):
+        
+    def initTable(self,table):
+        table.addField('seq',datatypes.INT)
+        table.addPointer('super',self.__class__)
+
+    def getUpTree(self):
+        l = []
+        super = self.super
+        while super:
+            l.insert(0,super)
+            super = super.super
+        return l
+
+class MemoTreeRow(MemoRow,TreeRow):
+    def initTable(self,table):
+        MemoRow.initTable(self,table)
+        TreeRow.initTable(self,table)
+
+    def getLabel(self):
+        return self.title
+
+        
+        
+
+class BabelRow(StoredDataRow):
+    
+    def initTable(self,table):
+        table.addBabelField('name',datatypes.STRING).setMandatory()
+        
+    def getLabel(self):
+        return self.name
+
 
 

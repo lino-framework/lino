@@ -546,63 +546,6 @@ class TtyConsole(Console):
         self._empty_line="".ljust(self.width)
         Console.__init__(self,*args,**kw)
 
-##     def __init__(self, stdout, stderr, **kw):
-##         stdout=rewriter(stdout)
-## ##         try:
-## ##             if stdout.encoding != sys.getdefaultencoding():
-## ##                 stdout=rewriter(stdout)
-## ##             else:
-## ##                 print "foo"
-## ##         except AttributError,e:
-## ##             print "oops: ", e
-        
-##         Console.__init__(self,stdout,stderr,**kw)
-
-##     def __init__(self,*args,**kw):
-##         self._batch = False
-##         Console.__init__(self,*args,**kw)
-        
-##     def configure(self, batch=None, **kw):
-##         if batch is not None:
-##             self._batch = batch
-##         Console.configure(self,**kw)
-
-##     def show_confirm(self,sess,msg,*args,**kw):
-##         self._refresh()
-##         return Console.show_confirm(self,sess,msg.ljust(self.width))
-
-##     def show_warning(self,sess,msg,*args,**kw):
-##         msg = sess.buildMessage(msg,*args,**kw)
-##         Console.show_warning(self,sess,msg.ljust(self.width))
-##         self._refresh()
-        
-##     def show_message(self,sess,msg,*args,**kw):
-##         msg = sess.buildMessage(msg,*args,**kw)
-##         Console.show_message(self,sess,msg.ljust(self.width))
-##         self._refresh()
-        
-##     def show_verbose(self,sess,msg,*args,**kw):
-##         msg = sess.buildMessage(msg,*args,**kw)
-##         Console.show_verbose(self,sess,msg.ljust(self.width))
-##         self._refresh()
-        
-##     def show_error(self,sess,msg,*args,**kw):
-##         msg = sess.buildMessage(msg,*args,**kw)
-##         Console.show_error(self,sess,msg.ljust(self.width))
-##         self._refresh()
-        
-##     def critical(self,msg,*args,**kw):
-##         msg = self.buildMessage(msg,*args,**kw)
-##         Console.critical(self,msg.ljust(self.width))
-##         self._refresh()
-        
-        
-##     def show_notice(self,sess,msg,*args,**kw):
-##         if self._verbosity >= 0:
-##         msg = sess.buildMessage(msg,*args,**kw)
-##         Console.show_notice(self,sess,msg.ljust(self.width))
-##         self._refresh()
-        
     def writeln(self,msg):
         self.stdout.write(self._empty_line+"\r")
         self.stdout.write("".ljust(self.width)+"\r")
@@ -621,7 +564,6 @@ class TtyConsole(Console):
         self.stdout.write("".ljust(self.width)+"\r")
         return raw_input(msg)
 
-    #def onTaskStatus(self,task):
     def on_breathe(self,task):
         if self.abortRequested():
             task.requestAbort()
@@ -635,61 +577,15 @@ class TtyConsole(Console):
             self.purzelPos+=1
             if self.purzelPos == len(self.purzelMann):
                 self.purzelPos=0
-                
-            
         else:
             s = "[%d%%] " % int(100*task.curval/task.maxval)
-##             if task.percentCompleted is None:
-##                 s = "[    ] " 
-##             else:
-##                 s = "[%3d%%] " % task.percentCompleted
-
-                
-##         if self.statusMessage is None:
-##             self.showStatus(s)
-##         else:
-##             self.showStatus(s+self.statusMessage)
+            
         msg=task.getStatus()
         if msg is not None:
             s += msg
             s = s[:self.width]
         self.stdout.write(s.ljust(self.width)+"\r")
         
-##     def show_status(self,sess,msg=None,*args,**kw):
-##         #if msg is not None:
-##             #ssert type(msg) == type('')
-##             #assert msg.__class__ in (types.StringType,
-##             #                         types.UnicodeType)
-##         msg=sess.buildMessage(msg,*args,**kw)
-##         self.statusMessage=msg
-##         return self.showStatus(msg)
-
-##     def setStatusMessage(self,msg):
-##         self.statusMessage=msg
-    
-##     def showStatus(self,msg):
-##         "does not store"
-##         if msg is None:
-##             msg=''
-##         else:
-##             msg = msg[:self.width]
-
-##     def _refresh(self):
-##         self.showStatus(self.statusMessage)
-            
-        #if sess._status is not None:
-        #    self.stdout(sess._status+"\r")
-
-##     def readkey(self,sess,msg,default=""):
-##         if self._batch:
-##             self.logfile(msg)
-##             return default
-##         if sess.statusMessage is not None:
-##             self.stdout.write(
-##                 sess.statusMessage.ljust(self.width)+"\n")
-##         return raw_input(msg)
-
-
     
 
 

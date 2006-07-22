@@ -17,10 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.forms import DbMainForm
 from lino.adamo.ddl import *
-
-#from lino.apps.pinboard.babel import Language
 
 SEX = STRING(width=1)
 
@@ -239,9 +236,12 @@ class ContactsReport(DataReport):
 
 ## class PartnerTypesReport(DataReport):
 ##     leadTable=PartnerType
+
     
 class Nation(BabelRow):
+    
     tableName="Nations"
+    
     def initTable(self,table):
         
         table.addField(DEFAULT_PRIMARY_KEY,ASTRING(width=2))
@@ -360,14 +360,12 @@ Warning: This application is not stable and there are no known users.
 class Contacts(DbApplication):
     name="Lino Contacts"
     version="0.0.1"
-    author="Luc Saffre"
+    copyright="Copyright 2002-2006 Luc Saffre"
+    #author="Luc Saffre"
     mainFormClass=ContactsMainForm
     #dbname="contacts"
+    url="http://lino.saffre-rumma.ee/contacts.html"
     description="""A Lino demo application to manage your contacts.
-
-    The most visible feature is that Lino Contacts doesn't lump
-    together persons and organizations.
-
     """
     
 
