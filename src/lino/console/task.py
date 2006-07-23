@@ -18,7 +18,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-
+import os
 from time import sleep
 
 #from lino.console.console import TaskAborted
@@ -170,6 +170,9 @@ has chosen a toolkit and who runs some code (usually an application)
     def logmessage(self,*args,**kw):
         return self.toolkit.logmessage(self,*args,**kw)
     
+    def showfile(self,filename):
+        os.system("start "+filename)
+        
     def showForm(self,frm):
         #print frm
         #frm.setup(self)

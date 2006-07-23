@@ -222,6 +222,7 @@ class Form(MenuContainer):
     def close(self,evt=None):
         #if not self.isShown(): return
         #self.mainComp.onClose()
+        self.toolkit.setActiveForm(self._parent)
         self.onClose()
         self.toolkit.closeForm(self,evt)
         self.ctrl=None

@@ -38,6 +38,6 @@ This document has non-standard page margins, a header and a footer.
 
     """)
     story.par("This paragraph is aligned right",align="RIGHT")
-    story.memo("Here is anoter paragraph.")
+    story.memo("Here is another paragraph.")
     
 PdfMaker().main(body)

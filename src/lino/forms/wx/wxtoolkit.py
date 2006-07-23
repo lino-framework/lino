@@ -209,7 +209,6 @@ class DataGrid(toolkit.DataGrid):
             
     def onRowsDeleted(self,frm,indexes):
         oldlen=len(self.wxctrl.table.rows)
-        indexes.reverse()
         for i in indexes:
             del self.wxctrl.table.rows[i]
         self.wxctrl.table.resetRows(self.wxctrl,oldlen)

@@ -49,4 +49,4 @@ def body(story):
 
     story.report(InvoiceReport())
     
-PdfMaker().main(body,header=header)
+PdfMaker().main(body) #,header=header)

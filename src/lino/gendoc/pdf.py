@@ -389,7 +389,7 @@ This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     
-    url="http://lino.saffre-rumma.ee/pdfmake.html"
+    url="http://lino.saffre-rumma.ee/pdfmaker.html"
     
     usage="usage: %s [options] [FILE]"
     
@@ -424,7 +424,7 @@ view it. Default for FILE is "tmp.pdf".
             doc.saveas(ofname,**kw)
             self.notice("%d pages." % doc.getPageNumber())
             if self.isInteractive():
-                os.system("start "+ofname)
+                self.showfile(ofname)
 
         except IOError,e:
             print e

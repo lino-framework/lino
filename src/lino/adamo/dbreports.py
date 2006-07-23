@@ -90,6 +90,17 @@ class DataReportRow(ReportRow):
         self.item.unlock()
         ReportRow.unlock(self)
 
+    def printRow(self,doc):
+        doc.body.h1(self.item.getLabel())
+        t=doc.body.table()
+        for col,s in self.cells():
+            t.addrow( col.getLabel(), s )
+            
+        
+        #doc.report(RowFormReport(self))
+            
+        
+
 class QueryReport(BaseReport):
     rowClass=DataReportRow
     def __init__(self,qry,
@@ -311,3 +322,26 @@ class DataReport(QueryReport):
             
 
 
+## class RowFormReport(Report):
+##     """Print the content of a ReportRow as a table.
+##     """
+##     def __init__(self,row,**kw):
+##         self.row=row
+##         Report.__init__(self,**kw)
+        
+##     def setupReport(self):
+##         for col in self.row.rpt.columns:
+##             self.addVurtColumn(lambda cell: cell.col.getLabel(),
+##                                width=20,
+##                                label="fieldName")
+##             self.addVurtColumn(lambda cell: str(cell),
+##                                width=50,
+##                                label="value")
+            
+##         for c in self.row:
+##             self.addColumn(lambda cell: cell.col.getLabel(),
+##                            width=20,
+##                            label="fieldName")
+##             self.addColumn(lambda cell: str(cell),
+##                            width=50,
+##                            label="value")

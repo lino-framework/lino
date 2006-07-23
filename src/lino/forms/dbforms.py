@@ -225,6 +225,7 @@ class ReportForm(Form,GenericDocument):
             return
         #print "dbforms.py:", row
         self.currentRow=row
+        row.item.commit()
         #print id(self.currentRow)
         #row.item.commit()
         #self.rpt.query._store.fireUpdate()
@@ -266,22 +267,38 @@ class ReportForm(Form,GenericDocument):
         elif not self.confirm(
             "Delete %d rows. Are you sure?" % len(l)):
             return
+        
+        # we must delete rows from bottom to top because deleting one
+        # row changes the index of the rows behind it.
+        
+        l.sort()
+        l.reverse()
+        
         for i in l:
             self.rpt[i].item.delete()
         self.onRowsDeleted(l)
         
     def printRow(self):
-        #print "printSelectedRows()", self.getSelectedRows()
-        #workdir = "c:\\temp"
-        #ui = self.getForm()
-        #workdir = self.getForm().toolkit.app.tempDir
-        from lino.oogen import SpreadsheetDocument
-        doc = SpreadsheetDocument("printRow")
+        from lino.gendoc.html import HtmlDocument
+        doc=HtmlDocument()
         for i in self.grid.getSelectedRows():
             row = self.rpt[i]
             row.printRow(doc)
-        #outFile = opj(workdir,"raceman_report.sxc")
-        doc.save(self.getForm(),showOutput=True)
+        filename="tmp.html"
+        doc.saveas(filename)
+        self.session.showfile(filename)
+        
+##         #print "printSelectedRows()", self.getSelectedRows()
+##         #workdir = "c:\\temp"
+##         #ui = self.getForm()
+##         #workdir = self.getForm().toolkit.app.tempDir
+##         from lino.oogen import SpreadsheetDocument
+##         doc = SpreadsheetDocument("printRow")
+##         for i in self.grid.getSelectedRows():
+##             row = self.rpt[i]
+##             row.printRow(doc)
+##         #outFile = opj(workdir,"raceman_report.sxc")
+##         doc.save(self.getForm(),showOutput=True)
 
     def printList(self):
         #ui = self.getForm()

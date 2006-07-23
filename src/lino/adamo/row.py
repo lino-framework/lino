@@ -198,17 +198,17 @@ class StoredDataRow(DataRow):
 ##                                    parentResponder._writer)
 ##      #assert rsp.request is self.request
 ##      rsp.writeParagraph()
-    
-    def printRow(self,doc):
-        rpt = doc.report(label=str(self))
-        for c in self:
-            rpt.addColumn(lambda cell: cell.col.getLabel(),
-                          width=20,
-                          label="fieldName")
-            rpt.addColumn(lambda cell: str(cell),
-                          width=50,
-                          label="value")
-        rpt.execute(self)
+
+
+##         rpt = doc.report(label=str(self))
+##         for c in self:
+##             rpt.addColumn(lambda cell: cell.col.getLabel(),
+##                           width=20,
+##                           label="fieldName")
+##             rpt.addColumn(lambda cell: str(cell),
+##                           width=50,
+##                           label="value")
+##         rpt.execute(self)
     
     def isComplete(self):
         return self._complete
@@ -521,4 +521,7 @@ class BabelRow(StoredDataRow):
         return self.name
 
 
+#from lino.reports.reports import Report
 
+        
+    

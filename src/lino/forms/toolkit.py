@@ -540,7 +540,7 @@ class Toolkit(BaseToolkit):
         self.console.setupOptionParser(p)
         
     def setActiveForm(self,frm):
-        assert frm is not None
+        #assert frm is not None
         #print "setActiveForm()",frm
         self._activeForm = frm
 
