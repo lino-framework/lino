@@ -156,10 +156,9 @@ class Console(BaseToolkit):
     def writeln(self,msg):
         self.stdout.write(msg+"\n")
 
-##     def start_running(self,app):
-##         if self.isInteractive():
-##             app.notice(app.aboutString())
-
+    def start_running(self,app):
+        if app.name and self.isInteractive():
+            app.notice(app.aboutString())
             
 ##     def show_status(self,sess,msg=None,*args,**kw):
 ##         #if msg is not None:
@@ -432,10 +431,10 @@ class Console(BaseToolkit):
         p.add_option("-l", "--logfile",
                      help="log a report to FILE",
                      type="string",
-                     dest="logFile",
-                     action="callback",
-                     callback=call_set,
-                     callback_kwargs=dict(logfile=1)
+                     dest="logfile",
+                     #action="callback",
+                     #callback=call_set,
+                     #callback_kwargs=dict(logfile=...)
                      )
         p.add_option("-v",
                      "--verbose",

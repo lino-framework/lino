@@ -462,13 +462,13 @@ from lino.console.task import Task
 #from lino.console.task import Job
 
 
-#class DbfMirrorLoader(Task):
 class DbfMirrorLoader(Task):
 
     tableClass = NotImplementedError  # subclass of adamo.tables.Table
     tableName = NotImplementedError   # name of external .DBF file
 
     def __init__(self,dbfpath=".",severe=True):
+        assert type(dbfpath) == type(''), repr(dbfpath)
         self.dbfpath = dbfpath
         self.severe=severe
         # self.label="Loading "+ self.sourceFilename()
@@ -478,18 +478,18 @@ class DbfMirrorLoader(Task):
         return "Loading "+ self.sourceFilename()
     
     #def load(self,sess,store):
-    def run(self,sess):
-        store=sess.db.getStore(self.tableClass)
+    def run(self,dbc):
+        store=dbc.db.getStore(self.tableClass)
         # task.setLabel("Loading "+ self.sourceFilename())
         if self.mtime() <= store.mtime():
-            sess.debug("No need to load %s.",self.sourceFilename())
+            self.verbose("No need to load %s.",self.sourceFilename())
             return
 
         f = dbfreader.DBFFile(self.sourceFilename(),codepage="cp850")
         f.open()
         #task.setMaxVal(len(f))
         def looper(task):
-            q=store.query(sess,"*")
+            q=store.query(dbc,"*")
             q.zap()
             for dbfrow in f:
                 task.increment()
@@ -513,8 +513,7 @@ class DbfMirrorLoader(Task):
                         sess.error(repr(e))
             q.commit()
             
-        sess.loop(looper,
-                  "Loading "+ self.sourceFilename(),
+        self.loop(looper,"Loading "+ self.sourceFilename(),
                   maxval=len(f))
         f.close()
 

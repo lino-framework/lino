@@ -1,10 +1,8 @@
 from lino.apps.pinboard.pinboard import Pinboard
-from lino.apps.pinboard.loaders import LOADERS
+#from lino.apps.pinboard.loaders import LOADERS
 
 from lino.adamo.store import Populator
-from lino.forms import gui
-
-loadfrom=r".\WEB\LINO"
+#from lino.forms import gui
 
 class MyPopulator(Populator):
     def populateNewsgroups(self,q):
@@ -12,14 +10,23 @@ class MyPopulator(Populator):
         q.appendRow(id="api",name="API change")
         q.appendRow(id="rel",name="Release note")
 
+class TimwebsPinboard(Pinboard):
+    populators=(MyPopulator(),)
+    loadMirrorsFrom=r"c:\temp\web\lino"
+    filename=r"c:\temp\pinboard.db"
 
-app=Pinboard()
-sess=app.quickStartup()
-sess.populate(MyPopulator())
-for lc in LOADERS:
-    loader=lc(loadfrom)
-    sess.run(loader.run)
-gui.choose("cherrypy")
-gui.run(sess)
+
+def main(): TimwebsPinboard().main()
+
+if __name__ == '__main__': main()
+    
+## app=Pinboard()
+## sess=app.quickStartup()
+## sess.populate(MyPopulator())
+## for lc in LOADERS:
+##     loader=lc(loadfrom)
+##     sess.run(loader.run)
+## gui.choose("cherrypy")
+## gui.run(sess)
 
 

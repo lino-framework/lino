@@ -24,13 +24,13 @@ import locale
 from lino.console.application import Application, UsageError
 from lino.reports.reports import DictReport
 #from lino.gendoc.html import StaticHtmlDocument
-from lino.gendoc.html import Document
+from lino.gendoc.html import HtmlDocument
 #from HyperText import HTML as html
 #from HyperText.Documents import Document
 
 def diag_encoding(ct):
 
-    ct.header(2,"System Encodings")
+    ct.h2("System Encodings")
     
     s="    locale.getdefaultlocale(): "\
        + repr(locale.getdefaultlocale())
@@ -72,6 +72,19 @@ def diag_printer(story):
     ul=story.ul(*l)
     win32print.ClosePrinter(h)
 
+    story.h2("EnumPrinters()")
+    
+    "http://aspn.activestate.com/ASPN/docs/ActivePython/2.4/pywin32/win32print__EnumPrinters_meth.html"
+    
+    l=[p for p in win32print.EnumPrinters(
+        win32print.PRINTER_ENUM_LOCAL,None,1)] \
+               + [p for p in win32print.EnumPrinters(
+        win32print.PRINTER_ENUM_REMOTE,None,1)]
+    if len(l):
+        story.ul(*[p[2] for p in l])
+    else:
+        story.memo("(No printers found)")
+
 class SysInfo(Application):
     name="Lino/SysInfo"
     copyright="""\
@@ -102,7 +115,7 @@ and output is sent to stdout.
             raise UsageError("Got more than 1 argument")
 
         self.notice("Generating %s ...",filename)
-        doc=Document()
+        doc=HtmlDocument()
         #doc=StaticHtmlDocument()
         
         doc.body.h1("System Information")
@@ -112,11 +125,11 @@ and output is sent to stdout.
         
         diag_printer(doc.body)
 
-        if False:
-            doc.body.header(2,"sys.modules")
+        if True:
+            doc.body.h2("sys.modules")
             doc.body.report(DictReport(sys.modules))
         if filename == "-":
-            doc.__xml__(self.toolkit.console.stdout.write)
+            doc.__xml__(self.toolkit.stdout.write)
         else:
             doc.saveas(filename)
             os.system(filename)

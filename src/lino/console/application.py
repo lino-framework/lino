@@ -73,17 +73,21 @@ class Application(Session):
     def applyOptions(self,options,args):
         self.options=options
         self.args=args
+        if self.name and self.isInteractive():
+            self.notice(self.aboutString())
 
     def isInteractive(self):
         return self.toolkit.isInteractive()
 
+    #def beforeRun(self):
+            
 
     def aboutString(self):
         s = str(self)
         if self.version is not None:
             s += " version " + self.version
-        if self.description is not None:
-            s += "\n" +  self.description.strip()
+        #if self.description is not None:
+        #    s += "\n" +  self.description.strip()
         if self.url is not None:
             s += "\nHomepage: " + self.url
         if self.author is not None:
@@ -179,12 +183,9 @@ class Application(Session):
         try:
             poptions,pargs = p.parse_args(argv)
             self.applyOptions(poptions,pargs)
+            #self.beforeRun()
             #self.on_main()
             #self.setupApplication()
-
-            if self.name and self.isInteractive():
-                self.notice(self.aboutString())
-            
             return self.run(*args,**kw)
 
         except UsageError,e:

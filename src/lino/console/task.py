@@ -96,12 +96,16 @@ has chosen a toolkit and who runs some code (usually an application)
     #curval=0
     #percentCompleted=0
     
-    def __init__(self,toolkit=None):
+    def __init__(self,toolkit=None,**kw):
         self.curval=0
         if toolkit is None:
             toolkit=syscon.getSystemConsole()
         self.toolkit=toolkit
         self.debug(self.__class__.__name__+".__init__()")
+        self.configure(**kw)
+
+    def configure(self):
+        pass
         
     def __str__(self):
         if self.name is None:

@@ -471,41 +471,6 @@ This is the Raceman main menu.
 
 
     
-class Raceman(DbApplication):
-    
-    name="Raceman"
-    years='2005-2006'
-    #tables = races.TABLES
-    mainFormClass=RacemanMainForm
-    loadMirrorsFrom="."
-    
-
-    def setupApplication(self):
-        l=[lc(self.loadfrom) for lc in loaders.LOADERS]
-        self.registerLoaders(l)
-
-
-    def registerLoaders(self,loaders):
-        for l in loaders:
-            it = self.dbsess.schema.findImplementingTables(
-                l.tableClass)
-            assert len(it) == 1
-            it[0].setMirrorLoader(l)
-
-    def setupOptionParser(self,parser):
-        DbApplication.setupOptionParser(self,parser)
-        parser.add_option("--loadfrom",
-                          help="""\
-directory containing mirror source files""",
-                          action="store",
-                          type="string",
-                          dest="loadfrom",
-                          default=".")
-        
-        
-
-    
-
 
 __all__ = [t.__name__ for t in RacemanSchema.tableClasses]
 __all__.append('RacemanSchema')

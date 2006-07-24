@@ -18,11 +18,7 @@
 
 from lino.misc.attrdict import AttrDict
 from lino.adamo import InvalidRequestError
-#from lino.ui import console
-#from lino.forms.session import Session
-#from lino.adamo import center
 from lino.adamo.dbreports import QueryReport
-#from lino.console.console import Session
 
 class BabelLang:
     def __init__(self,index,id):

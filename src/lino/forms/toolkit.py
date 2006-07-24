@@ -550,6 +550,8 @@ class Toolkit(BaseToolkit):
     def shutdown(self):
         pass
     
+    def show_verbose(self,*args,**kw):
+        self.console.show_verbose(*args,**kw)
     def show_status(self,*args,**kw):
         self.console.show_status(*args,**kw)
         
@@ -672,7 +674,7 @@ class Toolkit(BaseToolkit):
     def start_running(self,app):
         assert not self.running()
         self.root=app
-        self.onTaskBegin(app)
+        #self.onTaskBegin(app)
         #self._running=true
         
 

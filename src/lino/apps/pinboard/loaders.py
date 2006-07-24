@@ -1,4 +1,4 @@
-## Copyright 2004-2005 Luc Saffre 
+## Copyright 2004-2006 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -21,7 +21,7 @@ import os
 import sys
 
 
-from lino.apps.pinboard import tables
+from lino.apps.pinboard import pinboard_tables as tables
 
 from lino.adamo.table import DbfMirrorLoader
 

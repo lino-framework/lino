@@ -80,6 +80,9 @@ write to SPOOLFILE rather than really printing.""",
             raise UsageError("no arguments specified")
         if self.options.copies < 0:
             raise UsageError("wrong value for --copies")
+        if self.options.printerName is not None:
+            self.notice("Printing on printer '%s'",
+                        self.options.printerName)
         for inputfile in self.args:
             for cp in range(self.options.copies):
                 d = winprn.Win32TextPrinter(

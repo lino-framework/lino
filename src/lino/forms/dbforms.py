@@ -566,28 +566,10 @@ class DbMainForm(Form):
     minWidth=80
     minHeight=20
     
-##     def __init__(self,dbsess,*args,**kw):
-##         self.dbsess=dbsess
-##         Form.__init__(self,*args,**kw)
-
-    #def __init__(self,filename=None,langs=None,dump=False,**kw):
     def __init__(self,dbcontext,**kw):
-        #print self.__doc__
         self.dbsess=dbcontext
-        #self.filename=filename
-        #self.langs=langs
-        #self.dump=dump
-        #DbMainForm.__init__(self,**kw)
         Form.__init__(self,**kw)
         
-##     def createContext(self,*args,**kw):
-##         return self.schemaClass(self).quickStartup(*args,**kw)
-    
-
-##     def onShow(self):
-##         if self.dbsess is None:
-##             self.dbsess=self.createContext()
-            
     def onClose(self):
         if self.dbsess is not None:
             self.dbsess.close()
@@ -598,7 +580,9 @@ class DbMainForm(Form):
         #if self.toolkit.app is not None:
         m.addItem("about",label="Inf&o").setHandler(
             lambda : self.session.message(
-            self.toolkit.root.aboutString(), title="About"))
+            self.toolkit.root.aboutString()\
+            +self.toolkit.root.description.strip(),
+            title="About"))
 
 ##         def bugdemo(task):
 ##             for i in range(5,0,-1):
@@ -655,32 +639,66 @@ class DbApplication(GuiApplication):
 
     """
 
-    usage=""
+    #usage=""
+    filename=None
+    langs=None
+    dump=None
+    populators=None
+    loadMirrorsFrom=None
+    mirrorLoaders=None
 
-    def __init__(self,filename=None,langs=None,dump=False,**kw):
-        GuiApplication.__init__(self,**kw)
-        self.filename=filename
-        self.langs=langs
-        self.dump=dump
+##     def __init__(self,filename=None,langs=None,dump=False,**kw):
+##         GuiApplication.__init__(self,**kw)
+##         self.filename=filename
+##         self.langs=langs
+##         self.dump=dump
 
-    def configure(self,filename=None,langs=None,dump=False):
-        #print "configure"
+    def configure(self,filename=None,langs=None,dump=False,
+                  loadMirrorsFrom=None):
+        GuiApplication.configure(self)
         if dump is not None:
             self.dump=dump
         if langs is not None:
             self.langs=langs
         if filename is not None:
             self.filename=filename
+        if loadMirrorsFrom is not None:
+            self.loadMirrorsFrom=loadMirrorsFrom
+
+##     def registerMirrorLoader(self,ldr):
+##         #self.loadMirrorsFrom="."
+##         if self.mirrorLoaders is None:
+##             self.mirrorLoaders=[]
+##         self.mirrorLoaders.append(ldr)
+           
+    def applyOptions(self,options,args):
+        if options.loadMirrorsFrom is not None:
+            self.loadMirrorsFrom=loadMirrorsFrom
+        if len(args):
+            if len(args) > 1:
+                raise UsageError(
+                    "Found %d arguments, expected 0 or 1" % len(args))
+            self.filename=args[0]
         
     def setupOptionParser(self,parser):
         def call_set(option, opt_str, value, parser,**kw):
             self.configure(**kw)
-        parser.add_option("-d","--dump",
-                          help="dump all SQL commands to stdout",
-                          action="callback",
-                          callback=call_set,
-                          default=self.dump,
-                          callback_kwargs=dict(dump=True))
+        parser.add_option(
+            "-d","--dump",
+            help="dump all SQL commands to stdout",
+            action="callback",
+            callback=call_set,
+            default=self.dump,
+            callback_kwargs=dict(dump=True))
+        if self.mirrorLoaders is not None:
+            parser.add_option(
+                "--loadMirrorsFrom",
+                help="directory containing mirror source files",
+                action="callback",
+                type="string",
+                default=self.loadMirrorsFrom,
+                dest="loadMirrorsFrom")
+
 
     def createMainForm(self):
         dbc=self.createContext()
@@ -689,9 +707,29 @@ class DbApplication(GuiApplication):
     def createContext(self):
         #print "createContext"
         schema=self.mainFormClass.schemaClass(self)
-        return schema.createContext(langs=self.langs,
-                                    filename=self.filename,
-                                    dump=self.dump)
+        dbc=schema.createContext(langs=self.langs,
+                                 filename=self.filename,
+                                 dump=self.dump)
+        if self.loadMirrorsFrom is not None:
+            for lc in self.mirrorLoaders:
+                ldr=lc(self.loadMirrorsFrom)
+                self.runtask(ldr,dbc)
+##             qry=dbc.query(lc.tableClass)
+##             if qry._store.mtime()
+##             it = dbc.schema.findImplementingTables(lc.tableClass)
+##             assert len(it) == 1
+##             it[0].setMirrorLoader(ldr)
+##         if self._mirrorLoader.mtime() <= store.mtime():
+##             sess.debug("No need to load "+\
+##                        self._mirrorLoader.sourceFilename())
+##             return
+##         self._mirrorLoader.load(sess,store.query(sess))
+
+        if self.populators is not None:
+            for pc in self.populators:
+                self.runtask(pc,dbc)
+            
+        return dbc
 
     
         

@@ -18,7 +18,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from pinboard_tables import *
-#from pinboard_forms import Pinboard
+from lino.apps.pinboard.pinboard import Pinboard
 from lino.apps.contacts import contacts_demo 
 
 from lino.adamo.ddl import Populator

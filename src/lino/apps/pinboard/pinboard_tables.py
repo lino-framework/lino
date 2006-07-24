@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from lino.adamo.ddl import Schema
-from lino.adamo.ddl import DbMainForm, DbApplication
+from lino.adamo.ddl import DbMainForm
 
 from lino.apps.contacts.contacts_tables import User
 from lino.apps.contacts.contacts_tables import Contact
@@ -45,6 +45,7 @@ from lino.apps.pinboard.quotes import Author, \
      Quote,\
      AuthorsReport,\
      QuotesReport
+
 
 ## from lino.apps.pinboard import babel, web, events, \
 ##      projects, news, quotes
@@ -75,11 +76,6 @@ class PinboardSchema(Schema):
 class PinboardMainForm(DbMainForm):
     schemaClass=PinboardSchema
     
-##     def layout(self,panel):
-##         panel.label("""
-
-##         """)
-    
     def setupMenu(self):
         m = self.addMenu("pinboard","&Pinboard")
         
@@ -102,15 +98,8 @@ class PinboardMainForm(DbMainForm):
 
 
 
-class Pinboard(DbApplication):
-    name="Lino Pinboard"
-    years='2005-2006'
-    author="Luc Saffre"
-    mainFormClass=PinboardMainForm
-    
-    
 
 __all__ = [t.__name__ for t in PinboardSchema.tableClasses]
 
 __all__.append('PinboardSchema')
-__all__.append('Pinboard')
+#__all__.append('Pinboard')

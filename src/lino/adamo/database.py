@@ -141,8 +141,9 @@ class Database(Context): #,Describable):
         assert self._startupContext is None,\
                  "Cannot startup() again " + repr(self)
         dbc=DbContext(self)
+        self.schema.session.verbose("Starting up %s using %s",\
+                                    self,self._connections[0])
         for store in self.getStoresById():
-            self.schema.session.status("startup %s",store)
             store.onStartup()
                 
         self._startupContext=dbc
