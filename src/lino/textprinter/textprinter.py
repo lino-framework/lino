@@ -32,6 +32,7 @@ class TextPrinter:
                  pageSize=(0,0),
                  margin=0,
                  cpl=None,
+                 cpi=12,
                  coding=None):
 
 ##         self.lineCommands = {
@@ -45,19 +46,19 @@ class TextPrinter:
             chr(27)+"u" : self.parse_u,
             chr(27)+"i" : self.parse_i,
             chr(27)+"L" : self.parse_L,
-            #chr(27)+"L" : self.setPageLandscape,
             chr(27)+"I" : self.parse_I,
-            #chr(27)+"I" : self.insertImage,
             }
 
         self.coding = coding
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin 
-        self.cpl = cpl
-        self.page = 0
+        self.cpl=cpl
+        self.cpi=cpi
+        self.page=0
         #self.textobject = None
         self.fontChanged = True
-        self._pageStarted = False
+        self._docStarted=False
+        self._pageStarted=False
 
     def getCpl(self):
         "characters per line"
@@ -74,6 +75,8 @@ class TextPrinter:
     def onEndPage(self):
         pass
     def onSetPageSize(self):
+        pass
+    def onBeginDoc(self):
         pass
     def onEndDoc(self):
         pass
@@ -112,8 +115,10 @@ class TextPrinter:
         self._pageStarted = False
 
     def beginDoc(self):
-        pass
-    
+        self.onBeginDoc()
+        self._docStarted=True
+        self.setCpi(self.cpi)
+
     def endDoc(self):
         #if not self.textobject is None:
         if self._pageStarted:
@@ -155,9 +160,13 @@ class TextPrinter:
 
     def writeln(self,line):
         
-        """ The final newline is printed only if the line really has
+        """Print a line of text after parsing it.
+
+        The final newline is printed only if the line really has
         text.  Or if it is empty. For lines containing only
-        instructions the final newline is ignored.  """
+        instructions the final newline is ignored.
+
+        """
         
         line = line.rstrip()
         
@@ -198,10 +207,13 @@ class TextPrinter:
         #self.ypos -= self.linespacing 
 
     def printLine(self,line):
-        # deprecated alias for writeln
+        """Deprecated alias for writeln().
+        """
         self.writeln(line)
 
     def writechars(self,text):
+        if not self._docStarted:
+            self.beginDoc()
         if not self._pageStarted:
             self.beginPage()
 
@@ -226,10 +238,10 @@ class TextPrinter:
         
         
     def parse_L(self,line):
-        self.setPageLandscape()
+        self.setOrientationLandscape()
         return 0
     
-    def setPageLandscape(self):
+    def setOrientationLandscape(self):
         #assert self.textobject is None, \
         #       'setLandscape after first text has been printed'
         if self.pageHeight > self.pageWidth:
@@ -237,6 +249,10 @@ class TextPrinter:
             (self.pageHeight, self.pageWidth) = \
                              (self.pageWidth,self.pageHeight)
             self.onSetPageSize()
+
+    def isLandscape(self):
+        return self.pageHeight < self.pageWidth
+        
 
     def onSetFont(self):
         self.fontChanged = True

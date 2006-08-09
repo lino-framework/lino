@@ -22,6 +22,7 @@
 import sys
 
 import win32ui
+import win32gui
 import win32con
 import win32print
 import pywintypes
@@ -30,6 +31,16 @@ import pywintypes
 from PIL import Image, ImageWin
 
 #SUPPORT_LANDSCAPE = False
+
+NEWCENTURY=True
+
+"""
+http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
+
+"""
+
+            
+
 
 """
 thanks to
@@ -167,7 +178,6 @@ class Win32TextPrinter(TextPrinter):
     
     def __init__(self,printerName=None,
                  spoolFile=None,
-                 cpi=12,
                  lpi=6,
                  fontName="Courier New",
                  coding=sys.stdin.encoding,
@@ -190,14 +200,63 @@ class Win32TextPrinter(TextPrinter):
 
         self.font = None
         self.useWorldTransform=useWorldTransform
+        self.spoolFile=spoolFile
+        self.jobName=jobName
+
         
         if printerName is None:
             printerName=win32print.GetDefaultPrinter()
+        self.printerName=printerName
+        
+        #self.doc.dc.MoveTo(int(self.x),-int(self.y))
+        #self.y = doc.pageHeight-(2*doc.margin)
+        self.line = ""
+        self.leading = 0
+        
+        #print "Viewport:",\
+        #      self.dc.GetViewportOrg(), self.dc.GetViewportExt()
+        #print "Window:", self.dc.GetWindowOrg(), self.dc.GetWindowExt()
+        
+        
+        
+##     def createTextObject(self):
+##         textobject = TextObject(self)
+##         #textobject.setFont("Courier", 10)
+##         return textobject
+        
+    def onBeginDoc(self):
         #self.phandle=win32print.OpenPrinter(printerName)
-        self.dc = win32ui.CreateDC()
-        self.dc.CreatePrinterDC(printerName)
+        if NEWCENTURY:
+            # open the printer.
+            hprinter = win32print.OpenPrinter(self.printerName)
 
+            # retrieve default settings.  this code has complications on
+            # win95/98, I'm told, but I haven't tested it there.
+            devmode = win32print.GetPrinter(hprinter,2)["pDevMode"]
 
+            # change paper size and orientation
+            # constants are available here:
+            # http://msdn.microsoft.com/library/default.asp?\
+            # url=/library/en-us/intl/nls_Paper_Sizes.asp
+            devmode.PaperSize = 9 # DMPAPER_A4
+            # 1 = portrait, 2 = landscape
+            if self.isLandscape():
+                devmode.Orientation = 2
+            else:
+                devmode.Orientation = 1
+
+            # create dc using new settings.
+            # first get the integer hDC value.
+            # note that we need the name.
+            hdc = win32gui.CreateDC("WINSPOOL",
+                                    self.printerName,
+                                    devmode)
+            # next create a PyCDC from the hDC.
+            self.dc = win32ui.CreateDCFromHandle(hdc)
+
+        else:
+            self.dc = win32ui.CreateDC()
+            self.dc.CreatePrinterDC(printerName)
 
 ##         while True:
 ##             h = win32print.OpenPrinter(win32print.GetDefaultPrinter())
@@ -233,7 +292,7 @@ class Win32TextPrinter(TextPrinter):
 ##             raise PrinterNotReady
 
         try:
-            self.dc.StartDoc(jobName,spoolFile)
+            self.dc.StartDoc(self.jobName,self.spoolFile)
         except win32ui.error,e:
             raise PrinterNotReady("StartDoc() failed")
         
@@ -247,34 +306,18 @@ class Win32TextPrinter(TextPrinter):
         #self.ext = self.dc.GetViewportExt()
         self.org = self.dc.GetWindowOrg()
         self.ext = self.dc.GetWindowExt()
-        self.setCpi(cpi)
+        #self.setCpi(cpi)
         #self.setLpi(lpi)
 
-        #self.doc.dc.MoveTo(int(self.x),-int(self.y))
-        #self.y = doc.pageHeight-(2*doc.margin)
-        self.line = ""
-        self.leading = 0
-        
-        #print "Viewport:",\
-        #      self.dc.GetViewportOrg(), self.dc.GetViewportExt()
-        #print "Window:", self.dc.GetWindowOrg(), self.dc.GetWindowExt()
-        
-        
-        
-##     def createTextObject(self):
-##         textobject = TextObject(self)
-##         #textobject.setFont("Courier", 10)
-##         return textobject
+
+            
         
     def onBeginPage(self):
         self.x = self.org[0] + self.margin
         self.y = self.org[1] + self.margin
         self._images=[]
 
-        if self.pageHeight < self.pageWidth:
-            # landscape orientation
-            # see http://lino.berlios.de/176.html
-
+        if self.isLandscape():
             if self.useWorldTransform: # SUPPORT_LANDSCAPE:
                 r=0
                 # shifts to right:

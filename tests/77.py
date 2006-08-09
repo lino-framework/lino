@@ -1,5 +1,5 @@
 #coding:latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -21,6 +21,7 @@ import sys
 import os
 opj=os.path.join
 from lino.misc.tsttools import TestCase, main
+from lino.textprinter import winprn
 
 dataPath = os.path.join(os.path.dirname(__file__),
                         'testdata','textprinter')
@@ -41,16 +42,32 @@ class Case(TestCase):
         d.write(" is some")
         d.write(" frag")
         d.writeln("mented text.")
+
+        d.writeln()
+        d.write("This is a very long line. ")
+        d.write("Just do demonstrate that TextPrinter ")
+        d.write("doesn't wrap paragraphs for you...")
+        d.write("Blabla bla. "*20)
+        d.writeln("Amen.")
+        
         #d.drawDebugRaster()
         d.endDoc()
         
 
     def test01(self):
 
-        from lino.textprinter import winprn
-        spoolFile = self.addTempFile("5.ps",showOutput=True)
+        spoolFile = self.addTempFile("77.ps",showOutput=True)
         d = winprn.Win32TextPrinter(self.win32_printerName_PS,
                                     spoolFile )
+        self.doit(d)
+
+        
+        spoolFile = self.addTempFile("77L.ps",showOutput=True)
+        d = winprn.Win32TextPrinter(self.win32_printerName_PS,
+                                    spoolFile )
+        d.setOrientationLandscape()
+        d.writeln("And now the same in landscape. ")
+        d.writeln()
         self.doit(d)
         
 

@@ -87,7 +87,7 @@ class Status:
 		
 class PdfTextPrinter(TextPrinter):
 
-    def __init__(self,filename,cpi=12,**kw):
+    def __init__(self,filename,**kw):
         TextPrinter.__init__(self,
                              pageSize=A4,
                              margin=5*mm,
@@ -102,7 +102,6 @@ class PdfTextPrinter(TextPrinter):
         self.textobject = None
         self.filename = filename
         self.status = Status()
-        self.setCpi(cpi)
 
 
 ##      def background(self):

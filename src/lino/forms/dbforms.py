@@ -581,7 +581,7 @@ class DbMainForm(Form):
         m.addItem("about",label="Inf&o").setHandler(
             lambda : self.session.message(
             self.toolkit.root.aboutString()\
-            +self.toolkit.root.description.strip(),
+            +"\n\n"+self.toolkit.root.description.strip(),
             title="About"))
 
 ##         def bugdemo(task):
@@ -672,8 +672,9 @@ class DbApplication(GuiApplication):
 ##         self.mirrorLoaders.append(ldr)
            
     def applyOptions(self,options,args):
-        if options.loadMirrorsFrom is not None:
-            self.loadMirrorsFrom=loadMirrorsFrom
+        if self.mirrorLoaders is not None:
+            if options.loadMirrorsFrom is not None:
+                self.loadMirrorsFrom=options.loadMirrorsFrom
         if len(args):
             if len(args) > 1:
                 raise UsageError(
@@ -694,7 +695,6 @@ class DbApplication(GuiApplication):
             parser.add_option(
                 "--loadMirrorsFrom",
                 help="directory containing mirror source files",
-                action="callback",
                 type="string",
                 default=self.loadMirrorsFrom,
                 dest="loadMirrorsFrom")
