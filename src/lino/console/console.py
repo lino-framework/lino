@@ -57,14 +57,13 @@ def rewriter(from_encoding,to_stream,encoding):
 
         encode = e
         decode = d
-        errors='replace'
 
         def write(self,object):
             data,consumed = self.decode(object,self.errors)
             self.stream.write(data)
             return len(data)
 
-    return StreamRewriter(unicode_to_fs)
+    return StreamRewriter(unicode_to_fs,errors='replace')
 
 
 class BaseToolkit:
