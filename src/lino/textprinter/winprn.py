@@ -256,7 +256,7 @@ class Win32TextPrinter(TextPrinter):
 
         else:
             self.dc = win32ui.CreateDC()
-            self.dc.CreatePrinterDC(printerName)
+            self.dc.CreatePrinterDC(self.printerName)
 
 ##         while True:
 ##             h = win32print.OpenPrinter(win32print.GetDefaultPrinter())
@@ -465,8 +465,8 @@ class Win32TextPrinter(TextPrinter):
         # 
         #self.leading = max(self.leading,self.doc.status.leading)
         #self.doc.dc.TextOut(self.line)
-        #print "self.dc.TextOut(%d,%d,%r)"%\
-        #(int(self.x),-int(self.y),self.line)
+        print "self.dc.TextOut(%d,%d,%r)"%\
+              (int(self.x),-int(self.y),self.line)
         if len(self.line) == 0:
             (dx,dy) = self.dc.GetTextExtent(" ")
         else:
