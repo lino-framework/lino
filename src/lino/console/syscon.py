@@ -24,7 +24,7 @@ from lino.console.console import TtyConsole, Console
 DEBUG=False
 
 
-if sys.stdout.isatty():
+if hasattr(sys.stdout,'isatty') and sys.stdout.isatty():
     _syscon=TtyConsole(sys.stdout, sys.stderr)
 else:
     _syscon=Console(sys.stdout, sys.stderr)

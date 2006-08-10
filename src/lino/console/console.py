@@ -41,7 +41,7 @@ except ImportError,e:
 # (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
 
 def rewriter(from_encoding,to_stream,encoding):
-    if encoding is None:
+    if encoding is None and hasattr(to_stream,'encoding'):
         encoding=to_stream.encoding
     #print 'rewriter(%r,%r)' % (from_encoding, encoding)
     if encoding is None: return to_stream
