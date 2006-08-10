@@ -57,7 +57,7 @@ def rewriter(from_encoding,to_stream,encoding):
 
         encode = e
         decode = d
-        #errors='replace'
+        errors='replace'
 
         def write(self,object):
             data,consumed = self.decode(object,self.errors)
