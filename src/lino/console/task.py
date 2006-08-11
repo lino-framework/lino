@@ -175,7 +175,10 @@ has chosen a toolkit and who runs some code (usually an application)
         return self.toolkit.logmessage(self,*args,**kw)
     
     def showfile(self,filename):
-        os.system("start "+filename)
+        if self.isInteractive():
+            os.system("start "+filename)
+        else:
+            assert os.path.exists(filename)
         
     def showForm(self,frm):
         #print frm

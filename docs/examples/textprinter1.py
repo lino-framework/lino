@@ -1,3 +1,7 @@
+from lino.console.application import Application
+from lino.textprinter.plain import PlainTextPrinter
+from lino.textprinter.pdfprn import PdfTextPrinter
+from lino.textprinter.winprn import Win32TextPrinter
 
 def doit(d):
     d.writeln("")
@@ -12,21 +16,22 @@ def doit(d):
     d.writeln("Here is some \033i1italic\033i0 text.")
     d.endDoc()
 
-# doit() on sys.stdout:
-from lino.textprinter.plain import PlainTextPrinter
-d = PlainTextPrinter()
-doit(d)
+class Test(Application):
+    def run(self):
+        # do it on sys.stdout:
+        d = PlainTextPrinter(self)
+        doit(d)
 
-# doit() on a PDF document:
-from lino.textprinter.pdfprn import PdfTextPrinter
-filename = "textprinter1.pdf"
-d = PdfTextPrinter(filename)
-doit(d)
+        # do it on a PDF document:
+        filename = "textprinter1.pdf"
+        d = PdfTextPrinter(self,filename)
+        doit(d)
+        self.showfile(filename)
 
-# doit() on the default printer:
-if False:
-    from lino.textprinter.winprn import Win32TextPrinter
-    d = Win32TextPrinter()
-    doit(d)
+        # do it on the default printer:
+        if False:
+            d = Win32TextPrinter(self)
+            doit(d)
 
-
+if __name__ == "__main__":
+    Test().main()

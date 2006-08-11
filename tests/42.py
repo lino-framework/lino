@@ -87,6 +87,7 @@ test:               |cp1252a.txt       |372     |X    |53 Occurences
 test:               |cp850a.txt        |372     |X    |53 Occurences  
 test:               |5.pds             |500     |X    |0 Occurences   
 test:               |5b.pds            |676     |X    |0 Occurences   
+test:textprinter    |4.prn             |676     |X    |0 Occurences
 test:textprinter    |5.PRN             |794     |X    |0 Occurences   
 test:               |5d.pds            |850     |X    |0 Occurences   
 test:webman         |init.wmi          |917     |X    |0 Occurences   
