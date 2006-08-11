@@ -97,13 +97,16 @@ class Console(BaseToolkit):
         self.stderr=rewriter(sys.getdefaultencoding(),stderr,encoding)
 
 
-    def configure(self, verbosity=None, batch=None, logfile=None):
+    def configure(self,
+                  verbosity=None, batch=None, logfile=None,
+                  addverbosity=None):
         if batch is not None:
             self._batch = batch
         if verbosity is not None:
             self._verbosity=verbosity
-            #self._verbosity += verbosity
             #print "%s.verbositiy %d" % (self,self._verbosity)
+        if addverbosity is not None:
+            self._verbosity += addverbosity
         if logfile is not None:
             if self._logfile is not None:
                 self._logfile.close()
@@ -440,7 +443,7 @@ class Console(BaseToolkit):
                      help="increase verbosity",
                      action="callback",
                      callback=call_set,
-                     callback_kwargs=dict(verbosity=1)
+                     callback_kwargs=dict(addverbosity=1)
                      )
 
         p.add_option("-q",
@@ -448,7 +451,7 @@ class Console(BaseToolkit):
                      help="decrease verbosity",
                      action="callback",
                      callback=call_set,
-                     callback_kwargs=dict(verbosity=-1)
+                     callback_kwargs=dict(addverbosity=-1)
                      )
 
         p.add_option("-b",

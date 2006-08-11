@@ -222,38 +222,12 @@ class Task(Session):
         if label is not None:
             self.label=label
 
-##     def getStatusLine(self):
-##         # may override but caution: called frequently
-##         return self.label
-    
-##     def status(self,msg,*args,**kw):
-##         if msg is None:
-##             msg=''
-##         else:
-##             msg=self.buildMessage(msg,*args,**kw)
-##         self.label=msg
-##         return self.toolkit.show_status(self,msg)
-
     def getTitle(self):
         return str(self)
 ##         if self.title is None:
 ##             return self.__class__.__name__
 ##         return self.title
 
-##     def main(self,toolkit=None,*args,**kw):
-##         if toolkit is None:
-##             toolkit=syscon.getSystemConsole()
-##         #self.runfrom(toolkit,*args,**kw)
-##         try:
-##             return self.runfrom(toolkit,*args,**kw)
-##         except UserAborted,e:
-##             self.notice(str(e))
-##             return -1
-##         except OperationFailed,e:
-##             self.error(str(e))
-##             return -2
-    
-        
 
     def runfrom(self,toolkit,*args,**kw):
         # overridden by Progresser
@@ -262,23 +236,12 @@ class Task(Session):
         self.curval=0
         return self.run(*args,**kw)
     
-## class Looper(Task):
-    
-##     def __init__(self,f,label=None):
-##         Task.__init__(self,label)
-##         self.func=func
-        
-##     def run(self,*args,**kw):
-##         return self.func(*args,**kw)
-    
 class Progresser(Task):
 
     def __init__(self,label=None,maxval=None):
         Task.__init__(self,label)
         if maxval is not None:
             self.maxval=maxval
-        #self._done=False
-        #self.percentCompleted=0
 
 
     def runfrom(self,toolkit,*args,**kw):
@@ -313,99 +276,9 @@ class Progresser(Task):
             sleep(sleepStep)
 
         
-##     def breathe(self):
-##         self.toolkit.onTaskBreathe(self)
-## ##         if self._abortRequested:
-## ##             if self.confirm(_("Are you sure you want to abort?")):
-## ##                 raise UserAborted()
-## ##             self._abortRequested=False
-## ##             self.toolkit.onTaskResume(self)
-
-
     def increment(self,n=1):
         self.breathe()
-        #if self._done: return
-##         if self.maxval != 0:
-##             pc = int(100*self.curval/self.maxval)
-##             if pc == self.percentCompleted:
-##                 return
-##             self.percentCompleted = pc
-##         self.toolkit.onTaskIncrement(self)
-        #self.breathe()
 
-##     def status(self,msg,*args,**kw):
-##         #self.session.status(msg,*args,**kw)
-##         #self.breathe()
-##         raise """\
-## please replace "task.status()"
-## with task.toolkit.status() and/or task.breathe()
-## """
-    
-##     def status(self,msg,*args,**kw):
-##         if msg is not None:
-##             msg = self.session.buildMessage(msg,*args,**kw)
-##         self.session.setStatusMessage(msg)
-##         self.session.toolkit.onTaskStatus(self)
-##         self.breathe()
-        
-##     def done(self,msg=None,*args,**kw):
-##         if self._done: return
-##         if msg is not None:
-##             msg = self.session.buildMessage(msg,*args,**kw)
-
-##     def abort(self,msg=None):
-##         if msg is None:
-##             msg = _("Aborted")
-##         if not self._done:
-##             self._done = True
-##             self.toolkit.onTaskAbort(self,msg)
-            
-##     def error(self,*args,**kw):
-##     #def taskError(self,*args,**kw):
-##         self.count_errors += 1
-##         self.session.error(*args,**kw)
-
-##     def warning(self,*args,**kw):
-##     #def taskWarning(self,*args,**kw):
-##         self.count_warnings += 1
-##         self.session.warning(*args,**kw)
-        
-
-##    def getMaxVal(self):
-##        # may override
-##        return 0
-
-##     def begin(self,label=None,maxval=0):
-##         self._label=label
-##         self.maxval=maxval
-        
-
-    #def setLabel(self,s):
-    #    self.label=s
-
-    #def setStatus(self):
-##     def showStatus(self):
-##         raise "eine Task soll keinen Job haben"
-    
-##     def showStatus(self):
-##         self.session.setStatusMessage(self.job.getStatus())
-
-
-        
-##     def query(self,*args,**kw):
-##         raise "Is this still used?"
-        #return self.session.query(*args,**kw)
-
-    #def getLabel(self):
-    #    return self.job.getLabel(self)
-    
-##     def getLabel(self):
-##         raise NotImplementedError
-
-##     def run(self):
-##         raise NotImplementedError
-
-    
 
     
 

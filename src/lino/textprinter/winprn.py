@@ -176,7 +176,9 @@ LPIBASE = inch * 240 / 257
 
 class Win32TextPrinter(TextPrinter):
     
-    def __init__(self,printerName=None,
+    def __init__(self,
+                 session,
+                 printerName=None,
                  spoolFile=None,
                  lpi=6,
                  fontName="Courier New",
@@ -185,8 +187,10 @@ class Win32TextPrinter(TextPrinter):
                  useWorldTransform=False,
                  **kw):
         
-        TextPrinter.__init__(self,pageSize=A4,margin=5*mm,
-                             coding=coding,**kw)
+        TextPrinter.__init__(
+            self,session,
+            pageSize=A4,margin=5*mm,
+            coding=coding,**kw)
 
         self.fontDict = dict(
             name=fontName,
@@ -468,8 +472,8 @@ class Win32TextPrinter(TextPrinter):
         if len(self.line) == 0:
             (dx,dy) = self.dc.GetTextExtent(" ")
         else:
-            print "self.dc.TextOut(%d,%d,%r)"%\
-                  (int(self.x),-int(self.y),self.line)
+            self.session.notice("self.dc.TextOut(%d,%d,%r)",
+                               int(self.x),-int(self.y),self.line)
             self.dc.TextOut(int(self.x),-int(self.y),self.line)
             (dx,dy) = self.dc.GetTextExtent(self.line)
             self.x += dx

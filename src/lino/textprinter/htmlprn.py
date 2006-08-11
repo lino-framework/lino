@@ -26,12 +26,10 @@ class TextObject:
     pass
         
 class HtmlTextPrinter(TextPrinter):
-    def __init__(self,writer,
-                 cpi=12,
-                 charset=None):
-        TextPrinter.__init__(self)
+    def __init__(self,session,writer,
+                 charset=None,**kw):
+        TextPrinter.__init__(self,session,**kw)
         self.writer = writer
-        self.setCpi(cpi)
         
     def createTextObject(self):
         return TextObject()

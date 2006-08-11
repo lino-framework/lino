@@ -87,8 +87,8 @@ class Status:
 		
 class PdfTextPrinter(TextPrinter):
 
-    def __init__(self,filename,**kw):
-        TextPrinter.__init__(self,
+    def __init__(self,session,filename,**kw):
+        TextPrinter.__init__(self, session,
                              pageSize=A4,
                              margin=5*mm,
                              **kw)

@@ -29,6 +29,7 @@ class PrinterNotReady(Exception):
 
 class TextPrinter:
     def __init__(self,
+                 session,
                  pageSize=(0,0),
                  margin=0,
                  cpl=None,
@@ -49,6 +50,7 @@ class TextPrinter:
             chr(27)+"I" : self.parse_I,
             }
 
+        self.session=session
         self.coding = coding
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin 
@@ -59,6 +61,7 @@ class TextPrinter:
         self.fontChanged = True
         self._docStarted=False
         self._pageStarted=False
+        self.session.debug("TextPrinter.__init__()")
 
     def getCpl(self):
         "characters per line"

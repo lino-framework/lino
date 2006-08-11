@@ -85,7 +85,7 @@ write to SPOOLFILE rather than really printing.""",
                         self.options.printerName)
         for inputfile in self.args:
             for cp in range(self.options.copies):
-                d = winprn.Win32TextPrinter(
+                d = winprn.Win32TextPrinter(self,
                     self.options.printerName,
                     self.options.spoolFile,
                     useWorldTransform=self.options.useWorldTransform,
