@@ -34,7 +34,7 @@ class TextPrinter:
                  margin=0,
                  cpl=None,
                  cpi=12,
-                 coding=None):
+                 encoding=None):
 
 ##         self.lineCommands = {
 ##             ".image" : "parse_image",
@@ -48,10 +48,11 @@ class TextPrinter:
             chr(27)+"i" : self.parse_i,
             chr(27)+"L" : self.parse_L,
             chr(27)+"I" : self.parse_I,
+            "#python " : self.parse_python,
             }
 
         self.session=session
-        self.coding = coding
+        self.encoding = encoding
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin 
         self.cpl=cpl
@@ -144,18 +145,18 @@ class TextPrinter:
         return (firstpos,firstctrl)
     
 
-    def readfile(self,inputfile,coding=None):
-        if coding is None:
-            coding = self.coding
-        f = codecs.open(inputfile,"r",coding)
+    def readfile(self,inputfile,encoding=None):
+        if encoding is None:
+            encoding = self.encoding
+        f = codecs.open(inputfile,"r",encoding)
         cwd = os.getcwd()
         dirname = os.path.dirname(inputfile)
         if len(dirname) != 0:
             os.chdir(dirname)
             #print "chdir", dirname
         for line in f.readlines():
-            #if coding is not None:
-            #    line = line.decode(coding)
+            #if encoding is not None:
+            #    line = line.decode(encoding)
             #self.printLine(line.rstrip())
             self.writeln(line)
         os.chdir(cwd)
@@ -182,7 +183,20 @@ class TextPrinter:
             line=line[:-2]
         elif line.endswith("\n"):
             line=line[:-1]
+            
         if len(line) > 0:
+
+##             pos=line.find("#python ")
+##             if pos != -1:
+##                 if pos > 0:
+##                     self.write(line[:pos])
+##                     line=line[pos+1:]
+##                 a=line.split(None,1)
+##                 if len(a)==2:
+##                     eval(a[1])
+##                     return
+##                 raise "foo, a=%r" % a
+            
             hasText = False
             (pos,ctrl) = self.findFirstCtrl(line)
             while pos != None:
@@ -220,21 +234,6 @@ class TextPrinter:
         if not self._pageStarted:
             self.beginPage()
 
-        pos=text.find("#python ")
-
-        if pos != -1:
-            if pos > 0:
-                self.write(text[:pos])
-                text=text[pos+1:]
-            a=text.split(None,1)
-            if len(a)==2:
-                #eval("self."+line[1:])
-                eval(a[1])
-                #m = getattr(self,v)
-                #m(a[1])
-                return
-            raise "foo, a=%r" % a
-        
         self.write(text)
         #self._lineHasText = True
         
@@ -302,6 +301,15 @@ class TextPrinter:
                               % line[0])
         return 1
         
+    def parse_python(self,line):
+        eval(line)
+        return len(line)
+##         a=line.split(None,1)
+##         if len(a)==2:
+##             eval(a[1])
+##             return len(line)
+##         raise ParseError, "a=%r" % a
+    
     def parse_I(self,line):
         # deprecated, but still in use
         # use #python self.insertImage() instead

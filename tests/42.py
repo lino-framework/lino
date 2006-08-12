@@ -100,7 +100,7 @@ test:               |README.TXT        |2254    |X    |263 Occurences
 test:textprinter    |1.prn             |2387    |X    |0 Occurences   
 test:               |PAR.DBT           |4481    |X    |0 Occurences   
 test:               |jona.txt          |7803    |X    |1382 Occurences
-test:textprinter    |logo.jpg          |10126   |X    |0 Occurences   
+test:textprinter    |logo.jpg          |81800   |X    |0 Occurences   
 test:               |PLZ.DBF           |25246   |X    |0 Occurences   
 test:               |PAR.DBF           |43411   |X    |0 Occurences   
 test:               |eupen.pdf         |232672  |X    |799 Occurences 

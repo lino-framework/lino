@@ -52,6 +52,14 @@ print on PRINTERNAME rather than on Default Printer.""",
                           dest="printerName",
                           default=None)
     
+        parser.add_option("-e", "--encoding",
+                          help="""\
+Use ENCODING rather than sys.stdin.encoding.""",
+                          action="store",
+                          type="string",
+                          dest="encoding",
+                          default=sys.stdin.encoding)
+    
         parser.add_option("-c", "--copies",
                           help="""\
 print NUM copies.""",
@@ -68,12 +76,12 @@ write to SPOOLFILE rather than really printing.""",
                           dest="spoolFile",
                           default=None)
         
-        parser.add_option(
-            "-u", "--useWorldTransform",
-            help="use SetWorldTransform() to implement landscape",
-            action="store_true",
-            dest="useWorldTransform",
-            default=False)
+##         parser.add_option(
+##             "-u", "--useWorldTransform",
+##             help="use SetWorldTransform() to implement landscape",
+##             action="store_true",
+##             dest="useWorldTransform",
+##             default=False)
     
     def run(self):
         if len(self.args) == 0:
@@ -88,8 +96,8 @@ write to SPOOLFILE rather than really printing.""",
                 d = winprn.Win32TextPrinter(self,
                     self.options.printerName,
                     self.options.spoolFile,
-                    useWorldTransform=self.options.useWorldTransform,
-                    coding=sys.stdin.encoding)
+                    #useWorldTransform=self.options.useWorldTransform,
+                    encoding=self.options.encoding)
                     #charset=winprn.OEM_CHARSET)
                 d.readfile(inputfile)
                 d.endDoc()

@@ -119,7 +119,7 @@ LPIBASE = inch * 240 / 257
 ##         assert not "\r" in text, repr(text)
 ##         if self.doc.coding is not None:
 ##             #print "gonna code", repr(text)
-##             #text = text.decode(self.coding)
+##             #text = text.decode(self.encoding)
 ##             text = text.encode(self.doc.coding)
 ##             #print "result:", repr(text)
 ##         self.line += text
@@ -182,28 +182,86 @@ class Win32TextPrinter(TextPrinter):
                  spoolFile=None,
                  lpi=6,
                  fontName="Courier New",
-                 coding=sys.stdin.encoding,
+                 encoding=sys.stdin.encoding,
                  jobName="Win32PrinterDocument",
-                 useWorldTransform=False,
+                 #useWorldTransform=False,
                  **kw):
         
         TextPrinter.__init__(
             self,session,
             pageSize=A4,margin=5*mm,
-            coding=coding,**kw)
+            encoding=encoding,**kw)
 
-        self.fontDict = dict(
-            name=fontName,
-            orientation=50
-            )
+        self.logfont=win32gui.LOGFONT()
+        """
+        lfHeight
+        lfWidth
+        lfEscapement
+        lfOrientation
+        lfWeight
+        lfItalic
+        lfUnderline
+        lfStrikeOut
+        lfCharSet
+        lfOutPrecision
+        lfClipPrecision
+        lfQuality
         
-        try:
-            self.fontDict['charset'] = charsets[coding]
-        except KeyError,e:
-            pass
+        lfPitchAndFamily
+
+
+Specifies the pitch and family of the font. The two low-order bits specify the pitch of the font and can be one of the following values:
+
+        * DEFAULT_PITCH
+        * FIXED_PITCH
+        * VARIABLE_PITCH
+
+    The four high-order bits specify the font family and can be one of
+    the following values.
+    
+    Value 	        Description
+    
+    FF_DECORATIVE 	Novelty fonts. Old English is an example.
+    
+    FF_DONTCARE 	Use default font.
+    
+    FF_MODERN 	    Fonts with constant stroke width, with or without
+                    serifs. Pica, Elite, and Courier New are examples.
+                    
+    FF_ROMAN 	Fonts with variable stroke width and with serifs.
+                MS Serif is an example.
+                
+    FF_SCRIPT 	Fonts designed to look like handwriting. Script and
+                Cursive are examples.
+    
+    FF_SWISS 	Fonts with variable stroke width and without serifs.
+                MS Sans Serif is an example.
+
+http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
+                
+
+
+        
+        lfFaceName
+        """
+        
+        self.logfont.lfPitchAndFamily=win32con.FIXED_PITCH
+        self.logfont.lfCharSet=win32con.OEM_CHARSET
+
+##         self.fontDict = dict(
+##             name=fontName,
+##             #pitchAndFamily
+##             #orientation=50
+##             )
+        
+##         try:
+##             self.fontDict['charset'] = charsets[encoding]
+##         except KeyError,e:
+##             self.debug("No charset defined for %s encoding",encoding)
+##             self.fontDict['charset'] = win32con.OEM_CHARSET            
 
         self.font = None
-        self.useWorldTransform=useWorldTransform
+        #self.useWorldTransform=useWorldTransform
         self.spoolFile=spoolFile
         self.jobName=jobName
 
@@ -252,11 +310,11 @@ class Win32TextPrinter(TextPrinter):
             # create dc using new settings.
             # first get the integer hDC value.
             # note that we need the name.
-            hdc = win32gui.CreateDC("WINSPOOL",
-                                    self.printerName,
-                                    devmode)
+            self.dch = win32gui.CreateDC("WINSPOOL",
+                                         self.printerName,
+                                         devmode)
             # next create a PyCDC from the hDC.
-            self.dc = win32ui.CreateDCFromHandle(hdc)
+            self.dc = win32ui.CreateDCFromHandle(self.dch)
 
         else:
             self.dc = win32ui.CreateDC()
@@ -301,8 +359,8 @@ class Win32TextPrinter(TextPrinter):
             raise PrinterNotReady("StartDoc() failed")
         
         # using SetWorldTransform() requires advanced graphics mode
-        if self.useWorldTransform: #SUPPORT_LANDSCAPE:
-            self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
+        #if self.useWorldTransform: #SUPPORT_LANDSCAPE:
+        #    self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
         
         self.dc.SetMapMode(win32con.MM_TWIPS)
         
@@ -312,6 +370,8 @@ class Win32TextPrinter(TextPrinter):
         self.ext = self.dc.GetWindowExt()
         #self.setCpi(cpi)
         #self.setLpi(lpi)
+        self.session.debug("org: %r",self.org)
+        self.session.debug("ext: %r",self.ext)
 
 
             
@@ -321,17 +381,17 @@ class Win32TextPrinter(TextPrinter):
         self.y = self.org[1] + self.margin
         self._images=[]
 
-        if self.isLandscape():
-            if self.useWorldTransform: # SUPPORT_LANDSCAPE:
-                r=0
-                # shifts to right:
-                #r=self.dc.SetWorldTransform(1,0, 0,1, 200,0)
-                #print "Landscape"
-                r=self.dc.SetWorldTransform(
-                    0,1, -1,0,
-                    0, -int(self.pageWidth-2*self.margin))
-                if r == 0:
-                    raise PrinterNotReady("SetWorldTransform() failed")
+##         if self.isLandscape():
+##             if self.useWorldTransform: # SUPPORT_LANDSCAPE:
+##                 r=0
+##                 # shifts to right:
+##                 #r=self.dc.SetWorldTransform(1,0, 0,1, 200,0)
+##                 #print "Landscape"
+##                 r=self.dc.SetWorldTransform(
+##                     0,1, -1,0,
+##                     0, -int(self.pageWidth-2*self.margin))
+##                 if r == 0:
+##                     raise PrinterNotReady("SetWorldTransform() failed")
 ##         else:
 ##             #print "Portrait"
 ##             r=self.dc.SetWorldTransform(1,0,0,1,0,0)
@@ -374,11 +434,15 @@ class Win32TextPrinter(TextPrinter):
     def setCpi(self,cpi):
         w = int(inch/cpi)
         #console.debug("%d cpi = %d twips" % (cpi,w))
-        
-        self.fontDict['width'] = w
-        # see 20050602:
-        self.fontDict['height'] = int(w*RATIO)
-        # if RATIO changes, I must adapt TIM's prnprint.drv
+
+        if False:
+            self.fontDict['width'] = w
+            # see 20050602:
+            self.fontDict['height'] = int(w*RATIO)
+            # if RATIO changes, I must adapt TIM's prnprint.drv
+        else:
+            self.logfont.lfWidth=w
+            self.logfont.lfHeight=int(w*RATIO)
         
         self.cpl = int(self.lineWidth()/inch*cpi)
             #(self.pageWidth-(self.margin*2))/inch*cpi)
@@ -387,23 +451,29 @@ class Win32TextPrinter(TextPrinter):
         
     def setItalic(self,ital):
         if ital:
-            self.fontDict['italic'] = True
+            self.logfont.lfItalic=True
+            #self.fontDict['italic'] = True
         else:
-            self.fontDict['italic'] = None
+            self.logfont.lfItalic=None
+            #self.fontDict['italic'] = None
         self.font = None
 
     def setBold(self,bold):
         if bold:
-            self.fontDict['weight'] = win32con.FW_BOLD
+            self.logfont.lfWeight=win32con.FW_BOLD
+            #self.fontDict['weight'] = win32con.FW_BOLD
         else:
-            self.fontDict['weight'] = win32con.FW_NORMAL
+            self.logfont.lfWeight=win32con.FW_NORMAL
+            #self.fontDict['weight'] = win32con.FW_NORMAL
         self.font = None
             
     def setUnderline(self,ul):
         if ul:
-            self.fontDict['underline'] = True
+            self.logfont.lfUnderline=True
+            #self.fontDict['underline'] = True
         else:
-            self.fontDict['underline'] = None
+            self.logfont.lfUnderline=None
+            #self.fontDict['underline'] = None
         self.font = None
             
             
@@ -436,21 +506,29 @@ class Win32TextPrinter(TextPrinter):
     def write(self,text):
         assert not "\n" in text, repr(text)
         assert not "\r" in text, repr(text)
-        if self.coding is not None:
+        if self.encoding is not None:
             #print "gonna code", repr(text)
-            #text = text.decode(self.coding)
-            text = text.encode(self.coding)
+            #text = text.decode(self.encoding)
+            text = text.encode(self.encoding)
             #print "result:", repr(text)
         self.line += text
 
         if self.font is None:
-            self.font = win32ui.CreateFont(self.fontDict)
-            #print "CreateFont(%r)" % self.fontDict
-            #print "CreateFont() returned %r" % self.font
+            if False:
+                self.font = win32ui.CreateFont(self.fontDict)
+                self.dc.SelectObject(self.font)
+            else:
+                self.font = win32gui.CreateFontIndirect(self.logfont)
+                win32gui.SelectObject(self.dch,self.font)
         
-            # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
+            """
+            CreateFont:
+            
+            http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
+
+            http://msdn2.microsoft.com/en-us/library/2ek64h34.aspx
+            """
         
-            self.dc.SelectObject(self.font)
             #print "select font",self.fontDict
             
         #console.debug(repr(tm))
@@ -472,7 +550,7 @@ class Win32TextPrinter(TextPrinter):
         if len(self.line) == 0:
             (dx,dy) = self.dc.GetTextExtent(" ")
         else:
-            self.session.notice("self.dc.TextOut(%d,%d,%r)",
+            self.session.debug("self.dc.TextOut(%d,%d,%r)",
                                int(self.x),-int(self.y),self.line)
             self.dc.TextOut(int(self.x),-int(self.y),self.line)
             (dx,dy) = self.dc.GetTextExtent(self.line)
@@ -513,7 +591,8 @@ class Win32TextPrinter(TextPrinter):
             if s.endswith("ch"):
                 self.flush()
                 assert self.font is not None
-                return int(float(s[:-2]) * self.fontDict['width'])
+                #return int(float(s[:-2]) * self.fontDict['width'])
+                return int(float(s[:-2]) * self.logfont.lfWidth)
             if s.endswith("ln"):
                 self.flush()
                 return int(float(s[:-2]) * self.leading)
