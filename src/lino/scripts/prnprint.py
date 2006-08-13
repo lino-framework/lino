@@ -35,10 +35,11 @@ See file COPYING.txt for more information."""
     url="http://lino.saffre-rumma.ee/prnprint.html"
     
     usage="usage: lino prnprint [options] FILE [FILE ...]"
-    description="""\
-where FILE is a plain text file to be printed on the Default Printer.
-It must be in OEM charset and may contain simple formatting printer
-control sequences, see http://lino.berlios.de/prn2pdf.html
+    description="""
+
+where FILE is a textprinter input file to be printed on your Windows
+Printer.
+
 """ 
     
     def setupOptionParser(self,parser):
@@ -54,7 +55,7 @@ print on PRINTERNAME rather than on Default Printer.""",
     
         parser.add_option("-e", "--encoding",
                           help="""\
-Use ENCODING rather than sys.stdin.encoding.""",
+FILE is encoded using ENCODING (rather than sys.stdin.encoding).""",
                           action="store",
                           type="string",
                           dest="encoding",

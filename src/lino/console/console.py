@@ -81,7 +81,7 @@ class BaseToolkit:
 ##         pass
     
 class Console(BaseToolkit):
-
+    errors="replace"
     def __init__(self, stdout, stderr, encoding=None,**kw):
         self._verbosity = 0
         self._batch = False
@@ -93,8 +93,15 @@ class Console(BaseToolkit):
     def redirect(self,stdout,stderr,encoding=None):
         assert hasattr(stdout,'write')
         assert hasattr(stderr,'write')
-        self.stdout=rewriter(sys.getdefaultencoding(),stdout,encoding)
-        self.stderr=rewriter(sys.getdefaultencoding(),stderr,encoding)
+        #if encoding is None:
+        #    encoding=sys.getdefaultencoding()
+        if encoding is None and hasattr(stdout,'encoding'):
+            encoding=stdout.encoding
+        self.encoding=encoding
+        self.stdout=stdout
+        self.stderr=stderr
+        #self.stdout=rewriter(sys.getdefaultencoding(),stdout,encoding)
+        #self.stderr=rewriter(sys.getdefaultencoding(),stderr,encoding)
 
 
     def configure(self,
@@ -153,10 +160,12 @@ class Console(BaseToolkit):
     
 
     def write(self,msg):
+        if self.encoding is not None:
+            msg=msg.encode(self.encoding,self.errors)
         self.stdout.write(msg)
         
     def writeln(self,msg):
-        self.stdout.write(msg+"\n")
+        self.write(msg+"\n")
 
     def start_running(self,app):
         if app.name and self.isInteractive():
@@ -507,14 +516,22 @@ class Console(BaseToolkit):
 
 class CaptureConsole(Console):
     
-    def __init__(self,batch=True,encoding="utf8",**kw):
+##     def __init__(self,batch=True,encoding="utf8",**kw):
+##         self.buffer = StringIO()
+##         #self.encoding=encoding
+##         Console.__init__(self,
+##                          self.buffer,
+##                          self.buffer,
+##                          batch=batch,
+##                          encoding=encoding,
+##                          **kw)
+
+    def __init__(self,batch=True,**kw):
         self.buffer = StringIO()
-        self.encoding=encoding
         Console.__init__(self,
                          self.buffer,
                          self.buffer,
                          batch=batch,
-                         encoding=self.encoding,
                          **kw)
 
     def getConsoleOutput(self):
@@ -549,7 +566,9 @@ class TtyConsole(Console):
 
     def writeln(self,msg):
         self.stdout.write(self._empty_line+"\r")
-        self.stdout.write("".ljust(self.width)+"\r")
+        #self.stdout.write("".ljust(self.width)+"\r")
+        if self.encoding is not None:
+            msg=msg.encode(self.encoding,self.errors)
         self.stdout.write(msg+"\n")
         #self.stdout.write(msg.ljust(self.width)+"\n")
         #self._refresh()
@@ -562,7 +581,7 @@ class TtyConsole(Console):
         if self._batch:
             self.logmessage(msg)
             return default
-        self.stdout.write("".ljust(self.width)+"\r")
+        self.stdout.write(self._empty_line+"\r")
         return raw_input(msg)
 
     def on_breathe(self,task):
@@ -585,6 +604,8 @@ class TtyConsole(Console):
         if msg is not None:
             s += msg
             s = s[:self.width]
+        if self.encoding is not None:
+            s=s.encode(self.encoding,self.errors)
         self.stdout.write(s.ljust(self.width)+"\r")
         
     

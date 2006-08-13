@@ -67,6 +67,7 @@ id     |name          |parent        |files         |subdirs
                      columnNames="dir name size mustParse occurences")
         q.show(columnWidths="20 18 8 5 15")
         s=self.getConsoleOutput()
+        
         #print s
         
         self.assertEquivalent(s,"""\
@@ -88,8 +89,8 @@ test:               |cp850a.txt        |372     |X    |53 Occurences
 test:               |5.pds             |500     |X    |0 Occurences   
 test:               |5b.pds            |676     |X    |0 Occurences   
 test:textprinter    |4.prn             |676     |X    |0 Occurences
-test:textprinter    |5.PRN             |794     |X    |0 Occurences   
 test:               |5d.pds            |850     |X    |0 Occurences   
+test:textprinter    |5.PRN             |851     |X    |0 Occurences   
 test:webman         |init.wmi          |917     |X    |0 Occurences   
 test:2              |init.wmi          |975     |X    |0 Occurences   
 test:               |gnosis-readme     |1662    |X    |0 Occurences   
@@ -100,9 +101,9 @@ test:               |README.TXT        |2254    |X    |263 Occurences
 test:textprinter    |1.prn             |2387    |X    |0 Occurences   
 test:               |PAR.DBT           |4481    |X    |0 Occurences   
 test:               |jona.txt          |7803    |X    |1382 Occurences
-test:textprinter    |logo.jpg          |81800   |X    |0 Occurences   
 test:               |PLZ.DBF           |25246   |X    |0 Occurences   
 test:               |PAR.DBF           |43411   |X    |0 Occurences   
+test:textprinter    |logo.jpg          |81800   |X    |0 Occurences   
 test:               |eupen.pdf         |232672  |X    |799 Occurences 
 """)
 
