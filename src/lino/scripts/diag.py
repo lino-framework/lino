@@ -23,9 +23,9 @@ import locale
 
 from lino.console.application import Application, UsageError
 
-def diag_encoding(out):
+def babel_message():
 
-    out.write(u"""
+    s=u"""
 Some sentences in different languages:
     
     Ännchen Müller machte große Augen.
@@ -40,29 +40,37 @@ Overview table with some accented characters:
     ´   Á É Í Ó Ú   á é í ó ú            
     `   À È Ì Ò Ù   à è ì ò ù
     ^   Â Ê Î Ô Û   â ê î ô û
-""")
     
-    out.write("""
-Some system settings related to encodings:
-""")    
-    out.write("\n    locale.getdefaultlocale(): "
-              + repr(locale.getdefaultlocale()))
+"""
+    
+    try:
+        out_encoding=repr(sys.stdout.encoding)
+    except AttributeError:
+        out_encoding="(undefined)"
+        
+    try:
+        in_encoding=repr(sys.stdin.encoding)
+    except AttributeError:
+        in_encoding="(undefined)"
 
-    out.write("\n    sys.getdefaultencoding() : "
-              + sys.getdefaultencoding())
-    out.write("\n    sys.getfilesystemencoding() : "
-              + sys.getfilesystemencoding())
-    out.write("\n    sys.stdout.encoding : ")
-    try:
-        out.write(str(sys.stdout.encoding))
-    except AttributeError:
-        out.write("(undefined)")
-    out.write("\n    sys.stdin.encoding : ")
-    try:
-        out.write(str(sys.stdin.encoding))
-    except AttributeError:
-        out.write("(undefined)")
-    out.write("\n")
+    s+="""
+    
+Some system settings related to encodings:
+
+    locale.getdefaultlocale()   : %r
+    sys.getdefaultencoding()    : %r
+    sys.getfilesystemencoding() : %r
+    sys.stdout.encoding : %s
+    sys.stdin.encoding : %s
+    
+    """ % ( locale.getdefaultlocale(), 
+    sys.getdefaultencoding(),
+    sys.getfilesystemencoding(),
+    out_encoding,
+    in_encoding)
+
+    return s
+              
 
 ##     out.write("""
 ## Miscellaneous system settings:
@@ -100,8 +108,7 @@ writes some diagnostics about your computer.
         if len(self.args) != 0:
             raise UsageError("no arguments please")
         #diag(sys.stdout)
-        diag_encoding(self.toolkit.stdout)
-        self.message("")
+        self.message(babel_message())
 
 
 def main():
