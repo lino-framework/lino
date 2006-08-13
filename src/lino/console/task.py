@@ -18,110 +18,62 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
 from time import sleep
 
-#from lino.console.console import TaskAborted
-from lino.adamo.exceptions import UserAborted
-from lino.console import syscon
 from lino.console.console import BaseToolkit 
-
-if False:
-    
-    from lino.i18n import itr,_
-
-    itr("Working",
-       de=u"Arbeitsvorgang läuft",
-       fr="Travail en cours")
-    itr("%d warnings",
-        de="%d Warnungen",
-        fr="%d avertissements")
-    itr("%d errors" ,
-        de="%d Fehler",
-        fr="%d erreurs")
-    itr("Aborted",
-        de="Vorgang abgebrochen")
-    itr("Are you sure you want to abort?",
-        de="Arbeitsvorgang abbrechen?",
-        fr="Interrompre le travail en cours?")
-
-def _(s):
-    return s    
-
-
-#class TaskSummary:
-    
-## class Job:
-    
-##     #summaryClass=TaskSummary
-
-##     def __init__(self):
-##         self.count_errors = 0
-##         self.count_warnings = 0
-        
-##     def getStatus(self):
-##         # may override
-##         s = _("%d warnings") % (self.count_warnings) 
-##         s += ". " + _("%d errors") % (self.count_errors) + "."
-##         return s
+from lino.console.session import Session
 
     
-##     #def summary(self):
-##     #def lines(self):
-##     def getSummary(self):
-##         # may override
-##         return [
-##             _("%d warnings") % self.count_warnings,
-##             _("%d errors") % self.count_errors ]
+from lino.i18n import itr,_
 
-##     def getLabel(self):
-##         raise NotImplementedError
+## itr("Working",
+##    de=u"Arbeitsvorgang läuft",
+##    fr="Travail en cours")
+## itr("%d warnings",
+##     de="%d Warnungen",
+##     fr="%d avertissements")
+## itr("%d errors" ,
+##     de="%d Fehler",
+##     fr="%d erreurs")
+## itr("Aborted",
+##     de="Vorgang abgebrochen")
 
-##     def run(self,sess,*args,**kw):
-##         raise NotImplementedError
+#def _(s):
+#    return s    
 
 
-class Session:
+
+class Task(Session):
+
+    """A named Session with a status label.
+
+    name expresses what the Task is supposed to do.
+    label expresses what the Task is currently doing.
+
     """
     
-represents a user (usually a human sitting in front of a computer) who
-has chosen a toolkit and who runs some code (usually an application)
-
-    
-    """
+    #title=None
     name=None
-    #label="Working"
     label=None
-    maxval=0
     #curval=0
     #percentCompleted=0
     
-    def __init__(self,toolkit=None,**kw):
-        self.curval=0
-        if toolkit is None:
-            toolkit=syscon.getSystemConsole()
-        self.toolkit=toolkit
-        self.debug(self.__class__.__name__+".__init__()")
-        self.configure(**kw)
+    maxval=0 # used by Console.on_breathe
+    
+    
+    def __init__(self,label=None,**kw):
+        if label is not None:
+            self.label=label
+        Session.__init__(self,**kw)
 
-    def configure(self):
-        pass
-        
+    def getTitle(self):
+        return str(self)
+
     def __str__(self):
         if self.name is None:
-            s = self.__class__.__name__
-        else:
-            s = self.name
-        return s
+            return self.__class__.__name__
+        return self.name
     
-    def buildMessage(self,msg,*args,**kw):
-        assert len(kw) == 0, "kwargs not yet implemented"
-        if len(args) == 0:
-            return msg
-        return msg % args
-    
-    def isInteractive(self):
-        return True
 
     def getStatus(self):
         # may override 
@@ -132,117 +84,18 @@ has chosen a toolkit and who runs some code (usually an application)
         self.label=msg
         self.breathe()
 
-    
-    def loop(self,func,label,maxval=0,*args,**kw):
-        "run func with a Task or Progresser"
-        if maxval == 0:
-            task=Task(label)
-        else:
-            task=Progresser(label,maxval)
-        task.toolkit=self.toolkit
-        func(task,*args,**kw)
-        #task.runfrom(self,*args,**kw)
-        #task=Task(self,label,maxval)
-        #task.loop(func,*args,**kw)
-        return task
-
-    def runtask(self,task,*args,**kw):
-        # used by lino.scripts.sync.Sync.run()
-        return task.runfrom(self.toolkit,*args,**kw)
-
-
-    def confirm(self,*args,**kw):
-        return self.toolkit.show_confirm(self,*args,**kw)
-    def decide(self,*args,**kw):
-        return self.toolkit.show_decide(self,*args,**kw)
-    def message(self,*args,**kw):
-        return self.toolkit.show_message(self,*args,**kw)
-    def notice(self,*args,**kw):
-        return self.toolkit.show_notice(self,*args,**kw)
-    def debug(self,*args,**kw):
-        return self.toolkit.show_debug(self,*args,**kw)
-    def warning(self,*args,**kw):
-        return self.toolkit.show_warning(self,*args,**kw)
-    def verbose(self,*args,**kw):
-        return self.toolkit.show_verbose(self,*args,**kw)
-    def error(self,*args,**kw):
-        return self.toolkit.show_error(self,*args,**kw)
-##     def critical(self,*args,**kw):
-##         return self.toolkit.show_critical(*args,**kw)
-##     def status(self,*args,**kw):
-##         return self.toolkit.show_status(self,*args,**kw)
-    def logmessage(self,*args,**kw):
-        return self.toolkit.logmessage(self,*args,**kw)
-    
-    def showfile(self,filename):
-        if self.isInteractive():
-            os.system("start "+filename)
-        else:
-            assert os.path.exists(filename)
-        
-    def showForm(self,frm):
-        #print frm
-        #frm.setup(self)
-        return frm.show(self)
-    def showReport(self,*args,**kw):
-        return self.toolkit.show_report(*args,**kw)
-    def textprinter(self,*args,**kw):
-        return self.toolkit.textprinter(self,*args,**kw)
-    
-##     def runfrom(self,ui,*args,**kw):
-##         assert ui.toolkit is not None
-##         self.toolkit=ui.toolkit
-##         try:
-##             self.run(*args,**kw)
-##         except UserAborted,e:
-##             bla
-
-    def breathe(self):
-        self.curval += 1
-        return self.toolkit.on_breathe(self)
-
-    def setMaxVal(self,n):
-        self.maxval=n
-        
-    def requestAbort(self):
-        if self.confirm( _("Are you sure you want to abort?"),
-                         default=False):
-            raise UserAborted()
-        #self._abortRequested=False
-        self.toolkit.onTaskResume(self)
-        #self._abortRequested=True
-
-
-
-    
-    
-class Task(Session):
-    #title=None
-    
-    def __init__(self,label=None):
-        Session.__init__(self)
-        #self._abortRequested=False
-        if label is not None:
-            self.label=label
-
-    def getTitle(self):
-        return str(self)
-##         if self.title is None:
-##             return self.__class__.__name__
-##         return self.title
-
-
     def runfrom(self,toolkit,*args,**kw):
         # overridden by Progresser
         assert isinstance(toolkit,BaseToolkit)
         self.toolkit=toolkit
-        self.curval=0
         return self.run(*args,**kw)
     
+
 class Progresser(Task):
 
-    def __init__(self,label=None,maxval=None):
-        Task.__init__(self,label)
+    def __init__(self,label=None,maxval=None,**kw):
+        Task.__init__(self,label,**kw)
+        self.curval=0
         if maxval is not None:
             self.maxval=maxval
 
@@ -280,8 +133,15 @@ class Progresser(Task):
 
         
     def increment(self,n=1):
+        self.curval += n
         self.breathe()
 
+    def breathe(self):
+        return self.toolkit.on_breathe(self)
+
+    def setMaxVal(self,n):
+        self.maxval=n
+        
 
     
 

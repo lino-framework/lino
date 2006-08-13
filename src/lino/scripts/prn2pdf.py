@@ -63,20 +63,23 @@ write to OUTFILE rather than FILE.pdf""",
             self.options.outFile = root +".pdf"
 
         d = PdfTextPrinter(self.options.outFile,
-                           coding=sys.stdin.encoding)
-        ok = True
-        try:
-            d.readfile(inputfile)#,coding=sys.stdin.encoding)
-        except Exception,e:
-            self.error(str(e))
-            ok = False
+                           session=self,
+                           encoding=sys.stdin.encoding)
+        d.readfile(inputfile)#,coding=sys.stdin.encoding)
+        
+##         ok = True
+##         try:
+##             d.readfile(inputfile)#,coding=sys.stdin.encoding)
+##         except Exception,e:
+##             self.error(str(e))
+##             ok = False
 
-        d.endDoc()
-        if not ok:
-            return -1
+        d.close()
+##         if not ok:
+##             return -1
 
-        if sys.platform == "win32" and self.isInteractive():
-            os.system("start %s" % self.options.outFile)
+        #if sys.platform == "win32" and self.isInteractive():
+        #    os.system("start %s" % self.options.outFile)
 
 
 # Prn2pdf().main()    
@@ -90,3 +93,6 @@ write to OUTFILE rather than FILE.pdf""",
 
 def main(*args,**kw):
     Prn2pdf().main(*args,**kw)
+
+if __name__ == '__main__':
+    main()

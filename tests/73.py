@@ -35,15 +35,31 @@ dataPath = os.path.join(tsttools.TESTDATA,'textprinter')
 
 class Case(tsttools.TestCase):
     ""
-
+    prnfiles=('1','2','4','5')
     def test01(self):
-        #app=PrnPrint()
-        for i in ('1','2'):
+        for i in self.prnfiles:
             spoolFile = self.addTempFile(i+".ps",showOutput=True)
             inputFile = os.path.join(dataPath,i)+".prn"
 
             cmd='lino prnprint -p "%s" -o "%s" "%s"' % (
                 self.win32_printerName_PS,spoolFile,inputFile)
+            
+            fd=os.popen(cmd,"r")
+            observed=fd.read()
+            cr=fd.close()
+            
+            #print "observed", observed
+            
+            msg=repr(cmd)+" failed"
+            self.assertEqual(
+                cr,None,msg+" (close() returned %r)"%cr)
+            
+    def test02(self):
+        for i in self.prnfiles:
+            spoolFile = self.addTempFile(i+".pdf",showOutput=True)
+            inputFile = os.path.join(dataPath,i)+".prn"
+
+            cmd='lino prn2pdf -b -o "%s" "%s"' % (spoolFile,inputFile)
             
             fd=os.popen(cmd,"r")
             observed=fd.read()

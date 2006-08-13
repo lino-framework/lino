@@ -25,11 +25,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
-from lino.textprinter.textprinter import TextPrinter, ParserError
-
-from lino.console import syscon
-
-#from lino.ui import console
+from lino.textprinter.textprinter import FileTextPrinter, \
+     ParserError, OperationFailed
 
 HACK_BOXCHARS = {
     
@@ -82,25 +79,18 @@ class Status:
 
         
 
-
-
-		
-class PdfTextPrinter(TextPrinter):
-
-    def __init__(self,session,filename,**kw):
-        TextPrinter.__init__(self, session,
-                             pageSize=A4,
-                             margin=5*mm,
-                             **kw)
-        (root,ext) = os.path.splitext(filename)
-        if ext.lower() != ".pdf":
-            filename += ".pdf"
+class PdfTextPrinter(FileTextPrinter):
+    extension=".pdf"
+    def __init__(self,filename,**kw):
+        FileTextPrinter.__init__(self,filename,
+                                 pageSize=A4,
+                                 margin=5*mm,
+                                 **kw)
         
         self.canvas = canvas.Canvas(filename,
                                     #encoding=self.coding,
                                     pagesize=A4)
         self.textobject = None
-        self.filename = filename
         self.status = Status()
 
 
@@ -207,11 +197,11 @@ class PdfTextPrinter(TextPrinter):
                 return float(s[:-2]) * mm
             if s.endswith("ch"):
                 self.flush()
-                assert self.font is not None
-                return float(s[:-2]) * self.fontDict['width']
+                #assert self.font is not None
+                return float(s[:-2]) * self.status.size
             if s.endswith("ln"):
                 self.flush()
-                return float(s[:-2]) * self.leading
+                return float(s[:-2]) * self.status.leading
             return float(s) * mm
         except ValueError,e:
             raise ParserError("invalid length: %r" % s)
@@ -243,8 +233,23 @@ class PdfTextPrinter(TextPrinter):
     def insertImage(self,filename,w=None,h=None,dx=None,dy=None):
     #def insertImage(self,filename,width,height,filename):
         # picture size must be givin in mm :
-        width = self.length2i(w)
-        height = self.length2i(h)
+        width = height = None
+        if w is not None:
+            width = self.length2i(w)
+        if h is not None:
+            height = self.length2i(h)
+
+
+        if height is None:
+            img=self.openImage(filename)
+            height = int(width * img.size[0] / img.size[1])
+            del img
+        if width is None:
+            img=self.openImage(filename)
+            width = int(height * img.size[1] / img.size[0])
+            del img
+            
+
         #w = float(width) * mm 
         #h = float(height) * mm 
         # position of picture is the current text cursor 
@@ -260,7 +265,7 @@ class PdfTextPrinter(TextPrinter):
         if dx is not None:
             x += self.length2i(dx)
         if dy is not None:
-            y += self.length2i(dy)
+            y -= self.length2i(dy)
             
         self.canvas.drawImage(filename,
                               x,y-height, width,height)

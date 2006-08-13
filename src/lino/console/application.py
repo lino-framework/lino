@@ -34,10 +34,10 @@ from lino.adamo.exceptions import UserAborted, OperationFailed
 from lino.adamo.exceptions import UsageError #, ApplicationError
 
 from lino.console import syscon
-from lino.console.task import Session
+from lino.console.task import Task
 
     
-class Application(Session):
+class Application(Task):
     
     version=None # lino.__version__
     copyright=None
@@ -60,10 +60,6 @@ class Application(Session):
     
     """
         
-##     def setupApplication(self):
-##         pass
-        
-
     def close(self):
         pass
 
@@ -78,9 +74,6 @@ class Application(Session):
 
     def isInteractive(self):
         return self.toolkit.isInteractive()
-
-    #def beforeRun(self):
-            
 
     def aboutString(self):
         s = str(self)
@@ -136,21 +129,6 @@ class Application(Session):
     
         
             
-
-##     def setToolkit(self,toolkit):
-##         #assert isinstance(toolkit,AbstractToolkit),\
-##         #       repr(toolkit)+" is not a toolkit"
-##         self.toolkit = toolkit
-
-##     def beginSession(self,*args,**kw):
-##         # to be overridden by Adamo Applications
-##         return Session(*args,**kw)
-
-##     def on_main(self):
-##         # GuiApplication overrides this to launch the GUI toolkit
-##         pass
-    
-    #def main(self,argv=None):
     def main(self,*args,**kw):
         """Process command-line arguments and run the application.
 
@@ -161,6 +139,7 @@ class Application(Session):
 
         """
         self.toolkit=syscon.getSystemConsole()
+        syscon.setMainSession(self)
         
         desc=self.description
         if desc is not None:
@@ -203,5 +182,6 @@ class Application(Session):
 ##             return -1
 
     def run(self,*args,**kw):
-        raise NotImplementedError
+        pass
+        #raise NotImplementedError
 

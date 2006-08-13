@@ -17,19 +17,18 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-#from twisted.web.html import escape
 from lino.gendoc.elements import escape
-from lino.textprinter.textprinter import TextPrinter
+from lino.textprinter.textprinter import FileTextPrinter
 from lino.misc.txt2html import txt2html
 
 class TextObject:
     pass
         
-class HtmlTextPrinter(TextPrinter):
-    def __init__(self,session,writer,
-                 charset=None,**kw):
-        TextPrinter.__init__(self,session,**kw)
-        self.writer = writer
+class HtmlTextPrinter(FileTextPrinter):
+    extension=".html"
+    def __init__(self,filename,**kw):
+        FileTextPrinter.__init__(self,filename,**kw)
+        self.writer = file(self.filename,"w")
         
     def createTextObject(self):
         return TextObject()
@@ -40,6 +39,13 @@ class HtmlTextPrinter(TextPrinter):
     def onEndPage(self):
         self.writer.write('</PRE>')
         
+    def onBeginDoc(self):
+        self.writer.write('<HTML><BODY>')
+    
+    def onEndDoc(self):
+        self.writer.write('</BODY></HTML>')
+        self.writer.close()
+    
     def setBold(self,bold):
         if bold:
             self.writer.write('<b>')

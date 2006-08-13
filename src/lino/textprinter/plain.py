@@ -17,16 +17,16 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 #from lino.ui import console
-import sys
+#import sys
 from lino.textprinter.textprinter import TextPrinter
 
 class PlainTextPrinter(TextPrinter):
-    def __init__(self,session,
-                 writer=None,cpl=72,frameStyle="+-+|+-+|"):
+    def __init__(self,writer=None,cpl=72,frameStyle="+-+|+-+|",**kw):
+        TextPrinter.__init__(self,pageSize=(cpl,0),cpl=cpl,**kw)
         if writer is None:
-            writer=sys.stdout
+            writer=self.session.toolkit.stdout
+            #writer=sys.stdout
         self._writer = writer
-        TextPrinter.__init__(self,session,pageSize=(cpl,0),cpl=cpl)
         assert len(frameStyle) == 8
         self.topLeft = frameStyle[0]
         self.topBorder = frameStyle[1]

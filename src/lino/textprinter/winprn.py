@@ -27,33 +27,7 @@ import win32con
 import win32print
 import pywintypes
 #import win32gui
-
-from PIL import Image, ImageWin
-
-#SUPPORT_LANDSCAPE = False
-
-NEWCENTURY=True
-
-"""
-http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
-
-"""
-
-            
-
-
-"""
-thanks to
-http://starship.python.net/crew/theller/moin.cgi/PIL_20and_20py2exe
-for the following trick to avoid "IOError: cannot identify image
-file" when exefied with py2exe
-"""
-
-#from PIL import PngImagePlugin
-from PIL import JpegImagePlugin
-from PIL import BmpImagePlugin
-
-Image._initialized=2
+from PIL import ImageWin
 
 #OEM_CHARSET = win32con.OEM_CHARSET
 
@@ -76,7 +50,7 @@ A4 = (210*mm, 297*mm)
 
 RATIO=1.7
 
-# Note that in all modes, the point 0,0 is the top left corner of
+# Note that in all modes, (0,0) is the top left corner of
 # the page, and the units increase as you go down and across the
 # page.
 # We work in twips: self.dc.SetMapMode(win32con.MM_TWIPS)
@@ -177,20 +151,18 @@ LPIBASE = inch * 240 / 257
 class Win32TextPrinter(TextPrinter):
     
     def __init__(self,
-                 session,
                  printerName=None,
                  spoolFile=None,
                  lpi=6,
-                 fontName="Courier New",
-                 encoding=sys.stdin.encoding,
+                 #fontName="Courier New",
                  jobName="Win32PrinterDocument",
                  #useWorldTransform=False,
                  **kw):
         
-        TextPrinter.__init__(
-            self,session,
-            pageSize=A4,margin=5*mm,
-            encoding=encoding,**kw)
+        TextPrinter.__init__(self,
+                             pageSize=A4,
+                             margin=5*mm,
+                             **kw)
 
         self.logfont=win32gui.LOGFONT()
         """
@@ -287,38 +259,42 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
 ##         return textobject
         
     def onBeginDoc(self):
+
+
+        """ thanks to Chris Gonnerman for the recipe to set landscape
+        orientation
+        
+http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
+
+        
+        """
         #self.phandle=win32print.OpenPrinter(printerName)
-        if NEWCENTURY:
-            # open the printer.
-            hprinter = win32print.OpenPrinter(self.printerName)
+        # open the printer.
+        hprinter = win32print.OpenPrinter(self.printerName)
 
-            # retrieve default settings.  this code has complications on
-            # win95/98, I'm told, but I haven't tested it there.
-            devmode = win32print.GetPrinter(hprinter,2)["pDevMode"]
+        # retrieve default settings.  this code has complications on
+        # win95/98, I'm told, but I haven't tested it there.
+        devmode = win32print.GetPrinter(hprinter,2)["pDevMode"]
 
-            # change paper size and orientation
-            # constants are available here:
-            # http://msdn.microsoft.com/library/default.asp?\
-            # url=/library/en-us/intl/nls_Paper_Sizes.asp
-            devmode.PaperSize = 9 # DMPAPER_A4
-            # 1 = portrait, 2 = landscape
-            if self.isLandscape():
-                devmode.Orientation = 2
-            else:
-                devmode.Orientation = 1
-
-            # create dc using new settings.
-            # first get the integer hDC value.
-            # note that we need the name.
-            self.dch = win32gui.CreateDC("WINSPOOL",
-                                         self.printerName,
-                                         devmode)
-            # next create a PyCDC from the hDC.
-            self.dc = win32ui.CreateDCFromHandle(self.dch)
-
+        # change paper size and orientation
+        # constants are available here:
+        # http://msdn.microsoft.com/library/default.asp?\
+        # url=/library/en-us/intl/nls_Paper_Sizes.asp
+        devmode.PaperSize = 9 # DMPAPER_A4
+        # 1 = portrait, 2 = landscape
+        if self.isLandscape():
+            devmode.Orientation = 2
         else:
-            self.dc = win32ui.CreateDC()
-            self.dc.CreatePrinterDC(self.printerName)
+            devmode.Orientation = 1
+
+        # create dc using new settings.
+        # first get the integer hDC value.
+        # note that we need the name.
+        self.dch = win32gui.CreateDC("WINSPOOL",
+                                     self.printerName,
+                                     devmode)
+        # next create a PyCDC from the hDC.
+        self.dc = win32ui.CreateDCFromHandle(self.dch)
 
 ##         while True:
 ##             h = win32print.OpenPrinter(win32print.GetDefaultPrinter())
@@ -454,7 +430,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
             self.logfont.lfItalic=True
             #self.fontDict['italic'] = True
         else:
-            self.logfont.lfItalic=None
+            self.logfont.lfItalic=False
             #self.fontDict['italic'] = None
         self.font = None
 
@@ -472,7 +448,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
             self.logfont.lfUnderline=True
             #self.fontDict['underline'] = True
         else:
-            self.logfont.lfUnderline=None
+            self.logfont.lfUnderline=False
             #self.fontDict['underline'] = None
         self.font = None
             
@@ -573,9 +549,6 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
 ##             tm['tmInternalLeading'])
                       
 
-    def flush(self):
-        self.write("")
-
     def newline(self):
         #self.x = self.doc.margin
         self.x = self.org[0] + self.margin
@@ -605,43 +578,18 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
                     w=None,h=None,
                     dx=None,dy=None,
                     behindText=False):
-        # picture size is given in mm
-        # w = float(width) * mm 
-        # h = float(height) * mm
 
-        try:
-            img = Image.open(filename)
-        except OSError,e:
-            syscon.error(str(e))
-            return
+        img=self.openImage(filename)
         
         self.flush() # make sure that self.x and self.y are correct
         
         
-##         # position of picture is the current text cursor
-##         if self.textobject:
-##             self.textobject.flush()
-##             x = self.textobject.x
-##             y = self.textobject.y
-##         else:
-##             #print "no text has been processed until now"
-##             x = self.org[0] + self.margin
-##             y = self.org[1] + self.margin
-##             #x = self.margin
-##             #y = self.pageHeight-(2*self.margin)-h - y
-##             #y = self.margin
-##         else:
-##             # but picture starts on top of charbox:
-##             y += self.status.leading
-
-        #print "x,y", x, y
-
 
         # thanks to http://dbforums.com/t944137.html
         # and
         # http://www.activevb.de/rubriken/apikatalog/deklarationen/getdevicecaps.html
         """
-        HORZRES	: Breite des Bildscchirms, angegeben in Pixeln.
+        HORZRES	: Breite des Bildschirms, angegeben in Pixeln.
         
         VERTRES	: Hoehe des Bildschirms, angegeben in Rasterzeilen.
         

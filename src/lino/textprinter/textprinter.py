@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,20 +20,40 @@ import sys
 import os
 import codecs
 
+from lino.console import syscon
+from lino.adamo.exceptions import OperationFailed
+
+from PIL import Image
+
+"""
+thanks to
+http://starship.python.net/crew/theller/moin.cgi/PIL_20and_20py2exe
+for the following trick to avoid "IOError: cannot identify image
+file" when exefied with py2exe
+
+"""
+
+#from PIL import PngImagePlugin
+from PIL import JpegImagePlugin
+from PIL import BmpImagePlugin
+
+Image._initialized=2
+
+
+
 class ParserError(Exception):
     pass
 
 class PrinterNotReady(Exception):
     pass
 
-
 class TextPrinter:
     def __init__(self,
-                 session,
                  pageSize=(0,0),
                  margin=0,
                  cpl=None,
                  cpi=12,
+                 session=None,
                  encoding=None):
 
 ##         self.lineCommands = {
@@ -48,9 +68,11 @@ class TextPrinter:
             chr(27)+"i" : self.parse_i,
             chr(27)+"L" : self.parse_L,
             chr(27)+"I" : self.parse_I,
-            "#python " : self.parse_python,
+            chr(27)+"python " : self.parse_python,
             }
 
+        if session is None:
+            session=syscon.getMainSession()
         self.session=session
         self.encoding = encoding
         self.pageWidth,self.pageHeight = pageSize
@@ -73,6 +95,15 @@ class TextPrinter:
         
 ##     def createTextObject(self):
 ##         raise NotImplementedError
+        
+    def openImage(self,filename):
+        try:
+            return Image.open(filename)
+        except OSError,e:
+            raise OperationFailed(str(e))
+            #syscon.error(str(e))
+            #return
+        
         
     def onBeginPage(self):
         pass
@@ -123,11 +154,12 @@ class TextPrinter:
         self._docStarted=True
         self.setCpi(self.cpi)
 
-    def endDoc(self):
+    def close(self):
         #if not self.textobject is None:
         if self._pageStarted:
             self.endPage()
-        self.onEndDoc()
+        if self._docStarted:
+            self.onEndDoc()
 
 ##     def pageStarted(self):
 ##         return (self.textobject is not None)
@@ -237,6 +269,9 @@ class TextPrinter:
         self.write(text)
         #self._lineHasText = True
         
+    def flush(self):
+        self.write("")
+
         
         
     def parse_L(self,line):
@@ -343,3 +378,17 @@ class TextPrinter:
 
 
         
+class FileTextPrinter(TextPrinter):
+    extension=None
+    def __init__(self,filename,**kw):
+        (root,ext) = os.path.splitext(filename)
+        if ext.lower() != self.extension:
+            filename += self.extension
+        self.filename = filename
+        TextPrinter.__init__(self,**kw)
+
+    def close(self):
+        TextPrinter.close(self)
+        self.session.showfile(self.filename)
+            
+		

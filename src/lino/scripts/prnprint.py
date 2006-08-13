@@ -94,14 +94,15 @@ write to SPOOLFILE rather than really printing.""",
                         self.options.printerName)
         for inputfile in self.args:
             for cp in range(self.options.copies):
-                d = winprn.Win32TextPrinter(self,
+                d = winprn.Win32TextPrinter(
                     self.options.printerName,
                     self.options.spoolFile,
                     #useWorldTransform=self.options.useWorldTransform,
-                    encoding=self.options.encoding)
+                    encoding=self.options.encoding,
+                    session=self)
                     #charset=winprn.OEM_CHARSET)
                 d.readfile(inputfile)
-                d.endDoc()
+                d.close()
                 if d.page == 1:
                     self.notice("%s : 1 page has been printed",
                                 inputfile)
@@ -110,14 +111,8 @@ write to SPOOLFILE rather than really printing.""",
                                 inputfile,d.page)
 
 
-## consoleApplicationClass = PrnPrint
-
-# PrnPrint().main()
-    
-        
-## if __name__ == '__main__':
-##    PrnPrint().main()
-##     consoleApplicationClass().main() # console,sys.argv[1:])
-    
 def main(*args,**kw):
     PrnPrint().main(*args,**kw)
+
+if __name__ == '__main__':
+    main()

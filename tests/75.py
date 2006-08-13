@@ -27,7 +27,7 @@ class Case(TestCase):
 
     def doit(self,d):
         d.printLine("")
-        d.printLine("Win32PrinterDocument Test page")
+        d.printLine("TextPrinter Test page")
         d.printLine("")
         cols = 9
         d.printLine("".join([" "*9+str(i+1) for i in range(cols)]))
@@ -65,6 +65,27 @@ class Case(TestCase):
         self.doit(d)
         f.write("</body></html>")
         f.close()
+        
+    def test04(self):
+
+        from lino.textprinter import plain
+        d = plain.PlainTextPrinter()
+        self.doit(d)
+        s=self.getConsoleOutput()
+        self.assertEquivalent(s,"""
++------------------------------------------------------------------------+
+|                                                                        |
+|TextPrinter Test page                                                   |
+|                                                                        |
+|         1         2         3         4         5         6         7  |
+|123456789012345678901234567890123456789012345678901234567890123456789012|
+|                                                                        |
+|Here is some bold text.                                                 |
+|Here is some underlined text.                                           |
+|Here is some italic text.                                               |
++------------------------------------------------------------------------+        
+        """)
+        
 
 if __name__ == '__main__':
     main()

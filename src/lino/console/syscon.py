@@ -19,24 +19,39 @@
 import sys
 import atexit
 
-from lino.console.console import TtyConsole, Console
-
 DEBUG=False
 
-
-if hasattr(sys.stdout,'isatty') and sys.stdout.isatty():
-    _syscon=TtyConsole(sys.stdout, sys.stderr)
-else:
-    _syscon=Console(sys.stdout, sys.stderr)
-    
-
+_syscon=None
+_main=None
 
 def getSystemConsole():
+    global _syscon
+    if _syscon is None:
+        from lino.console.console import TtyConsole, Console
+        if hasattr(sys.stdout,'isatty') and sys.stdout.isatty():
+            _syscon=TtyConsole(sys.stdout, sys.stderr)
+        else:
+            _syscon=Console(sys.stdout, sys.stderr)
     return _syscon
 
 def setSystemConsole(con):
     global _syscon
     _syscon=con
+
+
+def setMainSession(sess):
+    global _main
+    _main=sess
+
+def getMainSession():
+    global _main
+    if _main is None:
+        from lino.console.application import Application
+        _main=Application()
+        _main.main()
+    return _main
+        
+    
 
 def shutdown():
     if _syscon is not None:
