@@ -220,6 +220,8 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         self.logfont.lfPitchAndFamily=win32con.FIXED_PITCH
         self.logfont.lfCharSet=win32con.OEM_CHARSET
 
+        self.setCpi(self.cpi)
+
 ##         self.fontDict = dict(
 ##             name=fontName,
 ##             #pitchAndFamily
@@ -232,7 +234,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
 ##             self.debug("No charset defined for %s encoding",encoding)
 ##             self.fontDict['charset'] = win32con.OEM_CHARSET            
 
-        self.font = None
+        #self.font = None
         #self.useWorldTransform=useWorldTransform
         self.spoolFile=spoolFile
         self.jobName=jobName
@@ -353,6 +355,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
             
         
     def onBeginPage(self):
+        self.session.debug("onBeginPage %d",self.page)
         self.x = self.org[0] + self.margin
         self.y = self.org[1] + self.margin
         self._images=[]
@@ -408,22 +411,17 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         #self.leading = int(inch/lpi)
         
     def setCpi(self,cpi):
+        #assert cpi != 12
         w = int(inch/cpi)
-        #console.debug("%d cpi = %d twips" % (cpi,w))
 
-        if False:
-            self.fontDict['width'] = w
-            # see 20050602:
-            self.fontDict['height'] = int(w*RATIO)
-            # if RATIO changes, I must adapt TIM's prnprint.drv
-        else:
-            self.logfont.lfWidth=w
-            self.logfont.lfHeight=int(w*RATIO)
+        # if RATIO changes, I must adapt TIM's prnprint.drv
+        self.logfont.lfWidth=w
+        self.logfont.lfHeight=int(w*RATIO)
         
         self.cpl = int(self.lineWidth()/inch*cpi)
-            #(self.pageWidth-(self.margin*2))/inch*cpi)
-        #print __name__, self.width
         self.font = None
+        self.session.debug("setCpi(): cpi=%d, lineWidth()=%d, cpl=%d",
+                           cpi, self.lineWidth(),self.cpl)
         
     def setItalic(self,ital):
         if ital:

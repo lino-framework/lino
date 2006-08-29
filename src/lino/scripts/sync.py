@@ -17,9 +17,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.console.application import Application, UsageError, UserAborted
-
+from lino.console.application import Application, \
+     UsageError, UserAborted
 from lino.tools.synchronizer import Synchronizer
+from lino import __url__
 
 class Sync(Application):
 
@@ -31,7 +32,7 @@ This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     
-    url="http://lino.saffre-rumma.ee/sync.html"
+    url=__url__+"/sync.html"
     
     usage="usage: lino sync [options] SRC DEST"
     

@@ -35,7 +35,21 @@ dataPath = os.path.join(tsttools.TESTDATA,'textprinter')
 
 class Case(tsttools.TestCase):
     ""
-    prnfiles=('1','2','4','5')
+    prnfiles=('1','2','4','5', '20060829')
+    def trycmd(self,cmd):
+        fd=os.popen(cmd,"r")
+        observed=fd.read()
+        cr=fd.close()
+        
+        #print "observed", observed
+            
+        #msg=repr(cmd)+" failed"
+        self.assertEqual(
+            cr,None,\
+            "%r failed: close() returned %r, observed is %r." \
+            % (cmd,cr,observed))
+            
+        
     def test01(self):
         for i in self.prnfiles:
             spoolFile = self.addTempFile(i+".ps",showOutput=True)
@@ -43,16 +57,7 @@ class Case(tsttools.TestCase):
 
             cmd='lino prnprint -p "%s" -o "%s" "%s"' % (
                 self.win32_printerName_PS,spoolFile,inputFile)
-            
-            fd=os.popen(cmd,"r")
-            observed=fd.read()
-            cr=fd.close()
-            
-            #print "observed", observed
-            
-            msg=repr(cmd)+" failed"
-            self.assertEqual(
-                cr,None,msg+" (close() returned %r)"%cr)
+            self.trycmd(cmd)
             
     def test02(self):
         for i in self.prnfiles:
@@ -60,16 +65,8 @@ class Case(tsttools.TestCase):
             inputFile = os.path.join(dataPath,i)+".prn"
 
             cmd='lino prn2pdf -b -o "%s" "%s"' % (spoolFile,inputFile)
-            
-            fd=os.popen(cmd,"r")
-            observed=fd.read()
-            cr=fd.close()
-            
-            #print "observed", observed
-            
-            msg=repr(cmd)+" failed"
-            self.assertEqual(
-                cr,None,msg+" (close() returned %r)"%cr)
+
+            self.trycmd(cmd)
             
 
 if __name__ == '__main__':

@@ -152,7 +152,7 @@ class TextPrinter:
     def beginDoc(self):
         self.onBeginDoc()
         self._docStarted=True
-        self.setCpi(self.cpi)
+        #self.setCpi(self.cpi)
 
     def close(self):
         #if not self.textobject is None:
