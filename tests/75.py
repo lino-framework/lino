@@ -37,7 +37,7 @@ class Case(TestCase):
         d.printLine("Here is some \033u1underlined\033u0 text.")
         d.printLine("Here is some \033i1italic\033i0 text.")
         
-        d.endDoc()
+        d.close()
         
 
     def test01(self):
@@ -51,20 +51,20 @@ class Case(TestCase):
     def test02(self):
 
         from lino.textprinter import pdfprn
-        fn = self.addTempFile("3.pdf",showOutput=True)
+        fn = self.addTempFile("3.pdf",showOutput=False)
         d = pdfprn.PdfTextPrinter(fn)
         self.doit(d)
         
     def test03(self):
 
         from lino.textprinter import htmlprn
-        fn = self.addTempFile("3.html",showOutput=True)
-        f = open(fn,"wt")
-        f.write("<html><body>")
-        d = htmlprn.HtmlTextPrinter(f)
+        fn = self.addTempFile("3.html",showOutput=False)
+        #f = open(fn,"wt")
+        #f.write("<html><body>")
+        d = htmlprn.HtmlTextPrinter(fn)
         self.doit(d)
-        f.write("</body></html>")
-        f.close()
+        #f.write("</body></html>")
+        #f.close()
         
     def test04(self):
 

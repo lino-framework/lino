@@ -91,6 +91,7 @@ test:               |5b.pds            |676     |X    |0 Occurences
 test:textprinter    |4.prn             |676     |X    |0 Occurences
 test:               |5d.pds            |850     |X    |0 Occurences   
 test:textprinter    |5.PRN             |851     |X    |0 Occurences   
+test:textprinter    |20060829.prn      |913     |X    |0 Occurences
 test:webman         |init.wmi          |917     |X    |0 Occurences   
 test:2              |init.wmi          |975     |X    |0 Occurences   
 test:               |gnosis-readme     |1662    |X    |0 Occurences   

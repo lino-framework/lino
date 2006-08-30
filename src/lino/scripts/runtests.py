@@ -134,59 +134,6 @@ continue testing even if failures or errors occur""",
                 
         return unittest.TestSuite(suites)
      
-##     def makeSuite(self,sess,argv,root='.'):
-
-##         sess.status("Collecting test cases")
-##         suites=[]
-##         cases = []
-##         #skipped=[]
-##         sys.path.append(root)
-##         for fn in os.listdir(root):
-##         for dirpath, dirnames, filenames in os.walk(root):
-##             prefix=".".join(dirpath.split(os.path.sep)[1:])
-##             if len(prefix):
-##                 prefix+="."
-##             #print dirpath
-##             for filename in filenames:
-##                 sess.status(os.path.join(dirpath,filename))
-##                 modname,ext = os.path.splitext(filename)
-##                 if ext == '.py':
-##                     doit = (len(argv) == 0)
-##                     for arg in argv:
-##                         a = arg.split('-')
-##                         if len(a) == 2:
-##                             if a[0].isdigit() and a[1].isdigit():
-##                                 if modname.isdigit():
-##                                     if int(modname) >= int(a[0]) \
-##                                           and int(modname) <= int(a[1]):
-##                                         doit = True
-##                             else:
-##                                 if modname >= a[0] and modname <= a[1]:
-##                                     doit = True
-##                         elif len(a) == 1:
-##                             if modname == a[0]:
-##                                 doit = True
-##                         else:
-##                             sess.warning("Unrecognized argument %s",
-##                                          arg)
-##                     if doit:
-##                         modname=prefix+modname
-##                         sess.verbose("Loading cases from %s...",
-##                                      modname)
-                        
-##                         self.findTestCases(sess,modname,cases,suites)
-##         sys.path.remove(root)
-
-##         sess.notice("found %d cases and %d suites.",
-##                     len(cases),len(suites))
-##         for tcl in cases:
-##             if hasattr(tcl,"todo"):
-##                 sess.notice("Todo %s : %s", tcl.__module__,tcl.todo)
-##             else:
-##                 suites.append(unittest.makeSuite(tcl))
-                
-##         return unittest.TestSuite(suites)
-     
     def findTestCases(self,modname,cases,suites):
         try:
             mod = my_import(modname)
@@ -210,16 +157,20 @@ continue testing even if failures or errors occur""",
                         cases.append(v)
         return cases
     
+    def showfile(self,filename):
+        assert os.path.exists(filename)
     
     def run(self):
+        
         suite = self.makeSuite(self.args)
-        #self.status("") 
-        #stream=sys.stdout
+        
         stream=self.toolkit.stdout
+        
         if self.options.ignore:
             runner = unittest.TextTestRunner(stream=stream)
         else:
             runner = StoppingTestRunner(stream=stream)
+            
         result=runner.run(suite)
         
         def tests(case):

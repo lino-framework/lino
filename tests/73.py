@@ -35,19 +35,21 @@ dataPath = os.path.join(tsttools.TESTDATA,'textprinter')
 
 class Case(tsttools.TestCase):
     ""
-    prnfiles=('1','2','4','5', '20060829')
+    #prnfiles=('1','2','4','5', '20060829')
+    prnfiles=('1','2','20060829')
+    
     def trycmd(self,cmd):
         fd=os.popen(cmd,"r")
         observed=fd.read()
-        cr=fd.close()
+        exitstatus=fd.close()
         
         #print "observed", observed
             
         #msg=repr(cmd)+" failed"
         self.assertEqual(
-            cr,None,\
-            "%r failed: close() returned %r, observed is %r." \
-            % (cmd,cr,observed))
+            exitstatus,None,\
+            "%r failed: close() returned %r, stdout is %r." \
+            % (cmd,exitstatus,observed))
             
         
     def test01(self):
