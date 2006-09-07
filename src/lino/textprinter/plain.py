@@ -16,15 +16,23 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-#from lino.ui import console
-#import sys
 from lino.textprinter.textprinter import TextPrinter
+from lino.console import syscon
 
 class PlainTextPrinter(TextPrinter):
     def __init__(self,writer=None,cpl=72,frameStyle="+-+|+-+|",**kw):
         TextPrinter.__init__(self,pageSize=(cpl,0),cpl=cpl,**kw)
         if writer is None:
-            writer=self.session.toolkit.stdout
+            """
+            
+            tests/75.py fails if i take stdout from
+            self.session.toolkit because TestCase.setUp() only does
+            setSystemConsole() while self.session remains the RunTests
+            instance.
+            
+            """
+            writer=syscon.getSystemConsole().stdout
+            #writer=self.session.toolkit.stdout
             #writer=sys.stdout
         self._writer = writer
         assert len(frameStyle) == 8

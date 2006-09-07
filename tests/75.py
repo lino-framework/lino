@@ -51,14 +51,14 @@ class Case(TestCase):
     def test02(self):
 
         from lino.textprinter import pdfprn
-        fn = self.addTempFile("3.pdf",showOutput=False)
+        fn = self.addTempFile("3.pdf",showOutput=True)
         d = pdfprn.PdfTextPrinter(fn)
         self.doit(d)
         
     def test03(self):
 
         from lino.textprinter import htmlprn
-        fn = self.addTempFile("3.html",showOutput=False)
+        fn = self.addTempFile("3.html",showOutput=True)
         #f = open(fn,"wt")
         #f.write("<html><body>")
         d = htmlprn.HtmlTextPrinter(fn)

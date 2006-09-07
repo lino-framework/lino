@@ -161,6 +161,7 @@ class TestCase(unittest.TestCase):
     win32_printerName_PS = "Lexmark Optra PS"
     tempDir = r"c:\temp"
     verbosity=-2
+    batch=True
 
 ##     def __init__(self):
 ##         unittest.TestCase.__init__(self)
@@ -176,7 +177,7 @@ class TestCase(unittest.TestCase):
         #self.ui = console.CaptureConsole(verbosity=-2,batch=True)
         self._oldToolkit=syscon.getSystemConsole()
         self.toolkit=CaptureConsole(verbosity=self.verbosity,
-                                    batch=True)
+                                    batch=self.batch)
         syscon.setSystemConsole(self.toolkit)
 
     def tearDown(self):

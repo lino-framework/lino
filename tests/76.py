@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -26,7 +26,7 @@ class Case(TestCase):
     ""
 
     def doit(self,d):
-        d.setPageLandscape()
+        d.setOrientationLandscape()
         d.drawDebugRaster()
         d.printLine("")
         d.printLine("Win32PrinterDocument Test page")
@@ -39,7 +39,7 @@ class Case(TestCase):
         d.printLine("Here is some \033u1underlined\033u0 text.")
         d.printLine("Here is some \033i1italic\033i0 text.")
         
-        d.endDoc()
+        d.close()
         
 
     def test01(self):

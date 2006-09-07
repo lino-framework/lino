@@ -33,7 +33,7 @@ class Case(TestCase):
     def doit(self,d):
 
         d.writeln("--- File 5.prn:---")
-        d.readfile(opj(dataPath,"5.prn"),coding="cp850")
+        d.readfile(opj(dataPath,"5.prn"),encoding="cp850")
         d.writeln("--- eof 5.prn---")
 
         d.writeln("Here is some more text.")

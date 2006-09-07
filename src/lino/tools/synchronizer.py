@@ -294,13 +294,13 @@ class Synchronizer(Progresser):
     
     
 #class SyncTask(Task):
-class SyncProject(Task):
+class SyncProject(Progresser):
     
     #summaryClass=SyncSummary
     
     #def __init__(self,app,src,target,simulate,recurse,summary=None):
     def __init__(self,job,src,target,recurse=False):
-        Task.__init__(self)
+        Progresser.__init__(self)
         #self.app=app
         self.job=job
         self.src = src
@@ -535,7 +535,7 @@ class SyncProject(Task):
 ##         self.breathe()
 
     def error(self,*args,**kw):
-        Task.error(self,*args,**kw)
+        Progresser.error(self,*args,**kw)
         self.job.count_errors += 1
         
     #def warning(self,*args,**kw):

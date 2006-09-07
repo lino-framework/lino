@@ -150,6 +150,7 @@ class TextPrinter:
         self._pageStarted = False
 
     def beginDoc(self):
+        if self._docStarted: return
         self.onBeginDoc()
         self._docStarted=True
         #self.setCpi(self.cpi)

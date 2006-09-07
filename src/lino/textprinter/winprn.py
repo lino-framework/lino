@@ -671,6 +671,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
 
     def drawDebugRaster(self):
+        self.beginDoc()
         fontDict=dict(name="Courier New",
                       height=100)
         font = win32ui.CreateFont(fontDict)
