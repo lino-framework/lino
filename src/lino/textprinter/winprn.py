@@ -481,10 +481,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         assert not "\n" in text, repr(text)
         assert not "\r" in text, repr(text)
         if self.encoding is not None:
-            #print "gonna code", repr(text)
-            #text = text.decode(self.encoding)
             text = text.encode(self.encoding)
-            #print "result:", repr(text)
         self.line += text
 
         if self.font is None:

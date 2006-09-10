@@ -56,13 +56,15 @@ def diag_encoding(ct):
 
 def diag_printer(story):
     try:
-        import win32print
+        import win32print, win32gui, win32con
     except ImportError,e:
         story.par("No module win32print (%s)" % e)
         return
 
     printerName=win32print.GetDefaultPrinter()
     story.h2("Windows Default Printer (%s)" % printerName)
+    
+    story.par("GetPrinter()['pDevMode']:")
     h=win32print.OpenPrinter(printerName)
     d=win32print.GetPrinter(h,2)
     devmode=d['pDevMode']
@@ -70,6 +72,49 @@ def diag_printer(story):
         for n in dir(devmode)
         if n != 'DriverData' and n[0]!='_']
     ul=story.ul(*l)
+
+
+    story.par("EnumFontFamilies:")
+    hprinter = win32print.OpenPrinter(printerName)
+    devmode = win32print.GetPrinter(hprinter,2)["pDevMode"]
+    hdc=win32gui.CreateDC('WINSPOOL',printerName,devmode)
+
+    l=[]
+    def callback(font, tm, fonttype, param):
+        t=""
+        if fonttype & win32con.DEVICE_FONTTYPE:
+            t+="D"
+        else:
+            t+="d"
+        if fonttype & win32con.RASTER_FONTTYPE:
+            t+="R"
+        else:
+            t+="r"
+        if fonttype & win32con.TRUETYPE_FONTTYPE:
+            t+="T"
+        else:
+            t+="t"
+        c=""
+        if font.lfCharSet == win32con.OEM_CHARSET:
+            c="OEM"
+        elif font.lfCharSet == win32con.ANSI_CHARSET:
+            c="ANSI"
+        elif font.lfCharSet == win32con.SYMBOL_CHARSET:
+            c="SYMBOL"
+        else:
+            c=str(font.lfCharSet)
+        l.append("%r : %s %s" % (font.lfFaceName, c, t))
+        return True
+
+    param=[] # arbitrary object, not None
+    win32gui.EnumFontFamilies(hdc, None, callback, param)
+
+    story.ul(*l)
+
+
+
+
+    
     win32print.ClosePrinter(h)
 
     story.h2("EnumPrinters()")
@@ -128,6 +173,10 @@ and output is sent to stdout.
         if True:
             doc.body.h2("sys.modules")
             doc.body.report(DictReport(sys.modules))
+
+            
+
+        
         if filename == "-":
             doc.__xml__(self.toolkit.stdout.write)
         else:

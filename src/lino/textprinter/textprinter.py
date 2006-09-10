@@ -191,6 +191,7 @@ class TextPrinter:
             #if encoding is not None:
             #    line = line.decode(encoding)
             #self.printLine(line.rstrip())
+            #print repr(line)
             self.writeln(line)
         os.chdir(cwd)
 
