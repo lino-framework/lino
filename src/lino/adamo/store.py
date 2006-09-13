@@ -151,6 +151,7 @@ class BaseStore:
 ##         #print "Datasource.unlockAll()",self
         for row in self._lockedRows.values():
             print "forced unlock:", row
+            #row.getSession().debug("forced unlock: %r",row)
             row.unlock()
 ##         #assert len(self._lockedRows) == 0
         

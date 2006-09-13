@@ -218,7 +218,15 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         """
         
         self.logfont.lfPitchAndFamily=win32con.FIXED_PITCH
+        
         self.logfont.lfCharSet=win32con.OEM_CHARSET
+        #self.logfont.lfCharSet=win32con.DEFAULT_CHARSET
+        #self.logfont.lfCharSet=win32con.ANSI_CHARSET
+        #self.logfont.lfCharSet=win32con.GB2312_CHARSET
+        #self.logfont.lfCharSet=win32con.BALTIC_CHARSET
+        #self.logfont.lfCharSet=win32con.HEBREW_CHARSET
+        #self.logfont.lfCharSet=win32con.ARABIC_CHARSET
+        #self.logfont.lfCharSet=win32con.SYMBOL_CHARSET
 
         self.setCpi(self.cpi)
 

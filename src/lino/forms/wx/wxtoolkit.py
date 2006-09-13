@@ -180,7 +180,7 @@ class DataGrid(toolkit.DataGrid):
     def refresh(self):
 ##         if self.isDirty():
 ##             self.commit()
-        #self.wxctrl.table._load()
+        self.wxctrl.table._load()
         self.wxctrl.table._refresh()
 ##         for row in self.wxctrl.table.rows:
 ##             print id(row)

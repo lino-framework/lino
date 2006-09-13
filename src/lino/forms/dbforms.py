@@ -76,6 +76,7 @@ class ReportForm(Form,GenericDocument):
             self.currentRow.item.lock()
             
     def afterRowEdit(self):
+        print "afterRowEdit", self.currentRow
         if self.currentRow is None: return
         #print "afterRowEdit()",repr(self.currentRow.item)
         if self.currentRow.item.isNew() \
@@ -316,6 +317,8 @@ class ReportForm(Form,GenericDocument):
         doc.save(self,showOutput=True)
 
     def onClose(self):
+        self.afterRowEdit()
+        #print "onClose", self
         self.rpt.endReport()
         #self.rpt.query.getContext().unlock()
 
@@ -355,9 +358,9 @@ class ReportRowForm(ReportForm):
     def getSelectedRow(self):
         return self.currentRow
     
-    def onClose(self):
-        self.afterRowEdit()
-        ReportForm.onClose(self)
+##     def onClose(self):
+##         self.afterRowEdit()
+##         ReportForm.onClose(self)
         
     def layout(self,panel):
         self.rpt.layoutReportForm(self,panel)

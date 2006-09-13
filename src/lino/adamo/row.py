@@ -144,6 +144,9 @@ class DataRow:
         return len(self._dirtyRowAttrs)>0
         #return self.__dict__['_dirty']
 
+    def getSession(self):
+        return self._store._db.schema.session
+        
     def getContext(self):
         #return self._query.getContext()
         return self._context
