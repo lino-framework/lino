@@ -22,10 +22,10 @@ import os
 opj=os.path.join
 from lino.misc.tsttools import TestCase, main
 from lino.textprinter import winprn
+from lino import config
 
-dataPath = os.path.join(os.path.dirname(__file__),
-                        'testdata','textprinter')
-dataPath = os.path.abspath(dataPath)
+dataPath = os.path.join(
+    config.paths.get('tests_path'),'testdata','textprinter')
 
 class Case(TestCase):
     ""
@@ -51,20 +51,20 @@ class Case(TestCase):
         d.writeln("Amen.")
         
         #d.drawDebugRaster()
-        d.endDoc()
+        d.close()
         
 
     def test01(self):
 
         spoolFile = self.addTempFile("77.ps",showOutput=True)
-        d = winprn.Win32TextPrinter(self.win32_printerName_PS,
-                                    spoolFile )
+        d = winprn.Win32TextPrinter(
+            config.win32.get('postscript_printer'),spoolFile )
         self.doit(d)
 
         
         spoolFile = self.addTempFile("77L.ps",showOutput=True)
-        d = winprn.Win32TextPrinter(self.win32_printerName_PS,
-                                    spoolFile )
+        d = winprn.Win32TextPrinter(
+            config.win32.get('postscript_printer'),spoolFile )
         d.setOrientationLandscape()
         d.writeln("And now the same in landscape. ")
         d.writeln()

@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
+import locale
 
 """
 
@@ -55,15 +56,17 @@ setlocalencoding()
 ##               sys.getdefaultencoding(),"to",encoding
 ##         sys.setdefaultencoding(encoding)
 
+def getlocalencoding():
+    return locale.getdefaultlocale()[1]
+
 def setlocalencoding():
     if sys.getdefaultencoding() != 'ascii': return
     if not hasattr(sys,'setdefaultencoding'): return
-    import locale
-    loc = locale.getdefaultlocale()
-    if loc[1] and sys.getdefaultencoding() != loc[1]:
+    loc=getlocalencoding()
+    if loc and sys.getdefaultencoding() != loc:
         #print "setting defaultencoding from", \
-        #      sys.getdefaultencoding(),"to",loc[1]
-        sys.setdefaultencoding(loc[1])
+        #      sys.getdefaultencoding(),"to",loc
+        sys.setdefaultencoding(loc)
 
 
 #print sys.getdefaultencoding()

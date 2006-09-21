@@ -190,3 +190,4 @@ def main(*args,**kw):
 
         
 
+if __name__ == '__main__': main() 

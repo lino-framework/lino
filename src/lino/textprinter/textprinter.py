@@ -59,6 +59,7 @@ class TextPrinter:
 ##         self.lineCommands = {
 ##             ".image" : "parse_image",
 ##             }
+            
         self.commands = {
             chr(12) : self.formFeed,
             chr(27)+"l" : self.parse_l,
@@ -74,6 +75,8 @@ class TextPrinter:
         if session is None:
             session=syscon.getMainSession()
         self.session=session
+        if encoding is None:
+            encoding=sys.stdout.encoding
         self.encoding = encoding
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin 
@@ -196,13 +199,13 @@ class TextPrinter:
         os.chdir(cwd)
 
 
-    def writeln(self,line):
+    def writeln(self,line=''):
         
         """Print a line of text after parsing it.
 
-        The final newline is printed only if the line really has
-        text.  Or if it is empty. For lines containing only
-        instructions the final newline is ignored.
+        The final newline is printed only if the line really has text
+        or if it is empty, but for lines containing only control
+        commands the final newline is ignored.
 
         """
         

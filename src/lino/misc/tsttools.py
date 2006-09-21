@@ -20,7 +20,6 @@
 """
 #import re
 import unittest
-import tempfile
 import sys
 import os
 import types
@@ -31,15 +30,18 @@ from cStringIO import StringIO
 from lino.console import syscon
 from lino.console.console import CaptureConsole
 from lino.forms.testkit import Toolkit
+from lino import config
 
+TESTDATA = os.path.join(config.paths.get('tests_path'),'testdata')
+DOCROOT = config.paths.get('docs_path')
 
-TESTDATA = os.path.normpath( os.path.join(
-    os.path.dirname(__file__),
-    '..','..','..','tests','testdata'))
+## TESTDATA = os.path.normpath( os.path.join(
+##     os.path.dirname(__file__),
+##     '..','..','..','tests','testdata'))
 
-DOCROOT = os.path.normpath( os.path.join(
-    os.path.dirname(__file__),
-    '..','..','..','docs'))
+## DOCROOT = os.path.normpath( os.path.join(
+##     os.path.dirname(__file__),
+##     '..','..','..','docs'))
 
 
 
@@ -158,8 +160,8 @@ def oneof(l,*args,**kw):
     
 class TestCase(unittest.TestCase):
     waiting=False
-    win32_printerName_PS = "Lexmark Optra PS"
-    tempDir = r"c:\temp"
+    #win32_printerName_PS = "Lexmark Optra PS"
+    #tempDir = r"c:\temp"
     verbosity=-2
     batch=True
 
@@ -188,7 +190,9 @@ class TestCase(unittest.TestCase):
         #raise "blabla"
         if len(self._tempFiles) > 0:
             for fn in self._tempFiles:
-                self.failUnless(os.path.exists(fn))
+                if not os.path.exists(fn):
+                    self.fail(
+                        "Temporary file %s has not been created" % fn)
 
     def afterRun(self,sess):
         # called by runtests.py
@@ -244,21 +248,56 @@ class TestCase(unittest.TestCase):
     def addTempFile(self,filename,showOutput=None):
         """unlike tempfile, these files are not OPENED
         """
-        fn = os.path.join(tempfile.gettempdir(),filename)
+        fn = os.path.join(config.paths.get('tempdir'),filename)
+        if os.path.exists(fn):
+            os.remove(fn)
         self._tempFiles.append(fn)
         if showOutput:
             self._showFiles.append(fn)
         return fn
     
-    def checkGeneratedFiles(self,*filenames):
-        raise DeprecationWarning("use addTempFile(showOutput=True)")
-##         for fn in filenames:
-##             if console.isInteractive(): 
-##                 os.system("start "+fn)
-##             else:
-##                 self.failUnless(os.path.exists(fn))
-##                 os.remove(fn)
+##     def trycmd(self,cmd,expected=None,msg=None):
+##         fd=os.popen(cmd,"r")
+##         observed=fd.read()
+##         exitstatus=fd.close()
+        
+##         #print "observed", observed
+            
+##         #msg=repr(cmd)+" failed"
+##         if exitstatus is not None:
+##             self.fail(
+##                 "%r failed: close() returned %r, stdout is %r." \
+##                 % (cmd,exitstatus,observed))
+                
+##         if expected is not None:
+##             self.assertEquivalent(observed,expected,msg)
+            
+    def trycmd(self,cmd,expected=None,msg=None,expectfile=None):
+        pin,pout=os.popen4(cmd,"t")
+        observed=pout.read()
+        exitstatus=pout.close()
+        pin.close()
+        
+        #print "observed", observed
+            
+        #msg=repr(cmd)+" failed"
+        if exitstatus is not None:
+            self.fail(
+                "%r failed: close() returned %r, stdout is %r." \
+                % (cmd,exitstatus,observed))
+                
+        if expected is not None:
+            if msg is None:
+                msg="unexpected output of `%s`:" % cmd
+            self.assertEquivalent(observed,expected,msg)
 
+        if expectfile is not None:
+            self._tempFiles.remove(expectfile)
+            if not os.path.exists(expectfile):
+                self.fail(
+                    '`%s` did not generate file %s. Output is:\n%s'\
+                    % (cmd,expectfile,observed))
+        
 
 #a = sys.stdout # open("a.txt","w")
 #b = sys.stdout # open("b.txt","w")

@@ -23,23 +23,35 @@ from lino.misc.tsttools import TestCase, main, DOCROOT
 from lino.misc.my_import import my_import
 from lino.apps import timtools
 
+from lino import config
+
 # same list as in mkdist.py
 console_targets = timtools.console_targets()
+
+srcpath=os.path.join(config.paths.get('src_path'),'lino','scripts')
 
 class Case(TestCase):
     def test01(self):
         s = ""
         for script in console_targets:
             if script != "runpy":
-                cmd="lino "+script+" --help"
-                fd=os.popen(cmd,"r")
-                observed=fd.read()
                 fn=os.path.join(DOCROOT,"help",script)+".help.txt"
+                expected=open(fn).read()
+                
+                cmd="lino "+script+" --help"
                 msg="output of `%s` differs from content of %s" \
                      % (cmd,fn)
-                self.assertEqual(fd.close(),None,msg)
-                expected=open(fn).read()
-                self.assertEquivalent(observed,expected,msg)
+                self.trycmd(cmd,expected,msg)
+
+                cmd="python "+os.path.join(srcpath,script)+".py --help"
+                msg="output of `%s` differs from content of %s" \
+                     % (cmd,fn)
+                self.trycmd(cmd,expected,msg)
+                
+                #fd=os.popen(cmd,"r")
+                #observed=fd.read()
+                #self.assertEqual(fd.close(),None,msg)
+                #self.assertEquivalent(observed,expected,msg)
 
     
     

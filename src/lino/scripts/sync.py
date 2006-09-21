@@ -106,3 +106,5 @@ where SRC and DEST are two directories to be synchronized.
     
 def main(*args,**kw):
     Sync().main(*args,**kw)
+
+if __name__ == '__main__': main() 

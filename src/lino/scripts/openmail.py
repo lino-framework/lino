@@ -47,16 +47,13 @@ optional.
 
         msg = readmail(self.args[0])
 
+        self.debug("openmail() : %s",msg)
+
         openmail(msg)
         
 
-#OpenMail().main()
-
-## consoleApplicationClass = OpenMail
-
-## if __name__ == '__main__':
-##     consoleApplicationClass().main() 
-
-
 def main(*args,**kw):
     OpenMail().main(*args,**kw)
+
+if __name__ == '__main__': main() 
+

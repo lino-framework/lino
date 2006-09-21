@@ -52,6 +52,13 @@ write to OUTFILE rather than FILE.pdf""",
                           dest="outFile",
                           default=None)
     
+        parser.add_option("-e", "--encoding",
+                          help="""\
+FILE is encoded using ENCODING (rather than sys.stdin.encoding).""",
+                          action="store",
+                          type="string",
+                          dest="encoding",
+                          default=sys.stdin.encoding)
 
     def run(self):
         
@@ -65,7 +72,7 @@ write to OUTFILE rather than FILE.pdf""",
 
         d = PdfTextPrinter(self.options.outFile,
                            session=self,
-                           encoding=sys.stdin.encoding)
+                           encoding=self.options.encoding)
         d.readfile(inputfile)#,coding=sys.stdin.encoding)
         
         d.close()

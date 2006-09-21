@@ -32,7 +32,7 @@ from lino.adamo.datatypes import itod
 from contacts_tables import *
 #, City, Nation
 
-rtlib_path=config.get(config.DEFAULTSECT,'rtlib_path')
+rtlib_path=config.paths.get('rtlib_path')
 
 MALE='m'
 FEMALE='f'

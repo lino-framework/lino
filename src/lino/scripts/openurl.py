@@ -54,3 +54,5 @@ Starts the default browser on the specified URL(s).
 
 def main(*args,**kw):
     OpenURL().main(*args,**kw)
+
+if __name__ == '__main__': main() 

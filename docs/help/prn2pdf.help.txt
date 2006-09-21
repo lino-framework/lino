@@ -11,3 +11,6 @@ options:
   -b, --batch           not interactive (don't ask anything)
   -oOUTFILE, --output=OUTFILE
                         write to OUTFILE rather than FILE.pdf
+  -eENCODING, --encoding=ENCODING
+                        FILE is encoded using ENCODING (rather than
+                        sys.stdin.encoding).

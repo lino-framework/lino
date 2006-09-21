@@ -20,7 +20,7 @@
 
 #from ctypes import WinError
 import sys
-
+#import locale
 import win32ui
 import win32gui
 import win32con
@@ -28,6 +28,7 @@ import win32print
 import pywintypes
 #import win32gui
 from PIL import ImageWin
+
 
 #OEM_CHARSET = win32con.OEM_CHARSET
 
@@ -490,6 +491,12 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         assert not "\r" in text, repr(text)
         if self.encoding is not None:
             text = text.encode(self.encoding)
+##         else:
+##             text = text.encode(sys.stdout.encoding)
+            #text = text.encode(sys.getdefaultencoding())
+            #if locale.getdefaultlocale()[1]:
+            #    print locale.getdefaultlocale()
+            #    text = text.encode(locale.getdefaultlocale()[1])
         self.line += text
 
         if self.font is None:

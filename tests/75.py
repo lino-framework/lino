@@ -21,6 +21,7 @@ testing textprinter
 """
 
 from lino.misc.tsttools import TestCase, main
+from lino import config
 
 class Case(TestCase):
     ""
@@ -44,8 +45,8 @@ class Case(TestCase):
 
         from lino.textprinter import winprn
         spoolFile = self.addTempFile("3.ps",showOutput=True)
-        d = winprn.Win32TextPrinter(self.win32_printerName_PS,
-                                    spoolFile)
+        d = winprn.Win32TextPrinter(
+            config.win32.get('postscript_printer'),spoolFile)
         self.doit(d)
         
     def test02(self):

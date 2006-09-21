@@ -60,7 +60,7 @@ Directories (volume=test,parent=None)
 =====================================
 id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
-1      |              |              |17 Files      |2 Directories
+1      |              |              |18 Files      |2 Directories
 """)
         q=sess.query(File,
                      orderBy="size",
@@ -84,6 +84,7 @@ test:webman         |1.txt             |138     |X    |19 Occurences
 test:2              |1.txt             |150     |X    |19 Occurences  
 test:webman         |index.txt         |182     |X    |15 Occurences  
 test:2              |index.txt         |193     |X    |21 Occurences  
+test:               |cp437box.txt      |293     |X    |21 Occurences
 test:               |cp1252a.txt       |372     |X    |53 Occurences  
 test:               |cp850a.txt        |372     |X    |53 Occurences  
 test:               |5.pds             |500     |X    |0 Occurences   

@@ -24,14 +24,52 @@ from ConfigParser import SafeConfigParser, DEFAULTSECT
 lino_home = os.path.abspath(
     os.path.join( os.path.dirname(__file__),"..",".."))
 
-rtlib_path = os.path.join(lino_home, "rtlib")
+## rtlib_path = os.path.join(lino_home, "rtlib")
+## tests_path = os.path.join(lino_home, "tests")
+## docs_path = os.path.join(lino_home, "docs")
+## src_path = os.path.join(lino_home, "src")
 
-defaults={
-    'lino_home' : lino_home,
-    'tempdir' : tempfile.gettempdir(),
-    'rtlib_path' : rtlib_path,
-    }
-config = SafeConfigParser(defaults)
+## defaults={
+##     'lino_home' : lino_home,
+##     'tempdir' : tempfile.gettempdir(),
+##     'rtlib_path' : rtlib_path,
+##     'tests_path' : tests_path,
+##     'docs_path' : docs_path,
+##     'src_path' : src_path,
+##     }
+## config = SafeConfigParser(defaults)
+
+class Section:
+    def __init__(self,parser,name,**kw):
+        self.name=name
+        self.parser=parser
+        parser.add_section(self.name)
+        for k,v in kw.items():
+            parser.set(self.name,k,v)
+    def get(self,name):
+        return self.parser.get(self.name,name)
+
+config = SafeConfigParser()
+
+paths = Section(config,'paths',
+                lino_home=lino_home,
+                tempdir=tempfile.gettempdir(),
+                rtlib_path=os.path.join(lino_home, "rtlib"),
+                tests_path=os.path.join(lino_home, "tests"),
+                docs_path=os.path.join(lino_home, "docs"),
+                src_path=os.path.join(lino_home, "src"))
+
+win32=Section(config,'win32',
+              postscript_printer="Lexmark Optra PS")
+
+## config.add_section('paths')
+## config.set('paths','lino_home',lino_home)
+## config.set('paths','tempdir',tempfile.gettempdir())
+## config.set('paths','rtlib_path',os.path.join(lino_home, "rtlib"))
+## config.set('paths','tests_path',os.path.join(lino_home, "tests"))
+## config.set('paths','docs_path',os.path.join(lino_home, "docs"))
+## config.set('paths','src_path',os.path.join(lino_home, "src"))
+
 #config.add_section('forms')
 #config.set('forms','wishlist','wx tix cherrypy console')
 
@@ -44,7 +82,7 @@ config.read( [
 get=config.get
 
 def tempdirfilename(name):
-    fn=os.path.join(config.get(DEFAULTSECT,'tempdir'),name)
+    fn=os.path.join(paths.get('tempdir'),name)
     #print "tempdirfilename", fn
     return fn
 

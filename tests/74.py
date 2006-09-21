@@ -20,6 +20,7 @@ import win32ui
 import win32con
 
 from lino.misc import tsttools
+from lino import config
 
 class Case(tsttools.TestCase):
     ""
@@ -27,7 +28,7 @@ class Case(tsttools.TestCase):
     def test01(self):
         spoolFile = self.addTempFile("74.ps",showOutput=True)
         dc = win32ui.CreateDC()
-        dc.CreatePrinterDC(self.win32_printerName_PS)
+        dc.CreatePrinterDC(config.win32.get('postscript_printer'))
         dc.StartDoc("my print job",spoolFile)
         dc.SetMapMode(win32con.MM_TWIPS)
         dc.StartPage()
