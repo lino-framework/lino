@@ -161,9 +161,9 @@ dll_excludes = ['cygwin1.dll',
                 ]
 excludes = [ #"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
              #"pywin.dialogs", "pywin.dialogs.list",
+             #'xml',
              "Tkconstants","Tkinter",
              "tcl",
-             'xml',
              'twisted',
              'mx',
              'docutils'

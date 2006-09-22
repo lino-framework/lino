@@ -20,6 +20,7 @@
 #from lino.gendoc import gendoc # import WriterDocument
 
 from xml.sax.saxutils import escape, unescape
+
 from lino.gendoc.elements import \
      CDATA, Element, Container
 

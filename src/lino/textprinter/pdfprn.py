@@ -292,8 +292,8 @@ class PdfTextPrinter(FileTextPrinter):
             self.status.leading = 28
         else:
             raise "%s : bad cpi size" % par
-        self.width = int(
-            (self.pageWidth-(self.margin*2))/inch*cpi)
+        #self.width = int(self.lineWidth()/inch*cpi)
+        self.cpl = int(self.lineWidth()/inch*cpi)
         #print __name__, self.width
         self.onSetFont()
          

@@ -49,16 +49,15 @@ inch = 1440.0
 mm = inch / 25.4
 A4 = (210*mm, 297*mm)
 
-RATIO=1.7
+RATIO=1.7 # if RATIO changes, I must adapt TIM's prnprint.drv
 
-# Note that in all modes, (0,0) is the top left corner of
-# the page, and the units increase as you go down and across the
-# page.
-# We work in twips: self.dc.SetMapMode(win32con.MM_TWIPS)
+# In all mapmodes is (0,0) the top left corner of the page, and the
+# units increase as you go down and across the page.
 
-# A Twip is 1/20 of a typesetting Point. A typesetting Point is 1/72
-# of an inch, so a Twip is 1/1440 of an inch. (0,0) is the bottom left
-# corner.
+# Win32TextPrinter works in twips:
+# self.dc.SetMapMode(win32con.MM_TWIPS).  A Twip is 1/20 of a
+# typesetting Point. A typesetting Point is 1/72 of an inch, so a Twip
+# is 1/1440 of an inch. (0,0) is the bottom left corner.
 
 # MS doc about SetMapMode() and MM_TWIPS: The mapping mode defines the
 # unit of measure used to transform page-space units into device-space
@@ -78,76 +77,6 @@ RATIO=1.7
 
 LPIBASE = inch * 240 / 257 
         
-
-## class TextObject:
-##     def __init__(self,doc):
-##         self.doc = doc
-##         self.x = self.doc.org[0] + self.doc.margin
-##         self.y = self.doc.org[1] + self.doc.margin
-##         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
-##         #self.y = doc.pageHeight-(2*doc.margin)
-##         self.line = ""
-##         self.leading = 0
-        
-##     def write(self,text):
-##         assert not "\n" in text, repr(text)
-##         assert not "\r" in text, repr(text)
-##         if self.doc.coding is not None:
-##             #print "gonna code", repr(text)
-##             #text = text.decode(self.encoding)
-##             text = text.encode(self.doc.coding)
-##             #print "result:", repr(text)
-##         self.line += text
-
-##         font = win32ui.CreateFont(self.doc.fontDict)
-        
-##         # CreateFont: http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
-        
-##         self.doc.dc.SelectObject(font)
-##         #console.debug(repr(tm))
-## ##         console.info(repr(self.dc.GetTextFace()))
-        
-##         # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_7ss2.asp
-        
-## ##         self.leading = tm['tmExternalLeading'] \
-## ##                        + tm['tmHeight'] \
-## ##                        #+ tm['tmInternalLeading'] \
-
-##         # 
-##         #self.leading = max(self.leading,self.doc.status.leading)
-##         #self.doc.dc.TextOut(self.line)
-##         console.debug("self.doc.dc.TextOut(%d,%d,%r)",
-##                       int(self.x),-int(self.y),self.line)
-##         self.doc.dc.TextOut(int(self.x),-int(self.y),self.line)
-##         (dx,dy) = self.doc.dc.GetTextExtent(self.line)
-        
-##         # GetTextExtent() returns the dimensions of the string in
-##         # logical units (twips)
-        
-##         self.x += dx
-##         #console.debug("TextOut(%d,%d,%s)" % \
-##         #              (int(self.x),-int(self.y),repr(self.line)))
-##         if dy != 0:
-##             self.leading = dy
-##         self.line = ""
-            
-## ##         tm = self.doc.dc.GetTextMetrics()
-## ##         console.debug(
-## ##             "dy=%d, leading=%d, extLeading=%d, height=%d, intLeading=%d",
-## ##             dy, self.leading,
-## ##             tm['tmExternalLeading'],tm['tmHeight'],
-## ##             tm['tmInternalLeading'])
-                      
-
-##     def flush(self):
-##         self.write("")
-
-##     def newline(self):
-##         #self.x = self.doc.margin
-##         self.x = self.doc.org[0] + self.doc.margin
-##         self.y += self.leading
-##         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
-##         console.debug("self.y += %d" % self.leading)
 
 class Win32TextPrinter(TextPrinter):
     
@@ -212,8 +141,6 @@ Specifies the pitch and family of the font. The two low-order bits specify the p
 
 http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp0.asp
                 
-
-
         
         lfFaceName
         """
@@ -420,15 +347,21 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         #self.leading = int(inch/lpi)
         
     def setCpi(self,cpi):
+        
+        """Set font size by specifying characters per inch.
+        
+        """
+        
         #assert cpi != 12
         w = int(inch/cpi)
 
-        # if RATIO changes, I must adapt TIM's prnprint.drv
         self.logfont.lfWidth=w
-        self.logfont.lfHeight=int(w*RATIO)
-        
-        self.cpl = int(self.lineWidth()/inch*cpi)
+        self.logfont.lfHeight=-int(w*RATIO)
+        # must create new font object before next TextOut():
         self.font = None
+        
+        self.cpi=cpi
+        self.cpl = int(self.lineWidth()/inch*cpi)
         self.session.debug("setCpi(): cpi=%d, lineWidth()=%d, cpl=%d",
                            cpi, self.lineWidth(),self.cpl)
         
@@ -500,12 +433,8 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         self.line += text
 
         if self.font is None:
-            if False:
-                self.font = win32ui.CreateFont(self.fontDict)
-                self.dc.SelectObject(self.font)
-            else:
-                self.font = win32gui.CreateFontIndirect(self.logfont)
-                win32gui.SelectObject(self.dch,self.font)
+            self.font = win32gui.CreateFontIndirect(self.logfont)
+            win32gui.SelectObject(self.dch,self.font)
         
             """
             CreateFont:
@@ -536,10 +465,12 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         if len(self.line) == 0:
             (dx,dy) = self.dc.GetTextExtent(" ")
         else:
-            self.session.debug("self.dc.TextOut(%d,%d,%r)",
-                               int(self.x),-int(self.y),self.line)
             self.dc.TextOut(int(self.x),-int(self.y),self.line)
             (dx,dy) = self.dc.GetTextExtent(self.line)
+            self.session.debug("self.dc.TextOut(%d,%d,%r) %.2f cpi",
+                               int(self.x),-int(self.y),
+                               self.line,
+                               len(self.line)*inch/dx)
             self.x += dx
         
         # GetTextExtent() returns the dimensions of the string in

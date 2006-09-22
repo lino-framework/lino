@@ -34,6 +34,7 @@ file" when exefied with py2exe
 """
 
 #from PIL import PngImagePlugin
+
 from PIL import JpegImagePlugin
 from PIL import BmpImagePlugin
 
@@ -47,7 +48,22 @@ class ParserError(Exception):
 class PrinterNotReady(Exception):
     pass
 
+
 class TextPrinter:
+    
+    
+    """Abstract base class for all textprinters.
+
+    Implemented by Win32TextPrinter, PdfTextPrinter,...
+    
+    lineWidth(), margin, pageWidth and pageHeight are expressed in
+    'logical units', that is, a unit chosen by the implementing
+    class. For example Win32TextPrinter uses twips as unit,
+    PdfTextPrinter uses the same unit as reportlab.lib.units. The base
+    class doesn't need care about the real value of these parameters.
+        
+    """
+    
     def __init__(self,
                  pageSize=(0,0),
                  margin=0,
@@ -94,6 +110,8 @@ class TextPrinter:
         return self.cpl
     
     def lineWidth(self):
+        """Return the width of a text line in logical units.
+        """
         return self.pageWidth - self.margin * 2
         
 ##     def createTextObject(self):
@@ -126,7 +144,12 @@ class TextPrinter:
         raise NotImplementedError
 
     def setCpi(self,cpi):
+        
+        """Set font size by specifying characters per inch.
+        """
+        
         pass
+    
     def setItalic(self,ital):
         pass
     def setBold(self,bold):
@@ -380,6 +403,13 @@ class TextPrinter:
 
     def insertImage(self,filename,w,h):
         raise NotImplementedError
+
+    def insertDebugRulers(self):
+        self.writeln("-"*self.cpl)
+        n=int(self.cpl/10)+1
+        self.writeln("1234567890"*n)
+        self.writeln("".join([str(i+1).rjust(10) for i in range(n)]))
+        self.writeln("-"*self.cpl)
 
 
         

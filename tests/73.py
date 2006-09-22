@@ -35,7 +35,7 @@ dataPath = os.path.join(tsttools.TESTDATA,'textprinter')
 
 class Case(tsttools.TestCase):
     ""
-    prnfiles=('1','2','4','5', '20060829')
+    prnfiles=('1','2','3','4','5', '20060829')
     
     def test01(self):
         for i in self.prnfiles:

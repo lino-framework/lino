@@ -19,7 +19,7 @@
 
 __docformat__ = 'reStructuredText'
 
-__micro__ = 20 # not yet released
+__micro__ = 21
 
 __version__ = "0.6.%d" % __micro__
 
