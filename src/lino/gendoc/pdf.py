@@ -107,6 +107,7 @@ class PdfDocument(html.Document):
         return platypus.XPreformatted(txt,style,**kw)
         
     def elem2flow(self,elem,style,width):
+        "Convert this element to an iteration of flowables."
         #print "elem2flow(%r)" % elem.__class__.__name__
         if isinstance(elem,html.PRE):
             assert len(elem.content) == 1
@@ -122,6 +123,9 @@ class PdfDocument(html.Document):
         elif isinstance(elem,html.LI):
             yield self.makepar(elem.toxml(),style)
             
+        elif elem.__class__ is html.IMG:
+            yield platypus.Image()
+            
         elif isinstance(elem,html.TABLE):
             t=self.pdftable(elem,width,style)
             #pt=PdfTable(elem)
@@ -130,18 +134,27 @@ class PdfDocument(html.Document):
             #print "gonna yield", t
             yield t
         
-        #elif isinstance(elem,html.Fragment):
-        #elif isinstance(elem,html.P):
-        elif elem.fragmentable:
+        #elif elem.fragmentable:
+        elif isinstance(elem,html.Container):
+            #print "fragmentable %s" % elem.__class__.__name__
             frags=[]
             for e in elem.content:
-                if e.__class__ is html.IMG:
-                    yield self.makepar("",style,frags=frags)
-                    yield platypus.Image()
-                    frags=[]
-                else:
+                if e.fragmentable:
+                    #print "gonna elem2frags(%s)"% e.__class__.__name__
                     for f in self.elem2frags(e,style):
                         frags.append(f)
+                elif e.flowable:
+                    # found non-fragmentable element inside a flowable
+                    if len(frags) > 0:
+                        yield self.makepar("",style,frags=frags)
+                    yield self.elem2flow(e,style,width)
+                    frags=[]
+##                 if e.__class__ is html.IMG:
+##                     yield self.makepar("",style,frags=frags)
+##                     yield platypus.Image()
+##                     frags=[]
+                #elif e.__class__ is H1:
+                #    yield self.makepar("",style,frags=frags)
             yield self.makepar("",style,frags=frags)
             
             #yield platypus.Table(data)

@@ -106,13 +106,11 @@ class MemoParser(HTMLParser):
                 #print "could not append <%s> to <%s>" % (
                 #    elem.tag(),
                 #    self.stack[-1].tag())
-                if elem.__class__ in self.stack[-1].autoClosedBy:
+                if elem.__class__ in self.stack[-1].autoClosedByStart:
                     popped=self.stack.pop()
                     #print "<%s> automagically closes <%s>" % (
                     #    elem.tag(),
                     #    popped.tag())
-                    #self.story.append(elem)
-                    #self.stack.append(elem)
                 else:
                     raise
         
@@ -164,7 +162,7 @@ class MemoParser(HTMLParser):
             if tag.upper() == popped.tag():
                 return
             cl=getattr(html,tag.upper())
-            if cl in popped.autoClosedBy:
+            if cl in popped.autoClosedByEnd:
                 pass
                 #print "<%s> autoClosedBy </%s>" % (
                 #    popped.tag(),tag.upper())

@@ -13,7 +13,7 @@ def body(doc):
     ignore them.
 
     Fortunately there is a workaround that should help in most cases:
-    You can avoiding automatic word wrapping by using
+    You can avoid automatic word wrapping by using
     <tt>verses()</tt>.
     
     The <tt>verses()</tt> method

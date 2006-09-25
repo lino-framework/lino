@@ -183,6 +183,58 @@ item.</P></LI><LI>This is the second list item.
         """)
         
         self.memo2xml("""
+        
+<table>
+<tr><td>
+Nested table:
+<td>
+<table>
+<tr><td>A1<td>A2</tr>
+<tr><td>B1<td>B2</tr>
+</table>
+</table>
+
+        ""","""
+        
+<BODY><TABLE><TR><TD>
+Nested table:
+</TD><TD>
+<TABLE><TR><TD>A1</TD><TD>A2</TD></TR><TR><TD>B1</TD><TD>B2</TD></TR></TABLE>
+</TD></TR></TABLE></BODY>
+
+        """)
+
+
+
+        
+        self.memo2xml("""
+
+        <table class="EmptyTable">
+        <tr><td align="left">%(number)d</td>
+        <td valign="top">
+        <h1>%(title2)s (%(title1)s)</h1>
+        
+        <table class="EmptyTable">
+        <tr>
+        <td valign="top">%(text2)s</td>
+        <td align="left">%(text1)s</td>
+        </table>
+        
+        </td></tr></table>
+
+        
+        ""","""
+
+<BODY><TABLE class="EmptyTable"><TR><TD align="left">%(number)d</TD><TD valign="top">
+        <H1>%(title2)s (%(title1)s)</H1>
+
+        <TABLE class="EmptyTable"><TR><TD valign="top">%(text2)s</TD><TD align="left">%(text1)s</TD></TR></TABLE>
+
+        </TD></TR></TABLE></BODY>        
+
+        """)
+        
+        self.memo2xml("""
         ""","""
         <BODY/>
         """)

@@ -20,8 +20,12 @@ import os
 
 from lino.misc.tsttools import TestCase, main
 
-examplesDir=os.path.join(os.path.dirname(__file__),
-                         "..", "docs","examples")
+from lino import config
+
+examplesDir=os.path.join(config.paths.get("docs_path"),"examples")
+
+#examplesDir=os.path.join(os.path.dirname(__file__),
+#                         "..", "docs","examples")
 
 class Case(TestCase):
 
@@ -40,19 +44,25 @@ class Case(TestCase):
             filename = base+".py"
             cmd="python "+os.path.join(examplesDir,filename)
             cmd += " --batch"
-            fd=os.popen(cmd,"r")
-            observed=fd.read()
-            cr=fd.close()
+
+            outfile=os.path.join(examplesDir,base)+".out"
+            expected=open(outfile).read()
             
-            msg="Example %s failed" % filename
-            self.assertEqual(
-                cr,None,msg+" (close() returned %r)"%cr)
-            if observed.strip().startswith("TODO:"):
+            if expected.strip().startswith("TODO:"):
                 print filename, observed
-            else:
-                outfile=os.path.join(examplesDir,base)+".out"
-                expected=open(outfile).read()
-                self.assertEquivalent(observed,expected,msg)
+
+            self.trycmd(cmd,expected)
+            
+            
+##             fd=os.popen(cmd,"r")
+##             observed=fd.read()
+##             cr=fd.close()
+            
+##             msg="Example %s failed" % filename
+##             self.assertEqual(
+##                 cr,None,msg+" (close() returned %r)"%cr)
+##             else:
+##                 self.assertEquivalent(observed,expected,msg)
                     
                                           
         

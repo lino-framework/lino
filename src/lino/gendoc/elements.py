@@ -58,6 +58,7 @@ def quote(x):
     raise InvalidRequest("%s not handled" % str(type(x)))
     
 class CDATA:
+    fragmentable=True
     def __init__(self,text):
         self.text = unicode(text)
         
@@ -69,8 +70,12 @@ class CDATA:
         return self.text
         
 class Element:
+    fragmentable=False
+    flowable=False
     elementname = None
     allowedAttribs = {}
+    autoClosedByStart=[]
+    autoClosedByEnd=[]
     #defaultAttribs = {}
     parent=None
     style=None
@@ -150,7 +155,7 @@ class Container(Element):
                 return elem
         raise InvalidRequest(
             "%s not allowed in %s" %
-            (str(elem.__class__),repr(self)))
+            (elem.__class__,self.__class__))
 
     def peek(self,*key):
         if self.primaryKey is None:

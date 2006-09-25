@@ -25,6 +25,7 @@ from lino.gendoc.elements import \
      CDATA, Element, Container
 
 class BR(Element):
+    #flowable=True
     pass
 
 class IMG(Element):
@@ -46,6 +47,7 @@ class Fragment(Container):
                         lang='lang',
                         style='style',
                         title='title')
+
 
 class SPAN(Fragment):
     allowedContent = (CDATA,Fragment)
@@ -109,6 +111,7 @@ class TBODY(Fragment):
     allowedContent=(TR,)
     
 class TABLE(Fragment):
+    fragmentable=False
     flowable=True
     allowedContent=(TR,COLGROUP,THEAD,TFOOT,TBODY)
     
@@ -150,6 +153,7 @@ def tablerows(table,area):
 
 
 class P(Fragment):
+    fragmentable=False
     flowable=True
     allowedContent = (CDATA,SPAN,BR,IMG)
     allowedAttribs = dict(
@@ -157,6 +161,7 @@ class P(Fragment):
         **SPAN.allowedAttribs)
     
 class H(P):
+    level=None
     def __init__(self,level,*args,**kw):
         assert level > 0 and level <= 9
         self.level=level
@@ -165,7 +170,7 @@ class H(P):
     def tag(self):
         return self.__class__.__name__+str(self.level)
         
-
+class H1(P): pass
 
 class PRE(P):
     allowedContent = (CDATA,)
@@ -175,14 +180,19 @@ class A(SPAN):
                         **SPAN.allowedAttribs)
 
 
-P.autoClosedBy=(P,LI,UL,OL,TABLE)
-TD.autoClosedBy=(TD,TH,TR,TABLE)
-TH.autoClosedBy=(TD,TH,TR,TABLE)
-TR.autoClosedBy=(TR,TABLE)
-LI.autoClosedBy=(LI,UL)
+P.autoClosedByStart=(P,LI,UL,OL,TABLE)
+TD.autoClosedByStart=(TD,TH,TR)
+TD.autoClosedByEnd=(TH,TR,TABLE)
+TH.autoClosedByStart=(TD,TH,TR)
+TH.autoClosedByEnd=(TD,TR,TABLE)
+TR.autoClosedByStart=(TR,TABLE)
+TR.autoClosedByEnd=(TABLE,)
+LI.autoClosedByStart=(LI,)
+LI.autoClosedByEnd=(UL,)
+
 LI.allowedContent = TD.allowedContent \
                     = TH.allowedContent \
-                    = (CDATA,P,SPAN,IMG)
+                    = (CDATA,P,SPAN,IMG,TABLE)
     
 
     
