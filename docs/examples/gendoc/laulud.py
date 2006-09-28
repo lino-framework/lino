@@ -3,10 +3,12 @@
 # Copyright 2006 Luc Saffre. This file also contains content
 # copyrighted by the community of Taizé (http://www.taize.fr)
 
-# todo: weiter ab 09.08.2006
+import time
 
 from lino.gendoc.pdf import PdfMaker
 from lino.gendoc.styles import mm, TA_RIGHT
+
+today = time.strftime("%d.%m.%Y")
 
 
 class Song:
@@ -38,9 +40,9 @@ def header(story):
     <tr><td align="left">
     lk %d
     <td align="right">
-    26.09.2006
+    %s
     </table>
-    """ % story.document.getPageNumber())
+    """ % (story.document.getPageNumber(),today))
 
 def footer(story):
     story.memo("""
@@ -57,18 +59,19 @@ FORMAT= 2
 def body(story):
     story.getStyle().update(
         #showBoundary=True,
-        leftMargin=20*mm,
-        rightMargin=20*mm,
-        topMargin=15*mm,
-        bottomMargin=152*mm, #   (297-20) / 2 = 277 / 2 = 138
-        # 297/2 = 248
+        leftMargin=15*mm,
+        rightMargin=15*mm,
+        topMargin=18*mm,
+        bottomMargin=155*mm, 
+        # 297/2 = 148
         #footer=footer,
         header=header,
         )
 
-    story.document.stylesheet["P"].update(fontSize=16,
-                                          leading=18,
-                                          spaceBefore=2)
+    story.document.stylesheet["P"].update(
+        fontSize=16,
+        leading=18,
+        spaceBefore=2)
     
     for s in songs:
         #print s.number
@@ -116,14 +119,14 @@ song(2,
      """,
      "Oota Issandat",
      """Oota Issandat, ta päev on pea,
-     oota Issandat, ja kindlaks jää!""")
+     oota Issandat ja kindlaks jää.""")
 
 song(3,"Bleibet hier","""Bleibet hier und wachet mit mir,
 wachet und betet,
 wachet und betet.
 """,
      "Siia jää",
-     """Siia jää, sa minuga koos, valva ja palu, valva ja palu.""")
+     """Siia jää sa minuga koos, valva ja palu, valva ja palu.""")
 
 
 song(4,"Ubi caritas Deus ibi est","",
@@ -143,7 +146,8 @@ Bless the Lord, my soul, who leads me into life.
 song(6,"Gloria ... et in terra pax (canon)","""
 """,
 "Olgu au (kaanon)",
-"""Olgu au, olgu au, Jumalale kõrges, olgu au, olgu au, halleluuja!
+"""Olgu au, olgu au Jumalale kõrges,
+olgu au, olgu au, halleluuja!
 Rahu olgu maa peal alati, inimestest he-a meel. """)
 
 song0(7,"Notre âme attend",
@@ -169,7 +173,7 @@ song(10,"Laudate Dominum","""
 """,
      "Kiitke nüüd Jumalat",
      """Kiitke nüüd Jumalat, kiitke nüüd Jumalat,
-     rahvad kõikjal, alleluja!""")
+     rahvad kõikjal, halleluja!""")
 
 
 song(11,"Oculi nostri","""
@@ -212,7 +216,14 @@ song(16,"Bénissez le Seigneur","""
 song(17,"El Senyor","""
 """,
      "Minu Jumal",
-     """Minu Jumal on minu lootus, minu valgus, mu jõud. Kristus on mu karjane ja temas rõõmustab hing ja meel ja temas rõõmustab hing ja meel.""", remark="""(Ps 28,7)""")
+     """
+
+     Minu Jumal on minu lootus, minu valgus, mu jõud.
+     Kristus on mu karjane
+     ja temas rõõmustab hing ja meel,
+     ja temas rõõmustab hing ja meel.
+
+     """, remark="""(Ps 28,7)""")
 
 
 song(18,"Confitemini Domino","""
@@ -323,6 +334,14 @@ In manus tuas, pater, commendo spiritum meum.
      """Oh Isa, sinu kätte ma annan oma vaimu.""")
 
 
+song(31,"Jubilate Deo (canon)",
+     "",
+     "Hõiska Jumalale",
+     """
+
+     Hõiska Jumalale, hõiska Jumala-le, halleluuja.
+
+     """)
 
 song(33,"Nunc dimittis",
       """
@@ -376,14 +395,27 @@ song(34,"Cantate Domino (canon)","""
      """Issandale laula.
      Halleluuja, halleluuja! Jumalale hõiska. """)
 
+song(35,"Bonum est confidere",
+     """
+     """,
+     "Issand on me pelgupaik",
+     """
+     
+     Issand on me pelgupaik, me loo-tus ta.
+     Issand on kal-ju, mil toe-tuda.
+     
+     """)
 
-
-song(36,"Spiritus Jesu Christi","""
-""",
+song(36,"Spiritus Jesu Christi",
+     """
+     """,
      "Kristus on arm ja elu",
-     """Kristus on arm ja elu,
-     Kristus on sinu valgus---
-ta kinnitab su südant, ta kinnitab su südant.
+     """
+
+     Kristus on arm ja elu,
+     Kristus on sinu valgus:
+     ta kinnitab su südant, ta kinnitab su südant.
+     
      """)
 
 
@@ -460,14 +492,23 @@ O--- Hing rõõmusta. O--- Hing rõõmusta.
 song(42,"Da pacem... in diebus (canon)","""
 """,
      "To rahu (kaanon)",
-     """Too rahu ilmale, too rahu Kristus sa, meie päevadesse.""")
+     """
+
+     Too rahu ilmale,
+     too rahu Kristus sa
+     meie päevadesse.
+
+     """)
 
 
 song(43,"Veni Lumen (choral)","""
 """,
      "Valgusta me südameid (koraal)",
-     """O--- Tule Looja, Püha Vaim.
-O--- Valgusta me südameid, valgusta me südameid.
+     """
+
+     O--- Tule, Looja Püha Vaim.
+     O--- Valgusta me südameid,
+     valgusta me südameid.
      """)
 
 song(44,"Adoramus te, o Christe",
@@ -517,20 +558,24 @@ song(50,"Nada te turbe","""
 song(51,"Dieu ne peut que donner son amour","""
 """,
      "Ainus, mis Jumal anda võib sul",
-     """Ainus, mis Jumal anda võib sul, on ta arm ja halastus. O--- Ta kingib armu. O--- Ta annab andeks""")
+     """
+     Ainus, mis Jumal anda võib sul,
+     on ta arm ja ta halastus.
+     O--- Ta kingib armu.
+     O--- Ta annab andeks.""")
 
 
 song(52,"Veni Sancte Spiritus","""
 """,
      "Tule, Looja Püha Vaim",
-     """Tule, Looja Püha Vaim!""")
+     """Tule, Looja Püha Vaim.""")
 
 
 song(53,"Dona la pace","""
 """,
      "Anna sa rahu",
-     """Anna sa rahu nüüd neile, kes sinusse usuvad,
-     anna, anna sa rahu nüüd neile, anna sa ra-hu.
+     """Anna sa rahu nüüd neile, kes sinusse usuvad.
+     Anna, anna sa rahu nüüd neile, anna sa ra-hu.
      """)
 
 
@@ -552,21 +597,38 @@ song(58,"Misericordias Domini","""
      """On Jumal halastav, armastav, talle ikka laulan ma.""")
 
 
-song(59,"Venite, exultemus Domino","""
-""",
+song(59,"Venite, exultemus Domino",
+     """
+     
+     Venite, exultemus Domino, venite, adoremus.
+     
+     """,
      "Kõik tulge, rõõmustage",
-     """Kõik tulge, rõõmustage Is-sandas, kõik tulge, ülista-ge. Venite, exultemus Domino, venite, adoremus.""")
+     
+     """Kõik tulge, rõõmustage Is-sandas, kõik tulge, ülista-ge.
+     """)
 
 
-song(60,"O Christe Domine Jesu","""
-""",
+song(60,"O Christe Domine Jesu",
+     """
+     O Christe Domine Jesu, O Christe Domine Jesu.
+     """,
      "O Issand Jeesus Kristus",
-     """O Issand Jee-sus Kristus, O Issand Jee-sus Kristus. O Christe Domine Jesu, O Christe Domine Jesu!""")
+     """O Issand Jee-sus Kristus, O Issand Jee-sus Kristus.
+     """)
 
-song(61,"Jubilate coeli (kaanon)","""
-""",
+song(61,"Jubilate coeli (kaanon)",
+     """
+     Jubilate cœli, jubilate mundi, Christus Jesus surrexit vere.
+     
+     """,
      "Hõisake kõik taevad (kaanon)",
-     """Hõisa-ke kõik taevad, hõisake kõik maad,- Kristus Jee-sus ülestõusnud on. Jubilate cœli, jubilate mundi, Christus Jesus surrexit vere.""")
+     """
+
+     Hõisake kõik taevad, hõisake kõik maad,
+     Kristus Jeesus ülestõusnud on.
+     
+     """)
 
 song(62,"Une soif emplit notre âme",
      """
@@ -584,7 +646,12 @@ song(62,"Une soif emplit notre âme",
 song(63,"Benedictus (kaanon)","""
 """,
      "Kiidetud on",
-     """Kiidetud on kes tuleb, / kiidetud on kes tuleb, / me Issanda, me Issanda, / me Issanda ni-mel.""")
+     """
+
+     Kiidetud on kes tuleb,
+     kiidetud on kes tuleb,
+     me Issanda, me Issanda,
+     me Issanda nimel.""")
 
 song0(
     64,"Grande est ta bonté","""
@@ -667,7 +734,14 @@ song(67,"Une soif",
 song(100,"Lumière de nos coeurs","""
 """,
      "Me südamete valgus",
-     """Me südamete valgus, Issand, igavikutee; me looja ja eluandja, ühendab meid su Püha Vaim. Halleluuja! Sa armastus ja arm, meid hüüad enda juurde. Su hääl lõhestab me öö, vastuseks hõiskame me sulle kiitust. Halleluuja!
+     """
+
+     Me südamete valgus, Issand, igavikutee; me looja ja eluandja,
+     meid ühendagu sinu Vaim. Halleluuja!
+     Sa armastus ja arm, meid hüüad enda juurde.
+     Su hääl lõhestab me öö,
+     vastuseks hõiskame me sulle kiitust.
+     Halleluuja!
      """)
 
 song(101,"Rendez grâce au Seigneur","""
@@ -680,10 +754,16 @@ song(101,"Rendez grâce au Seigneur","""
 
 
 
-song(121,"In resurrectione tua","""
-""",
+song(121,"In resurrectione tua",
+     """
+     """,
      "Su ülestõusmises",
-     """Su ülestõusmises, oh Jeesus Kristus, taevas ja maa rõõmustavad (2x). """)
+     """
+
+     Su ülestõusmises, oh Jeesus Kristus,
+     taevas ja maa rõõmustavad.
+
+     """)
 
 
 song(123,"Bóg jest miloscia","""
@@ -693,10 +773,15 @@ song(123,"Bóg jest miloscia","""
 """)
 
 
-song(124,"Beati voi poveri","""
-""",
+song(124,"Beati voi poveri",
+     """
+     """,
      "Nii õndsad, te vaesed",
-     """Nii õndsad, te vaesed, teie päralt Taevariik igavene.""")
+     """
+
+     Nii õndsad, te vaesed, teie päralt taevariik igavene.
+
+     """)
 
 song(125,"The kingdom of God","""
 """,
@@ -779,7 +864,12 @@ song(134,"L'ajuda em vindrà","""
 song(135,"Christe, lux mundi","""
 """,
      "Kristus, me valgus",
-     """Kristus me valgus, kes järgib Sinu teed, on temal eluvalgus, eluvalgus.""")
+     """
+
+     Kristus me valgus, kes järgib sinu teed,
+     on temal eluvalgus, eluvalgus.
+
+     """)
 
 
 song(136,"Esprit consolateur","""
@@ -799,7 +889,7 @@ song(137,"Nothing can ever","""
 song(138,"Kristus, din Ande","""
 """,
      "Kristus, su Vaim",
-     """Kristus, su Vaim meie sees, eluallikas on igavene.""")
+     """Kristus, su Vaim meie sees eluallikas on igavene.""")
 
 song(140,"I am sure I shall see","""
 """,
@@ -815,10 +905,17 @@ song(140,"I am sure I shall see","""
      headust elavate maal. Oota Issandat, ole vahva, ja su süda olgu
      kindel! Oh, oota Issandat!  """)
 
-song(141,"Que j'exulte et jubile","""
-""",
+song(141,"Que j'exulte et jubile",
+
+     """
+     """,
      "Sinu heldusest",
-     """O--- Sinu heldus mu hinge rõõmustab!""")
+     """
+
+     O--- Sinu heldusest rõõmustab mu hing!
+
+
+     """)
 
 song(142,"Cantate Domino canticum novum","""
 """,
@@ -861,17 +958,20 @@ song(145,"Dominus Spiritus est","""
      Jumal on Vaim, kes teeb elavaks.
      Jumal on Vaim, kes teeb elavaks. """)
 
-# todo 146 : in posttaize 05.08.2006 ist nur ein Satz. Was ist richtig?
 song(146,"Ad te Jesu Christe","""
 """,
      "Su poole, oh Jeesus",
      """
 
-     Su poole, oh Jee-sus ma tõstan o-ma hinge. Mu Lunasta-ja, su
-     peale loodan.  Su poole, oh Jee-sus nüüd oma hinge ma tõstan. Me
-     kõigi Pääst-ja, su peale loodan.
+     Su poole, oh Jee-sus ma tõstan o-ma hinge.
+     Mu Lunasta-ja, su peale loodan.
 
-""")
+     """,remark="""
+     
+     Su poole, oh Jee-sus nüüd oma hinge ma tõstan.
+     Me kõigi Pääst-ja, su peale loodan.
+
+     """)
 
 song(147,"Seigneur, tu gardes mon âme",
      """
@@ -894,10 +994,16 @@ song(148,"Frieden, Frieden","""
 
      """)
 
-song(149,"Viešpatie, tu viska žinai","""
-""",
+song(149,"Viešpatie, tu viska žinai",
+     """
+     """,
      "Issand minust kõike sa tead",
-     """Issand, minust kõike sa tead. Sina tead, oled mul armas.""",
+     """
+
+     Issand, minust kõike sa tead. Sina tead, oled mul armas.
+     O--- O--- 
+
+     """,
      remark="(Joh 21,17)")
 
 song(150,"Behüte mich Gott",
@@ -932,7 +1038,7 @@ song(152,"Fiez-vous en Lui","""
      "Usaldame sind",
      """Usaldame sind, ei karda me.
      Su rahu hoiab me südameid.
-     Usaldame sind. Alleluja, alleluja!""")
+     Usaldame sind. Halleluja, halleluja!""")
 
 
 """
@@ -950,8 +1056,6 @@ Järgmised tõlged on veel arutelus:
 Sa, kes meid hoiad, armastad ja andeks annad, kiitust sul lauldes paraneb me murtud süda. 
 (lauluga 28 on mingi copyrightiga seotud probleem ja paistab, et seda laul ei tohi tõlgida ega trükida... kui sain ise aru, miks see nii on, siis annan teada.)
 
-31 Jubilate Deo (kaanon) (jääb samaks)
-
 32 Mon âme se repose
 
 (a) Vaid Jumalas võib leida rahu mu hing, sest temast tuleb mu pääs. Jumalas leiab rahu minu hing, leiab rahu mu hing.
@@ -961,12 +1065,6 @@ Sa, kes meid hoiad, armastad ja andeks annad, kiitust sul lauldes paraneb me mur
 (b) Vaid Jumalas võib leida rahu mu hing, on temas lu-nastus. Jumalas leiab rahu minu hing, leiab ra-hu hing.
 
 (c) Vaid Jumalas võib leida rahu mu hing, on seal mu lu-nastus. Jumalas leiab rahu minu hing, leiab ra-hu hing.
-
-
-35 Bonum est confidere
-(a) Issand on me pelgupaik, me lootus ta. Issand on kalju, mil toetuda.
-(c) Hea on ikka usaldada Jumalat, hea on mul loota ta peale.
-
 
 
 47 Per crucem 
