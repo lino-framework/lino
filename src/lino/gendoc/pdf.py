@@ -52,6 +52,7 @@ def html2pdf(k,v):
     raise "html2pdf(%r,%r)" % (k,v)
 
 class PdfDocument(html.Document):
+    extension=".pdf"
     
     def __init__(self,stylesheet=None,**kw):
         if stylesheet is None:
@@ -172,7 +173,8 @@ class PdfDocument(html.Document):
         frag.rise=style.rise
         frag.underline=style.underline
         if elem.__class__ == html.CDATA:
-            frag.text=elem.text
+            frag.text=" ".join(elem.text.split())
+            #frag.text=elem.text
             yield frag
             return
         if elem.__class__ == html.BR:
@@ -416,14 +418,17 @@ view it. Default for FILE is "tmp.pdf".
     
 
     def run(self,body,ofname=None,**kw):
+        
+        if True:
+            doc=PdfDocument()
+        else:
+            doc=html.HtmlDocument()
+            
         if ofname is None:
             if len(self.args) > 0:
                 ofname=self.args[0]
             else:
-                ofname="tmp.pdf"
-            
-        doc=PdfDocument()
-
+                ofname="tmp"+doc.extension
         try:
             self.status("Preparing...")
             #try:

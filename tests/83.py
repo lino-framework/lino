@@ -225,13 +225,48 @@ Nested table:
         
         ""","""
 
-<BODY><TABLE class="EmptyTable"><TR><TD align="left">%(number)d</TD><TD valign="top">
-        <H1>%(title2)s (%(title1)s)</H1>
+        <BODY><TABLE class="EmptyTable"><TR><TD
+        align="left">%(number)d</TD><TD valign="top"> <H1>%(title2)s
+        (%(title1)s)</H1>
 
-        <TABLE class="EmptyTable"><TR><TD valign="top">%(text2)s</TD><TD align="left">%(text1)s</TD></TR></TABLE>
+        <TABLE class="EmptyTable"><TR><TD
+        valign="top">%(text2)s</TD><TD
+        align="left">%(text1)s</TD></TR></TABLE>
 
         </TD></TR></TABLE></BODY>        
 
+        """)
+
+        # fixed "InvalidRequest: BR not allowed in TD"
+        self.memo2xml("""
+
+        <table class="EmptyTable">
+        <tr>
+        <td valign="top">blabla
+        <br>blublu
+        </td>
+        </table>
+        ""","""
+        <BODY><TABLE class="EmptyTable"><TR><TD valign="top">blabla
+        <BR/>blublu
+        </TD></TR></TABLE></BODY>        
+        """)
+        
+        self.memo2xml("""
+
+        <table class="EmptyTable">
+        <tr>
+        <td valign="top">blabla
+
+        </td>
+        <td align="left"></td>
+        </table>
+        ""","""
+        InvalidRequest: P not allowed in TR
+
+        Die leere Zeile am Ende des ersten TD hat self.parsep gesetzt,
+        und dadurch wird im zweiten TD ein neuer P gestartet...
+        
         """)
         
         self.memo2xml("""

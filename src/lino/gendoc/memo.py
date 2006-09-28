@@ -24,9 +24,9 @@ from lino.gendoc.elements import InvalidRequest
 
 class MemoParser(HTMLParser):
 
-    def __init__(self,story,style,**kw):
+    def __init__(self,container,style,**kw):
         HTMLParser.__init__(self)
-        self.story=story
+        self.container=container
         self.style=style
         self.kw=kw
         self.stack=[]
@@ -43,7 +43,7 @@ class MemoParser(HTMLParser):
             self._append(p)
             #self.autopar()
         tail=self.stack[-1]
-        #print self.story.toxml()
+        #print self.container.toxml()
         #print "%r -> %r" % (data, tail)
         #raw_input()
         if html.CDATA in tail.__class__.allowedContent:
@@ -74,7 +74,7 @@ class MemoParser(HTMLParser):
 
     def handle_charref(self,name):
         """process a character reference of the form "&#ref;"."""
-        print "handle_charref", name
+        #print "handle_charref", name
         raise NotImplemented
     
         
@@ -92,12 +92,13 @@ class MemoParser(HTMLParser):
             if len(self.stack) == 0:
                 if elem.flowable:
                     self.stack.append(elem)
-                    self.story.append(elem)
+                    self.container.append(elem)
                     return
+                # create automagic paragraph
                 # e.g. memo starts with "<tt>"
                 p=html.P(xclass=self.style,**self.kw)
                 self._append(p)
-                # don't return
+                # don't return but loop again
             try:
                 self.stack[-1].append(elem)
                 self.stack.append(elem)
@@ -111,6 +112,7 @@ class MemoParser(HTMLParser):
                     #print "<%s> automagically closes <%s>" % (
                     #    elem.tag(),
                     #    popped.tag())
+                    # don't return but loop again
                 else:
                     raise
         
@@ -134,7 +136,7 @@ class MemoParser(HTMLParser):
         if self.parsep: 
             self.parsep=False
             if not elem.flowable:
-            #if not elem.__class__ in (P,UL,OL,TABLE):
+                #print "automagic P for nonflowable", elem.tag()
                 self._append(html.P(xclass=self.style,**self.kw))
         self._append(elem)
         return elem
@@ -146,7 +148,7 @@ class MemoParser(HTMLParser):
         self.stack.pop()
 
     def handle_starttag(self, tag, attrs):
-        #print "<%s>" % tag
+        #print "found <%s>" % tag
         #print "handle_starttag(%s)"%tag
         elem=self.do_starttag(tag,attrs)
         if not isinstance(elem,html.Container):
@@ -154,7 +156,7 @@ class MemoParser(HTMLParser):
             self.stack.pop()
 
     def handle_endtag(self, tag):
-        #print "</%s>" % tag
+        #print "found </%s>" % tag
         while True:
             if len(self.stack) == 0:
                 raise ParseError("stack underflow")

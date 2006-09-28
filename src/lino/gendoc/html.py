@@ -181,6 +181,7 @@ class A(SPAN):
 
 
 P.autoClosedByStart=(P,LI,UL,OL,TABLE)
+P.autoClosedByEnd=(LI,UL,OL,TABLE,TD,TH,TR)
 TD.autoClosedByStart=(TD,TH,TR)
 TD.autoClosedByEnd=(TH,TR,TABLE)
 TH.autoClosedByStart=(TD,TH,TR)
@@ -192,7 +193,7 @@ LI.autoClosedByEnd=(UL,)
 
 LI.allowedContent = TD.allowedContent \
                     = TH.allowedContent \
-                    = (CDATA,P,SPAN,IMG,TABLE)
+                    = (CDATA,P,BR,SPAN,IMG,TABLE)
     
 
     
@@ -311,10 +312,25 @@ class BODY(Story):
 ##         wr(escape(self.label))
 ##         wr('</a>')
 
+## def html2css(k,v):
+##     if k == "align":
+##         if v.lower() == "left": return "alignment",TA_LEFT
+##         if v.lower() == "right": return "alignment",TA_RIGHT
+##         if v.lower() == "center" : return "alignment",TA_CENTER
+##     elif k == "valign":
+##         if v.lower() == "top": return "vAlign",VA_TOP
+##         if v.lower() == "bottom": return "vAlign",VA_BOTTOM
+##         if v.lower() == "center": return "vAlign",VA_MIDDLE
+##     raise "html2pdf(%r,%r)" % (k,v)
+
+
+class FakeStyle:
+    def update(self,**kw):
+        pass
 
 
 class Document:
-
+    extension=None
     def __init__(self,
                  title="Untitled",
                  date=None,
@@ -328,8 +344,30 @@ class Document:
     def createStory(self):
         return BODY(self)
 
+    def getPageNumber(self):
+        return 1
+
+    def getElementStyle(self,elem,parent=None):
+        return FakeStyle()
+##         stName=elem.xclass 
+##         if stName is None:
+##             stName=elem.tag()
+##         style=self.stylesheet[stName]
+##         d={}
+##         for k,v in elem._attribs.items():
+##             if v is not None:
+##                 if k != 'xclass':
+##                     kk,vv=html2css(k,v)
+##                     d[kk]=vv
+##         if len(d):
+##             return style.child(**d)
+##         return style
+        
+
         
 class HtmlDocument(Document):
+    
+    extension=".html"
     
     def saveas(self,filename,showOutput=False):
         f=file(filename,"wt")

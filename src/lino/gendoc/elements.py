@@ -155,7 +155,7 @@ class Container(Element):
                 return elem
         raise InvalidRequest(
             "%s not allowed in %s" %
-            (elem.__class__,self.__class__))
+            (elem.__class__.__name__,self.__class__.__name__))
 
     def peek(self,*key):
         if self.primaryKey is None:
