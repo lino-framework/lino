@@ -17,9 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-__docformat__ = 'reStructuredText'
+__micro__ = 22
 
-__micro__ = 21
+__date__ = "20060930"
 
 __version__ = "0.6.%d" % __micro__
 
