@@ -84,9 +84,8 @@ class Win32TextPrinter(TextPrinter):
                  printerName=None,
                  spoolFile=None,
                  lpi=6,
-                 #fontName="Courier New",
+                 fontName=None,
                  jobName="Win32PrinterDocument",
-                 #useWorldTransform=False,
                  **kw):
         
         TextPrinter.__init__(self,
@@ -146,6 +145,8 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         """
         
         self.logfont.lfPitchAndFamily=win32con.FIXED_PITCH
+        if fontName is not None:
+            self.logfont.lfFaceName=fontName
         
         self.logfont.lfCharSet=win32con.OEM_CHARSET
         #self.logfont.lfCharSet=win32con.DEFAULT_CHARSET
@@ -174,6 +175,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         #self.useWorldTransform=useWorldTransform
         self.spoolFile=spoolFile
         self.jobName=jobName
+        #self.fontName=fontName
 
         
         if printerName is None:

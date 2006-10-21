@@ -11,9 +11,10 @@ options:
   -pPRINTERNAME, --printer=PRINTERNAME
                         print on PRINTERNAME rather than on Default Printer.
   -eENCODING, --encoding=ENCODING
-                        FILE is encoded using ENCODING (rather than
-                        sys.stdin.encoding).
+                        FILE is encoded using ENCODING rather than
+                        sys.stdin.encoding.
   -cCOPIES, --copies=COPIES
                         print NUM copies.
+  --fontName=FONTNAME   use the named font instead of "Courier New".
   -oSPOOLFILE, --output=SPOOLFILE
-                        write to SPOOLFILE rather than really printing.
+                        write to SPOOLFILE instead of really printing.

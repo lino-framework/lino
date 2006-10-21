@@ -55,7 +55,7 @@ print on PRINTERNAME rather than on Default Printer.""",
     
         parser.add_option("-e", "--encoding",
                           help="""\
-FILE is encoded using ENCODING (rather than sys.stdin.encoding).""",
+FILE is encoded using ENCODING rather than sys.stdin.encoding.""",
                           action="store",
                           type="string",
                           dest="encoding",
@@ -69,9 +69,17 @@ print NUM copies.""",
                           dest="copies",
                           default=1)
     
+        parser.add_option("--fontName",
+                          help="""\
+use the named font instead of "Courier New".""",
+                          action="store",
+                          type="string",
+                          dest="fontName",
+                          default="Courier New")
+
         parser.add_option("-o", "--output",
                           help="""\
-write to SPOOLFILE rather than really printing.""",
+write to SPOOLFILE instead of really printing.""",
                           action="store",
                           type="string",
                           dest="spoolFile",
@@ -99,6 +107,7 @@ write to SPOOLFILE rather than really printing.""",
                     self.options.spoolFile,
                     #useWorldTransform=self.options.useWorldTransform,
                     encoding=self.options.encoding,
+                    fontName=self.options.fontName,
                     session=self)
                     #charset=winprn.OEM_CHARSET)
                 d.readfile(inputfile)

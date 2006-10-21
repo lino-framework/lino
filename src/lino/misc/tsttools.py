@@ -178,8 +178,10 @@ class TestCase(unittest.TestCase):
         self.keepTemporaryFiles = False
         #self.ui = console.CaptureConsole(verbosity=-2,batch=True)
         self._oldToolkit=syscon.getSystemConsole()
-        self.toolkit=CaptureConsole(verbosity=self.verbosity,
-                                    batch=self.batch)
+        self.toolkit=CaptureConsole(
+            encoding="latin1",
+            verbosity=self.verbosity,
+            batch=self.batch)
         syscon.setSystemConsole(self.toolkit)
 
     def tearDown(self):
@@ -225,6 +227,10 @@ class TestCase(unittest.TestCase):
         l1 = observed.split()
         l2 = expected.split()
 
+        #print l1
+        #print "---"
+        #print l2
+        
         if l1 == l2: return
 
         a = StringIO()

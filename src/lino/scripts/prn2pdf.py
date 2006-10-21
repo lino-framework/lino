@@ -54,7 +54,7 @@ write to OUTFILE rather than FILE.pdf""",
     
         parser.add_option("-e", "--encoding",
                           help="""\
-FILE is encoded using ENCODING (rather than sys.stdin.encoding).""",
+FILE is encoded using ENCODING instead of sys.stdin.encoding.""",
                           action="store",
                           type="string",
                           dest="encoding",

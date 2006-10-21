@@ -61,8 +61,8 @@ def body(story):
         #showBoundary=True,
         leftMargin=15*mm,
         rightMargin=15*mm,
-        topMargin=18*mm,
-        bottomMargin=155*mm, 
+        topMargin=14*mm,
+        bottomMargin=153*mm, 
         # 297/2 = 148
         #footer=footer,
         header=header,
@@ -150,12 +150,15 @@ song(6,"Gloria ... et in terra pax (canon)","""
 olgu au, olgu au, halleluuja!
 Rahu olgu maa peal alati, inimestest he-a meel. """)
 
-song0(7,"Notre âme attend",
-      "",
-      "Sind Issand",
+song(7,"Notre âme attend",
+     "",
+     "Sind Issand",
       """
+      Sind, Issand, ootab me hing, sa meie südamete rõõm.
+      """,remark="""
+
       (a) Sind, Issand, ootab me hing, sest sinust tuleb meie rõõm.
-      (b) Sind, Issand, ootab me hing, sa meie südamete rõõm.
+      
       """)
 
 
@@ -309,11 +312,22 @@ O--- Halleluu-ja, halleluuja!
 
 song0(28,"")
 
-song0(29,
+song(29,
       "Ostende nobis Domine","""
       """,
       "Ostende nobis (kaanon)","""
-      Ilmuta meile, Issand, sa oma armu ja heldust.
+      Sa meile Issand osuta
+      oma halastust ja armu.
+      Aamen! Aamen!
+      Maaranata! Maaranata!
+      """,remark="""
+
+      Koraali tekst:
+      Sa meile Issand, Issand osuta oma halastust ja armu,
+      sopran: oma halastust ja armu.
+      teised: armu, armu.
+      
+      (a) Ilmuta meile, Issand, sa oma armu ja heldust.
       Aamen! Aamen! Maranata! Maranata!
 
       (a) Osuta meile, Is-sand, osuta meile halastust. 

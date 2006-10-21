@@ -21,13 +21,6 @@ import locale
 
 """
 
-This module is intended to be used from your sitecustomize.py as
-follows:
-
-site.addsitedir(r"xxx\svnwork\lino\trunk\src")
-from lino.customize import setlocalencoding
-setlocalencoding()
-
 """
 
 # In a normal Python installation the function setdefaultencoding() is
@@ -60,6 +53,18 @@ def getlocalencoding():
     return locale.getdefaultlocale()[1]
 
 def setlocalencoding():
+    
+    """Set system default encoding according to locale settings.
+
+    This must be called during site.py because
+    sys.setdefaultencoding() is no longer available.
+
+      site.addsitedir(r"local\path\to\lino\trunk\src")
+      from lino.customize import setlocalencoding
+      setlocalencoding()
+
+    
+    """
     if sys.getdefaultencoding() != 'ascii': return
     if not hasattr(sys,'setdefaultencoding'): return
     loc=getlocalencoding()

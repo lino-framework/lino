@@ -50,8 +50,7 @@ class Session:
     def configure(self):
         pass
         
-    def buildMessage(self,msg,*args,**kw):
-        assert len(kw) == 0, "kwargs not yet implemented"
+    def buildMessage(self,msg,*args):
         if len(args) == 0:
             return msg
         return msg % args
@@ -75,10 +74,7 @@ class Session:
         return self.toolkit.show_verbose(self,*args,**kw)
     def error(self,*args,**kw):
         return self.toolkit.show_error(self,*args,**kw)
-##     def critical(self,*args,**kw):
-##         return self.toolkit.show_critical(*args,**kw)
-##     def status(self,*args,**kw):
-##         return self.toolkit.show_status(self,*args,**kw)
+
     def logmessage(self,*args,**kw):
         return self.toolkit.logmessage(self,*args,**kw)
     

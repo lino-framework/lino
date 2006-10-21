@@ -40,30 +40,30 @@ except ImportError,e:
 # Unicode Tutorial
 # (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
 
-def rewriter(from_encoding,to_stream,encoding):
-    if encoding is None and hasattr(to_stream,'encoding'):
-        encoding=to_stream.encoding
-    #print 'rewriter(%r,%r)' % (from_encoding, encoding)
-    if encoding is None: return to_stream
-    if encoding == from_encoding: return to_stream
+## def rewriter(from_encoding,to_stream,encoding):
+##     if encoding is None and hasattr(to_stream,'encoding'):
+##         encoding=to_stream.encoding
+##     #print 'rewriter(%r,%r)' % (from_encoding, encoding)
+##     if encoding is None: return to_stream
+##     if encoding == from_encoding: return to_stream
 
-    (e,d,sr,sw) = codecs.lookup(encoding)
-    #unicode_to_fs = sw(to_stream)
-    unicode_to_fs = sw(to_stream,errors='replace')
+##     (e,d,sr,sw) = codecs.lookup(encoding)
+##     #unicode_to_fs = sw(to_stream)
+##     unicode_to_fs = sw(to_stream,errors='replace')
 
-    (e,d,sr,sw) = codecs.lookup(from_encoding)
+##     (e,d,sr,sw) = codecs.lookup(from_encoding)
     
-    class StreamRewriter(codecs.StreamWriter):
+##     class StreamRewriter(codecs.StreamWriter):
 
-        encode = e
-        decode = d
+##         encode = e
+##         decode = d
 
-        def write(self,object):
-            data,consumed = self.decode(object,self.errors)
-            self.stream.write(data)
-            return len(data)
+##         def write(self,object):
+##             data,consumed = self.decode(object,self.errors)
+##             self.stream.write(data)
+##             return len(data)
 
-    return StreamRewriter(unicode_to_fs,errors='replace')
+##     return StreamRewriter(unicode_to_fs,errors='replace')
 
 
 class BaseToolkit:
@@ -141,7 +141,9 @@ class Console(BaseToolkit):
         if self._batch:
             self.logmessage(msg)
             return default
-        return raw_input(msg)
+        if msg is not None:
+            self.write(msg)
+        return raw_input()
             
         
     def isBatch(self):
@@ -265,44 +267,41 @@ class Console(BaseToolkit):
             print details
         raise
 
-    def show_warning(self,sess,msg,*args,**kw):
+    def show_warning(self,sess,msg,*args):
         "Display message if verbosity is normal. Logged."
-        msg = sess.buildMessage(msg,*args,**kw)
+        msg = sess.buildMessage(msg,*args)
         self.logmessage(msg)
         #self.writelog(msg)
         if self._verbosity >= 0:
             self.writeln(msg)
             self.last_updated=0.0 # redisplay status
             self.on_breathe(sess)
-            #sess.breathe()
 
-    def show_notice(self,sess,msg,*args,**kw):
+    def show_notice(self,sess,msg,*args):
         "Display message if verbosity is normal. Logged."
         if self._verbosity >= 0:
-            msg = sess.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args)
             self.logmessage(msg)
             self.writeln(msg)
             self.last_updated=0.0 # redisplay status
             self.on_breathe(sess)
-            #sess.breathe()
 
-    def show_verbose(self,sess,msg,*args,**kw):
+    def show_verbose(self,sess,msg,*args):
         "Display message if verbosity is high. Not logged."
         if self._verbosity > 0:
-            msg = sess.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args)
             self.writeln(msg)
             self.last_updated=0.0 # redisplay status
             self.on_breathe(sess)
         
-    def show_debug(self,sess,msg,*args,**kw):
+    def show_debug(self,sess,msg,*args):
         "Display message if verbosity is very high. Not logged."
         if self._verbosity > 1:
-            msg = sess.buildMessage(msg,*args,**kw)
+            msg = sess.buildMessage(msg,*args)
             self.writeln(msg)
             #self.out.write(msg + "\n")
             self.last_updated=0.0 # redisplay status
             self.on_breathe(sess)
-            #sess.breathe()
 ##         else:
 ##             print "%s.verbositiy %d" % (self,self._verbosity)
 
@@ -582,7 +581,9 @@ class TtyConsole(Console):
             self.logmessage(msg)
             return default
         self.stdout.write(self._empty_line+"\r")
-        return raw_input(msg)
+        if msg is not None:
+            self.write(msg)
+        return raw_input()
 
     def on_breathe(self,task):
         if self.abortRequested():

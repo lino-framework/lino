@@ -25,37 +25,41 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+
 from lino.textprinter.textprinter import FileTextPrinter, \
      ParserError, OperationFailed
 
-HACK_BOXCHARS = {
+## HACK_BOXCHARS = {
     
-    # generated using tests/etc/3.py
+##     # generated using tests/etc/3.py
 
-    u'\u250c': '+',
-    u'\u2500': '-',
-    u'\u252c': '+',
-    u'\u2510': '+',
-    u'\u2502': '|',
-    u'\u251c': '+',
-    u'\u253c': '+',
-    u'\u2524': '+',
-    u'\u2514': '+',
-    u'\u2534': '+',
-    u'\u2518': '+',
+##     u'\u250c': '+',
+##     u'\u2500': '-',
+##     u'\u252c': '+',
+##     u'\u2510': '+',
+##     u'\u2502': '|',
+##     u'\u251c': '+',
+##     u'\u253c': '+',
+##     u'\u2524': '+',
+##     u'\u2514': '+',
+##     u'\u2534': '+',
+##     u'\u2518': '+',
               
-    u'\u2554': '+',
-    u'\u2550': '-',
-    u'\u2566': '+',
-    u'\u2557': '+',
-    u'\u2551': '|',
-    u'\u2560': '+',
-    u'\u256c': '+',
-    u'\u2563': '+',
-    u'\u255a': '+',
-    u'\u2569': '+',
-    u'\u255d': '+',
-    }
+##     u'\u2554': '+',
+##     u'\u2550': '-',
+##     u'\u2566': '+',
+##     u'\u2557': '+',
+##     u'\u2551': '|',
+##     u'\u2560': '+',
+##     u'\u256c': '+',
+##     u'\u2563': '+',
+##     u'\u255a': '+',
+##     u'\u2569': '+',
+##     u'\u255d': '+',
+##     }
 
 
 
@@ -67,7 +71,7 @@ class Status:
                  psfontname="Courier",
                  bold=False,
                  ital=False,
-                 leading=14.4):
+                 leading=12):
         self.ital = ital
         self.bold = bold
         self.psfontname = psfontname
@@ -86,6 +90,14 @@ class PdfTextPrinter(FileTextPrinter):
                                  pageSize=A4,
                                  margin=5*mm,
                                  **kw)
+
+        pdfmetrics.registerFont(TTFont("Courier", "cour.ttf"))
+        pdfmetrics.registerFont(TTFont("Courier-Bold", "courbd.ttf"))
+        pdfmetrics.registerFont(TTFont("Courier-Oblique",
+                                       "couri.ttf"))
+        pdfmetrics.registerFont(TTFont("Courier-BoldOblique",
+                                       "courbi.ttf"))
+        
         
         self.canvas = canvas.Canvas(filename,
                                     #encoding=self.coding,
@@ -171,19 +183,18 @@ class PdfTextPrinter(FileTextPrinter):
 ##             text = text.encode(self.coding)
 ##         self.textobject.textOut(text)
 ##         return
-            
-        for k,v in HACK_BOXCHARS.items():
-            text = text.replace(k,v)
 
-        #print "write(%r)" % text
-        #text = text.encode("iso-8859-1","replace")
-        try:
-            text = text.encode("iso-8859-1","strict")
-        except UnicodeError, e:
-            print e
-            print repr(text)
-            #print HACK_BOXCHARS
-            text = text.encode("iso-8859-1","replace")
+            
+        #for k,v in HACK_BOXCHARS.items():
+        #    text = text.replace(k,v)
+
+        if False: # reportlab version 1.x
+            try:
+                text = text.encode("iso-8859-1","strict")
+            except UnicodeError, e:
+                print e
+                print repr(text)
+                text = text.encode("iso-8859-1","replace")
 
         self.textobject.textOut(text)
         

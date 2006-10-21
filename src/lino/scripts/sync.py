@@ -64,12 +64,12 @@ where SRC and DEST are two directories to be synchronized.
             dest="recurse",
             default=False)
 
-        parser.add_option(
-            "-p", "--progress",
-            help="show progress bar",
-            action="store_true",
-            dest="showProgress",
-            default=False)
+##         parser.add_option(
+##             "-p", "--progress",
+##             help="show progress bar",
+##             action="store_true",
+##             dest="showProgress",
+##             default=False)
     
     def run(self):
 
@@ -94,9 +94,7 @@ where SRC and DEST are two directories to be synchronized.
         else:
             raise UsageError("needs 1 or 2 arguments")
 
-        self.runtask(job,
-                     showProgress=self.options.showProgress,
-                     safely=self.options.safely)
+        self.runtask(job,safely=self.options.safely)
                      
 
 # Sync().main()

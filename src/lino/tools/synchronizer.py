@@ -62,20 +62,24 @@ class NeitherFileNorDirectory(Exception): pass
 
 from lino.i18n import itr,_
 itr("Start?",
-   de="Arbeitsvorgang starten?",
+   de=u"Arbeitsvorgang starten?",
    fr=u"Démarrer?")
 itr("%d target files are NEWER! Are you sure?",
-    de="%d Zieldateien sind NEUER! Sind Sie sicher?")
+    de=u"%d Zieldateien sind NEUER! Sind Sie sicher?",
+    fr=u"%d fichiers cible sont plus récents! Etes-vous certain?")
 
 itr("Counting files...",
     de=u"Dateien zählen..."
     )
 itr("Analyzing %s ...",
-    de=u"Analysiere %s ..."
+    de=u"Analysiere %s ...",
+    fr=u"Analyse de %s en cours ..."
     )
 itr("Nothing to do",de="Nichts zu tun")
 itr("Synchronizing %s ...",
-    de=u"Synchronisiere %s ...")
+    de=u"Synchronisiere %s ...",
+    fr=u"Synchronisation de %s en cours ...",
+    )
 itr("Source directory '%s' doesn't exist.",
     de="Ursprungsordner '%s' existiert nicht.")
 itr("Target directory '%s' doesn't exist.",
@@ -149,7 +153,6 @@ class Synchronizer(Progresser):
         #self.done_update_dir = 0
         self.done_copy_dir = 0
         self.projects=[]
-        #self.showProgress=showProgress
 
         self._statusAnalysing = _("keep %d, update %d (%d newer), "
                                   "copy %d, delete %d files.")
@@ -163,7 +166,7 @@ class Synchronizer(Progresser):
         
 
 
-    def run(self,showProgress=False,safely=True):
+    def run(self,safely=True):
         #self.session=task.session
         #self.task=task
         #self.maxval=0
@@ -473,7 +476,7 @@ class SyncProject(Progresser):
                          os.path.join(target,fn))
         
     def copy_file(self,src,target):
-        self.verbose(_("copy %s") % target)
+        self.verbose(_("copy %s"), target)
         #self.verbose(_("copy file %s to %s") % (src,target))
         if self.job.simulate:
             self.job.count_copy_file += 1

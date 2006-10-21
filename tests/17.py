@@ -79,7 +79,7 @@ German
         for row in LANGS.query(orderBy="name"):
             s += row.name + "\n"
         #print s
-        self.assertEquivalent(s,"""\
+        self.assertEquivalent(s,u"""\
 Allemand
 Anglais
 Estonien
