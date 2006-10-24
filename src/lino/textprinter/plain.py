@@ -25,13 +25,14 @@ class PlainTextPrinter(TextPrinter):
         if writer is None:
             """
             
-            tests/75.py fails if i take stdout from
+            tests/75.py fails if I take stdout from
             self.session.toolkit because TestCase.setUp() only does
             setSystemConsole() while self.session remains the RunTests
             instance.
             
             """
-            writer=syscon.getSystemConsole().stdout
+            writer=syscon.getSystemConsole()
+            #writer=syscon.getSystemConsole().stdout
             #writer=self.session.toolkit.stdout
             #writer=sys.stdout
         self._writer = writer
@@ -73,6 +74,6 @@ class PlainTextPrinter(TextPrinter):
         self._writer.write(self.leftBorder+ln+self.rightBorder+"\n")
         self.textobject = ""
         
-    def insertImage(self,line):
-        raise NotImplementedError
+    def insertImage(self,*args,**kw):
+        pass
 

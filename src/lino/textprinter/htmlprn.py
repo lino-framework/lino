@@ -29,6 +29,7 @@ class HtmlTextPrinter(FileTextPrinter):
     def __init__(self,filename,**kw):
         FileTextPrinter.__init__(self,filename,**kw)
         self.writer = file(self.filename,"w")
+        self.cpl=100
         
     def createTextObject(self):
         return TextObject()
@@ -40,7 +41,11 @@ class HtmlTextPrinter(FileTextPrinter):
         self.writer.write('</PRE>')
         
     def onBeginDoc(self):
-        self.writer.write('<HTML><BODY>')
+        self.writer.write("""
+<HTML><HEAD>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</HEAD><BODY>
+        """)
     
     def onEndDoc(self):
         self.writer.write('</BODY></HTML>')
@@ -65,6 +70,7 @@ class HtmlTextPrinter(FileTextPrinter):
             self.writer.write('</u>')
 
     def write(self,text):
+        text=text.encode('utf-8')
         self.writer.write(escape(text))
             
         
@@ -72,6 +78,7 @@ class HtmlTextPrinter(FileTextPrinter):
         self.writer.write("\n")
         
         
-    def insertImage(self,line):
-        raise NotImplementedError
+    def insertImage(self,filename,w=None,h=None,dx=None,dy=None):
+        self.writer.write("""<img src="%s">""" % filename)
+        
 

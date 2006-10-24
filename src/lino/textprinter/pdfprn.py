@@ -26,7 +26,7 @@ from reportlab.lib.units import inch,mm
 from reportlab.lib.pagesizes import letter, A4
 
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.ttfonts import TTFont, TTFError
 
 
 from lino.textprinter.textprinter import FileTextPrinter, \
@@ -85,23 +85,35 @@ class Status:
 
 class PdfTextPrinter(FileTextPrinter):
     extension=".pdf"
+    ratio=1.1
+    charwidth=0.6
     def __init__(self,filename,**kw):
         FileTextPrinter.__init__(self,filename,
                                  pageSize=A4,
                                  margin=5*mm,
                                  **kw)
+        
 
-        pdfmetrics.registerFont(TTFont("Courier", "cour.ttf"))
-        pdfmetrics.registerFont(TTFont("Courier-Bold", "courbd.ttf"))
-        pdfmetrics.registerFont(TTFont("Courier-Oblique",
-                                       "couri.ttf"))
-        pdfmetrics.registerFont(TTFont("Courier-BoldOblique",
-                                       "courbi.ttf"))
+        try:
+            font=TTFont("Courier", "cour.ttf")
+##             print "pdfprn.py", font.face.bbox,\
+##                   font.face.ascent, font.face.descent
+##             minx,miny,maxx,maxy = font.face.bbox
+##             boxheight=font.face.ascent-font.face.descent
+##             #self.ratio=float(maxy-miny) / font.face.defaultWidth
+##             self.ratio=float(boxheight) / font.face.defaultWidth
+##             print "ratio=",self.ratio
+            pdfmetrics.registerFont(font)
+            pdfmetrics.registerFont(TTFont("Courier-Bold", "courbd.ttf"))
+            pdfmetrics.registerFont(TTFont("Courier-Oblique",
+                                           "couri.ttf"))
+            pdfmetrics.registerFont(TTFont("Courier-BoldOblique",
+                                           "courbi.ttf"))
+        except TTFError,e:
+            pass # continue with the Adobe builtin version
         
         
-        self.canvas = canvas.Canvas(filename,
-                                    #encoding=self.coding,
-                                    pagesize=A4)
+        self.canvas = canvas.Canvas(filename,pagesize=A4)
         self.textobject = None
         self.status = Status()
 
@@ -158,7 +170,11 @@ class PdfTextPrinter(FileTextPrinter):
 ##         TextPrinter.onSetFont(self)
 
     def prepareFont(self):
-        if self.status.lpi is not None:
+        if not self.fontChanged: return
+        self.fontChanged=False
+        if self.status.lpi is None:
+            self.status.leading = self.status.size * self.ratio
+        else:
             self.status.leading = 72 / self.status.lpi
 
         psfontname = self.status.psfontname
@@ -176,8 +192,7 @@ class PdfTextPrinter(FileTextPrinter):
 
     def write(self,text):
 
-        if self.fontChanged:
-            self.prepareFont()
+        self.prepareFont()
 
 ##         if self.coding is not None:
 ##             text = text.encode(self.coding)
@@ -207,12 +222,11 @@ class PdfTextPrinter(FileTextPrinter):
             if s.endswith("mm"):
                 return float(s[:-2]) * mm
             if s.endswith("ch"):
-                self.flush()
-                #assert self.font is not None
-                return float(s[:-2]) * self.status.size
+                #print "1ch=%s"%self.status.size
+                return float(s[:-2]) * self.status.size * self.charwidth
             if s.endswith("ln"):
-                self.flush()
-                return float(s[:-2]) * self.status.leading
+                #print "1ln=%s"%self.status.leading
+                return float(s[:-2]) * self.status.leading 
             return float(s) * mm
         except ValueError,e:
             raise ParserError("invalid length: %r" % s)
@@ -242,8 +256,7 @@ class PdfTextPrinter(FileTextPrinter):
 ##         return len(params[0])+len(params[1])+len(params[2])+3
     
     def insertImage(self,filename,w=None,h=None,dx=None,dy=None):
-    #def insertImage(self,filename,width,height,filename):
-        # picture size must be givin in mm :
+        self.flush()
         width = height = None
         if w is not None:
             width = self.length2i(w)
@@ -255,6 +268,7 @@ class PdfTextPrinter(FileTextPrinter):
             img=self.openImage(filename)
             height = int(width * img.size[0] / img.size[1])
             del img
+            #print "width,height=",width,height
         if width is None:
             img=self.openImage(filename)
             width = int(height * img.size[1] / img.size[0])
@@ -280,27 +294,32 @@ class PdfTextPrinter(FileTextPrinter):
             
         self.canvas.drawImage(filename,
                               x,y-height, width,height)
-    
+
+
+
+
     def setCpi(self,cpi):
         "set font size in cpi (characters per inch)"
+
+        
         if cpi == 10:
             self.status.size = 12
-            self.status.leading = 14
+            #self.status.leading = 14
         elif cpi == 12:
             self.status.size = 10
-            self.status.leading = 12
+            #self.status.leading = 12
         elif cpi == 15:
             self.status.size = 8
-            self.status.leading = 10
+            #self.status.leading = 10
         elif cpi == 17:
             self.status.size = 7
-            self.status.leading = 8
+            #self.status.leading = 8
         elif cpi == 20:
             self.status.size = 6
-            self.status.leading = 8
+            #self.status.leading = 8
         elif cpi == 5:
             self.status.size = 24
-            self.status.leading = 28
+            #self.status.leading = 28
         else:
             raise "%s : bad cpi size" % par
         #self.width = int(self.lineWidth()/inch*cpi)

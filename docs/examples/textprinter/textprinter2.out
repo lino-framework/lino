@@ -1,0 +1,62 @@
+1.prn --> <lino.textprinter.plain.PlainTextPrinter instance at 0x00AA7D78>
++------------------------------------------------------------------------+
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                         Café           |
+|                                                         "Le Pigalle"   |
+|                                                                        |
+|                                                                        |
+|                                                         F - 51051 REIMS|
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                 ┌──────────────────────────────────────────────────────|
+|                 │ FACTURE 030001                          Votre réf..: |
+|                 │ Date : 30 mars 2003                     Votre N° TVA:|
+|                 └──────────────────────────────────────────────────────|
+|                 Description                                     Qté    |
+|                 ─────────────────────────────────────────────── ────── |
+|                 Tapis-plein bleu                                 20,00 |
+|                 Tapis-plein vert                                 15,00 |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                                                                        |
+|                 ───────────────────────────────────────────────────────|
+|                                                              Total hors|
+|                                                Livraison intracommunaut|
+|                                                                        |
+|                                                                  (Monta|
+|                 Paiement dès réception facture.                        |
+|                                                                        |
++------------------------------------------------------------------------+
+1.prn --> <lino.textprinter.pdfprn.PdfTextPrinter instance at 0x00CE24E0>
+1.prn --> <lino.textprinter.htmlprn.HtmlTextPrinter instance at 0x00D68A80>
+1.prn --> <lino.textprinter.winprn.Win32TextPrinter instance at 0x00D68C88>

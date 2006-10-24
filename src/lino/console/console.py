@@ -97,6 +97,8 @@ class Console(BaseToolkit):
         #    encoding=sys.getdefaultencoding()
         if encoding is None and hasattr(stdout,'encoding'):
             encoding=stdout.encoding
+        if encoding is None:
+            encoding="utf8"
         self.encoding=encoding
         self.stdout=stdout
         self.stderr=stderr

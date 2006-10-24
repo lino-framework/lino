@@ -238,16 +238,19 @@ Confitemini Domino, halleluja!
 Tulge tänage Jumalat, halleluuja.
      """)
 
-song0(19,"Magnificat","""
+song(19,"Magnificat","""
 """,
      "Kiidab mu hing",
      """
      
-     1. Kiidab mu hing, kiidab mu hing, kiidab mu hing ja süda Issand
-     Jumalat. Kiidab mu hing, kiidab mu hing, kiidab mu hing ja süda
-     teda.
+     1. Kiidab mu hing, kiidab mu hing,
+     kiidab mu hing ja süda Issand Jumalat.
+     Kiidab mu hing, kiidab mu hing,
+     kiidab mu hing ja süda teda.
      
-     2. Kiidab mu hing, kiidab- mu hing, kiidab hing ja süda Jumalat,
+     2. Kiidab mu hing,
+     kiidab- mu hing,
+     kiidab hing ja süda Jumalat,
      kiidab hing ja süda Ju-malat.
      
      """)
@@ -937,11 +940,18 @@ song(142,"Cantate Domino canticum novum","""
      """Nüüd laulge Jumalal kiituselaulu. Halleluuja, halleluuja. Nüüd laulge Jumalal kogu maailm. Halleluuja, halleluuja. """)
 
 
-song0(144,"Cantarei ao Senhor",
+song(144,"Cantarei ao Senhor",
      """
      """,
-     "",
+     "Kuni elan",
      """
+
+     Kuni elan, mu huulil kiituselaul,
+     kuni olen, tal annan tänu ja au.
+     Olen rõõmus Jumala juures,
+     olen rõõmus Jumala juures.
+
+     """, remark="""
 
      (a) Tahan Issandat kiita ja hõisata, talle laulda nii kaua kui
      elan ma. Minu hing see rõõmustab temas, minu hing see rõõmustab
@@ -956,13 +966,12 @@ song0(144,"Cantarei ao Senhor",
      (d) Tahan alati kiita Issandat ma, tahan lõputult laulda ja
      mängida. Jumal on mu südame rõõm, Jumal on mu südame rõõm.
      
-     """,remark="""
-     
-     (Ps 104,33-34: Ma tahan laulda Issandale oma eluaja / ja mängida
+     (Ps 104,33-34:
+     Ma tahan laulda Issandale oma eluaja / ja mängida
      oma Jumalale, / niikaua kui ma olen elus. / Olgu mu mõlgutus
      armas tema meelest; / mina rõõmutsen Issandas. )
 
-     """)
+     """,source="Ps 104,33-34")
 
 
 song(145,"Dominus Spiritus est","""
@@ -1072,11 +1081,13 @@ Sa, kes meid hoiad, armastad ja andeks annad, kiitust sul lauldes paraneb me mur
 
 32 Mon âme se repose
 
-(a) Vaid Jumalas võib leida rahu mu hing, sest temast tuleb mu pääs. Jumalas leiab rahu minu hing, leiab rahu mu hing.
+(a) Vaid Jumalas võib leida rahu mu hing, sest temast tuleb mu pääs.
+Jumalas leiab rahu minu hing, leiab rahu mu hing.
 
 "sest temast tuleb mu pääs" on keelelt imelik ja tähenduselt ähmane, ning tekitab aldis ja bassis segadust, kuna nad peavad ise välja mõtlema, kuidas teksti oma osale kohandada. (Sama aldi-bassi probleem tekib päris lõpus, kus on sama rütmipilt.) Pakun välja:
 
-(b) Vaid Jumalas võib leida rahu mu hing, on temas lu-nastus. Jumalas leiab rahu minu hing, leiab ra-hu hing.
+(b) Vaid Jumalas võib leida rahu mu hing, on temas lu-nastus.
+Jumalas leiab rahu minu hing, leiab ra-hu hing.
 
 (c) Vaid Jumalas võib leida rahu mu hing, on seal mu lu-nastus. Jumalas leiab rahu minu hing, leiab ra-hu hing.
 
