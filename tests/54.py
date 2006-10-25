@@ -1,4 +1,4 @@
-from lino.sdoc.styles import getDefaultStyleSheet
+from lino.gendoc.styles import getDefaultStyleSheet
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, Frame
@@ -12,9 +12,9 @@ class MyCase(unittest.TestCase):
       styles = getDefaultStyleSheet()
       self.story = []
       self.story.append(
-         Paragraph("This is a first paragraph",styles.Normal))
+         Paragraph("This is a first paragraph",styles.P))
       self.story.append(
-         Paragraph("This is <i>another</i> paragraph.", styles.Normal))
+         Paragraph("This is <i>another</i> paragraph.", styles.P))
 
       self.assertEqual(len(self.story),2)
       
