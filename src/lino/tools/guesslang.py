@@ -21,11 +21,15 @@
 # based on a recipe by Dirk Holtwick:
 # http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/355807
 
+import sys
 import zlib
 
 _guesser = None
 
 class Entropy:
+    
+    #encoding='utf-8'
+    encoding=sys.getfilesystemencoding()
 
     def __init__(self):
         self.entro = []
@@ -36,8 +40,8 @@ class Entropy:
         <name> may also be a function or whatever you need
         to handle the result.
         """
-        corpus = str(corpus)
-        ziplen = len(zlib.compress(corpus))
+        corpus=corpus.encode(self.encoding)
+        ziplen=len(zlib.compress(corpus))
         self.entro.append((name, corpus, ziplen))
 
     def guess(self, part):
@@ -48,13 +52,13 @@ class Entropy:
         """
         what = None
         diff = 0
-        part = str(part)
+        part = part.encode(self.encoding)
         for name, corpus, ziplen in self.entro:
-            nz = len(zlib.compress(corpus + part)) - ziplen
+            nz = len(zlib.compress(corpus+part))-ziplen
             #print name, nz, ziplen, nz-ziplen, (1.0 * (nz-ziplen)) / len(part)
             if diff==0 or nz<diff:
-                what = name
-                diff = nz
+                what=name
+                diff=nz
                 
         return what
 
