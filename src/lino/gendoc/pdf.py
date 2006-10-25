@@ -172,13 +172,21 @@ class PdfDocument(html.Document):
         frag.textColor=style.textColor
         frag.rise=style.rise
         frag.underline=style.underline
+        frag.strike=0 # added for reportlab 2.0
+        frag.link=None # added for reportlab 2.0
         if elem.__class__ == html.CDATA:
             frag.text=" ".join(elem.text.split())
+            if elem.text.startswith(" "):
+                frag.text=" "+frag.text
+            if elem.text.endswith(" "):
+                frag.text+=" "
+            
             #frag.text=elem.text
             yield frag
             return
         if elem.__class__ == html.BR:
-            frag.text='\n'
+            #frag.text='\n'
+            frag.lineBreak=True
             yield frag
             return
         assert hasattr(elem,'content')

@@ -13,13 +13,16 @@ today = time.strftime("%d.%m.%Y")
 
 class Song:
     def __init__(self,number,title1,text1,title2,text2=None,
-                 remark=None):
+                 remark=None,source=None):
         self.number=number
-        self.title1=title1
-        self.text1=text1
-        self.title2=title2
+        self.title1=title1.decode("latin1")
+        self.text1=text1.decode("latin1")
+        self.title2=title2.decode("latin1")
         assert type(text2) == type(""), "%r is not a string"%text2
+        if text2 is not None: text2=text2.decode("latin1")
         self.text2=text2
+        if source is not None: source=source.decode("latin1")
+        self.source=source
 
 songs=[]
 
@@ -45,7 +48,7 @@ def header(story):
     """ % (story.document.getPageNumber(),today))
 
 def footer(story):
-    story.memo("""
+    story.memo(u"""
     <table class="EmptyTable">
     <tr><td align="left">
     Taizé laulud
@@ -79,14 +82,14 @@ def body(story):
         #story.table(s.text1,s.text2)
 
         if FORMAT == 1:
-            story.memo("""<h1 style="font-weight: bold;">%(number)d. %(title2)s (%(title1)s)</h1>""" 
+            story.memo(u"""<h1 style="font-weight: bold;">%(number)d. %(title2)s (%(title1)s)</h1>""" 
                      % s.__dict__)
             story.memo(s.text2)
 
         if FORMAT == 2:
             story.memo("("+str(s.number)+") "+s.text2.strip())
         elif FORMAT == 3:
-            s="""
+            s=u"""
 
             <b>%(number)d. %(title2)s (%(title1)s)</b>
 

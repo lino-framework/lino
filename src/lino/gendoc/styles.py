@@ -67,6 +67,7 @@ class FlowStyle(PropertySet):
         keepWithNext=False,    
         pageBreakBefore=False, 
         pageBreakAfter=False,  
+        wordWrap=None, # added for reportlab 2.x
         )
     
 class CharacterStyle(PropertySet):

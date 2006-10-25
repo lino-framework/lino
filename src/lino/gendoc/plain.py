@@ -22,6 +22,7 @@ from textwrap import TextWrapper
 from lino.gendoc.gendoc import GenericDocument
 from lino.reports import reports
 from lino.console import syscon
+from lino.misc.etc import assert_pure
 
 class PlainDocument(GenericDocument):
     def __init__(self,
@@ -31,25 +32,21 @@ class PlainDocument(GenericDocument):
                  columnHeaderSep='-',
                  **kw):
         if writer is None:
-            writer=syscon.getSystemConsole().toolkit.stdout
+            #writer=syscon.getSystemConsole().toolkit.stdout
+            writer=syscon.getSystemConsole()
         assert hasattr(writer,'write')
         self._writer = writer
         self.columnSep = columnSep
         self.columnHeaderSep = columnHeaderSep
         self.lineWidth=lineWidth
     
-##     def getLineWidth(self):
-##         return 79
-
-##     def getColumnSepWidth(self):
-##         return len(self.columnSep)
-    
     def write(self,txt):
-        try:
-            self._writer.write(txt)
-        except UnicodeEncodeError,e:
-            raise "FooException: could not write %r to %r" % (
-                txt, self._writer)
+        self._writer.write(txt)
+##         try:
+##             self._writer.write(txt)
+##         except UnicodeEncodeError,e:
+##             raise "FooException: could not write %r to %r" % (
+##                 txt, self._writer)
         
     def report(self,rpt):
         #print __file__, rpt.iterator._filters
@@ -82,7 +79,7 @@ class PlainDocument(GenericDocument):
             self.vfill(cell,reports.TOP,headerHeight)
             
         for i in range(headerHeight):
-            self._writeLine(rpt,headerCells,i)
+            self._writeRptLine(rpt,headerCells,i)
                                
         l = [ self.columnHeaderSep * col.width
               for col in rpt.columns]
@@ -128,7 +125,7 @@ class PlainDocument(GenericDocument):
                 rowHeight = rpt.rowHeight
 
             if rowHeight == 1:
-                self._writeLine(rpt,wrappedCells,0)
+                self._writeRptLine(rpt,wrappedCells,0)
             else:
                 # vfill each cell:
                 for j in range(len(rpt.columns)):
@@ -137,7 +134,7 @@ class PlainDocument(GenericDocument):
                                rowHeight)
 
                 for i in range(rowHeight):
-                    self._writeLine(rpt,wrappedCells,i)
+                    self._writeRptLine(rpt,wrappedCells,i)
             
         # renderFooter
         
@@ -152,14 +149,15 @@ class PlainDocument(GenericDocument):
 ##         return l
     
 
-    def _writeLine(self,rpt,cellValues,i):
+    def _writeRptLine(self,rpt,cellValues,i):
         l = []
         for j in range(len(rpt.columns)):
+            assert_pure(cellValues[j][i])
             l.append(self.hfill(cellValues[j][i],
                                 rpt.columns[j].halign,
-                                rpt.columns[j].width
-                                ))
-        self.write(self.columnSep.join(l) + "\n")
+                                rpt.columns[j].width))
+        s=self.columnSep.join(l)
+        self.write(s + "\n")
 
         
     def hfill(self,s,align,width):

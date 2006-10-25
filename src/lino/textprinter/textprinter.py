@@ -93,6 +93,10 @@ class TextPrinter:
         self.session=session
         if encoding is None:
             encoding=sys.stdout.encoding
+        if encoding is None:
+            encoding=sys.getfilesystemencoding()
+        #if encoding is None:
+        #    session.toolkit.encoding
         self.encoding = encoding
         self.pageWidth,self.pageHeight = pageSize
         self.margin = margin 

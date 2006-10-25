@@ -71,10 +71,10 @@ DOCROOT = config.paths.get('docs_path')
    
 
 
-def oneof(l,*args,**kw):
-    for f in l:
-        if f(*args,**kw): return True
-    return False
+## def oneof(l,*args,**kw):
+##     for f in l:
+##         if f(*args,**kw): return True
+##     return False
     
    
    
@@ -278,11 +278,21 @@ class TestCase(unittest.TestCase):
 ##         if expected is not None:
 ##             self.assertEquivalent(observed,expected,msg)
             
-    def trycmd(self,cmd,expected=None,msg=None,expectfile=None):
+    def trycmd(self,cmd,
+               expected=None,
+               msg=None,
+               startdir=None,
+               expectfile=None):
+        """Try the system command 'cmd' in a child process.
+        """
+        cwd=os.getcwd()
+        if startdir is not None:
+            os.chdir(startdir)
         pin,pout=os.popen4(cmd,"t")
         observed=pout.read()
         exitstatus=pout.close()
         pin.close()
+        os.chdir(cwd)
         
         #print "observed", observed
             

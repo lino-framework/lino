@@ -10,13 +10,13 @@ from lino import config
 
 PSPRINTER=config.get('win32','postscript_printer')
 
-DLDIR=r"u:\htdocs\timwebs\lino\examples"
+DLDIR=r"u:\htdocs\timwebs\lino\examples\textprinter"
 
 
-def doit(inputfile,p):
-    print inputfile, "-->", p
-    p.readfile(inputfile,encoding="cp850")
-    p.close()
+def doit(inputfile,tp):
+    print inputfile, "-->", tp.__class__.__name__
+    tp.readfile(inputfile,encoding="cp850")
+    tp.close()
 
 
 if __name__ == "__main__":

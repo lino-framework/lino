@@ -19,6 +19,8 @@
 import types
 from xml.sax.saxutils import escape, unescape
 
+from lino.misc.etc import assert_pure
+
 ## from xml.sax import saxutils
 ## escape=saxutils.escape
 ## unescape=saxutils.unescape
@@ -60,6 +62,7 @@ def quote(x):
 class CDATA:
     fragmentable=True
     def __init__(self,text):
+        assert_pure(text)
         self.text = unicode(text)
         
     def __xml__(self,wr):

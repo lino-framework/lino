@@ -29,8 +29,8 @@ def body(doc):
     There was a young man in Japan
     Who wrote verses that never would scan.
     When asked how this was
-    He said ``It's because
-    I always try to put as many words into the last line as I possibly can.´´
+    He said "It's because
+    I always try to put as many words into the last line as I possibly can."
     """)
 
 

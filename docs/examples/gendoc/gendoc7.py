@@ -4,7 +4,7 @@ from lino.reports.reports import ListReport,LEFT,RIGHT
 
 
 def footer(story):
-    story.verses("""
+    story.verses(u"""
     Rumma & Ko OÜ
     Tartu mnt 71-5
     10117 Tallinn

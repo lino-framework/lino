@@ -213,8 +213,8 @@ def txt_reader(sess,fileInstance,fullname):
 
 
 def pdf_reader(sess,fileInstance,fullname):
-    return unicode(os.popen(
-        r"s:\xpdf\pdftotext %s -" % fullname).read())
+    s=os.popen(r"s:\xpdf\pdftotext %s -" % fullname).read()
+    return s.decode(sys.getfilesystemencoding())
 
 readers = {
     '.pdf' : pdf_reader,

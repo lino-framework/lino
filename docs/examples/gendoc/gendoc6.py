@@ -3,7 +3,7 @@ from lino.gendoc.pdf import PdfMaker
 from lino.gendoc.styles import mm, TA_RIGHT
 
 def footer(story):
-    story.verses("""
+    story.verses(u"""
     Rumma & Ko OÜ
     Tartu mnt 71-5
     10117 Tallinn

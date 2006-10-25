@@ -46,8 +46,6 @@ class PlainTextPrinter(TextPrinter):
         self.bottomLeft = frameStyle[6]
         self.leftBorder = frameStyle[7]
         
-##     def createTextObject(self):
-##         return ""
         
     def onBeginPage(self):
         self._writer.write(

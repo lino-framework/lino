@@ -23,6 +23,7 @@ from lino.misc.descr import Describable
 from lino.console import syscon
 from lino.adamo.datatypes import STRING
 #from lino.adamo.query import Query
+from lino.misc.etc import ispure
 
 class ConfigError(Exception):
     pass
@@ -412,7 +413,9 @@ class ReportColumn(Describable):
         return self.width
 
     def format(self,v):
-        return self._formatter(v)
+        s=self._formatter(v)
+        assert ispure(s), "%r : %r: not pure" % (self,s)
+        return s
 
     def validate(self,value):
         pass

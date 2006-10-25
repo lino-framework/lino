@@ -36,22 +36,23 @@ class Case(TestCase):
             for filename in filenames:
                 base,ext = os.path.splitext(filename)
                 if ext == '.py':
-                    examples.append(os.path.join(dirpath,base))
+                    examples.append((dirpath,base))
                     
         #self.assertEqual(len(examples),13)
         
-        for base in examples:
-            filename = base+".py"
-            cmd="python "+os.path.join(examplesDir,filename)
-            cmd += " --batch"
+        for dirpath,base in examples:
+            #filename = os.path.join(dirpath,base)+".py"
+            cmd="python %s.py --batch" % base
 
-            outfile=os.path.join(examplesDir,base)+".out"
+            outfile=os.path.join(examplesDir,dirpath,base)+".out"
+            #outfile=base+".out"
             expected=open(outfile).read()
             
             if expected.strip().startswith("TODO:"):
-                print filename, observed
+                print cmd, observed
 
-            self.trycmd(cmd,expected)
+            self.trycmd(cmd,expected,
+                        startdir=os.path.join(examplesDir,dirpath))
             
             
 ##             fd=os.popen(cmd,"r")

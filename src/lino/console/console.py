@@ -98,7 +98,9 @@ class Console(BaseToolkit):
         if encoding is None and hasattr(stdout,'encoding'):
             encoding=stdout.encoding
         if encoding is None:
-            encoding="utf8"
+            encoding=sys.getfilesystemencoding()
+            #encoding="utf8"
+            #encoding=sys.stdout.encoding
         self.encoding=encoding
         self.stdout=stdout
         self.stderr=stderr
@@ -493,7 +495,7 @@ class Console(BaseToolkit):
 
     def show_report(self,rpt,*args,**kw):
         from lino.gendoc.plain import PlainDocument
-        doc = PlainDocument(self.stdout)
+        doc = PlainDocument(self)
         doc.beginDocument()
         doc.report(rpt)
         doc.endDocument()

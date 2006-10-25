@@ -30,16 +30,12 @@ import types
 
 from lino.tools.months import Month
 from lino.misc.descr import Describable
-from lino.misc.etc import ispure
+from lino.misc.etc import ispure, iif
 #from lino.adamo.exceptions import RefuseValue
 from lino.adamo.exceptions import DataVeto
 
 ERR_FORMAT_NONE = "caller must handle None values"
 ERR_PARSE_EMPTY = "caller must handle empty strings"
-
-def iif(test,x,y):
-    if test: return x
-    return y
 
 #def itself(x): return x
 
@@ -199,7 +195,8 @@ class StringType(AsciiType):
     def format(self,v):
         assert v is not None, ERR_FORMAT_NONE
         #return v
-        return v.encode("cp1252",'replace')
+        return unicode(v)
+        #return v.encode("cp1252",'replace')
         
     def validate(self,value):
         AsciiType.validate(self,value)

@@ -95,7 +95,7 @@ class MemoParser(HTMLParser):
                     self.container.append(elem)
                     return
                 # create automagic paragraph
-                # e.g. memo starts with "<tt>"
+                # e.g. a memo that starts with "<tt>"
                 p=html.P(xclass=self.style,**self.kw)
                 self._append(p)
                 # don't return but loop again

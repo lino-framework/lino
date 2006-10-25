@@ -1,5 +1,9 @@
 import types
 
+def iif(test,x,y):
+    if test: return x
+    return y
+
 def issequence(u):
    return type(u) in (types.TupleType,types.ListType)
 def isnumber(n):
@@ -17,6 +21,8 @@ def ispure(s):
         return True
     return False
 
+def assert_pure(s):
+    assert ispure(s), "%r: not pure" % s
 
 
 class LinoError(Exception):

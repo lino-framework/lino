@@ -15,4 +15,4 @@ A test is a test and not a final document.
 d.saveas("test.pdf")
 
 if not "--batch" in sys.argv:
-    os.system("start test.pdf")
+    os.startfile("test.pdf")
