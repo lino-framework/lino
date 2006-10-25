@@ -10,4 +10,3 @@ options:
   -b, --batch           not interactive (don't ask anything)
   -u, --unsafely        skip safety loop
   -r, --recurse         recurse into subdirs
-  -p, --progress        show progress bar

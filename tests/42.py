@@ -60,7 +60,7 @@ Directories (volume=test,parent=None)
 =====================================
 id     |name          |parent        |files         |subdirs
 -------+--------------+--------------+--------------+--------------
-1      |              |              |18 Files      |2 Directories
+1      |              |              |18 Files      |1 Directories
 """)
         q=sess.query(File,
                      orderBy="size",

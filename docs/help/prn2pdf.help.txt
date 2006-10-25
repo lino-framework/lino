@@ -12,5 +12,5 @@ options:
   -oOUTFILE, --output=OUTFILE
                         write to OUTFILE rather than FILE.pdf
   -eENCODING, --encoding=ENCODING
-                        FILE is encoded using ENCODING (rather than
-                        sys.stdin.encoding).
+                        FILE is encoded using ENCODING instead of
+                        sys.stdin.encoding.
