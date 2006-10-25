@@ -17,7 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import types
-from xml.sax.saxutils import escape, unescape
+#from xml.sax.saxutils import escape, unescape
 
 from lino.misc.etc import assert_pure
 
@@ -25,23 +25,23 @@ from lino.misc.etc import assert_pure
 ## escape=saxutils.escape
 ## unescape=saxutils.unescape
 
-## # from twisted.web.microdom
-## ESCAPE_CHARS = (('&', '&amp;'),
-##                 ('<', '&lt;'),
-##                 ('>', '&gt;'),
-##                 ('"', '&quot;'))
+# copied from twisted.web.microdom
+ESCAPE_CHARS = (('&', '&amp;'),
+                ('<', '&lt;'),
+                ('>', '&gt;'),
+                ('"', '&quot;'))
 
-## def unescape(text):
-##     "Perform the exact opposite of 'escape'."
-##     for ch, h in ESCAPE_CHARS:
-##         text = text.replace(h, ch)
-##     return text
+def escape(text):
+    "Replace a few special chars with HTML entities."
+    for ch, h in ESCAPE_CHARS:
+        text=text.replace(ch, h)
+    return text
 
-## def escape(text):
-##     "replace a few special chars with HTML entities."
-##     for ch, h in ESCAPE_CHARS:
-##         text = text.replace(ch, h)
-##     return text
+def unescape(text):
+    "Perform the exact opposite of 'escape'."
+    for ch, h in ESCAPE_CHARS:
+        text=text.replace(h, ch)
+    return text
 
 
 class InvalidRequest(Exception):
@@ -63,11 +63,12 @@ class CDATA:
     fragmentable=True
     def __init__(self,text):
         assert_pure(text)
-        self.text = unicode(text)
+        self.text = text
         
     def __xml__(self,wr):
         #self.text.replace("&","&amp;").replace("<","&lt;"))
-        wr(escape(self.text).encode("iso-8859-1","xmlcharrefreplace"))
+        #wr(escape(self.text).encode("iso-8859-1","xmlcharrefreplace"))
+        wr(escape(self.text))
 
     def __str__(self):
         return self.text
@@ -128,10 +129,20 @@ class Element:
         wr('/>')
         
     def toxml(self):
-        from cStringIO import StringIO
-        b=StringIO()
-        self.__xml__(b.write)
-        return b.getvalue()
+##         s=u""
+##         def wr(x):
+##             s.__add__(x)
+##         self.__xml__(wr)
+##         return s
+        from lino.misc.tsttools import UniStringIO
+        u=UniStringIO()
+##         from cStringIO import StringIO
+##         b=StringIO()
+##         def wr(s):
+##             b.write(s.encode("utf-8"))
+##         self.__xml__(wr)
+        self.__xml__(u.write)
+        return u.getvalue()
 
         
 class Container(Element):

@@ -1,6 +1,4 @@
-#coding: utf-8
-
-## Copyright 2004-2005 Luc Saffre
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,10 +18,12 @@
 
 
 """
-this module defines one class for each internal file of an oo document
+this module defines one class for each internal file of an OOo document
 """
+
 import os.path
 opj = os.path.join
+import codecs
 
 class InternalFile:
     filename = NotImplementedError
@@ -32,7 +32,8 @@ class InternalFile:
         self.doc = doc
         
     def writeFile(self):
-        f = open(opj(self.doc.tempDir,self.filename),"w")
+        f = codecs.open(opj(self.doc.tempDir,self.filename),"w",
+                        encoding="utf-8")
         self.writeInternalContent(f)
         f.close()
         
@@ -157,8 +158,8 @@ class CONTENT(InternalXmlFile):
     #doctype = 'office:document-content'
     
     def writeXmlContent(self,f):
-        def uw(s):
-            f.write(s.encode("utf-8"))
+        #def uw(s):
+        #    f.write(s.encode("utf-8"))
             
         f.write("""\
 <!DOCTYPE office:document-content PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "office.dtd">
@@ -182,9 +183,9 @@ office:version="1.0">
 """ % self.doc.officeClass)
 
     
-        self.doc.fonts.__xml__(uw)
-        self.doc.autoStyles.__xml__(uw)
-        self.doc.body.__xml__(uw)
+        self.doc.fonts.__xml__(f.write)
+        self.doc.autoStyles.__xml__(f.write)
+        self.doc.body.__xml__(f.write)
         f.write("\n</office:document-content>")
 
 

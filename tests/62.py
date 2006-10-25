@@ -25,9 +25,11 @@ import os
 from cStringIO import StringIO
 from lino.tools import dbfreader
 from lino.misc import tsttools
+from lino import config 
 
-dataPath = os.path.join(os.path.dirname(__file__),'testdata')
-dataPath = os.path.abspath(dataPath)
+dataPath=os.path.join(config.paths.get('tests_path'),'testdata')
+#dataPath = os.path.join(os.path.dirname(__file__),'testdata')
+#dataPath = os.path.abspath(dataPath)
 
 class Case(tsttools.TestCase):
     

@@ -57,7 +57,9 @@ paths = Section(config,'paths',
                 rtlib_path=os.path.join(lino_home, "rtlib"),
                 tests_path=os.path.join(lino_home, "tests"),
                 docs_path=os.path.join(lino_home, "docs"),
-                src_path=os.path.join(lino_home, "src"))
+                src_path=os.path.join(lino_home, "src"),
+                webhome=r"u:\htdocs\timwebs\lino",
+                )
 
 win32=Section(config,'win32',
               postscript_printer="Lexmark Optra PS")

@@ -1,3 +1,4 @@
+# -*- coding: latin1 -*-
 def doit(tp):
     tp.writeln("")
     tp.writeln("TextPrinter Test page")
@@ -9,8 +10,22 @@ def doit(tp):
     tp.writeln("Here is some \033b1bold\033b0 text.")
     tp.writeln("Here is some \033u1underlined\033u0 text.")
     tp.writeln("Here is some \033i1italic\033i0 text.")
-    tp.close()
 
+    tp.writeln("Here is some more text.")
+    tp.writeln(u"Ännchen Müller machte große Augen.")
+    tp.write("And here")
+    tp.write(" is some")
+    tp.write(" frag")
+    tp.writeln("mented text.")
+
+    tp.writeln()
+    tp.write("This is a very long line. ")
+    tp.write("Just do demonstrate that TextPrinter ")
+    tp.write("doesn't wrap paragraphs for you...")
+    tp.write("Blabla bla. "*20)
+    tp.writeln("Amen.")
+    tp.close()
+        
 
 if __name__ == "__main__":
     # do it on sys.stdout:

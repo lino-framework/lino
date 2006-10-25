@@ -25,7 +25,7 @@ from lino.textprinter import winprn
 from lino import config
 
 dataPath = os.path.join(
-    config.paths.get('tests_path'),'testdata','textprinter')
+    config.paths.get('docs_path'),'examples','textprinter')
 
 class Case(TestCase):
     ""

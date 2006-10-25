@@ -144,12 +144,9 @@ item.</P></LI><LI>This is the second list item.
         </LI></UL></BODY>
         """)
 
-        self.memo2xml("""
-        Price: 25,- &euro;
-        """,u"""\
-<BODY><P>
-        Price: 25,- &#8364;
-        </P></BODY>""")
+        self.memo2xml(
+            "Price: 25,- &euro;",
+            u"<BODY><P>Price: 25,- \u20ac</P></BODY>")
 
 
         self.memo2xml("""
@@ -252,22 +249,22 @@ Nested table:
         </TD></TR></TABLE></BODY>        
         """)
         
-        self.memo2xml("""
+##         self.memo2xml("""
 
-        <table class="EmptyTable">
-        <tr>
-        <td valign="top">blabla
+##         <table class="EmptyTable">
+##         <tr>
+##         <td valign="top">blabla
 
-        </td>
-        <td align="left"></td>
-        </table>
-        ""","""
-        InvalidRequest: P not allowed in TR
+##         </td>
+##         <td align="left"></td>
+##         </table>
+##         ""","""
+##         InvalidRequest: P not allowed in TR
 
-        Die leere Zeile am Ende des ersten TD hat self.parsep gesetzt,
-        und dadurch wird im zweiten TD ein neuer P gestartet...
+##         Die leere Zeile am Ende des ersten TD hat self.parsep gesetzt,
+##         und dadurch wird im zweiten TD ein neuer P gestartet...
         
-        """)
+##         """)
         
         self.memo2xml("""
         ""","""

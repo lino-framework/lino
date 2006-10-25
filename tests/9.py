@@ -72,7 +72,7 @@ Lieber natürliche Dummheit als künstliche Intelligenz.
         q = QUOTES.query("quote",
                          orderBy="quote",
                          lang=de)
-        q.setSqlFilters("quote LIKE '%Klügere%'")
+        q.setSqlFilters(u"quote LIKE '%Klügere%'")
         for quote in q:
             s += quote.quote + "\n"
 

@@ -66,7 +66,7 @@ class Case(TestCase):
 
         #print s2
         
-        self.assertEquivalent(s2,"""\
+        self.assertEquivalent(s2,u"""\
 Andreas Arens Eupen
 Anton Ausdemwald Aachen
 Emil Eierschal Eupen

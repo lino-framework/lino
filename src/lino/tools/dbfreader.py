@@ -334,7 +334,7 @@ class DBTFile:
             data = data.decode(self.dbf.codepage)
         # clipper adds "soft CR's" to memo texts. we convert them to
         # simple spaces:
-        data = data.replace("\xec\n","")
+        data = data.replace(u"\xec\n","")
         
         # convert CR/LF to simple LF:
         data = data.replace("\r\n","\n")

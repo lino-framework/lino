@@ -1,6 +1,4 @@
-#coding: utf-8
-
-## Copyright 2004-2005 Luc Saffre
+## Copyright 2004-2006 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -369,7 +367,7 @@ class Document:
         #sess.status("Writing "+self.filename)
         for f in self.ifiles:
             f.writeFile()
-        zf = zipfile.ZipFile(self.filename,'w', zipfile.ZIP_DEFLATED)
+        zf = zipfile.ZipFile(self.filename,'w',zipfile.ZIP_DEFLATED)
         for f in self.ifiles:
             zf.write(os.path.join(self.tempDir,f.filename),
                      f.filename)

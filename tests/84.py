@@ -56,7 +56,7 @@ align="LEFT" valign="TOP">pcd.fsc</TD><TD align="LEFT"
 valign="TOP">Fujitsu-Siemens Esprimo</TD><TD align="RIGHT"
 valign="TOP">756,50</TD></TR><TR><TD align="LEFT"
 valign="TOP">mon.lcd.fsc</TD><TD align="LEFT"
-valign="TOP">Fujitsu-Siemens Monitor 19"</TD><TD align="RIGHT"
+valign="TOP">Fujitsu-Siemens Monitor 19&quot;</TD><TD align="RIGHT"
 valign="TOP">370,80</TD></TR><TR><TD align="LEFT"
 valign="TOP">acc.cdr</TD><TD align="LEFT" valign="TOP">CDRW 10
 pcs</TD><TD align="RIGHT"

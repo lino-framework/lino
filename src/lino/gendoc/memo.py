@@ -81,6 +81,7 @@ class MemoParser(HTMLParser):
     def handle_entityref(self,name):
         """process a general entity reference of the form "&name;"."""
         self.handle_data(unichr(name2codepoint[name]))
+        #self.handle_data("&"+name+";")
         #print "handle_entityref", name
         #raise NotImplemented
 

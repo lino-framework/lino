@@ -8,9 +8,10 @@ from lino.textprinter.winprn import Win32TextPrinter
 
 from lino import config
 
-PSPRINTER=config.get('win32','postscript_printer')
+PSPRINTER=config.win32.get('postscript_printer')
 
-DLDIR=r"u:\htdocs\timwebs\lino\examples\textprinter"
+OUTDIR=os.path.join(config.paths.get('webhome'),
+                   "examples","textprinter")
 
 
 def doit(inputfile,tp):
@@ -27,14 +28,14 @@ if __name__ == "__main__":
         doit(fn,PlainTextPrinter())
 
         # do it in a PDF document:
-        doit(fn,PdfTextPrinter(os.path.join(DLDIR,base+".pdf")))
+        doit(fn,PdfTextPrinter(os.path.join(OUTDIR,base+".pdf")))
 
         # do it in a HTML file:
-        doit(fn,HtmlTextPrinter(os.path.join(DLDIR,base+".html")))
+        doit(fn,HtmlTextPrinter(os.path.join(OUTDIR,base+".html")))
 
         # do it on a Windows printer:
         doit(fn,Win32TextPrinter(
             printerName=PSPRINTER,
-            spoolFile=os.path.join(DLDIR,base+".ps")))
+            spoolFile=os.path.join(OUTDIR,base+".ps")))
 
 

@@ -32,6 +32,19 @@ from lino.console.console import CaptureConsole
 from lino.forms.testkit import Toolkit
 from lino import config
 
+class UniStringIO:
+    def __init__(self,s=u''):
+        self.buffer=s
+    def write(self,s):
+        #self.s += s.encode('utf-8')
+        self.buffer+=unicode(s)
+    def getvalue(self):
+        return self.buffer
+    def __str__(self):
+        return repr(self.buffer)
+
+
+
 TESTDATA = os.path.join(config.paths.get('tests_path'),'testdata')
 DOCROOT = config.paths.get('docs_path')
 
@@ -233,23 +246,26 @@ class TestCase(unittest.TestCase):
         
         if l1 == l2: return
 
-        a = StringIO()
+        u=UniStringIO()
+        #u=StringIO()
+
         if msg is not None:
-            a.write(msg+":")
-        a.write("\n--- observed --- :\n")
-        a.write(observed)
-        #a.write(repr(" ".join(l1))) # txt1)
-        a.write("\n--- expected --- :\n")
-        a.write(expected)
-        #a.write(repr(" ".join(l2))) # txt1)
-        a.write("\n---\n")
+            u.write(msg+":")
+        u.write("\n--- observed --- :\n")
+        u.write(observed)
+        #uwrite(repr(" ".join(l1))) # txt1)
+        u.write("\n--- expected --- :\n")
+        u.write(expected)
+        #uwrite(repr(" ".join(l2))) # txt1)
+        u.write("\n---\n")
 
         if False:
             from difflib import ndiff
             diff = ndiff(l1,l2)
             print '\n'.join(diff)
         
-        self.fail(a.getvalue()) 
+        #self.fail(a.getvalue()) 
+        self.fail(u.getvalue())
 
     def addTempFile(self,filename,showOutput=None):
         """unlike tempfile, these files are not OPENED
