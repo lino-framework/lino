@@ -88,25 +88,18 @@ test:               |cp437box.txt      |293     |X    |21 Occurences
 test:               |cp1252a.txt       |372     |X    |53 Occurences
 test:               |cp850a.txt        |372     |X    |53 Occurences
 test:               |5.pds             |500     |X    |0 Occurences
-test:textprinter    |3.prn             |524     |X    |0 Occurences
 test:               |5b.pds            |676     |X    |0 Occurences
-test:textprinter    |4.prn             |676     |X    |0 Occurences
 test:               |5d.pds            |850     |X    |0 Occurences
-test:textprinter    |5.prn             |851     |X    |0 Occurences
 test:webman         |init.wmi          |917     |X    |0 Occurences
 test:2              |init.wmi          |975     |X    |0 Occurences
-test:textprinter    |20060829.prn      |1029    |X    |0 Occurences
 test:               |gnosis-readme     |1662    |X    |0 Occurences
-test:textprinter    |2.prn             |1708    |X    |0 Occurences
 test:               |NAT.DBF           |1735    |X    |0 Occurences
 test:               |5c.pds            |2027    |X    |0 Occurences
 test:               |README.TXT        |2254    |X    |263 Occurences
-test:textprinter    |1.prn             |2387    |X    |0 Occurences
 test:               |PAR.DBT           |4481    |X    |0 Occurences
 test:               |jona.txt          |7803    |X    |1382 Occurences
 test:               |PLZ.DBF           |25246   |X    |0 Occurences
 test:               |PAR.DBF           |43411   |X    |0 Occurences
-test:textprinter    |logo.jpg          |81800   |X    |0 Occurences
 test:               |eupen.pdf         |232672  |X    |799 Occurences
 """)
 
