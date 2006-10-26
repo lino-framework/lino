@@ -197,16 +197,18 @@ LI.allowedContent = TD.allowedContent \
     
 
     
-class Story(Container):
-    def __init__(self,doc,*args,**kw):
-        self.document=doc
-        Container.__init__(self,*args,**kw)
-
+class Story:
+    """
+    Implemented by BODY and Document
+    """
     def format(self,**kw):
-        self.document.format(self,**kw)
+        raise NotImplementedError
+            
+    def append(self,*args,**kw):
+        raise NotImplementedError
             
     def table(self,*args,**kw):
-        return self.append(Table(self.doc,*args,**kw))
+        return self.append(Table(self.getDocument(),*args,**kw))
 
     def par(self,*args,**kw):
         return self.append(P(*args,**kw))
@@ -216,15 +218,12 @@ class Story(Container):
     def h1(self,txt,**kw): self.heading(1,txt,**kw)
     def h2(self,txt,**kw): self.heading(2,txt,**kw)
     def h3(self,txt,**kw): self.heading(3,txt,**kw)
-    def getStyle(self):
-        return self.document.getElementStyle(self)
+    def getStyle(self,*args,**kw):
+        return self.getDocument().getElementStyle(self,*args,**kw)
+
+    def getPageNumber(self):
+        return self.getDocument().getPageNumber()
     
-    
-class BODY(Story):
-    allowedAttribs= dict(
-        bgcolor='bgcolor',
-        **Fragment.allowedAttribs)
-        
     def memo(self,txt,style=None,**kw):
         from lino.gendoc.memo import MemoParser
         p=MemoParser(self,style,**kw)
@@ -295,8 +294,23 @@ class BODY(Story):
         return self.append(OL(*args,**kw))
     
     def getDocument(self):
-        return None
+        raise NotImplementedError
 
+    
+class BODY(Container,Story):
+    allowedAttribs= dict(
+        bgcolor='bgcolor',
+        **Fragment.allowedAttribs)
+        
+    def __init__(self,doc,*args,**kw):
+        self._document=doc
+        Container.__init__(self,*args,**kw)
+
+    def getDocument(self):
+        return self._document
+
+    def format(self,**kw):
+        self.getDocument().format(self,**kw)
 
 
 
@@ -329,26 +343,40 @@ class FakeStyle:
         pass
 
 
-class Document:
+class Document(Story):
     extension=None
     def __init__(self,
                  title="Untitled",
                  date=None,
                  stylesheet=None):
 
-        self.title = title
-        self.date = date
-        self.stylesheet = stylesheet
+        self.title=title
+        self.date=date
+        self.stylesheet=stylesheet
         self.body=self.createStory()
 
     def createStory(self):
+        "also used in PdfDocument.drawFrame()"
         return BODY(self)
+
+    def append(self,*args,**kw):
+        self.body.append(*args,**kw)
+        
+    def setTitle(self,title):
+        self.title=title
 
     def getPageNumber(self):
         return 1
+    
+    def getDocument(self):
+        return self
 
-    def getElementStyle(self,elem,parent=None):
+    def getStyle(self,*args,**kw):
+        return self.getDocument().getElementStyle(self.body,*args,**kw)
+    
+    def getElementStyle(self,elem,name=None,parent=None):
         return FakeStyle()
+    
 ##         stName=elem.xclass 
 ##         if stName is None:
 ##             stName=elem.tag()
@@ -384,9 +412,9 @@ class HtmlDocument(Document):
             wr('<link rel=stylesheet type="text/css" href="%s">\n'
                % self.urlto(self.stylesheet))
         wr('<meta name="KEYWORDS" content="">\n')
-        wr('<meta name="GENERATOR" content="Lino">\n')
+        wr('<meta name="GENERATOR" content="lino.gendoc">\n')
         wr('<meta name="author" content="">\n')
-        wr('<meta name="date" content="%s">')
+        wr('<meta name="date" content="%s">'%self.date)
         wr("<head>\n")
         self.body.__xml__(wr)
         wr("""\n</html>\n""")

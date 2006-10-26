@@ -87,10 +87,11 @@ class PdfDocument(html.Document):
                          onFirstPage=self.onEveryPage,
                          onLaterPages=self.onEveryPage)
 
-    def getElementStyle(self,elem,parent=None):
-        stName=elem.xclass 
+    def getElementStyle(self,elem,stName=None,parent=None):
         if stName is None:
-            stName=elem.tag()
+            stName=elem.xclass 
+            if stName is None:
+                stName=elem.tag()
         style=self.stylesheet[stName]
         d={}
         for k,v in elem._attribs.items():

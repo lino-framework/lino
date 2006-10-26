@@ -1,5 +1,5 @@
 #coding: latin1
-from lino.gendoc.pdf import PdfMaker
+from lino.gendoc.maker import DocMaker
 from lino.reports.reports import ListReport,LEFT,RIGHT
 
 
@@ -49,4 +49,4 @@ def body(story):
 
     story.report(InvoiceReport())
     
-PdfMaker().main(body) #,header=header)
+DocMaker().main(body) #,header=header)

@@ -64,6 +64,9 @@ paths = Section(config,'paths',
 win32=Section(config,'win32',
               postscript_printer="Lexmark Optra PS")
 
+## gendoc = Section(config,'gendoc',
+##                 basepath=paths.get('tempdir'))
+
 ## config.add_section('paths')
 ## config.set('paths','lino_home',lino_home)
 ## config.set('paths','tempdir',tempfile.gettempdir())

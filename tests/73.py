@@ -17,22 +17,46 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-testing prnprinter
+generate gendoc examples to webhome
 """
 ## import sys
-## import os
+import os
+import glob
 
-## from lino.misc import tsttools
-## from lino import config
+from lino.misc import tsttools
+from lino import config
 
-## dataPath = os.path.join(tsttools.TESTDATA,'textprinter')
+EXAMPLES=os.path.join(config.paths.get('docs_path'),
+                    'examples','gendoc','*.py')
+OUTDIR=os.path.join(config.paths.get('webhome'),
+                    'examples','gendoc')
 
 
-## class Case(tsttools.TestCase):
+class Case(tsttools.TestCase):
+
+
+    
+    
 ##     ""
 ##     prnfiles=('1','2','3','4','5', '20060829')
     
-##     def test01(self):
+    def test01(self):
+        l=[]
+        for filename in glob.glob(EXAMPLES):
+            base,ext = os.path.splitext(os.path.basename(filename))
+            l.append(base)
+            for ext in (".pdf",".html"):
+                outfile=os.path.join(OUTDIR,base)+ext
+                cmd="python %s --batch %s" % (filename,outfile)
+                self.trycmd(cmd)
+
+        self.assertEqual(len(l),8)
+                
+            
+    
+
+
+        
 ##         for i in self.prnfiles:
 ##             spoolFile = self.addTempFile(i+".ps",showOutput=True)
 ##             inputFile = os.path.join(dataPath,i)+".prn"

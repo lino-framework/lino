@@ -1,4 +1,4 @@
-from lino.gendoc.pdf import PdfMaker
+from lino.gendoc.maker import DocMaker
 
 def body(doc):
     doc.h1("Third Example")
@@ -21,6 +21,6 @@ Lists aren't yet well implemented...
 
 """)
 
-PdfMaker().main(body)    
+DocMaker().main(body)    
     
 

@@ -5,7 +5,7 @@
 
 import time
 
-from lino.gendoc.pdf import PdfMaker
+from lino.gendoc.maker import DocMaker
 from lino.gendoc.styles import mm, TA_RIGHT
 
 today = time.strftime("%d.%m.%Y")
@@ -45,7 +45,7 @@ def header(story):
     <td align="right">
     %s
     </table>
-    """ % (story.document.getPageNumber(),today))
+    """ % (story.getPageNumber(),today))
 
 def footer(story):
     story.memo(u"""
@@ -71,7 +71,7 @@ def body(story):
         header=header,
         )
 
-    story.document.stylesheet["P"].update(
+    story.getStyle("P").update(
         fontSize=16,
         leading=18,
         spaceBefore=2)
@@ -1109,5 +1109,5 @@ Jumalas leiab rahu minu hing, leiab ra-hu hing.
 
 
 
-PdfMaker().main(body)
+DocMaker().main(body)
 

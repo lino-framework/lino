@@ -1,5 +1,5 @@
 #coding: latin1
-from lino.gendoc.pdf import PdfMaker
+from lino.gendoc.maker import DocMaker
 
 def body(doc):
     doc.h1("Fourth Example")
@@ -25,13 +25,14 @@ def body(doc):
 
     """)
     
-    doc.verses("""
+    doc.verses('''
     There was a young man in Japan
     Who wrote verses that never would scan.
     When asked how this was
     He said "It's because
     I always try to put as many words into the last line as I possibly can."
-    """)
+    ''')
+    
 
 
 
@@ -55,6 +56,6 @@ def body(doc):
     doc.memo("This text is also aligned right",align="right")
     doc.memo("This one is aligned center",align="center")
     
-PdfMaker().main(body)    
-    
+DocMaker().main(body)    
+   
 

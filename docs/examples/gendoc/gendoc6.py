@@ -1,5 +1,5 @@
 #coding: latin1
-from lino.gendoc.pdf import PdfMaker
+from lino.gendoc.maker import DocMaker
 from lino.gendoc.styles import mm, TA_RIGHT
 
 def footer(story):
@@ -40,4 +40,4 @@ This document has non-standard page margins, a header and a footer.
     story.par("This paragraph is aligned right",align="RIGHT")
     story.memo("Here is another paragraph.")
     
-PdfMaker().main(body)
+DocMaker().main(body)

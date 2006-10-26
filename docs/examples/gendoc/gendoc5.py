@@ -1,4 +1,4 @@
-from lino.gendoc.pdf import PdfMaker
+from lino.gendoc.maker import DocMaker
 
 def body(doc):
     doc.h1("Fifth Example")
@@ -65,6 +65,6 @@ browsers still render it correctly:
     """)
 
     
-PdfMaker().main(body)    
+DocMaker().main(body)    
     
 

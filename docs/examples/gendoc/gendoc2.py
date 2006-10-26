@@ -1,4 +1,4 @@
-from lino.gendoc.pdf import PdfMaker
+from lino.gendoc.maker import DocMaker
 
 def body(doc):
     doc.h1("Second Example")
@@ -37,6 +37,6 @@ are implemented using separate fonts, while
     """)
     
 
-PdfMaker().main(body)    
+DocMaker().main(body)    
     
 
