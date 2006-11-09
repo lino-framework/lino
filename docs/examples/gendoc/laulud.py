@@ -363,6 +363,35 @@ song(31,"Jubilate Deo (canon)",
 
      """)
 
+
+song(32,"Mon âme se repose",
+     "",
+     "Vaid Jumalas",
+     """
+     
+     Vaid Jumalas võib leida rahu mu hing, sest temast tu-leb pääs.
+     Jumalas leiab rahu minu hing, leiab ra-hu hing.
+
+     """,remark="""
+
+     (a) Vaid Jumalas võib leida rahu mu hing, sest temast tuleb mu
+     pääs.  Jumalas leiab rahu minu hing, leiab rahu mu hing.
+
+     "sest temast tuleb mu pääs" on keelelt imelik ja tähenduselt
+     ähmane, ning tekitab aldis ja bassis segadust, kuna nad peavad
+     ise välja mõtlema, kuidas teksti oma osale kohandada. (Sama
+     aldi-bassi probleem tekib päris lõpus, kus on sama rütmipilt.)
+     Pakun välja:
+
+     (b) Vaid Jumalas võib leida rahu mu hing, on temas lu-nastus.
+     Jumalas leiab rahu minu hing, leiab ra-hu hing.
+
+     (c) Vaid Jumalas võib leida rahu mu hing, on seal mu
+     lu-nastus. Jumalas leiab rahu minu hing, leiab ra-hu hing.
+
+     """)
+
+
 song(33,"Nunc dimittis",
       """
       """,
@@ -1081,18 +1110,6 @@ Järgmised tõlged on veel arutelus:
 28 Toi qui nous aimes (canon)
 Sa, kes meid hoiad, armastad ja andeks annad, kiitust sul lauldes paraneb me murtud süda. 
 (lauluga 28 on mingi copyrightiga seotud probleem ja paistab, et seda laul ei tohi tõlgida ega trükida... kui sain ise aru, miks see nii on, siis annan teada.)
-
-32 Mon âme se repose
-
-(a) Vaid Jumalas võib leida rahu mu hing, sest temast tuleb mu pääs.
-Jumalas leiab rahu minu hing, leiab rahu mu hing.
-
-"sest temast tuleb mu pääs" on keelelt imelik ja tähenduselt ähmane, ning tekitab aldis ja bassis segadust, kuna nad peavad ise välja mõtlema, kuidas teksti oma osale kohandada. (Sama aldi-bassi probleem tekib päris lõpus, kus on sama rütmipilt.) Pakun välja:
-
-(b) Vaid Jumalas võib leida rahu mu hing, on temas lu-nastus.
-Jumalas leiab rahu minu hing, leiab ra-hu hing.
-
-(c) Vaid Jumalas võib leida rahu mu hing, on seal mu lu-nastus. Jumalas leiab rahu minu hing, leiab ra-hu hing.
 
 
 47 Per crucem 

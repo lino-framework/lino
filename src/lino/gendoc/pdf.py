@@ -118,7 +118,7 @@ class PdfDocument(html.Document):
             
         elif isinstance(elem,html.UL):
             for li in elem.content:
-                istyle=self.getElementStyle(li,elem)
+                istyle=self.getElementStyle(li,parent=elem)
                 for fl in self.elem2flow(li,istyle,width):
                     yield fl
             

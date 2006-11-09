@@ -320,7 +320,7 @@ class TestCase(unittest.TestCase):
                 
         if expected is not None:
             if msg is None:
-                msg="unexpected output of `%s`:" % cmd
+                msg="unexpected output of `%s`" % cmd
             self.assertEquivalent(observed,expected,msg)
 
         if expectfile is not None:

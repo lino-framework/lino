@@ -189,7 +189,7 @@ TH.autoClosedByEnd=(TD,TR,TABLE)
 TR.autoClosedByStart=(TR,TABLE)
 TR.autoClosedByEnd=(TABLE,)
 LI.autoClosedByStart=(LI,)
-LI.autoClosedByEnd=(UL,)
+LI.autoClosedByEnd=(UL,OL)
 
 LI.allowedContent = TD.allowedContent \
                     = TH.allowedContent \
