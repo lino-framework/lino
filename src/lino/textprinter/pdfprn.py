@@ -191,7 +191,7 @@ class PdfTextPrinter(FileTextPrinter):
         
 
     def write(self,text):
-
+        self.session.debug("write(%r)",text)
         self.prepareFont()
 
 ##         if self.coding is not None:
@@ -214,6 +214,7 @@ class PdfTextPrinter(FileTextPrinter):
         self.textobject.textOut(text)
         
     def newline(self):
+        self.write("") # see http://lino.saffre-rumma.ee/news/463.html
         self.textobject.textLine()
 
         
@@ -255,7 +256,10 @@ class PdfTextPrinter(FileTextPrinter):
 ##                                      w,h)
 ##         return len(params[0])+len(params[1])+len(params[2])+3
     
-    def insertImage(self,filename,w=None,h=None,dx=None,dy=None):
+    def insertImage(self,filename,
+                    w=None,h=None,
+                    x=None,y=None,
+                    dx=None,dy=None):
         self.flush()
         width = height = None
         if w is not None:
@@ -273,19 +277,22 @@ class PdfTextPrinter(FileTextPrinter):
             img=self.openImage(filename)
             width = int(height * img.size[1] / img.size[0])
             del img
-            
 
-        #w = float(width) * mm 
-        #h = float(height) * mm 
+
         # position of picture is the current text cursor 
-        (x,y) = self.textobject.getCursor()
-        if x == 0 and y == 0:
+        (cx,cy) = self.textobject.getCursor()
+        if cx == 0 and cy == 0:
             # print "no text has been processed until now"
-            x = self.margin + x
-            y = self.pageHeight-(2*self.margin)-height - y
+            cx = self.margin + cx
+            cy = self.pageHeight-(2*self.margin)-height - cy
         else:
             # but picture starts on top of charbox:
-            y += self.status.leading
+            cy += self.status.leading
+            
+        if x is None: x=cx
+        else: x = self.length2i(x)
+        if y is None: y=cy
+        else: y = self.length2i(y)
             
         if dx is not None:
             x += self.length2i(dx)
@@ -300,7 +307,6 @@ class PdfTextPrinter(FileTextPrinter):
 
     def setCpi(self,cpi):
         "set font size in cpi (characters per inch)"
-
         
         if cpi == 10:
             self.status.size = 12

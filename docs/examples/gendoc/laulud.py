@@ -1,7 +1,6 @@
 #coding: latin1
 
-# Copyright 2006 Luc Saffre. This file also contains content
-# copyrighted by the community of Taizé (http://www.taize.fr)
+# Copyright 2006 Community of Taizé (http://www.taize.fr)
 
 import time
 
@@ -60,21 +59,36 @@ def footer(story):
 FORMAT= 2 
     
 def body(story):
+##     story.getStyle().update(
+##         #showBoundary=True,
+##         leftMargin=15*mm,
+##         rightMargin=15*mm,
+##         topMargin=14*mm,
+##         bottomMargin=153*mm, 
+##         # 297/2 = 148
+##         #footer=footer,
+##         header=header,
+##         )
+
+##     story.getStyle("P").update(
+##         fontSize=16,
+##         leading=18,
+##         spaceBefore=2)
+    
     story.getStyle().update(
         #showBoundary=True,
-        leftMargin=15*mm,
-        rightMargin=15*mm,
-        topMargin=14*mm,
-        bottomMargin=153*mm, 
-        # 297/2 = 148
+        leftMargin=10*mm,
+        rightMargin=5*mm,
+        topMargin=11*mm,
+        bottomMargin=(148+9)*mm, # 297/2 = 148
         #footer=footer,
         header=header,
         )
 
     story.getStyle("P").update(
-        fontSize=16,
-        leading=18,
-        spaceBefore=2)
+        fontSize=18,
+        leading=20,
+        spaceBefore=5)
     
     for s in songs:
         #print s.number
@@ -173,7 +187,41 @@ Mu Jumal sa, teed pimeduses näita.
 Mu Jumal sa, teed pimeduses näita.
 """)
 
-song0(9,"Jésus le Christ")
+song(9,"Jésus le Christ","""
+""",
+     "Palume sind",
+     """
+
+ Palume sind, oh Kristus me valgus, keela me sees pimedusel kõnelda.
+ Palume sind, oh Kristus me valgus, aita armule hing avada.
+
+ """, remark="""
+
+(a) Kristus, me rõõm ja hingede valgus, keela me sees pimedusel kõnelda.
+    Kristus, me rõõm ja hingede valgus, täida meid oma armuga sa.
+
+(b) Palume sind, me Kristus, me valgus, tule ja vaigista pimeduse hääl.
+    Palume sind, me Kristus, me valgus, aita armule hing avada.
+
+(c) Kristus, tõe vaim, me südame valgus, keela me sees pimedusel kõnelda.
+    Kristus, tõe vaim, me südame valgus, täida meid oma armuga sa.
+
+(d) Palume sind, oh Kristus me valgus, vaigista varjude kõne meie sees.
+    Palume sind, oh Kristus me valgus, aita meil avada hing armule.
+
+(e) Kristus, mu rõõm, sa valgus mu hinges, vaigista varjude kõne minu sees.
+    Kristus, mu rõõm, sa valgus mu hinges, ava mind oma armastusele.
+
+    Palume sind, oh Kristus me valgus, keela me pimedal poolel kõnelda.
+    Palume sind, oh Kristus me valgus, aita armule hing avada.
+
+    ärgu olgu see minu pimedus, kes mulle räägib
+
+""")    
+
+
+
+
 
 song(10,"Laudate Dominum","""
 """,
@@ -708,10 +756,15 @@ song0(
     "",
     """
 
-    Suurim armastus on ju see, oma elugi anda meie eest. O--- Jumal
-    sinu heldust kiidame! O---""",
+    Suurim armastus on ju see, oma elugi anda meie eest. O---
+    Jumal sinu heldust kiidame! O---
+    
+    Suurim armastus on ju see, kui sa ohverdad elu teiste eest. O---
+    Jumal sinu heldust kiidame! O---.
+    """,
+    
       
-    remark="(Jh 15,13)")
+    source="Jh 15,13")
 
 
 song(65,"Dona nobis pacem",
@@ -1099,13 +1152,6 @@ song(152,"Fiez-vous en Lui","""
 """
 
 Järgmised tõlged on veel arutelus:
-
-9 Jésus le Christ
-(a) Kristus, me rõõm ja hingede valgus, keela me sees pimedusel kõnelda. Kristus, me rõõm ja hingede valgus, täida meid oma armuga sa.
-(b) Palume sind, me Kristus, me valgus, tule ja vaigista pimeduse hääl. Palume sind, me Kristus, me valgus, aita armule hing avada.
-(c) Kristus, tõe vaim, me südame valgus, keela me sees pimedusel kõnelda. Kristus, tõe vaim, me südame valgus, täida meid oma armuga sa.
-(d) Palume sind, oh Kristus me valgus, vaigista varjude kõne meie sees. Palume sind, oh Kristus me valgus, aita meil avada hing armule.
-(e) Kristus, mu rõõm, sa valgus mu hinges, vaigista varjude kõne minu sees. Kristus, mu rõõm, sa valgus mu hinges, ava mind oma armastusele.
 
 28 Toi qui nous aimes (canon)
 Sa, kes meid hoiad, armastad ja andeks annad, kiitust sul lauldes paraneb me murtud süda. 

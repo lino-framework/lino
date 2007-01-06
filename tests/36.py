@@ -37,10 +37,11 @@ demonstrate this bug::
 from types import TupleType
 from unittest import TestCase, main
 
-if True:
-    import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
-else:
-    import sqlite
+from lino.adamo.dbds.sqlite_dbd import sqlite
+## if True:
+##     import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
+## else:
+##     import sqlite
 
 
 class Case(TestCase):

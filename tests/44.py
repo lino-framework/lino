@@ -22,7 +22,8 @@ from unittest import TestCase, main
 
 import datetime
 
-import pysqlite2.dbapi2 as sqlite 
+from lino.adamo.dbds.sqlite_dbd import sqlite
+#import pysqlite2.dbapi2 as sqlite 
 
 
 class Case(TestCase):

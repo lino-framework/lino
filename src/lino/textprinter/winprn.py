@@ -493,6 +493,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
                       
 
     def newline(self):
+        self.write("") # see http://lino.saffre-rumma.ee/news/463.html
         #self.x = self.doc.margin
         self.x = self.org[0] + self.margin
         self.y += self.leading
@@ -519,6 +520,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         
     def insertImage(self,filename,
                     w=None,h=None,
+                    x=None,y=None,
                     dx=None,dy=None,
                     behindText=False):
 
@@ -562,9 +564,11 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 ##         y *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
 ##         w *= self.dc.GetDeviceCaps(win32con.LOGPIXELSX)
 ##         h *= self.dc.GetDeviceCaps(win32con.LOGPIXELSY)
-
-        x = int(self.x)
-        y = int(self.y)
+        if x is None: x=int(self.x)
+        else: x = self.length2i(x)
+        if y is None: y=int(self.y)
+        else: y = self.length2i(y)
+        
         if dx is not None:
             x += self.length2i(dx)
         if dy is not None:

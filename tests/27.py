@@ -20,7 +20,8 @@
 
 import os
 import codecs
-import pysqlite2.dbapi2 as sqlite
+from lino.adamo.dbds.sqlite_dbd import sqlite
+#import pysqlite2.dbapi2 as sqlite
 
 from unittest import TestCase, main
 

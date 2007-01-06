@@ -44,6 +44,23 @@ class UniStringIO:
         return repr(self.buffer)
 
 
+def trycmd(cmd,startdir=None):
+    
+    """Run the system command 'cmd' in a child process.
+
+    Returns the observed output (as a string) and the exit status (an integer) as a tuple.
+    Saves and restores the current working directory.
+    """
+    cwd=os.getcwd()
+    if startdir is not None:
+        os.chdir(startdir)
+    pin,pout=os.popen4(cmd,"t")
+    observed=pout.read()
+    exitstatus=pout.close()
+    pin.close()
+    os.chdir(cwd)
+    return observed,exitstatus
+
 
 TESTDATA = os.path.join(config.paths.get('tests_path'),'testdata')
 DOCROOT = config.paths.get('docs_path')
@@ -263,6 +280,10 @@ class TestCase(unittest.TestCase):
             from difflib import ndiff
             diff = ndiff(l1,l2)
             print '\n'.join(diff)
+
+        if False:
+            file("observed.txt","wt").write(observed)
+            file("expected.txt","wt").write(expected)
         
         #self.fail(a.getvalue()) 
         self.fail(u.getvalue())
@@ -293,22 +314,14 @@ class TestCase(unittest.TestCase):
                 
 ##         if expected is not None:
 ##             self.assertEquivalent(observed,expected,msg)
-            
+
     def trycmd(self,cmd,
                expected=None,
                msg=None,
                startdir=None,
                expectfile=None):
-        """Try the system command 'cmd' in a child process.
-        """
-        cwd=os.getcwd()
-        if startdir is not None:
-            os.chdir(startdir)
-        pin,pout=os.popen4(cmd,"t")
-        observed=pout.read()
-        exitstatus=pout.close()
-        pin.close()
-        os.chdir(cwd)
+            
+        observed,exitstatus=trycmd(cmd,startdir=startdir)
         
         #print "observed", observed
             

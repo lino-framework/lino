@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005-2006 Luc Saffre.
+## Copyright 2005-2007 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ summaries and suggest:
 import sys, os
 import shutil
 import stat
+from fnmatch import fnmatch
 from time import strftime
 
 
@@ -88,11 +89,15 @@ itr("Found %d files.",de="%d Dateien gefunden.")
 itr("Overwrite newer target %s",
     de=u"Jüngere Zieldatei %s überschreiben")
 itr("%s is up-to-date",de="%s ist unverändert")
-itr("remove directory %s", de=u"Ordner %s löschen")
-itr("remove file %s",de=u"Datei %s löschen")
+itr("Must remove %s", de=u"Ordner %s zu löschen")
+itr("Must delete %s",de=u"Datei %s zu löschen")
+itr("Must update %s",de=u"Datei %s zu aktualisieren")
+itr("Removing %s", de=u"Lösche Ordner %s")
+itr("Deleting %s", de=u"Lösche Datei %s")
 itr("create directory %s",de="Erstelle Ordner %s")
 #itr("copy file %s to %s",de=u"Kopiere Datei %s nach %s")
-itr("copy %s",de=u"Kopiere %s")
+itr("Copying %s",de=u"Kopiere %s")
+itr("Updating %s",de=u"Aktualisiere %s")
 
 itr("keep %d, update %d (%d newer), copy %d, delete %d files.",
     de=u"%d gleich, %d aktualisieren (%d neuer), %d kopieren, %d löschen."
@@ -302,23 +307,26 @@ class SyncProject(Progresser):
     #summaryClass=SyncSummary
     
     #def __init__(self,app,src,target,simulate,recurse,summary=None):
-    def __init__(self,job,src,target,recurse=False):
+    def __init__(self,job,src,target,recurse=False,ignorePattern=None):
         Progresser.__init__(self)
         #self.app=app
         self.job=job
-        self.src = src
-        self.target = target
+        self.src = unicode(src)
+        self.target = unicode(target)
         #self.simulate = simulate
         self.recurse = recurse
+        self.ignorePattern = ignorePattern
         
-        self.ignore_times = False
+        self.ignore_times = False        
         self.modify_window = 2
 
-        if not os.path.exists(self.src):
+        if not os.path.exists(self.src) \
+              and not os.path.ismount(self.src):
             raise OperationFailed(
                 _("Source directory '%s' doesn't exist.") % self.src)
 
-        if not os.path.exists(self.target):
+        if not os.path.exists(self.target) \
+              and not os.path.ismount(self.target):
             raise OperationFailed(
                 _("Target directory '%s' doesn't exist.") % self.target)
 
@@ -350,6 +358,11 @@ class SyncProject(Progresser):
     def update_dir(self,src,target):
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
+        if self.ignorePattern is not None:
+            srcnames=[n for n in srcnames
+                      if not fnmatch(n,self.ignorePattern)]
+            destnames=[n for n in destnames
+                      if not fnmatch(n,self.ignorePattern)]
         mustCopy = []
         mustUpdate = []
         for name in srcnames:
@@ -423,7 +436,7 @@ class SyncProject(Progresser):
         
         if self.job.simulate:
             self.job.count_update_file += 1
-            self.verbose("update %s" % target)
+            self.verbose("Must update %s", target)
             return
         
         if win32file:
@@ -439,7 +452,7 @@ class SyncProject(Progresser):
 
         #self.copy_file(src,target)
 
-        self.notice(_("copy file %s") % target)
+        self.verbose(_("Updating %s"),target)
         try:
             shutil.copyfile(src, target)
         except IOError,e:
@@ -462,7 +475,7 @@ class SyncProject(Progresser):
         if self.job.simulate:
             self.job.count_copy_dir += 1
         else:
-            self.notice(_("create directory %s") % target)
+            self.verbose(_("Creating directory %s"), target)
             try:
                 os.mkdir(target)
             except OSError,e:
@@ -470,18 +483,24 @@ class SyncProject(Progresser):
                 return
             self.utime(src,target)
             self.job.done_copy_dir += 1
-            
-        for fn in os.listdir(src):
+
+        srcnames=os.listdir(src)
+        if self.ignorePattern is not None:
+            srcnames=[n for n in srcnames
+                      if not fnmatch(n,self.ignorePattern)]
+        
+        for fn in srcnames:
             self.copy_it(os.path.join(src,fn),
                          os.path.join(target,fn))
         
     def copy_file(self,src,target):
-        self.verbose(_("copy %s"), target)
         #self.verbose(_("copy file %s to %s") % (src,target))
         if self.job.simulate:
+            self.verbose(_("Must copy %s"), target)
             self.job.count_copy_file += 1
             return
         #self.notice(_("copy file %s to %s") % (src,target))
+        self.verbose(_("Copying %s"), target)
         try:
             shutil.copyfile(src, target)
         except IOError,e:
@@ -492,11 +511,12 @@ class SyncProject(Progresser):
         self.job.done_copy_file += 1
 
     def delete_dir(self,name):
-        self.verbose(_("remove directory %s") % name)
         if self.job.simulate:
+            self.verbose(_("Must remove %s") % name)
             self.job.count_delete_dir += 1
             return
         
+        self.verbose(_("Removing %s") % name)
         for fn in os.listdir(name):
             self.delete_it(os.path.join(name,fn))
             
@@ -507,11 +527,12 @@ class SyncProject(Progresser):
         self.job.done_delete_dir += 1
             
     def delete_file(self,name):
-        self.verbose(_("remove file %s") % name)
         if self.job.simulate:
+            self.verbose(_("Must delete %s"),name)
             self.job.count_delete_file += 1
             return
 
+        self.verbose(_("Deleting %s"),name)
         if win32file:
             filemode = win32file.GetFileAttributesW(name)
             try:

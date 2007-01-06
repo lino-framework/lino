@@ -64,6 +64,13 @@ where SRC and DEST are two directories to be synchronized.
             dest="recurse",
             default=False)
 
+        parser.add_option(
+            "-i", "--ignore",
+            help="ignore files that match the pattern",
+            action="store",
+            type="string",
+            dest="ignore")
+
 ##         parser.add_option(
 ##             "-p", "--progress",
 ##             help="show progress bar",
@@ -77,7 +84,8 @@ where SRC and DEST are two directories to be synchronized.
         
         if len(self.args) == 2:
             job.addProject(
-                self.args[0],self.args[1],self.options.recurse)
+                self.args[0],self.args[1],
+                self.options.recurse, self.options.ignore)
 
         
         elif len(self.args) == 1:
@@ -89,7 +97,10 @@ where SRC and DEST are two directories to be synchronized.
                         a=ln.split()
                         assert len(a) == 2
                         job.addProject(
-                            a[0],a[1],self.options.recurse)
+                            a[0],a[1],
+                            self.options.recurse,
+                            self.options.ignore)
+                        
                         
         else:
             raise UsageError("needs 1 or 2 arguments")

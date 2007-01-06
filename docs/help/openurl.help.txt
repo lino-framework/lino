@@ -1,9 +1,10 @@
-usage: lino openurl URL [URL...]
+Usage: lino openurl URL [URL...]
 
 Starts the default browser on the specified URL(s).
-options:
+
+Options:
   -h, --help            show this help message and exit
-  -lLOGFILE, --logfile=LOGFILE
+  -l LOGFILE, --logfile=LOGFILE
                         log a report to FILE
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity

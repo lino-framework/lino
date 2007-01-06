@@ -1,16 +1,17 @@
-usage: lino prn2pdf [options] FILE
+Usage: lino prn2pdf [options] FILE
 
-where FILE is the file to be converted to a pdf file. It may contain plain text
-and simple formatting printer control sequences.
-options:
+where FILE is the file to be converted to a pdf file. It may contain plain
+text and simple formatting printer control sequences.
+
+Options:
   -h, --help            show this help message and exit
-  -lLOGFILE, --logfile=LOGFILE
+  -l LOGFILE, --logfile=LOGFILE
                         log a report to FILE
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity
   -b, --batch           not interactive (don't ask anything)
-  -oOUTFILE, --output=OUTFILE
+  -o OUTFILE, --output=OUTFILE
                         write to OUTFILE rather than FILE.pdf
-  -eENCODING, --encoding=ENCODING
+  -e ENCODING, --encoding=ENCODING
                         FILE is encoded using ENCODING instead of
                         sys.stdin.encoding.

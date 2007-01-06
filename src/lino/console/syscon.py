@@ -64,3 +64,5 @@ def shutdown():
 
 atexit.register(shutdown)
 
+def confirm(*args,**kw):
+    return getMainSession().confirm(*args,**kw)

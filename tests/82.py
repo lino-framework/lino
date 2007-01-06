@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,7 +22,7 @@
 from lino.misc.tsttools import TestCase, main
 
 class Case(TestCase):
-
+    todo="make keycodes those of wxPython. Or change wxtoolkit.py"
     def test01(self):
         import wx
         s=""
@@ -32,7 +32,7 @@ class Case(TestCase):
                     name[4:],getattr(wx,name))
 
         self.assertEquivalent(s,"""
-class ADD(Hotkey): keycode=337
+class ADD(Hotkey): keycode=335
 class ALT(Hotkey): keycode=307
 class BACK(Hotkey): keycode=8
 class CANCEL(Hotkey): keycode=303

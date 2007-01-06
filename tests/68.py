@@ -18,7 +18,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import pysqlite2.dbapi2 as sqlite
+from lino.adamo.dbds.sqlite_dbd import sqlite
+#import pysqlite2.dbapi2 as sqlite
 
 from unittest import TestCase, main
 

@@ -23,9 +23,12 @@ from types import StringType
 import datetime
 
 try:
-    import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
+    import sqlite3 as sqlite # Python 2.5
 except ImportError,e:
-    import sqlite # pysqlite 0.4.3
+    try:
+        import pysqlite2.dbapi2 as sqlite # pysqlite 2.0
+    except ImportError,e:
+        import sqlite # pysqlite 0.4.3
     
 ##     import warnings
 ##     warnings.filterwarnings("ignore",

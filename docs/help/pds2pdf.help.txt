@@ -1,14 +1,15 @@
-usage: lino pds2pdf [options] FILE
+Usage: lino pds2pdf [options] FILE
 
 pds2pdf converts the Python Document Script FILE (extension `.pds`) to a PDF
-file with same name, but `.pdf` as extension. Extension `.pdf` will be added if
-not specified. Note that you can specify only one FILE.
-options:
+file with same name, but `.pdf` as extension. Extension `.pdf` will be added
+if not specified. Note that you can specify only one FILE.
+
+Options:
   -h, --help            show this help message and exit
-  -lLOGFILE, --logfile=LOGFILE
+  -l LOGFILE, --logfile=LOGFILE
                         log a report to FILE
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity
   -b, --batch           not interactive (don't ask anything)
-  -oOUTFILE, --output=OUTFILE
+  -o OUTFILE, --output=OUTFILE
                         write to OUTFILE rather than FILE.pdf
