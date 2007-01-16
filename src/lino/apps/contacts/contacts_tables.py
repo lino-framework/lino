@@ -360,7 +360,7 @@ Warning: This application is not stable and there are no known users.
 class Contacts(DbApplication):
     name="Lino Contacts"
     version="0.0.1"
-    copyright="Copyright 2002-2006 Luc Saffre"
+    copyright="Copyright 2002-2007 Luc Saffre"
     #author="Luc Saffre"
     mainFormClass=ContactsMainForm
     #dbname="contacts"

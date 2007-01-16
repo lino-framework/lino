@@ -360,7 +360,7 @@ class Document(Story):
         return BODY(self)
 
     def append(self,*args,**kw):
-        self.body.append(*args,**kw)
+        return self.body.append(*args,**kw)
         
     def setTitle(self,title):
         self.title=title

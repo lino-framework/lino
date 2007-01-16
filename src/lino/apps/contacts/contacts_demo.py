@@ -1,6 +1,6 @@
 # coding: latin1
 
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -25,41 +25,14 @@
 import os
 from lino import config
 from lino.adamo import ddl
-#from lino.adamo.store import Populator
 from lino.adamo.datatypes import itod
-#from lino.apps.addrbook.addrbook_schema import AddressBookSchema, City
-#from lino.apps.addrbook import tables
 from contacts_tables import *
-#, City, Nation
 
 rtlib_path=config.paths.get('rtlib_path')
 
 MALE='m'
 FEMALE='f'
 
-
-## def startup(filename=None,
-##             langs=None,
-##             populate=True,
-##             dump=None,
-##             big=False,
-##             withDemoData=True,
-##             **kw):
-##     if populate:
-##         if withDemoData:
-##             app=DemoPopulator(big=big,**kw)
-##         else:
-##             app=StandardPopulator(big=big,**kw)
-##     else:
-##         app=Contacts(**kw)
-##     app.createMainForm()
-##     app.mainForm.dbsess.
-##     ctx=app.quickStartup(langs=langs,
-##                          filename=filename,
-##                          dump=dump)
-        
-
-##     return ctx
 
 def startup(**kw):
     app=DemoContacts(**kw)
@@ -86,26 +59,6 @@ class DemoContacts(Contacts):
                 #ctx.populate(StandardPopulator(big=self.big))
         return ctx
         
-
-## def startup(filename=None,
-##             langs=None,
-##             populate=True,
-##             dump=None,
-##             big=False,
-##             withDemoData=True,
-##             **kw):
-##     schema=ContactsSchema(**kw)
-##     ctx=schema.quickStartup(langs=langs,
-##                             filename=filename,
-##                             dump=dump)
-##     if populate:
-##         if withDemoData:
-##             ctx.populate(DemoPopulator(big=big))
-##         else:
-##             ctx.populate(StandardPopulator(big=big))
-
-##     return ctx
-
 
 class StandardPopulator(ddl.Populator):
     

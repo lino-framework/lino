@@ -87,10 +87,9 @@ class PdfTextPrinter(FileTextPrinter):
     extension=".pdf"
     ratio=1.1
     charwidth=0.6
-    def __init__(self,filename,**kw):
+    def __init__(self,filename,margin=5*mm,**kw):
         FileTextPrinter.__init__(self,filename,
                                  pageSize=A4,
-                                 margin=5*mm,
                                  **kw)
         
 

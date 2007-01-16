@@ -75,7 +75,7 @@ class GuiApplication(Application):
     instanciate the main form.
     
     """
-    wishlist="wx tix cp console"
+    wishlist="qt wx tix cp console"
     mainFormClass=None
 
     def __init__(self,mainForm=None,*args,**kw):
@@ -108,6 +108,9 @@ class GuiApplication(Application):
             #print tkname
             if tkname == "tix": 
                 from lino.forms.tix.tixform import Toolkit
+                return Toolkit()
+            if tkname == "qt": 
+                from lino.forms.qt.qttoolkit import Toolkit
                 return Toolkit()
             if tkname == "wx": 
                 from lino.forms.wx.wxtoolkit import Toolkit

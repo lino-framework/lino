@@ -83,6 +83,8 @@ class PdfDocument(html.Document):
                    and story[-1].__class__ != platypus.PageBreak:
                     story.append(platypus.PageBreak())
         #print story
+        #for fl in story:
+        #   assert hasattr(fl,"wrapOn")
         self.rldoc.build(story,
                          onFirstPage=self.onEveryPage,
                          onLaterPages=self.onEveryPage)
