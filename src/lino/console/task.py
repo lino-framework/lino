@@ -53,7 +53,6 @@ class Task(Session):
     """
     
     #title=None
-    name=None
     label=None
     #curval=0
     #percentCompleted=0

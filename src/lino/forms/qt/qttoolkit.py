@@ -522,27 +522,16 @@ class Toolkit(toolkit.Toolkit):
         CHARWIDTH = ctrl.fontMetrics().averageCharWidth()
         LINEHEIGHT = ctrl.fontMetrics().lineSpacing()
 
-        if frm.minWidth is None:
-            minW=-1
-        else:
-            minW=frm.minWidth * CHARWIDTH
-        if frm.minHeight is None:
-            minH=-1
-        else:
-            minH=frm.minHeight * LINEHEIGHT
+        if frm.minWidth is not None:
+            ctrl.setMinimumWidth(frm.minWidth * CHARWIDTH)
+        if frm.minHeight is not None:
+            ctrl.setMinimumHeight(frm.minHeight * LINEHEIGHT)
             
-        if frm.maxWidth is None:
-            maxW=-1
-        else:
-            maxW=frm.maxWidth * CHARWIDTH
-        if frm.maxHeight is None:
-            maxH=-1
-        else:
-            maxH=frm.maxHeight * LINEHEIGHT
+        if frm.maxWidth is not None:
+            ctrl.setMaximumWidth(frm.maxWidth * CHARWIDTH)
+        if frm.maxHeight is not None:
+            ctrl.setMaximumHeight(frm.maxHeight * LINEHEIGHT)
             
-        ctrl.setMinimumSize(minW,minH)
-        ctrl.setMaximumSize(maxW,maxH)
-        
         if False:
             if frm.halign is forms.CENTER:
                 ctrl.Centre(wx.HORIZONTAL)
@@ -608,7 +597,7 @@ class Toolkit(toolkit.Toolkit):
             task.qtctrl.setWindowTitle(title)
 
     def on_breathe(self,task):
-        if task.qtctrl is None:
+        if not hasattr(task,'qtctrl') or task.qtctrl is None:
             return self.console.on_breathe(task)
         msg=task.getStatus()
         #pc = task.percentCompleted

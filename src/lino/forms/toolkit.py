@@ -28,7 +28,7 @@ from lino.gendoc.gendoc import GenericDocument
 
 from lino.forms import keyboard
 from lino.forms.forms import VERTICAL, HORIZONTAL,\
-     Form, MessageDialog, ConfirmDialog
+     Form, MessageDialog, ConfirmDialog, DecideDialog
 
 from lino.forms.dbforms import ReportGridForm
 
@@ -536,8 +536,8 @@ class Toolkit(BaseToolkit):
 
         self._activeForm=None
 
-    def setupOptionParser(self,p):
-        self.console.setupOptionParser(p)
+##     def setupOptionParser(self,p):
+##         self.console.setupOptionParser(p)
         
     def setActiveForm(self,frm):
         #assert frm is not None
@@ -573,6 +573,8 @@ class Toolkit(BaseToolkit):
 
     
     def showException(self,sess,e,details=None):
+        print details
+        raise
         msg = str(e)
         #msg = e.getMessage()
         out = StringIO()
@@ -624,23 +626,26 @@ class Toolkit(BaseToolkit):
         
 
 
-    def show_decide(self,sess,prompt,answers,
-               title="Decision",
-               default=0):
-        raise "must be converted like message and confirm"
-        frm = sess.form(label=title,doc=prompt)
-        #p = frm.addPanel(HORIZONTAL)
-        p = frm.addHPanel()
-        buttons = []
-        for i in range(len(answers)):
-            btn = p.addButton(label=answers[i])
-            btn.setHandler(frm.close)
-            buttons.append(btn)
-        frm.showModal()
-        for i in range(len(answers)):
-            if frm.lastEvent == buttons[i]:
-                return i
-        raise "internal error: no button clicked?"
+    def show_decide(self,sess,*args,**kw):
+        return sess.showForm(DecideDialog(*args,**kw))
+    
+##     def show_decide(self,sess,prompt,answers,
+##                title="Decision",
+##                default=0):
+##         raise "must be converted like message and confirm"
+##         frm = sess.form(label=title,doc=prompt)
+##         #p = frm.addPanel(HORIZONTAL)
+##         p = frm.addHPanel()
+##         buttons = []
+##         for i in range(len(answers)):
+##             btn = p.addButton(label=answers[i])
+##             btn.setHandler(frm.close)
+##             buttons.append(btn)
+##         frm.showModal()
+##         for i in range(len(answers)):
+##             if frm.lastEvent == buttons[i]:
+##                 return i
+##         raise "internal error: no button clicked?"
         
     
     def createFormCtrl(self,frm):

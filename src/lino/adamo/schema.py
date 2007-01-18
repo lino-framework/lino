@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -33,7 +33,7 @@ from lino.adamo.table import Table, SchemaComponent
 from lino.adamo.exceptions import StartupDelay
 from lino.adamo.query import Query
 from lino.adamo.dbsession import DbContext
-from lino.adamo import center
+#from lino.adamo import center
 
 #class StartupSession(Session):
 #    pass
@@ -255,7 +255,7 @@ class Schema:
     def database(self,*args,**kw):
         assert self._initDone, \
                "database() before initialize()"
-        return center.database(self,*args,**kw)
+        return self.session.database(self,*args,**kw)
     
 ##     def addDatabase(self,name=None,**kw): #langs=None,label=None):
 ##     #def openDatabase(self,name=None,**kw):
@@ -273,7 +273,7 @@ class Schema:
     
     def createContext(self,filename=None,langs=None,dump=False):
         db = self.database(langs=langs)
-        conn = center.connection(filename=filename)
+        conn = self.session.connection(filename=filename)
         db.connect(conn)
         if dump:
             #conn.startDump(syscon.notice)

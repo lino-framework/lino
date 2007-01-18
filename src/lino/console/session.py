@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -38,6 +38,7 @@ class Session:
     Session is the base class for Application and for Task.
 
     """
+    name=None
 
     def __init__(self,toolkit=None,**kw):
         #assert toolkit is not None
@@ -45,6 +46,10 @@ class Session:
             toolkit=syscon.getSystemConsole()
         self.toolkit=toolkit
         #self.debug(self.__class__.__name__+".__init__()")
+
+        self._connections = []
+        self._databases = []
+        
         self.configure(**kw)
     
     def configure(self):
@@ -74,6 +79,8 @@ class Session:
         return self.toolkit.show_verbose(self,*args,**kw)
     def error(self,*args,**kw):
         return self.toolkit.show_error(self,*args,**kw)
+    def exception(self,*args,**kw):
+        return self.toolkit.showException(self,*args,**kw)
 
     def logmessage(self,*args,**kw):
         return self.toolkit.logmessage(self,*args,**kw)
@@ -122,3 +129,65 @@ class Session:
     
 
 
+    def connection(self,*args,**kw):
+        
+        from lino.adamo.qtconn import Connection
+        #from lino.adamo.dbds.firebird import Connection
+        #from lino.adamo.dbds.sqlite_dbd import Connection
+        #from lino.adamo.dbds.mysql_dbd import Connection
+        #from lino.adamo.dbds.gadfly_dbd import Connection
+        
+##         try:
+##             from lino.adamo.dbds.sqlite_dbd import Connection
+##         except ImportError:
+##             try:
+##                 from lino.adamo.dbds.mysql_dbd import Connection
+##             except ImportError:
+##                 try:
+##                     from lino.adamo.dbds.gadfly_dbd import Connection
+##                 except ImportError:
+##                     raise DatabaseError("no database driver available")
+
+        name=self.name
+        if len(self._connections):
+            name+=str(len(self._connections)+1)
+        conn = Connection(self,name,*args,**kw)
+        self._connections.append(conn)
+        #print conn
+        return conn
+
+    def database(self,schema,name=None,**kw):
+        #if name is None:
+        #    name = str(schema)+str(len(self._databases)+1)
+        from lino.adamo.database import Database
+        db = Database(schema,name=name,**kw)
+        self._databases.append(db)
+        return db
+
+    def startDump(self):
+        assert len(self._connections) == 1
+        self._connections[0].startDump()
+    def stopDump(self):
+        assert len(self._connections) == 1
+        return self._connections[0].stopDump()
+    
+    def peekDump(self):
+        assert len(self._connections) == 1
+        return self._connections[0].peekDump()
+        
+
+    def shutdown(self):
+        # tests/adamo/7.py failed when several tests
+        # were run (because previous startups remained open.
+        #if self.ui is None:
+        #    return
+        #self.app.debug("Center.shutdown()")
+##         for sch in self._schemas:
+##             sch.shutdown(syscon)
+##         self._schemas = []
+        for db in self._databases:
+            db.close()
+        self._databases = []
+        for conn in self._connections:
+            conn.close()
+        self._connections = []

@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -15,6 +15,8 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+raise "no longer used. now implemented by lino.console.Session"
 
 import atexit
 #from cStringIO import StringIO
@@ -45,8 +47,10 @@ class Center:
         #self.toolkit=toolkit
 
     def connection(self,*args,**kw):
+        
+        from lino.adamo.qtconn import Connection
         #from lino.adamo.dbds.firebird import Connection
-        from lino.adamo.dbds.sqlite_dbd import Connection
+        #from lino.adamo.dbds.sqlite_dbd import Connection
         #from lino.adamo.dbds.mysql_dbd import Connection
         #from lino.adamo.dbds.gadfly_dbd import Connection
         

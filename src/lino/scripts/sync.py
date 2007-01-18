@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005-2006 Luc Saffre.
+## Copyright 2005-2007 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -20,18 +20,16 @@
 from lino.console.application import Application, \
      UsageError, UserAborted
 from lino.tools.synchronizer import Synchronizer
-from lino import __url__
+from lino import __url__. __copyright__
 
 class Sync(Application):
 
-    name="Lino/sync"
-    
+    name="Lino/Sync"
     copyright="""\
-Copyright (c) 2005-2006 Luc Saffre.
+Copyright (c) 2005-2007 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
-    
     url=__url__+"/sync.html"
     
     usage="usage: lino sync [options] SRC DEST"

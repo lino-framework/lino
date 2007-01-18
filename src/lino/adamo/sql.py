@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -69,11 +69,12 @@ class SqlConnection(Connection):
     CST_CLOSING = 4
     CST_CLOSED = 5
     
-    def __init__(self): # ,*args,**kw):
+    def __init__(self,sess): # ,*args,**kw):
         #Connection.__init__(self,ui,*args,**kw)
         self._dumpWriter = None
         self._status = self.CST_NEW
         self._dirty=False
+        self.session=sess
         
     def getModificationTime(self,table):
         raise NotImplementedError
@@ -246,7 +247,7 @@ class SqlConnection(Connection):
      
         sql += "\n)"
         self._dirty=True
-        self.sql_exec(sql).close()
+        self.sql_exec(sql) # .close()
         self.commit()
 
 
@@ -472,7 +473,7 @@ class SqlConnection(Connection):
         csr = self.sql_exec(sql)
         #assert csr.rowcount is None or csr.rowcount == 1
         result=csr.fetchall()
-        csr.close()
+        #csr.close()
         assert len(result) == 1, "more than one row?!"
         atomicRow=result[0]
         #atomicRow = csr.fetchone()
@@ -507,7 +508,7 @@ class SqlConnection(Connection):
         #assert csr.rowcount is None or csr.rowcount == 1
         #assert csr.rowcount == 1
         result=csr.fetchall()
-        csr.close()
+        #csr.close()
         assert len(result) == 1, "more than one row?!"
         val=result[0][0]
         #val = csr.fetchone()[0]
@@ -536,7 +537,7 @@ class SqlConnection(Connection):
         csr = self.sql_exec(sql)
         
         result=csr.fetchall()
-        csr.close()
+        #csr.close()
         if len(result) == 0:
             return None
         assert len(result) == 1, \
@@ -585,7 +586,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         
     def executeZap(self,table):
         sql = "DELETE FROM " + table.getTableName()
-        self.sql_exec(sql).close()
+        self.sql_exec(sql)#.close()
         
     def executeInsert(self,row):
         query = row._store._peekQuery
@@ -614,7 +615,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         #    raise Exception(repr(l) + "\n" + str(e))
         
         sql += " )"
-        self.sql_exec(sql).close()
+        self.sql_exec(sql)#.close()
         self._dirty=True
         #self.commit()
         
@@ -650,7 +651,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
             i += 1
         sql += " AND ".join(l)
 
-        self.sql_exec(sql).close()
+        self.sql_exec(sql)#.close()
         self._dirty=True
         #self.commit()
 
@@ -668,7 +669,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
                                   self.value2sql(id[i],type)))
             i += 1
         sql += " AND ".join(l)
-        self.sql_exec(sql).close()
+        self.sql_exec(sql)#.close()
         self._dirty=True
 
     def executeDeleteAll(self,ds):
@@ -682,7 +683,7 @@ Could not convert raw atomic value %s in %s.%s (expected %s).""" \
         sql = "DELETE FROM " + ds.getLeadTable().getTableName()
         sql += self.whereClause(ds)
         #print sql
-        self.sql_exec(sql).close()
+        self.sql_exec(sql)#.close()
         self._dirty=True
 
 ##     def executeDeleteRows(self,ds):

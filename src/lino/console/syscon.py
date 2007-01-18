@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -41,6 +41,7 @@ def setSystemConsole(con):
 
 def setMainSession(sess):
     global _main
+    assert _main is None, "not meant to be used a second time" 
     _main=sess
 
 def getMainSession():

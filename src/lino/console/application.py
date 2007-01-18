@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -38,8 +38,21 @@ from lino.console.task import Task
 
     
 class Application(Task):
+
+    """A Task that can be launched from a command line.
+
+    User code will subclass Application, set class variables,
+    implement a run() method and optinally override
+    setupOptionParser().
+
+    Usage examples
+
+    docs/examples/appl1.py
+    docs/examples/appl2.py
+
+    """
     
-    version=None # lino.__version__
+    version=None 
     copyright=None
     url=None
     author=None
@@ -62,15 +75,14 @@ class Application(Task):
         
     def close(self):
         pass
+    
+    def setupOptionParser(self,p):
+        self.toolkit.setupOptionParser(p)
 
-    def setupOptionParser(self,parser):
-        pass
 
     def applyOptions(self,options,args):
         self.options=options
         self.args=args
-        if self.name and self.isInteractive():
-            self.notice(self.aboutString())
 
     def isInteractive(self):
         return self.toolkit.isInteractive()
@@ -127,15 +139,15 @@ class Application(Task):
             
         return s
     
+    def start_running(self):
+        self.toolkit.start_running(self)
         
+    def stop_running(self):
+        self.toolkit.stop_running()
             
     def main(self,*args,**kw):
         """Process command-line arguments and run the application.
 
-        This is meant to be called
-
-        if __name__ == '__main__':
-            MyApplication().main()
 
         """
         self.toolkit=syscon.getSystemConsole()
@@ -153,7 +165,6 @@ class Application(Task):
             usage=self.usage,
             description=desc)
         
-        self.toolkit.setupOptionParser(p)
         self.setupOptionParser(p)
 
         #if argv is None:
@@ -162,10 +173,12 @@ class Application(Task):
         try:
             poptions,pargs = p.parse_args(argv)
             self.applyOptions(poptions,pargs)
-            #self.beforeRun()
+            self.start_running()
             #self.on_main()
             #self.setupApplication()
-            return self.run(*args,**kw)
+            ret=self.run(*args,**kw)
+            self.stop_running()
+            return ret
 
         except UsageError,e:
             self.error("Usage error: "+str(e))

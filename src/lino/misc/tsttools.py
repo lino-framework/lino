@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -29,7 +29,7 @@ from cStringIO import StringIO
 #from lino.ui import console
 from lino.console import syscon
 from lino.console.console import CaptureConsole
-from lino.forms.testkit import Toolkit
+#from lino.forms.testkit import Toolkit
 from lino import config
 
 class UniStringIO:

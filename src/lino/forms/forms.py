@@ -1,4 +1,4 @@
-## Copyright 2005-2006 Luc Saffre 
+## Copyright 2005-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -319,6 +319,36 @@ class ConfirmDialog(Dialog):
         
         #p=self.addPanel(HORIZONTAL)
         p=panel.hpanel()
+        ok=p.okButton()
+        cancel = p.cancelButton()
+        if self.default == YES:
+            ok.setDefault()
+        else:
+            cancel.setDefault()
+
+class DecideDialog(Dialog):
+    title="Decision"
+    def __init__(self,prompt,answers,title=None,default=0,**kw):
+        Dialog.__init__(self,**kw)
+        self.prompt=prompt
+        self.answers=answers
+        self.default=default
+        if title is not None:
+            self.title=title
+        
+    def decide(self):
+        self.returnValue=None
+        for i in range(len(self.answers)):
+            if self.lastEvent.getLabel() == self.answers[i]:
+                self.returnValue=i
+        
+    def layout(self,panel):
+        panel.label(self.prompt)
+        
+        p=panel.hpanel()
+        for ans in self.answers:
+            btn=p.button(label=ans,action=self.decide)
+            
         ok=p.okButton()
         cancel = p.cancelButton()
         if self.default == YES:

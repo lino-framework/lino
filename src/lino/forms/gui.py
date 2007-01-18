@@ -83,11 +83,13 @@ class GuiApplication(Application):
         self.mainForm=mainForm
         self.console=None
 
-    def run(self,*args,**kw):
-        #assert self.console is None
+    def start_running(self):
         self.console=self.toolkit
         self.toolkit=self.createToolkit()
         self.toolkit.start_running(self)
+
+    def run(self,*args,**kw):
+        #assert self.console is None
         if self.mainForm is None:
             self.mainForm=self.createMainForm()
         #self.createMainForm()

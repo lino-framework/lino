@@ -32,6 +32,7 @@ from lino.adamo.row import DataRow
 from lino.adamo.rowattrs import Detail, Pointer, Field, BabelField, \
      is_reserved
 
+FETCHONE=False
 
 class QueryColumn:
     
@@ -1448,14 +1449,21 @@ class SimpleQuery(LeadTableColumnList):
         if offset < 0:
             offset += len(self) 
         csr = self.executeSelect(offset=offset,limit=1)
-        sqlatoms=csr.fetchone()
-        if sqlatoms is None:
+        if FETCHONE:
+            sqlatoms=csr.fetchone()
+            if sqlatoms is None:
+                csr.close()
+                return None
+
+            assert csr.fetchone() is None, \
+                   "Query.getRowAt() got more than one row"
             csr.close()
-            return None
-        
-        assert csr.fetchone() is None, \
-               "Query.getRowAt() got more than one row"
-        csr.close()
+        else:
+            if not csr.first():
+                return None
+            sqlatoms=[csr.value(i) for i in range(len(self._atoms))]
+            assert not csr.next(), \
+                   "Query.getRowAt() got more than one row"
         atomicRow = self.csr2atoms(sqlatoms)
         row = self.createRow({},False)
         self.atoms2row(atomicRow,row)
@@ -1510,17 +1518,25 @@ class SimpleQuery(LeadTableColumnList):
         qry = self.filter(*args,**knownValues)
         csr = qry.executeSelect()
         
-        sqlatoms = csr.fetchone()
-        if sqlatoms is None:
-            csr.close()
-            return None
+        if FETCHONE:
+            sqlatoms = csr.fetchone()
+            if sqlatoms is None:
+                csr.close()
+                return None
 
-        if csr.fetchone() is not None:
-            print knownValues
-            raise InvalidRequestError(
-                "findone() found more than one row in %s" % qry)
+            if csr.fetchone() is not None:
+                print knownValues
+                raise InvalidRequestError(
+                    "findone() found more than one row in %s" % qry)
+
+            csr.close()
+        else:
+            if not csr.first():
+                return None
+            sqlatoms=[csr.value(i) for i in range(len(self._atoms))]
+            assert not csr.next(), \
+                   "findone() got more than one row in %s" % qry
         
-        csr.close()
         atomicRow = self.csr2atoms(sqlatoms)
         row = self.createRow({},False)
         self.atoms2row(atomicRow,row)
@@ -1825,10 +1841,17 @@ class DataIterator:
         
     
     def next(self):
-        sqlatoms = self.csr.fetchone()
-        if sqlatoms == None:
-            self.close()
-            raise StopIteration
+        if FETCHONE:
+            sqlatoms = self.csr.fetchone()
+            if sqlatoms == None:
+                self.close()
+                raise StopIteration
+
+        else:
+            if not self.csr.first():
+                raise StopIteration
+            sqlatoms=[self.csr.value(i) for i in range(len(self.ds._atoms))]
+        
         atomicRow = self.ds.csr2atoms(sqlatoms)
         #row=self.ds.atoms2row(atomicRow,False)
         row = self.ds.createRow({},False)

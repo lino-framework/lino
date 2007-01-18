@@ -36,6 +36,8 @@ try:
 except ImportError,e:
     sound = False
 
+from PyQt4 import QtCore
+
 # rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
 # Unicode Tutorial
 # (http://www.reportlab.com/i18n/python_unicode_tutorial.html)
@@ -69,6 +71,10 @@ except ImportError,e:
 class BaseToolkit:
 
     def on_breathe(self,task):
+        if hasattr(self,"qtapp"):
+            self.qtapp.processEvents()
+        #else:
+        #    print "no qtapp"
         if self.abortRequested():
             task.requestAbort()
 ##         else:
@@ -123,6 +129,50 @@ class Console(BaseToolkit):
                 self._logfile.close()
             self._logfile = open(logfile,"a")
 
+
+
+    def setupOptionParser(self,p):
+        def tk_config(option, opt_str, value, parser,**kw):
+            self.configure(**kw)
+
+        p.add_option("-l", "--logfile",
+                     help="log a report to FILE",
+                     type="string",
+                     dest="logfile",
+                     #action="callback",
+                     #callback=call_set,
+                     #callback_kwargs=dict(logfile=...)
+                     )
+        p.add_option("-v",
+                     "--verbose",
+                     help="increase verbosity",
+                     action="callback",
+                     callback=tk_config,
+                     callback_kwargs=dict(addverbosity=1)
+                     )
+
+        p.add_option("-q",
+                     "--quiet",
+                     help="decrease verbosity",
+                     action="callback",
+                     callback=tk_config,
+                     callback_kwargs=dict(addverbosity=-1)
+                     )
+
+        p.add_option("-b",
+                     "--batch",
+                     help="not interactive (don't ask anything)",
+                     default=self.isBatch(),
+                     action="callback",
+                     callback=tk_config,
+                     callback_kwargs=dict(batch=True)
+                     )
+        
+        #AbstractToolkit.setupOptionParser(self,p)
+        
+    
+            
+
     def beginLog(self,filename):
         self._logfile_stack.append(self._logfile)
         self._logfile = open(filename,"a")
@@ -174,9 +224,18 @@ class Console(BaseToolkit):
         self.write(msg+"\n")
 
     def start_running(self,app):
+        #print "start_running()"
+        self.qtapp=QtCore.QCoreApplication([])
+        #if self.qtapp.hasPendingEvents():
+        #    print "there are pending events"
+        #self.qtapp.processEvents() # install DB drivers
+        #self.qtapp.exec_()
         if app.name and self.isInteractive():
             app.notice(app.aboutString())
             
+    def stop_running(self):
+        self.qtapp.processEvents() # install DB drivers
+        
 ##     def show_status(self,sess,msg=None,*args,**kw):
 ##         #if msg is not None:
 ##         self.show_verbose(sess,msg,*args,**kw)
@@ -438,45 +497,6 @@ class Console(BaseToolkit):
 ##              self.notify(msg)
             
 
-    def setupOptionParser(self,p):
-        def call_set(option, opt_str, value, parser,**kw):
-            self.configure(**kw)
-
-        p.add_option("-l", "--logfile",
-                     help="log a report to FILE",
-                     type="string",
-                     dest="logfile",
-                     #action="callback",
-                     #callback=call_set,
-                     #callback_kwargs=dict(logfile=...)
-                     )
-        p.add_option("-v",
-                     "--verbose",
-                     help="increase verbosity",
-                     action="callback",
-                     callback=call_set,
-                     callback_kwargs=dict(addverbosity=1)
-                     )
-
-        p.add_option("-q",
-                     "--quiet",
-                     help="decrease verbosity",
-                     action="callback",
-                     callback=call_set,
-                     callback_kwargs=dict(addverbosity=-1)
-                     )
-
-        p.add_option("-b",
-                     "--batch",
-                     help="not interactive (don't ask anything)",
-                     default=self.isBatch(),
-                     action="callback",
-                     callback=call_set,
-                     callback_kwargs=dict(batch=True)
-                     )
-        
-        #AbstractToolkit.setupOptionParser(self,p)
-        
 
 
 ##     def job(self,*args,**kw):
@@ -595,9 +615,7 @@ class TtyConsole(Console):
         return raw_input()
 
     def on_breathe(self,task):
-        if self.abortRequested():
-            task.requestAbort()
-            return
+        Console.on_breathe(self,task)
         if time.clock() - self.last_updated < self.update_interval:
             return
         self.last_updated=time.clock()

@@ -1,4 +1,4 @@
-## Copyright 2004-2006 Luc Saffre
+## Copyright 2004-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -59,11 +59,11 @@ class StoppingTestRunner(unittest.TextTestRunner):
 
 class Runtests(Application):
     name="Lino/runtests"
-    years='2004-2006'
+    #years='2004-2007'
     #author='Luc Saffre'
     
     copyright="""\
-Copyright (c) 2004-2006 Luc Saffre.
+Copyright (c) 2004-2007 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -164,7 +164,7 @@ continue testing even if failures or errors occur""",
     def run(self):
         
         suite = self.makeSuite(self.args)
-        
+
         stream=self.toolkit.stdout
         
         if self.options.ignore:
