@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -418,7 +418,6 @@ class DetailValue:
     def __init__(self,row,col):
         self.row=row
         self.col=col
-        #self.detailQuery=None # lazily instanciated in __call__ 
 
     def __call__(self,*args,**kw):
         for k,v in self.col._queryParams.items():
@@ -427,12 +426,6 @@ class DetailValue:
         return self.row.getContext().query(
             self.col.rowAttr.tcl,*args,**kw)
         
-##         if self.detailQuery is None:
-##             assert len(kw) == 1
-##             self.detailQuery=self.row.getSession().query(
-##                 self.col.rowAttr.tcl,
-##                 **kw)
-##         return self.detailQuery.child(**kw)
 
         
 class DetailColumn(QueryColumn):
@@ -1568,7 +1561,9 @@ class SimpleQuery(LeadTableColumnList):
         return DataIterator(self,**kw)
 
     def fetchall(self):
+        #if FETCHONE:
         return [x for x in self]
+        #raise NotImplementedError
 
     def onStoreUpdate(self):
         #print __file__,"onStoreUpdate()"
@@ -1837,7 +1832,8 @@ class DataIterator:
 
     def close(self):
         self.ds._store.removeIterator(self)
-        self.csr.close()
+        if FETCHONE:
+            self.csr.close()
         
     
     def next(self):
@@ -1848,9 +1844,11 @@ class DataIterator:
                 raise StopIteration
 
         else:
-            if not self.csr.first():
+            if not self.csr.next():
+                self.close()
                 raise StopIteration
-            sqlatoms=[self.csr.value(i) for i in range(len(self.ds._atoms))]
+            #sqlatoms=[self.csr.value(i) for i in range(len(self.ds._atoms))]
+            sqlatoms=[self.csr.value(a.index) for a in self.ds._atoms]
         
         atomicRow = self.ds.csr2atoms(sqlatoms)
         #row=self.ds.atoms2row(atomicRow,False)

@@ -66,7 +66,7 @@ class Connection(SqlConnection):
             self._status = self.CST_OPENED
 
 
-        self._dbconn=QtSql.QSqlDatabase.addDatabase("QSQLITE")
+        self._dbconn=QtSql.QSqlDatabase.addDatabase("QSQLITE",self.name)
         self._dbconn.setDatabaseName(filename)
         if not self._dbconn.open():
             raise DatabaseError(filename+":"+str(self._dbconn.lastError()))
@@ -88,7 +88,6 @@ class Connection(SqlConnection):
         
         """Convert a QVariant to a Python value.
 
-        
         """
         #print "sql.sql2value() :", s, type
         if s is None:
@@ -109,13 +108,14 @@ class Connection(SqlConnection):
             #assert ok, "oops:"+repr(n)
             return n
         elif isinstance(type, datatypes.TimeStampType):
-            return float(s)
+            return float(s.toFloat())
         elif isinstance(type, datatypes.TimeType):
-            return type.parse(s)
+            return type.parse(s.toString())
         elif isinstance(type, datatypes.DurationType):
-            return type.parse(s)
+            return type.parse(s.toString())
         elif isinstance(type, datatypes.PriceType):
-            return int(s)
+            n,ok=s.toInt()
+            return n
 
         s=s.toString()
 ##         if not s.__class__ in (types.StringType,
@@ -143,7 +143,7 @@ class Connection(SqlConnection):
                 raise "r%s : %s" % (sql,e)
 
         #self.session.notice(sql)
-        self.session.breathe()
+        #self.session.breathe()
         
         return self._dbconn.exec_(sql)
             
@@ -157,12 +157,13 @@ class Connection(SqlConnection):
         if self._status == self.CST_CLOSING:
             return
         self._status = self.CST_CLOSING
-        self.commit()
+        #self.commit()
         if self._dirty:
-            self._dbconn.commit()
+            self.commit()
         self._dbconn.close()
-        QtSql.QSqlDatabase.removeDatabase(self.name)
+        #self.session.breathe()
         self._dbconn=None
+        QtSql.QSqlDatabase.removeDatabase(self.name)
         self._status = self.CST_CLOSED
         #self._dbconn = None
 ##         if self._isTemporary and self._filename is not None:
@@ -210,7 +211,8 @@ class Connection(SqlConnection):
         sql = self.getSqlSelect(qry,sqlColumnNames='COUNT (*)' )
         csr = self.sql_exec(sql)
         csr.first()
-        return csr.value(0).toInt()
+        i,ok=csr.value(0).toInt()
+        return i
     
     def executeGetLastId(self,table,knownId=()):
         pka = table.getPrimaryAtoms()

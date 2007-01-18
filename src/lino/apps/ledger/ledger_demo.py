@@ -286,6 +286,8 @@ class DemoPopulator(addrdemo.DemoPopulator,StandardPopulator):
         #CCY=q.getContext().query(Currency)
         #BEF=CCY.peek("BEF")
         # must fetchall() because we update
+        #for p in NAT.peek('be').contacts_by_nation().fetchall():
+        #    p.update(currency=self.BEF)
         for p in NAT.peek('be').contacts_by_nation().fetchall():
             p.update(currency=self.BEF)
 
