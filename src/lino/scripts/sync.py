@@ -20,7 +20,7 @@
 from lino.console.application import Application, \
      UsageError, UserAborted
 from lino.tools.synchronizer import Synchronizer
-from lino import __url__. __copyright__
+from lino import __url__
 
 class Sync(Application):
 

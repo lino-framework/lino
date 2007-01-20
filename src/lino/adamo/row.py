@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -221,8 +221,8 @@ class StoredDataRow(DataRow):
     
     def validate(self):
         #print "Row.validate()"
-        assert self._complete or self._new, \
-               "seems that lock() did not makeComplete() "
+        #assert self._complete or self._new, \
+        #       "seems that lock() did not makeComplete() "
         for col in self._store._peekQuery._columns:
             v=col.getCellValue(self)
             col.validate(v)

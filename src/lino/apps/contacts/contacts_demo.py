@@ -317,7 +317,7 @@ class DemoPopulator(StandardPopulator):
         assert mets.nation.id == "ee", "%r!='ee'" % mets.nation
 
         qr.appendRow(
-            self.flott,'10621','Laki',123, None, self.munchen,
+            self.flott,'10621',u'Bierstraﬂe',123, None, self.munchen,
             "http://www.hansflott.de"
             )
         qr.appendRow(self.freitag,

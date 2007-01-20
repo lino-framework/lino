@@ -1,4 +1,4 @@
-## Copyright 2004-2006 Luc Saffre 
+## Copyright 2004-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -524,7 +524,6 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
                     dx=None,dy=None,
                     behindText=False):
 
-        img=self.openImage(filename)
         
         self.flush() # make sure that self.x and self.y are correct
         
@@ -574,12 +573,15 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         if dy is not None:
             y += self.length2i(dy)
         
+        
         width = height = None
         if w is not None:
             width = self.length2i(w)
         if h is not None:
             height = self.length2i(h)
             
+        img=self.openImage(filename)
+        
         if height is None:
             height = int(width * img.size[0] / img.size[1])
         if width is None:

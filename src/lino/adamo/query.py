@@ -1847,13 +1847,14 @@ class DataIterator:
             if not self.csr.next():
                 self.close()
                 raise StopIteration
-            #sqlatoms=[self.csr.value(i) for i in range(len(self.ds._atoms))]
-            sqlatoms=[self.csr.value(a.index) for a in self.ds._atoms]
+            sqlatoms=[self.csr.value(i) for i in range(len(self.ds._atoms))]
+            #sqlatoms=[self.csr.value(a.index) for a in self.ds._atoms]
         
         atomicRow = self.ds.csr2atoms(sqlatoms)
         #row=self.ds.atoms2row(atomicRow,False)
         row = self.ds.createRow({},False)
         self.ds.atoms2row(atomicRow,row)
+        row.validate()
         self.recno += 1
         return row
 

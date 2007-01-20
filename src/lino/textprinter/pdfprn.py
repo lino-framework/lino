@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2004-2006 Luc Saffre
+## Copyright 2004-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -90,6 +90,7 @@ class PdfTextPrinter(FileTextPrinter):
     def __init__(self,filename,margin=5*mm,**kw):
         FileTextPrinter.__init__(self,filename,
                                  pageSize=A4,
+                                 margin=margin,
                                  **kw)
         
 

@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -24,7 +24,6 @@
 
 """
 import sys
-from lino.adamo import center
 from lino.misc.tsttools import TestCase, main
 from lino.apps.ledger.ledger_demo import startup
 from lino.apps.ledger.ledger_tables import Nation,Contact, Currency
