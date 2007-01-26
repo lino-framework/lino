@@ -65,83 +65,91 @@ class Label(toolkit.Label):
         text = self.getLabel()
         if self.getDoc() is not None:
             text += '\n' + self.getDoc()
-        ctrl = wx.StaticText(panel,-1, text)
-        box.Add(ctrl, DONTSTRETCH, wx.EXPAND|wx.ALL, BORDER)
-        self.wxctrl = ctrl
+        ctrl = QtGui.QLabel(text,panel)
+        box.addWidget(ctrl, DONTSTRETCH)
+        self.qtctrl = ctrl
                 
 class Button(toolkit.Button):
     
     def qtsetup(self,form,panel,box):
         #parentFormCtrl = self.getForm().ctrl
         #winId = wx.NewId()
-        btn = wx.Button(panel,-1,self.getLabel(),
-                        wx.DefaultPosition,
-                        wx.DefaultSize)
+        btn = QtGui.QPushButton(self.getLabel(),panel)
         #btn.SetBackgroundColour('YELLOW')
         #parentFormCtrl.Bind(wx.EVT_BUTTON, lambda e:self.click(), btn)
-        panel.Bind(wx.EVT_BUTTON,
-                   EventCaller(self.click),
-                   btn)
+
+        form.connect(btn, QtCore.SIGNAL("clicked()"), self.click) 
 ##         if self.hotkey is not None:
 ##             #print 'Button.wxsetup', self.hotkey
 ##             wx.EVT_CHAR(panel, self.EVT_CHAR)
 ##             #form.Bind(wx.EVT_KEY_DOWN,self.EVT_CHAR)
         if self.doc is not None:
-            btn.SetToolTipString(self.doc)
+            btn.setToolTip(self.doc)
 
-        box.Add(btn,DONTSTRETCH,0,NOBORDER) #, 0, wx.CENTER,10)
-        self.wxctrl = btn
+        box.addWidget(btn,DONTSTRETCH)
+        self.qtctrl = btn
 
     def setFocus(self):
-        self.wxctrl.SetFocus()
+        self.qtctrl.SetFocus()
 
 class DataGrid(toolkit.DataGrid):
     
     def qtsetup(self,form,parent,box):
         #print "wxsetup()", self
-        self.wxctrl = wxgrid.DataGridCtrl(parent,self)
-        box.Add(self.wxctrl, STRETCH, wx.EXPAND,BORDER)
+        #box.Add(self.qtctrl, STRETCH, wx.EXPAND,BORDER)
+
+        model=qtgrid.DataGridModel(self)
+        
+##         model=QSqlQueryModel();
+##         model.setQuery(self.);
+##         model.setHeaderData(0, Qt.Horizontal, tr("Name"));
+##         model.setHeaderData(1, Qt.Horizontal, tr("Salary"));
+
+        self.qtctrl=QtGui.QTableView(parent)
+        self.qtctrl.setModel(model)
+        #view.show();
+        
         #self.refresh()
         
     def refresh(self):
 ##         if self.isDirty():
 ##             self.commit()
-        self.wxctrl.table._load()
-        self.wxctrl.table._refresh()
-##         for row in self.wxctrl.table.rows:
+        self.qtctrl.table._load()
+        self.qtctrl.table._refresh()
+##         for row in self.qtctrl.table.rows:
 ##             print id(row)
 
     def onRowInserted(self,frm,row):
         #l=self.getSelectedRows()
         #print "wxtoolkit.onRowInserted()"
         #print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
-        #                 for r in self.wxctrl.table.rows])
+        #                 for r in self.qtctrl.table.rows])
         #row=frm.currentRow
         #print row.index
-        oldlen=self.wxctrl.table.GetNumberRows()
-        self.wxctrl.table.rows.insert(row.index,row)
-        for tr in self.wxctrl.table.rows[row.index+2:]:
+        oldlen=self.qtctrl.table.GetNumberRows()
+        self.qtctrl.table.rows.insert(row.index,row)
+        for tr in self.qtctrl.table.rows[row.index+2:]:
             tr.index += 1
             #print tr.index
         #print "\n".join([str(r.index)+':'+str(r)+":"+str(id(r))
-        #                 for r in self.wxctrl.table.rows])
-        #self.wxctrl.table.cells.append([s for col,s in row.cells()])
-        self.wxctrl.table.resetRows(self.wxctrl,oldlen)
+        #                 for r in self.qtctrl.table.rows])
+        #self.qtctrl.table.cells.append([s for col,s in row.cells()])
+        self.qtctrl.table.resetRows(self.qtctrl,oldlen)
             
     def onRowsDeleted(self,frm,indexes):
-        oldlen=len(self.wxctrl.table.rows)
+        oldlen=len(self.qtctrl.table.rows)
         for i in indexes:
-            del self.wxctrl.table.rows[i]
-        self.wxctrl.table.resetRows(self.wxctrl,oldlen)
+            del self.qtctrl.table.rows[i]
+        self.qtctrl.table.resetRows(self.qtctrl,oldlen)
         
     def getSelectedRows(self):
-        return self.wxctrl.getSelectedRows()
+        return self.qtctrl.getSelectedRows()
 
     def getSelectedRow(self):
-        return self.wxctrl.getSelectedRow()
+        return self.qtctrl.getSelectedRow()
 
     def getSelectedCol(self):
-        return self.wxctrl.getSelectedCol()
+        return self.qtctrl.getSelectedCol()
         
 
 class TextViewer(toolkit.TextViewer):
@@ -149,19 +157,19 @@ class TextViewer(toolkit.TextViewer):
     def __init__(self,*args,**kw):
         toolkit.TextViewer.__init__(self,*args,**kw)
         #self._buffer = ""
-        self.wxctrl = None
+        self.qtctrl = None
         
         
     def onClose(self):
 ##         console.pop()
         console = self.getForm().toolkit.console
         console.redirect(*self.redirect)
-        self.wxctrl = None
+        self.qtctrl = None
         #self._buffer = ""
         #raise "it is no good idea to close this window"
     
-    def wxsetup(self,form,panel,box):
-        #parentFormCtrl = self.getForm().wxctrl
+    def qtwxsetup(self,form,panel,box):
+        #parentFormCtrl = self.getForm().qtctrl
         console = form.toolkit.console
         e = wx.TextCtrl(panel,-1,console.getConsoleOutput(),
                         style=wx.TE_MULTILINE|wx.HSCROLL)
@@ -171,20 +179,20 @@ class TextViewer(toolkit.TextViewer):
         e.SetMinSize(e.GetBestSize())
         #_setEditorSize(e,MEMO(width=50,height=10))
         #e.SetEnabled(False)
-        box.Add(e, STRETCH, wx.EXPAND|wx.ALL,NOBORDER)
-        self.wxctrl = e
-        self.wxctrl.SetInsertionPointEnd()
-        #self.wxctrl.ShowPosition(-1)
+        box.addWidget(e, STRETCH, wx.EXPAND|wx.ALL,NOBORDER)
+        self.qtctrl = e
+        self.qtctrl.SetInsertionPointEnd()
+        #self.qtctrl.ShowPosition(-1)
         self.redirect = console.redirect(self.addText,self.addText)
         self.getForm().session.debug(
             str(e.GetMinSize())+" "+str(e.GetMaxSize()))
 
     def addText(self,s):
-        self.wxctrl.WriteText(s)
-        self.wxctrl.ShowPosition(-1)
-##         if self.wxctrl is not None:
-##             self.wxctrl.WriteText(s)
-##             self.wxctrl.ShowPosition(-1)
+        self.qtctrl.WriteText(s)
+        self.qtctrl.ShowPosition(-1)
+##         if self.qtctrl is not None:
+##             self.qtctrl.WriteText(s)
+##             self.qtctrl.ShowPosition(-1)
 ##         else:
 ##             self._buffer += s
     
@@ -193,19 +201,21 @@ class Panel(toolkit.Panel):
 
     def qtsetup(self,form,parent,box):
         #print self,"wxsetup()"
-        mypanel = wx.Panel(parent,-1)
-        box.Add(mypanel, self.weight, wx.ALL|wx.EXPAND,NOBORDER)
+        ctrl = QtGui.QWidget(parent)
+        if box is not None:
+            box.addWidget(ctrl,self.weight)
         if self.direction == forms.VERTICAL:
-            mybox = wx.BoxSizer(wx.VERTICAL)
+            mybox = QtGui.QVBoxLayout()
         else:
-            mybox = wx.BoxSizer(wx.HORIZONTAL)
-        mypanel.SetSizer(mybox)
+            mybox = QtGui.QHBoxLayout()
+        ctrl.setLayout(mybox)
         
         self.mybox = mybox # store reference to avoid crash?
-        self.wxctrl = mypanel
+        self.qtctrl = ctrl
         
         for c in self._components:
-            c.wxsetup(form,mypanel,mybox)
+            c.qtsetup(form,ctrl,mybox)
+            c.qtctrl.adjustSize()
 
 class VPanel(Panel):
     direction=forms.VERTICAL
@@ -222,23 +232,23 @@ class EntryMixin:
 
     def qtsetup(self,form,panel,box):
         if self.hasLabel():
-            mypanel = wx.Panel(panel,-1)
+            mypanel = QtGui.QWidget(panel,-1)
             mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
-            box.Add(mypanel, self.weight, wx.EXPAND|wx.ALL,BORDER)
+            box.addWidget(mypanel, self.weight, wx.EXPAND|wx.ALL,BORDER)
             #hbox = wx.BoxSizer(wx.HORIZONTAL)
             hbox = SwappedBoxSizer(box)
-            mypanel.SetSizer(hbox)
+            mypanel.setLayout(hbox)
 
             if self.doc is not None:
-                label = wx.Panel(mypanel,-1)
+                label = QtGui.QWidget(mypanel,-1)
                 label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
                 labelSizer = SwappedBoxSizer(hbox)
-                label.SetSizer(labelSizer)
+                label.setLayout(labelSizer)
 
                 labelCtrl = wx.StaticText(
                     label,-1,self.getLabel(),style=wx.ALIGN_RIGHT)
                 labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer.Add(labelCtrl,DONTSTRETCH,wx.EXPAND,BORDER)
+                labelSizer.addWidget(labelCtrl,DONTSTRETCH)
 
                 docCtrl = wx.StaticText(
                     label, -1,
@@ -246,7 +256,7 @@ class EntryMixin:
                     style=wx.ALIGN_LEFT)
                 docCtrl.SetFont(ENTRY_DOC_FONT)
                 docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer.Add(docCtrl,DONTSTRETCH,wx.EXPAND,BORDER)
+                labelSizer.addWidget(docCtrl,DONTSTRETCH)
 
             else:
                 label = wx.StaticText(mypanel, -1,
@@ -255,17 +265,17 @@ class EntryMixin:
                 label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
 
             if hbox.GetOrientation() == wx.HORIZONTAL:
-                hbox.Add(
+                hbox.addWidget(
                     label, STRETCH,
                     wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
                     BORDER)
             else:
-                hbox.Add(
+                hbox.addWidget(
                     label, DONTSTRETCH,
                     wx.ALIGN_LEFT,
                     BORDER)
 
-            hbox.Add( (10,1), DONTSTRETCH,0,NOBORDER) # spacer
+            hbox.addWidget( (10,1), DONTSTRETCH,0,NOBORDER) # spacer
             
         else:
             mypanel = panel
@@ -312,19 +322,18 @@ class EntryMixin:
         self.editor = editor 
         if not self.hasLabel():
             if hbox.GetOrientation() == wx.HORIZONTAL:
-                hbox.Add(editor,STRETCH,
-                         wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
-                         BORDER)
+                hbox.addWidget(editor,STRETCH,
+                               wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
+                               BORDER)
             else:
                 #print "dont stretch:",self
-                hbox.Add(editor,DONTSTRETCH,
-                         wx.ALIGN_LEFT,
-                         BORDER)
-            self.wxctrl = mypanel
+                hbox.addWidget(editor,DONTSTRETCH,
+                               wx.ALIGN_LEFT,
+                               BORDER)
+            self.qtctrl = mypanel
         else:
-            hbox.Add(editor,STRETCH,
-                     wx.EXPAND|wx.ALL,NOBORDER)
-            self.wxctrl = editor
+            hbox.addWidget(editor,STRETCH)
+            self.qtctrl = editor
 
 ##     def EVT_CHAR(self, evt):
 ##         print "EVT_CHAR ", self, evt.GetKeyCode()
@@ -394,8 +403,8 @@ class Entry(EntryMixin,toolkit.Entry):
 
 class DataEntry(EntryMixin,toolkit.DataEntry):
     
-    def wxsetup(self,form,panel,box):
-        EntryMixin.wxsetup(self,form,panel,box)
+    def qtsetup(self,form,panel,box):
+        EntryMixin.qtsetup(self,form,panel,box)
         #self.editor.SetEditable(self.enabled)
         if self.enabled:
             self.editor.Enable()
@@ -461,10 +470,16 @@ class Toolkit(toolkit.Toolkit):
             
         if frm.modal:
             ctrl = QtGui.QDialog(qtparent)
+            frm.mainComp.qtsetup(ctrl,ctrl,None)
+            # ctrl.layout().addWidget(frm.mainComp.qtctrl)
         else:
             ctrl = QtGui.QMainWindow(qtparent)
             #ctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
-            
+            #centralWidget=QtGui.QWidget()
+            #ctrl.setCentralWidget(centralWidget)
+            frm.mainComp.qtsetup(ctrl,ctrl,None)
+            ctrl.setCentralWidget(frm.mainComp.qtctrl)
+
         ctrl.setWindowTitle(frm.getTitle())
         
         if frm.menuBar is not None:
@@ -480,6 +495,7 @@ class Toolkit(toolkit.Toolkit):
                         shk=QtGui.QKeySequence(hotkey)
                     qtmnu.addAction(lbl,mi.click,shk)
 
+        
 
 ##         ctrl.Bind(wx.EVT_SET_FOCUS, frm.onSetFocus)
 ##         ctrl.Bind(wx.EVT_KILL_FOCUS, frm.onKillFocus)
@@ -493,30 +509,26 @@ class Toolkit(toolkit.Toolkit):
 
 ##         wx.EVT_CLOSE(ctrl, frm.close)
 
-##         mainBox = wx.BoxSizer(wx.VERTICAL)
-##         #ctrl.SetSizer(mainBox)
+        #mainBox=QtGui.QVBoxLayout() 
+        #ctrl.setLayout(mainBox)
 
-##         frm.mainComp.wxsetup(ctrl,ctrl,mainBox)
-        
+
 ##         if frm.defaultButton is not None:
-##             frm.defaultButton.wxctrl.SetDefault()
+##             frm.defaultButton.qtctrl.SetDefault()
 
-##         # MenuItems have no .wxctrl, the are automagically bound if
+##         # MenuItems have no .qtctrl, the are automagically bound if
 ##         # the lbl passed to wxMenu.Append(winId,lbl,doc) contains a \t
 ##         # and a key name...
 
 ##         if len(frm.accelerators):
 ##             l=[ (flags(key),
 ##                  key.keycode,
-##                  btn.wxctrl.GetId())
+##                  btn.qtctrl.GetId())
 ##                 for key,btn
-##                 in frm.accelerators if hasattr(btn,'wxctrl')]
+##                 in frm.accelerators if hasattr(btn,'qtctrl')]
 ##             ctrl.SetAcceleratorTable(wx.AcceleratorTable(l))
 
             
-        
-
-        
         
 
         CHARWIDTH = ctrl.fontMetrics().averageCharWidth()
@@ -560,6 +572,7 @@ class Toolkit(toolkit.Toolkit):
 
 
     def executeShow(self,frm):
+        frm.ctrl.adjustSize()
         frm.ctrl.show()
 
     def executeRefresh(self,frm):

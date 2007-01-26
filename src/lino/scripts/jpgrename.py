@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005-2006 Luc Saffre 
+## Copyright 2005-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -19,6 +19,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import time
 from PIL import Image, ImageWin
 from PIL.TiffImagePlugin import DATE_TIME
 
@@ -28,6 +29,17 @@ from lino.console.application import Application, UsageError
 class MyException(Exception):
     pass
 
+def avinewname(root,name):
+    pass
+
+def wavnewname(root,name):
+    # this is wrong.
+    # i want to know how the creation date is stored in .wav files
+    filename=os.path.join(root, name)
+    sti=os.stat(filename)
+    ct=time.localtime(sti.st_ctime)
+    return time.strftime("%Y_%m_%d-%H_%M_%S.wav",ct)
+    
 def dt2filename(s):
     a = s.split()
     if len(a) != 2: return None
@@ -36,9 +48,6 @@ def dt2filename(s):
     t=a[1].split(':')
     if len(t) != 3: return None
     return '_'.join(d)+'-'+'_'.join(t)+'.jpg'
-
-def avinewname(root,name):
-    pass
 
 def jpgnewname(root,name):
     filename=os.path.join(root, name)
@@ -66,7 +75,7 @@ class JpgRename(Application):
     name="Lino/jpgrename"
 
     copyright="""\
-Copyright (c) 2002-2006 Luc Saffre.
+Copyright (c) 2002-2007 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -77,7 +86,8 @@ where DIR (default .) is a directory with .jpg files to rename.
 """
     converters = {
         '.jpg' : jpgnewname,
-        '.avi' : jpgnewname,
+        '.avi' : avinewname,
+        '.wav' : wavnewname,
         }
     
     def setupOptionParser(self,parser):

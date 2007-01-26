@@ -128,7 +128,6 @@ class Form(MenuContainer):
         self.mainComp.setup()
         self.ctrl = self.toolkit.createFormCtrl(self)
         self.onShow()
-        
         self.toolkit.executeShow(self)
         return self.returnValue
 

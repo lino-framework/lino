@@ -32,6 +32,8 @@ from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from lino.textprinter.textprinter import FileTextPrinter, \
      ParserError, OperationFailed
 
+
+
 ## HACK_BOXCHARS = {
     
 ##     # generated using tests/etc/3.py
@@ -85,7 +87,9 @@ class Status:
 
 class PdfTextPrinter(FileTextPrinter):
     extension=".pdf"
-    ratio=1.1
+    
+    ratio_width2size=1.7   # fontsize = width * ratio_width2size
+    ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
     charwidth=0.6
     def __init__(self,filename,margin=5*mm,**kw):
         FileTextPrinter.__init__(self,filename,
@@ -100,9 +104,9 @@ class PdfTextPrinter(FileTextPrinter):
 ##                   font.face.ascent, font.face.descent
 ##             minx,miny,maxx,maxy = font.face.bbox
 ##             boxheight=font.face.ascent-font.face.descent
-##             #self.ratio=float(maxy-miny) / font.face.defaultWidth
-##             self.ratio=float(boxheight) / font.face.defaultWidth
-##             print "ratio=",self.ratio
+##             #self.ratio_size2leading=float(maxy-miny) / font.face.defaultWidth
+##             self.ratio_size2leading=float(boxheight) / font.face.defaultWidth
+##             print "ratio_size2leading=",self.ratio_size2leading
             pdfmetrics.registerFont(font)
             pdfmetrics.registerFont(TTFont("Courier-Bold", "courbd.ttf"))
             pdfmetrics.registerFont(TTFont("Courier-Oblique",
@@ -173,7 +177,7 @@ class PdfTextPrinter(FileTextPrinter):
         if not self.fontChanged: return
         self.fontChanged=False
         if self.status.lpi is None:
-            self.status.leading = self.status.size * self.ratio
+            self.status.leading = self.status.size * self.ratio_size2leading
         else:
             self.status.leading = 72 / self.status.lpi
 
@@ -307,27 +311,28 @@ class PdfTextPrinter(FileTextPrinter):
 
     def setCpi(self,cpi):
         "set font size in cpi (characters per inch)"
-        
-        if cpi == 10:
-            self.status.size = 12
-            #self.status.leading = 14
-        elif cpi == 12:
-            self.status.size = 10
-            #self.status.leading = 12
-        elif cpi == 15:
-            self.status.size = 8
-            #self.status.leading = 10
-        elif cpi == 17:
-            self.status.size = 7
-            #self.status.leading = 8
-        elif cpi == 20:
-            self.status.size = 6
-            #self.status.leading = 8
-        elif cpi == 5:
-            self.status.size = 24
-            #self.status.leading = 28
-        else:
-            raise "%s : bad cpi size" % par
+        w=int(inch/cpi)
+        self.status.size = int(w*self.ratio_width2size)
+##         if cpi == 10:
+##             self.status.size = 12
+##             #self.status.leading = 14
+##         elif cpi == 12:
+##             self.status.size = 10
+##             #self.status.leading = 12
+##         elif cpi == 15:
+##             self.status.size = 8
+##             #self.status.leading = 10
+##         elif cpi == 17:
+##             self.status.size = 7
+##             #self.status.leading = 8
+##         elif cpi == 20:
+##             self.status.size = 6
+##             #self.status.leading = 8
+##         elif cpi == 5:
+##             self.status.size = 24
+##             #self.status.leading = 28
+##         else:
+##             raise ParserError("%s : bad cpi size" % par)
         #self.width = int(self.lineWidth()/inch*cpi)
         self.cpl = int(self.lineWidth()/inch*cpi)
         #print __name__, self.width
