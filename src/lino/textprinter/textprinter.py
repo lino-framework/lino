@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -292,17 +292,20 @@ class TextPrinter:
         """
         self.writeln(line)
 
-    def writechars(self,text):
+    def beforeWrite(self):
         if not self._docStarted:
             self.beginDoc()
         if not self._pageStarted:
             self.beginPage()
 
+    def writechars(self,text):
+        self.beforeWrite()
         self.write(text)
         #self._lineHasText = True
         
     def flush(self):
-        self.write("")
+        self.beforeWrite()
+        #self.write("")
 
         
         

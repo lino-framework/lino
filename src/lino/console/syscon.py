@@ -67,3 +67,6 @@ atexit.register(shutdown)
 
 def confirm(*args,**kw):
     return getMainSession().confirm(*args,**kw)
+
+def connection(*args,**kw):
+    return getMainSession().connection(*args,**kw)

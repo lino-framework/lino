@@ -1,0 +1,11 @@
+python self.insertImage("tallinn.jpg", h="30mm", x="10mm", y="287mm")
+python self.insertImage("tallinn.jpg", h="30mm", x="10mm", y="247mm")
+python self.drawDebugRaster()
+
+
+
+                                            The first image should be in
+                                            the upper left corner, 10mm
+                                            from each page border.
+
+

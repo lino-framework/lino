@@ -237,33 +237,26 @@ class PdfTextPrinter(FileTextPrinter):
             raise ParserError("invalid length: %r" % s)
         
         
-##     def insertImage(self,line):
-##         params = line.split(None,3)
-##         if len(params) < 3:
-##             raise "%s : need 3 parameters" % repr(params)
-##         # picture size must be givin in mm :
-##         w = float(params[0]) * mm #*self.status.size
-##         h = float(params[1]) * mm #*self.status.leading
-##         # position of picture is the current text cursor 
-##         (x,y) = self.textobject.getCursor()
-##         if x == 0 and y == 0:
-##             # print "no text has been processed until now"
-##             x = self.margin + x
-##             y = self.pageHeight-(2*self.margin)-h - y
-##         else:
-##             # but picture starts on top of charbox:
-##             y += self.status.leading
-            
-##         filename = params[2]
-##         self.canvas.drawImage(filename,
-##                                      x,y-h,
-##                                      w,h)
-##         return len(params[0])+len(params[1])+len(params[2])+3
-    
     def insertImage(self,filename,
                     w=None,h=None,
                     x=None,y=None,
                     dx=None,dy=None):
+        """
+        
+        w and h are the width and height of the image. At least one of
+        these parameters must be specified. If the other parameter is
+        not specified, it will be calculated to keep the image's
+        aspect ratio.
+
+        x and y to specify an absolute position of the top left corner
+        of the image. (0,0) is the lower left corner of the page.  If
+        x or y or both are missing, the image gets inserted at the
+        current text cursor position (more precisely the top left
+        corner of the charbox)
+
+        dx and dy are optional distances to be added to x and y.
+        
+        """
         self.flush()
         width = height = None
         if w is not None:
@@ -274,12 +267,12 @@ class PdfTextPrinter(FileTextPrinter):
 
         if height is None:
             img=self.openImage(filename)
-            height = int(width * img.size[0] / img.size[1])
+            height = int(width * img.size[1] / img.size[0])
             del img
             #print "width,height=",width,height
         if width is None:
             img=self.openImage(filename)
-            width = int(height * img.size[1] / img.size[0])
+            width = int(height * img.size[0] / img.size[1])
             del img
 
 
@@ -287,8 +280,8 @@ class PdfTextPrinter(FileTextPrinter):
         (cx,cy) = self.textobject.getCursor()
         if cx == 0 and cy == 0:
             # print "no text has been processed until now"
-            cx = self.margin + cx
-            cy = self.pageHeight-(2*self.margin)-height - cy
+            cx = self.margin
+            cy = self.pageHeight-(2*self.margin)-height
         else:
             # but picture starts on top of charbox:
             cy += self.status.leading
@@ -302,10 +295,9 @@ class PdfTextPrinter(FileTextPrinter):
             x += self.length2i(dx)
         if dy is not None:
             y -= self.length2i(dy)
-            
+        #print filename,(x,y-height, width,height)
         self.canvas.drawImage(filename,
                               x,y-height, width,height)
-
 
 
 
@@ -356,3 +348,6 @@ class PdfTextPrinter(FileTextPrinter):
         self.status.lpi = lpi
         self.onSetFont()
         
+    def drawDebugRaster(self):
+        self.write("drawDebugRaster() not implemented for PdfTextPrinter")
+

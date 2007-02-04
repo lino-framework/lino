@@ -208,24 +208,31 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
         
         """
-        #self.phandle=win32print.OpenPrinter(printerName)
         # open the printer.
         hprinter = win32print.OpenPrinter(self.printerName)
 
         # retrieve default settings.  this code has complications on
         # win95/98, I'm told, but I haven't tested it there.
-        devmode = win32print.GetPrinter(hprinter,2)["pDevMode"]
+        props = win32print.GetPrinter(hprinter,2)
+        devmode=props["pDevMode"]
 
-        # change paper size and orientation
-        # constants are available here:
-        # http://msdn.microsoft.com/library/default.asp?\
-        # url=/library/en-us/intl/nls_Paper_Sizes.asp
-        devmode.PaperSize = 9 # DMPAPER_A4
-        # 1 = portrait, 2 = landscape
-        if self.isLandscape():
-            devmode.Orientation = 2
+        if devmode is None:
+            # workaround, see http://lino.saffre-rumma.ee/news/477.html
+            self.session.debug("%r has no pDevMode property",props)
         else:
-            devmode.Orientation = 1
+
+            # change paper size and orientation
+            # constants are available here:
+            # http://msdn.microsoft.com/library/default.asp?\
+            # url=/library/en-us/intl/nls_Paper_Sizes.asp
+            devmode.PaperSize = 9 # DMPAPER_A4
+            # 1 = portrait, 2 = landscape
+            if self.isLandscape():
+                devmode.Orientation = 2
+                #print "Landscapecape"
+            else:
+                devmode.Orientation = 1
+                #print "Portrait"
 
         # create dc using new settings.
         # first get the integer hDC value.
@@ -279,6 +286,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         #    self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
         
         self.dc.SetMapMode(win32con.MM_TWIPS)
+        #self.dc.SetWindowOrg((0,0))
         
         #self.org = self.dc.GetViewportOrg()
         #self.ext = self.dc.GetViewportExt()
@@ -420,20 +428,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 ##         self.textobject.newline()
 ##         #self.textobject = None
 
-        
-    def write(self,text):
-        assert not "\n" in text, repr(text)
-        assert not "\r" in text, repr(text)
-        if self.encoding is not None:
-            text = text.encode(self.encoding)
-##         else:
-##             text = text.encode(sys.stdout.encoding)
-            #text = text.encode(sys.getdefaultencoding())
-            #if locale.getdefaultlocale()[1]:
-            #    print locale.getdefaultlocale()
-            #    text = text.encode(locale.getdefaultlocale()[1])
-        self.line += text
-
+    def prepareFont(self):
         if self.font is None:
             self.font = win32gui.CreateFontIndirect(self.logfont)
             win32gui.SelectObject(self.dch,self.font)
@@ -463,6 +458,21 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
         # 
         #self.leading = max(self.leading,self.doc.status.leading)
+        
+    def write(self,text):
+        assert not "\n" in text, repr(text)
+        assert not "\r" in text, repr(text)
+        if self.encoding is not None:
+            text = text.encode(self.encoding)
+##         else:
+##             text = text.encode(sys.stdout.encoding)
+            #text = text.encode(sys.getdefaultencoding())
+            #if locale.getdefaultlocale()[1]:
+            #    print locale.getdefaultlocale()
+            #    text = text.encode(locale.getdefaultlocale()[1])
+        self.line += text
+
+        self.prepareFont()
         #self.doc.dc.TextOut(self.line)
         if len(self.line) == 0:
             (dx,dy) = self.dc.GetTextExtent(" ")
@@ -526,8 +536,6 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
         
         self.flush() # make sure that self.x and self.y are correct
-        
-        
 
         # thanks to http://dbforums.com/t944137.html
         # and
@@ -573,7 +581,6 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         if dy is not None:
             y += self.length2i(dy)
         
-        
         width = height = None
         if w is not None:
             width = self.length2i(w)
@@ -583,9 +590,9 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         img=self.openImage(filename)
         
         if height is None:
-            height = int(width * img.size[0] / img.size[1])
+            height = int(width * img.size[1] / img.size[0])
         if width is None:
-            width = int(height * img.size[1] / img.size[0])
+            width = int(height * img.size[0] / img.size[1])
         
         #print "pixels:", x,y,w,h
 
@@ -608,10 +615,12 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         
         #y = 500
         # destination is a 4-tuple topx,topy, botx,boty
-        destination = ( x, -y, x+width, -(y+height) )
+        destination = ( x, -(self.ext[1]-y), x+width, -(self.ext[1]-(y-height)) )
+        #destination = ( x, y-height, x+width, y )
         #destination = [int(x) for x in destination]
         #destination = [x, y, 500, 500]
         #print "destination:", destination
+        
         if behindText:
             dib.draw(self.dc.GetHandleOutput(),destination)
         else:
@@ -632,6 +641,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         DELTA=10
         #print "org:", self.org
         #print "ext:", self.ext
+        # upper left
         self.dc.MoveTo((self.org[0]+DELTA,-self.org[1]-DELTA))
         # to upper right
         self.dc.LineTo((self.ext[0]+DELTA,-self.org[1]-DELTA))

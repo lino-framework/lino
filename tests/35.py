@@ -29,7 +29,8 @@ and Store still work if they know only a Context, not a Database?
 from lino.misc.tsttools import TestCase, main
 #from lino.ui import console
 
-from lino.adamo import center
+#from lino.adamo import center
+from lino.console import syscon
 from lino.adamo.database import Database
 from lino.adamo.dbsession import DbContext
 #from lino.adamo.dbds.sqlite_dbd import Connection
@@ -50,7 +51,7 @@ class Case(TestCase):
 
         sch = ContactsSchema()
     
-        conn = center.connection()
+        conn = syscon.connection()
         
         stddb = sch.database("std",
                              langs="en de fr et",
