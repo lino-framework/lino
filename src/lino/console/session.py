@@ -62,6 +62,8 @@ class Session:
     
     def isInteractive(self):
         return True
+    def isDebug(self):
+        return self.toolkit.isDebug()
 
     def confirm(self,*args,**kw):
         return self.toolkit.show_confirm(self,*args,**kw)

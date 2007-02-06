@@ -50,32 +50,16 @@ class PrinterNotReady(Exception):
 
 
 class TextPrinter:
-    
-    
-    """Abstract base class for all textprinters.
-
-    Implemented by Win32TextPrinter, PdfTextPrinter,...
-    
-    lineWidth(), margin, pageWidth and pageHeight are expressed in
-    'logical units', that is, a unit chosen by the implementing
-    class. For example Win32TextPrinter uses twips as unit,
-    PdfTextPrinter uses the same unit as reportlab.lib.units. The base
-    class doesn't need care about the real value of these parameters.
-        
-    """
+    "http://lino.saffre-rumma.ee/src/44.html"
     
     def __init__(self,
                  pageSize=(0,0),
-                 margin=0,
+                 margin="5mm",
                  cpl=None,
                  cpi=12,
                  session=None,
                  encoding=None):
 
-##         self.lineCommands = {
-##             ".image" : "parse_image",
-##             }
-            
         self.commands = {
             chr(12) : self.formFeed,
             chr(27)+"l" : self.parse_l,
@@ -99,7 +83,7 @@ class TextPrinter:
         #    session.toolkit.encoding
         self.encoding = encoding
         self.pageWidth,self.pageHeight = pageSize
-        self.margin = margin 
+        self.margin = self.length2i(margin)
         self.cpl=cpl
         self.cpi=cpi
         self.page=0
@@ -114,12 +98,8 @@ class TextPrinter:
         return self.cpl
     
     def lineWidth(self):
-        """Return the width of a text line in logical units.
-        """
+        "http://lino.saffre-rumma.ee/src/331.html"
         return self.pageWidth - self.margin * 2
-        
-##     def createTextObject(self):
-##         raise NotImplementedError
         
     def openImage(self,filename):
         try:
@@ -132,6 +112,7 @@ class TextPrinter:
         
     def onBeginPage(self):
         pass
+            
     def onEndPage(self):
         pass
     def onSetPageSize(self):
@@ -148,10 +129,7 @@ class TextPrinter:
         raise NotImplementedError
 
     def setCpi(self,cpi):
-        
-        """Set font size by specifying characters per inch.
-        """
-        
+        "http://lino.saffre-rumma.ee/src/330.html"
         pass
     
     def setItalic(self,ital):
@@ -176,6 +154,8 @@ class TextPrinter:
         if not self._pageStarted:
             # formfeed without any preceding text generates blank page
             self.beginPage()
+        if self.session.isDebug():
+            self.drawDebugRaster()
         self.onEndPage()
         self._pageStarted = False
 
@@ -227,14 +207,7 @@ class TextPrinter:
 
 
     def writeln(self,line=''):
-        
-        """Print a line of text after parsing it.
-
-        The final newline is printed only if the line really has text
-        or if it is empty, but for lines containing only control
-        commands the final newline is ignored.
-
-        """
+        "http://lino.saffre-rumma.ee/src/329.html"
         
         line = line.rstrip()
         
@@ -288,8 +261,7 @@ class TextPrinter:
         #self.ypos -= self.linespacing 
 
     def printLine(self,line):
-        """Deprecated alias for writeln().
-        """
+        "Deprecated alias for writeln()."
         self.writeln(line)
 
     def beforeWrite(self):
@@ -406,6 +378,10 @@ class TextPrinter:
         self.endPage()
         # self.beginPage()
         return 0
+
+    def length2i(self,s):
+        "http://lino.saffre-rumma.ee/src/328.html"
+        raise NotImplementedError
 
 
     def insertImage(self,filename,w,h):

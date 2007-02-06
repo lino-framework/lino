@@ -34,46 +34,15 @@ from lino.textprinter.textprinter import FileTextPrinter, \
 
 
 
-## HACK_BOXCHARS = {
-    
-##     # generated using tests/etc/3.py
-
-##     u'\u250c': '+',
-##     u'\u2500': '-',
-##     u'\u252c': '+',
-##     u'\u2510': '+',
-##     u'\u2502': '|',
-##     u'\u251c': '+',
-##     u'\u253c': '+',
-##     u'\u2524': '+',
-##     u'\u2514': '+',
-##     u'\u2534': '+',
-##     u'\u2518': '+',
-              
-##     u'\u2554': '+',
-##     u'\u2550': '-',
-##     u'\u2566': '+',
-##     u'\u2557': '+',
-##     u'\u2551': '|',
-##     u'\u2560': '+',
-##     u'\u256c': '+',
-##     u'\u2563': '+',
-##     u'\u255a': '+',
-##     u'\u2569': '+',
-##     u'\u255d': '+',
-##     }
-
-
-
 class Status:
     """
     could be used to save/restore the status of the textobject
     """
-    def __init__(self,size=10,
+    def __init__(self,size=10.0,
                  psfontname="Courier",
                  bold=False,
                  ital=False,
-                 leading=12):
+                 leading=12.0):
         self.ital = ital
         self.bold = bold
         self.psfontname = psfontname
@@ -91,11 +60,8 @@ class PdfTextPrinter(FileTextPrinter):
     ratio_width2size=1.7   # fontsize = width * ratio_width2size
     ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
     charwidth=0.6
-    def __init__(self,filename,margin=5*mm,**kw):
-        FileTextPrinter.__init__(self,filename,
-                                 pageSize=A4,
-                                 margin=margin,
-                                 **kw)
+    def __init__(self,filename,**kw):
+        FileTextPrinter.__init__(self,filename,pageSize=A4,**kw)
         
 
         try:
@@ -145,13 +111,14 @@ class PdfTextPrinter(FileTextPrinter):
         
     def onBeginPage(self):
         #self.background()
-        if self.pageHeight < self.pageWidth:
+        if self.isLandscape():
             # if landscape mode
             self.canvas.rotate(90)
-            self.canvas.translate(0,-210*mm)
+            self.canvas.translate(0,-210.0*mm)
         self.textobject = self.canvas.beginText()
         self.textobject.setTextOrigin(
             self.margin, self.pageHeight-(2*self.margin))
+        #FileTextPrinter.onBeginPage(self)
     
     def onEndPage(self):
         self.canvas.drawText(self.textobject)
@@ -179,7 +146,7 @@ class PdfTextPrinter(FileTextPrinter):
         if self.status.lpi is None:
             self.status.leading = self.status.size * self.ratio_size2leading
         else:
-            self.status.leading = 72 / self.status.lpi
+            self.status.leading = 72.0 / self.status.lpi
 
         psfontname = self.status.psfontname
         if self.status.bold:
@@ -223,6 +190,7 @@ class PdfTextPrinter(FileTextPrinter):
 
         
     def length2i(self,s):
+        "http://lino.saffre-rumma.ee/src/328.html"
         try:
             if s.endswith("mm"):
                 return float(s[:-2]) * mm
@@ -240,23 +208,9 @@ class PdfTextPrinter(FileTextPrinter):
     def insertImage(self,filename,
                     w=None,h=None,
                     x=None,y=None,
-                    dx=None,dy=None):
-        """
-        
-        w and h are the width and height of the image. At least one of
-        these parameters must be specified. If the other parameter is
-        not specified, it will be calculated to keep the image's
-        aspect ratio.
-
-        x and y to specify an absolute position of the top left corner
-        of the image. (0,0) is the lower left corner of the page.  If
-        x or y or both are missing, the image gets inserted at the
-        current text cursor position (more precisely the top left
-        corner of the charbox)
-
-        dx and dy are optional distances to be added to x and y.
-        
-        """
+                    dx=None,dy=None,
+                    behindText=False):
+        "http://lino.saffre-rumma.ee/src/334.html"
         self.flush()
         width = height = None
         if w is not None:
@@ -302,31 +256,10 @@ class PdfTextPrinter(FileTextPrinter):
 
 
     def setCpi(self,cpi):
-        "set font size in cpi (characters per inch)"
-        w=int(inch/cpi)
-        self.status.size = int(w*self.ratio_width2size)
-##         if cpi == 10:
-##             self.status.size = 12
-##             #self.status.leading = 14
-##         elif cpi == 12:
-##             self.status.size = 10
-##             #self.status.leading = 12
-##         elif cpi == 15:
-##             self.status.size = 8
-##             #self.status.leading = 10
-##         elif cpi == 17:
-##             self.status.size = 7
-##             #self.status.leading = 8
-##         elif cpi == 20:
-##             self.status.size = 6
-##             #self.status.leading = 8
-##         elif cpi == 5:
-##             self.status.size = 24
-##             #self.status.leading = 28
-##         else:
-##             raise ParserError("%s : bad cpi size" % par)
-        #self.width = int(self.lineWidth()/inch*cpi)
-        self.cpl = int(self.lineWidth()/inch*cpi)
+        "http://lino.saffre-rumma.ee/src/330.html"
+        w=inch/cpi
+        self.status.size = w*self.ratio_width2size
+        self.cpl = self.lineWidth()/inch*cpi
         #print __name__, self.width
         self.onSetFont()
          
@@ -349,5 +282,30 @@ class PdfTextPrinter(FileTextPrinter):
         self.onSetFont()
         
     def drawDebugRaster(self):
-        self.write("drawDebugRaster() not implemented for PdfTextPrinter")
+        self.flush()
 
+        LEFT=0
+        RIGHT=self.pageWidth
+        TOP=self.pageHeight
+        BOTTOM=0
+        WIDTH=self.pageWidth
+        HEIGHT=self.pageHeight
+        CS=9.0*mm # Cross Size
+
+        self.canvas.setFont("Helvetica",6)
+        self.canvas.setLineWidth(0.01)
+        
+        self.canvas.rect(LEFT,TOP,WIDTH,HEIGHT)
+
+        x=LEFT
+        while x <= RIGHT:
+            y=BOTTOM
+            while y <= TOP:
+                self.canvas.line(x-CS,y,x+CS,y)
+                self.canvas.line(x,y-CS,x,y+CS)
+                self.canvas.drawString(x,y,"(%d,%d)"%(round(x/mm),round(y/mm)))
+                y += 20.0*mm
+            x += 20.0*mm
+        
+
+        

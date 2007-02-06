@@ -30,6 +30,7 @@ import pywintypes
 from PIL import ImageWin
 
 
+
 #OEM_CHARSET = win32con.OEM_CHARSET
 
 charsets = {
@@ -43,13 +44,14 @@ charsets = {
 from lino.console import syscon
 from lino.textprinter.textprinter import TextPrinter, \
      PrinterNotReady, ParserError
+from lino.textprinter import devcaps 
 
 pt = 20
 inch = 1440.0
 mm = inch / 25.4
-A4 = (210*mm, 297*mm)
+A4 = (int(210*mm), int(297*mm))
 
-RATIO=1.7 # if RATIO changes, I must adapt TIM's prnprint.drv
+# RATIO=1.7 # if RATIO changes, I must adapt TIM's prnprint.drv
 
 # In all mapmodes is (0,0) the top left corner of the page, and the
 # units increase as you go down and across the page.
@@ -79,7 +81,8 @@ LPIBASE = inch * 240 / 257
         
 
 class Win32TextPrinter(TextPrinter):
-    
+    ratio_width2size=1.7   # fontsize = width * ratio_width2size
+    ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
     def __init__(self,
                  printerName=None,
                  spoolFile=None,
@@ -88,11 +91,9 @@ class Win32TextPrinter(TextPrinter):
                  jobName="Win32PrinterDocument",
                  **kw):
         
-        TextPrinter.__init__(self,
-                             pageSize=A4,
-                             margin=5*mm,
-                             **kw)
+        TextPrinter.__init__(self,pageSize=A4,**kw)
 
+        self.lpi = None
         self.logfont=win32gui.LOGFONT()
         """
         lfHeight
@@ -225,14 +226,14 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
             # constants are available here:
             # http://msdn.microsoft.com/library/default.asp?\
             # url=/library/en-us/intl/nls_Paper_Sizes.asp
-            devmode.PaperSize = 9 # DMPAPER_A4
-            # 1 = portrait, 2 = landscape
+            devmode.PaperSize = win32con.DMPAPER_A4
             if self.isLandscape():
-                devmode.Orientation = 2
-                #print "Landscapecape"
+                devmode.Orientation = win32con.DMORIENT_LANDSCAPE
+                #print "Landscape"
             else:
-                devmode.Orientation = 1
+                devmode.Orientation = win32con.DMORIENT_PORTRAIT
                 #print "Portrait"
+                
 
         # create dc using new settings.
         # first get the integer hDC value.
@@ -285,26 +286,12 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         #if self.useWorldTransform: #SUPPORT_LANDSCAPE:
         #    self.dc.SetGraphicsMode(win32con.GM_ADVANCED)
         
-        self.dc.SetMapMode(win32con.MM_TWIPS)
-        #self.dc.SetWindowOrg((0,0))
-        
-        #self.org = self.dc.GetViewportOrg()
-        #self.ext = self.dc.GetViewportExt()
-        self.org = self.dc.GetWindowOrg()
-        self.ext = self.dc.GetWindowExt()
         #self.setCpi(cpi)
         #self.setLpi(lpi)
-        self.session.debug("org: %r",self.org)
-        self.session.debug("ext: %r",self.ext)
 
-
-            
         
     def onBeginPage(self):
         self.session.debug("onBeginPage %d",self.page)
-        self.x = self.org[0] + self.margin
-        self.y = self.org[1] + self.margin
-        self._images=[]
 
 ##         if self.isLandscape():
 ##             if self.useWorldTransform: # SUPPORT_LANDSCAPE:
@@ -324,9 +311,40 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 ##                 raise PrinterNotReady("SetWorldTransform() failed")
         
         r = self.dc.StartPage()
+        
         # r seems to be always None
         # if r <= 0:
         #     raise PrinterNotReady("StartPage() returned %d",r)
+
+        self.dc.SetMapMode(win32con.MM_TWIPS)
+        
+        #self.org = self.dc.GetWindowOrg()
+        #self.ext = self.dc.GetWindowExt()
+        self.x = self.margin
+        self.y = self.pageHeight-self.margin
+        self._images=[]
+        self.dpi_x = self.dc.GetDeviceCaps(devcaps.LOGPIXELSX)
+        self.dpi_y = self.dc.GetDeviceCaps(devcaps.LOGPIXELSY)
+        offsetx=self.dots2twips_x(self.dc.GetDeviceCaps(devcaps.PHYSICALOFFSETX))
+        offsety=self.dots2twips_y(self.dc.GetDeviceCaps(devcaps.PHYSICALOFFSETY))
+        print offsetx/mm , offsety/mm
+        self.dc.SetWindowOrg((offsetx,self.pageHeight-offsety))
+        self.dc.SetWindowExt((self.pageWidth,self.pageHeight))
+        
+        #self.session.debug("org: %r",self.org)
+        #self.session.debug("ext: %r",self.ext)
+
+        #TextPrinter.onBeginPage(self)
+        
+
+
+    def dots2twips_x(self,dots):
+        return int(inch * dots / self.dpi_x)
+
+    def dots2twips_y(self,dots):
+        return int(inch * dots / self.dpi_y)
+        
+        
     
     def onEndPage(self):
         for dib,destination in self._images:
@@ -349,27 +367,18 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         del self.dc
             
     def setLpi(self,lpi):
-        pass
-        #h = int(LPIBASE / lpi)
-        #h = int(inch/lpi)
-        #console.debug("%d lpi = %d twips" % (lpi,h))
-        #self.fontDict['height'] = h
-        #self.leading = int(inch/lpi)
+        self.lpi=lpi
         
     def setCpi(self,cpi):
-        
-        """Set font size by specifying characters per inch.
-        
-        """
+        "http://lino.saffre-rumma.ee/src/330.html"
         
         #assert cpi != 12
-        w = int(inch/cpi)
+        w = inch/cpi
 
-        self.logfont.lfWidth=w
-        self.logfont.lfHeight=-int(w*RATIO)
+        self.logfont.lfWidth=int(w)
+        self.logfont.lfHeight=-int(w*self.ratio_width2size)
         # must create new font object before next TextOut():
         self.font = None
-        
         self.cpi=cpi
         self.cpl = int(self.lineWidth()/inch*cpi)
         self.session.debug("setCpi(): cpi=%d, lineWidth()=%d, cpl=%d",
@@ -432,6 +441,11 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         if self.font is None:
             self.font = win32gui.CreateFontIndirect(self.logfont)
             win32gui.SelectObject(self.dch,self.font)
+            if self.lpi is None:
+                self.leading=abs(self.logfont.lfHeight)*self.ratio_size2leading # 20070205
+            else:
+                self.leading=1440.0 / self.lpi
+        
         
             """
             CreateFont:
@@ -477,10 +491,10 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         if len(self.line) == 0:
             (dx,dy) = self.dc.GetTextExtent(" ")
         else:
-            self.dc.TextOut(int(self.x),-int(self.y),self.line)
+            self.dc.TextOut(int(self.x),int(self.y),self.line)
             (dx,dy) = self.dc.GetTextExtent(self.line)
             self.session.debug("self.dc.TextOut(%d,%d,%r) %.2f cpi",
-                               int(self.x),-int(self.y),
+                               int(self.x),int(self.y),
                                self.line,
                                len(self.line)*inch/dx)
             self.x += dx
@@ -491,7 +505,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         #console.debug("TextOut(%d,%d,%s)" % \
         #              (int(self.x),-int(self.y),repr(self.line)))
         #if dy != 0:
-        self.leading = dy
+        # 20070205 self.leading = dy
         self.line = ""
             
 ##         tm = self.doc.dc.GetTextMetrics()
@@ -505,13 +519,14 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
     def newline(self):
         self.write("") # see http://lino.saffre-rumma.ee/news/463.html
         #self.x = self.doc.margin
-        self.x = self.org[0] + self.margin
-        self.y += self.leading
+        self.x = self.margin
+        self.y -= self.leading
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
         #syscon.debug("self.y += %d" % self.leading)
 
 
     def length2i(self,s):
+        "http://lino.saffre-rumma.ee/src/328.html"
         try:
             if s.endswith("mm"):
                 return int(float(s[:-2]) * mm)
@@ -615,7 +630,8 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         
         #y = 500
         # destination is a 4-tuple topx,topy, botx,boty
-        destination = ( x, -(self.ext[1]-y), x+width, -(self.ext[1]-(y-height)) )
+        #destination = ( x, -(self.ext[1]-y), x+width, -(self.ext[1]-(y-height)) )
+        destination = ( x, y, x+width, y-height) 
         #destination = ( x, y-height, x+width, y )
         #destination = [int(x) for x in destination]
         #destination = [x, y, 500, 500]
@@ -631,44 +647,47 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
 
     def drawDebugRaster(self):
-        self.beginDoc()
+        self.session.debug("drawDebugRaster()")
+        self.flush()
+        #dc=self.dc
+        
         fontDict=dict(name="Courier New",
-                      height=100)
+                      height=8*pt)
         font = win32ui.CreateFont(fontDict)
         self.dc.SelectObject(font)
         #print "CreateFont(%r)" % fontDict
-        
-        DELTA=10
-        #print "org:", self.org
-        #print "ext:", self.ext
-        # upper left
-        self.dc.MoveTo((self.org[0]+DELTA,-self.org[1]-DELTA))
-        # to upper right
-        self.dc.LineTo((self.ext[0]+DELTA,-self.org[1]-DELTA))
-        
+
+        LEFT=0
+        BOTTOM=0
+        RIGHT=int(210*mm)
+        TOP=int(297*mm)
+
+        CS=int(9*mm) # Cross Size
+
+        # move to upper left
+        self.dc.MoveTo((LEFT,TOP))
+        # line to upper right
+        self.dc.LineTo((RIGHT,TOP))
+
         # to lower right
-        #self.dc.LineTo((0,-self.ext[1]))
-        self.dc.LineTo((self.ext[0]-DELTA,-self.ext[1]-DELTA))
+        self.dc.LineTo((RIGHT,BOTTOM))
 
         # to lower left
-        self.dc.LineTo((self.org[0],-(self.ext[1]-DELTA)))
+        self.dc.LineTo((LEFT,BOTTOM))
 
         # to upper left
-        self.dc.LineTo((self.org[0],-self.org[1]))
-        
-        CS=50 # Cross Size
-        for x in range(self.org[0],self.ext[0],int(20*mm)):
-            for y in range(self.org[1],self.ext[1],int(20*mm)):
-                
-                self.dc.MoveTo((x-CS,-y))
-                self.dc.LineTo((x+CS,-y))
-                
-                self.dc.MoveTo((x,-y-CS))
-                self.dc.LineTo((x,-y+CS))
-                
-                self.dc.TextOut(x,-y,"(%d,%d)"%(x,-y))
-                #print (x,y)
-        
-        #self.dc.LineTo((0,5000))
-        
-        
+        self.dc.LineTo((LEFT,TOP))
+
+        for x in range(LEFT,RIGHT,int(20*mm)):
+            for y in range(BOTTOM,TOP,int(20*mm)):
+
+                self.dc.MoveTo((x-CS,y))
+                self.dc.LineTo((x+CS,y))
+
+                self.dc.MoveTo((x,y-CS))
+                self.dc.LineTo((x,y+CS))
+
+                self.dc.TextOut(x,y,"(%d,%d)"%(round(x/mm),round(y/mm)))
+
+
+

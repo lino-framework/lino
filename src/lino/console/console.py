@@ -208,6 +208,9 @@ class Console(BaseToolkit):
     def isVerbose(self):
         return (self._verbosity > 0)
     
+    def isDebug(self):
+        return (self._verbosity > 1)
+    
     def isQuiet(self):
         return (self._verbosity < 0)
     
