@@ -85,6 +85,12 @@ write to SPOOLFILE instead of really printing.""",
                           dest="spoolFile",
                           default=None)
         
+        parser.add_option("-s", "--fontSize",
+                          help="use FONTSIZE characters per inch as default font size.",
+                          action="store",
+                          type="int",
+                          dest="fontSize",
+                          default=12)
 ##         parser.add_option(
 ##             "-u", "--useWorldTransform",
 ##             help="use SetWorldTransform() to implement landscape",
@@ -108,6 +114,7 @@ write to SPOOLFILE instead of really printing.""",
                     #useWorldTransform=self.options.useWorldTransform,
                     encoding=self.options.encoding,
                     fontName=self.options.fontName,
+                    cpi=self.options.fontSize,
                     session=self)
                     #charset=winprn.OEM_CHARSET)
                 d.readfile(inputfile)

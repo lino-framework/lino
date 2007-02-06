@@ -50,6 +50,7 @@ pt = 20
 inch = 1440.0
 mm = inch / 25.4
 A4 = (int(210*mm), int(297*mm))
+DELTA=50
 
 # RATIO=1.7 # if RATIO changes, I must adapt TIM's prnprint.drv
 
@@ -77,12 +78,12 @@ A4 = (int(210*mm), int(297*mm))
 # h = inch/lpi * 240 /257
 # <=> h = (inch * 240 / 257) / lpi
 
-LPIBASE = inch * 240 / 257 
+#LPIBASE = inch * 240 / 257 
         
 
 class Win32TextPrinter(TextPrinter):
     ratio_width2size=1.7   # fontsize = width * ratio_width2size
-    ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
+    ratio_size2leading=1.065 # leading = fontsize * ratio_size2leading
     def __init__(self,
                  printerName=None,
                  spoolFile=None,
@@ -157,6 +158,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         #self.logfont.lfCharSet=win32con.HEBREW_CHARSET
         #self.logfont.lfCharSet=win32con.ARABIC_CHARSET
         #self.logfont.lfCharSet=win32con.SYMBOL_CHARSET
+        self.logfont.lfWeight=win32con.FW_SEMIBOLD
 
         self.setCpi(self.cpi)
 
@@ -327,9 +329,9 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         self.dpi_y = self.dc.GetDeviceCaps(devcaps.LOGPIXELSY)
         offsetx=self.dots2twips_x(self.dc.GetDeviceCaps(devcaps.PHYSICALOFFSETX))
         offsety=self.dots2twips_y(self.dc.GetDeviceCaps(devcaps.PHYSICALOFFSETY))
-        print offsetx/mm , offsety/mm
+        #print offsetx/mm , offsety/mm
         self.dc.SetWindowOrg((offsetx,self.pageHeight-offsety))
-        self.dc.SetWindowExt((self.pageWidth,self.pageHeight))
+        self.dc.SetWindowExt((self.pageWidth,self.pageHeight+DELTA))
         
         #self.session.debug("org: %r",self.org)
         #self.session.debug("ext: %r",self.ext)
@@ -376,7 +378,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         w = inch/cpi
 
         self.logfont.lfWidth=int(w)
-        self.logfont.lfHeight=-int(w*self.ratio_width2size)
+        self.logfont.lfHeight=-int(round(w*self.ratio_width2size))
         # must create new font object before next TextOut():
         self.font = None
         self.cpi=cpi
@@ -395,10 +397,12 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
     def setBold(self,bold):
         if bold:
-            self.logfont.lfWeight=win32con.FW_BOLD
+            self.logfont.lfWeight=win32con.FW_EXTRABOLD
+            #self.logfont.lfWeight=win32con.FW_BOLD
             #self.fontDict['weight'] = win32con.FW_BOLD
         else:
-            self.logfont.lfWeight=win32con.FW_NORMAL
+            self.logfont.lfWeight=win32con.FW_SEMIBOLD
+            #self.logfont.lfWeight=win32con.FW_NORMAL
             #self.fontDict['weight'] = win32con.FW_NORMAL
         self.font = None
             
@@ -444,7 +448,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
             if self.lpi is None:
                 self.leading=abs(self.logfont.lfHeight)*self.ratio_size2leading # 20070205
             else:
-                self.leading=1440.0 / self.lpi
+                self.leading=inch/self.lpi
         
         
             """

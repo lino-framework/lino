@@ -59,6 +59,12 @@ FILE is encoded using ENCODING instead of sys.stdin.encoding.""",
                           type="string",
                           dest="encoding",
                           default=sys.stdin.encoding)
+        parser.add_option("-s", "--fontSize",
+                          help="use FONTSIZE characters per inch as default font size.",
+                          action="store",
+                          type="int",
+                          dest="fontSize",
+                          default=12)
 
     def run(self):
         
@@ -70,9 +76,12 @@ FILE is encoded using ENCODING instead of sys.stdin.encoding.""",
             (root,ext) = os.path.splitext(inputfile)
             self.options.outFile = root +".pdf"
 
-        d = PdfTextPrinter(self.options.outFile,
-                           session=self,
-                           encoding=self.options.encoding)
+        d = PdfTextPrinter(
+            self.options.outFile,
+            session=self,
+            encoding=self.options.encoding,
+            cpi=self.options.fontSize)
+                           
         d.readfile(inputfile)#,coding=sys.stdin.encoding)
         
         d.close()

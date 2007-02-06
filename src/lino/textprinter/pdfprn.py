@@ -41,25 +41,26 @@ class Status:
     def __init__(self,size=10.0,
                  psfontname="Courier",
                  bold=False,
-                 ital=False,
-                 leading=12.0):
+                 ital=False):
         self.ital = ital
         self.bold = bold
         self.psfontname = psfontname
         self.size = size
-        self.leading = leading
-        self.lpi = None
+        #self.leading = None #leading
+        #self.lpi = None
         self.underline = False
 
 
         
 
 class PdfTextPrinter(FileTextPrinter):
-    extension=".pdf"
+    "http://lino.saffre-rumma.ee/src/299.html"
     
+    extension=".pdf"
     ratio_width2size=1.7   # fontsize = width * ratio_width2size
     ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
     charwidth=0.6
+    
     def __init__(self,filename,**kw):
         FileTextPrinter.__init__(self,filename,pageSize=A4,**kw)
         
@@ -86,6 +87,9 @@ class PdfTextPrinter(FileTextPrinter):
         self.canvas = canvas.Canvas(filename,pagesize=A4)
         self.textobject = None
         self.status = Status()
+        self.leading=None
+        self.lpi = None
+        self.setCpi(self.cpi)
 
 
 ##      def background(self):
@@ -116,8 +120,7 @@ class PdfTextPrinter(FileTextPrinter):
             self.canvas.rotate(90)
             self.canvas.translate(0,-210.0*mm)
         self.textobject = self.canvas.beginText()
-        self.textobject.setTextOrigin(
-            self.margin, self.pageHeight-(2*self.margin))
+        self.textobject.setTextOrigin(self.margin,self.pageHeight-self.margin)
         #FileTextPrinter.onBeginPage(self)
     
     def onEndPage(self):
@@ -143,10 +146,10 @@ class PdfTextPrinter(FileTextPrinter):
     def prepareFont(self):
         if not self.fontChanged: return
         self.fontChanged=False
-        if self.status.lpi is None:
-            self.status.leading = self.status.size * self.ratio_size2leading
+        if self.lpi is None:
+            self.leading = self.status.size * self.ratio_size2leading
         else:
-            self.status.leading = 72.0 / self.status.lpi
+            self.leading = 72.0 / self.lpi
 
         psfontname = self.status.psfontname
         if self.status.bold:
@@ -158,7 +161,7 @@ class PdfTextPrinter(FileTextPrinter):
             
         self.textobject.setFont(psfontname,
                                 self.status.size,
-                                self.status.leading)
+                                self.leading)
         
 
     def write(self,text):
@@ -198,8 +201,8 @@ class PdfTextPrinter(FileTextPrinter):
                 #print "1ch=%s"%self.status.size
                 return float(s[:-2]) * self.status.size * self.charwidth
             if s.endswith("ln"):
-                #print "1ln=%s"%self.status.leading
-                return float(s[:-2]) * self.status.leading 
+                #print "1ln=%s"%self.leading
+                return float(s[:-2]) * self.leading 
             return float(s) * mm
         except ValueError,e:
             raise ParserError("invalid length: %r" % s)
@@ -235,10 +238,10 @@ class PdfTextPrinter(FileTextPrinter):
         if cx == 0 and cy == 0:
             # print "no text has been processed until now"
             cx = self.margin
-            cy = self.pageHeight-(2*self.margin)-height
+            cy = self.pageHeight-self.margin-height
         else:
             # but picture starts on top of charbox:
-            cy += self.status.leading
+            cy += self.leading
             
         if x is None: x=cx
         else: x = self.length2i(x)
@@ -259,7 +262,7 @@ class PdfTextPrinter(FileTextPrinter):
         "http://lino.saffre-rumma.ee/src/330.html"
         w=inch/cpi
         self.status.size = w*self.ratio_width2size
-        self.cpl = self.lineWidth()/inch*cpi
+        self.cpl=self.lineWidth() / inch * cpi
         #print __name__, self.width
         self.onSetFont()
          
@@ -278,7 +281,7 @@ class PdfTextPrinter(FileTextPrinter):
         self.onSetFont()
         
     def setLpi(self,lpi):
-        self.status.lpi = lpi
+        self.lpi = lpi
         self.onSetFont()
         
     def drawDebugRaster(self):
