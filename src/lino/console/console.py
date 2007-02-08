@@ -36,7 +36,7 @@ try:
 except ImportError,e:
     sound = False
 
-from PyQt4 import QtCore
+#from PyQt4 import QtCore
 
 # rewriter() inspired by a snippet in Marc-Andre Lemburg's Python
 # Unicode Tutorial
@@ -228,7 +228,8 @@ class Console(BaseToolkit):
 
     def start_running(self,app):
         #print "start_running()"
-        self.qtapp=QtCore.QCoreApplication([])
+        if False: 
+            self.qtapp=QtCore.QCoreApplication([])
         #if self.qtapp.hasPendingEvents():
         #    print "there are pending events"
         #self.qtapp.processEvents() # install DB drivers
@@ -237,7 +238,8 @@ class Console(BaseToolkit):
             app.notice(app.aboutString())
             
     def stop_running(self):
-        self.qtapp.processEvents() # install DB drivers
+        if hasattr(self,"qtapp"):
+            self.qtapp.processEvents() # install DB drivers
         
 ##     def show_status(self,sess,msg=None,*args,**kw):
 ##         #if msg is not None:

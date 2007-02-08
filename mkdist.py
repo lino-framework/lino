@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -157,7 +157,12 @@ print msg
 dll_excludes = ['cygwin1.dll',
                 'tk84.dll', 'tcl84.dll',
                 '_ssl.pyd', 'pyexpat.pyd',
-                '_tkinter.pyd', '_ssl.pyd'
+                '_tkinter.pyd', '_ssl.pyd',
+                'QtGui4.dll',
+                'QtCore4.dll', 'QtCore4.pyd',
+                'QtSql4.dll', 'QtSql.pyd', 
+                'MSVCR71.dll',
+                'mingwm10.dll',
                 ]
 excludes = [ #"pywin", "pywin.debugger", "pywin.debugger.dbgcon",
              #"pywin.dialogs", "pywin.dialogs.list",
@@ -191,7 +196,7 @@ if 'timtools' in args:
         author="Luc Saffre",
         author_email="luc.saffre@gmx.net",
         url=__url__+"/timtools.html",
-        long_description="A collection of command-line tools",
+        long_description="A collection of command-line tools to help DOS applications survive",
         package_dir = {'': 'src'},
         console=[ opj("src","lino","scripts",t+".py")
                   for t in console_targets],
