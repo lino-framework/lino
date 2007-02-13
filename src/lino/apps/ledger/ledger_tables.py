@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005-2006 Luc Saffre 
+## Copyright 2005-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -26,10 +26,6 @@ from lino.apps.contacts.contacts_tables import Language
 from lino.apps.contacts.contacts_tables import City, Nation
 from lino.apps.contacts.contacts_tables import Organisation, Person
 from lino.apps.contacts.contacts_tables import Contact, Function
-#from lino.apps.contacts.contacts_tables import PartnerType
-#from lino.apps.contacts.tables import Partner as PartnerBase
-#from lino.apps.contacts.tables import User
-#from lino.apps.contacts.contacts_data import *
 
 from lino.apps.contacts.contacts_tables import \
      Contacts, ContactsMainForm

@@ -1,4 +1,4 @@
-## Copyright 2005-2006 Luc Saffre
+## Copyright 2005-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -101,6 +101,11 @@ class Case(TestCase):
         check(200208,200606,  750,  803.33)
         check(200208,200606,  792,  848.32)
         check(200208,200606, 2200, 2356.45)
+        
+        check(200208,200701,  750,  811.01)
+        check(200208,200701, 1250, 1351.68)
+        
+        check(200610,200701, 1250, 1257.27)
         
         #base 1988
         check(199203,200601, 100, 126.21)

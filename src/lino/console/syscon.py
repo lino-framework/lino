@@ -55,8 +55,11 @@ def getMainSession():
     
 
 def shutdown():
+    if _main is not None:
+        _main.shutdown()
     if _syscon is not None:
         _syscon.shutdown()
+        
 
     if DEBUG:
         l = sys.modules.keys()

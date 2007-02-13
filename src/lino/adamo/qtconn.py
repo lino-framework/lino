@@ -17,10 +17,11 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
-from types import StringType
+from types import StringType, UnicodeType
 import datetime
 
 from PyQt4 import QtSql
+from PyQt4 import QtCore
 
 ##     import warnings
 ##     warnings.filterwarnings("ignore",
@@ -32,9 +33,13 @@ from PyQt4 import QtSql
 
 from types import TupleType
 
-from lino.adamo.sql import SqlConnection
+from lino.adamo.sql import SqlConnection #, SqlError
 from lino.adamo import DatabaseError
-from lino.adamo import datatypes 
+from lino.adamo import datatypes
+
+
+
+_qtapp=QtCore.QCoreApplication([])
 
 
 def month(s):
@@ -52,12 +57,20 @@ def day(s):
 
 class Connection(SqlConnection):
     
-    def __init__(self,sess,name,filename=None):
+    def __init__(self,sess,name=None,filename=None):
         SqlConnection.__init__(self,sess)
         #self._isTemporary = isTemporary
         self._mtime = 0.0
         self._filename = filename
+        
+        if name is None:
+            name=sess.name
+            if name is None:
+                name=sess.__class__.__name__
+            if len(sess._connections):
+                name+=str(len(sess._connections)+1)
         self.name=name
+
         if filename is None:
             # assert isTemporary
             filename=":memory:"
@@ -65,11 +78,11 @@ class Connection(SqlConnection):
             self._mtime = os.stat(filename).st_mtime
             self._status = self.CST_OPENED
 
-
         self._dbconn=QtSql.QSqlDatabase.addDatabase("QSQLITE",self.name)
         self._dbconn.setDatabaseName(filename)
+        _qtapp.processEvents()
         if not self._dbconn.open():
-            raise DatabaseError(filename+":"+str(self._dbconn.lastError()))
+            raise DatabaseError(filename+":"+str(self._dbconn.lastError().text()))
 
 ##         handle=self._dbconn.driver().handle().data()
 ##         handle.create_function("month",1,month)
@@ -90,11 +103,12 @@ class Connection(SqlConnection):
 
         """
         #print "sql.sql2value() :", s, type
-        if s is None:
-            return None
+        if s is None: return None
+        if s.isNull(): return None
         
         if isinstance(type, datatypes.DateType):
-            return s.toDateTime()
+            #return s.toDate()
+            return s.toDate().toPyDate()
             #return datetime.date.fromordinal(s)
         
         elif isinstance(type, datatypes.BoolType):
@@ -116,11 +130,22 @@ class Connection(SqlConnection):
         elif isinstance(type, datatypes.PriceType):
             n,ok=s.toInt()
             return n
+        elif isinstance(type, datatypes.StringType):
+            #s=str(s.toString().toUtf8()).decode('utf8')
+            s=unicode(s.toString())
+        elif isinstance(type, datatypes.AsciiType):
+            #s=str(s.toString().toAscii())
+            s=str(s.toString())
 
-        s=s.toString()
-##         if not s.__class__ in (types.StringType,
-##                                types.UnicodeType):
-##             raise SqlError("%r is not a string" % s)
+        #s=s.toString()
+        #print s
+        #s=str(s.toString().toLatin1()) # .__str__()
+        #s=unicode(s.toString().toUtf8())
+        #s=s.__unicode__()
+        
+        assert s.__class__ in (StringType, UnicodeType), "%r is not a string" % s
+            #print repr(s)
+        #    raise ValueError("%r is not a string" % s)
         
         if len(s) == 0:
             return None
@@ -150,6 +175,7 @@ class Connection(SqlConnection):
         
     def commit_really(self):
         self._dbconn.commit()
+        _qtapp.processEvents()
 
     def close(self):
         if self._status == self.CST_CLOSED:
@@ -163,7 +189,9 @@ class Connection(SqlConnection):
         self._dbconn.close()
         #self.session.breathe()
         self._dbconn=None
+        _qtapp.processEvents()
         QtSql.QSqlDatabase.removeDatabase(self.name)
+        _qtapp.processEvents()
         self._status = self.CST_CLOSED
         #self._dbconn = None
 ##         if self._isTemporary and self._filename is not None:
@@ -221,7 +249,7 @@ class Connection(SqlConnection):
         if self.isVirtual():
             # means that sqlite_dbd.Connection._filename is None
             return None
-        # print pka
+        #print "qtconn.py:", table.getTableName(),pka,knownId
         sql = "SELECT MAX(%s) "  % pka[-1][0]
         sql += "FROM " + table.getTableName()
         l = []

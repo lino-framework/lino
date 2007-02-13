@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,7 +17,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
    
-from lino.misc.tsttools import TestCase, main, Toolkit
+from lino.misc.tsttools import TestCase, main
 
 from lino.adamo.store import Populator
 
@@ -25,7 +25,7 @@ from lino.adamo.store import Populator
      
 from lino.apps.timings import timings_tables as tables
 from lino.adamo.datatypes import itot
-from lino.adamo import center
+#from lino.adamo import center
 
 class TestPopulator(Populator):
     def populateUsageTypes(self,q):

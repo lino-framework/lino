@@ -721,7 +721,7 @@ class Pointer(Field):
             if toTable is None:
                 return None
             atomicValues = self._reduceAtoms(toTable.getTableId(),
-                                                        atomicValues)
+                                             atomicValues)
             #toArea = getattr(sess.tables,toTable.getTableName())
             toArea = dbc.query(toTable._instanceClass)
         else:

@@ -282,36 +282,3 @@ class Database(Context): #,Describable):
 
 
 
-## class QuickDatabase(Database):
-##     "Database instance with only one connection"
-##     def __init__(self,
-##                  schema,
-##                  langs=None,
-##                  label=None,
-##                  filename=None
-##                  ):
-
-
-##         Database.__init__(self,
-##                           schema,
-##                           langs=langs,
-##                           label=label)
-
-        
-##         self._connection = Connection(filename=filename,
-##                                       schema=schema)
-
-##         self.connect(self._connection)
-
-## ##     def close(self):
-## ##         Database.close(self)
-## ##         self._connection.close()
-## ##         self._connection = None
-
-## ##     def commit(self):   
-## ##         Database.commit(self)
-## ##         self._connection.commit()
-        
-        
-
-

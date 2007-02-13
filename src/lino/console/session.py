@@ -82,6 +82,7 @@ class Session:
     def error(self,*args,**kw):
         return self.toolkit.show_error(self,*args,**kw)
     def exception(self,*args,**kw):
+        print "session.py", args, kw
         return self.toolkit.showException(self,*args,**kw)
 
     def logmessage(self,*args,**kw):
@@ -150,10 +151,7 @@ class Session:
 ##                 except ImportError:
 ##                     raise DatabaseError("no database driver available")
 
-        name=self.name
-        if len(self._connections):
-            name+=str(len(self._connections)+1)
-        conn = Connection(self,name,*args,**kw)
+        conn = Connection(self,*args,**kw)
         self._connections.append(conn)
         #print conn
         return conn

@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -48,8 +48,8 @@ class MyPizzeriaMain(pizzeria.PizzeriaMain):
     """
     
 Welcome to MyPizzeria, a customization of the most simple Lino demo
-application.  Note that this application is not stable and there are
-no known users.
+application.  Note that this application is for demonstration purposes
+only.
 
 """
 
@@ -60,26 +60,20 @@ no known users.
         pizzeria.PizzeriaMain.setupMenu(self)
 
 class MyPizzeria(pizzeria.Pizzeria):
-    name="Lino My Pizzeria"
+    name="My Pizzeria"
     mainFormClass=MyPizzeriaMain
     
 
 
-## class ServicePizzeria(pizzeria.Pizzeria):
-    
-##     def setupSchema(self):
-##         pizzeria.Pizzeria.setupSchema(self)
-##         self.addTable(Service)
 
-
-def populate(sess):
+def populate(dbc):
     
-    pizzeria.populate(sess)
+    pizzeria.populate(dbc)
     
-    SERV = sess.query(Service)
-    CUST = sess.query(pizzeria.Customer)
-    ORDERS = sess.query(pizzeria.Order)
-    PROD = sess.query(pizzeria.Product)
+    SERV = dbc.query(Service)
+    CUST = dbc.query(pizzeria.Customer)
+    ORDERS = dbc.query(pizzeria.Order)
+    PROD = dbc.query(pizzeria.Product)
     
     s1 = SERV.appendRow(name="bring home",price=1)
     s2 = SERV.appendRow(name="organize party",price=100)

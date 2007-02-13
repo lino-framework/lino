@@ -42,6 +42,12 @@ from lino.adamo.dbsession import DbContext
 
 class Schema:
     
+    """A collection of table definitions designed to work together.
+
+    One Python process can manipulate different Databases that share the same Schema.
+    
+    """
+    
     tableClasses=NotImplementedError
     defaultLangs = ('en',)
 

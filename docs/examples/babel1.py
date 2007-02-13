@@ -5,11 +5,9 @@ sess=startup(langs="en fr")
 qry=sess.query(Currency,"id name")
 # show in default language:
 qry.show()
-#sess.showQuery(qry)
 print
 # switch to FR and show again:
 sess.setBabelLangs("fr")
-#sess.showQuery(qry)
 qry.show()
-
+#sess.shutdown()
 

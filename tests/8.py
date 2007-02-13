@@ -1,5 +1,5 @@
 # coding: latin1
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -73,7 +73,7 @@ Emil Eierschal Eupen
 Erna Eierschal Eupen
 Frédéric Freitag Eupen
 Gerd Großmann Eupen
-Hans Flott Laki München
+Hans Flott Bierstraße München
 Henri Bodard Verviers
 Kati Kask Tallinn
 Kurtz & Büntig Bergstraße Eupen

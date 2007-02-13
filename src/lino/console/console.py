@@ -71,8 +71,8 @@ except ImportError,e:
 class BaseToolkit:
 
     def on_breathe(self,task):
-        if hasattr(self,"qtapp"):
-            self.qtapp.processEvents()
+        #if hasattr(self,"qtapp"):
+        #    self.qtapp.processEvents()
         #else:
         #    print "no qtapp"
         if self.abortRequested():
@@ -228,8 +228,8 @@ class Console(BaseToolkit):
 
     def start_running(self,app):
         #print "start_running()"
-        if False: 
-            self.qtapp=QtCore.QCoreApplication([])
+        #if False: 
+        #    self.qtapp=QtCore.QCoreApplication([])
         #if self.qtapp.hasPendingEvents():
         #    print "there are pending events"
         #self.qtapp.processEvents() # install DB drivers
@@ -238,8 +238,9 @@ class Console(BaseToolkit):
             app.notice(app.aboutString())
             
     def stop_running(self):
-        if hasattr(self,"qtapp"):
-            self.qtapp.processEvents() # install DB drivers
+        pass
+        #if hasattr(self,"qtapp"):
+        #    self.qtapp.processEvents() # install DB drivers
         
 ##     def show_status(self,sess,msg=None,*args,**kw):
 ##         #if msg is not None:

@@ -38,8 +38,8 @@ from lino.adamo.connection import Connection
 from lino.adamo.filters import NotEmpty, IsEqual, DateEquals, Contains
 
 
-#class SqlError(Exception):
-#    pass
+class SqlError(Exception):
+    pass
 
 class Master:
     # pseudo row for a Detail
@@ -565,12 +565,13 @@ class SqlConnection(Connection):
 ##         return self.csr2atoms(clist,csr.fetchone(),sess)
     
     def csr2atoms(self,qry,sqlatoms):
+        "convert the result of a cursor to atoms"
         l = []
         i = 0
         for a in qry.getAtoms():
             try:
                 v = self.sql2value(sqlatoms[i],a.type)
-            except Exception,e:
+            except ValueError,e:
                 qry.getDatabase().schema.session.exception(
                     e, details="""\
 Could not convert raw atomic value %s in %s.%s (expected %s).""" \

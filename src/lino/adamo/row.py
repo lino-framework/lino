@@ -25,6 +25,8 @@ from lino.adamo import datatypes
 ## from lino.adamo.rowattrs import RowAttribute,\
 ##      Field, BabelField, Pointer, Detail, FieldContainer
 
+from PyQt4.QtCore import QString
+
 
 class DataRow:
     def __init__(self,dbc,store,values,dirty=False):
@@ -231,6 +233,8 @@ class StoredDataRow(DataRow):
         id = [None] * len(self._store.getTable().getPrimaryAtoms())
         for col in self._store._peekQuery._pkColumns:
             col.row2atoms(self,id)
+        #for i in id:
+        #    assert type(i) is not QString, str(id)
         return id
         
 ##     def __str__(self):

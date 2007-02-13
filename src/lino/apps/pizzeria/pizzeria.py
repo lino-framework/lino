@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -135,15 +135,15 @@ class Pizzeria(DbApplication):
 
 
         
-def populate(sess):
+def populate(dbc):
     """
     Create some data and play with it
     """
 
-    CUST = sess.query(Customer)
-    PROD = sess.query(Product)
-    ORDERS = sess.query(Order)
-    LINES = sess.query(OrderLine)
+    CUST = dbc.query(Customer)
+    PROD = dbc.query(Product)
+    ORDERS = dbc.query(Order)
+    LINES = dbc.query(OrderLine)
     
     c1 = CUST.appendRow(name="Henri")
     c2 = CUST.appendRow(name="James")
@@ -164,7 +164,6 @@ def populate(sess):
 
     p=PROD.peek(1)
     assert p.price == 6
-
     
     o1.register()
     o2.register()
