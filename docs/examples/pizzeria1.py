@@ -2,11 +2,13 @@ from lino.apps.pizzeria.pizzeria import Pizzeria, populate, Order
 
 app = Pizzeria() 
 
-sess = app.createContext()
+dbc = app.createContext()
     
-populate(sess)
+populate(dbc)
 
-orders = sess.query(Order,"customer totalPrice")
+orders = dbc.query(Order,"customer totalPrice")
 
 for o in orders:
     print "%s must pay %d EUR" % (o.customer.name, o.totalPrice)
+
+del app, dbc, orders, o

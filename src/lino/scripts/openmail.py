@@ -1,4 +1,4 @@
-## Copyright 2004-2006 Luc Saffre.
+## Copyright 2004-2007 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -24,7 +24,7 @@ class OpenMail(Application):
     name="Lino/openmail"
 
     copyright="""\
-Copyright (c) 2002-2006 Luc Saffre.
+Copyright (c) 2002-2007 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""

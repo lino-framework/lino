@@ -17,9 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-__micro__ = 29
+__micro__ = 30
 
-__date__ = "2007-02-08"
+__date__ = "2007-04-27"
 
 __version__ = "0.6.%d" % __micro__
 

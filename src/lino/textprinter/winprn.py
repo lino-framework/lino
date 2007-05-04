@@ -41,6 +41,15 @@ charsets = {
 # OEM_FIXED_FONT = win32con.OEM_FIXED_FONT
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
 
+
+# 20070414 :
+#    weight_bold=win32con.FW_EXTRABOLD
+#    weight_normal=win32con.FW_SEMIBOLD
+weight_bold=win32con.FW_BOLD
+weight_normal=win32con.FW_NORMAL
+
+
+
 from lino.console import syscon
 from lino.textprinter.textprinter import TextPrinter, \
      PrinterNotReady, ParserError
@@ -158,7 +167,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         #self.logfont.lfCharSet=win32con.HEBREW_CHARSET
         #self.logfont.lfCharSet=win32con.ARABIC_CHARSET
         #self.logfont.lfCharSet=win32con.SYMBOL_CHARSET
-        self.logfont.lfWeight=win32con.FW_SEMIBOLD
+        self.logfont.lfWeight=weight_normal
 
         self.setCpi(self.cpi)
 
@@ -397,11 +406,13 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
 
     def setBold(self,bold):
         if bold:
-            self.logfont.lfWeight=win32con.FW_EXTRABOLD
+            #self.logfont.lfWeight=win32con.FW_EXTRABOLD
+            self.logfont.lfWeight=weight_bold
             #self.logfont.lfWeight=win32con.FW_BOLD
             #self.fontDict['weight'] = win32con.FW_BOLD
         else:
-            self.logfont.lfWeight=win32con.FW_SEMIBOLD
+            self.logfont.lfWeight=weight_normal
+            #self.logfont.lfWeight=win32con.FW_SEMIBOLD
             #self.logfont.lfWeight=win32con.FW_NORMAL
             #self.fontDict['weight'] = win32con.FW_NORMAL
         self.font = None

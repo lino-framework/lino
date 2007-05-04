@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 
-## Copyright 2004-2006 Luc Saffre
+## Copyright 2004-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -28,7 +28,7 @@ class PrnPrint(Application):
     
     name="Lino prnprint"
     copyright="""\
-Copyright (c) 2004-2006 Luc Saffre.
+Copyright (c) 2004-2007 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -103,9 +103,10 @@ write to SPOOLFILE instead of really printing.""",
             raise UsageError("no arguments specified")
         if self.options.copies < 0:
             raise UsageError("wrong value for --copies")
-        if self.options.printerName is not None:
-            self.notice("Printing on printer '%s'",
-                        self.options.printerName)
+        if self.options.printerName is None:
+            self.notice("Printing on Windows standard printer")
+        else:
+            self.notice("Printing on '%s'",self.options.printerName)
         for inputfile in self.args:
             for cp in range(self.options.copies):
                 d = winprn.Win32TextPrinter(

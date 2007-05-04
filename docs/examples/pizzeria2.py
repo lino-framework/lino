@@ -3,11 +3,11 @@ from lino.apps.pizzeria.services import MyPizzeria, populate
 
 app = MyPizzeria() # label="Luc's Pizza Service")
 
-sess = app.createContext()
+dbc = app.createContext()
     
-populate(sess)
+populate(dbc)
 
-orders = sess.query(Order)
+orders = dbc.query(Order)
 
 o = orders.peek(3)
 
@@ -22,3 +22,4 @@ for line in o.lines():
 print "-" * 40
 print "Total: ", o.totalPrice
 
+del app, dbc, o, line

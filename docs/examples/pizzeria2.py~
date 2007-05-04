@@ -1,9 +1,9 @@
 from lino.apps.pizzeria.pizzeria import Order
-from lino.apps.pizzeria.services import ServicePizzeria, populate
+from lino.apps.pizzeria.services import MyPizzeria, populate
 
-app = ServicePizzeria() # label="Luc's Pizza Service")
+app = MyPizzeria() # label="Luc's Pizza Service")
 
-sess = app.quickStartup()
+sess = app.createContext()
     
 populate(sess)
 

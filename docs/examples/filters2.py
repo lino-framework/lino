@@ -2,9 +2,9 @@ from lino.apps.contacts.contacts_demo import startup
 from lino.apps.contacts.contacts_tables import Nation
 from lino.adamo.filters import NotEmpty
 
-sess = startup(big=True)
+dbc = startup(big=True)
         
-qry=sess.query(Nation,"id name")
+qry=dbc.query(Nation,"id name")
 qry.addColumn("cities",search="dre",orderBy="name",depth=1)
 qry.addColFilter('cities',NotEmpty)
 qry.show(
@@ -13,3 +13,5 @@ qry.show(
 
 print
 print qry.getSqlSelect()
+
+del dbc, qry

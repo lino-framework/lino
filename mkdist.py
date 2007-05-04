@@ -206,6 +206,7 @@ if 'timtools' in args:
         "dist_dir" : dist_dir,
         "excludes" : excludes_console,
         "includes": ["encodings.*",
+                     "email.iterators",
                      #"encodings.cp850",
                      #"encodings.cp1252",
                      #"encodings.iso-8859-1"

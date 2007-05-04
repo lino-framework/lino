@@ -1,9 +1,9 @@
 from lino.apps.pizzeria.pizzeria import Product, OrderLine
 from lino.apps.pizzeria.services import \
-     ServicePizzeria, populate
+     MyPizzeria, populate
 
-app = ServicePizzeria()
-sess = app.quickStartup()
+app = MyPizzeria()
+sess = app.createContext()
 populate(sess)
 
 p=sess.query(Product).peek(1)

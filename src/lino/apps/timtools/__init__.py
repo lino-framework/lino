@@ -1,4 +1,4 @@
-## Copyright 2004-2006 Luc Saffre 
+## Copyright 2004-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -23,5 +23,6 @@ def console_targets():
         'prn2pdf', 'prnprint',
         'sync', 'diag',
         'openmail','openurl',
-        'runpy', 'sysinfo'
+        'runpy', 'sysinfo',
+        'sendmail'
         ]

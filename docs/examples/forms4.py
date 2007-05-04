@@ -25,3 +25,5 @@ class MyContactsReport(ContactsReport):
 rpt=MyContactsReport(dbc)
 
 ReportRowForm(rpt,enabled=False).main()
+
+del rpt,dbc
