@@ -207,6 +207,7 @@ if 'timtools' in args:
         "excludes" : excludes_console,
         "includes": ["encodings.*",
                      "email.iterators",
+                     "email.generator",
                      #"encodings.cp850",
                      #"encodings.cp1252",
                      #"encodings.iso-8859-1"

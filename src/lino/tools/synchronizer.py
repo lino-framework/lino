@@ -354,8 +354,12 @@ class SyncProject(Progresser):
         
     def run(self):
         return self.update_dir(self.src,self.target)
+
         
     def update_dir(self,src,target):
+        if self.ignorePattern is None:
+            if not fnmatch(src,self.ignorePattern): return
+            if not fnmatch(target,self.ignorePattern): return
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
         if self.ignorePattern is not None:

@@ -1,4 +1,5 @@
-## Copyright Luc Saffre 2003-2006.
+#coding: latin1
+## Copyright Luc Saffre 2003-2007.
 
 ## This file is part of the Lino project.
 
@@ -102,4 +103,107 @@ def openmail(msg):
     url = mailto_url(msg.get('to'),msg.get("subject"),msg.get_payload())
     webbrowser.open(url,new=1)
 
+
+
+RESERVED = ";/?:@&=+$, <>\r\n"
+
+def quote(s):
+    """Like urllib.quote(), but non-ascii characters are left unchanged.
+
+    """
+    for c in RESERVED:
+        s = s.replace(c,'%%%02X' % ord(c))
+    return s
+
     
+
+
+'''
+openmaila():
+start the user's mail client with a message ready to send.
+Similar to clicking on a mailto-URL, but allow for attachment.
+
+Example:
+
+#coding: latin1
+
+to=u"Luc Saffre <luc.saffre@gmx.net>, Ännchen Müller <anna@muller.de>"
+subject=u"Dornröschen und der schöne Prinz"
+attachment=r"c:\temp\VKR\thieron.pdf,c:\temp\Sissejuhatus est_t6lkimiseks.doc"
+body=u"""
+Ännchen Müller war ein schönes Mädchen.
+bla foo
+foo bar
+
+
+here is a lonely line
+
+
+
+
+last line 
+"""
+
+from lino.tools.mail import openmaila
+openmaila(to,subject,body,attachment)
+
+
+'''
+    
+def openmaila(to=None,subject=None,body=None,attachment=None,**kw):
+    message_options=[]
+    if to is not None:
+        to=quote(to)
+        #if " " in to or "<" in to:
+        #    to="'"+to+"'"
+        message_options.append("to=%s" % to)
+    if subject is not None:
+        subject=quote(subject)
+        message_options.append("subject=%s" % subject)
+    if body is not None:
+        body="\r\n".join(body.splitlines())
+        body=quote(body)
+        message_options.append("body=%s" % body)
+    if attachment is not None:
+        attachment=quote(attachment)
+        message_options.append("attachment=%s" % attachment)
+    for kv in kw.items():
+        message_options.append("%s='%s'" % kv)
+    
+    path=r'C:\Program Files\Mozilla Thunderbird\thunderbird.exe'
+    
+    #cmd="'%s' -compose \"%s\"" % (path,",".join(message_options))
+    #print cmd
+    #os.system(cmd)
+    
+    args = [path, '-compose', ",".join(message_options)]
+    #print args
+    os.spawnv(os.P_NOWAIT,path,args)
+
+
+"""
+Excerpt from http://www.mozilla.org/docs/command-line-args.html
+
+mozilla -compose "to=foo@nowhere.net"
+
+Syntax Rules
+
+    * Command parameters containing spaces must be enclosed in quotes; for example, "Joel User".
+    * Command actions are not case sensitive.
+    * Command parameters except profile names are not case sensitive.
+    * Blank spaces ( ) separate commands and parameters.
+    * Each message option follows the syntax field=value, for example:
+          o to=foo@nowhere.net
+          o subject=cool page
+          o attachment=www.mozilla.org
+          o attachment='file:///c:/test.txt'
+          o body=check this page
+    * Multiple message options are separated by comma (,), for
+      example: "to=foo@nowhere.net,subject=cool page" . Comma
+      separators must not follow or precede spaces ( ). To assign
+      multiple values to a field, enclose the values in single quotes
+      ('), for example: "to='foo@nowhere.net,foo@foo.de',subject=cool
+      page" .
+
+"""
+
