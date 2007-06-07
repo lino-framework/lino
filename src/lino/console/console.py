@@ -597,12 +597,12 @@ class TtyConsole(Console):
         self.stdout.write(self._empty_line+"\r")
         #self.stdout.write("".ljust(self.width)+"\r")
         if self.encoding is not None:
-            if msg.upper() != "foo":
-                try:
-                    msg=msg.encode(self.encoding,self.errors)
-                except UnicodeDecodeError,e:
-                    print self.encoding, self.errors, repr(msg)
-                    raise
+            try:
+                msg=msg.encode(self.encoding,self.errors)
+            except UnicodeDecodeError,e:
+                print e.__class__.__name__, ":", e
+                print self.encoding, self.errors, repr(msg)
+                raise
         self.stdout.write(msg+"\n")
         #self.stdout.write(msg.ljust(self.width)+"\n")
         #self._refresh()

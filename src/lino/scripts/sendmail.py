@@ -67,7 +67,7 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
-from email.utils import getaddresses, formataddr
+from email.utils import getaddresses, formataddr, parseaddr
 
 class MyMessage(Message):
     
@@ -80,18 +80,19 @@ class MyMessage(Message):
         self.add_header('Content-Transfer-Encoding','8bit')
         self.set_charset("utf-8")
     
-    def __setitem__(self, name, val):
-        if type(val) == types.UnicodeType:
-            try:
-                val=val.encode('ascii')
-            except UnicodeEncodeError,e:
-                val=Header(val,self.get_charset())
-        elif type(val) == types.StringType:
-            try:
-                val.decode("ascii")
-            except UnicodeDecodeError,e:
-                val=Header(val.decode(sys.getdefaultencoding()))
-        return Message.__setitem__(self,name,val)
+##     def __setitem__(self, name, val):
+##         if type(val) == types.UnicodeType:
+##             try:
+##                 val=val.encode('ascii')
+##             except UnicodeEncodeError,e:
+##                 val=Header(val,self.get_charset(),None,name,"\t")
+##         elif type(val) == types.StringType:
+##             try:
+##                 val.decode("ascii")
+##             except UnicodeDecodeError,e:
+##                 val=Header(val.decode(sys.getdefaultencoding()),self.get_charset(),
+##                            None,name,"\t")
+##         return Message.__setitem__(self,name,val)
                 
     def set_payload(self, payload, charset=None):
         payload=payload.encode('utf-8')
@@ -182,6 +183,19 @@ Taken from addrlist.txt if not given.
 ##         self.attach_files.append(value)
     
 
+    def encodeaddrs(self,msg,hdr,recipients=None):
+        all = msg.get_all(hdr, [])
+        del msg[hdr]
+        l=[]
+        for name,addr in getaddresses(all):
+                #name=msg.get_charset().header_encode(name)
+                name=str(Header(unicode(name),msg.get_charset()))
+                if recipients is not None:
+                    recipients.append((name,addr))
+                l.append(formataddr((name,addr)))
+        msg[hdr] = Header(", ".join(l))
+        return all    
+            
     def run(self):
         
         if len(self.args) == 0:
@@ -226,26 +240,21 @@ Taken from addrlist.txt if not given.
         """
         if files[0].lower().endswith(".eml"):
             self.notice("Reading file %s...",files[0])
-            #u=codecs.open(files[0],"r",self.options.encoding).read()
-            #first = email.message_from_string(u.encode('utf8'),_class=MyMessage) 
             first = email.message_from_file(
                 codecs.open(files[0],"r",self.options.encoding),
                 _class=MyMessage) 
-            #first = email.message_from_file(open(files[0]) )
-            #first.set_charset("latin1")
-##             if not first.has_key("Content-Type"):
-##                 first["Content-Type"] = "text/plain" # ; charset=ISO-8859-1"
-##             if not first.has_key("Content-Transfer-Encoding"):
-##                 first["Content-Transfer-Encoding"] = "8bit"
-            if subject is None: subject=first["subject"]
+            if first.has_key('subject'):
+                subject=first["subject"]
+                del first["subject"]
+                first["subject"] = Header(subject,first.get_charset())
+                
             if sender is None: sender=first["from"]
-            tos = first.get_all('to', [])
-            ccs = first.get_all('cc', [])            
-            bccs = first.get_all('bcc', [])
-            all = [unicode(a) for a in tos + ccs + bccs]
-            #print all
-            recipients += getaddresses(all)
+            self.encodeaddrs(first,'from')
+            self.encodeaddrs(first,'to',recipients)
+            self.encodeaddrs(first,'cc',recipients)
+            self.encodeaddrs(first,'bcc',recipients)
             del first['bcc']
+            
             del files[0]
             self.count_todo -= 1
         else:
@@ -264,7 +273,7 @@ Taken from addrlist.txt if not given.
                 for a in tos: outer["to"]=a
                 for a in ccs: outer["cc"]=a
             outer['subject'] = subject
-            outer['sender'] = sender
+            outer['from'] = sender
             self.notice("Attaching %d files...",self.count_todo)
             i = 1
             for filename in files:
@@ -293,7 +302,7 @@ Taken from addrlist.txt if not given.
         #    print "Bcc:", bcc
 
         #headers_i18n(outer)
-            
+
         if len(recipients) == 0:
             for addr in open(opj(self.dataDir,"addrlist.txt")).xreadlines():
                 addr = addr.strip()
@@ -313,11 +322,17 @@ Taken from addrlist.txt if not given.
                     len(recipients),
                     ", ".join([a[1] for a in recipients]))
         
+        sender=parseaddr(unicode(sender))[1]
+        
+        print "sender:", unicode(sender)
+
+        # print outer.as_string(unixfrom=0)
+            
         if not self.confirm("Okay?"):
             return
 
         self.connect()
-        
+
         self.sendmsg(outer,sender,recipients)
         
         self.server.quit()
@@ -370,102 +385,6 @@ Taken from addrlist.txt if not given.
 
 
 
-
-        
-
-##     def _file2msg(self,filename,i):
-##         self.notice("%s (%d/%d)",filename,i,self.count_todo)
-##         self.dataDir = os.path.dirname(filename)
-##         if len(self.dataDir) == 0:
-##             self.dataDir = "."
-
-##         (root,ext) = os.path.splitext(filename)
-
-        
-##         ctype, encoding = mimetypes.guess_type(filename)
-##         if ctype is None:
-##             self.warning(
-##                 "ignored file %s : could not guess mimetype", s)
-##             return
-        
-##         maintype, subtype = ctype.split('/', 1)
-##         if maintype == "image": 
-##             from email.MIMEImage import MIMEImage
-##             from email.MIMEBase import MIMEBase
-##             msg = MIMEBase("multipart", "mixed")
-##             if self.options.subject is None:
-##                 msg['Subject'] = ("%s (%d/%d)" % (filename,i,
-##                                                   self.count_todo))
-##             else:
-##                 msg['Subject'] = self.options.subject
-
-##                 """ epson.com : When you add photos to your account as
-##                  email attachments, you can specify that you don't want to
-##                  receive a confirmation email from us.  In the subject
-##                  line of the email that you send us, type noconfirm You
-##                  won't receive any confirmation messages when we receive
-##                  these photos.  """
-
-##             #msg.epilogue = ""
-##             #msg.preamble = ""
-
-##             fp = open(filename, 'rb')
-##             try:
-##                 # subtype = ext[1:]
-##                 img = MIMEImage(fp.read(),subtype,name=filename)
-##                 img.add_header('Content-Disposition',
-##                                'inline',
-##                                filename=filename)
-##             except TypeError,e:
-##                 # Could not guess image MIME subtype
-##                 raise
-##             fp.close()
-##             msg.attach(img)
-
-            
-##         else:
-##             # f = ConvertReader(filename,in_enc="cp437",out_enc="latin1")
-##             # msg = email.message_from_file(f) 
-##             msg = email.message_from_file(open(filename)) 
-##             if not msg.has_key("Content-Type"):
-##                 msg["Content-Type"] = "text/plain"
-##             if not msg.has_key("Content-Transfer-Encoding"):
-##                 msg["Content-Transfer-Encoding"] = "8bit"
-##             if len(self.attach_files) > 0:
-##                 mainmsg = MIMEMultipart()
-##                 #mainmsg = email.mime.multipart.MIMEMultipart()
-##                 if self.options.subject is None:
-##                     mainmsg['Subject'] = msg["Subject"]
-##                 else:
-##                     mainmsg['Subject'] = self.options.subject
-##                 mainmsg['To'] = msg["To"]
-##                 mainmsg['Cc'] = msg["Cc"]
-##                 mainmsg['Bcc'] = msg["Bcc"]
-##                 #mainmsg['Date'] = msg["Date"]
-##                 msg.add_header('Content-Disposition','inline')
-##                 mainmsg.attach(msg)
-##                 msg=mainmsg
-##                 for fn in self.attach_files:
-##                     att=email.message_from_file(open(fn))
-##                     ctype, encoding = mimetypes.guess_type(fn)
-##                     print ctype, encoding
-##                     att.add_header('Content-Type',ctype)
-##                     att.add_header('Content-Transfer-Encoding',encoding)
-##                     att.add_header('Content-Disposition','attachment',filename=fn)
-##                     msg.attach(att)
-            
-##         #print "Date: ", msg["Date"]
-##         #print "Subject: ", msg["Subject"]
-##         #print "From: ", msg["From"]
-
-##         # self.beginLog(root+".log")
-
-##         return msg
-
-            
-##         # self.endLog()
-                    
-
     def connect(self):
 
         try:
@@ -510,6 +429,9 @@ Taken from addrlist.txt if not given.
 
 
     def sendmsg(self,msg,sender,recipients):
+        self.debug("sendmsg(%r,%r,%r)",msg,sender,recipients)
+
+        #print msg.get_all("from")
 
         # note : simply setting a header does not overwrite an existing
         # header with the same key! 
@@ -525,15 +447,19 @@ Taken from addrlist.txt if not given.
             
         # body = str(msg)
         body = msg.as_string(unixfrom=0)
+        print body
+        mail_options="" # "8bitmime"
         try:
-            refused = self.server.sendmail(sender, [formataddr(a) for a in recipients], body)
+            refused = self.server.sendmail(sender,
+                                           [formataddr(a) for a in recipients],
+                                           body,mail_options)
             # self.notice(
             #     u"Sent '%s' at %s to %s",
             #     msg["Subject"], msg["Date"], ", ".join(recipients))
             self.count_ok += len(recipients)
-            self.debug("=" * 80)
-            self.debug(body) # .decode('latin1'))
-            self.debug("=" * 80)
+            #self.debug("=" * 80)
+            #self.debug(body.decode('utf8'))
+            #self.debug("=" * 80)
             if len(refused) > 0:
                 for i in refused.items():
                     self.warning(u"refused %s : %s", *i)
@@ -549,7 +475,7 @@ Taken from addrlist.txt if not given.
         except smtplib.SMTPServerDisconnected,e:
             self.error("%s : %s", recipients,e)
         except smtplib.SMTPSenderRefused,e:
-            self.error("%s : %s", recipients,e)
+            self.error("%s : %s", sender,e)
         except smtplib.SMTPDataError,e:
             self.error("%s : %s", recipients,e)
             
