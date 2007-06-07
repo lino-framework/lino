@@ -248,8 +248,8 @@ Taken from addrlist.txt if not given.
                 del first["subject"]
                 first["subject"] = Header(subject,first.get_charset())
                 
-            if sender is None: sender=first["from"]
             self.encodeaddrs(first,'from')
+            if sender is None: sender=first["from"]
             self.encodeaddrs(first,'to',recipients)
             self.encodeaddrs(first,'cc',recipients)
             self.encodeaddrs(first,'bcc',recipients)
@@ -270,8 +270,8 @@ Taken from addrlist.txt if not given.
             if first is not None:
                 first.add_header('Content-Disposition', 'inline')
                 outer.attach(first)
-                for a in tos: outer["to"]=a
-                for a in ccs: outer["cc"]=a
+                for hdr in ('to','cc'):
+                    outer[hdr]=first[hdr]
             outer['subject'] = subject
             outer['from'] = sender
             self.notice("Attaching %d files...",self.count_todo)
@@ -324,7 +324,7 @@ Taken from addrlist.txt if not given.
         
         sender=parseaddr(unicode(sender))[1]
         
-        print "sender:", unicode(sender)
+        # print "sender:", unicode(sender)
 
         # print outer.as_string(unixfrom=0)
             
@@ -447,7 +447,7 @@ Taken from addrlist.txt if not given.
             
         # body = str(msg)
         body = msg.as_string(unixfrom=0)
-        print body
+        # print body
         mail_options="" # "8bitmime"
         try:
             refused = self.server.sendmail(sender,
