@@ -67,6 +67,7 @@ from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
+from email.utils import getaddresses, formataddr
 
 class MyMessage(Message):
     
@@ -211,7 +212,7 @@ Taken from addrlist.txt if not given.
         if self.options.recipient is None:
             recipients=[]
         else:
-            recipients=[ self.options.recipient ]
+            recipients=[ getaddresses([self.options.recipient]) ]
             
         sender = self.options.sender
         subject = self.options.subject
@@ -241,7 +242,9 @@ Taken from addrlist.txt if not given.
             tos = first.get_all('to', [])
             ccs = first.get_all('cc', [])            
             bccs = first.get_all('bcc', [])
-            recipients += tos + ccs + bccs
+            all = [unicode(a) for a in tos + ccs + bccs]
+            #print all
+            recipients += getaddresses(all)
             del first['bcc']
             del files[0]
             self.count_todo -= 1
@@ -295,7 +298,7 @@ Taken from addrlist.txt if not given.
             for addr in open(opj(self.dataDir,"addrlist.txt")).xreadlines():
                 addr = addr.strip()
                 if len(addr) != 0 and addr[0] != "#":
-                    recipients.append(addr)
+                    recipients += getaddresses([addr])
 
         if not outer.has_key("Subject"):
             raise "Subject header is missing"
@@ -306,7 +309,9 @@ Taken from addrlist.txt if not given.
             print k,":",unicode(v)
         #self.notice(str(outer.keys()))
         self.notice("Message size: %d bytes.",len(str(outer)))
-        self.notice(u"Send this to %d recipients: %s",len(recipients),", ".join(recipients))
+        self.notice(u"Send this to %d recipients: %s",
+                    len(recipients),
+                    ", ".join([a[1] for a in recipients]))
         
         if not self.confirm("Okay?"):
             return
@@ -521,7 +526,7 @@ Taken from addrlist.txt if not given.
         # body = str(msg)
         body = msg.as_string(unixfrom=0)
         try:
-            refused = self.server.sendmail(sender, recipients, body)
+            refused = self.server.sendmail(sender, [formataddr(a) for a in recipients], body)
             # self.notice(
             #     u"Sent '%s' at %s to %s",
             #     msg["Subject"], msg["Date"], ", ".join(recipients))
