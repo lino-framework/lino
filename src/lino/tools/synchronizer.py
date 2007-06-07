@@ -307,7 +307,7 @@ class SyncProject(Progresser):
     #summaryClass=SyncSummary
     
     #def __init__(self,app,src,target,simulate,recurse,summary=None):
-    def __init__(self,job,src,target,recurse=False,ignorePattern=None):
+    def __init__(self,job,src,target,recurse=False,ignorePatterns=None):
         Progresser.__init__(self)
         #self.app=app
         self.job=job
@@ -315,7 +315,7 @@ class SyncProject(Progresser):
         self.target = unicode(target)
         #self.simulate = simulate
         self.recurse = recurse
-        self.ignorePattern = ignorePattern
+        self.ignorePatterns = ignorePatterns
         
         self.ignore_times = False        
         self.modify_window = 2
@@ -355,18 +355,26 @@ class SyncProject(Progresser):
     def run(self):
         return self.update_dir(self.src,self.target)
 
+
+    def ignore(self,fn):
+        if self.ignorePatterns is not None:
+            for i in self.ignorePatterns:
+                if fnmatch(fn,i): return True
+        return False
+
         
     def update_dir(self,src,target):
-        if self.ignorePattern is not None:
-            if not fnmatch(src,self.ignorePattern): return
-            if not fnmatch(target,self.ignorePattern): return
+        if self.ignore(src): return
+        if self.ignore(target): return
+##         if self.ignorePatterns is not None:
+##             for i in self.ignorePatterns:
+##                 if not fnmatch(src,i): return
+##                 if not fnmatch(target,i): return
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
-        if self.ignorePattern is not None:
-            srcnames=[n for n in srcnames
-                      if not fnmatch(n,self.ignorePattern)]
-            destnames=[n for n in destnames
-                      if not fnmatch(n,self.ignorePattern)]
+        if self.ignorePatterns is not None:
+            srcnames=[n for n in srcnames if not self.ignore(n)]
+            destnames=[n for n in destnames if not self.ignore(n)]
         mustCopy = []
         mustUpdate = []
         for name in srcnames:
@@ -489,9 +497,8 @@ class SyncProject(Progresser):
             self.job.done_copy_dir += 1
 
         srcnames=os.listdir(src)
-        if self.ignorePattern is not None:
-            srcnames=[n for n in srcnames
-                      if not fnmatch(n,self.ignorePattern)]
+        if self.ignorePatterns is not None:
+            srcnames=[n for n in srcnames if not self.ignore(n)]
         
         for fn in srcnames:
             self.copy_it(os.path.join(src,fn),

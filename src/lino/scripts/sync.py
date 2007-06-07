@@ -65,7 +65,7 @@ where SRC and DEST are two directories to be synchronized.
         parser.add_option(
             "-i", "--ignore",
             help="ignore files that match the pattern",
-            action="store",
+            action="append",
             type="string",
             dest="ignore")
 

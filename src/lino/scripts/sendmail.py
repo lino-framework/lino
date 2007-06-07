@@ -36,6 +36,8 @@ optional options :
 from lino.console.application import Application, \
      UsageError, OperationFailed # , ApplicationError
 
+from lino.misc.etc import ispure
+
 #from lino.ui.console import ConsoleApplication, \
 #     UsageError, ApplicationError
 #from lino import __version__
@@ -53,6 +55,8 @@ import glob
 import email
 import email.Utils
 import mimetypes
+import codecs
+import types
 
 
 from email import encoders
@@ -62,8 +66,35 @@ from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.header import Header
 
-
+class MyMessage(Message):
+    
+    def __init__(self):
+        Message.__init__(self)
+        """
+        If I don't set transfer-encoding myself, set_charset()
+        will set it to base64 which apparently is wrong
+        """
+        self.add_header('Content-Transfer-Encoding','8bit')
+        self.set_charset("utf-8")
+    
+    def __setitem__(self, name, val):
+        if type(val) == types.UnicodeType:
+            try:
+                val=val.encode('ascii')
+            except UnicodeEncodeError,e:
+                val=Header(val,self.get_charset())
+        elif type(val) == types.StringType:
+            try:
+                val.decode("ascii")
+            except UnicodeDecodeError,e:
+                val=Header(val.decode(sys.getdefaultencoding()))
+        return Message.__setitem__(self,name,val)
+                
+    def set_payload(self, payload, charset=None):
+        payload=payload.encode('utf-8')
+        Message.set_payload(self,payload,self.get_charset())
 
 
 class Sendmail(Application):
@@ -133,11 +164,17 @@ Taken from addrlist.txt if not given.
                           dest="user",
                           default=None)
     
-        parser.add_option("-p", "--passwort",
-                          help="the username for the SMTP host",
+        parser.add_option("-p", "--password",
+                          help="the password for the SMTP host",
                           action="store",
                           type="string",
                           dest="password",
+                          default=None)
+        parser.add_option("-e", "--encoding",
+                          help="the encoding of the .eml input file",
+                          action="store",
+                          type="string",
+                          dest="encoding",
                           default=None)
 
 ##     def attachfile(self,option, opt, value, parser):
@@ -171,19 +208,46 @@ Taken from addrlist.txt if not given.
             self.notice("Nothing to do: no input files found.")
             return
 
-        # if first input file is .eml, then this becomes the outer message
+        if self.options.recipient is None:
+            recipients=[]
+        else:
+            recipients=[ self.options.recipient ]
+            
+        sender = self.options.sender
+        subject = self.options.subject
+            
+        """
+
+        if the first input file's name ends with .eml, then this
+        becomes the outer message
+        
+
+        """
         if files[0].lower().endswith(".eml"):
-            first = email.message_from_file(open(files[0])) 
-            if not first.has_key("Content-Type"):
-                first["Content-Type"] = "text/plain"
-            if not first.has_key("Content-Transfer-Encoding"):
-                first["Content-Transfer-Encoding"] = "8bit"
+            self.notice("Reading file %s...",files[0])
+            #u=codecs.open(files[0],"r",self.options.encoding).read()
+            #first = email.message_from_string(u.encode('utf8'),_class=MyMessage) 
+            first = email.message_from_file(
+                codecs.open(files[0],"r",self.options.encoding),
+                _class=MyMessage) 
+            #first = email.message_from_file(open(files[0]) )
+            #first.set_charset("latin1")
+##             if not first.has_key("Content-Type"):
+##                 first["Content-Type"] = "text/plain" # ; charset=ISO-8859-1"
+##             if not first.has_key("Content-Transfer-Encoding"):
+##                 first["Content-Transfer-Encoding"] = "8bit"
+            if subject is None: subject=first["subject"]
+            if sender is None: sender=first["from"]
+            tos = first.get_all('to', [])
+            ccs = first.get_all('cc', [])            
+            bccs = first.get_all('bcc', [])
+            recipients += tos + ccs + bccs
+            del first['bcc']
             del files[0]
             self.count_todo -= 1
         else:
              first=None
             
-        self.notice("Reading %d input files.",self.count_todo)
         
         if len(files) == 0:
             outer=first
@@ -194,70 +258,68 @@ Taken from addrlist.txt if not given.
             if first is not None:
                 first.add_header('Content-Disposition', 'inline')
                 outer.attach(first)
-        
-        i = 1
-        for filename in files:
-            self.notice(u"%s (%d/%d)",filename,i,self.count_todo)
-            part=self.file2msg(filename)
-            # Set the filename parameter
-            part.add_header('Content-Disposition', 'attachment',
-                           filename=os.path.basename(filename))
-            outer.attach(part)
-            i += 1
+                for a in tos: outer["to"]=a
+                for a in ccs: outer["cc"]=a
+            outer['subject'] = subject
+            outer['sender'] = sender
+            self.notice("Attaching %d files...",self.count_todo)
+            i = 1
+            for filename in files:
+                self.notice(u"%s (%d/%d)",filename,i,self.count_todo)
+                part=self.file2msg(filename)
+                # Set the filename parameter
+                part.add_header('Content-Disposition', 'attachment',
+                               filename=os.path.basename(filename))
+                outer.attach(part)
+                i += 1
 
-        subject = self.options.subject
-        recipient = self.options.recipient
-        sender = self.options.sender
-            
-        for part in outer.walk():
-            if subject is None: subject=part["Subject"]
-            if sender is None: sender=part["From"]
-            if recipient is None: recipient=part["To"]
+        #for part in outer.walk():
+            #if recipient is None: recipient=part["To"]
+            #if bcc is None: bcc=part["Bcc"]
 
-        outer['Subject'] = subject
-        outer['To'] = recipient
-        outer['From'] = sender
+        if self.options.subject is not None:
+            del outer['subject']
+            outer['subject'] = self.options.subject
+        #if self.options.sender is not None:
+        #    del outer['from'] 
+        #    outer['from'] = self.options.sender
+        #del outer['to'] 
+        #outer['to'] = recipient
+        #if bcc is not None:
+        #    outer['Bcc'] = bcc
+        #    print "Bcc:", bcc
+
+        #headers_i18n(outer)
             
-        if recipient is None:
-            recipients=[]
+        if len(recipients) == 0:
             for addr in open(opj(self.dataDir,"addrlist.txt")).xreadlines():
                 addr = addr.strip()
                 if len(addr) != 0 and addr[0] != "#":
                     recipients.append(addr)
-        else:
-            recipients=[recipient]
-            
-                    
+
+        if not outer.has_key("Subject"):
+            raise "Subject header is missing"
+        if not outer.has_key("Date"):
+            outer["Date"] = email.Utils.formatdate(None,True)
+
+        for k,v in outer.items():
+            print k,":",unicode(v)
+        #self.notice(str(outer.keys()))
         self.notice("Message size: %d bytes.",len(str(outer)))
         self.notice(u"Send this to %d recipients: %s",len(recipients),", ".join(recipients))
         
         if not self.confirm("Okay?"):
             return
-        
+
         self.connect()
-
-        for r in recipients:
-            self.sendto(outer,r)
         
-##         if self.options.recipient is None:
-##             if outer["To"] is None:
-##                 addrlist = open(opj(self.dataDir,"addrlist.txt"))
-
-##                 for toAddr in addrlist.xreadlines():
-##                     toAddr = toAddr.strip()
-##                     if len(toAddr) != 0 and toAddr[0] != "#":
-##                         self.sendto(outer,toAddr)
-##             else:
-##                 self.sendto(outer,outer["To"])
-##         else:
-##             # msg["To"] = self.recipient
-##             self.sendto(outer,self.options.recipient)
-            
+        self.sendmsg(outer,sender,recipients)
+        
         self.server.quit()
         
-        self.notice("Sent %d messages.", self.count_ok)
+        self.notice("Sent to %d recipients.", self.count_ok)
         if self.count_nok != 0:
-            sess.notice("(%d failures)",self.count_nok)
+            self.notice("%d recipients refused",self.count_nok)
 
         
     def file2msg(self,filename):
@@ -306,108 +368,97 @@ Taken from addrlist.txt if not given.
 
         
 
-    def _file2msg(self,filename,i):
-        self.notice("%s (%d/%d)",filename,i,self.count_todo)
-        self.dataDir = os.path.dirname(filename)
-        if len(self.dataDir) == 0:
-            self.dataDir = "."
+##     def _file2msg(self,filename,i):
+##         self.notice("%s (%d/%d)",filename,i,self.count_todo)
+##         self.dataDir = os.path.dirname(filename)
+##         if len(self.dataDir) == 0:
+##             self.dataDir = "."
 
-        (root,ext) = os.path.splitext(filename)
+##         (root,ext) = os.path.splitext(filename)
 
         
-        ctype, encoding = mimetypes.guess_type(filename)
-        if ctype is None:
-            self.warning(
-                "ignored file %s : could not guess mimetype", s)
-            return
+##         ctype, encoding = mimetypes.guess_type(filename)
+##         if ctype is None:
+##             self.warning(
+##                 "ignored file %s : could not guess mimetype", s)
+##             return
         
-        maintype, subtype = ctype.split('/', 1)
-        if maintype == "image": 
-            from email.MIMEImage import MIMEImage
-            from email.MIMEBase import MIMEBase
-            msg = MIMEBase("multipart", "mixed")
-            if self.options.subject is None:
-                msg['Subject'] = ("%s (%d/%d)" % (filename,i,
-                                                  self.count_todo))
-            else:
-                msg['Subject'] = self.options.subject
+##         maintype, subtype = ctype.split('/', 1)
+##         if maintype == "image": 
+##             from email.MIMEImage import MIMEImage
+##             from email.MIMEBase import MIMEBase
+##             msg = MIMEBase("multipart", "mixed")
+##             if self.options.subject is None:
+##                 msg['Subject'] = ("%s (%d/%d)" % (filename,i,
+##                                                   self.count_todo))
+##             else:
+##                 msg['Subject'] = self.options.subject
 
-                """ epson.com : When you add photos to your account as
-                 email attachments, you can specify that you don't want to
-                 receive a confirmation email from us.  In the subject
-                 line of the email that you send us, type noconfirm You
-                 won't receive any confirmation messages when we receive
-                 these photos.  """
+##                 """ epson.com : When you add photos to your account as
+##                  email attachments, you can specify that you don't want to
+##                  receive a confirmation email from us.  In the subject
+##                  line of the email that you send us, type noconfirm You
+##                  won't receive any confirmation messages when we receive
+##                  these photos.  """
 
-            #msg.epilogue = ""
-            #msg.preamble = ""
+##             #msg.epilogue = ""
+##             #msg.preamble = ""
 
-            
-            
-##              dummyTextMessage = email.message_from_string("\n")
-##              dummyTextMessage.add_header('Content-Type',
-##                                                   'text/plain',
-##                                                   charset='us-ascii',
-##                                                   format='flowed')
-##              dummyTextMessage.add_header('Content-Transfer-Encoding',
-##                                                   '7bit')
-##              msg.attach(dummyTextMessage)
-            
-            fp = open(filename, 'rb')
-            try:
-                # subtype = ext[1:]
-                img = MIMEImage(fp.read(),subtype,name=filename)
-                img.add_header('Content-Disposition',
-                               'inline',
-                               filename=filename)
-            except TypeError,e:
-                # Could not guess image MIME subtype
-                raise
-            fp.close()
-            msg.attach(img)
+##             fp = open(filename, 'rb')
+##             try:
+##                 # subtype = ext[1:]
+##                 img = MIMEImage(fp.read(),subtype,name=filename)
+##                 img.add_header('Content-Disposition',
+##                                'inline',
+##                                filename=filename)
+##             except TypeError,e:
+##                 # Could not guess image MIME subtype
+##                 raise
+##             fp.close()
+##             msg.attach(img)
 
             
-        else:
-            # f = ConvertReader(filename,in_enc="cp437",out_enc="latin1")
-            # msg = email.message_from_file(f) 
-            msg = email.message_from_file(open(filename)) 
-            if not msg.has_key("Content-Type"):
-                msg["Content-Type"] = "text/plain"
-            if not msg.has_key("Content-Transfer-Encoding"):
-                msg["Content-Transfer-Encoding"] = "8bit"
-            if len(self.attach_files) > 0:
-                mainmsg = MIMEMultipart()
-                #mainmsg = email.mime.multipart.MIMEMultipart()
-                if self.options.subject is None:
-                    mainmsg['Subject'] = msg["Subject"]
-                else:
-                    mainmsg['Subject'] = self.options.subject
-                mainmsg['To'] = msg["To"]
-                mainmsg['Cc'] = msg["Cc"]
-                mainmsg['Bcc'] = msg["Bcc"]
-                #mainmsg['Date'] = msg["Date"]
-                msg.add_header('Content-Disposition','inline')
-                mainmsg.attach(msg)
-                msg=mainmsg
-                for fn in self.attach_files:
-                    att=email.message_from_file(open(fn))
-                    ctype, encoding = mimetypes.guess_type(fn)
-                    print ctype, encoding
-                    att.add_header('Content-Type',ctype)
-                    att.add_header('Content-Transfer-Encoding',encoding)
-                    att.add_header('Content-Disposition','attachment',filename=fn)
-                    msg.attach(att)
+##         else:
+##             # f = ConvertReader(filename,in_enc="cp437",out_enc="latin1")
+##             # msg = email.message_from_file(f) 
+##             msg = email.message_from_file(open(filename)) 
+##             if not msg.has_key("Content-Type"):
+##                 msg["Content-Type"] = "text/plain"
+##             if not msg.has_key("Content-Transfer-Encoding"):
+##                 msg["Content-Transfer-Encoding"] = "8bit"
+##             if len(self.attach_files) > 0:
+##                 mainmsg = MIMEMultipart()
+##                 #mainmsg = email.mime.multipart.MIMEMultipart()
+##                 if self.options.subject is None:
+##                     mainmsg['Subject'] = msg["Subject"]
+##                 else:
+##                     mainmsg['Subject'] = self.options.subject
+##                 mainmsg['To'] = msg["To"]
+##                 mainmsg['Cc'] = msg["Cc"]
+##                 mainmsg['Bcc'] = msg["Bcc"]
+##                 #mainmsg['Date'] = msg["Date"]
+##                 msg.add_header('Content-Disposition','inline')
+##                 mainmsg.attach(msg)
+##                 msg=mainmsg
+##                 for fn in self.attach_files:
+##                     att=email.message_from_file(open(fn))
+##                     ctype, encoding = mimetypes.guess_type(fn)
+##                     print ctype, encoding
+##                     att.add_header('Content-Type',ctype)
+##                     att.add_header('Content-Transfer-Encoding',encoding)
+##                     att.add_header('Content-Disposition','attachment',filename=fn)
+##                     msg.attach(att)
             
-        #print "Date: ", msg["Date"]
-        #print "Subject: ", msg["Subject"]
-        #print "From: ", msg["From"]
+##         #print "Date: ", msg["Date"]
+##         #print "Subject: ", msg["Subject"]
+##         #print "From: ", msg["From"]
 
-        # self.beginLog(root+".log")
+##         # self.beginLog(root+".log")
 
-        return msg
+##         return msg
 
             
-        # self.endLog()
+##         # self.endLog()
                     
 
     def connect(self):
@@ -453,54 +504,51 @@ Taken from addrlist.txt if not given.
 ##         return False
 
 
-    def sendto(self,msg,toAddr):
+    def sendmsg(self,msg,sender,recipients):
 
         # note : simply setting a header does not overwrite an existing
         # header with the same key! 
 
-        del msg["To"] 
-        msg["To"] = toAddr
+        #del msg["To"] 
+        #msg["To"] = toAddr
         
-        if not msg.has_key("Subject"):
-            raise "Subject header is missing"
-        if not msg.has_key("Date"):
-            msg["Date"] = email.Utils.formatdate(None,True)
 
-
-        if self.options.sender is None:
-            sender = msg['From'].encode('latin1')
-        else:
-            sender = self.options.sender
-            del msg["From"] 
-            msg["From"] = self.options.sender
+        #if self.options.sender is None:
+        #    sender = msg['From'] # .encode('latin1')
+        #else:
+        #    sender = self.options.sender
             
         # body = str(msg)
         body = msg.as_string(unixfrom=0)
         try:
-            self.server.sendmail(sender, (toAddr,), body)
-            # self.ToUserLog("%s : ok" % toAddr)
-            self.notice(
-                u"Sent '%s' at %s to %s",
-                msg["Subject"], msg["Date"], toAddr)
-            self.count_ok += 1
+            refused = self.server.sendmail(sender, recipients, body)
+            # self.notice(
+            #     u"Sent '%s' at %s to %s",
+            #     msg["Subject"], msg["Date"], ", ".join(recipients))
+            self.count_ok += len(recipients)
             self.debug("=" * 80)
-            self.debug(body)
+            self.debug(body) # .decode('latin1'))
             self.debug("=" * 80)
+            if len(refused) > 0:
+                for i in refused.items():
+                    self.warning(u"refused %s : %s", *i)
+                self.count_ok -= len(refused)
+                self.count_nok += len(refused)
             return 
         
         except smtplib.SMTPRecipientsRefused,e:
-            self.error("%s : %s", toAddr,e)
+            self.error("%s : %s", recipients,e)
             # All recipients were refused. Nobody got the mail.
         except smtplib.SMTPHeloError,e:
-            self.error("%s : %s", toAddr,e)
+            self.error("%s : %s", recipients,e)
         except smtplib.SMTPServerDisconnected,e:
-            self.error("%s : %s", toAddr,e)
+            self.error("%s : %s", recipients,e)
         except smtplib.SMTPSenderRefused,e:
-            self.error("%s : %s", toAddr,e)
+            self.error("%s : %s", recipients,e)
         except smtplib.SMTPDataError,e:
-            self.error("%s : %s", toAddr,e)
+            self.error("%s : %s", recipients,e)
             
-        self.count_nok += 1
+        self.count_nok += len(recipients)
         return 
 
 ##  def ToUserLog(self,msg):
