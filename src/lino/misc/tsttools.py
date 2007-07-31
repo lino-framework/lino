@@ -25,12 +25,14 @@ import os
 import types
 
 from cStringIO import StringIO
+from subprocess import Popen, PIPE, STDOUT
 
 #from lino.ui import console
 from lino.console import syscon
 from lino.console.console import CaptureConsole
 #from lino.forms.testkit import Toolkit
 from lino import config
+from lino.misc.etc import ispure
 
 class UniStringIO:
     def __init__(self,s=u''):
@@ -61,22 +63,42 @@ def removetree(top):
     os.rmdir(top)
 
 
+## def trycmd(cmd,startdir=None):
+    
+##     """Run the system command 'cmd' in a child process.
+
+##     Returns the observed output (as a string) and the exit status (an integer) as a tuple.
+##     Saves and restores the current working directory.
+##     """
+##     cwd=os.getcwd()
+##     if startdir is not None:
+##         os.chdir(startdir)
+##     pin,pout=os.popen4(cmd,"t")
+##     observed=pout.read()
+##     exitstatus=pout.close()
+##     pin.close()
+##     os.chdir(cwd)
+##     #observed=observed.decode('cp850') # sys.getfilesystemencoding())
+##     return observed,exitstatus
+
+
 def trycmd(cmd,startdir=None):
     
     """Run the system command 'cmd' in a child process.
 
-    Returns the observed output (as a string) and the exit status (an integer) as a tuple.
+    Returns the observed output (as a unicode string) and the exit status (an integer) as a tuple.
     Saves and restores the current working directory.
+    
     """
-    cwd=os.getcwd()
-    if startdir is not None:
-        os.chdir(startdir)
-    pin,pout=os.popen4(cmd,"t")
-    observed=pout.read()
-    exitstatus=pout.close()
-    pin.close()
-    os.chdir(cwd)
-    return observed,exitstatus
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, cwd=startdir)
+    observed=p.stdout.read()
+    if p.stdout.encoding is None:
+        observed=observed.decode('iso-8859-1')
+    else:
+        observed=observed.decode(p.stdout.encoding)
+            
+    return observed,p.returncode
+    
 
 
 TESTDATA = os.path.join(config.paths.get('tests_path'),'testdata')
@@ -226,7 +248,7 @@ class TestCase(unittest.TestCase):
         #self.ui = console.CaptureConsole(verbosity=-2,batch=True)
         self._oldToolkit=syscon.getSystemConsole()
         self.toolkit=CaptureConsole(
-            encoding="latin1",
+            #encoding="latin1",
             verbosity=self.verbosity,
             batch=self.batch)
         syscon.setSystemConsole(self.toolkit)
@@ -303,7 +325,8 @@ class TestCase(unittest.TestCase):
             file("expected.txt","wt").write(expected)
         
         #self.fail(a.getvalue()) 
-        self.fail(u.getvalue())
+        #self.fail(u.getvalue())
+        self.fail(u)
 
     def addTempFile(self,filename,showOutput=None):
         """unlike tempfile, these files are not OPENED
@@ -339,6 +362,8 @@ class TestCase(unittest.TestCase):
                expectfile=None):
             
         observed,exitstatus=trycmd(cmd,startdir=startdir)
+
+        
         
         #print "observed", observed
             
@@ -349,6 +374,7 @@ class TestCase(unittest.TestCase):
                 % (cmd,exitstatus,observed))
                 
         if expected is not None:
+            assert ispure(expected)
             expected=expected.strip()
             if msg is None:
                 msg="unexpected output of `%s`" % cmd

@@ -22,4 +22,6 @@ for line in o.lines():
 print "-" * 40
 print "Total: ", o.totalPrice
 
-del app, dbc, o, line
+#del app, dbc, o, line
+
+dbc.shutdown()

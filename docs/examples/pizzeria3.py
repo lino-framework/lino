@@ -17,4 +17,6 @@ qry.show(
 print
 print qry.getSqlSelect()
 
-del qry, dbc, app
+#del qry, dbc, app
+
+dbc.shutdown()

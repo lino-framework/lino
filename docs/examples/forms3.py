@@ -9,4 +9,6 @@ dbc=startup()
 rpt=ContactsReport(dbc)
 ReportGridForm(rpt).main()
     
-del dbc, qry
+# del dbc, qry
+
+dbc.shutdown()

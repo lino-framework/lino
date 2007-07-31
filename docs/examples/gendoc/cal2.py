@@ -9,7 +9,7 @@ import sys
 import calendar
 import datetime
 
-from lino.textprinter.pdfprn import PdfTextPrinter, mm
+from lino.textprinter.pdfprn import PdfTextPrinter
 
 import locale
 locale.setlocale(locale.LC_ALL, '')
@@ -28,7 +28,7 @@ s=s.decode(sys.getfilesystemencoding())
 
 
 
-p=PdfTextPrinter("tmp.pdf",margin=3*mm)
+p=PdfTextPrinter("tmp.pdf",margin="3mm")
 p.setOrientationLandscape()
 p.setCpi(10)
 p.setLpi(9)

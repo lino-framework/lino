@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import os
+import codecs
 
 from lino.misc.tsttools import TestCase, main
 
@@ -46,13 +47,17 @@ class Case(TestCase):
 
             outfile=os.path.join(examplesDir,dirpath,base)+".out"
             #outfile=base+".out"
-            expected=open(outfile).read()
+            #expected=open(outfile).read()
+            expected=codecs.open(outfile,encoding="iso-8859-1").read().strip()
             
-            if expected.strip().startswith("TODO:"):
-                print cmd, observed
-
-            self.trycmd(cmd,expected,
-                        startdir=os.path.join(examplesDir,dirpath))
+            
+            if expected.startswith("TODO:"):
+                print cmd, expected.splitlines()[0]
+            else:
+                print cmd
+                #print expected
+                self.trycmd(cmd,expected,
+                            startdir=os.path.join(examplesDir,dirpath))
             
             
 ##             fd=os.popen(cmd,"r")

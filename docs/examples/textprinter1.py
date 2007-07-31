@@ -1,4 +1,5 @@
 # -*- coding: latin1 -*-
+
 def doit(tp):
     tp.writeln("")
     tp.writeln("TextPrinter Test page")

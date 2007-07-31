@@ -1,3 +1,5 @@
+TODO: date values get mangled somewhere
+
 Who bought Pizza Margerita (product# 1)?
 ========================================
 order.date|order.custome

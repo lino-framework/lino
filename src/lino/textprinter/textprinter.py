@@ -381,7 +381,8 @@ class TextPrinter:
 
     def length2i(self,s):
         "http://lino.saffre-rumma.ee/src/328.html"
-        raise NotImplementedError
+        return 0
+        #raise NotImplementedError
 
 
     def insertImage(self,filename,w,h):

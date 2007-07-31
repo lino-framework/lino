@@ -40,3 +40,4 @@ sess = startup()
 rpt=DatabaseOverview(sess)
 rpt.show()
 
+sess.shutdown()

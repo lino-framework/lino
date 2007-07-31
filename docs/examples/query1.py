@@ -10,3 +10,5 @@ qry.show(width=50)
 
 print
 print qry.getSqlSelect()
+
+sess.shutdown()

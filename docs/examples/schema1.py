@@ -10,4 +10,5 @@ for appclass in Contacts, Keeper, Ledger:
     print
     print app
     SchemaOverview(db.getSchema()).show()
+    app.shutdown()
     

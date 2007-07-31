@@ -434,12 +434,13 @@ def stot(s):
         raise ValueError, repr(s)
 
 def itod(i):
-    s=str(i)
-    assert len(s) == 8, repr(i)
-    y = int(s[0:4])
-    m = int(s[4:6])
-    d = int(s[6:8])
-    return datetime.date(y,m,d)
+    return DATE.parse(str(i))
+##     s=str(i)
+##     assert len(s) == 8, repr(i)
+##     y = int(s[0:4])
+##     m = int(s[4:6])
+##     d = int(s[6:8])
+##     return datetime.date(y,m,d)
 
 def stod(s):
     return DATE.parse(s)

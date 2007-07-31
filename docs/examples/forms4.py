@@ -26,4 +26,6 @@ rpt=MyContactsReport(dbc)
 
 ReportRowForm(rpt,enabled=False).main()
 
-del rpt,dbc
+#del rpt,dbc
+
+dbc.shutdown()

@@ -1,3 +1,4 @@
+#coding: iso-8859-1
 from lino.console.application import Application
 from lino.reports.reports import DictReport
 
@@ -9,8 +10,8 @@ class MyReport(Application):
             name="Ausdemwald",
             firstName="Norbert",
             size=12,
-            description="""\
-Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Fremereygasse in Eupen."""
+            description=u"""\
+Norbert ist unser treuer Mitarbeiter im Vurt. Er wohnt in der Gülcherstraße in Eupen."""
             )
 
         rpt = DictReport(d)

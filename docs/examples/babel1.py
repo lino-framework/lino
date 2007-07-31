@@ -9,5 +9,5 @@ print
 # switch to FR and show again:
 sess.setBabelLangs("fr")
 qry.show()
-#sess.shutdown()
+sess.shutdown()
 

@@ -41,15 +41,15 @@ def setSystemConsole(con):
 
 def setMainSession(sess):
     global _main
-    assert _main is None, "not meant to be used a second time" 
+    assert _main is None, "cannot replace main session %r by %r" % (_main,sess)
     _main=sess
 
 def getMainSession():
-    global _main
+    #global _main
     if _main is None:
         from lino.console.application import Application
-        _main=Application()
-        _main.main()
+        a=Application()
+        a.main()
     return _main
         
     

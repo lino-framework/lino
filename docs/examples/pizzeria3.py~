@@ -3,12 +3,12 @@ from lino.apps.pizzeria.services import \
      MyPizzeria, populate
 
 app = MyPizzeria()
-sess = app.createContext()
-populate(sess)
+dbc = app.createContext()
+populate(dbc)
 
-p=sess.query(Product).peek(1)
+p=dbc.query(Product).peek(1)
 
-qry = sess.query(OrderLine,"order.date order.customer",
+qry = dbc.query(OrderLine,"order.date order.customer",
                  product=p)
 qry.show(
     columnWidths="10 13",
@@ -17,3 +17,4 @@ qry.show(
 print
 print qry.getSqlSelect()
 
+del qry, dbc, app
