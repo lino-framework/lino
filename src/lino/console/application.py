@@ -78,6 +78,16 @@ class Application(Task):
     
     def setupOptionParser(self,p):
         self.toolkit.setupOptionParser(p)
+        def set_lang(option, opt, value, parser):
+            from lino import i18n
+            i18n.setUserLang(value)
+            
+        p.add_option(
+            "--lang",
+            help="set user language to LANG",
+            type="string",
+            action="callback",
+            callback=set_lang)
 
 
     def applyOptions(self,options,args):

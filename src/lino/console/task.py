@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -23,25 +23,8 @@ from time import sleep
 from lino.console.console import BaseToolkit 
 from lino.console.session import Session
 
+from lino import i18n
     
-from lino.i18n import itr,_
-
-## itr("Working",
-##    de=u"Arbeitsvorgang läuft",
-##    fr="Travail en cours")
-## itr("%d warnings",
-##     de="%d Warnungen",
-##     fr="%d avertissements")
-## itr("%d errors" ,
-##     de="%d Fehler",
-##     fr="%d erreurs")
-## itr("Aborted",
-##     de="Vorgang abgebrochen")
-
-#def _(s):
-#    return s    
-
-
 
 class Task(Session):
 
@@ -52,11 +35,7 @@ class Task(Session):
 
     """
     
-    #title=None
     label=None
-    #curval=0
-    #percentCompleted=0
-    
     maxval=0 # used by Console.on_breathe
     
     

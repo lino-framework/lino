@@ -88,7 +88,7 @@ itr("Target directory '%s' doesn't exist.",
 itr("Found %d files.",de="%d Dateien gefunden.")
 itr("Overwrite newer target %s",
     de=u"Jüngere Zieldatei %s überschreiben")
-itr("%s is up-to-date",de="%s ist unverändert")
+itr("%s is up-to-date",de=u"%s ist unverändert")
 itr("Must remove %s", de=u"Ordner %s zu löschen")
 itr("Must delete %s",de=u"Datei %s zu löschen")
 itr("Must update %s",de=u"Datei %s zu aktualisieren")
@@ -443,7 +443,7 @@ class SyncProject(Progresser):
                 self.job.count_same += 1
             else:
                 self.job.done_same += 1
-            self.debug(_("%s is up-to-date") % target)
+            self.debug(_("%s is up-to-date"), target)
             return
         
         if self.job.simulate:
@@ -493,7 +493,7 @@ class SyncProject(Progresser):
             except OSError,e:
                 self.error("os.mkdir('%s') failed",target)
                 return
-            self.utime(src,target)
+            # self.utime(src,target)
             self.job.done_copy_dir += 1
 
         srcnames=os.listdir(src)

@@ -1,4 +1,4 @@
-## Copyright 2005-2006 Luc Saffre
+## Copyright 2005-2007 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,6 +18,8 @@
 
 from lino.console import syscon
 
+from lino.misc.etc import ispure
+
 _userLang = None
 _messages = {}
 
@@ -32,11 +34,14 @@ def _(text_en):
 
 def setUserLang(lang):
     global _userLang
-    _userLang = lang
     if _userLang == "en":
         _userLang = None
+    else:
+        _userLang = lang
     
 def itr(text_en,**kw):
+    for v in kw.values():
+        assert ispure(v)
     _messages[text_en] = kw
 
 

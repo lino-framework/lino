@@ -44,6 +44,23 @@ class UniStringIO:
         return repr(self.buffer)
 
 
+def removetree(top):
+    # Delete everything reachable from the directory named in 'top',
+    # assuming there are no symbolic links.
+    # CAUTION:  This is dangerous!  For example, if top == '/', it
+    # could delete all your disk files.
+    if not os.path.exists(top):
+        return
+    #if not syscon.confirm("really remove directory tree %r ?" % top):
+    #    return
+    for root, dirs, files in os.walk(top, topdown=False):
+        for name in files:
+            os.remove(os.path.join(root, name))
+        for name in dirs:
+            os.rmdir(os.path.join(root, name))
+    os.rmdir(top)
+
+
 def trycmd(cmd,startdir=None):
     
     """Run the system command 'cmd' in a child process.
@@ -332,9 +349,10 @@ class TestCase(unittest.TestCase):
                 % (cmd,exitstatus,observed))
                 
         if expected is not None:
+            expected=expected.strip()
             if msg is None:
                 msg="unexpected output of `%s`" % cmd
-            self.assertEquivalent(observed,expected,msg)
+            self.assertEquivalent(observed.strip(),expected,msg)
 
         if expectfile is not None:
             self._tempFiles.remove(expectfile)

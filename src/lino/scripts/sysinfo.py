@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2006 Luc Saffre.
+## Copyright 2006-2007 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -133,7 +133,7 @@ def diag_printer(story):
 class SysInfo(Application):
     name="Lino/SysInfo"
     copyright="""\
-Copyright (c) 2006 Luc Saffre.
+Copyright (c) 2006-2007 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
