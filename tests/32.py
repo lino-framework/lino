@@ -54,7 +54,7 @@ class Case(TestCase):
             if expected.startswith("TODO:"):
                 print cmd, expected.splitlines()[0]
             else:
-                print cmd
+                #print cmd
                 #print expected
                 self.trycmd(cmd,expected,
                             startdir=os.path.join(examplesDir,dirpath))

@@ -35,9 +35,9 @@ from PyQt4 import QtCore
 
 class DataGridModel(QtCore.QAbstractTableModel):
 
-    def __init__(self, editor):
-        self.editor = editor
-        self.columns = self.editor.rpt.columns
+    def __init__(self, grid):
+        self.editor = grid
+        self.columns = grid.rpt.columns
         self._load()
         QtCore.QAbstractTableModel.__init__(self)
 
@@ -48,8 +48,9 @@ class DataGridModel(QtCore.QAbstractTableModel):
             #doc=self.editor.form
             #self.cells = []
             self.rows = [row for row in self.editor.rpt.rows()]
+            # Add an empty row at the end
             self.rows.append(self.editor.rpt.createRow(len(self.rows)))
-            #print "loaded %d rows" % len(self.rows)
+            # print "loaded %d rows" % len(self.rows)
     
     def rowCount(self,parent):
         "Returns the number of rows under the given parent."
@@ -64,7 +65,10 @@ class DataGridModel(QtCore.QAbstractTableModel):
         the parent.
         """        
         return len(self.columns)
+    
     def data(self,index,role):
         return "%r,%r" % (index,role)
     
 
+    def headerData(self,section, orientation, role):
+        return QtCore.QVariant(str(section))

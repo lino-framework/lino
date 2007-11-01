@@ -71,7 +71,7 @@ See file COPYING.txt for more information."""
     usage="usage: %prog [options] [TESTS]"
     
     description="""\
-scans a directory tree for .py files containing test cases and run
+scan a directory tree for .py files containing test cases and run
 them.  TESTS specifies the tests to run. Default is all. Other
 possible values e.g. `1` or `1-7`.
 """

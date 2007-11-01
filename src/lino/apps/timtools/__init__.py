@@ -24,5 +24,5 @@ def console_targets():
         'sync', 'diag',
         'openmail','openurl',
         'runpy', 'sysinfo',
-        'sendmail'
+        'sendmail', 'pisa'
         ]

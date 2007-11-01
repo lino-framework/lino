@@ -2,18 +2,19 @@ from lino.forms import Form
 
 class PrivacyForm(Form):
     
-    """\
-
-(imagine our privacy statement here)
-
-Note that this form is not modal,
-so you don't need to close it if you want to continue registering.
-"""
-    
     title = "Privacy statement"
     
     def layout(self,panel):
-        panel.okButton()
+        
+        panel.label("""\
+
+(imagine our privacy statement here)
+
+Note that this form is not modal, so you don't need to close it if you
+want to continue registering.
+
+""")
+        panel.closeButton()
         
 class MyForm(Form):
     

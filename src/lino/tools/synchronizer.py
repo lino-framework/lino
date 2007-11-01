@@ -1,5 +1,4 @@
-#coding: latin1
-
+# -*- coding: ISO-8859-1 -*-
 ## Copyright 2005-2007 Luc Saffre.
 ## This file is part of the Lino project.
 
@@ -43,6 +42,7 @@ try:
 except:
     win32file = None
 
+from lino.i18n import itr,_
 #from lino.console.application import ApplicationError
 from lino.adamo.exceptions import OperationFailed
 from lino.console.task import Progresser, Task
@@ -61,7 +61,6 @@ class NeitherFileNorDirectory(Exception): pass
 
 
 
-from lino.i18n import itr,_
 itr("Start?",
    de=u"Arbeitsvorgang starten?",
    fr=u"Démarrer?")
@@ -171,7 +170,7 @@ class Synchronizer(Progresser):
         
 
 
-    def run(self,safely=True):
+    def run(self,safely=True,noaction=False):
         #self.session=task.session
         #self.task=task
         #self.maxval=0
@@ -219,7 +218,8 @@ class Synchronizer(Progresser):
         else:
             self.notice(self.getSummary())
             
-
+        if noaction:
+            return
 
         if not self.confirm(_("Start?")):
             return

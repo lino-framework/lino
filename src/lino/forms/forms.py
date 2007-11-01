@@ -115,10 +115,10 @@ class Form(MenuContainer):
 ##         else:
         self.session=sess
         self.toolkit=sess.toolkit
-        self._parent=sess.toolkit.getActiveForm()
         
-        self.mainComp = sess.toolkit.vpanelFactory(self,weight=1)
-        sess.toolkit.setActiveForm(self)
+        self._parent=self.toolkit.getActiveForm()
+        self.mainComp = self.toolkit.vpanelFactory(self,weight=1)
+        self.toolkit.setActiveForm(self)
             
         #if self.__doc__ is not None:
         #    self.mainComp.label(self.__doc__)

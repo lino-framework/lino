@@ -170,6 +170,12 @@ class Container(Component):
                            hotkey=keyboard.ESCAPE,
                            action=self.form.cancel)
 
+    def closeButton(self,*args,**kw):
+        return self.button(name="close",
+                           label="&Close",
+                           hotkey=keyboard.ESCAPE,
+                           action=self.form.close)
+
 
 
     
@@ -341,16 +347,16 @@ class BaseEntry(Component):
         "store raw value"
         raise NotImplementedError
     
-    def format(self,v):
-        "convert raw value to string"
-        raise NotImplementedError
+##     def format(self,v):
+##         "convert raw value to string"
+##         raise NotImplementedError
 
     def render(self,doc):
         doc.renderEntry(self)
     
-    def parse(self,s):
-        "convert the non-empty string to a raw value"
-        raise NotImplementedError
+##     def parse(self,s):
+##         "convert the non-empty string to a raw value"
+##         raise NotImplementedError
         
 
 class Entry(BaseEntry,TypedMixin):
@@ -533,12 +539,8 @@ class Toolkit(BaseToolkit):
             from lino.console import syscon
             console=syscon.getSystemConsole()
         self.console = console
-
         self._activeForm=None
 
-##     def setupOptionParser(self,p):
-##         self.console.setupOptionParser(p)
-        
     def setActiveForm(self,frm):
         #assert frm is not None
         #print "setActiveForm()",frm
@@ -547,6 +549,9 @@ class Toolkit(BaseToolkit):
     def getActiveForm(self):
         return self._activeForm
 
+##     def setupOptionParser(self,p):
+##         self.console.setupOptionParser(p)
+        
     def shutdown(self):
         pass
     

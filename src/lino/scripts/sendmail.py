@@ -1,5 +1,5 @@
+# -*- coding: ISO-8859-1 -*-
 ## Copyright 2002-2007 Luc Saffre
-
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -68,6 +68,22 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import getaddresses, formataddr, parseaddr
+
+
+from lino.i18n import itr,_
+
+itr("Message size: %d bytes.",
+    de=u"Größe: %d Bytes",
+    fr=u"Taille: %d octets")
+itr("Send this to %d recipients: %s",
+    de=u"Mail schicken an %d Empfänger: %s",
+    fr=u"Envoyer ce mail a %d destinataires: %s")
+itr("Sent to %d recipients.",
+    de=u"Verschickt an %d Empfänger.",
+    fr=u"Envoyé ? %d destinataires.")
+itr("%d recipients refused.",
+    de=u"%d Empfänger verweigert.",
+    fr=u"%d destinataires ont été refusés.")
 
 class MyMessage(Message):
     
@@ -226,7 +242,7 @@ Taken from addrlist.txt if not given.
         if self.options.recipient is None:
             recipients=[]
         else:
-            recipients=[ getaddresses([self.options.recipient]) ]
+            recipients=getaddresses([self.options.recipient]) 
             
         sender = self.options.sender
         subject = self.options.subject
@@ -317,8 +333,8 @@ Taken from addrlist.txt if not given.
         for k,v in outer.items():
             print k,":",unicode(v)
         #self.notice(str(outer.keys()))
-        self.notice("Message size: %d bytes.",len(str(outer)))
-        self.notice(u"Send this to %d recipients: %s",
+        self.notice(_("Message size: %d bytes."),len(str(outer)))
+        self.notice(_("Send this to %d recipients: %s"),
                     len(recipients),
                     ", ".join([a[1] for a in recipients]))
         
@@ -337,9 +353,9 @@ Taken from addrlist.txt if not given.
         
         self.server.quit()
         
-        self.notice("Sent to %d recipients.", self.count_ok)
+        self.notice(_("Sent to %d recipients."), self.count_ok)
         if self.count_nok != 0:
-            self.notice("%d recipients refused",self.count_nok)
+            self.notice(_("%d recipients refused."),self.count_nok)
 
         
     def file2msg(self,filename):

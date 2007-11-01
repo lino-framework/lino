@@ -24,7 +24,7 @@ You can trust us.
             self.notice("Name is mandatory")
             return
         self.message(
-            "Hello %s %s. Thank you for registering.",
+            u"Hello %s %s. Thank you for registering.",
             self.firstName.getValue(),
             self.name.getValue())
         self.close()

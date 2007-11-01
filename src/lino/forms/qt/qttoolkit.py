@@ -16,6 +16,18 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+"""
+
+    def qtsetup(self,form,panel,box):
+        form : the lino.forms.forms.Form owning this Component
+        panel : the qtctrl of the parent lino.forms.toolkit.Component 
+        box : the QLayout to be used
+        
+
+
+"""        
+
+
 
 from PyQt4 import QtCore, QtGui
  
@@ -43,10 +55,6 @@ NOBORDER=0
 from textwrap import TextWrapper
 docWrapper = TextWrapper(30)
 
-
-def _setEditorSize(editor,type):
-
-    editor.SetMinSize(editor.GetBestSize())
 
 
 class EventCaller:
@@ -107,6 +115,7 @@ class DataGrid(toolkit.DataGrid):
 
         self.qtctrl=QtGui.QTableView(parent)
         self.qtctrl.setModel(model)
+        box.addWidget(self.qtctrl)
         #view.show();
         
         #self.refresh()
@@ -168,7 +177,7 @@ class TextViewer(toolkit.TextViewer):
         #self._buffer = ""
         #raise "it is no good idea to close this window"
     
-    def qtwxsetup(self,form,panel,box):
+    def qtsetup(self,form,panel,box):
         #parentFormCtrl = self.getForm().qtctrl
         console = form.toolkit.console
         e = wx.TextCtrl(panel,-1,console.getConsoleOutput(),
@@ -177,7 +186,6 @@ class TextViewer(toolkit.TextViewer):
         e.SetForegroundColour('WHITE')
         e.SetEditable(False)
         e.SetMinSize(e.GetBestSize())
-        #_setEditorSize(e,MEMO(width=50,height=10))
         #e.SetEnabled(False)
         box.addWidget(e, STRETCH, wx.EXPAND|wx.ALL,NOBORDER)
         self.qtctrl = e
@@ -210,7 +218,7 @@ class Panel(toolkit.Panel):
             mybox = QtGui.QHBoxLayout()
         ctrl.setLayout(mybox)
         
-        self.mybox = mybox # store reference to avoid crash?
+        #self.mybox = mybox # store reference to avoid crash?
         self.qtctrl = ctrl
         
         for c in self._components:
@@ -222,91 +230,69 @@ class VPanel(Panel):
 class HPanel(Panel):
     direction=forms.HORIZONTAL
 
-def SwappedBoxSizer(box):
-    if box.GetOrientation() == wx.VERTICAL:
-        return wx.BoxSizer(wx.HORIZONTAL)
-    else:
-        return wx.BoxSizer(wx.VERTICAL)
+def swapped_box(box):
+    if isinstance(box,QtGui.QVBoxLayout):
+        return QtGui.QHBoxLayout()
+    if isinstance(box,QtGui.QHBoxLayout):
+        return QtGui.QVBoxLayout()
+    raise "error"
 
 class EntryMixin:
 
     def qtsetup(self,form,panel,box):
+        #self._dirty=False
         if self.hasLabel():
-            mypanel = QtGui.QWidget(panel,-1)
-            mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
-            box.addWidget(mypanel, self.weight, wx.EXPAND|wx.ALL,BORDER)
+            mypanel = QtGui.QWidget(panel)
+            #todo: mypanel.SetBackgroundColour(ENTRY_PANEL_BACKGROUND)
+            box.addWidget(mypanel, self.weight)
             #hbox = wx.BoxSizer(wx.HORIZONTAL)
-            hbox = SwappedBoxSizer(box)
+            hbox = swapped_box(box)
             mypanel.setLayout(hbox)
 
             if self.doc is not None:
-                label = QtGui.QWidget(mypanel,-1)
-                label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer = SwappedBoxSizer(hbox)
+                label = QtGui.QWidget(mypanel)
+                #label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+                labelSizer = swapped_box(hbox)
                 label.setLayout(labelSizer)
 
-                labelCtrl = wx.StaticText(
-                    label,-1,self.getLabel(),style=wx.ALIGN_RIGHT)
-                labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer.addWidget(labelCtrl,DONTSTRETCH)
+                labelCtrl = QtGui.QLabel(self.getLabel())
+                #labelCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+                labelSizer.addWidget(labelCtrl)
 
-                docCtrl = wx.StaticText(
-                    label, -1,
-                    "\n".join(docWrapper.wrap(self.doc)),
-                    style=wx.ALIGN_LEFT)
-                docCtrl.SetFont(ENTRY_DOC_FONT)
-                docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
-                labelSizer.addWidget(docCtrl,DONTSTRETCH)
+                docCtrl = QtGui.QLabel("\n".join(docWrapper.wrap(self.doc)))
+                #docCtrl.SetFont(ENTRY_DOC_FONT)
+                #docCtrl.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+                labelSizer.addWidget(docCtrl)
 
             else:
-                label = wx.StaticText(mypanel, -1,
-                                      self.getLabel(),
-                                      style=wx.ALIGN_RIGHT)
-                label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
+                label = QtGui.QLabel(self.getLabel())
+                #label.SetBackgroundColour(ENTRY_LABEL_BACKGROUND)
 
-            if hbox.GetOrientation() == wx.HORIZONTAL:
-                hbox.addWidget(
-                    label, STRETCH,
-                    wx.ALIGN_RIGHT| wx.ALIGN_CENTER_VERTICAL,
-                    BORDER)
-            else:
-                hbox.addWidget(
-                    label, DONTSTRETCH,
-                    wx.ALIGN_LEFT,
-                    BORDER)
-
-            hbox.addWidget( (10,1), DONTSTRETCH,0,NOBORDER) # spacer
-            
+            hbox.addWidget(label)
         else:
             mypanel = panel
             hbox = box
 
         type = self.getType()
         if isinstance(type,datatypes.BoolType):
-            editor=wx.CheckBox(mypanel,-1)
+            editor=QtGui.QCheckBox(self.getLabel(),mypanel)
             v=self.getValue()
             if v is None:
                 v=self.getType().defaultValue
-            editor.SetValue(v)
+            #todo: editor.setValue(v)
+        elif isinstance(type,datatypes.DateType):
+            editor=QtGui.QDateEdit(self.getLabel(),mypanel)
+        elif isinstance(type,datatypes.MemoType):
+            editor = QtGui.QTextEdit(self.getValueForEditor(),mypanel)
         else:
-            style=0
-            if self.getMaxHeight() > 1:
-                style = style|wx.TE_MULTILINE
             #if isinstance(type,datatypes.IntType):
             #    print __builtins__['type'](self.getValueForEditor())
-            editor = wx.TextCtrl(mypanel,-1,
-                                 self.getValueForEditor(),
-                                 style=style)
-                                 #validator=EntryValidator(self))
-                                 #style=wx.TE_PROCESS_ENTER)
-
-            editor.SetMinSize(editor.GetBestSize())
+            editor = QtGui.QLineEdit(self.getValueForEditor(),mypanel)
+            #editor.SetMinSize(editor.GetBestSize())
             #_setEditorSize(editor,self)
         
-        if self.enabled:
-            editor.Enable()
-        else:
-            editor.Disable()
+        editor.setEnabled(self.enabled)
+        #form.connect(editor, QtCore.SIGNAL("textChanged()"), self.onEdit)
             
         #print editor.GetMinSize(), editor.GetMaxSize()
         #print mypanel.GetMinSize(), editor.GetMaxSize()
@@ -321,18 +307,10 @@ class EntryMixin:
 
         self.editor = editor 
         if not self.hasLabel():
-            if hbox.GetOrientation() == wx.HORIZONTAL:
-                hbox.addWidget(editor,STRETCH,
-                               wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL,
-                               BORDER)
-            else:
-                #print "dont stretch:",self
-                hbox.addWidget(editor,DONTSTRETCH,
-                               wx.ALIGN_LEFT,
-                               BORDER)
+            hbox.addWidget(editor)
             self.qtctrl = mypanel
         else:
-            hbox.addWidget(editor,STRETCH)
+            hbox.addWidget(editor)
             self.qtctrl = editor
 
 ##     def EVT_CHAR(self, evt):
@@ -366,24 +344,27 @@ class EntryMixin:
     def refresh(self):
         if hasattr(self,'editor'):
             x = self.getValueForEditor()
-            self.editor.SetValue(x)
+            self.editor.setText(x)
         
     def setFocus(self):
+        assert hasattr(self,'editor')
         self.editor.SetFocus()
         self.editor.SetSelection(-1,-1)
         
     def isDirty(self):
-        if isinstance(self.getType(),datatypes.BoolType):
-            return False
-        return self.editor.IsModified()
+        return self.editor.isModified()  # _dirty
+
+##     def onEdit(self):
+##         self._dirty=True
 
     def store(self):
         #type = self._type
         #if isinstance(type,datatypes.StringType):
         if self.isDirty():
-            s = self.editor.GetValue()
+            s = unicode(self.editor.text())#.toLocal8Bit()
             #print "wxtoolkit:store()",self,s
             self.setValueFromEditor(s)
+            #self._dirty=False
         
         
         
@@ -406,21 +387,12 @@ class DataEntry(EntryMixin,toolkit.DataEntry):
     def qtsetup(self,form,panel,box):
         EntryMixin.qtsetup(self,form,panel,box)
         #self.editor.SetEditable(self.enabled)
-        if self.enabled:
-            self.editor.Enable()
-        else:
-            self.editor.Disable()
+        self.editor.setEnabled(self.enabled)
         
     def refresh(self):
         EntryMixin.refresh(self)
         toolkit.DataEntry.refresh(self)
-        if self.enabled:
-            self.editor.Enable()
-        else:
-            self.editor.Disable()
-        #self.editor.SetEditable(self.enabled)
-        #if not self.enabled:
-        #    print str(self), "is read-only"
+        self.editor.setEnabled(self.enabled)
     
 
 
@@ -470,8 +442,10 @@ class Toolkit(toolkit.Toolkit):
             
         if frm.modal:
             ctrl = QtGui.QDialog(qtparent)
-            frm.mainComp.qtsetup(ctrl,ctrl,None)
-            # ctrl.layout().addWidget(frm.mainComp.qtctrl)
+            box = QtGui.QVBoxLayout()
+            ctrl.setLayout(box)
+            frm.mainComp.qtsetup(ctrl,ctrl,box)
+            #ctrl.layout().addWidget(frm.mainComp.qtctrl)
         else:
             ctrl = QtGui.QMainWindow(qtparent)
             #ctrl.CreateStatusBar(1, wx.ST_SIZEGRIP)
@@ -496,41 +470,6 @@ class Toolkit(toolkit.Toolkit):
                     qtmnu.addAction(lbl,mi.click,shk)
 
         
-
-##         ctrl.Bind(wx.EVT_SET_FOCUS, frm.onSetFocus)
-##         ctrl.Bind(wx.EVT_KILL_FOCUS, frm.onKillFocus)
-
-##         def flags(key):
-##             if key.shift: return wx.ACCEL_SHIFT
-##             if key.alt: return wx.ACCEL_ALT
-##             if key.ctrl: return wx.ACCEL_CTRL
-##             return wx.ACCEL_NORMAL
-
-
-##         wx.EVT_CLOSE(ctrl, frm.close)
-
-        #mainBox=QtGui.QVBoxLayout() 
-        #ctrl.setLayout(mainBox)
-
-
-##         if frm.defaultButton is not None:
-##             frm.defaultButton.qtctrl.SetDefault()
-
-##         # MenuItems have no .qtctrl, the are automagically bound if
-##         # the lbl passed to wxMenu.Append(winId,lbl,doc) contains a \t
-##         # and a key name...
-
-##         if len(frm.accelerators):
-##             l=[ (flags(key),
-##                  key.keycode,
-##                  btn.qtctrl.GetId())
-##                 for key,btn
-##                 in frm.accelerators if hasattr(btn,'qtctrl')]
-##             ctrl.SetAcceleratorTable(wx.AcceleratorTable(l))
-
-            
-        
-
         CHARWIDTH = ctrl.fontMetrics().averageCharWidth()
         LINEHEIGHT = ctrl.fontMetrics().lineSpacing()
 
@@ -573,7 +512,10 @@ class Toolkit(toolkit.Toolkit):
 
     def executeShow(self,frm):
         frm.ctrl.adjustSize()
-        frm.ctrl.show()
+        if frm.modal:
+            return frm.ctrl.exec_()
+        else:
+            frm.ctrl.show()
 
     def executeRefresh(self,frm):
         frm.ctrl.update()
@@ -659,4 +601,4 @@ class Toolkit(toolkit.Toolkit):
 
     def stop_running(self):
         self.root.ctrl.exit()
-        
+

@@ -41,12 +41,12 @@ where SRC and DEST are two directories to be synchronized.
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
 
-##         parser.add_option(
-##             "-s", "--simulate",
-##             help="simulate only, don't do it",
-##             action="store_true",
-##             dest="simulate",
-##             default=False)
+        parser.add_option(
+            "-n", "--noaction",
+            help="no action, just say what to do",
+            action="store_true",
+            dest="noaction",
+            default=False)
         
         parser.add_option(
             "-u", "--unsafely",
@@ -103,7 +103,8 @@ where SRC and DEST are two directories to be synchronized.
         else:
             raise UsageError("needs 1 or 2 arguments")
 
-        self.runtask(job,safely=self.options.safely)
+        self.runtask(job,safely=self.options.safely,
+                     noaction=self.options.noaction)
                      
 
 # Sync().main()

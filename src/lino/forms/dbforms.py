@@ -1,4 +1,4 @@
-## Copyright 2005-2006 Luc Saffre 
+## Copyright 2005-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -29,9 +29,6 @@ class CreateReportRowDialog(Dialog):
         Dialog.__init__(self,**kw)
         self.row=row
 
-##     def ok(self):
-##         Dialog.ok(self)
-        
     def layout(self,panel):
         for col in self.row.rpt.columns:
             if col.isMandatory():
@@ -76,7 +73,7 @@ class ReportForm(Form,GenericDocument):
             self.currentRow.item.lock()
             
     def afterRowEdit(self):
-        print "afterRowEdit", self.currentRow
+        #print "afterRowEdit", self.currentRow
         if self.currentRow is None: return
         #print "afterRowEdit()",repr(self.currentRow.item)
         if self.currentRow.item.isNew() \

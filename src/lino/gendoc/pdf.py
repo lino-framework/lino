@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -151,7 +151,8 @@ class PdfDocument(html.Document):
                     # found non-fragmentable element inside a flowable
                     if len(frags) > 0:
                         yield self.makepar("",style,frags=frags)
-                    yield self.elem2flow(e,style,width)
+                    for ee in self.elem2flow(e,style,width):
+                        yield ee
                     frags=[]
 ##                 if e.__class__ is html.IMG:
 ##                     yield self.makepar("",style,frags=frags)
@@ -405,57 +406,57 @@ class PdfDocument(html.Document):
         
         
 
-class PdfMaker(Application):
+## class PdfMaker(Application):
 
-    name="Lino/PdfMaker"
+##     name="Lino/PdfMaker"
 
-    copyright="""\
-Copyright (c) 2006 Luc Saffre.
-This software comes with ABSOLUTELY NO WARRANTY and is
-distributed under the terms of the GNU General Public License.
-See file COPYING.txt for more information."""
+##     copyright="""\
+## Copyright (c) 2006 Luc Saffre.
+## This software comes with ABSOLUTELY NO WARRANTY and is
+## distributed under the terms of the GNU General Public License.
+## See file COPYING.txt for more information."""
     
-    url="http://lino.saffre-rumma.ee/pdfmaker.html"
+##     url="http://lino.saffre-rumma.ee/pdfmaker.html"
     
-    usage="usage: %s [options] [FILE]"
+##     usage="usage: %s [options] [FILE]"
     
-    description="""\
+##     description="""\
 
-PdfMaker creates a PDF file named FILE and then runs Acrobat Reader to
-view it. Default for FILE is "tmp.pdf".
+## PdfMaker creates a PDF file named FILE and then runs Acrobat Reader to
+## view it. Default for FILE is "tmp.pdf".
 
-"""
+## """
 
     
 
-    def run(self,body,ofname=None,**kw):
+##     def run(self,body,ofname=None,**kw):
         
-        if True:
-            doc=PdfDocument()
-        else:
-            doc=html.HtmlDocument()
+##         if True:
+##             doc=PdfDocument()
+##         else:
+##             doc=html.HtmlDocument()
             
-        if ofname is None:
-            if len(self.args) > 0:
-                ofname=self.args[0]
-            else:
-                ofname="tmp"+doc.extension
-        try:
-            self.status("Preparing...")
-            #try:
-            body(doc.body)
-            #except ParseError,e:
-            #    raise
+##         if ofname is None:
+##             if len(self.args) > 0:
+##                 ofname=self.args[0]
+##             else:
+##                 ofname="tmp"+doc.extension
+##         try:
+##             self.status("Preparing...")
+##             #try:
+##             body(doc.body)
+##             #except ParseError,e:
+##             #    raise
 
-            #print doc.body.toxml()
+##             #print doc.body.toxml()
             
-            self.status("Writing %s...",ofname)
-            doc.saveas(ofname,**kw)
-            self.notice("%d pages." % doc.getPageNumber())
-            if self.isInteractive():
-                self.showfile(ofname)
+##             self.status("Writing %s...",ofname)
+##             doc.saveas(ofname,**kw)
+##             self.notice("%d pages." % doc.getPageNumber())
+##             if self.isInteractive():
+##                 self.showfile(ofname)
 
-        except IOError,e:
-            print e
-            return -1
+##         except IOError,e:
+##             print e
+##             return -1
 

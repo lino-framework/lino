@@ -38,7 +38,7 @@ class DocMaker(Application):
     name="Lino/DocMaker"
 
     copyright="""\
-Copyright (c) 2006 Luc Saffre.
+Copyright (c) 2006-2007 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -74,7 +74,7 @@ mode) starts Acrobat Reader or the browser to view it.
             try:
                 self.status("Preparing %s...",filename)
                 body(doc)
-
+                #print doc.body.toxml()
                 self.status("Writing %s...",filename)
                 doc.saveas(filename,**kw)
                 self.notice("%d pages." % doc.getPageNumber())

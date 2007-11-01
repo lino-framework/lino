@@ -27,6 +27,7 @@ __all__ = (
     'runpy',
     'jpgrename', 'runtests',
     'contacts', 'ledger',
-    'sysinfo', 'countdown'
+    'sysinfo', 'countdown',
+    'pisa'
     )
 
