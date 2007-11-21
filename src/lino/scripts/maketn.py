@@ -1,4 +1,4 @@
-## Copyright 2003-2005 Luc Saffre 
+## Copyright 2002-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -25,11 +25,10 @@ replaced with the more "normal" method using "_tn" suffix.
 """
 
 import os
-import sys
 
 from PIL import Image
 
-from lino.ui import console
+from lino.console.application import Application
 
 class Size:
 	def __init__(self,suffix,size):
@@ -37,63 +36,90 @@ class Size:
 		self.size = size
 
 
-SIZES = [ #Size("tn",(128,128)),
-    Size("web",(512,512)) ]
+def webify(filename):
+    return filename.replace(" ","_")
 
-#EXTENSIONS = (".jpg",".png")
-EXTENSIONS = (".jpg")
+class MakeThumbnails(Application):
 
-def make_tn(path,sizes):
-	for fn in os.listdir(path):
-		pfn = os.path.join(path,fn)
-		if os.path.isdir(pfn):
-			make_tn(pfn,sizes)
-		else:
-			(root,ext) = os.path.splitext(pfn)
-			#(root,ext) = os.path.splitext(fn)
-			if not ext in EXTENSIONS:
-				continue
-			for size in sizes:
-				if root.endswith(size.suffix):
-					# it's a thumbnail
-					origname = root[:-len(size.suffix)]+ext
-					if not os.path.exists(origname):
-						print origname
-						console.warning("Warning: original for %s does not exist" % pfn)
-				else:
-					#1 tfn = os.path.join(path,root) + size.suffix + ext
-					tfn = root + size.suffix + ext
-					# TODO : check whether it is older than original
-					if not os.path.exists(tfn):
-						console.verbose("%s -> %s" % (pfn,tfn))
-						im = Image.open(pfn)
-						im.thumbnail(size.size) 
-						im.save(tfn)
-			
-				
+    name="Lino/maketn"
 
-def main(argv):
-
-    console.copyleft(name="Lino/maketn",years='2002-2005')
-    parser = console.getOptionParser(
-        usage="usage: %prog [options] DIR1 [DIR2 ...]",
-        description="""\
+    copyright="""\
+Copyright (c) 2002-2007 Luc Saffre.
+This software comes with ABSOLUTELY NO WARRANTY and is
+distributed under the terms of the GNU General Public License.
+See file COPYING.txt for more information."""
+    
+    usage="usage: %prog [options] DIR1 [DIR2 ...]"
+    
+    description="""\
 where DIR1 DIR2... are the root directories to be processed.
 Subdirectories of these directories will automatically be
 processed.
 
-""")
+"""
 
-    (options, args) = parser.parse_args(argv)
+    sizes = [ #Size("tn",(128,128)),
+        Size("web",(512,512)) ]
+
+    #EXTENSIONS = (".jpg",".png")
+    extensions = (".jpg")
 
 
-    if len(args) == 0:
-        parser.print_help() 
-        return -1
-    
-	for DIR in args:
-		make_tn(DIR,SIZES)
 
-if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    def make_tn(self,path):
+        for fn in os.listdir(path):
+            pfn = os.path.join(path,fn)
+            if os.path.isdir(pfn):
+                self.make_tn(pfn)
+            else:
+                (root,ext) = os.path.splitext(pfn)
+                #(root,ext) = os.path.splitext(fn)
+                if not ext in self.extensions:
+                    continue
+                if " " in root:
+                    self.warning("Skipping %s : spaces are not allowed!",pfn)
+                    continue
+                is_original=True
+                for size in self.sizes:
+                    if root.endswith(size.suffix):
+                        is_original=False
+                        ofn=os.path.join(path,root[0:-len(size.suffix)])+ext
+                        if not os.path.exists(ofn):
+                            self.warning("%s has no original (%s)!",pfn,ofn)
+                if is_original:
+                    self.count_originals += 1
+                    for size in self.sizes:
+                        #1 tfn = os.path.join(path,root) + size.suffix + ext
+                        tfn = root + size.suffix + ext
+                        # TODO : check whether it is older than original
+                        if not os.path.exists(tfn):
+                            self.verbose("%s -> %s" % (pfn,tfn))
+                            im = Image.open(pfn)
+                            im.thumbnail(size.size) 
+                            im.save(tfn)
+                            self.count_created += 1
+
+
+
+    def run(self):
+
+        self.count_created=0
+        self.count_originals=0
+
+        if len(self.args) == 0:
+            dirs=['.']
+        else:
+            dirs=self.args
+
+        for dirname in dirs:
+            self.make_tn(dirname)
+            
+        if self.count_created == 0:
+            self.notice("Nothing to do.")
+        else:
+            self.notice("Created %d thumbnails from %d originals.",
+                        self.count_created,self.count_originals)
+
+def main(*args,**kw):
+    MakeThumbnails().main(*args,**kw)
     
