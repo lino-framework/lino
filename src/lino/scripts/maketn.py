@@ -61,8 +61,8 @@ processed.
     sizes = [ #Size("tn",(128,128)),
         Size("web",(512,512)) ]
 
-    #EXTENSIONS = (".jpg",".png")
-    extensions = (".jpg")
+    extensions = (".jpg",".png")
+    #extensions = (".jpg")
 
 
 
