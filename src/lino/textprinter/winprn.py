@@ -104,6 +104,7 @@ class Win32TextPrinter(TextPrinter):
         TextPrinter.__init__(self,pageSize=A4,**kw)
 
         self.lpi = None
+        self.maxLeading=0
         self.logfont=win32gui.LOGFONT()
         """
         lfHeight
@@ -221,6 +222,10 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         
         """
         # open the printer.
+        if self.printerName is None:
+            self.session.notice("Printing on Windows standard printer")
+        else:
+            self.session.notice("Printing on '%s'",self.printerName)
         hprinter = win32print.OpenPrinter(self.printerName)
 
         # retrieve default settings.  this code has complications on
@@ -502,17 +507,20 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         self.line += text
 
         self.prepareFont()
+
+        self.maxLeading=max(self.leading,self.maxLeading)
+        
         #self.doc.dc.TextOut(self.line)
         if len(self.line) == 0:
-            (dx,dy) = self.dc.GetTextExtent(" ")
-        else:
-            self.dc.TextOut(int(self.x),int(self.y),self.line)
-            (dx,dy) = self.dc.GetTextExtent(self.line)
-            self.session.debug("self.dc.TextOut(%d,%d,%r) %.2f cpi",
-                               int(self.x),int(self.y),
-                               self.line,
-                               len(self.line)*inch/dx)
-            self.x += dx
+            return
+
+        self.dc.TextOut(int(self.x),int(self.y),self.line)
+        (dx,dy) = self.dc.GetTextExtent(self.line)
+        self.session.debug("self.dc.TextOut(%d,%d,%r) %.2f cpi",
+                           int(self.x),int(self.y),
+                           self.line,
+                           len(self.line)*inch/dx)
+        self.x += dx
         
         # GetTextExtent() returns the dimensions of the string in
         # logical units (twips)
@@ -535,7 +543,10 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         self.write("") # see http://lino.saffre-rumma.ee/news/463.html
         #self.x = self.doc.margin
         self.x = self.margin
-        self.y -= self.leading
+        # self.y -= self.leading
+        self.y -= self.maxLeading
+        self.maxLeading=0
+        #self.session.debug("Win32TextPrinter.newline() : leading is %d",self.leading)
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
         #syscon.debug("self.y += %d" % self.leading)
 

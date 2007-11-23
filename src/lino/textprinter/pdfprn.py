@@ -1,4 +1,4 @@
-#coding: latin1
+# -*- coding: iso-8859-1 -*-
 
 ## Copyright 2004-2007 Luc Saffre
 
@@ -188,6 +188,7 @@ class PdfTextPrinter(FileTextPrinter):
         self.textobject.textOut(text)
         
     def newline(self):
+        # self.session.debug("PdfTextPrinter.newline()")
         self.write("") # see http://lino.saffre-rumma.ee/news/463.html
         self.textobject.textLine()
 
