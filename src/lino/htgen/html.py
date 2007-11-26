@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,12 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-#from lino.gendoc import gendoc # import WriterDocument
-
-from xml.sax.saxutils import escape, unescape
-
-from lino.gendoc.elements import \
-     CDATA, Element, Container
+from lino.htgen.memo import MemoParser
+from lino.htgen.elements import \
+     CDATA, Element, Container, escape, unescape
 
 class BR(Element):
     #flowable=True
@@ -201,14 +198,11 @@ class Story:
     """
     Implemented by BODY and Document
     """
-    def format(self,**kw):
-        raise NotImplementedError
-            
     def append(self,*args,**kw):
         raise NotImplementedError
             
     def table(self,*args,**kw):
-        return self.append(Table(self.getDocument(),*args,**kw))
+        return self.append(TABLE(*args,**kw))
 
     def par(self,*args,**kw):
         return self.append(P(*args,**kw))
@@ -218,19 +212,18 @@ class Story:
     def h1(self,txt,**kw): self.heading(1,txt,**kw)
     def h2(self,txt,**kw): self.heading(2,txt,**kw)
     def h3(self,txt,**kw): self.heading(3,txt,**kw)
-    def getStyle(self,*args,**kw):
-        return self.getDocument().getElementStyle(self,*args,**kw)
 
-    def getPageNumber(self):
-        return self.getDocument().getPageNumber()
     
     def memo(self,txt,style=None,**kw):
-        from lino.gendoc.memo import MemoParser
         p=MemoParser(self,style,**kw)
         p.feed(txt)
         p.close()
 
     def report(self,rpt):
+
+        """ adamo is no longer supported, so this won't work. But I
+        leave the code until I get a working usage example.  """
+    
         rpt.beginReport()
         header=[TH(col.getLabel(),align=col.halign,valign=col.valign)
                 for col in rpt.columns]
@@ -257,9 +250,6 @@ class Story:
 
     def pre(self,txt,style=None,**kw):
         return self.append(PRE(txt,xclass=style,**kw))
-
-    def heading(self,level,txt,style=None,**kw):
-        return self.append(H(level,txt,xclass=style,**kw))
 
     def verses(self,txt,style=None,**kw):
         if False:
@@ -293,54 +283,15 @@ class Story:
     def ol(self,*args,**kw):
         return self.append(OL(*args,**kw))
     
-    def getDocument(self):
-        raise NotImplementedError
-
     
 class BODY(Container,Story):
     allowedAttribs= dict(
         bgcolor='bgcolor',
         **Fragment.allowedAttribs)
         
-    def __init__(self,doc,*args,**kw):
-        self._document=doc
-        Container.__init__(self,*args,**kw)
+##     def __init__(self,*args,**kw):
+##         Container.__init__(self,*args,**kw)
 
-    def getDocument(self):
-        return self._document
-
-    def format(self,**kw):
-        self.getDocument().format(self,**kw)
-
-
-
-    
-##     def __init__(self,href=None,label=None,doc=None):
-##         if label is None: label=href
-##         self.href=href
-##         self.label=label
-##         self.doc=doc
-        
-##     def __html__(self,doc,wr):
-##         wr('<a href="'+self.href+'">')
-##         wr(escape(self.label))
-##         wr('</a>')
-
-## def html2css(k,v):
-##     if k == "align":
-##         if v.lower() == "left": return "alignment",TA_LEFT
-##         if v.lower() == "right": return "alignment",TA_RIGHT
-##         if v.lower() == "center" : return "alignment",TA_CENTER
-##     elif k == "valign":
-##         if v.lower() == "top": return "vAlign",VA_TOP
-##         if v.lower() == "bottom": return "vAlign",VA_BOTTOM
-##         if v.lower() == "center": return "vAlign",VA_MIDDLE
-##     raise "html2pdf(%r,%r)" % (k,v)
-
-
-class FakeStyle:
-    def update(self,**kw):
-        pass
 
 
 class Document(Story):
@@ -353,54 +304,13 @@ class Document(Story):
         self.title=title
         self.date=date
         self.stylesheet=stylesheet
-        self.body=self.createStory()
-
-    def createStory(self):
-        "also used in PdfDocument.drawFrame()"
-        return BODY(self)
+        self.body=BODY()
 
     def append(self,*args,**kw):
         return self.body.append(*args,**kw)
         
     def setTitle(self,title):
         self.title=title
-
-    def getPageNumber(self):
-        return 1
-    
-    def getDocument(self):
-        return self
-
-    def getStyle(self,*args,**kw):
-        return self.getDocument().getElementStyle(self.body,*args,**kw)
-    
-    def getElementStyle(self,elem,name=None,parent=None):
-        return FakeStyle()
-    
-##         stName=elem.xclass 
-##         if stName is None:
-##             stName=elem.tag()
-##         style=self.stylesheet[stName]
-##         d={}
-##         for k,v in elem._attribs.items():
-##             if v is not None:
-##                 if k != 'xclass':
-##                     kk,vv=html2css(k,v)
-##                     d[kk]=vv
-##         if len(d):
-##             return style.child(**d)
-##         return style
-        
-        
-class HtmlDocument(Document):
-    
-    extension=".html"
-    
-    def saveas(self,filename,showOutput=False):
-        f=file(filename,"wt")
-        self.__xml__(f.write)
-        f.close()
-
 
     def __xml__(self,wr):
         wr("<html><head>\n<title>")
@@ -412,11 +322,33 @@ class HtmlDocument(Document):
             wr('<link rel=stylesheet type="text/css" href="%s">\n'
                % self.urlto(self.stylesheet))
         wr('<meta name="KEYWORDS" content="">\n')
-        wr('<meta name="GENERATOR" content="lino.gendoc">\n')
+        wr('<meta name="GENERATOR" content="lino.htgen">\n')
         wr('<meta name="author" content="">\n')
         wr('<meta name="date" content="%s">'%self.date)
         wr("<head>\n")
         self.body.__xml__(wr)
         wr("""\n</html>\n""")
+
+        
+    def toxml(self):
+        u=UniStringIO()
+        self.__xml__(u.write)
+        return u.getvalue()
+
+
+        
+class HtmlResponse(Document):
+    
+    def render(self,wr):
+        return self.__xml__(wr)
+
+class HtmlDocument(Document):
+    
+    extension=".html"
+    
+    def saveas(self,filename,showOutput=False):
+        f=file(filename,"wt")
+        self.__xml__(f.write)
+        f.close()
 
 
