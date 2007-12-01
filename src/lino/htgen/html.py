@@ -17,7 +17,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.htgen.memo import MemoParser
 from lino.htgen.elements import \
      CDATA, Element, Container, escape, unescape
 
@@ -177,7 +176,7 @@ class A(SPAN):
                         **SPAN.allowedAttribs)
 
 
-P.autoClosedByStart=(P,LI,UL,OL,TABLE)
+P.autoClosedByStart=(P,LI,UL,OL,TABLE,PRE)
 P.autoClosedByEnd=(LI,UL,OL,TABLE,TD,TH,TR)
 TD.autoClosedByStart=(TD,TH,TR)
 TD.autoClosedByEnd=(TH,TR,TABLE)
@@ -194,161 +193,14 @@ LI.allowedContent = TD.allowedContent \
     
 
     
-class Story:
-    """
-    Implemented by BODY and Document
-    """
-    def append(self,*args,**kw):
-        raise NotImplementedError
-            
-    def table(self,*args,**kw):
-        return self.append(TABLE(*args,**kw))
-
-    def par(self,*args,**kw):
-        return self.append(P(*args,**kw))
-        
-    def heading(self,level,text,**kw):
-        return self.append(H(level,text,**kw))
-    def h1(self,txt,**kw): self.heading(1,txt,**kw)
-    def h2(self,txt,**kw): self.heading(2,txt,**kw)
-    def h3(self,txt,**kw): self.heading(3,txt,**kw)
-
-    
-    def memo(self,txt,style=None,**kw):
-        p=MemoParser(self,style,**kw)
-        p.feed(txt)
-        p.close()
-
-    def report(self,rpt):
-
-        """ adamo is no longer supported, so this won't work. But I
-        leave the code until I get a working usage example.  """
-    
-        rpt.beginReport()
-        header=[TH(col.getLabel(),align=col.halign,valign=col.valign)
-                for col in rpt.columns]
-        t=TABLE()
-        cols=[]
-        for col in rpt.columns:
-            cols.append(COL(width=str(col.width)+"*"))
-        t.append(COLGROUP(*cols))
-        t.append(THEAD(TR(*header)))
-        # TFOOT if present must come before TBODY
-        tbody=t.append(TBODY())
-        for row in rpt.rows():
-            line=[TD(s, align=col.halign,
-                     valign=col.valign)
-                  for (col,s) in row.cells()]
-            tbody.append(TR(*line))
-            
-        rpt.endReport()
-        #print t.toxml()
-        return self.append(t)
-
-    def par(self,txt,style=None,**kw):
-        return self.append(P(txt,xclass=style,**kw))
-
-    def pre(self,txt,style=None,**kw):
-        return self.append(PRE(txt,xclass=style,**kw))
-
-    def verses(self,txt,style=None,**kw):
-        if False:
-            # this would be better, but reportlab cannot handle
-            # manual line breaks
-            t2=""
-            for line in txt.splitlines():
-                if len(line.strip()):
-                    t2 += "<br/>"+line
-                else:
-                    t2 += '\n'
-            return self.memo(txt,style,False,**kw)
-        # so we must use a trick:
-        if style is None:
-            style="Verses"
-        return self.memo(txt,style,**kw)
-
-    def example(self,intro,code):
-        self.memo(intro)
-        self.h2("Code:")
-        self.pre(code)
-        self.h2("Result:")
-        self.memo(code)
-    
-            
-        
-    def table(self,*args,**kw):
-        return self.append(TABLE(*args,**kw))
-    def ul(self,*args,**kw):
-        return self.append(UL(*args,**kw))
-    def ol(self,*args,**kw):
-        return self.append(OL(*args,**kw))
-    
-    
-class BODY(Container,Story):
-    allowedAttribs= dict(
+class BODY(Container):
+    allowedAttribs=dict(
         bgcolor='bgcolor',
         **Fragment.allowedAttribs)
-        
+    allowedContent=(TABLE,P,UL,OL,PRE)
 ##     def __init__(self,*args,**kw):
 ##         Container.__init__(self,*args,**kw)
 
 
-
-class Document(Story):
-    extension=None
-    def __init__(self,
-                 title="Untitled",
-                 date=None,
-                 stylesheet=None):
-
-        self.title=title
-        self.date=date
-        self.stylesheet=stylesheet
-        self.body=BODY()
-
-    def append(self,*args,**kw):
-        return self.body.append(*args,**kw)
-        
-    def setTitle(self,title):
-        self.title=title
-
-    def __xml__(self,wr):
-        wr("<html><head>\n<title>")
-        wr(escape(self.title))
-        wr("""</title>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-""")
-        if self.stylesheet is not None:
-            wr('<link rel=stylesheet type="text/css" href="%s">\n'
-               % self.urlto(self.stylesheet))
-        wr('<meta name="KEYWORDS" content="">\n')
-        wr('<meta name="GENERATOR" content="lino.htgen">\n')
-        wr('<meta name="author" content="">\n')
-        wr('<meta name="date" content="%s">'%self.date)
-        wr("<head>\n")
-        self.body.__xml__(wr)
-        wr("""\n</html>\n""")
-
-        
-    def toxml(self):
-        u=UniStringIO()
-        self.__xml__(u.write)
-        return u.getvalue()
-
-
-        
-class HtmlResponse(Document):
-    
-    def render(self,wr):
-        return self.__xml__(wr)
-
-class HtmlDocument(Document):
-    
-    extension=".html"
-    
-    def saveas(self,filename,showOutput=False):
-        f=file(filename,"wt")
-        self.__xml__(f.write)
-        f.close()
 
 

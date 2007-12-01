@@ -1,4 +1,4 @@
-## Copyright 2006 Luc Saffre 
+## Copyright 2006-2007 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -19,8 +19,11 @@
 from HTMLParser import HTMLParser
 from htmlentitydefs import name2codepoint
 
-from lino.gendoc import html
-from lino.gendoc.elements import InvalidRequest
+from lino.htgen import html
+from lino.htgen.elements import InvalidRequest
+
+class ParserError(Exception):
+    pass
 
 class MemoParser(HTMLParser):
 
@@ -170,9 +173,9 @@ class MemoParser(HTMLParser):
                 #print "<%s> autoClosedBy </%s>" % (
                 #    popped.tag(),tag.upper())
             else:
-                raise "Found </%s>, expected </%s> (stack was %s)" % (
+                raise ParserError("Found </%s>, expected </%s> (stack was %s)" % (
                     tag.upper(), popped.tag(),
                     [e.tag() for e in self.stack]+[popped.tag()]
-                    )
+                    ))
 
 
