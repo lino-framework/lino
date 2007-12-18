@@ -1,0 +1,32 @@
+title: Kõik abi ma saan Jumalalt
+title2: L'ajuda em vindrà del Señor
+width: 140
+singable: 
+  L'ajuda em vindrà del Señor 
+  del Señor el nostre Déu 
+  que ha fet el cel i la terra, 
+  el cel i la terra.      
+
+soprano: |
+
+  \relative c' {
+     \tempo 4=82 
+     \time 4/4
+     \key c \minor
+     \partial 8      
+     g'8 | c4 c8 c bes4 aes8 f | g2. 
+     g8 f | ees4. ees8 d4 f | ees2 d4. 
+     d8 | c4 ees f aes8 aes | g4 ( ees8 f g4. ) 
+     g8 | g2. c8 c | c2 ( b4. ) \breathe g8 :|
+  }       
+
+#alto: |
+#tenor: |
+#bass: |
+
+lyrics: 
+
+    Kõik | a- bi ma saan Ju- mal- | alt, 
+    Ju- ma- | alt, kes mei- e Is- sand, 
+    ta | tei- nud tae- va ja maa, 
+    kõik | tae- va ja maa.

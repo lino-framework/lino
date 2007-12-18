@@ -1,0 +1,42 @@
+title: J‰‰ meie juurde
+title2: Mane nobiscum
+width: 120
+singable: Mane nobiscum, Domine Jesu Christe.
+soprano:
+    \relative g' {
+        \tempo 4=72
+        \time 4/4
+        \key c \major
+        \voiceOne
+    g2 e4 c | a'4.( f8) f2 | f8( g) a4 g d | e2 e2 \bar ":|"
+    }
+
+alto: 
+    \relative c' {
+    \voiceTwo
+    c2 c4 c | c2 d2 | d8( d) e4 d d | c2 c2 \bar ":|"
+    }
+
+
+tenor:
+    \relative c {
+        \time 4/4
+        \key c \major
+        \voiceOne
+    e2 g4 e | f4.( g8) a2 | a8( bes) c4 bes f8 a | g2 g2 \bar ":|"
+    }
+                
+bass:
+    \relative c {
+    \voiceTwo
+    c2 c4 c | c2 c2 | c8( c) c4 c c | c2 c2 \bar ":|"
+    }
+    
+
+lyrics:
+    J‰‰ mei- e juur- de, Iss- and Jee- sus Kris- tus.
+
+#lyrics:
+#    Ma- ne no- bis- cum, Do-mi- ne Je- su Christ- te.
+
+

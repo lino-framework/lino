@@ -1,0 +1,77 @@
+title: Exaudi orationem meam
+width: 
+singable:
+
+  Exaudi orationem meam, 
+  et clamor meus ad te veniat. 
+  Tu, Deus, in aeternum permanes, 
+  in aeternum permanes.
+  
+soprano: |
+    \relative c' {
+        % http://lilypond.org/doc/v2.10/Documentation/user/lilypond/Metronome-marks#Metronome-marks
+        % \override Score.MetronomeMark #'padding = #2.5
+        \tempo 4=78
+        
+        \time 4/4
+        \key d \minor
+
+        \voiceOne
+        \partial 8
+        d8 \bar "|:" bes'4 a \times 2/3 {g8 g g } f8 g |    a4 e2 
+        e4 |  f8( g4) f8 e4 d8 d | f4 g8 a a4 | r8
+        a8 | a8 g a bes c4 g | bes a f 
+        f8 g | a2 f2 | g4. d8 d4. d8 :||
+        
+        }
+    
+
+alto: |
+
+    \relative c' {
+
+    \voiceTwo
+    \partial 8
+    d8 \bar "|:" e4 f \times 2/3 {d8 d d } d8 d | d4 cis2 
+    cis4 |  d4 cis cis a8 a |d4 d8 d cis4 r8 
+    cis8 | d d d d e4 e | d d d 
+    c8 c | c2 d4( c) | bes4. a8 a4. d8 :||
+                
+    }
+
+
+
+tenor: |
+    \relative c {
+        \time 4/4
+        \key d \minor
+
+        \voiceOne
+        \partial 8
+        f8 \bar "|:" g4 f \times 2/3 { f8 f f } d8 d| e4 e2
+        a4 | a4. a8 g4 f8 f | a4 g8 g e4 r8 
+        e8 | f g f f g4 g | g f f 
+        e8 e | f2 (bes4 a) | g4. g8 f4. f8 :||
+                
+                }
+
+bass: |
+    \relative c {
+
+    \voiceTwo
+    \partial 8
+        d8 \bar "|:" cis4 d \times 2/3 { bes8 bes bes } bes8 bes | a4 a2 
+        a4 |d a a f'8 f | c4 bes8 bes a4 r8
+        a8 | d e f d c4 c | g a bes c8 c | f2 (bes,4 c) | d4. d8 d4. d8 :|
+        }
+        
+
+
+lyrics:
+
+    Ex- | au- di o- ra- ti- o- nem | me- am, 
+    et | cla- mor me- us ad | te ve- ni- at. 
+    Tu, | De- us, in ae- ter- num per- ma- nes, 
+    in ae- | ter- num per- ma- nes. Ex- :|
+
+

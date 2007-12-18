@@ -1,0 +1,95 @@
+title: Kui me hoiame pilgu Jumalal
+title2: Qui regarde vers Dieu
+singable: 
+    Qui regarde vers Dieu resplendira, 
+    sur son visage plus d'amertume,
+    sur son visage plus d'amertume.
+
+
+soprano: |
+    \relative c'{
+        % http://lilypond.org/doc/v2.10/Documentation/user/lilypond/Metronome-marks#Metronome-marks
+        \override Score.MetronomeMark #'padding = #2.5
+        \tempo 4=78
+        
+        \time 4/4
+        \key g \minor
+
+        \voiceOne
+        \partial 4
+        g'8 \( a || bes4 a8 bes c bes c ees |
+        d2 \) \breathe c4 \( g8 bes |
+        a( g) f4 d g8 g |
+        a4 a \) r8 a \( bes c |
+        d4 bes c bes8 a |
+        \time 2/4 g4 g4 \fermata -\markup {Fine} \) 
+        \time 4/4 g1( | b | c ( | a \time 2/4 a4)) g8 a :|
+        
+        }
+    
+
+alto: |
+    \relative c'{
+
+    \voiceTwo
+    \partial 4
+    d8 d || g4 g8 g g g f f |
+    f2 \breathe c4 ees8 ees |
+    c8( bes) a4 bes c8 c |
+    d4 d r8 d d f |
+    f4 g ees d8 c |
+    \time 2/4 bes4 bes
+    \time 4/4 g'1( | g | g ( | f \time 2/4 f4)) d8 d  :|
+    
+    }
+
+
+tenor: |
+    \relative c' {
+        \time 4/4
+        \key g \minor
+
+        \voiceOne
+        \partial 4
+        bes8 c || d4 ees8 d c c a a |
+        bes2 \breathe g4 g8 g |
+        a4 a g g8 g |
+        fis4 fis r8 fis g a |
+        bes4 g g g8 fis |
+        \time 2/4 g4 g
+        \time 4/4 d'1( | d  | c  ( |d \time 2/4 d4)) bes8 c :|
+    
+    } 
+
+bass: |
+
+    \relative c' {
+
+    \voiceTwo
+    \partial 4
+    g8\( g || g4 g8 f ees c f f |
+    bes,2 \) \breathe ees4 \( c8 c8 |
+    f4 f g ees8 ees |
+    d4 d \) r8 d \( g f |
+    bes,4 ees c d8 d |
+    \time 2/4 g,4 g \)
+    \time 4/4 g'1( | f  | ees ( | d \time 2/4 d4)) g8 g :|
+    }
+
+
+
+
+lyrics:
+
+    Kui me hoi -- a -- me pil -- gu Ju -- ma -- lal, 
+    näol sä -- rab val- gus, kaob hin -- gest kur -- bus; 
+    näol sä -- rab val -- gus, kaob hin -- gest kur -- bus.
+    O -- Kui me hoi -- 
+    
+#lyrics:
+#    Qui re -- gar -- de vers Dieu res -- plen -- di -- ra,
+#    sur son vi -- sa -- ge plus d'a -- mer -- tu -- me,
+#    sur son vi -- sa -- ge plus d'a -- mer -- tu -- me.
+#    O -- Qui re --
+
+

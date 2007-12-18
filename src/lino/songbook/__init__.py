@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre
+## Copyright Luc Saffre 2007
 
 ## This file is part of the Lino project.
 
@@ -16,19 +16,4 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-__all__ = (
-    'pds2pdf',
-    #'pds2sxw', 'pds2sxc',
-    'prn2pdf', 'prnprint',
-    'sync', 'diag',
-    'openmail',
-    'sendmail',
-    'openurl',
-    'runpy',
-    'maketn',
-    'jpgrename', 'runtests',
-    'contacts', 'ledger',
-    'sysinfo', 'countdown',
-    'pisa', 'sng2pdf',
-    )
-
+from songbook import Songbook

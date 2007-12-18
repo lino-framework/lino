@@ -1,0 +1,84 @@
+title: Me pimeduse sees
+title2: Dans nos obscurités
+singable:
+
+  Dans nos obscurités allume le feu
+  qui ne s'éteint jamais, qui ne s'éteint jamais.
+
+soprano: |
+
+  \relative c' {
+      %% http://lilypond.org/doc/v2.10/Documentation/user/lilypond/Metronome-marks#Metronome-marks
+      \override Score.MetronomeMark #'padding = #2.5
+      \tempo 4=68
+      \time 4/4
+      \key g \major
+      \voiceOne
+        \partial 4*3
+        r8 dis8 dis dis cis dis | e4. 
+        e8 e4 e8 fis | g fis e fis g4 a | b8 
+        b b b c4 b | a r8 
+    b8 b a g fis | e4. e8 e4 e8 fis | 
+    dis8 dis dis dis e4 fis |
+    dis8 dis dis dis e4 fis | dis4 r8 dis8 dis dis cis dis :||
+  }
+  
+alto: |
+    \relative c' {
+
+    \voiceTwo
+        \partial 4*3
+                
+    r8 b8 b b b b | b4. 
+    b8 b4 b8 b | e e e e e4 fis | g8 
+    g g g g4 g | fis r8 
+    g8 g fis e d | c4. c8 c4 c8 c | 
+    b8 b b b b4 c |
+    b8 b b b b4 c | b4 r8 b8 b b b b :||
+    }
+
+tenor: |
+    \relative c {
+        \time 4/4
+        \key g \major
+
+        \voiceOne
+        \partial 4*3
+    
+    r8 fis8 fis fis e fis | g4. 
+    g8 g4 g8 a | b a g a b4 d | d8 
+    d d d e4 d | d r8 
+    d8 d d b a | g4. g8 g4 g8 a | 
+    fis8 fis fis fis g4 a |
+    fis8 fis fis fis g4 a | fis4 r8 fis8 fis fis e fis :||
+    }
+
+bass: |
+    \relative c {
+
+    \voiceTwo
+        \partial 4*3
+    
+    r8 b8 b b b b | e4. 
+    e8 e4 e8 e | e e e e e4 d | g8 
+    g g g c4 g | d r8 
+    g8 g d e b | c4. c8 c4 c8 a | 
+    b8 b b b e4 a, |
+    b8 b b b e4 a, | b4 r8 b8 b b b b :||
+    }
+
+#lyrics:
+#
+#  Dans nos obs- cu- ri- tés all- u- me le feu
+#  qui ne s'é- teint ja- mais, qui ne s'é- teint ja- mais.
+#  Dans nos obs- cu- ri- tés all- u- me le feu
+#  qui ne s'é- teint ja- mais, qui ne s'é- teint ja- mais. Dans nos
+  
+  
+lyrics:
+    Me pi- me- du- se | sees, sa sä- ra ja | süü- ta kus- tu- ma- tu | leek, 
+    su kus- tu- ma- tu | leek. 
+    Me pi- me- du- se | sees, sa sä- ra ja | süü- ta kus- tu- ma- tu | leek, 
+    su kus- tu- ma- tu | leek. Me pi- me- du- se 
+
+

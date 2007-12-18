@@ -1,5 +1,7 @@
-## Copyright 2003-2007 Luc Saffre
+#!/usr/local/bin/python
+# -*- coding: ISO-8859-1 -*-
 
+## Copyright 2007 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -16,19 +18,35 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-__all__ = (
-    'pds2pdf',
-    #'pds2sxw', 'pds2sxc',
-    'prn2pdf', 'prnprint',
-    'sync', 'diag',
-    'openmail',
-    'sendmail',
-    'openurl',
-    'runpy',
-    'maketn',
-    'jpgrename', 'runtests',
-    'contacts', 'ledger',
-    'sysinfo', 'countdown',
-    'pisa', 'sng2pdf',
+
+
+
+# Taizé laulud eesti keeles (Taizé songbook in Estonian)
+# http://yaml.org/spec/current.html
+# http://pyyaml.org/
+
+from lino.songbook import Songbook
+
+SONGS = """
+dans_nos
+wait_for
+lajuda 
+bleibet_hier
+mane_nobiscum
+qui_regarde
+il_signore_ti_ristora
+exaudi_orationem
+"""
+
+"""
+"""
+
+
+sbk=Songbook(
+    filename="taize-laulik",
+    output_dir=r"C:\temp\laulik",
+    input_encoding="latin1",
     )
+sbk.loadsongs(SONGS)
+sbk.main()
 

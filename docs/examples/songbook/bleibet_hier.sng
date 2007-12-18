@@ -1,0 +1,49 @@
+title: Siia j‰‰
+title2: Bleibet hier
+width: 140
+singable:
+  Bleibet hier und wachet mit mir. Wachet und betet, wachet und betet. / 
+  Stay with me, remain here with me, watch--- and pray---, watch---
+  and pray---.
+
+soprano: |
+  \relative g' {
+    \tempo 4=72
+        \time 4/4
+        \key d \minor
+        \voiceOne
+    f4( f e4. e8 | f8 f4 f8 e2)  \breathe | 
+    f2 g4 c | a2 g | f2( f4 g | e2 e4) r4
+    \bar ":|"
+  }
+
+alto: |
+  \relative c' {
+    \voiceTwo
+    d4 d d4. d8 | d8 d4 d8 d2  \breathe | 
+    d2 e4 e | f2 e | d2 d4 d | d4( cis8 b) cis4 r4
+    \bar ":|"
+  }
+
+tenor: |
+  \relative f {
+        \time 4/4
+        \key d \minor
+        \voiceOne
+    a4( a bes4. bes8 | a8 a4 a8 bes2)  \breathe | 
+    a2 c4 c | c2 c | a2( a4 bes | a2 a4) r4
+    \bar ":|"
+  }
+
+bass: |
+  \relative c {
+    \voiceTwo
+    d4 d d4. d8 | d8 d4 d8 d2  \breathe | 
+    d2 c4 c | f2 c | d2 d4 d | a2 a4 r4
+    \bar ":|"   
+  }
+
+lyrics: 
+    Sii- a j‰‰ sa mi- nu- ga koos, val- va ja pa- lu, val- va ja pa- lu.
+
+

@@ -1,0 +1,75 @@
+title: Issand Jumal teeb su terveks
+title2: Il Signore ti ristora
+width: 140
+singable: 
+  Il Signore ti ristora. Dio non allontana. 
+  Il Signore viene ad incontrarti.
+  Viene ad incontrarti.
+
+remark:
+    Le Seigneur te restaure. 
+    Dieu ne t'éloigne pas de Lui. 
+    Le Seigneur vient à ta rencontre.
+
+soprano: |
+
+    \relative c {
+        % \set Staff.midiInstrument = "violin"
+        \tempo 4=66
+        \time 3/4
+        \key e \major
+        \voiceOne
+        \partial 4
+        e'8 e || e4 e fis8 fis | gis4 gis2 \breathe |
+        fis4 fis8 gis a a | fis4 fis \breathe gis8 a |
+        \time 4/4 b4 b cis8 cis b b | \time 3/4 a4 a2 \breathe |
+        a4 a gis8 e | fis4 fis \breathe e8 e :|
+        }
+    
+
+alto: |
+
+    \relative c' {
+        % \set Staff.midiInstrument = "flute"
+        \voiceTwo
+        \partial 4
+        cis8 cis || cis4 cis dis8 dis | e4 e2 \breathe |
+        cis4 cis8 e e cis | cis( dis) dis4 \breathe e8 e |
+        \time 4/4 dis4 e e8 e dis dis | \time 3/4 e4 e2 \breathe |
+        fis4 e e8 cis | e( dis) dis4 \breathe cis8 cis :|
+        }
+
+
+tenor: |
+    \relative c {
+        % \set Staff.midiInstrument = "trumpet"
+        \time 3/4
+        \key e \major
+        \voiceOne
+        \partial 4
+        gis'8 gis || gis4 gis b8 b | b4 b2 \breathe |
+        a4 a8 b a a | b4 b \breathe b8 b |
+        \time 4/4 a4 b gis8 gis b b | \time 3/4 cis4 cis2 \breathe |
+        cis4 cis cis8 a | b4 b4 \breathe gis8 gis :|
+        } 
+
+bass: |
+    \relative c {
+    % \set Staff.midiInstrument = "acoustic bass"
+    \voiceTwo
+    \partial 4
+        cis8 cis || cis4 cis b8 b | e4 e2 \breathe |
+        a4 a8 gis fis fis | b,4 b \breathe e8 fis |
+        \time 4/4 fis4 gis cis,8 cis gis gis | \time 3/4 a4 a2 \breathe |
+        fis'4 fis cis8 fis | b,4 b4 \breathe cis8 cis :|
+        }
+
+
+
+lyrics:
+
+    Is -- sand Ju -- mal teeb su ter -- veks,
+    sind ta ei tõu -- ka ä -- ra,
+    Is -- sand Ju -- mal tu -- leb sul -- le vas -- tu,
+    tu -- leb sul -- le vas -- tu. Is -- sand
+

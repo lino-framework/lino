@@ -1,0 +1,46 @@
+title: Oota Issandat
+title2: Wait for the Lord
+width: 140
+singable: 
+  Wait for the Lord, whose day is near. 
+  Wait for the Lord, keep watch, take heart!
+
+
+soprano: |
+  \relative g' {
+    \tempo 2=48
+        \time 4/4
+        \key g \major
+        \voiceOne
+    g4. g8 g4. e8 | g2 r4 g4 | fis2 fis | fis2. r4 | g4. g8 a4. a8 | b2 r4 b4 | c2 b | e,2. r4 
+    \bar ":|"
+    }
+
+alto: |
+  \relative c' {
+    \voiceTwo
+    e4. e8 e4. e8 | e2 r4 e4 | e2 e | dis2. r4 | e4. e8 fis4. fis8 | g2 r4 g4 | e2 dis | e2. r4
+    \bar ":|"
+  }
+
+tenor: |
+  \relative f {
+        \time 4/4
+        \key g \major
+        \voiceOne
+    b4. b8 b4. b8 | c2 r4 c4 |c2 c | b2. r4 | b4. b8 d4. d8 | d2 r4 g,4 | a4( g) fis2 | g2. r4
+    \bar ":|"
+    }
+
+bass: |
+
+  \relative c {
+    \voiceTwo
+    e4. e8 e4. e8 | c2 r4 c4 |a2 a | b2. r4 | e4. e8 d4. d8 | g2 r4 e4 | a,2 b2 | e2. r4
+    \bar ":|"   
+    }
+
+lyrics:
+  Oo- ta Iss- an- dat, ta p‰ev on pea, oo- ta Iss- an- dat, ja kind- laks j‰‰.
+
+  
