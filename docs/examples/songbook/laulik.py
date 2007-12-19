@@ -27,7 +27,12 @@
 
 from lino.songbook import Songbook
 
-SONGS = """
+
+sbk=Songbook(filename="taize-laulik",
+             output_dir=r"C:\temp\laulik",
+             input_encoding="latin1")
+
+sbk.loadsongs("""
 dans_nos
 wait_for
 lajuda 
@@ -36,17 +41,6 @@ mane_nobiscum
 qui_regarde
 il_signore_ti_ristora
 exaudi_orationem
-"""
-
-"""
-"""
-
-
-sbk=Songbook(
-    filename="taize-laulik",
-    output_dir=r"C:\temp\laulik",
-    input_encoding="latin1",
-    )
-sbk.loadsongs(SONGS)
+""")
 sbk.main()
 

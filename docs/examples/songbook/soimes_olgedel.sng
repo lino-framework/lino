@@ -3,6 +3,7 @@ title: Sõimes õlgedel
 soprano:
     \relative c'{
         \time 2/4
+        \tempo 4=90
         \key d \minor
         \voiceOne
         d4 d8( e) | f4 f8 g | g4. a8 | a2 |
@@ -18,7 +19,7 @@ alto:
         \voiceTwo
         d2 | d | d2 | d4 cis |
         c2 | d4( f) | g4 <g c,> | <f c>2 |
-        <d bes>2 | <f a,>2 | <e a,>2 | <d a,>2 |
+        <d bes>2 | <f a,>2 | <e a,>2 | <d a>2 |
         <d bes>2 | <d bes>4 <d bes> | <bes g>4. d8 | d2 |
     }
 
@@ -38,20 +39,20 @@ tenor:
        \time 2/4
        \key d \minor
        \voiceOne
-       r4 c4 | b( a) | g f | e2 |
+       r4 c4 | bes( a) | g f | e2 |
        a | f | f4 e | f2 |
        d'2 | d2 | a2 | a2 |
-       e2 | d2 | d4 cis | d2 |
+       e2 | d4 d | d4 cis | d2 |
     } 
 
 bass:
     \relative c' {
        \time 2/4
        \voiceTwo
-       r4 c4 | b( a) | g f | e2 |
+       r4 c4 | bes( a) | g f | e2 |
        f | bes, | c4 c | f2 |
        bes2 | a2 | g2 | f2 |
-       g,2 | f2 | g4 a | d,2 |
+       g,2 | f4 f | g4 a | d,2 |
     }
 
 
@@ -69,6 +70,38 @@ lyrics:
     Sõi- mes õl- ge- del Jee- sus ui- nu- mas.
     Ing- gli tiib viib kum- mar- da ar- mas- tust.
         
+bass_lyrics:
+
+    Sõi- mes õl- ge- del
+    
+#Jee- sus ui- nu- mas. Ing- gli tiib viib kum- mar- da ar- mas- tust.
+        
 lead_voice: alto    
 
+midi_suffixes: ["sa","t", "b", "satb"]
+
+verses:
+
+  - Sõimes õlgedel Petlemmas \n
+    väike Jeesus uinumas. \n
+    Valge ingli tiib \n
+    tema juurde viib \n
+    kummardama suurimat armastust.
+
+  - Ema Maria põlvedel \n
+    on nii hea Jeesusel. \n
+    Valge ingli tiib \n
+    tema juurde viib \n
+    kummardama suurimat armastust.
+
+  - Keskel Saaroni rooside \n
+    magab püha lapsuke \n
+    Valge ingli tiib \n
+    tema juurde viib \n
+    kummardama suurimat armastust.
+
+remark:
+  Orig. Entre le boeuf et l'âne gris (prantsusmaa, XIII. saj.)
+  
+  
 

@@ -154,6 +154,9 @@ class Application(Task):
         
     def stop_running(self):
         self.toolkit.stop_running()
+
+    def get_description(self):
+        return self.description
             
     def main(self,*args,**kw):
         """Process command-line arguments and run the application.
@@ -163,7 +166,7 @@ class Application(Task):
         self.toolkit=syscon.getSystemConsole()
         syscon.setMainSession(self)
         
-        desc=self.description
+        desc=self.get_description()
         if desc is not None:
             desc=" ".join(desc.split())
 ##             paras=[]

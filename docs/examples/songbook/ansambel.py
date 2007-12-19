@@ -36,7 +36,16 @@ sbk=Songbook(
     filename="ansamblilaulik",
     output_dir=r"C:\temp\laulik",
     input_encoding="latin1",
+    geometryOptions=dict(a4paper=True,
+                         heightrounded=True,
+                         twoside=True,
+                         margin="10mm",
+                         #right="10mm",
+                         #top="10mm",
+                         #bottom="10mm",
+                         bindingoffset="5mm"),
     )
+
 sbk.loadsongs(SONGS)
 sbk.main()
 
