@@ -131,6 +131,13 @@ class Section(MyOptionDict):
     def __init__(self,sbk,**kw):
         self.sbk=sbk
         MyOptionDict.__init__(self,**kw)
+        if self.title is not None:
+            if self.number is None:
+                self.update(number=sbk.lastNumber + 1)
+        if self.number is not None:
+            if sbk.numbering:
+                sbk.lastNumber=self.number
+                            
 
 ##     def __str__(self):
 ##         return self.title
@@ -492,7 +499,7 @@ class Song(Section):
                     
 
 
-class Songbook(Application):
+class Songbook(Application,MyOptionDict):
     
     name="Lino Songbook"
     copyright="""\
@@ -586,14 +593,9 @@ where FILES is one or more files to be converted to a pdf file.
         for songdict in yaml.load_all(fd):
             songdict.update(kw)
             songdict['filename']=name
-            if songdict.has_key("number"):
-                self.lastNumber=songdict["number"]
-            elif self.numbering:
-                self.lastNumber += 1
-                songdict['number']=self.lastNumber
             self.addsong(**songdict)
         fd.close()
-        
+
 
     def loadsongs(self,songnames,**kw):
         for name in songnames.split():
