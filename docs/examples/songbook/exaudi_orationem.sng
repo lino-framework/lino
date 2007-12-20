@@ -1,5 +1,5 @@
 title: Exaudi orationem meam
-width: 
+url: http://www.taize.fr/en_article4635.html
 singable:
 
   Exaudi orationem meam, 
@@ -19,7 +19,7 @@ soprano: |
         \voiceOne
         \partial 8
         d8 \bar "|:" bes'4 a \times 2/3 {g8 g g } f8 g |    a4 e2 
-        e4 |  f8( g4) f8 e4 d8 d | f4 g8 a a4 | r8
+        e4 |  f8( g4) f8 e4 d8 d | f4 g8 a a4 r8
         a8 | a8 g a bes c4 g | bes a f 
         f8 g | a2 f2 | g4. d8 d4. d8 :||
         

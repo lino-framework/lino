@@ -36,6 +36,7 @@ sbk=Songbook(
     filename="ansamblilaulik",
     output_dir=r"C:\temp\laulik",
     input_encoding="latin1",
+    numbering=False,
     geometryOptions=dict(a4paper=True,
                          heightrounded=True,
                          twoside=True,

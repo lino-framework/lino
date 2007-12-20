@@ -29,10 +29,17 @@ from lino.songbook import Songbook
 
 
 sbk=Songbook(filename="taize-laulik",
+             geometryOptions=dict(a5paper=True,
+                                  landscape=True,
+                                  heightrounded=True,
+                                  twoside=True,
+                                  margin="10mm",
+                                  bindingoffset="5mm"),
              output_dir=r"C:\temp\laulik",
              input_encoding="latin1")
 
 sbk.loadsongs("""
+intro
 dans_nos
 wait_for
 lajuda 

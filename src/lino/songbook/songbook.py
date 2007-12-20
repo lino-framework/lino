@@ -30,134 +30,215 @@ LYBOOK=r'"C:\Program Files\LilyPond\usr\bin\lilypond-book.py"'
 PDFLATEX=r'"C:\Program Files\MiKTeX 2.5\miktex\bin\pdflatex.exe"'
 
 
+
+# barNumberVisibility = #all-invisible
+
+
+
 class MakeError(Exception):
     pass
 
-
-class Song:
-    def __init__(self,sbk,
-                 title=None,title2=None,
-                 filename=None,width=None,
-                 singable="",remark="", 
-                 composer="", author="",
-                 number=None,
-                 soprano=None,
-                 alto=None,
-                 alto2=None,
-                 tenor=None,
-                 bass=None,
-                 lyrics=None,
-                 bass_lyrics=None,
-                 soprano_lyrics=None,
-                 alto_lyrics=None,
-                 lead_voice=None,
-                 verses=None,
-                 versesColumns=None,
-                 newLines=None,
-                 midi_suffixes=["s","a","t", "b", "satb"],
-                 ):
-        self.title=title
-        self.title2=title2
-        self.filename=filename
-        self.singable=singable
-        self.remark=remark
-        self.scorewidth=width
-        self.composer=composer
-        self.author=author
-        self.soprano=soprano
-        self.alto=alto
-        self.alto2=alto2
-        self.tenor=tenor
-        self.bass=bass
-        self.soprano_lyrics=soprano_lyrics
-        self.alto_lyrics=alto_lyrics
-        self.bass_lyrics=bass_lyrics
-        self.number=number
-        self.lyrics=lyrics
-        self.lyrics_font="Helvetica" # AvantGarde, Palatino
-        if lead_voice is None:
-            lead_voice="soprano"
-        self.lead_voice=lead_voice
-        if width is not None:
-            self.textwidth=180-width
-        self.verses=verses
-        self.midi_suffixes=midi_suffixes
-        if newLines is None:
-            newLines=sbk.newLines
-        self.newLines=newLines
-        if versesColumns is None:
-            versesColumns=sbk.versesColumns
-        self.versesColumns=versesColumns
-
-        #self.inputfile=os.path.abspath(filename+".ly")
-        # self.inputfile.replace("\\","/")
-        #assert os.path.exists(self.inputfile)
+class MyOptionDict:
+    allowedAttribs=None
+    def __init__(self,*args,**kw):
+        self._attribs={}
+        self.update(*args,**kw)
         
     def __getitem__(self,name):
-        return getattr(self,name)
+        return self.__getattr__(name)
+
+
+    def __repr__(self):
+        l=[]
+        for k,v in self._attribs.items():
+            s=repr(v)
+            if len(s) > 10:
+                s=s[:4]+"..."+s[-4:]
+            l.append(k+"="+s)
+        return self.__class__.__name__+"("+",".join(l)+")"
+    
+
+    def __getattr__(self,name):
+        try:
+            return self._attribs[name]
+        except KeyError:
+            if self.allowedAttribs is not None:
+                try:
+                    return self.allowedAttribs[name]
+                except KeyError:
+                    pass
+            raise AttributeError(
+                "%s instance has no attribute '%s'" % (
+                self.__class__.__name__, name))
+    
+    def update(self,*args,**kw):
+
+        for a in args:
+            if self.allowedAttribs is not None:
+                if not a in self.allowedAttribs.keys():
+                    raise AttributeError("No attribute '%s' in %s" % (a,self.__class__.__name__))
+                assert type(True) == type(self.allowedAttribs[a])
+            self._attribs[a]=True
+            
+        for k,v in kw.items():
+            if self.allowedAttribs is not None:
+                if not k in self.allowedAttribs.keys():
+                    raise AttributeError("No attribute '%s' in %s" % (a,self.__class__.__name__))
+                assert self.allowedAttribs[k] is None or type(v) == type(self.allowedAttribs[k])
+            self._attribs[k]=v
+    
+    def remove(self,*args):
+        for a in args:
+            del self._attribs[a]
+            
+class PackageOptions(MyOptionDict):
+    def __str__(self):
+        l=[]
+        for k,v in self._attribs.items():
+            if v == True:
+                l.append(k)
+            elif type(v) == type(""):
+                l.append(k+"="+v)
+            elif type(v) == type([]):
+                l.append(k+"={"+",".join(v)+"}")
+        return ",".join(l)
+
+
+class DocumentOptions(PackageOptions):
+    pass
+    
+class GeometryOptions(PackageOptions):
+    "http://www.tug.org/teTeX/tetex-texmfdist/doc/latex/geometry/geometry.pdf"
+    pass
+
+
+
+
+
+class Section(MyOptionDict):
+    allowedAttribs=dict(
+        title=None,
+        title2=None,
+        filename=None,
+        number=None,
+        text=None,
+        remark=None, 
+        verses=None,
+        versesColumns=None,
+        newLines=None,
+        )
+        
+    def __init__(self,sbk,**kw):
+        self.sbk=sbk
+        MyOptionDict.__init__(self,**kw)
+
+##     def __str__(self):
+##         return self.title
+        
+    def has_music(self):
+        return False
+    
+    def toLytex(self,fd):
+        self.writeTitle(fd)
+        self.writeBody(fd)
+        
+    def writeBody(self,fd):
+        if self.text:
+            fd.write(self.text)
+        if self.verses:
+            if self.versesColumns > 1:
+                fd.write(r"""
+\begin{multicols}{%d}""" % self.versesColumns)
+            fd.write(r"""
+\begin{enumerate}""")
+            for verse in self.verses:
+                fd.write(r"""
+                \item %s""" % verse.replace(r"\n",self.newLines))
+            fd.write(r"""
+\end{enumerate}""")
+            if self.versesColumns > 1:
+                fd.write(r"""
+\end{multicols}""")
+        if self.remark:
+            fd.write(r"""
+\par\small  %s""" % self.remark)
+
+    
+    def writeTitle(self,fd):
+        
+        if self.title:
+            fd.write(r"\subsection*{")
+            if self.number:
+                fd.write(r"\framebox{\huge ~%d~} " % self.number)
+            fd.write(self.title)
+            if self.title2:
+                fd.write(r" \hfill {\small (%s)}" % self.title2)
+            fd.write(r"}")
+
+##         fd.write(r"""
+## %%\begin{figure}[h]
+## \marginpar{\framebox{Nr. %(number)d}}
+## %%\end{figure}
+##         """ % self)
+        
+            
+class Song(Section):
+    allowedAttribs = dict(
+        Section.allowedAttribs,
+        width=None,
+        scorewidth=None,
+        textwidth=None,
+        singable=None,
+        composer=None,
+        author=None,
+        soprano=None,
+        alto=None,
+        alto2=None,
+        tenor=None,
+        bass=None,
+        lyrics=None,
+        bass_lyrics=None,
+        soprano_lyrics=None,
+        lyrics_font="Helvetica", # AvantGarde, Palatino
+        alto_lyrics=None,
+        lead_voice="soprano",
+        midi_suffixes=None,
+        url=None,
+        )
+    
+    def __init__(self,sbk,**kw):
+        Section.__init__(self,sbk,**kw)
+        if self.width is not None and self.textwidth is None:
+            self.update(scorewidth=self.width,
+                        textwidth=180-self.width)
+            
+        if self.newLines is None:
+            self.update(newLines=sbk.newLines)
+            
+        if self.versesColumns is None:
+            self.update(versesColumns=sbk.versesColumns)
+        if self.midi_suffixes is None:
+            l=[]
+            if self.soprano: l.append("s")
+            if self.alto: l.append("a")
+            if self.tenor: l.append("t")
+            if self.bass: l.append("b")
+            if len(l) > 1:
+                l.append("".join(l))
+            self.update(midi_suffixes=l)
 
     def has_music(self):
         return self.soprano
     def is_single_staff(self):
         return not self.bass
 
-    def toMidi(self,fd,suffix):
+    def toLilypond(self,fd):
 
         fd.write(r'\version "2.10.25"')
-                
-        fd.write(r"""
-\score{
-<<
-""")
-
         
-        if self.soprano and "s" in suffix:
-            fd.write(r"""
-\new Staff { 
-  \set Staff.midiInstrument = "bright acoustic"
-  %(soprano)s
-}""" % self)
-            
-        if self.alto and "a" in suffix:
-            fd.write(r"""
-\new Staff {
-  \set Staff.midiInstrument = "violin"
-  %(alto)s
-}""" % self)
-
-        if self.tenor and "t" in suffix:
-            fd.write(r"""
-\new Staff {
-  \set Staff.midiInstrument = "trumpet"
-  %(tenor)s
-}""" % self)
-
-        if self.bass and "b" in suffix:
-            fd.write(r"""
-\new Staff {
-  \set Staff.midiInstrument = "contrabass"
-  %(bass)s
-}""" % self)
-
-        fd.write(r"""
->>
-\midi { }
-}""")
-                    
-
-
-    def toLilypond(self,fd,layout=True,midi=False):
-
-        fd.write(r'\version "2.10.25"')
-        if False and len(self.lyrics) > 1:
-            fd.write(r"""
-secondverse = \lyricmode {
-            """ + self.lyrics[1] + " }")
-
         if self.is_single_staff():
             fd.write(r"""
-\score{
-            """)
+\score{ """)
             fd.write(self.soprano)
             if self.lyrics:
                 fd.write(r"\addlyrics { " + self.lyrics + " }")
@@ -165,16 +246,9 @@ secondverse = \lyricmode {
             fd.write(r"""
   \midi {} 
   \layout {}
-}
-
-            """)
+} """)
         else:
             
-##             if self.alto2:
-##                 fd.write(r"""
-##                 voiceFive = #(context-spec-music (make-voice-props-set 4) 'Voice)
-##                 """)
-                
             fd.write(r"""
 \score{ 
 
@@ -191,7 +265,6 @@ secondverse = \lyricmode {
             if self.soprano:
                 fd.write(r"""
                 \context Voice = "soprano" %(soprano)s
-                \set Staff.midiInstrument = "bright acoustic" 
                 """ % self)
             
             if self.alto:
@@ -255,8 +328,7 @@ secondverse = \lyricmode {
             fd.write(r"""
         >>""")
             
-            if layout:
-                fd.write(r"""
+            fd.write(r"""
 \layout {
 
         \context{\Lyrics
@@ -273,10 +345,12 @@ secondverse = \lyricmode {
         autoBeaming = ##t
         \unset melismaBusyProperties 
         }
-        
-        \context{\Score
-        barNumberVisibility = #all-invisible
-        }
+    }""")
+
+            if False:
+                fd.write(r"""        
+    \context{\Score
+      barNumberVisibility = #all-invisible
     }""")
     
             fd.write(r"""
@@ -307,24 +381,7 @@ secondverse = \lyricmode {
                     
 
 
-    def toLytex(self,fd):
-
-        fd.write(r"\subsection*{")
-        if self.number:
-            fd.write(r"\framebox{\huge ~%d~} " % self.number)
-        fd.write(self.title)
-        if self.title2:
-            fd.write(r" \hfill {\small (%(title2)s)}" % self.title2)
-        fd.write(r"}")
-        
-
-##         fd.write(r"""
-## %%\begin{figure}[h]
-## \marginpar{\framebox{Nr. %(number)d}}
-## %%\end{figure}
-##         """ % self)
-        
-            
+    def writeBody(self,fd):
         if self.has_music():
             if self.scorewidth is not None:
                 fd.write(r"""
@@ -351,27 +408,10 @@ secondverse = \lyricmode {
         if self.singable:
             fd.write(r"""
 \par\normalsize %s""" % self.singable)
-        if self.verses:
-            if self.versesColumns > 1:
-                fd.write(r"""
-\begin{multicols}{%d}""" % self.versesColumns)
-            fd.write(r"""
-\begin{enumerate}""")
-            for verse in self.verses:
-                fd.write(r"""
-                \item %s""" % verse.replace(r"\n",self.newLines))
-            fd.write(r"""
-\end{enumerate}""")
-            if self.versesColumns > 1:
-                fd.write(r"""
-\end{multicols}""")
-        if self.remark:
-            fd.write(r"""
-\par\small  %s""" % self.remark)
 
-        if self.has_music():
-            if self.scorewidth is not None:
-                fd.write(r"""
+        Section.writeBody(self,fd)
+        if self.has_music() and self.scorewidth is not None:
+            fd.write(r"""
 \end{minipage}""" % self)
 
             #~ %% \begin{samepage}
@@ -386,8 +426,6 @@ secondverse = \lyricmode {
             #~ %% \end{samepage}
 
     def make_midi(self):
-        if not self.has_music():
-            return
         for suffix in self.midi_suffixes:
             midifile=self.filename + "_" + suffix + ".midi"
             lyfile=self.filename + "_" + suffix+".ly"
@@ -402,54 +440,56 @@ secondverse = \lyricmode {
             if not os.path.exists(midifile):
                 raise MakeError(midifile)
             
-class PackageOptions:
-    allowedOptions=None
-    def __init__(self,*args,**kw):
-        self.options={}
-        self.update(*args,**kw)
+    def toMidi(self,fd,suffix):
+        """
+
+        http://lilypond.org/doc/v2.10/Documentation/user/lilypond/MIDI-instruments#MIDI-instruments
         
-    def __str__(self):
-        l=[]
-        for k,v in self.options.items():
-            if v == True:
-                l.append(k)
-            elif type(v) == type(""):
-                l.append(k+"="+v)
-            elif type(v) == type([]):
-                l.append(k+"={"+",".join(v)+"}")
-        return ",".join(l)
+        http://www.midistudio.com/Help/GMSpecs_Patches.htm
+        
+        """
 
-    def remove(self,*args):
-        for a in args:
-            del self.options[a]
+        fd.write(r'\version "2.10.25"')
+                
+        fd.write(r"""
+\score{
+<<
+""")
+
+        
+        if self.soprano and "s" in suffix:
+            fd.write(r"""
+\new Staff { 
+  \set Staff.midiInstrument = "acoustic grand"
+  %(soprano)s
+}""" % self)
             
-    def update(self,*args,**kw):
+        if self.alto and "a" in suffix:
+            fd.write(r"""
+\new Staff {
+  \set Staff.midiInstrument = "acoustic guitar (nylon)"
+  %(alto)s
+}""" % self)
 
-        for a in args:
-            if self.allowedOptions is not None:
-                assert a in self.allowedOptions.keys()
-                assert type(True) == type(self.allowedOptions[a])
-            self.options[a]=True
-            
-        for k,v in kw.items():
-            if self.allowedOptions is not None:
-                assert k in self.allowedOptions.keys()
-                assert type(v) == type(self.allowedOptions[k])
-            self.options[k]=v
+        if self.tenor and "t" in suffix:
+            fd.write(r"""
+\new Staff {
+  \set Staff.midiInstrument = "french horn"
+  %(tenor)s
+}""" % self)
 
-       
+        if self.bass and "b" in suffix:
+            fd.write(r"""
+\new Staff {
+  \set Staff.midiInstrument = "acoustic bass"
+  %(bass)s
+}""" % self)
 
-class DocumentOptions(PackageOptions):
-    pass
-##     allowedOptions={
-##         "a4paper": True,
-##         "10pt": True,
-##         "12pt": True,
-##     }
-    
-class GeometryOptions(PackageOptions):
-    "http://www.tug.org/teTeX/tetex-texmfdist/doc/latex/geometry/geometry.pdf"
-    pass
+        fd.write(r"""
+>>
+\midi { }
+}""")
+                    
 
 
 class Songbook(Application):
@@ -478,6 +518,7 @@ where FILES is one or more files to be converted to a pdf file.
                  newLines=r"\\",
                  showFirstVerses=False,
                  songnames=None,
+                 numbering=True,
 ##                  paper="a4",
 ##                  landscape=False
 ##                  leftMargin="20mm",
@@ -513,6 +554,11 @@ where FILES is one or more files to be converted to a pdf file.
 ##         self.geometryOptions=geometryOptions
         if songnames is not None:
             self.loadsongs(songnames)
+
+            
+        self.lastNumber=0
+        self.numbering=numbering
+            
         Application.__init__(self)
 
     def __getitem__(self,name):
@@ -521,27 +567,37 @@ where FILES is one or more files to be converted to a pdf file.
     def addsong(self,*args,**kw):
         self.songs.append(Song(self,*args,**kw))
 
+    def addtext(self,**kw):
+        self.songs.append(Section(self,**kw))
+
     def get_description(self):
         return "Creates and launches the file %s.pdf which contains %d songs." % (
             os.path.join(self.output_dir,self.filename),len(self.songs))
         
-    def loadfile(self,filename,**kw):
-        fd = codecs.open(filename,"r",self.input_encoding)
-        for song in yaml.load_all(fd):
-            song.update(kw)
-            self.addsong(**song)
-        fd.close()
+##     def loadfile(self,filename,**kw):
+##         fd = codecs.open(filename,"r",self.input_encoding)
+##         for song in yaml.load_all(fd):
+##             song.update(kw)
+##             self.addsong(**song)
+##         fd.close()
 
-    def loadsongs(self,songnames):
-        for name in songnames.splitlines():
-            name=name.strip()
-            if len(name) != 0:
-                fd = codecs.open(name+".sng","r",self.input_encoding)
-                for songdict in yaml.load_all(fd):
-                    songdict['filename']=name
-                    songdict['number']=len(self.songs)+1
-                    self.addsong(**songdict)
-                fd.close()
+    def loadsong(self,name,**kw):
+        fd = codecs.open(name+".sng","r",self.input_encoding)
+        for songdict in yaml.load_all(fd):
+            songdict.update(kw)
+            songdict['filename']=name
+            if songdict.has_key("number"):
+                self.lastNumber=songdict["number"]
+            elif self.numbering:
+                self.lastNumber += 1
+                songdict['number']=self.lastNumber
+            self.addsong(**songdict)
+        fd.close()
+        
+
+    def loadsongs(self,songnames,**kw):
+        for name in songnames.split():
+            self.loadsong(name,**kw)
 
     def write_lytex_file(self,filename):
         self.notice("Generating %s...",
@@ -597,7 +653,9 @@ where FILES is one or more files to be converted to a pdf file.
         if "midi" in args:
 
             for song in self.songs:
-                song.make_midi()
+                # print "midi:", song
+                if song.has_music():
+                    song.make_midi()
 
 
         if "pdf" in args:

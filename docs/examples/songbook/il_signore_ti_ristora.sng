@@ -32,6 +32,7 @@ alto: |
     \relative c' {
         % \set Staff.midiInstrument = "flute"
         \voiceTwo
+        \time 3/4
         \partial 4
         cis8 cis || cis4 cis dis8 dis | e4 e2 \breathe |
         cis4 cis8 e e cis | cis( dis) dis4 \breathe e8 e |
@@ -57,6 +58,7 @@ bass: |
     \relative c {
     % \set Staff.midiInstrument = "acoustic bass"
     \voiceTwo
+    \time 3/4
     \partial 4
         cis8 cis || cis4 cis b8 b | e4 e2 \breathe |
         a4 a8 gis fis fis | b,4 b \breathe e8 fis |
