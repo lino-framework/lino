@@ -1,0 +1,56 @@
+title: Kus on halastus
+title2: Ubi caritas Deus ibi est
+width: 140
+url: http://www.taize.fr/en_article504.html
+singable:
+  Ubi caritas et amor, ubi caritas Deus ibi est.
+
+soprano: |
+  \relative g' {
+  #(override-auto-beam-setting '(end * * * *) 1 4)
+    \tempo 4=58
+        \time 2/4
+        \key e \major
+        \voiceOne
+    gis4 gis | a8 a a4 | gis8( a) b4 | b2 |
+    gis4 gis | a8 a a4 | \time 3/4 fis8( gis) a b4 b8 | \time 2/4 b2 |    
+    \bar ":|"
+  }
+
+alto: |
+  \relative c' {
+  #(override-auto-beam-setting '(end * * * *) 1 4)
+        \time 2/4
+    \voiceTwo
+    e4 e | e8 e e4 | e fis | gis2 |
+    e4 e | e8 e e4 | \time 3/4 cis8( dis) e fis4 fis8 | \time 2/4 gis2 |    
+    \bar ":|"
+  }
+
+tenor: |
+  \relative f {
+  #(override-auto-beam-setting '(end * * * *) 1 4)
+        \time 2/4
+        \key e \major
+        \voiceOne
+    b4 b | b8 b b4 | b8( cis) b4 | b2 |
+    b4 b | cis8 cis cis4 | \time 3/4 cis8( b) a fis4 b8 | \time 2/4 b2 |    
+    \bar ":|"
+  }
+
+bass: |
+  \relative c {
+  #(override-auto-beam-setting '(end * * * *) 1 4)
+    \time 2/4
+    \voiceTwo
+    e4 e | fis8 fis fis4 | gis8( cis,) dis4 | e2 |
+    e4 e | a,8 a a4 | \time 3/4 a8( b) cis dis4 dis8 | \time 2/4 e2 |    
+    \bar ":|"   
+  }
+
+lyrics: 
+  Kus on ar- mas- tus, ha- las- tus,
+  Kus on ar- mas- tus, seal on Ju- mal ka.
+  
+
+

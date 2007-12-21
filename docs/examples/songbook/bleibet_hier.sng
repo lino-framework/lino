@@ -12,8 +12,8 @@ soprano: |
         \time 4/4
         \key d \minor
         \voiceOne
-    f4( f e4. e8 | f8 f4 f8 e2)  \breathe | 
-    f2 g4 c | a2 g | f2( f4 g | e2 e4) r4
+    f4\( f e4. e8 | f8 f4 f8 e2\)  \breathe | 
+    f2 g4 c | a2 g | f2\( f4 g | e2 e4\) r4
     \bar ":|"
   }
 
@@ -30,8 +30,8 @@ tenor: |
         \time 4/4
         \key d \minor
         \voiceOne
-    a4( a bes4. bes8 | a8 a4 a8 bes2)  \breathe | 
-    a2 c4 c | c2 c | a2( a4 bes | a2 a4) r4
+    a4\( a bes4. bes8 | a8 a4 a8 bes2\)  \breathe | 
+    a2 c4 c | c2 c | a2\( a4 bes | a2 a4\) r4
     \bar ":|"
   }
 

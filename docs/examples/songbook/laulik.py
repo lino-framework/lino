@@ -28,7 +28,7 @@
 from lino.songbook import Songbook
 
 
-sbk=Songbook(filename="taize-laulik",
+sbk=Songbook(#filename="taize-laulik",
              geometryOptions=dict(a5paper=True,
                                   landscape=True,
                                   heightrounded=True,
@@ -42,8 +42,10 @@ sbk.loadsongs("""
 intro
 dans_nos
 wait_for
-lajuda 
 bleibet_hier
+ubi_caritas_deus
+bless_the_lord
+lajuda 
 mane_nobiscum
 qui_regarde
 il_signore_ti_ristora

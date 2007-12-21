@@ -126,6 +126,7 @@ class Section(MyOptionDict):
         verses=None,
         versesColumns=None,
         newLines=None,
+        mtime=None,
         )
         
     def __init__(self,sbk,**kw):
@@ -133,10 +134,10 @@ class Section(MyOptionDict):
         MyOptionDict.__init__(self,**kw)
         if self.title is not None:
             if self.number is None:
-                self.update(number=sbk.lastNumber + 1)
+                self.update(number=sbk.songCounter + 1)
         if self.number is not None:
             if sbk.numbering:
-                sbk.lastNumber=self.number
+                sbk.songCounter=self.number
                             
 
 ##     def __str__(self):
@@ -176,7 +177,7 @@ class Section(MyOptionDict):
         if self.title:
             fd.write(r"\subsection*{")
             if self.number:
-                fd.write(r"\framebox{\huge ~%d~} " % self.number)
+                fd.write(r"\framebox{\huge ~%d~}~ " % self.number)
             fd.write(self.title)
             if self.title2:
                 fd.write(r" \hfill {\small (%s)}" % self.title2)
@@ -211,6 +212,8 @@ class Song(Section):
         lead_voice="soprano",
         midi_suffixes=None,
         url=None,
+        staffSize=15,
+        copyright=None,
         )
     
     def __init__(self,sbk,**kw):
@@ -241,7 +244,8 @@ class Song(Section):
 
     def toLilypond(self,fd):
 
-        fd.write(r'\version "2.10.25"')
+        fd.write(r'''
+\version "2.10.25"''')
         
         if self.is_single_staff():
             fd.write(r"""
@@ -394,14 +398,14 @@ class Song(Section):
                 fd.write(r"""
 \begin{minipage}{%(scorewidth)dmm}
 """ % self)
-            if self.scorewidth is None:
-                fd.write(r"""
-\begin[noindent,staffsize=14]{lilypond}
-""")
-            else:
-                fd.write(r"""
-\begin[noindent,staffsize=14,line-width=%d\mm]{lilypond}
-""" % self.scorewidth)
+            lilypondOptions=['noindent']
+            if self.staffSize is not None:
+                lilypondOptions.append('staffsize=%d' % self.staffSize)
+            if self.scorewidth is not None:
+                lilypondOptions.append(r'line-width=%s\mm' % self.scorewidth)
+                
+            fd.write(r"""
+\begin[%s]{lilypond}""" % ",".join(lilypondOptions))
             
             self.toLilypond(fd)
             
@@ -434,18 +438,24 @@ class Song(Section):
 
     def make_midi(self):
         for suffix in self.midi_suffixes:
+            must_make=True
             midifile=self.filename + "_" + suffix + ".midi"
             lyfile=self.filename + "_" + suffix+".ly"
             if os.path.exists(midifile):
-                os.remove(midifile)
-            fd = codecs.open(lyfile,"w","utf8")
-            self.toMidi(fd,suffix)
-            fd.close()            
-            cmd="lilypond --no-print %s" % lyfile
-            print cmd
-            os.system(cmd)
-            if not os.path.exists(midifile):
-                raise MakeError(midifile)
+                if self.mtime < os.path.getmtime(midifile):
+                    print "%s is up-to-date." % midifile
+                    must_make=False
+                else:
+                    os.remove(midifile)
+            if must_make:
+                fd = codecs.open(lyfile,"w","utf8")
+                self.toMidi(fd,suffix)
+                fd.close()            
+                cmd="lilypond --no-print %s" % lyfile
+                print cmd
+                os.system(cmd)
+                if not os.path.exists(midifile):
+                    raise MakeError(midifile)
             
     def toMidi(self,fd,suffix):
         """
@@ -510,64 +520,46 @@ See file COPYING.txt for more information."""
     url=__url__+"/songbook.html"
     
     usage="usage: %s [options]" % sys.argv[0]
-    description="""\
-creates a songbook
-where FILES is one or more files to be converted to a pdf file.
-"""
+
+    allowedAttribs = dict(
+        showFirstVerses=False,
+        copyright=None,
+        numbering=True,
+        newLines=r"\\",
+        filename=None,
+        input_encoding=None,
+        versesColumns=3,
+        documentClass="article",
+        output_dir=None,
+        )
     
-    
-    def __init__(self,filename,output_dir,
-                 input_encoding=None,
+    def __init__(self,
                  geometryOptions=None,
                  documentOptions=None,
-                 documentClass="article",
-                 versesColumns=3,
-                 newLines=r"\\",
-                 showFirstVerses=False,
                  songnames=None,
-                 numbering=True,
-##                  paper="a4",
-##                  landscape=False
-##                  leftMargin="20mm",
-##                  rightMargin="20mm",
-##                  rightMargin="20mm",
-                 ):
+                 **kw):
+        
+        Application.__init__(self)
+        
         if geometryOptions is None: geometryOptions={}
         if documentOptions is None: documentOptions={}
-        self.output_dir=output_dir
-        self.filename=filename
-        self.input_encoding=input_encoding
-        self.versesColumns=versesColumns
-        self.newLines=newLines
-        self.showFirstVerses=showFirstVerses
-        self.songs = []
-        self.documentClass=documentClass
         self.documentOptions=DocumentOptions(**documentOptions)
         self.geometryOptions=GeometryOptions(**geometryOptions)
-##         self.geometryOptions=GeometryOptions( a4paper=True,
-##                                               heightrounded=True,
-##                                               twoside=True,
-##                                               margins="10mm",
-##                                               #right="10mm",
-##                                               #top="10mm",
-##                                               #bottom="10mm",
-##                                               bindingoffset="5mm")
-            
-            
-##         if geometryOptions is None:
-##             geometryOptions="""a4paper,twoside,
-##             bindingoffset=5mm,heightrounded,
-##             left=10mm,right=10mm,top=10mm,bottom=10mm"""
-##         self.geometryOptions=geometryOptions
+        self.songCounter=0
+        self.songs = []
+        
+        
+        MyOptionDict.__init__(self,**kw)
+        
+        assert self.output_dir is not None
+
+        if self.filename is None:
+            basename,ext = os.path.splitext(sys.argv[0])
+            self.update(filename=basename)
+        
         if songnames is not None:
             self.loadsongs(songnames)
-
             
-        self.lastNumber=0
-        self.numbering=numbering
-            
-        Application.__init__(self)
-
     def __getitem__(self,name):
         return getattr(self,name)
 
@@ -578,8 +570,12 @@ where FILES is one or more files to be converted to a pdf file.
         self.songs.append(Section(self,**kw))
 
     def get_description(self):
-        return "Creates and launches the file %s.pdf which contains %d songs." % (
-            os.path.join(self.output_dir,self.filename),len(self.songs))
+        return """
+Creates a songbook in directory %s.
+Consisting of a pdf file and several midi files for each song.
+If arguments are specified, then only these songs are included.
+
+""" % self.output_dir
         
 ##     def loadfile(self,filename,**kw):
 ##         fd = codecs.open(filename,"r",self.input_encoding)
@@ -589,10 +585,12 @@ where FILES is one or more files to be converted to a pdf file.
 ##         fd.close()
 
     def loadsong(self,name,**kw):
-        fd = codecs.open(name+".sng","r",self.input_encoding)
+        sngfile=name+".sng"
+        fd = codecs.open(sngfile,"r",self.input_encoding)
         for songdict in yaml.load_all(fd):
             songdict.update(kw)
             songdict['filename']=name
+            songdict['mtime']=os.path.getmtime(sngfile)
             self.addsong(**songdict)
         fd.close()
 
@@ -633,7 +631,8 @@ where FILES is one or more files to be converted to a pdf file.
         """)
 
         for song in self.songs:
-            song.toLytex(fd)
+            if len(self.args) == 0 or song.filename in self.args:
+                song.toLytex(fd)
 
         fd.write("""
 %% \printindex
@@ -642,9 +641,7 @@ where FILES is one or more files to be converted to a pdf file.
 
         fd.close()
 
-    def make(self,args):
-        if len(args) == 0:
-            args = ["midi", "pdf"]
+    def make(self):
         # see also:
         # http://griddlenoise.blogspot.com/2007/04/pythons-make-rake-and-bake-another-and.html
         assert not "/" in self.filename, "only basename"
@@ -652,15 +649,16 @@ where FILES is one or more files to be converted to a pdf file.
         cwd = os.getcwd()
         os.chdir(self.output_dir)
 
-        if "midi" in args:
+        if "midi" in self.options.make:
 
             for song in self.songs:
-                # print "midi:", song
-                if song.has_music():
-                    song.make_midi()
+                if len(self.args) == 0 or song.filename in self.args:
+                    # print "midi:", song
+                    if song.has_music():
+                        song.make_midi()
 
 
-        if "pdf" in args:
+        if "pdf" in self.options.make:
             
             if os.path.exists(self.filename+".pdf"):
                 os.remove(self.filename+".pdf")
@@ -687,35 +685,43 @@ where FILES is one or more files to be converted to a pdf file.
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
     
-        parser.add_option("-o", "--output",
+        parser.add_option("-m", "--make",
                           help="""\
-write to OUTFILE rather than to %s.pdf""" % os.path.join(self.output_dir,self.filename),
+make only this type of files (midi or pdf)""",
                           action="store",
                           type="string",
-                          dest="outFile",
-                          default=None)
+                          dest="make",
+                          default="midi,pdf")
     
     def run(self):
 
         
-        if self.options.outFile:
-            path,filename = os.path.split(self.options.outFile)
-            if len(path) != 0:
-                self.output_dir=path
-            name,ext=os.path.splitext(filename)
-            if len(ext) != 0:
-                assert ext.lower() == ".pdf"
-            self.filename=name
+##         if self.options.outFile:
+##             path,filename = os.path.split(self.options.outFile)
+##             if len(path) != 0:
+##                 self.output_dir=path
+##             name,ext=os.path.splitext(filename)
+##             if len(ext) != 0:
+##                 assert ext.lower() == ".pdf"
+##             self.filename=name
+
             
-        self.notice("Write %d songs to %s.pdf",
-                    len(self.songs),
-                    os.path.join(self.output_dir,self.filename))
+        if len(self.args) == 0:
+            what= "all"
+        else:
+            what=str(len(self.args))
+            
+        if not self.confirm("Write %s songs (%s) to %s.pdf ?" % (
+            what, self.options.make,
+            os.path.join(self.output_dir,self.filename))):
+            sys.exit(1)
+        
 
         try:
-            self.make(self.args)
+            self.make()
         except MakeError, e:
             print e
-            sys.exit(1)
+            sys.exit(2)
         
 
             

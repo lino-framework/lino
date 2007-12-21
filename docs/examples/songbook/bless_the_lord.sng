@@ -1,0 +1,53 @@
+title: Kiida Issandat
+title2: Bless the Lord
+width: 140
+url: http://www.taize.fr/en_article256.html
+singable:
+  Bless the Lord, my soul, and bless God's holy name.
+  Bless the Lord, my soul, who leads me into life.
+
+soprano:
+  \relative g' {
+    \tempo 4=78
+        \time 4/4
+        \key f \major
+        \voiceOne
+    a4. f8 g4. d8 | d2 r4 a' | d d c g | a1 |
+    a4. f8 g4. d8 | d2 r4 d | f f e c | d2. r4 |
+    \bar ":|"
+  }
+
+alto:
+  \relative c' {
+        \time 4/4
+    \voiceTwo
+    f4. f8 d4. d8 | d2 r4 f | f f e e | f2( e2) |
+    f4. f8 d4. d8 | d2 r4 d | d d c c | a2. r4 |
+    \bar ":|"
+  }
+
+tenor:
+  \relative f {
+        \time 4/4
+        \key f \major
+        \voiceOne
+    a4. a8 b4. g8 | a2 r4 a | bes a g c | c2 cis2 |
+    d4. a8 b4. g8 | a2 r4 a | bes a g g | f2. r4 |
+    \bar ":|"
+  }
+
+bass:
+  \relative c {
+    \time 4/4
+    \voiceTwo
+    d4. d8 g4. g8 | d2 r4 d | bes bes c c | f4 g a2 |
+    d,4. d8 g4. g8 | d2 r4 d | bes bes c e | d2. r4 |
+    \bar ":|"   
+  }
+
+lyrics:
+  Kii- da Is- san- dat ja ü- lis- ta, mu hing.
+  Kii- da Is- san- dat, ta el- lu ju- hib mind.
+  
+
+
