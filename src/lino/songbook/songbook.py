@@ -211,6 +211,7 @@ class Song(Section):
         alto_lyrics=None,
         lead_voice="soprano",
         midi_suffixes=None,
+        tempo=None,
         url=None,
         staffSize=15,
         copyright=None,
@@ -250,6 +251,9 @@ class Song(Section):
         if self.is_single_staff():
             fd.write(r"""
 \score{ """)
+##             if self.tempo:
+##                 fd.write(r"""
+## \tempo %s """ % self.tempo)
             fd.write(self.soprano)
             if self.lyrics:
                 fd.write(r"\addlyrics { " + self.lyrics + " }")
@@ -261,22 +265,31 @@ class Song(Section):
         else:
             
             fd.write(r"""
-\score{ 
-
+\score{""")
+            
+            fd.write(r"""
     \context StaffGroup<<
 
         \context Staff = "upper"
             """)
             
+##             if self.tempo:
+##                 fd.write(r"""
+## \tempo %s""" % self.tempo)
+                
             fd.write(r"""
             <<
             \clef treble
             """)
 
             if self.soprano:
+##                 if self.tempo:
+##                     tempoString= r"\tempo %s" % self.tempo
+##                 else:
+##                     tempoString= ""
+##                 tempoString= ""
                 fd.write(r"""
-                \context Voice = "soprano" %(soprano)s
-                """ % self)
+                \context Voice = "soprano" %s """ % self.soprano)
             
             if self.alto:
                 fd.write(r"""
@@ -297,9 +310,7 @@ class Song(Section):
                     \set stanza = ""
                     \override LyricText  #'font-name = #"%(lyrics_font)s"
                     \lyricmode { %(soprano_lyrics)s }
-                    }
-
-                """ % self)
+                    } """ % self)
                 
             if self.lyrics:
                 fd.write(r"""
@@ -307,16 +318,13 @@ class Song(Section):
                     \set stanza = ""
                     \override LyricText  #'font-name = #"%(lyrics_font)s"
                     \lyricmode { %(lyrics)s }
-                    }
-
-                """ % self)
+                    } """ % self)
             
             fd.write(r"""
             
         \context Staff = "lower" <<
                     
-                    \clef bass
-                    """)
+                    \clef bass """)
             if self.tenor:
                 fd.write(r"""
                     \context Voice = "tenor" %(tenor)s """ % self)

@@ -45,6 +45,7 @@ wait_for
 bleibet_hier
 ubi_caritas_deus
 bless_the_lord
+gloria_et_in_terra
 lajuda 
 mane_nobiscum
 qui_regarde
