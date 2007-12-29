@@ -1,5 +1,6 @@
 title: Kui me hoiame pilgu Jumalal
 title2: Qui regarde vers Dieu
+tempo: 4=78
 singable: 
     Qui regarde vers Dieu resplendira, 
     sur son visage plus d'amertume,
@@ -10,7 +11,6 @@ soprano: |
     \relative c'{
         % http://lilypond.org/doc/v2.10/Documentation/user/lilypond/Metronome-marks#Metronome-marks
         \override Score.MetronomeMark #'padding = #2.5
-        \tempo 4=78
         
         \time 4/4
         \key g \minor

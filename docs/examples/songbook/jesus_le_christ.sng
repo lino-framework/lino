@@ -1,0 +1,61 @@
+title: Palume sind, oh Kristus me valgus
+title2: Jésus le Christ
+url: http://www.taize.fr/en_article354.html
+tempo: 4=72
+singable:
+  Jésus le Christ, lumi?re intérieure,
+  ne laisse pas mes tén?bres me parler.
+  Jésus le Christ, lumi?re intérieure,
+  donne-moi d'acqueillir ton amour.
+  
+
+soprano: 
+    \relative c'{
+    \time 4/4
+    \key d \major
+    \voiceOne
+    \partial 2
+
+    b8 b4 fis8 |
+    \bar ":|"   
+    }
+    
+
+alto:
+
+    \relative c'{
+    \voiceTwo
+    \partial 2
+    
+    }
+
+
+tenor: |
+
+    \relative c' {
+    \time 4/4
+    \key d \major
+    \voiceOne
+    \partial 2
+    
+    } 
+
+bass: |
+
+    \relative c {
+    \voiceTwo
+    \partial 2
+    
+    }
+
+
+   
+
+
+lyrics:
+
+  Pa- lu- me sind, oh Kris- tus me val- gus, kee- la me sees pi- me-
+  du- sel kõ- nel- da.
+  Pa- lu- me sind, oh Kris- tus me val- gus, ai- ta ar- mu- le hing a-
+  va- da.
+

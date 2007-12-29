@@ -1,6 +1,6 @@
 title: Olgu au... rahu olgu maa peal (kaanon)
 title2: Gloria ... et in terra pax (canon)
-# tempo: 4=82
+tempo: 4=82
 width: 140
 singable:
   Gloria, gloria, in excelsis Deo, gloria, gloria, alleluia!
@@ -13,8 +13,6 @@ soprano: |
      \key c \minor
      #(override-auto-beam-setting '(end * * * *) 1 4)
      #(override-auto-beam-setting '(end * * * *) 3 4)
-     \tempo 4=82
-     \override Score.MetronomeMark #'padding = #3.5
      g'8^\markup {\circle {1}} \accent g g r8 g \accent g g r | aes aes g f g4 g4 ||
      c8^\markup {\circle {2}} \accent c g r es \accent es c r | r f es f g4 r ||
      c,8^\markup {\circle {3}} c d d es r es4 | f8( es) f4 d2 ||
@@ -26,6 +24,6 @@ lyrics:
 
     Ol- gu au, ol- gu au Ju- ma- la- le kõr- ges,
     ol- gu au, ol- gu au, hal- le- luu- ja!
-    Ra- hu ol- gu maa peal a- la- ti, i- ni- mes- test he--a  meel.
+    Ra- hu ol- gu maa peal a- la- ti, i- ni- mes- test hea meel.
 
 

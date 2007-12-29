@@ -1,0 +1,73 @@
+title: Sind, Issand, ootab me hing
+title2: Notre \^{a}me attend
+url: http://www.taize.fr/en_article486.html
+tempo: 4=80
+singable: 
+    Notre \^{a}me attend le Seigneur. En lui la joie de notre c{\oe}ur. O O
+
+
+soprano: |
+    \relative c'{
+    \time 4/4
+    \key f \major
+    \voiceOne
+    \partial 4
+    e4 | f4. a8 c4 c8 g | a2 r4
+    f | g4. d8 f f e e \time 2/4 | d2 \fermata -\markup {Fine}
+    || \time 4/4
+    d2( f4 a | g f e2) \breathe | f2 a4 g | a2 r4 
+    \bar ":|"   
+    }
+    
+
+alto: |
+
+    \relative c'{
+    \voiceTwo
+    \partial 4
+    cis4 | d4. d8 e4 d8 e | f2 r4
+    d4 | d4. d8 d d cis cis \time 2/4 | d2 \fermata -\markup {Fine}
+    || \time 4/4
+    d1( d2 c2) \breathe | f2( d4 e | cis2) r4
+    \bar ":|"   
+    
+    }
+
+
+tenor: |
+
+    \relative c' {
+    \time 4/4
+    \key f \major
+    \voiceOne
+    \partial 4
+    a4 | a4. f8 g4 g8 c | c2 r4
+    bes | bes4. bes8 a a a a \time 2/4 | f2 \fermata -\markup {Fine}
+    || \time 4/4
+    f2( a4 f | bes a g2) \breathe | a2. b4 | a2 r4 
+    \bar ":|"   
+    } 
+
+bass: |
+
+    \relative c {
+    \voiceTwo
+    \partial 4
+    a4 | d4. d8 c4 c8 c | f2 r4
+    bes,4 | bes4. bes8 d d a a \time 2/4 | d2 \fermata -\markup {Fine}
+    || \time 4/4
+    d1( bes2 c2) \breathe | f2.( e4 | a,2) r4
+    \bar ":|"   
+    }
+
+
+   
+
+
+lyrics:
+
+  Sind, Iss- and, oo- tab me hing,
+  sa mei- e sü- da- me- te rõõm.
+  O __ O __
+  
+

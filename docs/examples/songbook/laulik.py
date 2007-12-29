@@ -33,19 +33,24 @@ sbk=Songbook(#filename="taize-laulik",
                                   landscape=True,
                                   heightrounded=True,
                                   twoside=True,
-                                  margin="10mm",
-                                  bindingoffset="5mm"),
+                                  margin="12mm",
+                                  bindingoffset="4mm"),
              output_dir=r"C:\temp\laulik",
+             showTempi=True,
              input_encoding="latin1")
 
+sbk.loadsong("intro")
+sbk.loadsong("dans_nos")
+sbk.loadsong("wait_for")
+sbk.loadsong("bleibet_hier")
+sbk.loadsong("ubi_caritas_deus")
+sbk.loadsong("bless_the_lord")
+sbk.loadsong("gloria_et_in_terra")
+sbk.loadsong("notre_ame")
+sbk.loadsong("cest_toi")
+sbk.loadsong("jesus_le_christ")
+
 sbk.loadsongs("""
-intro
-dans_nos
-wait_for
-bleibet_hier
-ubi_caritas_deus
-bless_the_lord
-gloria_et_in_terra
 lajuda 
 mane_nobiscum
 qui_regarde

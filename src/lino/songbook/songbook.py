@@ -175,13 +175,14 @@ class Section(MyOptionDict):
     def writeTitle(self,fd):
         
         if self.title:
-            fd.write(r"\subsection*{")
+            fd.write(r"""
+\subsection*{ """)
             if self.number:
                 fd.write(r"\framebox{\huge ~%d~}~ " % self.number)
             fd.write(self.title)
             if self.title2:
                 fd.write(r" \hfill {\small (%s)}" % self.title2)
-            fd.write(r"}")
+            fd.write(r" }")
 
 ##         fd.write(r"""
 ## %%\begin{figure}[h]
@@ -207,13 +208,13 @@ class Song(Section):
         lyrics=None,
         bass_lyrics=None,
         soprano_lyrics=None,
-        lyrics_font="Helvetica", # AvantGarde, Palatino
+        lyrics_font="Arial", # Helvetica,AvantGarde, Palatino
         alto_lyrics=None,
         lead_voice="soprano",
         midi_suffixes=None,
         tempo=None,
         url=None,
-        staffSize=15,
+        staffSize=None,
         copyright=None,
         )
     
@@ -237,6 +238,10 @@ class Song(Section):
             if len(l) > 1:
                 l.append("".join(l))
             self.update(midi_suffixes=l)
+        if self.lyrics and type(self.lyrics) != type([]):
+            self.lyrics = [ self.lyrics ]
+        if self.staffSize is None:
+            self.staffSize=sbk.staffSize
 
     def has_music(self):
         return self.soprano
@@ -248,20 +253,55 @@ class Song(Section):
         fd.write(r'''
 \version "2.10.25"''')
         
+        fd.write(r"""
+%% http://lilypond.org/doc/v2.10/Documentation/user/lilypond/Style-sheets#Style-sheets        
+\layout{
+  \context { \Score
+    \override MetronomeMark #'extra-offset = #'(-9 . 0)
+    \override MetronomeMark #'padding = #'3
+  }
+
+  \context{\Lyrics
+        \override VerticalAxisGroup #'minimum-Y-extent = #'(-0.5 . 3)
+
+        }   
+            
+        \context{\StaffGroup
+        \remove "Span_bar_engraver"
+        }
+
+  \context{\Staff
+        \override VerticalAxisGroup #'minimum-Y-extent = #'(-3 . 3)
+        autoBeaming = ##t
+        \unset melismaBusyProperties 
+        }
+}
+
+""")
         if self.is_single_staff():
             fd.write(r"""
 \score{ """)
-##             if self.tempo:
-##                 fd.write(r"""
-## \tempo %s """ % self.tempo)
+
+            if self.tempo and self.sbk.showTempi:
+                fd.write(r"""
+{ \tempo %s """ % self.tempo)
+
+                
             fd.write(self.soprano)
+            if self.tempo and self.sbk.showTempi:
+                fd.write(r"""
+} """)
             if self.lyrics:
-                fd.write(r"\addlyrics { " + self.lyrics + " }")
+                for lyrics in self.lyrics:
+                    fd.write(r"""
+\addlyrics { """)
+                    fd.write(r"""
+\override LyricText  #'font-name = #"%s" """ % self.lyrics_font)
+                    fd.write(lyrics + " }")
 
             fd.write(r"""
-  \midi {} 
-  \layout {}
-} """)
+}
+""")
         else:
             
             fd.write(r"""
@@ -288,8 +328,13 @@ class Song(Section):
 ##                 else:
 ##                     tempoString= ""
 ##                 tempoString= ""
+                if self.tempo and self.sbk.showTempi: fd.write(r"""
+{ \tempo %s """ % self.tempo)
+                
                 fd.write(r"""
                 \context Voice = "soprano" %s """ % self.soprano)
+                if self.tempo  and self.sbk.showTempi: fd.write(r"""
+} """)
             
             if self.alto:
                 fd.write(r"""
@@ -313,12 +358,16 @@ class Song(Section):
                     } """ % self)
                 
             if self.lyrics:
-                fd.write(r"""
-        \lyricsto "%(lead_voice)s" \new Lyrics {
-                    \set stanza = ""
-                    \override LyricText  #'font-name = #"%(lyrics_font)s"
-                    \lyricmode { %(lyrics)s }
-                    } """ % self)
+                for lyrics in self.lyrics:
+                    fd.write(r"""
+        \lyricsto "%s" \new Lyrics {""" % self.lead_voice)
+                    fd.write(r"""
+\set stanza = "" """)
+                    fd.write(r"""
+\override LyricText  #'font-name = #"%s" """ % self.lyrics_font)
+                    fd.write(r"""
+                    \lyricmode { %s }
+                    } """ % lyrics)
             
             fd.write(r"""
             
@@ -347,25 +396,6 @@ class Song(Section):
             fd.write(r"""
         >>""")
             
-            fd.write(r"""
-\layout {
-
-        \context{\Lyrics
-        \override VerticalAxisGroup #'minimum-Y-extent = #'(-0.5 . 3)
-
-        }   
-            
-        \context{\StaffGroup
-        \remove "Span_bar_engraver"
-        }
-
-        \context{\Staff
-        \override VerticalAxisGroup #'minimum-Y-extent = #'(-3 . 3)
-        autoBeaming = ##t
-        \unset melismaBusyProperties 
-        }
-    }""")
-
             if False:
                 fd.write(r"""        
     \context{\Score
@@ -426,7 +456,7 @@ class Song(Section):
 """ % self)
         if self.singable:
             fd.write(r"""
-\par\normalsize %s""" % self.singable)
+\nopagebreak %s""" % self.singable)
 
         Section.writeBody(self,fd)
         if self.has_music() and self.scorewidth is not None:
@@ -480,35 +510,43 @@ class Song(Section):
 \score{
 <<
 """)
-
         
+        if self.tempo:
+            tempoString=r"\tempo " + self.tempo
+        else:
+            tempoString=""
+            
         if self.soprano and "s" in suffix:
             fd.write(r"""
-\new Staff { 
+\new Staff {
+  %s
   \set Staff.midiInstrument = "acoustic grand"
-  %(soprano)s
-}""" % self)
+  %s
+}""" % (tempoString,self.soprano))
             
         if self.alto and "a" in suffix:
             fd.write(r"""
 \new Staff {
+  %s
   \set Staff.midiInstrument = "acoustic guitar (nylon)"
-  %(alto)s
-}""" % self)
+  %s
+}""" % (tempoString,self.alto))
 
         if self.tenor and "t" in suffix:
             fd.write(r"""
 \new Staff {
+  %s
   \set Staff.midiInstrument = "french horn"
-  %(tenor)s
-}""" % self)
+  %s
+}""" % (tempoString,self.tenor))
 
         if self.bass and "b" in suffix:
             fd.write(r"""
 \new Staff {
+  %s
   \set Staff.midiInstrument = "acoustic bass"
-  %(bass)s
-}""" % self)
+  %s
+}""" % (tempoString,self.bass))
 
         fd.write(r"""
 >>
@@ -539,6 +577,8 @@ See file COPYING.txt for more information."""
         versesColumns=3,
         documentClass="article",
         output_dir=None,
+        showTempi=True,
+        staffSize=16,
         )
     
     def __init__(self,
@@ -628,6 +668,7 @@ If arguments are specified, then only these songs are included.
 %% \usepackage{songbook}
 \usepackage{multicol}
 \usepackage{helvet}
+%% \usepackage{arial}
 %% \usepackage{times}
 
 \renewcommand{\familydefault}{\sfdefault}
@@ -719,10 +760,9 @@ make only this type of files (midi or pdf)""",
         else:
             what=str(len(self.args))
             
-        if not self.confirm("Write %s songs (%s) to %s.pdf ?" % (
+        self.notice("Write %s songs (%s) to %s.pdf...", 
             what, self.options.make,
-            os.path.join(self.output_dir,self.filename))):
-            sys.exit(1)
+            os.path.join(self.output_dir,self.filename))
         
 
         try:

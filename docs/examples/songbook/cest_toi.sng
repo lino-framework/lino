@@ -1,0 +1,77 @@
+title: Sind, Issand, ootab me hing
+title2: C'est toi ma lampe, Seigneur
+url: http://www.taize.fr/en_article261.html
+tempo: 4=76
+singable:
+  C'est toi ma lampe, Seigneur. Mon Dieu éclaire ma tén\^{e}bre.
+  Seigneur, mon Dieu, éclaire ma tén\^{e}bre.
+
+
+soprano: 
+    \relative c'{
+    \time 4/4
+    \key f \major
+    \voiceOne
+    \partial 4
+    a'4 | bes4. bes8 c4 c8( g) | a2 r4
+    f | g4. g8 a8 a e e | f4 e2 a,4 \time 3/4 | d2 \breathe
+    a'4 \time 4/4 | bes4. \breathe c8 a a f g | a4 a r d \time 3/4 |
+    bes2 \breathe c8( g) \time 4/4 | a4 r8 a bes a g f | e4 d2 \breathe
+    \bar ":|"   
+    }
+    
+
+alto:
+
+    \relative c'{
+    \voiceTwo
+    \partial 4
+    
+    a4 | d4. d8 e4 d8( e) | f2 r4
+    f | d4. d8 cis8 cis b cis | d4 cis2 a4 \time 3/4 | d2 \breathe
+    f8( e) \time 4/4 | d4. \breathe e8 f f d d | cis4 cis r d \time 3/4 |
+    d2 \breathe e4 \time 4/4 | f4 r8 a g f e d | cis4 d2 \breathe
+    \bar ":|"   
+    }
+
+
+tenor: |
+
+    \relative c' {
+    \time 4/4
+    \key f \major
+    \voiceOne
+    \partial 4
+    
+    a4 | g4. g8 c4 c8( c) | c2 r4
+    f, | d4. d8 e8 e a a | a4 a2 a,4 \time 3/4 | d2 \breathe
+    a'4 \time 4/4 | g4. \breathe g8 f f bes g | e4 e r4 fis \time 3/4 |
+    g2 \breathe c4 \time 4/4 | c4 r8 f, g a bes g | a4 d,2 \breathe
+    \bar ":|"   
+    } 
+
+bass: |
+
+    \relative c {
+    \voiceTwo
+    \partial 4
+
+    a'4 | g4. g8 c,4 c8( c) | f2 r4
+    d | bes4. bes8 a8 a a a | d4 a2 a4 \time 3/4 | d2 \breathe
+    d4 \time 4/4 | g4. \breathe c,8 f f bes, bes | a4 a r4 d \time 3/4 |
+    g2 \breathe c,4 \time 4/4 | f4 r8 f g a bes g | a,4 d2 \breathe
+    \bar ":|"   
+    
+    }
+
+
+   
+
+
+lyrics:
+
+  Mu val- gus, Is- sand sa, mu teed sa pi- me- du- ses näi- ta.
+  Mu Ju- mal sa, teed pi- me- du- ses näi- ta.
+  Mu Ju- mal sa, teed pi- me- du- ses näi- ta.
+  
+
