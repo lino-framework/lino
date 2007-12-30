@@ -1,0 +1,95 @@
+title: Kiitke nüüd Jumalat
+title2: Laudate Dominum
+url: http://www.taize.fr/en_article463.html
+composer: J. Berthier
+tempo: 4=116
+
+singable:
+  Laudate Dominum, laudate Dominum,
+  omnes gentes, alleluja!
+  
+
+lyrics:
+
+  Kiit- ke nüüd Ju- ma- lat,
+  kiit- ke nüüd Ju- ma- lat,
+  rah- vad kõik- jal, hal- lee- luu- ja!
+  hal- lee- luu- ja!
+
+
+soprano: 
+    \relative g'{
+    \time 3/4
+    \key c \major
+    \voiceOne
+
+    \repeat volta 2 {
+      a4 a a | gis8 fis gis2 |
+      a4 a a | b8 a b2 |
+      c4 c r | b b r |
+    }
+    \alternative {
+      { c4 c d | b2. }
+      { a4 a gis | a2. }
+    }
+    \bar ":|"
+    }
+    
+alto:
+
+    \relative c'{
+    \voiceTwo
+    
+    \repeat volta 2 {
+      e4 e e | e8 d e2 |
+      e4 e e | g8 f g2 |
+      g4 g r | g g r |
+    }
+    \alternative {
+      { a4 f d | e2. }
+      { e4 f e | c2. }
+    }
+    \bar ":|"
+    }
+
+
+tenor: |
+
+    \relative g {
+    \time 3/4
+    \key c \major
+    \voiceOne
+    
+    \repeat volta 2 {
+      c4 c c | b8 a b2 |
+      c4 c c | d8 c d2 |
+      e4 e r | d d r |
+    }
+    \alternative {
+      { c4 c d | b2. }
+      { a4 d8( c) b4  | a2. }
+    }
+    \bar ":|"
+    } 
+
+bass: |
+
+    \relative g {
+    \voiceTwo
+    
+    \repeat volta 2 {
+      a4 a a | e8 e e2 |
+      a4 a a | g8 g g2 |
+      c4 c r | g g r |
+    }
+    \alternative {
+      { a4 f d | e2. }
+      { a4 d, e | a,2. }
+    }
+    \bar ":|"
+    }
+
+
+   
+
+

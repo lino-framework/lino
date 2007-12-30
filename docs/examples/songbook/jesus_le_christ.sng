@@ -2,10 +2,11 @@ title: Palume sind, oh Kristus me valgus
 title2: Jésus le Christ
 url: http://www.taize.fr/en_article354.html
 tempo: 4=72
+
 singable:
-  Jésus le Christ, lumi?re intérieure,
-  ne laisse pas mes tén?bres me parler.
-  Jésus le Christ, lumi?re intérieure,
+  Jésus le Christ, lumi\`{e}re intérieure,
+  ne laisse pas mes tén\`{e}bres me parler.
+  Jésus le Christ, lumi\`{e}re intérieure,
   donne-moi d'acqueillir ton amour.
   
 
@@ -16,7 +17,10 @@ soprano:
     \voiceOne
     \partial 2
 
-    b8 b4 fis8 |
+    b'8 b4 fis8 | g4 r8 e a4 a8 e | fis4 fis \breathe
+    d4 d8 d | e4 d8 e fis fis b b | ais2 \breathe
+    b8 b4 fis8 | g4 r8 b8 cis4 cis8 a | fis4 fis4 \breathe
+    d4 d | e d8 e fis4 b8 ais8 | b2 
     \bar ":|"   
     }
     
@@ -27,17 +31,27 @@ alto:
     \voiceTwo
     \partial 2
     
+    d8 d4 d8 | e4 r8 d cis4 b8 cis | d4 d \breathe
+    d4 d8 d | cis4 b8 cis d d e e | fis2 \breathe
+    d8 d4 d8 | e4 r8 d8 cis4 b8 cis | d4 d4 \breathe
+    d4 d | e d8 e d4 cis8 cis8 | d2 
+    \bar ":|"   
     }
 
 
 tenor: |
 
-    \relative c' {
+    \relative c {
     \time 4/4
     \key d \major
     \voiceOne
     \partial 2
     
+    fis8 fis4 b8 | b4 r8 g e4 e8 a | a4 a \breathe
+    b4 fis8 fis | a4 a8 a a b b b | cis2 \breathe
+    b8 fis4 b8 | b4 r8 g8 e4 e8 a | a4 a4 \breathe
+    b4 b | b b8 b b4 fis8 fis8 | fis2 
+    \bar ":|"   
     } 
 
 bass: |
@@ -46,6 +60,11 @@ bass: |
     \voiceTwo
     \partial 2
     
+    b8 b4 b8 | e4 r8 e a,4 a8 a | d4 d \breathe
+    b4 b8 b | a4 a8 a d d g g | fis2 \breathe
+    b,8 b4 b8 | e4 r8 e8 a,4 a8 a | d4 d4 \breathe
+    g4 g | g g8 g fis4 fis8 fis8 | b,2 
+    \bar ":|"   
     }
 
 

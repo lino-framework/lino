@@ -18,7 +18,8 @@ soprano: |
         b b b c4 b | a r8 
     b8 b a g fis | e4. e8 e4 e8 fis | 
     dis8 dis dis dis e4 fis |
-    dis8 dis dis dis e4 fis | dis4 r8 dis8 dis dis cis dis :||
+    dis8 dis dis dis e4 fis | dis4 r8 dis8 dis dis cis dis 
+    \bar ":|"   
   }
   
 alto: |
@@ -31,7 +32,8 @@ alto: |
     g g g g4 g | fis r8 
     g8 g fis e d | c4. c8 c4 c8 c | 
     b8 b b b b4 c |
-    b8 b b b b4 c | b4 r8 b8 b b b b :||
+    b8 b b b b4 c | b4 r8 b8 b b b b
+    \bar ":|"   
     }
 
 tenor: |
@@ -47,7 +49,8 @@ tenor: |
     d d d e4 d | d r8 
     d8 d d b a | g4. g8 g4 g8 a | 
     fis8 fis fis fis g4 a |
-    fis8 fis fis fis g4 a | fis4 r8 fis8 fis fis e fis :||
+    fis8 fis fis fis g4 a | fis4 r8 fis8 fis fis e fis 
+    \bar ":|"   
     }
 
 bass: |
@@ -61,7 +64,8 @@ bass: |
     g g g c4 g | d r8 
     g8 g d e b | c4. c8 c4 c8 a | 
     b8 b b b e4 a, |
-    b8 b b b e4 a, | b4 r8 b8 b b b b :||
+    b8 b b b e4 a, | b4 r8 b8 b b b b 
+    \bar ":|"   
     }
 
   

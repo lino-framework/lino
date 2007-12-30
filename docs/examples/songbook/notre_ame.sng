@@ -26,7 +26,7 @@ alto: |
     \voiceTwo
     \partial 4
     cis4 | d4. d8 e4 d8 e | f2 r4
-    d4 | d4. d8 d d cis cis \time 2/4 | d2 \fermata -\markup {Fine}
+    d4 | d4. d8 d d cis cis \time 2/4 | d2
     || \time 4/4
     d1( d2 c2) \breathe | f2( d4 e | cis2) r4
     \bar ":|"   
@@ -42,7 +42,7 @@ tenor: |
     \voiceOne
     \partial 4
     a4 | a4. f8 g4 g8 c | c2 r4
-    bes | bes4. bes8 a a a a \time 2/4 | f2 \fermata -\markup {Fine}
+    bes | bes4. bes8 a a a a \time 2/4 | f2 
     || \time 4/4
     f2( a4 f | bes a g2) \breathe | a2. b4 | a2 r4 
     \bar ":|"   
@@ -54,7 +54,7 @@ bass: |
     \voiceTwo
     \partial 4
     a4 | d4. d8 c4 c8 c | f2 r4
-    bes,4 | bes4. bes8 d d a a \time 2/4 | d2 \fermata -\markup {Fine}
+    bes,4 | bes4. bes8 d d a a \time 2/4 | d2
     || \time 4/4
     d1( bes2 c2) \breathe | f2.( e4 | a,2) r4
     \bar ":|"   

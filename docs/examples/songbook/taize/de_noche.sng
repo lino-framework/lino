@@ -1,0 +1,79 @@
+title: On öö me ümber
+title2: De noche
+url: http://www.taize.fr/en_article317.html
+composer: J. Berthier
+tempo: 4=60
+
+singable:
+  De noche iremos, de noche
+  que para encontrar la fuente,
+  sólo la sed nos allumbra,
+  sólo la sed nos allumbra.
+    
+
+lyrics:
+
+  On öö me üm- ber nii pi- me, kuid loo- da- me vett veel lei- da,
+  ja- nu vaid näi- tab meil val- gust e- lu- vee all- i- ka juur- de.
+
+soprano: 
+    \relative g'{
+    \time 4/4
+    \key f \major
+    \voiceOne
+    \partial 4
+    
+    a4 | a4. a8 a8 a4 a8 | bes4 bes2 \breathe
+    bes4 | a4 a8 a a4. g8 | e2 e2 \breathe
+    f8 f4 f8 g4 f8 g | a8( c4 bes8) a2 \breathe |
+    cis,8 cis4 cis8 d4 e8 d | cis4 cis2
+    \bar ":|"
+    }
+    
+alto:
+
+    \relative g'{
+    \partial 4
+    \voiceTwo
+
+    a,4 | f'4. f8 f8 f4 f8 | f4 f2 \breathe
+    f4 | e4 e8 e d4. d8 | d4( cis8 b) cis2 \breathe
+    d8 d4 d8 e4 d8 e | f2 e2 \breathe |
+    a,8 a4 a8 bes4 bes8 bes | a4 a2
+    \bar ":|"
+    }
+    
+
+tenor: |
+
+    \relative g {
+    \time 4/4
+    \key f \major
+    \partial 4
+    \voiceOne
+    
+    a4 | a4. a8 d8 d4 c8 | bes4 bes2 \breathe
+    f8( g) | a4 a8 a d,4. g8 | a2 a2 \breathe
+    a8 a4 a8 c4 c8 c | c2 cis2 \breathe |
+    a8 a4 e8 f4 g8 f | e4 e2
+    \bar ":|"
+    }
+    
+    
+    
+bass: |
+
+    \relative g {
+    \partial 4
+    \voiceTwo
+    
+    a,4 | d4. d8 d8 d4 d8 | d4 d2 \breathe
+    d4 | c4 c8 c bes4. bes8 | a2 a2 \breathe
+    d8 d4 d8 c4 c8 c | f4( g) a2 \breathe |
+    a,8 a4 a8 a4 a8 a | a4 a2
+    \bar ":|"
+    }
+    
+   
+
+

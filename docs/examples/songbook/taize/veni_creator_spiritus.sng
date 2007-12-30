@@ -1,0 +1,20 @@
+title: Veni Creator Spiritus
+url: http://www.taize.fr/en_article507.html
+composer: J. Berthier
+tempo: 2=40
+
+
+lyrics:
+
+  Ve- ni Cre- a- tor Spi- ri- tus.
+
+
+soprano: |
+    \relative g'{
+    \time 2/2
+    \key g \major
+    <a e a,>8 <a e a,> <a e a,> <a e a,> <c d, a>4 <b d, a>8 <a d, a> |
+    <a e a,>2 r2 
+    \bar ":|"
+    }
+    

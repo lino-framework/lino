@@ -3,8 +3,8 @@ title2: Bleibet hier
 width: 140
 tempo: 4=72
 singable:
-  Bleibet hier und wachet mit mir. Wachet und betet, wachet und betet. / 
-  Stay with me, remain here with me, watch--- and pray---, watch---
+  \textbf{Bleibet hier} und wachet mit mir. Wachet und betet, wachet und betet. / 
+  \textbf{Stay with me}, remain here with me, watch--- and pray---, watch---
   and pray---.
 
 soprano: |
@@ -12,8 +12,10 @@ soprano: |
         \time 4/4
         \key d \minor
         \voiceOne
-    f4\( f e4. e8 | f8 f4 f8 e2\)  \breathe | 
-    f2 g4 c | a2 g | f2\( f4 g | e2 e4\) r4
+        \dynamicUp
+        
+    f4\p\( f e4. e8 | f8 f4 f8 e2\)  \breathe | 
+    f2\< g4 c | a2\f\> g | f2\p\( f4 g | e2 e4\) r4
     \bar ":|"
   }
 

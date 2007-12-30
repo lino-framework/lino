@@ -1,0 +1,64 @@
+title: Pilgud meil pööratud
+title2: Oculi nostri
+url: http://www.taize.fr/en_article489.html
+composer: J. Berthier
+tempo: 4=98
+
+singable:
+  Oculi nostri ad Dominum Jesum.
+  Oculi nostri ad Dominum nostrum.
+    
+
+lyrics:
+
+  Pil- gud meil pöö- ra- tud Jee- sus- e poo- le,
+  pil- gud meil pöö- ra- tud Is- san- da poo- le.
+
+
+soprano: 
+    \relative g'{
+    \time 3/4
+    \key g \major
+    \voiceOne
+
+    g4 g a | b b a | g g a | fis fis2 |
+    e4 e fis | g g fis | e e fis | dis e2
+    \bar ":|"
+    }
+    
+alto:
+
+    \relative c'{
+    \voiceTwo
+
+    e4 e fis | g g fis | e e e | dis dis2 |
+    b4 b d | d d d | b c c | b b2
+    \bar ":|"
+    }
+    
+    
+
+tenor: |
+
+    \relative g {
+    \time 3/4
+    \key g \major
+    \voiceOne
+    
+    b4 b d | d d d | b c c | b b2 |
+    g4 g a | b b a | g g a | fis g2
+    \bar ":|"
+    }
+    
+bass: |
+
+    \relative g {
+    \voiceTwo
+    e4 e d | g g d | e c a | b b2 |
+    e4 e d | g g d | e c a | b e2
+    \bar ":|"
+    }
+    
+   
+
+
