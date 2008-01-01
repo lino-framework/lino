@@ -27,26 +27,33 @@
 
 from lino.songbook import Songbook
 
-SONGS = """
-soimes_olgedel
-"""
-
 
 sbk=Songbook(
-    filename="ansamblilaulik",
     output_dir=r"C:\temp\laulik",
     input_encoding="latin1",
     numbering=False,
+    staffSize=20,
+    # versesColumns=2,
+    # newLines="~/ ",
+    #newLines=r"\nopagebreak\\ \nopagebreak ",
+    #newLines=r"\nopagebreak\\",
+    newLines=r"\\",
+    showTempi=False,
     geometryOptions=dict(a4paper=True,
                          heightrounded=True,
-                         twoside=True,
+                         #twoside=True,
                          margin="10mm",
+                         left="15mm",
                          #right="10mm",
                          #top="10mm",
                          #bottom="10mm",
-                         bindingoffset="5mm"),
+                         #bindingoffset="5mm",
+                         ),
+    documentOptions={"12pt":True},
     )
 
-sbk.loadsongs(SONGS)
+sbk.loadsong("soimes_olgedel")
+sbk.loadsong("coventry_carol")
+sbk.loadsong("yks_roosike")
 sbk.main()
 

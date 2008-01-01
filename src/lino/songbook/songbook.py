@@ -83,7 +83,7 @@ class MyOptionDict:
         for k,v in kw.items():
             if self.allowedAttribs is not None:
                 if not k in self.allowedAttribs.keys():
-                    raise AttributeError("No attribute '%s' in %s" % (a,self.__class__.__name__))
+                    raise AttributeError("No attribute '%s' in %s" % (k,self.__class__.__name__))
                 assert self.allowedAttribs[k] is None or type(v) == type(self.allowedAttribs[k])
             self._attribs[k]=v
     
@@ -112,6 +112,17 @@ class GeometryOptions(PackageOptions):
     pass
 
 
+class Publication(MyOptionDict):
+    allowedAttribs=dict(
+        title=None,
+        author=None,
+        year=None)
+        
+class Book(Publication):
+    allowedAttribs = dict(
+        Publication.allowedAttribs,
+        isbn=None,
+        publisher=None)
 
 
 
@@ -125,6 +136,7 @@ class Section(MyOptionDict):
         remark=None, 
         verses=None,
         versesColumns=None,
+        versesWidth=None,
         newLines=None,
         mtime=None,
         )
@@ -132,6 +144,7 @@ class Section(MyOptionDict):
     def __init__(self,sbk,**kw):
         self.sbk=sbk
         MyOptionDict.__init__(self,**kw)
+        #print self.verses
         if self.title is not None:
             if self.number is None:
                 self.update(number=sbk.songCounter + 1)
@@ -156,17 +169,32 @@ class Section(MyOptionDict):
         if self.verses:
             if self.versesColumns > 1:
                 fd.write(r"""
-\begin{multicols}{%d}""" % self.versesColumns)
-            fd.write(r"""
-\begin{enumerate}""")
-            for verse in self.verses:
+\begin{multicols*}{%d}""" % self.versesColumns)
+            if not self.versesWidth:
                 fd.write(r"""
-                \item %s""" % verse.replace(r"\n",self.newLines))
-            fd.write(r"""
+\begin{enumerate}""")
+            i=0
+            for verse in self.verses:
+                verse=verse.strip().replace("\n",self.newLines)
+                i += 1
+                if self.versesWidth:
+                    fd.write(r"""
+\begin{minipage}{%s}
+  (%d) %s
+\end{minipage}
+""" % (self.versesWidth,i,verse))
+                else:
+                    fd.write(r"""
+\item\parbox[t]{\linewidth}{""" +  verse + r"}\vfill")
+##                     fd.write(r"""
+## \item """ +  verse + r"\vfill")
+                        
+            if not self.versesWidth:
+                    fd.write(r"""
 \end{enumerate}""")
             if self.versesColumns > 1:
                 fd.write(r"""
-\end{multicols}""")
+\vfill\end{multicols*}""")
         if self.remark:
             fd.write(r"""
 \par\small  %s""" % self.remark)
@@ -177,7 +205,7 @@ class Section(MyOptionDict):
         if self.title:
             fd.write(r"""
 \subsection*{ """)
-            if self.number:
+            if self.number and self.sbk.numbering:
                 fd.write(r"\framebox{\huge ~%d~}~ " % self.number)
             fd.write(self.title)
             if self.title2:
@@ -192,30 +220,36 @@ class Section(MyOptionDict):
         
             
 class Song(Section):
+    
     allowedAttribs = dict(
         Section.allowedAttribs,
         width=None,
         scorewidth=None,
         textwidth=None,
         singable=None,
-        composer=None,
-        author=None,
+        arrangedBy=None,
+        composedBy=None,
+        composedYear=None,
+        textAuthor=None,
+        textYear=None,
+        basedOn=None,
         soprano=None,
         alto=None,
         alto2=None,
         tenor=None,
         bass=None,
         lyrics=None,
-        bass_lyrics=None,
-        soprano_lyrics=None,
-        lyrics_font="Arial", # Helvetica,AvantGarde, Palatino
-        alto_lyrics=None,
-        lead_voice="soprano",
-        midi_suffixes=None,
+        bassLyrics=None,
+        sopranoLyrics=None,
+        altoLyrics=None,
+        lyricsFont="Arial", # Helvetica,AvantGarde, Palatino
+        leadVoice="soprano",
+        midiSuffixes=None,
         tempo=None,
         url=None,
         staffSize=None,
         copyright=None,
+        bibliography=None,
         )
     
     def __init__(self,sbk,**kw):
@@ -229,7 +263,7 @@ class Song(Section):
             
         if self.versesColumns is None:
             self.update(versesColumns=sbk.versesColumns)
-        if self.midi_suffixes is None:
+        if self.midiSuffixes is None:
             l=[]
             if self.soprano: l.append("s")
             if self.alto: l.append("a")
@@ -237,7 +271,7 @@ class Song(Section):
             if self.bass: l.append("b")
             if len(l) > 1:
                 l.append("".join(l))
-            self.update(midi_suffixes=l)
+            self.update(midiSuffixes=l)
         if self.lyrics and type(self.lyrics) != type([]):
             self.lyrics = [ self.lyrics ]
         if self.staffSize is None:
@@ -259,16 +293,18 @@ class Song(Section):
   \context { \Score
     \override MetronomeMark #'extra-offset = #'(-9 . 0)
     \override MetronomeMark #'padding = #'3
+    \override BarNumber #'transparent = ##t   %% hide bar numbers
   }
 
   \context{\Lyrics
-        \override VerticalAxisGroup #'minimum-Y-extent = #'(-0.5 . 3)
+    \override LyricText  #'font-name = #"%(lyricsFont)s"
+    \override VerticalAxisGroup #'minimum-Y-extent = #'(-0.5 . 3)
 
-        }   
+  }   
             
-        \context{\StaffGroup
-        \remove "Span_bar_engraver"
-        }
+  \context{\StaffGroup
+    \remove "Span_bar_engraver"
+  }
 
   \context{\Staff
         \override VerticalAxisGroup #'minimum-Y-extent = #'(-3 . 3)
@@ -277,101 +313,83 @@ class Song(Section):
         }
 }
 
-""")
-        if self.is_single_staff():
-            fd.write(r"""
+""" % self)
+        fd.write(r"""
 \score{ """)
-
-            if self.tempo and self.sbk.showTempi:
-                fd.write(r"""
-{ \tempo %s """ % self.tempo)
-
-                
-            fd.write(self.soprano)
-            if self.tempo and self.sbk.showTempi:
-                fd.write(r"""
-} """)
-            if self.lyrics:
-                for lyrics in self.lyrics:
-                    fd.write(r"""
-\addlyrics { """)
-                    fd.write(r"""
-\override LyricText  #'font-name = #"%s" """ % self.lyrics_font)
-                    fd.write(lyrics + " }")
+        
+        if not self.is_single_staff():
 
             fd.write(r"""
-}
+    \context StaffGroup <<
+            """)
+            
+        if self.sopranoLyrics:
+            fd.write(r"""
+\new Lyrics = "soprano" { s1 }
+%% http://lilypond.org/doc/v2.10/Documentation/user/lilypond/Vocal-ensembles
 """)
-        else:
             
-            fd.write(r"""
-\score{""")
-            
-            fd.write(r"""
-    \context StaffGroup<<
-
-        \context Staff = "upper"
+        fd.write(r"""
+        \new Staff = "upper"
             """)
-            
-##             if self.tempo:
-##                 fd.write(r"""
-## \tempo %s""" % self.tempo)
+        
+        fd.write(r"""
+        <<
+        \clef treble
+        """)
+        
                 
-            fd.write(r"""
-            <<
-            \clef treble
-            """)
+        if self.soprano:
+            if self.tempo and self.sbk.showTempi:
+                fd.write(r" { \tempo %s " % self.tempo)
+            fd.write(r' \new Voice = "soprano" %s ' % self.soprano)
+            if self.tempo and self.sbk.showTempi:
+                fd.write(r" } ")
 
-            if self.soprano:
-##                 if self.tempo:
-##                     tempoString= r"\tempo %s" % self.tempo
-##                 else:
-##                     tempoString= ""
-##                 tempoString= ""
-                if self.tempo and self.sbk.showTempi: fd.write(r"""
-{ \tempo %s """ % self.tempo)
-                
-                fd.write(r"""
-                \context Voice = "soprano" %s """ % self.soprano)
-                if self.tempo  and self.sbk.showTempi: fd.write(r"""
-} """)
-            
-            if self.alto:
-                fd.write(r"""
-                \context Voice = "alto" %(alto)s """ % self)
-            
-            if self.alto2:
-                fd.write(r"""
-                \context Voice = "alto2" %(alto2)s """ % self)
-            
+        if self.sopranoLyrics:
             fd.write(r"""
-            >>
+\context Lyrics = "soprano"
+\lyricsto "soprano"
+{
+  \set stanza = ""
+  \lyricmode { %(sopranoLyrics)s }
+} """ % self)
             
-            """ % self)
-            
-            if self.soprano_lyrics:
-                fd.write(r"""
-        \lyricsto "soprano" \new Lyrics {
+        if self.alto:
+            if self.tempo and self.sbk.showTempi:
+                fd.write(r" { \tempo %s " % self.tempo)
+            fd.write(r' \context Voice = "alto" %s ' % self.alto)
+            if self.tempo and self.sbk.showTempi:
+                fd.write(r" } ")
+                
+
+        if self.altoLyrics:
+            fd.write(r"""
+        \lyricsto "alto" \new Lyrics {
                     \set stanza = ""
-                    \override LyricText  #'font-name = #"%(lyrics_font)s"
-                    \lyricmode { %(soprano_lyrics)s }
+                    \lyricmode { %(altoLyrics)s }
                     } """ % self)
                 
-            if self.lyrics:
-                for lyrics in self.lyrics:
-                    fd.write(r"""
-        \lyricsto "%s" \new Lyrics {""" % self.lead_voice)
-                    fd.write(r"""
+        if self.lyrics:
+            for lyrics in self.lyrics:
+                fd.write(r"""
+        \lyricsto "%s" \new Lyrics {""" % self.leadVoice)
+                fd.write(r"""
 \set stanza = "" """)
-                    fd.write(r"""
-\override LyricText  #'font-name = #"%s" """ % self.lyrics_font)
-                    fd.write(r"""
+##                 fd.write(r"""
+## \override LyricText  #'font-name = #"%s" """ % self.lyricsFont)
+                fd.write(r"""
                     \lyricmode { %s }
                     } """ % lyrics)
+
+        if not self.is_single_staff():
+            fd.write(r"""
+            >>
+            """ % self)
             
             fd.write(r"""
             
-        \context Staff = "lower" <<
+        \new Staff = "lower" <<
                     
                     \clef bass """)
             if self.tenor:
@@ -385,28 +403,25 @@ class Song(Section):
                     >>
             """)
             
-            if self.bass_lyrics:
+            if self.bassLyrics:
                 fd.write(r"""
         \lyricsto "bass" \new Lyrics {
                     \set stanza = ""
-                    \override LyricText  #'font-name = #"%(lyrics_font)s"
-                    \lyricmode { %(bass_lyrics)s }
+                    \lyricmode { %(bassLyrics)s }
                     }""" % self)
             
-            fd.write(r"""
-        >>""")
+        fd.write(r" >> """)
             
-            if False:
-                fd.write(r"""        
-    \context{\Score
-      barNumberVisibility = #all-invisible
-    }""")
-    
-            fd.write(r"""
-}""")
+        fd.write(r"""
+} %% end \score""") 
                     
         fd.write("""
 \paper {
+       between-system-padding = #0.1
+       between-system-space = #0.1
+       ragged-last-bottom = ##f
+       ragged-bottom = ##f
+       
 %  myStaffSize = #20
 %  #(define fonts
 %    (make-pango-font-tree "Helvetica"
@@ -456,7 +471,7 @@ class Song(Section):
 """ % self)
         if self.singable:
             fd.write(r"""
-\nopagebreak %s""" % self.singable)
+\nopagebreak\normalsize %s""" % self.singable)
 
         Section.writeBody(self,fd)
         if self.has_music() and self.scorewidth is not None:
@@ -475,7 +490,7 @@ class Song(Section):
             #~ %% \end{samepage}
 
     def make_midi(self):
-        for suffix in self.midi_suffixes:
+        for suffix in self.midiSuffixes:
             must_make=True
             midifile=self.filename + "_" + suffix + ".midi"
             lyfile=self.filename + "_" + suffix+".ly"
@@ -571,10 +586,11 @@ See file COPYING.txt for more information."""
         showFirstVerses=False,
         copyright=None,
         numbering=True,
-        newLines=r"\\",
+        newLines=r" \\ ",
         filename=None,
         input_encoding=None,
         versesColumns=3,
+        versesWidth=None,
         documentClass="article",
         output_dir=None,
         showTempi=True,
@@ -635,11 +651,17 @@ If arguments are specified, then only these songs are included.
     def loadsong(self,name,**kw):
         sngfile=name+".sng"
         fd = codecs.open(sngfile,"r",self.input_encoding)
-        for songdict in yaml.load_all(fd):
-            songdict.update(kw)
-            songdict['filename']=name
-            songdict['mtime']=os.path.getmtime(sngfile)
-            self.addsong(**songdict)
+        try:
+            for songdict in yaml.load_all(fd):
+                for k in songdict.keys():
+                    if k.startswith(";"):
+                        del songdict[k]
+                songdict.update(kw)
+                songdict['filename']=name
+                songdict['mtime']=os.path.getmtime(sngfile)
+                self.addsong(**songdict)
+        except Exception,e:
+            raise MakeError(sngfile+":"+str(e))
         fd.close()
 
 
@@ -671,10 +693,13 @@ If arguments are specified, then only these songs are included.
 %% \usepackage{arial}
 %% \usepackage{times}
 
+\pagestyle {empty}
+
 \renewcommand{\familydefault}{\sfdefault}
 
 %% \makeindex % tells LaTeX to write an .idx file
 \setlength{\parindent}{0mm}
+\parskip6pt
 \begin{document}
         
         """)
