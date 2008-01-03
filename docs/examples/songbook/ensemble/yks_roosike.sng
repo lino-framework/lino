@@ -1,7 +1,8 @@
 title: Üks roosike on tõusnud
+language: et
 basedOn: Es ist ein Ros entsprungen (saksamaa XY. saj.)
-copyright: EELK Kirikumuusika Liit
-composedBy: Enn Kivinurm
+copyright: 2003 EELK Kirikumuusika Liit, Tallinn
+arrangedBy: Enn Kivinurm
 versesColumns: 3
 # versesWidth: 20em
 tempo: 4=90
@@ -85,7 +86,7 @@ lyrics:
     ta tu- li Jes- se soost.
     See kal- lis lil- le ke
     kesk- tal- vel kül- mal a- jal
-    ta tõus- is ü- les- se.
+    ta tõu- sis ü- les- se.
     
 ;altoLyrics:
     Üks roo- si- ke on tõus- nud
@@ -94,7 +95,7 @@ lyrics:
     ta tu- li Jes- se soost.
     See kal- lis lil- le ke
     kesk- tal- vel kül- mal a- jal
-    ta tõus- is ü- les- se.
+    ta tõu- sis ü- les- se.
     
 ;bassLyrics:
     Üks roo- si- ke on tõus- nud
@@ -103,7 +104,7 @@ lyrics:
     ta tu- li Jes- se soost.
     See kal- lis lil- le ke
     kesk- tal- vel kül- mal a- jal
-    ta tõus- is ü- les- se.
+    ta tõu- sis ü- les- se.
 
 
 verses:

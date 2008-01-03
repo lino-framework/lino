@@ -1,4 +1,4 @@
-## Copyright 2007 Luc Saffre 
+## Copyright 2007-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -132,6 +132,7 @@ class Section(MyOptionDict):
         title2=None,
         filename=None,
         number=None,
+        language=None,
         text=None,
         remark=None, 
         verses=None,
@@ -169,7 +170,7 @@ class Section(MyOptionDict):
         if self.verses:
             if self.versesColumns > 1:
                 fd.write(r"""
-\begin{multicols*}{%d}""" % self.versesColumns)
+\begin{multicols}{%d}""" % self.versesColumns)
             if not self.versesWidth:
                 fd.write(r"""
 \begin{enumerate}""")
@@ -185,7 +186,7 @@ class Section(MyOptionDict):
 """ % (self.versesWidth,i,verse))
                 else:
                     fd.write(r"""
-\item\parbox[t]{\linewidth}{""" +  verse + r"}\vfill")
+\item\parbox[t]{\linewidth}{""" +  verse + r"}")
 ##                     fd.write(r"""
 ## \item """ +  verse + r"\vfill")
                         
@@ -194,10 +195,29 @@ class Section(MyOptionDict):
 \end{enumerate}""")
             if self.versesColumns > 1:
                 fd.write(r"""
-\vfill\end{multicols*}""")
-        if self.remark:
+\vfill\end{multicols}""")
+        s=""
+        if self.textAuthor:
+            s += "Text: " + self.textAuthor 
+            if self.textYear:
+                s += " (" + str(self.textYear) + ")"
+            s += ". "
+        if self.composedBy:
+            s += "Music: " + self.composedBy 
+            if self.composedYear:
+                s += " (" + str(self.composedYear) + ")"
+            s += ". "
+        if self.arrangedBy:
+            s += "Arr.: " + self.arrangedBy 
+            if self.arrangedYear:
+                s += " (" + str(self.arrangedYear) + ")"
+            s += ". "
+        if self.copyright:
+            s += r"{\copyright}~" + self.copyright + ". "
+        if self.remark: s += self.remark 
+        if len(s) > 0:
             fd.write(r"""
-\par\small  %s""" % self.remark)
+\par\small  %s""" % s)
 
     
     def writeTitle(self,fd):
@@ -206,7 +226,7 @@ class Section(MyOptionDict):
             fd.write(r"""
 \subsection*{ """)
             if self.number and self.sbk.numbering:
-                fd.write(r"\framebox{\huge ~%d~}~ " % self.number)
+                fd.write(r"\framebox{\Huge ~%d~}~ " % self.number)
             fd.write(self.title)
             if self.title2:
                 fd.write(r" \hfill {\small (%s)}" % self.title2)
@@ -227,9 +247,10 @@ class Song(Section):
         scorewidth=None,
         textwidth=None,
         singable=None,
-        arrangedBy=None,
         composedBy=None,
         composedYear=None,
+        arrangedBy=None,
+        arrangedYear=None,
         textAuthor=None,
         textYear=None,
         basedOn=None,

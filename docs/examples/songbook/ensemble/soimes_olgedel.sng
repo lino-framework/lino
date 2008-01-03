@@ -1,7 +1,7 @@
 title: Sõimes õlgedel
 basedOn: Entre le b{\oe}uf et l'âne gris (prantsusmaa, XIII. saj.)
 bibliography: Jõulud tulnud jälle
-versesColumns: 1
+versesColumns: 2
 # versesWidth: 20em
 url: http://bmarcore.club.fr/index.html
 
@@ -85,7 +85,7 @@ leadVoice: alto
 
 midiSuffixes: ["sa","t", "b", "satb"]
 
-text: |
+; text: |
 
   \begin{enumerate}
   
@@ -107,6 +107,27 @@ text: |
     Valge \textbf{ingli tiib} ...
 
   \end{enumerate}
+  
+  
+verses: 
+
+  - |
+    \textbf{Sõimes õlgedel} Petlemmas
+    väike \textbf{Jeesus uinumas}. 
+    Valge \textbf{ingli tiib} tema juurde \textbf{viib}
+    \textbf{kummarda}ma suurimat \textbf{armastust}.
+
+  - |
+    \textbf{Ema} Maria \textbf{põlvedel}
+    \textbf{on} nii \textbf{hea Jeesusel}.
+    Valge \textbf{ingli tiib} ...
+    
+
+  - |
+    \textbf{Keskel} Saaroni \textbf{rooside}
+    \textbf{magab} püha \textbf{lapsuke}
+    Valge \textbf{ingli tiib} ...
+
   
   
 

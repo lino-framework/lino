@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 # -*- coding: ISO-8859-1 -*-
 
-## Copyright 2007 Luc Saffre.
+## Copyright 2007-2008 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -19,14 +19,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-
-
-# Taizé laulud eesti keeles (Taizé songbook in Estonian)
-# http://yaml.org/spec/current.html
-# http://pyyaml.org/
-
 from lino.songbook import Songbook
-
 
 sbk=Songbook(
     output_dir=r"C:\temp\laulik",
