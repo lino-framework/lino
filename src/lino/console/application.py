@@ -157,38 +157,34 @@ class Application(Task):
 
     def get_description(self):
         return self.description
-            
+
+
     def main(self,*args,**kw):
         """Process command-line arguments and run the application.
 
 
         """
+
         self.toolkit=syscon.getSystemConsole()
         syscon.setMainSession(self)
         
         desc=self.get_description()
         if desc is not None:
             desc=" ".join(desc.split())
-##             paras=[]
-##             for para in self.description.split('\n\n'):
-##                 paras.append(" ".join(para.split()))
-##             desc="\n\n".join(paras)
         
         p = OptionParser(
             usage=self.usage,
             description=desc)
+
+        
+        argv=sys.argv[1:]
         
         self.setupOptionParser(p)
-
-        #if argv is None:
-        argv = sys.argv[1:]
-
+        
         try:
             poptions,pargs = p.parse_args(argv)
             self.applyOptions(poptions,pargs)
             self.start_running()
-            #self.on_main()
-            #self.setupApplication()
             ret=self.run(*args,**kw)
             self.stop_running()
             return ret
