@@ -585,7 +585,7 @@ class SyncProject(Progresser):
             if self.recurse:
                 self.copy_dir(src,target)
         else:
-            raise NeitherFileNorDirectory()
+            raise NeitherFileNorDirectory(repr(src))
             #raise ApplicationError(
             #    "%s is neither file nor directory" % src)
             #self.task.abort(

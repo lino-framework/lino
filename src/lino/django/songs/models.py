@@ -18,6 +18,8 @@
 from django.db import models
 
 class Person(models.Model):
+    class Admin:
+        pass
     firstname = models.CharField(maxlength=100)
     lastname = models.CharField(maxlength=100)
     #born = models.DateTimeField(blank=True)
@@ -26,6 +28,8 @@ class Person(models.Model):
         return self.firstname+' '+self.lastname
 
 class Song(models.Model):
+    class Admin:
+        pass
     author = models.ForeignKey(
         Person,
         related_name="author",
@@ -45,6 +49,8 @@ class Song(models.Model):
         return self.title
 
 class Translation(models.Model):
+    class Admin:
+        pass
     translator = models.ForeignKey(
         Person,
         related_name="translator",
@@ -60,7 +66,9 @@ class Translation(models.Model):
     
 
 class Songbook(models.Model):
+    class Admin:
+        pass
     title = models.CharField(maxlength=200)
-    intro=models.TextField(blank=True)
-    publisher=models.TextField(blank=True)
+    intro = models.TextField(blank=True)
+    publisher = models.TextField(blank=True)
     
