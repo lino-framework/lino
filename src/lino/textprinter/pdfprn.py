@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 
-## Copyright 2004-2007 Luc Saffre
+## Copyright 2004-2008 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -32,6 +32,21 @@ from reportlab.pdfbase.ttfonts import TTFont, TTFError
 from lino.textprinter.textprinter import FileTextPrinter, \
      ParserError, OperationFailed
 
+# name: (regular, bold, italic, bolditalic)
+FONTFILES={
+    "Courier": ("cour.ttf", "courbd.ttf","couri.ttf","courbi.ttf"),
+    
+    "LucidaSansTypewriter": ("ltype.ttf","ltypeb.ttf","ltypeo.ttf","ltypebo.ttf"),
+    "LucidaConsole": ("lucon.ttf",),
+    "VeraMono": ("VeraMono.ttf", "VeraMoBd.ttf","VeraMoIt.ttf","VeraMoBI.ttf"),
+    "DejaVu": ( "DejaVuSansMono.ttf","DejaVuSansMono-Bold.ttf",
+               "DejaVuSansMono-Oblique.ttf","DejaVuSansMono-BoldOblique.ttf"),
+    # http://dejavu.sourceforge.net
+    
+    "Liberation": ("LiberationMono-Regular.ttf","LiberationMono-Bold.ttf",
+                   "LiberationMono-Italic.ttf","LiberationMono-BoldItalic.ttf"),
+    # https://www.redhat.com/promo/fonts/
+    }
 
 
 class Status:
@@ -39,12 +54,12 @@ class Status:
     could be used to save/restore the status of the textobject
     """
     def __init__(self,size=10.0,
-                 psfontname="Courier",
+                 fontName="Courier",
                  bold=False,
                  ital=False):
         self.ital = ital
         self.bold = bold
-        self.psfontname = psfontname
+        self.fontName = fontName
         self.size = size
         #self.leading = None #leading
         #self.lpi = None
@@ -61,32 +76,40 @@ class PdfTextPrinter(FileTextPrinter):
     ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
     charwidth=0.6
     
-    def __init__(self,filename,**kw):
+    def __init__(self,filename,fontName="Courier",**kw):
         FileTextPrinter.__init__(self,filename,pageSize=A4,**kw)
+
+        fontfiles=FONTFILES[fontName]
+        pdfmetrics.registerFont(TTFont(fontName, fontfiles[0]))
+        if len(fontfiles) == 1:
+            self._can_bold=False
+        else:
+            self._can_bold=True
+            pdfmetrics.registerFont(TTFont(fontName+"-Bold", fontfiles[1]))
+            pdfmetrics.registerFont(TTFont(fontName+"-Oblique", fontfiles[2]))
+            pdfmetrics.registerFont(TTFont(fontName+"-BoldOblique", fontfiles[3]))
         
 
-        try:
-            font=TTFont("Courier", "cour.ttf")
-##             print "pdfprn.py", font.face.bbox,\
-##                   font.face.ascent, font.face.descent
-##             minx,miny,maxx,maxy = font.face.bbox
-##             boxheight=font.face.ascent-font.face.descent
-##             #self.ratio_size2leading=float(maxy-miny) / font.face.defaultWidth
-##             self.ratio_size2leading=float(boxheight) / font.face.defaultWidth
-##             print "ratio_size2leading=",self.ratio_size2leading
-            pdfmetrics.registerFont(font)
-            pdfmetrics.registerFont(TTFont("Courier-Bold", "courbd.ttf"))
-            pdfmetrics.registerFont(TTFont("Courier-Oblique",
-                                           "couri.ttf"))
-            pdfmetrics.registerFont(TTFont("Courier-BoldOblique",
-                                           "courbi.ttf"))
-        except TTFError,e:
-            pass # continue with the Adobe builtin version
+##         try:
+## ##             font=TTFont("Courier", "cour.ttf")
+## ##             print "pdfprn.py", font.face.bbox,\
+## ##                   font.face.ascent, font.face.descent
+## ##             minx,miny,maxx,maxy = font.face.bbox
+## ##             boxheight=font.face.ascent-font.face.descent
+## ##             #self.ratio_size2leading=float(maxy-miny) / font.face.defaultWidth
+## ##             self.ratio_size2leading=float(boxheight) / font.face.defaultWidth
+## ##             print "ratio_size2leading=",self.ratio_size2leading
+##             pdfmetrics.registerFont(TTFont("Courier", "cour.ttf"))
+##             pdfmetrics.registerFont(TTFont("Courier-Bold", "courbd.ttf"))
+##             pdfmetrics.registerFont(TTFont("Courier-Oblique", "couri.ttf"))
+##             pdfmetrics.registerFont(TTFont("Courier-BoldOblique", "courbi.ttf"))
+##         except TTFError,e:
+##             pass # continue with the Adobe builtin version
         
         
         self.canvas = canvas.Canvas(filename,pagesize=A4)
         self.textobject = None
-        self.status = Status()
+        self.status = Status(fontName=fontName)
         self.leading=None
         self.lpi = None
         self.setCpi(self.cpi)
@@ -151,17 +174,24 @@ class PdfTextPrinter(FileTextPrinter):
         else:
             self.leading = 72.0 / self.lpi
 
-        psfontname = self.status.psfontname
-        if self.status.bold:
-            psfontname += "-Bold"
-            if self.status.ital:
-                psfontname += "Oblique"
-        elif self.status.ital:
-            psfontname += "-Oblique"
+        fontname = self.status.fontName
+        if self._can_bold:
+            if self.status.bold:
+                fontname += "-Bold"
+                if self.status.ital:
+                    fontname += "Oblique"
+            elif self.status.ital:
+                fontname += "-Oblique"
             
-        self.textobject.setFont(psfontname,
+        self.textobject.setFont(fontname,
                                 self.status.size,
                                 self.leading)
+        if False and not self._can_bold:
+            # disabled because that doesn't look satisfying either
+            if self.status.bold:
+                self.textobject.setFillGray(0.0)
+            else:
+                self.textobject.setFillGray(0.2)
         
 
     def write(self,text):

@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 
-## Copyright 2004-2007 Luc Saffre
+## Copyright 2004-2008 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -28,7 +28,7 @@ class PrnPrint(Application):
     
     name="Lino prnprint"
     copyright="""\
-Copyright (c) 2004-2007 Luc Saffre.
+Copyright (c) 2004-2008 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
