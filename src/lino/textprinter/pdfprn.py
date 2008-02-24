@@ -196,6 +196,7 @@ class PdfTextPrinter(FileTextPrinter):
 
     def write(self,text):
         self.session.debug("write(%r)",text)
+        self.beforeWrite()
         self.prepareFont()
 
 ##         if self.coding is not None:

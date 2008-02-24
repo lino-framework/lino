@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre 
+## Copyright 2003-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -167,6 +167,14 @@ class H(P):
         return self.__class__.__name__+str(self.level)
         
 class H1(P): pass
+class H2(P): pass
+class H3(P): pass
+class H4(P): pass
+class H5(P): pass
+class H6(P): pass
+class H7(P): pass
+class H8(P): pass
+class H9(P): pass
 
 class PRE(P):
     allowedContent = (CDATA,)
@@ -203,4 +211,10 @@ class BODY(Container):
 
 
 
+class HEAD(Container):
+    ignore=True
 
+class HTML(Container):
+    flowable=True
+    allowedContent=(BODY,HEAD)
+    

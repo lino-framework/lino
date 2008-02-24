@@ -494,6 +494,7 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
         #self.leading = max(self.leading,self.doc.status.leading)
         
     def write(self,text):
+        self.beforeWrite()
         assert not "\n" in text, repr(text)
         assert not "\r" in text, repr(text)
         if self.encoding is not None:

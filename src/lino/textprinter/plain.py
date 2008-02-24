@@ -63,6 +63,7 @@ class PlainTextPrinter(TextPrinter):
             "\n")
     
     def write(self,text):
+        self.beforeWrite()
         #self.writer(text)
         self.textobject += text
             

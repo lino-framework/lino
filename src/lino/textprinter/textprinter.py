@@ -198,6 +198,13 @@ class TextPrinter:
             os.chdir(dirname)
             #print "chdir", dirname
         for line in f.readlines():
+            if encoding == "cp437":
+                #line.replace(unichr(238),unichr(8364)) # u20AC
+                if chr(238).decode(encoding) in line:
+                    print "Articficial EURO symbol"
+                    raw_input()
+                    line.replace(chr(238).decode(encoding),unichr(8364)) # u20AC
+                #line.replace(chr(238),unichr(8364)) # u20AC
             #if encoding is not None:
             #    line = line.decode(encoding)
             #self.printLine(line.rstrip())

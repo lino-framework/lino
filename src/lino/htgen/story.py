@@ -18,7 +18,7 @@
 
 
 from lino.misc.tsttools import UniStringIO
-from lino.htgen.memo import MemoParser
+from lino.htgen.memo import MemoParser, ParserError
 from lino.htgen import html
 from lino.misc import restify
 
@@ -116,7 +116,7 @@ class Story:
     def memo(self,txt,style=None,**kw):
         p=MemoParser(self,style,**kw)
         x=oparse(txt)
-        print x
+        #print x
         p.feed(x)
         p.close()
 

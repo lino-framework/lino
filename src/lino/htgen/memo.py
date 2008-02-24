@@ -34,6 +34,7 @@ class MemoParser(HTMLParser):
         self.kw=kw
         self.stack=[]
         self.parsep=False
+        self.strict=False
 
     def handle_data(self,data):
         """process arbitrary data."""
@@ -73,7 +74,8 @@ class MemoParser(HTMLParser):
                 #newpar=True
 
         elif len(data.strip()) > 0:
-            raise "cannot handle %r inside <%s>" % (data,tail.tag())
+            raise ParserError("%d:%d: " % self.getpos() +
+                              "cannot handle %r inside <%s>" % (data,tail.tag()))
 
     def handle_charref(self,name):
         """process a character reference of the form "&#ref;"."""
@@ -93,6 +95,8 @@ class MemoParser(HTMLParser):
             #print "_append(%s) to %s" % (
             #    elem.__class__.__name__,
             #    [e.__class__.__name__ for e in self.stack])
+            if elem.ignore:
+                return
             if len(self.stack) == 0:
                 if elem.flowable:
                     self.stack.append(elem)
@@ -124,7 +128,9 @@ class MemoParser(HTMLParser):
         
     def do_starttag(self,tag,attrs):
         tag=tag.upper()
-        cl=getattr(html,tag)
+        cl=getattr(html,tag,None)
+        if cl is None:
+            return
         #print attrs
         d={}
         for hk,hv in attrs:
@@ -135,7 +141,10 @@ class MemoParser(HTMLParser):
                     found=True
                     break
             if not found:
-                raise "unhandled attribute %s" % k
+                if self.strict:
+                    raise ParserError(
+                        "%d:%d: " % self.getpos() +
+                        "Unhandled attribute '%s'" % hk)
         elem=cl(**d)
         if self.parsep: 
             self.parsep=False
@@ -161,20 +170,25 @@ class MemoParser(HTMLParser):
 
     def handle_endtag(self, tag):
         #print "found </%s>" % tag
+        tag=tag.upper()
+        cl=getattr(html,tag,None)
+        if cl is None:
+            return
         while True:
             if len(self.stack) == 0:
                 raise ParseError("stack underflow")
             popped=self.stack.pop()
-            if tag.upper() == popped.tag():
+            if tag == popped.tag():
                 return
-            cl=getattr(html,tag.upper())
             if cl in popped.autoClosedByEnd:
                 pass
                 #print "<%s> autoClosedBy </%s>" % (
                 #    popped.tag(),tag.upper())
             else:
-                raise ParserError("Found </%s>, expected </%s> (stack was %s)" % (
-                    tag.upper(), popped.tag(),
+                raise ParserError(
+                    "%d:%d:" % self.getpos() +
+                    "Found </%s>, expected </%s> (stack was %s)" % (
+                    tag, popped.tag(),
                     [e.tag() for e in self.stack]+[popped.tag()]
                     ))
 

@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre 
+## Copyright 2003-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -81,6 +81,7 @@ class Element:
     allowedAttribs = {}
     autoClosedByStart=[]
     autoClosedByEnd=[]
+    ignore=False
     #defaultAttribs = {}
     parent=None
     style=None
