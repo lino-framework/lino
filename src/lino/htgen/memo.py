@@ -1,4 +1,4 @@
-## Copyright 2006-2007 Luc Saffre 
+## Copyright 2006-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -27,23 +27,26 @@ class ParserError(Exception):
 
 class MemoParser(HTMLParser):
 
-    def __init__(self,container,style,**kw):
+    def __init__(self,container=None,**kw):
         HTMLParser.__init__(self)
         self.container=container
-        self.style=style
+        #self.style=style # ignored. use keyword xclass="styleName" instead
         self.kw=kw
         self.stack=[]
-        self.parsep=False
+        self.parsep=False # paragraph separator
         self.strict=False
+        self.ignoring=False
 
     def handle_data(self,data):
         """process arbitrary data."""
         #print "handle_data(%r) to %s"%(
         #    data,[e.tag() for e in self.stack])
+        if self.ignoring:
+            return
         if len(self.stack) == 0:
             if len(data.strip()) == 0:
                 return
-            p=html.P(xclass=self.style,**self.kw)
+            p=self.create_flowable()
             self._append(p)
             #self.autopar()
         tail=self.stack[-1]
@@ -64,9 +67,9 @@ class MemoParser(HTMLParser):
                 if len(chunk.strip()) > 0:
                     if self.parsep:
                         self.parsep=False
-                        self._append(
-                            html.P(chunk,
-                                   xclass=self.style,**self.kw))
+                        self._append(self.create_flowable(chunk))
+                            #html.P(chunk,
+                            #       xclass=self.style,**self.kw))
                     else:
                         tail.append(chunk)
                 elif not self.parsep:
@@ -79,8 +82,10 @@ class MemoParser(HTMLParser):
 
     def handle_charref(self,name):
         """process a character reference of the form "&#ref;"."""
+        self.handle_data(unichr(int(name)))
+        #self.handle_data("(charref %s)" % name)
         #print "handle_charref", name
-        raise NotImplemented
+        #raise NotImplemented
     
         
     def handle_entityref(self,name):
@@ -90,21 +95,29 @@ class MemoParser(HTMLParser):
         #print "handle_entityref", name
         #raise NotImplemented
 
+    def create_flowable(self,*content):
+        #return html.P(*content,xclass=self.style,**self.kw)
+        return html.P(*content,**self.kw)
+
     def _append(self,elem):
         while True:
             #print "_append(%s) to %s" % (
             #    elem.__class__.__name__,
             #    [e.__class__.__name__ for e in self.stack])
             if elem.ignore:
+                self.ignoring=True
                 return
             if len(self.stack) == 0:
                 if elem.flowable:
                     self.stack.append(elem)
-                    self.container.append(elem)
+                    if self.container is None:
+                        self.container=elem
+                    else:
+                        self.container.append(elem)
                     return
                 # create automagic paragraph
                 # e.g. a memo that starts with "<tt>"
-                p=html.P(xclass=self.style,**self.kw)
+                p=self.create_flowable()
                 self._append(p)
                 # don't return but loop again
             try:
@@ -150,7 +163,7 @@ class MemoParser(HTMLParser):
             self.parsep=False
             if not elem.flowable:
                 #print "automagic P for nonflowable", elem.tag()
-                self._append(html.P(xclass=self.style,**self.kw))
+                self._append(self.create_flowable())
         self._append(elem)
         return elem
         
@@ -163,8 +176,10 @@ class MemoParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         #print "found <%s>" % tag
         #print "handle_starttag(%s)"%tag
+        if self.ignoring:
+            return
         elem=self.do_starttag(tag,attrs)
-        if not isinstance(elem,html.Container):
+        if elem is not None and not isinstance(elem,html.Container):
             # tolerate <img> or <br> without endtag
             self.stack.pop()
 
@@ -173,6 +188,9 @@ class MemoParser(HTMLParser):
         tag=tag.upper()
         cl=getattr(html,tag,None)
         if cl is None:
+            return
+        if cl.ignore:
+            self.ignoring=False
             return
         while True:
             if len(self.stack) == 0:
@@ -193,3 +211,6 @@ class MemoParser(HTMLParser):
                     ))
 
 
+    def unknown_decl(self, data):
+        pass
+        #self.error("unknown declaration: %r" % (data,))

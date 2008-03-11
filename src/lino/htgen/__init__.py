@@ -1,4 +1,4 @@
-## Copyright 2007 Luc Saffre 
+## Copyright 2007-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 

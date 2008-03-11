@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre 
+## Copyright 2003-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -114,11 +114,22 @@ class Story:
 
     
     def memo(self,txt,style=None,**kw):
-        p=MemoParser(self,style,**kw)
+        assert style is None, "use keyword xclass=style instead"
+        p=MemoParser(self,**kw)
         x=oparse(txt)
         #print x
         p.feed(x)
         p.close()
+
+    def load_html(self,data):
+        p=MemoParser()
+        p.feed(data)
+        p.close()
+        assert p.container.__class__ is html.HTML
+        assert p.container.content[0].__class__ is html.BODY,\
+          "content[0] is %s" % p.container.content[0].__class__
+        for e in p.container.content[0].content:
+            self.append(e)
 
     def report(self,rpt):
 

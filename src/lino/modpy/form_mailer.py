@@ -1,4 +1,4 @@
-## Copyright 2007 Luc Saffre 
+## Copyright 2007-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -21,7 +21,7 @@
 a simple form mailer to be called by the mod_python Publisher handler.
 
 
-from lino.modpy.form_mailer import email
+  from lino.modpy.form_mailer import email
 
 
 """
@@ -61,11 +61,11 @@ To: %s
     for k,v in kw.items():
         if not k.startswith('_'):
             msg += str(k) + ":" + str(v) + "\n\n"
-    
-    msg += "\nRequest:\n"
-    for k in dir(req):
-        if not k.startswith('_'):
-            msg += "- " + str(k) + ":" + str(getattr(req,k)) + "\n"
+    if False:
+        msg += "\nRequest:\n"
+        for k in dir(req):
+            if not k.startswith('_'):
+                msg += "- " + str(k) + ":" + str(getattr(req,k)) + "\n"
     
     # send it out
     conn = smtplib.SMTP(SMTP_SERVER)

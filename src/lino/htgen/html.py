@@ -46,7 +46,7 @@ class Fragment(Container):
 
 
 class SPAN(Fragment):
-    allowedContent = (CDATA,Fragment)
+    allowedContent = (CDATA,IMG,Fragment)
 
 #class DIV(Fragment):
 #    allowedContent = (CDATA,P,TABLE,SPAN,BR,IMG)
@@ -205,11 +205,7 @@ class BODY(Container):
     allowedAttribs=dict(
         bgcolor='bgcolor',
         **Fragment.allowedAttribs)
-    allowedContent=(TABLE,P,UL,OL,PRE)
-##     def __init__(self,*args,**kw):
-##         Container.__init__(self,*args,**kw)
-
-
+    allowedContent=(P,TABLE,UL,OL,PRE)
 
 class HEAD(Container):
     ignore=True
