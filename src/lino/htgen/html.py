@@ -205,7 +205,7 @@ class BODY(Container):
     allowedAttribs=dict(
         bgcolor='bgcolor',
         **Fragment.allowedAttribs)
-    allowedContent=(P,TABLE,UL,OL,PRE)
+    allowedContent=(P,IMG,TABLE,UL,OL,PRE)
 
 class HEAD(Container):
     ignore=True

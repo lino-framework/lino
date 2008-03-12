@@ -18,8 +18,8 @@ if ext.lower() == ".mht":
   msg=email.message_from_file(open(filename,"r"))
   for part in msg.walk():
     if part.get_content_type() == "text/html":
-      #print part.get_payload()
-      d.load_html(part.get_payload(decode=True))
+      print part.get_payload(decode=True)
+      #d.load_html(part.get_payload(decode=True))
 else:      
   d.load_html(open(filename,"r").read())
     

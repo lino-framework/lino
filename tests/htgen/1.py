@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2008 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,14 +20,14 @@
 """
 """
 from lino.misc.tsttools import TestCase, main
-from lino.gendoc import html
+from lino.htgen import Document
 
 
 class Case(TestCase):
 
     def memo2xml(self,memo,xml):
-        doc=html.HtmlDocument()
-        doc.body.memo(memo)
+        doc=Document()
+        doc.memo(memo)
         self.assertEquivalent(doc.body.toxml(),xml)
     
     def test01(self):
@@ -249,22 +249,35 @@ Nested table:
         </TD></TR></TABLE></BODY>        
         """)
         
-##         self.memo2xml("""
-
-##         <table class="EmptyTable">
-##         <tr>
-##         <td valign="top">blabla
-
-##         </td>
-##         <td align="left"></td>
-##         </table>
-##         ""","""
-##         InvalidRequest: P not allowed in TR
-
-##         Die leere Zeile am Ende des ersten TD hat self.parsep gesetzt,
-##         und dadurch wird im zweiten TD ein neuer P gestartet...
+        self.memo2xml("""
+<p class=MsoNormal style='tab-stops:2.0cm'><u><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:"Arial Rounded MT Bold";color:black'>Artikel
+1 :<span style='mso-spacerun:yes'>&nbsp;&nbsp; </span><b>Art der
+Wettk&auml;mpfe<o:p></o:p></b></span></u></p>
+        """,u"""
+<BODY><P class="MsoNormal"><U><SPAN>Artikel
+1 :<SPAN>\xa0\xa0 </SPAN><B>Art der
+Wettk\xe4mpfe</B></SPAN></U></P></BODY>       
+        """)
         
-##         """)
+        if False:
+        
+          self.memo2xml("""
+
+          <table class="EmptyTable">
+          <tr>
+          <td valign="top">blabla
+
+          </td>
+          <td align="left"></td>
+          </table>
+          ""","""
+          InvalidRequest: P not allowed in TR
+
+          Die leere Zeile am Ende des ersten TD hat self.parsep gesetzt,
+          und dadurch wird im zweiten TD ein neuer P gestartet...
+
+          """)
         
         self.memo2xml("""
         ""","""
