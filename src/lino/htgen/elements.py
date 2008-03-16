@@ -82,7 +82,6 @@ class Element:
     autoClosedByStart=[]
     autoClosedByEnd=[]
     ignore=False
-    #defaultAttribs = {}
     parent=None
     style=None
     def __init__(self,style=None,**kw):
@@ -198,13 +197,17 @@ class Container(Element):
             for k,v in self._attribs.items():
                 if v is not None:
                     wr(' %s=%s' % (self.allowedAttribs[k],quote(v)))
-        if len(self.content) == 0:
-            wr('/>')
-        else:
-            wr('>')
-            for e in self.content:
-                e.__xml__(wr)
-            wr("</"+self.tag()+">" )
+##         if len(self.content) == 0:
+##             wr('/>')
+##         else:
+##             wr('>')
+##             for e in self.content:
+##                 e.__xml__(wr)
+##             wr("</"+self.tag()+">" )
+        wr('>')
+        for e in self.content:
+            e.__xml__(wr)
+        wr("</"+self.tag()+">" )
 
 
 

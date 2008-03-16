@@ -260,6 +260,21 @@ Wettk&auml;mpfe<o:p></o:p></b></span></u></p>
 Wettk\xe4mpfe</B></SPAN></U></P></BODY>       
         """)
         
+        
+        self.memo2xml("""
+<p class=MsoNormal style='tab-stops:56.0pt 310.0pt'><span style='font-size:
+10.0pt;mso-bidi-font-size:12.0pt;font-family:"Arial Rounded MT Bold";
+color:black'><span style='mso-tab-count:1'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><u>Poussins
+(Sch&uuml;ler U 9)</u> (M&auml;dchen und Jungen)<u><o:p></o:p></u></span></p>
+        """,u"""
+<BODY><P class="MsoNormal"><SPAN><SPAN>\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0 
+</SPAN><U>Poussins\n(Schüler U 9)</U> (Mädchen und Jungen)<U></U></SPAN></P></BODY>
+""")
+        self.memo2xml("""
+<u><o:p></o:p></u>""",u"""
+<BODY><P><U></U></P></BODY>""")
+        
+        
         if False:
         
           self.memo2xml("""
@@ -281,7 +296,7 @@ Wettk\xe4mpfe</B></SPAN></U></P></BODY>
         
         self.memo2xml("""
         ""","""
-        <BODY/>
+        <BODY></BODY>
         """)
         
         

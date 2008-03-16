@@ -35,9 +35,6 @@ class IMG(Element):
 class Fragment(Container):
     fragmentable=True
     flowable=False
-##     allowedAttribs=dict(id='id',
-##                         lang='lang',
-##                         title='title')
     allowedAttribs=dict(xclass='class',
                         id='id',
                         lang='lang',
@@ -52,8 +49,8 @@ class SPAN(Fragment):
 #    allowedContent = (CDATA,P,TABLE,SPAN,BR,IMG)
     
 
-class B(SPAN): pass    
-class EM(SPAN): pass    
+class B(SPAN): pass
+class EM(SPAN): pass
 class I(SPAN): pass
 class U(SPAN): pass
 class SUP(SPAN): pass
