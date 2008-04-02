@@ -139,7 +139,6 @@ class PdfTextPrinter(FileTextPrinter):
     def onBeginPage(self):
         #self.background()
         if self.isLandscape():
-            # if landscape mode
             self.canvas.rotate(90)
             self.canvas.translate(0,-210.0*mm)
         self.textobject = self.canvas.beginText()
@@ -197,6 +196,8 @@ class PdfTextPrinter(FileTextPrinter):
     def write(self,text):
         self.session.debug("write(%r)",text)
         self.beforeWrite()
+        assert not "\n" in text, repr(text)
+        assert not "\r" in text, repr(text)
         self.prepareFont()
 
 ##         if self.coding is not None:

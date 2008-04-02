@@ -18,11 +18,7 @@
 
 """
 
-pdfprn and winprn produced different results if font size
-changes. Win32TextPrinter.newline() advanced using the current leading
-value at the end of the line, while PdfTextPrinter.newline() calls
-textobject.textLine() which appearently respects the biggest font that
-has been used. I solved this by introducing Win32TextPrinter.maxLeading.
+This is another case where pdfprn and winprn produced different results.
 
 """
 
@@ -36,12 +32,10 @@ class Case(TestCase):
     ""
 
     def doit(self,d):
-        INPUT="""
-        
-        \033c5 ABCDEFG HIJKLMNO \033c12 
-        abcdefg : hijk lmno
-
-        """
+        INPUT="""\033c12
+   This text is 12cpi
+   \033c5 This text is 5cpi\033c12
+   This text is again 12cpi """
 
         for line in INPUT.splitlines():
             d.writeln(line)
@@ -50,13 +44,13 @@ class Case(TestCase):
 
     def test01(self):
 
-        spoolFile = self.addTempFile("1.ps",showOutput=True)
+        spoolFile = self.addTempFile("2.ps",showOutput=True)
         d = winprn.Win32TextPrinter(
             config.win32.get('postscript_printer'),
             spoolFile)
         self.doit(d)
         
-        spoolFile = self.addTempFile("1.pdf",showOutput=True)
+        spoolFile = self.addTempFile("2.pdf",showOutput=True)
         d = pdfprn.PdfTextPrinter(spoolFile)
         self.doit(d)
         
