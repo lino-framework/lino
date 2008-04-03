@@ -73,7 +73,8 @@ class PdfTextPrinter(FileTextPrinter):
     
     extension=".pdf"
     ratio_width2size=1.7   # fontsize = width * ratio_width2size
-    ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
+    #ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
+    ratio_size2leading=1.065 # leading = fontsize * ratio_size2leading
     charwidth=0.6
     
     def __init__(self,filename,fontName="Courier",**kw):
@@ -107,8 +108,10 @@ class PdfTextPrinter(FileTextPrinter):
 ##             pass # continue with the Adobe builtin version
         
         
+        self.maxLeading=0
+        self.leading=0
         self.canvas = canvas.Canvas(filename,pagesize=A4)
-        self.textobject = None
+        #self.textobject = None
         self.status = Status(fontName=fontName)
         self.leading=None
         self.lpi = None
@@ -138,17 +141,17 @@ class PdfTextPrinter(FileTextPrinter):
         
     def onBeginPage(self):
         #self.background()
+        self.x = self.margin
+        self.y = self.pageHeight-self.margin
         if self.isLandscape():
             self.canvas.rotate(90)
             self.canvas.translate(0,-210.0*mm)
-        self.textobject = self.canvas.beginText()
-        self.textobject.setTextOrigin(self.margin,self.pageHeight-self.margin)
         #FileTextPrinter.onBeginPage(self)
     
     def onEndPage(self):
-        self.canvas.drawText(self.textobject)
+        #self.canvas.drawText(self.textobject)
         self.canvas.showPage()
-        self.textobject = None
+        #self.textobject = None
         
     def onSetPageSize(self):
         self.canvas.setPageSize((self.pageHeight,self.pageWidth))
@@ -182,15 +185,15 @@ class PdfTextPrinter(FileTextPrinter):
             elif self.status.ital:
                 fontname += "-Oblique"
             
-        self.textobject.setFont(fontname,
-                                self.status.size,
-                                self.leading)
+        self.canvas.setFont(fontname,
+                            self.status.size,
+                            self.leading)
         if False and not self._can_bold:
             # disabled because that doesn't look satisfying either
             if self.status.bold:
-                self.textobject.setFillGray(0.0)
+                self.canvas.setFillGray(0.0)
             else:
-                self.textobject.setFillGray(0.2)
+                self.canvas.setFillGray(0.2)
         
 
     def write(self,text):
@@ -200,15 +203,11 @@ class PdfTextPrinter(FileTextPrinter):
         assert not "\r" in text, repr(text)
         self.prepareFont()
 
-##         if self.coding is not None:
-##             text = text.encode(self.coding)
-##         self.textobject.textOut(text)
-##         return
-
-            
-        #for k,v in HACK_BOXCHARS.items():
-        #    text = text.replace(k,v)
-
+        self.maxLeading=max(self.leading,self.maxLeading)
+        
+        if len(text) == 0:
+            return
+        
         if False: # reportlab version 1.x
             try:
                 text = text.encode("iso-8859-1","strict")
@@ -217,12 +216,15 @@ class PdfTextPrinter(FileTextPrinter):
                 print repr(text)
                 text = text.encode("iso-8859-1","replace")
 
-        self.textobject.textOut(text)
+        self.canvas.drawString(self.x,self.y-self.leading,text)
+        self.x += self.canvas.stringWidth(text)
         
     def newline(self):
         # self.session.debug("PdfTextPrinter.newline()")
         self.write("") # see http://lino.saffre-rumma.ee/news/463.html
-        self.textobject.textLine()
+        self.x = self.margin
+        self.y -= self.maxLeading
+        self.maxLeading=0
 
         
     def length2i(self,s):
@@ -267,7 +269,7 @@ class PdfTextPrinter(FileTextPrinter):
 
 
         # position of picture is the current text cursor 
-        (cx,cy) = self.textobject.getCursor()
+        (cx,cy) = self.canvas.getCursor()
         if cx == 0 and cy == 0:
             # print "no text has been processed until now"
             cx = self.margin

@@ -104,6 +104,8 @@ class Win32TextPrinter(TextPrinter):
         TextPrinter.__init__(self,pageSize=A4,**kw)
 
         self.lpi = None
+        self.line = ""
+        self.leading = 0
         self.maxLeading=0
         self.logfont=win32gui.LOGFONT()
         """
@@ -197,8 +199,6 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         
         #self.doc.dc.MoveTo(int(self.x),-int(self.y))
         #self.y = doc.pageHeight-(2*doc.margin)
-        self.line = ""
-        self.leading = 0
         
         #print "Viewport:",\
         #      self.dc.GetViewportOrg(), self.dc.GetViewportExt()
