@@ -269,7 +269,8 @@ class PdfTextPrinter(FileTextPrinter):
 
 
         # position of picture is the current text cursor 
-        (cx,cy) = self.canvas.getCursor()
+        #(cx,cy) = self.canvas.getCursor()
+        cx,cy = self.x, self.y
         if cx == 0 and cy == 0:
             # print "no text has been processed until now"
             cx = self.margin

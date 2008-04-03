@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre
+## Copyright 2003-2008 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,9 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-__micro__ = 37
+__micro__ = 38
 
-__date__ = "2007-11-23"
+__date__ = "2008-04-03"
 
 __version__ = "0.6.%d" % __micro__
 
@@ -28,7 +28,7 @@ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 __url__ = "http://lino.saffre-rumma.ee"
 
 __copyright__ = """\
-Copyright (c) 2002-2007 Luc Saffre.
+Copyright (c) 2002-2008 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
