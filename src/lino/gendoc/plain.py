@@ -149,7 +149,7 @@ class PlainDocument(GenericDocument):
                 # vfill each cell:
                 for j in range(len(rpt.columns)):
                     self.vfill(wrappedCells[j],
-                               rpt.columns[j].valign,
+                               rpt.columns[j].datatype.valign,
                                rowHeight)
 
                 for i in range(rowHeight):
@@ -173,10 +173,10 @@ class PlainDocument(GenericDocument):
         for j in range(len(rpt.columns)):
             assert_pure(cellValues[j][i])
             l.append(self.hfill(cellValues[j][i],
-                                rpt.columns[j].halign,
+                                rpt.columns[j].datatype.halign,
                                 rpt.columns[j].width))
         s=self.columnSep.join(l)
-        self.write(s + "\n")
+        self.write(s.rstrip() + "\n")
 
         
     def hfill(self,s,align,width):
@@ -214,7 +214,7 @@ class PlainDocument(GenericDocument):
         w=TextWrapper(self.lineWidth)
         l=w.wrap(text)
         for ln in l:
-            self.write(ln+"\n")
+            self.write(ln.rstrip()+"\n")
         self.write("\n")
 
     def heading(self,level,text,**kw):

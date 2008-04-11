@@ -21,22 +21,15 @@
 import types
 from lino.misc.descr import Describable
 from lino.console import syscon
-from lino.adamo.datatypes import STRING
 #from lino.adamo.query import Query
 from lino.misc.etc import ispure
 from lino.gendoc.plain import PlainDocument
-
+from lino.reports.datatypes import STRING, INT
 from lino.reports.constants import *
-
-class ConfigError(Exception):
-    pass
-
-class NotEnoughSpace(Exception):
-    pass
 
 class ReportRow:
     def __init__(self,rpt,item,index):
-        self.item = item # may be None
+        self.item = item # the item returned by iterator.next()
         self.index=index
         self.rpt=rpt
         self.computeValues()
@@ -79,53 +72,58 @@ class ReportRow:
             i+=1
                     
         
-    def __repr__(self):
-        return self.__class__.__name__+"("\
-               +",".join([repr(x) for x in self.values])+")"
+##     def __repr__(self):
+##         return self.__class__.__name__+"("\
+##                +",".join([repr(x) for x in self.values])+")"
 
 
 
     
-class BaseReport:
+class Report:
     
     title=None
     width=None
     columnWidths=None
     rowHeight=None
     rowClass=ReportRow
+    defaultDataType=STRING
 
-    def __init__(self, parent=None, 
+    def __init__(self, **kw):
+        self._mustSetup=True
+        self._mustComputeWidths=True
+        self.columns = []
+        self.groups = []
+        self.totals = []
+        self.formColumnGroups = None
+        self.configure(**kw)
+
+        
+    def configure(self, 
                  columnWidths=None,
                  width=None,
                  rowHeight=None,
                  title=None
                  ):
 
-        #self._mustSetup=True
-        self._setupDone=None
-        self.columns = []
-        self.groups = []
-        self.totals = []
-        #self._onRowEvents=[]
-        self.formColumnGroups = None
-
-        if parent is not None:
-            #if iterator is None: iterator=parent._iterator
-            if title is None: title=parent.title
-            #if ds is None: ds=parent.ds
-            if columnWidths is None: columnWidths=parent.columnWidths
-            if width is None: width=parent.width
-            if rowHeight is None: rowHeight=parent.rowHeight
-        #self.ds = ds
-        if rowHeight is not None: self.rowHeight = rowHeight
-        if columnWidths is not None: self.columnWidths=columnWidths
-        if width is not None: self.width=width
-        if title is not None: self.title=title
+        if rowHeight is not None:
+            self.rowHeight = rowHeight
+        if title is not None:
+            self.title=title
+        if columnWidths is not None:
+            self.columnWidths=columnWidths
+            self._mustComputeWidths=True
+        if width is not None:
+            self.width=width
+            self._mustComputeWidths=True
+        self._mustSetup=True
 
     def child(self,**kw):
-        assert not kw.has_key('parent'),\
-               "rpt.child(parent=x) is nonsense"
-        return self.__class__(parent=self,**kw)
+        r=copy.copy(self)
+        r.configure(**kw)
+        return r
+##         assert not kw.has_key('parent'),\
+##                "rpt.child(parent=x) is nonsense"
+##         return self.__class__(parent=self,**kw)
         
 
     def onClose(self):
@@ -171,8 +169,8 @@ class BaseReport:
     def computeWidths(self,columnSepWidth):
         
         """set total width or distribute available width to columns
-        without width. Note that these widths are to be interpreted as
-        logical widths.
+        without explicit width. Note that these widths are to be
+        interpreted as logical widths.
 
         """
         
@@ -188,6 +186,13 @@ class BaseReport:
                     col.width = int(item)
                 i += 1
 
+        if self.width is None:
+            for col in self.columns:
+                if col.width is None:
+                    col.width=col.datatype.getMinWidth()
+            return
+            
+
         waiting = [] # columns waiting for automatic width
         used = 0 # how much width used up by columns with a width
         for col in self.columns:
@@ -195,6 +200,7 @@ class BaseReport:
                 waiting.append(col)
             else:
                 used += col.width
+
                 
         available=self.width - columnSepWidth*(len(self.columns)-1)
 
@@ -231,15 +237,17 @@ class BaseReport:
     def setupReport(self):
         pass
     
-    def beginReport(self,lineWidth=100,columnSepWidth=0):
-        assert type(lineWidth) is types.IntType
+    def beginReport(self,lineWidth=None,columnSepWidth=0):
+        #assert type(lineWidth) is types.IntType
         #if self._mustSetup:
-        if self._setupDone is None:
-            self._setupDone=True
+        if self._mustSetup:
             self.setupReport()
+            self._mustSetup=False
+        if self._mustComputeWidths:
             if self.width is None:
                 self.width=lineWidth
             self.computeWidths(columnSepWidth)
+            self._mustComputeWidths=False
 ##         else:
 ##             assert self._setupDone is doc,\
 ##                    "%r being used by %s" % (self, self._setupDone)
@@ -259,8 +267,6 @@ class BaseReport:
         raise NotImplementedError
         #return self.rowClass(self,None,index)
         
-    #def processItem(self,doc,item):
-    #def processItem(self,rowno,item):
     def process_item(self,item,rowno=None):
         if rowno is None:
             rowno=len(self)
@@ -293,11 +299,11 @@ class BaseReport:
         self.columns.append(col)
         return col
     
-    def addColumn(self,*args,**kw):
-        return self.add_column(ListReportColumn(*args,**kw))
+    def addColumn(self,meth=None,**kw):
+        return self.add_column(ReportColumn(self,meth,**kw))
         
-    def addVurtColumn(self,meth,**kw):
-        return self.add_column(VurtReportColumn(meth,**kw))
+##     def addVurtColumn(self,meth,**kw):
+##         return self.add_column(VurtReportColumn(self,meth,**kw))
 
 ##     def onEach(self,meth):
 ##         self._onRowEvents.append(meth)
@@ -377,49 +383,49 @@ class BaseReport:
 
 class ReportColumn(Describable):
     
-    datatype=STRING
-    
-    def __init__(self,
-                 formatter=unicode,
-                 selector=None,
+    def __init__(self, rpt, meth,
                  name=None,label=None,doc=None,
                  when=None,
-                 halign=LEFT,
-                 valign=TOP,
                  width=None,
+                 datatype=None,
                  ):
         #self._owner = owner
+        self.rpt=rpt
         if label is None:
             label = name
         Describable.__init__(self, None, name,label,doc)
         self.width = width
-        self.valign = valign
-        self.halign = halign
+        #self.valign = valign
+        #self.halign = halign
+        if meth is None:
+            meth=lambda x : x.item[self.index]
+        self.meth = meth
         self.when = when
-        self._formatter=formatter
-##         if selector is None:
-##             selector=self.showSelector
-##         self._selector=selector
+        if datatype is None:
+            datatype=rpt.defaultDataType
+        self.datatype=datatype
+        #if formatter is None and type is not None:
+        #    formatter=type.format
+        #self._formatter=formatter
 
     def setupReportColumn(self,rpt,index):
         assert type(index) == type(1)
         self.index=index
         
+        
     def getCellValue(self,row):
-        raise NotImplementedError,str(self.__class__)
+        return self.meth(row)
 
     def setCellValue(self,row,value):
         raise NotImplementedError,str(self.__class__)
 
-        
-        
     def getMinWidth(self):
-        return self.width
+        return self.datatype.minWidth
     def getMaxWidth(self):
-        return self.width
+        return self.datatype.maxWidth
 
     def format(self,v):
-        s=self._formatter(v)
+        s=self.datatype.format(v)
         assert ispure(s), "%r : %r: not pure" % (self,s)
         return s
 
@@ -436,36 +442,26 @@ class ReportColumn(Describable):
 ##         return self.type
 
 
-class ListReportColumn(ReportColumn):
+## class ListReportColumn(ReportColumn):
     
-    def setupReportColumn(self,rpt,index):
-        ReportColumn.setupReportColumn(self,rpt,index)
-        self.rpt=rpt
+##     def setupReportColumn(self,rpt,index):
+##         ReportColumn.setupReportColumn(self,rpt,index)
+##         self.rpt=rpt
         
-    def getCellValue(self,row):
-        return self.rpt.getCellValue(row.index,self.index)
+##     def getCellValue(self,row):
+##         return self.rpt.getCellValue(row.index,self.index)
 
-    def setCellValue(self,row,value):
-        return self.rpt.setCellValue(row.index,self.index,value)
+##     def setCellValue(self,row,value):
+##         return self.rpt.setCellValue(row.index,self.index,value)
         
 
-class VurtReportColumn(ReportColumn):
+## class VurtReportColumn(ReportColumn):
     
-    def __init__(self,meth,datatype=None,formatter=None,**kw):
-        if datatype is not None:
-            self.datatype=datatype
-        if formatter is None:
-            formatter=self.datatype.format
-        ReportColumn.__init__(self,formatter,**kw)
-        self.meth = meth
+##     def __init__(self,rpt,meth,**kw):
+##         ReportColumn.__init__(self,rpt,**kw)
+##         self.meth = meth
 
-    def getCellValue(self,row):
-        return self.meth(row)
     
-    def getMinWidth(self):
-        return self.datatype.minWidth
-    def getMaxWidth(self):
-        return self.datatype.maxWidth
         
 ##     def format(self,v):
 ##         return self.type.format(v)
@@ -495,61 +491,87 @@ class ReportIterator:
         return row
 
 
-class DictReport(BaseReport):
+class DictReport(Report):
+    """
+    Example:
+    >>> rpt=DictReport(dict(A="Adam",B="Bruno"))
+    >>> print unicode(rpt)
+    key         |value
+    ------------+----------------------------------------
+    A           |Adam
+    B           |Bruno
+    <BLANKLINE>
+    >>> rpt.configure(columnWidths="4 5")
+    >>> print unicode(rpt)
+    key |value
+    ----+-----
+    A   |Adam
+    B   |Bruno
+    <BLANKLINE>    
+    """
     
     def __init__(self,d,**kw):
-        BaseReport.__init__(self,None, **kw)
-        self.dict=d
+        if d is not None:
+            self.dict=d
+        Report.__init__(self,**kw)
 
     def getIterator(self):
         return self.dict.items()
         
     def setupReport(self):
         if len(self.columns) == 0:
-            self.addVurtColumn(meth=lambda row: unicode(row.item[0]),
-                               label="key",
-                               width=12)
-            self.addVurtColumn(meth=lambda row: unicode(row.item[1]),
-                               label="value",
-                               width=40)
+            self.addColumn(lambda row: unicode(row.item[0]),
+                           label="key",
+                           width=12)
+            self.addColumn(lambda row: unicode(row.item[1]),
+                           label="value",
+                           width=40)
 
     def canSort(self):
         return False
         
-class ListReport(BaseReport):
+class ListReport(Report):
     """
-    A Report that iterates on a list or any Python sequence
+    A Report that iterates on a list or sequence that is stored in the report instance.
     
-    example:
+    Example:
+
     >>> class MyList(ListReport):
     ...     data=[1,2,3]
+    ...     defaultDataType=INT(width=3)
     ...     def setupReport(self):
-    ...         self.addColumn(label="i",type=IntType(3))
-    ...         self.addVurtColumn(lambda x: x+1, label="i+1",type=IntType(3))
-    ...         self.addVurtColumn(lambda x: x*2, label="i*2",type=IntType(3))
+    ...         self.addColumn(lambda x: x.item, label="i")
+    ...         self.addColumn(lambda x: x.item+1, label="i+1")
+    ...         self.addColumn(lambda x: x.item*2, label="i*2")
     >>> print unicode(MyList())
-    
-    todo
-
+      i|i+1|i*2
+    ---+---+---
+      1|  2|  2
+      2|  3|  4
+      3|  4|  6
+    <BLANKLINE>
     
     """
     
     data=NotImplementedError
     
+    def __init__(self,data=None,**kw):
+        if data is not None:
+            self.data=data
+        Report.__init__(self,**kw)
+
     def getIterator(self):
         return self.data
     
-    def getCellValue(self,ri,ci):
-        try:
-            return self.data[ri][ci]
-        except IndexError:
-            return
-    def setCellValue(self,ri,ci,v):
-        self.data[ri][ci]=v
+##     def getCellValue(self,ri,ci):
+##         try:
+##             return self.data[ri][ci]
+##         except IndexError:
+##             return
         
-class Report(BaseReport):
-    def __init__(self,**kw):
-        BaseReport.__init__(self,None, **kw)
+##     def setCellValue(self,ri,ci,v):
+##         self.data[ri][ci]=v
+        
 
 def _test():
     import doctest

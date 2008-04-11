@@ -610,6 +610,7 @@ class Toolkit(BaseToolkit):
                 
 
     def show_report(self,sess,rpt,**kw):
+        raise DeprecationError("")
         return sess.showForm(ReportGridForm(rpt))
         
 

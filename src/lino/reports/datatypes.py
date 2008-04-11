@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre 
+## Copyright 2003-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,55 +17,71 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-"""
-
-yet another attempt to create a universal set of datatypes...
-
-"""
-
 import datetime
+import copy
 from time import mktime, ctime
-
 import types
+import decimals
 
 from lino.tools.months import Month
-from lino.misc.descr import Describable
 from lino.misc.etc import ispure, iif
-#from lino.adamo.exceptions import RefuseValue
 from lino.adamo.exceptions import DataVeto
+from lino.reports.constants import *
 
 ERR_FORMAT_NONE = "caller must handle None values"
 ERR_PARSE_EMPTY = "caller must handle empty strings"
 
-#def itself(x): return x
-
-class Type(Describable):
-    "base class for containers of data-type specific meta information"
+class Type:
+    """ Base class for all datatypes.
+    """
     
+    allowedClasses=None # list of allowed classes for value (None means anything accepted)
     defaultValue=None
-    parser=lambda x: x # itself
+    parser=lambda x: x 
     formatter=str
+    halign=LEFT
+    valign=TOP
     
-    allowedClasses=None # None or list of allowed classes for value
 
     # sizes are given in "characters" or "lines"
     
     minHeight = 1
     maxHeight = 1
     
+    def __init__(self,**kw):
+        self.configure(**kw)
         
-    def __call__(self,*args,**kw):
-        return self.child(*args,**kw)
+    def configure(self,valign=None,halign=None):
+        if valign is not None:
+            self.valign=valign
+        if halign is not None:
+            self.halign=halign
+        
+##     def configure(self,**kw):
+##         "make sure that no new attribute gets created"
+##         for k,v in kw.items():
+##             assert hasattr(self,k), \
+##                    "invalid keyword "+k
+##             #assert self.__dict__.has_key(k), \
+##             #       "invalid keyword "+k
+##             self.__dict__[k] = v
+##             # setattr(self,k,v)
+
+    def __call__(self,**kw):
+        child=copy.copy(self)
+        child.configure(**kw)
+        return child
         #return apply(self.__class__,[],kw)
-    
+        
     def __repr__(self):
         return "%s (%s)" % (self.__class__.__name__,
                             repr(self.__dict__))
 
     def format(self,v):
+        """Convert a value of this type to a string.
+        """
         assert v is not None, ERR_FORMAT_NONE
         return self.formatter(v)
-        #return repr(v)
 
     def parse(self,s):
         assert len(s), ERR_PARSE_EMPTY
@@ -74,53 +90,32 @@ class Type(Describable):
     def validate(self,value):
         if self.allowedClasses is None: return
         if value.__class__ in self.allowedClasses: return
-        raise DataVeto("%r is not a valid %s" % (value,self))
+        raise TypeError("%r is not a valid %s" % (value,self))
             
     
-##     def getPreferredWidth(self):
-##         #note: for StringType, self.width is an instance variable, for
-##         #other classes it is a class variable.
-##         return self.width
-
-##     def getMinSize(self):
-##         return (self.minWidth
-        
-        
 class WidthType(Type):
     defaultWidth=50
     minWidth=15
     maxWidth=50
     
-    def __init__(self,parent=None,
-                 width=None,minWidth=None,maxWidth=None,
-                 **kw):
-        Type.__init__(self,parent,**kw)
-        
+    def configure(self,width=None,minWidth=None,maxWidth=None, **kw):
+        Type.configure(self,**kw)
         if width is not None:
             minWidth = maxWidth = width
             
         if maxWidth is not None:
             self.maxWidth = maxWidth
-        elif parent is not None:
-            if self.maxWidth != parent.maxWidth:
-                self.maxWidth = parent.maxWidth
         if minWidth is not None:
             self.minWidth = minWidth
-        elif parent is not None:
-            if self.minWidth != parent.minWidth:
-                self.minWidth = parent.minWidth
                 
-##     def parse(self,s):
-##         assert len(s), ERR_PARSE_EMPTY
-##         return int(s)
-    
-            
+        
 class IntType(WidthType):
     defaultValue=0
     defaultWidth=5
     minWidth=3
     maxWidth=7
     parser=int
+    halign=RIGHT
     allowedClasses=(types.IntType,)
     
 ##     def parse(self,s):
@@ -149,10 +144,6 @@ class AutoIncType(IntType):
 
 
 
-#class AreaType(IntType):
-#    pass
-
-    
     
 class LongType(IntType):
     parser=long
@@ -214,56 +205,17 @@ class PasswordType(StringType):
 
 
 class MemoType(StringType):
-    def __init__(self,parent=None,
-                 height=None, minHeight=None,maxHeight=None,
+    def configure(self,
+                 height=None,
+                 minHeight=4,maxHeight=10,
                  **kw):
-        StringType.__init__(self,parent,**kw)
         if height is not None:
             minHeight = maxHeight = height
-            
-        if minHeight is None:
-            if parent is None:
-                minHeight=4
-            else:
-                minHeight=parent.minHeight
-                
-        if maxHeight is None:
-            if parent is None:
-                maxHeight=10
-            else:
-                maxHeight=parent.maxHeight
-                
         self.minHeight = minHeight
         self.maxHeight = maxHeight
-    
-        
-class TimeStampType(Type):
-    maxWidth = 10
-    minWidth = 10
-    def parse(self,s):
-        assert len(s), ERR_PARSE_EMPTY
-        l=s.split()
-        if len(l) == 2:
-            d=DATE.parse(l[0])
-            t=TIME.parse(l[1])
-            dt=datetime.datetime.combine(d,t)
-            ts_tuple=dt.timetuple()
-            return mktime(ts_tuple)
-        raise ValueError, repr(s)
-    
-    def format(self,v):
-        assert v is not None, ERR_FORMAT_NONE
-        return ctime(v)
-    
-    def validate(self,value):
-        if value.__class__ in (types.FloatType, types.IntType):
-            return
-        raise DataVeto("not a date")
-##         if not isinstance(value,types.FloatType):
-##             #raise repr(value)+" is not a date"
-##             raise DataVeto("not a date")
+        StringType.configure(self,**kw)
 
-    
+        
 class DateType(Type):
     maxWidth = 10
     minWidth = 10
@@ -345,6 +297,36 @@ class TimeType(Type):
         if not isinstance(value,datetime.time):
             #raise repr(value)+" is not a time"
             raise DataVeto("not a time")
+
+
+class TimeStampType(Type):
+    maxWidth = 10
+    minWidth = 10
+    def parse(self,s):
+        assert len(s), ERR_PARSE_EMPTY
+        l=s.split()
+        if len(l) == 2:
+            d=DateType.parse(None,l[0])
+            t=TimeType.parse(None,l[1])
+            dt=datetime.datetime.combine(d,t)
+            ts_tuple=dt.timetuple()
+            return mktime(ts_tuple)
+        raise ValueError, repr(s)
+    
+    def format(self,v):
+        assert v is not None, ERR_FORMAT_NONE
+        return ctime(v)
+    
+    def validate(self,value):
+        if value.__class__ in (types.FloatType, types.IntType):
+            return
+        raise DataVeto("not a date")
+##         if not isinstance(value,types.FloatType):
+##             #raise repr(value)+" is not a date"
+##             raise DataVeto("not a date")
+
+    
+        
             
     
 class DurationType(Type):
@@ -397,28 +379,6 @@ class AmountType(IntType):
 class PriceType(IntType):
     pass
 
-ASTRING = AsciiType()
-STRING = StringType()
-PASSWORD = PasswordType()
-MEMO = MemoType()     
-DATE = DateType()     
-MONTH = MonthType()
-TIME = TimeType() # StringType(width=8)
-TIMESTAMP = TimeStampType() 
-DURATION = DurationType() 
-INT = IntType() 
-LONG = LongType() 
-BOOL = BoolType()
-AMOUNT = AmountType()
-PRICE = PriceType()
-ROWID = AutoIncType()
-URL = UrlType(width=200)
-EMAIL = EmailType(width=60)
-#AREA = AreaType()
-IMAGE = ImageType()
-LOGO = LogoType()
-LANG=STRING(2)
-
 
 def itot(i):
     return stot(str(i))
@@ -451,5 +411,26 @@ def itom(i):
 def stom(s):
     return MONTH.parse(s)
 
+
+ASTRING = AsciiType()
+STRING = StringType()
+PASSWORD = PasswordType()
+MEMO = MemoType()     
+DATE = DateType()     
+MONTH = MonthType()
+TIME = TimeType() # StringType(width=8)
+TIMESTAMP = TimeStampType() 
+DURATION = DurationType() 
+INT = IntType() 
+LONG = LongType() 
+BOOL = BoolType()
+AMOUNT = AmountType()
+PRICE = PriceType()
+ROWID = AutoIncType()
+URL = UrlType(width=200)
+EMAIL = EmailType(width=60)
+IMAGE = ImageType()
+LOGO = LogoType()
+LANG = AsciiType(width=2)
 
 __all__ = filter(lambda x: x[0] != "_", dir())

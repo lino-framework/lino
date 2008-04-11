@@ -22,6 +22,7 @@
 from lino.misc.tsttools import TestCase, main
 from lino.htgen import Document
 from lino.reports.reports import ListReport,LEFT,RIGHT
+from lino.reports.datatypes import PRICE
 
 
 class InvoiceReport(ListReport):
@@ -36,7 +37,7 @@ class InvoiceReport(ListReport):
         self.addColumn(label="Description"),
         #self.addColumn( label="Qty", width=3),
         #self.addColumn(label="Unit price", width=12),
-        self.addColumn(label="Price", width=12,halign=RIGHT),
+        self.addColumn(label="Price", datatype=PRICE),
 
 class Case(TestCase):
 
@@ -47,7 +48,7 @@ class Case(TestCase):
         doc.par("Tallinn, 10. juuni 2006. a.",align="RIGHT")
         doc.report(InvoiceReport())
         
-        if False:
+        if True:
             spoolFile = self.addTempFile("84.html",showOutput=True)
             doc.saveas(spoolFile)
         

@@ -20,3 +20,12 @@
 ## from lino.reports.reports import \
 ##      ReportColumn,\
 ##      BaseReport, Report, DictReport, RIGHT
+
+"""
+
+"""
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+

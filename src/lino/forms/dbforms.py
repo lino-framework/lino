@@ -20,7 +20,7 @@ from lino.console.task import BugDemo
 from lino.gendoc.gendoc import GenericDocument
 from lino.forms import keyboard
 from lino.forms.forms import Form, Dialog
-from lino.adamo.dbreports import QueryReport
+#from lino.adamo.dbreports import QueryReport
 from lino.forms.gui import GuiApplication
 
 class CreateReportRowDialog(Dialog):
@@ -171,7 +171,8 @@ class ReportForm(Form,GenericDocument):
         allowedValues=col.datacol.getAllowedValues(row.item)
         if allowedValues is None:
             return
-        rpt=QueryReport(allowedValues)
+        raise DeprecationError("rpt=QueryReport(allowedValues)")
+    
         #print value
         #print allowedValues
         #rpt.show()

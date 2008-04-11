@@ -138,7 +138,9 @@ class Story:
         leave the code until I get a working usage example.  """
     
         rpt.beginReport()
-        header=[html.TH(col.getLabel(),align=col.halign,valign=col.valign)
+        header=[html.TH(col.getLabel(),
+                        align=col.datatype.halign,
+                        valign=col.datatype.valign)
                 for col in rpt.columns]
         t=html.TABLE()
         cols=[]
@@ -149,8 +151,8 @@ class Story:
         # TFOOT if present must come before TBODY
         tbody=t.append(html.TBODY())
         for row in rpt.rows():
-            line=[html.TD(s, align=col.halign,
-                     valign=col.valign)
+            line=[html.TD(s, align=col.datatype.halign,
+                     valign=col.datatype.valign)
                   for (col,s) in row.cells()]
             tbody.append(html.TR(*line))
             

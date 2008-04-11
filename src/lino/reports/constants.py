@@ -23,4 +23,18 @@ CENTER = "CENTER"
 TOP = "TOP"
 BOTTOM = "BOTTOM"
 
-__all__ = ["LEFT","RIGHT","CENTER","TOP","BOTTOM"]
+class ConfigError(Exception):
+    pass
+
+class NotEnoughSpace(Exception):
+    pass
+
+
+
+
+__all__ = filter(lambda x: x[0] != "_", dir())
+
+## __all__ = [
+    
+##     "LEFT","RIGHT","CENTER","TOP","BOTTOM",
+##     ]
