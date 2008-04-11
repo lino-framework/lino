@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre
+## Copyright 2003-2008 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -308,11 +308,11 @@ class TestCase(unittest.TestCase):
         if msg is not None:
             u.write(msg+":")
         u.write("\n--- observed --- :\n")
-        u.write(observed)
-        #uwrite(repr(" ".join(l1))) # txt1)
+        #u.write(observed)
+        u.write(repr(" ".join(l1)))
         u.write("\n--- expected --- :\n")
-        u.write(expected)
-        #uwrite(repr(" ".join(l2))) # txt1)
+        #u.write(expected)
+        u.write(repr(" ".join(l2)))
         u.write("\n---\n")
 
         if False:
@@ -320,14 +320,24 @@ class TestCase(unittest.TestCase):
             diff = ndiff(l1,l2)
             print '\n'.join(diff)
 
-        if False:
-            file("observed.txt","wt").write(observed)
-            file("expected.txt","wt").write(expected)
+        if True:
+            file("observed.txt","wt").write("\n".join(l1))
+            file("expected.txt","wt").write("\n".join(l2))
         
         #self.fail(a.getvalue()) 
         #self.fail(u.getvalue())
         self.fail(u)
 
+    def assertEquivalentHtml(self,observed,expected,msg=None):
+        
+        """ like assertEquivalent(), but here we ignore differences
+        that are not importand in HTML
+
+        """
+        observed=observed.replace("><","> <")
+        expected=expected.replace("><","> <")
+        self.assertEquivalent(observed,expected,msg=None)
+        
     def addTempFile(self,filename,showOutput=None):
         """unlike tempfile, these files are not OPENED
         """

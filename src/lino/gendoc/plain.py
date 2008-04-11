@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -18,13 +18,28 @@
 
 import sys
 from textwrap import TextWrapper
+from cStringIO import StringIO
 
 from lino.gendoc.gendoc import GenericDocument
-from lino.reports import reports
+from lino.reports.constants import *
 from lino.console import syscon
 from lino.misc.etc import assert_pure
 
 class PlainDocument(GenericDocument):
+    """
+    Usage example:
+
+    >>> doc=PlainDocument(lineWidth=41)
+    >>> doc.h1("Title")
+    >>> doc.par("Foo, bar and baz. " * 4)
+    >>> print unicode(doc).strip()
+    Title
+    -----
+    Foo, bar and baz. Foo, bar and baz. Foo,
+    bar and baz. Foo, bar and baz.
+    
+    
+    """
     def __init__(self,
                  writer=None,
                  columnSep='|',
@@ -32,8 +47,9 @@ class PlainDocument(GenericDocument):
                  columnHeaderSep='-',
                  **kw):
         if writer is None:
+            writer=StringIO()
             #writer=syscon.getSystemConsole().toolkit.stdout
-            writer=syscon.getSystemConsole()
+            #writer=syscon.getSystemConsole()
         assert hasattr(writer,'write')
         self._writer = writer
         self.columnSep = columnSep
@@ -48,6 +64,9 @@ class PlainDocument(GenericDocument):
 ##             raise "FooException: could not write %r to %r" % (
 ##                 txt, self._writer)
         
+    def __unicode__(self):
+        return self._writer.getvalue()
+    
     def report(self,rpt):
         #print __file__, rpt.iterator._filters
         # initialize...
@@ -76,7 +95,7 @@ class PlainDocument(GenericDocument):
             i+=1
             
         for cell in headerCells:
-            self.vfill(cell,reports.TOP,headerHeight)
+            self.vfill(cell,TOP,headerHeight)
             
         for i in range(headerHeight):
             self._writeRptLine(rpt,headerCells,i)
@@ -161,35 +180,50 @@ class PlainDocument(GenericDocument):
 
         
     def hfill(self,s,align,width):
-        if align == reports.LEFT:
+        if align == LEFT:
             return s.ljust(width)
-        if align == reports.RIGHT:
+        if align == RIGHT:
             return s.rjust(width)
-        if align == reports.CENTER:
+        if align == CENTER:
             return s.center(width)
         raise ConfigError("hfill() : %s" % repr(align))
 
     def vfill(self,lines,valign,height):
         n = height - len(lines) # negative if too many
         if n == 0: return
-        if valign == reports.TOP:
+        if valign == TOP:
             if n > 0:
                 for i in range(n):
                     lines.append("")
             else:
                 del lines[n:] # ?
-        elif valign == reports.BOTTOM:
+        elif valign == BOTTOM:
             if n > 0:
                 for i in range(-n):
                     lines.insert(0,"")
             else:
                 del lines[0:n] # ?
-        elif valign == reports.CENTER:
+        elif valign == CENTER:
             raise NotImplementedError
         else:
             raise ConfigError("vfill() : %s" % repr(valign))
                 
 
 
-    def par(self,txt):
-        self.write("\n"+txt+"\n")
+    def par(self,text):
+        w=TextWrapper(self.lineWidth)
+        l=w.wrap(text)
+        for ln in l:
+            self.write(ln+"\n")
+        self.write("\n")
+
+    def heading(self,level,text,**kw):
+        self.write("\n"+text+"\n" + "-" * len(text) + "\n")
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+

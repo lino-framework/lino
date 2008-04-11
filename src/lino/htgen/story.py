@@ -17,12 +17,13 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+import re
+import codecs
+
 from lino.misc.tsttools import UniStringIO
 from lino.htgen.memo import MemoParser, ParserError
 from lino.htgen import html
 from lino.misc import restify
-
-import re
 
 def url2html(s):
     a=s.split(None,1)
@@ -144,7 +145,7 @@ class Story:
         for col in rpt.columns:
             cols.append(html.COL(width=str(col.width)+"*"))
         t.append(html.COLGROUP(*cols))
-        t.append(html.THEAD(TR(*header)))
+        t.append(html.THEAD(html.TR(*header)))
         # TFOOT if present must come before TBODY
         tbody=t.append(html.TBODY())
         for row in rpt.rows():
@@ -236,6 +237,9 @@ class Document(Story):
         u=UniStringIO()
         self.__xml__(u.write)
         return u.getvalue()
+
+    def saveas(self,filename,encoding="utf-8"):
+        codecs.open(filename,"w",encoding).write(self.toxml())
 
 
         

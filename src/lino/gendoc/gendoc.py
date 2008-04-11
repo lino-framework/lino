@@ -53,6 +53,9 @@ class GenericDocument:
     def renderForm(self,frm):
         frm.render(self)
         
+    def h1(self,txt,**kw): self.heading(1,txt,**kw)
+    def h2(self,txt,**kw): self.heading(2,txt,**kw)
+    def h3(self,txt,**kw): self.heading(3,txt,**kw)
     
 
 

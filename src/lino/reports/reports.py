@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2008 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -24,18 +24,15 @@ from lino.console import syscon
 from lino.adamo.datatypes import STRING
 #from lino.adamo.query import Query
 from lino.misc.etc import ispure
+from lino.gendoc.plain import PlainDocument
+
+from lino.reports.constants import *
 
 class ConfigError(Exception):
     pass
 
 class NotEnoughSpace(Exception):
     pass
-
-LEFT = "LEFT"
-RIGHT = "RIGHT"
-CENTER = "CENTER"
-TOP = "TOP"
-BOTTOM = "BOTTOM"
 
 class ReportRow:
     def __init__(self,rpt,item,index):
@@ -312,6 +309,15 @@ class BaseReport:
     def show(self,**kw):
         syscon.getSystemConsole().show_report(self,**kw)
 
+    def __unicode__(self):
+        doc = PlainDocument()
+        doc.beginDocument()
+        doc.report(self)
+        doc.endDocument()
+        return unicode(doc)
+        
+        
+
 ##     def showFormNavigator(self,sess,**kw):
 ##         frm=sess.form(label=self.getTitle(),
 ##                       name=self.getName(),
@@ -511,6 +517,22 @@ class DictReport(BaseReport):
         return False
         
 class ListReport(BaseReport):
+    """
+    A Report that iterates on a list or any Python sequence
+    
+    example:
+    >>> class MyList(ListReport):
+    ...     data=[1,2,3]
+    ...     def setupReport(self):
+    ...         self.addColumn(label="i",type=IntType(3))
+    ...         self.addVurtColumn(lambda x: x+1, label="i+1",type=IntType(3))
+    ...         self.addVurtColumn(lambda x: x*2, label="i*2",type=IntType(3))
+    >>> print unicode(MyList())
+    
+    todo
+
+    
+    """
     
     data=NotImplementedError
     
@@ -529,12 +551,10 @@ class Report(BaseReport):
     def __init__(self,**kw):
         BaseReport.__init__(self,None, **kw)
 
+def _test():
+    import doctest
+    doctest.testmod()
 
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    _test()
 

@@ -17,6 +17,10 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-## from lino.reports.reports import \
-##      ReportColumn,\
-##      BaseReport, Report, DictReport, RIGHT
+LEFT = "LEFT"
+RIGHT = "RIGHT"
+CENTER = "CENTER"
+TOP = "TOP"
+BOTTOM = "BOTTOM"
+
+__all__ = ["LEFT","RIGHT","CENTER","TOP","BOTTOM"]
