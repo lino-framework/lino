@@ -6,7 +6,7 @@ from PyQt4 import QtGui, QtCore
 
 class TrayIcon:
     
-    def __init__(self):
+    def __init__(self,mainWindow):
 
         text2=time.strftime("%d") # day of the month as a decimal number (01...31)
         text1=time.strftime("%a").upper()[0:2] # abbreviated weekday name
@@ -33,11 +33,11 @@ class TrayIcon:
         painter.end()
         
         icon=QtGui.QIcon(pixmap)
+        self.ctrl=QtGui.QSystemTrayIcon(icon)
         
         self.iconMenu=QtGui.QMenu()
-        self.iconMenu.addAction("&Close TrayDay",self.close)
+        self.iconMenu.addAction("&Close TrayDay",mainWindow.close)
         
-        self.ctrl=QtGui.QSystemTrayIcon(icon)
         self.ctrl.setContextMenu(self.iconMenu)
         self.ctrl.show()
 
@@ -46,10 +46,10 @@ class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
         self.setWindowTitle("TrayDay")
-        self.trayIcon=TrayIcon()
+        self.trayIcon=TrayIcon(self)
 
     def close(self):
-        self.trayIcon.hide()
+        self.trayIcon.ctrl.hide()
         QtGui.QMainWindow.close(self)
 
         

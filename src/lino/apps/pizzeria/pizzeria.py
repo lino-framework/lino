@@ -58,6 +58,9 @@ class Order(StoredDataRow):
 ##         return self.detail(OrderLine,*args,**kw)
         
     def register(self):
+        """
+        compute totalPrice and set isRegistered to True to prevent
+        further editing."""
         self.lock()
         totalPrice = 0
         for line in self.lines():
@@ -110,7 +113,8 @@ class PizzeriaMain(DbMainForm):
     """
     
 Welcome to Pizzeria, the most simple Lino demo application.
-Note that this application is not stable and there are no known users.
+Note that this application is not meant to be used for anything
+else than learning.
 
 """
 

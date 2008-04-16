@@ -22,7 +22,10 @@
 ##      BaseReport, Report, DictReport, RIGHT
 
 """
-
+Examples:
+    >>> from lino.reports import Report
+    >>> class MyReport(Report):
+    ...    
 """
 
 if __name__ == "__main__":
