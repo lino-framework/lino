@@ -229,6 +229,7 @@ class TextPrinter:
             line=line[:-1]
             
         if len(line) > 0:
+            #oline=line
 
 ##             pos=line.find("#python ")
 ##             if pos != -1:
@@ -259,6 +260,7 @@ class TextPrinter:
             #if line == "\r\n": return
             if len(line) == 0 and not hasText:
                 return
+            #print repr(oline)
         
         self.writechars(line)
         self.newline()

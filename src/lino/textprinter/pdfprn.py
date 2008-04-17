@@ -72,7 +72,7 @@ class PdfTextPrinter(FileTextPrinter):
     "http://lino.saffre-rumma.ee/src/299.html"
     
     extension=".pdf"
-    ratio_width2size=1.7   # fontsize = width * ratio_width2size
+    ratio_width2size=1.67   # fontsize = width * ratio_width2size
     #ratio_size2leading=1.1 # leading = fontsize * ratio_size2leading
     ratio_size2leading=1.065 # leading = fontsize * ratio_size2leading
     charwidth=0.6
@@ -216,7 +216,8 @@ class PdfTextPrinter(FileTextPrinter):
                 print repr(text)
                 text = text.encode("iso-8859-1","replace")
 
-        self.canvas.drawString(self.x,self.y-self.leading,text)
+        tmpLeading=self.status.size * self.ratio_size2leading
+        self.canvas.drawString(self.x,self.y-tmpLeading,text)
         self.x += self.canvas.stringWidth(text)
         
     def newline(self):
