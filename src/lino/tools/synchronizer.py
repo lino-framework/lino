@@ -1,5 +1,5 @@
 # -*- coding: ISO-8859-1 -*-
-## Copyright 2005-2007 Luc Saffre.
+## Copyright 2005-2008 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -602,7 +602,7 @@ class SyncProject(Progresser):
             if self.recurse:
                 self.update_dir(src,target)
         else:
-            raise NeitherFileNorDirectory()
+            raise NeitherFileNorDirectory(repr(src))
             #raise ApplicationError(
             #self.task.abort(
             #    "%s is neither file nor directory" % src)
@@ -617,7 +617,7 @@ class SyncProject(Progresser):
         elif os.path.isdir(name):
             self.delete_dir(name)
         else:
-            raise NeitherFileNorDirectory()
+            raise NeitherFileNorDirectory(repr(name))
             #raise ApplicationError(
             #self.task.abort(
             #    "%s is neither file nor directory" % name)
