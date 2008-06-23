@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 
-## Copyright 2005-2007 Luc Saffre 
+## Copyright 2005-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -20,6 +20,7 @@
 
 import os
 import time
+import datetime
 from PIL import Image, ImageWin
 from PIL.TiffImagePlugin import DATE_TIME
 
@@ -40,42 +41,13 @@ def wavnewname(root,name):
     ct=time.localtime(sti.st_ctime)
     return time.strftime("%Y_%m_%d-%H_%M_%S.wav",ct)
     
-def dt2filename(s):
-    a = s.split()
-    if len(a) != 2: return None
-    d=a[0].split(':')
-    if len(d) != 3: return None
-    t=a[1].split(':')
-    if len(t) != 3: return None
-    return '_'.join(d)+'-'+'_'.join(t)+'.jpg'
-
-def jpgnewname(root,name):
-    filename=os.path.join(root, name)
-    try:
-        img = Image.open(filename)
-    except IOError,e:
-        raise MyException(filename + ":" + str(e))
-    exif=img._getexif()
-    if exif is None:
-        raise MyException(filename+ ': no EXIF information found')
-    if not exif.has_key(DATE_TIME):
-        raise MyException(filename+ ':'+ str(exif.keys()))
-    nfn=dt2filename(exif[DATE_TIME])
-    if nfn is None:
-        raise MyException(
-            '%s: could not parse DATE_TIME "%s"' \
-            % (filename, exif[DATE_TIME]))
-    return nfn    
-
-
-
 
 class JpgRename(Application):
 
     name="Lino/jpgrename"
 
     copyright="""\
-Copyright (c) 2002-2007 Luc Saffre.
+Copyright (c) 2002-2008 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -84,12 +56,6 @@ See file COPYING.txt for more information."""
     description="""\
 where DIR (default .) is a directory with .jpg files to rename.
 """
-    converters = {
-        '.jpg' : jpgnewname,
-        '.avi' : avinewname,
-        '.wav' : wavnewname,
-        }
-    
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
 
@@ -100,8 +66,28 @@ where DIR (default .) is a directory with .jpg files to rename.
             dest="simulate",
             default=False)
 
+        parser.add_option(
+            "-d", "--timediff",
+            help="correct EXIF time by adding TIMEDIFF minutes",
+            action="store", type="int",
+            dest="timediff",
+            default=0)
+        
+        parser.add_option(
+            "--suffix",
+            help="add SUFFIC to each filename",
+            action="store", type="string",
+            dest="suffix",
+            default="")
+
     def run(self):
          
+        self.converters = {
+            '.jpg' : self.jpgnewname,
+            '.avi' : avinewname,
+            '.wav' : wavnewname,
+            }
+
         if len(self.args) == 0:
             dirs=['.']
         else:
@@ -151,6 +137,41 @@ where DIR (default .) is a directory with .jpg files to rename.
                     self.notice("Rename %s to %s", o,n)
                     os.rename(o,n)
                                    
+    def dt2filename(self,s):
+        a = s.split()
+        if len(a) != 2: return None
+        d=a[0].split(':')
+        if len(d) != 3: return None
+        t=a[1].split(':')
+        if len(t) != 3: return None
+        args=[int(x) for x in d] + [int(x) for x in t]
+        dt=datetime.datetime(*args)
+        dt += datetime.timedelta(0,0,0,0,self.options.timediff)
+        #print '_'.join(d)+'-'+'_'.join(t)+'.jpg', "->", dt.strftime("%Y_%m_%d-%H_%M_%S.jpg")
+        #return '_'.join(d)+'-'+'_'.join(t)+'.jpg'
+        return dt.strftime("%Y_%m_%d-%H_%M_%S")
+
+    def jpgnewname(self,root,name):
+        filename=os.path.join(root, name)
+        try:
+            img = Image.open(filename)
+        except IOError,e:
+            raise MyException(filename + ":" + str(e))
+        exif=img._getexif()
+        if exif is None:
+            raise MyException(filename+ ': no EXIF information found')
+        if not exif.has_key(DATE_TIME):
+            raise MyException(filename+ ':'+ str(exif.keys()))
+        nfn=self.dt2filename(exif[DATE_TIME])
+        if nfn is None:
+            raise MyException(
+                '%s: could not parse DATE_TIME "%s"' \
+                % (filename, exif[DATE_TIME]))
+        nfn+= self.options.suffix
+        return nfn + ".jpg"
+
+
+
 
 #JpgRename().main()
 
