@@ -77,7 +77,7 @@ processed.
                 if not ext in self.extensions:
                     continue
                 if " " in root:
-                    self.warning("Skipping %s : spaces are not allowed!",pfn)
+                    self.warning("Skipping %r : spaces are not allowed!",pfn)
                     continue
                 is_original=True
                 for size in self.sizes:

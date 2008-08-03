@@ -36,8 +36,7 @@ Example:
 
 Sources:
 
--
-http://mineco.fgov.be/informations/indexes/indint1xls_2003_2005_22_fr.htm
+- http://www.statbel.fgov.be/indicators/cpi/cpi_fr.asp
 
 - L'indexation du loyer:
   http://www.notaire.be/info/location/304_indexation_du_loyer.htm
