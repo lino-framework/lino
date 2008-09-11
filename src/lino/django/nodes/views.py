@@ -18,18 +18,38 @@
 
 from lino.django.nodes.models import Node
 from lino.htgen import Document
-from django.shortcuts import get_object_or_404
+#from django.shortcuts import get_object_or_404
+from django.shortcuts import _get_queryset
 from django.http import HttpResponse, Http404
 
 #from django.shortcuts import render_to_response, get_object_or_404
 #from stools import nations
 
+
+def get_object_or_404(klass, *args, **kwargs):
+    """ modified copy of django.shortcuts.get_object_or_404
+    shows the query's parameters if DoesNotExist.
+    """
+    queryset = _get_queryset(klass)
+    try:
+        return queryset.get(*args, **kwargs)
+    except queryset.model.DoesNotExist:
+        raise Http404('No %s matches the query (%r,%r).' % 
+        (queryset.model._meta.object_name,args,kwargs))
+
+
+
+
 def index(request):
-    return detail_by_name(request,'index')
+    name=request.META["PATH_INFO"]
+    if name == "/" or name == "":
+        name='index'
+    return detail_by_name(request,name)
 
 def latest_nodes():
     return Node.objects.all().order_by('-published')[:5]
-        
+
+
 
 def detail(request, node_id):
     n = get_object_or_404(Node,pk=node_id)
@@ -37,10 +57,14 @@ def detail(request, node_id):
     #return render_to_response('cms/detail.html', {'node': n})
 
 def detail_by_name(request, name):
-    parent=None
+    n=None
     for part in name.split('/'):
         if len(part) != 0:
-            n = get_object_or_404(Node,permaname=name,parent=parent)
+          if n is None:
+            n = get_object_or_404(Node,name=part,
+                                  parent__isnull=True)
+          else:
+            n = get_object_or_404(Node,name=part,parent=n)
     return render_node(request,n)
     # return render_to_response('cms/detail.html', {'node': n})
 

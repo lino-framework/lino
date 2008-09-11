@@ -20,8 +20,8 @@ from django.db import models
 class Person(models.Model):
     class Admin:
         pass
-    firstname = models.CharField(maxlength=100)
-    lastname = models.CharField(maxlength=100)
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
     #born = models.DateTimeField(blank=True)
     
     def __unicode__(self):
@@ -39,7 +39,7 @@ class Song(models.Model):
         Person,
         related_name="composer",
         blank=True)
-    title = models.CharField(maxlength=200)
+    title = models.CharField(max_length=200)
     #pub_date = models.DateField('date published',blank=True)
     published = models.IntegerField('year published',blank=True)
     text=models.TextField(blank=True)
@@ -68,7 +68,7 @@ class Translation(models.Model):
 class Songbook(models.Model):
     class Admin:
         pass
-    title = models.CharField(maxlength=200)
+    title = models.CharField(max_length=200)
     intro = models.TextField(blank=True)
     publisher = models.TextField(blank=True)
     

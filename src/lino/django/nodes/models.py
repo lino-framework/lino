@@ -1,4 +1,4 @@
-## Copyright 2007 Luc Saffre.
+## Copyright 2007-2008 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -22,14 +22,14 @@ class Node(models.Model):
 
     class Admin:
         fields = (
-            (None, dict(fields=('title','permaname','parent', 'abstract','body'))),
+            (None, dict(fields=('title','name','parent', 'abstract','body'))),
             ("Dates & times", dict(fields=('published','modified','created'))),
             ("Other", dict(fields=('hidden',),classes='collapse')),
             )
         
             #("Parent", dict(fields=('parent','seq'),classes='collapse')),
 
-        list_display=('title','parent', 'abstract','permaname','published','hidden')
+        list_display=('title','parent', 'abstract','name','published','hidden')
         
         list_filter=['published']
         search_fields=['title','abstract']
@@ -38,7 +38,7 @@ class Node(models.Model):
     title = models.CharField(max_length=200)
     abstract = models.TextField(blank=True)
     body = models.TextField(blank=True)
-    permaname = models.CharField(max_length=30,blank=True)
+    name = models.CharField(max_length=30,blank=True)
     
     published = models.DateTimeField('published',default=datetime.now)
     created = models.DateTimeField('created',default=datetime.now)
@@ -55,6 +55,8 @@ class Node(models.Model):
     def __unicode__(self):
         return self.title
 
+    class Meta:
+        ordering = ["published"]
 
 #class Resource(models.Model):
 #    
