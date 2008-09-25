@@ -1,4 +1,4 @@
-## Copyright 2004-2007 Luc Saffre 
+## Copyright 2004-2008 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -29,6 +29,11 @@ import pywintypes
 #import win32gui
 from PIL import ImageWin
 
+from lino.console import syscon
+from lino.textprinter.textprinter import TextPrinter, \
+     PrinterNotReady, ParserError
+from lino.textprinter import devcaps 
+
 
 
 #OEM_CHARSET = win32con.OEM_CHARSET
@@ -43,17 +48,14 @@ charsets = {
 
 
 # 20070414 :
-#    weight_bold=win32con.FW_EXTRABOLD
-#    weight_normal=win32con.FW_SEMIBOLD
-weight_bold=win32con.FW_BOLD
-weight_normal=win32con.FW_NORMAL
+if True:
+    # bolder than normal because Courier.ttf isn't dark enough 
+    weight_bold=win32con.FW_EXTRABOLD
+    weight_normal=win32con.FW_SEMIBOLD
+else:    
+    weight_bold=win32con.FW_BOLD
+    weight_normal=win32con.FW_NORMAL
 
-
-
-from lino.console import syscon
-from lino.textprinter.textprinter import TextPrinter, \
-     PrinterNotReady, ParserError
-from lino.textprinter import devcaps 
 
 pt = 20
 inch = 1440.0
