@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}{{ object.question }}{% endblock %}
+{% block content %}
+<h1>{{ object }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="/contatcs/{{ object.id }}/edit/" method="post">
+<input type="string" name="street" id="street" value="{{ object.street }}" />
+<input type="submit" value="Save" />
+</form>
+
+{% endblock %}

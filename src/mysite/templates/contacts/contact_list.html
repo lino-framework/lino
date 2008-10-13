@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %} List of Contacts {% endblock %}
+{% block content %}
+
+<h1>List of Contacts</h1>
+{% if object_list %}
+    <ul>
+    {% for contact in object_list %}
+        <li>
+        {{ contact.person }}
+        {{ contact.organisation }}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No entries.</p>
+{% endif %}
+
+{% endblock %}

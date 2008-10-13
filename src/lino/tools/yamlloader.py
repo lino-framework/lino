@@ -77,10 +77,11 @@ class YamlLoader(Application):
                 fd = codecs.open(pfn,"r",input_encoding)
                 try:
                     for yamldict in yaml.load_all(fd):
-                        for k in yamldict.keys():
-                            if k.startswith(";"):
-                                del yamldict[k]
-                        yamldict.update(kw)
+                        if type(yamldict) == type({}):
+                            for k in yamldict.keys():
+                                if k.startswith(";"):
+                                    del yamldict[k]
+                            yamldict.update(kw)
                         self.add_from_file(filename,pfn,yamldict)
                 except Exception,e:
                     if DEBUG:

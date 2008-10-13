@@ -1,0 +1,50 @@
+!!python/object:lino.django.nodes.models.Node
+name: index
+title: Testing lino.django.nodes
+abstract:
+  This website is to test the 
+  <tt>lino.django.nodes</tt> application.
+  
+body: |
+
+  <table border="1">
+  <tr>
+  <td>Simple external link using the <tt>&#91;url URL TEXT]</tt> syntax.
+  <td>Yet another [url http://www.djangoproject.com Django] website.
+  <tr>
+  <td>Internal links.
+  <td>Click [url here here] or [url here there] to check whether the links on this page work.
+  <tr>
+  <td>Text with clickable[url changes [1]] 
+  footnotes[url /nodes/2 [2]].
+  <td>
+  <tr>
+  <td>clickable text containing paired brackets
+  <td>[url /nodes/3 This is [...] the end.]
+  <tr>
+  <td>Enter the Admin site using the database admin user account you specified during <tt>manage.py syncdb</tt>.
+  <td>[url admin admin]
+  </table>
+
+---
+!!python/object:lino.django.nodes.models.Node
+name: changes
+title: History of changes
+abstract:
+  This page contains some historic notes.
+  
+body: |
+  <ul>
+  <li>before 20071130 : preliminary exercises.
+  <li>*20071130* created
+  <li>*20071130* : which markup language to use? 
+  </ul>
+---
+!!python/object:lino.django.nodes.models.Node
+name: here
+title: Here or there
+abstract:
+  This is just another page.
+  
+body: |
+  Now please go [url / back].
