@@ -17,8 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.htgen.elements import \
-     CDATA, Element, Container, escape, unescape
+from lino.htgen.elements import CDATA, Element, Container, escape, unescape
 
 class BR(Element):
     #flowable=True
@@ -29,7 +28,6 @@ class IMG(Element):
     allowedAttribs=dict(src="src",
                         width="width",
                         height="height")
-
 
 
 class Fragment(Container):
@@ -75,11 +73,12 @@ class OL(UL):
 
 
 
-class Cell(Fragment):
+class Cell(SPAN):
     allowedAttribs=dict(
         align="align",
         valign="valign",
         **Fragment.allowedAttribs)
+
 class TD(Cell):
     pass
     
@@ -109,7 +108,8 @@ class TABLE(Fragment):
     allowedContent=(TR,COLGROUP,THEAD,TFOOT,TBODY)
     
     def addrow(self,*cells):
-        return self.append(TR(*[TD(e) for e in cells]))
+        #return self.append(TR(*[TD(e) for e in cells]))
+        return self.append(TR(*cells))
     
 def tablerows(table,area):
     """
@@ -192,11 +192,10 @@ TR.autoClosedByEnd=(TABLE,)
 LI.autoClosedByStart=(LI,)
 LI.autoClosedByEnd=(UL,OL)
 
-LI.allowedContent = TD.allowedContent \
-                    = TH.allowedContent \
-                    = (CDATA,P,BR,SPAN,IMG,TABLE)
+#LI.allowedContent = Cell.allowedContent \
+#                    = (CDATA,P,BR,SPAN,IMG,TABLE)
     
-
+Fragment.allowedContent = (CDATA,IMG,BR,Fragment)
     
 class BODY(Container):
     allowedAttribs=dict(

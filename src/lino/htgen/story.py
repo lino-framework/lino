@@ -17,82 +17,11 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-import re
 import codecs
 
 from lino.misc.tsttools import UniStringIO
-from lino.htgen.memo import MemoParser, ParserError
 from lino.htgen import html
-from lino.misc import restify
-
-def url2html(s):
-    a=s.split(None,1)
-    url=a[0]
-    if len(a) == 1:
-        txt=url
-    else:
-        txt=a[1]
-    return '<a href="%s">%s</a>' % (url,txt)
-
-def parsekw(s,kw):
-    "todo"
-    pass
-
-def img2html(s,**kw):
-    a=s.split(None,1)
-    name=a[0]
-    if len(a) > 1:
-        parsekw(a[1],kw)
-    return '<img src="%s">' % name
-
-## def url2html(matchobj):
-##     url=matchobj.group(1)
-##     txt=matchobj.group(2)
-##     if len(txt) == 0:
-##         txt=url
-##     return '<a href="%s">%s</a>' % (url,txt)
-
-## def ref2html(matchobj):
-##     ref=matchobj.group(1)
-##     txt=matchobj.group(2)
-##     if len(txt) == 0:
-##         txt=ref
-##     return '<a href="%s">%s</a>' % (url,txt)
-
-def mark_em(matchobj):
-    return '<em>' + matchobj.group(1) + "</em>"
-
-CMDS=dict(
-    url=url2html,
-    #ref=ref2html,
-    img=img2html,
-    )
-
-def cmd_match(matchobj):
-    cmd=matchobj.group(1)
-    params=matchobj.group(2)
-    try:
-        return CMDS[cmd](params)
-    except KeyError,e:
-        return matchobj.group(0)
-
-REGS = (
-    ( re.compile(r"\*([^\*]+?)\*"), mark_em ),
-#    ( re.compile(r"\[url\s+(\S+)\s*((?:[^[\]]|\[.*?\])*?)\]"), url2html ),
-#    ( re.compile(r"\[ref\s+(\S+)\s*(.*)\]"), ref2html ),
-    ( re.compile(r"\[(\w+)\s+((?:[^[\]]|\[.*?\])*?)\]"), cmd_match ),
-    )
-
-
-def oparse(s):
-    for reg in REGS:
-        s=reg[0].sub(reg[1],s)
-    #s=s.replace("[B]","<b>")
-    #s=s.replace("[b]","</b>")
-    #return restify.reSTify(s)
-    return s
-
-
+#from lino.misc import restify
 
 class Story:
     """
@@ -100,6 +29,9 @@ class Story:
     """
     def append(self,*args,**kw):
         raise NotImplementedError
+
+    def memo(self,*args,**kw):
+        raise "replaced by lino.htgen.memo.parse_memo()"
             
     def table(self,*args,**kw):
         return self.append(html.TABLE(*args,**kw))
@@ -114,14 +46,6 @@ class Story:
     def h3(self,txt,**kw): self.heading(3,txt,**kw)
 
     
-    def memo(self,txt,style=None,**kw):
-        assert style is None, "use keyword xclass=style instead"
-        p=MemoParser(self,**kw)
-        x=oparse(txt)
-        #print x
-        p.feed(x)
-        p.close()
-
     def load_html(self,data):
         p=MemoParser()
         p.feed(data)
@@ -221,7 +145,7 @@ class Document(Story):
         wr("<html><head>\n<title>")
         wr(html.escape(self.title))
         wr("""</title>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 """)
         if self.stylesheet is not None:
             wr('<link rel=stylesheet type="text/css" href="%s">\n'

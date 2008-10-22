@@ -1,4 +1,4 @@
-## Copyright 2007 Luc Saffre.
+## Copyright 2007-2008 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -21,14 +21,14 @@ from lino.django.songs.models import Song, Person
 class TestCase(unittest.TestCase):
     
     def setUp(self):
-        self.john=Person(firstname="John",lastname="Lennon")
-        self.john.songs_composed.create(title="Imagine",published=1968)
-        self.john.songs_composed.create(title="Another song",published=1967)
-        self.john.songs_composed.create(title="A last song",published=1980)
-        
-        self.song1 = Song.objects.create(title="Foo",
-                                         text="foo, foo, foo.")
+        self.john=Person(firstname="John",name="Lennon")
+        self.john.save()
+        self.song1=Song(title="Give Peace a Chance",published=1971)
+        self.song2=Song(title="Imagine",published=1971)
+        self.john.songs_composed.create(song=self.song1)
+        self.john.songs_composed.create(song=self.song2)
 
     def test01(self):
         self.assertEquals(unicode(self.song1), u'Foo')
+        self.assertEquals(len(self.john.songs_composed), 3)
  

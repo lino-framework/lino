@@ -1,4 +1,4 @@
-## Copyright 2007 Luc Saffre.
+## Copyright 2007-2008 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -16,38 +16,52 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
+from lino.django.contacts.models import Person
 
-class Person(models.Model):
-    class Admin:
-        pass
-    firstname = models.CharField(max_length=100)
-    lastname = models.CharField(max_length=100)
-    #born = models.DateTimeField(blank=True)
+#~ class Person(models.Model):
+    #~ class Admin:
+        #~ pass
+    #~ firstname = models.CharField(max_length=100)
+    #~ lastname = models.CharField(max_length=100)
+    #~ #born = models.DateTimeField(blank=True)
     
-    def __unicode__(self):
-        return self.firstname+' '+self.lastname
+    #~ def __unicode__(self):
+        #~ return self.firstname+' '+self.lastname
 
 class Song(models.Model):
     class Admin:
         pass
-    author = models.ForeignKey(
-        Person,
-        related_name="author",
-        null=True)
-    
-    composer = models.ForeignKey(
-        Person,
-        related_name="composer",
-        blank=True)
     title = models.CharField(max_length=200)
     #pub_date = models.DateField('date published',blank=True)
     published = models.IntegerField('year published',blank=True)
     text=models.TextField(blank=True)
     #votes = models.IntegerField()
  
+    composers = models.ManyToManyField(
+        Person,
+        related_name="songs_composed")
+    textauthor = models.ManyToManyField(
+        Person,
+        related_name="texts_written")
+        
     def __unicode__(self):
         return self.title
 
+#~ class Work(models.Model):
+    #~ class Admin:
+        #~ pass
+    #~ composer = models.ForeignKey(
+        #~ Person,
+        #~ related_name="songs_composed")
+    #~ textauthor = models.ForeignKey(
+        #~ Person,
+        #~ related_name="texts_written")
+    #~ song = models.ForeignKey(
+        #~ Song,
+        #~ related_name="composed_by")
+    #~ remark = models.TextField(blank=True)
+    
+    
 class Translation(models.Model):
     class Admin:
         pass

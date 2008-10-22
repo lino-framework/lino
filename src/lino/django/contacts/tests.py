@@ -16,7 +16,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import unittest
-from lino.django.contacts.models import Person
+from lino.django.contacts.models import Person, Country, City, Contact
 
 class TestCase(unittest.TestCase):
     
@@ -29,15 +29,21 @@ class TestCase(unittest.TestCase):
         
         self.john=Person(firstname="John",name="Lennon")
         self.luc=Person(firstname="Luc",name="Saffre")
-        self.luc.home.create(
+        self.luc.save()
+        self.luc.home=Contact(
           addr1="Rummajaani talu",
           country=ee,city=vv,zipcode="78003")
+        self.luc.home.save()
         
         
     def test01(self):
-        self.assertEquals(unicode(self.luc), u'''Luc Saffre
-        Rummajaani talu
-        ''')
- 
-if __name__ == '__main__':
-    unittest.main()
+        self.assertEquals(unicode(self.luc.home), '''
+Rummajaani talu
+78003 Vana-Vigala
+Estonia''')
+
+## to run these tests, see
+## http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing
+## the following wouldn't work because there's no database
+## if __name__ == '__main__':
+##    unittest.main()

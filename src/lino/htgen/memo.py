@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import re
 from HTMLParser import HTMLParser
 from htmlentitydefs import name2codepoint
 
@@ -24,6 +25,57 @@ from lino.htgen.elements import InvalidRequest
 
 class ParserError(Exception):
     pass
+
+
+def url2html(s):
+    a=s.split(None,1)
+    url=a[0]
+    if len(a) == 1:
+        txt=url
+    else:
+        txt=a[1]
+    return '<a href="%s">%s</a>' % (url,txt)
+
+def parsekw(s,kw):
+    "todo"
+    pass
+
+def img2html(s,**kw):
+    a=s.split(None,1)
+    name=a[0]
+    if len(a) > 1:
+        parsekw(a[1],kw)
+    return '<img src="%s">' % name
+
+def mark_em(matchobj):
+    return '<em>' + matchobj.group(1) + "</em>"
+
+CMDS=dict(
+    url=url2html,
+    #ref=ref2html,
+    img=img2html,
+    )
+
+def cmd_match(matchobj):
+    cmd=matchobj.group(1)
+    params=matchobj.group(2)
+    try:
+        return CMDS[cmd](params)
+    except KeyError,e:
+        return matchobj.group(0)
+
+REGS = (
+    ( re.compile(r"\*([^\*]+?)\*"), mark_em ),
+    ( re.compile(r"\[(\w+)\s+((?:[^[\]]|\[.*?\])*?)\]"), cmd_match ),
+    )
+
+
+def preparse(s):
+    for reg in REGS:
+        s=reg[0].sub(reg[1],s)
+    return s
+
+
 
 class MemoParser(HTMLParser):
 
@@ -37,6 +89,10 @@ class MemoParser(HTMLParser):
         self.strict=False
         self.ignoring=False
 
+    def feed(self,txt):
+        txt=preparse(txt)
+        return HTMLParser.feed(self,txt)
+        
     def handle_data(self,data):
         """process arbitrary data."""
         #print "handle_data(%r) to %s"%(
@@ -214,3 +270,15 @@ class MemoParser(HTMLParser):
     def unknown_decl(self, data):
         pass
         #self.error("unknown declaration: %r" % (data,))
+
+
+
+        
+def parse_memo(container,txt,style=None,**kw):
+    assert style is None, "use keyword xclass=style instead"
+    p=MemoParser(container,**kw)
+    #x=oparse(txt)
+    #print x
+    p.feed(txt)
+    p.close()
+

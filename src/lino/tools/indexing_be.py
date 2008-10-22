@@ -18,7 +18,7 @@
 
 """
 
-Belgian price indexing
+Belgian Customer Price Indexing
 
 Example:
 
@@ -259,7 +259,8 @@ sante1996 = Index( Month.parse('199401'), (
 
 # 2008:
 
-122.7, 123.68, 124.37, 124.57, 
+122.7, 123.68, 124.37, 124.57, 125.37, 125.85,
+126.53, 126.15, 126.46
 
 
 ))

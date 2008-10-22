@@ -44,10 +44,8 @@ def unescape(text):
         text=text.replace(h, ch)
     return text
 
-
 class InvalidRequest(Exception):
     pass
-
 
 def quote(x):
     if type(x) == types.IntType:
@@ -153,20 +151,31 @@ class Container(Element):
         self.content = []
         for elem in content:
             #if type(elem) == types.StringType:
-            self.append(elem)   
+            self.append(elem)
+            
+    def format(self,elem):
+        if elem is None:
+            return self.allowedContent[0]()
+        elif isinstance(elem,basestring):
+            return self.allowedContent[0](elem)
+        elif isinstance(elem,int):
+            return self.allowedContent[0](str(elem))
+        return elem
         
     def append(self,elem):
-        #print self.allowedContent
-        if isinstance(elem,basestring):
-            e=self.allowedContent[0](elem)
-            self.content.append(e)
-            e.setParent=self
+        if type(elem) in (list,tuple):
+            for le in elem:
+                e=self.allowedContent[0](le)
+                self.content.append(e)
+                e.setParent=self
             return e
+        elem=self.format(elem)
         for cl in self.allowedContent:
             if isinstance(elem,cl):
                 self.content.append(elem)
                 elem.setParent=self
                 return elem
+        print self.allowedContent
         raise InvalidRequest(
             "%s not allowed in %s" %
             (elem.__class__.__name__,self.__class__.__name__))
@@ -189,7 +198,6 @@ class Container(Element):
             if found: return ch
         raise InvalidRequest(str(key)+" no such child")
                 
-        
         
     def __xml__(self,wr):
         wr("<"+self.tag())
