@@ -54,6 +54,17 @@ class Person(models.Model):
         age=date-self.birthdate
         return age.days() / 365
     age.short_description = 'Approximative age'
+    
+    def contacts(self):
+        def label(c):
+            if c.organisation is not None:
+                return unicode(c.organisation)
+            if c.place is not None:
+                return unicode(c.place)
+            return unicode(c)
+        return ", ".join([linkto(c,label(c)) 
+          for c in self.contact_set.all()])
+    contacts.allow_tags=True
 
 
 class Organisation(models.Model):
@@ -68,22 +79,50 @@ class Organisation(models.Model):
         return self.name
         
         
-class Contact(models.Model):
+
+    
+class Country(models.Model):
     name = models.CharField(max_length=200)
-    organisation = models.ForeignKey(Organisation,blank=True,null=True)
-    person = models.ForeignKey(Person,blank=True,null=True)
-    country = models.ForeignKey("Country",blank=True,null=True)
-    city = models.ForeignKey("City",blank=True,null=True)
-    zipcode = models.CharField(max_length=10,blank=True,null=True)
+    iso2 = models.CharField(max_length=2)
+    iso3 = models.CharField(max_length=3,blank=True,null=True) 
+    def __unicode__(self):
+        return self.name
+        
+        
+def linkto(obj,text=None):
+    if text is None:
+        text=unicode(obj)
+    s='<a href="/admin/contacts/%s/%d' % (obj.__class__.__name__,obj.id)
+    s+='">'+text+"</a>"
+    return s
+        
+class City(models.Model):
+    name = models.CharField(max_length=200)
+    country = models.ForeignKey(Country)
+    def __unicode__(self):
+        return self.name
+    def contacts(self):
+        l=[]
+        for p in self.place_set.all():
+            for c in p.contact_set.all():
+                if c.person is not None:
+                    l.append(c.person)
+        return ", ".join([linkto(x) for x in l])
+    contacts.allow_tags=True
+ 
+class Place(models.Model):
+    name = models.CharField(max_length=200)
     addr1 = models.CharField(max_length=200,blank=True,null=True)
     addr2 = models.CharField(max_length=200,blank=True,null=True)
+    country = models.ForeignKey(Country,blank=True,null=True)
+    city = models.ForeignKey(City,blank=True,null=True)
+    zipcode = models.CharField(max_length=10,blank=True,null=True)
     
     def __unicode__(self):
-        s=self.name
-        if self.organisation:
-          s += "\n%s" % self.organisation
-        if self.person:
-          s += "\n%s" % self.person
+        if self.name:
+            s=self.name
+        else:
+            s=''
         if self.addr1:
           s += "\n%s" % self.addr1
         if self.addr2:
@@ -93,18 +132,25 @@ class Contact(models.Model):
         if self.country:
           s += "\n%s" % self.country
         return s
-    
-    
-class City(models.Model):
-    name = models.CharField(max_length=200)
-    country = models.ForeignKey("Country")
-    def __unicode__(self):
-        return self.name
+
  
-class Country(models.Model):
+class Contact(models.Model):
     name = models.CharField(max_length=200)
-    iso2 = models.CharField(max_length=2)
-    iso3 = models.CharField(max_length=3,blank=True,null=True) 
+    organisation = models.ForeignKey(Organisation,blank=True,null=True)
+    person = models.ForeignKey(Person,blank=True,null=True)
+    place = models.ForeignKey(Place,blank=True,null=True)
+    email = models.EmailField(blank=True,null=True)
+    #image = models.ImageField(blank=True,null=True,
+    # upload_to=".")
+    
     def __unicode__(self):
-        return self.name
- 
+        s=self.name
+        if self.organisation:
+          s += "\n%s" % self.organisation
+        if self.person:
+          s += "\n%s" % self.person
+        if self.place:
+          s += "\n%s" % self.place
+        if self.email:
+          s += "\n%s" % self.email
+        return s

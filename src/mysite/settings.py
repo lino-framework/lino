@@ -76,10 +76,11 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'lino.django.nodes',
-    'lino.django.songs',
-    'lino.django.polls',
-    'lino.django.contacts',
+#    'lino.django.nodes',
+#    'lino.django.songs',
+#    'lino.django.polls',
+#    'lino.django.contacts',
+    'lino.django.igen',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

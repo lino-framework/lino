@@ -1,0 +1,82 @@
+﻿# 
+- model: contacts.Person
+  pk: 1
+  fields:
+    name: Saffre
+    firstname: Luc
+- model: contacts.Person
+  pk: 2
+  fields:
+    name: Rumma
+    firstname: Ly
+
+
+- model: contacts.Country
+  pk: 1
+  fields:
+    name: Estonia
+    iso2: ee
+- model: contacts.Country
+  pk: 2
+  fields:
+    name: Belgium
+    iso2: be
+- model: contacts.Country
+  pk: 3
+  fields:
+    name: Germany
+    iso2: de
+
+- model: contacts.City
+  pk: 1
+  fields:
+    name: Vana-Vigala
+    country: 1
+- model: contacts.City
+  pk: 2
+  fields:
+    name: Tallinn
+    country: 1
+- model: contacts.City
+  pk: 3
+  fields:
+    name: Pärnu
+    country: 1
+- model: contacts.City
+  pk: 4
+  fields:
+    name: Eupen
+    country: 2
+    
+- model: contacts.Place
+  pk: 1
+  fields:
+    name: Rummajaani talu
+    city: 1 
+    zipcode: 78003
+- model: contacts.Place
+  pk: 2
+  fields:
+    addr1: Favrunpark 13
+    city: 4
+    zipcode: 4700
+
+
+- model: contacts.Contact
+  pk: 1
+  fields:
+    person: 1
+    place: 1
+    email: "luc.saffre@gmx.net"
+- model: contacts.Contact
+  pk: 2
+  fields:
+    person: 1
+    place: 2
+    email: "luc.saffre@gmx.net"
+- model: contacts.Contact
+  pk: 3
+  fields:
+    person: 2
+    place: 1
+    email: "ly.rumma@mail.ee"

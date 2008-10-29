@@ -1,0 +1,104 @@
+﻿# 
+
+- model: igen.Language
+  pk: et
+  fields:
+    name: Estonian
+- model: igen.Language
+  pk: en
+  fields:
+    name: English
+
+
+- model: igen.Country
+  pk: ee
+  fields:
+    name: Estonia
+- model: igen.Country
+  pk: be
+  fields:
+    name: Belgium
+- model: igen.Country
+  pk: de
+  fields:
+    name: Germany
+- model: igen.Country
+  pk: fr
+  fields:
+    name: France
+    
+    
+- model: igen.ShippingMode
+  pk: 1
+  fields:
+    name: cash and carry
+    
+- model: igen.PaymentTerm
+  pk: 1
+  fields:
+    name: cash
+- model: igen.PaymentTerm
+  pk: 2
+  fields:
+    name: 7 päeva neto
+    
+
+- model: igen.Contact
+  pk: 1
+  fields:
+    lastName: Saffre
+    firstName: Luc
+    title: Mr. 
+    addr1: Rummajaani talu
+    addr2: Vana-Vigala küla
+    zipCode: 78003
+    city: Vigala vald
+    country: ee
+    region: Raplamaa
+    email: "luc.saffre@gmx.net"
+    language: et
+    paymentTerm: 2
+
+- model: igen.ProductCat
+  pk: 1
+  fields:
+    name: Furniture
+    
+
+- model: igen.Product
+  pk: 1
+  fields:
+    name: Wooden table
+    price: "199.99"
+    cat: 1
+    
+- model: igen.Product
+  pk: 2
+  fields:
+    name: Wooden chair
+    price: "99.99"
+    cat: 1
+
+
+
+- model: igen.Invoice
+  pk: 1
+  fields:
+    number: 1
+    customer: 1
+    date: 2008-10-29
+    dueDate: 2008-10-29
+    paymentTerm: 2
+    shippingMode: 1
+    
+- model: igen.InvoiceItem
+  pk: 1
+  fields:
+    invoice: 1
+    pos: 1
+    product: 1
+    description: Wooden table
+    unitPrice: "99.95"
+    qty: "1.00"
+    
+    
