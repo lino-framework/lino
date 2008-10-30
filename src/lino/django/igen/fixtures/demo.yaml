@@ -43,14 +43,13 @@
     name: 7 päeva neto
     
 
-model: igen.contact
+- model: igen.contact
   pk: 1
   fields:
     companyName: Minu Firma OÜ
     country: ee
     language: et
     paymentTerm: 2
-    shippingMode: 1
 
 - model: igen.Contact
   pk: 2
