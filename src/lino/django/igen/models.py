@@ -50,22 +50,22 @@ filled, contact record will be presented as CompanyName in contacts
 listing - otherwise as Person First- and Lastname.
     
 # Examples:
->>> p=Person.objects.create(lastName="Saffre",firstname="Luc")
+>>> p=Contact.objects.create(lastName="Saffre",firstName="Luc")
 >>> unicode(p)
 u'Luc Saffre'
->>> p=Person.objects.create(lastName="Saffre", firstname="Luc", title="Mr.")
+>>> p=Contact.objects.create(lastName="Saffre", firstName="Luc", title="Mr.")
 >>> unicode(p)
 u'Mr. Luc Saffre'
->>> p=Person.objects.create(lastName="Saffre", title="Mr.")
+>>> p=Contact.objects.create(lastName="Saffre", title="Mr.")
 >>> unicode(p)
 u'Mr. Saffre'
->>> p=Person.objects.create(firstname="Luc")
+>>> p=Contact.objects.create(firstName="Luc")
 >>> unicode(p)
 u'Luc'
->>> p=Person.objects.create(lastName="Saffre",firstname="Luc", companyName="Example & Co")
+>>> p=Contact.objects.create(lastName="Saffre",firstName="Luc", companyName="Example & Co")
 >>> unicode(p)
 u'Example & Co (Luc Saffre)'
->>> p=Person.objects.create(lastName="Saffre",firstname="Luc", companyName="Example & Co")
+>>> p=Contact.objects.create(lastName="Saffre",firstName="Luc", companyName="Example & Co")
 >>> unicode(p)
 u'Example & Co (Luc Saffre)'
     
@@ -93,10 +93,13 @@ u'Example & Co (Luc Saffre)'
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
-    language = models.ForeignKey("Language")
-    paymentTerm = models.ForeignKey("PaymentTerm")
     vatExempt = models.BooleanField(default=False)
     itemVat = models.BooleanField(default=False)
+    
+    language = models.ForeignKey("Language",blank=True,null=True)
+    paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
+    
+    remarks = models.TextField(blank=True,null=True)
     
     def __unicode__(self):
         l=filter(lambda x:x,[self.title,self.firstName,self.lastName])
@@ -223,6 +226,7 @@ class Document(models.Model):
     itemVat = models.BooleanField(default=False)
     totalExcl = PriceField(blank=True,null=True)
     totalVat = PriceField(blank=True,null=True)
+    intro = models.TextField("Introductive Text",blank=True,null=True)
     
     class Meta:
         abstract = True

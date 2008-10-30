@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 ## Copyright 2008 Luc Saffre.
 ## This file is part of the Lino project. 
 
@@ -16,34 +18,28 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import unittest
-from lino.django.contacts.models import Person, Country, City, Contact
+from models import Contact
 
 class TestCase(unittest.TestCase):
     
     def setUp(self):
-        be=Country(name="Belgium",iso2="be")
-        de=Country(name="Germany",iso2="de")
-        ee=Country(name="Estonia",iso2="ee")
-        vv=City(name="Vana-Vigala",country=ee)
-        v=City(name="Vigala",country=ee)
-        
-        self.john=Person(firstname="John",name="Lennon")
-        self.luc=Person(firstname="Luc",name="Saffre")
-        self.luc.save()
-        self.luc.home=Contact(
+        self.luc=Contact(firstName="Luc",lastName="Saffre",
           addr1="Rummajaani talu",
-          country=ee,city=vv,zipcode="78003")
-        self.luc.home.save()
+          addr2=u"Vana-Vigala küla",
+          country="ee",city="Vigala vald",zipcode="78003",
+          region="Raplamaa")
+        self.luc.save()
         
         
     def test01(self):
-        self.assertEquals(unicode(self.luc.home), '''
+        self.assertEquals(unicode(self.luc), 'Luc Saffre')
+        self.assertEquals(self.luc.asAddress(), u'''
+Luc Saffre
 Rummajaani talu
-78003 Vana-Vigala
-Estonia''')
+Vana-Vigala küla
+Vigala vald
+78003 Raplamaa
+''')
 
-## to run these tests, see
-## http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing
-## the following wouldn't work because there's no database
-## if __name__ == '__main__':
-##    unittest.main()
+## Run these tests using "python manage.py test".
+## see http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing

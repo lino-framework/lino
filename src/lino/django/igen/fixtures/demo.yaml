@@ -1,10 +1,10 @@
 ﻿# 
 
-- model: igen.Language
+- model: igen.language
   pk: et
   fields:
     name: Estonian
-- model: igen.Language
+- model: igen.language
   pk: en
   fields:
     name: English
@@ -36,15 +36,24 @@
 - model: igen.PaymentTerm
   pk: 1
   fields:
-    name: cash
+    name: sularahas
 - model: igen.PaymentTerm
   pk: 2
   fields:
     name: 7 päeva neto
     
 
-- model: igen.Contact
+model: igen.contact
   pk: 1
+  fields:
+    companyName: Minu Firma OÜ
+    country: ee
+    language: et
+    paymentTerm: 2
+    shippingMode: 1
+
+- model: igen.Contact
+  pk: 2
   fields:
     lastName: Saffre
     firstName: Luc
@@ -85,7 +94,7 @@
   pk: 1
   fields:
     number: 1
-    customer: 1
+    customer: 2
     date: 2008-10-29
     dueDate: 2008-10-29
     paymentTerm: 2

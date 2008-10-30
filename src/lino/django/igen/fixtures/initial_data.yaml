@@ -1,0 +1,65 @@
+﻿# 
+
+- model: igen.language
+  pk: et
+  fields:
+    name: Estonian
+- model: igen.language
+  pk: en
+  fields:
+    name: English
+- model: igen.language
+  pk: de
+  fields:
+    name: German
+- model: igen.language
+  pk: fr
+  fields:
+    name: French
+
+
+- model: igen.Country
+  pk: ee
+  fields:
+    name: Estonia
+- model: igen.Country
+  pk: be
+  fields:
+    name: Belgium
+- model: igen.Country
+  pk: de
+  fields:
+    name: Germany
+- model: igen.Country
+  pk: fr
+  fields:
+    name: France
+- model: igen.country
+  pk: nl
+  fields:
+    name: Netherlands
+    
+    
+- model: igen.shippingmode
+  pk: 1
+  fields:
+    name: cash and carry
+    
+- model: igen.paymentterm
+  pk: 1
+  fields:
+    name: cash
+- model: igen.paymentterm
+  pk: 2
+  fields:
+    name: 7 päeva neto
+    
+
+model: igen.contact
+  pk: 1
+  fields:
+    companyName: (Default Contact)
+    country: ee
+    language: et
+    paymentTerm: 2
+    shippingMode: 1
