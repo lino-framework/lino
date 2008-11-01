@@ -101,34 +101,45 @@ u'Example & Co (Luc Saffre)'
     
     remarks = models.TextField(blank=True,null=True)
     
+    ordering=("companyName","lastName","firstName")
+    
     def __unicode__(self):
         l=filter(lambda x:x,[self.title,self.firstName,self.lastName])
         s=" ".join(l)
         if self.companyName:
-            return self.companyName+" ("+s+")"
+            if len(s) > 0:
+                return self.companyName+" ("+s+")"
+            else:
+                return self.companyName
         else:
             return s
             
     def asAddress(self):
         l=filter(lambda x:x,[self.title,self.firstName,self.lastName])
         s=" ".join(l)
+        linesep="\n<br/>" # "\n"
         if self.companyName:
-            s=self.companyName+"\n"+s
+            s=self.companyName+linesep+s
         if self.addr1:
-          s += "\n"+self.addr1
+          s += linesep+self.addr1
         if self.addr2:
-          s += "\n"+self.addr2
+          s += linesep+self.addr2
         if self.city:
-          s += "\n"+self.city
+          s += linesep+self.city
         if self.zipCode:
-          s += "\n"+self.zipCode
+          s += linesep+self.zipCode
           if self.region:
             s += " " + self.region
         elif self.region:
-            s += "\n" + self.region
-        if False: # (if self.country != sender's country)
-          s += "\n" + self.country
+            s += linesep+ self.region
+        if self.id == 1:
+            foreigner=False
+        else:
+            foreigner=(self.country != Contact.objects.get(id=1).country)
+        if foreigner: # (if self.country != sender's country)
+            s += linesep + unicode(self.country)
         return s
+    asAddress.allow_tags=True
 
 
 class Country(models.Model):

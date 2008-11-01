@@ -7,12 +7,15 @@ class ContactAdmin(admin.ModelAdmin):
         ("Company data", dict(fields=['companyName','nationalId','vatId'])),
         ('Postal address', dict(fields=['addr1','addr2','city','zipCode','region',"country"])),
         ('Contact', dict(fields=['email','phone','gsm'])),
-        ('Invoicing', dict(fields=['paymentTerm','language','vatExempt','itemVat'], 
+        ('Invoicing', dict(fields=['paymentTerm','vatExempt','itemVat'], 
           classes=['collapse'])),
+        ('Other', dict(fields=['remarks','language'])),
     ]
-    list_display = ('__unicode__', 'asAddress')
+    list_display = ('__unicode__', "companyName","lastName",
+        "firstName", 'asAddress')
     list_filter = ['firstName','lastName','companyName']
     search_fields = ['firstName','lastName','companyName']
+    ordering=("companyName","lastName","firstName")
     
     
     

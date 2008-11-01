@@ -1,4 +1,4 @@
-﻿# 
+﻿#  
 
 - model: igen.language
   pk: et
@@ -55,11 +55,12 @@
     name: 7 päeva neto
     
 
-model: igen.contact
+- model: igen.contact
   pk: 1
   fields:
     companyName: (Default Contact)
+    remarks: 
+      Edit this (id #1) to represent your own contact data.
     country: ee
     language: et
     paymentTerm: 2
-    shippingMode: 1

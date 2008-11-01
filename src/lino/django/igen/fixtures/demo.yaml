@@ -65,7 +65,115 @@
     region: Raplamaa
     email: "luc.saffre@gmx.net"
     language: et
-    paymentTerm: 2
+    
+- model: igen.Contact
+  pk: 3
+  fields:
+    lastName: Arens
+    firstName: Andreas
+    title: Herrn
+    addr1: Vervierser Straße 12
+    zipCode: 4700
+    city: Eupen
+    country: be
+    language: de
+    
+- model: igen.Contact
+  pk: 4
+  fields:
+    lastName: Ausdemwald
+    firstName: Alfons
+    title: Bäckerei
+    addr1: Vervierser Straße 45
+    zipCode: 4700
+    city: Eupen
+    country: be
+    language: de
+
+- model: igen.Contact
+  pk: 5
+  fields:
+    lastName: Bodard
+    firstName: Bernard
+    title: Dr.
+    addr1: rue de la Loi 17
+    zipCode: 4840
+    city: Welkenraedt
+    country: be
+    language: fr
+
+- model: igen.Contact
+  pk: 6
+  fields:
+    companyName: Donderweer bv
+    addr1: Wolfgangamadeusplaats 1-5
+    zipCode: 8601 WB
+    city: Sneek
+    country: nl
+    language: nl
+
+- model: igen.Contact
+  pk: 7
+  fields:
+    lastName: Dupont
+    firstName: Jean
+    title: Mr
+    addr1: 71, rue Neuve
+    zipCode: 59121
+    city: Prouvy
+    country: fr
+    language: fr
+
+- model: igen.Contact
+  pk: 8
+  fields:
+    lastName: Eierschal
+    firstName: Emil
+    title: Herrn
+    addr1: Eichenstr. 7
+    zipCode: 91056
+    city: Erlangen
+    country: de
+    language: de
+
+- model: igen.Contact
+  pk: 9
+  fields:
+    companyName: Hans Flott & Co
+    lastName: Lahm
+    firstName: Lisa
+    title: Frau
+    addr1: Dürener Str. 264-266
+    zipCode: 52007
+    city: Aachen
+    country: de
+    language: de
+
+- model: igen.Contact
+  pk: 100
+  fields:
+    companyName: Mets ja Puu OÜ
+    lastName: Tamme
+    firstName: Tõnu
+    addr1: Sibula tee 1
+    zipCode: 74117
+    city: Maardu
+    region: Harju
+    country: ee
+    language: et
+
+- model: igen.Contact
+  pk: 101
+  fields:
+    lastName: Kask
+    firstName: Karl
+    addr1: Nõmme tee 1
+    addr2: Kloogaranna küla
+    zipCode: 76708
+    city: Keila vald
+    region: Harju
+    country: ee
+    language: et
 
 - model: igen.ProductCat
   pk: 1
