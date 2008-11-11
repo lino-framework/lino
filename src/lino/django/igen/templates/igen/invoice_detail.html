@@ -1,0 +1,10 @@
+<table>
+  {{ invoice.as_p() }}
+</table>
+
+<form method="POST" action="invoice_detail">
+    <table>
+        {{ items }}
+    </table>
+<input type="submit" value="Submit" />
+</form>

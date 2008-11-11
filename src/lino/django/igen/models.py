@@ -114,10 +114,9 @@ u'Example & Co (Luc Saffre)'
         else:
             return s
             
-    def asAddress(self):
+    def asAddress(self,linesep="\n<br/>"):
         l=filter(lambda x:x,[self.title,self.firstName,self.lastName])
         s=" ".join(l)
-        linesep="\n<br/>" # "\n"
         if self.companyName:
             s=self.companyName+linesep+s
         if self.addr1:
@@ -223,15 +222,15 @@ class Product(models.Model):
 
 class Document(models.Model):
     #journal = models.ForeignKey(Journal)
-    number = models.IntegerField()
-    date = models.DateField()
+    number = models.AutoField(primary_key=True)
+    date = models.DateField(auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
     shipTo = models.ForeignKey(Contact,blank=True,null=True,
       related_name="shipTo_%(class)s")
     yourRef = models.CharField(max_length=200,blank=True,null=True)
-    shippingMode = models.ForeignKey(ShippingMode)
-    paymentTerm = models.ForeignKey(PaymentTerm)
+    shippingMode = models.ForeignKey(ShippingMode,blank=True,null=True)
+    paymentTerm = models.ForeignKey(PaymentTerm,blank=True,null=True)
     remarks = models.CharField(max_length=200,blank=True,null=True)
     vatExempt = models.BooleanField(default=False)
     itemVat = models.BooleanField(default=False)
@@ -243,10 +242,10 @@ class Document(models.Model):
         abstract = True
 
 class Order(Document):
-    validUntil = models.DateField("Valid until")
+    validUntil = models.DateField("Valid until",blank=True,null=True)
 
 class Invoice(Document):
-    dueDate = models.DateField("Payable until")
+    dueDate = models.DateField("Payable until",blank=True,null=True)
 
 class DocumentItem(models.Model):
     pos = models.IntegerField("Position")
@@ -263,8 +262,8 @@ class DocumentItem(models.Model):
         abstract = True
     
 class OrderItem(DocumentItem):
-    order = models.ForeignKey(Order)
+    order = models.ForeignKey(Order,related_name="items")
         
 class InvoiceItem(DocumentItem):
-    invoice = models.ForeignKey(Invoice)
+    invoice = models.ForeignKey(Invoice,related_name="items")
         

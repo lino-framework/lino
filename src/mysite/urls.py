@@ -1,4 +1,4 @@
-
+# mysite.urls, the root URLconf module
 from django.conf.urls.defaults import *
 from django.contrib import databrowse
 from django.contrib.auth.decorators import login_required
@@ -6,10 +6,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
-#from lino.django.nodes import views
+from lino.django.igen.views import root
 
 urlpatterns = patterns('',
-    (r'^(.*)$', admin.site.root),
+    (r'^$', root),
+    (r'^admin/(.*)$', admin.site.root),
     (r'^db/(.*)', login_required(databrowse.site.root)),
 )    
 
