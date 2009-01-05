@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 
-## Copyright 2005-2008 Luc Saffre 
+## Copyright 2005-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -26,20 +26,19 @@ from PIL.TiffImagePlugin import DATE_TIME
 
 from lino.console.application import Application, UsageError
 
-
 class MyException(Exception):
     pass
 
-def avinewname(root,name):
+def avitime(root,name):
     pass
 
-def wavnewname(root,name):
+def wavtime(root,name,seq):
     # this is wrong.
     # i want to know how the creation date is stored in .wav files
     filename=os.path.join(root, name)
     sti=os.stat(filename)
-    ct=time.localtime(sti.st_ctime)
-    return time.strftime("%Y_%m_%d-%H_%M_%S.wav",ct)
+    return time.localtime(sti.st_ctime)
+    #return time.strftime("%Y_%m_%d-%H_%M_%S.wav",ct)
     
 
 class JpgRename(Application):
@@ -47,7 +46,7 @@ class JpgRename(Application):
     name="Lino/jpgrename"
 
     copyright="""\
-Copyright (c) 2002-2008 Luc Saffre.
+Copyright (c) 2002-2009 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -83,9 +82,9 @@ where DIR (default .) is a directory with .jpg files to rename.
     def run(self):
          
         self.converters = {
-            '.jpg' : self.jpgnewname,
-            '.avi' : avinewname,
-            '.wav' : wavnewname,
+            '.jpg' : self.jpgtime,
+            '.avi' : avitime,
+            '.wav' : wavtime,
             }
 
         if len(self.args) == 0:
@@ -98,60 +97,51 @@ where DIR (default .) is a directory with .jpg files to rename.
             
     def walk(self,dirname):
         for root, dirs, files in os.walk(dirname):
-            okay=True
-            filenames = {}
+            filedates = []
             for name in files:
                 base,ext = os.path.splitext(name)
                 cv = self.converters.get(ext.lower(),None)
                 if cv is not None:
                     try:
-                        nfn=cv(root,name)
+                        dt=cv(root,name)
                     except MyException,e:
                         self.warning(str(e))
                     else:
-                        if nfn is None: pass
-                        elif nfn == name: pass
-                        elif filenames.has_key(nfn):
-                            okay=False
-                            self.warning(
-                                '%s/%s: duplicate time %s', \
-                                root,name,nfn)
+                        if dt is None: pass
                         else:
-                            filenames[nfn] = name
-            if not okay: return
-            if len(filenames) == 0:
+                            filedates.append((dt,base,ext))
+            if len(filedates) == 0:
                 self.notice("Nothing to do.")
                 return
+                
+            filedates.sort(lambda a,b : cmp(a[0],b[0]))
             
             if not self.confirm(
                 "Rename %d files in directory %s ?" % \
-                (len(filenames),root)):
+                (len(filedates),root)):
                 return
-            
-            for nfn,ofn in filenames.items():
-                o=os.path.join(root,ofn)
-                n=os.path.join(root,nfn)
+            seq=0
+            for dt,oldname,ext in filedates:
+                seq += 1
+                newname=self.dt2filename(dt,seq)
+                o=os.path.join(root,oldname)+ext
+                n=os.path.join(root,newname)+ext
                 if self.options.simulate:
                     self.notice("Would rename %s to %s", o,n)
                 else:
                     self.notice("Rename %s to %s", o,n)
                     os.rename(o,n)
                                    
-    def dt2filename(self,s):
-        a = s.split()
-        if len(a) != 2: return None
-        d=a[0].split(':')
-        if len(d) != 3: return None
-        t=a[1].split(':')
-        if len(t) != 3: return None
-        args=[int(x) for x in d] + [int(x) for x in t]
-        dt=datetime.datetime(*args)
+    def dt2filename(self,dt,seq):
         dt += datetime.timedelta(0,0,0,0,self.options.timediff)
         #print '_'.join(d)+'-'+'_'.join(t)+'.jpg', "->", dt.strftime("%Y_%m_%d-%H_%M_%S.jpg")
         #return '_'.join(d)+'-'+'_'.join(t)+'.jpg'
-        return dt.strftime("%Y_%m_%d-%H_%M_%S")
+        if True: # my new naming schema
+            return dt.strftime("%Y%m%d") + "-%03d" % seq
+        else:
+            return dt.strftime("%Y_%m_%d-%H_%M_%S")
 
-    def jpgnewname(self,root,name):
+    def jpgtime(self,root,name):
         filename=os.path.join(root, name)
         try:
             img = Image.open(filename)
@@ -162,6 +152,19 @@ where DIR (default .) is a directory with .jpg files to rename.
             raise MyException(filename+ ': no EXIF information found')
         if not exif.has_key(DATE_TIME):
             raise MyException(filename+ ':'+ str(exif.keys()))
+        a = exif[DATE_TIME].split()
+        if len(a) != 2: 
+            raise MyException(filename+ ': invalid DATE_TIME format')
+        d=a[0].split(':')
+        if len(d) != 3: 
+            raise MyException(filename+ ': invalid DATE format')
+        t=a[1].split(':')
+        if len(t) != 3: 
+            raise MyException(filename+ ': invalid TIME format')
+        args=[int(x) for x in d] + [int(x) for x in t]
+        return datetime.datetime(*args)
+        
+    def unused(self):
         nfn=self.dt2filename(exif[DATE_TIME])
         if nfn is None:
             raise MyException(
@@ -170,16 +173,6 @@ where DIR (default .) is a directory with .jpg files to rename.
         nfn+= self.options.suffix
         return nfn + ".jpg"
 
-
-
-
-#JpgRename().main()
-
-## # lino.runscript expects a name consoleApplicationClass
-## consoleApplicationClass = JpgRename
-
-## if __name__ == '__main__':
-##     consoleApplicationClass().main() 
-    
+   
 def main(*args,**kw):
     JpgRename().main(*args,**kw)
