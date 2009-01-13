@@ -74,7 +74,7 @@ where DIR (default .) is a directory with .jpg files to rename.
         
         parser.add_option(
             "--suffix",
-            help="add SUFFIC to each filename",
+            help="add SUFFIX to each filename",
             action="store", type="string",
             dest="suffix",
             default="")
@@ -124,6 +124,8 @@ where DIR (default .) is a directory with .jpg files to rename.
             for dt,oldname,ext in filedates:
                 seq += 1
                 newname=self.dt2filename(dt,seq)
+                if self.options.suffix:
+                    newname+=self.options.suffix
                 o=os.path.join(root,oldname)+ext
                 n=os.path.join(root,newname)+ext
                 if self.options.simulate:
