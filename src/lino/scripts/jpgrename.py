@@ -132,7 +132,10 @@ where DIR (default .) is a directory with .jpg files to rename.
                     self.notice("Would rename %s to %s", o,n)
                 else:
                     self.notice("Rename %s to %s", o,n)
-                    os.rename(o,n)
+                    try:
+                        os.rename(o,n)
+                    except WindowsError,e:
+                        self.warning(str(e))
                                    
     def dt2filename(self,dt,seq):
         dt += datetime.timedelta(0,0,0,0,self.options.timediff)
