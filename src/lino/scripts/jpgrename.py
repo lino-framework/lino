@@ -73,6 +73,13 @@ where DIR (default .) is a directory with .jpg files to rename.
             default=0)
         
         parser.add_option(
+            "-f", "--format",
+            help="format template for new filename (1=YYYY_MM_DD-hh_mm_ss,2=YYYMMDD-SEQ,...)",
+            action="store", type="int",
+            dest="format",
+            default=3)
+        
+        parser.add_option(
             "--suffix",
             help="add SUFFIX to each filename",
             action="store", type="string",
@@ -141,10 +148,14 @@ where DIR (default .) is a directory with .jpg files to rename.
         dt += datetime.timedelta(0,0,0,0,self.options.timediff)
         #print '_'.join(d)+'-'+'_'.join(t)+'.jpg', "->", dt.strftime("%Y_%m_%d-%H_%M_%S.jpg")
         #return '_'.join(d)+'-'+'_'.join(t)+'.jpg'
-        if True: # my new naming schema
-            return dt.strftime("%Y%m%d") + "-%03d" % seq
-        else:
+        if self.options.format == 1:
             return dt.strftime("%Y_%m_%d-%H_%M_%S")
+        elif self.options.format == 2: # my new naming schema
+            return dt.strftime("%Y%m%d") + "-%03d" % seq
+        elif self.options.format == 3:
+            return dt.strftime("%Y%m-%d_%H%M-%S")
+        else:
+            raise MyException("%s : invalid format" % self.options.format)
 
     def jpgtime(self,root,name):
         filename=os.path.join(root, name)
