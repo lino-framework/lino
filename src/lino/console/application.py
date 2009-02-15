@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2007 Luc Saffre 
+## Copyright 2003-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -18,14 +18,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-## import sys
-
-## import lino
-
-## from lino.console import syscon
-
+import os
 import sys
 from optparse import OptionParser
+import cfgparse
 import textwrap
 
 import lino
@@ -58,6 +54,7 @@ class Application(Task):
     author=None
     usage=None
     description = None
+    configfile=None
 
     """
     
@@ -89,6 +86,12 @@ class Application(Task):
             action="callback",
             callback=set_lang)
 
+    def setupConfigParser(self,p):
+        if self.configfile is not None:
+            if os.path.exists(self.configfile):
+                p.add_file(self.configfile)
+                print "Using config file %s" % self.configfile
+      
 
     def applyOptions(self,options,args):
         self.options=options
@@ -162,7 +165,6 @@ class Application(Task):
     def main(self,*args,**kw):
         """Process command-line arguments and run the application.
 
-
         """
 
         self.toolkit=syscon.getSystemConsole()
@@ -172,17 +174,29 @@ class Application(Task):
         if desc is not None:
             desc=" ".join(desc.split())
         
-        p = OptionParser(
+        o = OptionParser(
             usage=self.usage,
             description=desc)
-
+            
+        # create the config file parser. do we allow security holes?
+        # if a subclass sets a configfile with extension ".py",
+        # then we trust that it knows what it wants.
+        allow_py=None
+        if self.configfile is not None:
+            if os.path.splitext(self.configfile)[1] == ".py":
+              allow_py=True
+        c = cfgparse.ConfigParser(allow_py=allow_py)
+        c.add_optparse_help_option(o)
         
+        self.setupOptionParser(o)
+        self.setupConfigParser(c)
+
         argv=sys.argv[1:]
         
-        self.setupOptionParser(p)
-        
         try:
-            poptions,pargs = p.parse_args(argv)
+            poptions,pargs = c.parse(o,argv)
+            #print poptions, pargs
+            #poptions,pargs = p.parse_args(argv)
             self.applyOptions(poptions,pargs)
             self.start_running()
             ret=self.run(*args,**kw)
@@ -191,7 +205,7 @@ class Application(Task):
 
         except UsageError,e:
             self.error("Usage error: "+str(e))
-            p.print_help()
+            c.print_help()
             return -1
         except UserAborted,e:
             self.verbose(str(e))
@@ -199,11 +213,7 @@ class Application(Task):
         except OperationFailed,e:
             self.error(str(e))
             return -2
-##         except ApplicationError,e:
-##             self.error(str(e))
-##             return -1
 
     def run(self,*args,**kw):
         pass
-        #raise NotImplementedError
 

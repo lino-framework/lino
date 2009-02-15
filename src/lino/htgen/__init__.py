@@ -1,4 +1,4 @@
-## Copyright 2007-2008 Luc Saffre 
+## Copyright 2007-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+raise """No longer supported. There are many other similar modules to generate HTML from Python, and this one is quite buggy and would need more work. I decided to switch to jinja2 for quick HTML generation. LS 20090210."""
 
 from lino.htgen.story import Document
 

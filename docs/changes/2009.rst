@@ -1,0 +1,22 @@
+Changes 2009
+============
+
+
+20090214
+--------
+
+- New optional keyword argument `fontWeights=None` in
+  :meth:`Win32TextPrinter.__init__`.
+
+- :mod:`lino.config` now also looks for a lino.cfg in the current working directory.
+
+
+- I deprecated :mod:`lino.config` after discovering Dan Gass's
+  `cfgparse <http://cfgparse.sourceforge.net/>`__ module. 
+  :class:`lino.console.application.Appliation.` now uses this module. 
+  
+  :attr:`Appliation.configfile`
+  :meth:`Appliation.setupConfigParser`
+  
+  Example:
+  :meth:`lino.scripts.prnprint.PrnPrint.setupConfigParser`

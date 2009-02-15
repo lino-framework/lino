@@ -1,4 +1,4 @@
-## Copyright 2003-2008 Luc Saffre 
+## Copyright 2003-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -42,6 +42,8 @@ class Fragment(Container):
 
 class SPAN(Fragment):
     allowedContent = (CDATA,IMG,Fragment)
+    
+#SPAN.allowedContent = (CDATA,IMG,Fragment,SPAN)
 
 #class DIV(Fragment):
 #    allowedContent = (CDATA,P,TABLE,SPAN,BR,IMG)
@@ -108,8 +110,8 @@ class TABLE(Fragment):
     allowedContent=(TR,COLGROUP,THEAD,TFOOT,TBODY)
     
     def addrow(self,*cells):
-        #return self.append(TR(*[TD(e) for e in cells]))
-        return self.append(TR(*cells))
+        return self.append(TR(*[TD(e) for e in cells]))
+        #return self.append(TR(*cells))
     
 def tablerows(table,area):
     """

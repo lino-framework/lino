@@ -1,4 +1,4 @@
-## Copyright 2003-2008 Luc Saffre 
+## Copyright 2003-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -154,7 +154,7 @@ class Document(Story):
         wr('<meta name="GENERATOR" content="lino.htgen">\n')
         wr('<meta name="author" content="">\n')
         wr('<meta name="date" content="%s">'%self.date)
-        wr("<head>\n")
+        wr("</head>\n")
         self.body.__xml__(wr)
         wr("""\n</html>\n""")
 

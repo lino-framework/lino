@@ -1,4 +1,4 @@
-## Copyright 2006-2007 Luc Saffre
+## Copyright 2006-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,24 +20,8 @@ import os
 import tempfile
 from ConfigParser import SafeConfigParser, DEFAULTSECT
 
-
 lino_home = os.path.abspath(
     os.path.join( os.path.dirname(__file__),"..",".."))
-
-## rtlib_path = os.path.join(lino_home, "rtlib")
-## tests_path = os.path.join(lino_home, "tests")
-## docs_path = os.path.join(lino_home, "docs")
-## src_path = os.path.join(lino_home, "src")
-
-## defaults={
-##     'lino_home' : lino_home,
-##     'tempdir' : tempfile.gettempdir(),
-##     'rtlib_path' : rtlib_path,
-##     'tests_path' : tests_path,
-##     'docs_path' : docs_path,
-##     'src_path' : src_path,
-##     }
-## config = SafeConfigParser(defaults)
 
 class Section:
     def __init__(self,parser,name,**kw):
@@ -64,16 +48,14 @@ paths = Section(config,'paths',
 win32=Section(config,'win32',
               postscript_printer="Lexmark Optra PS")
 
+#~ prnprint=Section(config,'prnprint',
+              #~ fontWeights=None,
+              #~ fontSize=12,
+              #~ fontName="Courier New"
+              #~ )
+
 ## gendoc = Section(config,'gendoc',
 ##                 basepath=paths.get('tempdir'))
-
-## config.add_section('paths')
-## config.set('paths','lino_home',lino_home)
-## config.set('paths','tempdir',tempfile.gettempdir())
-## config.set('paths','rtlib_path',os.path.join(lino_home, "rtlib"))
-## config.set('paths','tests_path',os.path.join(lino_home, "tests"))
-## config.set('paths','docs_path',os.path.join(lino_home, "docs"))
-## config.set('paths','src_path',os.path.join(lino_home, "src"))
 
 #config.add_section('forms')
 #config.set('forms','wishlist','wx tix cherrypy console')
@@ -81,7 +63,8 @@ win32=Section(config,'win32',
 #config.readfp(open('defaults.cfg'))
 config.read( [
     os.path.join(lino_home,'lino.cfg'),
-    os.path.expanduser('~/lino.cfg')
+    os.path.expanduser('~/lino.cfg'),
+    'lino.cfg'
     ])
 
 get=config.get

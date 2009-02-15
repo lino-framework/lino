@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 
-## Copyright 2004-2008 Luc Saffre
+## Copyright 2004-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,15 +20,15 @@
 
 import sys, os
 
-#from lino.ui import console
 from lino.textprinter import winprn
 from lino.console.application import Application, UsageError
+
 
 class PrnPrint(Application):
     
     name="Lino prnprint"
     copyright="""\
-Copyright (c) 2004-2008 Luc Saffre.
+Copyright (c) 2004-2009 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -41,7 +41,22 @@ where FILE is a textprinter input file to be printed on your Windows
 Printer.
 
 """ 
+    configfile="prnprint_config.py"
     
+    def setupConfigParser(self,parser):
+        
+        parser.add_option("fontWeights",
+                          help="""\
+a tuple of fontweight values expressing the boldnesses of 
+normal and bold text.
+Default is (400,700). Another reasonable value is (600,800).
+""",
+                          dest="fontWeights",
+                          default=None,
+                          metavar="(NORMAL,BOLD)")
+
+        Application.setupConfigParser(self,parser)
+        
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
     
@@ -71,11 +86,11 @@ print NUM copies.""",
     
         parser.add_option("--fontName",
                           help="""\
-use the named font instead of "Courier New".""",
+Name of font to be used. This sould be a fixed-pitch font. 
+Default is "Courier New".""",
                           action="store",
                           type="string",
-                          dest="fontName",
-                          default="Courier New")
+                          dest="fontName")
 
         parser.add_option("-o", "--output",
                           help="""\
@@ -111,6 +126,7 @@ write to SPOOLFILE instead of really printing.""",
                     #useWorldTransform=self.options.useWorldTransform,
                     encoding=self.options.encoding,
                     fontName=self.options.fontName,
+                    fontWeights=self.options.fontWeights,
                     cpi=self.options.fontSize,
                     session=self)
                     #charset=winprn.OEM_CHARSET)

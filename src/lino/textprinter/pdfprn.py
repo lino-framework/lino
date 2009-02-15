@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 
-## Copyright 2004-2008 Luc Saffre
+## Copyright 2004-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 

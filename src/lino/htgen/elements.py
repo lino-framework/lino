@@ -60,9 +60,12 @@ def quote(x):
     
 class CDATA:
     fragmentable=True
-    def __init__(self,text):
-        assert_pure(text)
-        self.text = text
+    def __init__(self,text=None):
+        if text is None:
+            self.text=""
+        else:
+            assert_pure(text)
+            self.text = text
         
     def __xml__(self,wr):
         #self.text.replace("&","&amp;").replace("<","&lt;"))
@@ -154,7 +157,9 @@ class Container(Element):
             self.append(elem)
             
     def format(self,elem):
+        #print "format(",elem,")"
         if elem is None:
+            #print self.allowedContent[0]
             return self.allowedContent[0]()
         elif isinstance(elem,basestring):
             return self.allowedContent[0](elem)

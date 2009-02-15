@@ -35,7 +35,6 @@ from lino.textprinter.textprinter import TextPrinter, \
 from lino.textprinter import devcaps 
 
 
-
 #OEM_CHARSET = win32con.OEM_CHARSET
 
 charsets = {
@@ -46,15 +45,6 @@ charsets = {
 # OEM_FIXED_FONT = win32con.OEM_FIXED_FONT
 # http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_3pbo.asp
 
-
-# 20070414 :
-if True:
-    # bolder than normal because Courier.ttf isn't dark enough 
-    weight_bold=win32con.FW_EXTRABOLD
-    weight_normal=win32con.FW_SEMIBOLD
-else:    
-    weight_bold=win32con.FW_BOLD
-    weight_normal=win32con.FW_NORMAL
 
 
 pt = 20
@@ -99,7 +89,8 @@ class Win32TextPrinter(TextPrinter):
                  printerName=None,
                  spoolFile=None,
                  lpi=6,
-                 fontName=None,
+                 fontName="Courier New",
+                 fontWeights=None,
                  jobName="Win32PrinterDocument",
                  **kw):
         
@@ -110,6 +101,19 @@ class Win32TextPrinter(TextPrinter):
         self.leading = 0
         self.maxLeading=0
         self.logfont=win32gui.LOGFONT()
+        # 20070414 :
+        self.weight_bold=win32con.FW_BOLD
+        self.weight_normal=win32con.FW_NORMAL
+        if fontWeights is not None:
+            if len(fontWeights) != 2:
+                raise TypeError("len(fontWeights) must be 2")
+            for i in fontWeights:
+                if type(i) != int:
+                    raise TypeError("%r : not an integer" % i)
+            # bolder than normal because Courier.ttf isn't dark enough 
+            self.weight_normal=fontWeights[0] # win32con.FW_SEMIBOLD
+            self.weight_bold=fontWeights[1] # win32con.FW_EXTRABOLD
+
         """
         lfHeight
         lfWidth
@@ -172,7 +176,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
         #self.logfont.lfCharSet=win32con.HEBREW_CHARSET
         #self.logfont.lfCharSet=win32con.ARABIC_CHARSET
         #self.logfont.lfCharSet=win32con.SYMBOL_CHARSET
-        self.logfont.lfWeight=weight_normal
+        self.logfont.lfWeight=self.weight_normal
 
         self.setCpi(self.cpi)
 
@@ -414,11 +418,11 @@ http://newcenturycomputers.net/projects/pythonicwindowsprinting.html
     def setBold(self,bold):
         if bold:
             #self.logfont.lfWeight=win32con.FW_EXTRABOLD
-            self.logfont.lfWeight=weight_bold
+            self.logfont.lfWeight=self.weight_bold
             #self.logfont.lfWeight=win32con.FW_BOLD
             #self.fontDict['weight'] = win32con.FW_BOLD
         else:
-            self.logfont.lfWeight=weight_normal
+            self.logfont.lfWeight=self.weight_normal
             #self.logfont.lfWeight=win32con.FW_SEMIBOLD
             #self.logfont.lfWeight=win32con.FW_NORMAL
             #self.fontDict['weight'] = win32con.FW_NORMAL
