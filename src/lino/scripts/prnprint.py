@@ -41,7 +41,13 @@ where FILE is a textprinter input file to be printed on your Windows
 Printer.
 
 """ 
-    configfile="prnprint_config.py"
+    configfile="prnprint.ini" 
+    configdefaults=dict(
+      fontWeights=(400,700) 
+      # a tuple of fontweight values expressing the boldnesses of 
+      # normal and bold text.
+      # Default is (400,700). Another reasonable value is (600,800).
+    )
     
     def setupConfigParser(self,parser):
         

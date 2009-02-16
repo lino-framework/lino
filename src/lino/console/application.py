@@ -21,7 +21,6 @@
 import os
 import sys
 from optparse import OptionParser
-import cfgparse
 import textwrap
 
 import lino
@@ -55,6 +54,7 @@ class Application(Task):
     usage=None
     description = None
     configfile=None
+    configdefaults={}
 
     """
     
@@ -75,6 +75,7 @@ class Application(Task):
     
     def setupOptionParser(self,p):
         self.toolkit.setupOptionParser(p)
+        
         def set_lang(option, opt, value, parser):
             from lino import i18n
             i18n.setUserLang(value)
@@ -85,15 +86,37 @@ class Application(Task):
             type="string",
             action="callback",
             callback=set_lang)
-
-    def setupConfigParser(self,p):
+            
         if self.configfile is not None:
-            if os.path.exists(self.configfile):
-                p.add_file(self.configfile)
-                print "Using config file %s" % self.configfile
-      
+            p.add_option("--config",
+                         help="""\
+alternate configuration file instead of %s.""" % self.configfile,
+                        action="store",
+                        type="string",
+                        dest="configfile",
+                        metavar="FILE",
+                        default=self.configfile)
+
 
     def applyOptions(self,options,args):
+      
+        """
+        :attr:`Application.configfile` just specifies the default name. 
+        If it is None, then there is no :cmd:`--config` option.
+        If it is not None, then if has been set the default value for
+        this option, so this is where we take the actual value to be
+        used.
+        """
+        if self.configfile is not None:
+            options._update_loose(self.configdefaults)
+            if os.path.exists(options.configfile):
+                self.verbose("Running configuration file %s", 
+                  options.configfile)
+                options.read_file(options.configfile,"loose")
+                #execfile(options.configfile,self.configdefaults)
+            else:
+                self.verbose("Skip nonexisting configuration file %s",
+                  options.configfile)
         self.options=options
         self.args=args
 
@@ -174,29 +197,16 @@ class Application(Task):
         if desc is not None:
             desc=" ".join(desc.split())
         
-        o = OptionParser(
+        p = OptionParser(
             usage=self.usage,
             description=desc)
             
-        # create the config file parser. do we allow security holes?
-        # if a subclass sets a configfile with extension ".py",
-        # then we trust that it knows what it wants.
-        allow_py=None
-        if self.configfile is not None:
-            if os.path.splitext(self.configfile)[1] == ".py":
-              allow_py=True
-        c = cfgparse.ConfigParser(allow_py=allow_py)
-        c.add_optparse_help_option(o)
-        
-        self.setupOptionParser(o)
-        self.setupConfigParser(c)
+        self.setupOptionParser(p)
 
         argv=sys.argv[1:]
         
         try:
-            poptions,pargs = c.parse(o,argv)
-            #print poptions, pargs
-            #poptions,pargs = p.parse_args(argv)
+            poptions,pargs = p.parse_args(argv)
             self.applyOptions(poptions,pargs)
             self.start_running()
             ret=self.run(*args,**kw)

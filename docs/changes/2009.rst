@@ -20,3 +20,59 @@ Changes 2009
   
   Example:
   :meth:`lino.scripts.prnprint.PrnPrint.setupConfigParser`
+
+
+20090216
+--------
+
+
+- My fascination for the cfgparse module got a slap in the face when I tried to implement the following features:
+  
+  - The name of the configuration file to be used should be
+    configurable in the command line.
+  - Configuration files should be of type Python even if their 
+    name doesn't end with ".py"
+  
+  (Note that it almost worked, 
+  :meth:`cfgparse.ConfigParser.parse` first executes 
+  OptionParser.parse_args() to parse the command line and 
+  stores the result in :attr:`optparser_options`. 
+  Or by using 
+  
+  Then I read on
+  http://wiki.python.org/moin/ConfigParserShootout
+  that most config file parser modules invest a lot of energy for so-called nested section names, a feature that I don't need, 
+  and that Guido refuses to 
+  
+  Then I realized how easy it is to simply read configuration files with the standard :meth:`execfile`. 
+  
+  Conclusion: I removed the :mod:`cfgparse` and related code again, replaced it by a few lines in :meth:`Appliation.applyOptions` and 
+  two class variables:
+  
+  - :attr:`Appliation.configfile`
+    specifies the default name of the application's configuration file. 
+    If it is None, then there is no :cmd:`--config` option.
+        
+  - :attr:`Appliation.configdefaults` : a dictionary of default
+    values.
+
+  The only thing I regret is that I must now find other ways to document the variables that may occur in a config file.
+  
+  :attr:`lino.scripts.prnprint.PrnPrint.configfile`
+  :attr:`lino.scripts.prnprint.PrnPrint.configdefaults`
+
+
+- Note that the :meth:`optparse.Values.read_file` of the standard library is currently::
+
+    def read_file(self, filename, mode="careful"):
+        vars = {}
+        execfile(filename, vars)
+        self._update(vars, mode)
+        
+  I should maybe suggest to change it to::
+
+    def read_file(self, filename, mode="careful",defaults={}):
+        execfile(filename, defaults)
+        self._update(defaults, mode)
+
+  
