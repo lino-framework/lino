@@ -30,7 +30,7 @@ from reportlab.pdfbase.ttfonts import TTFont, TTFError
 
 
 from lino.textprinter.textprinter import FileTextPrinter, \
-     ParserError, OperationFailed
+     ParserError
 
 # name: (regular, bold, italic, bolditalic)
 FONTFILES={

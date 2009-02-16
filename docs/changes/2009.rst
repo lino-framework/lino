@@ -25,7 +25,6 @@ Changes 2009
 20090216
 --------
 
-
 - My fascination for the cfgparse module got a slap in the face when I tried to implement the following features:
   
   - The name of the configuration file to be used should be
@@ -60,6 +59,16 @@ Changes 2009
   
   :attr:`lino.scripts.prnprint.PrnPrint.configfile`
   :attr:`lino.scripts.prnprint.PrnPrint.configdefaults`
+  
+  
+  
+.. keyword:: fontWeights
+
+A tuple of fontweight values expressing the boldnesses of 
+normal and bold text.
+Default is (400,700). 
+Another reasonable value is (600,800).
+  
 
 
 - Note that the :meth:`optparse.Values.read_file` of the standard library is currently::
@@ -74,5 +83,29 @@ Changes 2009
     def read_file(self, filename, mode="careful",defaults={}):
         execfile(filename, defaults)
         self._update(defaults, mode)
+
+  
+20090216b
+---------
+
+- I realized that :mod:`lino.scripts.prnprint` might become meaningless if I manage 
+  to find a quick way to print a PDF file directly. 
+  Quick for me means that it must be easily installable for my customers, and should not depend on the Acrobat Reader version.
+  
+  http://www.esnips.com/web/PDFTools
+  
+  Hmm...
+  
+  But here:
+  http://two.pairlist.net/pipermail/reportlab-users/2005-May/003936.html
+  
+  Thanks to Thomas Blatter for posting this.
+  
+  New lino script :mod:`lino.scripts.pdfprint`. 
+  It works, at least on my computer.  
+  
+  Unfortunately this trick can print only to the standard printer.
+  So :mod:`lino.scripts.prnprint` cannot yet die...
+  
 
   

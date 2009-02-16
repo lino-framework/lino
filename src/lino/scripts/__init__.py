@@ -1,4 +1,4 @@
-## Copyright 2003-2007 Luc Saffre
+## Copyright 2003-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -19,7 +19,7 @@
 __all__ = (
     'pds2pdf',
     #'pds2sxw', 'pds2sxc',
-    'prn2pdf', 'prnprint',
+    'prn2pdf', 'prnprint', 'pdfprint',
     'sync', 'diag',
     'openmail',
     'sendmail',
