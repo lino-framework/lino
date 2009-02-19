@@ -1,0 +1,17 @@
+{% extends "voc/base_site.html" %}
+
+{% block title %}List of units{% endblock %}
+
+{% block content %}
+
+<div id="breadcrumbs"><a href="{{ root_url }}">Home</a> / <a href="{{ model.url }}">{{ model.verbose_name_plural|capfirst }}</a> / By {{ field.field.verbose_name }}</div>
+
+<h1>List of units</h1>
+
+<ul class="objectlist">
+{% for unit in units %}
+<li class="{% cycle 'odd' 'even' %}"><a href="{{ unit.get_absolute_url }}">{{ unit }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

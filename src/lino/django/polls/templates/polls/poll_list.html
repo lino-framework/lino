@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %} List of Polls {% endblock %}
+{% block content %}
+
+<h1>List of Polls</h1>
+{% if object_list %}
+    <ul>
+    {% for poll in object_list %}
+        <li>{{ poll.question }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
+
+{% endblock %}

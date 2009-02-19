@@ -1,0 +1,36 @@
+{% extends "voc/base_site.html" %}
+
+{% block title %}{{ entry.unit.name }}{{ entry.pos }}{% endblock %}
+
+{% block content %}
+
+
+<div class="pagination">
+    <span class="step-links">
+        <a href="/">Home</a> |
+        <a href="{{ entry.unit.get_absolute_url }}">{{ entry.unit.title }}</a> |
+        {% if page_obj.has_previous %}
+            <a href="{{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="{{ page_obj.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+
+{% for entry in page_obj.object_list %}
+
+<h1>{{ entry.question }}</h1>
+
+<h1 align="right">{{ entry.answer }}</h1>
+
+{% endfor %}
+
+
+{% endblock %}

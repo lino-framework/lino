@@ -1,0 +1,194 @@
+"id","question","answer","unit_id"
+1,"sous","... all",2
+2,"devant","... ees",2
+3,"pour","... jaoks",2
+4,"sur","... peal",2
+5,"dans","... sees",2
+6,"derrière","... taga",2
+7,"avec","...ga",2
+8,"voilà","„vaata seal“",3
+9,"voici","„vaata siin“",3
+10,"mais","aga",3
+11,"merci","aitäh",2
+12,"fenêtre (n.f.)","aken",1
+13,"gentil / gentille","armas",1
+14,"aimer","armastama",2
+15,"ordinateur (n.m.)","arvuti",3
+16,"voiture (n.f.)","auto",2
+17,"ouvrir (j'ouvre / ouvert)","avama",3
+18,"piscine (n.f.)","bassein",2
+19,"bus (n.m.)","buss",2
+20,"directeur (n.m.)","direktor",2
+21,"non","ei",2
+22,"habiter","elada",2
+23,"salon (n.m.)","elutuba",3
+24,"mère (n.f.)","ema",1
+25,"mauvais / -e","halb",3
+26,"gris / grise","hall",3
+27,"bon / bonne","hea",3
+28,"bonjour","head päeva",2
+29,"bonsoir","head õhtut",2
+30,"bonne nuit","head ööd",2
+31,"Monsieur","Härra",2
+32,"beau / belle","ilus",2
+33,"laid / laide","inetu",2
+34,"père (n.m.)","isa",1
+35,"et","ja",2
+36,"oui","jah",2
+37,"vélo (n.m.)","jalgrattas",2
+38,"courir (je cours / couru)","jooksma",3
+39,"boire (je bois / bu)","jooma",2
+40,"dessiner (je dessine / dessiné)","joonistama",3
+41,"manteau (n.m.)","jope",1
+42,"fromage (n.m.)","juust",2
+43,"fourchette (n.f.)","kahvel",2
+44,"pullover (n.m.)","kampsun",1
+45,"armoire (n.f.)","kapp",1
+46,"plat (n.m.)","kauss",2
+47,"horloge (n.f.)","kell",3
+48,"soulier (n.m.)","king",1
+49,"fermé / fermée","kinni",3
+50,"cinéma (n.m.)","kino",2
+51,"église (n.f.)","kirik",2
+52,"écrire (j'écris / écrit)","kirjutama",3
+53,"verre (n.m.)","klaas",2
+54,"café (n.m.)","kohv",2
+55,"machine à café (n.f.)","kohvimasin",2
+56,"jaune / jaune","kollane",3
+57,"bonbon (n.m.)","komm",2
+58,"école (n.f.)","kool",2
+59,"si … alors","kui … siis",3
+60,"méchant / méchante","kuri",1
+61,"chaud / chaude","kuum",2
+62,"mince / mince","kõhn",3
+63,"dur / dure","kõva",2
+64,"cuisine (n.f.)","köök",2
+65,"froid / froide","külm",2
+66,"demander (je demande / demandé)","küsima",3
+67,"ouvert / ouverte","lahti",3
+68,"table (n.f.)","laud",1
+69,"chanter (je chante / chanté)","laulma",3
+70,"pain (n.m.)","leib",2
+71,"pain complet (n.m.)","leib",3
+72,"avion (n.m.)","lennuk",2
+73,"viande (n.f.)","liha",2
+74,"trop","liiga",2
+75,"limonade (n.f.)","limonaad",2
+76,"ville (n.f.)","linn",2
+77,"cuillère (n.f.)","lusikas",2
+78,"court / courte","lühike",1
+79,"je suis","ma olen",1
+80,"je voudrais","ma tahaksin",2
+81,"chambre à coucher (n.f.)","magamistuba",2
+82,"jus (n.m.)","mahl",2
+83,"maison (n.f.)","maja",2
+84,"machine (n.f.)","masin",2
+85,"nous sommes","me oleme",1
+86,"nous ","meie",1
+87,"métro (n.m.)","metroo",2
+88,"je ","mina",1
+89,"aller (je vais / allé)","minema",2
+90,"compote (n.f.)","moos",2
+91,"j'ai","mul on ",2
+92,"sale / sale","must",1
+93,"noir / noire","must",3
+94,"vendre (je vends / vendu)","müüma",3
+95,"elles ","nad",1
+96,"ils","nad",1
+97,"ils sont","nad on",1
+98,"elles sont","nad on",1
+99,"jeune / jeune","noor",2
+100,"couteau (n.m.)","nuga",2
+101,"au revoir","nägemiseni",2
+102,"oncle (n.m.)","onu",1
+103,"cousin (n.m.)","onupoeg",1
+104,"cousine (n.f.)","onutütar",1
+105,"orange / orange","oranž",3
+106,"acheter","ostma",2
+107,"gros / grosse","paks",3
+108,"s'il vous plaît","palun",2
+109,"s'il te plaît","palun",2
+110,"mettre (je mets / mis)","panema",3
+111,"stylo à bille (n.m.)","pastakas",3
+112,"mou / molle","pehme",2
+113,"lait (n.m.)","piim",2
+114,"long / longue","pikk",1
+115,"poire (n.f.)","pirn",2
+116,"crayon (n.m.)","pliiats",3
+117,"fils (n.m.)","poeg",2
+118,"garçon (n.m.)","poiss",2
+119,"Mademoiselle","Preili",2
+120,"Madame","Proua",2
+121,"brun / brune","pruun",3
+122,"bouteille (n.f.)","pudel",2
+123,"propre / propre","puhas",1
+124,"rouge / rouge","punane",3
+125,"livre (n.m.)","raamat",3
+126,"argent (n.m.)","raha",3
+127,"riche / riche","rikkas",3
+128,"vert / verte","roheline",3
+129,"train (n.m.)","rong",2
+130,"parler (je parle / parlé)","rääkima",3
+131,"tu es","sa oled",1
+132,"salle (n.f.)","saal",2
+133,"pain (blanc) (n.m.)","sai",3
+134,"là","seal",3
+135,"il y a","seal on",2
+136,"c'est","see on",2
+137,"ceci","see siin",2
+138,"jupe (n.f.)","seelik",1
+139,"parce que","sest",3
+140,"ici","siin",3
+141,"tu ","sina",1
+142,"bleu / bleue","sinine",3
+143,"fermer (je ferme / fermé)","sulgema",3
+144,"grand / grande","suur",1
+145,"ami (n.m.)","sõber",2
+146,"amie (n.f.)","sõbranna",2
+147,"chemise (n.f.)","särk",1
+148,"salle à manger (n.f.)","söögituba",3
+149,"manger","sööma",2
+150,"il est ","ta on",1
+151,"elle est ","ta on",1
+152,"taxi (n.m.)","takso",2
+153,"assiette (n.f.)","taldrik",2
+154,"tasse (n.f.)","tass",2
+155,"vous êtes","te olete",1
+156,"savoir (je sais / su)","teadma",3
+157,"thé (n.m.)","tee",2
+158,"vous ","teie",1
+159,"elle","tema",1
+160,"il","tema",1
+161,"salut","tere",2
+162,"bienvenue","tere tulemast",2
+163,"chaise (n.f.)","tool",3
+164,"tarte (n.f.)","tort",2
+165,"chambre (n.f.)","tuba",2
+166,"venir (je viens / venu)","tulema",2
+167,"tante (n.f.)","tädi",1
+168,"fille (n.f.)","tüdruk",2
+169,"fille (n.f.)","tütar",2
+170,"porte (n.f.)","uks",3
+171,"pardon","vabandust",2
+172,"pauvre / pauvre","vaene",3
+173,"blanc / blanche","valge",3
+174,"vieux / vieille","vana",2
+175,"salle de bain (n.f.)","vannituba",3
+176,"vin (n.m.)","vein",2
+177,"frère (n.m.)","vend",1
+178,"eau (n.f.)","vesi",2
+179,"saucisse (n.f.)","vorst",2
+180,"ou","või",2
+181,"peut-être","võib-olla",2
+182,"tartine (n.f.)","võileib",2
+183,"prendre (je prends / pris)","võtma",3
+184,"très","väga",2
+185,"petit /petite","väike",1
+186,"sœur (n.f.)","õde",1
+187,"ballon (n.m.)","õhupall",3
+188,"bière (n.f.)","õlu",2
+189,"professeur (n.m.)","õpetaja",2
+190,"élève (n.m.)","õpilane",2
+191,"pomme (n.f.)","õun",2
+192,"rond / ronde","ümargune",3
+" ",,,
