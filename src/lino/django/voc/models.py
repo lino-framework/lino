@@ -26,7 +26,7 @@ class Unit(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('lino.adamo.voc.views.unit_detail', [str(self.id)])
+        return ('lino.django.voc.views.unit_detail', [str(self.id)])
         
 class Entry(models.Model):
     unit = models.ForeignKey("Unit")
@@ -44,4 +44,4 @@ class Entry(models.Model):
         
     @models.permalink
     def get_absolute_url(self):
-        return ('lino.adamo.voc.views.entry_page', [self.unit.id, self.id])
+        return ('lino.django.voc.views.entry_page', [self.unit.id, self.id])

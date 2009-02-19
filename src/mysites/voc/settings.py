@@ -19,7 +19,7 @@
 # Works on Linux and Windows.
 
 import os
-import tempfile
+from tempfile import gettempdir
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -33,7 +33,8 @@ MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
-DATABASE_NAME = os.path.join(tempfile.gettempdir(),'django_voc.db') 
+#DATABASE_NAME = ':memory:'
+DATABASE_NAME = os.path.join(gettempdir(),'mysites_voc.db') 
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -90,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
 )
 
-#ROOT_URLCONF = 'sites.voc.urls'
+#ROOT_URLCONF = 'mysites.voc.urls'
 ROOT_URLCONF = 'lino.django.voc.urls'
 
 TEMPLATE_DIRS = (

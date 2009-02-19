@@ -18,7 +18,7 @@
 from django.conf.urls.defaults import *
 #from django.views.generic.list_detail import object_list, object_detail
 
-from lino.adamo.voc import views, models
+from lino.django.voc import views, models
 
 #~ info_dict = {
     #~ 'queryset': models.Unit.objects.all(),
