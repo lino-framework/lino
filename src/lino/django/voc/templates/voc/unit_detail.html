@@ -1,4 +1,5 @@
 {% extends "voc/base_site.html" %}
+{% load markup %}
 
 {% block title %}{{ unit.title }}{% endblock %}
 
@@ -8,7 +9,15 @@
 
 <h1>{{ unit.title }}</h1>
 
-<ul class="objectlist">
+<div>{{ unit.instruction }}</div>
+<div>{{ unit.question|restructuredtext }}</div>
+<div>{{ unit.answer|restructuredtext }}</div>
+
+<pre>{{ unit.vocabulary }}</pre>
+
+<p>Vocabulary:</p>
+
+<ul class="vocabulary">
 {% for entry in unit.entry_set.all %}
 <li class="{% cycle 'odd' 'even' %}"><a href="{{ entry.get_absolute_url }}">{{ entry }}</a></li>
 {% endfor %}
