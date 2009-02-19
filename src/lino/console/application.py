@@ -25,10 +25,8 @@ import textwrap
 
 import lino
 
-from lino.adamo.exceptions import UserAborted, OperationFailed
-from lino.adamo.exceptions import UsageError #, ApplicationError
-
 from lino.console import syscon
+from lino.console.exceptions import UserAborted, OperationFailed, UsageError
 from lino.console.task import Task
 
     

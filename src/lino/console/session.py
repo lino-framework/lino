@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2003-2007 Luc Saffre 
+## Copyright 2003-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -20,7 +20,7 @@
 
 import os
 from lino.console import syscon
-from lino.adamo.exceptions import UserAborted
+from lino.console.exceptions import UserAborted
 
 from lino.i18n import itr,_
 

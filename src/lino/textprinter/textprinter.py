@@ -21,7 +21,7 @@ import os
 import codecs
 
 from lino.console import syscon
-from lino.adamo.exceptions import OperationFailed
+from lino.console.exceptions import OperationFailed
 
 from PIL import Image
 
