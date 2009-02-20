@@ -4,9 +4,7 @@ Leçon 1
 Sissejuhatus
 ------------
 
-.. instruction:: 
-
-   Millised laused neist on prantsuse keeles?
+Millised laused neist on prantsuse keeles?
    
 .. question::
       (1) Es como una fiesta ver a tantos jóvenes juntos en la colina viviendo en una gran diversidad.
@@ -33,48 +31,59 @@ Sissejuhatus
 
     (5) ja (9)
 
-Mitmus
-------
+Olema
+-----
+
 
 .. vocabulary::
-      père 
-      pullover 
-      oncle
-      manteau
-      
-.. question::
-    mitmus = ainsus + **-s** : 
-    le père → les pères, 
-    le pullover → les pullovers, 
-    l'oncle → les oncles
-    (erandid: la → les, le manteau → les manteaux).
+
+    être          : olema
+    je suis       : ma olen
+    tu es         : sa oled
+    il est        : ta on (mees)
+    elle est      : ta on (naine)
+    nous sommes   : me oleme
+    vous êtes     : te olete
+    ils sont      : nad on (mehed)
+    elles sont    : nad on (naised)
+    
+    c'est         : see on
+    ce sont       : need on
+
 
 Esimesed laused
 ---------------
-.. vocabulary::
-      père 
-      je suis
-      grand
-      gentil
-      petit
-      sale
-      propre
-      frère
-.. instruction:: Tõlgi eesti keelde.
-.. question::
-      (1) Je suis ton père
-      (2) Tu es grande
-      (3) Il est gentil
-      (4) Elle est petite
-      (5) Nous sommes sales
-      (6) Vous êtes propres
-      (7) Ils sont mes frères
-      (8) Elles sont petites
 
-mees või naine?
+Omadussõnad on prantsuse keeles kahes vormis: mees- ja naissoost.
+Omadussõna muudab vormi vastavalt oma objekti soo.
+Tõlgi eesti keelde.
+
+.. vocabulary::
+
+      grand, grande : suur
+      gentil, gentille : armas
+      petit, petite : väike
+      sale, sale : puhas
+      propre, propre : must
+      
+      est-ce que : kas
+      oui : jah
+      non : ei
+
+.. question::
+      #. Tu es grand
+      #. Il est gentil
+      #. Elle est petite
+      #. Nous sommes sales
+      #. Vous êtes propres
+      #. Je suis ton père
+      #. Ils sont mes frères
+      #. Elles sont petites
+
+Mees või naine?
 ---------------
-.. instruction::
-      Vali sulgudest õige sõna. Kriipsuta alla tundmatud sõnad.
+
+Vali sulgudest õige sõna. Kriipsuta alla tundmatud sõnad.
       
 .. question::
       (1) Ma chemise est trop (petit/petite). 
@@ -86,7 +95,26 @@ mees või naine?
       (7) (Ton/Ta/Tes) souliers (est/sont/êtes) dans l'armoire. 
       (8) (Votre/Vos) jupe est (court/courte).
 
-.. instruction:: Pane mitmuse vormi.
+Mitmus
+------
+
+.. vocabulary::
+      le père : isa
+      le frère : vend
+      le pullover : kampsun
+      l'oncle : onu
+      le manteau : jope
+      
+mitmus = ainsus + **-s**. Näiteks:
+
+    le père → les pères, 
+    le pullover → les pullovers, 
+    l'oncle → les oncles
+    
+    (erandid: la → les, le manteau → les manteaux).
+
+Pane mitmuse vormi.
+
 .. question::
       (1) La fenêtre est sale 
       (2) L'armoire est grande 
@@ -94,11 +122,13 @@ mees või naine?
       (4) Son frère est méchant 
       (5) Ton soulier est propre 
 
-isikulised asesõnad
+Isikulised asesõnad
 -------------------
 
 .. remark:: pronoms personnels
-.. instruction:: Tõlgi prantsuse keelde.
+
+Tõlgi prantsuse keelde.
+
 .. question::
       (1) minu isa 
       (2) minu õde 
@@ -138,8 +168,11 @@ isikulised asesõnad
       (11) Minu õde on sinu tädi
       (12) Meie isa on suur
 
-      
-.. instruction:: Tõlgi eesti keelde.
+Said aru?
+---------
+
+Tõlgi eesti keelde.
+
 .. question::
       (1) Je suis grand
       (2) Ma petite sœur est gentille

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 ## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
@@ -17,35 +16,81 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from models import Unit, Entry
+import os
+import codecs
+from models import Course, Unit, Entry
+from django.core import serializers
 from django.test import TestCase
 
 
 class TestCase(TestCase):
-    fixtures=[ 'pkk.yaml' ]
+    #fixtures=[ 'pkk.yaml' ]
     def setUp(self):
         pass
         
-    def test01(self):
-        unit=Unit.objects.get(id=3)
-        unit.save()
-        entries=unit.entry_set.all()
-        s="\n".join([e.word1 for e in entries])
-        print s
-        self.assertEquals(s, unit.vocabulary)
+    #~ def test01(self):
+        #~ unit=Unit.objects.get(id=3)
+        #~ unit.save()
+        #~ entries=unit.entry_set.all()
+        #~ s="\n".join([e.word1 for e in entries])
+        #~ print s
+        #~ self.assertEquals(s, unit.vocabulary)
         
-    def test00(self):
-        entries=Entry.objects.all()
-        self.assertEquals(len(entries),192)
-        entries=Entry.objects.filter(word1__startswith="p")
-        self.assertEquals(len(entries),20)
-        s="\n".join([e.word1 for e in entries])
-        print s
-        #print "test00",entries
-        self.assertEquals(s,"""\
-père
-        """)
+    #~ def test02(self):
+        #~ entries=Entry.objects.all()
+        #~ self.assertEquals(len(entries),192)
+        #~ entries=Entry.objects.filter(word1__startswith="p")
+        #~ self.assertEquals(len(entries),20)
+        #~ s="\n".join([e.word1 for e in entries])
+        #~ print s
+        #~ #print "test00",entries
+        #~ self.assertEquals(s,"""\
+#~ père
+        #~ """)
 
+    def test03(self):
+        pkk=Course(name="pkk",title="PKK")
+        dirname=os.path.dirname(__file__)
+        pkk.load_rst(os.path.join(dirname,"data","pkk","pkk.rst"))
+        self.assertEqual(len(pkk.unit_set.all()),8)
+        u1=pkk.unit_set.all()[0]
+        u2=pkk.unit_set.all()[1]
+        u3=pkk.unit_set.all()[2]
+        self.assertEqual(u2.parent,u1)
+        self.assertEqual(u3.parent,u1)
+        
+        u4=pkk.unit_set.all()[3]
+        self.assertEqual(u4.title,"Esimesed laused")
+        
+        entries=Entry.objects.all()
+        self.assertEquals(len(entries),24)
+        entries=Entry.objects.filter(word1__startswith="p")
+        self.assertEquals(len(entries),2)
+        if False:
+            s="\n".join([e.word1 for e in entries])
+            print s
+            #print "test00",entries
+            self.assertEquals(s,u"""\
+père
+            """)
+        
+        if False:
+          s="\n".join([u.title for u in pkk.unit_set.all()])
+          print s
+          self.assertEqual(s,"""\
+          """)
+          
+        format='json'
+        serializers.get_serializer(format)
+        objects = []
+        for model in (Course,Unit,Entry):
+            objects.extend(model._default_manager.all())
+        outfile=os.path.join(dirname,"fixtures","pkk.json")
+        f=codecs.open(outfile,"w","utf8")
+        f.write(serializers.serialize(format, objects))
+        
+
+        
      
         
 ## Run these tests using "python manage.py test".

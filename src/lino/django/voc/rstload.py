@@ -1,6 +1,4 @@
 import os
-import codecs
-f=codecs.open(os.path.join("data","pkk","pkk.rst"),"r","utf8")
 
 from docutils import core 
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
@@ -21,12 +19,22 @@ directives.register_directive("vocabulary", Question)
 directives.register_directive("instruction", Question)
 directives.register_directive("remark", Question)
 
+import codecs
+f=codecs.open(os.path.join("data","pkk","pkk.rst"),"r","utf8")
+
 doctree = core.publish_doctree(f.read())
 
 for p in doctree:
     print p.__class__
     for sp in p:
         print "  ", sp.__class__
+        
+course=Course()
+entry=Entry(course=self)
+for elem in doctree:
+    if isinstance(elem,nodes.Titular):
+    if isinstance(elem,nodes.Structural):
+      
 
 #~ for k, v in doctree.items():
   #~ print "-", k, ":", type(v)

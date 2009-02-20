@@ -15,19 +15,90 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import codecs
+
 from django.db import models
 from django.db.models.signals import post_syncdb
 
 import re
+voc_splitter1=re.compile("^(.*)\s+\((.*)\)\s*:\s*(.+)",re.DOTALL)
+voc_splitter2=re.compile("^(.*)\s*:\s*(.+)",re.DOTALL)
 
-word1_splitter=re.compile("^(.*)\s+\((.*)\)",re.DOTALL)
 
+from docutils import core 
+from docutils.parsers.rst.directives.admonitions import BaseAdmonition
+from docutils.parsers.rst import directives
+from docutils import nodes 
+from docutils.parsers import rst
+
+
+class question(nodes.admonition): pass
+class answer(nodes.admonition): pass
+class vocabulary(nodes.admonition): pass
+class remark(nodes.admonition): pass
+
+class Special(BaseAdmonition):
+    has_content = True
+    
+class Question(Special):
+    node_class = question
+class Answer(Special):
+    node_class = answer
+class Vocabulary(Special):
+    node_class = vocabulary
+class Remark(Special):
+    node_class = remark
+  
+directives.register_directive("question", Question)
+directives.register_directive("answer", Answer)
+directives.register_directive("vocabulary", Vocabulary)
+directives.register_directive("remark", Remark)
+
+
+
+
+class Course(models.Model):
+    name = models.CharField(max_length=20,primary_key=True)
+    title = models.CharField(max_length=200,blank=True,null=True)
+    
+    def load_rst(self,input_file,encoding="utf8"):
+        f=codecs.open(input_file,"r",encoding)
+        doctree = core.publish_doctree(f.read())
+        unit=Unit(course=self)
+        self.load_tree(doctree,unit)
+        self.save()
+        
+    def load_tree(self,doctree,unit):
+        for elem in doctree:
+            if isinstance(elem,nodes.Structural):
+                unit.save()
+                self.load_tree(elem,Unit(course=self,parent=unit))
+            elif isinstance(elem,nodes.Titular):
+                if unit.title:
+                    raise "duplicate title in %s" % (unit.title)
+                unit.title=elem.rawsource
+            elif isinstance(elem,nodes.admonition):
+                fieldname=elem.__class__.__name__
+                if getattr(unit,fieldname):
+                    raise "duplicate %s directive in %s" % (
+                      fieldname,unit.title)
+                setattr(unit,fieldname,elem.rawsource)
+            else:
+                if unit.body:
+                    unit.body += elem.rawsource
+                    print "warning: multiple body parts"
+                else:
+                    unit.body = elem.rawsource
+                #print elem.__class__, "not handled"
+        unit.save()
 
 class Unit(models.Model):
     title = models.CharField(max_length=200,blank=True,null=True)
     iname = models.CharField(max_length=20,blank=True,null=True)
-    parent = models.ForeignKey("Unit",blank=True,null=True)
-    instruction = models.TextField(blank=True,null=True)
+    course = models.ForeignKey("Course")
+    parent = models.ForeignKey("Unit",blank=True,null=True,
+                  related_name="children")
+    body = models.TextField(blank=True,null=True)
     question = models.TextField(blank=True,null=True)
     answer = models.TextField(blank=True,null=True)
     remark = models.TextField(blank=True,null=True)
@@ -40,22 +111,43 @@ class Unit(models.Model):
     def get_absolute_url(self):
         return ('lino.django.voc.views.unit_detail', [str(self.id)])
         
+        
     def after_save(self):
         print "after_save:", self
         self.entry_set.all().delete()
         if self.vocabulary:
-            for word1 in self.vocabulary.splitlines():
-                word1=word1.strip()
-                #print repr(word1)
-                for e in Entry.objects.filter(word1=word1):
-                    e.units.add(self)
-                    e.save()
+            for line in self.vocabulary.splitlines():
+                self.add_entry(line.strip())
     after_save.alters_data = True
-                    
                     
     def save(self, force_insert=False, force_update=False):
         super(Unit, self).save(force_insert, force_update) 
         self.after_save()
+                    
+    def add_entry(self,line):
+        if len(line) == 0: return
+        mo=voc_splitter1.match(line)
+        if mo:
+            d=dict(word1=mo.group(1),
+                   word1_suffix=mo.group(2),
+                   word2=mo.group(3))
+        else:
+            mo=voc_splitter2.match(line)
+            if mo:
+                d=dict(word1=mo.group(1),
+                       word2=mo.group(2))
+            else:
+                raise "could not parse %r" % line
+        qs=Entry.objects.filter(**d)
+        if len(qs) == 0:
+            e=Entry(**d)
+            e.save()
+        elif len(qs) == 1:
+            e=qs[0]
+        else:
+            raise "duplicate voc entry %r" % line
+        self.entry_set.add(e)
+              
                     
         
 class Entry(models.Model):
@@ -77,20 +169,20 @@ class Entry(models.Model):
     def get_absolute_url(self):
         return ('lino.django.voc.views.entry_page', [self.unit.id, self.id])
         
-    def before_save(self):
-        print "before_save"
-        mo=word1_splitter.match(self.word1)
-        if mo:
-            self.word1=mo.group(1).strip()
-            self.word1_suffix=mo.group(2).strip()
-            print repr(self.word1),repr(self.word1_suffix)
-    before_save.alters_data = True
+    #~ def before_save(self):
+        #~ print "before_save"
+        #~ mo=voc_splitter.match(self.word1)
+        #~ if mo:
+            #~ self.word1=mo.group(1).strip()
+            #~ self.word1_suffix=mo.group(2).strip()
+            #~ print repr(self.word1),repr(self.word1_suffix)
+    #~ before_save.alters_data = True
 
-    def save(self, force_insert=False, force_update=False):
-        self.before_save()
-        super(Entry, self).save(force_insert, force_update) 
+    #~ def save(self, force_insert=False, force_update=False):
+        #~ self.before_save()
+        #~ super(Entry, self).save(force_insert, force_update) 
 
-def my_callback(sender,**kw):
-  print "my_callback",sender
+#~ def my_callback(sender,**kw):
+  #~ print "my_callback",sender
   
-post_syncdb.connect(my_callback)
+#~ post_syncdb.connect(my_callback)
