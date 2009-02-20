@@ -16,10 +16,11 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
+from django.db.models.signals import post_syncdb
 
 import re
 
-lang1_splitter=re.compile("^(.*)\w\((.*)\)",re.DOTALL)
+word1_splitter=re.compile("^(.*)\s+\((.*)\)",re.DOTALL)
 
 
 class Unit(models.Model):
@@ -39,34 +40,37 @@ class Unit(models.Model):
     def get_absolute_url(self):
         return ('lino.django.voc.views.unit_detail', [str(self.id)])
         
-    def update_entries(self):
-        print "update_entries: ", self.entry_set.all()
+    def after_save(self):
+        print "after_save:", self
         self.entry_set.all().delete()
         if self.vocabulary:
-            for lang1 in self.vocabulary.splitlines():
-                print lang1
-                for e in Entry.objects.filter(lang1=lang1):
+            for word1 in self.vocabulary.splitlines():
+                word1=word1.strip()
+                #print repr(word1)
+                for e in Entry.objects.filter(word1=word1):
                     e.units.add(self)
-    update_entries.alters_data = True
+                    e.save()
+    after_save.alters_data = True
                     
                     
     def save(self, force_insert=False, force_update=False):
         super(Unit, self).save(force_insert, force_update) 
-        update_entries()
+        self.after_save()
                     
         
 class Entry(models.Model):
-    lang1 = models.CharField(max_length=200)
-    lang1_suffix = models.CharField(max_length=5,blank=True,null=True)
-    lang2 = models.CharField(max_length=200)
+    word1 = models.CharField(max_length=200)
+    word1_suffix = models.CharField(max_length=200,blank=True,null=True)
+    word2 = models.CharField(max_length=200)
+    word2_suffix = models.CharField(max_length=200,blank=True,null=True)
     units = models.ManyToManyField(Unit)
     #pos = models.CharField(max_length=20,blank=True,null=True)
  
     def __unicode__(self):
-        s=self.lang1
-        if self.lang1_suffix:
-            s += " (" + self.lang1_suffix + ")"
-        s += " = " + self.lang2
+        s=self.word1
+        if self.word1_suffix:
+            s += " (" + self.word1_suffix + ")"
+        s += " = " + self.word2
         return s
         
     @models.permalink
@@ -74,12 +78,19 @@ class Entry(models.Model):
         return ('lino.django.voc.views.entry_page', [self.unit.id, self.id])
         
     def before_save(self):
-        mo=lang1_splitter.match(self.lang1)
+        print "before_save"
+        mo=word1_splitter.match(self.word1)
         if mo:
-            self.lang1=mo.group(1).strip()
-            self.lang1_suffix=mo.group(2).strip()
+            self.word1=mo.group(1).strip()
+            self.word1_suffix=mo.group(2).strip()
+            print repr(self.word1),repr(self.word1_suffix)
     before_save.alters_data = True
 
     def save(self, force_insert=False, force_update=False):
         self.before_save()
         super(Entry, self).save(force_insert, force_update) 
+
+def my_callback(sender,**kw):
+  print "my_callback",sender
+  
+post_syncdb.connect(my_callback)

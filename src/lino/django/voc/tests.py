@@ -27,14 +27,24 @@ class TestCase(TestCase):
         pass
         
     def test01(self):
-        mitmus=Unit.objects.get(id=3)
-        mitmus.update_entries()
-        s=mitmus.entry_set.all()
+        unit=Unit.objects.get(id=3)
+        unit.save()
+        entries=unit.entry_set.all()
+        s="\n".join([e.word1 for e in entries])
         print s
-        self.assertEquals(s, "")
+        self.assertEquals(s, unit.vocabulary)
         
     def test00(self):
-        print Entry.objects.all()
+        entries=Entry.objects.all()
+        self.assertEquals(len(entries),192)
+        entries=Entry.objects.filter(word1__startswith="p")
+        self.assertEquals(len(entries),20)
+        s="\n".join([e.word1 for e in entries])
+        print s
+        #print "test00",entries
+        self.assertEquals(s,"""\
+père
+        """)
 
      
         

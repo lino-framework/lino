@@ -77,10 +77,12 @@ def str2sql(x):
     #return '"' + x.encode('utf-8') + '"' 
     return '"' + x + '"' 
   
-fieldmap = dict(id=int2sql, 
-  lang1=str2sql,lang2=str2sql,lang1_suffix=str2sql)
+fieldmap = dict(
+  id=int2sql, 
+  word1=str2sql,
+  word2=str2sql,
+  word1_suffix=str2sql)
 
-f=file("sql/entry.sql","w")
 r = unicode_csv_reader(codecs.open('voc.csv','r',"utf-8"))
 titles = r.next()
 
@@ -97,6 +99,7 @@ for name,cv,i in fields:
     
 sqlcolumns = ",".join([fld[0] for fld in fields])
 n=1
+f=file("sql/entry.sql","w")
 for row in r:
     n+=1
     try:
@@ -108,7 +111,3 @@ for row in r:
         stmt=ENTRY_STMT % (sqlcolumns,sqlvalues)
         #print stmt
         f.write(stmt.encode("utf-8"))
-    
-
-    
-
