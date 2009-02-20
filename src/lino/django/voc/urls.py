@@ -41,7 +41,8 @@ from lino.django.voc import views, models
 
 urlpatterns = patterns('',
     (r'^$', views.unit_list ),
-    (r'^(?P<unit_id>\d+)$', views.unit_detail),
-    (r'^(?P<unit_id>\d+)/(?P<page>\d+)$', views.entry_page),
+    (r'^unit/(?P<unit_id>\d+)$', views.unit_detail),
     (r'^entry/(?P<entry_id>\d+)$', views.entry_detail),
 )
+
+#    (r'^(?P<course_id>\d+)/(?P<page>\d+)$', views.entry_page),

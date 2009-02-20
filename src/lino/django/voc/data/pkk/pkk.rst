@@ -34,6 +34,10 @@ Millised laused neist on prantsuse keeles?
 Olema
 -----
 
+Alustame tegusõna "olema" konjugeerimisega.
+
+Pane tähele: Kui sa räägid kellelt (kolmandas isikus), 
+siis on prantsuse keeles oluline kas ta on mees või naine.
 
 .. vocabulary::
 

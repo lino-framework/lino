@@ -18,7 +18,7 @@
 
 import os
 import codecs
-from models import Course, Unit, Entry
+from models import Unit, Entry
 from django.core import serializers
 from django.test import TestCase
 
@@ -49,17 +49,19 @@ class TestCase(TestCase):
         #~ """)
 
     def test03(self):
-        pkk=Course(name="pkk",title="PKK")
+        pkk=Unit()
         dirname=os.path.dirname(__file__)
         pkk.load_rst(os.path.join(dirname,"data","pkk","pkk.rst"))
-        self.assertEqual(len(pkk.unit_set.all()),8)
-        u1=pkk.unit_set.all()[0]
-        u2=pkk.unit_set.all()[1]
-        u3=pkk.unit_set.all()[2]
-        self.assertEqual(u2.parent,u1)
-        self.assertEqual(u3.parent,u1)
+        self.assertEqual(len(Unit.objects.all()),8)
+        self.assertEqual(len(pkk.children.all()),7)
+        u1=pkk.children.all()[0]
+        u2=pkk.children.all()[1]
+        u3=pkk.children.all()[2]
+        self.assertEqual(u1.parent,pkk)
+        self.assertEqual(u2.parent,pkk)
+        self.assertEqual(u3.parent,pkk)
         
-        u4=pkk.unit_set.all()[3]
+        u4=pkk.children.all()[2]
         self.assertEqual(u4.title,"Esimesed laused")
         
         entries=Entry.objects.all()
@@ -83,7 +85,7 @@ père
         format='json'
         serializers.get_serializer(format)
         objects = []
-        for model in (Course,Unit,Entry):
+        for model in (Unit,Entry):
             objects.extend(model._default_manager.all())
         outfile=os.path.join(dirname,"fixtures","pkk.json")
         f=codecs.open(outfile,"w","utf8")

@@ -9,18 +9,24 @@
 
 <h1>{{ unit.title }}</h1>
 
-<div>{{ unit.instruction }}</div>
-<div>{{ unit.question|restructuredtext }}</div>
-<div>{{ unit.answer|restructuredtext }}</div>
+<p>{{ unit.body|restructuredtext }}</p>
 
-<pre>{{ unit.vocabulary }}</pre>
+{% if unit.question %}
+<p>{{ unit.question|restructuredtext }}</p>
+{% endif %}
 
+{% if unit.answer %}
+<p>Answer:</p>
+<p>{{ unit.answer|restructuredtext }}</p>
+{% endif %}
+
+{% if unit.vocabulary %}
 <p>Vocabulary:</p>
-
-<ul class="vocabulary">
+<ul class="objectlist">
 {% for entry in unit.entry_set.all %}
 <li class="{% cycle 'odd' 'even' %}"><a href="{{ entry.get_absolute_url }}">{{ entry }}</a></li>
 {% endfor %}
 </ul>
+{% endif %}
 
 {% endblock %}

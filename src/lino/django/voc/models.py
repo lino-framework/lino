@@ -55,49 +55,11 @@ directives.register_directive("vocabulary", Vocabulary)
 directives.register_directive("remark", Remark)
 
 
-
-
-class Course(models.Model):
-    name = models.CharField(max_length=20,primary_key=True)
-    title = models.CharField(max_length=200,blank=True,null=True)
-    
-    def load_rst(self,input_file,encoding="utf8"):
-        f=codecs.open(input_file,"r",encoding)
-        doctree = core.publish_doctree(f.read())
-        unit=Unit(course=self)
-        self.load_tree(doctree,unit)
-        self.save()
-        
-    def load_tree(self,doctree,unit):
-        for elem in doctree:
-            if isinstance(elem,nodes.Structural):
-                unit.save()
-                self.load_tree(elem,Unit(course=self,parent=unit))
-            elif isinstance(elem,nodes.Titular):
-                if unit.title:
-                    raise "duplicate title in %s" % (unit.title)
-                unit.title=elem.rawsource
-            elif isinstance(elem,nodes.admonition):
-                fieldname=elem.__class__.__name__
-                if getattr(unit,fieldname):
-                    raise "duplicate %s directive in %s" % (
-                      fieldname,unit.title)
-                setattr(unit,fieldname,elem.rawsource)
-            else:
-                if unit.body:
-                    unit.body += elem.rawsource
-                    print "warning: multiple body parts"
-                else:
-                    unit.body = elem.rawsource
-                #print elem.__class__, "not handled"
-        unit.save()
-
 class Unit(models.Model):
     title = models.CharField(max_length=200,blank=True,null=True)
-    iname = models.CharField(max_length=20,blank=True,null=True)
-    course = models.ForeignKey("Course")
     parent = models.ForeignKey("Unit",blank=True,null=True,
                   related_name="children")
+    seq = models.IntegerField(default=1)
     body = models.TextField(blank=True,null=True)
     question = models.TextField(blank=True,null=True)
     answer = models.TextField(blank=True,null=True)
@@ -105,7 +67,18 @@ class Unit(models.Model):
     vocabulary = models.TextField(blank=True,null=True)
     
     def __unicode__(self):
-        return unicode(self.title)
+        s=self.fullseq()
+        if self.title:
+            s += ". " + self.title
+        return s
+        
+    def fullseq(self):
+        if self.parent:
+            s=self.parent.fullseq()+"."
+        else:
+            s=""
+        s += str(self.seq)
+        return s
 
     @models.permalink
     def get_absolute_url(self):
@@ -148,6 +121,37 @@ class Unit(models.Model):
             raise "duplicate voc entry %r" % line
         self.entry_set.add(e)
               
+    def load_rst(self,input_file,encoding="utf8"):
+        f=codecs.open(input_file,"r",encoding)
+        doctree = core.publish_doctree(f.read())
+        self.load_tree(doctree)
+        
+    def load_tree(self,doctree):
+        seq=0
+        for elem in doctree:
+            if isinstance(elem,nodes.Structural):
+                seq += 1
+                self.save()
+                child=Unit(parent=self,seq=seq)
+                child.load_tree(elem)
+            elif isinstance(elem,nodes.Titular):
+                if self.title:
+                    raise "duplicate title in %s" % (unit.title)
+                self.title=elem.rawsource
+            elif isinstance(elem,nodes.admonition):
+                fieldname=elem.__class__.__name__
+                if getattr(self,fieldname):
+                    raise "duplicate %s directive in %s" % (
+                      fieldname,self.title)
+                setattr(self,fieldname,elem.rawsource)
+            else:
+                if self.body:
+                    self.body += elem.rawsource
+                    print "warning: multiple body parts"
+                else:
+                    self.body = elem.rawsource
+                #print elem.__class__, "not handled"
+        self.save()
                     
         
 class Entry(models.Model):

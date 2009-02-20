@@ -28,6 +28,12 @@ def unit_list(request):
     return render_to_response("voc/unit_list.html", 
          dict(units=models.Unit.objects.all()))
       
+#~ def course_list(request):
+    #~ """
+    #~ """
+    #~ return render_to_response("voc/course_list.html", 
+         #~ dict(courses=models.Course.objects.all()))
+      
 def unit_detail(request, unit_id):
     """
     """
@@ -39,6 +45,13 @@ def unit_detail(request, unit_id):
     
     return render_to_response("voc/unit_detail.html", 
           dict(unit=unit))
+      
+#~ def course_detail(request, course_id):
+    #~ """
+    #~ """
+    #~ course = get_object_or_404(models.Course,pk=course_id)
+    #~ return render_to_response("voc/course_detail.html", 
+          #~ dict(course=course))
       
 
       
