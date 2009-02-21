@@ -25,12 +25,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
-from lino.django.igen.views import root
+#from lino.django.igen.views import root
+#from lino.django.voc.urls import url
 
 urlpatterns = patterns('',
-    (r'^$', root),
+    (r'^$', include('lino.django.voc.urls')),
     (r'^admin/(.*)$', admin.site.root),
-    (r'^db/(.*)', login_required(databrowse.site.root)),
+    (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
 )    

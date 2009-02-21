@@ -55,7 +55,11 @@ p { margin:0.5em 0 1em 0; }
 {% block extrahead %}{% endblock %}
 </head>
 <body id="{% block bodyid %}page{% endblock %}">
-<div id="header"><a href="{{ root_url }}">{% block databrowse_title %}lino.adamo.voc{% endblock %}</a></div>
+<div id="breadcrumbs">
+<a href="{{ root_url }}">{% block voc_title %}lino.adamo.voc{% endblock %}</a>
+/ <a href="{{ root_url }}/admin/">admin</a>
+/ <a href="{{ root_url }}/db/">databrowse</a>
+</div>
 <div id="content">
 {% block content %}{% endblock %}
 </div>

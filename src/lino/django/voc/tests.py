@@ -52,17 +52,17 @@ class TestCase(TestCase):
         pkk=Unit()
         dirname=os.path.dirname(__file__)
         pkk.load_rst(os.path.join(dirname,"data","pkk","pkk.rst"))
-        self.assertEqual(len(Unit.objects.all()),8)
-        self.assertEqual(len(pkk.children.all()),7)
-        u1=pkk.children.all()[0]
-        u2=pkk.children.all()[1]
-        u3=pkk.children.all()[2]
-        self.assertEqual(u1.parent,pkk)
-        self.assertEqual(u2.parent,pkk)
-        self.assertEqual(u3.parent,pkk)
+        self.assertEqual(len(Unit.objects.all()),22)
+        self.assertEqual(len(pkk.children.all()),2)
+        #~ u1=pkk.children.all()[0]
+        #~ u2=pkk.children.all()[1]
+        #~ u3=pkk.children.all()[2]
+        #~ self.assertEqual(u1.parent,pkk)
+        #~ self.assertEqual(u2.parent,pkk)
+        #~ self.assertEqual(u3.parent,pkk)
         
-        u4=pkk.children.all()[2]
-        self.assertEqual(u4.title,"Esimesed laused")
+        #~ u4=pkk.children.all()[2]
+        #~ self.assertEqual(u4.title,"Esimesed laused")
         
         entries=Entry.objects.all()
         self.assertEquals(len(entries),24)
@@ -76,11 +76,31 @@ class TestCase(TestCase):
 père
             """)
         
-        if False:
-          s="\n".join([u.title for u in pkk.unit_set.all()])
-          print s
-          self.assertEqual(s,"""\
-          """)
+        s=pkk.prettyprint()
+        #print s
+        self.assertEqual(s,u"""\
+1. Prantsuse keele kurs algajatele
+  1.1. Esimene tund
+    1.1.1. Sissejuhatus
+      1.1.2. Olema
+      1.1.3. Esimesed laused
+      1.1.4. Mees või naine?
+      1.1.5. Mitmus
+      1.1.6. Isikulised asesõnad
+      1.1.7. Harjutus
+  1.2. Teine tund
+    1.2.1. Sõnavara
+      1.2.2. Tõlgi eesti keelde.
+      1.2.3. Artiklid
+      1.2.4. Ma tahaksin...
+      1.2.5. Artiklid kokkuvõte
+      1.2.6. avoir & être
+      1.2.7. Harjutus
+      1.2.8. de & à
+      1.2.9. Harjutus
+      1.2.10. Harjutus
+      1.2.11. Harjutus
+      1.2.12. Harjutus""")
           
         format='json'
         serializers.get_serializer(format)

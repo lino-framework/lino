@@ -25,21 +25,18 @@ voc_splitter1=re.compile("^(.*)\s+\((.*)\)\s*:\s*(.+)",re.DOTALL)
 voc_splitter2=re.compile("^(.*)\s*:\s*(.+)",re.DOTALL)
 
 
+# imports needed for rst_load()
 from docutils import core 
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from docutils.parsers.rst import directives
 from docutils import nodes 
 from docutils.parsers import rst
-
-
 class question(nodes.admonition): pass
 class answer(nodes.admonition): pass
 class vocabulary(nodes.admonition): pass
 class remark(nodes.admonition): pass
-
 class Special(BaseAdmonition):
     has_content = True
-    
 class Question(Special):
     node_class = question
 class Answer(Special):
@@ -48,7 +45,6 @@ class Vocabulary(Special):
     node_class = vocabulary
 class Remark(Special):
     node_class = remark
-  
 directives.register_directive("question", Question)
 directives.register_directive("answer", Answer)
 directives.register_directive("vocabulary", Vocabulary)
@@ -84,18 +80,24 @@ class Unit(models.Model):
     def get_absolute_url(self):
         return ('lino.django.voc.views.unit_detail', [str(self.id)])
         
+    def prettyprint(self,level=0):
+        s="  "*level+unicode(self)
+        children=[u.prettyprint(level+1) for u in self.children.all()]
+        if len(children):
+            s += "\n" + ("\n"+"  "*level).join(children) 
+        return s
         
+    def save(self, force_insert=False, force_update=False):
+        super(Unit, self).save(force_insert, force_update) 
+        self.after_save()
+                    
     def after_save(self):
-        print "after_save:", self
+        #print "after_save:", self
         self.entry_set.all().delete()
         if self.vocabulary:
             for line in self.vocabulary.splitlines():
                 self.add_entry(line.strip())
     after_save.alters_data = True
-                    
-    def save(self, force_insert=False, force_update=False):
-        super(Unit, self).save(force_insert, force_update) 
-        self.after_save()
                     
     def add_entry(self,line):
         if len(line) == 0: return
@@ -121,6 +123,8 @@ class Unit(models.Model):
             raise "duplicate voc entry %r" % line
         self.entry_set.add(e)
               
+    # rst_load() doesn't yet work correctly 
+    # for example it simply ignores tables...
     def load_rst(self,input_file,encoding="utf8"):
         f=codecs.open(input_file,"r",encoding)
         doctree = core.publish_doctree(f.read())
@@ -128,6 +132,8 @@ class Unit(models.Model):
         
     def load_tree(self,doctree):
         seq=0
+        if not self.body:
+            self.body=""
         for elem in doctree:
             if isinstance(elem,nodes.Structural):
                 seq += 1
@@ -138,20 +144,53 @@ class Unit(models.Model):
                 if self.title:
                     raise "duplicate title in %s" % (unit.title)
                 self.title=elem.rawsource
+                #self.load_tree(elem)
             elif isinstance(elem,nodes.admonition):
                 fieldname=elem.__class__.__name__
                 if getattr(self,fieldname):
                     raise "duplicate %s directive in %s" % (
                       fieldname,self.title)
                 setattr(self,fieldname,elem.rawsource)
+                
+            elif isinstance(elem,nodes.Text):
+                self.body += elem.rawsource
+            elif isinstance(elem,nodes.block_quote):
+                self.body += elem.rawsource
+            elif isinstance(elem,nodes.system_message):
+                self.body += elem.rawsource
+            elif isinstance(elem,nodes.paragraph):
+                self.body += elem.rawsource
+                
+            elif isinstance(elem,nodes.table):
+                self.body += elem.rawsource
+                #self.load_tree(elem)
+            elif isinstance(elem,nodes.tgroup):
+                #self.body += elem.rawsource
+                self.load_tree(elem)
+            elif isinstance(elem,nodes.thead):
+                #self.body += elem.rawsource
+                self.load_tree(elem)
+            elif isinstance(elem,nodes.tbody):
+                #self.body += elem.rawsource
+                self.load_tree(elem)
+            elif isinstance(elem,nodes.colspec):
+                #self.body += elem.rawsource
+                self.load_tree(elem)
+            elif isinstance(elem,nodes.row):
+                #self.body += elem.rawsource
+                self.load_tree(elem)
+            elif isinstance(elem,nodes.entry):
+                self.body += elem.rawsource
+                #self.load_tree(elem)
+                
+            #~ elif isinstance(elem,nodes.Element):
+                #~ self.body += elem.rawsource
+                #self.load_tree(elem)
             else:
-                if self.body:
-                    self.body += elem.rawsource
-                    print "warning: multiple body parts"
-                else:
-                    self.body = elem.rawsource
-                #print elem.__class__, "not handled"
+                print "unhandled:", elem.__class__
         self.save()
+        if self.id == 13:
+            print self.body
                     
         
 class Entry(models.Model):
