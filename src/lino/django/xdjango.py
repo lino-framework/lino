@@ -24,8 +24,14 @@ Thanks to
 http://www.pointy-stick.com/blog/2008/10/15/django-tip-poor-mans-model-validation/
 """
 
-class ValidationError(Exception):
-    pass
+class ModelValidationError(Exception):
+    def __init__(self, errordict):
+        self.errordict=errordict
+    def __str__(self):
+        return "ModelValidationError (%s)" % \
+            ",".join(self.errordict.keys())
+    def __getitem__(self,i):
+        return self.errordict[i]
 
 class Model(models.Model):
   
@@ -43,7 +49,7 @@ class Model(models.Model):
         frm = self.model_form(forms.model_to_dict(self),instance=self)
         if not frm.is_valid():
             #self._errors = frm._errors
-            raise ValidationError(frm._errors.as_text())
+            raise ModelValidationError(frm._errors)
         #return frm.is_valid()
 
     def save(self, *args, **kwargs):

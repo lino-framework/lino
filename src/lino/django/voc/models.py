@@ -192,7 +192,7 @@ class UnitForm(forms.ModelForm):
     class Meta:
         model = Unit
 
-    def clean(self):
+    def clean_parent(self):
         l=[]
         p = self.cleaned_data.get("parent")
         if p == self.instance:

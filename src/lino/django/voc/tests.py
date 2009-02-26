@@ -24,6 +24,13 @@ from django.test import TestCase
 from django import forms
 from lino.django import xdjango
 
+# convert a django.forms.util.ErrorDict object to a str
+#~ def errordict2str(errordict):
+    #~ d={}
+    #~ for fieldname,errorlist in errordict.items():
+        #~ d[fieldname] = list(*errorlist)
+    #~ return d
+
 
 class TestCase(TestCase):
     def test01(self):
@@ -40,16 +47,19 @@ class TestCase(TestCase):
         
         self.assertEqual(u.pk,3)
         try:
-            print "set parent to self"
+            #print "set parent to self"
             u.parent=u
             u.save()
             print "save() : done"
-        except xdjango.ValidationError,e:
+        except xdjango.ModelValidationError,e:
             #s="\n".join([e.as_text() for m in e.messages])
-            s=str(e) # .messages.as_text()
-            self.assertEqual(s,"Parent cannot be self")
+            self.assertEqual(str(e),"ModelValidationError (parent)")
+            s=e["parent"].as_text()
+            self.assertEqual(s,"* Parent cannot be self")
         else:
-            self.fail("Expected forms.ValidationError")
+            self.fail("Expected ModelValidationError")
+            
+        
             
 
 class PkkTestCase(TestCase):
