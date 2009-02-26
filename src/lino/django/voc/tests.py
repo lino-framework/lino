@@ -21,20 +21,59 @@ import codecs
 from models import Unit, Entry
 from django.core import serializers
 from django.test import TestCase
+from django import forms
+from lino.django import xdjango
 
 
 class TestCase(TestCase):
-    #fixtures=[ 'pkk.yaml' ]
-    def setUp(self):
-        pass
+    def test01(self):
         
-    #~ def test01(self):
-        #~ unit=Unit.objects.get(id=3)
-        #~ unit.save()
-        #~ entries=unit.entry_set.all()
-        #~ s="\n".join([e.word1 for e in entries])
-        #~ print s
-        #~ self.assertEquals(s, unit.vocabulary)
+        u1 = Unit(title="First Chapter")
+        u1.save()
+        self.assertEqual(u1.seq,1)
+        u = Unit(title="First Section",parent=u1)
+        u.save()
+        self.assertEqual(u.seq,1)
+        u = Unit(title="Second Section",parent=u1)
+        u.save()
+        self.assertEqual(u.seq,2)
+        
+        self.assertEqual(u.pk,3)
+        try:
+            print "set parent to self"
+            u.parent=u
+            u.save()
+            print "save() : done"
+        except xdjango.ValidationError,e:
+            #s="\n".join([e.as_text() for m in e.messages])
+            s=str(e) # .messages.as_text()
+            self.assertEqual(s,"Parent cannot be self")
+        else:
+            self.fail("Expected forms.ValidationError")
+            
+
+class PkkTestCase(TestCase):
+    fixtures=[ 'pkk.yaml' ]
+    def setUp(self):
+        for u in Unit.objects.all():
+            u.save()
+        
+    def test01(self):
+        unit=Unit.objects.get(pk=5)
+        # unit.save()
+        entries=unit.entry_set.all()
+        s="\n".join([e.word1 for e in entries])
+        #print s
+        self.assertEquals(s.split(), u"""
+        grand, grande
+        gentil, gentille
+        petit, petite
+        méchant, méchante
+        sale, sale
+        propre, propre
+        est-ce que
+        oui
+        non """.split())
         
     #~ def test02(self):
         #~ entries=Entry.objects.all()
@@ -49,11 +88,25 @@ class TestCase(TestCase):
         #~ """)
 
     def test03(self):
-        pkk=Unit()
-        dirname=os.path.dirname(__file__)
-        pkk.load_rst(os.path.join(dirname,"data","pkk","pkk.rst"))
-        self.assertEqual(len(Unit.objects.all()),22)
-        self.assertEqual(len(pkk.children.all()),2)
+        # total number of rows in each table:
+        units=Unit.objects.all()
+        self.assertEqual(len(units),6)
+        self.assertEqual(len(Entry.objects.all()),9)
+        
+        pkk=unit=Unit.objects.get(pk=1)
+        self.assertEqual(len(pkk.children.all()),1)
+        
+        s=pkk.prettyprint()
+        #print s
+        self.assertEqual(s,u"""\
+1. Prantsuse keele kurs algajatele
+  1.1. Esimene tund
+    1.1.1. Sissejuhatus
+      1.1.2. Olema
+      1.1.3. Esimesed laused
+      1.1.4. Mees või naine?""")
+        
+        
         #~ u1=pkk.children.all()[0]
         #~ u2=pkk.children.all()[1]
         #~ u3=pkk.children.all()[2]
@@ -64,52 +117,27 @@ class TestCase(TestCase):
         #~ u4=pkk.children.all()[2]
         #~ self.assertEqual(u4.title,"Esimesed laused")
         
-        entries=Entry.objects.all()
-        self.assertEquals(len(entries),24)
         entries=Entry.objects.filter(word1__startswith="p")
         self.assertEquals(len(entries),2)
-        if False:
-            s="\n".join([e.word1 for e in entries])
-            print s
-            #print "test00",entries
-            self.assertEquals(s,u"""\
-père
-            """)
-        
-        s=pkk.prettyprint()
+        s="\n".join([e.word1 for e in entries])
         #print s
-        self.assertEqual(s,u"""\
-1. Prantsuse keele kurs algajatele
-  1.1. Esimene tund
-    1.1.1. Sissejuhatus
-      1.1.2. Olema
-      1.1.3. Esimesed laused
-      1.1.4. Mees või naine?
-      1.1.5. Mitmus
-      1.1.6. Isikulised asesõnad
-      1.1.7. Harjutus
-  1.2. Teine tund
-    1.2.1. Sõnavara
-      1.2.2. Tõlgi eesti keelde.
-      1.2.3. Artiklid
-      1.2.4. Ma tahaksin...
-      1.2.5. Artiklid kokkuvõte
-      1.2.6. avoir & être
-      1.2.7. Harjutus
-      1.2.8. de & à
-      1.2.9. Harjutus
-      1.2.10. Harjutus
-      1.2.11. Harjutus
-      1.2.12. Harjutus""")
+        self.assertEquals(s.split(),u"""
+petit, petite
+propre, propre
+        """.split())
+        
           
-        format='json'
-        serializers.get_serializer(format)
-        objects = []
-        for model in (Unit,Entry):
-            objects.extend(model._default_manager.all())
-        outfile=os.path.join(dirname,"fixtures","pkk.json")
-        f=codecs.open(outfile,"w","utf8")
-        f.write(serializers.serialize(format, objects))
+        #~ format='json'
+        #~ serializers.get_serializer(format)
+        #~ objects = []
+        #~ for model in (Unit,Entry):
+            #~ objects.extend(model._default_manager.all())
+        #~ outfile=os.path.join(dirname,"fixtures","pkk.json")
+        #~ f=codecs.open(outfile,"w","utf8")
+        #~ f.write(serializers.serialize(format, objects))
+        
+        
+        
         
 
         
