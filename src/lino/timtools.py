@@ -1,4 +1,4 @@
-## Copyright 2004-2007 Luc Saffre 
+## Copyright 2004-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -18,7 +18,7 @@
 
 def console_targets():
     return [
-        'pds2pdf',
+        #'pds2pdf',
         #'pds2sxw', 'pds2sxc',
         'prn2pdf', 'prnprint',
         'sync', 'diag',
