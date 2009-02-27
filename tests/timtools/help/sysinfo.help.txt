@@ -12,3 +12,4 @@ Options:
   -v, --verbose         increase verbosity
   -q, --quiet           decrease verbosity
   -b, --batch           not interactive (don't ask anything)
+  --lang=LANG           set user language to LANG

@@ -1,6 +1,6 @@
 #coding: latin1
 
-## Copyright 2005-2007 Luc Saffre.
+## Copyright 2005-2009 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -26,7 +26,7 @@ class Sync(Application):
 
     name="Lino/Sync"
     copyright="""\
-Copyright (c) 2005-2007 Luc Saffre.
+Copyright (c) 2005-2009 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
@@ -69,13 +69,6 @@ where SRC and DEST are two directories to be synchronized.
             type="string",
             dest="ignore")
 
-##         parser.add_option(
-##             "-p", "--progress",
-##             help="show progress bar",
-##             action="store_true",
-##             dest="showProgress",
-##             default=False)
-    
     def run(self):
 
         job=Synchronizer()
@@ -107,11 +100,6 @@ where SRC and DEST are two directories to be synchronized.
                      noaction=self.options.noaction)
                      
 
-# Sync().main()
-
-## if __name__ == '__main__':
-##     consoleApplicationClass().main() # console,sys.argv[1:])
-    
 def main(*args,**kw):
     Sync().main(*args,**kw)
 

@@ -1,4 +1,4 @@
-## Copyright 2003-2008 Luc Saffre 
+## Copyright 2003-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -21,12 +21,17 @@ import datetime
 import copy
 from time import mktime, ctime
 import types
-import decimals
+#import decimals
 
 from lino.tools.months import Month
 from lino.misc.etc import ispure, iif
-from lino.adamo.exceptions import DataVeto
+#from lino.adamo.exceptions import DataVeto
 from lino.reports.constants import *
+
+class DataVeto(Exception):
+    "Invalid data submitted"
+
+
 
 ERR_FORMAT_NONE = "caller must handle None values"
 ERR_PARSE_EMPTY = "caller must handle empty strings"

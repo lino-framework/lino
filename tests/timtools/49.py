@@ -1,4 +1,4 @@
-## Copyright 2005-2006 Luc Saffre
+## Copyright 2005-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -18,24 +18,21 @@
 
 import os
 
-#from lino.misc.tsttools import TestCase, main, catch_output
 from lino.misc.tsttools import TestCase, main, DOCROOT
 from lino.misc.my_import import my_import
-from lino.apps import timtools
+from lino.timtools import CONSOLE_TARGETS
 
-from lino import config
 
-# same list as in mkdist.py
-console_targets = timtools.console_targets()
+#srcpath=os.path.join(config.paths.get('src_path'),'lino','scripts')
 
-srcpath=os.path.join(config.paths.get('src_path'),'lino','scripts')
+help_path = os.path.join(os.path.dirname(__file__),"help")
 
 class Case(TestCase):
     def test01(self):
         s = ""
-        for script in console_targets:
+        for script in CONSOLE_TARGETS:
             if script != "runpy":
-                fn=os.path.join(DOCROOT,"help",script)+".help.txt"
+                fn=os.path.join(help_path,script)+".help.txt"
                 expected=open(fn).read()
                 
                 cmd="lino "+script+" --help"
@@ -43,10 +40,10 @@ class Case(TestCase):
                      % (cmd,fn)
                 self.trycmd(cmd,expected,msg)
 
-                cmd="python "+os.path.join(srcpath,script)+".py --help"
-                msg="output of `%s` differs from content of %s" \
-                     % (cmd,fn)
-                self.trycmd(cmd,expected,msg)
+                #~ cmd="python "+os.path.join(srcpath,script)+".py --help"
+                #~ msg="output of `%s` differs from content of %s" \
+                     #~ % (cmd,fn)
+                #~ self.trycmd(cmd,expected,msg)
                 
                 #fd=os.popen(cmd,"r")
                 #observed=fd.read()

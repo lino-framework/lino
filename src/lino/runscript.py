@@ -50,7 +50,7 @@ if len(sys.argv) <= 1:
     usage()
     sys.exit(-1)
 
-if not sys.argv[1] in scripts.__all__:
+if not sys.argv[1] in scripts.LINO_SCRIPTS:
     usage()
     print "error: unknown Lino script '%s'" % sys.argv[1]
     sys.exit(-1)

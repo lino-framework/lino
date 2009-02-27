@@ -1,0 +1,6 @@
+
+
+Usage : lino runpy FILE
+
+Executes the specified Python script FILE.
+

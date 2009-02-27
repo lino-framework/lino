@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre 
+## Copyright 2003-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -232,7 +232,9 @@ class Story:
 
     def report(self,rpt):
         rpt.beginReport()
-        header=[TH(col.getLabel(),align=col.halign,valign=col.valign)
+        header=[TH(col.getLabel(),
+                  align=col.datatype.halign,
+                  valign=col.datatype.valign)
                 for col in rpt.columns]
         t=TABLE()
         cols=[]
@@ -243,8 +245,8 @@ class Story:
         # TFOOT if present must come before TBODY
         tbody=t.append(TBODY())
         for row in rpt.rows():
-            line=[TD(s, align=col.halign,
-                     valign=col.valign)
+            line=[TD(s, align=col.datatype.halign,
+                     valign=col.datatype.valign)
                   for (col,s) in row.cells()]
             tbody.append(TR(*line))
             

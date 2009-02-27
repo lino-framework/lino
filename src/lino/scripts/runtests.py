@@ -1,4 +1,4 @@
-## Copyright 2004-2007 Luc Saffre
+## Copyright 2004-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -26,7 +26,7 @@ from lino.misc.my_import import my_import
 
 from lino.console import Application
 from lino.console import syscon
-from lino.forms.testkit import Toolkit
+#from lino.forms.testkit import Toolkit
 #gui.choose("testkit")
 
 class StoppingTestResult(unittest._TextTestResult):
@@ -59,11 +59,9 @@ class StoppingTestRunner(unittest.TextTestRunner):
 
 class Runtests(Application):
     name="Lino/runtests"
-    #years='2004-2007'
-    #author='Luc Saffre'
     
     copyright="""\
-Copyright (c) 2004-2007 Luc Saffre.
+Copyright (c) 2004-2009 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""

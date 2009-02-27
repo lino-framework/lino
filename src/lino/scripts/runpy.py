@@ -1,4 +1,4 @@
-## Copyright 2005-2006 Luc Saffre.
+## Copyright 2005-2009 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -15,47 +15,24 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-## from lino.console.application import Application
-
-## class RunPy(Application):
-
-##     name="Lino runpy"
-    
-##     copyright="""\
-## Copyright (c) 2005-2006 Luc Saffre.
-## This software comes with ABSOLUTELY NO WARRANTY and is
-## distributed under the terms of the GNU General Public License.
-## See file COPYING.txt for more information."""
-    
-##     url="http://lino.saffre-rumma.ee/runpy.html"
-    
-##     usage="usage: runpy [options] PYFILE"
-    
-##     description="""\
-## where PYFILE is a Python script to execute.
-## """ 
-    
-##     def run(self):
-
-##         for arg in self.args:
-##             execfile(arg)
-
-
-## #RunPy().main()
-
-## ## # lino.runscript expects a name consoleApplicationClass
-## ## consoleApplicationClass = Lino
-
-## ## if __name__ == '__main__':
-## ##     consoleApplicationClass().main()
-    
-## def main(*args,**kw):
-##     RunPy().main(*args,**kw)
-
 import sys
 
+USAGE = """
+
+Usage : lino runpy FILE
+
+Executes the specified Python script FILE.
+"""
+
 def main():
-    #print sys.argv
+    if len(sys.argv) <= 1:
+        print USAGE
+        sys.exit(-1)
+        
+    if sys.argv[1] == "--help":
+        print USAGE
+        sys.exit()
+      
     filename=sys.argv[1]
     del sys.argv[1]
     execfile(filename,{})
