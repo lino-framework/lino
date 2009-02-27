@@ -1,4 +1,4 @@
-## Copyright 2004-2006 Luc Saffre 
+## Copyright 2004-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -17,12 +17,10 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-
 This is a wrapper to the Lino scripts. Simply importing this module
 examines the command-line arguments and call the appropriate script.
 
 The auto-generated file lino.bat uses this wrapper
-
 
   python -c "from lino import runscript" %*
 
@@ -30,38 +28,22 @@ The auto-generated file lino.bat uses this wrapper
   
   python -c "from lino import runscript" %1 %2 %3 %4 %5 %6 %7 %8 %9
 
-
-
 """
 
 import sys
 
-#from lino import scripts
-#from lino.console import syscon
 from lino.misc.my_import import my_import
 from lino import scripts
 
 
 def usage():
-##     import os
     import lino
     
     print "Lino", lino.__version__
     print lino.__copyright__
     print "usage: lino SCRIPT [...]"
 
-    print "where SCRIPT is one of:", ", ".join(scripts.__all__)
-    
-##     for fn in os.listdir(scripts.__path__):
-##         if fn.endswith('.py'):
-##             modname=fn[:-2]
-##             mod = my_import("lino.scripts." + modname)
-##             if mod.hasattr('consoleApplicationClass'):
-##                 print modname
-
-                
-            
-            
+    print "where SCRIPT is one of:", ", ".join(scripts.LINO_SCRIPTS)
 
 
 if len(sys.argv) <= 1:
@@ -73,18 +55,8 @@ if not sys.argv[1] in scripts.__all__:
     print "error: unknown Lino script '%s'" % sys.argv[1]
     sys.exit(-1)
 
-#print sys.argv
-#del sys.argv[0]
 scriptName=sys.argv[1]
 del sys.argv[1]
 m=my_import("lino.scripts." + scriptName)
 m.main()
 
-## try:
-##     my_import("lino.scripts." + scriptName)
-## except ImportError,e:
-##     print "error: unknown lino script '%s'" % scriptName
-##     sys.exit(-1)
-
-#mod = my_import("lino.scripts." + sys.argv[1])
-#sys.exit(mod.consoleApplicationClass().main(sys.argv[2:]))

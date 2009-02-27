@@ -1,5 +1,5 @@
 # -*- coding: ISO-8859-1 -*-
-## Copyright 2005-2008 Luc Saffre.
+## Copyright 2005-2009 Luc Saffre.
 ## This file is part of the Lino project.
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -43,8 +43,7 @@ except:
     win32file = None
 
 from lino.i18n import itr,_
-#from lino.console.application import ApplicationError
-from lino.adamo.exceptions import OperationFailed
+from lino.console.exceptions import OperationFailed
 from lino.console.task import Progresser, Task
 
 class NeitherFileNorDirectory(Exception): pass
@@ -301,7 +300,6 @@ class Synchronizer(Progresser):
 
     
     
-#class SyncTask(Task):
 class SyncProject(Progresser):
     
     #summaryClass=SyncSummary
@@ -348,10 +346,6 @@ class SyncProject(Progresser):
         if self.recurse: s += " -r"
         return s
 
-##     def doit(self,task):
-##         self.task=task
-##         self.update_dir(self.src,self.target)
-        
     def run(self):
         return self.update_dir(self.src,self.target)
 
@@ -366,10 +360,6 @@ class SyncProject(Progresser):
     def update_dir(self,src,target):
         if self.ignore(src): return
         if self.ignore(target): return
-##         if self.ignorePatterns is not None:
-##             for i in self.ignorePatterns:
-##                 if not fnmatch(src,i): return
-##                 if not fnmatch(target,i): return
         srcnames = os.listdir(src)
         destnames = os.listdir(target)
         if self.ignorePatterns is not None:

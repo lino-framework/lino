@@ -213,7 +213,7 @@ alternate configuration file instead of %s.""" % self.configfile,
 
         except UsageError,e:
             self.error("Usage error: "+str(e))
-            c.print_help()
+            p.print_help()
             return -1
         except UserAborted,e:
             self.verbose(str(e))

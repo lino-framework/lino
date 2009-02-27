@@ -16,13 +16,15 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-def console_targets():
-    return [
-        #'pds2pdf',
-        #'pds2sxw', 'pds2sxc',
-        'prn2pdf', 'prnprint',
-        'sync', 'diag',
-        'openmail','openurl',
-        'runpy', 'sysinfo',
-        'sendmail', 'pisa'
-        ]
+#def console_targets():
+#    return [
+
+CONSOLE_TARGETS = (
+  #'pds2pdf',
+  #'pds2sxw', 'pds2sxc',
+  'prn2pdf', 'prnprint',
+  'sync', 'diag',
+  'openmail','openurl',
+  'runpy', 'sysinfo',
+  'sendmail', 'pisa'
+  )

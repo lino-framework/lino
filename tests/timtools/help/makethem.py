@@ -1,4 +1,4 @@
-from lino.apps.timtools import console_targets
+from lino.timtools import console_targets
 from lino.console.syscon import confirm
 from lino.misc.tsttools import trycmd
 
