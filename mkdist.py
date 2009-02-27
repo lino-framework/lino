@@ -179,11 +179,11 @@ excludes_console = excludes + ['wx']
 
 if 'timtools' in args:
     
-    from lino.apps import timtools
+    from lino import timtools
     
     sys.argv[1:] = ["py2exe"]
     
-    console_targets = timtools.console_targets()
+    console_targets = timtools.CONSOLE_TARGETS
 
     name = "timtools"
 

@@ -1,4 +1,4 @@
-## Copyright 2003-2008 Luc Saffre
+## Copyright 2003-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -17,9 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-__micro__ = 41
+__micro__ = 42
 
-__date__ = "2008-09-25"
+__date__ = "2009-02-27"
 
 __version__ = "0.6.%d" % __micro__
 
