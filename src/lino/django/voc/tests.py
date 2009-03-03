@@ -18,7 +18,7 @@
 
 import os
 import codecs
-from models import Unit, Entry
+from models import Unit, Entry, AllUnits
 from django.core import serializers
 from django.test import TestCase
 from django import forms
@@ -136,18 +136,14 @@ petit, petite
 propre, propre
         """.split())
         
-          
-        #~ format='json'
-        #~ serializers.get_serializer(format)
-        #~ objects = []
-        #~ for model in (Unit,Entry):
-            #~ objects.extend(model._default_manager.all())
-        #~ outfile=os.path.join(dirname,"fixtures","pkk.json")
-        #~ f=codecs.open(outfile,"w","utf8")
-        #~ f.write(serializers.serialize(format, objects))
+    def test04(self):
+        s=AllUnits().as_text()
+        print
+        print s
+        self.assertEquals(s.split(),u"""
+        """.split())
         
-        
-        
+        #print "foo", repr(u._meta.get_fields_with_model())
         
 
         

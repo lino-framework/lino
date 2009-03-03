@@ -53,6 +53,7 @@ class Model(models.Model):
         #return frm.is_valid()
 
     def save(self, *args, **kwargs):
+        #print "save:", self
         self.validate()
         self.before_save()
         super(Model, self).save(*args, **kwargs)

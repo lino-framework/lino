@@ -23,6 +23,7 @@ from django.db import models
 from django.utils.safestring import mark_safe 
 
 from lino.django import xdjango
+from lino.django import reports
 
 
 from docutils.core import publish_parts
@@ -210,3 +211,7 @@ class UnitForm(forms.ModelForm):
 
 Unit.model_form = UnitForm
 
+class AllUnits(reports.Report):
+    columnNames="id title name parent seq format remark"
+    queryset=Unit.objects.order_by("pk")
+    columnWidths="3 30 10 30 3 3 10"
