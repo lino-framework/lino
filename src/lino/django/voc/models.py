@@ -200,3 +200,5 @@ class UnitsPerParent(reports.Report):
     queryset=Unit.objects.order_by("seq")
     columnWidths="3 30 10 3 6 20 30"
 
+reports.site.register(AllUnits)
+reports.site.register(UnitsPerParent)

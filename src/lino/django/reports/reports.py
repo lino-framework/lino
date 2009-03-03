@@ -293,38 +293,4 @@ class Report:
         return s.rstrip()+"\n"
 
 
-    def view(request,page=1,pglen=15):
-        if request.method == 'POST': # If the form has been submitted...
-            form = ReportForm(request.POST) # A form bound to the POST data
-            if form.is_valid(): # All validation rules pass
-                # Process the data in form.cleaned_data
-                # ...
-                return HttpResponseRedirect('/thanks/') # Redirect after POST
-        else:
-            form = ReportForm() # An unbound form
 
-        return render_to_response('report.html', {
-            'report': self,
-            'form': form,
-        })
-
-
-# TODO: lino.django.reports should work of course also for other
-# applications. mysites/reports.py? or reports.register()?
-from lino.django.voc import reports as rptmod
-
-def list_view(request,rptname,**kw):
-    rpt=getattr(rptmod,rptname)
-    fsclass = modelformset_factory(rpt.modelForm,
-                                   fields=rpt.columNames.split())
-    if request.method == 'POST':
-        fs = fsclass(request.POST,queryset=rpt.queryset)
-        if fs.is_valid():
-            fs.save()
-    else:
-        fs = fsclass(queryset=rpt.queryset)
-    context_dict = dict(
-        report=rpt,
-        formset=fs,
-    )
-    return render_to_response("edit_report.html",context)

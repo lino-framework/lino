@@ -1,0 +1,28 @@
+{% extends "reports/base_site.html" %}
+
+{% block title %}{{ report.title }}{% endblock %}
+
+{% block content %}
+
+<div id="breadcrumbs"><a href="{{ root_url }}">Home</a></div>
+
+<h1>{{ report.title }}</h1>
+<form action="" method="POST">
+{{ formset.management_form() }}
+<table>
+<tr>
+{% for col in report.columns %}
+<th>{{ col.title }}</th>
+{% endfor %}
+</tr>
+{% for form in formset.forms %}
+<tr>
+{% for field in form %}
+<td>{{ field }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</table>
+</form>
+
+{% endblock %}
