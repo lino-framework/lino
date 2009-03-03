@@ -26,8 +26,7 @@ from lino.misc.etc import assert_pure
 
 
 from django.db import models
-from django.forms import modelform_factory
-from django.shortcuts import render_to_response
+from django.forms.models import modelform_factory
 
 
 # maps Django field types to a tuple of default paramenters

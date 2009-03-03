@@ -105,6 +105,7 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'lino.django.voc',
+    'lino.django.reports',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

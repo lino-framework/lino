@@ -8,11 +8,11 @@
 
 <h1>{{ report.title }}</h1>
 <form action="" method="POST">
-{{ formset.management_form() }}
+{{ formset.management_form }}
 <table>
 <tr>
 {% for col in report.columns %}
-<th>{{ col.title }}</th>
+<th>{{ col.getLabel }}</th>
 {% endfor %}
 </tr>
 {% for form in formset.forms %}

@@ -18,7 +18,11 @@
 
 
 
-from lino.django.reports.reports import Report, list_view
+from lino.django.reports.reports import Report
+from django.utils.functional import update_wrapper
+from django.forms.models import modelform_factory
+from django.forms.models import modelformset_factory
+from django.shortcuts import render_to_response
 
 class ReportsSite:
     def __init__(self):
@@ -28,32 +32,27 @@ class ReportsSite:
         self._registry[rptclass.__name__] = rptclass
         
     def get_report(self,name):
-        return self._registry[name]
+        return self._registry[name]()
         
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url, include
         
-        def wrap(view):
-            def wrapper(*args, **kwargs):
-                return self.admin_view(view)(*args, **kwargs)
-            return update_wrapper(wrapper, view)
-        
         # Admin-site-wide views.
         urlpatterns = patterns('',
             url(r'^$',
-                wrap(self.index)),
+                self.index),
             url(r'^(?P<rptname>\w+)/$',
-                wrap(self.list_view)),
+                self.list_view),
             url(r'^(?P<rptname>\w+)/(?P<rownum>.+)/$',
-                wrap(self.page_view)),
+                self.page_view),
         )
         
-        # Add in each model's views.
-        for model, model_admin in self._registry.iteritems():
-            urlpatterns += patterns('',
-                url(r'^%s/%s/' % (model._meta.app_label, model._meta.module_name),
-                    include(model_admin.urls))
-            )
+        #~ # Add in each model's views.
+        #~ for rptname,rptclass in self._registry.iteritems():
+            #~ urlpatterns += patterns('',
+                #~ url(r'^%s/%s/' % (rptname, model._meta.module_name),
+                    #~ include(model_admin.urls))
+            #~ )
         return urlpatterns         
         
     def urls(self):
@@ -61,17 +60,23 @@ class ReportsSite:
     urls = property(urls)
     
     
+    def index(self,request):
+        context = dict(
+            reports=self._registry.keys(),
+        )
+        return render_to_response("reports/index.html",context)    
+      
     def list_view(self,request,rptname):
         rpt = self.get_report(rptname)
-        fsclass = modelformset_factory(rpt.modelForm,
-                                       fields=rpt.columNames.split())
+        fsclass = modelformset_factory(rpt.queryset.model,
+                                       fields=rpt.columnNames.split())
         if request.method == 'POST':
             fs = fsclass(request.POST,queryset=rpt.queryset)
             if fs.is_valid():
                 fs.save()
         else:
             fs = fsclass(queryset=rpt.queryset)
-        context_dict = dict(
+        context = dict(
             report=rpt,
             formset=fs,
         )
@@ -86,6 +91,13 @@ class ReportsSite:
                 frm.save()
         else:
             frm=rpt.modelForm(instance=obj)      
+        context = dict(
+            report=rpt,
+            object=obj,
+            form=frm,
+        )
         return render_to_response("reports/page.html",context)    
+        
+        
 site = ReportsSite()
 

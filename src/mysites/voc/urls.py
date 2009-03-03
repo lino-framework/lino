@@ -27,6 +27,7 @@ admin.autodiscover()
 
 #from lino.django.igen.views import root
 from lino.django.voc.urls import url
+from lino.django import reports
 
 urlpatterns = patterns('',
     (r'^$', include('lino.django.voc.urls')),
