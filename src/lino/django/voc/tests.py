@@ -106,6 +106,9 @@ class PkkTestCase(TestCase):
         pkk=unit=Unit.objects.get(pk=1)
         self.assertEqual(len(pkk.children.all()),1)
         
+        #
+        # prettyprint()
+        #
         s=pkk.prettyprint()
         #print s
         self.assertEqual(s,u"""\
@@ -115,17 +118,10 @@ class PkkTestCase(TestCase):
       1.1.2. Olema
       1.1.3. Esimesed laused
       1.1.4. Mees või naine?""")
-        
-        
-        #~ u1=pkk.children.all()[0]
-        #~ u2=pkk.children.all()[1]
-        #~ u3=pkk.children.all()[2]
-        #~ self.assertEqual(u1.parent,pkk)
-        #~ self.assertEqual(u2.parent,pkk)
-        #~ self.assertEqual(u3.parent,pkk)
-        
-        #~ u4=pkk.children.all()[2]
-        #~ self.assertEqual(u4.title,"Esimesed laused")
+      
+        #
+        #
+        #
         
         entries=Entry.objects.filter(word1__startswith="p")
         self.assertEquals(len(entries),2)
@@ -136,14 +132,26 @@ petit, petite
 propre, propre
         """.split())
         
-    def test04(self):
+        #
+        #The first lino.django.Report
+        #
+        
         s=AllUnits().as_text()
-        print
-        print s
+        #print
+        #print s
         self.assertEquals(s.split(),u"""
+ID |title               |name      |parent              |seq|format|remark
+---+--------------------+----------+--------------------+---+------+--------------------
+1  |Prantsuse keele kurs|pkk       |                    |1  |R     |
+   |algajatele          |          |                    |   |      |
+2  |Esimene tund        |u1        |1. Prantsuse keele  |1  |R     |
+   |                    |          |kurs algajatele     |   |      |
+3  |Sissejuhatus        |          |1.1. Esimene tund   |1  |R     |
+4  |Olema               |          |1.1. Esimene tund   |2  |R     |
+5  |Esimesed laused     |          |1.1. Esimene tund   |3  |R     |
+6  |Mees või naine?     |          |1.1. Esimene tund   |4  |R     |        
         """.split())
         
-        #print "foo", repr(u._meta.get_fields_with_model())
         
 
         

@@ -272,7 +272,7 @@ class Report:
 
                 for i in range(rowHeight):
                     writer.write(self._row_as_text(
-                        wrappedCells,0,columnSep))
+                        wrappedCells,i,columnSep))
         
         return writer.getvalue()
 
@@ -287,3 +287,18 @@ class Report:
         s=columnSep.join(l)
         return s.rstrip()+"\n"
 
+
+    def view(request,page=1,pglen=15):
+        if request.method == 'POST': # If the form has been submitted...
+            form = ReportForm(request.POST) # A form bound to the POST data
+            if form.is_valid(): # All validation rules pass
+                # Process the data in form.cleaned_data
+                # ...
+                return HttpResponseRedirect('/thanks/') # Redirect after POST
+        else:
+            form = ReportForm() # An unbound form
+
+        return render_to_response('report.html', {
+            'report': self,
+            'form': form,
+        })

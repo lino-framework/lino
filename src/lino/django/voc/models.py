@@ -19,7 +19,6 @@ import codecs
 
 from django import forms
 from django.db import models
-#from django.db.models.signals import post_syncdb
 from django.utils.safestring import mark_safe 
 
 from lino.django import xdjango
@@ -166,27 +165,7 @@ class Entry(xdjango.Model):
     def get_absolute_url(self):
         return ('lino.django.voc.views.entry_page', [self.unit.id, self.id])
         
-    #~ def before_save(self):
-        #~ print "before_save"
-        #~ mo=voc_splitter.match(self.word1)
-        #~ if mo:
-            #~ self.word1=mo.group(1).strip()
-            #~ self.word1_suffix=mo.group(2).strip()
-            #~ print repr(self.word1),repr(self.word1_suffix)
-    #~ before_save.alters_data = True
-
-    #~ def save(self, force_insert=False, force_update=False):
-        #~ self.before_save()
-        #~ super(Entry, self).save(force_insert, force_update) 
         
-        
-
-#~ def my_callback(sender,**kw):
-  #~ print "my_callback",sender
-  
-#~ post_syncdb.connect(my_callback)
-
-
 
 
 class UnitForm(forms.ModelForm):
@@ -213,5 +192,11 @@ Unit.model_form = UnitForm
 
 class AllUnits(reports.Report):
     columnNames="id title name parent seq format remark"
-    queryset=Unit.objects.order_by("pk")
-    columnWidths="3 30 10 30 3 3 10"
+    queryset=Unit.objects.order_by("id")
+    columnWidths="3 20 10 20 3 6 20"
+
+class UnitsPerParent(reports.Report):
+    columnNames="id title name seq format remark parent"
+    queryset=Unit.objects.order_by("seq")
+    columnWidths="3 30 10 3 6 20 30"
+
