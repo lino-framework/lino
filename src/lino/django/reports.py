@@ -18,7 +18,7 @@
 
 
 import types
-from StringIO import StringIO
+from StringIO import StringIO # cStringIO doesn't support Unicode
 from textwrap import TextWrapper
 
 from lino.reports.constants import *
@@ -26,6 +26,9 @@ from lino.misc.etc import assert_pure
 
 
 from django.db import models
+from django.forms import modelform_factory
+from django.shortcuts import render_to_response
+
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth
@@ -105,15 +108,17 @@ class Report:
     width=None
     columnWidths=None
     rowHeight=None
+    modelForm=None
 
-    def __init__(self, **kw):
-        self._mustSetup=True
-        self._mustComputeWidths=True
-        #self.groups = []
-        #self.totals = []
-        self.columns=[]
+    def __init__(self):
+        self.groups = [] # for later
+        self.totals = [] # for later
+        self.columns = []
+        if self.modelForm is None:
+            self.modelForm = modelform_factory(self.queryset.model)
+        meta = self.queryset.model._meta
         for field_name in self.columnNames.split():
-            field = self.queryset.model._meta.get_field_by_name(field_name)[0]
+            field = meta.get_field_by_name(field_name)[0]
             self.columns.append(ReportColumn(field,len(self.columns)))
 
     def getTitle(self):
@@ -302,3 +307,24 @@ class Report:
             'report': self,
             'form': form,
         })
+
+
+# TODO: lino.django.reports should work of course also for other
+# applications. mysites/reports.py? or reports.register()?
+from lino.django.voc import reports as rptmod
+
+def list_view(request,rptname,**kw):
+    rpt=getattr(rptmod,rptname)
+    fsclass = modelformset_factory(rpt.modelForm,
+                                   fields=rpt.columNames.split())
+    if request.method == 'POST':
+        fs = fsclass(request.POST,queryset=rpt.queryset)
+        if fs.is_valid():
+            fs.save()
+    else:
+        fs = fsclass(queryset=rpt.queryset)
+    context_dict = dict(
+        report=rpt,
+        formset=fs,
+    )
+    return render_to_response("edit_report.html",context)
