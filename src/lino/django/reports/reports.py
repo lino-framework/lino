@@ -27,6 +27,9 @@ from lino.misc.etc import assert_pure
 
 from django.db import models
 from django.forms.models import modelform_factory
+from django.conf.urls.defaults import patterns, url, include
+from django.shortcuts import render_to_response
+
 
 
 # maps Django field types to a tuple of default paramenters
@@ -293,3 +296,34 @@ class Report:
 
 
 
+    def view_report(self,request,rpt,rownum=None):
+        fsclass = modelformset_factory(rpt.queryset.model,
+                                       fields=rpt.columnNames.split())
+        if request.method == 'POST':
+            fs = fsclass(request.POST,queryset=rpt.queryset)
+            if fs.is_valid():
+                fs.save()
+        else:
+            fs = fsclass(queryset=rpt.queryset)
+            
+        context = dict(
+            report=rpt,
+            formset=fs,
+        )
+        return render_to_response("tom/list.html",context)
+
+    def view_page(self,request,rpt,rownum):
+        obj=rpt.queryset[int(rownum)]
+        if request.method == 'POST':
+            frm=rpt.modelForm(request.POST,instance=obj)
+            if frm.is_valid():
+                frm.save()
+        else:
+            frm=rpt.modelForm(instance=obj)      
+        context = dict(
+            report=rpt,
+            object=obj,
+            form=frm,
+        )
+        return render_to_response("tom/page.html",context)    
+        

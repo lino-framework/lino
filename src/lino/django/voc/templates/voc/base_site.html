@@ -1,1 +1,16 @@
 {% extends "voc/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">lino.mysites.voc</h1>
+{% endblock %}
+
+{% block nav-global %}
+<a href="/">Home</a>
+/ <a href="/admin/">admin</a>
+/ <a href="/db/">databrowse</a>
+/ <a href="/reports/">reports</a>
+
+{% endblock %}

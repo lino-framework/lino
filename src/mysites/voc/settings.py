@@ -114,3 +114,10 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.databrowse',
 )
+
+NAV_GLOBAL = (
+  ( "/", "Home" ),
+  ( "/admin/", "admin" ), 
+  ( "/db/", "db" ), 
+  ( "/reports/", "reports" ), 
+)
