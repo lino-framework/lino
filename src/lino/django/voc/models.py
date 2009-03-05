@@ -18,11 +18,11 @@
 import codecs
 
 from django import forms
-from django.db import models
+#from django.db import models
 from django.utils.safestring import mark_safe 
 
-from lino.django import xdjango
-from lino.django import reports
+from lino.django import tom
+from lino.django.tom import models
 
 
 from docutils.core import publish_parts
@@ -41,7 +41,7 @@ FORMATS = (
 MAX_NESTING_LEVEL=10
 
 
-class Unit(xdjango.Model):
+class Unit(models.Model):
     
     name = models.CharField(max_length=20,blank=True)
     title = models.CharField(max_length=200,blank=True,null=True)
@@ -146,7 +146,7 @@ class Unit(xdjango.Model):
         self.entry_set.add(e)
               
         
-class Entry(xdjango.Model):
+class Entry(models.Model):
     word1 = models.CharField(max_length=200)
     word1_suffix = models.CharField(max_length=200,blank=True,null=True)
     word2 = models.CharField(max_length=200)
@@ -191,14 +191,14 @@ class UnitForm(forms.ModelForm):
 Unit.model_form = UnitForm
 
 class AllUnits(reports.Report):
-    columnNames="id title name parent seq format remark"
     queryset=Unit.objects.order_by("id")
+    columnNames="id title name parent seq format remark"
     columnWidths="3 20 10 20 3 6 20"
 
 class UnitsPerParent(reports.Report):
-    columnNames="id title name seq format remark parent"
     queryset=Unit.objects.order_by("seq")
+    columnNames="id title name seq format remark parent"
     columnWidths="3 30 10 3 6 20 30"
 
-reports.site.register(AllUnits)
-reports.site.register(UnitsPerParent)
+#tom.kernel.register(AllUnits)
+#tom.kernel.register(UnitsPerParent)
