@@ -1,4 +1,4 @@
-## Copyright 2008 Luc Saffre.
+## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -269,37 +269,3 @@ class InvoiceItem(DocumentItem):
     invoice = models.ForeignKey(Invoice,related_name="items")
         
         
-#
-# reports definition
-#        
-        
-from lino.django.tom import reports
-
-class Contacts(reports.Report):
-    queryset=Contact.objects.order_by("id")
-    columnNames="id companyName firstName lastName title country"
-
-class Companies(reports.Report):
-    queryset=Contact.objects.order_by("companyName")
-    columnNames="companyName id country title firstName lastName"
-    #queryset=Contact.objects.exclude(companyName__exact=False).order_by("companyName")
-
-#~ class Persons(reports.Report):
-    #~ queryset=Contact.objects.filter(companyName__exact=None).order_by("lastName","firstName")
-    #~ columnNames="companyName id country title firstName lastName"
-
-class Countries(reports.Report):
-    queryset=Country.objects.order_by("isocode")
-    columnNames="isocode name"
-    columnWidths="3 30"
-
-
-#
-# menu setup
-#
-def setup_menu(menu):
-    m = menu.addMenu("contacts","Contacts")
-    m.addAction(Contacts())
-    m.addAction(Companies())
-    #~ m.addAction(Persons())
-    m.addAction(Countries())

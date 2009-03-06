@@ -27,11 +27,12 @@ admin.autodiscover()
 from lino.django.tom.menus import Menu
 menu = Menu("","Main Menu")
 
-from lino.django import igen
-igen.setup_menu(menu)
+from lino.django.igen.menu import setup_menu
+setup_menu(menu)
 
-from lino.django import voc
-voc.setup_menu(menu)
+from lino.django.voc.menu import setup_menu
+#from lino.django import voc
+setup_menu(menu)
 
 urlpatterns = menu.urls
 

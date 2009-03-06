@@ -188,34 +188,3 @@ class UnitForm(forms.ModelForm):
 Unit.model_form = UnitForm
 
 
-#
-# reports definition
-#
-
-from lino.django.tom import reports
-
-class Units(reports.Report):
-    queryset=Unit.objects.order_by("id")
-    columnNames="id title name parent seq format"
-    columnWidths="3 20 10 20 3 6"
-
-class UnitsPerParent(reports.Report):
-    columnNames="id title name seq format parent"
-    columnWidths="3 30 10 3 6 30"
-    
-    def __init__(self,parent,**kw):
-        self.parent=parent
-        reports.Report.__init__(self,**kw)
-        
-    def get_queryset(self):
-        return Unit.objects.filter(parent=self.parent).order_by("seq")
-    queryset=property(get_queryset)
-    
-
-#
-# menu setup
-#
-def setup_menu(menu):
-    m = menu.addMenu("voc","Vocabulary")
-    m.addAction(Units(),label="List of All Units",)
-    m.addAction(UnitsPerParent(None),name="tree",label="Table of Contents")
