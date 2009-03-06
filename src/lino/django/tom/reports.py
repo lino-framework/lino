@@ -30,6 +30,7 @@ from django.forms.models import modelform_factory
 from django.forms.models import modelformset_factory
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
 
 
@@ -40,6 +41,7 @@ WIDTHS = {
     models.CharField : (10,40),
     models.TextField :  (10,40),
     models.ForeignKey : (5,40),
+    models.AutoField : (2,10),
 }
 
 
@@ -112,11 +114,15 @@ class Report:
     columnWidths=None
     rowHeight=None
     modelForm=None
+    pageLen=15
+    label=None
 
     def __init__(self):
         self.groups = [] # for later
         self.totals = [] # for later
         self.columns = []
+        if self.label is None:
+            self.label = self.__class__.__name__
         if self.modelForm is None:
             self.modelForm = modelform_factory(self.queryset.model)
         meta = self.queryset.model._meta
@@ -129,6 +135,9 @@ class Report:
         returns None if this report has no title
         """
         return self.title
+        
+    def getLabel(self):
+        return self.label
     
 
     def computeWidths(self,columnSepWidth):
@@ -307,17 +316,33 @@ class Report:
 
 
     def view_list(self,request):
+        # Make sure page request is an int. If not, deliver first page.
+        try:
+            pg = int(request.GET.get('pg', '1'))
+        except ValueError:
+            pg = 1
+
+        paginator = Paginator(self.queryset,self.pageLen)
+        
+        # If page request (9999) is out of range, deliver last page of results.
+        try:
+            page = paginator.page(pg)
+        except (EmptyPage, InvalidPage):
+            page = paginator.page(paginator.num_pages)
+
+                                       
         fsclass = modelformset_factory(self.queryset.model,
                                        fields=self.columnNames.split())
+                                       
         if request.method == 'POST':
-            fs = fsclass(request.POST,queryset=self.queryset)
+            fs = fsclass(request.POST,queryset=page.object_list)
             if fs.is_valid():
                 fs.save()
         else:
-            fs = fsclass(queryset=self.queryset)
-            
+            fs = fsclass(queryset=page.object_list)
         context = dict(
             report=self,
+            page=page,
             formset=fs,
         )
         return render_to_response("tom/list.html",context)

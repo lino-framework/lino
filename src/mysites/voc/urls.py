@@ -24,31 +24,23 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
-#from lino.django.igen.views import root
-#from lino.django import voc
-from lino.django import tom
+from lino.django.tom.menus import Menu
+menu = Menu("","Main Menu")
 
-urlpatterns = patterns('',
-    (r'^menu/', include(tom.menu.urls)),
+from lino.django import igen
+igen.setup_menu(menu)
+
+from lino.django import voc
+voc.setup_menu(menu)
+
+urlpatterns = menu.urls
+
+urlpatterns += patterns('',
+    #(r'^menu/', include(tom.menu.urls)),
     (r'^admin/', include(admin.site.urls)),
     #(r'^reports/', include(reports.site.urls)),
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
 )    
-
-#~ urlpatterns = patterns('',
-    #~ (r'^$', views.index),
-    #~ (r'^nodes/', include('lino.django.nodes.urls')),
-    #~ (r'^polls/', include('lino.django.polls.urls')),
-    #~ (r'^contacts/', include('lino.django.contacts.urls')),
-    #~ (r'^admin/(.*)', admin.site.root),
-    #~ (r'^db/(.*)', login_required(databrowse.site.root)),
-    #~ # (r'^.*$', nodes.views.index),
-#~ )
-
-
-#~ urlpatterns += patterns('',
-    #~ (r'^accounts/login/$', 'django.contrib.auth.views.login'),
-#~ )                        
 

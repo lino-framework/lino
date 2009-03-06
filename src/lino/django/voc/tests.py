@@ -18,7 +18,7 @@
 
 import os
 import codecs
-from models import Unit, Entry, AllUnits
+from models import Unit, Entry, Units
 from django.core import serializers
 from django.test import TestCase
 from django import forms
@@ -136,8 +136,8 @@ propre, propre
         # The first Report
         #
         
-        s=AllUnits().as_text()
-        #print "\n",s
+        s=Units().as_text()
+        #print "\n"+s
         self.assertEquals(s.split(),u"""
 ID |title               |name      |parent              |seq|format
 ---+--------------------+----------+--------------------+---+------

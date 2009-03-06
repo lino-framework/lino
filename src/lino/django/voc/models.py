@@ -28,7 +28,7 @@ from django import forms
 from django.utils.safestring import mark_safe 
 
 #from lino.django import tom
-from lino.django.tom import models, reports, menu
+from lino.django.tom import models
 
 
 FORMATS = (
@@ -187,7 +187,14 @@ class UnitForm(forms.ModelForm):
 
 Unit.model_form = UnitForm
 
-class AllUnits(reports.Report):
+
+#
+# reports definition
+#
+
+from lino.django.tom import reports
+
+class Units(reports.Report):
     queryset=Unit.objects.order_by("id")
     columnNames="id title name parent seq format"
     columnWidths="3 20 10 20 3 6"
@@ -205,6 +212,10 @@ class UnitsPerParent(reports.Report):
     queryset=property(get_queryset)
     
 
-m = menu.addMenu("voc","Vocabulary")
-m.addAction("units","List of All Units",AllUnits())
-m.addAction("tree","Table of Contents",UnitsPerParent(None))
+#
+# menu setup
+#
+def setup_menu(menu):
+    m = menu.addMenu("voc","Vocabulary")
+    m.addAction(Units(),label="List of All Units",)
+    m.addAction(UnitsPerParent(None),name="tree",label="Table of Contents")

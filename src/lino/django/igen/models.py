@@ -16,7 +16,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import datetime
-from django.db import models
+#from django.db import models
+from lino.django.tom import models
 
 def linkto(obj,text=None):
     if text is None:
@@ -40,7 +41,7 @@ class QuantityField(models.DecimalField):
         super(QuantityField, self).__init__(*args, **kwargs)
         
 
-class Contact(models.Model):
+class Contact(models.ValidatingModel):
     """
     
 Company and/or Person contact data, linked with client account and
@@ -267,3 +268,38 @@ class OrderItem(DocumentItem):
 class InvoiceItem(DocumentItem):
     invoice = models.ForeignKey(Invoice,related_name="items")
         
+        
+#
+# reports definition
+#        
+        
+from lino.django.tom import reports
+
+class Contacts(reports.Report):
+    queryset=Contact.objects.order_by("id")
+    columnNames="id companyName firstName lastName title country"
+
+class Companies(reports.Report):
+    queryset=Contact.objects.order_by("companyName")
+    columnNames="companyName id country title firstName lastName"
+    #queryset=Contact.objects.exclude(companyName__exact=False).order_by("companyName")
+
+#~ class Persons(reports.Report):
+    #~ queryset=Contact.objects.filter(companyName__exact=None).order_by("lastName","firstName")
+    #~ columnNames="companyName id country title firstName lastName"
+
+class Countries(reports.Report):
+    queryset=Country.objects.order_by("isocode")
+    columnNames="isocode name"
+    columnWidths="3 30"
+
+
+#
+# menu setup
+#
+def setup_menu(menu):
+    m = menu.addMenu("contacts","Contacts")
+    m.addAction(Contacts())
+    m.addAction(Companies())
+    #~ m.addAction(Persons())
+    m.addAction(Countries())

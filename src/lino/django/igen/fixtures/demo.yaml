@@ -150,6 +150,90 @@
     language: de
 
 - model: igen.Contact
+  pk: 10
+  fields:
+    companyName: Bernd Brecht
+    lastName: Brecht
+    firstName: Bernd
+    title: Herr
+    addr1: Eupener Str. 13
+    zipCode: 52007
+    city: Aachen
+    country: de
+    language: de
+
+- model: igen.Contact
+  pk: 11
+  fields:
+    companyName: 
+    lastName: Jeanémart
+    firstName: Jérôme
+    title: Monsieur
+    addr1: rue Haute
+    zipCode: 4850
+    city: Welkenradt
+    country: be
+    language: fr
+    
+
+- model: igen.Contact
+  pk: 12
+  fields:
+    companyName: 
+    lastName: Dubois
+    firstName: Robin
+    title: Monsieur
+    addr1: rue des prés 5
+    zipCode: 4850
+    city: Welkenradt
+    country: be
+    language: fr
+    
+
+- model: igen.Contact
+  pk: 13
+  fields:
+    companyName: 
+    lastName: Duprez
+    firstName: Denis
+    title: Dr.
+    addr1: rue des prés 9
+    zipCode: 4850
+    city: Welkenradt
+    country: be
+    language: fr
+    
+- model: igen.Contact
+  pk: 14
+  fields:
+    companyName: 
+    lastName: Monton
+    firstName: Antoine
+    title: Monsieur
+    addr1: rue des prés 9
+    zipCode: 4850
+    city: Welkenradt
+    country: be
+    language: fr
+    
+
+- model: igen.Contact
+  pk: 14
+  fields:
+    companyName: 
+    lastName: Keller
+    firstName: Karl
+    title: Herrn
+    addr1: Bergstraße 5
+    zipCode: 4700
+    city: Eupen
+    country: be
+    language: de
+    
+
+
+
+- model: igen.Contact
   pk: 100
   fields:
     companyName: Mets ja Puu OÜ

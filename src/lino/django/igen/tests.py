@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-## Copyright 2008 Luc Saffre.
+## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from models import Contact, Product, Invoice
+from models import Contact, Product, Invoice, Companies
 from django.test import TestCase
 
 
@@ -38,18 +38,19 @@ Vigala vald
 
     def test02(self):
       
-        """A simple query. Select all contacts whos lastName contains an 'a', ordered by lastName.
+        """A simple query. Select all contacts whose lastName contains an 'a', ordered by lastName.
         """
         
         s="\n".join([unicode(c) 
           for c in Contact.objects.filter(
             lastName__contains="a").order_by("lastName")])
-        #print s
+        #print "\n"+s
         self.assertEquals(s,u"""\
 Herrn Andreas Arens
 Bäckerei Alfons Ausdemwald
 Dr. Bernard Bodard
 Herrn Emil Eierschal
+Monsieur Jérôme Jeanémart
 Karl Kask
 Hans Flott & Co (Frau Lisa Lahm)
 Mr. Luc Saffre
@@ -70,6 +71,13 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         i=Invoice(customer=luc)
         i.save()
         i.items.create(pos=1,product=table,qty=1)
+        
+    def test05(self):
+        s=Companies().as_text()
+        #print "\n"+s
+        self.assertEquals(s.split(),u"""
+        """.split())
+        
         
 ## Run these tests using "python manage.py test".
 ## see http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing
