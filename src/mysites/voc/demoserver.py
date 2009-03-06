@@ -17,17 +17,17 @@ from django.db import connection
 from lino.django.voc.models import Unit
 
 
-verbosity = 1
+verbosity = 2
 addrport = "8000"
 
 # Create a test database.
 db_name = connection.creation.create_test_db(verbosity=verbosity)
 
 # Import the fixture data into the test database.
-call_command('loaddata', 'pkk', verbosity=verbosity)
+call_command('loaddata', 'demo', verbosity=verbosity)
 
-for u in Unit.objects.all():
-    u.save()
+#for u in Unit.objects.all():
+#    u.save()
 
 
 # Run the development server. Turn off auto-reloading because it causes

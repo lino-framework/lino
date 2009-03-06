@@ -38,9 +38,6 @@ from django.db.models import permalink
 
 
 
-
-
-
 """
 Thanks to 
 http://www.pointy-stick.com/blog/2008/10/15/django-tip-poor-mans-model-validation/
@@ -90,7 +87,7 @@ class ValidatingModel(Model):
     def view(self,response):
         raise NotImimplementedError
 
-    @models.permalink
+    @permalink
     def get_absolute_url(self):
         #return ('lino.django.tom.kernel.', [str(self.id)])
         return (self.__class__.view, [str(self.pk)])

@@ -26,13 +26,13 @@ from django.contrib import admin
 admin.autodiscover()
 
 #from lino.django.igen.views import root
-from lino.django.voc.urls import url
-from lino.django import reports
+#from lino.django import voc
+from lino.django.tom import kernel
 
 urlpatterns = patterns('',
-    (r'^$', include('lino.django.voc.urls')),
+    (r'^$', include(kernel.urls)),
     (r'^admin/', include(admin.site.urls)),
-    (r'^reports/', include(reports.site.urls)),
+    #(r'^reports/', include(reports.site.urls)),
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),

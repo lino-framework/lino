@@ -17,19 +17,18 @@
 
 import codecs
 
-from django import forms
-#from django.db import models
-from django.utils.safestring import mark_safe 
-
-#from lino.django import tom
-from lino.django.tom import models
-
-
 from docutils.core import publish_parts
 
 import re
 voc_splitter1=re.compile("^(.*)\s+\((.*)\)\s*:\s*(.+)",re.DOTALL)
 voc_splitter2=re.compile("^(.*)\s*:\s*(.+)",re.DOTALL)
+
+from django import forms
+#from django.db import models
+from django.utils.safestring import mark_safe 
+
+#from lino.django import tom
+from lino.django.tom import models, reports, kernel
 
 
 FORMATS = (
@@ -203,10 +202,10 @@ class UnitsPerParent(reports.Report):
         
     def get_queryset(self):
         return Unit.objects.filter(parent=self.parent).order_by("seq")
-    queryset=property(queryset)
+    queryset=property(get_queryset)
     
 
-m = tom.kernel.addMenu("voc","Vocabulary")
+m = kernel.addMenu("voc","Vocabulary")
 m.addItem("units","List of All Units",AllUnits())
 m.addItem("tree","Table of Contents",UnitsPerParent(None))
 #tom.kernel.register(AllUnits)

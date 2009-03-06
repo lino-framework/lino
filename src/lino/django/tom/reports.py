@@ -293,10 +293,17 @@ class Report:
                            self.columns[j].width))
         s=columnSep.join(l)
         return s.rstrip()+"\n"
+        
+    def get_urls(self,name):
+        urlpatterns = []
+        urlpatterns += patterns('',url(r'^%s$' % name, self.view_list))
+        urlpatterns += patterns('',url(r'^%s/(?P<row>\d+)$' % name, 
+        self.view_page))
+        return urlpatterns
+        
 
 
-
-    def view_report(self,request,rpt,rownum=None):
+    def view_list(self,request):
         fsclass = modelformset_factory(rpt.queryset.model,
                                        fields=rpt.columnNames.split())
         if request.method == 'POST':
@@ -312,16 +319,16 @@ class Report:
         )
         return render_to_response("tom/list.html",context)
 
-    def view_page(self,request,rpt,rownum):
-        obj=rpt.queryset[int(rownum)]
+    def view_page(self,request,row):
+        obj=self.queryset[int(row)]
         if request.method == 'POST':
-            frm=rpt.modelForm(request.POST,instance=obj)
+            frm=self.modelForm(request.POST,instance=obj)
             if frm.is_valid():
                 frm.save()
         else:
-            frm=rpt.modelForm(instance=obj)      
+            frm=self.modelForm(instance=obj)      
         context = dict(
-            report=rpt,
+            report=self,
             object=obj,
             form=frm,
         )

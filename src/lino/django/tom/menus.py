@@ -26,7 +26,7 @@ class Component:
         self.name=name
         self.label=label or self.__class__.__name__
         self.doc=doc
-        self.enabled=enabled and form.enabled
+        self.enabled=enabled
 
     def getLabel(self):
         return self.label
@@ -74,14 +74,15 @@ class Menu(Component):
         Component.__init__(self,*args,**kw)
         self.items = []
 
-    def addItem(self,*args,**kw):
-        i = MenuItem(*args,**kw)
+    def addItem(self,name,*args,**kw):
+        assert not name in [i.name for i in self.items]
+        i = MenuItem(name,*args,**kw)
         self.items.append(i)
         return i
     
-    def addMenu(self,*args,**kw):
-        action = Menu()...
-        i = MenuItem(*args,action=action,**kw)
+    def addMenu(self,name,*args,**kw):
+        mnu = Menu(name,*args,**kw)
+        i = MenuItem(name,action=mnu,label=mnu.label)
         self.items.append(i)
         return i
         
@@ -137,7 +138,7 @@ class MenuContainer:
         return urlpatterns
         
     def urls(self):
-        return self.get_urls()
+        return self.get_urls('')
     urls = property(urls)
     
     def view(self,request):

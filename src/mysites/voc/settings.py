@@ -104,8 +104,8 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    #'lino.django.igen',
     'lino.django.voc',
-    'lino.django.reports',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'django.contrib.admin',
     'django.contrib.databrowse',
+    'lino.django.tom',
 )
 
 NAV_GLOBAL = (
