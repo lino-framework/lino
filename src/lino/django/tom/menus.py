@@ -92,10 +92,14 @@ class Menu(Component):
     def get_items(self):
         for mi in self.items:
             yield mi
-            
-    def get_urls(self,name_prefix):
-        name=name_prefix + "/" + self.name
-        return patterns('',url(r'^%s$' % name,self.view))
+        
+    def get_urls(self,name):
+        urlpatterns = []
+        urlpatterns += patterns('',url(r'^%s$' % name, self.view))
+        for mi in self.items:
+            urlpatterns += mi.action.get_urls(name+"/"+mi.name)
+        return urlpatterns
+        
         
     def view(self,request):
         context = dict(
@@ -106,20 +110,40 @@ class Menu(Component):
 
 class MenuContainer:
     def __init__(self):
-        self.menu = Menu("menu")
+        self.menus = [] # Menu("menu")
         
-    def addMenu(self,*args,**kw):
-        return self.menu.addMenu(*args,**kw)
+    def addMenu(self,name,*args,**kw):
+        assert not name in [m.name for m in self.menus]
+        m=Menu(name,*args,**kw)
+        self.menus.append(m)
+        return m
         
-    def addItem(self,*args,**kw):
-        return self.menu.addItem(*args,**kw)
+    def getMenu(self,name):
+        for m in self.menus:
+            if m.name == name: return m
         
-    def get_items(self):
-        return self.menu.get_items()
+    #~ def addItem(self,*args,**kw):
+        #~ return self.menu.addItem(*args,**kw)
         
-    def get_urls(self,name_prefix):
+    #~ def get_items(self):
+        #~ return self.menu.get_items()
+        
+    def get_urls(self,name):
+        #return self.menu.get_urls(name)
         urlpatterns = []
-        for mi in self.menu.get_items():
-            urlpatterns += mi.get_urls(name_prefix)
+        #urlpatterns += self.menu.get_urls(name)
+        for menu in self.menus:
+            urlpatterns += menu.get_urls(name+"/"+menu.name)
         return urlpatterns
+        
+    def urls(self):
+        return self.get_urls()
+    urls = property(urls)
+    
+    def view(self,request):
+        context = dict(
+            menus=self.menus,
+        )
+        return render_to_response("tom/index.html",context)
+    
     

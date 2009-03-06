@@ -21,7 +21,7 @@ from django import forms
 #from django.db import models
 from django.utils.safestring import mark_safe 
 
-from lino.django import tom
+#from lino.django import tom
 from lino.django.tom import models
 
 
@@ -41,7 +41,7 @@ FORMATS = (
 MAX_NESTING_LEVEL=10
 
 
-class Unit(models.Model):
+class Unit(models.ValidatingModel):
     
     name = models.CharField(max_length=20,blank=True)
     title = models.CharField(max_length=200,blank=True,null=True)
@@ -79,13 +79,11 @@ class Unit(models.Model):
         return []
         
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ('lino.django.voc.views.unit_detail', [str(self.id)])
-        
     def formatted(self):
-        docutils_settings = getattr(settings, "RESTRUCTUREDTEXT_FILTER_SETTINGS", {})
-        parts = publish_parts(source=smart_str(value), writer_name="html4css1",
+        docutils_settings = getattr(settings,
+                "RESTRUCTUREDTEXT_FILTER_SETTINGS", {})
+        parts = publish_parts(source=smart_str(value), 
+                 writer_name="html4css1",
                  settings_overrides=docutils_settings)
         return mark_safe(force_unicode(parts["fragment"]))
     formatted.is_safe = True         
@@ -146,7 +144,7 @@ class Unit(models.Model):
         self.entry_set.add(e)
               
         
-class Entry(models.Model):
+class Entry(models.ValidatingModel):
     word1 = models.CharField(max_length=200)
     word1_suffix = models.CharField(max_length=200,blank=True,null=True)
     word2 = models.CharField(max_length=200)
@@ -196,9 +194,20 @@ class AllUnits(reports.Report):
     columnWidths="3 20 10 20 3 6 20"
 
 class UnitsPerParent(reports.Report):
-    queryset=Unit.objects.order_by("seq")
     columnNames="id title name seq format remark parent"
     columnWidths="3 30 10 3 6 20 30"
+    
+    def __init__(self,parent,**kw):
+        self.parent=parent
+        reports.Report.__init__(self,**kw)
+        
+    def get_queryset(self):
+        return Unit.objects.filter(parent=self.parent).order_by("seq")
+    queryset=property(queryset)
+    
 
+m = tom.kernel.addMenu("voc","Vocabulary")
+m.addItem("units","List of All Units",AllUnits())
+m.addItem("tree","Table of Contents",UnitsPerParent(None))
 #tom.kernel.register(AllUnits)
 #tom.kernel.register(UnitsPerParent)

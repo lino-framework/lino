@@ -18,12 +18,11 @@
 
 
 
-#from lino.django.reports.reports import Report
-from django.utils.functional import update_wrapper
-from django.forms.models import modelform_factory
-from django.forms.models import modelformset_factory
-from django.shortcuts import render_to_response
-from django.conf.urls.defaults import patterns, url, include
+#~ from django.utils.functional import update_wrapper
+#~ from django.forms.models import modelform_factory
+#~ from django.forms.models import modelformset_factory
+#~ from django.shortcuts import render_to_response
+#~ from django.conf.urls.defaults import patterns, url, include
 
 from lino.django.tom.menus import MenuContainer
 
@@ -38,11 +37,11 @@ class TheKernel(MenuContainer):
     #~ def get_report(self,name):
         #~ return self._registry[name]()
         
-    def get_urls(self):
+    #~ def get_urls(self):
         
-        urlpatterns = []
+        #~ urlpatterns = []
         
-        # Admin-site-wide views.
+        #~ # Admin-site-wide views.
         #~ urlpatterns = patterns('',
             #~ url(r'^$',
                 #~ self.index),
@@ -51,12 +50,9 @@ class TheKernel(MenuContainer):
             #~ url(r'^(?P<rptname>\w+)/(?P<rownum>.+)/$',
                 #~ self.page_view),
         #~ )
-        urlpatterns += MenuContainer.get_urls(self)
-        return urlpatterns
+        #~ urlpatterns += MenuContainer.get_urls(self,'menu')
+        #~ return urlpatterns
         
-    def urls(self):
-        return self.get_urls()
-    urls = property(urls)
     
     
     #~ def view(self,request,action=None,**kw):

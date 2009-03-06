@@ -17,7 +17,29 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django import forms
-from django.db import models
+#from django.db import models
+
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist, ImproperlyConfigured
+from django.db import connection
+from django.db.models.loading import get_apps, get_app, get_models, get_model, register_models
+from django.db.models.query import Q
+from django.db.models.expressions import F
+from django.db.models.manager import Manager
+from django.db.models.base import Model
+from django.db.models.aggregates import *
+from django.db.models.fields import *
+from django.db.models.fields.subclassing import SubfieldBase
+from django.db.models.fields.files import FileField, ImageField
+from django.db.models.fields.related import ForeignKey, OneToOneField, ManyToManyField, ManyToOneRel, ManyToManyRel, OneToOneRel
+from django.db.models import signals
+
+from django.db.models import permalink
+
+
+
+
+
 
 """
 Thanks to 
@@ -33,7 +55,7 @@ class ModelValidationError(Exception):
     def __getitem__(self,i):
         return self.errordict[i]
 
-class Model(models.Model):
+class ValidatingModel(Model):
   
     model_form = None
     
@@ -56,7 +78,7 @@ class Model(models.Model):
         #print "save:", self
         self.validate()
         self.before_save()
-        super(Model, self).save(*args, **kwargs)
+        super(ValidatingModel, self).save(*args, **kwargs)
         self.after_save()
                     
     def before_save(self):
@@ -64,4 +86,12 @@ class Model(models.Model):
 
     def after_save(self):
         pass
+        
+    def view(self,response):
+        raise NotImimplementedError
 
+    @models.permalink
+    def get_absolute_url(self):
+        #return ('lino.django.tom.kernel.', [str(self.id)])
+        return (self.__class__.view, [str(self.pk)])
+        
