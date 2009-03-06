@@ -95,10 +95,12 @@ class Menu(Component):
             yield mi
         
     def get_urls(self,name):
-        urlpatterns = []
-        urlpatterns += patterns('',url(r'^%s$' % name, self.view))
+        #print "Menu.get_urls()",name
+        urlpatterns = patterns('',
+          url(r'^%s$' % name, self.view))
         for mi in self.items:
             urlpatterns += mi.action.get_urls(name+"/"+mi.name)
+        #print urlpatterns
         return urlpatterns
         
         
@@ -133,8 +135,14 @@ class MenuContainer:
         #return self.menu.get_urls(name)
         urlpatterns = []
         #urlpatterns += self.menu.get_urls(name)
+        urlpatterns = patterns('',
+          url(r'^%s$' % name, self.view))
         for menu in self.menus:
-            urlpatterns += menu.get_urls(name+"/"+menu.name)
+            if len(name):
+                urlpatterns += menu.get_urls(name+"/"+menu.name)
+            else:
+                urlpatterns += menu.get_urls(menu.name)
+        #print urlpatterns
         return urlpatterns
         
     def urls(self):
@@ -144,6 +152,7 @@ class MenuContainer:
     def view(self,request):
         context = dict(
             menus=self.menus,
+            title="lino.django.tom"
         )
         return render_to_response("tom/index.html",context)
     

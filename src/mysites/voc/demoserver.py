@@ -17,7 +17,7 @@ from django.db import connection
 from lino.django.voc.models import Unit
 
 
-verbosity = 2
+verbosity = 1
 addrport = "8000"
 
 # Create a test database.

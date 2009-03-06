@@ -21,7 +21,6 @@ from django.conf.urls.defaults import *
 from django.contrib import databrowse
 from django.contrib.auth.decorators import login_required
 
-
 from django.contrib import admin
 admin.autodiscover()
 
@@ -30,7 +29,7 @@ admin.autodiscover()
 from lino.django.tom import kernel
 
 urlpatterns = patterns('',
-    (r'^$', include(kernel.urls)),
+    (r'^tom/', include(kernel.urls)),
     (r'^admin/', include(admin.site.urls)),
     #(r'^reports/', include(reports.site.urls)),
     (r'^db/(.*)', databrowse.site.root),

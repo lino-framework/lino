@@ -9,8 +9,8 @@
 <h1>{{ title }}</h1>
 
 <ul>
-{% for menu in menus %}
-<li><a href="{{ menu.name }}">{{ menu.label }}</a></li>
+{% for item in menu.items %}
+<li><a href="{{ item.name }}">{{ item.label }}</a></li>
 {% endfor %}
 </ul>
 

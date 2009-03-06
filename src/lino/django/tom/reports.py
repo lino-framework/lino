@@ -295,10 +295,12 @@ class Report:
         return s.rstrip()+"\n"
         
     def get_urls(self,name):
-        urlpatterns = []
-        urlpatterns += patterns('',url(r'^%s$' % name, self.view_list))
-        urlpatterns += patterns('',url(r'^%s/(?P<row>\d+)$' % name, 
-        self.view_page))
+        urlpatterns = patterns('',
+          url(r'^%s$' % name, 
+            self.view_list))
+        urlpatterns += patterns('',
+          url(r'^%s/(?P<row>\d+)$' % name,
+            self.view_page))
         return urlpatterns
         
 

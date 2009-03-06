@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-<title>{% block title %}{% endblock %}</title>
+<title>{% block title %}{{ title }}{% endblock %}</title>
 {% block style %}
 <style type="text/css">
 * { margin:0; padding:0; }
@@ -57,6 +57,7 @@ p { margin:0.5em 0 1em 0; }
 <body id="{% block bodyid %}page{% endblock %}">
 <div id="breadcrumbs">
 <a href="{{ root_url }}">{% block voc_title %}lino.adamo.voc{% endblock %}</a>
+/ <a href="{{ root_url }}/tom/">tom</a>
 / <a href="{{ root_url }}/admin/">admin</a>
 / <a href="{{ root_url }}/db/">databrowse</a>
 </div>
