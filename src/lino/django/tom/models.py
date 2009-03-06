@@ -37,7 +37,6 @@ from django.db.models import signals
 from django.db.models import permalink
 
 
-
 """
 Thanks to 
 http://www.pointy-stick.com/blog/2008/10/15/django-tip-poor-mans-model-validation/
@@ -92,3 +91,6 @@ class ValidatingModel(Model):
         #return ('lino.django.tom.kernel.', [str(self.id)])
         return (self.__class__.view, [str(self.pk)])
         
+
+    def get_url_path(self):
+        return '/%s/%s/' % (self.Meta.db_table,self.pk)

@@ -22,7 +22,7 @@ from models import Unit, Entry, AllUnits
 from django.core import serializers
 from django.test import TestCase
 from django import forms
-from lino.django import xdjango
+from lino.django.tom.models import ModelValidationError
 
 # convert a django.forms.util.ErrorDict object to a str
 #~ def errordict2str(errordict):
@@ -51,7 +51,7 @@ class TestCase(TestCase):
             u.parent=u
             u.save()
             print "save() : done"
-        except xdjango.ModelValidationError,e:
+        except ModelValidationError,e:
             #s="\n".join([e.as_text() for m in e.messages])
             self.assertEqual(str(e),"ModelValidationError (parent)")
             s=e["parent"].as_text()
@@ -63,7 +63,7 @@ class TestCase(TestCase):
             
 
 class PkkTestCase(TestCase):
-    fixtures=[ 'pkk.yaml' ]
+    fixtures=[ 'demo.yaml' ]
     def setUp(self):
         for u in Unit.objects.all():
             u.save()
@@ -133,29 +133,28 @@ propre, propre
         """.split())
         
         #
-        #The first lino.django.Report
+        # The first Report
         #
         
         s=AllUnits().as_text()
-        #print
-        #print s
+        #print "\n",s
         self.assertEquals(s.split(),u"""
-ID |title               |name      |parent              |seq|format|remark
----+--------------------+----------+--------------------+---+------+--------------------
-1  |Prantsuse keele kurs|pkk       |                    |1  |R     |
-   |algajatele          |          |                    |   |      |
-2  |Esimene tund        |u1        |1. Prantsuse keele  |1  |R     |
-   |                    |          |kurs algajatele     |   |      |
-3  |Sissejuhatus        |          |1.1. Esimene tund   |1  |R     |
-4  |Olema               |          |1.1. Esimene tund   |2  |R     |
-5  |Esimesed laused     |          |1.1. Esimene tund   |3  |R     |
-6  |Mees või naine?     |          |1.1. Esimene tund   |4  |R     |        
-        """.split())
+ID |title               |name      |parent              |seq|format
+---+--------------------+----------+--------------------+---+------
+1  |Prantsuse keele kurs|pkk       |                    |1  |R
+   |algajatele          |          |                    |   |
+2  |Esimene tund        |u1        |1. Prantsuse keele  |1  |R
+   |                    |          |kurs algajatele     |   |
+3  |Sissejuhatus        |          |1.1. Esimene tund   |1  |R
+4  |Olema               |          |1.1. Esimene tund   |2  |R
+5  |Esimesed laused     |          |1.1. Esimene tund   |3  |R
+6  |Mees või naine?     |          |1.1. Esimene tund   |4  |R
+""".split())
         
         
 
         
      
         
-## Run these tests using "python manage.py test".
-## see http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing
+# Run these tests using "python manage.py test".
+# see http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing

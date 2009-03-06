@@ -19,7 +19,6 @@
 
 
 from lino.django.tom.reports import Report
-from lino.django.tom.kernel import TheKernel
-        
-kernel = TheKernel()
+from lino.django.tom.kernel import menu
+       
 

@@ -1,9 +1,9 @@
 """
-pkkserver.py does almost the same as would do 
-``python manage.py testserver pkk``, with one difference:
+demoserver.py does almost the same as would do 
+``python manage.py testserver demo``, with one difference:
 the above command won't execute any custom before_save() and after_save() when commiting the fixtures to the database.
 
-But pkk.yaml is a hand-written fixture, and we need to run the
+But voc/fixtures/demo.yaml is a hand-written fixture, and we need to run the
 Unit.before_save() in order to set the Unit.seq fields and to 
 fill the Entry table with data found in Unit.vocabulary.
 
@@ -23,11 +23,13 @@ addrport = "8000"
 # Create a test database.
 db_name = connection.creation.create_test_db(verbosity=verbosity)
 
+print settings.INSTALLED_APPS
+
 # Import the fixture data into the test database.
 call_command('loaddata', 'demo', verbosity=verbosity)
 
-#for u in Unit.objects.all():
-#    u.save()
+for u in Unit.objects.all():
+    u.save()
 
 
 # Run the development server. Turn off auto-reloading because it causes

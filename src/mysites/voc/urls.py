@@ -26,10 +26,10 @@ admin.autodiscover()
 
 #from lino.django.igen.views import root
 #from lino.django import voc
-from lino.django.tom import kernel
+from lino.django import tom
 
 urlpatterns = patterns('',
-    (r'^tom/', include(kernel.urls)),
+    (r'^menu/', include(tom.menu.urls)),
     (r'^admin/', include(admin.site.urls)),
     #(r'^reports/', include(reports.site.urls)),
     (r'^db/(.*)', databrowse.site.root),

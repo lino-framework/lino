@@ -27,6 +27,7 @@ from lino.misc.etc import assert_pure
 
 from django.db import models
 from django.forms.models import modelform_factory
+from django.forms.models import modelformset_factory
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 
@@ -306,17 +307,17 @@ class Report:
 
 
     def view_list(self,request):
-        fsclass = modelformset_factory(rpt.queryset.model,
-                                       fields=rpt.columnNames.split())
+        fsclass = modelformset_factory(self.queryset.model,
+                                       fields=self.columnNames.split())
         if request.method == 'POST':
-            fs = fsclass(request.POST,queryset=rpt.queryset)
+            fs = fsclass(request.POST,queryset=self.queryset)
             if fs.is_valid():
                 fs.save()
         else:
-            fs = fsclass(queryset=rpt.queryset)
+            fs = fsclass(queryset=self.queryset)
             
         context = dict(
-            report=rpt,
+            report=self,
             formset=fs,
         )
         return render_to_response("tom/list.html",context)

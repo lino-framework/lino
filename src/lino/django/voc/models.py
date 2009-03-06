@@ -28,7 +28,7 @@ from django import forms
 from django.utils.safestring import mark_safe 
 
 #from lino.django import tom
-from lino.django.tom import models, reports, kernel
+from lino.django.tom import models, reports, menu
 
 
 FORMATS = (
@@ -189,12 +189,12 @@ Unit.model_form = UnitForm
 
 class AllUnits(reports.Report):
     queryset=Unit.objects.order_by("id")
-    columnNames="id title name parent seq format remark"
-    columnWidths="3 20 10 20 3 6 20"
+    columnNames="id title name parent seq format"
+    columnWidths="3 20 10 20 3 6"
 
 class UnitsPerParent(reports.Report):
-    columnNames="id title name seq format remark parent"
-    columnWidths="3 30 10 3 6 20 30"
+    columnNames="id title name seq format parent"
+    columnWidths="3 30 10 3 6 30"
     
     def __init__(self,parent,**kw):
         self.parent=parent
@@ -205,8 +205,6 @@ class UnitsPerParent(reports.Report):
     queryset=property(get_queryset)
     
 
-m = kernel.addMenu("voc","Vocabulary")
-m.addItem("units","List of All Units",AllUnits())
-m.addItem("tree","Table of Contents",UnitsPerParent(None))
-#tom.kernel.register(AllUnits)
-#tom.kernel.register(UnitsPerParent)
+m = menu.addMenu("voc","Vocabulary")
+m.addAction("units","List of All Units",AllUnits())
+m.addAction("tree","Table of Contents",UnitsPerParent(None))

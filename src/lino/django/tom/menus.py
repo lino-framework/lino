@@ -22,7 +22,8 @@ from django.shortcuts import render_to_response
 
         
 class Component:
-    def __init__(self,name,label=None,doc=None,enabled=True):
+    def __init__(self,parent,name,label,doc=None,enabled=True):
+        self.parent=parent
         self.name=name
         self.label=label or self.__class__.__name__
         self.doc=doc
@@ -42,49 +43,56 @@ class Component:
     
     def interesting(self,**kw):
         l=[]
-        if self._label is not None:
-            l.append(('label',self.getLabel().strip()))
+        if self.label is not None:
+            l.append(('label',self.label.strip()))
         if not self.enabled:
             l.append( ('enabled',self.enabled))
         return l
 
 
+class MenuItem(Component):
+    def get_url_path(self):
+        s=self.name
+        p=self.parent
+        while p is not None:
+            s = p.name + "/" + s
+            p = p.parent
+        return "/"+s
 
-class Button(Component):
-    def __init__(self,name=None,label=None,
+
+class Action(MenuItem):
+    def __init__(self,parent,name,label=None,
                  action=None,hotkey=None,
                  *args,**kw):
-        Component.__init__(self,name,label,*args,**kw)
+        Component.__init__(self,parent,name,label,*args,**kw)
         self.action=action
         self.hotkey=hotkey
-
-    def setAction(self,action):
-        self.action = action
-
-    def click(self):
-        if self.enabled:
-            return self.action()
         
+    def view(self,request):
+        return self.action.view(request)
         
-class MenuItem(Button):
-    pass
-
-class Menu(Component):
+    def get_urls(self,name):
+        return self.action.get_urls(name)
+        
+class Menu(MenuItem):
     def __init__(self,*args,**kw):
-        Component.__init__(self,*args,**kw)
+        MenuItem.__init__(self,*args,**kw)
         self.items = []
 
-    def addItem(self,name,*args,**kw):
-        assert not name in [i.name for i in self.items]
-        i = MenuItem(name,*args,**kw)
+    def addAction(self,name,*args,**kw):
+        if name in [i.name for i in self.items]:
+            raise "Duplicate item name %s for menu %s" % (name,self.name)
+        i = Action(self,name,*args,**kw)
         self.items.append(i)
         return i
     
     def addMenu(self,name,*args,**kw):
-        mnu = Menu(name,*args,**kw)
-        i = MenuItem(name,action=mnu,label=mnu.label)
-        self.items.append(i)
-        return i
+        if name in [i.name for i in self.items]:
+            raise "Duplicate item name %s for menu %s" % (name,self.name)
+        mnu = Menu(self,name,*args,**kw)
+        #i = MenuItem(self,name,action=mnu,label=mnu.label)
+        self.items.append(mnu)
+        return mnu
         
     def findItem(self,name):
         for mi in self.items:
@@ -99,10 +107,13 @@ class Menu(Component):
         urlpatterns = patterns('',
           url(r'^%s$' % name, self.view))
         for mi in self.items:
-            urlpatterns += mi.action.get_urls(name+"/"+mi.name)
+            urlpatterns += mi.get_urls(name+"/"+mi.name)
         #print urlpatterns
         return urlpatterns
         
+    def urls(self):
+        return self.get_urls(self.name)
+    urls = property(urls)
         
     def view(self,request):
         context = dict(
@@ -110,50 +121,44 @@ class Menu(Component):
         )
         return render_to_response("tom/menu.html",context)
         
+        
 
-class MenuContainer:
-    def __init__(self):
-        self.menus = [] # Menu("menu")
+#~ class MenuContainer:
+    #~ def __init__(self):
+        #~ self.menus = [] # Menu("menu")
         
-    def addMenu(self,name,*args,**kw):
-        assert not name in [m.name for m in self.menus]
-        m=Menu(name,*args,**kw)
-        self.menus.append(m)
-        return m
+    #~ def addMenu(self,name,*args,**kw):
+        #~ assert not name in [m.name for m in self.menus]
+        #~ m=Menu(None,name,*args,**kw)
+        #~ self.menus.append(m)
+        #~ return m
         
-    def getMenu(self,name):
-        for m in self.menus:
-            if m.name == name: return m
+    #~ def getMenu(self,name):
+        #~ for m in self.menus:
+            #~ if m.name == name: return m
         
-    #~ def addItem(self,*args,**kw):
-        #~ return self.menu.addItem(*args,**kw)
+    #~ def get_urls(self,name):
+        #~ #return self.menu.get_urls(name)
+        #~ urlpatterns = []
+        #~ #urlpatterns += self.menu.get_urls(name)
+        #~ urlpatterns = patterns('',
+          #~ url(r'^%s$' % name, self.view))
+        #~ for menu in self.menus:
+            #~ if len(name):
+                #~ urlpatterns += menu.get_urls(name+"/"+menu.name)
+            #~ else:
+                #~ urlpatterns += menu.get_urls(menu.name)
+        #~ return urlpatterns
         
-    #~ def get_items(self):
-        #~ return self.menu.get_items()
-        
-    def get_urls(self,name):
-        #return self.menu.get_urls(name)
-        urlpatterns = []
-        #urlpatterns += self.menu.get_urls(name)
-        urlpatterns = patterns('',
-          url(r'^%s$' % name, self.view))
-        for menu in self.menus:
-            if len(name):
-                urlpatterns += menu.get_urls(name+"/"+menu.name)
-            else:
-                urlpatterns += menu.get_urls(menu.name)
-        #print urlpatterns
-        return urlpatterns
-        
-    def urls(self):
-        return self.get_urls('')
-    urls = property(urls)
+    #~ def urls(self):
+        #~ return self.get_urls('')
+    #~ urls = property(urls)
     
-    def view(self,request):
-        context = dict(
-            menus=self.menus,
-            title="lino.django.tom"
-        )
-        return render_to_response("tom/index.html",context)
+    #~ def view(self,request):
+        #~ context = dict(
+            #~ menus=self.menus,
+            #~ title="Main Menu"
+        #~ )
+        #~ return render_to_response("tom/index.html",context)
     
     

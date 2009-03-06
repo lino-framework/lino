@@ -44,6 +44,7 @@ Vigala vald
         s="\n".join([unicode(c) 
           for c in Contact.objects.filter(
             lastName__contains="a").order_by("lastName")])
+        #print s
         self.assertEquals(s,u"""\
 Herrn Andreas Arens
 Bäckerei Alfons Ausdemwald
