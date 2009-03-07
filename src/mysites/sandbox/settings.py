@@ -62,7 +62,6 @@ USE_I18N = True
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.abspath(os.path.join(
   os.path.dirname(__file__), '..', 'media'))
-#MEDIA_ROOT = r't:\svnwork\lino\mysites\media\\'
 #MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
