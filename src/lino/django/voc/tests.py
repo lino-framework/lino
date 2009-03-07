@@ -18,7 +18,8 @@
 
 import os
 import codecs
-from models import Unit, Entry, Units
+from models import Unit, Entry
+from menu import Units
 from django.core import serializers
 from django.test import TestCase
 from django import forms

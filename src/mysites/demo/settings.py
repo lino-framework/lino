@@ -91,7 +91,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
 )
 
-ROOT_URLCONF = 'mysites.sandbox.urls'
+ROOT_URLCONF = 'mysites.demo.urls'
 #ROOT_URLCONF = 'lino.django.voc.urls'
 
 TEMPLATE_DIRS = (

@@ -105,6 +105,17 @@ class ReportColumn(object):
 
     def format(self,value):
         return unicode(value)
+        
+
+from django import forms
+
+class ReportParameterForm(forms.Form):
+    pg = forms.IntegerField(min_value=1,required=False)
+    search = forms.CharField(required=False)
+
+#        
+#  Report
+#        
     
 class Report:
     
@@ -116,7 +127,8 @@ class Report:
     modelForm=None
     pageLen=15
     label=None
-
+    param_form = ReportParameterForm
+    
     def __init__(self):
         self.groups = [] # for later
         self.totals = [] # for later
@@ -316,11 +328,17 @@ class Report:
 
 
     def view_list(self,request):
-        # Make sure page request is an int. If not, deliver first page.
-        try:
-            pg = int(request.GET.get('pg', '1'))
-        except ValueError:
+        params = self.param_form(request.GET)
+        if params.is_valid():
+            pg=params.cleaned_data['pg'] or 1
+        else: 
             pg = 1
+        
+        # Make sure page request is an int. If not, deliver first page.
+        #~ try:
+            #~ pg = int(request.GET.get('pg', '1'))
+        #~ except ValueError:
+            #~ pg = 1
 
         paginator = Paginator(self.queryset,self.pageLen)
         
@@ -341,6 +359,7 @@ class Report:
         else:
             fs = fsclass(queryset=page.object_list)
         context = dict(
+            params=params,
             report=self,
             page=page,
             formset=fs,

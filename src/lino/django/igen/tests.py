@@ -17,7 +17,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from models import Contact, Product, Invoice, Companies
+from models import Contact, Product, Invoice
+from menu import Companies
 from django.test import TestCase
 
 
@@ -76,7 +77,19 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         s=Companies().as_text()
         #print "\n"+s
         self.assertEquals(s.split(),u"""
-        """.split())
+companyName|ID|country|title     |firstName |lastName
+-----------+--+-------+----------+----------+----------
+Bernd      |10|Germany|Herr      |Bernd     |Brecht
+Brecht     |  |       |          |          |
+Donderweer |6 |Netherl|          |          |
+bv         |  |ands   |          |          |
+Hans Flott |9 |Germany|Frau      |Lisa      |Lahm
+& Co       |  |       |          |          |
+Mets ja Puu|10|Estonia|          |Tõnu      |Tamme
+OÜ         |0 |       |          |          |
+Minu Firma |1 |Estonia|          |          |
+OÜ         |  |       |          |          |        
+        """.split(),"Companies().as_text() has changed in demo")
         
         
 ## Run these tests using "python manage.py test".
