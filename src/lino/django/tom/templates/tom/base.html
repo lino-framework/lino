@@ -56,10 +56,12 @@ p { margin:0.5em 0 1em 0; }
 </head>
 <body id="{% block bodyid %}page{% endblock %}">
 <div id="breadcrumbs">
-<a href="{{ root_url }}">{% block voc_title %}lino.adamo.voc{% endblock %}</a>
+{% block breadcrumbs %}
+<a href="{{ root_url }}">{% block voc_title %}home{% endblock %}</a>
 / <a href="{{ root_url }}/tom/">tom</a>
 / <a href="{{ root_url }}/admin/">admin</a>
 / <a href="{{ root_url }}/db/">databrowse</a>
+{% endblock breadcrumbs %}
 </div>
 <div id="content">
 {% block content %}{% endblock %}
