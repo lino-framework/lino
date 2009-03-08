@@ -54,6 +54,7 @@ class ModelValidationError(Exception):
 class ValidatingModel(Model):
   
     model_form = None
+    #quicksearch_fields = None
     
     class Meta:
         abstract = True
@@ -94,3 +95,4 @@ class ValidatingModel(Model):
 
     def get_url_path(self):
         return '/%s/%s/' % (self.Meta.db_table,self.pk)
+        

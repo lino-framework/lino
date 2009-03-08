@@ -35,16 +35,21 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
 
 # maps Django field types to a tuple of default paramenters
-# each tuple contains: minWidth, maxWidth
+# each tuple contains: minWidth, maxWidth, is_filter
 WIDTHS = {
-    models.IntegerField : (2,10),
-    models.CharField : (10,40),
-    models.TextField :  (10,40),
-    models.ForeignKey : (5,40),
-    models.AutoField : (2,10),
+    models.IntegerField : (2,10,False),
+    models.CharField : (10,40,True),
+    models.TextField :  (10,40,True),
+    models.ForeignKey : (5,40,False),
+    models.AutoField : (2,10,False),
 }
 
 
+def urlparams(**kw):
+    s=""
+    for k,v in kw.items():
+        s += "?"+k+"="+str(v)
+    return s
 
 def hfill(s,align,width):
     if align == LEFT:
@@ -74,6 +79,7 @@ def vfill(lines,valign,height):
         raise NotImplementedError
     else:
         raise ConfigError("vfill() : %s" % repr(valign))
+        
 
 class ReportColumn(object):
     
@@ -85,6 +91,7 @@ class ReportColumn(object):
         self.halign=LEFT
         self.valign=TOP
         self.index=index
+        self.is_filter = WIDTHS[self.field.__class__][2]
 
         
     def getCellValue(self,row_instance):
@@ -110,8 +117,9 @@ class ReportColumn(object):
 from django import forms
 
 class ReportParameterForm(forms.Form):
-    pg = forms.IntegerField(min_value=1,required=False)
-    search = forms.CharField(required=False)
+    pgn = forms.IntegerField(required=False,label="Page number") 
+    pgl = forms.IntegerField(required=False,label="Rows per page")
+    flt = forms.CharField(required=False,label="Text filter")
 
 #        
 #  Report
@@ -119,14 +127,15 @@ class ReportParameterForm(forms.Form):
     
 class Report:
     
-    queryset=None # a Django QuerySet instance
-    title=None
-    width=None
-    columnWidths=None
-    rowHeight=None
-    modelForm=None
-    pageLen=15
-    label=None
+    queryset = None 
+    title = None
+    width = None
+    columnWidths = None
+    columnNames = None
+    rowHeight = None
+    modelForm = None
+    page_length = 15
+    label = None
     param_form = ReportParameterForm
     
     def __init__(self):
@@ -326,29 +335,33 @@ class Report:
         return urlpatterns
         
 
-
     def view_list(self,request):
         params = self.param_form(request.GET)
         if params.is_valid():
-            pg=params.cleaned_data['pg'] or 1
+            pgn = params.cleaned_data['pgn'] or 1
+            pgl = params.cleaned_data['pgl'] or self.page_length
+            flt = params.cleaned_data['flt'] or ''
         else: 
-            pg = 1
+            pgn = 1
+            pgl = self.page_length
+            flt = ''
+            
+        qs=self.queryset
+        if flt:
+            d={}
+            for col in self.columns:
+                if col.is_filter:
+                    d[col.field.name+"__contains"]=flt
+            print d
+            qs = qs.filter(**d)
+          
+        paginator = Paginator(qs,pgl)
         
-        # Make sure page request is an int. If not, deliver first page.
-        #~ try:
-            #~ pg = int(request.GET.get('pg', '1'))
-        #~ except ValueError:
-            #~ pg = 1
-
-        paginator = Paginator(self.queryset,self.pageLen)
-        
-        # If page request (9999) is out of range, deliver last page of results.
         try:
-            page = paginator.page(pg)
+            page = paginator.page(pgn)
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
 
-                                       
         fsclass = modelformset_factory(self.queryset.model,
                                        fields=self.columnNames.split())
                                        
@@ -358,11 +371,17 @@ class Report:
                 fs.save()
         else:
             fs = fsclass(queryset=page.object_list)
+            
+        def get_again(**kw):
+            kw.update(request.GET)
+            return urlparams(kw)
+
         context = dict(
             params=params,
             report=self,
             page=page,
             formset=fs,
+            get_again=get_again,
         )
         return render_to_response("tom/list.html",context)
 

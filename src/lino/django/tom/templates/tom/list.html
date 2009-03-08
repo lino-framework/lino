@@ -12,26 +12,26 @@
 <div class="pagination">
     <span class="step-links">
         {% if page.has_previous %}
-            <a href="?pg={{ page.previous_page_number }}">previous</a>
-        {% endif %}
+            <a href="?pgn={{ page.previous_page_number }}&pgl={{params.data.pgl}}&flt={{params.data.flt}}">previous</a>
+        {% else %} previous {% endif %}
 
+        {% if page.has_next %}
+            <a href="?pgn={{ page.next_page_number }}&pgl={{params.data.pgl}}&flt={{params.data.flt}}">next</a>
+        {% else %} next {% endif %}
         <span class="current">
             Page {{ page.number }} of {{ page.paginator.num_pages }}.
         </span>
 
-        {% if page.has_next %}
-            <a href="?pg={{ page.next_page_number }}">next</a>
-        {% endif %}
     </span>
 </div>
 
 
-<ul class="report_params">
 <form action="" method="GET">
+<ul class="report_params">
 {{ params.as_ul }}
-<input type="submit" value="Refresh" />
-</form>
+<li><input type="submit" value="Refresh" /></li>
 </ul>
+</form>
 
 
 <form action="" method="POST">

@@ -29,14 +29,14 @@ class Contacts(reports.Report):
 
 class Companies(reports.Report):
     #queryset=Contact.objects.order_by("companyName")
-    columnNames="companyName id country title firstName lastName"
+    columnNames="companyName country title firstName lastName"
     queryset=Contact.objects.exclude(companyName__exact=None)\
       .order_by("companyName")
 
 class Persons(reports.Report):
     queryset=Contact.objects.filter(companyName__exact=None)\
       .order_by("lastName","firstName")
-    columnNames="id country title firstName lastName"
+    columnNames="title firstName lastName country"
 
 class Countries(reports.Report):
     queryset=Country.objects.order_by("isocode")
