@@ -77,18 +77,18 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         s=Companies().as_text()
         #print "\n"+s
         self.assertEquals(s.split(),u"""
-companyName|ID|country|title     |firstName |lastName
------------+--+-------+----------+----------+----------
-Bernd      |10|Germany|Herr      |Bernd     |Brecht
-Brecht     |  |       |          |          |
-Donderweer |6 |Netherl|          |          |
-bv         |  |ands   |          |          |
-Hans Flott |9 |Germany|Frau      |Lisa      |Lahm
-& Co       |  |       |          |          |
-Mets ja Puu|10|Estonia|          |Tõnu      |Tamme
-OÜ         |0 |       |          |          |
-Minu Firma |1 |Estonia|          |          |
-OÜ         |  |       |          |          |        
+companyName|country|title     |firstName |lastName
+-----------+-------+----------+----------+----------
+Bernd      |Germany|Herr      |Bernd     |Brecht
+Brecht     |       |          |          |
+Donderweer |Netherl|          |          |
+bv         |ands   |          |          |
+Hans Flott |Germany|Frau      |Lisa      |Lahm
+& Co       |       |          |          |
+Mets ja Puu|Estonia|          |Tõnu      |Tamme
+OÜ         |       |          |          |
+Minu Firma |Estonia|          |          |
+OÜ         |       |          |          |        
         """.split(),"Companies().as_text() has changed in demo")
         
         

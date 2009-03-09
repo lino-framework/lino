@@ -1,0 +1,108 @@
+
+20090308
+--------
+
+The Django volunteers are quick.
+Yesterday I created `my first Django ticket <http://code.djangoproject.com/ticket/10431>`__, 
+and it didn't last half an
+hour before somebody answered. 
+
+The answer wasn't long: It just said
+"Dupe of `#8164 <http://code.djangoproject.com/ticket/8164>`__".
+
+Yes, I didn't look at the SortedDict class.
+Okay, for me this solution of just setting `SortedDict.keyOrder`
+is okay for me. It is simpler than my method.
+
+Some day someone might check (1) which method is more performant,
+and (2) INHO :meth:`fields_for_model` should raise an exception 
+if the fields list contains a non-existing field name.
+
+But where is this update? The patch is marked "Accepted", 
+but is not yet in the trunk.  How can I now get it?
+Answer:
+
+- Download the patch from  http://code.djangoproject.com/attachment/ticket/8164/modelforms-fields-order.diff
+
+- Then in a command shell::
+
+  L:\snapshot\django>patch < c:\temp\modelforms-fields-order.diff
+  can't find file to patch at input line 5
+  Perhaps you should have used the -p or --strip option?
+  The text leading up to this was:
+  --------------------------
+  |diff --git a/django/forms/models.py b/django/forms/models.py
+  |index e6bbb98..d5eab82 100644
+  |--- a/django/forms/models.py
+  |+++ b/django/forms/models.py
+  --------------------------
+  File to patch:
+  L:\snapshot\django>cd trunk
+  The system cannot find the path specified.
+
+  L:\snapshot\django>patch -p1 < c:\temp\modelforms-fields-order.diff
+  patching file django/forms/models.py
+  patching file docs/topics/forms/modelforms.txt
+  patching file tests/modeltests/model_forms/models.py
+
+
+
+20090309
+--------
+
+I started to think about how to implement report columns that represent
+another report. 
+
+Surf:
+
+- http://code.djangoproject.com/wiki/CookBookNewFormsFieldOrdering
+  A description of the `SortedDict.keyOrder` 
+  trick used by the patch in #8164.
+  
+- http://code.djangoproject.com/wiki/CookBookNewFormsDynamicFields
+  Dynamically add fields to a Form.
+  
+- http://code.djangoproject.com/wiki/ModifiedPreorderTreeTraversal:
+  An efficient parent/child relationship - Similar to the "category" data model above, but doesn't use recursive functions, neither multiple queries. 
+  
+- http://code.djangoproject.com/wiki/UsingMarkup
+  Body fields that are rendered using markdown, restructured_text or textile, should store the raw input *and* the resulting HTML, because database columns are cheap and processing time maybe not.
+  
+
+
+
+How to implement readonly form fields
+-------------------------------------
+
+I submitted my second Ticket to Django: `#10442 
+<http://code.djangoproject.com/ticket/10442>`__
+
+:meth:`fields_for_model` and 
+:meth:`form_for_fields`
+just skip model fields that are not ``editable``.
+
+The INPUT and TEXTAREA tags in HTML 
+can have a ``readonly`` attribute.
+(According to 
+http://de.selfhtml.org/html/formulare/eingabe.htm#nurlesen).
+
+They will probably even have the same HTML 
+as their editable colleagues, just with the HTML ``readonly`` 
+attribute added. 
+
+
+http://groups.google.com/group/django-developers/browse_thread/thread/611425acc40b78bb
+
+
+- django/forms/fields.py:
+
+  :meth:`Field.__init__` has a new keyword argument "readonly".
+  
+- django/forms/util.py:
+  
+  :func:`flatatt` now supports None values in the dictionary. 
+  These don't become a key="value" pair but a simple attribute without value.
+
+
+- django/forms/models.py:
+  :func:`model_to_dict` now also adds non-ediable fields to the dictionary.

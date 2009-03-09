@@ -26,6 +26,7 @@ from lino.misc.etc import assert_pure
 
 
 from django.db import models
+#from django import forms
 from django.forms.models import modelform_factory
 from django.forms.models import modelformset_factory
 from django.conf.urls.defaults import patterns, url, include
@@ -400,3 +401,6 @@ class Report:
         )
         return render_to_response("tom/page.html",context)    
         
+
+#class ReadOnlyWidget(forms.Widget):
+    
