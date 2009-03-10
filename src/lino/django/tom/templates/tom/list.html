@@ -38,14 +38,16 @@
 {{ formset.management_form }}
 <table>
 <tr>
+<td></td>
 {% for col in report.columns %}
 <th>{{ col.getLabel }}</th>
 {% endfor %}
 </tr>
 {% for form in formset.forms %}
 <tr>
-{% for field in form %}
-<td>{{ field }}</td>
+<td>{{ form.pk }}</td>
+{% for col in report.columns %}
+<td>{{ col|getcell:form }}</td>
 {% endfor %}
 </tr>
 {% endfor %}

@@ -27,20 +27,24 @@ from lino.misc.etc import assert_pure
 
 from django.db import models
 #from django import forms
-from django.forms.models import modelform_factory
-from django.forms.models import modelformset_factory
+from django.forms.models import modelform_factory, formset_factory
+from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
+
+from django import template
+
+register = template.Library()
 
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth, is_filter
 WIDTHS = {
     models.IntegerField : (2,10,False),
-    models.CharField : (10,40,True),
-    models.TextField :  (10,40,True),
+    models.CharField : (10,50,True),
+    models.TextField :  (10,50,True),
     models.ForeignKey : (5,40,False),
     models.AutoField : (2,10,False),
 }
@@ -82,19 +86,29 @@ def vfill(lines,valign,height):
         raise ConfigError("vfill() : %s" % repr(valign))
         
 
-class ReportColumn(object):
-    
-    def __init__(self, field,index):
-        assert type(index) == int
-        self.field = field
+
+class Column(object):
+    is_formfield = False
+    def __init__(self, rpt, label):
+        self.index=len(rpt.columns)
         self.width = None
-        self.index=None
         self.halign=LEFT
         self.valign=TOP
-        self.index=index
+        self.label=label
+
+    def getLabel(self):
+        return self.label
+
+    def format(self,value):
+        return unicode(value)
+  
+class FieldColumn(Column):
+    is_formfield = True
+    def __init__(self, rpt, field):
+        Column.__init__(self,rpt,field.verbose_name)
+        self.field = field
         self.is_filter = WIDTHS[self.field.__class__][2]
 
-        
     def getCellValue(self,row_instance):
         return getattr(row_instance,self.field.name)
 
@@ -108,11 +122,14 @@ class ReportColumn(object):
         x=WIDTHS[self.field.__class__]
         return x[1]
         
-    def getLabel(self):
-        return self.field.verbose_name
-
-    def format(self,value):
-        return unicode(value)
+    def get_cell(self,form):
+        return form[self.field.name]
+        
+class ReadonlyColumn(FieldColumn):
+    is_formfield = False
+    def get_cell(self,form):
+        #return "foo"
+        return getattr(form.instance,self.field.name)
         
 
 from django import forms
@@ -138,19 +155,51 @@ class Report:
     page_length = 15
     label = None
     param_form = ReportParameterForm
+    extra=1
+    can_delete=False
+    can_order=False
+    max_num=0
     
     def __init__(self):
         self.groups = [] # for later
         self.totals = [] # for later
         self.columns = []
+        self.formfields = []
         if self.label is None:
             self.label = self.__class__.__name__
         if self.modelForm is None:
             self.modelForm = modelform_factory(self.queryset.model)
         meta = self.queryset.model._meta
-        for field_name in self.columnNames.split():
-            field = meta.get_field_by_name(field_name)[0]
-            self.columns.append(ReportColumn(field,len(self.columns)))
+        # the pk must be in the form and will be rendered as hidden
+        formfields = [ meta.pk.name ] 
+        for colname in self.columnNames.split():
+            field, model, direct, m2m = meta.get_field_by_name(colname)
+            col = self.new_column(field)
+            self.columns.append(col)
+            if col.is_formfield:
+                formfields.append(colname)
+                #print self.label,colname
+        
+        # todo: instead of modelform_factory i should 
+        rowform_class = modelform_factory(self.queryset.model,
+                                          fields=formfields)
+                
+        #~ rowform_class = ModelFormMetaclass(
+          #~ self.__class__.__name__+"RowForm",
+          #~ (ModelForm,), formfields)
+        self.formset_class = formset_factory(rowform_class,
+              BaseModelFormSet, extra=self.extra, 
+              max_num=self.max_num,
+              can_order=self.can_order, can_delete=self.can_delete)
+        self.formset_class.model = self.queryset.model
+
+                
+    def new_column(self,field):
+        if field.primary_key:
+            return ReadonlyColumn(self,field)
+        if isinstance(field,models.Field):
+            return FieldColumn(self,field)
+        raise "cannot handle %s" % field
 
     def getTitle(self):
         """
@@ -363,16 +412,20 @@ class Report:
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
 
-        fsclass = modelformset_factory(self.queryset.model,
-                                       fields=self.columnNames.split())
+        #~ fsclass = reportformset_factory(self.queryset.model,
+                                       #~ fields=self.formfield_names)
                                        
         if request.method == 'POST':
-            fs = fsclass(request.POST,queryset=page.object_list)
+            fs = self.formset_class(request.POST,queryset=page.object_list)
             if fs.is_valid():
                 fs.save()
         else:
-            fs = fsclass(queryset=page.object_list)
-            
+            fs = self.formset_class(queryset=page.object_list)
+        
+        rows = []
+        for form in fs.forms:
+            rows.append([col.get_cell(form) for col in self.columns])
+              
         def get_again(**kw):
             kw.update(request.GET)
             return urlparams(kw)
@@ -382,6 +435,7 @@ class Report:
             report=self,
             page=page,
             formset=fs,
+            rows=rows,
             get_again=get_again,
         )
         return render_to_response("tom/list.html",context)
@@ -403,4 +457,10 @@ class Report:
         
 
 #class ReadOnlyWidget(forms.Widget):
+    
+    
+    
+@register.filter(name='getcell')
+def getcell(col, form):
+    return col.get_cell(form)
     
