@@ -23,7 +23,7 @@ from menu import Units
 from django.core import serializers
 from django.test import TestCase
 from django import forms
-from lino.django.tom.models import ModelValidationError
+from lino.django.tom.validatingmodel import ModelValidationError
 
 # convert a django.forms.util.ErrorDict object to a str
 #~ def errordict2str(errordict):
@@ -56,7 +56,7 @@ class TestCase(TestCase):
             #s="\n".join([e.as_text() for m in e.messages])
             self.assertEqual(str(e),"ModelValidationError (parent)")
             s=e["parent"].as_text()
-            self.assertEqual(s,"* Parent cannot be self")
+            self.assertEqual(s,"Unit 3 : Parent cannot be self")
         else:
             self.fail("Expected ModelValidationError")
             

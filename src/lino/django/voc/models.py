@@ -24,11 +24,11 @@ voc_splitter1=re.compile("^(.*)\s+\((.*)\)\s*:\s*(.+)",re.DOTALL)
 voc_splitter2=re.compile("^(.*)\s*:\s*(.+)",re.DOTALL)
 
 from django import forms
-#from django.db import models
+from django.db import models
 from django.utils.safestring import mark_safe 
 
 #from lino.django import tom
-from lino.django.tom import models
+from lino.django.tom.validatingmodel import ValidatingModel, ModelValidationError
 
 
 FORMATS = (
@@ -40,7 +40,7 @@ FORMATS = (
 MAX_NESTING_LEVEL=10
 
 
-class Unit(models.ValidatingModel):
+class Unit(ValidatingModel):
     
     name = models.CharField(max_length=20,blank=True)
     title = models.CharField(max_length=200,blank=True,null=True)
@@ -116,6 +116,19 @@ class Unit(models.ValidatingModel):
         self.seq=seq+1
 
 
+    def validate_parent(self):
+        l=[]
+        p = self.parent
+        if p == self:
+            raise ModelValidationError(self,"Parent cannot be self")
+        #print "clean()", self.instance
+        while p is not None:
+            if p in l:
+                raise ModelValidationError(self,"Parent recursion")
+            if len(l) > MAX_NESTING_LEVEL:
+                raise ModelValidationError(self,"Nesting level")
+            l.append(p)
+            p=p.parent
 
 
     def add_entry(self,line):
@@ -143,7 +156,7 @@ class Unit(models.ValidatingModel):
         self.entry_set.add(e)
               
         
-class Entry(models.ValidatingModel):
+class Entry(ValidatingModel):
     word1 = models.CharField(max_length=200)
     word1_suffix = models.CharField(max_length=200,blank=True,null=True)
     word2 = models.CharField(max_length=200)
@@ -157,10 +170,6 @@ class Entry(models.ValidatingModel):
             s += " (" + self.word1_suffix + ")"
         s += " = " + self.word2
         return s
-        
-    @models.permalink
-    def get_absolute_url(self):
-        return ('lino.django.voc.views.entry_page', [self.unit.id, self.id])
         
         
 

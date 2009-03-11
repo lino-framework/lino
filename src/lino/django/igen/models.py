@@ -16,8 +16,10 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import datetime
-#from django.db import models
-from lino.django.tom import models
+from django.db import models
+#from lino.django.tom import models
+from lino.django.tom.validatingmodel import ValidatingModel, ModelValidationError
+
 
 def linkto(obj,text=None):
     if text is None:
@@ -41,7 +43,7 @@ class QuantityField(models.DecimalField):
         super(QuantityField, self).__init__(*args, **kwargs)
         
 
-class Contact(models.ValidatingModel):
+class Contact(ValidatingModel):
     """
     
 Company and/or Person contact data, linked with client account and

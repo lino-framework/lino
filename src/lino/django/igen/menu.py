@@ -26,6 +26,7 @@ from lino.django.tom import reports
 class Contacts(reports.Report):
     queryset=Contact.objects.order_by("id")
     columnNames="id companyName firstName lastName title country"
+    can_delete=True
 
 class Companies(reports.Report):
     #queryset=Contact.objects.order_by("companyName")

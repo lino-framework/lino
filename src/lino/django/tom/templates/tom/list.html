@@ -39,18 +39,26 @@
 <table>
 <tr>
 <td></td>
+{% if report.can_delete%}
+<th>Delete</th>
+{% endif %}
 {% for col in report.columns %}
 <th>{{ col.getLabel }}</th>
 {% endfor %}
 </tr>
-{% for form in formset.forms %}
+
+{% for row in rows %}
 <tr>
-<td>{{ form.pk }}</td>
-{% for col in report.columns %}
-<td>{{ col|getcell:form }}</td>
+<td>{{ row.form.id }}</td>
+{% if report.can_delete %}
+<td>{{ row.form.DELETE }}</td>
+{% endif %}
+{% for cell in row %}
+<td>{{ cell }}</td>
 {% endfor %}
 </tr>
 {% endfor %}
+
 </table>
 <input type="submit" value="Save" />
 </form>

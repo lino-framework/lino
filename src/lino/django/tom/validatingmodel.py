@@ -17,41 +17,35 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django import forms
-#from django.db import models
-
-from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, ImproperlyConfigured
-from django.db import connection
-from django.db.models.loading import get_apps, get_app, get_models, get_model, register_models
-from django.db.models.query import Q
-from django.db.models.expressions import F
-from django.db.models.manager import Manager
-from django.db.models.base import Model
-from django.db.models.aggregates import *
-from django.db.models.fields import *
-from django.db.models.fields.subclassing import SubfieldBase
-from django.db.models.fields.files import FileField, ImageField
-from django.db.models.fields.related import ForeignKey, OneToOneField, ManyToManyField, ManyToOneRel, ManyToManyRel, OneToOneRel
-from django.db.models import signals
-
-from django.db.models import permalink
+from django.db import models
 
 
 """
 Thanks to 
 http://www.pointy-stick.com/blog/2008/10/15/django-tip-poor-mans-model-validation/
+for the initial idea.
 """
 
 class ModelValidationError(Exception):
-    def __init__(self, errordict):
-        self.errordict=errordict
+    def __init__(self, instance, msg):
+        self.instance = instance
+        self.msg = msg
+        
     def __str__(self):
-        return "ModelValidationError (%s)" % \
-            ",".join(self.errordict.keys())
-    def __getitem__(self,i):
-        return self.errordict[i]
+        return "%s %s : %s" % (self.instance.__class__.__name__,
+        self.instance.pk, self.msg)
+  
 
-class ValidatingModel(Model):
+#~ class ModelValidationError(Exception):
+    #~ def __init__(self, errordict):
+        #~ self.errordict=errordict
+    #~ def __str__(self):
+        #~ return "ModelValidationError (%s)" % \
+            #~ ",".join(self.errordict.keys())
+    #~ def __getitem__(self,i):
+        #~ return self.errordict[i]
+
+class ValidatingModel(models.Model):
   
     model_form = None
     #quicksearch_fields = None
@@ -59,7 +53,17 @@ class ValidatingModel(Model):
     class Meta:
         abstract = True
         
+    def validate_fields(self):
+        for field in self._meta.fields:
+            meth = getattr(self,"validate_%s" % field.name,None)
+            if meth:
+                meth()
+              
     def validate(self):
+        pass
+      
+        
+    def old_validate(self):
         if self.model_form is None: 
             #print "no model_form to validate", self
             return
@@ -73,9 +77,10 @@ class ValidatingModel(Model):
 
     def save(self, *args, **kwargs):
         #print "save:", self
+        self.validate_fields()
         self.validate()
         self.before_save()
-        super(ValidatingModel, self).save(*args, **kwargs)
+        super(ValidatingModel,self).save(*args,**kwargs)
         self.after_save()
                     
     def before_save(self):
@@ -87,11 +92,10 @@ class ValidatingModel(Model):
     def view(self,response):
         raise NotImimplementedError
 
-    @permalink
+    @models.permalink
     def get_absolute_url(self):
         #return ('lino.django.tom.kernel.', [str(self.id)])
         return (self.__class__.view, [str(self.pk)])
-        
 
     def get_url_path(self):
         return '/%s/%s/' % (self.Meta.db_table,self.pk)

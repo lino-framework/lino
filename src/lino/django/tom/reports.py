@@ -32,6 +32,7 @@ from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.http import HttpResponseRedirect
 
 
 from django import template
@@ -85,7 +86,27 @@ def vfill(lines,valign,height):
     else:
         raise ConfigError("vfill() : %s" % repr(valign))
         
-
+class Cell(object):
+    def __init__(self,row,column,index):
+        #self.column_index = index # not used
+        self.row = row
+        self.column = column
+        
+    def __unicode__(self):
+        return unicode(self.column.cell_field(self))
+        
+        
+class Row(object):
+    def __init__(self,rpt,form):
+        self.rpt = rpt
+        self.form=form
+      
+    def __iter__(self):
+        i=0
+        for col in self.rpt.columns:
+            cell = Cell(self, col, i)
+            i += 1
+            yield cell
 
 class Column(object):
     is_formfield = False
@@ -122,14 +143,13 @@ class FieldColumn(Column):
         x=WIDTHS[self.field.__class__]
         return x[1]
         
-    def get_cell(self,form):
-        return form[self.field.name]
+    def cell_field(self,cell):
+        return cell.row.form[self.field.name]
         
 class ReadonlyColumn(FieldColumn):
     is_formfield = False
-    def get_cell(self,form):
-        #return "foo"
-        return getattr(form.instance,self.field.name)
+    def cell_field(self,cell):
+        return getattr(cell.row.form.instance,self.field.name)
         
 
 from django import forms
@@ -163,24 +183,17 @@ class Report:
     def __init__(self):
         self.groups = [] # for later
         self.totals = [] # for later
-        self.columns = []
         self.formfields = []
         if self.label is None:
             self.label = self.__class__.__name__
         if self.modelForm is None:
             self.modelForm = modelform_factory(self.queryset.model)
-        meta = self.queryset.model._meta
-        # the pk must be in the form and will be rendered as hidden
-        formfields = [ meta.pk.name ] 
-        for colname in self.columnNames.split():
-            field, model, direct, m2m = meta.get_field_by_name(colname)
-            col = self.new_column(field)
-            self.columns.append(col)
-            if col.is_formfield:
-                formfields.append(colname)
-                #print self.label,colname
+            
+        formfields = self.add_columns()
         
-        # todo: instead of modelform_factory i should 
+        # todo: instead of letting modelform_factory look up the fields again by 
+        # their name, i should do it myself, formfields being then a list of 
+        # fields and not of fieldnames.
         rowform_class = modelform_factory(self.queryset.model,
                                           fields=formfields)
                 
@@ -193,6 +206,19 @@ class Report:
               can_order=self.can_order, can_delete=self.can_delete)
         self.formset_class.model = self.queryset.model
 
+    def add_columns(self):
+        self.columns = []
+        meta = self.queryset.model._meta
+        # the pk must be in the form and will be rendered as hidden
+        formfields = [ meta.pk.name ] 
+        for colname in self.columnNames.split():
+            field, model, direct, m2m = meta.get_field_by_name(colname)
+            col = self.new_column(field)
+            self.columns.append(col)
+            if col.is_formfield:
+                formfields.append(colname)
+                #print self.label,colname
+        return formfields
                 
     def new_column(self,field):
         if field.primary_key:
@@ -405,26 +431,31 @@ class Report:
             print d
             qs = qs.filter(**d)
           
-        paginator = Paginator(qs,pgl)
-        
+        paginator = Paginator(qs,pgl)        
         try:
             page = paginator.page(pgn)
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
 
-        #~ fsclass = reportformset_factory(self.queryset.model,
-                                       #~ fields=self.formfield_names)
-                                       
         if request.method == 'POST':
             fs = self.formset_class(request.POST,queryset=page.object_list)
             if fs.is_valid():
                 fs.save()
+                
+                if self.can_delete and fs.deleted_forms:
+                    #print [unicode(form.instance) for form in fs.deleted_forms]
+                    for form in fs.deleted_forms:
+                        print "Deleted:", form.instance
+                    # now paginator and page.object_list must be refreshed
+                    return HttpResponseRedirect(request.path)
+                    
         else:
             fs = self.formset_class(queryset=page.object_list)
         
         rows = []
         for form in fs.forms:
-            rows.append([col.get_cell(form) for col in self.columns])
+            rows.append(Row(self,form))
+            #[col.get_cell(form) for col in self.columns])
               
         def get_again(**kw):
             kw.update(request.GET)
