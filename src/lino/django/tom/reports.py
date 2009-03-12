@@ -33,6 +33,9 @@ from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import HttpResponseRedirect
+from django.utils.safestring import mark_safe
+
+
 
 
 from django import template
@@ -97,7 +100,9 @@ class Cell(object):
         
         
 class Row(object):
-    def __init__(self,rpt,form):
+    def __init__(self,rpt,request,form,offset):
+        self.request = request
+        self.offset = offset
         self.rpt = rpt
         self.form=form
       
@@ -107,6 +112,15 @@ class Row(object):
             cell = Cell(self, col, i)
             i += 1
             yield cell
+            
+    def links(self):
+        s='<a href="%s/%d">%d</a>' % (self.request.path,self.offset,self.offset)
+        #print s
+        return mark_safe(s)
+
+        
+    #~ def get_url_path(self):
+        #~ return self.rpt.get_url_path() + "/" + str(self.offset)
 
 class Column(object):
     is_formfield = False
@@ -155,9 +169,10 @@ class ReadonlyColumn(FieldColumn):
 from django import forms
 
 class ReportParameterForm(forms.Form):
-    pgn = forms.IntegerField(required=False,label="Page number") 
-    pgl = forms.IntegerField(required=False,label="Rows per page")
+    #~ pgn = forms.IntegerField(required=False,label="Page number") 
+    #~ pgl = forms.IntegerField(required=False,label="Rows per page")
     flt = forms.CharField(required=False,label="Text filter")
+    
 
 #        
 #  Report
@@ -171,7 +186,7 @@ class Report:
     columnWidths = None
     columnNames = None
     rowHeight = None
-    modelForm = None
+    form_class = None
     page_length = 15
     label = None
     param_form = ReportParameterForm
@@ -179,16 +194,19 @@ class Report:
     can_delete=False
     can_order=False
     max_num=0
+    default_filter=''
+    default_format='grid'
+    start_page=1
     
     def __init__(self):
         self.groups = [] # for later
         self.totals = [] # for later
-        self.formfields = []
         if self.label is None:
             self.label = self.__class__.__name__
-        if self.modelForm is None:
-            self.modelForm = modelform_factory(self.queryset.model)
+        if self.form_class is None:
+            self.form_class = modelform_factory(self.queryset.model)
             
+        self.formfields = []
         formfields = self.add_columns()
         
         # todo: instead of letting modelform_factory look up the fields again by 
@@ -236,6 +254,8 @@ class Report:
     def getLabel(self):
         return self.label
     
+    def get_url_path(self):
+        return self.rpt.get_url_path() + "/" + str(self.offset)
 
     def computeWidths(self,columnSepWidth):
         
@@ -404,39 +424,86 @@ class Report:
     def get_urls(self,name):
         urlpatterns = patterns('',
           url(r'^%s$' % name, 
-            self.view_list))
+            self.view_many))
         urlpatterns += patterns('',
           url(r'^%s/(?P<row>\d+)$' % name,
-            self.view_page))
+            self.view_one))
         return urlpatterns
         
-
-    def view_list(self,request):
-        params = self.param_form(request.GET)
+    def get_queryset(self,params):
         if params.is_valid():
-            pgn = params.cleaned_data['pgn'] or 1
-            pgl = params.cleaned_data['pgl'] or self.page_length
-            flt = params.cleaned_data['flt'] or ''
+            flt = params.cleaned_data['flt'] or self.default_filter
         else: 
-            pgn = 1
-            pgl = self.page_length
-            flt = ''
+            flt = self.default_filter
             
         qs=self.queryset
         if flt:
-            d={}
+            l=[]
+            q=models.Q()
             for col in self.columns:
                 if col.is_filter:
-                    d[col.field.name+"__contains"]=flt
-            print d
-            qs = qs.filter(**d)
-          
-        paginator = Paginator(qs,pgl)        
+                    q = q | models.Q(**{col.field.name+"__contains": flt})
+            #print l
+            qs = qs.filter(q)
+        return qs
+        
+    def get_context(self,request):
+        def get_again(**kw):
+            kw.update(request.GET)
+            return urlparams(kw)
+
+        return dict(
+            report=self,
+            title=self.label,
+            get_again=get_again,
+        )
+            
+
+    def view_one(self,request,row):
+        params = self.param_form(request.GET)
+        qs = self.get_queryset(params)
+        context = self.get_context(request)
+        obj=self.queryset[int(row)]
+        #obj = page.object_list[int(row)]
+        
+        if request.method == 'POST':
+            frm=self.form_class(request.POST,instance=obj)
+            if frm.is_valid():
+                frm.save()
+        else:
+            frm=self.form_class(instance=obj)      
+        
+        context.update(
+            params=params,
+            object=obj,
+            form=frm,
+        )
+        return render_to_response("tom/form.html",context)    
+        
+    def view_many(self,request):
+        params = self.param_form(request.GET)
+        qs = self.get_queryset(params)
+        pgn = request.GET.get('pgn')
+        if pgn is None:
+            pgn = self.start_page
+        else:
+            pgn=int(pgn)
+        pgl = request.GET.get('pgl')
+        if pgl is None:
+            pgl = self.page_length
+        else:
+            pgl = int(pgl)
+      
+      
+        paginator = Paginator(qs,pgl)
         try:
             page = paginator.page(pgn)
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
-
+            
+        context = self.get_context(request)
+        context['page'] = page
+            
         if request.method == 'POST':
             fs = self.formset_class(request.POST,queryset=page.object_list)
             if fs.is_valid():
@@ -446,52 +513,28 @@ class Report:
                     #print [unicode(form.instance) for form in fs.deleted_forms]
                     for form in fs.deleted_forms:
                         print "Deleted:", form.instance
-                    # now paginator and page.object_list must be refreshed
+                    # start from begin because paginator and page must reload
                     return HttpResponseRedirect(request.path)
                     
         else:
             fs = self.formset_class(queryset=page.object_list)
-        
+            
         rows = []
         for form in fs.forms:
-            rows.append(Row(self,form))
-            #[col.get_cell(form) for col in self.columns])
-              
-        def get_again(**kw):
-            kw.update(request.GET)
-            return urlparams(kw)
-
-        context = dict(
+            rows.append(Row(self,request,form,len(rows)))
+          
+        context.update(
             params=params,
-            report=self,
             page=page,
             formset=fs,
             rows=rows,
-            get_again=get_again,
         )
-        return render_to_response("tom/list.html",context)
+        return render_to_response("tom/grid.html",context)
 
-    def view_page(self,request,row):
-        obj=self.queryset[int(row)]
-        if request.method == 'POST':
-            frm=self.modelForm(request.POST,instance=obj)
-            if frm.is_valid():
-                frm.save()
-        else:
-            frm=self.modelForm(instance=obj)      
-        context = dict(
-            report=self,
-            object=obj,
-            form=frm,
-        )
-        return render_to_response("tom/page.html",context)    
-        
 
-#class ReadOnlyWidget(forms.Widget):
     
     
-    
-@register.filter(name='getcell')
-def getcell(col, form):
-    return col.get_cell(form)
+#~ @register.filter(name='getcell')
+#~ def getcell(col, form):
+    #~ return col.get_cell(form)
     

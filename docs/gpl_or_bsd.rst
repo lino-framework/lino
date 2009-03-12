@@ -24,6 +24,8 @@ would otherwise collaborate on Lino, refrain from doing so because of
 the GPL licensing. Let me know if you are one of them.
 
 
+- http://en.wikipedia.org/wiki/GNU_General_Public_License
+
 - 1999-06-23
   Joe Drew:
   The GPL vs the BSD License: A GPL advocate's perspective

@@ -62,13 +62,6 @@ class MenuItem(Component):
   
     def get_url_path(self):
         return "/".join([p.name for p in self.parents() if len(p.name) ] + [self.name])
-        #~ s=self.name
-        #~ p=self.parent
-        #~ while p is not None:
-            #~ if len(p.name) > 0:
-                #~ s = p.name + "/" + s
-            #~ p = p.parent
-        #~ return "/"+s
 
 
 class Action(MenuItem):

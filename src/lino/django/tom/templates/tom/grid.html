@@ -1,22 +1,15 @@
-{% extends "tom/base_site.html" %}
+{% extends "tom/report.html" %}
 
-{% block title %}{{ title }}{% endblock %}
-
-{% block content %}
-
-<div id="breadcrumbs"><a href="{{ root_url }}">Home</a></div>
-
-<h1>{{ title }}</h1>
-
+{% block navigation %}
 
 <div class="pagination">
     <span class="step-links">
         {% if page.has_previous %}
-            <a href="?pgn={{ page.previous_page_number }}&pgl={{params.data.pgl}}&flt={{params.data.flt}}">previous</a>
+            <a href="?pgn={{ page.previous_page_number }}&flt={{params.data.flt}}">previous</a>
         {% else %} previous {% endif %}
 
         {% if page.has_next %}
-            <a href="?pgn={{ page.next_page_number }}&pgl={{params.data.pgl}}&flt={{params.data.flt}}">next</a>
+            <a href="?pgn={{ page.next_page_number }}&flt={{params.data.flt}}">next</a>
         {% else %} next {% endif %}
         <span class="current">
             Page {{ page.number }} of {{ page.paginator.num_pages }}.
@@ -25,19 +18,17 @@
     </span>
 </div>
 
+{{ block.super }}
 
-<form action="" method="GET">
-<ul class="report_params">
-{{ params.as_ul }}
-<li><input type="submit" value="Refresh" /></li>
-</ul>
-</form>
+{% endblock navigation %}
 
+{% block content %}
 
 <form action="" method="POST">
 {{ formset.management_form }}
 <table>
 <tr>
+<td></td>
 <td></td>
 {% if report.can_delete%}
 <th>Delete</th>
@@ -49,6 +40,7 @@
 
 {% for row in rows %}
 <tr>
+<td>{{ row.links }}</td>
 <td>{{ row.form.id }}</td>
 {% if report.can_delete %}
 <td>{{ row.form.DELETE }}</td>
@@ -63,4 +55,4 @@
 <input type="submit" value="Save" />
 </form>
 
-{% endblock %}
+{% endblock content %}
