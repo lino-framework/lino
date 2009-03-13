@@ -1,0 +1,16 @@
+{% extends "tom/form.html" %}
+{% block content %}
+
+<form action="" method="POST">
+<ul>
+<li>{{ form.customer }}</li>
+<li>{{ form.due_date }}</li>
+</ul>
+<input type="submit" value="Save" />
+</form>
+
+<pre>
+{{ form.instance.lines.as_text }}
+</pre>
+
+{% endblock content %}

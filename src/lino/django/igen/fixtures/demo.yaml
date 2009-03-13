@@ -286,10 +286,10 @@
   fields:
     number: 1
     customer: 2
-    date: 2008-10-29
-    dueDate: 2008-10-29
-    paymentTerm: 2
-    shippingMode: 1
+    creation_date: 2008-10-29
+    due_date: 2008-10-29
+    payment_term: 2
+    shipping_mode: 1
     
 - model: igen.InvoiceItem
   pk: 1
@@ -298,7 +298,16 @@
     pos: 1
     product: 1
     description: Wooden table
-    unitPrice: "99.95"
+    unitPrice: "199.95"
     qty: "1.00"
     
+- model: igen.InvoiceItem
+  pk: 
+  fields:
+    invoice: 1
+    pos: 2
+    product: 2
+    description: Wooden chair
+    unitPrice: "99.99"
+    qty: "4.00"
     

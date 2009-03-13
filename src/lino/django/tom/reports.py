@@ -32,9 +32,9 @@ from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.safestring import mark_safe
-
+from django.template.loader import select_template, Context
 
 
 
@@ -49,10 +49,16 @@ WIDTHS = {
     models.IntegerField : (2,10,False),
     models.CharField : (10,50,True),
     models.TextField :  (10,50,True),
+    models.BooleanField : (10,10,True),
     models.ForeignKey : (5,40,False),
     models.AutoField : (2,10,False),
 }
 
+def again(request,**kw):
+    req=request.GET.copy()
+    for k,v in kw.items():
+        req[k] = v
+    return mark_safe(request.path + "?" + req.urlencode())
 
 def urlparams(**kw):
     s=""
@@ -100,11 +106,12 @@ class Cell(object):
         
         
 class Row(object):
-    def __init__(self,rpt,request,form,offset):
+    def __init__(self,rpt,request,queryset,form,rownum):
         self.request = request
-        self.offset = offset
+        self.rownum = rownum
         self.rpt = rpt
         self.form=form
+        self.queryset=queryset
       
     def __iter__(self):
         i=0
@@ -114,14 +121,31 @@ class Row(object):
             yield cell
             
     def links(self):
-        s='<a href="%s/%d">%d</a>' % (self.request.path,self.offset,self.offset)
+        s='<a href="%s">%d</a>' % (
+          self.get_url_path(),self.rownum)
         #print s
         return mark_safe(s)
 
+    def has_previous(self):
+        return self.rownum > 1
+    def has_next(self):
+        #print "Row.has_next() : ", self.rownum, self.queryset.count()
+        return self.rownum < self.queryset.count()
+    def previous(self):
+        return again(self.request,row=self.rownum-1)
+        #~ req=self.request.GET.copy()
+        #~ req["row"] = self.rownum-1
+        #~ return mark_safe(self.request.path + "?" + req.urlencode())
+    def next(self):
+        return again(self.request,row=self.rownum+1)
+        #return self.rownum+1
+            
+    def get_url_path(self):
+        return again(self.request,row=self.rownum)
+        #~ req=self.request.GET.copy()
+        #~ req["row"] = self.rownum
+        #~ return mark_safe(self.request.path + "?" + req.urlencode())
         
-    #~ def get_url_path(self):
-        #~ return self.rpt.get_url_path() + "/" + str(self.offset)
-
 class Column(object):
     is_formfield = False
     def __init__(self, rpt, label):
@@ -142,20 +166,22 @@ class FieldColumn(Column):
     def __init__(self, rpt, field):
         Column.__init__(self,rpt,field.verbose_name)
         self.field = field
-        self.is_filter = WIDTHS[self.field.__class__][2]
+        self.is_filter = isinstance(field,models.CharField)
 
     def getCellValue(self,row_instance):
         return getattr(row_instance,self.field.name)
 
     def getMinWidth(self):
-        x=WIDTHS[self.field.__class__]
-        w=x[0]
-        w = max(w,len(self.getLabel()))
-        return w
+        return 10
+        #~ x=WIDTHS[self.field.__class__]
+        #~ w=x[0]
+        #~ w = max(w,len(self.getLabel()))
+        #~ return w
         
     def getMaxWidth(self):
-        x=WIDTHS[self.field.__class__]
-        return x[1]
+        return 100
+        #~ x=WIDTHS[self.field.__class__]
+        #~ return x[1]
         
     def cell_field(self,cell):
         return cell.row.form[self.field.name]
@@ -191,7 +217,7 @@ class Report:
     label = None
     param_form = ReportParameterForm
     extra=1
-    can_delete=False
+    can_delete=True
     can_order=False
     max_num=0
     default_filter=''
@@ -228,14 +254,21 @@ class Report:
         self.columns = []
         meta = self.queryset.model._meta
         # the pk must be in the form and will be rendered as hidden
-        formfields = [ meta.pk.name ] 
-        for colname in self.columnNames.split():
-            field, model, direct, m2m = meta.get_field_by_name(colname)
-            col = self.new_column(field)
-            self.columns.append(col)
-            if col.is_formfield:
-                formfields.append(colname)
-                #print self.label,colname
+        formfields = [ meta.pk.name ]
+        if self.columnNames:
+            for colname in self.columnNames.split():
+                field, model, direct, m2m = meta.get_field_by_name(colname)
+                col = self.new_column(field)
+                self.columns.append(col)
+                if col.is_formfield:
+                    formfields.append(colname)
+        else:
+            for field in meta.fields:
+                col = self.new_column(field)
+                self.columns.append(col)
+                if col.is_formfield:
+                    formfields.append(field.attname)
+        # print self.label, ":", formfields
         return formfields
                 
     def new_column(self,field):
@@ -421,15 +454,18 @@ class Report:
         s=columnSep.join(l)
         return s.rstrip()+"\n"
         
-    def get_urls(self,name):
+    def get_urls_old(self,name):
         urlpatterns = patterns('',
           url(r'^%s$' % name, 
-            self.view_many))
-        urlpatterns += patterns('',
-          url(r'^%s/(?P<row>\d+)$' % name,
-            self.view_one))
+          self.view))
+        #~ urlpatterns += patterns('',
+          #~ url(r'^%s/(?P<row>\d+)$' % name,
+            #~ self.view_one))
         return urlpatterns
-        
+
+    def get_urls(self,name):
+        return [ url(r'^%s$' % name, self.view) ]
+
     def get_queryset(self,params):
         if params.is_valid():
             flt = params.cleaned_data['flt'] or self.default_filter
@@ -459,12 +495,25 @@ class Report:
         )
             
 
+    def view(self,request):
+        row = request.GET.get('row')
+        if row is None:
+            return self.view_many(request)
+        else:
+            return self.view_one(request,row)
+            
     def view_one(self,request,row):
         params = self.param_form(request.GET)
         qs = self.get_queryset(params)
         context = self.get_context(request)
-        obj=self.queryset[int(row)]
+        rownum=int(row)
+        try:
+            obj=qs[rownum-1]
+        except IndexError:
+            rownum=qs.count()
+            obj=qs[rownum-1]
         #obj = page.object_list[int(row)]
+        #print qs.count()
         
         if request.method == 'POST':
             frm=self.form_class(request.POST,instance=obj)
@@ -473,12 +522,21 @@ class Report:
         else:
             frm=self.form_class(instance=obj)      
         
+        row = Row(self,request,qs,frm,rownum)
+        
         context.update(
             params=params,
+            row=row,
             object=obj,
             form=frm,
         )
-        return render_to_response("tom/form.html",context)    
+        meta = self.queryset.model._meta
+        l=[ 
+           "tom/%s_form.html" % meta.db_table, 
+           "tom/form.html"]
+        t=select_template(l)
+        return HttpResponse(t.render(Context(context)))
+        #return render_to_response("tom/form.html",context)    
         
     def view_many(self,request):
         params = self.param_form(request.GET)
@@ -501,9 +559,6 @@ class Report:
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
             
-        context = self.get_context(request)
-        context['page'] = page
-            
         if request.method == 'POST':
             fs = self.formset_class(request.POST,queryset=page.object_list)
             if fs.is_valid():
@@ -520,12 +575,15 @@ class Report:
             fs = self.formset_class(queryset=page.object_list)
             
         rows = []
+        rownum = page.start_index()
         for form in fs.forms:
-            rows.append(Row(self,request,form,len(rows)))
+            rows.append(Row(self,request,qs,form,rownum))
+            rownum += 1
           
+        context = self.get_context(request)
         context.update(
-            params=params,
             page=page,
+            params=params,
             formset=fs,
             rows=rows,
         )

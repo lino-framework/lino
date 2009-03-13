@@ -1,5 +1,24 @@
 {% extends "tom/report.html" %}
 
+{% block navigation %}
+
+Row {{ row.rownum }} of {{ row.queryset.count }}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if row.has_previous %}
+            <a href="{{ row.previous }}">previous</a>
+        {% else %} previous {% endif %}
+        {% if row.has_next %}
+            <a href="{{ row.next }}">next</a>
+        {% else %} next {% endif %}
+    </span>
+</div>
+
+{{ block.super }}
+
+{% endblock navigation %}
+
 {% block content %}
 
 <form action="" method="POST">

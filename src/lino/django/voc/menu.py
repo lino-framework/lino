@@ -39,7 +39,10 @@ class UnitsPerParent(reports.Report):
     def get_queryset(self):
         return Unit.objects.filter(parent=self.parent).order_by("seq")
     queryset=property(get_queryset)
-    
+
+class Entries(reports.Report):
+    queryset=Entry.objects.all()
+
 
 #
 # menu setup
@@ -48,3 +51,4 @@ def setup_menu(menu):
     m = menu.addMenu("voc","Vocabulary")
     m.addAction(Units(),label="List of All Units",)
     m.addAction(UnitsPerParent(None),name="tree",label="Table of Contents")
+    m.addAction(Entries(),label="List of Entries",)

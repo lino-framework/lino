@@ -15,42 +15,26 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from models import Contact, Country
+from models import *
 
-#
-# reports definition
-#        
-        
-from lino.django.tom import reports
-
-class Contacts(reports.Report):
-    queryset=Contact.objects.order_by("id")
-    columnNames="id companyName firstName lastName title country"
-    can_delete=True
-
-class Companies(reports.Report):
-    #queryset=Contact.objects.order_by("companyName")
-    columnNames="companyName country title firstName lastName"
-    queryset=Contact.objects.exclude(companyName__exact=None)\
-      .order_by("companyName")
-
-class Persons(reports.Report):
-    queryset=Contact.objects.filter(companyName__exact=None)\
-      .order_by("lastName","firstName")
-    columnNames="title firstName lastName country"
-
-class Countries(reports.Report):
-    queryset=Country.objects.order_by("isocode")
-    columnNames="isocode name"
-    columnWidths="3 30"
 
 
 #
 # menu setup
 #
 def setup_menu(menu):
-    m = menu.addMenu("contacts","Contacts")
+    m = menu.addMenu("contacts","~Contacts")
     m.addAction(Contacts())
     m.addAction(Companies())
     m.addAction(Persons())
+    m = menu.addMenu("prods","~Products")
+    m.addAction(Products())
+    m.addAction(ProductCats())
+    m = menu.addMenu("docs","~Documents")
+    m.addAction(Orders())
+    m.addAction(Invoices())
+    m = menu.addMenu("config","~Configuration")
+    m.addAction(ShippingModes())
+    m.addAction(PaymentTerms())
+    m.addAction(Languages())
     m.addAction(Countries())

@@ -226,29 +226,32 @@ class Product(models.Model):
 class Document(models.Model):
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
-    date = models.DateField(auto_now_add=True)
+    creation_date = models.DateField(auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
-    shipTo = models.ForeignKey(Contact,blank=True,null=True,
+    ship_to = models.ForeignKey(Contact,blank=True,null=True,
       related_name="shipTo_%(class)s")
-    yourRef = models.CharField(max_length=200,blank=True,null=True)
-    shippingMode = models.ForeignKey(ShippingMode,blank=True,null=True)
-    paymentTerm = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    your_ref = models.CharField(max_length=200,blank=True,null=True)
+    shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     remarks = models.CharField(max_length=200,blank=True,null=True)
-    vatExempt = models.BooleanField(default=False)
-    itemVat = models.BooleanField(default=False)
-    totalExcl = PriceField(blank=True,null=True)
-    totalVat = PriceField(blank=True,null=True)
+    vat_exempt = models.BooleanField(default=False)
+    item_vat = models.BooleanField(default=False)
+    total_excl = PriceField(blank=True,null=True)
+    total_vat = PriceField(blank=True,null=True)
     intro = models.TextField("Introductive Text",blank=True,null=True)
     
     class Meta:
         abstract = True
 
 class Order(Document):
-    validUntil = models.DateField("Valid until",blank=True,null=True)
+    valid_until = models.DateField("Valid until",blank=True,null=True)
 
 class Invoice(Document):
-    dueDate = models.DateField("Payable until",blank=True,null=True)
+    due_date = models.DateField("Payable until",blank=True,null=True)
+    
+    def lines(self):
+        return InvoiceLinesPerInvoice(self)
 
 class DocumentItem(models.Model):
     pos = models.IntegerField("Position")
@@ -271,3 +274,61 @@ class InvoiceItem(DocumentItem):
     invoice = models.ForeignKey(Invoice,related_name="items")
         
         
+#
+# report definitions
+#        
+        
+from lino.django.tom import reports
+
+class Contacts(reports.Report):
+    queryset=Contact.objects.order_by("id")
+    columnNames="id companyName firstName lastName title country"
+    can_delete=True
+
+class Companies(reports.Report):
+    #queryset=Contact.objects.order_by("companyName")
+    columnNames="companyName country title firstName lastName"
+    queryset=Contact.objects.exclude(companyName__exact=None)\
+      .order_by("companyName")
+
+class Persons(reports.Report):
+    queryset=Contact.objects.filter(companyName__exact=None)\
+      .order_by("lastName","firstName")
+    columnNames="title firstName lastName country"
+
+class Countries(reports.Report):
+    queryset=Country.objects.order_by("isocode")
+    columnNames="isocode name"
+    #columnWidths="3 30"
+
+class Languages(reports.Report):
+    queryset=Language.objects.order_by("id")
+
+class PaymentTerms(reports.Report):
+    queryset=PaymentTerm.objects.order_by("id")
+
+class ShippingModes(reports.Report):
+    queryset=ShippingMode.objects.order_by("id")
+
+class ProductCats(reports.Report):
+    queryset=ProductCat.objects.order_by("id")
+
+class Products(reports.Report):
+    queryset=Product.objects.order_by("id")
+
+class Orders(reports.Report):
+    queryset=Order.objects.order_by("number")
+
+class Invoices(reports.Report):
+    queryset=Invoice.objects.order_by("number")
+    columnNames="number due_date customer total_excl total_vat"
+
+class InvoiceLinesPerInvoice(reports.Report):
+    
+    def __init__(self,invoice,**kw):
+        self.invoice=invoice
+        reports.Report.__init__(self,**kw)
+        
+    def get_queryset(self):
+        return InvoiceItem.objects.filter(invoice=self.invoice).order_by("pos")
+    queryset=property(get_queryset)

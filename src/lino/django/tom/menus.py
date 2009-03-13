@@ -108,7 +108,7 @@ class Menu(MenuItem):
         for mi in self.items:
             yield mi
         
-    def get_urls(self,name=''):
+    def get_urls_old(self,name=''):
         #print "Menu.get_urls()",name
         urlpatterns = patterns('',
           url(r'^%s$' % name, self.view))
@@ -119,8 +119,19 @@ class Menu(MenuItem):
         #print urlpatterns
         return urlpatterns
         
+    def get_urls(self,name=''):
+        #print "Menu.get_urls()",name
+        l=[url(r'^%s$' % name, self.view)]
+        if len(name):
+            name += "/"
+        for mi in self.items:
+            l += mi.get_urls(name+mi.name)
+        #print urlpatterns
+        return l
+        
     def urls(self):
-        return self.get_urls(self.name)
+        l = self.get_urls(self.name)
+        return patterns('',*l)
     urls = property(urls)
         
     def view(self,request):
