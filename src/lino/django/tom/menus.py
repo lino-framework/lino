@@ -17,17 +17,27 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
+from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
+from django.utils.safestring import mark_safe
 
         
 class Component:
+    HOTKEY_MARKER = '~'
     def __init__(self,parent,name,label,doc=None,enabled=True):
         self.parent=parent
         self.name=name
-        self.label=label or self.__class__.__name__
         self.doc=doc
         self.enabled=enabled
+        if label is None:
+            label=self.__class__.__name__
+        n=label.find(self.HOTKEY_MARKER)
+        if n != -1:
+            label=label.replace(self.HOTKEY_MARKER,'')
+            label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
+        self.label=label
+        
 
     def getLabel(self):
         return self.label
@@ -49,19 +59,24 @@ class Component:
             l.append( ('enabled',self.enabled))
         return l
 
-
-class MenuItem(Component):
-  
     def parents(self):
         l = []
         p=self.parent
         while p is not None:
+            if p in l:
+                raise Exception("circular parent")
             l.append(p)
             p = p.parent
         return l
   
     def get_url_path(self):
         return "/".join([p.name for p in self.parents() if len(p.name) ] + [self.name])
+
+    def as_html(self,level=None):
+        return '<a href="/%s">%s</a>' % (self.get_url_path(),self.label)
+        
+class MenuItem(Component):
+    pass
 
 
 class Action(MenuItem):
@@ -119,6 +134,17 @@ class Menu(MenuItem):
         #print urlpatterns
         return urlpatterns
         
+    def as_html(self,level=1):
+        if level == 1:
+            s = ''
+        else:
+            s = Component.as_html(self) + "&nbsp;: "
+        s += '<ul class="menu%d">' % level
+        for mi in self.items:
+            s += '<li>%s</li>' % mi.as_html(level+1)
+        s += '</ul>\n'
+        return mark_safe(s)
+        
     def get_urls(self,name=''):
         #print "Menu.get_urls()",name
         l=[url(r'^%s$' % name, self.view)]
@@ -137,6 +163,7 @@ class Menu(MenuItem):
     def view(self,request):
         context = dict(
             menu=self,
+            main_menu=settings.MAIN_MENU,
         )
         return render_to_response("tom/menu.html",context)
         

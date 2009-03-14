@@ -24,11 +24,11 @@ from textwrap import TextWrapper
 from lino.reports.constants import *
 from lino.misc.etc import assert_pure
 
-
 from django.db import models
 #from django import forms
 from django.forms.models import modelform_factory, formset_factory
 from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
+from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
@@ -37,10 +37,9 @@ from django.utils.safestring import mark_safe
 from django.template.loader import select_template, Context
 
 
+#~ from django import template
 
-from django import template
-
-register = template.Library()
+#~ register = template.Library()
 
 
 # maps Django field types to a tuple of default paramenters
@@ -484,14 +483,11 @@ class Report:
         return qs
         
     def get_context(self,request):
-        def get_again(**kw):
-            kw.update(request.GET)
-            return urlparams(kw)
-
+        #print settings.MAIN_MENU.as_html()
         return dict(
+            main_menu=settings.MAIN_MENU,
             report=self,
             title=self.label,
-            get_again=get_again,
         )
             
 

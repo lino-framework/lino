@@ -10,7 +10,7 @@
 
 <ul>
 {% for item in menu.items %}
-<li><a href="{{ item.get_url_path }}">{{ item.label }}</a></li>
+<li><a href="{{ item.get_url_path }}">{{ item.label|safe }}</a></li>
 {% endfor %}
 </ul>
 

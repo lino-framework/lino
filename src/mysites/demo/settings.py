@@ -115,3 +115,6 @@ INSTALLED_APPS = (
     'lino.django.tom',
 )
 
+
+
+#TEMPLATE_STRING_IF_INVALID = '%s'
