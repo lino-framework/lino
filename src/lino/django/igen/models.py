@@ -250,8 +250,8 @@ class Order(Document):
 class Invoice(Document):
     due_date = models.DateField("Payable until",blank=True,null=True)
     
-    def lines(self):
-        return InvoiceLinesPerInvoice(self)
+    def items(self):
+        return ItemsByInvoice(self)
 
 class DocumentItem(models.Model):
     pos = models.IntegerField("Position")
@@ -323,7 +323,7 @@ class Invoices(reports.Report):
     queryset=Invoice.objects.order_by("number")
     columnNames="number due_date customer total_excl total_vat"
 
-class InvoiceLinesPerInvoice(reports.Report):
+class ItemsByInvoice(reports.Report):
     
     def __init__(self,invoice,**kw):
         self.invoice=invoice

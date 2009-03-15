@@ -41,6 +41,7 @@ class Navigator:
         self.previous=None
         self.next=None
         self.last=None
+        self.text=None
         if page is not None:
             self.fill_from_page(page)
             
@@ -52,9 +53,20 @@ class Navigator:
             self.next=Link("~Next",self.again(row=page.number+1))
         if page.has_previous()
             self.previous=Link("~Previous",self.again(row=page.number-1))
+        self.text="Page %d of %d" % ( page.number,page.paginator.num_pages)
+            
+    def fill_from_queryset(self,queryset)
+        if page.has_next()
+            self.next=Link("~Next",self.again(row=page.number+1))
+        if page.has_previous()
+            self.previous=Link("~Previous",self.again(row=page.number-1))
+        self.text="Page %d of %d" % ( page.number,page.paginator.num_pages)
             
     
     def as_html(self):
         l = [ self.first, self.previous, self.next, self.last ]
-        return " ".join([ e.as_html() for e in l if e is not None])
+        s = " ".join([ e.as_html() for e in l if e is not None])
+        if self.text:
+            s += mark_safe(self.text)
+        return s
           

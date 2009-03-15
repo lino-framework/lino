@@ -158,7 +158,7 @@ Report.view() behält die drei momentanen Variablen flt, pgl und pgn,
 aber schon :meth:`Row.links` in :xfile:`grid.html` verlässt diesen
 Report, verweist direkt auf die betreffende Rechnung:
   
-  /docs/invoices/<pk>
+  /by_pk/igen_invoice/<pk>
   
 Das Blättern machen wir dann über eine Session-Variable::
 
@@ -186,5 +186,38 @@ Korrektur: Statt des oben erwähnten ``request.session.navigation = nav`` brauche
   request.session['navigator'] = nav
 
 
-Das scheint mir alles prinzipiell richtig. Mal sehen, ob es klappt.
+Mal sehen, ob es klappt.
+  
+Och nee, das geht nicht, dadurch verliere ich das Feature, im Vollbild durch einen Report
+blättern zu können. Denn wenn ich auf Vollbild schalte und dann auch Next klicke, wie soll er da
+den Navigator machen, ohne das Queryset selber in der Session zu speichern?
+
+Aber es geht anders: um einen Unterreport zu bearbeiten, verwendet das URL den pk der Rechnung,
+also wenn der Inhalt einer Rechnung "offen" ist, dann kann man eben nicht auf die nächste 
+Rechnung blättern. Ist ja logisch. Und wenn man den Inhalt speichert, ruft er einfach die
+Listenansicht Rechnungen wieder neu auf, mit Positionierung am Ende.
+
+Eine andere Frage ist die URL-Strukur. 
+Bisher war es ja schön einfach: alle URLs entstehen automatisch aus dem Hauptmenü.
+Aber jetzt brauche ich was Neues, 
+denn ich muss ja den primary key aus der URL holen, *ohne* dafür die 
+GET-Variablen zu benutzen.
+
+Also entweder alle Models verfügbar machen:
+
+  /_models/<db_table>/<pk>
+
+Oder aber für Reports wie InvoiceItems, die einen variablen obligatorischen Parameter
+``invoice`` haben (Signatur des Konstruktors analysieren, um die URL zu generieren?)
+
+  /_reports/ItemsByInvoice/<invoice_id>
+  /_reports/InvoicesByPartner/<partner_id>
+  
+Letzteres scheint mir richtig. Aber wie kriege ich das generiert? 
+Das Menü könnte die Actors abfragen, und wenn der Actor ein Report ist, 
+gibt er die URLs zu seinen Unter-Reports zurück.
+Also ein Report müssrw sich selbst nach Methoden durchsuchen...
+Hm...
+
+  
   
