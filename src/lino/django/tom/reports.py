@@ -53,17 +53,6 @@ WIDTHS = {
     models.AutoField : (2,10,False),
 }
 
-def again(request,**kw):
-    req=request.GET.copy()
-    for k,v in kw.items():
-        req[k] = v
-    return mark_safe(request.path + "?" + req.urlencode())
-
-def urlparams(**kw):
-    s=""
-    for k,v in kw.items():
-        s += "?"+k+"="+str(v)
-    return s
 
 def hfill(s,align,width):
     if align == LEFT:
@@ -555,6 +544,9 @@ class Report:
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
             
+        nav = Navigator(request)
+        nav.fill_from_page(page)
+            
         if request.method == 'POST':
             fs = self.formset_class(request.POST,queryset=page.object_list)
             if fs.is_valid():
@@ -578,7 +570,8 @@ class Report:
           
         context = self.get_context(request)
         context.update(
-            page=page,
+            navigator=nav,
+            #page=page,
             params=params,
             formset=fs,
             rows=rows,
