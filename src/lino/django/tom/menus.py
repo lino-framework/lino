@@ -70,7 +70,9 @@ class Component:
         return l
   
     def get_url_path(self):
-        return "/".join([p.name for p in self.parents() if len(p.name) ] + [self.name])
+        return "/".join(
+          [p.name for p in self.parents() if len(p.name)]
+            + [self.name])
 
     def as_html(self,level=None):
         return '<a href="/%s">%s</a>' % (self.get_url_path(),self.label)

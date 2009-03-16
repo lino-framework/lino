@@ -18,8 +18,8 @@
 
 import os
 import codecs
-from models import Unit, Entry
-from menu import Units
+from models import Unit, Entry, Units
+#from menu import Units
 from django.core import serializers
 from django.test import TestCase
 from django import forms
@@ -54,9 +54,7 @@ class TestCase(TestCase):
             print "save() : done"
         except ModelValidationError,e:
             #s="\n".join([e.as_text() for m in e.messages])
-            self.assertEqual(str(e),"ModelValidationError (parent)")
-            s=e["parent"].as_text()
-            self.assertEqual(s,"Unit 3 : Parent cannot be self")
+            self.assertEqual(str(e),"Parent cannot be self")
         else:
             self.fail("Expected ModelValidationError")
             
@@ -137,20 +135,32 @@ propre, propre
         # The first Report
         #
         
-        s=Units().as_text()
+        rpt=Units()
+        s=rpt.as_text()
         #print "\n"+s
         self.assertEquals(s.split(),u"""
-ID |title               |name      |parent              |seq|format
----+--------------------+----------+--------------------+---+------
-1  |Prantsuse keele kurs|pkk       |                    |1  |R
-   |algajatele          |          |                    |   |
-2  |Esimene tund        |u1        |1. Prantsuse keele  |1  |R
-   |                    |          |kurs algajatele     |   |
-3  |Sissejuhatus        |          |1.1. Esimene tund   |1  |R
-4  |Olema               |          |1.1. Esimene tund   |2  |R
-5  |Esimesed laused     |          |1.1. Esimene tund   |3  |R
-6  |Mees või naine?     |          |1.1. Esimene tund   |4  |R
-""".split())
+ID        |title     |name      |parent    |seq       |format
+----------+----------+----------+----------+----------+----------
+1         |Prantsuse |pkk       |          |1         |R
+          |keele kurs|          |          |          |
+          |algajatele|          |          |          |
+2         |Esimene   |u1        |1.        |1         |R
+          |tund      |          |Prantsuse |          |
+          |          |          |keele kurs|          |
+          |          |          |algajatele|          |
+3         |Sissejuhat|          |1.1.      |1         |R
+          |us        |          |Esimene   |          |
+          |          |          |tund      |          |
+4         |Olema     |          |1.1.      |2         |R
+          |          |          |Esimene   |          |
+          |          |          |tund      |          |
+5         |Esimesed  |          |1.1.      |3         |R
+          |laused    |          |Esimene   |          |
+          |          |          |tund      |          |
+6         |Mees või  |          |1.1.      |4         |R
+          |naine?    |          |Esimene   |          |
+          |          |          |tund      |          |
+""".split(),"Units().as_text() has changed in demo")
         
         
 

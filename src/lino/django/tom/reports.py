@@ -54,6 +54,14 @@ WIDTHS = {
 }
 
 
+
+def again(request,**kw):
+    req=request.GET.copy()
+    for k,v in kw.items():
+        req[k] = v
+    return mark_safe(request.path + "?" + req.urlencode())
+
+
 def hfill(s,align,width):
     if align == LEFT:
         return s.ljust(width)
@@ -90,7 +98,7 @@ class Cell(object):
         self.column = column
         
     def __unicode__(self):
-        return unicode(self.column.cell_field(self))
+        return unicode(self.column.cell_value(self))
         
         
 class Row(object):
@@ -146,6 +154,9 @@ class Column(object):
     def getLabel(self):
         return self.label
 
+    def get_urls(self,name):
+        return []
+        
     def format(self,value):
         return unicode(value)
   
@@ -171,13 +182,53 @@ class FieldColumn(Column):
         #~ x=WIDTHS[self.field.__class__]
         #~ return x[1]
         
-    def cell_field(self,cell):
+    def cell_value(self,cell):
         return cell.row.form[self.field.name]
         
 class ReadonlyColumn(FieldColumn):
     is_formfield = False
-    def cell_field(self,cell):
+    def cell_value(self,cell):
         return getattr(cell.row.form.instance,self.field.name)
+        
+class RelatedColumn(ReadonlyColumn):
+    is_filter = False
+    def __init__(self, rpt, name, field):
+        #print field.var_name
+        Column.__init__(self,rpt,name)
+        self.field = field
+        self.name = name
+        
+    def get_urls(self,name):
+        return [ url(r'^%s/%s/$' % (name,self.name), 
+            self.view) ]
+            
+    def cell_value(self,cell):
+        return getattr(cell.row.form.instance,self.name)
+            
+    def view(self,request):
+        return render_to_response("tom/base_site.html",
+          dict(title=self.name))
+      
+class MethodColumn(ReadonlyColumn):
+    is_filter = False
+    def __init__(self, rpt, name):
+        #print field.var_name
+        Column.__init__(self,rpt,name)
+        self.name = name
+        
+    def get_urls(self,name):
+        return [ url(r'^%s/%s/$' % (name,self.name), 
+            self.view) ]
+            
+    def cell_value(self,cell):
+        m=getattr(cell.row.form.instance,self.name)
+        return m()
+            
+    def view(self,request):
+        return render_to_response("tom/base_site.html",
+          dict(title=self.name))
+      
+  
         
 
 from django import forms
@@ -191,8 +242,27 @@ class ReportParameterForm(forms.Form):
 #        
 #  Report
 #        
+
+_report_classes = {}
+
+def get_report(name):
+    return _report_classes[name]
     
-class Report:
+def get_reports():
+    return _report_classes
+
+class ReportMetaClass(type):
+    def __new__(meta, classname, bases, classDict):
+        #print 'Class Name:', classname
+        #print 'Bases:', bases
+        #print 'Class Attributes', classDict
+        cls = type.__new__(meta, classname, bases, classDict)
+        _report_classes[classname] = cls
+        return cls
+    
+class Report(object):
+  
+    __metaclass__ = ReportMetaClass
     
     queryset = None 
     title = None
@@ -220,8 +290,9 @@ class Report:
         if self.form_class is None:
             self.form_class = modelform_factory(self.queryset.model)
             
-        self.formfields = []
+        #self.formfields = []
         formfields = self.add_columns()
+        #print formfields
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 
@@ -242,29 +313,34 @@ class Report:
         self.columns = []
         meta = self.queryset.model._meta
         # the pk must be in the form and will be rendered as hidden
-        formfields = [ meta.pk.name ]
+        #formfields = [ meta.pk.name ]
+        formfields = []
         if self.columnNames:
             for colname in self.columnNames.split():
-                field, model, direct, m2m = meta.get_field_by_name(colname)
-                col = self.new_column(field)
+                try:
+                    field,model,direct,m2m = meta.\
+                      get_field_by_name(colname)
+                    #print field, model, direct, m2m 
+                    col = self.new_column(field)
+                    if field.editable and not field.primary_key:
+                        formfields.append(colname)
+                except models.FieldDoesNotExist,e:
+                    col = MethodColumn(self,colname)
                 self.columns.append(col)
-                if col.is_formfield:
-                    formfields.append(colname)
+            return formfields
         else:
             for field in meta.fields:
                 col = self.new_column(field)
                 self.columns.append(col)
-                if col.is_formfield:
-                    formfields.append(field.attname)
-        # print self.label, ":", formfields
-        return formfields
+                #~ if field.editable:
+                    #~ formfields.append(field.name)
+            #~ return formfields
+            return None
                 
     def new_column(self,field):
-        if field.primary_key:
-            return ReadonlyColumn(self,field)
-        if isinstance(field,models.Field):
+        if field.editable:
             return FieldColumn(self,field)
-        raise "cannot handle %s" % field
+        return ReadonlyColumn(self,field)
 
     def getTitle(self):
         """
@@ -353,7 +429,8 @@ class Report:
     ##
 
     def __unicode__(self):
-        return unicode(self.as_text())
+        #return unicode(self.as_text())
+        return unicode("%d row(s)" % self.queryset.count())
         
         
     def as_text(self, columnSep='|',
@@ -452,7 +529,10 @@ class Report:
         return urlpatterns
 
     def get_urls(self,name):
-        return [ url(r'^%s$' % name, self.view) ]
+        l = [ url(r'^%s$' % name, self.view) ]
+        for col in self.columns:
+          l += col.get_urls(name)
+        return l
 
     def get_queryset(self,params):
         if params.is_valid():
@@ -473,10 +553,12 @@ class Report:
         
     def get_context(self,request):
         #print settings.MAIN_MENU.as_html()
+        #def req_again(self,**kw)
         return dict(
-            main_menu=settings.MAIN_MENU,
+            #main_menu=settings.MAIN_MENU,
             report=self,
             title=self.label,
+            #again=req_again,
         )
             
 
@@ -544,8 +626,8 @@ class Report:
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
             
-        nav = Navigator(request)
-        nav.fill_from_page(page)
+        #nav = Navigator(request)
+        #nav.fill_from_page(page)
             
         if request.method == 'POST':
             fs = self.formset_class(request.POST,queryset=page.object_list)
@@ -570,8 +652,8 @@ class Report:
           
         context = self.get_context(request)
         context.update(
-            navigator=nav,
-            #page=page,
+            #navigator=nav,
+            page=page,
             params=params,
             formset=fs,
             rows=rows,
@@ -585,3 +667,20 @@ class Report:
 #~ def getcell(col, form):
     #~ return col.get_cell(form)
     
+    
+def index(request):
+    context=dict(
+      title="foo"
+    )
+    return render_to_response("tom/index.html",context)
+    
+def edit_report(request,name,*args,**kw):
+    rptclass = _report_classes[name]
+    rpt = rptclass(*args,**kw)
+    return rpt.view(request)
+    
+def urls(name=''):
+    l=[url(r'^%s$' % name, index)]
+    l.append(url(r'^edit/(?P<name>\w+)$', edit_report))
+    #for rptname,rptclass in _report_classes.items():
+    return patterns('',*l)

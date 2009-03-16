@@ -120,13 +120,13 @@ class Unit(ValidatingModel):
         l=[]
         p = self.parent
         if p == self:
-            raise ModelValidationError(self,"Parent cannot be self")
+            raise ModelValidationError("Parent cannot be self")
         #print "clean()", self.instance
         while p is not None:
             if p in l:
-                raise ModelValidationError(self,"Parent recursion")
+                raise ModelValidationError("Parent recursion")
             if len(l) > MAX_NESTING_LEVEL:
-                raise ModelValidationError(self,"Nesting level")
+                raise ModelValidationError("Nesting level")
             l.append(p)
             p=p.parent
 
@@ -196,4 +196,30 @@ class UnitForm(forms.ModelForm):
 
 Unit.model_form = UnitForm
 
+
+#
+# reports definition
+#
+
+from lino.django.tom import reports
+
+class Units(reports.Report):
+    queryset=Unit.objects.order_by("id")
+    columnNames="id title name parent seq format"
+    #columnWidths="3 20 10 20 3 6"
+
+class UnitsPerParent(reports.Report):
+    columnNames="id title name seq format parent"
+    #columnWidths="3 30 10 3 6 30"
+    
+    def __init__(self,parent,**kw):
+        self.parent=parent
+        reports.Report.__init__(self,**kw)
+        
+    def get_queryset(self):
+        return Unit.objects.filter(parent=self.parent).order_by("seq")
+    queryset=property(get_queryset)
+
+class Entries(reports.Report):
+    queryset=Entry.objects.all()
 

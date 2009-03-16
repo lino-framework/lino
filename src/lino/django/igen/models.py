@@ -268,10 +268,10 @@ class DocumentItem(models.Model):
         abstract = True
     
 class OrderItem(DocumentItem):
-    order = models.ForeignKey(Order,related_name="items")
+    order = models.ForeignKey(Order) #,related_name="items")
         
 class InvoiceItem(DocumentItem):
-    invoice = models.ForeignKey(Invoice,related_name="items")
+    invoice = models.ForeignKey(Invoice) #,related_name="items")
         
         
 #
@@ -321,7 +321,7 @@ class Orders(reports.Report):
 
 class Invoices(reports.Report):
     queryset=Invoice.objects.order_by("number")
-    columnNames="number due_date customer total_excl total_vat"
+    columnNames="number items due_date customer total_excl total_vat"
 
 class ItemsByInvoice(reports.Report):
     
@@ -330,5 +330,6 @@ class ItemsByInvoice(reports.Report):
         reports.Report.__init__(self,**kw)
         
     def get_queryset(self):
-        return InvoiceItem.objects.filter(invoice=self.invoice).order_by("pos")
+        return self.invoice.invoiceitem_set.order_by("pos")
+        #return InvoiceItem.objects.filter(invoice=self.invoice).order_by("pos")
     queryset=property(get_queryset)

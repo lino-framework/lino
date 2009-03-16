@@ -71,25 +71,26 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         chair=Product.objects.get(id=2)
         i=Invoice(customer=luc)
         i.save()
-        i.items.create(pos=1,product=table,qty=1)
+        i.invoiceitem_set.create(pos=1,product=table,qty=1)
         
     def test05(self):
         s=Companies().as_text()
         #print "\n"+s
         self.assertEquals(s.split(),u"""
-companyName|country|title     |firstName |lastName
------------+-------+----------+----------+----------
-Bernd      |Germany|Herr      |Bernd     |Brecht
-Brecht     |       |          |          |
-Donderweer |Netherl|          |          |
-bv         |ands   |          |          |
-Hans Flott |Germany|Frau      |Lisa      |Lahm
-& Co       |       |          |          |
-Mets ja Puu|Estonia|          |Tõnu      |Tamme
-OÜ         |       |          |          |
-Minu Firma |Estonia|          |          |
-OÜ         |       |          |          |        
-        """.split(),"Companies().as_text() has changed in demo")
+companyNam|country   |title     |firstName |lastName
+e         |          |          |          |
+----------+----------+----------+----------+----------
+Bernd     |Germany   |Herr      |Bernd     |Brecht
+Brecht    |          |          |          |
+Donderweer|Netherland|          |          |
+bv        |s         |          |          |
+Hans Flott|Germany   |Frau      |Lisa      |Lahm
+& Co      |          |          |          |
+Mets ja   |Estonia   |          |Tõnu      |Tamme
+Puu OÜ    |          |          |          |
+Minu Firma|Estonia   |          |          |
+OÜ        |          |          |          |
+""".split(),"Companies().as_text() has changed in demo")
         
         
 ## Run these tests using "python manage.py test".

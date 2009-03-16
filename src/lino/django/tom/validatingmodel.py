@@ -27,13 +27,14 @@ for the initial idea.
 """
 
 class ModelValidationError(Exception):
-    def __init__(self, instance, msg):
-        self.instance = instance
+    def __init__(self, msg):
+        #self.instance = instance
         self.msg = msg
         
     def __str__(self):
-        return "%s %s : %s" % (self.instance.__class__.__name__,
-        self.instance.pk, self.msg)
+        return self.msg
+        #~ return "%s %s : %s" % (self.instance.__class__.__name__,
+        #~ self.instance.pk, self.msg)
   
 
 #~ class ModelValidationError(Exception):
