@@ -155,11 +155,11 @@ class Menu(MenuItem):
         for mi in self.items:
             l += mi.get_urls(name+mi.name)
         #print urlpatterns
-        return l
+        return patterns('',*l)
         
     def urls(self):
-        l = self.get_urls(self.name)
-        return patterns('',*l)
+        return self.get_urls(self.name)
+        #return patterns('',*l)
     urls = property(urls)
         
     def view(self,request):

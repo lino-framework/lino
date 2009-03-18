@@ -26,19 +26,18 @@ admin.autodiscover()
 
 from lino.django.tom import reports
 
-#~ from lino.django.tom.menus import Menu
-#~ menu = Menu("","Main Menu")
+from lino.django.tom.menus import Menu
+menu = Menu("","Main Menu")
 
-#~ from lino.django.igen.menu import setup_menu
-#~ setup_menu(menu)
+from lino.django.igen.menu import setup_menu
+setup_menu(menu)
 
-#~ from lino.django.voc.menu import setup_menu
-#~ setup_menu(menu)
+from lino.django.voc.menu import setup_menu
+setup_menu(menu)
 
+urlpatterns = menu.urls
 
-#~ urlpatterns = menu.urls
-
-#~ settings.MAIN_MENU = menu
+settings.MAIN_MENU = menu
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
@@ -47,5 +46,6 @@ urlpatterns = patterns('',
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
     (r'', include(reports.urls())),
+    (r'menu', include(menu.get_urls())),
 )    
 

@@ -243,26 +243,26 @@ class ReportParameterForm(forms.Form):
 #  Report
 #        
 
-_report_classes = {}
+#~ _report_classes = {}
 
-def get_report(name):
-    return _report_classes[name]
+#~ def get_report(name):
+    #~ return _report_classes[name]
     
-def get_reports():
-    return _report_classes
+#~ def get_reports():
+    #~ return _report_classes
 
-class ReportMetaClass(type):
-    def __new__(meta, classname, bases, classDict):
-        #print 'Class Name:', classname
-        #print 'Bases:', bases
-        #print 'Class Attributes', classDict
-        cls = type.__new__(meta, classname, bases, classDict)
-        _report_classes[classname] = cls
-        return cls
+#~ class ReportMetaClass(type):
+    #~ def __new__(meta, classname, bases, classDict):
+        #~ #print 'Class Name:', classname
+        #~ #print 'Bases:', bases
+        #~ #print 'Class Attributes', classDict
+        #~ cls = type.__new__(meta, classname, bases, classDict)
+        #~ _report_classes[classname] = cls
+        #~ return cls
     
 class Report(object):
   
-    __metaclass__ = ReportMetaClass
+    #~ __metaclass__ = ReportMetaClass
     
     queryset = None 
     title = None
@@ -292,7 +292,7 @@ class Report(object):
             
         #self.formfields = []
         formfields = self.add_columns()
-        #print formfields
+        #print self.label, ":", formfields
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 
@@ -519,14 +519,14 @@ class Report(object):
         s=columnSep.join(l)
         return s.rstrip()+"\n"
         
-    def get_urls_old(self,name):
-        urlpatterns = patterns('',
-          url(r'^%s$' % name, 
-          self.view))
-        #~ urlpatterns += patterns('',
-          #~ url(r'^%s/(?P<row>\d+)$' % name,
-            #~ self.view_one))
-        return urlpatterns
+    #~ def get_urls_old(self,name):
+        #~ urlpatterns = patterns('',
+          #~ url(r'^%s$' % name, 
+          #~ self.view))
+        urlpatterns += patterns('',
+          url(r'^%s/(?P<row>\d+)$' % name,
+            self.view_one))
+        #~ return urlpatterns
 
     def get_urls(self,name):
         l = [ url(r'^%s$' % name, self.view) ]
@@ -674,13 +674,31 @@ def index(request):
     )
     return render_to_response("tom/index.html",context)
     
-def edit_report(request,name,*args,**kw):
-    rptclass = _report_classes[name]
-    rpt = rptclass(*args,**kw)
-    return rpt.view(request)
+#~ def edit_report(request,name,*args,**kw):
+    #~ rptclass = _report_classes[name]
+    #~ rpt = rptclass(*args,**kw)
+    #~ return rpt.view(request)
+    
+def edit_instance(request,app,model,pk):
+    model_class = models.get_model(app,model)
+    #print model_class
+    obj = model_class.objects.get(pk=pk)
+    form_class=modelform_factory(model_class)
+    if request.method == 'POST':
+        frm=form_class(request.POST,instance=obj)
+        if frm.is_valid():
+            frm.save()
+    else:
+        frm=form_class(instance=obj)
+    context=dict(
+      title=unicode(obj),
+      form=frm,
+    )
+    return render_to_response("tom/instance.html",context)
     
 def urls(name=''):
     l=[url(r'^%s$' % name, index)]
-    l.append(url(r'^edit/(?P<name>\w+)$', edit_report))
+    #~ l.append(url(r'^edit/(?P<name>\w+)$', edit_report))
+    l.append(url(r'^edit/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$', edit_instance))
     #for rptname,rptclass in _report_classes.items():
     return patterns('',*l)

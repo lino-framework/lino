@@ -4,14 +4,8 @@
 
 {% block content %}
 
-<div id="breadcrumbs"><a href="{{ root_url }}">Home</a></div>
-
 <h1>{{ title }}</h1>
 
-<ul>
-{% for menu in menus %}
-<li><a href="{{ menu.name }}">{{ menu.label }}</a></li>
-{% endfor %}
-</ul>
+This is Tom's index page...
 
 {% endblock %}

@@ -15,20 +15,20 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from models import Unit, Entry
+from models import Units, UnitsPerParent, Entries
 
 
 #
 # menu setup
 #
-#~ def setup_menu(menu):
-    #~ m = menu.addMenu("voc","Vocabulary")
-    #~ m.addAction(Units(),label="List of All Units",)
-    #~ m.addAction(UnitsPerParent(None),name="tree",label="Table of Contents")
-    #~ m.addAction(Entries(),label="List of Entries",)
-
 def setup_menu(menu):
-    m = menu.addMenu("Vocabulary")
-    m.addAction("/edit/Units")
-    m.addAction("/edit/UnitsPerParent")
-    m.addAction("/edit/Entries")
+    m = menu.addMenu("voc","Vocabulary")
+    m.addAction(Units(),label="List of All Units",)
+    m.addAction(UnitsPerParent(None),name="tree",label="Table of Contents")
+    m.addAction(Entries(),label="List of Entries",)
+
+#~ def setup_menu(menu):
+    #~ m = menu.addMenu("Vocabulary")
+    #~ m.addAction("/edit/Units")
+    #~ m.addAction("/edit/UnitsPerParent")
+    #~ m.addAction("/edit/Entries")
