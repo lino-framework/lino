@@ -12,7 +12,7 @@ class ContactAdmin(admin.ModelAdmin):
         ('Other', dict(fields=['remarks','language'])),
     ]
     list_display = ('__unicode__', "companyName","lastName",
-        "firstName", 'asAddress')
+        "firstName", 'as_address')
     list_filter = ['firstName','lastName','companyName']
     search_fields = ['firstName','lastName','companyName']
     ordering=("companyName","lastName","firstName")

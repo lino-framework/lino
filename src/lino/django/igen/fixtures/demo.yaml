@@ -83,7 +83,8 @@
   fields:
     lastName: Ausdemwald
     firstName: Alfons
-    title: Bäckerei
+    title: Herrn
+    companyName: Bäckerei Ausdemwald
     addr1: Vervierser Straße 45
     zipCode: 4700
     city: Eupen

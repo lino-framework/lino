@@ -97,7 +97,7 @@ class Action(MenuItem):
                  hotkey=None,
                  *args,**kw):
         if name is None:
-            name=actor.__class__.__name__.lower()
+            name=actor.getName()
         if label is None:
             label=actor.getLabel()
         Component.__init__(self,parent,name,label,*args,**kw)
@@ -159,9 +159,9 @@ class Menu(MenuItem):
         
     def get_urls(self,name=''):
         #print "Menu.get_urls()",name
-        l=[url(r'^%s$' % name, self.view)]
-        if len(name):
+        if len(name) and not name.endswith("/"):
             name += "/"
+        l=[url(r'^%s$' % name, self.view)]
         for mi in self.items:
             l += mi.get_urls(name+mi.name)
         #print urlpatterns
@@ -169,7 +169,6 @@ class Menu(MenuItem):
         
     def urls(self):
         return self.get_urls(self.name)
-        #return patterns('',*l)
     urls = property(urls)
         
     def view(self,request):

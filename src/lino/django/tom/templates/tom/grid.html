@@ -28,8 +28,8 @@
 {{ formset.management_form }}
 <table>
 <tr>
-<td></td>
-<td></td>
+<td>links</td>
+<td>rownum</td>
 {% if report.can_delete%}
 <th>Delete</th>
 {% endif %}
@@ -41,7 +41,7 @@
 {% for row in rows %}
 <tr>
 <td>{{ row.links }}</td>
-<td>{{ row.form.id }}</td>
+<td>{{ row.rownum }}{{ row.form.pk }}</td>
 {% if report.can_delete %}
 <td>{{ row.form.DELETE }}</td>
 {% endif %}

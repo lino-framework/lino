@@ -18,15 +18,14 @@
 import datetime
 from django.db import models
 #from lino.django.tom import models
-from lino.django.tom.validatingmodel import ValidatingModel, ModelValidationError
+from lino.django.tom.validatingmodel import TomModel, ModelValidationError
+from django.utils.safestring import mark_safe
 
 
-def linkto(obj,text=None):
+def linkto(href,text=None):
     if text is None:
-        text=unicode(obj)
-    s='<a href="/admin/igen/%s/%d' % (obj.__class__.__name__,obj.id)
-    s+='">'+text+"</a>"
-    return s
+        text=href
+    return '<a href="%s">%s</a>' % (href,text)
         
 class PriceField(models.DecimalField):
     def __init__(self, *args, **kwargs):
@@ -43,7 +42,7 @@ class QuantityField(models.DecimalField):
         super(QuantityField, self).__init__(*args, **kwargs)
         
 
-class Contact(ValidatingModel):
+class Contact(TomModel):
     """
     
 Company and/or Person contact data, linked with client account and
@@ -58,16 +57,13 @@ listing - otherwise as Person First- and Lastname.
 u'Luc Saffre'
 >>> p=Contact.objects.create(lastName="Saffre", firstName="Luc", title="Mr.")
 >>> unicode(p)
-u'Mr. Luc Saffre'
+u'Luc Saffre'
 >>> p=Contact.objects.create(lastName="Saffre", title="Mr.")
 >>> unicode(p)
 u'Mr. Saffre'
 >>> p=Contact.objects.create(firstName="Luc")
 >>> unicode(p)
 u'Luc'
->>> p=Contact.objects.create(lastName="Saffre",firstName="Luc", companyName="Example & Co")
->>> unicode(p)
-u'Example & Co (Luc Saffre)'
 >>> p=Contact.objects.create(lastName="Saffre",firstName="Luc", companyName="Example & Co")
 >>> unicode(p)
 u'Example & Co (Luc Saffre)'
@@ -107,8 +103,13 @@ u'Example & Co (Luc Saffre)'
     ordering=("companyName","lastName","firstName")
     
     def __unicode__(self):
-        l=filter(lambda x:x,[self.title,self.firstName,self.lastName])
+        if self.title and not self.firstName:
+            l=filter(lambda x:x,[self.title,self.lastName])
+        else:
+            l=filter(lambda x:x,[self.firstName,self.lastName])
+            
         s=" ".join(l)
+            
         if self.companyName:
             if len(s) > 0:
                 return self.companyName+" ("+s+")"
@@ -117,7 +118,7 @@ u'Example & Co (Luc Saffre)'
         else:
             return s
             
-    def asAddress(self,linesep="\n<br/>"):
+    def as_address(self,linesep="\n<br/>"):
         l=filter(lambda x:x,[self.title,self.firstName,self.lastName])
         s=" ".join(l)
         if self.companyName:
@@ -141,10 +142,10 @@ u'Example & Co (Luc Saffre)'
         if foreigner: # (if self.country != sender's country)
             s += linesep + unicode(self.country)
         return s
-    asAddress.allow_tags=True
+    as_address.allow_tags=True
 
 
-class Country(models.Model):
+class Country(TomModel):
     name = models.CharField(max_length=200)
     isocode = models.CharField(max_length=2,primary_key=True)
     
@@ -156,9 +157,10 @@ class Country(models.Model):
         return self.name
         
     def contacts(self):
-        return ", ".join([linkto(c,displayName(c)) 
-          for c in self.contact_set.all()])
-    contacts.allow_tags=True
+        return ", ".join([unicode(c) for c in self.contact_set.all()])
+        return mark_safe(", ".join([linkto(c.get_url_path(),unicode(c)) 
+          for c in self.contact_set.all()]))
+    #contacts.allow_tags=True
     contacts.short_description='List of Contacts here'
         
 #~ class Region(models.Model):
@@ -184,32 +186,32 @@ class Country(models.Model):
           #~ for c in self.contact_set.all()])
  
     
-class Language(models.Model):
+class Language(TomModel):
     id = models.CharField(max_length=2,primary_key=True)
     name = models.CharField(max_length=200)
     
     def __unicode__(self):
         return self.name
 
-class PaymentTerm(models.Model):
+class PaymentTerm(TomModel):
     name = models.CharField(max_length=200)
     
     def __unicode__(self):
         return self.name
 
-class ShippingMode(models.Model):
+class ShippingMode(TomModel):
     name = models.CharField(max_length=200)
     
     def __unicode__(self):
         return self.name
 
-class ProductCat(models.Model):
+class ProductCat(TomModel):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
     def __unicode__(self):
         return self.name
 
-class Product(models.Model):
+class Product(TomModel):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
     cat = models.ForeignKey("ProductCat")
@@ -223,7 +225,7 @@ class Product(models.Model):
     #~ def __unicode__(self):
         #~ return self.name
 
-class Document(models.Model):
+class Document(TomModel):
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
     creation_date = models.DateField(auto_now_add=True)
@@ -253,7 +255,7 @@ class Invoice(Document):
     def items(self):
         return ItemsByInvoice(self)
 
-class DocumentItem(models.Model):
+class DocumentItem(TomModel):
     pos = models.IntegerField("Position")
     
     product = models.ForeignKey(Product)
@@ -298,8 +300,9 @@ class Persons(reports.Report):
 
 class Countries(reports.Report):
     queryset=Country.objects.order_by("isocode")
-    columnNames="isocode name"
+    columnNames="isocode name contacts"
     #columnWidths="3 30"
+    
 
 class Languages(reports.Report):
     queryset=Language.objects.order_by("id")

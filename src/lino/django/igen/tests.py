@@ -29,8 +29,8 @@ class TestCase(TestCase):
         
     def test01(self):
         luc=Contact.objects.get(id=2)
-        self.assertEquals(unicode(luc), 'Mr. Luc Saffre')
-        self.assertEquals(luc.asAddress("\n"), u'''\
+        self.assertEquals(unicode(luc), 'Luc Saffre')
+        self.assertEquals(luc.as_address("\n"), u'''\
 Mr. Luc Saffre
 Rummajaani talu
 Vana-Vigala küla
@@ -47,14 +47,14 @@ Vigala vald
             lastName__contains="a").order_by("lastName")])
         #print "\n"+s
         self.assertEquals(s,u"""\
-Herrn Andreas Arens
-Bäckerei Alfons Ausdemwald
-Dr. Bernard Bodard
-Herrn Emil Eierschal
-Monsieur Jérôme Jeanémart
+Andreas Arens
+Bäckerei Ausdemwald (Alfons Ausdemwald)
+Bernard Bodard
+Emil Eierschal
+Jérôme Jeanémart
 Karl Kask
-Hans Flott & Co (Frau Lisa Lahm)
-Mr. Luc Saffre
+Hans Flott & Co (Lisa Lahm)
+Luc Saffre
 Mets ja Puu OÜ (Tõnu Tamme)""")
 
     def test03(self):
@@ -74,22 +74,17 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         i.invoiceitem_set.create(pos=1,product=table,qty=1)
         
     def test05(self):
-        s=Companies().as_text()
+        s=Companies().as_text(column_widths=dict(companyName=20,country=12))
         #print "\n"+s
         self.assertEquals(s.split(),u"""
-companyNam|country   |title     |firstName |lastName
-e         |          |          |          |
-----------+----------+----------+----------+----------
-Bernd     |Germany   |Herr      |Bernd     |Brecht
-Brecht    |          |          |          |
-Donderweer|Netherland|          |          |
-bv        |s         |          |          |
-Hans Flott|Germany   |Frau      |Lisa      |Lahm
-& Co      |          |          |          |
-Mets ja   |Estonia   |          |Tõnu      |Tamme
-Puu OÜ    |          |          |          |
-Minu Firma|Estonia   |          |          |
-OÜ        |          |          |          |
+companyName         |country     |title         |firstName     |lastName
+--------------------+------------+--------------+--------------+--------------
+Bernd Brecht        |Germany     |Herr          |Bernd         |Brecht
+Bäckerei Ausdemwald |Belgium     |Herrn         |Alfons        |Ausdemwald
+Donderweer bv       |Netherlands |              |              |
+Hans Flott & Co     |Germany     |Frau          |Lisa          |Lahm
+Mets ja Puu OÜ      |Estonia     |              |Tõnu          |Tamme
+Minu Firma OÜ       |Estonia     |              |              |
 """.split(),"Companies().as_text() has changed in demo")
         
         

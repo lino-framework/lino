@@ -27,8 +27,9 @@ from django import forms
 from django.db import models
 from django.utils.safestring import mark_safe 
 
+
 #from lino.django import tom
-from lino.django.tom.validatingmodel import ValidatingModel, ModelValidationError
+from lino.django.tom.validatingmodel import TomModel, ModelValidationError
 
 
 FORMATS = (
@@ -40,7 +41,7 @@ FORMATS = (
 MAX_NESTING_LEVEL=10
 
 
-class Unit(ValidatingModel):
+class Unit(TomModel):
     
     name = models.CharField(max_length=20,blank=True)
     title = models.CharField(max_length=200,blank=True,null=True)
@@ -156,7 +157,7 @@ class Unit(ValidatingModel):
         self.entry_set.add(e)
               
         
-class Entry(ValidatingModel):
+class Entry(TomModel):
     word1 = models.CharField(max_length=200)
     word1_suffix = models.CharField(max_length=200,blank=True,null=True)
     word2 = models.CharField(max_length=200)
@@ -175,16 +176,15 @@ class Entry(ValidatingModel):
 
 
 class UnitForm(forms.ModelForm):
+  
     class Meta:
         model = Unit
 
     def clean_parent(self):
-        l=[]
         p = self.cleaned_data.get("parent")
         if p == self.instance:
-            #print "gonna raise", self.instance.pk
             raise forms.ValidationError("Parent cannot be self")
-        #print "clean()", self.instance
+        l=[]
         while p is not None:
             if p in l:
                 raise forms.ValidationError("Parent recursion")
@@ -194,8 +194,6 @@ class UnitForm(forms.ModelForm):
             p=p.parent
         return self.cleaned_data
 
-Unit.model_form = UnitForm
-
 
 #
 # reports definition
@@ -204,13 +202,13 @@ Unit.model_form = UnitForm
 from lino.django.tom import reports
 
 class Units(reports.Report):
+    model_form = UnitForm
     queryset=Unit.objects.order_by("id")
     columnNames="id title name parent seq format"
-    #columnWidths="3 20 10 20 3 6"
 
 class UnitsPerParent(reports.Report):
+    model_form = UnitForm
     columnNames="id title name seq format parent"
-    #columnWidths="3 30 10 3 6 30"
     
     def __init__(self,parent,**kw):
         self.parent=parent
@@ -222,4 +220,5 @@ class UnitsPerParent(reports.Report):
 
 class Entries(reports.Report):
     queryset=Entry.objects.all()
+    model_form = forms.models.modelform_factory(Entry)
 

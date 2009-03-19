@@ -136,30 +136,19 @@ propre, propre
         #
         
         rpt=Units()
-        s=rpt.as_text()
+        s=rpt.as_text(column_widths=dict(id=3,title=30,parent=20,seq=3))
         #print "\n"+s
         self.assertEquals(s.split(),u"""
-ID        |title     |name      |parent    |seq       |format
-----------+----------+----------+----------+----------+----------
-1         |Prantsuse |pkk       |          |1         |R
-          |keele kurs|          |          |          |
-          |algajatele|          |          |          |
-2         |Esimene   |u1        |1.        |1         |R
-          |tund      |          |Prantsuse |          |
-          |          |          |keele kurs|          |
-          |          |          |algajatele|          |
-3         |Sissejuhat|          |1.1.      |1         |R
-          |us        |          |Esimene   |          |
-          |          |          |tund      |          |
-4         |Olema     |          |1.1.      |2         |R
-          |          |          |Esimene   |          |
-          |          |          |tund      |          |
-5         |Esimesed  |          |1.1.      |3         |R
-          |laused    |          |Esimene   |          |
-          |          |          |tund      |          |
-6         |Mees või  |          |1.1.      |4         |R
-          |naine?    |          |Esimene   |          |
-          |          |          |tund      |          |
+ID |title                         |name     |parent              |seq|format
+---+------------------------------+---------+--------------------+---+---------
+1  |Prantsuse keele kurs          |pkk      |                    |1  |R
+   |algajatele                    |         |                    |   |
+2  |Esimene tund                  |u1       |1. Prantsuse keele  |1  |R
+   |                              |         |kurs algajatele     |   |
+3  |Sissejuhatus                  |         |1.1. Esimene tund   |1  |R
+4  |Olema                         |         |1.1. Esimene tund   |2  |R
+5  |Esimesed laused               |         |1.1. Esimene tund   |3  |R
+6  |Mees või naine?               |         |1.1. Esimene tund   |4  |R        
 """.split(),"Units().as_text() has changed in demo")
         
         

@@ -18,11 +18,13 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.test import TestCase
-from lino.django.tom.validatingmodel import ValidatingModel, ModelValidationError
+from lino.django.tom.validatingmodel import TomModel, ModelValidationError
+from lino.django.tom.reports import Report
 from django.db import models
-from django.forms.models import modelform_factory
+from django.forms.models import modelform_factory, formset_factory
 
-class Contact(ValidatingModel):
+class Contact(TomModel):
+    #id_code = models.CharField(max_length=6,primary_key=True)
     fname = models.CharField(max_length=20)
     lname = models.CharField(max_length=20)
     
@@ -30,7 +32,8 @@ class Contact(ValidatingModel):
         if len(self.fname) == 0:
           raise ModelValidationError("first name may not be empty")
 
-
+class Contacts(Report):
+    columnNames = "lname fname"
 
 class TestCase(TestCase):
     def test01(self):
@@ -98,3 +101,15 @@ class TestCase(TestCase):
 </li>
 </ul>
 """.split())
+
+
+    def test05(self):
+        form_class = modelform_factory(Contact)
+        fs_class = formset_factory(form_class,can_delete=True)
+        fs = fs_class()
+        s=fs.as_table()
+        print "\n"+s
+        self.assertEquals(s.split(),u"""
+""".split())
+        
+        

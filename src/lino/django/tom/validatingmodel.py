@@ -46,7 +46,7 @@ class ModelValidationError(Exception):
     #~ def __getitem__(self,i):
         #~ return self.errordict[i]
 
-class ValidatingModel(models.Model):
+class TomModel(models.Model):
   
     model_form = None
     #quicksearch_fields = None
@@ -81,7 +81,7 @@ class ValidatingModel(models.Model):
         self.validate_fields()
         self.validate()
         self.before_save()
-        super(ValidatingModel,self).save(*args,**kwargs)
+        super(TomModel,self).save(*args,**kwargs)
         self.after_save()
                     
     def before_save(self):
@@ -93,11 +93,11 @@ class ValidatingModel(models.Model):
     def view(self,response):
         raise NotImimplementedError
 
-    @models.permalink
-    def get_absolute_url(self):
-        #return ('lino.django.tom.kernel.', [str(self.id)])
-        return (self.__class__.view, [str(self.pk)])
+    #~ @models.permalink
+    #~ def get_absolute_url(self):
+        #~ #return ('lino.django.tom.kernel.', [str(self.id)])
+        #~ return (self.__class__.view, [str(self.pk)])
 
     def get_url_path(self):
-        return '/%s/%s/' % (self.Meta.db_table,self.pk)
+        return '/edit/%s/%s/' % (self._meta.db_table,self.pk)
         

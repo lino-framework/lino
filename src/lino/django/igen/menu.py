@@ -24,20 +24,20 @@ from models import *
 #
 def setup_menu(menu):
     m = menu.addMenu("contacts","~Contacts")
-    m.addAction(Contacts())
-    m.addAction(Companies())
-    m.addAction(Persons())
+    m.addAction(Contacts().as_form())
+    m.addAction(Companies().as_form())
+    m.addAction(Persons().as_form())
     m = menu.addMenu("prods","~Products")
-    m.addAction(Products())
-    m.addAction(ProductCats())
+    m.addAction(Products().as_form())
+    m.addAction(ProductCats().as_form())
     m = menu.addMenu("docs","~Documents")
-    m.addAction(Orders())
-    m.addAction(Invoices())
+    m.addAction(Orders().as_form())
+    m.addAction(Invoices().as_form())
     m = menu.addMenu("config","~Configuration")
-    m.addAction(ShippingModes())
-    m.addAction(PaymentTerms())
-    m.addAction(Languages())
-    m.addAction(Countries())
+    m.addAction(ShippingModes().as_form())
+    m.addAction(PaymentTerms().as_form())
+    m.addAction(Languages().as_form())
+    m.addAction(Countries().as_form())
 
 
 #~ def setup_menu(menu):
