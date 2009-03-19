@@ -555,7 +555,7 @@ class Report(object):
         #print settings.MAIN_MENU.as_html()
         #def req_again(self,**kw)
         return dict(
-            #main_menu=settings.MAIN_MENU,
+            main_menu=settings.MAIN_MENU,
             report=self,
             title=self.label,
             #again=req_again,

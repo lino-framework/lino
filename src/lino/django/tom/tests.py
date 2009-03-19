@@ -70,3 +70,31 @@ class TestCase(TestCase):
 #~ Orders        
         #~ """.split())
         
+    def test03(self):
+        from lino.django.tom.menus import Menu
+        from lino.django.igen.models import Contacts, Persons, Products
+        m = Menu("main","Main menu")
+        def setup_menu(menu):
+            m = menu.addMenu("m1","~Contacts")
+            m.addAction(Contacts())
+            m.addAction(Persons())
+            m = menu.addMenu("m2","~Products")
+            m.addAction(Products())
+        setup_menu(m)
+        s=m.as_html()
+        #print "\n"+s
+        self.assertEquals(s.split(),u"""
+<ul class="menu1">
+<li><a href="/main/m1">Contacts</a>&nbsp;:
+<ul class="menu2">
+<li><a href="/main/m1/contacts">Contacts</a></li>
+<li><a href="/main/m1/persons">Persons</a></li>
+</ul>
+</li>
+<li><a href="/main/m2">Products</a>&nbsp;:
+<ul class="menu2">
+<li><a href="/main/m2/products">Products</a></li>
+</ul>
+</li>
+</ul>
+""".split())

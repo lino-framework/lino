@@ -26,6 +26,13 @@ from django.utils.safestring import mark_safe
 class Component:
     HOTKEY_MARKER = '~'
     def __init__(self,parent,name,label,doc=None,enabled=True):
+        p=parent
+        l=[]
+        while p is not None:
+            if p in l:
+                raise Exception("circular parent")
+            l.append(p)
+            p = p.parent
         self.parent=parent
         self.name=name
         self.doc=doc
@@ -35,7 +42,7 @@ class Component:
         n=label.find(self.HOTKEY_MARKER)
         if n != -1:
             label=label.replace(self.HOTKEY_MARKER,'')
-            label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
+            #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
         self.label=label
         
 
@@ -63,19 +70,22 @@ class Component:
         l = []
         p=self.parent
         while p is not None:
-            if p in l:
-                raise Exception("circular parent")
             l.append(p)
             p = p.parent
         return l
   
     def get_url_path(self):
-        return "/".join(
-          [p.name for p in self.parents() if len(p.name)]
-            + [self.name])
+        if self.parent:
+            s=self.parent.get_url_path() + "/"
+        else:
+            s='/'
+        return s + self.name
+        #~ return "/".join(
+          #~ [p.name for p in self.parents() if len(p.name)]
+            #~ + [self.name])
 
     def as_html(self,level=None):
-        return '<a href="/%s">%s</a>' % (self.get_url_path(),self.label)
+        return mark_safe('<a href="%s">%s</a>' % (self.get_url_path(),self.label))
         
 class MenuItem(Component):
     pass
@@ -141,10 +151,10 @@ class Menu(MenuItem):
             s = ''
         else:
             s = Component.as_html(self) + "&nbsp;: "
-        s += '<ul class="menu%d">' % level
+        s += '\n<ul class="menu%d">' % level
         for mi in self.items:
-            s += '<li>%s</li>' % mi.as_html(level+1)
-        s += '</ul>\n'
+            s += '\n<li>%s</li>' % mi.as_html(level+1)
+        s += '\n</ul>\n'
         return mark_safe(s)
         
     def get_urls(self,name=''):
@@ -164,6 +174,7 @@ class Menu(MenuItem):
         
     def view(self,request):
         context = dict(
+            title=self.label,
             menu=self,
             main_menu=settings.MAIN_MENU,
         )

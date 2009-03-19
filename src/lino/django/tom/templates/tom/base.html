@@ -64,8 +64,10 @@ ul.menu1 { padding: 0pt 0pt ;}
 <div id="breadcrumbs">
 {% block breadcrumbs %}
 <a href="/">home</a>
+/ <a href="/menu/">menu</a>
 / <a href="/admin/">admin</a>
 / <a href="/db/">databrowse</a>
+{{ main_menu.as_html}}
 <!--
 <br><b>Contacts:</b> 
 <a href="/edit/Contacts">Contacts</a>
