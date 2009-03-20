@@ -19,7 +19,7 @@
 {% for row in context.rows %}
 <tr>
 <td>{{ row.links }}</td>
-<td>{{ row.rownum }}{{ row.form.pk }}</td>
+<td>{{ row.number }}{{ row.pk_field }} </td>
 {% if context.can_delete %}
 <td>{{ row.form.DELETE }}</td>
 {% endif %}

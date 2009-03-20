@@ -144,6 +144,10 @@ class Row(object):
     def get_url_path(self):
         return request_again(self.request,row=self.number)
         
+    def pk_field(self):
+        # used in grid_form.html
+        return self.form[self.queryset.model._meta.pk.name]
+        
 class Column(object):
     is_formfield = False
     def __init__(self, rpt, label,index):
@@ -349,7 +353,7 @@ class Report(object):
         if fmt == "show":
             return self.as_show(request)
         if fmt == "text":
-            return self.astext()
+            return self.as_text()
         raise Exception("%r : invalid format" % fmt)
         
     def as_text(self, **kw):
@@ -635,10 +639,12 @@ class ViewReportRenderer(ReportRenderer):
             page=self.page
             num_pages=self.page.paginator.num_pages
             get_name="pgn"
+            page_str="Page"
         else:
             page=self.row
             num_pages=self.queryset.count()
             get_name="row"
+            page_str="Row"
             
         text="&lt;&lt;Previous"
         if page.has_previous():
@@ -652,8 +658,8 @@ class ViewReportRenderer(ReportRenderer):
             s += text
         
         s += """
-        <span class="current"> Page %d of %d. </span>
-        """ % (page.number, num_pages)
+        <span class="current"> %s %d of %d. </span>
+        """ % (page_str, page.number, num_pages)
         s += """
         </span>
         </div>
@@ -704,14 +710,13 @@ class FormReportRenderer(ViewReportRenderer):
     can_order=False
     
     def __init__(self,
-                 report,
-                 editable=True):
-        self.editable=editable
+                 report):
         ViewReportRenderer.__init__(self,report)
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 
         # fields and not of fieldnames.
+        #formfields = [ report.queryset.model._meta.pk.name ]
         formfields = [col.field.name for col in self.columns if col.is_formfield]
         rowform_class = modelform_factory(report.queryset.model,
                                           fields=formfields)
@@ -724,7 +729,7 @@ class FormReportRenderer(ViewReportRenderer):
         self.formset_class.model = report.queryset.model
         
     def new_column(self,field,index):
-        if self.editable and field.editable and not field.primary_key:
+        if field.editable and not field.primary_key:
             return FormFieldColumn(self,field,index)
         return FieldColumn(self,field,index)
         
@@ -757,8 +762,11 @@ class FormReportRenderer(ViewReportRenderer):
                     #print [unicode(form.instance) for form in fs.deleted_forms]
                     for form in fs.deleted_forms:
                         print "Deleted:", form.instance
-                    # start from begin because paginator and page must reload
-                    return HttpResponseRedirect(request.path)
+                        
+                # start from begin because paginator and page must reload
+                # e.g. if an instance has been added, it will now be at a different row
+                # and the page count may have changed
+                return HttpResponseRedirect(request.path)
                     
         else:
             fs = self.formset_class(queryset=self.page.object_list)

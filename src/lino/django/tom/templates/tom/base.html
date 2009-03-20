@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-<title>{% block title %}{{ title }}{% endblock %}</title>
+<title>{% block title %}{{ context.title }}{% endblock %}</title>
 {% block style %}
 <style type="text/css">
 * { margin:0; padding:0; }
@@ -67,7 +67,7 @@ ul.menu1 { padding: 0pt 0pt ;}
 / <a href="/menu">menu</a>
 / <a href="/admin/">admin</a>
 / <a href="/db/">databrowse</a>
-{{ main_menu.as_html}}
+{{ context.main_menu.as_html}}
 {% endblock breadcrumbs %}
 </div>
 <div id="navigation">
