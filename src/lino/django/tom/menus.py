@@ -97,9 +97,9 @@ class Action(MenuItem):
                  hotkey=None,
                  *args,**kw):
         if name is None:
-            name=actor.getName()
+            name=actor.name
         if label is None:
-            label=actor.getLabel()
+            label=actor.label
         Component.__init__(self,parent,name,label,*args,**kw)
         self.actor=actor
         self.hotkey=hotkey

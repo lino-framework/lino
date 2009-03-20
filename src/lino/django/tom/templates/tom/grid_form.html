@@ -1,0 +1,36 @@
+{% extends "tom/report.html" %}
+
+{% block content %}
+
+<form action="" method="POST">
+{{ formset.management_form }}
+<table>
+<tr>
+<td>links</td>
+<td>rownum</td>
+{% if context.can_delete%}
+<th>Delete</th>
+{% endif %}
+{% for col in context.columns %}
+<th>{{ col.getLabel }}</th>
+{% endfor %}
+</tr>
+
+{% for row in context.rows %}
+<tr>
+<td>{{ row.links }}</td>
+<td>{{ row.rownum }}{{ row.form.pk }}</td>
+{% if context.can_delete %}
+<td>{{ row.form.DELETE }}</td>
+{% endif %}
+{% for cell in row %}
+<td>{{ cell }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+
+</table>
+<input type="submit" value="Save" />
+</form>
+
+{% endblock content %}

@@ -76,10 +76,10 @@ class TestCase(TestCase):
         m = Menu("main","Main menu")
         def setup_menu(menu):
             m = menu.addMenu("m1","~Contacts")
-            m.addAction(Contacts().as_form())
-            m.addAction(Persons().as_form())
+            m.addAction(Contacts())
+            m.addAction(Persons())
             m = menu.addMenu("m2","~Products")
-            m.addAction(Products().as_form())
+            m.addAction(Products())
         setup_menu(m)
         s=m.as_html()
         #print "\n"+s

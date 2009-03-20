@@ -23,9 +23,9 @@ from models import Units, UnitsPerParent, Entries
 #
 def setup_menu(menu):
     m = menu.addMenu("voc","Vocabulary")
-    m.addAction(Units().as_form(),label="List of All Units",)
-    m.addAction(UnitsPerParent(None).as_form(),name="tree",label="Table of Contents")
-    m.addAction(Entries().as_form(),label="List of Entries",)
+    m.addAction(Units(),label="List of All Units",)
+    m.addAction(UnitsPerParent(None),name="tree",label="Table of Contents")
+    m.addAction(Entries(),label="List of Entries",)
 
 #~ def setup_menu(menu):
     #~ m = menu.addMenu("Vocabulary")

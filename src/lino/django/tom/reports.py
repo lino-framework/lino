@@ -55,7 +55,7 @@ WIDTHS = {
 
 
 
-def again(request,**kw):
+def request_again(request,**kw):
     req=request.GET.copy()
     for k,v in kw.items():
         req[k] = v
@@ -93,51 +93,56 @@ def vfill(lines,valign,height):
         
 class Cell(object):
     def __init__(self,row,column):
+        assert row is not None
         self.row = row
         self.column = column
         
     def __unicode__(self):
-        return unicode(self.column.cell_value(
-          self.row.form.instance,self.row.form))
+        value = self.column.cell_value(
+          self.row.instance,self.row.form)
+        if value is None:
+            return ''
+        return unicode(value)
         
         
 class Row(object):
-    def __init__(self,rpt,request,queryset,instance,form,rownum):
-        self.request = request
-        self.rownum = rownum
-        self.rpt = rpt
+    def __init__(self,renderer,instance,number,form=None):
+        self.renderer = renderer
+        self.rpt = renderer.report
+        self.queryset = renderer.queryset
+        self.request = renderer.request
+        self.number = number
         self.instance = instance
-        self.form=form
-        self.queryset=queryset
+        self.form = form
       
     def __iter__(self):
-        for col in self.rpt.columns:
+        for col in self.renderer.columns:
             cell = Cell(self, col)
             yield cell
             
     def links(self):
         l=[]
         l.append('<a href="%s">page</a>' % self.get_url_path())
-        l.append('<a href="%s">row</a>' % self.form.instance.get_url_path())
+        l.append('<a href="%s">row</a>' % self.instance.get_url_path())
         #print "<br/>".join(l)
         return mark_safe("<br/>".join(l))
 
     def has_previous(self):
-        return self.rownum > 1
+        return self.number > 1
     def has_next(self):
         #print "Row.has_next() : ", self.rownum, self.queryset.count()
-        return self.rownum < self.queryset.count()
+        return self.number < self.queryset.count()
     def previous(self):
-        return again(self.request,row=self.rownum-1)
+        return request_again(self.request,row=self.number-1)
         #~ req=self.request.GET.copy()
         #~ req["row"] = self.rownum-1
         #~ return mark_safe(self.request.path + "?" + req.urlencode())
     def next(self):
-        return again(self.request,row=self.rownum+1)
+        return request_again(self.request,row=self.number+1)
         #return self.rownum+1
             
     def get_url_path(self):
-        return again(self.request,row=self.rownum)
+        return request_again(self.request,row=self.number)
         
 class Column(object):
     is_formfield = False
@@ -239,6 +244,11 @@ class ReportParameterForm(forms.Form):
     #~ pgn = forms.IntegerField(required=False,label="Page number") 
     #~ pgl = forms.IntegerField(required=False,label="Rows per page")
     flt = forms.CharField(required=False,label="Text filter")
+    fmt = forms.ChoiceField(required=False,label="Format",choices=(
+      ( 'form', "editable form" ),
+      ( 'show', "read-only display" ),
+      ( 'text', "plain text" ),
+    ))
     
 
 #        
@@ -272,21 +282,20 @@ class Report(object):
     #columnWidths = None
     columnNames = None
     #rowHeight = None
-    form_class = None
     label = None
     param_form = ReportParameterForm
     default_filter=''
-    default_format='grid'
+    default_format='form'
     #editable=True
+    name=None
     
     def __init__(self):
         self.groups = [] # for later
         self.totals = [] # for later
         if self.label is None:
             self.label = self.__class__.__name__
-        #~ if self.form_class is None:
-            #~ self.form_class = modelform_factory(self.queryset.model)
-        
+        if self.name is None:
+            self.name = self.__class__.__name__.lower()
         
     def build_columns(self,rnd):
         columns = []
@@ -328,12 +337,29 @@ class Report(object):
     def __unicode__(self):
         #return unicode(self.as_text())
         return unicode("%d row(s)" % self.queryset.count())
+    
+    def get_urls(self,name):
+        l = [ url(r'^%s$' % name, self.view) ]
+        return l
+
+    def view(self,request):
+        fmt = request.GET.get("fmt",self.default_format)
+        if fmt == "form":
+            return self.as_form(request)
+        if fmt == "show":
+            return self.as_show(request)
+        if fmt == "text":
+            return self.astext()
+        raise Exception("%r : invalid format" % fmt)
         
     def as_text(self, **kw):
         return TextReportRenderer(self,**kw).render()
         
-    def as_form(self, **kw):
-        return FormReportRenderer(self,**kw)
+    def as_show(self, request):
+        return ViewReportRenderer(self).view(request)
+
+    def as_form(self, request):
+        return FormReportRenderer(self).view(request)
 
     #~ def get_urls_old(self,name):
         #~ urlpatterns = patterns('',
@@ -363,16 +389,13 @@ class ReportRenderer:
     def __init__(self,report):
         self.report = report      
         self.columns = report.build_columns(self)
-
+        self.title = self.report.label
 
     def new_column(self,field,index):
         return FieldColumn(self,field,index)
         
-    def getLabel(self):
-        return self.report.getLabel()
-        
-    def getName(self):
-        return self.report.__class__.__name__.lower()
+    #~ def getLabel(self):
+        #~ return self.report.label
         
 
 class TextReportRenderer(ReportRenderer):
@@ -386,7 +409,6 @@ class TextReportRenderer(ReportRenderer):
                   column_widths=None,
                   rowHeight=None,
                   flt=None):
-        ReportRenderer.__init__(self,report)
         self.width=width
         self.columnWidths=columnWidths
         self.column_widths = column_widths
@@ -394,8 +416,9 @@ class TextReportRenderer(ReportRenderer):
         self.columnHeaderSep=columnHeaderSep
         self.columnSep=columnSep
         if flt is None:
-            flt=self.report.default_filter
+            flt=report.default_filter
         self.flt=flt
+        ReportRenderer.__init__(self,report)
                              
                              
   
@@ -476,16 +499,17 @@ class TextReportRenderer(ReportRenderer):
 
 
     def render(self):
-        writer=StringIO()
         self.computeWidths()
         wrappers = []
         for col in self.columns:
             wrappers.append(TextWrapper(col.width))
         width = self.width + len(self.columnSep)*(len(self.columns)-1)
 
+        writer=StringIO()
+        
         # renderHeader
 
-        title=self.report.getTitle()
+        title=self.title
         if title is not None:
             writer.write(title+"\n")
             writer.write("="*len(title)+"\n")
@@ -560,22 +584,130 @@ class TextReportRenderer(ReportRenderer):
         s=columnSep.join(l)
         return s.rstrip()+"\n"
         
-        
-        
-class FormReportRenderer(ReportRenderer):
 
+class ViewReportRenderer(ReportRenderer):
+  
     page_length = 15
+    max_num=0
+    start_page=1
+    form_class=None
+    
+    def again(self,**kw):
+        return request_again(self.request,**kw)
+        
+    def setup(self,request):
+        self.params = self.report.param_form(request.GET)
+        if self.params.is_valid():
+            flt = self.params.cleaned_data.get('flt',self.report.default_filter)
+        else: 
+            flt = self.report.default_filter
+        self.queryset = self.report._build_queryset(flt)
+        self.main_menu = settings.MAIN_MENU
+        if self.form_class is None:
+            self.form_class = modelform_factory(self.queryset.model)
+        
+    def setup_page(self,request):
+        pgn = request.GET.get('pgn')
+        if pgn is None:
+            pgn = self.start_page
+        else:
+            pgn=int(pgn)
+        pgl = request.GET.get('pgl')
+        if pgl is None:
+            pgl = self.page_length
+        else:
+            pgl = int(pgl)
+      
+        paginator = Paginator(self.queryset,pgl)
+        try:
+            page = paginator.page(pgn)
+        except (EmptyPage, InvalidPage):
+            page = paginator.page(paginator.num_pages)
+        self.page=page
+        
+    def navigator(self):
+        s="""
+        <div class="pagination">
+        <span class="step-links">
+        """
+        if hasattr(self,"page"):
+            assert not hasattr(self,"row")
+            page=self.page
+            num_pages=self.page.paginator.num_pages
+            get_name="pgn"
+        else:
+            page=self.row
+            num_pages=self.queryset.count()
+            get_name="row"
+            
+        text="&lt;&lt;Previous"
+        if page.has_previous():
+            s += '<a href="%s">%s</a>' % (self.again(**{get_name: page.number-1}),text)
+        else:
+            s += text
+        text="Next&gt;&gt;"
+        if page.has_next():
+            s += '<a href="%s">%s</a>' % (self.again(**{get_name: page.number+1}),text)
+        else:
+            s += text
+        
+        s += """
+        <span class="current"> Page %d of %d. </span>
+        """ % (page.number, num_pages)
+        s += """
+        </span>
+        </div>
+        """     
+        return mark_safe(s)
+      
+      
+      
+            
+    def view(self,request):
+        self.request=request
+        self.setup(request)
+        row = request.GET.get('row')
+        if row is None:
+            self.setup_page(request)
+            return self.view_many(request)
+            
+        rownum=int(row)
+        try:
+            obj=self.queryset[rownum-1]
+        except IndexError:
+            rownum=self.queryset.count()
+            obj=self.queryset[rownum-1]
+        return self.view_one(request,rownum,obj)
+            
+    def rows(self):
+        rownum = self.page.start_index()
+        for obj in self.page.object_list:
+            yield Row(self,obj,rownum)
+            rownum += 1
+
+    def view_many(self,request):
+        return render_to_response("tom/grid_show.html",dict(context=self))
+      
+    def view_one(self,request,rownum,obj):
+        self.row = Row(self,obj,rownum)
+        meta = self.queryset.model._meta
+        l=[ 
+           "tom/%s_show.html" % meta.db_table, 
+           "tom/show.html"]
+        t=select_template(l)
+        return HttpResponse(t.render(Context(dict(context=self))))
+
+
+class FormReportRenderer(ViewReportRenderer):
     extra=1
     can_delete=True
     can_order=False
-    max_num=0
-    start_page=1
     
     def __init__(self,
                  report,
                  editable=True):
         self.editable=editable
-        ReportRenderer.__init__(self,report)
+        ViewReportRenderer.__init__(self,report)
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 
@@ -591,97 +723,33 @@ class FormReportRenderer(ReportRenderer):
               can_delete=self.can_delete)
         self.formset_class.model = report.queryset.model
         
-        
-                  
     def new_column(self,field,index):
         if self.editable and field.editable and not field.primary_key:
             return FormFieldColumn(self,field,index)
         return FieldColumn(self,field,index)
         
-    def get_urls(self,name):
-        l = [ url(r'^%s$' % name, self.view) ]
-        #for col in self.columns:
-        #  l += col.get_urls(name)
-        return l
-
-    def view(self,request):
-      
-        params = self.report.param_form(request.GET)
-        if params.is_valid():
-            flt = params.cleaned_data['flt'] or self.report.default_filter
-        else: 
-            flt = self.report.default_filter
-        qs = self.report._build_queryset(flt)
-        
-        context = dict(
-            main_menu=settings.MAIN_MENU,
-            report=self.report,
-            title=self.report.label,
-            params=params)
-      
-        row = request.GET.get('row')
-        if row is None:
-            return self.view_many(request,qs,context)
-            
-        return self.view_one(request,qs,context,row)
-            
-
-
-    def view_one(self,request,qs,context,row):
-        rownum=int(row)
-        try:
-            obj=qs[rownum-1]
-        except IndexError:
-            rownum=qs.count()
-            obj=qs[rownum-1]
-        
+    def view_one(self,request,rownum,obj):
         if request.method == 'POST':
             frm=self.form_class(request.POST,instance=obj)
             if frm.is_valid():
                 frm.save()
         else:
             frm=self.form_class(instance=obj)      
-        context.update(
-            form=frm,
-        )
+        self.form = frm
         
-        row = Row(self.report,request,qs,obj,frm,rownum)
-        
-        context.update(
-            params=params,
-            row=row,
-            object=obj,
-        )
+        self.row = Row(self,obj,rownum,frm)
         meta = self.queryset.model._meta
         l=[ 
            "tom/%s_form.html" % meta.db_table, 
            "tom/form.html"]
         t=select_template(l)
-        return HttpResponse(t.render(Context(context)))
+        return HttpResponse(t.render(Context(dict(context=self))))
         
-    def view_many(self,request,qs,context):
-        
-        pgn = request.GET.get('pgn')
-        if pgn is None:
-            pgn = self.start_page
-        else:
-            pgn=int(pgn)
-        pgl = request.GET.get('pgl')
-        if pgl is None:
-            pgl = self.page_length
-        else:
-            pgl = int(pgl)
-      
-      
-        paginator = Paginator(qs,pgl)
-        try:
-            page = paginator.page(pgn)
-        except (EmptyPage, InvalidPage):
-            page = paginator.page(paginator.num_pages)
+    def view_many(self,request):
         
         if request.method == 'POST':
             fs = self.formset_class(request.POST,
-                    queryset=page.object_list)
+                    queryset=self.page.object_list)
             if fs.is_valid():
                 fs.save()
                 
@@ -693,26 +761,15 @@ class FormReportRenderer(ReportRenderer):
                     return HttpResponseRedirect(request.path)
                     
         else:
-            fs = self.formset_class(queryset=page.object_list)
-        context.update(formset=fs)
-            
-        rownum = page.start_index()
-        rows = []
-        if self.editable:
-            for form in fs.forms:
-                rows.append(Row(self,request,qs,form.instance,form,rownum))
-                rownum += 1
-        else:
-            for obj in page.object_list:
-                rows.append(Row,self,request,qs,obj,rownum)
-                rownum += 1
-          
-        context.update(
-            page=page,
-            rows=rows,
-        )
-        return render_to_response("tom/grid.html",context)
+            fs = self.formset_class(queryset=self.page.object_list)
+        self.formset=fs
+        return render_to_response("tom/grid_form.html",dict(context=self))
 
+    def rows(self):
+        rownum = self.page.start_index()
+        for form in self.formset.forms:
+            yield Row(self,form.instance,rownum,form)
+            rownum += 1
 
     
     

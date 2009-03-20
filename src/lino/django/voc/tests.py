@@ -139,6 +139,8 @@ propre, propre
         s=rpt.as_text(column_widths=dict(id=3,title=30,parent=20,seq=3))
         #print "\n"+s
         self.assertEquals(s.split(),u"""
+Units
+=====
 ID |title                         |name     |parent              |seq|format
 ---+------------------------------+---------+--------------------+---+---------
 1  |Prantsuse keele kurs          |pkk      |                    |1  |R

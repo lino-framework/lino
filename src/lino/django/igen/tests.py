@@ -77,6 +77,8 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         s=Companies().as_text(column_widths=dict(companyName=20,country=12))
         #print "\n"+s
         self.assertEquals(s.split(),u"""
+Companies
+=========
 companyName         |country     |title         |firstName     |lastName
 --------------------+------------+--------------+--------------+--------------
 Bernd Brecht        |Germany     |Herr          |Bernd         |Brecht

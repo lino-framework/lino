@@ -157,11 +157,12 @@ class Country(TomModel):
         return self.name
         
     def contacts(self):
-        return ", ".join([unicode(c) for c in self.contact_set.all()])
-        return mark_safe(", ".join([linkto(c.get_url_path(),unicode(c)) 
-          for c in self.contact_set.all()]))
-    #contacts.allow_tags=True
-    contacts.short_description='List of Contacts here'
+        return ContactsByCountry(self)
+        #~ return ", ".join([unicode(c) for c in self.contact_set.all()])
+        #~ return mark_safe(", ".join([linkto(c.get_url_path(),unicode(c)) 
+          #~ for c in self.contact_set.all()]))
+    #~ #contacts.allow_tags=True
+    #~ contacts.short_description='List of Contacts here'
         
 #~ class Region(models.Model):
     #~ name = models.CharField(max_length=200)
@@ -297,6 +298,16 @@ class Persons(reports.Report):
     queryset=Contact.objects.filter(companyName__exact=None)\
       .order_by("lastName","firstName")
     columnNames="title firstName lastName country"
+    
+class ContactsByCountry(reports.Report):
+    
+    def __init__(self,country,**kw):
+        self.country=country
+        reports.Report.__init__(self,**kw)
+        
+    def get_queryset(self):
+        return self.country.contact_set.order_by("city","addr1")
+    
 
 class Countries(reports.Report):
     queryset=Country.objects.order_by("isocode")
