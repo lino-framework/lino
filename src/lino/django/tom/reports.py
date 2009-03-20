@@ -92,12 +92,13 @@ def vfill(lines,valign,height):
         raise ConfigError("vfill() : %s" % repr(valign))
         
 class Cell(object):
-    def __init__(self,row,column,index):
+    def __init__(self,row,column):
         self.row = row
         self.column = column
         
     def __unicode__(self):
-        return unicode(self.column.cell_value(self))
+        return unicode(self.column.cell_value(
+          self.row.form.instance,self.row.form))
         
         
 class Row(object):
@@ -658,16 +659,16 @@ class FormReportRenderer(ReportRenderer):
         t=select_template(l)
         return HttpResponse(t.render(Context(context)))
         
-    def view_many(self,request,qs,context,row):
+    def view_many(self,request,qs,context):
         
         pgn = request.GET.get('pgn')
         if pgn is None:
-            pgn = self.report.start_page
+            pgn = self.start_page
         else:
             pgn=int(pgn)
         pgl = request.GET.get('pgl')
         if pgl is None:
-            pgl = self.report.page_length
+            pgl = self.page_length
         else:
             pgl = int(pgl)
       
@@ -679,7 +680,8 @@ class FormReportRenderer(ReportRenderer):
             page = paginator.page(paginator.num_pages)
         
         if request.method == 'POST':
-            fs = self.formset_class(request.POST,queryset=page.object_list)
+            fs = self.formset_class(request.POST,
+                    queryset=page.object_list)
             if fs.is_valid():
                 fs.save()
                 
@@ -741,6 +743,7 @@ def edit_instance(request,app,model,pk):
     context=dict(
       title=unicode(obj),
       form=frm,
+      main_menu = settings.MAIN_MENU,
     )
     return render_to_response("tom/instance.html",context)
     

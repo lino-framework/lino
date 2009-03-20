@@ -99,5 +99,8 @@ class TomModel(models.Model):
         #~ return (self.__class__.view, [str(self.pk)])
 
     def get_url_path(self):
-        return '/edit/%s/%s/' % (self._meta.db_table,self.pk)
+        return '/edit/%s/%s/%s' % (
+          self._meta.app_label,
+          self.__class__.__name__, 
+          self.pk)
         

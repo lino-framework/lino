@@ -22,6 +22,7 @@ from lino.django.tom.validatingmodel import TomModel, ModelValidationError
 from lino.django.tom.reports import Report
 from django.db import models
 from django.forms.models import modelform_factory, formset_factory
+from django.conf import settings
 
 class Contact(TomModel):
     #id_code = models.CharField(max_length=6,primary_key=True)
@@ -34,11 +35,32 @@ class Contact(TomModel):
 
 class Contacts(Report):
     columnNames = "lname fname"
+    
+    
+    
+    
+
+class ClientTest(TestCase):
+    def test01(self):
+        for url in (
+          '/menu',
+          '/menu/contacts',
+          '/menu/contacts/contacts',
+          '/edit/igen/Contact/1',
+        ):
+            response = self.client.get(url) # ,follow=True)
+            self.failUnlessEqual(response.status_code, 200,
+              "GET %r fails to respond" % url)
+
+   
+    
 
 class TestCase(TestCase):
     def test01(self):
         c = Contact(fname="Luc",lname="Saffre")
         c.save()
+        
+        self.assertEqual(c.get_url_path(),"/edit/tom/Contact/1")
         
         c = Contact(lname="Saffre")
         try:
@@ -48,41 +70,16 @@ class TestCase(TestCase):
         else:
             self.fail("expected ValidationError")
         
-    #~ def test02(self):
-        #~ from lino.django.tom.reports import get_reports
-        #~ s="\n".join(get_reports().keys())
-        #~ #print "\n"+s
-        #~ # this will fail if test are run for a site that 
-        #~ # doesn't have lino.django.voc and lino.django.igen
-        #~ self.assertEquals(s.split(),u"""
-#~ Persons
-#~ PaymentTerms
-#~ Contacts
-#~ Invoices
-#~ Companies
-#~ Countries
-#~ UnitsPerParent
-#~ ShippingModes
-#~ Languages
-#~ Units
-#~ ItemsByInvoice
-#~ Products
-#~ ProductCats
-#~ Entries
-#~ Report
-#~ Orders        
-        #~ """.split())
-        
     def test03(self):
         from lino.django.tom.menus import Menu
         from lino.django.igen.models import Contacts, Persons, Products
         m = Menu("main","Main menu")
         def setup_menu(menu):
             m = menu.addMenu("m1","~Contacts")
-            m.addAction(Contacts())
-            m.addAction(Persons())
+            m.addAction(Contacts().as_form())
+            m.addAction(Persons().as_form())
             m = menu.addMenu("m2","~Products")
-            m.addAction(Products())
+            m.addAction(Products().as_form())
         setup_menu(m)
         s=m.as_html()
         #print "\n"+s
@@ -102,14 +99,17 @@ class TestCase(TestCase):
 </ul>
 """.split())
 
+    #~ def test04(self):
+        #~ settings.MAIN_MENU
+
 
     def test05(self):
         form_class = modelform_factory(Contact)
         fs_class = formset_factory(form_class,can_delete=True)
         fs = fs_class()
         s=fs.as_table()
-        print "\n"+s
-        self.assertEquals(s.split(),u"""
-""".split())
+        #~ print "\n"+s
+        #~ self.assertEquals(s.split(),u"""
+#~ """.split())
         
         

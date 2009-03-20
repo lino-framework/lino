@@ -159,9 +159,9 @@ class Menu(MenuItem):
         
     def get_urls(self,name=''):
         #print "Menu.get_urls()",name
+        l=[url(r'^%s$' % name, self.view)]
         if len(name) and not name.endswith("/"):
             name += "/"
-        l=[url(r'^%s$' % name, self.view)]
         for mi in self.items:
             l += mi.get_urls(name+mi.name)
         #print urlpatterns

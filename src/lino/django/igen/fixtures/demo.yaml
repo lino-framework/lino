@@ -272,12 +272,23 @@
     name: Wooden table
     price: "199.99"
     cat: 1
-    
 - model: igen.Product
   pk: 2
   fields:
     name: Wooden chair
     price: "99.99"
+    cat: 1
+- model: igen.Product
+  pk: 3
+  fields:
+    name: Metal table
+    price: "129.99"
+    cat: 1
+- model: igen.Product
+  pk: 4
+  fields:
+    name: Metal chair
+    price: "79.99"
     cat: 1
 
 

@@ -1,8 +1,22 @@
-# Django settings for mysite, Lino's Django demo site
-# Works on Linux and Windows.
+## Copyright 2008-2009 Luc Saffre.
+## This file is part of the Lino project. 
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
 import os
 from tempfile import gettempdir
-
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -17,8 +31,7 @@ MANAGERS = ADMINS
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
 #DATABASE_NAME = ':memory:'
-DATABASE_NAME = os.path.join(gettempdir(),'mysites_igen.db') 
-
+DATABASE_NAME = os.path.join(gettempdir(),'lino_django_tests.db') 
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -44,12 +57,14 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.abspath(os.path.join(
+  os.path.dirname(__file__), '..', 'media'))
+#MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -57,7 +72,7 @@ MEDIA_URL = ''
 ADMIN_MEDIA_PREFIX = '/admin-media/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'cqt^18t(Fb#14a@s%mbtdif+ih8fscpf8l9aw+0ivo2!3c(c%&'
+SECRET_KEY = 'cqt^18t(gb#14a@s%mbtdifyih8fscpf8l9aw+0ivo2!3c(c%&'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -73,27 +88,27 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.doc.XViewMiddleware',
 )
 
-ROOT_URLCONF = 'mysites.igen.urls'
+ROOT_URLCONF = 'mysites.testsite.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    # "t:/svnwork/lino/trunk/src/mysite/templates",
     os.path.join(
       os.path.dirname(os.path.abspath(__file__)),'templates'),
 )
 
 INSTALLED_APPS = (
-#    'lino.django.nodes',
-#    'lino.django.songs',
-#    'lino.django.polls',
-#    'lino.django.contacts',
     'lino.django.igen',
-    'django.contrib.auth',
+    'lino.django.voc',
+    #'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.sites',
+    #'django.contrib.sites',
+    'django.contrib.markup',
     'django.contrib.admin',
     'django.contrib.databrowse',
+    'lino.django.tom',
 )
+
+#TEMPLATE_STRING_IF_INVALID = '%s'
