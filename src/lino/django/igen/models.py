@@ -19,6 +19,8 @@ import datetime
 from django.db import models
 #from lino.django.tom import models
 from lino.django.tom.validatingmodel import TomModel, ModelValidationError
+from lino.django.tom.layout import VBOX, HBOX
+
 from django.utils.safestring import mark_safe
 
 
@@ -41,6 +43,19 @@ class QuantityField(models.DecimalField):
         kwargs['decimal_places'] = 2
         super(QuantityField, self).__init__(*args, **kwargs)
         
+        
+#~ class SizedCharField(models.CharField):
+
+    #~ def __init__(self, size=None, *args, **kwargs):
+        #~ self.size = size
+        #~ super(SizedCharField, self).__init__(*args, **kwargs)
+        
+    #~ def formfield(self, *args, **kwargs):
+        #~ formfield = super(SizedCharField, self).formfield(*args, **kwargs)
+        #~ formfield.widget.attrs['size'] = str(self.size)
+        #~ return formfield
+
+          
 
 class Contact(TomModel):
     """
@@ -144,6 +159,31 @@ u'Example & Co (Luc Saffre)'
         return s
     as_address.allow_tags=True
 
+    def page_layout(self):
+        return VBOX(None,
+            VBOX("Names",
+              HBOX(None,"title:5 firstName:20 lastName:50"),
+              HBOX(None,"companyName:50 nationalId:15"),
+            ),
+            VBOX("Contact",
+              HBOX(None,"email"),
+              HBOX(None,"phone gsm"),
+            ),
+            VBOX("Postal Address",
+                HBOX(None,"country region"),
+                HBOX(None,"city zipCode"),
+                HBOX(None,"addr1	    "),
+                HBOX(None,"addr2	    "),
+            ),
+            HBOX("Options",
+              VBOX(None,"vatId vatExempt itemVat"),
+              VBOX(None,"language paymentTerm"),
+            ),
+            VBOX("Remarks",
+              "remarks"
+            ),
+        )
+    
 
 class Country(TomModel):
     name = models.CharField(max_length=200)
@@ -277,6 +317,8 @@ class InvoiceItem(DocumentItem):
     invoice = models.ForeignKey(Invoice) #,related_name="items")
         
         
+               
+
 #
 # report definitions
 #        

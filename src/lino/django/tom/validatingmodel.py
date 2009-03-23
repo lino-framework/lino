@@ -18,7 +18,7 @@
 
 from django import forms
 from django.db import models
-
+from lino.django.tom.layout import FIELD, VBOX
 
 """
 Thanks to 
@@ -104,3 +104,8 @@ class TomModel(models.Model):
           self.__class__.__name__, 
           self.pk)
         
+    def page_layout(self):
+        opts = self._meta
+        l = [ FIELD(f.name) for f in opts.fields + opts.many_to_many 
+            if f.editable]
+        return VBOX(None,*l)

@@ -21,6 +21,9 @@ from models import Contact, Product, Invoice
 from menu import Companies
 from django.test import TestCase
 
+from django.forms.models import modelform_factory, formset_factory
+from lino.django.tom.layout import LayoutRenderer
+
 
 class TestCase(TestCase):
     fixtures=[ 'demo.yaml' ]
@@ -89,6 +92,16 @@ Mets ja Puu OÜ      |Estonia     |              |Tõnu          |Tamme
 Minu Firma OÜ       |Estonia     |              |              |
 """.split(),"Companies().as_text() has changed in demo")
         
-        
+    def test06(self):
+        model=Contact
+        frmclass = modelform_factory(model)
+        for obj in model.objects.all():
+            frm = frmclass(instance=obj)
+            layout = LayoutRenderer(frm,obj.page_layout())
+            s = layout.as_html()
+            self.failUnless(s.startswith("<table"))
+
+
+
 ## Run these tests using "python manage.py test".
 ## see http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing

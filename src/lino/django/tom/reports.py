@@ -23,6 +23,7 @@ from textwrap import TextWrapper
 
 from lino.reports.constants import *
 from lino.misc.etc import assert_pure
+from lino.django.tom.layout import LayoutRenderer
 
 from django.db import models
 #from django import forms
@@ -794,11 +795,18 @@ def index(request):
     #~ rpt = rptclass(*args,**kw)
     #~ return rpt.view(request)
     
+
+def my_formfield_callback(f):
+    #~ if type(f) == models.CharField:
+        #~ return f.formfield(attrs=dict(size=f.max_length))
+    return f.formfield()    
+
+    
 def edit_instance(request,app,model,pk):
     model_class = models.get_model(app,model)
     #print model_class
     obj = model_class.objects.get(pk=pk)
-    form_class=modelform_factory(model_class)
+    form_class=modelform_factory(model_class,formfield_callback=my_formfield_callback)
     if request.method == 'POST':
         frm=form_class(request.POST,instance=obj)
         if frm.is_valid():
@@ -809,6 +817,7 @@ def edit_instance(request,app,model,pk):
       title=unicode(obj),
       form=frm,
       main_menu = settings.MAIN_MENU,
+      layout = LayoutRenderer(frm,obj.page_layout()),
     )
     return render_to_response("tom/instance.html",context)
     
