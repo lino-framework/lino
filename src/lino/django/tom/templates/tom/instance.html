@@ -1,28 +1,11 @@
 {% extends "tom/base_site.html" %}
 
-{% block navigation %}
-
-{{ main_menu.as_html }}
-
-{% endblock navigation %}
-
 
 {% block content %}
 
 <form action="" method="POST">
-<h1>Using layout.as_html</h1>
 {{ layout.as_html }}
 <input type="submit" value="Save" />
 </form>
-
-
-<form action="" method="POST">
-<h1>Using form.as_table</h1>
-<table>
-{{ form.as_table}}
-</table>
-<input type="submit" value="Save" />
-</form>
-
 
 {% endblock content %}

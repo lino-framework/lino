@@ -32,13 +32,18 @@ class FIELD(Element):
             self.size=None
         elif len(a) == 2:
             self.name = a[0]
-            self.size=int(a[1])
+            self.size=a[1]
             
         
     def as_html(self,renderer):
         bf = renderer.form[self.name]
         if self.size is not None:
-            bf.field.widget.attrs["size"] = str(self.size)
+            if isinstance(bf.field.widget,forms.TextInput):
+                bf.field.widget.attrs["size"] = self.size
+            elif isinstance(bf.field.widget,forms.Textarea):
+                rows,cols=self.size.split("x")
+                bf.field.widget.attrs["rows"] = rows
+                bf.field.widget.attrs["cols"] = cols
         s = bf.as_widget()
         #s = bf.as_widget(attrs=dict(size="40"))
         if bf.label:

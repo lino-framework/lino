@@ -32,10 +32,20 @@ class Contact(TomModel):
     def before_save(self):
         if len(self.fname) == 0:
           raise ModelValidationError("first name may not be empty")
+          
+class Country(TomModel):
+    isocode = models.CharField(max_length=2,primary_key=True)
+    name = models.CharField(max_length=200)
+          
 
 class Contacts(Report):
     columnNames = "lname fname"
-    
+    queryset=Contact.objects.order_by("lname","fname")
+
+class Countries(reports.Report):
+    queryset=Country.objects.order_by("isocode")
+    columnNames="isocode name"
+
     
     
     
@@ -54,6 +64,7 @@ class ClientTest(TestCase):
 
    
     
+
 
 class TestCase(TestCase):
     def test01(self):
@@ -102,14 +113,16 @@ class TestCase(TestCase):
     #~ def test04(self):
         #~ settings.MAIN_MENU
 
+    def test04(self):
+        pass
 
     def test05(self):
         form_class = modelform_factory(Contact)
-        fs_class = formset_factory(form_class,can_delete=True)
+        fs_class = formset_factory(form_class,can_delete=True,extra=1)
         fs = fs_class()
         s=fs.as_table()
-        #~ print "\n"+s
-        #~ self.assertEquals(s.split(),u"""
-#~ """.split())
+        print "\n"+s
+        self.assertEquals(s.split(),u"""
+        """.split())
         
         

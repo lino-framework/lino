@@ -102,6 +102,7 @@ u'Example & Co (Luc Saffre)'
     region = models.CharField(max_length=200,blank=True,null=True)
     
     email = models.EmailField(blank=True,null=True)
+    url = models.URLField(blank=True,null=True)
     phone = models.CharField(max_length=200,blank=True,null=True)
     gsm = models.CharField(max_length=200,blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
@@ -163,24 +164,26 @@ u'Example & Co (Luc Saffre)'
         return VBOX(None,
             VBOX("Names",
               HBOX(None,"title:5 firstName:20 lastName:50"),
-              HBOX(None,"companyName:50 nationalId:15"),
+              HBOX(None,"companyName:60 nationalId:15"),
             ),
-            VBOX("Contact",
-              HBOX(None,"email"),
-              HBOX(None,"phone gsm"),
+            HBOX("Contact",
+              VBOX(None,"email:60 url:60"),
+              VBOX(None,"phone:15 gsm:15"),
             ),
-            VBOX("Postal Address",
-                HBOX(None,"country region"),
-                HBOX(None,"city zipCode"),
-                HBOX(None,"addr1	    "),
-                HBOX(None,"addr2	    "),
-            ),
-            HBOX("Options",
-              VBOX(None,"vatId vatExempt itemVat"),
-              VBOX(None,"language paymentTerm"),
+            HBOX(None,
+              VBOX("Postal Address",
+                  HBOX(None,"country region"),
+                  HBOX(None,"city:25 zipCode:25"),
+                  HBOX(None,"addr1:60"),
+                  HBOX(None,"addr2:60"),
+              ),
+              VBOX("Options",
+                VBOX(None,"vatId vatExempt itemVat"),
+                VBOX(None,"language paymentTerm"),
+              ),
             ),
             VBOX("Remarks",
-              "remarks"
+              "remarks:6x60"
             ),
         )
     
@@ -388,4 +391,4 @@ class ItemsByInvoice(reports.Report):
     def get_queryset(self):
         return self.invoice.invoiceitem_set.order_by("pos")
         #return InvoiceItem.objects.filter(invoice=self.invoice).order_by("pos")
-    queryset=property(get_queryset)
+    #queryset=property(get_queryset)

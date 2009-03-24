@@ -150,7 +150,7 @@ class Menu(MenuItem):
         if level == 1:
             s = ''
         else:
-            s = Component.as_html(self) + "&nbsp;: "
+            s = Component.as_html(self) # + "&nbsp;: "
         s += '\n<ul class="menu%d">' % level
         for mi in self.items:
             s += '\n<li>%s</li>' % mi.as_html(level+1)

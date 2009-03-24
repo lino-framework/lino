@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-<title>{% block title %}{{ context.title }}{% endblock %}</title>
+<title>{% block title %}{{ title }}{% endblock %}</title>
 {% block style %}
 <style type="text/css">
 * { margin:0; padding:0; }
@@ -17,60 +17,105 @@ p { margin:0.5em 0 1em 0; }
 /* FILTERS */
 .filter { color:#999; font-size:0.9em; float:left; margin-bottom:10px; margin-right:20px; }
 .filter strong { color:#666; }
+
+
 /* LUC */
+
 .simple li { margin-left:5em; }
 ul.report_params { background:#5b80b2; padding:3pt;}
 ul.report_params li { display: inline; padding:1em;}
+/*
 ul.menu2 li { display: inline; padding: 0pt 3pt;}
 ul.menu2 { display: inline; padding: 3pt 0pt ;}
 ul.menu1 { padding: 0pt 0pt ;}
-table.vbox { background:#5b80b2; padding:1pt; }
+*/
+table.vbox { background:#bbbbbb; border: 1pt solid white; padding:1pt; }
 table.hbox { background:#bbbbbb; padding:1pt; }
+table.grid { background:#bbbbbb; border: 1pt solid white; border-collapse: collapse; }
+table.grid td { border: 1pt solid white; padding: 5px 5px; }
 
-/* OBJECT LISTS */
-.objectlist { clear:both; margin:0 -20px; color:#666; }
-.objectlist li a { display:block; padding:1em 20px; }
-.objectlist li a:hover { background:#5b80b2; color:#3B5572; color:#fff; text-decoration:none; }
-.related h2 { font-size: 1em; margin-bottom: 0.6em; }
-.related .objectlist li a { padding: 0.6em 20px; }
-.related .objectlist li.odd { background:#eee; }
-/* OBJECT DETAIL */
-.objectinfo { border-collapse:collapse; color:#666; margin:0 -20px; }
-.objectinfo td, .objectinfo th { padding:1em 20px; vertical-align:top; }
-.objectinfo td { width:100%; }
-.objectinfo th { text-align:left; white-space:nowrap; }
-/* MODEL GROUPS */
-.modelgroup { color:#999; font-size:0.9em; margin:0 -20px; }
-.modelgroup h2 { font-size:1.2em; margin:0; }
-.modelgroup h2 a { display: block; padding: 0.83em 20px; }
-.modelgroup h2 a:hover { text-decoration: none; color: #fff; }
-.modelgroup p { float:left; margin:-2.65em 0 0 14em; position:relative; }
-.modelgroup p a { white-space:nowrap; }
-.modelgroup a.more { color:#999; }
-.modelgroup:hover { background:#5b80b2; color:#becfe5; }
-.modelgroup:hover p a { color:#becfe5; }
-.modelgroup:hover a { color:#fff; }
-.modelgroup:hover a.more { color:#fff; }
-/* BREADCRUMBS */
-#breadcrumbs { padding:10px 0; color:#999; font-size:0.9em; }
+
+#menu ul a {
+  display: block;
+  padding: 0em;
+  font-weight: bold;
+}
+#menu ul a:link {
+  color: black; background-color: #eee;
+}
+#menu ul a:hover {
+  color: black; background-color: white;
+}
+#menu ul a:active {
+  color: white; background-color: gray;
+}
+
+#breadcrumbs { 
+  margin-left: 20em;
+  padding: 10px 10px; 
+  text-align: right;
+  color:#999; font-size:0.9em; }
+
+#content {
+  margin-left: 20em;
+  border: 1px dashed silver;
+  min-width: 16em; /* Mindestbreite (der Ueberschrift) verhindert Anzeigefehler in modernen Browsern */
+  background:#ffffff; 
+  border-bottom:1px solid #ddd; 
+  padding: 10px 10px; 
+}
+
+#navigation {
+  margin-left: 20em;
+}  
+
+#menu {
+  font-size: 0.91em;
+  float: left; 
+  width: 20em;
+  margin: 0; 
+  padding: 0;
+  border: 2pt solid white;
+}
+
+#menu li {
+  list-style: none;
+  margin: 0; padding: 0;
+}
+
+ul.menu2 {
+  margin-left: 1em; padding: 0;
+}
+
+
 /* HEADER */
+#header { 
+  margin-left: 22em;
+}
 #header a { display:block; background:#eee; color:#676868; padding:10px 20px; font-weight:bold; font-size:1em; text-decoration:none; border-bottom:1px solid #ddd; }
 #header a:hover { text-decoration:underline; }
-/* CONTENT */
-#content { background:#fff; border-bottom:1px solid #ddd; padding:0 20px; }
+
+/*
 </style>
 {% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
 <body id="{% block bodyid %}page{% endblock %}">
+<div id="menu">
+{{ main_menu.as_html}}
+</div>
 <div id="breadcrumbs">
 {% block breadcrumbs %}
 <a href="/">home</a>
 / <a href="/menu">menu</a>
 / <a href="/admin/">admin</a>
 / <a href="/db/">databrowse</a>
-{{ context.main_menu.as_html}}
 {% endblock breadcrumbs %}
+</div>
+<div id="header">
+{% block header %}
+<h1>{{title}}</h1>
+{% endblock header %}
 </div>
 <div id="navigation">
 {% block navigation %}{% endblock %}

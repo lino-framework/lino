@@ -126,7 +126,7 @@ class Row(object):
         l.append('<a href="%s">page</a>' % self.get_url_path())
         l.append('<a href="%s">row</a>' % self.instance.get_url_path())
         #print "<br/>".join(l)
-        return mark_safe("<br/>".join(l))
+        return mark_safe("\n".join(l))
 
     def has_previous(self):
         return self.number > 1
@@ -146,8 +146,15 @@ class Row(object):
         return request_again(self.request,row=self.number)
         
     def pk_field(self):
-        # used in grid_form.html
-        return self.form[self.queryset.model._meta.pk.name]
+        """
+        Used in grid_form.html
+        BaseModelFormSet.add_fields() usually adds a hidden input for the pk, which must 
+        get rendered somewhere on each row of the grid template.
+        """
+        pk=self.queryset.model._meta.pk
+        if pk.auto_created or isinstance(pk, models.AutoField):
+            return self.form[pk.name]
+        return ""
         
 class Column(object):
     is_formfield = False
@@ -301,15 +308,20 @@ class Report(object):
             self.label = self.__class__.__name__
         if self.name is None:
             self.name = self.__class__.__name__.lower()
+        #~ if self.title is None:
+            #~ self.title = self.build_title()
+        if self.queryset is None:
+            self.queryset = self.get_queryset()
+        
         
     def build_columns(self,rnd):
         columns = []
         meta = self.queryset.model._meta
         if self.columnNames:
-            for colname in self.columnNames.split():
+            for colname in self.columnNames.split() :
                 try:
-                    field,model,direct,m2m = meta.\
-                      get_field_by_name(colname)
+                    field,model,direct,m2m = \
+                      meta.get_field_by_name(colname)
                     #print field, model, direct, m2m 
                 except models.FieldDoesNotExist,e:
                     col = MethodColumn(self,colname,len(columns))
@@ -322,11 +334,10 @@ class Report(object):
                 columns.append(col)
         return columns
                 
-    def getTitle(self):
-        """
-        returns None if this report has no title
-        """
-        return self.title
+    def get_title(self):
+        #~ if self.title is None:
+            #~ return self.label
+        return self.title or self.label
         
     def getLabel(self):
         return self.label
@@ -394,7 +405,7 @@ class ReportRenderer:
     def __init__(self,report):
         self.report = report      
         self.columns = report.build_columns(self)
-        self.title = self.report.label
+        #self.title = self.report.get_title()
 
     def new_column(self,field,index):
         return FieldColumn(self,field,index)
@@ -514,7 +525,7 @@ class TextReportRenderer(ReportRenderer):
         
         # renderHeader
 
-        title=self.title
+        title=self.report.get_title()
         if title is not None:
             writer.write(title+"\n")
             writer.write("="*len(title)+"\n")
@@ -607,7 +618,7 @@ class ViewReportRenderer(ReportRenderer):
         else: 
             flt = self.report.default_filter
         self.queryset = self.report._build_queryset(flt)
-        self.main_menu = settings.MAIN_MENU
+        #self.main_menu = settings.MAIN_MENU
         if self.form_class is None:
             self.form_class = modelform_factory(self.queryset.model)
         
@@ -647,16 +658,18 @@ class ViewReportRenderer(ReportRenderer):
             get_name="row"
             page_str="Row"
             
-        text="&lt;&lt;Previous"
+        text="&#x25C4;Previous"
         if page.has_previous():
             s += '<a href="%s">%s</a>' % (self.again(**{get_name: page.number-1}),text)
         else:
             s += text
-        text="Next&gt;&gt;"
+        s += " "
+        text="Next&#x25BA;"
         if page.has_next():
             s += '<a href="%s">%s</a>' % (self.again(**{get_name: page.number+1}),text)
         else:
             s += text
+        s += " "
         
         s += """
         <span class="current"> %s %d of %d. </span>
@@ -693,7 +706,12 @@ class ViewReportRenderer(ReportRenderer):
             rownum += 1
 
     def view_many(self,request):
-        return render_to_response("tom/grid_show.html",dict(context=self))
+        context=dict(
+          context=self,
+          main_menu=settings.MAIN_MENU,
+          title=self.report.get_title(),
+        )
+        return render_to_response("tom/grid_show.html",context)
       
     def view_one(self,request,rownum,obj):
         self.row = Row(self,obj,rownum)
@@ -701,8 +719,14 @@ class ViewReportRenderer(ReportRenderer):
         l=[ 
            "tom/%s_show.html" % meta.db_table, 
            "tom/show.html"]
-        t=select_template(l)
-        return HttpResponse(t.render(Context(dict(context=self))))
+        context=dict(
+          context=self,
+          main_menu=settings.MAIN_MENU,
+          title=self.report.get_title(),
+        )
+        return render_to_response(l,context)
+        #~ t=select_template(l)
+        #~ return HttpResponse(t.render(Context(dict(context=self))))
 
 
 class FormReportRenderer(ViewReportRenderer):
@@ -719,8 +743,7 @@ class FormReportRenderer(ViewReportRenderer):
         # fields and not of fieldnames.
         #formfields = [ report.queryset.model._meta.pk.name ]
         formfields = [col.field.name for col in self.columns if col.is_formfield]
-        rowform_class = modelform_factory(report.queryset.model,
-                                          fields=formfields)
+        rowform_class = modelform_factory(report.queryset.model)#,fields=formfields)
                 
         self.formset_class = formset_factory(rowform_class,
               BaseModelFormSet, extra=self.extra, 
@@ -748,8 +771,14 @@ class FormReportRenderer(ViewReportRenderer):
         l=[ 
            "tom/%s_form.html" % meta.db_table, 
            "tom/form.html"]
-        t=select_template(l)
-        return HttpResponse(t.render(Context(dict(context=self))))
+        #t=select_template(l)
+        context=dict(
+          context=self,
+          main_menu=settings.MAIN_MENU,
+          title=self.report.get_title(),
+        )
+        return render_to_response(l,context)
+        #return HttpResponse(t.render(Context(context)))
         
     def view_many(self,request):
         
@@ -772,7 +801,12 @@ class FormReportRenderer(ViewReportRenderer):
         else:
             fs = self.formset_class(queryset=self.page.object_list)
         self.formset=fs
-        return render_to_response("tom/grid_form.html",dict(context=self))
+        context=dict(
+          context=self,
+          main_menu=settings.MAIN_MENU,
+          title=self.report.get_title(),
+        )
+        return render_to_response("tom/grid_form.html",context)
 
     def rows(self):
         rownum = self.page.start_index()

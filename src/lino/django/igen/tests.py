@@ -17,8 +17,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from models import Contact, Product, Invoice
-from menu import Companies
+from models import Contact, Product, Invoice, Country
+from models import Companies
 from django.test import TestCase
 
 from django.forms.models import modelform_factory, formset_factory
@@ -100,6 +100,18 @@ Minu Firma OÜ       |Estonia     |              |              |
             layout = LayoutRenderer(frm,obj.page_layout())
             s = layout.as_html()
             self.failUnless(s.startswith("<table"))
+            
+    def test07(self):
+        form_class = modelform_factory(Country)
+        fs_class = formset_factory(form_class,can_delete=True)
+        fs = fs_class()
+        s=fs.forms[0].as_table()
+        print "\n"+s
+        self.assertEquals(s.split(),u"""
+        """.split())
+        
+        
+            
 
 
 
