@@ -19,7 +19,7 @@
 
 from django.test import TestCase
 from lino.django.tom.validatingmodel import TomModel, ModelValidationError
-from lino.django.tom.reports import Report
+from lino.django.tom.reports import Report, ViewReportRenderer
 from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
@@ -42,7 +42,7 @@ class Contacts(Report):
     columnNames = "lname fname"
     queryset=Contact.objects.order_by("lname","fname")
 
-class Countries(reports.Report):
+class Countries(Report):
     queryset=Country.objects.order_by("isocode")
     columnNames="isocode name"
 
@@ -51,11 +51,13 @@ class Countries(reports.Report):
     
 
 class ClientTest(TestCase):
+    urls = 'mysites.demo.urls'
     def test01(self):
         for url in (
           '/menu',
           '/menu/contacts',
           '/menu/contacts/contacts',
+          '/menu/contacts/contacts/edit',
           '/edit/igen/Contact/1',
         ):
             response = self.client.get(url) # ,follow=True)
@@ -63,6 +65,21 @@ class ClientTest(TestCase):
               "GET %r fails to respond" % url)
 
    
+    def test04(self):
+        response = self.client.get('/menu/contacts/contacts')
+        s = "\n".join([repr(c) for c in response.context])
+        s = response.context[0].get("context").navigator()
+        print "\n"+s
+        self.assertEquals(s.split(),u"""
+        <div class="pagination">
+        <span class="step-links">
+        &#x25C4;Previous Next&#x25BA;
+        <span class="current"> Page 1 of 1. </span>
+        Format:  <a href="/menu/contacts/contacts/menu/contacts/contacts">show</a> <a href="/menu/contacts/contacts/menu
+/contacts/contacts/edit">edit</a> <a href="/menu/contacts/contacts/menu/contacts/contacts/text">text</a>
+        </span>
+        </div>        
+        """.split())
     
 
 
@@ -96,13 +113,13 @@ class TestCase(TestCase):
         #print "\n"+s
         self.assertEquals(s.split(),u"""
 <ul class="menu1">
-<li><a href="/main/m1">Contacts</a>&nbsp;:
+<li><a href="/main/m1">Contacts</a>
 <ul class="menu2">
 <li><a href="/main/m1/contacts">Contacts</a></li>
 <li><a href="/main/m1/persons">Persons</a></li>
 </ul>
 </li>
-<li><a href="/main/m2">Products</a>&nbsp;:
+<li><a href="/main/m2">Products</a>
 <ul class="menu2">
 <li><a href="/main/m2/products">Products</a></li>
 </ul>
@@ -113,16 +130,27 @@ class TestCase(TestCase):
     #~ def test04(self):
         #~ settings.MAIN_MENU
 
-    def test04(self):
-        pass
+    #~ def test04(self):
+        #~ rpt=Contacts()
+        #~ rnd=ViewReportRenderer(rpt,"test")
+        #~ response = rnd.view(self.client.request())
+        #~ s=rnd.navigator()
+        #~ #print "\n"+s
+        #~ self.assertEquals(s.split(),u"""
+        #~ """.split())
+        
 
     def test05(self):
         form_class = modelform_factory(Contact)
         fs_class = formset_factory(form_class,can_delete=True,extra=1)
         fs = fs_class()
         s=fs.as_table()
-        print "\n"+s
+        #print "\n"+s
         self.assertEquals(s.split(),u"""
+<input type="hidden" name="form-TOTAL_FORMS" value="1" id="id_form-TOTAL_FORMS" /><input type="hidden" name="form-INITIAL_FORMS" value="0" id="id_form-INITIAL_FORMS" />
+<tr><th><label for="id_form-0-fname">Fname:</label></th><td><input id="id_form-0-fname" type="text" name="form-0-fname" maxlength="20" /></td></tr>
+<tr><th><label for="id_form-0-lname">Lname:</label></th><td><input id="id_form-0-lname" type="text" name="form-0-lname" maxlength="20" /></td></tr>
+<tr><th><label for="id_form-0-DELETE">Delete:</label></th><td><input type="checkbox" name="form-0-DELETE" id="id_form-0-DELETE" /></td></tr>        
         """.split())
         
         

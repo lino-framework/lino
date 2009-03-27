@@ -23,6 +23,9 @@ from tempfile import gettempdir
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
+#TEMPLATE_STRING_IF_INVALID = 'foo'
+
 
 ADMINS = (
     ('Luc Saffre', 'luc.saffre@gmx.net'),
@@ -116,5 +119,3 @@ INSTALLED_APPS = (
 )
 
 
-
-#TEMPLATE_STRING_IF_INVALID = '%s'

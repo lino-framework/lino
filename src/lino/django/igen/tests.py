@@ -106,8 +106,11 @@ Minu Firma OÜ       |Estonia     |              |              |
         fs_class = formset_factory(form_class,can_delete=True)
         fs = fs_class()
         s=fs.forms[0].as_table()
-        print "\n"+s
+        #print "\n"+s
         self.assertEquals(s.split(),u"""
+<tr><th><label for="id_form-0-name">Name:</label></th><td><input id="id_form-0-name" type="text" name="form-0-name" maxlength="200" /></td></tr>
+<tr><th><label for="id_form-0-isocode">Isocode:</label></th><td><input id="id_form-0-isocode" type="text" name="form-0-isocode" maxlength="2" /></td></tr>
+<tr><th><label for="id_form-0-DELETE">Delete:</label></th><td><input type="checkbox" name="form-0-DELETE" id="id_form-0-DELETE" /></td></tr>
         """.split())
         
         

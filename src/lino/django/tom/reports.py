@@ -19,6 +19,7 @@
 
 import types
 from StringIO import StringIO # cStringIO doesn't support Unicode
+import cStringIO
 from textwrap import TextWrapper
 
 from lino.reports.constants import *
@@ -36,6 +37,10 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.template.loader import select_template, Context
+
+# l:\snapshot\xhtml2pdf
+import ho.pisa as pisa
+
 
 
 #~ from django import template
@@ -56,11 +61,17 @@ WIDTHS = {
 
 
 
-def request_again(request,**kw):
+def request_again(request,*args,**kw):
     req=request.GET.copy()
     for k,v in kw.items():
         req[k] = v
-    return mark_safe(request.path + "?" + req.urlencode())
+    pth=request.path
+    if len(args):
+        pth += "/" + "/".join(args)
+    s=req.urlencode()
+    if len(s):
+        pth += "?" + s
+    return mark_safe(pth)
 
 
 def hfill(s,align,width):
@@ -256,11 +267,11 @@ class ReportParameterForm(forms.Form):
     #~ pgn = forms.IntegerField(required=False,label="Page number") 
     #~ pgl = forms.IntegerField(required=False,label="Rows per page")
     flt = forms.CharField(required=False,label="Text filter")
-    fmt = forms.ChoiceField(required=False,label="Format",choices=(
-      ( 'form', "editable form" ),
-      ( 'show', "read-only display" ),
-      ( 'text', "plain text" ),
-    ))
+    #~ fmt = forms.ChoiceField(required=False,label="Format",choices=(
+      #~ ( 'form', "editable form" ),
+      #~ ( 'show', "read-only display" ),
+      #~ ( 'text', "plain text" ),
+    #~ ))
     
 
 #        
@@ -355,27 +366,43 @@ class Report(object):
         return unicode("%d row(s)" % self.queryset.count())
     
     def get_urls(self,name):
-        l = [ url(r'^%s$' % name, self.view) ]
+        l = []
+        #l += [ url(r'^%s/edit$' % name, self.as_form) ]
+        #l += [ url(r'^%s/text$' % name, self.as_text) ]
+        #l += [ url(r'^%s/show$' % name, self.as_show) ]
+        #l += [ url(r'^%s$' % name, self.view) ]
+        #l += [ url(r'^%s' % name, self.view) ]
+        #l += [ url(r'^%s$' % name, self.as_show) ]
+        l += [ url(r'^%s$' % name, ViewReportRenderer(self,name).view)]
+        l += [ url(r'^%s/edit$' % name, FormReportRenderer(self,name).view)]
+        l += [ url(r'^%s/pdf$' % name, PdfReportRenderer(self,name).view)]
         return l
 
-    def view(self,request):
-        fmt = request.GET.get("fmt",self.default_format)
-        if fmt == "form":
-            return self.as_form(request)
-        if fmt == "show":
-            return self.as_show(request)
-        if fmt == "text":
-            return self.as_text()
-        raise Exception("%r : invalid format" % fmt)
+    #~ def view(self,request):
+        #~ if request.path.endswith("edit"):
+            #~ return self.as_form(request)
+        #~ if request.path.endswith("text"):
+            #~ return self.as_text()
+        #~ return self.as_show(request)
+        
+    #~ def view(self,request):
+        #~ fmt = request.GET.get("fmt",self.default_format)
+        #~ if fmt == "form":
+            #~ return self.as_form(request)
+        #~ if fmt == "show":
+            #~ return self.as_show(request)
+        #~ if fmt == "text":
+            #~ return self.as_text()
+        #~ raise Exception("%r : invalid format" % fmt)
         
     def as_text(self, **kw):
         return TextReportRenderer(self,**kw).render()
         
-    def as_show(self, request):
-        return ViewReportRenderer(self).view(request)
+    #~ def as_show(self, request):
+        #~ return ViewReportRenderer(self).view(request)
 
-    def as_form(self, request):
-        return FormReportRenderer(self).view(request)
+    #~ def as_form(self, request):
+        #~ return FormReportRenderer(self).view(request)
 
     #~ def get_urls_old(self,name):
         #~ urlpatterns = patterns('',
@@ -409,9 +436,6 @@ class ReportRenderer:
 
     def new_column(self,field,index):
         return FieldColumn(self,field,index)
-        
-    #~ def getLabel(self):
-        #~ return self.report.label
         
 
 class TextReportRenderer(ReportRenderer):
@@ -608,8 +632,63 @@ class ViewReportRenderer(ReportRenderer):
     start_page=1
     form_class=None
     
-    def again(self,**kw):
-        return request_again(self.request,**kw)
+    def __init__(self,report,path):
+        self.path = "/"+path
+        ReportRenderer.__init__(self,report)
+    
+    def view(self,request):
+        self.request=request
+        self.setup(request)
+        row = request.GET.get('row')
+        if row is None:
+            self.setup_page(request)
+            return self.view_many(request)
+            
+        rownum=int(row)
+        try:
+            obj=self.queryset[rownum-1]
+        except IndexError:
+            rownum=self.queryset.count()
+            obj=self.queryset[rownum-1]
+        return self.view_one(request,rownum,obj)
+            
+    def view_many(self,request):
+        context=dict(
+          context=self,
+          main_menu=settings.MAIN_MENU,
+          title=self.report.get_title(),
+        )
+        return render_to_response("tom/grid_show.html",context)
+      
+    def view_one(self,request,rownum,obj):
+        self.row = Row(self,obj,rownum)
+        meta = self.queryset.model._meta
+        l=[ 
+           "tom/%s_show.html" % meta.db_table, 
+           "tom/show.html"]
+        context=dict(
+          context=self,
+          main_menu=settings.MAIN_MENU,
+          title=self.report.get_title(),
+        )
+        return render_to_response(l,context)
+        #~ t=select_template(l)
+        #~ return HttpResponse(t.render(Context(dict(context=self))))
+
+    def again(self,*args,**kw):
+        # similar to request_agina, but ignores the request.path
+        req=self.request.GET.copy()
+        for k,v in kw.items():
+            req[k] = v
+        pth=self.path
+        if len(args):
+            pth += "/" + "/".join(args)
+        s=req.urlencode()
+        if len(s):
+            pth += "?" + s
+        #print pth
+        return mark_safe(pth)
+        
         
     def setup(self,request):
         self.params = self.report.param_form(request.GET)
@@ -642,6 +721,7 @@ class ViewReportRenderer(ReportRenderer):
         self.page=page
         
     def navigator(self):
+        #print "start navigator()"
         s="""
         <div class="pagination">
         <span class="step-links">
@@ -674,30 +754,20 @@ class ViewReportRenderer(ReportRenderer):
         s += """
         <span class="current"> %s %d of %d. </span>
         """ % (page_str, page.number, num_pages)
+        s += 'Format: '
+        s += ' <a href="%s">%s</a>' % (self.again(),"show")
+        s += ' <a href="%s">%s</a>' % (self.again('edit'),"edit")
+        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
+        s += ' <a href="%s">%s</a>' % (self.again('text'),"text")
         s += """
         </span>
         </div>
         """     
+        #print "done navigator()"
         return mark_safe(s)
       
       
       
-            
-    def view(self,request):
-        self.request=request
-        self.setup(request)
-        row = request.GET.get('row')
-        if row is None:
-            self.setup_page(request)
-            return self.view_many(request)
-            
-        rownum=int(row)
-        try:
-            obj=self.queryset[rownum-1]
-        except IndexError:
-            rownum=self.queryset.count()
-            obj=self.queryset[rownum-1]
-        return self.view_one(request,rownum,obj)
             
     def rows(self):
         rownum = self.page.start_index()
@@ -705,38 +775,14 @@ class ViewReportRenderer(ReportRenderer):
             yield Row(self,obj,rownum)
             rownum += 1
 
-    def view_many(self,request):
-        context=dict(
-          context=self,
-          main_menu=settings.MAIN_MENU,
-          title=self.report.get_title(),
-        )
-        return render_to_response("tom/grid_show.html",context)
-      
-    def view_one(self,request,rownum,obj):
-        self.row = Row(self,obj,rownum)
-        meta = self.queryset.model._meta
-        l=[ 
-           "tom/%s_show.html" % meta.db_table, 
-           "tom/show.html"]
-        context=dict(
-          context=self,
-          main_menu=settings.MAIN_MENU,
-          title=self.report.get_title(),
-        )
-        return render_to_response(l,context)
-        #~ t=select_template(l)
-        #~ return HttpResponse(t.render(Context(dict(context=self))))
-
 
 class FormReportRenderer(ViewReportRenderer):
     extra=1
     can_delete=True
     can_order=False
     
-    def __init__(self,
-                 report):
-        ViewReportRenderer.__init__(self,report)
+    def __init__(self,report,path):
+        ViewReportRenderer.__init__(self,report,path)
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 
@@ -815,7 +861,39 @@ class FormReportRenderer(ViewReportRenderer):
             rownum += 1
 
     
-    
+
+class PdfReportRenderer(ViewReportRenderer):
+
+    def view_one(self,request,rownum,obj):
+        filename='tmp.pdf'
+        
+
+    def view_many(self,request):
+        #~ filename=r'tmp.pdf'
+        #~ pdf = pisa.CreatePDF(
+          #~ "Hello <strong>World</strong>",
+          #~ file(filename, "wb"))
+        #~ if pdf.err:
+            #~ raise Exception(str(pdf.err))
+        #~ response = HttpResponse(mimetype='application/pdf')
+        #~ response['Content-Disposition'] = 'attachment; filename='+filename
+        #~ return response
+        
+        
+        result = cStringIO.StringIO()
+        pdf = pisa.CreatePDF(
+            cStringIO.StringIO("Hello <strong>World</strong>"),
+            result
+            )
+
+        if pdf.err:
+            raise Exception(str(pdf.err))
+        return HttpResponse(
+            result.getvalue(),
+            mimetype='application/pdf')
+        
+      
+      
     
 def index(request):
     context=dict(
