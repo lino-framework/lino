@@ -20,11 +20,12 @@
 import types
 from StringIO import StringIO # cStringIO doesn't support Unicode
 import cStringIO
+import cgi
 from textwrap import TextWrapper
 
 from lino.reports.constants import *
 from lino.misc.etc import assert_pure
-from lino.django.tom.layout import LayoutRenderer
+from lino.django.tom.layout import EditLayoutRenderer, ShowLayoutRenderer
 
 from django.db import models
 #from django import forms
@@ -36,7 +37,7 @@ from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.safestring import mark_safe
-from django.template.loader import select_template, Context
+from django.template.loader import get_template, select_template, Context
 
 # l:\snapshot\xhtml2pdf
 import ho.pisa as pisa
@@ -72,7 +73,8 @@ def request_again(request,*args,**kw):
     if len(s):
         pth += "?" + s
     return mark_safe(pth)
-
+    
+    
 
 def hfill(s,align,width):
     if align == LEFT:
@@ -662,18 +664,28 @@ class ViewReportRenderer(ReportRenderer):
       
     def view_one(self,request,rownum,obj):
         self.row = Row(self,obj,rownum)
-        meta = self.queryset.model._meta
-        l=[ 
-           "tom/%s_show.html" % meta.db_table, 
-           "tom/show.html"]
-        context=dict(
-          context=self,
-          main_menu=settings.MAIN_MENU,
-          title=self.report.get_title(),
-        )
-        return render_to_response(l,context)
+        #~ meta = self.queryset.model._meta
+        #~ l=[ 
+           #~ "tom/%s_show.html" % meta.db_table, 
+           #~ "tom/show.html"]
+        #~ context=dict(
+          #~ context=self,
+          #~ main_menu=settings.MAIN_MENU,
+          #~ title=self.report.get_title(),
+        #~ )
+        #~ return render_to_response(l,context)
         #~ t=select_template(l)
         #~ return HttpResponse(t.render(Context(dict(context=self))))
+        
+        
+        context=dict(
+          context=self,
+          title=u"%s - %s" % (self.report.get_title(),obj),
+          main_menu = settings.MAIN_MENU,
+          layout = ShowLayoutRenderer(obj.page_layout(),obj),
+        )
+        return render_to_response("tom/show.html",context)
+        
 
     def again(self,*args,**kw):
         # similar to request_agina, but ignores the request.path
@@ -758,7 +770,7 @@ class ViewReportRenderer(ReportRenderer):
         s += ' <a href="%s">%s</a>' % (self.again(),"show")
         s += ' <a href="%s">%s</a>' % (self.again('edit'),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        s += ' <a href="%s">%s</a>' % (self.again('text'),"text")
+        #s += ' <a href="%s">%s</a>' % (self.again('text'),"text")
         s += """
         </span>
         </div>
@@ -813,18 +825,21 @@ class FormReportRenderer(ViewReportRenderer):
         self.form = frm
         
         self.row = Row(self,obj,rownum,frm)
-        meta = self.queryset.model._meta
-        l=[ 
-           "tom/%s_form.html" % meta.db_table, 
-           "tom/form.html"]
-        #t=select_template(l)
+        #meta = self.queryset.model._meta
+        #~ l=[ 
+           #~ "tom/%s_form.html" % meta.db_table, 
+           #~ "tom/form.html"
+           #~ ]
         context=dict(
           context=self,
-          main_menu=settings.MAIN_MENU,
-          title=self.report.get_title(),
+          title=unicode(obj),
+          form=frm,
+          main_menu = settings.MAIN_MENU,
+          layout = EditLayoutRenderer(obj.page_layout(),frm),
         )
-        return render_to_response(l,context)
-        #return HttpResponse(t.render(Context(context)))
+        return render_to_response("tom/form.html",context)
+        
+        
         
     def view_many(self,request):
         
@@ -869,31 +884,29 @@ class PdfReportRenderer(ViewReportRenderer):
         
 
     def view_many(self,request):
-        #~ filename=r'tmp.pdf'
-        #~ pdf = pisa.CreatePDF(
-          #~ "Hello <strong>World</strong>",
-          #~ file(filename, "wb"))
-        #~ if pdf.err:
-            #~ raise Exception(str(pdf.err))
-        #~ response = HttpResponse(mimetype='application/pdf')
-        #~ response['Content-Disposition'] = 'attachment; filename='+filename
-        #~ return response
-        
-        
+        template = get_template("tom/grid_pdf.html")
+        context=dict(
+          context=self,
+          title=self.report.get_title(),
+        )
+        html  = template.render(Context(context))
         result = cStringIO.StringIO()
-        pdf = pisa.CreatePDF(
-            cStringIO.StringIO("Hello <strong>World</strong>"),
-            result
-            )
-
+        pdf = pisa.pisaDocument(cStringIO.StringIO(html.encode("ISO-8859-1")), result)
         if pdf.err:
-            raise Exception(str(pdf.err))
-        return HttpResponse(
-            result.getvalue(),
+            raise Exception(cgi.escape(html))
+        return HttpResponse(result.getvalue(), 
             mimetype='application/pdf')
+      
+    def setup_page(self,request):
+        pass
         
-      
-      
+    def rows(self):
+        rownum = 1
+        for obj in self.queryset:
+            yield Row(self,obj,rownum)
+            rownum += 1
+
+
     
 def index(request):
     context=dict(
@@ -929,7 +942,7 @@ def edit_instance(request,app,model,pk):
       title=unicode(obj),
       form=frm,
       main_menu = settings.MAIN_MENU,
-      layout = LayoutRenderer(frm,obj.page_layout()),
+      layout = EditLayoutRenderer(obj.page_layout(),frm),
     )
     return render_to_response("tom/instance.html",context)
     

@@ -1,0 +1,26 @@
+<html>
+<body>
+
+<h1>{{title}}</h1>
+
+<table class="grid">
+<tr>
+<td>rownum</td>
+{% for col in context.columns %}
+<th>{{ col.getLabel }}</th>
+{% endfor %}
+</tr>
+
+{% for row in context.rows %}
+<tr>
+<td>{{ row.number }}</td>
+{% for cell in row %}
+<td>{{ cell }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+
+</table>
+
+</body>
+<html>

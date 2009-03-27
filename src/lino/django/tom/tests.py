@@ -69,14 +69,13 @@ class ClientTest(TestCase):
         response = self.client.get('/menu/contacts/contacts')
         s = "\n".join([repr(c) for c in response.context])
         s = response.context[0].get("context").navigator()
-        print "\n"+s
+        #print "\n"+s
         self.assertEquals(s.split(),u"""
         <div class="pagination">
         <span class="step-links">
         &#x25C4;Previous Next&#x25BA;
         <span class="current"> Page 1 of 1. </span>
-        Format:  <a href="/menu/contacts/contacts/menu/contacts/contacts">show</a> <a href="/menu/contacts/contacts/menu
-/contacts/contacts/edit">edit</a> <a href="/menu/contacts/contacts/menu/contacts/contacts/text">text</a>
+        Format:  <a href="/menu/contacts/contacts">show</a> <a href="/menu/contacts/contacts/edit">edit</a> <a href="/menu/contacts/contacts/pdf">pdf</a>
         </span>
         </div>        
         """.split())

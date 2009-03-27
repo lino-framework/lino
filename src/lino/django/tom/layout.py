@@ -36,22 +36,7 @@ class FIELD(Element):
             
         
     def as_html(self,renderer):
-        bf = renderer.form[self.name]
-        if self.size is not None:
-            if isinstance(bf.field.widget,forms.TextInput):
-                bf.field.widget.attrs["size"] = self.size
-            elif isinstance(bf.field.widget,forms.Textarea):
-                rows,cols=self.size.split("x")
-                bf.field.widget.attrs["rows"] = rows
-                bf.field.widget.attrs["cols"] = cols
-        s = bf.as_widget()
-        #s = bf.as_widget(attrs=dict(size="40"))
-        if bf.label:
-            if isinstance(bf.field.widget, forms.CheckboxInput):
-                s = s + " " + bf.label_tag()
-            else:
-                s = bf.label_tag() + "<br/>" + s
-        return mark_safe(s)
+        return mark_safe(renderer.field_to_html(self))
         
         
 class Container(Element):
@@ -73,7 +58,8 @@ class Container(Element):
           
     def as_html(self,renderer):
         s = self.html_before
-        s += self.html_between.join([e.as_html(renderer) for e in self.elements])
+        s += self.html_between.join(
+          [e.as_html(renderer) for e in self.elements])
         s += self.html_after
         return mark_safe(s)
           
@@ -91,12 +77,42 @@ class VBOX(Container):
         
     
         
-class LayoutRenderer:
-    def __init__(self,form,layout):
-        self.form = form
+class ShowLayoutRenderer:
+    def __init__(self,layout,instance):
         self.layout = layout
-        
+        self.instance=instance
       
     def as_html(self):
         return self.layout.as_html(self)
+        
+    def field_to_html(self,field):
+        model_field = self.instance._meta.get_field(field.name)
+        return model_field.verbose_name
+        
       
+class EditLayoutRenderer:
+    def __init__(self,layout,form):
+        self.form = form
+        self.layout = layout
+      
+    def as_html(self):
+        return self.layout.as_html(self)
+            
+    def field_to_html(self,field):
+        bf = self.form[field.name] # BoundField instance
+        if field.size is not None:
+            if isinstance(bf.field.widget,forms.TextInput):
+                bf.field.widget.attrs["size"] = field.size
+            elif isinstance(bf.field.widget,forms.Textarea):
+                rows,cols=field.size.split("x")
+                bf.field.widget.attrs["rows"] = rows
+                bf.field.widget.attrs["cols"] = cols
+        s = bf.as_widget()
+        if bf.label:
+            if isinstance(bf.field.widget, forms.CheckboxInput):
+                s = s + " " + bf.label_tag()
+            else:
+                s = bf.label_tag() + "<br/>" + s
+        return s
+        
+            

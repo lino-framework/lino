@@ -1,9 +1,5 @@
 {% extends "tom/report.html" %}
 
 {% block content %}
-<h1>{{context.title}}</h1>
-<table>
-{{ context.row.as_table}}
-</table>
-
+{{ layout.as_html }}
 {% endblock content %}
