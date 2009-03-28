@@ -35,7 +35,7 @@ from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
 from django.template.loader import get_template, select_template, Context
 
@@ -313,6 +313,7 @@ class Report(object):
     default_format='form'
     #editable=True
     name=None
+    path=None
     
     def __init__(self):
         self.groups = [] # for later
@@ -368,6 +369,8 @@ class Report(object):
         return unicode("%d row(s)" % self.queryset.count())
     
     def get_urls(self,name):
+        assert self.path is None, "you tried to install this Report instance to more than 1 url"
+        self.path = "/"+name
         l = []
         #l += [ url(r'^%s/edit$' % name, self.as_form) ]
         #l += [ url(r'^%s/text$' % name, self.as_text) ]
@@ -375,9 +378,12 @@ class Report(object):
         #l += [ url(r'^%s$' % name, self.view) ]
         #l += [ url(r'^%s' % name, self.view) ]
         #l += [ url(r'^%s$' % name, self.as_show) ]
-        l += [ url(r'^%s$' % name, ViewReportRenderer(self,name).view)]
-        l += [ url(r'^%s/edit$' % name, FormReportRenderer(self,name).view)]
-        l += [ url(r'^%s/pdf$' % name, PdfReportRenderer(self,name).view)]
+        #~ l += [ url(r'^%s$' % name, ViewReportRenderer(self,name).view)]
+        #~ l += [ url(r'^%s/edit$' % name, FormReportRenderer(self,name).view)]
+        #~ l += [ url(r'^%s/pdf$' % name, PdfReportRenderer(self,name).view)]
+        l += [ url(r'^%s$' % name, self.show_view)]
+        l += [ url(r'^%s/edit$' % name, self.edit_view)]
+        l += [ url(r'^%s/pdf$' % name, self.pdf_view)]
         return l
 
     #~ def view(self,request):
@@ -400,12 +406,15 @@ class Report(object):
     def as_text(self, **kw):
         return TextReportRenderer(self,**kw).render()
         
-    #~ def as_show(self, request):
-        #~ return ViewReportRenderer(self).view(request)
+    def show_view(self, request):
+        return ViewReportRenderer(self).view(request)
 
-    #~ def as_form(self, request):
-        #~ return FormReportRenderer(self).view(request)
+    def edit_view(self, request):
+        return FormReportRenderer(self).view(request)
 
+    def pdf_view(self, request):
+        return PdfReportRenderer(self).view(request)
+        
     #~ def get_urls_old(self,name):
         #~ urlpatterns = patterns('',
           #~ url(r'^%s$' % name, 
@@ -634,9 +643,9 @@ class ViewReportRenderer(ReportRenderer):
     start_page=1
     form_class=None
     
-    def __init__(self,report,path):
-        self.path = "/"+path
-        ReportRenderer.__init__(self,report)
+    #~ def __init__(self,report,path):
+        #~ self.path = "/"+path
+        #~ ReportRenderer.__init__(self,report)
     
     def view(self,request):
         self.request=request
@@ -651,6 +660,8 @@ class ViewReportRenderer(ReportRenderer):
             obj=self.queryset[rownum-1]
         except IndexError:
             rownum=self.queryset.count()
+            if rownum == 0:
+                raise Http404("queryset is empty")
             obj=self.queryset[rownum-1]
         return self.view_one(request,rownum,obj)
             
@@ -692,14 +703,14 @@ class ViewReportRenderer(ReportRenderer):
         req=self.request.GET.copy()
         for k,v in kw.items():
             req[k] = v
-        pth=self.path
+        path=self.report.path
         if len(args):
-            pth += "/" + "/".join(args)
+            path += "/" + "/".join(args)
         s=req.urlencode()
         if len(s):
-            pth += "?" + s
+            path += "?" + s
         #print pth
-        return mark_safe(pth)
+        return mark_safe(path)
         
         
     def setup(self,request):
@@ -793,8 +804,8 @@ class FormReportRenderer(ViewReportRenderer):
     can_delete=True
     can_order=False
     
-    def __init__(self,report,path):
-        ViewReportRenderer.__init__(self,report,path)
+    def __init__(self,report):
+        ViewReportRenderer.__init__(self,report)
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 

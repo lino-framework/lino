@@ -46,6 +46,5 @@ urlpatterns += patterns('',
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
     (r'', include(reports.urls())),
-    #~ (r'menu', include(menu.get_urls())),
 )    
 

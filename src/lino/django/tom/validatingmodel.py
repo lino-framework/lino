@@ -108,4 +108,5 @@ class TomModel(models.Model):
         opts = self._meta
         l = [ FIELD(f.name) for f in opts.fields + opts.many_to_many 
             if f.editable]
-        return VBOX(None,*l)
+        #print [str(f) for f in l]
+        return VBOX(*l)

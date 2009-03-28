@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.utils.safestring import mark_safe
+from django.db import models
 from django import forms
 
 
@@ -34,22 +35,89 @@ class FIELD(Element):
             self.name = a[0]
             self.size=a[1]
             
+    def __str__(self):
+        if self.size is None:
+            return self.name
+        return self.name + ":" + self.size
+            
+    def setup_widget(self,widget):
+        if self.size is not None:
+            if isinstance(widget,forms.TextInput):
+                widget.attrs["size"] = self.size
+            elif isinstance(widget,forms.Textarea):
+                rows,cols=self.size.split("x")
+                widget.attrs["rows"] = rows
+                widget.attrs["cols"] = cols
         
     def as_html(self,renderer):
         return mark_safe(renderer.field_to_html(self))
+        
+    def as_readonly(self,instance):
+        value = getattr(instance,self.name)
+        try:
+            model_field = instance._meta.get_field(self.name)
+        except models.FieldDoesNotExist,e:
+            # so it is a method
+            value=value()
+            label=self.name
+            widget=forms.TextInput()
+        else:
+            label = model_field.verbose_name
+            form_field = model_field.formfield() 
+            if form_field is None:
+                form_field = forms.CharField()
+                #return ''
+            #print self.instance, field.name
+            widget = form_field.widget
+        if value is None:
+            value = ''
+        else:
+            value = unicode(value)
+        self.setup_widget(widget)
+        if isinstance(widget, forms.CheckboxInput):
+            if value:
+                s = "[X]"
+            else: 
+                s = "[&nbsp;]"
+            s += " " + label
+        elif isinstance(widget, forms.Select):
+            s = label + "<br/>[" + value+"]"
+        else:
+            s = widget.render(self.name,value,
+              attrs={"readonly":"readonly","class":"readonly"})
+            s = label + "<br/>" + s
+        return s
+        
+    def render_boolean(self,value):
+        """
+        <input type="checkbox" readonly="readonly"> renders a normal checkbox
+        """
+        if value:
+            return "[X]"
+        return "[&nbsp;]"
         
         
 class Container(Element):
     html_before = ''
     html_between = '\n'
     html_after = ''
-    def __init__(self,label,*elements):
-        self.label = label
+    def __init__(self,*elements,**kw):
+        self.label = kw.get('label',None)
         self.elements = []
         for elem in elements:
+            assert elem is not None
             if type(elem) == str:
-                for fieldname in elem.split():
-                    self.elements.append(FIELD(fieldname))
+                if "\n" in elem:
+                    lines=[]
+                    for line in elem.splitlines():
+                        line = line.strip()
+                        if len(line) > 0 and not line.startswith("#"):
+                            lines.append(HBOX(line))
+                    self.elements.append(VBOX(*lines))
+                else:
+                    for fieldname in elem.split():
+                        if not fieldname.startswith("#"):
+                            self.elements.append(FIELD(fieldname))
             else:
                 self.elements.append(elem)
         
@@ -85,9 +153,10 @@ class ShowLayoutRenderer:
     def as_html(self):
         return self.layout.as_html(self)
         
+        
     def field_to_html(self,field):
-        model_field = self.instance._meta.get_field(field.name)
-        return model_field.verbose_name
+        return field.as_readonly(self.instance)
+        
         
       
 class EditLayoutRenderer:
@@ -97,16 +166,15 @@ class EditLayoutRenderer:
       
     def as_html(self):
         return self.layout.as_html(self)
-            
+        
     def field_to_html(self,field):
-        bf = self.form[field.name] # BoundField instance
-        if field.size is not None:
-            if isinstance(bf.field.widget,forms.TextInput):
-                bf.field.widget.attrs["size"] = field.size
-            elif isinstance(bf.field.widget,forms.Textarea):
-                rows,cols=field.size.split("x")
-                bf.field.widget.attrs["rows"] = rows
-                bf.field.widget.attrs["cols"] = cols
+        try:
+            bf = self.form[field.name] # BoundField instance
+        except KeyError,e:
+            return field.as_readonly(self.form.instance)
+        if bf.field.widget.is_hidden:
+            return field.as_readonly(self.form.instance)
+        field.setup_widget(bf.field.widget)
         s = bf.as_widget()
         if bf.label:
             if isinstance(bf.field.widget, forms.CheckboxInput):

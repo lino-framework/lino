@@ -52,6 +52,7 @@ class Countries(Report):
 
 class ClientTest(TestCase):
     urls = 'mysites.demo.urls'
+    fixtures = [ 'demo' ]
     def test01(self):
         for url in (
           '/menu',
@@ -59,27 +60,27 @@ class ClientTest(TestCase):
           '/menu/contacts/contacts',
           '/menu/contacts/contacts/edit',
           '/edit/igen/Contact/1',
+          '/menu/prods/products?row=1',
+          '/menu/docs/invoices?row=1',
         ):
             response = self.client.get(url) # ,follow=True)
             self.failUnlessEqual(response.status_code, 200,
               "GET %r fails to respond" % url)
 
-   
-    def test04(self):
+        # now we just check whether some methods raise an exception
+        # templates silently ignore them
         response = self.client.get('/menu/contacts/contacts')
         s = "\n".join([repr(c) for c in response.context])
         s = response.context[0].get("context").navigator()
-        #print "\n"+s
-        self.assertEquals(s.split(),u"""
-        <div class="pagination">
-        <span class="step-links">
-        &#x25C4;Previous Next&#x25BA;
-        <span class="current"> Page 1 of 1. </span>
-        Format:  <a href="/menu/contacts/contacts">show</a> <a href="/menu/contacts/contacts/edit">edit</a> <a href="/menu/contacts/contacts/pdf">pdf</a>
-        </span>
-        </div>        
-        """.split())
-    
+        
+        response = self.client.get('/menu/config/languages?row=1')
+        s = response.context[0].get("layout").as_html()
+
+        response = self.client.get('/menu/prods/products?row=1')
+        s = response.context[0].get("layout").as_html()
+
+        response = self.client.get('/menu/docs/invoices?row=1')
+        s = response.context[0].get("layout").as_html()
 
 
 class TestCase(TestCase):

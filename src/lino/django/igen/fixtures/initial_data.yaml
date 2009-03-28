@@ -16,6 +16,11 @@
   pk: fr
   fields:
     name: French
+- model: igen.language
+  pk: nl
+  fields:
+    name: Nederlands
+
 
 
 - model: igen.Country

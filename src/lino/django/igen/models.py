@@ -161,30 +161,30 @@ u'Example & Co (Luc Saffre)'
     as_address.allow_tags=True
 
     def page_layout(self):
-        return VBOX(None,
-            VBOX("Names",
-              HBOX(None,"title:5 firstName:20 lastName:50"),
-              HBOX(None,"companyName:60 nationalId:15"),
+        return VBOX(
+            VBOX("""
+              title:5 firstName:20 lastName:50
+              companyName:60 nationalId:15
+              """),
+            HBOX(
+              VBOX("email:60 url:60"),
+              VBOX("phone:15 gsm:15"),
+              label="Contact"
             ),
-            HBOX("Contact",
-              VBOX(None,"email:60 url:60"),
-              VBOX(None,"phone:15 gsm:15"),
-            ),
-            HBOX(None,
-              VBOX("Postal Address",
-                  HBOX(None,"country region"),
-                  HBOX(None,"city:25 zipCode:25"),
-                  HBOX(None,"addr1:60"),
-                  HBOX(None,"addr2:60"),
+            HBOX(
+              VBOX("""
+                  country region
+                  city:25 zipCode:25
+                  addr1:60
+                  addr2:60
+                  """),
+              VBOX(
+                VBOX("vatId vatExempt itemVat"),
+                VBOX("language paymentTerm"),
+                label="Options",
               ),
-              VBOX("Options",
-                VBOX(None,"vatId vatExempt itemVat"),
-                VBOX(None,"language paymentTerm"),
-              ),
             ),
-            VBOX("Remarks",
-              "remarks:6x60"
-            ),
+            VBOX("remarks:6x60"),
         )
     
 
@@ -258,11 +258,17 @@ class ProductCat(TomModel):
 class Product(TomModel):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
-    cat = models.ForeignKey("ProductCat")
+    cat = models.ForeignKey("ProductCat",verbose_name="Category")
     vatExempt = models.BooleanField(default=False)
     price = PriceField(blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
+    def page_layout(self):
+        return VBOX("""
+        id:5 name:50 cat
+        description:6x50
+        price vatExempt
+        """)
 
 #~ class Journal(models.Model):
     #~ name = models.CharField(max_length=200)
@@ -289,6 +295,9 @@ class Document(TomModel):
     
     class Meta:
         abstract = True
+        
+    def total_incl(self):
+        return self.total_excl + self.total_vat
 
 class Order(Document):
     valid_until = models.DateField("Valid until",blank=True,null=True)
@@ -296,6 +305,27 @@ class Order(Document):
 class Invoice(Document):
     due_date = models.DateField("Payable until",blank=True,null=True)
     
+    def page_layout(self):
+        return VBOX(
+          HBOX("""
+            number your_ref creation_date         
+            customer:40 ship_to:40
+            ""","""
+            shipping_mode payment_term
+            vat_exempt item_vat
+            """,
+          ),
+          HBOX("""
+            remarks:40
+            intro:5x40
+            ""","""
+            total_excl 
+            total_vat
+            #total_incl
+            """),
+          "items"
+          )
+            
     def items(self):
         return ItemsByInvoice(self)
 
