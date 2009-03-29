@@ -957,9 +957,34 @@ def edit_instance(request,app,model,pk):
     )
     return render_to_response("tom/instance.html",context)
     
+def exec_instance_method(request,app,model,pk,meth_name):
+    model_class = models.get_model(app,model)
+    obj = model_class.objects.get(pk=pk)
+    action_dict = obj.get_actions()
+    m = action_dict[meth_name]
+    result = m(request)
+    if request.method == 'POST':
+        frm=form_class(request.POST,instance=obj)
+        if frm.is_valid():
+            frm.save()
+    else:
+        frm=form_class(instance=obj)
+    context=dict(
+      title=unicode(obj),
+      form=frm,
+      main_menu = settings.MAIN_MENU,
+      layout = EditLayoutRenderer(obj.page_layout(),frm),
+    )
+    return render_to_response("tom/instance.html",context)
+    
 def urls(name=''):
     l=[url(r'^%s$' % name, index)]
     #~ l.append(url(r'^edit/(?P<name>\w+)$', edit_report))
-    l.append(url(r'^edit/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$', edit_instance))
+    l.append(
+      url(r'^edit/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
+          edit_instance))
+    l.append(
+      url(r'^exec/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
+          exec_instance_method))
     #for rptname,rptclass in _report_classes.items():
     return patterns('',*l)

@@ -106,7 +106,30 @@ class TomModel(models.Model):
         
     def page_layout(self):
         opts = self._meta
-        l = [ FIELD(f.name) for f in opts.fields + opts.many_to_many 
-            if f.editable]
+        l = [ FIELD(f.name) for f in opts.fields + opts.many_to_many]
         #print [str(f) for f in l]
         return VBOX(*l)
+        
+        
+    def get_actions(self):
+        return dict(
+          delete = DeleteDialog(self),
+        )
+
+
+class Dialog:
+    def view(self,request):
+      pass
+  
+class DeleteDialog(Dialog):
+    def __init__(self,instance):
+        self.instance = instance
+        Dialog.__init__(self)
+        
+    def view(self,request):
+        self.confirm(request,"Are you sure?")
+        self.instance.delete()
+        
+    def confirm(self,request,msg):
+        pass
+        

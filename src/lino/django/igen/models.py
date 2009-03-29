@@ -328,6 +328,12 @@ class Invoice(Document):
             
     def items(self):
         return ItemsByInvoice(self)
+        
+    def get_actions(self):
+        return dict(
+          detail = self.items,
+        ).update(TomModel.get_actions(self))
+        
 
 class DocumentItem(TomModel):
     pos = models.IntegerField("Position")
