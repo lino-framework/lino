@@ -35,6 +35,9 @@ setup_menu(menu)
 from lino.django.voc.menu import setup_menu
 setup_menu(menu)
 
+from lino.django.tom.sysadm import setup_menu
+setup_menu(menu)
+
 urlpatterns = menu.urls
 
 settings.MAIN_MENU = menu

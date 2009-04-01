@@ -34,40 +34,42 @@ RELAX=False
 
 class YamlLoader(Application):
     
-    input_encoding="ISO-8859-1"
+    #input_encoding="ISO-8859-1"
+    input_encoding="utf8"
     
-    def setupOptionParser(self,parser):
-        Application.setupOptionParser(self,parser)
+    #~ def setupOptionParser(self,parser):
+        #~ Application.setupOptionParser(self,parser)
     
-        parser.add_option("-i", "--input", help="""\
-        filter input files""",
-                     action="store",
-                     type="string",
-                     dest="inputFiles",
-                     default=None)
+        #~ parser.add_option("-i", "--input", help="""\
+        #~ filter input files""",
+                     #~ action="store",
+                     #~ type="string",
+                     #~ dest="inputFiles",
+                     #~ default=None)
     
 
     def add_from_file(self,filename,pfn,yamldict):
-        root,ext=os.path.splitext(filename)
-        if ext == ".sng":
-            adder=self.addsong
-        elif ext in [ ".txt" ]:
-            if root == "persons":
-                adder=self.addperson
-            else:
-                adder=self.addtext
-        else:
-            raise OperationFailed("%s : unknown file extension" % filename)
-        yamldict['filename']=filename
-        yamldict['mtime']=os.path.getmtime(pfn)
-        adder(**yamldict)
+        raise NotImplementedError
+        #~ root,ext=os.path.splitext(filename)
+        #~ if ext == ".sng":
+            #~ adder=self.addsong
+        #~ elif ext in [ ".txt" ]:
+            #~ if root == "persons":
+                #~ adder=self.addperson
+            #~ else:
+                #~ adder=self.addtext
+        #~ else:
+            #~ raise OperationFailed("%s : unknown file extension" % filename)
+        #~ yamldict['filename']=filename
+        #~ yamldict['mtime']=os.path.getmtime(pfn)
+        #~ adder(**yamldict)
         
         
     def loadfile(self,filename,input_encoding=None,**kw):
-        if self.options.inputFiles is not None:
-            if not fnmatch.fnmatch(filename, self.options.inputFiles):
-                self.verbose("Skipping file %s",filename)
-                return
+        #~ if self.options.inputFiles is not None:
+            #~ if not fnmatch.fnmatch(filename, self.options.inputFiles):
+                #~ self.verbose("Skipping file %s",filename)
+                #~ return
         if input_encoding is None:
             input_encoding=self.input_encoding
         for path in self.input_dirs:
@@ -96,4 +98,8 @@ class YamlLoader(Application):
             "%s : file not found in input_dirs (%s)" % (filename,
                                                         self.input_dirs))
 
+        
+    def run(self):
+        for filename in self.args:
+            self.loadfile(filename)
         

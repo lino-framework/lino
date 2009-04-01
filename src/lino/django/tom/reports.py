@@ -116,7 +116,7 @@ class Cell(object):
           self.row.instance,self.row.form)
         if value is None:
             return ''
-        return unicode(value)
+        return mark_safe(unicode(value))
         
         
 class Row(object):
@@ -137,7 +137,7 @@ class Row(object):
     def links(self):
         l=[]
         l.append('<a href="%s">page</a>' % self.get_url_path())
-        l.append('<a href="%s">row</a>' % self.instance.get_url_path())
+        l.append('<a href="%s">instance</a>' % self.instance.get_url_path())
         #print "<br/>".join(l)
         return mark_safe("\n".join(l))
 
@@ -160,7 +160,7 @@ class Row(object):
         
     def pk_field(self):
         """
-        Used in grid_form.html
+        Used in grid_edit.html
         BaseModelFormSet.add_fields() usually adds a hidden input for the pk, which must 
         get rendered somewhere on each row of the grid template.
         """
@@ -189,15 +189,9 @@ class Column(object):
   
     def getMinWidth(self):
         return 10
-        #~ x=WIDTHS[self.field.__class__]
-        #~ w=x[0]
-        #~ w = max(w,len(self.getLabel()))
-        #~ return w
         
     def getMaxWidth(self):
         return 100
-        #~ x=WIDTHS[self.field.__class__]
-        #~ return x[1]
         
 class FieldColumn(Column):
     def __init__(self, rpt, field,index):
@@ -214,9 +208,6 @@ class FieldColumn(Column):
 class FormFieldColumn(FieldColumn):
     is_formfield = True
 
-    #~ def getCellValue(self,row_instance):
-        #~ return getattr(row_instance,self.field.name)
-
     def cell_value(self,instance,form):
         return form[self.field.name]
         
@@ -229,13 +220,15 @@ class MethodColumn(Column):
         Column.__init__(self,rpt,name,index)
         self.name = name
         
-    def get_urls(self,name):
-        return [ url(r'^%s/%s/$' % (name,self.name), 
-            self.view) ]
+    #~ def get_urls(self,name):
+        #~ return [ url(r'^%s/%s/$' % (name,self.name), 
+            #~ self.view) ]
             
     def cell_value(self,instance,form):
         meth=getattr(instance,self.name)
-        return meth()
+        label = unicode(meth())
+        html='<a href="%s/%s">%s</a>' % (instance.get_url_path(),self.name,label)
+        return mark_safe(html)
             
     #~ def view(self,request):
         #~ return render_to_response("tom/base_site.html",
@@ -370,7 +363,7 @@ class Report(object):
     
     def get_urls(self,name):
         assert self.path is None, "you tried to install this Report instance to more than 1 url"
-        self.path = "/"+name
+        self.path = "/" + name
         l = []
         #l += [ url(r'^%s/edit$' % name, self.as_form) ]
         #l += [ url(r'^%s/text$' % name, self.as_text) ]
@@ -381,8 +374,8 @@ class Report(object):
         #~ l += [ url(r'^%s$' % name, ViewReportRenderer(self,name).view)]
         #~ l += [ url(r'^%s/edit$' % name, FormReportRenderer(self,name).view)]
         #~ l += [ url(r'^%s/pdf$' % name, PdfReportRenderer(self,name).view)]
-        l += [ url(r'^%s$' % name, self.show_view)]
-        l += [ url(r'^%s/edit$' % name, self.edit_view)]
+        l += [ url(r'^%s$' % name, self.view)]
+        #l += [ url(r'^%s/edit$' % name, self.edit_view)]
         l += [ url(r'^%s/pdf$' % name, self.pdf_view)]
         return l
 
@@ -403,14 +396,27 @@ class Report(object):
             #~ return self.as_text()
         #~ raise Exception("%r : invalid format" % fmt)
         
+    def view(self, request):
+        editing=request.GET.get("editing",None)
+        if editing is None:
+            editing=request.session.get("editing")
+        else:
+            editing=int(editing)
+        if editing:
+            r=FormReportRenderer(self)
+        else:
+            r=ViewReportRenderer(self)
+        return r.view(request)
+      
     def as_text(self, **kw):
         return TextReportRenderer(self,**kw).render()
         
-    def show_view(self, request):
-        return ViewReportRenderer(self).view(request)
+      
+    #~ def show_view(self, request):
+        #~ return ViewReportRenderer(self).view(request)
 
-    def edit_view(self, request):
-        return FormReportRenderer(self).view(request)
+    #~ def edit_view(self, request):
+        #~ return FormReportRenderer(self).view(request)
 
     def pdf_view(self, request):
         return PdfReportRenderer(self).view(request)
@@ -695,7 +701,7 @@ class ViewReportRenderer(ReportRenderer):
           main_menu = settings.MAIN_MENU,
           layout = ShowLayoutRenderer(obj.page_layout(),obj),
         )
-        return render_to_response("tom/show.html",context)
+        return render_to_response("tom/page_show.html",context)
         
 
     def again(self,*args,**kw):
@@ -827,10 +833,12 @@ class FormReportRenderer(ViewReportRenderer):
         return FieldColumn(self,field,index)
         
     def view_one(self,request,rownum,obj):
+        request.session["editing"] = 1
         if request.method == 'POST':
             frm=self.form_class(request.POST,instance=obj)
             if frm.is_valid():
                 frm.save()
+                request.session["editing"] = 0
         else:
             frm=self.form_class(instance=obj)      
         self.form = frm
@@ -848,12 +856,12 @@ class FormReportRenderer(ViewReportRenderer):
           main_menu = settings.MAIN_MENU,
           layout = EditLayoutRenderer(obj.page_layout(),frm),
         )
-        return render_to_response("tom/form.html",context)
+        return render_to_response("tom/page_edit.html",context)
         
         
         
     def view_many(self,request):
-        
+        request.session["editing"] = 1
         if request.method == 'POST':
             fs = self.formset_class(request.POST,
                     queryset=self.page.object_list)
@@ -868,6 +876,7 @@ class FormReportRenderer(ViewReportRenderer):
                 # start from begin because paginator and page must reload
                 # e.g. if an instance has been added, it will now be at a different row
                 # and the page count may have changed
+                request.session["editing"] = 0
                 return HttpResponseRedirect(request.path)
                     
         else:
@@ -878,7 +887,7 @@ class FormReportRenderer(ViewReportRenderer):
           main_menu=settings.MAIN_MENU,
           title=self.report.get_title(),
         )
-        return render_to_response("tom/grid_form.html",context)
+        return render_to_response("tom/grid_edit.html",context)
 
     def rows(self):
         rownum = self.page.start_index()
@@ -957,25 +966,14 @@ def edit_instance(request,app,model,pk):
     )
     return render_to_response("tom/instance.html",context)
     
-def exec_instance_method(request,app,model,pk,meth_name):
+def show_instance_method(request,app,model,pk,meth):
     model_class = models.get_model(app,model)
     obj = model_class.objects.get(pk=pk)
-    action_dict = obj.get_actions()
-    m = action_dict[meth_name]
-    result = m(request)
-    if request.method == 'POST':
-        frm=form_class(request.POST,instance=obj)
-        if frm.is_valid():
-            frm.save()
-    else:
-        frm=form_class(instance=obj)
-    context=dict(
-      title=unicode(obj),
-      form=frm,
-      main_menu = settings.MAIN_MENU,
-      layout = EditLayoutRenderer(obj.page_layout(),frm),
-    )
-    return render_to_response("tom/instance.html",context)
+    m = getattr(obj,meth)
+    #action_dict = obj.get_actions()
+    #m = action_dict[meth_name]
+    actor = m()
+    return actor.view(request)
     
 def urls(name=''):
     l=[url(r'^%s$' % name, index)]
@@ -984,7 +982,7 @@ def urls(name=''):
       url(r'^edit/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
           edit_instance))
     l.append(
-      url(r'^exec/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
-          exec_instance_method))
+      url(r'^show/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
+          show_instance_method))
     #for rptname,rptclass in _report_classes.items():
     return patterns('',*l)
