@@ -18,9 +18,6 @@
 
 raise "no longer used"
 
-from django.utils.safestring import mark_safe
-from django.db import models
 from django import forms
-from lino.django.tom.widgets import widget_for_value
+from lino.django.tom.reports import Report, HtmlReportRenderer
 
-    

@@ -23,10 +23,6 @@ import cStringIO
 import cgi
 from textwrap import TextWrapper
 
-from lino.reports.constants import *
-from lino.misc.etc import assert_pure
-from lino.django.tom.layout import EditLayoutRenderer, ShowLayoutRenderer
-
 from django.db import models
 #from django import forms
 from django.forms.models import modelform_factory, formset_factory
@@ -41,6 +37,12 @@ from django.template.loader import get_template, select_template, Context
 
 # l:\snapshot\xhtml2pdf
 import ho.pisa as pisa
+
+from lino.reports.constants import *
+from lino.misc.etc import assert_pure
+#from lino.django.tom.layout import EditLayoutRenderer, ShowLayoutRenderer
+
+
 
 
 
@@ -62,17 +64,37 @@ WIDTHS = {
 
 
 
-def request_again(request,*args,**kw):
-    req=request.GET.copy()
+#~ def request_again(request,*args,**kw):
+    #~ req=request.GET.copy()
+    #~ for k,v in kw.items():
+        #~ req[k] = v
+    #~ pth=request.path
+    #~ if len(args):
+        #~ pth += "/" + "/".join(args)
+    #~ s=req.urlencode()
+    #~ if len(s):
+        #~ pth += "?" + s
+    #~ return mark_safe(pth)
+    
+    
+    
+def again(request,*args,**kw):
+    get=request.GET.copy()
     for k,v in kw.items():
-        req[k] = v
-    pth=request.path
+        if v is None: # value None means "remove this key"
+            if get.has_key(k):
+                del get[k]
+        else:
+            get[k] = v
+    path=request.path
     if len(args):
-        pth += "/" + "/".join(args)
-    s=req.urlencode()
+        path += "/" + "/".join(args)
+    s=get.urlencode()
     if len(s):
-        pth += "?" + s
-    return mark_safe(pth)
+        path += "?" + s
+    #print pth
+    return mark_safe(path)
+    
     
     
 
@@ -124,7 +146,7 @@ class Row(object):
         self.renderer = renderer
         self.rpt = renderer.report
         self.queryset = renderer.queryset
-        self.request = renderer.request
+        #self.request = renderer.request
         self.number = number
         self.instance = instance
         self.form = form
@@ -147,16 +169,16 @@ class Row(object):
         #print "Row.has_next() : ", self.rownum, self.queryset.count()
         return self.number < self.queryset.count()
     def previous(self):
-        return request_again(self.request,row=self.number-1)
+        return self.renderer.again(row=self.number-1)
         #~ req=self.request.GET.copy()
         #~ req["row"] = self.rownum-1
         #~ return mark_safe(self.request.path + "?" + req.urlencode())
     def next(self):
-        return request_again(self.request,row=self.number+1)
+        return self.renderer.again(row=self.number+1)
         #return self.rownum+1
             
     def get_url_path(self):
-        return request_again(self.request,row=self.number)
+        return self.renderer.again(row=self.number)
         
     def pk_field(self):
         """
@@ -303,10 +325,10 @@ class Report(object):
     label = None
     param_form = ReportParameterForm
     default_filter=''
-    default_format='form'
+    #default_format='form'
     #editable=True
     name=None
-    path=None
+    #path=None
     
     def __init__(self):
         self.groups = [] # for later
@@ -349,21 +371,20 @@ class Report(object):
     def getLabel(self):
         return self.label
     
-    def get_url_path(self):
-        return self.rpt.get_url_path() + "/" + str(self.offset)
+    def header_layout(self):
+        pass
+        
+    #~ def get_url_path(self):
+        #~ return self.rpt.get_url_path() + "/" + str(self.offset)
 
         
-    ##
-    ## public methods for user code
-    ##
-
     def __unicode__(self):
         #return unicode(self.as_text())
         return unicode("%d row(s)" % self.queryset.count())
     
     def get_urls(self,name):
-        assert self.path is None, "you tried to install this Report instance to more than 1 url"
-        self.path = "/" + name
+        #assert self.path is None, "you tried to install this Report instance to more than 1 url"
+        #self.path = "/" + name
         l = []
         #l += [ url(r'^%s/edit$' % name, self.as_form) ]
         #l += [ url(r'^%s/text$' % name, self.as_text) ]
@@ -408,8 +429,14 @@ class Report(object):
             r=ViewReportRenderer(self)
         return r.view(request)
       
+    def pdf_view(self, request):
+        return PdfReportRenderer(self).view(request)
+        
     def as_text(self, **kw):
         return TextReportRenderer(self,**kw).render()
+        
+    def as_html(self, **kw):
+        return HtmlReportRenderer(self,**kw).render()
         
       
     #~ def show_view(self, request):
@@ -418,9 +445,6 @@ class Report(object):
     #~ def edit_view(self, request):
         #~ return FormReportRenderer(self).view(request)
 
-    def pdf_view(self, request):
-        return PdfReportRenderer(self).view(request)
-        
     #~ def get_urls_old(self,name):
         #~ urlpatterns = patterns('',
           #~ url(r'^%s$' % name, 
@@ -642,12 +666,41 @@ class TextReportRenderer(ReportRenderer):
         return s.rstrip()+"\n"
         
 
+class HtmlReportRenderer(ReportRenderer):
+  
+    def __init__( self,
+                  report,
+                  flt=None):
+        if flt is None:
+            flt=report.default_filter
+        self.flt=flt
+        ReportRenderer.__init__(self,report)
+                             
+  
+    def render(self):
+        s = "<table><tr>"
+        for col in self.columns:
+            s += "<th>%s</th>" % col.label
+        s += "</tr>"
+        queryset=self.report._build_queryset(flt=self.flt)
+        for obj in queryset:
+            s += "<tr>"
+            for col in self.columns:
+                v=col.cell_value(obj,None)
+                if v is None:
+                    v=''
+                s += "<td>%s</td>" % unicode(v)
+            s += "</tr>"
+        s += "</table>"
+        return s
+
 class ViewReportRenderer(ReportRenderer):
   
     page_length = 15
     max_num=0
     start_page=1
     form_class=None
+    editing=0
     
     #~ def __init__(self,report,path):
         #~ self.path = "/"+path
@@ -672,14 +725,17 @@ class ViewReportRenderer(ReportRenderer):
         return self.view_one(request,rownum,obj)
             
     def view_many(self,request):
+        request.session["editing"] = 0
         context=dict(
           context=self,
           main_menu=settings.MAIN_MENU,
           title=self.report.get_title(),
+          header = ShowLayoutRenderer(self.report.header_layout(),self.report),
         )
         return render_to_response("tom/grid_show.html",context)
       
     def view_one(self,request,rownum,obj):
+        request.session["editing"] = 0
         self.row = Row(self,obj,rownum)
         #~ meta = self.queryset.model._meta
         #~ l=[ 
@@ -699,24 +755,30 @@ class ViewReportRenderer(ReportRenderer):
           context=self,
           title=u"%s - %s" % (self.report.get_title(),obj),
           main_menu = settings.MAIN_MENU,
-          layout = ShowLayoutRenderer(obj.page_layout(),obj),
+          layout = ShowLayoutRenderer(page_layout(obj),obj),
         )
         return render_to_response("tom/page_show.html",context)
         
-
     def again(self,*args,**kw):
-        # similar to request_agina, but ignores the request.path
-        req=self.request.GET.copy()
-        for k,v in kw.items():
-            req[k] = v
-        path=self.report.path
-        if len(args):
-            path += "/" + "/".join(args)
-        s=req.urlencode()
-        if len(s):
-            path += "?" + s
-        #print pth
-        return mark_safe(path)
+        return again(self.request,*args,**kw)
+
+    #~ def again(self,*args,**kw):
+        #~ # similar to request_again, but takes report.path instead of request.path
+        #~ get=self.request.GET.copy()
+        #~ for k,v in kw.items():
+            #~ if v is None: # value None means "remove this key"
+                #~ if get.has_key(k):
+                    #~ del get[k]
+            #~ else:
+                #~ get[k] = v
+        #~ path=self.report.path
+        #~ if len(args):
+            #~ path += "/" + "/".join(args)
+        #~ s=get.urlencode()
+        #~ if len(s):
+            #~ path += "?" + s
+        #~ #print pth
+        #~ return mark_safe(path)
         
         
     def setup(self,request):
@@ -769,13 +831,15 @@ class ViewReportRenderer(ReportRenderer):
             
         text="&#x25C4;Previous"
         if page.has_previous():
-            s += '<a href="%s">%s</a>' % (self.again(**{get_name: page.number-1}),text)
+            s += '<a href="%s">%s</a>' % (
+              self.again(**{get_name: page.number-1}),text)
         else:
             s += text
         s += " "
         text="Next&#x25BA;"
         if page.has_next():
-            s += '<a href="%s">%s</a>' % (self.again(**{get_name: page.number+1}),text)
+            s += '<a href="%s">%s</a>' % (
+              self.again(**{get_name: page.number+1}),text)
         else:
             s += text
         s += " "
@@ -783,9 +847,14 @@ class ViewReportRenderer(ReportRenderer):
         s += """
         <span class="current"> %s %d of %d. </span>
         """ % (page_str, page.number, num_pages)
-        s += 'Format: '
-        s += ' <a href="%s">%s</a>' % (self.again(),"show")
-        s += ' <a href="%s">%s</a>' % (self.again('edit'),"edit")
+        # s += 'Format: '
+        # s += ' <a href="%s">%s</a>' % (self.again(),"show")
+        if self.editing:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=0),"show")
+        else:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=1),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         #s += ' <a href="%s">%s</a>' % (self.again('text'),"text")
         s += """
@@ -809,6 +878,7 @@ class FormReportRenderer(ViewReportRenderer):
     extra=1
     can_delete=True
     can_order=False
+    editing=1
     
     def __init__(self,report):
         ViewReportRenderer.__init__(self,report)
@@ -838,7 +908,7 @@ class FormReportRenderer(ViewReportRenderer):
             frm=self.form_class(request.POST,instance=obj)
             if frm.is_valid():
                 frm.save()
-                request.session["editing"] = 0
+                return HttpResponseRedirect(again(request,editing=0))
         else:
             frm=self.form_class(instance=obj)      
         self.form = frm
@@ -854,7 +924,8 @@ class FormReportRenderer(ViewReportRenderer):
           title=unicode(obj),
           form=frm,
           main_menu = settings.MAIN_MENU,
-          layout = EditLayoutRenderer(obj.page_layout(),frm),
+          layout = EditLayoutRenderer(page_layout(obj),frm),
+          form_action = again(request,editing=0),
         )
         return render_to_response("tom/page_edit.html",context)
         
@@ -876,8 +947,8 @@ class FormReportRenderer(ViewReportRenderer):
                 # start from begin because paginator and page must reload
                 # e.g. if an instance has been added, it will now be at a different row
                 # and the page count may have changed
-                request.session["editing"] = 0
-                return HttpResponseRedirect(request.path)
+                #request.session["editing"] = 0
+                return HttpResponseRedirect(again(request,editing=0))
                     
         else:
             fs = self.formset_class(queryset=self.page.object_list)
@@ -886,6 +957,7 @@ class FormReportRenderer(ViewReportRenderer):
           context=self,
           main_menu=settings.MAIN_MENU,
           title=self.report.get_title(),
+          form_action = again(request,editing=None),
         )
         return render_to_response("tom/grid_edit.html",context)
 
@@ -925,6 +997,249 @@ class PdfReportRenderer(ViewReportRenderer):
         for obj in self.queryset:
             yield Row(self,obj,rownum)
             rownum += 1
+            
+            
+            
+            
+            
+            
+class Element:
+    def as_html(self):
+        raise NotImplementedError
+        
+class FIELD(Element):
+    def __init__(self,name):
+        a=name.split(":")
+        if len(a) == 1:
+            self.name = name
+            self.size=None
+        elif len(a) == 2:
+            self.name = a[0]
+            self.size=a[1]
+        #print "foo", str(self)
+            
+    def __str__(self):
+        if self.size is None:
+            return self.name
+        return self.name + ":" + self.size
+            
+    def setup_widget(self,widget):
+        if self.size is not None:
+            if isinstance(widget,forms.TextInput):
+                widget.attrs["size"] = self.size
+            elif isinstance(widget,forms.Textarea):
+                rows,cols=self.size.split("x")
+                widget.attrs["rows"] = rows
+                widget.attrs["cols"] = cols
+        
+    def as_html(self,renderer):
+        return mark_safe(renderer.field_to_html(self))
+        
+    def as_readonly(self,instance):
+        value = getattr(instance,self.name)
+        try:
+            model_field = instance._meta.get_field(self.name)
+        except models.FieldDoesNotExist,e:
+            # so it is a method
+            value=value()
+            if isinstance(value,Report):
+                return value.as_html()
+            label=self.name
+            #widget=widget_for_value(value)
+            widget = forms.TextInput()
+        else:
+            label = model_field.verbose_name
+            form_field = model_field.formfield() 
+            if form_field is None:
+                form_field = forms.CharField()
+                #return ''
+            #print self.instance, field.name
+            widget = form_field.widget
+        if value is None:
+            value = ''
+        else:
+            value = unicode(value)
+        self.setup_widget(widget)
+        if isinstance(widget, forms.CheckboxInput):
+            if value:
+                s = "[X]"
+            else: 
+                s = "[&nbsp;]"
+            s += " " + label
+        elif isinstance(widget, forms.Select):
+            s = label + "<br/>[" + value + "]"
+        else:
+            s = widget.render(self.name,value,
+              attrs={"readonly":"readonly","class":"readonly"})
+            s = label + "<br/>" + s
+        return s
+        
+    #~ def render_boolean(self,value):
+        #~ """
+        #~ <input type="checkbox" readonly="readonly"> renders a normal checkbox
+        #~ """
+        #~ if value:
+            #~ return "[X]"
+        #~ return "[&nbsp;]"
+        
+        
+        
+        
+        
+class Container(Element):
+    html_before = ''
+    html_between = '\n'
+    html_after = ''
+    def __init__(self,layout,*elements,**kw):
+        assert isinstance(layout,PageLayout)
+        #print self.__class__.__name__, elements
+        self.label = kw.get('label',None)
+        self.elements = []
+        for elem in elements:
+            assert elem is not None
+            if type(elem) == str:
+                if "\n" in elem:
+                    lines=[]
+                    for line in elem.splitlines():
+                        line = line.strip()
+                        if len(line) > 0 and not line.startswith("#"):
+                            #lines.append(HBOX(layout,line))
+                            lines.append(layout,line)
+                        self.elements.append(VBOX(layout,*lines))
+                else:
+                    for name in elem.split():
+                        if not name.startswith("#"):
+                            self.elements.append(layout[name])
+            else:
+                self.elements.append(elem)
+        
+    def as_html(self,renderer):
+        return '\n'.join([ e.as_html(renderer) for e in self.elements])
+          
+    def as_html(self,renderer):
+        s = self.html_before
+        s += self.html_between.join(
+          [e.as_html(renderer) for e in self.elements])
+        s += self.html_after
+        return mark_safe(s)
+          
+        
+class HBOX(Container):
+    html_before = '<table width="100%" class="hbox"><tr><td>'
+    html_between = '</td>\n<td>'
+    html_after = '</td></tr></table>'
+        
+class VBOX(Container):
+    html_before = '<table class="vbox"><tr><td>'
+    html_between = '</td><tr/>\n<tr><td>'
+    html_after = '</td><tr/></table>'
+    
+        
+class PageLayout:
+    def __init__(self,desc=None):
+        if desc is None:
+            main = self['main']
+        else:
+            main = self.desc2elem(desc)
+        self._main = main
+        #~ for name in dir(self.__class__):
+            #~ spec = getattr(self.__class__,name)
+            #~ box = VBOX(spec)
+            #~ if name == 'layout':
+                #~ self._layout = box
+                
+    def __getitem__(self,name):
+        try:
+            s = getattr(self.__class__,name)
+        except AttributeError,e:
+            #~ print "%s has no attribute %s" % (
+              #~ self.__class__.__name__,name)
+            return FIELD(name)
+        return self.desc2elem(s)
+            
+    def desc2elem(self,desc):
+        if "\n" in desc:
+            lines=[]
+            for line in desc.splitlines():
+                line = line.strip()
+                if len(line) > 0 and not line.startswith("#"):
+                    lines.append(self.desc2elem(line))
+                    #lines.append(HBOX(layout,line))
+                    #lines.append(layout,line)
+            return VBOX(self,*lines)
+        else:
+            l=[]
+            for name in desc.split():
+                if not name.startswith("#"):
+                    l.append(self[name])
+            return HBOX(self,*l)
+        
+
+    def as_html(self,*args,**kw):
+        return self._main.as_html(*args,**kw)
+        
+    
+        
+class ShowLayoutRenderer:
+    def __init__(self,layout,instance):
+        self.layout = layout
+        self.instance=instance
+        
+    def __getitem__(self,name):
+        value = self.instance.__getitem__(name)
+      
+    def as_html(self):
+        return self.layout.as_html(self)
+        
+    def field_to_html(self,field):
+        return field.as_readonly(self.instance)
+        
+        
+      
+class EditLayoutRenderer:
+    def __init__(self,layout,form):
+        self.form = form
+        self.layout = layout
+      
+    def as_html(self):
+        return self.layout.as_html(self)
+        
+    def field_to_html(self,field):
+        try:
+            bf = self.form[field.name] # BoundField instance
+        except KeyError,e:
+            return field.as_readonly(self.form.instance)
+        if bf.field.widget.is_hidden:
+            return field.as_readonly(self.form.instance)
+        field.setup_widget(bf.field.widget)
+        s = bf.as_widget()
+        if bf.label:
+            if isinstance(bf.field.widget, forms.CheckboxInput):
+                s = s + " " + bf.label_tag()
+            else:
+                s = bf.label_tag() + "<br/>" + s
+        return s
+
+            
+            
+#~ class ReportWidget:
+    #~ def render(self,name,value,attrs=None):
+        #~ assert isinstance(value,Report), name
+        #~ r=HtmlReportRenderer(value)
+        #~ return r.render()
+
+#~ def widget_for_value(value):
+    #~ if isinstance(value,Report):
+        #~ return ReportWidget()
+    #~ return forms.TextInput()
+            
+def page_layout(obj):
+    if obj.page_layout is not None:
+        return obj.page_layout()  
+    opts = obj._meta
+    return PageLayout("\n".join([ 
+      f.name for f in opts.fields + opts.many_to_many]))
+      
 
 
     
@@ -941,17 +1256,12 @@ def index(request):
     #~ return rpt.view(request)
     
 
-def my_formfield_callback(f):
-    #~ if type(f) == models.CharField:
-        #~ return f.formfield(attrs=dict(size=f.max_length))
-    return f.formfield()    
-
     
-def edit_instance(request,app,model,pk):
+def view_instance(request,app,model,pk):
     model_class = models.get_model(app,model)
     #print model_class
     obj = model_class.objects.get(pk=pk)
-    form_class=modelform_factory(model_class,formfield_callback=my_formfield_callback)
+    form_class=modelform_factory(model_class)
     if request.method == 'POST':
         frm=form_class(request.POST,instance=obj)
         if frm.is_valid():
@@ -962,11 +1272,11 @@ def edit_instance(request,app,model,pk):
       title=unicode(obj),
       form=frm,
       main_menu = settings.MAIN_MENU,
-      layout = EditLayoutRenderer(obj.page_layout(),frm),
+      layout = EditLayoutRenderer(page_layout(obj),frm),
     )
     return render_to_response("tom/instance.html",context)
     
-def show_instance_method(request,app,model,pk,meth):
+def view_instance_method(request,app,model,pk,meth):
     model_class = models.get_model(app,model)
     obj = model_class.objects.get(pk=pk)
     m = getattr(obj,meth)
@@ -977,12 +1287,11 @@ def show_instance_method(request,app,model,pk,meth):
     
 def urls(name=''):
     l=[url(r'^%s$' % name, index)]
-    #~ l.append(url(r'^edit/(?P<name>\w+)$', edit_report))
     l.append(
-      url(r'^edit/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
-          edit_instance))
+      url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
+          view_instance))
     l.append(
-      url(r'^show/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
-          show_instance_method))
-    #for rptname,rptclass in _report_classes.items():
+      url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
+          view_instance_method))
     return patterns('',*l)
+

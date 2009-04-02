@@ -18,7 +18,7 @@
 
 from django import forms
 from django.db import models
-from lino.django.tom.layout import FIELD, VBOX
+#from lino.django.tom.layout import FIELD, VBOX
 
 """
 Thanks to 
@@ -50,6 +50,7 @@ class TomModel(models.Model):
   
     model_form = None
     #quicksearch_fields = None
+    page_layout = None
     
     class Meta:
         abstract = True
@@ -90,25 +91,14 @@ class TomModel(models.Model):
     def after_save(self):
         pass
         
-    def view(self,response):
-        raise NotImimplementedError
-
-    #~ @models.permalink
-    #~ def get_absolute_url(self):
-        #~ #return ('lino.django.tom.kernel.', [str(self.id)])
-        #~ return (self.__class__.view, [str(self.pk)])
-
     def get_url_path(self):
-        return '/edit/%s/%s/%s' % (
+        return '/instance/%s/%s/%s' % (
           self._meta.app_label,
           self.__class__.__name__, 
           self.pk)
         
-    def page_layout(self):
-        opts = self._meta
-        l = [ FIELD(f.name) for f in opts.fields + opts.many_to_many]
-        #print [str(f) for f in l]
-        return VBOX(*l)
+    #~ def page_layout(self):
+        #~ pass
         
         
     def get_actions(self):

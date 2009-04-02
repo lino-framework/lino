@@ -58,8 +58,8 @@ class ClientTest(TestCase):
           '/menu',
           '/menu/contacts',
           '/menu/contacts/contacts',
-          '/menu/contacts/contacts/edit',
-          '/edit/igen/Contact/1',
+          '/menu/contacts/contacts?editing=1',
+          '/instance/igen/Contact/1',
           '/menu/prods/products?row=1',
           '/menu/docs/invoices?row=1',
         ):
@@ -88,7 +88,7 @@ class TestCase(TestCase):
         c = Contact(fname="Luc",lname="Saffre")
         c.save()
         
-        self.assertEqual(c.get_url_path(),"/edit/tom/Contact/1")
+        self.assertEqual(c.get_url_path(),"/instance/tom/Contact/1")
         
         c = Contact(lname="Saffre")
         try:

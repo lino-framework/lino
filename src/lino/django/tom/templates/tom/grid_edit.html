@@ -2,8 +2,10 @@
 
 {% block content %}
 
-<form action="" method="POST">
+<form action="{{form_action}}" method="POST">
 {{ context.formset.management_form }}
+<input type="submit" value="Save" />
+
 <table class="grid">
 <tr>
 <td>links</td>
@@ -30,7 +32,7 @@
 {% endfor %}
 
 </table>
+
 <input type="submit" value="Save" />
 </form>
-
 {% endblock content %}

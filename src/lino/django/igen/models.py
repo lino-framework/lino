@@ -19,7 +19,7 @@ import datetime
 from django.db import models
 #from lino.django.tom import models
 from lino.django.tom.validatingmodel import TomModel, ModelValidationError
-from lino.django.tom.layout import VBOX, HBOX
+from lino.django.tom.reports import PageLayout # VBOX, HBOX
 
 from django.utils.safestring import mark_safe
 
@@ -56,8 +56,38 @@ class QuantityField(models.DecimalField):
         #~ return formfield
 
           
-
+class ContactPageLayout(PageLayout):
+    
+    box1 = """
+              title:5 firstName:20 lastName:50
+              companyName:60 nationalId:15
+              """
+    box2 = """email:60 
+              url:60"""
+    box3 = """phone:15 
+              gsm:15"""
+    box4 = """country region
+              city:25 zipCode:25
+              addr1:60
+              addr2:60
+              """
+    box5 = """vatId 
+                vatExempt 
+                itemVat"""
+    box6 = """language 
+                paymentTerm"""
+    box7 = """box5 
+              box6
+              """
+    main = """
+            box1
+            box2 box3
+            box4 box7
+            remarks:6x60
+            """
+  
 class Contact(TomModel):
+    page_layout = ContactPageLayout
     """
     
 Company and/or Person contact data, linked with client account and
@@ -160,32 +190,32 @@ u'Example & Co (Luc Saffre)'
         return s
     as_address.allow_tags=True
 
-    def page_layout(self):
-        return VBOX(
-            VBOX("""
-              title:5 firstName:20 lastName:50
-              companyName:60 nationalId:15
-              """),
-            HBOX(
-              VBOX("email:60 url:60"),
-              VBOX("phone:15 gsm:15"),
-              label="Contact"
-            ),
-            HBOX(
-              VBOX("""
-                  country region
-                  city:25 zipCode:25
-                  addr1:60
-                  addr2:60
-                  """),
-              VBOX(
-                VBOX("vatId vatExempt itemVat"),
-                VBOX("language paymentTerm"),
-                label="Options",
-              ),
-            ),
-            VBOX("remarks:6x60"),
-        )
+    #~ def page_layout(self):
+        #~ return VBOX(
+            #~ VBOX("""
+              #~ title:5 firstName:20 lastName:50
+              #~ companyName:60 nationalId:15
+              #~ """),
+            #~ HBOX(
+              #~ VBOX("email:60 url:60"),
+              #~ VBOX("phone:15 gsm:15"),
+              #~ label="Contact"
+            #~ ),
+            #~ HBOX(
+              #~ VBOX("""
+                  #~ country region
+                  #~ city:25 zipCode:25
+                  #~ addr1:60
+                  #~ addr2:60
+                  #~ """),
+              #~ VBOX(
+                #~ VBOX("vatId vatExempt itemVat"),
+                #~ VBOX("language paymentTerm"),
+                #~ label="Options",
+              #~ ),
+            #~ ),
+            #~ VBOX("remarks:6x60"),
+        #~ )
     
 
 class Country(TomModel):
@@ -255,7 +285,16 @@ class ProductCat(TomModel):
     def __unicode__(self):
         return self.name
 
+class ProductPageLayout(PageLayout):
+    main = """
+        id:5 name:50 cat
+        description:6x50
+        price vatExempt
+    """
+
 class Product(TomModel):
+    page_layout = ProductPageLayout
+    
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
     cat = models.ForeignKey("ProductCat",verbose_name="Category")
@@ -263,12 +302,16 @@ class Product(TomModel):
     price = PriceField(blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
-    def page_layout(self):
-        return VBOX("""
-        id:5 name:50 cat
-        description:6x50
-        price vatExempt
-        """)
+    
+    def __unicode__(self):
+        return self.name
+        
+    #~ def page_layout(self):
+        #~ return VBOX("""
+        #~ id:5 name:50 cat
+        #~ description:6x50
+        #~ price vatExempt
+        #~ """)
 
 #~ class Journal(models.Model):
     #~ name = models.CharField(max_length=200)
@@ -296,35 +339,59 @@ class Document(TomModel):
     class Meta:
         abstract = True
         
+    def __unicode__(self):
+        return "%s # %d" % (self.__class__.__name__,self.number)
+        
     def total_incl(self):
         return self.total_excl + self.total_vat
 
 class Order(Document):
     valid_until = models.DateField("Valid until",blank=True,null=True)
-
+    
+class InvoicePageLayout(PageLayout):
+    box1 = """number your_ref creation_date
+              customer:40 ship_to:40
+              """
+    box2 = """shipping_mode payment_term
+              vat_exempt item_vat
+              """
+    box3 = """remarks:40
+              intro:5x40
+              """
+    box4 = """total_excl 
+              total_vat
+              #total_incl
+              """
+    main = """box1 box2
+                box3 box4
+                items:5x80
+                """
+  
+  
 class Invoice(Document):
     due_date = models.DateField("Payable until",blank=True,null=True)
+    page_layout = InvoicePageLayout
     
-    def page_layout(self):
-        return VBOX(
-          HBOX("""
-            number your_ref creation_date         
-            customer:40 ship_to:40
-            ""","""
-            shipping_mode payment_term
-            vat_exempt item_vat
-            """,
-          ),
-          HBOX("""
-            remarks:40
-            intro:5x40
-            ""","""
-            total_excl 
-            total_vat
-            #total_incl
-            """),
-          "items"
-          )
+    #~ def page_layout(self):
+        #~ return VBOX(
+          #~ HBOX("""
+            #~ number your_ref creation_date         
+            #~ customer:40 ship_to:40
+            #~ ""","""
+            #~ shipping_mode payment_term
+            #~ vat_exempt item_vat
+            #~ """,
+          #~ ),
+          #~ HBOX("""
+            #~ remarks:40
+            #~ intro:5x40
+            #~ ""","""
+            #~ total_excl 
+            #~ total_vat
+            #~ #total_incl
+            #~ """),
+          #~ "items:5x80"
+          #~ )
             
     def items(self):
         return ItemsByInvoice(self)
@@ -428,3 +495,6 @@ class ItemsByInvoice(reports.Report):
         return self.invoice.invoiceitem_set.order_by("pos")
         #return InvoiceItem.objects.filter(invoice=self.invoice).order_by("pos")
     #queryset=property(get_queryset)
+    
+    def header_layout(self):
+        return self.invoice.page_layout()

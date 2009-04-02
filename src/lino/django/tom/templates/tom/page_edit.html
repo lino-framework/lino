@@ -2,7 +2,8 @@
 
 {% block content %}
 
-<form action="" method="POST">
+<form action="{{form_action}}" method="POST">
+<input type="submit" value="Save" />
 <table>
 {{ layout.as_html }}
 </table>
