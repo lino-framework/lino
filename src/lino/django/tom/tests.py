@@ -19,7 +19,8 @@
 
 from django.test import TestCase
 from lino.django.tom.validatingmodel import TomModel, ModelValidationError
-from lino.django.tom.reports import Report, ViewReportRenderer
+from lino.django.tom.reports import Report
+from lino.django.tom.render import ViewReportRenderer
 from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
@@ -59,6 +60,7 @@ class ClientTest(TestCase):
           '/menu/contacts',
           '/menu/contacts/contacts',
           '/menu/contacts/contacts?editing=1',
+          '/menu/contacts/contacts?editing=0',
           '/instance/igen/Contact/1',
           '/menu/prods/products?row=1',
           '/menu/docs/invoices?row=1',
@@ -71,7 +73,7 @@ class ClientTest(TestCase):
         # templates silently ignore them
         response = self.client.get('/menu/contacts/contacts')
         s = "\n".join([repr(c) for c in response.context])
-        s = response.context[0].get("context").navigator()
+        s = response.context[0].get("report").navigator()
         
         response = self.client.get('/menu/config/languages?row=1')
         s = response.context[0].get("layout").as_html()

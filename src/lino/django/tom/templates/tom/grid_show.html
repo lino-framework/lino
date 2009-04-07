@@ -6,12 +6,12 @@
 <tr>
 <td>links</td>
 <td>rownum</td>
-{% for col in context.columns %}
+{% for col in report.columns %}
 <th>{{ col.getLabel }}</th>
 {% endfor %}
 </tr>
 
-{% for row in context.rows %}
+{% for row in report.rows %}
 <tr>
 <td>{{ row.links }}</td>
 <td>{{ row.number }}</td>

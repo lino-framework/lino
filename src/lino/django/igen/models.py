@@ -19,7 +19,7 @@ import datetime
 from django.db import models
 #from lino.django.tom import models
 from lino.django.tom.validatingmodel import TomModel, ModelValidationError
-from lino.django.tom.reports import PageLayout # VBOX, HBOX
+from lino.django.tom.layout import PageLayout # VBOX, HBOX
 
 from django.utils.safestring import mark_safe
 
@@ -332,8 +332,8 @@ class Document(TomModel):
     remarks = models.CharField(max_length=200,blank=True,null=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
-    total_excl = PriceField(blank=True,null=True)
-    total_vat = PriceField(blank=True,null=True)
+    total_excl = PriceField(default=0)
+    total_vat = PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True,null=True)
     
     class Meta:
@@ -349,49 +349,34 @@ class Order(Document):
     valid_until = models.DateField("Valid until",blank=True,null=True)
     
 class InvoicePageLayout(PageLayout):
-    box1 = """number your_ref creation_date
-              customer:40 ship_to:40
-              """
-    box2 = """shipping_mode payment_term
-              vat_exempt item_vat
-              """
-    box3 = """remarks:40
-              intro:5x40
-              """
-    box4 = """total_excl 
-              total_vat
-              #total_incl
-              """
-    main = """box1 box2
-                box3 box4
-                items:5x80
-                """
+    box1 = """
+      number your_ref creation_date
+      customer:40 ship_to:40
+      """
+    box2 = """
+      shipping_mode payment_term
+      vat_exempt item_vat
+      """
+    box3 = """
+      remarks:40
+      intro:5x40
+      """
+    box4 = """
+      total_excl 
+      total_vat
+      total_incl
+      """
+    main = """
+      box1 box2
+      box3 box4
+      items:5x80
+      """
   
   
 class Invoice(Document):
     due_date = models.DateField("Payable until",blank=True,null=True)
     page_layout = InvoicePageLayout
     
-    #~ def page_layout(self):
-        #~ return VBOX(
-          #~ HBOX("""
-            #~ number your_ref creation_date         
-            #~ customer:40 ship_to:40
-            #~ ""","""
-            #~ shipping_mode payment_term
-            #~ vat_exempt item_vat
-            #~ """,
-          #~ ),
-          #~ HBOX("""
-            #~ remarks:40
-            #~ intro:5x40
-            #~ ""","""
-            #~ total_excl 
-            #~ total_vat
-            #~ #total_incl
-            #~ """),
-          #~ "items:5x80"
-          #~ )
             
     def items(self):
         return ItemsByInvoice(self)
@@ -483,9 +468,14 @@ class Orders(reports.Report):
 
 class Invoices(reports.Report):
     queryset=Invoice.objects.order_by("number")
-    columnNames="number items due_date customer total_excl total_vat"
+    columnNames="number items creation_date customer total_incl total_excl total_vat"
 
+class ItemsByInvoiceGridLayout(InvoicePageLayout):
+    pass
+    
 class ItemsByInvoice(reports.Report):
+    grid_layout = ItemsByInvoiceGridLayout
+    #InvoicePageLayout(context=items=)
     
     def __init__(self,invoice,**kw):
         self.invoice=invoice
@@ -493,8 +483,9 @@ class ItemsByInvoice(reports.Report):
         
     def get_queryset(self):
         return self.invoice.invoiceitem_set.order_by("pos")
-        #return InvoiceItem.objects.filter(invoice=self.invoice).order_by("pos")
-    #queryset=property(get_queryset)
+    
+    def foo(self):
+      return InvoicePageLayout(items=self)
     
     def header_layout(self):
         return self.invoice.page_layout()

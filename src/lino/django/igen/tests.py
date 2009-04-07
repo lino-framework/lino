@@ -22,7 +22,7 @@ from models import Companies
 from django.test import TestCase
 
 from django.forms.models import modelform_factory, formset_factory
-from lino.django.tom.reports import EditLayoutRenderer, ShowLayoutRenderer
+from lino.django.tom.layout import EditLayoutRenderer, ShowLayoutRenderer
 
 
 class TestCase(TestCase):
