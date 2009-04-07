@@ -48,5 +48,7 @@ def itr(text_en,**kw):
 
 
 import locale
-setUserLang(locale.getdefaultlocale()[0][:2])
+userLang=locale.getdefaultlocale()[0]
+if userLang is not None:
+    setUserLang(userLang[:2])
 #print _userLang
