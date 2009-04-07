@@ -75,14 +75,19 @@ class ClientTest(TestCase):
         s = "\n".join([repr(c) for c in response.context])
         s = response.context[0].get("report").navigator()
         
-        response = self.client.get('/menu/config/languages?row=1')
+        response = self.client.get('/menu/config/languages/1')
         s = response.context[0].get("layout").as_html()
 
-        response = self.client.get('/menu/prods/products?row=1')
+        response = self.client.get('/menu/prods/products/1')
         s = response.context[0].get("layout").as_html()
 
-        response = self.client.get('/menu/docs/invoices?row=1')
+        response = self.client.get('/menu/docs/invoices/1')
         s = response.context[0].get("layout").as_html()
+        
+        response = self.client.get('/menu/contacts/contacts/1?editing=1')
+        s = response.context[0].get("layout").as_html()
+        s = response.context[0].get("report").navigator()
+        
 
 
 class TestCase(TestCase):

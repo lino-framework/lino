@@ -166,16 +166,30 @@ class Report(object):
         #~ l += [ url(r'^%s$' % name, ViewReportRenderer(self,name).view)]
         #~ l += [ url(r'^%s/edit$' % name, FormReportRenderer(self,name).view)]
         #~ l += [ url(r'^%s/pdf$' % name, PdfReportRenderer(self,name).view)]
-        l += [ url(r'^%s$' % name, self.view)]
+        l += [ url(r'^%s$' % name, self.view_many)]
+        l += [ url(r'^%s/(\d+)$' % name, self.view_one)]
         #l += [ url(r'^%s/edit$' % name, self.edit_view)]
         l += [ url(r'^%s/pdf$' % name, self.pdf_view)]
         return l
 
-    def view(self, request):
-        if render.is_editing(request):
-            return render.EditReportRenderer(self).view(request)
-        return render.ViewReportRenderer(self).view(request)
+    #~ def view(self, request):
+        #~ if render.is_editing(request):
+            #~ return render.EditReportRenderer(self).view(request)
+        #~ return render.ViewReportRenderer(self).view(request)
             
+    def view_many(self, request):
+        if render.is_editing(request):
+            r = render.EditManyReportRenderer(self,request)
+        else:
+            r = render.ViewManyReportRenderer(self,request)
+        return r.render()
+            
+    def view_one(self, request,row):
+        if render.is_editing(request):
+            r = render.EditOneReportRenderer(self,request,row)
+        else:
+            r = render.ViewOneReportRenderer(self,request,row)
+        return r.render()
 
     def pdf_view(self, request):
         return render.PdfReportRenderer(self).view(request)

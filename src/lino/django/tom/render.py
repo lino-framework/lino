@@ -168,7 +168,7 @@ class Row(object):
         #return self.rownum+1
             
     def get_url_path(self):
-        return self.renderer.again(row=self.number)
+        return self.renderer.again(str(self.number))
         
     def pk_field(self):
         """
@@ -518,66 +518,99 @@ class HtmlReportRenderer(ReportRenderer):
 
 class ViewReportRenderer(ReportRenderer):
   
-    page_length = 15
-    max_num=0
-    start_page=1
     form_class=None
     editing=0
     
-    def view(self,request):
+    def __init__(self,report,request):
         self.request=request
-        self.setup(request)
-        row = request.GET.get('row')
-        if row is None:
-            self.setup_page(request)
-            return self.view_many(request)
+        self.params = report.param_form(request.GET)
+        if self.params.is_valid():
+            flt = self.params.cleaned_data.get('flt',report.default_filter)
+        else: 
+            flt = report.default_filter
+        self.queryset = report._build_queryset(flt)
+        #self.main_menu = settings.MAIN_MENU
+        if self.form_class is None:
+            self.form_class = modelform_factory(self.queryset.model)
+        ReportRenderer.__init__(self,report)
             
+    def again(self,*args,**kw):
+        return again(self.request,*args,**kw)
+        
+      
+      
+
+class ViewOneReportRenderer(ViewReportRenderer):
+
+    def __init__(self,report,request,row):
+        ViewReportRenderer.__init__(self,report,request)
         rownum=int(row)
         try:
-            obj=self.queryset[rownum-1]
+            obj = self.queryset[rownum-1]
         except IndexError:
             rownum=self.queryset.count()
             if rownum == 0:
                 raise Http404("queryset is empty")
-            obj=self.queryset[rownum-1]
-        return self.view_one(request,rownum,obj)
-
-    def view_many(self,request):
-        #request.session["editing"] = 0
-        context=dict(
-          report=self,
-          main_menu=settings.MAIN_MENU,
-          title=self.report.get_title(),
-          #header = layout.ShowLayoutRenderer(self.report.header_layout(),self.report),
-        )
-        return render_to_response("tom/grid_show.html",context)
-      
-    def view_one(self,request,rownum,obj):
+            obj = self.queryset[rownum-1]
+        self.instance = obj
+        self.rownum = rownum
         self.row = Row(self,obj,rownum)
-        layout = layouts.ShowLayoutRenderer(layouts.page_layout(obj),obj)
+        self.layout = layouts.ShowLayoutRenderer(layouts.page_layout(obj),obj)
+            
+    def render(self):
         context=dict(
           report=self,
-          title=u"%s - %s" % (self.report.get_title(),obj),
+          title=u"%s - %s" % (self.report.get_title(),self.instance),
           main_menu = settings.MAIN_MENU,
-          layout = layout
+          layout = self.layout
         )
-        return render_to_response(layout.template,context)
+        return render_to_response(self.layout.template,context)
         
-    def again(self,*args,**kw):
-        return again(self.request,*args,**kw)
+    def position_string(self):
+        return  "Row %d of %d." % (self.row.number,self.queryset.count())
         
-    def setup(self,request):
-        self.params = self.report.param_form(request.GET)
-        if self.params.is_valid():
-            flt = self.params.cleaned_data.get('flt',self.report.default_filter)
-        else: 
-            flt = self.report.default_filter
-        self.queryset = self.report._build_queryset(flt)
-        #self.main_menu = settings.MAIN_MENU
-        if self.form_class is None:
-            self.form_class = modelform_factory(self.queryset.model)
-        
-    def setup_page(self,request):
+    def navigator(self):
+        s="""<div class="pagination"><span class="step-links">"""
+        page = self.row
+        get_var_name = "row"
+
+        text = "&#x25C4;Previous"
+        if page.has_previous():
+            s += '<a href="%s">%s</a>' % (
+              self.again("../" +str(page.number-1)),
+              text)
+        else:
+            s += text
+        s += " "
+        text = "Next&#x25BA;"
+        if page.has_next():
+            s += '<a href="%s">%s</a>' % (
+              self.again("../" + str(page.number+1)),
+              text)
+              #self.again(**{get_var_name: page.number+1}),text)
+        else:
+            s += text
+        s += " "
+        s += '<span class="current">%s</span>' % self.position_string()
+        if self.editing:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=0),"show")
+        else:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=1),"edit")
+        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
+        s += """</span></div>"""     
+        return mark_safe(s)
+
+
+class ViewManyReportRenderer(ViewReportRenderer):
+  
+    page_length = 15
+    start_page = 1
+    max_num = 0
+    
+    def __init__(self,report,request):
+        ViewReportRenderer.__init__(self,report,request)
         pgn = request.GET.get('pgn')
         if pgn is None:
             pgn = self.start_page
@@ -595,41 +628,40 @@ class ViewReportRenderer(ReportRenderer):
         except (EmptyPage, InvalidPage):
             page = paginator.page(paginator.num_pages)
         self.page=page
+
+    def render(self):
+        #request.session["editing"] = 0
+        context=dict(
+          report=self,
+          main_menu=settings.MAIN_MENU,
+          title=self.report.get_title(),
+          #header = layout.ShowLayoutRenderer(self.report.header_layout(),self.report),
+        )
+        return render_to_response("tom/grid_show.html",context)
+    
         
     def position_string(self):
-        if hasattr(self,"page"):
-            return  "Page %d of %d." % (self.page.number,self.page.paginator.num_pages)
-        return  "Row %d of %d." % (self.row.number,self.queryset.count())
+        return  "Page %d of %d." % (self.page.number,self.page.paginator.num_pages)
         
     def navigator(self):
         s="""
         <div class="pagination">
         <span class="step-links">
         """
-        if hasattr(self,"page"):
-            assert not hasattr(self,"row")
-            page = self.page
-            #num_pages = self.page.paginator.num_pages
-            get_var_name = "pgn"
-            #page_str = "Page"
-            
-        else:
-            page = self.row
-            #num_pages = self.queryset.count()
-            get_var_name = "row"
-            #page_str = "Row"
+        page = self.page
+        #num_pages = self.page.paginator.num_pages
             
         text = "&#x25C4;Previous"
         if page.has_previous():
             s += '<a href="%s">%s</a>' % (
-              self.again(**{get_var_name: page.number-1}),text)
+              self.again(pgn=page.number-1),text)
         else:
             s += text
         s += " "
         text = "Next&#x25BA;"
         if page.has_next():
             s += '<a href="%s">%s</a>' % (
-              self.again(**{get_var_name: page.number+1}),text)
+              self.again(pgn=page.number+1),text)
         else:
             s += text
         s += " "
@@ -638,10 +670,6 @@ class ViewReportRenderer(ReportRenderer):
         <span class="current">%s</span>
         """ % self.position_string()
 
-        #~ s += """
-        #~ <span class="current"> %s %d of %d. </span>
-        #~ """ % (page_str, page.number, num_pages)
-        
         if self.editing:
             s += ' <a href="%s">%s</a>' % (
               self.again(editing=0),"show")
@@ -654,9 +682,6 @@ class ViewReportRenderer(ReportRenderer):
         </div>
         """     
         return mark_safe(s)
-      
-      
-      
             
     def rows(self):
         rownum = self.page.start_index()
@@ -665,14 +690,50 @@ class ViewReportRenderer(ReportRenderer):
             rownum += 1
 
 
-class EditReportRenderer(ViewReportRenderer):
+
+
+
+
+class EditReportRenderer:
+    editing=1
+    def new_column(self,field,index):
+        if field.editable and not field.primary_key:
+            return FormFieldColumn(self,field,index)
+        return FieldColumn(self,field,index)
+        
+
+class EditOneReportRenderer(ViewOneReportRenderer,EditReportRenderer):
+    
+    def render(self):
+        if self.request.method == 'POST':
+            frm=self.form_class(self.request.POST,instance=self.instance)
+            if frm.is_valid():
+                frm.save()
+                stop_editing(self.request)
+                return HttpResponseRedirect(self.again(editing=None))
+        else:
+            frm=self.form_class(instance=self.instance)
+        self.form = frm
+        
+        #self.row = Row(self,self.instance,self.rownum,frm)
+        self.row.form = frm
+        context=dict(
+          report=self,
+          title=unicode(self.instance),
+          form=frm,
+          main_menu = settings.MAIN_MENU,
+          layout = layouts.EditLayoutRenderer(layouts.page_layout(self.instance),frm),
+          form_action = again(self.request,editing=None),
+        )
+        return render_to_response("tom/page_edit.html",context)
+        
+class EditManyReportRenderer(ViewManyReportRenderer,EditReportRenderer):
     extra=1
     can_delete=True
     can_order=False
-    editing=1
-    
-    def __init__(self,report):
-        ViewReportRenderer.__init__(self,report)
+        
+    def __init__(self,report,request):
+        ViewManyReportRenderer.__init__(self,report,request)
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 
@@ -688,40 +749,9 @@ class EditReportRenderer(ViewReportRenderer):
               can_delete=self.can_delete)
         self.formset_class.model = report.queryset.model
         
-    def new_column(self,field,index):
-        if field.editable and not field.primary_key:
-            return FormFieldColumn(self,field,index)
-        return FieldColumn(self,field,index)
-        
-    def view_one(self,request,rownum,obj):
-        if request.method == 'POST':
-            frm=self.form_class(request.POST,instance=obj)
-            if frm.is_valid():
-                frm.save()
-                stop_editing(request)
-                return HttpResponseRedirect(again(request,editing=None))
-        else:
-            frm=self.form_class(instance=obj)      
-        self.form = frm
-        
-        self.row = Row(self,obj,rownum,frm)
-        context=dict(
-          report=self,
-          title=unicode(obj),
-          form=frm,
-          main_menu = settings.MAIN_MENU,
-          layout = layouts.EditLayoutRenderer(layouts.page_layout(obj),frm),
-          form_action = again(request,editing=None),
-        )
-        #start_editing(request)
-        return render_to_response("tom/page_edit.html",context)
-        
-        
-        
-    def view_many(self,request):
-        #request.session["editing"] = 1
-        if request.method == 'POST':
-            fs = self.formset_class(request.POST,
+    def render(self):
+        if self.request.method == 'POST':
+            fs = self.formset_class(self.request.POST,
                 queryset=self.page.object_list)
             if fs.is_valid():
                 fs.save()
@@ -735,8 +765,8 @@ class EditReportRenderer(ViewReportRenderer):
                 e.g. if an instance has been added, it may now be at 
                 a different row and the page count may have changed.
                 """
-                stop_editing(request)
-                return HttpResponseRedirect(again(request,editing=None))
+                stop_editing(self.request)
+                return HttpResponseRedirect(self.again(editing=None))
                     
         else:
             fs = self.formset_class(queryset=self.page.object_list)
@@ -745,7 +775,7 @@ class EditReportRenderer(ViewReportRenderer):
           report = self,
           main_menu = settings.MAIN_MENU,
           title = self.report.get_title(),
-          form_action = again(request,editing=None),
+          form_action = self.again(editing=None),
         )
         return render_to_response("tom/grid_edit.html",context)
 
