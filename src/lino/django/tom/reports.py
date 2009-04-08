@@ -169,7 +169,8 @@ class Report(object):
         l += [ url(r'^%s$' % name, self.view_many)]
         l += [ url(r'^%s/(\d+)$' % name, self.view_one)]
         #l += [ url(r'^%s/edit$' % name, self.edit_view)]
-        l += [ url(r'^%s/pdf$' % name, self.pdf_view)]
+        l += [ url(r'^%s/pdf$' % name, self.pdf_view_many)]
+        l += [ url(r'^%s/(\d+)/pdf$' % name, self.pdf_view_one)]
         return l
 
     #~ def view(self, request):
@@ -191,8 +192,11 @@ class Report(object):
             r = render.ViewOneReportRenderer(self,request,row)
         return r.render()
 
-    def pdf_view(self, request):
-        return render.PdfReportRenderer(self).view(request)
+    def pdf_view_one(self, request,row):
+        return render.PdfOneReportRenderer(self,request,row).render()
+        
+    def pdf_view_many(self, request):
+        return render.PdfManyReportRenderer(self,request).render()
         
     def as_text(self, **kw):
         return render.TextReportRenderer(self,**kw).render()

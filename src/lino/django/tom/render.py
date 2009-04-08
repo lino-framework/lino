@@ -39,8 +39,11 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string, get_template, select_template, Context
 
-# l:\snapshot\xhtml2pdf
-import ho.pisa as pisa
+try:
+    # l:\snapshot\xhtml2pdf
+    import ho.pisa as pisa
+except ImportError:
+    pisa = None
 
 
 from lino.reports.constants import *
@@ -787,12 +790,12 @@ class EditManyReportRenderer(ViewManyReportRenderer,EditReportRenderer):
 
     
 
-class PdfReportRenderer(ViewReportRenderer):
+class PdfOneReportRenderer(ViewOneReportRenderer):
 
-    def view_one(self,request,rownum,obj):
+    def render(self):
         template = get_template("tom/page_pdf.html")
         #self.row = Row(self,obj,rownum)
-        print obj
+        obj=self.instance
         layout = layouts.ShowLayoutRenderer(layouts.page_layout(obj),obj)
         context=dict(
           #report=self,
@@ -800,29 +803,30 @@ class PdfReportRenderer(ViewReportRenderer):
           layout = layout
         )
         html  = template.render(Context(context))
-        print html
+        if not pisa:
+            return HttpResponse(html)
         result = cStringIO.StringIO()
         pdf = pisa.pisaDocument(cStringIO.StringIO(html.encode("ISO-8859-1")), result)
         if pdf.err:
             raise Exception(cgi.escape(html))
         return HttpResponse(result.getvalue(),mimetype='application/pdf')
         
+class PdfManyReportRenderer(ViewManyReportRenderer):
 
-    def view_many(self,request):
+    def render(self):
         template = get_template("tom/grid_pdf.html")
         context=dict(
           report=self,
           title=self.report.get_title(),
         )
         html  = template.render(Context(context))
+        if not pisa:
+            return HttpResponse(html)
         result = cStringIO.StringIO()
         pdf = pisa.pisaDocument(cStringIO.StringIO(html.encode("ISO-8859-1")), result)
         if pdf.err:
             raise Exception(cgi.escape(html))
         return HttpResponse(result.getvalue(),mimetype='application/pdf')
-      
-    def setup_page(self,request):
-        pass
         
     def rows(self):
         rownum = 1
