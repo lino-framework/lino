@@ -301,6 +301,17 @@ class ReportRenderer:
     def new_column(self,field,index):
         return FieldColumn(self,field,index)
         
+    def _build_queryset(self,flt=None):
+        qs=self.report.queryset
+        if flt:
+            l=[]
+            q=models.Q()
+            for col in self.columns:
+                if col.is_filter:
+                    q = q | models.Q(**{col.field.name+"__contains": flt})
+            qs = qs.filter(q)
+        return qs
+        
         
         
 
@@ -440,7 +451,7 @@ class TextReportRenderer(ReportRenderer):
               for col in self.columns]
         writer.write("+".join(l) + "\n")
         
-        queryset=self.report._build_queryset(flt=self.flt)
+        queryset=self._build_queryset(flt=self.flt)
         #queryset=self.report.queryset
         #print queryset.count()
         for obj in queryset:
@@ -507,7 +518,7 @@ class HtmlReportRenderer(ReportRenderer):
         for col in self.columns:
             s += "<th>%s</th>" % col.label
         s += "</tr>"
-        queryset=self.report._build_queryset(flt=self.flt)
+        queryset=self._build_queryset(flt=self.flt)
         for obj in queryset:
             s += "<tr>"
             for col in self.columns:
@@ -525,17 +536,17 @@ class ViewReportRenderer(ReportRenderer):
     editing=0
     
     def __init__(self,report,request):
+        ReportRenderer.__init__(self,report)
         self.request=request
         self.params = report.param_form(request.GET)
         if self.params.is_valid():
             flt = self.params.cleaned_data.get('flt',report.default_filter)
         else: 
             flt = report.default_filter
-        self.queryset = report._build_queryset(flt)
+        self.queryset = self._build_queryset(flt)
         #self.main_menu = settings.MAIN_MENU
         if self.form_class is None:
             self.form_class = modelform_factory(self.queryset.model)
-        ReportRenderer.__init__(self,report)
             
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)

@@ -205,18 +205,6 @@ class Report(object):
         return render.HtmlReportRenderer(self,**kw).render()
         
 
-    def _build_queryset(self,flt=None):
-        qs=self.queryset
-        if flt:
-            l=[]
-            q=models.Q()
-            for col in self.columns:
-                if col.is_filter:
-                    q = q | models.Q(**{col.field.name+"__contains": flt})
-            #print l
-            qs = qs.filter(q)
-        return qs
-        
 
 
 
