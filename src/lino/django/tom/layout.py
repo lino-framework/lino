@@ -32,26 +32,25 @@ class FIELD(Element):
         a=name.split(":")
         if len(a) == 1:
             self.name = name
-            self.size=None
+            self.picture = None
         elif len(a) == 2:
             self.name = a[0]
-            self.size=a[1]
-        #print "foo", str(self)
+            self.picture = a[1]
             
     def __str__(self):
-        if self.size is None:
+        if self.picture is None:
             return self.name
-        return self.name + ":" + self.size
+        return self.name + ":" + self.picture
             
     def setup_widget(self,widget):
-        if self.size is not None:
+        if self.picture is not None:
             if isinstance(widget,forms.TextInput):
-                widget.attrs["size"] = self.size
+                widget.attrs["size"] = self.picture
             elif isinstance(widget,forms.Textarea):
-                rows,cols=self.size.split("x")
+                rows,cols=self.picture.split("x")
                 widget.attrs["rows"] = rows
                 widget.attrs["cols"] = cols
-        
+
     def render(self,renderer):
         return mark_safe(renderer.field_to_html(self))
         
@@ -128,7 +127,6 @@ class Container(Element):
           ",".join([str(e) for e in self.elements]))
         
     def render(self,renderer):
-        #print "rendering", self
         context = dict(
           element = ElementRenderer(self,renderer)
         )
@@ -145,6 +143,7 @@ class VBOX(Container):
     
         
 class PageLayout:
+    detail_reports = None
     def __init__(self,desc=None):
         if desc is None:
             main = self['main']
@@ -165,7 +164,7 @@ class PageLayout:
               #~ self.__class__.__name__,name)
             return FIELD(name)
         return self.desc2elem(s)
-            
+
     def desc2elem(self,desc):
         if "\n" in desc:
             lines=[]
@@ -212,16 +211,19 @@ class ElementRenderer:
         
     
 class LayoutRenderer:
-    def __init__(self,layout,data):
+    def __init__(self,layout,data,details={}):
         self.layout = layout
-        self.data = data
+        self.data = data # either a model instance or a form
+        self.details = details
         
     #~ def as_html(self):
         #~ return self.layout.as_html(self)
         
-    def __getitem__(self,name):
-        value = self.data.__getitem__(name)
-        return value
+    #~ def __getitem__(self,name):
+        #~ try:
+            #~ return self.data.__getitem__(name)
+        #~ except KeyError:
+            #~ return self.details[name]
         
     def as_html(self):
         main = self.layout._main
@@ -245,6 +247,17 @@ class EditLayoutRenderer(LayoutRenderer):
         try:
             bf = self.data[field.name] # BoundField instance
         except KeyError,e:
+            if self.details.has_key(field.name):
+                #print "coucou", field.name
+                r = self.details[field.name]
+                #print "coco", r
+                return r.render_to_string()
+                #~ try:
+                    #~ s = r.render_to_string()
+                #~ except Exception,e:
+                    #~ return str(e)
+                #~ #print "caca", s
+                #~ return s
             return field.as_readonly(self.data.instance)
         if bf.field.widget.is_hidden:
             return field.as_readonly(self.data.instance)

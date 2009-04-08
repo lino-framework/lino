@@ -123,6 +123,7 @@ class Report(object):
     #editable=True
     name=None
     #path=None
+    form_class=None
     
     def __init__(self):
         self.groups = [] # for later
@@ -135,7 +136,9 @@ class Report(object):
             #~ self.title = self.build_title()
         if self.queryset is None:
             self.queryset = self.get_queryset()
-        
+        if self.form_class is None:
+            self.form_class = modelform_factory(self.queryset.model)
+         
         
     def get_title(self):
         #~ if self.title is None:

@@ -188,14 +188,15 @@ class Row(object):
 
 
 
-class Column(object):
+class Column:
     is_formfield = False
-    def __init__(self, rpt, label,index):
+    def __init__(self,rpt,label,index,picture=None):
         self.index = index
         self.width = None
         self.halign = LEFT
         self.valign = TOP
         self.label = label
+        self.picture = picture
 
     def getLabel(self):
         return self.label
@@ -214,8 +215,8 @@ class Column(object):
         
 
 class FieldColumn(Column):
-    def __init__(self, rpt, field,index):
-        Column.__init__(self,rpt,field.verbose_name,index)
+    def __init__(self,rpt,field,*args):
+        Column.__init__(self,rpt,field.verbose_name,*args)
         self.field = field
         self.name=field.name
         self.is_filter = isinstance(field,models.CharField)
@@ -235,9 +236,9 @@ class FormFieldColumn(FieldColumn):
 class MethodColumn(Column):
     is_formfield = False
     is_filter = False
-    def __init__(self, rpt, name,index):
+    def __init__(self,rpt,name,*args):
         #print field.var_name
-        Column.__init__(self,rpt,name,index)
+        Column.__init__(self,rpt,name,*args)
         self.name = name
         
     #~ def get_urls(self,name):
@@ -247,7 +248,8 @@ class MethodColumn(Column):
     def cell_value(self,instance,form):
         meth=getattr(instance,self.name)
         label = unicode(meth())
-        html='<a href="%s/%s">%s</a>' % (instance.get_url_path(),self.name,label)
+        html='<a href="%s/%s">%s</a>' % (
+          instance.get_url_path(), self.name, label)
         return mark_safe(html)
             
     #~ def view(self,request):
@@ -283,14 +285,24 @@ class ReportRenderer:
         meta = self.report.queryset.model._meta
         if self.report.columnNames:
             for colname in self.report.columnNames.split() :
+                a = colname.split(":")
+                if len(a) == 1:
+                    fieldname = colname
+                    picture = None
+                else:
+                    fieldname = a[0]
+                    picture = a[1]
                 try:
                     field,model,direct,m2m = \
-                      meta.get_field_by_name(colname)
+                      meta.get_field_by_name(fieldname)
                     #print field, model, direct, m2m 
                 except models.FieldDoesNotExist,e:
-                    col = MethodColumn(self.report,colname,len(columns))
+                    col = MethodColumn(self.report,
+                                       fieldname,
+                                       len(columns),
+                                       picture)
                 else:
-                    col = self.new_column(field,len(columns))
+                    col = self.new_column(field,len(columns),picture)
                 columns.append(col)
         else:
             for field in meta.fields:
@@ -298,8 +310,8 @@ class ReportRenderer:
                 columns.append(col)
         self.columns = columns
 
-    def new_column(self,field,index):
-        return FieldColumn(self,field,index)
+    def new_column(self,*args):
+        return FieldColumn(self,*args)
         
     def _build_queryset(self,flt=None):
         qs=self.report.queryset
@@ -532,22 +544,20 @@ class HtmlReportRenderer(ReportRenderer):
 
 class ViewReportRenderer(ReportRenderer):
   
-    form_class=None
-    editing=0
+    editing = 0
     
-    def __init__(self,report,request):
+    def __init__(self,report,request,prefix=None):
         ReportRenderer.__init__(self,report)
-        self.request=request
-        self.params = report.param_form(request.GET)
-        if self.params.is_valid():
-            flt = self.params.cleaned_data.get('flt',report.default_filter)
-        else: 
-            flt = report.default_filter
+        self.request = request
+        self.prefix = prefix
+        flt = report.default_filter
+        if prefix is None:
+            self.params = report.param_form(request.GET)
+            if self.params.is_valid():
+                flt = self.params.cleaned_data.get('flt',report.default_filter)
         self.queryset = self._build_queryset(flt)
         #self.main_menu = settings.MAIN_MENU
-        if self.form_class is None:
-            self.form_class = modelform_factory(self.queryset.model)
-            
+           
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
         
@@ -623,25 +633,26 @@ class ViewManyReportRenderer(ViewReportRenderer):
     start_page = 1
     max_num = 0
     
-    def __init__(self,report,request):
-        ViewReportRenderer.__init__(self,report,request)
-        pgn = request.GET.get('pgn')
-        if pgn is None:
-            pgn = self.start_page
-        else:
-            pgn=int(pgn)
-        pgl = request.GET.get('pgl')
-        if pgl is None:
-            pgl = self.page_length
-        else:
-            pgl = int(pgl)
-      
-        paginator = Paginator(self.queryset,pgl)
-        try:
-            page = paginator.page(pgn)
-        except (EmptyPage, InvalidPage):
-            page = paginator.page(paginator.num_pages)
-        self.page=page
+    def __init__(self,report,request,prefix=None):
+        ViewReportRenderer.__init__(self,report,request,prefix)
+        if self.prefix is None:
+            pgn = request.GET.get('pgn')
+            if pgn is None:
+                pgn = self.start_page
+            else:
+                pgn=int(pgn)
+            pgl = request.GET.get('pgl')
+            if pgl is None:
+                pgl = self.page_length
+            else:
+                pgl = int(pgl)
+          
+            paginator = Paginator(self.queryset,pgl)
+            try:
+                page = paginator.page(pgn)
+            except (EmptyPage, InvalidPage):
+                page = paginator.page(paginator.num_pages)
+            self.page=page
 
     def render(self):
         #request.session["editing"] = 0
@@ -708,27 +719,39 @@ class ViewManyReportRenderer(ViewReportRenderer):
 
 
 
-class EditReportRenderer:
+class EditReportRenderer:  # Mixin class
     editing=1
-    def new_column(self,field,index):
+    def new_column(self,field,*args):
         if field.editable and not field.primary_key:
-            return FormFieldColumn(self,field,index)
-        return FieldColumn(self,field,index)
+            return FormFieldColumn(self,field,*args)
+        return FieldColumn(self,field,*args)
         
 
 class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
-    
+  
     def render(self):
         if self.request.method == 'POST':
-            frm=self.form_class(self.request.POST,instance=self.instance)
+            frm=self.report.form_class(self.request.POST,instance=self.instance)
             if frm.is_valid():
                 frm.save()
                 stop_editing(self.request)
                 return HttpResponseRedirect(self.again(editing=None))
         else:
-            frm=self.form_class(instance=self.instance)
+            frm=self.report.form_class(instance=self.instance)
         self.form = frm
         
+        layout = layouts.page_layout(self.instance)
+        
+        details = {}
+        #model=self.instance.model
+        if layout.detail_reports:
+            for name in layout.detail_reports.split():
+                meth = getattr(self.instance,name)
+                report = meth()
+                #print report.as_text()
+                renderer = EditManyReportRenderer(report,self.request,name)
+                details[name] = renderer
+            
         #self.row = Row(self,self.instance,self.rownum,frm)
         self.row.form = frm
         context=dict(
@@ -736,24 +759,25 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
           title=unicode(self.instance),
           form=frm,
           main_menu = settings.MAIN_MENU,
-          layout = layouts.EditLayoutRenderer(layouts.page_layout(self.instance),frm),
+          layout = layouts.EditLayoutRenderer(layout,frm,details),
           form_action = again(self.request,editing=None),
         )
         return render_to_response("tom/page_edit.html",context)
         
 class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
-    extra=1
-    can_delete=True
-    can_order=False
+    extra = 1
+    can_delete = True
+    can_order = False
+    template = "tom/includes/grid_edit.html"
         
-    def __init__(self,report,request):
-        ViewManyReportRenderer.__init__(self,report,request)
+    def __init__(self,report,request,prefix=None):
+        ViewManyReportRenderer.__init__(self,report,request,prefix)
         
         # todo: instead of letting modelform_factory look up the fields again by 
         # their name, i should do it myself, formfields being then a list of 
         # fields and not of fieldnames.
-        #formfields = [ report.queryset.model._meta.pk.name ]
-        formfields = [col.field.name for col in self.columns if col.is_formfield]
+        # formfields = [ report.queryset.model._meta.pk.name ]
+        # formfields = [col.field.name for col in self.columns if col.is_formfield]
         rowform_class = modelform_factory(report.queryset.model)#,fields=formfields)
                 
         self.formset_class = formset_factory(rowform_class,
@@ -762,11 +786,14 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
               can_order=self.can_order, 
               can_delete=self.can_delete)
         self.formset_class.model = report.queryset.model
+        if prefix:
+            self.formset_class.prefix = prefix
+            object_list = self.queryset
+        else:
+            object_list = self.page.object_list
         
-    def render(self):
         if self.request.method == 'POST':
-            fs = self.formset_class(self.request.POST,
-                queryset=self.page.object_list)
+            fs = self.formset_class(self.request.POST,queryset=object_list)
             if fs.is_valid():
                 fs.save()
                 
@@ -783,8 +810,10 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
                 return HttpResponseRedirect(self.again(editing=None))
                     
         else:
-            fs = self.formset_class(queryset=self.page.object_list)
-        self.formset=fs
+            fs = self.formset_class(queryset=object_list)
+        self.formset = fs
+        
+    def render(self):
         context=dict(
           report = self,
           main_menu = settings.MAIN_MENU,
@@ -792,9 +821,20 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
           form_action = self.again(editing=None),
         )
         return render_to_response("tom/grid_edit.html",context)
+        
+    def render_to_string(self):
+        context=dict(
+          report = self,
+        )
+        return render_to_string(self.template,context)
+        
+        
 
     def rows(self):
-        rownum = self.page.start_index()
+        if self.prefix is None:
+            rownum = self.page.start_index()
+        else:
+            rownum = 1
         for form in self.formset.forms:
             yield Row(self,form.instance,rownum,form)
             rownum += 1

@@ -3,36 +3,8 @@
 {% block content %}
 
 <form action="{{form_action}}" method="POST">
-{{ report.formset.management_form }}
 <input type="submit" value="Save" />
-
-<table class="grid">
-<tr>
-<td>links</td>
-<td>rownum</td>
-{% if report.can_delete%}
-<th>Delete</th>
-{% endif %}
-{% for col in report.columns %}
-<th>{{ col.getLabel }}</th>
-{% endfor %}
-</tr>
-
-{% for row in report.rows %}
-<tr>
-<td>{{ row.links }}</td>
-<td>{{ row.number }}{{ row.pk_field }} </td>
-{% if report.can_delete %}
-<td>{{ row.form.DELETE }}</td>
-{% endif %}
-{% for cell in row %}
-<td>{{ cell }}</td>
-{% endfor %}
-</tr>
-{% endfor %}
-
-</table>
-
+{% include "tom/includes/grid_edit.html" %}
 <input type="submit" value="Save" />
 </form>
 {% endblock content %}

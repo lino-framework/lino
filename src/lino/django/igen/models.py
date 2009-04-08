@@ -371,7 +371,12 @@ class InvoicePageLayout(PageLayout):
       box3 box4
       items:5x80
       """
+    detail_reports = "items"
   
+    #~ def items(self,instance,request):
+        #~ report=ItemsByInvoice(instance)
+        #~ renderer.EditManyReportRenderer(report,request)
+        
   
 class Invoice(Document):
     due_date = models.DateField("Payable until",blank=True,null=True)
@@ -470,12 +475,13 @@ class Invoices(reports.Report):
     queryset=Invoice.objects.order_by("number")
     columnNames="number items creation_date customer total_incl total_excl total_vat"
 
-class ItemsByInvoiceGridLayout(InvoicePageLayout):
-    pass
+#~ class ItemsByInvoiceGridLayout(InvoicePageLayout):
+    #~ pass
     
 class ItemsByInvoice(reports.Report):
-    grid_layout = ItemsByInvoiceGridLayout
+    #grid_layout = ItemsByInvoiceGridLayout
     #InvoicePageLayout(context=items=)
+    columnNames="pos product title description unitPrice qty total"
     
     def __init__(self,invoice,**kw):
         self.invoice=invoice

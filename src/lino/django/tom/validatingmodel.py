@@ -51,6 +51,7 @@ class TomModel(models.Model):
     model_form = None
     #quicksearch_fields = None
     page_layout = None
+    #detail_reports = None
     
     class Meta:
         abstract = True

@@ -88,6 +88,13 @@ class ClientTest(TestCase):
         s = response.context[0].get("layout").as_html()
         s = response.context[0].get("report").navigator()
         
+        response = self.client.get('/menu/docs/invoices/1?editing=1')
+        s = response.context[0].get("layout").as_html()
+        s = response.context[0].get("report").navigator()
+        #s = response.context[0].get("report").navigator()
+        
+        
+        
 
 
 class TestCase(TestCase):
