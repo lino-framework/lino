@@ -705,7 +705,7 @@ class EditReportRenderer:
         return FieldColumn(self,field,index)
         
 
-class EditOneReportRenderer(ViewOneReportRenderer,EditReportRenderer):
+class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
     
     def render(self):
         if self.request.method == 'POST':
@@ -730,7 +730,7 @@ class EditOneReportRenderer(ViewOneReportRenderer,EditReportRenderer):
         )
         return render_to_response("tom/page_edit.html",context)
         
-class EditManyReportRenderer(ViewManyReportRenderer,EditReportRenderer):
+class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     extra=1
     can_delete=True
     can_order=False
