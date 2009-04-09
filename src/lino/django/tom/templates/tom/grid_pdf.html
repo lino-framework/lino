@@ -6,18 +6,13 @@
 <table class="grid">
 <tr>
 <td>rownum</td>
-{% for col in report.columns %}
-<th>{{ col.getLabel }}</th>
+{% for col in report.column_headers %}
+<th>{{ col }}</th>
 {% endfor %}
 </tr>
 
 {% for row in report.rows %}
-<tr>
-<td>{{ row.number }}</td>
-{% for cell in row %}
-<td>{{ cell }}</td>
-{% endfor %}
-</tr>
+{{ row.as_html }}
 {% endfor %}
 
 </table>

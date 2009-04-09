@@ -27,8 +27,8 @@ from django.template.loader import render_to_string
 class Element:
     pass
     
-class FIELD(Element):
-    def __init__(self,name):
+class FieldElement(Element):
+    def __init__(self,layout,name):
         a=name.split(":")
         if len(a) == 1:
             self.name = name
@@ -36,7 +36,7 @@ class FIELD(Element):
         elif len(a) == 2:
             self.name = a[0]
             self.picture = a[1]
-            
+        
     def __str__(self):
         if self.picture is None:
             return self.name
@@ -52,10 +52,14 @@ class FIELD(Element):
                 widget.attrs["cols"] = cols
 
     def render(self,renderer):
-        return mark_safe(renderer.field_to_html(self))
+        if renderer.editing:
+            return self.as_editable(renderer)
+        return self.as_readonly(renderer)
+        #return mark_safe(renderer.field_to_html(self))
         
         
-    def as_readonly(self,instance):
+    def as_readonly(self,renderer):
+        instance = renderer.get_instance()
         value = getattr(instance,self.name)
         try:
             model_field = instance._meta.get_field(self.name)
@@ -80,27 +84,50 @@ class FIELD(Element):
             value = ''
         else:
             value = unicode(value)
-        self.setup_widget(widget)
         if isinstance(widget, forms.CheckboxInput):
             if value:
                 s = "[X]"
             else: 
                 s = "[&nbsp;]"
-            s += " " + label
+            if renderer.show_labels:
+                s += " " + label
         elif isinstance(widget, forms.Select):
-            s = label + "<br/>[" + value + "]"
+            s = "[" + value + "]"
+            if renderer.show_labels:
+                s = label + "<br/>" + s
         else:
+            self.setup_widget(widget)
             s = widget.render(self.name,value,
               attrs={"readonly":"readonly","class":"readonly"})
-            s = label + "<br/>" + s
-        return s
+            if renderer.show_labels:
+                s = label + "<br/>" + s
+        return mark_safe(s)
         
+    def as_editable(self,renderer):
+        form = renderer.get_form()
+        try:
+            bf = form[self.name] # a BoundField instance
+        except KeyError,e:
+            r = renderer.details.get(self.name)
+            if r is not None:
+                return r.render_to_string()
+            return self.as_readonly(renderer)
+        if bf.field.widget.is_hidden:
+            return self.as_readonly(renderer)
+        self.setup_widget(bf.field.widget)
+        s = bf.as_widget()
+        if renderer.show_labels and bf.label:
+            if isinstance(bf.field.widget, forms.CheckboxInput):
+                s = s + " " + bf.label_tag()
+            else:
+                s = bf.label_tag() + "<br/>" + s
+        return mark_safe(s)
         
         
         
 class Container(Element):
     def __init__(self,layout,*elements,**kw):
-        assert isinstance(layout,PageLayout)
+        assert isinstance(layout,Layout)
         #print self.__class__.__name__, elements
         self.label = kw.get('label',None)
         self.elements = []
@@ -128,27 +155,41 @@ class Container(Element):
         
     def render(self,renderer):
         context = dict(
-          element = ElementRenderer(self,renderer)
+          element = BoundElement(self,renderer)
         )
-        return render_to_string(self.template,context)
-        
-        
-          
-        
+        try:
+          s=render_to_string(self.template,context)
+          #print s
+        except Exception,e:
+          print e
+        return s
+
 class HBOX(Container):
     template = "tom/includes/hbox.html"
         
 class VBOX(Container):
     template = "tom/includes/vbox.html"
     
-        
-class PageLayout:
-    detail_reports = None
-    def __init__(self,desc=None):
-        if desc is None:
+class GRID_ROW(Container):
+    template = "tom/includes/grid_row.html"
+
+
+class Layout:
+    detail_reports = {}
+    join_str = None
+    vbox_class = VBOX
+    hbox_class = HBOX
+    def __init__(self,model,desc=None):
+        #self._meta = meta
+        if hasattr(self,"main"):
             main = self['main']
         else:
+            if desc is None:
+                desc = self.join_str.join([ 
+                    f.name for f in model._meta.fields 
+                    + model._meta.many_to_many])
             main = self.desc2elem(desc)
+
         self._main = main
         #~ for name in dir(self.__class__):
             #~ spec = getattr(self.__class__,name)
@@ -160,9 +201,7 @@ class PageLayout:
         try:
             s = getattr(self.__class__,name)
         except AttributeError,e:
-            #~ print "%s has no attribute %s" % (
-              #~ self.__class__.__name__,name)
-            return FIELD(name)
+            return FieldElement(self,name)
         return self.desc2elem(s)
 
     def desc2elem(self,desc):
@@ -174,109 +213,148 @@ class PageLayout:
                     lines.append(self.desc2elem(line))
                     #lines.append(HBOX(layout,line))
                     #lines.append(layout,line)
-            return VBOX(self,*lines)
+            return self.vbox_class(self,*lines)
         else:
             l=[]
             for name in desc.split():
                 if not name.startswith("#"):
                     l.append(self[name])
-            return HBOX(self,*l)
-        
+            return self.hbox_class(self,*l)
 
-    #~ def as_html(self,*args,**kw):
-        #~ return self._main.as_html(*args,**kw)
+class PageLayout(Layout):
+    show_labels = True
+    join_str = "\n"
 
+class RowLayout(Layout):
+    show_labels = False
+    join_str = " "
+    hbox_class = GRID_ROW
+    vbox_class = None # not yet allowed
 
+    
 
-
-
-class ElementRenderer:
+class BoundElement:
     def __init__(self,element,renderer):
         self.element = element
         self.renderer = renderer
-        #self.template = element.template
-        
+
     def as_html(self):
-        s = self.element.render(self.renderer)
-        #print "as_html(%s) -> %d" % (self.element, len(s))
-        return s
+        return self.element.render(self.renderer)
   
     def children(self):
+        assert isinstance(self.element,Container)
         for e in self.element.elements:
-            yield ElementRenderer(e,self)
-  
-    def field_to_html(self,field):
-        return self.renderer.field_to_html(field)
-        
-        
-    
+            yield BoundElement(e,self.renderer)
+            
+    def row_management(self):
+        #print "row_management", self.element
+        assert isinstance(self.element,GRID_ROW)
+        row = self.renderer.get_row()
+        s = "<td>%s</td>" % row.links()
+        if self.renderer.editing:
+            s += "<td>%d%s</td>" % (row.number,row.pk_field())
+            if row.renderer.can_delete:
+                s += "<td>%s</td>" % row.form["DELETE"]
+        else:
+            s += "<td>%d</td>" % (row.number)
+        return mark_safe(s)
+            
+
+
+
 class LayoutRenderer:
-    def __init__(self,layout,data,details={}):
+    def __init__(self,layout,details={},editing=False):
         self.layout = layout
-        self.data = data # either a model instance or a form
+        #self.data = data # either a model instance or a form
         self.details = details
+        self.show_labels = layout.show_labels
+        self.editing = editing
         
-    #~ def as_html(self):
-        #~ return self.layout.as_html(self)
+    def __unicode__(self):
+        return self.render_to_string()
         
-    #~ def __getitem__(self,name):
-        #~ try:
-            #~ return self.data.__getitem__(name)
-        #~ except KeyError:
-            #~ return self.details[name]
-        
-    def as_html(self):
+    def render_to_string(self):
         main = self.layout._main
         context = dict(
-          element = ElementRenderer(main,self),
+          element = BoundElement(main,self),
         )
-        return render_to_string(main.template,context)
-        
-    def field_to_html(self,field):
-        raise NotImplementedError
-        
-class ShowLayoutRenderer(LayoutRenderer):
-    template = "tom/includes/layout_show.html"
-    def field_to_html(self,field):
-        return field.as_readonly(self.data)
-      
-class EditLayoutRenderer(LayoutRenderer):
-    template = "tom/includes/layout_edit.html"
-      
-    def field_to_html(self,field):
-        try:
-            bf = self.data[field.name] # BoundField instance
-        except KeyError,e:
-            if self.details.has_key(field.name):
-                #print "coucou", field.name
-                r = self.details[field.name]
-                #print "coco", r
-                return r.render_to_string()
-                #~ try:
-                    #~ s = r.render_to_string()
-                #~ except Exception,e:
-                    #~ return str(e)
-                #~ #print "caca", s
-                #~ return s
-            return field.as_readonly(self.data.instance)
-        if bf.field.widget.is_hidden:
-            return field.as_readonly(self.data.instance)
-        field.setup_widget(bf.field.widget)
-        s = bf.as_widget()
-        if bf.label:
-            if isinstance(bf.field.widget, forms.CheckboxInput):
-                s = s + " " + bf.label_tag()
-            else:
-                s = bf.label_tag() + "<br/>" + s
+        s = render_to_string(main.template,context)
+        #print main
+        #print s
         return s
+        
+       
+class FormLayoutRenderer(LayoutRenderer):
+    def __init__(self,form,*args,**kw):
+        LayoutRenderer.__init__(self,*args,**kw)
+        self.form = form
+        
+    def get_form(self):
+        return self.form
+        
+    def get_instance(self):
+        return self.form.instance
+
+class InstanceLayoutRenderer(LayoutRenderer):
+    def __init__(self,instance,*args,**kw):
+        LayoutRenderer.__init__(self,*args,**kw)
+        self.instance = instance
+        
+    def get_instance(self):
+        return self.instance
+
+class RowLayoutRenderer(LayoutRenderer):
+    def __init__(self,row,*args,**kw):
+        LayoutRenderer.__init__(self,*args,**kw)
+        self.row = row
+        
+    def get_row(self):
+        return self.row
+    def get_instance(self):
+        return self.row.instance
+    def get_form(self):
+        return self.row.form
 
 
+#~ class ShowLayoutRenderer(LayoutRenderer):
+    #~ editing = False
+    #template = "tom/includes/layout_show.html"
+    #~ def field_to_html(self,field):
+        #~ return field.as_readonly(self.data)
+      
+#~ class EditLayoutRenderer(LayoutRenderer):
+    #~ editing = True
+    #template = "tom/includes/layout_edit.html"
+      
+    #~ def field_to_html(self,field):
+        #~ try:
+            #~ bf = self.data[field.name] # a BoundField instance
+        #~ except KeyError,e:
+            #~ r = self.details.get(field.name)
+            #~ if r is not None:
+                #~ return r.render_to_string()
+            #~ return field.as_readonly(self.data.instance)
+        #~ if bf.field.widget.is_hidden:
+            #~ return field.as_readonly(self.data.instance)
+        #~ field.setup_widget(bf.field.widget)
+        #~ s = bf.as_widget()
+        #~ if bf.label:
+            #~ if isinstance(bf.field.widget, forms.CheckboxInput):
+                #~ s = s + " " + bf.label_tag()
+            #~ else:
+                #~ s = bf.label_tag() + "<br/>" + s
+        #~ return s
 
             
-def page_layout(obj):
-    if obj.page_layout is not None:
-        return obj.page_layout()  
-    opts = obj._meta
-    return PageLayout("\n".join([ 
-      f.name for f in opts.fields + opts.many_to_many]))
+#~ def page_layout(obj):
+    #~ model = obj.__class__
+    #~ if model.page_layout_instance is None:
+        #~ if model.page_layout is None:
+            #~ model.page_layout_instance = PageLayout(model._meta)
+        #~ else:
+            #~ model.page_layout_instance = obj.page_layout(model._meta)
+    #~ return model.page_layout_instance
+            
+    #~ return PageLayout("\n".join([ 
+      #~ f.name for f in opts.fields + opts.many_to_many]))
       

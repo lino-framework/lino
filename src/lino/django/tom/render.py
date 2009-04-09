@@ -67,7 +67,14 @@ def again(request,*args,**kw):
         path += "?" + s
     #print pth
     return mark_safe(path)
-    
+
+def get_redirect(request):
+    if hasattr(request,"redirect_to"):
+        return request.redirect_to
+        
+def redirect_to(request,url):        
+    request.redirect_to = url
+
 def is_editing(request):
     editing=request.GET.get("editing",None)
     if editing is not None:
@@ -120,18 +127,18 @@ def vfill(lines,valign,height):
 
 
 
-class Cell(object):
-    def __init__(self,row,column):
-        assert row is not None
-        self.row = row
-        self.column = column
+#~ class Cell(object):
+    #~ def __init__(self,row,column):
+        #~ assert row is not None
+        #~ self.row = row
+        #~ self.column = column
         
-    def __unicode__(self):
-        value = self.column.cell_value(
-          self.row.instance,self.row.form)
-        if value is None:
-            return ''
-        return mark_safe(unicode(value))
+    #~ def __unicode__(self):
+        #~ value = self.column.cell_value(
+          #~ self.row.instance,self.row.form)
+        #~ if value is None:
+            #~ return ''
+        #~ return mark_safe(unicode(value))
         
         
 class Row(object):
@@ -144,15 +151,43 @@ class Row(object):
         self.instance = instance
         self.form = form
       
-    def __iter__(self):
-        for col in self.renderer.columns:
-            cell = Cell(self, col)
-            yield cell
-            
+    #~ def __iter__(self):
+        #~ for col in self.renderer.columns:
+            #~ cell = Cell(self, col)
+            #~ yield cell
+
+    def __getitem__(self,name):
+        if self.renderer.editing:
+            return self.form[name]
+        return getattr(self.instance,name)
+
+        #~ col = self.renderer.find_column(name)
+        #~ return Cell(self, col)
+        
+    def as_html(self):
+        r = layouts.RowLayoutRenderer(
+          self,
+          self.rpt.row_layout,
+          editing=self.renderer.editing)
+        s = r.render_to_string()
+        #print s
+        return s
+
+    #~ def as_readonly(self):
+        #~ r = layouts.ShowLayoutRenderer(self.rpt.row_layout,self.instance)
+        #~ return r.as_html()
+        
+    #~ def as_editable(self):
+        #~ s = "<td>%s</td>" % self.links()
+        #~ s += "<td>%d%s</td>" % (self.number,self.pk_field())
+        #~ r = layouts.EditLayoutRenderer(self.rpt.row_layout,self.form)
+        #~ return r.as_html()
+
     def links(self):
         l=[]
         l.append('<a href="%s">page</a>' % self.get_url_path())
-        l.append('<a href="%s">instance</a>' % self.instance.get_url_path())
+        l.append('<a href="%s">instance</a>' % \
+            self.instance.get_url_path())
         #print "<br/>".join(l)
         return mark_safe("\n".join(l))
 
@@ -279,8 +314,32 @@ class MethodColumn(Column):
 
 class ReportRenderer:
     def __init__(self,report):
-        self.report = report      
+        self.report = report
+        self.column_headers = report.column_headers
         #self.title = self.report.get_title()
+
+    def new_column(self,*args):
+        return FieldColumn(self,*args)
+        
+    def _build_queryset(self,flt=None):
+        qs=self.report.queryset
+        if flt:
+            l=[]
+            q=models.Q()
+            for col in self.columns:
+                if col.is_filter:
+                    q = q | models.Q(**{col.field.name+"__contains": flt})
+            qs = qs.filter(q)
+        return qs
+        
+    #~ def column_headers(self):
+        #~ for x in self.
+        
+class ColumnsReportRenderer(ReportRenderer):
+        
+    def __init__( self,*args,**kw):
+        ReportRenderer.__init__(self,*args,**kw)
+        self.columns_by_name = {}
         columns = []
         meta = self.report.queryset.model._meta
         if self.report.columnNames:
@@ -304,30 +363,17 @@ class ReportRenderer:
                 else:
                     col = self.new_column(field,len(columns),picture)
                 columns.append(col)
+                self.columns_by_name[fieldname] = col
         else:
             for field in meta.fields:
                 col = self.new_column(field,len(columns))
                 columns.append(col)
+                self.columns_by_name[field.name] = col
         self.columns = columns
-
-    def new_column(self,*args):
-        return FieldColumn(self,*args)
-        
-    def _build_queryset(self,flt=None):
-        qs=self.report.queryset
-        if flt:
-            l=[]
-            q=models.Q()
-            for col in self.columns:
-                if col.is_filter:
-                    q = q | models.Q(**{col.field.name+"__contains": flt})
-            qs = qs.filter(q)
-        return qs
-        
         
         
 
-class TextReportRenderer(ReportRenderer):
+class TextReportRenderer(ColumnsReportRenderer):
     
     def __init__( self,
                   report,
@@ -347,7 +393,7 @@ class TextReportRenderer(ReportRenderer):
         if flt is None:
             flt=report.default_filter
         self.flt=flt
-        ReportRenderer.__init__(self,report)
+        ColumnsReportRenderer.__init__(self,report)
                              
                              
   
@@ -514,7 +560,7 @@ class TextReportRenderer(ReportRenderer):
         return s.rstrip()+"\n"
         
 
-class HtmlReportRenderer(ReportRenderer):
+class HtmlReportRenderer(ColumnsReportRenderer):
   
     def __init__( self,
                   report,
@@ -522,7 +568,7 @@ class HtmlReportRenderer(ReportRenderer):
         if flt is None:
             flt=report.default_filter
         self.flt=flt
-        ReportRenderer.__init__(self,report)
+        ColumnsReportRenderer.__init__(self,report)
                              
   
     def render(self):
@@ -562,10 +608,30 @@ class ViewReportRenderer(ReportRenderer):
         return again(self.request,*args,**kw)
         
       
-      
+    def render_to_response(self):
+        url = get_redirect(self.request)
+        if url:
+            return HttpResponseRedirect(url)
+        context=dict(
+          report = self,
+          main_menu = settings.MAIN_MENU,
+          title = self.report.get_title(),
+          form_action = self.again(editing=None),
+        )
+        return render_to_response(self.template_to_reponse,context)
+        
+    def render_to_string(self):
+        context=dict(
+          report = self,
+        )
+        return render_to_string(self.template_to_string,context)
+        
 
 class ViewOneReportRenderer(ViewReportRenderer):
 
+    template_to_string = "tom/includes/page_show.html"
+    template_to_reponse = "tom/page_show.html"      
+    
     def __init__(self,report,request,row):
         ViewReportRenderer.__init__(self,report,request)
         rownum=int(row)
@@ -579,19 +645,23 @@ class ViewOneReportRenderer(ViewReportRenderer):
         self.instance = obj
         self.rownum = rownum
         self.row = Row(self,obj,rownum)
-        self.layout = layouts.ShowLayoutRenderer(layouts.page_layout(obj),obj)
+        self.layout = layouts.RowLayoutRenderer(self.row,
+            obj.page_layout())
             
-    def render(self):
-        context=dict(
-          report=self,
-          title=u"%s - %s" % (self.report.get_title(),self.instance),
-          main_menu = settings.MAIN_MENU,
-          layout = self.layout
-        )
-        return render_to_response(self.layout.template,context)
+    #~ def render(self):
+        #~ context=dict(
+          #~ report=self,
+          #~ title=self.get_title(),
+          #~ main_menu = settings.MAIN_MENU,
+          #~ layout = self.layout
+        #~ )
+        #~ return render_to_response(self.layout.template,context)
         
     def position_string(self):
         return  "Row %d of %d." % (self.row.number,self.queryset.count())
+        
+    def get_title(self):
+        return u"%s - %s" % (self.report.get_title(),self.instance)
         
     def navigator(self):
         s="""<div class="pagination"><span class="step-links">"""
@@ -633,6 +703,9 @@ class ViewManyReportRenderer(ViewReportRenderer):
     start_page = 1
     max_num = 0
     
+    template_to_string = "tom/includes/grid_show.html"
+    template_to_reponse = "tom/grid_show.html"      
+    
     def __init__(self,report,request,prefix=None):
         ViewReportRenderer.__init__(self,report,request,prefix)
         if self.prefix is None:
@@ -654,15 +727,13 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 page = paginator.page(paginator.num_pages)
             self.page=page
 
-    def render(self):
-        #request.session["editing"] = 0
-        context=dict(
-          report=self,
-          main_menu=settings.MAIN_MENU,
-          title=self.report.get_title(),
-          #header = layout.ShowLayoutRenderer(self.report.header_layout(),self.report),
-        )
-        return render_to_response("tom/grid_show.html",context)
+    #~ def render(self):
+        #~ context=dict(
+          #~ report=self,
+          #~ main_menu=settings.MAIN_MENU,
+          #~ title=self.report.get_title(),
+        #~ )
+        #~ return render_to_response("tom/grid_show.html",context)
     
         
     def position_string(self):
@@ -728,64 +799,68 @@ class EditReportRenderer:  # Mixin class
         
 
 class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
+    template_to_string = "tom/includes/page_edit.html"
+    template_to_reponse = "tom/page_edit.html"      
   
-    def render(self):
-        if self.request.method == 'POST':
-            frm=self.report.form_class(self.request.POST,instance=self.instance)
+    def __init__(self,report,request,row):
+        ViewOneReportRenderer.__init__(self,report,request,row)
+        if request.method == 'POST':
+            frm=report.form_class(request.POST,instance=self.instance)
             if frm.is_valid():
                 frm.save()
-                stop_editing(self.request)
-                return HttpResponseRedirect(self.again(editing=None))
+                stop_editing(request)
+                redirect_to(request,self.again(editing=None))
+                #return HttpResponseRedirect(self.again(editing=None))
         else:
-            frm=self.report.form_class(instance=self.instance)
+            frm=report.form_class(instance=self.instance)
         self.form = frm
         
-        layout = layouts.page_layout(self.instance)
+        layout = self.instance.page_layout()
         
         details = {}
         #model=self.instance.model
         if layout.detail_reports:
             for name in layout.detail_reports.split():
                 meth = getattr(self.instance,name)
-                report = meth()
+                dtlrep = meth()
                 #print report.as_text()
-                renderer = EditManyReportRenderer(report,self.request,name)
+                renderer = EditManyReportRenderer(dtlrep,request,name)
                 details[name] = renderer
-            
+                
+        self.layout = layouts.FormLayoutRenderer(frm,layout,
+            details,editing=True)
+        
         #self.row = Row(self,self.instance,self.rownum,frm)
         self.row.form = frm
-        context=dict(
-          report=self,
-          title=unicode(self.instance),
-          form=frm,
-          main_menu = settings.MAIN_MENU,
-          layout = layouts.EditLayoutRenderer(layout,frm,details),
-          form_action = again(self.request,editing=None),
-        )
-        return render_to_response("tom/page_edit.html",context)
+        
+        #~ context=dict(
+          #~ report=self,
+          #~ title=unicode(self.instance),
+          #~ form=frm,
+          #~ main_menu = settings.MAIN_MENU,
+          #~ layout = layouts.EditLayoutRenderer(layout,frm,details),
+          #~ form_action = again(self.request,editing=None),
+        #~ )
+        #~ return render_to_response("tom/page_edit.html",context)
         
 class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     extra = 1
     can_delete = True
     can_order = False
-    template = "tom/includes/grid_edit.html"
+    template_to_string = "tom/includes/grid_edit.html"
+    template_to_reponse = "tom/grid_edit.html"      
         
     def __init__(self,report,request,prefix=None):
         ViewManyReportRenderer.__init__(self,report,request,prefix)
         
-        # todo: instead of letting modelform_factory look up the fields again by 
-        # their name, i should do it myself, formfields being then a list of 
-        # fields and not of fieldnames.
-        # formfields = [ report.queryset.model._meta.pk.name ]
-        # formfields = [col.field.name for col in self.columns if col.is_formfield]
-        rowform_class = modelform_factory(report.queryset.model)#,fields=formfields)
-                
+        rowform_class = modelform_factory(report.queryset.model)
         self.formset_class = formset_factory(rowform_class,
               BaseModelFormSet, extra=self.extra, 
               max_num=self.max_num,
               can_order=self.can_order, 
               can_delete=self.can_delete)
         self.formset_class.model = report.queryset.model
+        
         if prefix:
             self.formset_class.prefix = prefix
             object_list = self.queryset
@@ -793,41 +868,26 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
             object_list = self.page.object_list
         
         if self.request.method == 'POST':
-            fs = self.formset_class(self.request.POST,queryset=object_list)
+            fs = self.formset_class(self.request.POST,
+                                    queryset=object_list)
             if fs.is_valid():
                 fs.save()
-                
                 if self.can_delete and fs.deleted_forms:
                     for form in fs.deleted_forms:
                         print "Deleted:", form.instance
-                        
+                stop_editing(self.request)
                 """
                 start from begin because paginator and page must reload
                 e.g. if an instance has been added, it may now be at 
                 a different row and the page count may have changed.
                 """
-                stop_editing(self.request)
-                return HttpResponseRedirect(self.again(editing=None))
-                    
+                #return HttpResponseRedirect(self.again(editing=None))
+                redirect_to(self.request,self.again(editing=None))
+            else:
+                print fs.errors
         else:
             fs = self.formset_class(queryset=object_list)
         self.formset = fs
-        
-    def render(self):
-        context=dict(
-          report = self,
-          main_menu = settings.MAIN_MENU,
-          title = self.report.get_title(),
-          form_action = self.again(editing=None),
-        )
-        return render_to_response("tom/grid_edit.html",context)
-        
-    def render_to_string(self):
-        context=dict(
-          report = self,
-        )
-        return render_to_string(self.template,context)
-        
         
 
     def rows(self):
@@ -847,11 +907,11 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
         template = get_template("tom/page_pdf.html")
         #self.row = Row(self,obj,rownum)
         obj=self.instance
-        layout = layouts.ShowLayoutRenderer(layouts.page_layout(obj),obj)
+        layout = layouts.InstanceLayoutRenderer(obj,obj.page_layout())
         context=dict(
-          #report=self,
+          report=self,
           title=u"%s - %s" % (self.report.get_title(),obj),
-          layout = layout
+          #layout = layout
         )
         html  = template.render(Context(context))
         if not pisa:

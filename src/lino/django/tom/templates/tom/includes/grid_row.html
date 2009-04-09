@@ -1,0 +1,6 @@
+<tr>
+{{ element.row_management }}
+{% for e in element.children %}
+<td>{{ e.as_html }}</td>
+{% endfor %}
+</tr>

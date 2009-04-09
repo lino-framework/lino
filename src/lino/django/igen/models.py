@@ -87,7 +87,7 @@ class ContactPageLayout(PageLayout):
             """
   
 class Contact(TomModel):
-    page_layout = ContactPageLayout
+    page_layout_class = ContactPageLayout
     """
     
 Company and/or Person contact data, linked with client account and
@@ -293,7 +293,7 @@ class ProductPageLayout(PageLayout):
     """
 
 class Product(TomModel):
-    page_layout = ProductPageLayout
+    page_layout_class = ProductPageLayout
     
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
@@ -380,7 +380,7 @@ class InvoicePageLayout(PageLayout):
   
 class Invoice(Document):
     due_date = models.DateField("Payable until",blank=True,null=True)
-    page_layout = InvoicePageLayout
+    page_layout_class = InvoicePageLayout
     
             
     def items(self):
@@ -423,7 +423,7 @@ from lino.django.tom import reports
 
 class Contacts(reports.Report):
     queryset=Contact.objects.order_by("id")
-    columnNames="id companyName firstName lastName title country"
+    columnNames="id:3 companyName firstName lastName title country"
     can_delete=True
 
 class Companies(reports.Report):
@@ -490,8 +490,8 @@ class ItemsByInvoice(reports.Report):
     def get_queryset(self):
         return self.invoice.invoiceitem_set.order_by("pos")
     
-    def foo(self):
-      return InvoicePageLayout(items=self)
+    #~ def foo(self):
+      #~ return InvoicePageLayout(items=self)
     
-    def header_layout(self):
-        return self.invoice.page_layout()
+    #~ def header_layout(self):
+        #~ return self.invoice.page_layout()

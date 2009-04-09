@@ -73,28 +73,47 @@ class ClientTest(TestCase):
         # templates silently ignore them
         response = self.client.get('/menu/contacts/contacts')
         s = "\n".join([repr(c) for c in response.context])
-        s = response.context[0].get("report").navigator()
+        renderer = response.context[0].get("report")
+        s = renderer.navigator()
+        count = 0
+        for row in renderer.rows():
+            s = row.as_html()
+            count += 1
+        self.assertEqual(count,15)
         
         response = self.client.get('/menu/config/languages/1')
-        s = response.context[0].get("layout").as_html()
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
 
         response = self.client.get('/menu/prods/products/1')
-        s = response.context[0].get("layout").as_html()
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
 
         response = self.client.get('/menu/docs/invoices/1')
-        s = response.context[0].get("layout").as_html()
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
         
         response = self.client.get('/menu/contacts/contacts/1?editing=1')
-        s = response.context[0].get("layout").as_html()
-        s = response.context[0].get("report").navigator()
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
+        s = report.navigator()
         
         response = self.client.get('/menu/docs/invoices/1?editing=1')
-        s = response.context[0].get("layout").as_html()
-        s = response.context[0].get("report").navigator()
-        #s = response.context[0].get("report").navigator()
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
         
-        
-        
+        response = self.client.get('/menu/docs/invoices?editing=1')
+        report = response.context[0].get("report")
+        s = report.navigator()
+        for row in report.rows():
+            s = row.as_html()
+            
+        response = self.client.get('/menu/docs/invoices?editing=0')
+        report = response.context[0].get("report")
+        s = report.navigator()
+        for row in report.rows():
+            s = row.as_html()
+            
 
 
 class TestCase(TestCase):

@@ -22,7 +22,7 @@ from models import Companies
 from django.test import TestCase
 
 from django.forms.models import modelform_factory, formset_factory
-from lino.django.tom.layout import EditLayoutRenderer, ShowLayoutRenderer
+from lino.django.tom import layout as layouts
 
 
 class TestCase(TestCase):
@@ -97,12 +97,14 @@ Minu Firma OÜ       |Estonia     |              |              |
         frmclass = modelform_factory(model)
         for obj in model.objects.all():
             frm = frmclass(instance=obj)
-            layout = EditLayoutRenderer(obj.page_layout(),frm)
-            s = layout.as_html()
+            layout = layouts.FormLayoutRenderer(frm,
+                obj.page_layout(),editing=True)
+            s = layout.render_to_string()
             self.failUnless(s.startswith("<table"))
             
-            layout = ShowLayoutRenderer(obj.page_layout(),obj)
-            s = layout.as_html()
+            layout = layouts.InstanceLayoutRenderer(obj,
+                obj.page_layout())
+            s = layout.render_to_string()
             self.failUnless(s.startswith("<table"))
             
     def test07(self):

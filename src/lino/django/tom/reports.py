@@ -34,6 +34,7 @@ from django.conf.urls.defaults import patterns, url, include
 #from lino.reports.constants import *
 #import EditLayoutRenderer, ShowLayoutRenderer
 from lino.django.tom import render
+from lino.django.tom import layout as layouts
 
 
 #~ from django import template
@@ -138,8 +139,15 @@ class Report(object):
             self.queryset = self.get_queryset()
         if self.form_class is None:
             self.form_class = modelform_factory(self.queryset.model)
+        self.row_layout = layouts.RowLayout(self.queryset.model,
+                                            self.columnNames)
          
-        
+    def column_headers(self):
+        #print "column_headers"
+        #print self.layout
+        for e in self.row_layout._main.elements:
+            yield e.name
+         
     def get_title(self):
         #~ if self.title is None:
             #~ return self.label
@@ -181,21 +189,24 @@ class Report(object):
             #~ return render.EditReportRenderer(self).view(request)
         #~ return render.ViewReportRenderer(self).view(request)
             
-    def view_many(self, request):
+    def view(self,request):
+        return self.view_many(request)
+        
+    def view_many(self,request):
         if render.is_editing(request):
             r = render.EditManyReportRenderer(self,request)
         else:
             r = render.ViewManyReportRenderer(self,request)
-        return r.render()
+        return r.render_to_response()
             
-    def view_one(self, request,row):
+    def view_one(self,request,row):
         if render.is_editing(request):
             r = render.EditOneReportRenderer(self,request,row)
         else:
             r = render.ViewOneReportRenderer(self,request,row)
-        return r.render()
+        return r.render_to_response()
 
-    def pdf_view_one(self, request,row):
+    def pdf_view_one(self,request,row):
         return render.PdfOneReportRenderer(self,request,row).render()
         
     def pdf_view_many(self, request):
@@ -248,7 +259,8 @@ def view_instance(request,app,model,pk):
       title=unicode(obj),
       form=frm,
       main_menu = settings.MAIN_MENU,
-      layout = layouts.EditLayoutRenderer(layouts.page_layout(obj),frm),
+      layout = layouts.LayoutRenderer(obj.page_layout(),frm,
+        editing=True),
     )
     return render_to_response("tom/instance.html",context)
     
