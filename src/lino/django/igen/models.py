@@ -481,7 +481,7 @@ class Invoices(reports.Report):
 class ItemsByInvoice(reports.Report):
     #grid_layout = ItemsByInvoiceGridLayout
     #InvoicePageLayout(context=items=)
-    columnNames="pos product title description unitPrice qty total"
+    columnNames="pos:3 product title description:1x40 unitPrice:6 qty:3 total:6"
     
     def __init__(self,invoice,**kw):
         self.invoice=invoice
