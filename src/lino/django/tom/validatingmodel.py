@@ -52,7 +52,7 @@ class TomModel(models.Model):
     #quicksearch_fields = None
     _page_layout = None
     page_layout_class = layouts.PageLayout
-    #detail_reports = None
+    detail_reports = None
     
     class Meta:
         abstract = True

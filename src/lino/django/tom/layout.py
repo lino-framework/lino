@@ -52,6 +52,10 @@ class FieldElement(Element):
                 widget.attrs["cols"] = cols
 
     def render(self,renderer):
+        r = renderer.details.get(self.name)
+        if r is not None:
+            return r(renderer.get_instance())
+            #return r.render_to_string()
         if renderer.editing:
             return self.as_editable(renderer)
         return self.as_readonly(renderer)
@@ -66,9 +70,9 @@ class FieldElement(Element):
         except models.FieldDoesNotExist,e:
             # so it is a method
             value=value()
-            from lino.django.tom import reports
-            if isinstance(value,reports.Report):
-                return value.as_html()
+            #~ from lino.django.tom import reports
+            #~ if isinstance(value,reports.Report):
+                #~ return value.as_html()
             label=self.name
             #widget=widget_for_value(value)
             widget = forms.TextInput()
@@ -108,9 +112,9 @@ class FieldElement(Element):
         try:
             bf = form[self.name] # a BoundField instance
         except KeyError,e:
-            r = renderer.details.get(self.name)
-            if r is not None:
-                return r.render_to_string()
+            #~ r = renderer.details.get(self.name)
+            #~ if r is not None:
+                #~ return r.render_to_string()
             return self.as_readonly(renderer)
         if bf.field.widget.is_hidden:
             return self.as_readonly(renderer)
@@ -158,11 +162,10 @@ class Container(Element):
           element = BoundElement(self,renderer)
         )
         try:
-          s=render_to_string(self.template,context)
-          #print s
+            return render_to_string(self.template,context)
         except Exception,e:
-          print e
-        return s
+            print e
+            return mark_safe("<PRE>%s</PRE>" % e)
 
 class HBOX(Container):
     template = "tom/includes/hbox.html"

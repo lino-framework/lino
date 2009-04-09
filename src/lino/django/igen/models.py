@@ -371,7 +371,7 @@ class InvoicePageLayout(PageLayout):
       box3 box4
       items:5x80
       """
-    detail_reports = "items"
+    #~ detail_reports = "items"
   
     #~ def items(self,instance,request):
         #~ report=ItemsByInvoice(instance)
@@ -381,6 +381,7 @@ class InvoicePageLayout(PageLayout):
 class Invoice(Document):
     due_date = models.DateField("Payable until",blank=True,null=True)
     page_layout_class = InvoicePageLayout
+    detail_reports = "items"
     
             
     def items(self):
@@ -473,7 +474,7 @@ class Orders(reports.Report):
 
 class Invoices(reports.Report):
     queryset=Invoice.objects.order_by("number")
-    columnNames="number items creation_date customer total_incl total_excl total_vat"
+    columnNames="number creation_date customer total_incl total_excl total_vat items"
 
 #~ class ItemsByInvoiceGridLayout(InvoicePageLayout):
     #~ pass

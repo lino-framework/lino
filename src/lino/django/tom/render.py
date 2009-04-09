@@ -168,7 +168,8 @@ class Row(object):
         r = layouts.RowLayoutRenderer(
           self,
           self.rpt.row_layout,
-          editing=self.renderer.editing)
+          self.renderer.details,
+          self.renderer.editing)
         s = r.render_to_string()
         #print s
         return s
@@ -571,7 +572,7 @@ class HtmlReportRenderer(ColumnsReportRenderer):
         ColumnsReportRenderer.__init__(self,report)
                              
   
-    def render(self):
+    def render_to_string(self):
         s = "<table><tr>"
         for col in self.columns:
             s += "<th>%s</th>" % col.label
@@ -588,9 +589,11 @@ class HtmlReportRenderer(ColumnsReportRenderer):
         s += "</table>"
         return s
 
+
 class ViewReportRenderer(ReportRenderer):
   
     editing = 0
+    detail_renderer = None # HtmlReportRenderer
     
     def __init__(self,report,request,prefix=None):
         ReportRenderer.__init__(self,report)
@@ -600,10 +603,31 @@ class ViewReportRenderer(ReportRenderer):
         if prefix is None:
             self.params = report.param_form(request.GET)
             if self.params.is_valid():
-                flt = self.params.cleaned_data.get('flt',report.default_filter)
+                flt = self.params.cleaned_data.get('flt',
+                    report.default_filter)
         self.queryset = self._build_queryset(flt)
         #self.main_menu = settings.MAIN_MENU
-           
+
+        details = {}
+        #model=self.instance.model
+        #if layout.detail_reports:
+        model = self.report.queryset.model
+        if model.detail_reports:
+            for name in model.detail_reports.split():
+                def render(instance):
+                    meth = getattr(instance,name)
+                    dtlrep = meth()
+                    #print report.as_text()
+                    if self.detail_renderer:
+                        r = self.detail_renderer(dtlrep,request,name)
+                        return r.render_to_string()
+                    else:
+                        return mark_safe(unicode(dtlrep))
+                details[name] = render
+        self.details = details
+                
+
+
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
         
@@ -626,77 +650,6 @@ class ViewReportRenderer(ReportRenderer):
         )
         return render_to_string(self.template_to_string,context)
         
-
-class ViewOneReportRenderer(ViewReportRenderer):
-
-    template_to_string = "tom/includes/page_show.html"
-    template_to_reponse = "tom/page_show.html"      
-    
-    def __init__(self,report,request,row):
-        ViewReportRenderer.__init__(self,report,request)
-        rownum=int(row)
-        try:
-            obj = self.queryset[rownum-1]
-        except IndexError:
-            rownum=self.queryset.count()
-            if rownum == 0:
-                raise Http404("queryset is empty")
-            obj = self.queryset[rownum-1]
-        self.instance = obj
-        self.rownum = rownum
-        self.row = Row(self,obj,rownum)
-        self.layout = layouts.RowLayoutRenderer(self.row,
-            obj.page_layout())
-            
-    #~ def render(self):
-        #~ context=dict(
-          #~ report=self,
-          #~ title=self.get_title(),
-          #~ main_menu = settings.MAIN_MENU,
-          #~ layout = self.layout
-        #~ )
-        #~ return render_to_response(self.layout.template,context)
-        
-    def position_string(self):
-        return  "Row %d of %d." % (self.row.number,self.queryset.count())
-        
-    def get_title(self):
-        return u"%s - %s" % (self.report.get_title(),self.instance)
-        
-    def navigator(self):
-        s="""<div class="pagination"><span class="step-links">"""
-        page = self.row
-        get_var_name = "row"
-
-        text = "&#x25C4;Previous"
-        if page.has_previous():
-            s += '<a href="%s">%s</a>' % (
-              self.again("../" +str(page.number-1)),
-              text)
-        else:
-            s += text
-        s += " "
-        text = "Next&#x25BA;"
-        if page.has_next():
-            s += '<a href="%s">%s</a>' % (
-              self.again("../" + str(page.number+1)),
-              text)
-              #self.again(**{get_var_name: page.number+1}),text)
-        else:
-            s += text
-        s += " "
-        s += '<span class="current">%s</span>' % self.position_string()
-        if self.editing:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=0),"show")
-        else:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=1),"edit")
-        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        s += """</span></div>"""     
-        return mark_safe(s)
-
-
 class ViewManyReportRenderer(ViewReportRenderer):
   
     page_length = 15
@@ -780,8 +733,14 @@ class ViewManyReportRenderer(ViewReportRenderer):
         return mark_safe(s)
             
     def rows(self):
-        rownum = self.page.start_index()
-        for obj in self.page.object_list:
+        if self.prefix is None:
+            rownum = self.page.start_index()
+            object_list = self.page.object_list
+        else:
+            rownum = 1
+            object_list = self.queryset
+        #rownum = self.page.start_index()
+        for obj in object_list:
             yield Row(self,obj,rownum)
             rownum += 1
 
@@ -789,60 +748,89 @@ class ViewManyReportRenderer(ViewReportRenderer):
 
 
 
+class ViewOneReportRenderer(ViewReportRenderer):
+
+    template_to_string = "tom/includes/page_show.html"
+    template_to_reponse = "tom/page_show.html"      
+    detail_renderer = ViewManyReportRenderer    
+    
+    def __init__(self,report,request,row):
+        ViewReportRenderer.__init__(self,report,request)
+        rownum=int(row)
+        try:
+            obj = self.queryset[rownum-1]
+        except IndexError:
+            rownum=self.queryset.count()
+            if rownum == 0:
+                raise Http404("queryset is empty")
+            obj = self.queryset[rownum-1]
+        self.instance = obj
+        self.rownum = rownum
+        self.row = Row(self,obj,rownum)
+        self.layout = layouts.RowLayoutRenderer(self.row,
+            obj.page_layout(),self.details)
+            
+    #~ def render(self):
+        #~ context=dict(
+          #~ report=self,
+          #~ title=self.get_title(),
+          #~ main_menu = settings.MAIN_MENU,
+          #~ layout = self.layout
+        #~ )
+        #~ return render_to_response(self.layout.template,context)
+        
+    def position_string(self):
+        return  "Row %d of %d." % (self.row.number,self.queryset.count())
+        
+    def get_title(self):
+        return u"%s - %s" % (self.report.get_title(),self.instance)
+        
+    def navigator(self):
+        s="""<div class="pagination"><span class="step-links">"""
+        page = self.row
+        get_var_name = "row"
+
+        text = "&#x25C4;Previous"
+        if page.has_previous():
+            s += '<a href="%s">%s</a>' % (
+              self.again("../" +str(page.number-1)),
+              text)
+        else:
+            s += text
+        s += " "
+        text = "Next&#x25BA;"
+        if page.has_next():
+            s += '<a href="%s">%s</a>' % (
+              self.again("../" + str(page.number+1)),
+              text)
+              #self.again(**{get_var_name: page.number+1}),text)
+        else:
+            s += text
+        s += " "
+        s += '<span class="current">%s</span>' % self.position_string()
+        if self.editing:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=0),"show")
+        else:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=1),"edit")
+        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
+        s += """</span></div>"""     
+        return mark_safe(s)
+
+
+
 
 class EditReportRenderer:  # Mixin class
+  
     editing=1
+    
     def new_column(self,field,*args):
         if field.editable and not field.primary_key:
             return FormFieldColumn(self,field,*args)
         return FieldColumn(self,field,*args)
         
 
-class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
-    template_to_string = "tom/includes/page_edit.html"
-    template_to_reponse = "tom/page_edit.html"      
-  
-    def __init__(self,report,request,row):
-        ViewOneReportRenderer.__init__(self,report,request,row)
-        if request.method == 'POST':
-            frm=report.form_class(request.POST,instance=self.instance)
-            if frm.is_valid():
-                frm.save()
-                stop_editing(request)
-                redirect_to(request,self.again(editing=None))
-                #return HttpResponseRedirect(self.again(editing=None))
-        else:
-            frm=report.form_class(instance=self.instance)
-        self.form = frm
-        
-        layout = self.instance.page_layout()
-        
-        details = {}
-        #model=self.instance.model
-        if layout.detail_reports:
-            for name in layout.detail_reports.split():
-                meth = getattr(self.instance,name)
-                dtlrep = meth()
-                #print report.as_text()
-                renderer = EditManyReportRenderer(dtlrep,request,name)
-                details[name] = renderer
-                
-        self.layout = layouts.FormLayoutRenderer(frm,layout,
-            details,editing=True)
-        
-        #self.row = Row(self,self.instance,self.rownum,frm)
-        self.row.form = frm
-        
-        #~ context=dict(
-          #~ report=self,
-          #~ title=unicode(self.instance),
-          #~ form=frm,
-          #~ main_menu = settings.MAIN_MENU,
-          #~ layout = layouts.EditLayoutRenderer(layout,frm,details),
-          #~ form_action = again(self.request,editing=None),
-        #~ )
-        #~ return render_to_response("tom/page_edit.html",context)
-        
 class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     extra = 1
     can_delete = True
@@ -900,27 +888,43 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
             rownum += 1
 
     
+class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
+    detail_renderer = EditManyReportRenderer
+    template_to_string = "tom/includes/page_edit.html"
+    template_to_reponse = "tom/page_edit.html"      
+  
+    def __init__(self,report,request,row):
+        ViewOneReportRenderer.__init__(self,report,request,row)
+        if request.method == 'POST':
+            frm=report.form_class(request.POST,instance=self.instance)
+            if frm.is_valid():
+                frm.save()
+                stop_editing(request)
+                redirect_to(request,self.again(editing=None))
+                #return HttpResponseRedirect(self.again(editing=None))
+        else:
+            frm=report.form_class(instance=self.instance)
+        self.form = frm
+        
+        layout = self.instance.page_layout()
+        
+        self.layout = layouts.FormLayoutRenderer(frm,layout,
+            self.details,editing=True)
+        
+        #self.row = Row(self,self.instance,self.rownum,frm)
+        self.row.form = frm
+        
+        #~ context=dict(
+          #~ report=self,
+          #~ title=unicode(self.instance),
+          #~ form=frm,
+          #~ main_menu = settings.MAIN_MENU,
+          #~ layout = layouts.EditLayoutRenderer(layout,frm,details),
+          #~ form_action = again(self.request,editing=None),
+        #~ )
+        #~ return render_to_response("tom/page_edit.html",context)
+        
 
-class PdfOneReportRenderer(ViewOneReportRenderer):
-
-    def render(self):
-        template = get_template("tom/page_pdf.html")
-        #self.row = Row(self,obj,rownum)
-        obj=self.instance
-        layout = layouts.InstanceLayoutRenderer(obj,obj.page_layout())
-        context=dict(
-          report=self,
-          title=u"%s - %s" % (self.report.get_title(),obj),
-          #layout = layout
-        )
-        html  = template.render(Context(context))
-        if not pisa:
-            return HttpResponse(html)
-        result = cStringIO.StringIO()
-        pdf = pisa.pisaDocument(cStringIO.StringIO(html.encode("ISO-8859-1")), result)
-        if pdf.err:
-            raise Exception(cgi.escape(html))
-        return HttpResponse(result.getvalue(),mimetype='application/pdf')
         
 class PdfManyReportRenderer(ViewManyReportRenderer):
 
@@ -945,3 +949,25 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
             yield Row(self,obj,rownum)
             rownum += 1
 
+class PdfOneReportRenderer(ViewOneReportRenderer):
+    detail_renderer = PdfManyReportRenderer
+
+    def render(self):
+        template = get_template("tom/page_pdf.html")
+        #self.row = Row(self,obj,rownum)
+        obj=self.instance
+        layout = layouts.InstanceLayoutRenderer(obj,
+          obj.page_layout(),self.details)
+        context=dict(
+          report=self,
+          title=u"%s - %s" % (self.report.get_title(),obj),
+          #layout = layout
+        )
+        html  = template.render(Context(context))
+        if not pisa:
+            return HttpResponse(html)
+        result = cStringIO.StringIO()
+        pdf = pisa.pisaDocument(cStringIO.StringIO(html.encode("ISO-8859-1")), result)
+        if pdf.err:
+            raise Exception(cgi.escape(html))
+        return HttpResponse(result.getvalue(),mimetype='application/pdf')
