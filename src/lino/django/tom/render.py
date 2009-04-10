@@ -30,7 +30,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django.shortcuts import render_to_response 
-from django.forms.models import modelform_factory, formset_factory
+from django.forms.models import modelform_factory, modelformset_factory, inlineformset_factory
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 
@@ -640,7 +640,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
     template_to_string = "tom/includes/grid_show.html"
     template_to_reponse = "tom/grid_show.html"      
     
-    def __init__(self,report,request,prefix=None):
+    def __init__(self,report,request,prefix=None,parent=None):
         ViewReportRenderer.__init__(self,report,request,prefix)
         if self.prefix is None:
             pgn = request.GET.get('pgn')
@@ -767,7 +767,8 @@ class ViewOneReportRenderer(ViewReportRenderer):
             for name in model.detail_reports.split():
                 meth = getattr(self.instance,name)
                 dtlrep = meth()
-                r = self.detail_renderer(dtlrep,request,name)
+                r = self.detail_renderer(dtlrep,request,name,
+                    self.instance)
                 details[name] = lambda x: r.render_to_string()
         self.details = details
         
@@ -843,27 +844,38 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     template_to_string = "tom/includes/grid_edit.html"
     template_to_reponse = "tom/grid_edit.html"      
         
-    def __init__(self,report,request,prefix=None):
+    def __init__(self,report,request,prefix=None,parent=None):
         ViewManyReportRenderer.__init__(self,report,request,prefix)
         
-        rowform_class = modelform_factory(report.queryset.model)
-        self.formset_class = formset_factory(rowform_class,
-              BaseModelFormSet, extra=self.extra, 
-              max_num=self.max_num,
-              can_order=self.can_order, 
-              can_delete=self.can_delete)
-        self.formset_class.model = report.queryset.model
-        
-        if prefix:
-            self.formset_class.prefix = prefix
-            #rowform_class.prefix = prefix
-            object_list = self.queryset
+        fs_args = {}
+        if parent is not None:
+            formset_class = inlineformset_factory(
+                  parent.__class__,report.queryset.model,
+                  extra=self.extra, 
+                  max_num=self.max_num,
+                  can_order=self.can_order, 
+                  can_delete=self.can_delete)
+            fs_args['instance'] = parent
         else:
-            object_list = self.page.object_list
+            formset_class = modelformset_factory(
+                  report.queryset.model,
+                  extra=self.extra, 
+                  max_num=self.max_num,
+                  can_order=self.can_order, 
+                  can_delete=self.can_delete)
+            fs_args['queryset'] = self.page.object_list
+
+        
+        #~ if prefix:
+            #~ formset_class.prefix = prefix
+            #~ #fs_args['queryset'] = self.queryset
+            #~ #object_list = self.queryset
+        #~ else:
+            #~ fs_args['queryset'] = self.page.object_list
+            #~ #object_list = self.page.object_list
         
         if self.request.method == 'POST':
-            fs = self.formset_class(self.request.POST,
-                                    queryset=object_list)
+            fs = formset_class(self.request.POST,**fs_args)
             if fs.is_valid():
                 fs.save()
                 if self.can_delete and fs.deleted_forms:
@@ -880,7 +892,7 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
             else:
                 print fs.errors
         else:
-            fs = self.formset_class(queryset=object_list)
+            fs = formset_class(**fs_args)
         self.formset = fs
         
 

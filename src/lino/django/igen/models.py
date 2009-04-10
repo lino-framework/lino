@@ -467,14 +467,15 @@ class ProductCats(reports.Report):
     queryset=ProductCat.objects.order_by("id")
 
 class Products(reports.Report):
-    queryset=Product.objects.order_by("id")
+    queryset = Product.objects.order_by("id")
+    columnNames = "id:3 name description:1x30 cat vatExempt price:6"
 
 class Orders(reports.Report):
     queryset=Order.objects.order_by("number")
 
 class Invoices(reports.Report):
     queryset=Invoice.objects.order_by("number")
-    columnNames="number creation_date customer total_incl total_excl total_vat items"
+    columnNames="number:4 creation_date:8 customer:20 total_incl:6 total_excl:6 total_vat:6 items"
 
 #~ class ItemsByInvoiceGridLayout(InvoicePageLayout):
     #~ pass
