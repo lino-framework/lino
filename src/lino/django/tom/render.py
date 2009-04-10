@@ -608,25 +608,6 @@ class ViewReportRenderer(ReportRenderer):
         self.queryset = self._build_queryset(flt)
         #self.main_menu = settings.MAIN_MENU
 
-        details = {}
-        #model=self.instance.model
-        #if layout.detail_reports:
-        model = self.report.queryset.model
-        if model.detail_reports:
-            for name in model.detail_reports.split():
-                def render(instance):
-                    meth = getattr(instance,name)
-                    dtlrep = meth()
-                    #print report.as_text()
-                    if self.detail_renderer:
-                        r = self.detail_renderer(dtlrep,request,name)
-                        return r.render_to_string()
-                    else:
-                        return mark_safe(unicode(dtlrep))
-                details[name] = render
-        self.details = details
-                
-
 
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
@@ -680,6 +661,19 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 page = paginator.page(paginator.num_pages)
             self.page=page
 
+        details = {}
+        #model=self.instance.model
+        #if layout.detail_reports:
+        model = self.report.queryset.model
+        if model.detail_reports:
+            for name in model.detail_reports.split():
+                def render(instance):
+                    meth = getattr(instance,name)
+                    dtlrep = meth()
+                    return mark_safe(unicode(dtlrep))
+                details[name] = render
+        self.details = details
+        
     #~ def render(self):
         #~ context=dict(
           #~ report=self,
@@ -767,9 +761,20 @@ class ViewOneReportRenderer(ViewReportRenderer):
         self.instance = obj
         self.rownum = rownum
         self.row = Row(self,obj,rownum)
+        details = {}
+        model = self.report.queryset.model
+        if model.detail_reports:
+            for name in model.detail_reports.split():
+                meth = getattr(self.instance,name)
+                dtlrep = meth()
+                r = self.detail_renderer(dtlrep,request,name)
+                details[name] = lambda x: r.render_to_string()
+        self.details = details
+        
         self.layout = layouts.RowLayoutRenderer(self.row,
             obj.page_layout(),self.details)
-            
+
+
     #~ def render(self):
         #~ context=dict(
           #~ report=self,
@@ -851,6 +856,7 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
         
         if prefix:
             self.formset_class.prefix = prefix
+            #rowform_class.prefix = prefix
             object_list = self.queryset
         else:
             object_list = self.page.object_list
@@ -896,12 +902,14 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
     def __init__(self,report,request,row):
         ViewOneReportRenderer.__init__(self,report,request,row)
         if request.method == 'POST':
-            frm=report.form_class(request.POST,instance=self.instance)
+            frm = report.form_class(request.POST,instance=self.instance)
             if frm.is_valid():
                 frm.save()
                 stop_editing(request)
                 redirect_to(request,self.again(editing=None))
                 #return HttpResponseRedirect(self.again(editing=None))
+            else:
+                print frm.errors
         else:
             frm=report.form_class(instance=self.instance)
         self.form = frm
@@ -911,8 +919,9 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
         self.layout = layouts.FormLayoutRenderer(frm,layout,
             self.details,editing=True)
         
-        #self.row = Row(self,self.instance,self.rownum,frm)
+        # hack: no need to instanciate a new Row for this...
         self.row.form = frm
+        #self.row = Row(self,self.instance,self.rownum,frm)
         
         #~ context=dict(
           #~ report=self,
