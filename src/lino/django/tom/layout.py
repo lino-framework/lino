@@ -20,6 +20,7 @@
 from django import forms
 from django.db import models
 from django.utils.safestring import mark_safe
+from django.utils.text import capfirst
 from django.template.loader import render_to_string
 
 
@@ -66,14 +67,17 @@ class FieldElement(Element):
                 #~ widget.attrs["cols"] = cols
 
     def render(self,renderer):
-        r = renderer.details.get(self.name)
-        if r is not None:
-            return r(renderer.get_instance())
-            #return r.render_to_string()
-        if renderer.editing:
-            return self.as_editable(renderer)
-        return self.as_readonly(renderer)
-        #return mark_safe(renderer.field_to_html(self))
+        try:
+            r = renderer.details.get(self.name)
+            if r is not None:
+                return r(renderer.get_instance())
+                #return r.render_to_string()
+            if renderer.editing:
+                return self.as_editable(renderer)
+            return self.as_readonly(renderer)
+            #return mark_safe(renderer.field_to_html(self))
+        except Exception,e:
+            print e
         
         
     def as_readonly(self,renderer):
@@ -83,13 +87,26 @@ class FieldElement(Element):
             model_field = instance._meta.get_field(self.name)
         except models.FieldDoesNotExist,e:
             # so it is a method
-            value=value()
-            #~ from lino.django.tom import reports
-            #~ if isinstance(value,reports.Report):
-                #~ return value.as_html()
-            label=self.name
-            #widget=widget_for_value(value)
-            widget = forms.TextInput()
+            if hasattr(value,"field"):
+                #print "it is a method"
+                field = value.field
+                value=value()
+                #print value
+                if field.verbose_name:
+                    label = field.verbose_name
+                else:
+                    label = self.name.replace('_', ' ')
+                #print label
+                widget = field.formfield().widget
+                #print widget
+            else:
+                value=value()
+                #~ from lino.django.tom import reports
+                #~ if isinstance(value,reports.Report):
+                    #~ return value.as_html()
+                label=self.name
+                #widget=widget_for_value(value)
+                widget = forms.TextInput()
         else:
             label = model_field.verbose_name
             form_field = model_field.formfield() 
@@ -100,17 +117,18 @@ class FieldElement(Element):
             widget = form_field.widget
         if value is None:
             value = ''
-        else:
-            value = unicode(value)
+        #~ else:
+            #~ value = unicode(value)
+        #print self.name, value
         if isinstance(widget, forms.CheckboxInput):
             if value:
                 s = "[X]"
             else: 
-                s = "[&nbsp;]"
+                s = "[&nbsp;&nbsp;]"
             if renderer.show_labels:
                 s += " " + label
         elif isinstance(widget, forms.Select):
-            s = "[" + value + "]"
+            s = "[ " + unicode(value) + " ]"
             if renderer.show_labels:
                 s = label + "<br/>" + s
         else:
@@ -295,10 +313,10 @@ class LayoutRenderer:
         context = dict(
           element = BoundElement(main,self),
         )
-        s = render_to_string(main.template,context)
-        #print main
-        #print s
-        return s
+        try:
+            return render_to_string(main.template,context)
+        except Exception,e:
+            print e
         
        
 class FormLayoutRenderer(LayoutRenderer):

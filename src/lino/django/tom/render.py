@@ -187,8 +187,9 @@ class Row(object):
     def links(self):
         l=[]
         l.append('<a href="%s">page</a>' % self.get_url_path())
-        l.append('<a href="%s">instance</a>' % \
-            self.instance.get_url_path())
+        if False:
+            l.append('<a href="%s">instance</a>' % \
+                self.instance.get_url_path())
         #print "<br/>".join(l)
         return mark_safe("\n".join(l))
 

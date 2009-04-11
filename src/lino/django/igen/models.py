@@ -375,6 +375,7 @@ class Document(TomModel):
         
     def total_incl(self):
         return self.total_excl + self.total_vat
+    total_incl.field = PriceField()
 
 class Order(Document):
     valid_until = MyDateField("Valid until",blank=True,null=True)
@@ -413,7 +414,6 @@ class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
     page_layout_class = InvoicePageLayout
     detail_reports = "items"
-    
             
     def items(self):
         return ItemsByInvoice(self)

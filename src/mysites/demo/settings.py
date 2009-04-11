@@ -119,3 +119,7 @@ INSTALLED_APPS = (
 )
 
 
+
+SERIALIZATION_MODULES = {
+     "data" : "lino.django.tom.dataserializer",
+}
