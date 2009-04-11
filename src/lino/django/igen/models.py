@@ -456,6 +456,16 @@ class DocumentItem(TomModel):
             return self.total
         return 0
         
+    def before_save(self):
+        #print "before_save()", self
+        if self.product:
+            if not self.title:
+                self.title = self.product.name
+            if not self.description:
+                self.description = self.product.description
+            if not self.unitPrice:
+                self.unitPrice = self.product.price
+        
 class OrderItem(DocumentItem):
     order = models.ForeignKey(Order) #,related_name="items")
         

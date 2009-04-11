@@ -31,6 +31,8 @@ try:
 except ImportError:
     from django.utils import _decimal as decimal # Python 2.3 fallback
 
+from django.core.serializers import base
+
 from django.db import models
 from django.core.serializers.python import Serializer as PythonSerializer
 from django.core.serializers.python import Deserializer as PythonDeserializer
@@ -73,19 +75,20 @@ class ModelBuilder:
                 self.converters.append(ForeignKeyConverter(f))
             
     def build(self,**kw):
-        print "build",kw
+        #print "build",kw
         for c in self.converters:
             kw = c.convert(**kw)
         return self.model_class(**kw)
   
 
 
-#~ class Serializer(PythonSerializer):
+class Serializer(PythonSerializer):
+    internal_use_only = False
+    
     #~ """
     #~ Convert a queryset to YAML.
     #~ """
     
-    #~ internal_use_only = False
     
     #~ def handle_field(self, obj, field):
         #~ # A nasty special case: base YAML doesn't support serialization of time
@@ -116,6 +119,7 @@ def Deserializer(stream_or_string, **options):
     else:
         stream = stream_or_string
         
+    model_builder = None
     for values in yaml.load_all(stream):
         if values.has_key('model'):
             modelspec = values.pop('model')
@@ -123,18 +127,21 @@ def Deserializer(stream_or_string, **options):
             app,model = modelspec.split(".")
             #print app,model
             model_class = models.get_model(app,model)
-            self.model_builder = ModelBuilder(model_class)
-        if self.model_builder is None:
+            model_builder = ModelBuilder(model_class)
+        if model_builder is None:
             raise Exception("no model specified")
         #print model_class
-        instance = self.model_builder.build(**values)
+        instance = model_builder.build(**values)
         #~ if model_class == User:
             #~ instance.set_password(yamldict.get('password'))
         # data files are required to use "!!python/object:", so the
         # yamldict is a Python object
         #self.add_node(yamldict)
-        print instance
-        yield instance
+        #print instance
+        m2m_data = {}
+        yield base.DeserializedObject(instance, m2m_data)
+
+
         #~ instance.save()
         #~ print "Saved:", instance
         #self.modelspec = modelspec

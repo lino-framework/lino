@@ -26,7 +26,7 @@ from lino.django.tom import layout as layouts
 
 
 class TestCase(TestCase):
-    fixtures=[ 'demo.yaml' ]
+    fixtures=[ 'demo' ]
     def setUp(self):
         pass
         
@@ -120,9 +120,67 @@ Minu Firma OÜ       |Estonia     |              |              |
         """.split())
         
         
+class ClientTest(TestCase):
+    urls = 'mysites.demo.urls'
+    fixtures = [ 'demo' ]
+    def test01(self):
+        for url in (
+          '/menu',
+          '/menu/contacts',
+          '/menu/contacts/contacts',
+          '/menu/contacts/contacts?editing=1',
+          '/menu/contacts/contacts?editing=0',
+          '/instance/igen/Contact/1',
+          '/menu/prods/products?row=1',
+          '/menu/docs/invoices?row=1',
+        ):
+            response = self.client.get(url) # ,follow=True)
+            self.failUnlessEqual(response.status_code, 200,
+              "GET %r fails to respond" % url)
+
+        # now we just check whether some methods raise an exception
+        # templates silently ignore them
+        response = self.client.get('/menu/contacts/contacts')
+        s = "\n".join([repr(c) for c in response.context])
+        renderer = response.context[0].get("report")
+        s = renderer.navigator()
+        count = 0
+        for row in renderer.rows():
+            s = row.as_html()
+            count += 1
+        self.assertEqual(count,15)
+        
+        response = self.client.get('/menu/config/languages/1')
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
+
+        response = self.client.get('/menu/prods/products/1')
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
+
+        response = self.client.get('/menu/docs/invoices/1')
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
+        
+        response = self.client.get('/menu/contacts/contacts/1?editing=1')
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
+        s = report.navigator()
+        
+        response = self.client.get('/menu/docs/invoices/1?editing=1')
+        report = response.context[0].get("report")
+        s = report.layout.render_to_string()
+        
+        response = self.client.get('/menu/docs/invoices?editing=1')
+        report = response.context[0].get("report")
+        s = report.navigator()
+        for row in report.rows():
+            s = row.as_html()
+            
+        response = self.client.get('/menu/docs/invoices?editing=0')
+        report = response.context[0].get("report")
+        s = report.navigator()
+        for row in report.rows():
+            s = row.as_html()
             
 
-
-
-## Run these tests using "python manage.py test".
-## see http://docs.djangoproject.com/en/dev/topics/testing/#topics-testing
