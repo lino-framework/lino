@@ -587,7 +587,7 @@ class HtmlReportRenderer(ColumnsReportRenderer):
                 s += "<td>%s</td>" % unicode(v)
             s += "</tr>"
         s += "</table>"
-        return s
+        return mark_safe(s)
 
 
 class ViewReportRenderer(ReportRenderer):
@@ -611,7 +611,6 @@ class ViewReportRenderer(ReportRenderer):
 
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
-        
       
     def render_to_response(self):
         url = get_redirect(self.request)
@@ -741,13 +740,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
 
 
 
+class RowViewReportRenderer(ViewReportRenderer):
 
-class ViewOneReportRenderer(ViewReportRenderer):
-
-    template_to_string = "tom/includes/page_show.html"
-    template_to_reponse = "tom/page_show.html"      
-    detail_renderer = ViewManyReportRenderer    
-    
     def __init__(self,report,request,row):
         ViewReportRenderer.__init__(self,report,request)
         rownum=int(row)
@@ -761,35 +755,33 @@ class ViewOneReportRenderer(ViewReportRenderer):
         self.instance = obj
         self.rownum = rownum
         self.row = Row(self,obj,rownum)
-        details = {}
-        model = self.report.queryset.model
-        if model.detail_reports:
-            for name in model.detail_reports.split():
-                meth = getattr(self.instance,name)
-                dtlrep = meth()
-                r = self.detail_renderer(dtlrep,request,name,
-                    self.instance)
-                details[name] = lambda x: r.render_to_string()
-        self.details = details
-        
-        self.layout = layouts.RowLayoutRenderer(self.row,
-            obj.page_layout(),self.details)
-
-
-    #~ def render(self):
-        #~ context=dict(
-          #~ report=self,
-          #~ title=self.get_title(),
-          #~ main_menu = settings.MAIN_MENU,
-          #~ layout = self.layout
-        #~ )
-        #~ return render_to_response(self.layout.template,context)
         
     def position_string(self):
         return  "Row %d of %d." % (self.row.number,self.queryset.count())
         
     def get_title(self):
         return u"%s - %s" % (self.report.get_title(),self.instance)
+        
+class ViewOneReportRenderer(RowViewReportRenderer):
+
+    template_to_string = "tom/includes/page_show.html"
+    template_to_reponse = "tom/page_show.html"      
+    detail_renderer = ViewManyReportRenderer    
+    
+    def __init__(self,report,request,row):
+        RowViewReportRenderer.__init__(self,report,request,row)
+        details = {}
+        model = self.report.queryset.model
+        if model.detail_reports:
+            for name in model.detail_reports.split():
+                meth = getattr(self.row.instance,name)
+                dtlrep = meth()
+                r = self.detail_renderer(dtlrep,request,name,
+                    self.row.instance)
+                details[name] = lambda x: r.render_to_string()
+        self.details = details
+        self.layout = layouts.RowLayoutRenderer(self.row,
+            self.row.instance.page_layout(),self.details)
         
     def navigator(self):
         s="""<div class="pagination"><span class="step-links">"""
@@ -820,6 +812,7 @@ class ViewOneReportRenderer(ViewReportRenderer):
         else:
             s += ' <a href="%s">%s</a>' % (
               self.again(editing=1),"edit")
+        s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         s += """</span></div>"""     
         return mark_safe(s)
@@ -992,3 +985,11 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
         if pdf.err:
             raise Exception(cgi.escape(html))
         return HttpResponse(result.getvalue(),mimetype='application/pdf')
+
+
+class RowPrintReportRenderer(RowViewReportRenderer):
+    def render(self):
+        tplname = self.report.get_row_print_template(self.row.instance)
+        context = dict(instance=self.row.instance)
+        return render_to_response(tplname,context)
+

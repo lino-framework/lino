@@ -31,17 +31,48 @@ def linkto(href,text=None):
         
 class PriceField(models.DecimalField):
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = 10
-        kwargs['max_digits'] = 10
-        kwargs['decimal_places'] = 2
-        super(PriceField, self).__init__(*args, **kwargs)
+        defaults = dict(
+            max_length=10,
+            max_digits=10,
+            decimal_places=2,
+            )
+        defaults.update(kwargs)
+        super(PriceField, self).__init__(*args, **defaults)
+        
+    def formfield(self, **kwargs):
+        fld = super(PriceField, self).formfield(**kwargs)
+        # display size is smaller than full size:
+        fld.widget.attrs['size'] = "6"
+        fld.widget.attrs['style'] = "text-align:right;"
+        return fld
+        
+class MyDateField(models.DateField):
+        
+    def formfield(self, **kwargs):
+        fld = super(MyDateField, self).formfield(**kwargs)
+        # display size is smaller than full size:
+        fld.widget.attrs['size'] = "8"
+        return fld
+        
+        
+
+        
         
 class QuantityField(models.DecimalField):
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = 5
-        kwargs['max_digits'] = 5
-        kwargs['decimal_places'] = 2
-        super(QuantityField, self).__init__(*args, **kwargs)
+        defaults = dict(
+            max_length=5,
+            max_digits=5,
+            decimal_places=0,
+            )
+        defaults.update(kwargs)
+        super(QuantityField, self).__init__(*args, **defaults)
+        
+    def formfield(self, **kwargs):
+        fld = super(QuantityField, self).formfield(**kwargs)
+        fld.widget.attrs['size'] = "3"
+        fld.widget.attrs['style'] = "text-align:right;"
+        return fld
         
         
 #~ class SizedCharField(models.CharField):
@@ -321,7 +352,7 @@ class Product(TomModel):
 class Document(TomModel):
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
-    creation_date = models.DateField(auto_now_add=True)
+    creation_date = MyDateField(auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
@@ -346,12 +377,12 @@ class Document(TomModel):
         return self.total_excl + self.total_vat
 
 class Order(Document):
-    valid_until = models.DateField("Valid until",blank=True,null=True)
+    valid_until = MyDateField("Valid until",blank=True,null=True)
     
 class InvoicePageLayout(PageLayout):
     box1 = """
       number your_ref creation_date
-      customer:40 ship_to:40
+      customer ship_to
       """
     box2 = """
       shipping_mode payment_term
@@ -379,13 +410,23 @@ class InvoicePageLayout(PageLayout):
         
   
 class Invoice(Document):
-    due_date = models.DateField("Payable until",blank=True,null=True)
+    due_date = MyDateField("Payable until",blank=True,null=True)
     page_layout_class = InvoicePageLayout
     detail_reports = "items"
     
             
     def items(self):
         return ItemsByInvoice(self)
+        
+    def before_save(self):
+        total_excl = 0
+        total_vat = 0
+        for i in self.invoiceitem_set.all():
+            total_excl += i.total_excl()
+            #~ if not i.product.vatExempt:
+                #~ total_vat += i.total_excl() * 0.18
+        self.total_excl = total_excl
+        self.total_vat = total_vat
         
     def get_actions(self):
         return dict(
@@ -406,7 +447,15 @@ class DocumentItem(TomModel):
     
     class Meta:
         abstract = True
-    
+        
+    def total_excl(self):
+        if self.unitPrice:
+            qty = self.qty or 1
+            return self.unitPrice * qty
+        elif self.total:
+            return self.total
+        return 0
+        
 class OrderItem(DocumentItem):
     order = models.ForeignKey(Order) #,related_name="items")
         
@@ -474,16 +523,14 @@ class Orders(reports.Report):
     queryset=Order.objects.order_by("number")
 
 class Invoices(reports.Report):
-    queryset=Invoice.objects.order_by("number")
-    columnNames="number:4 creation_date:8 customer:20 total_incl:6 total_excl:6 total_vat:6 items"
+    queryset = Invoice.objects.order_by("number")
+    columnNames = "number:4 creation_date:8 customer:20 " \
+                  "total_incl total_excl total_vat items"
 
-#~ class ItemsByInvoiceGridLayout(InvoicePageLayout):
-    #~ pass
     
 class ItemsByInvoice(reports.Report):
-    #grid_layout = ItemsByInvoiceGridLayout
-    #InvoicePageLayout(context=items=)
-    columnNames="pos:3 product title description:1x40 unitPrice:6 qty:3 total:6"
+    columnNames = "pos:3 product title description:1x40 " \
+                  "unitPrice qty total"
     
     def __init__(self,invoice,**kw):
         self.invoice=invoice
@@ -492,8 +539,3 @@ class ItemsByInvoice(reports.Report):
     def get_queryset(self):
         return self.invoice.invoiceitem_set.order_by("pos")
     
-    #~ def foo(self):
-      #~ return InvoicePageLayout(items=self)
-    
-    #~ def header_layout(self):
-        #~ return self.invoice.page_layout()

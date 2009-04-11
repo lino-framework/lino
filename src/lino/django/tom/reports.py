@@ -125,6 +125,7 @@ class Report(object):
     name=None
     #path=None
     form_class=None
+    row_print_template = "tom/"
     
     def __init__(self):
         self.groups = [] # for later
@@ -156,8 +157,8 @@ class Report(object):
     def getLabel(self):
         return self.label
     
-    def header_layout(self):
-        pass
+    def get_row_print_template(self,instance):
+        return instance._meta.db_table + "_print.html"
         
         
     def __unicode__(self):
@@ -182,13 +183,9 @@ class Report(object):
         #l += [ url(r'^%s/edit$' % name, self.edit_view)]
         l += [ url(r'^%s/pdf$' % name, self.pdf_view_many)]
         l += [ url(r'^%s/(\d+)/pdf$' % name, self.pdf_view_one)]
+        l += [ url(r'^%s/(\d+)/print$' % name, self.print_one_view)]
         return l
 
-    #~ def view(self, request):
-        #~ if render.is_editing(request):
-            #~ return render.EditReportRenderer(self).view(request)
-        #~ return render.ViewReportRenderer(self).view(request)
-            
     def view(self,request):
         return self.view_many(request)
         
@@ -211,12 +208,15 @@ class Report(object):
         
     def pdf_view_many(self, request):
         return render.PdfManyReportRenderer(self,request).render()
-        
+
+    def print_one_view(self,*args):
+        return render.RowPrintReportRenderer(self,*args).render()
+
     def as_text(self, **kw):
         return render.TextReportRenderer(self,**kw).render()
         
     def as_html(self, **kw):
-        return render.HtmlReportRenderer(self,**kw).render()
+        return render.HtmlReportRenderer(self,**kw).render_to_string()
         
 
 

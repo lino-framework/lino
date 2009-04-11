@@ -29,13 +29,22 @@ class Element:
     
 class FieldElement(Element):
     def __init__(self,layout,name):
-        a=name.split(":")
+        a=name.split(":",1)
         if len(a) == 1:
             self.name = name
             self.picture = None
+            self.widget_attrs = {}
         elif len(a) == 2:
             self.name = a[0]
             self.picture = a[1]
+            a = a[1].split("x",1)
+            if len(a) == 1:
+                self.widget_attrs = dict(size=a[0])
+            elif len(a) == 2:
+                self.widget_attrs = dict(rows=a[0],cols=a[1])
+            #~ else:
+                #~ raise Exception("Invalid picture spec %s" % name)
+            
         
     def __str__(self):
         if self.picture is None:
@@ -43,13 +52,18 @@ class FieldElement(Element):
         return self.name + ":" + self.picture
             
     def setup_widget(self,widget):
-        if self.picture is not None:
-            if isinstance(widget,forms.TextInput):
-                widget.attrs["size"] = self.picture
-            elif isinstance(widget,forms.Textarea):
-                rows,cols=self.picture.split("x")
-                widget.attrs["rows"] = rows
-                widget.attrs["cols"] = cols
+        if isinstance(widget,forms.widgets.Input):
+            widget.attrs.update(self.widget_attrs)
+        elif isinstance(widget,forms.Textarea):
+            widget.attrs.update(self.widget_attrs)
+            
+        #~ if self.picture is not None:
+            #~ if isinstance(widget,forms.widgets.Input):
+                #~ widget.attrs["size"] = self.picture
+            #~ elif isinstance(widget,forms.Textarea):
+                #~ rows,cols=self.picture.split("x")
+                #~ widget.attrs["rows"] = rows
+                #~ widget.attrs["cols"] = cols
 
     def render(self,renderer):
         r = renderer.details.get(self.name)
