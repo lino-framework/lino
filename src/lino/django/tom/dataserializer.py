@@ -47,6 +47,9 @@ DjangoSafeDumper.add_representer(decimal.Decimal, DjangoSafeDumper.represent_dec
 
 # my code
 
+class DataError(Exception):
+    pass
+
 class Converter:
     def __init__(self,field):
         self.field = field
@@ -58,7 +61,14 @@ class ForeignKeyConverter(Converter):
     def convert(self,**kw):
         pkvalue = kw.get(self.field.name)
         if pkvalue is not None:
-            kw[self.field.name] = self.field.rel.to.objects.get(pk=pkvalue)
+            try:
+                p = self.field.rel.to.objects.get(pk=pkvalue)
+            except self.field.rel.to.DoesNotExist,e:
+                raise DataError(
+                  "%s.objects.get(%s) : %s" % (
+                      self.field.rel.to.__name__,pkvalue,e))
+            else:
+                kw[self.field.name] = p
         return kw
     
       
@@ -78,7 +88,9 @@ class ModelBuilder:
         #print "build",kw
         for c in self.converters:
             kw = c.convert(**kw)
-        return self.model_class(**kw)
+        instance = self.model_class(**kw)
+        instance.save()
+        return instance
   
 
 
@@ -127,9 +139,11 @@ def Deserializer(stream_or_string, **options):
             app,model = modelspec.split(".")
             #print app,model
             model_class = models.get_model(app,model)
+            if not model_class:
+                raise Exception("invalid model:" + modelspec)
             model_builder = ModelBuilder(model_class)
         if model_builder is None:
-            raise Exception("no model specified")
+            raise DataError("No model specified")
         #print model_class
         instance = model_builder.build(**values)
         #~ if model_class == User:
@@ -137,7 +151,7 @@ def Deserializer(stream_or_string, **options):
         # data files are required to use "!!python/object:", so the
         # yamldict is a Python object
         #self.add_node(yamldict)
-        #print instance
+        #print instance.pk, instance
         m2m_data = {}
         yield base.DeserializedObject(instance, m2m_data)
 

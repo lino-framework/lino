@@ -30,12 +30,12 @@ from django.core.management import call_command
 from lino.console import syscon
         
 def main():
+    call_command('syncdb')
     if syscon.confirm("Gonna flush database %s. Are you sure?" 
         % settings.DATABASE_NAME):
         call_command('flush',interactive=False)
     elif not syscon.confirm("Continue filling the existing database?"):
         return
-    call_command('syncdb')
     call_command('loaddata','demo')
     User.objects.create_superuser('root','root@example.com','root')
     User.objects.create_user('user','user@example.com','user')

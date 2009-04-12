@@ -239,7 +239,6 @@ cat: 1
 
 ---
 model: igen.Invoice
-pk: 1
 number: 1
 customer: 2
 creation_date: 2008-10-29
@@ -247,15 +246,15 @@ due_date: 2008-10-29
 payment_term: 2
 shipping_mode: 1
 ---    
-model: igen.InvoiceItem
-invoice: 1
+model: igen.DocItem
+document: 1
 pos: 1
 product: 1
 description: Wooden table
 unitPrice: "199.95"
 qty: "1.00"
 ---    
-invoice: 1
+document: 1
 pos: 2
 product: 2
 description: Wooden chair
@@ -264,7 +263,6 @@ qty: "4.00"
 
 ---
 model: igen.Invoice
-pk: 2
 number: 2
 customer: 3
 creation_date: 2009-04-11
@@ -272,17 +270,56 @@ due_date: 2009-04-11
 payment_term: 2
 shipping_mode: 1
 ---    
-model: igen.InvoiceItem
-invoice: 2
+model: igen.DocItem
+document: 2
 pos: 1
 product: 3
 #description: Wooden table
 #unitPrice: "199.95"
 qty: "1.00"
 ---    
-invoice: 2
+document: 2
 pos: 2
 product: 4
 #description: Wooden chair
 #unitPrice: "99.99"
+qty: "4.00"
+
+---
+model: igen.Order
+number: 3
+customer: 4
+creation_date: 2009-04-12
+payment_term: 2
+shipping_mode: 1
+---    
+model: igen.DocItem
+document: 3
+pos: 1
+product: 3
+qty: "1.00"
+---    
+document: 3
+pos: 2
+product: 4
+qty: "4.00"
+
+---
+model: igen.Invoice
+number: 4
+customer: 4
+creation_date: 2009-04-12
+due_date: 2009-04-12
+payment_term: 2
+shipping_mode: 1
+---    
+model: igen.DocItem
+document: 4
+pos: 1
+product: 3
+qty: "1.00"
+---    
+document: 4
+pos: 2
+product: 4
 qty: "4.00"

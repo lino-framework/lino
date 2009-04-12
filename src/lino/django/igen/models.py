@@ -115,9 +115,11 @@ class ContactPageLayout(PageLayout):
             box2 box3
             box4 box7
             remarks:6x60
+            documents
             """
   
 class Contact(TomModel):
+    detail_reports = "documents"
     page_layout_class = ContactPageLayout
     """
     
@@ -221,6 +223,9 @@ u'Example & Co (Luc Saffre)'
         return s
     as_address.allow_tags=True
 
+    def documents(self):
+        return DocumentsByCustomer(self)
+        
     #~ def page_layout(self):
         #~ return VBOX(
             #~ VBOX("""
@@ -350,6 +355,8 @@ class Product(TomModel):
         #~ return self.name
 
 class Document(TomModel):
+    detail_reports = "items"
+    
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
     creation_date = MyDateField(auto_now_add=True)
@@ -367,8 +374,8 @@ class Document(TomModel):
     total_vat = PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True,null=True)
     
-    class Meta:
-        abstract = True
+    #~ class Meta:
+        #~ abstract = True
         
     def __unicode__(self):
         return "%s # %d" % (self.__class__.__name__,self.number)
@@ -377,13 +384,16 @@ class Document(TomModel):
         return self.total_excl + self.total_vat
     total_incl.field = PriceField()
 
+    def items(self):
+        return ItemsByDocument(self)
+        
 class Order(Document):
     valid_until = MyDateField("Valid until",blank=True,null=True)
     
 class InvoicePageLayout(PageLayout):
     box1 = """
       number your_ref creation_date
-      customer ship_to
+      customer ship_to due_date
       """
     box2 = """
       shipping_mode payment_term
@@ -403,38 +413,30 @@ class InvoicePageLayout(PageLayout):
       box3 box4
       items:5x80
       """
-    #~ detail_reports = "items"
-  
-    #~ def items(self,instance,request):
-        #~ report=ItemsByInvoice(instance)
-        #~ renderer.EditManyReportRenderer(report,request)
         
   
 class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
     page_layout_class = InvoicePageLayout
-    detail_reports = "items"
             
-    def items(self):
-        return ItemsByInvoice(self)
-        
     def before_save(self):
         total_excl = 0
         total_vat = 0
-        for i in self.invoiceitem_set.all():
+        for i in self.docitem_set.all():
             total_excl += i.total_excl()
             #~ if not i.product.vatExempt:
                 #~ total_vat += i.total_excl() * 0.18
         self.total_excl = total_excl
         self.total_vat = total_vat
         
-    def get_actions(self):
-        return dict(
-          detail = self.items,
-        ).update(TomModel.get_actions(self))
+    #~ def get_actions(self):
+        #~ return dict(
+          #~ detail = self.items,
+        #~ ).update(TomModel.get_actions(self))
         
 
-class DocumentItem(TomModel):
+class DocItem(TomModel):
+    document = models.ForeignKey(Document) 
     pos = models.IntegerField("Position")
     
     product = models.ForeignKey(Product)
@@ -445,8 +447,8 @@ class DocumentItem(TomModel):
     qty = QuantityField(blank=True,null=True)
     total = PriceField(blank=True,null=True)
     
-    class Meta:
-        abstract = True
+    #~ class Meta:
+        #~ abstract = True
         
     def total_excl(self):
         if self.unitPrice:
@@ -466,11 +468,11 @@ class DocumentItem(TomModel):
             if not self.unitPrice:
                 self.unitPrice = self.product.price
         
-class OrderItem(DocumentItem):
-    order = models.ForeignKey(Order) #,related_name="items")
+#~ class OrderItem(DocumentItem):
+    #~ order = models.ForeignKey(Order) #,related_name="items")
         
-class InvoiceItem(DocumentItem):
-    invoice = models.ForeignKey(Invoice) #,related_name="items")
+#~ class InvoiceItem(DocumentItem):
+    #~ invoice = models.ForeignKey(Invoice) #,related_name="items")
         
         
                
@@ -538,14 +540,28 @@ class Invoices(reports.Report):
                   "total_incl total_excl total_vat items"
 
     
-class ItemsByInvoice(reports.Report):
+class ItemsByDocument(reports.Report):
     columnNames = "pos:3 product title description:1x40 " \
                   "unitPrice qty total"
     
-    def __init__(self,invoice,**kw):
-        self.invoice=invoice
+    def __init__(self,doc,**kw):
+        self.doc = doc
         reports.Report.__init__(self,**kw)
         
     def get_queryset(self):
-        return self.invoice.invoiceitem_set.order_by("pos")
+        return self.doc.docitem_set.order_by("pos")
     
+
+class DocumentsByCustomer(reports.Report):
+    columnNames = "number:4 creation_date:8 " \
+                  "total_incl total_excl total_vat items"
+
+    def __init__(self,customer,**kw):
+        self.customer = customer
+        reports.Report.__init__(self,**kw)
+        
+    def get_queryset(self):
+        return Document.objects.filter(customer=self.customer).order_by("creation_date")
+
+    def get_title(self):
+        return unicode(self.customer) + " : documents by customer"

@@ -17,6 +17,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from lino.django.igen import models
 from models import Contact, Product, Invoice, Country
 from models import Companies
 from django.test import TestCase
@@ -74,7 +75,7 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         chair=Product.objects.get(id=2)
         i=Invoice(customer=luc)
         i.save()
-        i.invoiceitem_set.create(pos=1,product=table,qty=1)
+        i.docitem_set.create(pos=1,product=table,qty=1)
         
     def test05(self):
         s=Companies().as_text(column_widths=dict(companyName=20,country=12))
@@ -118,6 +119,30 @@ Minu Firma OÜ       |Estonia     |              |              |
 <tr><th><label for="id_form-0-isocode">Isocode:</label></th><td><input id="id_form-0-isocode" type="text" name="form-0-isocode" maxlength="2" /></td></tr>
 <tr><th><label for="id_form-0-DELETE">Delete:</label></th><td><input type="checkbox" name="form-0-DELETE" id="id_form-0-DELETE" /></td></tr>
         """.split())
+        
+    def test08(self):
+        c = Contact.objects.get(pk=4)
+        s = models.DocumentsByCustomer(c).as_text()
+        #print "\n"+s
+        self.assertEquals(s.split(),u"""
+Bäckerei Ausdemwald (Alfons Ausdemwald) : documents by customer
+===============================================================
+number      |creation    |total_incl  |total excl  |total vat   |items
+            |date        |            |            |            |
+------------+------------+------------+------------+------------+------------
+3           |2009-04-12  |<a href="/in|0           |0           |<a href="/in
+            |            |stance/igen/|            |            |stance/igen/
+            |            |Document/3/t|            |            |Document/3/i
+            |            |otal_incl">0|            |            |tems">2
+            |            |</a>        |            |            |row(s)</a>
+4           |2009-04-12  |<a href="/in|0           |0           |<a href="/in
+            |            |stance/igen/|            |            |stance/igen/
+            |            |Document/4/t|            |            |Document/4/i
+            |            |otal_incl">0|            |            |tems">2
+            |            |</a>        |            |            |row(s)</a>        
+""".split(),"DocumentsByCustomer().as_text() has changed in demo")
+        
+        
         
         
 class ClientTest(TestCase):
