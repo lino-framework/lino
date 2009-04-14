@@ -43,7 +43,15 @@ class DjangoSafeDumper(yaml.SafeDumper):
 
 DjangoSafeDumper.add_representer(decimal.Decimal, DjangoSafeDumper.represent_decimal)
 
+class FakeDeserializedObject(base.DeserializedObject):
+    """loaddata requires DeserializedObject instances, 
+    but this Deserializer does *not* bypass pre_save/save methods.
+    """
+    def __init__(self, obj):
+        self.object = obj
 
+    def save(self, save_m2m=True):
+        self.object.save()
 
 # my code
 
@@ -146,14 +154,16 @@ def Deserializer(stream_or_string, **options):
             raise DataError("No model specified")
         #print model_class
         instance = model_builder.build(**values)
+        #yield instance
         #~ if model_class == User:
             #~ instance.set_password(yamldict.get('password'))
         # data files are required to use "!!python/object:", so the
         # yamldict is a Python object
         #self.add_node(yamldict)
         #print instance.pk, instance
-        m2m_data = {}
-        yield base.DeserializedObject(instance, m2m_data)
+        #~ instance.save()
+        #~ m2m_data = {}
+        yield FakeDeserializedObject(instance)
 
 
         #~ instance.save()

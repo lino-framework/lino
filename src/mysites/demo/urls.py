@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
-from lino.django.tom import reports
+from lino.django import utils
 
 from lino.django.tom.menus import Menu
 menu = Menu("menu","Main Menu")
@@ -48,6 +48,6 @@ urlpatterns += patterns('',
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
-    (r'', include(reports.urls())),
+    (r'', include(utils.urls())),
 )    
 

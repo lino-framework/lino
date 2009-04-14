@@ -16,20 +16,22 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-
+import os
 
 def again(request,*args,**kw):
-    get=request.GET.copy()
+    get = request.GET.copy()
     for k,v in kw.items():
         if v is None: # value None means "remove this key"
             if get.has_key(k):
                 del get[k]
         else:
             get[k] = v
-    path=request.path
+    path = request.path
     if len(args):
         path += "/" + "/".join(args)
-    s=get.urlencode()
+    path = os.path.normpath(path)
+    path = path.replace("\\","/")
+    s = get.urlencode()
     if len(s):
         path += "?" + s
     #print pth

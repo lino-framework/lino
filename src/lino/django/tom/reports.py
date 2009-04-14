@@ -19,8 +19,10 @@
 
 from django.db import models
 from django import forms
-#from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
+from django.forms.models import modelform_factory
 from django.conf.urls.defaults import patterns, url, include
+
+#from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 #from django.shortcuts import render_to_response 
 #from django.core.paginator import Paginator, EmptyPage, InvalidPage
 #from django.http import HttpResponse, HttpResponseRedirect, Http404
@@ -33,7 +35,8 @@ from django.conf.urls.defaults import patterns, url, include
 #from lino.reports.constants import *
 #import EditLayoutRenderer, ShowLayoutRenderer
 from lino.django.tom import render
-from lino.django.tom import layout as layouts
+from lino.django.utils import layouts
+from lino.django.utils.requests import is_editing
 
 
 #~ from django import template
@@ -54,21 +57,6 @@ WIDTHS = {
 
 
 
-#~ def request_again(request,*args,**kw):
-    #~ req=request.GET.copy()
-    #~ for k,v in kw.items():
-        #~ req[k] = v
-    #~ pth=request.path
-    #~ if len(args):
-        #~ pth += "/" + "/".join(args)
-    #~ s=req.urlencode()
-    #~ if len(s):
-        #~ pth += "?" + s
-    #~ return mark_safe(pth)
-    
-    
-    
-        
 
 
 class ReportParameterForm(forms.Form):
@@ -118,13 +106,15 @@ class Report(object):
     #rowHeight = None
     label = None
     param_form = ReportParameterForm
-    default_filter=''
+    default_filter = ''
     #default_format='form'
     #editable=True
-    name=None
+    name = None
     #path=None
-    form_class=None
-    row_print_template = "tom/"
+    form_class = None
+    #row_print_template = "tom/"
+    fk_name = None
+    detail_reports = ''
     
     def __init__(self):
         self.groups = [] # for later
@@ -166,11 +156,11 @@ class Report(object):
     
     def get_urls(self,name):
         l = []
-        l += [ url(r'^%s$' % name, self.view_many)]
-        l += [ url(r'^%s/(\d+)$' % name, self.view_one)]
-        l += [ url(r'^%s/pdf$' % name, self.pdf_view_many)]
-        l += [ url(r'^%s/(\d+)/pdf$' % name, self.pdf_view_one)]
-        l += [ url(r'^%s/(\d+)/print$' % name, self.print_one_view)]
+        l.append(url(r'^%s$' % name, self.view_many))
+        l.append(url(r'^%s/(\d+)$' % name, self.view_one))
+        l.append(url(r'^%s/pdf$' % name, self.pdf_view_many))
+        l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_view_one))
+        l.append(url(r'^%s/(\d+)/print$' % name, self.print_one_view))
         return l
 
     def view(self,request):
@@ -205,68 +195,3 @@ class Report(object):
     def as_html(self, **kw):
         return render.HtmlReportRenderer(self,**kw).render_to_string()
         
-
-
-
-
-from django.conf import settings
-from django.forms.models import modelform_factory, formset_factory
-from django.shortcuts import render_to_response 
-from lino.django.tom import layout as layouts
-
-
-    
-def index(request):
-    context=dict(
-      main_menu=settings.MAIN_MENU,
-      title="foo"
-    )
-    return render_to_response("tom/index.html",context)
-    
-#~ def edit_report(request,name,*args,**kw):
-    #~ rptclass = _report_classes[name]
-    #~ rpt = rptclass(*args,**kw)
-    #~ return rpt.view(request)
-    
-
-    
-def view_instance(request,app,model,pk):
-    model_class = models.get_model(app,model)
-    #print model_class
-    obj = model_class.objects.get(pk=pk)
-    form_class=modelform_factory(model_class)
-    if request.method == 'POST':
-        frm=form_class(request.POST,instance=obj)
-        if frm.is_valid():
-            frm.save()
-    else:
-        frm=form_class(instance=obj)
-    
-    context=dict(
-      title=unicode(obj),
-      form=frm,
-      main_menu = settings.MAIN_MENU,
-      layout = layouts.LayoutRenderer(obj.page_layout(),frm,
-        editing=True),
-    )
-    return render_to_response("tom/instance.html",context)
-    
-def view_instance_method(request,app,model,pk,meth):
-    model_class = models.get_model(app,model)
-    obj = model_class.objects.get(pk=pk)
-    m = getattr(obj,meth)
-    #action_dict = obj.get_actions()
-    #m = action_dict[meth_name]
-    actor = m()
-    return actor.view(request)
-    
-def urls(name=''):
-    l=[url(r'^%s$' % name, index)]
-    l.append(
-      url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
-          view_instance))
-    l.append(
-      url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
-          view_instance_method))
-    return patterns('',*l)
-

@@ -19,7 +19,7 @@ import datetime
 from django.db import models
 #from lino.django.tom import models
 from lino.django.tom.validatingmodel import TomModel, ModelValidationError
-from lino.django.tom.layout import PageLayout # VBOX, HBOX
+from lino.django.utils.layouts import PageLayout # VBOX, HBOX
 
 from django.utils.safestring import mark_safe
 
@@ -354,12 +354,43 @@ class Product(TomModel):
     #~ def __unicode__(self):
         #~ return self.name
 
+class DocumentPageLayout(PageLayout):
+    box1 = """
+      number your_ref creation_date
+      customer ship_to
+      """
+    box2 = """
+      shipping_mode payment_term
+      vat_exempt item_vat
+      """
+    box3 = """
+      remarks:40
+      intro:5x40
+      """
+    box4 = """
+      total_excl 
+      total_vat
+      total_incl
+      """
+    main = """
+      box1 box2
+      box3 box4
+      items:5x80
+      """
+      
+class InvoicePageLayout(DocumentPageLayout):
+    box1 = """
+      number your_ref creation_date
+      customer ship_to due_date
+      """
+
+
 class Document(TomModel):
-    detail_reports = "items"
+    page_layout_class = DocumentPageLayout
     
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
-    creation_date = MyDateField(auto_now_add=True)
+    creation_date = MyDateField() # auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
@@ -387,38 +418,6 @@ class Document(TomModel):
     def items(self):
         return ItemsByDocument(self)
         
-class Order(Document):
-    valid_until = MyDateField("Valid until",blank=True,null=True)
-    
-class InvoicePageLayout(PageLayout):
-    box1 = """
-      number your_ref creation_date
-      customer ship_to due_date
-      """
-    box2 = """
-      shipping_mode payment_term
-      vat_exempt item_vat
-      """
-    box3 = """
-      remarks:40
-      intro:5x40
-      """
-    box4 = """
-      total_excl 
-      total_vat
-      total_incl
-      """
-    main = """
-      box1 box2
-      box3 box4
-      items:5x80
-      """
-        
-  
-class Invoice(Document):
-    due_date = MyDateField("Payable until",blank=True,null=True)
-    page_layout_class = InvoicePageLayout
-            
     def before_save(self):
         total_excl = 0
         total_vat = 0
@@ -429,11 +428,13 @@ class Invoice(Document):
         self.total_excl = total_excl
         self.total_vat = total_vat
         
-    #~ def get_actions(self):
-        #~ return dict(
-          #~ detail = self.items,
-        #~ ).update(TomModel.get_actions(self))
-        
+class Order(Document):
+    valid_until = MyDateField("Valid until",blank=True,null=True)
+  
+class Invoice(Document):
+    due_date = MyDateField("Payable until",blank=True,null=True)
+    page_layout_class = InvoicePageLayout
+
 
 class DocItem(TomModel):
     document = models.ForeignKey(Document) 
@@ -467,6 +468,7 @@ class DocItem(TomModel):
                 self.description = self.product.description
             if not self.unitPrice:
                 self.unitPrice = self.product.price
+        self.document.save()
         
 #~ class OrderItem(DocumentItem):
     #~ order = models.ForeignKey(Order) #,related_name="items")
@@ -532,12 +534,13 @@ class Products(reports.Report):
     columnNames = "id:3 name description:1x30 cat vatExempt price:6"
 
 class Orders(reports.Report):
-    queryset=Order.objects.order_by("number")
-
-class Invoices(reports.Report):
-    queryset = Invoice.objects.order_by("number")
+    detail_reports = "items"
+    queryset = Order.objects.order_by("number")
     columnNames = "number:4 creation_date:8 customer:20 " \
                   "total_incl total_excl total_vat items"
+
+class Invoices(Orders):
+    queryset = Invoice.objects.order_by("number")
 
     
 class ItemsByDocument(reports.Report):
@@ -553,6 +556,8 @@ class ItemsByDocument(reports.Report):
     
 
 class DocumentsByCustomer(reports.Report):
+    detail_reports = "items"
+    fk_name = 'customer' # temporary solution for editing inline grid 
     columnNames = "number:4 creation_date:8 " \
                   "total_incl total_excl total_vat items"
 

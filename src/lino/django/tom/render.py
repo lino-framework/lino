@@ -245,11 +245,12 @@ class MethodColumn(Column):
             #~ self.view) ]
             
     def cell_value(self,instance,form):
-        meth=getattr(instance,self.name)
-        label = unicode(meth())
-        html='<a href="%s/%s">%s</a>' % (
-          instance.get_url_path(), self.name, label)
-        return mark_safe(html)
+        meth = getattr(instance,self.name)
+        return unicode(meth())
+        #~ label = unicode(meth())
+        #~ html = '<a href="%s/%s">%s</a>' % (
+          #~ instance.get_url_path(), self.name, label)
+        #~ return mark_safe(html)
             
     #~ def view(self,request):
         #~ return render_to_response("tom/base_site.html",
@@ -602,7 +603,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
     template_to_string = "tom/includes/grid_show.html"
     template_to_reponse = "tom/grid_show.html"      
     
-    def __init__(self,report,request,prefix=None,parent=None):
+    def __init__(self,report,request,prefix=None,parent=None,fk_name=None):
         ViewReportRenderer.__init__(self,report,request,prefix)
         if self.prefix is None:
             pgn = request.GET.get('pgn')
@@ -626,14 +627,14 @@ class ViewManyReportRenderer(ViewReportRenderer):
         details = {}
         #model=self.instance.model
         #if layout.detail_reports:
-        model = self.report.queryset.model
-        if model.detail_reports:
-            for name in model.detail_reports.split():
-                def render(instance):
-                    meth = getattr(instance,name)
-                    dtlrep = meth()
-                    return mark_safe(unicode(dtlrep))
-                details[name] = render
+        #model = self.report.queryset.model
+        #if model.detail_reports:
+        for name in self.report.detail_reports.split():
+            def render(instance):
+                meth = getattr(instance,name)
+                dtlrep = meth()
+                return mark_safe(unicode(dtlrep))
+            details[name] = render
         self.details = details
         
     #~ def render(self):
@@ -728,26 +729,29 @@ class RowViewReportRenderer(ViewReportRenderer):
 class ViewOneReportRenderer(RowViewReportRenderer):
 
     template_to_string = "tom/includes/page_show.html"
-    template_to_reponse = "tom/page_show.html"      
-    detail_renderer = ViewManyReportRenderer    
+    template_to_reponse = "tom/page_show.html"
+    detail_renderer = ViewManyReportRenderer
     
     def __init__(self,report,request,row):
         RowViewReportRenderer.__init__(self,report,request,row)
         details = {}
-        model = self.report.queryset.model
-        if model.detail_reports:
-            for name in model.detail_reports.split():
-                meth = getattr(self.row.instance,name)
-                dtlrep = meth()
-                r = self.detail_renderer(dtlrep,request,name,
-                    self.row.instance)
-                details[name] = lambda x: r.render_to_string()
+        #~ model = self.report.queryset.model
+        #~ if model.detail_reports:
+            #~ for name in model.detail_reports.split():
+        for name in self.report.detail_reports.split():
+            meth = getattr(self.row.instance,name)
+            dtlrep = meth()
+            r = self.detail_renderer(dtlrep,request,name,
+                self.row.instance,dtlrep.fk_name)
+            details[name] = lambda x: r.render_to_string()
         self.details = details
         self.layout = layouts.RowLayoutRenderer(self.row,
             self.row.instance.page_layout(),self.details)
         
     def navigator(self):
         s="""<div class="pagination"><span class="step-links">"""
+        s += '<a href="%s">%s</a>' % (self.again("..",editing=None),self.report.get_title())
+
         page = self.row
         get_var_name = "row"
 
@@ -800,13 +804,15 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     template_to_string = "tom/includes/grid_edit.html"
     template_to_reponse = "tom/grid_edit.html"      
         
-    def __init__(self,report,request,prefix=None,parent=None):
+    def __init__(self,report,request,prefix=None,parent=None,fk_name=None):
         ViewManyReportRenderer.__init__(self,report,request,prefix)
         
         fs_args = {}
         if parent is not None:
             formset_class = inlineformset_factory(
-                  parent.__class__,report.queryset.model,
+                  parent.__class__,
+                  report.queryset.model,
+                  fk_name=fk_name,
                   extra=self.extra, 
                   max_num=self.max_num,
                   can_order=self.can_order, 

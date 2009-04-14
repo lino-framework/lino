@@ -18,7 +18,7 @@
 
 from django import forms
 from django.db import models
-from lino.django.tom import layout as layouts
+from lino.django.utils import layouts
 
 """
 Thanks to 
@@ -52,7 +52,7 @@ class TomModel(models.Model):
     #quicksearch_fields = None
     _page_layout = None
     page_layout_class = layouts.PageLayout
-    detail_reports = None
+    #detail_reports = None
     
     class Meta:
         abstract = True

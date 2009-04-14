@@ -68,10 +68,9 @@ class FieldElement(Element):
 
     def render(self,renderer):
         try:
-            r = renderer.details.get(self.name)
-            if r is not None:
-                return r(renderer.get_instance())
-                #return r.render_to_string()
+            detail = renderer.details.get(self.name)
+            if detail is not None:
+                return detail(renderer.get_instance())
             if renderer.editing:
                 return self.as_editable(renderer)
             return self.as_readonly(renderer)
@@ -90,7 +89,7 @@ class FieldElement(Element):
             if hasattr(value,"field"):
                 #print "it is a method"
                 field = value.field
-                value=value()
+                value = value()
                 #print value
                 if field.verbose_name:
                     label = field.verbose_name
@@ -277,7 +276,7 @@ class BoundElement:
         return self.element.render(self.renderer)
   
     def children(self):
-        assert isinstance(self.element,Container)
+        assert isinstance(self.element,Container), "%s is not a Container" % self.element
         for e in self.element.elements:
             yield BoundElement(e,self.renderer)
             

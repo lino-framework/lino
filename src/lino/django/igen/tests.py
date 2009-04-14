@@ -23,10 +23,9 @@ from models import Companies
 from django.test import TestCase
 
 from django.forms.models import modelform_factory, formset_factory
-from lino.django.tom import layout as layouts
+from lino.django.utils import layouts
 
-
-class TestCase(TestCase):
+class DemoTest(TestCase):
     fixtures=[ 'demo' ]
     def setUp(self):
         pass
@@ -63,9 +62,9 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
 
     def test03(self):
         luc=Contact.objects.get(id=2)
-        i1=Invoice(number=2000,customer=luc)
+        i1=Invoice(number=2000,customer=luc,creation_date="2009-04-14")
         i1.save()
-        i2=Invoice(customer=luc)
+        i2=Invoice(customer=luc,creation_date="2009-04-14")
         i2.save()
         self.assertEquals(i2.number,2001)
         
@@ -73,7 +72,7 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         luc=Contact.objects.get(id=2)
         table=Product.objects.get(id=1)
         chair=Product.objects.get(id=2)
-        i=Invoice(customer=luc)
+        i=Invoice(customer=luc,creation_date="2009-04-14")
         i.save()
         i.docitem_set.create(pos=1,product=table,qty=1)
         
@@ -123,23 +122,15 @@ Minu Firma OÜ       |Estonia     |              |              |
     def test08(self):
         c = Contact.objects.get(pk=4)
         s = models.DocumentsByCustomer(c).as_text()
-        #print "\n"+s
+        print "\n"+s
         self.assertEquals(s.split(),u"""
 Bäckerei Ausdemwald (Alfons Ausdemwald) : documents by customer
 ===============================================================
 number      |creation    |total_incl  |total excl  |total vat   |items
             |date        |            |            |            |
 ------------+------------+------------+------------+------------+------------
-3           |2009-04-12  |<a href="/in|0           |0           |<a href="/in
-            |            |stance/igen/|            |            |stance/igen/
-            |            |Document/3/t|            |            |Document/3/i
-            |            |otal_incl">0|            |            |tems">2
-            |            |</a>        |            |            |row(s)</a>
-4           |2009-04-12  |<a href="/in|0           |0           |<a href="/in
-            |            |stance/igen/|            |            |stance/igen/
-            |            |Document/4/t|            |            |Document/4/i
-            |            |otal_incl">0|            |            |tems">2
-            |            |</a>        |            |            |row(s)</a>        
+3           |2009-04-12  |449.95      |449.95      |0           |2 row(s)
+4           |2009-04-12  |449.95      |449.95      |0           |2 row(s)
 """.split(),"DocumentsByCustomer().as_text() has changed in demo")
         
         
