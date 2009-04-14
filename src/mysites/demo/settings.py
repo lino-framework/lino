@@ -121,5 +121,6 @@ INSTALLED_APPS = (
 
 
 SERIALIZATION_MODULES = {
-     "data" : "lino.django.tom.dataserializer",
+     "data" : "lino.django.utils.dataserializer",
+     "dpy" : "lino.django.utils.dpyserializer",
 }

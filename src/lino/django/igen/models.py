@@ -308,6 +308,9 @@ class PaymentTerm(TomModel):
     
     def __unicode__(self):
         return self.name
+        
+    def get_due_date(self,date1):
+        return date1
 
 class ShippingMode(TomModel):
     name = models.CharField(max_length=200)
@@ -434,6 +437,12 @@ class Order(Document):
 class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
     page_layout_class = InvoicePageLayout
+    def before_save(self):
+        Document.before_save(self)
+        if self.due_date is None:
+            if self.payment_term is not None:
+                self.due_date = self.payment_term.get_due_date(
+                    self.creation_date)
 
 
 class DocItem(TomModel):
@@ -461,6 +470,8 @@ class DocItem(TomModel):
         
     def before_save(self):
         #print "before_save()", self
+        if self.pos is None:
+            self.pos = self.document.docitem_set.count() + 1
         if self.product:
             if not self.title:
                 self.title = self.product.name

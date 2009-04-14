@@ -72,17 +72,22 @@ class ForeignKeyConverter(Converter):
             try:
                 p = self.field.rel.to.objects.get(pk=pkvalue)
             except self.field.rel.to.DoesNotExist,e:
-                raise DataError(
+                e = DataError(
                   "%s.objects.get(%s) : %s" % (
                       self.field.rel.to.__name__,pkvalue,e))
+                #print e
+                raise e
             else:
                 kw[self.field.name] = p
         return kw
     
       
 class ModelBuilder:
-    def __init__(self,model_class):
+    def __init__(self,model_class,fieldnames=None):
+        if type(fieldnames) == str:
+            fieldnames = fieldnames.split()
         self.model_class = model_class
+        self.fieldnames = fieldnames
         self.converters = []
         #print " ".join(dir(model_class))
         #print " ".join(model_class._meta.fields)
@@ -92,8 +97,13 @@ class ModelBuilder:
             if isinstance(f,models.ForeignKey):
                 self.converters.append(ForeignKeyConverter(f))
             
-    def build(self,**kw):
+    def build(self,*values,**kw):
         #print "build",kw
+        i = 0
+        for v in values:
+            if (not isinstance(v,basestring)) or len(v) > 0:
+                kw[self.fieldnames[i]] = v
+            i += 1
         for c in self.converters:
             kw = c.convert(**kw)
         instance = self.model_class(**kw)
