@@ -47,49 +47,11 @@ except ImportError:
 
 
 from lino.reports.constants import *
-from lino.django.tom import layout as layouts
+from lino.django.utils import layouts
 from lino.misc.etc import assert_pure
+from lino.django.utils.requests import again, is_editing, stop_editing, get_redirect, redirect_to
 
 
-def again(request,*args,**kw):
-    get=request.GET.copy()
-    for k,v in kw.items():
-        if v is None: # value None means "remove this key"
-            if get.has_key(k):
-                del get[k]
-        else:
-            get[k] = v
-    path=request.path
-    if len(args):
-        path += "/" + "/".join(args)
-    s=get.urlencode()
-    if len(s):
-        path += "?" + s
-    #print pth
-    return mark_safe(path)
-
-def get_redirect(request):
-    if hasattr(request,"redirect_to"):
-        return request.redirect_to
-        
-def redirect_to(request,url):        
-    request.redirect_to = url
-
-def is_editing(request):
-    editing=request.GET.get("editing",None)
-    if editing is not None:
-        editing = int(editing)
-        request.session["editing"] = editing
-    else:
-        editing=request.session.get("editing",0)
-    return editing
-
-def stop_editing(request):
-    request.session["editing"] = 0
-
-def start_editing(request):
-    request.session["editing"] = 1
-    
     
 
 def hfill(s,align,width):
@@ -823,7 +785,7 @@ class ViewOneReportRenderer(RowViewReportRenderer):
 
 class EditReportRenderer:  # Mixin class
   
-    editing=1
+    editing = 1
     
     def new_column(self,field,*args):
         if field.editable and not field.primary_key:

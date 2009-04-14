@@ -17,7 +17,6 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-
 from django.db import models
 from django import forms
 #from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
@@ -166,21 +165,9 @@ class Report(object):
         return unicode("%d row(s)" % self.queryset.count())
     
     def get_urls(self,name):
-        #assert self.path is None, "you tried to install this Report instance to more than 1 url"
-        #self.path = "/" + name
         l = []
-        #l += [ url(r'^%s/edit$' % name, self.as_form) ]
-        #l += [ url(r'^%s/text$' % name, self.as_text) ]
-        #l += [ url(r'^%s/show$' % name, self.as_show) ]
-        #l += [ url(r'^%s$' % name, self.view) ]
-        #l += [ url(r'^%s' % name, self.view) ]
-        #l += [ url(r'^%s$' % name, self.as_show) ]
-        #~ l += [ url(r'^%s$' % name, ViewReportRenderer(self,name).view)]
-        #~ l += [ url(r'^%s/edit$' % name, FormReportRenderer(self,name).view)]
-        #~ l += [ url(r'^%s/pdf$' % name, PdfReportRenderer(self,name).view)]
         l += [ url(r'^%s$' % name, self.view_many)]
         l += [ url(r'^%s/(\d+)$' % name, self.view_one)]
-        #l += [ url(r'^%s/edit$' % name, self.edit_view)]
         l += [ url(r'^%s/pdf$' % name, self.pdf_view_many)]
         l += [ url(r'^%s/(\d+)/pdf$' % name, self.pdf_view_one)]
         l += [ url(r'^%s/(\d+)/print$' % name, self.print_one_view)]
@@ -190,14 +177,14 @@ class Report(object):
         return self.view_many(request)
         
     def view_many(self,request):
-        if render.is_editing(request):
+        if is_editing(request):
             r = render.EditManyReportRenderer(self,request)
         else:
             r = render.ViewManyReportRenderer(self,request)
         return r.render_to_response()
             
     def view_one(self,request,row):
-        if render.is_editing(request):
+        if is_editing(request):
             r = render.EditOneReportRenderer(self,request,row)
         else:
             r = render.ViewOneReportRenderer(self,request,row)
