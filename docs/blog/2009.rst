@@ -1,3 +1,6 @@
+2009
+====
+
 
 20090308
 --------
@@ -114,14 +117,14 @@ I changed my working copy of Django to do the following::
       
 
 But then my ticket had been already set to "wontfix". 
-And now I agree with the Django developers because I get enlightened:
+And now I agree with the Django developers because I got enlightened:
 
   Forms are not meant to contain layout. 
   That's also why the field order 
   (`#8164 <http://code.djangoproject.com/ticket/8164>`_)
-  is not important in Forms.
-  **If you want to define layout without fiddling with templates, 
-  then you'll want a :class:`Report`.**
+  is not really important in Forms.
+  If you want to define layout without fiddling with templates, 
+  then you'll want a :class:`Report`.
 
 
 
@@ -178,9 +181,11 @@ gespeichert, und die Templates machen nur noch ein generelles
 
   ``{{ nav.as_ul() }}``
   
-Und wenn ich jemandem den Permalink einer Rechnung schicke, z.B. `/docs/invoices/7`_, dann sieht der Empfänger nicht mehr, wie ich diese Rechnung gefunden habe.
+Und wenn ich jemandem den Permalink einer Rechnung schicke, z.B. `/docs/invoices/7`, 
+dann sieht der Empfänger nicht mehr, wie ich diese Rechnung gefunden habe.
 
-Korrektur: Statt des oben erwähnten ``request.session.navigation = nav`` brauche ich eine :class:`Navigator`.
+Korrektur: Statt des oben erwähnten ``request.session.navigation = nav`` brauche 
+ich eine :class:`Navigator`.
 
   nav = Navigator(page)
   request.session['navigator'] = nav
@@ -224,7 +229,7 @@ Hm...
 20090328
 --------
 
-(Ich bin zur Zeit so schnell am entwickeln, dass es sich nicht lohnt,
+(Ich bin zur Zeit so wild am entwickeln, dass es sich nicht lohnt,
 das alles zu dokumentieren.)
 
 Notiz: den ``<input type="text" readonly>`` nutze ich im 
@@ -233,3 +238,6 @@ ShowLayoutRenderer. (Besser gesagt dessen XML-kompatible Variante
 Dann merkte ich, dass das Attribut readonly für Checkboxen und Selects leider *nicht* funktioniert. Deshalb muss ich die selber rendern. 
  
   
+  
+:doc:`20090415`
+

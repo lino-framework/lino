@@ -29,7 +29,7 @@ from lino.django.utils import layouts
 def index(request):
     context=dict(
       main_menu=settings.MAIN_MENU,
-      title="foo"
+      title=settings.MAIN_MENU.label,
     )
     return render_to_response("tom/index.html",context)
     
