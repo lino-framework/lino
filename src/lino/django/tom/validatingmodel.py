@@ -18,7 +18,7 @@
 
 from django import forms
 from django.db import models
-from lino.django.utils import layouts
+#from lino.django.utils import layouts
 
 """
 Thanks to 
@@ -50,8 +50,8 @@ class TomModel(models.Model):
   
     model_form = None
     #quicksearch_fields = None
-    _page_layout = None
-    page_layout_class = layouts.PageLayout
+    #_page_layout = None
+    #page_layout_class = layouts.PageLayout
     #detail_reports = None
     
     class Meta:
@@ -108,15 +108,6 @@ class TomModel(models.Model):
           delete = DeleteDialog(self),
         )
 
-    def page_layout(self):
-        model = self.__class__
-        if model._page_layout is None:
-            #~ if model.page_layout_class is None:
-                #~ model._page_layout = PageLayout(model._meta)
-            #~ else:
-            model._page_layout = model.page_layout_class(model)
-        return model._page_layout
-            
 
 class Dialog:
     def view(self,request):

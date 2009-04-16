@@ -77,7 +77,8 @@ Mets ja Puu OÜ (Tõnu Tamme)""")
         i.docitem_set.create(pos=1,product=table,qty=1)
         
     def test05(self):
-        s=Companies().as_text(column_widths=dict(companyName=20,country=12))
+        s = Companies().as_text(
+          column_widths=dict(companyName=20,country=12))
         #print "\n"+s
         self.assertEquals(s.split(),u"""
 Companies
@@ -92,18 +93,20 @@ Mets ja Puu OÜ      |Estonia     |              |Tõnu          |Tamme
 Minu Firma OÜ       |Estonia     |              |              |
 """.split(),"Companies().as_text() has changed in demo")
         
-    def test06(self):
-        model=Contact
+    def unused_test06(self):
+        # LayoutRenderer now also needs the ReportRenderer
+        rpt = models.Contacts()
+        model = rpt.model
         frmclass = modelform_factory(model)
         for obj in model.objects.all():
             frm = frmclass(instance=obj)
             layout = layouts.FormLayoutRenderer(frm,
-                obj.page_layout(),editing=True)
+                rpt.page_layout(),editing=True)
             s = layout.render_to_string()
             self.failUnless(s.startswith("<table"))
             
             layout = layouts.InstanceLayoutRenderer(obj,
-                obj.page_layout())
+                rpt.page_layout())
             s = layout.render_to_string()
             self.failUnless(s.startswith("<table"))
             
@@ -121,16 +124,15 @@ Minu Firma OÜ       |Estonia     |              |              |
         
     def test08(self):
         c = Contact.objects.get(pk=4)
-        s = models.DocumentsByCustomer(c).as_text()
-        print "\n"+s
+        s = models.DocumentsByCustomer().as_text(master_instance=c)
+        print "test08()\n"+s
         self.assertEquals(s.split(),u"""
 Bäckerei Ausdemwald (Alfons Ausdemwald) : documents by customer
 ===============================================================
-number      |creation    |total_incl  |total excl  |total vat   |items
-            |date        |            |            |            |
-------------+------------+------------+------------+------------+------------
-3           |2009-04-12  |449.95      |449.95      |0           |2 row(s)
-4           |2009-04-12  |449.95      |449.95      |0           |2 row(s)
+number         |creation date  |total_incl     |total excl     |total vat
+---------------+---------------+---------------+---------------+---------------
+3              |2009-04-12     |449.95         |449.95         |0
+4              |2009-04-12     |449.95         |449.95         |0        
 """.split(),"DocumentsByCustomer().as_text() has changed in demo")
         
         

@@ -52,12 +52,12 @@ def view_instance(request,app,model,pk):
     else:
         frm=form_class(instance=obj)
     
+    layout = layouts.PageLayout(model_class)
     context=dict(
       title=unicode(obj),
       form=frm,
       main_menu = settings.MAIN_MENU,
-      layout = layouts.LayoutRenderer(obj.page_layout(),frm,
-        editing=True),
+      layout = layouts.FormLayoutRenderer(frm,layout,editing=True),
     )
     return render_to_response("tom/instance.html",context)
     

@@ -21,6 +21,7 @@ from django.db import models
 from django import forms
 from django.forms.models import modelform_factory
 from django.conf.urls.defaults import patterns, url, include
+from django.forms.models import _get_foreign_key
 
 #from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 #from django.shortcuts import render_to_response 
@@ -32,8 +33,6 @@ from django.conf.urls.defaults import patterns, url, include
 # l:\snapshot\xhtml2pdf
 #import ho.pisa as pisa
 
-#from lino.reports.constants import *
-#import EditLayoutRenderer, ShowLayoutRenderer
 from lino.django.tom import render
 from lino.django.utils import layouts
 from lino.django.utils.requests import is_editing
@@ -94,11 +93,13 @@ class ReportParameterForm(forms.Form):
 
 
 
-class Report(object):
+class Report:
   
     #~ __metaclass__ = ReportMetaClass
     
     queryset = None 
+    model = None
+    order_by = None
     title = None
     #width = None
     #columnWidths = None
@@ -113,8 +114,11 @@ class Report(object):
     #path=None
     form_class = None
     #row_print_template = "tom/"
+    #detail_reports = ''
+    master = None
     fk_name = None
-    detail_reports = ''
+    _page_layout = None
+    page_layout_class = layouts.PageLayout
     
     def __init__(self):
         self.groups = [] # for later
@@ -125,23 +129,50 @@ class Report(object):
             self.name = self.__class__.__name__.lower()
         #~ if self.title is None:
             #~ self.title = self.build_title()
-        if self.queryset is None:
-            self.queryset = self.get_queryset()
+        #~ if self.queryset is None:
+            #~ self.queryset = self.get_queryset()
+        if self.model is None:
+            self.model = self.queryset.model
         if self.form_class is None:
-            self.form_class = modelform_factory(self.queryset.model)
-        self.row_layout = layouts.RowLayout(self.queryset.model,
+            self.form_class = modelform_factory(self.model)
+        self.row_layout = layouts.RowLayout(self.model,
                                             self.columnNames)
+        if self.master:
+            self.fk = _get_foreign_key(self.master,
+              self.model,self.fk_name)
+        
+        self.details = self.inlines()
          
     def column_headers(self):
         #print "column_headers"
         #print self.layout
         for e in self.row_layout._main.elements:
             yield e.name
+            
+    def inlines(self):
+        return {}
          
-    def get_title(self):
+    def get_title(self,renderer):
         #~ if self.title is None:
             #~ return self.label
         return self.title or self.label
+        
+    def get_queryset(self,master_instance):
+        if self.queryset is not None:
+            qs = self.queryset
+        else:
+            qs = self.model.objects.all()
+        #~ if self.master:
+            #~ fk = _get_foreign_key(self.master,self.model,self.fk_name)
+            #~ self.fk.get_attname()
+        if self.master is not None:
+            qs = qs.filter(**{self.fk.name:master_instance})
+            #~ if self.fk.limit_choices_to:
+                #~ qs = qs.filter(**self.fk.limit_choices_to)
+
+        if self.order_by:
+            qs = qs.order_by(*self.order_by.split())
+        return qs
         
     def getLabel(self):
         return self.label
@@ -149,10 +180,17 @@ class Report(object):
     def get_row_print_template(self,instance):
         return instance._meta.db_table + "_print.html"
         
+    def page_layout(self):
+        #model = self.__class__
+        if self._page_layout is None:
+            self._page_layout = self.page_layout_class(
+                self.model)
+        return self._page_layout
+            
         
-    def __unicode__(self):
-        #return unicode(self.as_text())
-        return unicode("%d row(s)" % self.queryset.count())
+    #~ def __unicode__(self):
+        #~ #return unicode(self.as_text())
+        #~ return unicode("%d row(s)" % self.queryset.count())
     
     def get_urls(self,name):
         l = []
@@ -168,30 +206,43 @@ class Report(object):
         
     def view_many(self,request):
         if is_editing(request):
-            r = render.EditManyReportRenderer(self,request)
+            r = render.EditManyReportRenderer(request,True,self)
         else:
-            r = render.ViewManyReportRenderer(self,request)
+            r = render.ViewManyReportRenderer(request,True,self)
         return r.render_to_response()
             
     def view_one(self,request,row):
         if is_editing(request):
-            r = render.EditOneReportRenderer(self,request,row)
+            r = render.EditOneReportRenderer(row,request,True,self)
         else:
-            r = render.ViewOneReportRenderer(self,request,row)
+            r = render.ViewOneReportRenderer(row,request,True,self)
         return r.render_to_response()
 
     def pdf_view_one(self,request,row):
-        return render.PdfOneReportRenderer(self,request,row).render()
+        return render.PdfOneReportRenderer(row,request,True,self).render()
         
     def pdf_view_many(self, request):
-        return render.PdfManyReportRenderer(self,request).render()
+        return render.PdfManyReportRenderer(request,True,self).render()
 
-    def print_one_view(self,*args):
-        return render.RowPrintReportRenderer(self,*args).render()
+    def print_one_view(self,request,row):
+        return render.RowPrintReportRenderer(row,request,True,self).render()
 
-    def as_text(self, **kw):
-        return render.TextReportRenderer(self,**kw).render()
+    def as_text(self, *args,**kw):
+        return render.TextReportRenderer(self,*args,**kw).render()
         
-    def as_html(self, **kw):
-        return render.HtmlReportRenderer(self,**kw).render_to_string()
+    #~ def as_html(self, **kw):
+        #~ return render.HtmlReportRenderer(self,**kw).render_to_string()
+        
+
+
+#~ class SubReport(Report):
+  
+    #~ def __init__(self,master,fk_name=None):
+    #~ fk = _get_foreign_key(master,self.model,fk_name)
+  
+    #~ def set_master(self,master):
+        #~ self.master = master
+        
+    #~ def get_queryset(self):
+        #~ return document.docitem_set.order_by("pos")
         

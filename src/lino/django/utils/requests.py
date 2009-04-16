@@ -56,7 +56,10 @@ def is_editing(request):
             request.session["editing"] = path = request.path
         else:
             request.session["editing"] = path = None
-    return (request.path == path)
+    if request.path == path:
+        return True
+    request.session["editing"] = None
+    return False
 
 def stop_editing(request):
     request.session["editing"] = None

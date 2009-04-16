@@ -2,16 +2,14 @@
 ============================
 
 Welcome to the Lino Website.
-:doc:`what_is`.
 
-I'm currently working heavily on *igen* which might become the first 
-usable application written using Lino. 
-"igen" stands for "invoice generator" and should become a simple, 
-web-based program to write invoices either manually or 
-periodically based on contracts.
+Latest news 
+-----------
 
-Here is the igen demo site: http://igen.saffre-rumma.ee
+.. include:: news/20090415.rst
 
+Content
+-------
 
 .. toctree::
    :maxdepth: 2

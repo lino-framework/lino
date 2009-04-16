@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import traceback
 
 from django import forms
 from django.db import models
@@ -23,7 +24,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.template.loader import render_to_string
 
-
+#from lino.django.tom import render
             
 class Element:
     pass
@@ -68,15 +69,25 @@ class FieldElement(Element):
 
     def render(self,renderer):
         try:
-            detail = renderer.details.get(self.name)
-            if detail is not None:
-                return detail(renderer.get_instance())
+            if renderer.render_detail:
+                s = renderer.render_detail(self.name)
+                if s is not None:
+                    #print self.name
+                    return s
+            #~ if renderer.master is not None:
+                #~ if hasattr(renderer.master,"render_detail"):
+                    #~ s = renderer.master.render_detail(self.name)
+                    #~ if s is not None:
+                        #~ #print self.name
+                        #~ return s
             if renderer.editing:
                 return self.as_editable(renderer)
             return self.as_readonly(renderer)
             #return mark_safe(renderer.field_to_html(self))
         except Exception,e:
-            print e
+            print "Exception in %s.render():" % self.__class__.__name__
+            traceback.print_exc()
+            raise e
         
         
     def as_readonly(self,renderer):
@@ -213,6 +224,7 @@ class Layout:
     join_str = None
     vbox_class = VBOX
     hbox_class = HBOX
+    
     def __init__(self,model,desc=None):
         #self._meta = meta
         if hasattr(self,"main"):
@@ -225,11 +237,6 @@ class Layout:
             main = self.desc2elem(desc)
 
         self._main = main
-        #~ for name in dir(self.__class__):
-            #~ spec = getattr(self.__class__,name)
-            #~ box = VBOX(spec)
-            #~ if name == 'layout':
-                #~ self._layout = box
                 
     def __getitem__(self,name):
         try:
@@ -254,6 +261,9 @@ class Layout:
                 if not name.startswith("#"):
                     l.append(self[name])
             return self.hbox_class(self,*l)
+            
+    def __str__(self):
+        return self.__class__.__name__ + "(%s)" % self._main
 
 class PageLayout(Layout):
     show_labels = True
@@ -297,17 +307,32 @@ class BoundElement:
 
 
 class LayoutRenderer:
-    def __init__(self,layout,details={},editing=False):
+    def __init__(self,layout,render_detail=None,editing=False):
         self.layout = layout
-        #self.data = data # either a model instance or a form
-        self.details = details
+        self.render_detail = render_detail
+        if render_detail:
+            assert callable(render_detail)
         self.show_labels = layout.show_labels
         self.editing = editing
+            
+        
+    #~ def __getitem__(self,name):
+        #~ if self.master is None:
+            #~ raise KeyError, name
+        #~ try:
+            #~ return getattr(self.master.report,name)
+        #~ except AttributeError,e:
+            #~ raise KeyError, name
+        #return rptclass()
+        #subrpt = meth(self.master.get_instance())
+        #~ subrpt.set_master(self.master)
+        #~ return subrpt
         
     def __unicode__(self):
         return self.render_to_string()
         
     def render_to_string(self):
+        #print self.layout
         main = self.layout._main
         context = dict(
           element = BoundElement(main,self),
@@ -350,45 +375,3 @@ class RowLayoutRenderer(LayoutRenderer):
         return self.row.form
 
 
-#~ class ShowLayoutRenderer(LayoutRenderer):
-    #~ editing = False
-    #template = "tom/includes/layout_show.html"
-    #~ def field_to_html(self,field):
-        #~ return field.as_readonly(self.data)
-      
-#~ class EditLayoutRenderer(LayoutRenderer):
-    #~ editing = True
-    #template = "tom/includes/layout_edit.html"
-      
-    #~ def field_to_html(self,field):
-        #~ try:
-            #~ bf = self.data[field.name] # a BoundField instance
-        #~ except KeyError,e:
-            #~ r = self.details.get(field.name)
-            #~ if r is not None:
-                #~ return r.render_to_string()
-            #~ return field.as_readonly(self.data.instance)
-        #~ if bf.field.widget.is_hidden:
-            #~ return field.as_readonly(self.data.instance)
-        #~ field.setup_widget(bf.field.widget)
-        #~ s = bf.as_widget()
-        #~ if bf.label:
-            #~ if isinstance(bf.field.widget, forms.CheckboxInput):
-                #~ s = s + " " + bf.label_tag()
-            #~ else:
-                #~ s = bf.label_tag() + "<br/>" + s
-        #~ return s
-
-            
-#~ def page_layout(obj):
-    #~ model = obj.__class__
-    #~ if model.page_layout_instance is None:
-        #~ if model.page_layout is None:
-            #~ model.page_layout_instance = PageLayout(model._meta)
-        #~ else:
-            #~ model.page_layout_instance = obj.page_layout(model._meta)
-    #~ return model.page_layout_instance
-            
-    #~ return PageLayout("\n".join([ 
-      #~ f.name for f in opts.fields + opts.many_to_many]))
-      

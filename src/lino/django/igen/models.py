@@ -19,7 +19,6 @@ import datetime
 from django.db import models
 #from lino.django.tom import models
 from lino.django.tom.validatingmodel import TomModel, ModelValidationError
-from lino.django.utils.layouts import PageLayout # VBOX, HBOX
 
 from django.utils.safestring import mark_safe
 
@@ -55,8 +54,6 @@ class MyDateField(models.DateField):
         return fld
         
         
-
-        
         
 class QuantityField(models.DecimalField):
     def __init__(self, *args, **kwargs):
@@ -75,52 +72,8 @@ class QuantityField(models.DecimalField):
         return fld
         
         
-#~ class SizedCharField(models.CharField):
-
-    #~ def __init__(self, size=None, *args, **kwargs):
-        #~ self.size = size
-        #~ super(SizedCharField, self).__init__(*args, **kwargs)
-        
-    #~ def formfield(self, *args, **kwargs):
-        #~ formfield = super(SizedCharField, self).formfield(*args, **kwargs)
-        #~ formfield.widget.attrs['size'] = str(self.size)
-        #~ return formfield
-
-          
-class ContactPageLayout(PageLayout):
-    
-    box1 = """
-              title:5 firstName:20 lastName:50
-              companyName:60 nationalId:15
-              """
-    box2 = """email:60 
-              url:60"""
-    box3 = """phone:15 
-              gsm:15"""
-    box4 = """country region
-              city:25 zipCode:25
-              addr1:60
-              addr2:60
-              """
-    box5 = """vatId 
-                vatExempt 
-                itemVat"""
-    box6 = """language 
-                paymentTerm"""
-    box7 = """box5 
-              box6
-              """
-    main = """
-            box1
-            box2 box3
-            box4 box7
-            remarks:6x60
-            documents
-            """
   
 class Contact(TomModel):
-    detail_reports = "documents"
-    page_layout_class = ContactPageLayout
     """
     
 Company and/or Person contact data, linked with client account and
@@ -223,36 +176,6 @@ u'Example & Co (Luc Saffre)'
         return s
     as_address.allow_tags=True
 
-    def documents(self):
-        return DocumentsByCustomer(self)
-        
-    #~ def page_layout(self):
-        #~ return VBOX(
-            #~ VBOX("""
-              #~ title:5 firstName:20 lastName:50
-              #~ companyName:60 nationalId:15
-              #~ """),
-            #~ HBOX(
-              #~ VBOX("email:60 url:60"),
-              #~ VBOX("phone:15 gsm:15"),
-              #~ label="Contact"
-            #~ ),
-            #~ HBOX(
-              #~ VBOX("""
-                  #~ country region
-                  #~ city:25 zipCode:25
-                  #~ addr1:60
-                  #~ addr2:60
-                  #~ """),
-              #~ VBOX(
-                #~ VBOX("vatId vatExempt itemVat"),
-                #~ VBOX("language paymentTerm"),
-                #~ label="Options",
-              #~ ),
-            #~ ),
-            #~ VBOX("remarks:6x60"),
-        #~ )
-    
 
 class Country(TomModel):
     name = models.CharField(max_length=200)
@@ -260,40 +183,10 @@ class Country(TomModel):
     
     class Meta:
         verbose_name_plural = "Countries"
-
     
     def __unicode__(self):
         return self.name
         
-    def contacts(self):
-        return ContactsByCountry(self)
-        #~ return ", ".join([unicode(c) for c in self.contact_set.all()])
-        #~ return mark_safe(", ".join([linkto(c.get_url_path(),unicode(c)) 
-          #~ for c in self.contact_set.all()]))
-    #~ #contacts.allow_tags=True
-    #~ contacts.short_description='List of Contacts here'
-        
-#~ class Region(models.Model):
-    #~ name = models.CharField(max_length=200)
-    #~ country = models.ForeignKey("Country")
-    
-    #~ def __unicode__(self):
-        #~ return self.name
-        
-    
-#~ class City(models.Model):
-    #~ name = models.CharField(max_length=200)
-    #~ country = models.ForeignKey("Country")
-    #~ region = models.ForeignKey(Region)
-    
-    #~ def __unicode__(self):
-        #~ return self.name
-        
-    #~ @allow_tags=True
-    #~ @short_description = 'List of Contacts here'
-    #~ def contacts(self):
-        #~ return ", ".join([linkto(c,displayName(c)) 
-          #~ for c in self.contact_set.all()])
  
     
 class Language(TomModel):
@@ -324,15 +217,7 @@ class ProductCat(TomModel):
     def __unicode__(self):
         return self.name
 
-class ProductPageLayout(PageLayout):
-    main = """
-        id:5 name:50 cat
-        description:6x50
-        price vatExempt
-    """
-
 class Product(TomModel):
-    page_layout_class = ProductPageLayout
     
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True,null=True)
@@ -345,51 +230,8 @@ class Product(TomModel):
     def __unicode__(self):
         return self.name
         
-    #~ def page_layout(self):
-        #~ return VBOX("""
-        #~ id:5 name:50 cat
-        #~ description:6x50
-        #~ price vatExempt
-        #~ """)
-
-#~ class Journal(models.Model):
-    #~ name = models.CharField(max_length=200)
-    #~ def __unicode__(self):
-        #~ return self.name
-
-class DocumentPageLayout(PageLayout):
-    box1 = """
-      number your_ref creation_date
-      customer ship_to
-      """
-    box2 = """
-      shipping_mode payment_term
-      vat_exempt item_vat
-      """
-    box3 = """
-      remarks:40
-      intro:5x40
-      """
-    box4 = """
-      total_excl 
-      total_vat
-      total_incl
-      """
-    main = """
-      box1 box2
-      box3 box4
-      items:5x80
-      """
-      
-class InvoicePageLayout(DocumentPageLayout):
-    box1 = """
-      number your_ref creation_date
-      customer ship_to due_date
-      """
-
 
 class Document(TomModel):
-    page_layout_class = DocumentPageLayout
     
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
@@ -418,9 +260,6 @@ class Document(TomModel):
         return self.total_excl + self.total_vat
     total_incl.field = PriceField()
 
-    def items(self):
-        return ItemsByDocument(self)
-        
     def before_save(self):
         total_excl = 0
         total_vat = 0
@@ -436,7 +275,6 @@ class Order(Document):
   
 class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
-    page_layout_class = InvoicePageLayout
     def before_save(self):
         Document.before_save(self)
         if self.due_date is None:
@@ -481,52 +319,96 @@ class DocItem(TomModel):
                 self.unitPrice = self.product.price
         self.document.save()
         
-#~ class OrderItem(DocumentItem):
-    #~ order = models.ForeignKey(Order) #,related_name="items")
-        
-#~ class InvoiceItem(DocumentItem):
-    #~ invoice = models.ForeignKey(Invoice) #,related_name="items")
-        
         
                
 
-#
-# report definitions
-#        
+##
+## report definitions
+##        
         
 from lino.django.tom import reports
+from lino.django.utils.layouts import PageLayout 
+
+
+class ContactPageLayout(PageLayout):
+    
+    box1 = """
+              title:5 firstName:20 lastName:50
+              companyName:60 nationalId:15
+              """
+    box2 = """email:60 
+              url:60"""
+    box3 = """phone:15 
+              gsm:15"""
+    box4 = """country region
+              city:25 zipCode:25
+              addr1:60
+              addr2:60
+              """
+    box5 = """vatId 
+                vatExempt 
+                itemVat"""
+    box6 = """language 
+                paymentTerm"""
+    box7 = """box5 
+              box6
+              """
+    main = """
+            box1
+            box2 box3
+            box4 box7
+            remarks:6x60
+            documents
+            """
+
+
 
 class Contacts(reports.Report):
-    queryset=Contact.objects.order_by("id")
-    columnNames="id:3 companyName firstName lastName title country"
-    can_delete=True
+    page_layout_class = ContactPageLayout
+    #detail_reports = "documents"
+    #queryset = Contact.objects.order_by("id")
+    columnNames = "id:3 companyName firstName lastName title country"
+    can_delete = True
+    model = Contact
+    order_by = "id"
 
-class Companies(reports.Report):
+    #~ documents = DocumentsByCustomer
+    #~ def documents(self,renderer):
+        #~ return DocumentsByCustomer(renderer.instance)
+
+    #~ def documents(self):
+        #~ return DocumentsByCustomer(self)
+        
+    def inlines(self):
+        return dict(documents=DocumentsByCustomer())
+
+class Companies(Contacts):
     #queryset=Contact.objects.order_by("companyName")
-    columnNames="companyName country title firstName lastName"
-    queryset=Contact.objects.exclude(companyName__exact=None)\
-      .order_by("companyName")
+    columnNames = "companyName country title firstName lastName"
+    queryset = Contact.objects.exclude(companyName__exact=None)
+    model = Contact
+    order_by = "companyName"
+    #~ queryset = Contact.objects.exclude(companyName__exact=None)\
+      #~ .order_by("companyName")
+    
 
-class Persons(reports.Report):
-    queryset=Contact.objects.filter(companyName__exact=None)\
-      .order_by("lastName","firstName")
+class Persons(Contacts):
+    queryset=Contact.objects.filter(companyName__exact=None)
+    order_by = "lastName firstName"
     columnNames="title firstName lastName country"
     
-class ContactsByCountry(reports.Report):
-    
-    def __init__(self,country,**kw):
-        self.country=country
-        reports.Report.__init__(self,**kw)
-        
-    def get_queryset(self):
-        return self.country.contact_set.order_by("city","addr1")
-    
-
+class CountryPageLayout(PageLayout):
+    main = """
+    isocode name
+    contacts
+    """
 class Countries(reports.Report):
-    queryset=Country.objects.order_by("isocode")
-    columnNames="isocode name contacts"
-    #columnWidths="3 30"
+    page_layout_class = CountryPageLayout
+    queryset = Country.objects.order_by("isocode")
+    columnNames = "isocode name"
     
+    def inlines(self):
+        return dict(contacts = ContactsByCountry())
 
 class Languages(reports.Report):
     queryset=Language.objects.order_by("id")
@@ -540,44 +422,108 @@ class ShippingModes(reports.Report):
 class ProductCats(reports.Report):
     queryset=ProductCat.objects.order_by("id")
 
+class ProductPageLayout(PageLayout):
+    main = """
+        id:5 name:50 cat
+        description:6x50
+        price vatExempt
+    """
+
 class Products(reports.Report):
+    page_layout_class = ProductPageLayout
     queryset = Product.objects.order_by("id")
     columnNames = "id:3 name description:1x30 cat vatExempt price:6"
+    
+    
+class DocumentPageLayout(PageLayout):
+    box1 = """
+      number your_ref creation_date
+      customer ship_to
+      """
+    box2 = """
+      shipping_mode payment_term
+      vat_exempt item_vat
+      """
+    box3 = """
+      remarks:40
+      intro:5x40
+      """
+    box4 = """
+      total_excl 
+      total_vat
+      total_incl
+      """
+    main = """
+      box1 box2
+      box3 box4
+      items:5x80
+      """
+      
 
-class Orders(reports.Report):
-    detail_reports = "items"
-    queryset = Order.objects.order_by("number")
+class Documents(reports.Report):
+    page_layout_class = DocumentPageLayout
+    #detail_reports = "items"
     columnNames = "number:4 creation_date:8 customer:20 " \
-                  "total_incl total_excl total_vat items"
+                  "total_incl total_excl total_vat"
+
+    #items = ItemsByDocument
+
+    #~ def items(self):
+        #~ return ItemsByDocument(self)
+        
+    def inlines(self):
+        return dict(items=ItemsByDocument())
+        
+class Orders(Documents):
+    queryset = Order.objects.order_by("number")
+
+
+class InvoicePageLayout(DocumentPageLayout):
+    box1 = """
+      number your_ref creation_date
+      customer ship_to due_date
+      """
 
 class Invoices(Orders):
     queryset = Invoice.objects.order_by("number")
+    page_layout_class = InvoicePageLayout
 
     
 class ItemsByDocument(reports.Report):
     columnNames = "pos:3 product title description:1x40 " \
                   "unitPrice qty total"
+    model = DocItem
+    master = Document
+    order_by = "pos"
     
-    def __init__(self,doc,**kw):
-        self.doc = doc
-        reports.Report.__init__(self,**kw)
+    #~ def __init__(self,doc,**kw):
+        #~ self.doc = doc
+        #~ reports.Report.__init__(self,**kw)
         
-    def get_queryset(self):
-        return self.doc.docitem_set.order_by("pos")
-    
+    #~ def get_queryset(self,document):
+        #~ return document.docitem_set.order_by("pos")
+#Documents.items = ItemsByDocument()
 
-class DocumentsByCustomer(reports.Report):
-    detail_reports = "items"
-    fk_name = 'customer' # temporary solution for editing inline grid 
+class DocumentsByCustomer(Documents):
+    #detail_reports = "items"
     columnNames = "number:4 creation_date:8 " \
-                  "total_incl total_excl total_vat items"
+                  "total_incl total_excl total_vat"
+    model = Document
+    master = Contact
+    fk_name = 'customer'
+    order_by = "creation_date"
 
-    def __init__(self,customer,**kw):
-        self.customer = customer
-        reports.Report.__init__(self,**kw)
+    #~ def __init__(self,customer,**kw):
+        #~ self.customer = customer
+        #~ reports.Report.__init__(self,**kw)
         
-    def get_queryset(self):
-        return Document.objects.filter(customer=self.customer).order_by("creation_date")
+    #~ def get_queryset(self):
+        #~ return Document.objects.filter(customer=self.customer).order_by("creation_date")
 
-    def get_title(self):
-        return unicode(self.customer) + " : documents by customer"
+    def get_title(self,renderer):
+        return unicode(renderer.master_instance) + " : documents by customer"
+
+class ContactsByCountry(Contacts):
+    model = Contact
+    master = Country
+    order_by = "city addr1"

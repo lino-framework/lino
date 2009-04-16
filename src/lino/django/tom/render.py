@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+#~ ## Copyright 2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -16,7 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-
+import traceback
 #import types
 import cgi
 from textwrap import TextWrapper
@@ -106,18 +106,13 @@ def vfill(lines,valign,height):
 class Row(object):
     def __init__(self,renderer,instance,number,form=None):
         self.renderer = renderer
-        self.rpt = renderer.report
-        self.queryset = renderer.queryset
+        self.report = renderer.report
+        #self.queryset = renderer.queryset
         #self.request = renderer.request
         self.number = number
         self.instance = instance
         self.form = form
       
-    #~ def __iter__(self):
-        #~ for col in self.renderer.columns:
-            #~ cell = Cell(self, col)
-            #~ yield cell
-
     def __getitem__(self,name):
         if self.renderer.editing:
             return self.form[name]
@@ -129,12 +124,15 @@ class Row(object):
     def as_html(self):
         r = layouts.RowLayoutRenderer(
           self,
-          self.rpt.row_layout,
-          self.renderer.details,
-          self.renderer.editing)
-        s = r.render_to_string()
-        #print s
-        return s
+          self.report.row_layout,
+          self.render_detail,
+          editing=self.renderer.editing)
+        try:
+            return r.render_to_string()
+        except Exception,e:
+            print "Exception in Row.as_html():"
+            traceback.print_exc()
+            raise e
 
     #~ def as_readonly(self):
         #~ r = layouts.ShowLayoutRenderer(self.rpt.row_layout,self.instance)
@@ -148,7 +146,8 @@ class Row(object):
 
     def links(self):
         l=[]
-        l.append('<a href="%s">page</a>' % self.get_url_path())
+        if self.renderer.is_main:
+            l.append('<a href="%s">page</a>' % self.get_url_path())
         if False:
             l.append('<a href="%s">instance</a>' % \
                 self.instance.get_url_path())
@@ -159,7 +158,7 @@ class Row(object):
         return self.number > 1
     def has_next(self):
         #print "Row.has_next() : ", self.rownum, self.queryset.count()
-        return self.number < self.queryset.count()
+        return self.number < self.renderer.queryset.count()
     def previous(self):
         return self.renderer.again(row=self.number-1)
         #~ req=self.request.GET.copy()
@@ -178,18 +177,36 @@ class Row(object):
         BaseModelFormSet.add_fields() usually adds a hidden input for the pk, which must 
         get rendered somewhere on each row of the grid template.
         """
-        pk=self.queryset.model._meta.pk
+        pk = self.renderer.queryset.model._meta.pk
         if pk.auto_created or isinstance(pk, models.AutoField):
             return self.form[pk.name]
         return ""
         
+    def render_detail(self,name):
+        dtlrep = self.report.details.get(name,None)
+        #dtlrep = getattr(self.report,name,None)
+        if dtlrep is None:
+            #print "%s has not detail %r" % (self.report,name)
+            return None
+        return self.renderer.detail_to_string(dtlrep,self.instance)
+        #~ dtlrep = getattr(self.report,name,None)
+        #~ if dtlrep is None:
+            #~ #print "%s has not detail %r" % (self.report,name)
+            #~ return None
+        #~ try:
+            #~ r = self.renderer.detail_renderer(self.renderer.request,False,dtlrep,self.instance)
+            #~ return r.render_to_string()
+        #~ except Exception,e:
+            #~ #print e
+            #~ traceback.print_exc()
+            #~ raise e
 
 
 
 
 class Column:
     is_formfield = False
-    def __init__(self,rpt,label,index,picture=None):
+    def __init__(self,renderer,label,index,picture=None):
         self.index = index
         self.width = None
         self.halign = LEFT
@@ -214,10 +231,10 @@ class Column:
         
 
 class FieldColumn(Column):
-    def __init__(self,rpt,field,*args):
-        Column.__init__(self,rpt,field.verbose_name,*args)
+    def __init__(self,rr,field,*args):
+        Column.__init__(self,rr,field.verbose_name,*args)
         self.field = field
-        self.name=field.name
+        self.name = field.name
         self.is_filter = isinstance(field,models.CharField)
         
     def cell_value(self,instance,form):
@@ -235,9 +252,9 @@ class FormFieldColumn(FieldColumn):
 class MethodColumn(Column):
     is_formfield = False
     is_filter = False
-    def __init__(self,rpt,name,*args):
+    def __init__(self,rr,name,*args):
         #print field.var_name
-        Column.__init__(self,rpt,name,*args)
+        Column.__init__(self,rr,name,*args)
         self.name = name
         
     #~ def get_urls(self,name):
@@ -255,6 +272,29 @@ class MethodColumn(Column):
     #~ def view(self,request):
         #~ return render_to_response("tom/base_site.html",
           #~ dict(title=self.name))
+          
+          
+class DetailColumn(Column):
+    is_formfield = False
+    is_filter = False
+    def __init__(self,renderer,name,dtlrep,*args):
+        #print field.var_name
+        Column.__init__(self,renderer.report,name,*args)
+        self.name = name
+        self.renderer = renderer
+        self.dtlrep = dtlrep
+        #assert renderer.master is not None
+        
+    def cell_value(self,instance,form):
+        return self.renderer.detail_to_string(self.dtlrep,instance)
+        #~ try:
+            #~ r = self.renderer.detail_renderer(self.renderer.request,False,self.dtlrep,instance)
+            #~ return r.render_to_string()
+        #~ except Exception,e:
+            #~ #print e
+            #~ traceback.print_exc()
+            #~ raise e
+          
       
 #~ class RelatedColumn(ReadonlyColumn):
     #~ is_filter = False
@@ -278,37 +318,65 @@ class MethodColumn(Column):
   
 
 class ReportRenderer:
-    def __init__(self,report):
+    def __init__(self,report,master_instance=None):
+        from lino.django.tom.reports import Report
+        assert isinstance(report,Report)
         self.report = report
         self.column_headers = report.column_headers
         #self.title = self.report.get_title()
+        if report.master is None:
+            assert master_instance is None
+        else:
+            assert isinstance(master_instance,report.master)
+        self.master_instance = master_instance
+        
 
     def new_column(self,*args):
         return FieldColumn(self,*args)
         
+    def get_title(self):
+        return self.report.get_title(self)
+        
     def _build_queryset(self,flt=None):
-        qs=self.report.queryset
+        qs = self.report.get_queryset(self.master_instance)
         if flt:
-            l=[]
-            q=models.Q()
+            l = []
+            q = models.Q()
             for col in self.columns:
                 if col.is_filter:
-                    q = q | models.Q(**{col.field.name+"__contains": flt})
+                    q = q | models.Q(**{
+                      col.field.name+"__contains": flt})
             qs = qs.filter(q)
         return qs
         
+    def render_detail(self,name):
+        dtlrep = self.report.details.get(name,None)
+        if dtlrep is None:
+            #print "%s has not detail %r" % (self.report,name)
+            return None
+        from lino.django.tom.reports import Report
+        assert isinstance(dtlrep,Report),"getattr(%r,%r) is not a Report" % (self.report,name)
+        return self.detail_to_string(dtlrep,self.row.instance)
+        #~ try:
+            #~ r = self.detail_renderer(self.request,False,dtlrep,self.row.instance)
+            #~ return r.render_to_string()
+        #~ except Exception,e:
+            #~ print "Exception in RowViewReportRenderer.render_detail()"
+            #~ traceback.print_exc()
+            #~ raise e
+      
     #~ def column_headers(self):
         #~ for x in self.
         
 class ColumnsReportRenderer(ReportRenderer):
         
-    def __init__( self,*args,**kw):
-        ReportRenderer.__init__(self,*args,**kw)
+    def __init__(self,report,*args,**kw):
+        ReportRenderer.__init__(self,report,*args,**kw)
         self.columns_by_name = {}
         columns = []
-        meta = self.report.queryset.model._meta
-        if self.report.columnNames:
-            for colname in self.report.columnNames.split() :
+        meta = report.model._meta
+        if report.columnNames:
+            for colname in report.columnNames.split() :
                 a = colname.split(":")
                 if len(a) == 1:
                     fieldname = colname
@@ -321,10 +389,18 @@ class ColumnsReportRenderer(ReportRenderer):
                       meta.get_field_by_name(fieldname)
                     #print field, model, direct, m2m 
                 except models.FieldDoesNotExist,e:
-                    col = MethodColumn(self.report,
-                                       fieldname,
-                                       len(columns),
-                                       picture)
+                    dtlrep = report.details.get(fieldname,None)
+                    if dtlrep != None:
+                        col = DetailColumn(self,
+                                           fieldname,
+                                           dtlrep,
+                                           len(columns),
+                                           picture)
+                    else:
+                        col = MethodColumn(report,
+                                           fieldname,
+                                           len(columns),
+                                           picture)
                 else:
                     col = self.new_column(field,len(columns),picture)
                 columns.append(col)
@@ -339,9 +415,9 @@ class ColumnsReportRenderer(ReportRenderer):
         
 
 class TextReportRenderer(ColumnsReportRenderer):
-    
     def __init__( self,
                   report,
+                  master_instance=None,
                   width=79,
                   columnWidths=None,
                   columnSep="|",
@@ -349,17 +425,16 @@ class TextReportRenderer(ColumnsReportRenderer):
                   column_widths=None,
                   rowHeight=None,
                   flt=None):
-        self.width=width
-        self.columnWidths=columnWidths
+        self.width = width
+        self.columnWidths = columnWidths
         self.column_widths = column_widths
-        self.rowHeight=rowHeight
-        self.columnHeaderSep=columnHeaderSep
-        self.columnSep=columnSep
+        self.rowHeight = rowHeight
+        self.columnHeaderSep = columnHeaderSep
+        self.columnSep = columnSep
         if flt is None:
-            flt=report.default_filter
-        self.flt=flt
-        ColumnsReportRenderer.__init__(self,report)
-                             
+            flt = report.default_filter
+        self.flt = flt
+        ColumnsReportRenderer.__init__(self,report,master_instance)
                              
   
     def computeWidths(self):
@@ -449,15 +524,15 @@ class TextReportRenderer(ColumnsReportRenderer):
         
         # renderHeader
 
-        title=self.report.get_title()
+        title=self.get_title()
         if title is not None:
             writer.write(title+"\n")
             writer.write("="*len(title)+"\n")
             
         # wrap header labels:
         headerCells = []
-        headerHeight=1
-        i=0
+        headerHeight = 1
+        i = 0
         for col in self.columns:
             cell = wrappers[i].wrap(col.getLabel())
             headerCells.append(cell)
@@ -474,13 +549,13 @@ class TextReportRenderer(ColumnsReportRenderer):
               for col in self.columns]
         writer.write("+".join(l) + "\n")
         
-        queryset=self._build_queryset(flt=self.flt)
+        queryset = self._build_queryset(flt=self.flt)
         #queryset=self.report.queryset
         #print queryset.count()
         for obj in queryset:
             wrappedCells = []
             for col in self.columns:
-                v=col.cell_value(obj,None)
+                v = col.cell_value(obj,None)
                 if v is None:
                     v=''
                 l = wrappers[col.index].wrap(col.format(v))
@@ -524,51 +599,55 @@ class TextReportRenderer(ColumnsReportRenderer):
         s=columnSep.join(l)
         return s.rstrip()+"\n"
         
+    def detail_to_string(self,dtlrep,instance):
+        r = TextReportRenderer(dtlrep,instance)
+        return r.render()
+      
 
-class HtmlReportRenderer(ColumnsReportRenderer):
+#~ class HtmlReportRenderer(ColumnsReportRenderer):
   
-    def __init__( self,
-                  report,
-                  flt=None):
-        if flt is None:
-            flt=report.default_filter
-        self.flt=flt
-        ColumnsReportRenderer.__init__(self,report)
+    #~ def __init__( self,
+                  #~ report,
+                  #~ flt=None):
+        #~ if flt is None:
+            #~ flt=report.default_filter
+        #~ self.flt=flt
+        #~ ColumnsReportRenderer.__init__(self,report)
                              
   
-    def render_to_string(self):
-        s = "<table><tr>"
-        for col in self.columns:
-            s += "<th>%s</th>" % col.label
-        s += "</tr>"
-        queryset=self._build_queryset(flt=self.flt)
-        for obj in queryset:
-            s += "<tr>"
-            for col in self.columns:
-                v=col.cell_value(obj,None)
-                if v is None:
-                    v=''
-                s += "<td>%s</td>" % unicode(v)
-            s += "</tr>"
-        s += "</table>"
-        return mark_safe(s)
+    #~ def render_to_string(self):
+        #~ s = "<table><tr>"
+        #~ for col in self.columns:
+            #~ s += "<th>%s</th>" % col.label
+        #~ s += "</tr>"
+        #~ queryset = self._build_queryset(flt=self.flt)
+        #~ for obj in queryset:
+            #~ s += "<tr>"
+            #~ for col in self.columns:
+                #~ v=col.cell_value(obj,None)
+                #~ if v is None:
+                    #~ v=''
+                #~ s += "<td>%s</td>" % unicode(v)
+            #~ s += "</tr>"
+        #~ s += "</table>"
+        #~ return mark_safe(s)
 
 
 class ViewReportRenderer(ReportRenderer):
   
     editing = 0
-    detail_renderer = None # HtmlReportRenderer
     
-    def __init__(self,report,request,prefix=None):
-        ReportRenderer.__init__(self,report)
+    def __init__(self,request,is_main,*args,**kw):
+        ReportRenderer.__init__(self,*args,**kw)
         self.request = request
-        self.prefix = prefix
-        flt = report.default_filter
-        if prefix is None:
-            self.params = report.param_form(request.GET)
+        self.is_main = is_main
+        #self.prefix = prefix
+        flt = self.report.default_filter
+        if self.master_instance is None:
+            self.params = self.report.param_form(request.GET)
             if self.params.is_valid():
                 flt = self.params.cleaned_data.get('flt',
-                    report.default_filter)
+                    self.report.default_filter)
         self.queryset = self._build_queryset(flt)
         #self.main_menu = settings.MAIN_MENU
 
@@ -583,7 +662,7 @@ class ViewReportRenderer(ReportRenderer):
         context=dict(
           report = self,
           main_menu = settings.MAIN_MENU,
-          title = self.report.get_title(),
+          title = self.get_title(),
           form_action = self.again(editing=None),
         )
         return render_to_response(self.template_to_reponse,context)
@@ -594,6 +673,14 @@ class ViewReportRenderer(ReportRenderer):
         )
         return render_to_string(self.template_to_string,context)
         
+    def detail_to_string(self,dtlrep,instance):
+        r = self.detail_renderer(self.request,False,dtlrep,instance)
+        return r.render_to_string()
+        #~ except Exception,e:
+            #~ print "Exception in RowViewReportRenderer.render_detail()"
+            #~ traceback.print_exc()
+            #~ raise e
+      
 class ViewManyReportRenderer(ViewReportRenderer):
   
     page_length = 15
@@ -603,15 +690,15 @@ class ViewManyReportRenderer(ViewReportRenderer):
     template_to_string = "tom/includes/grid_show.html"
     template_to_reponse = "tom/grid_show.html"      
     
-    def __init__(self,report,request,prefix=None,parent=None,fk_name=None):
-        ViewReportRenderer.__init__(self,report,request,prefix)
-        if self.prefix is None:
-            pgn = request.GET.get('pgn')
+    def __init__(self,*args,**kw) : 
+        ViewReportRenderer.__init__(self,*args,**kw)
+        if self.is_main:
+            pgn = self.request.GET.get('pgn')
             if pgn is None:
                 pgn = self.start_page
             else:
                 pgn=int(pgn)
-            pgl = request.GET.get('pgl')
+            pgl = self.request.GET.get('pgl')
             if pgl is None:
                 pgl = self.page_length
             else:
@@ -624,18 +711,14 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 page = paginator.page(paginator.num_pages)
             self.page=page
 
-        details = {}
-        #model=self.instance.model
-        #if layout.detail_reports:
-        #model = self.report.queryset.model
-        #if model.detail_reports:
-        for name in self.report.detail_reports.split():
-            def render(instance):
-                meth = getattr(instance,name)
-                dtlrep = meth()
-                return mark_safe(unicode(dtlrep))
-            details[name] = render
-        self.details = details
+        #~ details = {}
+        #~ for name in self.report.detail_reports.split():
+            #~ def render(instance):
+                #~ meth = getattr(instance,name)
+                #~ dtlrep = meth()
+                #~ return mark_safe(unicode(dtlrep))
+            #~ details[name] = render
+        #~ self.details = details
         
     #~ def render(self):
         #~ context=dict(
@@ -690,7 +773,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
         return mark_safe(s)
             
     def rows(self):
-        if self.prefix is None:
+        if self.master_instance is None:
             rownum = self.page.start_index()
             object_list = self.page.object_list
         else:
@@ -701,56 +784,63 @@ class ViewManyReportRenderer(ViewReportRenderer):
             yield Row(self,obj,rownum)
             rownum += 1
 
+ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
 
 
 
 class RowViewReportRenderer(ViewReportRenderer):
-
-    def __init__(self,report,request,row):
-        ViewReportRenderer.__init__(self,report,request)
-        rownum=int(row)
+    "A ViewReportRenderer that renders a single Row."
+    detail_renderer = ViewManyReportRenderer
+    def __init__(self,row,*args,**kw):
+        ViewReportRenderer.__init__(self,*args,**kw)
+        rownum = int(row)
         try:
             obj = self.queryset[rownum-1]
         except IndexError:
-            rownum=self.queryset.count()
+            rownum = self.queryset.count()
             if rownum == 0:
                 raise Http404("queryset is empty")
             obj = self.queryset[rownum-1]
-        self.instance = obj
-        self.rownum = rownum
+        #self.instance = obj
+        #self.rownum = rownum
         self.row = Row(self,obj,rownum)
+        assert issubclass(self.detail_renderer,ViewManyReportRenderer)
         
     def position_string(self):
         return  "Row %d of %d." % (self.row.number,self.queryset.count())
         
-    def get_title(self):
-        return u"%s - %s" % (self.report.get_title(),self.instance)
+    #~ def get_title(self):
+        #~ return u"%s - %s" % (self.report.get_title(self),self.instance)
+        
+      
         
 class ViewOneReportRenderer(RowViewReportRenderer):
 
     template_to_string = "tom/includes/page_show.html"
     template_to_reponse = "tom/page_show.html"
-    detail_renderer = ViewManyReportRenderer
     
-    def __init__(self,report,request,row):
-        RowViewReportRenderer.__init__(self,report,request,row)
-        details = {}
-        #~ model = self.report.queryset.model
-        #~ if model.detail_reports:
-            #~ for name in model.detail_reports.split():
-        for name in self.report.detail_reports.split():
-            meth = getattr(self.row.instance,name)
-            dtlrep = meth()
-            r = self.detail_renderer(dtlrep,request,name,
-                self.row.instance,dtlrep.fk_name)
-            details[name] = lambda x: r.render_to_string()
-        self.details = details
+    def __init__(self,*args,**kw):
+        RowViewReportRenderer.__init__(self,*args,**kw)
+        
+        #~ details = {}
+        #~ for name in self.report.detail_reports.split():
+            #~ meth = getattr(self.row.instance,name)
+            #~ dtlrep = meth()
+            #~ r = self.detail_renderer(dtlrep,request,name,
+                #~ self.row.instance,dtlrep.fk_name)
+            #~ details[name] = lambda x: r.render_to_string()
+        #~ self.details = details
+        
+        #~ self.layout = layouts.RowLayoutRenderer(self.row,
+            #~ self.page_layout(),self.details)
         self.layout = layouts.RowLayoutRenderer(self.row,
-            self.row.instance.page_layout(),self.details)
+            self.report.page_layout(),self.render_detail)
+            
         
     def navigator(self):
         s="""<div class="pagination"><span class="step-links">"""
-        s += '<a href="%s">%s</a>' % (self.again("..",editing=None),self.report.get_title())
+        s += '<a href="%s">%s</a>' % (
+          self.again("..",editing=None),self.get_title())
 
         page = self.row
         get_var_name = "row"
@@ -804,23 +894,23 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     template_to_string = "tom/includes/grid_edit.html"
     template_to_reponse = "tom/grid_edit.html"      
         
-    def __init__(self,report,request,prefix=None,parent=None,fk_name=None):
-        ViewManyReportRenderer.__init__(self,report,request,prefix)
+    def __init__(self,*args,**kw):
+        ViewManyReportRenderer.__init__(self,*args,**kw)
         
         fs_args = {}
-        if parent is not None:
+        if self.report.master is not None:
             formset_class = inlineformset_factory(
-                  parent.__class__,
-                  report.queryset.model,
-                  fk_name=fk_name,
+                  self.report.master,
+                  self.report.model,
+                  fk_name=self.report.fk_name,
                   extra=self.extra, 
                   max_num=self.max_num,
                   can_order=self.can_order, 
                   can_delete=self.can_delete)
-            fs_args['instance'] = parent
+            fs_args['instance'] = self.master_instance
         else:
             formset_class = modelformset_factory(
-                  report.queryset.model,
+                  self.report.model,
                   extra=self.extra, 
                   max_num=self.max_num,
                   can_order=self.can_order, 
@@ -859,7 +949,7 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
         
 
     def rows(self):
-        if self.prefix is None:
+        if self.is_main:
             rownum = self.page.start_index()
         else:
             rownum = 1
@@ -873,39 +963,29 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
     template_to_string = "tom/includes/page_edit.html"
     template_to_reponse = "tom/page_edit.html"      
   
-    def __init__(self,report,request,row):
-        ViewOneReportRenderer.__init__(self,report,request,row)
-        if request.method == 'POST':
-            frm = report.form_class(request.POST,instance=self.instance)
+    def __init__(self,*args,**kw):
+        ViewOneReportRenderer.__init__(self,*args,**kw)
+        if self.request.method == 'POST':
+            frm = self.report.form_class(self.request.POST,instance=self.row.instance)
             if frm.is_valid():
                 frm.save()
-                stop_editing(request)
-                redirect_to(request,self.again(editing=None))
+                stop_editing(self.request)
+                redirect_to(self.request,self.again(editing=None))
                 #return HttpResponseRedirect(self.again(editing=None))
             else:
                 print frm.errors
         else:
-            frm=report.form_class(instance=self.instance)
+            frm = self.report.form_class(instance=self.row.instance)
         self.form = frm
         
-        layout = self.instance.page_layout()
+        layout = self.report.page_layout()
         
         self.layout = layouts.FormLayoutRenderer(frm,layout,
-            self.details,editing=True)
+            render_detail=self.render_detail,editing=True)
         
         # hack: no need to instanciate a new Row for this...
         self.row.form = frm
         #self.row = Row(self,self.instance,self.rownum,frm)
-        
-        #~ context=dict(
-          #~ report=self,
-          #~ title=unicode(self.instance),
-          #~ form=frm,
-          #~ main_menu = settings.MAIN_MENU,
-          #~ layout = layouts.EditLayoutRenderer(layout,frm,details),
-          #~ form_action = again(self.request,editing=None),
-        #~ )
-        #~ return render_to_response("tom/page_edit.html",context)
         
 
         
@@ -915,7 +995,7 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
         template = get_template("tom/grid_pdf.html")
         context=dict(
           report=self,
-          title=self.report.get_title(),
+          title=self.get_title(),
         )
         html  = template.render(Context(context))
         if not pisa:
@@ -938,12 +1018,12 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
     def render(self):
         template = get_template("tom/page_pdf.html")
         #self.row = Row(self,obj,rownum)
-        obj=self.instance
+        obj = self.row.instance
         layout = layouts.InstanceLayoutRenderer(obj,
-          obj.page_layout(),self.details)
-        context=dict(
+          self.report.page_layout(),render_detail=self.render_detail)
+        context = dict(
           report=self,
-          title=u"%s - %s" % (self.report.get_title(),obj),
+          title=u"%s - %s" % (self.get_title(),obj),
           #layout = layout
         )
         html  = template.render(Context(context))
