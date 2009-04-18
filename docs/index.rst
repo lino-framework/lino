@@ -1,4 +1,5 @@
-﻿Lino -- Luc's Python Library
+﻿============================
+Lino -- Luc's Python Library
 ============================
 
 Welcome to the Lino Website.
@@ -14,14 +15,14 @@ Content
 .. toctree::
    :maxdepth: 2
 
-   what_is
+   about/what_is
    download
    install
    blog/index
    topics/index
    changes/index
    modules/index
-   gpl_or_bsd
+   about/gpl_or_bsd
 
 
 

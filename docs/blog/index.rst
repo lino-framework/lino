@@ -1,4 +1,5 @@
-﻿Blog
+﻿====
+Blog
 ====
 
 .. toctree::

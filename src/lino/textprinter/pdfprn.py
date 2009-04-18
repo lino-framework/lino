@@ -248,8 +248,14 @@ class PdfTextPrinter(FileTextPrinter):
                     w=None,h=None,
                     x=None,y=None,
                     dx=None,dy=None,
-                    behindText=False):
+                    behindText=None):
         "http://lino.saffre-rumma.ee/src/334.html"
+        if behindText is not None:
+            print """\
+Warning: PdfTextPrinter.insertImage() does not support *behindText*.
+Images are always placed *over* any text that occurs before them in 
+the input file.
+            """
         self.flush()
         width = height = None
         if w is not None:
@@ -259,12 +265,12 @@ class PdfTextPrinter(FileTextPrinter):
 
 
         if height is None:
-            img=self.openImage(filename)
+            img = self.openImage(filename)
             height = int(width * img.size[1] / img.size[0])
             del img
             #print "width,height=",width,height
         if width is None:
-            img=self.openImage(filename)
+            img = self.openImage(filename)
             width = int(height * img.size[0] / img.size[1])
             del img
 
@@ -324,22 +330,22 @@ class PdfTextPrinter(FileTextPrinter):
     def drawDebugRaster(self):
         self.flush()
 
-        LEFT=0
-        RIGHT=self.pageWidth
-        TOP=self.pageHeight
-        BOTTOM=0
-        WIDTH=self.pageWidth
-        HEIGHT=self.pageHeight
-        CS=9.0*mm # Cross Size
+        LEFT = 0
+        RIGHT = self.pageWidth
+        TOP = self.pageHeight
+        BOTTOM = 0
+        WIDTH = self.pageWidth
+        HEIGHT = self.pageHeight
+        CS = 9.0*mm # Cross Size
 
         self.canvas.setFont("Helvetica",6)
         self.canvas.setLineWidth(0.01)
         
         self.canvas.rect(LEFT,TOP,WIDTH,HEIGHT)
 
-        x=LEFT
+        x = LEFT
         while x <= RIGHT:
-            y=BOTTOM
+            y = BOTTOM
             while y <= TOP:
                 self.canvas.line(x-CS,y,x+CS,y)
                 self.canvas.line(x,y-CS,x,y+CS)

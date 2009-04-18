@@ -1,0 +1,9 @@
+20090418
+--------
+
+I discovered that :meth:`lino.textprinter.pdfprn.PdfTextPrinter.insertImage`
+has changed its behaviour between 0.6.37 and 0.6.42.
+Maybe because I upgraded the ReportLab toolkit between those releases. 
+Warning: PdfTextPrinter.insertImage() does not support *behindText*.
+Images are always placed *over* any text that occurs before them in 
+the input file.
