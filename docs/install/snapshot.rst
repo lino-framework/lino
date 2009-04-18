@@ -40,37 +40,6 @@ Go to the directory containing your local copy and type the command::
   svn update 
 
 
-Install other Python packages
------------------------------
-
-Lino uses a series of other free Python packages which you may have to
-install on your system.  Install them only if you get any related
-error messages, because the following list may not be perfectly
-up-to-date.
-
-- `Django <http://www.djangoproject.com/>`_
-  
-- Dirk Holtwick's `xhtml2pdf <http://www.xhtml2pdf.com/>`_ module.
-
-- `Reportlab Toolkit <http://www.reportlab.org/>`_
-
-- `Python Imaging Library <http://www.pythonware.com/products/pil/>`_
-
-- `docutils <http://docutils.sourceforge.net/>`_
-
-The following are probably not necessary:
-
-- `PySQLite <http://pysqlite.sourceforge.net/>`_
-  
-- `Twisted <http://www.twistedmatrix.com/>`_
-
-- `wxPython <http://www.wxpython.org/>`_
-
-- `Medusa <http://www.amk.ca/python/code/medusa.html>`_ web server.
-
-- `Quixote <http://www.mems-exchange.org/software/quixote/>`_
-
-
 Test whether it worked
 ----------------------
 

@@ -1,11 +1,37 @@
-==============
-2009 Changelog
-==============
+Changes 2009
+============
 
-20071123
+20090213
 --------
 
-:doc:`../timtools/index` 0.6.37 released
+Configurable boldness
+
+Okay, it seems that not all printer drivers behave correctly when they
+get «unusual» font weights. New testcase 
+srcref:`tests/textprinter/3.py` 
+shows whether your
+configured PostScript printer does it right. On the other hand the
+"Courier New" font looks «too lightweight» to many people on most
+printers. So I must make this option customizable. 
+
+N.B.: :mod:`win32.lib.win32con` defines the following names::
+
+  FW_DONTCARE = 0 
+  FW_THIN = 100 
+  FW_EXTRALIGHT = 200 
+  FW_LIGHT = 300 
+  FW_NORMAL = 400 
+  FW_MEDIUM = 500 
+  FW_SEMIBOLD = 600 
+  FW_BOLD = 700 
+  FW_EXTRABOLD = 800 
+  FW_HEAVY = 900 
+  FW_ULTRALIGHT = FW_EXTRALIGHT 
+  FW_REGULAR = FW_NORMAL 
+  FW_DEMIBOLD = FW_SEMIBOLD 
+  FW_ULTRABOLD = FW_EXTRABOLD 
+  FW_BLACK = FW_HEAVY
+
 
 
 20090227
