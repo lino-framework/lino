@@ -1,6 +1,6 @@
-============
-Install Lino
-============
+===================
+Get a Lino snapshot
+===================
 
 Short instructions:
 
