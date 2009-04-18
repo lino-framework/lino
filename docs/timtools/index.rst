@@ -8,8 +8,6 @@ selected command-line tools from the Lino Scripts collection.
 This selection is targeted to my customers who work with 
 `TIM <http://tim.saffre-rumma.ee>`_. 
 
-:doc:`changes/index`
-
 TIM users use mainly the following TIM Tools:
 
 - prn2pdf.py and prnprint.py to print classical text-mode reports on printers without text support.

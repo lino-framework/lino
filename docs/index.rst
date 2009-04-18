@@ -1,19 +1,31 @@
-﻿============================
+============================
 Lino -- Luc's Python Library
 ============================
 
 Welcome to the Lino Website.
 
-Status: I'm currently working a lot on 
-  :mod:`~lino.django.utils` and :mod:`~lino.django.igen`.
+Ännchen Müller
+
+Status
+------
+
+I'm currently working a lot on :mod:`~lino.django.utils` and
+:mod:`~lino.django.igen`.  
+"igen" stands for "invoice generator" and is a simple, 
+web-based program to write invoices either manually or 
+periodically based on contracts.
+It should become the first application Lino Django 
+application. There is even an early `demo site
+<http://igen.saffre-rumma.ee>`_ 
+ 
   
-  "igen" stands for "invoice generator" and is a simple, 
-  web-based program to write invoices either manually or 
-  periodically based on contracts.
-  It should become the first application Lino Django 
-  application.
+
+Quick links : 
+:doc:`about/what_is` |
+:doc:`install/download` |
+:doc:`install/snapshot` |
+:doc:`blog/index`
   
-  There is even an early `demo site <http://igen.saffre-rumma.ee>`_ 
 
 
 Content
@@ -22,14 +34,14 @@ Content
 .. toctree::
    :maxdepth: 2
 
-   about/what_is
-   install/download
-   install/snapshot
+   about/index
+   install/index
    blog/index
    topics/index
    changes/index
    modules/index
-   about/gpl_or_bsd
+   timtools/index
+   django/index
 
 
 

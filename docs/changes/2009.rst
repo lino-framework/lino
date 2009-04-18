@@ -5,13 +5,13 @@
 20071123
 --------
 
-:doc:`../timtools` 0.6.37 released
+:doc:`../timtools/index` 0.6.37 released
 
 
 20090227
 --------
 
-:doc:`../timtools` 0.6.42 released:
+:doc:`../timtools/index` 0.6.42 released:
 
 - The boldness of bold and normal text is now configurable for
   prnprint.py

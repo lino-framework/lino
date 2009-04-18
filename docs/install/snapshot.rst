@@ -19,7 +19,7 @@ If that was too short, then here is a longer version.
 And don't hesitate to contact me if you get stucked.
 
 
-About SVN: see :doc:`topics/svn`.
+About SVN: see :doc:`../topics/svn`.
 
 
 Add lino to your Python path
