@@ -1,3 +1,31 @@
-2009
-====
+==============
+2009 Changelog
+==============
 
+20071123
+--------
+
+:doc:`../timtools` 0.6.37 released
+
+
+20090227
+--------
+
+:doc:`../timtools` 0.6.42 released:
+
+- The boldness of bold and normal text is now configurable for
+  prnprint.py
+  (see [ref NEW:492 How bold is bold? (14.04.07)]).           
+
+
+20090418
+--------
+
+I discovered that :meth:`lino.textprinter.pdfprn.PdfTextPrinter.insertImage`
+has changed its behaviour between `0.6.37 <20071123>`_  and 
+<0.6.42 <20090227>`_.
+Maybe because I upgraded the ReportLab toolkit between those releases. 
+
+PdfTextPrinter.insertImage() does not support *behindText*.
+Images are always placed over any text that occurs before them in 
+the input file.

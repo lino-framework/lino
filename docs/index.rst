@@ -4,10 +4,17 @@ Lino -- Luc's Python Library
 
 Welcome to the Lino Website.
 
-Latest news 
------------
+Status: I'm currently working a lot on 
+  :mod:`~lino.django.utils` and :mod:`~lino.django.igen`.
+  
+  "igen" stands for "invoice generator" and is a simple, 
+  web-based program to write invoices either manually or 
+  periodically based on contracts.
+  It should become the first application Lino Django 
+  application.
+  
+  There is even an early `demo site <http://igen.saffre-rumma.ee>`_ 
 
-.. include:: news/20090415.rst
 
 Content
 -------
@@ -16,8 +23,8 @@ Content
    :maxdepth: 2
 
    about/what_is
-   download
-   install
+   install/download
+   install/snapshot
    blog/index
    topics/index
    changes/index

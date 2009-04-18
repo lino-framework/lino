@@ -1,8 +1,0 @@
-2009-04-15
-
-  I'm currently working on :mod:`~lino.django.igen` 
-  which should become the first usable Lino application. 
-  "igen" stands for "invoice generator" and is a simple, 
-  web-based program to write invoices either manually or 
-  periodically based on contracts.
-  There is even an early `demo site <http://igen.saffre-rumma.ee>`_ 
