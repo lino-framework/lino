@@ -20,7 +20,7 @@
 import sys
 import os
 opj=os.path.join
-from lino.misc.tsttools import TestCase, main
+from lino.tools.tsttools import TestCase, main
 from lino.textprinter import winprn
 from lino import config
 
@@ -58,13 +58,17 @@ class Case(TestCase):
 
         spoolFile = self.addTempFile("77.ps",showOutput=True)
         d = winprn.Win32TextPrinter(
-            config.win32.get('postscript_printer'),spoolFile )
+            #config.win32.get('postscript_printer'),
+            self.runtests.options.postscript_printer,
+            spoolFile )
         self.doit(d)
 
         
         spoolFile = self.addTempFile("77L.ps",showOutput=True)
         d = winprn.Win32TextPrinter(
-            config.win32.get('postscript_printer'),spoolFile )
+            #config.win32.get('postscript_printer'),
+            self.runtests.options.postscript_printer,
+            spoolFile )
         d.setOrientationLandscape()
         d.writeln("And now the same in landscape. ")
         d.writeln()

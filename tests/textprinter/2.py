@@ -1,4 +1,4 @@
-## Copyright 2007-2008 Luc Saffre
+## Copyright 2007-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -22,8 +22,8 @@ This is another case where pdfprn and winprn produced different results.
 
 """
 
-from lino.misc.tsttools import TestCase, main
-from lino import config
+from lino.tools.tsttools import TestCase, main
+#from lino import config
 
 from lino.textprinter import winprn
 from lino.textprinter import pdfprn
@@ -46,7 +46,8 @@ class Case(TestCase):
 
         spoolFile = self.addTempFile("2.ps",showOutput=True)
         d = winprn.Win32TextPrinter(
-            config.win32.get('postscript_printer'),
+            #config.win32.get('postscript_printer'),
+            self.runtests.options.postscript_printer,
             spoolFile)
         self.doit(d)
         

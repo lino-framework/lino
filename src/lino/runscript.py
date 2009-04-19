@@ -32,7 +32,7 @@ The auto-generated file lino.bat uses this wrapper
 
 import sys
 
-from lino.misc.my_import import my_import
+from lino.tools.my_import import my_import
 from lino import scripts
 
 
@@ -57,6 +57,6 @@ if not sys.argv[1] in scripts.LINO_SCRIPTS:
 
 scriptName=sys.argv[1]
 del sys.argv[1]
-m=my_import("lino.scripts." + scriptName)
+m = my_import("lino.scripts." + scriptName)
 m.main()
 

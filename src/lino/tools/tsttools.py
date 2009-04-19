@@ -1,4 +1,4 @@
-## Copyright 2003-2008 Luc Saffre
+## Copyright 2003-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -276,10 +276,10 @@ class TestCase(unittest.TestCase):
                 "Okay to start %s ?" % fn, default=False):
                 os.system('start ' + fn)
         if len(self._tempFiles) > 0:
-            if sess.confirm("Okay to delete %d temporary files ?" \
-                            % len(self._tempFiles)):
+            if sess.confirm("Okay to delete temporary files ?"):
                 for fn in self._tempFiles:
-                    os.remove(fn)
+                    if not os.path.exists(fn):
+                        os.remove(fn)
 
     def getConsoleOutput(self):
         return self.toolkit.getConsoleOutput()

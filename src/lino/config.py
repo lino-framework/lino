@@ -45,8 +45,8 @@ paths = Section(config,'paths',
                 webhome=r"u:\htdocs\timwebs\lino",
                 )
 
-win32=Section(config,'win32',
-              postscript_printer="Lexmark Optra PS")
+#win32=Section(config,'win32',
+#              postscript_printer="Lexmark Optra PS")
 
 #~ prnprint=Section(config,'prnprint',
               #~ fontWeights=None,

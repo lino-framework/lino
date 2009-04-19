@@ -22,8 +22,8 @@
 
 """
 
-from lino.misc.tsttools import TestCase, main
-from lino import config
+from lino.tools.tsttools import TestCase, main
+#from lino import config
 
 from lino.textprinter import winprn
 from lino.textprinter import pdfprn
@@ -49,7 +49,8 @@ although the first one has fontweight "normal" while the second is "bold"."""
 
         spoolFile = self.addTempFile("3.ps",showOutput=True)
         d = winprn.Win32TextPrinter(
-            config.win32.get('postscript_printer'),
+            #config.win32.get('postscript_printer'),
+            self.runtests.options.postscript_printer,
             spoolFile)
         self.doit(d)
         

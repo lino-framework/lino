@@ -281,7 +281,7 @@ the input file.
         if cx == 0 and cy == 0:
             # print "no text has been processed until now"
             cx = self.margin
-            cy = self.pageHeight-self.margin-height
+            cy = self.pageHeight - self.margin - height
         else:
             # but picture starts on top of charbox:
             cy += self.leading

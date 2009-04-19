@@ -18,8 +18,8 @@
 
 import os
 
-from lino.misc.tsttools import TestCase, main, DOCROOT
-from lino.misc.my_import import my_import
+from lino.tools.tsttools import TestCase, main, DOCROOT
+from lino.tools.my_import import my_import
 from lino.timtools import CONSOLE_TARGETS
 
 

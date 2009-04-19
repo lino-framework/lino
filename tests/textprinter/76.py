@@ -1,4 +1,4 @@
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -20,8 +20,8 @@
 testing setPageLandscape()
 """
 
-from lino.misc.tsttools import TestCase, main
-from lino import config
+from lino.tools.tsttools import TestCase, main
+#from lino import config
 
 class Case(TestCase):
     ""
@@ -48,7 +48,8 @@ class Case(TestCase):
         from lino.textprinter import winprn
         spoolFile = self.addTempFile("4.ps",showOutput=True)
         d = winprn.Win32TextPrinter(
-            config.win32.get('postscript_printer'),
+            #config.win32.get('postscript_printer'),
+            self.runtests.options.postscript_printer,
             spoolFile)
         self.doit(d)
         

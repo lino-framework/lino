@@ -21,23 +21,13 @@ import sys
 import types
 import unittest
 
-from lino.misc import tsttools
-from lino.misc.my_import import my_import
+from lino.tools import tsttools
+from lino.tools.my_import import my_import
 
 from lino.console import Application
 from lino.console import syscon
-#from lino.forms.testkit import Toolkit
-#gui.choose("testkit")
 
 class StoppingTestResult(unittest._TextTestResult):
-    
-##     def __init__(self,runner):
-##         self.runner=runner
-##         unittest._TextTestResult.__init__(
-##             runner.stream,
-##             runner.descriptions,
-##             runner.verbosity)
-    
 
     def stopTest(self, test):
         "Called when the given test has been run"
@@ -47,10 +37,6 @@ class StoppingTestResult(unittest._TextTestResult):
 
 class StoppingTestRunner(unittest.TextTestRunner):
 
-##     def __init__(self,sess,*args,**kw):
-##         self.session=sess
-##         unittest.TextTestRunner.__init__(*args,**kw)
-    
     def _makeResult(self):
         return StoppingTestResult(self.stream,
                                   self.descriptions,
@@ -58,25 +44,40 @@ class StoppingTestRunner(unittest.TextTestRunner):
 
 
 class Runtests(Application):
-    name="Lino/runtests"
+    name = "Lino/runtests"
     
-    copyright="""\
+    copyright = """\
 Copyright (c) 2004-2009 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
     
-    usage="usage: %prog [options] [TESTS]"
+    usage = "usage: %prog [options] [TESTS]"
     
-    description="""\
+    description = """\
 scan a directory tree for .py files containing test cases and run
 them.  TESTS specifies the tests to run. Default is all. Other
 possible values e.g. `1` or `1-7`.
 """
     
-##     def createToolkit(self):
-##         return Toolkit(syscon.getSystemConsole())
+    configfile = "runtests.ini" 
+    configdefaults = dict(
+      postscript_printer = "psfile"
+      # a valid Windows printer name
+    )
     
+    def setupConfigParser(self,parser):
+        
+        parser.add_option("postscript_printer",
+                          help="""\
+a valid Windows printer name.
+""",
+                          dest="postscript_printer",
+                          default=None,
+                          metavar="NAME")
+
+        Application.setupConfigParser(self,parser)
+        
     def setupOptionParser(self,parser):
         Application.setupOptionParser(self,parser)
     
@@ -87,41 +88,43 @@ continue testing even if failures or errors occur""",
                           dest="ignore",
                           default=False)
     
-    def makeSuite(self,argv,root='.'):
-
+    def makeSuite(self,argv,top='.'):
         self.status("Collecting test cases")
         suites=[]
         cases = []
         #skipped=[]
-        sys.path.append(root)
-        for filename in os.listdir(root):
-            modname,ext = os.path.splitext(filename)
-            if ext == '.py':
-                self.status(filename)
-                doit = (len(argv) == 0)
-                for arg in argv:
-                    a = arg.split('-')
-                    if len(a) == 2:
-                        if a[0].isdigit() and a[1].isdigit():
-                            if modname.isdigit():
-                                if int(modname) >= int(a[0]) \
-                                      and int(modname) <= int(a[1]):
+        for root, dirs, files in os.walk(top):
+            sys.path.append(root)
+            if '.svn' in dirs:
+                dirs.remove(".svn")  # don't visit CVS directories
+            for filename in files:
+                modname,ext = os.path.splitext(filename)
+                if ext == '.py':
+                    self.status(filename)
+                    doit = (len(argv) == 0)
+                    for arg in argv:
+                        a = arg.split('-')
+                        if len(a) == 2:
+                            if a[0].isdigit() and a[1].isdigit():
+                                if modname.isdigit():
+                                    if int(modname) >= int(a[0]) \
+                                          and int(modname) <= int(a[1]):
+                                        doit = True
+                            else:
+                                if modname >= a[0] and modname <= a[1]:
                                     doit = True
-                        else:
-                            if modname >= a[0] and modname <= a[1]:
+                        elif len(a) == 1:
+                            if modname == a[0]:
                                 doit = True
-                    elif len(a) == 1:
-                        if modname == a[0]:
-                            doit = True
-                    else:
-                        self.warning("Unrecognized argument %s",
-                                     arg)
-                if doit:
-                    self.verbose("Loading cases from %s...",
-                                 modname)
+                        else:
+                            self.warning("Unrecognized argument %s",
+                                         arg)
+                    if doit:
+                        self.verbose("Loading cases from %s...",
+                                     modname)
 
-                    self.findTestCases(modname,cases,suites)
-        sys.path.remove(root)
+                        self.findTestCases(modname,cases,suites)
+            sys.path.remove(root)
 
         self.notice("found %d cases and %d suites.",
                     len(cases),len(suites))
@@ -153,6 +156,7 @@ continue testing even if failures or errors occur""",
                         self.notice("Skipping %s.%s",
                                     modname,v.__name__)
                     else:
+                        v.runtests = self
                         cases.append(v)
         return cases
     
@@ -163,14 +167,16 @@ continue testing even if failures or errors occur""",
         
         suite = self.makeSuite(self.args)
 
-        stream=self.toolkit.stdout
+        stream = self.toolkit.stdout
         
         if self.options.ignore:
             runner = unittest.TextTestRunner(stream=stream)
         else:
             runner = StoppingTestRunner(stream=stream)
-            
-        result=runner.run(suite)
+        
+        # print "foo", suite
+        
+        result = runner.run(suite)
         
         def tests(case):
             if hasattr(case,'_tests'):

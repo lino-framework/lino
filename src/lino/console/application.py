@@ -45,14 +45,14 @@ class Application(Task):
 
     """
     
-    version=None 
-    copyright=None
-    url=None
-    author=None
-    usage=None
+    version = None 
+    copyright = None
+    url = None
+    author = None
+    usage = None
     description = None
-    configfile=None
-    configdefaults={}
+    configfile = None
+    configdefaults = {}
 
     """
     
@@ -155,9 +155,9 @@ alternate configuration file instead of %s.""" % self.configfile,
             win32print = sys.modules['win32print']
             using.append("Python Windows Extensions")
         
-        if sys.modules.has_key('cherrypy'):
-            cherrypy = sys.modules['cherrypy']
-            using.append("CherryPy " + cherrypy.__version__)
+        #~ if sys.modules.has_key('cherrypy'):
+            #~ cherrypy = sys.modules['cherrypy']
+            #~ using.append("CherryPy " + cherrypy.__version__)
 
         if sys.modules.has_key('PIL'):
             using.append("PIL")
@@ -188,10 +188,10 @@ alternate configuration file instead of %s.""" % self.configfile,
 
         """
 
-        self.toolkit=syscon.getSystemConsole()
+        self.toolkit = syscon.getSystemConsole()
         syscon.setMainSession(self)
         
-        desc=self.get_description()
+        desc = self.get_description()
         if desc is not None:
             desc=" ".join(desc.split())
         
@@ -201,7 +201,7 @@ alternate configuration file instead of %s.""" % self.configfile,
             
         self.setupOptionParser(p)
 
-        argv=sys.argv[1:]
+        argv = sys.argv[1:]
         
         try:
             poptions,pargs = p.parse_args(argv)

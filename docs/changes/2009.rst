@@ -48,10 +48,30 @@ N.B.: :mod:`win32.lib.win32con` defines the following names::
 --------
 
 I discovered that :meth:`lino.textprinter.pdfprn.PdfTextPrinter.insertImage`
-has changed its behaviour between `0.6.37 <20071123>`_  and 
-<0.6.42 <20090227>`_.
+has changed its behaviour between `0.6.37 <20071123_>`  and 
+`0.6.42 <20090227>`_.
 Maybe because I upgraded the ReportLab toolkit between those releases. 
 
 PdfTextPrinter.insertImage() does not support *behindText*.
 Images are always placed over any text that occurs before them in 
 the input file.
+
+
+20090419 Working on tests
+-------------------------
+
+- runtests.py now recurses into subdirs.
+
+- Started to move configuration options from "lino.config" to application-specific options. The first option is
+  :configcmd:`postscript_printer`.
+  Its definition has moved 
+  from the obsolete global :xfile:`lino.cfg` file to a new file :xfile:`runtest.ini`.
+  Until now it was accessed in testcases by::
+  
+    config.win32.get('postscript_printer')
+    
+  New access code::
+  
+    self.runtests.options.postscript_printer
+
+- moved my_import and tsttools from lino.misc to lino.tools

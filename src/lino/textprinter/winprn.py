@@ -1,4 +1,4 @@
-## Copyright 2004-2008 Luc Saffre 
+## Copyright 2004-2009 Luc Saffre 
 
 ## This file is part of the Lino project.
 
@@ -102,8 +102,8 @@ class Win32TextPrinter(TextPrinter):
         self.maxLeading=0
         self.logfont=win32gui.LOGFONT()
         # 20070414 :
-        self.weight_bold=win32con.FW_BOLD
-        self.weight_normal=win32con.FW_NORMAL
+        self.weight_bold = win32con.FW_BOLD
+        self.weight_normal = win32con.FW_NORMAL
         if fontWeights is not None:
             if len(fontWeights) != 2:
                 raise TypeError("len(fontWeights) must be 2")
@@ -111,8 +111,8 @@ class Win32TextPrinter(TextPrinter):
                 if type(i) != int:
                     raise TypeError("%r : not an integer" % i)
             # bolder than normal because Courier.ttf isn't dark enough 
-            self.weight_normal=fontWeights[0] # win32con.FW_SEMIBOLD
-            self.weight_bold=fontWeights[1] # win32con.FW_EXTRABOLD
+            self.weight_normal = fontWeights[0] # win32con.FW_SEMIBOLD
+            self.weight_bold = fontWeights[1] # win32con.FW_EXTRABOLD
 
         """
         lfHeight
@@ -194,8 +194,8 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/fontext_8fp
 
         #self.font = None
         #self.useWorldTransform=useWorldTransform
-        self.spoolFile=spoolFile
-        self.jobName=jobName
+        self.spoolFile = spoolFile
+        self.jobName = jobName
         #self.fontName=fontName
 
         
