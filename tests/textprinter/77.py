@@ -1,5 +1,5 @@
 #coding:latin1
-## Copyright 2003-2006 Luc Saffre
+## Copyright 2003-2009 Luc Saffre
 
 ## This file is part of the Lino project.
 
@@ -24,8 +24,10 @@ from lino.tools.tsttools import TestCase, main
 from lino.textprinter import winprn
 from lino import config
 
-dataPath = os.path.join(
-    config.paths.get('docs_path'),'examples','textprinter')
+#~ dataPath = os.path.join(
+    #~ config.paths.get('docs_path'),'examples','textprinter')
+    
+dataPath = opj(os.path.dirname(__file__),'data')
 
 class Case(TestCase):
     ""

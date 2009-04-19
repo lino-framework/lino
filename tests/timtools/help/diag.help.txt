@@ -1,4 +1,4 @@
-Usage: lino diag [options]
+bla Usage: lino diag [options]
 
 writes some diagnostics about your computer.
 
