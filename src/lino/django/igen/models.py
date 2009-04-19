@@ -318,7 +318,7 @@ class DocItem(TomModel):
             if not self.unitPrice:
                 self.unitPrice = self.product.price
         self.document.save()
-        
+    before_save.alters_data = True
         
                
 

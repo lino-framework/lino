@@ -75,7 +75,6 @@ class Case(TestCase):
         d.writeln("And now the same in landscape. ")
         d.writeln()
         self.doit(d)
-        
 
 if __name__ == '__main__':
     main()

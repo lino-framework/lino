@@ -8,7 +8,6 @@
   font-family: Helvetica, Arial, sans-serif;
   font-size: 18pt;
   font-weight: bolder;
-  content: "XHTML-Print: A Proposal --- August 25, 2000";
   }
 }
 
@@ -41,19 +40,16 @@ p.photo {
   width:28mm;
 }
 table.vnl {
-  table-layout:fixed; background-color:blue; padding: 2mm;
+  table-layout:fixed; background-color:gray; padding: 2mm;
 }
 table.vnl th {background-color:white;}
+td.number {text-align:right;}
 table.tech td {
   background-color:#eeeeee;
 }
 </style>
 </head>
 <body style="font-family: Helvetica;">
-
-
-
-
 <p>
 <br>
 <br>
@@ -90,12 +86,35 @@ table.tech td {
 {{instance.intro}}
 
 
-{{instance.items.as_html}}
+<table class="vnl">
+<tr>
+<th>pos</th>
+<th>title</th>
+<th>unit_price</th>
+<th>qty</th>
+<th>total_excl</th>
+</tr>
 
+{% for item in instance.docitem_set.all %}
+<tr>
+<td class="number" style="width:3em;">{{ item.pos }}</td>
+<td style="width:30em;">{{ item.title }}</td>
+<td class="number" style="width:6em;">{{ item.unit_price }}</td>
+<td class="number" style="width:3em;">{{ item.qty }}</td>
+<td class="number" style="width:6em;">{{ item.total_excl }}</td>
+</tr>
+{% endfor %}
 
-Total htva: {{instance.total_excl}}<br/>
-TVA: {{instance.total_vat}}<br/>
-Total tvac : {{instance.total_incl}}
+<tr><td colspan="2"></td>
+  <td colspan="2">Total htva:</td>
+  <td class="number">{{instance.total_excl}}</td></tr>
+<tr><td colspan="2"></td>
+  <td colspan="2">TVA: </td>
+  <td class="number">{{instance.total_vat}}</td></tr>
+<tr><td colspan="2"></td>
+  <td colspan="2">Total tvac : </td>
+  <td class="number">{{instance.total_incl}}</td></tr>
+</table>
 
 </body>
 </html>
