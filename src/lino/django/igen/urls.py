@@ -15,6 +15,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+raise "no longer used"
+
 from django.conf.urls.defaults import *
 from lino.django.contacts import views, models
 from django.views.generic import list_detail

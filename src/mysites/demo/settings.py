@@ -18,6 +18,8 @@
 # Django settings file
 # Works on Linux and Windows.
 
+#print "begin", __file__
+
 import os
 from tempfile import gettempdir
 
@@ -98,13 +100,31 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'mysites.demo.urls'
 #ROOT_URLCONF = 'lino.django.voc.urls'
 
+#print "foo", __file__
+
+try:
+    from lino.django import utils
+    #from lino.django.igen import models
+    #from lino.django.voc import models
+except Exception,e:
+    import traceback
+    traceback.print_exc(e)
+    raise e
+
+#print "bar", __file__
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    os.path.join(
-      os.path.dirname(os.path.abspath(__file__)),'templates'),
+      os.path.abspath(os.path.join(
+        os.path.dirname(__file__),
+        'templates')),
+      os.path.abspath(os.path.join(
+        os.path.dirname(utils.__file__),
+        'templates')),
 )
+#print "baz", __file__
 
 INSTALLED_APPS = (
     'lino.django.igen',
@@ -116,7 +136,7 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'django.contrib.admin',
     'django.contrib.databrowse',
-    'lino.django.tom',
+    #'lino.django.tom',
 )
 
 
@@ -125,3 +145,5 @@ SERIALIZATION_MODULES = {
      "data" : "lino.django.utils.dataserializer",
      "dpy" : "lino.django.utils.dpyserializer",
 }
+
+#print "done", __file__

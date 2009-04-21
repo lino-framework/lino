@@ -777,8 +777,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
     start_page = 1
     max_num = 0
     
-    template_to_string = "tom/includes/grid_show.html"
-    template_to_reponse = "tom/grid_show.html"      
+    template_to_string = "lino/includes/grid_show.html"
+    template_to_reponse = "lino/grid_show.html"      
     
     def __init__(self,*args,**kw) : 
         ViewReportRenderer.__init__(self,*args,**kw)
@@ -905,8 +905,8 @@ class RowViewReportRenderer(ViewReportRenderer):
         
 class ViewOneReportRenderer(RowViewReportRenderer):
 
-    template_to_string = "tom/includes/page_show.html"
-    template_to_reponse = "tom/page_show.html"
+    template_to_string = "lino/includes/page_show.html"
+    template_to_reponse = "lino/page_show.html"
     
     def __init__(self,*args,**kw):
         RowViewReportRenderer.__init__(self,*args,**kw)
@@ -983,8 +983,8 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     extra = 1
     can_delete = True
     can_order = False
-    template_to_string = "tom/includes/grid_edit.html"
-    template_to_reponse = "tom/grid_edit.html"      
+    template_to_string = "lino/includes/grid_edit.html"
+    template_to_reponse = "lino/grid_edit.html"
         
     def __init__(self,*args,**kw):
         ViewManyReportRenderer.__init__(self,*args,**kw)
@@ -1049,8 +1049,8 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     
 class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
     detail_renderer = EditManyReportRenderer
-    template_to_string = "tom/includes/page_edit.html"
-    template_to_reponse = "tom/page_edit.html"      
+    template_to_string = "lino/includes/page_edit.html"
+    template_to_reponse = "lino/page_edit.html"      
   
     def __init__(self,*args,**kw):
         ViewOneReportRenderer.__init__(self,*args,**kw)
@@ -1082,7 +1082,7 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
 class PdfManyReportRenderer(ViewManyReportRenderer):
 
     def render(self):
-        template = get_template("tom/grid_pdf.html")
+        template = get_template("lino/grid_pdf.html")
         context=dict(
           report=self,
           title=self.get_title(),
@@ -1106,7 +1106,7 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
     detail_renderer = PdfManyReportRenderer
 
     def render(self):
-        template = get_template("tom/page_pdf.html")
+        template = get_template("lino/page_pdf.html")
         #self.row = Row(self,obj,rownum)
         obj = self.row.instance
         #~ layout = layouts.InstanceLayoutRenderer(obj,

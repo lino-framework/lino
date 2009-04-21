@@ -33,8 +33,7 @@ from django.forms.models import _get_foreign_key
 # l:\snapshot\xhtml2pdf
 #import ho.pisa as pisa
 
-from lino.django.tom import render
-from lino.django.utils import layouts
+from lino.django.utils import layouts, render
 from lino.django.utils.editing import is_editing
 
 

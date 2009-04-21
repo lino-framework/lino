@@ -1,4 +1,6 @@
 # Create your views here.
+raise "no longer used"
+
 from django.http import HttpResponse
 
 def root(request):

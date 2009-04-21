@@ -18,9 +18,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.test import TestCase
-from lino.django.tom.validatingmodel import TomModel, ModelValidationError
-from lino.django.tom.reports import Report
-from lino.django.tom.render import ViewReportRenderer
+from lino.django.utils.validatingmodel import TomModel, ModelValidationError
+from lino.django.utils.reports import Report
+from lino.django.utils.render import ViewReportRenderer
 from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
@@ -68,8 +68,8 @@ class TestCase(TestCase):
             self.fail("expected ValidationError")
         
     def test03(self):
-        from lino.django.tom.menus import Menu
-        from lino.django.igen.models import Contacts, Persons, Products
+        from lino.django.utils.menus import Menu
+        from lino.django.utils.models import Contacts, Persons, Products
         m = Menu("main","Main menu")
         def setup_menu(menu):
             m = menu.addMenu("m1","~Contacts")

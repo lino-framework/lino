@@ -23,7 +23,7 @@ from django.forms.models import modelform_factory
 from django.shortcuts import render_to_response 
 from django.conf.urls.defaults import patterns, url, include
 
-from lino.django.utils import layouts
+#from lino.django.utils import layouts
 
     
 def index(request):
@@ -31,7 +31,7 @@ def index(request):
       main_menu=settings.MAIN_MENU,
       title=settings.MAIN_MENU.label,
     )
-    return render_to_response("tom/index.html",context)
+    return render_to_response("lino/index.html",context)
     
 #~ def edit_report(request,name,*args,**kw):
     #~ rptclass = _report_classes[name]
@@ -76,8 +76,9 @@ def urls(name=''):
     #~ l.append(
       #~ url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
           #~ view_instance))
-    l.append(
-      url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
-          view_instance_method))
+    if False:
+      l.append(
+        url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
+            view_instance_method))
     return patterns('',*l)
 

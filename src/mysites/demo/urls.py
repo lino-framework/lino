@@ -24,9 +24,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
-from lino.django import utils
 
-from lino.django.tom.menus import Menu
+from lino.django.utils.menus import Menu
 menu = Menu("menu","Main Menu")
 
 from lino.django.igen.menu import setup_menu
@@ -35,12 +34,14 @@ setup_menu(menu)
 from lino.django.voc.menu import setup_menu
 setup_menu(menu)
 
-from lino.django.tom.sysadm import setup_menu
+from lino.django.utils.sysadm import setup_menu
 setup_menu(menu)
 
 urlpatterns = menu.urls
 
 settings.MAIN_MENU = menu
+
+from lino.django.utils import urls as lino_site
 
 urlpatterns += patterns('',
     (r'^admin/', include(admin.site.urls)),
@@ -48,6 +49,6 @@ urlpatterns += patterns('',
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
-    (r'', include(utils.urls())),
+    (r'', include(lino_site.urls())),
 )    
 

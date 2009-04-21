@@ -29,7 +29,7 @@ from django.utils.safestring import mark_safe
 
 
 #from lino.django import tom
-from lino.django.tom.validatingmodel import TomModel, ModelValidationError
+from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 
 
 FORMATS = (
@@ -199,7 +199,7 @@ class UnitForm(forms.ModelForm):
 # reports definition
 #
 
-from lino.django.tom import reports
+from lino.django.utils import reports
 
 class Units(reports.Report):
     model_form = UnitForm

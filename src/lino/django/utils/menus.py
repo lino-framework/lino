@@ -177,7 +177,7 @@ class Menu(MenuItem):
             menu=self,
             main_menu=settings.MAIN_MENU,
         )
-        return render_to_response("tom/menu.html",context)
+        return render_to_response("lino/menu.html",context)
         
         
 

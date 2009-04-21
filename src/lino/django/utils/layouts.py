@@ -24,7 +24,6 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.template.loader import render_to_string
 
-#from lino.django.tom import render
             
 class Element:
     def __init__(self,layout):
@@ -107,7 +106,7 @@ class FieldElement(Element):
                 #print widget
             else:
                 value=value()
-                #~ from lino.django.tom import reports
+                #~ from lino.django.utils import reports
                 #~ if isinstance(value,reports.Report):
                     #~ return value.as_html()
                 label=self.name
@@ -206,13 +205,13 @@ class Container(Element):
             return mark_safe("<PRE>%s</PRE>" % e)
 
 class HBOX(Container):
-    template = "tom/includes/hbox.html"
+    template = "lino/includes/hbox.html"
         
 class VBOX(Container):
-    template = "tom/includes/vbox.html"
+    template = "lino/includes/vbox.html"
     
 class GRID_ROW(Container):
-    template = "tom/includes/grid_row.html"
+    template = "lino/includes/grid_row.html"
     
     
     
@@ -288,7 +287,7 @@ class BoundElement:
         #self.layout = layout
         self.row = row
         #self.renderer = renderer
-        from lino.django.tom.render import Row
+        from lino.django.utils.render import Row
         assert isinstance(row,Row)
 
     def as_html(self):

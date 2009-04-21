@@ -18,7 +18,7 @@
 import datetime
 from django.db import models
 #from lino.django.tom import models
-from lino.django.tom.validatingmodel import TomModel, ModelValidationError
+from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 
 from django.utils.safestring import mark_safe
 
@@ -326,7 +326,7 @@ class DocItem(TomModel):
 ## report definitions
 ##        
         
-from lino.django.tom import reports
+from lino.django.utils import reports
 from lino.django.utils.layouts import PageLayout 
 
 

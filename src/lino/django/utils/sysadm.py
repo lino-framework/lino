@@ -16,21 +16,25 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-raise "no longer used"
 
-#from lino.django.tom.menus import Menu
+from lino.django.utils import reports
+from django.contrib.auth.models import Permission, User, Group
 
-#menu = Menu(None,"main","Main Menu")
+class Permissions(reports.Report):
+    model = Permission
+    order_by = 'content_type__app_label codename'
 
-#~ class TomSite(MenuContainer):
-    #~ def __init__(self):
-        #~ #self._registry={}
-        #~ MenuContainer.__init__(self)
-        
-    #~ def register(self,rptclass):
-        #~ self._registry[rptclass.__name__] = rptclass
-        
-    #~ def get_report(self,name):
-        #~ return self._registry[name]()
-        
-#~ site = TomSite()
+
+  
+class Users(reports.Report):
+    queryset=User.objects.order_by("username")
+
+class Groups(reports.Report):
+    queryset=Group.objects.order_by("name")
+
+
+def setup_menu(menu):
+    m = menu.addMenu("system","~System")
+    m.addAction(Permissions())
+    m.addAction(Users())
+    m.addAction(Groups())
