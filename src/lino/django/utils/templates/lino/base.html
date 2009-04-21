@@ -117,6 +117,18 @@ ul.menu2 {
 / <a href="/db/">databrowse</a>
 {% endblock breadcrumbs %}
 </div>
+<div id="messages">
+{% if messages %}
+Messages: 
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+(No messages)
+{% endif %}
+</div>
 <div id="header">
 {% block header %}
 <h1>{{title}}</h1>

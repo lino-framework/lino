@@ -147,3 +147,7 @@ SERIALIZATION_MODULES = {
 }
 
 #print "done", __file__
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+  "django.core.context_processors.auth",
+)

@@ -203,11 +203,16 @@ class Report:
         return self.view_many(request)
         
     def view_many(self,request):
+        #~ msg = "Hello, "+unicode(request.user)
+        #~ print msg
+        #~ request.user.message_set.create(msg)
         if is_editing(request):
             r = render.EditManyReportRenderer(request,True,self)
         else:
             r = render.ViewManyReportRenderer(request,True,self)
         return r.render_to_response()
+        #~ return r.render_to_response(
+          #~ context_instance=RequestContext(request))
             
     def view_one(self,request,row):
         if is_editing(request):
