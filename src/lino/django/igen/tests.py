@@ -148,7 +148,7 @@ class ClientTest(TestCase):
           '/menu/contacts/contacts',
           '/menu/contacts/contacts?editing=1',
           '/menu/contacts/contacts?editing=0',
-          '/instance/igen/Contact/1',
+          #'/instance/igen/Contact/1',
           '/menu/prods/products?row=1',
           '/menu/docs/invoices?row=1',
         ):
@@ -170,24 +170,24 @@ class ClientTest(TestCase):
         
         response = self.client.get('/menu/config/languages/1')
         report = response.context[0].get("report")
-        s = report.layout.render_to_string()
+        s = report.layout.as_html()
 
         response = self.client.get('/menu/prods/products/1')
         report = response.context[0].get("report")
-        s = report.layout.render_to_string()
+        s = report.layout.as_html()
 
         response = self.client.get('/menu/docs/invoices/1')
         report = response.context[0].get("report")
-        s = report.layout.render_to_string()
+        s = report.layout.as_html()
         
         response = self.client.get('/menu/contacts/contacts/1?editing=1')
         report = response.context[0].get("report")
-        s = report.layout.render_to_string()
+        s = report.layout.as_html()
         s = report.navigator()
         
         response = self.client.get('/menu/docs/invoices/1?editing=1')
         report = response.context[0].get("report")
-        s = report.layout.render_to_string()
+        s = report.layout.as_html()
         
         response = self.client.get('/menu/docs/invoices?editing=1')
         report = response.context[0].get("report")

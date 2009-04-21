@@ -40,26 +40,27 @@ def index(request):
     
 
     
-def view_instance(request,app,model,pk):
-    model_class = models.get_model(app,model)
-    #print model_class
-    obj = model_class.objects.get(pk=pk)
-    form_class = modelform_factory(model_class)
-    if request.method == 'POST':
-        frm=form_class(request.POST,instance=obj)
-        if frm.is_valid():
-            frm.save()
-    else:
-        frm=form_class(instance=obj)
+#~ def view_instance(request,app,model,pk):
+    #~ model_class = models.get_model(app,model)
+    #~ #print model_class
+    #~ obj = model_class.objects.get(pk=pk)
+    #~ form_class = modelform_factory(model_class)
+    #~ if request.method == 'POST':
+        #~ frm=form_class(request.POST,instance=obj)
+        #~ if frm.is_valid():
+            #~ frm.save()
+    #~ else:
+        #~ frm=form_class(instance=obj)
     
-    layout = layouts.PageLayout(model_class)
-    context=dict(
-      title=unicode(obj),
-      form=frm,
-      main_menu = settings.MAIN_MENU,
-      layout = layouts.FormLayoutRenderer(frm,layout,editing=True),
-    )
-    return render_to_response("tom/instance.html",context)
+    #~ layout = layouts.PageLayout(model_class)
+    
+    #~ context = dict(
+      #~ title=unicode(obj),
+      #~ form=frm,
+      #~ main_menu = settings.MAIN_MENU,
+      #~ layout = layout.bound_to(Row(...frm,layout,editing=True),
+    #~ )
+    #~ return render_to_response("tom/instance.html",context)
     
 def view_instance_method(request,app,model,pk,meth):
     model_class = models.get_model(app,model)
@@ -72,9 +73,9 @@ def view_instance_method(request,app,model,pk,meth):
     
 def urls(name=''):
     l=[url(r'^%s$' % name, index)]
-    l.append(
-      url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
-          view_instance))
+    #~ l.append(
+      #~ url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)$',
+          #~ view_instance))
     l.append(
       url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
           view_instance_method))

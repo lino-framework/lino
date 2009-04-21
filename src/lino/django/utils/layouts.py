@@ -27,10 +27,13 @@ from django.template.loader import render_to_string
 #from lino.django.tom import render
             
 class Element:
-    pass
+    def __init__(self,layout):
+        assert isinstance(layout,Layout)
+        self.layout = layout
     
 class FieldElement(Element):
     def __init__(self,layout,name):
+        Element.__init__(self,layout)
         a=name.split(":",1)
         if len(a) == 1:
             self.name = name
@@ -67,30 +70,23 @@ class FieldElement(Element):
                 #~ widget.attrs["rows"] = rows
                 #~ widget.attrs["cols"] = cols
 
-    def render(self,renderer):
-        try:
-            if renderer.render_detail:
-                s = renderer.render_detail(self.name)
-                if s is not None:
-                    #print self.name
-                    return s
-            #~ if renderer.master is not None:
-                #~ if hasattr(renderer.master,"render_detail"):
-                    #~ s = renderer.master.render_detail(self.name)
-                    #~ if s is not None:
-                        #~ #print self.name
-                        #~ return s
-            if renderer.editing:
-                return self.as_editable(renderer)
-            return self.as_readonly(renderer)
-            #return mark_safe(renderer.field_to_html(self))
-        except Exception,e:
-            print "Exception in %s.render():" % self.__class__.__name__
-            traceback.print_exc()
-            raise e
+    def render(self,row):
+        return row.render_field(self)
+        #~ try:
+            #~ if renderer.render_detail:
+                #~ s = renderer.render_detail(self.name)
+                #~ if s is not None:
+                    #~ return s
+            #~ if renderer.editing:
+                #~ return self.as_editable(renderer)
+            #~ return self.as_readonly(renderer)
+        #~ except Exception,e:
+            #~ print "Exception in %s.render():" % self.__class__.__name__
+            #~ traceback.print_exc()
+            #~ raise e
         
         
-    def as_readonly(self,renderer):
+    def old_as_readonly(self,renderer):
         instance = renderer.get_instance()
         value = getattr(instance,self.name)
         try:
@@ -149,7 +145,7 @@ class FieldElement(Element):
                 s = label + "<br/>" + s
         return mark_safe(s)
         
-    def as_editable(self,renderer):
+    def old_as_editable(self,renderer):
         form = renderer.get_form()
         try:
             bf = form[self.name] # a BoundField instance
@@ -173,7 +169,7 @@ class FieldElement(Element):
         
 class Container(Element):
     def __init__(self,layout,*elements,**kw):
-        assert isinstance(layout,Layout)
+        Element.__init__(self,layout)
         #print self.__class__.__name__, elements
         self.label = kw.get('label',None)
         self.elements = []
@@ -199,9 +195,9 @@ class Container(Element):
         return "%s(%s)" % (self.__class__.__name__,
           ",".join([str(e) for e in self.elements]))
         
-    def render(self,renderer):
+    def render(self,row):
         context = dict(
-          element = BoundElement(self,renderer)
+          element = BoundElement(self,row)
         )
         try:
             return render_to_string(self.template,context)
@@ -217,6 +213,10 @@ class VBOX(Container):
     
 class GRID_ROW(Container):
     template = "tom/includes/grid_row.html"
+    
+    
+    
+    
 
 
 class Layout:
@@ -244,7 +244,8 @@ class Layout:
         except AttributeError,e:
             return FieldElement(self,name)
         return self.desc2elem(s)
-
+        
+         
     def desc2elem(self,desc):
         if "\n" in desc:
             lines=[]
@@ -264,6 +265,9 @@ class Layout:
             
     def __str__(self):
         return self.__class__.__name__ + "(%s)" % self._main
+        
+    def bound_to(self,row):
+        return BoundElement(self._main,row)
 
 class PageLayout(Layout):
     show_labels = True
@@ -278,100 +282,38 @@ class RowLayout(Layout):
     
 
 class BoundElement:
-    def __init__(self,element,renderer):
+    def __init__(self,element,row):
+        assert isinstance(element,Element)
         self.element = element
-        self.renderer = renderer
+        #self.layout = layout
+        self.row = row
+        #self.renderer = renderer
+        from lino.django.tom.render import Row
+        assert isinstance(row,Row)
 
     def as_html(self):
-        return self.element.render(self.renderer)
+        return self.element.render(self.row)
+        #return self.renderer.render_element(self.element)
   
+    def __unicode__(self):
+        return self.element.render(self.row)
+        
     def children(self):
         assert isinstance(self.element,Container), "%s is not a Container" % self.element
         for e in self.element.elements:
-            yield BoundElement(e,self.renderer)
+            yield BoundElement(e,self.row)
             
     def row_management(self):
         #print "row_management", self.element
         assert isinstance(self.element,GRID_ROW)
-        row = self.renderer.get_row()
-        s = "<td>%s</td>" % row.links()
-        if self.renderer.editing:
-            s += "<td>%d%s</td>" % (row.number,row.pk_field())
-            if row.renderer.can_delete:
-                s += "<td>%s</td>" % row.form["DELETE"]
+        #row = self.renderer.get_row()
+        s = "<td>%s</td>" % self.row.links()
+        if self.row.renderer.editing:
+            s += "<td>%d%s</td>" % (self.row.number,self.row.pk_field())
+            if self.row.renderer.can_delete:
+                s += "<td>%s</td>" % self.row.form["DELETE"]
         else:
-            s += "<td>%d</td>" % (row.number)
+            s += "<td>%d</td>" % (self.row.number)
         return mark_safe(s)
-            
-
-
-
-class LayoutRenderer:
-    def __init__(self,layout,render_detail=None,editing=False):
-        self.layout = layout
-        self.render_detail = render_detail
-        if render_detail:
-            assert callable(render_detail)
-        self.show_labels = layout.show_labels
-        self.editing = editing
-            
-        
-    #~ def __getitem__(self,name):
-        #~ if self.master is None:
-            #~ raise KeyError, name
-        #~ try:
-            #~ return getattr(self.master.report,name)
-        #~ except AttributeError,e:
-            #~ raise KeyError, name
-        #return rptclass()
-        #subrpt = meth(self.master.get_instance())
-        #~ subrpt.set_master(self.master)
-        #~ return subrpt
-        
-    def __unicode__(self):
-        return self.render_to_string()
-        
-    def render_to_string(self):
-        #print self.layout
-        main = self.layout._main
-        context = dict(
-          element = BoundElement(main,self),
-        )
-        try:
-            return render_to_string(main.template,context)
-        except Exception,e:
-            print e
-        
-       
-class FormLayoutRenderer(LayoutRenderer):
-    def __init__(self,form,*args,**kw):
-        LayoutRenderer.__init__(self,*args,**kw)
-        self.form = form
-        
-    def get_form(self):
-        return self.form
-        
-    def get_instance(self):
-        return self.form.instance
-
-class InstanceLayoutRenderer(LayoutRenderer):
-    def __init__(self,instance,*args,**kw):
-        LayoutRenderer.__init__(self,*args,**kw)
-        self.instance = instance
-        
-    def get_instance(self):
-        return self.instance
-
-class RowLayoutRenderer(LayoutRenderer):
-    def __init__(self,row,*args,**kw):
-        LayoutRenderer.__init__(self,*args,**kw)
-        self.row = row
-        
-    def get_row(self):
-        return self.row
-    def get_instance(self):
-        return self.row.instance
-    def get_form(self):
-        return self.row.form
 
 

@@ -92,6 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
+    'lino.django.utils.editing.EditingMiddleware',
 )
 
 ROOT_URLCONF = 'mysites.demo.urls'

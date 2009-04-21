@@ -360,33 +360,26 @@ class ContactPageLayout(PageLayout):
             remarks:6x60
             documents
             """
+            
 
 
 
 class Contacts(reports.Report):
     page_layout_class = ContactPageLayout
-    #detail_reports = "documents"
-    #queryset = Contact.objects.order_by("id")
     columnNames = "id:3 companyName firstName lastName title country"
     can_delete = True
     model = Contact
     order_by = "id"
-
-    #~ documents = DocumentsByCustomer
-    #~ def documents(self,renderer):
-        #~ return DocumentsByCustomer(renderer.instance)
-
-    #~ def documents(self):
-        #~ return DocumentsByCustomer(self)
-        
+    
     def inlines(self):
         return dict(documents=DocumentsByCustomer())
 
+
+        
 class Companies(Contacts):
     #queryset=Contact.objects.order_by("companyName")
     columnNames = "companyName country title firstName lastName"
     queryset = Contact.objects.exclude(companyName__exact=None)
-    model = Contact
     order_by = "companyName"
     #~ queryset = Contact.objects.exclude(companyName__exact=None)\
       #~ .order_by("companyName")
@@ -395,13 +388,15 @@ class Companies(Contacts):
 class Persons(Contacts):
     queryset=Contact.objects.filter(companyName__exact=None)
     order_by = "lastName firstName"
-    columnNames="title firstName lastName country"
+    columnNames = "title firstName lastName country"
     
 class CountryPageLayout(PageLayout):
     main = """
     isocode name
     contacts
     """
+    
+        
 class Countries(reports.Report):
     page_layout_class = CountryPageLayout
     queryset = Country.objects.order_by("isocode")
@@ -466,11 +461,6 @@ class Documents(reports.Report):
     columnNames = "number:4 creation_date:8 customer:20 " \
                   "total_incl total_excl total_vat"
 
-    #items = ItemsByDocument
-
-    #~ def items(self):
-        #~ return ItemsByDocument(self)
-        
     def inlines(self):
         return dict(items=ItemsByDocument())
         

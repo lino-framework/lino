@@ -35,7 +35,7 @@ from django.forms.models import _get_foreign_key
 
 from lino.django.tom import render
 from lino.django.utils import layouts
-from lino.django.utils.requests import is_editing
+from lino.django.utils.editing import is_editing
 
 
 #~ from django import template
@@ -140,8 +140,10 @@ class Report:
         if self.master:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
+        self._inlines = self.inlines()
         
-        self.details = self.inlines()
+    def inlines(self):
+        return {}
          
     def column_headers(self):
         #print "column_headers"
@@ -149,9 +151,6 @@ class Report:
         for e in self.row_layout._main.elements:
             yield e.name
             
-    def inlines(self):
-        return {}
-         
     def get_title(self,renderer):
         #~ if self.title is None:
             #~ return self.label

@@ -49,7 +49,9 @@ except ImportError:
 from lino.reports.constants import *
 from lino.django.utils import layouts
 from lino.misc.etc import assert_pure
-from lino.django.utils.requests import again, is_editing, stop_editing, get_redirect, redirect_to
+from lino.django.utils.requests import again, get_redirect, redirect_to
+#from lino.django.utils.editing import is_editing, stop_editing
+from lino.django.utils import editing
 
 
     
@@ -107,11 +109,18 @@ class Row(object):
     def __init__(self,renderer,instance,number,form=None):
         self.renderer = renderer
         self.report = renderer.report
-        #self.queryset = renderer.queryset
-        #self.request = renderer.request
         self.number = number
         self.instance = instance
         self.form = form
+        
+        self.inline_renderers = {}
+        if renderer.is_main:
+            for name,inline in self.report._inlines.items():
+                self.inline_renderers[name] = \
+                  renderer.detail_renderer(renderer.request,
+                    False,inline,self.instance)
+        
+        
       
     def __getitem__(self,name):
         if self.renderer.editing:
@@ -122,27 +131,19 @@ class Row(object):
         #~ return Cell(self, col)
         
     def as_html(self):
-        r = layouts.RowLayoutRenderer(
-          self,
-          self.report.row_layout,
-          self.render_detail,
-          editing=self.renderer.editing)
+        #~ return self.report.row_layout.render(self)
+        #~ r = layouts.RowLayoutRenderer(
+          #~ self,
+          #~ self.report.row_layout,
+          #~ self.render_detail,
+          #~ editing=self.renderer.editing)
         try:
-            return r.render_to_string()
+            #return r.render_to_string()
+            return self.report.row_layout.bound_to(self).as_html()
         except Exception,e:
             print "Exception in Row.as_html():"
             traceback.print_exc()
             raise e
-
-    #~ def as_readonly(self):
-        #~ r = layouts.ShowLayoutRenderer(self.rpt.row_layout,self.instance)
-        #~ return r.as_html()
-        
-    #~ def as_editable(self):
-        #~ s = "<td>%s</td>" % self.links()
-        #~ s += "<td>%d%s</td>" % (self.number,self.pk_field())
-        #~ r = layouts.EditLayoutRenderer(self.rpt.row_layout,self.form)
-        #~ return r.as_html()
 
     def links(self):
         l=[]
@@ -182,13 +183,16 @@ class Row(object):
             return self.form[pk.name]
         return ""
         
-    def render_detail(self,name):
-        dtlrep = self.report.details.get(name,None)
-        #dtlrep = getattr(self.report,name,None)
-        if dtlrep is None:
-            #print "%s has not detail %r" % (self.report,name)
-            return None
-        return self.renderer.detail_to_string(dtlrep,self.instance)
+        
+        
+    #~ def render_inline(self,inline):
+        #~ dtlrep = self.report.details.get(name,None)
+        #~ #dtlrep = getattr(self.report,name,None)
+        #~ if dtlrep is None:
+            #~ #print "%s has not detail %r" % (self.report,name)
+            #~ return None
+        #~ print self.__class__.__name__, ".render_detail()", name
+        #~ return self.renderer.detail_to_string(inline,self.instance)
         #~ dtlrep = getattr(self.report,name,None)
         #~ if dtlrep is None:
             #~ #print "%s has not detail %r" % (self.report,name)
@@ -200,6 +204,90 @@ class Row(object):
             #~ #print e
             #~ traceback.print_exc()
             #~ raise e
+            
+    def render_field(self,field):
+        r = self.inline_renderers.get(field.name,None)
+        if r is not None:
+            return r.render_to_string()
+        if self.form is None:
+            return self.field_as_readonly(field)
+        try:
+            bf = self.form[field.name] # a BoundField instance
+        except KeyError,e:
+            return self.field_as_readonly(field)
+            
+        if bf.field.widget.is_hidden:
+            return self.field_as_readonly(field)
+        field.setup_widget(bf.field.widget)
+        s = bf.as_widget()
+        if field.layout.show_labels and bf.label:
+            if isinstance(bf.field.widget, forms.CheckboxInput):
+                s = s + " " + bf.label_tag()
+            else:
+                s = bf.label_tag() + "<br/>" + s
+        return mark_safe(s)
+        
+            
+    def field_as_readonly(self,field_element):
+        #instance = renderer.get_instance()
+        value = getattr(self.instance,field_element.name)
+        try:
+            model_field = self.instance._meta.get_field(
+              field_element.name)
+        except models.FieldDoesNotExist,e:
+            # so it is a method
+            if hasattr(value,"field"):
+                #print "it is a method"
+                field = value.field
+                value = value()
+                #print value
+                if field.verbose_name:
+                    label = field.verbose_name
+                else:
+                    label = self.name.replace('_', ' ')
+                #print label
+                widget = field.formfield().widget
+                #print widget
+            else:
+                value = value()
+                #~ from lino.django.tom import reports
+                #~ if isinstance(value,reports.Report):
+                    #~ return value.as_html()
+                label = self.name
+                #widget=widget_for_value(value)
+                widget = forms.TextInput()
+        else:
+            label = model_field.verbose_name
+            form_field = model_field.formfield() 
+            if form_field is None:
+                form_field = forms.CharField()
+                #return ''
+            #print self.instance, field.name
+            widget = form_field.widget
+        if value is None:
+            value = ''
+        #~ else:
+            #~ value = unicode(value)
+        #print self.name, value
+        if isinstance(widget, forms.CheckboxInput):
+            if value:
+                s = "[X]"
+            else: 
+                s = "[&nbsp;&nbsp;]"
+            if field_element.layout.show_labels:
+                s += " " + label
+        elif isinstance(widget, forms.Select):
+            s = "[ " + unicode(value) + " ]"
+            if field_element.layout.show_labels:
+                s = label + "<br/>" + s
+        else:
+            field_element.setup_widget(widget)
+            s = widget.render(field_element.name,value,
+              attrs={"readonly":"readonly","class":"readonly"})
+            if field_element.layout.show_labels:
+                s = label + "<br/>" + s
+        return mark_safe(s)
+        
 
 
 
@@ -319,8 +407,9 @@ class DetailColumn(Column):
 
 class ReportRenderer:
     def __init__(self,report,master_instance=None):
-        from lino.django.tom.reports import Report
-        assert isinstance(report,Report)
+        #print self.__class__.__name__, "__init__()"
+        #from lino.django.tom.reports import Report
+        #assert isinstance(report,Report)
         self.report = report
         self.column_headers = report.column_headers
         #self.title = self.report.get_title()
@@ -349,14 +438,14 @@ class ReportRenderer:
             qs = qs.filter(q)
         return qs
         
-    def render_detail(self,name):
-        dtlrep = self.report.details.get(name,None)
-        if dtlrep is None:
-            #print "%s has not detail %r" % (self.report,name)
-            return None
-        from lino.django.tom.reports import Report
-        assert isinstance(dtlrep,Report),"getattr(%r,%r) is not a Report" % (self.report,name)
-        return self.detail_to_string(dtlrep,self.row.instance)
+    #~ def render_detail(self,name):
+        #~ dtlrep = self.report.details.get(name,None)
+        #~ if dtlrep is None:
+            #~ #print "%s has not detail %r" % (self.report,name)
+            #~ return None
+        #~ from lino.django.tom.reports import Report
+        #~ assert isinstance(dtlrep,Report),"getattr(%r,%r) is not a Report" % (self.report,name)
+        #~ return self.detail_to_string(dtlrep,self.row.instance)
         #~ try:
             #~ r = self.detail_renderer(self.request,False,dtlrep,self.row.instance)
             #~ return r.render_to_string()
@@ -389,7 +478,7 @@ class ColumnsReportRenderer(ReportRenderer):
                       meta.get_field_by_name(fieldname)
                     #print field, model, direct, m2m 
                 except models.FieldDoesNotExist,e:
-                    dtlrep = report.details.get(fieldname,None)
+                    dtlrep = report._inlines.get(fieldname,None)
                     if dtlrep != None:
                         col = DetailColumn(self,
                                            fieldname,
@@ -643,7 +732,7 @@ class ViewReportRenderer(ReportRenderer):
         self.is_main = is_main
         #self.prefix = prefix
         flt = self.report.default_filter
-        if self.master_instance is None:
+        if is_main:
             self.params = self.report.param_form(request.GET)
             if self.params.is_valid():
                 flt = self.params.cleaned_data.get('flt',
@@ -673,13 +762,14 @@ class ViewReportRenderer(ReportRenderer):
         )
         return render_to_string(self.template_to_string,context)
         
-    def detail_to_string(self,dtlrep,instance):
-        r = self.detail_renderer(self.request,False,dtlrep,instance)
-        return r.render_to_string()
+    #~ def detail_to_string(self,dtlrep,instance):
+        #~ r = self.detail_renderer(self.request,False,dtlrep,instance)
+        #~ return r.render_to_string()
         #~ except Exception,e:
             #~ print "Exception in RowViewReportRenderer.render_detail()"
             #~ traceback.print_exc()
             #~ raise e
+            
       
 class ViewManyReportRenderer(ViewReportRenderer):
   
@@ -730,7 +820,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
     
         
     def position_string(self):
-        return  "Page %d of %d." % (self.page.number,self.page.paginator.num_pages)
+        return  "Page %d of %d." % (self.page.number,
+          self.page.paginator.num_pages)
         
     def navigator(self):
         s="""
@@ -792,6 +883,7 @@ class RowViewReportRenderer(ViewReportRenderer):
     "A ViewReportRenderer that renders a single Row."
     detail_renderer = ViewManyReportRenderer
     def __init__(self,row,*args,**kw):
+        assert issubclass(self.detail_renderer,ViewManyReportRenderer)
         ViewReportRenderer.__init__(self,*args,**kw)
         rownum = int(row)
         try:
@@ -801,10 +893,7 @@ class RowViewReportRenderer(ViewReportRenderer):
             if rownum == 0:
                 raise Http404("queryset is empty")
             obj = self.queryset[rownum-1]
-        #self.instance = obj
-        #self.rownum = rownum
         self.row = Row(self,obj,rownum)
-        assert issubclass(self.detail_renderer,ViewManyReportRenderer)
         
     def position_string(self):
         return  "Row %d of %d." % (self.row.number,self.queryset.count())
@@ -833,8 +922,11 @@ class ViewOneReportRenderer(RowViewReportRenderer):
         
         #~ self.layout = layouts.RowLayoutRenderer(self.row,
             #~ self.page_layout(),self.details)
-        self.layout = layouts.RowLayoutRenderer(self.row,
-            self.report.page_layout(),self.render_detail)
+            
+        #~ self.layout = layouts.RowLayoutRenderer(self.row,
+            #~ self.report.page_layout(),self.render_detail)
+            
+        self.layout = self.report.page_layout().bound_to(self.row)
             
         
     def navigator(self):
@@ -896,6 +988,7 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
         
     def __init__(self,*args,**kw):
         ViewManyReportRenderer.__init__(self,*args,**kw)
+        #print self.__class__.__name__,"__init__()"
         
         fs_args = {}
         if self.report.master is not None:
@@ -918,22 +1011,15 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
             fs_args['queryset'] = self.page.object_list
 
         
-        #~ if prefix:
-            #~ formset_class.prefix = prefix
-            #~ #fs_args['queryset'] = self.queryset
-            #~ #object_list = self.queryset
-        #~ else:
-            #~ fs_args['queryset'] = self.page.object_list
-            #~ #object_list = self.page.object_list
-        
         if self.request.method == 'POST':
             fs = formset_class(self.request.POST,**fs_args)
             if fs.is_valid():
+                #print self.__class__.__name__, "valid"
                 fs.save()
                 if self.can_delete and fs.deleted_forms:
                     for form in fs.deleted_forms:
                         print "Deleted:", form.instance
-                stop_editing(self.request)
+                editing.stop_editing(self.request)
                 """
                 start from begin because paginator and page must reload
                 e.g. if an instance has been added, it may now be at 
@@ -943,9 +1029,12 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
                 redirect_to(self.request,self.again(editing=None))
             else:
                 print fs.errors
+                editing.continue_editing(self.request)
         else:
+            #print self.__class__.__name__, "not POST"
             fs = formset_class(**fs_args)
         self.formset = fs
+        #print self.__class__.__name__, "__init__() done"
         
 
     def rows(self):
@@ -966,27 +1055,28 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
     def __init__(self,*args,**kw):
         ViewOneReportRenderer.__init__(self,*args,**kw)
         if self.request.method == 'POST':
-            frm = self.report.form_class(self.request.POST,instance=self.row.instance)
+            frm = self.report.form_class(self.request.POST,
+              instance=self.row.instance)
             if frm.is_valid():
+                #print self.__class__.__name__, "valid"
                 frm.save()
-                stop_editing(self.request)
+                editing.stop_editing(self.request)
                 redirect_to(self.request,self.again(editing=None))
                 #return HttpResponseRedirect(self.again(editing=None))
             else:
                 print frm.errors
+                editing.continue_editing(self.request)
         else:
             frm = self.report.form_class(instance=self.row.instance)
         self.form = frm
         
-        layout = self.report.page_layout()
-        
-        self.layout = layouts.FormLayoutRenderer(frm,layout,
-            render_detail=self.render_detail,editing=True)
-        
         # hack: no need to instanciate a new Row for this...
         self.row.form = frm
-        #self.row = Row(self,self.instance,self.rownum,frm)
         
+        self.layout = self.report.page_layout().bound_to(self.row)
+        
+        #self.row = Row(self,self.instance,self.rownum,frm)
+        #print self.__class__.__name__, "__init__() done"
 
         
 class PdfManyReportRenderer(ViewManyReportRenderer):
@@ -1019,8 +1109,8 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
         template = get_template("tom/page_pdf.html")
         #self.row = Row(self,obj,rownum)
         obj = self.row.instance
-        layout = layouts.InstanceLayoutRenderer(obj,
-          self.report.page_layout(),render_detail=self.render_detail)
+        #~ layout = layouts.InstanceLayoutRenderer(obj,
+          #~ self.report.page_layout(),render_detail=self.render_detail)
         context = dict(
           report=self,
           title=u"%s - %s" % (self.get_title(),obj),
@@ -1030,10 +1120,12 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
         if not pisa:
             return HttpResponse(html)
         result = cStringIO.StringIO()
-        pdf = pisa.pisaDocument(cStringIO.StringIO(html.encode("ISO-8859-1")), result)
+        pdf = pisa.pisaDocument(cStringIO.StringIO(\
+                html.encode("ISO-8859-1")), result)
         if pdf.err:
             raise Exception(cgi.escape(html))
-        return HttpResponse(result.getvalue(),mimetype='application/pdf')
+        return HttpResponse(result.getvalue(),
+            mimetype='application/pdf')
 
 
 class RowPrintReportRenderer(RowViewReportRenderer):
