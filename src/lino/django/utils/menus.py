@@ -21,6 +21,7 @@ from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response
 from django.utils.safestring import mark_safe
+from django import template 
 
         
 class Component:
@@ -111,6 +112,7 @@ class Action(MenuItem):
         return self.actor.get_urls(name)
         
 class Menu(MenuItem):
+    template_to_reponse = 'lino/menu.html'
     def __init__(self,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,name,label,**kw)
         self.items = []
@@ -135,17 +137,6 @@ class Menu(MenuItem):
         for mi in self.items:
             yield mi
         
-    def get_urls_old(self,name=''):
-        #print "Menu.get_urls()",name
-        urlpatterns = patterns('',
-          url(r'^%s$' % name, self.view))
-        if len(name):
-            name += "/"
-        for mi in self.items:
-            urlpatterns += mi.get_urls(name+mi.name)
-        #print urlpatterns
-        return urlpatterns
-        
     def as_html(self,level=1):
         if level == 1:
             s = ''
@@ -168,16 +159,21 @@ class Menu(MenuItem):
         return patterns('',*l)
         
     def urls(self):
-        return self.get_urls(self.name)
+        return self.get_urls() #self.name)
     urls = property(urls)
         
+        
     def view(self,request):
-        context = dict(
+        from lino.django.utils.sites import site as lino_site
+        context = lino_site.context()
+        context.update(
             title=self.label,
             menu=self,
-            main_menu=settings.MAIN_MENU,
         )
-        return render_to_response("lino/menu.html",context)
+        #return render_to_response("lino/menu.html",context)
+        return render_to_response(self.template_to_reponse,
+          context,
+          context_instance=template.RequestContext(request))
         
         
 

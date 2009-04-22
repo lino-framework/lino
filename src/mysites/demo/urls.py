@@ -24,31 +24,35 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
+from lino.django.utils.sites import site as lino_site
+#lino_site.autodiscover()
 
-from lino.django.utils.menus import Menu
-menu = Menu("menu","Main Menu")
 
-from lino.django.igen.menu import setup_menu
-setup_menu(menu)
+#~ from lino.django.igen.menu import setup_menu
+#~ setup_menu(menu)
 
-from lino.django.voc.menu import setup_menu
-setup_menu(menu)
+#~ from lino.django.voc.menu import setup_menu
+#~ setup_menu(menu)
 
-from lino.django.utils.sysadm import setup_menu
-setup_menu(menu)
+#~ from lino.django.utils.sysadm import setup_menu
+#~ setup_menu(menu)
 
-urlpatterns = menu.urls
+#urlpatterns = menu.urls
 
-settings.MAIN_MENU = menu
 
-from lino.django.utils import urls as lino_site
+#from lino.django.utils import sites as lino_site
 
-urlpatterns += patterns('',
+
+urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     #(r'^reports/', include(reports.site.urls)),
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
-    (r'', include(lino_site.urls())),
+    (r'^lino/', include(lino_site.urls)),
+    (r'^$', lino_site.index),
 )    
 
+#from django.contrib.auth import urls as auth_site
+
+#urlpatterns += auth_site.urlpatterns

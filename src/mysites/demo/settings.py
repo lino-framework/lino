@@ -151,3 +151,5 @@ SERIALIZATION_MODULES = {
 TEMPLATE_CONTEXT_PROCESSORS = (
   "django.core.context_processors.auth",
 )
+
+#LOGIN_URL = '/accounts/login/'

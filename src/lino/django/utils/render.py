@@ -24,11 +24,12 @@ from StringIO import StringIO # cStringIO doesn't support Unicode
 import cStringIO
 
 
-from django.conf import settings
+#from django.conf import settings
 from django import forms
 from django.db import models
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
+from django import template 
 from django.shortcuts import render_to_response 
 from django.forms.models import modelform_factory, modelformset_factory, inlineformset_factory
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
@@ -52,6 +53,7 @@ from lino.misc.etc import assert_pure
 from lino.django.utils.requests import again, get_redirect, redirect_to
 #from lino.django.utils.editing import is_editing, stop_editing
 from lino.django.utils import editing
+from lino.django.utils.sites import site as lino_site
 
 
     
@@ -744,17 +746,20 @@ class ViewReportRenderer(ReportRenderer):
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
       
-    def render_to_response(self):
+    def render_to_response(self,**kw):
         url = get_redirect(self.request)
         if url:
             return HttpResponseRedirect(url)
-        context=dict(
+        context = lino_site.context()
+        context.update(
           report = self,
-          main_menu = settings.MAIN_MENU,
+          #main_menu = lino_site._menu,
           title = self.get_title(),
           form_action = self.again(editing=None),
         )
-        return render_to_response(self.template_to_reponse,context)
+        return render_to_response(self.template_to_reponse,
+          context,
+          context_instance=template.RequestContext(self.request))
         
     def render_to_string(self):
         context=dict(

@@ -22,6 +22,8 @@ from django import forms
 from django.forms.models import modelform_factory
 from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import _get_foreign_key
+from django.contrib.auth.decorators import login_required
+
 
 #from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 #from django.shortcuts import render_to_response 
@@ -199,9 +201,9 @@ class Report:
         l.append(url(r'^%s/(\d+)/print$' % name, self.print_one_view))
         return l
 
-    def view(self,request):
-        return self.view_many(request)
-        
+    #~ def view(self,request):
+        #~ return self.view_many(request)
+    @login_required
     def view_many(self,request):
         #~ msg = "Hello, "+unicode(request.user)
         #~ print msg
@@ -211,9 +213,8 @@ class Report:
         else:
             r = render.ViewManyReportRenderer(request,True,self)
         return r.render_to_response()
-        #~ return r.render_to_response(
-          #~ context_instance=RequestContext(request))
             
+    @login_required
     def view_one(self,request,row):
         if is_editing(request):
             r = render.EditOneReportRenderer(row,request,True,self)
@@ -221,12 +222,15 @@ class Report:
             r = render.ViewOneReportRenderer(row,request,True,self)
         return r.render_to_response()
 
+    @login_required
     def pdf_view_one(self,request,row):
         return render.PdfOneReportRenderer(row,request,True,self).render()
         
+    @login_required
     def pdf_view_many(self, request):
         return render.PdfManyReportRenderer(request,True,self).render()
 
+    @login_required
     def print_one_view(self,request,row):
         return render.RowPrintReportRenderer(row,request,True,self).render()
 

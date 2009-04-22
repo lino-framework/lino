@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+raise "replaced by lino.django.utils.sites.site.urls"
 
 from django.conf import settings
 from django.db import models
@@ -24,6 +25,8 @@ from django.shortcuts import render_to_response
 from django.conf.urls.defaults import patterns, url, include
 
 #from lino.django.utils import layouts
+
+#LINO_HAS_AUTH = True
 
     
 def index(request):
@@ -80,5 +83,9 @@ def urls(name=''):
       l.append(
         url(r'^instance/(?P<app>\w+)/(?P<model>\w+)/(?P<pk>\w+)/(?P<meth>\w+)$',
             view_instance_method))
+    #~ if LINO_HAS_AUTH:
+        #~ l.append(
+          #~ url(r'^accounts/login/$', 
+          #~ 'django.contrib.auth.views.login'))
     return patterns('',*l)
 
