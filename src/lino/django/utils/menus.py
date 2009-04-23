@@ -85,7 +85,8 @@ class Component:
         return s + self.name
 
     def as_html(self,level=None):
-        return mark_safe('<a href="%s">%s</a>' % (self.get_url_path(),self.label))
+        return mark_safe('<a href="%s">%s</a>' % (
+          self.get_url_path(),self.label))
         
 class MenuItem(Component):
     pass
@@ -111,7 +112,7 @@ class Action(MenuItem):
         return self.actor.get_urls(name)
         
 class Menu(MenuItem):
-    template_to_reponse = 'lino/menu.html'
+    template_to_response = 'lino/menu.html'
     def __init__(self,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,name,label,**kw)
         self.items = []
@@ -170,7 +171,7 @@ class Menu(MenuItem):
             menu=self,
         )
         #return render_to_response("lino/menu.html",context)
-        return render_to_response(self.template_to_reponse,
+        return render_to_response(self.template_to_response,
           context,
           context_instance=template.RequestContext(request))
         

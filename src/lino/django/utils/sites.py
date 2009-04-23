@@ -96,17 +96,23 @@ class LinoSite: #(AdminSite):
 
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
-            try:
-                app_path = mod.__path__
-            except AttributeError:
-                continue
+            lino_setup = getattr(mod,"lino_setup",None)
+            if lino_setup:
+                #print "lino_setup", app
+                lino_setup(self)
+                
+            #~ mod = import_module(app)
+            #~ try:
+                #~ app_path = mod.__path__
+            #~ except AttributeError:
+                #~ continue
 
-            try:
-                imp.find_module('lino_setup', app_path)
-            except ImportError:
-                continue
-            mod = import_module("%s.lino_setup" % app)
-            mod.setup_menu(self._menu)
+            #~ try:
+                #~ imp.find_module('lino_setup', app_path)
+            #~ except ImportError:
+                #~ continue
+            #~ mod = import_module("%s.lino_setup" % app)
+            #~ mod.setup_menu(self._menu)
             
         from lino.django.utils.sysadm import setup_menu
         setup_menu(self._menu)
@@ -114,15 +120,17 @@ class LinoSite: #(AdminSite):
         self.done = True
         self.loading = False
         
+    def addMenu(self,*args,**kw):
+        return self._menu.addMenu(*args,**kw)
        
-    def register(self,*args,**kw):
-        raise NotImplementedError
-    def unregister(self,*args,**kw):
-        raise NotImplementedError
-    def root(self,*args,**kw):
-        raise NotImplementedError
-    def model_page(self,*args,**kw):
-        raise NotImplementedError
+    #~ def register(self,*args,**kw):
+        #~ raise NotImplementedError
+    #~ def unregister(self,*args,**kw):
+        #~ raise NotImplementedError
+    #~ def root(self,*args,**kw):
+        #~ raise NotImplementedError
+    #~ def model_page(self,*args,**kw):
+        #~ raise NotImplementedError
         
     def context(self,**kw):
         d = dict(
@@ -155,6 +163,7 @@ class LinoSite: #(AdminSite):
                 if request.session.test_cookie_worked():
                     request.session.delete_test_cookie()
                 return HttpResponseRedirect(redirect_to)
+            print "not valid"
         else:
             form = AuthenticationForm(request)
         request.session.set_test_cookie()
@@ -163,7 +172,7 @@ class LinoSite: #(AdminSite):
         else:
             current_site = RequestSite(request)
         context = self.context(
-            title = _('login()'),
+            title = _('Login'),
             form = form,
             redirect_field_name = redirect_to,
             site = current_site,

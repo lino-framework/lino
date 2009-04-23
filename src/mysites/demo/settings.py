@@ -155,6 +155,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = "/"
 
-EMAIL_HOST="mail.hot.ee"
-#EMAIL_PORT=""
-LINO_WEBMASTER="luc.saffre@mail.ee"
+EMAIL_HOST = "mail.hot.ee"
+#EMAIL_PORT = ""
+LINO_WEBMASTER = "luc.saffre@mail.ee"
