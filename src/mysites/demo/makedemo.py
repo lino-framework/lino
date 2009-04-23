@@ -37,8 +37,8 @@ def main():
     call_command('syncdb',interactive=False)
     #call_command('flush',interactive=False)
     call_command('loaddata','demo')
-    User.objects.create_superuser('root','root@example.com','root')
-    User.objects.create_user('user','user@example.com','user')
+    User.objects.create_superuser('root','luc.saffre@gmx.net','root')
+    User.objects.create_user('user','luc.saffre@gmx.net','user')
         
 
 if __name__ == "__main__":

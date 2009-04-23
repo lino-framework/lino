@@ -77,13 +77,12 @@ class Component:
   
     def get_url_path(self):
         if self.parent:
-            s=self.parent.get_url_path() + "/"
+            s = self.parent.get_url_path()
+            if len(s) and not s.endswith("/"):
+                s += "/"
         else:
             s='/'
         return s + self.name
-        #~ return "/".join(
-          #~ [p.name for p in self.parents() if len(p.name)]
-            #~ + [self.name])
 
     def as_html(self,level=None):
         return mark_safe('<a href="%s">%s</a>' % (self.get_url_path(),self.label))
@@ -150,7 +149,7 @@ class Menu(MenuItem):
         
     def get_urls(self,name=''):
         #print "Menu.get_urls()",name
-        l=[url(r'^%s$' % name, self.view)]
+        l = [url(r'^%s$' % name, self.view)]
         if len(name) and not name.endswith("/"):
             name += "/"
         for mi in self.items:

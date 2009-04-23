@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}" xml:lang="{{ LANGUAGE_CODE }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-<title>{% block title %}{{ title }}{% endblock %}</title>
+<title>{{ title }}</title>
 {% block style %}
 <style type="text/css">
 * { margin:0; padding:0; }
@@ -111,14 +111,13 @@ ul.menu2 {
 {{ main_menu.as_html}}
 </div>
 <div id="breadcrumbs">
-{% if user.is_authenticated and user.is_staff %}
+{% if user.is_authenticated%}
 {% trans 'Welcome,' %} <strong>{% firstof user.first_name user.username %}</strong>. 
-{% block userlinks %}
-{% url django-admindocs-docroot as docsroot %}
-{% if docsroot %}<a href="{{ docsroot }}">{% trans 'Documentation' %}</a> / 
-{% endif %}<a href="{{ root_path }}password_change/">{% trans 'Change password' %}</a> / 
-<a href="{{ root_path }}logout/">{% trans 'Log out' %}</a> /
-{% endblock %}
+<a href="/accounts/password_change/">{% trans 'Change password' %}</a> / 
+<a href="/accounts/password_reset/">{% trans 'Reset password' %}</a> / 
+<a href="/accounts/logout/">{% trans 'Log out' %}</a> /
+{% else %}
+<a href="/accounts/login/">{% trans 'Log in' %}</a> /
 {% endif %}
 {% block breadcrumbs %}
 <a href="/">home</a>
@@ -134,13 +133,11 @@ Messages:
     <li>{{ message }}</li>
     {% endfor %}
 </ul>
-{% else %}
-(No messages)
 {% endif %}
 </div>
 <div id="header">
 {% block header %}
-<h1>{{title}}</h1>
+<h1>{{ title }}</h1>
 {% endblock header %}
 </div>
 <div id="navigation">

@@ -58,10 +58,26 @@ class EditingMiddleware:
                 request.session["editing"] = path = None
         
     def process_response(self, request, response):
-        if request.stop_editing and not request.continue_editing:
-            request.session["editing"] = None
+        try:
+            if request.stop_editing and not request.continue_editing:
+                request.session["editing"] = None
+        except AttributeError,e:
+            pass
         return response
-            
+        
+"""        
+[23/Apr/2009 09:48:36] "GET / HTTP/1.1" 200 4620
+Traceback (most recent call last):
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 278, in run
+    self.result = application(self.environ, self.start_response)
+  File "l:\snapshot\django\django\core\servers\basehttp.py", line 635, in __call__
+    return self.application(environ, start_response)
+  File "l:\snapshot\django\django\core\handlers\wsgi.py", line 245, in __call__
+    response = middleware_method(request, response)
+  File "c:\drives\t\svnwork\lino\trunk\src\lino\django\utils\editing.py", line 61, in process_response
+    if request.stop_editing and not request.continue_editing:
+AttributeError: 'WSGIRequest' object has no attribute 'stop_editing'        
+"""            
 
 def is_editing(request):
     path = request.session.get("editing",None)

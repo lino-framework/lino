@@ -152,4 +152,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
   "django.core.context_processors.auth",
 )
 
-#LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = "/"
+
+EMAIL_HOST="mail.hot.ee"
+#EMAIL_PORT=""
+LINO_WEBMASTER="luc.saffre@mail.ee"

@@ -42,6 +42,7 @@ from lino.django.utils.sites import site as lino_site
 
 #from lino.django.utils import sites as lino_site
 
+from django.contrib.auth import urls as auth_urls
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
@@ -49,8 +50,10 @@ urlpatterns = patterns('',
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
-    (r'^lino/', include(lino_site.urls)),
-    (r'^$', lino_site.index),
+    #(r'^lino/', include(lino_site.get_urls())),
+    (r'', include(lino_site.get_urls())),
+    #(r'^accounts/', include(auth_urls)),
+    #(r'^$', lino_site.index),
 )    
 
 #from django.contrib.auth import urls as auth_site
