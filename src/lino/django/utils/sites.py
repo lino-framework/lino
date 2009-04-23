@@ -28,6 +28,7 @@ from lino.django.utils.menus import Menu
 
 class LinoSite(AdminSite):
     index_template = 'lino/index.html'
+    login_template = 'lino/login.html'
   
     def __init__(self,*args,**kw):
         AdminSite.__init__(self,*args,**kw)
