@@ -284,6 +284,73 @@ class Row(object):
                 s = label + "<br/>" + s
         else:
             field_element.setup_widget(widget)
+            #~ s = widget.render(field_element.name,value,
+              #~ attrs={"readonly":"readonly","class":"readonly"})
+            style = widget.attrs.get("style","")
+            size = widget.attrs.get("size",None)
+            if size:
+                style += "width:%sem;" % size
+            s = """
+<span class="textinput" style="%s"">%s</span>            
+            """ % (style,unicode(value))
+            if field_element.layout.show_labels:
+                s = label + "<br/>" + s
+        return mark_safe(s)
+        
+    def old_field_as_readonly(self,field_element):
+        #instance = renderer.get_instance()
+        value = getattr(self.instance,field_element.name)
+        try:
+            model_field = self.instance._meta.get_field(
+              field_element.name)
+        except models.FieldDoesNotExist,e:
+            # so it is a method
+            if hasattr(value,"field"):
+                #print "it is a method"
+                field = value.field
+                value = value()
+                #print value
+                if field.verbose_name:
+                    label = field.verbose_name
+                else:
+                    label = self.name.replace('_', ' ')
+                #print label
+                widget = field.formfield().widget
+                #print widget
+            else:
+                value = value()
+                #~ from lino.django.tom import reports
+                #~ if isinstance(value,reports.Report):
+                    #~ return value.as_html()
+                label = self.name
+                #widget=widget_for_value(value)
+                widget = forms.TextInput()
+        else:
+            label = model_field.verbose_name
+            form_field = model_field.formfield() 
+            if form_field is None:
+                form_field = forms.CharField()
+                #return ''
+            #print self.instance, field.name
+            widget = form_field.widget
+        if value is None:
+            value = ''
+        #~ else:
+            #~ value = unicode(value)
+        #print self.name, value
+        if isinstance(widget, forms.CheckboxInput):
+            if value:
+                s = "[X]"
+            else: 
+                s = "[&nbsp;&nbsp;]"
+            if field_element.layout.show_labels:
+                s += " " + label
+        elif isinstance(widget, forms.Select):
+            s = "[ " + unicode(value) + " ]"
+            if field_element.layout.show_labels:
+                s = label + "<br/>" + s
+        else:
+            field_element.setup_widget(widget)
             s = widget.render(field_element.name,value,
               attrs={"readonly":"readonly","class":"readonly"})
             if field_element.layout.show_labels:
@@ -746,14 +813,15 @@ class ViewReportRenderer(ReportRenderer):
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
       
+    def can_change(self):
+        return self.report.can_change(self.request)
+            
     def render_to_response(self,**kw):
         url = get_redirect(self.request)
         if url:
             return HttpResponseRedirect(url)
-        context = lino_site.context()
-        context.update(
+        context = lino_site.context(self.request,
           report = self,
-          #main_menu = lino_site._menu,
           title = self.get_title(),
           form_action = self.again(editing=None),
         )
@@ -855,19 +923,20 @@ class ViewManyReportRenderer(ViewReportRenderer):
         <span class="current">%s</span>
         """ % self.position_string()
 
-        if self.editing:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=0),"show")
-        else:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=1),"edit")
+        if self.can_change():
+            if self.editing:
+                s += ' <a href="%s">%s</a>' % (
+                  self.again(editing=0),"show")
+            else:
+                s += ' <a href="%s">%s</a>' % (
+                  self.again(editing=1),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         s += """
         </span>
         </div>
         """     
         return mark_safe(s)
-            
+        
     def rows(self):
         if self.master_instance is None:
             rownum = self.page.start_index()
@@ -960,12 +1029,13 @@ class ViewOneReportRenderer(RowViewReportRenderer):
             s += text
         s += " "
         s += '<span class="current">%s</span>' % self.position_string()
-        if self.editing:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=0),"show")
-        else:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=1),"edit")
+        if self.can_change():
+            if self.editing:
+                s += ' <a href="%s">%s</a>' % (
+                  self.again(editing=0),"show")
+            else:
+                s += ' <a href="%s">%s</a>' % (
+                  self.again(editing=1),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         s += """</span></div>"""     
@@ -1139,3 +1209,12 @@ class RowPrintReportRenderer(RowViewReportRenderer):
         context = dict(instance=self.row.instance)
         return render_to_response(tplname,context)
 
+
+
+def sorry(request):
+    context = lino_site.context(request,
+      title = "Sorry",
+    )
+    return render_to_response("lino/sorry.html",
+      context,
+      context_instance = template.RequestContext(request))

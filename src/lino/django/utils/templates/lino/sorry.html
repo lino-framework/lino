@@ -1,0 +1,8 @@
+{% extends "lino/base_site.html" %}
+
+{% block content %}
+
+Sorry {{user.username}}, you have no access permission for this area.
+Consider <a href="/accounts/login">logging in</a> as another user.
+
+{% endblock %}

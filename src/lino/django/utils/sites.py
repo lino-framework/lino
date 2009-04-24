@@ -34,7 +34,7 @@ from lino.tools.my_import import my_import as import_module
 from django import template 
 from django.views.decorators.cache import never_cache 
 #from django.shortcuts import render_to_response 
-from lino.django.utils.menus import Menu
+from lino.django.utils.menus import Menu, MenuRenderer
 
 
 
@@ -132,16 +132,16 @@ class LinoSite: #(AdminSite):
     #~ def model_page(self,*args,**kw):
         #~ raise NotImplementedError
         
-    def context(self,**kw):
+    def context(self,request,**kw):
         d = dict(
-          main_menu = self._menu,
+          main_menu = MenuRenderer(self._menu,request),
           root_path = self.root_path,
         )
         d.update(kw)
         return d
         
     def index(self, request, extra_context=None):
-        context = self.context(title=self._menu.label)
+        context = self.context(request,title=self._menu.label)
         context.update(extra_context or {})
         return render_to_response(self.index_template, context,
             context_instance=template.RequestContext(request)
@@ -171,7 +171,7 @@ class LinoSite: #(AdminSite):
             current_site = Site.objects.get_current()
         else:
             current_site = RequestSite(request)
-        context = self.context(
+        context = self.context(request,
             title = _('Login'),
             form = form,
             redirect_field_name = redirect_to,
@@ -195,7 +195,7 @@ class LinoSite: #(AdminSite):
             if redirect_to:
                 return HttpResponseRedirect(redirect_to)
             else:
-                context = self.context(
+                context = self.context(request,
                     title=_('Logged out')
                 )
                 return render_to_response(template_name, context, 
@@ -253,7 +253,7 @@ class LinoSite: #(AdminSite):
                 return HttpResponseRedirect(post_reset_redirect)
         else:
             form = PasswordResetForm()
-        context = self.context(
+        context = self.context(request,
             form=form,
             title=_("Password reset"),
         )
@@ -261,7 +261,7 @@ class LinoSite: #(AdminSite):
           context_instance=RequestContext(request))
 
     def password_reset_done(self,request, template_name='registration/password_reset_done.html'):
-        context = self.context(
+        context = self.context(request,
             title="password_reset_done()"
         )
         return render_to_response(template_name,context,context_instance=RequestContext(request))
@@ -298,7 +298,7 @@ class LinoSite: #(AdminSite):
         else:
             context_instance['validlink'] = False
             form = None
-        context = self.context(
+        context = self.context(request,
             title=_('Password reset'),
             form = form,
         )
@@ -306,7 +306,7 @@ class LinoSite: #(AdminSite):
 
     def password_reset_complete(self,request, 
                     template_name='registration/password_reset_complete.html'):
-        context = self.context(
+        context = self.context(request,
             title=_('Password reset complete')
         )
         return render_to_response(template_name, context,
@@ -324,7 +324,7 @@ class LinoSite: #(AdminSite):
                 return HttpResponseRedirect(post_change_redirect)
         else:
             form = PasswordChangeForm(request.user)
-        context = self.context(
+        context = self.context(request,
             title="password_change()",
             form=form,
         )
@@ -334,7 +334,7 @@ class LinoSite: #(AdminSite):
 
     def password_change_done(self,request, 
                              template_name='registration/password_change_done.html'):
-        context = self.context(
+        context = self.context(request,
             title=_('Password change successful'),
         )
         return render_to_response(template_name, context,context_instance=RequestContext(request))

@@ -187,6 +187,16 @@ class Report:
                 self.model)
         return self._page_layout
             
+
+    def can_view(self,request,row=None):
+        return True
+        
+    def can_add(self,request,row=None):
+        return True
+        
+    def can_change(self,request,row=None):
+        return request.user.is_authenticated()
+        
         
     #~ def __unicode__(self):
         #~ #return unicode(self.as_text())
@@ -203,35 +213,45 @@ class Report:
 
     #~ def view(self,request):
         #~ return self.view_many(request)
-    @login_required
+    #@login_required
     def view_many(self,request):
         #~ msg = "Hello, "+unicode(request.user)
         #~ print msg
         #~ request.user.message_set.create(msg)
-        if is_editing(request):
+        if not self.can_view(request):
+            return render.sorry(request)
+        if is_editing(request) and self.can_change(request):
             r = render.EditManyReportRenderer(request,True,self)
         else:
             r = render.ViewManyReportRenderer(request,True,self)
         return r.render_to_response()
             
-    @login_required
+    #@login_required
     def view_one(self,request,row):
-        if is_editing(request):
+        if not self.can_view(request):
+            return render.sorry(request)
+        if is_editing(request) and self.can_change(request):
             r = render.EditOneReportRenderer(row,request,True,self)
         else:
             r = render.ViewOneReportRenderer(row,request,True,self)
         return r.render_to_response()
 
-    @login_required
+    #@login_required
     def pdf_view_one(self,request,row):
+        if not self.can_view(request):
+            return render.sorry(request)
         return render.PdfOneReportRenderer(row,request,True,self).render()
         
-    @login_required
+    #@login_required
     def pdf_view_many(self, request):
+        if not self.can_view(request):
+            return render.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render()
 
-    @login_required
+    #@login_required
     def print_one_view(self,request,row):
+        if not self.can_view(request):
+            return render.sorry(request)
         return render.RowPrintReportRenderer(row,request,True,self).render()
 
     def as_text(self, *args,**kw):

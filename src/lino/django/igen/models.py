@@ -409,10 +409,16 @@ class Languages(reports.Report):
     queryset=Language.objects.order_by("id")
 
 class PaymentTerms(reports.Report):
-    queryset=PaymentTerm.objects.order_by("id")
+    model = PaymentTerm
+    order_by = "id"
+    def can_view(self,request):
+      return request.user.is_staff
 
 class ShippingModes(reports.Report):
-    queryset=ShippingMode.objects.order_by("id")
+    model = ShippingMode
+    order_by = "id"
+    def can_view(self,request):
+      return request.user.is_staff
 
 class ProductCats(reports.Report):
     queryset=ProductCat.objects.order_by("id")

@@ -39,6 +39,7 @@ table.grid { background:#bbbbbb; border: 1pt solid white; border-collapse: colla
 table.grid td { border: 1pt solid white; padding: 5px 5px; }
 input.readonly { background:yellow;}
 textarea.readonly { background:yellow;}
+span.textinput {background:white;display:inline-block;}
 
 
 #menu ul a {
@@ -108,7 +109,7 @@ ul.menu2 {
 </head>
 <body id="{% block bodyid %}page{% endblock %}">
 <div id="menu">
-{{ main_menu.as_html}}
+{{ main_menu.as_html }}
 </div>
 <div id="breadcrumbs">
 {% if user.is_authenticated%}

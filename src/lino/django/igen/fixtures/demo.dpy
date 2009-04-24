@@ -57,7 +57,7 @@ contact_builder = Instantiator(Contact,fieldnames="""
 invoice_builder = Instantiator(Invoice,
     "number customer creation_date payment_term shipping_mode")
 
-order_builder = Instantiator(Invoice,
+order_builder = Instantiator(Order,
     "number customer creation_date payment_term shipping_mode")
   
 docitem_builder = Instantiator(DocItem,

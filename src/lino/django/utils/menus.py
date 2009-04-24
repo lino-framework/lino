@@ -84,9 +84,14 @@ class Component:
             s='/'
         return s + self.name
 
-    def as_html(self,level=None):
-        return mark_safe('<a href="%s">%s</a>' % (
-          self.get_url_path(),self.label))
+    def as_html(self,request,level=None):
+        if self.can_view(request):
+            return mark_safe('<a href="%s">%s</a>' % (
+              self.get_url_path(),self.label))
+        return u''
+              
+    def can_view(self,request):
+        return True
         
 class MenuItem(Component):
     pass
@@ -98,19 +103,22 @@ class Action(MenuItem):
                  hotkey=None,
                  *args,**kw):
         if name is None:
-            name=actor.name
+            name = actor.name
         if label is None:
-            label=actor.label
+            label = actor.label
         Component.__init__(self,parent,name,label,*args,**kw)
-        self.actor=actor
-        self.hotkey=hotkey
+        self.actor = actor
+        self.hotkey = hotkey
         
     def view(self,request):
         return self.actor.view(request)
         
     def get_urls(self,name):
         return self.actor.get_urls(name)
-        
+
+    def can_view(self,request):
+        return self.actor.can_view(request)
+
 class Menu(MenuItem):
     template_to_response = 'lino/menu.html'
     def __init__(self,name,label=None,parent=None,**kw):
@@ -137,14 +145,14 @@ class Menu(MenuItem):
         for mi in self.items:
             yield mi
         
-    def as_html(self,level=1):
+    def as_html(self,request,level=1):
         if level == 1:
             s = ''
         else:
-            s = Component.as_html(self) # + "&nbsp;: "
+            s = Component.as_html(self,request)
         s += '\n<ul class="menu%d">' % level
         for mi in self.items:
-            s += '\n<li>%s</li>' % mi.as_html(level+1)
+            s += '\n<li>%s</li>' % mi.as_html(request,level+1)
         s += '\n</ul>\n'
         return mark_safe(s)
         
@@ -165,10 +173,9 @@ class Menu(MenuItem):
         
     def view(self,request):
         from lino.django.utils.sites import site as lino_site
-        context = lino_site.context()
-        context.update(
-            title=self.label,
-            menu=self,
+        context = lino_site.context(request,
+            title = self.label,
+            menu = MenuRenderer(self,request),
         )
         #return render_to_response("lino/menu.html",context)
         return render_to_response(self.template_to_response,
@@ -177,3 +184,10 @@ class Menu(MenuItem):
         
         
 
+class MenuRenderer:
+    def __init__(self,menu,request):
+        self.menu = menu
+        self.request = request
+        
+    def as_html(self):
+        return self.menu.as_html(self.request)

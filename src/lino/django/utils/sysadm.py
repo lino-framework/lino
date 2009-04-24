@@ -33,8 +33,12 @@ class Groups(reports.Report):
     queryset=Group.objects.order_by("name")
 
 
+def staff_only(request):
+    return request.user.is_staff
+    
 def setup_menu(menu):
     m = menu.addMenu("system","~System")
     m.addAction(Permissions())
     m.addAction(Users())
     m.addAction(Groups())
+    m.can_view = staff_only
