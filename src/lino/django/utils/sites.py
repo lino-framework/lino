@@ -139,9 +139,10 @@ class LinoSite: #(AdminSite):
       import django
       yield HREF("http://www.djangoproject.com",
                  "Django",django.get_version())
-      #print l
-      #return l
       
+      import reportlab
+      yield HREF("http://www.reportlab.org/rl_toolkit.html",
+                 "ReportLab Toolkit",reportlab.Version)
         
     def context(self,request,**kw):
         d = dict(
