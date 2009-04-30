@@ -27,6 +27,7 @@
 """
 
 
+import os
 import imp
 from django.conf import settings
 from lino.tools.my_import import my_import as import_module
@@ -35,7 +36,6 @@ from django import template
 from django.views.decorators.cache import never_cache 
 #from django.shortcuts import render_to_response 
 from lino.django.utils.menus import Menu, MenuRenderer
-
 
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -59,6 +59,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.utils.http import int_to_base36
 
+from django.utils.safestring import mark_safe
 
 
 class PasswordResetForm(forms.Form):
@@ -123,19 +124,30 @@ class LinoSite: #(AdminSite):
     def addMenu(self,*args,**kw):
         return self._menu.addMenu(*args,**kw)
        
-    #~ def register(self,*args,**kw):
-        #~ raise NotImplementedError
-    #~ def unregister(self,*args,**kw):
-        #~ raise NotImplementedError
-    #~ def root(self,*args,**kw):
-        #~ raise NotImplementedError
-    #~ def model_page(self,*args,**kw):
-        #~ raise NotImplementedError
+    def versions(self):
+      def HREF(url,name,version):
+          return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
+
+      import lino
+      version = lino.__version__
+      from django.utils.version import get_svn_revision
+      svn_rev = get_svn_revision(os.path.dirname(__file__))
+      if svn_rev != u'SVN-unknown':
+          version += " " + svn_rev
+      yield HREF("http://lino.saffre-rumma.ee","Lino",version) 
+      
+      import django
+      yield HREF("http://www.djangoproject.com",
+                 "Django",django.get_version())
+      #print l
+      #return l
+      
         
     def context(self,request,**kw):
         d = dict(
           main_menu = MenuRenderer(self._menu,request),
           root_path = self.root_path,
+          lino = self,
         )
         d.update(kw)
         return d

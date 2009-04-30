@@ -28,9 +28,10 @@ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 __url__ = "http://lino.saffre-rumma.ee"
 
 __copyright__ = """\
-Copyright (c) 2002-2008 Luc Saffre.
+Copyright (c) 2002-2009 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
+
 
 

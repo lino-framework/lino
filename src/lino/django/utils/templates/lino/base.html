@@ -95,6 +95,13 @@ ul.menu2 {
 }
 
 
+p.about {
+  font-size: 0.71em;
+  border: 2pt solid yellow;
+}
+
+
+
 /* HEADER */
 #header { 
   margin-left: 22em;
@@ -110,6 +117,12 @@ ul.menu2 {
 <body id="{% block bodyid %}page{% endblock %}">
 <div id="menu">
 {{ main_menu.as_html }}
+<p class="about">
+Powered by
+{% for x in lino.versions %}
+<br/>{{x}}
+{% endfor %}
+</p>
 </div>
 <div id="breadcrumbs">
 {% if user.is_authenticated%}

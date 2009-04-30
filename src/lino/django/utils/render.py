@@ -266,35 +266,46 @@ class Row(object):
                 #return ''
             #print self.instance, field.name
             widget = form_field.widget
-        if value is None:
-            value = ''
-        #~ else:
-            #~ value = unicode(value)
-        #print self.name, value
+            
+        def SPAN(text,style):
+            return """<span class="textinput"
+            style="%s">&nbsp;%s&nbsp;</span>
+            """ % (style,text)
+            
         if isinstance(widget, forms.CheckboxInput):
             if value:
                 s = "[X]"
             else: 
                 s = "[&nbsp;&nbsp;]"
+            s = SPAN(s,style="width:2em;" )
             if field_element.layout.show_labels:
                 s += " " + label
-        elif isinstance(widget, forms.Select):
+            return mark_safe(s)
+            
+        if value is None:
+            value = ''
+        #~ else:
+            #~ value = unicode(value)
+        #print self.name, value
+        
+        
+        if isinstance(widget, forms.Select):
             s = "[ " + unicode(value) + " ]"
+            s = SPAN(s,style="width:10em;")
             if field_element.layout.show_labels:
                 s = label + "<br/>" + s
-        else:
-            field_element.setup_widget(widget)
-            #~ s = widget.render(field_element.name,value,
-              #~ attrs={"readonly":"readonly","class":"readonly"})
-            style = widget.attrs.get("style","")
-            size = widget.attrs.get("size",None)
-            if size:
-                style += "width:%sem;" % size
-            s = """
-<span class="textinput" style="%s"">%s</span>            
-            """ % (style,unicode(value))
-            if field_element.layout.show_labels:
-                s = label + "<br/>" + s
+            return mark_safe(s)
+            
+        field_element.setup_widget(widget)
+        #~ s = widget.render(field_element.name,value,
+          #~ attrs={"readonly":"readonly","class":"readonly"})
+        style = widget.attrs.get("style","")
+        size = widget.attrs.get("size",None)
+        if size:
+            style += "width:%sem;" % size
+        s = SPAN(unicode(value),style)
+        if field_element.layout.show_labels:
+            s = label + "<br/>" + s
         return mark_safe(s)
         
     def old_field_as_readonly(self,field_element):
