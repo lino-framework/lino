@@ -143,6 +143,9 @@ class LinoSite: #(AdminSite):
       import reportlab
       yield HREF("http://www.reportlab.org/rl_toolkit.html",
                  "ReportLab Toolkit",reportlab.Version)
+                 
+      import yaml
+      yield HREF("http://pyyaml.org/","PyYaml",yaml.__version__)
         
     def context(self,request,**kw):
         d = dict(

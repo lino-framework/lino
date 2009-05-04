@@ -22,13 +22,18 @@ And don't hesitate to contact me if you get stucked.
 About SVN: see :doc:`../topics/svn`.
 
 
-Add lino to your Python path
-----------------------------
+Add the Lino snapshot to your Python path
+-----------------------------------------
 
-For example on a Linux system, edit your :file:`sitecustomize.py`::
+For example on a Linux system, you can add a 
+path configuration file :file:`snapshots.pth` 
+to a directory that’s already on `Python’s path <http://www.python.org/doc/current/install/index.html>`_.
 
-  import site
-  site.addsitedir("/var/snapshots/lino/trunk/src")
+Here is how :file:`snapshots.pth` might look on a Debian lenny::
+
+  # cat /usr/local/lib/python2.5/site-packages/snapshots.pth
+  /var/snapshots/lino/trunk/src
+  /var/snapshots/django_src  
 
 
 Updating your Lino to the newest version
