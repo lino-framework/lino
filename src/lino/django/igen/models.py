@@ -357,7 +357,7 @@ class ContactPageLayout(PageLayout):
             box1
             box2 box3
             box4 box7
-            remarks:6x60
+            remarks:60x6
             documents
             """
             
@@ -426,14 +426,14 @@ class ProductCats(reports.Report):
 class ProductPageLayout(PageLayout):
     main = """
         id:5 name:50 cat
-        description:6x50
+        description:50x6
         price vatExempt
     """
 
 class Products(reports.Report):
     page_layout_class = ProductPageLayout
     queryset = Product.objects.order_by("id")
-    columnNames = "id:3 name description:1x30 cat vatExempt price:6"
+    columnNames = "id:3 name description:30x1 cat vatExempt price:6"
     
     
 class DocumentPageLayout(PageLayout):
@@ -447,7 +447,7 @@ class DocumentPageLayout(PageLayout):
       """
     box3 = """
       remarks:40
-      intro:5x40
+      intro:40x5
       """
     box4 = """
       total_excl 
@@ -457,7 +457,7 @@ class DocumentPageLayout(PageLayout):
     main = """
       box1 box2
       box3 box4
-      items:5x80
+      items:80x5
       """
       
 
@@ -486,11 +486,12 @@ class Invoices(Orders):
 
     
 class ItemsByDocument(reports.Report):
-    columnNames = "pos:3 product title description:1x40 " \
+    columnNames = "pos:3 product title description:40x1 " \
                   "unitPrice qty total"
     model = DocItem
     master = Document
     order_by = "pos"
+    
     
     #~ def __init__(self,doc,**kw):
         #~ self.doc = doc

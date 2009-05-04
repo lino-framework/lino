@@ -26,7 +26,7 @@ shippingmode_builder = Instantiator(ShippingMode,"name")
 paymentterm_builder = Instantiator(PaymentTerm,"name")
 
 productcat_builder = Instantiator(ProductCat,"name")
-product_builder = Instantiator(Product,"name price cat")
+product_builder = Instantiator(Product,"name price cat description")
 
 contact_builder = Instantiator(Contact,fieldnames="""
       id
@@ -113,10 +113,15 @@ def objects():
     yield furniture
     #print "foo", furniture.id, furniture
         
-    yield product_builder.build("Wooden table","199.99",1)
-    yield product_builder.build("Wooden chair","99.99",1)
-    yield product_builder.build("Metal table","129.99",1)
-    yield product_builder.build("Metal chair","79.99",1)
+    yield product_builder.build("Wooden table","199.99",1,"""\
+This table is made of pure wood. 
+<br/>It has <b>four legs</b>.
+<br/>It fits perfectly with <b>up to 4 wooden chairs</b>.
+<br/>Product of the year 2008.
+    """)
+    yield product_builder.build("Wooden chair","99.99",1,"")
+    yield product_builder.build("Metal table","129.99",1,"")
+    yield product_builder.build("Metal chair","79.99",1,"")
 
     yield invoice_builder.build(1,2,"2008-10-29",2,1)
     yield docitem_builder.build(1,1,1)

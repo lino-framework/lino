@@ -154,6 +154,10 @@ class LinoSite: #(AdminSite):
       import yaml
       version = getattr(yaml,'__version__','')
       yield ("PyYaml","http://pyyaml.org/",version)
+      
+      import sys
+      version = "%d.%d.%d" % sys.version_info[:3]
+      yield ("Python","http://www.python.org/",version)
         
     def context(self,request,**kw):
         d = dict(

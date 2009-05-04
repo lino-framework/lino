@@ -29,26 +29,28 @@ class Element:
     def __init__(self,layout):
         assert isinstance(layout,Layout)
         self.layout = layout
+        self.width = None
+        self.height = None
     
 class FieldElement(Element):
     def __init__(self,layout,name):
         Element.__init__(self,layout)
-        a=name.split(":",1)
+        a = name.split(":",1)
         if len(a) == 1:
             self.name = name
-            self.picture = None
-            self.widget_attrs = {}
+            #self.picture = None
+            #self.widget_attrs = {}
         elif len(a) == 2:
             self.name = a[0]
-            self.picture = a[1]
+            #self.picture = a[1]
             a = a[1].split("x",1)
             if len(a) == 1:
-                self.widget_attrs = dict(size=a[0])
+                self.width = int(a[0])
             elif len(a) == 2:
-                self.widget_attrs = dict(rows=a[0],cols=a[1])
+                self.width = int(a[0])
+                self.height = int(a[1])
             #~ else:
                 #~ raise Exception("Invalid picture spec %s" % name)
-            
         
     def __str__(self):
         if self.picture is None:
@@ -56,6 +58,7 @@ class FieldElement(Element):
         return self.name + ":" + self.picture
             
     def setup_widget(self,widget):
+        raise "no longer used. set it up based on my .width and .height"
         if isinstance(widget,forms.widgets.Input):
             widget.attrs.update(self.widget_attrs)
         elif isinstance(widget,forms.Textarea):
