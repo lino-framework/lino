@@ -28,8 +28,12 @@ from django.core.management import call_command
 
 
 from lino.console import syscon
+
+from lino.django.utils.sites import site as lino_site
         
 def main():
+    for name,url,version in lino_site.thanks_to():
+        print name,version, "<%s>" % url
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):
         return

@@ -125,27 +125,34 @@ class LinoSite: #(AdminSite):
         return self._menu.addMenu(*args,**kw)
        
     def versions(self):
-      def HREF(url,name,version):
+      def HREF(name,url,version):
           return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
-
+      for name,url,version in self.thanks_to():
+          yield HREF(name,url,version)
+          
+    def thanks_to(self):
       import lino
       version = lino.__version__
       from django.utils.version import get_svn_revision
       svn_rev = get_svn_revision(os.path.dirname(__file__))
       if svn_rev != u'SVN-unknown':
           version += " " + svn_rev
-      yield HREF("http://lino.saffre-rumma.ee","Lino",version) 
+      yield ("Lino",
+             "http://lino.saffre-rumma.ee",
+             version)
       
       import django
-      yield HREF("http://www.djangoproject.com",
-                 "Django",django.get_version())
+      yield ("Django",
+             "http://www.djangoproject.com",
+             django.get_version())
       
       import reportlab
-      yield HREF("http://www.reportlab.org/rl_toolkit.html",
-                 "ReportLab Toolkit",reportlab.Version)
+      yield ("ReportLab Toolkit",
+             "http://www.reportlab.org/rl_toolkit.html",
+             reportlab.Version)
                  
       import yaml
-      yield HREF("http://pyyaml.org/","PyYaml",yaml.__version__)
+      yield ("PyYaml","http://pyyaml.org/",yaml.__version__)
         
     def context(self,request,**kw):
         d = dict(
