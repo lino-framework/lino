@@ -116,7 +116,7 @@ def objects():
     yield product_builder.build("Wooden table","199.99",1,"""\
 This table is made of pure wood. 
 <br/>It has <b>four legs</b>.
-<br/>It fits perfectly with <b>up to 4 wooden chairs</b>.
+<br/>Designed to fit perfectly with <b>up to 6 wooden chairs</b>.
 <br/>Product of the year 2008.
     """)
     yield product_builder.build("Wooden chair","99.99",1,"")

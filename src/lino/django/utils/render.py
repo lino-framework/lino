@@ -133,12 +133,6 @@ class Row(object):
         #~ return Cell(self, col)
         
     def as_html(self):
-        #~ return self.report.row_layout.render(self)
-        #~ r = layouts.RowLayoutRenderer(
-          #~ self,
-          #~ self.report.row_layout,
-          #~ self.render_detail,
-          #~ editing=self.renderer.editing)
         try:
             #return r.render_to_string()
             return self.report.row_layout.bound_to(self).as_html()
@@ -235,6 +229,8 @@ class Row(object):
                 s = s + " " + bf.label_tag()
             else:
                 s = bf.label_tag() + "<br/>" + s
+        #print "render_field()", repr(bf.errors)
+        s += unicode(bf.errors)
         return mark_safe(s)
         
             

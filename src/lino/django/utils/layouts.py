@@ -267,7 +267,7 @@ class Layout:
             
     def __str__(self):
         return self.__class__.__name__ + "(%s)" % self._main
-        
+
     def bound_to(self,row):
         return BoundElement(self._main,row)
 
