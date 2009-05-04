@@ -152,7 +152,8 @@ class LinoSite: #(AdminSite):
              reportlab.Version)
                  
       import yaml
-      yield ("PyYaml","http://pyyaml.org/",yaml.__version__)
+      version = getattr(yaml,'__version__','')
+      yield ("PyYaml","http://pyyaml.org/",version)
         
     def context(self,request,**kw):
         d = dict(
