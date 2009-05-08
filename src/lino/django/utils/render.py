@@ -86,27 +86,8 @@ def vfill(lines,valign,height):
         raise NotImplementedError
     else:
         raise ConfigError("vfill() : %s" % repr(valign))
-        
 
 
-
-
-
-
-#~ class Cell(object):
-    #~ def __init__(self,row,column):
-        #~ assert row is not None
-        #~ self.row = row
-        #~ self.column = column
-        
-    #~ def __unicode__(self):
-        #~ value = self.column.cell_value(
-          #~ self.row.instance,self.row.form)
-        #~ if value is None:
-            #~ return ''
-        #~ return mark_safe(unicode(value))
-        
-        
 class Row(object):
     def __init__(self,renderer,instance,number,form=None):
         self.renderer = renderer
@@ -114,6 +95,8 @@ class Row(object):
         self.number = number
         self.instance = instance
         self.form = form
+        
+        print "Row.__init__()", self.instance.pk
         
         self.inline_renderers = {}
         if renderer.is_main:
@@ -272,9 +255,9 @@ class Row(object):
         
         style = widget.attrs.get('style','')
         if field_element.width is not None:
-            style += "width:%dem;" % field_element.width
+            style += "min-width:%dem;" % field_element.width
         if field_element.height is not None:
-            style += "height:%dem;" % (field_element.height * 2)
+            style += "min-height:%dem;" % (field_element.height * 2)
             # TODO: 
             
         if isinstance(widget, forms.Select):
@@ -809,6 +792,7 @@ class ViewReportRenderer(ReportRenderer):
     def render_to_response(self,**kw):
         url = get_redirect(self.request)
         if url:
+            #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
         context = lino_site.context(self.request,
           report = self,
@@ -1068,7 +1052,7 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
                 a different row and the page count may have changed.
                 """
                 #return HttpResponseRedirect(self.again(editing=None))
-                redirect_to(self.request,self.again(editing=None))
+                #redirect_to(self.request,self.again(editing=None))
             else:
                 print fs.errors
                 editing.continue_editing(self.request)
@@ -1103,7 +1087,7 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
                 #print self.__class__.__name__, "valid"
                 frm.save()
                 editing.stop_editing(self.request)
-                redirect_to(self.request,self.again(editing=None))
+                #redirect_to(self.request,self.again(editing=None))
                 #return HttpResponseRedirect(self.again(editing=None))
             else:
                 print frm.errors
