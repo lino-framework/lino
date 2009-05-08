@@ -281,7 +281,7 @@ class RowLayout(Layout):
     hbox_class = GRID_ROW
     vbox_class = None # not yet allowed
 
-    
+
 
 class BoundElement:
     def __init__(self,element,row):

@@ -121,8 +121,6 @@ class Row(object):
                 self.inline_renderers[name] = \
                   renderer.detail_renderer(renderer.request,
                     False,inline,self.instance)
-        
-        
       
     def __getitem__(self,name):
         if self.renderer.editing:
@@ -179,27 +177,6 @@ class Row(object):
             return self.form[pk.name]
         return ""
         
-        
-        
-    #~ def render_inline(self,inline):
-        #~ dtlrep = self.report.details.get(name,None)
-        #~ #dtlrep = getattr(self.report,name,None)
-        #~ if dtlrep is None:
-            #~ #print "%s has not detail %r" % (self.report,name)
-            #~ return None
-        #~ print self.__class__.__name__, ".render_detail()", name
-        #~ return self.renderer.detail_to_string(inline,self.instance)
-        #~ dtlrep = getattr(self.report,name,None)
-        #~ if dtlrep is None:
-            #~ #print "%s has not detail %r" % (self.report,name)
-            #~ return None
-        #~ try:
-            #~ r = self.renderer.detail_renderer(self.renderer.request,False,dtlrep,self.instance)
-            #~ return r.render_to_string()
-        #~ except Exception,e:
-            #~ #print e
-            #~ traceback.print_exc()
-            #~ raise e
             
     def render_field(self,field):
         r = self.inline_renderers.get(field.name,None)
@@ -489,7 +466,6 @@ class DetailColumn(Column):
 
 class ReportRenderer:
     def __init__(self,report,master_instance=None):
-        #print self.__class__.__name__, "__init__()"
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
@@ -500,6 +476,7 @@ class ReportRenderer:
         else:
             assert isinstance(master_instance,report.master)
         self.master_instance = master_instance
+        print self.__class__.__name__, "__init__()"
         
 
     def new_column(self,*args):
@@ -873,7 +850,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
             if pgn is None:
                 pgn = self.start_page
             else:
-                pgn=int(pgn)
+                pgn = int(pgn)
             pgl = self.request.GET.get('pgl')
             if pgl is None:
                 pgl = self.page_length
@@ -887,23 +864,6 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 page = paginator.page(paginator.num_pages)
             self.page=page
 
-        #~ details = {}
-        #~ for name in self.report.detail_reports.split():
-            #~ def render(instance):
-                #~ meth = getattr(instance,name)
-                #~ dtlrep = meth()
-                #~ return mark_safe(unicode(dtlrep))
-            #~ details[name] = render
-        #~ self.details = details
-        
-    #~ def render(self):
-        #~ context=dict(
-          #~ report=self,
-          #~ main_menu=settings.MAIN_MENU,
-          #~ title=self.report.get_title(),
-        #~ )
-        #~ return render_to_response("tom/grid_show.html",context)
-    
         
     def position_string(self):
         return  "Page %d of %d." % (self.page.number,
@@ -1007,12 +967,6 @@ class ViewOneReportRenderer(RowViewReportRenderer):
             #~ details[name] = lambda x: r.render_to_string()
         #~ self.details = details
         
-        #~ self.layout = layouts.RowLayoutRenderer(self.row,
-            #~ self.page_layout(),self.details)
-            
-        #~ self.layout = layouts.RowLayoutRenderer(self.row,
-            #~ self.report.page_layout(),self.render_detail)
-            
         self.layout = self.report.page_layout().bound_to(self.row)
             
         
@@ -1158,7 +1112,6 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
             frm = self.report.form_class(instance=self.row.instance)
         self.form = frm
         
-        # hack: no need to instanciate a new Row for this...
         self.row.form = frm
         
         self.layout = self.report.page_layout().bound_to(self.row)
