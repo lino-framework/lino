@@ -96,7 +96,7 @@ class Row(object):
         self.instance = instance
         self.form = form
         
-        print "Row.__init__()", self.instance.pk
+        #print "Row.__init__()", self.instance.pk
         
         self.inline_renderers = {}
         if renderer.is_main:
@@ -260,7 +260,10 @@ class Row(object):
             style += "min-height:%dem;" % (field_element.height * 2)
             # TODO: 
             
-        if isinstance(widget, forms.Select):
+        if isinstance(widget, forms.SelectMultiple):
+            s = "[ " + ",<br/>".join([unicode(o) for o in value.all()]) + " ]"
+            s = SPAN(s,style)
+        elif isinstance(widget, forms.Select):
             s = "[ " + unicode(value) + " ]"
             s = SPAN(s,style)
         else:

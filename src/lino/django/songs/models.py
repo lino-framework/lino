@@ -1,4 +1,4 @@
-## Copyright 2007-2008 Luc Saffre.
+## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -16,25 +16,24 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
-from lino.django.contacts.models import Person
 
-#~ class Person(models.Model):
-    #~ class Admin:
-        #~ pass
-    #~ firstname = models.CharField(max_length=100)
-    #~ lastname = models.CharField(max_length=100)
-    #~ #born = models.DateTimeField(blank=True)
+class Person(models.Model):
+    nickname = models.CharField(max_length=200,blank=True,null=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    #born = models.DateTimeField(blank=True,null=True)
     
-    #~ def __unicode__(self):
-        #~ return self.firstname+' '+self.lastname
+    def __unicode__(self):
+        return self.first_name+' '+self.last_name
+        
+    def before_save(self):
+        if self.nickname is None:
+            self.nickname = unicode(self)
 
 class Song(models.Model):
-    class Admin:
-        pass
     title = models.CharField(max_length=200)
-    #pub_date = models.DateField('date published',blank=True)
-    published = models.IntegerField('year published',blank=True)
-    text=models.TextField(blank=True)
+    published = models.IntegerField('year published',blank=True,null=True)
+    text = models.TextField(blank=True,null=True)
     #votes = models.IntegerField()
  
     composers = models.ManyToManyField(
@@ -45,7 +44,12 @@ class Song(models.Model):
         related_name="texts_written")
         
     def __unicode__(self):
-        return self.title
+        return self.title + " (%d)" % self.id
+        
+class Rehearsal(models.Model):        
+    date = models.DateField('date',blank=True,null=True)
+    singers = models.ManyToManyField(Person)
+    songs = models.ManyToManyField(Song)
 
 #~ class Work(models.Model):
     #~ class Admin:
@@ -59,7 +63,7 @@ class Song(models.Model):
     #~ song = models.ForeignKey(
         #~ Song,
         #~ related_name="composed_by")
-    #~ remark = models.TextField(blank=True)
+    #~ remark = models.TextField(blank=True,null=True)
     
     
 class Translation(models.Model):
@@ -83,6 +87,28 @@ class Songbook(models.Model):
     class Admin:
         pass
     title = models.CharField(max_length=200)
-    intro = models.TextField(blank=True)
-    publisher = models.TextField(blank=True)
+    intro = models.TextField(blank=True,null=True)
+    publisher = models.TextField(blank=True,null=True)
     
+from lino.django.utils import reports
+from lino.django.utils.layouts import PageLayout 
+    
+class Rehearsals(reports.Report):
+    model = Rehearsal
+    #page_layout_class = RehearsalPageLayout
+    columnNames = "date singers:40 songs:40 "
+                  
+
+    #~ def inlines(self):
+        #~ return dict(songs=SongsByRehearsal())
+
+
+class Singers(reports.Report):
+    model = Person
+    #page_layout_class = RehearsalPageLayout
+    columnNames = "id first_name last_name"
+
+class Songs(reports.Report):
+    model = Song
+    #page_layout_class = RehearsalPageLayout
+    columnNames = "id title composer"

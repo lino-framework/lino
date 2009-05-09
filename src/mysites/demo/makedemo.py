@@ -37,7 +37,10 @@ def main():
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):
         return
-    call_command('reset','igen','auth',interactive=False)
+    appnames = 'auth songs'.split()
+    options = dict(interactive=False)
+    call_command('reset',*appnames,**options)
+    #call_command('reset','songs','auth',interactive=False)
     call_command('syncdb',interactive=False)
     #call_command('flush',interactive=False)
     call_command('loaddata','demo')

@@ -1,0 +1,57 @@
+#coding: utf8
+## Copyright 2009 Luc Saffre
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+from lino.django.songs.models import *
+from lino.django.utils.instantiator import Instantiator
+
+#language_builder = Instantiator(Language,"id name")
+#country_builder = Instantiator(Country,"isocode name")
+song = Instantiator(Song,"id title").build
+singer = Instantiator(Person,"nickname first_name last_name").build
+person = Instantiator(Person,"first_name last_name").build
+rehearsal = Instantiator(Rehearsal,"date singers:nickname songs").build
+
+def objects():
+
+    #~ yield language_builder.build('et','Estonian')
+    #~ yield language_builder.build('en','English')
+    #~ yield language_builder.build('de','German')
+    #~ yield language_builder.build('fr','French')
+    
+    yield singer("ls","Luc","Saffre")
+    yield singer("er","Erich","Roots")
+    yield singer("pr","Pille-Riin","Roots")
+    yield singer("kj","Kristiina",u"Jõgi")
+    yield singer("as","Aili","Soonberg")
+    yield singer("rj","Ruth","Johanson")
+    yield singer("lr","Ly","Rumma")
+    
+    yield person("Friedrich","Mendelsohn-Bartholdi")
+    
+    yield song(1,u"Nüüd kevad saabub meile")
+    yield song(2,u"Ad te levavi")
+    yield song(3,u"Peace I leave with you")
+    yield song(4,u"Ma annan oma südame")
+    yield song(5,u"Auväärne haldaja") 
+    yield song(6,u"Verleih uns Frieden")
+    
+    yield rehearsal("2009-04-26","as lr kj ls","1 2 3 4")
+    yield rehearsal("2009-05-03","as lr kj ls","1 2 4 6")
+
+
