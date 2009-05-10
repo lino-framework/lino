@@ -34,11 +34,15 @@ from lino.django.utils.sites import site as lino_site
 def main():
     for name,url,version in lino_site.thanks_to():
         print name,version, "<%s>" % url
+    # TODO: find appnames automatically
+    appnames = 'auth songs'.split()
+    #appnames = [n.split('.')[-1] for n in settings.INSTALLED_APPS]
+    #appnames = [m.__name__ for m in models.get_apps()]
+    print "makedemo.py", appnames 
+    options = dict(interactive=False)
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):
         return
-    appnames = 'auth songs'.split()
-    options = dict(interactive=False)
     call_command('reset',*appnames,**options)
     #call_command('reset','songs','auth',interactive=False)
     call_command('syncdb',interactive=False)

@@ -18,17 +18,22 @@
 from django.db import models
 
 class Person(models.Model):
-    nickname = models.CharField(max_length=200,blank=True,null=True)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     #born = models.DateTimeField(blank=True,null=True)
+    born = models.IntegerField(blank=True,null=True)
+    died = models.IntegerField(blank=True,null=True)
+    nickname = models.CharField(max_length=200,blank=True,null=True)
     
     def __unicode__(self):
-        return self.first_name+' '+self.last_name
+        s = self.first_name+' '+self.last_name
+        if self.born and self.died:
+            s += " (%d-%d)" % (self.born,self.died)
+        return s
         
     def before_save(self):
         if self.nickname is None:
-            self.nickname = unicode(self)
+            self.nickname = self.first_name+' '+self.last_name
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
@@ -50,6 +55,7 @@ class Rehearsal(models.Model):
     date = models.DateField('date',blank=True,null=True)
     singers = models.ManyToManyField(Person)
     songs = models.ManyToManyField(Song)
+    remark = models.TextField(blank=True,null=True)
 
 #~ class Work(models.Model):
     #~ class Admin:
@@ -90,13 +96,16 @@ class Songbook(models.Model):
     intro = models.TextField(blank=True,null=True)
     publisher = models.TextField(blank=True,null=True)
     
+
+# reports
+
 from lino.django.utils import reports
 from lino.django.utils.layouts import PageLayout 
     
 class Rehearsals(reports.Report):
     model = Rehearsal
     #page_layout_class = RehearsalPageLayout
-    columnNames = "date singers:40 songs:40 "
+    columnNames = "date remark songs:40 singers:40"
                   
 
     #~ def inlines(self):
@@ -111,4 +120,4 @@ class Singers(reports.Report):
 class Songs(reports.Report):
     model = Song
     #page_layout_class = RehearsalPageLayout
-    columnNames = "id title composer"
+    columnNames = "id title composers"
