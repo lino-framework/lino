@@ -35,6 +35,15 @@ class Person(models.Model):
         if self.nickname is None:
             self.nickname = self.first_name+' '+self.last_name
 
+class Singer(Person):
+    voice = models.CharField(max_length=10,blank=True,null=True)
+    def __unicode__(self):
+        s = self.first_name
+        if self.voice is not None:
+            s += " (%s)" % self.voice
+        return s
+    
+
 class Song(models.Model):
     title = models.CharField(max_length=200)
     published = models.IntegerField('year published',blank=True,null=True)
@@ -53,10 +62,16 @@ class Song(models.Model):
         
 class Rehearsal(models.Model):        
     date = models.DateField('date',blank=True,null=True)
-    singers = models.ManyToManyField(Person)
+    singers = models.ManyToManyField(Singer)
     songs = models.ManyToManyField(Song)
     remark = models.TextField(blank=True,null=True)
 
+    def __unicode__(self):
+        s = str(self.date)
+        if self.remark:
+            s += " (%s)" % self.remark
+        return s
+        
 #~ class Work(models.Model):
     #~ class Admin:
         #~ pass
@@ -106,18 +121,38 @@ class Rehearsals(reports.Report):
     model = Rehearsal
     #page_layout_class = RehearsalPageLayout
     columnNames = "date remark songs:40 singers:40"
-                  
-
-    #~ def inlines(self):
-        #~ return dict(songs=SongsByRehearsal())
 
 
 class Singers(reports.Report):
-    model = Person
+    model = Singer
+    #page_layout_class = RehearsalPageLayout
+    columnNames = "id first_name last_name voice"
+    order_by = "last_name"
+
+class Persons(reports.Report):
+    #model = Person
+    queryset = Person.objects.filter(singer__exact=None)
     #page_layout_class = RehearsalPageLayout
     columnNames = "id first_name last_name"
+    order_by = "last_name"
+
+    
+#~ class RehearsalsBySong(reports.Report):
+    #~ model = Song
+    #~ master = Rehearsal
+    
+class SongPageLayout(PageLayout):
+    main = """
+    id title 
+    composers
+    rehearsal_set
+    """
 
 class Songs(reports.Report):
     model = Song
-    #page_layout_class = RehearsalPageLayout
+    page_layout_class = SongPageLayout
     columnNames = "id title composers"
+
+    #~ def inlines(self):
+        #~ return dict(rehearsals=RehearsalsBySong())
+

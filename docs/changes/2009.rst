@@ -75,3 +75,32 @@ the input file.
     self.runtests.options.postscript_printer
 
 - moved my_import and tsttools from lino.misc to lino.tools
+
+
+20090510
+--------
+
+- (Many undocumented changes during the last weeks.)
+
+- :class:`Instantiator` now supports many-to-many fields. 
+  Content of a many-to-many field can now be specified as a string 
+  containing a space-separated list of primary keys.
+  Or, if you want to use another field than the primary key for specifying related objects, m2m_field:lookup_field syntax.
+  Examples for both usages are in :srcref:`src/lino/django/songs/fixtures/demo.dpy`.
+  
+
+20090511
+--------
+
+- :mod:`mysites.demo.makedemo` now finds the list of installed apps automatically.
+  So I no longer need to change :xfile:`makedemo.py` after changing
+  :configcmd:`INSTALLED_APPS`.
+  
+  
+- Worked on website pages 
+  :doc:`../django/index` and
+  :doc:`../about/what_is`.
+  
+- :meth:`Row.field_as_readonly` now supports when a value is a :class:`Manager` (which is the case when you specify a ManyToManyField).
+
+- :class`Singer` is a subclass of :class`Person`.

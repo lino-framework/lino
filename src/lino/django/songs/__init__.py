@@ -30,4 +30,5 @@ def lino_setup(lino):
     m = lino.addMenu("songs","~Songs")
     m.addAction(reports.Rehearsals())
     m.addAction(reports.Singers())
+    m.addAction(reports.Persons())
     m.addAction(reports.Songs())

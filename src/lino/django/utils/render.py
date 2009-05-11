@@ -34,7 +34,7 @@ from django.shortcuts import render_to_response
 from django.forms.models import modelform_factory, modelformset_factory, inlineformset_factory
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
-
+from django.db.models.manager import Manager
 
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
@@ -201,8 +201,16 @@ class Row(object):
             model_field = self.instance._meta.get_field(
               field_element.name)
         except models.FieldDoesNotExist,e:
+            if isinstance(value,Manager):
+                try:
+                    value = "<br/>".join([unicode(o) for o in value.all()])
+                    label = field_element.name
+                    #widget=widget_for_value(value)
+                    widget = forms.TextInput()
+                except Exception, e:
+                  print e
             # so it is a method
-            if hasattr(value,"field"):
+            elif hasattr(value,"field"):
                 #print "it is a method"
                 field = value.field
                 value = value()
@@ -231,6 +239,8 @@ class Row(object):
             #print self.instance, field.name
             widget = form_field.widget
             
+        #print field_element.name, repr(value)
+        
         def SPAN(text,style):
             return """<span class="textinput"
             style="%s">%s</span>
@@ -250,7 +260,6 @@ class Row(object):
             value = '&nbsp;'
         #~ else:
             #~ value = unicode(value)
-        #print self.name, value
         
         
         style = widget.attrs.get('style','')
@@ -462,7 +471,7 @@ class ReportRenderer:
         else:
             assert isinstance(master_instance,report.master)
         self.master_instance = master_instance
-        print self.__class__.__name__, "__init__()"
+        #print self.__class__.__name__, "__init__()"
         
 
     def new_column(self,*args):

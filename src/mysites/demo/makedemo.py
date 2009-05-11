@@ -22,7 +22,8 @@ from django.core.management import setup_environ
 setup_environ(settings)
 from django.contrib.auth.models import User
 from django.core.management.color import no_style
-from django.db import models, connection, transaction, models
+from django.db import models, connection, transaction
+from django.db.models import loading
 from django.core.management.sql import sql_flush, emit_post_sync_signal
 from django.core.management import call_command
 
@@ -30,22 +31,29 @@ from django.core.management import call_command
 from lino.console import syscon
 
 from lino.django.utils.sites import site as lino_site
+
+def db_apps():
+    for app_name in settings.INSTALLED_APPS:
+        app_label = app_name.split('.')[-1]
+        if loading.get_app(app_label,emptyOK=True):
+            yield app_label
+
         
 def main():
     for name,url,version in lino_site.thanks_to():
         print name,version, "<%s>" % url
-    # TODO: find appnames automatically
-    appnames = 'auth songs'.split()
-    #appnames = [n.split('.')[-1] for n in settings.INSTALLED_APPS]
+        
+    app_labels = [n for n in db_apps()]
+
     #appnames = [m.__name__ for m in models.get_apps()]
-    print "makedemo.py", appnames 
+    print "makedemo.py", app_labels
     options = dict(interactive=False)
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):
         return
-    call_command('reset',*appnames,**options)
+    call_command('reset',*app_labels,**options)
     #call_command('reset','songs','auth',interactive=False)
-    call_command('syncdb',interactive=False)
+    call_command('syncdb',**options)
     #call_command('flush',interactive=False)
     call_command('loaddata','demo')
     User.objects.create_superuser('root','luc.saffre@gmx.net','1234')

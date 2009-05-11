@@ -23,7 +23,7 @@ from lino.django.utils.instantiator import Instantiator
 #language_builder = Instantiator(Language,"id name")
 #country_builder = Instantiator(Country,"isocode name")
 song = Instantiator(Song,"id title composers:nickname").build
-singer = Instantiator(Person,"nickname first_name last_name").build
+singer = Instantiator(Singer,"nickname first_name last_name").build
 composer = Instantiator(Person,"first_name last_name born died").build
 author = Instantiator(Person,"first_name last_name born died").build
 translator = Instantiator(Person,"first_name last_name born died").build
