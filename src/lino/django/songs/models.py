@@ -124,6 +124,9 @@ class Place(models.Model):
     name = models.CharField(max_length=200)
     country = models.ForeignKey('utils.Country',blank=True,null=True)
     
+    def __unicode__(self):
+        return self.name
+    
 class Collection(models.Model):
     title = models.CharField(max_length=200)
     intro = models.TextField(blank=True,null=True)
@@ -132,6 +135,9 @@ class Collection(models.Model):
     author = models.ForeignKey(Author,blank=True,null=True)
     place = models.ForeignKey(Place,blank=True,null=True)
     songs = models.ManyToManyField(Song)
+    
+    def __unicode__(self):
+        return self.title
     
 
 # reports

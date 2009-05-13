@@ -97,7 +97,7 @@ def objects():
     yield song(7,u"Sõimes õlgedel",'et')
     yield song(8,u"Entre le boeuf et l'āne gris",'fr')
     yield song(9,u'Coventry Carol','en')
-    yield song(10,u'Unelaul','et')
+    yield song(10,u'Unelaul','et') #,translated_by="Margus Kirja")
     yield song(11,u'Üks roosike on tõusnud','et')
     yield song(12,u'Give thanks','en')
     yield song(13,u'Lendas ingel','et')
@@ -129,10 +129,10 @@ def objects():
     collection = Instantiator(Collection,
       "title place:name year author:nickname songs").build
     yield collection("Luci Kammerkoori noodid",songs="""
-    33
+    33 26
     """)
     yield collection("cpdl.org",songs="""
-    32 26
+    9 16 32 
     """)
     yield collection(
       'Vaimulike laule kooridele ja ansamblitele 3',
