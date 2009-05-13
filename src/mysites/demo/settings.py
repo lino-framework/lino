@@ -128,8 +128,8 @@ TEMPLATE_DIRS = (
 
 INSTALLED_APPS = (
     'lino.django.utils',
-    #'lino.django.igen',
-    #'lino.django.voc',
+    'lino.django.igen',
+    'lino.django.voc',
     'lino.django.songs',
     'django.contrib.auth',
     'django.contrib.contenttypes',

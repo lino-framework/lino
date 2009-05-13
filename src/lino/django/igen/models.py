@@ -218,7 +218,7 @@ class Document(TomModel):
     
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
-    creation_date = MyDateField() # auto_now_add=True)
+    creation_date = MyDateField(auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
@@ -256,8 +256,74 @@ class Document(TomModel):
 class Order(Document):
     valid_until = MyDateField("Valid until",blank=True,null=True)
   
+class Contract(Document):
+    CYCLE_CHOICES = (
+        ('W', 'Weekly'),
+        ('M', 'Monthly'),
+        ('Q', 'Quarterly'),
+        ('Y', 'Yearly'),
+        ('I', 'Idle'),
+    )
+    #~ start_date = MyDateField("When to issue next invoice",
+      #~ blank=True,null=True,auto_now_add=True)
+    cycle = models.CharField(max_length=1, choices=CYCLE_CHOICES)
+    
+    def get_last_invoice(self):
+        invoices = self.invoice_set.order_by('creation_date')
+        cnt = invoices.count()
+        if cnt == 0:
+            return None
+        return invoices[cnt-1]
+    
+    def next_date(self,today=None):
+        if self.cycle == 'I':
+            return
+        if today is None:
+            today = datetime.date.today()
+        last_invoice = self.get_last_invoice()
+        if last_invoice is None:
+            date = self.creation_date
+        else:
+            date = last_invoice.creation_date
+            if self.cycle == "W":
+                date += datetime.timedelta(7)
+            elif self.cycle == "M":
+                date += datetime.timedelta(30)
+            elif self.cycle == "Q":
+                date += datetime.timedelta(91)
+            elif self.cycle == "Y":
+                date += datetime.timedelta(365)
+        date = datetime.date(date.year,date.month,date.day)
+        #print type(today)
+        #print date, type(date)
+        #assert isinstance(date,datetime.date)
+        if date > today:
+            return
+        return date
+        
+    def make_invoice(self,today=None):
+        date = self.next_date(today)
+        if not date:
+            return 
+        invoice = Invoice(creation_date=date,contract=self,
+            customer=self.customer,
+            ship_to=self.ship_to,payment_term=self.payment_term)
+        invoice.save()
+        for item in self.docitem_set.all():
+            d = {}
+            for fn in 'pos product title description unitPrice qty total'.split():
+                d[fn] = getattr(item,fn)
+            i = DocItem(document=invoice,**d)
+            i.save()
+        return invoice
+            
+        
+        
+    
 class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
+    contract = models.ForeignKey(Contract,blank=True,null=True)
+    
     def before_save(self):
         Document.before_save(self)
         if self.due_date is None:
@@ -265,6 +331,7 @@ class Invoice(Document):
                 self.due_date = self.payment_term.get_due_date(
                     self.creation_date)
 
+  
 
 class DocItem(TomModel):
     document = models.ForeignKey(Document) 
@@ -440,11 +507,15 @@ class Documents(reports.Report):
 class Orders(Documents):
     queryset = Order.objects.order_by("number")
 
+class Contracts(Documents):
+    queryset = Contract.objects.order_by("number")
+
 
 class InvoicePageLayout(DocumentPageLayout):
     box1 = """
       number your_ref creation_date
       customer ship_to due_date
+      contract
       """
 
 class Invoices(Orders):
@@ -519,6 +590,7 @@ def lino_setup(lino):
     m.add_action(ProductCats())
     m = lino.add_menu("docs","~Documents")
     m.add_action(Orders())
+    m.add_action(Contracts())
     m.add_action(Invoices())
     m = lino.add_menu("config","~Configuration")
     m.add_action(ShippingModes())

@@ -54,15 +54,7 @@ contact_builder = Instantiator(Contact,fieldnames="""
     """)
     
    
-invoice_builder = Instantiator(Invoice,
-    "number customer creation_date payment_term shipping_mode")
 
-order_builder = Instantiator(Order,
-    "number customer creation_date payment_term shipping_mode")
-  
-docitem_builder = Instantiator(DocItem,
-    "document product qty")
-  
 
 def objects():
 
@@ -111,21 +103,42 @@ This table is made of pure wood.
     yield product_builder.build("Wooden chair","99.99",1,"")
     yield product_builder.build("Metal table","129.99",1,"")
     yield product_builder.build("Metal chair","79.99",1,"")
+    
+    invoice = Instantiator(Invoice,
+    "number customer creation_date payment_term shipping_mode").build
+    
+    order = Instantiator(Order,
+    "number customer creation_date payment_term shipping_mode").build
+  
+    contract = Instantiator(Contract,
+    "number customer creation_date cycle payment_term shipping_mode").build
+    
+    docitem = Instantiator(DocItem,"document product qty").build
 
-    yield invoice_builder.build(1,2,"2008-10-29",2,1)
-    yield docitem_builder.build(1,1,1)
-    yield docitem_builder.build(1,2,4)
+    yield invoice(1,2,"2008-10-29",2,1)
+    yield docitem(1,1,1)
+    yield docitem(1,2,4)
     
-    yield invoice_builder.build(2,3,"2009-04-11",2,1)
-    yield docitem_builder.build(2,3,1)
-    yield docitem_builder.build(2,4,4)
+    yield invoice(2,3,"2009-04-11",2,1)
+    yield docitem(2,3,1)
+    yield docitem(2,4,4)
     
-    yield order_builder.build(3,4,"2009-04-12",2,1)
-    yield docitem_builder.build(3,3,1)
-    yield docitem_builder.build(3,4,4)
+    yield order(3,4,"2009-04-12",2,1)
+    yield docitem(3,3,1)
+    yield docitem(3,4,4)
     
-    yield invoice_builder.build(4,4,"2009-04-12",2,1)
-    yield docitem_builder.build(4,3,1)
-    yield docitem_builder.build(4,4,4)
+    yield invoice(4,4,"2009-04-12",2,1)
+    yield docitem(4,3,1)
+    yield docitem(4,4,4)
 
+    c = contract(5,4,"2008-05-13","M",2,1)
+    yield c
+    yield docitem(5,3,1)
+    yield docitem(5,4,4)
+    
+    while True:
+        i = c.make_invoice(today=datetime.date(2009,05,13))
+        if i is None: 
+            break
+        yield i
 

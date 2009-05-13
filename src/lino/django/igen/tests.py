@@ -31,7 +31,7 @@ class DemoTest(TestCase):
         pass
         
     def test01(self):
-        luc=Contact.objects.get(id=2)
+        luc = Contact.objects.get(id=2)
         self.assertEquals(unicode(luc), 'Luc Saffre')
         self.assertEquals(luc.as_address("\n"), u'''\
 Mr. Luc Saffre
