@@ -20,22 +20,22 @@
 from lino.django.songs.models import *
 from lino.django.utils.instantiator import Instantiator
 
-#language_builder = Instantiator(Language,"id name")
+language = Instantiator(Language,"id name").build
 #country_builder = Instantiator(Country,"isocode name")
-song = Instantiator(Song,"id title composers:nickname").build
+song = Instantiator(Song,"id title language composer:nickname").build
+
 singer = Instantiator(Singer,"nickname first_name last_name").build
-composer = Instantiator(Person,"first_name last_name born died").build
-author = Instantiator(Person,"first_name last_name born died").build
-translator = Instantiator(Person,"first_name last_name born died").build
+composer = Instantiator(Author,"first_name last_name born died").build
+author = Instantiator(Author,"first_name last_name born died").build
+translator = Instantiator(Author,"first_name last_name born died").build
+
 rehearsal = Instantiator(Rehearsal,"date singers:nickname songs").build
 auftritt = Instantiator(Rehearsal,"date singers:nickname songs remark").build
 
 def objects():
 
-    #~ yield language_builder.build('et','Estonian')
-    #~ yield language_builder.build('en','English')
-    #~ yield language_builder.build('de','German')
-    #~ yield language_builder.build('fr','French')
+    yield language('la','Latin')
+    yield language('he','Hebrew')
     
     yield singer("ls","Luc","Saffre")
     yield singer("er","Erich","Roots")
@@ -84,41 +84,41 @@ def objects():
     #~ yield song(5,u"Auväärne haldaja") 
     
     
-    yield song(1,u'Hevenu Shalom')
-    yield song(2,u'Mit Lieb bin ich umfangen')
-    yield song(3,u'Võin ma tulla nüüd veel')
-    yield song(4,u'Go down, Moses')
-    yield song(5,u'Et Kristust vastu võtta.')
-    yield song(6,u'Iiri õnnistussovid')
-    yield song(7,u"Sõimes õlgedel")
-    yield song(8,u"Entre le boeuf et l'āne gris")
-    yield song(9,u'Coventry Carol')
-    yield song(10,u'Unelaul')
-    yield song(11,u'Üks roosike on tõusnud')
-    yield song(12,u'Give thanks')
-    yield song(13,u'Lendas ingel')
-    yield song(14,u'Alta Trinita')
-    yield song(15,u'Give thanks')
-    yield song(16,u'Adoramus Te',"Palestrina") 
-    yield song(17,u'Nüüd kevad saabub meile')
-    yield song(18,u'Oh palugem ja laulgem')
-    yield song(19,u'Üks laev on läinud reisima')
-    yield song(20,u'Päike jälle kaob')
-    yield song(21,u'Näe rõõmsat last')
-    yield song(22,u'Sõber kas tunned')
-    yield song(23,u'Haschivenu')
-    yield song(24,u'Gaudeamus')
-    yield song(25,u'Heaven is a wonderful place')
-    yield song(26,u'Peace I leave with you')
-    yield song(27,u'Au kõrges olgu Isale')
-    yield song(28,u'Ma annan oma südame')
-    yield song(29,u'Jõuluöö (taevalaotusel tähtede vöö)')
-    yield song(30,u'Jõulud jälle kätte jõudnud')
-    yield song(31,u'Issand, kõik su kättetöö')
-    yield song(32,u"Ad te levavi")
-    yield song(33,u"Verleih uns Frieden")
-    yield song(34,u"Au kõrges olgu")
-    yield song(35,u'Nun will der Lenz uns grüßen')
+    yield song(1,u'Hevenu Shalom','he')
+    yield song(2,u'Mit Lieb bin ich umfangen','de')
+    yield song(3,u'Võin ma tulla nüüd veel','et')
+    yield song(4,u'Go down, Moses','en')
+    yield song(5,u'Et Kristust vastu võtta.','et')
+    yield song(6,u'Iiri õnnistussovid','et')
+    yield song(7,u"Sõimes õlgedel",'et')
+    yield song(8,u"Entre le boeuf et l'āne gris",'fr')
+    yield song(9,u'Coventry Carol','en')
+    yield song(10,u'Unelaul','et')
+    yield song(11,u'Üks roosike on tõusnud','et')
+    yield song(12,u'Give thanks','en')
+    yield song(13,u'Lendas ingel','et')
+    yield song(14,u'Alta Trinita','la')
+    yield song(15,u'Give thanks','en')
+    yield song(16,u'Adoramus Te','la',"Palestrina")
+    yield song(17,u'Nüüd kevad saabub meile','et')
+    yield song(18,u'Oh palugem ja laulgem','et')
+    yield song(19,u'Üks laev on läinud reisima','et')
+    yield song(20,u'Päike jälle kaob','et')
+    yield song(21,u'Näe rõõmsat last','et')
+    yield song(22,u'Sõber kas tunned','et')
+    yield song(23,u'Haschivenu','he')
+    yield song(24,u'Gaudeamus','la')
+    yield song(25,u'Heaven is a wonderful place','en')
+    yield song(26,u'Peace I leave with you','en')
+    yield song(27,u'Au kõrges olgu Isale','et')
+    yield song(28,u'Ma annan oma südame','et')
+    yield song(29,u'Jõuluöö (taevalaotusel tähtede vöö)','et')
+    yield song(30,u'Jõulud jälle kätte jõudnud','et')
+    yield song(31,u'Issand, kõik su kättetöö','et')
+    yield song(32,u"Ad te levavi",'la')
+    yield song(33,u"Verleih uns Frieden",'de')
+    yield song(34,u"Au kõrges olgu",'et')
+    yield song(35,u'Nun will der Lenz uns grüßen','de')
     
     yield auftritt("2007-09-09","pr er as rj kj ls","1 2","Esimene avalik esinemine kohvilaual")
     yield auftritt("2007-10-21","pr er as rj kj ls","3 4 5 6","Esimene Paldiskis")

@@ -103,4 +103,24 @@ the input file.
   
 - :meth:`Row.field_as_readonly` now supports when a value is a :class:`Manager` (which is the case when you specify a ManyToManyField).
 
-- :class`Singer` is a subclass of :class`Person`.
+- Classes :class`Singer` and :class`Author` are now subclasses of :class`Person`.
+
+- Started `Common models`_
+
+- updated my copy of Django from 10618 to 10736
+
+
+Common models
+-------------
+
+:class`Language` and :class`Country` are a first example of 
+model reuse by several applications. They are now defined in
+:mod:`lino.django.utils`.
+
+The order of applications in :configcmd:`INSTALLED_APPS` becomes
+important: :func:`lino_setup` is called in that order.
+  
+This way of doing has unresolved issues:
+  - cannot make a common class become abstract
+  - cannot remove a menu item or change order of menu items
+

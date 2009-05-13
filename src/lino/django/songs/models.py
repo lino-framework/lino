@@ -17,6 +17,8 @@
 
 from django.db import models
 
+from lino.django.utils.models import Language
+
 class Person(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -35,6 +37,9 @@ class Person(models.Model):
         if self.nickname is None:
             self.nickname = self.first_name+' '+self.last_name
 
+class Author(Person):
+    pass
+
 class Singer(Person):
     voice = models.CharField(max_length=10,blank=True,null=True)
     def __unicode__(self):
@@ -46,16 +51,21 @@ class Singer(Person):
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
-    published = models.IntegerField('year published',blank=True,null=True)
+    published = models.IntegerField('year published',
+      blank=True,null=True)
     text = models.TextField(blank=True,null=True)
+    language = models.ForeignKey(Language)
     #votes = models.IntegerField()
  
-    composers = models.ManyToManyField(
-        Person,
+    composer = models.ManyToManyField(
+        Author,
         related_name="songs_composed")
     textauthor = models.ManyToManyField(
-        Person,
+        Author,
         related_name="texts_written")
+    arranged_by = models.ManyToManyField(
+        Author,
+        related_name="songs_arranged")
         
     def __unicode__(self):
         return self.title + " (%d)" % self.id
@@ -129,11 +139,11 @@ class Singers(reports.Report):
     columnNames = "id first_name last_name voice"
     order_by = "last_name"
 
-class Persons(reports.Report):
-    #model = Person
-    queryset = Person.objects.filter(singer__exact=None)
+class Authors(reports.Report):
+    model = Author
+    #queryset = Author.objects.filter(singer__exact=None)
     #page_layout_class = RehearsalPageLayout
-    columnNames = "id first_name last_name"
+    columnNames = "id first_name last_name born died"
     order_by = "last_name"
 
     
@@ -143,15 +153,15 @@ class Persons(reports.Report):
     
 class SongPageLayout(PageLayout):
     main = """
-    id title 
-    composers
+    id title language
+    composer textauthor arranged_by
     rehearsal_set
     """
 
 class Songs(reports.Report):
     model = Song
     page_layout_class = SongPageLayout
-    columnNames = "id title composers"
+    columnNames = "id title language composer textauthor arranged_by"
 
     #~ def inlines(self):
         #~ return dict(rehearsals=RehearsalsBySong())

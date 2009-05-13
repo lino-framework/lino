@@ -27,8 +27,8 @@ document the activities of a choir.
 #
 def lino_setup(lino):
     import models as reports
-    m = lino.addMenu("songs","~Songs")
-    m.addAction(reports.Rehearsals())
-    m.addAction(reports.Singers())
-    m.addAction(reports.Persons())
-    m.addAction(reports.Songs())
+    m = lino.add_menu("songs","~Songs")
+    m.add_action(reports.Rehearsals())
+    m.add_action(reports.Singers())
+    m.add_action(reports.Authors())
+    m.add_action(reports.Songs())

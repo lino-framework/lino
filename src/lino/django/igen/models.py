@@ -18,9 +18,10 @@
 import datetime
 from django.db import models
 #from lino.django.tom import models
+from django.utils.safestring import mark_safe
+
 from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 
-from django.utils.safestring import mark_safe
 
 
 def linkto(href,text=None):
@@ -111,7 +112,7 @@ u'Example & Co (Luc Saffre)'
     
     addr1 = models.CharField(max_length=200,blank=True,null=True)
     addr2 = models.CharField(max_length=200,blank=True,null=True)
-    country = models.ForeignKey("Country",blank=True,null=True)
+    country = models.ForeignKey("utils.Country",blank=True,null=True)
     #city = models.ForeignKey("City",blank=True,null=True)
     city = models.CharField(max_length=200,blank=True,null=True)
     zipCode = models.CharField(max_length=10,blank=True,null=True)
@@ -127,7 +128,7 @@ u'Example & Co (Luc Saffre)'
     vatExempt = models.BooleanField(default=False)
     itemVat = models.BooleanField(default=False)
     
-    language = models.ForeignKey("Language",blank=True,null=True)
+    language = models.ForeignKey("utils.Language",blank=True,null=True)
     paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
     
     remarks = models.TextField(blank=True,null=True)
@@ -177,24 +178,6 @@ u'Example & Co (Luc Saffre)'
     as_address.allow_tags=True
 
 
-class Country(TomModel):
-    name = models.CharField(max_length=200)
-    isocode = models.CharField(max_length=2,primary_key=True)
-    
-    class Meta:
-        verbose_name_plural = "Countries"
-    
-    def __unicode__(self):
-        return self.name
-        
- 
-    
-class Language(TomModel):
-    id = models.CharField(max_length=2,primary_key=True)
-    name = models.CharField(max_length=200)
-    
-    def __unicode__(self):
-        return self.name
 
 class PaymentTerm(TomModel):
     name = models.CharField(max_length=200)
@@ -320,7 +303,8 @@ class DocItem(TomModel):
         self.document.save()
     before_save.alters_data = True
         
-               
+
+
 
 ##
 ## report definitions
@@ -329,6 +313,7 @@ class DocItem(TomModel):
 from lino.django.utils import reports
 from lino.django.utils.layouts import PageLayout 
 
+from lino.django.utils.models import Country, Languages
 
 class ContactPageLayout(PageLayout):
     
@@ -390,24 +375,6 @@ class Persons(Contacts):
     order_by = "lastName firstName"
     columnNames = "title firstName lastName country"
     
-class CountryPageLayout(PageLayout):
-    main = """
-    isocode name
-    contacts
-    """
-    
-        
-class Countries(reports.Report):
-    page_layout_class = CountryPageLayout
-    queryset = Country.objects.order_by("isocode")
-    columnNames = "isocode name"
-    
-    def inlines(self):
-        return dict(contacts = ContactsByCountry())
-
-class Languages(reports.Report):
-    queryset=Language.objects.order_by("id")
-
 class PaymentTerms(reports.Report):
     model = PaymentTerm
     order_by = "id"
@@ -520,7 +487,43 @@ class DocumentsByCustomer(Documents):
     def get_title(self,renderer):
         return unicode(renderer.master_instance) + " : documents by customer"
 
+
+
+class CountryPageLayout(PageLayout):
+    main = """
+    isocode name
+    contacts
+    """
+        
+class Countries(reports.Report):
+    page_layout_class = CountryPageLayout
+    model = Country
+    order_by = "isocode"
+    
+    def inlines(self):
+        return dict(contacts = ContactsByCountry())
+
 class ContactsByCountry(Contacts):
     model = Contact
     master = Country
     order_by = "city addr1"
+
+
+def lino_setup(lino):
+    m = lino.add_menu("contacts","~Contacts")
+    m.add_action(Contacts())
+    m.add_action(Companies())
+    m.add_action(Persons())
+    m = lino.add_menu("prods","~Products")
+    m.add_action(Products())
+    m.add_action(ProductCats())
+    m = lino.add_menu("docs","~Documents")
+    m.add_action(Orders())
+    m.add_action(Invoices())
+    m = lino.add_menu("config","~Configuration")
+    m.add_action(ShippingModes())
+    m.add_action(PaymentTerms())
+    m.add_action(Languages())
+    m.add_action(Countries())
+
+

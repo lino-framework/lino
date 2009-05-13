@@ -127,6 +127,7 @@ TEMPLATE_DIRS = (
 #print "baz", __file__
 
 INSTALLED_APPS = (
+    'lino.django.utils',
     'lino.django.igen',
     'lino.django.voc',
     'lino.django.songs',

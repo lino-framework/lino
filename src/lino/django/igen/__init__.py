@@ -38,20 +38,4 @@ There is even an early
 #
 def lino_setup(lino):
     import models as reports
-    m = lino.addMenu("contacts","~Contacts")
-    m.addAction(reports.Contacts())
-    m.addAction(reports.Companies())
-    m.addAction(reports.Persons())
-    m = lino.addMenu("prods","~Products")
-    m.addAction(reports.Products())
-    m.addAction(reports.ProductCats())
-    m = lino.addMenu("docs","~Documents")
-    m.addAction(reports.Orders())
-    m.addAction(reports.Invoices())
-    m = lino.addMenu("config","~Configuration")
-    m.addAction(reports.ShippingModes())
-    m.addAction(reports.PaymentTerms())
-    m.addAction(reports.Languages())
-    m.addAction(reports.Countries())
-
-
+    reports.lino_setup(lino)

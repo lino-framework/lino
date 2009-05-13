@@ -66,17 +66,6 @@ docitem_builder = Instantiator(DocItem,
 
 def objects():
 
-    yield language_builder.build('et','Estonian')
-    yield language_builder.build('en','English')
-    yield language_builder.build('de','German')
-
-
-    yield country_builder.build('ee',"Estonia")
-    yield country_builder.build('be',"Belgium")
-    yield country_builder.build('de',"Germany")
-    yield country_builder.build('fr',"France")
-
-
     yield shippingmode_builder.build("cash and carry")
     yield shippingmode_builder.build("regular mail")
 

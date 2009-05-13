@@ -55,9 +55,10 @@ class ManyToManyConverter(Converter):
             del kw[self.field.name]
             l = []
             for lookup_value in values.split():
-                obj = self.field.rel.to.objects.get(**{self.lookup_field: lookup_value})
+                obj = self.field.rel.to.objects.get(
+                  **{self.lookup_field: lookup_value})
                 l.append(obj)
-            kw['m2m'][self.field.name] = l
+            kw['_m2m'][self.field.name] = l
         return kw
 
       
@@ -90,29 +91,26 @@ class Instantiator:
             if isinstance(f,models.ForeignKey):
                 self.converters.append(ForeignKeyConverter(f))
             elif isinstance(f,models.ManyToManyField):
-                self.converters.append(ManyToManyConverter(f,lookup_fields.get(f.name,"pk")))
+                self.converters.append(ManyToManyConverter(f,
+                  lookup_fields.get(f.name,"pk")))
         #~ for f in model_class._meta.many_to_many:
             #~ print "foo", f.name
 
     def build(self,*values,**kw):
         #print "build",kw
         i = 0
-        kw['m2m'] = {}
+        kw['_m2m'] = {}
         for v in values:
             if (not isinstance(v,basestring)) or len(v) > 0:
                 kw[self.fields[i].name] = v
             i += 1
         for c in self.converters:
             kw = c.convert(**kw)
-        m2m = kw.pop("m2m")
+        m2m = kw.pop("_m2m")
         instance = self.model_class(**kw)
         instance.save()
         for k,v in m2m.items():
             queryset = getattr(instance,k)
             queryset.add(*v)
-            #~ lookup_field = self.lookup_fields.get(k,"pk")
-            #~ for pk in v:
-                #~ obj = queryset.get(**{lookup_field: pk})
-                #~ queryset.add(obj)
         return instance
   

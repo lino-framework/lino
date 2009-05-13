@@ -16,4 +16,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-# from urls import urls
+#
+# menu setup
+#
+def lino_setup(lino):
+    import models
+    models.lino_setup(lino)

@@ -37,8 +37,8 @@ def staff_only(request):
     return request.user.is_staff
     
 def setup_menu(menu):
-    m = menu.addMenu("system","~System")
-    m.addAction(Permissions())
-    m.addAction(Users())
-    m.addAction(Groups())
+    m = menu.add_menu("system","~System")
+    m.add_action(Permissions())
+    m.add_action(Users())
+    m.add_action(Groups())
     m.can_view = staff_only

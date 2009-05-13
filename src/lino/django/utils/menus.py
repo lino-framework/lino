@@ -85,10 +85,10 @@ class Component:
         return s + self.name
 
     def as_html(self,request,level=None):
-        if self.can_view(request):
-            return mark_safe('<a href="%s">%s</a>' % (
+        if not self.can_view(request):
+            return u''
+        return mark_safe('<a href="%s">%s</a>' % (
               self.get_url_path(),self.label))
-        return u''
               
     def can_view(self,request):
         return True
@@ -124,28 +124,40 @@ class Menu(MenuItem):
     def __init__(self,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,name,label,**kw)
         self.items = []
+        self.items_dict = {}
 
-    def addAction(self,*args,**kw):
+    def add_action(self,*args,**kw):
         return self.add_item(Action(self,*args,**kw))
+        
     
-    def addMenu(self,name,label,**kw):
+    def add_menu(self,name,label,**kw):
         return self.add_item(Menu(name,label,self,**kw))
         
     def add_item(self,m):
-        if m.name in [i.name for i in self.items]:
-            raise "Duplicate item name %s for menu %s" % (m.name,self.name)
-        self.items.append(m)
+        old = self.items_dict.get(m.name,None)
+        if old:
+            i = self.items.index(old)
+            print "replacing menu item %s at position %d" % (m.name,i)
+            self.items[i] = m
+        else:
+            self.items.append(m)
+        self.items_dict[m.name] = m
+        #~ if m.name in [i.name for i in self.items]:
+            #~ raise "Duplicate item name %s for menu %s" % (m.name,self.name)
         return m
         
     def findItem(self,name):
-        for mi in self.items:
-            if mi.name == name: return mi
+        return self.items_dict[name]
+        #~ for mi in self.items:
+            #~ if mi.name == name: return mi
 
     def get_items(self):
         for mi in self.items:
             yield mi
         
     def as_html(self,request,level=1):
+        if not self.can_view(request):
+            return u''
         if level == 1:
             s = ''
         else:

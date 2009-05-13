@@ -121,8 +121,8 @@ class LinoSite: #(AdminSite):
         self.done = True
         self.loading = False
         
-    def addMenu(self,*args,**kw):
-        return self._menu.addMenu(*args,**kw)
+    def add_menu(self,*args,**kw):
+        return self._menu.add_menu(*args,**kw)
        
     def versions(self):
       def HREF(name,url,version):

@@ -485,10 +485,10 @@ class ReportRenderer:
         if flt:
             l = []
             q = models.Q()
-            for col in self.columns:
-                if col.is_filter:
+            for field in self.report.model._meta.fields:
+                if isinstance(field,models.CharField):
                     q = q | models.Q(**{
-                      col.field.name+"__contains": flt})
+                      field.name+"__contains": flt})
             qs = qs.filter(q)
         return qs
         
@@ -629,7 +629,7 @@ class TextReportRenderer(ColumnsReportRenderer):
         if available <= 0:
             raise NotEnoughSpace()
         
-        l=[]
+        l = []
         if len(waiting) > 0:
             
             # first loop: distribute width to those columns who need
@@ -1088,7 +1088,7 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
 class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
     detail_renderer = EditManyReportRenderer
     template_to_string = "lino/includes/page_edit.html"
-    template_to_reponse = "lino/page_edit.html"      
+    template_to_reponse = "lino/page_edit.html"
   
     def __init__(self,*args,**kw):
         ViewOneReportRenderer.__init__(self,*args,**kw)
