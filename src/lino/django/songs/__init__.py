@@ -25,10 +25,6 @@ document the activities of a choir.
 #
 # menu setup
 #
-def lino_setup(lino):
-    import models as reports
-    m = lino.add_menu("songs","~Songs")
-    m.add_action(reports.Rehearsals())
-    m.add_action(reports.Singers())
-    m.add_action(reports.Authors())
-    m.add_action(reports.Songs())
+def lino_setup(*args):
+    import models
+    models.lino_setup(*args)

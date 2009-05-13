@@ -124,3 +124,11 @@ This way of doing has unresolved issues:
   - cannot make a common class become abstract
   - cannot remove a menu item or change order of menu items
 
+
+
+20090513
+--------
+
+- Added Collection and Places to songs.models. 
+  Added sample data in songs/fixtures/demo.dpy.
+- Instantiator now supports a lookup_field for ForeignKey.

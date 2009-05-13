@@ -22,8 +22,9 @@ class DataError(Exception):
     pass
 
 class Converter:
-    def __init__(self,field):
+    def __init__(self,field,lookup_field):
         self.field = field
+        self.lookup_field = lookup_field
   
     def convert(self,**kw):
         return kw
@@ -32,31 +33,31 @@ class ForeignKeyConverter(Converter):
     def convert(self,**kw):
         value = kw.get(self.field.name)
         if value is not None:
+            model = self.field.rel.to
             try:
-                p = self.field.rel.to.objects.get(pk=value)
-            except self.field.rel.to.DoesNotExist,e:
-                e = DataError(
-                  "%s.objects.get(%s) : %s" % (
-                      self.field.rel.to.__name__,value,e))
-                #print e
-                raise e
+                p = model.objects.get(
+                **{self.lookup_field: value})
+            except model.DoesNotExist,e:
+                raise DataError("%s.objects.get(%s) : %s" % (
+                      model.__name__,value,e))
             else:
                 kw[self.field.name] = p
         return kw
 
 class ManyToManyConverter(Converter):
-    def __init__(self,field,lookup_field):
-        Converter.__init__(self,field)
-        self.lookup_field = lookup_field
-        
     def convert(self,**kw):
         values = kw.get(self.field.name)
         if values is not None:
             del kw[self.field.name]
             l = []
-            for lookup_value in values.split():
-                obj = self.field.rel.to.objects.get(
-                  **{self.lookup_field: lookup_value})
+            model = self.field.rel.to
+            for value in values.split():
+                try:
+                    obj = model.objects.get(
+                      **{self.lookup_field: value})
+                except model.DoesNotExist,e:
+                    raise DataError("%s.objects.get(%s) : %s" % (
+                      model.__name__,value,e))
                 l.append(obj)
             kw['_m2m'][self.field.name] = l
         return kw
@@ -89,7 +90,8 @@ class Instantiator:
             #print repr(f)
             #print f.name
             if isinstance(f,models.ForeignKey):
-                self.converters.append(ForeignKeyConverter(f))
+                self.converters.append(ForeignKeyConverter(f,
+                  lookup_fields.get(f.name,"pk")))
             elif isinstance(f,models.ManyToManyField):
                 self.converters.append(ManyToManyConverter(f,
                   lookup_fields.get(f.name,"pk")))

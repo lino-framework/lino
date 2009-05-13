@@ -20,8 +20,6 @@
 from lino.django.songs.models import *
 from lino.django.utils.instantiator import Instantiator
 
-language = Instantiator(Language,"id name").build
-#country_builder = Instantiator(Country,"isocode name")
 song = Instantiator(Song,"id title language composer:nickname").build
 
 singer = Instantiator(Singer,"nickname first_name last_name").build
@@ -34,8 +32,13 @@ auftritt = Instantiator(Rehearsal,"date singers:nickname songs remark").build
 
 def objects():
 
+    language = Instantiator(Language,"id name").build
     yield language('la','Latin')
     yield language('he','Hebrew')
+    
+    place = Instantiator(Place,"name").build
+    yield place('Tallinn')
+    
     
     yield singer("ls","Luc","Saffre")
     yield singer("er","Erich","Roots")
@@ -76,6 +79,7 @@ def objects():
     yield composer('Johann Georg','Ebeling',1637,1676)
     yield author('Laurentius','Laurenti',1660,1722)
     yield composer('Giovanni Pierluigi da','Palestrina',1525,1594,nickname="Palestrina")
+    yield author('Silvi',u'Mänd')
     
     
     #~ yield song(1,u"Nüüd kevad saabub meile")
@@ -119,6 +123,27 @@ def objects():
     yield song(33,u"Verleih uns Frieden",'de')
     yield song(34,u"Au kõrges olgu",'et')
     yield song(35,u'Nun will der Lenz uns grüßen','de')
+    
+    yield song(35,u'Kuningate kuningas','et')
+    
+    collection = Instantiator(Collection,
+      "title place:name year author:nickname songs").build
+    yield collection("Luci Kammerkoori noodid",songs="""
+    33
+    """)
+    yield collection("cpdl.org",songs="""
+    32 26
+    """)
+    yield collection(
+      'Vaimulike laule kooridele ja ansamblitele 3',
+      'Tallinn',2007,u'Silvi Mänd',"22")
+    yield collection(u"Päevaviisid",songs="""
+    35
+    """)
+      
+    
+    
+    
     
     yield auftritt("2007-09-09","pr er as rj kj ls","1 2","Esimene avalik esinemine kohvilaual")
     yield auftritt("2007-10-21","pr er as rj kj ls","3 4 5 6","Esimene Paldiskis")

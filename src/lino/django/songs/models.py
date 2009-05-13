@@ -33,9 +33,15 @@ class Person(models.Model):
             s += " (%d-%d)" % (self.born,self.died)
         return s
         
-    def before_save(self):
+    def save(self, *args, **kwargs):
         if self.nickname is None:
-            self.nickname = self.first_name+' '+self.last_name
+            self.nickname = self.make_nickname()
+        super(Person,self).save(*args,**kwargs)
+        
+    def make_nickname(self):
+        if self.first_name:
+            return self.first_name + " " + self.last_name
+        return self.last_name
 
 class Author(Person):
     pass
@@ -114,12 +120,18 @@ class Translation(models.Model):
         null=True)
     
 
-class Songbook(models.Model):
-    class Admin:
-        pass
+class Place(models.Model):
+    name = models.CharField(max_length=200)
+    country = models.ForeignKey('utils.Country',blank=True,null=True)
+    
+class Collection(models.Model):
     title = models.CharField(max_length=200)
     intro = models.TextField(blank=True,null=True)
-    publisher = models.TextField(blank=True,null=True)
+    #publisher = models.TextField(blank=True,null=True)
+    year = models.IntegerField(blank=True,null=True)
+    author = models.ForeignKey(Author,blank=True,null=True)
+    place = models.ForeignKey(Place,blank=True,null=True)
+    songs = models.ManyToManyField(Song)
     
 
 # reports
@@ -131,6 +143,14 @@ class Rehearsals(reports.Report):
     model = Rehearsal
     #page_layout_class = RehearsalPageLayout
     columnNames = "date remark songs:40 singers:40"
+
+class Collections(reports.Report):
+    model = Collection
+    columnNames = "title place year author id"
+
+class Places(reports.Report):
+    model = Place
+    columnNames = "name country id"
 
 
 class Singers(reports.Report):
@@ -166,3 +186,11 @@ class Songs(reports.Report):
     #~ def inlines(self):
         #~ return dict(rehearsals=RehearsalsBySong())
 
+def lino_setup(lino):
+    m = lino.add_menu("songs","~Songs")
+    m.add_action(Rehearsals())
+    m.add_action(Singers())
+    m.add_action(Authors())
+    m.add_action(Songs())
+    m.add_action(Collections())
+    m.add_action(Places())
