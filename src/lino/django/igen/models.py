@@ -16,6 +16,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import datetime
+import dateutil
+from dateutil.relativedelta import relativedelta
+
 from django.db import models
 #from lino.django.tom import models
 from django.utils.safestring import mark_safe
@@ -218,7 +221,7 @@ class Document(TomModel):
     
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
-    creation_date = MyDateField(auto_now_add=True)
+    creation_date = MyDateField() #auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
@@ -238,6 +241,16 @@ class Document(TomModel):
         
     def __unicode__(self):
         return "%s # %d" % (self.__class__.__name__,self.number)
+        
+    def add_item(self,product,qty=None,**kw):
+        if product is not None:
+            if not isinstance(product,Product):
+                product = Product.objects.get(pk=product)
+            if qty is None:
+                qty = 1
+        kw['product'] = product 
+        kw['qty'] = qty
+        return self.docitem_set.add(DocItem(document=self,**kw))
         
     def total_incl(self):
         return self.total_excl + self.total_vat
@@ -275,7 +288,23 @@ class Contract(Document):
             return None
         return invoices[cnt-1]
     
-    def next_date(self,today=None):
+    def next_cycle(self,date):
+        if self.cycle == "W":
+            date += relativedelta(weeks=1)
+            #date += datetime.timedelta(7)
+        elif self.cycle == "M":
+            date += relativedelta(months=1)
+            #date += datetime.timedelta(30)
+        elif self.cycle == "Q":
+            date += relativedelta(months=3)
+            #date += datetime.timedelta(91)
+        elif self.cycle == "Y":
+            date += relativedelta(years=1)
+            #date += datetime.timedelta(365)
+        return datetime.date(date.year,date.month,date.day)
+        
+        
+    def make_invoice(self,today=None):
         if self.cycle == 'I':
             return
         if today is None:
@@ -284,35 +313,28 @@ class Contract(Document):
         if last_invoice is None:
             date = self.creation_date
         else:
-            date = last_invoice.creation_date
-            if self.cycle == "W":
-                date += datetime.timedelta(7)
-            elif self.cycle == "M":
-                date += datetime.timedelta(30)
-            elif self.cycle == "Q":
-                date += datetime.timedelta(91)
-            elif self.cycle == "Y":
-                date += datetime.timedelta(365)
-        date = datetime.date(date.year,date.month,date.day)
-        #print type(today)
-        #print date, type(date)
-        #assert isinstance(date,datetime.date)
-        if date > today:
-            return
-        return date
-        
-    def make_invoice(self,today=None):
-        date = self.next_date(today)
-        if not date:
+            date = self.next_cycle(last_invoice.creation_date)
+        #~ print "today", type(today), today
+        #~ print "date", type(date), date
+        #~ assert isinstance(date,datetime.date)
+        #~ assert isinstance(today,datetime.date)
+        items = []
+        while date <= today:
+            items.append(dict(title=str(self) + " " + str(date)+" :"))
+            for item in self.docitem_set.all():
+                d = {}
+                for fn in ('product','title','description',
+                    'unitPrice','qty','total'):
+                    d[fn] = getattr(item,fn)
+                items.append(d)
+            date = self.next_cycle(date)
+        if len(items) == 0:
             return 
         invoice = Invoice(creation_date=date,contract=self,
             customer=self.customer,
             ship_to=self.ship_to,payment_term=self.payment_term)
         invoice.save()
-        for item in self.docitem_set.all():
-            d = {}
-            for fn in 'pos product title description unitPrice qty total'.split():
-                d[fn] = getattr(item,fn)
+        for d in items:
             i = DocItem(document=invoice,**d)
             i.save()
         return invoice
@@ -337,7 +359,7 @@ class DocItem(TomModel):
     document = models.ForeignKey(Document) 
     pos = models.IntegerField("Position")
     
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product,blank=True,null=True)
     title = models.CharField(max_length=200,blank=True,null=True)
     description = models.TextField(blank=True,null=True)
     

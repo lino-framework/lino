@@ -17,18 +17,44 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
+import datetime
+from dateutil import parser as dateparser
 
 class DataError(Exception):
     pass
 
 class Converter:
-    def __init__(self,field,lookup_field):
+    def __init__(self,field,lookup_field=None):
         self.field = field
         self.lookup_field = lookup_field
   
     def convert(self,**kw):
         return kw
       
+
+#~ def parse_date(value):
+    #~ if len(value) == 8:
+        #~ year = int(value[:4])
+        #~ month = int(value[4:6])
+        #~ day = int(value[6:8])
+    #~ elif len(value) == 10:
+        #~ year,month,day = map(int,value.split('-'))
+    #~ else:
+        #~ raise ValueError("Invalid value %r for date." % value)
+    #~ return datetime.date(year,month,day)
+
+
+class DateConverter(Converter):
+    def convert(self,**kw):
+        value = kw.get(self.field.name)
+        if value is not None:
+            if not isinstance(value,datetime.date):
+                if type(value) == int:
+                    value = str(value)
+                d = dateparser.parse(value)
+                kw[self.field.name] = datetime.date(d.year,d.month,d.day)
+        return kw
+
 class ForeignKeyConverter(Converter):
     def convert(self,**kw):
         value = kw.get(self.field.name)
@@ -95,6 +121,8 @@ class Instantiator:
             elif isinstance(f,models.ManyToManyField):
                 self.converters.append(ManyToManyConverter(f,
                   lookup_fields.get(f.name,"pk")))
+            elif isinstance(f,models.DateField):
+                self.converters.append(DateConverter(f))
         #~ for f in model_class._meta.many_to_many:
             #~ print "foo", f.name
 

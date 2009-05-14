@@ -17,6 +17,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from datetime import date
 from lino.django.igen.models import *
 from lino.django.utils.instantiator import Instantiator
 
@@ -26,7 +27,6 @@ shippingmode_builder = Instantiator(ShippingMode,"name")
 paymentterm_builder = Instantiator(PaymentTerm,"name")
 
 productcat_builder = Instantiator(ProductCat,"name")
-product_builder = Instantiator(Product,"name price cat description")
 
 contact_builder = Instantiator(Contact,fieldnames="""
       id
@@ -93,52 +93,60 @@ def objects():
     furniture = productcat_builder.build("Furniture")
     yield furniture
     #print "foo", furniture.id, furniture
+    
+    
+    
+    
+    product = Instantiator(Product,"name price cat description").build
         
-    yield product_builder.build("Wooden table","199.99",1,"""\
+    yield product("Wooden table","199.99",1,"""\
 This table is made of pure wood. 
 <br/>It has <b>four legs</b>.
 <br/>Designed to fit perfectly with <b>up to 6 wooden chairs</b>.
 <br/>Product of the year 2008.
     """)
-    yield product_builder.build("Wooden chair","99.99",1,"")
-    yield product_builder.build("Metal table","129.99",1,"")
-    yield product_builder.build("Metal chair","79.99",1,"")
+    yield product("Wooden chair","99.99",1,"")
+    yield product("Metal table","129.99",1,"")
+    yield product("Metal chair","79.99",1,"")
+    hosting = product("Website hosting 1MB/month","3.99",1,"")
+    yield hosting
     
     invoice = Instantiator(Invoice,
-    "number customer creation_date payment_term shipping_mode").build
+    "customer creation_date payment_term shipping_mode").build
     
     order = Instantiator(Order,
-    "number customer creation_date payment_term shipping_mode").build
+    "customer creation_date payment_term shipping_mode").build
   
     contract = Instantiator(Contract,
-    "number customer creation_date cycle payment_term shipping_mode").build
+    "customer creation_date cycle payment_term shipping_mode").build
     
     docitem = Instantiator(DocItem,"document product qty").build
 
-    yield invoice(1,2,"2008-10-29",2,1)
-    yield docitem(1,1,1)
-    yield docitem(1,2,4)
-    
-    yield invoice(2,3,"2009-04-11",2,1)
-    yield docitem(2,3,1)
-    yield docitem(2,4,4)
-    
-    yield order(3,4,"2009-04-12",2,1)
-    yield docitem(3,3,1)
-    yield docitem(3,4,4)
-    
-    yield invoice(4,4,"2009-04-12",2,1)
-    yield docitem(4,3,1)
-    yield docitem(4,4,4)
-
-    c = contract(5,4,"2008-05-13","M",2,1)
+    c = contract(100,"2008-05-13","M",2,1)
+    c.add_item(hosting,1)
     yield c
-    yield docitem(5,3,1)
-    yield docitem(5,4,4)
     
-    while True:
-        i = c.make_invoice(today=datetime.date(2009,05,13))
-        if i is None: 
-            break
-        yield i
+    yield c.make_invoice(today=date(2008,10,29))
+        
+    i = invoice(2,"2008-10-29",2,1)
+    i.add_item(1,1)
+    i.add_item(2,4)
+    yield i
+    
+    yield c.make_invoice(today=date(2009,04,11))
+        
+    i = invoice(3,date(2009,04,11),2,1)
+    i.add_item(3,1)
+    i.add_item(4,4)
+    yield i
+    
+    yield order(4,date(2009,04,12),2,1)
+    i.add_item(3,1)
+    i.add_item(4,4)
+    
+    yield invoice(4,date(2009,04,12),2,1)
+    i.add_item(3,1)
+    i.add_item(4,4)
+
+    yield c.make_invoice(today=date(2009,05,14))
 

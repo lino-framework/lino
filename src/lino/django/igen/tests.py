@@ -125,14 +125,14 @@ Minu Firma OÜ       |Estonia     |              |              |
     def test08(self):
         c = Contact.objects.get(pk=4)
         s = models.DocumentsByCustomer().as_text(master_instance=c)
-        print "test08()\n"+s
+        #print "test08()\n"+s
         self.assertEquals(s.split(),u"""
 Bäckerei Ausdemwald (Alfons Ausdemwald) : documents by customer
 ===============================================================
 number         |creation date  |total_incl     |total excl     |total vat
 ---------------+---------------+---------------+---------------+---------------
-3              |2009-04-12     |449.95         |449.95         |0
-4              |2009-04-12     |449.95         |449.95         |0        
+6              |2009-04-12     |0              |0              |0
+7              |2009-04-12     |0              |0              |0        
 """.split(),"DocumentsByCustomer().as_text() has changed in demo")
         
         
@@ -143,14 +143,14 @@ class ClientTest(TestCase):
     fixtures = [ 'demo' ]
     def test01(self):
         for url in (
-          '/menu',
-          '/menu/contacts',
-          '/menu/contacts/contacts',
-          '/menu/contacts/contacts?editing=1',
-          '/menu/contacts/contacts?editing=0',
+          '',
+          '/contacts',
+          '/contacts/contacts',
+          '/contacts/contacts?editing=1',
+          '/contacts/contacts?editing=0',
           #'/instance/igen/Contact/1',
-          '/menu/prods/products?row=1',
-          '/menu/docs/invoices?row=1',
+          '/prods/products?row=1',
+          '/docs/invoices?row=1',
         ):
             response = self.client.get(url) # ,follow=True)
             self.failUnlessEqual(response.status_code, 200,
@@ -158,7 +158,7 @@ class ClientTest(TestCase):
 
         # now we just check whether some methods raise an exception
         # templates silently ignore them
-        response = self.client.get('/menu/contacts/contacts')
+        response = self.client.get('/contacts/contacts')
         s = "\n".join([repr(c) for c in response.context])
         renderer = response.context[0].get("report")
         s = renderer.navigator()
@@ -168,34 +168,34 @@ class ClientTest(TestCase):
             count += 1
         self.assertEqual(count,15)
         
-        response = self.client.get('/menu/config/languages/1')
+        response = self.client.get('/config/languages/1')
         report = response.context[0].get("report")
         s = report.layout.as_html()
 
-        response = self.client.get('/menu/prods/products/1')
+        response = self.client.get('/prods/products/1')
         report = response.context[0].get("report")
         s = report.layout.as_html()
 
-        response = self.client.get('/menu/docs/invoices/1')
+        response = self.client.get('/docs/invoices/1')
         report = response.context[0].get("report")
         s = report.layout.as_html()
         
-        response = self.client.get('/menu/contacts/contacts/1?editing=1')
+        response = self.client.get('/contacts/contacts/1?editing=1')
         report = response.context[0].get("report")
         s = report.layout.as_html()
         s = report.navigator()
         
-        response = self.client.get('/menu/docs/invoices/1?editing=1')
+        response = self.client.get('/docs/invoices/1?editing=1')
         report = response.context[0].get("report")
         s = report.layout.as_html()
         
-        response = self.client.get('/menu/docs/invoices?editing=1')
+        response = self.client.get('/docs/invoices?editing=1')
         report = response.context[0].get("report")
         s = report.navigator()
         for row in report.rows():
             s = row.as_html()
             
-        response = self.client.get('/menu/docs/invoices?editing=0')
+        response = self.client.get('/docs/invoices?editing=0')
         report = response.context[0].get("report")
         s = report.navigator()
         for row in report.rows():

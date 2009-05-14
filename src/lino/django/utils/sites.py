@@ -155,6 +155,10 @@ class LinoSite: #(AdminSite):
       version = getattr(yaml,'__version__','')
       yield ("PyYaml","http://pyyaml.org/",version)
       
+      import dateutil
+      version = getattr(dateutil,'__version__','')
+      yield ("python-dateutil","http://labix.org/python-dateutil",version)
+      
       import sys
       version = "%d.%d.%d" % sys.version_info[:3]
       yield ("Python","http://www.python.org/",version)

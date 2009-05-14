@@ -114,7 +114,7 @@ Common models
 -------------
 
 :class`Language` and :class`Country` are a first example of 
-model reuse by several applications. They are now defined in
+models being used by several applications. They are now defined in
 :mod:`lino.django.utils`.
 
 The order of applications in :configcmd:`INSTALLED_APPS` becomes
@@ -132,3 +132,21 @@ This way of doing has unresolved issues:
 - Added Collection and Places to songs.models. 
   Added sample data in songs/fixtures/demo.dpy.
 - Instantiator now supports a lookup_field for ForeignKey.
+
+20090514
+--------
+
+- Worked on :xfile:`/src/lino/django/igen/fixtures/demo.dpy`.
+
+- Added :class:`lino.django.igen.models.Contract`.
+
+- I noticed that Django's DateField does no validation and no conversion from string to date. :class:`lino.django.utils.instantiator.DateConverter`
+  How to parse a datetime.date from a string? 
+  The standard Python module has now support at all, even not to 
+  parse a simple iso-formatted date. `PEP 321 <http://www.python.org/dev/peps/pep-0321/`_ was exactly what I'd need now, but it has been withdrawn... I also read
+  http://mail.python.org/pipermail/python-dev/2004-April/044181.html
+  and
+  http://mail.python.org/pipermail/python-list/2003-November/236842.html
+  
+  Conclusion: I started by writing a parse_date() myself, then I understood that I also need other things from python-dateutil, so I threw it away and added dateutils to :meth:`lino.django.utils.sites.LinoSite.tanks_to`.
+  

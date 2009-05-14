@@ -60,6 +60,7 @@ def Deserializer(fp, **options):
     module = imp.load_module(fqname, fp, fp.name, desc)
     #m = __import__(filename)
     for instance in module.objects():
-        yield FakeDeserializedObject(instance)
+        if instance is not None:
+            yield FakeDeserializedObject(instance)
 
 
