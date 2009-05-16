@@ -89,18 +89,19 @@ def vfill(lines,valign,height):
 
 
 class Row(object):
-    def __init__(self,renderer,instance,number,form=None):
+    def __init__(self,renderer,instance,number,dtl=None,form=None):
         self.renderer = renderer
         self.report = renderer.report
         self.number = number
         self.instance = instance
         self.form = form
+        self.dtl = dtl
         
         #print "Row.__init__()", self.instance.pk
-        
         self.inline_renderers = {}
-        if renderer.is_main:
-            for name,inline in self.report._inlines.items():
+        if dtl is not None:
+        #if renderer.is_main:
+            for name,inline in self.report._page_layouts[dtl]._inlines.items():
                 self.inline_renderers[name] = \
                   renderer.detail_renderer(renderer.request,
                     False,inline,self.instance)
@@ -160,6 +161,8 @@ class Row(object):
             return self.form[pk.name]
         return ""
         
+    #~ def render_inline(self,elem):
+        #~ return self.inline_renderers[elem.name].render_to_string()
             
     def render_field(self,field):
         r = self.inline_renderers.get(field.name,None)
@@ -812,8 +815,8 @@ class ViewReportRenderer(ReportRenderer):
           form_action = self.again(editing=None),
         )
         return render_to_response(self.template_to_reponse,
-          context,
-          context_instance=template.RequestContext(self.request))
+            context,
+            context_instance=template.RequestContext(self.request))
         
     def render_to_string(self):
         context=dict(
@@ -915,7 +918,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
             object_list = self.queryset
         #rownum = self.page.start_index()
         for obj in object_list:
-            yield Row(self,obj,rownum)
+            yield Row(self,obj,rownum,None)
             rownum += 1
 
 ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
@@ -936,7 +939,30 @@ class RowViewReportRenderer(ViewReportRenderer):
             if rownum == 0:
                 raise Http404("queryset is empty")
             obj = self.queryset[rownum-1]
-        self.row = Row(self,obj,rownum)
+        if self.is_main:
+            dtl = self.request.GET.get('dtl')
+            if dtl is None:
+                dtl = 0
+            else:
+                dtl = int(dtl)
+        self.row = Row(self,obj,rownum,dtl)
+        self.dtl = dtl
+        layout = self.report._page_layouts[dtl]
+        self.layout = layout.bound_to(self.row)
+        
+    def details(self):
+        s = '<ul class="detail">'
+        i = 0
+        for layout in self.report._page_layouts:
+            title = layout.get_title()
+            if i == self.dtl:
+                s += '<li class="detail_active">%s</li>' % title
+            else:
+                href = self.again(dtl=i)
+                s += '<li class="detail"><a href="%s"  class="detail">%s</a>' % (href,title)
+            i += 1
+        s += "</ul>"
+        return mark_safe(s)
         
     def position_string(self):
         return  "Row %d of %d." % (self.row.number,self.queryset.count())
@@ -951,19 +977,10 @@ class ViewOneReportRenderer(RowViewReportRenderer):
     template_to_string = "lino/includes/page_show.html"
     template_to_reponse = "lino/page_show.html"
     
-    def __init__(self,*args,**kw):
-        RowViewReportRenderer.__init__(self,*args,**kw)
-        
-        #~ details = {}
-        #~ for name in self.report.detail_reports.split():
-            #~ meth = getattr(self.row.instance,name)
-            #~ dtlrep = meth()
-            #~ r = self.detail_renderer(dtlrep,request,name,
-                #~ self.row.instance,dtlrep.fk_name)
-            #~ details[name] = lambda x: r.render_to_string()
-        #~ self.details = details
-        
-        self.layout = self.report.page_layout().bound_to(self.row)
+    #~ def __init__(self,*args,**kw):
+        #~ RowViewReportRenderer.__init__(self,*args,**kw)
+        #~ layout = self.report._page_layouts[self.dtl]
+        #~ self.layout = layout.bound_to(self.row)
             
         
     def navigator(self):
@@ -1081,7 +1098,7 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
         else:
             rownum = 1
         for form in self.formset.forms:
-            yield Row(self,form.instance,rownum,form)
+            yield Row(self,form.instance,rownum,None,form)
             rownum += 1
 
     
@@ -1136,7 +1153,7 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
     def rows(self):
         rownum = 1
         for obj in self.queryset:
-            yield Row(self,obj,rownum)
+            yield Row(self,obj,rownum,None)
             rownum += 1
 
 class PdfOneReportRenderer(ViewOneReportRenderer):

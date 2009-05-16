@@ -404,26 +404,31 @@ from lino.django.utils.layouts import PageLayout
 
 from lino.django.utils.models import Country, Languages
 
+
+
+
+
+
 class ContactPageLayout(PageLayout):
     
     box1 = """
-              title:5 firstName:20 lastName:50
-              companyName:60 nationalId:15
+              title:5 firstName:10 lastName:15
+              companyName:20 nationalId:10
               """
-    box2 = """email:60 
-              url:60"""
+    box2 = """email:30 
+              url:30"""
     box3 = """phone:15 
               gsm:15"""
     box4 = """country region
-              city:25 zipCode:25
-              addr1:60
-              addr2:60
+              city:18 zipCode:10
+              addr1:30
+              addr2:30
               """
     box5 = """vatId 
-                vatExempt 
-                itemVat"""
+              vatExempt 
+              itemVat"""
     box6 = """language 
-                paymentTerm"""
+              paymentTerm"""
     box7 = """box5 
               box6
               """
@@ -431,22 +436,29 @@ class ContactPageLayout(PageLayout):
             box1
             box2 box3
             box4 box7
-            remarks:60x6
-            documents
+            remarks:30x6
             """
             
+    #~ def documents(self):
+        #~ return DocumentsByCustomer()
+            
 
+class ContactDocumentsLayout(ContactPageLayout):
+    main = """
+            box1
+            documents
+            """
+    def inlines(self):
+        return dict(documents=DocumentsByCustomer())
 
 
 class Contacts(reports.Report):
-    page_layout_class = ContactPageLayout
+    page_layouts = (ContactPageLayout, ContactDocumentsLayout)
     columnNames = "id:3 companyName firstName lastName title country"
     can_delete = True
     model = Contact
     order_by = "id"
     
-    def inlines(self):
-        return dict(documents=DocumentsByCustomer())
 
 
         
@@ -487,7 +499,7 @@ class ProductPageLayout(PageLayout):
     """
 
 class Products(reports.Report):
-    page_layout_class = ProductPageLayout
+    page_layouts = (ProductPageLayout,)
     queryset = Product.objects.order_by("id")
     columnNames = "id:3 name description:30x1 cat vatExempt price:6"
     
@@ -516,15 +528,18 @@ class DocumentPageLayout(PageLayout):
       items:80x5
       """
       
+    #~ def items(self):
+        #~ return ItemsByDocument()
+      
+    def inlines(self):
+        return dict(items=ItemsByDocument())
 
 class Documents(reports.Report):
-    page_layout_class = DocumentPageLayout
+    page_layouts = (DocumentPageLayout,)
     #detail_reports = "items"
     columnNames = "number:4 creation_date:8 customer:20 " \
                   "total_incl total_excl total_vat"
 
-    def inlines(self):
-        return dict(items=ItemsByDocument())
         
 class Orders(Documents):
     queryset = Order.objects.order_by("number")
@@ -542,7 +557,7 @@ class InvoicePageLayout(DocumentPageLayout):
 
 class Invoices(Orders):
     queryset = Invoice.objects.order_by("number")
-    page_layout_class = InvoicePageLayout
+    page_layouts = (InvoicePageLayout,)
 
     
 class ItemsByDocument(reports.Report):
@@ -582,20 +597,26 @@ class DocumentsByCustomer(Documents):
 
 
 
+
 class CountryPageLayout(PageLayout):
     main = """
     isocode name
     contacts
     """
-        
-class Countries(reports.Report):
-    page_layout_class = CountryPageLayout
-    model = Country
-    order_by = "isocode"
-    
+    #~ def contacts(self):
+        #~ return ContactsByCountry()
     def inlines(self):
         return dict(contacts = ContactsByCountry())
 
+        
+class Countries(reports.Report):
+    #page_layout_class = CountryPageLayout
+    model = Country
+    order_by = "isocode"
+    
+    page_layouts = (CountryPageLayout,)
+    
+    
 class ContactsByCountry(Contacts):
     model = Contact
     master = Country

@@ -118,8 +118,11 @@ class Report:
     #detail_reports = ''
     master = None
     fk_name = None
-    _page_layout = None
-    page_layout_class = layouts.PageLayout
+    #_page_layout = None
+    #page_layout_class = layouts.PageLayout
+    
+    _page_layouts = None
+    page_layouts = (layouts.PageLayout ,)
     
     def __init__(self):
         self.groups = [] # for later
@@ -141,11 +144,9 @@ class Report:
         if self.master:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
-        self._inlines = self.inlines()
+        self._page_layouts = [ 
+              l(self.model) for l in self.page_layouts]
         
-    def inlines(self):
-        return {}
-         
     def column_headers(self):
         #print "column_headers"
         #print self.layout
@@ -180,12 +181,11 @@ class Report:
     def get_row_print_template(self,instance):
         return instance._meta.db_table + "_print.html"
         
-    def page_layout(self):
-        #model = self.__class__
-        if self._page_layout is None:
-            self._page_layout = self.page_layout_class(
-                self.model)
-        return self._page_layout
+    #~ def page_layout(self,i=0):
+        #~ if self._page_layouts is None:
+            #~ self._page_layouts = [ 
+              #~ l(self.model) for l in self.page_layouts]
+        #~ return self._page_layouts[i]
             
 
     def can_view(self,request,row=None):
