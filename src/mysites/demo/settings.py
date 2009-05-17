@@ -34,6 +34,8 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
+# ADMINS is used in lino.django.utils.sites.LinoSite.password_reset()
+
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -57,7 +59,7 @@ TIME_ZONE = 'Europe/Tallinn'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1
+SITE_ID = 1 # see also makedemo.py
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -127,17 +129,17 @@ TEMPLATE_DIRS = (
 #print "baz", __file__
 
 INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.markup',
+    'django.contrib.admin',
+    'django.contrib.databrowse',
     'lino.django.utils',
     'lino.django.igen',
     'lino.django.voc',
     'lino.django.songs',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    #'django.contrib.sites',
-    'django.contrib.markup',
-    'django.contrib.admin',
-    'django.contrib.databrowse',
     #'lino.django.tom',
 )
 
@@ -159,4 +161,4 @@ LOGIN_REDIRECT_URL = "/"
 
 EMAIL_HOST = "mail.hot.ee"
 #EMAIL_PORT = ""
-LINO_WEBMASTER = "luc.saffre@mail.ee"
+#LINO_WEBMASTER = "luc.saffre@mail.ee"

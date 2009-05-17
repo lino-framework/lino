@@ -18,7 +18,7 @@
 
 """
   A LinoSite is somehow like an AdminSite, but there are differences.
-  - user code configures the site by adding commands to the menu instead of registering models.
+  - user code configures the site by filling a main menu instead of registering models.
   - autodiscover() works automatically 
   - the account/ views are initially copied from django.contrib.auth.views with the 
     following changes:
@@ -131,37 +131,46 @@ class LinoSite: #(AdminSite):
           yield HREF(name,url,version)
           
     def thanks_to(self):
-      import lino
-      version = lino.__version__
-      from django.utils.version import get_svn_revision
-      svn_rev = get_svn_revision(os.path.dirname(__file__))
-      if svn_rev != u'SVN-unknown':
-          version += " " + svn_rev
-      yield ("Lino",
-             "http://lino.saffre-rumma.ee",
-             version)
-      
-      import django
-      yield ("Django",
-             "http://www.djangoproject.com",
-             django.get_version())
-      
-      import reportlab
-      yield ("ReportLab Toolkit",
-             "http://www.reportlab.org/rl_toolkit.html",
-             reportlab.Version)
-                 
-      import yaml
-      version = getattr(yaml,'__version__','')
-      yield ("PyYaml","http://pyyaml.org/",version)
-      
-      import dateutil
-      version = getattr(dateutil,'__version__','')
-      yield ("python-dateutil","http://labix.org/python-dateutil",version)
-      
-      import sys
-      version = "%d.%d.%d" % sys.version_info[:3]
-      yield ("Python","http://www.python.org/",version)
+        import lino
+        version = lino.__version__
+        from django.utils.version import get_svn_revision
+        svn_rev = get_svn_revision(os.path.dirname(__file__))
+        if svn_rev != u'SVN-unknown':
+            version += " " + svn_rev
+        yield ("Lino",
+               "http://lino.saffre-rumma.ee",
+               version)
+        
+        import django
+        yield ("Django",
+               "http://www.djangoproject.com",
+               django.get_version())
+        
+        import reportlab
+        yield ("ReportLab Toolkit",
+               "http://www.reportlab.org/rl_toolkit.html",
+               reportlab.Version)
+                   
+        import yaml
+        version = getattr(yaml,'__version__','')
+        yield ("PyYaml","http://pyyaml.org/",version)
+        
+        import dateutil
+        version = getattr(dateutil,'__version__','')
+        yield ("python-dateutil","http://labix.org/python-dateutil",version)
+        
+        import sys
+        version = "%d.%d.%d" % sys.version_info[:3]
+        yield ("Python","http://www.python.org/",version)
+        
+        try:
+            # l:\snapshot\xhtml2pdf
+            import ho.pisa as pisa
+            version = getattr(pisa,'__version__','')
+            yield ("xhtml2pdf","http://www.htmltopdf.org/",version)
+        except ImportError:
+            pisa = None
+        
         
     def context(self,request,**kw):
         d = dict(
@@ -279,8 +288,9 @@ class LinoSite: #(AdminSite):
                         'confirm_path': reverse(self.password_reset_confirm,
                                                 kwargs=dict(uidb36=uid,token=token)),
                     }
-                    send_mail(_("Password reset on %s") % site_name,
-                        t.render(Context(c)), settings.LINO_WEBMASTER, [user.email])
+                    for name,email in settings.ADMINS:
+                      send_mail(_("Password reset on %s") % site_name,
+                          t.render(Context(c)), email, [user.email])
                 
                 return HttpResponseRedirect(post_reset_redirect)
         else:

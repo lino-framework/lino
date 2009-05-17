@@ -21,6 +21,7 @@ import settings
 from django.core.management import setup_environ
 setup_environ(settings)
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.management.color import no_style
 from django.db import models, connection, transaction
 from django.db.models import loading
@@ -58,6 +59,7 @@ def main():
     call_command('loaddata','demo')
     User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
     User.objects.create_user('user','luc.saffre@gmx.net','1234')
+    Site(id=1,domain="http://igen.saffre-rumma.ee",name="lino.django.utils demo").save()
         
 
 if __name__ == "__main__":
