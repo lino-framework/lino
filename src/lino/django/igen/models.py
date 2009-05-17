@@ -444,6 +444,7 @@ class ContactPageLayout(PageLayout):
             
 
 class ContactDocumentsLayout(ContactPageLayout):
+    label = "Documents"
     main = """
             box1
             documents
@@ -543,9 +544,18 @@ class Documents(reports.Report):
         
 class Orders(Documents):
     queryset = Order.objects.order_by("number")
+    
+    
+class ContractPageLayout(DocumentPageLayout):
+    label = "Emitted invoices"
+    main = "emitted_invoices"
+    def inlines(self):
+        return dict(emitted_invoices=InvoicesByContract())
+   
 
 class Contracts(Documents):
     queryset = Contract.objects.order_by("number")
+    page_layouts = Documents.page_layouts + (ContractPageLayout,)
 
 
 class InvoicePageLayout(DocumentPageLayout):
@@ -558,6 +568,12 @@ class InvoicePageLayout(DocumentPageLayout):
 class Invoices(Orders):
     queryset = Invoice.objects.order_by("number")
     page_layouts = (InvoicePageLayout,)
+
+class InvoicesByContract(Orders):
+    model = Invoice
+    master = Contract
+    fk_name = "contract"
+    order_by = "number"
 
     
 class ItemsByDocument(reports.Report):

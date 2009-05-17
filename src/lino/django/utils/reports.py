@@ -167,6 +167,8 @@ class Report:
             #~ fk = _get_foreign_key(self.master,self.model,self.fk_name)
             #~ self.fk.get_attname()
         if self.master is not None:
+            #print qs
+            #print qs.model
             qs = qs.filter(**{self.fk.name:master_instance})
             #~ if self.fk.limit_choices_to:
                 #~ qs = qs.filter(**self.fk.limit_choices_to)

@@ -940,26 +940,28 @@ class RowViewReportRenderer(ViewReportRenderer):
                 raise Http404("queryset is empty")
             obj = self.queryset[rownum-1]
         if self.is_main:
-            dtl = self.request.GET.get('dtl')
-            if dtl is None:
-                dtl = 0
+            tab = self.request.GET.get('tab')
+            if tab is None:
+                tab = 0
             else:
-                dtl = int(dtl)
-        self.row = Row(self,obj,rownum,dtl)
-        self.dtl = dtl
-        layout = self.report._page_layouts[dtl]
+                tab = int(tab)
+        self.row = Row(self,obj,rownum,tab)
+        self.tab = tab
+        layout = self.report._page_layouts[tab]
         self.layout = layout.bound_to(self.row)
         
-    def details(self):
-        s = '<ul class="detail">'
+    def tabs(self):
+        if len(self.report._page_layouts) == 1:
+            return ''
+        s = '<ul class="tab">'
         i = 0
         for layout in self.report._page_layouts:
-            title = layout.get_title()
-            if i == self.dtl:
-                s += '<li class="detail_active">%s</li>' % title
+            title = layout.get_label()
+            if i == self.tab:
+                s += '<li class="tab_selected">%s</li>' % title
             else:
-                href = self.again(dtl=i)
-                s += '<li class="detail"><a href="%s"  class="detail">%s</a>' % (href,title)
+                href = self.again(tab=i)
+                s += '<li><a href="%s">%s</a>' % (href,title)
             i += 1
         s += "</ul>"
         return mark_safe(s)
@@ -1127,7 +1129,7 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
         
         self.row.form = frm
         
-        self.layout = self.report.page_layout().bound_to(self.row)
+        #self.layout = self.report.page_layout().bound_to(self.row)
         
         #self.row = Row(self,self.instance,self.rownum,frm)
         #print self.__class__.__name__, "__init__() done"

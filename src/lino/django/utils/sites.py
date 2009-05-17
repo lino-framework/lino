@@ -88,6 +88,7 @@ class LinoSite: #(AdminSite):
         self.loading = False
         self.done = False
         self.root_path = '/lino/'
+        self.skin = Skin()
 
     def autodiscover(self):
         if self.done:
@@ -125,10 +126,10 @@ class LinoSite: #(AdminSite):
         return self._menu.add_menu(*args,**kw)
        
     def versions(self):
-      def HREF(name,url,version):
-          return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
-      for name,url,version in self.thanks_to():
-          yield HREF(name,url,version)
+        def HREF(name,url,version):
+            return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
+        for name,url,version in self.thanks_to():
+            yield HREF(name,url,version)
           
     def thanks_to(self):
         import lino
@@ -177,6 +178,7 @@ class LinoSite: #(AdminSite):
           main_menu = MenuRenderer(self._menu,request),
           root_path = self.root_path,
           lino = self,
+          skin = self.skin,
         )
         d.update(kw)
         return d
@@ -399,6 +401,34 @@ class LinoSite: #(AdminSite):
         urlpatterns += self._menu.get_urls() # self._menu.name)
         return urlpatterns
         #return self._menu.get_urls()
+        
+  
+class Skin:
+    body = dict(
+      background = "#eee",
+      text = "#333",
+      link = "#5b80b2",
+    )
+    params = dict(
+      background = "#5b80b2",
+      text = "yellow",
+      link = "#5b80b2",
+    )
+    grid = dict(
+      background = "#bbbbbb",
+      text = "yellow",
+      border = "1pt solid white",
+      link = "#5b80b2",
+    )
+    
+
+    background_color = "#eee"
+    #background_color_2 = '#5b80b2'
+    text_color = "#333"
+    link_color = "#5b80b2"
+    header_text_color = "#666"
+    
+    
          
        
 site = LinoSite()

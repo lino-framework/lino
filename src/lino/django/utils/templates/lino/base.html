@@ -6,12 +6,12 @@
 {% block style %}
 <style type="text/css">
 * { margin:0; padding:0; }
-body { background:#eee; color:#333; font:76%/1.6 "Lucida Grande","Bitstream Vera Sans",Verdana,sans-serif; }
-a { color: #5b80b2; text-decoration:none; }
+body { background:{{skin.body.background}}; color:{{skin.body.text}}; font:76%/1.6 "Lucida Grande","Bitstream Vera Sans",Verdana,sans-serif; }
+a { color: {{skin.body.link}}; text-decoration:none; }
 a:hover { text-decoration:underline; }
 a img { border:none; }
-h1 { font-size:1.8em; color:#666; margin:0.4em 0 0.2em 0; }
-h2 { font-size:1.5em; color:#666; margin:1em 0 0.2em 0; }
+h1 { font-size:1.8em; color:{{skin.header_text_color}}; margin:0.4em 0 0.2em 0; }
+h2 { font-size:1.5em; color:{{skin.header_text_color}}; margin:1em 0 0.2em 0; }
 p { margin:0.5em 0 1em 0; }
 .odd { background-color:#EDF3FE; }
 .quiet { color:#666; }
@@ -23,20 +23,24 @@ p { margin:0.5em 0 1em 0; }
 /* LUC */
 
 .simple li { margin-left:5em; }
-ul.report_params { background:#5b80b2; padding:3pt;}
+ul.report_params { background:{{skin.params.background}}; padding:3pt;}
 ul.report_params li { display: inline; padding:1em;}
+
+ul.tab { padding: 0pt 3pt;}
+ul.tab li { display: inline; padding: 0pt 3pt;}
+ul.tab li.tab_selected { background: {{skin.body.background}};}
 /*
 ul.menu2 li { display: inline; padding: 0pt 3pt;}
 ul.menu2 { display: inline; padding: 3pt 0pt ;}
 ul.menu1 { padding: 0pt 0pt ;}
 */
-table.vbox { background:#bbbbbb; border: 1pt solid white; 
+table.vbox { background:{{skin.grid.background}}; border: {{skin.grid.border}}; 
   padding:1pt; }
 table.vbox td { padding:0pt 1pt; }
   
 table.hbox { background:#bbbbbb; padding:1pt; }
-table.grid { background:#bbbbbb; border: 1pt solid white; border-collapse: collapse; }
-table.grid td { border: 1pt solid white; padding: 5px 5px;  vertical-align:top;}
+table.grid { background:#bbbbbb; border: {{skin.grid.border}}; border-collapse: collapse; }
+table.grid td { border: {{skin.grid.border}}; padding: 5px 5px;  vertical-align:top;}
 input.readonly { background:yellow;}
 textarea.readonly { background:yellow;}
 span.textinput {background:white;display:inline-block;}

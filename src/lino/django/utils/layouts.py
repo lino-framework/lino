@@ -125,6 +125,7 @@ class GRID_ROW(Container):
 
 
 class Layout:
+    label = "General"
     detail_reports = {}
     join_str = None
     vbox_class = VBOX
@@ -180,8 +181,10 @@ class Layout:
     def __str__(self):
         return self.__class__.__name__ + "(%s)" % self._main
         
-    def get_title(self):
-        return self.__class__.__name__
+    def get_label(self):
+        if self.label is None:
+            return self.__class__.__name__
+        return self.label
 
     def bound_to(self,row):
         return BoundElement(self._main,row)
