@@ -59,7 +59,7 @@ def main():
     call_command('loaddata','demo')
     User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
     User.objects.create_user('user','luc.saffre@gmx.net','1234')
-    Site(id=1,domain="http://igen.saffre-rumma.ee",name="lino.django.utils demo").save()
+    Site(id=1,domain="igen.saffre-rumma.ee",name="Lino/Django demo").save()
         
 
 if __name__ == "__main__":

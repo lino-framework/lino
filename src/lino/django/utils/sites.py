@@ -22,7 +22,9 @@
   - autodiscover() works automatically 
   - the account/ views are initially copied from django.contrib.auth.views with the 
     following changes:
+    - implemented as methods of LinoSite
     - context has the Lino Standard Context variables (title, main_menu
+    - Moved email sending code from PasswordResetForm.save() to Linosite.pasword_reset()
   
 """
 
@@ -258,17 +260,14 @@ class LinoSite: #(AdminSite):
         if request.method == "POST":
             form = PasswordResetForm(request.POST)
             if form.is_valid():
-                domain_override=None, 
-                email_template_name='registration/password_reset_email.html'
-                use_https=request.is_secure()
-                token_generator=default_token_generator
+                domain_override = None
+                use_https = request.is_secure()
                 if is_admin_site:
                     domain_override = request.META['HTTP_HOST']
                 else:
                     if not Site._meta.installed:
                         domain_override = RequestSite(request).domain
-                #form.save(**opts)
-                
+                # this was previously in form.save(**opts)
                 for user in form.users_cache:
                     if not domain_override:
                         current_site = Site.objects.get_current()
@@ -287,12 +286,14 @@ class LinoSite: #(AdminSite):
                         'user': user,
                         'token': token,
                         'protocol': use_https and 'https' or 'http',
-                        'confirm_path': reverse(self.password_reset_confirm,
-                                                kwargs=dict(uidb36=uid,token=token)),
+                        'confirm_path': reverse(
+                          self.password_reset_confirm,
+                          kwargs=dict(uidb36=uid,token=token)),
                     }
-                    for name,email in settings.ADMINS:
-                      send_mail(_("Password reset on %s") % site_name,
-                          t.render(Context(c)), email, [user.email])
+                    #sender = settings.ADMINS[0][1]
+                    send_mail(
+                      _("Password reset on %s") % site_name,
+                      t.render(Context(c)), None, [user.email])
                 
                 return HttpResponseRedirect(post_reset_redirect)
         else:

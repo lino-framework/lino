@@ -412,31 +412,30 @@ from lino.django.utils.models import Country, Languages
 class ContactPageLayout(PageLayout):
     
     box1 = """
-              title:5 firstName:10 lastName:15
-              companyName:20 nationalId:10
+              title:10 firstName:15 lastName
+              companyName nationalId:12
               """
     box2 = """email:30 
               url:30"""
     box3 = """phone:15 
               gsm:15"""
     box4 = """country region
-              city:18 zipCode:10
+              city zipCode:10
               addr1:30
               addr2:30
               """
-    box5 = """vatId 
-              vatExempt 
-              itemVat"""
-    box6 = """language 
+    box7 = """vatId
+              vatExempt itemVat 
+              language
               paymentTerm"""
-    box7 = """box5 
-              box6
-              """
+    #~ box7 = """box5 
+              #~ box6
+              #~ """
     main = """
             box1
             box2 box3
             box4 box7
-            remarks:30x6
+            remarks:45x6
             """
             
     #~ def documents(self):

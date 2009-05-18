@@ -26,16 +26,16 @@ from django.template.loader import render_to_string
 
             
 class Element:
-    def __init__(self,layout):
+    label = None
+    name = None
+    def __init__(self,layout,name):
         assert isinstance(layout,Layout)
         self.layout = layout
         self.width = None
         self.height = None
-
-    
-class FieldElement(Element):
-    def __init__(self,layout,name,params=None):
-        Element.__init__(self,layout)
+        if name is None:
+            self.name = self.__class__.__name__
+            return
         a = name.split(":",1)
         if len(a) == 1:
             self.name = name
@@ -60,6 +60,17 @@ class FieldElement(Element):
             return self.name + ":%d" % self.width
         return self.name + ":%dx%d" % (self.width,self.height)
 
+    def get_width(self):
+        return self.width
+        
+    def set_width(self,w):
+        self.width = w
+
+    
+class FieldElement(Element):
+    #~ def __init__(self,layout,name,params=None):
+        #~ Element.__init__(self,layout)
+        
     def render(self,row):
         #~ if self.name == "items":
           #~ print self.__class__.__name__, self.name, "render()"
@@ -73,10 +84,11 @@ class FieldElement(Element):
 
         
 class Container(Element):
-    def __init__(self,layout,*elements,**kw):
-        Element.__init__(self,layout)
+    vertical = False
+    def __init__(self,layout,name,*elements,**kw):
+        Element.__init__(self,layout,name)
         #print self.__class__.__name__, elements
-        self.label = kw.get('label',None)
+        self.label = kw.get('label',self.label)
         self.elements = []
         for elem in elements:
             assert elem is not None
@@ -88,7 +100,7 @@ class Container(Element):
                         if len(line) > 0 and not line.startswith("#"):
                             #lines.append(HBOX(layout,line))
                             lines.append(layout,line)
-                        self.elements.append(VBOX(layout,*lines))
+                        self.elements.append(VBOX(layout,None,*lines))
                 else:
                     for name in elem.split():
                         if not name.startswith("#"):
@@ -97,9 +109,53 @@ class Container(Element):
                 self.elements.append(elem)
         
     def __str__(self):
-        return "%s(%s)" % (self.__class__.__name__,
-          ",".join([str(e) for e in self.elements]))
+        s = Element.__str__(self)
+        # self.__class__.__name__
+        s += "(%s)" % (",".join([str(e) for e in self.elements]))
+        return s
         
+    def get_width(self):
+        total_width = 0
+        for elem in self.elements:
+            w = elem.get_width()
+            if w is not None:
+                if self.vertical:
+                    total_width = max(w,total_width)
+                else:
+                    total_width += w
+            else:
+                if not self.vertical:
+                    return None
+              
+        if total_width == 0:
+            return None
+        print self, "width is", w
+        return w
+
+    def set_width(self,w):
+        self.width = w
+        if self.vertical:
+            for elem in self.elements:
+                elem.set_width(w)
+            return
+        total_width = w
+        missing = []
+        for elem in self.elements:
+            w = elem.get_width()
+            if w is None:
+                missing.append(elem)
+            else:
+                elem.set_width(w)
+                total_width -= w
+        if len(missing) > 0:
+            if total_width <= 0:
+                print [elem.name for elem in missing]
+                raise Exception("%s.set_width(%d) : total_width <= 0" % (self.name,self.width))
+            w = int(total_width / len(missing))
+            for elem in missing:
+                elem.set_width(w)
+            
+
     def render(self,row):
         context = dict(
           element = BoundElement(self,row)
@@ -115,6 +171,7 @@ class HBOX(Container):
         
 class VBOX(Container):
     template = "lino/includes/vbox.html"
+    vertical = True
     
 class GRID_ROW(Container):
     template = "lino/includes/grid_row.html"
@@ -130,6 +187,7 @@ class Layout:
     join_str = None
     vbox_class = VBOX
     hbox_class = HBOX
+    width = None
     
     def __init__(self,model,desc=None):
         #self._meta = meta
@@ -141,9 +199,13 @@ class Layout:
                 desc = self.join_str.join([ 
                     f.name for f in model._meta.fields 
                     + model._meta.many_to_many])
-            main = self.desc2elem(desc)
+            main = self.desc2elem("main",desc)
 
         self._main = main
+        #~ width = 0
+        w = main.get_width()
+        if w is not None:
+            main.set_width(w)
                 
     def __getitem__(self,name):
         #print self.__class__.__name__, "__getitem__()", name
@@ -153,7 +215,7 @@ class Layout:
             return FieldElement(self,name)
 
         if type(s) == str:
-            return self.desc2elem(s)
+            return self.desc2elem(name,s)
         #return InlineElement(self,name)
         raise KeyError("non handled attribute %r" % s)
         
@@ -161,22 +223,24 @@ class Layout:
     def inlines(self):
         return {}
          
-    def desc2elem(self,desc):
+    def desc2elem(self,name,desc):
         if "\n" in desc:
-            lines=[]
+            lines = []
+            i = 0
             for line in desc.splitlines():
                 line = line.strip()
+                i += 1
                 if len(line) > 0 and not line.startswith("#"):
-                    lines.append(self.desc2elem(line))
+                    lines.append(self.desc2elem(name+'_'+str(i),line))
                     #lines.append(HBOX(layout,line))
                     #lines.append(layout,line)
-            return self.vbox_class(self,*lines)
+            return self.vbox_class(self,name,*lines)
         else:
-            l=[]
-            for name in desc.split():
-                if not name.startswith("#"):
-                    l.append(self[name])
-            return self.hbox_class(self,*l)
+            l = []
+            for x in desc.split():
+                if not x.startswith("#"):
+                    l.append(self[x])
+            return self.hbox_class(self,name,*l)
             
     def __str__(self):
         return self.__class__.__name__ + "(%s)" % self._main
