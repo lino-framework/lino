@@ -161,13 +161,13 @@ class Row(object):
             return self.form[pk.name]
         return ""
         
-    #~ def render_inline(self,elem):
-        #~ return self.inline_renderers[elem.name].render_to_string()
+    def render_inline(self,elem):
+        return self.inline_renderers[elem.name].render_to_string()
             
     def render_field(self,field):
-        r = self.inline_renderers.get(field.name,None)
-        if r is not None:
-            return r.render_to_string()
+        #~ r = self.inline_renderers.get(field.name,None)
+        #~ if r is not None:
+            #~ return r.render_to_string()
         if self.form is None:
             return self.field_as_readonly(field)
         try:

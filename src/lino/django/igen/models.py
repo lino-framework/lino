@@ -400,7 +400,7 @@ class DocItem(TomModel):
 ##        
         
 from lino.django.utils import reports
-from lino.django.utils.layouts import PageLayout 
+from lino.django.utils import layouts
 
 from lino.django.utils.models import Country, Languages
 
@@ -409,7 +409,7 @@ from lino.django.utils.models import Country, Languages
 
 
 
-class ContactPageLayout(PageLayout):
+class ContactPageLayout(layouts.PageLayout):
     
     box1 = """
               title:10 firstName:15 lastName
@@ -491,7 +491,7 @@ class ShippingModes(reports.Report):
 class ProductCats(reports.Report):
     queryset=ProductCat.objects.order_by("id")
 
-class ProductPageLayout(PageLayout):
+class ProductPageLayout(layouts.PageLayout):
     main = """
         id:5 name:50 cat
         description:50x6
@@ -504,7 +504,7 @@ class Products(reports.Report):
     columnNames = "id:3 name description:30x1 cat vatExempt price:6"
     
     
-class DocumentPageLayout(PageLayout):
+class DocumentPageLayout(layouts.PageLayout):
     box1 = """
       number your_ref creation_date
       customer ship_to
@@ -548,7 +548,10 @@ class Orders(Documents):
     
 class ContractPageLayout(DocumentPageLayout):
     label = "Emitted invoices"
-    main = "emitted_invoices"
+    main = """
+    number:4 creation_date customer:20
+    emitted_invoices
+    """
     def inlines(self):
         return dict(emitted_invoices=InvoicesByContract())
    
@@ -570,16 +573,25 @@ class Invoices(Orders):
     queryset = Invoice.objects.order_by("number")
     page_layouts = (InvoicePageLayout,)
 
-class InvoicesByContract(Orders):
+class InvoicesByContract(reports.Report):
     model = Invoice
     master = Contract
     fk_name = "contract"
     order_by = "number"
+    columnNames = "number creation_date your_ref total_excl total_vat 	shipping_mode payment_term due_date remarks vat_exempt item_vat "
 
     
+class ItemsByDocumentRowLayout(layouts.RowLayout):
+    main = "pos:3 title_box description:30x1 unitPrice qty total"
+    title_box = """
+    product 
+    title 
+    """
+
 class ItemsByDocument(reports.Report):
-    columnNames = "pos:3 product title description:30x1 " \
-                  "unitPrice qty total"
+    #~ columnNames = "pos:3 product title description:30x1 " \
+                  #~ "unitPrice qty total"
+    row_layout_class = ItemsByDocumentRowLayout
     model = DocItem
     master = Document
     order_by = "pos"
@@ -615,7 +627,7 @@ class DocumentsByCustomer(Documents):
 
 
 
-class CountryPageLayout(PageLayout):
+class CountryPageLayout(layouts.PageLayout):
     main = """
     isocode name
     contacts

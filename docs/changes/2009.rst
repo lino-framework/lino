@@ -153,7 +153,13 @@ This way of doing has unresolved issues:
 20090519
 --------
 
+- preparing for field-specific default width in Layouts            
+
 - :meth:`Row.field_as_readonly` now sets ``style="width:100%"``when  :attr:`Element.width`is `None`.
 
 - - removed `null=True` from string fields after reading 
   http://docs.djangoproject.com/en/dev/ref/models/fields/#null
+  
+- New :class:`GRID_CELL` to render more than one field in a single 
+  grid cell. 
+ 

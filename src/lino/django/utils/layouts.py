@@ -28,30 +28,12 @@ from django.template.loader import render_to_string
 class Element:
     label = None
     name = None
-    def __init__(self,layout,name):
+    def __init__(self,layout,name,width=None,height=None):
         assert isinstance(layout,Layout)
         self.layout = layout
-        self.width = None
-        self.height = None
-        if name is None:
-            self.name = self.__class__.__name__
-            return
-        a = name.split(":",1)
-        if len(a) == 1:
-            self.name = name
-            #self.picture = None
-            #self.widget_attrs = {}
-        elif len(a) == 2:
-            self.name = a[0]
-            #self.picture = a[1]
-            a = a[1].split("x",1)
-            if len(a) == 1:
-                self.width = int(a[0])
-            elif len(a) == 2:
-                self.width = int(a[0])
-                self.height = int(a[1])
-            #~ else:
-                #~ raise Exception("Invalid picture spec %s" % name)
+        self.name = name
+        self.width = width
+        self.height = height
         
     def __str__(self):
         if self.width is None:
@@ -68,18 +50,24 @@ class Element:
 
     
 class FieldElement(Element):
-    #~ def __init__(self,layout,name,params=None):
-        #~ Element.__init__(self,layout)
+    def __init__(self,layout,field,**kw):
+        Element.__init__(self,layout,field.name,**kw)
+        self.field = field
         
     def render(self,row):
         #~ if self.name == "items":
           #~ print self.__class__.__name__, self.name, "render()"
         return row.render_field(self)
         
-#~ class InlineElement(FieldElement):        
+class InlineElement(Element):
 
-    #~ def render(self,row):
-        #~ return row.render_inline(self)
+    def render(self,row):
+        return row.render_inline(self)
+
+class MethodElement(Element):
+
+    def render(self,row):
+        return row.render_field(self)
 
 
         
@@ -167,8 +155,10 @@ class Container(Element):
         try:
             return render_to_string(self.template,context)
         except Exception,e:
-            print e
-            return mark_safe("<PRE>%s</PRE>" % e)
+            traceback.print_exc(e)
+            raise
+            #print e
+            #return mark_safe("<PRE>%s</PRE>" % e)
 
 class HBOX(Container):
     template = "lino/includes/hbox.html"
@@ -180,9 +170,8 @@ class VBOX(Container):
 class GRID_ROW(Container):
     template = "lino/includes/grid_row.html"
     
-    
-    
-    
+class GRID_CELL(Container):
+    template = "lino/includes/grid_cell.html"
 
 
 class Layout:
@@ -198,7 +187,7 @@ class Layout:
         self._model = model
         self._inlines = self.inlines()
         if hasattr(self,"main"):
-            main = self['main']
+            main = self.create_element('main')
         else:
             if desc is None:
                 desc = self.join_str.join([ 
@@ -211,24 +200,44 @@ class Layout:
         w = main.get_width()
         if w is not None:
             main.set_width(w)
-                
-    def __getitem__(self,name):
+        from lino.django.igen.models import DocItem
+        if model == DocItem:
+            print self
+            
+    def create_element(self,name):
         #print self.__class__.__name__, "__getitem__()", name
+        name,kw = self.splitdesc(name)
+        if self._inlines.has_key(name):
+            return InlineElement(self,name,**kw)
         try:
             s = getattr(self,name)
         except AttributeError,e:
-            return FieldElement(self,name)
+            try:
+                field = self._model._meta.get_field(name)
+            except models.FieldDoesNotExist,e:
+                return MethodElement(self,name,**kw)
+            else:
+                return FieldElement(self,field,**kw)
 
         if type(s) == str:
-            return self.desc2elem(name,s)
-        #return InlineElement(self,name)
+            return self.desc2elem(name,s,**kw)
         raise KeyError("non handled attribute %r" % s)
         
          
-    def inlines(self):
-        return {}
-         
-    def desc2elem(self,name,desc):
+    def splitdesc(self,picture):
+        a = picture.split(":",1)
+        if len(a) == 1:
+            return picture,{}
+        if len(a) == 2:
+            name = a[0]
+            a = a[1].split("x",1)
+            if len(a) == 1:
+                return name, dict(width=int(a[0]))
+            elif len(a) == 2:
+                return name, dict(width=int(a[0]),height=int(a[1]))
+        raise Exception("Invalid picture descriptor %s" % picture)
+                
+    def desc2elem(self,name,desc,**kw):
         if "\n" in desc:
             lines = []
             i = 0
@@ -237,26 +246,31 @@ class Layout:
                 i += 1
                 if len(line) > 0 and not line.startswith("#"):
                     lines.append(self.desc2elem(name+'_'+str(i),line))
-                    #lines.append(HBOX(layout,line))
-                    #lines.append(layout,line)
-            return self.vbox_class(self,name,*lines)
+            if len(lines) == 1:
+                return lines[0]
+            return self.vbox_class(self,name,*lines,**kw)
         else:
             l = []
             for x in desc.split():
                 if not x.startswith("#"):
-                    l.append(self[x])
-            return self.hbox_class(self,name,*l)
+                    l.append(self.create_element(x))
+            if len(l) == 1:
+                return l[0]
+            return self.hbox_class(self,name,*l,**kw)
             
     def __str__(self):
         return self.__class__.__name__ + "(%s)" % self._main
         
+    def bound_to(self,row):
+        return BoundElement(self._main,row)
+
+    def inlines(self):
+        return {}
+         
     def get_label(self):
         if self.label is None:
             return self.__class__.__name__
         return self.label
-
-    def bound_to(self,row):
-        return BoundElement(self._main,row)
 
 class PageLayout(Layout):
     show_labels = True
@@ -266,7 +280,7 @@ class RowLayout(Layout):
     show_labels = False
     join_str = " "
     hbox_class = GRID_ROW
-    vbox_class = None # not yet allowed
+    vbox_class = GRID_CELL
 
 
 
@@ -282,7 +296,6 @@ class BoundElement:
 
     def as_html(self):
         return self.element.render(self.row)
-        #return self.renderer.render_element(self.element)
   
     def __unicode__(self):
         return self.element.render(self.row)

@@ -105,6 +105,7 @@ class Report:
     #width = None
     #columnWidths = None
     columnNames = None
+    row_layout_class = None
     #rowHeight = None
     label = None
     param_form = ReportParameterForm
@@ -139,8 +140,12 @@ class Report:
             self.model = self.queryset.model
         if self.form_class is None:
             self.form_class = modelform_factory(self.model)
-        self.row_layout = layouts.RowLayout(self.model,
-                                            self.columnNames)
+        if self.row_layout_class is None:
+            self.row_layout = layouts.RowLayout(self.model,
+                                                self.columnNames)
+        else:
+            assert self.columnNames is None
+            self.row_layout = self.row_layout_class(self.model)
         if self.master:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
