@@ -129,7 +129,7 @@ class Container(Element):
               
         if total_width == 0:
             return None
-        print self, "width is", w
+        #print self, "width is", w
         return w
 
     def set_width(self,w):
@@ -147,13 +147,17 @@ class Container(Element):
             else:
                 elem.set_width(w)
                 total_width -= w
-        if len(missing) > 0:
+        while len(missing) > 0:
             if total_width <= 0:
-                print [elem.name for elem in missing]
-                raise Exception("%s.set_width(%d) : total_width <= 0" % (self.name,self.width))
+                print "Warning: total_width <= 0 in ",
+                print "  %s.set_width(%d) : " \
+                  % (self.name,self.width)
+                print "  missing:", [elem.name for elem in missing]
+                return
             w = int(total_width / len(missing))
-            for elem in missing:
-                elem.set_width(w)
+            missing[0].set_width(w)
+            total_width -= w
+            missing = missing[1:]
             
 
     def render(self,row):
@@ -191,6 +195,7 @@ class Layout:
     
     def __init__(self,model,desc=None):
         #self._meta = meta
+        self._model = model
         self._inlines = self.inlines()
         if hasattr(self,"main"):
             main = self['main']

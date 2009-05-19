@@ -105,26 +105,26 @@ u'Example & Co (Luc Saffre)'
     
     """
     #name = models.CharField(max_length=200)
-    firstName = models.CharField(max_length=200,blank=True,null=True)
-    lastName = models.CharField(max_length=200,blank=True,null=True)
-    title = models.CharField(max_length=200,blank=True,null=True)
+    firstName = models.CharField(max_length=200,blank=True)
+    lastName = models.CharField(max_length=200,blank=True)
+    title = models.CharField(max_length=200,blank=True)
     
-    companyName = models.CharField(max_length=200,blank=True,null=True)
-    nationalId = models.CharField(max_length=200,blank=True,null=True)
-    vatId = models.CharField(max_length=200,blank=True,null=True)
+    companyName = models.CharField(max_length=200,blank=True)
+    nationalId = models.CharField(max_length=200,blank=True)
+    vatId = models.CharField(max_length=200,blank=True)
     
-    addr1 = models.CharField(max_length=200,blank=True,null=True)
-    addr2 = models.CharField(max_length=200,blank=True,null=True)
+    addr1 = models.CharField(max_length=200,blank=True)
+    addr2 = models.CharField(max_length=200,blank=True)
     country = models.ForeignKey("utils.Country",blank=True,null=True)
     #city = models.ForeignKey("City",blank=True,null=True)
-    city = models.CharField(max_length=200,blank=True,null=True)
-    zipCode = models.CharField(max_length=10,blank=True,null=True)
-    region = models.CharField(max_length=200,blank=True,null=True)
+    city = models.CharField(max_length=200,blank=True)
+    zipCode = models.CharField(max_length=10,blank=True)
+    region = models.CharField(max_length=200,blank=True)
     
-    email = models.EmailField(blank=True,null=True)
-    url = models.URLField(blank=True,null=True)
-    phone = models.CharField(max_length=200,blank=True,null=True)
-    gsm = models.CharField(max_length=200,blank=True,null=True)
+    email = models.EmailField(blank=True)
+    url = models.URLField(blank=True)
+    phone = models.CharField(max_length=200,blank=True)
+    gsm = models.CharField(max_length=200,blank=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
@@ -134,7 +134,7 @@ u'Example & Co (Luc Saffre)'
     language = models.ForeignKey("utils.Language",blank=True,null=True)
     paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
     
-    remarks = models.TextField(blank=True,null=True)
+    remarks = models.TextField(blank=True)
     
     ordering=("companyName","lastName","firstName")
     
@@ -199,14 +199,14 @@ class ShippingMode(TomModel):
 
 class ProductCat(TomModel):
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True,null=True)
+    description = models.TextField(blank=True)
     def __unicode__(self):
         return self.name
 
 class Product(TomModel):
     
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True,null=True)
+    description = models.TextField(blank=True)
     cat = models.ForeignKey("ProductCat",verbose_name="Category")
     vatExempt = models.BooleanField(default=False)
     price = PriceField(blank=True,null=True)
@@ -226,15 +226,15 @@ class Document(TomModel):
       related_name="customer_%(class)s")
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
       related_name="shipTo_%(class)s")
-    your_ref = models.CharField(max_length=200,blank=True,null=True)
+    your_ref = models.CharField(max_length=200,blank=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    remarks = models.CharField(max_length=200,blank=True,null=True)
+    remarks = models.CharField(max_length=200,blank=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
     total_excl = PriceField(default=0)
     total_vat = PriceField(default=0)
-    intro = models.TextField("Introductive Text",blank=True,null=True)
+    intro = models.TextField("Introductive Text",blank=True)
     
     #~ class Meta:
         #~ abstract = True
@@ -510,7 +510,8 @@ class DocumentPageLayout(PageLayout):
       customer ship_to
       """
     box2 = """
-      shipping_mode payment_term
+      shipping_mode 
+      payment_term
       vat_exempt item_vat
       """
     box3 = """
@@ -518,13 +519,13 @@ class DocumentPageLayout(PageLayout):
       intro:40x5
       """
     box4 = """
-      total_excl 
+      total_excl
       total_vat
       total_incl
       """
     main = """
-      box1 box2
-      box3 box4
+      box1 box2 box4
+      box3 
       items:80x5
       """
       
@@ -537,7 +538,7 @@ class DocumentPageLayout(PageLayout):
 class Documents(reports.Report):
     page_layouts = (DocumentPageLayout,)
     #detail_reports = "items"
-    columnNames = "number:4 creation_date:8 customer:20 " \
+    columnNames = "number:4 creation_date customer:20 " \
                   "total_incl total_excl total_vat"
 
         
@@ -558,9 +559,10 @@ class Contracts(Documents):
 
 
 class InvoicePageLayout(DocumentPageLayout):
-    box1 = """
-      number your_ref creation_date
-      customer ship_to due_date
+    box2 = """
+      shipping_mode
+      payment_term
+      vat_exempt item_vat
       contract
       """
 
@@ -576,7 +578,7 @@ class InvoicesByContract(Orders):
 
     
 class ItemsByDocument(reports.Report):
-    columnNames = "pos:3 product title description:40x1 " \
+    columnNames = "pos:3 product title description:30x1 " \
                   "unitPrice qty total"
     model = DocItem
     master = Document

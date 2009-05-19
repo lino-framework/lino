@@ -206,7 +206,8 @@ class Row(object):
         except models.FieldDoesNotExist,e:
             if isinstance(value,Manager):
                 try:
-                    value = "<br/>".join([unicode(o) for o in value.all()])
+                    value = "<br/>".join(
+                      [unicode(o) for o in value.all()])
                     label = field_element.name
                     #widget=widget_for_value(value)
                     widget = forms.TextInput()
@@ -259,8 +260,8 @@ class Row(object):
                 s += " " + label
             return mark_safe(s)
             
-        if value is None:
-            value = '&nbsp;'
+        #~ if value is None: # or len(value) == 0:
+            #~ value = '&nbsp;'
         #~ else:
             #~ value = unicode(value)
         
@@ -268,6 +269,8 @@ class Row(object):
         style = widget.attrs.get('style','')
         if field_element.width is not None:
             style += "min-width:%dem;" % field_element.width
+        else:
+            style += "width:100%;"
         if field_element.height is not None:
             style += "min-height:%dem;" % (field_element.height * 2)
             # TODO: 
@@ -276,73 +279,19 @@ class Row(object):
             s = "[ " + ",<br/>".join([unicode(o) for o in value.all()]) + " ]"
             s = SPAN(s,style)
         elif isinstance(widget, forms.Select):
-            s = "[ " + unicode(value) + " ]"
+            s = "[&nbsp;" + unicode(value) + "&nbsp;]"
             s = SPAN(s,style)
         else:
-            s = SPAN(unicode(value),style)
+            if value is None:
+                value = '&nbsp;'
+            else:
+                value = unicode(value)
+                if len(value) == 0:
+                    value = '&nbsp;'
+            s = SPAN(value,style)
             
         if field_element.layout.show_labels:
             s = label + "<br/>" + s
-        return mark_safe(s)
-        
-    def old_field_as_readonly(self,field_element):
-        #instance = renderer.get_instance()
-        value = getattr(self.instance,field_element.name)
-        try:
-            model_field = self.instance._meta.get_field(
-              field_element.name)
-        except models.FieldDoesNotExist,e:
-            # so it is a method
-            if hasattr(value,"field"):
-                #print "it is a method"
-                field = value.field
-                value = value()
-                #print value
-                if field.verbose_name:
-                    label = field.verbose_name
-                else:
-                    label = self.name.replace('_', ' ')
-                #print label
-                widget = field.formfield().widget
-                #print widget
-            else:
-                value = value()
-                #~ from lino.django.tom import reports
-                #~ if isinstance(value,reports.Report):
-                    #~ return value.as_html()
-                label = self.name
-                #widget=widget_for_value(value)
-                widget = forms.TextInput()
-        else:
-            label = model_field.verbose_name
-            form_field = model_field.formfield() 
-            if form_field is None:
-                form_field = forms.CharField()
-                #return ''
-            #print self.instance, field.name
-            widget = form_field.widget
-        if value is None:
-            value = ''
-        #~ else:
-            #~ value = unicode(value)
-        #print self.name, value
-        if isinstance(widget, forms.CheckboxInput):
-            if value:
-                s = "[X]"
-            else: 
-                s = "[&nbsp;&nbsp;]"
-            if field_element.layout.show_labels:
-                s += " " + label
-        elif isinstance(widget, forms.Select):
-            s = "[ " + unicode(value) + " ]"
-            if field_element.layout.show_labels:
-                s = label + "<br/>" + s
-        else:
-            field_element.setup_widget(widget)
-            s = widget.render(field_element.name,value,
-              attrs={"readonly":"readonly","class":"readonly"})
-            if field_element.layout.show_labels:
-                s = label + "<br/>" + s
         return mark_safe(s)
         
 

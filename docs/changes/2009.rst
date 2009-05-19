@@ -150,3 +150,10 @@ This way of doing has unresolved issues:
   
   Conclusion: I started by writing a parse_date() myself, then I understood that I also need other things from python-dateutil, so I threw it away and added dateutils to :meth:`lino.django.utils.sites.LinoSite.tanks_to`.
   
+20090519
+--------
+
+- :meth:`Row.field_as_readonly` now sets ``style="width:100%"``when  :attr:`Element.width`is `None`.
+
+- - removed `null=True` from string fields after reading 
+  http://docs.djangoproject.com/en/dev/ref/models/fields/#null
