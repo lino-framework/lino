@@ -466,14 +466,14 @@ class Contacts(reports.Report):
 class Companies(Contacts):
     #queryset=Contact.objects.order_by("companyName")
     columnNames = "companyName country title firstName lastName"
-    queryset = Contact.objects.exclude(companyName__exact=None)
+    queryset = Contact.objects.exclude(companyName__exact='')
     order_by = "companyName"
     #~ queryset = Contact.objects.exclude(companyName__exact=None)\
       #~ .order_by("companyName")
     
 
 class Persons(Contacts):
-    queryset=Contact.objects.filter(companyName__exact=None)
+    queryset=Contact.objects.filter(companyName__exact='')
     order_by = "lastName firstName"
     columnNames = "title firstName lastName country"
     
@@ -691,7 +691,7 @@ def lino_setup(lino):
     m.add_action(Orders())
     m.add_action(Contracts())
     m.add_action(Invoices())
-    m.add_action(MakeInvoicesDialog())
+    #m.add_action(MakeInvoicesDialog())
     m = lino.add_menu("config","~Configuration")
     m.add_action(ShippingModes())
     m.add_action(PaymentTerms())
