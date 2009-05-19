@@ -235,7 +235,7 @@ class Report:
             
     #@login_required
     def view_one(self,request,row):
-        print "Report.view_one()", request.path
+        #print "Report.view_one()", request.path
         if not self.can_view(request):
             return render.sorry(request)
         if is_editing(request) and self.can_change(request):

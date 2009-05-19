@@ -48,7 +48,12 @@ class Element:
     def set_width(self,w):
         self.width = w
 
-    
+class StaticText(Element):
+    def __init__(self,text):
+          self.text = mark_safe(text)
+    def render(self,row):
+        return self.text
+          
 class FieldElement(Element):
     def __init__(self,layout,field,**kw):
         Element.__init__(self,layout,field.name,**kw)
@@ -200,9 +205,9 @@ class Layout:
         w = main.get_width()
         if w is not None:
             main.set_width(w)
-        from lino.django.igen.models import DocItem
-        if model == DocItem:
-            print self
+        #~ from lino.django.igen.models import DocItem
+        #~ if model == DocItem:
+            #~ print self
             
     def create_element(self,name):
         #print self.__class__.__name__, "__getitem__()", name
@@ -210,7 +215,7 @@ class Layout:
         if self._inlines.has_key(name):
             return InlineElement(self,name,**kw)
         try:
-            s = getattr(self,name)
+            value = getattr(self,name)
         except AttributeError,e:
             try:
                 field = self._model._meta.get_field(name)
@@ -219,9 +224,11 @@ class Layout:
             else:
                 return FieldElement(self,field,**kw)
 
-        if type(s) == str:
-            return self.desc2elem(name,s,**kw)
-        raise KeyError("non handled attribute %r" % s)
+        if type(value) == str:
+            return self.desc2elem(name,value,**kw)
+        if isinstance(value,StaticText):
+            return value
+        raise KeyError("No handler for attribute %s = %r" % (name,value))
         
          
     def splitdesc(self,picture):
@@ -281,41 +288,74 @@ class RowLayout(Layout):
     join_str = " "
     hbox_class = GRID_ROW
     vbox_class = GRID_CELL
-
+    
 
 
 class BoundElement:
     def __init__(self,element,row):
         assert isinstance(element,Element)
         self.element = element
-        #self.layout = layout
         self.row = row
-        #self.renderer = renderer
-        from lino.django.utils.render import Row
-        assert isinstance(row,Row)
+        #from lino.django.utils.render import Row
+        #assert isinstance(row,Row)
 
     def as_html(self):
-        return self.element.render(self.row)
+        try:
+            return self.element.render(self.row)
+        except Exception,e:
+            print "Exception in BoundElement.as_html():"
+            traceback.print_exc()
+            raise e
   
     def __unicode__(self):
-        return self.element.render(self.row)
+        return self.as_html()
         
     def children(self):
-        assert isinstance(self.element,Container), "%s is not a Container" % self.element
-        for e in self.element.elements:
-            yield BoundElement(e,self.row)
+        try:
+            assert isinstance(self.element,Container), "%s is not a Container" % self.element
+            for e in self.element.elements:
+                yield BoundElement(e,self.row)
+        except Exception,e:
+            print "Exception in BoundElement.children():"
+            traceback.print_exc()
+            raise e
             
     def row_management(self):
         #print "row_management", self.element
-        assert isinstance(self.element,GRID_ROW)
-        #row = self.renderer.get_row()
-        s = "<td>%s</td>" % self.row.links()
-        if self.row.renderer.editing:
-            s += "<td>%d%s</td>" % (self.row.number,self.row.pk_field())
-            if self.row.renderer.can_delete:
-                s += "<td>%s</td>" % self.row.form["DELETE"]
-        else:
-            s += "<td>%d</td>" % (self.row.number)
-        return mark_safe(s)
+        try:
+            assert isinstance(self.element,GRID_ROW)
+            #row = self.renderer.get_row()
+            s = "<td>%s</td>" % self.row.links()
+            if self.row.renderer.editing:
+                s += "<td>%d%s</td>" % (self.row.number,
+                    self.row.pk_field())
+                if self.row.renderer.can_delete:
+                    s += "<td>%s</td>" % self.row.form["DELETE"]
+            else:
+                s += "<td>%d</td>" % (self.row.number)
+            return mark_safe(s)
+        except Exception,e:
+            print "Exception in BoundElement.row_management():"
+            traceback.print_exc()
+            raise e
 
+
+
+
+class Dialog:
+    form_class = None
+    layout = None
+    template_before = "lino/dialog_before.html"
+    template_after = "lino/dialog_after.html"
+    
+    def __init__(self):
+        self._layout = PageLayout(self.layout).bound_to(self)
+    
+    def execute(self):
+        raise NotImplementedError
+        
+    def view(self,request):
+        from lino.django.utils.render import DialogRenderer
+        r = DialogRenderer(self,request)
+        return r.render_to_response()
 

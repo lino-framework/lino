@@ -304,7 +304,7 @@ class Contract(Document):
         return datetime.date(date.year,date.month,date.day)
         
         
-    def make_invoice(self,today=None):
+    def make_invoice(self,today=None,simulate=False):
         if self.cycle == 'I':
             return
         if today is None:
@@ -330,6 +330,8 @@ class Contract(Document):
             date = self.next_cycle(date)
         if len(items) == 0:
             return 
+        if simulate:
+            return True
         invoice = Invoice(creation_date=date,contract=self,
             customer=self.customer,
             ship_to=self.ship_to,payment_term=self.payment_term)
@@ -399,13 +401,12 @@ class DocItem(TomModel):
 ## report definitions
 ##        
         
+from django import forms
+
 from lino.django.utils import reports
 from lino.django.utils import layouts
 
 from lino.django.utils.models import Country, Languages
-
-
-
 
 
 
@@ -489,7 +490,8 @@ class ShippingModes(reports.Report):
       return request.user.is_staff
 
 class ProductCats(reports.Report):
-    queryset=ProductCat.objects.order_by("id")
+    model = ProductCat
+    order_by = "id"
 
 class ProductPageLayout(layouts.PageLayout):
     main = """
@@ -526,11 +528,8 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 
-      items:80x5
+      items:60x5
       """
-      
-    #~ def items(self):
-        #~ return ItemsByDocument()
       
     def inlines(self):
         return dict(items=ItemsByDocument())
@@ -543,10 +542,11 @@ class Documents(reports.Report):
 
         
 class Orders(Documents):
-    queryset = Order.objects.order_by("number")
+    model = Order
+    order_by = "number"
     
     
-class ContractPageLayout(DocumentPageLayout):
+class ContractInvoicesPageLayout(DocumentPageLayout):
     label = "Emitted invoices"
     main = """
     number:4 creation_date customer:20
@@ -558,7 +558,7 @@ class ContractPageLayout(DocumentPageLayout):
 
 class Contracts(Documents):
     queryset = Contract.objects.order_by("number")
-    page_layouts = Documents.page_layouts + (ContractPageLayout,)
+    page_layouts = Documents.page_layouts + (ContractInvoicesPageLayout,)
 
 
 class InvoicePageLayout(DocumentPageLayout):
@@ -582,11 +582,11 @@ class InvoicesByContract(reports.Report):
 
     
 class ItemsByDocumentRowLayout(layouts.RowLayout):
-    main = "pos:3 title_box description:30x1 unitPrice qty total"
     title_box = """
-    product 
-    title 
+    product
+    title
     """
+    main = "pos:3 title_box description:30x1 unitPrice qty total"
 
 class ItemsByDocument(reports.Report):
     #~ columnNames = "pos:3 product title description:30x1 " \
@@ -597,29 +597,14 @@ class ItemsByDocument(reports.Report):
     order_by = "pos"
     
     
-    #~ def __init__(self,doc,**kw):
-        #~ self.doc = doc
-        #~ reports.Report.__init__(self,**kw)
-        
-    #~ def get_queryset(self,document):
-        #~ return document.docitem_set.order_by("pos")
-#Documents.items = ItemsByDocument()
 
 class DocumentsByCustomer(Documents):
-    #detail_reports = "items"
     columnNames = "number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
     model = Document
     master = Contact
     fk_name = 'customer'
     order_by = "creation_date"
-
-    #~ def __init__(self,customer,**kw):
-        #~ self.customer = customer
-        #~ reports.Report.__init__(self,**kw)
-        
-    #~ def get_queryset(self):
-        #~ return Document.objects.filter(customer=self.customer).order_by("creation_date")
 
     def get_title(self,renderer):
         return unicode(renderer.master_instance) + " : documents by customer"
@@ -632,8 +617,7 @@ class CountryPageLayout(layouts.PageLayout):
     isocode name
     contacts
     """
-    #~ def contacts(self):
-        #~ return ContactsByCountry()
+
     def inlines(self):
         return dict(contacts = ContactsByCountry())
 
@@ -650,6 +634,49 @@ class ContactsByCountry(Contacts):
     model = Contact
     master = Country
     order_by = "city addr1"
+    
+        
+class MakeInvoicesDialog(layouts.Dialog):
+    class form_class(forms.Form):
+        make_until = forms.DateField(label="Generate invoices on")
+        contract = forms.ModelChoiceField(
+            label="(only for this single contract:)",
+            queryset=Contract.objects.all())
+    
+    intro = layouts.StaticText("""
+    <p>This is the first example of a <em>Dialog</em>.</p>
+    """)
+    layout = """
+    intro
+    make_until
+    contract
+    simulate ok cancel help
+    """
+    
+    def execute(self,simulate=False):
+        contracts_seen = 0
+        invoices_made = 0
+        if self.contract is not None: # all contracts
+            contracts = Contract.objects.all()
+        else:
+            contracts = ( self.contract, )
+        for ct in contracts:
+            contracts_seen += 1
+            if ct.make_invoice(self.make_until,simulate):
+                invoices_made += 1
+        if simulate:
+            msg = "%d contracts would make %d invoices."
+        else:
+            msg = "%d contracts made %d new invoices."
+        self.message(msg,contracts_seen, invoices_made)
+        
+    def ok(self):
+        return self.execute(simulate=False)
+        
+    def simulate(self):
+        return self.execute(simulate=True)
+            
+        
 
 
 def lino_setup(lino):
@@ -664,6 +691,7 @@ def lino_setup(lino):
     m.add_action(Orders())
     m.add_action(Contracts())
     m.add_action(Invoices())
+    m.add_action(MakeInvoicesDialog())
     m = lino.add_menu("config","~Configuration")
     m.add_action(ShippingModes())
     m.add_action(PaymentTerms())

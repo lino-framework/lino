@@ -163,3 +163,8 @@ This way of doing has unresolved issues:
 - New :class:`GRID_CELL` to render more than one field in a single 
   grid cell. 
  
+- Started :class:`igen.models.MakeInvoicesDialog`. 
+  A Dialog is an enhanced django.forms.Form that can be installed as a menu action.
+  In Module :mod:`render`: 
+  started to split new class ElementServer out of Row
+  because Dialog will need only the ElementServer part of Row.

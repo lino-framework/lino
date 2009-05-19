@@ -1,7 +1,8 @@
+<!-- begin includes/grid_show.html -->
 <table class="grid">
 <tr>
-<td>links</td>
-<td>rownum</td>
+<th>links</th>
+<th>rownum</th>
 {% for col in report.column_headers %}
 <th>{{ col }}</th>
 {% endfor %}
@@ -11,3 +12,4 @@
 {{ row.as_html }}
 {% endfor %}
 </table>
+<!-- end includes/grid_show.html -->

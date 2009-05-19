@@ -87,14 +87,149 @@ def vfill(lines,valign,height):
     else:
         raise ConfigError("vfill() : %s" % repr(valign))
 
+class ElementServer:
+    def __init__(self,layout,form=None):
+        self.form = form
+        
+    def render_field(self,elem):
+        if self.form is None:
+            return self.field_as_readonly(elem)
+        try:
+            bf = self.form[elem.name] # a BoundField instance
+        except KeyError,e:
+            return self.field_as_readonly(elem)
+            
+        if bf.field.widget.is_hidden:
+            return self.field_as_readonly(elem)
+        #field.setup_widget(bf.field.widget)
+        
+        widget = bf.field.widget
+        if isinstance(widget,forms.widgets.Input):
+            widget.attrs.update(size=elem.width)
+        elif isinstance(widget,forms.Textarea):
+            widget.attrs.update(cols=elem.width,
+                                rows=elem.height)
+        
+        s = bf.as_widget()
+        if elem.layout.show_labels and bf.label:
+            if isinstance(bf.field.widget, forms.CheckboxInput):
+                s = s + " " + bf.label_tag()
+            else:
+                s = bf.label_tag() + "<br/>" + s
+        #print "render_field()", repr(bf.errors)
+        s += unicode(bf.errors)
+        return mark_safe(s)
+        
+    def get_value(self,elem):
+        raise NotImplementedError
 
-class Row(object):
+    def get_model_field(self,elem):
+        raise NotImplementedError
+
+    def field_as_readonly(self,elem):
+        value = self.get_value(elem)
+        model_field = self.get_model_field(elem)
+        if model_field is None:
+            if isinstance(value,Manager):
+                try:
+                    value = "<br/>".join(
+                      [unicode(o) for o in value.all()])
+                    label = elem.name
+                    #widget=widget_for_value(value)
+                    widget = forms.TextInput()
+                except Exception, e:
+                    print e
+            # so it is a method
+            elif hasattr(value,"field"):
+                #print "it is a method"
+                field = value.field
+                value = value()
+                #print value
+                if field.verbose_name:
+                    label = field.verbose_name
+                else:
+                    label = elem.name.replace('_', ' ')
+                #print label
+                widget = field.formfield().widget
+                #print widget
+            else:
+                value = value()
+                #~ from lino.django.tom import reports
+                #~ if isinstance(value,reports.Report):
+                    #~ return value.as_html()
+                label = self.name
+                #widget=widget_for_value(value)
+                widget = forms.TextInput()
+        else:
+            label = model_field.verbose_name
+            form_field = model_field.formfield() 
+            if form_field is None:
+                form_field = forms.CharField()
+                #return ''
+            #print self.instance, field.name
+            widget = form_field.widget
+            
+        #print field_element.name, repr(value)
+        
+        def SPAN(text,style):
+            return """<span class="textinput"
+            style="%s">%s</span>
+            """ % (style,text)
+            
+        if isinstance(widget, forms.CheckboxInput):
+            if value:
+                s = "[X]"
+            else: 
+                s = "[&nbsp;&nbsp;]"
+            s = SPAN(s,style="width:2em;" )
+            if elem.layout.show_labels:
+                s += " " + label
+            return mark_safe(s)
+            
+        #~ if value is None: # or len(value) == 0:
+            #~ value = '&nbsp;'
+        #~ else:
+            #~ value = unicode(value)
+        
+        
+        style = widget.attrs.get('style','')
+        if elem.width is not None:
+            style += "min-width:%dem;" % elem.width
+        else:
+            style += "width:100%;"
+        if elem.height is not None:
+            style += "min-height:%dem;" % (elem.height * 2)
+            # TODO: 
+            
+        if isinstance(widget, forms.SelectMultiple):
+            s = "[ " + ",<br/>".join([unicode(o) for o in value.all()]) + " ]"
+            s = SPAN(s,style)
+        elif isinstance(widget, forms.Select):
+            s = "[&nbsp;" + unicode(value) + "&nbsp;]"
+            s = SPAN(s,style)
+        else:
+            if value is None:
+                value = '&nbsp;'
+            else:
+                value = unicode(value)
+                if len(value) == 0:
+                    value = '&nbsp;'
+            s = SPAN(value,style)
+            
+        if elem.layout.show_labels:
+            s = label + "<br/>" + s
+        return mark_safe(s)
+        
+
+        
+
+class Row(ElementServer):
     def __init__(self,renderer,instance,number,dtl=None,form=None):
+        ElementServer.__init__(self,form)
         self.renderer = renderer
         self.report = renderer.report
         self.number = number
         self.instance = instance
-        self.form = form
         self.dtl = dtl
         
         #print "Row.__init__()", self.instance.pk
@@ -106,13 +241,11 @@ class Row(object):
                   renderer.detail_renderer(renderer.request,
                     False,inline,self.instance)
       
-    def __getitem__(self,name):
-        if self.renderer.editing:
-            return self.form[name]
-        return getattr(self.instance,name)
+    #~ def __getitem__(self,name):
+        #~ if self.renderer.editing:
+            #~ return self.form[name]
+        #~ return getattr(self.instance,name)
 
-        #~ col = self.renderer.find_column(name)
-        #~ return Cell(self, col)
         
     def as_html(self):
         try:
@@ -124,7 +257,7 @@ class Row(object):
             raise e
 
     def links(self):
-        l=[]
+        l = []
         if self.renderer.is_main:
             l.append('<a href="%s">page</a>' % self.get_url_path())
         if False:
@@ -164,138 +297,14 @@ class Row(object):
     def render_inline(self,elem):
         return self.inline_renderers[elem.name].render_to_string()
             
-    def render_field(self,field):
-        #~ r = self.inline_renderers.get(field.name,None)
-        #~ if r is not None:
-            #~ return r.render_to_string()
-        if self.form is None:
-            return self.field_as_readonly(field)
+    def get_value(self,elem):
+        return getattr(self.instance,elem.name)
+
+    def get_model_field(self,elem):
         try:
-            bf = self.form[field.name] # a BoundField instance
-        except KeyError,e:
-            return self.field_as_readonly(field)
-            
-        if bf.field.widget.is_hidden:
-            return self.field_as_readonly(field)
-        #field.setup_widget(bf.field.widget)
-        
-        widget = bf.field.widget
-        if isinstance(widget,forms.widgets.Input):
-            widget.attrs.update(size=field.width)
-        elif isinstance(widget,forms.Textarea):
-            widget.attrs.update(cols=field.width,
-                                rows=field.height)
-        
-        s = bf.as_widget()
-        if field.layout.show_labels and bf.label:
-            if isinstance(bf.field.widget, forms.CheckboxInput):
-                s = s + " " + bf.label_tag()
-            else:
-                s = bf.label_tag() + "<br/>" + s
-        #print "render_field()", repr(bf.errors)
-        s += unicode(bf.errors)
-        return mark_safe(s)
-        
-            
-    def field_as_readonly(self,field_element):
-        #instance = renderer.get_instance()
-        value = getattr(self.instance,field_element.name)
-        try:
-            model_field = self.instance._meta.get_field(
-              field_element.name)
+            return self.instance._meta.get_field(elem.name)
         except models.FieldDoesNotExist,e:
-            if isinstance(value,Manager):
-                try:
-                    value = "<br/>".join(
-                      [unicode(o) for o in value.all()])
-                    label = field_element.name
-                    #widget=widget_for_value(value)
-                    widget = forms.TextInput()
-                except Exception, e:
-                  print e
-            # so it is a method
-            elif hasattr(value,"field"):
-                #print "it is a method"
-                field = value.field
-                value = value()
-                #print value
-                if field.verbose_name:
-                    label = field.verbose_name
-                else:
-                    label = self.name.replace('_', ' ')
-                #print label
-                widget = field.formfield().widget
-                #print widget
-            else:
-                value = value()
-                #~ from lino.django.tom import reports
-                #~ if isinstance(value,reports.Report):
-                    #~ return value.as_html()
-                label = self.name
-                #widget=widget_for_value(value)
-                widget = forms.TextInput()
-        else:
-            label = model_field.verbose_name
-            form_field = model_field.formfield() 
-            if form_field is None:
-                form_field = forms.CharField()
-                #return ''
-            #print self.instance, field.name
-            widget = form_field.widget
-            
-        #print field_element.name, repr(value)
-        
-        def SPAN(text,style):
-            return """<span class="textinput"
-            style="%s">%s</span>
-            """ % (style,text)
-            
-        if isinstance(widget, forms.CheckboxInput):
-            if value:
-                s = "[X]"
-            else: 
-                s = "[&nbsp;&nbsp;]"
-            s = SPAN(s,style="width:2em;" )
-            if field_element.layout.show_labels:
-                s += " " + label
-            return mark_safe(s)
-            
-        #~ if value is None: # or len(value) == 0:
-            #~ value = '&nbsp;'
-        #~ else:
-            #~ value = unicode(value)
-        
-        
-        style = widget.attrs.get('style','')
-        if field_element.width is not None:
-            style += "min-width:%dem;" % field_element.width
-        else:
-            style += "width:100%;"
-        if field_element.height is not None:
-            style += "min-height:%dem;" % (field_element.height * 2)
-            # TODO: 
-            
-        if isinstance(widget, forms.SelectMultiple):
-            s = "[ " + ",<br/>".join([unicode(o) for o in value.all()]) + " ]"
-            s = SPAN(s,style)
-        elif isinstance(widget, forms.Select):
-            s = "[&nbsp;" + unicode(value) + "&nbsp;]"
-            s = SPAN(s,style)
-        else:
-            if value is None:
-                value = '&nbsp;'
-            else:
-                value = unicode(value)
-                if len(value) == 0:
-                    value = '&nbsp;'
-            s = SPAN(value,style)
-            
-        if field_element.layout.show_labels:
-            s = label + "<br/>" + s
-        return mark_safe(s)
-        
-
-
+            return None
 
 
 class Column:
@@ -1148,3 +1157,44 @@ def sorry(request):
     return render_to_response("lino/sorry.html",
       context,
       context_instance = template.RequestContext(request))
+
+
+
+class DialogRenderer(ElementServer):
+  
+    def __init__(self,dialog,request):
+        self.dialog = dialog
+        self.request = request
+        self.result = None
+        if request.method == 'POST': 
+            form = dialog.form_class(request.POST) 
+            if form.is_valid(): 
+                self.result = form.execute()
+        else:
+            form = dialog.form_class() 
+        ElementServer.__init__(form)
+            
+    def get_value(self,elem):
+        return self.form[elem.name]
+
+    def get_model_field(self,elem):
+        return None
+
+    def again(self,*args,**kw):
+        return again(self.request,*args,**kw)
+        
+    def render_to_response(self,**kw):
+        url = get_redirect(self.request)
+        if url:
+            #print "render_to_response() REDIRECT TO ", url
+            return HttpResponseRedirect(url)
+        context = lino_site.context(self.request,
+          report = self,
+          title = self.get_title(),
+          form_action = self.again(editing=None),
+        )
+        return render_to_response(self.template_to_reponse,
+            context,
+            context_instance=template.RequestContext(self.request))
+        
+        
