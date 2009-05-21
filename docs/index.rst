@@ -12,15 +12,8 @@ Quick links :
   
 
 Status : 
-I'm currently working a lot on :mod:`lino.django.utils` and
-:mod:`~lino.django.igen`.  
-"igen" stands for "invoice generator" and is a simple, 
-web-based program to write invoices either manually or 
-periodically based on contracts.
-It should become the first Lino Django 
-application. There is even an early `demo site
-<http://igen.saffre-rumma.ee>`_ 
-
+I'm currently working a lot on :mod:`lino.django.utils` 
+and :doc:`django/igen/index`.
 
 
 Content

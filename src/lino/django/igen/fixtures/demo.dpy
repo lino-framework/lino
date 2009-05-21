@@ -61,7 +61,8 @@ def objects():
     yield shippingmode_builder.build("cash and carry")
     yield shippingmode_builder.build("regular mail")
 
-    yield paymentterm_builder.build(u"sularahas")
+    cash = paymentterm_builder.build(u"sularahas")
+    yield cash 
     yield paymentterm_builder.build(u"7 päeva neto")
         
     s = u"""    
@@ -115,38 +116,37 @@ This table is made of pure wood.
     "customer creation_date payment_term shipping_mode").build
     
     order = Instantiator(Order,
-    "customer creation_date payment_term shipping_mode").build
-  
-    contract = Instantiator(Contract,
-    "customer creation_date cycle payment_term shipping_mode").build
+    "customer creation_date start_date cycle payment_term shipping_mode").build
     
     docitem = Instantiator(DocItem,"document product qty").build
 
-    c = contract(100,"2008-05-13","M",2,1)
-    c.add_item(hosting,1)
-    yield c
+    o = order(100,"2008-09-23","2008-09-24","M",2,1,remark="monthly order")
+    o.add_item(hosting,1)
+    yield o
     
-    yield c.make_invoice(today=date(2008,10,29))
+    yield o.make_invoice(today=date(2008,10,28))
         
-    i = invoice(2,"2008-10-29",2,1)
+    i = invoice(2,"2008-10-29",2,1,remark="first manual invoice")
     i.add_item(1,1)
     i.add_item(2,4)
     yield i
     
-    yield c.make_invoice(today=date(2009,04,11))
+    yield o.make_invoice(today=date(2009,04,11))
         
-    i = invoice(3,date(2009,04,11),2,1)
+    i = invoice(3,date(2009,04,11),2,1,remark="second manual invoice")
     i.add_item(3,1)
     i.add_item(4,4)
     yield i
     
-    yield order(4,date(2009,04,12),2,1)
+    o2 = order(4,"2009-04-12","2009-04-12","Y",2,1,remark="yearly order")
+    yield o2
     i.add_item(3,1)
     i.add_item(4,4)
+    yield o2.make_invoice(today=date(2009,04,12))
     
-    yield invoice(4,date(2009,04,12),2,1)
+    yield invoice(4,date(2009,04,12),2,1,remark="third manual invoice")
     i.add_item(3,1)
     i.add_item(4,4)
 
-    yield c.make_invoice(today=date(2009,05,14))
+    yield o.make_invoice(today=date(2009,05,14))
 

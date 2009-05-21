@@ -143,7 +143,7 @@ This way of doing has unresolved issues:
 - I noticed that Django's DateField does no validation and no conversion from string to date. :class:`lino.django.utils.instantiator.DateConverter`
   How to parse a datetime.date from a string? 
   The standard Python module has now support at all, even not to 
-  parse a simple iso-formatted date. `PEP 321 <http://www.python.org/dev/peps/pep-0321/`_ was exactly what I'd need now, but it has been withdrawn... I also read
+  parse a simple iso-formatted date. `PEP 321 <http://www.python.org/dev/peps/pep-0321/>`_ was exactly what I'd need now, but it has been withdrawn... I also read
   http://mail.python.org/pipermail/python-dev/2004-April/044181.html
   and
   http://mail.python.org/pipermail/python-list/2003-November/236842.html
@@ -155,9 +155,9 @@ This way of doing has unresolved issues:
 
 - preparing for field-specific default width in Layouts            
 
-- :meth:`Row.field_as_readonly` now sets ``style="width:100%"``when  :attr:`Element.width`is `None`.
+- :meth:`Row.field_as_readonly` now sets ``style="width:100%"`` when  :attr:`Element.width`is `None`.
 
-- - removed `null=True` from string fields after reading 
+- removed `null=True` from string fields after reading 
   http://docs.djangoproject.com/en/dev/ref/models/fields/#null
   
 - New :class:`GRID_CELL` to render more than one field in a single 
@@ -168,3 +168,38 @@ This way of doing has unresolved issues:
   In Module :mod:`render`: 
   started to split new class ElementServer out of Row
   because Dialog will need only the ElementServer part of Row.
+  
+20090521
+--------
+
+- Merged :class:`Contract` into :class:`Order`. A contract is just a cyclic Order.
+
+- Worked on :meth:`Order.make_invoice`.
+  make_invoice() will have to know when the next billing will occur.
+  And whether a service must be paid for before or afterwards the period.
+  For the moment we simplify by saying that the billing happens once per month.
+
+  
+- The old question again: which documentation system to use?
+  `Doxygen <http://www.stack.nl/~dimitri/doxygen/>`_ 
+  and
+  `breathe <http://github.com/michaeljones/breathe/tree/master>`_?
+  After playing around I continue to believe that documentation 
+  must be maintained outside of the source code.
+  Result for today: :doc:`../django/igen/index`.
+
+- Pro-rata : the covered period in a generated invoice may be longer or shorter than
+  normal in certain cases. 
+  
+  For example assume that invoices are sent only once a month, for
+  example on the first working day of each month.
+  What should we do if a monthly service order starts at the 28th of a
+  month? Or at the 5th of the month? 
+  :class:`Order` should get a new field, called maybe "Pro-rata".
+  Definition of "Pro-rata": see http://en.wikipedia.org/wiki/Pro-rata.
+  For the moment we simplify by saying that the covered period never 
+  adapts automatically to the billing cycle.
+
+
+
+

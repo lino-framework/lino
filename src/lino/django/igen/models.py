@@ -17,7 +17,9 @@
 
 import datetime
 import dateutil
+
 from dateutil.relativedelta import relativedelta
+ONE_DAY = relativedelta(days=1)
 
 from django.db import models
 #from lino.django.tom import models
@@ -219,6 +221,11 @@ class Product(TomModel):
 
 class Document(TomModel):
     
+    #~ STATUS_CHOICES = (
+        #~ ('N', 'New'),
+        #~ ('S', 'Sent'),
+        #~ ('X', 'Exported'),
+    #~ )
     #journal = models.ForeignKey(Journal)
     number = models.AutoField(primary_key=True)
     creation_date = MyDateField() #auto_now_add=True)
@@ -229,12 +236,15 @@ class Document(TomModel):
     your_ref = models.CharField(max_length=200,blank=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    remarks = models.CharField(max_length=200,blank=True)
+    remark = models.CharField("Remark for internal use",max_length=200,blank=True)
+    subject = models.CharField("Subject line",max_length=200,blank=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
     total_excl = PriceField(default=0)
     total_vat = PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
+    #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    can_send = models.BooleanField(default=False)
     
     #~ class Meta:
         #~ abstract = True
@@ -267,18 +277,16 @@ class Document(TomModel):
         self.total_vat = total_vat
         
 class Order(Document):
-    valid_until = MyDateField("Valid until",blank=True,null=True)
-  
-class Contract(Document):
     CYCLE_CHOICES = (
         ('W', 'Weekly'),
         ('M', 'Monthly'),
         ('Q', 'Quarterly'),
         ('Y', 'Yearly'),
-        ('I', 'Idle'),
     )
-    #~ start_date = MyDateField("When to issue next invoice",
-      #~ blank=True,null=True,auto_now_add=True)
+    #valid_until = MyDateField("Valid until",blank=True,null=True)
+    start_date = MyDateField(blank=True,null=True,
+      help_text="beginning of payable period. set to blank if no bill should be generated")
+    covered_until = MyDateField(blank=True,null=True)
     cycle = models.CharField(max_length=1, choices=CYCLE_CHOICES)
     
     def get_last_invoice(self):
@@ -288,57 +296,80 @@ class Contract(Document):
             return None
         return invoices[cnt-1]
     
-    def next_cycle(self,date):
+    def skip_date(self,date):
         if self.cycle == "W":
             date += relativedelta(weeks=1)
-            #date += datetime.timedelta(7)
         elif self.cycle == "M":
             date += relativedelta(months=1)
-            #date += datetime.timedelta(30)
         elif self.cycle == "Q":
             date += relativedelta(months=3)
-            #date += datetime.timedelta(91)
         elif self.cycle == "Y":
             date += relativedelta(years=1)
-            #date += datetime.timedelta(365)
+        else:
+            raise Exception("Invalid cycle value %r in %s" % (self.cycle,self))
         return datetime.date(date.year,date.month,date.day)
         
         
     def make_invoice(self,today=None,simulate=False):
-        if self.cycle == 'I':
+      
+        
+        if self.start_date is None:
             return
         if today is None:
             today = datetime.date.today()
-        last_invoice = self.get_last_invoice()
-        if last_invoice is None:
-            date = self.creation_date
+        
+        # assume that billing occurs once every month
+        # and that invoices must be sent out 5 days before they get paid
+        # and that covering periods are never increased or decreased to 
+        # fit into the billing cycle.
+        next_payment = today \
+          + relativedelta(months=1) \
+          + relativedelta(days=5) 
+        
+        if self.covered_until:
+            covered_until = self.covered_until
         else:
-            date = self.next_cycle(last_invoice.creation_date)
+            covered_until = self.start_date - ONE_DAY
+            
+        if next_payment < covered_until:
+            return # no invoice needed today
+            
+        #last_invoice = self.get_last_invoice()
+        cover_from = covered_until + ONE_DAY
+        cover_until = self.skip_date(cover_from) - ONE_DAY
+        qty = 1
+        while cover_until < next_payment:
+            cover_until = self.skip_date(cover_until)
+            qty += 1
+        
         #~ print "today", type(today), today
         #~ print "date", type(date), date
         #~ assert isinstance(date,datetime.date)
         #~ assert isinstance(today,datetime.date)
+        cover_text = "Period %s to %s :" % (cover_from,cover_until)
+        #print cover_text
         items = []
-        while date <= today:
-            items.append(dict(title=str(self) + " " + str(date)+" :"))
-            for item in self.docitem_set.all():
-                d = {}
-                for fn in ('product','title','description',
-                    'unitPrice','qty','total'):
-                    d[fn] = getattr(item,fn)
-                items.append(d)
-            date = self.next_cycle(date)
-        if len(items) == 0:
-            return 
+        for item in self.docitem_set.all():
+            d = {}
+            for fn in ('product','title','description','unitPrice','qty'):
+                d[fn] = getattr(item,fn)
+            d['qty'] *= qty
+            #d['total'] *= qty
+            items.append(d)
         if simulate:
             return True
-        invoice = Invoice(creation_date=date,contract=self,
+        invoice = Invoice(creation_date=today,order=self,
             customer=self.customer,
-            ship_to=self.ship_to,payment_term=self.payment_term)
+            ship_to=self.ship_to,payment_term=self.payment_term,
+            subject=cover_text,
+            your_ref=unicode(self),
+            )
         invoice.save()
         for d in items:
             i = DocItem(document=invoice,**d)
             i.save()
+        self.covered_until = cover_until
+        self.save()
         return invoice
             
         
@@ -346,7 +377,7 @@ class Contract(Document):
     
 class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
-    contract = models.ForeignKey(Contract,blank=True,null=True)
+    order = models.ForeignKey(Order,blank=True,null=True)
     
     def before_save(self):
         Document.before_save(self)
@@ -495,9 +526,9 @@ class ProductCats(reports.Report):
 
 class ProductPageLayout(layouts.PageLayout):
     main = """
-        id:5 name:50 cat
-        description:50x6
-        price vatExempt
+    id:5 name:50 cat
+    description:50x6
+    price vatExempt
     """
 
 class Products(reports.Report):
@@ -509,7 +540,8 @@ class Products(reports.Report):
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
       number your_ref creation_date
-      customer ship_to
+      customer 
+      ship_to
       """
     box2 = """
       shipping_mode 
@@ -517,7 +549,8 @@ class DocumentPageLayout(layouts.PageLayout):
       vat_exempt item_vat
       """
     box3 = """
-      remarks:40
+      subject:40
+      remark:40
       intro:40x5
       """
     box4 = """
@@ -525,60 +558,62 @@ class DocumentPageLayout(layouts.PageLayout):
       total_vat
       total_incl
       """
+    box5 = ''
+    
     main = """
       box1 box2 box4
-      box3 
+      box3 box5
       items:60x5
       """
       
     def inlines(self):
         return dict(items=ItemsByDocument())
-
-class Documents(reports.Report):
-    page_layouts = (DocumentPageLayout,)
-    #detail_reports = "items"
-    columnNames = "number:4 creation_date customer:20 " \
-                  "total_incl total_excl total_vat"
-
         
-class Orders(Documents):
-    model = Order
-    order_by = "number"
-    
-    
-class ContractInvoicesPageLayout(DocumentPageLayout):
+class OrderPageLayout(DocumentPageLayout):
+    box5 = """
+      cycle
+      start_date
+      covered_until
+      """
+        
+        
+class InvoicePageLayout(DocumentPageLayout):
+    box5 = """
+      order
+      """
+
+class EmittedInvoicesPageLayout(DocumentPageLayout):
     label = "Emitted invoices"
     main = """
     number:4 creation_date customer:20
     emitted_invoices
     """
     def inlines(self):
-        return dict(emitted_invoices=InvoicesByContract())
+        return dict(emitted_invoices=InvoicesByOrder())
    
 
-class Contracts(Documents):
-    queryset = Contract.objects.order_by("number")
-    page_layouts = Documents.page_layouts + (ContractInvoicesPageLayout,)
+class Orders(reports.Report):
+    model = Order
+    order_by = "number"
+    page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
+    columnNames = "number:4 creation_date customer:20 " \
+                  "subject total_incl total_excl total_vat " \
+                  "cycle start_date covered_until"
+    
 
 
-class InvoicePageLayout(DocumentPageLayout):
-    box2 = """
-      shipping_mode
-      payment_term
-      vat_exempt item_vat
-      contract
-      """
-
-class Invoices(Orders):
+class Invoices(reports.Report):
     queryset = Invoice.objects.order_by("number")
     page_layouts = (InvoicePageLayout,)
+    columnNames = "number:4 creation_date due_date customer:20 " \
+                  "subject total_incl total_excl total_vat order "
 
-class InvoicesByContract(reports.Report):
+class InvoicesByOrder(reports.Report):
     model = Invoice
-    master = Contract
-    fk_name = "contract"
+    master = Order
+    fk_name = "order"
     order_by = "number"
-    columnNames = "number creation_date your_ref total_excl total_vat 	shipping_mode payment_term due_date remarks vat_exempt item_vat "
+    columnNames = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject remark vat_exempt item_vat "
 
     
 class ItemsByDocumentRowLayout(layouts.RowLayout):
@@ -598,7 +633,8 @@ class ItemsByDocument(reports.Report):
     
     
 
-class DocumentsByCustomer(Documents):
+class DocumentsByCustomer(reports.Report):
+    page_layouts = (DocumentPageLayout,)
     columnNames = "number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
     model = Document
@@ -638,37 +674,37 @@ class ContactsByCountry(Contacts):
         
 class MakeInvoicesDialog(layouts.Dialog):
     class form_class(forms.Form):
-        make_until = forms.DateField(label="Generate invoices on")
-        contract = forms.ModelChoiceField(
-            label="(only for this single contract:)",
-            queryset=Contract.objects.all())
+        today = forms.DateField(label="Generate invoices on")
+        order = forms.ModelChoiceField(
+            label="(only for this single order:)",
+            queryset=Order.objects.all())
     
     intro = layouts.StaticText("""
     <p>This is the first example of a <em>Dialog</em>.</p>
     """)
     layout = """
     intro
-    make_until
-    contract
+    today
+    order
     simulate ok cancel help
     """
     
     def execute(self,simulate=False):
-        contracts_seen = 0
+        orders_seen = 0
         invoices_made = 0
-        if self.contract is not None: # all contracts
-            contracts = Contract.objects.all()
+        if self.order is not None: # all orders
+            orders = Order.objects.all()
         else:
-            contracts = ( self.contract, )
-        for ct in contracts:
-            contracts_seen += 1
+            orders = ( self.order, )
+        for ct in orders:
+            orders_seen += 1
             if ct.make_invoice(self.make_until,simulate):
                 invoices_made += 1
         if simulate:
-            msg = "%d contracts would make %d invoices."
+            msg = "%d orders would make %d invoices."
         else:
-            msg = "%d contracts made %d new invoices."
-        self.message(msg,contracts_seen, invoices_made)
+            msg = "%d orders made %d new invoices."
+        self.message(msg,orders_seen, invoices_made)
         
     def ok(self):
         return self.execute(simulate=False)
@@ -689,7 +725,6 @@ def lino_setup(lino):
     m.add_action(ProductCats())
     m = lino.add_menu("docs","~Documents")
     m.add_action(Orders())
-    m.add_action(Contracts())
     m.add_action(Invoices())
     #m.add_action(MakeInvoicesDialog())
     m = lino.add_menu("config","~Configuration")

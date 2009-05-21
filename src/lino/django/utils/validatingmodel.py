@@ -99,9 +99,6 @@ class TomModel(models.Model):
           self.__class__.__name__, 
           self.pk)
         
-    #~ def page_layout(self):
-        #~ pass
-        
         
     def get_actions(self):
         return dict(

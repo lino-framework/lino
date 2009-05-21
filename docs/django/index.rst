@@ -1,6 +1,7 @@
 Lino Django Utilities
 =====================
 
+
 :mod:`lino.django.utils` 
 is a framework to write 
 `Django <http://docs.djangoproject.com>`_ applications.
@@ -34,6 +35,12 @@ around the database logic instead of sitting inside the models.
 The disadvantage of Lino's approach is that it is not ready 
 for use in a production environment.
 
+Applications that use lino.django.utils:
+
+.. toctree::
+   :maxdepth: 2
+
+   igen/index
 
 
 

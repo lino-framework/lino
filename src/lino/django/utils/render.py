@@ -822,9 +822,17 @@ class ViewManyReportRenderer(ViewReportRenderer):
             self.page=page
 
         
+    #~ def position_string(self):
+        #~ return  "Page %d of %d." % (self.page.number,
+          #~ self.page.paginator.num_pages)
+          
     def position_string(self):
-        return  "Page %d of %d." % (self.page.number,
-          self.page.paginator.num_pages)
+        s = "Page %d of %d" % (self.page.number,self.page.paginator.num_pages)
+        s += ' in <a href="%s">%s</a>.' % (
+            self.again("",editing=None),self.report.get_title(self))
+        return mark_safe(s)
+        
+          
         
     def navigator(self):
         s="""
@@ -849,9 +857,9 @@ class ViewManyReportRenderer(ViewReportRenderer):
             s += text
         s += " "
         
-        s += """
-        <span class="current">%s</span>
-        """ % self.position_string()
+        #~ s += """
+        #~ <span class="current">%s</span>
+        #~ """ % self.position_string()
 
         if self.can_change():
             if self.editing:
@@ -861,11 +869,11 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 s += ' <a href="%s">%s</a>' % (
                   self.again(editing=1),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        s += """
-        </span>
-        </div>
-        """     
+        s += "</span>"
+        s += ' <span class="position">%s</span>' % self.position_string()
+        s += "</div>"
         return mark_safe(s)
+        
         
     def rows(self):
         if self.master_instance is None:
@@ -925,10 +933,11 @@ class RowViewReportRenderer(ViewReportRenderer):
         return mark_safe(s)
         
     def position_string(self):
-        return  "Row %d of %d." % (self.row.number,self.queryset.count())
+        s = "Row %d of %d" % (self.row.number,self.queryset.count())
+        s += ' in <a href="%s">%s</a>.' % (
+            self.again("..",editing=None),self.report.get_title(self))
+        return mark_safe(s)
         
-    #~ def get_title(self):
-        #~ return u"%s - %s" % (self.report.get_title(self),self.instance)
         
       
         
@@ -945,9 +954,6 @@ class ViewOneReportRenderer(RowViewReportRenderer):
         
     def navigator(self):
         s="""<div class="pagination"><span class="step-links">"""
-        s += '<a href="%s">%s</a>' % (
-          self.again("..",editing=None),self.get_title())
-
         page = self.row
         get_var_name = "row"
 
@@ -967,8 +973,6 @@ class ViewOneReportRenderer(RowViewReportRenderer):
               #self.again(**{get_var_name: page.number+1}),text)
         else:
             s += text
-        s += " "
-        s += '<span class="current">%s</span>' % self.position_string()
         if self.can_change():
             if self.editing:
                 s += ' <a href="%s">%s</a>' % (
@@ -978,9 +982,14 @@ class ViewOneReportRenderer(RowViewReportRenderer):
                   self.again(editing=1),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        s += """</span></div>"""     
+        s += '</span>'
+        s += '<span class="position">%s</span>' % self.position_string()
+        s += '</div>'
         return mark_safe(s)
 
+    def get_title(self):
+        return unicode(self.row.instance)
+        
 
 
 
