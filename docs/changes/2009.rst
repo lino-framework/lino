@@ -169,6 +169,16 @@ This way of doing has unresolved issues:
   started to split new class ElementServer out of Row
   because Dialog will need only the ElementServer part of Row.
   
+20090520
+--------
+
+- Good news: 
+  `Active Systems <http://www.active.ee>`_ is probably going to participate in the development of igen.
+  We started an issues tracker on their server at
+  http://code.active.ee:3000/projects/lino/issues  
+  We also wrote some Wiki pages:
+  https://code.active.ee/wiki/doku.php?id=igen:igen
+
 20090521
 --------
 
@@ -201,5 +211,4 @@ This way of doing has unresolved issues:
   adapts automatically to the billing cycle.
 
 
-
-
+.. _latest-news:
