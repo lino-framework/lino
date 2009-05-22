@@ -209,6 +209,26 @@ This way of doing has unresolved issues:
   Definition of "Pro-rata": see http://en.wikipedia.org/wiki/Pro-rata.
   For the moment we simplify by saying that the covered period never 
   adapts automatically to the billing cycle.
+  
+  
+20090522
+--------
 
+- The new class attributes :attr:`reports.Report.filter` and
+  :attr:`reports.Report.exclude` refer to the corresponding Django methods to limit a queryset.
+  
+- Issue `edit a report's grid view fails <http://code.active.ee:3000/issues/show/342>`_
+
+- Added some shortcuts
+  :func:`requests.is_staff`
+  :func:`requests.is_authenticated`
+  and 
+  :func:`requests.never`
+
+- Invoices.can_view = is_staff
+  Orders.can_view = is_authenticated
+  InvoicesToSend.can_add = never
+
+- :attr:`Report.typo_check`
 
 .. _latest-news:

@@ -17,26 +17,18 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.django.utils import reports
-from django.contrib.auth.models import Permission, User, Group
-from lino.django.utils import perms
+def never(request): return False
+def always(request): return True
+def is_staff(request): 
+    print "requests.is_staff()", request.user.is_staff
+    return request.user.is_staff
+def is_authenticated(request): return request.user.is_authenticated()
 
-class Permissions(reports.Report):
-    model = Permission
-    order_by = 'content_type__app_label codename'
-  
-class Users(reports.Report):
-    model = User
-    order_by = "username"
-
-class Groups(reports.Report):
-    model = Group
-    order_by = "name"
-
-    
-def setup_menu(menu):
-    m = menu.add_menu("system","~System")
-    m.add_action(Permissions())
-    m.add_action(Users())
-    m.add_action(Groups())
-    m.can_view = perms.AND(perms.is_staff)
+class AND:
+  def __init__(self,*tests):
+      self.tests = tests
+  def test(self,*args,**kw):
+      for t in self.tests:
+          if not t(*args,**kw):
+              return False
+      return True

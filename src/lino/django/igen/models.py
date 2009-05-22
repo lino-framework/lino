@@ -244,8 +244,6 @@ class Document(TomModel):
     total_vat = PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
-    can_send = models.BooleanField(default=False)
-    
     #~ class Meta:
         #~ abstract = True
         
@@ -378,6 +376,8 @@ class Order(Document):
 class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
     order = models.ForeignKey(Order,blank=True,null=True)
+    can_send = models.BooleanField(default=False)
+    
     
     def before_save(self):
         Document.before_save(self)
@@ -436,10 +436,9 @@ from django import forms
 
 from lino.django.utils import reports
 from lino.django.utils import layouts
+from lino.django.utils import requests
 
 from lino.django.utils.models import Country, Languages
-
-
 
 class ContactPageLayout(layouts.PageLayout):
     
@@ -599,15 +598,23 @@ class Orders(reports.Report):
     columnNames = "number:4 creation_date customer:20 " \
                   "subject total_incl total_excl total_vat " \
                   "cycle start_date covered_until"
+    can_view = perms.AND(perms.is_authenticated)
     
-
-
 class Invoices(reports.Report):
-    queryset = Invoice.objects.order_by("number")
+    model = Invoice
+    order_by = "number"
     page_layouts = (InvoicePageLayout,)
-    columnNames = "number:4 creation_date due_date customer:20 " \
+    columnNames = "number:4 can_send creation_date due_date " \
+                  "customer:20 " \
                   "subject total_incl total_excl total_vat order "
+    can_view = perms.AND(perms.is_staff)
 
+class InvoicesToSend(Invoices):
+    filter = dict(can_send=False)
+    # these override class methods, not attributes:
+    can_add = perms.AND(perms.never)
+    
+  
 class InvoicesByOrder(reports.Report):
     model = Invoice
     master = Order
@@ -726,6 +733,7 @@ def lino_setup(lino):
     m = lino.add_menu("docs","~Documents")
     m.add_action(Orders())
     m.add_action(Invoices())
+    m.add_action(InvoicesToSend())
     #m.add_action(MakeInvoicesDialog())
     m = lino.add_menu("config","~Configuration")
     m.add_action(ShippingModes())

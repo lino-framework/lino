@@ -101,6 +101,7 @@ class Action(MenuItem):
     def __init__(self,parent,actor,
                  name=None,label=None,
                  hotkey=None,
+                 can_view=None,
                  *args,**kw):
         if name is None:
             name = actor.name
@@ -109,6 +110,10 @@ class Action(MenuItem):
         Component.__init__(self,parent,name,label,*args,**kw)
         self.actor = actor
         self.hotkey = hotkey
+        if can_view is None:
+            self.can_view = actor.can_view
+        else:
+            self.can_view = can_view
         
     def view(self,request):
         return self.actor.view(request)
@@ -116,8 +121,6 @@ class Action(MenuItem):
     def get_urls(self,name):
         return self.actor.get_urls(name)
 
-    def can_view(self,request):
-        return self.actor.can_view(request)
 
 class Menu(MenuItem):
     template_to_response = 'lino/menu.html'

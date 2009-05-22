@@ -88,8 +88,8 @@ def vfill(lines,valign,height):
         raise ConfigError("vfill() : %s" % repr(valign))
 
 class ElementServer:
-    def __init__(self,layout,form=None):
-        self.form = form
+    def __init__(self,form):
+        self.form = form # form may be None
         
     def render_field(self,elem):
         if self.form is None:

@@ -32,16 +32,8 @@ from django.contrib.auth.decorators import login_required
 #from django.utils.safestring import mark_safe
 #from django.template.loader import render_to_string, get_template, select_template, Context
 
-# l:\snapshot\xhtml2pdf
-#import ho.pisa as pisa
-
-from lino.django.utils import layouts, render
+from lino.django.utils import layouts, render, perms
 from lino.django.utils.editing import is_editing
-
-
-#~ from django import template
-
-#~ register = template.Library()
 
 
 # maps Django field types to a tuple of default paramenters
@@ -101,6 +93,8 @@ class Report:
     queryset = None 
     model = None
     order_by = None
+    filter = None
+    exclude = None
     title = None
     #width = None
     #columnWidths = None
@@ -125,9 +119,15 @@ class Report:
     _page_layouts = None
     page_layouts = (layouts.PageLayout ,)
     
+    can_view = perms.AND(perms.always)
+    can_add = perms.AND(perms.always)
+    can_change = perms.AND(perms.is_authenticated)
+
+    typo_check = True
+    
     def __init__(self):
-        self.groups = [] # for later
-        self.totals = [] # for later
+        #~ self.groups = [] # for later
+        #~ self.totals = [] # for later
         if self.label is None:
             self.label = self.__class__.__name__
         if self.name is None:
@@ -151,6 +151,14 @@ class Report:
               self.model,self.fk_name)
         self._page_layouts = [ 
               l(self.model) for l in self.page_layouts]
+        if self.typo_check:
+            if len(self.__class__.__bases__) > 0:
+                myattrs = set(self.__class__.__dict__.keys())
+                for b in self.__class__.__bases__:
+                    for k in b.__dict__.keys():
+                        myattrs.discard(k)
+                if len(myattrs) > 0:
+                    print "[NWarning]: %s defines attributes not found in base classs : %s" % (self.__class__,myattrs)
         
     def column_headers(self):
         #print "column_headers"
@@ -180,6 +188,10 @@ class Report:
 
         if self.order_by:
             qs = qs.order_by(*self.order_by.split())
+        if self.filter:
+            qs = qs.filter(**self.filter)
+        if self.exclude:
+            qs = qs.exclude(**self.exclude)
         return qs
         
     def getLabel(self):
@@ -193,16 +205,15 @@ class Report:
             #~ self._page_layouts = [ 
               #~ l(self.model) for l in self.page_layouts]
         #~ return self._page_layouts[i]
-            
 
-    def can_view(self,request,row=None):
-        return True
+    #~ def can_view(self,request,row=None):
+        #~ return True
         
-    def can_add(self,request,row=None):
-        return True
+    #~ def can_add(self,request,row=None):
+        #~ return True
         
-    def can_change(self,request,row=None):
-        return request.user.is_authenticated()
+    #~ def can_change(self,request,row=None):
+        #~ return request.user.is_authenticated()
         
         
     #~ def __unicode__(self):
