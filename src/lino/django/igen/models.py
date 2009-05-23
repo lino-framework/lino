@@ -436,7 +436,7 @@ from django import forms
 
 from lino.django.utils import reports
 from lino.django.utils import layouts
-from lino.django.utils import requests
+from lino.django.utils import perms
 
 from lino.django.utils.models import Country, Languages
 

@@ -219,16 +219,25 @@ This way of doing has unresolved issues:
   
 - Issue `edit a report's grid view fails <http://code.active.ee:3000/issues/show/342>`_
 
-- Added some shortcuts
-  :func:`requests.is_staff`
-  :func:`requests.is_authenticated`
-  and 
-  :func:`requests.never`
+- Report extensively uses sime class attribut overriding in subclasses. That's what I want, but it has one disadvantage: typo's are not detected. :meth:`Report.__init__` now tries to detect them. This can be switched off by setting :attr:`Report.typo_check` to False.
 
-- Invoices.can_view = is_staff
-  Orders.can_view = is_authenticated
-  InvoicesToSend.can_add = never
+- New module :mod:`perms` with some shortcuts :func:`perms.is_staff`, :func:`perms.is_authenticated` and :func:`perms.never`.
+  Trying this on `Invoices.can_view = is_staff`,
+  `Orders.can_view = is_authenticated` and
+  `InvoicesToSend.can_add = never`.
 
-- :attr:`Report.typo_check`
+20090523
+--------
+
+- Why did I try to write my own permissions system? because I don't like the system suggested by :mod:`django.contrib.auth`. 
+  "but it's not currently possible to say "Mary may change news stories, but only the ones she created herself" or "Mary may only change news stories that have a certain status, publication date or ID." The latter functionality is something Django developers are currently discussing."
+  (http://docs.djangoproject.com/en/dev/topics/auth/#permissions)
+  
+  Some trace of the discussion is here:
+  http://code.djangoproject.com/ticket/3011
+  
+  My conclusion: don't insist for the moment on permissions and user management. Make my perms module minimal but usable and use it temporarily until Django has a good solution.
+  
+  
 
 .. _latest-news:

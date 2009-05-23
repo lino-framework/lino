@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import traceback
 
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
@@ -23,28 +24,31 @@ from django.shortcuts import render_to_response
 from django.utils.safestring import mark_safe
 from django import template 
 
+from lino.django.utils import perms
         
 class Component:
     HOTKEY_MARKER = '~'
-    def __init__(self,parent,name,label,doc=None,enabled=True):
-        p=parent
-        l=[]
+    def __init__(self,parent,name,label,doc=None,enabled=True,
+                 can_view=perms.always):
+        p = parent
+        l = []
         while p is not None:
             if p in l:
                 raise Exception("circular parent")
             l.append(p)
             p = p.parent
-        self.parent=parent
-        self.name=name
-        self.doc=doc
-        self.enabled=enabled
+        self.parent = parent
+        self.name = name
+        self.doc = doc
+        self.enabled = enabled
         if label is None:
-            label=self.__class__.__name__
-        n=label.find(self.HOTKEY_MARKER)
+            label = self.__class__.__name__
+        n = label.find(self.HOTKEY_MARKER)
         if n != -1:
-            label=label.replace(self.HOTKEY_MARKER,'')
+            label = label.replace(self.HOTKEY_MARKER,'')
             #label=label[:n] + '<u>' + label[n] + '</u>' + label[n+1:]
-        self.label=label
+        self.label = label
+        self.can_view = can_view
         
 
     def getLabel(self):
@@ -85,13 +89,17 @@ class Component:
         return s + self.name
 
     def as_html(self,request,level=None):
-        if not self.can_view(request):
-            return u''
-        return mark_safe('<a href="%s">%s</a>' % (
-              self.get_url_path(),self.label))
+        try:
+            if not self.can_view(request):
+                print self.__class__.__name__, "as_html() : can_view failed" 
+                return u''
+            return mark_safe('<a href="%s">%s</a>' % (
+                  self.get_url_path(),self.label))
+        except Exception,e:
+            traceback.print_exc(e)
               
-    def can_view(self,request):
-        return True
+    #~ def can_view(self,request):
+        #~ return True
         
 class MenuItem(Component):
     pass
@@ -101,8 +109,10 @@ class Action(MenuItem):
     def __init__(self,parent,actor,
                  name=None,label=None,
                  hotkey=None,
-                 can_view=None,
                  *args,**kw):
+        
+        if not kw.has_key('can_view'):
+            kw.update(can_view=actor.can_view)
         if name is None:
             name = actor.name
         if label is None:
@@ -110,10 +120,6 @@ class Action(MenuItem):
         Component.__init__(self,parent,name,label,*args,**kw)
         self.actor = actor
         self.hotkey = hotkey
-        if can_view is None:
-            self.can_view = actor.can_view
-        else:
-            self.can_view = can_view
         
     def view(self,request):
         return self.actor.view(request)
@@ -160,17 +166,21 @@ class Menu(MenuItem):
             yield mi
         
     def as_html(self,request,level=1):
-        if not self.can_view(request):
-            return u''
-        if level == 1:
-            s = ''
-        else:
-            s = Component.as_html(self,request)
-        s += '\n<ul class="menu%d">' % level
-        for mi in self.items:
-            s += '\n<li>%s</li>' % mi.as_html(request,level+1)
-        s += '\n</ul>\n'
-        return mark_safe(s)
+        try:
+            if not self.can_view(request):
+                print self.__class__.__name__, "as_html() : can_view failed" 
+                return u''
+            if level == 1:
+                s = ''
+            else:
+                s = Component.as_html(self,request)
+            s += '\n<ul class="menu%d">' % level
+            for mi in self.items:
+                s += '\n<li>%s</li>' % mi.as_html(request,level+1)
+            s += '\n</ul>\n'
+            return mark_safe(s)
+        except Exception, e:
+            traceback.print_exc(e)
         
     def get_urls(self,name=''):
         #print "Menu.get_urls()",name
