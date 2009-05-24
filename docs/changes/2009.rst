@@ -221,7 +221,7 @@ This way of doing has unresolved issues:
 
 - Report extensively uses sime class attribut overriding in subclasses. That's what I want, but it has one disadvantage: typo's are not detected. :meth:`Report.__init__` now tries to detect them. This can be switched off by setting :attr:`Report.typo_check` to False.
 
-- New module :mod:`perms` with some shortcuts :func:`perms.is_staff`, :func:`perms.is_authenticated` and :func:`perms.never`.
+- New module :mod:`lino.django.utils.perms` with some shortcuts :func:`perms.is_staff`, :func:`perms.is_authenticated` and :func:`perms.never`.
   Trying this on `Invoices.can_view = is_staff`,
   `Orders.can_view = is_authenticated` and
   `InvoicesToSend.can_add = never`.
@@ -238,6 +238,12 @@ This way of doing has unresolved issues:
   
   My conclusion: don't insist for the moment on permissions and user management. Make my perms module minimal but usable and use it temporarily until Django has a good solution.
   
-  
+20090524
+--------
+
+- continued on :mod:`lino.django.utils.perms`. Now it works.
+  (Updated http://code.active.ee:3000/issues/show/338)
+
+- fixed a bug in http://127.0.0.1:8000/voc/tree
 
 .. _latest-news:

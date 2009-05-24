@@ -39,4 +39,4 @@ def setup_menu(menu):
     m.add_action(Permissions())
     m.add_action(Users())
     m.add_action(Groups())
-    m.can_view = perms.AND(perms.is_staff)
+    m.can_view = perms.is_staff

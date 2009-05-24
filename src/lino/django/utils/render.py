@@ -430,7 +430,7 @@ class ReportRenderer:
         if report.master is None:
             assert master_instance is None
         else:
-            assert isinstance(master_instance,report.master)
+            assert master_instance is None or isinstance(master_instance,report.master)
         self.master_instance = master_instance
         #print self.__class__.__name__, "__init__()"
         
@@ -759,8 +759,8 @@ class ViewReportRenderer(ReportRenderer):
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
       
-    def can_change(self):
-        return self.report.can_change(self.request)
+    #~ def can_change(self):
+        #~ return self.report.can_change(self.request)
             
     def render_to_response(self,**kw):
         url = get_redirect(self.request)
@@ -861,13 +861,13 @@ class ViewManyReportRenderer(ViewReportRenderer):
         #~ <span class="current">%s</span>
         #~ """ % self.position_string()
 
-        if self.can_change():
-            if self.editing:
-                s += ' <a href="%s">%s</a>' % (
-                  self.again(editing=0),"show")
-            else:
-                s += ' <a href="%s">%s</a>' % (
-                  self.again(editing=1),"edit")
+        #if self.can_change():
+        if self.editing:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=0),"show")
+        else:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=1),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         s += "</span>"
         s += ' <span class="position">%s</span>' % self.position_string()
@@ -973,13 +973,13 @@ class ViewOneReportRenderer(RowViewReportRenderer):
               #self.again(**{get_var_name: page.number+1}),text)
         else:
             s += text
-        if self.can_change():
-            if self.editing:
-                s += ' <a href="%s">%s</a>' % (
-                  self.again(editing=0),"show")
-            else:
-                s += ' <a href="%s">%s</a>' % (
-                  self.again(editing=1),"edit")
+        #if self.can_change():
+        if self.editing:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=0),"show")
+        else:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=1),"edit")
         s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
         s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         s += '</span>'

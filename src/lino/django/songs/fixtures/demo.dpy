@@ -160,5 +160,6 @@ def objects():
     
     yield rehearsal("2009-04-26","as kj lr ls","17 32 26 28")
     yield rehearsal("2009-05-03","as kj lr ls","17 32 28 33")
+    yield rehearsal("2009-05-17","as kj lr ls pr er","17 26 32 28")
 
 

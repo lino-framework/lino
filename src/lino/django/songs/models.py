@@ -142,7 +142,7 @@ class Collection(models.Model):
 
 # reports
 
-from lino.django.utils import reports
+from lino.django.utils import reports, perms
 from lino.django.utils.layouts import PageLayout 
     
 class Rehearsals(reports.Report):
@@ -193,7 +193,7 @@ class Songs(reports.Report):
         #~ return dict(rehearsals=RehearsalsBySong())
 
 def lino_setup(lino):
-    m = lino.add_menu("songs","~Songs")
+    m = lino.add_menu("songs","~Songs",can_view=perms.is_authenticated)
     m.add_action(Rehearsals())
     m.add_action(Singers())
     m.add_action(Authors())

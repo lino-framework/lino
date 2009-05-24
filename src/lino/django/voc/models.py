@@ -199,26 +199,40 @@ class UnitForm(forms.ModelForm):
 # reports definition
 #
 
-from lino.django.utils import reports
+from lino.django.utils import reports, perms
 
 class Units(reports.Report):
+    model = Unit
     model_form = UnitForm
-    queryset=Unit.objects.order_by("id")
-    columnNames="id title name parent seq format"
+    order_by = "id"
+    columnNames = "id title name parent seq format"
 
 class UnitsPerParent(reports.Report):
     model_form = UnitForm
-    columnNames="id title name seq format parent"
+    columnNames = "id title name seq format parent"
+    order_by = "seq"
+    master = Unit
+    model = Unit
     
     def __init__(self,parent,**kw):
         self.parent=parent
         reports.Report.__init__(self,**kw)
         
-    def get_queryset(self):
-        return Unit.objects.filter(parent=self.parent).order_by("seq")
-    queryset=property(get_queryset)
+    #~ def get_queryset(self):
+        #~ return Unit.objects.filter(parent=self.parent).order_by("seq")
+    #~ queryset=property(get_queryset)
 
 class Entries(reports.Report):
-    queryset=Entry.objects.all()
+    model = Entry
     model_form = forms.models.modelform_factory(Entry)
 
+#
+# menu setup
+#
+def lino_setup(lino):
+    m = lino.add_menu("voc","Vocabulary",
+      can_view=perms.is_authenticated)
+    m.add_action(Units(),label="List of All Units",)
+    m.add_action(UnitsPerParent(None),name="tree",
+        label="Table of Contents")
+    m.add_action(Entries(),label="List of Entries",)

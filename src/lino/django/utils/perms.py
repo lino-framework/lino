@@ -17,18 +17,37 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-def never(request): return False
-def always(request): return True
-def is_staff(request): 
-    print "requests.is_staff()", request.user.is_staff
-    return request.user.is_staff
-def is_authenticated(request): return request.user.is_authenticated()
+class Condition:
+    pass
+class never(Condition):
+    @staticmethod
+    def passes(request): return False
+class always(Condition):        
+    @staticmethod
+    def passes(request): return True
+class is_staff(Condition):        
+    @staticmethod
+    def passes(request):
+        #print "requests.is_staff()", request.user.is_staff
+        return request.user.is_staff
+        
+class is_authenticated(Condition):
+    @staticmethod
+    def passes(request):
+        #print request.user, request.user.is_authenticated
+        return request.user.is_authenticated()
+      
+#~ def always(request): return True
+#~ def is_staff(request): 
+    #~ print "requests.is_staff()", request.user.is_staff
+    #~ return request.user.is_staff
+#~ def is_authenticated(request): return request.user.is_authenticated()
 
-class AND:
-  def __init__(self,*tests):
-      self.tests = tests
-  def test(self,*args,**kw):
-      for t in self.tests:
-          if not t(*args,**kw):
-              return False
-      return True
+#~ class AND:
+  #~ def __init__(self,*tests):
+      #~ self.tests = tests
+  #~ def test(self,*args,**kw):
+      #~ for t in self.tests:
+          #~ if not t(*args,**kw):
+              #~ return False
+      #~ return True

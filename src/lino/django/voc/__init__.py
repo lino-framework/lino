@@ -22,14 +22,5 @@ A vocabulary trainer. Not finished.
 
 """
 
+from models import lino_setup
 
-#
-# menu setup
-#
-def lino_setup(lino):
-    import models as reports
-    m = lino.add_menu("voc","Vocabulary")
-    m.add_action(reports.Units(),label="List of All Units",)
-    m.add_action(reports.UnitsPerParent(None),name="tree",
-        label="Table of Contents")
-    m.add_action(reports.Entries(),label="List of Entries",)

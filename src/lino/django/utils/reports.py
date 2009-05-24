@@ -48,7 +48,15 @@ WIDTHS = {
 }
 
 
-
+def base_attrs(cl):
+    #~ if cl is Report or len(cl.__bases__) == 0:
+        #~ return
+    #~ myattrs = set(cl.__dict__.keys())
+    for b in cl.__bases__:
+        for k in base_attrs(b):
+            yield k
+        for k in b.__dict__.keys():
+            yield k
 
 
 class ReportParameterForm(forms.Form):
@@ -88,42 +96,53 @@ class ReportParameterForm(forms.Form):
 
 class Report:
   
-    #~ __metaclass__ = ReportMetaClass
-    
     queryset = None 
     model = None
     order_by = None
     filter = None
     exclude = None
     title = None
-    #width = None
-    #columnWidths = None
     columnNames = None
     row_layout_class = None
-    #rowHeight = None
     label = None
     param_form = ReportParameterForm
     default_filter = ''
-    #default_format='form'
-    #editable=True
     name = None
-    #path=None
     form_class = None
-    #row_print_template = "tom/"
-    #detail_reports = ''
     master = None
     fk_name = None
-    #_page_layout = None
-    #page_layout_class = layouts.PageLayout
     
     _page_layouts = None
     page_layouts = (layouts.PageLayout ,)
     
-    can_view = perms.AND(perms.always)
-    can_add = perms.AND(perms.always)
-    can_change = perms.AND(perms.is_authenticated)
+    can_view = perms.always
+    can_add = perms.is_authenticated
+    can_change = perms.is_authenticated
 
     typo_check = True
+    
+    #~ __slots__ = """
+    #~ queryset model
+    #~ order_by
+    #~ filter
+    #~ exclude
+    #~ title
+    #~ columnNames
+    #~ row_layout_class
+    #~ label
+    #~ param_form
+    #~ default_filter
+    #~ name
+    #~ form_class
+    #~ master
+    #~ fk_name
+    #~ _page_layouts
+    #~ page_layouts
+    #~ can_view
+    #~ can_add
+    #~ can_change
+    #~ """.split()
+    
     
     def __init__(self):
         #~ self.groups = [] # for later
@@ -152,13 +171,11 @@ class Report:
         self._page_layouts = [ 
               l(self.model) for l in self.page_layouts]
         if self.typo_check:
-            if len(self.__class__.__bases__) > 0:
-                myattrs = set(self.__class__.__dict__.keys())
-                for b in self.__class__.__bases__:
-                    for k in b.__dict__.keys():
-                        myattrs.discard(k)
-                if len(myattrs) > 0:
-                    print "[NWarning]: %s defines attributes not found in base classs : %s" % (self.__class__,myattrs)
+            myattrs = set(self.__class__.__dict__.keys())
+            for attr in base_attrs(self.__class__):
+                myattrs.discard(attr)
+            for attr in myattrs:
+                print "[Warning]: %s defines new attributes : %s" % (self.__class__,myattrs)
         
     def column_headers(self):
         #print "column_headers"
@@ -179,7 +196,9 @@ class Report:
         #~ if self.master:
             #~ fk = _get_foreign_key(self.master,self.model,self.fk_name)
             #~ self.fk.get_attname()
-        if self.master is not None:
+        if self.master is None:
+            assert master_instance is None
+        else:
             #print qs
             #print qs.model
             qs = qs.filter(**{self.fk.name:master_instance})
@@ -236,9 +255,9 @@ class Report:
         #~ msg = "Hello, "+unicode(request.user)
         #~ print msg
         #~ request.user.message_set.create(msg)
-        if not self.can_view(request):
+        if not self.can_view.passes(request):
             return render.sorry(request)
-        if is_editing(request) and self.can_change(request):
+        if is_editing(request) and self.can_change.passes(request):
             r = render.EditManyReportRenderer(request,True,self)
         else:
             r = render.ViewManyReportRenderer(request,True,self)
@@ -247,9 +266,9 @@ class Report:
     #@login_required
     def view_one(self,request,row):
         #print "Report.view_one()", request.path
-        if not self.can_view(request):
+        if not self.can_view.passes(request):
             return render.sorry(request)
-        if is_editing(request) and self.can_change(request):
+        if is_editing(request) and self.can_change.passes(request):
             r = render.EditOneReportRenderer(row,request,True,self)
         else:
             r = render.ViewOneReportRenderer(row,request,True,self)
@@ -257,13 +276,13 @@ class Report:
 
     #@login_required
     def pdf_view_one(self,request,row):
-        if not self.can_view(request):
+        if not self.can_view.passes(request):
             return render.sorry(request)
         return render.PdfOneReportRenderer(row,request,True,self).render()
         
     #@login_required
     def pdf_view_many(self, request):
-        if not self.can_view(request):
+        if not self.can_view.passes(request):
             return render.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render()
 

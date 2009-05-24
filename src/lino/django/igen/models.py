@@ -489,8 +489,7 @@ class Contacts(reports.Report):
     can_delete = True
     model = Contact
     order_by = "id"
-    
-
+    #can_view = perms.is_authenticated
 
         
 class Companies(Contacts):
@@ -510,18 +509,21 @@ class Persons(Contacts):
 class PaymentTerms(reports.Report):
     model = PaymentTerm
     order_by = "id"
-    def can_view(self,request):
-      return request.user.is_staff
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
 
 class ShippingModes(reports.Report):
     model = ShippingMode
     order_by = "id"
-    def can_view(self,request):
-      return request.user.is_staff
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
 
 class ProductCats(reports.Report):
     model = ProductCat
     order_by = "id"
+    can_view = perms.is_staff
 
 class ProductPageLayout(layouts.PageLayout):
     main = """
@@ -598,7 +600,7 @@ class Orders(reports.Report):
     columnNames = "number:4 creation_date customer:20 " \
                   "subject total_incl total_excl total_vat " \
                   "cycle start_date covered_until"
-    can_view = perms.AND(perms.is_authenticated)
+    can_view = perms.is_authenticated
     
 class Invoices(reports.Report):
     model = Invoice
@@ -607,12 +609,12 @@ class Invoices(reports.Report):
     columnNames = "number:4 can_send creation_date due_date " \
                   "customer:20 " \
                   "subject total_incl total_excl total_vat order "
-    can_view = perms.AND(perms.is_staff)
+    can_view = perms.is_staff
 
 class InvoicesToSend(Invoices):
     filter = dict(can_send=False)
     # these override class methods, not attributes:
-    can_add = perms.AND(perms.never)
+    can_add = perms.never
     
   
 class InvoicesByOrder(reports.Report):
@@ -724,18 +726,20 @@ class MakeInvoicesDialog(layouts.Dialog):
 
 def lino_setup(lino):
     m = lino.add_menu("contacts","~Contacts")
-    m.add_action(Contacts())
     m.add_action(Companies())
     m.add_action(Persons())
+    m.add_action(Contacts(),label="All")
     m = lino.add_menu("prods","~Products")
     m.add_action(Products())
     m.add_action(ProductCats())
-    m = lino.add_menu("docs","~Documents")
+    m = lino.add_menu("docs","~Documents",
+      can_view=perms.is_authenticated)
     m.add_action(Orders())
     m.add_action(Invoices())
     m.add_action(InvoicesToSend())
     #m.add_action(MakeInvoicesDialog())
-    m = lino.add_menu("config","~Configuration")
+    m = lino.add_menu("config","~Configuration",
+      can_view=perms.is_staff)
     m.add_action(ShippingModes())
     m.add_action(PaymentTerms())
     m.add_action(Languages())
