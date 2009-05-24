@@ -246,6 +246,6 @@ This way of doing has unresolved issues:
 
 - fixed a bug in http://127.0.0.1:8000/voc/tree
 
-- Committed revision 680.
+- Committed revision 681.
 
 .. _latest-news:

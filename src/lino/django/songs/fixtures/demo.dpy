@@ -26,9 +26,10 @@ singer = Instantiator(Singer,"nickname first_name last_name").build
 composer = Instantiator(Author,"first_name last_name born died").build
 author = Instantiator(Author,"first_name last_name born died").build
 translator = Instantiator(Author,"first_name last_name born died").build
+place = Instantiator(Place,"name").build
 
 rehearsal = Instantiator(Rehearsal,"date singers:nickname songs").build
-auftritt = Instantiator(Rehearsal,"date singers:nickname songs remark").build
+auftritt = Instantiator(Performance,"date place singers:nickname songs remark").build
 
 def objects():
 
@@ -36,8 +37,9 @@ def objects():
     yield language('la','Latin')
     yield language('he','Hebrew')
     
-    place = Instantiator(Place,"name").build
     yield place('Tallinn')
+    yield place('Vigala Maarja kirik') # 2
+    yield place('Paldiski') # 3
     
     
     yield singer("ls","Luc","Saffre")
@@ -145,21 +147,22 @@ def objects():
     
     
     
-    yield auftritt("2007-09-09","pr er as rj kj ls","1 2","Esimene avalik esinemine kohvilaual")
-    yield auftritt("2007-10-21","pr er as rj kj ls","3 4 5 6","Esimene Paldiskis")
-    yield auftritt("2008-01-06","pr er as rj kj ls","7 9 11","Esinemine Vigala kirikus")
-    yield auftritt("2008-04-13","pr er as rj kj ls","34 13 17 35",u"Esinemine Vigala kiriku käärkambris")    
-    yield auftritt("2008-05-11","pr er as rj kj ls","","Esinemine Vigala kirikus")    
-    yield auftritt("2008-05-25","as kj ls","6 17",u"Väike esinemine Vigala kirikus")    
-    yield auftritt("2008-06-21","as kj ls bs","1","Iirise ristsed")
-    yield auftritt("2008-09-07","pr er as rj kj ls","18 19",
+    yield auftritt("2007-09-09",2,"pr er as rj kj ls","1 2","Esimene avalik esinemine kohvilaual")
+    yield auftritt("2007-10-21",3,"pr er as rj kj ls","3 4 5 6","Esimemine Paldiskis")
+    yield auftritt("2008-01-06",2,"pr er as rj kj ls","7 9 11","Esinemine Vigala kirikus")
+    yield auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 17 35",u"Esinemine Vigala kiriku käärkambris")    
+    yield auftritt("2008-05-11",2,"pr er as rj kj ls","","Esinemine Vigala kirikus")    
+    yield auftritt("2008-05-25",2,"as kj ls","6 17",u"Väike esinemine Vigala kirikus")    
+    yield auftritt("2008-06-21",2,"as kj ls bs","1","Iirise ristsed")
+    yield auftritt("2008-09-07",2,"pr er as rj kj ls","18 19",
       u"Esinemine Vigala kirikus (669. kiriku aastapäev)")    
-    yield auftritt("2008-12-24","pr er as rj kj ls","7 21",u"Esinemine Vigala kirikus")    
-    yield auftritt("2008-12-31","pr er as rj kj ls","6 10 20",u"Esinemine Vigala kirikus")    
-    yield auftritt("2009-04-12","er as kj lr ls","22 25",u"Esinemine Vigala kirikus")
+    yield auftritt("2008-12-24",2,"pr er as rj kj ls","7 21",u"Esinemine Vigala kirikus")    
+    yield auftritt("2008-12-31",2,"pr er as rj kj ls","6 10 20",u"Esinemine Vigala kirikus")    
+    yield auftritt("2009-04-12",2,"er as kj lr ls","22 25",u"Esinemine Vigala kirikus")
     
     yield rehearsal("2009-04-26","as kj lr ls","17 32 26 28")
     yield rehearsal("2009-05-03","as kj lr ls","17 32 28 33")
     yield rehearsal("2009-05-17","as kj lr ls pr er","17 26 32 28")
+    yield rehearsal("2009-05-24","kj lr ls pr er rj","17 32 33 26 28")
 
 

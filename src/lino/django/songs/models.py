@@ -19,6 +19,13 @@ from django.db import models
 
 from lino.django.utils.models import Language
 
+class Place(models.Model):
+    name = models.CharField(max_length=200)
+    country = models.ForeignKey('utils.Country',blank=True,null=True)
+    
+    def __unicode__(self):
+        return self.name
+    
 class Person(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -76,7 +83,7 @@ class Song(models.Model):
     def __unicode__(self):
         return self.title + " (%d)" % self.id
         
-class Rehearsal(models.Model):        
+class Event(models.Model):
     date = models.DateField('date',blank=True,null=True)
     singers = models.ManyToManyField(Singer)
     songs = models.ManyToManyField(Song)
@@ -87,6 +94,12 @@ class Rehearsal(models.Model):
         if self.remark:
             s += " (%s)" % self.remark
         return s
+        
+class Rehearsal(Event):
+    pass
+    
+class Performance(Event):
+    place = models.ForeignKey(Place)
         
 #~ class Work(models.Model):
     #~ class Admin:
@@ -120,13 +133,6 @@ class Translation(models.Model):
         null=True)
     
 
-class Place(models.Model):
-    name = models.CharField(max_length=200)
-    country = models.ForeignKey('utils.Country',blank=True,null=True)
-    
-    def __unicode__(self):
-        return self.name
-    
 class Collection(models.Model):
     title = models.CharField(max_length=200)
     intro = models.TextField(blank=True,null=True)
@@ -148,7 +154,14 @@ from lino.django.utils.layouts import PageLayout
 class Rehearsals(reports.Report):
     model = Rehearsal
     #page_layout_class = RehearsalPageLayout
-    columnNames = "date remark songs:40 singers:40"
+    columnNames = "date remark songs:20 singers:10"
+    order_by = "date"
+
+class Performances(reports.Report):
+    model = Performance
+    columnNames = "date place remark songs:20 singers:10"
+    order_by = "date"
+    
 
 class Collections(reports.Report):
     model = Collection
@@ -195,6 +208,7 @@ class Songs(reports.Report):
 def lino_setup(lino):
     m = lino.add_menu("songs","~Songs",can_view=perms.is_authenticated)
     m.add_action(Rehearsals())
+    m.add_action(Performances())
     m.add_action(Singers())
     m.add_action(Authors())
     m.add_action(Songs())
