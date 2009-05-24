@@ -22,5 +22,6 @@ A vocabulary trainer. Not finished.
 
 """
 
-from models import lino_setup
-
+def lino_setup(*args):
+    import models
+    models.lino_setup(*args)
