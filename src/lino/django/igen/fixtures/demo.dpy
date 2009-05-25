@@ -144,9 +144,9 @@ This table is made of pure wood.
     i.add_item(4,4)
     yield o2.make_invoice(today=date(2009,04,12))
     
-    yield invoice(4,date(2009,04,12),2,1,remark="third manual invoice")
-    i.add_item(3,1)
-    i.add_item(4,4)
+    yield invoice(4,date(2009,04,12),2,1,remark="third manual invoice with discount")
+    i.add_item(3,1,discount=10)
+    i.add_item(4,4,discount=5)
 
     yield o.make_invoice(today=date(2009,05,14))
 

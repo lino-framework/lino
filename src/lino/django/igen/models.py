@@ -248,6 +248,8 @@ class Document(TomModel):
         #~ abstract = True
         
     def __unicode__(self):
+        if self.number is None:
+            return "Unsaved %s" % self.__class__.__name__
         return "%s # %d" % (self.__class__.__name__,self.number)
         
     def add_item(self,product,qty=None,**kw):
@@ -386,16 +388,17 @@ class Invoice(Document):
                 self.due_date = self.payment_term.get_due_date(
                     self.creation_date)
 
-  
+
 
 class DocItem(TomModel):
     document = models.ForeignKey(Document) 
     pos = models.IntegerField("Position")
     
     product = models.ForeignKey(Product,blank=True,null=True)
-    title = models.CharField(max_length=200,blank=True,null=True)
+    title = models.CharField(max_length=200,blank=True)
     description = models.TextField(blank=True,null=True)
     
+    discount = models.IntegerField("Discount %",default=0)
     unitPrice = PriceField(blank=True,null=True) 
     qty = QuantityField(blank=True,null=True)
     total = PriceField(blank=True,null=True)
@@ -404,10 +407,10 @@ class DocItem(TomModel):
         #~ abstract = True
         
     def total_excl(self):
-        if self.unitPrice:
+        if self.unitPrice is not None:
             qty = self.qty or 1
             return self.unitPrice * qty
-        elif self.total:
+        elif self.total is not None:
             return self.total
         return 0
         
@@ -420,8 +423,9 @@ class DocItem(TomModel):
                 self.title = self.product.name
             if not self.description:
                 self.description = self.product.description
-            if not self.unitPrice:
-                self.unitPrice = self.product.price
+            if self.unitPrice is None:
+                if self.product.price is not None:
+                    self.unitPrice = self.product.price * (100 - self.discount) / 100
         self.document.save()
     before_save.alters_data = True
         
@@ -598,7 +602,7 @@ class Orders(reports.Report):
     order_by = "number"
     page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
     columnNames = "number:4 creation_date customer:20 " \
-                  "subject total_incl total_excl total_vat " \
+                  "remark:20 subject:20 total_incl total_excl total_vat " \
                   "cycle start_date covered_until"
     can_view = perms.is_authenticated
     
@@ -608,13 +612,17 @@ class Invoices(reports.Report):
     page_layouts = (InvoicePageLayout,)
     columnNames = "number:4 can_send creation_date due_date " \
                   "customer:20 " \
-                  "subject total_incl total_excl total_vat order "
+                  "remark:20 subject:20 total_incl total_excl total_vat order "
     can_view = perms.is_staff
 
-class InvoicesToSend(Invoices):
+class DocumentsToSend(reports.Report):
+    model = Document
+    order_by = "number"
     filter = dict(can_send=False)
-    # these override class methods, not attributes:
     can_add = perms.never
+    columnNames = "number:4 creation_date " \
+                  "customer:20 " \
+                  "subject total_incl total_excl total_vat "
     
   
 class InvoicesByOrder(reports.Report):
@@ -736,7 +744,7 @@ def lino_setup(lino):
       can_view=perms.is_authenticated)
     m.add_action(Orders())
     m.add_action(Invoices())
-    m.add_action(InvoicesToSend())
+    m.add_action(DocumentsToSend())
     #m.add_action(MakeInvoicesDialog())
     m = lino.add_menu("config","~Configuration",
       can_view=perms.is_staff)

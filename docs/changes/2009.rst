@@ -248,4 +248,14 @@ This way of doing has unresolved issues:
 
 - Committed revision 681.
 
+20090525
+--------
+
+- worked on ticket 
+  - added DocItem.discount
+  - added an example in demo
+  
+- new DecimalConverter in Instantiator. DecimalFields were stored as strings in the database. And Django didn't complain (maybe simply because I use the sqlite backend which allows such things).
+  
+
 .. _latest-news:

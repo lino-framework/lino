@@ -7,7 +7,7 @@ Yes, I principally publish my work under the
 The BSD versus GPL discussion has evolved to an almost religious
 dimension.  The personal preference of a software developer seems to
 depend mainly on his or her life situation and beliefs. And as far as I
-can see, my personal choice is clear: the GPL is the only license that
+can see, my personal faith is clear: the GPL is the only license that
 "resists proprietary vendors' attempts to `embrace, extend and extinguish 
 <http://en.wikipedia.org/wiki/Embrace,_extend_and_extinguish>`__"
 (a formualtion I found on `Wikipedia <http://en.wikipedia.org/wiki/GNU_General_Public_License>`__).

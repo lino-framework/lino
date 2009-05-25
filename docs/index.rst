@@ -8,15 +8,8 @@ Quick links :
 :ref:`Latest news <latest-news>` |
 `Issues <http://code.active.ee:3000/projects/lino/issues>`_ |
 :doc:`about/what_is` |
-:doc:`install/download` |
-:doc:`install/snapshot` |
-:doc:`blog/index`
+:doc:`install/snapshot`
   
-
-Status : 
-I'm currently working a lot on :mod:`lino.django.utils` 
-and :doc:`django/igen/index`.
-
 
 Content
 -------

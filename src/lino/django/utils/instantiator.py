@@ -19,6 +19,7 @@
 from django.db import models
 import datetime
 from dateutil import parser as dateparser
+import decimal
 
 class DataError(Exception):
     pass
@@ -53,6 +54,14 @@ class DateConverter(Converter):
                     value = str(value)
                 d = dateparser.parse(value)
                 kw[self.field.name] = datetime.date(d.year,d.month,d.day)
+        return kw
+
+class DecimalConverter(Converter):
+    def convert(self,**kw):
+        value = kw.get(self.field.name)
+        if value is not None:
+            if not isinstance(value,decimal.Decimal):
+                kw[self.field.name] = decimal.Decimal(value)
         return kw
 
 class ForeignKeyConverter(Converter):
@@ -123,6 +132,8 @@ class Instantiator:
                   lookup_fields.get(f.name,"pk")))
             elif isinstance(f,models.DateField):
                 self.converters.append(DateConverter(f))
+            elif isinstance(f,models.DecimalField):
+                self.converters.append(DecimalConverter(f))
         #~ for f in model_class._meta.many_to_many:
             #~ print "foo", f.name
 
