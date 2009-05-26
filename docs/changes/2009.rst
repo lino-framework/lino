@@ -251,11 +251,22 @@ This way of doing has unresolved issues:
 20090525
 --------
 
-- worked on ticket 
+- worked on ticket http://code.active.ee:3000/issues/show/337
   - added DocItem.discount
   - added an example in demo
   
 - new DecimalConverter in Instantiator. DecimalFields were stored as strings in the database. And Django didn't complain (maybe simply because I use the sqlite backend which allows such things).
   
+- Committed revision 683.
+
+20090526
+--------
+
+- bug in demo.dpy
+
+- :meth:`DocItem.before_save` now always sets :attr:`DocItem.total` (except when unitPrice or qty is None).
+  :meth:`DocItem.total_incl` no longer necessary.
+
+- Committed revision 685.
 
 .. _latest-news:

@@ -17,6 +17,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import time
 from datetime import date
 from lino.django.igen.models import *
 from lino.django.utils.instantiator import Instantiator
@@ -57,7 +58,6 @@ contact_builder = Instantiator(Contact,fieldnames="""
 
 
 def objects():
-
     yield shippingmode_builder.build("cash and carry")
     yield shippingmode_builder.build("regular mail")
 
@@ -139,14 +139,16 @@ This table is made of pure wood.
     yield i
     
     o2 = order(4,"2009-04-12","2009-04-12","Y",2,1,remark="yearly order")
+    o2.add_item(3,1)
+    o2.add_item(4,4)
     yield o2
-    i.add_item(3,1)
-    i.add_item(4,4)
     yield o2.make_invoice(today=date(2009,04,12))
     
-    yield invoice(4,date(2009,04,12),2,1,remark="third manual invoice with discount")
+    i = invoice(4,date(2009,04,12),2,1,
+      remark="third manual invoice with discount")
     i.add_item(3,1,discount=10)
     i.add_item(4,4,discount=5)
+    yield i
 
     yield o.make_invoice(today=date(2009,05,14))
 

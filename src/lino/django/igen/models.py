@@ -260,7 +260,7 @@ class Document(TomModel):
                 qty = 1
         kw['product'] = product 
         kw['qty'] = qty
-        return self.docitem_set.add(DocItem(document=self,**kw))
+        return self.docitem_set.create(**kw)
         
     def total_incl(self):
         return self.total_excl + self.total_vat
@@ -270,7 +270,8 @@ class Document(TomModel):
         total_excl = 0
         total_vat = 0
         for i in self.docitem_set.all():
-            total_excl += i.total_excl()
+            if i.total is not None:
+                total_excl += i.total
             #~ if not i.product.vatExempt:
                 #~ total_vat += i.total_excl() * 0.18
         self.total_excl = total_excl
@@ -403,16 +404,13 @@ class DocItem(TomModel):
     qty = QuantityField(blank=True,null=True)
     total = PriceField(blank=True,null=True)
     
-    #~ class Meta:
-        #~ abstract = True
-        
-    def total_excl(self):
-        if self.unitPrice is not None:
-            qty = self.qty or 1
-            return self.unitPrice * qty
-        elif self.total is not None:
-            return self.total
-        return 0
+    #~ def total_excl(self):
+        #~ if self.unitPrice is not None:
+            #~ qty = self.qty or 1
+            #~ return self.unitPrice * qty
+        #~ elif self.total is not None:
+            #~ return self.total
+        #~ return 0
         
     def before_save(self):
         #print "before_save()", self
@@ -426,7 +424,9 @@ class DocItem(TomModel):
             if self.unitPrice is None:
                 if self.product.price is not None:
                     self.unitPrice = self.product.price * (100 - self.discount) / 100
-        self.document.save()
+        if self.unitPrice is not None and self.qty is not None:
+            self.total = self.unitPrice * self.qty
+        self.document.save() # update total in document
     before_save.alters_data = True
         
 
@@ -611,18 +611,17 @@ class Invoices(reports.Report):
     order_by = "number"
     page_layouts = (InvoicePageLayout,)
     columnNames = "number:4 can_send creation_date due_date " \
-                  "customer:20 " \
-                  "remark:20 subject:20 total_incl total_excl total_vat order "
+                  "customer:10 " \
+                  "total_incl order subject:10 remark:10 " \
+                  "total_excl total_vat "
     can_view = perms.is_staff
 
-class DocumentsToSend(reports.Report):
-    model = Document
-    order_by = "number"
+class DocumentsToSend(Invoices):
     filter = dict(can_send=False)
     can_add = perms.never
-    columnNames = "number:4 creation_date " \
-                  "customer:20 " \
-                  "subject total_incl total_excl total_vat "
+    columnNames = "number:4 can_send order creation_date " \
+                  "customer:10 " \
+                  "subject:10 total_incl total_excl total_vat "
     
   
 class InvoicesByOrder(reports.Report):
@@ -638,7 +637,7 @@ class ItemsByDocumentRowLayout(layouts.RowLayout):
     product
     title
     """
-    main = "pos:3 title_box description:30x1 unitPrice qty total"
+    main = "pos:3 title_box description:20x1 discount unitPrice qty total"
 
 class ItemsByDocument(reports.Report):
     #~ columnNames = "pos:3 product title description:30x1 " \

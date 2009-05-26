@@ -876,16 +876,21 @@ class ViewManyReportRenderer(ViewReportRenderer):
         
         
     def rows(self):
-        if self.master_instance is None:
-            rownum = self.page.start_index()
-            object_list = self.page.object_list
-        else:
-            rownum = 1
-            object_list = self.queryset
-        #rownum = self.page.start_index()
-        for obj in object_list:
-            yield Row(self,obj,rownum,None)
-            rownum += 1
+        try:
+            if self.master_instance is None:
+                rownum = self.page.start_index()
+                object_list = self.page.object_list
+            else:
+                rownum = 1
+                object_list = self.queryset
+            #rownum = self.page.start_index()
+            print len(object_list)
+            for obj in object_list:
+                yield Row(self,obj,rownum,None)
+                rownum += 1
+        except Exception,e:
+            traceback.print_exc(e)
+            raise
 
 ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
 
