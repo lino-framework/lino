@@ -150,7 +150,7 @@ def objects():
     yield auftritt("2007-09-09",2,"pr er as rj kj ls","1 2","Esimene avalik esinemine kohvilaual")
     yield auftritt("2007-10-21",3,"pr er as rj kj ls","3 4 5 6","Esimemine Paldiskis")
     yield auftritt("2008-01-06",2,"pr er as rj kj ls","7 9 11","Esinemine Vigala kirikus")
-    yield auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 17 35",u"Esinemine Vigala kiriku käärkambris")    
+    yield auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 17",u"Esinemine Vigala kiriku käärkambris")    
     yield auftritt("2008-05-11",2,"pr er as rj kj ls","","Esinemine Vigala kirikus")    
     yield auftritt("2008-05-25",2,"as kj ls","6 17",u"Väike esinemine Vigala kirikus")    
     yield auftritt("2008-06-21",2,"as kj ls bs","1","Iirise ristsed")

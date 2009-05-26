@@ -267,6 +267,10 @@ This way of doing has unresolved issues:
 - :meth:`DocItem.before_save` now always sets :attr:`DocItem.total` (except when unitPrice or qty is None).
   :meth:`DocItem.total_incl` no longer necessary.
 
-- Committed revision 685.
+- Committed revision 684.
+
+- PaymentPerm.months and PaymentTerm.days.
+  It's not yet clear how igen should decide which type of invoice to generate (normal or proforma).
+
 
 .. _latest-news:

@@ -25,9 +25,9 @@ from lino.django.utils.instantiator import Instantiator
 language_builder = Instantiator(Language,"id name")
 country_builder = Instantiator(Country,"isocode name")
 shippingmode_builder = Instantiator(ShippingMode,"name")
-paymentterm_builder = Instantiator(PaymentTerm,"name")
+paymentterm = Instantiator(PaymentTerm,"name").build
 
-productcat_builder = Instantiator(ProductCat,"name")
+productcat = Instantiator(ProductCat,"name").build
 
 contact_builder = Instantiator(Contact,fieldnames="""
       id
@@ -61,9 +61,9 @@ def objects():
     yield shippingmode_builder.build("cash and carry")
     yield shippingmode_builder.build("regular mail")
 
-    cash = paymentterm_builder.build(u"sularahas")
-    yield cash 
-    yield paymentterm_builder.build(u"7 päeva neto")
+    yield paymentterm(u"sularahas")
+    yield paymentterm(u"7 päeva neto",days=7)
+    yield paymentterm(u"Ettemaks",days=7,proforma=True)
         
     s = u"""    
     1||||Minu Firma OÜ|||||ee||||||||0|0|et|2|
@@ -91,9 +91,10 @@ def objects():
             yield contact_builder.build(*a)
         
         
-    furniture = productcat_builder.build("Furniture")
+    furniture = productcat("Furniture") #1
     yield furniture
     #print "foo", furniture.id, furniture
+    yield productcat("Hosting") #2
     
     
     
@@ -109,7 +110,7 @@ This table is made of pure wood.
     yield product("Wooden chair","99.99",1,"")
     yield product("Metal table","129.99",1,"")
     yield product("Metal chair","79.99",1,"")
-    hosting = product("Website hosting 1MB/month","3.99",1,"")
+    hosting = product("Website hosting 1MB/month","3.99",2,"")
     yield hosting
     
     invoice = Instantiator(Invoice,

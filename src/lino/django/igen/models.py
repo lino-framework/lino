@@ -186,12 +186,16 @@ u'Example & Co (Luc Saffre)'
 
 class PaymentTerm(TomModel):
     name = models.CharField(max_length=200)
+    days = models.IntegerField(default=0)
+    months = models.IntegerField(default=0)
+    #proforma = models.BooleanField(default=False)
     
     def __unicode__(self):
         return self.name
         
     def get_due_date(self,date1):
-        return date1
+        d = date1 + relativedelta(months=self.monts,days=self.days)
+        return d
 
 class ShippingMode(TomModel):
     name = models.CharField(max_length=200)
@@ -361,7 +365,9 @@ class Order(Document):
             return True
         invoice = Invoice(creation_date=today,order=self,
             customer=self.customer,
-            ship_to=self.ship_to,payment_term=self.payment_term,
+            ship_to=self.ship_to,
+            payment_term=self.payment_term,
+            shipping_mode=self.shipping_mode,
             subject=cover_text,
             your_ref=unicode(self),
             )
