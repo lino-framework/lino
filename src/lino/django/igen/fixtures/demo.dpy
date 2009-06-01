@@ -63,7 +63,7 @@ def objects():
 
     yield paymentterm(u"sularahas")
     yield paymentterm(u"7 päeva neto",days=7)
-    yield paymentterm(u"Ettemaks",days=7,proforma=True)
+    yield paymentterm(u"Ettemaks",days=7) #,proforma=True)
         
     s = u"""    
     1||||Minu Firma OÜ|||||ee||||||||0|0|et|2|

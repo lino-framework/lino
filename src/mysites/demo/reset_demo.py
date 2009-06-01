@@ -47,7 +47,7 @@ def main():
     app_labels = [n for n in db_apps()]
 
     #appnames = [m.__name__ for m in models.get_apps()]
-    print "makedemo.py", app_labels
+    print "reset_demo.py", app_labels
     options = dict(interactive=False)
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):

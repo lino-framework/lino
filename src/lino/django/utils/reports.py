@@ -106,7 +106,7 @@ class Report:
     row_layout_class = None
     label = None
     param_form = ReportParameterForm
-    default_filter = ''
+    #default_filter = ''
     name = None
     form_class = None
     master = None
@@ -188,7 +188,7 @@ class Report:
             #~ return self.label
         return self.title or self.label
         
-    def get_queryset(self,master_instance):
+    def get_queryset(self,master_instance,flt=None):
         if self.queryset is not None:
             qs = self.queryset
         else:
@@ -211,6 +211,14 @@ class Report:
             qs = qs.filter(**self.filter)
         if self.exclude:
             qs = qs.exclude(**self.exclude)
+        if flt is not None:
+            l = []
+            q = models.Q()
+            for field in self.model._meta.fields:
+                if isinstance(field,models.CharField):
+                    q = q | models.Q(**{
+                      field.name+"__contains": flt})
+            qs = qs.filter(q)
         return qs
         
     def getLabel(self):
@@ -293,7 +301,8 @@ class Report:
         return render.RowPrintReportRenderer(row,request,True,self).render()
 
     def as_text(self, *args,**kw):
-        return render.TextReportRenderer(self,*args,**kw).render()
+        from lino.django.utils.renderers_text import TextReportRenderer
+        return TextReportRenderer(self,*args,**kw).render()
         
     #~ def as_html(self, **kw):
         #~ return render.HtmlReportRenderer(self,**kw).render_to_string()

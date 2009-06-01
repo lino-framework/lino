@@ -273,4 +273,18 @@ This way of doing has unresolved issues:
   It's not yet clear how igen should decide which type of invoice to generate (normal or proforma).
 
 
+20090601
+--------
+
+- removed unused scripts in mysites/demo. 
+- renamed makedemo.py to reset_demo.py
+- make_invoices.py is a script in mysites/demo 
+  but later it might become a Django command.
+  
+- PendingOrders is the first example of a Report with a customized params_form.
+  Changed the handling of Report parameters.
+
+- OrderManager is my first usage of a manager. It is needed for PendingOrders
+
+
 .. _latest-news:

@@ -194,7 +194,7 @@ class PaymentTerm(TomModel):
         return self.name
         
     def get_due_date(self,date1):
-        d = date1 + relativedelta(months=self.monts,days=self.days)
+        d = date1 + relativedelta(months=self.months,days=self.days)
         return d
 
 class ShippingMode(TomModel):
@@ -256,7 +256,7 @@ class Document(TomModel):
             return "Unsaved %s" % self.__class__.__name__
         return "%s # %d" % (self.__class__.__name__,self.number)
         
-    def add_item(self,product,qty=None,**kw):
+    def add_item(self,product=None,qty=None,**kw):
         if product is not None:
             if not isinstance(product,Product):
                 product = Product.objects.get(pk=product)
@@ -281,6 +281,16 @@ class Document(TomModel):
         self.total_excl = total_excl
         self.total_vat = total_vat
         
+class OrderManager(models.Manager):
+  
+    def pending(self,today=None):
+        l = []
+        for o in self.all():
+            if o.make_invoice(today=today,simulate=True):
+                l.append(o)
+        return l
+        
+        
 class Order(Document):
     CYCLE_CHOICES = (
         ('W', 'Weekly'),
@@ -293,6 +303,8 @@ class Order(Document):
       help_text="beginning of payable period. set to blank if no bill should be generated")
     covered_until = MyDateField(blank=True,null=True)
     cycle = models.CharField(max_length=1, choices=CYCLE_CHOICES)
+    
+    objects = OrderManager()
     
     def get_last_invoice(self):
         invoices = self.invoice_set.order_by('creation_date')
@@ -373,8 +385,10 @@ class Order(Document):
             )
         invoice.save()
         for d in items:
-            i = DocItem(document=invoice,**d)
-            i.save()
+            invoice.add_item(**d).save()
+            #i = DocItem(document=invoice,**d)
+            #i.save()
+        invoice.save() # save again because totals have been updated
         self.covered_until = cover_until
         self.save()
         return invoice
@@ -608,9 +622,21 @@ class Orders(reports.Report):
     order_by = "number"
     page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
     columnNames = "number:4 creation_date customer:20 " \
-                  "remark:20 subject:20 total_incl total_excl total_vat " \
+                  "remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     can_view = perms.is_authenticated
+    
+    
+
+class PendingOrdersParams(forms.Form):
+    today = forms.DateField(label="Generate invoices on",
+      initial=datetime.date.today(),required=False)
+
+class PendingOrders(Orders):
+    param_form = PendingOrdersParams
+    def get_queryset(self,master_instance,today=None):
+        assert master_instance is None
+        return Order.objects.pending(today=today)
     
 class Invoices(reports.Report):
     model = Invoice
@@ -695,6 +721,7 @@ class ContactsByCountry(Contacts):
     
         
 class MakeInvoicesDialog(layouts.Dialog):
+  
     class form_class(forms.Form):
         today = forms.DateField(label="Generate invoices on")
         order = forms.ModelChoiceField(
@@ -704,6 +731,7 @@ class MakeInvoicesDialog(layouts.Dialog):
     intro = layouts.StaticText("""
     <p>This is the first example of a <em>Dialog</em>.</p>
     """)
+    
     layout = """
     intro
     today
@@ -750,7 +778,12 @@ def lino_setup(lino):
     m.add_action(Orders())
     m.add_action(Invoices())
     m.add_action(DocumentsToSend())
-    #m.add_action(MakeInvoicesDialog())
+    m.add_action(PendingOrders())
+    
+    #~ m = lino.add_menu("admin","~Administration",
+      #~ can_view=perms.is_staff)
+    #~ m.add_action(MakeInvoicesDialog())
+    
     m = lino.add_menu("config","~Configuration",
       can_view=perms.is_staff)
     m.add_action(ShippingModes())

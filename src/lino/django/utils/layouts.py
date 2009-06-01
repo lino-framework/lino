@@ -340,13 +340,14 @@ class BoundElement:
             raise e
 
 
-
+from lino.django.utils import perms
 
 class Dialog:
     form_class = None
     layout = None
     template_before = "lino/dialog_before.html"
     template_after = "lino/dialog_after.html"
+    can_view = perms.always
     
     def __init__(self):
         self._layout = PageLayout(self.layout).bound_to(self)
