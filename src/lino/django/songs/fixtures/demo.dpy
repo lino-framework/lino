@@ -17,10 +17,51 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.django.songs.models import *
-from lino.django.utils.instantiator import Instantiator
+import os, codecs
+import yaml
 
-song = Instantiator(Song,"id title language composer:nickname").build
+
+from lino.django.songs.models import *
+from lino.django.utils.instantiator import Instantiator, ManyToManyConverter
+
+
+RELAX = not True
+
+def load_yaml(model,filename):
+    pfn = os.path.join(os.path.dirname(__file__),filename)
+    print "Loading input file %s ..." % filename
+    fd = codecs.open(pfn,"r",'utf-8')
+    try:
+        for yamldict in yaml.load_all(fd):
+            if yamldict is not None:
+                for k in yamldict.keys():
+                    if k.startswith(";"):
+                        del yamldict[k]
+                yield model(**yamldict)
+    except Exception,e:
+        if RELAX:
+            print "RELAX!", pfn+":"+str(e)
+        else:
+            raise 
+    fd.close()
+    
+
+
+
+class AuthorList(ManyToManyConverter):
+    splitsep = ","
+    def lookup(self,value):
+        return Author.objects.get_by_name(value)
+
+converter_classes=dict(
+  composed_by=AuthorList,
+  text_by=AuthorList,
+  arranged_by=AuthorList,
+  translated_by=AuthorList,
+  written_by=AuthorList,
+  )
+
+song = Instantiator(Song,converter_classes=converter_classes).build
 
 singer = Instantiator(Singer,"nickname first_name last_name").build
 composer = Instantiator(Author,"first_name last_name born died").build
@@ -51,85 +92,11 @@ def objects():
     yield singer("lr","Ly","Rumma")
     yield singer("bs","Bruno","Saffre")
     
-    yield composer("Friedrich","Mendelsohn-Bartholdi",1809,1847)
-    yield author("Paul","Gerhardt",1607,1676)
-    yield composer("Johann Sebastian", "Bach", 1685, 1750)
-    yield translator('Margus','Kirja')
-    yield composer('Franz Xaver','Gruber',1787,1863)
-    yield author('Joseph','Mohr',1792,1848)
-    yield translator('Karl August','Hermann',1851,1909)
-    yield composer('Friedrich','Silcher',1789,1860)
-    yield author('Adalbert Hugo','Willigerode',1816,1893)
-    yield author('Wilhelm','Hey', 1789, 1854)
-    yield author('John F.','Wade',1711,1786)
-    yield translator('Einar','Kiviste',1906,1986)
-    yield composer('Jean','Sibelius',1865,1957)
-    yield author('Sakari','Topelius',1818,1898)
-    yield translator('Eduard',u'Salumäe',1919,1985)
-    yield translator('Johannes','Hornung',1660,1715)
-    yield author('John Francis','Wade',1711,1786)
-    yield author('Johann Daniel','Falk',1768,1826)
-    yield translator('Johann Woldemar','Jansen',1819,1890)
-    yield author('Carl Nikolai','Nolcken',1830,1913)
-    yield author('Friedrich Wilhelm','Kritzinger',1816,1890)
-    yield composer('Johann Hans Georg','Nägeli',1773,1836)
-    yield composer('Enn',u'Võrk',1905,1962)
-    yield composer('Aleksander','Läte',1860,1948)
-    yield composer('Riho',u'Päts',1899,1977)
-    yield composer('Konstantin',u'Türnpu',1865,1927)
-    yield composer('Julius','Oro',1901,1941)
-    yield composer('Johann Georg','Ebeling',1637,1676)
-    yield author('Laurentius','Laurenti',1660,1722)
-    yield composer('Giovanni Pierluigi da','Palestrina',1525,1594,nickname="Palestrina")
-    yield author('Silvi',u'Mänd')
-    
-    
-    #~ yield song(1,u"Nüüd kevad saabub meile")
-    #~ yield song(3,u"Peace I leave with you")
-    #~ yield song(4,u"Ma annan oma südame")
-    #~ yield song(5,u"Auväärne haldaja") 
-    
-    
-    yield song(1,u'Hevenu Shalom','he')
-    yield song(2,u'Mit Lieb bin ich umfangen','de')
-    yield song(3,u'Võin ma tulla nüüd veel','et')
-    yield song(4,u'Go down, Moses','en')
-    yield song(5,u'Et Kristust vastu võtta.','et')
-    yield song(6,u'Iiri õnnistussovid','et')
-    yield song(7,u"Sõimes õlgedel",'et')
-    yield song(8,u"Entre le boeuf et l'āne gris",'fr')
-    yield song(9,u'Coventry Carol','en')
-    yield song(10,u'Unelaul','et') #,translated_by="Margus Kirja")
-    yield song(11,u'Üks roosike on tõusnud','et')
-    yield song(12,u'Give thanks','en')
-    yield song(13,u'Lendas ingel','et')
-    yield song(14,u'Alta Trinita','la')
-    yield song(15,u'Give thanks','en')
-    yield song(16,u'Adoramus Te','la',"Palestrina")
-    yield song(17,u'Nüüd kevad saabub meile','et')
-    yield song(18,u'Oh palugem ja laulgem','et')
-    yield song(19,u'Üks laev on läinud reisima','et')
-    yield song(20,u'Päike jälle kaob','et')
-    yield song(21,u'Näe rõõmsat last','et')
-    yield song(22,u'Sõber kas tunned','et')
-    yield song(23,u'Haschivenu','he')
-    yield song(24,u'Gaudeamus','la')
-    yield song(25,u'Heaven is a wonderful place','en')
-    yield song(26,u'Peace I leave with you','en')
-    yield song(27,u'Au kõrges olgu Isale','et')
-    yield song(28,u'Ma annan oma südame','et')
-    yield song(29,u'Jõuluöö (taevalaotusel tähtede vöö)','et')
-    yield song(30,u'Jõulud jälle kätte jõudnud','et')
-    yield song(31,u'Issand, kõik su kättetöö','et')
-    yield song(32,u"Ad te levavi",'la')
-    yield song(33,u"Verleih uns Frieden",'de')
-    yield song(34,u"Au kõrges olgu",'et')
-    yield song(35,u'Nun will der Lenz uns grüßen','de')
-    
-    yield song(35,u'Kuningate kuningas','et')
+    for o in load_yaml(author,'demo_authors.yaml'): yield o
+    for o in load_yaml(song,'demo_songs.yaml'): yield o
     
     collection = Instantiator(Collection,
-      "title place:name year author:nickname songs").build
+      "title place:name").build
     yield collection("Luci Kammerkoori noodid",songs="""
     33 26
     """)
@@ -138,31 +105,30 @@ def objects():
     """)
     yield collection(
       'Vaimulike laule kooridele ja ansamblitele 3',
-      'Tallinn',2007,u'Silvi Mänd',"22")
+      'Tallinn',year=2007,
+      author=Author.objects.get_by_name(u'Silvi Mänd'),songs="22")
     yield collection(u"Päevaviisid",songs="""
-    35
+    37
     """)
       
     
     
-    
-    
     yield auftritt("2007-09-09",2,"pr er as rj kj ls","1 2","Esimene avalik esinemine kohvilaual")
     yield auftritt("2007-10-21",3,"pr er as rj kj ls","3 4 5 6","Esimemine Paldiskis")
-    yield auftritt("2008-01-06",2,"pr er as rj kj ls","7 9 11","Esinemine Vigala kirikus")
-    yield auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 17",u"Esinemine Vigala kiriku käärkambris")    
+    yield auftritt("2008-01-06",2,"pr er as rj kj ls","8 9 11","Esinemine Vigala kirikus")
+    yield auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 35",u"Esinemine Vigala kiriku käärkambris")    
     yield auftritt("2008-05-11",2,"pr er as rj kj ls","","Esinemine Vigala kirikus")    
-    yield auftritt("2008-05-25",2,"as kj ls","6 17",u"Väike esinemine Vigala kirikus")    
+    yield auftritt("2008-05-25",2,"as kj ls","6 35",u"Väike esinemine Vigala kirikus")    
     yield auftritt("2008-06-21",2,"as kj ls bs","1","Iirise ristsed")
     yield auftritt("2008-09-07",2,"pr er as rj kj ls","18 19",
       u"Esinemine Vigala kirikus (669. kiriku aastapäev)")    
-    yield auftritt("2008-12-24",2,"pr er as rj kj ls","7 21",u"Esinemine Vigala kirikus")    
+    yield auftritt("2008-12-24",2,"pr er as rj kj ls","8 21",u"Esinemine Vigala kirikus")    
     yield auftritt("2008-12-31",2,"pr er as rj kj ls","6 10 20",u"Esinemine Vigala kirikus")    
     yield auftritt("2009-04-12",2,"er as kj lr ls","22 25",u"Esinemine Vigala kirikus")
     
-    yield rehearsal("2009-04-26","as kj lr ls","17 32 26 28")
-    yield rehearsal("2009-05-03","as kj lr ls","17 32 28 33")
-    yield rehearsal("2009-05-17","as kj lr ls pr er","17 26 32 28")
-    yield rehearsal("2009-05-24","kj lr ls pr er rj","17 32 33 26 28")
+    yield rehearsal("2009-04-26","as kj lr ls","35 32 26 28")
+    yield rehearsal("2009-05-03","as kj lr ls","35 32 28 33")
+    yield rehearsal("2009-05-17","as kj lr ls pr er","35 26 32 28")
+    yield rehearsal("2009-05-24","kj lr ls pr er rj","35 32 33 26 28")
 
 

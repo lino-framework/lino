@@ -25,33 +25,72 @@ class Place(models.Model):
     
     def __unicode__(self):
         return self.name
+        
+class PersonManager(models.Manager):
+    def get_by_name(self,s):
+        #print "get_by_name(%r)" % s
+        try:
+            return self.get(nickname__exact=s)
+        except self.model.DoesNotExist,e:
+            pass
+        a = s.split()
+        #~ if len(a) == 1: 
+            #~ return self.get(nickname__exact=s)
+        last_name = a.pop()
+        for p in self.filter(last_name__exact=last_name):
+            i = 0
+            ok = True
+            for fn in p.first_name.split():
+                if a[i].endswith("."):
+                    if not fn.startswith(a[i][:-1]):
+                        ok = False
+                elif i < len(a):
+                    if a[i] != fn:
+                        ok = False
+                i += 1
+            if ok:
+                return p
+        raise self.model.DoesNotExist("get_by_name(%r) failed" % s)
+        
+        
     
 class Person(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    objects = PersonManager()
+    first_name = models.CharField(max_length=100,blank=True)
+    last_name = models.CharField(max_length=100,blank=True)
     #born = models.DateTimeField(blank=True,null=True)
     born = models.IntegerField(blank=True,null=True)
     died = models.IntegerField(blank=True,null=True)
-    nickname = models.CharField(max_length=200,blank=True,null=True)
+    nickname = models.CharField(max_length=200,blank=True)
+    name_prefix = models.CharField(max_length=10,blank=True)
     
     def __unicode__(self):
-        s = self.first_name+' '+self.last_name
+        #s = self.first_name + ' ' + self.last_name
+        s = self.get_full_name()
         if self.born and self.died:
             s += " (%d-%d)" % (self.born,self.died)
         return s
         
-    def save(self, *args, **kwargs):
-        if self.nickname is None:
-            self.nickname = self.make_nickname()
-        super(Person,self).save(*args,**kwargs)
+    #~ def save(self, *args, **kwargs):
+        #~ if len(self.nickname) == 0:
+            #~ self.nickname = self.make_nickname()
+        #~ super(Person,self).save(*args,**kwargs)
         
-    def make_nickname(self):
-        if self.first_name:
-            return self.first_name + " " + self.last_name
-        return self.last_name
+    def get_full_name(self):
+        if len(self.nickname) > 0:
+            return self.nickname
+        l = [s for s in (self.first_name,
+            self.name_prefix,
+            self.last_name) if len(s)]
+        return " ".join(l)
+        #~ if self.first_name:
+            #~ return self.first_name + " " + self.last_name
+        #~ return self.last_name
+    full_name = property(get_full_name)
+        
 
 class Author(Person):
-    pass
+    objects = PersonManager()
 
 class Singer(Person):
     voice = models.CharField(max_length=10,blank=True,null=True)
@@ -64,21 +103,33 @@ class Singer(Person):
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
-    published = models.IntegerField('year published',
-      blank=True,null=True)
-    text = models.TextField(blank=True,null=True)
+    #year_published = models.IntegerField(blank=True,null=True)
+    text = models.TextField(blank=True)
     language = models.ForeignKey(Language)
-    #votes = models.IntegerField()
+    origin = models.CharField(max_length=200)
+    remarks = models.TextField(blank=True)
  
-    composer = models.ManyToManyField(
+    composed_year = models.IntegerField(blank=True,null=True)
+    text_year = models.IntegerField(blank=True,null=True)
+    composed_by = models.ManyToManyField(
         Author,
         related_name="songs_composed")
-    textauthor = models.ManyToManyField(
+    written_by = models.ManyToManyField(
+        Author,
+        related_name="songs_written")
+    text_by = models.ManyToManyField(
         Author,
         related_name="texts_written")
     arranged_by = models.ManyToManyField(
         Author,
         related_name="songs_arranged")
+    translated_by = models.ManyToManyField(
+        Author,
+        related_name="songs_translated")
+    voices = models.CharField(max_length=200)
+    bible_ref = models.CharField(max_length=200)
+    based_on = models.ForeignKey("Song",blank=True,null=True)
+    copyright = models.CharField(max_length=200)
         
     def __unicode__(self):
         return self.title + " (%d)" % self.id
@@ -182,28 +233,32 @@ class Authors(reports.Report):
     model = Author
     #queryset = Author.objects.filter(singer__exact=None)
     #page_layout_class = RehearsalPageLayout
-    columnNames = "id first_name last_name born died"
+    columnNames = "id get_full_name born died first_name last_name"
     order_by = "last_name"
 
     
 #~ class RehearsalsBySong(reports.Report):
-    #~ model = Song
-    #~ master = Rehearsal
+    #~ model = Rehearsal
+    #~ master = Song
+    #~ columns = "date singers"
     
 class SongPageLayout(PageLayout):
     main = """
-    id title language
-    composer textauthor arranged_by
-    rehearsal_set
+    id title language voices
+    origin based_on bible_ref
+    composed_by text_by written_by
+    arranged_by 
+    translated_by
+    #rehearsals
     """
+    #~ def inlines(self):
+        #~ return dict(rehearsals=RehearsalsBySong())
 
 class Songs(reports.Report):
     model = Song
-    page_layout_class = SongPageLayout
-    columnNames = "id title language composer textauthor arranged_by"
+    page_layouts = (SongPageLayout,)
+    columnNames = "id title language voices composed_by text_by written_by"
 
-    #~ def inlines(self):
-        #~ return dict(rehearsals=RehearsalsBySong())
 
 def lino_setup(lino):
     m = lino.add_menu("songs","~Songs",can_view=perms.is_authenticated)

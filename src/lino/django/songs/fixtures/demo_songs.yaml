@@ -1,0 +1,175 @@
+# -*- coding: utf-8 -*-
+id: 1
+title: Hevenu Shalom
+language: he
+---
+id: 2
+title: Mit Lieb bin ich umfangen
+language: de
+---
+id:  3
+title: Võin ma tulla nüüd veel
+language: et
+---
+id: 4
+title: Go down, Moses
+language: en
+---
+id: 5
+title: Et Kristust vastu võtta.
+language: et
+---
+id: 6
+title: Iiri õnnistussovid
+language: et
+---
+id: 7
+title: Entre le bœuf et l'āne gris
+language: fr
+---
+id: 8
+title: Sõimes õlgedel
+language: et
+based_on: 7
+---
+id:  9
+title: Coventry Carol
+text_by: Robert Croo
+text_year: 1534
+language: en
+---
+id: 10
+title: Unelaul
+language: et
+translated_by: Margus Kirja, I. Liive
+based_on: 9
+---
+id: 11
+title: Üks roosike on tõusnud
+language: et
+---
+id: 12
+title: Give thanks
+language: en
+---
+id: 13
+title: Lendas ingel
+language: et
+---
+id: 14
+title: Alta Trinita
+language: la
+---
+id: 15
+title: Give thanks
+language: en
+---
+id: 16
+title: Adoramus Te
+language: la
+composed_by: G. P. da Palestrina
+---
+id: 17
+title: Nun will der Lenz uns grüßen
+written_by: Neidhart von Reuenthal
+language: de
+---
+id: 18
+title: Oh palugem ja laulgem
+language: et
+---
+id: 19
+title: Üks laev on läinud reisima
+language: et
+---
+id: 20
+title: Päike jälle kaob
+language: et
+---
+id: 21
+title: Näe rõõmsat last
+language: et
+---
+id: 22
+title: Sõber kas tunned
+language: et
+---
+id: 23
+title: Hashivenu
+voices: Kaanon
+origin: Iisraeli rahvalaul
+language: he
+remarks: 
+  (Too meid, Issand, tagasi enese juurde, siis me pöördume!
+  Uuenda meie päevi nagu muiste!)
+bible_ref: Nutulaulud 5,21
+---
+id: 24
+title: Gaudeamus
+voices: Kaanon
+language: la
+---
+id: 25
+title: Heaven is a wonderful place
+origin: Spiritual
+language: en
+---
+id: 26
+title: Peace I leave with you
+language: en
+---
+id: 27
+title: Au kõrges olgu Isale
+language: et
+---
+id: 28
+language: et
+title: Ma annan oma südame
+origin: Eesti rahvaviis
+text_by: Johann Caspar Schade
+arranged_by: Enn Kivinurm
+voices: SAAB
+copyright: Seade (c) 2003 EELK Kirikumuusika Liit
+---
+id: 29
+title: Jõuluöö (taevalaotusel tähtede vöö)
+language: et
+---
+id: 30
+title: Jõulud jälle kätte jõudnud
+language: et
+---
+id: 31
+title: Issand, kõik su kättetöö
+language: et
+---
+id: 32
+title: Ad te levavi
+language: la
+composed_by: Franz Xaver Witt
+---
+id: 33
+title: Verleih uns Frieden
+composed_by: Felix Mendelssohn-Bartholdi
+composed_year: 1831
+language: de
+---
+id: 34
+title: Au kõrges olgu
+language: et
+---
+id: 35
+title: Nüüd kevad saabub meile
+language: et
+translated_by: Leelo Tungal
+arranged_by: Fr. Büchtiger
+based_on: 17
+---
+id: 36
+title: Herr der Herren
+language: de
+---
+id: 37
+title: Kuningate kuningas
+language: et
+based_on: 36

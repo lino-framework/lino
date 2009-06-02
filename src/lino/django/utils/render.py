@@ -125,7 +125,8 @@ class ElementServer:
                 #~ from lino.django.tom import reports
                 #~ if isinstance(value,reports.Report):
                     #~ return value.as_html()
-                label = self.name
+                #label = self.name
+                label = elem.name.replace('_', ' ')
                 #widget=widget_for_value(value)
                 widget = forms.TextInput()
         else:

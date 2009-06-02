@@ -52,10 +52,13 @@ def main():
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):
         return
+    print "reset"
     call_command('reset',*app_labels,**options)
     #call_command('reset','songs','auth',interactive=False)
+    print "syncdb"
     call_command('syncdb',**options)
     #call_command('flush',interactive=False)
+    print "loaddata demo"
     call_command('loaddata','demo')
     User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
     User.objects.create_user('user','luc.saffre@gmx.net','1234')

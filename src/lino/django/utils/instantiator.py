@@ -73,33 +73,37 @@ class ForeignKeyConverter(Converter):
                 p = model.objects.get(
                 **{self.lookup_field: value})
             except model.DoesNotExist,e:
-                raise DataError("%s.objects.get(%s) : %s" % (
+                raise DataError("%s.objects.get(%r) : %s" % (
                       model.__name__,value,e))
             else:
                 kw[self.field.name] = p
         return kw
 
 class ManyToManyConverter(Converter):
+    splitsep = None
+        
+    def lookup(self,value):
+        model = self.field.rel.to
+        try:
+            return model.objects.get(
+              **{self.lookup_field: value})
+        except model.DoesNotExist,e:
+            raise DataError("%s.objects.get(%r) : %s" % (
+              model.__name__,value,e))
+
     def convert(self,**kw):
         values = kw.get(self.field.name)
         if values is not None:
             del kw[self.field.name]
-            l = []
-            model = self.field.rel.to
-            for value in values.split():
-                try:
-                    obj = model.objects.get(
-                      **{self.lookup_field: value})
-                except model.DoesNotExist,e:
-                    raise DataError("%s.objects.get(%s) : %s" % (
-                      model.__name__,value,e))
-                l.append(obj)
+            l = [self.lookup(value) 
+              for value in values.split(self.splitsep)]
             kw['_m2m'][self.field.name] = l
         return kw
 
       
 class Instantiator:
-    def __init__(self,model_class,fieldnames=None):
+    def __init__(self,model_class,fieldnames=None,
+          converter_classes={}):
         if type(fieldnames) == str:
             fieldnames = fieldnames.split()
         self.model_class = model_class
@@ -120,20 +124,28 @@ class Instantiator:
         #print " ".join(dir(model_class))
         #print " ".join(model_class._meta.fields)
         #for f in model_class._meta.fields:
-        for f in self.fields:
+        #for f in self.fields:
+        for f in model_class._meta.fields + model_class._meta.many_to_many:
+            cv = None
             #f = getattr(model_class,name)
             #print repr(f)
             #print f.name
-            if isinstance(f,models.ForeignKey):
-                self.converters.append(ForeignKeyConverter(f,
-                  lookup_fields.get(f.name,"pk")))
-            elif isinstance(f,models.ManyToManyField):
-                self.converters.append(ManyToManyConverter(f,
-                  lookup_fields.get(f.name,"pk")))
-            elif isinstance(f,models.DateField):
-                self.converters.append(DateConverter(f))
-            elif isinstance(f,models.DecimalField):
-                self.converters.append(DecimalConverter(f))
+            cvc = converter_classes.get(f.name,None)
+            if cvc is not None:
+                cv = cvc(f)
+            else:
+                if isinstance(f,models.ForeignKey):
+                    cv = ForeignKeyConverter(f,
+                      lookup_fields.get(f.name,"pk"))
+                elif isinstance(f,models.ManyToManyField):
+                    cv = ManyToManyConverter(f,
+                      lookup_fields.get(f.name,"pk"))
+                elif isinstance(f,models.DateField):
+                    cv = DateConverter(f)
+                elif isinstance(f,models.DecimalField):
+                    cv = DecimalConverter(f)
+            if cv is not None:
+                self.converters.append(cv)
         #~ for f in model_class._meta.many_to_many:
             #~ print "foo", f.name
 
