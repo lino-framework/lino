@@ -415,13 +415,27 @@ class ViewManyReportRenderer(ViewReportRenderer):
         
           
         
+    def actions(self):
+        s = """
+        <div class="actions">
+        """
+        if self.editing:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=0),"show")
+        else:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=1),"edit")
+        s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
+        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
+        s += "</div>"
+        return mark_safe(s)
+        
     def navigator(self):
-        s="""
+        s = """
         <div class="pagination">
         <span class="step-links">
         """
         page = self.page
-        #num_pages = self.page.paginator.num_pages
             
         text = "&#x25C4;Previous"
         if page.has_previous():
@@ -437,19 +451,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
         else:
             s += text
         s += " "
-        
-        #~ s += """
-        #~ <span class="current">%s</span>
-        #~ """ % self.position_string()
 
-        #if self.can_change():
-        if self.editing:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=0),"show")
-        else:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=1),"edit")
-        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         s += "</span>"
         s += ' <span class="position">%s</span>' % self.position_string()
         s += "</div>"
@@ -465,7 +467,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 rownum = 1
                 object_list = self.queryset
             #rownum = self.page.start_index()
-            print len(object_list)
+            #print len(object_list)
             for obj in object_list:
                 yield Row(self,obj,rownum,None)
                 rownum += 1
@@ -532,14 +534,24 @@ class ViewOneReportRenderer(RowViewReportRenderer):
     template_to_string = "lino/includes/page_show.html"
     template_to_reponse = "lino/page_show.html"
     
-    #~ def __init__(self,*args,**kw):
-        #~ RowViewReportRenderer.__init__(self,*args,**kw)
-        #~ layout = self.report._page_layouts[self.dtl]
-        #~ self.layout = layout.bound_to(self.row)
-            
+        
+    def actions(self):
+        s = """
+        <div class="actions">
+        """
+        if self.editing:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=0),"show")
+        else:
+            s += ' <a href="%s">%s</a>' % (
+              self.again(editing=1),"edit")
+        s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
+        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
+        s += "</div>"
+        return mark_safe(s)
         
     def navigator(self):
-        s="""<div class="pagination"><span class="step-links">"""
+        s = """<div class="pagination"><span class="step-links">"""
         page = self.row
         get_var_name = "row"
 
@@ -560,14 +572,6 @@ class ViewOneReportRenderer(RowViewReportRenderer):
         else:
             s += text
         #if self.can_change():
-        if self.editing:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=0),"show")
-        else:
-            s += ' <a href="%s">%s</a>' % (
-              self.again(editing=1),"edit")
-        s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
-        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         s += '</span>'
         s += '<span class="position">%s</span>' % self.position_string()
         s += '</div>'
@@ -575,7 +579,6 @@ class ViewOneReportRenderer(RowViewReportRenderer):
 
     def get_title(self):
         return unicode(self.row.instance)
-        
 
 
 
@@ -583,10 +586,10 @@ class EditReportRenderer:  # Mixin class
   
     editing = 1
     
-    def new_column(self,field,*args):
-        if field.editable and not field.primary_key:
-            return FormFieldColumn(self,field,*args)
-        return FieldColumn(self,field,*args)
+    #~ def new_column(self,field,*args):
+        #~ if field.editable and not field.primary_key:
+            #~ return FormFieldColumn(self,field,*args)
+        #~ return FieldColumn(self,field,*args)
         
 
 class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
@@ -690,14 +693,14 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
         
 class PdfManyReportRenderer(ViewManyReportRenderer):
 
-    def render(self):
-        template = get_template("lino/grid_pdf.html")
+    def render(self,as_pdf=True):
+        template = get_template("lino/grid_print.html")
         context=dict(
           report=self,
           title=self.get_title(),
         )
         html  = template.render(Context(context))
-        if not pisa:
+        if not (pisa and as_pdf):
             return HttpResponse(html)
         result = cStringIO.StringIO()
         pdf = pisa.pisaDocument(cStringIO.StringIO(html.encode("ISO-8859-1")), result)
@@ -714,19 +717,22 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
 class PdfOneReportRenderer(ViewOneReportRenderer):
     detail_renderer = PdfManyReportRenderer
 
-    def render(self):
-        template = get_template("lino/page_pdf.html")
+    def render(self,as_pdf=True):
         #self.row = Row(self,obj,rownum)
         obj = self.row.instance
+        template = select_template([
+          obj._meta.db_table + "_print.html",
+          "lino/page_print.html"])
         #~ layout = layouts.InstanceLayoutRenderer(obj,
           #~ self.report.page_layout(),render_detail=self.render_detail)
         context = dict(
           report=self,
+          instance=obj,
           title=u"%s - %s" % (self.get_title(),obj),
           #layout = layout
         )
         html  = template.render(Context(context))
-        if not pisa:
+        if not (pisa and as_pdf):
             return HttpResponse(html)
         result = cStringIO.StringIO()
         pdf = pisa.pisaDocument(cStringIO.StringIO(\
@@ -737,11 +743,11 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
             mimetype='application/pdf')
 
 
-class RowPrintReportRenderer(RowViewReportRenderer):
-    def render(self):
-        tplname = self.report.get_row_print_template(self.row.instance)
-        context = dict(instance=self.row.instance)
-        return render_to_response(tplname,context)
+#~ class RowPrintReportRenderer(RowViewReportRenderer):
+    #~ def render(self):
+        #~ tplname = self.report.get_row_print_template(self.row.instance)
+        #~ context = dict(instance=self.row.instance)
+        #~ return render_to_response(tplname,context)
 
 
 

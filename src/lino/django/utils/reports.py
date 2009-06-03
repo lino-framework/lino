@@ -230,8 +230,8 @@ class Report:
     def getLabel(self):
         return self.label
     
-    def get_row_print_template(self,instance):
-        return instance._meta.db_table + "_print.html"
+    #~ def get_row_print_template(self,instance):
+        #~ return instance._meta.db_table + "_print.html"
         
     #~ def page_layout(self,i=0):
         #~ if self._page_layouts is None:
@@ -255,16 +255,16 @@ class Report:
     
     def get_urls(self,name):
         l = []
-        l.append(url(r'^%s$' % name, self.view_many))
         l.append(url(r'^%s/(\d+)$' % name, self.view_one))
-        l.append(url(r'^%s/pdf$' % name, self.pdf_view_many))
-        l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_view_one))
-        l.append(url(r'^%s/(\d+)/print$' % name, self.print_one_view))
+        l.append(url(r'^%s$' % name, self.view_many))
+        l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_one))
+        l.append(url(r'^%s/pdf$' % name, self.pdf_many))
+        l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
+        l.append(url(r'^%s/print$' % name, self.print_many))
         return l
 
     #~ def view(self,request):
         #~ return self.view_many(request)
-    #@login_required
     def view_many(self,request):
         #~ msg = "Hello, "+unicode(request.user)
         #~ print msg
@@ -277,7 +277,6 @@ class Report:
             r = render.ViewManyReportRenderer(request,True,self)
         return r.render_to_response()
             
-    #@login_required
     def view_one(self,request,row,**kw):
         #print "Report.view_one()", request.path
         if not self.can_view.passes(request):
@@ -288,23 +287,25 @@ class Report:
             r = render.ViewOneReportRenderer(row,request,True,self,**kw)
         return r.render_to_response()
 
-    #@login_required
-    def pdf_view_one(self,request,row):
+    def pdf_one(self,request,row):
         if not self.can_view.passes(request):
             return render.sorry(request)
         return render.PdfOneReportRenderer(row,request,True,self).render()
         
-    #@login_required
-    def pdf_view_many(self, request):
+    def pdf_many(self, request):
         if not self.can_view.passes(request):
             return render.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render()
 
-    #@login_required
-    def print_one_view(self,request,row):
-        if not self.can_view(request):
+    def print_many(self, request):
+        if not self.can_view.passes(request):
             return render.sorry(request)
-        return render.RowPrintReportRenderer(row,request,True,self).render()
+        return render.PdfManyReportRenderer(request,True,self).render(as_pdf=False)
+
+    def print_one(self,request,row):
+        if not self.can_view.passes(request):
+            return render.sorry(request)
+        return render.PdfOneReportRenderer(row,request,True,self).render(as_pdf=False)
 
     def as_text(self, *args,**kw):
         from lino.django.utils.renderers_text import TextReportRenderer
