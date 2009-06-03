@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import admin
 admin.autodiscover()
 
-from lino.django.utils.sites import site as lino_site
+from lino.django.utils.sites import lino_site
 #lino_site.autodiscover()
 
 

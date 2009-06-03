@@ -198,7 +198,7 @@ class Menu(MenuItem):
         
         
     def view(self,request):
-        from lino.django.utils.sites import site as lino_site
+        from lino.django.utils.sites import lino_site
         context = lino_site.context(request,
             title = self.label,
             menu = MenuRenderer(self,request),

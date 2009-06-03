@@ -504,7 +504,7 @@ class ContactDocumentsLayout(ContactPageLayout):
             documents
             """
     def inlines(self):
-        return dict(documents=DocumentsByCustomer())
+        return dict(documents=DocumentsByContact())
 
 
 class Contacts(reports.Report):
@@ -519,14 +519,14 @@ class Contacts(reports.Report):
 class Companies(Contacts):
     #queryset=Contact.objects.order_by("companyName")
     columnNames = "companyName country title firstName lastName"
-    queryset = Contact.objects.exclude(companyName__exact='')
+    exclude = dict(companyName__exact='')
     order_by = "companyName"
     #~ queryset = Contact.objects.exclude(companyName__exact=None)\
       #~ .order_by("companyName")
     
 
 class Persons(Contacts):
-    queryset=Contact.objects.filter(companyName__exact='')
+    filter = dict(companyName__exact='')
     order_by = "lastName firstName"
     columnNames = "title firstName lastName country"
     
@@ -558,7 +558,8 @@ class ProductPageLayout(layouts.PageLayout):
 
 class Products(reports.Report):
     page_layouts = (ProductPageLayout,)
-    queryset = Product.objects.order_by("id")
+    model = Product
+    order_by = "id"
     columnNames = "id:3 name description:30x1 cat vatExempt price:6"
     
     
@@ -681,7 +682,7 @@ class ItemsByDocument(reports.Report):
     
     
 
-class DocumentsByCustomer(reports.Report):
+class DocumentsByContact(reports.Report):
     page_layouts = (DocumentPageLayout,)
     columnNames = "number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"

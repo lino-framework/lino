@@ -52,7 +52,7 @@ from lino.django.utils import layouts
 from lino.django.utils.requests import again, get_redirect, redirect_to
 #from lino.django.utils.editing import is_editing, stop_editing
 from lino.django.utils import editing
-from lino.django.utils.sites import site as lino_site
+from lino.django.utils.sites import lino_site
 
 
 class ElementServer:
@@ -171,10 +171,19 @@ class ElementServer:
             # TODO: 
             
         if isinstance(widget, forms.SelectMultiple):
-            s = "[ " + ",<br/>".join([unicode(o) for o in value.all()]) + " ]"
+            l = []
+            for o in value.all():
+                url = lino_site.get_instance_url(o)
+                l.append('<a href="%s">%s</a>' % (url,o))
+            s = ",<br/>".join(l)
             s = SPAN(s,style)
         elif isinstance(widget, forms.Select):
-            s = "[&nbsp;" + unicode(value) + "&nbsp;]"
+            try:
+                url = lino_site.get_instance_url(value)
+                s = '<a href="%s">%s</a>' % (url,value)
+            except Exception,e:
+                print e
+                s = "[&nbsp;" + unicode(value) + "&nbsp;]"
             s = SPAN(s,style)
         else:
             if value is None:
@@ -210,11 +219,6 @@ class Row(ElementServer):
                   renderer.detail_renderer(renderer.request,
                     False,inline,self.instance)
       
-    #~ def __getitem__(self,name):
-        #~ if self.renderer.editing:
-            #~ return self.form[name]
-        #~ return getattr(self.instance,name)
-
         
     def as_html(self):
         try:
@@ -741,9 +745,15 @@ class RowPrintReportRenderer(RowViewReportRenderer):
 
 
 
-def sorry(request):
+def sorry(request,message=None):
+    if message is None:
+        message = mark_safe("""
+Sorry %s, you have no access permission for this action.
+Consider <a href="/accounts/login">logging in</a> as another user.
+""" % request.user.username)
     context = lino_site.context(request,
       title = "Sorry",
+      message = message,
     )
     return render_to_response("lino/sorry.html",
       context,

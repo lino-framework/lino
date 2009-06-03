@@ -34,8 +34,8 @@ class Groups(reports.Report):
     order_by = "name"
 
     
-def setup_menu(menu):
-    m = menu.add_menu("system","~System")
+def lino_setup(lino):
+    m = lino.add_menu("system","~System")
     m.add_action(Permissions())
     m.add_action(Users())
     m.add_action(Groups())

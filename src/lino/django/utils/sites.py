@@ -91,7 +91,8 @@ class LinoSite: #(AdminSite):
         self.done = False
         self.root_path = '/lino/'
         self.skin = Skin()
-
+        self.model_reports = {}
+        
     def autodiscover(self):
         if self.done:
             return
@@ -118,12 +119,27 @@ class LinoSite: #(AdminSite):
             #~ mod = import_module("%s.lino_setup" % app)
             #~ mod.setup_menu(self._menu)
             
-        from lino.django.utils.sysadm import setup_menu
-        setup_menu(self._menu)
+        from lino.django.utils.sysadm import lino_setup
+        lino_setup(self)
         
         self.done = True
         self.loading = False
         
+    def register_report(self,rptclass):
+        if rptclass.model is None:
+            return
+        if rptclass.master is not None:
+            return
+        if rptclass.exclude is not None:
+            return
+        if rptclass.filter is not None:
+            return
+        db_table = rptclass.model._meta.db_table
+        if self.model_reports.has_key(db_table):
+            print "[Warning] Ignoring %s" % rptclass.__name__
+            return
+        self.model_reports[db_table] = rptclass
+
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
        
@@ -192,6 +208,22 @@ class LinoSite: #(AdminSite):
             context_instance=template.RequestContext(request)
         )
     index = never_cache(index)
+    
+    def view_instance(self,request,db_table,pk):
+        context = self.context(request,title=self._menu.label)
+        print db_table
+        print pk
+        try:
+            rptclass = self.model_reports[db_table]
+        except KeyError,e:
+            msg = """
+            There is no Report defined for %s.
+            """ % db_table
+            from lino.django.utils import render
+            return render.sorry(request,message=msg)
+            
+        rpt = rptclass(filter=dict(pk__exact=pk))
+        return rpt.view_one(request,1)
 
     def login(self,request, template_name='registration/login.html', 
               redirect_field_name=REDIRECT_FIELD_NAME):
@@ -386,6 +418,8 @@ class LinoSite: #(AdminSite):
             
     def get_urls(self):
         self.autodiscover()
+        #~ for k,v in self.model_reports.items():
+            #~ print k,v
         
         urlpatterns = patterns('',
             (r'^accounts/login/$', self.login),
@@ -399,9 +433,15 @@ class LinoSite: #(AdminSite):
             (r'^accounts/reset/done/$', self.password_reset_complete),
         )
         #~ urlpatterns = AdminSite.get_urls(self)
+        urlpatterns += patterns('',
+            (r'^o/(?P<db_table>.+)/(?P<pk>.+)$', self.view_instance),
+        )
         urlpatterns += self._menu.get_urls() # self._menu.name)
         return urlpatterns
         #return self._menu.get_urls()
+        
+    def get_instance_url(self,instance):
+        return "/o/%s/%s" % (instance._meta.db_table, instance.pk)
         
   
 class Skin:
@@ -432,4 +472,4 @@ class Skin:
     
          
        
-site = LinoSite()
+lino_site = LinoSite()

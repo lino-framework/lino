@@ -166,7 +166,7 @@ class Entry(TomModel):
     #pos = models.CharField(max_length=20,blank=True,null=True)
  
     def __unicode__(self):
-        s=self.word1
+        s = self.word1
         if self.word1_suffix:
             s += " (" + self.word1_suffix + ")"
         s += " = " + self.word2
@@ -175,24 +175,24 @@ class Entry(TomModel):
         
 
 
-class UnitForm(forms.ModelForm):
+#~ class UnitForm(forms.ModelForm):
   
-    class Meta:
-        model = Unit
+    #~ class Meta:
+        #~ model = Unit
 
-    def clean_parent(self):
-        p = self.cleaned_data.get("parent")
-        if p == self.instance:
-            raise forms.ValidationError("Parent cannot be self")
-        l=[]
-        while p is not None:
-            if p in l:
-                raise forms.ValidationError("Parent recursion")
-            if len(l) > MAX_NESTING_LEVEL:
-                raise forms.ValidationError("Nesting level")
-            l.append(p)
-            p=p.parent
-        return self.cleaned_data
+    #~ def clean_parent(self):
+        #~ p = self.cleaned_data.get("parent")
+        #~ if p == self.instance:
+            #~ raise forms.ValidationError("Parent cannot be self")
+        #~ l=[]
+        #~ while p is not None:
+            #~ if p in l:
+                #~ raise forms.ValidationError("Parent recursion")
+            #~ if len(l) > MAX_NESTING_LEVEL:
+                #~ raise forms.ValidationError("Nesting level")
+            #~ l.append(p)
+            #~ p=p.parent
+        #~ return self.cleaned_data
 
 
 #
@@ -203,12 +203,12 @@ from lino.django.utils import reports, perms
 
 class Units(reports.Report):
     model = Unit
-    model_form = UnitForm
+    #model_form = UnitForm
     order_by = "id"
     columnNames = "id title name parent seq format"
 
 class UnitsPerParent(reports.Report):
-    model_form = UnitForm
+    #model_form = UnitForm
     columnNames = "id title name seq format parent"
     order_by = "seq"
     master = Unit
@@ -224,7 +224,7 @@ class UnitsPerParent(reports.Report):
 
 class Entries(reports.Report):
     model = Entry
-    model_form = forms.models.modelform_factory(Entry)
+    #model_form = forms.models.modelform_factory(Entry)
 
 #
 # menu setup

@@ -34,6 +34,7 @@ from django.contrib.auth.decorators import login_required
 
 from lino.django.utils import layouts, render, perms
 from lino.django.utils.editing import is_editing
+from lino.django.utils.sites import lino_site
 
 
 # maps Django field types to a tuple of default paramenters
@@ -82,20 +83,26 @@ class ReportParameterForm(forms.Form):
 #~ def get_reports():
     #~ return _report_classes
 
-#~ class ReportMetaClass(type):
-    #~ def __new__(meta, classname, bases, classDict):
-        #~ #print 'Class Name:', classname
-        #~ #print 'Bases:', bases
-        #~ #print 'Class Attributes', classDict
-        #~ cls = type.__new__(meta, classname, bases, classDict)
-        #~ _report_classes[classname] = cls
-        #~ return cls
+class ReportMetaClass(type):
+    def __new__(meta, classname, bases, classDict):
+        cls = type.__new__(meta, classname, bases, classDict)
+        if classname != 'Report':
+            if cls.typo_check:
+                myattrs = set(cls.__dict__.keys())
+                for attr in base_attrs(cls):
+                    myattrs.discard(attr)
+                if len(myattrs):
+                    print "[Warning]: %s defines new attribute(s) %s" % (cls,",".join(myattrs))
+        
+        #_report_classes[classname] = cls
+        lino_site.register_report(cls)
+        return cls
 
 
 
 
 class Report:
-  
+    __metaclass__ = ReportMetaClass
     queryset = None 
     model = None
     order_by = None
@@ -144,7 +151,7 @@ class Report:
     #~ """.split()
     
     
-    def __init__(self):
+    def __init__(self,**kw):
         #~ self.groups = [] # for later
         #~ self.totals = [] # for later
         if self.label is None:
@@ -168,14 +175,13 @@ class Report:
         if self.master:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
-        self._page_layouts = [ 
-              l(self.model) for l in self.page_layouts]
-        if self.typo_check:
-            myattrs = set(self.__class__.__dict__.keys())
-            for attr in base_attrs(self.__class__):
-                myattrs.discard(attr)
-            for attr in myattrs:
-                print "[Warning]: %s defines new attributes : %s" % (self.__class__,myattrs)
+        self._page_layouts = [
+              layout(self.model) for layout in self.page_layouts]
+                
+        for k,v in kw.items():
+            if not hasattr(self,k):
+                print "[Warning] Ignoring attribute %s" % k
+            setattr(self,k,v)
         
     def column_headers(self):
         #print "column_headers"
@@ -272,14 +278,14 @@ class Report:
         return r.render_to_response()
             
     #@login_required
-    def view_one(self,request,row):
+    def view_one(self,request,row,**kw):
         #print "Report.view_one()", request.path
         if not self.can_view.passes(request):
             return render.sorry(request)
         if is_editing(request) and self.can_change.passes(request):
-            r = render.EditOneReportRenderer(row,request,True,self)
+            r = render.EditOneReportRenderer(row,request,True,self,**kw)
         else:
-            r = render.ViewOneReportRenderer(row,request,True,self)
+            r = render.ViewOneReportRenderer(row,request,True,self,**kw)
         return r.render_to_response()
 
     #@login_required
