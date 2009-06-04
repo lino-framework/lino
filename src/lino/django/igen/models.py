@@ -183,7 +183,29 @@ u'Example & Co (Luc Saffre)'
     as_address.allow_tags=True
 
 
-
+class TransmissionMode(models.Model):
+    CHANNEL_CHOICES = (
+        ('P', 'Regular Mail'),
+        ('E', 'E-Mail'),
+    )
+    id = models.CharField(max_length=3, primary_key=True)
+    name = models.CharField(max_length=200)
+    price = PriceField(blank=True,null=True)
+    channel = models.CharField(max_length=1, 
+                choices=CHANNEL_CHOICES,help_text="""
+    Method used to send the invoice. 
+                """)
+    advance_days = models.IntegerField(default=0,
+                   help_text="""
+    Invoices must be sent out X days in advance so that the customer
+    has a chance to pay them in time. 
+    """)
+    
+    def __unicode__(self):
+        return self.name
+        
+    
+    
 class PaymentTerm(TomModel):
     name = models.CharField(max_length=200)
     days = models.IntegerField(default=0)
@@ -199,9 +221,12 @@ class PaymentTerm(TomModel):
 
 class ShippingMode(TomModel):
     name = models.CharField(max_length=200)
+    price = PriceField(blank=True,null=True)
     
     def __unicode__(self):
         return self.name
+        
+        
 
 class ProductCat(TomModel):
     name = models.CharField(max_length=200)
@@ -238,6 +263,7 @@ class Document(TomModel):
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
       related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
+    trmode = models.ForeignKey(TransmissionMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     remark = models.CharField("Remark for internal use",max_length=200,blank=True)
@@ -283,36 +309,41 @@ class Document(TomModel):
         
 class OrderManager(models.Manager):
   
-    def pending(self,today=None):
+    def pending(self,make_until=None):
         l = []
         for o in self.all():
-            if o.make_invoice(today=today,simulate=True):
+            if o.make_invoice(make_until=make_until,simulate=True):
                 l.append(o)
         return l
         
-        
+
+
 class Order(Document):
+  
     CYCLE_CHOICES = (
         ('W', 'Weekly'),
         ('M', 'Monthly'),
         ('Q', 'Quarterly'),
         ('Y', 'Yearly'),
     )
-    #valid_until = MyDateField("Valid until",blank=True,null=True)
+    
+    cycle = models.CharField(max_length=1, 
+            choices=CYCLE_CHOICES)
     start_date = MyDateField(blank=True,null=True,
-      help_text="beginning of payable period. set to blank if no bill should be generated")
+      help_text="""Beginning of payable period. 
+      Set to blank if no bill should be generated""")
     covered_until = MyDateField(blank=True,null=True)
-    cycle = models.CharField(max_length=1, choices=CYCLE_CHOICES)
     
     objects = OrderManager()
     
-    def get_last_invoice(self):
-        invoices = self.invoice_set.order_by('creation_date')
-        cnt = invoices.count()
-        if cnt == 0:
-            return None
-        return invoices[cnt-1]
+    #~ def get_last_invoice(self):
+        #~ invoices = self.invoice_set.order_by('creation_date')
+        #~ cnt = invoices.count()
+        #~ if cnt == 0:
+            #~ return None
+        #~ return invoices[cnt-1]
     
+        
     def skip_date(self,date):
         if self.cycle == "W":
             date += relativedelta(weeks=1)
@@ -323,39 +354,41 @@ class Order(Document):
         elif self.cycle == "Y":
             date += relativedelta(years=1)
         else:
-            raise Exception("Invalid cycle value %r in %s" % (self.cycle,self))
+            raise Exception("Invalid cycle value %r in %s" % (
+                self.cycle,self))
         return datetime.date(date.year,date.month,date.day)
         
-        
-    def make_invoice(self,today=None,simulate=False):
-      
-        
+    def make_invoice(self,make_until=None,simulate=False,today=None):
+
         if self.start_date is None:
             return
         if today is None:
             today = datetime.date.today()
+            
+        if make_until is None:
+            make_until = today
         
         # assume that billing occurs once every month
         # and that invoices must be sent out 5 days before they get paid
         # and that covering periods are never increased or decreased to 
         # fit into the billing cycle.
-        next_payment = today \
-          + relativedelta(months=1) \
-          + relativedelta(days=5) 
         
         if self.covered_until:
             covered_until = self.covered_until
         else:
             covered_until = self.start_date - ONE_DAY
             
-        if next_payment < covered_until:
+        expect_payment = self.payment_term.get_due_date(make_until)
+        expect_payment += relativedelta(days=self.trmode.advance_days)
+          
+        if expect_payment < covered_until:
             return # no invoice needed today
             
         #last_invoice = self.get_last_invoice()
         cover_from = covered_until + ONE_DAY
         cover_until = self.skip_date(cover_from) - ONE_DAY
         qty = 1
-        while cover_until < next_payment:
+        while cover_until < expect_payment:
             cover_until = self.skip_date(cover_until)
             qty += 1
         
@@ -363,12 +396,13 @@ class Order(Document):
         #~ print "date", type(date), date
         #~ assert isinstance(date,datetime.date)
         #~ assert isinstance(today,datetime.date)
-        cover_text = "Period %s to %s :" % (cover_from,cover_until)
+        cover_text = "Period %s to %s" % (cover_from,cover_until)
         #print cover_text
         items = []
         for item in self.docitem_set.all():
             d = {}
-            for fn in ('product','title','description','unitPrice','qty'):
+            for fn in ('product','title','description',
+                       'unitPrice','qty'):
                 d[fn] = getattr(item,fn)
             d['qty'] *= qty
             #d['total'] *= qty
@@ -378,6 +412,7 @@ class Order(Document):
         invoice = Invoice(creation_date=today,order=self,
             customer=self.customer,
             ship_to=self.ship_to,
+            trmode=self.trmode,
             payment_term=self.payment_term,
             shipping_mode=self.shipping_mode,
             subject=cover_text,
@@ -544,6 +579,11 @@ class ShippingModes(reports.Report):
     #~ def can_view(self,request):
       #~ return request.user.is_staff
 
+class TransmissionModes(reports.Report):
+    model = TransmissionMode
+    order_by = "id"
+    can_view = perms.is_staff
+
 class ProductCats(reports.Report):
     model = ProductCat
     order_by = "id"
@@ -570,6 +610,7 @@ class DocumentPageLayout(layouts.PageLayout):
       ship_to
       """
     box2 = """
+      trmode
       shipping_mode 
       payment_term
       vat_exempt item_vat
@@ -611,7 +652,7 @@ class InvoicePageLayout(DocumentPageLayout):
 class EmittedInvoicesPageLayout(DocumentPageLayout):
     label = "Emitted invoices"
     main = """
-    number:4 creation_date customer:20
+    number:4 creation_date customer:20 start_date
     emitted_invoices
     """
     def inlines(self):
@@ -622,7 +663,7 @@ class Orders(reports.Report):
     model = Order
     order_by = "number"
     page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
-    columnNames = "number:4 creation_date customer:20 " \
+    columnNames = "number:4 creation_date customer:20 trmode " \
                   "remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     can_view = perms.is_authenticated
@@ -630,14 +671,14 @@ class Orders(reports.Report):
     
 
 class PendingOrdersParams(forms.Form):
-    today = forms.DateField(label="Generate invoices on",
-      initial=datetime.date.today(),required=False)
+    make_until = forms.DateField(label="Make invoices until",
+      initial=datetime.date.today()+ONE_DAY,required=False)
 
 class PendingOrders(Orders):
     param_form = PendingOrdersParams
-    def get_queryset(self,master_instance,today=None):
+    def get_queryset(self,master_instance,make_until=None):
         assert master_instance is None
-        return Order.objects.pending(today=today)
+        return Order.objects.pending(make_until=make_until)
     
 class Invoices(reports.Report):
     model = Invoice
@@ -653,7 +694,7 @@ class DocumentsToSend(Invoices):
     filter = dict(can_send=False)
     can_add = perms.never
     columnNames = "number:4 can_send order creation_date " \
-                  "customer:10 " \
+                  "customer:10 trmode " \
                   "subject:10 total_incl total_excl total_vat "
     
   
@@ -787,6 +828,7 @@ def lino_setup(lino):
     
     m = lino.add_menu("config","~Configuration",
       can_view=perms.is_staff)
+    m.add_action(TransmissionModes())
     m.add_action(ShippingModes())
     m.add_action(PaymentTerms())
     m.add_action(Languages())

@@ -22,7 +22,7 @@ from datetime import date
 from lino.django.igen.models import *
 from lino.django.utils.instantiator import Instantiator
 
-language_builder = Instantiator(Language,"id name")
+#language_builder = Instantiator(Language,"id name")
 country_builder = Instantiator(Country,"isocode name")
 shippingmode_builder = Instantiator(ShippingMode,"name")
 paymentterm = Instantiator(PaymentTerm,"name").build
@@ -61,9 +61,14 @@ def objects():
     yield shippingmode_builder.build("cash and carry")
     yield shippingmode_builder.build("regular mail")
 
-    yield paymentterm(u"sularahas")
-    yield paymentterm(u"7 päeva neto",days=7)
-    yield paymentterm(u"Ettemaks",days=7) #,proforma=True)
+    yield paymentterm("Cash")
+    yield paymentterm("7 days net",days=7)
+    yield paymentterm("Prepayment",days=7)
+    
+    trmode = Instantiator(TransmissionMode,
+      "id channel name advance_days").build
+    yield trmode('e','E','By e-mail',2)
+    yield trmode('p','P','By snail mail',10)
         
     s = u"""    
     1||||Minu Firma OÜ|||||ee||||||||0|0|et|2|
@@ -114,38 +119,42 @@ This table is made of pure wood.
     yield hosting
     
     invoice = Instantiator(Invoice,
-    "customer creation_date payment_term shipping_mode").build
+    "customer creation_date trmode payment_term shipping_mode").build
     
     order = Instantiator(Order,
-    "customer creation_date start_date cycle payment_term shipping_mode").build
+    """customer creation_date start_date cycle trmode 
+    payment_term shipping_mode""").build
     
-    docitem = Instantiator(DocItem,"document product qty").build
+    #docitem = Instantiator(DocItem,"document product qty").build
 
-    o = order(100,"2008-09-23","2008-09-24","M",2,1,remark="monthly order")
+    o = order(100,"2008-09-23","2008-09-24","M","e",2,1,
+      remark="monthly order")
     o.add_item(hosting,1)
     yield o
     
     yield o.make_invoice(today=date(2008,10,28))
         
-    i = invoice(2,"2008-10-29",2,1,remark="first manual invoice")
+    i = invoice(2,"2008-10-29","e",2,1,remark="first manual invoice")
     i.add_item(1,1)
     i.add_item(2,4)
     yield i
     
     yield o.make_invoice(today=date(2009,04,11))
         
-    i = invoice(3,date(2009,04,11),2,1,remark="second manual invoice")
+    i = invoice(3,date(2009,04,11),"e",2,1,
+                remark="second manual invoice")
     i.add_item(3,1)
     i.add_item(4,4)
     yield i
     
-    o2 = order(4,"2009-04-12","2009-04-12","Y",2,1,remark="yearly order")
+    o2 = order(4,"2009-04-12","2009-04-12","Y","p",2,1,
+               remark="yearly order")
     o2.add_item(3,1)
     o2.add_item(4,4)
     yield o2
     yield o2.make_invoice(today=date(2009,04,12))
     
-    i = invoice(4,date(2009,04,12),2,1,
+    i = invoice(4,date(2009,04,12),"e",2,1,
       remark="third manual invoice with discount")
     i.add_item(3,1,discount=10)
     i.add_item(4,4,discount=5)

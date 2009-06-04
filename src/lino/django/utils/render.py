@@ -231,11 +231,8 @@ class Row(ElementServer):
 
     def links(self):
         l = []
-        if self.renderer.is_main:
-            l.append('<a href="%s">page</a>' % self.get_url_path())
-        if False:
-            l.append('<a href="%s">instance</a>' % \
-                self.instance.get_url_path())
+        l.append('<a href="%s">%s</a>' % (
+            self.get_url_path(),unicode(self.instance)))
         #print "<br/>".join(l)
         return mark_safe("\n".join(l))
 
@@ -254,7 +251,10 @@ class Row(ElementServer):
         #return self.rownum+1
             
     def get_url_path(self):
-        return self.renderer.again(str(self.number))
+        if self.renderer.is_main:
+            return self.renderer.again(str(self.number))
+        return lino_site.get_instance_url(self.instance)
+        
         
     def pk_field(self):
         """

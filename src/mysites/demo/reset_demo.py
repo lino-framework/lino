@@ -31,7 +31,7 @@ from django.core.management import call_command
 
 from lino.console import syscon
 
-from lino.django.utils.sites import site as lino_site
+from lino.django.utils.sites import lino_site
 
 def db_apps():
     for app_name in settings.INSTALLED_APPS:

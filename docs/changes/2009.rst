@@ -286,5 +286,17 @@ This way of doing has unresolved issues:
 
 - OrderManager is my first usage of a manager. It is needed for PendingOrders
 
+20090603
+--------
+
+- Foreign keys are now rendered as clickable links to the pointed object's page. Clickable Pointers. 
+  - :meth:`lino.django.utils.sites.LinoSite.get_instance_url`
+  - :class:`lino.django.utils.reports.ReportMetaclass`
+
+20090604
+--------
+
+- New :class:`lino.django.igen.models.InvoicingTerm`
+
 
 .. _latest-news:
