@@ -27,7 +27,8 @@ from django.utils.safestring import mark_safe
 
 from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 
-
+#from lino.django.utils.journals import Journal
+from lino.django.utils import journals
 
 def linkto(href,text=None):
     if text is None:
@@ -248,15 +249,11 @@ class Product(TomModel):
         return self.name
         
 
-class Document(TomModel):
+
+class Document(journals.Document):
     
-    #~ STATUS_CHOICES = (
-        #~ ('N', 'New'),
-        #~ ('S', 'Sent'),
-        #~ ('X', 'Exported'),
-    #~ )
-    #journal = models.ForeignKey(Journal)
-    number = models.AutoField(primary_key=True)
+    #~ journal = models.ForeignKey(Journal)
+    #~ number = models.IntegerField()
     creation_date = MyDateField() #auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
@@ -266,7 +263,8 @@ class Document(TomModel):
     trmode = models.ForeignKey(TransmissionMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    remark = models.CharField("Remark for internal use",max_length=200,blank=True)
+    remark = models.CharField("Remark for internal use",
+      max_length=200,blank=True)
     subject = models.CharField("Subject line",max_length=200,blank=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
@@ -276,11 +274,6 @@ class Document(TomModel):
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     #~ class Meta:
         #~ abstract = True
-        
-    def __unicode__(self):
-        if self.number is None:
-            return "Unsaved %s" % self.__class__.__name__
-        return "%s # %d" % (self.__class__.__name__,self.number)
         
     def add_item(self,product=None,qty=None,**kw):
         if product is not None:
@@ -306,6 +299,7 @@ class Document(TomModel):
                 #~ total_vat += i.total_excl() * 0.18
         self.total_excl = total_excl
         self.total_vat = total_vat
+        
         
 class OrderManager(models.Manager):
   
@@ -428,7 +422,7 @@ class Order(Document):
         self.save()
         return invoice
             
-        
+journals.register_doctype(Order)        
         
     
 class Invoice(Document):
@@ -483,7 +477,17 @@ class DocItem(TomModel):
             self.total = self.unitPrice * self.qty
         self.document.save() # update total in document
     before_save.alters_data = True
-        
+
+journals.register_doctype(Invoice)
+
+
+
+
+
+
+
+
+
 
 
 
