@@ -20,5 +20,6 @@
 # menu setup
 #
 def lino_setup(lino):
-    import models
-    models.lino_setup(lino)
+    pass
+    #import models
+    #models.lino_setup(lino)

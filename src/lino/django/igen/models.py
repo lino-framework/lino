@@ -28,7 +28,7 @@ from django.utils.safestring import mark_safe
 from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 
 #from lino.django.utils.journals import Journal
-from lino.django.utils import journals
+from lino.django.journals import models as journals
 
 def linkto(href,text=None):
     if text is None:
@@ -184,12 +184,13 @@ u'Example & Co (Luc Saffre)'
     as_address.allow_tags=True
 
 
-class TransmissionMode(models.Model):
+class InvoicingMode(models.Model):
     CHANNEL_CHOICES = (
         ('P', 'Regular Mail'),
         ('E', 'E-Mail'),
     )
     id = models.CharField(max_length=3, primary_key=True)
+    journal = models.ForeignKey(journals.Journal)
     name = models.CharField(max_length=200)
     price = PriceField(blank=True,null=True)
     channel = models.CharField(max_length=1, 
@@ -220,6 +221,7 @@ class PaymentTerm(TomModel):
         d = date1 + relativedelta(months=self.months,days=self.days)
         return d
 
+
 class ShippingMode(TomModel):
     name = models.CharField(max_length=200)
     price = PriceField(blank=True,null=True)
@@ -247,10 +249,19 @@ class Product(TomModel):
     
     def __unicode__(self):
         return self.name
-        
 
+class DocumentRule(models.Model):
+    journal = models.ForeignKey(journals.Journal,blank=True,null=True)
+    imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
+    shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    
+def get_document_rule(doc):
+    for r in DocumentRule.objects.all().order_by("id"):
+        if r.journal is None or r.journal == doc.journal:
+            return r
 
-class Document(journals.Document):
+class Document(journals.AbstractDocument):
     
     #~ journal = models.ForeignKey(Journal)
     #~ number = models.IntegerField()
@@ -260,7 +271,7 @@ class Document(journals.Document):
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
       related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
-    trmode = models.ForeignKey(TransmissionMode)
+    imode = models.ForeignKey(InvoicingMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     remark = models.CharField("Remark for internal use",
@@ -290,6 +301,17 @@ class Document(journals.Document):
     total_incl.field = PriceField()
 
     def before_save(self):
+      
+        r = get_document_rule(self)
+        if r is None:
+            raise journals.DocumentError("no document rule")
+        if self.imode is None:
+            self.imode = r.imode
+        if self.shipping_mode is None:
+            self.shipping_mode = r.shipping_mode
+        if self.shipping_mode is None:
+            self.shipping_mode = r.shipping_mode
+      
         total_excl = 0
         total_vat = 0
         for i in self.docitem_set.all():
@@ -373,7 +395,7 @@ class Order(Document):
             covered_until = self.start_date - ONE_DAY
             
         expect_payment = self.payment_term.get_due_date(make_until)
-        expect_payment += relativedelta(days=self.trmode.advance_days)
+        expect_payment += relativedelta(days=self.imode.advance_days)
           
         if expect_payment < covered_until:
             return # no invoice needed today
@@ -403,16 +425,17 @@ class Order(Document):
             items.append(d)
         if simulate:
             return True
-        invoice = Invoice(creation_date=today,order=self,
+        invoice = self.imode.journal.create_document(
+            creation_date=today,order=self,
             customer=self.customer,
             ship_to=self.ship_to,
-            trmode=self.trmode,
+            imode=self.imode,
             payment_term=self.payment_term,
             shipping_mode=self.shipping_mode,
             subject=cover_text,
             your_ref=unicode(self),
             )
-        invoice.save()
+        #invoice.save()
         for d in items:
             invoice.add_item(**d).save()
             #i = DocItem(document=invoice,**d)
@@ -583,8 +606,8 @@ class ShippingModes(reports.Report):
     #~ def can_view(self,request):
       #~ return request.user.is_staff
 
-class TransmissionModes(reports.Report):
-    model = TransmissionMode
+class InvoicingModes(reports.Report):
+    model = InvoicingMode
     order_by = "id"
     can_view = perms.is_staff
 
@@ -614,7 +637,7 @@ class DocumentPageLayout(layouts.PageLayout):
       ship_to
       """
     box2 = """
-      trmode
+      imode
       shipping_mode 
       payment_term
       vat_exempt item_vat
@@ -667,7 +690,7 @@ class Orders(reports.Report):
     model = Order
     order_by = "number"
     page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
-    columnNames = "number:4 creation_date customer:20 trmode " \
+    columnNames = "number:4 creation_date customer:20 imode " \
                   "remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     can_view = perms.is_authenticated
@@ -698,7 +721,7 @@ class DocumentsToSend(Invoices):
     filter = dict(can_send=False)
     can_add = perms.never
     columnNames = "number:4 can_send order creation_date " \
-                  "customer:10 trmode " \
+                  "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
     
   
@@ -832,7 +855,7 @@ def lino_setup(lino):
     
     m = lino.add_menu("config","~Configuration",
       can_view=perms.is_staff)
-    m.add_action(TransmissionModes())
+    m.add_action(InvoicingModes())
     m.add_action(ShippingModes())
     m.add_action(PaymentTerms())
     m.add_action(Languages())

@@ -103,10 +103,11 @@ class ManyToManyConverter(Converter):
       
 class Instantiator:
     def __init__(self,model_class,fieldnames=None,
-          converter_classes={}):
+          converter_classes={},**kw):
         if type(fieldnames) == str:
             fieldnames = fieldnames.split()
         self.model_class = model_class
+        self.default_values = kw
         #self.fieldnames = fieldnames
         lookup_fields = {}
         self.converters = []
@@ -160,6 +161,7 @@ class Instantiator:
         for c in self.converters:
             kw = c.convert(**kw)
         m2m = kw.pop("_m2m")
+        kw.update(self.default_values)
         instance = self.model_class(**kw)
         instance.save()
         for k,v in m2m.items():
