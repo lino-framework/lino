@@ -1,5 +1,19 @@
 {% extends "lino/report.html" %}
 
 {% block content %}
+
+{% if report.has_actions %}
+<form action="{{form_action}}" method="POST">
+On selected rows: {{ report.submit_buttons }}
+{% endif %}
+
 {% include "lino/includes/grid_show.html" %}
+
+{% if report.has_actions %}
+On selected rows: {{ report.submit_buttons }}
+</form>
+{% endif %}
+
 {% endblock content %}
+
+  

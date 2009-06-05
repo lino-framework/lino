@@ -723,6 +723,11 @@ class DocumentsToSend(Invoices):
     columnNames = "number:4 can_send order creation_date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
+                  
+    def sign(self,renderer):
+        for doc in renderer.selected():
+            doc.user = request.user
+            doc.save()
     
   
 class InvoicesByOrder(reports.Report):

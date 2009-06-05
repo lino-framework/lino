@@ -54,6 +54,8 @@ from lino.django.utils.requests import again, get_redirect, redirect_to
 from lino.django.utils import editing
 from lino.django.utils.sites import lino_site
 
+IS_SELECTED = 'IS_SELECTED_%d'
+
 
 class ElementServer:
     def __init__(self,form):
@@ -95,108 +97,111 @@ class ElementServer:
         raise NotImplementedError
 
     def field_as_readonly(self,elem):
-        value = self.get_value(elem)
-        model_field = self.get_model_field(elem)
-        if model_field is None:
-            if isinstance(value,Manager):
-                try:
+      
+        def SPAN(text,style):
+            return """<span class="textinput"
+            style="%s">%s</span>
+            """ % (style,text)
+        try:
+            value = self.get_value(elem)
+            if value is None:
+                return ''
+            model_field = self.get_model_field(elem)
+            if model_field is None:
+                if isinstance(value,Manager):
                     value = "<br/>".join(
                       [unicode(o) for o in value.all()])
                     label = elem.name
                     #widget=widget_for_value(value)
                     widget = forms.TextInput()
-                except Exception, e:
-                    print e
-            # so it is a method
-            elif hasattr(value,"field"):
-                #print "it is a method"
-                field = value.field
-                value = value()
-                #print value
-                if field.verbose_name:
-                    label = field.verbose_name
+                # so it is a method
+                elif hasattr(value,"field"):
+                    #print "it is a method"
+                    field = value.field
+                    value = value()
+                    #print value
+                    if field.verbose_name:
+                        label = field.verbose_name
+                    else:
+                        label = elem.name.replace('_', ' ')
+                    #print label
+                    widget = field.formfield().widget
+                    #print widget
                 else:
+                    value = value()
+                    #~ from lino.django.tom import reports
+                    #~ if isinstance(value,reports.Report):
+                        #~ return value.as_html()
+                    #label = self.name
                     label = elem.name.replace('_', ' ')
-                #print label
-                widget = field.formfield().widget
-                #print widget
+                    #widget=widget_for_value(value)
+                    widget = forms.TextInput()
             else:
-                value = value()
-                #~ from lino.django.tom import reports
-                #~ if isinstance(value,reports.Report):
-                    #~ return value.as_html()
-                #label = self.name
-                label = elem.name.replace('_', ' ')
-                #widget=widget_for_value(value)
-                widget = forms.TextInput()
-        else:
-            label = model_field.verbose_name
-            form_field = model_field.formfield() 
-            if form_field is None:
-                form_field = forms.CharField()
-                #return ''
-            #print self.instance, field.name
-            widget = form_field.widget
-            
-        #print field_element.name, repr(value)
-        
-        def SPAN(text,style):
-            return """<span class="textinput"
-            style="%s">%s</span>
-            """ % (style,text)
-            
-        if isinstance(widget, forms.CheckboxInput):
-            if value:
-                s = "[X]"
-            else: 
-                s = "[&nbsp;&nbsp;]"
-            s = SPAN(s,style="width:2em;" )
-            if elem.layout.show_labels:
-                s += " " + label
-            return mark_safe(s)
-            
-        #~ if value is None: # or len(value) == 0:
-            #~ value = '&nbsp;'
-        #~ else:
-            #~ value = unicode(value)
-        
-        
-        style = widget.attrs.get('style','')
-        if elem.width is not None:
-            style += "min-width:%dem;" % elem.width
-        else:
-            style += "width:100%;"
-        if elem.height is not None:
-            style += "min-height:%dem;" % (elem.height * 2)
-            # TODO: 
-            
-        if isinstance(widget, forms.SelectMultiple):
-            l = []
-            for o in value.all():
-                url = lino_site.get_instance_url(o)
-                l.append('<a href="%s">%s</a>' % (url,o))
-            s = ",<br/>".join(l)
-            s = SPAN(s,style)
-        elif isinstance(widget, forms.Select):
-            try:
-                url = lino_site.get_instance_url(value)
-                s = '<a href="%s">%s</a>' % (url,value)
-            except Exception,e:
-                print e
-                s = "[&nbsp;" + unicode(value) + "&nbsp;]"
-            s = SPAN(s,style)
-        else:
-            if value is None:
-                value = '&nbsp;'
+                label = model_field.verbose_name
+                form_field = model_field.formfield() 
+                if form_field is None:
+                    form_field = forms.CharField()
+                    #return ''
+                #print self.instance, field.name
+                widget = form_field.widget
+                
+            style = widget.attrs.get('style','')
+            if elem.width is not None:
+                style += "min-width:%dem;" % elem.width
             else:
-                value = unicode(value)
-                if len(value) == 0:
+                style += "width:100%;"
+            if elem.height is not None:
+                style += "min-height:%dem;" % (elem.height * 2)
+                # TODO: 
+                
+            #print field_element.name, repr(value)
+            
+            if isinstance(widget, forms.CheckboxInput):
+                if value:
+                    s = "[X]"
+                else: 
+                    s = "[&nbsp;&nbsp;]"
+                s = SPAN(s,style="width:2em;" )
+                if elem.layout.show_labels:
+                    s += " " + label
+                return mark_safe(s)
+                
+            #~ if value is None: # or len(value) == 0:
+                #~ value = '&nbsp;'
+            #~ else:
+                #~ value = unicode(value)
+                
+            if isinstance(widget, forms.SelectMultiple):
+                l = []
+                for o in value.all():
+                    url = lino_site.get_instance_url(o)
+                    l.append('<a href="%s">%s</a>' % (url,o))
+                s = ",<br/>".join(l)
+                s = SPAN(s,style)
+            elif isinstance(widget, forms.Select):
+                try:
+                    url = lino_site.get_instance_url(value)
+                    s = '<a href="%s">%s</a>' % (url,value)
+                except Exception,e:
+                    traceback.print_exc(e)
+                    s = "[&nbsp;" + unicode(value) + "&nbsp;]"
+                s = SPAN(s,style)
+            else:
+                if value is None:
                     value = '&nbsp;'
-            s = SPAN(value,style)
+                else:
+                    value = unicode(value)
+                    if len(value) == 0:
+                        value = '&nbsp;'
+                s = SPAN(value,style)
+                
+            if elem.layout.show_labels:
+                s = label + "<br/>" + s
+            return mark_safe(s)
+        except Exception, e:
+            traceback.print_exc(e)
+            raise
             
-        if elem.layout.show_labels:
-            s = label + "<br/>" + s
-        return mark_safe(s)
         
 
         
@@ -222,19 +227,21 @@ class Row(ElementServer):
         
     def as_html(self):
         try:
-            #return r.render_to_string()
             return self.report.row_layout.bound_to(self).as_html()
         except Exception,e:
             print "Exception in Row.as_html():"
             traceback.print_exc()
             raise e
+            
 
     def links(self):
         l = []
         l.append('<a href="%s">%s</a>' % (
             self.get_url_path(),unicode(self.instance)))
+        if self.renderer.is_main:
+            l.append(unicode(self.renderer.selector[IS_SELECTED % self.number]))
         #print "<br/>".join(l)
-        return mark_safe("\n".join(l))
+        return mark_safe("<br/>".join(l))
 
     def has_previous(self):
         return self.number > 1
@@ -342,12 +349,29 @@ class ViewReportRenderer(ReportRenderer):
       
     #~ def can_change(self):
         #~ return self.report.can_change(self.request)
+        
+    def has_actions(self):
+        return False
+        
+    def row_buttons(self):
+        l = []
+        for name,func in self.get_row_actions():
+            l.append('<input type="submit" name="row_action" value="%s">' % name)
+        return mark_safe('&nbsp;'.join(l))
+        
+    def get_row_actions(self):
+        return [] # empty iterator
+        
+        
+    def setup(self):
+        pass
             
     def render_to_response(self,**kw):
         url = get_redirect(self.request)
         if url:
             #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
+        self.setup()
         context = lino_site.context(self.request,
           report = self,
           title = self.get_title(),
@@ -358,6 +382,7 @@ class ViewReportRenderer(ReportRenderer):
             context_instance=template.RequestContext(self.request))
         
     def render_to_string(self):
+        self.setup()
         context=dict(
           report = self,
         )
@@ -400,8 +425,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 page = paginator.page(pgn)
             except (EmptyPage, InvalidPage):
                 page = paginator.page(paginator.num_pages)
-            self.page=page
-
+            self.page = page
+            
         
     #~ def position_string(self):
         #~ return  "Page %d of %d." % (self.page.number,
@@ -474,9 +499,56 @@ class ViewManyReportRenderer(ViewReportRenderer):
         except Exception,e:
             traceback.print_exc(e)
             raise
+            
+    def setup(self):
+        if self.request.method == 'POST':
+            frm = SelectorForm(self.request.POST)
+        else:
+            frm = SelectorForm()
+        i = 0
+        for row in self.rows():
+            i += 1
+            frm.fields[IS_SELECTED % i] = forms.BooleanField(initial=False,required=False)
+        self.selector = frm
+        
+        if not self.selector.is_valid():
+            print "self.selector.is_valid() False"
+            print self.selector.errors
+            return 
+        
+        action = getattr(self,self.selector.data['row_action']+"_action")
+        
+        for row in self.selected_rows():
+            action(row)
+
+        #print self.selector.data
+            
+    def selected_rows(self):
+        #~ for i  in range(10):
+            #~ yield self.selector[IS_SELECTED % i]
+        i = 0
+        for row in self.rows():
+            i += 1
+            if self.selector.cleaned_data[IS_SELECTED % i]:
+                yield row
+                
+    def has_actions(self):
+        return True
+            
+    def get_row_actions(self):
+        yield ('dummy',self.dummy_action)
+        yield ('delete',self.delete_action)
+            
+    def delete_action(self,row):
+        print "WOULD DELETE:", row.instance
+    def dummy_action(self,row):
+        print "DUMMY:", row.instance
 
 ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
 
+class SelectorForm(forms.Form):
+    pass
+    
 
 
 class RowViewReportRenderer(ViewReportRenderer):
@@ -600,8 +672,8 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
     template_to_reponse = "lino/grid_edit.html"
         
     def __init__(self,*args,**kw):
-        ViewManyReportRenderer.__init__(self,*args,**kw)
         #print self.__class__.__name__,"__init__()"
+        ViewManyReportRenderer.__init__(self,*args,**kw)
         
         fs_args = {}
         if self.report.master is not None:
