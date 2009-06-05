@@ -314,6 +314,20 @@ class Report:
     #~ def as_html(self, **kw):
         #~ return render.HtmlReportRenderer(self,**kw).render_to_string()
         
+    def get_row_actions(self,renderer):
+        l = []
+        #l.append( ('dummy',self.dummy) )
+        if self.can_change.passes(renderer.request):
+            l.append( ('delete',self.delete_selected) )
+        return l
+            
+    def delete_selected(self,renderer):
+        for row in renderer.selected_rows():
+            print "DELETE:", row.instance
+            row.instance.delete()
+        renderer.must_refresh()
+        
+        
 
 
 #~ class SubReport(Report):

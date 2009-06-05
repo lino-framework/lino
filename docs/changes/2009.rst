@@ -321,4 +321,14 @@ This way of doing has unresolved issues:
   
 - Committed revision 694.
 
+- The next big step is done: row actions. DocumentsToSend is a first usage example. You can select one or several rows in the grid view, then click on "sign" to sign them. Since this list shows only unsigned documents, they then disappear from this list.
+
+  Deleting rows is now also done using this mechanism, no longer using Django's FormSet.can_delete trick. In fact I find it strange that FormSet has a can_delete and can_order, but not a can_select...
+  
+  There are lots of little bugs hanging around, but the proof of concept is now almost complete.
+
+  TODO: confirmation dialog before deleting rows...
+
+- Committed revision 696.
+
 .. _latest-news:

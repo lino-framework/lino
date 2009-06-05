@@ -41,7 +41,7 @@ def get_redirect(request):
     if hasattr(request,"redirect_to"):
         return request.redirect_to
         
-def redirect_to(request,url):        
+def redirect_to(request,url):
     request.redirect_to = url
 
 

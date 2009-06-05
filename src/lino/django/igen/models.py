@@ -30,6 +30,8 @@ from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 #from lino.django.utils.journals import Journal
 from lino.django.journals import models as journals
 
+from django.contrib.auth.models import User
+
 def linkto(href,text=None):
     if text is None:
         text=href
@@ -282,6 +284,7 @@ class Document(journals.AbstractDocument):
     total_excl = PriceField(default=0)
     total_vat = PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
+    user = models.ForeignKey(User,blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     #~ class Meta:
         #~ abstract = True
@@ -451,7 +454,7 @@ journals.register_doctype(Order)
 class Invoice(Document):
     due_date = MyDateField("Payable until",blank=True,null=True)
     order = models.ForeignKey(Order,blank=True,null=True)
-    can_send = models.BooleanField(default=False)
+    #can_send = models.BooleanField(default=False)
     
     
     def before_save(self):
@@ -632,7 +635,7 @@ class Products(reports.Report):
     
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
-      number your_ref creation_date
+      number your_ref creation_date user
       customer 
       ship_to
       """
@@ -711,23 +714,29 @@ class Invoices(reports.Report):
     model = Invoice
     order_by = "number"
     page_layouts = (InvoicePageLayout,)
-    columnNames = "number:4 can_send creation_date due_date " \
+    columnNames = "number:4 creation_date due_date " \
                   "customer:10 " \
                   "total_incl order subject:10 remark:10 " \
-                  "total_excl total_vat "
+                  "total_excl total_vat user "
     can_view = perms.is_staff
 
 class DocumentsToSend(Invoices):
-    filter = dict(can_send=False)
+    filter = dict(user__exact=None)
     can_add = perms.never
-    columnNames = "number:4 can_send order creation_date " \
+    columnNames = "number:4 order creation_date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
                   
-    def sign(self,renderer):
-        for doc in renderer.selected():
-            doc.user = request.user
-            doc.save()
+    def get_row_actions(self,renderer):
+        l = super(Invoices,self).get_row_actions(renderer)
+        l.append( ('sign', self.sign_selected)  )
+        return l 
+        
+    def sign_selected(self,renderer):
+        for row in renderer.selected_rows():
+            row.instance.user = renderer.request.user
+            row.instance.save()
+        renderer.must_refresh()
     
   
 class InvoicesByOrder(reports.Report):

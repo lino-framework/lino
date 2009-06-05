@@ -5,8 +5,11 @@
 
 {% block navigation %}
 
-{{ report.navigator }}
-{{ report.actions }}
+<div class="pagination">
+<span class="step-links">{{ report.navigator }}</span>
+<span class="position">{{ report.position_string }}</span>
+</div>
+<div class="view_modes">view_modes: {{ report.view_modes }}</div>
 
 <form action="" method="GET">
 <ul class="report_params">

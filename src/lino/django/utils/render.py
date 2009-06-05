@@ -238,7 +238,7 @@ class Row(ElementServer):
         l = []
         l.append('<a href="%s">%s</a>' % (
             self.get_url_path(),unicode(self.instance)))
-        if self.renderer.is_main:
+        if self.renderer.selector is not None:
             l.append(unicode(self.renderer.selector[IS_SELECTED % self.number]))
         #print "<br/>".join(l)
         return mark_safe("<br/>".join(l))
@@ -333,6 +333,8 @@ class ReportRenderer:
 class ViewReportRenderer(ReportRenderer):
   
     editing = 0
+    selector = None
+    #must_refresh = False
     
     def __init__(self,request,is_main,report,*args,**kw):
         if is_main:
@@ -342,6 +344,7 @@ class ViewReportRenderer(ReportRenderer):
         ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
         self.is_main = is_main
+        self._actions = self.report.get_row_actions(self)
 
 
     def again(self,*args,**kw):
@@ -353,25 +356,40 @@ class ViewReportRenderer(ReportRenderer):
     def has_actions(self):
         return False
         
+    #~ def grid_buttons(self):
+        #~ if self.editing:
+            #~ s = '<input type="submit" name="submit" value="Save" />'
+        #~ return mark_safe(s)
+        #~ l = []
+        #~ for name,func in self.get_grid_actions():
+            #~ l.append('<input type="submit" name="grid_action" value="%s">' % name)
+        #~ return mark_safe('&nbsp;'.join(l))
+        
     def row_buttons(self):
         l = []
-        for name,func in self.get_row_actions():
+        for name,func in self._actions:
             l.append('<input type="submit" name="row_action" value="%s">' % name)
         return mark_safe('&nbsp;'.join(l))
         
     def get_row_actions(self):
-        return [] # empty iterator
-        
+        return []
+
+    #~ def get_grid_actions(self):
+        #~ return [] # empty iterator
+
         
     def setup(self):
         pass
-            
+        
     def render_to_response(self,**kw):
+        self.setup()
+        #~ if self.must_refresh:
+            #~ url = self.again()
+        #~ else:
         url = get_redirect(self.request)
-        if url:
+        if url is not None:
             #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
-        self.setup()
         context = lino_site.context(self.request,
           report = self,
           title = self.get_title(),
@@ -440,34 +458,25 @@ class ViewManyReportRenderer(ViewReportRenderer):
         
           
         
-    def actions(self):
-        s = """
-        <div class="actions">
-        """
+    def view_modes(self):
         if self.editing:
-            s += ' <a href="%s">%s</a>' % (
+            s = ' <a href="%s">%s</a>' % (
               self.again(editing=0),"show")
         else:
-            s += ' <a href="%s">%s</a>' % (
+            s = ' <a href="%s">%s</a>' % (
               self.again(editing=1),"edit")
-        s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
-        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        s += "</div>"
+            s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
+            s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         return mark_safe(s)
         
     def navigator(self):
-        s = """
-        <div class="pagination">
-        <span class="step-links">
-        """
         page = self.page
-            
         text = "&#x25C4;Previous"
         if page.has_previous():
-            s += '<a href="%s">%s</a>' % (
+            s = '<a href="%s">%s</a>' % (
               self.again(pgn=page.number-1),text)
         else:
-            s += text
+            s = text
         s += " "
         text = "Next&#x25BA;"
         if page.has_next():
@@ -475,11 +484,6 @@ class ViewManyReportRenderer(ViewReportRenderer):
               self.again(pgn=page.number+1),text)
         else:
             s += text
-        s += " "
-
-        s += "</span>"
-        s += ' <span class="position">%s</span>' % self.position_string()
-        s += "</div>"
         return mark_safe(s)
         
         
@@ -508,7 +512,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
         i = 0
         for row in self.rows():
             i += 1
-            frm.fields[IS_SELECTED % i] = forms.BooleanField(initial=False,required=False)
+            frm.fields[IS_SELECTED % i] = forms.BooleanField(required=False)
         self.selector = frm
         
         if not self.selector.is_valid():
@@ -516,16 +520,20 @@ class ViewManyReportRenderer(ViewReportRenderer):
             print self.selector.errors
             return 
         
-        action = getattr(self,self.selector.data['row_action']+"_action")
+        action_name = self.selector.data.get('row_action',None)
+        if action_name is None:
+            return
+        for name,action in self._actions:
+            if name == action_name:
+                return action(self)
+        #~ action = getattr(self,action_name+"_action")
         
-        for row in self.selected_rows():
-            action(row)
+        #~ for row in self.selected_rows():
+            #~ action(row)
 
         #print self.selector.data
             
     def selected_rows(self):
-        #~ for i  in range(10):
-            #~ yield self.selector[IS_SELECTED % i]
         i = 0
         for row in self.rows():
             i += 1
@@ -533,22 +541,19 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 yield row
                 
     def has_actions(self):
-        return True
+        return len(self._actions) > 0
             
-    def get_row_actions(self):
-        yield ('dummy',self.dummy_action)
-        yield ('delete',self.delete_action)
-            
-    def delete_action(self,row):
-        print "WOULD DELETE:", row.instance
-    def dummy_action(self,row):
-        print "DUMMY:", row.instance
+        
+    def must_refresh(self):
+        redirect_to(self.request,self.again()) 
+        
+    #~ def dummy(self,row):
+        #~ print "DUMMY:", row.instance
 
 ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
 
 class SelectorForm(forms.Form):
     pass
-    
 
 
 class RowViewReportRenderer(ViewReportRenderer):
@@ -607,23 +612,19 @@ class ViewOneReportRenderer(RowViewReportRenderer):
     template_to_reponse = "lino/page_show.html"
     
         
-    def actions(self):
-        s = """
-        <div class="actions">
-        """
+    def view_modes(self):
         if self.editing:
-            s += ' <a href="%s">%s</a>' % (
+            s = ' <a href="%s">%s</a>' % (
               self.again(editing=0),"show")
         else:
-            s += ' <a href="%s">%s</a>' % (
+            s = ' <a href="%s">%s</a>' % (
               self.again(editing=1),"edit")
-        s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
-        s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        s += "</div>"
+            s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
+            s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
         return mark_safe(s)
         
     def navigator(self):
-        s = """<div class="pagination"><span class="step-links">"""
+        s = "" # """<div class="pagination"><span class="step-links">"""
         page = self.row
         get_var_name = "row"
 
@@ -643,10 +644,6 @@ class ViewOneReportRenderer(RowViewReportRenderer):
               #self.again(**{get_var_name: page.number+1}),text)
         else:
             s += text
-        #if self.can_change():
-        s += '</span>'
-        s += '<span class="position">%s</span>' % self.position_string()
-        s += '</div>'
         return mark_safe(s)
 
     def get_title(self):
@@ -654,19 +651,11 @@ class ViewOneReportRenderer(RowViewReportRenderer):
 
 
 
-class EditReportRenderer:  # Mixin class
-  
-    editing = 1
-    
-    #~ def new_column(self,field,*args):
-        #~ if field.editable and not field.primary_key:
-            #~ return FormFieldColumn(self,field,*args)
-        #~ return FieldColumn(self,field,*args)
-        
 
-class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
+class EditManyReportRenderer(ViewManyReportRenderer):
+    editing = 1
     extra = 1
-    can_delete = True
+    can_delete = False # True
     can_order = False
     template_to_string = "lino/includes/grid_edit.html"
     template_to_reponse = "lino/grid_edit.html"
@@ -704,7 +693,8 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
                 if self.can_delete and fs.deleted_forms:
                     for form in fs.deleted_forms:
                         print "Deleted:", form.instance
-                editing.stop_editing(self.request)
+                #editing.stop_editing(self.request)
+                redirect_to(self.request,self.again(editing=0))
                 """
                 start from begin because paginator and page must reload
                 e.g. if an instance has been added, it may now be at 
@@ -732,7 +722,8 @@ class EditManyReportRenderer(EditReportRenderer,ViewManyReportRenderer):
             rownum += 1
 
     
-class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
+class EditOneReportRenderer(ViewOneReportRenderer):
+    editing = 1
     detail_renderer = EditManyReportRenderer
     template_to_string = "lino/includes/page_edit.html"
     template_to_reponse = "lino/page_edit.html"
@@ -745,8 +736,9 @@ class EditOneReportRenderer(EditReportRenderer,ViewOneReportRenderer):
             if frm.is_valid():
                 #print self.__class__.__name__, "valid"
                 frm.save()
-                editing.stop_editing(self.request)
-                #redirect_to(self.request,self.again(editing=None))
+                #print "SAVED:", self.row.instance
+                #editing.stop_editing(self.request)
+                redirect_to(self.request,self.again(editing=0))
                 #return HttpResponseRedirect(self.again(editing=None))
             else:
                 print frm.errors
