@@ -303,17 +303,22 @@ This way of doing has unresolved issues:
 --------
 
 - Journals and Documents now functioning. 
+  The main visible result is that 
+  http://127.0.0.1:8000/contacts/contacts/4?tab=1
+  is now able to show the documents' class (order or invoice)
+  
+- Document.number won't be with a document counter Journal.lastnum as in TIM.
   Karen Tracey helped me to think on this.
   http://groups.google.com/group/django-users/browse_thread/thread/227e9a638e4333fc
   
   TODO:
   - leave Journal and Document as a separate application "journals"?
-    
   - payment terms, shipping modes and invoicing modes: 
     how to make configurable default values for these settings? 
     Per Journal (by subclassing journals.Journal)?
     Currently this is in DocumentRule, but maybe rather a "template document" with number -1 ?
   - Is InvoicingMode the right word? If yes, then imode should be only in Order, not in Document.
-
+  
+- Committed revision 694.
 
 .. _latest-news:
