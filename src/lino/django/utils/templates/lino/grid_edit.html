@@ -4,9 +4,9 @@
 
 <form action="{{form_action}}" method="POST">
 All rows: <input type="submit" name="submit" value="Save" />
-<br>On selected rows: {{ report.submit_buttons }}
+<br>On selected rows: {{ report.row_buttons }}
 {% include "lino/includes/grid_edit.html" %}
 All rows: <input type="submit" name="submit" value="Save" />
-<br>On selected rows: {{ report.submit_buttons }}
+<br>On selected rows: {{ report.row_buttons }}
 </form>
 {% endblock content %}
