@@ -17,15 +17,20 @@
 
 from django.db import models
 
+from django.utils.safestring import mark_safe
+
+
 from lino.django.utils.models import Language
+from lino.django.utils.render import HREF
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
-    country = models.ForeignKey('utils.Country',blank=True,null=True)
+    country = models.ForeignKey('utils.Country')
     
     def __unicode__(self):
         return self.name
         
+
 class PersonManager(models.Manager):
     def get_by_name(self,s):
         #print "get_by_name(%r)" % s
@@ -100,6 +105,14 @@ class Singer(Person):
             s += " (%s)" % self.voice
         return s
     
+class Choir(models.Model):
+    name = models.CharField(max_length=200)
+    place = models.ForeignKey(Place)
+    singers = models.ManyToManyField(Singer)
+    
+    def __unicode__(self):
+        return self.name
+        
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
@@ -136,6 +149,7 @@ class Song(models.Model):
         
 class Event(models.Model):
     date = models.DateField('date',blank=True,null=True)
+    choir = models.ForeignKey(Choir)
     singers = models.ManyToManyField(Singer)
     songs = models.ManyToManyField(Song)
     remark = models.TextField(blank=True,null=True)
@@ -152,6 +166,18 @@ class Rehearsal(Event):
 class Performance(Event):
     place = models.ForeignKey(Place)
         
+class Note(models.Model):
+    url = models.URLField()
+    #text = models.CharField(max_length=200)
+    date = models.DateField('date',blank=True,null=True)
+    song = models.ForeignKey(Song,blank=True,null=True)
+    event = models.ForeignKey(Event,blank=True,null=True)
+
+    def __unicode__(self):
+        #if self.text:
+        #    return HREF(self.url,self.text)
+        return HREF(self.url,self.url)
+
 #~ class Work(models.Model):
     #~ class Admin:
         #~ pass
@@ -242,13 +268,17 @@ class Authors(reports.Report):
     #~ master = Song
     #~ columns = "date singers"
     
+
+    
 class SongPageLayout(PageLayout):
     main = """
     id title language voices
     origin based_on bible_ref
     composed_by text_by written_by
-    arranged_by 
+    arranged_by
     translated_by
+    event_set
+    note_set
     #rehearsals
     """
     #~ def inlines(self):
@@ -258,6 +288,12 @@ class Songs(reports.Report):
     model = Song
     page_layouts = (SongPageLayout,)
     columnNames = "id title language voices composed_by text_by written_by"
+
+class Notes(reports.Report):
+    model = Note
+
+class Choirs(reports.Report):
+    model = Choir
 
 
 def lino_setup(lino):
@@ -269,3 +305,4 @@ def lino_setup(lino):
     m.add_action(Songs())
     m.add_action(Collections())
     m.add_action(Places())
+    m.add_action(Notes())

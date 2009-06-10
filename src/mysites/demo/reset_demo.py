@@ -53,7 +53,10 @@ def main():
         % settings.DATABASE_NAME):
         return
     print "reset"
-    call_command('reset',*app_labels,**options)
+    if settings.DATABASE_ENGINE == 'sqlite3':
+        os.remove(settings.DATABASE_NAME)
+    else:
+        call_command('reset',*app_labels,**options)
     #call_command('reset','songs','auth',interactive=False)
     print "syncdb"
     call_command('syncdb',**options)

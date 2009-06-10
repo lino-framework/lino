@@ -304,24 +304,29 @@ This way of doing has unresolved issues:
 
 - Journals and Documents now functioning. 
   The main visible result is that 
-  http://127.0.0.1:8000/contacts/contacts/4?tab=1
+  http://igen.saffre-rumma.ee/contacts/contacts/4?tab=1
   is now able to show the documents' class (order or invoice)
   
 - Document.number won't be with a document counter Journal.lastnum as in TIM.
-  Karen Tracey helped me to think on this.
+  Karen Tracey helped me to think on this:
   http://groups.google.com/group/django-users/browse_thread/thread/227e9a638e4333fc
   
   TODO:
+  
   - leave Journal and Document as a separate application "journals"?
+  
   - payment terms, shipping modes and invoicing modes: 
     how to make configurable default values for these settings? 
-    Per Journal (by subclassing journals.Journal)?
-    Currently this is in DocumentRule, but maybe rather a "template document" with number -1 ?
-  - Is InvoicingMode the right word? If yes, then imode should be only in Order, not in Document.
+    - Per Journal (by subclassing journals.Journal)?
+    - Currently this is in DocumentRule
+    - maybe rather a "template document" with number -1 ?
+    
+  - Is InvoicingMode the right word? 
+    If yes, then imode should be only in Order, not in Document.
   
 - Committed revision 694.
 
-- The next big step is done: row actions. DocumentsToSend is a first usage example. You can select one or several rows in the grid view, then click on "sign" to sign them. Since this list shows only unsigned documents, they then disappear from this list.
+- The next big step is done: row actions. `DocumentsToSend <http://igen.saffre-rumma.ee/docs/documentstosend>`_ is a first usage example. You can select one or several rows in the grid view, then click on "sign" to sign them. Since this list shows only unsigned documents, they then disappear from this list.
 
   Deleting rows is now also done using this mechanism, no longer using Django's FormSet.can_delete trick. In fact I find it strange that FormSet has a can_delete and can_order, but not a can_select...
   
@@ -329,6 +334,6 @@ This way of doing has unresolved issues:
 
   TODO: confirmation dialog before deleting rows...
 
-- Committed revision 696.
+- Committed revision 698.
 
 .. _latest-news:

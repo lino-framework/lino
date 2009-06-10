@@ -27,7 +27,6 @@ import cStringIO
 #from django.conf import settings
 from django import forms
 from django.db import models
-from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 from django import template 
 from django.shortcuts import render_to_response 
@@ -38,6 +37,7 @@ from django.db.models.manager import Manager
 
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
+from django.utils.html import escape
 from django.template.loader import render_to_string, get_template, select_template, Context
 
 try:
@@ -47,15 +47,30 @@ except ImportError:
     pisa = None
 
 
-#from lino.reports.constants import *
 from lino.django.utils import layouts
 from lino.django.utils.requests import again, get_redirect, redirect_to
-#from lino.django.utils.editing import is_editing, stop_editing
 from lino.django.utils import editing
 from lino.django.utils.sites import lino_site
 
 IS_SELECTED = 'IS_SELECTED_%d'
 
+
+def SPAN(text,style):
+    #text = escape(text)
+    return """<span class="textinput"
+    style="%s">%s</span>
+    """ % (style,text)
+    
+def HREF(href,text):
+    text = escape(text)
+    return mark_safe('<a href="%s">%s</a>' % (href,text))
+
+
+
+def short_link(s):
+    return "link"
+    
+    
 
 class ElementServer:
     def __init__(self,form):
@@ -98,10 +113,6 @@ class ElementServer:
 
     def field_as_readonly(self,elem):
       
-        def SPAN(text,style):
-            return """<span class="textinput"
-            style="%s">%s</span>
-            """ % (style,text)
         try:
             value = self.get_value(elem)
             if value is None:
@@ -110,7 +121,7 @@ class ElementServer:
             if model_field is None:
                 if isinstance(value,Manager):
                     value = "<br/>".join(
-                      [unicode(o) for o in value.all()])
+                      [HREF(lino_site.get_instance_url(o),unicode(o)) for o in value.all()])
                     label = elem.name
                     #widget=widget_for_value(value)
                     widget = forms.TextInput()
@@ -189,12 +200,13 @@ class ElementServer:
             else:
                 if value is None:
                     value = '&nbsp;'
+                elif isinstance(model_field,models.URLField):
+                    value = HREF(value,short_link(value))
                 else:
                     value = unicode(value)
                     if len(value) == 0:
                         value = '&nbsp;'
                 s = SPAN(value,style)
-                
             if elem.layout.show_labels:
                 s = label + "<br/>" + s
             return mark_safe(s)

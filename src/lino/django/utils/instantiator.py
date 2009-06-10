@@ -69,13 +69,13 @@ class ForeignKeyConverter(Converter):
         value = kw.get(self.field.name)
         if value is not None:
             model = self.field.rel.to
-            try:
-                p = model.objects.get(
-                **{self.lookup_field: value})
-            except model.DoesNotExist,e:
-                raise DataError("%s.objects.get(%r) : %s" % (
-                      model.__name__,value,e))
-            else:
+            if not isinstance(value,model):
+                try:
+                    p = model.objects.get(
+                    **{self.lookup_field: value})
+                except model.DoesNotExist,e:
+                    raise DataError("%s.objects.get(%r) : %s" % (
+                          model.__name__,value,e))
                 kw[self.field.name] = p
         return kw
 
@@ -158,10 +158,10 @@ class Instantiator:
             if (not isinstance(v,basestring)) or len(v) > 0:
                 kw[self.fields[i].name] = v
             i += 1
+        kw.update(self.default_values)
         for c in self.converters:
             kw = c.convert(**kw)
         m2m = kw.pop("_m2m")
-        kw.update(self.default_values)
         instance = self.model_class(**kw)
         instance.save()
         for k,v in m2m.items():

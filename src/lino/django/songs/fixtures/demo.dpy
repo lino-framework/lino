@@ -69,8 +69,12 @@ author = Instantiator(Author,"first_name last_name born died").build
 translator = Instantiator(Author,"first_name last_name born died").build
 place = Instantiator(Place,"name").build
 
-rehearsal = Instantiator(Rehearsal,"date singers:nickname songs").build
-auftritt = Instantiator(Performance,"date place singers:nickname songs remark").build
+rehearsal = Instantiator(Rehearsal,"date singers:nickname songs",
+  choir=1).build
+auftritt = Instantiator(Performance,
+  "date place singers:nickname songs remark",choir=1).build
+video = Instantiator(Note).build
+choir = Instantiator(Choir,"name place singers:nickname").build
 
 def objects():
 
@@ -78,10 +82,10 @@ def objects():
     yield language('la','Latin')
     yield language('he','Hebrew')
     
-    yield place('Tallinn')
-    yield place('Vigala Maarja kirik') # 2
-    yield place('Paldiski') # 3
-    
+    yield place('Tallinn',country="ee")
+    yield place('Vigala',country="ee") # 2
+    yield place('Paldiski',country="ee") # 3
+    yield place(u'Pärnu',country="ee") # 4
     
     yield singer("ls","Luc","Saffre")
     yield singer("er","Erich","Roots")
@@ -91,6 +95,9 @@ def objects():
     yield singer("rj","Ruth","Johanson")
     yield singer("lr","Ly","Rumma")
     yield singer("bs","Bruno","Saffre")
+    
+    yield choir("Vigala Maarja koguduse ansambel",2,
+      "as kj lr ls er pr rj")
     
     for o in load_yaml(author,'demo_authors.yaml'): yield o
     for o in load_yaml(song,'demo_songs.yaml'): yield o
@@ -110,18 +117,41 @@ def objects():
     yield collection(u"Päevaviisid",songs="""
     37
     """)
-      
     
-    
-    yield auftritt("2007-09-09",2,"pr er as rj kj ls","1 2","Esimene avalik esinemine kohvilaual")
-    yield auftritt("2007-10-21",3,"pr er as rj kj ls","3 4 5 6","Esimemine Paldiskis")
-    yield auftritt("2008-01-06",2,"pr er as rj kj ls","8 9 11","Esinemine Vigala kirikus")
-    yield auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 35",u"Esinemine Vigala kiriku käärkambris")    
+    yield auftritt("2007-09-09",2,"pr er as rj kj ls","1 2",
+      "Esimene avalik esinemine kohvilaual")
+    yield auftritt("2007-10-21",3,"pr er as rj kj ls",
+      "3 4 5 6",
+      "Esimemine Paldiskis")
+    yield auftritt("2008-01-06",2,"pr er as rj kj ls","8 9 11",
+      "Esinemine Vigala kirikus")
+    p20080413 = auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 35",
+      u"Esinemine Vigala kiriku käärkambris")    
+    yield p20080413
     yield auftritt("2008-05-11",2,"pr er as rj kj ls","","Esinemine Vigala kirikus")    
     yield auftritt("2008-05-25",2,"as kj ls","6 35",u"Väike esinemine Vigala kirikus")    
     yield auftritt("2008-06-21",2,"as kj ls bs","1","Iirise ristsed")
-    yield auftritt("2008-09-07",2,"pr er as rj kj ls","18 19",
-      u"Esinemine Vigala kirikus (669. kiriku aastapäev)")    
+    p20080907 = auftritt("2008-09-07",2,"pr er as rj kj ls",
+      "18 19",
+      u"Esinemine Vigala kirikus (669. kiriku aastapäev)")
+    yield p20080907
+    yield video(
+     url="http://www.youtube.com/watch?v=dTDoNCbkZYM&feature=channel_page",
+     song=19,event=p20080907)
+    yield video(
+     url="http://www.youtube.com/watch?v=bqCsSVWF9AA&feature=channel_page",
+     song=18,event=p20080907)
+    
+    yield video(
+     url="http://www.youtube.com/watch?v=Eb-J1G-xjoM&feature=channel_page",
+     song=27,event=p20080413)
+    yield video(
+     url="http://www.youtube.com/watch?v=BwiOyYtf3DI&feature=channel_page",
+     song=35,event=p20080413)
+    yield video(
+     url="http://www.youtube.com/watch?v=Unsyh-fjJaM&feature=channel_page",
+     song=13,event=p20080413)
+     
     yield auftritt("2008-12-24",2,"pr er as rj kj ls","8 21",u"Esinemine Vigala kirikus")    
     yield auftritt("2008-12-31",2,"pr er as rj kj ls","6 10 20",u"Esinemine Vigala kirikus")    
     yield auftritt("2009-04-12",2,"er as kj lr ls","22 25",u"Esinemine Vigala kirikus")
@@ -130,5 +160,39 @@ def objects():
     yield rehearsal("2009-05-03","as kj lr ls","35 32 28 33")
     yield rehearsal("2009-05-17","as kj lr ls pr er","35 26 32 28")
     yield rehearsal("2009-05-24","kj lr ls pr er rj","35 32 33 26 28")
+    yield auftritt("2009-06-07",2,"as kj lr ls er pr","6",
+      u"Jüri saatmine")
+      
+    e = rehearsal("2009-06-07","as kj lr ls pr er",
+      "26 32 33 22 28 20 25 14",remark="Esimene proovipäev")
+    yield e
+      
+    yield video(event=e,url=
+    "http://www.youtube.com/watch?v=7_8r5WevmDI",
+    song=14) 
+      
 
-
+    e = auftritt("2009-06-09",2,"as kj lr ls er pr rj",
+      "14 20 28 22 26 25 6",u"Esinemine Pärnu Eliisabeti kirikus")
+    yield e
+    
+    yield video(event=e,url=
+    "http://www.youtube.com/watch?v=O02OHxv0oSg",
+    song=20) # Õhtul vaiksel tunnil    
+    
+    yield video(event=e,url=
+    "http://www.youtube.com/watch?v=DVbXWWRwWHA",
+    song=28) # ma annan oma südame
+    
+    yield video(event=e,url=
+    "http://www.youtube.com/watch?v=D0Qb9zgMkwI",
+    song=22,event=e) # Sõber kas tunned
+    
+    yield video(event=e,url=
+    "http://www.youtube.com/watch?v=3rRpV8baHEg",
+    song=26) # Peace    
+   
+    yield video(event=e,url=
+    "http://www.youtube.com/watch?v=aDC6kURdhLw",
+    song=6) # vanaiiri
+ 
