@@ -791,33 +791,43 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
             yield Row(self,obj,rownum,None)
             rownum += 1
 
+def print_instance(obj,as_pdf=True,model=None):
+    if model is None:
+        tn = obj._meta.db_table + "_print.html"
+    else:
+        tn = model._meta.db_table + "_print.html"
+    #print tn
+    template = select_template([tn,"lino/page_print.html"])
+    context = dict(
+      #report=self,
+      instance=obj,
+      title = unicode(obj),
+      #title=u"%s - %s" % (self.get_title(),obj),
+      #layout = layout
+    )
+    html = template.render(Context(context))
+    if not (pisa and as_pdf):
+        return html
+    html = html.encode("ISO-8859-1")
+    file('tmp.html','w').write(html)
+    result = cStringIO.StringIO()
+    pdf = pisa.pisaDocument(cStringIO.StringIO(html), result)
+    if pdf.err:
+        raise Exception("pisa.pisaDocument.err is %r" % pdf.err)
+    return result.getvalue()
+
+  
 class PdfOneReportRenderer(ViewOneReportRenderer):
     detail_renderer = PdfManyReportRenderer
 
     def render(self,as_pdf=True):
         #self.row = Row(self,obj,rownum)
-        obj = self.row.instance
-        template = select_template([
-          obj._meta.db_table + "_print.html",
-          "lino/page_print.html"])
-        #~ layout = layouts.InstanceLayoutRenderer(obj,
-          #~ self.report.page_layout(),render_detail=self.render_detail)
-        context = dict(
-          report=self,
-          instance=obj,
-          title=u"%s - %s" % (self.get_title(),obj),
-          #layout = layout
-        )
-        html  = template.render(Context(context))
-        if not (pisa and as_pdf):
-            return HttpResponse(html)
-        result = cStringIO.StringIO()
-        pdf = pisa.pisaDocument(cStringIO.StringIO(\
-                html.encode("ISO-8859-1")), result)
-        if pdf.err:
-            raise Exception(cgi.escape(html))
-        return HttpResponse(result.getvalue(),
-            mimetype='application/pdf')
+        result = print_instance(self.row.instance,as_pdf=as_pdf)
+        if pisa and as_pdf:
+            return HttpResponse(result,
+                mimetype='application/pdf')
+        return HttpResponse(result)
+
 
 
 #~ class RowPrintReportRenderer(RowViewReportRenderer):

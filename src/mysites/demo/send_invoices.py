@@ -26,27 +26,24 @@ setup_environ(settings)
 from lino.console import syscon
 
 from lino.django.utils.sites import lino_site
-from lino.django.igen.models import Order, PendingOrders
+from lino.django.igen.models import Document
 
         
 def main():
     for name,url,version in lino_site.thanks_to():
         print name,version, "<%s>" % url
         
-    rpt = PendingOrders()
-    print rpt.as_text()
-    
-    q = [o for o in Order.objects.pending()]
+    q = [o for o in Document.objects.filter(sent_date__exact=None).exclude(user__exact=None)]
     if len(q) == 0:
         print "Nothing to do"
         return
-    #~ for o in q:
-        #~ print o
-    if not syscon.confirm("Call make_invoices on these orders?"):
+    print "%d documents to send: " % len(q) + ", ".join(str(d) for d in q)
+    #~ for d in q:
+        #~ print d
+    if not syscon.confirm("Call send() on these documents?"):
         return
-    for o in q:
-        i = o.make_invoice()
-        print "%s made %s" % (o,i)
+    for d in q:
+        d.send()
 
 if __name__ == "__main__":
     main()

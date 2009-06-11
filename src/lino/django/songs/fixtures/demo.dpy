@@ -190,7 +190,7 @@ def objects():
     e = auftritt("2009-06-09",4,"as kj lr ls er pr rj",
       u"Esinemine Pärnu Eliisabeti kirikus")
     e.add_song(14)
-    e.add_song(20).add_link(text="Video",remark="salmid 2-5",
+    e.add_song(20,remark="salmid 2-5").add_link(text="Video",
       url="http://www.youtube.com/watch?v=O02OHxv0oSg") 
       # Õhtul vaiksel tunnil    
     e.add_song(28).add_link(text="Video",

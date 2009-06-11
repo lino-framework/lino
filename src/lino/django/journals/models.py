@@ -107,6 +107,9 @@ class AbstractDocument(models.Model):
         self.journal.pre_delete_document(self)
         #print "Deleting", self
         return super(AbstractDocument,self).delete()
+        
+    def get_model(self):
+        return DOCTYPE_CLASSES[self.journal.doctype]
 
 
 

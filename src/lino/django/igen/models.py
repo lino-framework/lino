@@ -26,6 +26,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 from lino.django.utils.validatingmodel import TomModel, ModelValidationError
+from lino.django.utils import render
 
 #from lino.django.utils.journals import Journal
 from lino.django.journals import models as journals
@@ -265,8 +266,6 @@ def get_document_rule(doc):
 
 class Document(journals.AbstractDocument):
     
-    #~ journal = models.ForeignKey(Journal)
-    #~ number = models.IntegerField()
     creation_date = MyDateField() #auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
@@ -285,6 +284,7 @@ class Document(journals.AbstractDocument):
     total_vat = PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
     user = models.ForeignKey(User,blank=True,null=True)
+    sent_date = MyDateField(blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     #~ class Meta:
         #~ abstract = True
@@ -324,6 +324,15 @@ class Document(journals.AbstractDocument):
                 #~ total_vat += i.total_excl() * 0.18
         self.total_excl = total_excl
         self.total_vat = total_vat
+        
+    def send(self,simulate=True):
+        result = render.print_instance(self,model=self.get_model(),as_pdf=True)
+        #print result
+        fn = "%s%d.pdf" % (self.journal.id,self.id)
+        file(fn,"w").write(result)
+        if not simulate:
+            self.sent_date = datetime.date.today()
+            self.save()
         
         
 class OrderManager(models.Manager):
@@ -635,7 +644,8 @@ class Products(reports.Report):
     
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
-      number your_ref creation_date user
+      number your_ref creation_date 
+      user sent_date
       customer 
       ship_to
       """
@@ -720,7 +730,7 @@ class Invoices(reports.Report):
                   "total_excl total_vat user "
     can_view = perms.is_staff
 
-class DocumentsToSend(Invoices):
+class DocumentsToSign(Invoices):
     filter = dict(user__exact=None)
     can_add = perms.never
     columnNames = "number:4 order creation_date " \
@@ -729,14 +739,16 @@ class DocumentsToSend(Invoices):
                   
     def get_row_actions(self,renderer):
         l = super(Invoices,self).get_row_actions(renderer)
-        l.append( ('sign', self.sign_selected)  )
+        
+        def sign(renderer):
+            for row in renderer.selected_rows():
+                row.instance.user = renderer.request.user
+                row.instance.save()
+            renderer.must_refresh()
+            
+        l.append( ('sign', sign) )
         return l 
         
-    def sign_selected(self,renderer):
-        for row in renderer.selected_rows():
-            row.instance.user = renderer.request.user
-            row.instance.save()
-        renderer.must_refresh()
     
   
 class InvoicesByOrder(reports.Report):
@@ -860,7 +872,7 @@ def lino_setup(lino):
       can_view=perms.is_authenticated)
     m.add_action(Orders())
     m.add_action(Invoices())
-    m.add_action(DocumentsToSend())
+    m.add_action(DocumentsToSign())
     m.add_action(PendingOrders())
     
     #~ m = lino.add_menu("admin","~Administration",
