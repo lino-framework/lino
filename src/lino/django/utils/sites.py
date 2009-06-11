@@ -440,8 +440,12 @@ class LinoSite: #(AdminSite):
         return urlpatterns
         #return self._menu.get_urls()
         
-    def get_instance_url(self,instance):
-        return "/o/%s/%s" % (instance._meta.db_table, instance.pk)
+    def get_instance_url(self,o):
+        if hasattr(o,'get_instance_url'):
+            url = o.get_instance_url()
+            if url is not None:
+                return url
+        return "/o/%s/%s" % (o._meta.db_table, o.pk)
         
   
 class Skin:

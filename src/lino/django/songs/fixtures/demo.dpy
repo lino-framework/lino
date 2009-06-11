@@ -37,7 +37,9 @@ def load_yaml(model,filename):
                 for k in yamldict.keys():
                     if k.startswith(";"):
                         del yamldict[k]
-                yield model(**yamldict)
+                o = model(**yamldict)
+                o.save()
+                #yield o
     except Exception,e:
         if RELAX:
             print "RELAX!", pfn+":"+str(e)
@@ -69,11 +71,11 @@ author = Instantiator(Author,"first_name last_name born died").build
 translator = Instantiator(Author,"first_name last_name born died").build
 place = Instantiator(Place,"name").build
 
-rehearsal = Instantiator(Rehearsal,"date singers:nickname songs",
+rehearsal = Instantiator(Rehearsal,"date singers:nickname",
   choir=1).build
 auftritt = Instantiator(Performance,
-  "date place singers:nickname songs remark",choir=1).build
-video = Instantiator(Note).build
+  "date place singers:nickname remark",choir=1).build
+#video = Instantiator(Note,text="video recording").build
 choir = Instantiator(Choir,"name place singers:nickname").build
 
 def objects():
@@ -99,8 +101,10 @@ def objects():
     yield choir("Vigala Maarja koguduse ansambel",2,
       "as kj lr ls er pr rj")
     
-    for o in load_yaml(author,'demo_authors.yaml'): yield o
-    for o in load_yaml(song,'demo_songs.yaml'): yield o
+    #~ for o in load_yaml(author,'demo_authors.yaml'): yield o
+    #~ for o in load_yaml(song,'demo_songs.yaml'): yield o
+    load_yaml(author,'demo_authors.yaml')
+    load_yaml(song,'demo_songs.yaml')
     
     collection = Instantiator(Collection,
       "title place:name").build
@@ -118,81 +122,84 @@ def objects():
     37
     """)
     
-    yield auftritt("2007-09-09",2,"pr er as rj kj ls","1 2",
+    a = auftritt("2007-09-09",2,"pr er as rj kj ls",
       "Esimene avalik esinemine kohvilaual")
-    yield auftritt("2007-10-21",3,"pr er as rj kj ls",
-      "3 4 5 6",
+    a.add_songs(1,2)
+    a = auftritt("2007-10-21",3,"pr er as rj kj ls",
       "Esimemine Paldiskis")
-    yield auftritt("2008-01-06",2,"pr er as rj kj ls","8 9 11",
+    a.add_songs(3,4,5,6)
+    
+    a = auftritt("2008-01-06",2,"pr er as rj kj ls",
       "Esinemine Vigala kirikus")
-    p20080413 = auftritt("2008-04-13",2,"pr er as rj kj ls","34 13 35",
+    a.add_songs(8,9,11)
+    
+    e = auftritt("2008-04-13",2,"pr er as rj kj ls",
       u"Esinemine Vigala kiriku käärkambris")    
-    yield p20080413
-    yield auftritt("2008-05-11",2,"pr er as rj kj ls","","Esinemine Vigala kirikus")    
-    yield auftritt("2008-05-25",2,"as kj ls","6 35",u"Väike esinemine Vigala kirikus")    
-    yield auftritt("2008-06-21",2,"as kj ls bs","1","Iirise ristsed")
-    p20080907 = auftritt("2008-09-07",2,"pr er as rj kj ls",
-      "18 19",
+    e.add_song(34)
+    e.add_song(27).add_link(text="Video",
+     url="http://www.youtube.com/watch?v=Eb-J1G-xjoM&feature=channel_page")
+    e.add_song(35).add_link(text="Video",
+     url="http://www.youtube.com/watch?v=BwiOyYtf3DI&feature=channel_page")
+    e.add_song(13).add_link(text="Video",
+     url="http://www.youtube.com/watch?v=Unsyh-fjJaM&feature=channel_page")
+    
+    a = auftritt("2008-05-11",2,"pr er as rj kj ls",
+      "Esinemine Vigala kirikus")    
+    a = auftritt("2008-05-25",2,"as kj ls",
+      u"Väike esinemine Vigala kirikus")    
+    a.add_songs(6,35)
+    
+    e = auftritt("2008-06-21",2,"as kj ls bs","Iirise ristsed")
+    e.add_songs(1)
+    
+    e = auftritt("2008-09-07",2,"pr er as rj kj ls",
       u"Esinemine Vigala kirikus (669. kiriku aastapäev)")
-    yield p20080907
-    yield video(
-     url="http://www.youtube.com/watch?v=dTDoNCbkZYM&feature=channel_page",
-     song=19,event=p20080907)
-    yield video(
-     url="http://www.youtube.com/watch?v=bqCsSVWF9AA&feature=channel_page",
-     song=18,event=p20080907)
+    e.add_song(18).add_link(text="Video",
+     url="http://www.youtube.com/watch?v=bqCsSVWF9AA&feature=channel_page")
+    e.add_song(19).add_link(text="Video",
+     url="http://www.youtube.com/watch?v=dTDoNCbkZYM&feature=channel_page")
     
-    yield video(
-     url="http://www.youtube.com/watch?v=Eb-J1G-xjoM&feature=channel_page",
-     song=27,event=p20080413)
-    yield video(
-     url="http://www.youtube.com/watch?v=BwiOyYtf3DI&feature=channel_page",
-     song=35,event=p20080413)
-    yield video(
-     url="http://www.youtube.com/watch?v=Unsyh-fjJaM&feature=channel_page",
-     song=13,event=p20080413)
      
-    yield auftritt("2008-12-24",2,"pr er as rj kj ls","8 21",u"Esinemine Vigala kirikus")    
-    yield auftritt("2008-12-31",2,"pr er as rj kj ls","6 10 20",u"Esinemine Vigala kirikus")    
-    yield auftritt("2009-04-12",2,"er as kj lr ls","22 25",u"Esinemine Vigala kirikus")
+    e = auftritt("2008-12-24",2,"pr er as rj kj ls",u"Esinemine Vigala kirikus")
+    e.add_songs(8,21)
     
-    yield rehearsal("2009-04-26","as kj lr ls","35 32 26 28")
-    yield rehearsal("2009-05-03","as kj lr ls","35 32 28 33")
-    yield rehearsal("2009-05-17","as kj lr ls pr er","35 26 32 28")
-    yield rehearsal("2009-05-24","kj lr ls pr er rj","35 32 33 26 28")
-    yield auftritt("2009-06-07",2,"as kj lr ls er pr","6",
+    e = auftritt("2008-12-31",2,"pr er as rj kj ls",u"Esinemine Vigala kirikus")    
+    e.add_songs(6,10,20)
+    
+    e = auftritt("2009-04-12",2,"er as kj lr ls",u"Esinemine Vigala kirikus")
+    e.add_songs(22,25)
+    
+    e = rehearsal("2009-04-26","as kj lr ls")
+    e.add_songs(35,32,26,28)
+    e = rehearsal("2009-05-03","as kj lr ls")
+    e.add_songs(35,32,28,33)
+    e = rehearsal("2009-05-17","as kj lr ls pr er")
+    e.add_songs(35,26,32,28)
+    e = rehearsal("2009-05-24","kj lr ls pr er rj")
+    e.add_songs(35,32,33,26,28)
+    e = auftritt("2009-06-07",2,"as kj lr ls er pr",
       u"Jüri saatmine")
+    e.add_song(6)
       
     e = rehearsal("2009-06-07","as kj lr ls pr er",
-      "26 32 33 22 28 20 25 14",remark="Esimene proovipäev")
-    yield e
+      remark="Esimene proovipäev")
+    e.add_song(14).add_link(text="Video",
+      url="http://www.youtube.com/watch?v=7_8r5WevmDI")
+    e.add_songs(26,32,33,22,28,20,25)
       
-    yield video(event=e,url=
-    "http://www.youtube.com/watch?v=7_8r5WevmDI",
-    song=14) 
-      
-
-    e = auftritt("2009-06-09",2,"as kj lr ls er pr rj",
-      "14 20 28 22 26 25 6",u"Esinemine Pärnu Eliisabeti kirikus")
-    yield e
-    
-    yield video(event=e,url=
-    "http://www.youtube.com/watch?v=O02OHxv0oSg",
-    song=20) # Õhtul vaiksel tunnil    
-    
-    yield video(event=e,url=
-    "http://www.youtube.com/watch?v=DVbXWWRwWHA",
-    song=28) # ma annan oma südame
-    
-    yield video(event=e,url=
-    "http://www.youtube.com/watch?v=D0Qb9zgMkwI",
-    song=22,event=e) # Sõber kas tunned
-    
-    yield video(event=e,url=
-    "http://www.youtube.com/watch?v=3rRpV8baHEg",
-    song=26) # Peace    
-   
-    yield video(event=e,url=
-    "http://www.youtube.com/watch?v=aDC6kURdhLw",
-    song=6) # vanaiiri
+    e = auftritt("2009-06-09",4,"as kj lr ls er pr rj",
+      u"Esinemine Pärnu Eliisabeti kirikus")
+    e.add_song(14)
+    e.add_song(20).add_link(text="Video",remark="salmid 2-5",
+      url="http://www.youtube.com/watch?v=O02OHxv0oSg") 
+      # Õhtul vaiksel tunnil    
+    e.add_song(28).add_link(text="Video",
+      url="http://www.youtube.com/watch?v=DVbXWWRwWHA") 
+      # ma annan oma südame
+    e.add_song(22).add_link(text="Video",
+      url="http://www.youtube.com/watch?v=D0Qb9zgMkwI") # Sõber kas tunned
+    e.add_song(26).add_link(text="Video",
+      url="http://www.youtube.com/watch?v=3rRpV8baHEg") # Peace    
+    e.add_song(6).add_link(text="Video",
+      url="http://www.youtube.com/watch?v=aDC6kURdhLw") # vanaiiri
  

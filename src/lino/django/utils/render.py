@@ -121,7 +121,8 @@ class ElementServer:
             if model_field is None:
                 if isinstance(value,Manager):
                     value = "<br/>".join(
-                      [HREF(lino_site.get_instance_url(o),unicode(o)) for o in value.all()])
+                      [HREF(lino_site.get_instance_url(o),
+                        unicode(o)) for o in value.all()])
                     label = elem.name
                     #widget=widget_for_value(value)
                     widget = forms.TextInput()
@@ -186,13 +187,13 @@ class ElementServer:
                 l = []
                 for o in value.all():
                     url = lino_site.get_instance_url(o)
-                    l.append('<a href="%s">%s</a>' % (url,o))
+                    l.append(HREF(url,unicode(o)))
                 s = ",<br/>".join(l)
                 s = SPAN(s,style)
             elif isinstance(widget, forms.Select):
                 try:
                     url = lino_site.get_instance_url(value)
-                    s = '<a href="%s">%s</a>' % (url,value)
+                    s = HREF(url,value)
                 except Exception,e:
                     traceback.print_exc(e)
                     s = "[&nbsp;" + unicode(value) + "&nbsp;]"

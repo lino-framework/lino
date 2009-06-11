@@ -54,7 +54,8 @@ def main():
         return
     print "reset"
     if settings.DATABASE_ENGINE == 'sqlite3':
-        os.remove(settings.DATABASE_NAME)
+        if settings.DATABASE_NAME != ':memory:':
+            os.remove(settings.DATABASE_NAME)
     else:
         call_command('reset',*app_labels,**options)
     #call_command('reset','songs','auth',interactive=False)

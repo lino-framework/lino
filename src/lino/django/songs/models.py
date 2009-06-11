@@ -151,9 +151,22 @@ class Event(models.Model):
     date = models.DateField('date',blank=True,null=True)
     choir = models.ForeignKey(Choir)
     singers = models.ManyToManyField(Singer)
-    songs = models.ManyToManyField(Song)
-    remark = models.TextField(blank=True,null=True)
+    #songs = models.ManyToManyField(Song,through="SongEvent")
+    remark = models.TextField(blank=True)
+    
+    def add_song(self,song,**kw):
+        if not kw.has_key('seq'):
+            kw['seq'] = self.songevent_set.count() + 1
+        if not isinstance(song,Song):
+            song = Song.objects.get(pk=song)
+        se = SongEvent(event=self,song=song,**kw)
+        se.save()
+        return se
 
+    def add_songs(self,*songs,**kw):
+        for song in songs:
+            self.add_song(song,**kw)
+            
     def __unicode__(self):
         s = str(self.date)
         if self.remark:
@@ -165,18 +178,40 @@ class Rehearsal(Event):
     
 class Performance(Event):
     place = models.ForeignKey(Place)
+    
+class SongEvent(models.Model):
+    event = models.ForeignKey(Event) #,related_name="songs")
+    seq = models.IntegerField(default=0)
+    song = models.ForeignKey(Song,related_name="events")
+    remark = models.TextField(blank=True)
+    
+    def add_link(self,**kw):
+        n = self.link_set.create(**kw)
+        #n = Link(songevent=self,**kw)
+        n.save()
+        return n
         
-class Note(models.Model):
+class Link(models.Model):
     url = models.URLField()
-    #text = models.CharField(max_length=200)
-    date = models.DateField('date',blank=True,null=True)
-    song = models.ForeignKey(Song,blank=True,null=True)
-    event = models.ForeignKey(Event,blank=True,null=True)
+    text = models.CharField(max_length=200)
+    #date = models.DateField('date',blank=True,null=True)
+    songevent = models.ForeignKey(SongEvent)
+    #song = models.ForeignKey(Song)
+    #event = models.ForeignKey(Event,blank=True,null=True)
 
     def __unicode__(self):
+        if self.text:
+            return self.text
+        return models.Model.__unicode__(self)
         #if self.text:
         #    return HREF(self.url,self.text)
-        return HREF(self.url,self.url)
+        #return HREF(self.url,self.url)
+        
+    def get_instance_url(self):
+        # see sites.LinoSite.get_instance_url()
+        if self.url:
+            return self.url
+        
 
 #~ class Work(models.Model):
     #~ class Admin:
@@ -227,8 +262,32 @@ class Collection(models.Model):
 
 from lino.django.utils import reports, perms
 from lino.django.utils.layouts import PageLayout 
+
+
+class SongPageLayout(PageLayout):
+    main = """
+    id title language voices
+    origin based_on bible_ref
+    composed_by text_by written_by
+    arranged_by
+    translated_by
+    events
+    """
+    def inlines(self):
+        return dict(events=EventsBySong())
+
+class PerformancePageLayout(PageLayout):
+    main = """
+    id date place remark 
+    choir
+    songs
+    singers
+    """
+    def inlines(self):
+        return dict(songs=SongsByEvent())
     
 class Rehearsals(reports.Report):
+    #page_layouts = (EventPageLayout,)
     model = Rehearsal
     #page_layout_class = RehearsalPageLayout
     columnNames = "date remark songs:20 singers:10"
@@ -238,6 +297,7 @@ class Performances(reports.Report):
     model = Performance
     columnNames = "date place remark songs:20 singers:10"
     order_by = "date"
+    page_layouts = (PerformancePageLayout,)
     
 
 class Collections(reports.Report):
@@ -263,34 +323,32 @@ class Authors(reports.Report):
     order_by = "last_name"
 
     
-#~ class RehearsalsBySong(reports.Report):
-    #~ model = Rehearsal
-    #~ master = Song
-    #~ columns = "date singers"
+class EventsBySong(reports.Report):
+    model = SongEvent
+    master = Song
+    columnNames = "event remark link_set"
     
-
-    
-class SongPageLayout(PageLayout):
-    main = """
-    id title language voices
-    origin based_on bible_ref
-    composed_by text_by written_by
-    arranged_by
-    translated_by
-    event_set
-    note_set
-    #rehearsals
-    """
-    #~ def inlines(self):
-        #~ return dict(rehearsals=RehearsalsBySong())
+class SongsByEvent(reports.Report):
+    model = SongEvent
+    master = Event
+    columnNames = "seq song link_set remark"
 
 class Songs(reports.Report):
     model = Song
     page_layouts = (SongPageLayout,)
     columnNames = "id title language voices composed_by text_by written_by"
 
-class Notes(reports.Report):
-    model = Note
+class SongEvents(reports.Report):
+    model = SongEvent
+
+class SongsByEvent(reports.Report):
+    model = SongEvent
+    master = Event
+    columnNames = "seq song remark link_set"
+
+
+class Links(reports.Report):
+    model = Link
 
 class Choirs(reports.Report):
     model = Choir
@@ -305,4 +363,5 @@ def lino_setup(lino):
     m.add_action(Songs())
     m.add_action(Collections())
     m.add_action(Places())
-    m.add_action(Notes())
+    m.add_action(Links())
+    m.add_action(SongEvents())
