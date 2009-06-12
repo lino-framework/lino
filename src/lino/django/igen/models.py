@@ -29,7 +29,8 @@ from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 from lino.django.utils import render
 
 #from lino.django.utils.journals import Journal
-from lino.django.journals import models as journals
+#from lino.django.journals import models as journals
+from lino.django.utils import fields, journals
 
 from django.contrib.auth.models import User
 
@@ -37,50 +38,6 @@ def linkto(href,text=None):
     if text is None:
         text=href
     return '<a href="%s">%s</a>' % (href,text)
-        
-class PriceField(models.DecimalField):
-    def __init__(self, *args, **kwargs):
-        defaults = dict(
-            max_length=10,
-            max_digits=10,
-            decimal_places=2,
-            )
-        defaults.update(kwargs)
-        super(PriceField, self).__init__(*args, **defaults)
-        
-    def formfield(self, **kwargs):
-        fld = super(PriceField, self).formfield(**kwargs)
-        # display size is smaller than full size:
-        fld.widget.attrs['size'] = "6"
-        fld.widget.attrs['style'] = "text-align:right;"
-        return fld
-        
-class MyDateField(models.DateField):
-        
-    def formfield(self, **kwargs):
-        fld = super(MyDateField, self).formfield(**kwargs)
-        # display size is smaller than full size:
-        fld.widget.attrs['size'] = "8"
-        return fld
-        
-        
-        
-class QuantityField(models.DecimalField):
-    def __init__(self, *args, **kwargs):
-        defaults = dict(
-            max_length=5,
-            max_digits=5,
-            decimal_places=0,
-            )
-        defaults.update(kwargs)
-        super(QuantityField, self).__init__(*args, **defaults)
-        
-    def formfield(self, **kwargs):
-        fld = super(QuantityField, self).formfield(**kwargs)
-        fld.widget.attrs['size'] = "3"
-        fld.widget.attrs['style'] = "text-align:right;"
-        return fld
-        
         
   
 class Contact(TomModel):
@@ -195,7 +152,7 @@ class InvoicingMode(models.Model):
     id = models.CharField(max_length=3, primary_key=True)
     journal = models.ForeignKey(journals.Journal)
     name = models.CharField(max_length=200)
-    price = PriceField(blank=True,null=True)
+    price = fields.PriceField(blank=True,null=True)
     channel = models.CharField(max_length=1, 
                 choices=CHANNEL_CHOICES,help_text="""
     Method used to send the invoice. 
@@ -227,7 +184,7 @@ class PaymentTerm(TomModel):
 
 class ShippingMode(TomModel):
     name = models.CharField(max_length=200)
-    price = PriceField(blank=True,null=True)
+    price = fields.PriceField(blank=True,null=True)
     
     def __unicode__(self):
         return self.name
@@ -246,27 +203,27 @@ class Product(TomModel):
     description = models.TextField(blank=True)
     cat = models.ForeignKey("ProductCat",verbose_name="Category")
     vatExempt = models.BooleanField(default=False)
-    price = PriceField(blank=True,null=True)
+    price = fields.PriceField(blank=True,null=True)
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
     def __unicode__(self):
         return self.name
 
-class DocumentRule(models.Model):
+class SalesRule(models.Model):
     journal = models.ForeignKey(journals.Journal,blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     
-def get_document_rule(doc):
-    for r in DocumentRule.objects.all().order_by("id"):
+def get_sales_rule(doc):
+    for r in SalesRule.objects.all().order_by("id"):
         if r.journal is None or r.journal == doc.journal:
             return r
 
-class Document(journals.AbstractDocument):
+class SalesDocument(journals.AbstractDocument):
     
-    creation_date = MyDateField() #auto_now_add=True)
+    creation_date = fields.MyDateField() #auto_now_add=True)
     customer = models.ForeignKey(Contact,
       related_name="customer_%(class)s")
     ship_to = models.ForeignKey(Contact,blank=True,null=True,
@@ -280,11 +237,11 @@ class Document(journals.AbstractDocument):
     subject = models.CharField("Subject line",max_length=200,blank=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
-    total_excl = PriceField(default=0)
-    total_vat = PriceField(default=0)
+    total_excl = fields.PriceField(default=0)
+    total_vat = fields.PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
     user = models.ForeignKey(User,blank=True,null=True)
-    sent_date = MyDateField(blank=True,null=True)
+    sent_date = fields.MyDateField(blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     #~ class Meta:
         #~ abstract = True
@@ -301,7 +258,7 @@ class Document(journals.AbstractDocument):
         
     def total_incl(self):
         return self.total_excl + self.total_vat
-    total_incl.field = PriceField()
+    total_incl.field = fields.PriceField()
 
     def before_save(self):
       
@@ -346,7 +303,7 @@ class OrderManager(models.Manager):
         
 
 
-class Order(Document):
+class Order(SalesDocument):
   
     CYCLE_CHOICES = (
         ('W', 'Weekly'),
@@ -357,10 +314,10 @@ class Order(Document):
     
     cycle = models.CharField(max_length=1, 
             choices=CYCLE_CHOICES)
-    start_date = MyDateField(blank=True,null=True,
+    start_date = fields.MyDateField(blank=True,null=True,
       help_text="""Beginning of payable period. 
       Set to blank if no bill should be generated""")
-    covered_until = MyDateField(blank=True,null=True)
+    covered_until = fields.MyDateField(blank=True,null=True)
     
     objects = OrderManager()
     
@@ -460,8 +417,8 @@ class Order(Document):
 journals.register_doctype(Order)        
         
     
-class Invoice(Document):
-    due_date = MyDateField("Payable until",blank=True,null=True)
+class Invoice(SalesDocument):
+    due_date = fields.MyDateField("Payable until",blank=True,null=True)
     order = models.ForeignKey(Order,blank=True,null=True)
     #can_send = models.BooleanField(default=False)
     
@@ -476,7 +433,7 @@ class Invoice(Document):
 
 
 class DocItem(TomModel):
-    document = models.ForeignKey(Document) 
+    document = models.ForeignKey(SalesDocument) 
     pos = models.IntegerField("Position")
     
     product = models.ForeignKey(Product,blank=True,null=True)
@@ -484,9 +441,9 @@ class DocItem(TomModel):
     description = models.TextField(blank=True,null=True)
     
     discount = models.IntegerField("Discount %",default=0)
-    unitPrice = PriceField(blank=True,null=True) 
-    qty = QuantityField(blank=True,null=True)
-    total = PriceField(blank=True,null=True)
+    unitPrice = fields.PriceField(blank=True,null=True) 
+    qty = fields.QuantityField(blank=True,null=True)
+    total = fields.PriceField(blank=True,null=True)
     
     #~ def total_excl(self):
         #~ if self.unitPrice is not None:
@@ -514,15 +471,6 @@ class DocItem(TomModel):
     before_save.alters_data = True
 
 journals.register_doctype(Invoice)
-
-
-
-
-
-
-
-
-
 
 
 
@@ -771,7 +719,7 @@ class ItemsByDocument(reports.Report):
                   #~ "unitPrice qty total"
     row_layout_class = ItemsByDocumentRowLayout
     model = DocItem
-    master = Document
+    master = SalesDocument
     order_by = "pos"
     
     
@@ -780,7 +728,7 @@ class DocumentsByContact(reports.Report):
     page_layouts = (DocumentPageLayout,)
     columnNames = "number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
-    model = Document
+    model = SalesDocument
     master = Contact
     fk_name = 'customer'
     order_by = "creation_date"
@@ -816,7 +764,7 @@ class ContactsByCountry(Contacts):
     
         
 class MakeInvoicesDialog(layouts.Dialog):
-  
+    # not yet working
     class form_class(forms.Form):
         today = forms.DateField(label="Generate invoices on")
         order = forms.ModelChoiceField(
@@ -861,30 +809,31 @@ class MakeInvoicesDialog(layouts.Dialog):
 
 
 def lino_setup(lino):
-    m = lino.add_menu("contacts","~Contacts")
-    m.add_action(Companies())
-    m.add_action(Persons())
-    m.add_action(Contacts(),label="All")
-    m = lino.add_menu("prods","~Products")
-    m.add_action(Products())
-    m.add_action(ProductCats())
-    m = lino.add_menu("docs","~Documents",
-      can_view=perms.is_authenticated)
-    m.add_action(Orders())
-    m.add_action(Invoices())
-    m.add_action(DocumentsToSign())
-    m.add_action(PendingOrders())
+    pass
+    #~ m = lino.add_menu("contacts","~Contacts")
+    #~ m.add_action(Companies())
+    #~ m.add_action(Persons())
+    #~ m.add_action(Contacts(),label="All")
+    #~ m = lino.add_menu("prods","~Products")
+    #~ m.add_action(Products())
+    #~ m.add_action(ProductCats())
+    #~ m = lino.add_menu("docs","~Documents",
+      #~ can_view=perms.is_authenticated)
+    #~ m.add_action(Orders())
+    #~ m.add_action(Invoices())
+    #~ m.add_action(DocumentsToSign())
+    #~ m.add_action(PendingOrders())
     
-    #~ m = lino.add_menu("admin","~Administration",
-      #~ can_view=perms.is_staff)
-    #~ m.add_action(MakeInvoicesDialog())
-    
-    m = lino.add_menu("config","~Configuration",
+    m = lino.add_menu("admin","~Administration",
       can_view=perms.is_staff)
-    m.add_action(InvoicingModes())
-    m.add_action(ShippingModes())
-    m.add_action(PaymentTerms())
-    m.add_action(Languages())
-    m.add_action(Countries())
+    m.add_action(MakeInvoicesDialog())
+    
+    #~ m = lino.add_menu("config","~Configuration",
+      #~ can_view=perms.is_staff)
+    #~ m.add_action(InvoicingModes())
+    #~ m.add_action(ShippingModes())
+    #~ m.add_action(PaymentTerms())
+    #~ m.add_action(Languages())
+    #~ m.add_action(Countries())
 
 

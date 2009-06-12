@@ -22,7 +22,7 @@ from datetime import date
 from dateutil import parser as dateparser
 from lino.django.igen.models import *
 from lino.django.utils.instantiator import Instantiator
-import lino.django.journals.models as journals
+from lino.django.utils import journals
 
 def i2d(i):
     return dateparser.parse(str(i))
@@ -172,6 +172,6 @@ This table is made of pure wood.
     i.add_item(3,1,discount=10)
     i.add_item(4,4,discount=5)
     yield i
-
+    
     yield o.make_invoice(today=date(2009,05,14))
 

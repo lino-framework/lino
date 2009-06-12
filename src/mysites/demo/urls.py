@@ -20,29 +20,23 @@ from django.conf import settings
 from django.conf.urls.defaults import *
 from django.contrib import databrowse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import urls as auth_urls
 
 from django.contrib import admin
 admin.autodiscover()
 
 from lino.django.utils.sites import lino_site
-#lino_site.autodiscover()
 
+from lino.django.igen import menu
+menu.lino_setup(lino_site)
 
-#~ from lino.django.igen.menu import setup_menu
-#~ setup_menu(menu)
+if "lino.django.songs" in settings.INSTALLED_APPS:
+    from lino.django.songs import models as menu
+    menu.lino_setup(lino_site)
 
-#~ from lino.django.voc.menu import setup_menu
-#~ setup_menu(menu)
-
-#~ from lino.django.utils.sysadm import setup_menu
-#~ setup_menu(menu)
-
-#urlpatterns = menu.urls
-
-
-#from lino.django.utils import sites as lino_site
-
-from django.contrib.auth import urls as auth_urls
+if "lino.django.voc" in settings.INSTALLED_APPS:
+    from lino.django.voc import models as menu
+    menu.lino_setup(lino_site)
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),

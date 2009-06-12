@@ -88,12 +88,13 @@ class LinoSite: #(AdminSite):
         #AdminSite.__init__(self,*args,**kw)
         self._menu = Menu("","Main Menu")
         self.loading = False
-        self.done = False
+        self.done = True 
         self.root_path = '/lino/'
         self.skin = Skin()
         self.model_reports = {}
         
     def autodiscover(self):
+        # autodiscover is currently not used
         if self.done:
             return
         self.loading = True

@@ -140,7 +140,7 @@ INSTALLED_APPS = (
     'lino.django.igen',
     'lino.django.voc',
     'lino.django.songs',
-    'lino.django.journals',
+    'lino.django.ledger',
     #'lino.django.tom',
 )
 

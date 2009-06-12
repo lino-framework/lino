@@ -15,11 +15,10 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-raise "moved to lino.django.utils.journals"
 
 """
-lino.django.journals
---------------------
+lino.django.utils.journals
+--------------------------
 
 This defines two abstract models Journal and Document.
 
@@ -71,7 +70,9 @@ class Journal(models.Model):
         return doc
         
     def get_next_number(self):
-        d = self.document_set.aggregate(models.Max('number'))
+        cl = DOCTYPE_CLASSES[self.doctype]
+        d = cl.objects.filter(journal=self).aggregate(
+            models.Max('number'))
         number = d['number__max']
         if number is None:
             return 1

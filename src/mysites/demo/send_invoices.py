@@ -26,18 +26,20 @@ setup_environ(settings)
 from lino.console import syscon
 
 from lino.django.utils.sites import lino_site
-from lino.django.igen.models import Document
+from lino.django.igen.models import SalesDocument
 
         
 def main():
     for name,url,version in lino_site.thanks_to():
         print name,version, "<%s>" % url
         
-    q = [o for o in Document.objects.filter(sent_date__exact=None).exclude(user__exact=None)]
+    q = [o for o in SalesDocument.objects.filter(
+        sent_date__exact=None).exclude(user__exact=None)]
     if len(q) == 0:
         print "Nothing to do"
         return
-    print "%d documents to send: " % len(q) + ", ".join(str(d) for d in q)
+    print "%d documents to send: " % len(q) \
+      + ", ".join(str(d) for d in q)
     #~ for d in q:
         #~ print d
     if not syscon.confirm("Call send() on these documents?"):
