@@ -336,4 +336,22 @@ This way of doing has unresolved issues:
 
 - Committed revision 698.
 
+20090612
+--------
+
+- Payments for igen. New "ledger" module. The trunk is currently unstable because I'm experimenting with the general structure. Here are some design decisions I'm currently busy with:
+
+  Should the menu of a website be done automatically using LinoSite.autodiscover()? Maybe this idea is utopic. Maybe it's better to stay simple and let each site build it's own menu...
+  
+  There should probably be a menu entry for each Journal. So we have a database-driven menu, at least partially. The webserver will have to reload the urls when Journals gets modified...
+  Alternatively the journals may be non-persistent and "hard-coded" in some configuration file. 
+  
+  It seems that also pisa (xhtml2pdf) has a lot of problems. Pisa was my only hope to get away from LaTeX. 
+  Maybe still `XSL-FO <http://www.w3schools.com/xslfo/default.asp>`_
+  
+20090613
+--------
+
+- utils and ledger are not INSTALLED_APPS
+
 .. _latest-news:

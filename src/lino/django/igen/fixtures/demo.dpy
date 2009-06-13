@@ -175,3 +175,18 @@ This table is made of pure wood.
     
     yield o.make_invoice(today=date(2009,05,14))
 
+    account = Instantiator(Account,"name").build
+    
+    BANK = journals.create_journal("BANK",FinancialDocument)
+    yield BANK
+    
+    EL = account("Electricity")
+    IN = account("Internet")
+    CU = account("Customers")
+    PR = account("Providers")
+    
+    doc = BANK.create_document(creation_date=i2d(20090501))
+    doc.add_item(account=PR,contact=Contact.objects.get(pk=2),
+      debit='12.49')
+
+    yield doc
