@@ -137,9 +137,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.databrowse',
     #'lino.django.utils',
-    'lino.django.igen',
-    'lino.django.voc',
-    'lino.django.songs',
+    'lino.django.apps.igen',
+    'lino.django.apps.voc',
+    'lino.django.apps.songs',
     #'lino.django.ledger',
     #'lino.django.tom',
 )

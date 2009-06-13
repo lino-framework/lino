@@ -40,7 +40,7 @@ def linkto(href,text=None):
     return '<a href="%s">%s</a>' % (href,text)
         
   
-class Contact(TomModel):
+class Contact(models.Model):
     """
     
 Company and/or Person contact data, linked with client account and
@@ -824,9 +824,9 @@ def lino_setup(lino):
     #~ m.add_action(DocumentsToSign())
     #~ m.add_action(PendingOrders())
     
-    m = lino.add_menu("admin","~Administration",
-      can_view=perms.is_staff)
-    m.add_action(MakeInvoicesDialog())
+    #~ m = lino.add_menu("admin","~Administration",
+      #~ can_view=perms.is_staff)
+    #~ m.add_action(MakeInvoicesDialog())
     
     #~ m = lino.add_menu("config","~Configuration",
       #~ can_view=perms.is_staff)
