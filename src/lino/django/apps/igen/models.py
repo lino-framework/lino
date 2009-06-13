@@ -30,7 +30,7 @@ from lino.django.utils import render
 
 #from lino.django.utils.journals import Journal
 #from lino.django.journals import models as journals
-from lino.django.utils import fields, journals
+from lino.django.plugins import fields, journals
 
 from django.contrib.auth.models import User
 
