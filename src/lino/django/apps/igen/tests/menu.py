@@ -52,7 +52,7 @@ class Countries(Report):
     
 
 
-class TestCase(TestCase):
+class MenuTest(TestCase):
     def test01(self):
         c = Contact(fname="Luc",lname="Saffre")
         c.save()

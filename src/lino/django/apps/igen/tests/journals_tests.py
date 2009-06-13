@@ -39,7 +39,7 @@ class Invoice(Document):
 journals.register_doctype(Invoice)
 
 
-class TestCase(TestCase):
+class JournalsTest(TestCase):
   
     def test01(self):
       
