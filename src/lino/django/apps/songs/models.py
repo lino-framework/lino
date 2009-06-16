@@ -19,12 +19,12 @@ from django.db import models
 
 from django.utils.safestring import mark_safe
 
-from lino.django.apps.igen.models.countries import Country, Language
+from lino.django.apps import countries # import Country, Language
 from lino.django.utils.render import HREF
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
-    country = models.ForeignKey(Country)
+    country = models.ForeignKey(countries.Country)
     
     def __unicode__(self):
         return self.name
@@ -117,7 +117,7 @@ class Song(models.Model):
     title = models.CharField(max_length=200)
     #year_published = models.IntegerField(blank=True,null=True)
     text = models.TextField(blank=True)
-    language = models.ForeignKey(Language)
+    language = models.ForeignKey(countries.Language)
     origin = models.CharField(max_length=200)
     remarks = models.TextField(blank=True)
  

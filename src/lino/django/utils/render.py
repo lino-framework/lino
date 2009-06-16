@@ -48,9 +48,9 @@ except ImportError:
 
 
 from lino.django.utils import layouts
+#from lino.django.utils import reports
 from lino.django.utils.requests import again, get_redirect, redirect_to
 from lino.django.utils import editing
-from lino.django.utils.sites import lino_site
 
 IS_SELECTED = 'IS_SELECTED_%d'
 
@@ -69,6 +69,37 @@ def HREF(href,text):
 
 def short_link(s):
     return "link"
+    
+    
+    
+    
+def view_instance(self,request,db_table,pk):
+    from . import reports
+    try:
+        rptclass = reports.model_reports[db_table]
+    except KeyError,e:
+        msg = """
+        There is no Report defined for %s.
+        """ % db_table
+        return sorry(request,message=msg)
+        
+    rpt = rptclass(filter=dict(pk__exact=pk))
+    return rpt.view_one(request,1)
+
+            
+def get_urls():
+    return patterns('',
+        (r'^o/(?P<db_table>.+)/(?P<pk>.+)$', view_instance),
+    )
+
+def get_instance_url(o):
+    if hasattr(o,'get_instance_url'):
+        url = o.get_instance_url()
+        if url is not None:
+            return url
+    return "/o/%s/%s" % (o._meta.db_table, o.pk)
+        
+    
     
     
 
@@ -112,7 +143,6 @@ class ElementServer:
         raise NotImplementedError
 
     def field_as_readonly(self,elem):
-      
         try:
             value = self.get_value(elem)
             if value is None:
@@ -121,7 +151,7 @@ class ElementServer:
             if model_field is None:
                 if isinstance(value,Manager):
                     value = "<br/>".join(
-                      [HREF(lino_site.get_instance_url(o),
+                      [HREF(get_instance_url(o),
                         unicode(o)) for o in value.all()])
                     label = elem.name
                     #widget=widget_for_value(value)
@@ -186,13 +216,13 @@ class ElementServer:
             if isinstance(widget, forms.SelectMultiple):
                 l = []
                 for o in value.all():
-                    url = lino_site.get_instance_url(o)
+                    url = get_instance_url(o)
                     l.append(HREF(url,unicode(o)))
                 s = ",<br/>".join(l)
                 s = SPAN(s,style)
             elif isinstance(widget, forms.Select):
                 try:
-                    url = lino_site.get_instance_url(value)
+                    url = get_instance_url(value)
                     s = HREF(url,value)
                 except Exception,e:
                     traceback.print_exc(e)
@@ -273,7 +303,7 @@ class Row(ElementServer):
     def get_url_path(self):
         if self.renderer.is_main:
             return self.renderer.again(str(self.number))
-        return lino_site.get_instance_url(self.instance)
+        return get_instance_url(self.instance)
         
         
     def pk_field(self):
@@ -394,6 +424,11 @@ class ViewReportRenderer(ReportRenderer):
     def setup(self):
         pass
         
+    #~ def context(self,**kw)
+        #~ from lino.django.utils.sites import lino_site
+        #~ return lino_site.context(self.request,**kw)
+        
+        
     def render_to_response(self,**kw):
         self.setup()
         #~ if self.must_refresh:
@@ -403,6 +438,7 @@ class ViewReportRenderer(ReportRenderer):
         if url is not None:
             #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
+        from lino.django.utils.sites import lino_site
         context = lino_site.context(self.request,
           report = self,
           title = self.get_title(),
@@ -844,6 +880,7 @@ def sorry(request,message=None):
 Sorry %s, you have no access permission for this action.
 Consider <a href="/accounts/login">logging in</a> as another user.
 """ % request.user.username)
+    from lino.django.utils.sites import lino_site
     context = lino_site.context(request,
       title = "Sorry",
       message = message,
@@ -882,6 +919,7 @@ class DialogRenderer(ElementServer):
         if url:
             #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
+        from lino.django.utils.sites import lino_site
         context = lino_site.context(self.request,
           report = self,
           title = self.get_title(),

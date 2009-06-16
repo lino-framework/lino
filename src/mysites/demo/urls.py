@@ -27,16 +27,16 @@ admin.autodiscover()
 
 from lino.django.utils.sites import lino_site
 
-from lino.django.igen import menu
-menu.lino_setup(lino_site)
+#~ from lino.django.igen import menu
+#~ menu.lino_setup(lino_site)
 
-if "lino.django.songs" in settings.INSTALLED_APPS:
-    from lino.django.songs import models as menu
-    menu.lino_setup(lino_site)
+#~ if "lino.django.songs" in settings.INSTALLED_APPS:
+    #~ from lino.django.songs import models as menu
+    #~ menu.lino_setup(lino_site)
 
-if "lino.django.voc" in settings.INSTALLED_APPS:
-    from lino.django.voc import models as menu
-    menu.lino_setup(lino_site)
+#~ if "lino.django.voc" in settings.INSTALLED_APPS:
+    #~ from lino.django.voc import models as menu
+    #~ menu.lino_setup(lino_site)
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),

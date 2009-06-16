@@ -26,7 +26,8 @@ def module_exists(full_name,path=None):
         return True
     assert len(a) == 2
     (file, pathname, description) = imp.find_module(a[0],path)
-    assert description[-1] == imp.PKG_DIRECTORY
+    if description[-1] != imp.PKG_DIRECTORY:
+        return False
     pkg = imp.load_module(a[0],file,pathname,description)
     if file is not None: file.close()
     return module_exists(a[1],pkg.__path__)

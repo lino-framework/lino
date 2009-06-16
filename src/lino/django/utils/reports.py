@@ -26,7 +26,6 @@ from django.contrib.auth.decorators import login_required
 
 from lino.django.utils import layouts, render, perms
 from lino.django.utils.editing import is_editing
-from lino.django.utils.sites import lino_site
 
 
 # maps Django field types to a tuple of default paramenters
@@ -50,6 +49,9 @@ def base_attrs(cl):
             yield k
         for k in b.__dict__.keys():
             yield k
+            
+            
+
 
 
 class ReportParameterForm(forms.Form):
@@ -74,6 +76,25 @@ class ReportParameterForm(forms.Form):
     
 #~ def get_reports():
     #~ return _report_classes
+    
+model_reports = {}    
+    
+def register_report(rptclass):
+    if rptclass.model is None:
+        return
+    if rptclass.master is not None:
+        return
+    if rptclass.exclude is not None:
+        return
+    if rptclass.filter is not None:
+        return
+    db_table = rptclass.model._meta.db_table
+    if model_reports.has_key(db_table):
+        print "[Warning] Ignoring %s" % rptclass.__name__
+        return
+    model_reports[db_table] = rptclass
+
+    
 
 class ReportMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -87,7 +108,8 @@ class ReportMetaClass(type):
                     print "[Warning]: %s defines new attribute(s) %s" % (cls,",".join(myattrs))
         
         #_report_classes[classname] = cls
-        lino_site.register_report(cls)
+        #from lino.django.utils.sites import lino_site
+        register_report(cls)
         return cls
 
 

@@ -37,7 +37,7 @@ from lino.tools.my_import import my_import as import_module
 from django import template 
 from django.views.decorators.cache import never_cache 
 #from django.shortcuts import render_to_response 
-from lino.django.utils.menus import Menu, MenuRenderer
+from lino.django.utils import menus # Menu, MenuRenderer
 
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -86,12 +86,12 @@ class LinoSite: #(AdminSite):
   
     def __init__(self,*args,**kw):
         #AdminSite.__init__(self,*args,**kw)
-        self._menu = Menu("","Main Menu")
+        self._menu = menus.Menu("","Main Menu")
         self.loading = False
-        self.done = True 
+        self.done = False
         self.root_path = '/lino/'
         self.skin = Skin()
-        self.model_reports = {}
+        #self.model_reports = {}
         
     def autodiscover(self):
         # autodiscover is currently not used
@@ -99,12 +99,11 @@ class LinoSite: #(AdminSite):
             return
         self.loading = True
 
-
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             lino_setup = getattr(mod,"lino_setup",None)
             if lino_setup:
-                #print "lino_setup", app
+                print "lino_setup", app
                 lino_setup(self)
                 
             #~ mod = import_module(app)
@@ -120,27 +119,12 @@ class LinoSite: #(AdminSite):
             #~ mod = import_module("%s.lino_setup" % app)
             #~ mod.setup_menu(self._menu)
             
-        from lino.django.utils.sysadm import lino_setup
-        lino_setup(self)
+        #~ from lino.django.utils.sysadm import lino_setup
+        #~ lino_setup(self)
         
         self.done = True
         self.loading = False
         
-    def register_report(self,rptclass):
-        if rptclass.model is None:
-            return
-        if rptclass.master is not None:
-            return
-        if rptclass.exclude is not None:
-            return
-        if rptclass.filter is not None:
-            return
-        db_table = rptclass.model._meta.db_table
-        if self.model_reports.has_key(db_table):
-            print "[Warning] Ignoring %s" % rptclass.__name__
-            return
-        self.model_reports[db_table] = rptclass
-
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
        
@@ -194,7 +178,7 @@ class LinoSite: #(AdminSite):
         
     def context(self,request,**kw):
         d = dict(
-          main_menu = MenuRenderer(self._menu,request),
+          main_menu = menus.MenuRenderer(self._menu,request),
           root_path = self.root_path,
           lino = self,
           skin = self.skin,
@@ -210,22 +194,6 @@ class LinoSite: #(AdminSite):
         )
     index = never_cache(index)
     
-    def view_instance(self,request,db_table,pk):
-        context = self.context(request,title=self._menu.label)
-        print db_table
-        print pk
-        try:
-            rptclass = self.model_reports[db_table]
-        except KeyError,e:
-            msg = """
-            There is no Report defined for %s.
-            """ % db_table
-            from lino.django.utils import render
-            return render.sorry(request,message=msg)
-            
-        rpt = rptclass(filter=dict(pk__exact=pk))
-        return rpt.view_one(request,1)
-
     def login(self,request, template_name='registration/login.html', 
               redirect_field_name=REDIRECT_FIELD_NAME):
         "Displays the login form and handles the login action."
@@ -426,27 +394,21 @@ class LinoSite: #(AdminSite):
             (r'^accounts/login/$', self.login),
             (r'^accounts/logout/$', self.logout),
             (r'^accounts/password_change/$', self.password_change),
-            (r'^accounts/password_change/done/$', self.password_change_done),
+            (r'^accounts/password_change/done/$', 
+                self.password_change_done),
             (r'^accounts/password_reset/$', self.password_reset),
-            (r'^accounts/password_reset/done/$', self.password_reset_done),
+            (r'^accounts/password_reset/done/$', 
+                self.password_reset_done),
             (r'^accounts/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 
               self.password_reset_confirm),
             (r'^accounts/reset/done/$', self.password_reset_complete),
         )
         #~ urlpatterns = AdminSite.get_urls(self)
-        urlpatterns += patterns('',
-            (r'^o/(?P<db_table>.+)/(?P<pk>.+)$', self.view_instance),
-        )
+        from lino.django.utils import render
+        urlpatterns += render.get_urls()
         urlpatterns += self._menu.get_urls() # self._menu.name)
         return urlpatterns
         #return self._menu.get_urls()
-        
-    def get_instance_url(self,o):
-        if hasattr(o,'get_instance_url'):
-            url = o.get_instance_url()
-            if url is not None:
-                return url
-        return "/o/%s/%s" % (o._meta.db_table, o.pk)
         
   
 class Skin:

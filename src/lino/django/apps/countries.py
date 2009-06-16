@@ -52,10 +52,13 @@ class Countries(reports.Report):
     order_by = "isocode"
     columnNames = "isocode name"
     
-
 class Languages(reports.Report):
     model = Language
     order_by = "id"
+
+##
+## menu setup
+##
 
 def lino_setup(lino):
     m = lino.add_menu("config","~Configuration")
