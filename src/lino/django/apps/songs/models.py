@@ -20,12 +20,12 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 
-from lino.django.utils.models import Language
+from lino.django.plugins.countries import Country, Language
 from lino.django.utils.render import HREF
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
-    country = models.ForeignKey('utils.Country')
+    country = models.ForeignKey(Country)
     
     def __unicode__(self):
         return self.name

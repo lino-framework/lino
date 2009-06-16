@@ -24,14 +24,6 @@ from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
 
-
-#from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
-#from django.shortcuts import render_to_response 
-#from django.core.paginator import Paginator, EmptyPage, InvalidPage
-#from django.http import HttpResponse, HttpResponseRedirect, Http404
-#from django.utils.safestring import mark_safe
-#from django.template.loader import render_to_string, get_template, select_template, Context
-
 from lino.django.utils import layouts, render, perms
 from lino.django.utils.editing import is_editing
 from lino.django.utils.sites import lino_site

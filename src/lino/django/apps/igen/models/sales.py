@@ -1,0 +1,525 @@
+## Copyright 2008-2009 Luc Saffre.
+## This file is part of the Lino project. 
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+from dateutil.relativedelta import relativedelta
+ONE_DAY = relativedelta(days=1)
+
+from django.db import models
+
+
+from . import fields, journals, contacts, products
+
+class InvoicingMode(models.Model):
+    CHANNEL_CHOICES = (
+        ('P', 'Regular Mail'),
+        ('E', 'E-Mail'),
+    )
+    id = models.CharField(max_length=3, primary_key=True)
+    journal = models.ForeignKey(journals.Journal)
+    name = models.CharField(max_length=200)
+    price = fields.PriceField(blank=True,null=True)
+    channel = models.CharField(max_length=1, 
+                choices=CHANNEL_CHOICES,help_text="""
+    Method used to send the invoice. 
+                """)
+    advance_days = models.IntegerField(default=0,
+                   help_text="""
+    Invoices must be sent out X days in advance so that the customer
+    has a chance to pay them in time. 
+    """)
+    
+    def __unicode__(self):
+        return self.name
+        
+    
+    
+class PaymentTerm(TomModel):
+    name = models.CharField(max_length=200)
+    days = models.IntegerField(default=0)
+    months = models.IntegerField(default=0)
+    #proforma = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.name
+        
+    def get_due_date(self,date1):
+        d = date1 + relativedelta(months=self.months,days=self.days)
+        return d
+
+
+class ShippingMode(TomModel):
+    name = models.CharField(max_length=200)
+    price = fields.PriceField(blank=True,null=True)
+    
+    def __unicode__(self):
+        return self.name
+        
+
+        
+
+class SalesRule(models.Model):
+    journal = models.ForeignKey(journals.Journal,blank=True,null=True)
+    imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
+    shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    
+def get_sales_rule(doc):
+    for r in SalesRule.objects.all().order_by("id"):
+        if r.journal is None or r.journal == doc.journal:
+            return r
+
+class SalesDocument(journals.AbstractDocument):
+    
+    creation_date = fields.MyDateField() #auto_now_add=True)
+    customer = models.ForeignKey(contacts.Contact,
+      related_name="customer_%(class)s")
+    ship_to = models.ForeignKey(contacts.Contact,blank=True,null=True,
+      related_name="shipTo_%(class)s")
+    your_ref = models.CharField(max_length=200,blank=True)
+    imode = models.ForeignKey(InvoicingMode)
+    shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    remark = models.CharField("Remark for internal use",
+      max_length=200,blank=True)
+    subject = models.CharField("Subject line",max_length=200,blank=True)
+    vat_exempt = models.BooleanField(default=False)
+    item_vat = models.BooleanField(default=False)
+    total_excl = fields.PriceField(default=0)
+    total_vat = fields.PriceField(default=0)
+    intro = models.TextField("Introductive Text",blank=True)
+    user = models.ForeignKey(User,blank=True,null=True)
+    sent_date = fields.MyDateField(blank=True,null=True)
+    #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    #~ class Meta:
+        #~ abstract = True
+        
+    def add_item(self,product=None,qty=None,**kw):
+        if product is not None:
+            if not isinstance(product,products.Product):
+                product = products.Product.objects.get(pk=product)
+            if qty is None:
+                qty = 1
+        kw['product'] = product 
+        kw['qty'] = qty
+        return self.docitem_set.create(**kw)
+        
+    def total_incl(self):
+        return self.total_excl + self.total_vat
+    total_incl.field = fields.PriceField()
+
+    def before_save(self):
+      
+        r = get_document_rule(self)
+        if r is None:
+            raise journals.DocumentError("no document rule")
+        if self.imode is None:
+            self.imode = r.imode
+        if self.shipping_mode is None:
+            self.shipping_mode = r.shipping_mode
+        if self.shipping_mode is None:
+            self.shipping_mode = r.shipping_mode
+      
+        total_excl = 0
+        total_vat = 0
+        for i in self.docitem_set.all():
+            if i.total is not None:
+                total_excl += i.total
+            #~ if not i.product.vatExempt:
+                #~ total_vat += i.total_excl() * 0.18
+        self.total_excl = total_excl
+        self.total_vat = total_vat
+        
+    def send(self,simulate=True):
+        result = render.print_instance(self,model=self.get_model(),as_pdf=True)
+        #print result
+        fn = "%s%d.pdf" % (self.journal.id,self.id)
+        file(fn,"w").write(result)
+        if not simulate:
+            self.sent_date = datetime.date.today()
+            self.save()
+        
+        
+class OrderManager(models.Manager):
+  
+    def pending(self,make_until=None):
+        l = []
+        for o in self.all():
+            if o.make_invoice(make_until=make_until,simulate=True):
+                l.append(o)
+        return l
+        
+
+
+class Order(SalesDocument):
+  
+    CYCLE_CHOICES = (
+        ('W', 'Weekly'),
+        ('M', 'Monthly'),
+        ('Q', 'Quarterly'),
+        ('Y', 'Yearly'),
+    )
+    
+    cycle = models.CharField(max_length=1, 
+            choices=CYCLE_CHOICES)
+    start_date = fields.MyDateField(blank=True,null=True,
+      help_text="""Beginning of payable period. 
+      Set to blank if no bill should be generated""")
+    covered_until = fields.MyDateField(blank=True,null=True)
+    
+    objects = OrderManager()
+    
+    #~ def get_last_invoice(self):
+        #~ invoices = self.invoice_set.order_by('creation_date')
+        #~ cnt = invoices.count()
+        #~ if cnt == 0:
+            #~ return None
+        #~ return invoices[cnt-1]
+    
+        
+    def skip_date(self,date):
+        if self.cycle == "W":
+            date += relativedelta(weeks=1)
+        elif self.cycle == "M":
+            date += relativedelta(months=1)
+        elif self.cycle == "Q":
+            date += relativedelta(months=3)
+        elif self.cycle == "Y":
+            date += relativedelta(years=1)
+        else:
+            raise Exception("Invalid cycle value %r in %s" % (
+                self.cycle,self))
+        return datetime.date(date.year,date.month,date.day)
+        
+    def make_invoice(self,make_until=None,simulate=False,today=None):
+
+        if self.start_date is None:
+            return
+        if today is None:
+            today = datetime.date.today()
+            
+        if make_until is None:
+            make_until = today
+        
+        # assume that billing occurs once every month
+        # and that invoices must be sent out 5 days before they get paid
+        # and that covering periods are never increased or decreased to 
+        # fit into the billing cycle.
+        
+        if self.covered_until:
+            covered_until = self.covered_until
+        else:
+            covered_until = self.start_date - ONE_DAY
+            
+        expect_payment = self.payment_term.get_due_date(make_until)
+        expect_payment += relativedelta(days=self.imode.advance_days)
+          
+        if expect_payment < covered_until:
+            return # no invoice needed today
+            
+        #last_invoice = self.get_last_invoice()
+        cover_from = covered_until + ONE_DAY
+        cover_until = self.skip_date(cover_from) - ONE_DAY
+        qty = 1
+        while cover_until < expect_payment:
+            cover_until = self.skip_date(cover_until)
+            qty += 1
+        
+        #~ print "today", type(today), today
+        #~ print "date", type(date), date
+        #~ assert isinstance(date,datetime.date)
+        #~ assert isinstance(today,datetime.date)
+        cover_text = "Period %s to %s" % (cover_from,cover_until)
+        #print cover_text
+        items = []
+        for item in self.docitem_set.all():
+            d = {}
+            for fn in ('product','title','description',
+                       'unitPrice','qty'):
+                d[fn] = getattr(item,fn)
+            d['qty'] *= qty
+            #d['total'] *= qty
+            items.append(d)
+        if simulate:
+            return True
+        invoice = self.imode.journal.create_document(
+            creation_date=today,order=self,
+            customer=self.customer,
+            ship_to=self.ship_to,
+            imode=self.imode,
+            payment_term=self.payment_term,
+            shipping_mode=self.shipping_mode,
+            subject=cover_text,
+            your_ref=unicode(self),
+            )
+        #invoice.save()
+        for d in items:
+            invoice.add_item(**d).save()
+            #i = DocItem(document=invoice,**d)
+            #i.save()
+        invoice.save() # save again because totals have been updated
+        self.covered_until = cover_until
+        self.save()
+        return invoice
+            
+journals.register_doctype(Order)        
+        
+    
+class Invoice(SalesDocument):
+    due_date = fields.MyDateField("Payable until",blank=True,null=True)
+    order = models.ForeignKey(Order,blank=True,null=True)
+    #can_send = models.BooleanField(default=False)
+    
+    
+    def before_save(self):
+        Document.before_save(self)
+        if self.due_date is None:
+            if self.payment_term is not None:
+                self.due_date = self.payment_term.get_due_date(
+                    self.creation_date)
+
+
+
+class DocItem(TomModel):
+    document = models.ForeignKey(SalesDocument) 
+    pos = models.IntegerField("Position")
+    
+    product = models.ForeignKey(Product,blank=True,null=True)
+    title = models.CharField(max_length=200,blank=True)
+    description = models.TextField(blank=True,null=True)
+    
+    discount = models.IntegerField("Discount %",default=0)
+    unitPrice = fields.PriceField(blank=True,null=True) 
+    qty = fields.QuantityField(blank=True,null=True)
+    total = fields.PriceField(blank=True,null=True)
+    
+    #~ def total_excl(self):
+        #~ if self.unitPrice is not None:
+            #~ qty = self.qty or 1
+            #~ return self.unitPrice * qty
+        #~ elif self.total is not None:
+            #~ return self.total
+        #~ return 0
+        
+    def before_save(self):
+        #print "before_save()", self
+        if self.pos is None:
+            self.pos = self.document.docitem_set.count() + 1
+        if self.product:
+            if not self.title:
+                self.title = self.product.name
+            if not self.description:
+                self.description = self.product.description
+            if self.unitPrice is None:
+                if self.product.price is not None:
+                    self.unitPrice = self.product.price * (100 - self.discount) / 100
+        if self.unitPrice is not None and self.qty is not None:
+            self.total = self.unitPrice * self.qty
+        self.document.save() # update total in document
+    before_save.alters_data = True
+
+journals.register_doctype(Invoice)
+
+##
+## report definitions
+##        
+        
+from django import forms
+
+from lino.django.utils import reports
+from lino.django.utils import layouts
+from lino.django.utils import perms
+
+from lino.django.plugins.countries import Languages
+
+class PaymentTerms(reports.Report):
+    model = PaymentTerm
+    order_by = "id"
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
+
+class ShippingModes(reports.Report):
+    model = ShippingMode
+    order_by = "id"
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
+
+class InvoicingModes(reports.Report):
+    model = InvoicingMode
+    order_by = "id"
+    can_view = perms.is_staff
+
+    
+class DocumentPageLayout(layouts.PageLayout):
+    box1 = """
+      number your_ref creation_date 
+      user sent_date
+      customer 
+      ship_to
+      """
+    box2 = """
+      imode
+      shipping_mode 
+      payment_term
+      vat_exempt item_vat
+      """
+    box3 = """
+      subject:40
+      remark:40
+      intro:40x5
+      """
+    box4 = """
+      total_excl
+      total_vat
+      total_incl
+      """
+    box5 = ''
+    
+    main = """
+      box1 box2 box4
+      box3 box5
+      items:60x5
+      """
+      
+    def inlines(self):
+        return dict(items=ItemsByDocument())
+        
+class OrderPageLayout(DocumentPageLayout):
+    box5 = """
+      cycle
+      start_date
+      covered_until
+      """
+        
+        
+class InvoicePageLayout(DocumentPageLayout):
+    box5 = """
+      order
+      """
+
+class EmittedInvoicesPageLayout(DocumentPageLayout):
+    label = "Emitted invoices"
+    main = """
+    number:4 creation_date customer:20 start_date
+    emitted_invoices
+    """
+    def inlines(self):
+        return dict(emitted_invoices=InvoicesByOrder())
+   
+
+class Orders(reports.Report):
+    model = Order
+    order_by = "number"
+    page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
+    columnNames = "number:4 creation_date customer:20 imode " \
+                  "remark:20 subject:20 total_incl " \
+                  "cycle start_date covered_until"
+    can_view = perms.is_authenticated
+    
+    
+
+class PendingOrdersParams(forms.Form):
+    make_until = forms.DateField(label="Make invoices until",
+      initial=datetime.date.today()+ONE_DAY,required=False)
+
+class PendingOrders(Orders):
+    param_form = PendingOrdersParams
+    def get_queryset(self,master_instance,make_until=None):
+        assert master_instance is None
+        return Order.objects.pending(make_until=make_until)
+    
+class Invoices(reports.Report):
+    model = Invoice
+    order_by = "number"
+    page_layouts = (InvoicePageLayout,)
+    columnNames = "number:4 creation_date due_date " \
+                  "customer:10 " \
+                  "total_incl order subject:10 remark:10 " \
+                  "total_excl total_vat user "
+    can_view = perms.is_staff
+
+class DocumentsToSign(Invoices):
+    filter = dict(user__exact=None)
+    can_add = perms.never
+    columnNames = "number:4 order creation_date " \
+                  "customer:10 imode " \
+                  "subject:10 total_incl total_excl total_vat "
+                  
+    def get_row_actions(self,renderer):
+        l = super(Invoices,self).get_row_actions(renderer)
+        
+        def sign(renderer):
+            for row in renderer.selected_rows():
+                row.instance.user = renderer.request.user
+                row.instance.save()
+            renderer.must_refresh()
+            
+        l.append( ('sign', sign) )
+        return l 
+        
+    
+  
+class InvoicesByOrder(reports.Report):
+    model = Invoice
+    master = Order
+    fk_name = "order"
+    order_by = "number"
+    columnNames = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject remark vat_exempt item_vat "
+
+    
+class ItemsByDocumentRowLayout(layouts.RowLayout):
+    title_box = """
+    product
+    title
+    """
+    main = "pos:3 title_box description:20x1 discount unitPrice qty total"
+
+class ItemsByDocument(reports.Report):
+    #~ columnNames = "pos:3 product title description:30x1 " \
+                  #~ "unitPrice qty total"
+    row_layout_class = ItemsByDocumentRowLayout
+    model = DocItem
+    master = SalesDocument
+    order_by = "pos"
+    
+
+
+
+class DocumentsByContactTabLayout(contacts.ContactPageLayout):
+    label = "Documents"
+    main = """
+            box1
+            documents
+            """
+    def inlines(self):
+        return dict(documents=DocumentsByContact())
+
+
+class DocumentsByContact(reports.Report):
+    page_layouts = (DocumentPageLayout,)
+    columnNames = "number:4 creation_date:8 " \
+                  "total_incl total_excl total_vat"
+    model = SalesDocument
+    master = contacts.Contact
+    fk_name = 'customer'
+    order_by = "creation_date"
+
+    def get_title(self,renderer):
+        return unicode(renderer.master_instance) + " : documents by customer"
+
+

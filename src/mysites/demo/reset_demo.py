@@ -48,6 +48,9 @@ def main():
 
     #appnames = [m.__name__ for m in models.get_apps()]
     print "reset_demo.py", app_labels
+    
+    print "\n".join([m._meta.db_table for m in loading.get_models()])
+    
     options = dict(interactive=False)
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):
@@ -55,7 +58,8 @@ def main():
     print "reset"
     if settings.DATABASE_ENGINE == 'sqlite3':
         if settings.DATABASE_NAME != ':memory:':
-            os.remove(settings.DATABASE_NAME)
+            if os.path.exists(settings.DATABASE_NAME):
+                os.remove(settings.DATABASE_NAME)
     else:
         call_command('reset',*app_labels,**options)
     #call_command('reset','songs','auth',interactive=False)

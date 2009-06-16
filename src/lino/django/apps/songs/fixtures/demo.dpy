@@ -21,7 +21,7 @@ import os, codecs
 import yaml
 
 
-from lino.django.songs.models import *
+from lino.django.apps.songs.models import *
 from lino.django.utils.instantiator import Instantiator, ManyToManyConverter
 
 

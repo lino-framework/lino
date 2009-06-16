@@ -1,5 +1,5 @@
 ﻿#  
-from lino.django.utils.models import *
+from lino.django.plugins.countries import *
 from lino.django.utils.instantiator import Instantiator
 
 language = Instantiator(Language,"id name").build
