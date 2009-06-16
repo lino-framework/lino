@@ -17,10 +17,13 @@
 
 from django.db import models
 
-from lino.django.apps.igen import Model
+#from lino.django.apps.igen import Model
 from . import countries # countries import Country, Language
 
-class Contact(Model):
+__app_label__ = "contacts"
+
+
+class Contact(models.Model):
     """
     
 Company and/or Person contact data, linked with client account and

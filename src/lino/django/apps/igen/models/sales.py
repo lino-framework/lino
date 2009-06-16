@@ -19,13 +19,16 @@ import datetime
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
+__app_label__ = "sales"
+
+
 from django.db import models
 from django.contrib.auth import models as auth
 
-from lino.django.apps.igen import Model
+#from lino.django.apps.igen import Model
 from . import fields, journals, contacts, products
 
-class InvoicingMode(Model):
+class InvoicingMode(models.Model):
     CHANNEL_CHOICES = (
         ('P', 'Regular Mail'),
         ('E', 'E-Mail'),
@@ -49,7 +52,7 @@ class InvoicingMode(Model):
         
     
     
-class PaymentTerm(Model):
+class PaymentTerm(models.Model):
     name = models.CharField(max_length=200)
     days = models.IntegerField(default=0)
     months = models.IntegerField(default=0)
@@ -63,7 +66,7 @@ class PaymentTerm(Model):
         return d
 
 
-class ShippingMode(Model):
+class ShippingMode(models.Model):
     name = models.CharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     
@@ -73,7 +76,7 @@ class ShippingMode(Model):
 
         
 
-class SalesRule(Model):
+class SalesRule(models.Model):
     journal = models.ForeignKey(journals.Journal,blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
@@ -295,7 +298,7 @@ class Invoice(SalesDocument):
 
 
 
-class DocItem(Model):
+class DocItem(models.Model):
     document = models.ForeignKey(SalesDocument) 
     pos = models.IntegerField("Position")
     

@@ -29,8 +29,11 @@ of Document it is.
 
 """
 
+__app_label__ = "journals"
+
+
 from django.db import models
-from lino.django.apps.igen import Model
+#from lino.django.apps.igen import Model
 
 class DocumentError(Exception):
   pass
@@ -56,7 +59,7 @@ def create_journal(id,cl,**kw):
     return jnl
 
 
-class Journal(Model):
+class Journal(models.Model):
   
     #~ class Meta:
         #~ db_table = 'lino_journal'
@@ -89,7 +92,7 @@ class Journal(Model):
                   "%s is not the last document in journal" % unicode(doc)
                   )
     
-class AbstractDocument(Model):
+class AbstractDocument(models.Model):
     
     class Meta:
         abstract = True

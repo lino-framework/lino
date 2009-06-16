@@ -18,9 +18,10 @@
 from django.db import models
 #from lino.django.plugins import fields, journals
 #from lino.django.apps.igen.models import Contact
-from .. import Model
+#from .. import Model
 from . import contacts, fields, journals
 
+__app_label__ = "ledger"
 
 class FinancialDocument(journals.AbstractDocument):
     creation_date = fields.MyDateField()

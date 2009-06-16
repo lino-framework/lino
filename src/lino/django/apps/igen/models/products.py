@@ -15,20 +15,22 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+__app_label__ = "products"
+
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
 from . import fields, journals
-from lino.django.apps.igen import Model
+#from lino.django.apps.igen import Model
 
-class ProductCat(Model):
+class ProductCat(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     def __unicode__(self):
         return self.name
 
-class Product(Model):
+class Product(models.Model):
     
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)

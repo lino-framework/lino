@@ -17,9 +17,12 @@
 
 import datetime
 from django.db import models
-from lino.django.apps.igen import Model
+#from lino.django.apps.igen import Model
 
-class Country(Model):
+__app_label__ = "countries"
+
+
+class Country(models.Model):
     name = models.CharField(max_length=200)
     isocode = models.CharField(max_length=2,primary_key=True)
     
@@ -31,7 +34,7 @@ class Country(Model):
         
  
     
-class Language(Model):
+class Language(models.Model):
     id = models.CharField(max_length=2,primary_key=True)
     name = models.CharField(max_length=200)
     
