@@ -19,8 +19,7 @@ from django.db import models
 
 from django.utils.safestring import mark_safe
 
-
-from lino.django.plugins.countries import Country, Language
+from lino.django.apps.igen.models.countries import Country, Language
 from lino.django.utils.render import HREF
 
 class Place(models.Model):

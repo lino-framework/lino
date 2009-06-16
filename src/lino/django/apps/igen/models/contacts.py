@@ -17,9 +17,10 @@
 
 from django.db import models
 
-from .countries import Country, Language
+from lino.django.apps.igen import Model
+from . import countries # countries import Country, Language
 
-class Contact(models.Model):
+class Contact(Model):
     """
     
 Company and/or Person contact data, linked with client account and
@@ -57,7 +58,7 @@ u'Example & Co (Luc Saffre)'
     
     addr1 = models.CharField(max_length=200,blank=True)
     addr2 = models.CharField(max_length=200,blank=True)
-    country = models.ForeignKey(Country,blank=True,null=True)
+    country = models.ForeignKey(countries.Country,blank=True,null=True)
     #city = models.ForeignKey("City",blank=True,null=True)
     city = models.CharField(max_length=200,blank=True)
     zipCode = models.CharField(max_length=10,blank=True)
@@ -73,7 +74,7 @@ u'Example & Co (Luc Saffre)'
     vatExempt = models.BooleanField(default=False)
     itemVat = models.BooleanField(default=False)
     
-    language = models.ForeignKey(Language,blank=True,null=True)
+    language = models.ForeignKey(countries.Language,blank=True,null=True)
     paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
     
     remarks = models.TextField(blank=True)
@@ -133,7 +134,7 @@ from lino.django.utils import reports
 from lino.django.utils import layouts
 from lino.django.utils import perms
 
-from lino.django.plugins.countries import Languages
+#from lino.django.plugins.countries import Languages
 
 class ContactPageLayout(layouts.PageLayout):
     
@@ -168,7 +169,7 @@ class ContactPageLayout(layouts.PageLayout):
         #~ return DocumentsByCustomer()
             
 class Contacts(reports.Report):
-    page_layouts = (ContactPageLayout, ContactDocumentsLayout)
+    page_layouts = (ContactPageLayout,)
     columnNames = "id:3 companyName firstName lastName title country"
     can_delete = True
     model = Contact
@@ -192,7 +193,7 @@ class Persons(Contacts):
     
 
 
-class ContactsByCountry(contacts.Contacts):
+class ContactsByCountry(Contacts):
     model = Contact
     master = countries.Country
     order_by = "city addr1"

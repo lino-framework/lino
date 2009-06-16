@@ -30,6 +30,7 @@ of Document it is.
 """
 
 from django.db import models
+from lino.django.apps.igen import Model
 
 class DocumentError(Exception):
   pass
@@ -55,10 +56,10 @@ def create_journal(id,cl,**kw):
     return jnl
 
 
-class Journal(models.Model):
+class Journal(Model):
   
-    class Meta:
-        db_table = 'lino_journal'
+    #~ class Meta:
+        #~ db_table = 'lino_journal'
 
     id = models.CharField(max_length=4,primary_key=True)
     name = models.CharField(max_length=100)
@@ -88,7 +89,7 @@ class Journal(models.Model):
                   "%s is not the last document in journal" % unicode(doc)
                   )
     
-class AbstractDocument(models.Model):
+class AbstractDocument(Model):
     
     class Meta:
         abstract = True

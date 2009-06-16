@@ -15,15 +15,17 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import datetime
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
+from django.contrib.auth import models as auth
 
-
+from lino.django.apps.igen import Model
 from . import fields, journals, contacts, products
 
-class InvoicingMode(models.Model):
+class InvoicingMode(Model):
     CHANNEL_CHOICES = (
         ('P', 'Regular Mail'),
         ('E', 'E-Mail'),
@@ -47,7 +49,7 @@ class InvoicingMode(models.Model):
         
     
     
-class PaymentTerm(TomModel):
+class PaymentTerm(Model):
     name = models.CharField(max_length=200)
     days = models.IntegerField(default=0)
     months = models.IntegerField(default=0)
@@ -61,7 +63,7 @@ class PaymentTerm(TomModel):
         return d
 
 
-class ShippingMode(TomModel):
+class ShippingMode(Model):
     name = models.CharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     
@@ -71,7 +73,7 @@ class ShippingMode(TomModel):
 
         
 
-class SalesRule(models.Model):
+class SalesRule(Model):
     journal = models.ForeignKey(journals.Journal,blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
@@ -101,7 +103,7 @@ class SalesDocument(journals.AbstractDocument):
     total_excl = fields.PriceField(default=0)
     total_vat = fields.PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
-    user = models.ForeignKey(User,blank=True,null=True)
+    user = models.ForeignKey(auth.User,blank=True,null=True)
     sent_date = fields.MyDateField(blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     #~ class Meta:
@@ -293,11 +295,11 @@ class Invoice(SalesDocument):
 
 
 
-class DocItem(TomModel):
+class DocItem(Model):
     document = models.ForeignKey(SalesDocument) 
     pos = models.IntegerField("Position")
     
-    product = models.ForeignKey(Product,blank=True,null=True)
+    product = models.ForeignKey(products.Product,blank=True,null=True)
     title = models.CharField(max_length=200,blank=True)
     description = models.TextField(blank=True,null=True)
     
@@ -343,7 +345,7 @@ from lino.django.utils import reports
 from lino.django.utils import layouts
 from lino.django.utils import perms
 
-from lino.django.plugins.countries import Languages
+#from lino.django.plugins.countries import Languages
 
 class PaymentTerms(reports.Report):
     model = PaymentTerm
@@ -523,3 +525,6 @@ class DocumentsByContact(reports.Report):
         return unicode(renderer.master_instance) + " : documents by customer"
 
 
+class Contacts(contacts.Contacts):
+    page_layouts = contacts.Contacts.page_layouts \
+      + (DocumentsByContactTabLayout,)

@@ -17,12 +17,20 @@
 
 
 """
-lino.django.igen
+lino.django.apps.igen
 """
+
+from django.db import models
+
+class Model(models.Model):
+    class Meta:
+        abstract = True
+        app_label = 'igen'
+
 
 #
 # menu setup
 #
 def lino_setup(lino):
-    import models
+    from . import models
     models.lino_setup(lino)

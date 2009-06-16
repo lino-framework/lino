@@ -20,14 +20,15 @@ ONE_DAY = relativedelta(days=1)
 
 from django.db import models
 from . import fields, journals
+from lino.django.apps.igen import Model
 
-class ProductCat(models.Model):
+class ProductCat(Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     def __unicode__(self):
         return self.name
 
-class Product(models.Model):
+class Product(Model):
     
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -49,8 +50,6 @@ from django import forms
 from lino.django.utils import reports
 from lino.django.utils import layouts
 from lino.django.utils import perms
-
-from lino.django.plugins.countries import Languages
 
 class ProductCats(reports.Report):
     model = ProductCat

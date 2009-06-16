@@ -16,8 +16,11 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
-from lino.django.plugins import fields, journals
-from lino.django.apps.igen.models import Contact
+#from lino.django.plugins import fields, journals
+#from lino.django.apps.igen.models import Contact
+from .. import Model
+from . import contacts, fields, journals
+
 
 class FinancialDocument(journals.AbstractDocument):
     creation_date = fields.MyDateField()
@@ -38,8 +41,8 @@ class FinancialDocument(journals.AbstractDocument):
             if not isinstance(account,Account):
                 account = Account.objects.get(pk=account)
         if contact is not None:
-            if not isinstance(contact,Contact):
-                contact = Contact.objects.get(pk=contact)
+            if not isinstance(contact,contacts.Contact):
+                contact = contacts.Contact.objects.get(pk=contact)
         kw['account'] = account
         kw['contact'] = contact        
         return self.docitem_set.create(**kw)
@@ -56,7 +59,7 @@ class DocItem(models.Model):
     credit = fields.PriceField(blank=True,null=True)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey(Account)
-    contact = models.ForeignKey(Contact,blank=True,null=True)
+    contact = models.ForeignKey(contacts.Contact,blank=True,null=True)
     
     def save(self,*args,**kw):
         if self.pos is None:
