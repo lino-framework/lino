@@ -1,4 +1,3 @@
-raise "is now a package"
 ## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
@@ -115,8 +114,7 @@ class ItemsByDocument(reports.Report):
     order_by = "pos"
 
 def lino_setup(lino):
-    pass
-    #~ m = lino.add_menu("docs","~Documents",
-      #~ can_view=perms.is_authenticated)
-    #~ m.add_action(FinancialDocuments())
-    #~ m.add_action(Accounts())
+    m = lino.add_menu("ledger","~Ledger",
+      can_view=perms.is_authenticated)
+    m.add_action(FinancialDocuments())
+    m.add_action(Accounts())

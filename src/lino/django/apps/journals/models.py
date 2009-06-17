@@ -1,4 +1,3 @@
-raise "is now a package"
 ## Copyright 2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
@@ -127,16 +126,16 @@ class AbstractDocument(models.Model):
 ## report definitions
 ##        
         
-#~ from lino.django.utils import reports
-#~ from lino.django.utils.layouts import PageLayout 
+from lino.django.utils import reports
+from lino.django.utils.layouts import PageLayout 
 
-#~ class Journals(reports.Report):
-    #~ model = Journal
-    #~ order_by = "id"
-    #~ columnNames = "id name doctype lastnum force_sequence"
+class Journals(reports.Report):
+    model = Journal
+    order_by = "id"
+    columnNames = "id name doctype lastnum force_sequence"
     
 
-#~ def lino_setup(lino):
-    #~ m = lino.add_menu("config","~Configuration")
-    #~ m.add_action(Journals())
+def lino_setup(lino):
+    m = lino.add_menu("config","~Configuration")
+    m.add_action(Journals())
 

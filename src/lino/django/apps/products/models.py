@@ -1,4 +1,3 @@
-raise "is now a package"
 ## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
@@ -72,3 +71,8 @@ class Products(reports.Report):
     order_by = "id"
     columnNames = "id:3 name description:30x1 cat vatExempt price:6"
     
+
+def lino_setup(lino):
+    m = lino.add_menu("prods","~Products")
+    m.add_action(Products())
+    m.add_action(ProductCats())

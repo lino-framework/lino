@@ -1,4 +1,3 @@
-raise "is now a package"
 ## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
@@ -532,3 +531,11 @@ class DocumentsByContact(reports.Report):
 class Contacts(contacts.Contacts):
     page_layouts = contacts.Contacts.page_layouts \
       + (DocumentsByContactTabLayout,)
+
+def lino_setup(lino):
+    m = lino.add_menu("sales","~Sales",
+      can_view=perms.is_authenticated)
+    m.add_action(Orders())
+    m.add_action(Invoices())
+    m.add_action(DocumentsToSign())
+    m.add_action(PendingOrders())

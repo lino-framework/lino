@@ -1,4 +1,3 @@
-raise "is now a package"
 ## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 

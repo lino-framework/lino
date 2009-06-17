@@ -1,0 +1,77 @@
+#coding: utf8
+## Copyright 2009 Luc Saffre
+
+## This file is part of the Lino project.
+
+## Lino is free software; you can redistribute it and/or modify it
+## under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+
+## Lino is distributed in the hope that it will be useful, but WITHOUT
+## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+## License for more details.
+
+## You should have received a copy of the GNU General Public License
+## along with Lino; if not, write to the Free Software Foundation,
+## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+from lino.django.apps.contacts.models import *
+from lino.django.utils.instantiator import Instantiator
+
+contact = Instantiator(Contact,fieldnames="""
+      id
+      firstName
+      lastName
+      title
+      companyName
+      nationalId
+      vatId
+      addr1
+      addr2
+      country
+      city
+      zipCode
+      region
+      email
+      url
+      phone
+      gsm
+      vatExempt
+      itemVat
+      language
+      paymentTerm
+      remarks
+    """).build
+    
+   
+
+
+def objects():
+    s = u"""    
+    1||||Minu Firma OÜ|||||ee||||||||0|0|et|2|
+    2|Luc|Saffre|Mr.||||Rummajaani talu|Vana-Vigala küla|ee|Vigala vald|78003|Raplamaa|luc.saffre@gmx.net||||0|0|et||
+    3|Andreas|Arens|Herrn||||Vervierser Straße 12||be|Eupen|4700||||||0|0|de||
+    4|Alfons|Ausdemwald|Herrn|Bäckerei Ausdemwald|||Vervierser Straße 45||be|Eupen|4700||||||0|0|de||
+    5|Bernard|Bodard|Dr.||||rue de la Loi 17||be|Welkenraedt|4840||||||0|0|fr||
+    6||||Donderweer bv|||Wolfgangamadeusplaats 1-5||nl|Sneek|8601 WB||||||0|0|nl||
+    7|Jean|Dupont|Mr||||71, rue Neuve||fr|Prouvy|59121||||||0|0|fr||
+    8|Emil|Eierschal|Herrn||||Eichenstr. 7||de|Erlangen|91056||||||0|0|de||
+    9|Lisa|Lahm|Frau|Hans Flott & Co|||Dürener Str. 264-266||de|Aachen|52007||||||0|0|de||
+    10|Bernd|Brecht|Herr|Bernd Brecht|||Eupener Str. 13||de|Aachen|52007||||||0|0|de||
+    11|Jérôme|Jeanémart|Monsieur||||rue Haute||be|Welkenradt|4850||||||0|0|fr||
+    12|Robin|Dubois|Monsieur||||rue des prés 5||be|Welkenradt|4850||||||0|0|fr||
+    13|Denis|Duprez|Dr.||||rue des prés 9||be|Welkenradt|4850||||||0|0|fr||
+    14|Karl|Keller|Herrn||||Bergstraße 5||be|Eupen|4700||||||0|0|de||
+    100|Tõnu|Tamme||Mets ja Puu OÜ|||Sibula tee 1||ee|Maardu|74117|Harju|||||0|0|et||
+    101|Karl|Kask|||||Nõmme tee 1|Kloogaranna küla|ee|Keila vald|76708|Harju|||||0|0|et||
+    """
+
+    for line in s.splitlines():
+        if len(line.strip()) > 0:
+            a = line.split('|')
+            #print a
+            yield contact(*a)
+        
+        

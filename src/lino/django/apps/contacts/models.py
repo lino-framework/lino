@@ -1,4 +1,3 @@
-raise "is now a package"
 ## Copyright 2008-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
@@ -214,3 +213,9 @@ class ContactsByCountryTabLayout(layouts.PageLayout):
 class Countries(countries.Countries):
     page_layouts = (ContactsByCountryTabLayout,)
   
+
+def lino_setup(lino):
+    m = lino.add_menu("contacts","~Contacts")
+    m.add_action(Companies())
+    m.add_action(Persons())
+    m.add_action(Contacts(),label="All")
