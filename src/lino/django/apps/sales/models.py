@@ -121,6 +121,11 @@ class SalesDocument(journals.AbstractDocument):
     #~ class Meta:
         #~ abstract = True
         
+    def save(self, *args, **kwargs):
+        self.before_save()
+        super(SalesDocument,self).save(*args,**kwargs)
+                    
+        
     def add_item(self,product=None,qty=None,**kw):
         if product is not None:
             if not isinstance(product,products.Product):
@@ -136,10 +141,9 @@ class SalesDocument(journals.AbstractDocument):
     total_incl.field = fields.PriceField()
 
     def before_save(self):
-      
-        r = get_document_rule(self)
+        r = get_sales_rule(self)
         if r is None:
-            raise journals.DocumentError("no document rule")
+            raise journals.DocumentError("No sales rule for %s",self)
         if self.imode is None:
             self.imode = r.imode
         if self.shipping_mode is None:
@@ -299,7 +303,7 @@ class Invoice(SalesDocument):
     
     
     def before_save(self):
-        Document.before_save(self)
+        SalesDocument.before_save(self)
         if self.due_date is None:
             if self.payment_term is not None:
                 self.due_date = self.payment_term.get_due_date(
@@ -328,6 +332,10 @@ class DocItem(models.Model):
             #~ return self.total
         #~ return 0
         
+    def save(self, *args, **kwargs):
+        self.before_save()
+        super(DocItem,self).save(*args,**kwargs)
+                    
     def before_save(self):
         #print "before_save()", self
         if self.pos is None:

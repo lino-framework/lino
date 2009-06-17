@@ -40,8 +40,8 @@ MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
-DATABASE_NAME = ':memory:'
-#DATABASE_NAME = os.path.join(gettempdir(),'mysites_demo.db') 
+#DATABASE_NAME = ':memory:'
+DATABASE_NAME = os.path.join(gettempdir(),'mysites_demo.db') 
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -136,17 +136,15 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'django.contrib.admin',
     'django.contrib.databrowse',
+    'lino.django.apps.system',
     'lino.django.apps.countries',
     'lino.django.apps.contacts',
     'lino.django.apps.products',
     'lino.django.apps.journals',
     'lino.django.apps.sales',
     'lino.django.apps.ledger',
-    'lino.django.apps.auth',
     'lino.django.apps.voc',
     'lino.django.apps.songs',
-    #'lino.django.ledger',
-    #'lino.django.tom',
 )
 
 

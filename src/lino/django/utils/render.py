@@ -34,6 +34,8 @@ from django.forms.models import modelform_factory, modelformset_factory, inlinef
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 from django.db.models.manager import Manager
+from django.conf.urls.defaults import patterns, url, include
+
 
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe

@@ -27,28 +27,22 @@ def i2d(i):
     return dateparser.parse(str(i))
 
 journal = Instantiator(journals.Journal,"id name")
-shippingmode_builder = Instantiator(ShippingMode,"name")
+shippingmode = Instantiator(ShippingMode,"name").build
 paymentterm = Instantiator(PaymentTerm,"name").build
-
-invoice = Instantiator(Invoice,
-"customer creation_date imode payment_term shipping_mode",journal=INV).build
-
-order = Instantiator(Order,
-"""customer creation_date start_date cycle imode 
-payment_term shipping_mode""",journal=ORD).build
-    
+salesrule = Instantiator(SalesRule).build
+customer = Instantiator(Customer).build
 
 
 def objects():
-    yield shippingmode_builder.build("cash and carry")
-    yield shippingmode_builder.build("regular mail")
+    yield shippingmode("cash and carry")
+    yield shippingmode("regular mail")
 
     yield paymentterm("Cash")
     yield paymentterm("7 days net",days=7)
     yield paymentterm("Prepayment",days=7)
     
     for ct in contacts.Contact.objects.all():
-        yield customer(contact=ct,paymentTerm=1)
+        yield customer(contact_ptr=ct,paymentTerm=1)
     
         #~ vatExempt=None
         #~ itemVat
@@ -58,16 +52,27 @@ def objects():
     INV = journals.create_journal("INV",Invoice)
     yield INV    
     
+    
+    invoice = Instantiator(Invoice,
+      "customer creation_date imode payment_term shipping_mode",
+      journal=INV).build
+
+    order = Instantiator(Order,
+    """customer creation_date start_date cycle imode 
+    payment_term shipping_mode""",journal=ORD).build
+    
     imode = Instantiator(InvoicingMode,
       "id channel name advance_days journal").build
-    yield imode('e','E','By e-mail',2,"INV")
-    yield imode('p','P','By snail mail',10,"INV")
+    yield imode('e','E','By e-mail',2,INV)
+    yield imode('p','P','By snail mail',10,INV)
         
+    salesrule(imode='e',shipping_mode=1,payment_term=2)
         
     furniture = ProductCat.objects.get(name="Furniture")
     hosting = 5
     
-    o = order(100,"2008-09-23","2008-09-24","M","e",2,1,remark="monthly order")
+    o = order(100,"2008-09-23","2008-09-24","M","e",2,1,
+        remark="monthly order")
     o.add_item(hosting,1)
     yield o
     
@@ -81,7 +86,7 @@ def objects():
     yield o.make_invoice(today=date(2009,04,11))
         
     i = invoice(3,date(2009,04,11),"e",2,1,
-                remark="second manual invoice")
+        remark="second manual invoice")
     i.add_item(3,1)
     i.add_item(4,4)
     yield i

@@ -22,6 +22,7 @@ import yaml
 
 
 from lino.django.apps.songs.models import *
+from lino.django.apps.countries import models as countries
 from lino.django.utils.instantiator import Instantiator, ManyToManyConverter
 
 
@@ -80,7 +81,7 @@ choir = Instantiator(Choir,"name place singers:nickname").build
 
 def objects():
 
-    language = Instantiator(Language,"id name").build
+    language = Instantiator(countries.Language,"id name").build
     yield language('la','Latin')
     yield language('he','Hebrew')
     
