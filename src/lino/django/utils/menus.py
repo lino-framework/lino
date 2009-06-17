@@ -147,8 +147,10 @@ class Menu(MenuItem):
         if old:
             i = self.items.index(old)
             # print [ mi.name for mi in self.items ]
-            print "[debug] Replacing menu item %s at position %d" % (m.name,i)
-            self.items[i] = m
+            print "[debug] Modifing menu item %s at position %d" % (m.name,i)
+            # self.items[i] = m
+            # assert len(m) == 0
+            return old 
         else:
             self.items.append(m)
         self.items_dict[m.name] = m

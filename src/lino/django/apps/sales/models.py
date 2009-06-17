@@ -556,3 +556,13 @@ def lino_setup(lino):
     m.add_action(Invoices())
     m.add_action(DocumentsToSign())
     m.add_action(PendingOrders())
+
+#~ m = lino.add_menu("admin","~Administration",
+      #~ can_view=perms.is_staff)
+    #~ m.add_action(MakeInvoicesDialog())
+    
+    m = lino.add_menu("config","~Configuration",
+      can_view=perms.is_staff)
+    m.add_action(InvoicingModes())
+    m.add_action(ShippingModes())
+    m.add_action(PaymentTerms())
