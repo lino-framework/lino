@@ -41,11 +41,12 @@ def objects():
     yield paymentterm("7 days net",days=7)
     yield paymentterm("Prepayment",days=7)
     
-    for ct in contacts.Contact.objects.all():
-        yield customer(contact_ptr=ct,paymentTerm=1)
+    #print " ".join([f.name for f in Customer._meta.fields])
+    print Customer._meta.get_all_field_names()
+    raise "hier"
     
-        #~ vatExempt=None
-        #~ itemVat
+    for ct in contacts.Contact.objects.all():
+        yield customer(contact=ct,paymentTerm=1)
       
     ORD = journals.create_journal("ORD",Order)
     yield ORD

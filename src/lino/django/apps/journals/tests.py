@@ -24,7 +24,7 @@ from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
 
-from lino.django.journals import models as journals
+from lino.django.apps.journals import models as journals
 # Journal, Document, register_doctype, DocumentError
 
 class Document(journals.AbstractDocument):

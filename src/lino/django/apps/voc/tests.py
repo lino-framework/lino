@@ -62,7 +62,7 @@ class TestCase(TestCase):
             
 
 class PkkTestCase(TestCase):
-    fixtures=[ 'demo.yaml' ]
+    fixtures=[ 'demo' ]
     def setUp(self):
         for u in Unit.objects.all():
             u.save()

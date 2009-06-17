@@ -76,21 +76,19 @@ u'Example & Co (Luc Saffre)'
     # upload_to=".")
     
     remarks = models.TextField(blank=True)
-    
-    
-    ordering=("companyName","lastName","firstName")
+    ordering = ("companyName","lastName","firstName")
     
     def __unicode__(self):
         if self.title and not self.firstName:
-            l=filter(lambda x:x,[self.title,self.lastName])
+            l = filter(lambda x:x,[self.title,self.lastName])
         else:
-            l=filter(lambda x:x,[self.firstName,self.lastName])
-            
-        s=" ".join(l)
+            l = filter(lambda x:x,[self.firstName,self.lastName])
+
+        s = " ".join(l)
             
         if self.companyName:
             if len(s) > 0:
-                return self.companyName+" ("+s+")"
+                return self.companyName + " (" + s + ")"
             else:
                 return self.companyName
         else:
@@ -151,12 +149,8 @@ class ContactPageLayout(layouts.PageLayout):
               addr2:30
               """
     box7 = """vatId
-              vatExempt itemVat 
               language
-              paymentTerm"""
-    #~ box7 = """box5 
-              #~ box6
-              #~ """
+              """
     main = """
             box1
             box2 box3

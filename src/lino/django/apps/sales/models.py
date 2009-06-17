@@ -385,6 +385,14 @@ class InvoicingModes(reports.Report):
     model = InvoicingMode
     order_by = "id"
     can_view = perms.is_staff
+    
+class CustomerPageLayout(contacts.ContactPageLayout):
+    
+    box7 = """vatId
+              vatExempt itemVat 
+              language
+              paymentTerm"""
+    
 
     
 class DocumentPageLayout(layouts.PageLayout):
@@ -522,22 +530,22 @@ class ItemsByDocument(reports.Report):
 
 
 
-class DocumentsByContactTabLayout(contacts.ContactPageLayout):
+class DocumentsByCustomerTabLayout(contacts.ContactPageLayout):
     label = "Documents"
     main = """
             box1
             documents
             """
     def inlines(self):
-        return dict(documents=DocumentsByContact())
+        return dict(documents=DocumentsByCustomer())
 
 
-class DocumentsByContact(reports.Report):
+class DocumentsByCustomer(reports.Report):
     page_layouts = (DocumentPageLayout,)
     columnNames = "number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
     model = SalesDocument
-    master = contacts.Contact
+    master = Customer
     fk_name = 'customer'
     order_by = "creation_date"
 
@@ -545,13 +553,13 @@ class DocumentsByContact(reports.Report):
         return unicode(renderer.master_instance) + " : documents by customer"
 
 
-class Contacts(contacts.Contacts):
-    page_layouts = contacts.Contacts.page_layouts \
-      + (DocumentsByContactTabLayout,)
+class Customers(contacts.Contacts):
+    page_layouts = (CustomerPageLayout,DocumentsByCustomerTabLayout)
 
 def lino_setup(lino):
     m = lino.add_menu("sales","~Sales",
       can_view=perms.is_authenticated)
+    m.add_action(Customers())
     m.add_action(Orders())
     m.add_action(Invoices())
     m.add_action(DocumentsToSign())

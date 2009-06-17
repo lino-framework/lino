@@ -68,7 +68,7 @@ def objects():
     for line in s.splitlines():
         if len(line.strip()) > 0:
             a = line.split('|')
-            #print a
-            yield contact(*a)
+            ct = contact(*a)
+            yield ct
         
         

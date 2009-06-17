@@ -1,4 +1,4 @@
-## Copyright 2007-2008 Luc Saffre.
+## Copyright 2007-2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -16,19 +16,24 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import unittest
-from lino.django.songs.models import Song, Person
+from lino.django.apps.songs.models import Song, Author
+from lino.django.apps.countries.models import Language
 
 class TestCase(unittest.TestCase):
     
     def setUp(self):
-        self.john=Person(firstname="John",name="Lennon")
+        en = Language(pk='en')
+        self.john=Author(first_name="John",last_name="Lennon")
         self.john.save()
-        self.song1=Song(title="Give Peace a Chance",published=1971)
-        self.song2=Song(title="Imagine",published=1971)
-        self.john.songs_composed.create(song=self.song1)
-        self.john.songs_composed.create(song=self.song2)
+        self.song1=Song(title="Give Peace a Chance",
+          composed_year=1971,language=en)
+        self.song1.save()
+        self.song1.composed_by.add(self.john)
+        self.john.songs_composed.create(title="Imagine",
+          composed_year=1971,language=en)
 
     def test01(self):
-        self.assertEquals(unicode(self.song1), u'Foo')
-        self.assertEquals(len(self.john.songs_composed), 3)
+        self.assertEquals(unicode(self.song1), 'Give Peace a Chance (1)')
+        self.assertEquals(self.john.songs_composed.count(), 2)
+        self.assertEquals(Song.objects.count(), 2)
  
