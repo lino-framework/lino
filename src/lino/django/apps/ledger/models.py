@@ -16,10 +16,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
-#from lino.django.plugins import fields, journals
-#from lino.django.apps.igen.models import Contact
-#from .. import Model
-from . import contacts, fields, journals
+from lino.django.apps import fields
+from lino.django.apps.contacts import models as contacts
+from lino.django.apps.journals import models as journals
 
 __app_label__ = "ledger"
 

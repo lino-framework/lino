@@ -18,9 +18,9 @@
 from django.db import models
 
 #from lino.django.apps.igen import Model
-from . import countries # countries import Country, Language
+from lino.django.apps.countries import models as countries 
 
-__app_label__ = "contacts"
+#__app_label__ = "contacts"
 
 
 class Contact(models.Model):
@@ -66,6 +66,7 @@ u'Example & Co (Luc Saffre)'
     city = models.CharField(max_length=200,blank=True)
     zipCode = models.CharField(max_length=10,blank=True)
     region = models.CharField(max_length=200,blank=True)
+    language = models.ForeignKey(countries.Language,blank=True,null=True)
     
     email = models.EmailField(blank=True)
     url = models.URLField(blank=True)
@@ -74,13 +75,8 @@ u'Example & Co (Luc Saffre)'
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
-    vatExempt = models.BooleanField(default=False)
-    itemVat = models.BooleanField(default=False)
-    
-    language = models.ForeignKey(countries.Language,blank=True,null=True)
-    paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
-    
     remarks = models.TextField(blank=True)
+    
     
     ordering=("companyName","lastName","firstName")
     
@@ -101,8 +97,8 @@ u'Example & Co (Luc Saffre)'
             return s
             
     def as_address(self,linesep="\n<br/>"):
-        l=filter(lambda x:x,[self.title,self.firstName,self.lastName])
-        s=" ".join(l)
+        l = filter(lambda x:x,[self.title,self.firstName,self.lastName])
+        s = " ".join(l)
         if self.companyName:
             s=self.companyName+linesep+s
         if self.addr1:
@@ -118,9 +114,9 @@ u'Example & Co (Luc Saffre)'
         elif self.region:
             s += linesep+ self.region
         if self.id == 1:
-            foreigner=False
+            foreigner = False
         else:
-            foreigner=(self.country != Contact.objects.get(id=1).country)
+            foreigner = (self.country != Contact.objects.get(id=1).country)
         if foreigner: # (if self.country != sender's country)
             s += linesep + unicode(self.country)
         return s

@@ -47,6 +47,12 @@ def objects():
     yield paymentterm("7 days net",days=7)
     yield paymentterm("Prepayment",days=7)
     
+    for ct in contacts.Contact.objects.all():
+        yield customer(contact=ct,paymentTerm=1)
+    
+        #~ vatExempt=None
+        #~ itemVat
+      
     ORD = journals.create_journal("ORD",Order)
     yield ORD
     INV = journals.create_journal("INV",Invoice)

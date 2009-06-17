@@ -25,8 +25,17 @@ __app_label__ = "sales"
 from django.db import models
 from django.contrib.auth import models as auth
 
-#from lino.django.apps.igen import Model
-from . import fields, journals, contacts, products
+from lino.django.apps import fields
+from lino.django.apps.contacts import models as contacts
+from lino.django.apps.journals import models as journals
+from lino.django.apps.products import models as products
+
+class Customer(contacts.Contact):
+    paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
+    vatExempt = models.BooleanField(default=False)
+    itemVat = models.BooleanField(default=False)
+    
+  
 
 class InvoicingMode(models.Model):
     CHANNEL_CHOICES = (
@@ -90,10 +99,10 @@ def get_sales_rule(doc):
 class SalesDocument(journals.AbstractDocument):
     
     creation_date = fields.MyDateField() #auto_now_add=True)
-    customer = models.ForeignKey(contacts.Contact,
-      related_name="customer_%(class)s")
-    ship_to = models.ForeignKey(contacts.Contact,blank=True,null=True,
-      related_name="shipTo_%(class)s")
+    customer = models.ForeignKey(Customer,
+        related_name="customer_%(class)s")
+    ship_to = models.ForeignKey(Customer,blank=True,null=True,
+        related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
     imode = models.ForeignKey(InvoicingMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
