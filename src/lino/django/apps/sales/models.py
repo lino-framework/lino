@@ -15,6 +15,19 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+"""
+>>> luc = contacts.Contact(firstName="Luc",lastName="Saffre")
+>>> luc.save()
+>>> luc
+<Contact: Luc Saffre>
+
+>>> c = Customer.from_parent(luc)
+>>> c.save()
+>>> c
+<Customer: Luc Saffre>
+
+"""
+
 import datetime
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
@@ -25,6 +38,8 @@ __app_label__ = "sales"
 from django.db import models
 from django.contrib.auth import models as auth
 
+from lino.django.utils.ticket7623 import child_from_parent
+
 from lino.django.apps import fields
 from lino.django.apps.contacts import models as contacts
 from lino.django.apps.journals import models as journals
@@ -34,6 +49,10 @@ class Customer(contacts.Contact):
     paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
     vatExempt = models.BooleanField(default=False)
     itemVat = models.BooleanField(default=False)
+    
+    @classmethod
+    def from_parent(cls,*args,**kw):
+        return child_from_parent(cls,*args,**kw)
     
   
 

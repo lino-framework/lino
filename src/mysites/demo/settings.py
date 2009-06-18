@@ -128,7 +128,8 @@ TEMPLATE_DIRS = (
 )
 #print "baz", __file__
 
-INSTALLED_APPS = (
+if True:
+  INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -145,7 +146,13 @@ INSTALLED_APPS = (
     'lino.django.apps.ledger',
     'lino.django.apps.voc',
     'lino.django.apps.songs',
-)
+  )
+else:
+  INSTALLED_APPS = (
+    #'lino.django.apps.sandbox.contacts',
+    #'lino.django.apps.sandbox.sales',
+    'lino.django.apps.sandbox.example',
+  )
 
 
 

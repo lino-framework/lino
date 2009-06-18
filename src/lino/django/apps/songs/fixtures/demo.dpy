@@ -30,7 +30,7 @@ RELAX = not True
 
 def load_yaml(model,filename):
     pfn = os.path.join(os.path.dirname(__file__),filename)
-    print "Loading input file %s ..." % filename
+    #print "Loading input file %s ..." % filename
     fd = codecs.open(pfn,"r",'utf-8')
     try:
         for yamldict in yaml.load_all(fd):

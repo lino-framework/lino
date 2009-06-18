@@ -21,6 +21,9 @@ import datetime
 from dateutil import parser as dateparser
 import decimal
 
+def i2d(i):
+    return dateparser.parse(str(i))
+
 class DataError(Exception):
     pass
 

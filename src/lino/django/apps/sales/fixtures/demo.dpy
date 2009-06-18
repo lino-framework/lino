@@ -21,10 +21,7 @@ import time
 from datetime import date
 from dateutil import parser as dateparser
 from lino.django.apps.sales.models import *
-from lino.django.utils.instantiator import Instantiator
-
-def i2d(i):
-    return dateparser.parse(str(i))
+from lino.django.utils.instantiator import Instantiator, i2d
 
 journal = Instantiator(journals.Journal,"id name")
 shippingmode = Instantiator(ShippingMode,"name").build
@@ -37,16 +34,13 @@ def objects():
     yield shippingmode("cash and carry")
     yield shippingmode("regular mail")
 
-    yield paymentterm("Cash")
+    cash = paymentterm("Cash")
+    yield cash
     yield paymentterm("7 days net",days=7)
     yield paymentterm("Prepayment",days=7)
     
-    #print " ".join([f.name for f in Customer._meta.fields])
-    print Customer._meta.get_all_field_names()
-    raise "hier"
-    
     for ct in contacts.Contact.objects.all():
-        yield customer(contact=ct,paymentTerm=1)
+        yield Customer.from_parent(ct)
       
     ORD = journals.create_journal("ORD",Order)
     yield ORD
