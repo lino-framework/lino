@@ -201,7 +201,7 @@ class Report:
         #print "column_headers"
         #print self.layout
         for e in self.row_layout._main.elements:
-            yield e.name
+            yield e.label
             
     def get_title(self,renderer):
         #~ if self.title is None:

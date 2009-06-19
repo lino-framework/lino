@@ -38,6 +38,7 @@ from django import template
 from django.views.decorators.cache import never_cache 
 #from django.shortcuts import render_to_response 
 from lino.django.utils import menus # Menu, MenuRenderer
+from django.contrib.auth.models import User
 
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -182,6 +183,7 @@ class LinoSite: #(AdminSite):
           root_path = self.root_path,
           lino = self,
           skin = self.skin,
+          request=request
         )
         d.update(kw)
         return d

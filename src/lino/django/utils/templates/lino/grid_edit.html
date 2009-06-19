@@ -3,10 +3,14 @@
 {% block content %}
 
 <form action="{{form_action}}" method="POST">
-All rows: <input type="submit" name="submit" value="Save" />
+All rows: 
+<input type="submit" name="submit" value="Save" />
+<input type="reset" name="reset" value="Reset" />
 <br>On selected rows: {{ report.row_buttons }}
 {% include "lino/includes/grid_edit.html" %}
-All rows: <input type="submit" name="submit" value="Save" />
+All rows: 
+<input type="submit" name="submit" value="Save" />
+<input type="reset" name="reset" value="Reset" />
 <br>On selected rows: {{ report.row_buttons }}
 </form>
 {% endblock content %}

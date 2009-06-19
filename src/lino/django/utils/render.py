@@ -151,15 +151,7 @@ class ElementServer:
                 return ''
             model_field = self.get_model_field(elem)
             if model_field is None:
-                if isinstance(value,Manager):
-                    value = "<br/>".join(
-                      [HREF(get_instance_url(o),
-                        unicode(o)) for o in value.all()])
-                    label = elem.name
-                    #widget=widget_for_value(value)
-                    widget = forms.TextInput()
-                # so it is a method
-                elif hasattr(value,"field"):
+                if hasattr(value,"field"):
                     #print "it is a method"
                     field = value.field
                     value = value()
@@ -172,7 +164,6 @@ class ElementServer:
                     widget = field.formfield().widget
                     #print widget
                 else:
-                    value = value()
                     #~ from lino.django.tom import reports
                     #~ if isinstance(value,reports.Report):
                         #~ return value.as_html()
@@ -215,31 +206,28 @@ class ElementServer:
             #~ else:
                 #~ value = unicode(value)
                 
-            if isinstance(widget, forms.SelectMultiple):
-                l = []
-                for o in value.all():
-                    url = get_instance_url(o)
-                    l.append(HREF(url,unicode(o)))
-                s = ",<br/>".join(l)
-                s = SPAN(s,style)
-            elif isinstance(widget, forms.Select):
-                try:
-                    url = get_instance_url(value)
-                    s = HREF(url,value)
-                except Exception,e:
-                    traceback.print_exc(e)
-                    s = "[&nbsp;" + unicode(value) + "&nbsp;]"
-                s = SPAN(s,style)
+            if callable(value):
+                value = value()
+                
+            if isinstance(value,Manager):
+                value = "<br/>".join(
+                  [HREF(get_instance_url(o),
+                    unicode(o)) for o in value.all()])
+            elif hasattr(value,'__iter__'):
+                value = "<br/>".join(
+                  [unicode(x) for x in value])
+            elif isinstance(value,models.Model):
+                url = get_instance_url(value)
+                value = HREF(url,value)
+            elif value is None:
+                value = '&nbsp;'
+            elif isinstance(model_field,models.URLField):
+                value = HREF(value,short_link(value))
             else:
-                if value is None:
+                value = unicode(value)
+                if len(value) == 0:
                     value = '&nbsp;'
-                elif isinstance(model_field,models.URLField):
-                    value = HREF(value,short_link(value))
-                else:
-                    value = unicode(value)
-                    if len(value) == 0:
-                        value = '&nbsp;'
-                s = SPAN(value,style)
+            s = SPAN(value,style)
             if elem.layout.show_labels:
                 s = label + "<br/>" + s
             return mark_safe(s)

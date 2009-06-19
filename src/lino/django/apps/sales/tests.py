@@ -19,6 +19,7 @@
 
 from django.test import TestCase
 from django.forms.models import modelform_factory, formset_factory
+from django.contrib.auth.models import User
 
 from lino.django.utils import layouts
 from lino.django.utils.instantiator import i2d
@@ -84,10 +85,17 @@ number         |creation date  |total_incl     |total excl     |total vat
             self.failUnlessEqual(response.status_code, 200,
               "GET %r fails to respond" % url)
             return response.context
-
+            
         context = test_context('/sales/invoices?row=1')
         self.assertEqual(context[0].get("title"),u"Sorry")
         
+        User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
+        url = '/accounts/login/'
+        response = self.client.post(url,
+            dict(username='root',password='1234'))
+        #~ self.failUnlessEqual(response.status_code, 200,
+          #~ "POST %r failed with status %d" % (url,response.status_code))
+
         # now we just check whether some methods raise an exception
         # templates silently ignore them
         context = test_context('/sales/invoices/1')

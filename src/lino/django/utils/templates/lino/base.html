@@ -135,7 +135,7 @@ Powered by
 <a href="/accounts/password_reset/">{% trans 'Reset password' %}</a> / 
 <a href="/accounts/logout/">{% trans 'Log out' %}</a> /
 {% else %}
-<a href="/accounts/login/">{% trans 'Log in' %}</a> /
+<a href="/accounts/login?next={{request.path}}">{% trans 'Log in' %}</a> /
 {% endif %}
 {% block breadcrumbs %}
 <a href="/">home</a>

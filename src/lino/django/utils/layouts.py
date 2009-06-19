@@ -26,14 +26,17 @@ from django.template.loader import render_to_string
 
             
 class Element:
-    label = None
-    name = None
-    def __init__(self,layout,name,width=None,height=None):
+    #label = None
+    #name = None
+    def __init__(self,layout,name,width=None,height=None,label=None):
         assert isinstance(layout,Layout)
         self.layout = layout
         self.name = name
         self.width = width
         self.height = height
+        if label is None:
+            label = name.replace("_"," ")
+        self.label = label
         
     def __str__(self):
         if self.width is None:
@@ -56,7 +59,7 @@ class StaticText(Element):
           
 class FieldElement(Element):
     def __init__(self,layout,field,**kw):
-        Element.__init__(self,layout,field.name,**kw)
+        Element.__init__(self,layout,field.name,label=field.verbose_name,**kw)
         self.field = field
         
     def render(self,row):
@@ -335,7 +338,8 @@ class BoundElement:
                 s += "<td>%d</td>" % (self.row.number)
             return mark_safe(s)
         except Exception,e:
-            print "Exception in BoundElement.row_management():"
+            print "Exception in BoundElement.row_management() %s:" % \
+                 self.row.renderer.request.path
             traceback.print_exc()
             raise e
 
