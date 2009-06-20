@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>{{intance}}</title>
+<style type="text/css">
+
+@page {
+  @top-left{
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 18pt;
+  font-weight: bolder;
+  }
+}
+
+body {
+  font-family: "Helvetica";
+}
+
+h1 { border: solid 1pt black; text-align: center;font-family: Helvetica; font-size: 16pt; }
+h2 { font-family: Helvetica; font-size: 14pt; }
+
+p.Recipient, p.Subject {
+  font-weight: bold;
+}
+
+
+p.Recipient, p.Date, p.Signature {
+  margin-left: 70mm;
+}
+
+p.VnlDesig {
+  font-weight: bold;
+}
+p.VnlMemo {
+  font-weight: bold;
+}
+img.foto {
+  width:28mm;
+}
+p.photo {
+  width:28mm;
+}
+table.vnl {
+  table-layout:fixed; background-color:gray; padding: 2mm;
+}
+table.vnl th {background-color:white;}
+td.number {text-align:right;}
+table.tech td {
+  background-color:#eeeeee;
+}
+</style>
+</head>
+<body style="font-family: Helvetica;">
+<p>
+<br>
+<br>
+<br>
+</p>
+<p class="Recipient" style="margin-left: 70mm;font-weight: bold;">
+{{instance.customer}}<br>
+{{instance.customer.addr1}}<br>
+{{instance.customer.zipCode}}
+{{instance.customer.city}}
+
+
+</p>
+
+<p>
+<br>
+
+<br>
+<br>
+</p>
+
+
+
+<p class="Date" style="margin-left: 70mm;">
+{{instance.creation_date}}
+</p>
+
+
+<p class="Subject" style="font-weight: bold; width:100%; border-bottom: solid 1pt black">
+{{instance}} / {{instance.your_ref}}
+</p>
+
+
+{{instance.intro}}
+
+
+<table class="vnl">
+<tr>
+<th>pos</th>
+<th>title</th>
+<th>unit_price</th>
+<th>qty</th>
+<th>total_excl</th>
+</tr>
+
+{% for item in instance.docitem_set.all %}
+<tr>
+<td class="number" style="width:3em;">{{ item.pos }}</td>
+<td style="width:30em;">{{ item.title }}</td>
+<td class="number" style="width:6em;">{{ item.unit_price }}</td>
+<td class="number" style="width:3em;">{{ item.qty }}</td>
+<td class="number" style="width:6em;">{{ item.total_excl }}</td>
+</tr>
+{% endfor %}
+
+<tr><td colspan="2"></td>
+  <td colspan="2">Total htva:</td>
+  <td class="number">{{instance.total_excl}}</td></tr>
+<tr><td colspan="2"></td>
+  <td colspan="2">TVA: </td>
+  <td class="number">{{instance.total_vat}}</td></tr>
+<tr><td colspan="2"></td>
+  <td colspan="2">Total tvac : </td>
+  <td class="number">{{instance.total_incl}}</td></tr>
+</table>
+
+</body>
+</html>

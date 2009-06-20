@@ -1,0 +1,51 @@
+\documentclass[12pt]{article}
+\usepackage{color}
+\usepackage{chngpage}
+\usepackage[utf8]{inputenc}
+\usepackage[footskip=12pt,right=6mm,twoside,bottom=12mm,top=10mm,heightrounded,a4paper,left=16mm]{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{fancyhdr}
+\usepackage{calc}
+\usepackage[estonian]{babel}
+\pagestyle{empty}
+\renewcommand{\familydefault}{\sfdefault}
+\setlength{\parindent}{0mm}
+%% \setlength{\marginparwidth}{12mm}
+%% \setlength{\marginparsep}{2mm}
+%% \parskip6pt
+\usepackage{graphics}
+
+
+\begin{document}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhf{}
+\lfoot{\today }
+
+
+{{instance.customer}}
+{{instance.customer.addr1}}
+{{instance.customer.zipCode}}
+{{instance.customer.city}}
+
+{{instance.creation_date}}
+
+Subject: {{instance.journal.id}} {{instance.number}} / {{instance.your_ref}}
+
+{{instance.intro}}
+
+
+{% for item in instance.docitem_set.all %}
+{{ item.pos }}
+{{ item.title }}
+{{ item.unit_price }}
+{{ item.qty }}
+{{ item.total_excl }}
+{% endfor %}
+
+Total htva:
+{{instance.total_excl}}
+
+
+\end{document}

@@ -29,7 +29,7 @@ of Document it is.
 
 """
 
-__app_label__ = "journals"
+#~ __app_label__ = "journals"
 
 
 from django.db import models
@@ -61,13 +61,9 @@ def create_journal(id,cl,**kw):
 
 class Journal(models.Model):
   
-    #~ class Meta:
-        #~ db_table = 'lino_journal'
-
     id = models.CharField(max_length=4,primary_key=True)
     name = models.CharField(max_length=100)
     doctype = models.IntegerField(choices=DOCTYPE_CHOICES)
-    #lastnum = models.IntegerField(blank=True,null=True,default=0)
     force_sequence = models.BooleanField(default=False)
     
     def create_document(self,**kw):

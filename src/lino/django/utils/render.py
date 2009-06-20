@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
 import traceback
 #import types
 import cgi
@@ -817,13 +818,34 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
             yield Row(self,obj,rownum,None)
             rownum += 1
 
-def print_instance(obj,as_pdf=True,model=None):
-    if model is None:
-        tn = obj._meta.db_table + "_print.html"
-    else:
-        tn = model._meta.db_table + "_print.html"
-    #print tn
-    template = select_template([tn,"lino/page_print.html"])
+def render_to_pdf(obj):
+    tplnames = [ obj._meta.db_table, "lino/page" ]
+    tpls = [ x + ".tex" for x in tplnames ]
+    template = select_template(tpls)
+    context = dict(
+      #report=self,
+      instance=obj,
+      #title = unicode(obj),
+      #title=u"%s - %s" % (self.get_title(),obj),
+      #layout = layout
+    )
+    tex = template.render(Context(context))
+    tex = tex.encode("utf-8")
+    file('tmp.tex','w').write(tex)
+    os.system("pdflatex tmp.tex")
+    if not os.path.exists("tmp.pdf"):
+        raise Exception("tmp.pdf not created")
+    return "tmp.pdf"
+
+def as_printable(obj,as_pdf=True,model=None):
+    #~ if model is None:
+        #~ tn = obj._meta.db_table + "_print.html"
+    #~ else:
+        #~ tn = model._meta.db_table + "_print.html"
+    tplnames = [ obj._meta.db_table, "lino/page" ]
+    tpls = [ x + "_printable.html" for x in tplnames ]
+    template = select_template(tpls)
+    
     context = dict(
       #report=self,
       instance=obj,
@@ -835,7 +857,7 @@ def print_instance(obj,as_pdf=True,model=None):
     if not (pisa and as_pdf):
         return html
     html = html.encode("ISO-8859-1")
-    file('tmp.html','w').write(html)
+    #file('tmp.html','w').write(html)
     result = cStringIO.StringIO()
     pdf = pisa.pisaDocument(cStringIO.StringIO(html), result)
     if pdf.err:
@@ -847,20 +869,18 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
     detail_renderer = PdfManyReportRenderer
 
     def render(self,as_pdf=True):
-        #self.row = Row(self,obj,rownum)
-        result = print_instance(self.row.instance,as_pdf=as_pdf)
-        if pisa and as_pdf:
-            return HttpResponse(result,
-                mimetype='application/pdf')
+        if as_pdf:
+            fname = render_to_pdf(self.row.instance)
+            response = HttpResponse(mimetype='application/pdf')
+            response['Content-Disposition'] = \
+              'attachment; filename=%s' % fname
+            s = open(fname).read()
+            response.write(s)
+            #print s
+            return response 
+            #HttpResponse(s,mimetype='application/pdf')
+        result = as_printable(self.row.instance,as_pdf=as_pdf)
         return HttpResponse(result)
-
-
-
-#~ class RowPrintReportRenderer(RowViewReportRenderer):
-    #~ def render(self):
-        #~ tplname = self.report.get_row_print_template(self.row.instance)
-        #~ context = dict(instance=self.row.instance)
-        #~ return render_to_response(tplname,context)
 
 
 

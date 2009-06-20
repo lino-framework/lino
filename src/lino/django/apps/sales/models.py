@@ -181,7 +181,8 @@ class SalesDocument(journals.AbstractDocument):
         self.total_vat = total_vat
         
     def send(self,simulate=True):
-        result = render.print_instance(self,model=self.get_model(),as_pdf=True)
+        result = render.print_instance(self,
+          model=self.get_model(),as_pdf=True)
         #print result
         fn = "%s%d.pdf" % (self.journal.id,self.id)
         file(fn,"w").write(result)
