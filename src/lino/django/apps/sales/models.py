@@ -137,8 +137,6 @@ class SalesDocument(journals.AbstractDocument):
     user = models.ForeignKey(auth.User,blank=True,null=True)
     sent_date = fields.MyDateField(blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
-    #~ class Meta:
-        #~ abstract = True
         
     def save(self, *args, **kwargs):
         self.before_save()

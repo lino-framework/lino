@@ -53,7 +53,7 @@ except ImportError:
 from lino.django.utils import layouts
 #from lino.django.utils import reports
 from lino.django.utils.requests import again, get_redirect, redirect_to
-from lino.django.utils import editing
+from lino.django.utils import editing, latex
 
 IS_SELECTED = 'IS_SELECTED_%d'
 
@@ -819,9 +819,8 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
             rownum += 1
 
 def render_to_pdf(obj):
-    tplnames = [ obj._meta.db_table, "lino/page" ]
-    tpls = [ x + ".tex" for x in tplnames ]
-    template = select_template(tpls)
+    tplbases = [ obj._meta.db_table, "lino/page" ]
+    tplnames = [ x + ".tex" for x in tplbases ]
     context = dict(
       #report=self,
       instance=obj,
@@ -829,13 +828,15 @@ def render_to_pdf(obj):
       #title=u"%s - %s" % (self.get_title(),obj),
       #layout = layout
     )
-    tex = template.render(Context(context))
-    tex = tex.encode("utf-8")
-    file('tmp.tex','w').write(tex)
-    os.system("pdflatex tmp.tex")
-    if not os.path.exists("tmp.pdf"):
-        raise Exception("tmp.pdf not created")
-    return "tmp.pdf"
+    return latex.process_latex(tplnames,context)
+    #~ template = select_template(tpls)
+    #~ tex = template.render(Context(context))
+    #~ tex = tex.encode("utf-8")
+    #~ file('tmp.tex','w').write(tex)
+    #~ os.system("pdflatex tmp.tex")
+    #~ if not os.path.exists("tmp.pdf"):
+        #~ raise Exception("tmp.pdf not created")
+    #~ return "tmp.pdf"
 
 def as_printable(obj,as_pdf=True,model=None):
     #~ if model is None:
@@ -870,15 +871,17 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
 
     def render(self,as_pdf=True):
         if as_pdf:
-            fname = render_to_pdf(self.row.instance)
-            response = HttpResponse(mimetype='application/pdf')
-            response['Content-Disposition'] = \
-              'attachment; filename=%s' % fname
-            s = open(fname).read()
-            response.write(s)
-            #print s
-            return response 
-            #HttpResponse(s,mimetype='application/pdf')
+            s = render_to_pdf(self.row.instance)
+            return HttpResponse(s,mimetype='application/pdf')
+            
+            #~ fname = render_to_pdf(self.row.instance)
+            #~ response = HttpResponse(mimetype='application/pdf')
+            #~ response['Content-Disposition'] = \
+              #~ 'attachment; filename=%s' % fname
+            #~ s = open(fname).read()
+            #~ response.write(s)
+            #~ #print s
+            #~ return response 
         result = as_printable(self.row.instance,as_pdf=as_pdf)
         return HttpResponse(result)
 
