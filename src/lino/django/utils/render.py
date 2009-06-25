@@ -855,7 +855,7 @@ def as_printable(obj,as_pdf=True,model=None):
       #layout = layout
     )
     html = template.render(Context(context))
-    if not (pisa and as_pdf):
+    if not as_pdf:
         return html
     html = html.encode("ISO-8859-1")
     #file('tmp.html','w').write(html)
@@ -871,19 +871,15 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
 
     def render(self,as_pdf=True):
         if as_pdf:
-            s = render_to_pdf(self.row.instance)
-            return HttpResponse(s,mimetype='application/pdf')
-            
-            #~ fname = render_to_pdf(self.row.instance)
-            #~ response = HttpResponse(mimetype='application/pdf')
-            #~ response['Content-Disposition'] = \
-              #~ 'attachment; filename=%s' % fname
-            #~ s = open(fname).read()
-            #~ response.write(s)
-            #~ #print s
-            #~ return response 
-        result = as_printable(self.row.instance,as_pdf=as_pdf)
-        return HttpResponse(result)
+            if False:
+                s = render_to_pdf(self.row.instance)
+                return HttpResponse(s,mimetype='application/pdf')
+            elif pisa:
+                s = as_printable(self.row.instance,as_pdf=True)
+                return HttpResponse(s,mimetype='application/pdf')
+        else:
+            result = as_printable(self.row.instance,as_pdf=False)
+            return HttpResponse(result)
 
 
 
