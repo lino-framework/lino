@@ -22,8 +22,9 @@ import time
 from appy.pod import PodError
 from appy.pod.renderer import Renderer
 
-docFormat = "odt"
-coOpenOfficePath = r"C:\Program Files\OpenOffice.org 3\program\soffice.exe"
+#docFormat = "odt"
+#coOpenOfficePath = r"C:\Program Files\OpenOffice.org 3\program\soffice.exe"
+coOpenOfficePath = r"C:\PROGRA~1\OPENOF~1.ORG\program\soffice.exe"
 
 def process_pod(template,context,outfile):
     #template_name = r"c:\temp\sales\invoice.odt"

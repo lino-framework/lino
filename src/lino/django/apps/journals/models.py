@@ -17,8 +17,8 @@
 
 
 """
-lino.django.plugins.journals
-----------------------------
+lino.django.apps.journals
+-------------------------
 
 This defines two models Journal and AbstractDocument.
 
@@ -33,7 +33,7 @@ of Document it is.
 
 
 from django.db import models
-#from lino.django.apps.igen import Model
+from lino.django.apps.documents import models as documents
 
 class DocumentError(Exception):
   pass
@@ -88,7 +88,7 @@ class Journal(models.Model):
                   "%s is not the last document in journal" % unicode(doc)
                   )
     
-class AbstractDocument(models.Model):
+class AbstractDocument(documents.AbstractDocument):
     
     class Meta:
         abstract = True

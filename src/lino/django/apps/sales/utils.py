@@ -16,18 +16,31 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+"""
+make_invoices() creates invoices. 
+
+These new invoices are not yet signed. 
+A user must sign them using the web interface before they can be sent.
+
+send_invoices() then "sends" the signed invoices:
+  - create a PDF version 
+  - send this to a printer (for regular mail channel) 
+    or directly via e-mail to the customer.
+"""
+
 import os
 import datetime
 
 from lino.console import syscon
 from lino.django.apps.sales import models as sales
 from lino.django.utils.sites import lino_site
-        
-def make_invoices():
-        
+
+def thanks_to():
     for name,url,version in lino_site.thanks_to():
         print name,version, "<%s>" % url
 
+        
+def make_invoices():
     rpt = sales.PendingOrders()
     print rpt.as_text()
     
@@ -44,10 +57,6 @@ def make_invoices():
         print "%s made %s" % (o,i)
 
 def send_invoices():
-        
-    for name,url,version in lino_site.thanks_to():
-        print name,version, "<%s>" % url
-    
     q = [o for o in sales.SalesDocument.objects.filter(
         sent_date__exact=None).exclude(user__exact=None)]
     if len(q) == 0:

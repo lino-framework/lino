@@ -141,6 +141,7 @@ if True:
     'lino.django.apps.countries',
     'lino.django.apps.contacts',
     'lino.django.apps.products',
+    'lino.django.apps.documents',
     'lino.django.apps.journals',
     'lino.django.apps.sales',
     'lino.django.apps.ledger',

@@ -178,24 +178,6 @@ class SalesDocument(journals.AbstractDocument):
         self.total_excl = total_excl
         self.total_vat = total_vat
         
-    def send(self,simulate=True):
-        if True:
-            model = self.get_model()
-            from lino.django.utils.appy_pod import process_pod
-            context = dict(instance=self)
-            template = r"c:\temp\sales\invoice.odt"
-            outfile = r"c:\temp\sales\temp\%s_%d.odt" % (self.journal.id,self.number)
-            process_pod(template,context,outfile)
-        if False:
-            result = render.print_instance(self,
-              model=self.get_model(),as_pdf=True)
-            #print result
-            fn = "%s%d.pdf" % (self.journal.id,self.id)
-            file(fn,"w").write(result)
-        if not simulate:
-            self.sent_date = datetime.date.today()
-            self.save()
-        
         
 class OrderManager(models.Manager):
   
