@@ -2,119 +2,112 @@
 <head>
 <title>{{intance}}</title>
 <style type="text/css">
-/**
-@page {
-  @top-left{
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 18pt;
-  font-weight: bolder;
-  }
-}
-
 body {
-  font-family: "Helvetica";
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14pt;
 }
 
-h1 { border: solid 1pt black; text-align: center;font-family: Helvetica; font-size: 16pt; }
-h2 { font-family: Helvetica; font-size: 14pt; }
+h1 { border: solid 1pt black; text-align: center;font-size: 16pt; }
+h2 { font-size: 14pt; }
 
 p.Recipient, p.Subject {
   font-weight: bold;
 }
 
-
 p.Recipient, p.Date, p.Signature {
   margin-left: 70mm;
 }
 
-p.VnlDesig {
-  font-weight: bold;
+
+table.items {
+  table-layout:fixed; background-color:white; padding: 2mm;
 }
-p.VnlMemo {
-  font-weight: bold;
-}
-img.foto {
-  width:28mm;
-}
-p.photo {
-  width:28mm;
-}
-table.vnl {
-  table-layout:fixed; background-color:gray; padding: 2mm;
-}
-table.vnl th {background-color:white;}
-td.number {text-align:right;}
+table.items th { background-color:gray; padding: 1mm; text-align:left;}
+td.number { text-align:right; }
 table.tech td {
   background-color:#eeeeee;
 }
-***/
+table.total tr { background-color:gray; padding: 1mm; }
+
 </style>
 </head>
-<body style="font-family: Helvetica;">
-<p>
-<br>
-<br>
-<br>
-</p>
-<p class="Recipient" style="margin-left: 70mm;font-weight: bold;">
+<body>
+
+<table>
+<tr>
+<td>
+<img src="t:/data/luc/rumma-ko/logo2.jpg" width="30mm"/>
+</td>
+<td style="text-align:center;">
+<b><font size="7">igen demo</font></b>
+</td>
+<td style="text-align:right; font-size:8pt">
+<br/>Tartu mnt 71-5, 10115 Tallinn
+<br/>Tel +372/4824548
+<br/>GSM +372/56672435
+<br/>http://igen.saffre-rumma.ee
+</td>
+</tr>
+</table>
+
+<pdf:spacer height="20mm">
+
+<p class="Recipient" style="margin-left:70mm;font-weight: bold;">
 {{instance.customer}}<br>
 {{instance.customer.addr1}}<br>
 {{instance.customer.zipCode}}
 {{instance.customer.city}}
 
-
-</p>
-
-<p>
-<br>
-
-<br>
-<br>
-</p>
-
-
+<pdf:spacer height="20mm">
 
 <p class="Date" style="margin-left: 70mm;">
 {{instance.creation_date}}
 </p>
 
-
 <p class="Subject" style="font-weight: bold; width:100%; border-bottom: solid 1pt black">
 {{instance}} / {{instance.your_ref}}
 </p>
 
-
 {{instance.intro}}
 
-
-<table class="vnl">
+<table class="items" repeat="1">
 <tr>
-<th>pos</th>
-<th>title</th>
-<th>unit_price</th>
-<th>qty</th>
-<th>total_excl</th>
+<th style="width:15mm;">pos</th>
+<th style="width:125mm;">title</th>
+<th style="width:20mm;">unit price</th>
+<th style="width:20mm;">qty</th>
+<th style="width:20mm;">total excl</th>
 </tr>
 
 {% for item in instance.docitem_set.all %}
 <tr>
-<td class="number" style="width:3em;">{{ item.pos }}</td>
-<td style="width:30em;">{{ item.title }}</td>
-<td class="number" style="width:6em;">{{ item.unit_price }}</td>
-<td class="number" style="width:3em;">{{ item.qty }}</td>
-<td class="number" style="width:6em;">{{ item.total_excl }}</td>
+<td class="number">{{ item.pos }}</td>
+<td>{{ item.title }}</td>
+<td class="number">{{ item.unit_price }}</td>
+<td class="number">{{ item.qty }}</td>
+<td class="number">{{ item.total_excl }}</td>
 </tr>
 {% endfor %}
 
-<tr><td colspan="2"></td>
-  <td colspan="2">Total htva:</td>
-  <td class="number">{{instance.total_excl}}</td></tr>
-<tr><td colspan="2"></td>
-  <td colspan="2">TVA: </td>
-  <td class="number">{{instance.total_vat}}</td></tr>
-<tr><td colspan="2"></td>
-  <td colspan="2">Total tvac : </td>
-  <td class="number">{{instance.total_incl}}</td></tr>
+</table>
+
+<table class="total">
+<tr>
+  <td style="width:130mm; font-size:10pt" rowspan="3" valign="top">
+  Our general terms and conditions apply.
+  <br/>Invoicing mode: <b>{{instance.imode}}</b>
+  <br/>Payment term: <b>{{instance.payment_term}}</b>
+  <br/>Shipping mode: <b>{{instance.shipping_mode}}</b>
+  </td>
+  <td style="width:40mm; text-align:right;">Total htva:</td>
+  <td style="width:20mm;" class="number">{{instance.total_excl}}</td></tr>
+<tr>
+  <td style="width:40mm; text-align:right;">TVA:</td>
+  <td style="width:20mm;" class="number">{{instance.total_vat}}</td>
+</tr>
+<tr>
+  <td style="width:40mm; text-align:right;">Total to pay:</td>
+  <td style="width:20mm;" class="number">{{instance.total_incl}}</td></tr>
 </table>
 
 </body>

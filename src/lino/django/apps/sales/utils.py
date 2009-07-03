@@ -46,11 +46,11 @@ def make_invoices():
     
     q = [o for o in sales.Order.objects.pending()]
     if len(q) == 0:
-        print "Nothing to do"
+        print "Nothing to do."
         return
     #~ for o in q:
         #~ print o
-    if not syscon.confirm("Call make_invoice on these orders?"):
+    if not syscon.confirm("Make invoices for these orders?"):
         return
     for o in q:
         i = o.make_invoice()
@@ -60,11 +60,11 @@ def send_invoices():
     q = [o for o in sales.SalesDocument.objects.filter(
         sent_date__exact=None).exclude(user__exact=None)]
     if len(q) == 0:
-        print "Nothing to do"
+        print "Nothing to do."
         return
     print "%d documents to send: " % len(q) \
       + ", ".join(str(d) for d in q)
-    if not syscon.confirm("Call send() on these documents?"):
+    if not syscon.confirm("Send these documents?"):
         return
     for d in q:
         d.send()

@@ -20,7 +20,8 @@
 lino.django.apps.documents
 --------------------------
 
-This defines AbstractDocument which 
+This defines AbstractDocument which knows how to "print" an instance.
+
 
 
 """
@@ -29,15 +30,29 @@ This defines AbstractDocument which
 import os
 import sys
 import datetime
+import cStringIO
+
 
 from django.db import models
-from lino.django.utils import appy_pod
+from django.template.loader import render_to_string, get_template, select_template, Context
 
-LINO_PDFROOT = '/var/cache/lino/pdf'
+try:
+    import ho.pisa as pisa
+    pisa.showLogging()
+except ImportError:
+    pisa = None
+
+try:
+    from lino.django.utils import appy_pod
+except ImportError:
+    appy_pod = None
+
 
 if sys.platform == 'win32':
     LINO_PDFROOT = r'c:\pdfroot'
-    
+else:
+    LINO_PDFROOT = '/var/cache/lino/pdf'
+
 
 class DocumentError(Exception):
     pass
@@ -54,11 +69,16 @@ class AbstractDocument(models.Model):
         return True
         
     def pdf_filename(self):
-        return os.path.join(LINO_PDFROOT,self._meta.db_table,str(self.pk))+'.pdf'
+        return os.path.join(LINO_PDFROOT,
+          self._meta.db_table,
+          str(self.pk))+'.pdf'
         
     def odt_template(self):
         return os.path.join(os.path.dirname(__file__),
                             'odt',self._meta.db_table)+'.odt'
+        
+    def html_template(self):
+        return 'sales_invoice_printable.html' # % self._meta.db_table
         
     def make_pdf(self):
         filename = self.pdf_filename()
@@ -68,16 +88,36 @@ class AbstractDocument(models.Model):
             mtime = os.path.getmtime(filename)
             #~ st = os.stat(filename)
             #~ mtime = st.st_mtime
+            mtime = datetime.datetime.fromtimestamp(mtime)
             if mtime >= self.last_modified:
+                print "up to date:", filename
                 return
             os.remove(filename)
         dirname = os.path.dirname(filename)
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
-        context = dict(instance=self)
-        template = self.odt_template()
-        outfile = self.pdf_filename()
-        appy_pod.process_pod(template,context,outfile)
+        if False:
+            # using appy.pod
+            context = dict(instance=self)
+            template = self.odt_template()
+            appy_pod.process_pod(template,context,filename)
+        else:
+            # using pisa
+            context = dict(
+              instance=self,
+              title = unicode(self),
+            )
+            template = get_template(self.html_template())
+            html = template.render(Context(context))
+            html = html.encode("ISO-8859-1")
+            file(filename+'.html','w').write(html)
+            result = cStringIO.StringIO()
+            pdf = pisa.pisaDocument(cStringIO.StringIO(html), result)
+            if pdf.err:
+                raise Exception("pisa.pisaDocument.err is %r" % pdf.err)
+            file(filename,'wb').write(result.getvalue())
+            #return result.getvalue()
+          
         
     def send(self,simulate=True):
         self.make_pdf()
