@@ -47,10 +47,6 @@ class JournalsTest(TestCase):
 
         ORD = journals.create_journal("ORD",Order)
         INV = journals.create_journal("INV",Invoice,force_sequence=True)
-        #~ INV = journals.Journal(id="INV",name="Invoices",
-          #~ doctype=journals.get_doctype(Invoice),        
-          #~ force_sequence=True)
-        #~ INV.save()
         
         ORD.create_document() # Order(journal=ORD).save()
         INV.create_document() # Invoice(journal=INV).save()
@@ -107,5 +103,22 @@ ORD#2 (3)
 ORD#3 (4)
 ORD#4 (6)
 INV#2 (7)""")
+
+        # 20090704 : new method get_child_instance()
+        s = ''
+        for gen_doc in Document.objects.all():
+            spec_doc = gen_doc.get_child_instance()
+            s += "%s : %s\n" % (spec_doc,spec_doc.__class__.__name__)
+        #print s
+        self.assertEqual(s,"""\
+INV#1 (2) : Invoice
+ORD#2 (3) : Order
+ORD#3 (4) : Order
+ORD#4 (6) : Order
+INV#2 (7) : Invoice
+""")
+        
+            
+          
       
         

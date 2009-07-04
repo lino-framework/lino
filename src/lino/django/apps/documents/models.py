@@ -64,21 +64,44 @@ class AbstractDocument(models.Model):
         abstract = True
         
     last_modified = models.DateTimeField(auto_now=True)
+    sent_time = models.DateTimeField(blank=True,null=True)
     
-    def can_send(self):
-        return True
+    def get_child_model(self):
+        raise NotImplementedError
+        #return self.__class__
+        # implementation example SalesDocument in lino.django.apps.journals
         
-    def pdf_filename(self):
-        return os.path.join(LINO_PDFROOT,
-          self._meta.db_table,
-          str(self.pk))+'.pdf'
+    def get_child_instance(self):
+        model = self.get_child_model()
+        if model is self.__class__:
+            return self
+        related_name = model.__name__.lower()
+        return getattr(self,related_name)
         
     def odt_template(self):
         return os.path.join(os.path.dirname(__file__),
                             'odt',self._meta.db_table)+'.odt'
+    def html_templates(self):
+        return [
+          '%s_pisa.html' % self.__class__.__name__.lower(),
+          'document_pisa.html'
+        ]
+
+    def can_send(self):
+        return True
+      
+    def must_send(self):
+        if not self.can_send():
+            return False
+        return self.sent_time is None
         
-    def html_template(self):
-        return 'sales_invoice_printable.html' # % self._meta.db_table
+    def pdf_root(self):
+        return LINO_PDFROOT
+        
+    def pdf_filename(self):
+        return os.path.join(self.pdf_root(),
+          self._meta.db_table,
+          str(self.pk))+'.pdf'
         
     def make_pdf(self):
         filename = self.pdf_filename()
@@ -107,10 +130,10 @@ class AbstractDocument(models.Model):
               instance=self,
               title = unicode(self),
             )
-            template = get_template(self.html_template())
+            template = select_template(self.html_templates())
             html = template.render(Context(context))
             html = html.encode("ISO-8859-1")
-            file(filename+'.html','w').write(html)
+            #file(filename+'.html','w').write(html)
             result = cStringIO.StringIO()
             pdf = pisa.pisaDocument(cStringIO.StringIO(html), result)
             if pdf.err:
@@ -122,13 +145,13 @@ class AbstractDocument(models.Model):
     def send(self,simulate=True):
         self.make_pdf()
         if False:
-            result = render.print_instance(self,
-              model=self.get_model(),as_pdf=True)
+            result = render.print_instance(self,as_pdf=True)
             #print result
             fn = "%s%d.pdf" % (self.journal.id,self.id)
             file(fn,"w").write(result)
         if not simulate:
-            self.sent_date = datetime.date.today()
+            # todo : here we should really send it
+            self.sent_time = datetime.datetime.now()
             self.save()
         
         

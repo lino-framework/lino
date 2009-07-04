@@ -135,8 +135,11 @@ class SalesDocument(journals.AbstractDocument):
     total_vat = fields.PriceField(default=0)
     intro = models.TextField("Introductive Text",blank=True)
     user = models.ForeignKey(auth.User,blank=True,null=True)
-    sent_date = fields.MyDateField(blank=True,null=True)
     #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+        
+    def can_send(self):
+        "only signed documents can be sent"
+        return self.user is not None
         
     def save(self, *args, **kwargs):
         self.before_save()
@@ -406,7 +409,7 @@ class CustomerPageLayout(contacts.ContactPageLayout):
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
       number your_ref creation_date 
-      user sent_date
+      user sent_time
       customer 
       ship_to
       """

@@ -31,7 +31,7 @@ of Document it is.
 
 #~ __app_label__ = "journals"
 
-
+import os
 from django.db import models
 from lino.django.apps.documents import models as documents
 
@@ -42,6 +42,7 @@ DOCTYPE_CLASSES = []
 DOCTYPE_CHOICES = []
 
 def register_doctype(cl):
+    assert cl not in DOCTYPE_CLASSES
     i = len(DOCTYPE_CHOICES)
     DOCTYPE_CHOICES.append((i,cl.__name__))
     DOCTYPE_CLASSES.append(cl)
@@ -113,8 +114,13 @@ class AbstractDocument(documents.AbstractDocument):
         #print "Deleting", self
         return super(AbstractDocument,self).delete()
         
-    def get_model(self):
+    def get_child_model(self):
         return DOCTYPE_CLASSES[self.journal.doctype]
+        
+    def pdf_filename(self):
+        return os.path.join(self.pdf_root(),
+          self.journal.id,
+          str(self.number))+'.pdf'
 
 
 

@@ -57,8 +57,10 @@ def make_invoices():
         print "%s made %s" % (o,i)
 
 def send_invoices():
-    q = [o for o in sales.SalesDocument.objects.filter(
-        sent_date__exact=None).exclude(user__exact=None)]
+    q = [ o.get_child_instance() for o in sales.SalesDocument.objects.all() ]
+    q = [ o for o in q if o.must_send() ]
+    #~ q = [o for o in sales.SalesDocument.objects.filter(
+        #~ sent_time__exact=None).exclude(user__exact=None)]
     if len(q) == 0:
         print "Nothing to do."
         return
@@ -66,6 +68,6 @@ def send_invoices():
       + ", ".join(str(d) for d in q)
     if not syscon.confirm("Send these documents?"):
         return
-    for d in q:
-        d.send()
+    for doc in q:
+        doc.send()
 
