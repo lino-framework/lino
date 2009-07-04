@@ -88,6 +88,9 @@ class Journal(models.Model):
                 raise DocumentError(
                   "%s is not the last document in journal" % unicode(doc)
                   )
+                  
+    def __unicode__(self):
+        return self.id
     
 class AbstractDocument(documents.AbstractDocument):
     

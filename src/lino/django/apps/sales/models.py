@@ -408,7 +408,7 @@ class CustomerPageLayout(contacts.ContactPageLayout):
     
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
-      number your_ref creation_date 
+      journal number your_ref creation_date 
       user sent_time
       customer 
       ship_to
@@ -456,7 +456,7 @@ class InvoicePageLayout(DocumentPageLayout):
 class EmittedInvoicesPageLayout(DocumentPageLayout):
     label = "Emitted invoices"
     main = """
-    number:4 creation_date customer:20 start_date
+    journal number:4 creation_date customer:20 start_date
     emitted_invoices
     """
     def inlines(self):

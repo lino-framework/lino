@@ -818,7 +818,7 @@ class PdfManyReportRenderer(ViewManyReportRenderer):
             yield Row(self,obj,rownum,None)
             rownum += 1
 
-def render_to_pdf(obj):
+def unused_render_to_pdf(obj):
     tplbases = [ obj._meta.db_table, "lino/page" ]
     tplnames = [ x + ".tex" for x in tplbases ]
     context = dict(
@@ -838,7 +838,7 @@ def render_to_pdf(obj):
         #~ raise Exception("tmp.pdf not created")
     #~ return "tmp.pdf"
 
-def as_printable(obj,as_pdf=True,model=None):
+def unused_as_printable(obj,as_pdf=True,model=None):
     #~ if model is None:
         #~ tn = obj._meta.db_table + "_print.html"
     #~ else:
@@ -871,15 +871,17 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
 
     def render(self,as_pdf=True):
         if as_pdf:
-            if False:
-                s = render_to_pdf(self.row.instance)
-                return HttpResponse(s,mimetype='application/pdf')
-            elif pisa:
-                s = as_printable(self.row.instance,as_pdf=True)
-                return HttpResponse(s,mimetype='application/pdf')
+            return self.row.instance.view_pdf(self.request)
+            #~ if False:
+                #~ s = render_to_pdf(self.row.instance)
+                #~ return HttpResponse(s,mimetype='application/pdf')
+            #~ elif pisa:
+                #~ s = as_printable(self.row.instance,as_pdf=True)
+                #~ return HttpResponse(s,mimetype='application/pdf')
         else:
-            result = as_printable(self.row.instance,as_pdf=False)
-            return HttpResponse(result)
+            return self.row.instance.view_printable(self.request)
+            #~ result = as_printable(self.row.instance,as_pdf=False)
+            #~ return HttpResponse(result)
 
 
 
