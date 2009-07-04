@@ -103,7 +103,7 @@ class AbstractDocument(models.Model):
         return self.sent_time is None
         
     def pdf_root(self):
-        return os.path.join(settings.MEDIA_ROOT,"pdf_root")
+        return os.path.join(settings.MEDIA_ROOT,"pdf_cache")
         #return LINO_PDFROOT
         
     def pdf_filename(self):
@@ -136,7 +136,8 @@ class AbstractDocument(models.Model):
         else:
             # using pisa
             #url = "file:///"+settings.MEDIA_ROOT + os.path.sep
-            url = "file:///"+settings.MEDIA_ROOT.replace('\\','/') + '/'
+            #url = "file:///"+settings.MEDIA_ROOT.replace('\\','/') + '/'
+            url = settings.MEDIA_ROOT.replace('\\','/') + '/'
             html = self.make_pisa_html(MEDIA_URL=url)
             html = html.encode("ISO-8859-1")
             file(filename+'.html','w').write(html)
