@@ -160,13 +160,29 @@ class Menu(MenuItem):
         
     def findItem(self,name):
         return self.items_dict[name]
-        #~ for mi in self.items:
-            #~ if mi.name == name: return mi
 
     def get_items(self):
         for mi in self.items:
             yield mi
         
+    def sort_items(self,front=None,back=None):
+        new_items = []
+        if front:
+            for name in front.split():
+                new_items.append(self.findItem(name))
+        back_items = []
+        if back:
+            for name in back.split():
+                back_items.append(self.findItem(name))
+        for i in self.get_items():
+            if not i in new_items + back_items:
+                new_items.append(i)
+        self.items = new_items + back_items
+        self.items_dict = {}
+        for i in self.items:
+            self.items_dict[i.name] = i
+                
+
     def as_html(self,request,level=1):
         try:
             if not self.can_view.passes(request):

@@ -78,7 +78,18 @@ class PasswordResetForm(forms.Form):
             raise forms.ValidationError(_("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
         return email
 
-
+def app_mod_label(mod):
+    """
+    This algorithm should also be used by
+    django.db.models.loading.get_models()
+    django.core.management.commands.reset.Command
+    django.core.management.commands.syncdb.Command
+    and others
+    
+    """
+    if hasattr(mod,'__applabel__'):
+        return mod.__applabel__
+    return mod.__name__.split('.')[-1]
 
 
 class LinoSite: #(AdminSite):
@@ -94,38 +105,28 @@ class LinoSite: #(AdminSite):
         self.skin = Skin()
         #self.model_reports = {}
         
-    def autodiscover(self):
-        # autodiscover is currently not used
+    def setup(self):
         if self.done:
             return
         self.loading = True
 
+        print "Reading lino_settings.py"
+        execfile('lino_settings.py',dict(lino=self))
+        self.done = True
+        self.loading = False
+        
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
             lino_setup = getattr(mod,"lino_setup",None)
             if lino_setup:
                 print "lino_setup", app
                 lino_setup(self)
+            lbl = app_mod_label(mod)
+            if hasattr(self,lbl):
+                print "Warning: %s" % lbl
+            else:
+                setattr(self,lbl,mod)
                 
-            #~ mod = import_module(app)
-            #~ try:
-                #~ app_path = mod.__path__
-            #~ except AttributeError:
-                #~ continue
-
-            #~ try:
-                #~ imp.find_module('lino_setup', app_path)
-            #~ except ImportError:
-                #~ continue
-            #~ mod = import_module("%s.lino_setup" % app)
-            #~ mod.setup_menu(self._menu)
-            
-        #~ from lino.django.utils.sysadm import lino_setup
-        #~ lino_setup(self)
-        
-        self.done = True
-        self.loading = False
-        
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
        
@@ -134,6 +135,10 @@ class LinoSite: #(AdminSite):
             return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
         for name,url,version in self.thanks_to():
             yield HREF(name,url,version)
+            
+    def sort_menu_items(self,*args,**kw):
+        return self._menu.sort_items(*args,**kw)
+        
           
     def thanks_to(self):
         import lino
@@ -388,7 +393,7 @@ class LinoSite: #(AdminSite):
         return render_to_response(template_name, context,context_instance=RequestContext(request))
             
     def get_urls(self):
-        self.autodiscover()
+        self.setup()
         #~ for k,v in self.model_reports.items():
             #~ print k,v
         
@@ -442,3 +447,4 @@ class Skin:
          
        
 lino_site = LinoSite()
+lino_site.setup()

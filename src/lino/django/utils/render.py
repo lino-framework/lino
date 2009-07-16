@@ -37,7 +37,6 @@ from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 from django.db.models.manager import Manager
 from django.conf.urls.defaults import patterns, url, include
 
-
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
@@ -74,9 +73,11 @@ def short_link(s):
     return "link"
     
     
+
     
-    
-def view_instance(self,request,db_table,pk):
+def view_instance(request,db_table=None,pk=None):
+    if db_table is None:
+        return Http404
     from . import reports
     try:
         rptclass = reports.model_reports[db_table]
@@ -148,8 +149,6 @@ class ElementServer:
     def field_as_readonly(self,elem):
         try:
             value = self.get_value(elem)
-            if value is None:
-                return ''
             model_field = self.get_model_field(elem)
             if model_field is None:
                 if hasattr(value,"field"):
@@ -272,8 +271,9 @@ class Row(ElementServer):
         l = []
         l.append('<a href="%s">%s</a>' % (
             self.get_url_path(),unicode(self.instance)))
-        if self.renderer.selector is not None:
-            l.append(unicode(self.renderer.selector[IS_SELECTED % self.number]))
+        if self.renderer.has_actions():
+            l.append(unicode(
+              self.renderer.selector[IS_SELECTED % self.number]))
         #print "<br/>".join(l)
         return mark_safe("<br/>".join(l))
 
@@ -378,7 +378,10 @@ class ViewReportRenderer(ReportRenderer):
         ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
         self.is_main = is_main
-        self._actions = self.report.get_row_actions(self)
+        if is_main:
+            self._actions = self.report.get_row_actions(self)
+        else:
+            self._actions = ()
 
 
     def again(self,*args,**kw):
@@ -388,7 +391,10 @@ class ViewReportRenderer(ReportRenderer):
         #~ return self.report.can_change(self.request)
         
     def has_actions(self):
-        return False
+        return len(self._actions) > 0
+            
+    #~ def has_actions(self):
+        #~ return False
         
     #~ def grid_buttons(self):
         #~ if self.editing:
@@ -435,6 +441,8 @@ class ViewReportRenderer(ReportRenderer):
           title = self.get_title(),
           form_action = self.again(editing=None),
         )
+        if self.report.help_url is not None:
+            context['help_url'] = self.report.help_url
         return render_to_response(self.template_to_reponse,
             context,
             context_instance=template.RequestContext(self.request))
@@ -545,6 +553,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
             raise
             
     def setup(self):
+        if not self.has_actions():
+            return
         if self.request.method == 'POST':
             frm = SelectorForm(self.request.POST)
         else:
@@ -552,7 +562,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
         i = 0
         for row in self.rows():
             i += 1
-            frm.fields[IS_SELECTED % i] = forms.BooleanField(required=False)
+            frm.fields[IS_SELECTED % i] = forms.BooleanField(
+              required=False)
         self.selector = frm
         
         if not self.selector.is_valid():
@@ -566,12 +577,6 @@ class ViewManyReportRenderer(ViewReportRenderer):
         for name,action in self._actions:
             if name == action_name:
                 return action(self)
-        #~ action = getattr(self,action_name+"_action")
-        
-        #~ for row in self.selected_rows():
-            #~ action(row)
-
-        #print self.selector.data
             
     def selected_rows(self):
         i = 0
@@ -580,9 +585,6 @@ class ViewManyReportRenderer(ViewReportRenderer):
             if self.selector.cleaned_data[IS_SELECTED % i]:
                 yield row
                 
-    def has_actions(self):
-        return len(self._actions) > 0
-            
         
     def must_refresh(self):
         redirect_to(self.request,self.again()) 

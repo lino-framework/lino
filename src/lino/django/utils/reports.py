@@ -132,6 +132,7 @@ class Report:
     form_class = None
     master = None
     fk_name = None
+    help_url = None
     
     _page_layouts = None
     page_layouts = (layouts.PageLayout ,)

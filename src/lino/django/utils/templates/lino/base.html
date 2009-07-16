@@ -129,8 +129,9 @@ Powered by
 </p>
 </div>
 <div id="breadcrumbs">
-{% if user.is_authenticated%}
+{% if user.is_authenticated %}
 {% trans 'Welcome,' %} <strong>{% firstof user.first_name user.username %}</strong>. 
+
 <a href="/accounts/password_change/">{% trans 'Change password' %}</a> / 
 <a href="/accounts/password_reset/">{% trans 'Reset password' %}</a> / 
 <a href="/accounts/logout/">{% trans 'Log out' %}</a> /
@@ -141,6 +142,9 @@ Powered by
 <a href="/">home</a>
 / <a href="/admin/">admin</a>
 / <a href="/db/">databrowse</a>
+{% if lino.help_url %}
+/ <a href="{{ lino.help_url }}" target="_HELP">{% trans 'Help' %}</a>
+{% endif %}
 {% endblock breadcrumbs %}
 </div>
 <div id="messages">

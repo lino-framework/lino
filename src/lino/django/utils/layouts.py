@@ -37,6 +37,8 @@ class Element:
         if label is None:
             label = name.replace("_"," ")
         self.label = label
+        #~ if name.startswith("bal"):
+            #~ print self.__class__.__name__, self.name, "in", layout
         
     def __str__(self):
         if self.width is None:
@@ -66,6 +68,11 @@ class FieldElement(Element):
         #~ if self.name == "items":
           #~ print self.__class__.__name__, self.name, "render()"
         return row.render_field(self)
+        #~ print self.name
+        #~ return r
+        #~ except Exception,e:
+            #~ traceback.print_exc(e)
+            #~ raise
         
 class InlineElement(Element):
 
@@ -157,10 +164,10 @@ class Container(Element):
             
 
     def render(self,row):
-        context = dict(
-          element = BoundElement(self,row)
-        )
         try:
+            context = dict(
+              element = BoundElement(self,row)
+            )
             return render_to_string(self.template,context)
         except Exception,e:
             traceback.print_exc(e)
@@ -269,7 +276,10 @@ class Layout:
             return self.hbox_class(self,name,*l,**kw)
             
     def __str__(self):
-        return self.__class__.__name__ + "(%s)" % self._main
+        s = self.__class__.__name__ 
+        if hasattr(self,'_main'):
+            s += "(%s)" % self._main
+        return s
         
     def bound_to(self,row):
         return BoundElement(self._main,row)
