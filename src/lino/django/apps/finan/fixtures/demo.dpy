@@ -17,21 +17,25 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import time
-from datetime import date
-from dateutil import parser as dateparser
+#import time
+#from datetime import date
+#from dateutil import parser as dateparser
+from lino.django.apps.finan import models as finan
 from lino.django.apps.ledger import models as ledger
 #from lino.django.apps.journals import models as journals
-from lino.django.apps.ledger.fixtures import be
+#from lino.django.apps.ledger.fixtures import be
 from lino.django.utils.instantiator import Instantiator, i2d
 
-#journal = Instantiator(journals.Journal,"id name")
-#account = Instantiator(ledger.Account,"name").build
-account = Instantiator(ledger.Account,"id name").build
-
 def objects():
-    for ln in be.PCMN.splitlines():
-        a = ln.split(None,1)
-        if len(a) == 2:
-            yield account(*a)
+    #ba = ledger.Account.objects.get(pk="5500")
+    BANK = journals.get_journal_by_docclass(finan.BankStatement)
     
+    EL = ledger.Account.objects.get(pk='61202')
+    IN = ledger.Account.objects.get(pk='61211')
+    PR = ledger.Account.objects.get(pk='4400')
+    
+    doc = BANK.create_document(date=i2d(20090501),balance1='1056.40')
+    doc.add_item(account=PR,contact=Contact.objects.get(pk=2),
+      debit='12.49')
+    doc.book()
+    yield doc

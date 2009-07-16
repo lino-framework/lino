@@ -47,6 +47,8 @@ show:
   
 upload:
 	cd $(BUILDDIR) && rsync -r --progress --delete --times ./ luc@saffre-rumma.ee:/var/cache/sphinxbuild/$(SITENAME)
+	cd $(BUILDDIR) && rsync -r --progress --delete --times ./ lsaffre@shell.berlios.de:/home/groups/lino/htdocs/
+
 
 
 pickle:

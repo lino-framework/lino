@@ -32,7 +32,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
-__app_label__ = "sales"
+# __app_label__ = "sales"
 
 
 from django.db import models
@@ -43,6 +43,7 @@ from lino.django.utils.ticket7623 import child_from_parent
 from lino.django.apps import fields
 from lino.django.apps.contacts import models as contacts
 from lino.django.apps.journals import models as journals
+from lino.django.apps.ledger import models as ledger
 from lino.django.apps.products import models as products
 
 class Customer(contacts.Contact):
@@ -53,7 +54,6 @@ class Customer(contacts.Contact):
     @classmethod
     def from_parent(cls,*args,**kw):
         return child_from_parent(cls,*args,**kw)
-    
   
 
 class InvoicingMode(models.Model):
@@ -62,7 +62,8 @@ class InvoicingMode(models.Model):
         ('E', 'E-Mail'),
     )
     id = models.CharField(max_length=3, primary_key=True)
-    journal = models.ForeignKey(journals.Journal)
+    journal = journals.JournalRef()
+    #journal = models.ForeignKey(journals.Journal)
     name = models.CharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     channel = models.CharField(max_length=1, 
@@ -102,18 +103,18 @@ class ShippingMode(models.Model):
         return self.name
         
 
-        
 
 class SalesRule(models.Model):
-    journal = models.ForeignKey(journals.Journal,blank=True,null=True)
+    #journal = models.ForeignKey(journals.Journal,blank=True,null=True)
+    journal = journals.JournalRef(blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     
 def get_sales_rule(doc):
     for r in SalesRule.objects.all().order_by("id"):
-        if r.journal is None or r.journal == doc.journal:
-            return r
+        #if r.journal is None or r.journal == doc.journal:
+        return r
 
 class SalesDocument(journals.AbstractDocument):
     
@@ -126,7 +127,7 @@ class SalesDocument(journals.AbstractDocument):
     imode = models.ForeignKey(InvoicingMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    remark = models.CharField("Remark for internal use",
+    sales_remark = models.CharField("Remark for sales",
       max_length=200,blank=True)
     subject = models.CharField("Subject line",max_length=200,blank=True)
     vat_exempt = models.BooleanField(default=False)
@@ -141,9 +142,9 @@ class SalesDocument(journals.AbstractDocument):
         "only signed documents can be sent"
         return self.user is not None
         
-    def save(self, *args, **kwargs):
-        self.before_save()
-        super(SalesDocument,self).save(*args,**kwargs)
+    #~ def save(self, *args, **kwargs):
+        #~ self.before_save()
+        #~ super(SalesDocument,self).save(*args,**kwargs)
                     
         
     def add_item(self,product=None,qty=None,**kw):
@@ -161,6 +162,7 @@ class SalesDocument(journals.AbstractDocument):
     total_incl.field = fields.PriceField()
 
     def before_save(self):
+        journals.AbstractDocument.before_save(self)
         r = get_sales_rule(self)
         if r is None:
             raise journals.DocumentError("No sales rule for %s",self)
@@ -284,8 +286,10 @@ class Order(SalesDocument):
             items.append(d)
         if simulate:
             return True
-        invoice = self.imode.journal.create_document(
-            creation_date=today,order=self,
+        jnl = journals.get_journal(self.imode.journal)
+        invoice = jnl.create_document(
+            creation_date=today,
+            order=self,
             customer=self.customer,
             ship_to=self.ship_to,
             imode=self.imode,
@@ -294,6 +298,7 @@ class Order(SalesDocument):
             subject=cover_text,
             your_ref=unicode(self),
             )
+            
         #invoice.save()
         for d in items:
             invoice.add_item(**d).save()
@@ -304,22 +309,34 @@ class Order(SalesDocument):
         self.save()
         return invoice
             
-journals.register_doctype(Order)        
+#journals.register_doctype(Order)
         
     
-class Invoice(SalesDocument):
+class Invoice(ledger.LedgerDocument,SalesDocument):
     due_date = fields.MyDateField("Payable until",blank=True,null=True)
     order = models.ForeignKey(Order,blank=True,null=True)
-    #can_send = models.BooleanField(default=False)
-    
     
     def before_save(self):
-        SalesDocument.before_save(self)
         if self.due_date is None:
             if self.payment_term is not None:
                 self.due_date = self.payment_term.get_due_date(
                     self.creation_date)
+        #SalesDocument.before_save(self)
+        #ledger.LedgerDocumentMixin.before_save(self)
+        super(Invoice,self).before_save()
 
+
+    def collect_bookings(self):
+        jnl = self.get_journal()
+        yield self.create_booking(
+          account=ledger.get_account('sales_base'),
+          debit=self.total_excl)
+        yield self.create_booking(
+          account=ledger.get_account('sales_vat'),
+          debit=self.total_vat)
+        yield self.create_booking(
+          account=ledger.Account.objects.get(pk=jnl.account_id),
+          credit=self.total_excl+self.total_vat)
 
 
 class DocItem(models.Model):
@@ -364,7 +381,6 @@ class DocItem(models.Model):
         self.document.save() # update total in document
     before_save.alters_data = True
 
-journals.register_doctype(Invoice)
 
 ##
 ## report definitions
@@ -421,7 +437,7 @@ class DocumentPageLayout(layouts.PageLayout):
       """
     box3 = """
       subject:40
-      remark:40
+      sales_remark:40
       intro:40x5
       """
     box4 = """
@@ -468,7 +484,7 @@ class Orders(reports.Report):
     order_by = "number"
     page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
     columnNames = "number:4 creation_date customer:20 imode " \
-                  "remark:20 subject:20 total_incl " \
+                  "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     can_view = perms.is_authenticated
     
@@ -490,7 +506,8 @@ class Invoices(reports.Report):
     page_layouts = (InvoicePageLayout,)
     columnNames = "number:4 creation_date due_date " \
                   "customer:10 " \
-                  "total_incl order subject:10 remark:10 " \
+                  "total_incl order subject:10 sales_remark:10 " \
+                  "ledger_remark:10 " \
                   "total_excl total_vat user "
     can_view = perms.is_staff
 
@@ -520,7 +537,7 @@ class InvoicesByOrder(reports.Report):
     master = Order
     fk_name = "order"
     order_by = "number"
-    columnNames = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject remark vat_exempt item_vat "
+    columnNames = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
 
     
 class ItemsByDocumentRowLayout(layouts.RowLayout):

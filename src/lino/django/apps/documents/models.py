@@ -89,7 +89,7 @@ class AbstractDocument(models.Model):
         # when using pisa
         model = self.get_child_model()
         return [
-          '%s_pisa.html' % self.journal.id,
+          '%s_pisa.html' % self.journal,
           '%s_pisa.html' % model.__name__.lower(),
           'document_pisa.html'
         ]

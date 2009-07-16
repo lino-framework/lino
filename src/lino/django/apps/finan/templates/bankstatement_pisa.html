@@ -1,0 +1,74 @@
+<html>
+<head>
+<title>{{intance}}</title>
+<style type="text/css">
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14pt;
+}
+
+h1 { border: solid 1pt black; text-align: center;font-size: 16pt; }
+h2 { font-size: 14pt; }
+
+p.Recipient, p.Subject {
+  font-weight: bold;
+}
+
+p.Recipient, p.Date, p.Signature {
+  margin-left: 70mm;
+}
+
+
+table.items {
+  table-layout:fixed; background-color:white; padding: 2mm;
+}
+table.items th { background-color:gray; padding: 1mm; text-align:left;}
+td.number { text-align:right; }
+table.tech td {
+  background-color:#eeeeee;
+}
+table.total tr { background-color:gray; padding: 1mm; }
+
+</style>
+</head>
+<body>
+
+
+{{item.contact.as_address}}
+
+<h1>{{instance}}</h1>
+
+<p class="Date" style="margin-left: 70mm;">
+Creation date: {{instance.creation_date}}
+<br>Value date: {{instance.value_date}}
+</p>
+
+<p align="right">Old balance: {{instance.balance1}}</p>
+
+<table class="items" repeat="1">
+<tr>
+<th style="width:15mm;">pos</th>
+<th style="width:125mm;">account</th>
+<th style="width:125mm;">contact</th>
+<th style="width:125mm;">ledger_remark</th>
+<th style="width:20mm;">debit</th>
+<th style="width:20mm;">credit</th>
+</tr>
+
+{% for item in instance.docitem_set.all %}
+<tr>
+<td class="number">{{ item.pos }}</td>
+<td>{{ item.account.id }} {{ item.account.name }}</td>
+<td>{{ item.ledger_remark }}</td>
+<td>{{ item.contact.as_address }}</td>
+<td class="number">{{ item.debit }}</td>
+<td class="number">{{ item.credit }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<p align="right">New balance: {{instance.balance2}}</p>
+
+</body>
+</html>

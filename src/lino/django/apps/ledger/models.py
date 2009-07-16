@@ -20,52 +20,118 @@ from lino.django.apps import fields
 from lino.django.apps.contacts import models as contacts
 from lino.django.apps.journals import models as journals
 
-__app_label__ = "ledger"
 
-class FinancialDocument(journals.AbstractDocument):
-    creation_date = fields.MyDateField()
-    value_date = fields.MyDateField() 
-    remark = models.CharField("Remark for internal use",
-      max_length=200,blank=True)
-    balance1 = fields.PriceField(blank=True,null=True)
-    balance2 = fields.PriceField(blank=True,null=True)
-    
-    def save(self,*args,**kw):
-        if self.value_date is None:
-            self.value_date = self.creation_date
-        return super(FinancialDocument,self).save(*args,**kw)
-        
-    def add_item(self,account=None,contact=None,**kw):
-        pos = self.docitem_set.count() + 1
-        if account is not None:
-            if not isinstance(account,Account):
-                account = Account.objects.get(pk=account)
-        if contact is not None:
-            if not isinstance(contact,contacts.Contact):
-                contact = contacts.Contact.objects.get(pk=contact)
-        kw['account'] = account
-        kw['contact'] = contact        
-        return self.docitem_set.create(**kw)
-    
-journals.register_doctype(FinancialDocument)
-  
 class Account(models.Model):
+    id = models.CharField(max_length=10,primary_key=True)
     name = models.CharField(max_length=200,blank=True)
+    
+    def __unicode__(self):
+        if len(self.name):
+            return self.name
+        return self.id
+        #return super(Account,self).__unicode__()
 
-class DocItem(models.Model):
-    document = models.ForeignKey(FinancialDocument) 
-    pos = models.IntegerField("Position")
-    debit = fields.PriceField(blank=True,null=True)
-    credit = fields.PriceField(blank=True,null=True)
-    remark = models.CharField(max_length=200,blank=True)
+
+class LedgerJournal(journals.Journal):
+  
+    def __init__(self,docclass,id,account_id=None,**kw):
+        assert type(account_id) == type('')
+        self.account_id = account_id
+        journals.Journal.__init__(self,docclass,id,**kw)
+        
+    #~ account = models.ForeignKey(Account)
+    
+    def pre_delete_document(self,doc):
+        print "pre_delete_document", doc.number, self.get_next_number()
+        if doc.number + 1 != self.get_next_number():
+            raise journals.DocumentError(
+              "%s is not the last document in journal" % unicode(doc)
+              )
+    
+class LedgerDocument(journals.AbstractDocument):
+  
+    journal_class = LedgerJournal
+    #journal = models.ForeignKey(LedgerJournal)
+    """
+    django.core.exceptions.FieldError: Local field 'journal' in class 'LedgerDocument' clashes with field of similar name from base class 'AbstractDocument'
+    """
+    
+    value_date = fields.MyDateField(auto_now=True) 
+    ledger_remark = models.CharField("Remark for ledger",
+      max_length=200,blank=True)
+    booked = models.BooleanField(default=False)
+    
+    def unbook(self):
+        for b in self.booking_set.all():
+            b.delete()
+        self.booked = False
+            
+    def book(self):
+        bookings = [b for b in self.collect_bookings()]
+        for b in bookings:
+            b.save()
+        self.booked = True
+        #self.save()
+        
+    def collect_bookings(self):
+        pass
+        
+    def create_booking(self,**kw):
+      #kw['journal'] = self.idjnl
+      kw['document'] = self
+      #kw['number'] = self.number
+      if not kw.get('date',None):
+          kw['date'] = self.value_date
+      b = Booking(**kw)
+      #print b.date
+      #b.save()
+      return b
+        
+        
+
+ACCOUNTS = dict(
+  providers='4400',
+  customers='4000',
+  sales_base='7000',
+  sales_vat='4510',
+)
+
+def get_account(name):
+    x = ACCOUNTS[name]
+    a = Account.objects.get(pk=x)
+    if a is None:
+        raise ConfigurationError("No account %s defined" % x)
+    return a
+    
+#~ def customers_account():
+    #~ a = Account.objects.get(pk="4000")
+    #~ if a is None:
+        #~ raise ConfigurationError("No account 4000 defined")
+    #~ return a
+
+#~ def sales_base():
+    #~ a = Account.objects.get(pk="7000")
+    #~ if a is None:
+        #~ raise ConfigurationError("No account 7000 defined")
+    #~ return a
+
+#~ def vat_base():
+    #~ a = Account.objects.get(pk="4510")
+    #~ if a is None:
+        #~ raise ConfigurationError("No account 7000 defined")
+    #~ return a
+    
+        
+class Booking(models.Model):
+    #journal = journals.JournalRef()
+    #number = models.IntegerField()
+    document = models.ForeignKey(LedgerDocument) 
+    pos = models.IntegerField("Position",blank=True,null=True)
+    date = fields.MyDateField()
     account = models.ForeignKey(Account)
     contact = models.ForeignKey(contacts.Contact,blank=True,null=True)
-    
-    def save(self,*args,**kw):
-        if self.pos is None:
-            self.pos = self.document.docitem_set.count() + 1
-        return super(DocItem,self).save(*args,**kw)
-        
+    debit = fields.PriceField(default=0)
+    credit = fields.PriceField(default=0)
     
 
 ##
@@ -78,42 +144,22 @@ from lino.django.utils import reports
 from lino.django.utils import layouts
 from lino.django.utils import perms
 
-class FinDocPageLayout(layouts.PageLayout):
-    
-    balance = """
-    balance1
-    balance2
-    """
-    
-    box1 = """
-    creation_date value_date
-    remark
-    """
-    
-    main = """
-            box1 balance
-            content
-            """
-    def inlines(self):
-        return dict(content=ItemsByDocument())
-            
 
 class Accounts(reports.Report):
     model = Account
-    
-class FinancialDocuments(reports.Report):
-    page_layouts = (FinDocPageLayout, )
-    model = FinancialDocument
-    order_by = "number"
 
-class ItemsByDocument(reports.Report):
-    columnNames = "pos:3 account contact remark debit credit" 
-    model = DocItem
-    master = FinancialDocument
-    order_by = "pos"
+    
+#~ class LedgerJournals(journals.Journals):
+    #~ model = LedgerJournal
+    #~ columnNames = journals.Journals.columnNames + " account"
+    
 
 def lino_setup(lino):
     m = lino.add_menu("ledger","~Ledger",
       can_view=perms.is_authenticated)
-    m.add_action(FinancialDocuments())
     m.add_action(Accounts())
+        
+    #m.add_action(LedgerJournals())
+    #~ sales = lino.get_app_models('sales')
+    #~ if sales:
+        #~ sales.Invoice = LedgerInvoice

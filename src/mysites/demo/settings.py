@@ -41,7 +41,7 @@ MANAGERS = ADMINS
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
 DATABASE_NAME = os.path.join(gettempdir(),'mysites_demo.db') 
-#DATABASE_NAME = ':memory:'
+DATABASE_NAME = ':memory:'
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -59,7 +59,7 @@ TIME_ZONE = 'Europe/Tallinn'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1 # see also makedemo.py
+SITE_ID = 1 # see also reset_demo.py
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -142,19 +142,21 @@ if True:
     'lino.django.apps.contacts',
     'lino.django.apps.products',
     'lino.django.apps.documents',
-    'lino.django.apps.journals',
-    'lino.django.apps.sales',
     'lino.django.apps.ledger',
-    'lino.django.apps.voc',
-    'lino.django.apps.songs',
+    'lino.django.apps.sales',
+    'lino.django.apps.finan',
+    #'lino.django.apps.voc',
+    #'lino.django.apps.songs',
+    'lino.django.apps.journals',
   )
 else:
   INSTALLED_APPS = (
-    #'lino.django.apps.sandbox.contacts',
-    #'lino.django.apps.sandbox.sales',
-    'lino.django.apps.sandbox.example',
+    #'lino.django.test_apps.contacts',
+    #'lino.django.test_apps.sales',
+    #'lino.django.test_apps.example',
+    #'lino.django.test_apps.ledger',
+    'lino.django.test_apps.20090714',
   )
-
 
 
 SERIALIZATION_MODULES = {

@@ -1,0 +1,143 @@
+Moving from berlios.de to code.google.com
+=========================================
+
+Jahrelang war ich glücklich mit dem SVN-Repository von berlios.de. Aber jetzt habe ich ein Problem, wo ich keine Lösung sehe. Vielleicht habe ich auch nicht genug gesucht, weil ich sowieso seit einiger Zeit Lust hatte, nach code.google.com umzusteigen.
+
+Mein Problem bei berlios.de ist, dass ``svn ci`` seit einer Woche immer nur sagt::
+  (...)
+  Sending        src\mysites\demo\urls.py
+  Transmitting file data ................................
+  svn: Commit failed (details follow):
+  svn: Connection closed unexpectedly
+
+Ich habe ein ``ssh -l lsaffre svn.berlios.de`` versucht und dort  ``svnadmin verify`` und ``svnadmin recover`` gemacht::
+
+  lsaffre@sheep:~> svnadmin verify /svnroot/repos/lino
+  lsaffre@sheep:~> svnadmin recover /svnroot/repos/lino
+  
+Die funktionieren zwar und melden keine Fehler, aber es ändert nichts.
+
+Ich vermute, dass es daran liegt, dass ich mit einer recht alten Version des SVN-clients garbeitet hatte (ich arbeite noch immer auf Windows und Subversion wird dort nicht automatisch aktualisiert).
+Ich hatte mit Subversion 1.4 gearbeitet. Kann sein, dass deshalb was kaputt gegangen ist.
+
+Beschluss: Ich wechsle nach Mercurial und code.google.com.
+Die Anweisungen (wenn man wie ich die Historik mit importieren will) sehen auf 
+http://code.google.com/p/support/wiki/ConvertingSvnToHg
+relativ kompliziert aus, aber in der Praxis geht das relativ einfach, wenn man einen Rechner mit aktuellem Linux zur Hand hat. Zuerst die nötigen Packages installieren::
+
+  aptitude install subversion
+  aptitude install mercurial
+  aptitude install python-subversion
+  aptitude install svn-workbench
+  
+Dann zuerst ein ``hg convert``::
+
+  luc@jaama:~$ mkdir hg-client
+  luc@jaama:~$ hg convert svn://svn.berlios.de/lino/trunk hg-client
+  initializing destination hg-client repository
+  scanning source...
+
+(und dann ein langer download)
+
+Und nach über einer Stunde::
+
+  (...)
+  7 using appy.pod to print invoices
+  6 started lino.django.apps.documents
+  5 wip: printing invoices using pisa
+  4 wip: printing invoices using pisa
+  3 printing invoices using pisa, with logo.jpg
+  2 release to tups (print invoices using pisa)
+  1 sorry()
+  0 m
+  luc@jaama:~$ 
+  
+Fertig! Jetzt habe ich also ein lokales Hg-Repository von Lino, mit 735 changesets.  Das muss ich jetzt nach google pushen::
+  
+  
+  luc@jaama:~$ cd hg-client/
+  luc@jaama:~/hg-client$ hg push https://lino.googlecode.com/hg
+  pushing to https://lino.googlecode.com/hg
+  searching for changes
+  http authorization required
+  realm: Google Code Mercurial Repository
+  user: user.name@gmail.com
+  password:
+  
+  
+Probleme: 
+
+- Broken pipe on large push                             
+  http://code.google.com/p/support/issues/detail?id=2716
+
+- Welches Passwort? Nicht mein eigenes Google-Passwort, sondern das generierte Passwort, das ich auf meinem Profiel finde:
+  http://code.google.com/hosting/settings
+  
+- Wie konnfiguriere ich hg, dass er mich jetzt nicht 735 mal nach meinem Passwort fragt? Die Anweisungen im `Mercurial FAQ <http://mercurial.selenic.com/wiki/FAQ#FAQ.2BAC8-CommonProblems.How_can_I_store_my_HTTP_login_once_and_for_all_.3F>`_
+  sind etwas kurz. Änderungsvorschlag:
+  
+  
+    *4.19. How can I store my HTTP login once and for all ?*
+
+    Hg lets you specify the username and password in the URL like:
+
+      http://user:password@example.org
+
+    To avoid typing this long URL each time, create an alias for it in the `[paths]` section of your hgrc file::
+    
+      [paths]
+      example = http://user:password@example.org
+      
+    With Mercurial 1.3 you can...
+    
+- Nachdem das ``hg push`` geklappt hat, kann ich ein erstes Resulat bewundern:
+  http://code.google.com/p/lino/source/browse/
+  zeigt alles schön an. Zumindest den letzten eingecheckten Stand der Dinge, vom 07. Juli.  
+  
+  Die Änderungen nach dem 07.07. konnte ich ja bei berlios.de nicht mehr einchecken, die muss ich jetzt wohl oder übel manuell in mein hg-work einbauen. 
+  
+  Aber zunächst stelle ich fest, dass ``hg status`` alle Dateien mit einem Fragezeichen davor ausflistet. Da stimmt was nicht. Aber der Repository ist nicht korrupt::
+
+    luc@jaama:~/hg-client$ hg verify
+    checking changesets
+    checking manifests
+    crosschecking files in changesets and manifests
+    checking files
+    3207 files, 735 changesets, 8916 total revisions
+  
+  Hmm... das hg-work auf jaama ist mir ja eigentlich egal, das war nur tempor�r. Ich probiere mal ein clone auf Armand::
+
+    T:\hgwork>hg clone https://lino.googlecode.com/hg/ lino
+    T:\hgwork\lino>cd lino
+    T:\hgwork\lino>hg update
+    0 files updated, 0 files merged, 0 files removed, 0 files unresolved
+    
+    T:\hgwork\lino>hg st
+    T:\hgwork\lino>hg tip
+    changeset:   734:37fadcd1aa1c
+    tag:         tip
+    user:        lsaffre
+    date:        Tue Jul 07 10:26:51 2009 +0000
+    summary:     m  
+    
+  Sieht gut aus. Also fang ich mal an, die Äderungen der letzten zwei Wochen manuell in mein hgwork zu kopieren. Zum Glück funktioniert ``svn status`` noch in meiner SVN-Kopie, so dass ich eine Liste aller geänderten Dateien habe. Nach den ersten 7 mache ich einen Versuch::
+  
+    T:\hgwork\lino>hg st
+    M src\lino\django\utils\layouts.py
+    M src\lino\django\utils\menus.py
+    M src\lino\django\utils\render.py
+    M src\lino\django\utils\reports.py
+    M src\lino\django\utils\sites.py
+    M src\lino\django\utils\templates\lino\base.html
+    M src\lino\django\utils\ticket7623.py
+    
+  Stimmt. Jetzt ein commit und ein push::
+
+    T:\hgwork\lino>hg ci -m "two weeks of changes"
+    T:\hgwork\lino>hg push lino
+    pushing to https://luc.saffre:***@lino.googlecode.com/hg
+    searching for changes
+    Success.
+    T:\hgwork\lino>  
+      
+  Voil�! Jetzt nur noch die restlichen �nderungen

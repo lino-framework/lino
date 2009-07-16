@@ -27,27 +27,19 @@ admin.autodiscover()
 
 from lino.django.utils.sites import lino_site
 
-#~ from lino.django.igen import menu
-#~ menu.lino_setup(lino_site)
+# these settings cannot be in lino_settings.py because it modifies the menu which is built by INSTALLED_APPS during their lino_setup()
+# TODO: put this into a separate file, similar to lino_settings.py, but executed after lino_setup()
+lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
+lino_site.sort_menu_items(back='config system')
 
-#~ if "lino.django.songs" in settings.INSTALLED_APPS:
-    #~ from lino.django.songs import models as menu
-    #~ menu.lino_setup(lino_site)
-
-#~ if "lino.django.voc" in settings.INSTALLED_APPS:
-    #~ from lino.django.voc import models as menu
-    #~ menu.lino_setup(lino_site)
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
-    #(r'^reports/', include(reports.site.urls)),
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
     #(r'^lino/', include(lino_site.get_urls())),
     (r'', include(lino_site.get_urls())),
-    #(r'^accounts/', include(auth_urls)),
-    #(r'^$', lino_site.index),
 )    
 
 if settings.DEBUG:
@@ -57,8 +49,3 @@ if settings.DEBUG:
         'document_root': settings.MEDIA_ROOT,
         'show_indexes': True }),)
 
-
-
-#from django.contrib.auth import urls as auth_site
-
-#urlpatterns += auth_site.urlpatterns

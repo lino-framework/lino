@@ -16,6 +16,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
+from django.utils.safestring import mark_safe
 
 #from lino.django.apps.igen import Model
 from lino.django.apps.countries import models as countries 
@@ -117,8 +118,8 @@ u'Example & Co (Luc Saffre)'
             foreigner = (self.country != Contact.objects.get(id=1).country)
         if foreigner: # (if self.country != sender's country)
             s += linesep + unicode(self.country)
-        return s
-    as_address.allow_tags=True
+        return mark_safe(s)
+        #as_address.allow_tags=True
 
 
 ##

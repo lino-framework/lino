@@ -17,6 +17,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.test import TestCase
+from django.core.management import call_command
+from django.db.models import loading
+
 from lino.django.utils.validatingmodel import TomModel, ModelValidationError
 from lino.django.utils.reports import Report
 from lino.django.utils.render import ViewReportRenderer
@@ -25,18 +28,8 @@ from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
 
 from lino.django.apps.journals import models as journals
+from lino.django.apps.ledger import models as ledger
 # Journal, Document, register_doctype, DocumentError
-
-class Document(journals.AbstractDocument):
-    pass
-    
-class Order(Document):
-    pass
-journals.register_doctype(Order)
-
-class Invoice(Document):
-    pass
-journals.register_doctype(Invoice)
 
 
 class JournalsTest(TestCase):
@@ -44,15 +37,16 @@ class JournalsTest(TestCase):
     def test01(self):
       
         # create two journals and some documents::
-
-        ORD = journals.create_journal("ORD",Order)
-        INV = journals.create_journal("INV",Invoice,force_sequence=True)
         
-        ORD.create_document() # Order(journal=ORD).save()
-        INV.create_document() # Invoice(journal=INV).save()
-        ORD.create_document() # Order(journal=ORD).save()
-        ORD.create_document() # Order(journal=ORD).save()
-        INV.create_document() # Invoice(journal=INV).save()
+        ORD = Order.create_journal("ORD")
+        INV = Invoice.create_journal("INV",
+                account=ledger.get_account('customers'))
+        
+        ORD.create_document() 
+        INV.create_document() 
+        ORD.create_document() 
+        ORD.create_document() 
+        INV.create_document() 
         s = "\n".join(unicode(doc) for doc in Document.objects.all())
         #print s
         self.assertEqual(s,u"""\
@@ -67,12 +61,11 @@ INV#2 (5)""")
 
         Document.objects.get(pk=1).delete()
         
-        doc = ORD.create_document() # Order(journal=ORD)
+        doc = ORD.create_document() 
         self.assertEqual(unicode(doc),u"ORD#4 (6)")
         
-        # For invoices,``force_sequence=True`` means that it is not allowed to
-        # delete documents in the middle because this would leave a hole in the
-        # sequence:
+        # For invoices it is not allowed to delete documents in the
+        # middle because this would leave a hole in the sequence:
 
         try:
             Document.objects.get(pk=2).delete()

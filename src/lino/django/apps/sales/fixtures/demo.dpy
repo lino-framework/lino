@@ -23,12 +23,13 @@ from dateutil import parser as dateparser
 from lino.django.apps.sales.models import *
 from lino.django.utils.instantiator import Instantiator, i2d
 
-journal = Instantiator(journals.Journal,"id name")
 shippingmode = Instantiator(ShippingMode,"name").build
 paymentterm = Instantiator(PaymentTerm,"name").build
 salesrule = Instantiator(SalesRule).build
 customer = Instantiator(Customer).build
 
+imode = Instantiator(InvoicingMode,
+  "id channel name advance_days journal").build
 
 def objects():
     yield shippingmode("cash and carry")
@@ -41,39 +42,44 @@ def objects():
     
     for ct in contacts.Contact.objects.all():
         yield Customer.from_parent(ct)
-      
-    ORD = journals.create_journal("ORD",Order)
-    yield ORD
-    INV = journals.create_journal("INV",Invoice)
-    yield INV    
+    
+    ORD = journals.get_journal_by_docclass(Order)
+    INV = journals.get_journal_by_docclass(Invoice)
+        
+    #ORD = Order.create_journal(id="ORD")
+    #ORD = journals.get_journal("ORD")
+    #INV = journals.get_journal("INV")
+    #yield ORD
+    #~ INV = Invoice.create_journal(id="INV",\
+      #~ account=ledger.Account.objects.get(pk="4000"))
+    #yield INV
     
     
     invoice = Instantiator(Invoice,
       "customer creation_date imode payment_term shipping_mode",
-      journal=INV).build
+      journal=INV.id).build
 
     order = Instantiator(Order,
     """customer creation_date start_date cycle imode 
-    payment_term shipping_mode""",journal=ORD).build
+    payment_term shipping_mode""",journal=ORD.id).build
     
-    imode = Instantiator(InvoicingMode,
-      "id channel name advance_days journal").build
-    yield imode('e','E','By e-mail',2,INV)
-    yield imode('p','P','By snail mail',10,INV)
+    yield imode('e','E','By e-mail',2,INV.id)
+    yield imode('p','P','By snail mail',10,INV.id)
         
     salesrule(imode='e',shipping_mode=1,payment_term=2)
-        
+
     furniture = ProductCat.objects.get(name="Furniture")
     hosting = 5
     
     o = order(100,"2008-09-23","2008-09-24","M","e",2,1,
-        remark="monthly order")
+        sales_remark="monthly order")
     o.add_item(hosting,1)
     yield o
     
     yield o.make_invoice(today=date(2008,10,28))
         
-    i = invoice(2,"2008-10-29","e",2,1,remark="first manual invoice")
+    i = invoice(2,"2008-10-29","e",2,1,
+      sales_remark="first manual invoice")
     i.add_item(1,1)
     i.add_item(2,4)
     yield i
@@ -81,20 +87,20 @@ def objects():
     yield o.make_invoice(today=date(2009,04,11))
         
     i = invoice(3,date(2009,04,11),"e",2,1,
-        remark="second manual invoice")
+        sales_remark="second manual invoice")
     i.add_item(3,1)
     i.add_item(4,4)
     yield i
     
     o2 = order(4,"2009-04-12","2009-04-12","Y","p",2,1,
-               remark="yearly order")
+               sales_remark="yearly order")
     o2.add_item(3,1)
     o2.add_item(4,4)
     yield o2
     yield o2.make_invoice(today=date(2009,04,12))
     
     i = invoice(4,date(2009,04,12),"e",2,1,
-      remark="third manual invoice with discount")
+      sales_remark="third manual invoice with discount")
     i.add_item(3,1,discount=10)
     i.add_item(4,4,discount=5)
     yield i
