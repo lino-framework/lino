@@ -22,7 +22,10 @@ from dateutil import parser as dateparser
 import decimal
 
 def i2d(i):
-    return dateparser.parse(str(i))
+    d = dateparser.parse(str(i))
+    d = datetime.date(d.year,d.month,d.day)
+    #print i, "->", v
+    return d
 
 class DataError(Exception):
     pass
@@ -56,7 +59,8 @@ class DateConverter(Converter):
                 if type(value) == int:
                     value = str(value)
                 d = dateparser.parse(value)
-                kw[self.field.name] = datetime.date(d.year,d.month,d.day)
+                d = datetime.date(d.year,d.month,d.day)
+                kw[self.field.name] = d
         return kw
 
 class DecimalConverter(Converter):

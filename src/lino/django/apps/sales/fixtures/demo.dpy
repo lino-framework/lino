@@ -92,12 +92,17 @@ def objects():
     i.add_item(4,4)
     yield i
     
-    o2 = order(4,"2009-04-12","2009-04-12","Y","p",2,1,
-               sales_remark="yearly order")
+    #d = '2009-04-12'
+    #d = '20090412'
+    d = i2d(20090412)
+    #d = date(2009,4,12)
+    o2 = order(4,d,d,"Y","p",2,1,sales_remark="yearly order")
     o2.add_item(3,1)
     o2.add_item(4,4)
+    #print o2
+    #o2.save()
     yield o2
-    yield o2.make_invoice(today=date(2009,04,12))
+    yield o2.make_invoice(today=d)
     
     i = invoice(4,date(2009,04,13),"e",2,1,
       sales_remark="third manual invoice with discount")

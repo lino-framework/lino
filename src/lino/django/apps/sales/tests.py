@@ -70,6 +70,13 @@ Hans Flott & Co (Lisa Lahm)
 Luc Saffre
 Mets ja Puu OÜ (Tõnu Tamme)""")
 
+        s="\n".join([
+          unicode(d)+" "+str(d.creation_date)+" "+unicode(d.customer)
+          for d in sales.SalesDocument.objects.all().order_by('creation_date')])
+        print "\n"+s
+        self.assertEquals(s,u"""\
+""")
+
         
     #~ def test08(self):
         c = sales.Customer.objects.get(pk=4)

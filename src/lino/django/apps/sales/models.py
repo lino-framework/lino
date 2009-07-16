@@ -91,6 +91,9 @@ class PaymentTerm(models.Model):
         return self.name
         
     def get_due_date(self,date1):
+        assert isinstance(date1,datetime.date), \
+          "%s is not a date" % date1
+        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
         d = date1 + relativedelta(months=self.months,days=self.days)
         return d
 
@@ -155,6 +158,7 @@ class SalesDocument(journals.AbstractDocument):
                 qty = 1
         kw['product'] = product 
         kw['qty'] = qty
+        #print self,kw
         return self.docitem_set.create(**kw)
         
     def total_incl(self):
@@ -162,6 +166,8 @@ class SalesDocument(journals.AbstractDocument):
     total_incl.field = fields.PriceField()
 
     def before_save(self):
+        #~ if self.journal == "ORD":
+            #~ print "before_save:", self
         journals.AbstractDocument.before_save(self)
         r = get_sales_rule(self)
         if r is None:
@@ -182,6 +188,8 @@ class SalesDocument(journals.AbstractDocument):
                 #~ total_vat += i.total_excl() * 0.18
         self.total_excl = total_excl
         self.total_vat = total_vat
+        #~ if self.journal == "ORD":
+            #~ print "  done before_save:", self
         
         
 class OrderManager(models.Manager):
