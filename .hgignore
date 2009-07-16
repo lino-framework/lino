@@ -5,3 +5,4 @@ syntax: glob
 *.dpyc
 *.pyc
 *~
+src\mysites\media\pdf_cache

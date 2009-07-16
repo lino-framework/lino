@@ -15,12 +15,24 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import sys
 from django.db import models
 from lino.django.apps import fields
 from lino.django.apps.contacts import models as contacts
 from lino.django.apps.ledger import models as ledger
 from lino.django.apps.journals import models as journals
 
+def _functionId(nFramesUp):
+    # thanks to:
+    # http://nedbatchelder.com/blog/200410/file_and_line_in_python.html
+    """ Create a string naming the function n frames up on the stack.
+    """
+    co = sys._getframe(nFramesUp+1).f_code
+    return "%s (%s:%d)" % (co.co_name, co.co_filename, co.co_firstlineno)
+
+
+def todo_notice(msg):
+    print "[todo] in %s :\n       %s" % (_functionId(1),msg)
   
 class BankStatement(ledger.LedgerDocument):
                         
@@ -53,11 +65,11 @@ class BankStatement(ledger.LedgerDocument):
               credit=i.credit)
             sum_debit += i.debit - i.credit
             yield b
-        print type(self.balance2),type(self.balance1),type(sum_debit)
-        print repr(self.balance2),repr(self.balance1),repr(sum_debit)
-        self.balance2 = self.balance1 + sum_debit
+        todo_notice("BankStatement.balance1 and 2 are strings?!")
+        #http://code.google.com/p/lino/issues/detail?id=1
+        #self.balance2 = self.balance1 + sum_debit
         jnl = self.get_journal()
-        acct = Account.objects.get(id=jnl.account_id)
+        acct = ledger.Account.objects.get(id=jnl.account_id)
         b = self.create_booking(account=acct)
         if sum_debit > 0:
             b.debit = sum_debit

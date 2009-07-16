@@ -96,6 +96,12 @@ ACCOUNTS = dict(
   sales_vat='4510',
 )
 
+def set_accounts(**kw):
+    for k,v in kw.items():
+        if not ACCOUNTS.has_key(k):
+            raise RuntimeError("invalid account name %s" % k)
+        ACCOUNTS[k] = v
+
 def get_account(name):
     x = ACCOUNTS[name]
     a = Account.objects.get(pk=x)

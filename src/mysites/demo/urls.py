@@ -29,7 +29,8 @@ from lino.django.utils.sites import lino_site
 
 # these settings cannot be in lino_settings.py because it modifies the menu which is built by INSTALLED_APPS during their lino_setup()
 # TODO: put this into a separate file, similar to lino_settings.py, but executed after lino_setup()
-lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
+#lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
+lino_site.help_url = "http://lino.saffre-rumma.ee/django/igen/userman.html"
 lino_site.sort_menu_items(back='config system')
 
 
