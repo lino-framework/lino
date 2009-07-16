@@ -570,7 +570,7 @@ class DocumentsByCustomerTabLayout(contacts.ContactPageLayout):
 
 class DocumentsByCustomer(reports.Report):
     page_layouts = (DocumentPageLayout,)
-    columnNames = "number:4 creation_date:8 " \
+    columnNames = "journal:4 number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
     model = SalesDocument
     master = Customer

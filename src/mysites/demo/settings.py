@@ -106,7 +106,6 @@ ROOT_URLCONF = 'mysites.demo.urls'
 #print "foo", __file__
 
 #~ try:
-from lino.django import utils
 #~ except Exception,e:
     #~ import traceback
     #~ traceback.print_exc(e)
@@ -115,14 +114,14 @@ from lino.django import utils
 
 #print "bar", __file__
 
+from lino.django import templates
+
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
       os.path.abspath(os.path.join(PROJECT_DIR,'templates')),
-      os.path.abspath(os.path.join(
-        os.path.dirname(utils.__file__),
-        'templates')),
+      os.path.abspath(os.path.dirname(templates.__file__)),
 )
 #print "baz", __file__
 

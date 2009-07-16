@@ -90,8 +90,8 @@ class LedgerDocument(journals.AbstractDocument):
         
 
 ACCOUNTS = dict(
-  providers='4400',
-  customers='4000',
+  #providers='4400',
+  #customers='4000',
   sales_base='7000',
   sales_vat='4510',
 )

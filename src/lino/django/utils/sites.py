@@ -109,14 +109,6 @@ class LinoSite: #(AdminSite):
         if self.done:
             return
         self.loading = True
-        if hasattr(settings,'LINO_CONFIG'):
-            print "Reading", settings.LINO_CONFIG
-            execfile(settings.LINO_CONFIG,dict(lino=self))
-        else:
-            print "[Warning] settings.LINO_CONFIG entry is missing"
-          
-        self.done = True
-        self.loading = False
         
         for app in settings.INSTALLED_APPS:
             mod = import_module(app)
@@ -130,6 +122,15 @@ class LinoSite: #(AdminSite):
             #~ else:
                 #~ setattr(self,lbl,mod)
                 
+        if hasattr(settings,'LINO_CONFIG'):
+            print "Reading", settings.LINO_CONFIG
+            execfile(settings.LINO_CONFIG,dict(lino=self))
+        else:
+            print "[Warning] settings.LINO_CONFIG entry is missing"
+          
+        self.done = True
+        self.loading = False
+        
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
        

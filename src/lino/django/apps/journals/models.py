@@ -66,7 +66,7 @@ JOURNALS = {}
 class Journal:
     def __init__(self,docclass,id,name=None):
         if JOURNALS.has_key(id):
-            raise ConfigurationError("Duplicate definition of journal %s" % id)
+            raise RuntimeError("Duplicate definition of journal %s" % id)
         assert id is not None
         assert len(id) > 0
         assert issubclass(docclass,AbstractDocument)
@@ -150,6 +150,10 @@ class AbstractDocument(documents.AbstractDocument):
     def get_journal(self):
         return JOURNALS[self.journal]
     
+    @classmethod
+    def get_journal_by_docclass(cls,*args,**kw):
+        return get_journal_by_docclass(cls,*args,**kw)
+        
     def __unicode__(self):
         if self.id is None:
             return "(Unsaved %s document)" % self.journal
