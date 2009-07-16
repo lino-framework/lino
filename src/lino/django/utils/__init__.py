@@ -19,6 +19,12 @@
 #
 # menu setup
 #
-def lino_setup(lino):
-    import models
-    models.lino_setup(lino)
+#~ def lino_setup(lino):
+    #~ import models
+    #~ models.lino_setup(lino)
+    
+from django.db.backends.signals import connection_created
+def lino_setup(sender=None, **kwargs):
+    from lino.django.utils.sites import lino_site
+    lino_site.setup()
+connection_created.connect(lino_setup)

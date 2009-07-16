@@ -124,11 +124,11 @@ class LinoSite: #(AdminSite):
             if lino_setup:
                 print "lino_setup", app
                 lino_setup(self)
-            lbl = app_mod_label(mod)
-            if hasattr(self,lbl):
-                print "Warning: %s" % lbl
-            else:
-                setattr(self,lbl,mod)
+            #~ lbl = app_mod_label(mod)
+            #~ if hasattr(self,lbl):
+                #~ print "[Warning] %s" % lbl
+            #~ else:
+                #~ setattr(self,lbl,mod)
                 
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
@@ -446,8 +446,6 @@ class Skin:
     link_color = "#5b80b2"
     header_text_color = "#666"
     
-    
-         
-       
+
 lino_site = LinoSite()
-lino_site.setup()
+#lino_site.setup()

@@ -105,14 +105,13 @@ ROOT_URLCONF = 'mysites.demo.urls'
 
 #print "foo", __file__
 
-try:
-    from lino.django import utils
-    #from lino.django.igen import models
-    #from lino.django.voc import models
-except Exception,e:
-    import traceback
-    traceback.print_exc(e)
-    raise e
+#~ try:
+from lino.django import utils
+#~ except Exception,e:
+    #~ import traceback
+    #~ traceback.print_exc(e)
+    #~ raise e
+
 
 #print "bar", __file__
 
