@@ -28,6 +28,7 @@ TEMPLATE_DEBUG = DEBUG
 DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 #TEMPLATE_STRING_IF_INVALID = 'foo'
 
+PROJECT_DIR = os.path.normpath(os.path.dirname(__file__))
 
 ADMINS = (
     ('Luc Saffre', 'luc.saffre@gmx.net'),
@@ -68,7 +69,7 @@ USE_I18N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.abspath(os.path.join(
-  os.path.dirname(__file__), '..', 'media'))
+  PROJECT_DIR, '..', 'media'))
 #MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -119,9 +120,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-      os.path.abspath(os.path.join(
-        os.path.dirname(__file__),
-        'templates')),
+      os.path.abspath(os.path.join(PROJECT_DIR,'templates')),
       os.path.abspath(os.path.join(
         os.path.dirname(utils.__file__),
         'templates')),
@@ -176,3 +175,5 @@ LOGIN_REDIRECT_URL = "/"
 EMAIL_HOST = "mail.hot.ee"
 #EMAIL_PORT = ""
 #LINO_WEBMASTER = "luc.saffre@mail.ee"
+
+LINO_CONFIG = os.path.join(PROJECT_DIR,"lino_settings.py")

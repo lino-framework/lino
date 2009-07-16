@@ -109,9 +109,12 @@ class LinoSite: #(AdminSite):
         if self.done:
             return
         self.loading = True
-
-        print "Reading lino_settings.py"
-        execfile('lino_settings.py',dict(lino=self))
+        if hasattr(settings,'LINO_CONFIG'):
+            print "Reading", settings.LINO_CONFIG
+            execfile(settings.LINO_CONFIG,dict(lino=self))
+        else:
+            print "[Warning] settings.LINO_CONFIG entry is missing"
+          
         self.done = True
         self.loading = False
         

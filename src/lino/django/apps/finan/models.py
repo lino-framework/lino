@@ -176,7 +176,7 @@ class ItemsByDocument(reports.Report):
 
 def lino_setup(lino):
     m = lino.add_menu("finan","~Financial",
-      can_view=perms.is_authenticated)
+      can_view=perms.is_staff)
     #m.add_action(FinancialDocuments())
     for jnl in journals.get_journals_by_docclass(BankStatement):
         m.add_action(BankStatementsByJournal(jnl))
