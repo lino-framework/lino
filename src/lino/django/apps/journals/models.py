@@ -37,11 +37,11 @@ class DocumentError(Exception):
     pass
   
 
-DOCTYPE_CLASSES = []
+DOCTYPES = []
 DOCTYPE_CHOICES = []
 
-def register_doctype(docclass):
-    assert not docclass in DOCTYPE_CLASSES
+def register_doctype(docclass,rptclass):
+    #assert not docclass in DOCTYPE_CLASSES
     #~ i = 0
     #~ for cl in DOCTYPE_CLASSES:
         #~ if cl == docclass:
@@ -49,13 +49,13 @@ def register_doctype(docclass):
         #~ i += 1
     type_id = len(DOCTYPE_CHOICES)
     DOCTYPE_CHOICES.append((type_id,docclass.__name__))
-    DOCTYPE_CLASSES.append(docclass)
+    DOCTYPES.append((docclass,rptclass))
     docclass.doctype = type_id
     return type_id
 
 def get_doctype(cl):
     i = 0
-    for c in DOCTYPE_CLASSES:
+    for c,r in DOCTYPES:
         if c == cl:
             return i
         i += 1
@@ -74,10 +74,13 @@ class Journal(models.Model):
     account = models.CharField(max_length=6,blank=True)
     pos = models.IntegerField()
     
-    def get_docmodel(self):
+    def get_doc_model(self):
         #print self,DOCTYPE_CLASSES, self.doctype
-        return DOCTYPE_CLASSES[self.doctype]
-        
+        return DOCTYPES[self.doctype][0]
+
+    def get_doc_report(self,**kw):
+        return DOCTYPES[self.doctype][1](**kw)
+
     def create_document(self,**kw):
         cl = self.get_docmodel()
         doc = cl(journal=self,**kw)
@@ -235,7 +238,7 @@ class AbstractDocument(documents.AbstractDocument):
         return super(AbstractDocument,self).delete()
         
     def get_child_model(self):
-        return DOCTYPE_CLASSES[self.journal.doctype]
+        return DOCTYPES[self.journal.doctype][0]
         
     def pdf_filename(self):
         return os.path.join(self.pdf_root(),
@@ -268,29 +271,50 @@ class Journals(reports.Report):
     columnNames = "id name doctype force_sequence"
     
 class DocumentsByJournal(reports.Report):
-    "abstract Report"
     order_by = "number"
-    #master = Journal
-    #fk_name = 'journal' # see django issue 10808
+    master = Journal
+    fk_name = 'journal' # see django issue 10808
     
-    def __init__(self,journal,*args,**kw):
+    def __init__(self,journal,**kw):
         self.journal = journal
-        super(DocumentsByJournal,self).__init__(*args,**kw)
+        rpt = journal.get_doc_report()
+        params = dict(
+          label=self.journal.name,
+          name=self.journal.id,
+          model=rpt.model,
+          page_layouts=rpt.page_layouts,
+          master_instance=journal,
+          title=u"%s (journal %s)" % (journal.name,journal.id),
+          columnNames=rpt.columnNames,
+        )
+        #~ for k in ('model','label','page_layouts'):
+            #~ params[k] = getattr(rpt,k)
+        #~ model = journal.get_docmodel()
+        #~ params=dict(
+          #~ model=model,
+          #~ label=self.journal.name,
+          #~ page_layouts = model.get_page_layouts()
+          #~ )
+        params.update(kw)
+        reports.Report.__init__(self,**params)
         
-    def get_title(self,renderer):
-        return "Documents in journal %s" % self.journal.name
+    #~ def get_title(self,renderer):
+        #~ return "Documents in journal %s" % (self.journal.name
         
-    def create_model(self):
-        return self.journal.get_docmodel()
+    #~ def get_model(self):
+        #~ return self.journal.get_docmodel()
         
-    def create_label(self):
-        if self.journal.name:
-            return self.journal.name
-        return self.journal.id
+    #~ def get_label(self):
+        #~ if self.journal.name:
+            #~ return self.journal.name
+        #~ return self.journal.id
         
-    def get_queryset(self,*args,**kw):
-        qs = super(DocumentsByJournal,self).get_queryset(*args,**kw)
-        return qs.filter(journal__exact=self.journal)
+    #~ def get_master_instance(self):
+        #~ return self.journal
+        
+    #~ def get_queryset(self,*args,**kw):
+        #~ qs = super(DocumentsByJournal,self).get_queryset(*args,**kw)
+        #~ return qs.filter(journal__exact=self.journal)
         
 
 def unused_lino_setup(lino):

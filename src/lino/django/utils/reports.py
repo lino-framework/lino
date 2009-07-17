@@ -133,6 +133,7 @@ class Report:
     master = None
     fk_name = None
     help_url = None
+    master_instance = None
     
     _page_layouts = None
     page_layouts = (layouts.PageLayout ,)
@@ -143,41 +144,18 @@ class Report:
 
     typo_check = True
     
-    #~ __slots__ = """
-    #~ queryset model
-    #~ order_by
-    #~ filter
-    #~ exclude
-    #~ title
-    #~ columnNames
-    #~ row_layout_class
-    #~ label
-    #~ param_form
-    #~ default_filter
-    #~ name
-    #~ form_class
-    #~ master
-    #~ fk_name
-    #~ _page_layouts
-    #~ page_layouts
-    #~ can_view
-    #~ can_add
-    #~ can_change
-    #~ """.split()
-    
-    
     def __init__(self,**kw):
+        for k,v in kw.items():
+            if not hasattr(self,k):
+                print "[Warning] Ignoring attribute %s" % k
+            setattr(self,k,v)
+            
         if self.model is None:
-            self.model = self.create_model()
+            self.model = self.queryset.model
         if self.label is None:
-            self.label = self.create_label()
+            self.label = self.__class__.__name__
         if self.name is None:
-            #self.name = self.__class__.__name__.lower()
             self.name = self.label.lower()
-        #~ if self.title is None:
-            #~ self.title = self.build_title()
-        #~ if self.queryset is None:
-            #~ self.queryset = self.get_queryset()
         if self.form_class is None:
             self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
@@ -192,20 +170,16 @@ class Report:
         self._page_layouts = [
               layout(self.model) for layout in self.page_layouts]
                 
-        for k,v in kw.items():
-            if not hasattr(self,k):
-                print "[Warning] Ignoring attribute %s" % k
-            setattr(self,k,v)
         
-    def create_model(self):
-        assert self.queryset is not None,"""
-        if you set neither model nor queryset in your subclass, 
-        then you must override create_model(). Example: journals.DocumentsByJournal
-        """
-        return self.queryset.model
+    #~ def get_model(self):
+        #~ assert self.queryset is not None,"""
+        #~ if you set neither model nor queryset in your Report, 
+        #~ then you must override get_model(). Example: journals.DocumentsByJournal
+        #~ """
+        #~ return self.queryset.model
         
-    def create_label(self):
-        return self.__class__.__name__
+    #~ def get_label(self):
+        #~ return self.__class__.__name__
         
     def column_headers(self):
         #print "column_headers"
@@ -218,6 +192,9 @@ class Report:
             #~ return self.label
         return self.title or self.label
         
+    #~ def get_master_instance(self):
+        #~ raise NotImplementedError
+        
     def get_queryset(self,master_instance,flt=None):
         if self.queryset is not None:
             qs = self.queryset
@@ -229,6 +206,8 @@ class Report:
         if self.master is None:
             assert master_instance is None
         else:
+            if master_instance is None:
+                master_instance = self.master_instance
             #print qs
             #print qs.model
             qs = qs.filter(**{self.fk.name:master_instance})

@@ -378,7 +378,7 @@ class ViewReportRenderer(ReportRenderer):
         ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
         self.is_main = is_main
-        if is_main:
+        if is_main and not self.editing:
             self._actions = self.report.get_row_actions(self)
         else:
             self._actions = ()

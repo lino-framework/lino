@@ -90,7 +90,6 @@ class BankStatement(ledger.LedgerDocument):
         kw['contact'] = contact        
         return self.docitem_set.create(**kw)
     
-journals.register_doctype(BankStatement)
   
 class DocItem(models.Model):
     document = models.ForeignKey(BankStatement) 
@@ -157,9 +156,10 @@ class FinDocPageLayout(layouts.PageLayout):
     #~ model = LedgerJournal
     #~ columnNames = journals.Journals.columnNames + " account"
     
-class BankStatementsByJournal(journals.DocumentsByJournal):
-    page_layouts = (FinDocPageLayout, )
+class BankStatements(reports.Report):
     model = BankStatement
+    page_layouts = (FinDocPageLayout, )
+    columnNames = "number date balance1 balance2 ledger_remark value_date"
     
     
 class DocItems(reports.Report):
@@ -180,3 +180,5 @@ class ItemsByDocument(reports.Report):
       #~ can_view=perms.is_staff)
     #~ for jnl in BankStatement.get_journals():
         #~ m.add_action(BankStatementsByJournal(jnl))
+
+journals.register_doctype(BankStatement,BankStatements)

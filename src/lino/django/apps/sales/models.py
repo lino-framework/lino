@@ -317,7 +317,6 @@ class Order(SalesDocument):
         self.save()
         return invoice
             
-journals.register_doctype(Order)
         
     
 class Invoice(ledger.LedgerDocument,SalesDocument):
@@ -346,7 +345,6 @@ class Invoice(ledger.LedgerDocument,SalesDocument):
           account=ledger.Account.objects.get(pk=jnl.account_id),
           credit=self.total_excl+self.total_vat)
 
-journals.register_doctype(Invoice)
 
 class DocItem(models.Model):
     document = models.ForeignKey(SalesDocument) 
@@ -591,7 +589,12 @@ class DocumentsByCustomer(reports.Report):
 
 
 class Customers(contacts.Contacts):
+    model = Customer
     page_layouts = (CustomerPageLayout,DocumentsByCustomerTabLayout)
+    
+journals.register_doctype(Order,Orders)
+journals.register_doctype(Invoice,Invoices)
+    
 
 def unused_lino_setup(lino):
     m = lino.add_menu("sales","~Sales",

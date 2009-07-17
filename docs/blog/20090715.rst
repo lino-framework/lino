@@ -4,6 +4,7 @@ Moving from berlios.de to code.google.com
 Jahrelang war ich glücklich mit dem SVN-Repository von berlios.de. Aber jetzt habe ich ein Problem, wo ich keine Lösung sehe. Vielleicht habe ich auch nicht genug gesucht, weil ich sowieso seit einiger Zeit Lust hatte, nach code.google.com umzusteigen.
 
 Mein Problem bei berlios.de ist, dass ``svn ci`` seit einer Woche immer nur sagt::
+
   (...)
   Sending        src\mysites\demo\urls.py
   Transmitting file data ................................
