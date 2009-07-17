@@ -42,7 +42,7 @@ MANAGERS = ADMINS
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
 DATABASE_NAME = os.path.join(gettempdir(),'mysites_demo.db') 
-DATABASE_NAME = ':memory:'
+#DATABASE_NAME = ':memory:'
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
 DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
@@ -134,6 +134,7 @@ if True:
     'django.contrib.markup',
     'django.contrib.admin',
     'django.contrib.databrowse',
+    
     'lino.django.apps.system',
     'lino.django.apps.countries',
     'lino.django.apps.contacts',
@@ -142,9 +143,10 @@ if True:
     'lino.django.apps.ledger',
     'lino.django.apps.sales',
     'lino.django.apps.finan',
+    'lino.django.apps.journals',
+    
     #'lino.django.apps.voc',
     #'lino.django.apps.songs',
-    'lino.django.apps.journals',
   )
 else:
   INSTALLED_APPS = (
@@ -152,7 +154,8 @@ else:
     #'lino.django.test_apps.sales',
     #'lino.django.test_apps.example',
     #'lino.django.test_apps.ledger',
-    'lino.django.test_apps.20090714',
+    #'lino.django.test_apps.20090714',
+    'lino.django.test_apps.20090717',
   )
 
 
@@ -174,4 +177,4 @@ EMAIL_HOST = "mail.hot.ee"
 #EMAIL_PORT = ""
 #LINO_WEBMASTER = "luc.saffre@mail.ee"
 
-LINO_CONFIG = os.path.join(PROJECT_DIR,"lino_settings.py")
+LINO_SETTINGS = os.path.join(PROJECT_DIR,"lino_settings.py")

@@ -60,7 +60,7 @@ class Languages(reports.Report):
 ## menu setup
 ##
 
-def lino_setup(lino):
+def unused_lino_setup(lino):
     m = lino.add_menu("config","~Configuration")
     m.add_action(Languages())
     m.add_action(Countries())

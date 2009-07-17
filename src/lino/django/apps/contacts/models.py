@@ -205,7 +205,7 @@ class Countries(countries.Countries):
     page_layouts = (ContactsByCountryTabLayout,)
   
 
-def lino_setup(lino):
+def unused_lino_setup(lino):
     m = lino.add_menu("contacts","~Contacts")
     m.add_action(Companies())
     m.add_action(Persons())

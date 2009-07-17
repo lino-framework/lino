@@ -167,18 +167,17 @@ class Report:
     
     
     def __init__(self,**kw):
-        #~ self.groups = [] # for later
-        #~ self.totals = [] # for later
+        if self.model is None:
+            self.model = self.create_model()
         if self.label is None:
-            self.label = self.__class__.__name__
+            self.label = self.create_label()
         if self.name is None:
-            self.name = self.__class__.__name__.lower()
+            #self.name = self.__class__.__name__.lower()
+            self.name = self.label.lower()
         #~ if self.title is None:
             #~ self.title = self.build_title()
         #~ if self.queryset is None:
             #~ self.queryset = self.get_queryset()
-        if self.model is None:
-            self.model = self.queryset.model
         if self.form_class is None:
             self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
@@ -197,6 +196,16 @@ class Report:
             if not hasattr(self,k):
                 print "[Warning] Ignoring attribute %s" % k
             setattr(self,k,v)
+        
+    def create_model(self):
+        assert self.queryset is not None,"""
+        if you set neither model nor queryset in your subclass, 
+        then you must override create_model(). Example: journals.DocumentsByJournal
+        """
+        return self.queryset.model
+        
+    def create_label(self):
+        return self.__class__.__name__
         
     def column_headers(self):
         #print "column_headers"

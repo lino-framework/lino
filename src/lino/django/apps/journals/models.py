@@ -22,105 +22,151 @@ lino.django.apps.journals
 
 This defines the models Journal and AbstractDocument.
 
-A journal is a sequence of numbered documents in accounting applications.
+A journal is a sequence of numbered documents.
 A Journal instance knows the model used for documents in this journal.
-A Document instance can look at its journal to find out which subclass 
-of Document it is.
+An AbstractDocument instance can look at its journal to find out which subclass it is.
 
 """
-
-#~ __app_label__ = "journals"
 
 import os
 from django.db import models
 from lino.django.apps.documents import models as documents
+#from lino.django.apps.ledger import models as ledger
 
 class DocumentError(Exception):
     pass
   
 
-#~ DOCTYPE_CLASSES = []
-#~ DOCTYPE_CHOICES = []
+DOCTYPE_CLASSES = []
+DOCTYPE_CHOICES = []
 
-#~ def register_doctype(docclass):
+def register_doctype(docclass):
+    assert not docclass in DOCTYPE_CLASSES
     #~ i = 0
     #~ for cl in DOCTYPE_CLASSES:
         #~ if cl == docclass:
             #~ return i
         #~ i += 1
-    #~ type_id = len(DOCTYPE_CHOICES)
-    #~ DOCTYPE_CHOICES.append((type_id,docclass.__name__))
-    #~ DOCTYPE_CLASSES.append(docclass)
-    #~ return type_id
+    type_id = len(DOCTYPE_CHOICES)
+    DOCTYPE_CHOICES.append((type_id,docclass.__name__))
+    DOCTYPE_CLASSES.append(docclass)
+    docclass.doctype = type_id
+    return type_id
 
-#~ def get_doctype(cl):
-    #~ i = 0
-    #~ for c in DOCTYPE_CLASSES:
-        #~ if c == cl:
-            #~ return i
-        #~ i += 1
+def get_doctype(cl):
+    i = 0
+    for c in DOCTYPE_CLASSES:
+        if c == cl:
+            return i
+        i += 1
+    return None
     
 
-JOURNALS = {}
+#JOURNALS = {}
 
-class Journal:
-    def __init__(self,docclass,id,name=None):
-        if JOURNALS.has_key(id):
-            raise RuntimeError("Duplicate definition of journal %s" % id)
-        assert id is not None
-        assert len(id) > 0
-        assert issubclass(docclass,AbstractDocument)
-        self.id = id
-        self.docclass = docclass
-        if name is None:
-            name = id
-        self.name = name
-        self.seq_num = len(JOURNALS)
-        JOURNALS[id] = self
-        #print self.seq_num,":",self.id,self.__class__.__name__,self.docclass
+class Journal(models.Model):
+  
+    id = models.CharField(max_length=4,primary_key=True)
+    name = models.CharField(max_length=100)
+    doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
+    force_sequence = models.BooleanField(default=False)
+    #account = models.ForeignKey(ledger.Account,blank=True,null=True)
+    account = models.CharField(max_length=6,blank=True)
+    pos = models.IntegerField()
+    
+    def get_docmodel(self):
+        #print self,DOCTYPE_CLASSES, self.doctype
+        return DOCTYPE_CLASSES[self.doctype]
         
     def create_document(self,**kw):
-        #cl = DOCTYPE_CLASSES[self.doctype]
-        #print self.id
-        #print self.docclass
-        doc = self.docclass(journal=self.id,**kw)
-        #print doc
-        #print doc.journal
+        cl = self.get_docmodel()
+        doc = cl(journal=self,**kw)
         doc.save()
         return doc
         
     def get_next_number(self):
-        #cl = DOCTYPE_CLASSES[self.doctype]
-        d = self.docclass.objects.filter(journal=self.id).aggregate(
+        cl = self.get_docmodel()
+        d = cl.objects.filter(journal=self).aggregate(
             models.Max('number'))
         number = d['number__max']
         if number is None:
             return 1
         return number + 1
         
+    #~ def __init__(self,docclass,id,name=None):
+        #~ if JOURNALS.has_key(id):
+            #~ raise RuntimeError("Duplicate definition of journal %s" % id)
+        #~ assert id is not None
+        #~ assert len(id) > 0
+        #~ assert issubclass(docclass,AbstractDocument)
+        #~ self.id = id
+        #~ self.docclass = docclass
+        #~ if name is None:
+            #~ name = id
+        #~ self.name = name
+        #~ self.seq_num = len(JOURNALS)
+        #~ JOURNALS[id] = self
+        #print self.seq_num,":",self.id,self.__class__.__name__,self.docclass
+        
+    #~ def create_document(self,**kw):
+        #~ doc = self.docclass(journal=self.id,**kw)
+        #~ doc.save()
+        #~ return doc
+        
+    #~ def get_next_number(self):
+        #~ #cl = DOCTYPE_CLASSES[self.doctype]
+        #~ d = self.docclass.objects.filter(journal=self.id).aggregate(
+            #~ models.Max('number'))
+        #~ number = d['number__max']
+        #~ if number is None:
+            #~ return 1
+        #~ return number + 1
+        
     def __unicode__(self):
         return self.id
         
-    def pre_delete_document(self,doc):
+    def save(self,*args,**kw):
+        self.before_save()
+        r = super(Journal,self).save(*args,**kw)
+        self.after_save()
+        return r
+        
+    def after_save(self):
         pass
         
-def get_journal(id):
-    return JOURNALS[id]
-    
-def get_journals_by_docclass(cls):
-    #from lino.django.utils.sites import lino_site # ensure setup
-    #print 'JOURNALS:', JOURNALS
-    return [jnl for jnl in JOURNALS.values() if jnl.docclass == cls]
+    def before_save(self):
+        if not self.name:
+            self.name = self.id
+        if not self.pos:
+            self.pos = self.__class__.objects.all().count() + 1
       
-def get_journal_by_docclass(cls,num=0):
-    l = get_journals_by_docclass(cls)
-    if len(l) > num:
-        return l[num]
-    raise RuntimeError("No journal %s in lino_settings.py" % cls.__name__)
+        
+    def pre_delete_document(self,doc):
+        #print "pre_delete_document", doc.number, self.get_next_number()
+        if self.force_sequence:
+            if doc.number + 1 != self.get_next_number():
+                raise DocumentError(
+                  "%s is not the last document in journal" % unicode(doc)
+                  )
+        
+#~ def get_journal(id):
+    #~ return JOURNALS[id]
+    
+#~ def get_journals_by_docclass(cls):
+    #~ #from lino.django.utils.sites import lino_site # ensure setup
+    #~ #print 'JOURNALS:', JOURNALS
+    #~ return [jnl for jnl in JOURNALS.values() if jnl.docclass == cls]
+      
+#~ def get_journal_by_docclass(cls,num=0):
+    #~ l = get_journals_by_docclass(cls)
+    #~ if len(l) > num:
+        #~ return l[num]
+    #~ raise RuntimeError("No journal %s in lino_settings.py" % cls.__name__)
       
     
 def JournalRef(**kw):
-    return models.CharField(max_length=4,choices=JOURNALS,**kw)
+    #return models.CharField(max_length=4,choices=JOURNALS,**kw)
+    return models.ForeignKey(Journal,**kw)
 
 def DocumentRef(**kw):
     return models.IntegerField(**kw)
@@ -130,29 +176,36 @@ class AbstractDocument(documents.AbstractDocument):
   
     journal = JournalRef()
     #idjnl = models.CharField(max_length=4,choices=JOURNALS)
-    #journal = models.ForeignKey(Journal)
     number = DocumentRef()
     
-    journal_class = Journal
+    #~ journal_class = Journal
     
     class Meta:
         abstract = True
         
+        
     @classmethod
-    def create_journal(cls,*args,**kw):
-        #doctype = register_doctype(cls)
+    def create_journal(cls,id,**kw):
+        doctype = get_doctype(cls)
+        jnl = Journal(doctype=doctype,id=id,**kw)
         #jcl = self.journal._meta.rel.to.__class__
         #print jcl, " == ", cls.journal_class
-        jnl = cls.journal_class(cls,*args,**kw)
-        #jnl.save()
+        #jnl = cls.journal_class(cls,*args,**kw)
+        jnl.save()
         return jnl
         
-    def get_journal(self):
-        return JOURNALS[self.journal]
-    
     @classmethod
-    def get_journal_by_docclass(cls,*args,**kw):
-        return get_journal_by_docclass(cls,*args,**kw)
+    def get_journals(cls):
+        doctype = get_doctype(cls)
+        return Journal.objects.filter(doctype=doctype).order_by('pos')
+            
+        
+    #~ def get_journal(self):
+        #~ return JOURNALS[self.journal]
+    
+    #~ @classmethod
+    #~ def get_journal_by_docclass(cls,*args,**kw):
+        #~ return get_journal_by_docclass(cls,*args,**kw)
         
     def __unicode__(self):
         if self.id is None:
@@ -163,9 +216,9 @@ class AbstractDocument(documents.AbstractDocument):
     def before_save(self):
         #~ assert self.journal is not None
         #~ assert JOURNALS.has_key(self.journal)
-        jnl = self.get_journal()
+        #jnl = self.get_journal()
         if self.number is None:
-            self.number = jnl.get_next_number()
+            self.number = self.journal.get_next_number()
         
     def save(self,*args,**kw):
         self.before_save()
@@ -177,22 +230,28 @@ class AbstractDocument(documents.AbstractDocument):
         pass
         
     def delete(self):
-        jnl = self.get_journal()
-        jnl.pre_delete_document(self)
+        #jnl = self.get_journal()
+        self.journal.pre_delete_document(self)
         return super(AbstractDocument,self).delete()
         
     def get_child_model(self):
-        jnl = self.get_journal()
-        return jnl.docclass
-        #return DOCTYPE_CLASSES[jnl.doctype]
+        return DOCTYPE_CLASSES[self.journal.doctype]
         
     def pdf_filename(self):
         return os.path.join(self.pdf_root(),
-          self.journal,
+          self.journal.id,
           str(self.number))+'.pdf'
+
+    #~ def get_child_model(self):
+        #~ jnl = self.get_journal()
+        #~ return jnl.docclass
+        #~ #return DOCTYPE_CLASSES[jnl.doctype]
+        
+    #~ def pdf_filename(self):
+        #~ return os.path.join(self.pdf_root(),
+          #~ self.journal,
+          #~ str(self.number))+'.pdf'
           
-          
-      
 
 
 
@@ -203,29 +262,40 @@ class AbstractDocument(documents.AbstractDocument):
 from lino.django.utils import reports
 #~ from lino.django.utils.layouts import PageLayout 
 
-#~ class Journals(reports.Report):
-    #~ model = Journal
-    #~ order_by = "id"
-    #~ columnNames = "id name doctype lastnum"
+class Journals(reports.Report):
+    model = Journal
+    order_by = "id"
+    columnNames = "id name doctype force_sequence"
     
 class DocumentsByJournal(reports.Report):
     "abstract Report"
     order_by = "number"
-    def __init__(self,jnl,*args,**kw):
-        self.jnl = jnl
+    #master = Journal
+    #fk_name = 'journal' # see django issue 10808
+    
+    def __init__(self,journal,*args,**kw):
+        self.journal = journal
         super(DocumentsByJournal,self).__init__(*args,**kw)
         
     def get_title(self,renderer):
-        return "Documents in journal " + self.jnl.name
+        return "Documents in journal %s" % self.journal.name
         
-    def get_queryset(self,master_instance,flt=None):
-        qs = super(DocumentsByJournal,self).get_queryset(
-                     master_instance,flt)
-        return qs.filter(journal__exact=self.jnl.id)
+    def create_model(self):
+        return self.journal.get_docmodel()
+        
+    def create_label(self):
+        if self.journal.name:
+            return self.journal.name
+        return self.journal.id
+        
+    def get_queryset(self,*args,**kw):
+        qs = super(DocumentsByJournal,self).get_queryset(*args,**kw)
+        return qs.filter(journal__exact=self.journal)
         
 
-def lino_setup(lino):
+def unused_lino_setup(lino):
     pass
     #~ m = lino.add_menu("config","~Configuration")
     #~ m.add_action(Journals())
 
+__all__ = ['Journal']

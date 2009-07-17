@@ -33,11 +33,16 @@ from lino.console import syscon
 
 from lino.django.utils.sites import lino_site
 
-def db_apps():
+def unused_db_apps():
     for app_name in settings.INSTALLED_APPS:
         app_label = app_name.split('.')[-1]
         if loading.get_app(app_label,emptyOK=True):
             yield app_label
+            
+            
+def db_apps():
+    for a in loading.get_apps():
+        yield a.__name__.split('.')[-2]
 
         
 def main():
@@ -45,6 +50,7 @@ def main():
         print name,version, "<%s>" % url
         
     app_labels = [n for n in db_apps()]
+      
 
     #appnames = [m.__name__ for m in models.get_apps()]
     print "reset_demo.py", app_labels

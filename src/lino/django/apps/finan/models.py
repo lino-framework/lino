@@ -68,8 +68,8 @@ class BankStatement(ledger.LedgerDocument):
         todo_notice("BankStatement.balance1 and 2 are strings?!")
         #http://code.google.com/p/lino/issues/detail?id=1
         #self.balance2 = self.balance1 + sum_debit
-        jnl = self.get_journal()
-        acct = ledger.Account.objects.get(id=jnl.account_id)
+        #jnl = self.get_journal()
+        acct = ledger.Account.objects.get(id=self.journal.account)
         b = self.create_booking(account=acct)
         if sum_debit > 0:
             b.debit = sum_debit
@@ -90,7 +90,7 @@ class BankStatement(ledger.LedgerDocument):
         kw['contact'] = contact        
         return self.docitem_set.create(**kw)
     
-#journals.register_doctype(FinancialDocument)
+journals.register_doctype(BankStatement)
   
 class DocItem(models.Model):
     document = models.ForeignKey(BankStatement) 
@@ -174,14 +174,9 @@ class ItemsByDocument(reports.Report):
     master = BankStatement
     order_by = "pos"
 
-def lino_setup(lino):
-    m = lino.add_menu("finan","~Financial",
-      can_view=perms.is_staff)
-    #m.add_action(FinancialDocuments())
-    for jnl in journals.get_journals_by_docclass(BankStatement):
-        m.add_action(BankStatementsByJournal(jnl))
-    #m.add_action(Accounts())
-    #m.add_action(LedgerJournals())
-    #~ sales = lino.get_app_models('sales')
-    #~ if sales:
-        #~ sales.Invoice = LedgerInvoice
+#~ def lino_setup(lino):
+    #~ pass
+    #~ m = lino.add_menu("finan","~Financial",
+      #~ can_view=perms.is_staff)
+    #~ for jnl in BankStatement.get_journals():
+        #~ m.add_action(BankStatementsByJournal(jnl))

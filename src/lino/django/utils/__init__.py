@@ -16,9 +16,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from django.db.backends.signals import connection_created
+#~ from django.db.backends.signals import connection_created
 
-def lino_setup(sender=None, **kwargs):
-    from lino.django.utils.sites import lino_site
-    lino_site.setup()
-connection_created.connect(lino_setup)
+#~ def lino_setup(sender=None, **kwargs):
+    #~ from lino.django.utils.sites import lino_site
+    #~ lino_site.setup()
+#~ connection_created.connect(lino_setup)

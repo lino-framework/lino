@@ -34,7 +34,7 @@ class Groups(reports.Report):
     order_by = "name"
 
     
-def lino_setup(lino):
+def unused_lino_setup(lino):
     m = lino.add_menu("system","~System")
     m.add_action(Permissions())
     m.add_action(Users())

@@ -116,8 +116,8 @@ class SalesRule(models.Model):
     
 def get_sales_rule(doc):
     for r in SalesRule.objects.all().order_by("id"):
-        #if r.journal is None or r.journal == doc.journal:
-        return r
+        if r.journal is None or r.journal == doc.journal:
+            return r
 
 class SalesDocument(journals.AbstractDocument):
     
@@ -294,8 +294,8 @@ class Order(SalesDocument):
             items.append(d)
         if simulate:
             return True
-        jnl = journals.get_journal(self.imode.journal)
-        invoice = jnl.create_document(
+        #jnl = journals.get_journal(self.imode.journal)
+        invoice = self.imode.journal.create_document(
             creation_date=today,
             order=self,
             customer=self.customer,
@@ -317,7 +317,7 @@ class Order(SalesDocument):
         self.save()
         return invoice
             
-#journals.register_doctype(Order)
+journals.register_doctype(Order)
         
     
 class Invoice(ledger.LedgerDocument,SalesDocument):
@@ -346,6 +346,7 @@ class Invoice(ledger.LedgerDocument,SalesDocument):
           account=ledger.Account.objects.get(pk=jnl.account_id),
           credit=self.total_excl+self.total_vat)
 
+journals.register_doctype(Invoice)
 
 class DocItem(models.Model):
     document = models.ForeignKey(SalesDocument) 
@@ -592,12 +593,12 @@ class DocumentsByCustomer(reports.Report):
 class Customers(contacts.Contacts):
     page_layouts = (CustomerPageLayout,DocumentsByCustomerTabLayout)
 
-def lino_setup(lino):
+def unused_lino_setup(lino):
     m = lino.add_menu("sales","~Sales",
       can_view=perms.is_authenticated)
     m.add_action(Customers())
-    m.add_action(Orders())
-    m.add_action(Invoices())
+    #m.add_action(Orders())
+    #m.add_action(Invoices())
     m.add_action(DocumentsToSign())
     m.add_action(PendingOrders())
 

@@ -31,7 +31,7 @@ class SalesTest(TestCase):
     def test01(self):
         luc = sales.Customer(firstName="Luc",lastName="Saffre")
         luc.save()
-        INV = sales.Invoice.get_journal_by_docclass()
+        #INV = sales.Invoice.get_journal_by_docclass()
         #~ i = INV.create_document()
         #~ i.save()
         #~ print i

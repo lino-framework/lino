@@ -32,26 +32,21 @@ class Account(models.Model):
         #return super(Account,self).__unicode__()
 
 
-class LedgerJournal(journals.Journal):
+#~ class LedgerJournal(journals.Journal):
   
-    def __init__(self,docclass,id,account_id=None,**kw):
-        assert type(account_id) == type('')
-        self.account_id = account_id
-        journals.Journal.__init__(self,docclass,id,**kw)
+    #~ def __init__(self,docclass,id,account_id=None,**kw):
+        #~ assert type(account_id) == type('')
+        #~ self.account_id = account_id
+        #~ journals.Journal.__init__(self,docclass,id,**kw)
         
     #~ account = models.ForeignKey(Account)
     
-    def pre_delete_document(self,doc):
-        print "pre_delete_document", doc.number, self.get_next_number()
-        if doc.number + 1 != self.get_next_number():
-            raise journals.DocumentError(
-              "%s is not the last document in journal" % unicode(doc)
-              )
     
 class LedgerDocument(journals.AbstractDocument):
   
-    journal_class = LedgerJournal
-    #journal = models.ForeignKey(LedgerJournal)
+    #journal_class = LedgerJournal
+    #journal = models.ForeignKey(journals.Journal)
+    #journal = journals.JournalRef()
     """
     django.core.exceptions.FieldError: Local field 'journal' in class 'LedgerDocument' clashes with field of similar name from base class 'AbstractDocument'
     """
@@ -131,7 +126,7 @@ def get_account(name):
 class Booking(models.Model):
     #journal = journals.JournalRef()
     #number = models.IntegerField()
-    document = models.ForeignKey(LedgerDocument) 
+    document = models.ForeignKey(LedgerDocument)
     pos = models.IntegerField("Position",blank=True,null=True)
     date = fields.MyDateField()
     account = models.ForeignKey(Account)
@@ -160,7 +155,7 @@ class Accounts(reports.Report):
     #~ columnNames = journals.Journals.columnNames + " account"
     
 
-def lino_setup(lino):
+def unused_lino_setup(lino):
     m = lino.add_menu("ledger","~Ledger",
       can_view=perms.is_authenticated)
     m.add_action(Accounts())

@@ -78,18 +78,18 @@ class PasswordResetForm(forms.Form):
             raise forms.ValidationError(_("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
         return email
 
-def app_mod_label(mod):
-    """
-    This algorithm should also be used by
-    django.db.models.loading.get_models()
-    django.core.management.commands.reset.Command
-    django.core.management.commands.syncdb.Command
-    and others
+#~ def app_mod_label(mod):
+    #~ """
+    #~ This algorithm should also be used by
+    #~ django.db.models.loading.get_models()
+    #~ django.core.management.commands.reset.Command
+    #~ django.core.management.commands.syncdb.Command
+    #~ and others
     
-    """
-    if hasattr(mod,'__applabel__'):
-        return mod.__applabel__
-    return mod.__name__.split('.')[-1]
+    #~ """
+    #~ if hasattr(mod,'__applabel__'):
+        #~ return mod.__applabel__
+    #~ return mod.__name__.split('.')[-1]
 
 
 class LinoSite: #(AdminSite):
@@ -110,23 +110,18 @@ class LinoSite: #(AdminSite):
             return
         self.loading = True
         
-        for app in settings.INSTALLED_APPS:
-            mod = import_module(app)
-            lino_setup = getattr(mod,"lino_setup",None)
-            if lino_setup:
-                print "lino_setup", app
-                lino_setup(self)
-            #~ lbl = app_mod_label(mod)
-            #~ if hasattr(self,lbl):
-                #~ print "[Warning] %s" % lbl
-            #~ else:
-                #~ setattr(self,lbl,mod)
+        #~ for app in settings.INSTALLED_APPS:
+            #~ mod = import_module(app)
+            #~ lino_setup = getattr(mod,"lino_setup",None)
+            #~ if lino_setup:
+                #~ print "lino_setup", app
+                #~ lino_setup(self)
                 
-        if hasattr(settings,'LINO_CONFIG'):
-            print "Reading", settings.LINO_CONFIG
-            execfile(settings.LINO_CONFIG,dict(lino=self))
+        if hasattr(settings,'LINO_SETTINGS'):
+            print "Reading", settings.LINO_SETTINGS
+            execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
-            print "[Warning] settings.LINO_CONFIG entry is missing"
+            print "[Warning] settings.LINO_SETTINGS entry is missing"
           
         self.done = True
         self.loading = False

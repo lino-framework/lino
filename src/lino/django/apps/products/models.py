@@ -72,7 +72,7 @@ class Products(reports.Report):
     columnNames = "id:3 name description:30x1 cat vatExempt price:6"
     
 
-def lino_setup(lino):
+def unused_lino_setup(lino):
     m = lino.add_menu("prods","~Products")
     m.add_action(Products())
     m.add_action(ProductCats())

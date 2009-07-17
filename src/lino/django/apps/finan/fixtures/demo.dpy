@@ -28,7 +28,9 @@ from lino.django.utils.instantiator import Instantiator, i2d
 
 def objects():
     #ba = ledger.Account.objects.get(pk="5500")
-    BANK = journals.get_journal_by_docclass(finan.BankStatement)
+    #BANK = journals.get_journal_by_docclass(finan.BankStatement)
+    BANK = finan.BankStatement.create_journal("BANK",account='5500',name="FirstAndOnly Bank")
+    yield BANK
     
     EL = ledger.Account.objects.get(pk='61202')
     IN = ledger.Account.objects.get(pk='61211')

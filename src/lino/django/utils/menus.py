@@ -113,10 +113,8 @@ class Action(MenuItem):
         
         if not kw.has_key('can_view'):
             kw.update(can_view=actor.can_view)
-        if name is None:
-            name = actor.name
-        if label is None:
-            label = actor.label
+        name = name or actor.name
+        label = label or actor.label
         Component.__init__(self,parent,name,label,*args,**kw)
         self.actor = actor
         self.hotkey = hotkey
@@ -147,11 +145,12 @@ class Menu(MenuItem):
         if old:
             i = self.items.index(old)
             # print [ mi.name for mi in self.items ]
-            print "[debug] Modifing menu item %s at position %d" % (m.name,i)
+            print "[debug] Replacing menu item %s at position %d" % (m.name,i)
             # self.items[i] = m
             # assert len(m) == 0
             return old 
         else:
+            #print "[debug] Adding menu item %s" % m.name
             self.items.append(m)
         self.items_dict[m.name] = m
         #~ if m.name in [i.name for i in self.items]:
