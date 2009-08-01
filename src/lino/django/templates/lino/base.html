@@ -4,7 +4,12 @@
 <head>
 <title>{{ title }}</title>
 <script type="text/javascript" src="/media/jquery.js"></script>
-{% block style %}
+<script type="text/javascript" src="/media/jquery.dimensions.js"></script>
+<script type="text/javascript" src="/media/jquery.positionBy.js"></script>
+<script type="text/javascript" src="/media/jquery.bgiframe.js"></script>
+<script type="text/javascript" src="/media/jquery.jdMenu.js"></script>
+<link rel="stylesheet" type="text/css" href="/media/lino.css">
+<link rel="stylesheet" type="text/css" href="/media/jquery.jdMenu.css">
 <style type="text/css">
 * { margin:0; padding:0; }
 body { background:{{skin.body.background}}; color:{{skin.body.text}}; font:76%/1.6 "Lucida Grande","Bitstream Vera Sans",Verdana,sans-serif; }
@@ -30,11 +35,6 @@ ul.report_params li { display: inline; padding:1em;}
 ul.tab { padding: 0pt 3pt;}
 ul.tab li { display: inline; padding: 0pt 3pt;}
 ul.tab li.tab_selected { background: {{skin.body.background}};}
-/*
-ul.menu2 li { display: inline; padding: 0pt 3pt;}
-ul.menu2 { display: inline; padding: 3pt 0pt ;}
-ul.menu1 { padding: 0pt 0pt ;}
-*/
 table.vbox { background:{{skin.grid.background}}; border: {{skin.grid.border}}; 
   padding:1pt; }
 table.vbox td { padding:0pt 1pt; }
@@ -47,29 +47,16 @@ textarea.readonly { background:yellow;}
 span.textinput { background:white;display:inline-block;}
 span.position { padding-left:1em; padding-right:1em; border:1px solid black;}
 
-#menu ul a {
-  display: block;
-  padding: 0em;
-  font-weight: bold;
-}
-#menu ul a:link {
-  color: black; background-color: #eee;
-}
-#menu ul a:hover {
-  color: black; background-color: white;
-}
-#menu ul a:active {
-  color: white; background-color: gray;
-}
-
 #breadcrumbs { 
-  margin-left: 20em;
   padding: 10px 10px; 
   text-align: right;
   color:#999; font-size:0.9em; }
 
+#jd_menu { 
+  padding: 0px 10px; 
+  color:#999; font-size:0.9em; }
+
 #content {
-  margin-left: 20em;
   border: 1px dashed silver;
   min-width: 16em; /* Mindestbreite (der Ueberschrift) verhindert Anzeigefehler in modernen Browsern */
   background:#ffffff; 
@@ -78,9 +65,10 @@ span.position { padding-left:1em; padding-right:1em; border:1px solid black;}
 }
 
 #navigation {
-  margin-left: 20em;
+  /* margin-left: 20em; */
 }  
 
+/*
 #menu {
   font-size: 0.91em;
   float: left; 
@@ -89,6 +77,7 @@ span.position { padding-left:1em; padding-right:1em; border:1px solid black;}
   padding: 0;
   border: 2pt solid white;
 }
+*/
 
 #menu li {
   list-style: none;
@@ -108,27 +97,19 @@ p.about {
 
 
 /* HEADER */
+/**********
 #header { 
   margin-left: 22em;
-}
+} 
+***********/
 #header a { display:block; background:#eee; color:#676868; padding:10px 20px; font-weight:bold; font-size:1em; text-decoration:none; border-bottom:1px solid #ddd; }
 #header a:hover { text-decoration:underline; }
 
 /*
 </style>
-{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
 <body id="{% block bodyid %}page{% endblock %}">
-<div id="menu">
-{{ main_menu.as_html }}
-<p class="about">
-Powered by
-{% for x in lino.versions %}
-<br/>{{x}}
-{% endfor %}
-</p>
-</div>
 <div id="breadcrumbs">
 {% if user.is_authenticated %}
 {% trans 'Welcome,' %} <strong>{% firstof user.first_name user.username %}</strong>. 
@@ -147,6 +128,9 @@ Powered by
 / <a href="{{ lino.help_url }}" target="_HELP">{% trans 'Help' %}</a>
 {% endif %}
 {% endblock breadcrumbs %}
+</div>
+<div id="jd_menu">
+{{ main_menu.as_html }}
 </div>
 <div id="messages">
 {% if messages %}
@@ -168,6 +152,15 @@ Messages:
 </div>
 <div id="content">
 {% block content %}{% endblock %}
+</div>
+<div id="footer">
+<p class="about">
+Powered by
+{% for x in lino.versions %}
+{{x}},
+{% endfor %}
+<a href="http://jquery.com">jQuery</a>
+</p>
 </div>
 {% if debug %}
 <div id="debug">

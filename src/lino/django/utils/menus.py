@@ -189,9 +189,11 @@ class Menu(MenuItem):
                 return u''
             if level == 1:
                 s = ''
+                s += '\n<ul class="jd_menu">' 
             else:
                 s = Component.as_html(self,request)
-            s += '\n<ul class="menu%d">' % level
+                s += '\n<ul>' 
+            #s += '\n<ul class="menu%d">' % level
             for mi in self.items:
                 s += '\n<li>%s</li>' % mi.as_html(request,level+1)
             s += '\n</ul>\n'
