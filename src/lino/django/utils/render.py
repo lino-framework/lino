@@ -146,7 +146,7 @@ class ElementServer:
     def get_model_field(self,elem):
         raise NotImplementedError
 
-    def field_as_readonly(self,elem):
+    def field_as_readonly(self,elem,with_links=False):
         try:
             value = self.get_value(elem)
             model_field = self.get_model_field(elem)
@@ -216,12 +216,12 @@ class ElementServer:
             elif hasattr(value,'__iter__'):
                 value = "<br/>".join(
                   [unicode(x) for x in value])
-            elif isinstance(value,models.Model):
-                url = get_instance_url(value)
-                value = HREF(url,value)
             elif value is None:
                 value = '&nbsp;'
-            elif isinstance(model_field,models.URLField):
+            elif with_links and isinstance(value,models.Model):
+                url = get_instance_url(value)
+                value = HREF(url,value)
+            elif with_links and isinstance(model_field,models.URLField):
                 value = HREF(value,short_link(value))
             else:
                 value = unicode(value)
