@@ -64,6 +64,16 @@ class FieldElement(Element):
         Element.__init__(self,layout,field.name,label=field.verbose_name,**kw)
         self.field = field
         
+    def columns(self):
+        d = dict(label=self.label,
+          name=self.name,align="left")
+        w = self.width
+        if w is None:
+          d['width'] = 40
+        else:
+          d['width'] = w * 10
+        return [d]
+          
     def render(self,row):
         #~ if self.name == "items":
           #~ print self.__class__.__name__, self.name, "render()"
@@ -84,8 +94,6 @@ class MethodElement(Element):
     def render(self,row):
         return row.render_field(self)
 
-
-        
 class Container(Element):
     vertical = False
     def __init__(self,layout,name,*elements,**kw):
@@ -110,6 +118,13 @@ class Container(Element):
                             self.elements.append(layout[name])
             else:
                 self.elements.append(elem)
+        
+    def columns(self):
+        l = []
+        for e in self.elements:
+            l += e.columns()
+        #print l
+        return l
         
     def __str__(self):
         s = Element.__str__(self)
@@ -174,6 +189,11 @@ class Container(Element):
             raise
             #print e
             #return mark_safe("<PRE>%s</PRE>" % e)
+
+    def render_as_json(self,row):
+        return dict(
+          id=row.instance.pk,
+          cell=[row.get_value(e) for e in self.elements])
 
 class HBOX(Container):
     template = "lino/includes/hbox.html"
@@ -320,6 +340,9 @@ class BoundElement:
             traceback.print_exc()
             raise e
   
+    def as_json(self):
+        return self.element.render_as_json(self.row)
+        
     def __unicode__(self):
         return self.as_html()
         

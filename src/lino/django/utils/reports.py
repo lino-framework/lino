@@ -19,13 +19,20 @@
 
 from django.db import models
 from django import forms
-from django.forms.models import modelform_factory
 from django.conf.urls.defaults import patterns, url, include
+from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
 
 from lino.django.utils import layouts, render, perms
 from lino.django.utils.editing import is_editing
+
+from django.http import HttpResponse
+from django.core import serializers
+#from django.shortcuts import render_to_response
+from django.utils import simplejson
+
+
 
 
 # maps Django field types to a tuple of default paramenters
@@ -262,6 +269,8 @@ class Report:
         l.append(url(r'^%s$' % name, self.view_many))
         l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_one))
         l.append(url(r'^%s/pdf$' % name, self.pdf_many))
+        l.append(url(r'^%s/flexigrid$' % name, self.flexigrid))
+        l.append(url(r'^%s/json$' % name, self.json_many))
         l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
         l.append(url(r'^%s/print$' % name, self.print_many))
         return l
@@ -300,6 +309,23 @@ class Report:
             return render.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render()
 
+    def json_many(self, request):
+        if not self.can_view.passes(request):
+            return render.sorry(request)
+        rend = render.ViewManyReportRenderer(request,True,self)
+        rows = [row.as_json() for row in rend.rows()]
+        d = dict(page=1,total=rend.queryset.count(),rows=rows)
+        #s = serializers.serialize('json',d)
+        s = simplejson.dumps(d,default=unicode)
+        #print s
+        return HttpResponse(s, mimetype='text/x-json')
+
+    def flexigrid(self, request):
+        if not self.can_view.passes(request):
+            return render.sorry(request)
+        r = render.FlexigridRenderer(request,True,self)
+        return r.render_to_response()
+        
     def print_many(self, request):
         if not self.can_view.passes(request):
             return render.sorry(request)

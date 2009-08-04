@@ -259,12 +259,10 @@ class Row(ElementServer):
       
         
     def as_html(self):
-        try:
-            return self.report.row_layout.bound_to(self).as_html()
-        except Exception,e:
-            print "Exception in Row.as_html():"
-            traceback.print_exc()
-            raise e
+        return self.report.row_layout.bound_to(self).as_html()
+            
+    def as_json(self):
+        return self.report.row_layout.bound_to(self).as_json()
             
 
     def links(self):
@@ -386,7 +384,10 @@ class ViewReportRenderer(ReportRenderer):
 
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
-      
+
+    #~ def json(self,*args,**kw):
+        #~ return again(self.request,'../json',*args,**kw)
+
     #~ def can_change(self):
         #~ return self.report.can_change(self.request)
         
@@ -498,6 +499,14 @@ class ViewManyReportRenderer(ViewReportRenderer):
         #~ return  "Page %d of %d." % (self.page.number,
           #~ self.page.paginator.num_pages)
           
+    def columns(self):
+        try:
+            c = self.report.row_layout._main.columns()
+        except Exception,e:
+            traceback.print_exc(e)
+        #print "foo",repr(c)
+        return c
+          
     def position_string(self):
         s = "Page %d of %d" % (self.page.number,self.page.paginator.num_pages)
         s += ' in <a href="%s">%s</a>.' % (
@@ -593,6 +602,10 @@ class ViewManyReportRenderer(ViewReportRenderer):
         #~ print "DUMMY:", row.instance
 
 ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
+
+class FlexigridRenderer(ViewManyReportRenderer):
+    template_to_reponse = "lino/flexigrid_show.html"      
+  
 
 class SelectorForm(forms.Form):
     pass
