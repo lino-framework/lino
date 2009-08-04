@@ -82,13 +82,13 @@ class Journal(models.Model):
         return DOCTYPES[self.doctype][1](**kw)
 
     def create_document(self,**kw):
-        cl = self.get_docmodel()
+        cl = self.get_doc_model()
         doc = cl(journal=self,**kw)
         doc.save()
         return doc
         
     def get_next_number(self):
-        cl = self.get_docmodel()
+        cl = self.get_doc_model()
         d = cl.objects.filter(journal=self).aggregate(
             models.Max('number'))
         number = d['number__max']
