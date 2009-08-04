@@ -10,6 +10,15 @@
 <script type="text/javascript" src="/media/jquery.jdMenu.js"></script>
 <link rel="stylesheet" type="text/css" href="/media/lino.css">
 <link rel="stylesheet" type="text/css" href="/media/jquery.jdMenu.css">
+<script type="text/javascript">
+ function _go(url) { document.location = url; }
+ function _rowRolloverOn(elem) {
+  elem.style.backgroundColor='red';
+ }
+ function _rowRolloverOff(elem) {
+   elem.style.backgroundColor='#84C1DF';
+ }
+</script> 
 <style type="text/css">
 * { margin:0; padding:0; }
 body { background:{{skin.body.background}}; color:{{skin.body.text}}; font:76%/1.6 "Lucida Grande","Bitstream Vera Sans",Verdana,sans-serif; }
@@ -47,12 +56,17 @@ textarea.readonly { background:yellow;}
 span.textinput { background:white;display:inline-block;}
 span.position { padding-left:1em; padding-right:1em; border:1px solid black;}
 
+table.grid .clickable { cursor:pointer;}
+table.grid tr:hover { background:#cccccc;}
+
+
+
 #breadcrumbs { 
   padding: 10px 10px; 
   text-align: right;
   color:#999; font-size:0.9em; }
 
-#jd_menu { 
+#main_menu { 
   padding: 0px 10px; 
   color:#999; font-size:0.9em; }
 
@@ -129,7 +143,7 @@ p.about {
 {% endif %}
 {% endblock breadcrumbs %}
 </div>
-<div id="jd_menu">
+<div id="main_menu">
 {{ main_menu.as_html }}
 </div>
 <div id="messages">

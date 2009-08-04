@@ -1,8 +1,16 @@
 <!-- begin includes/grid_row.html {{ element.element.name }} -->
 <tr>
-{{ element.row_management }}
+<td class="management" onclick="true">{{ element.row_management }}</td>
+
 {% for e in element.children %}
-<td>{{ e.as_html }}</td>
+{% if renderer.editing %}
+<td>
+{% else %}
+<td class="clickable" onclick="_go('{{element.row.get_url_path}}');">
+{% endif %}    
+{{ e.as_html }}
+</td>
 {% endfor %}
+
 </tr>
 <!-- end includes/grid_row.html {{ element.element.name }} -->

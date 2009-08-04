@@ -89,14 +89,10 @@ class Component:
         return s + self.name
 
     def as_html(self,request,level=None):
-        try:
-            if not self.can_view.passes(request):
-                #print self.__class__.__name__, "as_html() : can_view failed" 
-                return u''
-            return mark_safe('<a href="%s">%s</a>' % (
-                  self.get_url_path(),self.label))
-        except Exception,e:
-            traceback.print_exc(e)
+        #~ if not self.can_view.passes(request):
+            #~ return u''
+        return mark_safe('<a href="%s">%s</a>' % (
+              self.get_url_path(),self.label))
               
     #~ def can_view(self,request):
         #~ return True
@@ -184,17 +180,16 @@ class Menu(MenuItem):
 
     def as_html(self,request,level=1):
         try:
-            if not self.can_view.passes(request):
-                #print self.__class__.__name__, "as_html() : can_view failed" 
-                return u''
+            #~ if not self.can_view.passes(request):
+                #~ return u''
+            items = [i for i in self.items if i.can_view.passes(request)]
             if level == 1:
-                s = ''
-                s += '\n<ul class="jd_menu">' 
+                s = '<ul class="jd_menu">' 
             else:
-                s = Component.as_html(self,request)
+                #s = Component.as_html(self,request)
+                s = self.label
                 s += '\n<ul>' 
-            #s += '\n<ul class="menu%d">' % level
-            for mi in self.items:
+            for mi in items:
                 s += '\n<li>%s</li>' % mi.as_html(request,level+1)
             s += '\n</ul>\n'
             return mark_safe(s)

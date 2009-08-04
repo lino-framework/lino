@@ -265,15 +265,40 @@ class Row(ElementServer):
         return self.report.row_layout.bound_to(self).as_json()
             
 
-    def links(self):
+    def unused_links(self):
         l = []
-        l.append('<a href="%s">%s</a>' % (
-            self.get_url_path(),unicode(self.instance)))
+        #~ l.append('<a href="%s">%s</a>' % (
+            #~ self.get_url_path(),unicode(self.instance)))
         if self.renderer.has_actions():
             l.append(unicode(
               self.renderer.selector[IS_SELECTED % self.number]))
         #print "<br/>".join(l)
         return mark_safe("<br/>".join(l))
+        
+        
+        
+    def management(self):
+        #print "row_management", self.element
+        try:
+            l = []
+            if self.renderer.editing:
+                l.append("%d%s" % (self.number,self.pk_field()))
+                if self.renderer.can_delete:
+                    l.append(self.form["DELETE"])
+            else:
+                l.append(str(self.number))
+                
+            if self.renderer.has_actions():
+                l.append(unicode(
+              self.renderer.selector[IS_SELECTED % self.number]))
+
+            return mark_safe("<br/>".join(l))
+        except Exception,e:
+            print "Exception in Row.management() %s:" % \
+                 self.renderer.request.path
+            traceback.print_exc()
+            raise e
+        
 
     def has_previous(self):
         return self.number > 1

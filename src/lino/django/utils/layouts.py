@@ -75,14 +75,7 @@ class FieldElement(Element):
         return [d]
           
     def render(self,row):
-        #~ if self.name == "items":
-          #~ print self.__class__.__name__, self.name, "render()"
         return row.render_field(self)
-        #~ print self.name
-        #~ return r
-        #~ except Exception,e:
-            #~ traceback.print_exc(e)
-            #~ raise
         
 class InlineElement(Element):
 
@@ -181,7 +174,8 @@ class Container(Element):
     def render(self,row):
         try:
             context = dict(
-              element = BoundElement(self,row)
+              element = BoundElement(self,row),
+              renderer = row.renderer
             )
             return render_to_string(self.template,context)
         except Exception,e:
@@ -357,11 +351,20 @@ class BoundElement:
             raise e
             
     def row_management(self):
+        return self.row.management()
+        
+    def unused_row_management(self):
         #print "row_management", self.element
         try:
             assert isinstance(self.element,GRID_ROW)
             #row = self.renderer.get_row()
-            s = "<td>%s</td>" % self.row.links()
+            #s = "<td>%s</td>" % self.row.links()
+            l = []
+            if self.row.renderer.has_actions():
+                l.append(unicode(
+              self.renderer.selector[IS_SELECTED % self.row.number]))
+
+            s = ''
             if self.row.renderer.editing:
                 s += "<td>%d%s</td>" % (self.row.number,
                     self.row.pk_field())
