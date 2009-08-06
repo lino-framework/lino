@@ -21,6 +21,7 @@
 #print "begin", __file__
 
 import os
+import sys
 from tempfile import gettempdir
 
 DEBUG = True
@@ -68,14 +69,16 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
+# Used by FileSystemStorage
 MEDIA_ROOT = os.path.abspath(os.path.join(
   PROJECT_DIR, '..', 'media'))
-#MEDIA_ROOT = ''
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/media/'
+
+
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -178,3 +181,13 @@ EMAIL_HOST = "mail.hot.ee"
 #LINO_WEBMASTER = "luc.saffre@mail.ee"
 
 LINO_SETTINGS = os.path.join(PROJECT_DIR,"lino_settings.py")
+
+EXTJS_URL = "/extjs/"
+if sys.platform == 'win32':
+    EXTJS_ROOT = r's:\ext-3.0.0'
+    #~ if os.path.exists(extjs_root):
+        #~ from django.core.files.storage import FileSystemStorage
+        #~ fs = FileSystemStorage(location=extjs_root,base_url=EXTJS_URL)
+        #~ print extjs_root
+        
+#print "ok"

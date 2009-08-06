@@ -15,6 +15,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import os
 # urls.py, the root URLconf module
 from django.conf import settings
 from django.conf.urls.defaults import *
@@ -39,9 +40,19 @@ urlpatterns = patterns('',
     (r'^db/(.*)', databrowse.site.root),
     (r'^admin-media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
-    #(r'^lino/', include(lino_site.get_urls())),
     (r'', include(lino_site.get_urls())),
 )    
+
+if settings.EXTJS_ROOT:
+   if os.path.exists(settings.EXTJS_ROOT):
+      if settings.EXTJS_URL.startswith('/'):
+        urlpatterns += patterns('django.views.static',
+        (r'^%s(?P<path>.*)$' % settings.EXTJS_URL[1:], 
+            'serve', {
+            'document_root': settings.EXTJS_ROOT,
+            'show_indexes': True }),)
+
+
 
 if settings.DEBUG:
     urlpatterns += patterns('django.views.static',

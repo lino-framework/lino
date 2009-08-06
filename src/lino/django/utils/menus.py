@@ -97,6 +97,10 @@ class Component:
     #~ def can_view(self,request):
         #~ return True
         
+    def as_extjs(self,request,level=1):
+        s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
+        return mark_safe(s)
+        
 class MenuItem(Component):
     pass
 
@@ -195,7 +199,31 @@ class Menu(MenuItem):
             return mark_safe(s)
         except Exception, e:
             traceback.print_exc(e)
-        
+
+    def as_extjs(self,request,level=1):
+      try:
+        items = [i for i in self.items if i.can_view.passes(request)]
+        s = ""
+        if len(items) == 0: return ''
+        if level == 1:
+            s += " [ "
+        else:
+            s += """
+            {
+            text: "%s",
+            menu: { items: [
+            """ % self.label
+        s += ",\n".join([mi.as_extjs(request,level+1) for mi in items])
+        if level == 1:
+            s += " ] "
+        else:
+            s += """
+            ]}}"""
+        return mark_safe(s)
+      except Exception, e:
+        traceback.print_exc(e)
+            
+
     def get_urls(self,name=''):
         #print "Menu.get_urls()",name
         l = [url(r'^%s$' % name, self.view)]
@@ -231,3 +259,8 @@ class MenuRenderer:
         
     def as_html(self):
         return self.menu.as_html(self.request)
+        
+    def as_extjs(self):
+        return self.menu.as_extjs(self.request)
+      
+        

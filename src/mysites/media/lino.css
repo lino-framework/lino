@@ -1,0 +1,99 @@
+* { margin:0; padding:0; }
+body { background:#eee; color:#333; font:76%/1.6 "Lucida Grande","Bitstream Vera Sans",Verdana,sans-serif; }
+a { color: #5b80b2; text-decoration:none; }
+a:hover { text-decoration:underline; }
+a img { border:none; }
+h1 { font-size:1.8em; color:#666; margin:0.4em 0 0.2em 0; }
+h2 { font-size:1.5em; color:#666; margin:1em 0 0.2em 0; }
+p { margin:0.5em 0 1em 0; }
+.odd { background-color:#EDF3FE; }
+.quiet { color:#666; }
+/* FILTERS */
+.filter { color:#999; font-size:0.9em; float:left; margin-bottom:10px; margin-right:20px; }
+.filter strong { color:#666; }
+
+
+/* LUC */
+
+.simple li { margin-left:5em; }
+ul.report_params { background:#5b80b2; padding:3pt;}
+ul.report_params li { display: inline; padding:1em;}
+
+ul.tab { padding: 0pt 3pt;}
+ul.tab li { display: inline; padding: 0pt 3pt;}
+ul.tab li.tab_selected { background: #eee;}
+table.vbox { background:#bbbbbb; border: 1pt solid white; 
+  padding:1pt; }
+table.vbox td { padding:0pt 1pt; }
+  
+table.hbox { background:#bbbbbb; padding:1pt; }
+table.grid { background:#bbbbbb; border: 1pt solid white; border-collapse: collapse; }
+table.grid td { border: 1pt solid white; padding: 5px 5px;  vertical-align:top;}
+input.readonly { background:yellow;}
+textarea.readonly { background:yellow;}
+span.textinput { background:white;display:inline-block;}
+span.position { padding-left:1em; padding-right:1em; border:1px solid black;}
+
+table.grid .clickable { cursor:pointer;}
+table.grid tr:hover { background:#cccccc;}
+
+
+
+#breadcrumbs { 
+  padding: 10px 10px; 
+  text-align: right;
+  color:#999; font-size:0.9em; }
+
+#main_menu { 
+  padding: 0px 10px; 
+  color:#999; font-size:0.9em; }
+
+#content {
+  border: 1px dashed silver;
+  min-width: 16em; /* Mindestbreite (der Ueberschrift) verhindert Anzeigefehler in modernen Browsern */
+  background:#ffffff; 
+  border-bottom:1px solid #ddd; 
+  padding: 10px 10px; 
+}
+
+#navigation {
+  /* margin-left: 20em; */
+}  
+
+/*
+#menu {
+  font-size: 0.91em;
+  float: left; 
+  width: 20em;
+  margin: 0; 
+  padding: 0;
+  border: 2pt solid white;
+}
+*/
+
+#menu li {
+  list-style: none;
+  margin: 0; padding: 0;
+}
+
+ul.menu2 {
+  margin-left: 1em; padding: 0;
+}
+
+
+p.about {
+  font-size: 0.71em;
+  border: 2pt solid yellow;
+}
+
+
+
+/* HEADER */
+/**********
+#header { 
+  margin-left: 22em;
+} 
+***********/
+#header a { display:block; background:#eee; color:#676868; padding:10px 20px; font-weight:bold; font-size:1em; text-decoration:none; border-bottom:1px solid #ddd; }
+#header a:hover { text-decoration:underline; }
+
