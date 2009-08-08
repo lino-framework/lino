@@ -26,8 +26,7 @@ from django.template.loader import render_to_string
 
             
 class Element:
-    #label = None
-    #name = None
+    editable = False
     def __init__(self,layout,name,width=None,height=None,label=None):
         assert isinstance(layout,Layout)
         self.layout = layout
@@ -37,8 +36,6 @@ class Element:
         if label is None:
             label = name.replace("_"," ")
         self.label = label
-        #~ if name.startswith("bal"):
-            #~ print self.__class__.__name__, self.name, "in", layout
         
     def __str__(self):
         if self.width is None:
@@ -52,6 +49,30 @@ class Element:
         
     def set_width(self,w):
         self.width = w
+        
+    def columns(self):
+        return [ self ]
+        
+        
+    def ext_column(self,renderer):
+        s = """
+        {
+          dataIndex: '%s', 
+          header: '%s', 
+        """ % (self.name, self.label)
+        if self.width:
+            s += " width: %d, " % (self.width * 10)
+        if renderer.editing:
+            ed = self.ext_editor(renderer)
+            if ed:
+                s += " editor: %s, " % ed
+        s += " } "
+        return s
+        
+        
+    def ext_editor(self,renderer):
+        return None
+        
 
 class StaticText(Element):
     def __init__(self,text):
@@ -59,23 +80,44 @@ class StaticText(Element):
     def render(self,row):
         return self.text
           
+django2ext = (
+    (models.CharField, 'Ext.form.TextField'),
+    (models.DateField, 'Ext.form.DateField'),
+    (models.IntegerField, 'Ext.form.NumberField'),
+    (models.BooleanField, 'Ext.form.Checkbox'),
+)
+        
+def ext_class(field):
+    for cl,x in django2ext:
+        if isinstance(field,cl):
+            return x
+
 class FieldElement(Element):
     def __init__(self,layout,field,**kw):
-        Element.__init__(self,layout,field.name,label=field.verbose_name,**kw)
+        Element.__init__(self,layout,field.name,
+            label=field.verbose_name,**kw)
         self.field = field
+        self.editable = field.editable
         
-    def columns(self):
-        d = dict(label=self.label,
-          name=self.name,align="left")
-        w = self.width
-        if w is None:
-          d['width'] = 40
-        else:
-          d['width'] = w * 10
-        return [d]
-          
     def render(self,row):
         return row.render_field(self)
+        
+    def ext_editor(self,renderer):
+        if not self.editable:
+            return None
+        cl = ext_class(self.field)
+        if not cl:
+            print "no ext editor class for field ", self
+            return None
+        s = """new %s ({ """ % cl
+        if not self.field.blank:
+            s += "allowBlank: false, "
+        if isinstance(self.field,models.CharField):
+            s += "maxLength: %d, " % self.field.max_length
+        s += """
+          }) """
+        return s
+        
         
 class InlineElement(Element):
 
@@ -184,10 +226,23 @@ class Container(Element):
             #print e
             #return mark_safe("<PRE>%s</PRE>" % e)
 
-    def render_as_json(self,row):
-        return dict(
-          id=row.instance.pk,
-          cell=[row.get_value(e) for e in self.elements])
+    #~ def grid_columns(self):
+        #~ """
+        #~ Used (from Report on its row_layout._main) to build a Ext.grid.ColumnModel.
+        #~ This "flattens" the structure.
+        #~ """
+        #~ l = []
+        #~ for e in self.elements:
+            #~ if isinstance(e,layouts.Container):
+                #~ l += e.grid_columns()
+            #~ else:
+                #~ l.append(e)
+        #~ return l
+        
+    #~ def render_as_json(self,row):
+        #~ return dict(
+          #~ id=row.instance.pk,
+          #~ rows=[row.get_value(e) for e in self.elements])
 
 class HBOX(Container):
     template = "lino/includes/hbox.html"
@@ -334,8 +389,8 @@ class BoundElement:
             traceback.print_exc()
             raise e
   
-    def as_json(self):
-        return self.element.render_as_json(self.row)
+    #~ def as_json(self):
+        #~ return self.element.render_as_json(self.row)
         
     def __unicode__(self):
         return self.as_html()

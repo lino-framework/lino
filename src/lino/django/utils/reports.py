@@ -189,10 +189,12 @@ class Report:
         #~ return self.__class__.__name__
         
     def column_headers(self):
-        #print "column_headers"
-        #print self.layout
         for e in self.row_layout._main.elements:
             yield e.label
+            
+    def columns(self):
+        return self.row_layout._main.columns()
+    
             
     def get_title(self,renderer):
         #~ if self.title is None:
@@ -271,6 +273,7 @@ class Report:
         l.append(url(r'^%s/pdf$' % name, self.pdf_many))
         l.append(url(r'^%s/flexigrid$' % name, self.flexigrid))
         l.append(url(r'^%s/json$' % name, self.json_many))
+        l.append(url(r'^%s/update$' % name, self.ajax_update))
         l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
         l.append(url(r'^%s/print$' % name, self.print_many))
         return l
@@ -313,12 +316,16 @@ class Report:
         if not self.can_view.passes(request):
             return render.sorry(request)
         rend = render.ViewManyReportRenderer(request,True,self)
-        rows = [row.as_json() for row in rend.rows()]
-        d = dict(page=1,total=rend.queryset.count(),rows=rows)
+        rows = [row.as_json_dict() for row in rend.rows()]
+        d = dict(count=rend.queryset.count(),rows=rows)
         #s = serializers.serialize('json',d)
         s = simplejson.dumps(d,default=unicode)
         #print s
         return HttpResponse(s, mimetype='text/x-json')
+        
+    def ajax_update(self,request):
+        print request.POST
+        raise NotImplementedError
 
     def flexigrid(self, request):
         if not self.can_view.passes(request):

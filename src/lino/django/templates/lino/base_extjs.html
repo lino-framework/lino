@@ -22,13 +22,11 @@
 <!-- extensions -->
 
 <!-- page specific -->
-{% block page_js %}
 <script type="text/javascript">
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '{{settings.EXTJS_URL}}/resources/images/default/s.gif';
 Ext.onReady(function(){
   // alert('woohoo!!! this is Ext.js!');
-  console.info('woohoo!!! this is Ext.js!');
   
   var tb = new Ext.Toolbar(
     {{main_menu.as_extjs}}
@@ -37,10 +35,11 @@ Ext.onReady(function(){
   tb.doLayout();
   
   tb.render('main_menu');
-   
+{% block extjs_on_ready %}
+  console.info('default extjs_on_ready block');
+{% endblock %}   
 }); //end onReady
 </script>
-{% endblock %}
 {% block extrahead %}{% endblock %}
 </head>
 <body id="{% block bodyid %}page{% endblock %}">

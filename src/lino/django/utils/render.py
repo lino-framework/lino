@@ -261,8 +261,11 @@ class Row(ElementServer):
     def as_html(self):
         return self.report.row_layout.bound_to(self).as_html()
             
-    def as_json(self):
-        return self.report.row_layout.bound_to(self).as_json()
+    def as_json_dict(self):
+        d = dict(id=self.instance.pk)
+        for e in self.report.columns():
+            d[e.name] = self.get_value(e) 
+        return d
             
 
     def unused_links(self):
@@ -405,7 +408,6 @@ class ViewReportRenderer(ReportRenderer):
             self._actions = self.report.get_row_actions(self)
         else:
             self._actions = ()
-
 
     def again(self,*args,**kw):
         return again(self.request,*args,**kw)
@@ -625,6 +627,18 @@ class ViewManyReportRenderer(ViewReportRenderer):
         
     #~ def dummy(self,row):
         #~ print "DUMMY:", row.instance
+        
+    def ext_column_model(self):
+      try:
+        s = "[ "
+        for e in self.report.columns():
+            s += e.ext_column(self) + ", "
+        s += " ]"
+        return mark_safe(s)
+      except Exception,e:
+          traceback.print_exc(e)
+        
+        
 
 ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
 

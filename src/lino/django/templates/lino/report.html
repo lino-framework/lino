@@ -20,3 +20,90 @@
 
 {% endblock navigation %}
 
+
+{% block extjs_on_ready %}
+
+ds = new Ext.data.Store({
+  id: '{{report.name}}',
+  proxy: new Ext.data.HttpProxy({
+      url: '{{form_action}}/json',
+      method: 'GET'
+    }),
+  baseParams:{},
+  reader: new Ext.data.JsonReader(
+    {   
+      totalProperty: 'count',
+      root: 'rows',
+      id: 'id'
+    },
+    [ 
+    {% for e in report.columns %}
+      {name: '{{e.name}}', type: 'auto'},
+    {% endfor %}
+    ]
+  )
+});
+
+cm = new Ext.grid.ColumnModel(
+  {{ report.ext_column_model }}
+);
+cm.defaultSortable= true;
+
+grid = new Ext.grid.EditorGridPanel({
+    id: '{{report.name}}EditorGrid',
+    store: ds,  
+    cm: cm,     
+    enableColLock:false,
+    clicksToEdit:1,
+    selModel: new Ext.grid.RowSelectionModel({singleSelect:false})
+  });
+  
+function save(oGrid_event){
+  Ext.Ajax.request({   
+      waitMsg: 'Please wait...',
+      url: '{{form_action}}/update',
+      params: {
+        {% for e in report.columns %}
+          {{e.name}}: oGrid_event.record.data.{{e.name}},
+        {% endfor %}
+      }, 
+      success: function(response){							
+         var result=eval(response.responseText);
+         switch(result){
+         case 1:
+            ds.commitChanges(); // get rid of the red triangles
+            ds.reload();        // reload our datastore.
+            break;					
+         default:
+            Ext.MessageBox.alert('Uh uh...','We couldn\'t save him...');
+            break;
+         }
+      },
+      failure: function(response){
+         var result=response.responseText;
+         Ext.MessageBox.alert('error','could not connect to the database. retry later');		
+      }									    
+   });   
+  }
+  
+  
+grid.on('afteredit', save);  
+  
+gridWindow = new Ext.Window({
+    id: '{{report.name}}Window',
+    title: '{{report.title}}',
+    closable:true,
+    width:700,
+    height:350,
+    plain:true,
+    layout: 'fit',
+    items: grid  // 
+  });
+  
+ds.load();      // Load the data
+gridWindow.show();  // Display our window
+
+
+
+
+{% endblock extjs_on_ready%}   
