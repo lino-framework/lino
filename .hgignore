@@ -5,4 +5,7 @@ syntax: glob
 *.dpyc
 *.pyc
 *~
+build
+dist
+
 src\mysites\media\pdf_cache

@@ -325,7 +325,7 @@ class Report:
         
     def ajax_update(self,request):
         print request.POST
-        raise NotImplementedError
+        return HttpResponse("1", mimetype='text/x-json')
 
     def flexigrid(self, request):
         if not self.can_view.passes(request):

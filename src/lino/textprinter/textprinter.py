@@ -194,9 +194,9 @@ class TextPrinter:
         f = codecs.open(inputfile,"r",encoding)
         cwd = os.getcwd()
         dirname = os.path.dirname(inputfile)
-        if len(dirname) != 0:
+        if len(dirname) != 0 and dirname != ".":
+            #print "[debug] chdir(%r)" % dirname
             os.chdir(dirname)
-            #print "chdir", dirname
         for line in f.readlines():
             if encoding == "cp437":
                 #line.replace(unichr(238),unichr(8364)) # u20AC
