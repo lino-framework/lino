@@ -364,7 +364,14 @@ This way of doing has unresolved issues:
 20090810
 --------
 
-- One user reported the folowing poblem::
+- Bug report: 
+  on a Windows XP running on a virtual machine of a Mac, calling for example...
+  
+  ::
+  
+    prnprint .\preview.prn
+    
+  ... causes an error::
 
     Traceback (most recent call last):
       File "prnprint.py", line 153, in <module>
@@ -374,6 +381,7 @@ This way of doing has unresolved issues:
       File "lino\textprinter\textprinter.pyo", line 198, in readfile
     WindowsError: [Error 123] Die Syntax für den Dateinamen, Verzeichnisnamen oder die Datenträgerbezeichnung ist falsch: '.'
 
-  Released timtools 0.6.43. which tests for this special case.
+
+- Released `TIM Tools 0.6.43 <http://lino.googlecode.com/files/timtools-0.6.43-py2exe.zip>`_. which fixes the above bug
 
 .. _latest-news:
