@@ -529,8 +529,11 @@ class PageLayout(Layout):
       try:
         s = "new Ext.form.FormPanel({ frame:true, " 
         if self._main.width is not None:
-            s += " width:%d, " % ( (self._main.width+self._main.label_width) * EXT_CHAR_WIDTH)
-        s += "items: [ %s ], " % ",\n".join([e.as_ext() for e in self._main.children()])
+            s += " width:%d, " % ( 
+              (self._main.width+self._main.label_width) 
+                * EXT_CHAR_WIDTH)
+        s += "items: [ %s ], " % ",\n".join(
+          [e.as_ext() for e in self._main.children()])
         # TODO : resolve code-template dependence 
         s += """
   bbar: new Ext.PagingToolbar({

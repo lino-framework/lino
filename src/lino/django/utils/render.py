@@ -467,7 +467,8 @@ class ViewReportRenderer(ReportRenderer):
         
     def json_url(self):
         #return self.again(json=True)
-        return self.again('json')
+        #return self.again('json')
+        return self.report.url + "/json"
         
     def ext_fields(self):
         return self.report.columns()

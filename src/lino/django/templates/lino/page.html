@@ -7,7 +7,7 @@ ds = new Ext.data.Store({
   proxy: new Ext.data.HttpProxy({
       url: '{{report.json_url}}',
       method: 'GET'
-    }),
+    }), 
   baseParams:{},
   reader: new Ext.data.JsonReader(
     {   
@@ -22,6 +22,10 @@ ds = new Ext.data.Store({
 });
 // TODO: the datastore must be in a variable called "ds" because the following report.layout.as_ext will generate code that relies on this. Yes, bad design.
 frm = {{ report.layout.as_ext }};
+
+ds.addListener('load',function(store,rows,options) {
+    frm.form.loadRecord(rows[0]);
+})
 
 var submit = frm.addButton({
     text: 'Submit',

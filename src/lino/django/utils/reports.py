@@ -84,7 +84,7 @@ class ReportParameterForm(forms.Form):
 #~ def get_reports():
     #~ return _report_classes
     
-model_reports = {}    
+model_reports = {}
     
 def register_report(rptclass):
     if rptclass.model is None:
@@ -151,6 +151,7 @@ class Report:
     can_change = perms.is_authenticated
 
     typo_check = True
+    url = None
     
     def __init__(self,**kw):
         for k,v in kw.items():
@@ -195,12 +196,20 @@ class Report:
             
     def columns(self):
       try:
-        cols = self.row_layout._main.columns()
-        return cols
+        s = set(self.row_layout._main.columns())
+        for l in self._page_layouts:
+            s.update(l._main.columns())
+        return s
+        #return self.row_layout._main.columns()
       except Exception,e:
         import traceback
         traceback.print_exc(e)
     
+    def obj2json(self,obj):
+        d = dict(id=obj.pk)
+        for e in self.columns():
+            d[e.name] = getattr(obj,e.name)
+        return d
             
     def get_title(self,renderer):
         #~ if self.title is None:
@@ -272,6 +281,9 @@ class Report:
         #~ return unicode("%d row(s)" % self.queryset.count())
     
     def get_urls(self,name):
+        if self.url:
+            raise RuntimError("Report.get_urls() called again.")
+        self.url = "/" + name
         l = []
         l.append(url(r'^%s/(\d+)$' % name, self.view_one))
         l.append(url(r'^%s$' % name, self.view_many))
@@ -281,8 +293,8 @@ class Report:
         l.append(url(r'^%s/update$' % name, self.ajax_update))
         l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
         l.append(url(r'^%s/print$' % name, self.print_many))
-        l.append(url(r'^%s/json$' % name, self.json_many))
-        l.append(url(r'^%s/(\d+)/json$' % name, self.json_one))
+        l.append(url(r'^%s/json$' % name, self.json))
+        #l.append(url(r'^%s/(\d+)/json$' % name, self.json_one))
         return l
 
     #~ def view(self,request):
@@ -320,7 +332,8 @@ class Report:
         return render.PdfManyReportRenderer(request,True,self).render()
         
 
-    def json_many(self, request):
+        
+    def json(self, request):
         if not self.can_view.passes(request):
             return None
         qs = self.get_queryset()
@@ -342,24 +355,18 @@ class Report:
         d = dict(count=qs.count(),rows=rows)
         s = simplejson.dumps(d,default=unicode)
         #print s
-        return HttpResponse(s, mimetype='text/x-json')
-        
-    def obj2json(self,obj):
-        d = dict(id=obj.pk)
-        for e in self.columns():
-            d[e.name] = getattr(obj,e.name)
-        return d
+        return HttpResponse(s, mimetype='text/html')
         
         
-    def json_one(self,request,row):
-        if not self.can_view.passes(request):
-            return None
-        qs = self.get_queryset()
-        rows = [ self.obj2json(qs[int(row)]) ]
-        d = dict(count=qs.count(),rows=rows)
-        s = simplejson.dumps(d,default=unicode)
-        #print s
-        return HttpResponse(s, mimetype='text/x-json')
+    #~ def json_one(self,request,row):
+        #~ if not self.can_view.passes(request):
+            #~ return None
+        #~ qs = self.get_queryset()
+        #~ rows = [ self.obj2json(qs[int(row)]) ]
+        #~ d = dict(count=qs.count(),rows=rows)
+        #~ s = simplejson.dumps(d,default=unicode)
+        #~ #print s
+        #~ return HttpResponse(s, mimetype='text/html')
         
         
     def ajax_update(self,request):
