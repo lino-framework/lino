@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import traceback
+import types
 
 from django import forms
 from django.db import models
@@ -24,17 +25,26 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.template.loader import render_to_string
 
+EXT_CHAR_WIDTH = 9
+
+def py2js(v):
+    if type(v) is types.BooleanType:
+        return str(v).lower()
+    return repr(v)
             
 class Element:
+    label_width = 0 
+    parent = None
     editable = False
+    ext_template = 'lino/includes/element.js'
     def __init__(self,layout,name,width=None,height=None,label=None):
         assert isinstance(layout,Layout)
         self.layout = layout
         self.name = name
         self.width = width
         self.height = height
-        if label is None:
-            label = name.replace("_"," ")
+        #if label is None:
+        #    label = name.replace("_"," ")
         self.label = label
         
     def __str__(self):
@@ -52,27 +62,72 @@ class Element:
         
     def columns(self):
         return [ self ]
+
+    #~ def as_ext(self):
+        #~ s = self.ext_editor(label=True)
+        #~ if s is not None:
+            #~ return mark_safe(s)
+        #~ return self.name
         
+    
+            
+    def as_ext(self,**kw):
+        options = self.ext_options()
+        options.update(kw)
+        s = "{ "
+        s += ",\n".join(["%s: %s" % (k,py2js(v)) for k,v in options.items()])
+        s += " }"
+        return mark_safe(s)
+        
+    def ext_options(self):
+        d = dict(name=self.name)
+        if self.width is None:
+            if isinstance(self.parent,HBOX):
+                d.update(flex=1)
+            else:
+                d.update(anchor="100%")
+        else:
+            d.update(width=(self.width+self.label_width)*EXT_CHAR_WIDTH)
+        if self.label:
+            d.update(fieldLabel=self.label)
+        return d
+        
+    #~ def as_ext(self):
+        #~ try:
+            #~ context = dict(
+              #~ element = self
+            #~ )
+            #~ return render_to_string(self.ext_template,context)
+        #~ except Exception,e:
+            #~ traceback.print_exc(e)
         
     def ext_column(self,renderer):
         s = """
         {
           dataIndex: '%s', 
           header: '%s', 
+          sortable: true,
         """ % (self.name, self.label)
         if self.width:
             s += " width: %d, " % (self.width * 10)
-        if renderer.editing:
-            ed = self.ext_editor(renderer)
-            if ed:
-                s += " editor: %s, " % ed
+        if renderer.editing and self.editable:
+            s += " editor: %s, " % self.ext_editor(label=False)
         s += " } "
         return s
         
         
-    def ext_editor(self,renderer):
-        return None
+    def ext_editor(self,label=False):
+        s = " new Ext.form.TextField ({ " 
+        s += " name: '%s', " % self.name
+        if label:
+            s += " fieldLabel: '%s', " % self.label
+        s += " disabled: true, " 
+        s += """
+          }) """
+        return s
         
+    def children(self):
+        return [ self ]
 
 class StaticText(Element):
     def __init__(self,text):
@@ -81,14 +136,35 @@ class StaticText(Element):
         return self.text
           
 django2ext = (
+    (models.TextField, 'Ext.form.TextArea'),
     (models.CharField, 'Ext.form.TextField'),
     (models.DateField, 'Ext.form.DateField'),
     (models.IntegerField, 'Ext.form.NumberField'),
+    (models.DecimalField, 'Ext.form.NumberField'),
     (models.BooleanField, 'Ext.form.Checkbox'),
+    (models.ForeignKey, 'Ext.form.ComboBox'),
+    (models.AutoField, 'Ext.form.NumberField'),
 )
-        
+
+
 def ext_class(field):
     for cl,x in django2ext:
+        if isinstance(field,cl):
+            return x
+            
+_ext_options = (
+    (models.TextField, dict(xtype='textarea')),
+    (models.CharField, dict(xtype='textfield')),
+    (models.DateField, dict(xtype='datefield')),
+    (models.IntegerField, dict(xtype='numberfield')),
+    (models.DecimalField, dict(xtype='numberfield')),
+    (models.BooleanField, dict(xtype='checkbox')),
+    (models.ForeignKey, dict(xtype='combo')),
+    (models.AutoField, dict(xtype='numberfield')),
+)
+            
+def ext_options(field):
+    for cl,x in _ext_options:
         if isinstance(field,cl):
             return x
 
@@ -102,21 +178,32 @@ class FieldElement(Element):
     def render(self,row):
         return row.render_field(self)
         
-    def ext_editor(self,renderer):
-        if not self.editable:
-            return None
+    def ext_editor(self,label=False):
         cl = ext_class(self.field)
         if not cl:
-            print "no ext editor class for field ", self
+            print "no ext editor class for field ", \
+              self.field.__class__.__name__, self
             return None
-        s = """new %s ({ """ % cl
+        s = " new %s ({ " % cl
+        s += " name: '%s', " % self.name
+        if label:
+            s += " fieldLabel: '%s', " % self.label
         if not self.field.blank:
-            s += "allowBlank: false, "
+            s += " allowBlank: false, "
         if isinstance(self.field,models.CharField):
-            s += "maxLength: %d, " % self.field.max_length
+            s += " maxLength: %d, " % self.field.max_length
         s += """
           }) """
         return s
+        
+    def ext_options(self):
+        d = Element.ext_options(self)
+        d.update(ext_options(self.field))
+        if not self.field.blank:
+            d.update(allowBlank=False)
+        if isinstance(self.field,models.CharField):
+            d.update(maxLength=self.field.max_length)
+        return d
         
         
 class InlineElement(Element):
@@ -130,21 +217,25 @@ class MethodElement(Element):
         return row.render_field(self)
 
 class Container(Element):
+    ext_template = 'lino/includes/element.js'
+    ext_container = 'Ext.Panel'
     vertical = False
+    hpad = 1
+    is_fieldset = False
+    
     def __init__(self,layout,name,*elements,**kw):
-        Element.__init__(self,layout,name)
+        Element.__init__(self,layout,name,**kw)
         #print self.__class__.__name__, elements
-        self.label = kw.get('label',self.label)
+        #self.label = kw.get('label',self.label)
         self.elements = []
         for elem in elements:
             assert elem is not None
             if type(elem) == str:
                 if "\n" in elem:
-                    lines=[]
+                    lines = []
                     for line in elem.splitlines():
                         line = line.strip()
                         if len(line) > 0 and not line.startswith("#"):
-                            #lines.append(HBOX(layout,line))
                             lines.append(layout,line)
                         self.elements.append(VBOX(layout,None,*lines))
                 else:
@@ -153,6 +244,49 @@ class Container(Element):
                             self.elements.append(layout[name])
             else:
                 self.elements.append(elem)
+        self.compute_width()
+        # some more analysis:
+        for e in self.elements:
+            e.parent = self
+            if isinstance(e,FieldElement):
+                self.is_fieldset = True
+                if e.label:
+                    w = len(e.label) + 1 
+                    if self.label_width < w:
+                        self.label_width = w
+            if e.width == self.width:
+                """
+                this was the width-giving element. 
+                remove this width to correct padding differences.
+                """
+                e.width = None
+                
+    def compute_width(self):
+        """
+        If all children have a width (in case of a horizontal layout), 
+        or (in a vertical layout) if at at least one element has a width, 
+        then my width is also known.
+        """
+        if self.width is None:
+            #print self, "compute_width..."
+            w = 0
+            if self.vertical:
+                #~ if self.name == 'main' and self.layout._model.__name__ == 'Product':
+                    #~ print "foo", [e.width for e in self.elements]
+                for e in self.elements:
+                    if e.width is not None:
+                        w = max(e.width,w)
+            else:
+                for e in self.elements:
+                    if e.width is None:
+                        return
+                    w += e.width
+            if w > 0:
+                self.width = w
+                
+        
+    def children(self):
+        return self.elements
         
     def columns(self):
         l = []
@@ -167,7 +301,7 @@ class Container(Element):
         s += "(%s)" % (",".join([str(e) for e in self.elements]))
         return s
         
-    def get_width(self):
+    def old_get_width(self):
         total_width = 0
         for elem in self.elements:
             w = elem.get_width()
@@ -185,7 +319,7 @@ class Container(Element):
         #print self, "width is", w
         return w
 
-    def set_width(self,w):
+    def old_set_width(self,w):
         self.width = w
         if self.vertical:
             for elem in self.elements:
@@ -226,30 +360,49 @@ class Container(Element):
             #print e
             #return mark_safe("<PRE>%s</PRE>" % e)
 
-    #~ def grid_columns(self):
-        #~ """
-        #~ Used (from Report on its row_layout._main) to build a Ext.grid.ColumnModel.
-        #~ This "flattens" the structure.
-        #~ """
-        #~ l = []
-        #~ for e in self.elements:
-            #~ if isinstance(e,layouts.Container):
-                #~ l += e.grid_columns()
-            #~ else:
-                #~ l.append(e)
-        #~ return l
+    def ext_options(self):
+        d = Element.ext_options(self)
+        if self.is_fieldset:
+            d.update(labelWidth=self.label_width*EXT_CHAR_WIDTH)
+        return d
+            
+    def as_ext(self,**kw):
+        options = self.ext_options()
+        options.update(kw)
+        s = "{ "
+        s += ", ".join(["%s: %r" % i for i in options.items()])
+        s += ", items: [ %s ]" % ", ".join([e.as_ext() for e in self.elements])
+        s += " }"
+        return mark_safe(s)
         
-    #~ def render_as_json(self,row):
-        #~ return dict(
-          #~ id=row.instance.pk,
-          #~ rows=[row.get_value(e) for e in self.elements])
+        
 
 class HBOX(Container):
     template = "lino/includes/hbox.html"
+    ext_layout = 'Ext.layout.HBoxLayout'
+        
+    def ext_options(self):
+        d = Container.ext_options(self)
+        d.update(xtype='panel')
+        d.update(layout='hbox')
+        return d
         
 class VBOX(Container):
     template = "lino/includes/vbox.html"
     vertical = True
+    ext_layout = 'Ext.layout.VBoxLayout'
+    
+                
+    def ext_options(self):
+        d = Container.ext_options(self)
+        if self.is_fieldset:
+            d.update(xtype='fieldset')
+            d.update(layout='form')
+        else:
+            d.update(xtype='panel')
+            d.update(layout='vbox')
+        return d
+        
     
 class GRID_ROW(Container):
     template = "lino/includes/grid_row.html"
@@ -281,9 +434,9 @@ class Layout:
 
         self._main = main
         #~ width = 0
-        w = main.get_width()
-        if w is not None:
-            main.set_width(w)
+        # w = main.get_width()
+        # if w is not None:
+        #     main.set_width(w)
         #~ from lino.django.igen.models import DocItem
         #~ if model == DocItem:
             #~ print self
@@ -331,7 +484,7 @@ class Layout:
                 line = line.strip()
                 i += 1
                 if len(line) > 0 and not line.startswith("#"):
-                    lines.append(self.desc2elem(name+'_'+str(i),line))
+                    lines.append(self.desc2elem(name+'_'+str(i),line,**kw))
             if len(lines) == 1:
                 return lines[0]
             return self.vbox_class(self,name,*lines,**kw)
@@ -360,16 +513,44 @@ class Layout:
         if self.label is None:
             return self.__class__.__name__
         return self.label
+        
+    #~ def as_ext(self):
+        #~ try:
+          #~ return self._main.as_ext()
+        #~ except Exception,e:
+          #~ traceback.print_exc(e)
 
 class PageLayout(Layout):
     show_labels = True
     join_str = "\n"
+    ext_layout = ""
+    
+    def as_ext(self):
+      try:
+        s = "new Ext.form.FormPanel({ frame:true, " 
+        if self._main.width is not None:
+            s += " width:%d, " % ( (self._main.width+self._main.label_width) * EXT_CHAR_WIDTH)
+        s += "items: [ %s ], " % ",\n".join([e.as_ext() for e in self._main.children()])
+        # TODO : resolve code-template dependence 
+        s += """
+  bbar: new Ext.PagingToolbar({
+    store: ds,       
+    displayInfo: true,
+    pageSize: 1,
+    prependButtons: true,
+  })
+    """
+        s += "})" 
+        return mark_safe(s)
+      except Exception,e:
+        traceback.print_exc(e)
 
 class RowLayout(Layout):
     show_labels = False
     join_str = " "
     hbox_class = GRID_ROW
     vbox_class = GRID_CELL
+    ext_layout = 'Ext.layout.HBoxLayout'
     
 
 

@@ -443,9 +443,9 @@ class DocumentPageLayout(layouts.PageLayout):
       vat_exempt item_vat
       """
     box3 = """
-      subject:40
-      sales_remark:40
-      intro:40x5
+      subject:80
+      sales_remark:80
+      intro:80x5
       """
     box4 = """
       total_excl
@@ -457,7 +457,7 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 box5
-      items:60x5
+      items:80x5
       """
       
     def inlines(self):
@@ -594,23 +594,3 @@ class Customers(contacts.Contacts):
     
 journals.register_doctype(Order,Orders)
 journals.register_doctype(Invoice,Invoices)
-    
-
-def unused_lino_setup(lino):
-    m = lino.add_menu("sales","~Sales",
-      can_view=perms.is_authenticated)
-    m.add_action(Customers())
-    #m.add_action(Orders())
-    #m.add_action(Invoices())
-    m.add_action(DocumentsToSign())
-    m.add_action(PendingOrders())
-
-#~ m = lino.add_menu("admin","~Administration",
-      #~ can_view=perms.is_staff)
-    #~ m.add_action(MakeInvoicesDialog())
-    
-    m = lino.add_menu("config","~Configuration",
-      can_view=perms.is_staff)
-    m.add_action(InvoicingModes())
-    m.add_action(ShippingModes())
-    m.add_action(PaymentTerms())

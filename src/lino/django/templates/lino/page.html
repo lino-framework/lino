@@ -1,0 +1,63 @@
+{% extends "lino/report.html" %}
+
+{% block extrahead %}
+<script type="text/javascript">
+Ext.onReady(function(){
+ds = new Ext.data.Store({
+  proxy: new Ext.data.HttpProxy({
+      url: '{{report.json_url}}',
+      method: 'GET'
+    }),
+  baseParams:{},
+  reader: new Ext.data.JsonReader(
+    {   
+      totalProperty: 'count',
+      root: 'rows',
+      id: 'id'
+    },
+    [ 
+    {% for e in report.ext_fields %} '{{e.name}}', {% endfor %} 
+    ]
+  )
+});
+// TODO: the datastore must be in a variable called "ds" because the following report.layout.as_ext will generate code that relies on this. Yes, bad design.
+frm = {{ report.layout.as_ext }};
+
+var submit = frm.addButton({
+    text: 'Submit',
+    handler: function(){
+        frm.form.submit({
+            url:'foo', 
+            waitMsg:'Saving Data...',
+            success: function (form, action) {
+                Ext.MessageBox.alert('Message', 'Saved OK');
+            },
+            failure:function(form, action) {
+                Ext.MessageBox.alert('Message', 'Save failed');
+            }
+        });
+    }
+});
+
+ds.load();
+
+frm.render('datapage');
+
+// main.doLayout();
+// main.show();
+
+}); //end onReady
+</script>
+{% endblock extrahead %}
+
+
+
+{% block content %}
+
+{{ report.tabs }}
+
+{{ report.form.errors }}
+
+<div id="datapage"></div>
+
+{% endblock content %}

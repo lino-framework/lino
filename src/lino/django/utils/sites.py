@@ -102,6 +102,7 @@ class LinoSite: #(AdminSite):
         self.loading = False
         self.done = False
         self.root_path = '/lino/'
+        #self.use_extjs = not True
         #self.skin = Skin()
         #self.model_reports = {}
         

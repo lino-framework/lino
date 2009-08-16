@@ -40,6 +40,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+#from django.utils import simplejson
 from django.template.loader import render_to_string, get_template, select_template, Context
 
 try:
@@ -261,12 +262,6 @@ class Row(ElementServer):
     def as_html(self):
         return self.report.row_layout.bound_to(self).as_html()
             
-    def as_json_dict(self):
-        d = dict(id=self.instance.pk)
-        for e in self.report.columns():
-            d[e.name] = self.get_value(e) 
-        return d
-            
 
     def unused_links(self):
         l = []
@@ -281,6 +276,7 @@ class Row(ElementServer):
         
         
     def management(self):
+        return '' # not used with extjs
         #print "row_management", self.element
         try:
             l = []
@@ -338,7 +334,10 @@ class Row(ElementServer):
         return self.inline_renderers[elem.name].render_to_string()
             
     def get_value(self,elem):
+      try:
         return getattr(self.instance,elem.name)
+      except Exception,e:
+        print "[TODO] No field %s in %s" % (elem.name,self.instance.__class__.__name__)
 
     def get_model_field(self,elem):
         try:
@@ -353,7 +352,6 @@ class ReportRenderer:
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
-        self.column_headers = report.column_headers
         #self.title = self.report.get_title()
         if report.master is None:
             assert master_instance is None
@@ -362,7 +360,19 @@ class ReportRenderer:
         self.master_instance = master_instance
         #print self.__class__.__name__, "__init__()"
         #self.params = params
-        self.queryset = report.get_queryset(master_instance,**params)
+        qs = report.get_queryset(master_instance,**params)
+        #~ self.offset = offset
+        #~ if limit is None:
+            #~ limit = self.page_length -1
+        #~ self.limit = limit
+        #~ if offset:
+            #~ qs = qs[offset:]
+        #~ if limit is not None:
+            #~ qs = qs[:limit]
+        self.queryset = qs
+        # some shortcuts:
+        self.page_length = report.page_length
+        self.column_headers = report.column_headers
         
 
     def get_title(self):
@@ -392,6 +402,7 @@ class ReportRenderer:
 
 class ViewReportRenderer(ReportRenderer):
   
+    #page_length = 10
     editing = 0
     selector = None
     #must_refresh = False
@@ -401,6 +412,7 @@ class ViewReportRenderer(ReportRenderer):
             self.params = report.param_form(request.GET)
             if self.params.is_valid():
                 kw.update(self.params.cleaned_data)
+            #self.json = request.GET.get('json',False)
         ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
         self.is_main = is_main
@@ -453,6 +465,13 @@ class ViewReportRenderer(ReportRenderer):
         #~ from lino.django.utils.sites import lino_site
         #~ return lino_site.context(self.request,**kw)
         
+    def json_url(self):
+        #return self.again(json=True)
+        return self.again('json')
+        
+    def ext_fields(self):
+        return self.report.columns()
+        
         
     def render_to_response(self,**kw):
         self.setup()
@@ -463,6 +482,9 @@ class ViewReportRenderer(ReportRenderer):
         if url is not None:
             #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
+        #~ if self.json:
+            #~ return self.json_reponse()
+            
         from lino.django.utils.sites import lino_site
         context = lino_site.context(self.request,
           report = self,
@@ -482,6 +504,7 @@ class ViewReportRenderer(ReportRenderer):
         )
         return render_to_string(self.template_to_string,context)
         
+        
     #~ def detail_to_string(self,dtlrep,instance):
         #~ r = self.detail_renderer(self.request,False,dtlrep,instance)
         #~ return r.render_to_string()
@@ -493,48 +516,42 @@ class ViewReportRenderer(ReportRenderer):
       
 class ViewManyReportRenderer(ViewReportRenderer):
   
-    page_length = 15
     start_page = 1
     max_num = 0
     
-    template_to_string = "lino/includes/grid_show.html"
-    template_to_reponse = "lino/grid_show.html"      
+    template_to_string = "lino/includes/grid.html"
+    template_to_reponse = "lino/grid.html"
     
     def __init__(self,*args,**kw) : 
         ViewReportRenderer.__init__(self,*args,**kw)
-        if self.is_main:
-            pgn = self.request.GET.get('pgn')
-            if pgn is None:
-                pgn = self.start_page
-            else:
-                pgn = int(pgn)
-            pgl = self.request.GET.get('pgl')
-            if pgl is None:
-                pgl = self.page_length
-            else:
-                pgl = int(pgl)
           
-            paginator = Paginator(self.queryset,pgl)
-            try:
-                page = paginator.page(pgn)
-            except (EmptyPage, InvalidPage):
-                page = paginator.page(paginator.num_pages)
-            self.page = page
+        if False: # before extjs
+            if self.is_main:
+                pgn = self.request.GET.get('pgn')
+                if pgn is None:
+                    pgn = self.start_page
+                else:
+                    pgn = int(pgn)
+                pgl = self.request.GET.get('pgl')
+                if pgl is None:
+                    pgl = self.page_length
+                else:
+                    pgl = int(pgl)
+              
+                paginator = Paginator(self.queryset,pgl)
+                try:
+                    page = paginator.page(pgn)
+                except (EmptyPage, InvalidPage):
+                    page = paginator.page(paginator.num_pages)
+                self.page = page
             
         
     #~ def position_string(self):
         #~ return  "Page %d of %d." % (self.page.number,
           #~ self.page.paginator.num_pages)
           
-    def columns(self):
-        try:
-            c = self.report.row_layout._main.columns()
-        except Exception,e:
-            traceback.print_exc(e)
-        #print "foo",repr(c)
-        return c
-          
     def position_string(self):
+        return '' # not used with extjs
         s = "Page %d of %d" % (self.page.number,self.page.paginator.num_pages)
         s += ' in <a href="%s">%s</a>.' % (
             self.again("",editing=None),self.report.get_title(self))
@@ -554,6 +571,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
         return mark_safe(s)
         
     def navigator(self):
+        return '' # not used with extjs
         page = self.page
         text = "&#x25C4;Previous"
         if page.has_previous():
@@ -572,21 +590,11 @@ class ViewManyReportRenderer(ViewReportRenderer):
         
         
     def rows(self):
-        try:
-            if self.master_instance is None:
-                rownum = self.page.start_index()
-                object_list = self.page.object_list
-            else:
-                rownum = 1
-                object_list = self.queryset
-            #rownum = self.page.start_index()
-            #print len(object_list)
-            for obj in object_list:
+        if False: # not used with extjs
+            rownum = self.offset + 1
+            for obj in self.queryset:
                 yield Row(self,obj,rownum,None)
                 rownum += 1
-        except Exception,e:
-            traceback.print_exc(e)
-            raise
             
     def setup(self):
         if not self.has_actions():
@@ -630,14 +638,20 @@ class ViewManyReportRenderer(ViewReportRenderer):
         
     def ext_column_model(self):
       try:
-        s = "[ "
-        for e in self.report.columns():
-            s += e.ext_column(self) + ", "
-        s += " ]"
+        l = [e.ext_column(self) for e in self.report.columns()]
+        s = "[ %s ]" % ", ".join(l)
         return mark_safe(s)
       except Exception,e:
           traceback.print_exc(e)
         
+    #~ def json_reponse(self):
+        #~ qs = self.queryset[]
+        #~ rows = [row.as_json_dict() for row in self.rows()]
+        #~ d = dict(count=self.queryset.count(),rows=rows)
+        #~ s = simplejson.dumps(d,default=unicode)
+        #~ #print s
+        #~ return HttpResponse(s, mimetype='text/x-json')
+    
         
 
 ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
@@ -672,8 +686,8 @@ class RowViewReportRenderer(ViewReportRenderer):
                 tab = int(tab)
         self.row = Row(self,obj,rownum,tab)
         self.tab = tab
-        layout = self.report._page_layouts[tab]
-        self.layout = layout.bound_to(self.row)
+        self.layout = self.report._page_layouts[tab]
+        self.bound_layout = self.layout.bound_to(self.row)
         
     def tabs(self):
         if len(self.report._page_layouts) == 1:
@@ -692,18 +706,25 @@ class RowViewReportRenderer(ViewReportRenderer):
         return mark_safe(s)
         
     def position_string(self):
+        return '' # not used with extjs
         s = "Row %d of %d" % (self.row.number,self.queryset.count())
         s += ' in <a href="%s">%s</a>.' % (
             self.again("..",editing=None),self.report.get_title(self))
         return mark_safe(s)
         
-        
+    #~ def json_reponse(self):
+        #~ rows = [ self.row.as_json_dict() ]
+        #~ d = dict(count=self.queryset.count(),rows=rows)
+        #~ s = simplejson.dumps(d,default=unicode)
+        #~ #print s
+        #~ return HttpResponse(s, mimetype='text/x-json')
+    
       
         
 class ViewOneReportRenderer(RowViewReportRenderer):
 
-    template_to_string = "lino/includes/page_show.html"
-    template_to_reponse = "lino/page_show.html"
+    template_to_string = "lino/includes/page.html" # not yet used
+    template_to_reponse = "lino/page.html"
     
         
     def view_modes(self):
@@ -751,8 +772,8 @@ class EditManyReportRenderer(ViewManyReportRenderer):
     extra = 1
     can_delete = False # True
     can_order = False
-    template_to_string = "lino/includes/grid_edit.html"
-    template_to_reponse = "lino/grid_edit.html"
+    #template_to_string = "lino/includes/grid_edit.html"
+    #template_to_reponse = "lino/grid_edit.html"
         
     def __init__(self,*args,**kw):
         #print self.__class__.__name__,"__init__()"
@@ -819,8 +840,6 @@ class EditManyReportRenderer(ViewManyReportRenderer):
 class EditOneReportRenderer(ViewOneReportRenderer):
     editing = 1
     detail_renderer = EditManyReportRenderer
-    template_to_string = "lino/includes/page_edit.html"
-    template_to_reponse = "lino/page_edit.html"
   
     def __init__(self,*args,**kw):
         ViewOneReportRenderer.__init__(self,*args,**kw)

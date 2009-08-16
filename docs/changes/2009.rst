@@ -382,6 +382,20 @@ This way of doing has unresolved issues:
     WindowsError: [Error 123] Die Syntax für den Dateinamen, Verzeichnisnamen oder die Datenträgerbezeichnung ist falsch: '.'
 
 
-- Released `TIM Tools 0.6.43 <http://lino.googlecode.com/files/timtools-0.6.43-py2exe.zip>`_. which fixes the above bug
+- Released `TIM Tools 0.6.43 <http://lino.googlecode.com/files/timtools-0.6.43-py2exe.zip>`_. which fixes the above bug.
+
+20090811
+--------
+
+- Working on ExtJS integration. The main menu was easy. 
+  Now I'm at the databrowse which uses a Ext.grid.Grid.
+
+- Should Lino use XML or JSON for AJAX? 
+
+  Answer (from http://ajaxian.com/archives/json-vs-xml-the-debate):
+  "JSON is a better fit for Web services that power Web mashups and AJAX widgets due to the fact that it is essentially serialized Javascript objects which makes it fit better client side scripting which is primarily done in Javascript. That’s it. XML will never fit the bill as well for these scenarios without changes to the existing browser ecosystem which I doubt are forthcoming anytime soon."
+  
+  
+  
 
 .. _latest-news:

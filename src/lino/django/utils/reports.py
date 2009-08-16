@@ -28,7 +28,7 @@ from lino.django.utils import layouts, render, perms
 from lino.django.utils.editing import is_editing
 
 from django.http import HttpResponse
-from django.core import serializers
+#from django.core import serializers
 #from django.shortcuts import render_to_response
 from django.utils import simplejson
 
@@ -141,6 +141,7 @@ class Report:
     fk_name = None
     help_url = None
     master_instance = None
+    page_length = 10
     
     _page_layouts = None
     page_layouts = (layouts.PageLayout ,)
@@ -193,7 +194,12 @@ class Report:
             yield e.label
             
     def columns(self):
-        return self.row_layout._main.columns()
+      try:
+        cols = self.row_layout._main.columns()
+        return cols
+      except Exception,e:
+        import traceback
+        traceback.print_exc(e)
     
             
     def get_title(self,renderer):
@@ -204,7 +210,7 @@ class Report:
     #~ def get_master_instance(self):
         #~ raise NotImplementedError
         
-    def get_queryset(self,master_instance,flt=None):
+    def get_queryset(self,master_instance=None,flt=None):
         if self.queryset is not None:
             qs = self.queryset
         else:
@@ -271,11 +277,12 @@ class Report:
         l.append(url(r'^%s$' % name, self.view_many))
         l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_one))
         l.append(url(r'^%s/pdf$' % name, self.pdf_many))
-        l.append(url(r'^%s/flexigrid$' % name, self.flexigrid))
-        l.append(url(r'^%s/json$' % name, self.json_many))
+        #l.append(url(r'^%s/flexigrid$' % name, self.flexigrid))
         l.append(url(r'^%s/update$' % name, self.ajax_update))
         l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
         l.append(url(r'^%s/print$' % name, self.print_many))
+        l.append(url(r'^%s/json$' % name, self.json_many))
+        l.append(url(r'^%s/(\d+)/json$' % name, self.json_one))
         return l
 
     #~ def view(self,request):
@@ -311,27 +318,59 @@ class Report:
         if not self.can_view.passes(request):
             return render.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render()
+        
 
     def json_many(self, request):
         if not self.can_view.passes(request):
-            return render.sorry(request)
-        rend = render.ViewManyReportRenderer(request,True,self)
-        rows = [row.as_json_dict() for row in rend.rows()]
-        d = dict(count=rend.queryset.count(),rows=rows)
-        #s = serializers.serialize('json',d)
+            return None
+        qs = self.get_queryset()
+        sort = request.GET.get('sort',None)
+        if sort:
+            sort_dir = request.GET.get('dir','ASC')
+            if sort_dir == 'DESC':
+                sort = '-'+sort
+            qs = qs.order_by(sort)
+        offset = request.GET.get('start',None)
+        if offset:
+            lqs = qs[int(offset):]
+        else:
+            lqs = qs
+        limit = request.GET.get('limit',self.page_length)
+        if limit:
+            lqs = lqs[:int(limit)]
+        rows = [ self.obj2json(row) for row in lqs ]
+        d = dict(count=qs.count(),rows=rows)
         s = simplejson.dumps(d,default=unicode)
         #print s
         return HttpResponse(s, mimetype='text/x-json')
+        
+    def obj2json(self,obj):
+        d = dict(id=obj.pk)
+        for e in self.columns():
+            d[e.name] = getattr(obj,e.name)
+        return d
+        
+        
+    def json_one(self,request,row):
+        if not self.can_view.passes(request):
+            return None
+        qs = self.get_queryset()
+        rows = [ self.obj2json(qs[int(row)]) ]
+        d = dict(count=qs.count(),rows=rows)
+        s = simplejson.dumps(d,default=unicode)
+        #print s
+        return HttpResponse(s, mimetype='text/x-json')
+        
         
     def ajax_update(self,request):
         print request.POST
         return HttpResponse("1", mimetype='text/x-json')
 
-    def flexigrid(self, request):
-        if not self.can_view.passes(request):
-            return render.sorry(request)
-        r = render.FlexigridRenderer(request,True,self)
-        return r.render_to_response()
+    #~ def flexigrid(self, request):
+        #~ if not self.can_view.passes(request):
+            #~ return render.sorry(request)
+        #~ r = render.FlexigridRenderer(request,True,self)
+        #~ return r.render_to_response()
         
     def print_many(self, request):
         if not self.can_view.passes(request):

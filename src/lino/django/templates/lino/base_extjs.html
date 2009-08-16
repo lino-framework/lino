@@ -5,16 +5,15 @@
 <title id="title">{{ title }}</title>
 <!-- ** CSS ** -->
 <!-- base library -->
-<link rel="stylesheet" type="text/css" href="{{settings.EXTJS_URL}}/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="{{settings.EXTJS_URL}}resources/css/ext-all.css" />
 
 <!-- overrides to base library -->
 
 <!-- ** Javascript ** -->
 <!-- ExtJS library: base/adapter -->
-<script type="text/javascript" src="{{settings.EXTJS_URL}}/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="{{settings.EXTJS_URL}}adapter/ext/ext-base.js"></script>
 <!-- ExtJS library: all widgets -->
-<script type="text/javascript" src="{{settings.EXTJS_URL}}/ext-all-debug.js"></script>
-
+<script type="text/javascript" src="{{settings.EXTJS_URL}}ext-all-debug.js"></script>
 <!-- overrides to library -->
 <link rel="stylesheet" type="text/css" href="/media/lino.css">
 <script type="text/javascript" src="/media/lino.js"></script>
@@ -24,20 +23,17 @@
 <!-- page specific -->
 <script type="text/javascript">
 // Path to the blank image should point to a valid location on your server
-Ext.BLANK_IMAGE_URL = '{{settings.EXTJS_URL}}/resources/images/default/s.gif';
+Ext.BLANK_IMAGE_URL = '{{settings.EXTJS_URL}}resources/images/default/s.gif';
 Ext.onReady(function(){
   // alert('woohoo!!! this is Ext.js!');
   
   var tb = new Ext.Toolbar(
-    {{main_menu.as_extjs}}
+    {{ main_menu.as_ext }}
   );
 
   tb.doLayout();
   
   tb.render('main_menu');
-{% block extjs_on_ready %}
-  console.info('default extjs_on_ready block');
-{% endblock %}   
 }); //end onReady
 </script>
 {% block extrahead %}{% endblock %}

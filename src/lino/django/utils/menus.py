@@ -97,7 +97,7 @@ class Component:
     #~ def can_view(self,request):
         #~ return True
         
-    def as_extjs(self,request,level=1):
+    def as_ext(self,request,level=1):
         s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
         return mark_safe(s)
         
@@ -200,7 +200,7 @@ class Menu(MenuItem):
         except Exception, e:
             traceback.print_exc(e)
 
-    def as_extjs(self,request,level=1):
+    def as_ext(self,request,level=1):
       try:
         items = [i for i in self.items if i.can_view.passes(request)]
         s = ""
@@ -213,7 +213,7 @@ class Menu(MenuItem):
             text: "%s",
             menu: { items: [
             """ % self.label
-        s += ",\n".join([mi.as_extjs(request,level+1) for mi in items])
+        s += ",\n".join([mi.as_ext(request,level+1) for mi in items])
         if level == 1:
             s += " ] "
         else:
@@ -260,7 +260,7 @@ class MenuRenderer:
     def as_html(self):
         return self.menu.as_html(self.request)
         
-    def as_extjs(self):
-        return self.menu.as_extjs(self.request)
+    def as_ext(self):
+        return self.menu.as_ext(self.request)
       
         

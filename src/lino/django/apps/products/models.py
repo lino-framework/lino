@@ -59,11 +59,20 @@ class ProductCats(reports.Report):
     can_view = perms.is_staff
 
 class ProductPageLayout(layouts.PageLayout):
+    #~ main = """
+    #~ id:5 name:50 cat
+    #~ description:50x6
+    #~ price vatExempt
+    #~ """
+    
     main = """
-    id:5 name:50 cat
-    description:50x6
-    price vatExempt
+    g1:60
+    g2 g3:10
     """
+    
+    g1 = "name \n description"
+    g2 = "price \n cat"
+    g3 = "id \n vatExempt"
 
 class Products(reports.Report):
     page_layouts = (ProductPageLayout,)
