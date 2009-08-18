@@ -2,38 +2,14 @@
 
 {% block extrahead %}
 <script type="text/javascript">
-Ext.onReady(function(){
-ds = new Ext.data.Store({
-  id: '{{report.name}}',
-  proxy: new Ext.data.HttpProxy({
-      url: '{{report.json_url}}',
-      method: 'GET'
-    }),
-  baseParams:{},
-  remoteSort: true,
-  reader: new Ext.data.JsonReader(
-    {   
-      totalProperty: 'count',
-      root: 'rows',
-      id: 'id'
-    },
-    [ {% for e in report.ext_fields %} '{{e.name}}', {% endfor %} ]
-  )
-});
 
-/*ds = new Ext.data.JsonStore({
-  url: '{{report.json_url}}',
-  method: 'GET',
-  baseParams:{},
-  totalProperty: 'count',
-  root: 'rows',
-  id: 'id',
-  fields: [ {% for e in report.columns %} '{{e.name}}', {% endfor %} ]
-});
-*/
-cm = new Ext.grid.ColumnModel(
-  {{ report.ext_column_model }}
-);
+master_store = {{ report.as_ext_store }};
+
+Ext.onReady(function(){
+
+
+cm = {{ report.as_ext_colmodel }};
+
 cm.defaultSortable= true;
 
 grid = new Ext.grid.EditorGridPanel({
@@ -43,13 +19,13 @@ grid = new Ext.grid.EditorGridPanel({
     autoHeight: true,
     // columnLines: true,
     // stripeRows:true,
-    store: ds,  
+    store: master_store,  
     colModel: cm,     
     enableColLock:false,
     clicksToEdit:1,
     selModel: new Ext.grid.RowSelectionModel({singleSelect:false}),
     bbar: new Ext.PagingToolbar({
-        store: ds,       // grid and PagingToolbar using same store
+        store: master_store,       // grid and PagingToolbar using same store
         displayInfo: true,
         pageSize: {{report.page_length}},
         prependButtons: true,

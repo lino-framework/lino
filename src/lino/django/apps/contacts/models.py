@@ -135,6 +135,7 @@ from lino.django.utils import perms
 #from lino.django.plugins.countries import Languages
 
 class ContactPageLayout(layouts.PageLayout):
+    #frame = False
     
     box1 = """
               title:10 firstName:15 lastName
@@ -197,16 +198,14 @@ class ContactsByCountryTabLayout(layouts.PageLayout):
     isocode name
     contacts
     """
+    
+    
+    #~ def slaves(self):
+        #~ return dict(contacts = ContactsByCountry)
 
-    def inlines(self):
-        return dict(contacts = ContactsByCountry())
 
 class Countries(countries.Countries):
     page_layouts = (ContactsByCountryTabLayout,)
+    
   
 
-def unused_lino_setup(lino):
-    m = lino.add_menu("contacts","~Contacts")
-    m.add_action(Companies())
-    m.add_action(Persons())
-    m.add_action(Contacts(),label="All")

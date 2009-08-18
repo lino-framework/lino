@@ -9,7 +9,7 @@ from lino.django.apps.products import models as products
 from lino.django.apps.documents import models as documents
 from lino.django.apps.ledger import models as ledger
 from lino.django.apps.sales import models as sales
-from lino.django.apps.finan import models as finan 
+from lino.django.apps.finan import models as finan
 from lino.django.apps.journals import models as journals 
 from lino.django.utils import perms
 

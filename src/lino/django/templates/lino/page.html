@@ -2,29 +2,48 @@
 
 {% block extrahead %}
 <script type="text/javascript">
-Ext.onReady(function(){
-ds = new Ext.data.Store({
-  proxy: new Ext.data.HttpProxy({
-      url: '{{report.json_url}}',
-      method: 'GET'
-    }), 
-  baseParams:{},
-  reader: new Ext.data.JsonReader(
-    {   
-      totalProperty: 'count',
-      root: 'rows',
-      id: 'id'
-    },
-    [ 
-    {% for e in report.ext_fields %} '{{e.name}}', {% endfor %} 
-    ]
-  )
+
+/*
+function set_charwidth() {
+  el = document.createElement('span');
+  el.innerHTML='9';
+  CHAR_WIDTH = el.offsetWidth; 
+};
+
+MyFormLayout = Ext.extend(Ext.layout.FormLayout, {
+  labelSeparator : '--',
+  fieldTpl: (function() {
+      var t = new Ext.Template(
+          '<div class="x-form-item {itemCls}" tabIndex="-1">',
+              '<label for="{id}" style="{labelStyle}" class="x-form-item-label">{label}{labelSeparator}</label><br/>',
+              '<div class="x-form-element" id="x-form-el-{id}" style="{elementStyle}">',
+              '</div><div class="{clearCls}"></div>',
+          '</div>'
+      );
+      t.disableFormats = true;
+      return t.compile();
+  })(),
+  
 });
-// TODO: the datastore must be in a variable called "ds" because the following report.layout.as_ext will generate code that relies on this. Yes, bad design.
+
+Ext.Container.LAYOUTS['form'] = MyFormLayout;
+
+*/
+
+master_store = {{ report.as_ext_store }};
+{% for slave in report.slaves %}
+{{slave.name}}_store = {{ slave.as_ext_store }};
+{% endfor %}
+
+Ext.onReady(function(){
+
 frm = {{ report.layout.as_ext }};
 
-ds.addListener('load',function(store,rows,options) {
+master_store.addListener('load',function(store,rows,options) {
     frm.form.loadRecord(rows[0]);
+    {% for slave in report.slaves %}
+    {{slave.name}}_store.reload({'master':rows[0].id})
+    {% endfor %}
 })
 
 var submit = frm.addButton({
@@ -43,7 +62,7 @@ var submit = frm.addButton({
     }
 });
 
-ds.load();
+master_store.load();
 
 frm.render('datapage');
 
@@ -53,7 +72,6 @@ frm.render('datapage');
 }); //end onReady
 </script>
 {% endblock extrahead %}
-
 
 
 {% block content %}

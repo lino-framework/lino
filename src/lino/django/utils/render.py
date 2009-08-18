@@ -81,20 +81,32 @@ def view_instance(request,db_table=None,pk=None):
         return Http404
     from . import reports
     try:
-        rptclass = reports.model_reports[db_table]
+        #rptclass = reports.model_reports[db_table]
+        rpt = reports.model_reports[db_table]
     except KeyError,e:
         msg = """
         There is no Report defined for %s.
         """ % db_table
         return sorry(request,message=msg)
         
-    rpt = rptclass(filter=dict(pk__exact=pk))
+    #rpt = rptclass(filter=dict(pk__exact=pk))
     return rpt.view_one(request,1)
 
-            
+def view_instance_slave(request,app_label=None,model_name=None,slave=None):
+    pk = request.GET['master']
+    model = loading.get_model(app_label,model_name)
+    obj = model.get(pk)
+    slave = getattr(obj,slave)
+    assert issubclass(slave,Report)
+    return slave(master_instance=obj).json(request)
+
+
+
 def get_urls():
     return patterns('',
         (r'^o/(?P<db_table>.+)/(?P<pk>.+)$', view_instance),
+        #(r'^o/(?P<app_label>.+)/(?P<model_name>.+)/(?P<pk>.+)/(?P<slave>.+)$', view_instance_slave),
+        (r'^slave/(?P<app_label>.+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
     )
 
 def get_instance_url(o):
@@ -112,7 +124,7 @@ class ElementServer:
     def __init__(self,form):
         self.form = form # form may be None
         
-    def render_field(self,elem):
+    def old_render_field(self,elem):
         if self.form is None:
             return self.field_as_readonly(elem)
         try:
@@ -147,7 +159,7 @@ class ElementServer:
     def get_model_field(self,elem):
         raise NotImplementedError
 
-    def field_as_readonly(self,elem,with_links=False):
+    def old_field_as_readonly(self,elem,with_links=False):
         try:
             value = self.get_value(elem)
             model_field = self.get_model_field(elem)
@@ -249,11 +261,11 @@ class Row(ElementServer):
         self.instance = instance
         self.dtl = dtl
         
+        return # remaining code not used with extjs
         #print "Row.__init__()", self.instance.pk
         self.inline_renderers = {}
         if dtl is not None:
-        #if renderer.is_main:
-            for name,inline in self.report._page_layouts[dtl]._inlines.items():
+            for name,inline in self.report._inlines.items():
                 self.inline_renderers[name] = \
                   renderer.detail_renderer(renderer.request,
                     False,inline,self.instance)
@@ -373,6 +385,9 @@ class ReportRenderer:
         # some shortcuts:
         self.page_length = report.page_length
         self.column_headers = report.column_headers
+        self.slaves = self.report.slaves
+        
+        
         
 
     def get_title(self):
@@ -466,12 +481,13 @@ class ViewReportRenderer(ReportRenderer):
         #~ return lino_site.context(self.request,**kw)
         
     def json_url(self):
-        #return self.again(json=True)
-        #return self.again('json')
-        return self.report.url + "/json"
+        return self.report.json_url()
         
-    def ext_fields(self):
+    def columns(self):
         return self.report.columns()
+        
+    def as_ext_store(self):
+        return self.report.as_ext_store()
         
         
     def render_to_response(self,**kw):
@@ -637,13 +653,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
     #~ def dummy(self,row):
         #~ print "DUMMY:", row.instance
         
-    def ext_column_model(self):
-      try:
-        l = [e.ext_column(self) for e in self.report.columns()]
-        s = "[ %s ]" % ", ".join(l)
-        return mark_safe(s)
-      except Exception,e:
-          traceback.print_exc(e)
+    def as_ext_colmodel(self):
+        return self.report.as_ext_colmodel(self.editing)
         
     #~ def json_reponse(self):
         #~ qs = self.queryset[]

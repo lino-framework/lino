@@ -132,7 +132,7 @@ class FinDocPageLayout(layouts.PageLayout):
     
     box1 = """
     date value_date
-    remark
+    ledger_remark
     """
     
     balance = """
@@ -144,17 +144,6 @@ class FinDocPageLayout(layouts.PageLayout):
             box1 balance
             content
             """
-            
-    def inlines(self):
-        return dict(content=ItemsByDocument())
-            
-
-#~ class Accounts(reports.Report):
-    #~ model = Account
-    
-#~ class LedgerJournals(journals.Journals):
-    #~ model = LedgerJournal
-    #~ columnNames = journals.Journals.columnNames + " account"
     
 class BankStatements(reports.Report):
     model = BankStatement
@@ -162,23 +151,18 @@ class BankStatements(reports.Report):
     columnNames = "number date balance1 balance2 ledger_remark value_date"
     
     
+    
 class DocItems(reports.Report):
     columnNames = "journal document pos:3 "\
-                  "date account contact ledger_remark debit credit" 
+                  "date account contact remark debit credit" 
     model = DocItem
     order_by = "pos"
 
-class ItemsByDocument(reports.Report):
-    columnNames = "pos:3 date account contact ledger_remark debit credit" 
-    model = DocItem
+class ItemsByDocument(DocItems):
+    columnNames = "pos:3 date account contact remark debit credit" 
     master = BankStatement
     order_by = "pos"
-
-#~ def lino_setup(lino):
-    #~ pass
-    #~ m = lino.add_menu("finan","~Financial",
-      #~ can_view=perms.is_staff)
-    #~ for jnl in BankStatement.get_journals():
-        #~ m.add_action(BankStatementsByJournal(jnl))
+    
+BankStatement.content = ItemsByDocument
 
 journals.register_doctype(BankStatement,BankStatements)

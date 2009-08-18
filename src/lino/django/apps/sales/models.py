@@ -457,11 +457,9 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 box5
-      items:80x5
+      docitem_set:80x5
       """
       
-    def inlines(self):
-        return dict(items=ItemsByDocument())
         
 class OrderPageLayout(DocumentPageLayout):
     box5 = """
@@ -476,17 +474,22 @@ class InvoicePageLayout(DocumentPageLayout):
       order
       """
 
-class EmittedInvoicesPageLayout(DocumentPageLayout):
+class EmittedInvoicesPageLayout(OrderPageLayout):
     label = "Emitted invoices"
     main = """
     journal number:4 creation_date customer:20 start_date
-    emitted_invoices
+    invoice_set
     """
-    def inlines(self):
-        return dict(emitted_invoices=InvoicesByOrder())
    
+class SalesDocuments(reports.Report):
+    model = SalesDocument
+    page_layouts = (DocumentPageLayout,)
+    
+    #~ def inlines(self):
+        #~ return dict(items=ItemsByDocument())
 
-class Orders(reports.Report):
+
+class Orders(SalesDocuments):
     model = Order
     order_by = "number"
     page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
@@ -494,6 +497,11 @@ class Orders(reports.Report):
                   "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
     can_view = perms.is_authenticated
+    
+    def inlines(self):
+        d = super(Orders,self).inlines()
+        d.update(emitted_invoices=InvoicesByOrder())
+        return d
     
     
 
@@ -506,8 +514,9 @@ class PendingOrders(Orders):
     def get_queryset(self,master_instance,make_until=None):
         assert master_instance is None
         return Order.objects.pending(make_until=make_until)
+
     
-class Invoices(reports.Report):
+class Invoices(SalesDocuments):
     model = Invoice
     order_by = "number"
     page_layouts = (InvoicePageLayout,)
@@ -539,7 +548,7 @@ class DocumentsToSign(Invoices):
         
     
   
-class InvoicesByOrder(reports.Report):
+class InvoicesByOrder(SalesDocuments):
     model = Invoice
     master = Order
     fk_name = "order"
@@ -569,28 +578,27 @@ class DocumentsByCustomerTabLayout(contacts.ContactPageLayout):
     label = "Documents"
     main = """
             box1
-            documents
+            customer_salesdocument
             """
-    def inlines(self):
-        return dict(documents=DocumentsByCustomer())
 
-
-class DocumentsByCustomer(reports.Report):
-    page_layouts = (DocumentPageLayout,)
+class DocumentsByCustomer(SalesDocuments):
     columnNames = "journal:4 number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
-    model = SalesDocument
     master = Customer
     fk_name = 'customer'
     order_by = "creation_date"
 
     def get_title(self,renderer):
         return unicode(renderer.master_instance) + " : documents by customer"
+        
 
 
 class Customers(contacts.Contacts):
     model = Customer
     page_layouts = (CustomerPageLayout,DocumentsByCustomerTabLayout)
     
+    #~ def inlines(self):
+        #~ return dict(documents=DocumentsByCustomer())
+        
 journals.register_doctype(Order,Orders)
 journals.register_doctype(Invoice,Invoices)

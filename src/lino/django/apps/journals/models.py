@@ -278,6 +278,7 @@ class DocumentsByJournal(reports.Report):
     def __init__(self,journal,**kw):
         self.journal = journal
         rpt = journal.get_doc_report()
+        #self.inlines = rpt.inlines
         params = dict(
           label=self.journal.name,
           name=self.journal.id,
@@ -287,39 +288,8 @@ class DocumentsByJournal(reports.Report):
           title=u"%s (journal %s)" % (journal.name,journal.id),
           columnNames=rpt.columnNames,
         )
-        #~ for k in ('model','label','page_layouts'):
-            #~ params[k] = getattr(rpt,k)
-        #~ model = journal.get_docmodel()
-        #~ params=dict(
-          #~ model=model,
-          #~ label=self.journal.name,
-          #~ page_layouts = model.get_page_layouts()
-          #~ )
         params.update(kw)
         reports.Report.__init__(self,**params)
-        
-    #~ def get_title(self,renderer):
-        #~ return "Documents in journal %s" % (self.journal.name
-        
-    #~ def get_model(self):
-        #~ return self.journal.get_docmodel()
-        
-    #~ def get_label(self):
-        #~ if self.journal.name:
-            #~ return self.journal.name
-        #~ return self.journal.id
-        
-    #~ def get_master_instance(self):
-        #~ return self.journal
-        
-    #~ def get_queryset(self,*args,**kw):
-        #~ qs = super(DocumentsByJournal,self).get_queryset(*args,**kw)
-        #~ return qs.filter(journal__exact=self.journal)
-        
 
-def unused_lino_setup(lino):
-    pass
-    #~ m = lino.add_menu("config","~Configuration")
-    #~ m.add_action(Journals())
 
 __all__ = ['Journal']

@@ -124,7 +124,7 @@ class LinoSite: #(AdminSite):
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
             print "[Warning] settings.LINO_SETTINGS entry is missing"
-          
+            
         self.done = True
         self.loading = False
         

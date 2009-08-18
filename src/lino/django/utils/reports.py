@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import traceback
 
 from django.db import models
 from django import forms
@@ -31,9 +32,7 @@ from django.http import HttpResponse
 #from django.core import serializers
 #from django.shortcuts import render_to_response
 from django.utils import simplejson
-
-
-
+from django.utils.safestring import mark_safe
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth, is_filter
@@ -85,21 +84,43 @@ class ReportParameterForm(forms.Form):
     #~ return _report_classes
     
 model_reports = {}
-    
-def register_report(rptclass):
+#_slave_reports = {}
+
+def register_report_class(rptclass):
     if rptclass.model is None:
         return
     if rptclass.master is not None:
+        slaves = getattr(rptclass.master,"_lino_slaves",None)
+        if slaves is None:
+            slaves = []
+            setattr(rptclass.master,'_lino_slaves',slaves)
+        slaves.append(rptclass)
+        #~ l = _slave_reports.get(rptclass.model,None)
+        #~ if l is None:
+            #~ l = []
+            #~ _slave_reports[rptclass.model] = l
+        #~ l.append(rptclass)
+    
+
+
+def register_report(rpt):
+    if rpt.model is None:
         return
-    if rptclass.exclude is not None:
+    if rpt.master is not None:
         return
-    if rptclass.filter is not None:
+    if rpt.exclude is not None:
         return
-    db_table = rptclass.model._meta.db_table
+    if rpt.filter is not None:
+        return
+    db_table = rpt.model._meta.db_table
     if model_reports.has_key(db_table):
-        print "[Warning] Ignoring %s" % rptclass.__name__
+        print "[Warning] Ignoring %s" % rpt #.__name__
         return
-    model_reports[db_table] = rptclass
+    model_reports[db_table] = rpt
+    
+def slave_reports(model):
+    return getattr(model,"_lino_slaves",[])
+    #return _slave_reports.get(model,[])
 
     
 
@@ -116,7 +137,7 @@ class ReportMetaClass(type):
         
         #_report_classes[classname] = cls
         #from lino.django.utils.sites import lino_site
-        register_report(cls)
+        register_report_class(cls)
         return cls
 
 
@@ -142,6 +163,7 @@ class Report:
     help_url = None
     master_instance = None
     page_length = 10
+    display_field = None
     
     _page_layouts = None
     page_layouts = (layouts.PageLayout ,)
@@ -152,34 +174,49 @@ class Report:
 
     typo_check = True
     url = None
+    _slaves = None
     
     def __init__(self,**kw):
         for k,v in kw.items():
-            if not hasattr(self,k):
+            if hasattr(self,k):
+                setattr(self,k,v)
+            else:
                 print "[Warning] Ignoring attribute %s" % k
-            setattr(self,k,v)
             
+        #self._inlines = self.inlines()
+        
         if self.model is None:
             self.model = self.queryset.model
         if self.label is None:
             self.label = self.__class__.__name__
         if self.name is None:
             self.name = self.label.lower()
+            
         if self.form_class is None:
             self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
-            self.row_layout = layouts.RowLayout(self.model,
-                                                self.columnNames)
+            self.row_layout = layouts.RowLayout(self,self.columnNames)
         else:
             assert self.columnNames is None
-            self.row_layout = self.row_layout_class(self.model)
+            self.row_layout = self.row_layout_class(self)
         if self.master:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
+            #self.name = self.fk.rel.related_name
         self._page_layouts = [
-              layout(self.model) for layout in self.page_layouts]
-                
+              layout(self) for layout in self.page_layouts]
         
+        if self.display_field is None:
+            self.display_field = '__unicode__'
+                
+        register_report(self)
+        
+          
+        #~ if hasattr(self.model,'slaves'):
+            #~ #self.slaves = [ rpt(name=k) for k,v in self.model.slaves().items() ]
+        #~ else:
+            #~ self.slaves = []
+                
     #~ def get_model(self):
         #~ assert self.queryset is not None,"""
         #~ if you set neither model nor queryset in your Report, 
@@ -190,11 +227,44 @@ class Report:
     #~ def get_label(self):
         #~ return self.__class__.__name__
         
+    def get_slave(self,name):
+        l = self.slaves() # to populate
+        return self._slaves.get(name,None)
+        
+        
+    def slaves(self):
+        if self._slaves is None:
+            self._slaves = {}
+            for cl in slave_reports(self.model):
+                rpt = cl()
+                self._slaves[rpt.name] = rpt
+            print "reports.Report.slaves()", self.__class__.__name__, ":", self._slaves
+        return self._slaves.values()
+        
+        
+    def inlines(self):
+        return {}
+         
+    def json_url(self):
+        if self.url:
+            return "%s/json" % self.url
+        model_name = self.master._meta.object_name.lower()
+        app_label = self.master._meta.app_label
+        return "/slave/%s/%s/%s" % (app_label,model_name,self.fk.name)
+        
+            #~ m = self.master.get(master_id)
+            #~ url = render.get_instance_url(m)
+            #~ return url+"/"+self.name+"/json"
+        
+        
     def column_headers(self):
         for e in self.row_layout._main.elements:
             yield e.label
             
     def columns(self):
+        return self.row_layout.leaves()
+        
+    def unused_ext_columns(self):
       try:
         s = set(self.row_layout._main.columns())
         for l in self._page_layouts:
@@ -209,6 +279,7 @@ class Report:
         d = dict(id=obj.pk)
         for e in self.columns():
             d[e.name] = getattr(obj,e.name)
+        d['__unicode__'] = unicode(obj)
         return d
             
     def get_title(self,renderer):
@@ -334,6 +405,7 @@ class Report:
 
         
     def json(self, request):
+        #print "json:", self
         if not self.can_view.passes(request):
             return None
         qs = self.get_queryset()
@@ -409,9 +481,50 @@ class Report:
             row.instance.delete()
         renderer.must_refresh()
         
+    def as_ext_store(self):
+      try:
+        s = """
+        new Ext.data.Store({
+          id: '%s',
+        """ % self.name
+        s += """
+          proxy: new Ext.data.HttpProxy({
+              url: '%s',
+              method: 'GET'
+            }),
+        """ % self.json_url()
+        if self.master:
+            s += """
+              baseParams:{ 'master': null },
+            """
+        s += """
+          remoteSort: true,
+          reader: new Ext.data.JsonReader(
+            {   
+              totalProperty: 'count',
+              root: 'rows',
+              id: 'id'
+            },
+            [ 
+        """ 
+        for e in self.columns():
+            s += " '%s'," % e.name
+        s += "  ])}) "
+        return mark_safe(s)
+      except Exception,e:
+          traceback.print_exc(e)
+
+    def as_ext_colmodel_editing(self):
+        return self.as_ext_colmodel(True)
         
-
-
+    def as_ext_colmodel(self,editing=False):
+      try:
+        l = [e.ext_column(editing) for e in self.columns()]
+        s = "new Ext.grid.ColumnModel([ %s ])" % ", ".join(l)
+        return mark_safe(s)
+      except Exception,e:
+          traceback.print_exc(e)
+        
 #~ class SubReport(Report):
   
     #~ def __init__(self,master,fk_name=None):
