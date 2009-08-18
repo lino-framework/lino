@@ -3,33 +3,6 @@
 {% block extrahead %}
 <script type="text/javascript">
 
-/*
-function set_charwidth() {
-  el = document.createElement('span');
-  el.innerHTML='9';
-  CHAR_WIDTH = el.offsetWidth; 
-};
-
-MyFormLayout = Ext.extend(Ext.layout.FormLayout, {
-  labelSeparator : '--',
-  fieldTpl: (function() {
-      var t = new Ext.Template(
-          '<div class="x-form-item {itemCls}" tabIndex="-1">',
-              '<label for="{id}" style="{labelStyle}" class="x-form-item-label">{label}{labelSeparator}</label><br/>',
-              '<div class="x-form-element" id="x-form-el-{id}" style="{elementStyle}">',
-              '</div><div class="{clearCls}"></div>',
-          '</div>'
-      );
-      t.disableFormats = true;
-      return t.compile();
-  })(),
-  
-});
-
-Ext.Container.LAYOUTS['form'] = MyFormLayout;
-
-*/
-
 master_store = {{ report.as_ext_store }};
 {% for slave in report.slaves %}
 {{slave.name}}_store = {{ slave.as_ext_store }};
@@ -42,7 +15,7 @@ frm = {{ report.layout.as_ext }};
 master_store.addListener('load',function(store,rows,options) {
     frm.form.loadRecord(rows[0]);
     {% for slave in report.slaves %}
-    {{slave.name}}_store.reload({'master':rows[0].id})
+    {{slave.name}}_store.load({params: {master: rows[0].get('number')}});
     {% endfor %}
 })
 

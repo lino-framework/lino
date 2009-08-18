@@ -93,9 +93,17 @@ def view_instance(request,db_table=None,pk=None):
     return rpt.view_one(request,1)
 
 def view_instance_slave(request,app_label=None,model_name=None,slave=None):
-    pk = request.GET['master']
-    model = loading.get_model(app_label,model_name)
-    obj = model.get(pk)
+    pk = request.GET.get('params',None)
+    print "params", repr(pk)
+    pk = request.GET.get('master',None)
+    print "master", repr(pk)
+    return sorry(request)
+    if pk is None:
+        print "TODO: how to do the first load?"
+        return 
+    #pk = params.master
+    model = models.get_model(app_label,model_name)
+    obj = model.objects.get(pk)
     slave = getattr(obj,slave)
     assert issubclass(slave,Report)
     return slave(master_instance=obj).json(request)

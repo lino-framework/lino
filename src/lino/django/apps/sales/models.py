@@ -457,7 +457,7 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 box5
-      docitem_set:80x5
+      ItemsByDocument:80x5
       """
       
         
@@ -578,7 +578,7 @@ class DocumentsByCustomerTabLayout(contacts.ContactPageLayout):
     label = "Documents"
     main = """
             box1
-            customer_salesdocument
+            DocumentsByCustomer
             """
 
 class DocumentsByCustomer(SalesDocuments):

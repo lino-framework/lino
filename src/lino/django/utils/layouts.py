@@ -282,7 +282,7 @@ class InlineElement(Element):
       try:
         #print self.name, self.layout.detail_reports
         rpt = self.inline
-        print rpt
+        # print rpt
         d = Element.ext_options(self)
         d.update(xtype='grid')
         d.update(store=js_code(self.name+"_store"))
@@ -300,6 +300,7 @@ class MethodElement(Element):
     def __init__(self,layout,name,meth,**kw):
         Element.__init__(self,layout,name,**kw)
         self.meth = meth
+        print "MethodElement", name, meth
         
     def render(self,row):
         return row.render_field(self)

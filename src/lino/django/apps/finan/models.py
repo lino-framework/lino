@@ -142,7 +142,7 @@ class FinDocPageLayout(layouts.PageLayout):
     
     main = """
             box1 balance
-            content
+            ItemsByDocument
             """
     
 class BankStatements(reports.Report):

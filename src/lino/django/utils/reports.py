@@ -95,6 +95,7 @@ def register_report_class(rptclass):
             slaves = []
             setattr(rptclass.master,'_lino_slaves',slaves)
         slaves.append(rptclass)
+        print "%s is slave of %s" % (rptclass.__name__, rptclass.master.__name__)
         #~ l = _slave_reports.get(rptclass.model,None)
         #~ if l is None:
             #~ l = []
@@ -119,7 +120,10 @@ def register_report(rpt):
     model_reports[db_table] = rpt
     
 def slave_reports(model):
-    return getattr(model,"_lino_slaves",[])
+    l = getattr(model,"_lino_slaves",[])
+    for b in model.__bases__:
+        l += getattr(b,"_lino_slaves",[])
+    return l
     #return _slave_reports.get(model,[])
 
     
@@ -190,7 +194,7 @@ class Report:
         if self.label is None:
             self.label = self.__class__.__name__
         if self.name is None:
-            self.name = self.label.lower()
+            self.name = self.label #.lower()
             
         if self.form_class is None:
             self.form_class = modelform_factory(self.model)
@@ -238,7 +242,7 @@ class Report:
             for cl in slave_reports(self.model):
                 rpt = cl()
                 self._slaves[rpt.name] = rpt
-            print "reports.Report.slaves()", self.__class__.__name__, ":", self._slaves
+            #print "reports.Report.slaves()", self.__class__.__name__, ":", self._slaves
         return self._slaves.values()
         
         
@@ -250,7 +254,7 @@ class Report:
             return "%s/json" % self.url
         model_name = self.master._meta.object_name.lower()
         app_label = self.master._meta.app_label
-        return "/slave/%s/%s/%s" % (app_label,model_name,self.fk.name)
+        return "/slave/%s/%s/%s" % (app_label,model_name,self.name)
         
             #~ m = self.master.get(master_id)
             #~ url = render.get_instance_url(m)
@@ -493,20 +497,20 @@ class Report:
               method: 'GET'
             }),
         """ % self.json_url()
-        if self.master:
-            s += """
-              baseParams:{ 'master': null },
-            """
+        #~ if self.master:
+            #~ s += """
+              #~ baseParams:{ 'params': { 'master': '1' } },
+            #~ """
         s += """
           remoteSort: true,
           reader: new Ext.data.JsonReader(
             {   
               totalProperty: 'count',
               root: 'rows',
-              id: 'id'
+              id: '%s'
             },
             [ 
-        """ 
+        """ % self.model._meta.pk.attname
         for e in self.columns():
             s += " '%s'," % e.name
         s += "  ])}) "
