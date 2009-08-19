@@ -125,6 +125,8 @@ class LinoSite: #(AdminSite):
         else:
             print "[Warning] settings.LINO_SETTINGS entry is missing"
             
+        #reports.analyse_models()
+        
         self.done = True
         self.loading = False
         

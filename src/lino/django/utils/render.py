@@ -93,20 +93,20 @@ def view_instance(request,db_table=None,pk=None):
     return rpt.view_one(request,1)
 
 def view_instance_slave(request,app_label=None,model_name=None,slave=None):
-    pk = request.GET.get('params',None)
-    print "params", repr(pk)
     pk = request.GET.get('master',None)
-    print "master", repr(pk)
-    return sorry(request)
-    if pk is None:
-        print "TODO: how to do the first load?"
-        return 
+    if not pk:
+        print "view_instance_slave with master=%s" % pk
+        return sorry(request)
     #pk = params.master
+    #print repr(pk)
     model = models.get_model(app_label,model_name)
-    obj = model.objects.get(pk)
-    slave = getattr(obj,slave)
-    assert issubclass(slave,Report)
-    return slave(master_instance=obj).json(request)
+    obj = model.objects.get(pk=pk)
+    from . import reports
+    rpt = reports.get_slave(obj,slave)
+    if not rpt:
+        print "no slave %s for model %s" % (slave,model)
+        return sorry(request)
+    return rpt(master_instance=obj).json(request)
 
 
 
@@ -368,11 +368,11 @@ class Row(ElementServer):
 
 
 class ReportRenderer:
+    
     def __init__(self,report,master_instance=None,**params):
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
-        #self.title = self.report.get_title()
         if report.master is None:
             assert master_instance is None
         else:
@@ -381,20 +381,12 @@ class ReportRenderer:
         #print self.__class__.__name__, "__init__()"
         #self.params = params
         qs = report.get_queryset(master_instance,**params)
-        #~ self.offset = offset
-        #~ if limit is None:
-            #~ limit = self.page_length -1
-        #~ self.limit = limit
-        #~ if offset:
-            #~ qs = qs[offset:]
-        #~ if limit is not None:
-            #~ qs = qs[:limit]
         self.queryset = qs
         # some shortcuts:
         self.page_length = report.page_length
         self.column_headers = report.column_headers
-        self.slaves = self.report.slaves
-        
+        #self.slaves = report.slaves
+        self.pk = report.model._meta.pk
         
         
 
@@ -549,6 +541,7 @@ class ViewManyReportRenderer(ViewReportRenderer):
     
     def __init__(self,*args,**kw) : 
         ViewReportRenderer.__init__(self,*args,**kw)
+        self.slaves = self.report.row_layout.slaves
           
         if False: # before extjs
             if self.is_main:
@@ -708,6 +701,8 @@ class RowViewReportRenderer(ViewReportRenderer):
         self.tab = tab
         self.layout = self.report._page_layouts[tab]
         self.bound_layout = self.layout.bound_to(self.row)
+        self.slaves = self.layout.slaves
+        
         
     def tabs(self):
         if len(self.report._page_layouts) == 1:

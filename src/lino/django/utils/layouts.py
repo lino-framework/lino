@@ -42,14 +42,24 @@ def py2js(v,k):
     return repr(v)
             
 class Element:
+    def __init__(self,layout,name):
+        if layout is not None:
+            assert isinstance(layout,Layout)
+        self.layout = layout
+        self.name = name
+        
+class HiddenField(Element):
+    def __init__(self,layout,field):
+        Element.__init__(self,layout,field.name)
+        self.field = field
+  
+class VisibleElement(Element):
     label_width = 0 
     parent = None
     editable = False
     #ext_template = 'lino/includes/element.js'
     def __init__(self,layout,name,width=None,height=None,label=None):
-        assert isinstance(layout,Layout)
-        self.layout = layout
-        self.name = name
+        Element.__init__(self,layout,name)
         self.width = width
         self.height = height
         #if label is None:
@@ -67,6 +77,9 @@ class Element:
 
     def get_width(self):
         return self.width
+        
+    def value2js(self,obj):
+        raise NotImplementedError
         
     def set_width(self,w):
         self.width = w
@@ -146,7 +159,7 @@ class Element:
     def children(self):
         return [ self ]
 
-class StaticText(Element):
+class StaticText(VisibleElement):
     def __init__(self,text):
           self.text = mark_safe(text)
     def render(self,row):
@@ -176,7 +189,7 @@ _ext_options = (
     (models.IntegerField, dict(xtype='numberfield')),
     (models.DecimalField, dict(xtype='numberfield')),
     (models.BooleanField, dict(xtype='checkbox')),
-    (models.ForeignKey, dict(xtype='combo',hiddenName='')),
+    (models.ForeignKey, dict(xtype='combo')),
     (models.AutoField, dict(xtype='numberfield')),
 )
             
@@ -185,12 +198,15 @@ def ext_options(field):
         if isinstance(field,cl):
             return x
 
-class FieldElement(Element):
+class FieldElement(VisibleElement):
     def __init__(self,layout,field,**kw):
-        Element.__init__(self,layout,field.name,
+        VisibleElement.__init__(self,layout,field.name,
             label=field.verbose_name,**kw)
         self.field = field
         self.editable = field.editable
+        
+    def value2js(self,obj):
+        return getattr(obj,self.name)
         
     def render(self,row):
         return row.render_field(self)
@@ -214,7 +230,7 @@ class FieldElement(Element):
         return s
         
     def as_ext(self,**kw):
-        panel_options = Element.ext_options(self)
+        panel_options = VisibleElement.ext_options(self)
         panel_options.update(xtype='panel',layout='form')
         field_options = ext_options(self.field)
         field_options.update(anchor="100%")
@@ -229,32 +245,9 @@ class FieldElement(Element):
         if isinstance(self.field,models.ForeignKey):
             #print self.field.related_name
             from . import reports
-            rpt = reports.model_reports[self.field.rel.to._meta.db_table]
-            if rpt.url is None:
-                print rpt, "has no url"
-            else:
-                s = """new Ext.data.Store({
-                proxy: new Ext.data.HttpProxy({
-                  url: '%s',
-                  method: 'GET'
-                }), 
-                """ % (rpt.url+"/json")
-                s += """
-                baseParams:{},
-                reader: new Ext.data.JsonReader(
-                  {   
-                    totalProperty: 'count',
-                    root: 'rows',
-                    id: 'id'
-                  },
-                  [ 
-                  """
-                s += ",".join([repr(e.name) for e in rpt.row_layout.leaves()])
-                s += """, '__unicode__'
-                  ]
-                )}) """
-                field_options.update(store=js_code(s))
-            field_options.update(valueField='id')
+            rpt = reports.get_combo_report(self.field.rel.to)
+            field_options.update(store=js_code(rpt.as_ext_store()))
+            field_options.update(valueField=rpt.model._meta.pk.attname)
             field_options.update(displayField=rpt.display_field)
             field_options.update(typeAhead=True)
             field_options.update(mode='remote')
@@ -272,18 +265,18 @@ class FieldElement(Element):
         return mark_safe(s)
             
         
-class InlineElement(Element):
+class InlineElement(VisibleElement):
 
-    def __init__(self,layout,name,inline,**kw):
-        Element.__init__(self,layout,name,**kw)
-        self.inline = inline
+    def __init__(self,layout,name,slave,**kw):
+        VisibleElement.__init__(self,layout,name,**kw)
+        self.slave = slave
       
     def ext_options(self):
       try:
         #print self.name, self.layout.detail_reports
-        rpt = self.inline
+        rpt = self.slave
         # print rpt
-        d = Element.ext_options(self)
+        d = VisibleElement.ext_options(self)
         d.update(xtype='grid')
         d.update(store=js_code(self.name+"_store"))
         #d.update(store=js_code(rpt.as_ext_store()))
@@ -295,17 +288,21 @@ class InlineElement(Element):
     def render(self,row):
         return row.render_inline(self)
 
-class MethodElement(Element):
+class MethodElement(VisibleElement):
 
     def __init__(self,layout,name,meth,**kw):
-        Element.__init__(self,layout,name,**kw)
+        VisibleElement.__init__(self,layout,name,**kw)
         self.meth = meth
         print "MethodElement", name, meth
+        
+    def value2js(self,obj):
+        fn = getattr(obj,self.name)
+        return fn()
         
     def render(self,row):
         return row.render_field(self)
 
-class Container(Element):
+class Container(VisibleElement):
     ext_template = 'lino/includes/element.js'
     ext_container = 'Ext.Panel'
     vertical = False
@@ -313,7 +310,7 @@ class Container(Element):
     is_fieldset = False
     
     def __init__(self,layout,name,*elements,**kw):
-        Element.__init__(self,layout,name,**kw)
+        VisibleElement.__init__(self,layout,name,**kw)
         #print self.__class__.__name__, elements
         #self.label = kw.get('label',self.label)
         self.elements = []
@@ -525,8 +522,8 @@ class Layout:
     def __init__(self,report,desc=None):
         #self._meta = meta
         #self._model = model
-        from . import reports
-        assert isinstance(report,reports.Report)
+        #from . import reports
+        #assert isinstance(report,reports.Report)
         self.report = report
         if hasattr(self,"main"):
             main = self.create_element('main')
@@ -536,8 +533,25 @@ class Layout:
                     f.name for f in report.model._meta.fields 
                     + report.model._meta.many_to_many])
             main = self.desc2elem("main",desc)
+            #~ for e in main.leaves():
+                #~ if e.name == report.model._meta.pk.name
 
         self._main = main
+        
+        pk = None
+        for e in self._main.leaves():
+            if e.name == self.model._meta.pk.name:
+                pk = e
+                break
+                
+        if pk is None:
+            self.pk = HiddenField(self,self.model._meta.pk)
+            self.ext_store_fields = tuple(self._main.leaves()+[pk])
+        else:
+            self.pk = pk
+            self.ext_store_fields = tuple(self._main.leaves())
+
+
         #~ width = 0
         # w = main.get_width()
         # if w is not None:
@@ -549,15 +563,13 @@ class Layout:
     def create_element(self,name):
         #print self.__class__.__name__, "__getitem__()", name
         name,kw = self.splitdesc(name)
-        slave = self.report.get_slave(name)
-        if slave is not None:
-            return InlineElement(self,name,slave,**kw)
-        #~ inl = self.report._inlines.get(name,None)
-        #~ if inl is not None:
-            #~ return InlineElement(self,name,inl,**kw)
         try:
             value = getattr(self,name)
         except AttributeError,e:
+            #return self.report.create_element()
+            slave = self.report.get_slave(name)
+            if slave is not None:
+                return InlineElement(self,name,slave(),**kw)
             try:
                 field = self.report.model._meta.get_field(name)
             except models.FieldDoesNotExist,e:
@@ -625,6 +637,11 @@ class Layout:
         
     def leaves(self):
         return self._main.leaves()
+        
+    def slaves(self):
+        for e in self.leaves():
+            if isinstance(e,InlineElement):
+                yield e.slave
         
     #~ def as_ext(self):
         #~ try:

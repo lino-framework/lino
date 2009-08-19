@@ -15,7 +15,8 @@ frm = {{ report.layout.as_ext }};
 master_store.addListener('load',function(store,rows,options) {
     frm.form.loadRecord(rows[0]);
     {% for slave in report.slaves %}
-    {{slave.name}}_store.load({params: {master: rows[0].get('number')}});
+    {{slave.name}}_store.load({
+      params: { master: rows[0].data['{{report.pk.name}}'] } });
     {% endfor %}
 })
 
@@ -38,9 +39,6 @@ var submit = frm.addButton({
 master_store.load();
 
 frm.render('datapage');
-
-// main.doLayout();
-// main.show();
 
 }); //end onReady
 </script>

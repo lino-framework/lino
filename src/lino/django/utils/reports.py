@@ -85,22 +85,27 @@ class ReportParameterForm(forms.Form):
     
 model_reports = {}
 #_slave_reports = {}
+#_reports = []
 
 def register_report_class(rptclass):
+    #_reports.append(cls)
     if rptclass.model is None:
+        #print "%s : model is None" % rptclass.__name__
         return
-    if rptclass.master is not None:
-        slaves = getattr(rptclass.master,"_lino_slaves",None)
-        if slaves is None:
-            slaves = []
-            setattr(rptclass.master,'_lino_slaves',slaves)
-        slaves.append(rptclass)
-        print "%s is slave of %s" % (rptclass.__name__, rptclass.master.__name__)
-        #~ l = _slave_reports.get(rptclass.model,None)
-        #~ if l is None:
-            #~ l = []
-            #~ _slave_reports[rptclass.model] = l
-        #~ l.append(rptclass)
+    if rptclass.master is None:
+        #print "%s : master is None" % rptclass.__name__
+        return
+    slaves = getattr(rptclass.master,"_lino_slaves",None)
+    if slaves is None:
+        slaves = {}
+        setattr(rptclass.master,'_lino_slaves',slaves)
+    slaves[rptclass.__name__] = rptclass
+    print "%s : slave for %s" % (rptclass.__name__, rptclass.master.__name__)
+    #~ l = _slave_reports.get(rptclass.model,None)
+    #~ if l is None:
+        #~ l = []
+        #~ _slave_reports[rptclass.model] = l
+    #~ l.append(rptclass)
     
 
 
@@ -119,14 +124,51 @@ def register_report(rpt):
         return
     model_reports[db_table] = rpt
     
-def slave_reports(model):
-    l = getattr(model,"_lino_slaves",[])
-    for b in model.__bases__:
-        l += getattr(b,"_lino_slaves",[])
-    return l
-    #return _slave_reports.get(model,[])
+    
+def analyse_models():
+    """
+    - Each model can receive a number of "slaves". 
+      slaves are reports that display detail data for a known instance of that model (their master).
+      They are stored in a dictionary called '_lino_slaves'.
+      
+    - For each model we want to find out the "model report", 
+      This will be used when displaying a single object. 
+      And the "choices report" for a foreignkey field is also currently simply the pointed model's
+      model_report.
+      `_lino_model_report`
 
     
+    """
+    pass
+    #~ for model in models.get_models():
+        #~ model._lino_slaves = {}
+        #~ model._lino_model_report = None
+        #~ for rc in reports.report_classes:
+            #~ ...
+            #~ model._lino_slaves[rpt.name] = rpt
+    
+#~ def slave_reports(model):
+    #~ d = getattr(model,"_lino_slaves",{})
+    #~ for b in model.__bases__:
+        #~ l += getattr(b,"_lino_slaves",[])
+    #~ return l
+    #return _slave_reports.get(model,[])
+
+def get_slave(model,name):
+    d = getattr(model,"_lino_slaves",{})
+    #print d
+    if d.has_key(name): return d[name]
+    for b in model.__bases__:
+        d = getattr(b,"_lino_slaves",{})
+        if d.has_key(name): return d[name]
+    return None
+    
+def get_combo_report(model):
+    rpt = getattr(model,'_lino_combo',None)
+    if rpt: return rpt
+    rpt = model_reports[model._meta.db_table]
+    model._lino_combo = rpt.__class__(columnNames=rpt.display_field,url=rpt.url) # "__unicode__")
+    return model._lino_combo
 
 class ReportMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -138,10 +180,7 @@ class ReportMetaClass(type):
                     myattrs.discard(attr)
                 if len(myattrs):
                     print "[Warning]: %s defines new attribute(s) %s" % (cls,",".join(myattrs))
-        
-        #_report_classes[classname] = cls
-        #from lino.django.utils.sites import lino_site
-        register_report_class(cls)
+            register_report_class(cls)
         return cls
 
 
@@ -167,7 +206,7 @@ class Report:
     help_url = None
     master_instance = None
     page_length = 10
-    display_field = None
+    display_field = '__unicode__'
     
     _page_layouts = None
     page_layouts = (layouts.PageLayout ,)
@@ -178,7 +217,7 @@ class Report:
 
     typo_check = True
     url = None
-    _slaves = None
+    #_slaves = None
     
     def __init__(self,**kw):
         for k,v in kw.items():
@@ -210,11 +249,18 @@ class Report:
         self._page_layouts = [
               layout(self) for layout in self.page_layouts]
         
-        if self.display_field is None:
-            self.display_field = '__unicode__'
-                
+        self.ext_row_fields = list(self.row_layout.leaves())
+        self.ext_store_fields = self.ext_row_fields
+        #if not self.model._meta.pk.attname in self.ext_store_fields:
+        if True: # TODO: check whether pk already present...
+            self.pk = layouts.FieldElement(None,self.model._meta.pk)
+            self.ext_store_fields.append(self.pk)
+        #~ if not self.display_field in self.ext_store_fields:
+            #~ self.ext_store_fields.append(self.display_field)
+            
         register_report(self)
         
+       
           
         #~ if hasattr(self.model,'slaves'):
             #~ #self.slaves = [ rpt(name=k) for k,v in self.model.slaves().items() ]
@@ -232,18 +278,21 @@ class Report:
         #~ return self.__class__.__name__
         
     def get_slave(self,name):
-        l = self.slaves() # to populate
-        return self._slaves.get(name,None)
+        return get_slave(self.model,name)
+        #l = self.slaves() # to populate
+        #return self._slaves.get(name,None)
         
         
-    def slaves(self):
-        if self._slaves is None:
-            self._slaves = {}
-            for cl in slave_reports(self.model):
-                rpt = cl()
-                self._slaves[rpt.name] = rpt
+    #~ def slaves(self):
+        #~ hier: und zwar die slaves in diesem report (nicht alle slaves des modells)
+      
+        #~ if self._slaves is None:
+            #~ self._slaves = {}
+            #~ for cl in slave_reports(self.model):
+                #~ rpt = cl()
+                #~ self._slaves[rpt.name] = rpt
             #print "reports.Report.slaves()", self.__class__.__name__, ":", self._slaves
-        return self._slaves.values()
+        #~ return self._slaves.values()
         
         
     def inlines(self):
@@ -252,10 +301,11 @@ class Report:
     def json_url(self):
         if self.url:
             return "%s/json" % self.url
-        model_name = self.master._meta.object_name.lower()
-        app_label = self.master._meta.app_label
-        return "/slave/%s/%s/%s" % (app_label,model_name,self.name)
-        
+        if self.master is not None:
+            model_name = self.master._meta.object_name.lower()
+            app_label = self.master._meta.app_label
+            return "/slave/%s/%s/%s" % (app_label,model_name,self.name)
+        print self.name, "has neither url nor master!?"
             #~ m = self.master.get(master_id)
             #~ url = render.get_instance_url(m)
             #~ return url+"/"+self.name+"/json"
@@ -265,8 +315,8 @@ class Report:
         for e in self.row_layout._main.elements:
             yield e.label
             
-    def columns(self):
-        return self.row_layout.leaves()
+    #~ def columns(self):
+        #~ return self.row_layout.leaves()
         
     def unused_ext_columns(self):
       try:
@@ -280,10 +330,11 @@ class Report:
         traceback.print_exc(e)
     
     def obj2json(self,obj):
-        d = dict(id=obj.pk)
-        for e in self.columns():
-            d[e.name] = getattr(obj,e.name)
-        d['__unicode__'] = unicode(obj)
+        d = {}
+        for e in self.ext_store_fields:
+            #if d.has_key(e.name):
+            #    print "Duplicate field %s was %r and becomes %r" % (e.name,d[e.name],e.value2js(obj))
+            d[e.name] = e.value2js(obj)
         return d
             
     def get_title(self,renderer):
@@ -504,26 +555,23 @@ class Report:
         s += """
           remoteSort: true,
           reader: new Ext.data.JsonReader(
-            {   
-              totalProperty: 'count',
-              root: 'rows',
-              id: '%s'
-            },
-            [ 
-        """ % self.model._meta.pk.attname
-        for e in self.columns():
-            s += " '%s'," % e.name
-        s += "  ])}) "
+            { totalProperty: 'count', 
+              root: 'rows', 
+              id: '%s' 
+            }, 
+        """ % self.model._meta.pk.name
+        s += "[ %s ]" % ",".join([repr(e.name) for e in self.ext_store_fields])
+        s += "  )}) "
         return mark_safe(s)
       except Exception,e:
           traceback.print_exc(e)
 
     def as_ext_colmodel_editing(self):
-        return self.as_ext_colmodel(True)
+        return self.as_ext_colmodel(editing=True)
         
     def as_ext_colmodel(self,editing=False):
       try:
-        l = [e.ext_column(editing) for e in self.columns()]
+        l = [e.ext_column(editing) for e in self.ext_store_fields]
         s = "new Ext.grid.ColumnModel([ %s ])" % ", ".join(l)
         return mark_safe(s)
       except Exception,e:
