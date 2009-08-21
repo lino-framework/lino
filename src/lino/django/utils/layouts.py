@@ -42,14 +42,25 @@ def py2js(v,k):
     return repr(v)
             
 class Renderable:
+    declared = False
+    name_suffix = None
     def value2js(self,obj):
         raise NotImplementedError
         
     def as_ext(self,request,**kw):
+        if self.declared:
+            return self.as_ext_name()
+        else:
+            return self.as_ext_value(request,**kw)
+        
+    def as_ext_value(self,request,**kw):
         options = self.ext_options(request)
         options.update(kw)
         s = "{ %s }" % ", ".join(["%s: %s" % (k,py2js(v,k)) for k,v in options.items()])
         return s
+        
+    def as_ext_name(self):
+        return self.name + "_" + self.name_suffix
         
     def ext_options(self,request):
         d = dict(name=self.name)
@@ -209,6 +220,8 @@ def ext_options(field):
             return x
 
 class FieldElement(VisibleElement):
+    declared = True
+    name_suffix = "field"
     def __init__(self,layout,field,**kw):
         VisibleElement.__init__(self,layout,field.name,
             label=field.verbose_name,**kw)
@@ -239,7 +252,7 @@ class FieldElement(VisibleElement):
           }) """
         return s
         
-    def as_ext(self,request,**kw):
+    def as_ext_value(self,request,**kw):
         panel_options = VisibleElement.ext_options(self,request,**kw)
         panel_options.update(xtype='panel',layout='form')
         field_options = ext_options(self.field)
@@ -276,11 +289,14 @@ class FieldElement(VisibleElement):
         return s
             
         
-class InlineElement(VisibleElement):
+class SlaveElement(VisibleElement):
+    declared = True
+    name_suffix = "grid"
 
     def __init__(self,layout,name,slave,**kw):
         VisibleElement.__init__(self,layout,name,**kw)
         self.slave = slave
+        layout.add_element(StoreElement(self))
       
     def ext_options(self,request):
         #print self.name, self.layout.detail_reports
@@ -291,7 +307,8 @@ class InlineElement(VisibleElement):
         d.update(xtype='grid')
         d.update(store=js_code(self.name+"_store"))
         #d.update(store=js_code(rpt.as_ext_store()))
-        d.update(colModel=js_code(r.as_ext_colmodel()))
+        d.update(colModel=js_code(self.name+"_cm"))
+        #d.update(colModel=js_code(r.as_ext_colmodel()))
         return d
             
     def value2js(self,obj):
@@ -400,53 +417,7 @@ class Container(VisibleElement):
         # self.__class__.__name__
         s += "(%s)" % (",".join([str(e) for e in self.elements]))
         return s
-        
-    def old_get_width(self):
-        total_width = 0
-        for elem in self.elements:
-            w = elem.get_width()
-            if w is not None:
-                if self.vertical:
-                    total_width = max(w,total_width)
-                else:
-                    total_width += w
-            else:
-                if not self.vertical:
-                    return None
-              
-        if total_width == 0:
-            return None
-        #print self, "width is", w
-        return w
-
-    def old_set_width(self,w):
-        self.width = w
-        if self.vertical:
-            for elem in self.elements:
-                elem.set_width(w)
-            return
-        total_width = w
-        missing = []
-        for elem in self.elements:
-            w = elem.get_width()
-            if w is None:
-                missing.append(elem)
-            else:
-                elem.set_width(w)
-                total_width -= w
-        while len(missing) > 0:
-            if total_width <= 0:
-                print "Warning: total_width <= 0 in ",
-                print "  %s.set_width(%d) : " \
-                  % (self.name,self.width)
-                print "  missing:", [elem.name for elem in missing]
-                return
-            w = int(total_width / len(missing))
-            missing[0].set_width(w)
-            total_width -= w
-            missing = missing[1:]
             
-
     def render(self,row):
         try:
             context = dict(
@@ -467,7 +438,8 @@ class Container(VisibleElement):
         #if not self.is_fieldset:
         d.update(frame=self.layout.frame)
         d.update(labelAlign=self.layout.labelAlign)
-        d.update(items=js_code("[\n  %s\n]" % (", ".join([e.as_ext(request) for e in self.elements]))))
+        l = [e.as_ext(request) for e in self.elements ]
+        d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         return d
             
     #~ def as_ext(self,request,**kw):
@@ -558,14 +530,18 @@ class Layout(Renderable):
 
         self._main = main
         
-
-        #~ width = 0
-        # w = main.get_width()
-        # if w is not None:
-        #     main.set_width(w)
-        #~ from lino.django.igen.models import DocItem
-        #~ if model == DocItem:
-            #~ print self
+        self.slaves = [ 
+          e.slave for e in self.leaves() 
+            if isinstance(e,SlaveElement) ]
+        
+        self.fields = [ e for e in self.leaves() 
+            if isinstance(e,FieldElement)]
+              
+    #~ def slaves(self):
+        #~ for e in self.leaves():
+            #~ if isinstance(e,SlaveElement):
+                #~ yield e.slave
+        
             
     def desc2elem(self,name,desc,**kw):
         if "\n" in desc:
@@ -599,7 +575,7 @@ class Layout(Renderable):
             if slaveclass is not None:
                 slave = slaveclass()
                 self._slave_dict[name] = slave
-                return InlineElement(self,name,slave,**kw)
+                return SlaveElement(self,name,slave,**kw)
             try:
                 field = self.report.model._meta.get_field(name)
             except models.FieldDoesNotExist,e:
@@ -650,11 +626,6 @@ class Layout(Renderable):
     def leaves(self):
         return self._main.leaves()
         
-    def slaves(self):
-        for e in self.leaves():
-            if isinstance(e,InlineElement):
-                yield e.slave
-        
     def ext_options(self,request):
         return self._main.ext_options(request)
         
@@ -667,8 +638,8 @@ class Layout(Renderable):
     def get_slave(self,name):
         return self._slave_dict[name]
         
-    def renderer(self,request):
-        return LayoutRenderer(self,request)
+    def renderer(self,report_renderer):
+        return LayoutRenderer(self,report_renderer)
         
 class RowLayout(Layout):
     show_labels = False
@@ -692,8 +663,10 @@ class PageLayout(Layout):
         }) """))
         return d
         
-    def as_ext(self,request,**kw):
-        s = "new Ext.form.FormPanel({items: [ %s ]})" % self._main.as_ext(request,**kw)
+    def as_ext_value(self,request,**kw):
+        options = self.ext_options(request)
+        options.update(kw)
+        s = "new Ext.form.FormPanel({items: [ %s ]})" % self._main.as_ext_value(request,**options)
         return mark_safe(s)
 
 class TabbedPageLayout(PageLayout):
@@ -702,28 +675,58 @@ class TabbedPageLayout(PageLayout):
         # tabs is a list of PageLayout classes
         tabs = [tc(report) for tc in page_layouts]
         l = [tab._main for tab in tabs]
-        main=TAB(self,"tabs",*l)
+        main = TAB(self,"tabs",*l)
         PageLayout.__init__(self,report,main=main)
         
 class LayoutRenderer:
-    def __init__(self,layout,request):
+    def __init__(self,layout,report_renderer):
         self.layout = layout
-        self.request = request
+        self.report = report_renderer
+        self.request = report_renderer.request
+        self.slaves = [ sl.renderer(self.request) 
+                          for sl in layout.slaves ]
+        self.fields = layout.fields
         
-    def as_ext(self):
+    def as_ext_value(self):
       try:
-        s = self.layout.as_ext(self.request)
+        s = self.layout.as_ext_value(self.request)
         return mark_safe(s)
       except Exception,e:
         traceback.print_exc(e)
-      
         
-    def slaves(self):
+    def ext_globals(self):
       try:
-        for sl in self.layout.slaves():
-            yield sl.renderer(self.request)
+        s = "master_store = %s; " % self.report.as_ext_store()
+
+        for slave in self.slaves:
+            s += "\n%s_cm = %s;" % (slave.name,slave.as_ext_colmodel())
+            s += "\n%s_store = %s;" % (slave.name,slave.as_ext_store())
+        for e in self.layout.leaves():
+            if e.declared:
+                s += "\n%s = %s;" % (
+                  e.as_ext_name(),
+                  e.as_ext_value(self.request))
+        s += "\nfrm = %s;" % self.as_ext_value()
+        s += """
+master_store.addListener('load',function(store,rows,options) {
+    frm.form.loadRecord(rows[0]);
+    """
+        for slave in self.slaves:
+            s += """
+  %s_store.load({
+      params: { master: rows[0].data['%s'] } });""" % (
+      slave.name,self.report.pk.name)
+        s += "\n});"
+        return mark_safe(s)
       except Exception,e:
         traceback.print_exc(e)
+        
+    #~ def slaves(self):
+      #~ try:
+        #~ for sl in self.layout.slaves:
+            #~ yield sl.renderer(self.request)
+      #~ except Exception,e:
+        #~ traceback.print_exc(e)
         
     
 class BoundElement:

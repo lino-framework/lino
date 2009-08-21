@@ -29,6 +29,7 @@ from urllib import urlencode
 #from django.conf import settings
 from django import forms
 from django.db import models
+from django.db.models.query import QuerySet
 from django.template.loader import render_to_string
 from django import template 
 from django.shortcuts import render_to_response 
@@ -93,7 +94,7 @@ def view_instance(request,db_table=None,pk=None):
     #rpt = rptclass(filter=dict(pk__exact=pk))
     return rpt.view_one(request,1)
 
-def view_instance_slave(request,app_label=None,model_name=None,slave_name=None):
+def unused_view_instance_slave(request,app_label=None,model_name=None,slave_name=None):
     pk = request.GET.get('master',None)
     if not pk:
         print "view_instance_slave with master=%s" % pk
@@ -119,7 +120,10 @@ def view_report_list(request,app_label=None,rptname=None):
 
 def view_report_detail(request,app_label=None,rptname=None):
     app = models.get_app(app_label)
-    rptclass = getattr(app,rptname)
+    rptclass = getattr(app,rptname,None)
+    if rptclass is None:
+        raise Http404("Application '%s' (%s) has no report '%s'" % (
+          app_label, app.__file__, rptname))
     rpt = rptclass()
     return rpt.view_one(request)
     
@@ -152,6 +156,7 @@ def get_instance_url(o):
         
 
 class ReportRenderer:
+    limit = None
     master_instance = None
     def __init__(self,report,master_instance=None,layout=None,**kw):
         #from lino.django.tom.reports import Report
@@ -168,7 +173,9 @@ class ReportRenderer:
         #print self.__class__.__name__, "__init__()"
         #self.params = params
         self.queryset = report.get_queryset(master_instance,**kw)
-        # some shortcuts:
+        if self.limit is None:
+            # ListRenderer gets report.page_length as limit, but DetailRenderer shows one row per page and has a fixed limit 1 that doesn't come from Report
+            self.limit = report.page_length
         self.page_length = report.page_length
         self.column_headers = report.column_headers
         #self.slaves = report.slaves
@@ -239,20 +246,21 @@ class ReportRenderer:
           reader: new Ext.data.JsonReader(
             { totalProperty: 'count', 
               root: 'rows', 
-              id: '%s' 
-            }, 
+              id: '%s',
         """ % self.report.model._meta.pk.name
-        s += "[ %s ]" % ",".join([repr(e.name) for e in self.ext_store_fields])
+        s += "fields: [ %s ]" % ",".join([repr(e.name) for e in self.ext_store_fields])
+        s += " } " 
         s += "  )}) "
         return mark_safe(s)
       except Exception,e:
           traceback.print_exc(e)
 
-    def as_ext_colmodel_editing(self):
-        return self.as_ext_colmodel(editing=True)
+    #~ def as_ext_colmodel_editing(self):
+        #~ return self.as_ext_colmodel(editing=True)
         
     def as_ext_colmodel(self,editing=False):
       try:
+        editing = self.report.can_change.passes(self.request)
         l = [e.ext_column(editing) for e in self.layout.leaves()]
         s = "new Ext.grid.ColumnModel([ %s ])" % ", ".join(l)
         return mark_safe(s)
@@ -274,7 +282,6 @@ class ViewReportRenderer(ReportRenderer):
     editing = 0
     selector = None
     #must_refresh = False
-    limit = None
     offset = None
     sort_column = None
     sort_direction = None
@@ -299,16 +306,22 @@ class ViewReportRenderer(ReportRenderer):
             
             self.json = request.GET.get('json',False)
                 
-            
+
+        #print "ViewReportRenderer.__init__() 1",report.name
         ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
-        self.total_count = self.queryset.count()
+        #print "ViewReportRenderer.__init__() 2",report.name
+        if isinstance(self.queryset,QuerySet):
+            self.total_count = self.queryset.count()
+        else:
+            # a Report may override get_queryset() and return a list
+            self.total_count = len(self.queryset)
         
         if is_main:
             offset = request.GET.get('start',None)
             if offset:
                 self.offset = offset
-            limit = request.GET.get('limit',self.page_length)
+            limit = request.GET.get('limit',self.limit)
             if limit:
                 self.limit = limit
         
@@ -327,7 +340,7 @@ class ViewReportRenderer(ReportRenderer):
     def get_absolute_url(self,**kw):
         if self.master_instance is not None:
             kw.update(master_instance=self.master_instance)
-        if self.limit is not None:
+        if self.limit != self.__class__.limit:
             kw.update(limit=self.limit)
         if self.offset is not None:
             kw.update(start=self.offset)
@@ -371,7 +384,7 @@ class ViewReportRenderer(ReportRenderer):
         from lino.django.utils.sites import lino_site
         context = lino_site.context(self.request,
           report = self,
-          layout = self.layout.renderer(self.request),
+          layout = self.layout.renderer(self),
           title = self.get_title(),
           #form_action = self.again(editing=None),
         )
@@ -405,7 +418,7 @@ class ViewReportRenderer(ReportRenderer):
             #~ raise e
             
       
-class ViewManyReportRenderer(ViewReportRenderer):
+class ListViewReportRenderer(ViewReportRenderer):
   
     start_page = 1
     max_num = 0
@@ -515,9 +528,9 @@ class ViewManyReportRenderer(ViewReportRenderer):
     
         
 
-ViewManyReportRenderer.detail_renderer = ViewManyReportRenderer
+ListViewReportRenderer.detail_renderer = ListViewReportRenderer
 
-class FlexigridRenderer(ViewManyReportRenderer):
+class FlexigridRenderer(ListViewReportRenderer):
     template_to_reponse = "lino/flexigrid_show.html"      
   
 
@@ -528,9 +541,9 @@ class SelectorForm(forms.Form):
 class RowViewReportRenderer(ViewReportRenderer):
     "A ViewReportRenderer that renders a single Row."
     limit = 1
-    detail_renderer = ViewManyReportRenderer
+    detail_renderer = ListViewReportRenderer
     def __init__(self,*args,**kw):
-        assert issubclass(self.detail_renderer,ViewManyReportRenderer)
+        assert issubclass(self.detail_renderer,ListViewReportRenderer)
         #kw.update(limit=1)
         ViewReportRenderer.__init__(self,*args,**kw)
         if self.queryset.count() == 0:
@@ -647,7 +660,7 @@ class ViewOneReportRenderer(RowViewReportRenderer):
 
 
 
-class unused_EditManyReportRenderer(ViewManyReportRenderer):
+class unused_EditManyReportRenderer(ListViewReportRenderer):
     editing = 1
     extra = 1
     can_delete = False # True
@@ -657,7 +670,7 @@ class unused_EditManyReportRenderer(ViewManyReportRenderer):
         
     def __init__(self,*args,**kw):
         #print self.__class__.__name__,"__init__()"
-        ViewManyReportRenderer.__init__(self,*args,**kw)
+        ListViewReportRenderer.__init__(self,*args,**kw)
         
         fs_args = {}
         if self.report.master is not None:
@@ -748,7 +761,7 @@ class unused_EditOneReportRenderer(ViewOneReportRenderer):
         #print self.__class__.__name__, "__init__() done"
 
         
-class PdfManyReportRenderer(ViewManyReportRenderer):
+class PdfManyReportRenderer(ListViewReportRenderer):
 
     def render(self,as_pdf=True):
         template = get_template("lino/grid_print.html")

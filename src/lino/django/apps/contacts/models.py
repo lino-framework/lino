@@ -205,7 +205,7 @@ class ContactsByCountryTabLayout(layouts.PageLayout):
 
 
 class Countries(countries.Countries):
-    page_layouts = (ContactsByCountryTabLayout,)
+    page_layouts = (layouts.PageLayout,ContactsByCountryTabLayout)
     
   
 

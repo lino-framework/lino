@@ -3,14 +3,12 @@
 {% block extrahead %}
 <script type="text/javascript">
 
+master_cm = {{ report.as_ext_colmodel }};
+master_cm.defaultSortable= true;
 master_store = {{ report.as_ext_store }};
 
 Ext.onReady(function(){
 
-
-cm = {{ report.as_ext_colmodel }};
-
-cm.defaultSortable= true;
 
 grid = new Ext.grid.EditorGridPanel({
     title: '{{report.title}}',
@@ -20,7 +18,7 @@ grid = new Ext.grid.EditorGridPanel({
     // columnLines: true,
     // stripeRows:true,
     store: master_store,  
-    colModel: cm,     
+    colModel: master_cm,     
     enableColLock:false,
     clicksToEdit:1,
     selModel: new Ext.grid.RowSelectionModel({singleSelect:false}),
@@ -61,7 +59,7 @@ function save(oGrid_event){
   }
   
   
-grid.on('afteredit', save);  
+grid.on('afteredit', save);
 
 master_store.load();      // Load the data
 

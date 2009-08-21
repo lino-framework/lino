@@ -167,7 +167,7 @@ def get_combo_report(model):
     rpt = getattr(model,'_lino_combo',None)
     if rpt: return rpt
     rpt = model_reports[model._meta.db_table]
-    model._lino_combo = rpt.__class__(columnNames=rpt.display_field,url=rpt.url) # "__unicode__")
+    model._lino_combo = rpt.__class__(columnNames=rpt.display_field) # "__unicode__")
     return model._lino_combo
 
 class ReportMetaClass(type):
@@ -363,9 +363,6 @@ class Report:
             #~ if self.fk.limit_choices_to:
                 #~ qs = qs.filter(**self.fk.limit_choices_to)
 
-        order_by = order_by or self.order_by
-        if order_by:
-            qs = qs.order_by(*order_by.split())
         if self.filter:
             qs = qs.filter(**self.filter)
         if self.exclude:
@@ -378,6 +375,14 @@ class Report:
                     q = q | models.Q(**{
                       field.name+"__contains": flt})
             qs = qs.filter(q)
+        order_by = order_by or self.order_by
+        if order_by:
+            qs = qs.order_by(*order_by.split())
+        #~ print "Report.get_queryset()", qs
+        #~ from django.db.models.query import QuerySet
+        #~ if not isinstance(qs,QuerySet):
+            #~ raise Exception(
+              #~ "%s is not a QuerySet but a %s:" % (qs, type(qs)))
         return qs
         
     def getLabel(self):
@@ -435,15 +440,15 @@ class Report:
         #~ request.user.message_set.create(msg)
         if not self.can_view.passes(request):
             return render.sorry(request)
-        r = render.ViewManyReportRenderer(request,True,self)
+        r = render.ListViewReportRenderer(request,True,self)
         #~ if is_editing(request) and self.can_change.passes(request):
             #~ r = render.EditManyReportRenderer(request,True,self)
         #~ else:
-            #~ r = render.ViewManyReportRenderer(request,True,self)
+            #~ r = render.ListViewReportRenderer(request,True,self)
         return r.render_to_response()
         
     def renderer(self,request):
-        return render.ViewManyReportRenderer(request,False,self)
+        return render.ListViewReportRenderer(request,False,self)
         
             
     def view_one(self,request,**kw):
@@ -462,7 +467,7 @@ class Report:
             #~ return render.sorry(request)
         #~ r = render.ViewOneReportRenderer(row_num,request,True,self)
         #~ sl = r.get_slave(slave_name)
-        #~ slr = render.ViewManyReportRenderer(request,True,sl)
+        #~ slr = render.ListViewReportRenderer(request,True,sl)
         #~ return slr.render_to_response()
 
     def pdf_one(self,request,row):

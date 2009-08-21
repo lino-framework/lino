@@ -3,22 +3,11 @@
 {% block extrahead %}
 <script type="text/javascript">
 
-master_store = {{ report.as_ext_store }};
-{% for slave in layout.slaves %}
-{{slave.name}}_store = {{ slave.as_ext_store }};
-{% endfor %}
+// layout.ext_globals
+{{ layout.ext_globals }}
+// end of layout.ext_globals
 
 Ext.onReady(function(){
-
-frm = {{ layout.as_ext }}; 
-
-master_store.addListener('load',function(store,rows,options) {
-    frm.form.loadRecord(rows[0]);
-    {% for slave in layout.slaves %}
-    {{slave.name}}_store.load({
-      params: { master: rows[0].data['{{report.pk.name}}'] } });
-    {% endfor %}
-})
 
 var submit = frm.addButton({
     text: 'Submit',
