@@ -418,7 +418,7 @@ class LinoSite: #(AdminSite):
         #~ urlpatterns = AdminSite.get_urls(self)
         from lino.django.utils import render
         urlpatterns += render.get_urls()
-        urlpatterns += self._menu.get_urls() # self._menu.name)
+        #urlpatterns += self._menu.get_urls() # self._menu.name)
         return urlpatterns
         #return self._menu.get_urls()
         

@@ -493,16 +493,20 @@ class Orders(SalesDocuments):
     model = Order
     order_by = "number"
     page_layouts = (OrderPageLayout,EmittedInvoicesPageLayout,)
+    can_view = perms.is_authenticated
+    
+    #~ def inlines(self):
+        #~ d = super(Orders,self).inlines()
+        #~ d.update(emitted_invoices=InvoicesByOrder())
+        #~ return d
+    
+class OrdersByJournal(Orders):
+    order_by = "number"
+    master = journals.Journal
+    fk_name = 'journal' # see django issue 10808
     columnNames = "number:4 creation_date customer:20 imode " \
                   "sales_remark:20 subject:20 total_incl " \
                   "cycle start_date covered_until"
-    can_view = perms.is_authenticated
-    
-    def inlines(self):
-        d = super(Orders,self).inlines()
-        d.update(emitted_invoices=InvoicesByOrder())
-        return d
-    
     
 
 class PendingOrdersParams(forms.Form):
@@ -518,14 +522,19 @@ class PendingOrders(Orders):
     
 class Invoices(SalesDocuments):
     model = Invoice
-    order_by = "number"
+    order_by = "id"
     page_layouts = (InvoicePageLayout,)
+    can_view = perms.is_staff
+    
+class InvoicesByJournal(Invoices):
+    order_by = "number"
+    fk_name = 'journal' # see django issue 10808
+    master = journals.Journal
     columnNames = "number:4 creation_date due_date " \
                   "customer:10 " \
                   "total_incl order subject:10 sales_remark:10 " \
                   "ledger_remark:10 " \
                   "total_excl total_vat user "
-    can_view = perms.is_staff
 
 class DocumentsToSign(Invoices):
     filter = dict(user__exact=None)
@@ -600,5 +609,5 @@ class Customers(contacts.Contacts):
     #~ def inlines(self):
         #~ return dict(documents=DocumentsByCustomer())
         
-journals.register_doctype(Order,Orders)
-journals.register_doctype(Invoice,Invoices)
+journals.register_doctype(Order,OrdersByJournal)
+journals.register_doctype(Invoice,InvoicesByJournal)

@@ -344,7 +344,7 @@ class Report:
     #~ def get_master_instance(self):
         #~ raise NotImplementedError
         
-    def get_queryset(self,master_instance=None,flt=None):
+    def get_queryset(self,master_instance=None,flt=None,order_by=None):
         if self.queryset is not None:
             qs = self.queryset
         else:
@@ -363,8 +363,9 @@ class Report:
             #~ if self.fk.limit_choices_to:
                 #~ qs = qs.filter(**self.fk.limit_choices_to)
 
-        if self.order_by:
-            qs = qs.order_by(*self.order_by.split())
+        order_by = order_by or self.order_by
+        if order_by:
+            qs = qs.order_by(*order_by.split())
         if self.filter:
             qs = qs.filter(**self.filter)
         if self.exclude:
@@ -382,18 +383,8 @@ class Report:
     def getLabel(self):
         return self.label
         
-    def get_absolute_url(self,root,master_instance=None,**kw):
-        # root :  'one' or 'many'
-        app_label = self.model._meta.app_label
-        if master_instance is None:
-            master_instance = self.master_instance
-        if master_instance is not None:
-            kw['master'] == master_instance.pk
-        url = '/%s/%s/%s' % (root,app_label,self.__class__.__name__)
-        if len(kw):
-            url += urlencode(kw)
-        return url
-        
+    def get_absolute_url(self,*args,**kw):
+        return render.get_report_url(self,*args,**kw)
     
     #~ def get_row_print_template(self,instance):
         #~ return instance._meta.db_table + "_print.html"
@@ -418,7 +409,7 @@ class Report:
         #~ #return unicode(self.as_text())
         #~ return unicode("%d row(s)" % self.queryset.count())
     
-    def get_urls(self,name):
+    def unused_get_urls(self,name):
         if self.url:
             raise RuntimError("Report.get_urls() called again.")
         self.url = "/" + name
@@ -455,11 +446,11 @@ class Report:
         return render.ViewManyReportRenderer(request,False,self)
         
             
-    def view_one(self,request,row_num,**kw):
+    def view_one(self,request,**kw):
         #print "Report.view_one()", request.path
         if not self.can_view.passes(request):
             return render.sorry(request)
-        r = render.ViewOneReportRenderer(row_num,request,True,self,**kw)
+        r = render.ViewOneReportRenderer(request,True,self,**kw)
         #~ if is_editing(request) and self.can_change.passes(request):
             #~ r = render.EditOneReportRenderer(row_num,request,True,self,**kw)
         #~ else:

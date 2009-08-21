@@ -23,6 +23,7 @@ import cgi
 from textwrap import TextWrapper
 from StringIO import StringIO # cStringIO doesn't support Unicode
 import cStringIO
+from urllib import urlencode
 
 
 #from django.conf import settings
@@ -110,27 +111,36 @@ def view_instance_slave(request,app_label=None,model_name=None,slave_name=None):
     return rpt.json(request)
 
 
-def view_report_many(request,app_label=None,rptname=None):
+def view_report_list(request,app_label=None,rptname=None):
     app = models.get_app(app_label)
     rptclass = getattr(app,rptname)
     rpt = rptclass()
     return rpt.view_many(request)
 
-def view_report_one(request,app_label=None,rptname=None):
+def view_report_detail(request,app_label=None,rptname=None):
     app = models.get_app(app_label)
     rptclass = getattr(app,rptname)
     rpt = rptclass()
     return rpt.view_one(request)
+    
 
-
-
+def get_report_url(self,mode='list',master_instance=None,**kw):
+    app_label = self.model._meta.app_label
+    if master_instance is None:
+        master_instance = self.master_instance
+    if master_instance is not None:
+        kw['master'] = master_instance.pk
+    url = '/%s/%s/%s' % (mode,app_label,self.__class__.__name__)
+    if len(kw):
+        url += "?"+urlencode(kw)
+    return url
+        
 def get_urls():
     return patterns('',
         (r'^o/(?P<db_table>.+)/(?P<pk>.+)$', view_instance),
-        #(r'^o/(?P<app_label>.+)/(?P<model_name>.+)/(?P<pk>.+)/(?P<slave>.+)$', view_instance_slave),
         #(r'^slave/(?P<app_label>.+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
-        (r'^many/(?P<app_label>.+)/(?Prpt_name>.+)$', view_report_many),
-        (r'^one/(?P<app_label>.+)/(?Prpt_name>.+)$', view_report_one),
+        (r'^list/(?P<app_label>.+)/(?P<rptname>.+)$', view_report_list),
+        (r'^detail/(?P<app_label>.+)/(?P<rptname>.+)$', view_report_detail),
     )
 
 def get_instance_url(o):
@@ -140,287 +150,6 @@ def get_instance_url(o):
             return url
     return "/o/%s/%s" % (o._meta.db_table, o.pk)
         
-    
-    
-    
-
-class unused_ElementServer:
-    def __init__(self,form):
-        self.form = form # form may be None
-        
-    def old_render_field(self,elem):
-        if self.form is None:
-            return self.field_as_readonly(elem)
-        try:
-            bf = self.form[elem.name] # a BoundField instance
-        except KeyError,e:
-            return self.field_as_readonly(elem)
-            
-        if bf.field.widget.is_hidden:
-            return self.field_as_readonly(elem)
-        #field.setup_widget(bf.field.widget)
-        
-        widget = bf.field.widget
-        if isinstance(widget,forms.widgets.Input):
-            widget.attrs.update(size=elem.width)
-        elif isinstance(widget,forms.Textarea):
-            widget.attrs.update(cols=elem.width,
-                                rows=elem.height)
-        
-        s = bf.as_widget()
-        if elem.layout.show_labels and bf.label:
-            if isinstance(bf.field.widget, forms.CheckboxInput):
-                s = s + " " + bf.label_tag()
-            else:
-                s = bf.label_tag() + "<br/>" + s
-        #print "render_field()", repr(bf.errors)
-        s += unicode(bf.errors)
-        return mark_safe(s)
-        
-    def get_value(self,elem):
-        raise NotImplementedError
-
-    def get_model_field(self,elem):
-        raise NotImplementedError
-
-    def old_field_as_readonly(self,elem,with_links=False):
-        try:
-            value = self.get_value(elem)
-            model_field = self.get_model_field(elem)
-            if model_field is None:
-                if hasattr(value,"field"):
-                    #print "it is a method"
-                    field = value.field
-                    value = value()
-                    #print value
-                    if field.verbose_name:
-                        label = field.verbose_name
-                    else:
-                        label = elem.name.replace('_', ' ')
-                    #print label
-                    widget = field.formfield().widget
-                    #print widget
-                else:
-                    #~ from lino.django.tom import reports
-                    #~ if isinstance(value,reports.Report):
-                        #~ return value.as_html()
-                    #label = self.name
-                    label = elem.name.replace('_', ' ')
-                    #widget=widget_for_value(value)
-                    widget = forms.TextInput()
-            else:
-                label = model_field.verbose_name
-                form_field = model_field.formfield() 
-                if form_field is None:
-                    form_field = forms.CharField()
-                    #return ''
-                #print self.instance, field.name
-                widget = form_field.widget
-                
-            style = widget.attrs.get('style','')
-            if elem.width is not None:
-                style += "min-width:%dem;" % elem.width
-            else:
-                style += "width:100%;"
-            if elem.height is not None:
-                style += "min-height:%dem;" % (elem.height * 2)
-                # TODO: 
-                
-            #print field_element.name, repr(value)
-            
-            if isinstance(widget, forms.CheckboxInput):
-                if value:
-                    s = "[X]"
-                else: 
-                    s = "[&nbsp;&nbsp;]"
-                s = SPAN(s,style="width:2em;" )
-                if elem.layout.show_labels:
-                    s += " " + label
-                return mark_safe(s)
-                
-            #~ if value is None: # or len(value) == 0:
-                #~ value = '&nbsp;'
-            #~ else:
-                #~ value = unicode(value)
-                
-            if callable(value):
-                value = value()
-                
-            if isinstance(value,Manager):
-                value = "<br/>".join(
-                  [HREF(get_instance_url(o),
-                    unicode(o)) for o in value.all()])
-            elif hasattr(value,'__iter__'):
-                value = "<br/>".join(
-                  [unicode(x) for x in value])
-            elif value is None:
-                value = '&nbsp;'
-            elif with_links and isinstance(value,models.Model):
-                url = get_instance_url(value)
-                value = HREF(url,value)
-            elif with_links and isinstance(model_field,models.URLField):
-                value = HREF(value,short_link(value))
-            else:
-                value = unicode(value)
-                if len(value) == 0:
-                    value = '&nbsp;'
-            s = SPAN(value,style)
-            if elem.layout.show_labels:
-                s = label + "<br/>" + s
-            return mark_safe(s)
-        except Exception, e:
-            traceback.print_exc(e)
-            raise
-            
-        
-class unused_DialogRenderer(unused_ElementServer):
-  
-    def __init__(self,dialog,request):
-        self.dialog = dialog
-        self.request = request
-        self.result = None
-        if request.method == 'POST': 
-            form = dialog.form_class(request.POST) 
-            if form.is_valid(): 
-                self.result = form.execute()
-        else:
-            form = dialog.form_class() 
-        unused_ElementServer.__init__(form)
-            
-    def get_value(self,elem):
-        return self.form[elem.name]
-
-    def get_model_field(self,elem):
-        return None
-
-    def again(self,*args,**kw):
-        return again(self.request,*args,**kw)
-        
-    def render_to_response(self,**kw):
-        url = get_redirect(self.request)
-        if url:
-            #print "render_to_response() REDIRECT TO ", url
-            return HttpResponseRedirect(url)
-        from lino.django.utils.sites import lino_site
-        context = lino_site.context(self.request,
-          report = self,
-          title = self.get_title(),
-          #form_action = self.again(editing=None),
-        )
-        return render_to_response(self.template_to_reponse,
-            context,
-            context_instance=template.RequestContext(self.request))
-        
-        
-
-        
-
-class unused_Row(unused_ElementServer):
-    def __init__(self,renderer,instance,number,dtl=None,form=None):
-        unused_ElementServer.__init__(self,form)
-        self.renderer = renderer
-        self.report = renderer.report
-        self.number = number
-        self.instance = instance
-        self.dtl = dtl
-        
-        return # remaining code not used with extjs
-        #print "Row.__init__()", self.instance.pk
-        self.inline_renderers = {}
-        if dtl is not None:
-            for name,inline in self.report._inlines.items():
-                self.inline_renderers[name] = \
-                  renderer.detail_renderer(renderer.request,
-                    False,inline,self.instance)
-      
-        
-    def as_html(self):
-        return self.report.row_layout.bound_to(self).as_html()
-            
-
-    def unused_links(self):
-        l = []
-        #~ l.append('<a href="%s">%s</a>' % (
-            #~ self.get_url_path(),unicode(self.instance)))
-        if self.renderer.has_actions():
-            l.append(unicode(
-              self.renderer.selector[IS_SELECTED % self.number]))
-        #print "<br/>".join(l)
-        return mark_safe("<br/>".join(l))
-        
-        
-        
-    def management(self):
-        return '' # not used with extjs
-        #print "row_management", self.element
-        try:
-            l = []
-            if self.renderer.editing:
-                l.append("%d%s" % (self.number,self.pk_field()))
-                if self.renderer.can_delete:
-                    l.append(self.form["DELETE"])
-            else:
-                l.append(str(self.number))
-                
-            if self.renderer.has_actions():
-                l.append(unicode(
-              self.renderer.selector[IS_SELECTED % self.number]))
-
-            return mark_safe("<br/>".join(l))
-        except Exception,e:
-            print "Exception in Row.management() %s:" % \
-                 self.renderer.request.path
-            traceback.print_exc()
-            raise e
-        
-
-    def has_previous(self):
-        return self.number > 1
-    def has_next(self):
-        #print "Row.has_next() : ", self.rownum, self.queryset.count()
-        return self.number < self.renderer.queryset.count()
-    def previous(self):
-        return self.renderer.again(row=self.number-1)
-        #~ req=self.request.GET.copy()
-        #~ req["row"] = self.rownum-1
-        #~ return mark_safe(self.request.path + "?" + req.urlencode())
-    def next(self):
-        return self.renderer.again(row=self.number+1)
-        #return self.rownum+1
-            
-    def get_url_path(self):
-        if self.renderer.is_main:
-            return self.renderer.again(str(self.number))
-        return get_instance_url(self.instance)
-        
-        
-    def pk_field(self):
-        """
-        Used in grid_edit.html
-        BaseModelFormSet.add_fields() usually adds a hidden input for the pk, which must 
-        get rendered somewhere on each row of the grid template.
-        """
-        pk = self.renderer.queryset.model._meta.pk
-        if pk.auto_created or isinstance(pk, models.AutoField):
-            return self.form[pk.name]
-        return ""
-        
-    def render_inline(self,elem):
-        return self.inline_renderers[elem.name].render_to_string()
-            
-    def get_value(self,elem):
-      try:
-        return getattr(self.instance,elem.name)
-      except Exception,e:
-        print "[TODO] No field %s in %s" % (elem.name,self.instance.__class__.__name__)
-
-    def get_model_field(self,elem):
-        try:
-            return self.instance._meta.get_field(elem.name)
-        except models.FieldDoesNotExist,e:
-            return None
-
-
 
 class ReportRenderer:
     master_instance = None
@@ -470,9 +199,6 @@ class ReportRenderer:
     def get_slave(self,name):
         return self.layout.get_slave(name)
         
-    def get_absolute_url(self):
-        return self.report.get_absolute_url(master_instance=self.master_instance)
-        
     #~ def render_detail(self,name):
         #~ dtlrep = self.report.details.get(name,None)
         #~ if dtlrep is None:
@@ -503,7 +229,7 @@ class ReportRenderer:
               url: '%s',
               method: 'GET'
             }),
-        """ % self.json_url()
+        """ % self.get_absolute_url(json=True)  # self.json_url()
         #~ if self.master:
             #~ s += """
               #~ baseParams:{ 'params': { 'master': '1' } },
@@ -548,6 +274,10 @@ class ViewReportRenderer(ReportRenderer):
     editing = 0
     selector = None
     #must_refresh = False
+    limit = None
+    offset = None
+    sort_column = None
+    sort_direction = None
     
     def __init__(self,request,is_main,report,*args,**kw):
       
@@ -557,26 +287,35 @@ class ViewReportRenderer(ReportRenderer):
                 kw.update(self.params.cleaned_data)
             pk = request.GET.get('master',None)
             if pk is not None:
-                self.master_instance = self.master.objects.get(pk=pk)
+                kw.update(master_instance=report.master.objects.get(pk=pk))
+            sort = request.GET.get('sort',None)
+            if sort:
+                self.sort_column = sort
+                sort_dir = request.GET.get('dir','ASC')
+                if sort_dir == 'DESC':
+                    sort = '-'+sort
+                    self.sort_direction = 'DESC'
+                kw.update(order_by=sort)
+            
+            self.json = request.GET.get('json',False)
+                
             
         ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
         self.total_count = self.queryset.count()
+        
         if is_main:
-            sort = request.GET.get('sort',None)
-            if sort:
-                sort_dir = request.GET.get('dir','ASC')
-                if sort_dir == 'DESC':
-                    sort = '-'+sort
-                self.queryset = self.queryset.order_by(sort)
             offset = request.GET.get('start',None)
             if offset:
-                self.queryset = self.queryset[int(offset):]
+                self.offset = offset
             limit = request.GET.get('limit',self.page_length)
             if limit:
-                self.queryset = self.queryset[:int(limit)]
-                
-            self.json = request.GET.get('json',False)
+                self.limit = limit
+        
+        if self.offset is not None:
+            self.queryset = self.queryset[int(self.offset):]
+        if self.limit is not None:
+            self.queryset = self.queryset[:int(self.limit)]
             
         self.is_main = is_main
         
@@ -585,29 +324,23 @@ class ViewReportRenderer(ReportRenderer):
         else:
             self._actions = ()
 
-    def unused_again(self,*args,**kw):
-        return again(self.request,*args,**kw)
-
-    #~ def json(self,*args,**kw):
-        #~ return again(self.request,'../json',*args,**kw)
-
-    #~ def can_change(self):
-        #~ return self.report.can_change(self.request)
+    def get_absolute_url(self,**kw):
+        if self.master_instance is not None:
+            kw.update(master_instance=self.master_instance)
+        if self.limit is not None:
+            kw.update(limit=self.limit)
+        if self.offset is not None:
+            kw.update(start=self.offset)
+        if self.sort_column is not None:
+            kw.update(sort=self.sort_column)
+        if self.sort_direction is not None:
+            kw.update(dir=self.sort_direction)
+        return self.report.get_absolute_url(**kw)
+        
         
     def has_actions(self):
         return len(self._actions) > 0
             
-    #~ def has_actions(self):
-        #~ return False
-        
-    #~ def grid_buttons(self):
-        #~ if self.editing:
-            #~ s = '<input type="submit" name="submit" value="Save" />'
-        #~ return mark_safe(s)
-        #~ l = []
-        #~ for name,func in self.get_grid_actions():
-            #~ l.append('<input type="submit" name="grid_action" value="%s">' % name)
-        #~ return mark_safe('&nbsp;'.join(l))
         
     def row_buttons(self):
         l = []
@@ -618,38 +351,10 @@ class ViewReportRenderer(ReportRenderer):
     def get_row_actions(self):
         return []
 
-    #~ def get_grid_actions(self):
-        #~ return [] # empty iterator
-
         
     def setup(self):
         pass
         
-    #~ def context(self,**kw)
-        #~ from lino.django.utils.sites import lino_site
-        #~ return lino_site.context(self.request,**kw)
-        
-    #~ def json_url(self):
-        #~ if self.master is not None:
-            #~ app_label = self.model._meta.app_label
-            #~ return "/one/%s/%s?master=%s" % (
-              #~ app_label,
-              #~ self.__class__.__name__,
-              #~ self.master_instance.pk)
-        #~ return self.again(self.url_root, self.name,json=True)
-        
-        
-    #~ def json_url(self):
-        #~ #return self.report.json_url()
-        #~ #if self.is_main:
-        #~ return self.again(json=True)
-        #~ #return self.again(self.name,json=True)
-        
-    #~ def columns(self):
-        #~ return self.report.columns()
-        
-    #~ def as_ext_store(self):
-        #~ return self.report.as_ext_store()
         
     def render_to_response(self):
         self.setup()
@@ -668,7 +373,7 @@ class ViewReportRenderer(ReportRenderer):
           report = self,
           layout = self.layout.renderer(self.request),
           title = self.get_title(),
-          form_action = self.again(editing=None),
+          #form_action = self.again(editing=None),
         )
         if self.report.help_url is not None:
             context['help_url'] = self.report.help_url
@@ -708,35 +413,6 @@ class ViewManyReportRenderer(ViewReportRenderer):
     template_to_string = "lino/includes/grid.html"
     template_to_reponse = "lino/grid.html"
     
-    def __init__(self,*args,**kw) : 
-        ViewReportRenderer.__init__(self,*args,**kw)
-          
-        if False: # before extjs
-            if self.is_main:
-                pgn = self.request.GET.get('pgn')
-                if pgn is None:
-                    pgn = self.start_page
-                else:
-                    pgn = int(pgn)
-                pgl = self.request.GET.get('pgl')
-                if pgl is None:
-                    pgl = self.page_length
-                else:
-                    pgl = int(pgl)
-              
-                paginator = Paginator(self.queryset,pgl)
-                try:
-                    page = paginator.page(pgn)
-                except (EmptyPage, InvalidPage):
-                    page = paginator.page(paginator.num_pages)
-                self.page = page
-            
-        
-              
-    #~ def position_string(self):
-        #~ return  "Page %d of %d." % (self.page.number,
-          #~ self.page.paginator.num_pages)
-
     def get_layout(self):
         return self.report.row_layout
         
@@ -851,19 +527,27 @@ class SelectorForm(forms.Form):
 
 class RowViewReportRenderer(ViewReportRenderer):
     "A ViewReportRenderer that renders a single Row."
+    limit = 1
     detail_renderer = ViewManyReportRenderer
-    def __init__(self,row,*args,**kw):
+    def __init__(self,*args,**kw):
         assert issubclass(self.detail_renderer,ViewManyReportRenderer)
+        #kw.update(limit=1)
         ViewReportRenderer.__init__(self,*args,**kw)
-        rownum = int(row)
-        try:
-            obj = self.queryset[rownum-1]
-        except IndexError:
-            rownum = self.queryset.count()
-            if rownum == 0:
-                raise Http404("queryset is empty")
-            obj = self.queryset[rownum-1]
-        self.instance = obj
+        if self.queryset.count() == 0:
+            raise "No record found"
+        if self.queryset.count() > 1:
+            raise "Found more than one record"
+        self.instance = self.queryset[0]
+            
+        #~ rownum = int(row)
+        #~ try:
+            #~ obj = self.queryset[rownum-1]
+        #~ except IndexError:
+            #~ rownum = self.queryset.count()
+            #~ if rownum == 0:
+                #~ raise Http404("queryset is empty")
+            #~ obj = self.queryset[rownum-1]
+        #~ self.instance = obj
         #~ if self.is_main:
             #~ tab = self.request.GET.get('tab')
             #~ if tab is None:
@@ -878,6 +562,10 @@ class RowViewReportRenderer(ViewReportRenderer):
         
     def get_layout(self):
         return self.report.page_layout
+        
+    def get_absolute_url(self,**kw):
+        kw['mode'] = 'detail'
+        return ViewReportRenderer.get_absolute_url(self,**kw)
         
     def tabs(self):
         if len(self.report._page_layouts) == 1:
@@ -1170,5 +858,284 @@ def sorry(request,message=None):
       context,
       context_instance = template.RequestContext(request))
 
+
+
+
+
+class unused_ElementServer:
+    def __init__(self,form):
+        self.form = form # form may be None
+        
+    def old_render_field(self,elem):
+        if self.form is None:
+            return self.field_as_readonly(elem)
+        try:
+            bf = self.form[elem.name] # a BoundField instance
+        except KeyError,e:
+            return self.field_as_readonly(elem)
+            
+        if bf.field.widget.is_hidden:
+            return self.field_as_readonly(elem)
+        #field.setup_widget(bf.field.widget)
+        
+        widget = bf.field.widget
+        if isinstance(widget,forms.widgets.Input):
+            widget.attrs.update(size=elem.width)
+        elif isinstance(widget,forms.Textarea):
+            widget.attrs.update(cols=elem.width,
+                                rows=elem.height)
+        
+        s = bf.as_widget()
+        if elem.layout.show_labels and bf.label:
+            if isinstance(bf.field.widget, forms.CheckboxInput):
+                s = s + " " + bf.label_tag()
+            else:
+                s = bf.label_tag() + "<br/>" + s
+        #print "render_field()", repr(bf.errors)
+        s += unicode(bf.errors)
+        return mark_safe(s)
+        
+    def get_value(self,elem):
+        raise NotImplementedError
+
+    def get_model_field(self,elem):
+        raise NotImplementedError
+
+    def old_field_as_readonly(self,elem,with_links=False):
+        try:
+            value = self.get_value(elem)
+            model_field = self.get_model_field(elem)
+            if model_field is None:
+                if hasattr(value,"field"):
+                    #print "it is a method"
+                    field = value.field
+                    value = value()
+                    #print value
+                    if field.verbose_name:
+                        label = field.verbose_name
+                    else:
+                        label = elem.name.replace('_', ' ')
+                    #print label
+                    widget = field.formfield().widget
+                    #print widget
+                else:
+                    #~ from lino.django.tom import reports
+                    #~ if isinstance(value,reports.Report):
+                        #~ return value.as_html()
+                    #label = self.name
+                    label = elem.name.replace('_', ' ')
+                    #widget=widget_for_value(value)
+                    widget = forms.TextInput()
+            else:
+                label = model_field.verbose_name
+                form_field = model_field.formfield() 
+                if form_field is None:
+                    form_field = forms.CharField()
+                    #return ''
+                #print self.instance, field.name
+                widget = form_field.widget
+                
+            style = widget.attrs.get('style','')
+            if elem.width is not None:
+                style += "min-width:%dem;" % elem.width
+            else:
+                style += "width:100%;"
+            if elem.height is not None:
+                style += "min-height:%dem;" % (elem.height * 2)
+                # TODO: 
+                
+            #print field_element.name, repr(value)
+            
+            if isinstance(widget, forms.CheckboxInput):
+                if value:
+                    s = "[X]"
+                else: 
+                    s = "[&nbsp;&nbsp;]"
+                s = SPAN(s,style="width:2em;" )
+                if elem.layout.show_labels:
+                    s += " " + label
+                return mark_safe(s)
+                
+            #~ if value is None: # or len(value) == 0:
+                #~ value = '&nbsp;'
+            #~ else:
+                #~ value = unicode(value)
+                
+            if callable(value):
+                value = value()
+                
+            if isinstance(value,Manager):
+                value = "<br/>".join(
+                  [HREF(get_instance_url(o),
+                    unicode(o)) for o in value.all()])
+            elif hasattr(value,'__iter__'):
+                value = "<br/>".join(
+                  [unicode(x) for x in value])
+            elif value is None:
+                value = '&nbsp;'
+            elif with_links and isinstance(value,models.Model):
+                url = get_instance_url(value)
+                value = HREF(url,value)
+            elif with_links and isinstance(model_field,models.URLField):
+                value = HREF(value,short_link(value))
+            else:
+                value = unicode(value)
+                if len(value) == 0:
+                    value = '&nbsp;'
+            s = SPAN(value,style)
+            if elem.layout.show_labels:
+                s = label + "<br/>" + s
+            return mark_safe(s)
+        except Exception, e:
+            traceback.print_exc(e)
+            raise
+            
+        
+class unused_DialogRenderer(unused_ElementServer):
+  
+    def __init__(self,dialog,request):
+        self.dialog = dialog
+        self.request = request
+        self.result = None
+        if request.method == 'POST': 
+            form = dialog.form_class(request.POST) 
+            if form.is_valid(): 
+                self.result = form.execute()
+        else:
+            form = dialog.form_class() 
+        unused_ElementServer.__init__(form)
+            
+    def get_value(self,elem):
+        return self.form[elem.name]
+
+    def get_model_field(self,elem):
+        return None
+
+    def again(self,*args,**kw):
+        return again(self.request,*args,**kw)
+        
+    def render_to_response(self,**kw):
+        url = get_redirect(self.request)
+        if url:
+            #print "render_to_response() REDIRECT TO ", url
+            return HttpResponseRedirect(url)
+        from lino.django.utils.sites import lino_site
+        context = lino_site.context(self.request,
+          report = self,
+          title = self.get_title(),
+          #form_action = self.again(editing=None),
+        )
+        return render_to_response(self.template_to_reponse,
+            context,
+            context_instance=template.RequestContext(self.request))
+        
+        
+
+        
+
+class unused_Row(unused_ElementServer):
+    def __init__(self,renderer,instance,number,dtl=None,form=None):
+        unused_ElementServer.__init__(self,form)
+        self.renderer = renderer
+        self.report = renderer.report
+        self.number = number
+        self.instance = instance
+        self.dtl = dtl
+        
+        return # remaining code not used with extjs
+        #print "Row.__init__()", self.instance.pk
+        self.inline_renderers = {}
+        if dtl is not None:
+            for name,inline in self.report._inlines.items():
+                self.inline_renderers[name] = \
+                  renderer.detail_renderer(renderer.request,
+                    False,inline,self.instance)
+      
+        
+    def as_html(self):
+        return self.report.row_layout.bound_to(self).as_html()
+            
+
+    def unused_links(self):
+        l = []
+        #~ l.append('<a href="%s">%s</a>' % (
+            #~ self.get_url_path(),unicode(self.instance)))
+        if self.renderer.has_actions():
+            l.append(unicode(
+              self.renderer.selector[IS_SELECTED % self.number]))
+        #print "<br/>".join(l)
+        return mark_safe("<br/>".join(l))
+        
+        
+        
+    def management(self):
+        return '' # not used with extjs
+        #print "row_management", self.element
+        try:
+            l = []
+            if self.renderer.editing:
+                l.append("%d%s" % (self.number,self.pk_field()))
+                if self.renderer.can_delete:
+                    l.append(self.form["DELETE"])
+            else:
+                l.append(str(self.number))
+                
+            if self.renderer.has_actions():
+                l.append(unicode(
+              self.renderer.selector[IS_SELECTED % self.number]))
+
+            return mark_safe("<br/>".join(l))
+        except Exception,e:
+            print "Exception in Row.management() %s:" % \
+                 self.renderer.request.path
+            traceback.print_exc()
+            raise e
+        
+
+    def has_previous(self):
+        return self.number > 1
+    def has_next(self):
+        #print "Row.has_next() : ", self.rownum, self.queryset.count()
+        return self.number < self.renderer.queryset.count()
+    def previous(self):
+        return self.renderer.again(row=self.number-1)
+        #~ req=self.request.GET.copy()
+        #~ req["row"] = self.rownum-1
+        #~ return mark_safe(self.request.path + "?" + req.urlencode())
+    def next(self):
+        return self.renderer.again(row=self.number+1)
+        #return self.rownum+1
+            
+    def get_url_path(self):
+        if self.renderer.is_main:
+            return self.renderer.again(str(self.number))
+        return get_instance_url(self.instance)
+        
+        
+    def pk_field(self):
+        """
+        Used in grid_edit.html
+        BaseModelFormSet.add_fields() usually adds a hidden input for the pk, which must 
+        get rendered somewhere on each row of the grid template.
+        """
+        pk = self.renderer.queryset.model._meta.pk
+        if pk.auto_created or isinstance(pk, models.AutoField):
+            return self.form[pk.name]
+        return ""
+        
+    def render_inline(self,elem):
+        return self.inline_renderers[elem.name].render_to_string()
+            
+    def get_value(self,elem):
+      try:
+        return getattr(self.instance,elem.name)
+      except Exception,e:
+        print "[TODO] No field %s in %s" % (elem.name,self.instance.__class__.__name__)
+
+    def get_model_field(self,elem):
+        try:
+            return self.instance._meta.get_field(elem.name)
+        except models.FieldDoesNotExist,e:
+            return None
 
 

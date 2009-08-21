@@ -118,6 +118,10 @@ class Action(MenuItem):
         Component.__init__(self,parent,name,label,*args,**kw)
         self.actor = actor
         self.hotkey = hotkey
+        self._url = actor.get_absolute_url()
+        
+    def get_url_path(self):
+        return self._url
         
     def view(self,request):
         return self.actor.view(request)

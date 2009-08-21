@@ -79,6 +79,7 @@ class Journal(models.Model):
         return DOCTYPES[self.doctype][0]
 
     def get_doc_report(self,**kw):
+        kw.update(master_instance=self)
         return DOCTYPES[self.doctype][1](**kw)
 
     def create_document(self,**kw):
@@ -270,7 +271,19 @@ class Journals(reports.Report):
     order_by = "id"
     columnNames = "id name doctype force_sequence"
     
+    
 class DocumentsByJournal(reports.Report):
+    order_by = "number"
+    master = Journal
+    fk_name = 'journal' # see django issue 10808
+    
+    def get_title(self,renderer):
+        return u"%s (journal %s)" % (
+          renderer.master_instance.name,
+          renderer.master_instance.id),
+    
+    
+class unused_DocumentsByJournal(reports.Report):
     order_by = "number"
     master = Journal
     fk_name = 'journal' # see django issue 10808
