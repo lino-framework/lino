@@ -31,7 +31,7 @@ from lino.django.utils.editing import is_editing
 from django.http import HttpResponse
 #from django.core import serializers
 #from django.shortcuts import render_to_response
-from django.utils import simplejson
+#from django.utils import simplejson
 from django.utils.safestring import mark_safe
 
 # maps Django field types to a tuple of default paramenters
@@ -246,17 +246,24 @@ class Report:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
             #self.name = self.fk.rel.related_name
-        self._page_layouts = [
-              layout(self) for layout in self.page_layouts]
+        if len(self.page_layouts) == 1:
+            self.page_layout = self.page_layouts[0](self)
+        else:
+            self.page_layout = layouts.TabbedPageLayout(self,
+              self.page_layouts)
+        #~ self._page_layouts = [
+              #~ layout(self) for layout in self.page_layouts]
         
-        self.ext_row_fields = list(self.row_layout.leaves())
-        self.ext_store_fields = self.ext_row_fields
-        #if not self.model._meta.pk.attname in self.ext_store_fields:
-        if True: # TODO: check whether pk already present...
-            self.pk = layouts.FieldElement(None,self.model._meta.pk)
-            self.ext_store_fields.append(self.pk)
+        #~ self.ext_row_fields = list(self.row_layout.leaves())
+        #~ self.ext_store_fields = self.ext_row_fields
+        #~ #if not self.model._meta.pk.attname in self.ext_store_fields:
+        #~ if True: # TODO: check whether pk already present...
+            #~ self.pk = layouts.FieldElement(None,self.model._meta.pk)
+            #~ self.ext_store_fields.append(self.pk)
         #~ if not self.display_field in self.ext_store_fields:
             #~ self.ext_store_fields.append(self.display_field)
+
+            
             
         register_report(self)
         
@@ -295,10 +302,10 @@ class Report:
         #~ return self._slaves.values()
         
         
-    def inlines(self):
-        return {}
+    #~ def inlines(self):
+        #~ return {}
          
-    def json_url(self):
+    def unused_json_url(self):
         if self.url:
             return "%s/json" % self.url
         if self.master is not None:
@@ -329,14 +336,6 @@ class Report:
         import traceback
         traceback.print_exc(e)
     
-    def obj2json(self,obj):
-        d = {}
-        for e in self.ext_store_fields:
-            #if d.has_key(e.name):
-            #    print "Duplicate field %s was %r and becomes %r" % (e.name,d[e.name],e.value2js(obj))
-            d[e.name] = e.value2js(obj)
-        return d
-            
     def get_title(self,renderer):
         #~ if self.title is None:
             #~ return self.label
@@ -382,6 +381,19 @@ class Report:
         
     def getLabel(self):
         return self.label
+        
+    def get_absolute_url(self,root,master_instance=None,**kw):
+        # root :  'one' or 'many'
+        app_label = self.model._meta.app_label
+        if master_instance is None:
+            master_instance = self.master_instance
+        if master_instance is not None:
+            kw['master'] == master_instance.pk
+        url = '/%s/%s/%s' % (root,app_label,self.__class__.__name__)
+        if len(kw):
+            url += urlencode(kw)
+        return url
+        
     
     #~ def get_row_print_template(self,instance):
         #~ return instance._meta.db_table + "_print.html"
@@ -412,6 +424,7 @@ class Report:
         self.url = "/" + name
         l = []
         l.append(url(r'^%s/(\d+)$' % name, self.view_one))
+        #l.append(url(r'^%s/(\d+)/(.+)$' % name, self.view_one_slave))
         l.append(url(r'^%s$' % name, self.view_many))
         l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_one))
         l.append(url(r'^%s/pdf$' % name, self.pdf_many))
@@ -419,7 +432,7 @@ class Report:
         l.append(url(r'^%s/update$' % name, self.ajax_update))
         l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
         l.append(url(r'^%s/print$' % name, self.print_many))
-        l.append(url(r'^%s/json$' % name, self.json))
+        #l.append(url(r'^%s/json$' % name, self.json))
         #l.append(url(r'^%s/(\d+)/json$' % name, self.json_one))
         return l
 
@@ -431,21 +444,35 @@ class Report:
         #~ request.user.message_set.create(msg)
         if not self.can_view.passes(request):
             return render.sorry(request)
-        if is_editing(request) and self.can_change.passes(request):
-            r = render.EditManyReportRenderer(request,True,self)
-        else:
-            r = render.ViewManyReportRenderer(request,True,self)
+        r = render.ViewManyReportRenderer(request,True,self)
+        #~ if is_editing(request) and self.can_change.passes(request):
+            #~ r = render.EditManyReportRenderer(request,True,self)
+        #~ else:
+            #~ r = render.ViewManyReportRenderer(request,True,self)
         return r.render_to_response()
+        
+    def renderer(self,request):
+        return render.ViewManyReportRenderer(request,False,self)
+        
             
-    def view_one(self,request,row,**kw):
+    def view_one(self,request,row_num,**kw):
         #print "Report.view_one()", request.path
         if not self.can_view.passes(request):
             return render.sorry(request)
-        if is_editing(request) and self.can_change.passes(request):
-            r = render.EditOneReportRenderer(row,request,True,self,**kw)
-        else:
-            r = render.ViewOneReportRenderer(row,request,True,self,**kw)
+        r = render.ViewOneReportRenderer(row_num,request,True,self,**kw)
+        #~ if is_editing(request) and self.can_change.passes(request):
+            #~ r = render.EditOneReportRenderer(row_num,request,True,self,**kw)
+        #~ else:
+            #~ r = render.ViewOneReportRenderer(row_num,request,True,self,**kw)
         return r.render_to_response()
+
+    #~ def view_one_slave(self,request,row_num,slave_name):
+        #~ if not self.can_view.passes(request):
+            #~ return render.sorry(request)
+        #~ r = render.ViewOneReportRenderer(row_num,request,True,self)
+        #~ sl = r.get_slave(slave_name)
+        #~ slr = render.ViewManyReportRenderer(request,True,sl)
+        #~ return slr.render_to_response()
 
     def pdf_one(self,request,row):
         if not self.can_view.passes(request):
@@ -456,10 +483,9 @@ class Report:
         if not self.can_view.passes(request):
             return render.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render()
-        
 
         
-    def json(self, request):
+    def old_json(self, request):
         #print "json:", self
         if not self.can_view.passes(request):
             return None
@@ -536,46 +562,6 @@ class Report:
             row.instance.delete()
         renderer.must_refresh()
         
-    def as_ext_store(self):
-      try:
-        s = """
-        new Ext.data.Store({
-          id: '%s',
-        """ % self.name
-        s += """
-          proxy: new Ext.data.HttpProxy({
-              url: '%s',
-              method: 'GET'
-            }),
-        """ % self.json_url()
-        #~ if self.master:
-            #~ s += """
-              #~ baseParams:{ 'params': { 'master': '1' } },
-            #~ """
-        s += """
-          remoteSort: true,
-          reader: new Ext.data.JsonReader(
-            { totalProperty: 'count', 
-              root: 'rows', 
-              id: '%s' 
-            }, 
-        """ % self.model._meta.pk.name
-        s += "[ %s ]" % ",".join([repr(e.name) for e in self.ext_store_fields])
-        s += "  )}) "
-        return mark_safe(s)
-      except Exception,e:
-          traceback.print_exc(e)
-
-    def as_ext_colmodel_editing(self):
-        return self.as_ext_colmodel(editing=True)
-        
-    def as_ext_colmodel(self,editing=False):
-      try:
-        l = [e.ext_column(editing) for e in self.ext_store_fields]
-        s = "new Ext.grid.ColumnModel([ %s ])" % ", ".join(l)
-        return mark_safe(s)
-      except Exception,e:
-          traceback.print_exc(e)
         
 #~ class SubReport(Report):
   

@@ -4,17 +4,17 @@
 <script type="text/javascript">
 
 master_store = {{ report.as_ext_store }};
-{% for slave in report.slaves %}
+{% for slave in layout.slaves %}
 {{slave.name}}_store = {{ slave.as_ext_store }};
 {% endfor %}
 
 Ext.onReady(function(){
 
-frm = {{ report.layout.as_ext }};
+frm = {{ layout.as_ext }}; 
 
 master_store.addListener('load',function(store,rows,options) {
     frm.form.loadRecord(rows[0]);
-    {% for slave in report.slaves %}
+    {% for slave in layout.slaves %}
     {{slave.name}}_store.load({
       params: { master: rows[0].data['{{report.pk.name}}'] } });
     {% endfor %}

@@ -40,7 +40,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
-#from django.utils import simplejson
+from django.utils import simplejson
 from django.template.loader import render_to_string, get_template, select_template, Context
 
 try:
@@ -92,7 +92,7 @@ def view_instance(request,db_table=None,pk=None):
     #rpt = rptclass(filter=dict(pk__exact=pk))
     return rpt.view_one(request,1)
 
-def view_instance_slave(request,app_label=None,model_name=None,slave=None):
+def view_instance_slave(request,app_label=None,model_name=None,slave_name=None):
     pk = request.GET.get('master',None)
     if not pk:
         print "view_instance_slave with master=%s" % pk
@@ -102,11 +102,25 @@ def view_instance_slave(request,app_label=None,model_name=None,slave=None):
     model = models.get_model(app_label,model_name)
     obj = model.objects.get(pk=pk)
     from . import reports
-    rpt = reports.get_slave(obj,slave)
-    if not rpt:
+    rptclass = reports.get_slave(obj,slave_name)
+    if not rptclass:
         print "no slave %s for model %s" % (slave,model)
         return sorry(request)
-    return rpt(master_instance=obj).json(request)
+    rpt = rptclass(master_instance=obj)
+    return rpt.json(request)
+
+
+def view_report_many(request,app_label=None,rptname=None):
+    app = models.get_app(app_label)
+    rptclass = getattr(app,rptname)
+    rpt = rptclass()
+    return rpt.view_many(request)
+
+def view_report_one(request,app_label=None,rptname=None):
+    app = models.get_app(app_label)
+    rptclass = getattr(app,rptname)
+    rpt = rptclass()
+    return rpt.view_one(request)
 
 
 
@@ -114,7 +128,9 @@ def get_urls():
     return patterns('',
         (r'^o/(?P<db_table>.+)/(?P<pk>.+)$', view_instance),
         #(r'^o/(?P<app_label>.+)/(?P<model_name>.+)/(?P<pk>.+)/(?P<slave>.+)$', view_instance_slave),
-        (r'^slave/(?P<app_label>.+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
+        #(r'^slave/(?P<app_label>.+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
+        (r'^many/(?P<app_label>.+)/(?Prpt_name>.+)$', view_report_many),
+        (r'^one/(?P<app_label>.+)/(?Prpt_name>.+)$', view_report_one),
     )
 
 def get_instance_url(o):
@@ -128,7 +144,7 @@ def get_instance_url(o):
     
     
 
-class ElementServer:
+class unused_ElementServer:
     def __init__(self,form):
         self.form = form # form may be None
         
@@ -257,12 +273,51 @@ class ElementServer:
             raise
             
         
+class unused_DialogRenderer(unused_ElementServer):
+  
+    def __init__(self,dialog,request):
+        self.dialog = dialog
+        self.request = request
+        self.result = None
+        if request.method == 'POST': 
+            form = dialog.form_class(request.POST) 
+            if form.is_valid(): 
+                self.result = form.execute()
+        else:
+            form = dialog.form_class() 
+        unused_ElementServer.__init__(form)
+            
+    def get_value(self,elem):
+        return self.form[elem.name]
+
+    def get_model_field(self,elem):
+        return None
+
+    def again(self,*args,**kw):
+        return again(self.request,*args,**kw)
+        
+    def render_to_response(self,**kw):
+        url = get_redirect(self.request)
+        if url:
+            #print "render_to_response() REDIRECT TO ", url
+            return HttpResponseRedirect(url)
+        from lino.django.utils.sites import lino_site
+        context = lino_site.context(self.request,
+          report = self,
+          title = self.get_title(),
+          #form_action = self.again(editing=None),
+        )
+        return render_to_response(self.template_to_reponse,
+            context,
+            context_instance=template.RequestContext(self.request))
+        
+        
 
         
 
-class Row(ElementServer):
+class unused_Row(unused_ElementServer):
     def __init__(self,renderer,instance,number,dtl=None,form=None):
-        ElementServer.__init__(self,form)
+        unused_ElementServer.__init__(self,form)
         self.renderer = renderer
         self.report = renderer.report
         self.number = number
@@ -368,31 +423,55 @@ class Row(ElementServer):
 
 
 class ReportRenderer:
-    
-    def __init__(self,report,master_instance=None,**params):
+    master_instance = None
+    def __init__(self,report,master_instance=None,layout=None,**kw):
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
-        if report.master is None:
-            assert master_instance is None
-        else:
-            assert master_instance is None or isinstance(master_instance,report.master)
-        self.master_instance = master_instance
+        self.name = report.name
+        #~ if report.master is None:
+            #~ assert master_instance is None
+        #~ else:
+            #~ assert master_instance is None or isinstance(master_instance,report.master)
+        #~ self.master_instance = master_instance
+        if master_instance is not None:
+            self.master_instance = master_instance
         #print self.__class__.__name__, "__init__()"
         #self.params = params
-        qs = report.get_queryset(master_instance,**params)
-        self.queryset = qs
+        self.queryset = report.get_queryset(master_instance,**kw)
         # some shortcuts:
         self.page_length = report.page_length
         self.column_headers = report.column_headers
         #self.slaves = report.slaves
-        self.pk = report.model._meta.pk
+        #self.pk = report.model._meta.pk
         
+        layout = self.layout = self.get_layout()
+        
+        pk = None
+        for e in layout.leaves():
+            if e.name == report.model._meta.pk.name:
+                pk = e
+                break
+                
+        if pk is None:
+            self.pk = layout.add_hidden_field(report.model._meta.pk)
+            self.ext_store_fields = tuple(layout.leaves()+[self.pk])
+        else:
+            self.pk = pk
+            self.ext_store_fields = tuple(layout.leaves())
         
 
     def get_title(self):
         return self.report.get_title(self)
         
+    def get_layout(self) :
+        raise NotImplementedError
+        
+    def get_slave(self,name):
+        return self.layout.get_slave(name)
+        
+    def get_absolute_url(self):
+        return self.report.get_absolute_url(master_instance=self.master_instance)
         
     #~ def render_detail(self,name):
         #~ dtlrep = self.report.details.get(name,None)
@@ -413,7 +492,55 @@ class ReportRenderer:
     #~ def column_headers(self):
         #~ for x in self.
         
+    def as_ext_store(self):
+      try:
+        s = """
+        new Ext.data.Store({
+          id: '%s',
+        """ % self.report.name
+        s += """
+          proxy: new Ext.data.HttpProxy({
+              url: '%s',
+              method: 'GET'
+            }),
+        """ % self.json_url()
+        #~ if self.master:
+            #~ s += """
+              #~ baseParams:{ 'params': { 'master': '1' } },
+            #~ """
+        s += """
+          remoteSort: true,
+          reader: new Ext.data.JsonReader(
+            { totalProperty: 'count', 
+              root: 'rows', 
+              id: '%s' 
+            }, 
+        """ % self.report.model._meta.pk.name
+        s += "[ %s ]" % ",".join([repr(e.name) for e in self.ext_store_fields])
+        s += "  )}) "
+        return mark_safe(s)
+      except Exception,e:
+          traceback.print_exc(e)
 
+    def as_ext_colmodel_editing(self):
+        return self.as_ext_colmodel(editing=True)
+        
+    def as_ext_colmodel(self,editing=False):
+      try:
+        l = [e.ext_column(editing) for e in self.layout.leaves()]
+        s = "new Ext.grid.ColumnModel([ %s ])" % ", ".join(l)
+        return mark_safe(s)
+      except Exception,e:
+          traceback.print_exc(e)
+
+    def obj2json(self,obj):
+        d = {}
+        for e in self.ext_store_fields:
+            #if d.has_key(e.name):
+            #    print "Duplicate field %s was %r and becomes %r" % (e.name,d[e.name],e.value2js(obj))
+            d[e.name] = e.value2js(obj)
+        return d
+            
 
 class ViewReportRenderer(ReportRenderer):
   
@@ -423,20 +550,42 @@ class ViewReportRenderer(ReportRenderer):
     #must_refresh = False
     
     def __init__(self,request,is_main,report,*args,**kw):
+      
         if is_main:
             self.params = report.param_form(request.GET)
             if self.params.is_valid():
                 kw.update(self.params.cleaned_data)
-            #self.json = request.GET.get('json',False)
+            pk = request.GET.get('master',None)
+            if pk is not None:
+                self.master_instance = self.master.objects.get(pk=pk)
+            
         ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
+        self.total_count = self.queryset.count()
+        if is_main:
+            sort = request.GET.get('sort',None)
+            if sort:
+                sort_dir = request.GET.get('dir','ASC')
+                if sort_dir == 'DESC':
+                    sort = '-'+sort
+                self.queryset = self.queryset.order_by(sort)
+            offset = request.GET.get('start',None)
+            if offset:
+                self.queryset = self.queryset[int(offset):]
+            limit = request.GET.get('limit',self.page_length)
+            if limit:
+                self.queryset = self.queryset[:int(limit)]
+                
+            self.json = request.GET.get('json',False)
+            
         self.is_main = is_main
+        
         if is_main and not self.editing:
             self._actions = self.report.get_row_actions(self)
         else:
             self._actions = ()
 
-    def again(self,*args,**kw):
+    def unused_again(self,*args,**kw):
         return again(self.request,*args,**kw)
 
     #~ def json(self,*args,**kw):
@@ -480,17 +629,29 @@ class ViewReportRenderer(ReportRenderer):
         #~ from lino.django.utils.sites import lino_site
         #~ return lino_site.context(self.request,**kw)
         
-    def json_url(self):
-        return self.report.json_url()
+    #~ def json_url(self):
+        #~ if self.master is not None:
+            #~ app_label = self.model._meta.app_label
+            #~ return "/one/%s/%s?master=%s" % (
+              #~ app_label,
+              #~ self.__class__.__name__,
+              #~ self.master_instance.pk)
+        #~ return self.again(self.url_root, self.name,json=True)
         
-    def columns(self):
-        return self.report.columns()
         
-    def as_ext_store(self):
-        return self.report.as_ext_store()
+    #~ def json_url(self):
+        #~ #return self.report.json_url()
+        #~ #if self.is_main:
+        #~ return self.again(json=True)
+        #~ #return self.again(self.name,json=True)
         
+    #~ def columns(self):
+        #~ return self.report.columns()
         
-    def render_to_response(self,**kw):
+    #~ def as_ext_store(self):
+        #~ return self.report.as_ext_store()
+        
+    def render_to_response(self):
         self.setup()
         #~ if self.must_refresh:
             #~ url = self.again()
@@ -499,12 +660,13 @@ class ViewReportRenderer(ReportRenderer):
         if url is not None:
             #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
-        #~ if self.json:
-            #~ return self.json_reponse()
+        if self.json:
+            return self.json_reponse()
             
         from lino.django.utils.sites import lino_site
         context = lino_site.context(self.request,
           report = self,
+          layout = self.layout.renderer(self.request),
           title = self.get_title(),
           form_action = self.again(editing=None),
         )
@@ -514,7 +676,14 @@ class ViewReportRenderer(ReportRenderer):
             context,
             context_instance=template.RequestContext(self.request))
         
-    def render_to_string(self):
+    def json_reponse(self):
+        rows = [ self.obj2json(row) for row in self.queryset ]
+        d = dict(count=self.total_count,rows=rows)
+        s = simplejson.dumps(d,default=unicode)
+        #print s
+        return HttpResponse(s, mimetype='text/html')
+        
+    def unused_render_to_string(self):
         self.setup()
         context=dict(
           report = self,
@@ -541,7 +710,6 @@ class ViewManyReportRenderer(ViewReportRenderer):
     
     def __init__(self,*args,**kw) : 
         ViewReportRenderer.__init__(self,*args,**kw)
-        self.slaves = self.report.row_layout.slaves
           
         if False: # before extjs
             if self.is_main:
@@ -564,10 +732,14 @@ class ViewManyReportRenderer(ViewReportRenderer):
                 self.page = page
             
         
+              
     #~ def position_string(self):
         #~ return  "Page %d of %d." % (self.page.number,
           #~ self.page.paginator.num_pages)
-          
+
+    def get_layout(self):
+        return self.report.row_layout
+        
     def position_string(self):
         return '' # not used with extjs
         s = "Page %d of %d" % (self.page.number,self.page.paginator.num_pages)
@@ -654,8 +826,8 @@ class ViewManyReportRenderer(ViewReportRenderer):
     #~ def dummy(self,row):
         #~ print "DUMMY:", row.instance
         
-    def as_ext_colmodel(self):
-        return self.report.as_ext_colmodel(self.editing)
+    #~ def as_ext_colmodel(self):
+        #~ return self.report.as_ext_colmodel(self.editing)
         
     #~ def json_reponse(self):
         #~ qs = self.queryset[]
@@ -691,18 +863,21 @@ class RowViewReportRenderer(ViewReportRenderer):
             if rownum == 0:
                 raise Http404("queryset is empty")
             obj = self.queryset[rownum-1]
-        if self.is_main:
-            tab = self.request.GET.get('tab')
-            if tab is None:
-                tab = 0
-            else:
-                tab = int(tab)
-        self.row = Row(self,obj,rownum,tab)
-        self.tab = tab
-        self.layout = self.report._page_layouts[tab]
-        self.bound_layout = self.layout.bound_to(self.row)
-        self.slaves = self.layout.slaves
+        self.instance = obj
+        #~ if self.is_main:
+            #~ tab = self.request.GET.get('tab')
+            #~ if tab is None:
+                #~ tab = 0
+            #~ else:
+                #~ tab = int(tab)
+        #~ self.row = Row(self,obj,rownum,tab)
+        #~ self.tab = tab
+        #self.layout = self.report._page_layouts[tab]
+        #self.bound_layout = self.layout.bound_to(self.row)
+        #self.slaves = self.layout.slaves
         
+    def get_layout(self):
+        return self.report.page_layout
         
     def tabs(self):
         if len(self.report._page_layouts) == 1:
@@ -743,6 +918,7 @@ class ViewOneReportRenderer(RowViewReportRenderer):
     
         
     def view_modes(self):
+        return '' # not used with extjs
         if self.editing:
             s = ' <a href="%s">%s</a>' % (
               self.again(editing=0),"show")
@@ -754,6 +930,7 @@ class ViewOneReportRenderer(RowViewReportRenderer):
         return mark_safe(s)
         
     def navigator(self):
+        return '' # not used with extjs
         s = "" # """<div class="pagination"><span class="step-links">"""
         page = self.row
         get_var_name = "row"
@@ -777,12 +954,12 @@ class ViewOneReportRenderer(RowViewReportRenderer):
         return mark_safe(s)
 
     def get_title(self):
-        return unicode(self.row.instance)
+        return unicode(self.instance)
 
 
 
 
-class EditManyReportRenderer(ViewManyReportRenderer):
+class unused_EditManyReportRenderer(ViewManyReportRenderer):
     editing = 1
     extra = 1
     can_delete = False # True
@@ -852,9 +1029,9 @@ class EditManyReportRenderer(ViewManyReportRenderer):
             rownum += 1
 
     
-class EditOneReportRenderer(ViewOneReportRenderer):
+class unused_EditOneReportRenderer(ViewOneReportRenderer):
     editing = 1
-    detail_renderer = EditManyReportRenderer
+    detail_renderer = unused_EditManyReportRenderer
   
     def __init__(self,*args,**kw):
         ViewOneReportRenderer.__init__(self,*args,**kw)
@@ -995,42 +1172,3 @@ def sorry(request,message=None):
 
 
 
-class DialogRenderer(ElementServer):
-  
-    def __init__(self,dialog,request):
-        self.dialog = dialog
-        self.request = request
-        self.result = None
-        if request.method == 'POST': 
-            form = dialog.form_class(request.POST) 
-            if form.is_valid(): 
-                self.result = form.execute()
-        else:
-            form = dialog.form_class() 
-        ElementServer.__init__(form)
-            
-    def get_value(self,elem):
-        return self.form[elem.name]
-
-    def get_model_field(self,elem):
-        return None
-
-    def again(self,*args,**kw):
-        return again(self.request,*args,**kw)
-        
-    def render_to_response(self,**kw):
-        url = get_redirect(self.request)
-        if url:
-            #print "render_to_response() REDIRECT TO ", url
-            return HttpResponseRedirect(url)
-        from lino.django.utils.sites import lino_site
-        context = lino_site.context(self.request,
-          report = self,
-          title = self.get_title(),
-          form_action = self.again(editing=None),
-        )
-        return render_to_response(self.template_to_reponse,
-            context,
-            context_instance=template.RequestContext(self.request))
-        
-        

@@ -196,7 +196,7 @@ class ContactsByCountry(Contacts):
 class ContactsByCountryTabLayout(layouts.PageLayout):
     main = """
     isocode name
-    contacts
+    ContactsByCountry
     """
     
     
