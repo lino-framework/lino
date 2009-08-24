@@ -181,51 +181,26 @@ class ReportRenderer:
         #self.slaves = report.slaves
         #self.pk = report.model._meta.pk
         
-        layout = self.layout = self.get_layout()
+        layout = self.get_layout()
+        self.layout = layout.renderer(self)
         
-        pk = None
-        for e in layout.leaves():
-            if e.name == report.model._meta.pk.name:
-                pk = e
-                break
-                
-        if pk is None:
-            self.pk = layout.add_hidden_field(report.model._meta.pk)
-            self.ext_store_fields = tuple(layout.leaves()+[self.pk])
-        else:
-            self.pk = pk
-            self.ext_store_fields = tuple(layout.leaves())
-        
-
     def get_title(self):
         return self.report.get_title(self)
         
     def get_layout(self) :
         raise NotImplementedError
         
-    def get_slave(self,name):
+    def unused_get_slave(self,name):
+        # self.layout is now a LayoutRenderer, not a Layout
         return self.layout.get_slave(name)
         
-    #~ def render_detail(self,name):
-        #~ dtlrep = self.report.details.get(name,None)
-        #~ if dtlrep is None:
-            #~ #print "%s has not detail %r" % (self.report,name)
-            #~ return None
-        #~ from lino.django.tom.reports import Report
-        #~ assert isinstance(dtlrep,Report),"getattr(%r,%r) is not a Report" % (self.report,name)
-        #~ return self.detail_to_string(dtlrep,self.row.instance)
-        #~ try:
-            #~ r = self.detail_renderer(self.request,False,dtlrep,self.row.instance)
-            #~ return r.render_to_string()
-        #~ except Exception,e:
-            #~ print "Exception in RowViewReportRenderer.render_detail()"
-            #~ traceback.print_exc()
-            #~ raise e
-      
-    #~ def column_headers(self):
-        #~ for x in self.
+    def unused_as_ext_store(self):
+      try:
+        return self.layout.store.as_ext_value()
+      except Exception,e:
+          traceback.print_exc(e)
         
-    def as_ext_store(self):
+    def old_as_ext_store(self):
       try:
         s = """
         new Ext.data.Store({
@@ -258,7 +233,7 @@ class ReportRenderer:
     #~ def as_ext_colmodel_editing(self):
         #~ return self.as_ext_colmodel(editing=True)
         
-    def as_ext_colmodel(self,editing=False):
+    def old_as_ext_colmodel(self,editing=False):
       try:
         editing = self.report.can_change.passes(self.request)
         l = [e.ext_column(editing) for e in self.layout.leaves()]
@@ -308,8 +283,8 @@ class ViewReportRenderer(ReportRenderer):
                 
 
         #print "ViewReportRenderer.__init__() 1",report.name
-        ReportRenderer.__init__(self,report,*args,**kw)
         self.request = request
+        ReportRenderer.__init__(self,report,*args,**kw)
         #print "ViewReportRenderer.__init__() 2",report.name
         if isinstance(self.queryset,QuerySet):
             self.total_count = self.queryset.count()
@@ -384,7 +359,7 @@ class ViewReportRenderer(ReportRenderer):
         from lino.django.utils.sites import lino_site
         context = lino_site.context(self.request,
           report = self,
-          layout = self.layout.renderer(self),
+          layout = self.layout,
           title = self.get_title(),
           #form_action = self.again(editing=None),
         )

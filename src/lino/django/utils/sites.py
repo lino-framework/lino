@@ -198,9 +198,8 @@ class LinoSite: #(AdminSite):
         d.update(kw)
         return d
         
-    def index(self, request, extra_context=None):
+    def index(self, request):
         context = self.context(request,title=self._menu.label)
-        context.update(extra_context or {})
         return render_to_response(self.index_template, context,
             context_instance=template.RequestContext(request)
         )
@@ -403,6 +402,7 @@ class LinoSite: #(AdminSite):
             #~ print k,v
         
         urlpatterns = patterns('',
+            (r'^$', self.index),
             (r'^accounts/login/$', self.login),
             (r'^accounts/logout/$', self.logout),
             (r'^accounts/password_change/$', self.password_change),

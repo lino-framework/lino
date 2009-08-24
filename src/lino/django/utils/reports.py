@@ -195,7 +195,6 @@ class Report:
     exclude = None
     title = None
     columnNames = None
-    row_layout_class = None
     label = None
     param_form = ReportParameterForm
     #default_filter = ''
@@ -208,8 +207,9 @@ class Report:
     page_length = 10
     display_field = '__unicode__'
     
-    _page_layouts = None
     page_layouts = (layouts.PageLayout ,)
+    _page_layouts = None
+    row_layout_class = None
     
     can_view = perms.always
     can_add = perms.is_authenticated
@@ -242,6 +242,9 @@ class Report:
         else:
             assert self.columnNames is None
             self.row_layout = self.row_layout_class(self)
+            
+        self.columns = tuple(self.row_layout.leaves())
+        
         if self.master:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
@@ -319,12 +322,9 @@ class Report:
         
         
     def column_headers(self):
-        for e in self.row_layout._main.elements:
+        for e in self.columns:
             yield e.label
             
-    #~ def columns(self):
-        #~ return self.row_layout.leaves()
-        
     def unused_ext_columns(self):
       try:
         s = set(self.row_layout._main.columns())

@@ -28,12 +28,6 @@ from django.template.loader import render_to_string
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 12
 
-class js_code:
-    def __init__(self,s):
-      self.s = s
-    def __repr__(self):
-      return self.s
-      
 def py2js(v,k):
     if type(v) is types.BooleanType:
         return str(v).lower()
@@ -41,31 +35,36 @@ def py2js(v,k):
     #    return str(v)+"*CHAR_WIDTH"
     return repr(v)
             
+class js_code:
+    "A string that py2js will represent as is, not between quotes."
+    def __init__(self,s):
+      self.s = s
+    def __repr__(self):
+      return self.s
+      
 class Renderable:
     declared = False
-    name_suffix = None
+    #name_suffix = None
+    value_template = "{ %s }"
     def value2js(self,obj):
         raise NotImplementedError
         
     def as_ext(self,request,**kw):
         if self.declared:
-            return self.as_ext_name()
+            return self.name # as_ext_name()
         else:
             return self.as_ext_value(request,**kw)
         
     def as_ext_value(self,request,**kw):
         options = self.ext_options(request)
         options.update(kw)
-        s = "{ %s }" % ", ".join(["%s: %s" % (k,py2js(v,k)) for k,v in options.items()])
-        return s
+        s = self.value_template % ", ".join(["%s: %s" % (k,py2js(v,k)) for k,v in options.items()])
+        return mark_safe(s)
         
-    def as_ext_name(self):
-        return self.name + "_" + self.name_suffix
+    #~ def as_ext_name(self):
+        #~ return self.name + "_" + self.name_suffix
         
-    def ext_options(self,request):
-        d = dict(name=self.name)
-        return d
-            
+        
 class Element(Renderable):
     width = None
     height = None
@@ -74,6 +73,8 @@ class Element(Renderable):
             assert isinstance(layout,Layout)
         self.layout = layout
         self.name = name
+        if self.declared:
+            layout.variables.append(self)
         
     def __str__(self):
         "This shows how elements are specified"
@@ -82,16 +83,70 @@ class Element(Renderable):
         if self.height is None:
             return self.name + ":%d" % self.width
         return self.name + ":%dx%d" % (self.width,self.height)
+        
+    def ext_options(self,request):
+        return {}
 
+class Store(Element):
+    value_template = "new Ext.data.JsonStore({ %s })"
+    declared = True
+    
+    def __init__(self,layout,report):
+        Element.__init__(self,layout,report.name+"_store")
+        self.report = report
+        
+    def ext_options(self,request):
+        d = Element.ext_options(self,request)
+        d.update(storeId=self.name)
+        d.update(remoteSort=True)
+        d.update(proxy=js_code(
+          "new Ext.data.HttpProxy({url:'%s',method:'GET'})" % \
+          self.report.get_absolute_url(json=True)
+        ))
+        # a JsonStore without explicit proxy sometimes used method POST
+        # d.update(url=self.rr.get_absolute_url(json=True))
+        # d.update(method='GET')
+        d.update(totalProperty='count')
+        d.update(root='rows')
+        d.update(id=self.report.row_layout.pk.name)
+        d.update(fields=js_code(
+          "[ %s ]" % ",".join([repr(e.name) 
+          for e in self.report.row_layout.ext_store_fields])
+        ))
+        return d
+    
+class ColumnModel(Element):
+    declared = True
+    #name_suffix = "cm"
+    value_template = "new Ext.grid.ColumnModel({ %s })"
+    
+    def __init__(self,layout,report):
+        Element.__init__(self,layout,report.name+"_cols")
+        self.report = report
+        
+    #~ def __init__(self,layout,report):
+        #~ self.layout = layout # the owning layout
+        #~ self.report = report
+        #~ self.name = report.name
+        
+        
+    def ext_options(self,request):
+        d = Element.ext_options(self,request)
+        editing = self.layout.report.can_change.passes(request)
+        l = [e.ext_column(editing) for e in self.report.row_layout.leaves()]
+        d.update(columns="[ %s ]" % ", ".join(l))
+        return d
+        
+            
         
 class HiddenField(Element):
     def __init__(self,layout,field):
         Element.__init__(self,layout,field.attname)
         self.field = field
+        
     def value2js(self,obj):
         return getattr(obj,self.name)
         
-  
         
 class VisibleElement(Element):
     label = None
@@ -219,9 +274,16 @@ def ext_options(field):
         if isinstance(field,cl):
             return x
 
+class ForeignKeyField(FieldElement)
+    def __init__(self,layout,field,**kw):
+        FieldElement.__init__(self,layout,field,**kw)
+        if self.editable:
+            self.store = Store(layout,)
+    def get_field_options(self,request):
+      
 class FieldElement(VisibleElement):
     declared = True
-    name_suffix = "field"
+    #name_suffix = "field"
     def __init__(self,layout,field,**kw):
         VisibleElement.__init__(self,layout,field.name,
             label=field.verbose_name,**kw)
@@ -253,9 +315,13 @@ class FieldElement(VisibleElement):
         return s
         
     def as_ext_value(self,request,**kw):
+        """
+        ExtJS renders fieldLabels only if the field's container has layout 'form', so we create a panel around each field
+        """
         panel_options = VisibleElement.ext_options(self,request,**kw)
         panel_options.update(xtype='panel',layout='form')
         field_options = ext_options(self.field)
+        field_options.update(name=self.name)
         field_options.update(anchor="100%")
         for o in ('fieldLabel','name'):
             v = panel_options.pop(o,None)
@@ -289,33 +355,32 @@ class FieldElement(VisibleElement):
         return s
             
         
-class SlaveElement(VisibleElement):
+class GridElement(VisibleElement):
     declared = True
-    name_suffix = "grid"
 
-    def __init__(self,layout,name,slave,**kw):
-        VisibleElement.__init__(self,layout,name,**kw)
-        self.slave = slave
-        layout.add_element(StoreElement(self))
+    def __init__(self,layout,report,**kw):
+        VisibleElement.__init__(self,layout,report.name+"_grid",**kw)
+        self.report = report
+        self.store = Store(layout,report)
+        self.column_model = ColumnModel(layout,report)
       
     def ext_options(self,request):
         #print self.name, self.layout.detail_reports
-        rpt = self.slave
-        r = rpt.renderer(request)
+        #rpt = self.slave
+        #r = rpt.renderer(request)
         # print rpt
         d = VisibleElement.ext_options(self,request)
         d.update(xtype='grid')
-        d.update(store=js_code(self.name+"_store"))
+        d.update(store=self.store)
+        d.update(colModel=self.column_model)
+        #d.update(store=js_code(self.name+"_store"))
+        #d.update(colModel=js_code(self.name+"_cm"))
         #d.update(store=js_code(rpt.as_ext_store()))
-        d.update(colModel=js_code(self.name+"_cm"))
         #d.update(colModel=js_code(r.as_ext_colmodel()))
         return d
             
     def value2js(self,obj):
         return "1"
-        
-    def unused_render(self,row):
-        return row.render_inline(self)
 
 class MethodElement(VisibleElement):
 
@@ -514,8 +579,11 @@ class Layout(Renderable):
     def __init__(self,report,desc=None,main=None):
         #from . import reports
         #assert isinstance(report,reports.Report)
+        self.variables = []
+        self.slave_grids = []
+        self.master_store = Store(self,report)
         self.report = report
-        self._slave_dict = {}
+        #self._slave_dict = {}
         if main is None:
             if hasattr(self,"main"):
                 main = self.create_element('main')
@@ -530,12 +598,32 @@ class Layout(Renderable):
 
         self._main = main
         
-        self.slaves = [ 
-          e.slave for e in self.leaves() 
-            if isinstance(e,SlaveElement) ]
+        #~ self.slaves = [ 
+          #~ e.slave for e in self.leaves() 
+            #~ if isinstance(e,SlaveElement) ]
         
-        self.fields = [ e for e in self.leaves() 
-            if isinstance(e,FieldElement)]
+        self.fields = tuple([ 
+            e for e in self.leaves() 
+                if isinstance(e,FieldElement) ])
+              
+        pk = None
+        for e in self.leaves():
+            if e.name == report.model._meta.pk.name:
+                pk = e
+                break
+                
+        if pk is None:
+            self.pk = self.add_hidden_field(report.model._meta.pk)
+            self.ext_store_fields = tuple(self.leaves()+[self.pk])
+        else:
+            self.pk = pk
+            self.ext_store_fields = tuple(self.leaves())
+        
+
+    #~ def add_variable(self,e):
+        #~ name = e.as_ext_name()
+        #~ assert not self.variables.has_key(name)
+        #~ self.variables[name] = e
               
     #~ def slaves(self):
         #~ for e in self.leaves():
@@ -573,9 +661,11 @@ class Layout(Renderable):
             #return self.report.create_element()
             slaveclass = self.report.get_slave(name)
             if slaveclass is not None:
-                slave = slaveclass()
-                self._slave_dict[name] = slave
-                return SlaveElement(self,name,slave,**kw)
+                slaverpt = slaveclass()
+                #self._slave_dict[name] = slaverpt
+                e = GridElement(self,slaverpt,**kw)
+                self.slave_grids.append(e)
+                return e
             try:
                 field = self.report.model._meta.get_field(name)
             except models.FieldDoesNotExist,e:
@@ -635,7 +725,7 @@ class Layout(Renderable):
         #~ except Exception,e:
           #~ traceback.print_exc(e)
 
-    def get_slave(self,name):
+    def old_get_slave(self,name):
         return self._slave_dict[name]
         
     def renderer(self,report_renderer):
@@ -647,6 +737,7 @@ class RowLayout(Layout):
     hbox_class = GRID_ROW
     vbox_class = GRID_CELL
     ext_layout = 'Ext.layout.HBoxLayout'
+    
     
 class PageLayout(Layout):
     show_labels = True
@@ -683,9 +774,8 @@ class LayoutRenderer:
         self.layout = layout
         self.report = report_renderer
         self.request = report_renderer.request
-        self.slaves = [ sl.renderer(self.request) 
-                          for sl in layout.slaves ]
         self.fields = layout.fields
+        #self.slaves = [ rpt.renderer(self.request) for rpt in layout.slave_grids ]
         
     def as_ext_value(self):
       try:
@@ -696,25 +786,22 @@ class LayoutRenderer:
         
     def ext_globals(self):
       try:
-        s = "master_store = %s; " % self.report.as_ext_store()
-
-        for slave in self.slaves:
-            s += "\n%s_cm = %s;" % (slave.name,slave.as_ext_colmodel())
-            s += "\n%s_store = %s;" % (slave.name,slave.as_ext_store())
-        for e in self.layout.leaves():
-            if e.declared:
-                s += "\n%s = %s;" % (
-                  e.as_ext_name(),
-                  e.as_ext_value(self.request))
+        #s = "master_store = %s; " % self.report.as_ext_store()
+        s = ''
+        #~ for slave in self.slaves:
+            #~ s += "\n%s_cm = %s;" % (slave.name,slave.as_ext_colmodel())
+            #~ s += "\n%s_store = %s;" % (slave.name,slave.as_ext_store())
+        for e in self.layout.variables:
+            s += "\n%s = %s;" % (e.name,e.as_ext_value(self.request))
         s += "\nfrm = %s;" % self.as_ext_value()
         s += """
-master_store.addListener('load',function(store,rows,options) {
+%s.addListener('load',function(store,rows,options) { """ % self.layout.master_store.name
+        s += """
     frm.form.loadRecord(rows[0]);
     """
-        for slave in self.slaves:
+        for slave in self.layout.slave_grids:
             s += """
-  %s_store.load({
-      params: { master: rows[0].data['%s'] } });""" % (
+  %s.load({params: { master: rows[0].data['%s'] } });""" % (
       slave.name,self.report.pk.name)
         s += "\n});"
         return mark_safe(s)
@@ -729,7 +816,7 @@ master_store.addListener('load',function(store,rows,options) {
         #~ traceback.print_exc(e)
         
     
-class BoundElement:
+class unused_BoundElement:
     def __init__(self,element,row):
         assert isinstance(element,Element)
         self.element = element
@@ -790,24 +877,4 @@ class BoundElement:
             traceback.print_exc()
             raise e
 
-
-from lino.django.utils import perms
-
-class Dialog:
-    form_class = None
-    layout = None
-    template_before = "lino/dialog_before.html"
-    template_after = "lino/dialog_after.html"
-    can_view = perms.always
-    
-    def __init__(self):
-        self._layout = PageLayout(self.layout).bound_to(self)
-    
-    def execute(self):
-        raise NotImplementedError
-        
-    def view(self,request):
-        from lino.django.utils.render import DialogRenderer
-        r = DialogRenderer(self,request)
-        return r.render_to_response()
 
