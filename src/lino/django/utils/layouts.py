@@ -34,6 +34,8 @@ def dict2js(d):
 def py2js(v,k):
     if type(v) is types.BooleanType:
         return str(v).lower()
+    if type(v) is unicode:
+        return repr(v.encode('utf8'))
     return repr(v)
             
 class js_code:
@@ -80,8 +82,8 @@ class Element(Renderable):
     width = None
     height = None
     def __init__(self,layout,name):
-        if layout is not None:
-            assert isinstance(layout,Layout)
+        #print "Element.__init__()", layout,name
+        assert isinstance(layout,Layout)
         self.layout = layout
         self.name = name
         if self.declared:
@@ -108,6 +110,7 @@ class Store(Element):
     def __init__(self,layout,report):
         Element.__init__(self,layout,report.name+"_store")
         self.report = report
+        print self,report.get_absolute_url()
         
     def ext_options(self,request):
         #self.report.setup()
@@ -156,7 +159,7 @@ class ColumnModel(Element):
         #editing = self.layout.report.can_change.passes(request)
         l = [e.as_ext_column(request) for e in self.report.row_layout.leaves()]
         d.update(columns=js_code("[ %s ]" % ", ".join(l)))
-        d.update(defaultSortable=True)
+        #d.update(defaultSortable=True)
         return d
         
             
@@ -175,6 +178,7 @@ class VisibleElement(Element):
     label_width = 0 
     parent = None
     editable = False
+    sortable = False
     #ext_template = 'lino/includes/element.js'
     def __init__(self,layout,name,width=None,height=None,label=None):
         Element.__init__(self,layout,name)
@@ -230,8 +234,8 @@ class VisibleElement(Element):
     def as_ext_column(self,request):
         d = dict(
           dataIndex=self.name, 
-          header=self.label or self.name,
-          sortable=True)
+          header=unicode(self.label) if self.label else self.name,
+          sortable=self.sortable)
         if self.width:
             d.update(width=self.width * EXT_CHAR_WIDTH)
         if request.editing and self.editable:
@@ -342,7 +346,7 @@ class FieldElement(VisibleElement):
         kw.update(xtype=self.xtype,name=self.name)
         kw.update(anchor="100%")
         if self.label:
-            kw.update(fieldLabel=self.label)
+            kw.update(fieldLabel=unicode(self.label))
         if not self.field.blank:
             kw.update(allowBlank=False)
         return kw
@@ -367,6 +371,7 @@ class TextFieldElement(FieldElement):
 
 class CharFieldElement(FieldElement):
     xtype = "textfield"
+    sortable = True
   
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
@@ -375,12 +380,12 @@ class CharFieldElement(FieldElement):
         
 class ForeignKeyElement(FieldElement):
     xtype = "combo"
+    sortable = True
     
     def __init__(self,layout,field,**kw):
         FieldElement.__init__(self,layout,field,**kw)
         if self.editable:
-            from . import reports
-            rpt = reports.get_combo_report(self.field.rel.to)
+            rpt = self.layout.report.get_choices(self.field)
             self.store = Store(layout,rpt)
       
     def get_field_options(self,request,**kw):
@@ -393,6 +398,8 @@ class ForeignKeyElement(FieldElement):
             kw.update(typeAhead=True)
             kw.update(mode='remote')
             kw.update(selectOnFocus=True)
+            kw.update(pageSize=self.store.report.page_length)
+            
         kw.update(triggerAction='all')
         kw.update(emptyText='Select a %s...' % self.store.report.model.__name__)
         kw.update(hiddenName=self.name+"Hidden")
@@ -401,18 +408,21 @@ class ForeignKeyElement(FieldElement):
             
 class DateFieldElement(FieldElement):
     xtype='datefield'
+    sortable = True
     
 class IntegerFieldElement(FieldElement):
     xtype='numberfield'
+    sortable = True
 
 class DecimalFieldElement(FieldElement):
     xtype='numberfield'
+    sortable = True
 
 class BooleanFieldElement(FieldElement):
     xtype='checkbox'
 
-
 class GridElement(VisibleElement):
+    value_template = "new Ext.grid.GridPanel({ %s })"
     declared = True
 
     def __init__(self,layout,report,store=None,**kw):
@@ -431,10 +441,10 @@ class GridElement(VisibleElement):
         d = VisibleElement.ext_options(self,request)
         #editing = self.report.can_change.passes(request)
         if request.editing:
-            d.update(xtype='editorgrid')
-            d.update(clicksToEdit=1)
-        else:
-            d.update(xtype='grid')
+            d.update(clicksToEdit=2)
+            #~ d.update(xtype='editorgrid')
+        #~ else:
+            #~ d.update(xtype='grid')
         #d.update(store=self.store)
         #d.update(colModel=self.column_model)
         d.update(store=js_code(self.store.name))
@@ -444,14 +454,28 @@ class GridElement(VisibleElement):
         
         #d.update(columnLines=True)
         #d.update(stripeRows=True)
+        d.update(autoHeight=True)
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
+        if False:
+            d.update(tbar=js_code("""new Ext.PagingToolbar({
+            store: %s,       
+            displayInfo: true,
+            pageSize: %d,
+            prependButtons: true,
+            })""" % (self.store.name,self.report.page_length)))
         
         return d
             
     def value2js(self,obj):
         return "1"
         
+class M2mGridElement(GridElement):
+    def __init__(self,layout,field,**kw):
+        from . import reports
+        rpt = reports.get_model_report(field.rel.to)
+        GridElement.__init__(self,layout,rpt,**kw)
+  
         
 
 class MethodElement(VisibleElement):
@@ -476,9 +500,9 @@ _field2elem = (
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
     (models.BooleanField, BooleanFieldElement),
+    (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
     (models.AutoField, IntegerFieldElement),
-    (models.ManyToManyField, GridElement),
 )
             
 def field2elem(layout,field,**kw):
@@ -676,8 +700,8 @@ class Layout(Renderable):
         #assert isinstance(report,reports.Report)
         self.variables = []
         self.slave_grids = []
-        self.master_store = Store(self,report)
         self.report = report
+        self.master_store = Store(self,report)
         #self._slave_dict = {}
         if main is None:
             if hasattr(self,"main"):
@@ -750,7 +774,7 @@ class Layout(Renderable):
             return self.hbox_class(self,name,*l,**kw)
             
     def create_element(self,name):
-        print self, "create_element()", name
+        # print self, "create_element()", name
         name,kw = self.splitdesc(name)
         if name in ('__str__','__unicode__'):
             meth = get_unbound_meth(self.report.model,name)
@@ -848,10 +872,10 @@ class Layout(Renderable):
             else:
                 others.append(e)
         for e in others + visibles:
-            s += "\n%s = %s;" % (e.name,e.as_ext_value(request))
+            s += "\nvar %s = %s;" % (e.name,e.as_ext_value(request))
             
         s += """
-frm = %s;""" % self.as_ext_value(request)
+var frm = %s;""" % self.as_ext_value(request)
 
         s += self.on_load(request)
         
@@ -868,8 +892,9 @@ class RowLayout(Layout):
     join_str = " "
     hbox_class = GRID_ROW
     vbox_class = GRID_CELL
-    ext_layout = 'Ext.layout.HBoxLayout'
-    value_template = "new Ext.grid.EditorGridPanel({ %s })"
+    #ext_layout = 'Ext.layout.HBoxLayout'
+    #value_template = "new Ext.grid.EditorGridPanel({ %s })"
+    value_template = "new Ext.form.FormPanel({ %s })"
     
     def __init__(self,report,desc=None,**kw):
         Layout.__init__(self,report,desc,**kw)
@@ -878,19 +903,32 @@ class RowLayout(Layout):
     
     
     def ext_options(self,request):
-        d = self.grid.ext_options(request)
-        
+        d = {} # Layout.ext_options(self,request)
+        if True:
+            d.update(tbar=js_code("""new Ext.PagingToolbar({
+              store: %s,
+              displayInfo: true,
+              pageSize: 1,
+              prependButtons: true,
+            }) """ % self.master_store.name))
+        d.update(items=js_code("[ %s ]" % self.grid.name))
         d.update(title=request.get_title())
-        d.update(autoHeight=True)
-        #d.update(store=js_code(self.master_store.name))
-        #d.update(colModel=js_code(self.grid.column_model.name))
-        d.update(tbar=js_code("""new Ext.PagingToolbar({
-            store: %s,       
-            displayInfo: true,
-            pageSize: %d,
-            prependButtons: true,
-            })""" % (self.master_store.name,self.report.page_length)))
         return d
+        
+    #~ def ext_options(self,request):
+        #~ d = self.grid.ext_options(request)
+        
+        #~ d.update(title=request.get_title())
+        #~ d.update(autoHeight=True)
+        #~ #d.update(store=js_code(self.master_store.name))
+        #~ #d.update(colModel=js_code(self.grid.column_model.name))
+        #~ d.update(tbar=js_code("""new Ext.PagingToolbar({
+            #~ store: %s,       
+            #~ displayInfo: true,
+            #~ pageSize: %d,
+            #~ prependButtons: true,
+            #~ })""" % (self.master_store.name,self.report.page_length)))
+        #~ return d
         
         
         
@@ -926,13 +964,26 @@ function save(oGrid_event){
      });
   }
   
-frm.on('afteredit', save);"""        
+frm.on('afteredit', save);"""
+        l = self.report.get_absolute_url(mode='detail').split('?')
+        if len(l) == 1:
+            l.append('')
+        s += """
+  
+function onCellClick(grid, rowIndex, e) {
+  url = "%s?row=" + String(rowIndex) + "%s";
+  Ext.MessageBox.alert(url,url);
+  // document.location = url;
+};""" % tuple(l)
+        s += """
+%s.getSelectionModel().on('rowselect', onCellClick);
+        """ % self.grid.name
         return s
     
 class PageLayout(Layout):
     show_labels = True
     join_str = "\n"
-    ext_layout = ""
+    #ext_layout = ""
     value_template = "new Ext.form.FormPanel({ %s })"
     
     def ext_options(self,request):
@@ -943,7 +994,7 @@ class PageLayout(Layout):
           pageSize: 1,
           prependButtons: true,
         }) """ % self.master_store.name))
-        d.update(items=js_code("[ %s ]" % self._main.as_ext_value(request)))
+        d.update(items=js_code("[ %s ]" % self._main.as_ext(request)))
         return d
         
     #~ def as_ext_value(self,request,**kw):

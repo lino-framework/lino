@@ -417,8 +417,9 @@ class LinoSite: #(AdminSite):
             (r'^accounts/reset/done/$', self.password_reset_complete),
         )
         #~ urlpatterns = AdminSite.get_urls(self)
-        from lino.django.utils import render
-        urlpatterns += render.get_urls()
+        from . import urls
+        urlpatterns += urls.get_urls()
+        #urlpatterns += urls.url_patterns
         #urlpatterns += self._menu.get_urls() # self._menu.name)
         return urlpatterns
         #return self._menu.get_urls()

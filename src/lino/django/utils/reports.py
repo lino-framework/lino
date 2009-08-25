@@ -25,7 +25,7 @@ from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
 
-from lino.django.utils import layouts, render, perms
+from lino.django.utils import layouts, render, perms, urls
 from lino.django.utils.editing import is_editing
 
 from django.http import HttpResponse
@@ -98,7 +98,7 @@ def register_report_class(rptclass):
         if hasattr(rptclass.model,'_lino_model_report_class'):
             #print "[Warning] %s" % rptclass #.__name__
             return
-        print "%s : model report is %s" % (rptclass.model.__name__,rptclass)
+        #print "%s : model report is %s" % (rptclass.model.__name__,rptclass)
         rptclass.model._lino_model_report_class = rptclass
         return
     slaves = getattr(rptclass.master,"_lino_slaves",None)
@@ -106,12 +106,7 @@ def register_report_class(rptclass):
         slaves = {}
         setattr(rptclass.master,'_lino_slaves',slaves)
     slaves[rptclass.__name__] = rptclass
-    print "%s : slave for %s" % (rptclass.__name__, rptclass.master.__name__)
-    #~ l = _slave_reports.get(rptclass.model,None)
-    #~ if l is None:
-        #~ l = []
-        #~ _slave_reports[rptclass.model] = l
-    #~ l.append(rptclass)
+    #print "%s : slave for %s" % (rptclass.__name__, rptclass.master.__name__)
     
 
 
@@ -226,13 +221,11 @@ def get_slave(model,name):
     return None
     
 def get_combo_report(model):
-    rpt = getattr(model,'_lino_combo',None)
+    rpt = getattr(model,'_lino_choices',None)
     if rpt: return rpt
-    #raise SetupNotDone("%s has no combo report" % model)
-    #rpt = model_reports[model._meta.db_table]
     rc = model._lino_model_report_class
-    model._lino_combo = rc(columnNames=rc.display_field)
-    return model._lino_combo
+    model._lino_choices = rc(columnNames=rc.display_field,mode='choices')
+    return model._lino_choices
 
 def get_model_report(model):
     rpt = getattr(model,'_lino_model_report',None)
@@ -284,10 +277,12 @@ class Report:
     can_view = perms.always
     can_add = perms.is_authenticated
     can_change = perms.is_authenticated
+    can_delete = perms.is_authenticated
 
     typo_check = True
     url = None
     #_slaves = None
+    mode = 'list' # or 'detail' or 'choices'
     
     def __init__(self,**kw):
         for k,v in kw.items():
@@ -360,6 +355,9 @@ class Report:
         #l = self.slaves() # to populate
         #return self._slaves.get(name,None)
         
+    def get_choices(self,field):
+        # TODO : if hasattr(self,"%s_choices" % field.name)...
+        return get_combo_report(field.rel.to)
         
     #~ def slaves(self):
         #~ hier: und zwar die slaves in diesem report (nicht alle slaves des modells)
@@ -458,7 +456,7 @@ class Report:
         return self.label
         
     def get_absolute_url(self,*args,**kw):
-        return render.get_report_url(self,*args,**kw)
+        return urls.get_report_url(self,*args,**kw)
     
     #~ def get_row_print_template(self,instance):
         #~ return instance._meta.db_table + "_print.html"
@@ -508,7 +506,7 @@ class Report:
         #~ print msg
         #~ request.user.message_set.create(msg)
         if not self.can_view.passes(request):
-            return render.sorry(request)
+            return urls.sorry(request)
         r = render.ListViewReportRenderer(request,True,self)
         #~ if is_editing(request) and self.can_change.passes(request):
             #~ r = render.EditManyReportRenderer(request,True,self)
@@ -523,7 +521,7 @@ class Report:
     def view_one(self,request,**kw):
         #print "Report.view_one()", request.path
         if not self.can_view.passes(request):
-            return render.sorry(request)
+            return urls.sorry(request)
         r = render.ViewOneReportRenderer(request,True,self,**kw)
         #~ if is_editing(request) and self.can_change.passes(request):
             #~ r = render.EditOneReportRenderer(row_num,request,True,self,**kw)
@@ -541,12 +539,12 @@ class Report:
 
     def pdf_one(self,request,row):
         if not self.can_view.passes(request):
-            return render.sorry(request)
+            return urls.sorry(request)
         return render.PdfOneReportRenderer(row,request,True,self).render()
         
     def pdf_many(self, request):
         if not self.can_view.passes(request):
-            return render.sorry(request)
+            return urls.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render()
 
         
@@ -599,12 +597,12 @@ class Report:
         
     def print_many(self, request):
         if not self.can_view.passes(request):
-            return render.sorry(request)
+            return urls.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render(as_pdf=False)
 
     def print_one(self,request,row):
         if not self.can_view.passes(request):
-            return render.sorry(request)
+            return urls.sorry(request)
         return render.PdfOneReportRenderer(row,request,True,self).render(as_pdf=False)
 
     def as_text(self, *args,**kw):

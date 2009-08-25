@@ -23,7 +23,6 @@ import cgi
 from textwrap import TextWrapper
 from StringIO import StringIO # cStringIO doesn't support Unicode
 import cStringIO
-from urllib import urlencode
 
 
 #from django.conf import settings
@@ -37,7 +36,6 @@ from django.forms.models import modelform_factory, modelformset_factory, inlinef
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.forms.models import ModelForm,ModelFormMetaclass, BaseModelFormSet
 from django.db.models.manager import Manager
-from django.conf.urls.defaults import patterns, url, include
 
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.utils.safestring import mark_safe
@@ -78,82 +76,6 @@ def short_link(s):
     
 
     
-def view_instance(request,db_table=None,pk=None):
-    if db_table is None:
-        return Http404
-    from . import reports
-    try:
-        #rptclass = reports.model_reports[db_table]
-        rpt = reports.model_reports[db_table]
-    except KeyError,e:
-        msg = """
-        There is no Report defined for %s.
-        """ % db_table
-        return sorry(request,message=msg)
-        
-    #rpt = rptclass(filter=dict(pk__exact=pk))
-    return rpt.view_one(request,1)
-
-def unused_view_instance_slave(request,app_label=None,model_name=None,slave_name=None):
-    pk = request.GET.get('master',None)
-    if not pk:
-        print "view_instance_slave with master=%s" % pk
-        return sorry(request)
-    #pk = params.master
-    #print repr(pk)
-    model = models.get_model(app_label,model_name)
-    obj = model.objects.get(pk=pk)
-    from . import reports
-    rptclass = reports.get_slave(obj,slave_name)
-    if not rptclass:
-        print "no slave %s for model %s" % (slave,model)
-        return sorry(request)
-    rpt = rptclass(master_instance=obj)
-    return rpt.json(request)
-
-
-def view_report_list(request,app_label=None,rptname=None):
-    app = models.get_app(app_label)
-    rptclass = getattr(app,rptname)
-    rpt = rptclass()
-    return rpt.view_many(request)
-
-def view_report_detail(request,app_label=None,rptname=None):
-    app = models.get_app(app_label)
-    rptclass = getattr(app,rptname,None)
-    if rptclass is None:
-        raise Http404("Application '%s' (%s) has no report '%s'" % (
-          app_label, app.__file__, rptname))
-    rpt = rptclass()
-    return rpt.view_one(request)
-    
-
-def get_report_url(self,mode='list',master_instance=None,**kw):
-    app_label = self.model._meta.app_label
-    if master_instance is None:
-        master_instance = self.master_instance
-    if master_instance is not None:
-        kw['master'] = master_instance.pk
-    url = '/%s/%s/%s' % (mode,app_label,self.__class__.__name__)
-    if len(kw):
-        url += "?"+urlencode(kw)
-    return url
-        
-def get_urls():
-    return patterns('',
-        (r'^o/(?P<db_table>.+)/(?P<pk>.+)$', view_instance),
-        #(r'^slave/(?P<app_label>.+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
-        (r'^list/(?P<app_label>.+)/(?P<rptname>.+)$', view_report_list),
-        (r'^detail/(?P<app_label>.+)/(?P<rptname>.+)$', view_report_detail),
-    )
-
-def get_instance_url(o):
-    if hasattr(o,'get_instance_url'):
-        url = o.get_instance_url()
-        if url is not None:
-            return url
-    return "/o/%s/%s" % (o._meta.db_table, o.pk)
-        
 
 class ReportRenderer:
     limit = None
@@ -328,33 +250,10 @@ class ViewReportRenderer(ReportRenderer):
         return self.report.get_absolute_url(**kw)
         
         
-    def has_actions(self):
-        return len(self._actions) > 0
-            
-        
-    def row_buttons(self):
-        l = []
-        for name,func in self._actions:
-            l.append('<input type="submit" name="row_action" value="%s">' % name)
-        return mark_safe('&nbsp;'.join(l))
-        
-    def get_row_actions(self):
-        return []
-
-        
-    def setup(self):
-        pass
-        
-        
     def render_to_response(self):
-        #~ if self.must_refresh:
-            #~ url = self.again()
-        #~ else:
         url = get_redirect(self.request)
         if url is not None:
-            #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
-        self.setup()
         if self.json:
             return self.json_reponse()
             
@@ -379,21 +278,6 @@ class ViewReportRenderer(ReportRenderer):
         #print s
         return HttpResponse(s, mimetype='text/html')
         
-    def unused_render_to_string(self):
-        self.setup()
-        context=dict(
-          report = self,
-        )
-        return render_to_string(self.template_to_string,context)
-        
-        
-    #~ def detail_to_string(self,dtlrep,instance):
-        #~ r = self.detail_renderer(self.request,False,dtlrep,instance)
-        #~ return r.render_to_string()
-        #~ except Exception,e:
-            #~ print "Exception in RowViewReportRenderer.render_detail()"
-            #~ traceback.print_exc()
-            #~ raise e
             
       
 class ListViewReportRenderer(ViewReportRenderer):
@@ -407,113 +291,15 @@ class ListViewReportRenderer(ViewReportRenderer):
     def get_layout(self):
         return self.report.row_layout
         
-    def position_string(self):
-        return '' # not used with extjs
-        s = "Page %d of %d" % (self.page.number,self.page.paginator.num_pages)
-        s += ' in <a href="%s">%s</a>.' % (
-            self.again("",editing=None),self.report.get_title(self))
-        return mark_safe(s)
-        
-          
-        
-    def view_modes(self):
-        if self.editing:
-            s = ' <a href="%s">%s</a>' % (
-              self.again(editing=0),"show")
-        else:
-            s = ' <a href="%s">%s</a>' % (
-              self.again(editing=1),"edit")
-            s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
-            s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        return mark_safe(s)
-        
-    def navigator(self):
-        return '' # not used with extjs
-        page = self.page
-        text = "&#x25C4;Previous"
-        if page.has_previous():
-            s = '<a href="%s">%s</a>' % (
-              self.again(pgn=page.number-1),text)
-        else:
-            s = text
-        s += " "
-        text = "Next&#x25BA;"
-        if page.has_next():
-            s += '<a href="%s">%s</a>' % (
-              self.again(pgn=page.number+1),text)
-        else:
-            s += text
-        return mark_safe(s)
-        
-        
-    def rows(self):
-        if False: # not used with extjs
-            rownum = self.offset + 1
-            for obj in self.queryset:
-                yield Row(self,obj,rownum,None)
-                rownum += 1
-            
-    def setup(self):
-        if not self.has_actions():
-            return
-        if self.request.method == 'POST':
-            frm = SelectorForm(self.request.POST)
-        else:
-            frm = SelectorForm()
-        i = 0
-        for row in self.rows():
-            i += 1
-            frm.fields[IS_SELECTED % i] = forms.BooleanField(
-              required=False)
-        self.selector = frm
-        
-        if not self.selector.is_valid():
-            print "self.selector.is_valid() False"
-            print self.selector.errors
-            return 
-        
-        action_name = self.selector.data.get('row_action',None)
-        if action_name is None:
-            return
-        for name,action in self._actions:
-            if name == action_name:
-                return action(self)
-            
-    def selected_rows(self):
-        i = 0
-        for row in self.rows():
-            i += 1
-            if self.selector.cleaned_data[IS_SELECTED % i]:
-                yield row
-                
         
     def must_refresh(self):
         redirect_to(self.request,self.again()) 
         
-    #~ def dummy(self,row):
-        #~ print "DUMMY:", row.instance
-        
-    #~ def as_ext_colmodel(self):
-        #~ return self.report.as_ext_colmodel(self.editing)
-        
-    #~ def json_reponse(self):
-        #~ qs = self.queryset[]
-        #~ rows = [row.as_json_dict() for row in self.rows()]
-        #~ d = dict(count=self.queryset.count(),rows=rows)
-        #~ s = simplejson.dumps(d,default=unicode)
-        #~ #print s
-        #~ return HttpResponse(s, mimetype='text/x-json')
     
         
 
 ListViewReportRenderer.detail_renderer = ListViewReportRenderer
 
-class FlexigridRenderer(ListViewReportRenderer):
-    template_to_reponse = "lino/flexigrid_show.html"      
-  
-
-class SelectorForm(forms.Form):
-    pass
 
 
 class RowViewReportRenderer(ViewReportRenderer):
@@ -530,27 +316,6 @@ class RowViewReportRenderer(ViewReportRenderer):
             raise "Found more than one record"
         self.instance = self.queryset[0]
             
-        #~ rownum = int(row)
-        #~ try:
-            #~ obj = self.queryset[rownum-1]
-        #~ except IndexError:
-            #~ rownum = self.queryset.count()
-            #~ if rownum == 0:
-                #~ raise Http404("queryset is empty")
-            #~ obj = self.queryset[rownum-1]
-        #~ self.instance = obj
-        #~ if self.is_main:
-            #~ tab = self.request.GET.get('tab')
-            #~ if tab is None:
-                #~ tab = 0
-            #~ else:
-                #~ tab = int(tab)
-        #~ self.row = Row(self,obj,rownum,tab)
-        #~ self.tab = tab
-        #self.layout = self.report._page_layouts[tab]
-        #self.bound_layout = self.layout.bound_to(self.row)
-        #self.slaves = self.layout.slaves
-        
     def get_layout(self):
         return self.report.page_layout
         
@@ -558,185 +323,18 @@ class RowViewReportRenderer(ViewReportRenderer):
         kw['mode'] = 'detail'
         return ViewReportRenderer.get_absolute_url(self,**kw)
         
-    def tabs(self):
-        if len(self.report._page_layouts) == 1:
-            return ''
-        s = '<ul class="tab">'
-        i = 0
-        for layout in self.report._page_layouts:
-            title = layout.get_label()
-            if i == self.tab:
-                s += '<li class="tab_selected">%s</li>' % title
-            else:
-                href = self.again(tab=i)
-                s += '<li><a href="%s">%s</a>' % (href,title)
-            i += 1
-        s += "</ul>"
-        return mark_safe(s)
-        
-    def position_string(self):
-        return '' # not used with extjs
-        s = "Row %d of %d" % (self.row.number,self.queryset.count())
-        s += ' in <a href="%s">%s</a>.' % (
-            self.again("..",editing=None),self.report.get_title(self))
-        return mark_safe(s)
-        
-    #~ def json_reponse(self):
-        #~ rows = [ self.row.as_json_dict() ]
-        #~ d = dict(count=self.queryset.count(),rows=rows)
-        #~ s = simplejson.dumps(d,default=unicode)
-        #~ #print s
-        #~ return HttpResponse(s, mimetype='text/x-json')
     
       
         
 class ViewOneReportRenderer(RowViewReportRenderer):
 
-    template_to_string = "lino/includes/page.html" # not yet used
     template_to_reponse = "lino/page.html"
     
         
-    def view_modes(self):
-        return '' # not used with extjs
-        if self.editing:
-            s = ' <a href="%s">%s</a>' % (
-              self.again(editing=0),"show")
-        else:
-            s = ' <a href="%s">%s</a>' % (
-              self.again(editing=1),"edit")
-            s += ' <a href="%s">%s</a>' % (self.again('print'),"print")
-            s += ' <a href="%s">%s</a>' % (self.again('pdf'),"pdf")
-        return mark_safe(s)
-        
-    def navigator(self):
-        return '' # not used with extjs
-        s = "" # """<div class="pagination"><span class="step-links">"""
-        page = self.row
-        get_var_name = "row"
-
-        text = "&#x25C4;Previous"
-        if page.has_previous():
-            s += '<a href="%s">%s</a>' % (
-              self.again("../" +str(page.number-1)),
-              text)
-        else:
-            s += text
-        s += " "
-        text = "Next&#x25BA;"
-        if page.has_next():
-            s += '<a href="%s">%s</a>' % (
-              self.again("../" + str(page.number+1)),
-              text)
-              #self.again(**{get_var_name: page.number+1}),text)
-        else:
-            s += text
-        return mark_safe(s)
 
     def get_title(self):
         return unicode(self.instance)
 
-
-
-
-class unused_EditManyReportRenderer(ListViewReportRenderer):
-    editing = 1
-    extra = 1
-    can_delete = False # True
-    can_order = False
-    #template_to_string = "lino/includes/grid_edit.html"
-    #template_to_reponse = "lino/grid_edit.html"
-        
-    def __init__(self,*args,**kw):
-        #print self.__class__.__name__,"__init__()"
-        ListViewReportRenderer.__init__(self,*args,**kw)
-        
-        fs_args = {}
-        if self.report.master is not None:
-            formset_class = inlineformset_factory(
-                  self.report.master,
-                  self.report.model,
-                  fk_name=self.report.fk_name,
-                  extra=self.extra, 
-                  max_num=self.max_num,
-                  can_order=self.can_order, 
-                  can_delete=self.can_delete)
-            fs_args['instance'] = self.master_instance
-        else:
-            formset_class = modelformset_factory(
-                  self.report.model,
-                  extra=self.extra, 
-                  max_num=self.max_num,
-                  can_order=self.can_order, 
-                  can_delete=self.can_delete)
-            fs_args['queryset'] = self.page.object_list
-
-        
-        if self.request.method == 'POST':
-            fs = formset_class(self.request.POST,**fs_args)
-            if fs.is_valid():
-                #print self.__class__.__name__, "valid"
-                fs.save()
-                if self.can_delete and fs.deleted_forms:
-                    for form in fs.deleted_forms:
-                        print "Deleted:", form.instance
-                #editing.stop_editing(self.request)
-                redirect_to(self.request,self.again(editing=0))
-                """
-                start from begin because paginator and page must reload
-                e.g. if an instance has been added, it may now be at 
-                a different row and the page count may have changed.
-                """
-                #return HttpResponseRedirect(self.again(editing=None))
-                #redirect_to(self.request,self.again(editing=None))
-            else:
-                print fs.errors
-                editing.continue_editing(self.request)
-        else:
-            #print self.__class__.__name__, "not POST"
-            fs = formset_class(**fs_args)
-        self.formset = fs
-        #print self.__class__.__name__, "__init__() done"
-        
-
-    def rows(self):
-        if self.is_main:
-            rownum = self.page.start_index()
-        else:
-            rownum = 1
-        for form in self.formset.forms:
-            yield Row(self,form.instance,rownum,None,form)
-            rownum += 1
-
-    
-class unused_EditOneReportRenderer(ViewOneReportRenderer):
-    editing = 1
-    detail_renderer = unused_EditManyReportRenderer
-  
-    def __init__(self,*args,**kw):
-        ViewOneReportRenderer.__init__(self,*args,**kw)
-        if self.request.method == 'POST':
-            frm = self.report.form_class(self.request.POST,
-              instance=self.row.instance)
-            if frm.is_valid():
-                #print self.__class__.__name__, "valid"
-                frm.save()
-                #print "SAVED:", self.row.instance
-                #editing.stop_editing(self.request)
-                redirect_to(self.request,self.again(editing=0))
-                #return HttpResponseRedirect(self.again(editing=None))
-            else:
-                print frm.errors
-                editing.continue_editing(self.request)
-        else:
-            frm = self.report.form_class(instance=self.row.instance)
-        self.form = frm
-        
-        self.row.form = frm
-        
-        #self.layout = self.report.page_layout().bound_to(self.row)
-        
-        #self.row = Row(self,self.instance,self.rownum,frm)
-        #print self.__class__.__name__, "__init__() done"
 
         
 class PdfManyReportRenderer(ListViewReportRenderer):
@@ -826,28 +424,6 @@ class PdfOneReportRenderer(ViewOneReportRenderer):
             return self.row.instance.view_printable(self.request)
             #~ result = as_printable(self.row.instance,as_pdf=False)
             #~ return HttpResponse(result)
-
-
-
-def sorry(request,message=None):
-    if message is None:
-        if request.user.is_authenticated():
-            message = mark_safe("""
-    Sorry %s, you have no access permission for this action.
-    Consider logging in as another user.
-    """ % request.user.username)
-        else:
-            message = mark_safe("""
-    This action requires that you log in.
-            """)
-    from lino.django.utils.sites import lino_site
-    context = lino_site.context(request,
-      title = "Sorry",
-      message = message,
-    )
-    return render_to_response("lino/sorry.html",
-      context,
-      context_instance = template.RequestContext(request))
 
 
 
