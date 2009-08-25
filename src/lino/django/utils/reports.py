@@ -57,7 +57,8 @@ def base_attrs(cl):
             yield k
             
             
-
+class SetupNotDone(Exception):
+    pass 
 
 
 class ReportParameterForm(forms.Form):
@@ -83,7 +84,7 @@ class ReportParameterForm(forms.Form):
 #~ def get_reports():
     #~ return _report_classes
     
-model_reports = {}
+#model_reports = {}
 #_slave_reports = {}
 #_reports = []
 
@@ -94,6 +95,11 @@ def register_report_class(rptclass):
         return
     if rptclass.master is None:
         #print "%s : master is None" % rptclass.__name__
+        if hasattr(rptclass.model,'_lino_model_report_class'):
+            #print "[Warning] %s" % rptclass #.__name__
+            return
+        print "%s : model report is %s" % (rptclass.model.__name__,rptclass)
+        rptclass.model._lino_model_report_class = rptclass
         return
     slaves = getattr(rptclass.master,"_lino_slaves",None)
     if slaves is None:
@@ -109,7 +115,7 @@ def register_report_class(rptclass):
     
 
 
-def register_report(rpt):
+def unused_register_report(rpt):
     if rpt.model is None:
         return
     if rpt.master is not None:
@@ -118,14 +124,38 @@ def register_report(rpt):
         return
     if rpt.filter is not None:
         return
-    db_table = rpt.model._meta.db_table
-    if model_reports.has_key(db_table):
+    if hasattr(rpt.model,'_lino_model_report'):
         print "[Warning] Ignoring %s" % rpt #.__name__
         return
-    model_reports[db_table] = rpt
+    rpt.model._lino_model_report = self
+    #~ db_table = rpt.model._meta.db_table
+    #~ if model_reports.has_key(db_table):
+        #~ print "[Warning] Ignoring %s" % rpt #.__name__
+        #~ return
+    #~ model_reports[db_table] = rpt
     
     
-def analyse_models():
+def setup():
+    """
+    - Each model can receive a number of "slaves". 
+      slaves are reports that display detail data for a known instance of that model (their master).
+      They are stored in a dictionary called '_lino_slaves'.
+      
+    - For each model we want to find out the "model report", 
+      This will be used when displaying a single object. 
+      And the "choices report" for a foreignkey field is also currently simply the pointed model's
+      model_report.
+      `_lino_model_report`
+
+    """
+    for model in models.get_models():
+        rc = getattr(model,'_lino_model_report_class',None)
+        if rc is None:
+            model._lino_model_report_class = report_factory(model)
+          
+        #~ model._lino_combo = Report(model=model,columnNames='__str__')
+
+def old_setup():
     """
     - Each model can receive a number of "slaves". 
       slaves are reports that display detail data for a known instance of that model (their master).
@@ -139,10 +169,42 @@ def analyse_models():
 
     
     """
-    pass
+    todo = [ m for m in models.get_models()]
+    while True:
+        len_todo = len(todo)
+        print "[Note] reports.setup() : %d reports" % len_todo
+        todo = _try_setup(todo)
+        if len(todo) == 0:
+            return
+        if len(todo) == len_todo:
+            raise RuntimeError("Failed to setup %d models: %s" % (len_todo,todo))
     #~ for model in models.get_models():
+        #~ model._lino_combo = Report(model=model,columnNames='__str__')
+
+
+def _old_try_setup(todo):
+    try_again = []
+    for model in todo:
+        try:
+            rc = getattr(model,'_lino_model_report_class',None)
+            if rc is None:
+                #~ if hasattr(rc,'__unicode__'):
+                model._lino_combo = Report(model=model,columnNames='__str__')
+                model._lino_model_report = Report(model=model)
+                print "[Note] Using default report for model %s" % model._meta.db_table
+                #~ else:
+                    #~ print "[Note] No report for model %s" % model._meta.db_table
+            else:
+                model._lino_combo = rc(columnNames=rc.display_field)
+                model._lino_model_report = rc()
+                print "[Note] %s : reports.setup() ok" % model._meta.db_table
+        except SetupNotDone,e:
+            print "[Note]", model, ":", e
+            try_again.append(model)
+    return try_again
+            
+        
         #~ model._lino_slaves = {}
-        #~ model._lino_model_report = None
         #~ for rc in reports.report_classes:
             #~ ...
             #~ model._lino_slaves[rpt.name] = rpt
@@ -166,9 +228,17 @@ def get_slave(model,name):
 def get_combo_report(model):
     rpt = getattr(model,'_lino_combo',None)
     if rpt: return rpt
-    rpt = model_reports[model._meta.db_table]
-    model._lino_combo = rpt.__class__(columnNames=rpt.display_field) # "__unicode__")
+    #raise SetupNotDone("%s has no combo report" % model)
+    #rpt = model_reports[model._meta.db_table]
+    rc = model._lino_model_report_class
+    model._lino_combo = rc(columnNames=rc.display_field)
     return model._lino_combo
+
+def get_model_report(model):
+    rpt = getattr(model,'_lino_model_report',None)
+    if rpt: return rpt
+    model._lino_model_report = model._lino_model_report_class()
+    return model._lino_model_report
 
 class ReportMetaClass(type):
     def __new__(meta, classname, bases, classDict):
@@ -235,6 +305,13 @@ class Report:
         if self.name is None:
             self.name = self.label #.lower()
             
+        self._setup_done = False
+        
+        # register_report(self)
+        
+    def setup(self):
+        if self._setup_done:
+            return
         if self.form_class is None:
             self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
@@ -257,18 +334,9 @@ class Report:
         #~ self._page_layouts = [
               #~ layout(self) for layout in self.page_layouts]
         
-        #~ self.ext_row_fields = list(self.row_layout.leaves())
-        #~ self.ext_store_fields = self.ext_row_fields
-        #~ #if not self.model._meta.pk.attname in self.ext_store_fields:
-        #~ if True: # TODO: check whether pk already present...
-            #~ self.pk = layouts.FieldElement(None,self.model._meta.pk)
-            #~ self.ext_store_fields.append(self.pk)
-        #~ if not self.display_field in self.ext_store_fields:
-            #~ self.ext_store_fields.append(self.display_field)
-
+        self._setup_done = False
             
             
-        register_report(self)
         
        
           
@@ -322,6 +390,7 @@ class Report:
         
         
     def column_headers(self):
+        self.setup()
         for e in self.columns:
             yield e.label
             
@@ -569,4 +638,9 @@ class Report:
         
     #~ def get_queryset(self):
         #~ return document.docitem_set.order_by("pos")
+        
+        
+def report_factory(model):
+    return type(model.__name__+"Report",(Report,),dict(model=model))
+    
         

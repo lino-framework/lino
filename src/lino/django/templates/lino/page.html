@@ -2,44 +2,13 @@
 
 {% block extrahead %}
 <script type="text/javascript">
-
-// layout.ext_globals
-{{ layout.ext_globals }}
-// end of layout.ext_globals
-
-Ext.onReady(function(){
-
-var submit = frm.addButton({
-    text: 'Submit',
-    handler: function(){
-        frm.form.submit({
-            url:'foo', 
-            waitMsg:'Saving Data...',
-            success: function (form, action) {
-                Ext.MessageBox.alert('Message', 'Saved OK');
-            },
-            failure:function(form, action) {
-                Ext.MessageBox.alert('Message', 'Save failed');
-            }
-        });
-    }
-});
-
-master_store.load();
-
-frm.render('datapage');
-
-}); //end onReady
+{{ layout.as_ext_script }}
 </script>
 {% endblock extrahead %}
 
 
 {% block content %}
 
-{{ report.tabs }}
-
-{{ report.form.errors }}
-
-<div id="datapage"></div>
+<div id="data"></div>
 
 {% endblock content %}

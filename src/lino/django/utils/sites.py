@@ -118,15 +118,16 @@ class LinoSite: #(AdminSite):
             #~ if lino_setup:
                 #~ print "lino_setup", app
                 #~ lino_setup(self)
-                
+
+        from . import reports
+        reports.setup()
+        
         if hasattr(settings,'LINO_SETTINGS'):
             print "Reading", settings.LINO_SETTINGS
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
             print "[Warning] settings.LINO_SETTINGS entry is missing"
             
-        #reports.analyse_models()
-        
         self.done = True
         self.loading = False
         

@@ -162,6 +162,7 @@ class ReportRenderer:
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
+        report.setup()
         self.name = report.name
         #~ if report.master is None:
             #~ assert master_instance is None
@@ -181,8 +182,9 @@ class ReportRenderer:
         #self.slaves = report.slaves
         #self.pk = report.model._meta.pk
         
-        layout = self.get_layout()
-        self.layout = layout.renderer(self)
+        self.layout = self.get_layout()
+        #~ layout = self.get_layout()
+        #~ self.layout = layout.renderer(self)
         
     def get_title(self):
         return self.report.get_title(self)
@@ -244,7 +246,7 @@ class ReportRenderer:
 
     def obj2json(self,obj):
         d = {}
-        for e in self.ext_store_fields:
+        for e in self.layout.ext_store_fields:
             #if d.has_key(e.name):
             #    print "Duplicate field %s was %r and becomes %r" % (e.name,d[e.name],e.value2js(obj))
             d[e.name] = e.value2js(obj)
@@ -345,7 +347,6 @@ class ViewReportRenderer(ReportRenderer):
         
         
     def render_to_response(self):
-        self.setup()
         #~ if self.must_refresh:
             #~ url = self.again()
         #~ else:
@@ -353,13 +354,15 @@ class ViewReportRenderer(ReportRenderer):
         if url is not None:
             #print "render_to_response() REDIRECT TO ", url
             return HttpResponseRedirect(url)
+        self.setup()
         if self.json:
             return self.json_reponse()
             
         from lino.django.utils.sites import lino_site
         context = lino_site.context(self.request,
           report = self,
-          layout = self.layout,
+          #layout = self.layout,
+          layout = self.layout.renderer(self),
           title = self.get_title(),
           #form_action = self.again(editing=None),
         )

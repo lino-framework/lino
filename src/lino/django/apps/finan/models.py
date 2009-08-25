@@ -153,7 +153,7 @@ class BankStatements(reports.Report):
     
     
 class DocItems(reports.Report):
-    columnNames = "journal document pos:3 "\
+    columnNames = "document pos:3 "\
                   "date account contact remark debit credit" 
     model = DocItem
     order_by = "pos"

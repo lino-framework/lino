@@ -8,7 +8,8 @@ Short instructions:
 
 - In a command shell, run::
 
-     svn checkout svn://svn.berlios.de/lino/trunk
+     hg clone https://lino.googlecode.com/hg/ lino
+
   
 - Don't run :file:`setup.py`, it is not necessary and doesn't work.  
 
@@ -42,7 +43,8 @@ Updating your Lino to the newest version
 Go to the directory containing your local copy and type the command::
 
   cd /var/snapshots/lino/trunk
-  svn update 
+  hg pull
+  hg update
 
 
 Test whether it worked
