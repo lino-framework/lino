@@ -2,6 +2,13 @@
 
 <h1>{{ title }}</h1>
 
+{% block extrahead %}
+<script type="text/javascript">
+{{ report.as_ext_script }}
+</script>
+{% endblock extrahead %}
+
+
 {% block navigation %}
 
 <div class="view_modes">view_modes: {{ report.view_modes }}</div>
@@ -16,3 +23,6 @@
 {% endblock navigation %}
 
 
+{% block content %}
+<div id="data"></div>
+{% endblock content %}

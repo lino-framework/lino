@@ -24,6 +24,7 @@ from django.db import models
 from django import template 
 from django.conf.urls.defaults import patterns, url, include
 
+
 def view_instance(request,db_table=None,pk=None):
     if db_table is None:
         return Http404
@@ -57,10 +58,6 @@ def unused_view_instance_slave(request,app_label=None,model_name=None,slave_name
     rpt = rptclass(master_instance=obj)
     return rpt.json(request)
 
-def report_view(request,app_label=None,rptname=None):
-    """
-    """
-    pass
     
 def list_view(request,app_label=None,rptname=None):
     app = models.get_app(app_label)
@@ -92,12 +89,13 @@ def field_choices_view(request,app_label=None,model_name=None,field_name=None):
 
 
 
-def get_report_url(report,mode='list',master_instance=None,**kw):
-    app_label = report.__class__.__module__.split('.')[-2]
-    if mode == 'choices':
-        url = '/choices/%s/%s' % (app_label,report.model.__name__)
-    else:
-        url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
+def get_report_url(report,master_instance=None,**kw):
+    url = "/r/" + report.name
+    #~ app_label = report.__class__.__module__.split('.')[-2]
+    #~ if mode == 'choices':
+        #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
+    #~ else:
+        #~ url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
     if master_instance is None:
         master_instance = report.master_instance
     if master_instance is not None:
@@ -139,12 +137,14 @@ def sorry(request,message=None):
 
 
 def get_urls():
+    from . import reports
     return patterns('',
         (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
         #(r'^slave/(?P<app_label>\w+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
-        (r'^choices/(?P<app_label>\w+)/(?P<model_name>\w+)$', choices_view),
+        (r'^r/(?P<rptname>\w+)$', reports.view_report),
+        #(r'^choices/(?P<app_label>\w+)/(?P<model_name>\w+)$', choices_view),
+        #(r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_view),
+        #(r'^detail/(?P<app_label>\w+)/(?P<rptname>\w+)$', detail_view),
         #(r'^field_choices/(?P<app_label>.+)/(?P<model_name>.+)/(?P<field_name>.+)$', choices_view),
-        (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_view),
-        (r'^detail/(?P<app_label>\w+)/(?P<rptname>\w+)$', detail_view),
     )
 

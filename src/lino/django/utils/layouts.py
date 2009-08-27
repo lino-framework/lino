@@ -71,20 +71,18 @@ class Renderable:
         options = self.ext_options(request)
         options.update(kw)
         s = self.value_template % dict2js(options)
-        #s = self.value_template % ", ".join(["%s: %s" % (k,py2js(v,k)) for k,v in options.items()])
         return mark_safe(s)
-        
-    #~ def as_ext_name(self):
-        #~ return self.name + "_" + self.name_suffix
         
         
 class Element(Renderable):
     width = None
     height = None
+    #parent = None # will be set by Container
     def __init__(self,layout,name):
         #print "Element.__init__()", layout,name
         assert isinstance(layout,Layout)
         self.layout = layout
+        #self.parent = parent
         self.name = name
         if self.declared:
             layout.add_variable(self)
@@ -100,7 +98,7 @@ class Element(Renderable):
     def ext_options(self,request):
         return {}
         
-    def children(self):
+    def walk(self):
         return [ self ]
 
 class Store(Element):
@@ -108,16 +106,19 @@ class Store(Element):
     declared = True
     
     def __init__(self,layout,report):
-        Element.__init__(self,layout,report.name+"_store")
+        Element.__init__(self,layout,layout.name+"_store")
         self.report = report
-        print self,report.get_absolute_url()
+        print "Store.__init__()",self.name
+        #print self,report.get_absolute_url()
         
     def ext_options(self,request):
         #self.report.setup()
         if request.report == self.report:
             rr = request
         else:
-            rr = self.report.renderer(request.request)
+            #rr = self.report.renderer(request.request)
+            rr = self.report
+        self.report.setup()
         d = Element.ext_options(self,request)
         d.update(storeId=self.name)
         d.update(remoteSort=True)
@@ -157,7 +158,7 @@ class ColumnModel(Element):
     def ext_options(self,request):
         d = Element.ext_options(self,request)
         #editing = self.layout.report.can_change.passes(request)
-        l = [e.as_ext_column(request) for e in self.report.row_layout.leaves()]
+        l = [e.as_ext_column(request) for e in self.report.columns]
         d.update(columns=js_code("[ %s ]" % ", ".join(l)))
         #d.update(defaultSortable=True)
         return d
@@ -190,15 +191,18 @@ class VisibleElement(Element):
         #~ if label is not None:
             #~ self.label_width = len(label) + 1
         
+    def get_property(self,name):
+        v = getattr(self,name)
+        if self.parent is None or v is not None:
+            return v
+        return self.parent.get_property(name)
+
     def get_width(self):
         return self.width
         
     def set_width(self,w):
         self.width = w
         
-    def leaves(self):
-        return [ self ]
-
     #~ def as_ext(self):
         #~ s = self.ext_editor(label=True)
         #~ if s is not None:
@@ -231,19 +235,6 @@ class VisibleElement(Element):
         #~ except Exception,e:
             #~ traceback.print_exc(e)
         
-    def as_ext_column(self,request):
-        d = dict(
-          dataIndex=self.name, 
-          header=unicode(self.label) if self.label else self.name,
-          sortable=self.sortable)
-        if self.width:
-            d.update(width=self.width * EXT_CHAR_WIDTH)
-        if request.editing and self.editable:
-            fo = self.get_field_options(request)
-            # del fo['fieldLabel']
-            d.update(editor=js_code("{ %s }" % dict2js(fo)))
-        return "{ %s }" % dict2js(d)
-
     #~ def ext_column(self,editing):
         #~ s = """
         #~ {
@@ -318,6 +309,19 @@ class FieldElement(VisibleElement):
         self.field = field
         self.editable = field.editable
         
+    def as_ext_column(self,request):
+        d = dict(
+          dataIndex=self.name, 
+          header=unicode(self.label) if self.label else self.name,
+          sortable=self.sortable)
+        if self.width:
+            d.update(width=self.width * EXT_CHAR_WIDTH)
+        if request.editing and self.editable:
+            fo = self.get_field_options(request)
+            # del fo['fieldLabel']
+            d.update(editor=js_code("{ %s }" % dict2js(fo)))
+        return "{ %s }" % dict2js(d)
+
     def value2js(self,obj):
         return getattr(obj,self.name)
         
@@ -489,8 +493,8 @@ class MethodElement(VisibleElement):
         fn = getattr(obj,self.name)
         return fn()
         
-    def render(self,row):
-        return row.render_field(self)
+    #~ def render(self,row):
+        #~ return row.render_field(self)
 
 
 _field2elem = (
@@ -516,33 +520,38 @@ def field2elem(layout,field,**kw):
 
 
 class Container(VisibleElement):
-    ext_template = 'lino/includes/element.js'
-    ext_container = 'Ext.Panel'
+    #ext_template = 'lino/includes/element.js'
+    #ext_container = 'Ext.Panel'
     vertical = False
     hpad = 1
     is_fieldset = False
+    
+    # ExtJS options
+    frame = True
+    labelAlign = 'top'
     
     def __init__(self,layout,name,*elements,**kw):
         VisibleElement.__init__(self,layout,name,**kw)
         #print self.__class__.__name__, elements
         #self.label = kw.get('label',self.label)
-        self.elements = []
-        for elem in elements:
-            assert elem is not None
-            if type(elem) == str:
-                if "\n" in elem:
-                    lines = []
-                    for line in elem.splitlines():
-                        line = line.strip()
-                        if len(line) > 0 and not line.startswith("#"):
-                            lines.append(layout,line)
-                        self.elements.append(VBOX(layout,None,*lines))
-                else:
-                    for name in elem.split():
-                        if not name.startswith("#"):
-                            self.elements.append(layout[name])
-            else:
-                self.elements.append(elem)
+        self.elements = elements
+        #~ self.elements = []
+        #~ for elem in elements:
+            #~ assert elem is not None
+            #~ if type(elem) == str:
+                #~ if "\n" in elem:
+                    #~ lines = []
+                    #~ for line in elem.splitlines():
+                        #~ line = line.strip()
+                        #~ if len(line) > 0 and not line.startswith("#"):
+                            #~ lines.append(layout,line)
+                        #~ self.elements.append(VBOX(layout,None,*lines))
+                #~ else:
+                    #~ for name in elem.split():
+                        #~ if not name.startswith("#"):
+                            #~ self.elements.append(layout[name])
+            #~ else:
+                #~ self.elements.append(elem)
         self.compute_width()
         
         # some more analysis:
@@ -553,7 +562,7 @@ class Container(VisibleElement):
                 #~ if self.label_width < e.label_width:
                     #~ self.label_width = e.label_width
                 if self.vertical and e.label:
-                    w = len(e.label) + 1 
+                    w = len(e.label) + self.hpad
                     if self.label_width < w:
                         self.label_width = w
             if e.width == self.width:
@@ -581,19 +590,19 @@ class Container(VisibleElement):
             else:
                 for e in self.elements:
                     if e.width is None:
-                        return
+                        return # don't set this container's width since at least one element is flexible
                     w += e.width
             if w > 0:
                 self.width = w
                 
         
-    def children(self):
-        return self.elements
+    #~ def children(self):
+        #~ return self.elements
         
-    def leaves(self):
-        l = []
+    def walk(self):
+        l = [ self ]
         for e in self.elements:
-            l += e.leaves()
+            l += e.walk()
         return l
         
     def __str__(self):
@@ -614,14 +623,14 @@ class Container(VisibleElement):
             #~ raise
             #~ #print e
             #~ #return mark_safe("<PRE>%s</PRE>" % e)
-
+            
     def ext_options(self,request):
         d = VisibleElement.ext_options(self,request)
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
         #if not self.is_fieldset:
-        d.update(frame=self.layout.frame)
-        d.update(labelAlign=self.layout.labelAlign)
+        d.update(frame=self.get_property('frame'))
+        d.update(labelAlign=self.get_property('labelAlign'))
         l = [e.as_ext(request) for e in self.elements ]
         d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         return d
@@ -674,14 +683,14 @@ class GRID_ROW(Container):
 class GRID_CELL(Container):
     template = "lino/includes/grid_cell.html"
 
-class TAB(Container):
-    vertical = True
-    def ext_options(self,request):
-        d = Container.ext_options(self,request)
-        d.update(xtype='tabpanel')
-        d.update(layout='fit')
-        #d.update(activeTab=0)
-        return d
+#~ class TAB(Container):
+    #~ vertical = True
+    #~ def ext_options(self,request):
+        #~ d = Container.ext_options(self,request)
+        #~ d.update(xtype='tabpanel')
+        #~ d.update(layout='fit')
+        #~ #d.update(activeTab=0)
+        #~ return d
 
 class Layout(Renderable):
     label = "General"
@@ -691,16 +700,14 @@ class Layout(Renderable):
     hbox_class = HBOX
     width = None
     
-    # ExtJS options
-    frame = True
-    labelAlign = 'top'
-    
-    def __init__(self,report,desc=None,main=None):
+    def __init__(self,report,index,desc=None,main=None):
         #from . import reports
         #assert isinstance(report,reports.Report)
         self.variables = []
         self.slave_grids = []
         self.report = report
+        self.index = index
+        self.name = report.name + str(index)
         self.master_store = Store(self,report)
         #self._slave_dict = {}
         if main is None:
@@ -717,26 +724,24 @@ class Layout(Renderable):
 
         self._main = main
         
-        #~ self.slaves = [ 
-          #~ e.slave for e in self.leaves() 
-            #~ if isinstance(e,SlaveElement) ]
-        
         self.fields = tuple([ 
-            e for e in self.leaves() 
+            e for e in self.walk() 
                 if isinstance(e,FieldElement) ])
-              
+                  
         pk = None
-        for e in self.leaves():
+        for e in self.fields:
             if e.name == report.model._meta.pk.name:
                 pk = e
                 break
                 
         if pk is None:
             self.pk = self.add_hidden_field(report.model._meta.pk)
-            self.ext_store_fields = tuple(self.leaves()+[self.pk])
+            self.ext_store_fields = self.fields + (self.pk,)
         else:
             self.pk = pk
-            self.ext_store_fields = tuple(self.leaves())
+            self.ext_store_fields = self.fields
+        
+              
         
 
     #~ def add_variable(self,e):
@@ -846,8 +851,8 @@ class Layout(Renderable):
             return self.__class__.__name__
         return self.label
         
-    def leaves(self):
-        return self._main.leaves()
+    def walk(self):
+        return self._main.walk()
         
     def ext_options(self,request):
         raise NotImplementedError
@@ -896,8 +901,8 @@ class RowLayout(Layout):
     #value_template = "new Ext.grid.EditorGridPanel({ %s })"
     value_template = "new Ext.form.FormPanel({ %s })"
     
-    def __init__(self,report,desc=None,**kw):
-        Layout.__init__(self,report,desc,**kw)
+    def __init__(self,report,index,desc=None,**kw):
+        Layout.__init__(self,report,index,desc,**kw)
         self.grid = GridElement(self,report,self.master_store)
         #self.column_model = ColumnModel(self,report)
     
@@ -911,7 +916,8 @@ class RowLayout(Layout):
               pageSize: 1,
               prependButtons: true,
             }) """ % self.master_store.name))
-        d.update(items=js_code("[ %s ]" % self.grid.name))
+        #d.update(items=js_code("[ %s ]" % self.grid.name))
+        d.update(items=js_code(self.grid.name))
         d.update(title=request.get_title())
         return d
         
@@ -964,7 +970,7 @@ function save(oGrid_event){
      });
   }
   
-frm.on('afteredit', save);"""
+// frm.on('afteredit', save);"""
         l = self.report.get_absolute_url(mode='detail').split('?')
         if len(l) == 1:
             l.append('')
@@ -1007,7 +1013,7 @@ class PageLayout(Layout):
         s = """
 %s.addListener('load',function(store,rows,options) { """ % self.master_store.name
         s += """    
-    frm.form.loadRecord(rows[0]);"""
+    %s.form.loadRecord(rows[0]);""" % self.name
         for slave in self.slave_grids:
             s += """
     %s.load({params: { master: rows[0].data['%s'] } });""" % (
@@ -1015,7 +1021,7 @@ class PageLayout(Layout):
         s += """
 });"""
         s += """
-var submit = frm.addButton({
+var submit = %s.addButton({
     text: 'Submit',
     handler: function(){
         frm.form.submit({
@@ -1029,41 +1035,41 @@ var submit = frm.addButton({
             }
         });
     }
-});"""
+});""" % self.name
         return s
     
         
 
-class TabbedPageLayout(PageLayout):
+#~ class TabbedPageLayout(PageLayout):
   
-    def __init__(self,report,page_layouts):
-        # tabs is a list of PageLayout classes
-        tabs = [tc(report) for tc in page_layouts]
-        l = [tab._main for tab in tabs]
-        main = TAB(self,"tabs",*l)
-        PageLayout.__init__(self,report,main=main)
+    #~ def __init__(self,report,page_layouts):
+        #~ # page_layouts is a list of PageLayout classes
+        #~ tabs = [tc(report) for tc in page_layouts]
+        #~ l = [tab._main for tab in tabs]
+        #~ main = TAB(self,"tabs",*l)
+        #~ PageLayout.__init__(self,report,main=main)
         
-class LayoutRenderer:
-    def __init__(self,layout,report_renderer):
-        self.layout = layout
-        self.report = report_renderer
-        #self.request = report_renderer.request
-        self.fields = layout.fields
-        #self.slaves = [ rpt.renderer(self.request) for rpt in layout.slave_grids ]
-        self.master_store = layout.master_store
+#~ class LayoutRenderer:
+    #~ def __init__(self,layout,report_renderer):
+        #~ self.layout = layout
+        #~ self.report = report_renderer
+        #~ #self.request = report_renderer.request
+        #~ self.fields = layout.fields
+        #~ #self.slaves = [ rpt.renderer(self.request) for rpt in layout.slave_grids ]
+        #~ self.master_store = layout.master_store
         
-    def as_ext_value(self):
-      try:
-        s = self.layout.as_ext_value(self.report)
-        return mark_safe(s)
-      except Exception,e:
-        traceback.print_exc(e)
+    #~ def as_ext_value(self):
+      #~ try:
+        #~ s = self.layout.as_ext_value(self.report)
+        #~ return mark_safe(s)
+      #~ except Exception,e:
+        #~ traceback.print_exc(e)
         
-    def as_ext_script(self):
-      try:
-        return self.layout.as_ext_script(self.report)
-      except Exception,e:
-        traceback.print_exc(e)
+    #~ def old_as_ext_script(self):
+      #~ try:
+        #~ return self.layout.as_ext_script(self.report)
+      #~ except Exception,e:
+        #~ traceback.print_exc(e)
         
         
     #~ def slaves(self):
@@ -1074,65 +1080,62 @@ class LayoutRenderer:
         #~ traceback.print_exc(e)
         
     
-class unused_BoundElement:
-    def __init__(self,element,row):
-        assert isinstance(element,Element)
-        self.element = element
-        self.row = row
-        #from lino.django.utils.render import Row
-        #assert isinstance(row,Row)
+#~ class unused_BoundElement:
+    #~ def __init__(self,element,row):
+        #~ assert isinstance(element,Element)
+        #~ self.element = element
+        #~ self.row = row
+        #~ #from lino.django.utils.render import Row
+        #~ #assert isinstance(row,Row)
 
-    def as_html(self):
-        try:
-            return self.element.render(self.row)
-        except Exception,e:
-            print "Exception in BoundElement.as_html():"
-            traceback.print_exc()
-            raise e
+    #~ def as_html(self):
+        #~ try:
+            #~ return self.element.render(self.row)
+        #~ except Exception,e:
+            #~ print "Exception in BoundElement.as_html():"
+            #~ traceback.print_exc()
+            #~ raise e
   
-    #~ def as_json(self):
-        #~ return self.element.render_as_json(self.row)
+    #~ def __unicode__(self):
+        #~ return self.as_html()
         
-    def __unicode__(self):
-        return self.as_html()
-        
-    def children(self):
-        try:
-            assert isinstance(self.element,Container), "%s is not a Container" % self.element
-            for e in self.element.elements:
-                yield BoundElement(e,self.row)
-        except Exception,e:
-            print "Exception in BoundElement.children():"
-            traceback.print_exc()
-            raise e
+    #~ def children(self):
+        #~ try:
+            #~ assert isinstance(self.element,Container), "%s is not a Container" % self.element
+            #~ for e in self.element.elements:
+                #~ yield BoundElement(e,self.row)
+        #~ except Exception,e:
+            #~ print "Exception in BoundElement.children():"
+            #~ traceback.print_exc()
+            #~ raise e
             
-    def row_management(self):
-        return self.row.management()
+    #~ def row_management(self):
+        #~ return self.row.management()
         
-    def unused_row_management(self):
-        #print "row_management", self.element
-        try:
-            assert isinstance(self.element,GRID_ROW)
-            #row = self.renderer.get_row()
-            #s = "<td>%s</td>" % self.row.links()
-            l = []
-            if self.row.renderer.has_actions():
-                l.append(unicode(
-              self.renderer.selector[IS_SELECTED % self.row.number]))
+    #~ def unused_row_management(self):
+        #~ #print "row_management", self.element
+        #~ try:
+            #~ assert isinstance(self.element,GRID_ROW)
+            #~ #row = self.renderer.get_row()
+            #~ #s = "<td>%s</td>" % self.row.links()
+            #~ l = []
+            #~ if self.row.renderer.has_actions():
+                #~ l.append(unicode(
+              #~ self.renderer.selector[IS_SELECTED % self.row.number]))
 
-            s = ''
-            if self.row.renderer.editing:
-                s += "<td>%d%s</td>" % (self.row.number,
-                    self.row.pk_field())
-                if self.row.renderer.can_delete:
-                    s += "<td>%s</td>" % self.row.form["DELETE"]
-            else:
-                s += "<td>%d</td>" % (self.row.number)
-            return mark_safe(s)
-        except Exception,e:
-            print "Exception in BoundElement.row_management() %s:" % \
-                 self.row.renderer.request.path
-            traceback.print_exc()
-            raise e
+            #~ s = ''
+            #~ if self.row.renderer.editing:
+                #~ s += "<td>%d%s</td>" % (self.row.number,
+                    #~ self.row.pk_field())
+                #~ if self.row.renderer.can_delete:
+                    #~ s += "<td>%s</td>" % self.row.form["DELETE"]
+            #~ else:
+                #~ s += "<td>%d</td>" % (self.row.number)
+            #~ return mark_safe(s)
+        #~ except Exception,e:
+            #~ print "Exception in BoundElement.row_management() %s:" % \
+                 #~ self.row.renderer.request.path
+            #~ traceback.print_exc()
+            #~ raise e
 
 

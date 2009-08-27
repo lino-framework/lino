@@ -86,7 +86,7 @@ class ReportParameterForm(forms.Form):
     
 #model_reports = {}
 #_slave_reports = {}
-#_reports = []
+_reports = {}
 
 def register_report_class(rptclass):
     #_reports.append(cls)
@@ -109,26 +109,38 @@ def register_report_class(rptclass):
     #print "%s : slave for %s" % (rptclass.__name__, rptclass.master.__name__)
     
 
-
-def unused_register_report(rpt):
-    if rpt.model is None:
-        return
-    if rpt.master is not None:
-        return
-    if rpt.exclude is not None:
-        return
-    if rpt.filter is not None:
-        return
-    if hasattr(rpt.model,'_lino_model_report'):
-        print "[Warning] Ignoring %s" % rpt #.__name__
-        return
-    rpt.model._lino_model_report = self
+def register_report(rpt):
+    assert not _reports.has_key(rpt.name)
+    _reports[rpt.name] = rpt
+    
+    #~ if rpt.model is None:
+        #~ return
+    #~ if rpt.master is not None:
+        #~ return
+    #~ if rpt.exclude is not None:
+        #~ return
+    #~ if rpt.filter is not None:
+        #~ return
+    #~ if hasattr(rpt.model,'_lino_model_report'):
+        #~ print "[Warning] Ignoring %s" % rpt #.__name__
+        #~ return
+    #~ rpt.model._lino_model_report = self
     #~ db_table = rpt.model._meta.db_table
     #~ if model_reports.has_key(db_table):
         #~ print "[Warning] Ignoring %s" % rpt #.__name__
         #~ return
     #~ model_reports[db_table] = rpt
     
+def get_report(rptname):
+    rpt = _reports[rptname]
+    rpt.setup()
+    return rpt
+    
+def view_report(request,rptname=None):
+    """
+    """
+    rpt = get_report(rptname)
+    return rpt.view(request)
     
 def setup():
     """
@@ -149,6 +161,7 @@ def setup():
             model._lino_model_report_class = report_factory(model)
           
         #~ model._lino_combo = Report(model=model,columnNames='__str__')
+        
 
 def old_setup():
     """
@@ -224,8 +237,9 @@ def get_combo_report(model):
     rpt = getattr(model,'_lino_choices',None)
     if rpt: return rpt
     rc = model._lino_model_report_class
-    model._lino_choices = rc(columnNames=rc.display_field,mode='choices')
-    return model._lino_choices
+    rpt = rc(columnNames=rc.display_field,mode='choices')
+    model._lino_choices = rpt
+    return rpt
 
 def get_model_report(model):
     rpt = getattr(model,'_lino_model_report',None)
@@ -282,7 +296,7 @@ class Report:
     typo_check = True
     url = None
     #_slaves = None
-    mode = 'list' # or 'detail' or 'choices'
+    mode = None # suffix to create unique names 'choices'
     
     def __init__(self,**kw):
         for k,v in kw.items():
@@ -298,38 +312,49 @@ class Report:
         if self.label is None:
             self.label = self.__class__.__name__
         if self.name is None:
-            self.name = self.label #.lower()
+            self.name = self.__class__.__name__
+        if self.mode is not None:
+            self.name += "_" + self.mode
             
         self._setup_done = False
         
-        # register_report(self)
+        register_report(self)
+        print "Report.__init__() done:", self.name
         
     def setup(self):
         if self._setup_done:
             return
-        if self.form_class is None:
-            self.form_class = modelform_factory(self.model)
+        #~ if self.form_class is None:
+            #~ self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
-            self.row_layout = layouts.RowLayout(self,self.columnNames)
+            self.row_layout = layouts.RowLayout(self,0,self.columnNames)
         else:
             assert self.columnNames is None
-            self.row_layout = self.row_layout_class(self)
+            self.row_layout = self.row_layout_class(self,0)
             
-        self.columns = tuple(self.row_layout.leaves())
+        self.columns = self.row_layout.fields
         
         if self.master:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
             #self.name = self.fk.rel.related_name
-        if len(self.page_layouts) == 1:
-            self.page_layout = self.page_layouts[0](self)
-        else:
-            self.page_layout = layouts.TabbedPageLayout(self,
-              self.page_layouts)
+        self.layouts = [ self.row_layout ]
+        index = 1
+        for lc in self.page_layouts:
+            self.layouts.append(lc(self,index))
+            index += 1
+            
+        #~ if len(self.page_layouts) == 1:
+            #~ self.page_layout = self.page_layouts[0](self)
+        #~ else:
+            #~ self.page_layout = layouts.TabbedPageLayout(self,
+              #~ self.page_layouts)
         #~ self._page_layouts = [
               #~ layout(self) for layout in self.page_layouts]
         
-        self._setup_done = False
+        
+        self._setup_done = True
+        print "Report.setup() done:", self.name
             
             
         
@@ -371,54 +396,22 @@ class Report:
         #~ return self._slaves.values()
         
         
-    #~ def inlines(self):
-        #~ return {}
-         
-    def unused_json_url(self):
-        if self.url:
-            return "%s/json" % self.url
-        if self.master is not None:
-            model_name = self.master._meta.object_name.lower()
-            app_label = self.master._meta.app_label
-            return "/slave/%s/%s/%s" % (app_label,model_name,self.name)
-        print self.name, "has neither url nor master!?"
-            #~ m = self.master.get(master_id)
-            #~ url = render.get_instance_url(m)
-            #~ return url+"/"+self.name+"/json"
-        
-        
     def column_headers(self):
         self.setup()
         for e in self.columns:
             yield e.label
             
-    def unused_ext_columns(self):
-      try:
-        s = set(self.row_layout._main.columns())
-        for l in self._page_layouts:
-            s.update(l._main.columns())
-        return s
-        #return self.row_layout._main.columns()
-      except Exception,e:
-        import traceback
-        traceback.print_exc(e)
-    
     def get_title(self,renderer):
         #~ if self.title is None:
             #~ return self.label
         return self.title or self.label
         
-    #~ def get_master_instance(self):
-        #~ raise NotImplementedError
         
     def get_queryset(self,master_instance=None,flt=None,order_by=None):
         if self.queryset is not None:
             qs = self.queryset
         else:
             qs = self.model.objects.all()
-        #~ if self.master:
-            #~ fk = _get_foreign_key(self.master,self.model,self.fk_name)
-            #~ self.fk.get_attname()
         if self.master is None:
             assert master_instance is None
         else:
@@ -451,6 +444,11 @@ class Report:
             #~ raise Exception(
               #~ "%s is not a QuerySet but a %s:" % (qs, type(qs)))
         return qs
+        
+    def create_instance(self,renderer):
+        i = self.model()
+        # todo...
+        return i
         
     def getLabel(self):
         return self.label
@@ -489,36 +487,38 @@ class Report:
         l.append(url(r'^%s/(\d+)$' % name, self.view_one))
         #l.append(url(r'^%s/(\d+)/(.+)$' % name, self.view_one_slave))
         l.append(url(r'^%s$' % name, self.view_many))
-        l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_one))
-        l.append(url(r'^%s/pdf$' % name, self.pdf_many))
+        #l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_one))
+        #l.append(url(r'^%s/pdf$' % name, self.pdf_many))
         #l.append(url(r'^%s/flexigrid$' % name, self.flexigrid))
         l.append(url(r'^%s/update$' % name, self.ajax_update))
-        l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
-        l.append(url(r'^%s/print$' % name, self.print_many))
+        #l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
+        #l.append(url(r'^%s/print$' % name, self.print_many))
         #l.append(url(r'^%s/json$' % name, self.json))
         #l.append(url(r'^%s/(\d+)/json$' % name, self.json_one))
         return l
 
-    #~ def view(self,request):
-        #~ return self.view_many(request)
-    def view_many(self,request):
+    def view(self,request):
+        r = render.ViewReportRenderer(request,self)
+        return r.render_to_response()
+
+    def unused_view_many(self,request):
         #~ msg = "Hello, "+unicode(request.user)
         #~ print msg
         #~ request.user.message_set.create(msg)
         if not self.can_view.passes(request):
             return urls.sorry(request)
-        r = render.ListViewReportRenderer(request,True,self)
+        r = render.ViewReportRenderer(request,self)
         #~ if is_editing(request) and self.can_change.passes(request):
             #~ r = render.EditManyReportRenderer(request,True,self)
         #~ else:
             #~ r = render.ListViewReportRenderer(request,True,self)
         return r.render_to_response()
         
-    def renderer(self,request):
-        return render.ListViewReportRenderer(request,False,self)
+    #~ def renderer(self,request):
+        #~ return render.ListViewReportRenderer(request,False,self)
         
             
-    def view_one(self,request,**kw):
+    def unused_view_one(self,request,**kw):
         #print "Report.view_one()", request.path
         if not self.can_view.passes(request):
             return urls.sorry(request)
@@ -537,15 +537,15 @@ class Report:
         #~ slr = render.ListViewReportRenderer(request,True,sl)
         #~ return slr.render_to_response()
 
-    def pdf_one(self,request,row):
-        if not self.can_view.passes(request):
-            return urls.sorry(request)
-        return render.PdfOneReportRenderer(row,request,True,self).render()
+    #~ def pdf_one(self,request,row):
+        #~ if not self.can_view.passes(request):
+            #~ return urls.sorry(request)
+        #~ return render.PdfOneReportRenderer(row,request,True,self).render()
         
-    def pdf_many(self, request):
-        if not self.can_view.passes(request):
-            return urls.sorry(request)
-        return render.PdfManyReportRenderer(request,True,self).render()
+    #~ def pdf_many(self, request):
+        #~ if not self.can_view.passes(request):
+            #~ return urls.sorry(request)
+        #~ return render.PdfManyReportRenderer(request,True,self).render()
 
         
     def old_json(self, request):
@@ -595,12 +595,12 @@ class Report:
         #~ r = render.FlexigridRenderer(request,True,self)
         #~ return r.render_to_response()
         
-    def print_many(self, request):
+    def unused_print_many(self, request):
         if not self.can_view.passes(request):
             return urls.sorry(request)
         return render.PdfManyReportRenderer(request,True,self).render(as_pdf=False)
 
-    def print_one(self,request,row):
+    def unused_print_one(self,request,row):
         if not self.can_view.passes(request):
             return urls.sorry(request)
         return render.PdfOneReportRenderer(row,request,True,self).render(as_pdf=False)
@@ -624,7 +624,39 @@ class Report:
             print "DELETE:", row.instance
             row.instance.delete()
         renderer.must_refresh()
+
+    def as_ext_script(self,renderer):
+        s = '''
+        Ext.onReady(function(){ '''
+        # variable declarations. 
+        # Store declarations must come first because they may be referenced by field declarations
+        visibles = []
+        others = []
+        for layout in self.layouts:
+            for e in layout.variables:
+                if isinstance(e,layouts.VisibleElement):
+                    visibles.append(e)
+                else:
+                    others.append(e)
+        for e in others + visibles:
+            s += "\nvar %s = %s;" % (e.name,e.as_ext_value(renderer))
+            
+        for layout in self.layouts:
+            s += """
+var %s = %s;""" % (layout.name,layout.as_ext_value(renderer))
+
+            s += layout.on_load(renderer)
         
+            s += """
+%s.load(); """ % layout.master_store.name
+        items = ",".join([layout.name for layout in self.layouts])
+        s += """
+frm = new Ext.TabPanel(items = [%s], layout='fit');        
+frm.render('data');
+}); //end onReady """ % items
+        return mark_safe(s)
+        
+
         
 #~ class SubReport(Report):
   
