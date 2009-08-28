@@ -162,6 +162,9 @@ def setup():
           
         #~ model._lino_combo = Report(model=model,columnNames='__str__')
         
+    for rpt in _reports.values():
+        rpt.setup()
+        
 
 def old_setup():
     """
@@ -327,10 +330,10 @@ class Report:
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
-            self.row_layout = layouts.RowLayout(self,0,self.columnNames)
+            self.row_layout = layouts.RowLayout(self,1,self.columnNames)
         else:
             assert self.columnNames is None
-            self.row_layout = self.row_layout_class(self,0)
+            self.row_layout = self.row_layout_class(self,1)
             
         self.columns = self.row_layout.fields
         
@@ -339,7 +342,7 @@ class Report:
               self.model,self.fk_name)
             #self.name = self.fk.rel.related_name
         self.layouts = [ self.row_layout ]
-        index = 1
+        index = 2
         for lc in self.page_layouts:
             self.layouts.append(lc(self,index))
             index += 1
@@ -638,6 +641,7 @@ class Report:
                     visibles.append(e)
                 else:
                     others.append(e)
+        #print "foo", others[:2]
         for e in others + visibles:
             s += "\nvar %s = %s;" % (e.name,e.as_ext_value(renderer))
             

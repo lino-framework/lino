@@ -106,7 +106,7 @@ class Store(Element):
     declared = True
     
     def __init__(self,layout,report):
-        Element.__init__(self,layout,layout.name+"_store")
+        Element.__init__(self,layout,layout.name+"_"+report.name+"_store")
         self.report = report
         print "Store.__init__()",self.name
         #print self,report.get_absolute_url()
@@ -138,6 +138,12 @@ class Store(Element):
           "[ %s ]" % ",".join([repr(e.name) 
           for e in self.report.row_layout.ext_store_fields])
         ))
+        #~ d.update(fields=js_code(
+            #~ "[ %s ]" % ",".join([
+                #~ "{ %s }" % dict2js(dict(mapping=e.field.name,name=e.name))
+                #~ for e in self.report.row_layout.ext_store_fields
+            #~ ])
+        #~ ))
         return d
     
 class ColumnModel(Element):
@@ -146,7 +152,9 @@ class ColumnModel(Element):
     value_template = "new Ext.grid.ColumnModel({ %s })"
     
     def __init__(self,layout,report):
-        Element.__init__(self,layout,report.name+"_cols")
+        Element.__init__(self,layout,layout.name+"_"+report.name+"_cols")
+        #Element.__init__(self,layout,report.name+"_cols"+str(layout.index))
+        #Element.__init__(self,layout,report.name+"_cols")
         self.report = report
         
     #~ def __init__(self,layout,report):
@@ -304,7 +312,7 @@ class FieldElement(VisibleElement):
     declared = True
     #name_suffix = "field"
     def __init__(self,layout,field,**kw):
-        VisibleElement.__init__(self,layout,field.name,
+        VisibleElement.__init__(self,layout,layout.name+"_"+field.name,
             label=field.verbose_name,**kw)
         self.field = field
         self.editable = field.editable
@@ -323,7 +331,7 @@ class FieldElement(VisibleElement):
         return "{ %s }" % dict2js(d)
 
     def value2js(self,obj):
-        return getattr(obj,self.name)
+        return getattr(obj,self.field.name)
         
     #~ def render(self,row):
         #~ return row.render_field(self)
@@ -430,7 +438,9 @@ class GridElement(VisibleElement):
     declared = True
 
     def __init__(self,layout,report,store=None,**kw):
-        VisibleElement.__init__(self,layout,report.name+"_grid",**kw)
+        VisibleElement.__init__(self,layout,layout.name+"_"+report.name+"_grid")
+        #VisibleElement.__init__(self,layout,report.name+"_grid"+str(layout.index),**kw)
+        #VisibleElement.__init__(self,layout,report.name+"_grid",**kw)
         self.report = report
         if store is None:
             store = Store(layout,report)
