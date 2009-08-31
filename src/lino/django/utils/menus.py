@@ -105,29 +105,30 @@ class MenuItem(Component):
     pass
 
 
+        
 class Action(MenuItem):
-    def __init__(self,parent,actor,
+    def __init__(self,parent,actor=None,
                  name=None,label=None,
-                 hotkey=None,
+                 hotkey=None,url=None,
                  *args,**kw):
         
         if not kw.has_key('can_view'):
             kw.update(can_view=actor.can_view)
-        name = name or actor.name
+        #name = name or actor.name
         label = label or actor.label
         Component.__init__(self,parent,name,label,*args,**kw)
+        self._url = url or actor.get_absolute_url()
         self.actor = actor
         self.hotkey = hotkey
-        self._url = actor.get_absolute_url()
         
     def get_url_path(self):
         return self._url
         
-    def view(self,request):
-        return self.actor.view(request)
+    #~ def view(self,request):
+        #~ return self.actor.view(request)
         
-    def get_urls(self,name):
-        return self.actor.get_urls(name)
+    #~ def get_urls(self,name):
+        #~ return self.actor.get_urls(name)
 
 
 class Menu(MenuItem):
@@ -137,14 +138,17 @@ class Menu(MenuItem):
         self.items = []
         self.items_dict = {}
 
-    def add_action(self,*args,**kw):
-        return self.add_item(Action(self,*args,**kw))
-        
+    def add_action(self,actor,**kw):
+        return self._add_item(Action(self,actor,**kw))
+
+    def add_item(self,**kw):
+        return self._add_item(Action(self,**kw))
+
     
     def add_menu(self,name,label,**kw):
-        return self.add_item(Menu(name,label,self,**kw))
+        return self._add_item(Menu(name,label,self,**kw))
         
-    def add_item(self,m):
+    def _add_item(self,m):
         old = self.items_dict.get(m.name,None)
         if old:
             i = self.items.index(old)
@@ -204,13 +208,13 @@ class Menu(MenuItem):
         except Exception, e:
             traceback.print_exc(e)
 
-    def as_ext(self,request,level=1):
+    def as_ext(self,request,level=1,**kw):
       try:
         items = [i for i in self.items if i.can_view.passes(request)]
         s = ""
         if len(items) == 0: return ''
         if level == 1:
-            s += " [ "
+            s += "{region:'north', height:30, items:[ "
         else:
             s += """
             {
@@ -219,40 +223,40 @@ class Menu(MenuItem):
             """ % self.label
         s += ",\n".join([mi.as_ext(request,level+1) for mi in items])
         if level == 1:
-            s += " ] "
+            s += " ]} "
         else:
             s += """
             ]}}"""
-        return mark_safe(s)
+        return s
       except Exception, e:
         traceback.print_exc(e)
             
 
-    def get_urls(self,name=''):
-        #print "Menu.get_urls()",name
-        l = [url(r'^%s$' % name, self.view)]
-        if len(name) and not name.endswith("/"):
-            name += "/"
-        for mi in self.items:
-            l += mi.get_urls(name+mi.name)
-        #print urlpatterns
-        return patterns('',*l)
+    #~ def get_urls(self,name=''):
+        #~ #print "Menu.get_urls()",name
+        #~ l = [url(r'^%s$' % name, self.view)]
+        #~ if len(name) and not name.endswith("/"):
+            #~ name += "/"
+        #~ for mi in self.items:
+            #~ l += mi.get_urls(name+mi.name)
+        #~ #print urlpatterns
+        #~ return patterns('',*l)
         
-    def urls(self):
-        return self.get_urls() #self.name)
-    urls = property(urls)
+    #~ def urls(self):
+        #~ return self.get_urls() #self.name)
+    #~ urls = property(urls)
         
         
-    def view(self,request):
-        from lino.django.utils.sites import lino_site
-        context = lino_site.context(request,
-            title = self.label,
-            menu = MenuRenderer(self,request),
-        )
-        #return render_to_response("lino/menu.html",context)
-        return render_to_response(self.template_to_response,
-          context,
-          context_instance=template.RequestContext(request))
+    #~ def view(self,request):
+        #~ from lino.django.utils.sites import lino_site
+        #~ context = lino_site.context(request,
+            #~ title = self.label,
+            #~ menu = MenuRenderer(self,request),
+        #~ )
+        #~ #return render_to_response("lino/menu.html",context)
+        #~ return render_to_response(self.template_to_response,
+          #~ context,
+          #~ context_instance=template.RequestContext(request))
         
         
 
@@ -265,6 +269,6 @@ class MenuRenderer:
         return self.menu.as_html(self.request)
         
     def as_ext(self):
-        return self.menu.as_ext(self.request)
+        return mark_safe(self.menu.as_ext(self.request))
       
         

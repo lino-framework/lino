@@ -36,7 +36,12 @@ class is_authenticated(Condition):
     def passes(request):
         #print request.user, request.user.is_authenticated
         return request.user.is_authenticated()
-      
+
+class is_anonymous(Condition):
+    @staticmethod
+    def passes(request):
+        return not request.user.is_authenticated()
+
 #~ def always(request): return True
 #~ def is_staff(request): 
     #~ print "requests.is_staff()", request.user.is_staff

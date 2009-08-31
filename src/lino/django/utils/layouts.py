@@ -133,17 +133,17 @@ class Store(Element):
         d.update(root='rows')
         #print self.report.model._meta
         #d.update(id=self.report.model._meta.pk.attname)
-        d.update(id=self.report.row_layout.pk.name)
-        d.update(fields=js_code(
-          "[ %s ]" % ",".join([repr(e.name) 
-          for e in self.report.row_layout.ext_store_fields])
-        ))
+        d.update(id=self.layout.pk.field.name)
         #~ d.update(fields=js_code(
-            #~ "[ %s ]" % ",".join([
-                #~ "{ %s }" % dict2js(dict(mapping=e.field.name,name=e.name))
-                #~ for e in self.report.row_layout.ext_store_fields
-            #~ ])
+          #~ "[ %s ]" % ",".join([repr(e.field.name) 
+          #~ for e in self.report.row_layout.ext_store_fields])
         #~ ))
+        d.update(fields=js_code(
+            "[ %s ]" % ",".join([
+                "{ %s }" % dict2js(dict(mapping=e.field.name,name=e.name))
+                for e in self.layout.ext_store_fields
+            ])
+        ))
         return d
     
 class ColumnModel(Element):
@@ -718,6 +718,7 @@ class Layout(Renderable):
         self.report = report
         self.index = index
         self.name = report.name + str(index)
+        #print "Layout.__init__()", self.name
         self.master_store = Store(self,report)
         #self._slave_dict = {}
         if main is None:
@@ -731,6 +732,8 @@ class Layout(Renderable):
                 main = self.desc2elem("main",desc)
                 #~ for e in main.leaves():
                     #~ if e.name == report.model._meta.pk.name
+        else:
+            print "main is", main
 
         self._main = main
         
@@ -740,7 +743,7 @@ class Layout(Renderable):
                   
         pk = None
         for e in self.fields:
-            if e.name == report.model._meta.pk.name:
+            if e.field.name == report.model._meta.pk.name:
                 pk = e
                 break
                 
@@ -751,6 +754,7 @@ class Layout(Renderable):
             self.pk = pk
             self.ext_store_fields = self.fields
         
+        #print "Layout.__init__() done:", self.name
               
         
 
@@ -766,6 +770,8 @@ class Layout(Renderable):
         
             
     def desc2elem(self,name,desc,**kw):
+        #print "desc2elem()", repr(name),repr(desc)
+        #assert desc != 'Countries_choices2'
         if "\n" in desc:
             lines = []
             i = 0
@@ -789,40 +795,35 @@ class Layout(Renderable):
             return self.hbox_class(self,name,*l,**kw)
             
     def create_element(self,name):
-        # print self, "create_element()", name
+        #print "create_element()", name
         name,kw = self.splitdesc(name)
-        if name in ('__str__','__unicode__'):
-            meth = get_unbound_meth(self.report.model,name)
-            return MethodElement(self,name,meth,**kw)
+        if not name in ('__str__','__unicode__','name'):
+            value = getattr(self,name,None)
+            if value is not None:
+                if type(value) == str:
+                    return self.desc2elem(name,value,**kw)
+                if isinstance(value,StaticText):
+                    return value
+        slaveclass = self.report.get_slave(name)
+        if slaveclass is not None:
+            slaverpt = slaveclass()
+            #self._slave_dict[name] = slaverpt
+            e = GridElement(self,slaverpt,**kw)
+            self.slave_grids.append(e)
+            return e
         try:
-            value = getattr(self,name)
-        except AttributeError,e:
-            #return self.report.create_element()
-            slaveclass = self.report.get_slave(name)
-            if slaveclass is not None:
-                slaverpt = slaveclass()
-                #self._slave_dict[name] = slaverpt
-                e = GridElement(self,slaverpt,**kw)
-                self.slave_grids.append(e)
-                return e
-            try:
-                field = self.report.model._meta.get_field(name)
-            except models.FieldDoesNotExist,e:
-                meth = get_unbound_meth(self.report.model,name)
-                if meth is not None:
-                    return MethodElement(self,name,meth,**kw)
-            else:
-                return field2elem(self,field,**kw)
-                #return FieldElement(self,field,**kw)
+            field = self.report.model._meta.get_field(name)
+        except models.FieldDoesNotExist,e:
+            meth = get_unbound_meth(self.report.model,name)
+            if meth is not None:
+                return MethodElement(self,name,meth,**kw)
         else:
-            if type(value) == str:
-                return self.desc2elem(name,value,**kw)
-            if isinstance(value,StaticText):
-                return value
-            #print value
-        msg = "%s has no attribute '%s' (used in layout %s)" % (self.report.model,name,self.__class__)
-        print "[Warning]", msg
-        #raise KeyError(msg)
+            return field2elem(self,field,**kw)
+            #return FieldElement(self,field,**kw)
+        msg = "%s has no attribute '%s' (used in layout %s)" % (
+          self.report.model, name, self.__class__)
+        #print "[Warning]", msg
+        raise KeyError(msg)
         
          
     def splitdesc(self,picture):
@@ -853,9 +854,6 @@ class Layout(Renderable):
     def add_variable(self,elem):
         self.variables.append(elem)
         
-    def old_bound_to(self,row):
-        return BoundElement(self._main,row)
-
     def get_label(self):
         if self.label is None:
             return self.__class__.__name__
@@ -865,8 +863,8 @@ class Layout(Renderable):
         return self._main.walk()
         
     def ext_options(self,request):
-        raise NotImplementedError
-        #return self._main.ext_options(request)
+        return self._main.ext_options(request)
+        #return dict(title=request.get_title())
         
     def renderer(self,rr):
         return LayoutRenderer(self,rr)
@@ -918,17 +916,18 @@ class RowLayout(Layout):
     
     
     def ext_options(self,request):
-        d = {} # Layout.ext_options(self,request)
+        # d = Layout.ext_options(self,request)
+        d = dict(title=request.get_title()) 
+        d.update(region='center',split=True)
         if True:
             d.update(tbar=js_code("""new Ext.PagingToolbar({
               store: %s,
               displayInfo: true,
-              pageSize: 1,
+              pageSize: %d,
               prependButtons: true,
-            }) """ % self.master_store.name))
+            }) """ % (self.master_store.name,self.report.page_length)))
         #d.update(items=js_code("[ %s ]" % self.grid.name))
         d.update(items=js_code(self.grid.name))
-        d.update(title=request.get_title())
         return d
         
     #~ def ext_options(self,request):
@@ -956,7 +955,7 @@ function save(oGrid_event){
         url: '%s',""" % request.get_absolute_url(ajax='update')
         d = {}
         for e in self.ext_store_fields:
-            d[e.name] = js_code('oGrid_event.record.data.%s' % e.name)
+            d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.name)
         
         s += """
         params: { %s }, """ % dict2js(d)
@@ -1003,14 +1002,15 @@ class PageLayout(Layout):
     value_template = "new Ext.form.FormPanel({ %s })"
     
     def ext_options(self,request):
-        d = {} # Layout.ext_options(self,request)
+        d = Layout.ext_options(self,request)
+        d.update(region='east',split=True) #,width=300)
         d.update(tbar=js_code("""new Ext.PagingToolbar({
           store: %s,
           displayInfo: true,
           pageSize: 1,
           prependButtons: true,
         }) """ % self.master_store.name))
-        d.update(items=js_code("[ %s ]" % self._main.as_ext(request)))
+        d.update(items=js_code(self._main.as_ext(request)))
         return d
         
     #~ def as_ext_value(self,request,**kw):

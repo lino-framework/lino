@@ -25,14 +25,15 @@ from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
 
-from lino.django.utils import layouts, render, perms, urls
-from lino.django.utils.editing import is_editing
-
 from django.http import HttpResponse
 #from django.core import serializers
 #from django.shortcuts import render_to_response
 #from django.utils import simplejson
 from django.utils.safestring import mark_safe
+
+from lino.django.utils import layouts, render, perms, urls
+from lino.django.utils.editing import is_editing
+from lino.django.utils.sites import lino_site
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth, is_filter
@@ -631,6 +632,8 @@ class Report:
     def as_ext_script(self,renderer):
         s = '''
         Ext.onReady(function(){ '''
+        s += """
+var main_menu = new Ext.Toolbar(%s);""" % lino_site._menu.as_ext(renderer.request)
         # variable declarations. 
         # Store declarations must come first because they may be referenced by field declarations
         visibles = []
@@ -648,16 +651,58 @@ class Report:
         for layout in self.layouts:
             s += """
 var %s = %s;""" % (layout.name,layout.as_ext_value(renderer))
-
             s += layout.on_load(renderer)
         
+        for layout in self.layouts:
             s += """
 %s.load(); """ % layout.master_store.name
-        items = ",".join([layout.name for layout in self.layouts])
+
+        mode = 2
+        if mode == 0:
+            d = dict(
+              items=layouts.js_code("[%s]" % ",".join([layout.name for layout in self.layouts]))
+              )
+            #d.update(layout='fit')
+            d.update(activeTab=0)
+            #d.update(autoHeight=True)
+            #d.update(title=layout.name)
+            #d.update(width=500)
+            d.update(height=500)
+            s += """
+frm = new Ext.TabPanel({%s});""" % layouts.dict2js(d)
+            s += """
+main_menu.render('main_menu');
+frm.render('data');"""
+        elif mode == 1:
+            num = 0
+            width = 500
+            s += """
+main_menu.render('main_menu');"""
+            for layout in self.layouts:
+                d = dict(layout='fit')
+                d.update(width=width)
+                d.update(height=500)
+                d.update(maximizable=True)
+                d.update(minimizable=True)
+                d.update(x=10+num*width)
+                d.update(y=100)
+                d.update(title=layout.name)
+                d.update(items=layouts.js_code(layout.name))
+                s += """
+new Ext.Window({%s}).show();""" % layouts.dict2js(d)
+                num += 1
+
+
+        elif mode == 2:
+            d = dict(layout='border')
+            d.update(items=layouts.js_code(
+              "[main_menu,"+",".join([l.name for l in self.layouts]) +"]"
+            ))
+            s += """
+new Ext.Viewport({%s}).render('body');""" % layouts.dict2js(d)
+            
         s += """
-frm = new Ext.TabPanel(items = [%s], layout='fit');        
-frm.render('data');
-}); //end onReady """ % items
+}); //end onReady """ 
         return mark_safe(s)
         
 

@@ -1,7 +1,5 @@
 {% extends "lino/base_site.html" %}
 
-<h1>{{ title }}</h1>
-
 {% block extrahead %}
 <script type="text/javascript">
 {{ report.as_ext_script }}
@@ -9,20 +7,3 @@
 {% endblock extrahead %}
 
 
-{% block navigation %}
-
-<div class="view_modes">view_modes: {{ report.view_modes }}</div>
-
-<form action="" method="GET">
-<ul class="report_params">
-{{ report.params.as_ul }}
-<li><input type="submit" value="Refresh" /></li>
-</ul>
-</form>
-
-{% endblock navigation %}
-
-
-{% block content %}
-<div id="data"></div>
-{% endblock content %}

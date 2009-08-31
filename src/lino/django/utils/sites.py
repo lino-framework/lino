@@ -37,7 +37,6 @@ from lino.tools.my_import import my_import as import_module
 from django import template 
 from django.views.decorators.cache import never_cache 
 #from django.shortcuts import render_to_response 
-from lino.django.utils import menus # Menu, MenuRenderer
 from django.contrib.auth.models import User
 
 
@@ -64,6 +63,8 @@ from django.utils.http import int_to_base36
 
 from django.utils.safestring import mark_safe
 
+from . import perms
+from . import menus
 
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label=_("E-mail"), max_length=75)
@@ -407,11 +408,9 @@ class LinoSite: #(AdminSite):
             (r'^accounts/login/$', self.login),
             (r'^accounts/logout/$', self.logout),
             (r'^accounts/password_change/$', self.password_change),
-            (r'^accounts/password_change/done/$', 
-                self.password_change_done),
+            (r'^accounts/password_change/done/$', self.password_change_done),
             (r'^accounts/password_reset/$', self.password_reset),
-            (r'^accounts/password_reset/done/$', 
-                self.password_reset_done),
+            (r'^accounts/password_reset/done/$', self.password_reset_done),
             (r'^accounts/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 
               self.password_reset_confirm),
             (r'^accounts/reset/done/$', self.password_reset_complete),
@@ -424,6 +423,11 @@ class LinoSite: #(AdminSite):
         return urlpatterns
         #return self._menu.get_urls()
         
+    def add_program_menu(self):
+        m = self.add_menu("app","~Application",)
+        m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
+        m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
+    
   
 #~ class Skin:
     #~ body = dict(

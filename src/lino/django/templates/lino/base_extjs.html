@@ -27,13 +27,13 @@ Ext.BLANK_IMAGE_URL = '{{settings.EXTJS_URL}}resources/images/default/s.gif';
 Ext.onReady(function(){
   // alert('woohoo!!! this is Ext.js!');
   
-  var tb = new Ext.Toolbar(
-    {{ main_menu.as_ext }}
-  );
+  // var tb = new Ext.Toolbar(
+//    { { main_menu.as_ext } }
+  //);
 
-  tb.doLayout();
+  // tb.doLayout();
   
-  tb.render('main_menu');
+  // tb.render('main_menu');
 }); //end onReady
 </script>
 {% block extrahead %}{% endblock %}

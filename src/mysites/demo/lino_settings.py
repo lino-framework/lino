@@ -90,4 +90,5 @@ m.add_action(system.Users())
 m.add_action(system.Groups())
 #m.can_view = perms.is_staff
 
-
+lino.add_program_menu()
+#m.add_action()
