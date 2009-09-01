@@ -48,7 +48,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.sites.models import Site, RequestSite
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponse,HttpResponseRedirect, Http404
 from django.template import RequestContext, Context, loader
 from django.utils.http import urlquote, base36_to_int
 from django.utils.translation import ugettext as _
@@ -65,6 +65,7 @@ from django.utils.safestring import mark_safe
 
 from . import perms
 from . import menus
+from . import layouts
 
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label=_("E-mail"), max_length=75)
@@ -94,8 +95,14 @@ class PasswordResetForm(forms.Form):
 
 
 class LinoSite: #(AdminSite):
-    index_template = 'lino/index.html'
+    #index_template = 'lino/index.html'
+    index_template = 'lino/ext_index.html'
     #login_template = 'lino/login.html'
+    
+    help_url = "http://code.google.com/p/lino"
+
+    index_html = "This is the main page."
+    
   
     def __init__(self,*args,**kw):
         #AdminSite.__init__(self,*args,**kw)
@@ -201,11 +208,15 @@ class LinoSite: #(AdminSite):
         return d
         
     def index(self, request):
+        cmp = layouts.Component("index",xtype="panel",html=self.index_html,region="center")
+        return self.ext_view(request, cmp)
+    index = never_cache(index)
+      
+    def old_index(self, request):
         context = self.context(request,title=self._menu.label)
         return render_to_response(self.index_template, context,
             context_instance=template.RequestContext(request)
         )
-    index = never_cache(index)
     
     def login(self,request, template_name='registration/login.html', 
               redirect_field_name=REDIRECT_FIELD_NAME):
@@ -428,6 +439,53 @@ class LinoSite: #(AdminSite):
         m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
         m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
     
+  
+  
+    def ext_view(self,request,*components):
+        s = """<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">{{ title }}</title>"""
+        s += """
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="%sresources/css/ext-all.css" />""" % settings.EXTJS_URL
+        s += """
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="%sadapter/ext/ext-base.js"></script>""" % settings.EXTJS_URL
+        s += """
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="%sext-all-debug.js"></script>""" % settings.EXTJS_URL
+        s += """
+<!-- overrides to library -->
+<link rel="stylesheet" type="text/css" href="/media/lino.css">
+<script type="text/javascript" src="/media/lino.js"></script>
+<!-- page specific -->
+<script type="text/javascript">
+// Path to the blank image should point to a valid location on your server
+Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
+        s += """
+Ext.onReady(function(){ """
+        s += """
+var main_menu = new Ext.Toolbar(%s);""" % self._menu.as_ext(request)
+
+        d = dict(layout='border')
+        d.update(items=layouts.js_code(
+          "[main_menu,"+",".join([c.as_ext(request) for c in components]) +"]"
+        ))
+        for c in components:
+            for v in c.ext_variables(request):
+                s += "%s = %s;\n" % (v.name,v.as_ext_value(request))
+
+        for c in components:
+            for ln in c.ext_lines(request):
+                s += ln + "\n"
+        s += """
+new Ext.Viewport({%s}).render('body');""" % layouts.dict2js(d)
+        s += "\n}); // end of onReady()"
+        s += "\n</script></head><body></body></html>"
+        return HttpResponse(s)
   
 #~ class Skin:
     #~ body = dict(

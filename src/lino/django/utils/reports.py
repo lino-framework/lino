@@ -34,6 +34,7 @@ from django.utils.safestring import mark_safe
 from lino.django.utils import layouts, render, perms, urls
 from lino.django.utils.editing import is_editing
 from lino.django.utils.sites import lino_site
+from lino.django.utils.requests import get_redirect, redirect_to
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth, is_filter
@@ -502,8 +503,13 @@ class Report:
         return l
 
     def view(self,request):
+        url = get_redirect(request)
+        if url is not None:
+            return HttpResponseRedirect(url)
         r = render.ViewReportRenderer(request,self)
+        request._lino_report = r
         return r.render_to_response()
+        #return lino_site.view(request,r.get_components())
 
     def unused_view_many(self,request):
         #~ msg = "Hello, "+unicode(request.user)
@@ -629,9 +635,9 @@ class Report:
             row.instance.delete()
         renderer.must_refresh()
 
-    def as_ext_script(self,renderer):
+    def old_as_ext_script(self,renderer):
         s = '''
-        Ext.onReady(function(){ '''
+Ext.onReady(function(){ '''
         s += """
 var main_menu = new Ext.Toolbar(%s);""" % lino_site._menu.as_ext(renderer.request)
         # variable declarations. 
@@ -705,7 +711,31 @@ new Ext.Viewport({%s}).render('body');""" % layouts.dict2js(d)
 }); //end onReady """ 
         return mark_safe(s)
         
+        
+    def old_ext_lines(self,renderer):
+        # variable declarations. 
+        # Stores and fields must come first because they may be referenced by field declarations
+        visibles = []
+        others = []
+        for layout in self.layouts:
+            for e in layout.variables:
+                if isinstance(e,layouts.VisibleElement):
+                    visibles.append(e)
+                else:
+                    others.append(e)
+        #print "foo", others[:2]
+        for e in others + visibles:
+            yield "var %s = %s;" % (e.name,e.as_ext_value(renderer))
+            
+        for layout in self.layouts:
+            yield "var %s = %s;" % (layout.name,layout.as_ext_value(renderer))
+            for ln in layout.ext_lines(renderer):
+                yield ln
+        
+        for layout in self.layouts:
+            yield "%s.load();" % layout.master_store.name
 
+        
         
 #~ class SubReport(Report):
   

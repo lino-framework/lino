@@ -141,6 +141,13 @@ class ReportRenderer:
             d[e.field.name] = e.value2js(obj)
         return d
             
+    def json_reponse(self):
+        rows = [ self.obj2json(row) for row in self.queryset ]
+        d = dict(count=self.total_count,rows=rows)
+        s = simplejson.dumps(d,default=unicode)
+        #print s
+        return HttpResponse(s, mimetype='text/html')
+        
 
 class ViewReportRenderer(ReportRenderer):
   
@@ -200,7 +207,7 @@ class ViewReportRenderer(ReportRenderer):
         return self.report.get_absolute_url(**kw)
         
         
-    def render_to_response(self):
+    def old_render_to_response(self):
         url = get_redirect(self.request)
         if url is not None:
             return HttpResponseRedirect(url)
@@ -219,6 +226,21 @@ class ViewReportRenderer(ReportRenderer):
             context['help_url'] = self.report.help_url
         return render_to_response("lino/report.html", context,
             context_instance=template.RequestContext(self.request))
+            
+            
+    #~ def ext_components(self):
+        #~ return self.layouts
+            
+    def render_to_response(self):
+        #~ url = get_redirect(self.request)
+        #~ if url is not None:
+            #~ return HttpResponseRedirect(url)
+        if self.json:
+            return self.json_reponse()
+            
+        from lino.django.utils.sites import lino_site
+        return lino_site.ext_view(self.request,*self.report.layouts)
+        
 
     def as_ext_script(self):
       try:
@@ -228,13 +250,6 @@ class ViewReportRenderer(ReportRenderer):
         
 
 
-    def json_reponse(self):
-        rows = [ self.obj2json(row) for row in self.queryset ]
-        d = dict(count=self.total_count,rows=rows)
-        s = simplejson.dumps(d,default=unicode)
-        #print s
-        return HttpResponse(s, mimetype='text/html')
-        
             
       
 #~ class ListViewReportRenderer(ViewReportRenderer):

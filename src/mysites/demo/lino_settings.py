@@ -1,5 +1,13 @@
 #lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
 lino.help_url = "http://lino.saffre-rumma.ee/django/igen/userman.html"
+
+lino.index_html = """
+<p>This is a demo database with no user authentification required.
+You can change data and play with it, 
+but keep in mind that the data is being reset 
+to an initial state when necessary.
+<a href="%s">More</a>""" % lino.help_url
+
 #lino.sort_menu_items(back='config system')
 
 #~ from lino.django.apps.system import models as system
@@ -92,3 +100,4 @@ m.add_action(system.Groups())
 
 lino.add_program_menu()
 #m.add_action()
+

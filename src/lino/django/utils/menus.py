@@ -136,7 +136,7 @@ class Menu(MenuItem):
     def __init__(self,name,label=None,parent=None,**kw):
         MenuItem.__init__(self,parent,name,label,**kw)
         self.items = []
-        self.items_dict = {}
+        #self.items_dict = {}
 
     def add_action(self,actor,**kw):
         return self._add_item(Action(self,actor,**kw))
@@ -149,18 +149,18 @@ class Menu(MenuItem):
         return self._add_item(Menu(name,label,self,**kw))
         
     def _add_item(self,m):
-        old = self.items_dict.get(m.name,None)
-        if old:
-            i = self.items.index(old)
-            # print [ mi.name for mi in self.items ]
-            print "[debug] Replacing menu item %s at position %d" % (m.name,i)
-            # self.items[i] = m
-            # assert len(m) == 0
-            return old 
-        else:
+        #~ old = self.items_dict.get(m.name,None)
+        #~ if old:
+            #~ i = self.items.index(old)
+            #~ # print [ mi.name for mi in self.items ]
+            #~ print "[debug] Replacing menu item %s at position %d" % (m.name,i)
+            #~ # self.items[i] = m
+            #~ # assert len(m) == 0
+            #~ return old 
+        #~ else:
             #print "[debug] Adding menu item %s" % m.name
-            self.items.append(m)
-        self.items_dict[m.name] = m
+        self.items.append(m)
+        #self.items_dict[m.name] = m
         #~ if m.name in [i.name for i in self.items]:
             #~ raise "Duplicate item name %s for menu %s" % (m.name,self.name)
         return m

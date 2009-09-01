@@ -54,27 +54,41 @@ def get_unbound_meth(cl,name):
         if meth is not None:
             return meth
       
-class Renderable:
+class Component:
     declared = False
     #name_suffix = None
     value_template = "{ %s }"
+    
+    def __init__(self,name,**options):
+        self.name = name
+        self.options = options
+        
     def value2js(self,obj):
         raise NotImplementedError
         
-    def as_ext(self,request,**kw):
+    def ext_variables(self,request):
         if self.declared:
-            return self.name # as_ext_name()
-        else:
-            return self.as_ext_value(request,**kw)
+            yield self
         
-    def as_ext_value(self,request,**kw):
+    def ext_lines(self,request):
+        return []
+        
+    def ext_options(self,request):
+        return self.options
+        
+    def as_ext_value(self,request):
         options = self.ext_options(request)
-        options.update(kw)
         s = self.value_template % dict2js(options)
         return mark_safe(s)
         
+    def as_ext(self,request):
+        if self.declared:
+            return self.name # as_ext_name()
+        else:
+            return self.as_ext_value(request)
         
-class Element(Renderable):
+        
+class Element(Component):
     width = None
     height = None
     #parent = None # will be set by Container
@@ -83,7 +97,7 @@ class Element(Renderable):
         assert isinstance(layout,Layout)
         self.layout = layout
         #self.parent = parent
-        self.name = name
+        Component.__init__(self,name)
         if self.declared:
             layout.add_variable(self)
             
@@ -113,10 +127,9 @@ class Store(Element):
         
     def ext_options(self,request):
         #self.report.setup()
-        if request.report == self.report:
-            rr = request
+        if request._lino_report.report == self.report:
+            rr = request._lino_report
         else:
-            #rr = self.report.renderer(request.request)
             rr = self.report
         self.report.setup()
         d = Element.ext_options(self,request)
@@ -324,7 +337,7 @@ class FieldElement(VisibleElement):
           sortable=self.sortable)
         if self.width:
             d.update(width=self.width * EXT_CHAR_WIDTH)
-        if request.editing and self.editable:
+        if request._lino_report.editing and self.editable:
             fo = self.get_field_options(request)
             # del fo['fieldLabel']
             d.update(editor=js_code("{ %s }" % dict2js(fo)))
@@ -454,7 +467,7 @@ class GridElement(VisibleElement):
         # print rpt
         d = VisibleElement.ext_options(self,request)
         #editing = self.report.can_change.passes(request)
-        if request.editing:
+        if request._lino_report.editing:
             d.update(clicksToEdit=2)
             #~ d.update(xtype='editorgrid')
         #~ else:
@@ -702,7 +715,8 @@ class GRID_CELL(Container):
         #~ #d.update(activeTab=0)
         #~ return d
 
-class Layout(Renderable):
+class Layout(Component):
+    declared = True
     label = "General"
     #detail_reports = {}
     join_str = None # set by subclasses
@@ -713,11 +727,11 @@ class Layout(Renderable):
     def __init__(self,report,index,desc=None,main=None):
         #from . import reports
         #assert isinstance(report,reports.Report)
+        Component.__init__(self,report.name + str(index))
         self.variables = []
         self.slave_grids = []
         self.report = report
         self.index = index
-        self.name = report.name + str(index)
         #print "Layout.__init__()", self.name
         self.master_store = Store(self,report)
         #self._slave_dict = {}
@@ -869,10 +883,20 @@ class Layout(Renderable):
     def renderer(self,rr):
         return LayoutRenderer(self,rr)
         
-    def on_load(self,request):
-        return ""
+    def ext_variables(self,request):
+        later = []
+        for e in self.variables:
+            if isinstance(e,VisibleElement):
+                later.append(e)
+            else:
+                yield e
+        for e in later: yield e
+        yield self
         
-    def as_ext_script(self,request):
+    def ext_lines(self,request):
+        raise NotImplementedError
+    
+    def old_as_ext_script(self,request):
         s = '''
         Ext.onReady(function(){ '''
         # variable declarations. 
@@ -917,7 +941,7 @@ class RowLayout(Layout):
     
     def ext_options(self,request):
         # d = Layout.ext_options(self,request)
-        d = dict(title=request.get_title()) 
+        d = dict(title=request._lino_report.get_title()) 
         d.update(region='center',split=True)
         if True:
             d.update(tbar=js_code("""new Ext.PagingToolbar({
@@ -947,12 +971,12 @@ class RowLayout(Layout):
         
         
         
-    def on_load(self,request):
+    def ext_lines(self,request):
         s = """
 function save(oGrid_event){
     Ext.Ajax.request({
         waitMsg: 'Please wait...',
-        url: '%s',""" % request.get_absolute_url(ajax='update')
+        url: '%s',""" % request._lino_report.get_absolute_url(ajax='update')
         d = {}
         for e in self.ext_store_fields:
             d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.name)
@@ -977,23 +1001,22 @@ function save(oGrid_event){
            Ext.MessageBox.alert('error','could not connect to the database. retry later');		
         }
      });
-  }
-  
-// frm.on('afteredit', save);"""
+  }"""
+        yield s
+        yield "// frm.on('afteredit', save);"
+
         l = self.report.get_absolute_url(mode='detail').split('?')
         if len(l) == 1:
             l.append('')
-        s += """
-  
+        s = """
 function onCellClick(grid, rowIndex, e) {
   url = "%s?row=" + String(rowIndex) + "%s";
   Ext.MessageBox.alert(url,url);
   // document.location = url;
 };""" % tuple(l)
-        s += """
-%s.getSelectionModel().on('rowselect', onCellClick);
-        """ % self.grid.name
-        return s
+        yield s
+        yield "%s.getSelectionModel().on('rowselect', onCellClick);" % self.grid.name
+        yield "%s.load();" % self.master_store.name
     
 class PageLayout(Layout):
     show_labels = True
@@ -1019,18 +1042,15 @@ class PageLayout(Layout):
         #~ s = "new Ext.form.FormPanel({items: [ %s ]})" % self._main.as_ext_value(request,**options)
         #~ return mark_safe(s)
         
-    def on_load(self,request):
-        s = """
-%s.addListener('load',function(store,rows,options) { """ % self.master_store.name
-        s += """    
-    %s.form.loadRecord(rows[0]);""" % self.name
+    def ext_lines(self,request):
+        s = "%s.addListener('load',function(store,rows,options) { " % self.master_store.name
+        s += "\n  %s.form.loadRecord(rows[0]);" % self.name
         for slave in self.slave_grids:
-            s += """
-    %s.load({params: { master: rows[0].data['%s'] } });""" % (
-      slave.store.name,request.layout.pk.name)
-        s += """
-});"""
-        s += """
+            s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
+                 slave.store.name,request.layout.pk.name)
+        s += "\n});"
+        yield s
+        s = """
 var submit = %s.addButton({
     text: 'Submit',
     handler: function(){
@@ -1046,7 +1066,8 @@ var submit = %s.addButton({
         });
     }
 });""" % self.name
-        return s
+        yield s
+        yield "%s.load();" % self.master_store.name
     
         
 
