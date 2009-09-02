@@ -100,8 +100,8 @@ class LinoSite: #(AdminSite):
     #login_template = 'lino/login.html'
     
     help_url = "http://code.google.com/p/lino"
-
     index_html = "This is the main page."
+    title = "Unnamed LinoSite"
     
   
     def __init__(self,*args,**kw):
@@ -444,7 +444,7 @@ class LinoSite: #(AdminSite):
     def ext_view(self,request,*components):
         s = """<html><head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title id="title">{{ title }}</title>"""
+<title id="title">%s</title>""" % self.title
         s += """
 <!-- ** CSS ** -->
 <!-- base library -->

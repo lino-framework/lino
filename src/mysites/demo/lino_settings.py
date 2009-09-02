@@ -1,24 +1,20 @@
 #lino_site.help_url = "http://code.google.com/p/lino/wiki/IgenUserManual"
 lino.help_url = "http://lino.saffre-rumma.ee/django/igen/userman.html"
-
+lino.title = "iGen demo"
 lino.index_html = """
-<p>This is a demo database with no user authentification required.
+This is a demo database for iGen, the first Lino application.
+
+<p>iGen lets you write recurrent invoices to your customers, and manage their payments.
+
+<p>
 You can change data and play with it, 
 but keep in mind that the data is being reset 
 to an initial state when necessary.
+
+<p>
+You can log in as user "user" or "root", both with password "1234".
+The menu changes depending on which user you are.
 <a href="%s">More</a>""" % lino.help_url
-
-#lino.sort_menu_items(back='config system')
-
-#~ from lino.django.apps.system import models as system
-#~ from lino.django.apps.countries import models as countries
-#~ from lino.django.apps.contacts import models as contacts
-#~ from lino.django.apps.products import models as products
-#~ from lino.django.apps.documents import models as documents
-#~ from lino.django.apps.ledger import models as ledger
-#~ from lino.django.apps.sales import models as sales
-#~ from lino.django.apps.finan import models as finan
-#~ from lino.django.apps.journals import models as journals 
 
 from django.db import models
 

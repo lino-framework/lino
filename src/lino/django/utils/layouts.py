@@ -25,6 +25,16 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.template.loader import render_to_string
 
+def get_unbound_meth(cl,name):
+    meth = getattr(cl,name,None)
+    if meth is not None:
+        return meth
+    for b in cl.__bases__:
+        meth = getattr(b,name,None)
+        if meth is not None:
+            return meth
+
+
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 12
 
@@ -44,15 +54,6 @@ class js_code:
       self.s = s
     def __repr__(self):
       return self.s
-      
-def get_unbound_meth(cl,name):
-    meth = getattr(cl,name,None)
-    if meth is not None:
-        return meth
-    for b in cl.__bases__:
-        meth = getattr(b,name,None)
-        if meth is not None:
-            return meth
       
 class Component:
     declared = False
@@ -671,8 +672,6 @@ class Container(VisibleElement):
         
 
 class HBOX(Container):
-    #template = "lino/includes/hbox.html"
-    #ext_layout = 'Ext.layout.HBoxLayout'
         
     def ext_options(self,request):
         d = Container.ext_options(self,request)
@@ -681,10 +680,7 @@ class HBOX(Container):
         return d
         
 class VBOX(Container):
-    #template = "lino/includes/vbox.html"
     vertical = True
-    #ext_layout = 'Ext.layout.VBoxLayout'
-    
                 
     def ext_options(self,request):
         d = Container.ext_options(self,request)
@@ -706,14 +702,6 @@ class GRID_ROW(Container):
 class GRID_CELL(Container):
     template = "lino/includes/grid_cell.html"
 
-#~ class TAB(Container):
-    #~ vertical = True
-    #~ def ext_options(self,request):
-        #~ d = Container.ext_options(self,request)
-        #~ d.update(xtype='tabpanel')
-        #~ d.update(layout='fit')
-        #~ #d.update(activeTab=0)
-        #~ return d
 
 class Layout(Component):
     declared = True
@@ -896,33 +884,6 @@ class Layout(Component):
     def ext_lines(self,request):
         raise NotImplementedError
     
-    def old_as_ext_script(self,request):
-        s = '''
-        Ext.onReady(function(){ '''
-        # variable declarations. 
-        # Store declarations must come first because they may be referenced by field declarations
-        visibles = []
-        others = []
-        for e in self.variables:
-            if isinstance(e,VisibleElement):
-                visibles.append(e)
-            else:
-                others.append(e)
-        for e in others + visibles:
-            s += "\nvar %s = %s;" % (e.name,e.as_ext_value(request))
-            
-        s += """
-var frm = %s;""" % self.as_ext_value(request)
-
-        s += self.on_load(request)
-        
-        s += """
-%s.load(); """ % self.master_store.name
-        s += """
-frm.render('data');
-}); //end onReady """ 
-        return mark_safe(s)
-        
         
 class RowLayout(Layout):
     show_labels = False
@@ -953,23 +914,6 @@ class RowLayout(Layout):
         #d.update(items=js_code("[ %s ]" % self.grid.name))
         d.update(items=js_code(self.grid.name))
         return d
-        
-    #~ def ext_options(self,request):
-        #~ d = self.grid.ext_options(request)
-        
-        #~ d.update(title=request.get_title())
-        #~ d.update(autoHeight=True)
-        #~ #d.update(store=js_code(self.master_store.name))
-        #~ #d.update(colModel=js_code(self.grid.column_model.name))
-        #~ d.update(tbar=js_code("""new Ext.PagingToolbar({
-            #~ store: %s,       
-            #~ displayInfo: true,
-            #~ pageSize: %d,
-            #~ prependButtons: true,
-            #~ })""" % (self.master_store.name,self.report.page_length)))
-        #~ return d
-        
-        
         
     def ext_lines(self,request):
         s = """
@@ -1005,17 +949,24 @@ function save(oGrid_event){
         yield s
         yield "// frm.on('afteredit', save);"
 
-        l = self.report.get_absolute_url(mode='detail').split('?')
-        if len(l) == 1:
-            l.append('')
         s = """
-function onCellClick(grid, rowIndex, e) {
-  url = "%s?row=" + String(rowIndex) + "%s";
-  Ext.MessageBox.alert(url,url);
-  // document.location = url;
-};""" % tuple(l)
+function onRowSelect(grid, rowIndex, e) {"""
+        for layout in self.report.layouts[1:]:
+            s += """
+    var pgnum = rowIndex + 1;
+    %s.getTopToolbar().changePage(pgnum);""" % layout.name
+    
+        #~ l = self.report.get_absolute_url(mode='detail').split('?')
+        #~ if len(l) == 1:
+            #~ l.append('')
+        #~ s += """
+  #~ url = "%s?row=" + String(rowIndex) + "%s";
+  #~ // Ext.MessageBox.alert(url,url);
+  #~ document.location = url;
+  #~ """ % tuple(l)
+        s += "};"
         yield s
-        yield "%s.getSelectionModel().on('rowselect', onCellClick);" % self.grid.name
+        yield "%s.getSelectionModel().on('rowselect', onRowSelect);" % self.grid.name
         yield "%s.load();" % self.master_store.name
     
 class PageLayout(Layout):
@@ -1036,18 +987,13 @@ class PageLayout(Layout):
         d.update(items=js_code(self._main.as_ext(request)))
         return d
         
-    #~ def as_ext_value(self,request,**kw):
-        #~ options = self.ext_options(request)
-        #~ options.update(kw)
-        #~ s = "new Ext.form.FormPanel({items: [ %s ]})" % self._main.as_ext_value(request,**options)
-        #~ return mark_safe(s)
         
     def ext_lines(self,request):
         s = "%s.addListener('load',function(store,rows,options) { " % self.master_store.name
         s += "\n  %s.form.loadRecord(rows[0]);" % self.name
         for slave in self.slave_grids:
             s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
-                 slave.store.name,request.layout.pk.name)
+                 slave.store.name,request._lino_report.layout.pk.name)
         s += "\n});"
         yield s
         s = """
@@ -1070,103 +1016,3 @@ var submit = %s.addButton({
         yield "%s.load();" % self.master_store.name
     
         
-
-#~ class TabbedPageLayout(PageLayout):
-  
-    #~ def __init__(self,report,page_layouts):
-        #~ # page_layouts is a list of PageLayout classes
-        #~ tabs = [tc(report) for tc in page_layouts]
-        #~ l = [tab._main for tab in tabs]
-        #~ main = TAB(self,"tabs",*l)
-        #~ PageLayout.__init__(self,report,main=main)
-        
-#~ class LayoutRenderer:
-    #~ def __init__(self,layout,report_renderer):
-        #~ self.layout = layout
-        #~ self.report = report_renderer
-        #~ #self.request = report_renderer.request
-        #~ self.fields = layout.fields
-        #~ #self.slaves = [ rpt.renderer(self.request) for rpt in layout.slave_grids ]
-        #~ self.master_store = layout.master_store
-        
-    #~ def as_ext_value(self):
-      #~ try:
-        #~ s = self.layout.as_ext_value(self.report)
-        #~ return mark_safe(s)
-      #~ except Exception,e:
-        #~ traceback.print_exc(e)
-        
-    #~ def old_as_ext_script(self):
-      #~ try:
-        #~ return self.layout.as_ext_script(self.report)
-      #~ except Exception,e:
-        #~ traceback.print_exc(e)
-        
-        
-    #~ def slaves(self):
-      #~ try:
-        #~ for sl in self.layout.slaves:
-            #~ yield sl.renderer(self.request)
-      #~ except Exception,e:
-        #~ traceback.print_exc(e)
-        
-    
-#~ class unused_BoundElement:
-    #~ def __init__(self,element,row):
-        #~ assert isinstance(element,Element)
-        #~ self.element = element
-        #~ self.row = row
-        #~ #from lino.django.utils.render import Row
-        #~ #assert isinstance(row,Row)
-
-    #~ def as_html(self):
-        #~ try:
-            #~ return self.element.render(self.row)
-        #~ except Exception,e:
-            #~ print "Exception in BoundElement.as_html():"
-            #~ traceback.print_exc()
-            #~ raise e
-  
-    #~ def __unicode__(self):
-        #~ return self.as_html()
-        
-    #~ def children(self):
-        #~ try:
-            #~ assert isinstance(self.element,Container), "%s is not a Container" % self.element
-            #~ for e in self.element.elements:
-                #~ yield BoundElement(e,self.row)
-        #~ except Exception,e:
-            #~ print "Exception in BoundElement.children():"
-            #~ traceback.print_exc()
-            #~ raise e
-            
-    #~ def row_management(self):
-        #~ return self.row.management()
-        
-    #~ def unused_row_management(self):
-        #~ #print "row_management", self.element
-        #~ try:
-            #~ assert isinstance(self.element,GRID_ROW)
-            #~ #row = self.renderer.get_row()
-            #~ #s = "<td>%s</td>" % self.row.links()
-            #~ l = []
-            #~ if self.row.renderer.has_actions():
-                #~ l.append(unicode(
-              #~ self.renderer.selector[IS_SELECTED % self.row.number]))
-
-            #~ s = ''
-            #~ if self.row.renderer.editing:
-                #~ s += "<td>%d%s</td>" % (self.row.number,
-                    #~ self.row.pk_field())
-                #~ if self.row.renderer.can_delete:
-                    #~ s += "<td>%s</td>" % self.row.form["DELETE"]
-            #~ else:
-                #~ s += "<td>%d</td>" % (self.row.number)
-            #~ return mark_safe(s)
-        #~ except Exception,e:
-            #~ print "Exception in BoundElement.row_management() %s:" % \
-                 #~ self.row.renderer.request.path
-            #~ traceback.print_exc()
-            #~ raise e
-
-

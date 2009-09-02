@@ -104,7 +104,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'mysites.demo.urls'
-#ROOT_URLCONF = 'lino.django.voc.urls'
 
 #print "foo", __file__
 

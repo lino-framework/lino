@@ -214,7 +214,7 @@ class Menu(MenuItem):
         s = ""
         if len(items) == 0: return ''
         if level == 1:
-            s += "{region:'north', height:30, items:[ "
+            s += "{region:'north', height:27, items:[ "
         else:
             s += """
             {

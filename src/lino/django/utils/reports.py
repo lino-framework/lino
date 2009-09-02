@@ -112,7 +112,9 @@ def register_report_class(rptclass):
     
 
 def register_report(rpt):
-    assert not _reports.has_key(rpt.name)
+    if _reports.has_key(rpt.name):
+        print "[Warning] %s used for models %s and %s" % (rpt.name,rpt.model,_reports[rpt.name].model)
+        return
     _reports[rpt.name] = rpt
     
     #~ if rpt.model is None:
