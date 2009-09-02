@@ -326,7 +326,7 @@ class Report:
         self._setup_done = False
         
         register_report(self)
-        print "Report.__init__() done:", self.name
+        # print "Report.__init__() done:", self.name
         
     def setup(self):
         if self._setup_done:
@@ -512,6 +512,17 @@ class Report:
         request._lino_report = r
         return r.render_to_response()
         #return lino_site.view(request,r.get_components())
+        
+        
+    def ext_components(self):
+        if len(self.layouts) == 2:
+            return self.layouts
+        return [ self.layouts[0], layouts.TabbedPanel("EastPanel",self.layouts[1:]) ]
+        #~ tabitems = self.layouts[1:]
+        #~ tabpanel = layouts.Component("EastPanel",xtype="tabpanel",
+          #~ region="east",
+          #~ items=layouts.js_code("[%s]" % ",".join([l.name for l in tabitems])))
+        #~ return [tabpanel]
 
     def unused_view_many(self,request):
         #~ msg = "Hello, "+unicode(request.user)

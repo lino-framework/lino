@@ -141,23 +141,23 @@ class ContactPageLayout(layouts.PageLayout):
               title:10 firstName:15 lastName
               companyName nationalId:12
               """
-    box2 = """email:30 
-              url:30"""
-    box3 = """phone:15 
-              gsm:15"""
+    box2 = """email:40 
+              url"""
+    box3 = """phone
+              gsm"""
     box4 = """country region
               city zipCode:10
-              addr1:30
-              addr2:30
+              addr1:40
+              addr2
               """
-    box7 = """vatId
+    box7 = """vatId:15
               language
               """
     main = """
             box1
             box2 box3
             box4 box7
-            remarks:45x6
+            remarks:60x6
             """
             
     #~ def documents(self):
@@ -193,7 +193,8 @@ class ContactsByCountry(Contacts):
     master = countries.Country
     order_by = "city addr1"
     
-class ContactsByCountryTabLayout(layouts.PageLayout):
+class CountryAndContactsPage(layouts.PageLayout):
+    label = "Contacts by Country"
     main = """
     isocode name
     ContactsByCountry
@@ -205,7 +206,7 @@ class ContactsByCountryTabLayout(layouts.PageLayout):
 
 
 class Countries(countries.Countries):
-    page_layouts = (layouts.PageLayout,ContactsByCountryTabLayout)
+    page_layouts = (layouts.PageLayout,CountryAndContactsPage)
     
   
 

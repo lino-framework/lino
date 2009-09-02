@@ -431,8 +431,8 @@ class CustomerPageLayout(contacts.ContactPageLayout):
     
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
-      journal number your_ref creation_date 
-      user sent_time
+      journal number your_ref 
+      creation_date 
       customer 
       ship_to
       """
@@ -440,14 +440,16 @@ class DocumentPageLayout(layouts.PageLayout):
       imode
       shipping_mode 
       payment_term
-      vat_exempt item_vat
+      user sent_time
       """
     box3 = """
-      subject:80
+      subject box5
       sales_remark:80
       intro:80x5
       """
     box4 = """
+      vat_exempt 
+      item_vat
       total_excl
       total_vat
       total_incl
@@ -456,7 +458,7 @@ class DocumentPageLayout(layouts.PageLayout):
     
     main = """
       box1 box2 box4
-      box3 box5
+      box3
       ItemsByDocument:80x5
       """
       

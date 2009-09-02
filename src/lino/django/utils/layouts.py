@@ -67,7 +67,7 @@ class Component:
     def value2js(self,obj):
         raise NotImplementedError
         
-    def ext_variables(self,request):
+    def ext_variables(self):
         if self.declared:
             yield self
         
@@ -123,7 +123,7 @@ class Store(Element):
     def __init__(self,layout,report):
         Element.__init__(self,layout,layout.name+"_"+report.name+"_store")
         self.report = report
-        print "Store.__init__()",self.name
+        #print "Store.__init__()",self.name
         #print self,report.get_absolute_url()
         
     def ext_options(self,request):
@@ -610,12 +610,12 @@ class Container(VisibleElement):
                     #~ print "foo", [e.width for e in self.elements]
                 for e in self.elements:
                     if e.width is not None:
-                        w = max(e.width,w)
+                        w = max(w,e.width + self.hpad*2)
             else:
                 for e in self.elements:
                     if e.width is None:
                         return # don't set this container's width since at least one element is flexible
-                    w += e.width
+                    w += e.width + self.hpad*2
             if w > 0:
                 self.width = w
                 
@@ -653,7 +653,9 @@ class Container(VisibleElement):
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
         #if not self.is_fieldset:
-        d.update(frame=self.get_property('frame'))
+        #d.update(frame=self.get_property('frame'))
+        d.update(frame=self.frame)
+        d.update(border=False)
         d.update(labelAlign=self.get_property('labelAlign'))
         l = [e.as_ext(request) for e in self.elements ]
         d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
@@ -705,7 +707,6 @@ class GRID_CELL(Container):
 
 class Layout(Component):
     declared = True
-    label = "General"
     #detail_reports = {}
     join_str = None # set by subclasses
     vbox_class = VBOX
@@ -842,7 +843,7 @@ class Layout(Component):
         raise Exception("Invalid picture descriptor %s" % picture)
                 
     def __str__(self):
-        return self.report.name+"."+self.__class__.__name__
+        return self.report.model._meta.app_label+"."+self.__class__.__name__
         
     def __repr__(self):
         s = self.__class__.__name__ 
@@ -856,6 +857,9 @@ class Layout(Component):
     def add_variable(self,elem):
         self.variables.append(elem)
         
+    def renderer(self,rr):
+        return LayoutRenderer(self,rr)
+        
     def get_label(self):
         if self.label is None:
             return self.__class__.__name__
@@ -865,13 +869,12 @@ class Layout(Component):
         return self._main.walk()
         
     def ext_options(self,request):
-        return self._main.ext_options(request)
+        d = self._main.ext_options(request)
+        #d.update(label=self.name)
+        return d
         #return dict(title=request.get_title())
         
-    def renderer(self,rr):
-        return LayoutRenderer(self,rr)
-        
-    def ext_variables(self,request):
+    def ext_variables(self):
         later = []
         for e in self.variables:
             if isinstance(e,VisibleElement):
@@ -904,6 +907,7 @@ class RowLayout(Layout):
         # d = Layout.ext_options(self,request)
         d = dict(title=request._lino_report.get_title()) 
         d.update(region='center',split=True)
+        d.update(autoScroll=True)
         if True:
             d.update(tbar=js_code("""new Ext.PagingToolbar({
               store: %s,
@@ -968,8 +972,10 @@ function onRowSelect(grid, rowIndex, e) {"""
         yield s
         yield "%s.getSelectionModel().on('rowselect', onRowSelect);" % self.grid.name
         yield "%s.load();" % self.master_store.name
-    
+
+
 class PageLayout(Layout):
+    label = "Detail"
     show_labels = True
     join_str = "\n"
     #ext_layout = ""
@@ -977,14 +983,17 @@ class PageLayout(Layout):
     
     def ext_options(self,request):
         d = Layout.ext_options(self,request)
+        d.update(title=self.label) 
         d.update(region='east',split=True) #,width=300)
+        d.update(autoScroll=True)
         d.update(tbar=js_code("""new Ext.PagingToolbar({
           store: %s,
           displayInfo: true,
           pageSize: 1,
           prependButtons: true,
         }) """ % self.master_store.name))
-        d.update(items=js_code(self._main.as_ext(request)))
+        #d.update(items=js_code(self._main.as_ext(request)))
+        d.update(items=js_code("[%s]" % ",".join([e.as_ext(request) for e in self._main.elements])))
         return d
         
         
@@ -1016,3 +1025,31 @@ var submit = %s.addButton({
         yield "%s.load();" % self.master_store.name
     
         
+class TabbedPanel(Component):
+    value_template = "new Ext.TabPanel({ %s })"
+    def __init__(self,name,layouts):
+        Component.__init__(self,name)
+        self.layouts = layouts
+        self.width = layouts[0]._main.width or 60
+    
+
+    def ext_lines(self,request):
+        for layout in self.layouts:
+            for ln in layout.ext_lines(request):
+                yield ln
+                
+    def ext_variables(self):
+        for layout in self.layouts:
+            for ln in layout.ext_variables():
+                yield ln
+                
+    def ext_options(self,request):
+        d = dict(
+          xtype="tabpanel",
+          region="east",
+          split=True,
+          activeTab=0,
+          width=self.width * EXT_CHAR_WIDTH,
+          items=js_code("[%s]" % ",".join([l.name for l in self.layouts])))
+        return d
+                

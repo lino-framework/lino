@@ -239,7 +239,8 @@ class ViewReportRenderer(ReportRenderer):
             return self.json_reponse()
             
         from lino.django.utils.sites import lino_site
-        return lino_site.ext_view(self.request,*self.report.layouts)
+        return lino_site.ext_view(self.request,
+            *self.report.ext_components())
         
 
     def as_ext_script(self):
