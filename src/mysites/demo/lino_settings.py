@@ -2,18 +2,18 @@
 lino.help_url = "http://lino.saffre-rumma.ee/django/igen/userman.html"
 lino.title = "iGen demo"
 lino.index_html = """
-This is a demo database for iGen, the first Lino application.
+Welcome to iGen, the first Lino application.
 
 <p>iGen lets you write recurrent invoices to your customers, and manage their payments.
 
-<p>
+<p>This is a demo database.
 You can change data and play with it, 
 but keep in mind that the data is being reset 
 to an initial state when necessary.
 
 <p>
 You can log in as user "user" or "root", both with password "1234".
-The menu changes depending on which user you are.
+Note how the menu changes depending on which user you are.
 <a href="%s">More</a>""" % lino.help_url
 
 from django.db import models

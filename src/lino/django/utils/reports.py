@@ -137,7 +137,7 @@ def register_report(rpt):
     
 def get_report(rptname):
     rpt = _reports[rptname]
-    rpt.setup()
+    #rpt.setup()
     return rpt
     
 def view_report(request,rptname=None):
@@ -152,9 +152,8 @@ def setup():
       slaves are reports that display detail data for a known instance of that model (their master).
       They are stored in a dictionary called '_lino_slaves'.
       
-    - For each model we want to find out the "model report", 
-      This will be used when displaying a single object. 
-      And the "choices report" for a foreignkey field is also currently simply the pointed model's
+    - For each model we want to find out the "model report" ot "default report".
+      The "choices report" for a foreignkey field is also currently simply the pointed model's
       model_report.
       `_lino_model_report`
 
@@ -163,8 +162,6 @@ def setup():
         rc = getattr(model,'_lino_model_report_class',None)
         if rc is None:
             model._lino_model_report_class = report_factory(model)
-          
-        #~ model._lino_combo = Report(model=model,columnNames='__str__')
         
     for rpt in _reports.values():
         rpt.setup()
@@ -324,6 +321,7 @@ class Report:
             self.name += "_" + self.mode
             
         self._setup_done = False
+        self._setup_doing = False
         
         register_report(self)
         # print "Report.__init__() done:", self.name
@@ -331,6 +329,9 @@ class Report:
     def setup(self):
         if self._setup_done:
             return
+        if self._setup_doing:
+            return
+        self._setup_doing = True
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
@@ -360,6 +361,7 @@ class Report:
               #~ layout(self) for layout in self.page_layouts]
         
         
+        self._setup_doing = False
         self._setup_done = True
         print "Report.setup() done:", self.name
             

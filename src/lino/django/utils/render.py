@@ -167,7 +167,11 @@ class ViewReportRenderer(ReportRenderer):
             kw.update(self.params.cleaned_data)
         pk = request.GET.get('master',None)
         if pk is not None:
-            kw.update(master_instance=report.master.objects.get(pk=pk))
+            try:
+                kw.update(master_instance=report.master.objects.get(pk=pk))
+            except report.master.DoesNotExist,e:
+                print "[Warning] There's no %s with %s=%r" % (
+                  report.master.__name__,report.master._meta.pk.name,pk)
         sort = request.GET.get('sort',None)
         if sort:
             self.sort_column = sort

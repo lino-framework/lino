@@ -110,6 +110,9 @@ class Element(Component):
             return self.name + ":%d" % self.width
         return self.name + ":%dx%d" % (self.width,self.height)
         
+    def pprint(self,level=0):
+        return ("  " * level) + self.__str__()
+        
     def ext_options(self,request):
         return {}
         
@@ -123,22 +126,33 @@ class Store(Element):
     def __init__(self,layout,report):
         Element.__init__(self,layout,layout.name+"_"+report.name+"_store")
         self.report = report
+        if report == layout.report:
+            # it's the master store
+            self.data_layout = layout
+        else:
+            report.setup()
+            self.data_layout = report.row_layout
         #print "Store.__init__()",self.name
         #print self,report.get_absolute_url()
         
     def ext_options(self,request):
         #self.report.setup()
-        if request._lino_report.report == self.report:
-            rr = request._lino_report
-        else:
-            rr = self.report
-        self.report.setup()
+        url = self.report.get_absolute_url(json=True)
+        #~ if request._lino_report.report == self.report:
+            #~ #rr = request._lino_report
+            #~ layout = self.layout
+            #~ url = request._lino_report.get_absolute_url(json=True)
+        #~ else:
+            #~ # it's a slave
+            #~ layout = request._lino_report.report.row_layout
+            #~ #rr = self.report.renderer()
+            #~ url = self.report.get_absolute_url(json=True)
+        #self.report.setup()
         d = Element.ext_options(self,request)
         d.update(storeId=self.name)
         d.update(remoteSort=True)
         d.update(proxy=js_code(
-          "new Ext.data.HttpProxy({url:'%s',method:'GET'})" % \
-          rr.get_absolute_url(json=True)
+          "new Ext.data.HttpProxy({url:'%s',method:'GET'})" % url           
         ))
         # a JsonStore without explicit proxy sometimes used method POST
         # d.update(url=self.rr.get_absolute_url(json=True))
@@ -147,7 +161,7 @@ class Store(Element):
         d.update(root='rows')
         #print self.report.model._meta
         #d.update(id=self.report.model._meta.pk.attname)
-        d.update(id=self.layout.pk.field.name)
+        d.update(id=self.data_layout.pk.field.name)
         #~ d.update(fields=js_code(
           #~ "[ %s ]" % ",".join([repr(e.field.name) 
           #~ for e in self.report.row_layout.ext_store_fields])
@@ -155,7 +169,7 @@ class Store(Element):
         d.update(fields=js_code(
             "[ %s ]" % ",".join([
                 "{ %s }" % dict2js(dict(mapping=e.field.name,name=e.name))
-                for e in self.layout.ext_store_fields
+                for e in self.data_layout.ext_store_fields
             ])
         ))
         return d
@@ -178,6 +192,7 @@ class ColumnModel(Element):
         
         
     def ext_options(self,request):
+        self.report.setup()
         d = Element.ext_options(self,request)
         #editing = self.layout.report.can_change.passes(request)
         l = [e.as_ext_column(request) for e in self.report.columns]
@@ -202,11 +217,14 @@ class VisibleElement(Element):
     parent = None
     editable = False
     sortable = False
+    xpadding = 5
     #ext_template = 'lino/includes/element.js'
     def __init__(self,layout,name,width=None,height=None,label=None):
         Element.__init__(self,layout,name)
-        self.width = width
-        self.height = height
+        if width is not None:
+            self.width = width
+        if height is not None:
+            self.height = height
         if label is not None:
             self.label = label
         #    label = name.replace("_"," ")
@@ -243,10 +261,18 @@ class VisibleElement(Element):
             else:
                 d.update(anchor="100%")
         else:
-            d.update(width=(self.width+self.label_width) * EXT_CHAR_WIDTH)
+            d.update(width=self.ext_width())
         if self.height is not None:
             d.update(height=(self.height+2) * EXT_CHAR_HEIGHT)
         return d
+        
+    def ext_width(self):
+        if self.width is None:
+            return None
+        #if self.parent.labelAlign == 'top':
+        return max(self.width,self.label_width) * EXT_CHAR_WIDTH + self.xpadding
+        #return (self.width + self.label_width) * EXT_CHAR_WIDTH + self.xpadding
+        
         
     #~ def as_ext(self):
         #~ try:
@@ -392,13 +418,19 @@ class FieldElement(VisibleElement):
         return po
         
 class TextFieldElement(FieldElement):
-    xtype='textarea'
+    xtype = 'textarea'
+    width = 60
 
 
 class CharFieldElement(FieldElement):
     xtype = "textfield"
     sortable = True
   
+    #~ def __init__(self,*args,**kw):
+        #~ FieldElement.__init__(self,*args,**kw)
+        #~ if self.width is None:
+            #~ self.width = min(40,self.field.max_length)
+            
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
         kw.update(maxLength=self.field.max_length)
@@ -407,12 +439,13 @@ class CharFieldElement(FieldElement):
 class ForeignKeyElement(FieldElement):
     xtype = "combo"
     sortable = True
+    #width = 20
     
-    def __init__(self,layout,field,**kw):
-        FieldElement.__init__(self,layout,field,**kw)
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
         if self.editable:
             rpt = self.layout.report.get_choices(self.field)
-            self.store = Store(layout,rpt)
+            self.store = Store(self.layout,rpt)
       
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
@@ -433,19 +466,25 @@ class ForeignKeyElement(FieldElement):
         
             
 class DateFieldElement(FieldElement):
-    xtype='datefield'
+    xtype = 'datefield'
     sortable = True
+    #width = 10
     
 class IntegerFieldElement(FieldElement):
-    xtype='numberfield'
+    xtype = 'numberfield'
     sortable = True
+    width = 8
 
 class DecimalFieldElement(FieldElement):
-    xtype='numberfield'
+    xtype = 'numberfield'
     sortable = True
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
+        if self.width is None:
+            self.width = min(10,self.field.max_digits) + self.field.decimal_places
 
 class BooleanFieldElement(FieldElement):
-    xtype='checkbox'
+    xtype = 'checkbox'
 
 class GridElement(VisibleElement):
     value_template = "new Ext.grid.GridPanel({ %s })"
@@ -475,6 +514,8 @@ class GridElement(VisibleElement):
             #~ d.update(xtype='grid')
         #d.update(store=self.store)
         #d.update(colModel=self.column_model)
+        d.update(autoScroll=True)
+        d.update(fitToFrame=True)
         d.update(store=js_code(self.store.name))
         d.update(colModel=js_code(self.column_model.name))
         #d.update(store=js_code(rpt.as_ext_store()))
@@ -585,8 +626,8 @@ class Container(VisibleElement):
                 self.is_fieldset = True
                 #~ if self.label_width < e.label_width:
                     #~ self.label_width = e.label_width
-                if self.vertical and e.label:
-                    w = len(e.label) + self.hpad
+                if e.label:
+                    w = len(e.label) + 1 # +1 for the ":"
                     if self.label_width < w:
                         self.label_width = w
             if e.width == self.width:
@@ -605,19 +646,23 @@ class Container(VisibleElement):
         if self.width is None:
             #print self, "compute_width..."
             w = 0
+            xpadding = self.xpadding
             if self.vertical:
-                #~ if self.name == 'main' and self.layout._model.__name__ == 'Product':
-                    #~ print "foo", [e.width for e in self.elements]
                 for e in self.elements:
                     if e.width is not None:
-                        w = max(w,e.width + self.hpad*2)
+                        if w < e.width:
+                            w = e.width
+                            xpadding = e.xpadding
+                        # w = max(w,e.width) # + self.hpad*2)
             else:
                 for e in self.elements:
                     if e.width is None:
                         return # don't set this container's width since at least one element is flexible
-                    w += e.width + self.hpad*2
+                    w += e.width # + self.hpad*2
+                    xpadding += e.xpadding
             if w > 0:
                 self.width = w
+                self.xpadding = xpadding
                 
         
     #~ def children(self):
@@ -629,12 +674,21 @@ class Container(VisibleElement):
             l += e.walk()
         return l
         
-    def __str__(self):
-        s = Element.__str__(self)
+    #~ def __str__(self):
+        #~ s = Element.__str__(self)
+        #~ # self.__class__.__name__
+        #~ s += "(%s)" % (",".join([str(e) for e in self.elements]))
+        #~ return s
+
+    def pprint(self,level=0):
+        margin = "  " * level
+        s = margin + str(self) + ":\n"
         # self.__class__.__name__
-        s += "(%s)" % (",".join([str(e) for e in self.elements]))
+        for e in self.elements:
+            for ln in e.pprint(level+1).splitlines():
+                s += ln + "\n"
         return s
-            
+
     #~ def render(self,row):
         #~ try:
             #~ context = dict(
@@ -780,8 +834,8 @@ class Layout(Component):
             i = 0
             for line in desc.splitlines():
                 line = line.strip()
-                i += 1
                 if len(line) > 0 and not line.startswith("#"):
+                    i += 1
                     lines.append(self.desc2elem(name+'_'+str(i),line,**kw))
             if len(lines) == 1:
                 return lines[0]
@@ -800,7 +854,7 @@ class Layout(Component):
     def create_element(self,name):
         #print "create_element()", name
         name,kw = self.splitdesc(name)
-        if not name in ('__str__','__unicode__','name'):
+        if not name in ('__str__','__unicode__','name','label'):
             value = getattr(self,name,None)
             if value is not None:
                 if type(value) == str:
@@ -868,12 +922,6 @@ class Layout(Component):
     def walk(self):
         return self._main.walk()
         
-    def ext_options(self,request):
-        d = self._main.ext_options(request)
-        #d.update(label=self.name)
-        return d
-        #return dict(title=request.get_title())
-        
     def ext_variables(self):
         later = []
         for e in self.variables:
@@ -907,7 +955,6 @@ class RowLayout(Layout):
         # d = Layout.ext_options(self,request)
         d = dict(title=request._lino_report.get_title()) 
         d.update(region='center',split=True)
-        d.update(autoScroll=True)
         if True:
             d.update(tbar=js_code("""new Ext.PagingToolbar({
               store: %s,
@@ -981,8 +1028,14 @@ class PageLayout(Layout):
     #ext_layout = ""
     value_template = "new Ext.form.FormPanel({ %s })"
     
+    def __init__(self,*args,**kw):
+        Layout.__init__(self,*args,**kw)
+        if self._main.width is None:
+            print "[Warning] Could not compute width for PageLayout", self
+        #print self._main.pprint()
+        
     def ext_options(self,request):
-        d = Layout.ext_options(self,request)
+        d = self._main.ext_options(request)
         d.update(title=self.label) 
         d.update(region='east',split=True) #,width=300)
         d.update(autoScroll=True)
@@ -1002,7 +1055,8 @@ class PageLayout(Layout):
         s += "\n  %s.form.loadRecord(rows[0]);" % self.name
         for slave in self.slave_grids:
             s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
-                 slave.store.name,request._lino_report.layout.pk.name)
+                 slave.store.name,self.master_store.layout.pk.name)
+                 #slave.store.name,request._lino_report.layout.pk.name)
         s += "\n});"
         yield s
         s = """
@@ -1030,7 +1084,7 @@ class TabbedPanel(Component):
     def __init__(self,name,layouts):
         Component.__init__(self,name)
         self.layouts = layouts
-        self.width = layouts[0]._main.width or 60
+        self.width = self.layouts[0]._main.ext_width() or 300
     
 
     def ext_lines(self,request):
@@ -1049,7 +1103,7 @@ class TabbedPanel(Component):
           region="east",
           split=True,
           activeTab=0,
-          width=self.width * EXT_CHAR_WIDTH,
+          width=self.width,
           items=js_code("[%s]" % ",".join([l.name for l in self.layouts])))
         return d
                 
