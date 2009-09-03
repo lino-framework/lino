@@ -194,23 +194,25 @@ def view_report_save(request,rptname=None):
     pk = request.POST.get('pk',None)
     if pk is None:
         return json_response(success=False,msg="No primary key was specified")
-    layout = rpt.layouts[int(request.POST.get('layout'))]
     #print "foo",request.POST
     try:
+        layout = rpt.layouts[int(request.POST.get('layout'))]
         instance = rpt.model.objects.get(pk=pk)
         for e in layout.ext_store_fields:
-            e.store_value(request.POST[e.name],instance)
+            e.update_from_form(instance,request.POST)
         #~ for k,v in request.POST.items():
             #~ setattr(instance,k,v)
         instance.save()
         return json_response(success=True,
-              msg="%s has been saved" % r.instance)
+              msg="%s has been saved" % instance)
     except Exception,e:
         traceback.print_exc(e)
         return json_response(success=False,msg="Exception occured: "+str(e))
     
 def json_response(**kw):
-    return HttpResponse("{%s}" % layouts.dict2js(kw), mimetype='text/html')
+    s = "{%s}" % layouts.dict2js(kw)
+    print "json_response()", s
+    return HttpResponse(s, mimetype='text/html')
     
 def setup():
     """
