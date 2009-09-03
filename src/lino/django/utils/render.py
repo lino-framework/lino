@@ -81,7 +81,11 @@ class ReportRenderer:
     limit = None
     offset = None
     master_instance = None
-    def __init__(self,report,master_instance=None,layout=None,offset=None,limit=None,**kw):
+    instance = None
+    
+    def __init__(self,report,
+            master_instance=None,
+            offset=None,limit=None,**kw):
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
@@ -138,15 +142,16 @@ class ReportRenderer:
     def obj2json(self,obj):
         d = {}
         for e in self.layout.ext_store_fields:
-            d[e.field.name] = e.value2js(obj)
+            d[e.name] = e.value2js(obj)
         return d
             
-    def json_reponse(self):
+    def render_to_json(self):
         rows = [ self.obj2json(row) for row in self.queryset ]
         d = dict(count=self.total_count,rows=rows)
         s = simplejson.dumps(d,default=unicode)
+        return s
         #print s
-        return HttpResponse(s, mimetype='text/html')
+        #return HttpResponse(s, mimetype='text/html')
         
 
 class ViewReportRenderer(ReportRenderer):
@@ -181,7 +186,7 @@ class ViewReportRenderer(ReportRenderer):
                 self.sort_direction = 'DESC'
             kw.update(order_by=sort)
         
-        self.json = request.GET.get('json',False)
+        #self.json = request.GET.get('json',False)
         
         offset = request.GET.get('start',None)
         if offset:
@@ -235,23 +240,23 @@ class ViewReportRenderer(ReportRenderer):
     #~ def ext_components(self):
         #~ return self.layouts
             
-    def render_to_response(self):
+    #~ def render_to_response(self):
         #~ url = get_redirect(self.request)
         #~ if url is not None:
             #~ return HttpResponseRedirect(url)
-        if self.json:
-            return self.json_reponse()
+        #if self.json:
+        #    return self.json_reponse()
             
-        from lino.django.utils.sites import lino_site
-        return lino_site.ext_view(self.request,
-            *self.report.ext_components())
+        #~ from lino.django.utils.sites import lino_site
+        #~ return lino_site.ext_view(self.request,
+            #~ *self.report.ext_components())
         
 
-    def as_ext_script(self):
-      try:
-        return self.report.as_ext_script(self)
-      except Exception,e:
-        traceback.print_exc(e)
+    #~ def as_ext_script(self):
+      #~ try:
+        #~ return self.report.as_ext_script(self)
+      #~ except Exception,e:
+        #~ traceback.print_exc(e)
         
 
 

@@ -51,9 +51,9 @@ def py2js(v,k):
 class js_code:
     "A string that py2js will represent as is, not between quotes."
     def __init__(self,s):
-      self.s = s
+        self.s = s
     def __repr__(self):
-      return self.s
+        return self.s
       
 class Component:
     declared = False
@@ -63,6 +63,7 @@ class Component:
     def __init__(self,name,**options):
         self.name = name
         self.options = options
+        self.ext_name = name
         
     def value2js(self,obj):
         raise NotImplementedError
@@ -84,14 +85,20 @@ class Component:
         
     def as_ext(self,request):
         if self.declared:
-            return self.name # as_ext_name()
+            return self.ext_name
         else:
             return self.as_ext_value(request)
+            
+    #~ def ext_name(self):
+        #~ return self.name
         
         
 class Element(Component):
+    stored = False
     width = None
     height = None
+    ext_name = None
+    ext_suffix = ""
     #parent = None # will be set by Container
     def __init__(self,layout,name):
         #print "Element.__init__()", layout,name
@@ -101,6 +108,7 @@ class Element(Component):
         Component.__init__(self,name)
         if self.declared:
             layout.add_variable(self)
+            self.ext_name = self.layout.name +"_" + self.name + self.ext_suffix
             
     def __str__(self):
         "This shows how elements are specified"
@@ -118,13 +126,15 @@ class Element(Component):
         
     def walk(self):
         return [ self ]
+        
 
 class Store(Element):
     value_template = "new Ext.data.JsonStore({ %s })"
     declared = True
+    ext_suffix = "_store"
     
     def __init__(self,layout,report):
-        Element.__init__(self,layout,layout.name+"_"+report.name+"_store")
+        Element.__init__(self,layout,report.name)
         self.report = report
         if report == layout.report:
             # it's the master store
@@ -149,7 +159,7 @@ class Store(Element):
             #~ url = self.report.get_absolute_url(json=True)
         #self.report.setup()
         d = Element.ext_options(self,request)
-        d.update(storeId=self.name)
+        d.update(storeId=self.ext_name)
         d.update(remoteSort=True)
         d.update(proxy=js_code(
           "new Ext.data.HttpProxy({url:'%s',method:'GET'})" % url           
@@ -164,11 +174,12 @@ class Store(Element):
         d.update(id=self.data_layout.pk.field.name)
         #~ d.update(fields=js_code(
           #~ "[ %s ]" % ",".join([repr(e.field.name) 
-          #~ for e in self.report.row_layout.ext_store_fields])
+          #~ for e in self.data_layout.ext_store_fields])
         #~ ))
         d.update(fields=js_code(
             "[ %s ]" % ",".join([
-                "{ %s }" % dict2js(dict(mapping=e.field.name,name=e.name))
+                "{ %s }" % dict2js(dict(name=e.name))
+                #"{ %s }" % dict2js(dict(mapping=e.field.name,name=e.name))
                 for e in self.data_layout.ext_store_fields
             ])
         ))
@@ -176,11 +187,11 @@ class Store(Element):
     
 class ColumnModel(Element):
     declared = True
-    #name_suffix = "cm"
+    name_suffix = "cols"
     value_template = "new Ext.grid.ColumnModel({ %s })"
     
     def __init__(self,layout,report):
-        Element.__init__(self,layout,layout.name+"_"+report.name+"_cols")
+        Element.__init__(self,layout,report.name)
         #Element.__init__(self,layout,report.name+"_cols"+str(layout.index))
         #Element.__init__(self,layout,report.name+"_cols")
         self.report = report
@@ -350,10 +361,10 @@ class StaticText(VisibleElement):
 
 class FieldElement(VisibleElement):
     declared = True
+    stored = True
     #name_suffix = "field"
     def __init__(self,layout,field,**kw):
-        VisibleElement.__init__(self,layout,layout.name+"_"+field.name,
-            label=field.verbose_name,**kw)
+        VisibleElement.__init__(self,layout,field.name,label=field.verbose_name,**kw)
         self.field = field
         self.editable = field.editable
         
@@ -371,7 +382,9 @@ class FieldElement(VisibleElement):
         return "{ %s }" % dict2js(d)
 
     def value2js(self,obj):
-        return getattr(obj,self.field.name)
+        return getattr(obj,self.name)
+    def store_value(self,value,instance):
+        setattr(instance,self.name,value)
         
     #~ def render(self,row):
         #~ return row.render_field(self)
@@ -450,9 +463,15 @@ class ForeignKeyElement(FieldElement):
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
         if self.editable:
-            kw.update(store=js_code(self.store.name))
+            kw.update(store=js_code(self.store.ext_name))
             #kw.update(store=js_code(self.store.as_ext_value(request)))
+            kw.update(hiddenName=self.name)#+"Hidden")
             kw.update(valueField=self.store.report.model._meta.pk.attname)
+            """
+            valueField: The underlying data value name to bind to this ComboBox (defaults to undefined if mode = 'remote' or 'field2' if transforming a select or if the field name is autogenerated based on the store configuration).
+
+Note: use of a valueField requires the user to make a selection in order for a value to be mapped. See also hiddenName, hiddenValue, and displayField.
+            """
             kw.update(displayField=self.store.report.display_field)
             kw.update(typeAhead=True)
             kw.update(mode='remote')
@@ -461,8 +480,12 @@ class ForeignKeyElement(FieldElement):
             
         kw.update(triggerAction='all')
         kw.update(emptyText='Select a %s...' % self.store.report.model.__name__)
-        kw.update(hiddenName=self.name+"Hidden")
         return kw
+        
+    def store_value(self,value,instance):
+        #target_pk = values[self.name]
+        target = self.store.report.model.objects.get(pk=value)
+        setattr(instance,self.name,target)
         
             
 class DateFieldElement(FieldElement):
@@ -489,9 +512,10 @@ class BooleanFieldElement(FieldElement):
 class GridElement(VisibleElement):
     value_template = "new Ext.grid.GridPanel({ %s })"
     declared = True
+    ext_suffix = "_grid"
 
     def __init__(self,layout,report,store=None,**kw):
-        VisibleElement.__init__(self,layout,layout.name+"_"+report.name+"_grid")
+        VisibleElement.__init__(self,layout,report.name)
         #VisibleElement.__init__(self,layout,report.name+"_grid"+str(layout.index),**kw)
         #VisibleElement.__init__(self,layout,report.name+"_grid",**kw)
         self.report = report
@@ -516,8 +540,8 @@ class GridElement(VisibleElement):
         #d.update(colModel=self.column_model)
         d.update(autoScroll=True)
         d.update(fitToFrame=True)
-        d.update(store=js_code(self.store.name))
-        d.update(colModel=js_code(self.column_model.name))
+        d.update(store=js_code(self.store.ext_name))
+        d.update(colModel=js_code(self.column_model.ext_name))
         #d.update(store=js_code(rpt.as_ext_store()))
         #d.update(colModel=js_code(r.as_ext_colmodel()))
         
@@ -526,14 +550,6 @@ class GridElement(VisibleElement):
         d.update(autoHeight=True)
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
-        if False:
-            d.update(tbar=js_code("""new Ext.PagingToolbar({
-            store: %s,       
-            displayInfo: true,
-            pageSize: %d,
-            prependButtons: true,
-            })""" % (self.store.name,self.report.page_length)))
-        
         return d
             
     def value2js(self,obj):
@@ -548,6 +564,7 @@ class M2mGridElement(GridElement):
         
 
 class MethodElement(VisibleElement):
+    stored = True
 
     def __init__(self,layout,name,meth,**kw):
         VisibleElement.__init__(self,layout,name,**kw)
@@ -794,13 +811,11 @@ class Layout(Component):
 
         self._main = main
         
-        self.fields = tuple([ 
-            e for e in self.walk() 
-                if isinstance(e,FieldElement) ])
+        self.fields = tuple([e for e in self.walk() if e.stored])
                   
         pk = None
         for e in self.fields:
-            if e.field.name == report.model._meta.pk.name:
+            if isinstance(e,FieldElement) and e.field.name == report.model._meta.pk.name:
                 pk = e
                 break
                 
@@ -961,9 +976,9 @@ class RowLayout(Layout):
               displayInfo: true,
               pageSize: %d,
               prependButtons: true,
-            }) """ % (self.master_store.name,self.report.page_length)))
+            }) """ % (self.master_store.ext_name,self.report.page_length)))
         #d.update(items=js_code("[ %s ]" % self.grid.name))
-        d.update(items=js_code(self.grid.name))
+        d.update(items=js_code(self.grid.ext_name))
         return d
         
     def ext_lines(self,request):
@@ -974,7 +989,7 @@ function save(oGrid_event){
         url: '%s',""" % request._lino_report.get_absolute_url(ajax='update')
         d = {}
         for e in self.ext_store_fields:
-            d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.name)
+            d[e.name] = js_code('oGrid_event.record.data.%s' % e.name)
         
         s += """
         params: { %s }, """ % dict2js(d)
@@ -1005,7 +1020,7 @@ function onRowSelect(grid, rowIndex, e) {"""
         for layout in self.report.layouts[1:]:
             s += """
     var pgnum = rowIndex + 1;
-    %s.getTopToolbar().changePage(pgnum);""" % layout.name
+    %s.getTopToolbar().changePage(pgnum);""" % layout.ext_name
     
         #~ l = self.report.get_absolute_url(mode='detail').split('?')
         #~ if len(l) == 1:
@@ -1017,8 +1032,8 @@ function onRowSelect(grid, rowIndex, e) {"""
   #~ """ % tuple(l)
         s += "};"
         yield s
-        yield "%s.getSelectionModel().on('rowselect', onRowSelect);" % self.grid.name
-        yield "%s.load();" % self.master_store.name
+        yield "%s.getSelectionModel().on('rowselect', onRowSelect);" % self.grid.ext_name
+        yield "%s.load();" % self.master_store.ext_name
 
 
 class PageLayout(Layout):
@@ -1044,39 +1059,52 @@ class PageLayout(Layout):
           displayInfo: true,
           pageSize: 1,
           prependButtons: true,
-        }) """ % self.master_store.name))
+        }) """ % self.master_store.ext_name))
         #d.update(items=js_code(self._main.as_ext(request)))
         d.update(items=js_code("[%s]" % ",".join([e.as_ext(request) for e in self._main.elements])))
         return d
         
         
     def ext_lines(self,request):
-        s = "%s.addListener('load',function(store,rows,options) { " % self.master_store.name
-        s += "\n  %s.form.loadRecord(rows[0]);" % self.name
+        s = "%s.addListener('load',function(store,rows,options) { " % self.master_store.ext_name
+        s += "\n  %s.form.loadRecord(rows[0]);" % self.ext_name
         for slave in self.slave_grids:
             s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
-                 slave.store.name,self.master_store.layout.pk.name)
+                 slave.store.ext_name,self.master_store.layout.pk.name)
                  #slave.store.name,request._lino_report.layout.pk.name)
         s += "\n});"
         yield s
+        url = self.report.get_absolute_url(save=True)
         s = """
-var submit = %s.addButton({
+%s.addButton({
     text: 'Submit',
-    handler: function(){
-        frm.form.submit({
-            url:'foo', 
-            waitMsg:'Saving Data...',
-            success: function (form, action) {
+    handler: function(btn,evt){""" % self.ext_name
+        #s += "console.log(btn,evt);"
+        #~ s += """
+        # s += "console.log('ok');"
+        #~ var pk = %s.getAt(0).data.%s;""" % (self.master_store.name,self.layout.pk.field.attname)
+        d = dict(
+            url=self.report.get_absolute_url(save=True),
+            params=js_code("{ pk: %s.getAt(0).data.%s, layout:%d }" % (
+                self.master_store.ext_name,
+                self.master_store.data_layout.pk.field.attname,
+                self.master_store.data_layout.index)),
+            waitMsg='Saving Data...',
+            success=js_code("""function (form, action) {
                 Ext.MessageBox.alert('Message', 'Saved OK');
-            },
-            failure:function(form, action) {
-                Ext.MessageBox.alert('Message', 'Save failed');
-            }
-        });
-    }
-});""" % self.name
+            }"""),
+            failure=js_code("""function(form, action) {
+                // console.log("form:",form);
+                Ext.MessageBox.alert('Submit failed!', 
+                  action.result ? action.result.msg : 'undefined action result');
+            }""")
+            )
+        
+        s += "\n  %s.form.submit({%s});" % (self.ext_name,dict2js(d))
+        s += """
+}});"""
         yield s
-        yield "%s.load();" % self.master_store.name
+        yield "%s.load();" % self.master_store.ext_name
     
         
 class TabbedPanel(Component):
@@ -1104,6 +1132,6 @@ class TabbedPanel(Component):
           split=True,
           activeTab=0,
           width=self.width,
-          items=js_code("[%s]" % ",".join([l.name for l in self.layouts])))
+          items=js_code("[%s]" % ",".join([l.ext_name for l in self.layouts])))
         return d
                 

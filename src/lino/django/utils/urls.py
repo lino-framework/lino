@@ -23,6 +23,7 @@ from django.utils.safestring import mark_safe
 from django.db import models
 from django import template 
 from django.conf.urls.defaults import patterns, url, include
+from django.shortcuts import render_to_response 
 
 
 def view_instance(request,db_table=None,pk=None):
@@ -89,29 +90,6 @@ def field_choices_view(request,app_label=None,model_name=None,field_name=None):
 
 
 
-def get_report_url(report,master_instance=None,**kw):
-    url = "/r/" + report.name
-    #~ app_label = report.__class__.__module__.split('.')[-2]
-    #~ if mode == 'choices':
-        #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
-    #~ else:
-        #~ url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
-    if master_instance is None:
-        master_instance = report.master_instance
-    if master_instance is not None:
-        kw['master'] = master_instance.pk
-    if len(kw):
-        url += "?"+urlencode(kw)
-    return url
-        
-
-def get_instance_url(o):
-    if hasattr(o,'get_instance_url'):
-        url = o.get_instance_url()
-        if url is not None:
-            return url
-    return "/o/%s/%s" % (o._meta.db_table, o.pk)
-        
 
 def sorry(request,message=None):
     if message is None:
@@ -135,13 +113,44 @@ def sorry(request,message=None):
 
 
 
+def get_report_url(report,master_instance=None,json=False,save=False,**kw):
+    if json:
+        url = "/json/" + report.name
+    elif save:
+        url = "/save/" + report.name
+    else:
+        url = "/r/" + report.name
+    #~ app_label = report.__class__.__module__.split('.')[-2]
+    #~ if mode == 'choices':
+        #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
+    #~ else:
+        #~ url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
+    if master_instance is None:
+        master_instance = report.master_instance
+    if master_instance is not None:
+        kw['master'] = master_instance.pk
+    if len(kw):
+        url += "?"+urlencode(kw)
+    return url
+        
+
+def get_instance_url(o):
+    if hasattr(o,'get_instance_url'):
+        url = o.get_instance_url()
+        if url is not None:
+            return url
+    return "/o/%s/%s" % (o._meta.db_table, o.pk)
+        
+
 
 def get_urls():
     from . import reports
     return patterns('',
         (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
         #(r'^slave/(?P<app_label>\w+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
-        (r'^r/(?P<rptname>\w+)$', reports.view_report),
+        (r'^r/(?P<rptname>\w+)$', reports.view_report_as_ext),
+        (r'^json/(?P<rptname>\w+)$', reports.view_report_as_json),
+        (r'^save/(?P<rptname>\w+)$', reports.view_report_save),
         #(r'^choices/(?P<app_label>\w+)/(?P<model_name>\w+)$', choices_view),
         #(r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_view),
         #(r'^detail/(?P<app_label>\w+)/(?P<rptname>\w+)$', detail_view),

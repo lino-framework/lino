@@ -184,7 +184,7 @@ class Companies(Contacts):
 class Persons(Contacts):
     filter = dict(companyName__exact='')
     order_by = "lastName firstName"
-    columnNames = "title firstName lastName country"
+    columnNames = "title firstName lastName country id"
     
 
 

@@ -31,7 +31,7 @@ from django.http import HttpResponse
 #from django.utils import simplejson
 from django.utils.safestring import mark_safe
 
-from lino.django.utils import layouts, render, perms, urls
+from . import layouts, render, perms, urls
 from lino.django.utils.editing import is_editing
 from lino.django.utils.sites import lino_site
 from lino.django.utils.requests import get_redirect, redirect_to
@@ -136,15 +136,81 @@ def register_report(rpt):
     #~ model_reports[db_table] = rpt
     
 def get_report(rptname):
-    rpt = _reports[rptname]
+    rpt = _reports.get(rptname,None)
     #rpt.setup()
     return rpt
-    
-def view_report(request,rptname=None):
+
+
+def view_report_as_json(request,rptname=None):
     """
     """
     rpt = get_report(rptname)
-    return rpt.view(request)
+    if rpt is None:
+        return json_response(success=False,
+            msg="%s : no such report" % rptname)
+    if not rpt.can_view.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot view %s : " % (request.user,rptname))
+    r = render.ViewReportRenderer(request,rpt)
+    #request._lino_report = r
+    s = r.render_to_json()
+    return HttpResponse(s, mimetype='text/html')
+
+def view_report_as_ext(request,rptname=None):
+    """
+    """
+    #~ url = get_redirect(request)
+    #~ if url is not None:
+        #~ return HttpResponseRedirect(url)
+    rpt = get_report(rptname)
+    if rpt is None:
+        return urls.sorry(request)
+    if not rpt.can_view.passes(request):
+        return urls.sorry(request)
+    r = render.ViewReportRenderer(request,rpt)
+    request._lino_report = r
+    return lino_site.ext_view(request,*rpt.ext_components())
+    
+    #return r.render_to_response()
+    
+    
+def view_report_save(request,rptname=None):
+    """
+    """
+    rpt = get_report(rptname)
+    rpt.setup()
+    d = dict()
+    if rpt is None:
+        return json_response(success=False,
+            msg="%s : no such report" % rptname)
+    if not rpt.can_change.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot update data in %s : " % (request.user,rptname))
+    #~ r = render.ViewReportRenderer(request,rpt)
+    #~ if r.instance is None:
+        #~ print request.GET
+        #~ return json_response(success=False,
+            #~ msg="tried to update more than one row")
+    pk = request.POST.get('pk',None)
+    if pk is None:
+        return json_response(success=False,msg="No primary key was specified")
+    layout = rpt.layouts[int(request.POST.get('layout'))]
+    #print "foo",request.POST
+    try:
+        instance = rpt.model.objects.get(pk=pk)
+        for e in layout.ext_store_fields:
+            e.store_value(request.POST[e.name],instance)
+        #~ for k,v in request.POST.items():
+            #~ setattr(instance,k,v)
+        instance.save()
+        return json_response(success=True,
+              msg="%s has been saved" % r.instance)
+    except Exception,e:
+        traceback.print_exc(e)
+        return json_response(success=False,msg="Exception occured: "+str(e))
+    
+def json_response(**kw):
+    return HttpResponse("{%s}" % layouts.dict2js(kw), mimetype='text/html')
     
 def setup():
     """
@@ -301,6 +367,7 @@ class Report:
     url = None
     #_slaves = None
     mode = None # suffix to create unique names 'choices'
+    json = False
     
     def __init__(self,**kw):
         for k,v in kw.items():
@@ -335,10 +402,10 @@ class Report:
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
         if self.row_layout_class is None:
-            self.row_layout = layouts.RowLayout(self,1,self.columnNames)
+            self.row_layout = layouts.RowLayout(self,0,self.columnNames)
         else:
             assert self.columnNames is None
-            self.row_layout = self.row_layout_class(self,1)
+            self.row_layout = self.row_layout_class(self,0)
             
         self.columns = self.row_layout.fields
         
@@ -347,7 +414,7 @@ class Report:
               self.model,self.fk_name)
             #self.name = self.fk.rel.related_name
         self.layouts = [ self.row_layout ]
-        index = 2
+        index = 1
         for lc in self.page_layouts:
             self.layouts.append(lc(self,index))
             index += 1
@@ -506,15 +573,6 @@ class Report:
         #l.append(url(r'^%s/(\d+)/json$' % name, self.json_one))
         return l
 
-    def view(self,request):
-        url = get_redirect(request)
-        if url is not None:
-            return HttpResponseRedirect(url)
-        r = render.ViewReportRenderer(request,self)
-        request._lino_report = r
-        return r.render_to_response()
-        #return lino_site.view(request,r.get_components())
-        
         
     def ext_components(self):
         if len(self.layouts) == 2:
@@ -530,8 +588,6 @@ class Report:
         #~ msg = "Hello, "+unicode(request.user)
         #~ print msg
         #~ request.user.message_set.create(msg)
-        if not self.can_view.passes(request):
-            return urls.sorry(request)
         r = render.ViewReportRenderer(request,self)
         #~ if is_editing(request) and self.can_change.passes(request):
             #~ r = render.EditManyReportRenderer(request,True,self)

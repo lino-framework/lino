@@ -476,7 +476,7 @@ var main_menu = new Ext.Toolbar(%s);""" % self._menu.as_ext(request)
         ))
         for c in components:
             for v in c.ext_variables():
-                s += "%s = %s;\n" % (v.name,v.as_ext_value(request))
+                s += "%s = %s;\n" % (v.ext_name,v.as_ext_value(request))
 
         for c in components:
             for ln in c.ext_lines(request):
