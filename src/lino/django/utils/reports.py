@@ -309,7 +309,7 @@ def get_combo_report(model):
     rpt = getattr(model,'_lino_choices',None)
     if rpt: return rpt
     rc = model._lino_model_report_class
-    rpt = rc(columnNames=rc.display_field,mode='choices')
+    rpt = rc(columnNames=rc.display_field,mode='choices',page_length=None)
     model._lino_choices = rpt
     return rpt
 

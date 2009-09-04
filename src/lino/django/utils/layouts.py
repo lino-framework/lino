@@ -136,23 +136,27 @@ class Store(Element):
     declared = True
     ext_suffix = "_store"
     
-    def __init__(self,layout,report,**options):
+    def __init__(self,layout,report,layout_index=0,**options):
         Element.__init__(self,layout,report.name)
         self.report = report
         self.options = options
-        if report == layout.report:
-            # it's the master store
-            self.data_layout = layout
-        else:
-            report.setup()
-            self.data_layout = report.row_layout
+        #report.setup()
+        self.layout_index = layout_index
+        #~ if report == layout.report:
+            #~ # it's the master store
+            #~ self.data_layout = layout
+        #~ else:
+            #~ report.setup()
+            #~ self.data_layout = report.row_layout
         #print "Store.__init__()",self.name
         #print self,report.get_absolute_url()
         
     def ext_options(self,request):
         d = Element.ext_options(self,request)
-        #self.report.setup()
-        url = self.report.get_absolute_url(json=True)
+        self.report.setup()
+        data_layout = self.report.layouts[self.layout_index]
+        url = self.report.get_absolute_url(json=True,
+          layout=data_layout.index)
         #~ if request._lino_report.report == self.report:
             #~ #rr = request._lino_report
             #~ layout = self.layout
@@ -175,14 +179,14 @@ class Store(Element):
         d.update(root='rows')
         #print self.report.model._meta
         #d.update(id=self.report.model._meta.pk.attname)
-        d.update(id=self.data_layout.pk.field.name)
+        d.update(id=data_layout.pk.field.name)
         #~ d.update(fields=js_code(
           #~ "[ %s ]" % ",".join([repr(e.field.name) 
           #~ for e in self.data_layout.ext_store_fields])
         #~ ))
         d.update(fields=js_code(
             "[ %s ]" % ",".join([
-                e.as_store_field() for e in self.data_layout.ext_store_fields
+                e.as_store_field() for e in data_layout.ext_store_fields
             ])
         ))
         return d
@@ -486,7 +490,7 @@ class ForeignKeyElement(FieldElement):
         FieldElement.__init__(self,*args,**kw)
         if self.editable:
             rpt = self.layout.report.get_choices(self.field)
-            self.store = Store(self.layout,rpt,autoLoad=True)
+            self.store = Store(self.layout,rpt) #,autoLoad=True)
       
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
@@ -506,7 +510,7 @@ Note: use of a valueField requires the user to make a selection in order for a v
             #kw.update(lazyInit=False)
             kw.update(mode='remote')
             kw.update(selectOnFocus=True)
-            kw.update(pageSize=self.store.report.page_length)
+            #kw.update(pageSize=self.store.report.page_length)
             
         kw.update(triggerAction='all')
         kw.update(emptyText='Select a %s...' % self.store.report.model.__name__)
@@ -859,7 +863,7 @@ class Layout(Component):
         self.report = report
         self.index = index
         #print "Layout.__init__()", self.name
-        self.master_store = Store(self,report)
+        self.master_store = Store(self,report,self.index)
         #self._slave_dict = {}
         if main is None:
             if hasattr(self,"main"):
@@ -1146,12 +1150,12 @@ class PageLayout(Layout):
     text: 'Submit',
     handler: function(btn,evt){""" % self.ext_name
         #s += "console.log(btn,evt);"
-        s += "console.log(%s.getAt(0));" % self.master_store.ext_name
+        #s += "console.log(%s.getAt(0));" % self.master_store.ext_name
         s += """
         var pk = %s.getAt(0).data.%s;""" % (self.master_store.ext_name,self.pk.name)
         d = dict(
             url=self.report.get_absolute_url(save=True),
-            params=js_code("{pk:pk,layout:%d}" % self.master_store.data_layout.index),
+            params=js_code("{pk:pk,layout:%d}" % self.master_store.layout_index),
             waitMsg='Saving Data...',
             success=js_code("""function (form, action) {
                 Ext.MessageBox.alert('Saved OK',

@@ -85,12 +85,15 @@ class ReportRenderer:
     
     def __init__(self,report,
             master_instance=None,
-            offset=None,limit=None,**kw):
+            offset=None,limit=None,
+            layout=0,
+            **kw):
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
         report.setup()
         self.name = report.name
+        self.layout = report.layouts[layout]
         #~ if report.master is None:
             #~ assert master_instance is None
         #~ else:
@@ -119,16 +122,17 @@ class ReportRenderer:
             self.limit = limit
             
         self.page_length = report.page_length
+        self.column_headers = report.column_headers
         
-        if self.limit == 1:
-            self.layout = self.report.page_layout
-            try:
-                self.instance = self.queryset[0]
-            except IndexError,e:
-                self.instance = self.report.create_instance(self)
-        else:
-            self.layout = self.report.row_layout
-            self.column_headers = report.column_headers
+        #~ if self.limit == 1:
+            #~ #self.layout = self.report.page_layout
+            #~ try:
+                #~ self.instance = self.queryset[0]
+            #~ except IndexError,e:
+                #~ self.instance = self.report.create_instance(self)
+        #~ else:
+            #~ #self.layout = self.report.row_layout
+            #~ self.column_headers = report.column_headers
             
         self.actions = self.report.get_row_actions(self)
 
@@ -195,6 +199,9 @@ class ViewReportRenderer(ReportRenderer):
         limit = request.GET.get('limit',None)
         if limit:
             kw.update(limit=limit)
+        layout = request.GET.get('layout',None)
+        if layout:
+            kw.update(layout=int(layout))
 
         #print "ViewReportRenderer.__init__() 1",report.name
         self.request = request
@@ -214,6 +221,8 @@ class ViewReportRenderer(ReportRenderer):
             kw.update(sort=self.sort_column)
         if self.sort_direction is not None:
             kw.update(dir=self.sort_direction)
+        if self.layout.index != 0:
+            kw.update(layout=self.layout.index)
         return self.report.get_absolute_url(**kw)
         
         
