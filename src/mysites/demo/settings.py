@@ -188,5 +188,7 @@ if sys.platform == 'win32':
         #~ from django.core.files.storage import FileSystemStorage
         #~ fs = FileSystemStorage(location=extjs_root,base_url=EXTJS_URL)
         #~ print extjs_root
+else:
+   EXTJS_ROOT = None
         
 #print "ok"
