@@ -65,11 +65,6 @@ class Component:
         self.options = options
         self.ext_name = name
         
-    def store_to_form(self,obj,d):
-        raise NotImplementedError
-    #~ def value2js(self,obj):
-        #~ raise NotImplementedError
-        
     def ext_variables(self):
         if self.declared:
             yield self
@@ -78,7 +73,9 @@ class Component:
         return []
         
     def ext_options(self,request):
-        return self.options
+        d = {}
+        d.update(self.options)
+        return d
         
     def as_ext_value(self,request):
         options = self.ext_options(request)
@@ -102,12 +99,12 @@ class Element(Component):
     ext_name = None
     ext_suffix = ""
     #parent = None # will be set by Container
-    def __init__(self,layout,name):
+    def __init__(self,layout,name,**kw):
         #print "Element.__init__()", layout,name
         assert isinstance(layout,Layout)
         self.layout = layout
         #self.parent = parent
-        Component.__init__(self,name)
+        Component.__init__(self,name,**kw)
         if self.declared:
             layout.add_variable(self)
             self.ext_name = self.layout.name +"_" + self.name + self.ext_suffix
@@ -123,12 +120,15 @@ class Element(Component):
     def pprint(self,level=0):
         return ("  " * level) + self.__str__()
         
-    def ext_options(self,request):
-        return {}
-        
     def walk(self):
         return [ self ]
         
+    def as_store_field(self):
+        return "{ %s }" % dict2js(dict(name=self.name))
+
+    def load_to_form(self,obj,d):
+        d[self.name] = getattr(obj,self.name)
+
         
 
 class Store(Element):
@@ -136,9 +136,10 @@ class Store(Element):
     declared = True
     ext_suffix = "_store"
     
-    def __init__(self,layout,report):
+    def __init__(self,layout,report,**options):
         Element.__init__(self,layout,report.name)
         self.report = report
+        self.options = options
         if report == layout.report:
             # it's the master store
             self.data_layout = layout
@@ -149,6 +150,7 @@ class Store(Element):
         #print self,report.get_absolute_url()
         
     def ext_options(self,request):
+        d = Element.ext_options(self,request)
         #self.report.setup()
         url = self.report.get_absolute_url(json=True)
         #~ if request._lino_report.report == self.report:
@@ -161,7 +163,6 @@ class Store(Element):
             #~ #rr = self.report.renderer()
             #~ url = self.report.get_absolute_url(json=True)
         #self.report.setup()
-        d = Element.ext_options(self,request)
         d.update(storeId=self.ext_name)
         d.update(remoteSort=True)
         d.update(proxy=js_code(
@@ -181,13 +182,11 @@ class Store(Element):
         #~ ))
         d.update(fields=js_code(
             "[ %s ]" % ",".join([
-                "{ %s }" % dict2js(dict(name=e.name))
-                #"{ %s }" % dict2js(dict(mapping=e.field.name,name=e.name))
-                for e in self.data_layout.ext_store_fields
+                e.as_store_field() for e in self.data_layout.ext_store_fields
             ])
         ))
         return d
-    
+        
 class ColumnModel(Element):
     declared = True
     name_suffix = "cols"
@@ -221,9 +220,6 @@ class HiddenField(Element):
         Element.__init__(self,layout,field.attname)
         self.field = field
         
-    def store_to_form(self,obj,d):
-        d[self.name] = getattr(obj,self.name)
-
     #~ def value2js(self,obj):
         #~ return getattr(obj,self.name)
         
@@ -266,6 +262,31 @@ class VisibleElement(Element):
             #~ return mark_safe(s)
         #~ return self.name
         
+    def get_column_options(self,request,**kw):
+        kw.update(
+          dataIndex=self.name, 
+          header=unicode(self.label) if self.label else self.name,
+          sortable=self.sortable)
+        if self.width:
+            kw.update(width=self.width * EXT_CHAR_WIDTH)
+        return kw    
+        
+    def as_ext_column(self,request):
+        kw = self.get_column_options(request)
+        return "{ %s }" % dict2js(kw)
+        
+    #~ def as_ext_column(self,request):
+        #~ d = dict(
+          #~ dataIndex=self.name, 
+          #~ header=unicode(self.label) if self.label else self.name,
+          #~ sortable=self.sortable)
+        #~ if self.width:
+            #~ d.update(width=self.width * EXT_CHAR_WIDTH)
+        #~ if request._lino_report.editing and self.editable:
+            #~ fo = self.get_field_options(request)
+            #~ # del fo['fieldLabel']
+            #~ d.update(editor=js_code("{ %s }" % dict2js(fo)))
+        #~ return "{ %s }" % dict2js(d)
     
     def ext_options(self,request):
         d = Element.ext_options(self,request)
@@ -372,27 +393,22 @@ class FieldElement(VisibleElement):
     def __init__(self,layout,field,**kw):
         VisibleElement.__init__(self,layout,field.name,label=field.verbose_name,**kw)
         self.field = field
-        self.editable = field.editable
+        self.editable = field.editable and not field.primary_key
         
-    def as_ext_column(self,request):
-        d = dict(
-          dataIndex=self.name, 
-          header=unicode(self.label) if self.label else self.name,
-          sortable=self.sortable)
-        if self.width:
-            d.update(width=self.width * EXT_CHAR_WIDTH)
+    def get_column_options(self,request,**kw):
+        kw = VisibleElement.get_column_options(self,request,**kw)
         if request._lino_report.editing and self.editable:
             fo = self.get_field_options(request)
-            # del fo['fieldLabel']
-            d.update(editor=js_code("{ %s }" % dict2js(fo)))
-        return "{ %s }" % dict2js(d)
+            kw.update(editor=js_code("{ %s }" % dict2js(fo)))
+        return kw    
+        
 
     #~ def value2js(self,obj):
         #~ return getattr(obj,self.name)
         
     def update_from_form(self,instance,values):
         setattr(instance,self.name,values.get(self.name,None))
-    def store_to_form(self,obj,d):
+    def load_to_form(self,obj,d):
         d[self.name] = getattr(obj,self.name)
         
     #~ def render(self,row):
@@ -423,6 +439,9 @@ class FieldElement(VisibleElement):
             kw.update(fieldLabel=unicode(self.label))
         if not self.field.blank:
             kw.update(allowBlank=False)
+        if not self.editable:
+            kw.update(readOnly=True)
+            print "get_field_options() readOnly", self
         return kw
         
     def get_panel_options(self,request,**kw):
@@ -467,7 +486,7 @@ class ForeignKeyElement(FieldElement):
         FieldElement.__init__(self,*args,**kw)
         if self.editable:
             rpt = self.layout.report.get_choices(self.field)
-            self.store = Store(self.layout,rpt)
+            self.store = Store(self.layout,rpt,autoLoad=True)
       
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
@@ -476,6 +495,7 @@ class ForeignKeyElement(FieldElement):
             #kw.update(store=js_code(self.store.as_ext_value(request)))
             kw.update(hiddenName=self.name+"Hidden")
             kw.update(valueField=self.store.report.model._meta.pk.attname)
+            #kw.update(valueField=self.name)
             """
             valueField: The underlying data value name to bind to this ComboBox (defaults to undefined if mode = 'remote' or 'field2' if transforming a select or if the field name is autogenerated based on the store configuration).
 
@@ -497,20 +517,29 @@ Note: use of a valueField requires the user to make a selection in order for a v
         #~ if v is not None:
             #~ return v.pk
         
+    def as_store_field(self):
+        return "{ %s },{ %s }" % (
+          dict2js(dict(name=self.name)),
+          dict2js(dict(name=self.name+"Hidden"))
+        )
+
     def update_from_form(self,instance,values):
+        #v = values.get(self.name,None)
         v = values.get(self.name+"Hidden",None)
         if v is not None:
             v = self.store.report.model.objects.get(pk=v)
         setattr(instance,self.name,v)
         
-    def store_to_form(self,obj,d):
+    def load_to_form(self,obj,d):
         v = getattr(obj,self.name)
         if v is None:
-            d[self.name] = ''
+            #d[self.name] = ''
             d[self.name+"Hidden"] = None
+            d[self.name] = None
         else:
             d[self.name] = unicode(v)
             d[self.name+"Hidden"] = v.pk
+            #d[self.name] = v.pk
         
 
         
@@ -610,8 +639,10 @@ class MethodElement(VisibleElement):
         fn = getattr(obj,self.name)
         return fn()
         
-    #~ def render(self,row):
-        #~ return row.render_field(self)
+    def load_to_form(self,obj,d):
+        fn = getattr(obj,self.name)
+        d[self.name] = fn()
+        
 
 
 _field2elem = (
