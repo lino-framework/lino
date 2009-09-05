@@ -193,7 +193,7 @@ class Store(Element):
         
 class ColumnModel(Element):
     declared = True
-    name_suffix = "cols"
+    ext_suffix = "cols"
     value_template = "new Ext.grid.ColumnModel({ %s })"
     
     def __init__(self,layout,report):
@@ -235,6 +235,8 @@ class VisibleElement(Element):
     editable = False
     sortable = False
     xpadding = 5
+    editable = False
+    preferred_width = 10
     #ext_template = 'lino/includes/element.js'
     def __init__(self,layout,name,width=None,height=None,label=None):
         Element.__init__(self,layout,name)
@@ -253,7 +255,7 @@ class VisibleElement(Element):
         if self.parent is None or v is not None:
             return v
         return self.parent.get_property(name)
-
+        
     def get_width(self):
         return self.width
         
@@ -269,10 +271,13 @@ class VisibleElement(Element):
     def get_column_options(self,request,**kw):
         kw.update(
           dataIndex=self.name, 
+          editable=self.editable,
           header=unicode(self.label) if self.label else self.name,
           sortable=self.sortable)
         if self.width:
             kw.update(width=self.width * EXT_CHAR_WIDTH)
+        else:
+            kw.update(width=self.preferred_width * EXT_CHAR_WIDTH)
         return kw    
         
     def as_ext_column(self,request):
@@ -464,17 +469,20 @@ class FieldElement(VisibleElement):
         
 class TextFieldElement(FieldElement):
     xtype = 'textarea'
-    width = 60
+    #width = 60
+    preferred_width = 60
 
 
 class CharFieldElement(FieldElement):
     xtype = "textfield"
     sortable = True
   
-    #~ def __init__(self,*args,**kw):
-        #~ FieldElement.__init__(self,*args,**kw)
-        #~ if self.width is None:
-            #~ self.width = min(40,self.field.max_length)
+    def __init__(self,*args,**kw):
+        FieldElement.__init__(self,*args,**kw)
+        self.preferred_width = min(20,self.field.max_length)
+        if self.width is None and self.field.max_length < 10:
+            # "small" texfields should not be expanded, so they get an explicit width
+            self.width = self.field.max_length
             
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
@@ -490,7 +498,7 @@ class ForeignKeyElement(FieldElement):
         FieldElement.__init__(self,*args,**kw)
         if self.editable:
             rpt = self.layout.report.get_choices(self.field)
-            self.store = Store(self.layout,rpt) #,autoLoad=True)
+            self.store = Store(self.layout,rpt,autoLoad=True)
       
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
@@ -570,6 +578,11 @@ class BooleanFieldElement(FieldElement):
   
     xtype = 'checkbox'
     
+    def get_column_options(self,request,**kw):
+        kw = FieldElement.get_column_options(self,request,**kw)
+        kw.update(xtype='booleancolumn')
+        return kw
+        
     def update_from_form(self,instance,values):
         """
         standard HTML submits checkboxes of a form only when they are checked.
@@ -645,7 +658,10 @@ class MethodElement(VisibleElement):
         
     def load_to_form(self,obj,d):
         fn = getattr(obj,self.name)
-        d[self.name] = fn()
+        try:
+            d[self.name] = fn()
+        except Exception,e:
+            print "[Warning] %s : %s" % (self.ext_name,e)
         
 
 
@@ -677,6 +693,7 @@ class Container(VisibleElement):
     vertical = False
     hpad = 1
     is_fieldset = False
+    preferred_width = None
     
     # ExtJS options
     frame = True
@@ -719,12 +736,12 @@ class Container(VisibleElement):
                         self.label_width = w
             if e.width == self.width:
                 """
-                this was the width-giving element. 
-                remove this width to avoid padding differences.
+                e was the width-giving element for this container.
+                remove e's width to avoid padding differences.
                 """
                 e.width = None
                 
-    def compute_width(self):
+    def compute_width(self,unused_insist=False):
         """
         If all children have a width (in case of a horizontal layout), 
         or (in a vertical layout) if at at least one element has a width, 
@@ -734,18 +751,21 @@ class Container(VisibleElement):
             #print self, "compute_width..."
             w = 0
             xpadding = self.xpadding
-            if self.vertical:
-                for e in self.elements:
-                    if e.width is not None:
-                        if w < e.width:
-                            w = e.width
+            for e in self.elements:
+                ew = e.width or e.preferred_width
+                #~ ew = e.width
+                #~ if ew is None and insist:
+                    #~ ew = e.preferred_width
+                if self.vertical:
+                    if ew is not None:
+                        if w < ew:
+                            w = ew
                             xpadding = e.xpadding
                         # w = max(w,e.width) # + self.hpad*2)
-            else:
-                for e in self.elements:
-                    if e.width is None:
+                else:
+                    if ew is None:
                         return # don't set this container's width since at least one element is flexible
-                    w += e.width # + self.hpad*2
+                    w += ew # + self.hpad*2
                     xpadding += e.xpadding
             if w > 0:
                 self.width = w
@@ -1117,6 +1137,7 @@ class PageLayout(Layout):
         Layout.__init__(self,*args,**kw)
         if self._main.width is None:
             print "[Warning] Could not compute width for PageLayout", self
+            #self._main.compute_width(insist=True)
         #print self._main.pprint()
         
     def ext_options(self,request):

@@ -480,7 +480,7 @@ class EmittedInvoicesPageLayout(OrderPageLayout):
     label = "Emitted invoices"
     main = """
     journal number:4 creation_date customer:20 start_date
-    invoice_set
+    InvoicesByOrder
     """
    
 class SalesDocuments(reports.Report):

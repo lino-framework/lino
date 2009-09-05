@@ -22,7 +22,7 @@ from lino.django.apps.journals import models as journals
 
 
 class Account(models.Model):
-    id = models.CharField(max_length=10,primary_key=True)
+    id = models.CharField(max_length=8,primary_key=True)
     name = models.CharField(max_length=200,blank=True)
     
     def __unicode__(self):
@@ -148,6 +148,7 @@ from lino.django.utils import perms
 
 class Accounts(reports.Report):
     model = Account
+    #columnNames = "id name:50"
 
     
 #~ class LedgerJournals(journals.Journals):
