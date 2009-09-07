@@ -98,6 +98,7 @@ class Element(Component):
     height = None
     ext_name = None
     ext_suffix = ""
+    data_type = None 
     #parent = None # will be set by Container
     def __init__(self,layout,name,**kw):
         #print "Element.__init__()", layout,name
@@ -124,7 +125,11 @@ class Element(Component):
         return [ self ]
         
     def as_store_field(self):
-        return "{ %s }" % dict2js(dict(name=self.name))
+        d = dict(name=self.name)
+        if self.data_type:
+            d.update(type=self.data_type)
+            d.update(dateFormat='Y-m-d')
+        return "{ %s }" % dict2js(d)
 
     def load_to_form(self,obj,d):
         d[self.name] = getattr(obj,self.name)
@@ -193,7 +198,7 @@ class Store(Element):
         
 class ColumnModel(Element):
     declared = True
-    ext_suffix = "cols"
+    ext_suffix = "_cols"
     value_template = "new Ext.grid.ColumnModel({ %s })"
     
     def __init__(self,layout,report):
@@ -558,29 +563,60 @@ Note: use of a valueField requires the user to make a selection in order for a v
             
 class DateFieldElement(FieldElement):
     xtype = 'datefield'
+    data_type = 'date' # for store column
     sortable = True
-    #width = 10
+    preferred_width = 8 
+    # todo: DateFieldElement.preferred_width should be computed from Report.date_format
+    
+    def get_column_options(self,request,**kw):
+        kw = FieldElement.get_column_options(self,request,**kw)
+        kw.update(xtype='datecolumn')
+        kw.update(format=self.layout.report.date_format)
+        return kw
     
 class IntegerFieldElement(FieldElement):
     xtype = 'numberfield'
     sortable = True
     width = 8
+    data_type = 'int' 
 
 class DecimalFieldElement(FieldElement):
     xtype = 'numberfield'
     sortable = True
+    data_type = 'float' 
+    
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
         if self.width is None:
-            self.width = min(10,self.field.max_digits) + self.field.decimal_places
+            self.width = min(10,self.field.max_digits) \
+                + self.field.decimal_places
+                
+    def get_column_options(self,request,**kw):
+        kw = FieldElement.get_column_options(self,request,**kw)
+        kw.update(xtype='numbercolumn')
+        kw.update(align='right')
+        fmt = "0,000"
+        if self.field.decimal_places > 0:
+            fmt += "." + ("0" * self.field.decimal_places)
+        kw.update(format=fmt)
+        return kw
+        
+                
 
 class BooleanFieldElement(FieldElement):
   
     xtype = 'checkbox'
+    data_type = 'boolean' 
     
+    #~ def __init__(self,*args,**kw):
+        #~ FieldElement.__init__(self,*args,**kw)
+        
     def get_column_options(self,request,**kw):
         kw = FieldElement.get_column_options(self,request,**kw)
         kw.update(xtype='booleancolumn')
+        kw.update(trueText=self.layout.report.boolean_texts[0])
+        kw.update(falseText=self.layout.report.boolean_texts[1])
+        kw.update(undefinedText=self.layout.report.boolean_texts[2])
         return kw
         
     def update_from_form(self,instance,values):
@@ -644,17 +680,23 @@ class M2mGridElement(GridElement):
   
         
 
-class MethodElement(VisibleElement):
+class MethodElement(FieldElement):
     stored = True
+    editable = False
 
     def __init__(self,layout,name,meth,**kw):
-        VisibleElement.__init__(self,layout,name,**kw)
         self.meth = meth
-        # print "MethodElement", name, meth
-        
-    def value2js(self,obj):
-        fn = getattr(obj,self.name)
-        return fn()
+        field = getattr(meth,'return_type',None)
+        if field is None:
+            field = models.TextField(max_length=200)
+        else:
+            print "MethodElement", field.name
+        field.name = name
+        FieldElement.__init__(self,layout,field,**kw)
+        delegate = field2elem(layout,field,**kw)
+        for a in ('as_store_field','ext_width','ext_options',
+          'get_column_options','get_field_options'):
+            setattr(self,a,getattr(delegate,a))
         
     def load_to_form(self,obj,d):
         fn = getattr(obj,self.name)
@@ -663,6 +705,8 @@ class MethodElement(VisibleElement):
         except Exception,e:
             print "[Warning] %s : %s" % (self.ext_name,e)
         
+    def update_from_form(self,instance,values):
+        raise Exception("Cannot update a virtual field")
 
 
 _field2elem = (
@@ -681,9 +725,9 @@ def field2elem(layout,field,**kw):
     for cl,x in _field2elem:
         if isinstance(field,cl):
             return x(layout,field,**kw)
-    print "TODO: no layout element for %s" % field.__class__
-    return None
-    #raise NotImplementedError("field %s (%s)" %(field.name,field.__class__))
+    if True:
+        raise NotImplementedError("field %s (%s)" %(field.name,field.__class__))
+    print "[Warning] No LayoutElement for %s" % field.__class__
             
 
 
@@ -1165,6 +1209,7 @@ class PageLayout(Layout):
                  #slave.store.name,request._lino_report.layout.pk.name)
         s += "\n});"
         yield s
+        
         url = self.report.get_absolute_url(save=True)
         s = """
 %s.addButton({
@@ -1193,6 +1238,7 @@ class PageLayout(Layout):
         s += """
 }});"""
         yield s
+        
         yield "%s.load({params:{limit:1,start:0}});" % self.master_store.ext_name
     
         

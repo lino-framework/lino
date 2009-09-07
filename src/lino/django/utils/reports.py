@@ -355,6 +355,8 @@ class Report:
     master_instance = None
     page_length = 10
     display_field = '__unicode__'
+    boolean_texts = ('Ja','Nein',' ')
+    date_format = 'd.m.y'
     
     page_layouts = (layouts.PageLayout ,)
     _page_layouts = None

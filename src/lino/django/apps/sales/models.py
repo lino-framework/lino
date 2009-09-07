@@ -163,7 +163,7 @@ class SalesDocument(journals.AbstractDocument):
         
     def total_incl(self):
         return self.total_excl + self.total_vat
-    total_incl.field = fields.PriceField()
+    total_incl.return_type = fields.PriceField()
 
     def before_save(self):
         #~ if self.journal == "ORD":
