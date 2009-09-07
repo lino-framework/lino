@@ -442,49 +442,9 @@ class LinoSite: #(AdminSite):
   
   
     def ext_view(self,request,*components):
-        s = """<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title id="title">%s</title>""" % self.title
-        s += """
-<!-- ** CSS ** -->
-<!-- base library -->
-<link rel="stylesheet" type="text/css" href="%sresources/css/ext-all.css" />""" % settings.EXTJS_URL
-        s += """
-<!-- overrides to base library -->
-<!-- ** Javascript ** -->
-<!-- ExtJS library: base/adapter -->
-<script type="text/javascript" src="%sadapter/ext/ext-base.js"></script>""" % settings.EXTJS_URL
-        s += """
-<!-- ExtJS library: all widgets -->
-<script type="text/javascript" src="%sext-all-debug.js"></script>""" % settings.EXTJS_URL
-        s += """
-<!-- overrides to library -->
-<link rel="stylesheet" type="text/css" href="/media/lino.css">
-<script type="text/javascript" src="/media/lino.js"></script>
-<!-- page specific -->
-<script type="text/javascript">
-// Path to the blank image should point to a valid location on your server
-Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
-        s += """
-Ext.onReady(function(){ """
-        s += """
-var main_menu = new Ext.Toolbar(%s);""" % self._menu.as_ext(request)
-
-        d = dict(layout='border')
-        d.update(items=layouts.js_code(
-          "[main_menu,"+",".join([c.as_ext(request) for c in components]) +"]"
-        ))
-        for c in components:
-            for v in c.ext_variables():
-                s += "%s = %s;\n" % (v.ext_name,v.as_ext_value(request))
-
-        for c in components:
-            for ln in c.ext_lines(request):
-                s += ln + "\n"
-        s += """
-new Ext.Viewport({%s}).render('body');""" % layouts.dict2js(d)
-        s += "\n}); // end of onReady()"
-        s += "\n</script></head><body></body></html>"
+        vp = layouts.Viewport(self.title,self._menu,*components)
+        s = vp.render_to_html(request)
+        #s = layouts.ext_viewport(request,self.title,self._menu,*components)
         return HttpResponse(s)
   
 #~ class Skin:

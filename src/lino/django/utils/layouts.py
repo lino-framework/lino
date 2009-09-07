@@ -21,6 +21,7 @@ import types
 
 from django import forms
 from django.db import models
+from django.conf import settings
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 from django.template.loader import render_to_string
@@ -41,7 +42,11 @@ EXT_CHAR_HEIGHT = 12
 def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v,k)) for k,v in d.items()])
 
-def py2js(v,k):
+def py2js(v):
+    if type(v) is types.ListType:
+        return "[ %s ]" % ", ".join(v)
+    if type(v) is types.DictType:
+        return "{ %s }" % ", ".join(["%s: %s" % (k,py2js(v)) for k,v in v.items()])
     if type(v) is types.BooleanType:
         return str(v).lower()
     if type(v) is unicode:
@@ -57,20 +62,23 @@ class js_code:
       
 class Component:
     declared = False
-    #name_suffix = None
+    ext_suffix = ''
     value_template = "{ %s }"
     
     def __init__(self,name,**options):
         self.name = name
         self.options = options
-        self.ext_name = name
+        self.ext_name = name + self.ext_suffix        
+    #~ def ext_variables(self):
+        #~ if self.declared:
+            #~ yield self
+        
+    def ext_lines(self,request):
+        return []
         
     def ext_variables(self):
         if self.declared:
             yield self
-        
-    def ext_lines(self,request):
-        return []
         
     def ext_options(self,request):
         d = {}
@@ -91,77 +99,76 @@ class Component:
     #~ def ext_name(self):
         #~ return self.name
         
-        
-class Element(Component):
-    stored = False
-    width = None
-    height = None
-    ext_name = None
-    ext_suffix = ""
-    data_type = None 
-    #parent = None # will be set by Container
-    def __init__(self,layout,name,**kw):
-        #print "Element.__init__()", layout,name
-        assert isinstance(layout,Layout)
-        self.layout = layout
-        #self.parent = parent
-        Component.__init__(self,name,**kw)
-        if self.declared:
-            layout.add_variable(self)
-            self.ext_name = self.layout.name +"_" + self.name + self.ext_suffix
-            
-    def __str__(self):
-        "This shows how elements are specified"
-        if self.width is None:
-            return self.name
-        if self.height is None:
-            return self.name + ":%d" % self.width
-        return self.name + ":%dx%d" % (self.width,self.height)
-        
-    def pprint(self,level=0):
-        return ("  " * level) + self.__str__()
-        
-    def walk(self):
-        return [ self ]
-        
-    def as_store_field(self):
-        d = dict(name=self.name)
-        if self.data_type:
-            d.update(type=self.data_type)
-            d.update(dateFormat='Y-m-d')
-        return "{ %s }" % dict2js(d)
 
-    def load_to_form(self,obj,d):
-        d[self.name] = getattr(obj,self.name)
+DATATYPES = {
+  models.TextField: 'string',
+  models.CharField: 'string',
+  models.DateField: 'date',
+  models.IntegerField: 'int',
+  models.DecimalField: 'float',
+  models.BooleanField: 'boolean',
+  models.AutoField: 'int',
+}
 
-        
 
-class Store(Element):
+def store_fields(fld,**kw):
+    if isinstance(fld,models.ManyToManyField):
+        pass
+    elif isinstance(fld,models.ForeignKey):
+        yield dict(name=fld.name)
+        yield dict(name=fld.name+"Hidden")
+    else:
+        kw['type'] = DATATYPES.get(fld.__class__,'auto')
+        kw['dateFormat'] = 'Y-m-d'
+        kw['name'] = fld.name
+        yield kw
+
+
+class Store(Component):
     value_template = "new Ext.data.JsonStore({ %s })"
     declared = True
     ext_suffix = "_store"
     
-    def __init__(self,layout,report,layout_index=0,**options):
-        Element.__init__(self,layout,report.name)
+    def __init__(self,report,**options):
+        Component.__init__(self,report.name,**options)
         self.report = report
-        self.options = options
-        #report.setup()
-        self.layout_index = layout_index
-        #~ if report == layout.report:
-            #~ # it's the master store
-            #~ self.data_layout = layout
+        
+        fields = set()
+        for layout in report.layouts:
+            for e in layout.walk():
+                if isinstance(e,FieldElement):
+                    fields.add(e.field)
+                    
+                  
+        pk = None
+        for fld in fields:
+            if fld.name == report.model._meta.pk.name:
+                pk = e
+                break
+                
+        if pk is None:
+            fields.add(report.model._meta.pk)
+                
+        self.fields = tuple(fields)
+        
+        #~ if pk is None:
+            #~ self.pk = report.model._meta.pk
+            #~ self.ext_store_fields = self.fields + (self.pk,)
         #~ else:
-            #~ report.setup()
-            #~ self.data_layout = report.row_layout
-        #print "Store.__init__()",self.name
-        #print self,report.get_absolute_url()
+            #~ self.pk = pk
+            #~ self.ext_store_fields = self.fields
+            
+        self.store_fields = []
+        for fld in fields:
+            self.store_fields += store_fields(fld)
+        
+        
         
     def ext_options(self,request):
         d = Element.ext_options(self,request)
-        self.report.setup()
-        data_layout = self.report.layouts[self.layout_index]
-        url = self.report.get_absolute_url(json=True,
-          layout=data_layout.index)
+        #self.report.setup()
+        #data_layout = self.report.layouts[self.layout_index]
+        url = self.report.get_absolute_url(json=True)
         #~ if request._lino_report.report == self.report:
             #~ #rr = request._lino_report
             #~ layout = self.layout
@@ -184,17 +191,56 @@ class Store(Element):
         d.update(root='rows')
         #print self.report.model._meta
         #d.update(id=self.report.model._meta.pk.attname)
-        d.update(id=data_layout.pk.field.name)
+        d.update(id=self.pk.name)
         #~ d.update(fields=js_code(
           #~ "[ %s ]" % ",".join([repr(e.field.name) 
           #~ for e in self.data_layout.ext_store_fields])
         #~ ))
-        d.update(fields=js_code(
-            "[ %s ]" % ",".join([
-                e.as_store_field() for e in data_layout.ext_store_fields
-            ])
-        ))
+        d.update(fields=self.store_fields)
         return d
+        
+        
+
+
+
+
+class Element(Component):
+    stored = False
+    width = None
+    height = None
+    ext_name = None
+    ext_suffix = ""
+    data_type = None 
+    #parent = None # will be set by Container
+    def __init__(self,layout,name,**kw):
+        #print "Element.__init__()", layout,name
+        assert isinstance(layout,Layout)
+        self.layout = layout
+        #self.parent = parent
+        Component.__init__(self,name,**kw)
+        #~ if self.declared:
+            #~ layout.add_variable(self)
+            #~ self.ext_name = self.layout.name +"_" + self.name + self.ext_suffix
+            
+    def __str__(self):
+        "This shows how elements are specified"
+        if self.width is None:
+            return self.name
+        if self.height is None:
+            return self.name + ":%d" % self.width
+        return self.name + ":%dx%d" % (self.width,self.height)
+        
+    def pprint(self,level=0):
+        return ("  " * level) + self.__str__()
+        
+    def walk(self):
+        return [ self ]
+        
+    def load_to_form(self,obj,d):
+        d[self.name] = getattr(obj,self.name)
+
+        
+
         
 class ColumnModel(Element):
     declared = True
@@ -207,6 +253,12 @@ class ColumnModel(Element):
         #Element.__init__(self,layout,report.name+"_cols")
         self.report = report
         
+        columns = []
+        for e in layout.walk():
+            if isinstance(e,FieldElement):
+                columns.append(e)
+        self.columns = columns
+        
     #~ def __init__(self,layout,report):
         #~ self.layout = layout # the owning layout
         #~ self.report = report
@@ -217,8 +269,9 @@ class ColumnModel(Element):
         self.report.setup()
         d = Element.ext_options(self,request)
         #editing = self.layout.report.can_change.passes(request)
-        l = [e.as_ext_column(request) for e in self.report.columns]
-        d.update(columns=js_code("[ %s ]" % ", ".join(l)))
+        #l = [e.as_ext_column(request) for e in self.report.columns]
+        #d.update(columns=js_code("[ %s ]" % ", ".join(l)))
+        d.update(columns=[e.as_ext_column(request) for e in self.columns])
         #d.update(defaultSortable=True)
         return d
         
@@ -502,23 +555,24 @@ class ForeignKeyElement(FieldElement):
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
         if self.editable:
-            rpt = self.layout.report.get_choices(self.field)
-            self.store = Store(self.layout,rpt,autoLoad=True)
+            self.report = self.layout.report.get_choices(self.field)
+            self.report.setup()
+            #self.store = Store(rpt,autoLoad=True)
       
     def get_field_options(self,request,**kw):
         kw = FieldElement.get_field_options(self,request,**kw)
         if self.editable:
-            kw.update(store=js_code(self.store.ext_name))
+            kw.update(store=js_code(self.report.store.ext_name))
             #kw.update(store=js_code(self.store.as_ext_value(request)))
             kw.update(hiddenName=self.name+"Hidden")
-            kw.update(valueField=self.store.report.model._meta.pk.attname)
+            kw.update(valueField=self.report.model._meta.pk.attname)
             #kw.update(valueField=self.name)
             """
             valueField: The underlying data value name to bind to this ComboBox (defaults to undefined if mode = 'remote' or 'field2' if transforming a select or if the field name is autogenerated based on the store configuration).
 
 Note: use of a valueField requires the user to make a selection in order for a value to be mapped. See also hiddenName, hiddenValue, and displayField.
             """
-            kw.update(displayField=self.store.report.display_field)
+            kw.update(displayField=self.report.display_field)
             kw.update(typeAhead=True)
             #kw.update(lazyInit=False)
             kw.update(mode='remote')
@@ -526,7 +580,7 @@ Note: use of a valueField requires the user to make a selection in order for a v
             #kw.update(pageSize=self.store.report.page_length)
             
         kw.update(triggerAction='all')
-        kw.update(emptyText='Select a %s...' % self.store.report.model.__name__)
+        kw.update(emptyText='Select a %s...' % self.report.model.__name__)
         return kw
         
     #~ def value2js(self,obj):
@@ -534,17 +588,17 @@ Note: use of a valueField requires the user to make a selection in order for a v
         #~ if v is not None:
             #~ return v.pk
         
-    def as_store_field(self):
-        return "{ %s },{ %s }" % (
-          dict2js(dict(name=self.name)),
-          dict2js(dict(name=self.name+"Hidden"))
-        )
+    #~ def as_store_field(self):
+        #~ return "{ %s },{ %s }" % (
+          #~ dict2js(dict(name=self.name)),
+          #~ dict2js(dict(name=self.name+"Hidden"))
+        #~ )
 
     def update_from_form(self,instance,values):
         #v = values.get(self.name,None)
         v = values.get(self.name+"Hidden",None)
         if v is not None:
-            v = self.store.report.model.objects.get(pk=v)
+            v = self.report.model.objects.get(pk=v)
         setattr(instance,self.name,v)
         
     def load_to_form(self,obj,d):
@@ -631,14 +685,14 @@ class GridElement(VisibleElement):
     declared = True
     ext_suffix = "_grid"
 
-    def __init__(self,layout,report,store=None,**kw):
+    def __init__(self,layout,report,**kw):
         VisibleElement.__init__(self,layout,report.name)
         #VisibleElement.__init__(self,layout,report.name+"_grid"+str(layout.index),**kw)
         #VisibleElement.__init__(self,layout,report.name+"_grid",**kw)
         self.report = report
-        if store is None:
-            store = Store(layout,report)
-        self.store = store
+        #~ if store is None:
+            #~ store = Store(layout,report)
+        #~ self.store = store
         self.column_model = ColumnModel(layout,report)
       
     def ext_options(self,request):
@@ -657,7 +711,7 @@ class GridElement(VisibleElement):
         #d.update(colModel=self.column_model)
         d.update(autoScroll=True)
         d.update(fitToFrame=True)
-        d.update(store=js_code(self.store.ext_name))
+        d.update(store=js_code(self.report.store.ext_name))
         d.update(colModel=js_code(self.column_model.ext_name))
         #d.update(store=js_code(rpt.as_ext_store()))
         #d.update(colModel=js_code(r.as_ext_colmodel()))
@@ -694,7 +748,7 @@ class MethodElement(FieldElement):
         field.name = name
         FieldElement.__init__(self,layout,field,**kw)
         delegate = field2elem(layout,field,**kw)
-        for a in ('as_store_field','ext_width','ext_options',
+        for a in ('ext_width','ext_options',
           'get_column_options','get_field_options'):
             setattr(self,a,getattr(delegate,a))
         
@@ -876,6 +930,9 @@ class Container(VisibleElement):
         #~ s += " }\n"
         #~ return mark_safe(s)
         
+    def ext_variables(self):
+        for v in self.elements.ext_variables():
+            yield v
         
 
 class HBOX(Container):
@@ -922,12 +979,11 @@ class Layout(Component):
         #from . import reports
         #assert isinstance(report,reports.Report)
         Component.__init__(self,report.name + str(index))
-        self.variables = []
         self.slave_grids = []
         self.report = report
         self.index = index
         #print "Layout.__init__()", self.name
-        self.master_store = Store(self,report,self.index)
+        #self.master_store = report.master_store # Store(self,report,self.index)
         #self._slave_dict = {}
         if main is None:
             if hasattr(self,"main"):
@@ -944,21 +1000,6 @@ class Layout(Component):
             print "main is", main
 
         self._main = main
-        
-        self.fields = tuple([e for e in self.walk() if e.stored])
-                  
-        pk = None
-        for e in self.fields:
-            if isinstance(e,FieldElement) and e.field.name == report.model._meta.pk.name:
-                pk = e
-                break
-                
-        if pk is None:
-            self.pk = self.add_hidden_field(report.model._meta.pk)
-            self.ext_store_fields = self.fields + (self.pk,)
-        else:
-            self.pk = pk
-            self.ext_store_fields = self.fields
         
         #print "Layout.__init__() done:", self.name
               
@@ -1057,9 +1098,6 @@ class Layout(Component):
     def add_hidden_field(self,field):
         return HiddenField(self,field)
         
-    def add_variable(self,elem):
-        self.variables.append(elem)
-        
     def renderer(self,rr):
         return LayoutRenderer(self,rr)
         
@@ -1071,6 +1109,12 @@ class Layout(Component):
     def walk(self):
         return self._main.walk()
         
+    def ext_variables(self):
+        yield self.report.store
+        for v in self._main.ext_variables():
+            yield v
+        yield self
+                
     def ext_variables(self):
         later = []
         for e in self.variables:
@@ -1096,7 +1140,8 @@ class RowLayout(Layout):
     
     def __init__(self,report,index,desc=None,**kw):
         Layout.__init__(self,report,index,desc,**kw)
-        self.grid = GridElement(self,report,self.master_store)
+        #self.grid = GridElement(self,report,self.master_store)
+        self.grid = GridElement(self,report)
         #self.column_model = ColumnModel(self,report)
     
     
@@ -1110,7 +1155,7 @@ class RowLayout(Layout):
               displayInfo: true,
               pageSize: %d,
               prependButtons: true,
-            }) """ % (self.master_store.ext_name,self.report.page_length)))
+            }) """ % (self.report.store.ext_name,self.report.page_length)))
         #d.update(items=js_code("[ %s ]" % self.grid.name))
         d.update(items=js_code(self.grid.ext_name))
         return d
@@ -1122,7 +1167,7 @@ function save(oGrid_event){
         waitMsg: 'Please wait...',
         url: '%s',""" % request._lino_report.get_absolute_url(ajax='update')
         d = {}
-        for e in self.ext_store_fields:
+        for e in self.report.store.fields:
             d[e.name] = js_code('oGrid_event.record.data.%s' % e.name)
         
         s += """
@@ -1153,21 +1198,14 @@ function save(oGrid_event){
 function onRowSelect(grid, rowIndex, e) {"""
         for layout in self.report.layouts[1:]:
             s += """
-    var pgnum = rowIndex + 1;
-    %s.getTopToolbar().changePage(pgnum);""" % layout.ext_name
+    var row = %s.getAt(rowIndex);""" % self.report.store.ext_name
+            s += """
+    %s.form.loadRecord(row);""" % layout.ext_name
     
-        #~ l = self.report.get_absolute_url(mode='detail').split('?')
-        #~ if len(l) == 1:
-            #~ l.append('')
-        #~ s += """
-  #~ url = "%s?row=" + String(rowIndex) + "%s";
-  #~ // Ext.MessageBox.alert(url,url);
-  #~ document.location = url;
-  #~ """ % tuple(l)
         s += "};"
         yield s
         yield "%s.getSelectionModel().on('rowselect', onRowSelect);" % self.grid.ext_name
-        yield "%s.load();" % self.master_store.ext_name
+        #yield "%s.load();" % self.report.store.ext_name
 
 
 class PageLayout(Layout):
@@ -1189,20 +1227,22 @@ class PageLayout(Layout):
         d.update(title=self.label) 
         d.update(region='east',split=True) #,width=300)
         d.update(autoScroll=True)
-        d.update(tbar=js_code("""new Ext.PagingToolbar({
-          store: %s,
-          displayInfo: true,
-          pageSize: 1,
-          prependButtons: true,
-        }) """ % self.master_store.ext_name))
+        if False:
+            d.update(tbar=js_code("""new Ext.PagingToolbar({
+              store: %s,
+              displayInfo: true,
+              pageSize: 1,
+              prependButtons: true,
+            }) """ % self.master_store.ext_name))
         #d.update(items=js_code(self._main.as_ext(request)))
         d.update(items=js_code("[%s]" % ",".join([e.as_ext(request) for e in self._main.elements])))
         return d
         
         
     def ext_lines(self,request):
-        s = "%s.addListener('load',function(store,rows,options) { " % self.master_store.ext_name
-        s += "\n  %s.form.loadRecord(rows[0]);" % self.ext_name
+        s = "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
+        s += """
+    %s.form.loadRecord(rows[0]);""" % self.ext_name
         for slave in self.slave_grids:
             s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
                  slave.store.ext_name,self.master_store.layout.pk.name)
@@ -1257,8 +1297,8 @@ class TabbedPanel(Component):
                 
     def ext_variables(self):
         for layout in self.layouts:
-            for ln in layout.ext_variables():
-                yield ln
+            for v in layout.ext_variables():
+                yield v
                 
     def ext_options(self,request):
         d = dict(
@@ -1267,6 +1307,72 @@ class TabbedPanel(Component):
           split=True,
           activeTab=0,
           width=self.width,
-          items=js_code("[%s]" % ",".join([l.ext_name for l in self.layouts])))
+          #items=js_code("[%s]" % ",".join([l.ext_name for l in self.layouts]))
+          items=[l.ext_name for l in self.layouts]
+        )
         return d
                 
+class Viewport:
+  
+    def __init__(self,title,main_menu,*components):
+        self.title = title
+        self.main_menu = main_menu
+        self.components = components
+        self.variables = []
+        
+    def add_variable(self,elem):
+        self.variables.append(elem)
+        
+    def render_to_html(self,request):
+        s = """<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">%s</title>""" % self.title
+        s += """
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="%sresources/css/ext-all.css" />""" % settings.EXTJS_URL
+        s += """
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="%sadapter/ext/ext-base.js"></script>""" % settings.EXTJS_URL
+        s += """
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="%sext-all-debug.js"></script>""" % settings.EXTJS_URL
+        s += """
+<!-- overrides to library -->
+<link rel="stylesheet" type="text/css" href="/media/lino.css">
+<script type="text/javascript" src="/media/lino.js"></script>
+<!-- page specific -->
+<script type="text/javascript">
+// Path to the blank image should point to a valid location on your server
+Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
+        s += """
+Ext.onReady(function(){ """
+        s += """
+var main_menu = new Ext.Toolbar(%s);""" % self.main_menu.as_ext(request)
+
+        for c in self.components:
+            for v in c.ext_variables():
+                s += "%s = %s;\n" % (v.ext_name,v.as_ext_value(request))
+
+        for c in self.components:
+            for ln in c.ext_lines(request):
+                s += ln + "\n"
+                
+        d = dict(layout='border')
+        d.update(items=js_code(
+          "[main_menu,"+",".join([c.as_ext(request) for c in self.components]) +"]"
+        ))
+        s += """
+    new Ext.Viewport({%s}).render('body');""" % dict2js(d)
+        s += "\n}); // end of onReady()"
+        s += "\n</script></head><body></body></html>"
+        return s
+            
+            
+#~ class ReportMaster(Viewport):
+  
+    #~ def __init__(self,report,*args):
+        #~ self.store = Store(self,report)
+        #~ Viewport.__init__(self,*args)

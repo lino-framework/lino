@@ -411,7 +411,7 @@ class Report:
             assert self.columnNames is None
             self.row_layout = self.row_layout_class(self,0)
             
-        self.columns = self.row_layout.fields
+        #self.columns = [e for e in self.row_layout.walk() if isinstance(e,FieldElement)]
         
         if self.master:
             self.fk = _get_foreign_key(self.master,
@@ -431,10 +431,13 @@ class Report:
         #~ self._page_layouts = [
               #~ layout(self) for layout in self.page_layouts]
         
+        self.store = layouts.Store(self)
         
         self._setup_doing = False
         self._setup_done = True
+        
         print "Report.setup() done:", self.name
+        
             
             
         
@@ -580,8 +583,8 @@ class Report:
         
     def ext_components(self):
         if len(self.layouts) == 2:
-            return self.layouts
-        return [ self.layouts[0], layouts.TabbedPanel("EastPanel",self.layouts[1:]) ]
+            return [ self.store ] + self.layouts
+        return [ self.store, self.layouts[0], layouts.TabbedPanel("EastPanel",self.layouts[1:]) ]
         #~ tabitems = self.layouts[1:]
         #~ tabpanel = layouts.Component("EastPanel",xtype="tabpanel",
           #~ region="east",
@@ -710,119 +713,6 @@ class Report:
             row.instance.delete()
         renderer.must_refresh()
 
-    def old_as_ext_script(self,renderer):
-        s = '''
-Ext.onReady(function(){ '''
-        s += """
-var main_menu = new Ext.Toolbar(%s);""" % lino_site._menu.as_ext(renderer.request)
-        # variable declarations. 
-        # Store declarations must come first because they may be referenced by field declarations
-        visibles = []
-        others = []
-        for layout in self.layouts:
-            for e in layout.variables:
-                if isinstance(e,layouts.VisibleElement):
-                    visibles.append(e)
-                else:
-                    others.append(e)
-        #print "foo", others[:2]
-        for e in others + visibles:
-            s += "\nvar %s = %s;" % (e.name,e.as_ext_value(renderer))
-            
-        for layout in self.layouts:
-            s += """
-var %s = %s;""" % (layout.name,layout.as_ext_value(renderer))
-            s += layout.on_load(renderer)
-        
-        for layout in self.layouts:
-            s += """
-%s.load(); """ % layout.master_store.name
-
-        mode = 2
-        if mode == 0:
-            d = dict(
-              items=layouts.js_code("[%s]" % ",".join([layout.name for layout in self.layouts]))
-              )
-            #d.update(layout='fit')
-            d.update(activeTab=0)
-            #d.update(autoHeight=True)
-            #d.update(title=layout.name)
-            #d.update(width=500)
-            d.update(height=500)
-            s += """
-frm = new Ext.TabPanel({%s});""" % layouts.dict2js(d)
-            s += """
-main_menu.render('main_menu');
-frm.render('data');"""
-        elif mode == 1:
-            num = 0
-            width = 500
-            s += """
-main_menu.render('main_menu');"""
-            for layout in self.layouts:
-                d = dict(layout='fit')
-                d.update(width=width)
-                d.update(height=500)
-                d.update(maximizable=True)
-                d.update(minimizable=True)
-                d.update(x=10+num*width)
-                d.update(y=100)
-                d.update(title=layout.name)
-                d.update(items=layouts.js_code(layout.name))
-                s += """
-new Ext.Window({%s}).show();""" % layouts.dict2js(d)
-                num += 1
-
-
-        elif mode == 2:
-            d = dict(layout='border')
-            d.update(items=layouts.js_code(
-              "[main_menu,"+",".join([l.name for l in self.layouts]) +"]"
-            ))
-            s += """
-new Ext.Viewport({%s}).render('body');""" % layouts.dict2js(d)
-            
-        s += """
-}); //end onReady """ 
-        return mark_safe(s)
-        
-        
-    def old_ext_lines(self,renderer):
-        # variable declarations. 
-        # Stores and fields must come first because they may be referenced by field declarations
-        visibles = []
-        others = []
-        for layout in self.layouts:
-            for e in layout.variables:
-                if isinstance(e,layouts.VisibleElement):
-                    visibles.append(e)
-                else:
-                    others.append(e)
-        #print "foo", others[:2]
-        for e in others + visibles:
-            yield "var %s = %s;" % (e.name,e.as_ext_value(renderer))
-            
-        for layout in self.layouts:
-            yield "var %s = %s;" % (layout.name,layout.as_ext_value(renderer))
-            for ln in layout.ext_lines(renderer):
-                yield ln
-        
-        for layout in self.layouts:
-            yield "%s.load();" % layout.master_store.name
-
-        
-        
-#~ class SubReport(Report):
-  
-    #~ def __init__(self,master,fk_name=None):
-    #~ fk = _get_foreign_key(master,self.model,fk_name)
-  
-    #~ def set_master(self,master):
-        #~ self.master = master
-        
-    #~ def get_queryset(self):
-        #~ return document.docitem_set.order_by("pos")
-        
         
 def report_factory(model):
     return type(model.__name__+"Report",(Report,),dict(model=model))
