@@ -391,6 +391,8 @@ class Report:
         if self.mode is not None:
             self.name += "_" + self.mode
             
+        self.choices_stores = {}
+            
         self._setup_done = False
         self._setup_doing = False
         
@@ -465,7 +467,11 @@ class Report:
         
     def get_choices(self,field):
         # TODO : if hasattr(self,"%s_choices" % field.name)...
-        return get_combo_report(field.rel.to)
+        rpt = self.choices_stores.get(field,None)
+        if rpt is None:
+            rpt = get_combo_report(field.rel.to)
+            self.choices_stores[field] = rpt
+        return rpt
         
     #~ def slaves(self):
         #~ hier: und zwar die slaves in diesem report (nicht alle slaves des modells)
@@ -539,159 +545,20 @@ class Report:
     def get_absolute_url(self,*args,**kw):
         return urls.get_report_url(self,*args,**kw)
     
-    #~ def get_row_print_template(self,instance):
-        #~ return instance._meta.db_table + "_print.html"
-        
-    #~ def page_layout(self,i=0):
-        #~ if self._page_layouts is None:
-            #~ self._page_layouts = [ 
-              #~ l(self.model) for l in self.page_layouts]
-        #~ return self._page_layouts[i]
-
-    #~ def can_view(self,request,row=None):
-        #~ return True
-        
-    #~ def can_add(self,request,row=None):
-        #~ return True
-        
-    #~ def can_change(self,request,row=None):
-        #~ return request.user.is_authenticated()
-        
-        
-    #~ def __unicode__(self):
-        #~ #return unicode(self.as_text())
-        #~ return unicode("%d row(s)" % self.queryset.count())
-    
-    def unused_get_urls(self,name):
-        if self.url:
-            raise RuntimError("Report.get_urls() called again.")
-        self.url = "/" + name
-        l = []
-        l.append(url(r'^%s/(\d+)$' % name, self.view_one))
-        #l.append(url(r'^%s/(\d+)/(.+)$' % name, self.view_one_slave))
-        l.append(url(r'^%s$' % name, self.view_many))
-        #l.append(url(r'^%s/(\d+)/pdf$' % name, self.pdf_one))
-        #l.append(url(r'^%s/pdf$' % name, self.pdf_many))
-        #l.append(url(r'^%s/flexigrid$' % name, self.flexigrid))
-        l.append(url(r'^%s/update$' % name, self.ajax_update))
-        #l.append(url(r'^%s/(\d+)/print$' % name, self.print_one))
-        #l.append(url(r'^%s/print$' % name, self.print_many))
-        #l.append(url(r'^%s/json$' % name, self.json))
-        #l.append(url(r'^%s/(\d+)/json$' % name, self.json_one))
-        return l
-
-        
     def ext_components(self):
+        yield self.store
+        for rpt in self.choices_stores.values():
+            yield rpt.store
+        yield self.layouts[0]
         if len(self.layouts) == 2:
-            return [ self.store ] + self.layouts
-        return [ self.store, self.layouts[0], layouts.TabbedPanel("EastPanel",self.layouts[1:]) ]
-        #~ tabitems = self.layouts[1:]
-        #~ tabpanel = layouts.Component("EastPanel",xtype="tabpanel",
-          #~ region="east",
-          #~ items=layouts.js_code("[%s]" % ",".join([l.name for l in tabitems])))
-        #~ return [tabpanel]
-
-    def unused_view_many(self,request):
-        #~ msg = "Hello, "+unicode(request.user)
-        #~ print msg
-        #~ request.user.message_set.create(msg)
-        r = render.ViewReportRenderer(request,self)
-        #~ if is_editing(request) and self.can_change.passes(request):
-            #~ r = render.EditManyReportRenderer(request,True,self)
-        #~ else:
-            #~ r = render.ListViewReportRenderer(request,True,self)
-        return r.render_to_response()
-        
-    #~ def renderer(self,request):
-        #~ return render.ListViewReportRenderer(request,False,self)
-        
-            
-    def unused_view_one(self,request,**kw):
-        #print "Report.view_one()", request.path
-        if not self.can_view.passes(request):
-            return urls.sorry(request)
-        r = render.ViewOneReportRenderer(request,True,self,**kw)
-        #~ if is_editing(request) and self.can_change.passes(request):
-            #~ r = render.EditOneReportRenderer(row_num,request,True,self,**kw)
-        #~ else:
-            #~ r = render.ViewOneReportRenderer(row_num,request,True,self,**kw)
-        return r.render_to_response()
-
-    #~ def view_one_slave(self,request,row_num,slave_name):
-        #~ if not self.can_view.passes(request):
-            #~ return render.sorry(request)
-        #~ r = render.ViewOneReportRenderer(row_num,request,True,self)
-        #~ sl = r.get_slave(slave_name)
-        #~ slr = render.ListViewReportRenderer(request,True,sl)
-        #~ return slr.render_to_response()
-
-    #~ def pdf_one(self,request,row):
-        #~ if not self.can_view.passes(request):
-            #~ return urls.sorry(request)
-        #~ return render.PdfOneReportRenderer(row,request,True,self).render()
-        
-    #~ def pdf_many(self, request):
-        #~ if not self.can_view.passes(request):
-            #~ return urls.sorry(request)
-        #~ return render.PdfManyReportRenderer(request,True,self).render()
-
-        
-    def old_json(self, request):
-        #print "json:", self
-        if not self.can_view.passes(request):
-            return None
-        qs = self.get_queryset()
-        sort = request.GET.get('sort',None)
-        if sort:
-            sort_dir = request.GET.get('dir','ASC')
-            if sort_dir == 'DESC':
-                sort = '-'+sort
-            qs = qs.order_by(sort)
-        offset = request.GET.get('start',None)
-        if offset:
-            lqs = qs[int(offset):]
+            yield self.layouts[1]
         else:
-            lqs = qs
-        limit = request.GET.get('limit',self.page_length)
-        if limit:
-            lqs = lqs[:int(limit)]
-        rows = [ self.obj2json(row) for row in lqs ]
-        d = dict(count=qs.count(),rows=rows)
-        s = simplejson.dumps(d,default=unicode)
-        #print s
-        return HttpResponse(s, mimetype='text/html')
-        
-        
-    #~ def json_one(self,request,row):
-        #~ if not self.can_view.passes(request):
-            #~ return None
-        #~ qs = self.get_queryset()
-        #~ rows = [ self.obj2json(qs[int(row)]) ]
-        #~ d = dict(count=qs.count(),rows=rows)
-        #~ s = simplejson.dumps(d,default=unicode)
-        #~ #print s
-        #~ return HttpResponse(s, mimetype='text/html')
-        
-        
+            yield layouts.TabbedPanel("EastPanel",self.layouts[1:])
+
     def ajax_update(self,request):
         print request.POST
         return HttpResponse("1", mimetype='text/x-json')
 
-    #~ def flexigrid(self, request):
-        #~ if not self.can_view.passes(request):
-            #~ return render.sorry(request)
-        #~ r = render.FlexigridRenderer(request,True,self)
-        #~ return r.render_to_response()
-        
-    def unused_print_many(self, request):
-        if not self.can_view.passes(request):
-            return urls.sorry(request)
-        return render.PdfManyReportRenderer(request,True,self).render(as_pdf=False)
-
-    def unused_print_one(self,request,row):
-        if not self.can_view.passes(request):
-            return urls.sorry(request)
-        return render.PdfOneReportRenderer(row,request,True,self).render(as_pdf=False)
 
     def as_text(self, *args,**kw):
         from lino.django.utils.renderers_text import TextReportRenderer
