@@ -208,7 +208,10 @@ class LinoSite: #(AdminSite):
         return d
         
     def index(self, request):
-        cmp = layouts.Component("index",xtype="panel",html=self.index_html,region="center")
+        cmp = layouts.VisibleComponent("index",
+          xtype="panel",
+          html=self.index_html,
+          region="center")
         return self.ext_view(request, cmp)
     index = never_cache(index)
       

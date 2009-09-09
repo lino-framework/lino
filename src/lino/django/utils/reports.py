@@ -107,7 +107,7 @@ def register_report_class(rptclass):
     if slaves is None:
         slaves = {}
         setattr(rptclass.master,'_lino_slaves',slaves)
-    slaves[rptclass.__name__] = rptclass
+    slaves[rptclass.__name__] = rptclass()
     #print "%s : slave for %s" % (rptclass.__name__, rptclass.master.__name__)
     
 
@@ -296,14 +296,27 @@ def _old_try_setup(todo):
     #~ return l
     #return _slave_reports.get(model,[])
 
+#~ def _get_slave(model,name):
+    #~ d = getattr(model,"_lino_slaves",None)
+    #~ if d:
+        #~ rpt = d.get(name,None)
+        #~ if rpt is not None:
+            #~ rpt.setup()
+            #~ return rpt
+
 def get_slave(model,name):
-    d = getattr(model,"_lino_slaves",{})
-    #print d
-    if d.has_key(name): return d[name]
-    for b in model.__bases__:
-        d = getattr(b,"_lino_slaves",{})
-        if d.has_key(name): return d[name]
-    return None
+    for b in (model,) + model.__bases__:
+        d = getattr(b,"_lino_slaves",None)
+        if d:
+            rpt = d.get(name,None)
+            if rpt is not None:
+                rpt.setup()
+                return rpt
+                
+    #~ for b in model.__bases__:
+        #~ d = getattr(b,"_lino_slaves",{})
+        #~ if d.has_key(name): return d[name]
+    #~ return None
     
 def get_combo_report(model):
     rpt = getattr(model,'_lino_choices',None)
@@ -546,14 +559,12 @@ class Report:
         return urls.get_report_url(self,*args,**kw)
     
     def ext_components(self):
-        yield self.store
-        for rpt in self.choices_stores.values():
-            yield rpt.store
-        yield self.layouts[0]
+        yield self.layouts[0]._main
         if len(self.layouts) == 2:
-            yield self.layouts[1]
+            yield self.layouts[1]._main
         else:
-            yield layouts.TabbedPanel("EastPanel",self.layouts[1:])
+            comps = [l._main for l in self.layouts[1:]]
+            yield layouts.TabPanel(None,"EastPanel",*comps)
 
     def ajax_update(self,request):
         print request.POST

@@ -1,1 +1,1 @@
-@python manage.py runserver 
+@start python manage.py runserver 

@@ -145,8 +145,8 @@ class ReportRenderer:
 
     def obj2json(self,obj):
         d = {}
-        for e in self.layout.ext_store_fields:
-            e.load_to_form(obj,d)
+        for fld in self.report.store.fields:
+            fld.write_to_form(obj,d)
             #d[e.name] = e.value2js(obj)
         return d
             
