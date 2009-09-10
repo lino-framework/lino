@@ -22,4 +22,4 @@ setup_environ(settings)
 
 from lino.django.apps.sales import utils
 utils.thanks_to()
-utils.make_invoices()
+print utils.make_invoices()

@@ -59,8 +59,8 @@ def base_attrs(cl):
             yield k
             
             
-class SetupNotDone(Exception):
-    pass 
+#~ class SetupNotDone(Exception):
+    #~ pass 
 
 
 class ReportParameterForm(forms.Form):
@@ -88,34 +88,45 @@ class ReportParameterForm(forms.Form):
     
 #model_reports = {}
 #_slave_reports = {}
-_reports = {}
+#_reports = {}
+
+# name : ( class , instance )
+
+"""
+Each Report subclass definition found
+"""
+
+def rc_name(rptclass):
+    return rptclass.app_label + '.' + rptclass.__name__
 
 def register_report_class(rptclass):
     #_reports.append(cls)
+    rptclass.app_label = rptclass.__module__.split('.')[-2]
+    #print "register_report_class()", rptclass.app_label + '.' + rptclass.__name__
     if rptclass.model is None:
-        #print "%s : model is None" % rptclass.__name__
+        print "register", rc_name(rptclass), ": model is None" 
         return
     if rptclass.master is None:
         #print "%s : master is None" % rptclass.__name__
-        if hasattr(rptclass.model,'_lino_model_report_class'):
-            #print "[Warning] %s" % rptclass #.__name__
-            return
-        #print "%s : model report is %s" % (rptclass.model.__name__,rptclass)
-        rptclass.model._lino_model_report_class = rptclass
+        if rptclass.use_as_default_report:
+            print "register", rc_name(rptclass), ": model_report for", rptclass.model.__name__
+            rptclass.model._lino_model_report_class = rptclass
+        else:
+            print "register", rc_name(rptclass), ": not used as model_report"
         return
     slaves = getattr(rptclass.master,"_lino_slaves",None)
     if slaves is None:
         slaves = {}
         setattr(rptclass.master,'_lino_slaves',slaves)
     slaves[rptclass.__name__] = rptclass()
-    #print "%s : slave for %s" % (rptclass.__name__, rptclass.master.__name__)
+    print "register", rc_name(rptclass), ": slave for %s" % rptclass.master.__name__
     
 
-def register_report(rpt):
-    if _reports.has_key(rpt.name):
-        print "[Warning] %s used for models %s and %s" % (rpt.name,rpt.model,_reports[rpt.name].model)
-        return
-    _reports[rpt.name] = rpt
+#~ def register_report(rpt):
+    #~ if _reports.has_key(rpt.name):
+        #~ print "[Warning] %s used for models %s and %s" % (rpt.name,rpt.model,_reports[rpt.name].model)
+        #~ return
+    #~ _reports[rpt.name] = rpt
     
     #~ if rpt.model is None:
         #~ return
@@ -135,16 +146,36 @@ def register_report(rpt):
         #~ return
     #~ model_reports[db_table] = rpt
     
-def get_report(rptname):
-    rpt = _reports.get(rptname,None)
-    #rpt.setup()
-    return rpt
+#~ def get_report(rptname):
+    #~ rpt = _reports.get(rptname,None)
+    #~ #rpt.setup()
+    #~ return rpt
+    
+def get_report(app_label,rptname):
+    app = models.get_app(app_label)
+    rptclass = getattr(app,rptname,None)
+    if rptclass is None:
+        print "No report %s in application %r" % (rptname,app)
+        return None
+    return rptclass()
+    
 
 
-def view_report_as_json(request,rptname=None):
-    """
-    """
-    rpt = get_report(rptname)
+def view_report_as_ext(request,app_label=None,rptname=None):
+    rpt = get_report(app_label,rptname)
+    if rpt is None:
+        return urls.sorry(request,"%s : no such report" % rptname)
+    if not rpt.can_view.passes(request):
+        return urls.sorry(request)
+    r = render.ViewReportRenderer(request,rpt)
+    request._lino_renderer = r
+    return lino_site.ext_view(request,*rpt.ext_components())
+    
+    #return r.render_to_response()
+    
+    
+def view_report_as_json(request,app_label=None,rptname=None):
+    rpt = get_report(app_label,rptname)
     if rpt is None:
         return json_response(success=False,
             msg="%s : no such report" % rptname)
@@ -152,37 +183,18 @@ def view_report_as_json(request,rptname=None):
         return json_response(success=False,
             msg="User %s cannot view %s : " % (request.user,rptname))
     r = render.ViewReportRenderer(request,rpt)
+    request._lino_renderer = r
     #request._lino_report = r
     s = r.render_to_json()
     return HttpResponse(s, mimetype='text/html')
 
-def view_report_as_ext(request,rptname=None):
-    """
-    """
-    #~ url = get_redirect(request)
-    #~ if url is not None:
-        #~ return HttpResponseRedirect(url)
-    rpt = get_report(rptname)
-    if rpt is None:
-        return urls.sorry(request)
-    if not rpt.can_view.passes(request):
-        return urls.sorry(request)
-    r = render.ViewReportRenderer(request,rpt)
-    request._lino_report = r
-    return lino_site.ext_view(request,*rpt.ext_components())
-    
-    #return r.render_to_response()
-    
-    
-def view_report_save(request,rptname=None):
-    """
-    """
-    rpt = get_report(rptname)
-    rpt.setup()
-    d = dict()
+def view_report_save(request,app_label=None,rptname=None):
+    rpt = get_report(app_label,rptname)
     if rpt is None:
         return json_response(success=False,
             msg="%s : no such report" % rptname)
+    rpt.setup()
+    d = dict()
     if not rpt.can_change.passes(request):
         return json_response(success=False,
             msg="User %s cannot update data in %s : " % (request.user,rptname))
@@ -226,83 +238,22 @@ def setup():
       `_lino_model_report`
 
     """
+    print "reports.setup() : ------------------------------"
+    i = 0
     for model in models.get_models():
+        i += 1
         rc = getattr(model,'_lino_model_report_class',None)
         if rc is None:
             model._lino_model_report_class = report_factory(model)
+        print i,model._meta.db_table,rc_name(model._lino_model_report_class)
+        model._lino_model_report = model._lino_model_report_class()
+        model._lino_model_report.setup()
+    print "reports.setup() : done ------------------------- (%d models)" % i
         
-    for rpt in _reports.values():
-        rpt.setup()
+    #~ for rpt in _reports.values():
+        #~ rpt.setup()
         
 
-def old_setup():
-    """
-    - Each model can receive a number of "slaves". 
-      slaves are reports that display detail data for a known instance of that model (their master).
-      They are stored in a dictionary called '_lino_slaves'.
-      
-    - For each model we want to find out the "model report", 
-      This will be used when displaying a single object. 
-      And the "choices report" for a foreignkey field is also currently simply the pointed model's
-      model_report.
-      `_lino_model_report`
-
-    
-    """
-    todo = [ m for m in models.get_models()]
-    while True:
-        len_todo = len(todo)
-        print "[Note] reports.setup() : %d reports" % len_todo
-        todo = _try_setup(todo)
-        if len(todo) == 0:
-            return
-        if len(todo) == len_todo:
-            raise RuntimeError("Failed to setup %d models: %s" % (len_todo,todo))
-    #~ for model in models.get_models():
-        #~ model._lino_combo = Report(model=model,columnNames='__str__')
-
-
-def _old_try_setup(todo):
-    try_again = []
-    for model in todo:
-        try:
-            rc = getattr(model,'_lino_model_report_class',None)
-            if rc is None:
-                #~ if hasattr(rc,'__unicode__'):
-                model._lino_combo = Report(model=model,columnNames='__str__')
-                model._lino_model_report = Report(model=model)
-                print "[Note] Using default report for model %s" % model._meta.db_table
-                #~ else:
-                    #~ print "[Note] No report for model %s" % model._meta.db_table
-            else:
-                model._lino_combo = rc(columnNames=rc.display_field)
-                model._lino_model_report = rc()
-                print "[Note] %s : reports.setup() ok" % model._meta.db_table
-        except SetupNotDone,e:
-            print "[Note]", model, ":", e
-            try_again.append(model)
-    return try_again
-            
-        
-        #~ model._lino_slaves = {}
-        #~ for rc in reports.report_classes:
-            #~ ...
-            #~ model._lino_slaves[rpt.name] = rpt
-    
-#~ def slave_reports(model):
-    #~ d = getattr(model,"_lino_slaves",{})
-    #~ for b in model.__bases__:
-        #~ l += getattr(b,"_lino_slaves",[])
-    #~ return l
-    #return _slave_reports.get(model,[])
-
-#~ def _get_slave(model,name):
-    #~ d = getattr(model,"_lino_slaves",None)
-    #~ if d:
-        #~ rpt = d.get(name,None)
-        #~ if rpt is not None:
-            #~ rpt.setup()
-            #~ return rpt
 
 def get_slave(model,name):
     for b in (model,) + model.__bases__:
@@ -318,18 +269,22 @@ def get_slave(model,name):
         #~ if d.has_key(name): return d[name]
     #~ return None
     
-def get_combo_report(model):
-    rpt = getattr(model,'_lino_choices',None)
-    if rpt: return rpt
-    rc = model._lino_model_report_class
-    rpt = rc(columnNames=rc.display_field,mode='choices',page_length=None)
-    model._lino_choices = rpt
-    return rpt
+#~ def get_combo_report(model):
+    #~ rpt = getattr(model,'_lino_choices',None)
+    #~ if rpt: return rpt
+    #~ rc = model._lino_model_report_class
+    #~ rpt = rc(columnNames=rc.display_field,mode='choices',page_length=None)
+    #~ model._lino_choices = rpt
+    #~ return rpt
 
 def get_model_report(model):
     rpt = getattr(model,'_lino_model_report',None)
     if rpt: return rpt
-    model._lino_model_report = model._lino_model_report_class()
+    rptclass = getattr(model,'_lino_model_report_class',None)
+    if rptclass is None:
+        rptclass = report_factory(model)
+        model._lino_model_report_class = rptclass
+    model._lino_model_report = rptclass()
     return model._lino_model_report
 
 class ReportMetaClass(type):
@@ -344,6 +299,15 @@ class ReportMetaClass(type):
                     print "[Warning]: %s defines new attribute(s) %s" % (cls,",".join(myattrs))
             register_report_class(cls)
         return cls
+        
+    def __init__(cls, name, bases, dict):
+        type.__init__(cls,name, bases, dict)
+        cls.instance = None 
+
+    def __call__(cls,*args,**kw):
+        if cls.instance is None:
+            cls.instance = type.__call__(cls,*args, **kw)
+        return cls.instance
 
 
 
@@ -352,6 +316,7 @@ class Report:
     __metaclass__ = ReportMetaClass
     queryset = None 
     model = None
+    use_as_default_report = True
     order_by = None
     filter = None
     exclude = None
@@ -365,7 +330,7 @@ class Report:
     master = None
     fk_name = None
     help_url = None
-    master_instance = None
+    #master_instance = None
     page_length = 10
     display_field = '__unicode__'
     boolean_texts = ('Ja','Nein',' ')
@@ -383,15 +348,20 @@ class Report:
     typo_check = True
     url = None
     #_slaves = None
-    mode = None # suffix to create unique names 'choices'
-    json = False
+    # mode = None # suffix to create unique names 'choices'
+    # json = False
     
-    def __init__(self,**kw):
-        for k,v in kw.items():
-            if hasattr(self,k):
-                setattr(self,k,v)
-            else:
-                print "[Warning] Ignoring attribute %s" % k
+    # __shared_state = {} 
+    
+    def __init__(self):
+      
+        # self.__dict__ = self.__shared_state
+        
+        #~ for k,v in kw.items():
+            #~ if hasattr(self,k):
+                #~ setattr(self,k,v)
+            #~ else:
+                #~ print "[Warning] Ignoring attribute %s" % k
             
         #self._inlines = self.inlines()
         
@@ -401,30 +371,37 @@ class Report:
             self.label = self.__class__.__name__
         if self.name is None:
             self.name = self.__class__.__name__
-        if self.mode is not None:
-            self.name += "_" + self.mode
+        #~ if self.mode is not None:
+            #~ self.name += "_" + self.mode
             
-        self.choices_stores = {}
+        #self.choices_stores = {}
             
         self._setup_done = False
         self._setup_doing = False
         
-        register_report(self)
+        #self.setup()
+        
+        #register_report(self)
         # print "Report.__init__() done:", self.name
         
     def setup(self):
         if self._setup_done:
             return
         if self._setup_doing:
-            return
+            print "[Warning] %s.setup() called recursively" % self.name
+            return 
         self._setup_doing = True
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
+        choice_layout = layouts.RowLayout(self,0,self.display_field)
+        self.choice_store = layouts.Store(self,[choice_layout],mode='choice') 
+        
         if self.row_layout_class is None:
-            self.row_layout = layouts.RowLayout(self,0,self.columnNames)
+            self.row_layout = layouts.RowLayout(self,1,self.columnNames)
         else:
             assert self.columnNames is None
-            self.row_layout = self.row_layout_class(self,0)
+            self.row_layout = self.row_layout_class(self,1)
+            
             
         #self.columns = [e for e in self.row_layout.walk() if isinstance(e,FieldElement)]
         
@@ -432,10 +409,10 @@ class Report:
             self.fk = _get_foreign_key(self.master,
               self.model,self.fk_name)
             #self.name = self.fk.rel.related_name
-        self.layouts = [ self.row_layout ]
-        index = 1
+        l = [ self.row_layout ]
+        index = 2
         for lc in self.page_layouts:
-            self.layouts.append(lc(self,index))
+            l.append(lc(self,index))
             index += 1
             
         #~ if len(self.page_layouts) == 1:
@@ -446,7 +423,7 @@ class Report:
         #~ self._page_layouts = [
               #~ layout(self) for layout in self.page_layouts]
         
-        self.store = layouts.Store(self)
+        self.store = layouts.Store(self,l)
         
         self._setup_doing = False
         self._setup_done = True
@@ -478,13 +455,15 @@ class Report:
         #l = self.slaves() # to populate
         #return self._slaves.get(name,None)
         
-    def get_choices(self,field):
+    def get_field_choices(self,field):
+        return get_model_report(field.rel.to)
+        #return get_combo_report(field.rel.to)
         # TODO : if hasattr(self,"%s_choices" % field.name)...
-        rpt = self.choices_stores.get(field,None)
-        if rpt is None:
-            rpt = get_combo_report(field.rel.to)
-            self.choices_stores[field] = rpt
-        return rpt
+        #~ rpt = self.choices_stores.get(field,None)
+        #~ if rpt is None:
+            #~ rpt = get_combo_report(field.rel.to)
+            #~ self.choices_stores[field] = rpt
+        #~ return rpt
         
     #~ def slaves(self):
         #~ hier: und zwar die slaves in diesem report (nicht alle slaves des modells)
@@ -498,10 +477,10 @@ class Report:
         #~ return self._slaves.values()
         
         
-    def column_headers(self):
-        self.setup()
-        for e in self.columns:
-            yield e.label
+    #~ def column_headers(self):
+        #~ self.setup()
+        #~ for e in self.columns:
+            #~ yield e.label
             
     def get_title(self,renderer):
         #~ if self.title is None:
@@ -517,8 +496,9 @@ class Report:
         if self.master is None:
             assert master_instance is None
         else:
-            if master_instance is None:
-                master_instance = self.master_instance
+            #~ if master_instance is None:
+                #~ master_instance = self.master_instance
+            assert isinstance(master_instance,self.master), "%r is not a %s" % (master_instance,self.master)
             #print qs
             #print qs.model
             qs = qs.filter(**{self.fk.name:master_instance})
@@ -559,12 +539,20 @@ class Report:
         return urls.get_report_url(self,*args,**kw)
     
     def ext_components(self):
-        yield self.layouts[0]._main
-        if len(self.layouts) == 2:
-            yield self.layouts[1]._main
+        if len(self.store.layouts) == 2:
+            for s in self.store.layouts:
+                yield s._main
         else:
-            comps = [l._main for l in self.layouts[1:]]
+            yield self.store.layouts[0]._main
+            comps = [l._main for l in self.store.layouts[1:]]
             yield layouts.TabPanel(None,"EastPanel",*comps)
+            
+        #~ yield self.layouts[0]._main
+        #~ if len(self.layouts) == 2:
+            #~ yield self.layouts[1]._main
+        #~ else:
+            #~ comps = [l._main for l in self.layouts[1:]]
+            #~ yield layouts.TabPanel(None,"EastPanel",*comps)
 
     def ajax_update(self,request):
         print request.POST
@@ -572,8 +560,8 @@ class Report:
 
 
     def as_text(self, *args,**kw):
-        from lino.django.utils.renderers_text import TextReportRenderer
-        return TextReportRenderer(self,*args,**kw).render()
+        from . import renderers_text 
+        return renderers_text.TextReportRenderer(self,*args,**kw).render()
         
     #~ def as_html(self, **kw):
         #~ return render.HtmlReportRenderer(self,**kw).render_to_string()

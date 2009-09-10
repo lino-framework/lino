@@ -40,21 +40,22 @@ def thanks_to():
         print name,version, "<%s>" % url
 
         
-def make_invoices():
-    rpt = sales.PendingOrders()
-    print rpt.as_text()
+def make_invoices(make_until=None):
+    #~ rpt = sales.PendingOrders()
+    #~ print rpt.as_text()
     
-    q = [o for o in sales.Order.objects.pending()]
-    if len(q) == 0:
-        print "Nothing to do."
-        return
-    #~ for o in q:
-        #~ print o
-    if not syscon.confirm("Make invoices for these orders?"):
-        return
+    q = [o for o in sales.Order.objects.pending(make_until)]
+    s = "make_invoices(make_until=%r):\n" % make_until
     for o in q:
-        i = o.make_invoice()
-        print "%s made %s" % (o,i)
+        i = o.make_invoice(make_until)
+        s += "%s -> %s\n" % (o,i)
+    if len(q) == 0:
+        s += "Nothing to do.\n"
+    else:
+        s += "%d invoices have been issued.\n" % len(q)
+    return s
+    
+    
 
 def send_invoices():
     q = [ o.get_child_instance() for o in sales.SalesDocument.objects.all() ]

@@ -86,14 +86,19 @@ class ReportRenderer:
     def __init__(self,report,
             master_instance=None,
             offset=None,limit=None,
-            layout=0,
+            mode=None,
             **kw):
         #from lino.django.tom.reports import Report
         #assert isinstance(report,Report)
         self.report = report
         report.setup()
-        self.name = report.name
-        self.layout = report.layouts[layout]
+        self.name = report.name+"Renderer"
+        self.mode = mode
+        if mode == 'choice':
+            self.store = report.choice_store
+        else:
+            self.store = report.store
+        #self.layout = report.layouts[layout]
         #~ if report.master is None:
             #~ assert master_instance is None
         #~ else:
@@ -122,7 +127,7 @@ class ReportRenderer:
             self.limit = limit
             
         self.page_length = report.page_length
-        self.column_headers = report.column_headers
+        #self.column_headers = report.column_headers
         
         #~ if self.limit == 1:
             #~ #self.layout = self.report.page_layout
@@ -145,7 +150,7 @@ class ReportRenderer:
 
     def obj2json(self,obj):
         d = {}
-        for fld in self.report.store.fields:
+        for fld in self.store.fields:
             fld.write_to_form(obj,d)
             #d[e.name] = e.value2js(obj)
         return d
@@ -199,9 +204,12 @@ class ViewReportRenderer(ReportRenderer):
         limit = request.GET.get('limit',None)
         if limit:
             kw.update(limit=limit)
-        layout = request.GET.get('layout',None)
-        if layout:
-            kw.update(layout=int(layout))
+        #~ layout = request.GET.get('layout',None)
+        #~ if layout:
+            #~ kw.update(layout=int(layout))
+        mode = request.GET.get('mode',None)
+        if mode:
+            kw.update(mode=mode)
 
         #print "ViewReportRenderer.__init__() 1",report.name
         self.request = request
@@ -221,108 +229,13 @@ class ViewReportRenderer(ReportRenderer):
             kw.update(sort=self.sort_column)
         if self.sort_direction is not None:
             kw.update(dir=self.sort_direction)
-        if self.layout.index != 0:
-            kw.update(layout=self.layout.index)
+        #~ if self.layout.index != 0:
+            #~ kw.update(layout=self.layout.index)
+        if self.mode is not None:
+            kw.update(mode=self.mode)
         return self.report.get_absolute_url(**kw)
         
         
-    def old_render_to_response(self):
-        url = get_redirect(self.request)
-        if url is not None:
-            return HttpResponseRedirect(url)
-        if self.json:
-            return self.json_reponse()
-            
-        from lino.django.utils.sites import lino_site
-        context = lino_site.context(self.request,
-          report = self,
-          #layout = self.layout,
-          #layout = self.layout.renderer(self),
-          title = self.get_title(),
-          #form_action = self.again(editing=None),
-        )
-        if self.report.help_url is not None:
-            context['help_url'] = self.report.help_url
-        return render_to_response("lino/report.html", context,
-            context_instance=template.RequestContext(self.request))
-            
-            
-    #~ def ext_components(self):
-        #~ return self.layouts
-            
-    #~ def render_to_response(self):
-        #~ url = get_redirect(self.request)
-        #~ if url is not None:
-            #~ return HttpResponseRedirect(url)
-        #if self.json:
-        #    return self.json_reponse()
-            
-        #~ from lino.django.utils.sites import lino_site
-        #~ return lino_site.ext_view(self.request,
-            #~ *self.report.ext_components())
-        
-
-    #~ def as_ext_script(self):
-      #~ try:
-        #~ return self.report.as_ext_script(self)
-      #~ except Exception,e:
-        #~ traceback.print_exc(e)
-        
-
-
-            
-      
-#~ class ListViewReportRenderer(ViewReportRenderer):
-  
-    #~ start_page = 1
-    #~ max_num = 0
-    
-    #~ template_to_string = "lino/includes/grid.html"
-    #~ template_to_reponse = "lino/grid.html"
-    
-    #~ def get_layout(self):
-        #~ return self.report.row_layout
-        
-        
-    #~ def must_refresh(self):
-        #~ redirect_to(self.request,self.again()) 
-        
-    
-        
-
-#ListViewReportRenderer.detail_renderer = ListViewReportRenderer
-
-
-#~ class RowViewReportRenderer(ViewReportRenderer):
-    #~ "A ViewReportRenderer that renders a single Row."
-    #~ limit = 1
-    #~ #detail_renderer = ListViewReportRenderer
-    #~ def __init__(self,*args,**kw):
-        #~ #assert issubclass(self.detail_renderer,ListViewReportRenderer)
-        #~ #kw.update(limit=1)
-        #~ ViewReportRenderer.__init__(self,*args,**kw)
-        #~ if self.queryset.count() == 0:
-            #~ raise "No record found"
-        #~ if self.queryset.count() > 1:
-            #~ raise "Found more than one record"
-        #~ self.instance = self.queryset[0]
-            
-    #~ def get_layout(self):
-        #~ return self.report.page_layout
-        
-    #~ def get_absolute_url(self,**kw):
-        #~ kw['mode'] = 'detail'
-        #~ return ViewReportRenderer.get_absolute_url(self,**kw)
-        
-    
-      
-        
-#~ class ViewOneReportRenderer(RowViewReportRenderer):
-
-    #~ template_to_reponse = "lino/page.html"
-
-    #~ def get_title(self):
-        #~ return unicode(self.instance)
 
 
         

@@ -35,7 +35,7 @@ def todo_notice(msg):
     print "[todo] in %s :\n       %s" % (_functionId(1),msg)
   
 class BankStatement(ledger.LedgerDocument):
-                        
+    
     date = fields.MyDateField()
     balance1 = fields.PriceField()
     balance2 = fields.PriceField()
@@ -106,6 +106,9 @@ class DocItem(models.Model):
             self.pos = self.document.docitem_set.count() + 1
         return super(DocItem,self).save(*args,**kw)
         
+    def __unicode__(self):
+        return u"DocItem %s.%d" % (self.document,self.pos)
+        
 #~ class Booking(models.Model):
     #~ #journal = models.ForeignKey(journals.Journal)
     #~ #number = models.IntegerField()
@@ -145,7 +148,7 @@ class FinDocPageLayout(layouts.PageLayout):
             ItemsByDocument
             """
     
-class BankStatements(reports.Report):
+class BankStatements(journals.DocumentsByJournal):
     model = BankStatement
     page_layouts = (FinDocPageLayout, )
     columnNames = "number date balance1 balance2 ledger_remark value_date"

@@ -134,6 +134,9 @@ class Booking(models.Model):
     debit = fields.PriceField(default=0)
     credit = fields.PriceField(default=0)
     
+    def __unicode__(self):
+        return u"%s.%d" % (self.document,self.pos)
+    
 
 ##
 ## report definitions

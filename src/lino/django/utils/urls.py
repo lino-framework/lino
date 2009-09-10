@@ -113,22 +113,25 @@ def sorry(request,message=None):
 
 
 
-def get_report_url(report,master_instance=None,json=False,save=False,**kw):
+def get_report_url(report,master_instance=None,json=False,save=False,mode=None,**kw):
     if json:
-        url = "/json/" + report.name
+        url = "/json/"
     elif save:
-        url = "/save/" + report.name
+        url = "/save/"
     else:
-        url = "/r/" + report.name
+        url = "/r/"
+    url += report.app_label + "/" + report.name
     #~ app_label = report.__class__.__module__.split('.')[-2]
     #~ if mode == 'choices':
         #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
     #~ else:
         #~ url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
-    if master_instance is None:
-        master_instance = report.master_instance
+    #~ if master_instance is None:
+        #~ master_instance = report.master_instance
     if master_instance is not None:
         kw['master'] = master_instance.pk
+    if mode is not None:
+        kw['mode'] = mode
     if len(kw):
         url += "?"+urlencode(kw)
     return url
@@ -148,9 +151,12 @@ def get_urls():
     return patterns('',
         (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
         #(r'^slave/(?P<app_label>\w+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
-        (r'^r/(?P<rptname>\w+)$', reports.view_report_as_ext),
-        (r'^json/(?P<rptname>\w+)$', reports.view_report_as_json),
-        (r'^save/(?P<rptname>\w+)$', reports.view_report_save),
+        #(r'^r/(?P<rptname>\w+)$', reports.view_report_as_ext),
+        #(r'^json/(?P<rptname>\w+)$', reports.view_report_as_json),
+        #(r'^save/(?P<rptname>\w+)$', reports.view_report_save),
+        (r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
+        (r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_json),
+        (r'^save/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_save),
         #(r'^choices/(?P<app_label>\w+)/(?P<model_name>\w+)$', choices_view),
         #(r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_view),
         #(r'^detail/(?P<app_label>\w+)/(?P<rptname>\w+)$', detail_view),

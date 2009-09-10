@@ -21,6 +21,7 @@ import time
 from datetime import date
 from dateutil import parser as dateparser
 from lino.django.apps.sales.models import *
+from lino.django.apps.sales import utils
 from lino.django.utils.instantiator import Instantiator, i2d
 
 shippingmode = Instantiator(ShippingMode,"name").build
@@ -69,15 +70,23 @@ def objects():
         
     salesrule(imode='e',shipping_mode=1,payment_term=2)
 
+    metsjapuu = Customer.objects.get(companyName__startswith="Mets")
+    dubois = Customer.objects.get(lastName__startswith="Dubois")
+    
     furniture = ProductCat.objects.get(name="Furniture")
     hosting = 5
     
-    o = order(100,"2008-09-23","2008-09-24","M","e",2,1,
+    o = order(metsjapuu,"2008-09-23","2008-09-24","M","e",2,1,
         sales_remark="monthly order")
     o.add_item(hosting,1)
     yield o
-    
-    yield o.make_invoice(today=date(2008,10,28))
+
+    o = order(dubois,"2008-09-23","2008-09-24","M","e",2,1,
+        sales_remark="dubois gets 50% discount")
+    o.add_item(hosting,1,discount=50)
+    yield o  
+
+    utils.make_invoices(make_until=date(2008,10,28))
         
     i = invoice(2,"2008-10-29","e",2,1,
       sales_remark="first manual invoice")
@@ -85,7 +94,7 @@ def objects():
     i.add_item(2,4)
     yield i
     
-    yield o.make_invoice(today=date(2009,04,11))
+    utils.make_invoices(make_until=date(2009,04,11))
         
     i = invoice(3,date(2009,04,11),"e",2,1,
         sales_remark="second manual invoice")
@@ -103,7 +112,7 @@ def objects():
     #print o2
     #o2.save()
     yield o2
-    yield o2.make_invoice(today=d)
+    utils.make_invoices(make_until=d)
     
     i = invoice(4,date(2009,04,13),"e",2,1,
       sales_remark="third manual invoice with discount")
@@ -111,4 +120,4 @@ def objects():
     i.add_item(4,4,discount=5)
     yield i
     
-    yield o.make_invoice(today=date(2009,05,14))
+    utils.make_invoices(make_until=date(2009,05,14))

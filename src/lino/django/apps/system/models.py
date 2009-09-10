@@ -18,25 +18,26 @@
 
 
 from lino.django.utils import reports
-from django.contrib.auth.models import Permission, User, Group
+from django.contrib.auth import models as auth
+from django.contrib.sessions import models as sessions
 from lino.django.utils import perms
 
 class Permissions(reports.Report):
-    model = Permission
+    model = auth.Permission
     order_by = 'content_type__app_label codename'
   
 class Users(reports.Report):
-    model = User
+    model = auth.User
     order_by = "username"
+    display_field = 'username'
 
 class Groups(reports.Report):
-    model = Group
+    model = auth.Group
     order_by = "name"
+    display_field = 'name'
+
+class Sessions(reports.Report):
+    model = sessions.Session
+    display_field = 'session_key'
 
     
-def unused_lino_setup(lino):
-    m = lino.add_menu("system","~System")
-    m.add_action(Permissions())
-    m.add_action(Users())
-    m.add_action(Groups())
-    m.can_view = perms.is_staff

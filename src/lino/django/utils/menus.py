@@ -110,16 +110,17 @@ class Action(MenuItem):
     def __init__(self,parent,actor=None,
                  name=None,label=None,
                  hotkey=None,url=None,
-                 *args,**kw):
+                 params={},*args,**kw):
         
         if not kw.has_key('can_view'):
             kw.update(can_view=actor.can_view)
         #name = name or actor.name
         label = label or actor.label
-        Component.__init__(self,parent,name,label,*args,**kw)
-        self._url = url or actor.get_absolute_url()
+        self.params = params
+        self._url = url or actor.get_absolute_url(**params)
         self.actor = actor
         self.hotkey = hotkey
+        Component.__init__(self,parent,name,label,*args,**kw)
         
     def get_url_path(self):
         return self._url

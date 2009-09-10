@@ -134,7 +134,7 @@ if True:
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.markup',
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.databrowse',
     
     'lino.django.apps.system',

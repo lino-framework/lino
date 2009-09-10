@@ -114,6 +114,9 @@ class SalesRule(models.Model):
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     
+    def __unicode__(self):
+        return u"SalesRule %d" % (self.id)
+        
 def get_sales_rule(doc):
     for r in SalesRule.objects.all().order_by("id"):
         if r.journal is None or r.journal == doc.journal:
@@ -388,6 +391,8 @@ class DocItem(models.Model):
         self.document.save() # update total in document
     before_save.alters_data = True
 
+    def __unicode__(self):
+        return u"DocItem %s.%d" % (self.document,self.pos)
 
 ##
 ## report definitions
@@ -539,6 +544,7 @@ class InvoicesByJournal(Invoices):
                   "total_excl total_vat user "
 
 class DocumentsToSign(Invoices):
+    use_as_default_report = False
     filter = dict(user__exact=None)
     can_add = perms.never
     columnNames = "number:4 order creation_date " \
