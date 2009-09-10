@@ -156,6 +156,7 @@ class ForeignKeyStoreField(StoreField):
     def update_from_form(self,instance,values):
         #v = values.get(self.name,None)
         v = values.get(self.field.name+"Hidden",None)
+        print self.field.name,"=",repr(v)
         if v is not None:
             v = self.model.objects.get(pk=v)
         setattr(instance,self.field.name,v)

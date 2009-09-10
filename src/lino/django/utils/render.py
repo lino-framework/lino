@@ -216,6 +216,7 @@ class ViewReportRenderer(ReportRenderer):
         ReportRenderer.__init__(self,report,*args,**kw)
         #print "ViewReportRenderer.__init__() 2",report.name
         #self.is_main = is_main
+        request._lino_renderer = self
         
 
     def get_absolute_url(self,**kw):

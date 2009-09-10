@@ -168,7 +168,6 @@ def view_report_as_ext(request,app_label=None,rptname=None):
     if not rpt.can_view.passes(request):
         return urls.sorry(request)
     r = render.ViewReportRenderer(request,rpt)
-    request._lino_renderer = r
     return lino_site.ext_view(request,*rpt.ext_components())
     
     #return r.render_to_response()
@@ -183,7 +182,6 @@ def view_report_as_json(request,app_label=None,rptname=None):
         return json_response(success=False,
             msg="User %s cannot view %s : " % (request.user,rptname))
     r = render.ViewReportRenderer(request,rpt)
-    request._lino_renderer = r
     #request._lino_report = r
     s = r.render_to_json()
     return HttpResponse(s, mimetype='text/html')
@@ -193,8 +191,6 @@ def view_report_save(request,app_label=None,rptname=None):
     if rpt is None:
         return json_response(success=False,
             msg="%s : no such report" % rptname)
-    rpt.setup()
-    d = dict()
     if not rpt.can_change.passes(request):
         return json_response(success=False,
             msg="User %s cannot update data in %s : " % (request.user,rptname))
@@ -207,11 +203,12 @@ def view_report_save(request,app_label=None,rptname=None):
     if pk is None:
         return json_response(success=False,msg="No primary key was specified")
     #print "foo",request.POST
+    rpt.setup()
     try:
-        layout = rpt.layouts[int(request.POST.get('layout'))]
         instance = rpt.model.objects.get(pk=pk)
-        for e in layout.ext_store_fields:
-            e.update_from_form(instance,request.POST)
+        print "Updating", instance, "using", request.POST
+        for f in rpt.store.fields:
+            f.update_from_form(instance,request.POST)
         #~ for k,v in request.POST.items():
             #~ setattr(instance,k,v)
         instance.save()
