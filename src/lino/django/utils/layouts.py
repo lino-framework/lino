@@ -123,15 +123,15 @@ class MethodStoreField(StoreField):
 
 
 class OneToOneStoreField(StoreField):
-    def __init__(self,field,model,**kw):
-        StoreField.__init__(self,field,**kw)
-        self.model = model
+    #~ def __init__(self,field,**kw):
+        #~ StoreField.__init__(self,field,**kw)
+        #~ self.model = field.rel.to
         
     def update_from_form(self,instance,values):
         #v = values.get(self.name,None)
         v = values.get(self.field.name,None)
         if v is not None:
-            v = self.model.objects.get(pk=v)
+            v = self.field.rel.to.objects.get(pk=v)
         setattr(instance,self.field.name,v)
         
     def write_to_form(self,obj,d):
@@ -144,9 +144,12 @@ class OneToOneStoreField(StoreField):
 
 
 class ForeignKeyStoreField(StoreField):
-    def __init__(self,field,model,**kw):
-        StoreField.__init__(self,field,**kw)
-        self.model = model
+    #~ def __init__(self,field,model,**kw):
+        #~ StoreField.__init__(self,field,**kw)
+        #~ self.model = model
+    #~ def __init__(self,field,**kw):
+        #~ StoreField.__init__(self,field,**kw)
+        #~ self.model = field.rel.to
         
     def as_js(self):
         s = StoreField.as_js(self)
@@ -156,9 +159,9 @@ class ForeignKeyStoreField(StoreField):
     def update_from_form(self,instance,values):
         #v = values.get(self.name,None)
         v = values.get(self.field.name+"Hidden",None)
-        print self.field.name,"=",repr(v)
+        #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
         if v is not None:
-            v = self.model.objects.get(pk=v)
+            v = self.field.rel.to.objects.get(pk=v)
         setattr(instance,self.field.name,v)
         
     def write_to_form(self,obj,d):
@@ -230,9 +233,9 @@ class Store(Component):
             return StoreField(fld)
             #raise NotImplementedError
         if isinstance(fld,models.OneToOneField):
-            return OneToOneStoreField(fld,self.report.model)
+            return OneToOneStoreField(fld)
         if isinstance(fld,models.ForeignKey):
-            return ForeignKeyStoreField(fld,self.report.model)
+            return ForeignKeyStoreField(fld)
             #yield dict(name=fld.name)
             #yield dict(name=fld.name+"Hidden")
         if isinstance(fld,models.DateField):
@@ -258,6 +261,7 @@ class Store(Component):
         #data_layout = self.report.layouts[self.layout_index]
         d.update(storeId=self.ext_name)
         d.update(remoteSort=True)
+        d.update(autoLoad=True)
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
         if request._lino_renderer.report == self.report:
             url = request._lino_renderer.get_absolute_url(json=True,mode=self.mode)
@@ -1137,18 +1141,18 @@ class MainGridElement(GridElement):
         # d = dict(title=request._lino_report.get_title()) 
         d.update(title=request._lino_renderer.get_title()) 
         d.update(region='center',split=True)
-        d['listeners'] = js_code("""{
-  resize: function(comp,adjWidth,adjHeight,rawWidth,rawHeight) {
-    console.log("resize:",comp['title'],[adjWidth,adjHeight,rawWidth,rawHeight]);
-  }
-}""")
-        if True:
-            d.update(tbar=js_code("""new Ext.PagingToolbar({
-              store: %s,
-              displayInfo: true,
-              pageSize: %d,
-              prependButtons: true,
-            }) """ % (self.report.store.ext_name,self.report.page_length)))
+        if False:
+            d['listeners'] = js_code("""{
+              resize: function(comp,adjWidth,adjHeight,rawWidth,rawHeight) {
+                console.log("resize:",comp['title'],[adjWidth,adjHeight,rawWidth,rawHeight]);
+              }
+            }""")
+        d.update(tbar=js_code("""new Ext.PagingToolbar({
+          store: %s,
+          displayInfo: true,
+          pageSize: %d,
+          prependButtons: true,
+        }) """ % (self.report.store.ext_name,self.report.page_length)))
         #d.update(items=js_code("[ %s ]" % self.grid.name))
         #d.update(items=js_code(self.grid.ext_name))
         #d.update(items=js_code("[%s]" % ",".join([e.as_ext(request) for e in self.elements])))
@@ -1203,7 +1207,7 @@ function onRowSelect(grid, rowIndex, e) {"""
         s += "\n};"
         yield s
         yield "%s.getSelectionModel().on('rowselect', onRowSelect);" % self.ext_name
-        yield "%s.load();" % self.report.store.ext_name
+        # yield "%s.load();" % self.report.store.ext_name
 
   
 

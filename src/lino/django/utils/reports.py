@@ -206,11 +206,10 @@ def view_report_save(request,app_label=None,rptname=None):
     rpt.setup()
     try:
         instance = rpt.model.objects.get(pk=pk)
-        print "Updating", instance, "using", request.POST
+        #print "Updating", instance, "using", request.POST
         for f in rpt.store.fields:
+            #print "reports.view_report_save()",f.field.name
             f.update_from_form(instance,request.POST)
-        #~ for k,v in request.POST.items():
-            #~ setattr(instance,k,v)
         instance.save()
         return json_response(success=True,
               msg="%s has been saved" % instance)
@@ -495,7 +494,8 @@ class Report:
         else:
             #~ if master_instance is None:
                 #~ master_instance = self.master_instance
-            assert isinstance(master_instance,self.master), "%r is not a %s" % (master_instance,self.master)
+            if not isinstance(master_instance,self.master):
+                raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
             #print qs
             #print qs.model
             qs = qs.filter(**{self.fk.name:master_instance})
