@@ -211,7 +211,6 @@ class Menu(MenuItem):
             traceback.print_exc(e)
 
     def as_ext(self,request,level=1,**kw):
-      try:
         items = [i for i in self.items if i.can_view.passes(request)]
         s = ""
         if len(items) == 0: return ''
@@ -230,8 +229,6 @@ class Menu(MenuItem):
             s += """
             ]}}"""
         return s
-      except Exception, e:
-        traceback.print_exc(e)
             
 
     #~ def get_urls(self,name=''):
