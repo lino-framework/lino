@@ -213,7 +213,7 @@ class LinoSite: #(AdminSite):
           xtype="panel",
           html=self.index_html,
           region="center")
-        return self.ext_view(request,[cmp])
+        return self.ext_view(request,cmp)
     index = never_cache(index)
       
     def ext_view(self,request,*comps):
