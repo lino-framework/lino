@@ -139,7 +139,7 @@ class ContactPageLayout(layouts.PageLayout):
     
     box1 = """
               title:10 firstName:15 lastName
-              companyName nationalId:12
+              companyName nationalId:12 id
               """
     box2 = """email:40 
               url"""

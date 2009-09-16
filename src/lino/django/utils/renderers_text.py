@@ -185,10 +185,10 @@ class DetailColumn(Column):
   
 
 
-class ColumnsReportRenderer(render.ReportRenderer):
+class ColumnsReportRequest(reports.ReportRequest):
         
     def __init__(self,report,*args,**kw):
-        render.ReportRenderer.__init__(self,report,*args,**kw)
+        reports.ReportRequest.__init__(self,report,*args,**kw)
         self.columns_by_name = {}
         columns = []
         meta = report.model._meta
@@ -234,7 +234,7 @@ class ColumnsReportRenderer(render.ReportRenderer):
         return FieldColumn(self,*args)
         
 
-class TextReportRenderer(ColumnsReportRenderer):
+class TextReportRequest(ColumnsReportRequest):
     def __init__( self,
                   report,
                   master_instance=None,
@@ -254,7 +254,7 @@ class TextReportRenderer(ColumnsReportRenderer):
         #~ if flt is None:
             #~ flt = report.default_filter
         #~ self.flt = flt
-        ColumnsReportRenderer.__init__(self,report,master_instance,**params)
+        ColumnsReportRequest.__init__(self,report,master_instance,**params)
                              
   
     def computeWidths(self):
@@ -420,34 +420,6 @@ class TextReportRenderer(ColumnsReportRenderer):
         return s.rstrip()+"\n"
         
     def detail_to_string(self,dtlrep,instance):
-        r = TextReportRenderer(dtlrep,instance)
+        r = TextReportRequest(dtlrep,instance)
         return r.render()
       
-#~ class HtmlReportRenderer(ColumnsReportRenderer):
-  
-    #~ def __init__( self,
-                  #~ report,
-                  #~ flt=None):
-        #~ if flt is None:
-            #~ flt=report.default_filter
-        #~ self.flt=flt
-        #~ ColumnsReportRenderer.__init__(self,report)
-                             
-  
-    #~ def render_to_string(self):
-        #~ s = "<table><tr>"
-        #~ for col in self.columns:
-            #~ s += "<th>%s</th>" % col.label
-        #~ s += "</tr>"
-        #~ queryset = self._build_queryset(flt=self.flt)
-        #~ for obj in queryset:
-            #~ s += "<tr>"
-            #~ for col in self.columns:
-                #~ v=col.cell_value(obj,None)
-                #~ if v is None:
-                    #~ v=''
-                #~ s += "<td>%s</td>" % unicode(v)
-            #~ s += "</tr>"
-        #~ s += "</table>"
-        #~ return mark_safe(s)
-

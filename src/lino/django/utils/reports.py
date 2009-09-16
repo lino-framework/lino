@@ -24,6 +24,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
+from django.utils import simplejson
 
 from django.http import HttpResponse
 #from django.core import serializers
@@ -31,21 +32,20 @@ from django.http import HttpResponse
 #from django.utils import simplejson
 from django.utils.safestring import mark_safe
 
-from . import layouts, render, perms, urls
-from lino.django.utils.editing import is_editing
+from . import layouts, extjs, perms, urls
+
 from lino.django.utils.sites import lino_site
-from lino.django.utils.requests import get_redirect, redirect_to
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth, is_filter
-WIDTHS = {
-    models.IntegerField : (2,10,False),
-    models.CharField : (10,50,True),
-    models.TextField :  (10,50,True),
-    models.BooleanField : (10,10,True),
-    models.ForeignKey : (5,40,False),
-    models.AutoField : (2,10,False),
-}
+#~ WIDTHS = {
+    #~ models.IntegerField : (2,10,False),
+    #~ models.CharField : (10,50,True),
+    #~ models.TextField :  (10,50,True),
+    #~ models.BooleanField : (10,10,True),
+    #~ models.ForeignKey : (5,40,False),
+    #~ models.AutoField : (2,10,False),
+#~ }
 
 
 def base_attrs(cl):
@@ -167,8 +167,9 @@ def view_report_as_ext(request,app_label=None,rptname=None):
         return urls.sorry(request,"%s : no such report" % rptname)
     if not rpt.can_view.passes(request):
         return urls.sorry(request)
-    r = render.ViewReportRenderer(request,rpt)
-    return lino_site.ext_view(request,*rpt.ext_components())
+    r = ViewReportRequest(request,rpt)
+    return r.render_to_html()
+    #return lino_site.ext_view(request,*rpt.ext_components())
     
     #return r.render_to_response()
     
@@ -181,7 +182,7 @@ def view_report_as_json(request,app_label=None,rptname=None):
     if not rpt.can_view.passes(request):
         return json_response(success=False,
             msg="User %s cannot view %s : " % (request.user,rptname))
-    r = render.ViewReportRenderer(request,rpt)
+    r = ViewReportRequest(request,rpt)
     #request._lino_report = r
     s = r.render_to_json()
     return HttpResponse(s, mimetype='text/html')
@@ -194,7 +195,7 @@ def view_report_save(request,app_label=None,rptname=None):
     if not rpt.can_change.passes(request):
         return json_response(success=False,
             msg="User %s cannot update data in %s : " % (request.user,rptname))
-    #~ r = render.ViewReportRenderer(request,rpt)
+    #~ r = render.ViewReportRequest(request,rpt)
     #~ if r.instance is None:
         #~ print request.GET
         #~ return json_response(success=False,
@@ -203,7 +204,7 @@ def view_report_save(request,app_label=None,rptname=None):
     if pk is None:
         return json_response(success=False,msg="No primary key was specified")
     #print "foo",request.POST
-    rpt.setup()
+    #20090916 rpt.setup()
     try:
         instance = rpt.model.objects.get(pk=pk)
         #print "Updating", instance, "using", request.POST
@@ -244,6 +245,19 @@ def setup():
         print i,model._meta.db_table,rc_name(model._lino_model_report_class)
         model._lino_model_report = model._lino_model_report_class()
         model._lino_model_report.setup()
+        
+    #~ todo = [m._lino_model_report for m in models.get_models()]
+    #~ while len(todo):
+        #~ print "Setting up %d model reports..." % len(todo)
+        #~ again = todo
+        #~ todo = []
+        #~ for rpt in again:
+            #~ if not rpt.setup():
+                #~ todo.append(rpt)
+        #~ if len(again) == len(todo):
+            #~ raise Exception("Could not setup reports %s" % todo)
+            
+          
     print "reports.setup() : done ------------------------- (%d models)" % i
         
     #~ for rpt in _reports.values():
@@ -257,7 +271,7 @@ def get_slave(model,name):
         if d:
             rpt = d.get(name,None)
             if rpt is not None:
-                rpt.setup()
+                #20090916 rpt.setup()
                 return rpt
                 
     #~ for b in model.__bases__:
@@ -343,24 +357,9 @@ class Report:
 
     typo_check = True
     url = None
-    #_slaves = None
-    # mode = None # suffix to create unique names 'choices'
-    # json = False
-    
-    # __shared_state = {} 
     
     def __init__(self):
       
-        # self.__dict__ = self.__shared_state
-        
-        #~ for k,v in kw.items():
-            #~ if hasattr(self,k):
-                #~ setattr(self,k,v)
-            #~ else:
-                #~ print "[Warning] Ignoring attribute %s" % k
-            
-        #self._inlines = self.inlines()
-        
         if self.model is None:
             self.model = self.queryset.model
         if self.label is None:
@@ -370,7 +369,6 @@ class Report:
         #~ if self.mode is not None:
             #~ self.name += "_" + self.mode
             
-        #self.choices_stores = {}
             
         self._setup_done = False
         self._setup_doing = False
@@ -382,15 +380,21 @@ class Report:
         
     def setup(self):
         if self._setup_done:
-            return
+            return True
         if self._setup_doing:
             print "[Warning] %s.setup() called recursively" % self.name
-            return 
+            return False
         self._setup_doing = True
+        
+        if self.master:
+            self.fk = _get_foreign_key(self.master,
+              self.model,self.fk_name)
+            #self.name = self.fk.rel.related_name
+        
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
         choice_layout = layouts.RowLayout(self,0,self.display_field)
-        self.choice_store = layouts.Store(self,[choice_layout],mode='choice') 
+        self.choice_store = extjs.Store(self,[choice_layout],mode='choice') 
         
         if self.row_layout_class is None:
             self.row_layout = layouts.RowLayout(self,1,self.columnNames)
@@ -398,53 +402,39 @@ class Report:
             assert self.columnNames is None
             self.row_layout = self.row_layout_class(self,1)
             
-            
-        #self.columns = [e for e in self.row_layout.walk() if isinstance(e,FieldElement)]
-        
-        if self.master:
-            self.fk = _get_foreign_key(self.master,
-              self.model,self.fk_name)
-            #self.name = self.fk.rel.related_name
         l = [ self.row_layout ]
         index = 2
         for lc in self.page_layouts:
             l.append(lc(self,index))
             index += 1
             
-        #~ if len(self.page_layouts) == 1:
-            #~ self.page_layout = self.page_layouts[0](self)
-        #~ else:
-            #~ self.page_layout = layouts.TabbedPageLayout(self,
-              #~ self.page_layouts)
-        #~ self._page_layouts = [
-              #~ layout(self) for layout in self.page_layouts]
+        self.store = extjs.Store(self,l)
         
-        self.store = layouts.Store(self,l)
         
         self._setup_doing = False
         self._setup_done = True
         
-        print "Report.setup() done:", self.name
+        #print "Report.setup() done:", self.name
+        return True
         
-            
-            
         
-       
-          
-        #~ if hasattr(self.model,'slaves'):
-            #~ #self.slaves = [ rpt(name=k) for k,v in self.model.slaves().items() ]
+        
+    def unused_ext_components(self):
+        if len(self.store.layouts) == 2:
+            for s in self.store.layouts:
+                yield s._main
+        else:
+            yield self.store.layouts[0]._main
+            comps = [l._main for l in self.store.layouts[1:]]
+            yield extjs.TabPanel(None,"EastPanel",*comps)
+            
+        #~ yield self.layouts[0]._main
+        #~ if len(self.layouts) == 2:
+            #~ yield self.layouts[1]._main
         #~ else:
-            #~ self.slaves = []
-                
-    #~ def get_model(self):
-        #~ assert self.queryset is not None,"""
-        #~ if you set neither model nor queryset in your Report, 
-        #~ then you must override get_model(). Example: journals.DocumentsByJournal
-        #~ """
-        #~ return self.queryset.model
-        
-    #~ def get_label(self):
-        #~ return self.__class__.__name__
+            #~ comps = [l._main for l in self.layouts[1:]]
+            #~ yield layouts.TabPanel(None,"EastPanel",*comps)
+
         
     def get_slave(self,name):
         return get_slave(self.model,name)
@@ -490,7 +480,7 @@ class Report:
         else:
             qs = self.model.objects.all()
         if self.master is None:
-            assert master_instance is None
+            assert master_instance is None, "This Report doesn't accept a master"
         else:
             #~ if master_instance is None:
                 #~ master_instance = self.master_instance
@@ -535,22 +525,6 @@ class Report:
     def get_absolute_url(self,*args,**kw):
         return urls.get_report_url(self,*args,**kw)
     
-    def ext_components(self):
-        if len(self.store.layouts) == 2:
-            for s in self.store.layouts:
-                yield s._main
-        else:
-            yield self.store.layouts[0]._main
-            comps = [l._main for l in self.store.layouts[1:]]
-            yield layouts.TabPanel(None,"EastPanel",*comps)
-            
-        #~ yield self.layouts[0]._main
-        #~ if len(self.layouts) == 2:
-            #~ yield self.layouts[1]._main
-        #~ else:
-            #~ comps = [l._main for l in self.layouts[1:]]
-            #~ yield layouts.TabPanel(None,"EastPanel",*comps)
-
     def ajax_update(self,request):
         print request.POST
         return HttpResponse("1", mimetype='text/x-json')
@@ -558,10 +532,11 @@ class Report:
 
     def as_text(self, *args,**kw):
         from . import renderers_text 
-        return renderers_text.TextReportRenderer(self,*args,**kw).render()
+        r = renderers_text.TextReportRequest(self,*args,**kw)
+        return r.render()
         
     #~ def as_html(self, **kw):
-        #~ return render.HtmlReportRenderer(self,**kw).render_to_string()
+        #~ return render.HtmlReportRequest(self,**kw).render_to_string()
         
     def get_row_actions(self,renderer):
         l = []
@@ -581,3 +556,192 @@ def report_factory(model):
     return type(model.__name__+"Report",(Report,),dict(model=model))
     
         
+        
+        
+class ReportRequest:
+    limit = None
+    offset = None
+    master_instance = None
+    instance = None
+    
+    def __init__(self,report,
+            master_instance=None,
+            offset=None,limit=None,
+            mode=None,
+            **kw):
+        #from lino.django.tom.reports import Report
+        #assert isinstance(report,Report)
+        self.report = report
+        report.setup()
+        self.name = report.name+"Renderer"
+        self.mode = mode
+        if mode == 'choice':
+            self.store = report.choice_store
+        else:
+            self.store = report.store
+        if master_instance is not None:
+            self.master_instance = master_instance
+        #print self.__class__.__name__, "__init__()"
+        #self.params = params
+        self.queryset = report.get_queryset(master_instance,**kw)
+        
+        if isinstance(self.queryset,models.query.QuerySet):
+            self.total_count = self.queryset.count()
+        else:
+            # a Report may override get_queryset() and return a list
+            self.total_count = len(self.queryset)
+        
+        if offset is not None:
+            self.queryset = self.queryset[int(offset):]
+            self.offset = offset
+            
+        if limit is None:
+            limit = report.page_length
+        if limit is not None:
+            self.queryset = self.queryset[:int(limit)]
+            self.limit = limit
+            
+        self.page_length = report.page_length
+            
+        self.actions = self.report.get_row_actions(self)
+
+    def get_title(self):
+        return self.report.get_title(self)
+
+    def obj2json(self,obj):
+        d = {}
+        for fld in self.store.fields:
+            fld.write_to_form(obj,d)
+            #d[e.name] = e.value2js(obj)
+        return d
+            
+    def render_to_json(self):
+        rows = [ self.obj2json(row) for row in self.queryset ]
+        d = dict(count=self.total_count,rows=rows)
+        s = simplejson.dumps(d,default=unicode)
+        return s
+        #print s
+        #return HttpResponse(s, mimetype='text/html')
+        
+
+class ViewReportRequest(ReportRequest):
+  
+    editing = 0
+    selector = None
+    sort_column = None
+    sort_direction = None
+    
+    def __init__(self,request,report,*args,**kw):
+      
+        self.params = report.param_form(request.GET)
+        if self.params.is_valid():
+            kw.update(self.params.cleaned_data)
+        pk = request.GET.get('master',None)
+        if pk is not None:
+            try:
+                kw.update(master_instance=report.master.objects.get(pk=pk))
+            except report.master.DoesNotExist,e:
+                print "[Warning] There's no %s with %s=%r" % (
+                  report.master.__name__,report.master._meta.pk.name,pk)
+        sort = request.GET.get('sort',None)
+        if sort:
+            self.sort_column = sort
+            sort_dir = request.GET.get('dir','ASC')
+            if sort_dir == 'DESC':
+                sort = '-'+sort
+                self.sort_direction = 'DESC'
+            kw.update(order_by=sort)
+        
+        #self.json = request.GET.get('json',False)
+        
+        offset = request.GET.get('start',None)
+        if offset:
+            kw.update(offset=offset)
+        limit = request.GET.get('limit',None)
+        if limit:
+            kw.update(limit=limit)
+        #~ layout = request.GET.get('layout',None)
+        #~ if layout:
+            #~ kw.update(layout=int(layout))
+        mode = request.GET.get('mode',None)
+        if mode:
+            kw.update(mode=mode)
+
+        #print "ViewReportRequest.__init__() 1",report.name
+        self.request = request
+        ReportRequest.__init__(self,report,*args,**kw)
+        #print "ViewReportRequest.__init__() 2",report.name
+        #self.is_main = is_main
+        request._lino_request = self
+        
+
+    def get_absolute_url(self,**kw):
+        if self.master_instance is not None:
+            kw.update(master_instance=self.master_instance)
+        if self.limit != self.__class__.limit:
+            kw.update(limit=self.limit)
+        if self.offset is not None:
+            kw.update(start=self.offset)
+        if self.sort_column is not None:
+            kw.update(sort=self.sort_column)
+        if self.sort_direction is not None:
+            kw.update(dir=self.sort_direction)
+        #~ if self.layout.index != 0:
+            #~ kw.update(layout=self.layout.index)
+        if self.mode is not None:
+            kw.update(mode=self.mode)
+        return self.report.get_absolute_url(**kw)
+
+    def render_to_html(self):
+        if len(self.store.layouts) == 2:
+            comps = [l._main for l in self.store.layouts]
+        else:
+            tabs = [l._main for l in self.store.layouts[1:]]
+            comps = [self.store.layouts[0]._main,extjs.TabPanel(None,"EastPanel",*tabs)]
+        return lino_site.ext_view(self.request,*comps)
+        #return self.report.viewport.render_to_html(self.request)
+
+
+
+        
+class PdfManyReportRenderer(ViewReportRequest):
+
+    def render(self,as_pdf=True):
+        template = get_template("lino/grid_print.html")
+        context=dict(
+          report=self,
+          title=self.get_title(),
+        )
+        html  = template.render(Context(context))
+        if not (pisa and as_pdf):
+            return HttpResponse(html)
+        result = cStringIO.StringIO()
+        pdf = pisa.pisaDocument(cStringIO.StringIO(
+          html.encode("ISO-8859-1")), result)
+        if pdf.err:
+            raise Exception(cgi.escape(html))
+        return HttpResponse(result.getvalue(),mimetype='application/pdf')
+        
+    def rows(self):
+        rownum = 1
+        for obj in self.queryset:
+            yield Row(self,obj,rownum,None)
+            rownum += 1
+
+  
+class PdfOneReportRenderer(ViewReportRequest):
+    #detail_renderer = PdfManyReportRenderer
+
+    def render(self,as_pdf=True):
+        if as_pdf:
+            return self.row.instance.view_pdf(self.request)
+            #~ if False:
+                #~ s = render_to_pdf(self.row.instance)
+                #~ return HttpResponse(s,mimetype='application/pdf')
+            #~ elif pisa:
+                #~ s = as_printable(self.row.instance,as_pdf=True)
+                #~ return HttpResponse(s,mimetype='application/pdf')
+        else:
+            return self.row.instance.view_printable(self.request)
+            #~ result = as_printable(self.row.instance,as_pdf=False)
+            #~ return HttpResponse(result)
