@@ -200,7 +200,8 @@ def view_report_save(request,app_label=None,rptname=None):
         #~ print request.GET
         #~ return json_response(success=False,
             #~ msg="tried to update more than one row")
-    pk = request.POST.get('pk',None)
+    pk = request.POST.get(rpt.store.pk.name,None)
+    #pk = request.POST.get('pk',None)
     if pk is None:
         return json_response(success=False,msg="No primary key was specified")
     #print "foo",request.POST
@@ -219,7 +220,7 @@ def view_report_save(request,app_label=None,rptname=None):
         return json_response(success=False,msg="Exception occured: "+str(e))
     
 def json_response(**kw):
-    s = "{%s}" % layouts.dict2js(kw)
+    s = "{%s}" % extjs.dict2js(kw)
     print "json_response()", s
     return HttpResponse(s, mimetype='text/html')
     
@@ -271,7 +272,7 @@ def get_slave(model,name):
         if d:
             rpt = d.get(name,None)
             if rpt is not None:
-                #20090916 rpt.setup()
+                rpt.setup()
                 return rpt
                 
     #~ for b in model.__bases__:
@@ -394,7 +395,7 @@ class Report:
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
         choice_layout = layouts.RowLayout(self,0,self.display_field)
-        self.choice_store = extjs.Store(self,[choice_layout],mode='choice') 
+        self.choice_store = extjs.Store(self,[choice_layout],mode='choice',autoLoad=True) 
         
         if self.row_layout_class is None:
             self.row_layout = layouts.RowLayout(self,1,self.columnNames)
@@ -408,7 +409,7 @@ class Report:
             l.append(lc(self,index))
             index += 1
             
-        self.store = extjs.Store(self,l)
+        self.store = extjs.Store(self,l,autoLoad=True)
         
         
         self._setup_doing = False

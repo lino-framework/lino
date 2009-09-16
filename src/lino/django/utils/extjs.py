@@ -257,7 +257,10 @@ class Store(Component):
         #data_layout = self.report.layouts[self.layout_index]
         d.update(storeId=self.ext_name)
         d.update(remoteSort=True)
-        d.update(autoLoad=True)
+        #~ if self.report.master is None:
+            #~ d.update(autoLoad=True)
+        #~ else:
+            #~ d.update(autoLoad=False)
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
         if request._lino_request.report == self.report:
             url = request._lino_request.get_absolute_url(json=True,mode=self.mode)
@@ -1045,6 +1048,7 @@ class GridElement(Container):
         #d.update(colModel=self.column_model)
         d.update(viewConfig=js_code(py2js(dict(
           autoScroll=True,
+          scrollOffset=200,
           emptyText="Nix gefunden!"
         ))))
         #d.update(autoScroll=True)
@@ -1178,38 +1182,37 @@ class MainGridElement(GridElement):
         
     def ext_lines(self,request):
         s = """
-function save(oGrid_event){
-    Ext.Ajax.request({
-        waitMsg: 'Please wait...',
-        url: '%s',""" % self.report.get_absolute_url(ajax='update')
+function saveCell(oGrid_event){
+  Ext.Ajax.request({
+    waitMsg: 'Please wait...',
+    url: '%s',""" % self.report.get_absolute_url(save=True)
         #request._lino_report.get_absolute_url(ajax='update')
         d = {}
         for e in self.report.store.fields:
             d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
         
         s += """
-        params: { %s }, """ % dict2js(d)
+    params: { %s }, """ % dict2js(d)
         s += """
-        success: function(response){							
-           var result=eval(response.responseText);
-           switch(result){
-           case 1:
-              %s.commitChanges(); // get rid of the red triangles
-              %s.reload();        // reload our datastore.
-              break;					
-           default:
-              Ext.MessageBox.alert('Uh uh...','We could not save him...');
-              break;
-           }
-        },
-        failure: function(response){
-           var result=response.responseText;
-           Ext.MessageBox.alert('error','could not connect to the database. retry later');		
-        }
-     });
-  }""" % (self.report.store.ext_name,self.report.store.ext_name)
+    success: function(response){
+      console.log('success',response.responseText);
+      var result=Ext.decode(response.responseText);
+      console.log(result);
+      if (result.success) {
+        %s.commitChanges(); // get rid of the red triangles
+        %s.reload();        // reload our datastore.
+      } else {
+        Ext.MessageBox.alert(result.msg);
+      }
+    },
+    failure: function(response){
+      console.log(response);
+      Ext.MessageBox.alert('error','could not connect to the database. retry later');		
+    }
+  });
+};""" % (self.report.store.ext_name,self.report.store.ext_name)
         yield s
-        # yield "// frm.on('afteredit', save);"
+        yield "%s.on('afteredit', saveCell);" % self.ext_name
 
         s = """
 function onRowSelect(grid, rowIndex, e) {"""
