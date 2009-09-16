@@ -1299,9 +1299,11 @@ class Viewport:
 <!-- ** Javascript ** -->
 <!-- ExtJS library: base/adapter -->
 <script type="text/javascript" src="%sadapter/ext/ext-base.js"></script>""" % settings.EXTJS_URL
+        #widget_library = 'ext-all-debug'
+        widget_library = 'ext-all'
         s += """
 <!-- ExtJS library: all widgets -->
-<script type="text/javascript" src="%sext-all-debug.js"></script>""" % settings.EXTJS_URL
+<script type="text/javascript" src="%s%s.js"></script>""" % (settings.EXTJS_URL,widget_library)
         s += """
 <!-- overrides to library -->
 <link rel="stylesheet" type="text/css" href="/media/lino.css">
