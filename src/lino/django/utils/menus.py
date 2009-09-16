@@ -99,7 +99,8 @@ class Component:
         
     def as_ext(self,request,level=1):
         s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
-        return mark_safe(s)
+        #return mark_safe(s)
+        return s
         
 class MenuItem(Component):
     pass
