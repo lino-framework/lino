@@ -1,0 +1,25 @@
+Index: django/forms/models.py
+===================================================================
+--- django/forms/models.py	(revision 11231)
++++ django/forms/models.py	(working copy)
+@@ -793,15 +793,11 @@
+     from django.db.models import ForeignKey
+     opts = model._meta
+     if fk_name:
+-        fks_to_parent = [f for f in opts.fields if f.name == fk_name]
+-        if len(fks_to_parent) == 1:
+-            fk = fks_to_parent[0]
+-            if not isinstance(fk, ForeignKey) or \
+-                    (fk.rel.to != parent_model and
+-                     fk.rel.to not in parent_model._meta.get_parent_list()):
+-                raise Exception("fk_name '%s' is not a ForeignKey to %s" % (fk_name, parent_model))
+-        elif len(fks_to_parent) == 0:
+-            raise Exception("%s has no field named '%s'" % (model, fk_name))
++        fk = opts.get_field(fk_name,many_to_many=False)
++        if not isinstance(fk, ForeignKey) or \
++                (fk.rel.to != parent_model and
++                 fk.rel.to not in parent_model._meta.get_parent_list()):
++            raise Exception("fk_name '%s' is not a ForeignKey to %s" % (fk_name, parent_model))
+     else:
+         # Try to discover what the ForeignKey from model to parent_model is
+         fks_to_parent = [
