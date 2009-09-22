@@ -250,7 +250,21 @@ class Store(Component):
             #~ yield kw
 
             
-        
+    def get_absolute_url(self,request,**kw):
+        if request._lino_request.report == self.report:
+            return request._lino_request.get_absolute_url(**kw)
+        else:
+            return self.report.get_absolute_url(**kw)
+        #~ if request._lino_report.report == self.report:
+            #~ #rr = request._lino_report
+            #~ layout = self.layout
+            #~ url = request._lino_report.get_absolute_url(json=True)
+        #~ else:
+            #~ # it's a slave
+            #~ layout = request._lino_report.report.row_layout
+            #~ #rr = self.report.renderer()
+            #~ url = self.report.get_absolute_url(json=True)
+      
     def ext_options(self,request):
         d = Component.ext_options(self,request)
         #self.report.setup()
@@ -262,19 +276,7 @@ class Store(Component):
         #~ else:
             #~ d.update(autoLoad=False)
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
-        if request._lino_request.report == self.report:
-            url = request._lino_request.get_absolute_url(json=True,mode=self.mode)
-        else:
-            url = self.report.get_absolute_url(json=True,mode=self.mode)
-        #~ if request._lino_report.report == self.report:
-            #~ #rr = request._lino_report
-            #~ layout = self.layout
-            #~ url = request._lino_report.get_absolute_url(json=True)
-        #~ else:
-            #~ # it's a slave
-            #~ layout = request._lino_report.report.row_layout
-            #~ #rr = self.report.renderer()
-            #~ url = self.report.get_absolute_url(json=True)
+        url = self.get_absolute_url(request,json=True,mode=self.mode)
         #self.report.setup()
         d.update(proxy=js_code(
           "new Ext.data.HttpProxy({url:'%s',method:'GET'})" % url           
@@ -1059,10 +1061,112 @@ class GridElement(Container):
         d.update(autoHeight=True)
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
+        
+        actions = [dict(text=a.label,handler=js_code(a.name+'_action')) for a in self.report._actions]
+        #actions.insert(0," ")
+        d.update(tbar=js_code("""new Ext.PagingToolbar({
+          store: %s,
+          displayInfo: true,
+          pageSize: %d,
+          prependButtons: false,
+          items: %s
+        }) """ % (self.report.store.ext_name,self.report.page_length,py2js(actions))))
         return d
             
     #~ def value2js(self,obj):
         #~ return "1"
+        
+    def ext_lines(self,request):
+        s = """
+function %s_afteredit(oGrid_event){""" % self.ext_name
+        s += """
+  Ext.Ajax.request({
+    waitMsg: 'Please wait...',
+    url: '%s',""" % self.report.get_absolute_url(save=True)
+        #request._lino_report.get_absolute_url(ajax='update')
+        d = {}
+        for e in self.report.store.fields:
+            d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
+        
+        s += """
+    params: { %s }, """ % dict2js(d)
+        s += """
+    success: function(response){
+      // console.log('success',response.responseText);
+      var result=Ext.decode(response.responseText);
+      // console.log(result);
+      if (result.success) {
+        %s.commitChanges(); // get rid of the red triangles
+        %s.reload();        // reload our datastore.
+      } else {
+        Ext.MessageBox.alert(result.msg);
+      }
+    },
+    failure: function(response){
+      // console.log(response);
+      Ext.MessageBox.alert('error','could not connect to the database. retry later');		
+    }
+  });
+};""" % (self.report.store.ext_name,self.report.store.ext_name)
+        yield s
+        yield "%s.on('afteredit', %s_afteredit);" % (self.ext_name,self.ext_name)
+
+        for action in self.report._actions:
+            s = """
+function %s_action(oGrid_event) {""" % action.name
+            s += """
+  var sel_pks = '';
+  var must_reload = false;
+  var sels = %s.getSelectionModel().getSelections();""" % self.ext_name
+            s += """
+  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].%s + ','; };""" % self.report.store.pk.name
+            s += """
+  var doit = function(confirmed) {
+    Ext.Ajax.request({
+      waitMsg: 'Running action "%s". Please wait...',""" % action.label
+            s += """
+      url: '%s',""" % self.report.store.get_absolute_url(request,action=action.name)
+      #self.report.get_absolute_url(action=action.name)
+            s += """
+      params: { confirmed:confirmed,selected:sel_pks }, """ #% dict2js(params)
+            s += """
+      success: function(response){
+        console.log('success',response.responseText);
+        var result = Ext.decode(response.responseText);
+        console.log(result);
+        if(result.success) {
+          if (result.msg) Ext.MessageBox.alert('success',result.msg);
+          if (result.must_reload) %s.load(); """ % self.report.store.ext_name
+            s += """
+        } else {
+          if(result.confirm) Ext.Msg.show({
+            title: 'Confirmation',
+            msg: result.confirm,
+            buttons: Ext.Msg.YESNOCANCEL,
+            fn: function(btn) {
+              if (btn == 'yes') {
+                  console.log(btn);
+                  doit(confirmed+1);
+              }
+            }
+          })
+        }
+      },
+      failure: function(response){
+        // console.log(response);
+        Ext.MessageBox.alert('error','Could not connect to the server.');
+      }
+    });
+  };
+  doit(0);
+};""" 
+            yield s
+              
+            #~ s = """%s.getTopToolbar().addButton({""" % self.ext_name
+            #~ s += "text:'%s', " % action.label
+            #~ s += """ handler: %s_action}); """ % action.name
+            #~ yield s
+  
         
 class M2mGridElement(GridElement):
     def __init__(self,layout,field,*elements,**kw):
@@ -1156,6 +1260,7 @@ var submitButton = %s.addButton({
 class MainGridElement(GridElement):
     def __init__(self,layout,name,vertical,*elements,**kw):
         GridElement.__init__(self,layout,name,layout.report,*elements,**kw)
+        #print "MainGridElement.__init__()",self.ext_name
         
     def ext_options(self,request):
         d = GridElement.ext_options(self,request)
@@ -1163,59 +1268,13 @@ class MainGridElement(GridElement):
         # d = dict(title=request._lino_report.get_title()) 
         d.update(title=request._lino_request.get_title()) 
         d.update(region='center',split=True)
-        if False:
-            d['listeners'] = js_code("""{
-              resize: function(comp,adjWidth,adjHeight,rawWidth,rawHeight) {
-                console.log("resize:",comp['title'],[adjWidth,adjHeight,rawWidth,rawHeight]);
-              }
-            }""")
-        d.update(tbar=js_code("""new Ext.PagingToolbar({
-          store: %s,
-          displayInfo: true,
-          pageSize: %d,
-          prependButtons: true,
-        }) """ % (self.report.store.ext_name,self.report.page_length)))
-        #d.update(items=js_code("[ %s ]" % self.grid.name))
-        #d.update(items=js_code(self.grid.ext_name))
-        #d.update(items=js_code("[%s]" % ",".join([e.as_ext(request) for e in self.elements])))
         return d
         
     def ext_lines(self,request):
+        for s in GridElement.ext_lines(self,request):
+            yield s
         s = """
-function saveCell(oGrid_event){
-  Ext.Ajax.request({
-    waitMsg: 'Please wait...',
-    url: '%s',""" % self.report.get_absolute_url(save=True)
-        #request._lino_report.get_absolute_url(ajax='update')
-        d = {}
-        for e in self.report.store.fields:
-            d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
-        
-        s += """
-    params: { %s }, """ % dict2js(d)
-        s += """
-    success: function(response){
-      console.log('success',response.responseText);
-      var result=Ext.decode(response.responseText);
-      console.log(result);
-      if (result.success) {
-        %s.commitChanges(); // get rid of the red triangles
-        %s.reload();        // reload our datastore.
-      } else {
-        Ext.MessageBox.alert(result.msg);
-      }
-    },
-    failure: function(response){
-      console.log(response);
-      Ext.MessageBox.alert('error','could not connect to the database. retry later');		
-    }
-  });
-};""" % (self.report.store.ext_name,self.report.store.ext_name)
-        yield s
-        yield "%s.on('afteredit', saveCell);" % self.ext_name
-
-        s = """
-function onRowSelect(grid, rowIndex, e) {"""
+function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
         s += """
     var row = %s.getAt(rowIndex);""" % self.report.store.ext_name
         for layout in self.report.store.layouts[1:]:
@@ -1227,10 +1286,9 @@ function onRowSelect(grid, rowIndex, e) {"""
     
         s += "\n};"
         yield s
-        yield "%s.getSelectionModel().on('rowselect', onRowSelect);" % self.ext_name
-        # yield "%s.load();" % self.report.store.ext_name
+        yield "%s.getSelectionModel().on('rowselect', %s_rowselect);" % (self.ext_name,self.ext_name)
+        yield "%s.load();" % self.report.store.ext_name
 
-  
 
 _field2elem = (
     (models.TextField, TextFieldElement),
@@ -1319,10 +1377,12 @@ var main_menu = new Ext.Toolbar(%s);""" % self.main_menu.as_ext(request)
 
         for v in self.variables:
             s += "\n%s = %s;" % (v.ext_name,v.as_ext_value(request))
-
-        for c in self.components:
-            for ln in c.ext_lines(request):
+            for ln in v.ext_lines(request):
                 s += "\n" + ln 
+
+        #~ for c in self.components:
+            #~ for ln in c.ext_lines(request):
+                #~ s += "\n" + ln 
                 
         d = dict(layout='border')
         d.update(items=js_code(

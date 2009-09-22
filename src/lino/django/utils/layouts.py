@@ -50,22 +50,17 @@ class Layout:
         self.name = report.name + str(index)
         self.slave_grids = []
         self.store_fields = []
-        #self.choice_stores = [] # filled by ForeignKeyElement.__init__()
         self.report = report
         self.index = index
         #print "Layout.__init__()", self.name
-        #self.master_store = report.master_store # Store(self,report,self.index)
-        #self._slave_dict = {}
         if main is None:
             if hasattr(self,"main"):
-                #main = self.create_element(self.main_class,self.name)
                 main = self.create_element(self.main_class,'main')
             else:
                 if desc is None:
                     desc = self.join_str.join([ 
                         f.name for f in report.model._meta.fields 
                         + report.model._meta.many_to_many])
-                #main = self.desc2elem(self.main_class,self.name,desc)
                 main = self.desc2elem(self.main_class,"main",desc)
                 #print main
         self._main = main
@@ -192,7 +187,7 @@ class RowLayout(Layout):
         #print "RowLayout.__init__(%r,%r,%r,%r)" % (report.name,index,desc,main)
         assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (report.name,self.ext_name)
         self.columns = self._main.elements
-        self._main = extjs.Panel(self,"scrollgrid",True,self._main, region="center",autoScroll=True)
+        self._main = extjs.Panel(self,"scrollgrid",True,self._main,region="center",autoScroll=True)
     
 
 class PageLayout(Layout):

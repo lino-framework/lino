@@ -487,10 +487,20 @@ class EmittedInvoicesPageLayout(OrderPageLayout):
     journal number:4 creation_date customer:20 start_date
     InvoicesByOrder
     """
-   
+
+class PrintAction(reports.Action):
+    label = "Print"
+    def run(self,context):
+        msg = "Would have printed %s" % context.selected_rows
+        print msg
+        return msg
+
+
+
 class SalesDocuments(reports.Report):
     model = SalesDocument
     page_layouts = (DocumentPageLayout,)
+    actions = reports.Report.actions + [ PrintAction ]
     
     #~ def inlines(self):
         #~ return dict(items=ItemsByDocument())
@@ -543,6 +553,18 @@ class InvoicesByJournal(Invoices):
                   "ledger_remark:10 " \
                   "total_excl total_vat user "
 
+class SignAction(reports.Action):
+    label = "Sign"
+    def run(self,context):
+        context.confirm(
+            "Going to sign %d documents as user %s. Are you sure?" % (
+            len(context.selected_rows),
+            context.request.user))
+        for row in context.selected_rows:
+            row.instance.user = context.request.user
+            row.instance.save()
+        context.refresh()
+
 class DocumentsToSign(Invoices):
     use_as_default_report = False
     filter = dict(user__exact=None)
@@ -550,20 +572,21 @@ class DocumentsToSign(Invoices):
     columnNames = "number:4 order creation_date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
-                  
-    def get_row_actions(self,renderer):
-        l = super(Invoices,self).get_row_actions(renderer)
-        
-        def sign(renderer):
-            for row in renderer.selected_rows():
-                row.instance.user = renderer.request.user
-                row.instance.save()
-            renderer.must_refresh()
-            
-        l.append( ('sign', sign) )
-        return l 
-        
+    actions = Invoices.actions + [ SignAction ]
     
+    #~ def get_row_actions(self,renderer):
+        #~ l = super(Invoices,self).get_row_actions(renderer)
+        
+        #~ def sign(renderer):
+            #~ for row in renderer.selected_rows():
+                #~ row.instance.user = renderer.request.user
+                #~ row.instance.save()
+            #~ renderer.must_refresh()
+            
+        #~ l.append( ('sign', sign) )
+        #~ return l 
+
+
   
 class InvoicesByOrder(SalesDocuments):
     model = Invoice

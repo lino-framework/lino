@@ -113,14 +113,19 @@ def sorry(request,message=None):
 
 
 
-def get_report_url(report,master_instance=None,json=False,save=False,mode=None,**kw):
+def get_report_url(report,master_instance=None,
+        json=False,save=False,mode=None,action=None,**kw):
     if json:
         url = "/json/"
     elif save:
         url = "/save/"
+    elif action:
+        url = "/action/"
     else:
         url = "/r/"
     url += report.app_label + "/" + report.name
+    if action:
+        url += "/" + action
     #~ app_label = report.__class__.__module__.split('.')[-2]
     #~ if mode == 'choices':
         #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
@@ -157,6 +162,7 @@ def get_urls():
         (r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
         (r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_json),
         (r'^save/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_save),
+        (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', reports.view_action),
         #(r'^choices/(?P<app_label>\w+)/(?P<model_name>\w+)$', choices_view),
         #(r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_view),
         #(r'^detail/(?P<app_label>\w+)/(?P<rptname>\w+)$', detail_view),

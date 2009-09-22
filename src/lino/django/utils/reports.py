@@ -61,6 +61,82 @@ def base_attrs(cl):
             
 #~ class SetupNotDone(Exception):
     #~ pass 
+    
+UNDEFINED = "nix"
+    
+class ActionEvent(Exception):
+    pass
+    
+class MustConfirm(ActionEvent):
+    pass
+    
+class Action:
+    label = None
+    name = None
+    def __init__(self,report):
+        if self.label is None:
+            self.label = self.__class__.__name__
+        if self.name is None:
+            self.name = self.label
+        self.report = report
+        
+    def do_run(self,request):
+        context = ActionContext(self,request)
+        try:
+            msg = self.run(context)
+            if msg is None:
+                msg = "Completed"
+            d = dict(success=True,msg=msg)
+        except MustConfirm,e:
+            d = dict(success=False,confirm=str(e))
+        except Exception,e:
+            d = dict(success=False,msg=str(e))
+        d.update(must_reload=context.must_reload)
+        return d
+        
+    def run(self,context):
+        raise NotImplementedError
+    def before_run(self,renderer):
+        pass
+        
+class ActionContext:
+    def __init__(self,action,request):
+        #self.request = request
+        selected = request.POST.get('selected',None)
+        if selected:
+            self.selected_rows = [
+              action.report.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+        else:
+            self.selected_rows = []
+        self.confirmed = request.POST.get('confirmed',None)
+        if self.confirmed is not None:
+            self.confirmed = int(self.confirmed)
+        self.confirms = 0
+        self.must_reload = False
+        print 'Actioncontext.__init__()', self.confirmed, self.selected_rows
+        
+    def refresh(self):
+        self.must_reload = True
+        
+    def confirm(self,msg):
+        print "ActionContext.confirm()", msg
+        self.confirms += 1
+        if self.confirmed >= self.confirms:
+            return
+        raise MustConfirm(msg)
+        
+class DeleteSelected(Action):
+    label = "Delete"
+    def run(self,context):
+        if len(context.selected_rows) == 0:
+            return "No rows selected. Nothing to do."
+        context.confirm("Delete %d rows. Are you sure?" % len(context.selected_rows))
+        for row in context.selected_rows:
+            #print "DELETE:", row
+            row.delete()
+        context.refresh()
+
+    
 
 
 class ReportParameterForm(forms.Form):
@@ -187,6 +263,27 @@ def view_report_as_json(request,app_label=None,rptname=None):
     s = r.render_to_json()
     return HttpResponse(s, mimetype='text/html')
 
+
+def view_action(request,app_label=None,rptname=None,action=None):
+    rpt = get_report(app_label,rptname)
+    if rpt is None:
+        return json_response(success=False,
+            msg="%s : no such report" % rptname)
+    if not rpt.can_view.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot view %s : " % (request.user,rptname))
+    r = ViewReportRequest(request,rpt)
+    d = None
+    for a in rpt._actions:
+        if a.name == action:
+            d = a.do_run(request)
+            break
+    if d is None:
+        d = dict(success=False,msg="Not implemented")
+    s = simplejson.dumps(d,default=unicode)
+    return HttpResponse(s, mimetype='text/html')
+
+
 def view_report_save(request,app_label=None,rptname=None):
     rpt = get_report(app_label,rptname)
     if rpt is None:
@@ -202,16 +299,21 @@ def view_report_save(request,app_label=None,rptname=None):
             #~ msg="tried to update more than one row")
     pk = request.POST.get(rpt.store.pk.name,None)
     #pk = request.POST.get('pk',None)
-    if pk is None:
-        return json_response(success=False,msg="No primary key was specified")
-    #print "foo",request.POST
-    #20090916 rpt.setup()
+    if pk == UNDEFINED:
+        pk = None
     try:
-        instance = rpt.model.objects.get(pk=pk)
+        if pk is None:
+            #return json_response(success=False,msg="No primary key was specified")
+            instance = rpt.model()
+        else:
+            instance = rpt.model.objects.get(pk=pk)
+        #print "foo",request.POST
+        #20090916 rpt.setup()
         #print "Updating", instance, "using", request.POST
         for f in rpt.store.fields:
-            #print "reports.view_report_save()",f.field.name
-            f.update_from_form(instance,request.POST)
+            if not f.field.primary_key:
+                #print "reports.view_report_save()",f.field.name
+                f.update_from_form(instance,request.POST)
         instance.save()
         return json_response(success=True,
               msg="%s has been saved" % instance)
@@ -322,7 +424,6 @@ class ReportMetaClass(type):
 
 
 
-
 class Report:
     __metaclass__ = ReportMetaClass
     queryset = None 
@@ -358,6 +459,7 @@ class Report:
 
     typo_check = True
     url = None
+    actions = [ DeleteSelected ]
     
     def __init__(self):
       
@@ -395,7 +497,7 @@ class Report:
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
         choice_layout = layouts.RowLayout(self,0,self.display_field)
-        self.choice_store = extjs.Store(self,[choice_layout],mode='choice',autoLoad=True) 
+        self.choice_store = extjs.Store(self,[choice_layout],mode='choice',autoLoad=True)
         
         if self.row_layout_class is None:
             self.row_layout = layouts.RowLayout(self,1,self.columnNames)
@@ -409,7 +511,9 @@ class Report:
             l.append(lc(self,index))
             index += 1
             
-        self.store = extjs.Store(self,l,autoLoad=True)
+        self.store = extjs.Store(self,l) #,autoLoad=True
+        
+        self._actions = [cl(self) for cl in self.actions]
         
         
         self._setup_doing = False
@@ -483,15 +587,16 @@ class Report:
         if self.master is None:
             assert master_instance is None, "This Report doesn't accept a master"
         else:
-            #~ if master_instance is None:
-                #~ master_instance = self.master_instance
-            if not isinstance(master_instance,self.master):
-                raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
-            #print qs
-            #print qs.model
-            qs = qs.filter(**{self.fk.name:master_instance})
-            #~ if self.fk.limit_choices_to:
-                #~ qs = qs.filter(**self.fk.limit_choices_to)
+            if master_instance is None:
+                qs = qs.filter(**{"%s__exact" % self.fk.name:None})
+            else:
+                if not isinstance(master_instance,self.master):
+                    raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
+                #print qs
+                #print qs.model
+                qs = qs.filter(**{self.fk.name:master_instance})
+                #~ if self.fk.limit_choices_to:
+                    #~ qs = qs.filter(**self.fk.limit_choices_to)
 
         if self.filter:
             qs = qs.filter(**self.filter)
@@ -539,18 +644,18 @@ class Report:
     #~ def as_html(self, **kw):
         #~ return render.HtmlReportRequest(self,**kw).render_to_string()
         
-    def get_row_actions(self,renderer):
-        l = []
-        #l.append( ('dummy',self.dummy) )
-        if self.can_change.passes(renderer.request):
-            l.append( ('delete',self.delete_selected) )
-        return l
+    #~ def get_row_actions(self,renderer):
+        #~ l = []
+        #~ #l.append( ('dummy',self.dummy) )
+        #~ if self.can_change.passes(renderer.request):
+            #~ l.append( ('delete',self.delete_selected) )
+        #~ return l
             
-    def delete_selected(self,renderer):
-        for row in renderer.selected_rows():
-            print "DELETE:", row.instance
-            row.instance.delete()
-        renderer.must_refresh()
+    #~ def delete_selected(self,renderer):
+        #~ for row in renderer.selected_rows():
+            #~ print "DELETE:", row.instance
+            #~ row.instance.delete()
+        #~ renderer.must_refresh()
 
         
 def report_factory(model):
@@ -580,8 +685,8 @@ class ReportRequest:
             self.store = report.choice_store
         else:
             self.store = report.store
-        if master_instance is not None:
-            self.master_instance = master_instance
+        #if master_instance is not None:
+        self.master_instance = master_instance
         #print self.__class__.__name__, "__init__()"
         #self.params = params
         self.queryset = report.get_queryset(master_instance,**kw)
@@ -604,7 +709,7 @@ class ReportRequest:
             
         self.page_length = report.page_length
             
-        self.actions = self.report.get_row_actions(self)
+        #self.actions = self.report.get_row_actions(self)
 
     def get_title(self):
         return self.report.get_title(self)
@@ -618,7 +723,15 @@ class ReportRequest:
             
     def render_to_json(self):
         rows = [ self.obj2json(row) for row in self.queryset ]
-        d = dict(count=self.total_count,rows=rows)
+        total_count = self.total_count
+        if True: # add one empty row
+            d = {}
+            for fld in self.store.fields:
+                d[fld.field.name] = None
+            d[self.report.store.pk.name] = UNDEFINED
+            rows.append(d)
+            total_count += 1
+        d = dict(count=total_count,rows=rows)
         s = simplejson.dumps(d,default=unicode)
         return s
         #print s
@@ -637,13 +750,18 @@ class ViewReportRequest(ReportRequest):
         self.params = report.param_form(request.GET)
         if self.params.is_valid():
             kw.update(self.params.cleaned_data)
-        pk = request.GET.get('master',None)
-        if pk is not None:
-            try:
-                kw.update(master_instance=report.master.objects.get(pk=pk))
-            except report.master.DoesNotExist,e:
-                print "[Warning] There's no %s with %s=%r" % (
-                  report.master.__name__,report.master._meta.pk.name,pk)
+        if report.master is not None:
+            pk = request.GET.get('master',None)
+            if pk == UNDEFINED:
+                pk = None
+            if pk is None:
+                kw.update(master_instance=None)
+            else:
+                try:
+                    kw.update(master_instance=report.master.objects.get(pk=pk))
+                except report.master.DoesNotExist,e:
+                    print "[Warning] There's no %s with %s=%r" % (
+                      report.master.__name__,report.master._meta.pk.name,pk)
         sort = request.GET.get('sort',None)
         if sort:
             self.sort_column = sort
@@ -746,3 +864,6 @@ class PdfOneReportRenderer(ViewReportRequest):
             return self.row.instance.view_printable(self.request)
             #~ result = as_printable(self.row.instance,as_pdf=False)
             #~ return HttpResponse(result)
+
+
+
