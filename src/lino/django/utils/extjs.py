@@ -1119,6 +1119,7 @@ function %s_action(oGrid_event) {""" % action.name
   var must_reload = false;
   var sels = %s.getSelectionModel().getSelections();""" % self.ext_name
             s += """
+  // console.log(sels);
   for(var i=0;i<sels.length;i++) { sel_pks += sels[i].%s + ','; };""" % self.report.store.pk.name
             s += """
   var doit = function(confirmed) {
@@ -1131,11 +1132,12 @@ function %s_action(oGrid_event) {""" % action.name
       params: { confirmed:confirmed,selected:sel_pks }, """ #% dict2js(params)
             s += """
       success: function(response){
-        console.log('success',response.responseText);
+        // console.log('raw response:',response.responseText);
         var result = Ext.decode(response.responseText);
-        console.log(result);
+        console.log('got response:',result);
         if(result.success) {
           if (result.msg) Ext.MessageBox.alert('success',result.msg);
+          if (result.html) Ext.Window({html:result.html}).show();
           if (result.must_reload) %s.load(); """ % self.report.store.ext_name
             s += """
         } else {

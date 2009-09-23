@@ -488,19 +488,11 @@ class EmittedInvoicesPageLayout(OrderPageLayout):
     InvoicesByOrder
     """
 
-class PrintAction(reports.Action):
-    label = "Print"
-    def run(self,context):
-        msg = "Would have printed %s" % context.selected_rows
-        print msg
-        return msg
-
-
 
 class SalesDocuments(reports.Report):
     model = SalesDocument
     page_layouts = (DocumentPageLayout,)
-    actions = reports.Report.actions + [ PrintAction ]
+    #actions = reports.Report.actions + [ PrintAction ]
     
     #~ def inlines(self):
         #~ return dict(items=ItemsByDocument())

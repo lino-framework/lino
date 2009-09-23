@@ -43,12 +43,6 @@ from django.utils.html import escape
 from django.utils import simplejson
 from django.template.loader import render_to_string, get_template, select_template, Context
 
-try:
-    # l:\snapshot\xhtml2pdf
-    import ho.pisa as pisa
-except ImportError:
-    pisa = None
-
 
 from lino.django.utils import layouts
 #from lino.django.utils import reports

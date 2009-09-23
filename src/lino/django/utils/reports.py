@@ -32,6 +32,14 @@ from django.http import HttpResponse
 #from django.utils import simplejson
 from django.utils.safestring import mark_safe
 
+try:
+    # l:\snapshot\xhtml2pdf
+    import ho.pisa as pisa
+except ImportError:
+    pisa = None
+
+
+
 from . import layouts, extjs, perms, urls
 
 from lino.django.utils.sites import lino_site
@@ -80,24 +88,27 @@ class Action:
             self.name = self.label
         self.report = report
         
-    def do_run(self,request):
+        
+    def view(self,request):
         context = ActionContext(self,request)
         try:
-            msg = self.run(context)
-            if msg is None:
-                msg = "Completed"
-            d = dict(success=True,msg=msg)
-        except MustConfirm,e:
-            d = dict(success=False,confirm=str(e))
+            self.run(context)
+            #~ if msg is None:
+                #~ msg = "Completed"
+            #~ d = dict(success=True,msg=msg)
+        except ActionEvent,e:
+            pass
         except Exception,e:
-            d = dict(success=False,msg=str(e))
-        d.update(must_reload=context.must_reload)
-        return d
+            traceback.print_exc(e)
+            context._response.update(msg=str(e),success=False)
+            #d = dict(success=False,msg=str(e))
+        #d.update(must_reload=context.must_reload)
+        s = simplejson.dumps(context._response,default=unicode)
+        return HttpResponse(s, mimetype='text/html')
+      
         
     def run(self,context):
         raise NotImplementedError
-    def before_run(self,renderer):
-        pass
         
 class ActionContext:
     def __init__(self,action,request):
@@ -112,18 +123,28 @@ class ActionContext:
         if self.confirmed is not None:
             self.confirmed = int(self.confirmed)
         self.confirms = 0
-        self.must_reload = False
-        print 'Actioncontext.__init__()', self.confirmed, self.selected_rows
+        self._response = dict(success=True,must_reload=False,msg=None)
+        #print 'Actioncontext.__init__()', self.confirmed, self.selected_rows
         
     def refresh(self):
-        self.must_reload = True
+        self._response.update(must_reload=True)
+        
+    def setmsg(self,msg=None):
+        if msg is not None:
+            self._reponse.update(msg=msg)
+        
+    def error(self,msg=None):
+        self._response.update(success=False)
+        self.setmsg(msg)
+        raise ActionEvent() # MustConfirm(msg)
         
     def confirm(self,msg):
-        print "ActionContext.confirm()", msg
+        #print "ActionContext.confirm()", msg
         self.confirms += 1
         if self.confirmed >= self.confirms:
             return
-        raise MustConfirm(msg)
+        self._response.update(confirm=msg,success=False)
+        raise ActionEvent() # MustConfirm(msg)
         
 class DeleteSelected(Action):
     label = "Delete"
@@ -273,13 +294,10 @@ def view_action(request,app_label=None,rptname=None,action=None):
         return json_response(success=False,
             msg="User %s cannot view %s : " % (request.user,rptname))
     r = ViewReportRequest(request,rpt)
-    d = None
     for a in rpt._actions:
         if a.name == action:
-            d = a.do_run(request)
-            break
-    if d is None:
-        d = dict(success=False,msg="Not implemented")
+            return a.view(request)
+    d = dict(success=False,msg="Not implemented")
     s = simplejson.dumps(d,default=unicode)
     return HttpResponse(s, mimetype='text/html')
 
@@ -515,6 +533,9 @@ class Report:
         
         self._actions = [cl(self) for cl in self.actions]
         
+        setup = getattr(self.model,'setup_report',None)
+        if setup:
+            setup(self)
         
         self._setup_doing = False
         self._setup_done = True
@@ -522,7 +543,9 @@ class Report:
         #print "Report.setup() done:", self.name
         return True
         
-        
+    def add_actions(self,*actions):
+        for cl in actions:
+            self._actions.append(cl(self))
         
     def unused_ext_components(self):
         if len(self.store.layouts) == 2:

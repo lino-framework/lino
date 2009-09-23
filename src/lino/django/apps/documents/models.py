@@ -111,6 +111,15 @@ class AbstractDocument(models.Model):
           self._meta.db_table,
           str(self.pk))+'.pdf'
         
+    def make_pisa_html(self,MEDIA_URL=settings.MEDIA_URL):
+        context = dict(
+          instance=self,
+          title = unicode(self),
+          MEDIA_URL = MEDIA_URL,
+        )
+        template = select_template(self.html_templates())
+        return template.render(Context(context))
+
     def make_pdf(self):
         filename = self.pdf_filename()
         if not filename:
@@ -151,15 +160,6 @@ class AbstractDocument(models.Model):
                 raise Exception("pisa.pisaDocument.err is %r" % pdf.err)
             #return result.getvalue()
             
-    def make_pisa_html(self,MEDIA_URL=settings.MEDIA_URL):
-        context = dict(
-          instance=self,
-          title = unicode(self),
-          MEDIA_URL = MEDIA_URL,
-        )
-        template = select_template(self.html_templates())
-        return template.render(Context(context))
-
     def view_pdf(self,request):
         self.make_pdf()
         s = open(self.pdf_filename()).read()
@@ -179,17 +179,36 @@ class AbstractDocument(models.Model):
             # todo : here we should really send it
             self.sent_time = datetime.datetime.now()
             self.save()
+            
+    @classmethod
+    def setup_report(cls,rpt):
+        rpt.add_actions(PrintAction,PdfAction)
         
-        
+from lino.django.utils import reports        
     
+class PrintAction(reports.Action):
+    label = "Print"
+    def run(self,context):
+        row = context.selected_rows[0]
+        context._response.update(html=row.make_pisa_html())
+        #return row.view_printable(context.request)
 
+class PdfAction(reports.Action):
+    label = "PDF"
+    def run(self,context):
+        row = context.selected_rows[0]
+        return row.view_pdf(context.request)
+
+
+#~ class Documents(reports.Report):
+    #~ actions = reports.Report.actions + [PrintAction]
 
 ##
 ## Lino setup
 ##  
 
-def lino_setup(lino):
-    pass
+#~ def lino_setup(lino):
+    #~ pass
     #~ print "makedirs", LINO_PDFROOT
     #~ if not os.path.isdir(LINO_PDFROOT):
         #~ os.makedirs(LINO_PDFROOT)
