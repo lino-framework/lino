@@ -124,7 +124,7 @@ class ActionContext:
             self.confirmed = int(self.confirmed)
         self.confirms = 0
         self._response = dict(success=True,must_reload=False,msg=None)
-        #print 'Actioncontext.__init__()', self.confirmed, self.selected_rows
+        #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
         
     def refresh(self):
         self._response.update(must_reload=True)

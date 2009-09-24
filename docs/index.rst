@@ -4,21 +4,21 @@ Lino -- Luc's Python Library
 
 Welcome to the Lino Website.
 
-Quick links : 
-:ref:`Latest news <latest-news>` |
-`Issues <http://code.active.ee:3000/projects/lino/issues>`_ |
-:doc:`about/what_is` |
-:doc:`install/snapshot`
-  
+Quick links:
 
-Content
--------
+- `Code <http://code.google.com/p/lino>`__
+- `Wiki <http://code.google.com/p/lino/wiki/Main>`__
+- `Blog <http://lsaffre.blogspot.com>`__
+- `Demo <http://igen.saffre-rumma.ee>`__
+
+
+The rest of this page is being migrated to the above sites.
+
 
 .. toctree::
    :maxdepth: 2
 
    about/index
-   install/index
    blog/index
    topics/index
    changes/index
