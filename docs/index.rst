@@ -18,7 +18,6 @@ The rest of this page is being migrated to the above sites.
 .. toctree::
    :maxdepth: 2
 
-   about/index
    blog/index
    topics/index
    changes/index

@@ -43,6 +43,8 @@ def py2js(v):
         return str(v).lower()
     if type(v) is unicode:
         return repr(v.encode('utf8'))
+    if isinstance(v,Component):
+        return v.as_ext()
     return repr(v)
             
 class js_code:
@@ -63,26 +65,26 @@ class Component:
         self.options = options
         self.ext_name = name + self.ext_suffix        
         
-    def ext_lines(self,request):
+    def ext_lines(self):
         return []
         
     def ext_variables(self):
         if self.declared:
             yield self
         
-    def ext_options(self,request,**kw):
+    def ext_options(self,**kw):
         kw.update(self.options)
         return kw
         
-    def as_ext_value(self,request):
-        options = self.ext_options(request)
+    def as_ext_value(self):
+        options = self.ext_options()
         return self.value_template % dict2js(options)
         
-    def as_ext(self,request):
+    def as_ext(self):
         if self.declared:
             return self.ext_name
         else:
-            return self.as_ext_value(request)
+            return self.as_ext_value()
 
 
 class StoreField:
@@ -101,22 +103,16 @@ class StoreField:
         setattr(instance,self.field.name,values.get(self.field.name,None))
         
 class MethodStoreField(StoreField):
+  
     def write_to_form(self,obj,d):
         meth = getattr(obj,self.field.name)
         d[self.field.name] = meth()
-        #~ try:
-            #~ d[self.field.name] = fn()
-        #~ except Exception,e:
-            #~ print "[Warning] %s : %s" % (self.field.name,e)
         
     def update_from_form(self,instance,values):
         raise Exception("Cannot update a virtual field")
 
 
 class OneToOneStoreField(StoreField):
-    #~ def __init__(self,field,**kw):
-        #~ StoreField.__init__(self,field,**kw)
-        #~ self.model = field.rel.to
         
     def update_from_form(self,instance,values):
         #v = values.get(self.name,None)
@@ -158,26 +154,12 @@ class ForeignKeyStoreField(StoreField):
     def write_to_form(self,obj,d):
         v = getattr(obj,self.field.name)
         if v is None:
-            #d[self.name] = ''
             d[self.field.name+"Hidden"] = None
             d[self.field.name] = None
         else:
             d[self.field.name] = unicode(v)
             d[self.field.name+"Hidden"] = v.pk
-            #d[self.name] = v.pk
         
-        
-
-
-#~ DATATYPES = {
-  #~ models.TextField: 'string',
-  #~ models.CharField: 'string',
-  #~ models.DateField: 'date',
-  #~ models.IntegerField: 'int',
-  #~ models.DecimalField: 'float',
-  #~ models.BooleanField: 'boolean',
-  #~ models.AutoField: 'int',
-#~ }
 
 
 
@@ -250,11 +232,11 @@ class Store(Component):
             #~ yield kw
 
             
-    def get_absolute_url(self,request,**kw):
-        if request._lino_request.report == self.report:
-            return request._lino_request.get_absolute_url(**kw)
-        else:
-            return self.report.get_absolute_url(**kw)
+    def get_absolute_url(self,**kw):
+        #~ if request._lino_request.report == self.report:
+            #~ return request._lino_request.get_absolute_url(**kw)
+        #~ else:
+        return self.report.get_absolute_url(**kw)
         #~ if request._lino_report.report == self.report:
             #~ #rr = request._lino_report
             #~ layout = self.layout
@@ -265,8 +247,8 @@ class Store(Component):
             #~ #rr = self.report.renderer()
             #~ url = self.report.get_absolute_url(json=True)
       
-    def ext_options(self,request):
-        d = Component.ext_options(self,request)
+    def ext_options(self):
+        d = Component.ext_options(self)
         #self.report.setup()
         #data_layout = self.report.layouts[self.layout_index]
         d.update(storeId=self.ext_name)
@@ -276,7 +258,7 @@ class Store(Component):
         #~ else:
             #~ d.update(autoLoad=False)
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
-        url = self.get_absolute_url(request,json=True,mode=self.mode)
+        url = self.get_absolute_url(json=True,mode=self.mode)
         #self.report.setup()
         d.update(proxy=js_code(
           "new Ext.data.HttpProxy({url:'%s',method:'GET'})" % url           
@@ -325,9 +307,9 @@ class ColumnModel(Component):
         #~ self.name = report.name
         
         
-    def ext_options(self,request):
+    def ext_options(self):
         #self.report.setup()
-        d = Component.ext_options(self,request)
+        d = Component.ext_options(self)
         #editing = self.layout.report.can_change.passes(request)
         #l = [e.as_ext_column(request) for e in self.report.columns]
         #d.update(columns=js_code("[ %s ]" % ", ".join(l)))
@@ -337,7 +319,7 @@ class ColumnModel(Component):
                 #~ self.columns.append(e)
                 
         #~ d.update(columns=[js_code(e.as_ext_column(request)) for e in self.columns])
-        d.update(columns=[js_code(e.as_ext_column(request)) for e in self.grid.elements])
+        d.update(columns=[js_code(e.as_ext_column()) for e in self.grid.elements])
         #d.update(defaultSortable=True)
         return d
         
@@ -345,6 +327,16 @@ class ColumnModel(Component):
 class VisibleComponent(Component):
     width = None
     height = None
+    
+    def __init__(self,name,width=None,height=None,label=None,**kw):
+        Component.__init__(self,name,**kw)
+        if width is not None:
+            self.width = width
+        if height is not None:
+            self.height = height
+        if label is not None:
+            self.label = label
+    
 
     def __str__(self):
         "This shows how elements are specified"
@@ -374,17 +366,11 @@ class LayoutElement(VisibleComponent):
     xpadding = 5
     preferred_width = 10
     
-    def __init__(self,layout,name,width=None,height=None,label=None,**kw):
+    def __init__(self,layout,name,**kw):
         #print "Element.__init__()", layout,name
-        self.layout = layout
         #self.parent = parent
         VisibleComponent.__init__(self,name,**kw)
-        if width is not None:
-            self.width = width
-        if height is not None:
-            self.height = height
-        if label is not None:
-            self.label = label
+        self.layout = layout
         if layout is not None:
             #assert isinstance(layout,Layout), "%r is not a Layout" % layout
             self.ext_name = layout.name + "_" + name + self.ext_suffix
@@ -411,7 +397,7 @@ class LayoutElement(VisibleComponent):
             #~ return mark_safe(s)
         #~ return self.name
         
-    def get_column_options(self,request,**kw):
+    def get_column_options(self,**kw):
         kw.update(
           dataIndex=self.name, 
           editable=self.editable,
@@ -419,7 +405,7 @@ class LayoutElement(VisibleComponent):
           sortable=self.sortable
           )
         if self.editable:
-            editor = self.get_field_options(request)
+            editor = self.get_field_options()
             kw.update(editor=js_code(py2js(editor)))
         if self.width:
             kw.update(width=self.width * EXT_CHAR_WIDTH)
@@ -428,8 +414,8 @@ class LayoutElement(VisibleComponent):
             kw.update(width=self.preferred_width * EXT_CHAR_WIDTH)
         return kw    
         
-    def as_ext_column(self,request):
-        kw = self.get_column_options(request)
+    def as_ext_column(self):
+        kw = self.get_column_options()
         return "{ %s }" % dict2js(kw)
         
     #~ def as_ext_column(self,request):
@@ -445,8 +431,8 @@ class LayoutElement(VisibleComponent):
             #~ d.update(editor=js_code("{ %s }" % dict2js(fo)))
         #~ return "{ %s }" % dict2js(d)
     
-    def ext_options(self,request):
-        d = VisibleComponent.ext_options(self,request)
+    def ext_options(self):
+        d = VisibleComponent.ext_options(self)
         if self.width is None:
             """
             an element without explicit width will get flex=1 when in a hbox, otherwise anchor="100%".
@@ -554,10 +540,11 @@ class FieldElement(LayoutElement):
         self.field = field
         self.editable = field.editable and not field.primary_key
         
-    def get_column_options(self,request,**kw):
-        kw = LayoutElement.get_column_options(self,request,**kw)
-        if request._lino_request.editing and self.editable:
-            fo = self.get_field_options(request)
+    def get_column_options(self,**kw):
+        kw = LayoutElement.get_column_options(self,**kw)
+        if self.editable:
+        #if request._lino_request.editing and self.editable:
+            fo = self.get_field_options()
             kw.update(editor=js_code("{ %s }" % dict2js(fo)))
         return kw    
         
@@ -586,7 +573,7 @@ class FieldElement(LayoutElement):
           #~ }) """
         #~ return s
         
-    def get_field_options(self,request,**kw):
+    def get_field_options(self,**kw):
         kw.update(xtype=self.xtype,name=self.name)
         kw.update(anchor="100%")
         if self.label:
@@ -598,17 +585,17 @@ class FieldElement(LayoutElement):
             print "get_field_options() readOnly", self
         return kw
         
-    def get_panel_options(self,request,**kw):
-        d = LayoutElement.ext_options(self,request,**kw)
+    def get_panel_options(self,**kw):
+        d = LayoutElement.ext_options(self,**kw)
         d.update(xtype='panel',layout='form')
         return d
 
-    def ext_options(self,request,**kw):
+    def ext_options(self,**kw):
         """
         ExtJS renders fieldLabels only if the field's container has layout 'form', so we create a panel around each field
         """
-        fo = self.get_field_options(request)
-        po = self.get_panel_options(request)
+        fo = self.get_field_options()
+        po = self.get_panel_options()
         po.update(items=js_code("[ { %s } ]" % dict2js(fo)))
         return po
         
@@ -629,8 +616,8 @@ class CharFieldElement(FieldElement):
             # "small" texfields should not be expanded, so they get an explicit width
             self.width = self.field.max_length
             
-    def get_field_options(self,request,**kw):
-        kw = FieldElement.get_field_options(self,request,**kw)
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
         kw.update(maxLength=self.field.max_length)
         return kw
 
@@ -642,33 +629,34 @@ class ForeignKeyElement(FieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
+        self.choice_report = self.layout.report.get_field_choices(self.field)
         if self.editable:
-            rpt = self.layout.report.get_field_choices(self.field)
-            rpt.setup()
-            self.store = rpt.choice_store
+            self.choice_report.setup()
+            #self.store = rpt.choice_store
             #self.layout.choice_stores.append(self.store)
             #self.report.setup()
             #self.store = Store(rpt,autoLoad=True)
             #self.layout.report.add_variable(self.store)
       
     def ext_variables(self):
-        yield self.store
+        #yield self.store
+        yield self.choice_report.choice_store
         yield self
         
-    def get_field_options(self,request,**kw):
-        kw = FieldElement.get_field_options(self,request,**kw)
+    def get_field_options(self,**kw):
+        kw = FieldElement.get_field_options(self,**kw)
         if self.editable:
-            kw.update(store=js_code(self.store.ext_name))
+            kw.update(store=js_code(self.choice_report.choice_store.ext_name))
             #kw.update(store=js_code(self.store.as_ext_value(request)))
             kw.update(hiddenName=self.name+"Hidden")
-            kw.update(valueField=self.store.pk.attname)
+            kw.update(valueField=self.choice_report.choice_store.pk.attname)
             #kw.update(valueField=self.name)
             """
             valueField: The underlying data value name to bind to this ComboBox (defaults to undefined if mode = 'remote' or 'field2' if transforming a select or if the field name is autogenerated based on the store configuration).
 
 Note: use of a valueField requires the user to make a selection in order for a value to be mapped. See also hiddenName, hiddenValue, and displayField.
             """
-            kw.update(displayField=self.store.report.display_field)
+            kw.update(displayField=self.choice_report.display_field)
             kw.update(typeAhead=True)
             #kw.update(lazyInit=False)
             kw.update(mode='remote')
@@ -676,7 +664,7 @@ Note: use of a valueField requires the user to make a selection in order for a v
             #kw.update(pageSize=self.store.report.page_length)
             
         kw.update(triggerAction='all')
-        kw.update(emptyText='Select a %s...' % self.store.report.model.__name__)
+        kw.update(emptyText='Select a %s...' % self.choice_report.model.__name__)
         return kw
         
     #~ def value2js(self,obj):
@@ -699,8 +687,8 @@ class DateFieldElement(FieldElement):
     preferred_width = 8 
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
     
-    def get_column_options(self,request,**kw):
-        kw = FieldElement.get_column_options(self,request,**kw)
+    def get_column_options(self,**kw):
+        kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
         kw.update(format=self.layout.report.date_format)
         return kw
@@ -722,8 +710,8 @@ class DecimalFieldElement(FieldElement):
             self.width = min(10,self.field.max_digits) \
                 + self.field.decimal_places
                 
-    def get_column_options(self,request,**kw):
-        kw = FieldElement.get_column_options(self,request,**kw)
+    def get_column_options(self,**kw):
+        kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='numbercolumn')
         kw.update(align='right')
         fmt = "0,000"
@@ -742,8 +730,8 @@ class BooleanFieldElement(FieldElement):
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
         
-    def get_column_options(self,request,**kw):
-        kw = FieldElement.get_column_options(self,request,**kw)
+    def get_column_options(self,**kw):
+        kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='booleancolumn')
         kw.update(trueText=self.layout.report.boolean_texts[0])
         kw.update(falseText=self.layout.report.boolean_texts[1])
@@ -905,8 +893,8 @@ class Container(LayoutElement):
             #~ #print e
             #~ #return mark_safe("<PRE>%s</PRE>" % e)
             
-    def ext_options(self,request):
-        d = LayoutElement.ext_options(self,request)
+    def ext_options(self):
+        d = LayoutElement.ext_options(self)
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
         #if not self.is_fieldset:
@@ -914,7 +902,7 @@ class Container(LayoutElement):
         d.update(frame=self.frame)
         d.update(border=False)
         d.update(labelAlign=self.get_property('labelAlign'))
-        l = [e.as_ext(request) for e in self.elements ]
+        l = [e.as_ext() for e in self.elements ]
         d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         return d
             
@@ -935,9 +923,9 @@ class Container(LayoutElement):
         if self.declared:
             yield self
         
-    def ext_lines(self,request):
+    def ext_lines(self):
         for e in self.elements:
-            for v in e.ext_lines(request):
+            for v in e.ext_lines():
                 yield v
                 
 
@@ -973,8 +961,8 @@ class Panel(Container):
         self.vertical = vertical
         Container.__init__(self,layout,name,*elements,**kw)
         
-    def ext_options(self,request,**d):
-        d = Container.ext_options(self,request,**d)
+    def ext_options(self,**d):
+        d = Container.ext_options(self,**d)
         d.update(xtype='panel')
         if self.vertical:
             d.update(layout='anchor')
@@ -992,7 +980,7 @@ class TabPanel(Container):
         self.width = self.elements[0].ext_width() or 300
     
 
-    def ext_options(self,request):
+    def ext_options(self):
         d = dict(
           xtype="tabpanel",
           region="east",
@@ -1000,7 +988,7 @@ class TabPanel(Container):
           activeTab=0,
           width=self.width,
           #items=js_code("[%s]" % ",".join([l.ext_name for l in self.layouts]))
-          items=[js_code(e.as_ext(request)) for e in self.elements]
+          items=[js_code(e.as_ext()) for e in self.elements]
         )
         return d
 
@@ -1034,12 +1022,12 @@ class GridElement(Container):
         yield self.column_model
         yield self
         
-    def ext_options(self,request):
+    def ext_options(self):
         #print self.name, self.layout.detail_reports
         #rpt = self.slave
         #r = rpt.renderer(request)
         # print rpt
-        d = LayoutElement.ext_options(self,request)
+        d = LayoutElement.ext_options(self)
         #editing = self.report.can_change.passes(request)
         #if request._lino_request.editing:
         d.update(clicksToEdit=2)
@@ -1076,7 +1064,7 @@ class GridElement(Container):
     #~ def value2js(self,obj):
         #~ return "1"
         
-    def ext_lines(self,request):
+    def ext_lines(self):
         s = """
 function %s_afteredit(oGrid_event){""" % self.ext_name
         s += """
@@ -1126,7 +1114,7 @@ function %s_action(oGrid_event) {""" % action.name
     Ext.Ajax.request({
       waitMsg: 'Running action "%s". Please wait...',""" % action.label
             s += """
-      url: '%s',""" % self.report.store.get_absolute_url(request,action=action.name)
+      url: '%s',""" % self.report.store.get_absolute_url(action=action.name)
       #self.report.get_absolute_url(action=action.name)
             s += """
       params: { confirmed:confirmed,selected:sel_pks }, """ #% dict2js(params)
@@ -1178,6 +1166,43 @@ class M2mGridElement(GridElement):
         GridElement.__init__(self,layout,rpt.name,rpt,*elements,**kw)
   
 
+  
+class MainGridElement(GridElement):
+    def __init__(self,layout,name,vertical,*elements,**kw):
+        # ignore the "vertical" arg
+        GridElement.__init__(self,layout,name,layout.report,*elements,**kw)
+        #print "MainGridElement.__init__()",self.ext_name
+        
+    def ext_options(self):
+        d = GridElement.ext_options(self)
+        # d = Layout.ext_options(self,request)
+        # d = dict(title=request._lino_report.get_title()) 
+        #d.update(title=request._lino_request.get_title()) 
+        d.update(title=self.report.get_title(None)) 
+        d.update(region='center',split=True)
+        return d
+        
+    def ext_lines(self):
+        for s in GridElement.ext_lines(self):
+            yield s
+        s = """
+function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
+        s += """
+    var row = %s.getAt(rowIndex);""" % self.report.store.ext_name
+        for layout in self.report.store.layouts[1:]:
+            s += """
+    %s.form.loadRecord(row);""" % layout._main.ext_name
+            for slave in layout.slave_grids:
+                s += """  
+    %s.load({params: { master: row.id } });""" % slave.report.store.ext_name
+    
+        s += "\n};"
+        yield s
+        yield "%s.getSelectionModel().on('rowselect', %s_rowselect);" % (self.ext_name,self.ext_name)
+        yield "%s.load();" % self.report.store.ext_name
+
+
+
 
 class MainPanel(Panel):
     ext_suffix = "_detail"
@@ -1187,8 +1212,8 @@ class MainPanel(Panel):
         Panel.__init__(self,layout,name,vertical,*elements,**kw)
         
         
-    def ext_options(self,request):
-        d = Panel.ext_options(self,request)
+    def ext_options(self):
+        d = Panel.ext_options(self)
         d.update(title=self.layout.label)
         d.update(region='east',split=True) #,width=300)
         d.update(autoScroll=True)
@@ -1200,12 +1225,12 @@ class MainPanel(Panel):
               prependButtons: true,
             }) """ % self.report.store.ext_name))
         #d.update(items=js_code(self._main.as_ext(request)))
-        d.update(items=js_code("[%s]" % ",".join([e.as_ext(request) for e in self.elements])))
+        d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
         d.update(autoHeight=False)
         return d
         
         
-    def ext_lines(self,request):
+    def ext_lines(self):
       
         #~ s = "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         #~ s += """
@@ -1258,38 +1283,6 @@ var submitButton = %s.addButton({
         #~ for v in Panel.ext_variables(self):
             #~ yield v
         
-  
-class MainGridElement(GridElement):
-    def __init__(self,layout,name,vertical,*elements,**kw):
-        GridElement.__init__(self,layout,name,layout.report,*elements,**kw)
-        #print "MainGridElement.__init__()",self.ext_name
-        
-    def ext_options(self,request):
-        d = GridElement.ext_options(self,request)
-        # d = Layout.ext_options(self,request)
-        # d = dict(title=request._lino_report.get_title()) 
-        d.update(title=request._lino_request.get_title()) 
-        d.update(region='center',split=True)
-        return d
-        
-    def ext_lines(self,request):
-        for s in GridElement.ext_lines(self,request):
-            yield s
-        s = """
-function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
-        s += """
-    var row = %s.getAt(rowIndex);""" % self.report.store.ext_name
-        for layout in self.report.store.layouts[1:]:
-            s += """
-    %s.form.loadRecord(row);""" % layout._main.ext_name
-            for slave in layout.slave_grids:
-                s += """  
-    %s.load({params: { master: row.id } });""" % slave.report.store.ext_name
-    
-        s += "\n};"
-        yield s
-        yield "%s.getSelectionModel().on('rowselect', %s_rowselect);" % (self.ext_name,self.ext_name)
-        yield "%s.load();" % self.report.store.ext_name
 
 
 _field2elem = (
@@ -1313,6 +1306,29 @@ def field2elem(layout,field,**kw):
     print "[Warning] No LayoutElement for %s" % field.__class__
             
 
+
+
+#~ class Window(VisibleComponent):
+    #~ declared = True
+    #~ ext_suffix = "_detail"
+    #~ value_template = "new Ext.Window({ %s })"
+
+    #~ def __init__(self,report,layouts,**kw):
+        #~ print "Window.__init__()", report
+        #~ VisibleComponent.__init__(self,report.name+"_win",**kw)
+        #~ #self.layouts = layouts
+        #~ #self.report = report
+        #~ self.store = Store(report,layouts)
+
+    #~ def ext_options(self):
+        #~ d = VisibleComponent.ext_options(self)
+        #~ tabs = [l._main for l in self.store.layouts]
+        #~ d.update(items=TabPanel(None,"MainPanel",*tabs))
+        #~ d.update(title=self.layout.label)
+        #~ return d
+        
+    #~ def ext_lines(self):
+        #~ yield ".show();"
 
 
 
@@ -1375,11 +1391,11 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
         s += """
 Ext.onReady(function(){ """
         s += """
-var main_menu = new Ext.Toolbar(%s);""" % self.main_menu.as_ext(request)
+var main_menu = new Ext.Toolbar(%s);""" % self.main_menu.as_ext()
 
         for v in self.variables:
-            s += "\n%s = %s;" % (v.ext_name,v.as_ext_value(request))
-            for ln in v.ext_lines(request):
+            s += "\n%s = %s;" % (v.ext_name,v.as_ext_value())
+            for ln in v.ext_lines():
                 s += "\n" + ln 
 
         #~ for c in self.components:
@@ -1389,7 +1405,7 @@ var main_menu = new Ext.Toolbar(%s);""" % self.main_menu.as_ext(request)
         d = dict(layout='border')
         d.update(items=js_code(
             "[main_menu,"+",".join([
-                  c.as_ext(request) for c in self.components]) +"]"))
+                  c.as_ext() for c in self.components]) +"]"))
         s += "\nnew Ext.Viewport({%s}).render('body');" % dict2js(d)
         s += "\n}); // end of onReady()"
         s += "\n</script></head><body></body></html>"

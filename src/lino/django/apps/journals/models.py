@@ -278,6 +278,7 @@ class DocumentsByJournal(reports.Report):
     fk_name = 'journal' # see django issue 10808
     
     def get_title(self,renderer):
+        return "todo: journals.models.DocumentsByJournal.get_title()"
         return "%s (journal %s)" % (
           renderer.master_instance.name,
           renderer.master_instance.id)

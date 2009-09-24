@@ -112,7 +112,6 @@ class Layout:
             #slaverpt = slaveclass()
             #self._slave_dict[name] = slaverpt
             #elems = rpt.row_layout._main.elements
-            #print "coucou", rpt.row_layout._main
             elems = rpt.row_layout.columns
             e = extjs.GridElement(self,name,rpt,*elems,**kw)
             self.slave_grids.append(e)

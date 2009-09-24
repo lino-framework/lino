@@ -209,11 +209,11 @@ class LinoSite: #(AdminSite):
         return d
         
     def index(self, request):
-        cmp = extjs.VisibleComponent("index",
+        comp = extjs.VisibleComponent("index",
           xtype="panel",
           html=self.index_html,
           region="center")
-        return self.ext_view(request,cmp)
+        return self.ext_view(request,comp)
     index = never_cache(index)
       
     def ext_view(self,request,*comps):
@@ -445,6 +445,7 @@ class LinoSite: #(AdminSite):
         #return self._menu.get_urls()
         
     def add_program_menu(self):
+        return
         m = self.add_menu("app","~Application",)
         m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
         m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)

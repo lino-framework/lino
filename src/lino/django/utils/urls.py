@@ -122,7 +122,8 @@ def get_report_url(report,master_instance=None,
     elif action:
         url = "/action/"
     else:
-        url = "/r/"
+        raise "one of json, save or action must be True"
+        #url = "/r/"
     url += report.app_label + "/" + report.name
     if action:
         url += "/" + action
@@ -155,17 +156,9 @@ def get_urls():
     from . import reports
     return patterns('',
         (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
-        #(r'^slave/(?P<app_label>\w+)/(?P<model_name>.+)/(?P<slave>.+)$', view_instance_slave),
-        #(r'^r/(?P<rptname>\w+)$', reports.view_report_as_ext),
-        #(r'^json/(?P<rptname>\w+)$', reports.view_report_as_json),
-        #(r'^save/(?P<rptname>\w+)$', reports.view_report_save),
-        (r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
+        #(r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
         (r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_json),
         (r'^save/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_save),
         (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', reports.view_action),
-        #(r'^choices/(?P<app_label>\w+)/(?P<model_name>\w+)$', choices_view),
-        #(r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_view),
-        #(r'^detail/(?P<app_label>\w+)/(?P<rptname>\w+)$', detail_view),
-        #(r'^field_choices/(?P<app_label>.+)/(?P<model_name>.+)/(?P<field_name>.+)$', choices_view),
     )
 

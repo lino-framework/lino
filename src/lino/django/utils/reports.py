@@ -258,7 +258,7 @@ def get_report(app_label,rptname):
     
 
 
-def view_report_as_ext(request,app_label=None,rptname=None):
+def unused_view_report_as_ext(request,app_label=None,rptname=None):
     rpt = get_report(app_label,rptname)
     if rpt is None:
         return urls.sorry(request,"%s : no such report" % rptname)
@@ -341,7 +341,7 @@ def view_report_save(request,app_label=None,rptname=None):
     
 def json_response(**kw):
     s = "{%s}" % extjs.dict2js(kw)
-    print "json_response()", s
+    #print "json_response()", s
     return HttpResponse(s, mimetype='text/html')
     
 def setup():
@@ -367,23 +367,8 @@ def setup():
         model._lino_model_report = model._lino_model_report_class()
         model._lino_model_report.setup()
         
-    #~ todo = [m._lino_model_report for m in models.get_models()]
-    #~ while len(todo):
-        #~ print "Setting up %d model reports..." % len(todo)
-        #~ again = todo
-        #~ todo = []
-        #~ for rpt in again:
-            #~ if not rpt.setup():
-                #~ todo.append(rpt)
-        #~ if len(again) == len(todo):
-            #~ raise Exception("Could not setup reports %s" % todo)
-            
-          
     print "reports.setup() : done ------------------------- (%d models)" % i
-        
-    #~ for rpt in _reports.values():
-        #~ rpt.setup()
-        
+
 
 
 def get_slave(model,name):
@@ -394,19 +379,6 @@ def get_slave(model,name):
             if rpt is not None:
                 rpt.setup()
                 return rpt
-                
-    #~ for b in model.__bases__:
-        #~ d = getattr(b,"_lino_slaves",{})
-        #~ if d.has_key(name): return d[name]
-    #~ return None
-    
-#~ def get_combo_report(model):
-    #~ rpt = getattr(model,'_lino_choices',None)
-    #~ if rpt: return rpt
-    #~ rc = model._lino_model_report_class
-    #~ rpt = rc(columnNames=rc.display_field,mode='choices',page_length=None)
-    #~ model._lino_choices = rpt
-    #~ return rpt
 
 def get_model_report(model):
     rpt = getattr(model,'_lino_model_report',None)
@@ -664,6 +636,30 @@ class Report:
         r = renderers_text.TextReportRequest(self,*args,**kw)
         return r.render()
         
+    def as_ext(self):
+        self.setup()
+        self.variables = []
+        for layout in self.store.layouts:
+            for v in layout._main.ext_variables():
+                self.variables.append(v)
+        tabs = [l._main for l in self.store.layouts]
+        comp = extjs.TabPanel(None,"MainPanel",*tabs)
+        self.variables.append(comp)
+        self.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
+        
+        d = {}
+        d.update(items=comp)
+        d.update(title=self.get_title(None))
+        s = "function %s(btn,event) { " % self.name
+        for v in self.variables:
+            s += "\n  var %s = %s;" % (v.ext_name,v.as_ext_value())
+            for ln in v.ext_lines():
+                s += "\n  " + ln 
+        s += "\n  %s.load();" % self.store.ext_name
+        s += "\n  new Ext.Window( %s ).show();" % extjs.py2js(d)
+        s += "}"
+        return s
+        
     #~ def as_html(self, **kw):
         #~ return render.HtmlReportRequest(self,**kw).render_to_string()
         
@@ -834,7 +830,7 @@ class ViewReportRequest(ReportRequest):
             kw.update(mode=self.mode)
         return self.report.get_absolute_url(**kw)
 
-    def render_to_html(self):
+    def unused_render_to_html(self):
         if len(self.store.layouts) == 2:
             comps = [l._main for l in self.store.layouts]
         else:

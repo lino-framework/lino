@@ -26,7 +26,8 @@ from django import template
 
 from lino.django.utils import perms
         
-class Component:
+class MenuItem:
+  
     HOTKEY_MARKER = '~'
     def __init__(self,parent,name,label,doc=None,enabled=True,
                  can_view=perms.always):
@@ -64,7 +65,7 @@ class Component:
         return s+")"
     
     def interesting(self,**kw):
-        l=[]
+        l = []
         if self.label is not None:
             l.append(('label',self.label.strip()))
         if not self.enabled:
@@ -97,12 +98,12 @@ class Component:
     #~ def can_view(self,request):
         #~ return True
         
-    def as_ext(self,request,level=1):
-        s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
+    def as_ext(self,level=1):
+        #s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
+        s = """ { text: "%s", handler: %s } """ % (self.label,self.actor.as_ext())
         #return mark_safe(s)
         return s
         
-class MenuItem(Component):
     pass
 
 
@@ -118,10 +119,11 @@ class Action(MenuItem):
         #name = name or actor.name
         label = label or actor.label
         self.params = params
-        self._url = url or actor.get_absolute_url(**params)
+        #self._url = url or actor.get_absolute_url(**params)
+        assert actor is not None
         self.actor = actor
         self.hotkey = hotkey
-        Component.__init__(self,parent,name,label,*args,**kw)
+        MenuItem.__init__(self,parent,name,label,*args,**kw)
         
     def get_url_path(self):
         return self._url
@@ -210,8 +212,9 @@ class Menu(MenuItem):
         except Exception, e:
             traceback.print_exc(e)
 
-    def as_ext(self,request,level=1,**kw):
-        items = [i for i in self.items if i.can_view.passes(request)]
+    def as_ext(self,level=1,**kw):
+        #items = [i for i in self.items if i.can_view.passes(request)]
+        items = self.items
         s = ""
         if len(items) == 0: return ''
         if level == 1:
@@ -222,42 +225,14 @@ class Menu(MenuItem):
             text: "%s",
             menu: { items: [
             """ % self.label
-        s += ",\n".join([mi.as_ext(request,level+1) for mi in items])
+        s += ",\n".join([mi.as_ext(level+1) for mi in items])
         if level == 1:
             s += " ]} "
         else:
             s += """
             ]}}"""
         return s
-            
 
-    #~ def get_urls(self,name=''):
-        #~ #print "Menu.get_urls()",name
-        #~ l = [url(r'^%s$' % name, self.view)]
-        #~ if len(name) and not name.endswith("/"):
-            #~ name += "/"
-        #~ for mi in self.items:
-            #~ l += mi.get_urls(name+mi.name)
-        #~ #print urlpatterns
-        #~ return patterns('',*l)
-        
-    #~ def urls(self):
-        #~ return self.get_urls() #self.name)
-    #~ urls = property(urls)
-        
-        
-    #~ def view(self,request):
-        #~ from lino.django.utils.sites import lino_site
-        #~ context = lino_site.context(request,
-            #~ title = self.label,
-            #~ menu = MenuRenderer(self,request),
-        #~ )
-        #~ #return render_to_response("lino/menu.html",context)
-        #~ return render_to_response(self.template_to_response,
-          #~ context,
-          #~ context_instance=template.RequestContext(request))
-        
-        
 
 class MenuRenderer:
     def __init__(self,menu,request):
