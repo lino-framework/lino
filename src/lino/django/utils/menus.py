@@ -64,6 +64,9 @@ class MenuItem:
             k+"="+repr(v) for k,v in self.interesting()])
         return s+")"
     
+    def get_items(self):
+        yield self
+        
     def interesting(self,**kw):
         l = []
         if self.label is not None:
@@ -74,7 +77,7 @@ class MenuItem:
 
     def parents(self):
         l = []
-        p=self.parent
+        p = self.parent
         while p is not None:
             l.append(p)
             p = p.parent
@@ -98,13 +101,12 @@ class MenuItem:
     #~ def can_view(self,request):
         #~ return True
         
-    def as_ext(self,level=1):
-        #s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
-        s = """ { text: "%s", handler: %s } """ % (self.label,self.actor.as_ext())
-        #return mark_safe(s)
-        return s
+    #~ def as_ext(self,level=1):
+        #~ #s = """ { text: "%s", href: "%s" } """ % (self.label,self.get_url_path())
+        #~ s = """ { text: "%s", handler: %s } """ % (self.label,self.actor.as_ext())
+        #~ #return mark_safe(s)
+        #~ return s
         
-    pass
 
 
         
@@ -174,7 +176,8 @@ class Menu(MenuItem):
 
     def get_items(self):
         for mi in self.items:
-            yield mi
+            for i in mi.get_items():
+                yield i
         
     def sort_items(self,front=None,back=None):
         new_items = []
@@ -212,7 +215,7 @@ class Menu(MenuItem):
         except Exception, e:
             traceback.print_exc(e)
 
-    def as_ext(self,level=1,**kw):
+    def unused_as_ext(self,level=1,**kw):
         #items = [i for i in self.items if i.can_view.passes(request)]
         items = self.items
         s = ""
@@ -234,15 +237,15 @@ class Menu(MenuItem):
         return s
 
 
-class MenuRenderer:
-    def __init__(self,menu,request):
-        self.menu = menu
-        self.request = request
+#~ class MenuRenderer:
+    #~ def __init__(self,menu,request):
+        #~ self.menu = menu
+        #~ self.request = request
         
-    def as_html(self):
-        return self.menu.as_html(self.request)
+    #~ def as_html(self):
+        #~ return self.menu.as_html(self.request)
         
-    def as_ext(self):
-        return mark_safe(self.menu.as_ext(self.request))
+    #~ def as_ext(self):
+        #~ return mark_safe(self.menu.as_ext(self.request))
       
         

@@ -40,7 +40,7 @@ except ImportError:
 
 
 
-from . import layouts, extjs, perms, urls
+from . import layouts, perms, urls
 
 from lino.django.utils.sites import lino_site
 
@@ -271,79 +271,6 @@ def unused_view_report_as_ext(request,app_label=None,rptname=None):
     #return r.render_to_response()
     
     
-def view_report_as_json(request,app_label=None,rptname=None):
-    rpt = get_report(app_label,rptname)
-    if rpt is None:
-        return json_response(success=False,
-            msg="%s : no such report" % rptname)
-    if not rpt.can_view.passes(request):
-        return json_response(success=False,
-            msg="User %s cannot view %s : " % (request.user,rptname))
-    r = ViewReportRequest(request,rpt)
-    #request._lino_report = r
-    s = r.render_to_json()
-    return HttpResponse(s, mimetype='text/html')
-
-
-def view_action(request,app_label=None,rptname=None,action=None):
-    rpt = get_report(app_label,rptname)
-    if rpt is None:
-        return json_response(success=False,
-            msg="%s : no such report" % rptname)
-    if not rpt.can_view.passes(request):
-        return json_response(success=False,
-            msg="User %s cannot view %s : " % (request.user,rptname))
-    r = ViewReportRequest(request,rpt)
-    for a in rpt._actions:
-        if a.name == action:
-            return a.view(request)
-    d = dict(success=False,msg="Not implemented")
-    s = simplejson.dumps(d,default=unicode)
-    return HttpResponse(s, mimetype='text/html')
-
-
-def view_report_save(request,app_label=None,rptname=None):
-    rpt = get_report(app_label,rptname)
-    if rpt is None:
-        return json_response(success=False,
-            msg="%s : no such report" % rptname)
-    if not rpt.can_change.passes(request):
-        return json_response(success=False,
-            msg="User %s cannot update data in %s : " % (request.user,rptname))
-    #~ r = render.ViewReportRequest(request,rpt)
-    #~ if r.instance is None:
-        #~ print request.GET
-        #~ return json_response(success=False,
-            #~ msg="tried to update more than one row")
-    pk = request.POST.get(rpt.store.pk.name,None)
-    #pk = request.POST.get('pk',None)
-    if pk == UNDEFINED:
-        pk = None
-    try:
-        if pk is None:
-            #return json_response(success=False,msg="No primary key was specified")
-            instance = rpt.model()
-        else:
-            instance = rpt.model.objects.get(pk=pk)
-        #print "foo",request.POST
-        #20090916 rpt.setup()
-        #print "Updating", instance, "using", request.POST
-        for f in rpt.store.fields:
-            if not f.field.primary_key:
-                #print "reports.view_report_save()",f.field.name
-                f.update_from_form(instance,request.POST)
-        instance.save()
-        return json_response(success=True,
-              msg="%s has been saved" % instance)
-    except Exception,e:
-        traceback.print_exc(e)
-        return json_response(success=False,msg="Exception occured: "+str(e))
-    
-def json_response(**kw):
-    s = "{%s}" % extjs.dict2js(kw)
-    #print "json_response()", s
-    return HttpResponse(s, mimetype='text/html')
-    
 def setup():
     """
     - Each model can receive a number of "slaves". 
@@ -365,6 +292,8 @@ def setup():
             model._lino_model_report_class = report_factory(model)
         print i,model._meta.db_table,rc_name(model._lino_model_report_class)
         model._lino_model_report = model._lino_model_report_class()
+        
+    for model in models.get_models():
         model._lino_model_report.setup()
         
     print "reports.setup() : done ------------------------- (%d models)" % i
@@ -475,6 +404,7 @@ class Report:
         if self._setup_done:
             return True
         if self._setup_doing:
+            raise Exception("%s.setup() called recursively" % self.name)
             print "[Warning] %s.setup() called recursively" % self.name
             return False
         self._setup_doing = True
@@ -486,8 +416,7 @@ class Report:
         
         #~ if self.form_class is None:
             #~ self.form_class = modelform_factory(self.model)
-        choice_layout = layouts.RowLayout(self,0,self.display_field)
-        self.choice_store = extjs.Store(self,[choice_layout],mode='choice',autoLoad=True)
+        self.choice_layout = layouts.RowLayout(self,0,self.display_field)
         
         if self.row_layout_class is None:
             self.row_layout = layouts.RowLayout(self,1,self.columnNames)
@@ -495,14 +424,12 @@ class Report:
             assert self.columnNames is None
             self.row_layout = self.row_layout_class(self,1)
             
-        l = [ self.row_layout ]
+        self.layouts = [ self.row_layout ]
         index = 2
         for lc in self.page_layouts:
-            l.append(lc(self,index))
+            self.layouts.append(lc(self,index))
             index += 1
             
-        self.store = extjs.Store(self,l) #,autoLoad=True
-        
         self._actions = [cl(self) for cl in self.actions]
         
         setup = getattr(self.model,'setup_report',None)
@@ -636,29 +563,29 @@ class Report:
         r = renderers_text.TextReportRequest(self,*args,**kw)
         return r.render()
         
-    def as_ext(self):
-        self.setup()
-        self.variables = []
-        for layout in self.store.layouts:
-            for v in layout._main.ext_variables():
-                self.variables.append(v)
-        tabs = [l._main for l in self.store.layouts]
-        comp = extjs.TabPanel(None,"MainPanel",*tabs)
-        self.variables.append(comp)
-        self.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
+    #~ def as_ext(self):
+        #~ self.setup()
+        #~ self.variables = []
+        #~ for layout in self.store.layouts:
+            #~ for v in layout._main.ext_variables():
+                #~ self.variables.append(v)
+        #~ tabs = [l._main for l in self.store.layouts]
+        #~ comp = extjs.TabPanel(None,"MainPanel",*tabs)
+        #~ self.variables.append(comp)
+        #~ self.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
         
-        d = {}
-        d.update(items=comp)
-        d.update(title=self.get_title(None))
-        s = "function %s(btn,event) { " % self.name
-        for v in self.variables:
-            s += "\n  var %s = %s;" % (v.ext_name,v.as_ext_value())
-            for ln in v.ext_lines():
-                s += "\n  " + ln 
-        s += "\n  %s.load();" % self.store.ext_name
-        s += "\n  new Ext.Window( %s ).show();" % extjs.py2js(d)
-        s += "}"
-        return s
+        #~ d = {}
+        #~ d.update(items=comp)
+        #~ d.update(title=self.get_title(None))
+        #~ s = "function %s(btn,event) { " % self.name
+        #~ for v in self.variables:
+            #~ s += "\n  var %s = %s;" % (v.ext_name,v.as_ext_value())
+            #~ for ln in v.ext_lines():
+                #~ s += "\n  " + ln 
+        #~ s += "\n  %s.load();" % self.store.ext_name
+        #~ s += "\n  new Ext.Window( %s ).show();" % extjs.py2js(d)
+        #~ s += "}"
+        #~ return s
         
     #~ def as_html(self, **kw):
         #~ return render.HtmlReportRequest(self,**kw).render_to_string()

@@ -153,12 +153,12 @@ def get_instance_url(o):
 
 
 def get_urls():
-    from . import reports
+    from . import extjs
     return patterns('',
         (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
         #(r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
-        (r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_json),
-        (r'^save/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_save),
-        (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', reports.view_action),
+        (r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
+        (r'^save/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_save),
+        (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', extjs.view_action),
     )
 

@@ -66,7 +66,6 @@ from django.utils.safestring import mark_safe
 from . import perms
 from . import menus
 #from . import layouts
-from . import extjs
 
 class PasswordResetForm(forms.Form):
     email = forms.EmailField(label=_("E-mail"), max_length=75)
@@ -209,18 +208,16 @@ class LinoSite: #(AdminSite):
         return d
         
     def index(self, request):
+        from lino.django.utils import extjs
         comp = extjs.VisibleComponent("index",
-          xtype="panel",
-          html=self.index_html,
-          region="center")
-        return self.ext_view(request,comp)
-    index = never_cache(index)
-      
-    def ext_view(self,request,*comps):
-        viewport = extjs.Viewport(self.title,self._menu,*comps)
+            xtype="panel",
+            html=self.index_html,
+            region="center")
+        viewport = extjs.Viewport(self.title,self._menu,comp)
         s = viewport.render_to_html(request)
         #s = layouts.ext_viewport(request,self.title,self._menu,*components)
         return HttpResponse(s)
+    index = never_cache(index)
         
     def old_index(self, request):
         context = self.context(request,title=self._menu.label)

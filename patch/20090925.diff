@@ -1,0 +1,62 @@
+Index: django/db/models/loading.py
+===================================================================
+--- django/db/models/loading.py	(revision 11003)
++++ django/db/models/loading.py	(working copy)
+@@ -12,6 +12,8 @@
+ __all__ = ('get_apps', 'get_app', 'get_models', 'get_model', 'register_models',
+         'load_app', 'app_cache_ready')
+ 
++from lino.tools.my_import import module_exists
++
+ class AppCache(object):
+     """
+     A cache that stores installed applications and their models. Used to
+@@ -62,7 +64,7 @@
+                 self.loaded = True
+         finally:
+             self.write_lock.release()
+-
++            
+     def load_app(self, app_name, can_postpone=False):
+         """
+         Loads the app with the provided fully qualified name, and returns the
+@@ -70,17 +72,22 @@
+         """
+         self.handled[app_name] = None
+         self.nesting_level += 1
++        #print "Trying to find_module", app_name + ".models"
++        if not module_exists(app_name + ".models"):
++            # silently ignore applications without models
++            return None
+         try:
+             models = import_module('.models', app_name)
+-        except ImportError:
++        except ImportError,e:
+             self.nesting_level -= 1
+             if can_postpone:
+-                # Either the app has no models, or the package is still being
++                # The package is maybe still being
+                 # imported by Python and the model module isn't available yet.
+                 # We will check again once all the recursion has finished (in
+                 # populate).
+                 self.postponed.append(app_name)
+-            return None
++                return None
++            raise
+         self.nesting_level -= 1
+         if models not in self.app_store:
+             self.app_store[models] = len(self.app_store)
+Index: django/core/management/base.py
+===================================================================
+--- django/core/management/base.py	(revision 11003)
++++ django/core/management/base.py	(working copy)
+@@ -214,7 +214,8 @@
+             except ImportError, e:
+                 # If settings should be available, but aren't,
+                 # raise the error and quit.
+-                sys.stderr.write(self.style.ERROR(str('Error: %s\n' % e)))
++                import traceback
++                traceback.print_exc(e)
+                 sys.exit(1)
+         try:
+             if self.requires_model_validation:

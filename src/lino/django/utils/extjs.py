@@ -22,10 +22,13 @@ import types
 #from django import forms
 from django.db import models
 from django.conf import settings
+from django.http import HttpResponse
+
 #from django.utils.safestring import mark_safe
 #from django.utils.text import capfirst
 #from django.template.loader import render_to_string
 
+from . import reports, menus
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 12
@@ -33,7 +36,37 @@ EXT_CHAR_HEIGHT = 12
 def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
 
-def py2js(v):
+def py2js(v,**kw):
+    if isinstance(v,reports.Report):
+        self = v
+        setup_report(self)
+        tabs = [l._main for l in self.store.layouts]
+        comp = TabPanel(None,"MainPanel",*tabs)
+        kw.update(items=comp)
+        kw.update(title=self.get_title(None))
+        s = "function %s(btn,event) { " % self.name
+        for v in self.variables:
+            s += "\n  var %s = %s;" % (v.ext_name,v.as_ext_value())
+            for ln in v.ext_lines():
+                s += "\n  " + ln 
+        s += "\n  %s.load();" % self.store.ext_name
+        s += "\n  new Ext.Window( %s ).show();" % py2js(kw)
+        s += "}"
+        return s
+        
+    if isinstance(v,menus.Menu):
+        if v.parent is None:
+            kw.update(region='north',height=27,items=v.items)
+            return "new Ext.Toolbar(%s);" % py2js(kw)
+        kw.update(text=v.label,menu=dict(items=v.items))
+        return py2js(kw)
+        
+    if isinstance(v,menus.MenuItem):
+        return py2js(dict(text=v.label,handler=js_code(v.actor.name)))
+    if isinstance(v,Component):
+        return v.as_ext(**kw)
+        
+    assert len(kw) == 0
     if type(v) is types.ListType:
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
     if type(v) is types.DictType:
@@ -43,8 +76,6 @@ def py2js(v):
         return str(v).lower()
     if type(v) is unicode:
         return repr(v.encode('utf8'))
-    if isinstance(v,Component):
-        return v.as_ext()
     return repr(v)
             
 class js_code:
@@ -53,6 +84,102 @@ class js_code:
         self.s = s
     def __repr__(self):
         return self.s
+        
+        
+        
+        
+        
+        
+def setup_report(rpt):
+    rpt.setup()
+    if not hasattr(rpt,'choice_store'):
+        rpt.choice_store = Store(rpt,[rpt.choice_layout],mode='choice',autoLoad=True)
+        rpt.store = Store(rpt,rpt.layouts) #,autoLoad=True
+        rpt.variables = []
+        for layout in rpt.store.layouts:
+            for v in layout._main.ext_variables():
+                rpt.variables.append(v)
+        tabs = [l._main for l in rpt.store.layouts]
+        comp = TabPanel(None,"MainPanel",*tabs)
+        rpt.variables.append(comp)
+        rpt.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
+        
+        
+        
+def view_report_as_json(request,app_label=None,rptname=None):
+    rpt = reports.get_report(app_label,rptname)
+    if rpt is None:
+        return json_response(success=False,
+            msg="%s : no such report" % rptname)
+    if not rpt.can_view.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot view %s : " % (request.user,rptname))
+    r = reports.ViewReportRequest(request,rpt)
+    #request._lino_report = r
+    s = r.render_to_json()
+    return HttpResponse(s, mimetype='text/html')
+
+
+def view_action(request,app_label=None,rptname=None,action=None):
+    rpt = reports.get_report(app_label,rptname)
+    if rpt is None:
+        return json_response(success=False,
+            msg="%s : no such report" % rptname)
+    if not rpt.can_view.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot view %s : " % (request.user,rptname))
+    r = reports.ViewReportRequest(request,rpt)
+    for a in rpt._actions:
+        if a.name == action:
+            return a.view(request)
+    d = dict(success=False,msg="Not implemented")
+    s = simplejson.dumps(d,default=unicode)
+    return HttpResponse(s, mimetype='text/html')
+
+
+def view_report_save(request,app_label=None,rptname=None):
+    rpt = reports.get_report(app_label,rptname)
+    if rpt is None:
+        return json_response(success=False,
+            msg="%s : no such report" % rptname)
+    if not rpt.can_change.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot update data in %s : " % (request.user,rptname))
+    #~ r = render.ViewReportRequest(request,rpt)
+    #~ if r.instance is None:
+        #~ print request.GET
+        #~ return json_response(success=False,
+            #~ msg="tried to update more than one row")
+    pk = request.POST.get(rpt.store.pk.name,None)
+    #pk = request.POST.get('pk',None)
+    if pk == reports.UNDEFINED:
+        pk = None
+    try:
+        if pk is None:
+            #return json_response(success=False,msg="No primary key was specified")
+            instance = rpt.model()
+        else:
+            instance = rpt.model.objects.get(pk=pk)
+        #print "foo",request.POST
+        #20090916 rpt.setup()
+        #print "Updating", instance, "using", request.POST
+        for f in rpt.store.fields:
+            if not f.field.primary_key:
+                #print "reports.view_report_save()",f.field.name
+                f.update_from_form(instance,request.POST)
+        instance.save()
+        return json_response(success=True,
+              msg="%s has been saved" % instance)
+    except Exception,e:
+        traceback.print_exc(e)
+        return json_response(success=False,msg="Exception occured: "+str(e))
+    
+def json_response(**kw):
+    s = "{%s}" % dict2js(kw)
+    #print "json_response()", s
+    return HttpResponse(s, mimetype='text/html')
+    
+        
       
 class Component:
     declared = False
@@ -195,7 +322,7 @@ class Store(Component):
             #~ fields.add(report.model._meta.pk)
                 
         #self.fields = tuple(fields)
-        self.related_stores = []
+        #self.related_stores = []
         self.fields = [self.create_field(fld) for fld in fields]
         #report.add_variable(self)
           
@@ -211,8 +338,8 @@ class Store(Component):
         if isinstance(fld,models.OneToOneField):
             return OneToOneStoreField(fld)
         if isinstance(fld,models.ForeignKey):
-            related_rpt = self.report.get_field_choices(fld)
-            self.related_stores.append(related_rpt.choice_store)
+            #related_rpt = self.report.get_field_choices(fld)
+            #self.related_stores.append(related_rpt.choice_store)
             return ForeignKeyStoreField(fld)
             #yield dict(name=fld.name)
             #yield dict(name=fld.name+"Hidden")
@@ -630,8 +757,8 @@ class ForeignKeyElement(FieldElement):
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
         self.choice_report = self.layout.report.get_field_choices(self.field)
-        if self.editable:
-            self.choice_report.setup()
+        #~ if self.editable:
+            #~ setup_report(self.choice_report)
             #self.store = rpt.choice_store
             #self.layout.choice_stores.append(self.store)
             #self.report.setup()
@@ -640,12 +767,14 @@ class ForeignKeyElement(FieldElement):
       
     def ext_variables(self):
         #yield self.store
+        setup_report(self.choice_report)
         yield self.choice_report.choice_store
         yield self
         
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         if self.editable:
+            setup_report(self.choice_report)
             kw.update(store=js_code(self.choice_report.choice_store.ext_name))
             #kw.update(store=js_code(self.store.as_ext_value(request)))
             kw.update(hiddenName=self.name+"Hidden")
@@ -1012,7 +1141,7 @@ class GridElement(Container):
 
       
     def ext_variables(self):
-        self.report.setup()
+        setup_report(self.report)
         yield self.report.store
         #~ for rpt in self.report.choices_stores.values():
             #~ yield rpt.store
@@ -1178,7 +1307,8 @@ class MainGridElement(GridElement):
         # d = Layout.ext_options(self,request)
         # d = dict(title=request._lino_report.get_title()) 
         #d.update(title=request._lino_request.get_title()) 
-        d.update(title=self.report.get_title(None)) 
+        d.update(title=self.layout.label)
+        #d.update(title=self.report.get_title(None)) 
         d.update(region='center',split=True)
         return d
         
@@ -1390,8 +1520,15 @@ class Viewport:
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
         s += """
 Ext.onReady(function(){ """
-        s += """
-var main_menu = new Ext.Toolbar(%s);""" % self.main_menu.as_ext()
+        
+        for mi in self.main_menu.get_items():
+            l = mi.parents()
+            l.reverse()
+            l.append(mi)
+            s += "\n\n// menu command [%s]" % " / ".join([i.label for i in l])
+            s += "\n" + py2js(mi.actor) + "\n"
+            
+        s += "\nvar main_menu = " + py2js(self.main_menu)
 
         for v in self.variables:
             s += "\n%s = %s;" % (v.ext_name,v.as_ext_value())

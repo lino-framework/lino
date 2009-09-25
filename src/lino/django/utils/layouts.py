@@ -26,8 +26,6 @@ from django.conf import settings
 #from django.utils.text import capfirst
 #from django.template.loader import render_to_string
 
-from . import extjs
-
 def get_unbound_meth(cl,name):
     meth = getattr(cl,name,None)
     if meth is not None:
@@ -67,6 +65,7 @@ class Layout:
               
         
     def desc2elem(self,panelclass,name,desc,**kw):
+        from lino.django.utils import extjs
         #print "desc2elem()", repr(name),repr(desc)
         #assert desc != 'Countries_choices2'
         if "\n" in desc:
@@ -97,6 +96,7 @@ class Layout:
         #~ return MainPanel(self,name,vertical,*elems,**kw)
             
     def create_element(self,panelclass,name):
+        from lino.django.utils import extjs
         #print "create_element()", name
         name,kw = self.splitdesc(name)
         if not name in ('__str__','__unicode__','name','label'):
@@ -170,30 +170,35 @@ class Layout:
     def walk(self):
         return self._main.walk()
         
-            
         
     def ext_lines(self,request):
         return self._main.ext_lines(request)
     
         
 class RowLayout(Layout):
+    label = "List"
     show_labels = False
     join_str = " "
-    main_class = extjs.MainGridElement
     
     def __init__(self,report,index,desc=None,main=None):
+        from lino.django.utils import extjs
+        self.main_class = extjs.MainGridElement
         Layout.__init__(self,report,index,desc,main)
         #print "RowLayout.__init__(%r,%r,%r,%r)" % (report.name,index,desc,main)
         assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (report.name,self.ext_name)
         self.columns = self._main.elements
-        self._main = extjs.Panel(self,"scrollgrid",True,self._main,region="center",autoScroll=True)
+        #self._main = extjs.Panel(self,"scrollgrid",True,self._main,region="center",autoScroll=True)
     
 
 class PageLayout(Layout):
     label = "Detail"
     show_labels = True
     join_str = "\n"
-    main_class = extjs.MainPanel
+    #main_class = extjs.MainPanel
+    def __init__(self,*args,**kw):
+        from lino.django.utils import extjs
+        self.main_class = extjs.MainPanel
+        Layout.__init__(self,*args,**kw)
     
         
                 
