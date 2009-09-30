@@ -18,6 +18,7 @@
 
 #import traceback
 #import types
+import logging
 
 #from django import forms
 from django.db import models
@@ -38,19 +39,31 @@ def get_unbound_meth(cl,name):
 
 
 class Layout:
+    """
+    A Layout specifies how fields of a Report should be arranged when they are
+    displayed in a form or a grid. When instanciated, a Layout analyzes its 
+    "descriptor" and builds a tree of LayoutElements. 
+    
+    A layout descriptor is a plain text with some simple rules:
+    - each word will lead to an element
+    - ...todo...
+    
+    """
     join_str = None # set by subclasses
     main_class = None
     
+    
     def __init__(self,report,index,desc=None,main=None):
+        from lino.django.utils import extjs
         #from . import reports
         #assert isinstance(report,reports.Report)
         # Component.__init__(self,report.name + str(index))
         self.name = report.name + str(index)
         self.slave_grids = []
-        self.store_fields = []
         self.report = report
         self.index = index
-        #print "Layout.__init__()", self.name
+        self._store_fields = []
+        logging.debug("Layout.__init__() : %s", self.name)
         if main is None:
             if hasattr(self,"main"):
                 main = self.create_element(self.main_class,'main')
@@ -62,7 +75,7 @@ class Layout:
                 main = self.desc2elem(self.main_class,"main",desc)
                 #print main
         self._main = main
-              
+        self.store = extjs.Store(self)
         
     def desc2elem(self,panelclass,name,desc,**kw):
         from lino.django.utils import extjs
@@ -108,12 +121,12 @@ class Layout:
                     return value
         rpt = self.report.get_slave(name)
         if rpt is not None:
-            rpt.setup()
+            #rpt.setup()
             #slaverpt = slaveclass()
             #self._slave_dict[name] = slaverpt
             #elems = rpt.row_layout._main.elements
-            elems = rpt.row_layout.columns
-            e = extjs.GridElement(self,name,rpt,*elems,**kw)
+            #elems = rpt.row_layout.columns
+            e = extjs.GridElement(self,name,rpt,**kw)
             self.slave_grids.append(e)
             return e
         try:
@@ -122,11 +135,11 @@ class Layout:
             meth = get_unbound_meth(self.report.model,name)
             if meth is not None:
                 e = extjs.MethodElement(self,name,meth,**kw)
-                self.store_fields.append(e.field)
+                self._store_fields.append(e.field)
                 return e
         else:
             e = extjs.field2elem(self,field,**kw)
-            self.store_fields.append(e.field)
+            self._store_fields.append(e.field)
             return e
             #return FieldElement(self,field,**kw)
         msg = "Unknown element '%s' referred in layout %s" % (name, self.name)
@@ -166,6 +179,9 @@ class Layout:
         if self.label is None:
             return self.__class__.__name__
         return self.label
+        
+    def get_title(self):
+        return self.report.get_title(None) + " - " + self.get_label()
         
     def walk(self):
         return self._main.walk()

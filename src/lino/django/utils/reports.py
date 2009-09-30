@@ -89,10 +89,11 @@ class Hotkey:
                 kw[n] = getattr(self,n)
             return Hotkey(**kw)
       
-DELETE = Hotkey(keycode=46)
+RETURN = Hotkey(keycode=13)
 ESCAPE = Hotkey(keycode=27)
 PAGE_UP  = Hotkey(keycode=33)
 PAGE_DOWN = Hotkey(keycode=34)
+DELETE = Hotkey(keycode=46)
     
 class ActionEvent(Exception):
     pass
@@ -219,27 +220,30 @@ Each Report subclass definition found
 
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
+    
+master_reports = []
+slave_reports = []
 
 def register_report_class(rptclass):
     #_reports.append(cls)
     rptclass.app_label = rptclass.__module__.split('.')[-2]
-    #print "register_report_class()", rptclass.app_label + '.' + rptclass.__name__
     if rptclass.model is None:
         logging.info("register %s : model is None", rc_name(rptclass))
         return
     if rptclass.master is None:
-        #print "%s : master is None" % rptclass.__name__
+        master_reports.append(rptclass)
         if rptclass.use_as_default_report:
             logging.info("register %s : model_report for %s", rc_name(rptclass), rptclass.model.__name__)
             rptclass.model._lino_model_report_class = rptclass
         else:
             logging.info("register %s: not used as model_report",rc_name(rptclass))
         return
+    slave_reports.append(rptclass)
     slaves = getattr(rptclass.master,"_lino_slaves",None)
     if slaves is None:
         slaves = {}
         setattr(rptclass.master,'_lino_slaves',slaves)
-    slaves[rptclass.__name__] = rptclass()
+    slaves[rptclass.__name__] = rptclass
     logging.info("register %s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
     
 
@@ -276,7 +280,7 @@ def get_report(app_label,rptname):
     app = models.get_app(app_label)
     rptclass = getattr(app,rptname,None)
     if rptclass is None:
-        print "No report %s in application %r" % (rptname,app)
+        logging.warning("No report %s in application %r",rptname,app)
         return None
     return rptclass()
     
@@ -307,20 +311,22 @@ def setup():
       `_lino_model_report`
 
     """
-    print "reports.setup() : ------------------------------"
+    logging.info("reports.setup() : instantiate model reports ------------------------------")
     i = 0
     for model in models.get_models():
         i += 1
         rc = getattr(model,'_lino_model_report_class',None)
         if rc is None:
             model._lino_model_report_class = report_factory(model)
-        print i,model._meta.db_table,rc_name(model._lino_model_report_class)
+        logging.info("%d %s %s",i,model._meta.db_table,rc_name(model._lino_model_report_class))
         model._lino_model_report = model._lino_model_report_class()
         
+    logging.info("reports.setup() : setup model reports ------------------------------")
+    
     for model in models.get_models():
         model._lino_model_report.setup()
         
-    print "reports.setup() : done ------------------------- (%d models)" % i
+    logging.info("reports.setup() : done ------------------------- (%d models)",i)
 
 
 
@@ -328,8 +334,9 @@ def get_slave(model,name):
     for b in (model,) + model.__bases__:
         d = getattr(b,"_lino_slaves",None)
         if d:
-            rpt = d.get(name,None)
-            if rpt is not None:
+            rptclass = d.get(name,None)
+            if rptclass is not None:
+                rpt = rptclass()
                 rpt.setup()
                 return rpt
 
@@ -352,7 +359,7 @@ class ReportMetaClass(type):
                 for attr in base_attrs(cls):
                     myattrs.discard(attr)
                 if len(myattrs):
-                    print "[Warning]: %s defines new attribute(s) %s" % (cls,",".join(myattrs))
+                    logging.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
             register_report_class(cls)
         return cls
         
@@ -422,15 +429,17 @@ class Report:
         #self.setup()
         
         #register_report(self)
-        # print "Report.__init__() done:", self.name
+        logging.debug("Report.__init__() done: %s", self.name)
         
     def setup(self):
         if self._setup_done:
             return True
         if self._setup_doing:
-            raise Exception("%s.setup() called recursively" % self.name)
-            print "[Warning] %s.setup() called recursively" % self.name
-            return False
+            if True: # severe error handling
+                raise Exception("%s.setup() called recursively" % self.name)
+            else:
+                logging.warning("%s.setup() called recursively" % self.name)
+                return False
         self._setup_doing = True
         
         if self.master:
@@ -448,7 +457,7 @@ class Report:
             assert self.columnNames is None
             self.row_layout = self.row_layout_class(self,1)
             
-        self.layouts = [ self.row_layout ]
+        self.layouts = [ self.choice_layout, self.row_layout ]
         index = 2
         for lc in self.page_layouts:
             self.layouts.append(lc(self,index))
@@ -462,22 +471,22 @@ class Report:
         
         self._setup_doing = False
         self._setup_done = True
-        
-        #print "Report.setup() done:", self.name
+        logging.debug("Report.setup() done: %s", self.name)
         return True
         
-    def add_actions(self,*actions):
-        for cl in actions:
+    def add_actions(self,*more_actions):
+        "May be used in Model.setup_report() to specify actions for each report which uses this model."
+        for cl in more_actions:
             self._actions.append(cl(self))
         
-    def unused_ext_components(self):
-        if len(self.store.layouts) == 2:
-            for s in self.store.layouts:
-                yield s._main
-        else:
-            yield self.store.layouts[0]._main
-            comps = [l._main for l in self.store.layouts[1:]]
-            yield extjs.TabPanel(None,"EastPanel",*comps)
+    #~ def unused_ext_components(self):
+        #~ if len(self.store.layouts) == 2:
+            #~ for s in self.store.layouts:
+                #~ yield s._main
+        #~ else:
+            #~ yield self.store.layouts[0]._main
+            #~ comps = [l._main for l in self.store.layouts[1:]]
+            #~ yield extjs.TabPanel(None,"EastPanel",*comps)
             
         #~ yield self.layouts[0]._main
         #~ if len(self.layouts) == 2:
@@ -643,18 +652,18 @@ class ReportRequest:
     def __init__(self,report,
             master_instance=None,
             offset=None,limit=None,
-            mode=None,
+            layout=None,
             **kw):
-        #from lino.django.tom.reports import Report
-        #assert isinstance(report,Report)
         self.report = report
         report.setup()
         self.name = report.name+"Renderer"
-        self.mode = mode
-        if mode == 'choice':
-            self.store = report.choice_store
-        else:
-            self.store = report.store
+        self.layout = report.layouts[layout]
+        self.store = self.layout.store
+        #~ self.mode = mode
+        #~ if mode == 'choice':
+            #~ self.store = report.choice_store
+        #~ else:
+            #~ self.store = report.store
         #if master_instance is not None:
         self.master_instance = master_instance
         #print self.__class__.__name__, "__init__()"
@@ -698,7 +707,7 @@ class ReportRequest:
             d = {}
             for fld in self.store.fields:
                 d[fld.field.name] = None
-            d[self.report.store.pk.name] = UNDEFINED
+            d[self.store.pk.name] = UNDEFINED
             rows.append(d)
             total_count += 1
         d = dict(count=total_count,rows=rows)
@@ -749,12 +758,12 @@ class ViewReportRequest(ReportRequest):
         limit = request.GET.get('limit',None)
         if limit:
             kw.update(limit=limit)
-        #~ layout = request.GET.get('layout',None)
-        #~ if layout:
-            #~ kw.update(layout=int(layout))
-        mode = request.GET.get('mode',None)
-        if mode:
-            kw.update(mode=mode)
+        layout = request.GET.get('layout',None)
+        if layout:
+            kw.update(layout=int(layout))
+        #~ mode = request.GET.get('mode',None)
+        #~ if mode:
+            #~ kw.update(mode=mode)
 
         #print "ViewReportRequest.__init__() 1",report.name
         self.request = request
@@ -775,19 +784,19 @@ class ViewReportRequest(ReportRequest):
             kw.update(sort=self.sort_column)
         if self.sort_direction is not None:
             kw.update(dir=self.sort_direction)
-        #~ if self.layout.index != 0:
-            #~ kw.update(layout=self.layout.index)
-        if self.mode is not None:
-            kw.update(mode=self.mode)
+        if self.layout.index != 0:
+            kw.update(layout=self.layout.index)
+        #~ if self.mode is not None:
+            #~ kw.update(mode=self.mode)
         return self.report.get_absolute_url(**kw)
 
-    def unused_render_to_html(self):
-        if len(self.store.layouts) == 2:
-            comps = [l._main for l in self.store.layouts]
-        else:
-            tabs = [l._main for l in self.store.layouts[1:]]
-            comps = [self.store.layouts[0]._main,extjs.TabPanel(None,"EastPanel",*tabs)]
-        return lino_site.ext_view(self.request,*comps)
+    #~ def unused_render_to_html(self):
+        #~ if len(self.store.layouts) == 2:
+            #~ comps = [l._main for l in self.store.layouts]
+        #~ else:
+            #~ tabs = [l._main for l in self.store.layouts[1:]]
+            #~ comps = [self.store.layouts[0]._main,extjs.TabPanel(None,"EastPanel",*tabs)]
+        #~ return lino_site.ext_view(self.request,*comps)
         #return self.report.viewport.render_to_html(self.request)
 
 
