@@ -9,3 +9,4 @@ build
 dist
 
 src\mysites\media\pdf_cache
+src\mysites\demo\lino.log

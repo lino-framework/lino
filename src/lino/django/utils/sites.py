@@ -31,6 +31,8 @@
 
 import os
 import imp
+import logging
+
 from django.conf import settings
 from lino.tools.my_import import my_import as import_module
 #from django.contrib.admin.sites import AdminSite
@@ -96,7 +98,7 @@ class PasswordResetForm(forms.Form):
 
 class LinoSite: #(AdminSite):
     #index_template = 'lino/index.html'
-    index_template = 'lino/ext_index.html'
+    #index_template = 'lino/ext_index.html'
     #login_template = 'lino/login.html'
     
     help_url = "http://code.google.com/p/lino"
@@ -110,6 +112,7 @@ class LinoSite: #(AdminSite):
         self.loading = False
         self.done = False
         self.root_path = '/lino/'
+        self._response = None
         #self.use_extjs = not True
         #self.skin = Skin()
         #self.model_reports = {}
@@ -131,10 +134,10 @@ class LinoSite: #(AdminSite):
         reports.setup()
         
         if hasattr(settings,'LINO_SETTINGS'):
-            print "Reading", settings.LINO_SETTINGS
+            logging.info("Reading %s...", settings.LINO_SETTINGS)
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
-            print "[Warning] settings.LINO_SETTINGS entry is missing"
+            logging.warning("settings.LINO_SETTINGS entry is missing")
             
         self.done = True
         self.loading = False
@@ -208,16 +211,22 @@ class LinoSite: #(AdminSite):
         return d
         
     def index(self, request):
-        from lino.django.utils import extjs
-        comp = extjs.VisibleComponent("index",
-            xtype="panel",
-            html=self.index_html,
-            region="center")
-        viewport = extjs.Viewport(self.title,self._menu,comp)
-        s = viewport.render_to_html(request)
+        if self._response is None:
+            logging.debug("building LinoSite._response...")
+            from lino.django.utils import extjs
+            comp = extjs.VisibleComponent("index",
+                xtype="panel",
+                html=self.index_html,
+                autoScroll=True,
+                #width=50000,
+                #height=50000,
+                region="center")
+            viewport = extjs.Viewport(self.title,self._menu,comp)
+            s = viewport.render_to_html(request)
+            self._response = HttpResponse(s)
         #s = layouts.ext_viewport(request,self.title,self._menu,*components)
-        return HttpResponse(s)
-    index = never_cache(index)
+        return self._response
+    #index = never_cache(index)
         
     def old_index(self, request):
         context = self.context(request,title=self._menu.label)

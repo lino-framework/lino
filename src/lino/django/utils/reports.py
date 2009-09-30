@@ -17,6 +17,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import traceback
+import logging
 
 from django.db import models
 from django import forms
@@ -71,6 +72,27 @@ def base_attrs(cl):
     #~ pass 
     
 UNDEFINED = "nix"
+
+class Hotkey:
+    keycode = None
+    shift = False
+    ctrl = False
+    alt = False
+    inheritable = ('keycode','shift','ctrl','alt')
+    def __init__(self,**kw):
+        for k,v in kw.items():
+            setattr(self,k,v)
+            
+    def __call__(self,**kw):
+        for n in self.inheritable:
+            if not kw.has_key(n):
+                kw[n] = getattr(self,n)
+            return Hotkey(**kw)
+      
+DELETE = Hotkey(keycode=46)
+ESCAPE = Hotkey(keycode=27)
+PAGE_UP  = Hotkey(keycode=33)
+PAGE_DOWN = Hotkey(keycode=34)
     
 class ActionEvent(Exception):
     pass
@@ -81,6 +103,7 @@ class MustConfirm(ActionEvent):
 class Action:
     label = None
     name = None
+    key = None
     def __init__(self,report):
         if self.label is None:
             self.label = self.__class__.__name__
@@ -148,6 +171,7 @@ class ActionContext:
         
 class DeleteSelected(Action):
     label = "Delete"
+    key = DELETE # (ctrl=True)
     def run(self,context):
         if len(context.selected_rows) == 0:
             return "No rows selected. Nothing to do."
@@ -201,22 +225,22 @@ def register_report_class(rptclass):
     rptclass.app_label = rptclass.__module__.split('.')[-2]
     #print "register_report_class()", rptclass.app_label + '.' + rptclass.__name__
     if rptclass.model is None:
-        print "register", rc_name(rptclass), ": model is None" 
+        logging.info("register %s : model is None", rc_name(rptclass))
         return
     if rptclass.master is None:
         #print "%s : master is None" % rptclass.__name__
         if rptclass.use_as_default_report:
-            print "register", rc_name(rptclass), ": model_report for", rptclass.model.__name__
+            logging.info("register %s : model_report for %s", rc_name(rptclass), rptclass.model.__name__)
             rptclass.model._lino_model_report_class = rptclass
         else:
-            print "register", rc_name(rptclass), ": not used as model_report"
+            logging.info("register %s: not used as model_report",rc_name(rptclass))
         return
     slaves = getattr(rptclass.master,"_lino_slaves",None)
     if slaves is None:
         slaves = {}
         setattr(rptclass.master,'_lino_slaves',slaves)
     slaves[rptclass.__name__] = rptclass()
-    print "register", rc_name(rptclass), ": slave for %s" % rptclass.master.__name__
+    logging.info("register %s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
     
 
 #~ def register_report(rpt):

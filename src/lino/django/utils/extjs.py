@@ -19,6 +19,8 @@
 #import traceback
 import types
 
+import logging
+
 #from django import forms
 from django.db import models
 from django.conf import settings
@@ -37,6 +39,7 @@ def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
 
 def py2js(v,**kw):
+    #logging.debug("py2js(%r,%r)",v,kw)
     if isinstance(v,reports.Report):
         self = v
         setup_report(self)
@@ -63,6 +66,15 @@ def py2js(v,**kw):
         
     if isinstance(v,menus.MenuItem):
         return py2js(dict(text=v.label,handler=js_code(v.actor.name)))
+    #~ if isinstance(v,reports.Hotkey):
+        #~ kw.update(key=v.keycode)
+        #~ if v.ctrl: 
+            #~ kw['ctrl'] = True
+        #~ if v.alt: 
+            #~ kw['alt'] = True
+        #~ if v.shift: 
+            #~ kw['shift'] = True
+        #~ return py2js(kw)
     if isinstance(v,Component):
         return v.as_ext(**kw)
         
@@ -1179,15 +1191,24 @@ class GridElement(Container):
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
         
-        actions = [dict(text=a.label,handler=js_code(a.name+'_action')) for a in self.report._actions]
-        #actions.insert(0," ")
+        keys = []
+        buttons = []
+        for a in self.report._actions:
+            buttons.append(dict(text=a.label,handler=js_code(a.name+'_action')))
+            if a.key:
+                #keys.append(dict(handler=js_code("%s_action" % a.name),key=a.key))
+                keys.append(dict(
+                  handler=js_code("%s_action" % a.name),
+                  key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
+        if len(keys):
+            d['keys'] = keys
         d.update(tbar=js_code("""new Ext.PagingToolbar({
           store: %s,
           displayInfo: true,
           pageSize: %d,
           prependButtons: false,
           items: %s
-        }) """ % (self.report.store.ext_name,self.report.page_length,py2js(actions))))
+        }) """ % (self.report.store.ext_name,self.report.page_length,py2js(buttons))))
         return d
             
     #~ def value2js(self,obj):
@@ -1201,12 +1222,13 @@ function %s_afteredit(oGrid_event){""" % self.ext_name
     waitMsg: 'Please wait...',
     url: '%s',""" % self.report.get_absolute_url(save=True)
         #request._lino_report.get_absolute_url(ajax='update')
+        
         d = {}
         for e in self.report.store.fields:
             d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
-        
         s += """
     params: { %s }, """ % dict2js(d)
+    
         s += """
     success: function(response){
       // console.log('success',response.responseText);
@@ -1280,6 +1302,7 @@ function %s_action(oGrid_event) {""" % action.name
   doit(0);
 };""" 
             yield s
+            
               
             #~ s = """%s.getTopToolbar().addButton({""" % self.ext_name
             #~ s += "text:'%s', " % action.label
@@ -1540,6 +1563,7 @@ Ext.onReady(function(){ """
                 #~ s += "\n" + ln 
                 
         d = dict(layout='border')
+        #d.update(autoScroll=True)
         d.update(items=js_code(
             "[main_menu,"+",".join([
                   c.as_ext() for c in self.components]) +"]"))

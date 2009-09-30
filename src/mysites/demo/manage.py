@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+import logging
+LOG_FILENAME = 'lino.log'
+logging.basicConfig(filename=LOG_FILENAME,level=logging.DEBUG,filemode='w')
+
 from django.core.management import execute_manager
 try:
     import settings # Assumed to be in the same directory.

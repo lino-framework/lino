@@ -16,6 +16,8 @@ You can log in as user "user" or "root", both with password "1234".
 Note how the menu changes depending on which user you are.
 <a href="%s">More</a>""" % lino.help_url
 
+lino.index_html += "<br/>" * 500
+
 from django.db import models
 
 system = models.get_app('system')
