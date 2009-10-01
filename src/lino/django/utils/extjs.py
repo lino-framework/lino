@@ -764,7 +764,6 @@ class FieldElement(LayoutElement):
             kw.update(allowBlank=False)
         if not self.editable:
             kw.update(readOnly=True)
-            print "get_field_options() readOnly", self
         return kw
         
     def get_panel_options(self,**kw):
@@ -1450,13 +1449,13 @@ class MainPanel(Panel):
         #d.update(title=self.layout.label)
         d.update(region='east',split=True) #,width=300)
         d.update(autoScroll=True)
-        if False:
+        if True:
             d.update(tbar=js_code("""new Ext.PagingToolbar({
               store: %s,
               displayInfo: true,
               pageSize: 1,
               prependButtons: true,
-            }) """ % self.report.store.ext_name))
+            }) """ % self.layout.store.ext_name))
         #d.update(items=js_code(self._main.as_ext(request)))
         d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
         d.update(autoHeight=False)
@@ -1465,15 +1464,15 @@ class MainPanel(Panel):
         
     def ext_lines_after(self):
       
-        #~ s = "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
-        #~ s += """
-    #~ %s.form.loadRecord(rows[0]);""" % self.ext_name
-        #~ for slave in self.layout.slave_grids:
-            #~ s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
-                 #~ slave.store.ext_name,self.layout.report.pk.name)
-                 #~ #slave.store.name,request._lino_report.layout.pk.name)
-        #~ s += "\n});"
-        #~ #yield s
+        s = "%s.addListener('load',function(store,rows,options) { " % self.layout.store.ext_name
+        s += """
+    %s.form.loadRecord(rows[0]);""" % self.ext_name
+        for slave in self.layout.slave_grids:
+            s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
+                 slave.layout.store.ext_name,self.layout.store.pk.name)
+                 #slave.store.name,request._lino_report.layout.pk.name)
+        s += "\n});"
+        yield s
         
         url = self.report.get_absolute_url(save=True)
         s = """
