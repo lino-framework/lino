@@ -56,26 +56,13 @@ def py2js(v,**kw):
     if isinstance(v,reports.Report):
         self = v
         setup_report(self)
-        #~ tabs = [l._main for l in self.store.layouts]
-        #~ comp = TabPanel(None,"MainPanel",*tabs)
-        #~ kw.update(items=comp)
-        #~ kw.update(title=self.get_title(None))
-    
-        #~ s = "function %s(btn,event) { " % self.name
-        #~ for v in self.variables:
-            #~ s += "\n  var %s = %s;" % (v.ext_name,v.as_ext_value())
-            #~ for ln in v.ext_lines():
-                #~ s += "\n  " + ln 
-        #~ s += "\n  %s.load();" % self.store.ext_name
-        #~ s += "\n  new Ext.Window( %s ).show();" % py2js(kw)
-        #~ s += "}"
-        #~ return s
-        #s = define_vars([self.store])
         s = ''
         for layout in self.layouts[1:]:
             kw.update(items=layout._main)
             kw.update(title=layout.get_title())
             kw.update(closeAction='hide')
+            kw.update(maximizable=True)
+            #kw.update(maximized=True)
             s += "function %s(btn,event) { " % layout.name
             if self.master is not None:
                 s += ""
@@ -101,15 +88,6 @@ def py2js(v,**kw):
         
     if isinstance(v,menus.MenuItem):
         return py2js(dict(text=v.label,handler=js_code(v.actor.name+"1")))
-    #~ if isinstance(v,reports.Hotkey):
-        #~ kw.update(key=v.keycode)
-        #~ if v.ctrl: 
-            #~ kw['ctrl'] = True
-        #~ if v.alt: 
-            #~ kw['alt'] = True
-        #~ if v.shift: 
-            #~ kw['shift'] = True
-        #~ return py2js(kw)
     if isinstance(v,Component):
         return v.as_ext(**kw)
         
@@ -196,12 +174,12 @@ def view_report_save(request,app_label=None,rptname=None):
     if not rpt.can_change.passes(request):
         return json_response(success=False,
             msg="User %s cannot update data in %s : " % (request.user,rptname))
-    #~ r = render.ViewReportRequest(request,rpt)
+    #r = reports.ViewReportRequest(request,rpt)
     #~ if r.instance is None:
         #~ print request.GET
         #~ return json_response(success=False,
             #~ msg="tried to update more than one row")
-    pk = request.POST.get(rpt.store.pk.name,None)
+    pk = request.POST.get(rpt.pk.name,None)
     #pk = request.POST.get('pk',None)
     if pk == reports.UNDEFINED:
         pk = None
@@ -214,7 +192,7 @@ def view_report_save(request,app_label=None,rptname=None):
         #print "foo",request.POST
         #20090916 rpt.setup()
         #print "Updating", instance, "using", request.POST
-        for f in rpt.store.fields:
+        for f in r.layout.store.fields:
             if not f.field.primary_key:
                 #print "reports.view_report_save()",f.field.name
                 f.update_from_form(instance,request.POST)
@@ -365,19 +343,7 @@ class Store(Component):
         if not self.pk in fields:
             fields.add(self.pk)
             
-        #~ pk = None
-        #~ for fld in fields:
-            #~ if fld.name == report.model._meta.pk.name:
-                #~ pk = e
-                #~ break
-                
-        #~ if pk is None:
-            #~ fields.add(report.model._meta.pk)
-                
-        #self.fields = tuple(fields)
-        #self.related_stores = []
         self.fields = [self.create_field(fld) for fld in fields]
-        #report.add_variable(self)
           
         
     def create_field(self,fld):
@@ -758,6 +724,7 @@ class FieldElement(LayoutElement):
     def get_field_options(self,**kw):
         kw.update(xtype=self.xtype,name=self.name)
         kw.update(anchor="100%")
+        #kw.update(style=dict(padding='0px'),color='green')
         if self.label:
             kw.update(fieldLabel=unicode(self.label))
         if not self.field.blank:
@@ -769,6 +736,9 @@ class FieldElement(LayoutElement):
     def get_panel_options(self,**kw):
         d = LayoutElement.ext_options(self,**kw)
         d.update(xtype='panel',layout='form')
+        #d.update(style=dict(padding='0px'),color='green')
+        #d.update(hideBorders=True)
+        #d.update(margins='0')
         return d
 
     def ext_options(self,**kw):
@@ -1121,30 +1091,6 @@ class Container(LayoutElement):
                 yield v
                 
 
-#~ class HBOX(Container):
-        
-    #~ def ext_options(self,request):
-        #~ d = Container.ext_options(self,request)
-        #~ d.update(xtype='panel')
-        #~ d.update(layout='hbox')
-        #~ return d
-        
-#~ class VBOX(Container):
-    #~ vertical = True
-                
-    #~ def ext_options(self,request):
-        #~ d = Container.ext_options(self,request)
-        #~ if self.is_fieldset:
-            #~ d.update(xtype='fieldset')
-            #~ d.update(layout='form')
-        #~ else:
-            #~ d.update(xtype='panel')
-            #~ d.update(layout='vbox')
-        #~ d.update(xtype='panel')
-        #~ #d.update(layout='vbox')
-        #~ d.update(layout='anchor')
-        #~ return d
-
 
 class Panel(Container):
     declared = True
@@ -1157,6 +1103,9 @@ class Panel(Container):
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
         d.update(xtype='panel')
+        #d.update(margins='0')
+        #d.update(style=dict(padding='0px'))
+        d.update(style=dict(padding='0px'))
         if self.vertical:
             d.update(layout='anchor')
         else:
