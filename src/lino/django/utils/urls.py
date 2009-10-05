@@ -114,7 +114,7 @@ def sorry(request,message=None):
 
 
 def get_report_url(report,master_instance=None,
-        json=False,save=False,mode=None,action=None,**kw):
+        json=False,save=False,action=None,**kw):
     if json:
         url = "/json/"
     elif save:
@@ -136,8 +136,8 @@ def get_report_url(report,master_instance=None,
         #~ master_instance = report.master_instance
     if master_instance is not None:
         kw['master'] = master_instance.pk
-    if mode is not None:
-        kw['mode'] = mode
+    #~ if mode is not None:
+        #~ kw['mode'] = mode
     if len(kw):
         url += "?"+urlencode(kw)
     return url

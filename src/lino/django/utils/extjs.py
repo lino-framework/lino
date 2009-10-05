@@ -16,9 +16,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-#import traceback
+import traceback
 import types
-
 import logging
 
 #from django import forms
@@ -39,7 +38,7 @@ def define_vars(variables,indent=0):
     sep = "\n" + ' ' * indent
     s = ''
     for v in variables:
-        logging.debug("define_vars() : %s", v.ext_name)
+        #logging.debug("define_vars() : %s", v.ext_name)
         for ln in v.ext_lines_before():
             s += sep + ln 
         s += sep + "var %s = %s;" % (v.ext_name,v.as_ext_value())
@@ -63,19 +62,23 @@ def py2js(v,**kw):
             kw.update(closeAction='hide')
             kw.update(maximizable=True)
             #kw.update(maximized=True)
-            s += "function %s(btn,event) { " % layout.name
-            if self.master is not None:
-                s += ""
+            s += "function %s(btn,event,master) { " % layout.name
             s += "\n  var win;\n  if(!win){"
             s += define_vars(layout._main.ext_variables(),indent=4)
-            s += "\n    %s.load();" % layout.store.ext_name
             s += "\n    win = new Ext.Window( %s );" % py2js(kw)
-            s += "\n  }\n  win.show();\n}\n"
+            if self.master is not None:
+                s += "\n    %s.setBaseParam('master',master);" % layout.store.ext_name
+            s += "\n    %s.addListener(" % layout.store.ext_name
+            s += "{exception: function() { Ext.MessageBox.alert('exception','no data');win.hide();}});"
+            s += "\n  }"
+            s += "\n  %s.load();" % layout.store.ext_name
+            s += "\n  win.show();"
+            s += "\n}\n"
             
-        s += "function %s_detail() { " % self.name
-        for layout in self.layouts[2:]:
-            s += layout.name + "();" 
-        s += "}"
+        #~ s += "function %s_detail() { " % self.name
+        #~ for layout in self.layouts[2:]:
+            #~ s += layout.name + "();" 
+        #~ s += "}"
         return s
         
         
@@ -87,11 +90,15 @@ def py2js(v,**kw):
         return py2js(kw)
         
     if isinstance(v,menus.MenuItem):
-        return py2js(dict(text=v.label,handler=js_code(v.actor.name+"1")))
+        if v.args:
+            handler = "function(btn,evt) {%s(btn,evt,%s);}" % (v.actor.name+"1",",".join([py2js(a) for a in v.args]))
+        else:
+            handler = v.actor.name+"1"
+        return py2js(dict(text=v.label,handler=js_code(handler)))
     if isinstance(v,Component):
         return v.as_ext(**kw)
         
-    assert len(kw) == 0
+    assert len(kw) == 0, "py2js() : value %r cannot get keyword parameters" % v
     if type(v) is types.ListType:
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
     if type(v) is types.DictType:
@@ -174,13 +181,12 @@ def view_report_save(request,app_label=None,rptname=None):
     if not rpt.can_change.passes(request):
         return json_response(success=False,
             msg="User %s cannot update data in %s : " % (request.user,rptname))
-    #r = reports.ViewReportRequest(request,rpt)
+    r = reports.ViewReportRequest(request,rpt)
     #~ if r.instance is None:
         #~ print request.GET
         #~ return json_response(success=False,
             #~ msg="tried to update more than one row")
-    pk = request.POST.get(rpt.pk.name,None)
-    #pk = request.POST.get('pk',None)
+    pk = request.POST.get(r.layout.store.pk.name,None)
     if pk == reports.UNDEFINED:
         pk = None
     try:
@@ -194,8 +200,8 @@ def view_report_save(request,app_label=None,rptname=None):
         #print "Updating", instance, "using", request.POST
         for f in r.layout.store.fields:
             if not f.field.primary_key:
-                #print "reports.view_report_save()",f.field.name
-                f.update_from_form(instance,request.POST)
+                if request.POST.has_key(f.field.name):
+                    f.update_from_form(instance,request.POST)
         instance.save()
         return json_response(success=True,
               msg="%s has been saved" % instance)
@@ -382,6 +388,8 @@ class Store(Component):
         #~ if request._lino_request.report == self.report:
             #~ return request._lino_request.get_absolute_url(**kw)
         #~ else:
+        #~ if self.report.master is not None:
+            #~ kw.update(master=js_code('master'))
         kw.update(layout=self.layout.index)
         return self.report.get_absolute_url(**kw)
         #~ if request._lino_report.report == self.report:
@@ -407,22 +415,18 @@ class Store(Component):
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
         url = self.get_absolute_url(json=True)
         #self.report.setup()
+        proxy = dict(url=self.get_absolute_url(json=True),method='GET')
         d.update(proxy=js_code(
-          "new Ext.data.HttpProxy({url:'%s',method:'GET'})" % url           
+          "new Ext.data.HttpProxy(%s)" % py2js(proxy)
         ))
         # a JsonStore without explicit proxy sometimes used method POST
         # d.update(url=self.rr.get_absolute_url(json=True))
         # d.update(method='GET')
         d.update(totalProperty='count')
         d.update(root='rows')
-        #print self.report.model._meta
-        #d.update(id=self.report.model._meta.pk.attname)
         d.update(id=self.pk.name)
-        #~ d.update(fields=js_code(
-          #~ "[ %s ]" % ",".join([repr(e.field.name) 
-          #~ for e in self.data_layout.ext_store_fields])
-        #~ ))
         d.update(fields=[js_code(f.as_js()) for f in self.fields])
+        #d.update(listeners=dict(exception=js_code("on_store_exception")))
         return d
         
         
@@ -1143,10 +1147,10 @@ class GridElement(Container):
     def __init__(self,layout,name,report,*elements,**kw):
         """
         Note: layout is the owning layout. 
-        In case of a slave grid this is the master layout.
+        In case of a slave grid, layout.report is the master.
         """
-        #~ if len(elements) == 0:
-            #~ elements = report.row_layout._main
+        if len(elements) == 0:
+            elements = report.row_layout._main.elements
         Container.__init__(self,layout,name,*elements,**kw)
         #LayoutElement.__init__(self,layout,report.name)
         self.report = report
@@ -1198,41 +1202,34 @@ class GridElement(Container):
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
         
-        keys = []
-        buttons = []
-        for a in self.report._actions:
-            buttons.append(dict(text=a.label,handler=js_code(a.name+'_action')))
-            if a.key:
-                #keys.append(dict(handler=js_code("%s_action" % a.name),key=a.key))
-                keys.append(dict(
-                  handler=js_code("%s_action" % a.name),
-                  key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-        # Ctrl+ENTER in a grid opens all detail windows
-        key = reports.RETURN(ctrl=True)
-        keys.append(dict(
-          handler=js_code("%s_detail" % self.report.name),
-          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-          
-        for layout in self.report.layouts[2:]:
-            buttons.append(dict(
-              handler=js_code("%s" % layout.name),
-              text=layout.label))
-            
-        if len(keys):
-            d['keys'] = keys
-        d.update(tbar=js_code("""new Ext.PagingToolbar({
-          store: %s,
-          displayInfo: true,
-          pageSize: %d,
-          prependButtons: false,
-          items: %s
-        }) """ % (self.report.row_layout.store.ext_name,self.report.page_length,py2js(buttons))))
+        #~ if len(keys):
+            #~ d['keys'] = keys
+        #~ d.update(tbar=js_code("""new Ext.PagingToolbar({
+          #~ store: %s,
+          #~ displayInfo: true,
+          #~ pageSize: %d,
+          #~ prependButtons: false,
+          #~ items: %s
+        #~ }) """ % (self.report.row_layout.store.ext_name,self.report.page_length,py2js(buttons))))
+        tbar = dict(
+          store=self.report.row_layout.store,
+          displayInfo=True,
+          pageSize=self.report.page_length,
+          prependButtons=False,
+        )
+        d.update(tbar=js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
+        #~ d.update(tbar=js_code("""new Ext.PagingToolbar({
+          #~ store: %s,
+          #~ displayInfo: true,
+          #~ pageSize: %d,
+          #~ prependButtons: false,
+        #~ }) """ % (self.report.row_layout.store.ext_name,self.report.page_length)))
         return d
             
     #~ def value2js(self,obj):
         #~ return "1"
         
-    def ext_lines_before(self):
+    def unused_ext_lines_before(self):
         setup_report(self.report)
         for action in self.report._actions:
             s = """
@@ -1290,40 +1287,83 @@ function %s_action(oGrid_event) {""" % action.name
       
       
     def ext_lines_after(self):
-        s = """
-function %s_afteredit(oGrid_event){""" % self.ext_name
-        s += """
-  Ext.Ajax.request({
-    waitMsg: 'Please wait...',
-    url: '%s',""" % self.report.get_absolute_url(save=True)
-        #request._lino_report.get_absolute_url(ajax='update')
-        
-        d = {}
-        for e in self.report.row_layout.store.fields:
-            d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
-        s += """
-    params: { %s }, """ % dict2js(d)
+      
+        keys = []
+        buttons = []
+        for a in self.report._actions:
+            h = js_code("grid_action(%s,'%s','%s')" % (
+                  self.ext_name, a.name, self.report.row_layout.store.get_absolute_url(action=a.name)))
+            buttons.append(dict(text=a.label,handler=h))
+            if a.key:
+                #keys.append(dict(handler=js_code("%s_action" % a.name),key=a.key))
+                keys.append(dict(
+                  handler=h,
+                  #handler=js_code("%s_action" % a.name),
+                  key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
+        # Ctrl+ENTER in a grid opens all detail windows
+        #~ key = reports.RETURN(ctrl=True)
+        #~ keys.append(dict(
+          #~ handler=js_code("%s_detail" % self.report.name),
+          #~ key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
+
+        key = reports.RETURN(ctrl=True)
+        layout = self.report.layouts[2]
+        keys.append(dict(
+          handler=js_code("show_detail(%s,%s)" % (self.ext_name,layout.name)),
+          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
+
+        for layout in self.report.layouts[2:]:
+            buttons.append(dict(
+              handler=js_code("show_detail(%s,%s)" % (self.ext_name,layout.name)),
+              text=layout.label))
+            
+        yield "%s.keys = %s;" % (self.ext_name,py2js(keys))
+        yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(buttons))
+        #~ for k in buttons:
+            #~ yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(k))
+            
+        #~ d = {}
+        #~ for e in self.report.row_layout.store.fields:
+            #~ d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
+        yield "%s.on('afteredit', grid_afteredit(%s,'%s','%s'));" % (
+          self.ext_name,self.ext_name,
+          self.report.row_layout.store.get_absolute_url(save=True),
+          self.report.row_layout.store.pk.name)
+            
+            
+      
+        #~ s = """
+#~ function %s_afteredit(oGrid_event){""" % self.ext_name
+        #~ s += """
+  #~ Ext.Ajax.request({
+    #~ waitMsg: 'Please wait...',
+    #~ url: '%s',""" % self.report.row_layout.store.get_absolute_url(save=True)
+        #~ d = {}
+        #~ for e in self.report.row_layout.store.fields:
+            #~ d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
+        #~ s += """
+    #~ params: { %s }, """ % dict2js(d)
     
-        s += """
-    success: function(response){
-      // console.log('success',response.responseText);
-      var result=Ext.decode(response.responseText);
-      // console.log(result);
-      if (result.success) {
-        %s.commitChanges(); // get rid of the red triangles
-        %s.reload();        // reload our datastore.
-      } else {
-        Ext.MessageBox.alert(result.msg);
-      }
-    },
-    failure: function(response){
-      // console.log(response);
-      Ext.MessageBox.alert('error','could not connect to the database. retry later');		
-    }
-  });
-};""" % (self.report.row_layout.store.ext_name,self.report.row_layout.store.ext_name)
-        yield s
-        yield "%s.on('afteredit', %s_afteredit);" % (self.ext_name,self.ext_name)
+        #~ s += """
+    #~ success: function(response){
+      #~ // console.log('success',response.responseText);
+      #~ var result=Ext.decode(response.responseText);
+      #~ // console.log(result);
+      #~ if (result.success) {
+        #~ %s.commitChanges(); // get rid of the red triangles
+        #~ %s.reload();        // reload our datastore.
+      #~ } else {
+        #~ Ext.MessageBox.alert(result.msg);
+      #~ }
+    #~ },
+    #~ failure: function(response){
+      #~ // console.log(response);
+      #~ Ext.MessageBox.alert('error','could not connect to the database. retry later');		
+    #~ }
+  #~ });
+#~ };""" % (self.report.row_layout.store.ext_name,self.report.row_layout.store.ext_name)
+        #~ yield s
+        #~ yield "%s.on('afteredit', %s_afteredit);" % (self.ext_name,self.ext_name)
 
               
             #~ s = """%s.getTopToolbar().addButton({""" % self.ext_name
@@ -1418,39 +1458,43 @@ class MainPanel(Panel):
     %s.form.loadRecord(rows[0]);""" % self.ext_name
         for slave in self.layout.slave_grids:
             s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
-                 slave.layout.store.ext_name,self.layout.store.pk.name)
+                 slave.report.row_layout.store.ext_name,
+                 self.layout.store.pk.name)
                  #slave.store.name,request._lino_report.layout.pk.name)
         s += "\n});"
         yield s
         
-        url = self.report.get_absolute_url(save=True)
-        s = """
-var submitButton = %s.addButton({
-    text: 'Submit',
-    handler: function(btn,evt){""" % self.ext_name
-        #s += "console.log(btn,evt);"
-        #s += "console.log(%s.getAt(0));" % self.master_store.ext_name
-        d = dict(
-            url=self.report.get_absolute_url(save=True),
-            params=js_code("{pk:%s.getAt(0).data.%s}" % (
-                self.layout.store.ext_name,self.layout.store.pk.name)),
-            waitMsg='Saving Data...',
-            success=js_code("""function (form, action) {
-                Ext.MessageBox.alert('Saved OK',
-                  action.result ? action.result.msg : '(undefined action result)');
-                %s.reload();
-            }""" % self.layout.store.ext_name),
-            failure=js_code("""function(form, action) {
-                // console.log("form:",form);
-                Ext.MessageBox.alert('Submit failed!', 
-                  action.result ? action.result.msg : '(undefined action result)');
-            }""")
-            )
+        url = self.layout.store.get_absolute_url(save=True)
+        yield "%s.addButton({text: 'Submit',handler: form_submit(%s.form,'%s',%s)});" % (
+          self.ext_name,self.ext_name,url,self.layout.store.ext_name)
+    
+        #~ s = """
+#~ %s.addButton({
+    #~ text: 'Submit',
+    #~ handler: function(btn,evt){""" % self.ext_name
+        #~ #s += "console.log(btn,evt);"
+        #~ #s += "console.log(%s.getAt(0));" % self.master_store.ext_name
+        #~ d = dict(
+            #~ url=self.layout.store.get_absolute_url(save=True),
+            #~ params=js_code("{pk:%s.getAt(0).data.%s}" % (
+                #~ self.layout.store.ext_name,self.layout.store.pk.name)),
+            #~ waitMsg='Saving Data...',
+            #~ success=js_code("""function (form, action) {
+                #~ Ext.MessageBox.alert('Saved OK',
+                  #~ action.result ? action.result.msg : '(undefined action result)');
+                #~ %s.reload();
+            #~ }""" % self.layout.store.ext_name),
+            #~ failure=js_code("""function(form, action) {
+                #~ // console.log("form:",form);
+                #~ Ext.MessageBox.alert('Submit failed!', 
+                  #~ action.result ? action.result.msg : '(undefined action result)');
+            #~ }""")
+            #~ )
         
-        s += "\n  %s.form.submit({%s});" % (self.ext_name,dict2js(d))
-        s += """
-}});"""
-        yield s
+        #~ s += "\n  %s.form.submit({%s});" % (self.ext_name,dict2js(d))
+        #~ s += """
+#~ }});"""
+        #~ yield s
         
         #yield "%s.load({params:{limit:1,start:0}});" % self.report.store.ext_name
         
@@ -1567,6 +1611,116 @@ class Viewport:
 <script type="text/javascript" src="/media/lino.js"></script>
 <!-- page specific -->
 <script type="text/javascript">
+
+function on_store_exception(store,type,action,options,reponse,arg) {
+  console.log("Ha! on_store_exception() was called!");
+  console.log("params:",store,type,action,options,reponse,arg);
+};
+
+function grid_afteredit(grid,url,pk) {
+  return function(e) {
+    var p = {};
+    p[e.field] = e.value;
+    p[pk] = e.record.data[pk];
+    Ext.Ajax.request({
+      waitMsg: 'Please wait...',
+      url: url,
+      params: p, 
+      success: function(response) {
+        // console.log('success',response.responseText);
+        var result=Ext.decode(response.responseText);
+        // console.log(result);
+        if (result.success) {
+          grid.getStore().commitChanges(); // get rid of the red triangles
+          grid.getStore().reload();        // reload our datastore.
+        } else {
+          Ext.MessageBox.alert(result.msg);
+        }
+      },
+      failure: function(response) {
+        // console.log(response);
+        Ext.MessageBox.alert('error','could not connect to the database. retry later');		
+      }
+    })
+  }
+}
+
+
+function grid_action(grid,name,url) {
+  console.log("foo",grid,name,url);
+  return function(oGrid_event) {
+    console.log("bar",oGrid_event);
+    var sel_pks = '';
+    var must_reload = false;
+    var sels = grid.getSelectionModel().getSelections();
+    // console.log(sels);
+    for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
+    var doit = function(confirmed) {
+      Ext.Ajax.request({
+        waitMsg: 'Running action "' + name + '". Please wait...',
+        url: url,
+        params: { confirmed:confirmed,selected:sel_pks }, 
+        success: function(response){
+          // console.log('raw response:',response.responseText);
+          var result = Ext.decode(response.responseText);
+          // console.log('got response:',result);
+          if(result.success) {
+            if (result.msg) Ext.MessageBox.alert('success',result.msg);
+            if (result.html) Ext.Window({html:result.html}).show();
+            if (result.must_reload) grid.getStore().load(); 
+          } else {
+            if(result.confirm) Ext.Msg.show({
+              title: 'Confirmation',
+              msg: result.confirm,
+              buttons: Ext.Msg.YESNOCANCEL,
+              fn: function(btn) {
+                if (btn == 'yes') {
+                    console.log(btn);
+                    doit(confirmed+1);
+                }
+              }
+            })
+          }
+        },
+        failure: function(response){
+          // console.log(response);
+          Ext.MessageBox.alert('error','Could not connect to the server.');
+        }
+      });
+    };
+    doit(0);
+  };
+}
+
+function form_submit(form,url,store) {
+  return function(btn,evt) {
+    form.submit({
+      url: url, 
+      failure: function(form, action) {
+        // console.log("form:",form);
+        Ext.MessageBox.alert('Submit failed!', 
+        action.result ? action.result.msg : '(undefined action result)');
+      }, 
+      params: { pk:store.getAt(0).data.id }, 
+      waitMsg: 'Saving Data...', 
+      success: function (form, action) {
+        Ext.MessageBox.alert('Saved OK',
+          action.result ? action.result.msg : '(undefined action result)');
+          store.reload();
+      }
+    })
+  } 
+}
+
+
+function show_detail(grid,fn) { 
+  return function(btn,evt) {
+    p = grid.getStore().baseParams;
+    fn(btn,evt,p['master']);
+  }
+}
+
+
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
         s += """
@@ -1597,3 +1751,4 @@ Ext.onReady(function(){ """
         return s
             
             
+

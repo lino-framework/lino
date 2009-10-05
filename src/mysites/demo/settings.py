@@ -181,6 +181,8 @@ EMAIL_HOST = "mail.hot.ee"
 
 LINO_SETTINGS = os.path.join(PROJECT_DIR,"lino_settings.py")
 
+BYPASS_PERMS = True        
+
 EXTJS_URL = "/extjs/"
 if sys.platform == 'win32':
     EXTJS_ROOT = r's:\ext-3.0.0'

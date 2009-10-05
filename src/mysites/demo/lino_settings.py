@@ -16,7 +16,8 @@ You can log in as user "user" or "root", both with password "1234".
 Note how the menu changes depending on which user you are.
 <a href="%s">More</a>""" % lino.help_url
 
-lino.index_html += "<br/>" * 500
+# this creates a (useless) vertical scrollbar in the main viewport:
+# lino.index_html += "<br/>" * 500
 
 from django.db import models
 
@@ -63,7 +64,8 @@ m.add_action(products.ProductCats())
 m = lino.add_menu("journals","~Journals",can_view=perms.is_staff)
 for jnl in journals.Journal.objects.all().order_by('pos'):
     #m.add_action(jnl.get_doc_report())
-    m.add_action(jnl.get_doc_report(),params={'master':jnl})
+    #m.add_action(jnl.get_doc_report(),params={'master':jnl})
+    m.add_action(jnl.get_doc_report(),args=[jnl.pk])
     
 m = lino.add_menu("sales","~Sales",
   can_view=perms.is_authenticated)

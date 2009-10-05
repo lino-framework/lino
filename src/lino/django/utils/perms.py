@@ -19,12 +19,15 @@
 
 class Condition:
     pass
+    
 class never(Condition):
     @staticmethod
     def passes(request): return False
+      
 class always(Condition):        
     @staticmethod
     def passes(request): return True
+      
 class is_staff(Condition):        
     @staticmethod
     def passes(request):
@@ -41,6 +44,14 @@ class is_anonymous(Condition):
     @staticmethod
     def passes(request):
         return not request.user.is_authenticated()
+        
+        
+from django.conf import settings
+
+
+if settings.BYPASS_PERMS:
+    is_authenticated.passes = staticmethod(always.passes)
+    is_staff.passes = staticmethod(always.passes)
 
 #~ def always(request): return True
 #~ def is_staff(request): 

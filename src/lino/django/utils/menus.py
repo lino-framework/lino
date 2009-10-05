@@ -114,18 +114,18 @@ class Action(MenuItem):
     def __init__(self,parent,actor=None,
                  name=None,label=None,
                  hotkey=None,url=None,
-                 params={},*args,**kw):
+                 args=[],**kw):
         
         if not kw.has_key('can_view'):
             kw.update(can_view=actor.can_view)
         #name = name or actor.name
         label = label or actor.label
-        self.params = params
+        self.args = args
         #self._url = url or actor.get_absolute_url(**params)
         assert actor is not None
         self.actor = actor
         self.hotkey = hotkey
-        MenuItem.__init__(self,parent,name,label,*args,**kw)
+        MenuItem.__init__(self,parent,name,label,**kw)
         
     def get_url_path(self):
         return self._url
@@ -155,6 +155,7 @@ class Menu(MenuItem):
         return self._add_item(Menu(name,label,self,**kw))
         
     def _add_item(self,m):
+        assert isinstance(m,MenuItem)
         #~ old = self.items_dict.get(m.name,None)
         #~ if old:
             #~ i = self.items.index(old)
