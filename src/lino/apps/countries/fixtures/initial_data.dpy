@@ -1,6 +1,6 @@
 ﻿#  
-from lino.django.apps.countries.models import *
-from lino.django.utils.instantiator import Instantiator
+from lino.apps.countries.models import *
+from lino.utils.instantiator import Instantiator
 
 language = Instantiator(Language,"id name").build
 country = Instantiator(Country,"isocode name").build

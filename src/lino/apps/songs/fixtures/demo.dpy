@@ -21,9 +21,9 @@ import os, codecs
 import yaml
 
 
-from lino.django.apps.songs.models import *
-from lino.django.apps.countries import models as countries
-from lino.django.utils.instantiator import Instantiator, ManyToManyConverter
+from lino.apps.songs.models import *
+from lino.apps.countries import models as countries
+from lino.utils.instantiator import Instantiator, ManyToManyConverter
 
 
 RELAX = not True

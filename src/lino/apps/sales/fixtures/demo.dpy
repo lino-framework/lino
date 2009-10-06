@@ -20,9 +20,9 @@
 import time
 from datetime import date
 from dateutil import parser as dateparser
-from lino.django.apps.sales.models import *
-from lino.django.apps.sales import utils
-from lino.django.utils.instantiator import Instantiator, i2d
+from lino.apps.sales.models import *
+from lino.apps.sales import utils
+from lino.utils.instantiator import Instantiator, i2d
 
 shippingmode = Instantiator(ShippingMode,"name").build
 paymentterm = Instantiator(PaymentTerm,"name").build

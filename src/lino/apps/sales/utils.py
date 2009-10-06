@@ -31,7 +31,7 @@ send_invoices() then "sends" the signed invoices:
 import os
 import datetime
 
-from lino.console import syscon
+from timtools.console import syscon
 from lino.apps.sales import models as sales
 from lino.utils.sites import lino_site
 

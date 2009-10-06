@@ -20,9 +20,9 @@
 import time
 from datetime import date
 from dateutil import parser as dateparser
-from lino.django.apps.igen.models import *
-from lino.django.utils.instantiator import Instantiator
-#from lino.django.plugins import journals
+from lino.apps.igen.models import *
+from lino.utils.instantiator import Instantiator
+#from lino.plugins import journals
 
 def i2d(i):
     return dateparser.parse(str(i))

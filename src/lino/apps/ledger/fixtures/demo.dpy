@@ -20,10 +20,10 @@
 import time
 from datetime import date
 from dateutil import parser as dateparser
-from lino.django.apps.ledger import models as ledger
-#from lino.django.apps.journals import models as journals
-from lino.django.apps.ledger.fixtures import be
-from lino.django.utils.instantiator import Instantiator, i2d
+from lino.apps.ledger import models as ledger
+#from lino.apps.journals import models as journals
+from lino.apps.ledger.fixtures import be
+from lino.utils.instantiator import Instantiator, i2d
 
 #journal = Instantiator(journals.Journal,"id name")
 #account = Instantiator(ledger.Account,"name").build

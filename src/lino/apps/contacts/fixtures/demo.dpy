@@ -17,8 +17,8 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.django.apps.contacts.models import *
-from lino.django.utils.instantiator import Instantiator
+from lino.apps.contacts.models import *
+from lino.utils.instantiator import Instantiator
 
 contact = Instantiator(Contact,fieldnames="""
       id

@@ -34,7 +34,7 @@ import imp
 import logging
 
 from django.conf import settings
-from lino.tools.my_import import my_import as import_module
+from timtools.tools.my_import import my_import as import_module
 #from django.contrib.admin.sites import AdminSite
 from django import template 
 from django.views.decorators.cache import never_cache 
