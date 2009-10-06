@@ -1257,7 +1257,7 @@ function %s_action(oGrid_event) {""" % action.name
       success: function(response){
         // console.log('raw response:',response.responseText);
         var result = Ext.decode(response.responseText);
-        console.log('got response:',result);
+        // console.log('got response:',result);
         if(result.success) {
           if (result.msg) Ext.MessageBox.alert('success',result.msg);
           if (result.html) Ext.Window({html:result.html}).show();
@@ -1270,7 +1270,7 @@ function %s_action(oGrid_event) {""" % action.name
             buttons: Ext.Msg.YESNOCANCEL,
             fn: function(btn) {
               if (btn == 'yes') {
-                  console.log(btn);
+                  // console.log(btn);
                   doit(confirmed+1);
               }
             }
@@ -1616,8 +1616,8 @@ class Viewport:
 <script type="text/javascript">
 
 function on_store_exception(store,type,action,options,reponse,arg) {
-  console.log("Ha! on_store_exception() was called!");
-  console.log("params:",store,type,action,options,reponse,arg);
+  // console.log("Ha! on_store_exception() was called!");
+  // console.log("params:",store,type,action,options,reponse,arg);
 };
 
 function grid_afteredit(grid,url,pk) {
@@ -1650,9 +1650,9 @@ function grid_afteredit(grid,url,pk) {
 
 
 function grid_action(grid,name,url) {
-  console.log("foo",grid,name,url);
+  // console.log("foo",grid,name,url);
   return function(oGrid_event) {
-    console.log("bar",oGrid_event);
+    // console.log("bar",oGrid_event);
     var sel_pks = '';
     var must_reload = false;
     var sels = grid.getSelectionModel().getSelections();
@@ -1678,7 +1678,7 @@ function grid_action(grid,name,url) {
               buttons: Ext.Msg.YESNOCANCEL,
               fn: function(btn) {
                 if (btn == 'yes') {
-                    console.log(btn);
+                    // console.log(btn);
                     doit(confirmed+1);
                 }
               }
