@@ -130,10 +130,23 @@ class CompanyPageLayout(ContactPageLayout):
     box1 = """
               name vat_id:12
               """
-        
+              
+class ProjectsByPersonPage(layouts.PageLayout):
+    main = """
+    id title first_name last_name
+    ProjectsByPerson
+    """
+
+class ProjectsByCompanyPage(layouts.PageLayout):
+    main = """
+    id name vat_id
+    ProjectsByCompany
+    """
+
             
 class Persons(reports.Report):
-    page_layouts = (PersonPageLayout,)
+    label = "Personen"
+    page_layouts = (PersonPageLayout,ProjectsByPersonPage)
     columnNames = "first_name last_name title country id"
     can_delete = True
     model = Person
@@ -142,7 +155,8 @@ class Persons(reports.Report):
 
         
 class Companies(reports.Report):
-    page_layouts = (CompanyPageLayout,)
+    label = "Firmen und Organisationen"
+    page_layouts = (CompanyPageLayout,ProjectsByCompanyPage)
     columnNames = "name country id"
     model = Company
     order_by = "name"
@@ -151,21 +165,34 @@ class Companies(reports.Report):
     
 
 
-class ContactsByCountry(reports.Report):
+class PersonsByCountry(reports.Report):
     model = Person # Contact
     master = countries.Country
     order_by = "city addr1"
     columnNames = "city addr1 name"
     
-class CountryAndContactsPage(layouts.PageLayout):
-    label = "Contacts by Country"
+class CompaniesByCountry(PersonsByCountry):
+    model = Company
+    
+class PersonsByCountryPage(layouts.PageLayout):
+    label = "Personen pro Land"
     main = """
     isocode name
-    ContactsByCountry
+    PersonsByCountry
+    """
+
+class CompaniesByCountryPage(layouts.PageLayout):
+    label = "Firmen pro Land"
+    main = """
+    isocode name
+    CompaniesByCountry
     """
     
 class Countries(countries.Countries):
-    page_layouts = (layouts.PageLayout,CountryAndContactsPage)
+    page_layouts = (
+      layouts.PageLayout,
+      PersonsByCountryPage,
+      CompaniesByCountryPage)
     
   
 
