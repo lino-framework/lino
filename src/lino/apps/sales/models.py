@@ -38,13 +38,13 @@ ONE_DAY = relativedelta(days=1)
 from django.db import models
 from django.contrib.auth import models as auth
 
-from lino.django.utils.ticket7623 import child_from_parent
+from lino.utils.ticket7623 import child_from_parent
 
-from lino.django.apps import fields
-from lino.django.apps.contacts import models as contacts
-from lino.django.apps.journals import models as journals
-from lino.django.apps.ledger import models as ledger
-from lino.django.apps.products import models as products
+from lino.apps import fields
+from lino.apps.contacts import models as contacts
+from lino.apps.journals import models as journals
+from lino.apps.ledger import models as ledger
+from lino.apps.products import models as products
 
 class Customer(contacts.Contact):
     paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
@@ -400,11 +400,11 @@ class DocItem(models.Model):
         
 from django import forms
 
-from lino.django.utils import reports
-from lino.django.utils import layouts
-from lino.django.utils import perms
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
 
-#from lino.django.plugins.countries import Languages
+#from lino.plugins.countries import Languages
 
 class PaymentTerms(reports.Report):
     model = PaymentTerm

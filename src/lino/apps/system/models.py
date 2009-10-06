@@ -17,10 +17,10 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-from lino.django.utils import reports
+from lino.utils import reports
 from django.contrib.auth import models as auth
 from django.contrib.sessions import models as sessions
-from lino.django.utils import perms
+from lino.utils import perms
 
 class Permissions(reports.Report):
     model = auth.Permission

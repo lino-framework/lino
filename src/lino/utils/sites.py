@@ -213,7 +213,7 @@ class LinoSite: #(AdminSite):
     def index(self, request):
         if self._response is None:
             logging.debug("building LinoSite._response...")
-            from lino.django.utils import extjs
+            from lino.utils import extjs
             comp = extjs.VisibleComponent("index",
                 xtype="panel",
                 html=self.index_html,

@@ -36,13 +36,13 @@ ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
 
-# ADMINS is used in lino.django.utils.sites.LinoSite.password_reset()
+# ADMINS is used in lino.utils.sites.LinoSite.password_reset()
 
 MANAGERS = ADMINS
 
 DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 
-DATABASE_NAME = os.path.join(gettempdir(),'mysites_demo.db') 
+DATABASE_NAME = os.path.join(gettempdir(),'mysites_igen.db') 
 #DATABASE_NAME = ':memory:'
 DATABASE_USER = ''             # Not used with sqlite3.
 DATABASE_PASSWORD = ''         # Not used with sqlite3.
@@ -61,7 +61,7 @@ TIME_ZONE = 'Europe/Tallinn'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1 # see also reset_demo.py
+SITE_ID = 1 # see also fill.py
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -70,8 +70,7 @@ USE_I18N = True
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 # Used by FileSystemStorage
-MEDIA_ROOT = os.path.abspath(os.path.join(
-  PROJECT_DIR, '..', 'media'))
+MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR,'..','media'))
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -100,23 +99,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
-    'lino.django.utils.editing.EditingMiddleware',
+    #'lino.utils.editing.EditingMiddleware',
 )
 
-ROOT_URLCONF = 'mysites.demo.urls'
+ROOT_URLCONF = 'mysites.igen.urls'
 
-#print "foo", __file__
-
-#~ try:
-#~ except Exception,e:
-    #~ import traceback
-    #~ traceback.print_exc(e)
-    #~ raise e
-
-
-#print "bar", __file__
-
-from lino.django import templates
+from lino import templates
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -137,33 +125,33 @@ if True:
     #'django.contrib.admin',
     'django.contrib.databrowse',
     
-    'lino.django.apps.system',
-    'lino.django.apps.countries',
-    'lino.django.apps.contacts',
-    'lino.django.apps.products',
-    'lino.django.apps.documents',
-    'lino.django.apps.ledger',
-    'lino.django.apps.sales',
-    'lino.django.apps.finan',
-    'lino.django.apps.journals',
+    'lino.apps.system',
+    'lino.apps.countries',
+    'lino.apps.contacts',
+    'lino.apps.products',
+    'lino.apps.documents',
+    'lino.apps.ledger',
+    'lino.apps.sales',
+    'lino.apps.finan',
+    'lino.apps.journals',
     
-    #'lino.django.apps.voc',
-    #'lino.django.apps.songs',
+    #'lino.apps.voc',
+    #'lino.apps.songs',
   )
 else:
   INSTALLED_APPS = (
-    #'lino.django.test_apps.contacts',
-    #'lino.django.test_apps.sales',
-    #'lino.django.test_apps.example',
-    #'lino.django.test_apps.ledger',
-    #'lino.django.test_apps.20090714',
-    'lino.django.test_apps.20090717',
+    #'lino.test_apps.contacts',
+    #'lino.test_apps.sales',
+    #'lino.test_apps.example',
+    #'lino.test_apps.ledger',
+    #'lino.test_apps.20090714',
+    'lino.test_apps.20090717',
   )
 
 
 SERIALIZATION_MODULES = {
-     "data" : "lino.django.utils.dataserializer",
-     "dpy" : "lino.django.utils.dpyserializer",
+     "data" : "lino.utils.dataserializer",
+     "dpy" : "lino.utils.dpyserializer",
 }
 
 #print "done", __file__
@@ -186,11 +174,7 @@ BYPASS_PERMS = True
 EXTJS_URL = "/extjs/"
 if sys.platform == 'win32':
     EXTJS_ROOT = r's:\ext-3.0.0'
-    #~ if os.path.exists(extjs_root):
-        #~ from django.core.files.storage import FileSystemStorage
-        #~ fs = FileSystemStorage(location=extjs_root,base_url=EXTJS_URL)
-        #~ print extjs_root
 else:
    EXTJS_ROOT = None
-        
-#print "ok"
+   # don't serve extjs files because Apache does it
+       

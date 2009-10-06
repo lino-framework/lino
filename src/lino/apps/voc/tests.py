@@ -23,7 +23,7 @@ from models import Unit, Entry, Units
 from django.core import serializers
 from django.test import TestCase
 from django import forms
-from lino.django.utils.validatingmodel import ModelValidationError
+from lino.utils.validatingmodel import ModelValidationError
 
 # convert a django.forms.util.ErrorDict object to a str
 #~ def errordict2str(errordict):

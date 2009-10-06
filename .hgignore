@@ -2,11 +2,11 @@
 syntax: glob
 
 *.elc
-*.dpyc
 *.pyc
 *~
+*.dpyc
+*.log
 build
 dist
 
 src\mysites\media\pdf_cache
-src\mysites\demo\lino.log

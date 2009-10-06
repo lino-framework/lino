@@ -16,8 +16,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import unittest
-from lino.django.apps.songs.models import Song, Author
-from lino.django.apps.countries.models import Language
+from lino.apps.songs.models import Song, Author
+from lino.apps.countries.models import Language
 
 class TestCase(unittest.TestCase):
     

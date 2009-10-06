@@ -20,15 +20,15 @@ from django.test import TestCase
 from django.core.management import call_command
 from django.db.models import loading
 
-from lino.django.utils.validatingmodel import TomModel, ModelValidationError
-from lino.django.utils.reports import Report
-from lino.django.utils.render import ViewReportRenderer
+from lino.utils.validatingmodel import TomModel, ModelValidationError
+from lino.utils.reports import Report
+from lino.utils.render import ViewReportRenderer
 from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
 
-from lino.django.apps.journals import models as journals
-from lino.django.apps.ledger import models as ledger
+from lino.apps.journals import models as journals
+from lino.apps.ledger import models as ledger
 # Journal, Document, register_doctype, DocumentError
 
 

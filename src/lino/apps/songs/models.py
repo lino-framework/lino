@@ -19,8 +19,8 @@ from django.db import models
 
 from django.utils.safestring import mark_safe
 
-from lino.django.apps.countries import models as countries # import Country, Language
-from lino.django.utils.render import HREF
+from lino.apps.countries import models as countries # import Country, Language
+from lino.utils.render import HREF
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
@@ -259,8 +259,8 @@ class Collection(models.Model):
 
 # reports
 
-from lino.django.utils import reports, perms
-from lino.django.utils.layouts import PageLayout 
+from lino.utils import reports, perms
+from lino.utils.layouts import PageLayout 
 
 
 class SongPageLayout(PageLayout):

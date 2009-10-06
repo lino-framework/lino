@@ -24,7 +24,7 @@ from django.shortcuts import render_to_response
 from django.utils.safestring import mark_safe
 from django import template 
 
-from lino.django.utils import perms
+from lino.utils import perms
         
 class MenuItem:
   

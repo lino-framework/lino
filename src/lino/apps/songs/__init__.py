@@ -16,15 +16,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-lino.django.songs
-
 This is an experimental Django database to manage and/or 
 document the activities of a choir.
 
 """
-#
-# menu setup
-#
-def lino_setup(*args):
-    import models
-    models.lino_setup(*args)
+

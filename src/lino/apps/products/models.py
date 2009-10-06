@@ -21,8 +21,8 @@ from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
 from django.db import models
-from lino.django.apps import fields
-from lino.django.apps.journals import models as journals
+from lino.apps import fields
+from lino.apps.journals import models as journals
 
 class ProductCat(models.Model):
     name = models.CharField(max_length=200)
@@ -49,9 +49,9 @@ class Product(models.Model):
         
 from django import forms
 
-from lino.django.utils import reports
-from lino.django.utils import layouts
-from lino.django.utils import perms
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
 
 class ProductCats(reports.Report):
     model = ProductCat

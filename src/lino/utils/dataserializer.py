@@ -55,7 +55,7 @@ class FakeDeserializedObject(base.DeserializedObject):
 
 # my code
 
-from lino.django.utils.instantiator import Instantiator
+from lino.utils.instantiator import Instantiator
 
 class Serializer(PythonSerializer):
     internal_use_only = False

@@ -17,7 +17,7 @@
 
 import datetime
 from django.db import models
-#from lino.django.apps.igen import Model
+#from lino.apps.igen import Model
 
 __app_label__ = "countries"
 
@@ -45,7 +45,7 @@ class Language(models.Model):
 ## report definitions
 ##        
         
-from lino.django.utils import reports
+from lino.utils import reports
 
 class Countries(reports.Report):
     model = Country

@@ -28,8 +28,7 @@ from django.db import models
 from django.utils.safestring import mark_safe 
 
 
-#from lino.django import tom
-from lino.django.utils.validatingmodel import TomModel, ModelValidationError
+from lino.utils.validatingmodel import TomModel, ModelValidationError
 
 
 FORMATS = (
@@ -199,7 +198,7 @@ class Entry(TomModel):
 # reports definition
 #
 
-from lino.django.utils import reports, perms
+from lino.utils import reports, perms
 
 class Units(reports.Report):
     model = Unit

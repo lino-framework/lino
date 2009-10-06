@@ -26,7 +26,7 @@ from django.contrib.auth import urls as auth_urls
 from django.contrib import admin
 admin.autodiscover()
 
-from lino.django.utils.sites import lino_site
+from lino.utils.sites import lino_site
 
 #~ # these settings cannot be in lino_settings.py because it modifies the menu which is built by INSTALLED_APPS during their lino_setup()
 #~ # TODO: put this into a separate file, similar to lino_settings.py, but executed after lino_setup()

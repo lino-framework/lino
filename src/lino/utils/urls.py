@@ -102,7 +102,7 @@ def sorry(request,message=None):
             message = mark_safe("""
     This action requires that you log in.
             """)
-    from lino.django.utils.sites import lino_site
+    from lino.utils.sites import lino_site
     context = lino_site.context(request,
       title = "Sorry",
       message = message,

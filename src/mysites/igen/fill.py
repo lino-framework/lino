@@ -29,9 +29,9 @@ from django.core.management.sql import sql_flush, emit_post_sync_signal
 from django.core.management import call_command
 
 
-from lino.console import syscon
+from timtools.console import syscon
 
-from lino.django.utils.sites import lino_site
+from lino.utils.sites import lino_site
 
 def unused_db_apps():
     for app_name in settings.INSTALLED_APPS:

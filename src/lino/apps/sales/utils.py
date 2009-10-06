@@ -32,8 +32,8 @@ import os
 import datetime
 
 from lino.console import syscon
-from lino.django.apps.sales import models as sales
-from lino.django.utils.sites import lino_site
+from lino.apps.sales import models as sales
+from lino.utils.sites import lino_site
 
 def thanks_to():
     for name,url,version in lino_site.thanks_to():

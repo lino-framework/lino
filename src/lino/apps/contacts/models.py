@@ -18,8 +18,8 @@
 from django.db import models
 from django.utils.safestring import mark_safe
 
-#from lino.django.apps.igen import Model
-from lino.django.apps.countries import models as countries 
+#from lino.apps.igen import Model
+from lino.apps.countries import models as countries 
 
 #__app_label__ = "contacts"
 
@@ -128,11 +128,11 @@ u'Example & Co (Luc Saffre)'
         
 from django import forms
 
-from lino.django.utils import reports
-from lino.django.utils import layouts
-from lino.django.utils import perms
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
 
-#from lino.django.plugins.countries import Languages
+#from lino.plugins.countries import Languages
 
 class ContactPageLayout(layouts.PageLayout):
     #frame = False

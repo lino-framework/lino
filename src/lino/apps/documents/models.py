@@ -17,9 +17,6 @@
 
 
 """
-lino.django.apps.documents
---------------------------
-
 This defines AbstractDocument which knows how to "print" an instance.
 
 
@@ -46,7 +43,7 @@ except ImportError:
     pisa = None
 
 try:
-    from lino.django.utils import appy_pod
+    from lino.utils import appy_pod
 except ImportError:
     appy_pod = None
 
@@ -72,7 +69,7 @@ class AbstractDocument(models.Model):
     def get_child_model(self):
         raise NotImplementedError
         #return self.__class__
-        # implementation example SalesDocument in lino.django.apps.journals
+        # implementation example SalesDocument in lino.apps.journals
         
     def get_child_instance(self):
         model = self.get_child_model()
@@ -184,7 +181,7 @@ class AbstractDocument(models.Model):
     def setup_report(cls,rpt):
         rpt.add_actions(PrintAction,PdfAction)
         
-from lino.django.utils import reports        
+from lino.utils import reports        
     
 class PrintAction(reports.Action):
     label = "Print"

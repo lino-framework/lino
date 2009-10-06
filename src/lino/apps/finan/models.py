@@ -17,10 +17,10 @@
 
 import sys
 from django.db import models
-from lino.django.apps import fields
-from lino.django.apps.contacts import models as contacts
-from lino.django.apps.ledger import models as ledger
-from lino.django.apps.journals import models as journals
+from lino.apps import fields
+from lino.apps.contacts import models as contacts
+from lino.apps.ledger import models as ledger
+from lino.apps.journals import models as journals
 
 def _functionId(nFramesUp):
     # thanks to:
@@ -127,9 +127,9 @@ class DocItem(models.Model):
         
 from django import forms
 
-from lino.django.utils import reports
-from lino.django.utils import layouts
-from lino.django.utils import perms
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
 
 class FinDocPageLayout(layouts.PageLayout):
     

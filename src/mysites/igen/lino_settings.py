@@ -31,7 +31,7 @@ sales = models.get_app('sales')
 finan = models.get_app('finan')
 journals = models.get_app('journals')
 
-from lino.django.utils import perms
+from lino.utils import perms
 
 #~ from django.db.models.loading import get_model
 

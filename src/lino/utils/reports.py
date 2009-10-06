@@ -43,7 +43,7 @@ except ImportError:
 
 from . import layouts, perms, urls
 
-from lino.django.utils.sites import lino_site
+from lino.utils.sites import lino_site
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth, is_filter

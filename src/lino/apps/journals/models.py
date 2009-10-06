@@ -17,8 +17,8 @@
 
 
 """
-lino.django.apps.journals
--------------------------
+lino.apps.journals
+------------------
 
 This defines the models Journal and AbstractDocument.
 
@@ -30,8 +30,8 @@ An AbstractDocument instance can look at its journal to find out which subclass 
 
 import os
 from django.db import models
-from lino.django.apps.documents import models as documents
-#from lino.django.apps.ledger import models as ledger
+from lino.apps.documents import models as documents
+#from lino.apps.ledger import models as ledger
 
 class DocumentError(Exception):
     pass
@@ -157,7 +157,7 @@ class Journal(models.Model):
     #~ return JOURNALS[id]
     
 #~ def get_journals_by_docclass(cls):
-    #~ #from lino.django.utils.sites import lino_site # ensure setup
+    #~ #from lino.utils.sites import lino_site # ensure setup
     #~ #print 'JOURNALS:', JOURNALS
     #~ return [jnl for jnl in JOURNALS.values() if jnl.docclass == cls]
       
@@ -263,8 +263,8 @@ class AbstractDocument(documents.AbstractDocument):
 ## report definitions
 ##        
         
-from lino.django.utils import reports
-#~ from lino.django.utils.layouts import PageLayout 
+from lino.utils import reports
+#~ from lino.utils.layouts import PageLayout 
 
 class Journals(reports.Report):
     model = Journal

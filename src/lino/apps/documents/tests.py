@@ -17,14 +17,14 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.test import TestCase
-from lino.django.utils.validatingmodel import TomModel, ModelValidationError
-from lino.django.utils.reports import Report
-from lino.django.utils.render import ViewReportRenderer
+from lino.utils.validatingmodel import TomModel, ModelValidationError
+from lino.utils.reports import Report
+from lino.utils.render import ViewReportRenderer
 from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
 
-from lino.django.apps.documents import models as documents
+from lino.apps.documents import models as documents
 
 class Document(documents.AbstractDocument):
     pass

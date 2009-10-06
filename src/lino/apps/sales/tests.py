@@ -21,9 +21,9 @@ from django.test import TestCase
 from django.forms.models import modelform_factory, formset_factory
 from django.contrib.auth.models import User
 
-from lino.django.utils import layouts
-from lino.django.utils.instantiator import i2d
-from lino.django.apps.sales import models as sales
+from lino.utils import layouts
+from lino.utils.instantiator import i2d
+from lino.apps.sales import models as sales
 
 
 class SalesTest(TestCase):

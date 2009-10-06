@@ -18,12 +18,12 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.test import TestCase
-#from lino.django.igen import models
-from lino.django.apps.contacts.models import Contact, Companies
-from lino.django.apps.countries.models import Country
+#from lino.igen import models
+from lino.apps.contacts.models import Contact, Companies
+from lino.apps.countries.models import Country
 
 from django.forms.models import modelform_factory, formset_factory
-from lino.django.utils import layouts
+from lino.utils import layouts
 
 class DemoTest(TestCase):
     urls = 'mysites.demo.urls'

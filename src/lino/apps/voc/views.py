@@ -19,7 +19,7 @@ from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 #from django.http import HttpResponse
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from lino.django.voc import models
+from lino.voc import models
 
 
 def unit_list(request):

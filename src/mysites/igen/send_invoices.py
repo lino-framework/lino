@@ -20,6 +20,6 @@ import settings
 from django.core.management import setup_environ
 setup_environ(settings)
 
-from lino.django.apps.sales import utils
+from lino.apps.sales import utils
 utils.thanks_to()
 utils.send_invoices()

@@ -44,10 +44,10 @@ from django.utils import simplejson
 from django.template.loader import render_to_string, get_template, select_template, Context
 
 
-from lino.django.utils import layouts
-#from lino.django.utils import reports
-from lino.django.utils.requests import again, get_redirect, redirect_to
-from lino.django.utils import editing, latex
+from lino.utils import layouts
+#from lino.utils import reports
+from lino.utils.requests import again, get_redirect, redirect_to
+from lino.utils import editing, latex
 
 IS_SELECTED = 'IS_SELECTED_%d'
 

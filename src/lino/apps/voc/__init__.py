@@ -16,12 +16,7 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 """
-lino.django.voc
-
 A vocabulary trainer. Not finished.
 
 """
 
-def lino_setup(*args):
-    import models
-    models.lino_setup(*args)

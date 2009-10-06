@@ -16,9 +16,9 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
-from lino.django.apps import fields
-from lino.django.apps.contacts import models as contacts
-from lino.django.apps.journals import models as journals
+from lino.apps import fields
+from lino.apps.contacts import models as contacts
+from lino.apps.journals import models as journals
 
 
 class Account(models.Model):
@@ -144,9 +144,9 @@ class Booking(models.Model):
         
 from django import forms
 
-from lino.django.utils import reports
-from lino.django.utils import layouts
-from lino.django.utils import perms
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
 
 
 class Accounts(reports.Report):

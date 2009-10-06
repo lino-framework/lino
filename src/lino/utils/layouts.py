@@ -54,7 +54,7 @@ class Layout:
     
     
     def __init__(self,report,index,desc=None,main=None):
-        from lino.django.utils import extjs
+        from lino.utils import extjs
         #from . import reports
         #assert isinstance(report,reports.Report)
         # Component.__init__(self,report.name + str(index))
@@ -78,7 +78,7 @@ class Layout:
         self.store = extjs.Store(self)
         
     def desc2elem(self,panelclass,name,desc,**kw):
-        from lino.django.utils import extjs
+        from lino.utils import extjs
         #print "desc2elem()", repr(name),repr(desc)
         #assert desc != 'Countries_choices2'
         if "\n" in desc:
@@ -109,7 +109,7 @@ class Layout:
         #~ return MainPanel(self,name,vertical,*elems,**kw)
             
     def create_element(self,panelclass,name):
-        from lino.django.utils import extjs
+        from lino.utils import extjs
         #print "create_element()", name
         name,kw = self.splitdesc(name)
         if not name in ('__str__','__unicode__','name','label'):
@@ -197,7 +197,7 @@ class RowLayout(Layout):
     join_str = " "
     
     def __init__(self,report,index,desc=None,main=None):
-        from lino.django.utils import extjs
+        from lino.utils import extjs
         self.main_class = extjs.MainGridElement
         Layout.__init__(self,report,index,desc,main)
         #print "RowLayout.__init__(%r,%r,%r,%r)" % (report.name,index,desc,main)
@@ -212,7 +212,7 @@ class PageLayout(Layout):
     join_str = "\n"
     #main_class = extjs.MainPanel
     def __init__(self,*args,**kw):
-        from lino.django.utils import extjs
+        from lino.utils import extjs
         self.main_class = extjs.MainPanel
         Layout.__init__(self,*args,**kw)
     

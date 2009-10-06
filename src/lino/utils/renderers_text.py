@@ -25,7 +25,7 @@ import cStringIO
 
 from django.db import models
 
-from lino.django.utils import render
+from lino.utils import render
 from lino.misc.etc import assert_pure
 
 LEFT = "LEFT"
