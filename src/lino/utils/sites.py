@@ -34,12 +34,13 @@ import imp
 import logging
 
 from django.conf import settings
-from timtools.tools.my_import import my_import as import_module
+#from timtools.tools.my_import import my_import as import_module
 #from django.contrib.admin.sites import AdminSite
 from django import template 
 from django.views.decorators.cache import never_cache 
+from django.db import models
 #from django.shortcuts import render_to_response 
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
 
 
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -54,9 +55,10 @@ from django.http import HttpResponse,HttpResponseRedirect, Http404
 from django.template import RequestContext, Context, loader
 from django.utils.http import urlquote, base36_to_int
 from django.utils.translation import ugettext as _
-from django.contrib.auth.models import User
 
 from django.conf.urls.defaults import patterns, url, include
+#auth = models.get_app('auth')
+from django.contrib.auth import models as auth
 
 from django import forms
 from django.contrib.auth.tokens import default_token_generator
@@ -64,6 +66,13 @@ from django.core.mail import send_mail
 from django.utils.http import int_to_base36
 
 from django.utils.safestring import mark_safe
+
+from django.db.models import loading
+def db_apps():
+    for a in loading.get_apps():
+        yield a.__name__.split('.')[-2]
+
+
 
 from . import perms
 from . import menus
@@ -77,7 +86,7 @@ class PasswordResetForm(forms.Form):
         Validates that a user exists with the given e-mail address.
         """
         email = self.cleaned_data["email"]
-        self.users_cache = User.objects.filter(email__iexact=email)
+        self.users_cache = auth.User.objects.filter(email__iexact=email)
         if len(self.users_cache) == 0:
             raise forms.ValidationError(_("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
         return email
@@ -94,7 +103,7 @@ class PasswordResetForm(forms.Form):
     #~ if hasattr(mod,'__applabel__'):
         #~ return mod.__applabel__
     #~ return mod.__name__.split('.')[-1]
-
+    
 
 class LinoSite: #(AdminSite):
     #index_template = 'lino/index.html'
@@ -104,6 +113,7 @@ class LinoSite: #(AdminSite):
     help_url = "http://code.google.com/p/lino"
     index_html = "This is the main page."
     title = "Unnamed LinoSite"
+    domain = "www.example.com"
     
   
     def __init__(self,*args,**kw):
@@ -216,7 +226,7 @@ class LinoSite: #(AdminSite):
             from lino.utils import extjs
             comp = extjs.VisibleComponent("index",
                 xtype="panel",
-                html=self.index_html,
+                html=self.index_html.encode('ascii','xmlcharrefreplace'),
                 autoScroll=True,
                 #width=50000,
                 #height=50000,
@@ -369,7 +379,7 @@ class LinoSite: #(AdminSite):
         except ValueError:
             raise Http404
 
-        user = get_object_or_404(User, id=uid_int)
+        user = get_object_or_404(auth.User, id=uid_int)
         context_instance = RequestContext(request)
 
         if token_generator.check_token(user, token):
@@ -457,6 +467,41 @@ class LinoSite: #(AdminSite):
         m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
     
   
+    def fill(self):
+      
+        from django.core.management import call_command
+        from timtools.console import syscon
+        sites = models.get_app('sites')
+              
+        for name,url,version in self.thanks_to():
+            print name,version, "<%s>" % url
+            
+        app_labels = [n for n in db_apps()]
+
+        print "fill.py", app_labels
+        
+        options = dict(interactive=False)
+        if not syscon.confirm("Gonna reset database %s. Are you sure?" 
+            % settings.DATABASE_NAME):
+            return
+        print "reset"
+        if settings.DATABASE_ENGINE == 'sqlite3':
+            if settings.DATABASE_NAME != ':memory:':
+                if os.path.exists(settings.DATABASE_NAME):
+                    os.remove(settings.DATABASE_NAME)
+        else:
+            call_command('reset',*app_labels,**options)
+        #call_command('reset','songs','auth',interactive=False)
+        print "syncdb"
+        call_command('syncdb',**options)
+        #call_command('flush',interactive=False)
+        print "loaddata demo"
+        call_command('loaddata','demo')
+        auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
+        auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
+        sites.Site(id=2,domain=self.domain,name=self.title).save()
+            
+
   
   
 #~ class Skin:

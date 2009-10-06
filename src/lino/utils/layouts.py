@@ -135,10 +135,12 @@ class Layout:
             meth = get_unbound_meth(self.report.model,name)
             if meth is not None:
                 e = extjs.MethodElement(self,name,meth,**kw)
+                assert e.field is not None,"e.field is None for %s.%s" % (self,name)
                 self._store_fields.append(e.field)
                 return e
         else:
             e = extjs.field2elem(self,field,**kw)
+            assert e.field is not None,"e.field is None for %s.%s" % (self,name)
             self._store_fields.append(e.field)
             return e
             #return FieldElement(self,field,**kw)

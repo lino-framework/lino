@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre.
+## Copyright 2009 Luc Saffre.
 ## This file is part of the Lino project. 
 
 ## Lino is free software; you can redistribute it and/or modify it
@@ -15,28 +15,33 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import logging
 import datetime
 from django.db import models
+from lino.apps import fields
 
+#~ contacts = models.get_app('contacts')
+#~ logging.debug(contacts.__file__)
 
-class Country(models.Model):
+class Project(models.Model):
     name = models.CharField(max_length=200)
-    isocode = models.CharField(max_length=2,primary_key=True)
-    
-    class Meta:
-        verbose_name_plural = "Countries"
+    contact = models.ForeignKey("contacts.Contact",blank=True,null=True)
+    started = fields.MyDateField() 
+    stopped = fields.MyDateField() 
     
     def __unicode__(self):
         return self.name
         
  
     
-class Language(models.Model):
-    id = models.CharField(max_length=2,primary_key=True)
-    name = models.CharField(max_length=200)
+class Note(models.Model):
+    project = models.ForeignKey(Project,blank=True,null=True)
+    contact = models.ForeignKey('contacts.Contact',blank=True,null=True)
+    short = models.CharField(max_length=200,blank=True,null=True)
+    date = fields.MyDateField() 
     
     def __unicode__(self):
-        return self.name
+        return self.short
 
 ##
 ## report definitions
@@ -44,12 +49,19 @@ class Language(models.Model):
         
 from lino.utils import reports
 
-class Countries(reports.Report):
-    model = Country
-    order_by = "isocode"
-    columnNames = "isocode name"
+class Projects(reports.Report):
+    model = Project
+    order_by = "name"
     
-class Languages(reports.Report):
-    model = Language
-    order_by = "id"
+class ProjectsByContact(Projects):
+    master = contacts.Contact  
+    order_by = "started"
+    
+class Notes(reports.Report):
+    model = Note
 
+class NotesByContact(Notes):
+    master = contacts.Contact  
+    
+class NotesByProject(Notes):
+    master = Project

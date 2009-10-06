@@ -342,9 +342,12 @@ class Store(Component):
         fields = set()
         #~ for layout in layouts:
         for fld in layout._store_fields:
+            assert fld is not None, "%s"
             fields.add(fld)
                   
         self.pk = self.report.model._meta.pk
+        assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
+          self.report.name,self.report.model)
         
         if not self.pk in fields:
             fields.add(self.pk)
