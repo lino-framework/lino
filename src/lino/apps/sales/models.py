@@ -46,15 +46,16 @@ from lino.apps.journals import models as journals
 from lino.apps.ledger import models as ledger
 from lino.apps.products import models as products
 
-class Customer(contacts.Contact):
-    paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
-    vatExempt = models.BooleanField(default=False)
-    itemVat = models.BooleanField(default=False)
+#~ class Customer(contacts.Contact):
+    #~ paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
+    #~ vatExempt = models.BooleanField(default=False)
+    #~ itemVat = models.BooleanField(default=False)
     
-    @classmethod
-    def from_parent(cls,*args,**kw):
-        return child_from_parent(cls,*args,**kw)
+    #~ @classmethod
+    #~ def from_parent(cls,*args,**kw):
+        #~ return child_from_parent(cls,*args,**kw)
   
+
 
 class InvoicingMode(models.Model):
     CHANNEL_CHOICES = (
@@ -81,23 +82,6 @@ class InvoicingMode(models.Model):
         
     
     
-class PaymentTerm(models.Model):
-    name = models.CharField(max_length=200)
-    days = models.IntegerField(default=0)
-    months = models.IntegerField(default=0)
-    #proforma = models.BooleanField(default=False)
-    
-    def __unicode__(self):
-        return self.name
-        
-    def get_due_date(self,date1):
-        assert isinstance(date1,datetime.date), \
-          "%s is not a date" % date1
-        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
-        d = date1 + relativedelta(months=self.months,days=self.days)
-        return d
-
-
 class ShippingMode(models.Model):
     name = models.CharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
@@ -112,7 +96,7 @@ class SalesRule(models.Model):
     journal = journals.JournalRef(blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
-    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    payment_term = models.ForeignKey(contacts.PaymentTerm,blank=True,null=True)
     
     def __unicode__(self):
         return u"SalesRule %d" % (self.id)
@@ -125,14 +109,15 @@ def get_sales_rule(doc):
 class SalesDocument(journals.AbstractDocument):
     
     creation_date = fields.MyDateField() #auto_now_add=True)
-    customer = models.ForeignKey(Customer,
+    customer = models.ForeignKey(contacts.Partner,
         related_name="customer_%(class)s")
-    ship_to = models.ForeignKey(Customer,blank=True,null=True,
+    ship_to = models.ForeignKey(contacts.Partner,
+        blank=True,null=True,
         related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
     imode = models.ForeignKey(InvoicingMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
-    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    payment_term = models.ForeignKey(contacts.PaymentTerm,blank=True,null=True)
     sales_remark = models.CharField("Remark for sales",
       max_length=200,blank=True)
     subject = models.CharField("Subject line",max_length=200,blank=True)
@@ -406,12 +391,7 @@ from lino.utils import perms
 
 #from lino.plugins.countries import Languages
 
-class PaymentTerms(reports.Report):
-    model = PaymentTerm
-    order_by = "id"
-    can_view = perms.is_staff
-    #~ def can_view(self,request):
-      #~ return request.user.is_staff
+
 
 class ShippingModes(reports.Report):
     model = ShippingMode
@@ -425,14 +405,6 @@ class InvoicingModes(reports.Report):
     order_by = "id"
     can_view = perms.is_staff
     
-class CustomerPageLayout(contacts.ContactPageLayout):
-    
-    box7 = """vatId
-              vatExempt itemVat 
-              language
-              paymentTerm"""
-    
-
     
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
@@ -606,17 +578,19 @@ class ItemsByDocument(reports.Report):
 
 
 
-class DocumentsByCustomerTabLayout(contacts.ContactPageLayout):
-    label = "Documents"
+class DocumentsByPartnerDetail(layouts.PageLayout):
+    label = "Sales"
     main = """
-            box1
-            DocumentsByCustomer
+            company person
+            DocumentsByPartner
             """
+contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
+            
 
-class DocumentsByCustomer(SalesDocuments):
+class DocumentsByPartner(SalesDocuments):
     columnNames = "journal:4 number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
-    master = Customer
+    master = contacts.Partner
     fk_name = 'customer'
     order_by = "creation_date"
 
@@ -626,12 +600,10 @@ class DocumentsByCustomer(SalesDocuments):
         
 
 
-class Customers(contacts.Contacts):
-    model = Customer
-    page_layouts = (CustomerPageLayout,DocumentsByCustomerTabLayout)
+#~ class Customers(contacts.Contacts):
+    #~ model = Customer
+    #~ page_layouts = (PartnerPageLayout,DocumentsByCustomerTabLayout)
     
-    #~ def inlines(self):
-        #~ return dict(documents=DocumentsByCustomer())
         
 journals.register_doctype(Order,OrdersByJournal)
 journals.register_doctype(Invoice,InvoicesByJournal)

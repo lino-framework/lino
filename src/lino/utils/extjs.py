@@ -270,7 +270,7 @@ class StoreField:
         d[self.field.name] = getattr(obj,self.field.name)
     def update_from_form(self,instance,values):
         v = values.get(self.field.name)
-        if v == '':
+        if v == '' and self.field.null:
             v = None
         setattr(instance,self.field.name,v)
         
@@ -302,6 +302,8 @@ class OneToOneStoreField(StoreField):
     def update_from_form(self,instance,values):
         #v = values.get(self.field.name,None)
         v = values.get(self.field.name)
+        if v == '' and self.field.null:
+            v = None
         if v is not None:
             v = self.field.rel.to.objects.get(pk=v)
         setattr(instance,self.field.name,v)
@@ -318,12 +320,6 @@ class OneToOneStoreField(StoreField):
         
 
 class ForeignKeyStoreField(StoreField):
-    #~ def __init__(self,field,model,**kw):
-        #~ StoreField.__init__(self,field,**kw)
-        #~ self.model = model
-    #~ def __init__(self,field,**kw):
-        #~ StoreField.__init__(self,field,**kw)
-        #~ self.model = field.rel.to
         
     def as_js(self):
         s = StoreField.as_js(self)
@@ -335,6 +331,8 @@ class ForeignKeyStoreField(StoreField):
         #v = values.get(self.field.name+"Hidden",None)
         v = values.get(self.field.name+"Hidden")
         #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
+        if v == '' and self.field.null:
+            v = None
         if v is not None:
         #if len(v):
             try:
@@ -973,6 +971,7 @@ class Container(LayoutElement):
     # ExtJS options
     frame = True
     labelAlign = 'top'
+    #labelAlign = 'left'
     
     def __init__(self,layout,name,*elements,**kw):
         LayoutElement.__init__(self,layout,name,**kw)
@@ -1738,7 +1737,9 @@ function grid_action(grid,name,url) {
           // console.log('got response:',result);
           if(result.success) {
             if (result.msg) Ext.MessageBox.alert('success',result.msg);
-            if (result.html) Ext.Window({html:result.html}).show();
+            if (result.html) { new Ext.Window({html:result.html}).show(); };
+            if (result.window) { new Ext.Window(result.window).show(); };
+            if (result.redirect) { window.open(result.redirect); };
             if (result.must_reload) grid.getStore().load(); 
           } else {
             if(result.confirm) Ext.Msg.show({

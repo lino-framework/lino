@@ -15,6 +15,9 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import datetime
+from dateutil.relativedelta import relativedelta
+
 from django.db import models
 from django.utils.safestring import mark_safe
 
@@ -24,50 +27,115 @@ from lino.apps.countries import models as countries
 #__app_label__ = "contacts"
 
 
+#~ class Contact(models.Model):
+    #~ """
+    
+#~ Company and/or Person contact data, linked with client account and
+#~ choosable for invoicing regarding particular order (if wanting other
+#~ invoice to than client default contact). If CompanyName field is
+#~ filled, contact record will be presented as CompanyName in contacts
+#~ listing - otherwise as Person First- and Lastname.
+    
+#~ # Examples:
+#~ >>> p=Contact.objects.create(lastName="Saffre",firstName="Luc")
+#~ >>> unicode(p)
+#~ u'Luc Saffre'
+#~ >>> p=Contact.objects.create(lastName="Saffre", firstName="Luc", title="Mr.")
+#~ >>> unicode(p)
+#~ u'Luc Saffre'
+#~ >>> p=Contact.objects.create(lastName="Saffre", title="Mr.")
+#~ >>> unicode(p)
+#~ u'Mr. Saffre'
+#~ >>> p=Contact.objects.create(firstName="Luc")
+#~ >>> unicode(p)
+#~ u'Luc'
+#~ >>> p=Contact.objects.create(lastName="Saffre",firstName="Luc", companyName="Example & Co")
+#~ >>> unicode(p)
+#~ u'Example & Co (Luc Saffre)'
+    
+    #~ """
+    
+    #~ #name = models.CharField(max_length=200)
+    #~ companyName = models.CharField(max_length=200,blank=True)
+    #~ nationalId = models.CharField(max_length=200,blank=True)
+    #~ vatId = models.CharField(max_length=200,blank=True)
+    
+    #~ addr1 = models.CharField(max_length=200,blank=True)
+    #~ addr2 = models.CharField(max_length=200,blank=True)
+    #~ country = models.ForeignKey(countries.Country,blank=True,null=True)
+    #~ #city = models.ForeignKey("City",blank=True,null=True)
+    #~ city = models.CharField(max_length=200,blank=True)
+    #~ zipCode = models.CharField(max_length=10,blank=True)
+    #~ region = models.CharField(max_length=200,blank=True)
+    #~ language = models.ForeignKey(countries.Language,blank=True,null=True)
+    
+    #~ email = models.EmailField(blank=True)
+    #~ url = models.URLField(blank=True)
+    #~ phone = models.CharField(max_length=200,blank=True)
+    #~ gsm = models.CharField(max_length=200,blank=True)
+    #~ #image = models.ImageField(blank=True,null=True,
+    #~ # upload_to=".")
+    
+    #~ remarks = models.TextField(blank=True)
+    #~ ordering = ("companyName","lastName","firstName")
+    
+    #~ def __unicode__(self):
+        #~ if self.title and not self.firstName:
+            #~ l = filter(lambda x:x,[self.title,self.lastName])
+        #~ else:
+            #~ l = filter(lambda x:x,[self.firstName,self.lastName])
+
+        #~ s = " ".join(l)
+            
+        #~ if self.companyName:
+            #~ if len(s) > 0:
+                #~ return self.companyName + " (" + s + ")"
+            #~ else:
+                #~ return self.companyName
+        #~ else:
+            #~ return s
+            
+    #~ def as_address(self,linesep="\n<br/>"):
+        #~ l = filter(lambda x:x,[self.title,self.firstName,self.lastName])
+        #~ s = " ".join(l)
+        #~ if self.companyName:
+            #~ s=self.companyName+linesep+s
+        #~ if self.addr1:
+          #~ s += linesep+self.addr1
+        #~ if self.addr2:
+          #~ s += linesep+self.addr2
+        #~ if self.city:
+          #~ s += linesep+self.city
+        #~ if self.zipCode:
+          #~ s += linesep+self.zipCode
+          #~ if self.region:
+            #~ s += " " + self.region
+        #~ elif self.region:
+            #~ s += linesep+ self.region
+        #~ if self.id == 1:
+            #~ foreigner = False
+        #~ else:
+            #~ foreigner = (self.country != Contact.objects.get(id=1).country)
+        #~ if foreigner: # (if self.country != sender's country)
+            #~ s += linesep + unicode(self.country)
+        #~ return mark_safe(s)
+        #~ #as_address.allow_tags=True
+
 class Contact(models.Model):
-    """
-    
-Company and/or Person contact data, linked with client account and
-choosable for invoicing regarding particular order (if wanting other
-invoice to than client default contact). If CompanyName field is
-filled, contact record will be presented as CompanyName in contacts
-listing - otherwise as Person First- and Lastname.
-    
-# Examples:
->>> p=Contact.objects.create(lastName="Saffre",firstName="Luc")
->>> unicode(p)
-u'Luc Saffre'
->>> p=Contact.objects.create(lastName="Saffre", firstName="Luc", title="Mr.")
->>> unicode(p)
-u'Luc Saffre'
->>> p=Contact.objects.create(lastName="Saffre", title="Mr.")
->>> unicode(p)
-u'Mr. Saffre'
->>> p=Contact.objects.create(firstName="Luc")
->>> unicode(p)
-u'Luc'
->>> p=Contact.objects.create(lastName="Saffre",firstName="Luc", companyName="Example & Co")
->>> unicode(p)
-u'Example & Co (Luc Saffre)'
-    
-    """
-    #name = models.CharField(max_length=200)
-    firstName = models.CharField(max_length=200,blank=True)
-    lastName = models.CharField(max_length=200,blank=True)
-    title = models.CharField(max_length=200,blank=True)
-    
-    companyName = models.CharField(max_length=200,blank=True)
-    nationalId = models.CharField(max_length=200,blank=True)
-    vatId = models.CharField(max_length=200,blank=True)
-    
+  
+    class Meta:
+        abstract = True
+        
+    name = models.CharField(max_length=200)
+    national_id = models.CharField(max_length=200,blank=True)
     addr1 = models.CharField(max_length=200,blank=True)
     addr2 = models.CharField(max_length=200,blank=True)
-    country = models.ForeignKey(countries.Country,blank=True,null=True)
+    country = models.ForeignKey('countries.Country',blank=True,null=True)
     #city = models.ForeignKey("City",blank=True,null=True)
     city = models.CharField(max_length=200,blank=True)
-    zipCode = models.CharField(max_length=10,blank=True)
+    zip_code = models.CharField(max_length=10,blank=True)
     region = models.CharField(max_length=200,blank=True)
-    language = models.ForeignKey(countries.Language,blank=True,null=True)
+    language = models.ForeignKey('countries.Language',blank=True,null=True)
     
     email = models.EmailField(blank=True)
     url = models.URLField(blank=True)
@@ -77,33 +145,13 @@ u'Example & Co (Luc Saffre)'
     # upload_to=".")
     
     remarks = models.TextField(blank=True)
-    ordering = ("companyName","lastName","firstName")
     
     def __unicode__(self):
-        if self.title and not self.firstName:
-            l = filter(lambda x:x,[self.title,self.lastName])
-        else:
-            l = filter(lambda x:x,[self.firstName,self.lastName])
-
-        s = " ".join(l)
-            
-        if self.companyName:
-            if len(s) > 0:
-                return self.companyName + " (" + s + ")"
-            else:
-                return self.companyName
-        else:
-            return s
-            
+        return self.name
+        
     def as_address(self,linesep="\n<br/>"):
-        l = filter(lambda x:x,[self.title,self.firstName,self.lastName])
-        s = " ".join(l)
-        if self.companyName:
-            s=self.companyName+linesep+s
-        if self.addr1:
-          s += linesep+self.addr1
-        if self.addr2:
-          s += linesep+self.addr2
+        l = filter(lambda x:x,[self.name,self.addr1,self.addr2])
+        s = linesep.join(l)
         if self.city:
           s += linesep+self.city
         if self.zipCode:
@@ -111,7 +159,7 @@ u'Example & Co (Luc Saffre)'
           if self.region:
             s += " " + self.region
         elif self.region:
-            s += linesep+ self.region
+            s += linesep + self.region
         if self.id == 1:
             foreigner = False
         else:
@@ -119,7 +167,64 @@ u'Example & Co (Luc Saffre)'
         if foreigner: # (if self.country != sender's country)
             s += linesep + unicode(self.country)
         return mark_safe(s)
-        #as_address.allow_tags=True
+    
+ 
+
+class Company(Contact):
+    vat_id = models.CharField(max_length=200,blank=True)
+    
+    def as_address(self,linesep="\n<br/>"):
+        s = Contact.as_address(self,linesep)
+        return self.name + linesep + s
+    
+    
+class Person(Contact):    
+    first_name = models.CharField(max_length=200,blank=True)
+    last_name = models.CharField(max_length=200,blank=True)
+    title = models.CharField(max_length=200,blank=True)
+    
+    def save(self,*args,**kw):
+        self.before_save()
+        r = super(Contact,self).save(*args,**kw)
+        return r
+        
+    def before_save(self):
+        if not self.name:
+            l = filter(lambda x:x,[self.title,self.first_name,self.last_name])
+            self.name = " ".join(l)
+
+        
+class Partner(models.Model):
+    name = models.CharField("Searchname",max_length=30)
+    company = models.ForeignKey(Company,blank=True,null=True)
+    person = models.ForeignKey(Person,blank=True,null=True)
+    payment_term = models.ForeignKey("PaymentTerm",blank=True,null=True)
+    vat_exempt = models.BooleanField(default=False)
+    item_vat = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        if self.company:
+            return unicode(self.company)
+        return unicode(self.person)
+
+class PaymentTerm(models.Model):
+    name = models.CharField(max_length=200)
+    days = models.IntegerField(default=0)
+    months = models.IntegerField(default=0)
+    #proforma = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.name
+        
+    def get_due_date(self,date1):
+        assert isinstance(date1,datetime.date), \
+          "%s is not a date" % date1
+        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
+        d = date1 + relativedelta(months=self.months,days=self.days)
+        return d
+
+
+
 
 
 ##
@@ -137,76 +242,139 @@ from lino.utils import perms
 class ContactPageLayout(layouts.PageLayout):
     #frame = False
     
-    box1 = """
-              title:10 firstName:15 lastName
-              companyName nationalId:12 id
-              """
-    box2 = """email:40 
-              url"""
-    box3 = """phone
-              gsm"""
-    box4 = """country region
-              city zipCode:10
+    box3 = """country region
+              city zip_code:10
               addr1:40
               addr2
               """
-    box7 = """vatId:15
+    box4 = """email:40 
+              url
+              phone
+              gsm
+              """
+    box7 = """national_id:15
               language
               """
+    main = """box1 box7
+              box3 box4
+              remarks:60x6
+              """
+       
+class PersonPageLayout(ContactPageLayout):
+    box1 = "last_name first_name:15 title:10"
+class CompanyPageLayout(ContactPageLayout):
+    box1 = "name vat_id:12"
+              
+class PartnerPageLayout(layouts.PageLayout):
     main = """
-            box1
-            box2 box3
-            box4 box7
-            remarks:60x6
-            """
+           company person
+           payment_term 
+           vat_exempt item_vat
+           """
+
             
-    #~ def documents(self):
-        #~ return DocumentsByCustomer()
-            
-class Contacts(reports.Report):
-    page_layouts = (ContactPageLayout,)
-    columnNames = "id:3 companyName firstName lastName title country"
+class Persons(reports.Report):
+    #label = "Personen"
+    #page_layouts = (PersonPageLayout,ProjectsByPersonPage)
+    columnNames = "first_name last_name title country id"
     can_delete = True
-    model = Contact
-    order_by = "id"
+    model = Person
+    order_by = "name"
     #can_view = perms.is_authenticated
 
         
-class Companies(Contacts):
-    #queryset=Contact.objects.order_by("companyName")
-    columnNames = "companyName country title firstName lastName"
-    exclude = dict(companyName__exact='')
-    order_by = "companyName"
+class Companies(reports.Report):
+    #label = "Companies"
+    #page_layouts = (CompanyPageLayout,ProjectsByCompanyPage)
+    columnNames = "name country id"
+    model = Company
+    order_by = "name"
     #~ queryset = Contact.objects.exclude(companyName__exact=None)\
       #~ .order_by("companyName")
     
+class Partners(reports.Report):
+    page_layouts = (PartnerPageLayout,)
+    columnNames = "company person payment_term vat_exempt item_vat"
+    can_delete = True
+    model = Partner
+    order_by = "id"
+    #can_view = perms.is_authenticated
 
-class Persons(Contacts):
-    filter = dict(companyName__exact='')
-    order_by = "lastName firstName"
-    columnNames = "title firstName lastName country id"
-    
+
+class PaymentTerms(reports.Report):
+    model = PaymentTerm
+    order_by = "id"
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
 
 
-class ContactsByCountry(Contacts):
-    model = Contact
+class PersonsByCountry(reports.Report):
+    model = Person # Contact
     master = countries.Country
     order_by = "city addr1"
+    columnNames = "city addr1 name"
     
-class CountryAndContactsPage(layouts.PageLayout):
-    label = "Contacts by Country"
+class CompaniesByCountry(PersonsByCountry):
+    model = Company
+    
+class PersonsByCountryPage(layouts.PageLayout):
+    label = "Personen pro Land"
     main = """
     isocode name
-    ContactsByCountry
+    PersonsByCountry
     """
+
+class CompaniesByCountryPage(layouts.PageLayout):
+    label = "Firmen pro Land"
+    main = """
+    isocode name
+    CompaniesByCountry
+    """
+
+countries.Countries.register_page_layout(CompaniesByCountryPage,PersonsByCountryPage)
+
+            
+#~ class Contacts(reports.Report):
+    #~ page_layouts = (ContactPageLayout,)
+    #~ columnNames = "id:3 companyName firstName lastName title country"
+    #~ can_delete = True
+    #~ model = Contact
+    #~ order_by = "id"
+    #~ #can_view = perms.is_authenticated
+
+        
+#~ class Companies(Contacts):
+    #~ #queryset=Contact.objects.order_by("companyName")
+    #~ columnNames = "companyName country title firstName lastName"
+    #~ exclude = dict(companyName__exact='')
+    #~ order_by = "companyName"
     
+
+#~ class Persons(Contacts):
+    #~ filter = dict(companyName__exact='')
+    #~ order_by = "lastName firstName"
+    #~ columnNames = "title firstName lastName country id"
     
-    #~ def slaves(self):
-        #~ return dict(contacts = ContactsByCountry)
 
 
-class Countries(countries.Countries):
-    page_layouts = (layouts.PageLayout,CountryAndContactsPage)
+#~ class ContactsByCountry(Contacts):
+    #~ model = Contact
+    #~ master = countries.Country
+    #~ order_by = "city addr1"
+    
+#~ class CountryAndContactsPage(layouts.PageLayout):
+    #~ label = "Contacts by Country"
+    #~ main = """
+    #~ isocode name
+    #~ ContactsByCountry
+    #~ """
+    
+    
+
+
+#~ class Countries(countries.Countries):
+    #~ page_layouts = (layouts.PageLayout,CountryAndContactsPage)
     
   
 

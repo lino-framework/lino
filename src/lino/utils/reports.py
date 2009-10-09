@@ -97,13 +97,15 @@ DELETE = Hotkey(keycode=46)
 class ActionEvent(Exception):
     pass
     
-class MustConfirm(ActionEvent):
-    pass
+#~ class MustConfirm(ActionEvent):
+    #~ pass
     
 class Action:
     label = None
     name = None
     key = None
+    needs_selection = True
+    
     def __init__(self,report):
         if self.label is None:
             self.label = self.__class__.__name__
@@ -114,18 +116,23 @@ class Action:
         
     def get_response(self,rptreq):
         context = ActionContext(self,rptreq)
-        try:
-            self.run(context)
-            #~ if msg is None:
-                #~ msg = "Completed"
-            #~ d = dict(success=True,msg=msg)
-        except ActionEvent,e:
-            pass
-        except Exception,e:
-            traceback.print_exc(e)
-            context._response.update(msg=str(e),success=False)
-            #d = dict(success=False,msg=str(e))
-        #d.update(must_reload=context.must_reload)
+        if self.needs_selection and len(context.selected_rows) == 0:
+            context._response.update(
+              msg="No selection. Nothing to do.",
+              success=False)
+        else:
+            try:
+                self.run(context)
+                #~ if msg is None:
+                    #~ msg = "Completed"
+                #~ d = dict(success=True,msg=msg)
+            except ActionEvent,e:
+                pass
+            except Exception,e:
+                traceback.print_exc(e)
+                context._response.update(msg=str(e),success=False)
+                #d = dict(success=False,msg=str(e))
+            #d.update(must_reload=context.must_reload)
         return context._response
         #return extjs.json_response(**context._response)
         #~ s = simplejson.dumps(context._response,default=unicode)
@@ -137,14 +144,14 @@ class Action:
         
 class ActionContext:
     def __init__(self,action,rptreq):
-        #self.request = request
-        selected = rptreq.request.POST.get('selected',None)
+        self.request = rptreq.request
+        selected = self.request.POST.get('selected',None)
         if selected:
             self.selected_rows = [
               action.report.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
         else:
             self.selected_rows = []
-        self.confirmed = rptreq.request.POST.get('confirmed',None)
+        self.confirmed = self.request.POST.get('confirmed',None)
         if self.confirmed is not None:
             self.confirmed = int(self.confirmed)
         self.confirms = 0
@@ -153,6 +160,9 @@ class ActionContext:
         
     def refresh(self):
         self._response.update(must_reload=True)
+        
+    def redirect(self,url):
+        self._response.update(redirect=url)
         
     def setmsg(self,msg=None):
         if msg is not None:
@@ -174,10 +184,12 @@ class ActionContext:
 class DeleteSelected(Action):
     label = "Delete"
     key = DELETE # (ctrl=True)
+    
     def run(self,context):
-        if len(context.selected_rows) == 0:
-            return "No rows selected. Nothing to do."
-        context.confirm("Delete %d rows. Are you sure?" % len(context.selected_rows))
+        if len(context.selected_rows) == 1:
+            context.confirm("Delete row %s. Are you sure?" % context.selected_rows[0])
+        else:
+            context.confirm("Delete %d rows. Are you sure?" % len(context.selected_rows))
         for row in context.selected_rows:
             #print "DELETE:", row
             row.delete()
@@ -596,6 +608,10 @@ class Report:
         from . import renderers_text 
         r = renderers_text.TextReportRequest(self,*args,**kw)
         return r.render()
+        
+    @classmethod
+    def register_page_layout(cls,*layouts):
+        cls.page_layouts = tuple(cls.page_layouts) + layouts
         
     #~ def as_ext(self):
         #~ self.setup()

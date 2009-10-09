@@ -17,58 +17,122 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from lino.apps.contacts.models import *
+from lino.apps.contacts import models as contacts
 from lino.utils.instantiator import Instantiator
 
-contact = Instantiator(Contact,fieldnames="""
-      id
-      firstName
-      lastName
-      title
-      companyName
-      nationalId
-      vatId
-      addr1
-      addr2
-      country
-      city
-      zipCode
-      region
-      email
-      url
-      phone
-      gsm
-      language
-      remarks
-    """).build
-    
+#~ person = Instantiator(contacts.Person,fieldnames="""
+      #~ id
+      #~ first_name
+      #~ last_name
+      #~ title
+      #~ company_name
+      #~ national_id
+      #~ vatId
+      #~ addr1
+      #~ addr2
+      #~ country
+      #~ city
+      #~ zipCode
+      #~ region
+      #~ email
+      #~ url
+      #~ phone
+      #~ gsm
+      #~ language
+      #~ remarks
+    #~ """).build
+
+#~ company = Instantiator(contacts.Company,fieldnames="""
+      #~ id
+      #~ company_name
+      #~ national_id
+      #~ vatId
+      #~ addr1
+      #~ addr2
+      #~ country
+      #~ city
+      #~ zipCode
+      #~ region
+      #~ email
+      #~ url
+      #~ phone
+      #~ gsm
+      #~ language
+      #~ remarks
+    #~ """).build
+
+#~ partner = Instantiator(contacts.Partner).build
    
 
 
 def objects():
-    s = u"""    
-    1||||Minu Firma OÜ|||||ee||||||||et|2|
-    2|Luc|Saffre|Mr.||||Rummajaani talu|Vana-Vigala küla|ee|Vigala vald|78003|Raplamaa|luc.saffre@gmx.net||||et|
-    3|Andreas|Arens|Herrn||||Vervierser Straße 12||be|Eupen|4700||||||de|
-    4|Alfons|Ausdemwald|Herrn|Bäckerei Ausdemwald|||Vervierser Straße 45||be|Eupen|4700||||||de|
-    5|Bernard|Bodard|Dr.||||rue de la Loi 17||be|Welkenraedt|4840||||||fr|
-    6||||Donderweer bv|||Wolfgangamadeusplaats 1-5||nl|Sneek|8601 WB||||||nl|
-    7|Jean|Dupont|Mr||||71, rue Neuve||fr|Prouvy|59121||||||fr|
-    8|Emil|Eierschal|Herrn||||Eichenstr. 7||de|Erlangen|91056||||||de|
-    9|Lisa|Lahm|Frau|Hans Flott & Co|||Dürener Str. 264-266||de|Aachen|52007||||||de|
-    10|Bernd|Brecht|Herr|Bernd Brecht|||Eupener Str. 13||de|Aachen|52007||||||de|
-    11|Jérôme|Jeanémart|Monsieur||||rue Haute||be|Welkenradt|4850||||||fr|
-    12|Robin|Dubois|Monsieur||||rue des prés 5||be|Welkenradt|4850||||||fr|
-    13|Denis|Duprez|Dr.||||rue des prés 9||be|Welkenradt|4850||||||fr|
-    14|Karl|Keller|Herrn||||Bergstraße 5||be|Eupen|4700||||||de|
-    100|Tõnu|Tamme||Mets ja Puu OÜ|||Sibula tee 1||ee|Maardu|74117|Harju|||||et|
-    101|Karl|Kask|||||Nõmme tee 1|Kloogaranna küla|ee|Keila vald|76708|Harju|||||et|
-    """
+    company = Instantiator(contacts.Company,country='ee',language='et').build
+    yield company(name=u'Minu Firma OÜ')
+    yield company(name=u'Mets ja Puu OÜ')
+    
+    company = Instantiator(contacts.Company,country='be',language='de').build
+    yield company(name=u'Bäckerei Ausdemwald',addr1=u'Vervierser Straße 45',city='Eupen',zip_code='4700')
+    
+    company = Instantiator(contacts.Company,country='nl',language='nl').build
+    yield company(name=u'Donderweer bv')
+    
+    company = Instantiator(contacts.Company,country='de',language='de').build
+    yield company(name=u'Hans Flott & Co')
+    yield company(name=u'Bernd Brechts Bücherladen')
+    
+    person = Instantiator(contacts.Person).build
+    yield person(first_name=u'Luc',last_name=u'Saffre')
+    yield person(first_name=u'Andreas',last_name=u'Arens')
+    yield person(first_name=u'Alfons',last_name=u'Ausdemwald')
+    yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
+    yield person(first_name=u'Jean',last_name=u'Dupont')
+    yield person(first_name=u'Emil',last_name=u'Eierschal')
+    yield person(first_name=u'Lisa',last_name=u'Lahm')
+    yield person(first_name=u'Bernd',last_name=u'Brecht')
+    yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
+    yield person(first_name=u'Robin',last_name=u'Dubois')
+    yield person(first_name=u'Denis',last_name=u'Duprez')
+    yield person(first_name=u'Karl',last_name=u'Keller')
+    yield person(first_name=u'Tõnu',last_name=u'Tamm')
+    yield person(first_name=u'Karl',last_name=u'Kask')
+    
+    partner = Instantiator(contacts.Partner).build
+    
+    for c in contacts.Company.objects.all():
+        yield partner(company=c.pk)
+        
+    for p in contacts.Person.objects.all():
+        yield partner(person=p.pk)
+    
+    
+    paymentterm = Instantiator(contacts.PaymentTerm,"name").build
+    yield paymentterm("Cash")
+    yield paymentterm("7 days net",days=7)
+    yield paymentterm("Prepayment",days=7)
 
-    for line in s.splitlines():
-        if len(line.strip()) > 0:
-            a = line.split('|')
-            ct = contact(*a)
-            yield ct
+    #~ s = u"""    
+    #~ 1||||Minu Firma OÜ|||||ee||||||||et|2|
+    #~ 2|Luc|Saffre|Mr.||||Rummajaani talu|Vana-Vigala küla|ee|Vigala vald|78003|Raplamaa|luc.saffre@gmx.net||||et|
+    #~ 3|Andreas|Arens|Herrn||||Vervierser Straße 12||be|Eupen|4700||||||de|
+    #~ 4|Alfons|Ausdemwald|Herrn|Bäckerei Ausdemwald|||Vervierser Straße 45||be|Eupen|4700||||||de|
+    #~ 5|Bernard|Bodard|Dr.||||rue de la Loi 17||be|Welkenraedt|4840||||||fr|
+    #~ 6||||Donderweer bv|||Wolfgangamadeusplaats 1-5||nl|Sneek|8601 WB||||||nl|
+    #~ 7|Jean|Dupont|Mr||||71, rue Neuve||fr|Prouvy|59121||||||fr|
+    #~ 8|Emil|Eierschal|Herrn||||Eichenstr. 7||de|Erlangen|91056||||||de|
+    #~ 9|Lisa|Lahm|Frau|Hans Flott & Co|||Dürener Str. 264-266||de|Aachen|52007||||||de|
+    #~ 10|Bernd|Brecht|Herr|Bernd Brecht|||Eupener Str. 13||de|Aachen|52007||||||de|
+    #~ 11|Jérôme|Jeanémart|Monsieur||||rue Haute||be|Welkenradt|4850||||||fr|
+    #~ 12|Robin|Dubois|Monsieur||||rue des prés 5||be|Welkenradt|4850||||||fr|
+    #~ 13|Denis|Duprez|Dr.||||rue des prés 9||be|Welkenradt|4850||||||fr|
+    #~ 14|Karl|Keller|Herrn||||Bergstraße 5||be|Eupen|4700||||||de|
+    #~ 100|Tõnu|Tamme||Mets ja Puu OÜ|||Sibula tee 1||ee|Maardu|74117|Harju|||||et|
+    #~ 101|Karl|Kask|||||Nõmme tee 1|Kloogaranna küla|ee|Keila vald|76708|Harju|||||et|
+    #~ """
+
+    #~ for line in s.splitlines():
+        #~ if len(line.strip()) > 0:
+            #~ a = line.split('|')
+            #~ ct = contact(*a)
+            #~ yield ct
         
         

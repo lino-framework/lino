@@ -101,12 +101,16 @@ class AbstractDocument(models.Model):
         
     def pdf_root(self):
         return os.path.join(settings.MEDIA_ROOT,"pdf_cache")
-        #return LINO_PDFROOT
+        
+    def pdf_url(self):
+        return settings.MEDIA_URL + "/".join(["pdf_cache",self.pdf_filename()])
+        
+    def pdf_path(self):
+        return os.path.join(self.pdf_root(),self.pdf_filename())
         
     def pdf_filename(self):
-        return os.path.join(self.pdf_root(),
-          self._meta.db_table,
-          str(self.pk))+'.pdf'
+        return self._meta.db_table + "/" + str(self.pk) + '.pdf'
+
         
     def make_pisa_html(self,MEDIA_URL=settings.MEDIA_URL):
         context = dict(
@@ -118,7 +122,7 @@ class AbstractDocument(models.Model):
         return template.render(Context(context))
 
     def make_pdf(self):
-        filename = self.pdf_filename()
+        filename = self.pdf_path()
         if not filename:
             return
         if self.last_modified is not None and os.path.exists(filename):
@@ -159,7 +163,7 @@ class AbstractDocument(models.Model):
             
     def view_pdf(self,request):
         self.make_pdf()
-        s = open(self.pdf_filename()).read()
+        s = open(self.pdf_path()).read()
         return HttpResponse(s,mimetype='application/pdf')
         
     def view_printable(self,request):
@@ -186,15 +190,23 @@ from lino.utils import reports
 class PrintAction(reports.Action):
     label = "Print"
     def run(self,context):
-        row = context.selected_rows[0]
-        context._response.update(html=row.make_pisa_html())
+        row = context.selected_rows[0].get_child_instance()
+        context._response.update(window=dict(
+          title="Printable view",
+          maximizable=True,
+          html=row.make_pisa_html()
+          ))
+        #context._response.update(html=row.make_pisa_html())
         #return row.view_printable(context.request)
 
 class PdfAction(reports.Action):
     label = "PDF"
     def run(self,context):
-        row = context.selected_rows[0]
-        return row.view_pdf(context.request)
+        row = context.selected_rows[0].get_child_instance()
+        row.make_pdf()
+        print "redirect", row.pdf_url()
+        context.redirect(row.pdf_url())
+        #return row.view_pdf(context.request)
 
 
 #~ class Documents(reports.Report):

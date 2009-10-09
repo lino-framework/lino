@@ -130,7 +130,7 @@ class Booking(models.Model):
     pos = models.IntegerField("Position",blank=True,null=True)
     date = fields.MyDateField()
     account = models.ForeignKey(Account)
-    contact = models.ForeignKey(contacts.Contact,blank=True,null=True)
+    partner = models.ForeignKey(contacts.Company,blank=True,null=True)
     debit = fields.PriceField(default=0)
     credit = fields.PriceField(default=0)
     
@@ -159,12 +159,3 @@ class Accounts(reports.Report):
     #~ columnNames = journals.Journals.columnNames + " account"
     
 
-def unused_lino_setup(lino):
-    m = lino.add_menu("ledger","~Ledger",
-      can_view=perms.is_authenticated)
-    m.add_action(Accounts())
-        
-    #m.add_action(LedgerJournals())
-    #~ sales = lino.get_app_models('sales')
-    #~ if sales:
-        #~ sales.Invoice = LedgerInvoice

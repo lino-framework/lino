@@ -242,9 +242,8 @@ class AbstractDocument(documents.AbstractDocument):
         return DOCTYPES[self.journal.doctype][0]
         
     def pdf_filename(self):
-        return os.path.join(self.pdf_root(),
-          self.journal.id,
-          str(self.number))+'.pdf'
+        return self.journal.id + "/" + str(self.number) + '.pdf'
+        #return os.path.join(self.journal.id,str(self.number)) + '.pdf'
 
     #~ def get_child_model(self):
         #~ jnl = self.get_journal()

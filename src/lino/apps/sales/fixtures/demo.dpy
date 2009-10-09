@@ -20,60 +20,59 @@
 import time
 from datetime import date
 from dateutil import parser as dateparser
-from lino.apps.sales.models import *
+#from lino.apps.sales.models import *
+#from lino.apps.contacts import models as contacts
 from lino.apps.sales import utils
 from lino.utils.instantiator import Instantiator, i2d
 
-shippingmode = Instantiator(ShippingMode,"name").build
-paymentterm = Instantiator(PaymentTerm,"name").build
-salesrule = Instantiator(SalesRule).build
-customer = Instantiator(Customer).build
+contacts = models.get_app('contacts')
+products = models.get_app('products')
+sales = models.get_app('sales')
 
-imode = Instantiator(InvoicingMode,
+
+shippingmode = Instantiator(sales.ShippingMode,"name").build
+salesrule = Instantiator(sales.SalesRule).build
+#customer = Instantiator(Customer).build
+
+imode = Instantiator(sales.InvoicingMode,
   "id channel name advance_days journal").build
 
 def objects():
     yield shippingmode("cash and carry")
     yield shippingmode("regular mail")
 
-    cash = paymentterm("Cash")
-    yield cash
-    yield paymentterm("7 days net",days=7)
-    yield paymentterm("Prepayment",days=7)
-    
-    for ct in contacts.Contact.objects.all():
-        yield Customer.from_parent(ct)
+    #~ for ct in contacts.Contact.objects.all():
+        #~ yield Customer.from_parent(ct)
     
     #ORD = journals.get_journal_by_docclass(Order)
     #INV = journals.get_journal_by_docclass(Invoice)
         
-    ORD = Order.create_journal("ORD",name="Orders")
+    ORD = sales.Order.create_journal("ORD",name="Orders")
     #ORD = journals.get_journal("ORD")
     #INV = journals.get_journal("INV")
     yield ORD
     #~ INV = Invoice.create_journal("INV",\
       #~ account=ledger.Account.objects.get(pk="4000"))
-    INV = Invoice.create_journal("INV",account="4000",name="Invoices")
+    INV = sales.Invoice.create_journal("INV",account="4000",name="Invoices")
     yield INV
     
     
-    invoice = Instantiator(Invoice,
+    invoice = Instantiator(sales.Invoice,
       "customer creation_date imode payment_term shipping_mode",
       journal=INV).build
 
-    order = Instantiator(Order,
+    order = Instantiator(sales.Order,
     """customer creation_date start_date cycle imode 
     payment_term shipping_mode""",journal=ORD).build
     
     yield imode('e','E','By e-mail',2,INV)
     yield imode('p','P','By snail mail',10,INV)
         
-    salesrule(imode='e',shipping_mode=1,payment_term=2)
-
-    metsjapuu = Customer.objects.get(companyName__startswith="Mets")
-    dubois = Customer.objects.get(lastName__startswith="Dubois")
+    yield salesrule(imode='e',shipping_mode=1,payment_term=2)
     
-    furniture = ProductCat.objects.get(name="Furniture")
+    metsjapuu = contacts.Partner.objects.get(company__name__startswith="Mets")
+    dubois = contacts.Partner.objects.get(person__last_name__startswith="Dubois")
+    furniture = products.ProductCat.objects.get(name="Furniture")
     hosting = 5
     
     o = order(metsjapuu,"2008-09-23","2008-09-24","M","e",2,1,

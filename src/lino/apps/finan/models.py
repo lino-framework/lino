@@ -99,7 +99,7 @@ class DocItem(models.Model):
     credit = fields.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey(ledger.Account)
-    contact = models.ForeignKey(contacts.Contact,blank=True,null=True)
+    contact = models.ForeignKey(contacts.Partner,blank=True,null=True)
     
     def save(self,*args,**kw):
         if self.pos is None:
