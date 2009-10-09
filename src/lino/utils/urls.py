@@ -114,11 +114,13 @@ def sorry(request,message=None):
 
 
 def get_report_url(report,master_instance=None,
-        json=False,save=False,action=None,**kw):
-    if json:
-        url = "/json/"
-    elif save:
-        url = "/save/"
+        simple_list=False,submit=False,grid_afteredit=False,action=None,**kw):
+    if simple_list:
+        url = "/list/"
+    elif grid_afteredit:
+        url = "/grid_afteredit/"
+    elif submit:
+        url = "/submit/"
     elif action:
         url = "/action/"
     else:
@@ -157,8 +159,12 @@ def get_urls():
     return patterns('',
         (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
         #(r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
-        (r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
-        (r'^save/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_save),
-        (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', extjs.view_action),
+        #(r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
+        (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.list_report_view),
+        (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', extjs.json_report_view),
+        (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.form_submit_view),
+        (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.grid_afteredit_view),
+        #(r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', extjs.view_action),
+        
     )
 

@@ -15,11 +15,6 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-#__app_label__ = "products"
-
-from dateutil.relativedelta import relativedelta
-ONE_DAY = relativedelta(days=1)
-
 from django.db import models
 from lino.apps import fields
 from lino.apps.journals import models as journals
@@ -33,7 +28,7 @@ class ProductCat(models.Model):
 class Product(models.Model):
     
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True,null=True)
     cat = models.ForeignKey(ProductCat,verbose_name="Category")
     vatExempt = models.BooleanField(default=False)
     price = fields.PriceField(blank=True,null=True)
@@ -47,8 +42,6 @@ class Product(models.Model):
 ## report definitions
 ##        
         
-from django import forms
-
 from lino.utils import reports
 from lino.utils import layouts
 from lino.utils import perms

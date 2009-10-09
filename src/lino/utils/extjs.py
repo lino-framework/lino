@@ -24,6 +24,7 @@ import logging
 from django.db import models
 from django.conf import settings
 from django.http import HttpResponse
+from django.utils import simplejson
 
 #from django.utils.safestring import mark_safe
 #from django.utils.text import capfirst
@@ -91,7 +92,9 @@ def py2js(v,**kw):
         
     if isinstance(v,menus.MenuItem):
         if v.args:
-            handler = "function(btn,evt) {%s(btn,evt,%s);}" % (v.actor.name+"1",",".join([py2js(a) for a in v.args]))
+            handler = "function(btn,evt) {%s(btn,evt,%s);}" % (
+                v.actor.name+"1",
+                ",".join([py2js(a) for a in v.args]))
         else:
             handler = v.actor.name+"1"
         return py2js(dict(text=v.label,handler=js_code(handler)))
@@ -142,7 +145,68 @@ def setup_report(rpt):
         
         
         
-def view_report_as_json(request,app_label=None,rptname=None):
+def grid_afteredit_view(request,**kw):
+    kw['colname'] = request.POST['colname']
+    return json_report_view(request,**kw)
+    
+def form_submit_view(request,**kw):
+    #kw['submit'] = True
+    return json_report_view(request,**kw)
+
+def list_report_view(request,**kw):
+    kw['simple_list'] = True
+    return json_report_view(request,**kw)
+
+def json_report_view(request,app_label=None,rptname=None,action=None,colname=None,simple_list=False):
+    rpt = reports.get_report(app_label,rptname)
+    if rpt is None:
+        return json_response(success=False,
+            msg="%s : no such report" % rptname)
+    if not rpt.can_view.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot view %s : " % (request.user,rptname))
+    rptreq = reports.ViewReportRequest(request,rpt)
+    if action:
+        for a in rpt._actions:
+            if a.name == action:
+                d = a.get_response(rptreq)
+                return json_response(**d)
+        return json_response(
+            success=False,
+            msg="Report %r has no action %r" % (rpt.name,action))
+    if simple_list:
+        d = rptreq.render_to_json()
+        return json_response(**d)
+
+    pk = request.POST.get(rptreq.layout.store.pk.name) #,None)
+    #~ if pk == reports.UNDEFINED:
+        #~ pk = None
+    try:
+        if pk in ('', None):
+            #return json_response(success=False,msg="No primary key was specified")
+            instance = rpt.model()
+        else:
+            instance = rpt.model.objects.get(pk=pk)
+            
+        for f in rptreq.layout.store.fields:
+            if not f.field.primary_key:
+                f.update_from_form(instance,request.POST)
+                    
+        instance.save()
+        return json_response(success=True,
+              msg="%s has been saved" % instance)
+    except Exception,e:
+        traceback.print_exc(e)
+        return json_response(success=False,msg="Exception occured: "+str(e))
+    
+def json_response(**kw):
+    s = simplejson.dumps(kw,default=unicode)
+    #return HttpResponse(s, mimetype='text/html')
+    #s = py2js(kw)
+    #print "json_response()", s
+    return HttpResponse(s, mimetype='text/html')
+    
+def unused_view_report_as_json(request,app_label=None,rptname=None):
     rpt = reports.get_report(app_label,rptname)
     if rpt is None:
         return json_response(success=False,
@@ -153,65 +217,6 @@ def view_report_as_json(request,app_label=None,rptname=None):
     r = reports.ViewReportRequest(request,rpt)
     #request._lino_report = r
     s = r.render_to_json()
-    return HttpResponse(s, mimetype='text/html')
-
-
-def view_action(request,app_label=None,rptname=None,action=None):
-    rpt = reports.get_report(app_label,rptname)
-    if rpt is None:
-        return json_response(success=False,
-            msg="%s : no such report" % rptname)
-    if not rpt.can_view.passes(request):
-        return json_response(success=False,
-            msg="User %s cannot view %s : " % (request.user,rptname))
-    r = reports.ViewReportRequest(request,rpt)
-    for a in rpt._actions:
-        if a.name == action:
-            return a.view(request)
-    d = dict(success=False,msg="Not implemented")
-    s = simplejson.dumps(d,default=unicode)
-    return HttpResponse(s, mimetype='text/html')
-
-
-def view_report_save(request,app_label=None,rptname=None):
-    rpt = reports.get_report(app_label,rptname)
-    if rpt is None:
-        return json_response(success=False,
-            msg="%s : no such report" % rptname)
-    if not rpt.can_change.passes(request):
-        return json_response(success=False,
-            msg="User %s cannot update data in %s : " % (request.user,rptname))
-    r = reports.ViewReportRequest(request,rpt)
-    #~ if r.instance is None:
-        #~ print request.GET
-        #~ return json_response(success=False,
-            #~ msg="tried to update more than one row")
-    pk = request.POST.get(r.layout.store.pk.name,None)
-    if pk == reports.UNDEFINED:
-        pk = None
-    try:
-        if pk is None:
-            #return json_response(success=False,msg="No primary key was specified")
-            instance = rpt.model()
-        else:
-            instance = rpt.model.objects.get(pk=pk)
-        #print "foo",request.POST
-        #20090916 rpt.setup()
-        #print "Updating", instance, "using", request.POST
-        for f in r.layout.store.fields:
-            if not f.field.primary_key:
-                if request.POST.has_key(f.field.name):
-                    f.update_from_form(instance,request.POST)
-        instance.save()
-        return json_response(success=True,
-              msg="%s has been saved" % instance)
-    except Exception,e:
-        traceback.print_exc(e)
-        return json_response(success=False,msg="Exception occured: "+str(e))
-    
-def json_response(**kw):
-    s = "{%s}" % dict2js(kw)
-    #print "json_response()", s
     return HttpResponse(s, mimetype='text/html')
     
         
@@ -264,8 +269,23 @@ class StoreField:
     def write_to_form(self,obj,d):
         d[self.field.name] = getattr(obj,self.field.name)
     def update_from_form(self,instance,values):
-        setattr(instance,self.field.name,values.get(self.field.name,None))
+        v = values.get(self.field.name)
+        if v == '':
+            v = None
+        setattr(instance,self.field.name,v)
         
+class BooleanStoreField(StoreField):
+    def __init__(self,field,**kw):
+        kw['type'] = 'boolean'
+        StoreField.__init__(self,field,**kw)
+    def update_from_form(self,instance,values):
+        v = values.get(self.field.name)
+        if v == 'true':
+            v = True
+        else:
+            v = False
+        setattr(instance,self.field.name,v)
+  
 class MethodStoreField(StoreField):
   
     def write_to_form(self,obj,d):
@@ -273,26 +293,29 @@ class MethodStoreField(StoreField):
         d[self.field.name] = meth()
         
     def update_from_form(self,instance,values):
-        raise Exception("Cannot update a virtual field")
+        pass
+        #raise Exception("Cannot update a virtual field")
 
 
 class OneToOneStoreField(StoreField):
         
     def update_from_form(self,instance,values):
-        #v = values.get(self.name,None)
-        v = values.get(self.field.name,None)
+        #v = values.get(self.field.name,None)
+        v = values.get(self.field.name)
         if v is not None:
             v = self.field.rel.to.objects.get(pk=v)
         setattr(instance,self.field.name,v)
         
     def write_to_form(self,obj,d):
-        v = getattr(obj,self.field.name)
+        try:
+            v = getattr(obj,self.field.name)
+        except self.field.rel.to.DoesNotExist,e:
+            v = None
         if v is None:
             d[self.field.name] = None
         else:
             d[self.field.name] = v.pk
         
-
 
 class ForeignKeyStoreField(StoreField):
     #~ def __init__(self,field,model,**kw):
@@ -309,14 +332,22 @@ class ForeignKeyStoreField(StoreField):
         
     def update_from_form(self,instance,values):
         #v = values.get(self.name,None)
-        v = values.get(self.field.name+"Hidden",None)
+        #v = values.get(self.field.name+"Hidden",None)
+        v = values.get(self.field.name+"Hidden")
         #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
         if v is not None:
-            v = self.field.rel.to.objects.get(pk=v)
+        #if len(v):
+            try:
+                v = self.field.rel.to.objects.get(pk=v)
+            except self.field.rel.to.DoesNotExist,e:
+                print "[update_from_form]", v, values.get(self.field.name)
         setattr(instance,self.field.name,v)
         
     def write_to_form(self,obj,d):
-        v = getattr(obj,self.field.name)
+        try:
+            v = getattr(obj,self.field.name)
+        except self.field.rel.to.DoesNotExist,e:
+            v = None
         if v is None:
             d[self.field.name+"Hidden"] = None
             d[self.field.name] = None
@@ -378,7 +409,7 @@ class Store(Component):
         if isinstance(fld,models.AutoField):
             return StoreField(fld,type="int")
         if isinstance(fld,models.BooleanField):
-            return StoreField(fld,type="boolean")
+            return BooleanStoreField(fld)
         return StoreField(fld)
         #~ else:
             #~ kw['type'] = DATATYPES.get(fld.__class__,'auto')
@@ -416,9 +447,9 @@ class Store(Component):
         #~ else:
             #~ d.update(autoLoad=False)
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
-        url = self.get_absolute_url(json=True)
+        #url = self.get_absolute_url(json=True)
         #self.report.setup()
-        proxy = dict(url=self.get_absolute_url(json=True),method='GET')
+        proxy = dict(url=self.get_absolute_url(simple_list=True),method='GET')
         d.update(proxy=js_code(
           "new Ext.data.HttpProxy(%s)" % py2js(proxy)
         ))
@@ -1330,7 +1361,7 @@ function %s_action(oGrid_event) {""" % action.name
             #~ d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
         yield "%s.on('afteredit', grid_afteredit(%s,'%s','%s'));" % (
           self.ext_name,self.ext_name,
-          self.report.row_layout.store.get_absolute_url(save=True),
+          self.report.row_layout.store.get_absolute_url(grid_afteredit=True),
           self.report.row_layout.store.pk.name)
             
             
@@ -1456,20 +1487,23 @@ class MainPanel(Panel):
         
     def ext_lines_after(self):
       
-        s = "%s.addListener('load',function(store,rows,options) { " % self.layout.store.ext_name
-        s += """
-    %s.form.loadRecord(rows[0]);""" % self.ext_name
+        yield "%s.addListener('load',function(store,rows,options) { " % self.layout.store.ext_name
+        yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
         for slave in self.layout.slave_grids:
-            s += "\n  %s.load({params: { master: rows[0].data['%s'] } });" % (
+            yield "  %s.load({params: { master: rows[0].data['%s'] } });" % (
                  slave.report.row_layout.store.ext_name,
                  self.layout.store.pk.name)
                  #slave.store.name,request._lino_report.layout.pk.name)
-        s += "\n});"
-        yield s
+        yield "});"
         
-        url = self.layout.store.get_absolute_url(save=True)
-        yield "%s.addButton({text: 'Submit',handler: form_submit(%s.form,'%s',%s)});" % (
-          self.ext_name,self.ext_name,url,self.layout.store.ext_name)
+        url = self.layout.store.get_absolute_url(submit=True)
+        button = dict(
+            handler=js_code("form_submit(%s.form,'%s',%s)" % (
+                self.ext_name,url,self.layout.store.ext_name)),
+            text='Submit')
+        yield "%s.addButton(%s);" % (self.ext_name,py2js(button))
+        #~ yield "%s.addButton({text: 'Submit',handler: form_submit(%s.form,'%s',%s)});" % (
+          #~ self.ext_name,self.ext_name,url,self.layout.store.ext_name)
     
         #~ s = """
 #~ %s.addButton({
@@ -1620,11 +1654,46 @@ function on_store_exception(store,type,action,options,reponse,arg) {
   // console.log("params:",store,type,action,options,reponse,arg);
 };
 
+function form_submit(form,url,store) {
+  return function(btn,evt) {
+    form.submit({
+      url: url, 
+      failure: function(form, action) {
+        // console.log("form:",form);
+        Ext.MessageBox.alert('Submit failed!', 
+        action.result ? action.result.msg : '(undefined action result)');
+      }, 
+      params: { pk:store.getAt(0).data.id }, 
+      waitMsg: 'Saving Data...', 
+      success: function (form, action) {
+        Ext.MessageBox.alert('Saved OK',
+          action.result ? action.result.msg : '(undefined action result)');
+          store.reload();
+      }
+    })
+  } 
+}
+
 function grid_afteredit(grid,url,pk) {
   return function(e) {
-    var p = {};
+    /*
+    e.grid - This grid
+    e.record - The record being edited
+    e.field - The field name being edited
+    e.value - The value being set
+    e.originalValue - The original value for the field, before the edit.
+    e.row - The grid row index
+    e.column - The grid column index
+    
+    Note: the line {{{p[e.field+'Hidden'] = e.value;}}} is there for ForeignKeyStoreField.
+    
+    */
+    var p = e.record.data;
+    // var p = {};
+    p['colname'] = e.field;
     p[e.field] = e.value;
-    p[pk] = e.record.data[pk];
+    p[e.field+'Hidden'] = e.value;
+    // p[pk] = e.record.data[pk];
     Ext.Ajax.request({
       waitMsg: 'Please wait...',
       url: url,
@@ -1693,26 +1762,6 @@ function grid_action(grid,name,url) {
     };
     doit(0);
   };
-}
-
-function form_submit(form,url,store) {
-  return function(btn,evt) {
-    form.submit({
-      url: url, 
-      failure: function(form, action) {
-        // console.log("form:",form);
-        Ext.MessageBox.alert('Submit failed!', 
-        action.result ? action.result.msg : '(undefined action result)');
-      }, 
-      params: { pk:store.getAt(0).data.id }, 
-      waitMsg: 'Saving Data...', 
-      success: function (form, action) {
-        Ext.MessageBox.alert('Saved OK',
-          action.result ? action.result.msg : '(undefined action result)');
-          store.reload();
-      }
-    })
-  } 
 }
 
 

@@ -25,7 +25,6 @@ from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
-from django.utils import simplejson
 
 from django.http import HttpResponse
 #from django.core import serializers
@@ -113,8 +112,8 @@ class Action:
         self.report = report
         
         
-    def view(self,request):
-        context = ActionContext(self,request)
+    def get_response(self,rptreq):
+        context = ActionContext(self,rptreq)
         try:
             self.run(context)
             #~ if msg is None:
@@ -127,23 +126,25 @@ class Action:
             context._response.update(msg=str(e),success=False)
             #d = dict(success=False,msg=str(e))
         #d.update(must_reload=context.must_reload)
-        s = simplejson.dumps(context._response,default=unicode)
-        return HttpResponse(s, mimetype='text/html')
+        return context._response
+        #return extjs.json_response(**context._response)
+        #~ s = simplejson.dumps(context._response,default=unicode)
+        #~ return HttpResponse(s, mimetype='text/html')
       
         
     def run(self,context):
         raise NotImplementedError
         
 class ActionContext:
-    def __init__(self,action,request):
+    def __init__(self,action,rptreq):
         #self.request = request
-        selected = request.POST.get('selected',None)
+        selected = rptreq.request.POST.get('selected',None)
         if selected:
             self.selected_rows = [
               action.report.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
         else:
             self.selected_rows = []
-        self.confirmed = request.POST.get('confirmed',None)
+        self.confirmed = rptreq.request.POST.get('confirmed',None)
         if self.confirmed is not None:
             self.confirmed = int(self.confirmed)
         self.confirms = 0
@@ -575,7 +576,7 @@ class Report:
               #~ "%s is not a QuerySet but a %s:" % (qs, type(qs)))
         return qs
         
-    def create_instance(self,renderer):
+    def create_instance(self,rptreq):
         i = self.model()
         # todo...
         return i
@@ -656,7 +657,7 @@ class ReportRequest:
             **kw):
         self.report = report
         report.setup()
-        self.name = report.name+"Renderer"
+        self.name = report.name+"Request"
         self.layout = report.layouts[layout]
         self.store = self.layout.store
         #~ self.mode = mode
@@ -703,18 +704,17 @@ class ReportRequest:
     def render_to_json(self):
         rows = [ self.obj2json(row) for row in self.queryset ]
         total_count = self.total_count
-        if True: # add one empty row
-            d = {}
-            for fld in self.store.fields:
-                d[fld.field.name] = None
-            d[self.store.pk.name] = UNDEFINED
-            rows.append(d)
+        # add one empty row:
+        if self.layout.index == 1: # currently only in a grid
+            row = self.report.create_instance(self)
+            rows.append(self.obj2json(row))
+            #~ d = {}
+            #~ for fld in self.store.fields:
+                #~ d[fld.field.name] = None
+            #~ # d[self.store.pk.name] = UNDEFINED
+            #~ rows.append(d)
             total_count += 1
-        d = dict(count=total_count,rows=rows)
-        s = simplejson.dumps(d,default=unicode)
-        return s
-        #print s
-        #return HttpResponse(s, mimetype='text/html')
+        return dict(count=total_count,rows=rows)
         
 
 class ViewReportRequest(ReportRequest):
