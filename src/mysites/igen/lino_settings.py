@@ -54,8 +54,8 @@ ledger.set_accounts(
 m = lino.add_menu("contacts","~Contacts")
 m.add_action(contacts.Companies())
 m.add_action(contacts.Persons())
-m.add_action(contacts.Contacts(),label="All")
-m.add_action(sales.Customers())
+m.add_action(contacts.Partners())
+# m.add_action(sales.Customers())
 
 m = lino.add_menu("prods","~Products")
 m.add_action(products.Products())
@@ -82,15 +82,15 @@ m = lino.add_menu("config","~Configuration",
   can_view=perms.is_staff)
 m.add_action(sales.InvoicingModes())
 m.add_action(sales.ShippingModes())
-m.add_action(sales.PaymentTerms())
+m.add_action(contacts.PaymentTerms())
 m.add_action(journals.Journals())
 #~ m = lino.add_menu("ledger","~Ledger",
   #~ can_view=perms.is_authenticated)
 m.add_action(ledger.Accounts())
 
 m.add_action(countries.Languages())
-#m.add_action(countries.Countries())
-m.add_action(contacts.Countries())
+m.add_action(countries.Countries())
+#m.add_action(contacts.Countries())
 
 #m = lino.add_menu("system","~System")
 m.add_action(system.Permissions())

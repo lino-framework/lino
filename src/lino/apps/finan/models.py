@@ -59,7 +59,7 @@ class BankStatement(ledger.LedgerDocument):
             b = self.create_booking(
               pos=i.pos,
               account=i.account,
-              contact=i.contact,
+              partner=i.partner,
               date=i.date,
               debit=i.debit,
               credit=i.credit)
@@ -78,16 +78,16 @@ class BankStatement(ledger.LedgerDocument):
         yield b
         
         
-    def add_item(self,account=None,contact=None,**kw):
+    def add_item(self,account=None,partner=None,**kw):
         pos = self.docitem_set.count() + 1
         if account is not None:
             if not isinstance(account,ledger.Account):
                 account = ledger.Account.objects.get(pk=account)
-        if contact is not None:
-            if not isinstance(contact,contacts.Contact):
-                contact = contacts.Contact.objects.get(pk=contact)
+        if partner is not None:
+            if not isinstance(partner,contacts.Partner):
+                partner = contacts.Partner.objects.get(pk=partner)
         kw['account'] = account
-        kw['contact'] = contact        
+        kw['partner'] = partner
         return self.docitem_set.create(**kw)
     
   
@@ -99,7 +99,7 @@ class DocItem(models.Model):
     credit = fields.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey(ledger.Account)
-    contact = models.ForeignKey(contacts.Partner,blank=True,null=True)
+    partner = models.ForeignKey(contacts.Partner,blank=True,null=True)
     
     def save(self,*args,**kw):
         if self.pos is None:
@@ -157,12 +157,12 @@ class BankStatements(journals.DocumentsByJournal):
     
 class DocItems(reports.Report):
     columnNames = "document pos:3 "\
-                  "date account contact remark debit credit" 
+                  "date account partner remark debit credit" 
     model = DocItem
     order_by = "pos"
 
 class ItemsByDocument(DocItems):
-    columnNames = "pos:3 date account contact remark debit credit" 
+    columnNames = "pos:3 date account partner remark debit credit" 
     master = BankStatement
     order_by = "pos"
     

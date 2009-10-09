@@ -596,6 +596,9 @@ class Report:
     def getLabel(self):
         return self.label
         
+    def __str__(self):
+        return rc_name(self.__class__)
+        
     def get_absolute_url(self,*args,**kw):
         return urls.get_report_url(self,*args,**kw)
     

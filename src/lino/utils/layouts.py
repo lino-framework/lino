@@ -144,7 +144,7 @@ class Layout:
             self._store_fields.append(e.field)
             return e
             #return FieldElement(self,field,**kw)
-        msg = "Unknown element '%s' referred in layout %s" % (name, self.name)
+        msg = "Unknown element %r referred in layout %s[%d]" % (name,self.report,self.index)
         #print "[Warning]", msg
         raise KeyError(msg)
         
@@ -163,7 +163,7 @@ class Layout:
         raise Exception("Invalid picture descriptor %s" % picture)
                 
     def __str__(self):
-        return self.report.model._meta.app_label+"."+self.__class__.__name__
+        return self.report.model._meta.app_label+"."+self.name # __class__.__name__
         
     def __repr__(self):
         s = self.__class__.__name__ 

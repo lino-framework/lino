@@ -80,19 +80,32 @@ def objects():
     yield company(name=u'Hans Flott & Co')
     yield company(name=u'Bernd Brechts Bücherladen')
     
-    person = Instantiator(contacts.Person).build
-    yield person(first_name=u'Luc',last_name=u'Saffre')
+    person = Instantiator(contacts.Person,country='be',language='de').build
     yield person(first_name=u'Andreas',last_name=u'Arens')
     yield person(first_name=u'Alfons',last_name=u'Ausdemwald')
+    yield person(first_name=u'Luc',last_name=u'Saffre')
+    
+    person = Instantiator(contacts.Person,country='be',language='fr').build
     yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
     yield person(first_name=u'Jean',last_name=u'Dupont')
+    
+    person = Instantiator(contacts.Person,country='be',language='nl').build
+    yield person(first_name=u'Mark',last_name=u'Martelaer')
+    yield person(first_name=u'Rik',last_name=u'Radermecker')
+    yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos')
+    
+    person = Instantiator(contacts.Person,country='de').build
     yield person(first_name=u'Emil',last_name=u'Eierschal')
     yield person(first_name=u'Lisa',last_name=u'Lahm')
     yield person(first_name=u'Bernd',last_name=u'Brecht')
-    yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
-    yield person(first_name=u'Robin',last_name=u'Dubois')
-    yield person(first_name=u'Denis',last_name=u'Duprez')
     yield person(first_name=u'Karl',last_name=u'Keller')
+    
+    person = Instantiator(contacts.Person,country='fr').build
+    yield person(first_name=u'Robin',last_name=u'Dubois')
+    yield person(first_name=u'Denis',last_name=u'Denon')
+    yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
+    
+    person = Instantiator(contacts.Person,country='ee').build
     yield person(first_name=u'Tõnu',last_name=u'Tamm')
     yield person(first_name=u'Karl',last_name=u'Kask')
     

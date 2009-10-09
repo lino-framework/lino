@@ -130,7 +130,7 @@ class Booking(models.Model):
     pos = models.IntegerField("Position",blank=True,null=True)
     date = fields.MyDateField()
     account = models.ForeignKey(Account)
-    partner = models.ForeignKey(contacts.Company,blank=True,null=True)
+    partner = models.ForeignKey(contacts.Partner,blank=True,null=True)
     debit = fields.PriceField(default=0)
     credit = fields.PriceField(default=0)
     

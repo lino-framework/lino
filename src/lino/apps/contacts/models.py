@@ -182,6 +182,9 @@ class Person(Contact):
     first_name = models.CharField(max_length=200,blank=True)
     last_name = models.CharField(max_length=200,blank=True)
     title = models.CharField(max_length=200,blank=True)
+    nationality = models.ForeignKey('countries.Country',
+        blank=True,null=True,
+        related_name='by_nationality')
     
     def save(self,*args,**kw):
         self.before_save()
@@ -262,6 +265,10 @@ class ContactPageLayout(layouts.PageLayout):
        
 class PersonPageLayout(ContactPageLayout):
     box1 = "last_name first_name:15 title:10"
+    box7 = """national_id:15
+              nationality
+              language
+              """
 class CompanyPageLayout(ContactPageLayout):
     box1 = "name vat_id:12"
               
@@ -275,7 +282,7 @@ class PartnerPageLayout(layouts.PageLayout):
             
 class Persons(reports.Report):
     #label = "Personen"
-    #page_layouts = (PersonPageLayout,ProjectsByPersonPage)
+    page_layouts = (PersonPageLayout,)
     columnNames = "first_name last_name title country id"
     can_delete = True
     model = Person
@@ -285,7 +292,7 @@ class Persons(reports.Report):
         
 class Companies(reports.Report):
     #label = "Companies"
-    #page_layouts = (CompanyPageLayout,ProjectsByCompanyPage)
+    page_layouts = (CompanyPageLayout,)
     columnNames = "name country id"
     model = Company
     order_by = "name"
@@ -312,21 +319,32 @@ class PaymentTerms(reports.Report):
 class PersonsByCountry(reports.Report):
     model = Person # Contact
     master = countries.Country
+    fk_name = 'country'
     order_by = "city addr1"
-    columnNames = "city addr1 name"
-    
-class CompaniesByCountry(PersonsByCountry):
+    columnNames = "city addr1 name nationality language"
+
+class PersonsByNationality(reports.Report):
+    model = Person # Contact
+    master = countries.Country
+    fk_name = 'nationality'
+    order_by = "city addr1"
+    columnNames = "city addr1 name country language"
+
+class CompaniesByCountry(reports.Report):
     model = Company
+    master = countries.Country
+    columnNames = "city addr1 name country language"
+    order_by = "city addr1"
     
 class PersonsByCountryPage(layouts.PageLayout):
-    label = "Personen pro Land"
+    label = "Persons by Country"
     main = """
     isocode name
     PersonsByCountry
     """
 
 class CompaniesByCountryPage(layouts.PageLayout):
-    label = "Firmen pro Land"
+    label = "Companies by Country"
     main = """
     isocode name
     CompaniesByCountry

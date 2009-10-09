@@ -21,15 +21,23 @@
 #from datetime import date
 #from dateutil import parser as dateparser
 from lino.apps.finan import models as finan
-from lino.apps.ledger import models as ledger
+#from lino.apps.ledger import models as ledger
+#from lino.apps.contacts import models as contacts
 #from lino.apps.journals import models as journals
 #from lino.apps.ledger.fixtures import be
 from lino.utils.instantiator import Instantiator, i2d
 
+from django.db import models
+
+contacts = models.get_app('contacts')
+ledger = models.get_app('ledger')
+finan = models.get_app('finan')
+
 def objects():
     #ba = ledger.Account.objects.get(pk="5500")
     #BANK = journals.get_journal_by_docclass(finan.BankStatement)
-    BANK = finan.BankStatement.create_journal("BANK",account='5500',name="FirstAndOnly Bank")
+    BANK = finan.BankStatement.create_journal(
+        "BANK",account='5500',name="FirstAndOnly Bank")
     yield BANK
     
     EL = ledger.Account.objects.get(pk='61202')
@@ -37,7 +45,7 @@ def objects():
     PR = ledger.Account.objects.get(pk='4400')
     
     doc = BANK.create_document(date=i2d(20090501),balance1='1056.40')
-    doc.add_item(account=PR,contact=Contact.objects.get(pk=2),
+    doc.add_item(account=PR,partner=contacts.Partner.objects.get(pk=2),
       debit='12.49')
     doc.book()
     yield doc

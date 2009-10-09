@@ -53,7 +53,7 @@ def main():
       
 
     #appnames = [m.__name__ for m in models.get_apps()]
-    print "reset_demo.py", app_labels
+    print "fill.py", app_labels
     
     #print "\n".join([m._meta.db_table for m in loading.get_models()])
     
