@@ -403,6 +403,7 @@ class Report:
     name = None
     form_class = None
     master = None
+    slaves = None
     fk_name = None
     help_url = None
     #master_instance = None
@@ -476,11 +477,28 @@ class Report:
             self.layouts.append(lc(self,index))
             index += 1
             
+        from . import extjs
+        self.store = extjs.Store(self)
+            
         self._actions = [cl(self) for cl in self.actions]
         
         setup = getattr(self.model,'setup_report',None)
         if setup:
             setup(self)
+        
+        if hasattr(self.model,'_lino_slaves'):
+            if self.slaves is None:
+                self._slaves = [sl() for sl in self.model._lino_slaves.values()]
+            else:
+                self._slaves = []
+                for slave_name in self.slaves.split():
+                    sl = get_slave(self.model,slave_name)
+                    if sl is None:
+                        logging.info("[Warning] invalid name %s in %s.%s.slaves" % (slave_name,self.app_label,self.name))
+                    self._slaves.append(sl)
+        else:
+            self._slaves = []
+              
         
         self._setup_doing = False
         self._setup_done = True
@@ -672,13 +690,16 @@ class ReportRequest:
     def __init__(self,report,
             master_instance=None,
             offset=None,limit=None,
-            layout=None,
+            extra=0,
+            #layout=None,
             **kw):
         self.report = report
         report.setup()
         self.name = report.name+"Request"
-        self.layout = report.layouts[layout]
-        self.store = self.layout.store
+        #self.layout = report.layouts[layout]
+        #self.store = self.layout.store
+        self.store = report.store
+        self.extra = extra
         #~ self.mode = mode
         #~ if mode == 'choice':
             #~ self.store = report.choice_store
@@ -724,7 +745,8 @@ class ReportRequest:
         rows = [ self.obj2json(row) for row in self.queryset ]
         total_count = self.total_count
         # add one empty row:
-        if self.layout.index == 1: # currently only in a grid
+        for i in range(1,self.extra):
+        #if self.layout.index == 1: # currently only in a grid
             row = self.report.create_instance(self)
             rows.append(self.obj2json(row))
             #~ d = {}
@@ -777,9 +799,9 @@ class ViewReportRequest(ReportRequest):
         limit = request.GET.get('limit',None)
         if limit:
             kw.update(limit=limit)
-        layout = request.GET.get('layout',None)
-        if layout:
-            kw.update(layout=int(layout))
+        #~ layout = request.GET.get('layout',None)
+        #~ if layout:
+            #~ kw.update(layout=int(layout))
         #~ mode = request.GET.get('mode',None)
         #~ if mode:
             #~ kw.update(mode=mode)
@@ -803,8 +825,8 @@ class ViewReportRequest(ReportRequest):
             kw.update(sort=self.sort_column)
         if self.sort_direction is not None:
             kw.update(dir=self.sort_direction)
-        if self.layout.index != 0:
-            kw.update(layout=self.layout.index)
+        #if self.layout.index != 0:
+        #    kw.update(layout=self.layout.index)
         #~ if self.mode is not None:
             #~ kw.update(mode=self.mode)
         return self.report.get_absolute_url(**kw)

@@ -595,7 +595,7 @@ class DocumentsByPartner(SalesDocuments):
     order_by = "creation_date"
 
     def get_title(self,renderer):
-        return " : documents by customer"
+        return "Documents by customer"
         #return unicode(renderer.master_instance) + " : documents by customer"
         
 

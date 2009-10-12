@@ -58,7 +58,7 @@ class Layout:
         #from . import reports
         #assert isinstance(report,reports.Report)
         # Component.__init__(self,report.name + str(index))
-        self.name = report.name + str(index)
+        self.name = report.app_label + "_" + report.name + str(index)
         self.slave_grids = []
         self.report = report
         self.index = index
@@ -75,7 +75,7 @@ class Layout:
                 main = self.desc2elem(self.main_class,"main",desc)
                 #print main
         self._main = main
-        self.store = extjs.Store(self)
+        #self.store = extjs.Store(self)
         
     def desc2elem(self,panelclass,name,desc,**kw):
         from lino.utils import extjs

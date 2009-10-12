@@ -51,36 +51,105 @@ def define_vars(variables,indent=0):
 def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
 
+class ReportRenderer:
+    def __init__(self,report,**kw):
+        setup_report(report)
+        self.ext_name = report.app_label + "_" + report.name
+        self.options = kw
+        self.report = report
+        self.windows = [LayoutWindow(layout) for layout in report.layouts[1:] ]
+        
+    def ext_lines(self):
+        yield define_vars([self.report.store])
+        yield "    %s.addListener(" % self.report.store.ext_name
+        yield "{exception: function() { Ext.MessageBox.alert('exception','no data');}});"
+        yield ''
+        for win in self.windows:
+            yield "var %s_win;" % win.name
+            for ln in win.ext_lines():
+                yield ln
+            yield '// end of window %s' % win.name
+  
+class LayoutWindow:
+    def __init__(self,layout,**kw):
+        self.options = kw
+        self.layout = layout
+        #self.ext_name = report.app_label + "_" + report.name
+        self.name = layout.name
+        
+    def ext_lines(self):
+        self.options.update(title=self.layout.get_title())
+        self.options.update(closeAction='hide')
+        self.options.update(maximizable=True)
+        self.options.update(items=self.layout._main)
+        #kw.update(maximized=True)
+        if self.layout.report.master is not None:
+            yield "function %s(btn,event,master,master_grid) { " % self.name
+        else:
+            yield "function %s(btn,event) { " % self.name
+        yield "  if(!%s_win){" % self.name
+        yield define_vars(self.layout._main.ext_variables(),indent=4)
+        yield "    %s_win = new Ext.Window( %s );" % (self.name,py2js(self.options))
+        
+        yield "  }"
+        if self.layout.report.master is None:
+            yield "  %s.load();" % self.layout.report.store.ext_name
+        else:
+            yield "  if(master)"
+            #yield "    %s.setBaseParam('master',master);" % self.layout.store.ext_name
+            yield "    %s.load({master:master});" % self.layout.report.store.ext_name
+            yield "  else {"
+            yield "    master_grid.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
+            yield "      %s.load({params:{master:record.data.%s}});" % (
+                self.layout.report.store.ext_name,self.layout.report.store.pk.name)
+            yield "    })"
+            yield "  }"
+        yield "  %s_win.show();" % self.name
+        yield "}\n"
+      
+#~ def get_report_windows(rpt,**kw):
+    #~ setup_report(rpt)
+    #~ for layout in rpt.layouts[1:]:
+        #~ yield LayoutWindow(layout,**kw)
+        
+      
+
 def py2js(v,**kw):
     #logging.debug("py2js(%r,%r)",v,kw)
-    if isinstance(v,reports.Report):
-        self = v
-        setup_report(self)
-        s = ''
-        for layout in self.layouts[1:]:
-            kw.update(items=layout._main)
-            kw.update(title=layout.get_title())
-            kw.update(closeAction='hide')
-            kw.update(maximizable=True)
-            #kw.update(maximized=True)
-            s += "function %s(btn,event,master) { " % layout.name
-            s += "\n  var win;\n  if(!win){"
-            s += define_vars(layout._main.ext_variables(),indent=4)
-            s += "\n    win = new Ext.Window( %s );" % py2js(kw)
-            if self.master is not None:
-                s += "\n    %s.setBaseParam('master',master);" % layout.store.ext_name
-            s += "\n    %s.addListener(" % layout.store.ext_name
-            s += "{exception: function() { Ext.MessageBox.alert('exception','no data');win.hide();}});"
-            s += "\n  }"
-            s += "\n  %s.load();" % layout.store.ext_name
-            s += "\n  win.show();"
-            s += "\n}\n"
+    #~ if isinstance(v,reports.Report):
+        #~ self = v
+        #~ setup_report(self)
+        #~ s = ''
+        #~ for layout in self.layouts[1:]:
+            #~ kw.update(items=layout._main)
+            #~ kw.update(title=layout.get_title())
+            #~ kw.update(closeAction='hide')
+            #~ kw.update(maximizable=True)
+            #~ #kw.update(maximized=True)
+            #~ if self.master is not None:
+                #~ s += "function %s(btn,event,master,master_grid) { " % layout.name
+            #~ else:
+                #~ s += "function %s(btn,event) { " % layout.name
+            #~ s += "\n  var win;\n  if(!win){"
+            #~ s += define_vars(layout._main.ext_variables(),indent=4)
+            #~ s += "\n    win = new Ext.Window( %s );" % py2js(kw)
+            #~ if self.master is not None:
+                #~ s += "\n    if(master)"
+                #~ s += "\n      %s.setBaseParam('master',master);" % layout.store.ext_name
+                #~ s += "\n    else {"
+                #~ s += "\n      master_grid.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
+                #~ s += "\n        %s.load({params:{master:record.data.%s}});" % (layout.store.ext_name,layout.store.pk.name)
+                #~ s += "\n      })"
+                #~ s += "\n    }"
+            #~ s += "\n    %s.addListener(" % layout.store.ext_name
+            #~ s += "{exception: function() { Ext.MessageBox.alert('exception','no data');win.hide();}});"
+            #~ s += "\n  }"
+            #~ if self.master is None:
+                #~ s += "\n  %s.load();" % layout.store.ext_name
+            #~ s += "\n  win.show();"
+            #~ s += "\n}\n"
             
-        #~ s += "function %s_detail() { " % self.name
-        #~ for layout in self.layouts[2:]:
-            #~ s += layout.name + "();" 
-        #~ s += "}"
-        return s
+        #~ return s
         
         
     if isinstance(v,menus.Menu):
@@ -91,12 +160,13 @@ def py2js(v,**kw):
         return py2js(kw)
         
     if isinstance(v,menus.MenuItem):
+        ext_name = v.actor.app_label + "_" + v.actor.name + "1"
         if v.args:
             handler = "function(btn,evt) {%s(btn,evt,%s);}" % (
-                v.actor.name+"1",
+                ext_name,
                 ",".join([py2js(a) for a in v.args]))
         else:
-            handler = v.actor.name+"1"
+            handler = ext_name
         return py2js(dict(text=v.label,handler=js_code(handler)))
     if isinstance(v,Component):
         return v.as_ext(**kw)
@@ -178,7 +248,7 @@ def json_report_view(request,app_label=None,rptname=None,action=None,colname=Non
         d = rptreq.render_to_json()
         return json_response(**d)
 
-    pk = request.POST.get(rptreq.layout.store.pk.name) #,None)
+    pk = request.POST.get(rptreq.report.store.pk.name) #,None)
     #~ if pk == reports.UNDEFINED:
         #~ pk = None
     try:
@@ -188,7 +258,7 @@ def json_report_view(request,app_label=None,rptname=None,action=None,colname=Non
         else:
             instance = rpt.model.objects.get(pk=pk)
             
-        for f in rptreq.layout.store.fields:
+        for f in rptreq.report.store.fields:
             if not f.field.primary_key:
                 f.update_from_form(instance,request.POST)
                     
@@ -362,17 +432,17 @@ class Store(Component):
     ext_suffix = "_store"
     declaration_order = 1
     
-    def __init__(self,layout,**options):
-        Component.__init__(self,layout.name,**options)
-        self.report = layout.report
-        self.layout = layout
+    def __init__(self,report,**options):
+        Component.__init__(self,report.app_label+"_"+report.name,**options)
+        self.report = report
+        #self.layout = layout
         #self.mode = mode
         
         fields = set()
-        #~ for layout in layouts:
-        for fld in layout._store_fields:
-            assert fld is not None, "%s"
-            fields.add(fld)
+        for layout in report.layouts:
+            for fld in layout._store_fields:
+                assert fld is not None, "%s"
+                fields.add(fld)
                   
         self.pk = self.report.model._meta.pk
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
@@ -422,7 +492,7 @@ class Store(Component):
         #~ else:
         #~ if self.report.master is not None:
             #~ kw.update(master=js_code('master'))
-        kw.update(layout=self.layout.index)
+        #kw.update(layout=self.layout.index)
         return self.report.get_absolute_url(**kw)
         #~ if request._lino_report.report == self.report:
             #~ #rr = request._lino_report
@@ -828,20 +898,20 @@ class ForeignKeyElement(FieldElement):
             #self.store = Store(rpt,autoLoad=True)
             #self.layout.report.add_variable(self.store)
       
-    def ext_variables(self):
-        #yield self.store
-        setup_report(self.report)
-        yield self.report.choice_layout.store
-        yield self
+    #~ def ext_variables(self):
+        #~ #yield self.store
+        #~ setup_report(self.report)
+        #~ yield self.report.choice_layout.store
+        #~ yield self
         
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         if self.editable:
             setup_report(self.report)
-            kw.update(store=js_code(self.report.choice_layout.store.ext_name))
+            kw.update(store=js_code(self.report.store.ext_name))
             #kw.update(store=js_code(self.store.as_ext_value(request)))
             kw.update(hiddenName=self.name+"Hidden")
-            kw.update(valueField=self.report.choice_layout.store.pk.attname)
+            kw.update(valueField=self.report.store.pk.attname)
             #kw.update(valueField=self.name)
             """
             valueField: The underlying data value name to bind to this ComboBox (defaults to undefined if mode = 'remote' or 'field2' if transforming a select or if the field name is autogenerated based on the store configuration).
@@ -1197,7 +1267,7 @@ class GridElement(Container):
       
     def ext_variables(self):
         setup_report(self.report)
-        yield self.report.row_layout.store
+        #yield self.report.row_layout.store
         #~ for rpt in self.report.choices_stores.values():
             #~ yield rpt.store
         for e in self.elements:
@@ -1229,7 +1299,7 @@ class GridElement(Container):
         #d.update(autoScroll=True)
         #d.update(fitToFrame=True)
         d.update(emptyText="Nix gefunden...")
-        d.update(store=js_code(self.report.row_layout.store.ext_name))
+        d.update(store=js_code(self.report.store.ext_name))
         d.update(colModel=js_code(self.column_model.ext_name))
         d.update(autoHeight=True)
         d.update(enableColLock=False)
@@ -1245,7 +1315,7 @@ class GridElement(Container):
           #~ items: %s
         #~ }) """ % (self.report.row_layout.store.ext_name,self.report.page_length,py2js(buttons))))
         tbar = dict(
-          store=self.report.row_layout.store,
+          store=self.report.store,
           displayInfo=True,
           pageSize=self.report.page_length,
           prependButtons=False,
@@ -1273,13 +1343,13 @@ function %s_action(oGrid_event) {""" % action.name
   var sels = %s.getSelectionModel().getSelections();""" % self.ext_name
             s += """
   // console.log(sels);
-  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].%s + ','; };""" % self.report.row_layout.store.pk.name
+  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].%s + ','; };""" % self.report.store.pk.name
             s += """
   var doit = function(confirmed) {
     Ext.Ajax.request({
       waitMsg: 'Running action "%s". Please wait...',""" % action.label
             s += """
-      url: '%s',""" % self.report.row_layout.store.get_absolute_url(action=action.name)
+      url: '%s',""" % self.report.store.get_absolute_url(action=action.name)
       #self.report.get_absolute_url(action=action.name)
             s += """
       params: { confirmed:confirmed,selected:sel_pks }, """ #% dict2js(params)
@@ -1291,7 +1361,7 @@ function %s_action(oGrid_event) {""" % action.name
         if(result.success) {
           if (result.msg) Ext.MessageBox.alert('success',result.msg);
           if (result.html) Ext.Window({html:result.html}).show();
-          if (result.must_reload) %s.load(); """ % self.report.row_layout.store.ext_name
+          if (result.must_reload) %s.load(); """ % self.report.store.ext_name
             s += """
         } else {
           if(result.confirm) Ext.Msg.show({
@@ -1325,7 +1395,7 @@ function %s_action(oGrid_event) {""" % action.name
         buttons = []
         for a in self.report._actions:
             h = js_code("grid_action(%s,'%s','%s')" % (
-                  self.ext_name, a.name, self.report.row_layout.store.get_absolute_url(action=a.name)))
+                  self.ext_name, a.name, self.report.store.get_absolute_url(action=a.name)))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 #keys.append(dict(handler=js_code("%s_action" % a.name),key=a.key))
@@ -1349,6 +1419,12 @@ function %s_action(oGrid_event) {""" % action.name
             buttons.append(dict(
               handler=js_code("show_detail(%s,%s)" % (self.ext_name,layout.name)),
               text=layout.label))
+              
+        for slave in self.report._slaves:
+            buttons.append(dict(
+              handler=js_code("function(btn,evt) {%s_%s1(btn,evt,undefined,%s)}" % (slave.app_label,slave.name,self.ext_name)),
+              text = slave.label
+            ))
             
         yield "%s.keys = %s;" % (self.ext_name,py2js(keys))
         yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(buttons))
@@ -1360,8 +1436,8 @@ function %s_action(oGrid_event) {""" % action.name
             #~ d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
         yield "%s.on('afteredit', grid_afteredit(%s,'%s','%s'));" % (
           self.ext_name,self.ext_name,
-          self.report.row_layout.store.get_absolute_url(grid_afteredit=True),
-          self.report.row_layout.store.pk.name)
+          self.report.store.get_absolute_url(grid_afteredit=True),
+          self.report.store.pk.name)
             
             
       
@@ -1438,14 +1514,14 @@ class MainGridElement(GridElement):
         s = """
 function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
         s += """
-    var row = %s.getAt(rowIndex);""" % self.report.row_layout.store.ext_name
+    var row = %s.getAt(rowIndex);""" % self.report.store.ext_name
         for layout in self.report.layouts[1:]:
             s += """
     %s.form.loadRecord(row);""" % layout._main.ext_name
             for slave in layout.slave_grids:
                 setup_report(slave.report)
                 s += """  
-    %s.load({params: { master: row.id } });""" % slave.report.row_layout.store.ext_name
+    %s.load({params: { master: row.id } });""" % slave.report.store.ext_name
     
         s += "\n};"
         #yield s
@@ -1461,23 +1537,23 @@ class MainPanel(Panel):
         Panel.__init__(self,layout,name,vertical,*elements,**kw)
         
         
-    def ext_variables(self):
-        yield self.layout.store
-        for v in Panel.ext_variables(self):
-            yield v
+    #~ def ext_variables(self):
+        #~ yield self.layout.store
+        #~ for v in Panel.ext_variables(self):
+            #~ yield v
         
     def ext_options(self):
         d = Panel.ext_options(self)
         #d.update(title=self.layout.label)
         d.update(region='east',split=True) #,width=300)
         d.update(autoScroll=True)
-        if True:
+        if False:
             d.update(tbar=js_code("""new Ext.PagingToolbar({
               store: %s,
               displayInfo: true,
               pageSize: 1,
               prependButtons: true,
-            }) """ % self.layout.store.ext_name))
+            }) """ % self.report.store.ext_name))
         #d.update(items=js_code(self._main.as_ext(request)))
         d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
         d.update(autoHeight=False)
@@ -1486,19 +1562,19 @@ class MainPanel(Panel):
         
     def ext_lines_after(self):
       
-        yield "%s.addListener('load',function(store,rows,options) { " % self.layout.store.ext_name
+        yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
         for slave in self.layout.slave_grids:
             yield "  %s.load({params: { master: rows[0].data['%s'] } });" % (
-                 slave.report.row_layout.store.ext_name,
-                 self.layout.store.pk.name)
+                 slave.report.store.ext_name,
+                 self.report.store.pk.name)
                  #slave.store.name,request._lino_report.layout.pk.name)
         yield "});"
         
-        url = self.layout.store.get_absolute_url(submit=True)
+        url = self.report.store.get_absolute_url(submit=True)
         button = dict(
             handler=js_code("form_submit(%s.form,'%s',%s)" % (
-                self.ext_name,url,self.layout.store.ext_name)),
+                self.ext_name,url,self.report.store.ext_name)),
             text='Submit')
         yield "%s.addButton(%s);" % (self.ext_name,py2js(button))
         #~ yield "%s.addButton({text: 'Submit',handler: form_submit(%s.form,'%s',%s)});" % (
@@ -1786,9 +1862,12 @@ Ext.onReady(function(){ """
             #~ s += "\n\n// menu command [%s]" % " / ".join([i.label for i in l])
             #~ s += "\n" + py2js(mi.actor) + "\n"
             
-        for rptclass in reports.master_reports + reports.slave_reports:
-            s += "\n" + py2js(rptclass()) + "\n"
-            
+        rpts = [ ReportRenderer(rptclass()) 
+            for rptclass in reports.master_reports + reports.slave_reports]
+        for rpt in rpts:
+            for ln in rpt.ext_lines():
+                s += "\n" + ln
+                
         s += "\nvar main_menu = " + py2js(self.main_menu)
         
         s += define_vars(self.variables,indent=2)
