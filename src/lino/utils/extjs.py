@@ -57,7 +57,8 @@ class ReportRenderer:
         self.ext_name = report.app_label + "_" + report.name
         self.options = kw
         self.report = report
-        self.windows = [LayoutWindow(layout) for layout in report.layouts[1:] ]
+        self.windows = [ LayoutWindow(layout) 
+            for layout in report.layouts[1:] ]
         
     def ext_lines(self):
         yield define_vars([self.report.store])
@@ -91,13 +92,16 @@ class LayoutWindow:
         yield define_vars(self.layout._main.ext_variables(),indent=4)
         yield "    %s_win = new Ext.Window( %s );" % (self.name,py2js(self.options))
         
+        if isinstance(self.layout._main,MainGridElement):
+            yield "%s_win.grid = %s; // foo" % (self.name,self.layout._main.ext_name)
+        
         yield "  }"
         if self.layout.report.master is None:
             yield "  %s.load();" % self.layout.report.store.ext_name
         else:
             yield "  if(master)"
-            #yield "    %s.setBaseParam('master',master);" % self.layout.store.ext_name
-            yield "    %s.load({master:master});" % self.layout.report.store.ext_name
+            yield "    %s.setBaseParam('master',master);" % self.layout.report.store.ext_name
+            #yield "    %s.load({master:master});" % self.layout.report.store.ext_name
             yield "  else {"
             yield "    master_grid.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
             yield "      %s.load({params:{master:record.data.%s}});" % (
@@ -1438,7 +1442,7 @@ function %s_action(oGrid_event) {""" % action.name
           self.ext_name,self.ext_name,
           self.report.store.get_absolute_url(grid_afteredit=True),
           self.report.store.pk.name)
-            
+          
             
       
         #~ s = """
@@ -1561,15 +1565,23 @@ class MainPanel(Panel):
         
         
     def ext_lines_after(self):
-      
-        yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
-        yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
+        yield "%s_win.grid.getSelectionModel().addListener('rowselect'," % self.layout.report.row_layout.name
+        yield "  function(sm,rowIndex,record) { "
+        yield "    %s.form.loadRecord(record);" % self.ext_name
         for slave in self.layout.slave_grids:
-            yield "  %s.load({params: { master: rows[0].data['%s'] } });" % (
+            yield "  %s.load({params: { master: record.data.%s } });" % (
                  slave.report.store.ext_name,
                  self.report.store.pk.name)
-                 #slave.store.name,request._lino_report.layout.pk.name)
         yield "});"
+        
+        #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
+        #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
+        #~ for slave in self.layout.slave_grids:
+            #~ yield "  %s.load({params: { master: rows[0].data['%s'] } });" % (
+                 #~ slave.report.store.ext_name,
+                 #~ self.report.store.pk.name)
+                 #~ #slave.store.name,request._lino_report.layout.pk.name)
+        #~ yield "});"
         
         url = self.report.store.get_absolute_url(submit=True)
         button = dict(
