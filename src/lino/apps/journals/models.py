@@ -213,9 +213,9 @@ class AbstractDocument(documents.AbstractDocument):
         
     def __unicode__(self):
         if self.id is None:
-            return "(Unsaved %s document)" % self.journal
+            return "(Unsaved %s document)" % self.__class__
             #~ return "%s#%d (%d)" % (self.journal.id,self.number, self.id)
-        return "%s#%d (%d)" % (self.journal,self.number,self.id)
+        return "%s#%s (%d)" % (self.journal,self.number,self.id)
         
     def before_save(self):
         #~ assert self.journal is not None

@@ -20,6 +20,8 @@ import traceback
 import types
 import logging
 
+from dateutil import parser as dateparser
+
 #from django import forms
 from django.db import models
 from django.conf import settings
@@ -62,8 +64,10 @@ class ReportRenderer:
         
     def ext_lines(self):
         yield define_vars([self.report.store])
-        yield "    %s.addListener(" % self.report.store.ext_name
-        yield "{exception: function() { Ext.MessageBox.alert('exception','no data');}});"
+        yield "%s.addListener({exception: function(a,b,c) { " % self.report.store.ext_name
+        yield "  console.log(a,b,c);"
+        yield "  Ext.MessageBox.alert('Exception in %s','no data');" % self.report.store.ext_name
+        yield "}});"
         yield ''
         for win in self.windows:
             yield "var %s_win;" % win.name
@@ -99,13 +103,16 @@ class LayoutWindow:
         if self.layout.report.master is None:
             yield "  %s.load();" % self.layout.report.store.ext_name
         else:
-            yield "  if(master)"
+            yield "  if(master) {"
             yield "    %s.setBaseParam('master',master);" % self.layout.report.store.ext_name
+            yield "    %s.load();" % self.layout.report.store.ext_name
             #yield "    %s.load({master:master});" % self.layout.report.store.ext_name
-            yield "  else {"
+            yield "  } else {"
             yield "    master_grid.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
-            yield "      %s.load({params:{master:record.data.%s}});" % (
-                self.layout.report.store.ext_name,self.layout.report.store.pk.name)
+            yield "      console.log(rowIndex,record);" 
+            yield "      %s.load({params:{master:record.id}});" % self.layout.report.store.ext_name
+            #~ yield "      %s.load({params:{master:record.data.%s}});" % (
+                #~ self.layout.report.store.ext_name,self.layout.report.store.pk.name)
             yield "    })"
             yield "  }"
         yield "  %s_win.show();" % self.name
@@ -231,7 +238,8 @@ def list_report_view(request,**kw):
     kw['simple_list'] = True
     return json_report_view(request,**kw)
 
-def json_report_view(request,app_label=None,rptname=None,action=None,colname=None,simple_list=False):
+def json_report_view(request,app_label=None,rptname=None,
+                     action=None,colname=None,simple_list=False):
     rpt = reports.get_report(app_label,rptname)
     if rpt is None:
         return json_response(success=False,
@@ -359,7 +367,30 @@ class BooleanStoreField(StoreField):
         else:
             v = False
         setattr(instance,self.field.name,v)
+
+class DateStoreField(StoreField):
   
+    def __init__(self,field,date_format,**kw):
+        self.date_format = date_format
+        kw['type'] = 'date'
+        StoreField.__init__(self,field,**kw)
+        
+    def write_to_form(self,obj,d):
+        value = getattr(obj,self.field.name)
+        if value is not None:
+            value = value.ctime() # strftime('%Y-%m-%d')
+            #print value
+            d[self.field.name] = value
+            
+    def update_from_form(self,instance,values):
+        v = values.get(self.field.name)
+        if v == '' and self.field.null:
+            v = None
+        if v is not None:
+            print v
+            v = dateparser.parse(v,fuzzy=True)
+        setattr(instance,self.field.name,v)
+
 class MethodStoreField(StoreField):
   
     def write_to_form(self,obj,d):
@@ -475,7 +506,9 @@ class Store(Component):
             #yield dict(name=fld.name)
             #yield dict(name=fld.name+"Hidden")
         if isinstance(fld,models.DateField):
-            return StoreField(fld,type="date",dateFormat='Y-m-d')
+            #return StoreField(fld,type="date",dateFormat='Y-m-d')
+            #return StoreField(fld,type="date",dateFormat=self.report.date_format)
+            return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.IntegerField):
             return StoreField(fld,type="int")
         if isinstance(fld,models.AutoField):
@@ -1336,61 +1369,6 @@ class GridElement(Container):
     #~ def value2js(self,obj):
         #~ return "1"
         
-    def unused_ext_lines_before(self):
-        setup_report(self.report)
-        for action in self.report._actions:
-            s = """
-function %s_action(oGrid_event) {""" % action.name
-            s += """
-  var sel_pks = '';
-  var must_reload = false;
-  var sels = %s.getSelectionModel().getSelections();""" % self.ext_name
-            s += """
-  // console.log(sels);
-  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].%s + ','; };""" % self.report.store.pk.name
-            s += """
-  var doit = function(confirmed) {
-    Ext.Ajax.request({
-      waitMsg: 'Running action "%s". Please wait...',""" % action.label
-            s += """
-      url: '%s',""" % self.report.store.get_absolute_url(action=action.name)
-      #self.report.get_absolute_url(action=action.name)
-            s += """
-      params: { confirmed:confirmed,selected:sel_pks }, """ #% dict2js(params)
-            s += """
-      success: function(response){
-        // console.log('raw response:',response.responseText);
-        var result = Ext.decode(response.responseText);
-        // console.log('got response:',result);
-        if(result.success) {
-          if (result.msg) Ext.MessageBox.alert('success',result.msg);
-          if (result.html) Ext.Window({html:result.html}).show();
-          if (result.must_reload) %s.load(); """ % self.report.store.ext_name
-            s += """
-        } else {
-          if(result.confirm) Ext.Msg.show({
-            title: 'Confirmation',
-            msg: result.confirm,
-            buttons: Ext.Msg.YESNOCANCEL,
-            fn: function(btn) {
-              if (btn == 'yes') {
-                  // console.log(btn);
-                  doit(confirmed+1);
-              }
-            }
-          })
-        }
-      },
-      failure: function(response){
-        // console.log(response);
-        Ext.MessageBox.alert('error','Could not connect to the server.');
-      }
-    });
-  };
-  doit(0);
-};""" 
-            yield s
-            
       
       
     def ext_lines_after(self):
@@ -1784,6 +1762,7 @@ function grid_afteredit(grid,url,pk) {
     // var p = {};
     p['colname'] = e.field;
     p[e.field] = e.value;
+    // console.log(e);
     p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
     Ext.Ajax.request({

@@ -299,18 +299,6 @@ def get_report(app_label,rptname):
     
 
 
-def unused_view_report_as_ext(request,app_label=None,rptname=None):
-    rpt = get_report(app_label,rptname)
-    if rpt is None:
-        return urls.sorry(request,"%s : no such report" % rptname)
-    if not rpt.can_view.passes(request):
-        return urls.sorry(request)
-    r = ViewReportRequest(request,rpt)
-    return r.render_to_html()
-    #return lino_site.ext_view(request,*rpt.ext_components())
-    
-    #return r.render_to_response()
-    
     
 def setup():
     """
@@ -410,7 +398,9 @@ class Report:
     page_length = 10
     display_field = '__unicode__'
     boolean_texts = ('Ja','Nein',' ')
+    #date_format = 'Y-m-d'
     date_format = 'd.m.y'
+    #date_format = '%d.%m.%y'
     
     page_layouts = (layouts.PageLayout ,)
     _page_layouts = None
@@ -690,7 +680,7 @@ class ReportRequest:
     def __init__(self,report,
             master_instance=None,
             offset=None,limit=None,
-            extra=0,
+            extra=1,
             #layout=None,
             **kw):
         self.report = report
@@ -745,7 +735,7 @@ class ReportRequest:
         rows = [ self.obj2json(row) for row in self.queryset ]
         total_count = self.total_count
         # add one empty row:
-        for i in range(1,self.extra):
+        for i in range(0,self.extra):
         #if self.layout.index == 1: # currently only in a grid
             row = self.report.create_instance(self)
             rows.append(self.obj2json(row))

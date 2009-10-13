@@ -81,11 +81,11 @@ def choices_view(request,app_label=None,model_name=None):
     rpt = model._lino_choices
     return rpt.view_many(request)
 
-def field_choices_view(request,app_label=None,model_name=None,field_name=None):
-    model = models.get_model(app_label,model_name)
-    field = model.get_field(field)
-    rpt = get_combo_report(field.rel.to)
-    return rpt.view_many(request)
+#~ def field_choices_view(request,app_label=None,model_name=None,field_name=None):
+    #~ model = models.get_model(app_label,model_name)
+    #~ field = model.get_field(field)
+    #~ rpt = get_combo_report(field.rel.to)
+    #~ return rpt.view_many(request)
 
 
 

@@ -24,7 +24,44 @@ from django.utils.safestring import mark_safe
 #from lino.apps.igen import Model
 from lino.apps.countries import models as countries 
 
+##
+## report definitions
+##        
+        
+from django import forms
+
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
+
 #__app_label__ = "contacts"
+
+
+class PaymentTerm(models.Model):
+    name = models.CharField(max_length=200)
+    days = models.IntegerField(default=0)
+    months = models.IntegerField(default=0)
+    #proforma = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.name
+        
+    def get_due_date(self,date1):
+        assert isinstance(date1,datetime.date), \
+          "%s is not a date" % date1
+        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
+        d = date1 + relativedelta(months=self.months,days=self.days)
+        return d
+
+
+class PaymentTerms(reports.Report):
+    model = PaymentTerm
+    order_by = "id"
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
+
+
 
 
 #~ class Contact(models.Model):
@@ -168,80 +205,6 @@ class Contact(models.Model):
             s += linesep + unicode(self.country)
         return mark_safe(s)
     
- 
-
-class Company(Contact):
-    vat_id = models.CharField(max_length=200,blank=True)
-    
-    def as_address(self,linesep="\n<br/>"):
-        s = Contact.as_address(self,linesep)
-        return self.name + linesep + s
-    
-    
-class Person(Contact):    
-    first_name = models.CharField(max_length=200,blank=True)
-    last_name = models.CharField(max_length=200,blank=True)
-    title = models.CharField(max_length=200,blank=True)
-    nationality = models.ForeignKey('countries.Country',
-        blank=True,null=True,
-        related_name='by_nationality')
-    
-    def save(self,*args,**kw):
-        self.before_save()
-        r = super(Contact,self).save(*args,**kw)
-        return r
-        
-    def before_save(self):
-        if not self.name:
-            l = filter(lambda x:x,[self.title,self.first_name,self.last_name])
-            self.name = " ".join(l)
-
-        
-class Partner(models.Model):
-    name = models.CharField("Searchname",max_length=30)
-    company = models.ForeignKey(Company,blank=True,null=True)
-    person = models.ForeignKey(Person,blank=True,null=True)
-    payment_term = models.ForeignKey("PaymentTerm",blank=True,null=True)
-    vat_exempt = models.BooleanField(default=False)
-    item_vat = models.BooleanField(default=False)
-    
-    def __unicode__(self):
-        if self.company:
-            return unicode(self.company)
-        return unicode(self.person)
-
-class PaymentTerm(models.Model):
-    name = models.CharField(max_length=200)
-    days = models.IntegerField(default=0)
-    months = models.IntegerField(default=0)
-    #proforma = models.BooleanField(default=False)
-    
-    def __unicode__(self):
-        return self.name
-        
-    def get_due_date(self,date1):
-        assert isinstance(date1,datetime.date), \
-          "%s is not a date" % date1
-        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
-        d = date1 + relativedelta(months=self.months,days=self.days)
-        return d
-
-
-
-
-
-##
-## report definitions
-##        
-        
-from django import forms
-
-from lino.utils import reports
-from lino.utils import layouts
-from lino.utils import perms
-
-#from lino.plugins.countries import Languages
-
 class ContactPageLayout(layouts.PageLayout):
     #frame = False
     
@@ -263,58 +226,41 @@ class ContactPageLayout(layouts.PageLayout):
               remarks:60x6
               """
        
+ 
+
+class Person(Contact):    
+    first_name = models.CharField(max_length=200,blank=True)
+    last_name = models.CharField(max_length=200,blank=True)
+    title = models.CharField(max_length=200,blank=True)
+    nationality = models.ForeignKey('countries.Country',
+        blank=True,null=True,
+        related_name='by_nationality')
+    
+    def save(self,*args,**kw):
+        self.before_save()
+        r = super(Contact,self).save(*args,**kw)
+        return r
+        
+    def before_save(self):
+        if True: # not self.name:
+            l = filter(lambda x:x,[self.title,self.first_name,self.last_name])
+            self.name = " ".join(l)
+
 class PersonPageLayout(ContactPageLayout):
     box1 = "last_name first_name:15 title:10"
     box7 = """national_id:15
               nationality
               language
               """
-class CompanyPageLayout(ContactPageLayout):
-    box1 = "name vat_id:12"
-              
-class PartnerPageLayout(layouts.PageLayout):
-    main = """
-           company person
-           payment_term 
-           vat_exempt item_vat
-           """
 
-            
 class Persons(reports.Report):
     #label = "Personen"
     page_layouts = (PersonPageLayout,)
-    columnNames = "first_name last_name title country id"
+    columnNames = "first_name last_name title country id name"
     can_delete = True
     model = Person
-    order_by = "name"
+    order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
-
-        
-class Companies(reports.Report):
-    #label = "Companies"
-    page_layouts = (CompanyPageLayout,)
-    columnNames = "name country id"
-    model = Company
-    order_by = "name"
-    #~ queryset = Contact.objects.exclude(companyName__exact=None)\
-      #~ .order_by("companyName")
-    
-class Partners(reports.Report):
-    page_layouts = (PartnerPageLayout,)
-    columnNames = "company person payment_term vat_exempt item_vat"
-    can_delete = True
-    model = Partner
-    order_by = "id"
-    #can_view = perms.is_authenticated
-
-
-class PaymentTerms(reports.Report):
-    model = PaymentTerm
-    order_by = "id"
-    can_view = perms.is_staff
-    #~ def can_view(self,request):
-      #~ return request.user.is_staff
-
 
 class PersonsByCountry(reports.Report):
     model = Person # Contact
@@ -330,6 +276,27 @@ class PersonsByNationality(reports.Report):
     order_by = "city addr1"
     columnNames = "city addr1 name country language"
 
+
+
+class Company(Contact):
+    vat_id = models.CharField(max_length=200,blank=True)
+    
+    def as_address(self,linesep="\n<br/>"):
+        s = Contact.as_address(self,linesep)
+        return self.name + linesep + s
+
+class CompanyPageLayout(ContactPageLayout):
+    box1 = "name vat_id:12"
+              
+class Companies(reports.Report):
+    #label = "Companies"
+    page_layouts = (CompanyPageLayout,)
+    columnNames = "name country id"
+    model = Company
+    order_by = "name"
+    #~ queryset = Contact.objects.exclude(companyName__exact=None)\
+      #~ .order_by("companyName")
+    
 class CompaniesByCountry(reports.Report):
     model = Company
     master = countries.Country
@@ -342,6 +309,7 @@ class PersonsByCountryPage(layouts.PageLayout):
     isocode name
     PersonsByCountry
     """
+countries.Countries.register_page_layout(PersonsByCountryPage)
 
 class CompaniesByCountryPage(layouts.PageLayout):
     label = "Companies by Country"
@@ -349,8 +317,39 @@ class CompaniesByCountryPage(layouts.PageLayout):
     isocode name
     CompaniesByCountry
     """
+countries.Countries.register_page_layout(CompaniesByCountryPage)
 
-countries.Countries.register_page_layout(CompaniesByCountryPage,PersonsByCountryPage)
+        
+class Partner(models.Model):
+    name = models.CharField("Searchname",max_length=30)
+    company = models.ForeignKey(Company,blank=True,null=True)
+    person = models.ForeignKey(Person,blank=True,null=True)
+    payment_term = models.ForeignKey("PaymentTerm",blank=True,null=True)
+    vat_exempt = models.BooleanField(default=False)
+    item_vat = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        if self.company:
+            return unicode(self.company)
+        return unicode(self.person)
+
+class PartnerPageLayout(layouts.PageLayout):
+    main = """
+           company person
+           payment_term 
+           vat_exempt item_vat
+           """
+    
+class Partners(reports.Report):
+    page_layouts = (PartnerPageLayout,)
+    columnNames = "company person payment_term vat_exempt item_vat"
+    can_delete = True
+    model = Partner
+    order_by = "id"
+    #can_view = perms.is_authenticated
+
+
+
 
             
 #~ class Contacts(reports.Report):

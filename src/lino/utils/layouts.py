@@ -35,6 +35,8 @@ def get_unbound_meth(cl,name):
         meth = getattr(b,name,None)
         if meth is not None:
             return meth
+    #~ if name == '__unicode__':
+        #~ print "Strange: didn't find __unicode__ in %s" % cl
 
 
 

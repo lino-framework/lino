@@ -377,7 +377,10 @@ class DocItem(models.Model):
     before_save.alters_data = True
 
     def __unicode__(self):
-        return u"DocItem %s.%d" % (self.document,self.pos)
+        return "%s object" % self.__class__.__name__
+        #~ if self.document is None:
+            #~ return models.Model.__unicode__(self)
+        #~ return u"DocItem %s.%d" % (self.document,self.pos)
 
 ##
 ## report definitions
