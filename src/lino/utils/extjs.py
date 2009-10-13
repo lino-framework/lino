@@ -1567,6 +1567,7 @@ class MainPanel(Panel):
     def ext_lines_after(self):
         yield "%s_win.grid.getSelectionModel().addListener('rowselect'," % self.layout.report.row_layout.name
         yield "  function(sm,rowIndex,record) { "
+        yield "    %s.form._lino_pk = record.data.id;" % self.ext_name
         yield "    %s.form.loadRecord(record);" % self.ext_name
         for slave in self.layout.slave_grids:
             yield "  %s.load({params: { master: record.data.%s } });" % (
@@ -1585,8 +1586,8 @@ class MainPanel(Panel):
         
         url = self.report.store.get_absolute_url(submit=True)
         button = dict(
-            handler=js_code("form_submit(%s.form,'%s',%s)" % (
-                self.ext_name,url,self.report.store.ext_name)),
+            handler=js_code("form_submit(%s.form,'%s',%s,'%s')" % (
+                self.ext_name,url,self.report.store.ext_name,self.report.store.pk.name)),
             text='Submit')
         yield "%s.addButton(%s);" % (self.ext_name,py2js(button))
         #~ yield "%s.addButton({text: 'Submit',handler: form_submit(%s.form,'%s',%s)});" % (
@@ -1741,8 +1742,12 @@ function on_store_exception(store,type,action,options,reponse,arg) {
   // console.log("params:",store,type,action,options,reponse,arg);
 };
 
-function form_submit(form,url,store) {
+function form_submit(form,url,store,pkname) {
   return function(btn,evt) {
+    // console.log(store);
+    p = {};
+    // p[pkname] = store.getAt(0).data.id;
+    p[pkname] = form._lino_pk
     form.submit({
       url: url, 
       failure: function(form, action) {
@@ -1750,7 +1755,7 @@ function form_submit(form,url,store) {
         Ext.MessageBox.alert('Submit failed!', 
         action.result ? action.result.msg : '(undefined action result)');
       }, 
-      params: { pk:store.getAt(0).data.id }, 
+      params: p, 
       waitMsg: 'Saving Data...', 
       success: function (form, action) {
         Ext.MessageBox.alert('Saved OK',
