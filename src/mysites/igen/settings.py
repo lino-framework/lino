@@ -145,7 +145,8 @@ else:
     #'lino.test_apps.example',
     #'lino.test_apps.ledger',
     #'lino.test_apps.20090714',
-    'lino.test_apps.20090717',
+    #'lino.test_apps.20090717',
+    'lino.test_apps.20091014',
   )
 
 

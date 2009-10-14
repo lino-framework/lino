@@ -45,15 +45,13 @@ def make_invoices(make_until=None):
     #~ print rpt.as_text()
     
     q = [o for o in sales.Order.objects.pending(make_until)]
-    s = "make_invoices(make_until=%r):\n" % make_until
+    print "make_invoices(make_until=%r)" % make_until
+    made = []
     for o in q:
         i = o.make_invoice(make_until)
-        s += "%s -> %s\n" % (o,i)
-    if len(q) == 0:
-        s += "Nothing to do.\n"
-    else:
-        s += "%d invoices have been issued.\n" % len(q)
-    return s
+        #s += "%s -> %s\n" % (o,i)
+        made.append((o,i))
+    return made
     
     
 

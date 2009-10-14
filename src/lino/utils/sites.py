@@ -32,6 +32,7 @@
 import os
 import imp
 import logging
+logger = logging.getLogger('lino')
 
 from django.conf import settings
 #from timtools.tools.my_import import my_import as import_module
@@ -144,10 +145,10 @@ class LinoSite: #(AdminSite):
         reports.setup()
         
         if hasattr(settings,'LINO_SETTINGS'):
-            logging.info("Reading %s...", settings.LINO_SETTINGS)
+            logger.info("Reading %s...", settings.LINO_SETTINGS)
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
-            logging.warning("settings.LINO_SETTINGS entry is missing")
+            logger.warning("settings.LINO_SETTINGS entry is missing")
             
         self.done = True
         self.loading = False
@@ -202,7 +203,7 @@ class LinoSite: #(AdminSite):
             # l:\snapshot\xhtml2pdf
             import ho.pisa as pisa
             version = getattr(pisa,'__version__','')
-            yield ("xhtml2pdf","http://www.htmltopdf.org/",version)
+            yield ("xhtml2pdf","http://www.xhtml2pdf.com//",version)
         except ImportError:
             pisa = None
         
@@ -222,7 +223,7 @@ class LinoSite: #(AdminSite):
         
     def index(self, request):
         if self._response is None:
-            logging.debug("building LinoSite._response...")
+            logger.debug("building LinoSite._response...")
             from lino.utils import extjs
             comp = extjs.VisibleComponent("index",
                 xtype="panel",
@@ -235,6 +236,8 @@ class LinoSite: #(AdminSite):
             s = viewport.render_to_html(request)
             self._response = HttpResponse(s)
         #s = layouts.ext_viewport(request,self.title,self._menu,*components)
+        #windows = request.GET.get('open',None)
+        #print "absolute_uri",request.build_absolute_uri()
         return self._response
     #index = never_cache(index)
         

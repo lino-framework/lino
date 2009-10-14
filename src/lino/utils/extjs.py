@@ -1835,8 +1835,20 @@ function grid_action(grid,name,url) {
     };
     doit(0);
   };
-}
+}"""
+        uri = request.build_absolute_uri()
 
+        #~ windows = '';
+        #~ for() {
+          #~ windows += "," + Ext.WindowMgr...
+        #~ }
+        
+        s += """
+function goto_permalink() {
+    var windows = "foo,bar";
+    document.location = "%s?open=" + windows;
+}""" % uri
+        s += """
 
 function show_detail(grid,fn) { 
   return function(btn,evt) {

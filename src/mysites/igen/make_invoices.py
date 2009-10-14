@@ -22,4 +22,9 @@ setup_environ(settings)
 
 from lino.apps.sales import utils
 utils.thanks_to()
-print utils.make_invoices()
+made = utils.make_invoices()
+if len(made) == 0:
+    print "Nothing to do."
+else:
+    print "%d invoices have been made.\n" % len(made)
+

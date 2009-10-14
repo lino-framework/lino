@@ -9,12 +9,17 @@ Welcome to iGen, the first Lino application.
 <p>This is a demo database.
 You can change data and play with it, 
 but keep in mind that the data is being reset 
-to an initial state when necessary.
+to an initial state when necessary."""
 
-<p>
-You can log in as user "user" or "root", both with password "1234".
-Note how the menu changes depending on which user you are.
-<a href="%s">More</a>""" % lino.help_url
+#~ lino.index_html += """<p>
+#~ You can log in as user "user" or "root", both with password "1234".
+#~ Note how the menu changes depending on which user you are.
+#~ """
+
+lino.index_html += """<ul>"""
+lino.index_html += """<li><a href="#" onclick="goto_permalink()">permalink with open windows</a></li>"""
+lino.index_html += """<li><a href="%s">User manual</a></li>""" % lino.help_url
+lino.index_html += """</ul>"""
 
 # this creates a (useless) vertical scrollbar in the main viewport:
 # lino.index_html += "<br/>" * 500

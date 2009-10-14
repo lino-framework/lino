@@ -16,6 +16,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 import sys
+import decimal
+
 from django.db import models
 from lino.apps import fields
 from lino.apps.contacts import models as contacts
@@ -54,7 +56,7 @@ class BankStatement(ledger.LedgerDocument):
         super(BankStatement,self).before_save()
         
     def collect_bookings(self):
-        sum_debit = 0
+        sum_debit = decimal.Decimal(0)
         for i in self.docitem_set.all():
             b = self.create_booking(
               pos=i.pos,
@@ -65,9 +67,10 @@ class BankStatement(ledger.LedgerDocument):
               credit=i.credit)
             sum_debit += i.debit - i.credit
             yield b
-        todo_notice("BankStatement.balance1 and 2 are strings?!")
+        #todo_notice("BankStatement.balance1 and 2 are strings?!")
         #http://code.google.com/p/lino/issues/detail?id=1
-        #self.balance2 = self.balance1 + sum_debit
+        print "finan.BankStatement %r %r" % (self.balance1, sum_debit)
+        self.balance2 = self.balance1 + sum_debit
         #jnl = self.get_journal()
         acct = ledger.Account.objects.get(id=self.journal.account)
         b = self.create_booking(account=acct)

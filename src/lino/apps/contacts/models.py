@@ -38,6 +38,7 @@ from lino.utils import perms
 
 
 class PaymentTerm(models.Model):
+    id = models.CharField(max_length=10,primary_key=True)
     name = models.CharField(max_length=200)
     days = models.IntegerField(default=0)
     months = models.IntegerField(default=0)
@@ -321,7 +322,7 @@ countries.Countries.register_page_layout(CompaniesByCountryPage)
 
         
 class Partner(models.Model):
-    name = models.CharField("Searchname",max_length=30)
+    name = models.CharField("Sort name",max_length=40)
     company = models.ForeignKey(Company,blank=True,null=True)
     person = models.ForeignKey(Person,blank=True,null=True)
     payment_term = models.ForeignKey("PaymentTerm",blank=True,null=True)
@@ -329,9 +330,19 @@ class Partner(models.Model):
     item_vat = models.BooleanField(default=False)
     
     def __unicode__(self):
+        return self.name
+        
+    def save(self,*args,**kw):
+        self.before_save()
+        return super(Partner,self).save(*args,**kw)
+        
+    def before_save(self):
         if self.company:
-            return unicode(self.company)
-        return unicode(self.person)
+            self.name = self.company.name
+        elif self.person:
+            l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
+            self.name = " ".join(l)
+        
 
 class PartnerPageLayout(layouts.PageLayout):
     main = """
@@ -342,10 +353,10 @@ class PartnerPageLayout(layouts.PageLayout):
     
 class Partners(reports.Report):
     page_layouts = (PartnerPageLayout,)
-    columnNames = "company person payment_term vat_exempt item_vat"
+    columnNames = "name payment_term vat_exempt item_vat company person"
     can_delete = True
     model = Partner
-    order_by = "id"
+    order_by = "name"
     #can_view = perms.is_authenticated
 
 

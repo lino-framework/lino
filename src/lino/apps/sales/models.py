@@ -46,6 +46,21 @@ from lino.apps.journals import models as journals
 from lino.apps.ledger import models as ledger
 from lino.apps.products import models as products
 
+
+##
+## report definitions
+##        
+        
+from django import forms
+
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
+
+#from lino.plugins.countries import Languages
+
+
+
 #~ class Customer(contacts.Contact):
     #~ paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
     #~ vatExempt = models.BooleanField(default=False)
@@ -80,15 +95,28 @@ class InvoicingMode(models.Model):
     def __unicode__(self):
         return self.name
         
+class InvoicingModes(reports.Report):
+    model = InvoicingMode
+    order_by = "id"
+    can_view = perms.is_staff
+    
     
     
 class ShippingMode(models.Model):
+    id = models.CharField(max_length=10, primary_key=True)
     name = models.CharField(max_length=200)
     price = fields.PriceField(blank=True,null=True)
     
     def __unicode__(self):
         return self.name
         
+class ShippingModes(reports.Report):
+    model = ShippingMode
+    order_by = "id"
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
+
 
 
 class SalesRule(models.Model):
@@ -145,6 +173,9 @@ class SalesDocument(journals.AbstractDocument):
             if qty is None:
                 qty = 1
         kw['product'] = product 
+        unit_price = kw.get('unit_price',None)
+        if type(unit_price) == float:
+            kw['unit_price'] = "%.2f" % unit_price
         kw['qty'] = qty
         #print self,kw
         return self.docitem_set.create(**kw)
@@ -231,6 +262,11 @@ class Order(SalesDocument):
                 self.cycle,self))
         return datetime.date(date.year,date.month,date.day)
         
+    def before_save(self):
+        SalesDocument.before_save(self)
+        if self.start_date is None:
+            self.start_date = self.creation_date
+            
     def make_invoice(self,make_until=None,simulate=False,today=None):
 
         if self.start_date is None:
@@ -275,7 +311,7 @@ class Order(SalesDocument):
         for item in self.docitem_set.all():
             d = {}
             for fn in ('product','title','description',
-                       'unitPrice','qty'):
+                       'unit_price','qty'):
                 d[fn] = getattr(item,fn)
             d['qty'] *= qty
             #d['total'] *= qty
@@ -343,7 +379,7 @@ class DocItem(models.Model):
     description = models.TextField(blank=True,null=True)
     
     discount = models.IntegerField("Discount %",default=0)
-    unitPrice = fields.PriceField(blank=True,null=True) 
+    unit_price = fields.PriceField(blank=True,null=True) 
     qty = fields.QuantityField(blank=True,null=True)
     total = fields.PriceField(blank=True,null=True)
     
@@ -368,11 +404,11 @@ class DocItem(models.Model):
                 self.title = self.product.name
             if not self.description:
                 self.description = self.product.description
-            if self.unitPrice is None:
+            if self.unit_price is None:
                 if self.product.price is not None:
-                    self.unitPrice = self.product.price * (100 - self.discount) / 100
-        if self.unitPrice is not None and self.qty is not None:
-            self.total = self.unitPrice * self.qty
+                    self.unit_price = self.product.price * (100 - self.discount) / 100
+        if self.unit_price is not None and self.qty is not None:
+            self.total = self.unit_price * self.qty
         self.document.save() # update total in document
     before_save.alters_data = True
 
@@ -382,32 +418,8 @@ class DocItem(models.Model):
             #~ return models.Model.__unicode__(self)
         #~ return u"DocItem %s.%d" % (self.document,self.pos)
 
-##
-## report definitions
-##        
-        
-from django import forms
-
-from lino.utils import reports
-from lino.utils import layouts
-from lino.utils import perms
-
-#from lino.plugins.countries import Languages
 
 
-
-class ShippingModes(reports.Report):
-    model = ShippingMode
-    order_by = "id"
-    can_view = perms.is_staff
-    #~ def can_view(self,request):
-      #~ return request.user.is_staff
-
-class InvoicingModes(reports.Report):
-    model = InvoicingMode
-    order_by = "id"
-    can_view = perms.is_staff
-    
     
 class DocumentPageLayout(layouts.PageLayout):
     box1 = """
@@ -423,7 +435,7 @@ class DocumentPageLayout(layouts.PageLayout):
       user sent_time
       """
     box3 = """
-      subject box5
+      subject 
       sales_remark:80
       intro:80x5
       """
@@ -438,14 +450,14 @@ class DocumentPageLayout(layouts.PageLayout):
     
     main = """
       box1 box2 box4
-      box3
-      ItemsByDocument:80x5
+      box3 box5
+      ItemsByDocument:100x5
       """
       
         
 class OrderPageLayout(DocumentPageLayout):
     box5 = """
-      cycle
+      cycle:20
       start_date
       covered_until
       """
@@ -563,17 +575,16 @@ class InvoicesByOrder(SalesDocuments):
     columnNames = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
 
     
-class ItemsByDocumentRowLayout(layouts.RowLayout):
-    title_box = """
-    product
-    title
-    """
-    main = "pos:3 title_box description:20x1 discount unitPrice qty total"
+#~ class ItemsByDocumentRowLayout(layouts.RowLayout):
+    #~ title_box = """
+    #~ product
+    #~ title
+    #~ """
+    #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 
 class ItemsByDocument(reports.Report):
-    #~ columnNames = "pos:3 product title description:30x1 " \
-                  #~ "unitPrice qty total"
-    row_layout_class = ItemsByDocumentRowLayout
+    columnNames = "pos:3 product title description:20x1 discount unit_price qty total"
+    #row_layout_class = ItemsByDocumentRowLayout
     model = DocItem
     master = SalesDocument
     order_by = "pos"

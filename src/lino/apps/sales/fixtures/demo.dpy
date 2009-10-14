@@ -30,7 +30,6 @@ products = models.get_app('products')
 sales = models.get_app('sales')
 
 
-shippingmode = Instantiator(sales.ShippingMode,"name").build
 salesrule = Instantiator(sales.SalesRule).build
 #customer = Instantiator(Customer).build
 
@@ -38,8 +37,9 @@ imode = Instantiator(sales.InvoicingMode,
   "id channel name advance_days journal").build
 
 def objects():
-    yield shippingmode("cash and carry")
-    yield shippingmode("regular mail")
+    shippingmode = Instantiator(sales.ShippingMode,"id name").build
+    yield shippingmode("ta","take away")
+    yield shippingmode("rm","regular mail")
 
     #~ for ct in contacts.Contact.objects.all():
         #~ yield Customer.from_parent(ct)
@@ -57,37 +57,37 @@ def objects():
     yield INV
     
     
-    invoice = Instantiator(sales.Invoice,
-      "customer creation_date imode payment_term shipping_mode",
-      journal=INV).build
-
-    order = Instantiator(sales.Order,
-    """customer creation_date start_date cycle imode 
-    payment_term shipping_mode""",journal=ORD).build
-    
     yield imode('e','E','By e-mail',2,INV)
     yield imode('p','P','By snail mail',10,INV)
         
-    yield salesrule(imode='e',shipping_mode=1,payment_term=2)
+    yield salesrule(imode='e',shipping_mode="ta",payment_term="7")
     
     metsjapuu = contacts.Partner.objects.get(company__name__startswith="Mets")
     dubois = contacts.Partner.objects.get(person__last_name__startswith="Dubois")
     furniture = products.ProductCat.objects.get(name="Furniture")
     hosting = 5
     
-    o = order(metsjapuu,"2008-09-23","2008-09-24","M","e",2,1,
+    order = Instantiator(sales.Order,
+        "customer creation_date start_date cycle imode",
+        payment_term="30",journal=ORD).build
+    invoice = Instantiator(sales.Invoice,
+      "customer creation_date imode",
+      payment_term="30",journal=INV).build
+    
+    o = order(metsjapuu,"2008-09-23","2008-09-24","M","e",
         sales_remark="monthly order")
     o.add_item(hosting,1)
     yield o
 
-    o = order(dubois,"2008-09-23","2008-09-24","M","e",2,1,
+    o = order(dubois,"2008-09-23","2008-09-24","M","e",
         sales_remark="dubois gets 50% discount")
     o.add_item(hosting,1,discount=50)
     yield o  
 
     utils.make_invoices(make_until=date(2008,10,28))
         
-    i = invoice(2,"2008-10-29","e",2,1,
+
+    i = invoice(2,"2008-10-29","e",
       sales_remark="first manual invoice")
     i.add_item(1,1)
     i.add_item(2,4)
@@ -95,7 +95,7 @@ def objects():
     
     utils.make_invoices(make_until=date(2009,04,11))
         
-    i = invoice(3,date(2009,04,11),"e",2,1,
+    i = invoice(3,date(2009,04,11),"e",
         sales_remark="second manual invoice")
     i.add_item(3,1)
     i.add_item(4,4)
@@ -105,7 +105,7 @@ def objects():
     #d = '20090412'
     d = i2d(20090412)
     #d = date(2009,4,12)
-    o2 = order(4,d,d,"Y","p",2,1,sales_remark="yearly order")
+    o2 = order(4,d,d,"Y","p",sales_remark="yearly order")
     o2.add_item(3,1)
     o2.add_item(4,4)
     #print o2
@@ -113,10 +113,22 @@ def objects():
     yield o2
     utils.make_invoices(make_until=d)
     
-    i = invoice(4,date(2009,04,13),"e",2,1,
+    i = invoice(4,date(2009,04,13),"e",
       sales_remark="third manual invoice with discount")
     i.add_item(3,1,discount=10)
     i.add_item(4,4,discount=5)
     yield i
     
     utils.make_invoices(make_until=date(2009,05,14))
+
+    order = Instantiator(sales.Order,journal=ORD,cycle='M',imode='e',payment_term="15").build
+    for i in range(29):
+        o = order(
+            customer=i+1,creation_date=date(2009,6,1+i),
+            sales_remark="range demo #%d" % i)
+        yield o
+        yield o.add_item(5,1,unit_price=1.7*i)
+        
+    utils.make_invoices(make_until=date(2009,7,1))
+    utils.make_invoices(make_until=date(2009,8,1))
+    utils.make_invoices(make_until=date(2009,10,1))

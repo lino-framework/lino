@@ -70,8 +70,11 @@ def objects():
     yield company(name=u'Minu Firma OÜ')
     yield company(name=u'Mets ja Puu OÜ')
     
-    company = Instantiator(contacts.Company,country='be',language='de').build
-    yield company(name=u'Bäckerei Ausdemwald',addr1=u'Vervierser Straße 45',city='Eupen',zip_code='4700')
+    company = Instantiator(contacts.Company,"name zip_code city addr1",country='be',language='de').build
+    yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße 45')
+    yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert 103')
+    yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße 53')
+    yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße 13')
     
     company = Instantiator(contacts.Company,country='nl',language='nl').build
     yield company(name=u'Donderweer bv')
@@ -80,10 +83,62 @@ def objects():
     yield company(name=u'Hans Flott & Co')
     yield company(name=u'Bernd Brechts Bücherladen')
     
-    person = Instantiator(contacts.Person,country='be',language='de').build
-    yield person(first_name=u'Andreas',last_name=u'Arens')
-    yield person(first_name=u'Alfons',last_name=u'Ausdemwald')
-    yield person(first_name=u'Luc',last_name=u'Saffre')
+    person = Instantiator(contacts.Person,"first_name last_name",
+                country='be',language='de',city='Eupen',zip_code='4700').build
+    yield person(u'Andreas',  u'Arens')
+    yield person(u'Annette',  u'Arens')
+    yield person(u'Hans',     u'Altenberg')
+    yield person(u'Alfons',   u'Ausdemwald')
+    yield person(u'Laurent',  u'Bastiaensen')
+    yield person(u'Charlotte',  u'Collard')
+    yield person(u'Ulrike',  u'Charlier')
+    yield person(u'Marc',  u'Chantraine')
+    yield person(u'Daniel',   u'Dericum')
+    yield person(u'Dorothée', u'Demeulenaere')
+    yield person(u'Berta',    u'Ernst')
+    yield person(u'Bernd',    u'Evertz')
+    yield person(u'Eberhart', u'Evers')
+    yield person(u'Daniel',   u'Emonts')
+    yield person(u'Edgar',    u'Engels')
+    yield person(u'Luc',      u'Faymonville')
+    yield person(u'Gérard',   u'Gernegroß')
+    yield person(u'Werner',   u'Groteclaes')
+    yield person(u'Grete',    u'Hilgers')
+    yield person(u'Hans',     u'Hilgers')
+    yield person(u'Irene',    u'Ingels')
+    yield person(u'Jérémy',   u'Jansen')
+    yield person(u'Jean-Pierre', u'Jacob')
+    yield person(u'Herbert', u'Johnen')
+    yield person(u'Johannes', u'Jonas')
+    yield person(u'Jan', u'Jousten')
+    yield person(u'Karl', u'Kaivers')
+    yield person(u'Guido', u'Lambertz')
+    yield person(u'Luc', u'Laschet')
+    yield person(u'Line', u'Lazarus')
+    yield person(u'Josefine', u'Leffin')
+    yield person(u'Marc', u'Malmendier')
+    yield person(u'Leo', u'Meessen')
+    yield person(u'Franz', u'Mießen')
+    yield person(u'Marie-Louise', u'Meier')
+    
+    
+    person = Instantiator(contacts.Person,"first_name last_name",
+                country='be',language='de',city='Raeren',zip_code='4730').build
+    yield person(u'Erich',    u'Emonts')
+    yield person(u'Erwin',    u'Emontspool')
+    yield person(u'Erna',     u'Emonts-Gast')
+    yield person(u'Alfons',     u'Radermacher')
+    yield person(u'Berta',     u'Radermacher')
+    yield person(u'Christian',     u'Radermacher')
+    yield person(u'Daniela',     u'Radermacher')
+    yield person(u'Edgard',     u'Radermacher')
+    yield person(u'Fritz',     u'Radermacher')
+    yield person(u'Guido',     u'Radermacher')
+    yield person(u'Hans',     u'Radermacher')
+    yield person(u'Hedi',     u'Radermacher')
+    yield person(u'Inge',     u'Radermacher')
+    yield person(u'Jean',     u'Radermacher')
+    
     
     person = Instantiator(contacts.Person,country='be',language='fr').build
     yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
@@ -105,9 +160,19 @@ def objects():
     yield person(first_name=u'Denis',last_name=u'Denon')
     yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
     
-    person = Instantiator(contacts.Person,country='ee').build
-    yield person(first_name=u'Tõnu',last_name=u'Tamm')
-    yield person(first_name=u'Karl',last_name=u'Kask')
+    person = Instantiator(contacts.Person,"first_name last_name",country='ee').build
+    yield person(u'Aare',u'Aaresild')
+    yield person(u'Ahti',u'Aaspere')
+    yield person(u'Peeter',u'Bach')
+    yield person(u'Tiina',u'Engelbert')
+    yield person(u'Inge',u'Hallik')
+    yield person(u'Harri',u'Hunt')
+    yield person(u'Ingmar',u'Iliste')
+    yield person(u'Jaan',u'Janno')
+    yield person(u'Jaan',u'Jõgi')
+    yield person(u'Tõnu',u'Tamm')
+    yield person(u'Tiina',u'Türnpuu')
+    yield person(u'Karl',u'Kask')
     
     partner = Instantiator(contacts.Partner).build
     
@@ -118,34 +183,129 @@ def objects():
         yield partner(person=p.pk)
     
     
-    paymentterm = Instantiator(contacts.PaymentTerm,"name").build
-    yield paymentterm("Cash")
-    yield paymentterm("7 days net",days=7)
-    yield paymentterm("Prepayment",days=7)
+    paymentterm = Instantiator(contacts.PaymentTerm,"id name").build
+    yield paymentterm("pp","Prepayment",days=7)
+    yield paymentterm("cash","Cash")
+    yield paymentterm("7","7 days net",days=7)
+    yield paymentterm("15","15 days net",days=15)
+    yield paymentterm("30","30 days net",days=30)
 
-    #~ s = u"""    
-    #~ 1||||Minu Firma OÜ|||||ee||||||||et|2|
-    #~ 2|Luc|Saffre|Mr.||||Rummajaani talu|Vana-Vigala küla|ee|Vigala vald|78003|Raplamaa|luc.saffre@gmx.net||||et|
-    #~ 3|Andreas|Arens|Herrn||||Vervierser Straße 12||be|Eupen|4700||||||de|
-    #~ 4|Alfons|Ausdemwald|Herrn|Bäckerei Ausdemwald|||Vervierser Straße 45||be|Eupen|4700||||||de|
-    #~ 5|Bernard|Bodard|Dr.||||rue de la Loi 17||be|Welkenraedt|4840||||||fr|
-    #~ 6||||Donderweer bv|||Wolfgangamadeusplaats 1-5||nl|Sneek|8601 WB||||||nl|
-    #~ 7|Jean|Dupont|Mr||||71, rue Neuve||fr|Prouvy|59121||||||fr|
-    #~ 8|Emil|Eierschal|Herrn||||Eichenstr. 7||de|Erlangen|91056||||||de|
-    #~ 9|Lisa|Lahm|Frau|Hans Flott & Co|||Dürener Str. 264-266||de|Aachen|52007||||||de|
-    #~ 10|Bernd|Brecht|Herr|Bernd Brecht|||Eupener Str. 13||de|Aachen|52007||||||de|
-    #~ 11|Jérôme|Jeanémart|Monsieur||||rue Haute||be|Welkenradt|4850||||||fr|
-    #~ 12|Robin|Dubois|Monsieur||||rue des prés 5||be|Welkenradt|4850||||||fr|
-    #~ 13|Denis|Duprez|Dr.||||rue des prés 9||be|Welkenradt|4850||||||fr|
-    #~ 14|Karl|Keller|Herrn||||Bergstraße 5||be|Eupen|4700||||||de|
-    #~ 100|Tõnu|Tamme||Mets ja Puu OÜ|||Sibula tee 1||ee|Maardu|74117|Harju|||||et|
-    #~ 101|Karl|Kask|||||Nõmme tee 1|Kloogaranna küla|ee|Keila vald|76708|Harju|||||et|
-    #~ """
 
-    #~ for line in s.splitlines():
-        #~ if len(line.strip()) > 0:
-            #~ a = line.split('|')
-            #~ ct = contact(*a)
-            #~ yield ct
+    
+    s = u"""
+    Aachener Straße
+    Akazienweg
+    Alter Malmedyer Weg
+    Am Bahndamm
+    Am Berg
+    Am Waisenbüschchen
+    Auenweg
+    Auf dem Spitzberg
+    Auf'm Rain
+    August-Thonnar-Str.
+    Bahnhofsgasse
+    Bahnhofstraße
+    Bellmerin
+    Bennetsborn
+    Bergkapellstraße
+    Bergstraße
+    Binsterweg
+    Brabantstraße
+    Buchenweg
+    Edelstraße
+    Euregiostraße
+    Favrunpark
+    Feldstraße
+    Fränzel
+    Gewerbestraße
+    Gospert
+    Gülcherstraße
+    Haagenstraße
+    Haasberg
+    Haasstraße
+    Habsburgerweg
+    Heidberg
+    Heidgasse
+    Heidhöhe
+    Herbesthaler Straße
+    Hisselsgasse
+    Hochstraße
+    Hook
+    Hostert
+    Hufengasse
+    Hugo-Zimmermann-Str.
+    Hütte
+    Hütterprivatweg
+    Im Peschgen
+    In den Siepen
+    Industriestraße
+    Johannesstraße
+    Judenstraße
+    Kaperberg
+    Kaplan-Arnolds-Str.
+    Karl-Weiß-Str.
+    Kehrweg
+    Kirchgasse
+    Kirchstraße
+    Klinkeshöfchen
+    Kügelgasse
+    Langesthal
+    Lascheterweg
+    Limburgerweg
+    Lindenweg
+    Lothringerweg
+    Malmedyer Straße
+    Maria-Theresia-Straße
+    Marktplatz
+    Monschauer Straße
+    Mühlenweg
+    Neustraße
+    Nikolausfeld
+    Nispert
+    Noereth
+    Obere Ibern
+    Obere Rottergasse
+    Oestraße
+    Olengraben
+    Panorama
+    Paveestraße
+    Peter-Becker-Str.
+    Rosenweg
+    Rot-Kreuz-Str.
+    Rotenberg
+    Rotenbergplatz
+    Schilsweg
+    Schlüsselhof
+    Schnellewindgasse
+    Schönefeld
+    Schorberg
+    Schulstraße
+    Selterschlag
+    Simarstraße
+    Steinroth
+    Stendrich
+    Stockbergerweg
+    Stockem
+    Theodor-Mooren-Str.
+    Untere Ibern
+    Vervierser Straße
+    Vossengasse
+    Voulfeld
+    Werthplatz
+    Weserstraße
+    """
+    
+    streets_of_eupen = [ line for line in s.splitlines() if len(line.strip()) > 0 ]
+    
+    i = 0
+    nr = 1
+    for p in contacts.Person.objects.filter(city__exact='Eupen'):
+        setattr(p,'addr1',streets_of_eupen[i] + " " + str(nr))
+        p.save()
+        nr += 1
+        if i < len(streets_of_eupen) : 
+            i += 1
+        else:
+            i = 0
         
         
