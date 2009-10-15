@@ -455,7 +455,7 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 box5
-      ItemsByDocument:100x5
+      ItemsByDocument:100x15
       """
       
         

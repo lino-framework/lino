@@ -18,7 +18,7 @@
 
 import traceback
 import types
-import logging
+import logging ; logger = logging.getLogger("lino.extjs")
 
 from dateutil import parser as dateparser
 
@@ -41,7 +41,7 @@ def define_vars(variables,indent=0):
     sep = "\n" + ' ' * indent
     s = ''
     for v in variables:
-        #logging.debug("define_vars() : %s", v.ext_name)
+        #logger.debug("define_vars() : %s", v.ext_name)
         for ln in v.ext_lines_before():
             s += sep + ln 
         s += sep + "var %s = %s;" % (v.ext_name,v.as_ext_value())
@@ -74,6 +74,7 @@ class ReportRenderer:
             for ln in win.ext_lines():
                 yield ln
             yield '// end of window %s' % win.name
+            yield ''
   
 class LayoutWindow:
     def __init__(self,layout,**kw):
@@ -86,6 +87,9 @@ class LayoutWindow:
         self.options.update(title=self.layout.get_title())
         self.options.update(closeAction='hide')
         self.options.update(maximizable=True)
+        self.options.update(id=self.name)
+        self.options.update(layout='fit')
+        self.options.update(height=300,width=800)
         self.options.update(items=self.layout._main)
         #kw.update(maximized=True)
         if self.layout.report.master is not None:
@@ -97,7 +101,7 @@ class LayoutWindow:
         yield "    %s_win = new Ext.Window( %s );" % (self.name,py2js(self.options))
         
         if isinstance(self.layout._main,MainGridElement):
-            yield "%s_win.grid = %s; // foo" % (self.name,self.layout._main.ext_name)
+            yield "%s_win.grid = %s;" % (self.name,self.layout._main.ext_name)
         
         yield "  }"
         if self.layout.report.master is None:
@@ -126,7 +130,7 @@ class LayoutWindow:
       
 
 def py2js(v,**kw):
-    #logging.debug("py2js(%r,%r)",v,kw)
+    #logger.debug("py2js(%r,%r)",v,kw)
     #~ if isinstance(v,reports.Report):
         #~ self = v
         #~ setup_report(self)
@@ -1124,7 +1128,7 @@ class Container(LayoutElement):
                 remove e's width to avoid padding differences.
                 """
                 e.width = None
-        logging.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
+        logger.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
                 
     def compute_width(self,unused_insist=False):
         """
@@ -1250,7 +1254,9 @@ class Panel(Container):
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
         d.update(style=dict(padding='0px'))
-        if self.vertical:
+        if len(self.elements) == 1:
+            d.update(layout='fit')
+        elif self.vertical:
             d.update(layout='anchor')
         else:
             d.update(layout='hbox')
@@ -1269,7 +1275,7 @@ class TabPanel(Container):
     def ext_options(self):
         d = dict(
           xtype="tabpanel",
-          region="east",
+          #region="east",
           split=True,
           activeTab=0,
           width=self.width,
@@ -1329,7 +1335,11 @@ class GridElement(Container):
         #d.update(store=self.store)
         #d.update(colModel=self.column_model)
         d.update(viewConfig=js_code(py2js(dict(
-          autoScroll=True,
+          #autoScroll=True,
+          #autoFill=True,
+          #forceFit=True,
+          #enableRowBody=True,
+          showPreview=True,
           scrollOffset=200,
           emptyText="Nix gefunden!"
         ))))
@@ -1338,7 +1348,8 @@ class GridElement(Container):
         d.update(emptyText="Nix gefunden...")
         d.update(store=js_code(self.report.store.ext_name))
         d.update(colModel=js_code(self.column_model.ext_name))
-        d.update(autoHeight=True)
+        #d.update(autoHeight=True)
+        #d.update(layout='fit')
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
         
@@ -1486,7 +1497,7 @@ class MainGridElement(GridElement):
         #d.update(title=request._lino_request.get_title()) 
         #d.update(title=self.layout.label)
         #d.update(title=self.report.get_title(None)) 
-        d.update(region='center',split=True)
+        #d.update(region='center',split=True)
         return d
         
     def ext_lines_after(self):
@@ -1527,7 +1538,7 @@ class MainPanel(Panel):
     def ext_options(self):
         d = Panel.ext_options(self)
         #d.update(title=self.layout.label)
-        d.update(region='east',split=True) #,width=300)
+        #d.update(region='east',split=True) #,width=300)
         d.update(autoScroll=True)
         if False:
             d.update(tbar=js_code("""new Ext.PagingToolbar({
@@ -1562,54 +1573,36 @@ class MainPanel(Panel):
                  #~ #slave.store.name,request._lino_report.layout.pk.name)
         #~ yield "});"
         
+        
+      
+        keys = []
+        buttons = []
+
+        key = reports.PAGE_UP
+        js = js_code("function() {%s_win.grid.getSelectionModel().selectPrevious()}" % self.layout.report.row_layout.name)
+        keys.append(dict(
+          handler=js,
+          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
+        buttons.append(dict(handler=js,text="Previous"))
+
+        key = reports.PAGE_DOWN
+        js = js_code("function() {%s_win.grid.getSelectionModel().selectNext()}" % self.layout.report.row_layout.name)
+        keys.append(dict(
+          handler=js,
+          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
+        buttons.append(dict(handler=js,text="Next"))
+        if len(keys):
+            yield "%s.keys = %s;" % (self.ext_name,py2js(keys))
+        
+        
         url = self.report.store.get_absolute_url(submit=True)
-        button = dict(
-            handler=js_code("form_submit(%s.form,'%s',%s,'%s')" % (
-                self.ext_name,url,self.report.store.ext_name,self.report.store.pk.name)),
-            text='Submit')
-        yield "%s.addButton(%s);" % (self.ext_name,py2js(button))
-        #~ yield "%s.addButton({text: 'Submit',handler: form_submit(%s.form,'%s',%s)});" % (
-          #~ self.ext_name,self.ext_name,url,self.layout.store.ext_name)
+        js = js_code("form_submit(%s.form,'%s',%s,'%s')" % (
+                self.ext_name,url,self.report.store.ext_name,self.report.store.pk.name))
+        buttons.append(dict(handler=js,text='Submit'))
+        
+        for btn in buttons:
+            yield "%s.addButton(%s);" % (self.ext_name,py2js(btn))
     
-        #~ s = """
-#~ %s.addButton({
-    #~ text: 'Submit',
-    #~ handler: function(btn,evt){""" % self.ext_name
-        #~ #s += "console.log(btn,evt);"
-        #~ #s += "console.log(%s.getAt(0));" % self.master_store.ext_name
-        #~ d = dict(
-            #~ url=self.layout.store.get_absolute_url(save=True),
-            #~ params=js_code("{pk:%s.getAt(0).data.%s}" % (
-                #~ self.layout.store.ext_name,self.layout.store.pk.name)),
-            #~ waitMsg='Saving Data...',
-            #~ success=js_code("""function (form, action) {
-                #~ Ext.MessageBox.alert('Saved OK',
-                  #~ action.result ? action.result.msg : '(undefined action result)');
-                #~ %s.reload();
-            #~ }""" % self.layout.store.ext_name),
-            #~ failure=js_code("""function(form, action) {
-                #~ // console.log("form:",form);
-                #~ Ext.MessageBox.alert('Submit failed!', 
-                  #~ action.result ? action.result.msg : '(undefined action result)');
-            #~ }""")
-            #~ )
-        
-        #~ s += "\n  %s.form.submit({%s});" % (self.ext_name,dict2js(d))
-        #~ s += """
-#~ }});"""
-        #~ yield s
-        
-        #yield "%s.load({params:{limit:1,start:0}});" % self.report.store.ext_name
-        
-        
-    #~ def ext_variables(self):
-        #~ for s in self.layout.choice_stores:
-            #~ yield s
-        #~ for g in self.layout.slave_grids:
-            #~ for v in g.ext_variables():
-                #~ yield v
-        #~ for v in Panel.ext_variables(self):
-            #~ yield v
         
 
 
@@ -1838,14 +1831,13 @@ function grid_action(grid,name,url) {
 }"""
         uri = request.build_absolute_uri()
 
-        #~ windows = '';
-        #~ for() {
-          #~ windows += "," + Ext.WindowMgr...
-        #~ }
-        
         s += """
 function goto_permalink() {
-    var windows = "foo,bar";
+    var windows = "";
+    var sep = '';
+    Ext.WindowMgr.each(function(win){
+      if(!win.hidden) {windows+=sep+win.getId();sep=","}
+    });
     document.location = "%s?open=" + windows;
 }""" % uri
         s += """
@@ -1886,6 +1878,27 @@ Ext.onReady(function(){ """
             "[main_menu,"+",".join([
                   c.as_ext() for c in self.components]) +"]"))
         s += "\nnew Ext.Viewport(%s).render('body');" % py2js(d)
+ 
+        s += """
+function gup( name )
+{
+  // Thanks to http://www.netlobo.com/url_query_string_javascript.html
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+}        
+var windows = gup('open').split(',');
+for(i=0;i<windows.length;i++) {
+  console.log(windows[i]);
+  if(windows[i]) eval(windows[i]+"()");
+}
+main_menu.get(0).focus();
+        """
         s += "\n}); // end of onReady()"
         s += "\n</script></head><body></body></html>"
         return s
