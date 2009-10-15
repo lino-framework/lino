@@ -95,6 +95,10 @@ class BankStatement(ledger.LedgerDocument):
                 partner = contacts.Partner.objects.get(pk=partner)
         kw['account'] = account
         kw['partner'] = partner
+        for k in ('debit','credit'):
+            v = kw.get(k,None)
+            if isinstance(v,basestring):
+                kw[k] = decimal.Decimal(v)
         return self.docitem_set.create(**kw)
     
   

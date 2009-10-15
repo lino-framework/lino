@@ -21,6 +21,7 @@
 #from datetime import date
 #from dateutil import parser as dateparser
 from lino.apps.finan import models as finan
+import decimal
 #from lino.apps.ledger import models as ledger
 #from lino.apps.contacts import models as contacts
 #from lino.apps.journals import models as journals
@@ -46,7 +47,7 @@ def objects():
     
     doc = BANK.create_document(
       date=i2d(20090501),
-      balance1='1056.40')
+      balance1=decimal.Decimal('1056.40'))
     doc.add_item(
       account=PR,
       partner=contacts.Partner.objects.get(pk=2),

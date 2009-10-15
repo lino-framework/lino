@@ -6,6 +6,11 @@ It is okay to assign integer values to DecimalFields::
   >>> a.total()
   20.00
   >>> a.save()
+  >>> pk = a.pk
+  >>> a = A.objects.get(pk=pk)
+  >>> a.total()
+  Decimal("20")
+  
 
 Don't assign float values to a DecimalField because 
 although Django doesn't complain at first, and although the 
@@ -15,49 +20,22 @@ a TypeError when you try to save the object::
   >>> a = A(price=2.50,qty=8.0)
   >>> a.total()
   20.00
-  >>> a.save()
-Exception raised:
-    Traceback (most recent call last):
-    ...
-    TypeError: Cannot convert float to Decimal.  First convert the float to a string  
-    
-To assign non-integer values to a DecimalField, you 
-should convert the value to a string first::
-
-  >>> a = A(price='2.50',qty='8')
+  >>> a.save() #doctest: +IGNORE_EXCEPTION_DETAIL
+  Traceback (most recent call last):
+  ...
+  TypeError: Cannot convert float to Decimal.  First convert the float to a string  
+      
+  >>> import decimal
+  >>> a = A(price=decimal.Decimal('2.50'),qty=8)
   >>> a.total()
-  20.00 foo
+  Decimal("20.00")
   >>> a.save()
-  
-And this::
 
-  >>> type(a.price)
-  foo
-  >>> type(a.qty)
-  
-Even this works::
-
-  >>> a = A(price='',qty='')
+  >>> a = A(price=decimal.Decimal('2.20'),qty=decimal.Decimal('2.2'))
   >>> a.total()
-  0.00
+  Decimal("4.840")
   >>> a.save()
-  
-  >>> a = A.objects.get(id=1)
-  >>> type(a.price)
-  >>> type(a.qty)
-  
-  
 
-  >>> b = B(price=10,qty=2)
-  >>> b.total()
-  20.00
-  >>> b.save()
-
-
-  >>> b = B(price='2.50',qty='8')
-  >>> b.total()
-  20.00
-  >>> b.save()
   
 
 """
@@ -71,32 +49,4 @@ class A(models.Model):
     def total(self):
         return self.price * self.qty
 
-
-class PriceField(models.DecimalField):
-    def __init__(self, *args, **kwargs):
-        defaults = dict(
-            max_length=10,
-            max_digits=10,
-            decimal_places=2,
-            )
-        defaults.update(kwargs)
-        super(PriceField, self).__init__(*args, **defaults)
-        
-class QuantityField(models.DecimalField):
-    def __init__(self, *args, **kwargs):
-        defaults = dict(
-            max_length=5,
-            max_digits=5,
-            decimal_places=0,
-            )
-        defaults.update(kwargs)
-        super(QuantityField, self).__init__(*args, **defaults)
-        
-        
-class B(models.Model):
-    price = PriceField()
-    qty = QuantityField()
-    
-    def total(self):
-        return self.price * self.qty
 

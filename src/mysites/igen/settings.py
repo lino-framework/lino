@@ -115,7 +115,7 @@ TEMPLATE_DIRS = (
 )
 #print "baz", __file__
 
-if not True:
+if True:
   INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
