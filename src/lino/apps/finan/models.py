@@ -17,6 +17,7 @@
 
 import sys
 import decimal
+import logging ; logger = logging.getLogger('lino.apps.finan')
 
 from django.db import models
 from lino.apps import fields
@@ -55,8 +56,11 @@ class BankStatement(ledger.LedgerDocument):
             self.balance2 = balance
         super(BankStatement,self).before_save()
         
+    def after_save(self):
+        logger.info("Saved document %s (balances=%r,%r)",self,self.balance1,self.balance2)
+        
     def collect_bookings(self):
-        sum_debit = decimal.Decimal(0)
+        sum_debit = 0 # decimal.Decimal(0)
         for i in self.docitem_set.all():
             b = self.create_booking(
               pos=i.pos,
@@ -69,7 +73,7 @@ class BankStatement(ledger.LedgerDocument):
             yield b
         #todo_notice("BankStatement.balance1 and 2 are strings?!")
         #http://code.google.com/p/lino/issues/detail?id=1
-        print "finan.BankStatement %r %r" % (self.balance1, sum_debit)
+        logger.info("finan.BankStatement %r %r",self.balance1, sum_debit)
         self.balance2 = self.balance1 + sum_debit
         #jnl = self.get_journal()
         acct = ledger.Account.objects.get(id=self.journal.account)

@@ -16,6 +16,7 @@
 ## along with Lino; if not, write to the Free Software Foundation,
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+import logging
 
 __micro__ = 1
 
@@ -33,5 +34,22 @@ This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
 
+def setup():
 
+    logging.basicConfig(
+        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        datefmt='%Y%m-%d %H:%M',
+        filename='lino.log',level=logging.DEBUG,filemode='w')
+
+    logger = logging.getLogger('lino')
+
+    if True:
+        console = logging.StreamHandler()
+        console.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(message)s')
+        #formatter = logging.Formatter('%(levelname)s %(message)s')
+        console.setFormatter(formatter)
+        logger.addHandler(console)
+
+    logger.info('Lino version %s',__version__)
 

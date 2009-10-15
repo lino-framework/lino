@@ -1,5 +1,5 @@
+#coding: utf8
 """
-
 It is okay to assign integer values to DecimalFields::
 
   >>> a = A(price=10,qty=2)
@@ -8,7 +8,7 @@ It is okay to assign integer values to DecimalFields::
   >>> a.save()
 
 Don't assign float values to a DecimalField because 
-although Django doesn't complain, and although the 
+although Django doesn't complain at first, and although the 
 values get stored in the instance object, you'll get 
 a TypeError when you try to save the object::
 
@@ -26,8 +26,14 @@ should convert the value to a string first::
 
   >>> a = A(price='2.50',qty='8')
   >>> a.total()
-  20.00
+  20.00 foo
   >>> a.save()
+  
+And this::
+
+  >>> type(a.price)
+  foo
+  >>> type(a.qty)
   
 Even this works::
 
@@ -35,6 +41,11 @@ Even this works::
   >>> a.total()
   0.00
   >>> a.save()
+  
+  >>> a = A.objects.get(id=1)
+  >>> type(a.price)
+  >>> type(a.qty)
+  
   
 
   >>> b = B(price=10,qty=2)

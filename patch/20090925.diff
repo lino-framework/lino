@@ -1,17 +1,45 @@
 Index: django/db/models/loading.py
 ===================================================================
---- django/db/models/loading.py	(revision 11003)
+--- django/db/models/loading.py	(revision 11624)
 +++ django/db/models/loading.py	(working copy)
-@@ -12,6 +12,8 @@
+@@ -8,10 +8,36 @@
+ import sys
+ import os
+ import threading
++import imp
+ 
  __all__ = ('get_apps', 'get_app', 'get_models', 'get_model', 'register_models',
          'load_app', 'app_cache_ready')
  
-+from lino.tools.my_import import module_exists
++def module_exists(full_name,path=None):
++    """
++    tests whether the module exists but does not import it.
++    see http://www.python.org/doc/current/library/imp.html#module-imp
++    """
++    a = full_name.split('.',1)
++    if len(a) == 1:
++        # simple module name without package
++        try:
++            (file, pathname, description) = imp.find_module(full_name,path)
++            if file is not None: file.close()
++        except ImportError,e:
++            return False
++        return True
++    assert len(a) == 2
++    (file, pathname, description) = imp.find_module(a[0],path)
++    if description[-1] != imp.PKG_DIRECTORY:
++        return False
++    pkg = imp.load_module(a[0],file,pathname,description)
++    if file is not None: file.close()
++    return module_exists(a[1],pkg.__path__)
++
++
++
 +
  class AppCache(object):
      """
      A cache that stores installed applications and their models. Used to
-@@ -62,7 +64,7 @@
+@@ -62,7 +88,7 @@
                  self.loaded = True
          finally:
              self.write_lock.release()
@@ -20,7 +48,7 @@ Index: django/db/models/loading.py
      def load_app(self, app_name, can_postpone=False):
          """
          Loads the app with the provided fully qualified name, and returns the
-@@ -70,17 +72,22 @@
+@@ -70,17 +96,22 @@
          """
          self.handled[app_name] = None
          self.nesting_level += 1
@@ -48,7 +76,7 @@ Index: django/db/models/loading.py
              self.app_store[models] = len(self.app_store)
 Index: django/core/management/base.py
 ===================================================================
---- django/core/management/base.py	(revision 11003)
+--- django/core/management/base.py	(revision 11624)
 +++ django/core/management/base.py	(working copy)
 @@ -214,7 +214,8 @@
              except ImportError, e:

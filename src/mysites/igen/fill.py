@@ -31,6 +31,10 @@ from django.core.management import call_command
 
 from timtools.console import syscon
 
+import lino
+lino.setup()
+import logging ; logger = logging.getLogger('lino.fill')
+
 from lino.utils.sites import lino_site
 
 def unused_db_apps():
@@ -53,7 +57,8 @@ def main():
       
 
     #appnames = [m.__name__ for m in models.get_apps()]
-    print "fill.py", app_labels
+    logger.info("fill.py %s", app_labels)
+
     
     #print "\n".join([m._meta.db_table for m in loading.get_models()])
     
@@ -61,7 +66,7 @@ def main():
     if not syscon.confirm("Gonna reset database %s. Are you sure?" 
         % settings.DATABASE_NAME):
         return
-    print "reset"
+    logger.info("reset")
     if settings.DATABASE_ENGINE == 'sqlite3':
         if settings.DATABASE_NAME != ':memory:':
             if os.path.exists(settings.DATABASE_NAME):
@@ -69,10 +74,10 @@ def main():
     else:
         call_command('reset',*app_labels,**options)
     #call_command('reset','songs','auth',interactive=False)
-    print "syncdb"
+    logger.info("syncdb")
     call_command('syncdb',**options)
     #call_command('flush',interactive=False)
-    print "loaddata demo"
+    logger.info("loaddata demo")
     call_command('loaddata','demo')
     User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
     User.objects.create_user('user','luc.saffre@gmx.net','1234')

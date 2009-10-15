@@ -17,10 +17,7 @@
 
 
 """
-lino.apps.journals
-------------------
-
-This defines the models Journal and AbstractDocument.
+This module defines the models Journal and AbstractDocument.
 
 A journal is a sequence of numbered documents.
 A Journal instance knows the model used for documents in this journal.
@@ -29,9 +26,10 @@ An AbstractDocument instance can look at its journal to find out which subclass 
 """
 
 import os
+import logging ; logger = logging.getLogger('lino.apps.journals')
+
 from django.db import models
 from lino.apps.documents import models as documents
-#from lino.apps.ledger import models as ledger
 
 class DocumentError(Exception):
     pass
@@ -231,6 +229,7 @@ class AbstractDocument(documents.AbstractDocument):
         return r
         
     def after_save(self):
+        #logger.info("Saved document %s",self)
         pass
         
     def delete(self):

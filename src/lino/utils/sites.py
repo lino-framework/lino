@@ -31,8 +31,7 @@
 
 import os
 import imp
-import logging
-logger = logging.getLogger('lino')
+import logging ; logger = logging.getLogger('lino.sites')
 
 from django.conf import settings
 #from timtools.tools.my_import import my_import as import_module
@@ -72,7 +71,6 @@ from django.db.models import loading
 def db_apps():
     for a in loading.get_apps():
         yield a.__name__.split('.')[-2]
-
 
 
 from . import perms

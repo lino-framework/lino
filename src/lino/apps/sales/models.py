@@ -183,6 +183,20 @@ class SalesDocument(journals.AbstractDocument):
     def total_incl(self):
         return self.total_excl + self.total_vat
     total_incl.return_type = fields.PriceField()
+    
+    def update_total(self):
+        total_excl = 0
+        total_vat = 0
+        for i in self.docitem_set.all():
+            if i.total is not None:
+                total_excl += i.total
+            #~ if not i.product.vatExempt:
+                #~ total_vat += i.total_excl() * 0.18
+        self.total_excl = total_excl
+        self.total_vat = total_vat
+        #~ if self.journal == "ORD":
+            #~ print "  done before_save:", self
+        
 
     def before_save(self):
         #~ if self.journal == "ORD":
@@ -197,19 +211,8 @@ class SalesDocument(journals.AbstractDocument):
             self.shipping_mode = r.shipping_mode
         if self.shipping_mode is None:
             self.shipping_mode = r.shipping_mode
+        self.update_total()
       
-        total_excl = 0
-        total_vat = 0
-        for i in self.docitem_set.all():
-            if i.total is not None:
-                total_excl += i.total
-            #~ if not i.product.vatExempt:
-                #~ total_vat += i.total_excl() * 0.18
-        self.total_excl = total_excl
-        self.total_vat = total_vat
-        #~ if self.journal == "ORD":
-            #~ print "  done before_save:", self
-        
         
 class OrderManager(models.Manager):
   
@@ -409,7 +412,8 @@ class DocItem(models.Model):
                     self.unit_price = self.product.price * (100 - self.discount) / 100
         if self.unit_price is not None and self.qty is not None:
             self.total = self.unit_price * self.qty
-        self.document.save() # update total in document
+        #self.document.save() # update total in document
+        self.document.update_total()
     before_save.alters_data = True
 
     def __unicode__(self):

@@ -44,8 +44,12 @@ def objects():
     IN = ledger.Account.objects.get(pk='61211')
     PR = ledger.Account.objects.get(pk='4400')
     
-    doc = BANK.create_document(date=i2d(20090501),balance1='1056.40')
-    doc.add_item(account=PR,partner=contacts.Partner.objects.get(pk=2),
+    doc = BANK.create_document(
+      date=i2d(20090501),
+      balance1='1056.40')
+    doc.add_item(
+      account=PR,
+      partner=contacts.Partner.objects.get(pk=2),
       debit='12.49')
     doc.book()
     yield doc
