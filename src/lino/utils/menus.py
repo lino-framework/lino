@@ -115,14 +115,13 @@ class Action(MenuItem):
                  name=None,label=None,
                  hotkey=None,url=None,
                  args=[],**kw):
-        
+        assert actor is not None
         if not kw.has_key('can_view'):
             kw.update(can_view=actor.can_view)
-        #name = name or actor.name
+        name = name or actor.name
         label = label or actor.label
         self.args = args
         #self._url = url or actor.get_absolute_url(**params)
-        assert actor is not None
         self.actor = actor
         self.hotkey = hotkey
         MenuItem.__init__(self,parent,name,label,**kw)
@@ -216,37 +215,5 @@ class Menu(MenuItem):
         except Exception, e:
             traceback.print_exc(e)
 
-    def unused_as_ext(self,level=1,**kw):
-        #items = [i for i in self.items if i.can_view.passes(request)]
-        items = self.items
-        s = ""
-        if len(items) == 0: return ''
-        if level == 1:
-            s += "{region:'north', height:27, items:[ "
-        else:
-            s += """
-            {
-            text: "%s",
-            menu: { items: [
-            """ % self.label
-        s += ",\n".join([mi.as_ext(level+1) for mi in items])
-        if level == 1:
-            s += " ]} "
-        else:
-            s += """
-            ]}}"""
-        return s
 
 
-#~ class MenuRenderer:
-    #~ def __init__(self,menu,request):
-        #~ self.menu = menu
-        #~ self.request = request
-        
-    #~ def as_html(self):
-        #~ return self.menu.as_html(self.request)
-        
-    #~ def as_ext(self):
-        #~ return mark_safe(self.menu.as_ext(self.request))
-      
-        

@@ -322,7 +322,7 @@ def setup():
         lino_site.log.debug("%d %s %s",i,model._meta.db_table,rc_name(model._lino_model_report_class))
         model._lino_model_report = model._lino_model_report_class()
         
-    lino_site.log.info("Set up model reports.")
+    lino_site.log.debug("Set up model reports.")
     
     for model in models.get_models():
         model._lino_model_report.setup()

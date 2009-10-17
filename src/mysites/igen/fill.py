@@ -18,69 +18,7 @@
 
 #import logging ; logging.basicConfig(level=logging.DEBUG)
 
-import os
-import settings
-from django.core.management import setup_environ
-setup_environ(settings)
-from django.contrib.auth.models import User
-from django.contrib.sites.models import Site
-from django.core.management.color import no_style
-from django.db import models, connection, transaction
-from django.db.models import loading
-from django.core.management.sql import sql_flush, emit_post_sync_signal
-from django.core.management import call_command
-
-
-from timtools.console import syscon
-
-#import lino
-#lino.setup()
-#import logging ; logger = logging.getLogger('lino.fill')
-
 from lino.utils.sites import lino_site
 
-            
-#~ def db_apps():
-    #~ for a in loading.get_apps():
-        #~ yield a.__name__.split('.')[-2]
-
-        
-#~ def main():
-    #~ for name,url,version in lino_site.thanks_to():
-        #~ print name,version, "<%s>" % url
-        
-    #~ app_labels = [n for n in db_apps()]
-      
-
-    #~ #appnames = [m.__name__ for m in models.get_apps()]
-    #~ logger.info("fill.py %s", app_labels)
-
-    
-    #~ #print "\n".join([m._meta.db_table for m in loading.get_models()])
-    
-    #~ options = dict(interactive=False)
-    #~ if not syscon.confirm("Gonna reset database %s. Are you sure?" 
-        #~ % settings.DATABASE_NAME):
-        #~ return
-    #~ logger.info("reset")
-    #~ if settings.DATABASE_ENGINE == 'sqlite3':
-        #~ if settings.DATABASE_NAME != ':memory:':
-            #~ if os.path.exists(settings.DATABASE_NAME):
-                #~ os.remove(settings.DATABASE_NAME)
-    #~ else:
-        #~ call_command('reset',*app_labels,**options)
-    #~ #call_command('reset','songs','auth',interactive=False)
-    #~ logger.info("syncdb")
-    #~ call_command('syncdb',**options)
-    #~ #call_command('flush',interactive=False)
-    #~ logger.info("loaddata demo")
-    #~ call_command('loaddata','demo')
-    #~ User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
-    #~ User.objects.create_user('user','luc.saffre@gmx.net','1234')
-    #~ Site(id=1,domain="igen.saffre-rumma.ee",name="iGen demo").save()
-        
-
 if __name__ == "__main__":
-    #lino_site.greeting()
     lino_site.fill()
-    #main()

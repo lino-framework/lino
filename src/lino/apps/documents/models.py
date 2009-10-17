@@ -20,7 +20,6 @@
 This defines AbstractDocument which knows how to "print" an instance.
 
 
-
 """
 
 
@@ -42,16 +41,13 @@ try:
 except ImportError:
     pisa = None
 
-try:
-    from lino.utils import appy_pod
-except ImportError:
-    appy_pod = None
+if False:
+    try:
+        from lino.utils import appy_pod
+    except ImportError:
+        appy_pod = None
 
-
-#~ if sys.platform == 'win32':
-    #~ LINO_PDFROOT = r'c:\pdfroot'
-#~ else:
-    #~ LINO_PDFROOT = '/var/cache/lino/pdf'
+from lino.utils import reports        
 
 
 class DocumentError(Exception):
@@ -185,7 +181,6 @@ class AbstractDocument(models.Model):
     def setup_report(cls,rpt):
         rpt.add_actions(PrintAction,PdfAction)
         
-from lino.utils import reports        
     
 class PrintAction(reports.Action):
     label = "Print"
@@ -208,20 +203,4 @@ class PdfAction(reports.Action):
         context.redirect(row.pdf_url())
         #return row.view_pdf(context.request)
 
-
-#~ class Documents(reports.Report):
-    #~ actions = reports.Report.actions + [PrintAction]
-
-##
-## Lino setup
-##  
-
-#~ def lino_setup(lino):
-    #~ pass
-    #~ print "makedirs", LINO_PDFROOT
-    #~ if not os.path.isdir(LINO_PDFROOT):
-        #~ os.makedirs(LINO_PDFROOT)
-
-    #~ m = lino.add_menu("config","~Configuration")
-    #~ m.add_action(Journals())
 

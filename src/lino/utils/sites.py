@@ -92,19 +92,6 @@ class PasswordResetForm(forms.Form):
               _("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
         return email
 
-#~ def app_mod_label(mod):
-    #~ """
-    #~ This algorithm should also be used by
-    #~ django.db.models.loading.get_models()
-    #~ django.core.management.commands.reset.Command
-    #~ django.core.management.commands.syncdb.Command
-    #~ and others
-    
-    #~ """
-    #~ if hasattr(mod,'__applabel__'):
-        #~ return mod.__applabel__
-    #~ return mod.__name__.split('.')[-1]
-    
 
 class LinoSite: 
     help_url = "http://code.google.com/p/lino"
@@ -112,8 +99,8 @@ class LinoSite:
     title = "Unnamed LinoSite"
     domain = "www.example.com"
     #_log_level = logging.WARNING
-    #_log_level = logging.INFO
-    _log_level = logging.DEBUG
+    _log_level = logging.INFO
+    #_log_level = logging.DEBUG
     
   
     def __init__(self,*args,**kw):
@@ -127,14 +114,13 @@ class LinoSite:
             
             """
             
-            If you didn't configure logging before instantiating LinoSite, then we now install
-            Lino's default logging behaviour which is to render the bare messages 
+            Lino's default logging behaviour is to render the bare messages 
             to sys.stderr and write complete records (including timestamp, name, level) to a file lino.log.
+            If you don't like this, then just configure logging before instantiating LinoSite.
             
             """
             
-            # this will create a first handler in the root looger:
-            #logging.basicConfig(format='%(message)s',stream=sys.stdout,level=self._log_level)
+            # this will create a first handler in the logging.root logger:
             logging.basicConfig(format='%(message)s',level=self._log_level)
             
             if True:
@@ -227,16 +213,7 @@ class LinoSite:
         if self._setting_up:
             raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
-        #~ if len(logging.root.handlers) > 0:
-            #~ print "LinoSite.setup()"
-            #~ print "WARNING: logging already configured."
-            #~ self.log = logging.getLogger('lino')
-        #~ else:
-            #~ logging.basicConfig(
-                #~ format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-                #~ datefmt='%Y%m-%d %H:%M',
-                #~ filename='lino.log',level=logging.DEBUG,filemode='w')
-
+        
         from . import reports
         reports.setup()
         

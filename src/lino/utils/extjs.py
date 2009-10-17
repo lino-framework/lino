@@ -132,42 +132,7 @@ class LayoutWindow:
       
 
 def py2js(v,**kw):
-    #logger.debug("py2js(%r,%r)",v,kw)
-    #~ if isinstance(v,reports.Report):
-        #~ self = v
-        #~ setup_report(self)
-        #~ s = ''
-        #~ for layout in self.layouts[1:]:
-            #~ kw.update(items=layout._main)
-            #~ kw.update(title=layout.get_title())
-            #~ kw.update(closeAction='hide')
-            #~ kw.update(maximizable=True)
-            #~ #kw.update(maximized=True)
-            #~ if self.master is not None:
-                #~ s += "function %s(btn,event,master,master_grid) { " % layout.name
-            #~ else:
-                #~ s += "function %s(btn,event) { " % layout.name
-            #~ s += "\n  var win;\n  if(!win){"
-            #~ s += define_vars(layout._main.ext_variables(),indent=4)
-            #~ s += "\n    win = new Ext.Window( %s );" % py2js(kw)
-            #~ if self.master is not None:
-                #~ s += "\n    if(master)"
-                #~ s += "\n      %s.setBaseParam('master',master);" % layout.store.ext_name
-                #~ s += "\n    else {"
-                #~ s += "\n      master_grid.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
-                #~ s += "\n        %s.load({params:{master:record.data.%s}});" % (layout.store.ext_name,layout.store.pk.name)
-                #~ s += "\n      })"
-                #~ s += "\n    }"
-            #~ s += "\n    %s.addListener(" % layout.store.ext_name
-            #~ s += "{exception: function() { Ext.MessageBox.alert('exception','no data');win.hide();}});"
-            #~ s += "\n  }"
-            #~ if self.master is None:
-                #~ s += "\n  %s.load();" % layout.store.ext_name
-            #~ s += "\n  win.show();"
-            #~ s += "\n}\n"
-            
-        #~ return s
-        
+    #lino_site.log.debug("py2js(%r,%r)",v,kw)
         
     if isinstance(v,menus.Menu):
         if v.parent is None:
@@ -188,7 +153,7 @@ def py2js(v,**kw):
     if isinstance(v,Component):
         return v.as_ext(**kw)
         
-    assert len(kw) == 0, "py2js() : value %r cannot get keyword parameters" % v
+    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
     if type(v) is types.ListType:
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
     if type(v) is types.DictType:
@@ -1896,7 +1861,7 @@ function gup( name )
 }        
 var windows = gup('open').split(',');
 for(i=0;i<windows.length;i++) {
-  console.log(windows[i]);
+  // console.log(windows[i]);
   if(windows[i]) eval(windows[i]+"()");
 }
 main_menu.get(0).focus();
