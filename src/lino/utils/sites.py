@@ -30,8 +30,9 @@
 
 
 import os
+import sys
 import imp
-import logging ; logger = logging.getLogger('lino.sites')
+import logging
 
 from django.conf import settings
 #from timtools.tools.my_import import my_import as import_module
@@ -87,7 +88,8 @@ class PasswordResetForm(forms.Form):
         email = self.cleaned_data["email"]
         self.users_cache = auth.User.objects.filter(email__iexact=email)
         if len(self.users_cache) == 0:
-            raise forms.ValidationError(_("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
+            raise forms.ValidationError(
+              _("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
         return email
 
 #~ def app_mod_label(mod):
@@ -104,65 +106,78 @@ class PasswordResetForm(forms.Form):
     #~ return mod.__name__.split('.')[-1]
     
 
-class LinoSite: #(AdminSite):
-    #index_template = 'lino/index.html'
-    #index_template = 'lino/ext_index.html'
-    #login_template = 'lino/login.html'
-    
+class LinoSite: 
     help_url = "http://code.google.com/p/lino"
     index_html = "This is the main page."
     title = "Unnamed LinoSite"
     domain = "www.example.com"
+    #_log_level = logging.WARNING
+    #_log_level = logging.INFO
+    _log_level = logging.DEBUG
     
   
     def __init__(self,*args,**kw):
-        #AdminSite.__init__(self,*args,**kw)
         self._menu = menus.Menu("","Main Menu")
-        self.loading = False
-        self.done = False
+        self._setting_up = False
+        self._setup_done = False
         self.root_path = '/lino/'
         self._response = None
-        #self.use_extjs = not True
-        #self.skin = Skin()
-        #self.model_reports = {}
-        
-        
-    def setup(self):
-        if self.done:
-            return
-        self.loading = True
-        
-        #~ for app in settings.INSTALLED_APPS:
-            #~ mod = import_module(app)
-            #~ lino_setup = getattr(mod,"lino_setup",None)
-            #~ if lino_setup:
-                #~ print "lino_setup", app
-                #~ lino_setup(self)
 
-        from . import reports
-        reports.setup()
-        
-        if hasattr(settings,'LINO_SETTINGS'):
-            logger.info("Reading %s...", settings.LINO_SETTINGS)
-            execfile(settings.LINO_SETTINGS,dict(lino=self))
-        else:
-            logger.warning("settings.LINO_SETTINGS entry is missing")
+        if len(logging.root.handlers) == 0:
             
-        self.done = True
-        self.loading = False
+            """
+            
+            If you didn't configure logging before instantiating LinoSite, then we now install
+            Lino's default logging behaviour which is to render the bare messages 
+            to sys.stderr and write complete records (including timestamp, name, level) to a file lino.log.
+            
+            """
+            
+            # this will create a first handler in the root looger:
+            #logging.basicConfig(format='%(message)s',stream=sys.stdout,level=self._log_level)
+            logging.basicConfig(format='%(message)s',level=self._log_level)
+            
+            if True:
+                h = logging.FileHandler('lino.log','w')
+                h.setLevel(self._log_level)
+                fmt = logging.Formatter(
+                    fmt='%(asctime)s %(levelname)s %(module)s : %(message)s ',
+                    datefmt='%Y%m-%d %H:%M')
+                h.setFormatter(fmt)
+                logging.root.addHandler(h)
+
+        self.log = logging.getLogger('lino')
+            
+            #~ if True:
+                #~ h = logging.root.handlers[0]
+                #~ #h = logging.StreamHandler(sys.stdout)
+                #~ #h.setLevel(logging.INFO)
+                #~ formatter = logging.Formatter('%(message)s')
+                #~ #formatter = logging.Formatter('%(levelname)s %(message)s')
+                #~ h.setFormatter(formatter)
+                #~ self.log.addHandler(h)
+
+            
+        #~ else:
+            #~ self.log = logging.getLogger('lino')
+            
+        #print self.log.handlers
+        #print "foo"
         
-    def add_menu(self,*args,**kw):
-        return self._menu.add_menu(*args,**kw)
-       
+        self.greeting()
+        
+    def greeting(self):
+        for name,url,version in self.thanks_to():
+            self.log.info("%s %s <%s>",name,version,url)
+            
+        
+        
     def versions(self):
         def HREF(name,url,version):
             return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
         for name,url,version in self.thanks_to():
             yield HREF(name,url,version)
             
-    def sort_menu_items(self,*args,**kw):
-        return self._menu.sort_items(*args,**kw)
-        
           
     def thanks_to(self):
         import lino
@@ -205,7 +220,46 @@ class LinoSite: #(AdminSite):
         except ImportError:
             pisa = None
         
+
+    def setup(self):
+        if self._setup_done:
+            return
+        if self._setting_up:
+            raise Exception("LinoSite.setup() called recursively.")
+        self._setting_up = True
+        #~ if len(logging.root.handlers) > 0:
+            #~ print "LinoSite.setup()"
+            #~ print "WARNING: logging already configured."
+            #~ self.log = logging.getLogger('lino')
+        #~ else:
+            #~ logging.basicConfig(
+                #~ format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                #~ datefmt='%Y%m-%d %H:%M',
+                #~ filename='lino.log',level=logging.DEBUG,filemode='w')
+
+        from . import reports
+        reports.setup()
         
+        if hasattr(settings,'LINO_SETTINGS'):
+            self.log.info("Reading %s...", settings.LINO_SETTINGS)
+            execfile(settings.LINO_SETTINGS,dict(lino=self))
+        else:
+            self.log.warning("settings.LINO_SETTINGS entry is missing")
+            
+        self.app_labels = [n for n in db_apps()]
+          
+        self.log.info("Lino Site %r is ready. %d applications.", self.title, len(self.app_labels))
+          
+        self._setup_done = True
+        self._setting_up = False
+        
+    def add_menu(self,*args,**kw):
+        return self._menu.add_menu(*args,**kw)
+       
+    #~ def sort_menu_items(self,*args,**kw):
+        #~ return self._menu.sort_items(*args,**kw)
+
+
     def context(self,request,**kw):
         d = dict(
           main_menu = menus.MenuRenderer(self._menu,request),
@@ -221,7 +275,7 @@ class LinoSite: #(AdminSite):
         
     def index(self, request):
         if self._response is None:
-            logger.debug("building LinoSite._response...")
+            self.log.debug("building LinoSite._response...")
             from lino.utils import extjs
             comp = extjs.VisibleComponent("index",
                 xtype="panel",
@@ -467,36 +521,33 @@ class LinoSite: #(AdminSite):
         m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
         m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
     
-  
+      
     def fill(self):
       
+        self.setup()
+        
         from django.core.management import call_command
         from timtools.console import syscon
         sites = models.get_app('sites')
-              
-        for name,url,version in self.thanks_to():
-            print name,version, "<%s>" % url
-            
-        app_labels = [n for n in db_apps()]
 
-        print "fill.py", app_labels
         
         options = dict(interactive=False)
         if not syscon.confirm("Gonna reset database %s. Are you sure?" 
             % settings.DATABASE_NAME):
             return
-        print "reset"
-        if settings.DATABASE_ENGINE == 'sqlite3':
+        self.log.warning("lino_site.fill() %s", (" ".join(self.app_labels)))
+        self.log.info("reset")
+        if False: # settings.DATABASE_ENGINE == 'sqlite3':
             if settings.DATABASE_NAME != ':memory:':
                 if os.path.exists(settings.DATABASE_NAME):
                     os.remove(settings.DATABASE_NAME)
         else:
-            call_command('reset',*app_labels,**options)
+            call_command('reset',*self.app_labels,**options)
         #call_command('reset','songs','auth',interactive=False)
-        print "syncdb"
+        self.log.info("syncdb")
         call_command('syncdb',**options)
         #call_command('flush',interactive=False)
-        print "loaddata demo"
+        self.log.info("loaddata demo")
         call_command('loaddata','demo')
         auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
         auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')

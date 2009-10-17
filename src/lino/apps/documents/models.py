@@ -38,7 +38,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 
 try:
     import ho.pisa as pisa
-    pisa.showLogging()
+    #pisa.showLogging()
 except ImportError:
     pisa = None
 

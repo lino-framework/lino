@@ -26,9 +26,10 @@ An AbstractDocument instance can look at its journal to find out which subclass 
 """
 
 import os
-import logging ; logger = logging.getLogger('lino.apps.journals')
+#import logging ; logger = logging.getLogger('lino.apps.journals')
 
 from django.db import models
+from lino.utils.sites import lino_site
 from lino.apps.documents import models as documents
 
 class DocumentError(Exception):
@@ -229,7 +230,7 @@ class AbstractDocument(documents.AbstractDocument):
         return r
         
     def after_save(self):
-        #logger.info("Saved document %s",self)
+        #lino_site.log.info("Saved document %s",self)
         pass
         
     def delete(self):

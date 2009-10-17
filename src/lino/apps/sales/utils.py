@@ -35,17 +35,13 @@ from timtools.console import syscon
 from lino.apps.sales import models as sales
 from lino.utils.sites import lino_site
 
-def thanks_to():
-    for name,url,version in lino_site.thanks_to():
-        print name,version, "<%s>" % url
-
         
 def make_invoices(make_until=None):
     #~ rpt = sales.PendingOrders()
     #~ print rpt.as_text()
     
     q = [o for o in sales.Order.objects.pending(make_until)]
-    print "make_invoices(make_until=%r)" % make_until
+    lino_site.log.debug("make_invoices(make_until=%s)",make_until)
     made = []
     for o in q:
         i = o.make_invoice(make_until)

@@ -18,7 +18,7 @@
 
 import traceback
 import types
-import logging ; logger = logging.getLogger("lino.extjs")
+#import logging ; logger = logging.getLogger("lino.extjs")
 
 from dateutil import parser as dateparser
 
@@ -32,6 +32,8 @@ from django.utils import simplejson
 #from django.utils.text import capfirst
 #from django.template.loader import render_to_string
 
+from lino.utils.sites import lino_site
+
 from . import reports, menus
 
 EXT_CHAR_WIDTH = 9
@@ -41,7 +43,7 @@ def define_vars(variables,indent=0):
     sep = "\n" + ' ' * indent
     s = ''
     for v in variables:
-        #logger.debug("define_vars() : %s", v.ext_name)
+        #lino_site.log.debug("define_vars() : %s", v.ext_name)
         for ln in v.ext_lines_before():
             s += sep + ln 
         s += sep + "var %s = %s;" % (v.ext_name,v.as_ext_value())
@@ -1128,7 +1130,7 @@ class Container(LayoutElement):
                 remove e's width to avoid padding differences.
                 """
                 e.width = None
-        logger.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
+        lino_site.log.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
                 
     def compute_width(self,unused_insist=False):
         """
