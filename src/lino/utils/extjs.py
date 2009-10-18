@@ -129,6 +129,30 @@ class LayoutWindow:
     #~ for layout in rpt.layouts[1:]:
         #~ yield LayoutWindow(layout,**kw)
         
+def menu_view(request):
+    s = py2js(lino_site._menu)
+    return HttpResponse(s, mimetype='text/html')
+
+def unused_menu2json(v,request):
+        
+    if isinstance(v,menus.Menu):
+        if v.parent is None:
+            kw.update(region='north',height=27,items=v.items)
+            return "new Ext.Toolbar(%s);" % py2js(kw)
+        kw.update(text=v.label,menu=dict(items=v.items))
+        return py2js(kw)
+        
+    if isinstance(v,menus.MenuItem):
+        ext_name = v.actor.app_label + "_" + v.actor.name + "1"
+        if v.args:
+            handler = "function(btn,evt) {%s(btn,evt,%s);}" % (
+                ext_name,
+                ",".join([py2js(a) for a in v.args]))
+        else:
+            handler = ext_name
+        return py2js(dict(text=v.label,handler=js_code(handler)))
+        
+        
       
 
 def py2js(v,**kw):
@@ -137,7 +161,7 @@ def py2js(v,**kw):
     if isinstance(v,menus.Menu):
         if v.parent is None:
             kw.update(region='north',height=27,items=v.items)
-            return "new Ext.Toolbar(%s);" % py2js(kw)
+            return py2js(kw)
         kw.update(text=v.label,menu=dict(items=v.items))
         return py2js(kw)
         
@@ -208,7 +232,7 @@ def form_submit_view(request,**kw):
 def list_report_view(request,**kw):
     kw['simple_list'] = True
     return json_report_view(request,**kw)
-
+    
 def json_report_view(request,app_label=None,rptname=None,
                      action=None,colname=None,simple_list=False):
     rpt = reports.get_report(app_label,rptname)
@@ -1638,17 +1662,6 @@ class Viewport:
             
         self.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
         
-    #~ def add_component(self,c):
-        #~ if c.declared:
-            #~ l = self.variables.get(c.__class__,None)
-            #~ if l is None:
-                #~ l = []
-                #~ self.variables[c.__class__] = l
-            #~ l.append(c)
-        #~ self.components.append(c)
-        #~ if isinstance(c,VisibleComponent):
-            #~ self.visibles.append(c)
-        
         
     def render_to_html(self,request):
         s = """<html><head>
@@ -1835,7 +1848,24 @@ Ext.onReady(function(){ """
             for ln in rpt.ext_lines():
                 s += "\n" + ln
                 
-        s += "\nvar main_menu = " + py2js(self.main_menu)
+        #s += "\nvar main_menu = " + py2js(self.main_menu)
+        
+        s += """
+var main_menu;
+Ext.Ajax.request({
+  waitMsg: 'Loading main menu...',
+  url: %r,""" % '/menu'
+      s += """
+  success: function(response) {
+    console.log('success',response.responseText);
+    var p = Ext.decode(response.responseText);
+    main_menu = new Ext.Toolbar(p);
+  },
+  failure: function(response) {
+    // console.log(response);
+    Ext.MessageBox.alert('error','could not connect to the LinoSite.');
+  }
+});"""
         
         s += define_vars(self.variables,indent=2)
                 

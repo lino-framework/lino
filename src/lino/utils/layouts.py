@@ -27,18 +27,29 @@ from django.conf import settings
 #from django.utils.text import capfirst
 #from django.template.loader import render_to_string
 
-def get_unbound_meth(cl,name):
-    meth = getattr(cl,name,None)
-    if meth is not None:
-        return meth
-    for b in cl.__bases__:
-        meth = getattr(b,name,None)
-        if meth is not None:
-            return meth
-    #~ if name == '__unicode__':
-        #~ print "Strange: didn't find __unicode__ in %s" % cl
+class FormReport:
+    "Wrapper around a Django form to make it usable as report of a PageLayout."
+    def __init__(self,form):
+        self.app_label = form.__module__.split()[-2]
+        self.name = form.name
 
+    def get_fields(self):
+        return [ f.name for f in self.form.fields ]
+          
+    def get_slave(self,name):
+        return None
+        
+    def try_get_meth(self,name):
+        return None
+        
+    def try_get_field(self,name):
+        try:
+            return self.form[name]
+        except KeyError,e:
+            pass
 
+    def get_title(self,renderer):
+        return self.form.title or self.form.label
 
 class Layout:
     """
@@ -57,9 +68,6 @@ class Layout:
     
     def __init__(self,report,index,desc=None,main=None):
         from lino.utils import extjs
-        #from . import reports
-        #assert isinstance(report,reports.Report)
-        # Component.__init__(self,report.name + str(index))
         self.name = report.app_label + "_" + report.name + str(index)
         self.slave_grids = []
         self.report = report
@@ -71,9 +79,7 @@ class Layout:
                 main = self.create_element(self.main_class,'main')
             else:
                 if desc is None:
-                    desc = self.join_str.join([ 
-                        f.name for f in report.model._meta.fields 
-                        + report.model._meta.many_to_many])
+                    desc = self.join_str.join(report.get_fields())
                 main = self.desc2elem(self.main_class,"main",desc)
                 #print main
         self._main = main
@@ -131,10 +137,9 @@ class Layout:
             e = extjs.GridElement(self,name,rpt,**kw)
             self.slave_grids.append(e)
             return e
-        try:
-            field = self.report.model._meta.get_field(name)
-        except models.FieldDoesNotExist,e:
-            meth = get_unbound_meth(self.report.model,name)
+        field = self.report.try_get_field(name)
+        if field is None:
+            meth = self.report.try_get_meth(name)
             if meth is not None:
                 e = extjs.MethodElement(self,name,meth,**kw)
                 assert e.field is not None,"e.field is None for %s.%s" % (self,name)
@@ -165,10 +170,10 @@ class Layout:
         raise Exception("Invalid picture descriptor %s" % picture)
                 
     def __str__(self):
-        return self.report.model._meta.app_label+"."+self.name # __class__.__name__
+        return self.name # self.report.model._meta.app_label+"."+self.name # __class__.__name__
         
     def __repr__(self):
-        s = self.__class__.__name__ 
+        s = self.name # self.__class__.__name__ 
         if hasattr(self,'_main'):
             s += "(%s)" % self._main
         return s

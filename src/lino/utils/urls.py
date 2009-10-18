@@ -160,6 +160,7 @@ def get_urls():
         (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
         #(r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
         #(r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
+        (r'^menu$', extjs.menu_view),
         (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.list_report_view),
         (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', extjs.json_report_view),
         (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.form_submit_view),

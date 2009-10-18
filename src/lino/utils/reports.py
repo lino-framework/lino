@@ -484,7 +484,9 @@ class Report:
                 for slave_name in self.slaves.split():
                     sl = get_slave(self.model,slave_name)
                     if sl is None:
-                        lino_site.log.info("[Warning] invalid name %s in %s.%s.slaves" % (slave_name,self.app_label,self.name))
+                        lino_site.log.info(
+                            "[Warning] invalid name %s in %s.%s.slaves" % (
+                                slave_name,self.app_label,self.name))
                     self._slaves.append(sl)
         else:
             self._slaves = []
@@ -494,6 +496,31 @@ class Report:
         self._setup_done = True
         lino_site.log.debug("Report.setup() done: %s", self.name)
         return True
+        
+    def get_fields(self):
+        return [ f.name for f in self.model._meta.fields + self.model._meta.many_to_many]
+        
+    def try_get_field(self,name):
+        try:
+            return self.model._meta.get_field(name)
+        except models.FieldDoesNotExist,e:
+            return None
+            
+    def try_get_meth(self,name):
+        def get_unbound_meth(cl,name):
+            meth = getattr(cl,name,None)
+            if meth is not None:
+                return meth
+            for b in cl.__bases__:
+                meth = getattr(b,name,None)
+                if meth is not None:
+                    return meth
+        return get_unbound_meth(self.model,name)
+            
+    def get_slave(self,name):
+        return get_slave(self.model,name)
+        #l = self.slaves() # to populate
+        #return self._slaves.get(name,None)
         
     def add_actions(self,*more_actions):
         "May be used in Model.setup_report() to specify actions for each report which uses this model."
@@ -516,11 +543,6 @@ class Report:
             #~ comps = [l._main for l in self.layouts[1:]]
             #~ yield layouts.TabPanel(None,"EastPanel",*comps)
 
-        
-    def get_slave(self,name):
-        return get_slave(self.model,name)
-        #l = self.slaves() # to populate
-        #return self._slaves.get(name,None)
         
     def get_field_choices(self,field):
         return get_model_report(field.rel.to)
