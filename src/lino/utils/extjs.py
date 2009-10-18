@@ -64,13 +64,7 @@ class ReportRenderer:
         self.windows = [ LayoutWindow(layout) 
             for layout in report.layouts[1:] ]
         
-    def ext_lines(self):
-        yield define_vars([self.report.store])
-        yield "%s.addListener({exception: function(a,b,c) { " % self.report.store.ext_name
-        yield "  console.log(a,b,c);"
-        yield "  Ext.MessageBox.alert('Exception in %s','no data');" % self.report.store.ext_name
-        yield "}});"
-        yield ''
+    def ext_globals(self):
         for win in self.windows:
             yield "var %s_win;" % win.name
             for ln in win.ext_lines():
@@ -78,6 +72,14 @@ class ReportRenderer:
             yield '// end of window %s' % win.name
             yield ''
   
+    def ext_lines(self):
+        yield define_vars([self.report.store])
+        yield "%s.addListener({exception: function(a,b,c) { " % self.report.store.ext_name
+        yield "  console.log(a,b,c);"
+        yield "  Ext.MessageBox.alert('Exception in %s','no data');" % self.report.store.ext_name
+        yield "}});"
+        yield ''
+        
 class LayoutWindow:
     def __init__(self,layout,**kw):
         self.options = kw
@@ -1829,53 +1831,61 @@ function show_detail(grid,fn) {
   }
 }
 
+var main_menu;
 
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
-        s += """
-Ext.onReady(function(){ """
-        
-        #~ for mi in self.main_menu.get_items():
-            #~ l = mi.parents()
-            #~ l.reverse()
-            #~ l.append(mi)
-            #~ s += "\n\n// menu command [%s]" % " / ".join([i.label for i in l])
-            #~ s += "\n" + py2js(mi.actor) + "\n"
-            
+
         rpts = [ ReportRenderer(rptclass()) 
             for rptclass in reports.master_reports + reports.slave_reports]
+              
+        for rpt in rpts:
+            for ln in rpt.ext_globals():
+                s += "\n" + ln
+                
         for rpt in rpts:
             for ln in rpt.ext_lines():
                 s += "\n" + ln
                 
-        #s += "\nvar main_menu = " + py2js(self.main_menu)
         
         s += """
-var main_menu;
+function on_load_menu(response)  {
+  // console.log('success',response.responseText);
+  var p = Ext.decode(response.responseText);
+  main_menu = new Ext.Toolbar(p);"""
+        d = dict(layout='border')
+        #d.update(autoScroll=True)
+        d.update(items=js_code(
+            "[main_menu,"+",".join([
+                  c.as_ext() for c in self.components]) +"]"))
+        s += """
+  new Ext.Viewport(%s).render('body');""" % py2js(d)
+        s += """
+  main_menu.get(0).focus();"""
+        s += """
+}"""
+    
+
+        s += """
+Ext.onReady(function(){ """
+        
+            
+        #s += "\nvar main_menu = " + py2js(self.main_menu)
+        
+        s += define_vars(self.variables,indent=2)
+                
+    
+        s += """
 Ext.Ajax.request({
   waitMsg: 'Loading main menu...',
-  url: %r,""" % '/menu'
-      s += """
-  success: function(response) {
-    console.log('success',response.responseText);
-    var p = Ext.decode(response.responseText);
-    main_menu = new Ext.Toolbar(p);
-  },
+  url: '/menu',
+  success: on_load_menu,
   failure: function(response) {
     // console.log(response);
     Ext.MessageBox.alert('error','could not connect to the LinoSite.');
   }
 });"""
         
-        s += define_vars(self.variables,indent=2)
-                
-        d = dict(layout='border')
-        #d.update(autoScroll=True)
-        d.update(items=js_code(
-            "[main_menu,"+",".join([
-                  c.as_ext() for c in self.components]) +"]"))
-        s += "\nnew Ext.Viewport(%s).render('body');" % py2js(d)
- 
         s += """
 function gup( name )
 {
@@ -1894,7 +1904,6 @@ for(i=0;i<windows.length;i++) {
   // console.log(windows[i]);
   if(windows[i]) eval(windows[i]+"()");
 }
-main_menu.get(0).focus();
         """
         s += "\n}); // end of onReady()"
         s += "\n</script></head><body></body></html>"
