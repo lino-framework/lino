@@ -304,21 +304,21 @@ class CompaniesByCountry(reports.Report):
     columnNames = "city addr1 name country language"
     order_by = "city addr1"
     
-class PersonsByCountryPage(layouts.PageLayout):
-    label = "Persons by Country"
-    main = """
-    isocode name
-    PersonsByCountry
-    """
-countries.Countries.register_page_layout(PersonsByCountryPage)
+#~ class PersonsByCountryPage(layouts.PageLayout):
+    #~ label = "Persons by Country"
+    #~ main = """
+    #~ isocode name
+    #~ PersonsByCountry
+    #~ """
+#~ countries.Countries.register_page_layout(PersonsByCountryPage)
 
-class CompaniesByCountryPage(layouts.PageLayout):
-    label = "Companies by Country"
-    main = """
-    isocode name
-    CompaniesByCountry
-    """
-countries.Countries.register_page_layout(CompaniesByCountryPage)
+#~ class CompaniesByCountryPage(layouts.PageLayout):
+    #~ label = "Companies by Country"
+    #~ main = """
+    #~ isocode name
+    #~ CompaniesByCountry
+    #~ """
+#~ countries.Countries.register_page_layout(CompaniesByCountryPage)
 
         
 class Partner(models.Model):

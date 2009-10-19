@@ -117,7 +117,7 @@ class LayoutWindow:
             #yield "    %s.load({master:master});" % self.layout.report.store.ext_name
             yield "  } else {"
             yield "    master_grid.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
-            yield "      console.log(rowIndex,record);" 
+            yield "      // console.log(rowIndex,record);" 
             yield "      %s.load({params:{master:record.id}});" % self.layout.report.store.ext_name
             #~ yield "      %s.load({params:{master:record.data.%s}});" % (
                 #~ self.layout.report.store.ext_name,self.layout.report.store.pk.name)
@@ -562,7 +562,7 @@ class Store(Component):
         d.update(root='rows')
         d.update(id=self.pk.name)
         d.update(fields=[js_code(f.as_js()) for f in self.fields])
-        #d.update(listeners=dict(exception=js_code("on_store_exception")))
+        #d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return d
         
         
@@ -1380,7 +1380,7 @@ class GridElement(Container):
         keys = []
         buttons = []
         for a in self.report._actions:
-            h = js_code("grid_action(%s,'%s','%s')" % (
+            h = js_code("Lino.grid_action(%s,'%s','%s')" % (
                   self.ext_name, a.name, self.report.store.get_absolute_url(action=a.name)))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
@@ -1398,12 +1398,12 @@ class GridElement(Container):
         key = reports.RETURN(ctrl=True)
         layout = self.report.layouts[2]
         keys.append(dict(
-          handler=js_code("show_detail(%s,%s)" % (self.ext_name,layout.name)),
+          handler=js_code("Lino.show_detail(%s,%s)" % (self.ext_name,layout.name)),
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
         for layout in self.report.layouts[2:]:
             buttons.append(dict(
-              handler=js_code("show_detail(%s,%s)" % (self.ext_name,layout.name)),
+              handler=js_code("Lino.show_detail(%s,%s)" % (self.ext_name,layout.name)),
               text=layout.label))
               
         for slave in self.report._slaves:
@@ -1420,7 +1420,7 @@ class GridElement(Container):
         #~ d = {}
         #~ for e in self.report.row_layout.store.fields:
             #~ d[e.field.name] = js_code('oGrid_event.record.data.%s' % e.field.name)
-        yield "%s.on('afteredit', grid_afteredit(%s,'%s','%s'));" % (
+        yield "%s.on('afteredit', Lino.grid_afteredit(%s,'%s','%s'));" % (
           self.ext_name,self.ext_name,
           self.report.store.get_absolute_url(grid_afteredit=True),
           self.report.store.pk.name)
@@ -1589,7 +1589,7 @@ class MainPanel(Panel):
         
         
         url = self.report.store.get_absolute_url(submit=True)
-        js = js_code("form_submit(%s.form,'%s',%s,'%s')" % (
+        js = js_code("Lino.form_submit(%s.form,'%s',%s,'%s')" % (
                 self.ext_name,url,self.report.store.ext_name,self.report.store.pk.name))
         buttons.append(dict(handler=js,text='Submit'))
         
@@ -1689,13 +1689,13 @@ class Viewport:
 <script type="text/javascript" src="/media/lino.js"></script>
 <!-- page specific -->
 <script type="text/javascript">
-
-function on_store_exception(store,type,action,options,reponse,arg) {
+Ext.namespace('Lino');
+// Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
   // console.log("Ha! on_store_exception() was called!");
   // console.log("params:",store,type,action,options,reponse,arg);
-};
+// };
 
-function form_submit(form,url,store,pkname) {
+Lino.form_submit = function (form,url,store,pkname) {
   return function(btn,evt) {
     // console.log(store);
     p = {};
@@ -1717,9 +1717,9 @@ function form_submit(form,url,store,pkname) {
       }
     })
   } 
-}
+};
 
-function grid_afteredit(grid,url,pk) {
+Lino.grid_afteredit = function (grid,url,pk) {
   return function(e) {
     /*
     e.grid - This grid
@@ -1761,10 +1761,10 @@ function grid_afteredit(grid,url,pk) {
       }
     })
   }
-}
+};
 
 
-function grid_action(grid,name,url) {
+Lino.grid_action = function(grid,name,url) {
   // console.log("foo",grid,name,url);
   return function(oGrid_event) {
     // console.log("bar",oGrid_event);
@@ -1810,28 +1810,40 @@ function grid_action(grid,name,url) {
     };
     doit(0);
   };
-}"""
+};"""
         uri = request.build_absolute_uri()
 
         s += """
-function goto_permalink() {
+Lino.gup = function( name )
+{
+  // Thanks to http://www.netlobo.com/url_query_string_javascript.html
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "";
+  else
+    return results[1];
+};
+Lino.goto_permalink = function () {
     var windows = "";
     var sep = '';
     Ext.WindowMgr.each(function(win){
       if(!win.hidden) {windows+=sep+win.getId();sep=","}
     });
     document.location = "%s?open=" + windows;
-}""" % uri
-        s += """
+};""" % uri
 
-function show_detail(grid,fn) { 
+        s += """
+Lino.show_detail = function (grid,fn) { 
   return function(btn,evt) {
     p = grid.getStore().baseParams;
     fn(btn,evt,p['master']);
   }
-}
+};
 
-var main_menu;
+Lino.main_menu = {};
 
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
@@ -1849,21 +1861,21 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
                 
         
         s += """
-function on_load_menu(response)  {
+Lino.on_load_menu = function(response) {
   // console.log('success',response.responseText);
   var p = Ext.decode(response.responseText);
-  main_menu = new Ext.Toolbar(p);"""
+  Lino.main_menu = new Ext.Toolbar(p);"""
         d = dict(layout='border')
         #d.update(autoScroll=True)
         d.update(items=js_code(
-            "[main_menu,"+",".join([
+            "[Lino.main_menu,"+",".join([
                   c.as_ext() for c in self.components]) +"]"))
         s += """
   new Ext.Viewport(%s).render('body');""" % py2js(d)
         s += """
-  main_menu.get(0).focus();"""
+  Lino.main_menu.get(0).focus();"""
         s += """
-}"""
+};"""
     
 
         s += """
@@ -1879,7 +1891,7 @@ Ext.onReady(function(){ """
 Ext.Ajax.request({
   waitMsg: 'Loading main menu...',
   url: '/menu',
-  success: on_load_menu,
+  success: Lino.on_load_menu,
   failure: function(response) {
     // console.log(response);
     Ext.MessageBox.alert('error','could not connect to the LinoSite.');
@@ -1887,19 +1899,7 @@ Ext.Ajax.request({
 });"""
         
         s += """
-function gup( name )
-{
-  // Thanks to http://www.netlobo.com/url_query_string_javascript.html
-  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-  var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp( regexS );
-  var results = regex.exec( window.location.href );
-  if( results == null )
-    return "";
-  else
-    return results[1];
-}        
-var windows = gup('open').split(',');
+var windows = Lino.gup('open').split(',');
 for(i=0;i<windows.length;i++) {
   // console.log(windows[i]);
   if(windows[i]) eval(windows[i]+"()");

@@ -596,13 +596,13 @@ class ItemsByDocument(reports.Report):
 
 
 
-class DocumentsByPartnerDetail(layouts.PageLayout):
-    label = "Sales"
-    main = """
-            company person
-            DocumentsByPartner
-            """
-contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
+#~ class DocumentsByPartnerDetail(layouts.PageLayout):
+    #~ label = "Sales"
+    #~ main = """
+            #~ company person
+            #~ DocumentsByPartner
+            #~ """
+#~ contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
             
 
 class DocumentsByPartner(SalesDocuments):

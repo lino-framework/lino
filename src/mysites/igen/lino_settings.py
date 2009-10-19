@@ -17,7 +17,7 @@ to an initial state when necessary."""
 #~ """
 
 lino.index_html += """<ul>"""
-lino.index_html += """<li><a href="#" onclick="goto_permalink()">permalink with open windows</a></li>"""
+lino.index_html += """<li><a href="#" onclick="Lino.goto_permalink()">permalink with open windows</a></li>"""
 lino.index_html += """<li><a href="%s">User manual</a></li>""" % lino.help_url
 lino.index_html += """</ul>"""
 
