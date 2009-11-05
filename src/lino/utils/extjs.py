@@ -105,7 +105,7 @@ class WindowRenderer:
         #yield define_vars(self.layout._main.ext_variables(),indent=2,prefix="this.")
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
         yield "  this.show = function(btn,event,master,master_grid) {"
-        yield "    console.log('show',this.comp);" 
+        yield "    console.log('show',this);" 
         if self.layout.report.master is None:
             yield "    %s.load();" % self.store.as_ext()
         else:
@@ -178,7 +178,8 @@ def py2js(v,**kw):
                 ext_name,
                 ",".join([py2js(a) for a in v.args]))
         else:
-            handler = ext_name
+            handler = "function(btn,evt) {%s(btn,evt);}" % ext_name
+            #handler = ext_name
         return py2js(dict(text=v.label,handler=js_code(handler)))
     if isinstance(v,Component):
         return v.as_ext(**kw)
@@ -1648,7 +1649,7 @@ Lino.grid_action = function(gridwrapper,name,url) {
             if (result.html) { new Ext.Window({html:result.html}).show(); };
             if (result.window) { new Ext.Window(result.window).show(); };
             if (result.redirect) { window.open(result.redirect); };
-            if (result.must_reload) grid.getStore().load(); 
+            if (result.must_reload) grid.comp.getStore().load(); 
           } else {
             if(result.confirm) Ext.Msg.show({
               title: 'Confirmation',
@@ -1697,10 +1698,10 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.show_detail = function (grid,fn) { 
+Lino.show_detail = function (grid,wrapper) { 
   return function(btn,evt) {
-    p = grid.getStore().baseParams;
-    fn(btn,evt,p['master']);
+    p = grid.comp.getStore().baseParams;
+    wrapper.show(btn,evt,p['master']);
   }
 };
 
