@@ -62,17 +62,18 @@ class ReportRenderer:
   
     def js_lines(self):
         store = self.report.store
-        yield "var %s = %s;" % (store.ext_name,store.as_ext_value())
-        yield "%s.addListener({exception: function(a,b,c) { " % store.ext_name
+        for ln in store.js_lines():
+            yield ln
+        #yield "var %s = %s;" % (store.ext_name,store.as_ext_value())
+        yield "%s.addListener({exception: function(a,b,c) { " % store.as_ext()
         yield "  console.log(a,b,c);"
-        yield "  Ext.MessageBox.alert('Exception in %s','no data');" % store.ext_name
+        yield "  Ext.MessageBox.alert('Exception in %s','no data');" % store.as_ext()
         yield "}});"
         yield ''
         for win in self.windows:
             yield '// window %s' % win.name
             for ln in win.js_lines():
                 yield ln
-            yield '// end of window %s' % win.name
             yield ''
         
         
@@ -81,6 +82,7 @@ class WindowRenderer:
     def __init__(self,layout,**kw):
         self.options = kw
         self.layout = layout
+        self.store = layout.report.store
         #self.ext_name = report.app_label + "_" + report.name
         self.name = layout.name
         
@@ -91,36 +93,34 @@ class WindowRenderer:
         self.options.update(id=self.name)
         self.options.update(layout='fit')
         self.options.update(height=300,width=800)
-        #self.options.update(items=self.layout._main)
-        self.options.update(items=js_code("this.%s" % self.layout._main.ext_name))
+        self.options.update(items=self.layout._main)
+        #self.options.update(items=js_code("this.%s" % self.layout._main.ext_name))
         #kw.update(maximized=True)
         yield "var %s = new function() {" % self.name
-        yield "  this.name = '%s';" % self.name
+        #yield "  this.name = '%s';" % self.name
         for ln in self.layout._main.js_lines():
             yield "  " + ln
         #~ for v in self.layout._main.ext_variables():
             #~ yield "  this.%s = %s;" % (v.ext_name,v.as_ext_value())
         #yield define_vars(self.layout._main.ext_variables(),indent=2,prefix="this.")
-        yield "  this.win = new Ext.Window( %s );" % py2js(self.options)
+        yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
+        yield "  this.show = function(btn,event,master,master_grid) {"
+        yield "    console.log('show',this.comp);" 
         if self.layout.report.master is None:
-            yield "  function show(btn,event) {"
-            yield "    this.store.load();"
-            yield "    this.win.show();"
-            yield "  }"
+            yield "    %s.load();" % self.store.as_ext()
         else:
-            yield "  function show(btn,event,master,master_grid) {"
             yield "    if(master) {"
-            yield "      this.store.setBaseParam('master',master);" 
-            yield "      this.store.load();" 
+            yield "      %s.setBaseParam('master',master);" % self.store.as_ext()
+            yield "      %s.load();" % self.store.as_ext()
             #yield "      this.store.load({master:master});" 
             yield "    } else {"
-            yield "      master_grid.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
+            yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
             yield "        // console.log(rowIndex,record);" 
-            yield "        this.store.load({params:{master:record.id}});" 
+            yield "        %s.load({params:{master:record.id}});" % self.store.as_ext()
             yield "      });"
             yield "    }"
-            yield "    this.win.show();"
-            yield "  }"
+        yield "    this.comp.show();"
+        yield "  };"
         
         yield "}();"
         
@@ -172,7 +172,7 @@ def py2js(v,**kw):
         return py2js(kw)
         
     if isinstance(v,menus.MenuItem):
-        ext_name = v.actor.app_label + "_" + v.actor.name + "1"
+        ext_name = v.actor.app_label + "_" + v.actor.name + "1" + ".show"
         if v.args:
             handler = "function(btn,evt) {%s(btn,evt,%s);}" % (
                 ext_name,
@@ -289,31 +289,38 @@ def json_response(**kw):
     #print "json_response()", s
     return HttpResponse(s, mimetype='text/html')
     
-      
-class Component:
-    declared = False
+
+
+DECLARE_INLINE = 0
+DECLARE_VAR = 1
+DECLARE_THIS = 2
+
+class Component: # better name? JSObject? Scriptable?
+    #declared = False
+    declare_type = DECLARE_INLINE
     ext_suffix = ''
     value_template = "{ %s }"
-    declaration_order = 9
+    #declaration_order = 9
+    has_comp = False
     
     def __init__(self,name,**options):
         self.name = name
         self.options = options
-        self.ext_name = name + self.ext_suffix        
+        self.ext_name = name + self.ext_suffix
         
-    def ext_lines_after(self):
-        return []
-    def ext_lines_before(self):
-        return []
+    #~ def ext_lines_after(self):
+        #~ return []
+    #~ def ext_lines_before(self):
+        #~ return []
         
     def js_lines(self):
-        if self.declared:
+        if self.declare_type == DECLARE_INLINE:
+            pass
+        elif self.declare_type == DECLARE_VAR:
+            yield "var %s = %s;" % (self.ext_name,self.as_ext_value())
+        elif self.declare_type == DECLARE_THIS:
             yield "this.%s = %s;" % (self.ext_name,self.as_ext_value())
             
-    def unused_ext_variables(self):
-        if self.declared:
-            yield self
-        
     def ext_options(self,**kw):
         kw.update(self.options)
         return kw
@@ -323,10 +330,16 @@ class Component:
         return self.value_template % dict2js(options)
         
     def as_ext(self):
-        if self.declared:
-            return self.ext_name
-        else:
+        if self.declare_type == DECLARE_INLINE:
             return self.as_ext_value()
+        if self.declare_type == DECLARE_THIS:
+            name = "this." + self.ext_name
+        else:
+            name = self.ext_name
+        if self.has_comp:
+            return name + ".comp"
+        else:
+            return name
 
 
 class StoreField:
@@ -453,33 +466,26 @@ class ForeignKeyStoreField(StoreField):
 
 
 class Store(Component):
-    value_template = "new Ext.data.JsonStore({ %s })"
-    declared = True
+    declare_type = DECLARE_VAR
     ext_suffix = "_store"
-    declaration_order = 1
+    value_template = "new Ext.data.JsonStore({ %s })"
     
     def __init__(self,report,**options):
         Component.__init__(self,report.app_label+"_"+report.name,**options)
         self.report = report
-        #self.layout = layout
-        #self.mode = mode
         
         fields = set()
         for layout in report.layouts:
             for fld in layout._store_fields:
                 assert fld is not None, "%s"
                 fields.add(fld)
-                  
         self.pk = self.report.model._meta.pk
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
           self.report.name,self.report.model)
-        
         if not self.pk in fields:
             fields.add(self.pk)
-            
         self.fields = [self.create_field(fld) for fld in fields]
           
-        
     def create_field(self,fld):
         meth = getattr(fld,'_return_type_for_method',None)
         if meth is not None:
@@ -562,10 +568,10 @@ class Store(Component):
         
 
 class ColumnModel(Component):
-    declared = True
+    declare_type = DECLARE_VAR
     ext_suffix = "_cols"
     value_template = "new Ext.grid.ColumnModel({ %s })"
-    declaration_order = 2
+    #declaration_order = 2
     
     def __init__(self,grid):
         self.grid = grid
@@ -688,8 +694,9 @@ class LayoutElement(VisibleComponent):
         return kw    
         
     def as_ext_column(self):
-        kw = self.get_column_options()
-        return "{ %s }" % dict2js(kw)
+        return py2js(self.get_column_options())
+        #~ kw = self.get_column_options()
+        #~ return "{ %s }" % dict2js(kw)
         
     #~ def as_ext_column(self,request):
         #~ d = dict(
@@ -730,39 +737,6 @@ class LayoutElement(VisibleComponent):
         #return (self.width + self.label_width) * EXT_CHAR_WIDTH + self.xpadding
         
         
-    #~ def as_ext(self):
-        #~ try:
-            #~ context = dict(
-              #~ element = self
-            #~ )
-            #~ return render_to_string(self.ext_template,context)
-        #~ except Exception,e:
-            #~ traceback.print_exc(e)
-        
-    #~ def ext_column(self,editing):
-        #~ s = """
-        #~ {
-          #~ dataIndex: '%s', 
-          #~ header: '%s', 
-          #~ sortable: true,
-        #~ """ % (self.name, self.label)
-        #~ if self.width:
-            #~ s += " width: %d, " % (self.width * 10)
-        #~ if editing and self.editable:
-            #~ s += " editor: %s, " % self.ext_editor(label=False)
-        #~ s += " } "
-        #~ return s
-        
-        
-    #~ def ext_editor(self,label=False):
-        #~ s = " new Ext.form.TextField ({ " 
-        #~ s += " name: '%s', " % self.name
-        #~ if label:
-            #~ s += " fieldLabel: '%s', " % self.label
-        #~ s += " disabled: true, " 
-        #~ s += """
-          #~ }) """
-        #~ return s
         
 
 class StaticText(LayoutElement):
@@ -771,44 +745,14 @@ class StaticText(LayoutElement):
     def render(self,row):
         return self.text
           
-#~ django2ext = (
-    #~ (models.TextField, 'Ext.form.TextArea'),
-    #~ (models.CharField, 'Ext.form.TextField'),
-    #~ (models.DateField, 'Ext.form.DateField'),
-    #~ (models.IntegerField, 'Ext.form.NumberField'),
-    #~ (models.DecimalField, 'Ext.form.NumberField'),
-    #~ (models.BooleanField, 'Ext.form.Checkbox'),
-    #~ (models.ForeignKey, 'Ext.form.ComboBox'),
-    #~ (models.AutoField, 'Ext.form.NumberField'),
-#~ )
-
-
-#~ def ext_class(field):
-    #~ for cl,x in django2ext:
-        #~ if isinstance(field,cl):
-            #~ return x
-            
-#~ _ext_options = (
-    #~ (models.TextField, dict(xtype='textarea')),
-    #~ (models.CharField, dict(xtype='textfield')),
-    #~ (models.DateField, dict(xtype='datefield')),
-    #~ (models.IntegerField, dict(xtype='numberfield')),
-    #~ (models.DecimalField, dict(xtype='numberfield')),
-    #~ (models.BooleanField, dict(xtype='checkbox')),
-    #~ (models.ForeignKey, dict(xtype='combo')),
-    #~ (models.AutoField, dict(xtype='numberfield')),
-#~ )
-            
-#~ def ext_options(field):
-    #~ for cl,x in _ext_options:
-        #~ if isinstance(field,cl):
-            #~ return x
 
 class FieldElement(LayoutElement):
-    declared = True
+    declare_type = DECLARE_THIS
     stored = True
-    declaration_order = 3
-    #name_suffix = "field"
+    #declaration_order = 3
+    name_suffix = "_field"
+    xtype = None # set by subclasses
+    
     def __init__(self,layout,field,**kw):
         LayoutElement.__init__(self,layout,field.name,label=field.verbose_name,**kw)
         self.field = field
@@ -928,7 +872,7 @@ class ForeignKeyElement(FieldElement):
         kw = FieldElement.get_field_options(self,**kw)
         if self.editable:
             setup_report(self.report)
-            kw.update(store=js_code(self.report.store.ext_name))
+            kw.update(store=self.report.store)
             #kw.update(store=js_code(self.store.as_ext_value(request)))
             kw.update(hiddenName=self.name+"Hidden")
             kw.update(valueField=self.report.store.pk.attname)
@@ -1058,10 +1002,13 @@ class Container(LayoutElement):
     is_fieldset = False
     preferred_width = None
     
+    declare_type = DECLARE_THIS
+    
     # ExtJS options
     frame = True
     labelAlign = 'top'
     #labelAlign = 'left'
+    
     
     def __init__(self,layout,name,*elements,**kw):
         LayoutElement.__init__(self,layout,name,**kw)
@@ -1187,37 +1134,31 @@ class Container(LayoutElement):
         d.update(border=False)
         d.update(labelAlign=self.get_property('labelAlign'))
         l = [e.as_ext() for e in self.elements ]
+        #d.update(items=js_code(py2js(self.elements)))
         d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
+        #d.update(items=js_code("this.elements"))
         return d
         
     def js_lines(self):
-        for e in self.elements:
-            for ln in e.js_lines():
-                yield ln
-        for ln in LayoutElement.js_lines(self):
-            yield ln
+        assert self.declare_type == DECLARE_THIS
+        if self.has_comp:
+            yield "this.%s = new function(parent) {" % self.ext_name
+            #yield "  this._parent = parent;" 
+            for e in self.elements:
+                for ln in e.js_lines():
+                    yield "  "+ln
+            yield "  this.comp = %s;" % self.as_ext_value()
+            yield "}(this);"
+        else:
+            for e in self.elements:
+                for ln in e.js_lines():
+                    yield ln
+            yield "this.%s = %s;" % (self.ext_name,self.as_ext_value())
             
-    #~ def ext_variables(self):
-        #~ for e in self.elements:
-            #~ for v in e.ext_variables():
-                #~ yield v
-        #~ if self.declared:
-            #~ yield self
-        
-    def ext_lines_after(self):
-        for e in self.elements:
-            for v in e.ext_lines_after():
-                yield v
-                
-    def ext_lines_before(self):
-        for e in self.elements:
-            for v in e.ext_lines_before():
-                yield v
-                
+            
 
 
 class Panel(Container):
-    declared = True
     ext_suffix = "_panel"
         
     def __init__(self,layout,name,vertical,*elements,**kw):
@@ -1240,7 +1181,6 @@ class Panel(Container):
         
 
 class TabPanel(Container):
-    declared = True
     value_template = "new Ext.TabPanel({ %s })"
     def __init__(self,layout,name,*elements,**options):
         Container.__init__(self,layout,name,*elements,**options)
@@ -1263,8 +1203,8 @@ class TabPanel(Container):
 
 class GridElement(Container):
     value_template = "new Ext.grid.EditorGridPanel({ %s })"
-    declared = True
     ext_suffix = "_grid"
+    has_comp = True
 
     def __init__(self,layout,name,report,*elements,**kw):
         """
@@ -1286,8 +1226,8 @@ class GridElement(Container):
         keys = []
         buttons = []
         for a in self.report._actions:
-            h = js_code("Lino.grid_action(%s,'%s','%s')" % (
-                  self.ext_name, a.name, self.report.store.get_absolute_url(action=a.name)))
+            h = js_code("Lino.grid_action(this.comp,'%s','%s')" % (
+                  a.name, self.report.store.get_absolute_url(action=a.name)))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 keys.append(dict(
@@ -1297,19 +1237,19 @@ class GridElement(Container):
         key = reports.RETURN(ctrl=True)
         layout = self.report.layouts[2]
         keys.append(dict(
-          handler=js_code("Lino.show_detail(%s,%s)" % (self.ext_name,layout.name)),
+          handler=js_code("Lino.show_detail(this,%s)" % layout.name),
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
         for layout in self.report.layouts[2:]:
             buttons.append(dict(
-              handler=js_code("Lino.show_detail(%s,%s)" % (self.ext_name,layout.name)),
+              handler=js_code("Lino.show_detail(this,%s)" % layout.name),
               text=layout.label))
               
         for slave in self.report._slaves:
             buttons.append(dict(
               handler=js_code(
-                  "function(btn,evt) {%s_%s1(btn,evt,undefined,%s)}" % (
-                      slave.app_label,slave.name,self.ext_name)),
+                  "function(btn,evt) {%s_%s1(btn,evt,undefined,this)}" % (
+                      slave.app_label,slave.name)),
               text = slave.label
             ))
             
@@ -1318,18 +1258,25 @@ class GridElement(Container):
         
         
     def js_lines(self):
+        """
+        a grid doesn't generate the declaration of its elements
+        """
         self.setup()
-        yield "this.%s = new function() {" % self.name
-        yield "  this.elements = new function() {"
-        for e in self.elements:
-            for ln in e.js_lines():
-                yield "    " + ln
-        yield "  }();"
+        #~ for ln in Container.js_lines(self):
+            #~ yield ln
+        yield "this.%s = new function() {" % self.ext_name
         #yield "this.cols = %s;" % self.column_model.as_ext_value()
         for ln in self.column_model.js_lines():
             yield "  " + ln
-        yield "this.comp = %s;" % self.as_ext_value()
+        yield "  var buttons = %s;" % py2js(self.buttons)
+        yield "  var keys = %s;" % py2js(self.keys)
+        yield "  this.comp = %s;" % self.as_ext_value()
+        yield "  this.comp.on('afteredit', Lino.grid_afteredit(this.comp,'%s','%s'));" % (
+          self.report.store.get_absolute_url(grid_afteredit=True),
+          self.report.store.pk.name)
         yield "}();"
+        #yield "%s.keys = %s;" % (self.ext_name,py2js(self.keys))
+        #yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(self.buttons))
           
         
 
@@ -1358,7 +1305,8 @@ class GridElement(Container):
         #d.update(fitToFrame=True)
         d.update(emptyText="Nix gefunden...")
         d.update(store=js_code(self.report.store.ext_name))
-        d.update(colModel=js_code('this.cols'))
+        d.update(colModel=self.column_model)
+        #d.update(colModel=js_code('this.cols'))
         #d.update(colModel=js_code(self.column_model.ext_name))
         #d.update(autoHeight=True)
         #d.update(layout='fit')
@@ -1370,19 +1318,14 @@ class GridElement(Container):
           displayInfo=True,
           pageSize=self.report.page_length,
           prependButtons=False,
+          items=js_code('buttons'),
         )
         d.update(tbar=js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         return d
             
       
-    def ext_lines_after(self):
-        self.setup()
-        yield "%s.keys = %s;" % (self.ext_name,py2js(keys))
-        yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(buttons))
-        yield "%s.on('afteredit', Lino.grid_afteredit(%s,'%s','%s'));" % (
-          self.ext_name,self.ext_name,
-          self.report.store.get_absolute_url(grid_afteredit=True),
-          self.report.store.pk.name)
+    #~ def ext_lines_after(self):
+        #~ self.setup()
           
       
         
@@ -1412,10 +1355,10 @@ class MainGridElement(GridElement):
         #d.update(region='center',split=True)
         return d
         
-    def ext_lines_after(self):
-        for s in GridElement.ext_lines_after(self):
-            yield s
+    def unused_js_lines(self):
         # rowselect is currently not used. maybe in the future.
+        for ln in GridElement.js_lines(self):
+            yield ln
         s = """
 function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
         s += """
@@ -1636,7 +1579,7 @@ Lino.form_submit = function (form,url,store,pkname) {
   } 
 };
 
-Lino.grid_afteredit = function (grid,url,pk) {
+Lino.grid_afteredit = function (gridwrapper,url,pk) {
   return function(e) {
     /*
     e.grid - This grid
@@ -1666,28 +1609,29 @@ Lino.grid_afteredit = function (grid,url,pk) {
         var result=Ext.decode(response.responseText);
         // console.log(result);
         if (result.success) {
-          grid.getStore().commitChanges(); // get rid of the red triangles
-          grid.getStore().reload();        // reload our datastore.
+          gridwrapper.comp.getStore().commitChanges(); // get rid of the red triangles
+          gridwrapper.comp.getStore().reload();        // reload our datastore.
         } else {
           Ext.MessageBox.alert(result.msg);
         }
       },
       failure: function(response) {
         // console.log(response);
-        Ext.MessageBox.alert('error','could not connect to the database. retry later');		
+        Ext.MessageBox.alert('error','could not connect to the database. retry later');
       }
     })
   }
 };
 
 
-Lino.grid_action = function(grid,name,url) {
+Lino.grid_action = function(gridwrapper,name,url) {
+  
   // console.log("foo",grid,name,url);
   return function(oGrid_event) {
     // console.log("bar",oGrid_event);
     var sel_pks = '';
     var must_reload = false;
-    var sels = grid.getSelectionModel().getSelections();
+    var sels = gridwrapper.comp.getSelectionModel().getSelections();
     // console.log(sels);
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
     var doit = function(confirmed) {
