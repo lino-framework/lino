@@ -24,7 +24,9 @@ from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
 
-from lino.apps.documents import models as documents
+#from lino.apps.documents import models as documents
+documents = models.get_app('documents')
+
 
 class Document(documents.AbstractDocument):
     pass

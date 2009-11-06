@@ -27,9 +27,12 @@ from django.db import models
 from django.forms.models import modelform_factory, formset_factory
 from django.conf import settings
 
-from lino.apps.journals import models as journals
-from lino.apps.ledger import models as ledger
-# Journal, Document, register_doctype, DocumentError
+journals = models.get_app('journals')
+ledger = models.get_app('ledger')
+
+
+#~ from lino.modlib.journals import models as journals
+#~ from lino.apps.ledger import models as ledger
 
 
 class JournalsTest(TestCase):

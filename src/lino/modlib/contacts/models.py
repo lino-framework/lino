@@ -21,20 +21,15 @@ from dateutil.relativedelta import relativedelta
 from django.db import models
 from django.utils.safestring import mark_safe
 
-#from lino.apps.igen import Model
-from lino.apps.countries import models as countries 
+#from lino.modlib.countries import models as countries
 
-##
-## report definitions
-##        
-        
 from django import forms
 
 from lino.utils import reports
 from lino.utils import layouts
 from lino.utils import perms
 
-#__app_label__ = "contacts"
+countries = models.get_app('countries')
 
 
 class PaymentTerm(models.Model):

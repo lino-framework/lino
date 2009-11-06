@@ -40,16 +40,18 @@ from django.contrib.auth import models as auth
 
 from lino.utils.ticket7623 import child_from_parent
 
-from lino.apps import fields
-from lino.apps.contacts import models as contacts
-from lino.apps.journals import models as journals
-from lino.apps.ledger import models as ledger
-from lino.apps.products import models as products
+from lino.modlib import fields
 
+from lino.modlib.contacts import models as contacts
+#~ from lino.apps.journals import models as journals
+#~ from lino.apps.ledger import models as ledger
+#~ from lino.apps.products import models as products
 
-##
-## report definitions
-##        
+#contacts = models.get_app('contacts')
+journals = models.get_app('journals')
+ledger = models.get_app('ledger')
+products = models.get_app('products')
+
         
 from django import forms
 

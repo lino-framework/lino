@@ -18,7 +18,7 @@
 import logging
 import datetime
 from django.db import models
-from lino.apps import fields
+from lino.modlib import fields
 
 #~ contacts = models.get_app('contacts')
 #~ logging.debug(contacts.__file__)

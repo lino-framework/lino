@@ -30,7 +30,9 @@ import os
 
 from django.db import models
 from lino.utils.sites import lino_site
-from lino.apps.documents import models as documents
+#from lino.apps.documents import models as documents
+documents = models.get_app('documents')
+
 
 class DocumentError(Exception):
     pass

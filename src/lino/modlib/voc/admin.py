@@ -1,4 +1,4 @@
-from lino.apps.voc import models
+from lino.modlib.voc import models
 from django.contrib import admin, databrowse
 
 admin.site.register(models.Unit)

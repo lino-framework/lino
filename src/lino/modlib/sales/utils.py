@@ -32,7 +32,9 @@ import os
 import datetime
 
 from timtools.console import syscon
-from lino.apps.sales import models as sales
+sales = models.get_app('sales')
+
+#from lino.apps.sales import models as sales
 from lino.utils.sites import lino_site
 
         

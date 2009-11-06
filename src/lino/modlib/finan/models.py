@@ -20,10 +20,15 @@ import decimal
 #import logging ; logger = logging.getLogger('lino.apps.finan')
 
 from django.db import models
-from lino.apps import fields
-from lino.apps.contacts import models as contacts
-from lino.apps.ledger import models as ledger
-from lino.apps.journals import models as journals
+from lino.modlib import fields
+
+contacts = models.get_app('contacts')
+#ledger = models.get_app('ledger')
+journals = models.get_app('journals')
+
+#~ from lino.modlib.contacts import models as contacts
+from lino.modlib.ledger import models as ledger
+#~ from lino.modlib.journals import models as journals
 
 from lino.utils.sites import lino_site
 

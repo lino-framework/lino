@@ -84,8 +84,8 @@ INV#2 (7) : Invoice
 """
 
 from django.db import models
-from lino.apps.journals import models as journals
-from lino.apps.ledger import models as ledger
+from lino.modlib.journals import models as journals
+from lino.modlib.ledger import models as ledger
 
 class Customer(models.Model):
     pass

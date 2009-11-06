@@ -23,11 +23,11 @@ from django.contrib.auth.models import User
 
 from lino.utils import layouts
 from lino.utils.instantiator import i2d
-from lino.apps.sales import models as sales
+from lino.modlib.sales import models as sales
 
 
 class SalesTest(TestCase):
-    urls = 'mysites.demo.urls'
+    urls = 'igen.demo.urls'
     def test01(self):
         luc = sales.Customer(firstName="Luc",lastName="Saffre")
         luc.save()

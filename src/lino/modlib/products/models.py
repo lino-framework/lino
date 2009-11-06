@@ -16,8 +16,8 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
-from lino.apps import fields
-from lino.apps.journals import models as journals
+from lino.modlib import fields
+#journals = models.get_app('journals')
 
 class ProductCat(models.Model):
     name = models.CharField(max_length=200)

@@ -19,8 +19,8 @@
 
 from django.test import TestCase
 #from lino.igen import models
-from lino.apps.contacts.models import Contact, Companies
-from lino.apps.countries.models import Country
+from lino.modlib.contacts.models import Contact, Companies
+from lino.modlib.countries.models import Country
 
 from django.forms.models import modelform_factory, formset_factory
 from lino.utils import layouts

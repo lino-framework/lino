@@ -16,9 +16,20 @@
 ## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from django.db import models
-from lino.apps import fields
-from lino.apps.contacts import models as contacts
-from lino.apps.journals import models as journals
+from lino.modlib import fields
+
+
+from django import forms
+
+from lino.utils import reports
+from lino.utils import layouts
+from lino.utils import perms
+
+#contacts = models.get_app('contacts')
+journals = models.get_app('journals')
+from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.journals import models as journals
+
 
 
 class Account(models.Model):
@@ -142,12 +153,6 @@ class Booking(models.Model):
 ## report definitions
 ##        
         
-from django import forms
-
-from lino.utils import reports
-from lino.utils import layouts
-from lino.utils import perms
-
 
 class Accounts(reports.Report):
     model = Account
