@@ -61,15 +61,15 @@ class ReportRenderer:
             #~ yield ''
   
     def js_lines(self):
-        store = self.report.store
-        for ln in store.js_lines():
-            yield ln
-        #yield "var %s = %s;" % (store.ext_name,store.as_ext_value())
-        yield "%s.addListener({exception: function(a,b,c) { " % store.as_ext()
-        yield "  console.log(a,b,c);"
-        yield "  Ext.MessageBox.alert('Exception in %s','no data');" % store.as_ext()
-        yield "}});"
-        yield ''
+        if False:
+            store = self.report.store
+            for ln in store.js_lines():
+                yield ln
+            yield "%s.addListener({exception: function(a,b,c) { " % store.as_ext()
+            yield "  // console.log(a,b,c);"
+            yield "  Ext.MessageBox.alert('Exception in %s','no data');" % store.as_ext()
+            yield "}});"
+            yield ''
         for win in self.windows:
             yield '// window %s' % win.name
             for ln in win.js_lines():
@@ -92,7 +92,7 @@ class WindowRenderer:
         self.options.update(maximizable=True)
         self.options.update(id=self.name)
         self.options.update(layout='fit')
-        self.options.update(height=300,width=500)
+        self.options.update(height=300,width=400)
         self.options.update(items=self.layout._main)
         #self.options.update(items=js_code("this.%s" % self.layout._main.ext_name))
         #kw.update(maximized=True)
@@ -105,7 +105,7 @@ class WindowRenderer:
         #yield define_vars(self.layout._main.ext_variables(),indent=2,prefix="this.")
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
         yield "  this.show = function(btn,event,master,master_grid) {"
-        yield "    console.log('show',this);" 
+        #yield "    console.log('show',this);" 
         if self.layout.report.master is None:
             yield "    %s.load();" % self.store.as_ext()
         else:
@@ -114,8 +114,9 @@ class WindowRenderer:
             yield "      %s.load();" % self.store.as_ext()
             #yield "      this.store.load({master:master});" 
             yield "    } else {"
+            #yield "      console.log('show() master_grid=',master_grid);"
             yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
-            yield "        // console.log(rowIndex,record);" 
+            #yield "        console.log(rowIndex,record);" 
             yield "        %s.load({params:{master:record.id}});" % self.store.as_ext()
             yield "      });"
             yield "    }"
@@ -1227,8 +1228,9 @@ class GridElement(Container):
         keys = []
         buttons = []
         for a in self.report._actions:
-            h = js_code("Lino.grid_action(this.comp,'%s','%s')" % (
-                  a.name, self.report.store.get_absolute_url(action=a.name)))
+            h = js_code("Lino.grid_action(this,'%s','%s')" % (
+                  a.name, 
+                  self.report.store.get_absolute_url(action=a.name)))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 keys.append(dict(
@@ -1248,10 +1250,8 @@ class GridElement(Container):
               
         for slave in self.report._slaves:
             buttons.append(dict(
-              handler=js_code(
-                  "function(btn,evt) {%s_%s1(btn,evt,undefined,this)}" % (
-                      slave.app_label,slave.name)),
-              text = slave.label
+              handler=js_code("Lino.show_slave(this,%r)" % slave.row_layout.name),
+              text = slave.label,
             ))
             
         self.keys = keys
@@ -1260,7 +1260,8 @@ class GridElement(Container):
         
     def js_lines(self):
         """
-        a grid doesn't generate the declaration of its elements
+        a grid doesn't generate the declaration of its elements 
+        because its column_model does this indirectly
         """
         self.setup()
         #~ for ln in Container.js_lines(self):
@@ -1272,23 +1273,14 @@ class GridElement(Container):
         yield "  var buttons = %s;" % py2js(self.buttons)
         yield "  var keys = %s;" % py2js(self.keys)
         yield "  this.comp = %s;" % self.as_ext_value()
-        yield "  this.comp.on('afteredit', Lino.grid_afteredit(this.comp,'%s','%s'));" % (
+        yield "  this.comp.on('afteredit', Lino.grid_afteredit(this,'%s','%s'));" % (
           self.report.store.get_absolute_url(grid_afteredit=True),
           self.report.store.pk.name)
         yield "}();"
         #yield "%s.keys = %s;" % (self.ext_name,py2js(self.keys))
         #yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(self.buttons))
           
-        
 
-    #~ def ext_variables(self):
-        #~ self.setup()
-        #~ for e in self.elements:
-            #~ for v in e.ext_variables():
-                #~ yield v
-        #~ yield self.column_model
-        #~ yield self
-        
     def ext_options(self):
         self.setup()
         d = LayoutElement.ext_options(self)
@@ -1414,7 +1406,7 @@ class MainPanel(Panel):
             yield ln
         yield "%s.main.comp.getSelectionModel().addListener('rowselect'," % self.layout.report.row_layout.name
         yield "  function(sm,rowIndex,record) { "
-        yield "    console.log(this);"
+        #yield "    console.log(this);"
         name = self.layout.name
         yield "    %s.main.form._lino_pk = record.data.id;" % name
         yield "    %s.main.form.loadRecord(record);" % name
@@ -1586,7 +1578,16 @@ Lino.form_submit = function (form,url,store,pkname) {
   } 
 };
 
-Lino.grid_afteredit = function (gridwrapper,url,pk) {
+Lino.show_slave = function(master_win,slave_name) {
+  return function(btn,evt) {
+    slave_win = eval(slave_name);
+    slave_win.show(btn,evt,undefined,master_win);
+  }
+}
+                      
+
+
+Lino.grid_afteredit = function (gridwin,url,pk) {
   return function(e) {
     /*
     e.grid - This grid
@@ -1616,8 +1617,8 @@ Lino.grid_afteredit = function (gridwrapper,url,pk) {
         var result=Ext.decode(response.responseText);
         // console.log(result);
         if (result.success) {
-          gridwrapper.comp.getStore().commitChanges(); // get rid of the red triangles
-          gridwrapper.comp.getStore().reload();        // reload our datastore.
+          gridwin.comp.getStore().commitChanges(); // get rid of the red triangles
+          gridwin.comp.getStore().reload();        // reload our datastore.
         } else {
           Ext.MessageBox.alert(result.msg);
         }
@@ -1631,14 +1632,17 @@ Lino.grid_afteredit = function (gridwrapper,url,pk) {
 };
 
 
-Lino.grid_action = function(gridwrapper,name,url) {
-  
+Lino.grid_action = function(gridwin,name,url) {
+  // console.log("grid_action.this=",this);
+  // console.log("grid_action.gridwin=",gridwin);
   // console.log("foo",grid,name,url);
-  return function(oGrid_event) {
-    // console.log("bar",oGrid_event);
+  return function(event) {
+    // 'this' is the button who called this handler
+    // console.log("grid_action.this = ",this);
+    // console.log("grid_action.event = ",event);
     var sel_pks = '';
     var must_reload = false;
-    var sels = gridwrapper.comp.getSelectionModel().getSelections();
+    var sels = gridwin.comp.getSelectionModel().getSelections();
     // console.log(sels);
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
     var doit = function(confirmed) {
@@ -1655,7 +1659,7 @@ Lino.grid_action = function(gridwrapper,name,url) {
             if (result.html) { new Ext.Window({html:result.html}).show(); };
             if (result.window) { new Ext.Window(result.window).show(); };
             if (result.redirect) { window.open(result.redirect); };
-            if (result.must_reload) grid.comp.getStore().load(); 
+            if (result.must_reload) gridwin.comp.getStore().load(); 
           } else {
             if(result.confirm) Ext.Msg.show({
               title: 'Confirmation',
@@ -1723,6 +1727,11 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
         #~ for rpt in rpts:
             #~ for ln in rpt.ext_globals():
                 #~ s += "\n" + ln
+                
+        for rpt in rpts:
+            for ln in rpt.report.store.js_lines():
+                s += "\n" + ln
+                
                 
         for rpt in rpts:
             for ln in rpt.js_lines():
