@@ -92,7 +92,7 @@ class WindowRenderer:
         self.options.update(maximizable=True)
         self.options.update(id=self.name)
         self.options.update(layout='fit')
-        self.options.update(height=300,width=800)
+        self.options.update(height=300,width=500)
         self.options.update(items=self.layout._main)
         #self.options.update(items=js_code("this.%s" % self.layout._main.ext_name))
         #kw.update(maximized=True)
@@ -1234,16 +1234,16 @@ class GridElement(Container):
                 keys.append(dict(
                   handler=h,
                   key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-        # Ctrl+ENTER in a grid opens the first detail window
+        # the first detail window can be opend with Ctrl+ENTER 
         key = reports.RETURN(ctrl=True)
         layout = self.report.layouts[2]
         keys.append(dict(
-          handler=js_code("Lino.show_detail(this,%s)" % layout.name),
+          handler=js_code("Lino.show_detail(this,%r)" % layout.name),
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
         for layout in self.report.layouts[2:]:
             buttons.append(dict(
-              handler=js_code("Lino.show_detail(this,%s)" % layout.name),
+              handler=js_code("Lino.show_detail(this,%r)" % layout.name),
               text=layout.label))
               
         for slave in self.report._slaves:
@@ -1409,14 +1409,18 @@ class MainPanel(Panel):
         return d
         
         
-    def ext_lines_after(self):
-        yield "%s_win.grid.getSelectionModel().addListener('rowselect'," % self.layout.report.row_layout.name
+    def js_lines(self):
+        for ln in Panel.js_lines(self):
+            yield ln
+        yield "%s.main.comp.getSelectionModel().addListener('rowselect'," % self.layout.report.row_layout.name
         yield "  function(sm,rowIndex,record) { "
-        yield "    %s.form._lino_pk = record.data.id;" % self.ext_name
-        yield "    %s.form.loadRecord(record);" % self.ext_name
+        yield "    console.log(this);"
+        name = self.layout.name
+        yield "    %s.main.form._lino_pk = record.data.id;" % name
+        yield "    %s.main.form.loadRecord(record);" % name
         for slave in self.layout.slave_grids:
             yield "  %s.load({params: { master: record.data.%s } });" % (
-                 slave.report.store.ext_name,
+                 slave.report.store.as_ext(),
                  self.report.store.pk.name)
         yield "});"
         
@@ -1435,29 +1439,31 @@ class MainPanel(Panel):
         buttons = []
 
         key = reports.PAGE_UP
-        js = js_code("function() {%s_win.grid.getSelectionModel().selectPrevious()}" % self.layout.report.row_layout.name)
+        js = js_code("function() {%s.main.comp.getSelectionModel().selectPrevious()}" % self.layout.report.row_layout.name)
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
         buttons.append(dict(handler=js,text="Previous"))
 
         key = reports.PAGE_DOWN
-        js = js_code("function() {%s_win.grid.getSelectionModel().selectNext()}" % self.layout.report.row_layout.name)
+        js = js_code("function() {%s.main.comp.getSelectionModel().selectNext()}" % self.layout.report.row_layout.name)
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
         buttons.append(dict(handler=js,text="Next"))
         if len(keys):
-            yield "%s.keys = %s;" % (self.ext_name,py2js(keys))
+            #yield "console.log(%s);" % self.as_ext()
+            #yield "console.log(%s.comp);" % self.as_ext()
+            yield "%s.keys = %s;" % (self.as_ext(),py2js(keys))
         
         
         url = self.report.store.get_absolute_url(submit=True)
         js = js_code("Lino.form_submit(%s.form,'%s',%s,'%s')" % (
-                self.ext_name,url,self.report.store.ext_name,self.report.store.pk.name))
+                self.as_ext(),url,self.report.store.as_ext(),self.report.store.pk.name))
         buttons.append(dict(handler=js,text='Submit'))
         
         for btn in buttons:
-            yield "%s.addButton(%s);" % (self.ext_name,py2js(btn))
+            yield "%s.addButton(%s);" % (self.as_ext(),py2js(btn))
     
         
 
@@ -1698,10 +1704,11 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.show_detail = function (grid,wrapper) { 
+Lino.show_detail = function (grid,wrappername) { 
   return function(btn,evt) {
     p = grid.comp.getStore().baseParams;
-    wrapper.show(btn,evt,p['master']);
+    w = eval(wrappername);
+    w.show(btn,evt,p['master']);
   }
 };
 
