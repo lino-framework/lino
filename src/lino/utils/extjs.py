@@ -1542,10 +1542,12 @@ class Viewport:
         s += """
 <!-- ExtJS library: all widgets -->
 <script type="text/javascript" src="%s%s.js"></script>""" % (settings.EXTJS_URL,widget_library)
-        s += """
+        if False:
+            s += """
 <!-- overrides to library -->
 <link rel="stylesheet" type="text/css" href="/media/lino.css">
-<script type="text/javascript" src="/media/lino.js"></script>
+<script type="text/javascript" src="/media/lino.js"></script>"""
+        s += """
 <!-- page specific -->
 <script type="text/javascript">
 Ext.namespace('Lino');
