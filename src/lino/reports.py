@@ -35,10 +35,22 @@ except ImportError:
     pisa = None
 
 
+def get_app(app_label):
+    """
+    Kann in fixtures benutzt werden, aber nicht in models.
+    weil m evtl. bei circular imports nicht komplett importiert ist
+    und weil get_app() vorher _populate() macht.
+    """
+    m = models.get_app(app_label)
+    if m is None:
+        raise ImportError("%s models not yet ready." % app_label)
+    return m
 
-from . import layouts, perms, urls
 
-from lino.utils.sites import lino_site
+from lino.utils import layouts, perms, urls
+
+#from lino.utils.sites import lino_site
+import lino
 
 # maps Django field types to a tuple of default paramenters
 # each tuple contains: minWidth, maxWidth, is_filter
@@ -237,15 +249,15 @@ def register_report_class(rptclass):
     #_reports.append(cls)
     rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rptclass.model is None:
-        lino_site.log.debug("register %s : model is None", rc_name(rptclass))
+        lino.log.debug("register %s : model is None", rc_name(rptclass))
         return
     if rptclass.master is None:
         master_reports.append(rptclass)
         if rptclass.use_as_default_report:
-            lino_site.log.debug("register %s : model_report for %s", rc_name(rptclass), rptclass.model.__name__)
+            lino.log.debug("register %s : model_report for %s", rc_name(rptclass), rptclass.model.__name__)
             rptclass.model._lino_model_report_class = rptclass
         else:
-            lino_site.log.debug("register %s: not used as model_report",rc_name(rptclass))
+            lino.log.debug("register %s: not used as model_report",rc_name(rptclass))
         return
     slave_reports.append(rptclass)
     slaves = getattr(rptclass.master,"_lino_slaves",None)
@@ -253,7 +265,7 @@ def register_report_class(rptclass):
         slaves = {}
         setattr(rptclass.master,'_lino_slaves',slaves)
     slaves[rptclass.__name__] = rptclass
-    lino_site.log.debug("register %s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
+    lino.log.debug("register %s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
     
 
 #~ def register_report(rpt):
@@ -289,7 +301,7 @@ def get_report(app_label,rptname):
     app = models.get_app(app_label)
     rptclass = getattr(app,rptname,None)
     if rptclass is None:
-        lino_site.log.warning("No report %s in application %r",rptname,app)
+        lino.log.warning("No report %s in application %r",rptname,app)
         return None
     return rptclass()
     
@@ -308,22 +320,22 @@ def setup():
       `_lino_model_report`
 
     """
-    lino_site.log.debug("Instantiate model reports.")
+    lino.log.debug("Instantiate model reports.")
     i = 0
     for model in models.get_models():
         i += 1
         rc = getattr(model,'_lino_model_report_class',None)
         if rc is None:
             model._lino_model_report_class = report_factory(model)
-        lino_site.log.debug("%d %s %s",i,model._meta.db_table,rc_name(model._lino_model_report_class))
+        lino.log.debug("%d %s %s",i,model._meta.db_table,rc_name(model._lino_model_report_class))
         model._lino_model_report = model._lino_model_report_class()
         
-    lino_site.log.debug("Set up model reports.")
+    lino.log.debug("Set up model reports.")
     
     for model in models.get_models():
         model._lino_model_report.setup()
         
-    lino_site.log.debug("reports.setup() done (%d models)",i)
+    lino.log.debug("reports.setup() done (%d models)",i)
 
 
 
@@ -356,7 +368,7 @@ class ReportMetaClass(type):
                 for attr in base_attrs(cls):
                     myattrs.discard(attr)
                 if len(myattrs):
-                    lino_site.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
+                    lino.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
             register_report_class(cls)
         return cls
         
@@ -429,7 +441,7 @@ class Report:
         #self.setup()
         
         #register_report(self)
-        lino_site.log.debug("Report.__init__() done: %s", self.name)
+        lino.log.debug("Report.__init__() done: %s", self.name)
         
     def setup(self):
         if self._setup_done:
@@ -438,7 +450,7 @@ class Report:
             if True: # severe error handling
                 raise Exception("%s.setup() called recursively" % self.name)
             else:
-                lino_site.log.warning("%s.setup() called recursively" % self.name)
+                lino.log.warning("%s.setup() called recursively" % self.name)
                 return False
         self._setup_doing = True
         
@@ -480,7 +492,7 @@ class Report:
                 for slave_name in self.slaves.split():
                     sl = get_slave(self.model,slave_name)
                     if sl is None:
-                        lino_site.log.info(
+                        lino.log.info(
                             "[Warning] invalid name %s in %s.%s.slaves" % (
                                 slave_name,self.app_label,self.name))
                     self._slaves.append(sl)
@@ -490,7 +502,7 @@ class Report:
         
         self._setup_doing = False
         self._setup_done = True
-        lino_site.log.debug("Report.setup() done: %s", self.name)
+        lino.log.debug("Report.setup() done: %s", self.name)
         return True
         
     def get_fields(self):

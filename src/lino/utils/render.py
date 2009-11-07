@@ -41,7 +41,6 @@ from django.template.loader import render_to_string, get_template, select_templa
 
 
 from lino.utils import layouts
-#from lino.utils import reports
 from lino.utils.requests import again, get_redirect, redirect_to
 from lino.utils import editing, latex
 

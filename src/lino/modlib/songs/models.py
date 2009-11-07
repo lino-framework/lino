@@ -1,26 +1,29 @@
-## Copyright 2008-2009 Luc Saffre.
-## This file is part of the Lino project. 
-
-## Lino is free software; you can redistribute it and/or modify it
-## under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
+## Copyright 2008-2009 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-
-## Lino is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
-## License for more details.
-
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
-## along with Lino; if not, write to the Free Software Foundation,
-## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
 
 from django.db import models
 
 from django.utils.safestring import mark_safe
 
-from lino.apps.countries import models as countries # import Country, Language
 from lino.utils.render import HREF
+
+from lino import reports
+from lino.utils import perms
+from lino.utils.layouts import PageLayout 
+
+from lino.modlib.countries import models as countries 
+#= reports.get_app('countries')
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
@@ -259,9 +262,6 @@ class Collection(models.Model):
 
 # reports
 
-from lino.utils import reports, perms
-from lino.utils.layouts import PageLayout 
-
 
 class SongPageLayout(PageLayout):
     main = """
@@ -353,14 +353,14 @@ class Choirs(reports.Report):
     model = Choir
 
 
-def lino_setup(lino):
-    m = lino.add_menu("songs","~Songs",can_view=perms.is_authenticated)
-    m.add_action(Rehearsals())
-    m.add_action(Performances())
-    m.add_action(Singers())
-    m.add_action(Authors())
-    m.add_action(Songs())
-    m.add_action(Collections())
-    m.add_action(Places())
-    m.add_action(Links())
-    m.add_action(SongEvents())
+#~ def lino_setup(lino):
+    #~ m = lino.add_menu("songs","~Songs",can_view=perms.is_authenticated)
+    #~ m.add_action(Rehearsals())
+    #~ m.add_action(Performances())
+    #~ m.add_action(Singers())
+    #~ m.add_action(Authors())
+    #~ m.add_action(Songs())
+    #~ m.add_action(Collections())
+    #~ m.add_action(Places())
+    #~ m.add_action(Links())
+    #~ m.add_action(SongEvents())

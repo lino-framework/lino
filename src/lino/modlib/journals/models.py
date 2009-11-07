@@ -1,19 +1,15 @@
-## Copyright 2009 Luc Saffre.
-## This file is part of the Lino project. 
-
-## Lino is free software; you can redistribute it and/or modify it
-## under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
+## Copyright 2009 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-
-## Lino is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
-## License for more details.
-
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
-## along with Lino; if not, write to the Free Software Foundation,
-## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
 """
@@ -29,9 +25,10 @@ import os
 #import logging ; logger = logging.getLogger('lino.apps.journals')
 
 from django.db import models
-from lino.utils.sites import lino_site
-#from lino.apps.documents import models as documents
-documents = models.get_app('documents')
+import lino
+from lino import reports
+from lino.apps.documents import models as documents
+#documents = reports.get_app('documents')
 
 
 class DocumentError(Exception):
@@ -232,7 +229,7 @@ class AbstractDocument(documents.AbstractDocument):
         return r
         
     def after_save(self):
-        #lino_site.log.info("Saved document %s",self)
+        #lino.log.info("Saved document %s",self)
         pass
         
     def delete(self):
@@ -264,8 +261,6 @@ class AbstractDocument(documents.AbstractDocument):
 ## report definitions
 ##        
         
-from lino.utils import reports
-#~ from lino.utils.layouts import PageLayout 
 
 class Journals(reports.Report):
     model = Journal

@@ -20,9 +20,10 @@ from django.db import models
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import simplejson
-from lino.utils.sites import lino_site
+import lino
 
-from . import reports, menus
+from lino import reports
+from lino.utils import menus
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 12
@@ -32,7 +33,7 @@ def define_vars(variables,indent=0,prefix="var "):
     sep = "\n" + ' ' * indent
     s = ''
     for v in variables:
-        #lino_site.log.debug("define_vars() : %s", v.ext_name)
+        #lino.log.debug("define_vars() : %s", v.ext_name)
         for ln in v.ext_lines_before():
             s += sep + ln 
         s += sep + template % (v.ext_name,v.as_ext_value())
@@ -158,12 +159,13 @@ class WindowRenderer:
         #~ yield LayoutWindow(layout,**kw)
         
 def menu_view(request):
-    s = py2js(lino_site._menu)
+    from lino.utils.sites import lino_site
+    s = py2js(lino_site.get_menu())
     return HttpResponse(s, mimetype='text/html')
 
 
 def py2js(v,**kw):
-    #lino_site.log.debug("py2js(%r,%r)",v,kw)
+    #lino.log.debug("py2js(%r,%r)",v,kw)
         
     if isinstance(v,menus.Menu):
         if v.parent is None:
@@ -1056,7 +1058,7 @@ class Container(LayoutElement):
                 remove e's width to avoid padding differences.
                 """
                 e.width = None
-        lino_site.log.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
+        lino.log.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
                 
     def compute_width(self,unused_insist=False):
         """

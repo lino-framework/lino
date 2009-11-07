@@ -25,7 +25,7 @@ from django.shortcuts import render_to_response
 def view_instance(request,db_table=None,pk=None):
     if db_table is None:
         return Http404
-    from . import reports
+    from lino import reports
     try:
         #rptclass = reports.model_reports[db_table]
         rpt = reports.model_reports[db_table]
@@ -47,7 +47,7 @@ def unused_view_instance_slave(request,app_label=None,model_name=None,slave_name
     #print repr(pk)
     model = models.get_model(app_label,model_name)
     obj = model.objects.get(pk=pk)
-    from . import reports
+    from lino import reports
     rptclass = reports.get_slave(obj,slave_name)
     if not rptclass:
         print "no slave %s for model %s" % (slave,model)

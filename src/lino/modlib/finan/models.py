@@ -1,36 +1,39 @@
-## Copyright 2008-2009 Luc Saffre.
-## This file is part of the Lino project. 
-
-## Lino is free software; you can redistribute it and/or modify it
-## under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
+## Copyright 2008-2009 Luc Saffre
+## This file is part of the Lino project.
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-
-## Lino is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
-## License for more details.
-
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
-## along with Lino; if not, write to the Free Software Foundation,
-## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
 
 import sys
 import decimal
 #import logging ; logger = logging.getLogger('lino.apps.finan')
 
+from django import forms
+
+from lino import reports
+from lino.utils import layouts
+from lino.utils import perms
+
 from django.db import models
 from lino.modlib import fields
 
-contacts = models.get_app('contacts')
-#ledger = models.get_app('ledger')
-journals = models.get_app('journals')
+#~ contacts = reports.get_app('contacts')
+#~ ledger = reports.get_app('ledger')
+#~ journals = reports.get_app('journals')
 
-#~ from lino.modlib.contacts import models as contacts
+from lino.modlib.contacts import models as contacts
 from lino.modlib.ledger import models as ledger
-#~ from lino.modlib.journals import models as journals
+from lino.modlib.journals import models as journals
 
-from lino.utils.sites import lino_site
+#from lino.utils.sites import lino_site
 
 def _functionId(nFramesUp):
     # thanks to:
@@ -64,7 +67,7 @@ class BankStatement(ledger.LedgerDocument):
         super(BankStatement,self).before_save()
         
     #~ def after_save(self):
-        #~ lino_site.log.info("Saved document %s (balances=%r,%r)",self,self.balance1,self.balance2)
+        #~ lino.log.info("Saved document %s (balances=%r,%r)",self,self.balance1,self.balance2)
         
     def collect_bookings(self):
         sum_debit = 0 # decimal.Decimal(0)
@@ -80,7 +83,7 @@ class BankStatement(ledger.LedgerDocument):
             yield b
         #todo_notice("BankStatement.balance1 and 2 are strings?!")
         #http://code.google.com/p/lino/issues/detail?id=1
-        #lino_site.log.info("finan.BankStatement %r %r",self.balance1, sum_debit)
+        #lino.log.info("finan.BankStatement %r %r",self.balance1, sum_debit)
         self.balance2 = self.balance1 + sum_debit
         #jnl = self.get_journal()
         acct = ledger.Account.objects.get(id=self.journal.account)
@@ -143,11 +146,6 @@ class DocItem(models.Model):
 ## report definitions
 ##        
         
-from django import forms
-
-from lino.utils import reports
-from lino.utils import layouts
-from lino.utils import perms
 
 class FinDocPageLayout(layouts.PageLayout):
     

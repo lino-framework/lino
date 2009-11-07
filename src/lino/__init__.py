@@ -25,3 +25,50 @@ This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
 
+import logging
+
+#_log_level = logging.WARNING
+_log_level = logging.INFO
+#_log_level = logging.DEBUG
+
+
+if len(logging.root.handlers) == 0:
+    
+    """
+    
+    Lino's default logging behaviour is to render the bare messages 
+    to sys.stderr and write complete records (including timestamp, name, level) to a file lino.log.
+    If you don't like this, then just configure logging before instantiating LinoSite.
+    
+    """
+    
+    # this will create a first handler in the logging.root logger:
+    logging.basicConfig(format='%(message)s',level=_log_level)
+    
+    if True:
+        h = logging.FileHandler('lino.log','w')
+        h.setLevel(_log_level)
+        fmt = logging.Formatter(
+            fmt='%(asctime)s %(levelname)s %(module)s : %(message)s ',
+            datefmt='%Y%m-%d %H:%M')
+        h.setFormatter(fmt)
+        logging.root.addHandler(h)
+
+log = logging.getLogger('lino')
+    
+    #~ if True:
+        #~ h = logging.root.handlers[0]
+        #~ #h = logging.StreamHandler(sys.stdout)
+        #~ #h.setLevel(logging.INFO)
+        #~ formatter = logging.Formatter('%(message)s')
+        #~ #formatter = logging.Formatter('%(levelname)s %(message)s')
+        #~ h.setFormatter(formatter)
+        #~ self.log.addHandler(h)
+
+    
+#~ else:
+    #~ self.log = logging.getLogger('lino')
+    
+#print self.log.handlers
+#print "foo"
+

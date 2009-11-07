@@ -28,7 +28,6 @@
 import os
 import sys
 import imp
-import logging
 
 #from timtools.tools.my_import import my_import as import_module
 #from django.contrib.admin.sites import AdminSite
@@ -65,9 +64,9 @@ from django.utils.safestring import mark_safe
 
 from django.db.models import loading
 def db_apps():
-    for a in loading.get_apps():
-        yield a.__name__.split('.')[-2]
+    return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
+import lino
 
 from . import perms
 from . import menus
@@ -93,9 +92,6 @@ class LinoSite:
     index_html = "This is the main page."
     title = "Unnamed LinoSite"
     domain = "www.example.com"
-    #_log_level = logging.WARNING
-    _log_level = logging.INFO
-    #_log_level = logging.DEBUG
     
   
     def __init__(self,django_settings=None):
@@ -110,52 +106,11 @@ class LinoSite:
         self.root_path = '/lino/'
         self._response = None
 
-        if len(logging.root.handlers) == 0:
-            
-            """
-            
-            Lino's default logging behaviour is to render the bare messages 
-            to sys.stderr and write complete records (including timestamp, name, level) to a file lino.log.
-            If you don't like this, then just configure logging before instantiating LinoSite.
-            
-            """
-            
-            # this will create a first handler in the logging.root logger:
-            logging.basicConfig(format='%(message)s',level=self._log_level)
-            
-            if True:
-                h = logging.FileHandler('lino.log','w')
-                h.setLevel(self._log_level)
-                fmt = logging.Formatter(
-                    fmt='%(asctime)s %(levelname)s %(module)s : %(message)s ',
-                    datefmt='%Y%m-%d %H:%M')
-                h.setFormatter(fmt)
-                logging.root.addHandler(h)
-
-        self.log = logging.getLogger('lino')
-            
-            #~ if True:
-                #~ h = logging.root.handlers[0]
-                #~ #h = logging.StreamHandler(sys.stdout)
-                #~ #h.setLevel(logging.INFO)
-                #~ formatter = logging.Formatter('%(message)s')
-                #~ #formatter = logging.Formatter('%(levelname)s %(message)s')
-                #~ h.setFormatter(formatter)
-                #~ self.log.addHandler(h)
-
-            
-        #~ else:
-            #~ self.log = logging.getLogger('lino')
-            
-        #print self.log.handlers
-        #print "foo"
-        
-        self.greeting()
-        
-    def greeting(self):
         for name,url,version in self.thanks_to():
-            self.log.info("%s %s <%s>",name,version,url)
-            
+            lino.log.info("%s %s <%s>",name,version,url)
+        self.app_labels = db_apps()
+        lino.log.info("%d applications: %s.", len(self.app_labels),", ".join(self.app_labels))
+        
         
         
     def versions(self):
@@ -214,20 +169,17 @@ class LinoSite:
             raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
-        
-        from . import reports
+        lino.log.info("Setting up Lino reports...")
+        from lino import reports
         reports.setup()
         
         if hasattr(self.django_settings,'LINO_SETTINGS'):
-            self.log.info("Reading %s...", self.django_settings.LINO_SETTINGS)
+            lino.log.info("Reading %s...", self.django_settings.LINO_SETTINGS)
             execfile(self.django_settings.LINO_SETTINGS,dict(lino=self))
-            self.log.info("Done %s.", self.django_settings.LINO_SETTINGS)
         else:
-            self.log.warning("settings.LINO_SETTINGS entry is missing")
-            
-        self.app_labels = [n for n in db_apps()]
+            lino.log.warning("settings.LINO_SETTINGS entry is missing")
           
-        self.log.info("Lino Site %r is ready. %d applications.", self.title, len(self.app_labels))
+        lino.log.info("LinoSite %r is ready.", self.title)
           
         self._setup_done = True
         self._setting_up = False
@@ -254,7 +206,7 @@ class LinoSite:
         
     def index(self, request):
         if self._response is None:
-            self.log.debug("building LinoSite._response...")
+            lino.log.debug("building LinoSite._response...")
             from lino.utils import extjs
             comp = extjs.VisibleComponent("index",
                 xtype="panel",
@@ -499,12 +451,14 @@ class LinoSite:
         m = self.add_menu("app","~Application",)
         m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
         m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
+        
+    def get_menu(self):
+        self.setup()
+        return self._menu
     
       
     def fill(self):
       
-        self.setup()
-        
         from django.core.management import call_command
         from timtools.console import syscon
         sites = models.get_app('sites')
@@ -513,8 +467,8 @@ class LinoSite:
         if not syscon.confirm("Gonna reset database %s. Are you sure?" 
             % self.django_settings.DATABASE_NAME):
             return
-        self.log.warning("lino_site.fill() %s", (" ".join(self.app_labels)))
-        self.log.info("reset")
+        lino.log.warning("lino_site.fill() %s", (" ".join(self.app_labels)))
+        lino.log.info("reset")
         if False: # settings.DATABASE_ENGINE == 'sqlite3':
             if self.django_settings.DATABASE_NAME != ':memory:':
                 if os.path.exists(self.django_settings.DATABASE_NAME):
@@ -522,14 +476,16 @@ class LinoSite:
         else:
             call_command('reset',*self.app_labels,**options)
         #call_command('reset','songs','auth',interactive=False)
-        self.log.info("syncdb")
+        lino.log.info("syncdb")
         call_command('syncdb',**options)
         #call_command('flush',interactive=False)
-        self.log.info("loaddata demo")
+        lino.log.info("loaddata demo")
         call_command('loaddata','demo')
         auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
         auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
         sites.Site(id=2,domain=self.domain,name=self.title).save()
+        self.setup()
+        
             
 
   
