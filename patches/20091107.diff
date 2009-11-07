@@ -1,0 +1,83 @@
+Index: django/db/models/loading.py
+===================================================================
+--- django/db/models/loading.py	(revision 11724)
++++ django/db/models/loading.py	(working copy)
+@@ -8,10 +8,36 @@
+ import sys
+ import os
+ import threading
++import imp
+ 
+ __all__ = ('get_apps', 'get_app', 'get_models', 'get_model', 'register_models',
+         'load_app', 'app_cache_ready')
+ 
++def module_exists(full_name,path=None):
++    """
++    tests whether the module exists but does not import it.
++    see http://www.python.org/doc/current/library/imp.html#module-imp
++    """
++    a = full_name.split('.',1)
++    if len(a) == 1:
++        # simple module name without package
++        try:
++            (file, pathname, description) = imp.find_module(full_name,path)
++            if file is not None: file.close()
++        except ImportError,e:
++            return False
++        return True
++    assert len(a) == 2
++    (file, pathname, description) = imp.find_module(a[0],path)
++    if description[-1] != imp.PKG_DIRECTORY:
++        return False
++    pkg = imp.load_module(a[0],file,pathname,description)
++    if file is not None: file.close()
++    return module_exists(a[1],pkg.__path__)
++
++
++
++
+ class AppCache(object):
+     """
+     A cache that stores installed applications and their models. Used to
+@@ -60,27 +86,37 @@
+                 for app_name in self.postponed:
+                     self.load_app(app_name)
+                 self.loaded = True
++            if len(self.postponed):
++                raise ImproperlyConfigured("Could not import %s." % ", ".join(self.postponed))
+         finally:
+             self.write_lock.release()
+-
++            
+     def load_app(self, app_name, can_postpone=False):
+         """
+         Loads the app with the provided fully qualified name, and returns the
+         model module.
+         """
+         self.handled[app_name] = None
++        if not module_exists(app_name + ".models"):
++            # silently ignore applications without models
++            #print "[DEBUG] application %s has no models" % app_name
++            return None
+         self.nesting_level += 1
+         try:
+             models = import_module('.models', app_name)
+-        except ImportError:
++        except ImportError,e:
+             self.nesting_level -= 1
+             if can_postpone:
+-                # Either the app has no models, or the package is still being
++                # The package is maybe still being
+                 # imported by Python and the model module isn't available yet.
+                 # We will check again once all the recursion has finished (in
+                 # populate).
+                 self.postponed.append(app_name)
+-            return None
++                #print "[DEBUG] Postponing application %s (%s)" % (app_name,e)
++                return None
++            import traceback
++            traceback.print_exc(e)
++            raise
+         self.nesting_level -= 1
+         if models not in self.app_store:
+             self.app_store[models] = len(self.app_store)
