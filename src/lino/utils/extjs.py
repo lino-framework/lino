@@ -1058,7 +1058,7 @@ class Container(LayoutElement):
                 remove e's width to avoid padding differences.
                 """
                 e.width = None
-        lino.log.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
+        #lino.log.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
                 
     def compute_width(self,unused_insist=False):
         """
@@ -1327,7 +1327,6 @@ class GridElement(Container):
 class M2mGridElement(GridElement):
     def __init__(self,layout,field,*elements,**kw):
         self.field = field
-        from . import reports
         rpt = reports.get_model_report(field.rel.to)
         GridElement.__init__(self,layout,rpt.name,rpt,*elements,**kw)
   

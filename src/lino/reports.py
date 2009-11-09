@@ -15,6 +15,9 @@
 import traceback
 #import logging ; logger = logging.getLogger('lino.reports')
 
+from django.conf import settings
+from django.utils.importlib import import_module
+
 from django.db import models
 from django import forms
 from django.conf.urls.defaults import patterns, url, include
@@ -36,15 +39,20 @@ except ImportError:
 
 
 def get_app(app_label):
-    """
-    Kann in fixtures benutzt werden, aber nicht in models.
-    weil m evtl. bei circular imports nicht komplett importiert ist
-    und weil get_app() vorher _populate() macht.
-    """
-    m = models.get_app(app_label)
-    if m is None:
-        raise ImportError("%s models not yet ready." % app_label)
-    return m
+    for app_name in settings.INSTALLED_APPS:
+        if app_name.endswith('.'+app_label):
+            return import_module('.models', app_name)
+      
+#~ def get_app(app_label):
+    #~ """
+    #~ Kann in fixtures benutzt werden, aber nicht in models.
+    #~ weil m evtl. bei circular imports nicht komplett importiert ist
+    #~ und weil get_app() vorher _populate() macht.
+    #~ """
+    #~ m = models.get_app(app_label)
+    #~ if m is None:
+        #~ raise ImportError("%s models not yet ready." % app_label)
+    #~ return m
 
 
 from lino.utils import layouts, perms, urls
@@ -61,6 +69,8 @@ import lino
     #~ models.ForeignKey : (5,40,False),
     #~ models.AutoField : (2,10,False),
 #~ }
+
+
 
 
 def base_attrs(cl):
@@ -248,7 +258,7 @@ def register_report_class(rptclass):
     #_reports.append(cls)
     rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rptclass.model is None:
-        lino.log.debug("register %s : model is None", rc_name(rptclass))
+        lino.log.warning("register %s : model is None", rc_name(rptclass))
         return
     if rptclass.master is None:
         master_reports.append(rptclass)
@@ -259,12 +269,6 @@ def register_report_class(rptclass):
             lino.log.debug("register %s: not used as model_report",rc_name(rptclass))
         return
     slave_reports.append(rptclass)
-    slaves = getattr(rptclass.master,"_lino_slaves",None)
-    if slaves is None:
-        slaves = {}
-        setattr(rptclass.master,'_lino_slaves',slaves)
-    slaves[rptclass.__name__] = rptclass
-    lino.log.debug("register %s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
     
 
 #~ def register_report(rpt):
@@ -329,8 +333,28 @@ def setup():
         lino.log.debug("%d %s %s",i,model._meta.db_table,rc_name(model._lino_model_report_class))
         model._lino_model_report = model._lino_model_report_class()
         
-    lino.log.debug("Set up model reports.")
-    
+    lino.log.debug("Analyze %d slave reports...",len(slave_reports))
+    for rptclass in slave_reports:
+        if isinstance(rptclass.master,basestring):
+            name = rptclass.master
+            # Same logic as in django.db.models.fields.related.add_lazy_relation()
+            try:
+                app_label, model_name = name.split(".")
+            except ValueError:
+                # If we can't split, assume a model in current app
+                app_label = rptclass.app_label
+                model_name = name
+            rptclass.master = models.get_model(app_label,model_name,False)
+            
+        slaves = getattr(rptclass.master,"_lino_slaves",None)
+        if slaves is None:
+            slaves = {}
+            setattr(rptclass.master,'_lino_slaves',slaves)
+        slaves[rptclass.__name__] = rptclass
+        lino.log.debug("%s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
+    lino.log.debug("Assigned %d slave_reports to their master.",len(slave_reports))
+        
+    lino.log.debug("Setup model reports...")
     for model in models.get_models():
         model._lino_model_report.setup()
         
@@ -474,7 +498,7 @@ class Report:
             self.layouts.append(lc(self,index))
             index += 1
             
-        from . import extjs
+        from lino.utils import extjs
         self.store = extjs.Store(self)
             
         self._actions = [cl(self) for cl in self.actions]

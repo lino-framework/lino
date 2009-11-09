@@ -25,13 +25,13 @@ from lino.utils import perms
 from django.db import models
 from lino.modlib import fields
 
-#~ contacts = reports.get_app('contacts')
-#~ ledger = reports.get_app('ledger')
-#~ journals = reports.get_app('journals')
+contacts = reports.get_app('contacts')
+ledger = reports.get_app('ledger')
+journals = reports.get_app('journals')
 
-from lino.modlib.contacts import models as contacts
-from lino.modlib.ledger import models as ledger
-from lino.modlib.journals import models as journals
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.ledger import models as ledger
+#~ from lino.modlib.journals import models as journals
 
 def _functionId(nFramesUp):
     # thanks to:
@@ -118,7 +118,7 @@ class DocItem(models.Model):
     credit = fields.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey(ledger.Account)
-    partner = models.ForeignKey(contacts.Partner,blank=True,null=True)
+    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
     
     def save(self,*args,**kw):
         if self.pos is None:

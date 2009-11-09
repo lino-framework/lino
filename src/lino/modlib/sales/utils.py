@@ -28,10 +28,12 @@ import os
 import datetime
 
 from timtools.console import syscon
-sales = models.get_app('sales')
 
-#from lino.apps.sales import models as sales
-from lino import lino_site
+from lino import lino_site, reports
+
+#from lino.modlib.sales import models as sales
+sales = reports.get_app('sales')
+
 
         
 def make_invoices(make_until=None):

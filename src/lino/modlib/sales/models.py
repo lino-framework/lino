@@ -46,15 +46,15 @@ from lino import reports
 from lino.utils import layouts
 from lino.utils import perms
 
-from lino.modlib.contacts import models as contacts
-from lino.apps.journals import models as journals
-from lino.apps.ledger import models as ledger
-from lino.apps.products import models as products
+#~ from lino.modlib.contacts import models as contacts
+#~ from lino.modlib.journals import models as journals
+#~ from lino.modlib.ledger import models as ledger
+#~ from lino.modlib.products import models as products
 
-#~ contacts = reports.get_app('contacts')
-#~ journals = reports.get_app('journals')
-#~ ledger = reports.get_app('ledger')
-#~ products = reports.get_app('products')
+contacts = reports.get_app('contacts')
+journals = reports.get_app('journals')
+ledger = reports.get_app('ledger')
+products = reports.get_app('products')
 
 
 #~ class Customer(contacts.Contact):
@@ -120,7 +120,7 @@ class SalesRule(models.Model):
     journal = journals.JournalRef(blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
-    payment_term = models.ForeignKey(contacts.PaymentTerm,blank=True,null=True)
+    payment_term = models.ForeignKey('contacts.PaymentTerm',blank=True,null=True)
     
     def __unicode__(self):
         return u"SalesRule %d" % (self.id)
@@ -133,15 +133,15 @@ def get_sales_rule(doc):
 class SalesDocument(journals.AbstractDocument):
     
     creation_date = fields.MyDateField() #auto_now_add=True)
-    customer = models.ForeignKey(contacts.Partner,
+    customer = models.ForeignKey('contacts.Partner',
         related_name="customer_%(class)s")
-    ship_to = models.ForeignKey(contacts.Partner,
+    ship_to = models.ForeignKey('contacts.Partner',
         blank=True,null=True,
         related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
     imode = models.ForeignKey(InvoicingMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
-    payment_term = models.ForeignKey(contacts.PaymentTerm,blank=True,null=True)
+    payment_term = models.ForeignKey('contacts.PaymentTerm',blank=True,null=True)
     sales_remark = models.CharField("Remark for sales",
       max_length=200,blank=True)
     subject = models.CharField("Subject line",max_length=200,blank=True)
@@ -604,7 +604,7 @@ class ItemsByDocument(reports.Report):
 class DocumentsByPartner(SalesDocuments):
     columnNames = "journal:4 number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
-    master = contacts.Partner
+    master = 'contacts.Partner'
     fk_name = 'customer'
     order_by = "creation_date"
 

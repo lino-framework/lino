@@ -27,7 +27,7 @@ import os
 from django.db import models
 import lino
 from lino import reports
-from lino.apps.documents import models as documents
+from lino.modlib.documents import models as documents
 #documents = reports.get_app('documents')
 
 

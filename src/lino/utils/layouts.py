@@ -146,7 +146,7 @@ class Layout:
             self._store_fields.append(e.field)
             return e
             #return FieldElement(self,field,**kw)
-        msg = "Unknown element %r referred in layout %s[%d]" % (name,self.report,self.index)
+        msg = "Unknown element %r referred in layout %s" % (name,self.name)
         #print "[Warning]", msg
         raise KeyError(msg)
         
