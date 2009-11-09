@@ -33,8 +33,6 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.ledger import models as ledger
 from lino.modlib.journals import models as journals
 
-#from lino.utils.sites import lino_site
-
 def _functionId(nFramesUp):
     # thanks to:
     # http://nedbatchelder.com/blog/200410/file_and_line_in_python.html

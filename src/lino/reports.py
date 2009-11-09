@@ -49,7 +49,6 @@ def get_app(app_label):
 
 from lino.utils import layouts, perms, urls
 
-#from lino.utils.sites import lino_site
 import lino
 
 # maps Django field types to a tuple of default paramenters

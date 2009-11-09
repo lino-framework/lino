@@ -29,6 +29,8 @@ import os
 import sys
 import imp
 
+from django.conf import settings
+
 #from timtools.tools.my_import import my_import as import_module
 #from django.contrib.admin.sites import AdminSite
 from django import template 
@@ -68,8 +70,8 @@ def db_apps():
 
 import lino
 
-from . import perms
-from . import menus
+from lino.utils import perms
+from lino.utils import menus
 #from . import layouts
 
 class PasswordResetForm(forms.Form):
@@ -94,11 +96,9 @@ class LinoSite:
     domain = "www.example.com"
     
   
-    def __init__(self,django_settings=None):
-        if django_settings is None:
-            from django.conf import settings
-            django_settings = settings
-        self.django_settings = django_settings
+    def __init__(self):
+        
+        #self.django_settings = settings
         
         self._menu = menus.Menu("","Main Menu")
         self._setting_up = False
@@ -169,13 +169,17 @@ class LinoSite:
             raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
+        #~ for app_name in self.django_settings.INSTALLED_APPS:
+            #~ if loading.module_exists(app_name + ".reports"):
+                #~ import_module('.reports', app_name)
+        
         lino.log.info("Setting up Lino reports...")
         from lino import reports
         reports.setup()
         
-        if hasattr(self.django_settings,'LINO_SETTINGS'):
-            lino.log.info("Reading %s...", self.django_settings.LINO_SETTINGS)
-            execfile(self.django_settings.LINO_SETTINGS,dict(lino=self))
+        if hasattr(settings,'LINO_SETTINGS'):
+            lino.log.info("Reading %s...", settings.LINO_SETTINGS)
+            execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")
           
@@ -183,6 +187,8 @@ class LinoSite:
           
         self._setup_done = True
         self._setting_up = False
+        
+        
         
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
@@ -196,7 +202,7 @@ class LinoSite:
           main_menu = menus.MenuRenderer(self._menu,request),
           root_path = self.root_path,
           lino = self,
-          settings = self.django_settings,
+          settings = settings,
           debug = True,
           #skin = self.skin,
           request = request
@@ -239,7 +245,7 @@ class LinoSite:
             if form.is_valid():
                 # Light security check -- make sure redirect_to isn't garbage.
                 if not redirect_to or '//' in redirect_to or ' ' in redirect_to:
-                    redirect_to = self.django_settings.LOGIN_REDIRECT_URL
+                    redirect_to = settings.LOGIN_REDIRECT_URL
                 from django.contrib.auth import login
                 login(request, form.get_user())
                 if request.session.test_cookie_worked():
@@ -327,7 +333,7 @@ class LinoSite:
                           self.password_reset_confirm,
                           kwargs=dict(uidb36=uid,token=token)),
                     }
-                    #sender = self.django_settings.ADMINS[0][1]
+                    #sender = settings.ADMINS[0][1]
                     send_mail(
                       _("Password reset on %s") % site_name,
                       t.render(Context(c)), None, [user.email])
@@ -392,7 +398,7 @@ class LinoSite:
             title=_('Password reset complete')
         )
         return render_to_response(template_name, context,
-          context_instance=RequestContext(request,{'login_url': self.django_settings.LOGIN_URL}))
+          context_instance=RequestContext(request,{'login_url': settings.LOGIN_URL}))
 
     def password_change(self,request, 
                         template_name='registration/password_change_form.html',
@@ -465,14 +471,14 @@ class LinoSite:
         
         options = dict(interactive=False)
         if not syscon.confirm("Gonna reset database %s. Are you sure?" 
-            % self.django_settings.DATABASE_NAME):
+            % settings.DATABASE_NAME):
             return
         lino.log.warning("lino_site.fill() %s", (" ".join(self.app_labels)))
         lino.log.info("reset")
         if False: # settings.DATABASE_ENGINE == 'sqlite3':
-            if self.django_settings.DATABASE_NAME != ':memory:':
-                if os.path.exists(self.django_settings.DATABASE_NAME):
-                    os.remove(self.django_settings.DATABASE_NAME)
+            if settings.DATABASE_NAME != ':memory:':
+                if os.path.exists(settings.DATABASE_NAME):
+                    os.remove(settings.DATABASE_NAME)
         else:
             call_command('reset',*self.app_labels,**options)
         #call_command('reset','songs','auth',interactive=False)
@@ -517,3 +523,6 @@ class LinoSite:
 
 lino_site = LinoSite()
 #lino_site.setup()
+
+fill = lino_site.fill
+context = lino_site.context

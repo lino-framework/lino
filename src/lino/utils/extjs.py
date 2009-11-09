@@ -159,7 +159,7 @@ class WindowRenderer:
         #~ yield LayoutWindow(layout,**kw)
         
 def menu_view(request):
-    from lino.utils.sites import lino_site
+    from lino import lino_site
     s = py2js(lino_site.get_menu())
     return HttpResponse(s, mimetype='text/html')
 

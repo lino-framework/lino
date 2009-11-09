@@ -2,11 +2,12 @@ Index: django/db/models/loading.py
 ===================================================================
 --- django/db/models/loading.py	(revision 11724)
 +++ django/db/models/loading.py	(working copy)
-@@ -8,10 +8,36 @@
+@@ -8,10 +8,37 @@
  import sys
  import os
  import threading
 +import imp
++import traceback
  
  __all__ = ('get_apps', 'get_app', 'get_models', 'get_model', 'register_models',
          'load_app', 'app_cache_ready')
@@ -39,12 +40,21 @@ Index: django/db/models/loading.py
  class AppCache(object):
      """
      A cache that stores installed applications and their models. Used to
-@@ -60,27 +86,37 @@
-                 for app_name in self.postponed:
+@@ -57,30 +84,45 @@
+                     continue
+                 self.load_app(app_name, True)
+             if not self.nesting_level:
+-                for app_name in self.postponed:
++                postponed = self.postponed
++                self.postponed = []
++                for app_name,tb in postponed:
                      self.load_app(app_name)
                  self.loaded = True
 +            if len(self.postponed):
-+                raise ImproperlyConfigured("Could not import %s." % ", ".join(self.postponed))
++                msg = ''.join(["%s:\n%s" % i for i in self.postponed])
++                raise ImproperlyConfigured(
++                    "Failed to import %d applications:\n%s" % (
++                        len(self.postponed),msg))
          finally:
              self.write_lock.release()
 -
@@ -65,17 +75,18 @@ Index: django/db/models/loading.py
 -        except ImportError:
 +        except ImportError,e:
              self.nesting_level -= 1
++            self.postponed.append( (app_name,traceback.format_exc(e)) )
              if can_postpone:
 -                # Either the app has no models, or the package is still being
 +                # The package is maybe still being
                  # imported by Python and the model module isn't available yet.
                  # We will check again once all the recursion has finished (in
                  # populate).
-                 self.postponed.append(app_name)
+-                self.postponed.append(app_name)
 -            return None
-+                #print "[DEBUG] Postponing application %s (%s)" % (app_name,e)
++                #print "[DEBUG] Postponing application %s:" % app_name
++                #traceback.print_exc(e)
 +                return None
-+            import traceback
 +            traceback.print_exc(e)
 +            raise
          self.nesting_level -= 1
