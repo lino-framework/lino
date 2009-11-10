@@ -46,13 +46,16 @@ if len(logging.root.handlers) == 0:
     logging.basicConfig(format='%(message)s',level=_log_level)
     
     if True:
-        h = logging.FileHandler('lino.log','w')
-        h.setLevel(_log_level)
-        fmt = logging.Formatter(
-            fmt='%(asctime)s %(levelname)s %(module)s : %(message)s ',
-            datefmt='%Y%m-%d %H:%M')
-        h.setFormatter(fmt)
-        logging.root.addHandler(h)
+        try:
+            h = logging.FileHandler('lino.log','w')
+            h.setLevel(_log_level)
+            fmt = logging.Formatter(
+                fmt='%(asctime)s %(levelname)s %(module)s : %(message)s ',
+                datefmt='%Y%m-%d %H:%M')
+            h.setFormatter(fmt)
+            logging.root.addHandler(h)
+        except IOError,e:
+            print "Failed to open log file: ", e
 
 log = logging.getLogger('lino')
     
