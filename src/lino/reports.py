@@ -42,6 +42,7 @@ def get_app(app_label):
     for app_name in settings.INSTALLED_APPS:
         if app_name.endswith('.'+app_label):
             return import_module('.models', app_name)
+    raise ImportError("No application labeled %r." % app_label)
       
 #~ def get_app(app_label):
     #~ """
@@ -267,8 +268,8 @@ def register_report_class(rptclass):
             rptclass.model._lino_model_report_class = rptclass
         else:
             lino.log.debug("register %s: not used as model_report",rc_name(rptclass))
-        return
-    slave_reports.append(rptclass)
+    else:
+        slave_reports.append(rptclass)
     
 
 #~ def register_report(rpt):

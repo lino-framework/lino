@@ -13,7 +13,6 @@
 
 #import traceback
 #import types
-import logging
 
 #from django import forms
 from django.db import models
@@ -21,6 +20,8 @@ from django.conf import settings
 #from django.utils.safestring import mark_safe
 #from django.utils.text import capfirst
 #from django.template.loader import render_to_string
+
+import lino
 
 class FormReport:
     "Wrapper around a Django form to make it usable as report of a PageLayout."
@@ -68,7 +69,7 @@ class Layout:
         self.report = report
         self.index = index
         self._store_fields = []
-        logging.debug("Layout.__init__() : %s", self.name)
+        lino.log.debug("Layout.__init__() : %s", self.name)
         if main is None:
             if hasattr(self,"main"):
                 main = self.create_element(self.main_class,'main')

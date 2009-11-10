@@ -26,7 +26,7 @@ from lino import reports
 from lino.utils import layouts
 from lino.utils import perms
 
-countries = models.get_app('countries')
+countries = reports.get_app('countries')
 
 
 class PaymentTerm(models.Model):

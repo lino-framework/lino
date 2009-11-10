@@ -13,14 +13,11 @@
 
 
 """
-  A LinoSite is somehow like an AdminSite, but there are differences.
-  - user code configures the site by filling a main menu instead of registering models.
-  - autodiscover() works automatically 
-  - the account/ views are initially copied from django.contrib.auth.views with the 
-    following changes:
+  the account/ views are initially copied from django.contrib.auth.views with the 
+  following changes:
     - implemented as methods of LinoSite
     - context has the Lino Standard Context variables (title, main_menu
-    - Moved email sending code from PasswordResetForm.save() to Linosite.pasword_reset()
+    - Moved email sending code from PasswordResetForm.save() to Linosite.password_reset()
   
 """
 
@@ -64,12 +61,13 @@ from django.utils.http import int_to_base36
 
 from django.utils.safestring import mark_safe
 
+
 from django.db.models import loading
-def db_apps():
-    return [a.__name__.split('.')[-2] for a in loading.get_apps()]
+#~ def db_apps():
+    #~ return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
 import lino
-
+from lino import reports
 from lino.utils import perms
 from lino.utils import menus
 #from . import layouts
@@ -108,7 +106,7 @@ class LinoSite:
 
         for name,url,version in self.thanks_to():
             lino.log.info("%s %s <%s>",name,version,url)
-        self.app_labels = db_apps()
+        self.app_labels = [a.__name__.split('.')[-2] for a in loading.get_apps()]
         lino.log.info("%d applications: %s.", len(self.app_labels),", ".join(self.app_labels))
         
         
@@ -174,7 +172,7 @@ class LinoSite:
                 #~ import_module('.reports', app_name)
         
         lino.log.info("Setting up Lino reports...")
-        from lino import reports
+        #from lino import reports
         reports.setup()
         
         if hasattr(settings,'LINO_SETTINGS'):
@@ -445,7 +443,7 @@ class LinoSite:
             (r'^accounts/reset/done/$', self.password_reset_complete),
         )
         #~ urlpatterns = AdminSite.get_urls(self)
-        from . import urls
+        from lino.utils import urls
         urlpatterns += urls.get_urls()
         #urlpatterns += urls.url_patterns
         #urlpatterns += self._menu.get_urls() # self._menu.name)
@@ -467,7 +465,9 @@ class LinoSite:
       
         from django.core.management import call_command
         from timtools.console import syscon
-        sites = models.get_app('sites')
+        #from lino import reports
+        
+        sites = reports.get_app('sites')
         
         options = dict(interactive=False)
         if not syscon.confirm("Gonna reset database %s. Are you sure?" 
@@ -524,5 +524,9 @@ class LinoSite:
 lino_site = LinoSite()
 #lino_site.setup()
 
+#'get_urls','fill','context'
+
 fill = lino_site.fill
 context = lino_site.context
+get_urls = lino_site.get_urls
+get_menu = lino_site.get_menu

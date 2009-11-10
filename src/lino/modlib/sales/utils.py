@@ -29,11 +29,11 @@ import datetime
 
 from timtools.console import syscon
 
-from lino import lino_site, reports
+import lino
+from lino import reports
 
-#from lino.modlib.sales import models as sales
-sales = reports.get_app('sales')
-
+from lino.modlib.sales import models as sales
+#sales = reports.get_app('sales')
 
         
 def make_invoices(make_until=None):
@@ -41,7 +41,7 @@ def make_invoices(make_until=None):
     #~ print rpt.as_text()
     
     q = [o for o in sales.Order.objects.pending(make_until)]
-    lino_site.log.debug("make_invoices(make_until=%s)",make_until)
+    lino.log.debug("make_invoices(make_until=%s)",make_until)
     made = []
     for o in q:
         i = o.make_invoice(make_until)
