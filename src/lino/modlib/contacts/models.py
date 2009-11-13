@@ -23,7 +23,7 @@ from django.utils.safestring import mark_safe
 from django import forms
 
 from lino import reports
-from lino.utils import layouts
+from lino import layouts
 from lino.utils import perms
 
 countries = reports.get_app('countries')

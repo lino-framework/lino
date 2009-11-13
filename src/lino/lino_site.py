@@ -86,6 +86,16 @@ class PasswordResetForm(forms.Form):
               _("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
         return email
 
+class PasswordResetLayout(layouts.Layout):
+    target = PasswordResetForm
+    main = """
+    intro
+    email
+    """
+    intro = layouts.StaticText("""
+    Please fill in you e-mail adress.
+    We will then send you a mail with a new temporary password.
+    """)
 
 class LinoSite:
     help_url = "http://code.google.com/p/lino"
@@ -175,11 +185,16 @@ class LinoSite:
         #from lino import reports
         reports.setup()
         
+        from lino.ui import extjs
+        self.ui = extjs.ui
+        
         if hasattr(settings,'LINO_SETTINGS'):
             lino.log.info("Reading %s...", settings.LINO_SETTINGS)
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")
+            
+        self.ui.setup_site(self)
           
         lino.log.info("LinoSite %r is ready.", self.title)
           
@@ -208,25 +223,6 @@ class LinoSite:
         d.update(kw)
         return d
         
-    def index(self, request):
-        if self._response is None:
-            lino.log.debug("building LinoSite._response...")
-            from lino.utils import extjs
-            comp = extjs.VisibleComponent("index",
-                xtype="panel",
-                html=self.index_html.encode('ascii','xmlcharrefreplace'),
-                autoScroll=True,
-                #width=50000,
-                #height=50000,
-                region="center")
-            viewport = extjs.Viewport(self.title,self._menu,comp)
-            s = viewport.render_to_html(request)
-            self._response = HttpResponse(s)
-        #s = layouts.ext_viewport(request,self.title,self._menu,*components)
-        #windows = request.GET.get('open',None)
-        #print "absolute_uri",request.build_absolute_uri()
-        return self._response
-    #index = never_cache(index)
         
     def old_index(self, request):
         context = self.context(request,title=self._menu.label)
@@ -431,7 +427,6 @@ class LinoSite:
             #~ print k,v
         
         urlpatterns = patterns('',
-            (r'^$', self.index),
             (r'^accounts/login/$', self.login),
             (r'^accounts/logout/$', self.logout),
             (r'^accounts/password_change/$', self.password_change),
@@ -443,8 +438,11 @@ class LinoSite:
             (r'^accounts/reset/done/$', self.password_reset_complete),
         )
         #~ urlpatterns = AdminSite.get_urls(self)
-        from lino.utils import urls
-        urlpatterns += urls.get_urls()
+        #~ from lino.utils import urls
+        #~ urlpatterns += urls.get_urls()
+        
+        urlpatterns += self.ui.get_urls()
+        
         #urlpatterns += urls.url_patterns
         #urlpatterns += self._menu.get_urls() # self._menu.name)
         return urlpatterns

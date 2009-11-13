@@ -19,7 +19,7 @@ import decimal
 from django import forms
 
 from lino import reports
-from lino.utils import layouts
+from lino import layouts
 from lino.utils import perms
 
 from django.db import models

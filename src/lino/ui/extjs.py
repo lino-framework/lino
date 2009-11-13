@@ -20,10 +20,13 @@ from django.db import models
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import simplejson
-import lino
 
+import lino
 from lino import reports
+from lino import layouts
 from lino.utils import menus
+
+UNDEFINED = "nix"
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 12
@@ -44,14 +47,56 @@ def define_vars(variables,indent=0,prefix="var "):
 
 def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
+      
+      
+class ActionContext:
+    def __init__(self,action,rptreq):
+        self.request = rptreq.request
+        selected = self.request.POST.get('selected',None)
+        if selected:
+            self.selected_rows = [
+              action.report.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+        else:
+            self.selected_rows = []
+        self.confirmed = self.request.POST.get('confirmed',None)
+        if self.confirmed is not None:
+            self.confirmed = int(self.confirmed)
+        self.confirms = 0
+        self._response = dict(success=True,must_reload=False,msg=None)
+        #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
+        
+    def refresh(self):
+        self._response.update(must_reload=True)
+        
+    def redirect(self,url):
+        self._response.update(redirect=url)
+        
+    def setmsg(self,msg=None):
+        if msg is not None:
+            self._reponse.update(msg=msg)
+        
+    def error(self,msg=None):
+        self._response.update(success=False)
+        self.setmsg(msg)
+        raise ActionEvent() # MustConfirm(msg)
+        
+    def confirm(self,msg):
+        #print "ActionContext.confirm()", msg
+        self.confirms += 1
+        if self.confirmed >= self.confirms:
+            return
+        self._response.update(confirm=msg,success=False)
+        raise ActionEvent() # MustConfirm(msg)
+        
+      
 
 class ReportRenderer:
     def __init__(self,report,**kw):
-        setup_report(report)
+        assert isinstance(report,reports.Report)
+        self.report = ui.get_report_handle(report)
         self.ext_name = report.app_label + "_" + report.name
         self.options = kw
-        self.report = report
-        self.windows = [ WindowRenderer(l) for l in report.layouts[1:] ]
+        self.windows = [ WindowRenderer(l) for l in self.report.layouts[1:] ]
         
     #~ def ext_globals(self):
         #~ for win in self.windows:
@@ -81,6 +126,7 @@ class ReportRenderer:
         
 class WindowRenderer:
     def __init__(self,layout,**kw):
+        assert isinstance(layout,layouts.LayoutHandle)
         self.options = kw
         self.layout = layout
         self.store = layout.report.store
@@ -107,7 +153,7 @@ class WindowRenderer:
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
         yield "  this.show = function(btn,event,master,master_grid) {"
         #yield "    console.log('show',this);" 
-        if self.layout.report.master is None:
+        if self.layout.report._rd.master is None:
             yield "    %s.load();" % self.store.as_ext()
         else:
             yield "    if(master) {"
@@ -211,14 +257,14 @@ class js_code:
         
         
         
-def setup_report(rpt):
-    "adds ExtJS specific stuff to a Report instance"
-    rpt.setup()
-    if False: # not hasattr(rpt,'choice_store'):
-        #rpt.choice_store = Store(rpt,rpt.choice_layout,mode='choice',autoLoad=True)
-        for layout in rpt.layouts:
-            if not hasattr(layout,'choice_store'):
-                layout.store = Store(rpt,layout) #,autoLoad=True
+#~ def setup_report(rpt):
+    #~ "adds ExtJS specific stuff to a Report instance"
+    #~ rpt.setup()
+    #~ if False: # not hasattr(rpt,'choice_store'):
+        #~ #rpt.choice_store = Store(rpt,rpt.choice_layout,mode='choice',autoLoad=True)
+        #~ for layout in rpt.layouts:
+            #~ if not hasattr(layout,'choice_store'):
+                #~ layout.store = Store(rpt,layout) #,autoLoad=True
         #~ rpt.variables = []
         #~ for layout in rpt.layouts:
             #~ layout.store = Store(rpt,layout) #,autoLoad=True
@@ -228,9 +274,9 @@ def setup_report(rpt):
         #~ comp = TabPanel(None,"MainPanel",*tabs)
         #~ rpt.variables.append(comp)
         #~ rpt.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
-        
-        
-        
+
+
+
 def grid_afteredit_view(request,**kw):
     kw['colname'] = request.POST['colname']
     return json_report_view(request,**kw)
@@ -252,7 +298,8 @@ def json_report_view(request,app_label=None,rptname=None,
     if not rpt.can_view.passes(request):
         return json_response(success=False,
             msg="User %s cannot view %s : " % (request.user,rptname))
-    rptreq = reports.ViewReportRequest(request,rpt)
+    rh = rpt.get_handle(ui)
+    rptreq = ViewReportRequest(request,rh)
     if action:
         for a in rpt._actions:
             if a.name == action:
@@ -475,7 +522,8 @@ class Store(Component):
     value_template = "new Ext.data.JsonStore({ %s })"
     
     def __init__(self,report,**options):
-        Component.__init__(self,report.app_label+"_"+report.name,**options)
+        assert isinstance(report,reports.ReportHandle)
+        Component.__init__(self,report._rd.app_label+"_"+report._rd.name,**options)
         self.report = report
         
         fields = set()
@@ -483,9 +531,9 @@ class Store(Component):
             for fld in layout._store_fields:
                 assert fld is not None, "%s"
                 fields.add(fld)
-        self.pk = self.report.model._meta.pk
+        self.pk = self.report._rd.model._meta.pk
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
-          self.report.name,self.report.model)
+          self.report._rd.name,self.report._rd.model)
         if not self.pk in fields:
             fields.add(self.pk)
         self.fields = [self.create_field(fld) for fld in fields]
@@ -509,7 +557,7 @@ class Store(Component):
         if isinstance(fld,models.DateField):
             #return StoreField(fld,type="date",dateFormat='Y-m-d')
             #return StoreField(fld,type="date",dateFormat=self.report.date_format)
-            return DateStoreField(fld,self.report.date_format)
+            return DateStoreField(fld,self.report._rd.date_format)
         if isinstance(fld,models.IntegerField):
             return StoreField(fld,type="int")
         if isinstance(fld,models.AutoField):
@@ -654,6 +702,7 @@ class LayoutElement(VisibleComponent):
         VisibleComponent.__init__(self,name,**kw)
         self.layout = layout
         if layout is not None:
+            assert isinstance(layout,layouts.LayoutHandle)
             #assert isinstance(layout,Layout), "%r is not a Layout" % layout
             #self.ext_name = layout.name + "_" + name + self.ext_suffix
             self.ext_name = name
@@ -743,12 +792,6 @@ class LayoutElement(VisibleComponent):
         
         
 
-class StaticText(LayoutElement):
-    def __init__(self,text):
-          self.text = text
-    def render(self,row):
-        return self.text
-          
 
 class FieldElement(LayoutElement):
     declare_type = DECLARE_THIS
@@ -857,7 +900,8 @@ class ForeignKeyElement(FieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
-        self.report = self.layout.report.get_field_choices(self.field)
+        rd = self.layout.report.get_field_choices(self.field)
+        self.report = rd.get_handle(self.layout.ui)
         #~ if self.editable:
             #~ setup_report(self.choice_report)
             #self.store = rpt.choice_store
@@ -875,7 +919,7 @@ class ForeignKeyElement(FieldElement):
     def get_field_options(self,**kw):
         kw = FieldElement.get_field_options(self,**kw)
         if self.editable:
-            setup_report(self.report)
+            #setup_report(self.report)
             kw.update(store=self.report.store)
             #kw.update(store=js_code(self.store.as_ext_value(request)))
             kw.update(hiddenName=self.name+"Hidden")
@@ -886,7 +930,7 @@ class ForeignKeyElement(FieldElement):
 
 Note: use of a valueField requires the user to make a selection in order for a value to be mapped. See also hiddenName, hiddenValue, and displayField.
             """
-            kw.update(displayField=self.report.display_field)
+            kw.update(displayField=self.report._rd.display_field)
             kw.update(typeAhead=True)
             #kw.update(lazyInit=False)
             kw.update(mode='remote')
@@ -894,7 +938,7 @@ Note: use of a valueField requires the user to make a selection in order for a v
             #kw.update(pageSize=self.store.report.page_length)
             
         kw.update(triggerAction='all')
-        kw.update(emptyText='Select a %s...' % self.report.model.__name__)
+        kw.update(emptyText='Select a %s...' % self.report._rd.model.__name__)
         return kw
         
     #~ def value2js(self,obj):
@@ -920,7 +964,7 @@ class DateFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
-        kw.update(format=self.layout.report.date_format)
+        kw.update(format=self.layout.report._rd.date_format)
         return kw
     
 class IntegerFieldElement(FieldElement):
@@ -963,9 +1007,9 @@ class BooleanFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.layout.report.boolean_texts[0])
-        kw.update(falseText=self.layout.report.boolean_texts[1])
-        kw.update(undefinedText=self.layout.report.boolean_texts[2])
+        kw.update(trueText=self.layout.report._rd.boolean_texts[0])
+        kw.update(falseText=self.layout.report._rd.boolean_texts[1])
+        kw.update(undefinedText=self.layout.report._rd.boolean_texts[2])
         return kw
         
     def update_from_form(self,instance,values):
@@ -981,6 +1025,7 @@ class MethodElement(FieldElement):
     editable = False
 
     def __init__(self,layout,name,meth,**kw):
+        assert isinstance(layout,layouts.LayoutHandle)
         # uh, this is tricky...
         #self.meth = meth
         field = getattr(meth,'return_type',None)
@@ -992,7 +1037,7 @@ class MethodElement(FieldElement):
         field.name = name
         field._return_type_for_method = meth
         FieldElement.__init__(self,layout,field)
-        delegate = field2elem(layout,field,**kw)
+        delegate = layout.ui.field2elem(layout,field,**kw)
         for a in ('ext_width','ext_options',
           'get_column_options','get_field_options'):
             setattr(self,a,getattr(delegate,a))
@@ -1014,8 +1059,8 @@ class Container(LayoutElement):
     #labelAlign = 'left'
     
     
-    def __init__(self,layout,name,*elements,**kw):
-        LayoutElement.__init__(self,layout,name,**kw)
+    def __init__(self,lui,name,*elements,**kw):
+        LayoutElement.__init__(self,lui,name,**kw)
         #print self.__class__.__name__, elements
         #self.label = kw.get('label',self.label)
         self.elements = elements
@@ -1210,14 +1255,15 @@ class GridElement(Container):
     ext_suffix = "_grid"
     has_comp = True
 
-    def __init__(self,layout,name,report,*elements,**kw):
+    def __init__(self,lui,name,report,*elements,**kw):
+        assert isinstance(report,reports.ReportHandle), "%r is not a ReportHandle!" % report
         """
-        Note: layout is the owning layout. 
-        In case of a slave grid, layout.report is the master.
+        Note: lui is the owning layout ui. 
+        In case of a slave grid, lui.layout.report is the master.
         """
         if len(elements) == 0:
             elements = report.row_layout._main.elements
-        Container.__init__(self,layout,name,*elements,**kw)
+        Container.__init__(self,lui,name,*elements,**kw)
         self.report = report
         self.column_model = ColumnModel(self)
         self.preferred_width = 80
@@ -1226,10 +1272,10 @@ class GridElement(Container):
     def setup(self):
         if self.keys:
             return
-        setup_report(self.report)
+        #setup_report(self.report)
         keys = []
         buttons = []
-        for a in self.report._actions:
+        for a in self.report._rd._actions:
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
                   a.name, 
                   self.report.store.get_absolute_url(action=a.name)))
@@ -1248,12 +1294,13 @@ class GridElement(Container):
         for layout in self.report.layouts[2:]:
             buttons.append(dict(
               handler=js_code("Lino.show_detail(this,%r)" % layout.name),
-              text=layout.label))
+              text=layout._ld.label))
               
-        for slave in self.report._slaves:
+        for sl in self.report._rd._slaves:
+            slave = sl.get_handle(self.layout.ui)
             buttons.append(dict(
               handler=js_code("Lino.show_slave(this,%r)" % slave.row_layout.name),
-              text = slave.label,
+              text = slave._rd.label,
             ))
             
         self.keys = keys
@@ -1311,7 +1358,7 @@ class GridElement(Container):
         tbar = dict(
           store=self.report.store,
           displayInfo=True,
-          pageSize=self.report.page_length,
+          pageSize=self.report._rd.page_length,
           prependButtons=False,
           items=js_code('buttons'),
         )
@@ -1325,10 +1372,11 @@ class GridElement(Container):
       
         
 class M2mGridElement(GridElement):
-    def __init__(self,layout,field,*elements,**kw):
+    def __init__(self,lui,field,*elements,**kw):
         self.field = field
         rpt = reports.get_model_report(field.rel.to)
-        GridElement.__init__(self,layout,rpt.name,rpt,*elements,**kw)
+        rh = rpt.get_handle(lui.ui)
+        GridElement.__init__(self,lui,rpt.name,rh,*elements,**kw)
   
 
   
@@ -1374,9 +1422,9 @@ function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
 
 class MainPanel(Panel):
     value_template = "new Ext.form.FormPanel({ %s })"
-    def __init__(self,layout,name,vertical,*elements,**kw):
-        self.report = layout.report
-        Panel.__init__(self,layout,name,vertical,*elements,**kw)
+    def __init__(self,lui,name,vertical,*elements,**kw):
+        self.report = lui.report
+        Panel.__init__(self,lui,name,vertical,*elements,**kw)
         
         
     #~ def ext_variables(self):
@@ -1460,27 +1508,6 @@ class MainPanel(Panel):
     
         
 
-
-_field2elem = (
-    (models.TextField, TextFieldElement),
-    (models.CharField, CharFieldElement),
-    (models.DateField, DateFieldElement),
-    (models.IntegerField, IntegerFieldElement),
-    (models.DecimalField, DecimalFieldElement),
-    (models.BooleanField, BooleanFieldElement),
-    (models.ManyToManyField, M2mGridElement),
-    (models.ForeignKey, ForeignKeyElement),
-    (models.AutoField, IntegerFieldElement),
-)
-            
-def field2elem(layout,field,**kw):
-    for cl,x in _field2elem:
-        if isinstance(field,cl):
-            return x(layout,field,**kw)
-    if True:
-        raise NotImplementedError("field %s (%s)" %(field.name,field.__class__))
-    print "[Warning] No LayoutElement for %s" % field.__class__
-            
 
 
 
@@ -1792,3 +1819,271 @@ for(i=0;i<windows.length;i++) {
             
             
 
+
+
+class ViewReportRequest(reports.ReportRequest):
+  
+    editing = 0
+    selector = None
+    sort_column = None
+    sort_direction = None
+    
+    def __init__(self,request,report,*args,**kw):
+      
+        self.params = report._rd.param_form(request.GET)
+        if self.params.is_valid():
+            kw.update(self.params.cleaned_data)
+        if report._rd.master is not None:
+            pk = request.GET.get('master',None)
+            if pk == UNDEFINED:
+                pk = None
+            if pk is None:
+                kw.update(master_instance=None)
+            else:
+                try:
+                    kw.update(master_instance=report._rd.master.objects.get(pk=pk))
+                except report._rd.master.DoesNotExist,e:
+                    print "[Warning] There's no %s with %s=%r" % (
+                      report._rd.master.__name__,report._rd.master._meta.pk.name,pk)
+        sort = request.GET.get('sort',None)
+        if sort:
+            self.sort_column = sort
+            sort_dir = request.GET.get('dir','ASC')
+            if sort_dir == 'DESC':
+                sort = '-'+sort
+                self.sort_direction = 'DESC'
+            kw.update(order_by=sort)
+        
+        #self.json = request.GET.get('json',False)
+        
+        offset = request.GET.get('start',None)
+        if offset:
+            kw.update(offset=offset)
+        limit = request.GET.get('limit',None)
+        if limit:
+            kw.update(limit=limit)
+        #~ layout = request.GET.get('layout',None)
+        #~ if layout:
+            #~ kw.update(layout=int(layout))
+        #~ mode = request.GET.get('mode',None)
+        #~ if mode:
+            #~ kw.update(mode=mode)
+
+        #print "ViewReportRequest.__init__() 1",report.name
+        self.request = request
+        
+        reports.ReportRequest.__init__(self,report,*args,**kw)
+        self.store = self.report.store
+        #print "ViewReportRequest.__init__() 2",report.name
+        #self.is_main = is_main
+        request._lino_request = self
+        
+
+    def get_absolute_url(self,**kw):
+        if self.master_instance is not None:
+            kw.update(master_instance=self.master_instance)
+        if self.limit != self.__class__.limit:
+            kw.update(limit=self.limit)
+        if self.offset is not None:
+            kw.update(start=self.offset)
+        if self.sort_column is not None:
+            kw.update(sort=self.sort_column)
+        if self.sort_direction is not None:
+            kw.update(dir=self.sort_direction)
+        #if self.layout.index != 0:
+        #    kw.update(layout=self.layout.index)
+        #~ if self.mode is not None:
+            #~ kw.update(mode=self.mode)
+        return self.report.get_absolute_url(**kw)
+
+    #~ def unused_render_to_html(self):
+        #~ if len(self.store.layouts) == 2:
+            #~ comps = [l._main for l in self.store.layouts]
+        #~ else:
+            #~ tabs = [l._main for l in self.store.layouts[1:]]
+            #~ comps = [self.store.layouts[0]._main,extjs.TabPanel(None,"EastPanel",*tabs)]
+        #~ return lino_site.ext_view(self.request,*comps)
+        #return self.report.viewport.render_to_html(self.request)
+
+
+    def obj2json(self,obj):
+        d = {}
+        for fld in self.store.fields:
+            fld.write_to_form(obj,d)
+            #d[e.name] = e.value2js(obj)
+        return d
+            
+    def render_to_json(self):
+        rows = [ self.obj2json(row) for row in self.queryset ]
+        total_count = self.total_count
+        # add one empty row:
+        for i in range(0,self.extra):
+        #if self.layout.index == 1: # currently only in a grid
+            row = self.report._rd.create_instance(self)
+            rows.append(self.obj2json(row))
+            #~ d = {}
+            #~ for fld in self.store.fields:
+                #~ d[fld.field.name] = None
+            #~ # d[self.store.pk.name] = UNDEFINED
+            #~ rows.append(d)
+            total_count += 1
+        return dict(count=total_count,rows=rows)
+        
+
+        
+class PdfManyReportRenderer(ViewReportRequest):
+
+    def render(self,as_pdf=True):
+        template = get_template("lino/grid_print.html")
+        context=dict(
+          report=self,
+          title=self.get_title(),
+        )
+        html  = template.render(Context(context))
+        if not (pisa and as_pdf):
+            return HttpResponse(html)
+        result = cStringIO.StringIO()
+        pdf = pisa.pisaDocument(cStringIO.StringIO(
+          html.encode("ISO-8859-1")), result)
+        if pdf.err:
+            raise Exception(cgi.escape(html))
+        return HttpResponse(result.getvalue(),mimetype='application/pdf')
+        
+    def rows(self):
+        rownum = 1
+        for obj in self.queryset:
+            yield Row(self,obj,rownum,None)
+            rownum += 1
+
+  
+class PdfOneReportRenderer(ViewReportRequest):
+    #detail_renderer = PdfManyReportRenderer
+
+    def render(self,as_pdf=True):
+        if as_pdf:
+            return self.row.instance.view_pdf(self.request)
+            #~ if False:
+                #~ s = render_to_pdf(self.row.instance)
+                #~ return HttpResponse(s,mimetype='application/pdf')
+            #~ elif pisa:
+                #~ s = as_printable(self.row.instance,as_pdf=True)
+                #~ return HttpResponse(s,mimetype='application/pdf')
+        else:
+            return self.row.instance.view_printable(self.request)
+            #~ result = as_printable(self.row.instance,as_pdf=False)
+            #~ return HttpResponse(result)
+
+
+
+from django.conf.urls.defaults import patterns, url, include
+
+
+class ExtUI(reports.UI):
+    _response = None
+    
+    _field2elem = (
+        (models.TextField, TextFieldElement),
+        (models.CharField, CharFieldElement),
+        (models.DateField, DateFieldElement),
+        (models.IntegerField, IntegerFieldElement),
+        (models.DecimalField, DecimalFieldElement),
+        (models.BooleanField, BooleanFieldElement),
+        (models.ManyToManyField, M2mGridElement),
+        (models.ForeignKey, ForeignKeyElement),
+        (models.AutoField, IntegerFieldElement),
+    )
+                
+    def __init__(self):
+        #self.StaticText = StaticText
+        self.GridElement = GridElement
+        self.MethodElement = MethodElement
+        self.Panel = Panel
+        self.Store = Store
+        
+    def field2elem(self,lui,field,**kw):
+        for cl,x in self._field2elem:
+            if isinstance(field,cl):
+                return x(lui,field,**kw)
+        if True:
+            raise NotImplementedError("field %s (%s)" % (field.name,field.__class__))
+        lino.log.warning("No LayoutElement for %s",field.__class__)
+                
+
+    def main_panel_class(self,layout):
+        if isinstance(layout,layouts.RowLayout) : 
+            return MainGridElement    
+        if isinstance(layout,layouts.PageLayout) : 
+            return MainPanel
+        raise Exception("No element class for layout %r" % layout)
+            
+
+    
+    def index(self, request):
+        if self._response is None:
+            from lino.lino_site import lino_site
+            from django.http import HttpResponse
+            lino.log.debug("building extjs._response...")
+            comp = VisibleComponent("index",
+                xtype="panel",
+                html=lino_site.index_html.encode('ascii','xmlcharrefreplace'),
+                autoScroll=True,
+                #width=50000,
+                #height=50000,
+                region="center")
+            viewport = Viewport(lino_site.title,lino_site.get_menu(),comp)
+            s = viewport.render_to_html(request)
+            self._response = HttpResponse(s)
+        #s = layouts.ext_viewport(request,self.title,self._menu,*components)
+        #windows = request.GET.get('open',None)
+        #print "absolute_uri",request.build_absolute_uri()
+        return self._response
+    #index = never_cache(index)
+
+  
+    def get_urls(self):
+        return patterns('',
+            #(r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
+            #(r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
+            #(r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
+            (r'^$', self.index),
+            (r'^menu$', menu_view),
+            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_report_view),
+            (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
+            (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
+            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
+            
+        )
+
+    def get_report_url(self,report,master_instance=None,
+            simple_list=False,submit=False,grid_afteredit=False,action=None,**kw):
+        if simple_list:
+            url = "/list/"
+        elif grid_afteredit:
+            url = "/grid_afteredit/"
+        elif submit:
+            url = "/submit/"
+        elif action:
+            url = "/action/"
+        else:
+            raise "one of json, save or action must be True"
+            #url = "/r/"
+        url += report._rd.app_label + "/" + report._rd.name
+        if action:
+            url += "/" + action
+        #~ app_label = report.__class__.__module__.split('.')[-2]
+        #~ if mode == 'choices':
+            #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
+        #~ else:
+            #~ url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
+        #~ if master_instance is None:
+            #~ master_instance = report.master_instance
+        if master_instance is not None:
+            kw['master'] = master_instance.pk
+        #~ if mode is not None:
+            #~ kw['mode'] = mode
+        if len(kw):
+            url += "?"+urlencode(kw)
+        return url
+            
+    
+ui = ExtUI()

@@ -19,7 +19,7 @@ from lino.modlib import fields
 from django import forms
 
 from lino import reports
-from lino.utils import layouts
+from lino import layouts
 from lino.utils import perms
 
 #contacts = reports.get_app('contacts')

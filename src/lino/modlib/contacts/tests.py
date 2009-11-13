@@ -20,7 +20,7 @@ from lino.modlib.contacts.models import Contact, Companies
 from lino.modlib.countries.models import Country
 
 from django.forms.models import modelform_factory, formset_factory
-from lino.utils import layouts
+from lino import layouts
 
 class DemoTest(TestCase):
     urls = 'mysites.demo.urls'

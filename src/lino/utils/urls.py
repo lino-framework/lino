@@ -11,6 +11,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+raise "no longer used. moved to lino.ui.extjs.urls and lino.ui.console.urls"
 
 from urllib import urlencode
 
@@ -22,7 +23,7 @@ from django.conf.urls.defaults import patterns, url, include
 from django.shortcuts import render_to_response 
 
 
-def view_instance(request,db_table=None,pk=None):
+def unused_view_instance(request,db_table=None,pk=None):
     if db_table is None:
         return Http404
     from lino import reports
@@ -109,37 +110,6 @@ def sorry(request,message=None):
 
 
 
-def get_report_url(report,master_instance=None,
-        simple_list=False,submit=False,grid_afteredit=False,action=None,**kw):
-    if simple_list:
-        url = "/list/"
-    elif grid_afteredit:
-        url = "/grid_afteredit/"
-    elif submit:
-        url = "/submit/"
-    elif action:
-        url = "/action/"
-    else:
-        raise "one of json, save or action must be True"
-        #url = "/r/"
-    url += report.app_label + "/" + report.name
-    if action:
-        url += "/" + action
-    #~ app_label = report.__class__.__module__.split('.')[-2]
-    #~ if mode == 'choices':
-        #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
-    #~ else:
-        #~ url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
-    #~ if master_instance is None:
-        #~ master_instance = report.master_instance
-    if master_instance is not None:
-        kw['master'] = master_instance.pk
-    #~ if mode is not None:
-        #~ kw['mode'] = mode
-    if len(kw):
-        url += "?"+urlencode(kw)
-    return url
-        
 
 def get_instance_url(o):
     if hasattr(o,'get_instance_url'):
@@ -149,19 +119,4 @@ def get_instance_url(o):
     return "/o/%s/%s" % (o._meta.db_table, o.pk)
         
 
-
-def get_urls():
-    from . import extjs
-    return patterns('',
-        (r'^o/(?P<db_table>\w+)/(?P<pk>\w+)$', view_instance),
-        #(r'^r/(?P<app_label>\w+)/(?P<rptname>\w+)$', reports.view_report_as_ext),
-        #(r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
-        (r'^menu$', extjs.menu_view),
-        (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.list_report_view),
-        (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', extjs.json_report_view),
-        (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.form_submit_view),
-        (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.grid_afteredit_view),
-        #(r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', extjs.view_action),
-        
-    )
 

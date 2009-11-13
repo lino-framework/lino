@@ -44,35 +44,14 @@ def get_app(app_label):
             return import_module('.models', app_name)
     raise ImportError("No application labeled %r." % app_label)
       
-#~ def get_app(app_label):
-    #~ """
-    #~ Kann in fixtures benutzt werden, aber nicht in models.
-    #~ weil m evtl. bei circular imports nicht komplett importiert ist
-    #~ und weil get_app() vorher _populate() macht.
-    #~ """
-    #~ m = models.get_app(app_label)
-    #~ if m is None:
-        #~ raise ImportError("%s models not yet ready." % app_label)
-    #~ return m
 
-
-from lino.utils import layouts, perms, urls
+#from lino.utils import layouts, perms, urls
+from lino.utils import perms
 
 import lino
 
-# maps Django field types to a tuple of default paramenters
-# each tuple contains: minWidth, maxWidth, is_filter
-#~ WIDTHS = {
-    #~ models.IntegerField : (2,10,False),
-    #~ models.CharField : (10,50,True),
-    #~ models.TextField :  (10,50,True),
-    #~ models.BooleanField : (10,10,True),
-    #~ models.ForeignKey : (5,40,False),
-    #~ models.AutoField : (2,10,False),
-#~ }
-
-
-
+    
+from lino import layouts
 
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
@@ -85,11 +64,7 @@ def base_attrs(cl):
             yield k
             
             
-#~ class SetupNotDone(Exception):
-    #~ pass 
     
-UNDEFINED = "nix"
-
 class Hotkey:
     keycode = None
     shift = False
@@ -133,7 +108,7 @@ class Action:
         
         
     def get_response(self,rptreq):
-        context = ActionContext(self,rptreq)
+        context = self.ui.ActionContext(self,rptreq)
         if self.needs_selection and len(context.selected_rows) == 0:
             context._response.update(
               msg="No selection. Nothing to do.",
@@ -159,45 +134,6 @@ class Action:
         
     def run(self,context):
         raise NotImplementedError
-        
-class ActionContext:
-    def __init__(self,action,rptreq):
-        self.request = rptreq.request
-        selected = self.request.POST.get('selected',None)
-        if selected:
-            self.selected_rows = [
-              action.report.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
-        else:
-            self.selected_rows = []
-        self.confirmed = self.request.POST.get('confirmed',None)
-        if self.confirmed is not None:
-            self.confirmed = int(self.confirmed)
-        self.confirms = 0
-        self._response = dict(success=True,must_reload=False,msg=None)
-        #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
-        
-    def refresh(self):
-        self._response.update(must_reload=True)
-        
-    def redirect(self,url):
-        self._response.update(redirect=url)
-        
-    def setmsg(self,msg=None):
-        if msg is not None:
-            self._reponse.update(msg=msg)
-        
-    def error(self,msg=None):
-        self._response.update(success=False)
-        self.setmsg(msg)
-        raise ActionEvent() # MustConfirm(msg)
-        
-    def confirm(self,msg):
-        #print "ActionContext.confirm()", msg
-        self.confirms += 1
-        if self.confirmed >= self.confirms:
-            return
-        self._response.update(confirm=msg,success=False)
-        raise ActionEvent() # MustConfirm(msg)
         
 class DeleteSelected(Action):
     label = "Delete"
@@ -435,7 +371,6 @@ class Report:
     #date_format = '%d.%m.%y'
     
     page_layouts = (layouts.PageLayout ,)
-    _page_layouts = None
     row_layout_class = None
     
     can_view = perms.always
@@ -458,7 +393,7 @@ class Report:
         #~ if self.mode is not None:
             #~ self.name += "_" + self.mode
             
-            
+        self._handles = {}
         self._setup_done = False
         self._setup_doing = False
         
@@ -466,6 +401,7 @@ class Report:
         
         #register_report(self)
         lino.log.debug("Report.__init__() done: %s", self.name)
+        
         
     def setup(self):
         if self._setup_done:
@@ -479,29 +415,9 @@ class Report:
         self._setup_doing = True
         
         if self.master:
-            self.fk = _get_foreign_key(self.master,
-              self.model,self.fk_name)
+            self.fk = _get_foreign_key(self.master,self.model,self.fk_name)
             #self.name = self.fk.rel.related_name
         
-        #~ if self.form_class is None:
-            #~ self.form_class = modelform_factory(self.model)
-        self.choice_layout = layouts.RowLayout(self,0,self.display_field)
-        
-        if self.row_layout_class is None:
-            self.row_layout = layouts.RowLayout(self,1,self.columnNames)
-        else:
-            assert self.columnNames is None
-            self.row_layout = self.row_layout_class(self,1)
-            
-        self.layouts = [ self.choice_layout, self.row_layout ]
-        index = 2
-        for lc in self.page_layouts:
-            self.layouts.append(lc(self,index))
-            index += 1
-            
-        from lino.utils import extjs
-        self.store = extjs.Store(self)
-            
         self._actions = [cl(self) for cl in self.actions]
         
         setup = getattr(self.model,'setup_report',None)
@@ -528,6 +444,9 @@ class Report:
         self._setup_done = True
         lino.log.debug("Report.setup() done: %s", self.name)
         return True
+        
+    def get_handle(self,ui):
+        return ui.get_report_handle(self)
         
     def get_fields(self):
         return [ f.name for f in self.model._meta.fields + self.model._meta.many_to_many]
@@ -661,9 +580,6 @@ class Report:
     def __str__(self):
         return rc_name(self.__class__)
         
-    def get_absolute_url(self,*args,**kw):
-        return urls.get_report_url(self,*args,**kw)
-    
     def ajax_update(self,request):
         print request.POST
         return HttpResponse("1", mimetype='text/x-json')
@@ -721,10 +637,8 @@ class Report:
         
 def report_factory(model):
     return type(model.__name__+"Report",(Report,),dict(model=model))
-    
-        
-        
-        
+
+
 class ReportRequest:
     limit = None
     offset = None
@@ -738,11 +652,9 @@ class ReportRequest:
             #layout=None,
             **kw):
         self.report = report
-        report.setup()
-        self.name = report.name+"Request"
+        self.name = report._rd.name+"Request"
         #self.layout = report.layouts[layout]
         #self.store = self.layout.store
-        self.store = report.store
         self.extra = extra
         #~ self.mode = mode
         #~ if mode == 'choice':
@@ -753,7 +665,7 @@ class ReportRequest:
         self.master_instance = master_instance
         #print self.__class__.__name__, "__init__()"
         #self.params = params
-        self.queryset = report.get_queryset(master_instance,**kw)
+        self.queryset = report._rd.get_queryset(master_instance,**kw)
         
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
@@ -766,168 +678,78 @@ class ReportRequest:
             self.offset = offset
             
         if limit is None:
-            limit = report.page_length
+            limit = report._rd.page_length
         if limit is not None:
             self.queryset = self.queryset[:int(limit)]
             self.limit = limit
             
-        self.page_length = report.page_length
+        self.page_length = report._rd.page_length
             
         #self.actions = self.report.get_row_actions(self)
 
     def get_title(self):
         return self.report.get_title(self)
 
-    def obj2json(self,obj):
-        d = {}
-        for fld in self.store.fields:
-            fld.write_to_form(obj,d)
-            #d[e.name] = e.value2js(obj)
-        return d
+
+
+class ReportHandle:
+    def __init__(self,ui,rd):
+        lino.log.debug('ReportHandle.__init__(%s)',rd)
+        assert isinstance(rd,Report)
+        assert isinstance(ui,UI)
+        self.ui = ui
+        self._rd = rd
+        for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices'):
+            setattr(self,n,getattr(rd,n))
             
-    def render_to_json(self):
-        rows = [ self.obj2json(row) for row in self.queryset ]
-        total_count = self.total_count
-        # add one empty row:
-        for i in range(0,self.extra):
-        #if self.layout.index == 1: # currently only in a grid
-            row = self.report.create_instance(self)
-            rows.append(self.obj2json(row))
-            #~ d = {}
-            #~ for fld in self.store.fields:
-                #~ d[fld.field.name] = None
-            #~ # d[self.store.pk.name] = UNDEFINED
-            #~ rows.append(d)
-            total_count += 1
-        return dict(count=total_count,rows=rows)
+    def setup(self):
+        def lh(layout_class,*args,**kw):
+            layout = layout_class()
+            return layouts.LayoutHandle(self,layout,*args,**kw)
         
-
-class ViewReportRequest(ReportRequest):
-  
-    editing = 0
-    selector = None
-    sort_column = None
-    sort_direction = None
-    
-    def __init__(self,request,report,*args,**kw):
-      
-        self.params = report.param_form(request.GET)
-        if self.params.is_valid():
-            kw.update(self.params.cleaned_data)
-        if report.master is not None:
-            pk = request.GET.get('master',None)
-            if pk == UNDEFINED:
-                pk = None
-            if pk is None:
-                kw.update(master_instance=None)
-            else:
-                try:
-                    kw.update(master_instance=report.master.objects.get(pk=pk))
-                except report.master.DoesNotExist,e:
-                    print "[Warning] There's no %s with %s=%r" % (
-                      report.master.__name__,report.master._meta.pk.name,pk)
-        sort = request.GET.get('sort',None)
-        if sort:
-            self.sort_column = sort
-            sort_dir = request.GET.get('dir','ASC')
-            if sort_dir == 'DESC':
-                sort = '-'+sort
-                self.sort_direction = 'DESC'
-            kw.update(order_by=sort)
+        self.choice_layout = lh(layouts.RowLayout,0,self._rd.display_field)
         
-        #self.json = request.GET.get('json',False)
-        
-        offset = request.GET.get('start',None)
-        if offset:
-            kw.update(offset=offset)
-        limit = request.GET.get('limit',None)
-        if limit:
-            kw.update(limit=limit)
-        #~ layout = request.GET.get('layout',None)
-        #~ if layout:
-            #~ kw.update(layout=int(layout))
-        #~ mode = request.GET.get('mode',None)
-        #~ if mode:
-            #~ kw.update(mode=mode)
-
-        #print "ViewReportRequest.__init__() 1",report.name
-        self.request = request
-        ReportRequest.__init__(self,report,*args,**kw)
-        #print "ViewReportRequest.__init__() 2",report.name
-        #self.is_main = is_main
-        request._lino_request = self
-        
-
-    def get_absolute_url(self,**kw):
-        if self.master_instance is not None:
-            kw.update(master_instance=self.master_instance)
-        if self.limit != self.__class__.limit:
-            kw.update(limit=self.limit)
-        if self.offset is not None:
-            kw.update(start=self.offset)
-        if self.sort_column is not None:
-            kw.update(sort=self.sort_column)
-        if self.sort_direction is not None:
-            kw.update(dir=self.sort_direction)
-        #if self.layout.index != 0:
-        #    kw.update(layout=self.layout.index)
-        #~ if self.mode is not None:
-            #~ kw.update(mode=self.mode)
-        return self.report.get_absolute_url(**kw)
-
-    #~ def unused_render_to_html(self):
-        #~ if len(self.store.layouts) == 2:
-            #~ comps = [l._main for l in self.store.layouts]
-        #~ else:
-            #~ tabs = [l._main for l in self.store.layouts[1:]]
-            #~ comps = [self.store.layouts[0]._main,extjs.TabPanel(None,"EastPanel",*tabs)]
-        #~ return lino_site.ext_view(self.request,*comps)
-        #return self.report.viewport.render_to_html(self.request)
-
-
-
-        
-class PdfManyReportRenderer(ViewReportRequest):
-
-    def render(self,as_pdf=True):
-        template = get_template("lino/grid_print.html")
-        context=dict(
-          report=self,
-          title=self.get_title(),
-        )
-        html  = template.render(Context(context))
-        if not (pisa and as_pdf):
-            return HttpResponse(html)
-        result = cStringIO.StringIO()
-        pdf = pisa.pisaDocument(cStringIO.StringIO(
-          html.encode("ISO-8859-1")), result)
-        if pdf.err:
-            raise Exception(cgi.escape(html))
-        return HttpResponse(result.getvalue(),mimetype='application/pdf')
-        
-    def rows(self):
-        rownum = 1
-        for obj in self.queryset:
-            yield Row(self,obj,rownum,None)
-            rownum += 1
-
-  
-class PdfOneReportRenderer(ViewReportRequest):
-    #detail_renderer = PdfManyReportRenderer
-
-    def render(self,as_pdf=True):
-        if as_pdf:
-            return self.row.instance.view_pdf(self.request)
-            #~ if False:
-                #~ s = render_to_pdf(self.row.instance)
-                #~ return HttpResponse(s,mimetype='application/pdf')
-            #~ elif pisa:
-                #~ s = as_printable(self.row.instance,as_pdf=True)
-                #~ return HttpResponse(s,mimetype='application/pdf')
+        if self._rd.row_layout_class is None:
+            self.row_layout = lh(layouts.RowLayout,1,self._rd.columnNames)
         else:
-            return self.row.instance.view_printable(self.request)
-            #~ result = as_printable(self.row.instance,as_pdf=False)
-            #~ return HttpResponse(result)
+            assert self._rd.columnNames is None
+            self.row_layout = lh(self._rd.row_layout_class,1)
+            
+        self.layouts = [ self.choice_layout, self.row_layout ]
+        index = 2
+        for lc in self._rd.page_layouts:
+            self.layouts.append(lh(lc,index))
+            index += 1
+            
+        self.store = self.ui.Store(self)
 
+    def get_absolute_url(self,*args,**kw):
+        return self.ui.get_report_url(self,*args,**kw)
+    
+
+class UI:
+    
+    def get_urls():
+        pass
+        
+    def setup_site(self,lino_site):
+        pass
+    
+    def field2elem(self,lui,field,**kw):
+        pass
+        
+    def _get_report_handle(self,app_label,rptname):
+        rpt = get_report(app_label,rptname)
+        return self.get_report_handle(rpt)
+        
+    def get_report_handle(self,rpt):
+        #lino.log.debug('get_report_handle(%s)',rpt)
+        rpt.setup()
+        h = rpt._handles.get(self,None)
+        if h is None:
+            h = ReportHandle(self,rpt)
+            rpt._handles[self] = h
+            h.setup()
+        return h
 
 

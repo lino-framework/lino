@@ -19,11 +19,11 @@ from django.utils.safestring import mark_safe
 from lino.utils.render import HREF
 
 from lino import reports
+from lino import layouts 
 from lino.utils import perms
-from lino.utils.layouts import PageLayout 
 
-from lino.modlib.countries import models as countries 
-#= reports.get_app('countries')
+#from lino.modlib.countries import models as countries 
+countries = reports.get_app('countries')
 
 class Place(models.Model):
     name = models.CharField(max_length=200)
@@ -263,7 +263,7 @@ class Collection(models.Model):
 # reports
 
 
-class SongPageLayout(PageLayout):
+class SongPageLayout(layouts.PageLayout):
     main = """
     id title language voices
     origin based_on bible_ref
@@ -275,7 +275,7 @@ class SongPageLayout(PageLayout):
     def inlines(self):
         return dict(events=EventsBySong())
 
-class PerformancePageLayout(PageLayout):
+class PerformancePageLayout(layouts.PageLayout):
     main = """
     id date place remark 
     choir

@@ -16,7 +16,7 @@ from django.db import models
 from lino.modlib import fields
 #journals = models.get_app('journals')
 from lino import reports
-from lino.utils import layouts
+from lino import layouts
 from lino.utils import perms
 
 

@@ -17,7 +17,7 @@ from django.test import TestCase
 from django.forms.models import modelform_factory, formset_factory
 from django.contrib.auth.models import User
 
-from lino.utils import layouts
+from lino import layouts
 from lino.utils.instantiator import i2d
 from lino.modlib.sales import models as sales
 

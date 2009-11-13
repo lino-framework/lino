@@ -43,7 +43,7 @@ from lino.modlib import fields
 from django import forms
 
 from lino import reports
-from lino.utils import layouts
+from lino import layouts
 from lino.utils import perms
 
 #~ from lino.modlib.contacts import models as contacts
