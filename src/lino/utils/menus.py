@@ -21,6 +21,22 @@ from django.utils.safestring import mark_safe
 from django import template 
 
 from lino.utils import perms
+
+
+class Actor(object):
+    name = None
+    label = None
+    def __init__(self):
+        if self.label is None:
+            self.label = self.__class__.__name__
+        if self.name is None:
+            self.name = self.__class__.__name__
+
+    def get_label(self):
+        #~ if self.label is None:
+            #~ return self.__class__.__name__
+        return self.label
+
         
 class MenuItem:
   

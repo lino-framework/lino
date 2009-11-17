@@ -45,13 +45,10 @@ def get_app(app_label):
     raise ImportError("No application labeled %r." % app_label)
       
 
-#from lino.utils import layouts, perms, urls
-from lino.utils import perms
 
 import lino
-
-    
 from lino import layouts
+from lino.utils import perms, menus
 
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
@@ -108,7 +105,8 @@ class Action:
         
         
     def get_response(self,rptreq):
-        context = self.ui.ActionContext(self,rptreq)
+        context = rptreq.report.ui.ActionContext(self,rptreq)
+        #context = self.report.ui.ActionContext(self,rptreq)
         if self.needs_selection and len(context.selected_rows) == 0:
             context._response.update(
               msg="No selection. Nothing to do.",
@@ -116,20 +114,12 @@ class Action:
         else:
             try:
                 self.run(context)
-                #~ if msg is None:
-                    #~ msg = "Completed"
-                #~ d = dict(success=True,msg=msg)
             except ActionEvent,e:
                 pass
             except Exception,e:
                 traceback.print_exc(e)
                 context._response.update(msg=str(e),success=False)
-                #d = dict(success=False,msg=str(e))
-            #d.update(must_reload=context.must_reload)
         return context._response
-        #return extjs.json_response(**context._response)
-        #~ s = simplejson.dumps(context._response,default=unicode)
-        #~ return HttpResponse(s, mimetype='text/html')
       
         
     def run(self,context):
@@ -163,27 +153,6 @@ class ReportParameterForm(forms.Form):
     #~ ))
     
 
-#        
-#  Report
-#        
-
-#~ _report_classes = {}
-
-#~ def get_report(name):
-    #~ return _report_classes[name]
-    
-#~ def get_reports():
-    #~ return _report_classes
-    
-#model_reports = {}
-#_slave_reports = {}
-#_reports = {}
-
-# name : ( class , instance )
-
-"""
-Each Report subclass definition found
-"""
 
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
@@ -192,7 +161,6 @@ master_reports = []
 slave_reports = []
 
 def register_report_class(rptclass):
-    #_reports.append(cls)
     rptclass.app_label = rptclass.__module__.split('.')[-2]
     if rptclass.model is None:
         lino.log.warning("register %s : model is None", rc_name(rptclass))
@@ -206,36 +174,7 @@ def register_report_class(rptclass):
             lino.log.debug("register %s: not used as model_report",rc_name(rptclass))
     else:
         slave_reports.append(rptclass)
-    
 
-#~ def register_report(rpt):
-    #~ if _reports.has_key(rpt.name):
-        #~ print "[Warning] %s used for models %s and %s" % (rpt.name,rpt.model,_reports[rpt.name].model)
-        #~ return
-    #~ _reports[rpt.name] = rpt
-    
-    #~ if rpt.model is None:
-        #~ return
-    #~ if rpt.master is not None:
-        #~ return
-    #~ if rpt.exclude is not None:
-        #~ return
-    #~ if rpt.filter is not None:
-        #~ return
-    #~ if hasattr(rpt.model,'_lino_model_report'):
-        #~ print "[Warning] Ignoring %s" % rpt #.__name__
-        #~ return
-    #~ rpt.model._lino_model_report = self
-    #~ db_table = rpt.model._meta.db_table
-    #~ if model_reports.has_key(db_table):
-        #~ print "[Warning] Ignoring %s" % rpt #.__name__
-        #~ return
-    #~ model_reports[db_table] = rpt
-    
-#~ def get_report(rptname):
-    #~ rpt = _reports.get(rptname,None)
-    #~ #rpt.setup()
-    #~ return rpt
     
 def get_report(app_label,rptname):
     app = models.get_app(app_label)
@@ -244,8 +183,6 @@ def get_report(app_label,rptname):
         lino.log.warning("No report %s in application %r",rptname,app)
         return None
     return rptclass()
-    
-
 
     
 def setup():
@@ -289,7 +226,7 @@ def setup():
             setattr(rptclass.master,'_lino_slaves',slaves)
         slaves[rptclass.__name__] = rptclass
         lino.log.debug("%s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
-    lino.log.debug("Assigned %d slave_reports to their master.",len(slave_reports))
+    lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     lino.log.debug("Setup model reports...")
     for model in models.get_models():
@@ -343,7 +280,7 @@ class ReportMetaClass(type):
 
 
 
-class Report:
+class Report(menus.Actor):
     __metaclass__ = ReportMetaClass
     queryset = None 
     model = None
@@ -383,16 +320,11 @@ class Report:
     actions = [ DeleteSelected ]
     
     def __init__(self):
-      
+        menus.Actor.__init__(self)
         if self.model is None:
             self.model = self.queryset.model
-        if self.label is None:
-            self.label = self.__class__.__name__
-        if self.name is None:
-            self.name = self.__class__.__name__
         #~ if self.mode is not None:
             #~ self.name += "_" + self.mode
-            
         self._handles = {}
         self._setup_done = False
         self._setup_doing = False
@@ -438,8 +370,7 @@ class Report:
                     self._slaves.append(sl)
         else:
             self._slaves = []
-              
-        
+
         self._setup_doing = False
         self._setup_done = True
         lino.log.debug("Report.setup() done: %s", self.name)
@@ -505,22 +436,6 @@ class Report:
             #~ self.choices_stores[field] = rpt
         #~ return rpt
         
-    #~ def slaves(self):
-        #~ hier: und zwar die slaves in diesem report (nicht alle slaves des modells)
-      
-        #~ if self._slaves is None:
-            #~ self._slaves = {}
-            #~ for cl in slave_reports(self.model):
-                #~ rpt = cl()
-                #~ self._slaves[rpt.name] = rpt
-            #print "reports.Report.slaves()", self.__class__.__name__, ":", self._slaves
-        #~ return self._slaves.values()
-        
-        
-    #~ def column_headers(self):
-        #~ self.setup()
-        #~ for e in self.columns:
-            #~ yield e.label
             
     def get_title(self,renderer):
         #~ if self.title is None:
@@ -562,11 +477,6 @@ class Report:
         order_by = order_by or self.order_by
         if order_by:
             qs = qs.order_by(*order_by.split())
-        #~ print "Report.get_queryset()", qs
-        #~ from django.db.models.query import QuerySet
-        #~ if not isinstance(qs,QuerySet):
-            #~ raise Exception(
-              #~ "%s is not a QuerySet but a %s:" % (qs, type(qs)))
         return qs
         
     def create_instance(self,rptreq):
@@ -593,113 +503,20 @@ class Report:
     @classmethod
     def register_page_layout(cls,*layouts):
         cls.page_layouts = tuple(cls.page_layouts) + layouts
-        
-    #~ def as_ext(self):
-        #~ self.setup()
-        #~ self.variables = []
-        #~ for layout in self.store.layouts:
-            #~ for v in layout._main.ext_variables():
-                #~ self.variables.append(v)
-        #~ tabs = [l._main for l in self.store.layouts]
-        #~ comp = extjs.TabPanel(None,"MainPanel",*tabs)
-        #~ self.variables.append(comp)
-        #~ self.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
-        
-        #~ d = {}
-        #~ d.update(items=comp)
-        #~ d.update(title=self.get_title(None))
-        #~ s = "function %s(btn,event) { " % self.name
-        #~ for v in self.variables:
-            #~ s += "\n  var %s = %s;" % (v.ext_name,v.as_ext_value())
-            #~ for ln in v.ext_lines():
-                #~ s += "\n  " + ln 
-        #~ s += "\n  %s.load();" % self.store.ext_name
-        #~ s += "\n  new Ext.Window( %s ).show();" % extjs.py2js(d)
-        #~ s += "}"
-        #~ return s
-        
-    #~ def as_html(self, **kw):
-        #~ return render.HtmlReportRequest(self,**kw).render_to_string()
-        
-    #~ def get_row_actions(self,renderer):
-        #~ l = []
-        #~ #l.append( ('dummy',self.dummy) )
-        #~ if self.can_change.passes(renderer.request):
-            #~ l.append( ('delete',self.delete_selected) )
-        #~ return l
-            
-    #~ def delete_selected(self,renderer):
-        #~ for row in renderer.selected_rows():
-            #~ print "DELETE:", row.instance
-            #~ row.instance.delete()
-        #~ renderer.must_refresh()
 
         
 def report_factory(model):
     return type(model.__name__+"Report",(Report,),dict(model=model))
 
 
-class ReportRequest:
-    limit = None
-    offset = None
-    master_instance = None
-    instance = None
-    
-    def __init__(self,report,
-            master_instance=None,
-            offset=None,limit=None,
-            extra=1,
-            #layout=None,
-            **kw):
-        self.report = report
-        self.name = report._rd.name+"Request"
-        #self.layout = report.layouts[layout]
-        #self.store = self.layout.store
-        self.extra = extra
-        #~ self.mode = mode
-        #~ if mode == 'choice':
-            #~ self.store = report.choice_store
-        #~ else:
-            #~ self.store = report.store
-        #if master_instance is not None:
-        self.master_instance = master_instance
-        #print self.__class__.__name__, "__init__()"
-        #self.params = params
-        self.queryset = report._rd.get_queryset(master_instance,**kw)
-        
-        if isinstance(self.queryset,models.query.QuerySet):
-            self.total_count = self.queryset.count()
-        else:
-            # a Report may override get_queryset() and return a list
-            self.total_count = len(self.queryset)
-        
-        if offset is not None:
-            self.queryset = self.queryset[int(offset):]
-            self.offset = offset
-            
-        if limit is None:
-            limit = report._rd.page_length
-        if limit is not None:
-            self.queryset = self.queryset[:int(limit)]
-            self.limit = limit
-            
-        self.page_length = report._rd.page_length
-            
-        #self.actions = self.report.get_row_actions(self)
-
-    def get_title(self):
-        return self.report.get_title(self)
-
-
-
-class ReportHandle:
+class ReportHandle(layouts.DataLink):
     def __init__(self,ui,rd):
         lino.log.debug('ReportHandle.__init__(%s)',rd)
+        layouts.DataLink.__init__(self,ui,rd.app_label + "_" + rd.name)
         assert isinstance(rd,Report)
         assert isinstance(ui,UI)
-        self.ui = ui
         self._rd = rd
-        for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices'):
+        for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices','get_title'):
             setattr(self,n,getattr(rd,n))
             
     def setup(self):
@@ -727,6 +544,51 @@ class ReportHandle:
         return self.ui.get_report_url(self,*args,**kw)
     
 
+class ReportRequest:
+    """
+    An instance of this will be created for every request.
+    """
+    limit = None
+    offset = None
+    master_instance = None
+    instance = None
+    
+    def __init__(self,report,
+            master_instance=None,
+            offset=None,limit=None,
+            extra=1,
+            #layout=None,
+            **kw):
+        assert isinstance(report,ReportHandle)
+        self.report = report
+        self.name = report._rd.name+"Request"
+        self.extra = extra
+        self.master_instance = master_instance
+        self.queryset = report._rd.get_queryset(master_instance,**kw)
+        # Report.get_queryset() may return a list
+        if isinstance(self.queryset,models.query.QuerySet):
+            self.total_count = self.queryset.count()
+        else:
+            self.total_count = len(self.queryset)
+        
+        if offset is not None:
+            self.queryset = self.queryset[int(offset):]
+            self.offset = offset
+            
+        if limit is None:
+            limit = report._rd.page_length
+        if limit is not None:
+            self.queryset = self.queryset[:int(limit)]
+            self.limit = limit
+            
+        self.page_length = report._rd.page_length
+
+    def get_title(self):
+        return self.report.get_title(self)
+
+
+
+
 class UI:
     
     def get_urls():
@@ -751,5 +613,15 @@ class UI:
             rpt._handles[self] = h
             h.setup()
         return h
+        
+    def get_form_handle(self,layout):
+        h = layout._handles.get(self,None)
+        if h is None:
+            lnk = layouts.FormLink(self,layout)
+            h = layouts.LayoutHandle(lnk,layout,0)
+            layout._handles[self] = h
+            #h.setup()
+        return h
+        
 
 

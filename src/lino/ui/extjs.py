@@ -55,7 +55,7 @@ class ActionContext:
         selected = self.request.POST.get('selected',None)
         if selected:
             self.selected_rows = [
-              action.report.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+              rptreq.report._rd.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
         else:
             self.selected_rows = []
         self.confirmed = self.request.POST.get('confirmed',None)
@@ -96,7 +96,7 @@ class ReportRenderer:
         self.report = ui.get_report_handle(report)
         self.ext_name = report.app_label + "_" + report.name
         self.options = kw
-        self.windows = [ WindowRenderer(l) for l in self.report.layouts[1:] ]
+        self.windows = [ ReportWindowRenderer(l) for l in self.report.layouts[1:] ]
         
     #~ def ext_globals(self):
         #~ for win in self.windows:
@@ -123,18 +123,17 @@ class ReportRenderer:
             yield ''
         
         
-        
-class WindowRenderer:
+class ReportWindowRenderer:
     def __init__(self,layout,**kw):
         assert isinstance(layout,layouts.LayoutHandle)
         self.options = kw
         self.layout = layout
-        self.store = layout.report.store
+        self.store = layout.link.store
         #self.ext_name = report.app_label + "_" + report.name
         self.name = layout.name
         
     def js_lines(self):
-        self.options.update(title=self.layout.get_title())
+        self.options.update(title=self.layout.get_title(self))
         self.options.update(closeAction='hide')
         self.options.update(maximizable=True)
         self.options.update(id=self.name)
@@ -153,7 +152,7 @@ class WindowRenderer:
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
         yield "  this.show = function(btn,event,master,master_grid) {"
         #yield "    console.log('show',this);" 
-        if self.layout.report._rd.master is None:
+        if self.layout.link._rd.master is None:
             yield "    %s.load();" % self.store.as_ext()
         else:
             yield "    if(master) {"
@@ -204,6 +203,35 @@ class WindowRenderer:
     #~ for layout in rpt.layouts[1:]:
         #~ yield LayoutWindow(layout,**kw)
         
+
+class FormRenderer:
+    def __init__(self,layout,**kw):
+        assert isinstance(layout,layouts.DialogLayout)
+        self.options = kw
+        self.lh = ui.get_form_handle(layout)
+        self.name = layout.name
+        
+    def js_lines(self):
+        self.options.update(title=self.lh.get_title(self))
+        self.options.update(closeAction='hide')
+        self.options.update(maximizable=True)
+        self.options.update(id=self.name)
+        self.options.update(layout='fit')
+        self.options.update(height=300,width=400)
+        self.options.update(items=self.lh._main)
+        yield "var %s = new function() {" % self.name
+        for ln in self.lh._main.js_lines():
+            yield "  " + ln
+        yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
+        yield "  this.show = function(btn,event) {"
+        yield "    console.log('show',this);" 
+        #yield "    %s.load();" % self.store.as_ext()
+        yield "    this.comp.show();"
+        yield "  };"
+        yield "}();"
+
+
+
 def menu_view(request):
     from lino import lino_site
     s = py2js(lino_site.get_menu())
@@ -790,8 +818,21 @@ class LayoutElement(VisibleComponent):
         #return (self.width + self.label_width) * EXT_CHAR_WIDTH + self.xpadding
         
         
+class ButtonElement(LayoutElement):
+    name_suffix = "_button"
+    xtype = 'button'
+
+    def __init__(self,layout,name,meth,**kw):
+        assert isinstance(layout,layouts.LayoutHandle)
+        LayoutElement.__init__(self,layout,name,**kw)
+        self.meth = meth
         
 
+class StaticTextElement(LayoutElement):
+    declare_type = DECLARE_INLINE
+    def __init__(self,layout,name,text,**kw):
+        LayoutElement.__init__(self,layout,name,**kw)
+        self.text = text.text
 
 class FieldElement(LayoutElement):
     declare_type = DECLARE_THIS
@@ -801,6 +842,7 @@ class FieldElement(LayoutElement):
     xtype = None # set by subclasses
     
     def __init__(self,layout,field,**kw):
+        assert field.name, Exception("field %r has no name!" % field)
         LayoutElement.__init__(self,layout,field.name,label=field.verbose_name,**kw)
         self.field = field
         self.editable = field.editable and not field.primary_key
@@ -900,7 +942,7 @@ class ForeignKeyElement(FieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
-        rd = self.layout.report.get_field_choices(self.field)
+        rd = self.layout.link.get_field_choices(self.field)
         self.report = rd.get_handle(self.layout.ui)
         #~ if self.editable:
             #~ setup_report(self.choice_report)
@@ -964,7 +1006,7 @@ class DateFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
-        kw.update(format=self.layout.report._rd.date_format)
+        kw.update(format=self.layout.link._rd.date_format)
         return kw
     
 class IntegerFieldElement(FieldElement):
@@ -1007,9 +1049,9 @@ class BooleanFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.layout.report._rd.boolean_texts[0])
-        kw.update(falseText=self.layout.report._rd.boolean_texts[1])
-        kw.update(undefinedText=self.layout.report._rd.boolean_texts[2])
+        kw.update(trueText=self.layout.link._rd.boolean_texts[0])
+        kw.update(falseText=self.layout.link._rd.boolean_texts[1])
+        kw.update(undefinedText=self.layout.link._rd.boolean_texts[2])
         return kw
         
     def update_from_form(self,instance,values):
@@ -1020,20 +1062,18 @@ class BooleanFieldElement(FieldElement):
         setattr(instance,self.name,values.get(self.name,False))
 
   
-class MethodElement(FieldElement):
+class VirtualFieldElement(FieldElement):
     stored = True
     editable = False
 
-    def __init__(self,layout,name,meth,**kw):
+    def __init__(self,layout,name,meth,return_type,**kw):
         assert isinstance(layout,layouts.LayoutHandle)
         # uh, this is tricky...
         #self.meth = meth
+        field = return_type
         field = getattr(meth,'return_type',None)
-        if field is None:
-            field = models.TextField(max_length=200)
-            #meth.return_type = field
-        #~ else:
-            #~ print "MethodElement", field.name
+        #~ if field is None:
+            #~ field = models.TextField(max_length=200)
         field.name = name
         field._return_type_for_method = meth
         FieldElement.__init__(self,layout,field)
@@ -1384,7 +1424,7 @@ class MainGridElement(GridElement):
     def __init__(self,layout,name,vertical,*elements,**kw):
         # ignore the "vertical" arg
         #layout.report.setup()
-        GridElement.__init__(self,layout,name,layout.report,*elements,**kw)
+        GridElement.__init__(self,layout,name,layout.link,*elements,**kw)
         #print "MainGridElement.__init__()",self.ext_name
         
     def ext_options(self):
@@ -1419,12 +1459,11 @@ function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
 
 
 
-
-class MainPanel(Panel):
+class ReportMainPanel(Panel):
     value_template = "new Ext.form.FormPanel({ %s })"
-    def __init__(self,lui,name,vertical,*elements,**kw):
-        self.report = lui.report
-        Panel.__init__(self,lui,name,vertical,*elements,**kw)
+    def __init__(self,layout,name,vertical,*elements,**kw):
+        self.report = layout.link
+        Panel.__init__(self,layout,name,vertical,*elements,**kw)
         
         
     #~ def ext_variables(self):
@@ -1453,7 +1492,7 @@ class MainPanel(Panel):
     def js_lines(self):
         for ln in Panel.js_lines(self):
             yield ln
-        yield "%s.main.comp.getSelectionModel().addListener('rowselect'," % self.layout.report.row_layout.name
+        yield "%s.main.comp.getSelectionModel().addListener('rowselect'," % self.layout.link.row_layout.name
         yield "  function(sm,rowIndex,record) { "
         #yield "    console.log(this);"
         name = self.layout.name
@@ -1480,14 +1519,14 @@ class MainPanel(Panel):
         buttons = []
 
         key = reports.PAGE_UP
-        js = js_code("function() {%s.main.comp.getSelectionModel().selectPrevious()}" % self.layout.report.row_layout.name)
+        js = js_code("function() {%s.main.comp.getSelectionModel().selectPrevious()}" % self.layout.link.row_layout.name)
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
         buttons.append(dict(handler=js,text="Previous"))
 
         key = reports.PAGE_DOWN
-        js = js_code("function() {%s.main.comp.getSelectionModel().selectNext()}" % self.layout.report.row_layout.name)
+        js = js_code("function() {%s.main.comp.getSelectionModel().selectNext()}" % self.layout.link.row_layout.name)
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
@@ -1508,6 +1547,18 @@ class MainPanel(Panel):
     
         
 
+class DialogMainPanel(Panel):
+    value_template = "new Ext.form.FormPanel({ %s })"
+
+    def ext_options(self):
+        d = Panel.ext_options(self)
+        #d.update(title=self.layout.label)
+        #d.update(region='east',split=True) #,width=300)
+        d.update(autoScroll=True)
+        d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
+        d.update(autoHeight=False)
+        return d
+        
 
 
 
@@ -1753,20 +1804,18 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
 
         rpts = [ ReportRenderer(rptclass()) 
             for rptclass in reports.master_reports + reports.slave_reports]
-              
-        #~ for rpt in rpts:
-            #~ for ln in rpt.ext_globals():
-                #~ s += "\n" + ln
-                
         for rpt in rpts:
             for ln in rpt.report.store.js_lines():
                 s += "\n" + ln
-                
-                
         for rpt in rpts:
             for ln in rpt.js_lines():
                 s += "\n" + ln
-                
+        
+        forms = [ FormRenderer(frmclass())
+            for frmclass in layouts.form_layouts ]
+        for frm in forms:
+            for ln in frm.js_lines():
+                s += "\n" + ln
         
         s += """
 Lino.on_load_menu = function(response) {
@@ -1991,14 +2040,18 @@ class ExtUI(reports.UI):
         (models.ManyToManyField, M2mGridElement),
         (models.ForeignKey, ForeignKeyElement),
         (models.AutoField, IntegerFieldElement),
+        (models.EmailField, CharFieldElement),
     )
                 
     def __init__(self):
         #self.StaticText = StaticText
         self.GridElement = GridElement
-        self.MethodElement = MethodElement
+        self.VirtualFieldElement = VirtualFieldElement
+        self.ButtonElement = ButtonElement
         self.Panel = Panel
         self.Store = Store
+        self.StaticTextElement = StaticTextElement
+        self.ActionContext = ActionContext
         
     def field2elem(self,lui,field,**kw):
         for cl,x in self._field2elem:
@@ -2013,7 +2066,9 @@ class ExtUI(reports.UI):
         if isinstance(layout,layouts.RowLayout) : 
             return MainGridElement    
         if isinstance(layout,layouts.PageLayout) : 
-            return MainPanel
+            return ReportMainPanel
+        if isinstance(layout,layouts.DialogLayout) : 
+            return DialogMainPanel
         raise Exception("No element class for layout %r" % layout)
             
 

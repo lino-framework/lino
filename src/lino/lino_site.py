@@ -86,16 +86,7 @@ class PasswordResetForm(forms.Form):
               _("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
         return email
 
-class PasswordResetLayout(layouts.Layout):
-    target = PasswordResetForm
-    main = """
-    intro
-    email
-    """
-    intro = layouts.StaticText("""
-    Please fill in you e-mail adress.
-    We will then send you a mail with a new temporary password.
-    """)
+
 
 class LinoSite:
     help_url = "http://code.google.com/p/lino"
@@ -451,8 +442,10 @@ class LinoSite:
     def add_program_menu(self):
         return
         m = self.add_menu("app","~Application",)
-        m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
-        m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
+        #~ m.add_item(url="/accounts/login/",label="Login",can_view=perms.is_anonymous)
+        #~ m.add_item(url="/accounts/logout/",label="Logout",can_view=perms.is_authenticated)
+        #m.add_item(system.Login(),can_view=perms.is_anonymous)
+        #m.add_item(system.Logout(),can_view=perms.is_authenticated)
         
     def get_menu(self):
         self.setup()

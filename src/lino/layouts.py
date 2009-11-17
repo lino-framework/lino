@@ -22,32 +22,97 @@ from django.conf import settings
 #from django.template.loader import render_to_string
 
 import lino
+from lino.utils import perms, menus
 
-class FormReport:
-    "Wrapper around a Django form to make it usable as report of a PageLayout."
-    def __init__(self,form):
-        self.app_label = form.__module__.split()[-2]
-        self.name = form.name
+class DataLink:
+    def __init__(self,ui,name):
+        self.ui = ui
+        self.name = name
+
+
+class FormLink(DataLink):
+    "Wrapper around a Django form to make it usable as link of a PageLayout."
+    def __init__(self,ui,layout):
+        DataLink.__init__(self,ui,layout.__module__.split('.')[-2] + "_" + layout.name)
+        #self.form = layout.form()
+        self.layout = layout
 
     def get_fields(self):
-        return [ f.name for f in self.form.fields ]
+        for n in dir(self):
+            v = getattr(self,n)
+            if isinstance(v,models.Field):
+                yield v
+        #return [ f.name for f in self.form.fields ]
           
     def get_slave(self,name):
         return None
         
     def try_get_meth(self,name):
-        return None
+        v = getattr(self,name,None)
+        if v is None:
+            return None
+        print type(v)
+        raise NotImplementedError
         
     def try_get_field(self,name):
         try:
-            return self.form[name]
+            v = getattr(self,name,None)
+            if v is None:
+                return None
+            if not isinstance(v,models.Field):
+                return None
+            return v
+            #return self.form.fields[name]
         except KeyError,e:
             pass
 
     def get_title(self,renderer):
-        return self.form.title or self.form.label
+        return self.layout.title or self.layout.label
+        
+        
+        
+form_layouts = []
 
-class Layout:
+def register_layout_class(cls):
+    if cls.__name__ == 'DialogLayout':
+        return
+    lino.log.debug("register_layout_class(%s)", cls)
+    cls.app_label = cls.__module__.split('.')[-2]
+    #~ if cls.form is None:
+        #~ return
+    form_layouts.append(cls)
+    
+def get_form(app_label,name):
+    app = models.get_app(app_label)
+    cls = getattr(app,name,None)
+    if cls is None:
+        return None
+    return cls()
+
+
+def setup():
+    lino.log.debug("Instantiate forms.")
+    
+
+class LayoutMetaClass(type):
+    def __new__(meta, classname, bases, classDict):
+        cls = type.__new__(meta, classname, bases, classDict)
+        register_layout_class(cls)
+        return cls
+
+    def __init__(cls, name, bases, dict):
+        type.__init__(cls,name, bases, dict)
+        cls.instance = None 
+
+    def __call__(cls,*args,**kw):
+        if cls.instance is None:
+            cls.instance = type.__call__(cls,*args, **kw)
+        return cls.instance
+
+
+
+
+class Layout(menus.Actor):
     """
     A Layout specifies how fields of a Report should be arranged when they are
     displayed in a form or a grid. When instanciated, a Layout analyzes its 
@@ -58,18 +123,16 @@ class Layout:
     - ...todo...
     
     """
-    target = None
+    #target = None
     join_str = None # set by subclasses
     label = None
     
+    def __init__(self):
+        menus.Actor.__init__(self)
+        self._handles = {}
     
-    def get_label(self):
-        if self.label is None:
-            return self.__class__.__name__
-        return self.label
-        
-    
-    
+
+
 class RowLayout(Layout):
     label = "List"
     show_labels = False
@@ -95,7 +158,21 @@ class PageLayout(Layout):
         #~ self.main_class = extjs.MainPanel
         #~ Layout.__init__(self,*args,**kw)
     
+class DialogLayout(Layout,menus.Actor):
+    __metaclass__ = LayoutMetaClass
+    #label = "Dialog"
+    show_labels = True
+    join_str = "\n"
+    form = None
+    title = None
+    
+    def cancel(self,context):
+        context.cancel()
         
+    def ok(self,context):
+        pass
+        
+
 class StaticText:
     def __init__(self,text):
           self.text = text
@@ -105,16 +182,15 @@ class StaticText:
 
 class LayoutHandle:
   
-    def __init__(self,report,layout,index,desc=None,main=None):
+    def __init__(self,link,layout,index,desc=None,main=None):
         assert isinstance(layout,Layout)
-        #assert isinstance(report,reports.ReportHandle)
-        self.ui = report.ui
+        #assert isinstance(link,reports.ReportHandle)
+        self.ui = link.ui
         self._ld = layout
-        self.name = report._rd.app_label + "_" + report._rd.name + str(index)
+        self.name = link.name + str(index)
         lino.log.debug('LayoutHandle.__init__(%s)',self.name)
-        self.report = report
+        self.link = link
         self.index = index
-        lino.log.debug("Layout.__init__() : %s", self.name)
         self._store_fields = []
         self.slave_grids = []
         self._store_fields = []
@@ -123,14 +199,14 @@ class LayoutHandle:
             self._main = self.create_element(self._main_class,'main')
         else:
             if desc is None:
-                desc = self._ld.join_str.join(self.report.get_fields())
+                desc = self._ld.join_str.join(self.link.get_fields())
                 self._main = self.desc2elem(self._main_class,"main",desc)
             else:
                 if not isinstance(desc,basestring):
                     raise Exception("%r is not a string" % desc)
                 self._main = self.desc2elem(self._main_class,"main",desc)
         if isinstance(self._ld,RowLayout):
-            assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (report.name,self.ext_name)
+            assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (link.name,self.ext_name)
             self.columns = self._main.elements
                 
         
@@ -150,8 +226,8 @@ class LayoutHandle:
     #~ def renderer(self,rr):
         #~ return LayoutRenderer(self,rr)
         
-    def get_title(self):
-        return self.report._rd.get_title(None) + " - " + self._ld.get_label()
+    def get_title(self,renderer):
+        return self.link.get_title(renderer) + " - " + self._ld.get_label()
         
     def walk(self):
         return self._main.walk()
@@ -197,9 +273,16 @@ class LayoutHandle:
             if value is not None:
                 if type(value) == str:
                     return self.desc2elem(panelclass,name,value,**kw)
-                if isinstance(value,self.StaticText):
-                    return self.ui.StaticText(value)
-        rpt = self.report.get_slave(name)
+                if isinstance(value,StaticText):
+                    return self.ui.StaticTextElement(self,name,value)
+                if isinstance(value,models.Field):
+                    if value.name is None:
+                        value.name = name
+                    return self.create_field_element(value,**kw)
+                if callable(value):
+                    return self.create_meth_element(name,value,**kw)
+                raise ValueError("Cannot handle value %r in %s.%s." % (value,self._ld.name,name))
+        rpt = self.link.get_slave(name)
         if rpt is not None:
             #rpt.setup()
             #slaverpt = slaveclass()
@@ -209,23 +292,33 @@ class LayoutHandle:
             e = self.ui.GridElement(self,name,rpt.get_handle(self.ui),**kw)
             self.slave_grids.append(e)
             return e
-        field = self.report._rd.try_get_field(name)
+        field = self.link.try_get_field(name)
         if field is None:
-            meth = self.report._rd.try_get_meth(name)
+            meth = self.link.try_get_meth(name)
             if meth is not None:
-                e = self.ui.MethodElement(self,name,meth,**kw)
-                assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)
-                self._store_fields.append(e.field)
-                return e
+                return self.create_meth_element(name,meth,**kw)
         else:
-            e = self.ui.field2elem(self,field,**kw)
-            assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)
-            self._store_fields.append(e.field)
-            return e
-            #return FieldElement(self,field,**kw)
+            return self.create_field_element(field,**kw)
         msg = "Unknown element %r referred in layout %s" % (name,self.name)
         #print "[Warning]", msg
         raise KeyError(msg)
+        
+    def create_meth_element(self,name,meth,**kw):
+        rt = getattr(meth,'return_type',None)
+        if rt is None:
+            return self.ui.ButtonElement(self,name,meth,**kw)
+        else:
+            e = self.ui.VirtualFieldElement(self,name,meth,rt,**kw)
+            assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)
+            self._store_fields.append(e.field)
+            return e
+          
+    def create_field_element(self,field,**kw):
+        e = self.ui.field2elem(self,field,**kw)
+        assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)
+        self._store_fields.append(e.field)
+        return e
+        #return FieldElement(self,field,**kw)
         
          
     def splitdesc(self,picture):
