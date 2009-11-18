@@ -511,7 +511,7 @@ def report_factory(model):
 
 class ReportHandle(layouts.DataLink):
     def __init__(self,ui,rd):
-        lino.log.debug('ReportHandle.__init__(%s)',rd)
+        #lino.log.debug('ReportHandle.__init__(%s)',rd)
         layouts.DataLink.__init__(self,ui,rd.app_label + "_" + rd.name)
         assert isinstance(rd,Report)
         assert isinstance(ui,UI)

@@ -29,7 +29,7 @@ import logging
 
 #_log_level = logging.WARNING
 _log_level = logging.INFO
-#_log_level = logging.DEBUG
+_log_level = logging.DEBUG
 
 
 if len(logging.root.handlers) == 0:

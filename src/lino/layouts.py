@@ -126,12 +126,15 @@ class Layout(menus.Actor):
     #target = None
     join_str = None # set by subclasses
     label = None
+    frame = True
+    label_align = 'top'
+    #label_align = 'left'
+    
     
     def __init__(self):
         menus.Actor.__init__(self)
         self._handles = {}
-    
-
+        
 
 class RowLayout(Layout):
     label = "List"
@@ -165,6 +168,7 @@ class DialogLayout(Layout,menus.Actor):
     join_str = "\n"
     form = None
     title = None
+    label_align = 'left'
     
     def cancel(self,context):
         context.cancel()
@@ -187,6 +191,7 @@ class LayoutHandle:
         #assert isinstance(link,reports.ReportHandle)
         self.ui = link.ui
         self._ld = layout
+        self.layout = layout
         if index == 1:
             self.name = link.name
         else:
@@ -202,15 +207,20 @@ class LayoutHandle:
             self._main = self.create_element(self._main_class,'main')
         else:
             if desc is None:
-                desc = self._ld.join_str.join(self.link.get_fields())
+                desc = self.layout.join_str.join(self.link.get_fields())
                 self._main = self.desc2elem(self._main_class,"main",desc)
             else:
                 if not isinstance(desc,basestring):
                     raise Exception("%r is not a string" % desc)
                 self._main = self.desc2elem(self._main_class,"main",desc)
-        if isinstance(self._ld,RowLayout):
+        if isinstance(self.layout,RowLayout):
             assert len(self._main.elements) > 0, "%s : Grid %s has no columns" % (link.name,self.ext_name)
             self.columns = self._main.elements
+            
+        #~ self.width = self.layout.width or self._main.width
+        #~ self.height = self.layout.height or self._main.height
+        self.width = self._main.width
+        self.height = self._main.height
                 
         
             
@@ -229,8 +239,12 @@ class LayoutHandle:
     #~ def renderer(self,rr):
         #~ return LayoutRenderer(self,rr)
         
+    #~ def get_title(self,renderer):
+        #~ return self.link.get_title(renderer) 
+        
     def get_title(self,renderer):
-        return self.link.get_title(renderer) + " - " + self._ld.get_label()
+        return self.link.get_title(renderer) + " - " + self.layout.get_label()
+
         
     def walk(self):
         return self._main.walk()
