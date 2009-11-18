@@ -95,8 +95,8 @@ class LoginAction(reports.Action):
 
 #from django.contrib.auth.forms import AuthenticationForm
 class Login(layouts.DialogLayout):
-    width = 40
-    height = 12
+    #width = 40
+    #height = 12
     #form = AuthenticationForm
     username = models.CharField(verbose_name=_("Username"), max_length=75)    
     password = models.CharField(verbose_name=_("Password"), max_length=75)    
