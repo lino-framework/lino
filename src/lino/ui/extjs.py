@@ -121,8 +121,8 @@ class ReportRenderer:
             for ln in win.js_lines():
                 yield ln
             yield ''
-        
-        
+
+
 class ReportWindowRenderer:
     def __init__(self,layout,**kw):
         assert isinstance(layout,layouts.LayoutHandle)
@@ -209,17 +209,17 @@ class FormRenderer:
         assert isinstance(layout,layouts.DialogLayout)
         self.options = kw
         self.lh = ui.get_form_handle(layout)
-        self.name = layout.name
+        #self.name = self.lh.name
         
     def js_lines(self):
         self.options.update(title=self.lh.get_title(self))
         self.options.update(closeAction='hide')
         self.options.update(maximizable=True)
-        self.options.update(id=self.name)
+        self.options.update(id=self.lh.name)
         self.options.update(layout='fit')
         self.options.update(height=300,width=400)
         self.options.update(items=self.lh._main)
-        yield "var %s = new function() {" % self.name
+        yield "var %s = new function() {" % self.lh.name
         for ln in self.lh._main.js_lines():
             yield "  " + ln
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
@@ -249,7 +249,7 @@ def py2js(v,**kw):
         return py2js(kw)
         
     if isinstance(v,menus.MenuItem):
-        ext_name = v.actor.app_label + "_" + v.actor.name + "1" + ".show"
+        ext_name = v.actor.app_label + "_" + v.actor.name + ".show"
         if v.args:
             handler = "function(btn,evt) {%s(btn,evt,%s);}" % (
                 ext_name,
@@ -799,11 +799,15 @@ class LayoutElement(VisibleComponent):
             an element without explicit width will get flex=1 when in a hbox, otherwise anchor="100%".
             """
             #if isinstance(self.parent,HBOX):
-            assert self.parent is not None, "%s %s : parent is None!?" % (self.__class__.__name__,self.ext_name)
-            if self.parent.vertical:
-                d.update(anchor="100%")
+            #assert self.parent is not None, "%s %s : parent is None!?" % (self.__class__.__name__,self.ext_name)
+            if self.parent is not None:
+                if self.parent.vertical:
+                    d.update(anchor="100%")
+                else:
+                    d.update(flex=1)
             else:
-                d.update(flex=1)
+                lino.log.warning("%s %s : parent is None",self.__class__.__name__,self.ext_name)
+                    
         else:
             d.update(width=self.ext_width())
         if self.height is not None:
@@ -830,10 +834,16 @@ class ButtonElement(LayoutElement):
 
 class StaticTextElement(LayoutElement):
     declare_type = DECLARE_INLINE
+    xtype = 'label'
+    
     def __init__(self,layout,name,text,**kw):
         LayoutElement.__init__(self,layout,name,**kw)
         self.text = text.text
 
+    def get_options(self,**kw):
+        kw = super(StaticTextElement,self).get_options(**kw)
+        kw.update(html=self.text.text)
+        
 class FieldElement(LayoutElement):
     declare_type = DECLARE_THIS
     stored = True
@@ -1785,7 +1795,7 @@ Lino.goto_permalink = function () {
     Ext.WindowMgr.each(function(win){
       if(!win.hidden) {windows+=sep+win.getId();sep=","}
     });
-    document.location = "%s?open=" + windows;
+    document.location = "%s?show=" + windows;
 };""" % uri
 
         s += """
@@ -1856,10 +1866,10 @@ Ext.Ajax.request({
 });"""
         
         s += """
-var windows = Lino.gup('open').split(',');
+var windows = Lino.gup('show').split(',');
 for(i=0;i<windows.length;i++) {
   // console.log(windows[i]);
-  if(windows[i]) eval(windows[i]+"()");
+  if(windows[i]) eval(windows[i]+".show()");
 }
         """
         s += "\n}); // end of onReady()"

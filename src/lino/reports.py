@@ -618,7 +618,7 @@ class UI:
         h = layout._handles.get(self,None)
         if h is None:
             lnk = layouts.FormLink(self,layout)
-            h = layouts.LayoutHandle(lnk,layout,0)
+            h = layouts.LayoutHandle(lnk,layout,1)
             layout._handles[self] = h
             #h.setup()
         return h

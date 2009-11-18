@@ -43,6 +43,7 @@ class Sessions(reports.Report):
 
 
 class PasswordReset(layouts.DialogLayout):
+    width = 50
     title = _("Request Password Reset")
     email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
     #form = PasswordResetForm
@@ -94,6 +95,7 @@ class LoginAction(reports.Action):
 
 #from django.contrib.auth.forms import AuthenticationForm
 class Login(layouts.DialogLayout):
+    width = 50
     #form = AuthenticationForm
     username = models.CharField(verbose_name=_("Username"), max_length=75)    
     password = models.CharField(verbose_name=_("Password"), max_length=75)    
@@ -104,11 +106,12 @@ class Login(layouts.DialogLayout):
     cancel ok
     """
     ok = LoginAction
-    text = layouts.StaticText("Please enter your username and password.")
+    text = layouts.StaticText("Please enter your username and password to authentificate.")
     
 
 
 class Logout(layouts.DialogLayout):
+    width = 50
     form = None
     
 

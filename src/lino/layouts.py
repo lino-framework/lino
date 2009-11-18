@@ -187,7 +187,10 @@ class LayoutHandle:
         #assert isinstance(link,reports.ReportHandle)
         self.ui = link.ui
         self._ld = layout
-        self.name = link.name + str(index)
+        if index == 1:
+            self.name = link.name
+        else:
+            self.name = link.name + str(index)
         lino.log.debug('LayoutHandle.__init__(%s)',self.name)
         self.link = link
         self.index = index
