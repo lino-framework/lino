@@ -104,8 +104,10 @@ class LoginAction(actions.OK):
     
 
 class Login(layouts.DialogLayout):
-    username = models.CharField(verbose_name=_("Username"), max_length=75)    
-    password = models.CharField(verbose_name=_("Password"), max_length=75)    
+    #username = models.CharField(verbose_name=_("Username"), max_length=75)    
+    #password = models.CharField(verbose_name=_("Password"), max_length=75)
+    username = layouts.Input(fieldLabel=_("Username"),maxLength=75)
+    password = layouts.Input(fieldLabel=_("Password"),maxLength=75,inputType='password')
     main = """
     text
     username

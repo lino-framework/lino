@@ -25,6 +25,10 @@ import lino
 from lino.utils import perms, menus
 from lino import actions
 
+class Input:
+    def __init__(self,**kw):
+        self.options = kw
+
 class DataLink:
     "inherited by DialogLink and by ReportHandle"
     def __init__(self,ui,name):
@@ -198,6 +202,7 @@ class LayoutHandle:
         lino.log.debug('LayoutHandle.__init__(%s)',self.name)
         self.link = link
         self.index = index
+        self.inputs = []
         self._store_fields = []
         self.slave_grids = []
         self._store_fields = []
@@ -292,6 +297,10 @@ class LayoutHandle:
                     return self.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,StaticText):
                     return self.ui.StaticTextElement(self,name,value)
+                if isinstance(value,Input):
+                    e = self.ui.InputElement(self,name,value)
+                    self.inputs.append(e)
+                    return e
                 if isinstance(value,models.Field):
                     if value.name is None:
                         value.name = name
@@ -341,7 +350,6 @@ class LayoutHandle:
         return e
         #return FieldElement(self,field,**kw)
         
-         
     def splitdesc(self,picture):
         a = picture.split(":",1)
         if len(a) == 1:

@@ -181,8 +181,11 @@ class DialogRenderer(WindowRenderer):
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
         yield "  this.get_values = function() {"
         yield "    var v = {};"
-        for f in self.lh._store_fields:
-            yield "    v[%r] = %s.comp.get(%r).getValue();" % (f.name,self.lh.name,f.name)
+        yield "    console.log(20091119,%s.main_panel);" % self.lh.name
+        for e in self.lh.inputs:
+            yield "    v[%r] = %s.main_panel.getForm().findField(%r).getValue();" % (e.name,self.lh.name,e.name)
+        #~ for f in self.lh._store_fields:
+            #~ yield "    v[%r] = %s.main_panel.getForm().findField(%r).getValue();" % (f.name,self.lh.name,f.name)
         yield "    return v;"
         yield "  };"
         yield "  this.show = function(btn,event) {"
@@ -781,6 +784,8 @@ class LayoutElement(VisibleComponent):
             kw.update(width=self.ext_width())
         if self.height is not None:
             kw.update(height=(self.height+2) * EXT_CHAR_HEIGHT)
+        if self.xtype is not None:
+            kw.update(xtype=self.xtype)
         return kw
         
     def ext_width(self):
@@ -790,6 +795,24 @@ class LayoutElement(VisibleComponent):
         return max(self.width,self.label_width) * EXT_CHAR_WIDTH + self.xpadding
         #return (self.width + self.label_width) * EXT_CHAR_WIDTH + self.xpadding
         
+class InputElement(LayoutElement):
+    declare_type = DECLARE_THIS
+    name_suffix = "_input"
+    xtype = 'textfield'
+    preferred_height = 2
+    
+    def __init__(self,lh,name,input,**kw):
+        lino.log.debug("InputElement.__init__(%r,%r,%r)",lh,name,input)
+        LayoutElement.__init__(self,lh,name,**kw)
+        assert isinstance(lh.layout,layouts.DialogLayout), "%s is not a DialogLayout" % lh.name
+        self.input = input
+        
+    def ext_options(self,**kw):
+        kw = LayoutElement.ext_options(self,**kw)
+        kw.update(self.input.options)
+        kw.update(name=self.name)
+        #kw.update(xtype='textfield')
+        return kw
         
 class ButtonElement(LayoutElement):
     declare_type = DECLARE_THIS
@@ -806,7 +829,7 @@ class ButtonElement(LayoutElement):
     def ext_options(self,**kw):
         #kw = super(StaticTextElement,self).ext_options(**kw)
         kw = LayoutElement.ext_options(self,**kw)
-        kw.update(xtype=self.xtype)
+        #kw.update(xtype=self.xtype)
         kw.update(text=self.action.label or self.name)
         kw.update(handler=js_code('Lino.dialog_action(this,%r,%r)' % (
           self.name,self.lh.ui.get_action_url(self))))
@@ -824,7 +847,7 @@ class StaticTextElement(LayoutElement):
     def ext_options(self,**kw):
         #kw = super(StaticTextElement,self).ext_options(**kw)
         kw = LayoutElement.ext_options(self,**kw)
-        kw.update(xtype=self.xtype)
+        #kw.update(xtype=self.xtype)
         kw.update(html=self.text.text)
         return kw
         
@@ -2084,11 +2107,12 @@ class ExtUI(reports.UI):
         self.Store = Store
         self.StaticTextElement = StaticTextElement
         self.ActionContext = ActionContext
+        self.InputElement = InputElement
         
-    def field2elem(self,lui,field,**kw):
+    def field2elem(self,lh,field,**kw):
         for cl,x in self._field2elem:
             if isinstance(field,cl):
-                return x(lui,field,**kw)
+                return x(lh,field,**kw)
         if True:
             raise NotImplementedError("field %s (%s)" % (field.name,field.__class__))
         lino.log.warning("No LayoutElement for %s",field.__class__)
