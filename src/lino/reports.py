@@ -48,6 +48,7 @@ def get_app(app_label):
 
 import lino
 from lino import layouts
+from lino import actions
 from lino.utils import perms, menus
 
 def base_attrs(cl):
@@ -61,84 +62,6 @@ def base_attrs(cl):
             yield k
             
             
-    
-class Hotkey:
-    keycode = None
-    shift = False
-    ctrl = False
-    alt = False
-    inheritable = ('keycode','shift','ctrl','alt')
-    def __init__(self,**kw):
-        for k,v in kw.items():
-            setattr(self,k,v)
-            
-    def __call__(self,**kw):
-        for n in self.inheritable:
-            if not kw.has_key(n):
-                kw[n] = getattr(self,n)
-            return Hotkey(**kw)
-      
-RETURN = Hotkey(keycode=13)
-ESCAPE = Hotkey(keycode=27)
-PAGE_UP  = Hotkey(keycode=33)
-PAGE_DOWN = Hotkey(keycode=34)
-DELETE = Hotkey(keycode=46)
-    
-class ActionEvent(Exception):
-    pass
-    
-#~ class MustConfirm(ActionEvent):
-    #~ pass
-    
-class Action:
-    label = None
-    name = None
-    key = None
-    needs_selection = True
-    
-    def __init__(self,report):
-        if self.label is None:
-            self.label = self.__class__.__name__
-        if self.name is None:
-            self.name = self.label
-        self.report = report
-        
-        
-    def get_response(self,rptreq):
-        context = rptreq.report.ui.ActionContext(self,rptreq)
-        #context = self.report.ui.ActionContext(self,rptreq)
-        if self.needs_selection and len(context.selected_rows) == 0:
-            context._response.update(
-              msg="No selection. Nothing to do.",
-              success=False)
-        else:
-            try:
-                self.run(context)
-            except ActionEvent,e:
-                pass
-            except Exception,e:
-                traceback.print_exc(e)
-                context._response.update(msg=str(e),success=False)
-        return context._response
-      
-        
-    def run(self,context):
-        raise NotImplementedError
-        
-class DeleteSelected(Action):
-    label = "Delete"
-    key = DELETE # (ctrl=True)
-    
-    def run(self,context):
-        if len(context.selected_rows) == 1:
-            context.confirm("Delete row %s. Are you sure?" % context.selected_rows[0])
-        else:
-            context.confirm("Delete %d rows. Are you sure?" % len(context.selected_rows))
-        for row in context.selected_rows:
-            #print "DELETE:", row
-            row.delete()
-        context.refresh()
-
     
 
 
@@ -317,7 +240,7 @@ class Report(menus.Actor):
 
     typo_check = True
     url = None
-    actions = [ DeleteSelected ]
+    actions = []
     
     def __init__(self):
         menus.Actor.__init__(self)
@@ -328,6 +251,7 @@ class Report(menus.Actor):
         self._handles = {}
         self._setup_done = False
         self._setup_doing = False
+        self.actions = self.actions + [ actions.DeleteSelected() ]
         
         #self.setup()
         
@@ -350,7 +274,7 @@ class Report(menus.Actor):
             self.fk = _get_foreign_key(self.master,self.model,self.fk_name)
             #self.name = self.fk.rel.related_name
         
-        self._actions = [cl(self) for cl in self.actions]
+        #self._actions = [cl(self) for cl in self.actions]
         
         setup = getattr(self.model,'setup_report',None)
         if setup:
@@ -404,10 +328,11 @@ class Report(menus.Actor):
         #l = self.slaves() # to populate
         #return self._slaves.get(name,None)
         
-    def add_actions(self,*more_actions):
+    def add_actions(self,*args):
         "May be used in Model.setup_report() to specify actions for each report which uses this model."
-        for cl in more_actions:
-            self._actions.append(cl(self))
+        self.actions += args
+        #~ for a in more_actions:
+            #~ self._actions.append(a)
         
     #~ def unused_ext_components(self):
         #~ if len(self.store.layouts) == 2:
@@ -614,10 +539,11 @@ class UI:
             h.setup()
         return h
         
-    def get_form_handle(self,layout):
+    def get_dialog_handle(self,layout):
+        assert isinstance(layout,layouts.DialogLayout)
         h = layout._handles.get(self,None)
         if h is None:
-            lnk = layouts.FormLink(self,layout)
+            lnk = layouts.DialogLink(self,layout)
             h = layouts.LayoutHandle(lnk,layout,1)
             layout._handles[self] = h
             #h.setup()

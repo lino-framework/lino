@@ -19,6 +19,7 @@ from django.utils.translation import ugettext as _
 
 from lino import reports
 from lino import layouts
+from lino import actions
 from lino.utils import perms
 
 
@@ -41,6 +42,9 @@ class Sessions(reports.Report):
     display_field = 'session_key'
 
 
+class PasswordResetAction(actions.OK):
+    def run(self,context):
+        context.error('not implemented')
 
 class PasswordReset(layouts.DialogLayout):
     width = 50
@@ -56,12 +60,18 @@ class PasswordReset(layouts.DialogLayout):
     Please fill in you e-mail adress.
     We will then send you a mail with a new temporary password.
     """)
+    ok = PasswordResetAction()
     
     
 
-class LoginAction(reports.Action):
+class LoginAction(actions.OK):
+  
     label = _("Login")
+    
     def run(self,context):
+        raise NotImplementedError()
+        
+    def unused(self):
         redirect_to = request.REQUEST.get(redirect_field_name, '')
         if request.method == "POST":
             form = AuthenticationForm(data=request.POST)
@@ -93,11 +103,7 @@ class LoginAction(reports.Action):
             context_instance=RequestContext(request))
     
 
-#from django.contrib.auth.forms import AuthenticationForm
 class Login(layouts.DialogLayout):
-    #width = 40
-    #height = 12
-    #form = AuthenticationForm
     username = models.CharField(verbose_name=_("Username"), max_length=75)    
     password = models.CharField(verbose_name=_("Password"), max_length=75)    
     main = """
@@ -106,14 +112,13 @@ class Login(layouts.DialogLayout):
     password
     cancel ok
     """
-    ok = LoginAction
+    ok = LoginAction()
     text = layouts.StaticText("Please enter your username and password to authentificate.")
     
 
 
 class Logout(layouts.DialogLayout):
     width = 50
-    form = None
     
 
 

@@ -43,7 +43,8 @@ if False:
     except ImportError:
         appy_pod = None
 
-from lino import reports        
+from lino import reports
+from lino import actions
 
 
 class DocumentError(Exception):
@@ -175,22 +176,22 @@ class AbstractDocument(models.Model):
             
     @classmethod
     def setup_report(cls,rpt):
-        rpt.add_actions(PrintAction,PdfAction)
+        rpt.add_actions(PrintAction(),PdfAction())
         
     
-class PrintAction(reports.Action):
+class PrintAction(actions.Action):
     label = "Print"
     def run(self,context):
         row = context.selected_rows[0].get_child_instance()
-        context._response.update(window=dict(
+        context.show_window(
           title="Printable view",
           maximizable=True,
           html=row.make_pisa_html()
-          ))
+          )
         #context._response.update(html=row.make_pisa_html())
         #return row.view_printable(context.request)
 
-class PdfAction(reports.Action):
+class PdfAction(actions.Action):
     label = "PDF"
     def run(self,context):
         row = context.selected_rows[0].get_child_instance()

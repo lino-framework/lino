@@ -20,9 +20,11 @@ from django.db import models
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import simplejson
+from django.utils.translation import ugettext as _
 
 import lino
 from lino import reports
+from lino import actions
 from lino import layouts
 from lino.utils import menus
 
@@ -49,44 +51,22 @@ def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
       
       
-class ActionContext:
-    def __init__(self,action,rptreq):
-        self.request = rptreq.request
+class ActionContext(actions.ActionContext):
+    def __init__(self,action,request,rh=None):
+        actions.ActionContext.__init__(self,ui,action)
+        self.request = request
         selected = self.request.POST.get('selected',None)
         if selected:
             self.selected_rows = [
-              rptreq.report._rd.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+              rh._rd.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
         else:
             self.selected_rows = []
         self.confirmed = self.request.POST.get('confirmed',None)
         if self.confirmed is not None:
             self.confirmed = int(self.confirmed)
         self.confirms = 0
-        self._response = dict(success=True,must_reload=False,msg=None)
+        self.response = dict(success=True,must_reload=False,msg=None)
         #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
-        
-    def refresh(self):
-        self._response.update(must_reload=True)
-        
-    def redirect(self,url):
-        self._response.update(redirect=url)
-        
-    def setmsg(self,msg=None):
-        if msg is not None:
-            self._reponse.update(msg=msg)
-        
-    def error(self,msg=None):
-        self._response.update(success=False)
-        self.setmsg(msg)
-        raise ActionEvent() # MustConfirm(msg)
-        
-    def confirm(self,msg):
-        #print "ActionContext.confirm()", msg
-        self.confirms += 1
-        if self.confirmed >= self.confirms:
-            return
-        self._response.update(confirm=msg,success=False)
-        raise ActionEvent() # MustConfirm(msg)
         
       
 
@@ -183,30 +163,30 @@ class ReportWindowRenderer(WindowRenderer):
         
         
 
-class FormRenderer(WindowRenderer):
+class DialogRenderer(WindowRenderer):
+  
     def __init__(self,layout,**kw):
-        assert isinstance(layout,layouts.DialogLayout)
-        lh = ui.get_form_handle(layout)
+        lh = ui.get_dialog_handle(layout)
         WindowRenderer.__init__(self,lh,**kw)
-        #self.name = self.lh.name
         
     def js_lines(self):
-        #~ self.options.update(title=self.lh.get_title(self))
-        #~ self.options.update(closeAction='hide')
-        #~ self.options.update(maximizable=True)
-        #~ self.options.update(id=self.lh.name)
-        #~ self.options.update(layout='fit')
-        #~ if self.lh.height is not None:
-            #~ self.options.update(height=self.lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
-        #~ if self.lh.width is not None:
-            #~ self.options.update(width=self.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
-        #~ self.options.update(items=self.lh._main)
         yield "var %s = new function() {" % self.lh.name
+        #~ for b in self.lh._buttons:
+            #~ yield "  this.%s_handler = function(btn,event) {" % b.name
+            #~ yield "    console.log(20091119, '%s',this);"  % b.name
+            #~ yield "    %s.comp.hide();" % self.name
+            #~ yield "  };"
         for ln in self.lh._main.js_lines():
             yield "  " + ln
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
+        yield "  this.get_values = function() {"
+        yield "    var v = {};"
+        for f in self.lh._store_fields:
+            yield "    v[%r] = %s.comp.get(%r).getValue();" % (f.name,self.lh.name,f.name)
+        yield "    return v;"
+        yield "  };"
         yield "  this.show = function(btn,event) {"
-        yield "    console.log('show',this);" 
+        #yield "    console.log('show',this);" 
         #yield "    %s.load();" % self.store.as_ext()
         yield "    this.comp.show();"
         yield "  };"
@@ -299,6 +279,13 @@ def list_report_view(request,**kw):
     kw['simple_list'] = True
     return json_report_view(request,**kw)
     
+def dialog_action_view(request,app_label=None,dlgname=None,actname=None,**kw):
+    dlg = layouts.get_dialog(app_label,dlgname)
+    action = getattr(dlg,actname)
+    context = ActionContext(action,request)
+    context.run()
+    return json_response(**context.response)
+
 def json_report_view(request,app_label=None,rptname=None,
                      action=None,colname=None,simple_list=False):
     rpt = reports.get_report(app_label,rptname)
@@ -309,15 +296,17 @@ def json_report_view(request,app_label=None,rptname=None,
         return json_response(success=False,
             msg="User %s cannot view %s : " % (request.user,rptname))
     rh = rpt.get_handle(ui)
-    rptreq = ViewReportRequest(request,rh)
     if action:
-        for a in rpt._actions:
+        for a in rpt.actions:
             if a.name == action:
-                d = a.get_response(rptreq)
-                return json_response(**d)
+                context = ActionContext(a,request,rh)
+                context.run()
+                #d = a.get_response(rptreq)
+                return json_response(**context.response)
         return json_response(
             success=False,
             msg="Report %r has no action %r" % (rpt.name,action))
+    rptreq = ViewReportRequest(request,rh)
     if simple_list:
         d = rptreq.render_to_json()
         return json_response(**d)
@@ -704,16 +693,16 @@ class LayoutElement(VisibleComponent):
     preferred_height = 2
     xtype = None # set by subclasses
     
-    def __init__(self,layout,name,**kw):
+    def __init__(self,lh,name,**kw):
         #print "Element.__init__()", layout,name
         #self.parent = parent
         VisibleComponent.__init__(self,name,**kw)
-        self.layout = layout
-        if layout is not None:
-            assert isinstance(layout,layouts.LayoutHandle)
+        self.lh = lh
+        if lh is not None:
+            assert isinstance(lh,layouts.LayoutHandle)
             #assert isinstance(layout,Layout), "%r is not a Layout" % layout
             #self.ext_name = layout.name + "_" + name + self.ext_suffix
-            self.ext_name = name
+            #self.ext_name = name
             #~ if self.declared:
                 #~ self.layout.report.add_variable(self)
                 
@@ -808,24 +797,28 @@ class ButtonElement(LayoutElement):
     xtype = 'button'
     preferred_height = 1
 
-    def __init__(self,layout,name,meth,**kw):
-        assert isinstance(layout,layouts.LayoutHandle)
-        LayoutElement.__init__(self,layout,name,**kw)
-        self.meth = meth
+    def __init__(self,lh,name,action,**kw):
+        lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
+        LayoutElement.__init__(self,lh,name,**kw)
+        assert isinstance(lh.layout,layouts.DialogLayout), "%s is not a DialogLayout" % lh.name
+        self.action = action
         
     def ext_options(self,**kw):
         #kw = super(StaticTextElement,self).ext_options(**kw)
         kw = LayoutElement.ext_options(self,**kw)
         kw.update(xtype=self.xtype)
-        kw.update(text=self.name)
+        kw.update(text=self.action.label or self.name)
+        kw.update(handler=js_code('Lino.dialog_action(this,%r,%r)' % (
+          self.name,self.lh.ui.get_action_url(self))))
         return kw
+
 
 class StaticTextElement(LayoutElement):
     declare_type = DECLARE_THIS
     xtype = 'label'
     
-    def __init__(self,layout,name,text,**kw):
-        LayoutElement.__init__(self,layout,name,**kw)
+    def __init__(self,lh,name,text,**kw):
+        LayoutElement.__init__(self,lh,name,**kw)
         self.text = text
 
     def ext_options(self,**kw):
@@ -841,9 +834,9 @@ class FieldElement(LayoutElement):
     #declaration_order = 3
     name_suffix = "_field"
     
-    def __init__(self,layout,field,**kw):
+    def __init__(self,lh,field,**kw):
         assert field.name, Exception("field %r has no name!" % field)
-        LayoutElement.__init__(self,layout,field.name,label=field.verbose_name,**kw)
+        LayoutElement.__init__(self,lh,field.name,label=field.verbose_name,**kw)
         self.field = field
         self.editable = field.editable and not field.primary_key
         
@@ -942,8 +935,8 @@ class ForeignKeyElement(FieldElement):
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
-        rd = self.layout.link.get_field_choices(self.field)
-        self.report = rd.get_handle(self.layout.ui)
+        rd = self.lh.link.get_field_choices(self.field)
+        self.report = rd.get_handle(self.lh.ui)
         #~ if self.editable:
             #~ setup_report(self.choice_report)
             #self.store = rpt.choice_store
@@ -1006,7 +999,7 @@ class DateFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='datecolumn')
-        kw.update(format=self.layout.link._rd.date_format)
+        kw.update(format=self.lh.link._rd.date_format)
         return kw
     
 class IntegerFieldElement(FieldElement):
@@ -1049,9 +1042,9 @@ class BooleanFieldElement(FieldElement):
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         kw.update(xtype='booleancolumn')
-        kw.update(trueText=self.layout.link._rd.boolean_texts[0])
-        kw.update(falseText=self.layout.link._rd.boolean_texts[1])
-        kw.update(undefinedText=self.layout.link._rd.boolean_texts[2])
+        kw.update(trueText=self.lh.link._rd.boolean_texts[0])
+        kw.update(falseText=self.lh.link._rd.boolean_texts[1])
+        kw.update(undefinedText=self.lh.link._rd.boolean_texts[2])
         return kw
         
     def update_from_form(self,instance,values):
@@ -1066,18 +1059,13 @@ class VirtualFieldElement(FieldElement):
     stored = True
     editable = False
 
-    def __init__(self,layout,name,meth,return_type,**kw):
-        assert isinstance(layout,layouts.LayoutHandle)
+    def __init__(self,lh,name,meth,return_type,**kw):
+        assert isinstance(lh,layouts.LayoutHandle)
         # uh, this is tricky...
-        #self.meth = meth
-        field = return_type
-        field = getattr(meth,'return_type',None)
-        #~ if field is None:
-            #~ field = models.TextField(max_length=200)
-        field.name = name
-        field._return_type_for_method = meth
-        FieldElement.__init__(self,layout,field)
-        delegate = layout.ui.field2elem(layout,field,**kw)
+        return_type.name = name
+        return_type._return_type_for_method = meth
+        FieldElement.__init__(self,lh,return_type)
+        delegate = lh.ui.field2elem(lh,return_type,**kw)
         for a in ('ext_width','ext_options',
           'get_column_options','get_field_options'):
             setattr(self,a,getattr(delegate,a))
@@ -1123,10 +1111,10 @@ class Container(LayoutElement):
             #~ else:
                 #~ self.elements.append(elem)
         if self.__class__ is MainGridElement:
-            lino.log.debug("%s.%s before compute_size:w=%r,h=%r",self.layout.name,self.name,self.width,self.height)
+            lino.log.debug("%s.%s before compute_size:w=%r,h=%r",self.lh.name,self.name,self.width,self.height)
         self.compute_size()
         if self.__class__ is MainGridElement:
-            lino.log.debug("%s.%s after compute_size:w=%r,h=%r",self.layout.name,self.name,self.width,self.height)
+            lino.log.debug("%s.%s after compute_size:w=%r,h=%r",self.lh.name,self.name,self.width,self.height)
         
         # some more analysis:
         for e in self.elements:
@@ -1145,7 +1133,7 @@ class Container(LayoutElement):
                 remove e's width to avoid padding differences.
                 """
                 e.width = None
-        #lino.log.debug("%s.%s %s : elements = %s",self.layout.name,self.__class__.__name__,self.name,self.elements)
+        #lino.log.debug("%s.%s %s : elements = %s",self.lh.name,self.__class__.__name__,self.name,self.elements)
                 
     def compute_size(self):
         """
@@ -1276,9 +1264,9 @@ class Container(LayoutElement):
 class Panel(Container):
     ext_suffix = "_panel"
         
-    def __init__(self,layout,name,vertical,*elements,**kw):
+    def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
-        Container.__init__(self,layout,name,*elements,**kw)
+        Container.__init__(self,lh,name,*elements,**kw)
         
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
@@ -1297,8 +1285,8 @@ class Panel(Container):
 
 class TabPanel(Container):
     value_template = "new Ext.TabPanel({ %s })"
-    def __init__(self,layout,name,*elements,**options):
-        Container.__init__(self,layout,name,*elements,**options)
+    def __init__(self,lh,name,*elements,**options):
+        Container.__init__(self,lh,name,*elements,**options)
         #~ self.layouts = layouts
         self.width = self.elements[0].ext_width() or 300
     
@@ -1324,7 +1312,7 @@ class GridElement(Container):
     def __init__(self,lh,name,rh,*elements,**kw):
         assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
         """
-        Note: lh is the owning layout's handle. 
+        Note: lh is the owning layout handle. 
         In case of a slave grid, lh.layout.report is the master.
         """
         if len(elements) == 0:
@@ -1342,7 +1330,7 @@ class GridElement(Container):
         #setup_report(self.report)
         keys = []
         buttons = []
-        for a in self.report._rd._actions:
+        for a in self.report._rd.actions:
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
                   a.name, 
                   self.report.store.get_absolute_url(action=a.name)))
@@ -1352,7 +1340,7 @@ class GridElement(Container):
                   handler=h,
                   key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
         # the first detail window can be opend with Ctrl+ENTER 
-        key = reports.RETURN(ctrl=True)
+        key = actions.RETURN(ctrl=True)
         layout = self.report.layouts[2]
         keys.append(dict(
           handler=js_code("Lino.show_detail(this,%r)" % layout.name),
@@ -1364,7 +1352,7 @@ class GridElement(Container):
               text=layout._ld.label))
               
         for sl in self.report._rd._slaves:
-            slave = sl.get_handle(self.layout.ui)
+            slave = sl.get_handle(self.lh.ui)
             buttons.append(dict(
               handler=js_code("Lino.show_slave(this,%r)" % slave.row_layout.name),
               text = slave._rd.label,
@@ -1448,10 +1436,10 @@ class M2mGridElement(GridElement):
 
   
 class MainGridElement(GridElement):
-    def __init__(self,layout,name,vertical,*elements,**kw):
+    def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
-        #layout.report.setup()
-        GridElement.__init__(self,layout,name,layout.link,*elements,**kw)
+        #lh.report.setup()
+        GridElement.__init__(self,lh,name,lh.link,*elements,**kw)
         #~ if self.height is None:
             #~ self.height = self.preferred_height
         #~ if self.width is None:
@@ -1492,9 +1480,9 @@ function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
 
 class ReportMainPanel(Panel):
     value_template = "new Ext.form.FormPanel({ %s })"
-    def __init__(self,layout,name,vertical,*elements,**kw):
-        self.report = layout.link
-        Panel.__init__(self,layout,name,vertical,*elements,**kw)
+    def __init__(self,lh,name,vertical,*elements,**kw):
+        self.report = lh.link
+        Panel.__init__(self,lh,name,vertical,*elements,**kw)
         self.height += 6
         self.width += 4
         
@@ -1525,13 +1513,13 @@ class ReportMainPanel(Panel):
     def js_lines(self):
         for ln in Panel.js_lines(self):
             yield ln
-        yield "%s.main.comp.getSelectionModel().addListener('rowselect'," % self.layout.link.row_layout.name
+        yield "%s.main_grid.comp.getSelectionModel().addListener('rowselect'," % self.lh.link.row_layout.name
         yield "  function(sm,rowIndex,record) { "
         #yield "    console.log(this);"
-        name = self.layout.name
-        yield "    %s.main.form._lino_pk = record.data.id;" % name
-        yield "    %s.main.form.loadRecord(record);" % name
-        for slave in self.layout.slave_grids:
+        name = self.lh.name + '.' + self.lh._main.ext_name
+        yield "    %s.form._lino_pk = record.data.id;" % name
+        yield "    %s.form.loadRecord(record);" % name
+        for slave in self.lh.slave_grids:
             yield "  %s.load({params: { master: record.data.%s } });" % (
                  slave.report.store.as_ext(),
                  self.report.store.pk.name)
@@ -1539,11 +1527,11 @@ class ReportMainPanel(Panel):
         
         #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
-        #~ for slave in self.layout.slave_grids:
+        #~ for slave in self.lh.slave_grids:
             #~ yield "  %s.load({params: { master: rows[0].data['%s'] } });" % (
                  #~ slave.report.store.ext_name,
                  #~ self.report.store.pk.name)
-                 #~ #slave.store.name,request._lino_report.layout.pk.name)
+                 #~ #slave.store.name,request._lino_report.lh.pk.name)
         #~ yield "});"
         
         
@@ -1551,15 +1539,16 @@ class ReportMainPanel(Panel):
         keys = []
         buttons = []
 
-        key = reports.PAGE_UP
-        js = js_code("function() {%s.main.comp.getSelectionModel().selectPrevious()}" % self.layout.link.row_layout.name)
+        main_name = self.lh.link.row_layout.name + '.' + 'main_grid'
+        key = actions.PAGE_UP
+        js = js_code("function() {%s.comp.getSelectionModel().selectPrevious()}" % main_name)
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
         buttons.append(dict(handler=js,text="Previous"))
 
-        key = reports.PAGE_DOWN
-        js = js_code("function() {%s.main.comp.getSelectionModel().selectNext()}" % self.layout.link.row_layout.name)
+        key = actions.PAGE_DOWN
+        js = js_code("function() {%s.comp.getSelectionModel().selectNext()}" % main_name)
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
@@ -1585,7 +1574,7 @@ class DialogMainPanel(Panel):
 
     def ext_options(self):
         d = Panel.ext_options(self)
-        #d.update(title=self.layout.label)
+        #d.update(title=self.lh.label)
         #d.update(region='east',split=True) #,width=300)
         d.update(autoScroll=True)
         d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
@@ -1745,6 +1734,47 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
   }
 };
 
+Lino.do_action = function(url,name,params,reload,close_dialog) {
+  console.log('Lino.do_action()',name,params,reload);
+  var doit = function(confirmed) {
+    params['confirmed'] = confirmed;
+    Ext.Ajax.request({
+      waitMsg: 'Running action "' + name + '". Please wait...',
+      url: url,
+      params: params, 
+      success: function(response){
+        // console.log('raw response:',response.responseText);
+        var result = Ext.decode(response.responseText);
+        // console.log('got response:',result);
+        if(result.success) {
+          if (result.msg) Ext.MessageBox.alert('success',result.msg);
+          if (result.html) { new Ext.Window({html:result.html}).show(); };
+          if (result.window) { new Ext.Window(result.window).show(); };
+          if (result.redirect) { window.open(result.redirect); };
+          if (result.must_reload) reload();
+        } else {
+          if(result.confirm) Ext.Msg.show({
+            title: 'Confirmation',
+            msg: result.confirm,
+            buttons: Ext.Msg.YESNOCANCEL,
+            fn: function(btn) {
+              if (btn == 'yes') {
+                  // console.log(btn);
+                  doit(confirmed+1);
+              }
+            }
+          })
+        }
+        if (result.close_dialog && close_dialog) close_dialog();
+      },
+      failure: function(response){
+        // console.log(response);
+        Ext.MessageBox.alert('error','Could not connect to the server.');
+      }
+    });
+  };
+  doit(0);
+};
 
 Lino.grid_action = function(gridwin,name,url) {
   // console.log("grid_action.this=",this);
@@ -1759,42 +1789,7 @@ Lino.grid_action = function(gridwin,name,url) {
     var sels = gridwin.comp.getSelectionModel().getSelections();
     // console.log(sels);
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
-    var doit = function(confirmed) {
-      Ext.Ajax.request({
-        waitMsg: 'Running action "' + name + '". Please wait...',
-        url: url,
-        params: { confirmed:confirmed,selected:sel_pks }, 
-        success: function(response){
-          // console.log('raw response:',response.responseText);
-          var result = Ext.decode(response.responseText);
-          // console.log('got response:',result);
-          if(result.success) {
-            if (result.msg) Ext.MessageBox.alert('success',result.msg);
-            if (result.html) { new Ext.Window({html:result.html}).show(); };
-            if (result.window) { new Ext.Window(result.window).show(); };
-            if (result.redirect) { window.open(result.redirect); };
-            if (result.must_reload) gridwin.comp.getStore().load(); 
-          } else {
-            if(result.confirm) Ext.Msg.show({
-              title: 'Confirmation',
-              msg: result.confirm,
-              buttons: Ext.Msg.YESNOCANCEL,
-              fn: function(btn) {
-                if (btn == 'yes') {
-                    // console.log(btn);
-                    doit(confirmed+1);
-                }
-              }
-            })
-          }
-        },
-        failure: function(response){
-          // console.log(response);
-          Ext.MessageBox.alert('error','Could not connect to the server.');
-        }
-      });
-    };
-    doit(0);
+    Lino.do_action(url,name,{selected:sel_pks},function() {gridwin.comp.getStore().load()});
   };
 };"""
         uri = request.build_absolute_uri()
@@ -1830,6 +1825,14 @@ Lino.show_detail = function (grid,wrappername) {
   }
 };
 
+Lino.dialog_action = function (dlg,name,url) { 
+  return function(btn,evt) {
+    console.log('dialog_action()',dlg,name);
+    v = dlg.get_values();
+    Lino.do_action(url,name,v,undefined,function() {dlg.comp.hide()});
+  }
+};
+
 Lino.main_menu = {};
 
 // Path to the blank image should point to a valid location on your server
@@ -1844,10 +1847,10 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
             for ln in rpt.js_lines():
                 s += "\n" + ln
         
-        forms = [ FormRenderer(frmclass())
-            for frmclass in layouts.form_layouts ]
-        for frm in forms:
-            for ln in frm.js_lines():
+        dialogs = [ DialogRenderer(dlgclass())
+            for dlgclass in layouts.dialogs ]
+        for dlg in dialogs:
+            for ln in dlg.js_lines():
                 s += "\n" + ln
         
         s += """
@@ -1972,10 +1975,6 @@ class ViewReportRequest(reports.ReportRequest):
             kw.update(sort=self.sort_column)
         if self.sort_direction is not None:
             kw.update(dir=self.sort_direction)
-        #if self.layout.index != 0:
-        #    kw.update(layout=self.layout.index)
-        #~ if self.mode is not None:
-            #~ kw.update(mode=self.mode)
         return self.report.get_absolute_url(**kw)
 
     #~ def unused_render_to_html(self):
@@ -2139,10 +2138,18 @@ class ExtUI(reports.UI):
             (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
+            (r'^dialog_action/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_action_view),
             
         )
 
-    def get_report_url(self,report,master_instance=None,
+    def get_action_url(self,btn,**kw):
+        layout = btn.lh.layout
+        url = "/dialog_action/" + layout.app_label + "/" + layout.name + "/" + btn.name
+        if len(kw):
+            url += "?"+urlencode(kw)
+        return url
+        
+    def get_report_url(self,rh,master_instance=None,
             simple_list=False,submit=False,grid_afteredit=False,action=None,**kw):
         if simple_list:
             url = "/list/"
@@ -2155,7 +2162,7 @@ class ExtUI(reports.UI):
         else:
             raise "one of json, save or action must be True"
             #url = "/r/"
-        url += report._rd.app_label + "/" + report._rd.name
+        url += rh._rd.app_label + "/" + rh._rd.name
         if action:
             url += "/" + action
         #~ app_label = report.__class__.__module__.split('.')[-2]

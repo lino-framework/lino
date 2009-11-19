@@ -23,15 +23,17 @@ from django.conf import settings
 
 import lino
 from lino.utils import perms, menus
+from lino import actions
 
 class DataLink:
+    "inherited by DialogLink and by ReportHandle"
     def __init__(self,ui,name):
         self.ui = ui
         self.name = name
 
 
-class FormLink(DataLink):
-    "Wrapper around a Django form to make it usable as link of a PageLayout."
+class DialogLink(DataLink):
+    "Wrapper around a DialogLayout to make it usable as link of a LayoutHandle."
     def __init__(self,ui,layout):
         DataLink.__init__(self,ui,layout.__module__.split('.')[-2] + "_" + layout.name)
         #self.form = layout.form()
@@ -71,18 +73,18 @@ class FormLink(DataLink):
         
         
         
-form_layouts = []
+dialogs = []
 
-def register_layout_class(cls):
+def register_dialog_class(cls):
     if cls.__name__ == 'DialogLayout':
         return
     lino.log.debug("register_layout_class(%s)", cls)
     cls.app_label = cls.__module__.split('.')[-2]
     #~ if cls.form is None:
         #~ return
-    form_layouts.append(cls)
+    dialogs.append(cls)
     
-def get_form(app_label,name):
+def get_dialog(app_label,name):
     app = models.get_app(app_label)
     cls = getattr(app,name,None)
     if cls is None:
@@ -94,10 +96,10 @@ def setup():
     lino.log.debug("Instantiate forms.")
     
 
-class LayoutMetaClass(type):
+class DialogLayoutMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         cls = type.__new__(meta, classname, bases, classDict)
-        register_layout_class(cls)
+        register_dialog_class(cls)
         return cls
 
     def __init__(cls, name, bases, dict):
@@ -115,7 +117,9 @@ class LayoutMetaClass(type):
 class Layout(menus.Actor):
     """
     A Layout specifies how fields of a Report should be arranged when they are
-    displayed in a form or a grid. When instanciated, a Layout analyzes its 
+    displayed in a form or a grid. 
+    
+    Each Layout will hold LayoutHandle will analyzes her Layout's
     "descriptor" and builds a tree of LayoutElements. 
     
     A layout descriptor is a plain text with some simple rules:
@@ -130,11 +134,11 @@ class Layout(menus.Actor):
     label_align = 'top'
     #label_align = 'left'
     
-    
     def __init__(self):
         menus.Actor.__init__(self)
         self._handles = {}
         
+    
 
 class RowLayout(Layout):
     label = "List"
@@ -161,8 +165,9 @@ class PageLayout(Layout):
         #~ self.main_class = extjs.MainPanel
         #~ Layout.__init__(self,*args,**kw)
     
-class DialogLayout(Layout,menus.Actor):
-    __metaclass__ = LayoutMetaClass
+class DialogLayout(Layout):
+    __metaclass__ = DialogLayoutMetaClass
+    cancel = actions.CancelDialog()
     #label = "Dialog"
     show_labels = True
     join_str = "\n"
@@ -170,12 +175,6 @@ class DialogLayout(Layout,menus.Actor):
     title = None
     label_align = 'left'
     
-    def cancel(self,context):
-        context.cancel()
-        
-    def ok(self,context):
-        pass
-        
 
 class StaticText:
     def __init__(self,text):
@@ -202,6 +201,7 @@ class LayoutHandle:
         self._store_fields = []
         self.slave_grids = []
         self._store_fields = []
+        self._buttons = []
         self._main_class = self.ui.main_panel_class(layout)
         if hasattr(layout,"main"):
             self._main = self.create_element(self._main_class,'main')
@@ -296,8 +296,8 @@ class LayoutHandle:
                     if value.name is None:
                         value.name = name
                     return self.create_field_element(value,**kw)
-                if callable(value):
-                    return self.create_meth_element(name,value,**kw)
+                if isinstance(value,actions.Action):
+                    return self.create_button_element(name,value,**kw)
                 raise ValueError("Cannot handle value %r in %s.%s." % (value,self._ld.name,name))
         rpt = self.link.get_slave(name)
         if rpt is not None:
@@ -320,15 +320,19 @@ class LayoutHandle:
         #print "[Warning]", msg
         raise KeyError(msg)
         
+    def create_button_element(self,name,action,**kw):
+        e = self.ui.ButtonElement(self,name,action,**kw)
+        self._buttons.append(e)
+        return e
+          
     def create_meth_element(self,name,meth,**kw):
         rt = getattr(meth,'return_type',None)
         if rt is None:
-            return self.ui.ButtonElement(self,name,meth,**kw)
-        else:
-            e = self.ui.VirtualFieldElement(self,name,meth,rt,**kw)
-            assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)
-            self._store_fields.append(e.field)
-            return e
+            rt = models.TextField()
+        e = self.ui.VirtualFieldElement(self,name,meth,rt,**kw)
+        assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)
+        self._store_fields.append(e.field)
+        return e
           
     def create_field_element(self,field,**kw):
         e = self.ui.field2elem(self,field,**kw)

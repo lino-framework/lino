@@ -44,6 +44,7 @@ from django import forms
 
 from lino import reports
 from lino import layouts
+from lino import actions
 from lino.utils import perms
 
 #~ from lino.modlib.contacts import models as contacts
@@ -532,7 +533,7 @@ class InvoicesByJournal(Invoices):
                   "ledger_remark:10 " \
                   "total_excl total_vat user "
 
-class SignAction(reports.Action):
+class SignAction(actions.Action):
     label = "Sign"
     def run(self,context):
         context.confirm(
@@ -551,7 +552,7 @@ class DocumentsToSign(Invoices):
     columnNames = "number:4 order creation_date " \
                   "customer:10 imode " \
                   "subject:10 total_incl total_excl total_vat "
-    actions = Invoices.actions + [ SignAction ]
+    actions = Invoices.actions + [ SignAction() ]
     
     #~ def get_row_actions(self,renderer):
         #~ l = super(Invoices,self).get_row_actions(renderer)
