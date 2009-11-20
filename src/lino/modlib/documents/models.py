@@ -43,6 +43,7 @@ if False:
     except ImportError:
         appy_pod = None
 
+import lino
 from lino import reports
 from lino import actions
 
@@ -180,6 +181,7 @@ class AbstractDocument(models.Model):
         
     
 class PrintAction(actions.Action):
+    needs_selection = True
     label = "Print"
     def run(self,context):
         row = context.selected_rows[0].get_child_instance()
@@ -192,11 +194,12 @@ class PrintAction(actions.Action):
         #return row.view_printable(context.request)
 
 class PdfAction(actions.Action):
+    needs_selection = True
     label = "PDF"
     def run(self,context):
         row = context.selected_rows[0].get_child_instance()
         row.make_pdf()
-        print "redirect", row.pdf_url()
+        #lino.log.debug("redirect to", row.pdf_url())
         context.redirect(row.pdf_url())
         #return row.view_pdf(context.request)
 

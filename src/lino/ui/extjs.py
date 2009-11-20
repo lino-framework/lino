@@ -282,7 +282,7 @@ def list_report_view(request,**kw):
     kw['simple_list'] = True
     return json_report_view(request,**kw)
     
-def dialog_action_view(request,app_label=None,dlgname=None,actname=None,**kw):
+def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
     dlg = layouts.get_dialog(app_label,dlgname)
     action = getattr(dlg,actname)
     context = ActionContext(action,request)
@@ -1789,6 +1789,7 @@ Lino.do_action = function(url,name,params,reload,close_dialog) {
           })
         }
         if (result.close_dialog && close_dialog) close_dialog();
+        if (result.refresh_menu) load_main_menu();
       },
       failure: function(response){
         // console.log(response);
@@ -1892,6 +1893,19 @@ Lino.on_load_menu = function(response) {
   Lino.main_menu.get(0).focus();"""
         s += """
 };"""
+
+        s += """
+Lino.load_main_menu = function() {
+  Ext.Ajax.request({
+    waitMsg: 'Loading main menu...',
+    url: '/menu',
+    success: Lino.on_load_menu,
+    failure: function(response) {
+      // console.log(response);
+      Ext.MessageBox.alert('error','could not connect to the LinoSite.');
+    }
+  });
+};"""
     
 
         s += """
@@ -1904,15 +1918,7 @@ Ext.onReady(function(){ """
         #~ s += define_vars(self.variables,indent=2)
     
         s += """
-Ext.Ajax.request({
-  waitMsg: 'Loading main menu...',
-  url: '/menu',
-  success: Lino.on_load_menu,
-  failure: function(response) {
-    // console.log(response);
-    Ext.MessageBox.alert('error','could not connect to the LinoSite.');
-  }
-});"""
+Lino.load_main_menu();"""
         
         s += """
 var windows = Lino.gup('show').split(',');
@@ -2162,13 +2168,13 @@ class ExtUI(reports.UI):
             (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
-            (r'^dialog_action/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_action_view),
+            (r'^dialog/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
             
         )
 
     def get_action_url(self,btn,**kw):
         layout = btn.lh.layout
-        url = "/dialog_action/" + layout.app_label + "/" + layout.name + "/" + btn.name
+        url = "/dialog/" + layout.app_label + "/" + layout.name + "/" + btn.name
         if len(kw):
             url += "?"+urlencode(kw)
         return url

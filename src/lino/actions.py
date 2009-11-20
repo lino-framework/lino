@@ -39,6 +39,9 @@ DELETE = Hotkey(keycode=46)
 class ActionEvent(Exception):
     pass
     
+class ValidationError(Exception):
+    pass
+    
 #~ class MustConfirm(ActionEvent):
     #~ pass
     
@@ -46,7 +49,7 @@ class Action:
     label = None
     name = None
     key = None
-    needs_selection = True
+    needs_selection = False
     
     def __init__(self):
         if self.label is None:
@@ -99,6 +102,9 @@ class ActionContext:
     def refresh(self):
         self.response.update(must_reload=True)
         
+    def refresh_menu(self):
+        self.response.update(refresh_menu=True)
+        
     def redirect(self,url):
         self.response.update(redirect=url)
         
@@ -129,6 +135,7 @@ class ActionContext:
 
 
 class DeleteSelected(Action):
+    needs_selection = True
     label = "Delete"
     key = DELETE # (ctrl=True)
     
@@ -144,7 +151,6 @@ class DeleteSelected(Action):
 
     
 class CancelDialog(Action):
-    needs_selection = False
     label = "Cancel"
     key = ESCAPE 
     
@@ -152,6 +158,8 @@ class CancelDialog(Action):
         context.cancel()
 
 class OK(Action):
-    needs_selection = False
     label = "OK"
     key = RETURN
+
+    def run(self,context):
+        pass

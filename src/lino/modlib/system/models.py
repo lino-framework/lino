@@ -17,6 +17,7 @@ from django import forms
 from django.db import models
 from django.utils.translation import ugettext as _
 
+import lino
 from lino import reports
 from lino import layouts
 from lino import actions
@@ -42,7 +43,8 @@ class Sessions(reports.Report):
     display_field = 'session_key'
 
 
-class PasswordResetAction(actions.OK):
+class PasswordResetAction(actions.Action):
+    label = _("Request Password Reset")
     def run(self,context):
         context.error('not implemented')
 
@@ -57,19 +59,38 @@ class PasswordReset(layouts.DialogLayout):
     ok cancel
     """
     intro = layouts.StaticText("""
-    Please fill in you e-mail adress.
+    Please fill in your e-mail adress.
     We will then send you a mail with a new temporary password.
     """)
     ok = PasswordResetAction()
     
     
+from django.contrib.auth import login, authenticate, logout
 
 class LoginAction(actions.OK):
   
     label = _("Login")
     
     def run(self,context):
-        raise NotImplementedError()
+      
+        username = context.request.POST.get('username')
+        password = context.request.POST.get('password')
+
+        
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if user is None:
+                raise actions.ValidationError(
+                _("Please enter a correct username and password. Note that both fields are case-sensitive."))
+            elif not user.is_active:
+                raise actions.ValidationError(_("This account is inactive."))
+            login(request, user)
+            #lino.log.info("User %s logged in.",user)
+            context.refresh_menu()
+        
+        
+        
+        
         
     def unused(self):
         redirect_to = request.REQUEST.get(redirect_field_name, '')
@@ -117,10 +138,20 @@ class Login(layouts.DialogLayout):
     ok = LoginAction()
     text = layouts.StaticText("Please enter your username and password to authentificate.")
     
+    def before(self,context):
+        if not context.request.session.test_cookie_worked():
+           raise actions.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
+        
 
+class Logout(actions.OK):
+  
+    label = _("Log out")
+    
+    def run(self,context):
+        context.confirm(_("Are you sure you want to log out?"))
+        logout(context.request)
+        context.refresh_menu()
 
-class Logout(layouts.DialogLayout):
-    width = 50
     
 
 
