@@ -119,16 +119,16 @@ class AbstractDocument(models.Model):
         filename = self.pdf_path()
         if not filename:
             return
+        lino.log.debug("make_pdf(%s) -> %s", self, filename)
         if self.last_modified is not None and os.path.exists(filename):
             mtime = os.path.getmtime(filename)
             #~ st = os.stat(filename)
             #~ mtime = st.st_mtime
             mtime = datetime.datetime.fromtimestamp(mtime)
             if mtime >= self.last_modified:
-                print "up to date:", filename
+                lino.log.debug(" -> %s is up to date",filename)
                 return
             os.remove(filename)
-        print "make_pdf:", filename
         dirname = os.path.dirname(filename)
         if not os.path.isdir(dirname):
             os.makedirs(dirname)

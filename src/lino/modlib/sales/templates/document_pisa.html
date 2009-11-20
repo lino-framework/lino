@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>{{intance}}</title>
+<title>{{instance}}</title>
 <style type="text/css">
 body {
   font-family: Helvetica, Arial, sans-serif;
@@ -18,6 +18,7 @@ p.Recipient, p.Date, p.Signature {
   margin-left: 70mm;
 }
 
+#footerContent { text-align: right; font-size: 8pt; }
 
 table.items {
   table-layout:fixed; background-color:white; padding: 2mm;
@@ -29,10 +30,43 @@ table.tech td {
 }
 table.total tr { background-color:gray; padding: 1mm; }
 
+
+@page {
+
+  margin:2cm;
+  margin-left:3cm;
+  margin-bottom:25mm;
+  margin-top:45mm;
+  -pdf-frame-border: 1; 
+  
+  @frameheader {
+    -pdf-frame-content:headerContent;
+    top:10mm;
+    height:33mm;
+    margin-left:1cm;
+    margin-right:1cm;
+    -pdf-frame-border: 1; 
+  }
+
+  @framefooter {
+    -pdf-frame-content:footerContent;
+    bottom:1cm;
+    margin-left:3cm;
+    margin-right:2cm;
+    height:1cm;
+    -pdf-frame-border: 1; 
+  }
+}
+
 </style>
 </head>
 <body>
 
+<div id="footerContent">
+[page <pdf:pagenumber>]
+</div>
+
+<div id="headerContent">
 <table>
 <tr>
 <td>
@@ -49,6 +83,7 @@ table.total tr { background-color:gray; padding: 1mm; }
 </td>
 </tr>
 </table>
+</div>
 
 <pdf:spacer height="20mm">
 
