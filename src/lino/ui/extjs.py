@@ -1931,7 +1931,8 @@ Lino.on_load_menu = function(response) {
   Lino.viewport.doLayout();
   console.log('on_load_menu viewport',Lino.viewport);
   // Lino.viewport.show();
-  // Lino.main_menu.get(0).focus();"""
+  i = Lino.main_menu.get(0);
+  if (i) i.focus();"""
         s += """
 };"""
 
