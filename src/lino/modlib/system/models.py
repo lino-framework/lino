@@ -76,7 +76,6 @@ class LoginAction(actions.OK):
         username = context.request.POST.get('username')
         password = context.request.POST.get('password')
 
-        
         if username and password:
             user = authenticate(username=username, password=password)
             if user is None:
@@ -84,7 +83,7 @@ class LoginAction(actions.OK):
                 _("Please enter a correct username and password. Note that both fields are case-sensitive."))
             elif not user.is_active:
                 raise actions.ValidationError(_("This account is inactive."))
-            login(request, user)
+            login(context.request, user)
             #lino.log.info("User %s logged in.",user)
             context.refresh_menu()
         

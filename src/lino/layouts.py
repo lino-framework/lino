@@ -22,7 +22,7 @@ from django.conf import settings
 #from django.template.loader import render_to_string
 
 import lino
-from lino.utils import perms, menus
+from lino.utils import perms, menus, actors
 from lino import actions
 
 class Input:
@@ -75,18 +75,22 @@ class DialogLink(DataLink):
     def get_title(self,renderer):
         return self.layout.title or self.layout.label
         
-        
-        
+
 dialogs = []
 
-def register_dialog_class(cls):
-    if cls.__name__ == 'DialogLayout':
-        return
-    lino.log.debug("register_layout_class(%s)", cls)
-    cls.app_label = cls.__module__.split('.')[-2]
-    #~ if cls.form is None:
+def setup():
+    lino.log.debug("Registering Dialogs...")
+    for cls in actors.actors:
+        if issubclass(cls,DialogLayout) and cls is not DialogLayout:
+            dialogs.append(cls())
+
+
+#~ def register_dialog_class(cls):
+    #~ if cls.__name__ == 'DialogLayout':
         #~ return
-    dialogs.append(cls)
+    #~ lino.log.debug("register_layout_class(%s)", cls)
+    #~ cls.app_label = cls.__module__.split('.')[-2]
+    #~ dialogs.append(cls)
     
 def get_dialog(app_label,name):
     app = models.get_app(app_label)
@@ -96,29 +100,29 @@ def get_dialog(app_label,name):
     return cls()
 
 
-def setup():
-    lino.log.debug("Instantiate forms.")
+#~ def setup():
+    #~ lino.log.debug("Instantiate forms.")
     
 
-class DialogLayoutMetaClass(type):
-    def __new__(meta, classname, bases, classDict):
-        cls = type.__new__(meta, classname, bases, classDict)
-        register_dialog_class(cls)
-        return cls
+#~ class DialogLayoutMetaClass(type):
+    #~ def __new__(meta, classname, bases, classDict):
+        #~ cls = type.__new__(meta, classname, bases, classDict)
+        #~ register_dialog_class(cls)
+        #~ return cls
 
-    def __init__(cls, name, bases, dict):
-        type.__init__(cls,name, bases, dict)
-        cls.instance = None 
+    #~ def __init__(cls, name, bases, dict):
+        #~ type.__init__(cls,name, bases, dict)
+        #~ cls.instance = None 
 
-    def __call__(cls,*args,**kw):
-        if cls.instance is None:
-            cls.instance = type.__call__(cls,*args, **kw)
-        return cls.instance
-
-
+    #~ def __call__(cls,*args,**kw):
+        #~ if cls.instance is None:
+            #~ cls.instance = type.__call__(cls,*args, **kw)
+        #~ return cls.instance
 
 
-class Layout(menus.Actor):
+
+
+class Layout(actors.Actor):
     """
     A Layout specifies how fields of a Report should be arranged when they are
     displayed in a form or a grid. 
@@ -139,7 +143,7 @@ class Layout(menus.Actor):
     #label_align = 'left'
     
     def __init__(self):
-        menus.Actor.__init__(self)
+        actors.Actor.__init__(self)
         self._handles = {}
         
     
@@ -170,7 +174,7 @@ class PageLayout(Layout):
         #~ Layout.__init__(self,*args,**kw)
     
 class DialogLayout(Layout):
-    __metaclass__ = DialogLayoutMetaClass
+    #__metaclass__ = DialogLayoutMetaClass
     cancel = actions.CancelDialog()
     #label = "Dialog"
     show_labels = True
@@ -213,6 +217,7 @@ class LayoutHandle:
         else:
             if desc is None:
                 desc = self.layout.join_str.join(self.link.get_fields())
+                lino.log.debug('desc for %s is %r',self.name,desc)
                 self._main = self.desc2elem(self._main_class,"main",desc)
             else:
                 if not isinstance(desc,basestring):
@@ -261,7 +266,7 @@ class LayoutHandle:
   
         
     def desc2elem(self,panelclass,name,desc,**kw):
-        #lino.log.debug("desc2elem(%r,%r)", name,desc)
+        #lino.log.debug("desc2elem(panelclass,%r,%r)", name,desc)
         #assert desc != 'Countries_choices2'
         if "\n" in desc:
             elems = []
@@ -288,26 +293,8 @@ class LayoutHandle:
             return panelclass(self,name,False,*elems,**kw)
             
     def create_element(self,panelclass,name):
-        #print "create_element()", name
+        #lino.log.debug("create_element(panelclass,%r)", name)
         name,kw = self.splitdesc(name)
-        if not name in ('__str__','__unicode__','name','label'):
-            value = getattr(self._ld,name,None)
-            if value is not None:
-                if type(value) == str:
-                    return self.desc2elem(panelclass,name,value,**kw)
-                if isinstance(value,StaticText):
-                    return self.ui.StaticTextElement(self,name,value)
-                if isinstance(value,Input):
-                    e = self.ui.InputElement(self,name,value)
-                    self.inputs.append(e)
-                    return e
-                if isinstance(value,models.Field):
-                    if value.name is None:
-                        value.name = name
-                    return self.create_field_element(value,**kw)
-                if isinstance(value,actions.Action):
-                    return self.create_button_element(name,value,**kw)
-                raise ValueError("Cannot handle value %r in %s.%s." % (value,self._ld.name,name))
         rpt = self.link.get_slave(name)
         if rpt is not None:
             #rpt.setup()
@@ -325,6 +312,24 @@ class LayoutHandle:
                 return self.create_meth_element(name,meth,**kw)
         else:
             return self.create_field_element(field,**kw)
+        if not name in ('__str__','__unicode__','name','label'):
+            value = getattr(self._ld,name,None)
+            if value is not None:
+                if type(value) == str:
+                    return self.desc2elem(panelclass,name,value,**kw)
+                if isinstance(value,StaticText):
+                    return self.ui.StaticTextElement(self,name,value)
+                if isinstance(value,Input):
+                    e = self.ui.InputElement(self,name,value)
+                    self.inputs.append(e)
+                    return e
+                if isinstance(value,models.Field):
+                    if value.name is None:
+                        value.name = name
+                    return self.create_field_element(value,**kw)
+                if isinstance(value,actions.Action):
+                    return self.create_button_element(name,value,**kw)
+                raise KeyError("Cannot handle value %r in %s.%s." % (value,self._ld.name,name))
         msg = "Unknown element %r referred in layout %s" % (name,self.name)
         #print "[Warning]", msg
         raise KeyError(msg)

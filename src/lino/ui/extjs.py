@@ -26,7 +26,7 @@ import lino
 from lino import reports
 from lino import actions
 from lino import layouts
-from lino.utils import menus
+from lino.utils import menus, actors
 
 UNDEFINED = "nix"
 
@@ -65,7 +65,7 @@ class ActionContext(actions.ActionContext):
         if self.confirmed is not None:
             self.confirmed = int(self.confirmed)
         self.confirms = 0
-        self.response = dict(success=True,must_reload=False,msg=None)
+        self.response = dict(success=True,must_reload=False,msg=None,close_dialog=True)
         #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
         
       
@@ -101,6 +101,21 @@ class ReportRenderer:
             for ln in win.js_lines():
                 yield ln
             yield ''
+
+class ActionRenderer:
+    def __init__(self,a,**kw):
+        assert isinstance(a,actions.Action)
+        self.action = a
+        self.name = a.app_label + "_" + a.name
+        
+    def js_lines(self):
+        yield "var %s = new function() {" % self.name
+        yield "  this.show = function(btn,event) {"
+        yield "    console.log(%r);" % self.name
+        yield "    Lino.do_action(%r,%r,{});" % (self.action.get_url(ui),self.action.name)
+
+        yield "  };"
+        yield "}();"
 
 class WindowRenderer:
     def __init__(self,lh,**kw):
@@ -199,7 +214,7 @@ class DialogRenderer(WindowRenderer):
 
 def menu_view(request):
     from lino import lino_site
-    s = py2js(lino_site.get_menu())
+    s = py2js(lino_site.get_menu(request))
     return HttpResponse(s, mimetype='text/html')
 
 
@@ -208,8 +223,9 @@ def py2js(v,**kw):
         
     if isinstance(v,menus.Menu):
         if v.parent is None:
-            kw.update(region='north',height=27,items=v.items)
-            return py2js(kw)
+            return py2js(v.items)
+            #kw.update(region='north',height=27,items=v.items)
+            #return py2js(kw)
         kw.update(text=v.label,menu=dict(items=v.items))
         return py2js(kw)
         
@@ -227,7 +243,7 @@ def py2js(v,**kw):
         return v.as_ext(**kw)
         
     assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
-    if type(v) is types.ListType:
+    if type(v) in (types.ListType, types.TupleType):
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
     if type(v) is types.DictType:
         return "{ %s }" % ", ".join([
@@ -283,8 +299,14 @@ def list_report_view(request,**kw):
     return json_report_view(request,**kw)
     
 def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
-    dlg = layouts.get_dialog(app_label,dlgname)
+    dlg = actors.get_actor(app_label,dlgname)
     action = getattr(dlg,actname)
+    context = ActionContext(action,request)
+    context.run()
+    return json_response(**context.response)
+
+def action_view(request,app_label=None,actname=None,**kw):
+    action = actors.get_actor(app_label,actname)
     context = ActionContext(action,request)
     context.run()
     return json_response(**context.response)
@@ -832,7 +854,7 @@ class ButtonElement(LayoutElement):
         #kw.update(xtype=self.xtype)
         kw.update(text=self.action.label or self.name)
         kw.update(handler=js_code('Lino.dialog_action(this,%r,%r)' % (
-          self.name,self.lh.ui.get_action_url(self))))
+          self.name,self.lh.ui.get_button_url(self))))
         return kw
 
 
@@ -1633,9 +1655,9 @@ class DialogMainPanel(Panel):
 
 class Viewport:
   
-    def __init__(self,title,main_menu,*components):
+    def __init__(self,title,*components):
         self.title = title
-        self.main_menu = main_menu
+        #self.main_menu = main_menu
         
         #self.variables = []
         self.components = components
@@ -1789,7 +1811,7 @@ Lino.do_action = function(url,name,params,reload,close_dialog) {
           })
         }
         if (result.close_dialog && close_dialog) close_dialog();
-        if (result.refresh_menu) load_main_menu();
+        if (result.refresh_menu) Lino.load_main_menu();
       },
       failure: function(response){
         // console.log(response);
@@ -1857,13 +1879,13 @@ Lino.dialog_action = function (dlg,name,url) {
   }
 };
 
-Lino.main_menu = {};
+Lino.main_menu = new Ext.Toolbar({});
 
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
 
-        rpts = [ ReportRenderer(rptclass()) 
-            for rptclass in reports.master_reports + reports.slave_reports]
+        rpts = [ ReportRenderer(rpt) 
+            for rpt in reports.master_reports + reports.slave_reports]
         for rpt in rpts:
             for ln in rpt.report.store.js_lines():
                 s += "\n" + ln
@@ -1871,26 +1893,45 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
             for ln in rpt.js_lines():
                 s += "\n" + ln
         
-        dialogs = [ DialogRenderer(dlgclass())
-            for dlgclass in layouts.dialogs ]
-        for dlg in dialogs:
+        dlgs = [ DialogRenderer(dlg) for dlg in layouts.dialogs ]
+        for dlg in dlgs:
             for ln in dlg.js_lines():
                 s += "\n" + ln
-        
+
+        acts = [ ActionRenderer(a) for a in actions.global_actions ]
+        for a in acts:
+            for ln in a.js_lines():
+                s += "\n" + ln
+
         s += """
 Lino.on_load_menu = function(response) {
   // console.log('success',response.responseText);
+  console.log('on_load_menu before',Lino.main_menu);
   var p = Ext.decode(response.responseText);
-  Lino.main_menu = new Ext.Toolbar(p);"""
-        d = dict(layout='border')
+  console.log('on_load_menu p',p);
+  // Lino.viewport.hide();
+  // Lino.viewport.remove(Lino.main_menu);
+  Lino.main_menu.removeAll();
+  Lino.main_menu.add(p);
+  // Lino.main_menu = new Ext.Toolbar(p);"""
         #d.update(autoScroll=True)
-        d.update(items=js_code(
-            "[Lino.main_menu,"+",".join([
-                  c.as_ext() for c in self.components]) +"]"))
+        #~ d.update(items=js_code(
+            #~ "[Lino.main_menu,"+",".join([
+                  #~ c.as_ext() for c in self.components]) +"]"))
+                    
         s += """
-  new Ext.Viewport(%s).render('body');""" % py2js(d)
+  console.log('on_load_menu after',Lino.main_menu);"""
         s += """
-  Lino.main_menu.get(0).focus();"""
+  // Lino.viewport.add(Lino.main_menu);""" 
+        #~ items = "[Lino.main_menu,"+",".join([
+                  #~ c.as_ext() for c in self.components]) +"]"
+        #~ s += """
+  #~ Lino.viewport.add(%s);""" % py2js(self.components)
+        s += """
+  Lino.viewport.doLayout();
+  console.log('on_load_menu viewport',Lino.viewport);
+  // Lino.viewport.show();
+  // Lino.main_menu.get(0).focus();"""
         s += """
 };"""
 
@@ -1916,16 +1957,24 @@ Ext.onReady(function(){ """
                 s += "\n" + ln
             
         #~ s += define_vars(self.variables,indent=2)
+        
+        d = dict(layout='border')
+        d.update(items=js_code(py2js([js_code('Lino.main_menu')]+list(self.components))))
+        s += """
+  Lino.main_menu = new Ext.Toolbar({region:'north',height:27});
+  Lino.viewport = new Ext.Viewport(%s);""" % py2js(d)
+        s += """
+  Lino.viewport.render('body');""" 
     
         s += """
-Lino.load_main_menu();"""
+  Lino.load_main_menu();"""
         
         s += """
-var windows = Lino.gup('show').split(',');
-for(i=0;i<windows.length;i++) {
-  // console.log(windows[i]);
-  if(windows[i]) eval(windows[i]+".show()");
-}
+  var windows = Lino.gup('show').split(',');
+  for(i=0;i<windows.length;i++) {
+    // console.log(windows[i]);
+    if(windows[i]) eval(windows[i]+".show()");
+  }
         """
         s += "\n}); // end of onReady()"
         s += "\n</script></head><body></body></html>"
@@ -2147,7 +2196,7 @@ class ExtUI(reports.UI):
                 #width=50000,
                 #height=50000,
                 region="center")
-            viewport = Viewport(lino_site.title,lino_site.get_menu(),comp)
+            viewport = Viewport(lino_site.title,comp)
             s = viewport.render_to_html(request)
             self._response = HttpResponse(s)
         #s = layouts.ext_viewport(request,self.title,self._menu,*components)
@@ -2165,14 +2214,21 @@ class ExtUI(reports.UI):
             (r'^$', self.index),
             (r'^menu$', menu_view),
             (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_report_view),
-            (r'^action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
+            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
             (r'^dialog/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
+            (r'^action/(?P<app_label>\w+)/(?P<actname>\w+)$', action_view),
             
         )
 
-    def get_action_url(self,btn,**kw):
+    def get_action_url(self,a,**kw):
+        url = "/action/" + a.app_label + "/" + a.name 
+        if len(kw):
+            url += "?"+urlencode(kw)
+        return url
+        
+    def get_button_url(self,btn,**kw):
         layout = btn.lh.layout
         url = "/dialog/" + layout.app_label + "/" + layout.name + "/" + btn.name
         if len(kw):
@@ -2188,7 +2244,7 @@ class ExtUI(reports.UI):
         elif submit:
             url = "/submit/"
         elif action:
-            url = "/action/"
+            url = "/grid_action/"
         else:
             raise "one of json, save or action must be True"
             #url = "/r/"

@@ -49,7 +49,7 @@ def get_app(app_label):
 import lino
 from lino import layouts
 from lino import actions
-from lino.utils import perms, menus
+from lino.utils import perms, menus, actors
 
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
@@ -83,20 +83,21 @@ def rc_name(rptclass):
 master_reports = []
 slave_reports = []
 
-def register_report_class(rptclass):
-    rptclass.app_label = rptclass.__module__.split('.')[-2]
-    if rptclass.model is None:
-        lino.log.warning("register %s : model is None", rc_name(rptclass))
+def register_report(cls):
+    #rptclass.app_label = rptclass.__module__.split('.')[-2]
+    if cls.model is None:
+        lino.log.debug("%s is an abstract report", cls)
         return
-    if rptclass.master is None:
-        master_reports.append(rptclass)
-        if rptclass.use_as_default_report:
-            lino.log.debug("register %s : model_report for %s", rc_name(rptclass), rptclass.model.__name__)
-            rptclass.model._lino_model_report_class = rptclass
+    rpt = cls()
+    if rpt.master is None:
+        master_reports.append(rpt)
+        if rpt.use_as_default_report:
+            lino.log.debug("register %s : model_report for %s", rpt.name, rpt.model.__name__)
+            rpt.model._lino_model_report = rpt
         else:
-            lino.log.debug("register %s: not used as model_report",rc_name(rptclass))
+            lino.log.debug("register %s: not used as model_report",rpt.name)
     else:
-        slave_reports.append(rptclass)
+        slave_reports.append(rpt)
 
     
 def get_report(app_label,rptname):
@@ -120,35 +121,48 @@ def setup():
       `_lino_model_report`
 
     """
+    lino.log.debug("Register Report actors...")
+    for cls in actors.actors:
+        if issubclass(cls,Report) and cls is not Report:
+            if cls.typo_check:
+                myattrs = set(cls.__dict__.keys())
+                for attr in base_attrs(cls):
+                    myattrs.discard(attr)
+                if len(myattrs):
+                    lino.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
+            register_report(cls)
+    
     lino.log.debug("Instantiate model reports.")
     i = 0
     for model in models.get_models():
         i += 1
-        rc = getattr(model,'_lino_model_report_class',None)
-        if rc is None:
-            model._lino_model_report_class = report_factory(model)
-        lino.log.debug("%d %s %s",i,model._meta.db_table,rc_name(model._lino_model_report_class))
-        model._lino_model_report = model._lino_model_report_class()
+        rpt = getattr(model,'_lino_model_report',None)
+        if rpt is None:
+            cls = report_factory(model)
+            register_report(cls)
+            model._lino_model_report = cls()
+        lino.log.debug("%d %s %s",i,model._meta.db_table,model._lino_model_report.name)
+        #model._lino_model_report = model._lino_model_report_class()
         
     lino.log.debug("Analyze %d slave reports...",len(slave_reports))
-    for rptclass in slave_reports:
-        if isinstance(rptclass.master,basestring):
-            name = rptclass.master
+    for rpt in slave_reports:
+        if isinstance(rpt.master,basestring):
+            name = rpt.master
             # Same logic as in django.db.models.fields.related.add_lazy_relation()
             try:
                 app_label, model_name = name.split(".")
             except ValueError:
                 # If we can't split, assume a model in current app
-                app_label = rptclass.app_label
+                app_label = rpt.app_label
                 model_name = name
-            rptclass.master = models.get_model(app_label,model_name,False)
+            rpt.master = models.get_model(app_label,model_name,False)
             
-        slaves = getattr(rptclass.master,"_lino_slaves",None)
+        slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
-            setattr(rptclass.master,'_lino_slaves',slaves)
-        slaves[rptclass.__name__] = rptclass
-        lino.log.debug("%s: slave for %s",rc_name(rptclass), rptclass.master.__name__)
+            setattr(rpt.master,'_lino_slaves',slaves)
+        slaves[rpt.name] = rpt
+        lino.log.debug("%s: slave for %s",rpt.name, rpt.master.__name__)
     lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     lino.log.debug("Setup model reports...")
@@ -163,13 +177,20 @@ def get_slave(model,name):
     for b in (model,) + model.__bases__:
         d = getattr(b,"_lino_slaves",None)
         if d:
-            rptclass = d.get(name,None)
-            if rptclass is not None:
-                rpt = rptclass()
-                rpt.setup()
+            rpt = d.get(name,None)
+            if rpt is not None:
                 return rpt
+            #lino.log.debug("No slave %r in %s",name,model)
+            #~ rptclass = d.get(name,None)
+            #~ if rptclass is not None:
+                #~ rpt = rptclass()
+                #~ rpt.setup()
+                #~ return rpt
 
 def get_model_report(model):
+    return model._lino_model_report
+
+def unused_get_model_report(model):
     rpt = getattr(model,'_lino_model_report',None)
     if rpt: return rpt
     rptclass = getattr(model,'_lino_model_report_class',None)
@@ -179,7 +200,7 @@ def get_model_report(model):
     model._lino_model_report = rptclass()
     return model._lino_model_report
 
-class ReportMetaClass(type):
+class unused_ReportMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         cls = type.__new__(meta, classname, bases, classDict)
         if classname != 'Report':
@@ -203,8 +224,8 @@ class ReportMetaClass(type):
 
 
 
-class Report(menus.Actor):
-    __metaclass__ = ReportMetaClass
+class Report(actors.Actor):
+    #__metaclass__ = ReportMetaClass
     queryset = None 
     model = None
     use_as_default_report = True
@@ -243,8 +264,10 @@ class Report(menus.Actor):
     actions = []
     
     def __init__(self):
-        menus.Actor.__init__(self)
+        actors.Actor.__init__(self)
         if self.model is None:
+            if self.queryset is None:
+                raise Exception(self.__class__)
             self.model = self.queryset.model
         #~ if self.mode is not None:
             #~ self.name += "_" + self.mode
@@ -282,8 +305,10 @@ class Report(menus.Actor):
         
         if hasattr(self.model,'_lino_slaves'):
             if self.slaves is None:
-                self._slaves = [sl() for sl in self.model._lino_slaves.values()]
+                #self._slaves = [sl() for sl in self.model._lino_slaves.values()]
+                self._slaves = self.model._lino_slaves.values()
             else:
+                raise Exception("20091120 no longer possible")
                 self._slaves = []
                 for slave_name in self.slaves.split():
                     sl = get_slave(self.model,slave_name)
@@ -431,7 +456,7 @@ class Report(menus.Actor):
 
         
 def report_factory(model):
-    return type(model.__name__+"Report",(Report,),dict(model=model))
+    return type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
 
 
 class ReportHandle(layouts.DataLink):

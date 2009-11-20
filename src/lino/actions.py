@@ -14,6 +14,9 @@
 import traceback
 from django.utils.translation import ugettext as _
 
+import lino
+from lino.utils import actors
+
 class Hotkey:
     keycode = None
     shift = False
@@ -45,17 +48,28 @@ class ValidationError(Exception):
 #~ class MustConfirm(ActionEvent):
     #~ pass
     
-class Action:
+    
+global_actions = []
+
+def setup():
+    lino.log.debug("Registering Global Actions...")
+    for cls in actors.actors:
+        if issubclass(cls,Action) and cls is not Action:
+            global_actions.append(cls())
+    
+    
+class Action(actors.Actor):
     label = None
     name = None
     key = None
     needs_selection = False
     
     def __init__(self):
+        actors.Actor.__init__(self)
         if self.label is None:
-            self.label = self.__class__.__name__
-        if self.name is None:
-            self.name = self.label
+            self.label = self.name #self.__class__.__name__
+        #~ if self.name is None:
+            #~ self.name = self.label
         #self.report = report
         
         
@@ -78,6 +92,9 @@ class Action:
         
     def run(self,context):
         raise NotImplementedError
+        
+    def get_url(self,ui):
+        return ui.get_action_url(self)
 
 class ActionContext:
     def __init__(self,ui,action):

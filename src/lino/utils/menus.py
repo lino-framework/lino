@@ -22,22 +22,6 @@ from django import template
 
 from lino.utils import perms
 
-
-class Actor(object):
-    name = None
-    label = None
-    def __init__(self):
-        if self.label is None:
-            self.label = self.__class__.__name__
-        if self.name is None:
-            self.name = self.__class__.__name__
-
-    def get_label(self):
-        #~ if self.label is None:
-            #~ return self.__class__.__name__
-        return self.label
-
-        
 class MenuItem:
   
     HOTKEY_MARKER = '~'
@@ -228,4 +212,12 @@ class Menu(MenuItem):
             traceback.print_exc(e)
 
 
+import copy
+
+def menu_request(menu,request):
+    if menu.can_view.passes(request):
+        m = copy.copy(menu)
+        items = [i for i in m.items if i.can_view.passes(request)]
+        m.items = items
+        return m
 

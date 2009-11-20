@@ -68,6 +68,8 @@ from django.db.models import loading
 
 import lino
 from lino import reports
+from lino import layouts
+from lino import actions
 from lino.utils import perms
 from lino.utils import menus
 #from . import layouts
@@ -175,6 +177,8 @@ class LinoSite:
         lino.log.info("Setting up Lino reports...")
         #from lino import reports
         reports.setup()
+        layouts.setup()
+        actions.setup()
         
         from lino.ui import extjs
         self.ui = extjs.ui
@@ -447,10 +451,10 @@ class LinoSite:
         #m.add_item(system.Login(),can_view=perms.is_anonymous)
         #m.add_item(system.Logout(),can_view=perms.is_authenticated)
         
-    def get_menu(self):
+    def get_menu(self,request):
         self.setup()
-        return self._menu
-    
+        return menus.menu_request(self._menu,request)
+        
       
     def fill(self):
       
