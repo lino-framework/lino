@@ -13,6 +13,8 @@
 
 from django.contrib.auth import models as auth
 from django.contrib.sessions import models as sessions
+from django.contrib.contenttypes import models as contenttypes
+
 from django import forms
 from django.db import models
 from django.utils.translation import ugettext as _
@@ -41,6 +43,10 @@ class Groups(reports.Report):
 class Sessions(reports.Report):
     model = sessions.Session
     display_field = 'session_key'
+
+
+class ContentTypes(reports.Report):
+    model = contenttypes.ContentType
 
 
 class PasswordResetAction(actions.Action):
