@@ -286,18 +286,6 @@ class js_code:
 
 
 
-def grid_afteredit_view(request,**kw):
-    kw['colname'] = request.POST['colname']
-    return json_report_view(request,**kw)
-    
-def form_submit_view(request,**kw):
-    #kw['submit'] = True
-    return json_report_view(request,**kw)
-
-def list_report_view(request,**kw):
-    kw['simple_list'] = True
-    return json_report_view(request,**kw)
-    
 def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
     dlg = actors.get_actor(app_label,dlgname)
     action = getattr(dlg,actname)
@@ -311,15 +299,33 @@ def action_view(request,app_label=None,actname=None,**kw):
     context.run()
     return json_response(**context.response)
 
-def json_report_view(request,app_label=None,rptname=None,
-                     action=None,colname=None,simple_list=False):
+def choices_view(request,app_label=None,modname=None,fldname=None,**kw):
+    model = models.get_model(app_label,modname)
+    field = model._meta.get_field_by_name(fldname)
+    rpt = field._lino_choices_report
+    #kw['colname'] = request.POST['colname']
+    return json_report_view_(request,rpt,**kw)
+    
+def grid_afteredit_view(request,**kw):
+    kw['colname'] = request.POST['colname']
+    return json_report_view(request,**kw)
+
+def form_submit_view(request,**kw):
+    #kw['submit'] = True
+    return json_report_view(request,**kw)
+
+def list_report_view(request,**kw):
+    kw['simple_list'] = True
+    return json_report_view(request,**kw)
+    
+def json_report_view(request,app_label=None,rptname=None,**kw):
     rpt = reports.get_report(app_label,rptname)
-    if rpt is None:
-        return json_response(success=False,
-            msg="%s : no such report" % rptname)
+    return json_report_view_(request,rpt,**kw)
+
+def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
     if not rpt.can_view.passes(request):
         return json_response(success=False,
-            msg="User %s cannot view %s : " % (request.user,rptname))
+            msg="User %s cannot view %s." % (request.user,rptname))
     rh = rpt.get_handle(ui)
     if action:
         for a in rpt.actions:
@@ -1384,17 +1390,19 @@ class GridElement(Container):
                 keys.append(dict(
                   handler=h,
                   key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-        # the first detail window can be opend with Ctrl+ENTER 
-        key = actions.RETURN(ctrl=True)
-        layout = self.report.layouts[2]
-        keys.append(dict(
-          handler=js_code("Lino.show_detail(this,%r)" % layout.name),
-          key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-
-        for layout in self.report.layouts[2:]:
-            buttons.append(dict(
+        if len(self.report.layouts) > 1:
+            # the first detail window can be opend with Ctrl+ENTER 
+            key = actions.RETURN(ctrl=True)
+            layout = self.report.layouts[1]
+            keys.append(dict(
               handler=js_code("Lino.show_detail(this,%r)" % layout.name),
-              text=layout._ld.label))
+              key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
+
+            if len(self.report.layouts) > 2:
+                for layout in self.report.layouts[1:]:
+                    buttons.append(dict(
+                      handler=js_code("Lino.show_detail(this,%r)" % layout.name),
+                      text=layout._ld.label))
               
         for sl in self.report._rd._slaves:
             slave = sl.get_handle(self.lh.ui)
@@ -1885,7 +1893,7 @@ Lino.main_menu = new Ext.Toolbar({});
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
 
         rpts = [ ReportRenderer(rpt) 
-            for rpt in reports.master_reports + reports.slave_reports]
+            for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values()]
         for rpt in rpts:
             for ln in rpt.report.store.js_lines():
                 s += "\n" + ln
@@ -2220,6 +2228,7 @@ class ExtUI(reports.UI):
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
             (r'^dialog/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
             (r'^action/(?P<app_label>\w+)/(?P<actname>\w+)$', action_view),
+            (r'^choices/(?P<app_label>\w+)/(?P<modname>\w+)/(?P<fldname>\w+)$', choices_view),
             
         )
 

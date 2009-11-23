@@ -29,34 +29,6 @@ from lino.utils import perms
 countries = reports.get_app('countries')
 
 
-class PaymentTerm(models.Model):
-    id = models.CharField(max_length=10,primary_key=True)
-    name = models.CharField(max_length=200)
-    days = models.IntegerField(default=0)
-    months = models.IntegerField(default=0)
-    #proforma = models.BooleanField(default=False)
-    
-    def __unicode__(self):
-        return self.name
-        
-    def get_due_date(self,date1):
-        assert isinstance(date1,datetime.date), \
-          "%s is not a date" % date1
-        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
-        d = date1 + relativedelta(months=self.months,days=self.days)
-        return d
-
-
-class PaymentTerms(reports.Report):
-    model = PaymentTerm
-    order_by = "id"
-    can_view = perms.is_staff
-    #~ def can_view(self,request):
-      #~ return request.user.is_staff
-
-
-
-
 #~ class Contact(models.Model):
     #~ """
     
@@ -314,12 +286,13 @@ class CompaniesByCountry(reports.Report):
 
         
 class Partner(models.Model):
+    # subclassed in lino.modlib.sales and dsbe.modlib.project
+    class Meta:
+        abstract = True
+        
     name = models.CharField("Sort name",max_length=40)
     company = models.ForeignKey(Company,blank=True,null=True)
     person = models.ForeignKey(Person,blank=True,null=True)
-    payment_term = models.ForeignKey("PaymentTerm",blank=True,null=True)
-    vat_exempt = models.BooleanField(default=False)
-    item_vat = models.BooleanField(default=False)
     
     def __unicode__(self):
         return self.name
@@ -339,15 +312,13 @@ class Partner(models.Model):
 class PartnerPageLayout(layouts.PageLayout):
     main = """
            company person
-           payment_term 
-           vat_exempt item_vat
            """
     
 class Partners(reports.Report):
     page_layouts = (PartnerPageLayout,)
-    columnNames = "name payment_term vat_exempt item_vat company person"
+    columnNames = "name company person"
     can_delete = True
-    model = Partner
+    model = "contacts.Partner"
     order_by = "name"
     #can_view = perms.is_authenticated
 
@@ -379,22 +350,20 @@ class Partners(reports.Report):
 
 
 #~ class ContactsByCountry(Contacts):
-    #~ model = Contact
-    #~ master = countries.Country
+    #~ model = "contacts.Partner"
+    #~ master = "countries.Country"
     #~ order_by = "city addr1"
     
-#~ class CountryAndContactsPage(layouts.PageLayout):
+#~ class CountryAndPartnersPage(layouts.PageLayout):
     #~ label = "Contacts by Country"
     #~ main = """
     #~ isocode name
     #~ ContactsByCountry
     #~ """
     
-    
-
 
 #~ class Countries(countries.Countries):
-    #~ page_layouts = (layouts.PageLayout,CountryAndContactsPage)
+    #~ page_layouts = (layouts.PageLayout,CountryAndPartnersPage)
     
   
 

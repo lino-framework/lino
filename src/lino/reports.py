@@ -24,6 +24,8 @@ from django.conf.urls.defaults import patterns, url, include
 from django.forms.models import modelform_factory
 from django.forms.models import _get_foreign_key
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
+
 
 from django.http import HttpResponse
 #from django.core import serializers
@@ -38,12 +40,6 @@ except ImportError:
     pisa = None
 
 
-def get_app(app_label):
-    for app_name in settings.INSTALLED_APPS:
-        if app_name.endswith('.'+app_label):
-            return import_module('.models', app_name)
-    raise ImportError("No application labeled %r." % app_label)
-      
 
 
 import lino
@@ -60,8 +56,31 @@ def base_attrs(cl):
             yield k
         for k in b.__dict__.keys():
             yield k
-            
-            
+
+def resolve_model(name,app_label):
+    # Same logic as in django.db.models.fields.related.add_lazy_relation()
+    try:
+        app_label, model_name = name.split(".")
+    except ValueError:
+        # If we can't split, assume a model in current app
+        #app_label = rpt.app_label
+        model_name = name
+    return models.get_model(app_label,model_name,False)
+
+
+def resolve_field(name,app_label):
+    l = name.split('.')
+    if len(l) == 3:
+        app_label = l[0]
+        del l[0]
+    if len(l) == 2:
+        print "models.get_model(",app_label,l[0],False,")"
+        model = models.get_model(app_label,l[0],False)
+        fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
+        assert remote_model is None
+        return fld
+
+
     
 
 
@@ -82,30 +101,58 @@ def rc_name(rptclass):
     
 master_reports = []
 slave_reports = []
+generic_slaves = {}
 
 def register_report(cls):
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     if cls.model is None:
-        lino.log.debug("%s is an abstract report", cls)
-        return
+        if cls.field is None:
+            lino.log.debug("%s is an abstract report", cls)
+            return
+    elif isinstance(cls.model,basestring):
+        cls.model = resolve_model(cls.model,cls.app_label)
+        
     rpt = cls()
+    
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
-            lino.log.debug("register %s : model_report for %s", rpt.name, rpt.model.__name__)
+            lino.log.debug("register %s : model_report for %r", rpt.name, rpt.model)
             rpt.model._lino_model_report = rpt
         else:
             lino.log.debug("register %s: not used as model_report",rpt.name)
+    elif rpt.master is ContentType:
+        generic_slaves[rpt.name] = rpt
     else:
         slave_reports.append(rpt)
 
     
+def get_app(app_label):
+    """
+    This is called in models modules instead of "from x.y import models as y"
+    It is probably quicker than loading.get_app().
+    It doesn't work during loading.appcache._populate().
+    Didn't test how they compare in multi-threading cases.
+    """
+    for app_name in settings.INSTALLED_APPS:
+        if app_name.endswith('.'+app_label):
+            return import_module('.models', app_name)
+    #~ if not emptyOK:
+    raise ImportError("No application labeled %r." % app_label)
+      
 def get_report(app_label,rptname):
-    app = models.get_app(app_label)
+    """this method is called for each request, and it does not need to work when the AppCache is populating
+    """
+    lino.log.debug('reports.get_report(%r,%r)',app_label,rptname)
+    #app = models.get_app(app_label)
+    app = get_app(app_label)
+    #~ if app is None:
+        #~ return None
     rptclass = getattr(app,rptname,None)
     if rptclass is None:
-        lino.log.warning("No report %s in application %r",rptname,app)
-        return None
+        raise ImportError("No report %s in application %r" % (rptname,app))
+        #~ lino.log.warning("No report %s in application %r",rptname,app)
+        #~ return None
     return rptclass()
 
     
@@ -132,7 +179,7 @@ def setup():
                     lino.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
             register_report(cls)
     
-    lino.log.debug("Instantiate model reports.")
+    lino.log.debug("Instantiate model reports...")
     i = 0
     for model in models.get_models():
         i += 1
@@ -144,19 +191,19 @@ def setup():
         lino.log.debug("%d %s %s",i,model._meta.db_table,model._lino_model_report.name)
         #model._lino_model_report = model._lino_model_report_class()
         
+    lino.log.debug("Instantiate choice reports...")
+    for model in models.get_models():
+        for fld in model._meta.fields:
+            if isinstance(fld,models.ForeignKey):
+                if not hasattr(fld,'_lino_choice_report'):
+                    cls = choice_report_factory(model,fld)
+                    register_report(cls)
+                    fld._lino_choice_report = cls()
+        
     lino.log.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
         if isinstance(rpt.master,basestring):
-            name = rpt.master
-            # Same logic as in django.db.models.fields.related.add_lazy_relation()
-            try:
-                app_label, model_name = name.split(".")
-            except ValueError:
-                # If we can't split, assume a model in current app
-                app_label = rpt.app_label
-                model_name = name
-            rpt.master = models.get_model(app_label,model_name,False)
-            
+            rpt.master = resolve_model(rpt.master,rpt.app_label)
         slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
@@ -171,9 +218,10 @@ def setup():
         
     lino.log.debug("reports.setup() done (%d models)",i)
 
-
-
 def get_slave(model,name):
+    rpt = generic_slaves.get(name,None)
+    if rpt is not None:
+        return rpt
     for b in (model,) + model.__bases__:
         d = getattr(b,"_lino_slaves",None)
         if d:
@@ -190,42 +238,10 @@ def get_slave(model,name):
 def get_model_report(model):
     return model._lino_model_report
 
-def unused_get_model_report(model):
-    rpt = getattr(model,'_lino_model_report',None)
-    if rpt: return rpt
-    rptclass = getattr(model,'_lino_model_report_class',None)
-    if rptclass is None:
-        rptclass = report_factory(model)
-        model._lino_model_report_class = rptclass
-    model._lino_model_report = rptclass()
-    return model._lino_model_report
-
-class unused_ReportMetaClass(type):
-    def __new__(meta, classname, bases, classDict):
-        cls = type.__new__(meta, classname, bases, classDict)
-        if classname != 'Report':
-            if cls.typo_check:
-                myattrs = set(cls.__dict__.keys())
-                for attr in base_attrs(cls):
-                    myattrs.discard(attr)
-                if len(myattrs):
-                    lino.log.warning("%s defines new attribute(s) %s", cls, ",".join(myattrs))
-            register_report_class(cls)
-        return cls
-        
-    def __init__(cls, name, bases, dict):
-        type.__init__(cls,name, bases, dict)
-        cls.instance = None 
-
-    def __call__(cls,*args,**kw):
-        if cls.instance is None:
-            cls.instance = type.__call__(cls,*args, **kw)
-        return cls.instance
-
-
 
 class Report(actors.Actor):
     #__metaclass__ = ReportMetaClass
+    field = None
     queryset = None 
     model = None
     use_as_default_report = True
@@ -265,10 +281,18 @@ class Report(actors.Actor):
     
     def __init__(self):
         actors.Actor.__init__(self)
-        if self.model is None:
-            if self.queryset is None:
-                raise Exception(self.__class__)
-            self.model = self.queryset.model
+        if self.field is None:
+            if self.model is None:
+                if self.queryset is None:
+                    raise Exception(self.__class__)
+                self.model = self.queryset.model
+        else:
+            assert isinstance(self.field,basestring), "%s.field must be a string" % self.name
+            fld = resolve_field(self.field,self.app_label)
+            self.model = fld.rel.to
+            #self.master = self.field.model
+            assert not hasattr(fld,'_lino_choice_report')
+            fld._lino_choice_report = self
         #~ if self.mode is not None:
             #~ self.name += "_" + self.mode
         self._handles = {}
@@ -377,13 +401,10 @@ class Report(actors.Actor):
 
         
     def get_field_choices(self,field):
-        return get_model_report(field.rel.to)
-        #return get_combo_report(field.rel.to)
-        # TODO : if hasattr(self,"%s_choices" % field.name)...
-        #~ rpt = self.choices_stores.get(field,None)
+        return field._lino_choice_report
+        #~ rpt = getattr(field,'_lino_choice_report',None)
         #~ if rpt is None:
-            #~ rpt = get_combo_report(field.rel.to)
-            #~ self.choices_stores[field] = rpt
+            #~ return get_model_report(field.rel.to)
         #~ return rpt
         
             
@@ -404,13 +425,14 @@ class Report(actors.Actor):
             if master_instance is None:
                 qs = qs.filter(**{"%s__exact" % self.fk.name:None})
             else:
-                if not isinstance(master_instance,self.master):
-                    raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
-                #print qs
-                #print qs.model
+                if self.master is ContentType:
+                    pass
+                    #~ t = ContentType.objects.get_for_model(master_instance.__class__)
+                    #~ master_instance = t.get_object_for_this_type(pk=master_instance.pk)
+                else:
+                    if not isinstance(master_instance,self.master):
+                        raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
                 qs = qs.filter(**{self.fk.name:master_instance})
-                #~ if self.fk.limit_choices_to:
-                    #~ qs = qs.filter(**self.fk.limit_choices_to)
 
         if self.filter:
             qs = qs.filter(**self.filter)
@@ -458,6 +480,11 @@ class Report(actors.Actor):
 def report_factory(model):
     return type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
 
+def choice_report_factory(model,field):
+    clsname = model.__name__+"_"+field.name+'_'+"Choices"
+    fldname = model._meta.app_label+'.'+model.__class__.__name__+'.'+field.name
+    return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,columnNames='__unicode__'))
+
 
 class ReportHandle(layouts.DataLink):
     def __init__(self,ui,rd):
@@ -474,16 +501,18 @@ class ReportHandle(layouts.DataLink):
             layout = layout_class()
             return layouts.LayoutHandle(self,layout,*args,**kw)
         
-        self.choice_layout = lh(layouts.RowLayout,0,self._rd.display_field)
+        #self.choice_layout = lh(layouts.RowLayout,0,self._rd.display_field)
         
+        index = 0
         if self._rd.row_layout_class is None:
-            self.row_layout = lh(layouts.RowLayout,1,self._rd.columnNames)
+            self.row_layout = lh(layouts.RowLayout,index,self._rd.columnNames)
         else:
             assert self._rd.columnNames is None
-            self.row_layout = lh(self._rd.row_layout_class,1)
+            self.row_layout = lh(self._rd.row_layout_class,index)
             
-        self.layouts = [ self.choice_layout, self.row_layout ]
-        index = 2
+        #self.layouts = [ self.choice_layout, self.row_layout ]
+        self.layouts = [ self.row_layout ]
+        index = 1
         for lc in self._rd.page_layouts:
             self.layouts.append(lh(lc,index))
             index += 1
@@ -493,7 +522,6 @@ class ReportHandle(layouts.DataLink):
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
     
-
 class ReportRequest:
     """
     An instance of this will be created for every request.
@@ -514,7 +542,7 @@ class ReportRequest:
         self.name = report._rd.name+"Request"
         self.extra = extra
         self.master_instance = master_instance
-        self.queryset = report._rd.get_queryset(master_instance,**kw)
+        self.queryset = report._rd.get_queryset(self.master_instance,**kw)
         # Report.get_queryset() may return a list
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()

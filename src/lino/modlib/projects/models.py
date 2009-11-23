@@ -24,9 +24,9 @@ from lino import reports
 
 class Project(models.Model):
     name = models.CharField(max_length=200)
-    contact = models.ForeignKey("contacts.Contact",blank=True,null=True)
-    started = fields.MyDateField() 
-    stopped = fields.MyDateField() 
+    partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
+    started = fields.MyDateField(blank=True,null=True) 
+    stopped = fields.MyDateField(blank=True,null=True) 
     
     def __unicode__(self):
         return self.name
@@ -35,7 +35,7 @@ class Project(models.Model):
     
 class Note(models.Model):
     project = models.ForeignKey(Project,blank=True,null=True)
-    contact = models.ForeignKey('contacts.Contact',blank=True,null=True)
+    partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     short = models.CharField(max_length=200,blank=True,null=True)
     date = fields.MyDateField() 
     
@@ -50,15 +50,15 @@ class Projects(reports.Report):
     model = Project
     order_by = "name"
     
-class ProjectsByContact(Projects):
-    master = contacts.Contact  
+class ProjectsByPartner(Projects):
+    master = "contacts.Partner"
     order_by = "started"
     
 class Notes(reports.Report):
     model = Note
 
-class NotesByContact(Notes):
-    master = contacts.Contact  
+class NotesByPartner(Notes):
+    master = "contacts.Partner"
     
 class NotesByProject(Notes):
     master = Project

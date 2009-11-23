@@ -31,6 +31,14 @@ imode = Instantiator(sales.InvoicingMode,
   "id channel name advance_days journal").build
 
 def objects():
+    paymentterm = Instantiator(sales.PaymentTerm,"id name").build
+    yield paymentterm("pp","Prepayment",days=7)
+    yield paymentterm("cash","Cash")
+    yield paymentterm("7","7 days net",days=7)
+    yield paymentterm("15","15 days net",days=15)
+    yield paymentterm("30","30 days net",days=30)
+
+
     shippingmode = Instantiator(sales.ShippingMode,"id name").build
     yield shippingmode("ta","take away")
     yield shippingmode("rm","regular mail")

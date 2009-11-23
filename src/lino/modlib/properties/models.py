@@ -24,22 +24,58 @@ from lino.utils import perms
 class Property(models.Model):
     short = models.CharField(max_length=40)
     name = models.CharField(max_length=200)
+    only_for = models.ForeignKey(ContentType)
     
     def __unicode__(self):
         return self.name
         
 
+class PropChoice(models.Model):
+    prop = models.ForeignKey(Property)
+    name = models.CharField(max_length=200)
+    short = models.CharField(max_length=40)
+    
+    def __unicode__(self):
+        return self.name
+
 class PropValue(models.Model):
+    owner_type = models.ForeignKey(ContentType)
+    owner_id = models.PositiveIntegerField()
+    owner = generic.GenericForeignKey('owner_type', 'owner_id')
     prop = models.ForeignKey(Property)
     value = models.CharField(max_length=200)
-    owner_t = models.ForeignKey(ContentType)
-    owner_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('owner_t', 'owner_id')
+    
+    def __unicode__(self):
+        if not self.owner:
+            return ''
+        if not self.prop:
+            return ''
+        return "%s: %s" % (self.prop.short,self.value)
+        
+
+class PropValuePropChoices(reports.Report):
+    field = 'PropValue.prop'
+    # which implicitly sets:
+    # model = Property (= field.rel.to)
+    # columnNames = '__unicode__'
+    
+    def limit_choices_to(self,recipient):
+        """
+        recipient is a PropValue instance which doesn't know her .prop attribute.
+        This report answers the question "What Properties are possible for this PropValue?", 
+        which basically is "All Properties that apply to this type of owner". 
+        This means currently that Property.only_for must be either None or equal to master_instance.owner_type
+        """
+        return dict(only_for__in=(recipient.owner_type,None))
   
 
-class PropsByOwner(reports.Report):
-    master = models.Model
-    columnNames = "prop value"
-    can_delete = True
+class PropValues(reports.Report):
     model = PropValue
     order_by = "prop.short"
+    
+class PropsByOwner(reports.Report):
+    master = ContentType
+    columnNames = "prop value"
+    #can_delete = True
+    model = PropValue
+    order_by = "prop__short"

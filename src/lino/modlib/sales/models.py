@@ -58,6 +58,36 @@ ledger = reports.get_app('ledger')
 products = reports.get_app('products')
 
 
+
+class PaymentTerm(models.Model):
+    id = models.CharField(max_length=10,primary_key=True)
+    name = models.CharField(max_length=200)
+    days = models.IntegerField(default=0)
+    months = models.IntegerField(default=0)
+    #proforma = models.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.name
+        
+    def get_due_date(self,date1):
+        assert isinstance(date1,datetime.date), \
+          "%s is not a date" % date1
+        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
+        d = date1 + relativedelta(months=self.months,days=self.days)
+        return d
+
+
+class PaymentTerms(reports.Report):
+    model = PaymentTerm
+    order_by = "id"
+    can_view = perms.is_staff
+    #~ def can_view(self,request):
+      #~ return request.user.is_staff
+
+
+
+
+
 #~ class Customer(contacts.Contact):
     #~ paymentTerm = models.ForeignKey("PaymentTerm",blank=True,null=True)
     #~ vatExempt = models.BooleanField(default=False)
@@ -130,6 +160,31 @@ def get_sales_rule(doc):
     for r in SalesRule.objects.all().order_by("id"):
         if r.journal is None or r.journal == doc.journal:
             return r
+            
+            
+class Partner(contacts.Partner):
+    class Meta:
+        app_label = 'contacts'
+    payment_term = models.ForeignKey("PaymentTerm",blank=True,null=True)
+    vat_exempt = models.BooleanField(default=False)
+    item_vat = models.BooleanField(default=False)
+    
+
+class PartnerPageLayout(layouts.PageLayout):
+    main = """
+           company person
+           payment_term 
+           vat_exempt item_vat
+           """
+    
+class Partners(reports.Report):
+    page_layouts = (PartnerPageLayout,)
+    columnNames = "name payment_term vat_exempt item_vat company person"
+    can_delete = True
+    model = Partner
+    order_by = "name"
+    #can_view = perms.is_authenticated
+
 
 class SalesDocument(journals.AbstractDocument):
     
