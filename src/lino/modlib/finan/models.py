@@ -177,7 +177,8 @@ class DocItems(reports.Report):
 
 class ItemsByDocument(DocItems):
     columnNames = "pos:3 date account partner remark debit credit" 
-    master = BankStatement
+    #master = BankStatement
+    fk_name = 'document'
     order_by = "pos"
     
 BankStatement.content = ItemsByDocument

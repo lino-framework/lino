@@ -92,12 +92,12 @@ def setup():
     #~ cls.app_label = cls.__module__.split('.')[-2]
     #~ dialogs.append(cls)
     
-def get_dialog(app_label,name):
-    app = models.get_app(app_label)
-    cls = getattr(app,name,None)
-    if cls is None:
-        return None
-    return cls()
+#~ def get_dialog(app_label,name):
+    #~ app = models.get_app(app_label)
+    #~ cls = getattr(app,name,None)
+    #~ if cls is None:
+        #~ return None
+    #~ return cls()
 
 
 #~ def setup():

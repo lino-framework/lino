@@ -18,13 +18,20 @@ from django.db import models
 import lino
 
 actors = []
+actors_dict = {}
 
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
+        #~ if not classDict.has_key('app_label'):
+            #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
         lino.log.debug("actor(%s)", cls)
-        cls.app_label = cls.__module__.split('.')[-2]
+        if not classDict.has_key('app_label'):
+            # don't do this for reports created by utils.report_factory():
+            cls.app_label = cls.__module__.split('.')[-2]
         actors.append(cls)
+        k = cls.app_label + "." + cls.__name__
+        actors_dict[k] = cls
         return cls
 
     def __init__(cls, name, bases, dict):
@@ -53,8 +60,12 @@ class Actor(object):
             #~ return self.__class__.__name__
         return self.label
 
-
 def get_actor(app_label,name):
+    k = app_label + "." + name
+    cls = actors_dict[k]
+    return cls()
+    
+def unused_get_actor(app_label,name):
     app = models.get_app(app_label)
     cls = getattr(app,name,None)
     if cls is None:

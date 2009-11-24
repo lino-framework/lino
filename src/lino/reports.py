@@ -106,14 +106,10 @@ generic_slaves = {}
 def register_report(cls):
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
     if cls.model is None:
-        if cls.field is None:
-            lino.log.debug("%s is an abstract report", cls)
-            return
-    elif isinstance(cls.model,basestring):
-        cls.model = resolve_model(cls.model,cls.app_label)
+        lino.log.debug("%s is an abstract report", cls)
+        return
         
     rpt = cls()
-    
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
@@ -122,6 +118,7 @@ def register_report(cls):
         else:
             lino.log.debug("register %s: not used as model_report",rpt.name)
     elif rpt.master is ContentType:
+        lino.log.debug("register %s : generic slave for %r", rpt.name, rpt.fk_name)
         generic_slaves[rpt.name] = rpt
     else:
         slave_reports.append(rpt)
@@ -140,7 +137,8 @@ def get_app(app_label):
     #~ if not emptyOK:
     raise ImportError("No application labeled %r." % app_label)
       
-def get_report(app_label,rptname):
+def unused_get_report(app_label,rptname):
+    # replaced by actors.get_actor()
     """this method is called for each request, and it does not need to work when the AppCache is populating
     """
     lino.log.debug('reports.get_report(%r,%r)',app_label,rptname)
@@ -191,19 +189,17 @@ def setup():
         lino.log.debug("%d %s %s",i,model._meta.db_table,model._lino_model_report.name)
         #model._lino_model_report = model._lino_model_report_class()
         
-    lino.log.debug("Instantiate choice reports...")
-    for model in models.get_models():
-        for fld in model._meta.fields:
-            if isinstance(fld,models.ForeignKey):
-                if not hasattr(fld,'_lino_choice_report'):
-                    cls = choice_report_factory(model,fld)
-                    register_report(cls)
-                    fld._lino_choice_report = cls()
+    #~ lino.log.debug("Instantiate choice reports...")
+    #~ for model in models.get_models():
+        #~ for fld in model._meta.fields:
+            #~ if isinstance(fld,models.ForeignKey):
+                #~ if not hasattr(fld,'_lino_choice_report'):
+                    #~ cls = choice_report_factory(model,fld)
+                    #~ register_report(cls)
+                    #~ fld._lino_choice_report = cls()
         
     lino.log.debug("Analyze %d slave reports...",len(slave_reports))
     for rpt in slave_reports:
-        if isinstance(rpt.master,basestring):
-            rpt.master = resolve_model(rpt.master,rpt.app_label)
         slaves = getattr(rpt.master,"_lino_slaves",None)
         if slaves is None:
             slaves = {}
@@ -281,24 +277,45 @@ class Report(actors.Actor):
     
     def __init__(self):
         actors.Actor.__init__(self)
-        if self.field is None:
-            if self.model is None:
-                if self.queryset is None:
-                    raise Exception(self.__class__)
-                self.model = self.queryset.model
-        else:
-            assert isinstance(self.field,basestring), "%s.field must be a string" % self.name
-            fld = resolve_field(self.field,self.app_label)
-            self.model = fld.rel.to
-            #self.master = self.field.model
-            assert not hasattr(fld,'_lino_choice_report')
-            fld._lino_choice_report = self
-        #~ if self.mode is not None:
-            #~ self.name += "_" + self.mode
         self._handles = {}
         self._setup_done = False
         self._setup_doing = False
         self.actions = self.actions + [ actions.DeleteSelected() ]
+        
+        #~ if self.field is None:
+        if self.model is None:
+            if self.queryset is None:
+                raise Exception(self.__class__)
+            self.model = self.queryset.model
+        elif isinstance(self.model,basestring):
+            self.model = resolve_model(self.model,self.app_label)
+        assert issubclass(self.model,models.Model), "%s.model is a %r" % (self.name,self.model)
+        
+        if isinstance(self.master,basestring):
+            self.master = resolve_model(self.master,self.app_label)
+        
+        if self.fk_name:
+            try:
+                fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
+                assert direct
+                assert not m2m
+                master = fk.rel.to
+            except models.FieldDoesNotExist,e:
+                master = None
+                for vf in self.model._meta.virtual_fields:
+                    if vf.name == self.fk_name:
+                        fk = vf
+                        master = ContentType
+            if master is None:
+                raise Exeption("No master for fk_name %r in %s" % (self.fk_name,self.model.__name__))
+            self.master = master
+            self.fk = fk
+        elif self.master:
+            lino.log.warning("DEPRECATED: replace %s.master by fk_name" % self.name)
+            #assert isinstance(self.master,object), "%s.master is a %r" % (self.name,self.master)
+            assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.name,self.master)
+            self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
+        
         
         #self.setup()
         
@@ -316,10 +333,6 @@ class Report(actors.Actor):
                 lino.log.warning("%s.setup() called recursively" % self.name)
                 return False
         self._setup_doing = True
-        
-        if self.master:
-            self.fk = _get_foreign_key(self.master,self.model,self.fk_name)
-            #self.name = self.fk.rel.related_name
         
         #self._actions = [cl(self) for cl in self.actions]
         
@@ -401,7 +414,8 @@ class Report(actors.Actor):
 
         
     def get_field_choices(self,field):
-        return field._lino_choice_report
+        return get_model_report(field.rel.to)
+        #return field._lino_choice_report
         #~ rpt = getattr(field,'_lino_choice_report',None)
         #~ if rpt is None:
             #~ return get_model_report(field.rel.to)
@@ -421,17 +435,25 @@ class Report(actors.Actor):
             qs = self.model.objects.all()
         if self.master is None:
             assert master_instance is None, "This Report doesn't accept a master"
+        elif self.master is ContentType:
+            if master_instance is None:
+                kw = {
+                  self.fk.ct_field:None,
+                  self.fk.fk_field:None
+                }
+            else:
+                ct = ContentType.objects.get_for_model(master_instance.__class__)
+                kw = {
+                  self.fk.ct_field:ct,
+                  self.fk.fk_field:master_instance.pk
+                }
+            qs = qs.filter(**kw)
         else:
             if master_instance is None:
                 qs = qs.filter(**{"%s__exact" % self.fk.name:None})
+            elif not isinstance(master_instance,self.master):
+                raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
             else:
-                if self.master is ContentType:
-                    pass
-                    #~ t = ContentType.objects.get_for_model(master_instance.__class__)
-                    #~ master_instance = t.get_object_for_this_type(pk=master_instance.pk)
-                else:
-                    if not isinstance(master_instance,self.master):
-                        raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
                 qs = qs.filter(**{self.fk.name:master_instance})
 
         if self.filter:
@@ -478,12 +500,13 @@ class Report(actors.Actor):
 
         
 def report_factory(model):
+    lino.log.debug('report_factory(%s) -> app_label=%r',model.__name__,model._meta.app_label)
     return type(model.__name__+"Report",(Report,),dict(model=model,app_label=model._meta.app_label))
 
-def choice_report_factory(model,field):
-    clsname = model.__name__+"_"+field.name+'_'+"Choices"
-    fldname = model._meta.app_label+'.'+model.__class__.__name__+'.'+field.name
-    return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,columnNames='__unicode__'))
+#~ def choice_report_factory(model,field):
+    #~ clsname = model.__name__+"_"+field.name+'_'+"Choices"
+    #~ fldname = model._meta.app_label+'.'+model.__class__.__name__+'.'+field.name
+    #~ return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,columnNames='__unicode__'))
 
 
 class ReportHandle(layouts.DataLink):
@@ -501,23 +524,24 @@ class ReportHandle(layouts.DataLink):
             layout = layout_class()
             return layouts.LayoutHandle(self,layout,*args,**kw)
         
-        #self.choice_layout = lh(layouts.RowLayout,0,self._rd.display_field)
+        self.choice_layout = lh(layouts.RowLayout,0,self._rd.display_field)
         
-        index = 0
+        index = 1
         if self._rd.row_layout_class is None:
             self.row_layout = lh(layouts.RowLayout,index,self._rd.columnNames)
         else:
             assert self._rd.columnNames is None
             self.row_layout = lh(self._rd.row_layout_class,index)
             
-        #self.layouts = [ self.choice_layout, self.row_layout ]
-        self.layouts = [ self.row_layout ]
-        index = 1
+        self.layouts = [ self.choice_layout, self.row_layout ]
+        index = 2
         for lc in self._rd.page_layouts:
             self.layouts.append(lh(lc,index))
             index += 1
             
         self.store = self.ui.Store(self)
+        if self._rd.name == 'Persons':
+            lino.log.debug("ReportHandle.setup() done (%s)",self.layouts)
 
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
@@ -579,7 +603,8 @@ class UI:
         pass
         
     def _get_report_handle(self,app_label,rptname):
-        rpt = get_report(app_label,rptname)
+        rpt = actors.get_actor(app_label,rptname)
+        #rpt = get_report(app_label,rptname)
         return self.get_report_handle(rpt)
         
     def get_report_handle(self,rpt):

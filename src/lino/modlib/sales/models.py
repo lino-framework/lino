@@ -554,7 +554,7 @@ class Orders(SalesDocuments):
     
 class OrdersByJournal(Orders):
     order_by = "number"
-    master = journals.Journal
+    #master = journals.Journal
     fk_name = 'journal' # see django issue 10808
     columnNames = "number:4 creation_date customer:20 imode " \
                   "sales_remark:20 subject:20 total_incl " \
@@ -581,7 +581,7 @@ class Invoices(SalesDocuments):
 class InvoicesByJournal(Invoices):
     order_by = "number"
     fk_name = 'journal' # see django issue 10808
-    master = journals.Journal
+    #master = journals.Journal
     columnNames = "number:4 creation_date due_date " \
                   "customer:10 " \
                   "total_incl order subject:10 sales_remark:10 " \
@@ -625,7 +625,7 @@ class DocumentsToSign(Invoices):
   
 class InvoicesByOrder(SalesDocuments):
     model = Invoice
-    master = Order
+    #master = Order
     fk_name = "order"
     order_by = "number"
     columnNames = "number creation_date your_ref total_excl total_vat shipping_mode payment_term due_date subject sales_remark vat_exempt item_vat "
@@ -642,7 +642,8 @@ class ItemsByDocument(reports.Report):
     columnNames = "pos:3 product title description:20x1 discount unit_price qty total"
     #row_layout_class = ItemsByDocumentRowLayout
     model = DocItem
-    master = SalesDocument
+    #master = SalesDocument
+    fk_name = 'document'
     order_by = "pos"
     
 
@@ -660,7 +661,7 @@ class ItemsByDocument(reports.Report):
 class DocumentsByPartner(SalesDocuments):
     columnNames = "journal:4 number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
-    master = 'contacts.Partner'
+    #master = 'contacts.Partner'
     fk_name = 'customer'
     order_by = "creation_date"
 

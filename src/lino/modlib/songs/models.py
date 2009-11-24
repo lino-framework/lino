@@ -324,12 +324,14 @@ class Authors(reports.Report):
     
 class EventsBySong(reports.Report):
     model = SongEvent
-    master = Song
+    #master = Song
+    fk_name = 'song'
     columnNames = "event remark link_set"
     
 class SongsByEvent(reports.Report):
     model = SongEvent
-    master = Event
+    #master = Event
+    fk_name = 'event'
     columnNames = "seq song link_set remark"
 
 class Songs(reports.Report):
@@ -342,7 +344,8 @@ class SongEvents(reports.Report):
 
 class SongsByEvent(reports.Report):
     model = SongEvent
-    master = Event
+    #master = Event
+    fk_name = 'event'
     columnNames = "seq song remark link_set"
 
 

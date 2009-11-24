@@ -270,7 +270,7 @@ class Journals(reports.Report):
     
 class DocumentsByJournal(reports.Report):
     order_by = "number"
-    master = Journal
+    #master = Journal
     fk_name = 'journal' # see django issue 10808
     
     def get_title(self,renderer):
@@ -282,7 +282,7 @@ class DocumentsByJournal(reports.Report):
     
 class unused_DocumentsByJournal(reports.Report):
     order_by = "number"
-    master = Journal
+    #master = Journal
     fk_name = 'journal' # see django issue 10808
     
     def __init__(self,journal,**kw):

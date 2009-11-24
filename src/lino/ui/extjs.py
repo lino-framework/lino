@@ -21,6 +21,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.utils.translation import ugettext as _
+from django.contrib.contenttypes.models import ContentType
 
 import lino
 from lino import reports
@@ -32,6 +33,9 @@ UNDEFINED = "nix"
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 12
+
+URL_PARAM_MASTER_TYPE = 'mt'
+URL_PARAM_MASTER_PK = 'mk'
 
 def define_vars(variables,indent=0,prefix="var "):
     template = "var %s = %s;"
@@ -156,19 +160,22 @@ class ReportWindowRenderer(WindowRenderer):
         #yield define_vars(self.layout._main.ext_variables(),indent=2,prefix="this.")
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
         yield "  this.show = function(btn,event,master,master_grid) {"
-        #yield "    console.log('show',this);" 
+        # yield "    console.log('show',this);" 
         if self.lh.link._rd.master is None:
             yield "    %s.load();" % self.store.as_ext()
         else:
             yield "    if(master) {"
-            yield "      %s.setBaseParam('master',master);" % self.store.as_ext()
+            yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
             yield "      %s.load();" % self.store.as_ext()
             #yield "      this.store.load({master:master});" 
             yield "    } else {"
             #yield "      console.log('show() master_grid=',master_grid);"
             yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
             #yield "        console.log(rowIndex,record);" 
-            yield "        %s.load({params:{master:record.id}});" % self.store.as_ext()
+            yield "        var p={%s:record.id};" % URL_PARAM_MASTER_PK
+            mt = ContentType.objects.get_for_model(self.lh.link._rd.model).pk
+            yield "        p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+            yield "        %s.load({params:p});" % self.store.as_ext()
             yield "      });"
             yield "    }"
         yield "    this.comp.show();"
@@ -319,7 +326,7 @@ def list_report_view(request,**kw):
     return json_report_view(request,**kw)
     
 def json_report_view(request,app_label=None,rptname=None,**kw):
-    rpt = reports.get_report(app_label,rptname)
+    rpt = actors.get_actor(app_label,rptname)
     return json_report_view_(request,rpt,**kw)
 
 def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
@@ -745,17 +752,6 @@ class LayoutElement(VisibleComponent):
             return v
         return self.parent.get_property(name)
         
-    #~ def get_width(self):
-        #~ return self.width
-        
-    #~ def set_width(self,w):
-        #~ self.width = w
-        
-    #~ def as_ext(self):
-        #~ s = self.ext_editor(label=True)
-        #~ if s is not None:
-            #~ return mark_safe(s)
-        #~ return self.name
         
     def get_column_options(self,**kw):
         kw.update(
@@ -811,7 +807,7 @@ class LayoutElement(VisibleComponent):
         else:
             kw.update(width=self.ext_width())
         if self.height is not None:
-            kw.update(height=(self.height+2) * EXT_CHAR_HEIGHT)
+            kw.update(height=self.height * EXT_CHAR_HEIGHT)
         if self.xtype is not None:
             kw.update(xtype=self.xtype)
         return kw
@@ -846,7 +842,7 @@ class ButtonElement(LayoutElement):
     declare_type = DECLARE_THIS
     name_suffix = "_btn"
     xtype = 'button'
-    preferred_height = 1
+    preferred_height = 2
 
     def __init__(self,lh,name,action,**kw):
         lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
@@ -1218,7 +1214,7 @@ class Container(LayoutElement):
                 self.width = w
                 self.xpadding = xpadding
 
-        if self.height is None:
+        if False: # and self.height is None:
             #print self, "compute_width..."
             h = self.height or self.preferred_height or 0
             ypadding = self.ypadding
@@ -1390,19 +1386,18 @@ class GridElement(Container):
                 keys.append(dict(
                   handler=h,
                   key=a.key.keycode,ctrl=a.key.ctrl,alt=a.key.alt,shift=a.key.shift))
-        if len(self.report.layouts) > 1:
+        if len(self.report.layouts) > 2:
             # the first detail window can be opend with Ctrl+ENTER 
             key = actions.RETURN(ctrl=True)
-            layout = self.report.layouts[1]
+            layout = self.report.layouts[2]
             keys.append(dict(
               handler=js_code("Lino.show_detail(this,%r)" % layout.name),
               key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
-            if len(self.report.layouts) > 2:
-                for layout in self.report.layouts[1:]:
-                    buttons.append(dict(
-                      handler=js_code("Lino.show_detail(this,%r)" % layout.name),
-                      text=layout._ld.label))
+            for layout in self.report.layouts[2:]:
+                buttons.append(dict(
+                  handler=js_code("Lino.show_detail(this,%r)" % layout.name),
+                  text=layout._ld.label))
               
         for sl in self.report._rd._slaves:
             slave = sl.get_handle(self.lh.ui)
@@ -1536,8 +1531,10 @@ class ReportMainPanel(Panel):
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.report = lh.link
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
-        self.height += 6
-        self.width += 4
+        if self.height is not None:
+            self.height += 6
+        if self.width is not None:
+            self.width += 4
         
         
     #~ def ext_variables(self):
@@ -1563,6 +1560,7 @@ class ReportMainPanel(Panel):
         return d
         
         
+        
     def js_lines(self):
         for ln in Panel.js_lines(self):
             yield ln
@@ -1572,10 +1570,11 @@ class ReportMainPanel(Panel):
         name = self.lh.name + '.' + self.lh._main.ext_name
         yield "    %s.form._lino_pk = record.data.id;" % name
         yield "    %s.form.loadRecord(record);" % name
+        yield "    var p = {%s: record.data.%s}" % (URL_PARAM_MASTER_PK,self.report.store.pk.name)
+        mt = ContentType.objects.get_for_model(self.report._rd.model).pk
+        yield "    p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
         for slave in self.lh.slave_grids:
-            yield "  %s.load({params: { master: record.data.%s } });" % (
-                 slave.report.store.as_ext(),
-                 self.report.store.pk.name)
+            yield "    %s.load({params: p });" % slave.report.store.as_ext()
         yield "});"
         
         #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
@@ -1634,30 +1633,6 @@ class DialogMainPanel(Panel):
         d.update(autoHeight=False)
         return d
         
-
-
-
-#~ class Window(VisibleComponent):
-    #~ declared = True
-    #~ ext_suffix = "_detail"
-    #~ value_template = "new Ext.Window({ %s })"
-
-    #~ def __init__(self,report,layouts,**kw):
-        #~ print "Window.__init__()", report
-        #~ VisibleComponent.__init__(self,report.name+"_win",**kw)
-        #~ #self.layouts = layouts
-        #~ #self.report = report
-        #~ self.store = Store(report,layouts)
-
-    #~ def ext_options(self):
-        #~ d = VisibleComponent.ext_options(self)
-        #~ tabs = [l._main for l in self.store.layouts]
-        #~ d.update(items=TabPanel(None,"MainPanel",*tabs))
-        #~ d.update(title=self.layout.label)
-        #~ return d
-        
-    #~ def ext_lines(self):
-        #~ yield ".show();"
 
 
 
@@ -1875,10 +1850,11 @@ Lino.show_detail = function (grid,wrappername) {
   return function(btn,evt) {
     p = grid.comp.getStore().baseParams;
     w = eval(wrappername);
-    w.show(btn,evt,p['master']);
+    w.show(btn,evt,p[%r]);
   }
 };
-
+""" % URL_PARAM_MASTER_PK
+        s += """
 Lino.dialog_action = function (dlg,name,url) { 
   return function(btn,evt) {
     console.log('dialog_action()',dlg,name);
@@ -1914,9 +1890,9 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
         s += """
 Lino.on_load_menu = function(response) {
   // console.log('success',response.responseText);
-  console.log('on_load_menu before',Lino.main_menu);
+  // console.log('on_load_menu before',Lino.main_menu);
   var p = Ext.decode(response.responseText);
-  console.log('on_load_menu p',p);
+  // console.log('on_load_menu p',p);
   // Lino.viewport.hide();
   // Lino.viewport.remove(Lino.main_menu);
   Lino.main_menu.removeAll();
@@ -1928,7 +1904,7 @@ Lino.on_load_menu = function(response) {
                   #~ c.as_ext() for c in self.components]) +"]"))
                     
         s += """
-  console.log('on_load_menu after',Lino.main_menu);"""
+  // console.log('on_load_menu after',Lino.main_menu);"""
         s += """
   // Lino.viewport.add(Lino.main_menu);""" 
         #~ items = "[Lino.main_menu,"+",".join([
@@ -1937,7 +1913,7 @@ Lino.on_load_menu = function(response) {
   #~ Lino.viewport.add(%s);""" % py2js(self.components)
         s += """
   Lino.viewport.doLayout();
-  console.log('on_load_menu viewport',Lino.viewport);
+  // console.log('on_load_menu viewport',Lino.viewport);
   // Lino.viewport.show();
   i = Lino.main_menu.get(0);
   if (i) i.focus();"""
@@ -2006,17 +1982,26 @@ class ViewReportRequest(reports.ReportRequest):
         if self.params.is_valid():
             kw.update(self.params.cleaned_data)
         if report._rd.master is not None:
-            pk = request.GET.get('master',None)
+            pk = request.GET.get(URL_PARAM_MASTER_PK,None)
             if pk == UNDEFINED:
+                pk = None
+            if pk == '':
                 pk = None
             if pk is None:
                 kw.update(master_instance=None)
             else:
+                if report._rd.master is ContentType:
+                    mt = request.GET.get(URL_PARAM_MASTER_TYPE)
+                    master_model = ContentType.objects.get(pk=mt).model_class()
+                else:
+                    master_model = report._rd.master
                 try:
-                    kw.update(master_instance=report._rd.master.objects.get(pk=pk))
-                except report._rd.master.DoesNotExist,e:
-                    print "[Warning] There's no %s with %s=%r" % (
-                      report._rd.master.__name__,report._rd.master._meta.pk.name,pk)
+                    m = master_model.objects.get(pk=pk)
+                except master_model.DoesNotExist,e:
+                    lino.log.warning(
+                      "There's no %s with primary key %r",
+                      master_model.__name__,pk)
+                kw.update(master_instance=m)
         sort = request.GET.get('sort',None)
         if sort:
             self.sort_column = sort
@@ -2269,7 +2254,9 @@ class ExtUI(reports.UI):
         #~ if master_instance is None:
             #~ master_instance = report.master_instance
         if master_instance is not None:
-            kw['master'] = master_instance.pk
+            kw[URL_PARAM_MASTER_PK] = master_instance.pk
+            mt = ContentType.objects.get_for_model(master_instance.__class__).pk
+            kw[URL_PARAM_MASTER_TYPE] = mt
         #~ if mode is not None:
             #~ kw['mode'] = mode
         if len(kw):

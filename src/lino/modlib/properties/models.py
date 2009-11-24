@@ -24,10 +24,15 @@ from lino.utils import perms
 class Property(models.Model):
     short = models.CharField(max_length=40)
     name = models.CharField(max_length=200)
-    only_for = models.ForeignKey(ContentType)
+    only_for = models.ForeignKey(ContentType,blank=True,null=True)
     
     def __unicode__(self):
         return self.name
+        
+class Properties(reports.Report):
+    model = Property
+    columnNames = 'short name only_for'
+    order_by = "short"
         
 
 class PropChoice(models.Model):
@@ -37,6 +42,9 @@ class PropChoice(models.Model):
     
     def __unicode__(self):
         return self.name
+
+class PropChoices(reports.Report):
+    model = PropChoice
 
 class PropValue(models.Model):
     owner_type = models.ForeignKey(ContentType)
@@ -52,14 +60,7 @@ class PropValue(models.Model):
             return ''
         return "%s: %s" % (self.prop.short,self.value)
         
-
-class PropValuePropChoices(reports.Report):
-    field = 'PropValue.prop'
-    # which implicitly sets:
-    # model = Property (= field.rel.to)
-    # columnNames = '__unicode__'
-    
-    def limit_choices_to(self,recipient):
+    def prop_choices_filter(self,recipient):
         """
         recipient is a PropValue instance which doesn't know her .prop attribute.
         This report answers the question "What Properties are possible for this PropValue?", 
@@ -71,11 +72,12 @@ class PropValuePropChoices(reports.Report):
 
 class PropValues(reports.Report):
     model = PropValue
-    order_by = "prop.short"
+    order_by = "prop__short"
     
-class PropsByOwner(reports.Report):
-    master = ContentType
+class PropValuesByOwner(reports.Report):
+    model = PropValue
+    #master = ContentType
+    fk_name = 'owner'
     columnNames = "prop value"
     #can_delete = True
-    model = PropValue
     order_by = "prop__short"

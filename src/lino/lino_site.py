@@ -485,7 +485,7 @@ class LinoSite:
         auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
         auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
         sites.Site(id=2,domain=self.domain,name=self.title).save()
-        self.setup()
+        #self.setup()
         
             
 

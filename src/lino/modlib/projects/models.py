@@ -51,14 +51,17 @@ class Projects(reports.Report):
     order_by = "name"
     
 class ProjectsByPartner(Projects):
-    master = "contacts.Partner"
+    #master = "contacts.Partner"
+    fk_name = 'partner'
     order_by = "started"
     
 class Notes(reports.Report):
     model = Note
 
 class NotesByPartner(Notes):
-    master = "contacts.Partner"
+    #master = "contacts.Partner"
+    fk_name = 'partner'
     
 class NotesByProject(Notes):
-    master = Project
+    #master = Project
+    fk_name = 'project'

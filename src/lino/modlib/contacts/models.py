@@ -28,101 +28,6 @@ from lino.utils import perms
 
 countries = reports.get_app('countries')
 
-
-#~ class Contact(models.Model):
-    #~ """
-    
-#~ Company and/or Person contact data, linked with client account and
-#~ choosable for invoicing regarding particular order (if wanting other
-#~ invoice to than client default contact). If CompanyName field is
-#~ filled, contact record will be presented as CompanyName in contacts
-#~ listing - otherwise as Person First- and Lastname.
-    
-#~ # Examples:
-#~ >>> p=Contact.objects.create(lastName="Saffre",firstName="Luc")
-#~ >>> unicode(p)
-#~ u'Luc Saffre'
-#~ >>> p=Contact.objects.create(lastName="Saffre", firstName="Luc", title="Mr.")
-#~ >>> unicode(p)
-#~ u'Luc Saffre'
-#~ >>> p=Contact.objects.create(lastName="Saffre", title="Mr.")
-#~ >>> unicode(p)
-#~ u'Mr. Saffre'
-#~ >>> p=Contact.objects.create(firstName="Luc")
-#~ >>> unicode(p)
-#~ u'Luc'
-#~ >>> p=Contact.objects.create(lastName="Saffre",firstName="Luc", companyName="Example & Co")
-#~ >>> unicode(p)
-#~ u'Example & Co (Luc Saffre)'
-    
-    #~ """
-    
-    #~ #name = models.CharField(max_length=200)
-    #~ companyName = models.CharField(max_length=200,blank=True)
-    #~ nationalId = models.CharField(max_length=200,blank=True)
-    #~ vatId = models.CharField(max_length=200,blank=True)
-    
-    #~ addr1 = models.CharField(max_length=200,blank=True)
-    #~ addr2 = models.CharField(max_length=200,blank=True)
-    #~ country = models.ForeignKey(countries.Country,blank=True,null=True)
-    #~ #city = models.ForeignKey("City",blank=True,null=True)
-    #~ city = models.CharField(max_length=200,blank=True)
-    #~ zipCode = models.CharField(max_length=10,blank=True)
-    #~ region = models.CharField(max_length=200,blank=True)
-    #~ language = models.ForeignKey(countries.Language,blank=True,null=True)
-    
-    #~ email = models.EmailField(blank=True)
-    #~ url = models.URLField(blank=True)
-    #~ phone = models.CharField(max_length=200,blank=True)
-    #~ gsm = models.CharField(max_length=200,blank=True)
-    #~ #image = models.ImageField(blank=True,null=True,
-    #~ # upload_to=".")
-    
-    #~ remarks = models.TextField(blank=True)
-    #~ ordering = ("companyName","lastName","firstName")
-    
-    #~ def __unicode__(self):
-        #~ if self.title and not self.firstName:
-            #~ l = filter(lambda x:x,[self.title,self.lastName])
-        #~ else:
-            #~ l = filter(lambda x:x,[self.firstName,self.lastName])
-
-        #~ s = " ".join(l)
-            
-        #~ if self.companyName:
-            #~ if len(s) > 0:
-                #~ return self.companyName + " (" + s + ")"
-            #~ else:
-                #~ return self.companyName
-        #~ else:
-            #~ return s
-            
-    #~ def as_address(self,linesep="\n<br/>"):
-        #~ l = filter(lambda x:x,[self.title,self.firstName,self.lastName])
-        #~ s = " ".join(l)
-        #~ if self.companyName:
-            #~ s=self.companyName+linesep+s
-        #~ if self.addr1:
-          #~ s += linesep+self.addr1
-        #~ if self.addr2:
-          #~ s += linesep+self.addr2
-        #~ if self.city:
-          #~ s += linesep+self.city
-        #~ if self.zipCode:
-          #~ s += linesep+self.zipCode
-          #~ if self.region:
-            #~ s += " " + self.region
-        #~ elif self.region:
-            #~ s += linesep+ self.region
-        #~ if self.id == 1:
-            #~ foreigner = False
-        #~ else:
-            #~ foreigner = (self.country != Contact.objects.get(id=1).country)
-        #~ if foreigner: # (if self.country != sender's country)
-            #~ s += linesep + unicode(self.country)
-        #~ return mark_safe(s)
-        #~ #as_address.allow_tags=True
-
 class Contact(models.Model):
   
     class Meta:
@@ -213,9 +118,8 @@ class Person(Contact):
 
 class PersonPageLayout(ContactPageLayout):
     box1 = "last_name first_name:15 title:10"
-    box7 = """national_id:15
-              nationality
-              language
+    box7 = """national_id:15 id
+              nationality language
               """
 
 class Persons(reports.Report):
@@ -229,14 +133,14 @@ class Persons(reports.Report):
 
 class PersonsByCountry(reports.Report):
     model = Person # Contact
-    master = countries.Country
+    #master = countries.Country
     fk_name = 'country'
     order_by = "city addr1"
     columnNames = "city addr1 name nationality language"
 
 class PersonsByNationality(reports.Report):
     model = Person # Contact
-    master = countries.Country
+    #master = countries.Country
     fk_name = 'nationality'
     order_by = "city addr1"
     columnNames = "city addr1 name country language"
@@ -264,7 +168,8 @@ class Companies(reports.Report):
     
 class CompaniesByCountry(reports.Report):
     model = Company
-    master = countries.Country
+    #master = countries.Country
+    fk_name = 'country'
     columnNames = "city addr1 name country language"
     order_by = "city addr1"
     
