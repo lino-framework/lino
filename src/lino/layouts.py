@@ -80,7 +80,7 @@ dialogs = []
 
 def setup():
     lino.log.debug("Registering Dialogs...")
-    for cls in actors.actors:
+    for cls in actors.actors_dict.values():
         if issubclass(cls,DialogLayout) and cls is not DialogLayout:
             dialogs.append(cls())
 

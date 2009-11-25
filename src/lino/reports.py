@@ -167,7 +167,7 @@ def setup():
 
     """
     lino.log.debug("Register Report actors...")
-    for cls in actors.actors:
+    for cls in actors.actors_dict.values():
         if issubclass(cls,Report) and cls is not Report:
             if cls.typo_check:
                 myattrs = set(cls.__dict__.keys())

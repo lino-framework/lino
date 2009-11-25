@@ -1,0 +1,241 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20091125</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="http://127.0.0.1:8000/extjs/resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="http://127.0.0.1:8000/extjs/adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="http://127.0.0.1:8000/extjs/ext-all-debug.js"></script>
+
+<!-- page specific -->
+<script type="text/javascript">
+
+var myData = [
+    ['3m Co',71.72,0.02,0.03],
+    ['Alcoa Inc',29.01,0.42,1.47],
+    ['Boeing Co.',75.43,0.53,0.71],
+    ['Hewlett-Packard Co.',36.53,-0.03,-0.08],
+    ['Wal-Mart Stores, Inc.',45.45,0.73,1.63]
+];
+
+var store = new Ext.data.ArrayStore({
+    // store configs
+    autoDestroy: true,
+    storeId: 'myStore',
+    data: myData,
+    // reader configs
+    idIndex: 0,  
+    fields: [
+       'company',
+       {name: 'price', type: 'float'},
+       {name: 'change', type: 'float'},
+       {name: 'pctChange', type: 'float'},
+    ]
+});
+
+var colModel = new Ext.grid.ColumnModel({
+    defaults: {
+        width: 120,
+        sortable: true
+    },
+    columns: [
+        {id: 'company', header: 'Company', width: 200, sortable: true, dataIndex: 'company'},
+        {header: 'Price', renderer: Ext.util.Format.usMoney, dataIndex: 'price'},
+        {header: 'Change', dataIndex: 'change'},
+        {header: '% Change', dataIndex: 'pctChange'},
+    ],
+});
+
+var grid = new Ext.grid.GridPanel({
+    store: store,
+    cm: colModel,
+    sm: new Ext.grid.RowSelectionModel({singleSelect:true}),
+    viewConfig: {
+        // forceFit: true,
+    },
+    // width: 600,
+    // height: 300,
+    // frame: true,
+    title: '20091125 grid',
+    // iconCls: 'icon-grid'
+});
+
+show_window = function() {
+  fields = [
+    {flex:0, layout:'form',items:{
+      xtype: 'textfield', fieldLabel:'First Name',maxLength:20}},
+    {flex:1, layout:'form',
+      items:{xtype: 'textfield', fieldLabel:'Last Name',maxLength:60}},
+  ];
+  buttons = [
+    { flex:0, xtype: 'button', text:'Cancel'},
+    { flex:1, xtype: 'button', text:'OK'},
+  ];
+  
+  fields_box = { flex:0, layout:'hbox', frame:true, items:fields, layoutConfig: {align:'stretchmax'}};
+  grid_box   = { flex:1, layout:'fit',  frame:true, items:grid, autoScroll: true};
+  button_box = { flex:0, layout:'hbox', frame:true, items:buttons};
+  
+  main = { xtype: 'panel', 
+    layout:'vbox', layoutConfig: {align:'stretch'}, 
+    items:[ fields_box, grid_box, button_box ], 
+  };
+  
+  win = new Ext.Window({
+    title:'20091125',
+    layout:'fit',
+    items:main,
+    height:400, 
+    width:500,
+    maximizable: true, 
+    });
+  win.show();
+}
+
+// pasted from Lino generated JS
+Ext.namespace('Lino');
+Lino.save_window_config = function(url) {};
+Lino.form_submit = function (form,url,store,pkname) {};
+Lino.grid_afteredit = function (gridwin,url,pk) {};
+Lino.do_action = function(url,name,params,reload,close_dialog) {};
+Lino.grid_action = function(gridwin,name,url) {};
+Lino.show_detail = function (grid,wrappername) {};
+Lino.dialog_action = function (dlg,name,url) {};
+
+
+var properties_PropValuesByOwner_store = new Ext.data.JsonStore({ totalProperty: 'count', proxy: new Ext.data.HttpProxy({ url: '/list/properties/PropValuesByOwner', method: 'GET' }), remoteSort: true, fields: [ { type: 'int', name: 'owner_id' }, { name: 'prop' },'propHidden', { name: 'value' }, { type: 'int', name: 'id' }, { name: '__unicode__' }, { name: 'owner_type' },'owner_typeHidden' ], storeId: 'properties_PropValuesByOwner_store', root: 'rows', id: 'id' });
+var countries_Countries_store = new Ext.data.JsonStore({ totalProperty: 'count', proxy: new Ext.data.HttpProxy({ url: '/list/countries/Countries', method: 'GET' }), remoteSort: true, fields: [ { name: '__unicode__' }, { name: 'isocode' }, { name: 'name' } ], storeId: 'countries_Countries_store', root: 'rows', id: 'isocode' });
+var countries_Languages_store = new Ext.data.JsonStore({ totalProperty: 'count', proxy: new Ext.data.HttpProxy({ url: '/list/countries/Languages', method: 'GET' }), remoteSort: true, fields: [ { name: '__unicode__' }, { name: 'id' }, { name: 'name' } ], storeId: 'countries_Languages_store', root: 'rows', id: 'id' });
+var properties_Properties_store = new Ext.data.JsonStore({ totalProperty: 'count', proxy: new Ext.data.HttpProxy({ url: '/list/properties/Properties', method: 'GET' }), remoteSort: true, fields: [ { name: '__unicode__' }, { name: 'short' }, { name: 'only_for' },'only_forHidden', { name: 'name' }, { type: 'int', name: 'id' } ], storeId: 'properties_Properties_store', root: 'rows', id: 'id' });
+
+
+var contacts_Persons2 = new function() {
+  this.last_name = { flex: 20, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'last name', name: 'last_name', xtype: 'textfield' } };
+  this.first_name = { flex: 15, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'first name', name: 'first_name', xtype: 'textfield' } };
+  this.title = { flex: 10, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'title', name: 'title', xtype: 'textfield' } };
+  this.box1_panel = { flex: 45, layoutConfig: { align: 'stretchmax' }, labelWidth: 99, xtype: 'panel', items: [ this.last_name, this.first_name, this.title ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  this.national_id = { flex: 15, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'national id', name: 'national_id', xtype: 'textfield' } };
+  this.id = { flex: 8, layout: 'form', xtype: 'panel', items: { readOnly: true, anchor: '100%', fieldLabel: 'ID', name: 'id', xtype: 'numberfield' } };
+  this.box7_1_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 108, xtype: 'panel', items: [ this.national_id, this.id ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  this.nationality = { flex: 10, layout: 'form', xtype: 'panel', items: { displayField: '__unicode__', fieldLabel: 'nationality', name: 'nationality', hiddenName: 'nationalityHidden', typeAhead: true, valueField: 'isocode', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Country...', anchor: '100%', store: countries_Countries_store, xtype: 'combo' } };
+  this.language = { flex: 10, layout: 'form', xtype: 'panel', items: { displayField: '__unicode__', fieldLabel: 'language', name: 'language', hiddenName: 'languageHidden', typeAhead: true, valueField: 'id', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Language...', anchor: '100%', store: countries_Languages_store, xtype: 'combo' } };
+  this.box7_2_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 108, xtype: 'panel', items: [ this.nationality, this.language ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  this.box7_panel = { flex: 23, layout: 'vbox', xtype: 'panel', 
+    items: [ this.box7_1_panel, this.box7_2_panel ], frame: true, border: false, 
+    layoutConfig: { align: 'stretchmax' }, labelAlign: 'top' };
+  this.main_1_panel = { flex: 1, layout: 'hbox', xtype: 'panel', items: [ this.box1_panel, this.box7_panel ], frame: true, border: false, layoutConfig: { align: 'stretchmax' }, labelAlign: 'top' };
+  this.country = { flex: 10, layout: 'form', xtype: 'panel', items: { displayField: '__unicode__', fieldLabel: 'country', name: 'country', hiddenName: 'countryHidden', typeAhead: true, valueField: 'isocode', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Country...', anchor: '100%', store: countries_Countries_store, xtype: 'combo' } };
+  this.region = { flex: 20, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'region', name: 'region', xtype: 'textfield' } };
+  this.box3_1_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 72, xtype: 'panel', items: [ this.country, this.region ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  this.city = { flex: 20, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'city', name: 'city', xtype: 'textfield' } };
+  this.zip_code = { flex: 10, layout: 'form', xtype: 'panel', items: { maxLength: 10, anchor: '100%', fieldLabel: 'zip code', name: 'zip_code', xtype: 'textfield' } };
+  this.box3_2_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 81, xtype: 'panel', items: [ this.city, this.zip_code ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  this.addr1 = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'addr1', name: 'addr1', xtype: 'textfield' } };
+  this.addr2 = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'addr2', name: 'addr2', xtype: 'textfield' } };
+  this.box3_panel = { flex: 40, labelWidth: 54, xtype: 'panel', items: [ this.box3_1_panel, this.box3_2_panel, this.addr1, this.addr2 ], frame: true, layoutConfig: { align: 'stretchmax' }, layout: 'vbox', border: false, labelAlign: 'top' };
+  this.email = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 75, anchor: '100%', fieldLabel: 'email', name: 'email', xtype: 'textfield' } };
+  this.url = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'url', name: 'url', xtype: 'textfield' } };
+  this.phone = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'phone', name: 'phone', xtype: 'textfield' } };
+  this.gsm = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'gsm', name: 'gsm', xtype: 'textfield' } };
+  this.box4_panel = { flex: 40, labelWidth: 54, xtype: 'panel', items: [ this.email, this.url, this.phone, this.gsm ], frame: true, layoutConfig: { align: 'stretchmax' }, layout: 'vbox', border: false, labelAlign: 'top' };
+  this.main_2_panel = { flex: 1, layout: 'hbox', xtype: 'panel', items: [ this.box3_panel, this.box4_panel ], frame: true, border: false, layoutConfig: { align: 'stretchmax' }, labelAlign: 'top' };
+  this.PropValuesByOwner_grid = new function() {
+    var PropValuesByOwner_cols = new Ext.grid.ColumnModel({ columns: [ { header: 'prop', sortable: true, editor: { displayField: '__unicode__', fieldLabel: 'prop', xtype: 'combo', name: 'prop', hiddenName: 'propHidden', typeAhead: true, valueField: 'id', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Property...', anchor: '100%', store: properties_Properties_store, allowBlank: false }, width: 90, editable: true, dataIndex: 'prop' }, { header: 'value', sortable: true, editor: { xtype: 'textfield', fieldLabel: 'value', allowBlank: false, maxLength: 200, anchor: '100%', name: 'value' }, width: 180, editable: true, dataIndex: 'value' } ] });
+    var buttons = [ { text: 'Delete', handler: Lino.grid_action(this,'DeleteSelected','/grid_action/properties/PropValuesByOwner/DeleteSelected') }, { text: 'Detail', handler: Lino.show_detail(this,'properties_PropValuesByOwner2') } ];
+    var keys = [ { shift: false, alt: false, handler: Lino.grid_action(this,'DeleteSelected','/grid_action/properties/PropValuesByOwner/DeleteSelected'), key: 46, ctrl: false }, { shift: false, alt: false, handler: Lino.show_detail(this,'properties_PropValuesByOwner2'), key: 13, ctrl: true } ];
+    this.comp = new Ext.grid.EditorGridPanel({ clicksToEdit: 2, flex: 1, colModel: PropValuesByOwner_cols, tbar: new Ext.PagingToolbar({ prependButtons: false, items: buttons, pageSize: 10, store: properties_PropValuesByOwner_store, displayInfo: true }), viewConfig: { showPreview: true, scrollOffset: 200, emptyText: 'Nix gefunden!' }, selModel: new Ext.grid.RowSelectionModel({singleSelect:false}), enableColLock: false, store: properties_PropValuesByOwner_store, emptyText: 'Nix gefunden...' });
+    this.comp.on('afteredit', Lino.grid_afteredit(this,'/grid_afteredit/properties/PropValuesByOwner','id'));
+  }();
+  this.main_panel = new Ext.form.FormPanel({ layoutConfig: { align: 'stretchmax' }, autoHeight: false, layout: 'vbox', xtype: 'panel', autoScroll: true, items: [this.main_1_panel,this.main_2_panel,this.PropValuesByOwner_grid.comp], frame: true, border: false, labelAlign: 'top' });
+  this.main_panel.keys = [ { shift: false, alt: false, key: 33, ctrl: false }, { shift: false, alt: false, handler: function() {contacts_Persons.main_grid.comp.getSelectionModel().selectNext()}, key: 34, ctrl: false } ];
+  this.main_panel.addButton({ text: 'Previous'  });
+  this.main_panel.addButton({ text: 'Next' });
+  this.main_panel.addButton({ text: 'Submit' });
+  this.comp = new Ext.Window( { layout: 'fit', title: 'Persons - Detail', items: this.main_panel, height: 559, width: 830, maximizable: true, closeAction: 'hide', y: 4, x: 196, tools: [ { handler: Lino.save_window_config('/save_win/contacts_Persons2'), id: 'save' } ], id: 'contacts_Persons2' } );
+  this.show = function(btn,event,master,master_grid) {
+    this.comp.show();
+  };
+}();
+
+
+var old_contacts_Persons2 = new function() {
+  this.last_name = { flex: 20, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'last name', name: 'last_name', xtype: 'textfield' } };
+  this.first_name = { flex: 15, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'first name', name: 'first_name', xtype: 'textfield' } };
+  this.title = { flex: 10, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'title', name: 'title', xtype: 'textfield' } };
+  this.box1_panel = { flex: 45, layoutConfig: { align: 'stretchmax' }, labelWidth: 99, xtype: 'panel', items: [ this.last_name, this.first_name, this.title ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  
+  this.national_id = { flex: 15, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'national id', id:'national_id', name: 'national_id', xtype: 'textfield' } };
+  this.id = { flex: 8, layout: 'form', xtype: 'panel', items: { readOnly: true, anchor: '100%', fieldLabel: 'ID', name: 'id', xtype: 'numberfield' } };
+  this.box7_1_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 108, xtype: 'panel', 
+    items: [ this.national_id, this.id ], frame: true, border: false, 
+    layout: 'hbox', labelAlign: 'top' };
+  
+  this.nationality = { flex: 10, layout: 'form', xtype: 'panel', items: { displayField: '__unicode__', fieldLabel: 'nationality', name: 'nationality', hiddenName: 'nationalityHidden', typeAhead: true, valueField: 'isocode', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Country...', anchor: '100%', store: countries_Countries_store, xtype: 'combo' } };
+  this.language = { flex: 10, layout: 'form', xtype: 'panel', items: { displayField: '__unicode__', fieldLabel: 'language', name: 'language', hiddenName: 'languageHidden', typeAhead: true, valueField: 'id', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Language...', anchor: '100%', store: countries_Languages_store, xtype: 'combo' } };
+  this.box7_2_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 108, xtype: 'panel', 
+    items: [ this.nationality, this.language ], frame: true, border: false, 
+    layout: 'hbox', labelAlign: 'top' };
+  
+  this.box7_panel = { flex: 23, layout: 'vbox', xtype: 'panel', 
+    items: [ this.box7_1_panel, this.box7_2_panel ], frame: true, border: false, 
+    layoutConfig: { align: 'stretch' }, labelAlign: 'top' };
+    
+  this.main_1_panel = { flex: 0, layout: 'hbox', xtype: 'panel', 
+    items: [ this.box1_panel, this.box7_panel ], 
+    frame: true, border: false, layoutConfig: { align: 'stretchmax' }, labelAlign: 'top' };
+    
+  this.country = { flex: 10, layout: 'form', xtype: 'panel', items: { displayField: '__unicode__', fieldLabel: 'country', name: 'country', hiddenName: 'countryHidden', typeAhead: true, valueField: 'isocode', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Country...', anchor: '100%', store: countries_Countries_store, xtype: 'combo' } };
+  this.region = { flex: 20, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'region', name: 'region', xtype: 'textfield' } };
+  this.box3_1_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 72, xtype: 'panel', items: [ this.country, this.region ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  this.city = { flex: 20, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'city', name: 'city', xtype: 'textfield' } };
+  this.zip_code = { flex: 10, layout: 'form', xtype: 'panel', items: { maxLength: 10, anchor: '100%', fieldLabel: 'zip code', name: 'zip_code', xtype: 'textfield' } };
+  this.box3_2_panel = { flex: 0, layoutConfig: { align: 'stretchmax' }, labelWidth: 81, xtype: 'panel', items: [ this.city, this.zip_code ], frame: true, border: false, layout: 'hbox', labelAlign: 'top' };
+  this.addr1 = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'addr1', name: 'addr1', xtype: 'textfield' } };
+  this.addr2 = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'addr2', name: 'addr2', xtype: 'textfield' } };
+  this.box3_panel = { flex: 40, labelWidth: 54, xtype: 'panel', items: [ this.box3_1_panel, this.box3_2_panel, this.addr1, this.addr2 ], frame: true, layoutConfig: { align: 'stretchmax' }, layout: 'vbox', border: false, labelAlign: 'top' };
+  this.email = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 75, anchor: '100%', fieldLabel: 'email', name: 'email', xtype: 'textfield' } };
+  this.url = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'url', name: 'url', xtype: 'textfield' } };
+  this.phone = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'phone', name: 'phone', xtype: 'textfield' } };
+  this.gsm = { flex: 0, layout: 'form', xtype: 'panel', items: { maxLength: 200, anchor: '100%', fieldLabel: 'gsm', name: 'gsm', xtype: 'textfield' } };
+  this.box4_panel = { flex: 40, labelWidth: 54, xtype: 'panel', items: [ this.email, this.url, this.phone, this.gsm ], frame: true, layoutConfig: { align: 'stretchmax' }, layout: 'vbox', border: false, labelAlign: 'top' };
+  this.main_2_panel = { flex: 0, layout: 'hbox', xtype: 'panel', items: [ this.box3_panel, this.box4_panel ], frame: true, border: false, layoutConfig: { align: 'stretchmax' }, labelAlign: 'top' };
+  
+  this.PropValuesByOwner_grid = new function() {
+    var PropValuesByOwner_cols = new Ext.grid.ColumnModel({ columns: [ { header: 'prop', sortable: true, editor: { displayField: '__unicode__', fieldLabel: 'prop', xtype: 'combo', name: 'prop', hiddenName: 'propHidden', typeAhead: true, valueField: 'id', mode: 'remote', triggerAction: 'all', selectOnFocus: true, emptyText: 'Select a Property...', anchor: '100%', store: properties_Properties_store, allowBlank: false }, width: 90, editable: true, dataIndex: 'prop' }, { header: 'value', sortable: true, editor: { xtype: 'textfield', fieldLabel: 'value', allowBlank: false, maxLength: 200, anchor: '100%', name: 'value' }, width: 180, editable: true, dataIndex: 'value' } ] });
+    var buttons = [ { text: 'Delete' }, { text: 'Detail' } ];
+    var keys = [ { shift: false, alt: false, key: 46, ctrl: false }, { shift: false, alt: false, key: 13, ctrl: true } ];
+    this.comp = new Ext.grid.EditorGridPanel({ clicksToEdit: 2, flex: 1, colModel: PropValuesByOwner_cols, tbar: new Ext.PagingToolbar({ prependButtons: false, items: buttons, pageSize: 10, store: properties_PropValuesByOwner_store, displayInfo: true }), viewConfig: { showPreview: true, scrollOffset: 200, emptyText: 'Nix gefunden!' }, selModel: new Ext.grid.RowSelectionModel({singleSelect:false}), enableColLock: false, store: properties_PropValuesByOwner_store, emptyText: 'Nix gefunden...' });
+  }();
+  this.main_panel = new Ext.form.FormPanel({ layoutConfig: { align: 'stretchmax' }, autoHeight: false, layout: 'vbox', xtype: 'panel', autoScroll: true, items: [this.main_1_panel,this.main_2_panel,this.PropValuesByOwner_grid.comp], frame: true, border: false, labelAlign: 'top' });
+  this.main_panel.keys = [ { shift: false, alt: false, handler: function() {}, key: 34, ctrl: false } ];
+  this.main_panel.addButton({ text: 'Previous', handler: function(){} });
+  this.main_panel.addButton({ text: 'Next', handler: function() {} });
+  this.main_panel.addButton({ text: 'Submit', handler: function(){} });
+  this.comp = new Ext.Window( { layout: 'fit', title: 'Persons - Detail', items: this.main_panel, height: 559, width: 830, maximizable: true, closeAction: 'hide', y: 4, x: 196, id: 'contacts_Persons2' } );
+  console.log('national_id',this.comp.findById('national_id'));
+  this.show = function(btn,event,master,master_grid) {
+    // contacts_Persons_store.load();
+    this.comp.show();
+    console.log('national_id',this.comp.findById('national_id').getHeight());
+  };
+}();
+
+
+
+Ext.onReady(function() {
+  viewport = new Ext.Viewport({ 
+    layout: 'border' , 
+    items: [ { 
+      region: 'center', 
+    }]
+  });
+  viewport.render('body');
+  // show_window();
+  contacts_Persons2.show();
+});
+</script>
+</head><body></body></html>

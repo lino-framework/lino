@@ -130,16 +130,9 @@ class WindowRenderer:
         self.options.update(closeAction='hide')
         self.options.update(maximizable=True)
         self.options.update(id=self.name)
-        def save():
-            yield "function(event,toolEl,panel,tc) {"
-            yield "  console.log(panel.id,panel.getSize(),panel.getPosition());"
-            yield "var pos = panel.getPosition();"
-            yield "var size = panel.getSize();"
-            url = '/save_win/' + self.name
-            yield "  Lino.do_action(%r,%r,{x:pos[0],y:pos[1],h:size['height'],w:size['width']});" % (url,url)
-            yield "}"
-          
-        self.options.update(tools=[dict(id='save',handler=save)])
+        url = '/save_win/' + self.name
+        js = 'Lino.save_window_config(%r)' % url
+        self.options.update(tools=[dict(id='save',handler=js_code(js))])
         self.options.update(layout='fit')
         self.options.update(items=self.lh._main)
         if self.lh.height is None:
@@ -235,12 +228,6 @@ class DialogRenderer(WindowRenderer):
 
 
 
-def menu_view(request):
-    from lino import lino_site
-    s = py2js(lino_site.get_menu(request))
-    return HttpResponse(s, mimetype='text/html')
-
-
 def py2js(v,**kw):
     #lino.log.debug("py2js(%r,%r)",v,kw)
         
@@ -265,6 +252,9 @@ def py2js(v,**kw):
     if isinstance(v,Component):
         return v.as_ext(**kw)
         
+    if callable(v):
+        return "\n".join([ln for ln in v(**kw)])
+
     assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
     if type(v) in (types.ListType, types.TupleType):
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
@@ -275,9 +265,6 @@ def py2js(v,**kw):
         return str(v).lower()
     if type(v) is unicode:
         return repr(v.encode('utf8'))
-    if callable(v):
-        return "\n".join([ln for ln in v()])
-
     return repr(v)
             
 class js_code:
@@ -292,125 +279,6 @@ class js_code:
         
         
         
-#~ def setup_report(rpt):
-    #~ "adds ExtJS specific stuff to a Report instance"
-    #~ rpt.setup()
-    #~ if False: # not hasattr(rpt,'choice_store'):
-        #~ #rpt.choice_store = Store(rpt,rpt.choice_layout,mode='choice',autoLoad=True)
-        #~ for layout in rpt.layouts:
-            #~ if not hasattr(layout,'choice_store'):
-                #~ layout.store = Store(rpt,layout) #,autoLoad=True
-        #~ rpt.variables = []
-        #~ for layout in rpt.layouts:
-            #~ layout.store = Store(rpt,layout) #,autoLoad=True
-            #~ for v in layout._main.ext_variables():
-                #~ rpt.variables.append(v)
-        #~ tabs = [l._main for l in rpt.store.layouts]
-        #~ comp = TabPanel(None,"MainPanel",*tabs)
-        #~ rpt.variables.append(comp)
-        #~ rpt.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
-
-class SaveWindowConfigAction(actions.Action):
-    def run(self,context,name):
-        h = int(context.request.POST.get('h'))
-        w = int(context.request.POST.get('w'))
-        x = int(context.request.POST.get('x'))
-        y = int(context.request.POST.get('y'))
-        context.confirm("%r,%r,%r,%r,%r : Are you sure?!" % (name,x,y,h,w))
-        ui.window_configs[name] = (x,y,w,h)
-        ui.save_window_configs()
-
-def save_win_view(request,name=None):
-    #print 'save_win_view()',name
-    action = SaveWindowConfigAction()
-    context = ActionContext(action,request,name)
-    context.run()
-    return json_response(**context.response)
-
-def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
-    dlg = actors.get_actor(app_label,dlgname)
-    action = getattr(dlg,actname)
-    context = ActionContext(action,request)
-    context.run()
-    return json_response(**context.response)
-
-def action_view(request,app_label=None,actname=None,**kw):
-    action = actors.get_actor(app_label,actname)
-    context = ActionContext(action,request)
-    context.run()
-    return json_response(**context.response)
-
-def choices_view(request,app_label=None,modname=None,fldname=None,**kw):
-    model = models.get_model(app_label,modname)
-    field = model._meta.get_field_by_name(fldname)
-    rpt = field._lino_choices_report
-    #kw['colname'] = request.POST['colname']
-    return json_report_view_(request,rpt,**kw)
-    
-def grid_afteredit_view(request,**kw):
-    kw['colname'] = request.POST['colname']
-    return json_report_view(request,**kw)
-
-def form_submit_view(request,**kw):
-    #kw['submit'] = True
-    return json_report_view(request,**kw)
-
-def list_report_view(request,**kw):
-    kw['simple_list'] = True
-    return json_report_view(request,**kw)
-    
-def json_report_view(request,app_label=None,rptname=None,**kw):
-    rpt = actors.get_actor(app_label,rptname)
-    return json_report_view_(request,rpt,**kw)
-
-def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
-    if not rpt.can_view.passes(request):
-        return json_response(success=False,
-            msg="User %s cannot view %s." % (request.user,rptname))
-    rh = rpt.get_handle(ui)
-    if action:
-        for a in rpt.actions:
-            if a.name == action:
-                context = ReportActionContext(a,request,rh)
-                context.run()
-                #d = a.get_response(rptreq)
-                return json_response(**context.response)
-        return json_response(
-            success=False,
-            msg="Report %r has no action %r" % (rpt.name,action))
-    rptreq = ViewReportRequest(request,rh)
-    if simple_list:
-        d = rptreq.render_to_json()
-        return json_response(**d)
-
-    pk = request.POST.get(rptreq.report.store.pk.name) #,None)
-    #~ if pk == reports.UNDEFINED:
-        #~ pk = None
-    try:
-        if pk in ('', None):
-            #return json_response(success=False,msg="No primary key was specified")
-            instance = rpt.model()
-        else:
-            instance = rpt.model.objects.get(pk=pk)
-            
-        for f in rptreq.report.store.fields:
-            if not f.field.primary_key:
-                f.update_from_form(instance,request.POST)
-                    
-        instance.save()
-        return json_response(success=True,
-              msg="%s has been saved" % instance)
-    except Exception,e:
-        traceback.print_exc(e)
-        return json_response(success=False,msg="Exception occured: "+str(e))
-    
-def json_response(**kw):
-    s = simplejson.dumps(kw,default=unicode)
-    #return HttpResponse(s, mimetype='text/html')
-    #s = py2js(kw)
-    #print "json_response()", s
-    return HttpResponse(s, mimetype='text/html')
-    
 
 
 DECLARE_INLINE = 0
@@ -765,6 +633,22 @@ class LayoutElement(VisibleComponent):
     preferred_height = 2
     xtype = None # set by subclasses
     
+    """
+    hflex means that this element should be stretched horizontally. 
+    This is usually the case for everybody. maybe there will come exceptions.
+    
+    vflex means that this element should be stretched vertically.
+    This is the case only for GridElement and TextArea. 
+    
+    A Container's vflex becomes True if at least on element has vflex.
+    
+    A hbox sets layoutConfig(align="stretch") if and only if it has at least one element with e.vflex.
+    A vbox sets layoutConfig(align="stretch") if and only if it has at least one element with e.hflex.
+    
+    """
+    hflex = True
+    vflex = False
+    
     def __init__(self,lh,name,**kw):
         #print "Element.__init__()", layout,name
         #self.parent = parent
@@ -806,52 +690,48 @@ class LayoutElement(VisibleComponent):
         
     def as_ext_column(self):
         return py2js(self.get_column_options())
-        #~ kw = self.get_column_options()
-        #~ return "{ %s }" % dict2js(kw)
-        
-    #~ def as_ext_column(self,request):
-        #~ d = dict(
-          #~ dataIndex=self.name, 
-          #~ header=unicode(self.label) if self.label else self.name,
-          #~ sortable=self.sortable)
-        #~ if self.width:
-            #~ d.update(width=self.width * EXT_CHAR_WIDTH)
-        #~ if request._lino_report.editing and self.editable:
-            #~ fo = self.get_field_options(request)
-            #~ # del fo['fieldLabel']
-            #~ d.update(editor=js_code("{ %s }" % dict2js(fo)))
-        #~ return "{ %s }" % dict2js(d)
     
     def ext_options(self,**kw):
         kw = VisibleComponent.ext_options(self,**kw)
-        if self.width is None:
-            """
-            an element without explicit width will get flex=1 when in a hbox, otherwise anchor="100%".
-            """
-            #if isinstance(self.parent,HBOX):
-            #assert self.parent is not None, "%s %s : parent is None!?" % (self.__class__.__name__,self.ext_name)
-            if self.parent is not None:
-                if self.parent.vertical:
-                    kw.update(anchor="100%")
+        if self.parent is not None:
+            if self.parent.vertical:
+                if self.vflex:
+                    flex = self.height or self.preferred_height or 1
+                    assert flex > 0
+                    kw.update(flex=flex)
                 else:
-                    kw.update(flex=1)
+                    kw.update(flex=0)
             else:
-                lino.log.warning("%s %s : parent is None",self.__class__.__name__,self.ext_name)
-                    
-        else:
-            kw.update(width=self.ext_width())
-        if self.height is not None:
-            kw.update(height=self.height * EXT_CHAR_HEIGHT)
+                if self.hflex:
+                    flex = self.width or self.preferred_width
+                    assert flex > 0
+                    kw.update(flex=flex)
+                else:
+                    kw.update(flex=0)
+        #~ if self.width is None:
+            #~ """
+            #~ an element without explicit width will get flex=1 when in a hbox, otherwise anchor="100%".
+            #~ """
+            #~ if self.parent is not None:
+                #~ if self.parent.vertical:
+                    #~ kw.update(anchor="100%")
+                #~ else:
+                    #~ kw.update(flex=1)
+            #~ else:
+                #~ lino.log.warning("%s %s : parent is None",self.__class__.__name__,self.ext_name)
+        #~ else:
+            #~ kw.update(width=self.ext_width())
+        #~ if self.height is not None:
+            #~ kw.update(height=self.height * EXT_CHAR_HEIGHT)
         if self.xtype is not None:
             kw.update(xtype=self.xtype)
         return kw
         
-    def ext_width(self):
-        if self.width is None:
-            return None
-        #if self.parent.labelAlign == 'top':
-        return max(self.width,self.label_width) * EXT_CHAR_WIDTH + self.xpadding
-        #return (self.width + self.label_width) * EXT_CHAR_WIDTH + self.xpadding
+    #~ def ext_width(self):
+        #~ if self.width is None:
+            #~ return None
+        #~ #if self.parent.labelAlign == 'top':
+        #~ return max(self.width,self.label_width) * EXT_CHAR_WIDTH + self.xpadding
         
 class InputElement(LayoutElement):
     declare_type = DECLARE_THIS
@@ -980,13 +860,15 @@ class FieldElement(LayoutElement):
         """
         fo = self.get_field_options()
         po = self.get_panel_options()
-        po.update(items=js_code("[ { %s } ]" % dict2js(fo)))
+        #po.update(items=js_code("[ { %s } ]" % dict2js(fo)))
+        po.update(items=fo)
         return po
         
 class TextFieldElement(FieldElement):
     xtype = 'textarea'
     #width = 60
     preferred_width = 60
+    vflex = True
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
         #~ assert self.name != '__unicode__'
@@ -1147,8 +1029,9 @@ class VirtualFieldElement(FieldElement):
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = lh.ui.field2elem(lh,return_type,**kw)
-        for a in ('ext_width','ext_options',
-          'get_column_options','get_field_options'):
+        #~ for a in ('ext_width','ext_options',
+          #~ 'get_column_options','get_field_options'):
+        for a in ('ext_options','get_column_options','get_field_options'):
             setattr(self,a,getattr(delegate,a))
         
 
@@ -1171,9 +1054,7 @@ class Container(LayoutElement):
         #print self.__class__.__name__, elements
         #self.label = kw.get('label',self.label)
         self.elements = elements
-        for e in elements:
-            if not isinstance(e,LayoutElement):
-                raise Exception("%r is not a LayoutElement" % e)
+        
         #~ self.elements = []
         #~ for elem in elements:
             #~ assert elem is not None
@@ -1191,15 +1072,14 @@ class Container(LayoutElement):
                             #~ self.elements.append(layout[name])
             #~ else:
                 #~ self.elements.append(elem)
-        if self.__class__ is MainGridElement:
-            lino.log.debug("%s.%s before compute_size:w=%r,h=%r",self.lh.name,self.name,self.width,self.height)
+        #~ if self.__class__ is MainGridElement:
+            #~ lino.log.debug("%s.%s before compute_size:w=%r,h=%r",self.lh.name,self.name,self.width,self.height)
         self.compute_size()
-        if self.__class__ is MainGridElement:
-            lino.log.debug("%s.%s after compute_size:w=%r,h=%r",self.lh.name,self.name,self.width,self.height)
+        #~ if self.__class__ is MainGridElement:
+            #~ lino.log.debug("%s.%s after compute_size:w=%r,h=%r",self.lh.name,self.name,self.width,self.height)
         
         # some more analysis:
         for e in self.elements:
-            e.parent = self
             if isinstance(e,FieldElement):
                 self.is_fieldset = True
                 #~ if self.label_width < e.label_width:
@@ -1317,9 +1197,9 @@ class Container(LayoutElement):
         d.update(frame=self.frame)
         d.update(border=False)
         d.update(labelAlign=self.get_property('labelAlign'))
-        l = [e.as_ext() for e in self.elements ]
-        #d.update(items=js_code(py2js(self.elements)))
-        d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
+        d.update(items=self.elements)
+        #l = [e.as_ext() for e in self.elements ]
+        #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         #d.update(items=js_code("this.elements"))
         return d
         
@@ -1344,23 +1224,43 @@ class Container(LayoutElement):
 
 class Panel(Container):
     ext_suffix = "_panel"
-        
+    
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
         Container.__init__(self,lh,name,*elements,**kw)
+        vflex = vertical
+        hflex = False
+        for e in elements:
+            if not isinstance(e,LayoutElement):
+                raise Exception("%r is not a LayoutElement" % e)
+            e.parent = self
+            vflex = vflex or e.vflex
+            hflex = hflex or e.hflex
+        self.vflex = vflex
+        self.hflex = hflex
+        
         
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
         d.update(xtype='panel')
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
-        d.update(style=dict(padding='0px'))
         if len(self.elements) == 1:
             d.update(layout='fit')
         elif self.vertical:
-            d.update(layout='anchor')
+            align = 'left'
+            for e in self.elements:
+                if e.hflex:
+                    align = 'stretch'
+            d.update(layout='vbox',layoutConfig=dict(align=align))
+            d.update(layout='vbox',layoutConfig=dict(align='stretchmax'))
         else:
-            d.update(layout='hbox')
+            align = 'top'
+            for e in self.elements:
+                if e.vflex:
+                    align = 'stretch'
+            #d.update(layout='hbox',layoutConfig=dict(align=align))
+            d.update(layout='hbox',layoutConfig=dict(align='stretchmax'))
         return d
         
 
@@ -1389,6 +1289,7 @@ class GridElement(Container):
     value_template = "new Ext.grid.EditorGridPanel({ %s })"
     ext_suffix = "_grid"
     has_comp = True
+    vflex = True
 
     def __init__(self,lh,name,rh,*elements,**kw):
         assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
@@ -1399,7 +1300,7 @@ class GridElement(Container):
         if len(elements) == 0:
             elements = rh.row_layout._main.elements
         #self.preferred_width = 80
-        self.preferred_height = rh._rd.page_length + 5
+        #self.preferred_height = rh._rd.page_length + 5
         self.keys = None
         Container.__init__(self,lh,name,*elements,**kw)
         self.report = rh
@@ -1719,6 +1620,15 @@ Ext.namespace('Lino');
   // console.log("params:",store,type,action,options,reponse,arg);
 // };
 
+Lino.save_window_config = function(url) {
+  return function(event,toolEl,panel,tc) {
+    console.log(panel.id,panel.getSize(),panel.getPosition());
+    var pos = panel.getPosition();
+    var size = panel.getSize();
+    Lino.do_action(url,'save_window_config',{x:pos[0],y:pos[1],h:size['height'],w:size['width']});
+  }
+};
+
 Lino.form_submit = function (form,url,store,pkname) {
   return function(btn,evt) {
     // console.log(store);
@@ -1953,8 +1863,8 @@ Lino.on_load_menu = function(response) {
   if (i) i.focus();"""
         s += """
 };"""
-
         s += """
+        
 Lino.load_main_menu = function() {
   Ext.Ajax.request({
     waitMsg: 'Loading main menu...',
@@ -1965,8 +1875,9 @@ Lino.load_main_menu = function() {
       Ext.MessageBox.alert('error','could not connect to the LinoSite.');
     }
   });
-};"""
-    
+};
+
+"""   
 
         s += """
 Ext.onReady(function(){ """
@@ -1975,8 +1886,6 @@ Ext.onReady(function(){ """
             for ln in c.js_lines():
                 s += "\n" + ln
             
-        #~ s += define_vars(self.variables,indent=2)
-        
         d = dict(layout='border')
         d.update(items=js_code(py2js([js_code('Lino.main_menu')]+list(self.components))))
         s += """
@@ -2118,7 +2027,7 @@ class ViewReportRequest(reports.ReportRequest):
         
 
         
-class PdfManyReportRenderer(ViewReportRequest):
+class unused_PdfManyReportRenderer(ViewReportRequest):
 
     def render(self,as_pdf=True):
         template = get_template("lino/grid_print.html")
@@ -2143,7 +2052,7 @@ class PdfManyReportRenderer(ViewReportRequest):
             rownum += 1
 
   
-class PdfOneReportRenderer(ViewReportRequest):
+class unused_PdfOneReportRenderer(ViewReportRequest):
     #detail_renderer = PdfManyReportRenderer
 
     def render(self,as_pdf=True):
@@ -2162,7 +2071,118 @@ class PdfOneReportRenderer(ViewReportRequest):
 
 
 
+
+
+
 from django.conf.urls.defaults import patterns, url, include
+
+class SaveWindowConfigAction(actions.Action):
+    def run(self,context,name):
+        h = int(context.request.POST.get('h'))
+        w = int(context.request.POST.get('w'))
+        x = int(context.request.POST.get('x'))
+        y = int(context.request.POST.get('y'))
+        context.confirm("%r,%r,%r,%r,%r : Are you sure?!" % (name,x,y,h,w))
+        ui.window_configs[name] = (x,y,w,h)
+        ui.save_window_configs()
+
+def save_win_view(request,name=None):
+    #print 'save_win_view()',name
+    action = SaveWindowConfigAction()
+    context = ActionContext(action,request,name)
+    context.run()
+    return json_response(**context.response)
+
+def menu_view(request):
+    from lino import lino_site
+    s = py2js(lino_site.get_menu(request))
+    return HttpResponse(s, mimetype='text/html')
+
+
+def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
+    dlg = actors.get_actor(app_label,dlgname)
+    action = getattr(dlg,actname)
+    context = ActionContext(action,request)
+    context.run()
+    return json_response(**context.response)
+
+def action_view(request,app_label=None,actname=None,**kw):
+    action = actors.get_actor(app_label,actname)
+    context = ActionContext(action,request)
+    context.run()
+    return json_response(**context.response)
+
+def choices_view(request,app_label=None,modname=None,fldname=None,**kw):
+    model = models.get_model(app_label,modname)
+    field = model._meta.get_field_by_name(fldname)
+    rpt = field._lino_choices_report
+    #kw['colname'] = request.POST['colname']
+    return json_report_view_(request,rpt,**kw)
+    
+def grid_afteredit_view(request,**kw):
+    kw['colname'] = request.POST['colname']
+    return json_report_view(request,**kw)
+
+def form_submit_view(request,**kw):
+    #kw['submit'] = True
+    return json_report_view(request,**kw)
+
+def list_report_view(request,**kw):
+    kw['simple_list'] = True
+    return json_report_view(request,**kw)
+    
+def json_report_view(request,app_label=None,rptname=None,**kw):
+    rpt = actors.get_actor(app_label,rptname)
+    return json_report_view_(request,rpt,**kw)
+
+def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
+    if not rpt.can_view.passes(request):
+        return json_response(success=False,
+            msg="User %s cannot view %s." % (request.user,rptname))
+    rh = rpt.get_handle(ui)
+    if action:
+        for a in rpt.actions:
+            if a.name == action:
+                context = ReportActionContext(a,request,rh)
+                context.run()
+                #d = a.get_response(rptreq)
+                return json_response(**context.response)
+        return json_response(
+            success=False,
+            msg="Report %r has no action %r" % (rpt.name,action))
+    rptreq = ViewReportRequest(request,rh)
+    if simple_list:
+        d = rptreq.render_to_json()
+        return json_response(**d)
+
+    pk = request.POST.get(rptreq.report.store.pk.name) #,None)
+    #~ if pk == reports.UNDEFINED:
+        #~ pk = None
+    try:
+        if pk in ('', None):
+            #return json_response(success=False,msg="No primary key was specified")
+            instance = rpt.model()
+        else:
+            instance = rpt.model.objects.get(pk=pk)
+            
+        for f in rptreq.report.store.fields:
+            if not f.field.primary_key:
+                f.update_from_form(instance,request.POST)
+                    
+        instance.save()
+        return json_response(success=True,
+              msg="%s has been saved" % instance)
+    except Exception,e:
+        traceback.print_exc(e)
+        return json_response(success=False,msg="Exception occured: "+str(e))
+    
+def json_response(**kw):
+    s = simplejson.dumps(kw,default=unicode)
+    #return HttpResponse(s, mimetype='text/html')
+    #s = py2js(kw)
+    #print "json_response()", s
+    return HttpResponse(s, mimetype='text/html')
+    
 
 
 class ExtUI(reports.UI):

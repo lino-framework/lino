@@ -1,0 +1,27 @@
+<html><head>
+<script type="text/javascript">
+function doSomething() {
+   this.style.color = '#cc0000';
+}
+
+window.onload = function () {
+  var foo = new function() {
+    this.bar = 1;
+    this.baz = new function() {
+      this.bar = 2;
+      this.baz = new function() {
+        this.bar = 3;
+      }();
+      this.hello = function() {
+        return "Hello";
+      }
+    }();
+    this.hello = function() {
+      return this.baz.hello();
+    }
+  }();
+  document.write(foo.bar+" "+foo.baz.bar+" "+foo.baz.baz.bar+" "+foo.hello());
+  doSomething();
+}
+</script>
+</head><body></body></html>

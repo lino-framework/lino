@@ -17,7 +17,7 @@ from django.db import models
 
 import lino
 
-actors = []
+#actors = []
 actors_dict = {}
 
 class ActorMetaClass(type):
@@ -29,9 +29,12 @@ class ActorMetaClass(type):
         if not classDict.has_key('app_label'):
             # don't do this for reports created by utils.report_factory():
             cls.app_label = cls.__module__.split('.')[-2]
-        actors.append(cls)
         k = cls.app_label + "." + cls.__name__
+        old = actors_dict.get(k,None)
+        if old is not None:
+            lino.log.debug("ActorMetaClass %s : %r replaced by %r",k,old,cls)
         actors_dict[k] = cls
+        #actors.append(cls)
         return cls
 
     def __init__(cls, name, bases, dict):

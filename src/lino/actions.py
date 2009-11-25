@@ -53,7 +53,7 @@ global_actions = []
 
 def setup():
     lino.log.debug("Registering Global Actions...")
-    for cls in actors.actors:
+    for cls in actors.actors_dict.values():
         if issubclass(cls,Action) and cls is not Action:
             global_actions.append(cls())
     
