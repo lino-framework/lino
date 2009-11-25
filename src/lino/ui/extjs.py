@@ -11,8 +11,10 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+import os
 import traceback
 import types
+import cPickle as pickle
 
 from dateutil import parser as dateparser
 
@@ -56,15 +58,9 @@ def dict2js(d):
       
       
 class ActionContext(actions.ActionContext):
-    def __init__(self,action,request,rh=None):
-        actions.ActionContext.__init__(self,ui,action)
+    def __init__(self,action,request,*args,**kw):
+        actions.ActionContext.__init__(self,ui,action,*args,**kw)
         self.request = request
-        selected = self.request.POST.get('selected',None)
-        if selected:
-            self.selected_rows = [
-              rh._rd.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
-        else:
-            self.selected_rows = []
         self.confirmed = self.request.POST.get('confirmed',None)
         if self.confirmed is not None:
             self.confirmed = int(self.confirmed)
@@ -72,6 +68,32 @@ class ActionContext(actions.ActionContext):
         self.response = dict(success=True,must_reload=False,msg=None,close_dialog=True)
         #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
         
+class ReportActionContext(ActionContext):
+    def __init__(self,action,request,rh,*args,**kw):
+        ActionContext.__init__(self,action,request,**kw)
+        selected = self.request.POST.get('selected',None)
+        if selected:
+            self.selected_rows = [
+              rh._rd.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+        else:
+            self.selected_rows = []
+        
+        
+class ActionRenderer:
+    def __init__(self,a,**kw):
+        assert isinstance(a,actions.Action)
+        self.action = a
+        self.name = a.app_label + "_" + a.name
+        
+    def js_lines(self):
+        yield "var %s = new function() {" % self.name
+        yield "  this.show = function(btn,event) {"
+        yield "    console.log(%r);" % self.name
+        yield "    Lino.do_action(%r,%r,{});" % (self.action.get_url(ui),self.action.name)
+
+        yield "  };"
+        yield "}();"
+
       
 
 class ReportRenderer:
@@ -81,15 +103,7 @@ class ReportRenderer:
         self.ext_name = report.app_label + "_" + report.name
         self.options = kw
         self.windows = [ ReportWindowRenderer(l) for l in self.report.layouts[1:] ]
-        
-    #~ def ext_globals(self):
-        #~ for win in self.windows:
-            #~ yield "var %s_win;" % win.name
-            #~ for ln in win.ext_lines():
-                #~ yield ln
-            #~ yield '// end of window %s' % win.name
-            #~ yield ''
-  
+
     def js_lines(self):
         if False:
             store = self.report.store
@@ -106,21 +120,6 @@ class ReportRenderer:
                 yield ln
             yield ''
 
-class ActionRenderer:
-    def __init__(self,a,**kw):
-        assert isinstance(a,actions.Action)
-        self.action = a
-        self.name = a.app_label + "_" + a.name
-        
-    def js_lines(self):
-        yield "var %s = new function() {" % self.name
-        yield "  this.show = function(btn,event) {"
-        yield "    console.log(%r);" % self.name
-        yield "    Lino.do_action(%r,%r,{});" % (self.action.get_url(ui),self.action.name)
-
-        yield "  };"
-        yield "}();"
-
 class WindowRenderer:
     def __init__(self,lh,**kw):
         assert isinstance(lh,layouts.LayoutHandle)
@@ -131,6 +130,17 @@ class WindowRenderer:
         self.options.update(closeAction='hide')
         self.options.update(maximizable=True)
         self.options.update(id=self.name)
+        def save():
+            yield "function(event,toolEl,panel,tc) {"
+            yield "  // console.log(event,toolEl,panel,tc);"
+            yield "  console.log(panel.id,panel.getSize(),panel.getPosition());"
+            yield "var pos = panel.getPosition();"
+            yield "var size = panel.getSize();"
+            url = '/save_win/' + self.name
+            yield "  Lino.do_action(%r,%r,{x:pos[0],y:pos[1],h:size['height'],w:size['width']});" % (url,url)
+            yield "}"
+          
+        self.options.update(tools=[dict(id='save',handler=save)])
         self.options.update(layout='fit')
         self.options.update(items=self.lh._main)
         if self.lh.height is None:
@@ -141,6 +151,13 @@ class WindowRenderer:
             self.options.update(width=400)
         else:
             self.options.update(width=self.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        wc = ui.window_configs.get(self.name,None)
+        if wc is not None:
+            assert len(wc) == 4
+            self.options.update(x=wc[0])
+            self.options.update(y=wc[1])
+            self.options.update(width=wc[2])
+            self.options.update(height=wc[3])
 
 class ReportWindowRenderer(WindowRenderer):
     def __init__(self,lh,**kw):
@@ -259,6 +276,9 @@ def py2js(v,**kw):
         return str(v).lower()
     if type(v) is unicode:
         return repr(v.encode('utf8'))
+    if callable(v):
+        return "\n".join([ln for ln in v()])
+
     return repr(v)
             
 class js_code:
@@ -291,7 +311,22 @@ class js_code:
         #~ rpt.variables.append(comp)
         #~ rpt.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
 
+class SaveWindowAction(actions.Action):
+    def run(self,context,name):
+        h = int(context.request.POST.get('h'))
+        w = int(context.request.POST.get('w'))
+        x = int(context.request.POST.get('x'))
+        y = int(context.request.POST.get('y'))
+        context.confirm("%r,%r,%r,%r,%r : Are you sure?!" % (name,x,y,h,w))
+        ui.window_configs[name] = (x,y,w,h)
+        ui.save_window_configs()
 
+def save_win_view(request,name=None):
+    print 'save_win_view()',name
+    action = SaveWindowAction()
+    context = ActionContext(action,request,name)
+    context.run()
+    return json_response(**context.response)
 
 def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
     dlg = actors.get_actor(app_label,dlgname)
@@ -337,7 +372,7 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
     if action:
         for a in rpt.actions:
             if a.name == action:
-                context = ActionContext(a,request,rh)
+                context = ReportActionContext(a,request,rh)
                 context.run()
                 #d = a.get_response(rptreq)
                 return json_response(**context.response)
@@ -2146,6 +2181,8 @@ class ExtUI(reports.UI):
         (models.AutoField, IntegerFieldElement),
         (models.EmailField, CharFieldElement),
     )
+    
+    window_configs_file = 'window_configs.pck'
                 
     def __init__(self):
         #self.StaticText = StaticText
@@ -2155,8 +2192,22 @@ class ExtUI(reports.UI):
         self.Panel = Panel
         self.Store = Store
         self.StaticTextElement = StaticTextElement
-        self.ActionContext = ActionContext
+        #self.ActionContext = ActionContext
         self.InputElement = InputElement
+        self.window_configs = {}
+        if os.path.exists(self.window_configs_file):
+            wc = pickle.load(open(self.window_configs_file))
+            if type(wc) is dict:
+                self.window_configs = wc
+            
+    def save_window_configs(self):
+        f = open(self.window_configs_file,'w')
+        pickle.dump(self.window_configs,f)
+        f.close()
+        self._response = None
+
+
+        
         
     def field2elem(self,lh,field,**kw):
         for cl,x in self._field2elem:
@@ -2214,6 +2265,7 @@ class ExtUI(reports.UI):
             (r'^dialog/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
             (r'^action/(?P<app_label>\w+)/(?P<actname>\w+)$', action_view),
             (r'^choices/(?P<app_label>\w+)/(?P<modname>\w+)/(?P<fldname>\w+)$', choices_view),
+            (r'^save_win/(?P<name>\w+)$', save_win_view),
             
         )
 

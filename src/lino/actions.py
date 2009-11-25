@@ -97,9 +97,11 @@ class Action(actors.Actor):
         return ui.get_action_url(self)
 
 class ActionContext:
-    def __init__(self,ui,action):
+    def __init__(self,ui,action,*args,**kw):
         self.ui = ui
         self.action = action
+        self._kw = kw
+        self._args = args
         
     def run(self):
         if self.action.needs_selection and len(self.selected_rows) == 0:
@@ -108,7 +110,7 @@ class ActionContext:
               success=False)
         else:
             try:
-                self.action.run(self)
+                self.action.run(self,*self._args,**self._kw)
             except ActionEvent,e:
                 pass
             except Exception,e:
