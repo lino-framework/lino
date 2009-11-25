@@ -132,7 +132,6 @@ class WindowRenderer:
         self.options.update(id=self.name)
         def save():
             yield "function(event,toolEl,panel,tc) {"
-            yield "  // console.log(event,toolEl,panel,tc);"
             yield "  console.log(panel.id,panel.getSize(),panel.getPosition());"
             yield "var pos = panel.getPosition();"
             yield "var size = panel.getSize();"
@@ -311,7 +310,7 @@ class js_code:
         #~ rpt.variables.append(comp)
         #~ rpt.variables.sort(lambda a,b:cmp(a.declaration_order,b.declaration_order))
 
-class SaveWindowAction(actions.Action):
+class SaveWindowConfigAction(actions.Action):
     def run(self,context,name):
         h = int(context.request.POST.get('h'))
         w = int(context.request.POST.get('w'))
@@ -322,8 +321,8 @@ class SaveWindowAction(actions.Action):
         ui.save_window_configs()
 
 def save_win_view(request,name=None):
-    print 'save_win_view()',name
-    action = SaveWindowAction()
+    #print 'save_win_view()',name
+    action = SaveWindowConfigAction()
     context = ActionContext(action,request,name)
     context.run()
     return json_response(**context.response)
