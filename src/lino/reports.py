@@ -510,38 +510,37 @@ def report_factory(model):
 
 
 class ReportHandle(layouts.DataLink):
-    def __init__(self,ui,rd):
+    def __init__(self,ui,report):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
-        layouts.DataLink.__init__(self,ui,rd.app_label + "_" + rd.name)
-        assert isinstance(rd,Report)
+        layouts.DataLink.__init__(self,ui,report.app_label + "_" + report.name)
+        assert isinstance(report,Report)
         assert isinstance(ui,UI)
-        self._rd = rd
+        #self._rd = rd
+        self.report = report
         for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices','get_title'):
-            setattr(self,n,getattr(rd,n))
+            setattr(self,n,getattr(report,n))
             
     def setup(self):
         def lh(layout_class,*args,**kw):
             layout = layout_class()
             return layouts.LayoutHandle(self,layout,*args,**kw)
         
-        self.choice_layout = lh(layouts.RowLayout,0,self._rd.display_field)
+        self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
         
         index = 1
-        if self._rd.row_layout_class is None:
-            self.row_layout = lh(layouts.RowLayout,index,self._rd.columnNames)
+        if self.report.row_layout_class is None:
+            self.row_layout = lh(layouts.RowLayout,index,self.report.columnNames)
         else:
-            assert self._rd.columnNames is None
-            self.row_layout = lh(self._rd.row_layout_class,index)
+            assert self.report.columnNames is None
+            self.row_layout = lh(self.report.row_layout_class,index)
             
         self.layouts = [ self.choice_layout, self.row_layout ]
         index = 2
-        for lc in self._rd.page_layouts:
+        for lc in self.report.page_layouts:
             self.layouts.append(lh(lc,index))
             index += 1
             
         self.store = self.ui.Store(self)
-        if self._rd.name == 'Persons':
-            lino.log.debug("ReportHandle.setup() done (%s)",self.layouts)
 
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
@@ -555,18 +554,19 @@ class ReportRequest:
     master_instance = None
     instance = None
     
-    def __init__(self,report,
+    def __init__(self,rh,
             master_instance=None,
             offset=None,limit=None,
             extra=1,
             #layout=None,
             **kw):
-        assert isinstance(report,ReportHandle)
-        self.report = report
-        self.name = report._rd.name+"Request"
+        assert isinstance(rh,ReportHandle)
+        self.report = rh.report
+        self.rh = rh
+        self.name = rh.report.name+"Request"
         self.extra = extra
         self.master_instance = master_instance
-        self.queryset = report._rd.get_queryset(self.master_instance,**kw)
+        self.queryset = rh.report.get_queryset(self.master_instance,**kw)
         # Report.get_queryset() may return a list
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
@@ -578,16 +578,21 @@ class ReportRequest:
             self.offset = offset
             
         if limit is None:
-            limit = report._rd.page_length
+            limit = rh.report.page_length
         if limit is not None:
             self.queryset = self.queryset[:int(limit)]
             self.limit = limit
             
-        self.page_length = report._rd.page_length
+        self.page_length = rh.report.page_length
 
     def get_title(self):
         return self.report.get_title(self)
 
+    def create_model(self,**kw):
+        if self.report.master is not None:
+            kw[self.report.fk_name] = self.master_instance
+        return self.report.model(**kw)
+        
 
 
 

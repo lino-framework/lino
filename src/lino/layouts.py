@@ -25,6 +25,12 @@ import lino
 from lino.utils import perms, menus, actors
 from lino import actions
 
+
+LABEL_ALIGN_TOP = 'top'
+LABEL_ALIGN_LEFT = 'left'
+
+
+
 class Input:
     def __init__(self,**kw):
         self.options = kw
@@ -138,8 +144,8 @@ class Layout(actors.Actor):
     #target = None
     join_str = None # set by subclasses
     label = None
-    frame = True
-    label_align = 'top'
+    has_frame = False # True
+    label_align = LABEL_ALIGN_TOP
     #label_align = 'left'
     
     def __init__(self):
@@ -231,6 +237,7 @@ class LayoutHandle:
         #~ self.height = self.layout.height or self._main.height
         self.width = self._main.width
         self.height = self._main.height
+        self.write_debug_info()
                 
         
             
@@ -245,6 +252,12 @@ class LayoutHandle:
         
     def add_hidden_field(self,field):
         return HiddenField(self,field)
+        
+    def write_debug_info(self):
+        f = file(self.name+".debug.csv","w")
+        f.write("\n".join(self._main.debug_lines()))
+        f.close()
+        
         
     #~ def renderer(self,rr):
         #~ return LayoutRenderer(self,rr)

@@ -11,9 +11,31 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-#~ from django.db.backends.signals import connection_created
+"""
+>>> constrain(-1,2,5)
+2
+>>> constrain(1,2,5)
+2
+>>> constrain(0,2,5)
+2
+>>> constrain(2,2,5)
+2
+>>> constrain(3,2,5)
+3
+>>> constrain(5,2,5)
+5
+>>> constrain(6,2,5)
+5
+>>> constrain(10,2,5)
+5
+"""
+def constrain(value,lowest,highest):
+    return min(highest,max(value,lowest))
 
-#~ def lino_setup(sender=None, **kwargs):
-    #~ from lino.django.utils.sites import lino_site
-    #~ lino_site.setup()
-#~ connection_created.connect(lino_setup)
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
+
