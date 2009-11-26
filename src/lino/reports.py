@@ -433,28 +433,9 @@ class Report(actors.Actor):
             qs = self.queryset
         else:
             qs = self.model.objects.all()
-        if self.master is None:
-            assert master_instance is None, "This Report doesn't accept a master"
-        elif self.master is ContentType:
-            if master_instance is None:
-                kw = {
-                  self.fk.ct_field:None,
-                  self.fk.fk_field:None
-                }
-            else:
-                ct = ContentType.objects.get_for_model(master_instance.__class__)
-                kw = {
-                  self.fk.ct_field:ct,
-                  self.fk.fk_field:master_instance.pk
-                }
+        kw = self.add_master_kw(master_instance)
+        if len(kw):
             qs = qs.filter(**kw)
-        else:
-            if master_instance is None:
-                qs = qs.filter(**{"%s__exact" % self.fk.name:None})
-            elif not isinstance(master_instance,self.master):
-                raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
-            else:
-                qs = qs.filter(**{self.fk.name:master_instance})
 
         if self.filter:
             qs = qs.filter(**self.filter)
@@ -473,10 +454,33 @@ class Report(actors.Actor):
             qs = qs.order_by(*order_by.split())
         return qs
         
-    def create_instance(self,rptreq):
-        i = self.model()
-        # todo...
-        return i
+    def add_master_kw(self,master_instance,**kw):
+        if self.master is None:
+            assert master_instance is None, "This Report doesn't accept a master"
+        elif self.master is ContentType:
+            if master_instance is None:
+                kw[self.fk.ct_field] = None,
+                kw[self.fk.fk_field] = None
+            else:
+                ct = ContentType.objects.get_for_model(master_instance.__class__)
+                kw[self.fk.ct_field] = ct
+                kw[self.fk.fk_field] = master_instance.pk
+          else:
+            if master_instance is None:
+                kw["%s__exact" % self.fk.name] = None
+            elif not isinstance(master_instance,self.master):
+                raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
+            else:
+                kw[self.fk.name] = master_instance
+        return kw
+        
+    #~ def create_instance(self,rptreq):
+        #~ i = self.model()
+        #~ # todo...
+        #~ return i
+        
+    def after_create(self,instance):
+        pass
         
     def getLabel(self):
         return self.label
@@ -588,10 +592,12 @@ class ReportRequest:
     def get_title(self):
         return self.report.get_title(self)
 
-    def create_model(self,**kw):
-        if self.report.master is not None:
-            kw[self.report.fk_name] = self.master_instance
-        return self.report.model(**kw)
+    def create_instance(self,**kw):
+        kw = self.report.add_master_kw(self.master_instance,**kw)
+        print 20091126, self.report.name, kw
+        instance = self.report.model(**kw)
+        self.report.after_create(instance)
+        return instance
         
 
 

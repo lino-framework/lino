@@ -254,9 +254,10 @@ class LayoutHandle:
         return HiddenField(self,field)
         
     def write_debug_info(self):
-        f = file(self.name+".debug.csv","w")
-        f.write("\n".join(self._main.debug_lines()))
-        f.close()
+        if False:
+            f = file(self.name+".debug.csv","w")
+            f.write("\n".join(self._main.debug_lines()))
+            f.close()
         
         
     #~ def renderer(self,rr):

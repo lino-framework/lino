@@ -1878,7 +1878,7 @@ class ViewReportRequest(reports.ReportRequest):
         # add one empty row:
         for i in range(0,self.extra):
         #if self.layout.index == 1: # currently only in a grid
-            row = self.report.create_instance(self)
+            row = self.create_instance()
             rows.append(self.obj2json(row))
             #~ d = {}
             #~ for fld in self.store.fields:
@@ -2024,7 +2024,7 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
     try:
         if pk in ('', None):
             #return json_response(success=False,msg="No primary key was specified")
-            instance = rptreq.create_model()
+            instance = rptreq.create_instance()
         else:
             instance = rpt.model.objects.get(pk=pk)
             

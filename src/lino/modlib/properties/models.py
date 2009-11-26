@@ -54,10 +54,12 @@ class PropValue(models.Model):
     value = models.CharField(max_length=200)
     
     def __unicode__(self):
-        if not self.owner:
+        if self.pk is None:
             return ''
-        if not self.prop:
-            return ''
+        #~ if not self.owner:
+            #~ return ''
+        #~ if self.prop is None:
+            #~ return ''
         return "%s: %s" % (self.prop.short,self.value)
         
     def prop_choices_filter(self,recipient):
