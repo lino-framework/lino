@@ -191,11 +191,15 @@ class CompaniesByCountry(reports.Report):
 
         
 class Partner(models.Model):
-    # subclassed in lino.modlib.sales and dsbe.modlib.project
+    """
+    The Partner model in lino.modlib.contacts is abstract. 
+    igen uses the implementation in lino.modlib.sales (which has Meta app_label = "").
+    dsbe uses its own implementation in dsbe.modlib.contacts.models which just removes the abstract attribute.
+    """
     class Meta:
         abstract = True
         
-    name = models.CharField("Sort name",max_length=40)
+    name = models.CharField("Sort name",max_length=40,editable=False)
     company = models.ForeignKey(Company,blank=True,null=True)
     person = models.ForeignKey(Person,blank=True,null=True)
     

@@ -18,6 +18,7 @@
 #from lino.apps.finan import models as finan
 import decimal
 from lino.utils.instantiator import Instantiator, i2d
+from lino.modlib.tools import resolve_model
 
 #from lino.apps.ledger import models as ledger
 #from lino.apps.contacts import models as contacts
@@ -25,9 +26,11 @@ from lino.utils.instantiator import Instantiator, i2d
 #from lino.apps.ledger.fixtures import be
 
 from lino import reports
-contacts = reports.get_app('contacts')
+#contacts = reports.get_app('contacts')
 ledger = reports.get_app('ledger')
 finan = reports.get_app('finan')
+
+Partner = resolve_model('contacts.Partner')
 
 def objects():
     #ba = ledger.Account.objects.get(pk="5500")
@@ -45,7 +48,7 @@ def objects():
       balance1=decimal.Decimal('1056.40'))
     doc.add_item(
       account=PR,
-      partner=contacts.Partner.objects.get(pk=2),
+      partner=Partner.objects.get(pk=2),
       debit='12.49')
     doc.book()
     yield doc

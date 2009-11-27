@@ -16,6 +16,8 @@ import datetime
 from dateutil import parser as dateparser
 import decimal
 
+import lino
+
 def i2d(i):
     d = dateparser.parse(str(i))
     d = datetime.date(d.year,d.month,d.day)
@@ -103,18 +105,22 @@ class ManyToManyConverter(Converter):
         return kw
 
       
+from lino.modlib.tools import resolve_model
+
 class Instantiator:
-    def __init__(self,model_class,fieldnames=None,
+    def __init__(self,model,fieldnames=None,
           converter_classes={},**kw):
+        self.model = resolve_model(model)
+        if self.model._meta.pk is None: 
+            raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
         if type(fieldnames) == str:
             fieldnames = fieldnames.split()
-        self.model_class = model_class
         self.default_values = kw
         #self.fieldnames = fieldnames
         lookup_fields = {}
         self.converters = []
         if fieldnames is None:
-            self.fields = model_class._meta.fields
+            self.fields = self.model._meta.fields
         else:
             self.fields = []
             for name in fieldnames:
@@ -122,13 +128,13 @@ class Instantiator:
                 if len(a) == 2:
                     name = a[0]
                     lookup_fields[name] = a[1]
-                field = model_class._meta.get_field(name)
+                field = self.model._meta.get_field(name)
                 self.fields.append(field)
         #print " ".join(dir(model_class))
         #print " ".join(model_class._meta.fields)
         #for f in model_class._meta.fields:
         #for f in self.fields:
-        for f in model_class._meta.fields + model_class._meta.many_to_many:
+        for f in self.model._meta.fields + self.model._meta.many_to_many:
             cv = None
             #f = getattr(model_class,name)
             #print repr(f)
@@ -153,7 +159,7 @@ class Instantiator:
             #~ print "foo", f.name
 
     def build(self,*values,**kw):
-        #print "build",kw
+        # lino.log.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
         i = 0
         kw['_m2m'] = {}
         for v in values:
@@ -164,7 +170,7 @@ class Instantiator:
         for c in self.converters:
             kw = c.convert(**kw)
         m2m = kw.pop("_m2m")
-        instance = self.model_class(**kw)
+        instance = self.model(**kw)
         instance.save()
         for k,v in m2m.items():
             queryset = getattr(instance,k)

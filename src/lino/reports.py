@@ -47,6 +47,8 @@ from lino import layouts
 from lino import actions
 from lino.utils import perms, menus, actors
 
+from lino.modlib.tools import resolve_model, resolve_field
+
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
         #~ return
@@ -56,30 +58,6 @@ def base_attrs(cl):
             yield k
         for k in b.__dict__.keys():
             yield k
-
-def resolve_model(name,app_label):
-    # Same logic as in django.db.models.fields.related.add_lazy_relation()
-    try:
-        app_label, model_name = name.split(".")
-    except ValueError:
-        # If we can't split, assume a model in current app
-        #app_label = rpt.app_label
-        model_name = name
-    return models.get_model(app_label,model_name,False)
-
-
-def resolve_field(name,app_label):
-    l = name.split('.')
-    if len(l) == 3:
-        app_label = l[0]
-        del l[0]
-    if len(l) == 2:
-        print "models.get_model(",app_label,l[0],False,")"
-        model = models.get_model(app_label,l[0],False)
-        fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
-        assert remote_model is None
-        return fld
-
 
     
 
@@ -287,12 +265,11 @@ class Report(actors.Actor):
             if self.queryset is None:
                 raise Exception(self.__class__)
             self.model = self.queryset.model
-        elif isinstance(self.model,basestring):
+        else:
             self.model = resolve_model(self.model,self.app_label)
         assert issubclass(self.model,models.Model), "%s.model is a %r" % (self.name,self.model)
         
-        if isinstance(self.master,basestring):
-            self.master = resolve_model(self.master,self.app_label)
+        self.master = resolve_model(self.master,self.app_label)
         
         if self.fk_name:
             try:
@@ -428,12 +405,13 @@ class Report(actors.Actor):
         return self.title or self.label
         
         
-    def get_queryset(self,master_instance=None,flt=None,order_by=None):
+    def get_queryset(self,master_instance=None,flt=None,order_by=None,**kw):
+        lino.log.debug('%sReport.get_queryset(%r)',self.name,master_instance)
         if self.queryset is not None:
             qs = self.queryset
         else:
             qs = self.model.objects.all()
-        kw = self.add_master_kw(master_instance)
+        kw = self.add_master_kw(master_instance,**kw)
         if len(kw):
             qs = qs.filter(**kw)
 
@@ -465,7 +443,7 @@ class Report(actors.Actor):
                 ct = ContentType.objects.get_for_model(master_instance.__class__)
                 kw[self.fk.ct_field] = ct
                 kw[self.fk.fk_field] = master_instance.pk
-          else:
+        else:
             if master_instance is None:
                 kw["%s__exact" % self.fk.name] = None
             elif not isinstance(master_instance,self.master):
@@ -564,6 +542,7 @@ class ReportRequest:
             extra=1,
             #layout=None,
             **kw):
+        lino.log.debug('%sRequest.__init__(%r)',rh.report.name,master_instance)
         assert isinstance(rh,ReportHandle)
         self.report = rh.report
         self.rh = rh
@@ -594,7 +573,6 @@ class ReportRequest:
 
     def create_instance(self,**kw):
         kw = self.report.add_master_kw(self.master_instance,**kw)
-        print 20091126, self.report.name, kw
         instance = self.report.model(**kw)
         self.report.after_create(instance)
         return instance

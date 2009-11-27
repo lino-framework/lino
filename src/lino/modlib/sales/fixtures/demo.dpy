@@ -19,8 +19,9 @@ from dateutil import parser as dateparser
 #from lino.apps.contacts import models as contacts
 from lino.modlib.sales import utils
 from lino.utils.instantiator import Instantiator, i2d
+from lino.modlib.tools import resolve_model
 
-contacts = reports.get_app('contacts')
+#contacts = reports.get_app('contacts')
 products = reports.get_app('products')
 sales = reports.get_app('sales')
 
@@ -64,8 +65,9 @@ def objects():
         
     yield salesrule(imode='e',shipping_mode="ta",payment_term="7")
     
-    metsjapuu = contacts.Partner.objects.get(company__name__startswith="Mets")
-    dubois = contacts.Partner.objects.get(person__last_name__startswith="Dubois")
+    Partner = resolve_model('contacts.Partner')
+    metsjapuu = Partner.objects.get(company__name__startswith="Mets")
+    dubois = Partner.objects.get(person__last_name__startswith="Dubois")
     furniture = products.ProductCat.objects.get(name="Furniture")
     hosting = 5
     

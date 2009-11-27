@@ -1225,7 +1225,7 @@ class GridElement(Container):
         yield "  var keys = %s;" % py2js(self.keys)
         yield "  this.comp = %s;" % self.as_ext_value()
         yield "  this.comp.on('afteredit', Lino.grid_afteredit(this,'%s','%s'));" % (
-          self.rh.store.get_absolute_url(grid_afteredit=True),
+          self.rh.get_absolute_url(grid_afteredit=True),
           self.rh.store.pk.name)
         yield "}();"
         #yield "%s.keys = %s;" % (self.ext_name,py2js(self.keys))
@@ -2004,6 +2004,7 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
             msg="User %s cannot view %s." % (request.user,rptname))
     rh = rpt.get_handle(ui)
     if action:
+        # TODO: store actions in a dict (in Report or ReportHandle)
         for a in rpt.actions:
             if a.name == action:
                 context = ReportActionContext(a,request,rh)
@@ -2028,7 +2029,7 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
         else:
             instance = rpt.model.objects.get(pk=pk)
             
-        for f in rptreq.report.store.fields:
+        for f in rh.store.fields:
             if not f.field.primary_key:
                 f.update_from_form(instance,request.POST)
                     
@@ -2180,19 +2181,10 @@ class ExtUI(reports.UI):
         url += rh.report.app_label + "/" + rh.report.name
         if action:
             url += "/" + action
-        #~ app_label = report.__class__.__module__.split('.')[-2]
-        #~ if mode == 'choices':
-            #~ url = '/choices/%s/%s' % (app_label,report.model.__name__)
-        #~ else:
-            #~ url = '/%s/%s/%s' % (mode,app_label,report.__class__.__name__)
-        #~ if master_instance is None:
-            #~ master_instance = report.master_instance
         if master_instance is not None:
             kw[URL_PARAM_MASTER_PK] = master_instance.pk
             mt = ContentType.objects.get_for_model(master_instance.__class__).pk
             kw[URL_PARAM_MASTER_TYPE] = mt
-        #~ if mode is not None:
-            #~ kw['mode'] = mode
         if len(kw):
             url += "?"+urlencode(kw)
         return url

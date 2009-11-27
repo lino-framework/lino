@@ -151,7 +151,7 @@ class SalesRule(models.Model):
     journal = journals.JournalRef(blank=True,null=True)
     imode = models.ForeignKey(InvoicingMode,blank=True,null=True)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
-    payment_term = models.ForeignKey('contacts.PaymentTerm',blank=True,null=True)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     
     def __unicode__(self):
         return u"SalesRule %d" % (self.id)
@@ -165,7 +165,7 @@ def get_sales_rule(doc):
 class Partner(contacts.Partner):
     class Meta:
         app_label = 'contacts'
-    payment_term = models.ForeignKey("PaymentTerm",blank=True,null=True)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
     
@@ -197,7 +197,7 @@ class SalesDocument(journals.AbstractDocument):
     your_ref = models.CharField(max_length=200,blank=True)
     imode = models.ForeignKey(InvoicingMode)
     shipping_mode = models.ForeignKey(ShippingMode,blank=True,null=True)
-    payment_term = models.ForeignKey('contacts.PaymentTerm',blank=True,null=True)
+    payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     sales_remark = models.CharField("Remark for sales",
       max_length=200,blank=True)
     subject = models.CharField("Subject line",max_length=200,blank=True)
