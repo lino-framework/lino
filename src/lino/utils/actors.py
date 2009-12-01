@@ -17,7 +17,6 @@ from django.db import models
 
 import lino
 
-#actors = []
 actors_dict = {}
 
 class ActorMetaClass(type):
@@ -25,15 +24,19 @@ class ActorMetaClass(type):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         cls = type.__new__(meta, classname, bases, classDict)
-        lino.log.debug("actor(%s)", cls)
+        #lino.log.debug("actor(%s)", cls)
         if not classDict.has_key('app_label'):
-            # don't do this for reports created by utils.report_factory():
+            # dynamically created report classes must specify themselves their app_label,
+            # otherwise the app_label will be 'utils' (from utils.report_factory()).
             cls.app_label = cls.__module__.split('.')[-2]
-        k = cls.app_label + "." + cls.__name__
-        old = actors_dict.get(k,None)
+        name = classDict.get('actor_id',None)
+        if name is None:
+            name = cls.app_label + "_" + cls.__name__
+            cls.actor_id = name
+        old = actors_dict.get(cls.actor_id,None)
         if old is not None:
-            lino.log.debug("ActorMetaClass %s : %r replaced by %r",k,old,cls)
-        actors_dict[k] = cls
+            lino.log.debug("ActorMetaClass %s : %r replaced by %r",cls.actor_id,old,cls)
+        actors_dict[cls.actor_id] = cls
         #actors.append(cls)
         return cls
 
@@ -50,24 +53,29 @@ class ActorMetaClass(type):
 
 class Actor(object):
     __metaclass__ = ActorMetaClass
-    name = None
+    actor_id = None
     label = None
     def __init__(self):
         if self.label is None:
             self.label = self.__class__.__name__
-        if self.name is None:
-            self.name = self.__class__.__name__
+        #~ if self.name is None:
+            #~ self.name = self.__class__.__name__
 
     def get_label(self):
         #~ if self.label is None:
             #~ return self.__class__.__name__
         return self.label
 
-def get_actor(app_label,name):
+def get_actor(actor_id):
+    cls = actors_dict[actor_id]
+    return cls()
+    
+def old_get_actor(app_label,name):
     k = app_label + "." + name
     cls = actors_dict[k]
     return cls()
     
+
 def unused_get_actor(app_label,name):
     app = models.get_app(app_label)
     cls = getattr(app,name,None)

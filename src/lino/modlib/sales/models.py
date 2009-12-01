@@ -461,6 +461,7 @@ class DocItem(models.Model):
                 self.description = self.product.description
             if self.unit_price is None:
                 if self.product.price is not None:
+                    print 20091130, repr(self.discount)
                     self.unit_price = self.product.price * (100 - self.discount) / 100
         if self.unit_price is not None and self.qty is not None:
             self.total = self.unit_price * self.qty
@@ -507,7 +508,7 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 box5
-      ItemsByDocument:100x15
+      sales_ItemsByDocument:100x15
       """
       
         
@@ -528,7 +529,7 @@ class EmittedInvoicesPageLayout(OrderPageLayout):
     label = "Emitted invoices"
     main = """
     journal number:4 creation_date customer:20 start_date
-    InvoicesByOrder
+    sales_InvoicesByOrder
     """
 
 

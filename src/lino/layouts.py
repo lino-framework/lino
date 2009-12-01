@@ -28,6 +28,7 @@ from lino import actions
 
 LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
+LABEL_ALIGN_RIGHT = 'right'
 
 
 
@@ -45,7 +46,8 @@ class DataLink:
 class DialogLink(DataLink):
     "Wrapper around a DialogLayout to make it usable as link of a LayoutHandle."
     def __init__(self,ui,layout):
-        DataLink.__init__(self,ui,layout.__module__.split('.')[-2] + "_" + layout.name)
+        DataLink.__init__(self,ui,layout.actor_id)
+        #DataLink.__init__(self,ui,layout.__module__.split('.')[-2] + "_" + layout.name)
         #self.form = layout.form()
         self.layout = layout
 
@@ -145,7 +147,8 @@ class Layout(actors.Actor):
     join_str = None # set by subclasses
     label = None
     has_frame = False # True
-    label_align = LABEL_ALIGN_TOP
+    #label_align = LABEL_ALIGN_TOP
+    label_align = LABEL_ALIGN_LEFT
     #label_align = 'left'
     
     def __init__(self):

@@ -93,8 +93,8 @@ class Action(actors.Actor):
     def run(self,context):
         raise NotImplementedError
         
-    def get_url(self,ui):
-        return ui.get_action_url(self)
+    def get_url(self,ui,**kw):
+        return ui.get_action_url(self,**kw)
 
 class ActionContext:
     def __init__(self,ui,action,*args,**kw):

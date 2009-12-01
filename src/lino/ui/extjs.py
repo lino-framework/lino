@@ -15,6 +15,7 @@ import os
 import traceback
 import types
 import cPickle as pickle
+import cgi
 
 from dateutil import parser as dateparser
 
@@ -22,8 +23,10 @@ from django.db import models
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import simplejson
+#from django.utils import html
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
+from django.core import exceptions
 
 import lino
 from lino import reports
@@ -84,14 +87,13 @@ class ActionRenderer:
     def __init__(self,a,**kw):
         assert isinstance(a,actions.Action)
         self.action = a
-        self.name = a.app_label + "_" + a.name
+        self.name = a.actor_id # a.app_label + "_" + a.name
         
     def js_lines(self):
         yield "var %s = new function() {" % self.name
         yield "  this.show = function(btn,event) {"
         yield "    console.log(%r);" % self.name
-        yield "    Lino.do_action(%r,%r,{});" % (self.action.get_url(ui),self.action.name)
-
+        yield "    Lino.do_action(%r,%r,{});" % (self.action.get_url(ui),self.name)
         yield "  };"
         yield "}();"
 
@@ -101,7 +103,7 @@ class ReportRenderer:
     def __init__(self,report,**kw):
         assert isinstance(report,reports.Report)
         self.report = ui.get_report_handle(report)
-        self.ext_name = report.app_label + "_" + report.name
+        self.ext_name = report.actor_id # report.app_label + "_" + report.name
         self.options = kw
         self.windows = [ ReportWindowRenderer(l) for l in self.report.layouts[1:] ]
 
@@ -147,11 +149,14 @@ class WindowRenderer:
             else:
                 self.options.update(width=self.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
         else:
-            assert len(wc) == 4
-            self.options.update(x=wc[0])
-            self.options.update(y=wc[1])
-            self.options.update(width=wc[2])
-            self.options.update(height=wc[3])
+            assert len(wc) == 2
+            #assert len(wc) == 4
+            #self.options.update(x=wc[0])
+            #self.options.update(y=wc[1])
+            #self.options.update(width=wc[2])
+            #self.options.update(height=wc[3])
+            self.options.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
+            self.options.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
 
 class ReportWindowRenderer(WindowRenderer):
     def __init__(self,lh,**kw):
@@ -169,26 +174,32 @@ class ReportWindowRenderer(WindowRenderer):
         #~ for v in self.layout._main.ext_variables():
             #~ yield "  this.%s = %s;" % (v.ext_name,v.as_ext_value())
         #yield define_vars(self.layout._main.ext_variables(),indent=2,prefix="this.")
-        yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
-        yield "  this.show = function(btn,event,master,master_grid) {"
+        yield "  this.show = function(btn,event,unused_master,master_grid) {"
         # yield "    console.log('show',this);" 
+        yield "    if(this.comp) { this.comp.show() ; return; }"
+        yield "    this.comp = new Ext.Window( %s );" % py2js(self.options)
         if self.lh.link.report.master is None:
             yield "    %s.load();" % self.store.as_ext()
         else:
-            yield "    if(master) {"
-            yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
-            yield "      %s.load();" % self.store.as_ext()
-            #yield "      this.store.load({master:master});" 
-            yield "    } else {"
+            #self.lh.link.report.params.has_key('master_instance')
+            #master_report = reports.get_model_report(self.lh.link.report.master)
+            #yield "    master_grid = %s.grid;" % master_report.actor_id
+            #~ yield "    if(master) {"
+            #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
+            #~ yield "      %s.load();" % self.store.as_ext()
+            #~ yield "    } else {"
+            yield "    if(master_grid) {"
             #yield "      console.log('show() master_grid=',master_grid);"
             yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
-            #yield "        console.log(rowIndex,record);" 
-            yield "        var p={%s:record.id};" % URL_PARAM_MASTER_PK
+            #yield "      console.log(rowIndex,record);" 
+            yield "      var p={%s:record.id};" % URL_PARAM_MASTER_PK
             mt = ContentType.objects.get_for_model(self.lh.link.report.model).pk
-            yield "        p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-            yield "        %s.load({params:p});" % self.store.as_ext()
-            yield "      });"
-            yield "    }"
+            yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+            yield "      %s.load({params:p});" % self.store.as_ext()
+            yield "    });"
+            yield "  } else {"
+            yield "      %s.load();" % self.store.as_ext()
+            yield "  }"
         yield "    this.comp.show();"
         yield "  };"
         
@@ -242,14 +253,12 @@ def py2js(v,**kw):
         return py2js(kw)
         
     if isinstance(v,menus.MenuItem):
-        ext_name = v.actor.app_label + "_" + v.actor.name + ".show"
         if v.args:
-            handler = "function(btn,evt) {%s(btn,evt,%s);}" % (
-                ext_name,
+            handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
+                v.actor.actor_id,
                 ",".join([py2js(a) for a in v.args]))
         else:
-            handler = "function(btn,evt) {%s(btn,evt);}" % ext_name
-            #handler = ext_name
+            handler = "function(btn,evt) {%s.show(btn,evt);}" % v.actor.actor_id
         return py2js(dict(text=v.label,handler=js_code(handler)))
     if isinstance(v,Component):
         return v.as_ext(**kw)
@@ -275,12 +284,7 @@ class js_code:
         self.s = s
     def __repr__(self):
         return self.s
-        
-        
-        
-        
-        
-        
+  
 
 
 DECLARE_INLINE = 0
@@ -339,25 +343,37 @@ class StoreField(object):
     def as_js(self):
         return py2js(self.options)
         
-    def write_to_form(self,obj,d):
-        d[self.field.name] = getattr(obj,self.field.name)
-    def update_from_form(self,instance,values):
+    def obj2json(self,obj,d):
+        #d[self.field.name] = getattr(obj,self.field.name)
+        #v = getattr(obj,self.field.name)
+        #d[self.field.name] = self.field.value_to_string(obj)
+        d[self.field.name] = self.field.value_from_object(obj)
+        
+    def get_from_form(self,instance,values):
         v = values.get(self.field.name)
-        if v == '' and self.field.null:
-            v = None
-        setattr(instance,self.field.name,v)
+        #~ if v == '' and self.field.null:
+            #~ v = None
+        if v == '':
+            v = self.field.get_default()
+        try:
+            instance[self.field.name] = self.field.to_python(v)
+        except exceptions.ValidationError,e:
+            lino.log.exception("%s = %r : %s",self.field.name,v,e)
+            raise 
+        #setattr(instance,self.field.name,v)
+        
         
 class BooleanStoreField(StoreField):
     def __init__(self,field,**kw):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
-    def update_from_form(self,instance,values):
+    def get_from_form(self,instance,values):
         v = values.get(self.field.name)
         if v == 'true':
             v = True
         else:
             v = False
-        setattr(instance,self.field.name,v)
+        instance[self.field.name] = v
 
 class DateStoreField(StoreField):
   
@@ -366,45 +382,63 @@ class DateStoreField(StoreField):
         kw['type'] = 'date'
         StoreField.__init__(self,field,**kw)
         
-    def write_to_form(self,obj,d):
+    def obj2json(self,obj,d):
         value = getattr(obj,self.field.name)
         if value is not None:
             value = value.ctime() # strftime('%Y-%m-%d')
             #print value
             d[self.field.name] = value
             
-    def update_from_form(self,instance,values):
+    def get_from_form(self,instance,values):
         v = values.get(self.field.name)
         if v == '' and self.field.null:
             v = None
         if v is not None:
-            print v
+            #print v
             v = dateparser.parse(v,fuzzy=True)
-        setattr(instance,self.field.name,v)
+        instance[self.field.name] = v
+
+class unused_IntegerStoreField(StoreField):
+  
+    def __init__(self,field,**kw):
+        kw['type'] = 'int'
+        StoreField.__init__(self,field,**kw)
+        
+    def get_from_form(self,instance,values):
+        v = values.get(self.field.name)
+        if v == '':
+            v = None
+            #~ if self.field.default is models.NOT_PROVIDED:
+                #~ v = None
+            #~ else:
+                #~ v = self.field.default
+        else:
+            v = int(v)
+        instance[self.field.name] = v
 
 class MethodStoreField(StoreField):
   
-    def write_to_form(self,obj,d):
+    def obj2json(self,obj,d):
         meth = getattr(obj,self.field.name)
         d[self.field.name] = meth()
         
-    def update_from_form(self,instance,values):
+    def get_from_form(self,instance,values):
         pass
         #raise Exception("Cannot update a virtual field")
 
 
 class OneToOneStoreField(StoreField):
         
-    def update_from_form(self,instance,values):
+    def get_from_form(self,instance,values):
         #v = values.get(self.field.name,None)
         v = values.get(self.field.name)
         if v == '' and self.field.null:
             v = None
         if v is not None:
             v = self.field.rel.to.objects.get(pk=v)
-        setattr(instance,self.field.name,v)
+        instance[self.field.name] = v
         
-    def write_to_form(self,obj,d):
+    def obj2json(self,obj,d):
         try:
             v = getattr(obj,self.field.name)
         except self.field.rel.to.DoesNotExist,e:
@@ -422,7 +456,7 @@ class ForeignKeyStoreField(StoreField):
         s += "," + repr(self.field.name+"Hidden")
         return s 
         
-    def update_from_form(self,instance,values):
+    def get_from_form(self,instance,values):
         #v = values.get(self.name,None)
         #v = values.get(self.field.name+"Hidden",None)
         v = values.get(self.field.name+"Hidden")
@@ -434,10 +468,10 @@ class ForeignKeyStoreField(StoreField):
             try:
                 v = self.field.rel.to.objects.get(pk=v)
             except self.field.rel.to.DoesNotExist,e:
-                print "[update_from_form]", v, values.get(self.field.name)
-        setattr(instance,self.field.name,v)
+                print "[get_from_form]", v, values.get(self.field.name)
+        instance[self.field.name] = v
         
-    def write_to_form(self,obj,d):
+    def obj2json(self,obj,d):
         try:
             v = getattr(obj,self.field.name)
         except self.field.rel.to.DoesNotExist,e:
@@ -459,7 +493,7 @@ class Store(Component):
     
     def __init__(self,rh,**options):
         assert isinstance(rh,reports.ReportHandle)
-        Component.__init__(self,rh.report.app_label+"_"+rh.report.name,**options)
+        Component.__init__(self,rh.report.actor_id,**options)
         self.rh = rh
         self.report = rh.report
         
@@ -470,7 +504,7 @@ class Store(Component):
                 fields.add(fld)
         self.pk = self.report.model._meta.pk
         assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
-          self.report.name,self.report.model)
+          self.report.actor_id,self.report.model)
         if not self.pk in fields:
             fields.add(self.pk)
         self.fields = [self.create_field(fld) for fld in fields]
@@ -496,9 +530,11 @@ class Store(Component):
             #return StoreField(fld,type="date",dateFormat=self.report.date_format)
             return DateStoreField(fld,self.report.date_format)
         if isinstance(fld,models.IntegerField):
-            return StoreField(fld,type="int")
+            return StoreField(fld,type='int')
+            #~ return IntegerStoreField(fld)
         if isinstance(fld,models.AutoField):
-            return StoreField(fld,type="int")
+            return StoreField(fld,type='int')
+            #~ return IntegerStoreField(fld)
         if isinstance(fld,models.BooleanField):
             return BooleanStoreField(fld)
         return StoreField(fld)
@@ -509,7 +545,7 @@ class Store(Component):
             #~ yield kw
 
             
-    def get_absolute_url(self,**kw):
+    def unused_get_absolute_url(self,**kw):
         #~ if request._lino_request.report == self.report:
             #~ return request._lino_request.get_absolute_url(**kw)
         #~ else:
@@ -540,7 +576,7 @@ class Store(Component):
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
         #url = self.get_absolute_url(json=True)
         #self.report.setup()
-        proxy = dict(url=self.get_absolute_url(simple_list=True),method='GET')
+        proxy = dict(url=self.rh.get_absolute_url(simple_list=True),method='GET')
         d.update(proxy=js_code(
           "new Ext.data.HttpProxy(%s)" % py2js(proxy)
         ))
@@ -554,6 +590,13 @@ class Store(Component):
         #d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return d
         
+    def get_from_form(self,post_values):
+        instance = {}
+        for f in self.fields:
+            if not f.field.primary_key:
+                f.get_from_form(instance,post_values)
+        return instance
+                    
         
 
 class ColumnModel(Component):
@@ -813,7 +856,8 @@ class FieldElement(LayoutElement):
         
     def get_panel_options(self,**kw):
         d = LayoutElement.ext_options(self,**kw)
-        d.update(xtype='panel',layout='form')
+        #d.update(xtype='panel',layout='form') 
+        d.update(xtype='container',layout='form')
         #d.update(style=dict(padding='0px'),color='green')
         #d.update(hideBorders=True)
         #d.update(margins='0')
@@ -895,7 +939,7 @@ Note: use of a valueField requires the user to make a selection in order for a v
             #kw.update(lazyInit=False)
             kw.update(mode='remote')
             kw.update(selectOnFocus=True)
-            #kw.update(pageSize=self.store.report.page_length)
+            kw.update(pageSize=self.rh.report.page_length)
             
         kw.update(triggerAction='all')
         kw.update(emptyText='Select a %s...' % self.report.model.__name__)
@@ -971,12 +1015,14 @@ class BooleanFieldElement(FieldElement):
         kw.update(undefinedText=self.lh.link.report.boolean_texts[2])
         return kw
         
-    def update_from_form(self,instance,values):
+    def get_from_form(self,instance,values):
         """
         standard HTML submits checkboxes of a form only when they are checked.
         So if the field is not contained in values, we take False as value.
         """
-        setattr(instance,self.name,values.get(self.name,False))
+        instance[self.name] = values.get(self.name,False)
+
+
 
   
 class VirtualFieldElement(FieldElement):
@@ -1086,7 +1132,8 @@ class Panel(Container):
         
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
-        d.update(xtype='panel')
+        #d.update(xtype='panel')
+        d.update(xtype='container')
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
         
@@ -1117,7 +1164,7 @@ class Panel(Container):
             d.update(bodyBorder=False)
             d.update(border=False)
             d.update(labelAlign=self.labelAlign)
-            d.update(style=dict(padding='0px'),color='green')
+            #d.update(style=dict(padding='0px'),color='green')
         else:
             d.update(frame=False)
             #d.update(bodyBorder=False)
@@ -1178,8 +1225,8 @@ class GridElement(Container):
         buttons = []
         for a in self.report.actions:
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
-                  a.name, 
-                  self.rh.store.get_absolute_url(action=a.name)))
+                  a.actor_id, 
+                  self.rh.get_absolute_url(action=a.actor_id)))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 keys.append(dict(
@@ -1274,7 +1321,7 @@ class M2mGridElement(GridElement):
         self.field = field
         rpt = reports.get_model_report(field.rel.to)
         rh = rpt.get_handle(lh.ui)
-        GridElement.__init__(self,lh,rpt.name,rh,*elements,**kw)
+        GridElement.__init__(self,lh,rpt.actor_id,rh,*elements,**kw)
   
 
   
@@ -1408,7 +1455,7 @@ class ReportMainPanel(Panel):
             yield "%s.keys = %s;" % (self.as_ext(),py2js(keys))
         
         
-        url = self.rh.store.get_absolute_url(submit=True)
+        url = self.rh.get_absolute_url(submit=True)
         js = js_code("Lino.form_submit(%s.form,'%s',%s,'%s')" % (
                 self.as_ext(),url,self.rh.store.as_ext(),self.rh.store.pk.name))
         buttons.append(dict(handler=js,text='Submit'))
@@ -1486,9 +1533,12 @@ Ext.namespace('Lino');
 Lino.save_window_config = function(url) {
   return function(event,toolEl,panel,tc) {
     console.log(panel.id,panel.getSize(),panel.getPosition());
-    var pos = panel.getPosition();
+    // var pos = panel.getPosition();
     var size = panel.getSize();
-    Lino.do_action(url,'save_window_config',{x:pos[0],y:pos[1],h:size['height'],w:size['width']});
+    var w = size['width'] * 100 / Lino.viewport.getWidth();
+    var h = size['height'] * 100 / Lino.viewport.getHeight();
+    Lino.do_action(url,'save_window_config',{h:Math.round(h),w:Math.round(w)});
+    // Lino.do_action(url,'save_window_config',{x:pos[0],y:pos[1],h:size['height'],w:size['width']});
   }
 };
 
@@ -1563,7 +1613,7 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
       },
       failure: function(response) {
         // console.log(response);
-        Ext.MessageBox.alert('Action failed','Could not connect to Lino server. retry later');
+        Ext.MessageBox.alert('Action failed','Lino server did not respond to Ajax request '+url);
       }
     })
   }
@@ -1784,10 +1834,11 @@ class ViewReportRequest(reports.ReportRequest):
     
     def __init__(self,request,rh,*args,**kw):
       
-        self.params = rh.report.param_form(request.GET)
-        if self.params.is_valid():
-            kw.update(self.params.cleaned_data)
-        if rh.report.master is not None:
+        #~ self.params = rh.report.param_form(request.GET)
+        #~ if self.params.is_valid():
+            #~ kw.update(self.params.cleaned_data)
+        kw.update(rh.report.params)
+        if rh.report.master is not None and not kw.has_key('master_instance'):
             pk = request.GET.get(URL_PARAM_MASTER_PK,None)
             if pk == UNDEFINED:
                 pk = None
@@ -1817,20 +1868,15 @@ class ViewReportRequest(reports.ReportRequest):
                 self.sort_direction = 'DESC'
             kw.update(order_by=sort)
         
-        #self.json = request.GET.get('json',False)
-        
+        quick_search = request.GET.get('query',None)
+        if quick_search:
+            kw.update(quick_search=quick_search)
         offset = request.GET.get('start',None)
         if offset:
             kw.update(offset=offset)
         limit = request.GET.get('limit',None)
         if limit:
             kw.update(limit=limit)
-        #~ layout = request.GET.get('layout',None)
-        #~ if layout:
-            #~ kw.update(layout=int(layout))
-        #~ mode = request.GET.get('mode',None)
-        #~ if mode:
-            #~ kw.update(mode=mode)
 
         #print "ViewReportRequest.__init__() 1",report.name
         self.request = request
@@ -1838,7 +1884,6 @@ class ViewReportRequest(reports.ReportRequest):
         reports.ReportRequest.__init__(self,rh,*args,**kw)
         self.store = rh.store
         #print "ViewReportRequest.__init__() 2",report.name
-        #self.is_main = is_main
         request._lino_request = self
         
 
@@ -1865,12 +1910,10 @@ class ViewReportRequest(reports.ReportRequest):
         #return self.report.viewport.render_to_html(self.request)
 
 
-    def obj2json(self,obj):
-        d = {}
+    def obj2json(self,obj,**kw):
         for fld in self.store.fields:
-            fld.write_to_form(obj,d)
-            #d[e.name] = e.value2js(obj)
-        return d
+            fld.obj2json(obj,kw)
+        return kw
             
     def render_to_json(self):
         rows = [ self.obj2json(row) for row in self.queryset ]
@@ -1943,10 +1986,12 @@ class SaveWindowConfigAction(actions.Action):
     def run(self,context,name):
         h = int(context.request.POST.get('h'))
         w = int(context.request.POST.get('w'))
-        x = int(context.request.POST.get('x'))
-        y = int(context.request.POST.get('y'))
-        context.confirm("%r,%r,%r,%r,%r : Are you sure?!" % (name,x,y,h,w))
-        ui.window_configs[name] = (x,y,w,h)
+        #x = int(context.request.POST.get('x'))
+        #y = int(context.request.POST.get('y'))
+        #context.confirm("%r,%r,%r,%r,%r : Are you sure?!" % (name,x,y,h,w))
+        context.confirm("%r,%r,%r : Are you sure?!" % (name,h,w))
+        #ui.window_configs[name] = (x,y,w,h)
+        ui.window_configs[name] = (w,h)
         ui.save_window_configs()
 
 def save_win_view(request,name=None):
@@ -1962,15 +2007,16 @@ def menu_view(request):
     return HttpResponse(s, mimetype='text/html')
 
 
-def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
-    dlg = actors.get_actor(app_label,dlgname)
+def dialog_view(request,dlgname=None,actname=None,**kw):
+#def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
+    dlg = actors.get_actor(dlgname)
     action = getattr(dlg,actname)
     context = ActionContext(action,request)
     context.run()
     return json_response(**context.response)
 
-def action_view(request,app_label=None,actname=None,**kw):
-    action = actors.get_actor(app_label,actname)
+def action_view(request,actname=None,**kw):
+    action = actors.get_actor(actname)
     context = ActionContext(action,request)
     context.run()
     return json_response(**context.response)
@@ -1994,8 +2040,8 @@ def list_report_view(request,**kw):
     kw['simple_list'] = True
     return json_report_view(request,**kw)
     
-def json_report_view(request,app_label=None,rptname=None,**kw):
-    rpt = actors.get_actor(app_label,rptname)
+def json_report_view(request,rptname=None,**kw):
+    rpt = actors.get_actor(rptname)
     return json_report_view_(request,rpt,**kw)
 
 def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
@@ -2006,16 +2052,16 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
     if action:
         # TODO: store actions in a dict (in Report or ReportHandle)
         for a in rpt.actions:
-            if a.name == action:
+            if a.actor_id == action:
                 context = ReportActionContext(a,request,rh)
                 context.run()
                 #d = a.get_response(rptreq)
                 return json_response(**context.response)
         return json_response(
             success=False,
-            msg="Report %r has no action %r" % (rpt.name,action))
-    rptreq = ViewReportRequest(request,rh)
+            msg="Report %r has no action %r" % (rpt.actor_id,action))
     if simple_list:
+        rptreq = ViewReportRequest(request,rh)
         d = rptreq.render_to_json()
         return json_response(**d)
 
@@ -2023,22 +2069,22 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
     #~ if pk == reports.UNDEFINED:
         #~ pk = None
     try:
+        data = rh.store.get_from_form(request.POST)
         if pk in ('', None):
             #return json_response(success=False,msg="No primary key was specified")
-            instance = rptreq.create_instance()
+            instance = rh.create_instance(**data)
+            instance.save(force_insert=True)
         else:
             instance = rpt.model.objects.get(pk=pk)
-            
-        for f in rh.store.fields:
-            if not f.field.primary_key:
-                f.update_from_form(instance,request.POST)
-                    
-        instance.save()
+            for k,v in data.items():
+                setattr(instance,k,v)
+            instance.save(force_update=True)
         return json_response(success=True,
               msg="%s has been saved" % instance)
     except Exception,e:
-        traceback.print_exc(e)
-        return json_response(success=False,msg="Exception occured: "+str(e))
+        lino.log.exception(e)
+        #traceback.format_exc(e)
+        return json_response(success=False,msg="Exception occured: "+cgi.escape(str(e)))
     
 def json_response(**kw):
     s = simplejson.dumps(kw,default=unicode)
@@ -2141,32 +2187,35 @@ class ExtUI(reports.UI):
             #(r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
             (r'^$', self.index),
             (r'^menu$', menu_view),
-            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_report_view),
-            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
-            (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
-            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
-            (r'^dialog/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
-            (r'^action/(?P<app_label>\w+)/(?P<actname>\w+)$', action_view),
+            (r'^list/(?P<rptname>\w+)$', list_report_view),
+            (r'^grid_action/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
+            (r'^submit/(?P<rptname>\w+)$', form_submit_view),
+            (r'^grid_afteredit/(?P<rptname>\w+)$', grid_afteredit_view),
+            (r'^dialog/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
+            (r'^action/(?P<actname>\w+)$', action_view),
             (r'^choices/(?P<app_label>\w+)/(?P<modname>\w+)/(?P<fldname>\w+)$', choices_view),
             (r'^save_win/(?P<name>\w+)$', save_win_view),
             
         )
 
     def get_action_url(self,a,**kw):
-        url = "/action/" + a.app_label + "/" + a.name 
+        url = "/action/" + a.actor_id # app_label + "/" + a.name 
         if len(kw):
             url += "?"+urlencode(kw)
         return url
         
     def get_button_url(self,btn,**kw):
         layout = btn.lh.layout
-        url = "/dialog/" + layout.app_label + "/" + layout.name + "/" + btn.name
+        #url = "/dialog/" + layout.app_label + "/" + layout.name + "/" + btn.name
+        url = "/dialog/" + layout.actor_id + "/" + btn.name
         if len(kw):
             url += "?"+urlencode(kw)
         return url
         
     def get_report_url(self,rh,master_instance=None,
             simple_list=False,submit=False,grid_afteredit=False,action=None,**kw):
+        #~ lino.log.debug("get_report_url(%s)", [rh.name,master_instance,
+            #~ simple_list,submit,grid_afteredit,action,kw])
         if simple_list:
             url = "/list/"
         elif grid_afteredit:
@@ -2178,7 +2227,8 @@ class ExtUI(reports.UI):
         else:
             raise "one of json, save or action must be True"
             #url = "/r/"
-        url += rh.report.app_label + "/" + rh.report.name
+        url += rh.report.actor_id
+        #url += rh.report.app_label + "/" + rh.report.name
         if action:
             url += "/" + action
         if master_instance is not None:

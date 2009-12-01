@@ -77,8 +77,9 @@ class Journal(models.Model):
         return DOCTYPES[self.doctype][0]
 
     def get_doc_report(self,**kw):
-        #kw['master_instance'] = self
-        return DOCTYPES[self.doctype][1]()#(**kw)
+        kw['master_instance'] = self
+        rptclass = DOCTYPES[self.doctype][1].spawn(self.id,params=kw)
+        return rptclass()
 
     def create_document(self,**kw):
         cl = self.get_doc_model()

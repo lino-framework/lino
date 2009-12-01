@@ -170,25 +170,21 @@ class LinoSite:
             raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
-        #~ for app_name in self.django_settings.INSTALLED_APPS:
-            #~ if loading.module_exists(app_name + ".reports"):
-                #~ import_module('.reports', app_name)
-        
-        lino.log.info("Setting up Lino reports...")
-        #from lino import reports
-        reports.setup()
-        layouts.setup()
-        actions.setup()
-        
-        from lino.ui import extjs
-        self.ui = extjs.ui
-        
         if hasattr(settings,'LINO_SETTINGS'):
             lino.log.info("Reading %s...", settings.LINO_SETTINGS)
             execfile(settings.LINO_SETTINGS,dict(lino=self))
         else:
             lino.log.warning("settings.LINO_SETTINGS entry is missing")
             
+        lino.log.info("Setting up Lino reports...")
+        #from lino import reports
+        reports.setup()
+        layouts.setup()
+        actions.setup()
+        
+            
+        from lino.ui import extjs
+        self.ui = extjs.ui
         self.ui.setup_site(self)
           
         lino.log.info("LinoSite %r is ready.", self.title)

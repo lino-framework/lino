@@ -91,13 +91,13 @@ def register_report(cls):
     if rpt.master is None:
         master_reports.append(rpt)
         if rpt.use_as_default_report:
-            lino.log.debug("register %s : model_report for %r", rpt.name, rpt.model)
+            lino.log.debug("register %s : model_report for %r", rpt.actor_id, rpt.model)
             rpt.model._lino_model_report = rpt
         else:
-            lino.log.debug("register %s: not used as model_report",rpt.name)
+            lino.log.debug("register %s: not used as model_report",rpt.actor_id)
     elif rpt.master is ContentType:
-        lino.log.debug("register %s : generic slave for %r", rpt.name, rpt.fk_name)
-        generic_slaves[rpt.name] = rpt
+        lino.log.debug("register %s : generic slave for %r", rpt.actor_id, rpt.fk_name)
+        generic_slaves[rpt.actor_id] = rpt
     else:
         slave_reports.append(rpt)
 
@@ -164,7 +164,7 @@ def setup():
             cls = report_factory(model)
             register_report(cls)
             model._lino_model_report = cls()
-        lino.log.debug("%d %s %s",i,model._meta.db_table,model._lino_model_report.name)
+        lino.log.debug("%d %s %s",i,model._meta.db_table,model._lino_model_report.actor_id)
         #model._lino_model_report = model._lino_model_report_class()
         
     #~ lino.log.debug("Instantiate choice reports...")
@@ -182,8 +182,8 @@ def setup():
         if slaves is None:
             slaves = {}
             setattr(rpt.master,'_lino_slaves',slaves)
-        slaves[rpt.name] = rpt
-        lino.log.debug("%s: slave for %s",rpt.name, rpt.master.__name__)
+        slaves[rpt.actor_id] = rpt
+        lino.log.debug("%s: slave for %s",rpt.actor_id, rpt.master.__name__)
     lino.log.debug("Assigned %d slave reports to their master.",len(slave_reports))
         
     lino.log.debug("Setup model reports...")
@@ -193,20 +193,20 @@ def setup():
     lino.log.debug("reports.setup() done (%d models)",i)
 
 def get_slave(model,name):
-    rpt = generic_slaves.get(name,None)
-    if rpt is not None:
-        return rpt
-    for b in (model,) + model.__bases__:
-        d = getattr(b,"_lino_slaves",None)
-        if d:
-            rpt = d.get(name,None)
-            if rpt is not None:
-                return rpt
-            #lino.log.debug("No slave %r in %s",name,model)
-            #~ rptclass = d.get(name,None)
-            #~ if rptclass is not None:
-                #~ rpt = rptclass()
-                #~ rpt.setup()
+    try:
+        rpt = actors.get_actor(name)
+    except KeyError:
+        return None
+    assert issubclass(model,rpt.master), "%s.master is %r,\nmust be subclass of %r" % (name,rpt.master,model)
+    return rpt
+    #~ rpt = generic_slaves.get(name,None)
+    #~ if rpt is not None:
+        #~ return rpt
+    #~ for b in (model,) + model.__bases__:
+        #~ d = getattr(b,"_lino_slaves",None)
+        #~ if d:
+            #~ rpt = d.get(name,None)
+            #~ if rpt is not None:
                 #~ return rpt
 
 def get_model_report(model):
@@ -215,6 +215,7 @@ def get_model_report(model):
 
 class Report(actors.Actor):
     #__metaclass__ = ReportMetaClass
+    params = {}
     field = None
     queryset = None 
     model = None
@@ -227,7 +228,7 @@ class Report(actors.Actor):
     label = None
     param_form = ReportParameterForm
     #default_filter = ''
-    name = None
+    #name = None
     form_class = None
     master = None
     slaves = None
@@ -267,7 +268,7 @@ class Report(actors.Actor):
             self.model = self.queryset.model
         else:
             self.model = resolve_model(self.model,self.app_label)
-        assert issubclass(self.model,models.Model), "%s.model is a %r" % (self.name,self.model)
+        assert issubclass(self.model,models.Model), "%s.model is a %r" % (self.actor_id,self.model)
         
         self.master = resolve_model(self.master,self.app_label)
         
@@ -288,26 +289,31 @@ class Report(actors.Actor):
             self.master = master
             self.fk = fk
         elif self.master:
-            lino.log.warning("DEPRECATED: replace %s.master by fk_name" % self.name)
+            lino.log.warning("DEPRECATED: replace %s.master by fk_name" % self.actor_id)
             #assert isinstance(self.master,object), "%s.master is a %r" % (self.name,self.master)
-            assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.name,self.master)
+            assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.actor_id,self.master)
             self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
         
         
         #self.setup()
         
         #register_report(self)
-        lino.log.debug("Report.__init__() done: %s", self.name)
+        lino.log.debug("Report.__init__() done: %s", self.actor_id)
         
+        
+    @classmethod
+    def spawn(cls,suffix,**kw):
+        kw['app_label'] = cls.app_label
+        return type(cls.__name__+str(suffix),(cls,),kw)
         
     def setup(self):
         if self._setup_done:
             return True
         if self._setup_doing:
             if True: # severe error handling
-                raise Exception("%s.setup() called recursively" % self.name)
+                raise Exception("%s.setup() called recursively" % self.actor_id)
             else:
-                lino.log.warning("%s.setup() called recursively" % self.name)
+                lino.log.warning("%s.setup() called recursively" % self.actor_id)
                 return False
         self._setup_doing = True
         
@@ -328,15 +334,15 @@ class Report(actors.Actor):
                     sl = get_slave(self.model,slave_name)
                     if sl is None:
                         lino.log.info(
-                            "[Warning] invalid name %s in %s.%s.slaves" % (
-                                slave_name,self.app_label,self.name))
+                            "[Warning] invalid name %s in %s.slaves" % (
+                                slave_name,self.actor_id))
                     self._slaves.append(sl)
         else:
             self._slaves = []
 
         self._setup_doing = False
         self._setup_done = True
-        lino.log.debug("Report.setup() done: %s", self.name)
+        lino.log.debug("Report.setup() done: %s", self.actor_id)
         return True
         
     def get_handle(self,ui):
@@ -405,8 +411,8 @@ class Report(actors.Actor):
         return self.title or self.label
         
         
-    def get_queryset(self,master_instance=None,flt=None,order_by=None,**kw):
-        lino.log.debug('%sReport.get_queryset(%r)',self.name,master_instance)
+    def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
+        lino.log.debug('%sReport.get_queryset(%r)',self.actor_id,master_instance)
         if self.queryset is not None:
             qs = self.queryset
         else:
@@ -419,13 +425,13 @@ class Report(actors.Actor):
             qs = qs.filter(**self.filter)
         if self.exclude:
             qs = qs.exclude(**self.exclude)
-        if flt is not None:
+        if quick_search is not None:
             l = []
             q = models.Q()
             for field in self.model._meta.fields:
                 if isinstance(field,models.CharField):
                     q = q | models.Q(**{
-                      field.name+"__contains": flt})
+                      field.name+"__contains": quick_search})
             qs = qs.filter(q)
         order_by = order_by or self.order_by
         if order_by:
@@ -434,7 +440,7 @@ class Report(actors.Actor):
         
     def add_master_kw(self,master_instance,**kw):
         if self.master is None:
-            assert master_instance is None, "This Report doesn't accept a master"
+            assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
         elif self.master is ContentType:
             if master_instance is None:
                 kw[self.fk.ct_field] = None,
@@ -445,17 +451,18 @@ class Report(actors.Actor):
                 kw[self.fk.fk_field] = master_instance.pk
         else:
             if master_instance is None:
-                kw["%s__exact" % self.fk.name] = None
+                kw[self.fk.name] = master_instance
+                #kw["%s__exact" % self.fk.name] = None
             elif not isinstance(master_instance,self.master):
                 raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
             else:
                 kw[self.fk.name] = master_instance
         return kw
         
-    #~ def create_instance(self,rptreq):
-        #~ i = self.model()
-        #~ # todo...
-        #~ return i
+    def create_instance(self,**kw):
+        instance = self.model(**kw)
+        self.after_create(instance)
+        return instance
         
     def after_create(self,instance):
         pass
@@ -494,12 +501,13 @@ def report_factory(model):
 class ReportHandle(layouts.DataLink):
     def __init__(self,ui,report):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
-        layouts.DataLink.__init__(self,ui,report.app_label + "_" + report.name)
+        layouts.DataLink.__init__(self,ui,report.actor_id)
         assert isinstance(report,Report)
         assert isinstance(ui,UI)
         #self._rd = rd
         self.report = report
-        for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices','get_title'):
+        for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices',
+                  'get_title', 'create_instance'):
             setattr(self,n,getattr(report,n))
             
     def setup(self):
@@ -542,11 +550,11 @@ class ReportRequest:
             extra=1,
             #layout=None,
             **kw):
-        lino.log.debug('%sRequest.__init__(%r)',rh.report.name,master_instance)
+        lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)
         assert isinstance(rh,ReportHandle)
         self.report = rh.report
         self.rh = rh
-        self.name = rh.report.name+"Request"
+        self.name = rh.report.actor_id+"Request"
         self.extra = extra
         self.master_instance = master_instance
         self.queryset = rh.report.get_queryset(self.master_instance,**kw)
@@ -573,9 +581,7 @@ class ReportRequest:
 
     def create_instance(self,**kw):
         kw = self.report.add_master_kw(self.master_instance,**kw)
-        instance = self.report.model(**kw)
-        self.report.after_create(instance)
-        return instance
+        return self.report.create_instance(**kw)
         
 
 

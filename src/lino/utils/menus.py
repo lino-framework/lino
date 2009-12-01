@@ -114,7 +114,7 @@ class Action(MenuItem):
         assert actor is not None
         if not kw.has_key('can_view'):
             kw.update(can_view=actor.can_view)
-        name = name or actor.name
+        name = name or actor.actor_id
         label = label or actor.label
         self.args = args
         #self._url = url or actor.get_absolute_url(**params)
