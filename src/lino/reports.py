@@ -156,16 +156,16 @@ def setup():
             register_report(cls)
     
     lino.log.debug("Instantiate model reports...")
-    i = 0
     for model in models.get_models():
-        i += 1
         rpt = getattr(model,'_lino_model_report',None)
         if rpt is None:
             cls = report_factory(model)
             register_report(cls)
             model._lino_model_report = cls()
-        lino.log.debug("%d %s %s",i,model._meta.db_table,model._lino_model_report.actor_id)
-        #model._lino_model_report = model._lino_model_report_class()
+    i = 0
+    for model in models.get_models():
+        i += 1
+        lino.log.debug("%2d: %s %s %s",i,model._meta.db_table,model,model._lino_model_report.actor_id)
         
     #~ lino.log.debug("Instantiate choice reports...")
     #~ for model in models.get_models():
@@ -197,7 +197,8 @@ def get_slave(model,name):
         rpt = actors.get_actor(name)
     except KeyError:
         return None
-    assert issubclass(model,rpt.master), "%s.master is %r,\nmust be subclass of %r" % (name,rpt.master,model)
+    if rpt.master is not ContentType:
+        assert issubclass(model,rpt.master), "%s.master is %r,\nmust be subclass of %r" % (name,rpt.master,model)
     return rpt
     #~ rpt = generic_slaves.get(name,None)
     #~ if rpt is not None:
@@ -256,6 +257,7 @@ class Report(actors.Actor):
     
     def __init__(self):
         actors.Actor.__init__(self)
+        lino.log.debug("Report.__init__() %s", self.actor_id)
         self._handles = {}
         self._setup_done = False
         self._setup_doing = False
@@ -268,11 +270,9 @@ class Report(actors.Actor):
             self.model = self.queryset.model
         else:
             self.model = resolve_model(self.model,self.app_label)
-        assert issubclass(self.model,models.Model), "%s.model is a %r" % (self.actor_id,self.model)
-        
-        self.master = resolve_model(self.master,self.app_label)
         
         if self.fk_name:
+            #~ self.master = resolve_model(self.master,self.app_label)
             try:
                 fk, remote, direct, m2m = self.model._meta.get_field_by_name(self.fk_name)
                 assert direct
@@ -288,17 +288,18 @@ class Report(actors.Actor):
                 raise Exeption("No master for fk_name %r in %s" % (self.fk_name,self.model.__name__))
             self.master = master
             self.fk = fk
-        elif self.master:
-            lino.log.warning("DEPRECATED: replace %s.master by fk_name" % self.actor_id)
-            #assert isinstance(self.master,object), "%s.master is a %r" % (self.name,self.master)
-            assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.actor_id,self.master)
-            self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
+        else:
+            assert self.master is None
+        #~ elif self.master:
+            #~ lino.log.warning("DEPRECATED: replace %s.master by fk_name" % self.actor_id)
+            #~ #assert isinstance(self.master,object), "%s.master is a %r" % (self.name,self.master)
+            #~ assert issubclass(self.master,models.Model), "%s.master is a %r" % (self.actor_id,self.master)
+            #~ self.fk = _get_foreign_key(self.master,self.model) #,self.fk_name)
         
         
         #self.setup()
         
         #register_report(self)
-        lino.log.debug("Report.__init__() done: %s", self.actor_id)
         
         
     @classmethod

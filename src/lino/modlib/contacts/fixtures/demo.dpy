@@ -12,78 +12,32 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-#from lino.modlib.contacts import models as contacts
 from lino.modlib.tools import resolve_model
 from lino.utils.instantiator import Instantiator
 #from lino import reports
 #contacts = reports.get_app('contacts')
 
 
-#~ person = Instantiator(contacts.Person,fieldnames="""
-      #~ id
-      #~ first_name
-      #~ last_name
-      #~ title
-      #~ company_name
-      #~ national_id
-      #~ vatId
-      #~ addr1
-      #~ addr2
-      #~ country
-      #~ city
-      #~ zipCode
-      #~ region
-      #~ email
-      #~ url
-      #~ phone
-      #~ gsm
-      #~ language
-      #~ remarks
-    #~ """).build
-
-#~ company = Instantiator(contacts.Company,fieldnames="""
-      #~ id
-      #~ company_name
-      #~ national_id
-      #~ vatId
-      #~ addr1
-      #~ addr2
-      #~ country
-      #~ city
-      #~ zipCode
-      #~ region
-      #~ email
-      #~ url
-      #~ phone
-      #~ gsm
-      #~ language
-      #~ remarks
-    #~ """).build
-
-#~ partner = Instantiator(contacts.Partner).build
-   
-
-
 def objects():
-    company = Instantiator("contacts.Company",country='ee',language='et').build
+    company = Instantiator("contacts.Company",country='EE',language='et').build
     yield company(name=u'Minu Firma OÜ')
     yield company(name=u'Mets ja Puu OÜ')
     
-    company = Instantiator('contacts.Company',"name zip_code city addr1",country='be',language='de').build
+    company = Instantiator('contacts.Company',"name zip_code city addr1",country='BE',language='de').build
     yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße 45')
     yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert 103')
     yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße 53')
     yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße 13')
     
-    company = Instantiator('contacts.Company',country='nl',language='nl').build
+    company = Instantiator('contacts.Company',country='NL',language='nl').build
     yield company(name=u'Donderweer bv')
     
-    company = Instantiator('contacts.Company',country='de',language='de').build
+    company = Instantiator('contacts.Company',country='DE',language='de').build
     yield company(name=u'Hans Flott & Co')
     yield company(name=u'Bernd Brechts Bücherladen')
     
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='be',language='de',city='Eupen',zip_code='4700').build
+                country='BE',language='de',city='Eupen',zip_code='4700').build
     yield person(u'Andreas',  u'Arens')
     yield person(u'Annette',  u'Arens')
     yield person(u'Hans',     u'Altenberg')
@@ -122,7 +76,7 @@ def objects():
     
     
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='be',language='de',city='Raeren',zip_code='4730').build
+                country='BE',language='de',city='Raeren',zip_code='4730').build
     yield person(u'Erich',    u'Emonts')
     yield person(u'Erwin',    u'Emontspool')
     yield person(u'Erna',     u'Emonts-Gast')
@@ -139,27 +93,27 @@ def objects():
     yield person(u'Jean',     u'Radermacher')
     
     
-    person = Instantiator('contacts.Person',country='be',language='fr').build
+    person = Instantiator('contacts.Person',country='BE',language='fr').build
     yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
     yield person(first_name=u'Jean',last_name=u'Dupont')
     
-    person = Instantiator('contacts.Person',country='be',language='nl').build
+    person = Instantiator('contacts.Person',country='BE',language='nl').build
     yield person(first_name=u'Mark',last_name=u'Martelaer')
     yield person(first_name=u'Rik',last_name=u'Radermecker')
     yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos')
     
-    person = Instantiator('contacts.Person',country='de').build
+    person = Instantiator('contacts.Person',country='DE').build
     yield person(first_name=u'Emil',last_name=u'Eierschal')
     yield person(first_name=u'Lisa',last_name=u'Lahm')
     yield person(first_name=u'Bernd',last_name=u'Brecht')
     yield person(first_name=u'Karl',last_name=u'Keller')
     
-    person = Instantiator('contacts.Person',country='fr').build
+    person = Instantiator('contacts.Person',country='FR').build
     yield person(first_name=u'Robin',last_name=u'Dubois')
     yield person(first_name=u'Denis',last_name=u'Denon')
     yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
     
-    person = Instantiator('contacts.Person',"first_name last_name",country='ee').build
+    person = Instantiator('contacts.Person',"first_name last_name",country='EE').build
     yield person(u'Aare',u'Aaresild')
     yield person(u'Ahti',u'Aaspere')
     yield person(u'Peeter',u'Bach')
@@ -169,9 +123,17 @@ def objects():
     yield person(u'Ingmar',u'Iliste')
     yield person(u'Jaan',u'Janno')
     yield person(u'Jaan',u'Jõgi')
+    yield person(u'Karl',u'Kask')
+    yield person(u'Leo',u'Lepamets')
+    yield person(u'Madis',u'Mäeorg')
+    yield person(u'Natalja',u'Nagel')
+    yield person(u'Ott',u'Ojavee')
+    yield person(u'Piret',u'Paas')
+    yield person(u'Rannes',u'Rannala')
+    yield person(u'Silja',u'Sääsk')
     yield person(u'Tõnu',u'Tamm')
     yield person(u'Tiina',u'Türnpuu')
-    yield person(u'Karl',u'Kask')
+    yield person(u'Urmas',u'Uukivi')
     
     partner = Instantiator('contacts.Partner').build
     

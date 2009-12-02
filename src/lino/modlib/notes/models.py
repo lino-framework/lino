@@ -13,40 +13,43 @@
 
 
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
 from lino.modlib import fields
 from lino import reports
 
-
-#
-# PROJECT TYPE
-#
-class ProjectType(models.Model):
+class NoteType(models.Model):
     name = models.CharField(max_length=200)
     def __unicode__(self):
         return self.name
 
-class ProjectTypes(reports.Report):
-    model = ProjectType
-    order_by = "name"
 
-#
-# PROJECT
-#
-class Project(models.Model):
-    name = models.CharField(max_length=200)
-    type = models.ForeignKey(ProjectType,blank=True,null=True)
+class Note(models.Model):
+    user = models.ForeignKey("auth.User")
+    date = fields.MyDateField() 
+    owner_type = models.ForeignKey(ContentType)
+    owner_id = models.PositiveIntegerField()
+    owner = generic.GenericForeignKey('owner_type', 'owner_id')
     partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
-    started = fields.MyDateField(blank=True,null=True) 
-    stopped = fields.MyDateField(blank=True,null=True) 
+    type = models.ForeignKey(NoteType,blank=True,null=True)
+    short = models.CharField(max_length=200,blank=True,null=True)
+    text = models.TextField(blank=True)
     
     def __unicode__(self):
-        return self.name
-        
-class Projects(reports.Report):
-    model = Project
-    order_by = "name"
-    
-class ProjectsByPartner(Projects):
-    fk_name = 'partner'
-    order_by = "started"
-    
+        return self.short
+
+class Notes(reports.Report):
+    model = 'notes.Note'
+    columnNames = "id date user owner short text partner"
+    order_by = "id"
+
+class MyNotes(Notes):
+    fk_name = 'user'
+    columnNames = "date short partner owner"
+
+class NotesByOwner(Notes):
+    fk_name = 'owner'
+    columnNames = "date short user partner"
+    order_by = "date"
+  

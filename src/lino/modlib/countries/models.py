@@ -14,11 +14,13 @@
 
 import datetime
 from django.db import models
+from lino import reports
+
 
 
 class Country(models.Model):
     name = models.CharField(max_length=200)
-    isocode = models.CharField(max_length=2,primary_key=True)
+    isocode = models.CharField(max_length=4,primary_key=True)
     
     class Meta:
         verbose_name_plural = "Countries"
@@ -26,7 +28,12 @@ class Country(models.Model):
     def __unicode__(self):
         return self.name
         
- 
+class Countries(reports.Report):
+    model = 'countries.Country'
+    order_by = "isocode"
+    columnNames = "isocode name"
+    
+FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
     
 class Language(models.Model):
     id = models.CharField(max_length=2,primary_key=True)
@@ -35,18 +42,7 @@ class Language(models.Model):
     def __unicode__(self):
         return self.name
 
-##
-## report definitions
-##        
-        
-from lino import reports
-
-class Countries(reports.Report):
-    model = Country
-    order_by = "isocode"
-    columnNames = "isocode name"
-    
 class Languages(reports.Report):
-    model = Language
+    model = 'countries.Language'
     order_by = "id"
 

@@ -29,10 +29,10 @@ class ActorMetaClass(type):
             # dynamically created report classes must specify themselves their app_label,
             # otherwise the app_label will be 'utils' (from utils.report_factory()).
             cls.app_label = cls.__module__.split('.')[-2]
-        name = classDict.get('actor_id',None)
-        if name is None:
-            name = cls.app_label + "_" + cls.__name__
-            cls.actor_id = name
+        actor_id = classDict.get('actor_id',None)
+        if actor_id is None:
+            actor_id = cls.app_label + "_" + cls.__name__
+            cls.actor_id = actor_id
         old = actors_dict.get(cls.actor_id,None)
         if old is not None:
             lino.log.debug("ActorMetaClass %s : %r replaced by %r",cls.actor_id,old,cls)

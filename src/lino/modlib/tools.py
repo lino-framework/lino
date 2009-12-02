@@ -12,17 +12,24 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
-def resolve_model(model,app_label=None):
+
+def resolve_model(model_spec,app_label=None):
     # Same logic as in django.db.models.fields.related.add_lazy_relation()
-    if not isinstance(model,basestring):
-        return model
-    try:
-        app_label, model_name = model.split(".")
-    except ValueError:
-        # If we can't split, assume a model in current app
-        #app_label = rpt.app_label
-        model_name = model
-    return models.get_model(app_label,model_name,False)
+    if isinstance(model_spec,basestring):
+        try:
+            app_label, model_name = model_spec.split(".")
+        except ValueError:
+            # If we can't split, assume a model in current app
+            #app_label = rpt.app_label
+            model_name = model_spec
+        model = models.get_model(app_label,model_name,False)
+    else:
+        model = model_spec
+    if not isinstance(model,type) or not issubclass(model,models.Model):
+        raise Exception("Could not resolve model_spec %r using app_label=%r" % (model_spec,app_label))
+    return model
+    
+    
 
 
 def resolve_field(name,app_label):

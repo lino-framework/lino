@@ -476,10 +476,11 @@ class LinoSite:
         lino.log.info("syncdb")
         call_command('syncdb',**options)
         #call_command('flush',interactive=False)
-        lino.log.info("loaddata demo")
-        call_command('loaddata','demo')
         auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
         auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
+        
+        lino.log.info("loaddata demo")
+        call_command('loaddata','demo')
         sites.Site(id=2,domain=self.domain,name=self.title).save()
         #self.setup()
         

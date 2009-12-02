@@ -19,6 +19,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 
 #from lino.modlib.countries import models as countries
+#countries = reports.get_app('countries')
 
 from django import forms
 
@@ -26,14 +27,13 @@ from lino import reports
 from lino import layouts
 from lino.utils import perms
 
-countries = reports.get_app('countries')
 
 class Contact(models.Model):
   
     class Meta:
         abstract = True
         
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200,editable=False)
     national_id = models.CharField(max_length=200,blank=True)
     addr1 = models.CharField(max_length=200,blank=True)
     addr2 = models.CharField(max_length=200,blank=True)
@@ -76,8 +76,10 @@ class Contact(models.Model):
         return mark_safe(s)
     
 class ContactPageLayout(layouts.PageLayout):
-    #frame = False
     
+    box2 = """national_id:15
+              language
+              """
     box3 = """country region
               city zip_code:10
               addr1:40
@@ -88,10 +90,7 @@ class ContactPageLayout(layouts.PageLayout):
               phone
               gsm
               """
-    box7 = """national_id:15
-              language
-              """
-    main = """box1 box7
+    main = """box1 box2
               box3 box4
               remarks:60x6
               """
@@ -105,6 +104,10 @@ class Person(Contact):
     nationality = models.ForeignKey('countries.Country',
         blank=True,null=True,
         related_name='by_nationality')
+        
+    class Meta:
+        abstract = True
+        app_label = 'contacts'
     
     def save(self,*args,**kw):
         self.before_save()
@@ -113,34 +116,30 @@ class Person(Contact):
         
     def before_save(self):
         if True: # not self.name:
-            l = filter(lambda x:x,[self.title,self.first_name,self.last_name])
+            l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
             self.name = " ".join(l)
 
 class PersonPageLayout(ContactPageLayout):
     box1 = "last_name first_name:15 title:10"
-    box7 = """national_id:15 id
+    box2 = """national_id:15 id
               nationality language
               """
 
 class Persons(reports.Report):
+    model = "contacts.Person"
     #label = "Personen"
     page_layouts = (PersonPageLayout,)
     columnNames = "first_name last_name title country id name"
     can_delete = True
-    model = Person
     order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
 
-class PersonsByCountry(reports.Report):
-    model = Person # Contact
-    #master = countries.Country
+class PersonsByCountry(Persons):
     fk_name = 'country'
     order_by = "city addr1"
     columnNames = "city addr1 name nationality language"
 
-class PersonsByNationality(reports.Report):
-    model = Person # Contact
-    #master = countries.Country
+class PersonsByNationality(Persons):
     fk_name = 'nationality'
     order_by = "city addr1"
     columnNames = "city addr1 name country language"
@@ -148,6 +147,10 @@ class PersonsByNationality(reports.Report):
 
 
 class Company(Contact):
+    class Meta:
+        abstract = True
+        app_label = 'contacts'
+    
     vat_id = models.CharField(max_length=200,blank=True)
     
     def as_address(self,linesep="\n<br/>"):
@@ -161,14 +164,12 @@ class Companies(reports.Report):
     #label = "Companies"
     page_layouts = (CompanyPageLayout,)
     columnNames = "name country id"
-    model = Company
+    model = 'contacts.Company'
     order_by = "name"
     #~ queryset = Contact.objects.exclude(companyName__exact=None)\
       #~ .order_by("companyName")
     
-class CompaniesByCountry(reports.Report):
-    model = Company
-    #master = countries.Country
+class CompaniesByCountry(Companies):
     fk_name = 'country'
     columnNames = "city addr1 name country language"
     order_by = "city addr1"
@@ -198,10 +199,12 @@ class Partner(models.Model):
     """
     class Meta:
         abstract = True
+        app_label = 'contacts'
+    
         
     name = models.CharField("Sort name",max_length=40,editable=False)
-    company = models.ForeignKey(Company,blank=True,null=True)
-    person = models.ForeignKey(Person,blank=True,null=True)
+    company = models.ForeignKey('contacts.Company',blank=True,null=True)
+    person = models.ForeignKey('contacts.Person',blank=True,null=True)
     
     def __unicode__(self):
         return self.name

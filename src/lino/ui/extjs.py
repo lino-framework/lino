@@ -149,7 +149,7 @@ class WindowRenderer:
             else:
                 self.options.update(width=self.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
         else:
-            assert len(wc) == 2
+            assert len(wc) == 3
             #assert len(wc) == 4
             #self.options.update(x=wc[0])
             #self.options.update(y=wc[1])
@@ -157,6 +157,7 @@ class WindowRenderer:
             #self.options.update(height=wc[3])
             self.options.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
             self.options.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
+            self.options.update(maximized=wc[2])
 
 class ReportWindowRenderer(WindowRenderer):
     def __init__(self,lh,**kw):
@@ -1537,7 +1538,7 @@ Lino.save_window_config = function(url) {
     var size = panel.getSize();
     var w = size['width'] * 100 / Lino.viewport.getWidth();
     var h = size['height'] * 100 / Lino.viewport.getHeight();
-    Lino.do_action(url,'save_window_config',{h:Math.round(h),w:Math.round(w)});
+    Lino.do_action(url,'save_window_config',{h:Math.round(h),w:Math.round(w),max:panel.maximized});
     // Lino.do_action(url,'save_window_config',{x:pos[0],y:pos[1],h:size['height'],w:size['width']});
   }
 };
@@ -1986,12 +1987,17 @@ class SaveWindowConfigAction(actions.Action):
     def run(self,context,name):
         h = int(context.request.POST.get('h'))
         w = int(context.request.POST.get('w'))
+        maximized = context.request.POST.get('max')
+        if maximized == 'true':
+            maximized = True
+        else:
+            maximized = False
         #x = int(context.request.POST.get('x'))
         #y = int(context.request.POST.get('y'))
         #context.confirm("%r,%r,%r,%r,%r : Are you sure?!" % (name,x,y,h,w))
-        context.confirm("%r,%r,%r : Are you sure?!" % (name,h,w))
+        context.confirm("%r,%r,%r,%r : Are you sure?!" % (name,h,w,maximized))
         #ui.window_configs[name] = (x,y,w,h)
-        ui.window_configs[name] = (w,h)
+        ui.window_configs[name] = (w,h,maximized)
         ui.save_window_configs()
 
 def save_win_view(request,name=None):
