@@ -1299,6 +1299,7 @@ class GridElement(Container):
         d.update(emptyText="Nix gefunden...")
         d.update(store=js_code(self.rh.store.ext_name))
         d.update(colModel=self.column_model)
+        d.update(title=self.rh.report.label)
         #d.update(colModel=js_code('this.cols'))
         #d.update(colModel=js_code(self.column_model.ext_name))
         #d.update(autoHeight=True)
