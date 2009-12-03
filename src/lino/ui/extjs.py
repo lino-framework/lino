@@ -2117,7 +2117,7 @@ class ExtUI(reports.UI):
         (models.EmailField, CharFieldElement),
     )
     
-    window_configs_file = 'window_configs.pck'
+    window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
                 
     def __init__(self):
         #self.StaticText = StaticText
@@ -2131,9 +2131,12 @@ class ExtUI(reports.UI):
         self.InputElement = InputElement
         self.window_configs = {}
         if os.path.exists(self.window_configs_file):
+            lino.log.info("Loading %s...",self.window_configs_file)
             wc = pickle.load(open(self.window_configs_file))
             if type(wc) is dict:
                 self.window_configs = wc
+        else:
+            lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
     def save_window_configs(self):
         f = open(self.window_configs_file,'w')
