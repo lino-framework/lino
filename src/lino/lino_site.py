@@ -452,8 +452,10 @@ class LinoSite:
         return menus.menu_request(self._menu,request)
         
       
-    def fill(self):
+    def fill(self,*fixtures):
       
+        self.setup()
+        
         from django.core.management import call_command
         from timtools.console import syscon
         #from lino import reports
@@ -464,7 +466,7 @@ class LinoSite:
         if not syscon.confirm("Gonna reset database %s. Are you sure?" 
             % settings.DATABASE_NAME):
             return
-        lino.log.warning("lino_site.fill() %s", (" ".join(self.app_labels)))
+        lino.log.info("lino_site.fill(%r)", fixtures)
         lino.log.info("reset")
         if False: # settings.DATABASE_ENGINE == 'sqlite3':
             if settings.DATABASE_NAME != ':memory:':
@@ -478,10 +480,11 @@ class LinoSite:
         #call_command('flush',interactive=False)
         auth.User.objects.create_superuser('root','luc.saffre@gmx.net','1234')
         auth.User.objects.create_user('user','luc.saffre@gmx.net','1234')
-        
-        lino.log.info("loaddata demo")
-        call_command('loaddata','demo')
         sites.Site(id=2,domain=self.domain,name=self.title).save()
+        
+        for fix in fixtures:
+            lino.log.info("loaddata %s",fix)
+            call_command('loaddata',fix)
         #self.setup()
         
             

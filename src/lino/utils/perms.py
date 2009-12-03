@@ -44,7 +44,6 @@ class is_anonymous(Condition):
         
 from django.conf import settings
 
-
 if settings.BYPASS_PERMS:
     is_authenticated.passes = staticmethod(always.passes)
     is_staff.passes = staticmethod(always.passes)

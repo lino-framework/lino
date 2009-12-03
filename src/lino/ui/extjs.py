@@ -785,7 +785,8 @@ class InputElement(LayoutElement):
         kw.update(self.input.options)
         kw.update(name=self.name)
         #kw.update(xtype='textfield')
-        return kw
+        po = dict(xtype='container',layout='form',items=kw)
+        return po
         
 class ButtonElement(LayoutElement):
     declare_type = DECLARE_THIS

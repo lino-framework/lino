@@ -1,37 +1,28 @@
 #coding: latin1
-
-## Copyright Luc Saffre 2003-2004.
-
+## Copyright 2003-2009 Luc Saffre
 ## This file is part of the Lino project.
-
-## Lino is free software; you can redistribute it and/or modify it
-## under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
+## Lino is free software; you can redistribute it and/or modify 
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-
-## Lino is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
-## License for more details.
-
+## Lino is distributed in the hope that it will be useful, 
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
-## along with Lino; if not, write to the Free Software Foundation,
-## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
 discovering and extending Lars M. Garshol's dbfreader.py
 """
 import os
+import unittest
 from cStringIO import StringIO
-from lino.tools import dbfreader
-from lino.misc import tsttools
-from lino import config 
+from lino.utils import dbfreader
 
-dataPath=os.path.join(config.paths.get('tests_path'),'testdata')
-#dataPath = os.path.join(os.path.dirname(__file__),'testdata')
-#dataPath = os.path.abspath(dataPath)
+dataPath = os.path.dirname(__file__)
 
-class Case(tsttools.TestCase):
+class Case(unittest.TestCase):
     
     def test01(self):
         f = dbfreader.DBFFile(os.path.join(dataPath,"NAT.DBF"),
@@ -155,4 +146,4 @@ def get_fields(f):
                        for field in f.get_fields()])
 
 if __name__ == "__main__":
-    tsttools.main()
+    unittest.main()

@@ -413,7 +413,7 @@ class Report(actors.Actor):
         
         
     def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
-        lino.log.debug('%sReport.get_queryset(%r)',self.actor_id,master_instance)
+        #lino.log.debug('%sReport.get_queryset(%r)',self.actor_id,master_instance)
         if self.queryset is not None:
             qs = self.queryset
         else:

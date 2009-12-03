@@ -212,7 +212,7 @@ class LayoutHandle:
             self.name = link.name
         else:
             self.name = link.name + str(index)
-        lino.log.debug('LayoutHandle.__init__(%s)',self.name)
+        #lino.log.debug('LayoutHandle.__init__(%s)',self.name)
         self.link = link
         self.index = index
         self.inputs = []
@@ -226,7 +226,7 @@ class LayoutHandle:
         else:
             if desc is None:
                 desc = self.layout.join_str.join(self.link.get_fields())
-                lino.log.debug('desc for %s is %r',self.name,desc)
+                #lino.log.debug('desc for %s is %r',self.name,desc)
                 self._main = self.desc2elem(self._main_class,"main",desc)
             else:
                 if not isinstance(desc,basestring):
