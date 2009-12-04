@@ -110,7 +110,15 @@ class LinoSite:
         for name,url,version in self.thanks_to():
             lino.log.info("%s %s <%s>",name,version,url)
         self.app_labels = [a.__name__.split('.')[-2] for a in loading.get_apps()]
-        lino.log.info("%d applications: %s.", len(self.app_labels),", ".join(self.app_labels))
+          
+        lino.log.debug("%d applications: %s.", len(self.app_labels),", ".join(self.app_labels))
+        models_list = models.get_models()
+        lino.log.debug("%d models:",len(models_list))
+        i = 0
+        for model in models_list:
+            i += 1
+            lino.log.debug("  %2d: %s %r",i,model._meta.db_table,model)
+        
         
         
         
@@ -167,7 +175,9 @@ class LinoSite:
         if self._setup_done:
             return
         if self._setting_up:
-            raise Exception("LinoSite.setup() called recursively.")
+            lino.log.warning("LinoSite.setup() called recursively.")
+            return 
+            #raise Exception("LinoSite.setup() called recursively.")
         self._setting_up = True
         
         if hasattr(settings,'LINO_SETTINGS'):
@@ -452,9 +462,9 @@ class LinoSite:
         return menus.menu_request(self._menu,request)
         
       
-    def fill(self,*fixtures):
+    def fill(self,fixtures=[]):
       
-        self.setup()
+        # self.setup()
         
         from django.core.management import call_command
         from timtools.console import syscon
@@ -463,10 +473,10 @@ class LinoSite:
         sites = reports.get_app('sites')
         
         options = dict(interactive=False)
+        lino.log.info("lino_site.fill(%r)", fixtures)
         if not syscon.confirm("Gonna reset database %s. Are you sure?" 
             % settings.DATABASE_NAME):
             return
-        lino.log.info("lino_site.fill(%r)", fixtures)
         lino.log.info("reset")
         if False: # settings.DATABASE_ENGINE == 'sqlite3':
             if settings.DATABASE_NAME != ':memory:':

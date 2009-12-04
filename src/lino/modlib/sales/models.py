@@ -461,7 +461,6 @@ class DocItem(models.Model):
                 self.description = self.product.description
             if self.unit_price is None:
                 if self.product.price is not None:
-                    print 20091130, repr(self.discount)
                     self.unit_price = self.product.price * (100 - self.discount) / 100
         if self.unit_price is not None and self.qty is not None:
             self.total = self.unit_price * self.qty

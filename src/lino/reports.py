@@ -162,10 +162,10 @@ def setup():
             cls = report_factory(model)
             register_report(cls)
             model._lino_model_report = cls()
-    i = 0
-    for model in models.get_models():
-        i += 1
-        lino.log.debug("%2d: %s %s %s",i,model._meta.db_table,model,model._lino_model_report.actor_id)
+    #~ i = 0
+    #~ for model in models.get_models():
+        #~ i += 1
+        #~ lino.log.debug("%2d: %s %s %s",i,model._meta.db_table,model,model._lino_model_report.actor_id)
         
     #~ lino.log.debug("Instantiate choice reports...")
     #~ for model in models.get_models():
@@ -190,7 +190,7 @@ def setup():
     for model in models.get_models():
         model._lino_model_report.setup()
         
-    lino.log.debug("reports.setup() done (%d models)",i)
+    lino.log.debug("reports.setup() done")
 
 def get_slave(model,name):
     try:

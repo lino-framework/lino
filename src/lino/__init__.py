@@ -30,19 +30,15 @@ import logging
 
 if len(logging.root.handlers) == 0:
     """
-    If you don't like Lino's default logging behaviour, then just configure 
+    If you don't like Lino's default logging config, then just configure 
     logging in your settings.py before importing lino.
     """
-    
-    #_log_level = logging.WARNING
-    _log_level = logging.INFO
-    _log_level = logging.DEBUG
 
     if sys.platform == 'win32':
         # this will create a first handler in the logging.root logger:
-        logging.basicConfig(format='%(message)s',level=_log_level)
+        logging.basicConfig(format='%(message)s',level=logging.INFO)
         h = logging.FileHandler('lino.log','w')
-        h.setLevel(_log_level)
+        h.setLevel(logging.DEBUG)
         fmt = logging.Formatter(
             fmt='%(asctime)s %(levelname)s %(module)s : %(message)s',
             datefmt='%Y%m-%d %H:%M:%S'
@@ -56,7 +52,7 @@ if len(logging.root.handlers) == 0:
         logging.basicConfig(
           format='%(asctime)s %(levelname)s %(module)s : %(message)s',
           datefmt='%Y%m-%d %H:%M:%S',
-          level=_log_level,
+          level=logging.DEBUG,
           filename='/var/log/lino/lino.log',
           filemode='a',
           )
