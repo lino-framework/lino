@@ -16,8 +16,11 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from lino.modlib import fields
+from lino.modlib import fields, tools
 from lino import reports
+from lino import layouts
+
+tools.requires_apps('auth','contenttypes','links')
 
 class NoteType(models.Model):
     name = models.CharField(max_length=200)
@@ -27,7 +30,7 @@ class NoteType(models.Model):
 
 class Note(models.Model):
     user = models.ForeignKey("auth.User")
-    date = fields.MyDateField() 
+    date = fields.MyDateField()
     owner_type = models.ForeignKey(ContentType)
     owner_id = models.PositiveIntegerField()
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
@@ -38,8 +41,19 @@ class Note(models.Model):
     
     def __unicode__(self):
         return self.short
+        
+    def on_create(self,req):
+        self.user = req.get_user()
+        
 
+class NoteDetail(layouts.PageLayout):
+    main = """
+    date type user owner 
+    short partner
+    text:40x5 links_LinksByOwner:40x5
+    """
 class Notes(reports.Report):
+    page_layouts = (NoteDetail,)
     model = 'notes.Note'
     columnNames = "id date user owner short text partner"
     order_by = "id"
@@ -47,6 +61,16 @@ class Notes(reports.Report):
 class MyNotes(Notes):
     fk_name = 'user'
     columnNames = "date short partner owner"
+    
+    #~ def get_queryset(self,req,master_instance=None,**kw):
+        #~ if master_instance is None:
+            #~ master_instance = req.get_user()
+        #~ return super(MyNotes,self).get_queryset(req,master_instance=master_instance,**kw)
+
+    def setup_request(self,req):
+        if req.master_instance is None:
+            req.master_instance = req.get_user()
+
 
 class NotesByOwner(Notes):
     fk_name = 'owner'

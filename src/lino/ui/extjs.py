@@ -421,6 +421,7 @@ class MethodStoreField(StoreField):
   
     def obj2json(self,obj,d):
         meth = getattr(obj,self.field.name)
+        # print 20091208, self.field.name
         d[self.field.name] = meth()
         
     def get_from_form(self,instance,values):
@@ -1889,6 +1890,9 @@ class ViewReportRequest(reports.ReportRequest):
         #print "ViewReportRequest.__init__() 2",report.name
         request._lino_request = self
         
+    def get_user(self):
+        return self.request.user
+        
 
     def get_absolute_url(self,**kw):
         if self.master_instance is not None:
@@ -2068,8 +2072,10 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
         return json_response(
             success=False,
             msg="Report %r has no action %r" % (rpt.actor_id,action))
+            
+    rptreq = ViewReportRequest(request,rh)
+    
     if simple_list:
-        rptreq = ViewReportRequest(request,rh)
         d = rptreq.render_to_json()
         return json_response(**d)
 
@@ -2080,7 +2086,7 @@ def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
         data = rh.store.get_from_form(request.POST)
         if pk in ('', None):
             #return json_response(success=False,msg="No primary key was specified")
-            instance = rh.create_instance(**data)
+            instance = rptreq.create_instance(**data)
             instance.save(force_insert=True)
         else:
             instance = rpt.model.objects.get(pk=pk)

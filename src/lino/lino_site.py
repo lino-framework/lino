@@ -196,6 +196,11 @@ class LinoSite:
         from lino.ui import extjs
         self.ui = extjs.ui
         self.ui.setup_site(self)
+        
+        from lino.utils import actors
+        lino.log.debug("ACTORS:")
+        for k,v in actors.actors_dict.items():
+            lino.log.debug("%s -> %r",k,v)
           
         lino.log.info("LinoSite %r is ready.", self.title)
           
@@ -535,3 +540,4 @@ fill = lino_site.fill
 context = lino_site.context
 get_urls = lino_site.get_urls
 get_menu = lino_site.get_menu
+setup = lino_site.setup

@@ -47,7 +47,7 @@ from lino import layouts
 from lino import actions
 from lino.utils import perms, menus, actors
 
-from lino.modlib.tools import resolve_model, resolve_field
+from lino.modlib.tools import resolve_model, resolve_field, get_app
 
 def base_attrs(cl):
     #~ if cl is Report or len(cl.__bases__) == 0:
@@ -102,19 +102,6 @@ def register_report(cls):
         slave_reports.append(rpt)
 
     
-def get_app(app_label):
-    """
-    This is called in models modules instead of "from x.y import models as y"
-    It is probably quicker than loading.get_app().
-    It doesn't work during loading.appcache._populate().
-    Didn't test how they compare in multi-threading cases.
-    """
-    for app_name in settings.INSTALLED_APPS:
-        if app_name.endswith('.'+app_label):
-            return import_module('.models', app_name)
-    #~ if not emptyOK:
-    raise ImportError("No application labeled %r." % app_label)
-      
 def unused_get_report(app_label,rptname):
     # replaced by actors.get_actor()
     """this method is called for each request, and it does not need to work when the AppCache is populating
@@ -411,8 +398,9 @@ class Report(actors.Actor):
             #~ return self.label
         return self.title or self.label
         
-        
-    def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
+    def get_queryset(self,req,master_instance=None,quick_search=None,order_by=None,**kw):
+        assert isinstance (req,ReportRequest)
+        assert req.report is self
         #lino.log.debug('%sReport.get_queryset(%r)',self.actor_id,master_instance)
         if self.queryset is not None:
             qs = self.queryset
@@ -439,6 +427,9 @@ class Report(actors.Actor):
             qs = qs.order_by(*order_by.split())
         return qs
         
+    def setup_request(self,req):
+        pass
+        
     def add_master_kw(self,master_instance,**kw):
         if self.master is None:
             assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
@@ -460,13 +451,16 @@ class Report(actors.Actor):
                 kw[self.fk.name] = master_instance
         return kw
         
-    def create_instance(self,**kw):
+    def create_instance(self,req,**kw):
         instance = self.model(**kw)
-        self.after_create(instance)
+        m = getattr(instance,'on_create',None)
+        if m:
+            m(req)
+        #self.on_create(instance,req)
         return instance
         
-    def after_create(self,instance):
-        pass
+    #~ def on_create(self,instance,req):
+        #~ pass
         
     def getLabel(self):
         return self.label
@@ -508,7 +502,7 @@ class ReportHandle(layouts.DataLink):
         #self._rd = rd
         self.report = report
         for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices',
-                  'get_title', 'create_instance'):
+                  'get_title'):
             setattr(self,n,getattr(report,n))
             
     def setup(self):
@@ -535,6 +529,7 @@ class ReportHandle(layouts.DataLink):
 
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
+        
     
 class ReportRequest:
     """
@@ -549,17 +544,17 @@ class ReportRequest:
             master_instance=None,
             offset=None,limit=None,
             extra=1,
-            #layout=None,
             **kw):
-        lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)
         assert isinstance(rh,ReportHandle)
+        lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)
         self.report = rh.report
         self.rh = rh
         self.name = rh.report.actor_id+"Request"
         self.extra = extra
         self.master_instance = master_instance
-        self.queryset = rh.report.get_queryset(self.master_instance,**kw)
-        # Report.get_queryset() may return a list
+        rh.report.setup_request(self)
+        self.queryset = self.get_queryset(**kw)
+        # get_queryset() may return a list
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
         else:
@@ -582,7 +577,13 @@ class ReportRequest:
 
     def create_instance(self,**kw):
         kw = self.report.add_master_kw(self.master_instance,**kw)
-        return self.report.create_instance(**kw)
+        return self.report.create_instance(self,**kw)
+        
+    def get_user(self):
+        raise NotImplementedError
+        
+    def get_queryset(self,**kw):
+        return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
         
 
 

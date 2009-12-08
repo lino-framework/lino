@@ -11,7 +11,24 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from django.conf import settings
 from django.db import models
+from django.utils.importlib import import_module
+
+def get_app(app_label):
+    """
+    This is called in models modules instead of "from x.y import models as y"
+    It is probably quicker than loading.get_app().
+    It doesn't work during loading.appcache._populate().
+    Didn't test how they compare in multi-threading cases.
+    """
+    for app_name in settings.INSTALLED_APPS:
+        if app_name.endswith('.'+app_label):
+            return import_module('.models', app_name)
+    #~ if not emptyOK:
+    raise ImportError("No application labeled %r." % app_label)
+      
+
 
 def resolve_model(model_spec,app_label=None):
     # Same logic as in django.db.models.fields.related.add_lazy_relation()
@@ -45,3 +62,8 @@ def resolve_field(name,app_label):
         return fld
 
 
+def requires_apps(self,*app_labels):
+    for app_label in app_labels:
+        get_app(app_label)
+    
+    
