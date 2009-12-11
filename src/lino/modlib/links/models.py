@@ -47,6 +47,6 @@ class MyLinks(Links):
 
 class LinksByOwner(Links):
     fk_name = 'owner'
-    columnNames = "date desc user"
+    columnNames = "url date desc user"
     order_by = "date"
   

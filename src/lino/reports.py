@@ -336,31 +336,6 @@ class Report(actors.Actor):
     def get_handle(self,ui):
         return ui.get_report_handle(self)
         
-    def get_fields(self):
-        return [ f.name for f in self.model._meta.fields + self.model._meta.many_to_many]
-        
-    def try_get_field(self,name):
-        try:
-            return self.model._meta.get_field(name)
-        except models.FieldDoesNotExist,e:
-            return None
-            
-    def try_get_meth(self,name):
-        def get_unbound_meth(cl,name):
-            meth = getattr(cl,name,None)
-            if meth is not None:
-                return meth
-            for b in cl.__bases__:
-                meth = getattr(b,name,None)
-                if meth is not None:
-                    return meth
-        return get_unbound_meth(self.model,name)
-            
-    def get_slave(self,name):
-        return get_slave(self.model,name)
-        #l = self.slaves() # to populate
-        #return self._slaves.get(name,None)
-        
     def add_actions(self,*args):
         "May be used in Model.setup_report() to specify actions for each report which uses this model."
         self.actions += args
@@ -383,14 +358,6 @@ class Report(actors.Actor):
             #~ comps = [l._main for l in self.layouts[1:]]
             #~ yield layouts.TabPanel(None,"EastPanel",*comps)
 
-        
-    def get_field_choices(self,field):
-        return get_model_report(field.rel.to)
-        #return field._lino_choice_report
-        #~ rpt = getattr(field,'_lino_choice_report',None)
-        #~ if rpt is None:
-            #~ return get_model_report(field.rel.to)
-        #~ return rpt
         
             
     def get_title(self,renderer):
@@ -501,9 +468,9 @@ class ReportHandle(layouts.DataLink):
         assert isinstance(ui,UI)
         #self._rd = rd
         self.report = report
-        for n in ('get_fields','get_slave','try_get_field','try_get_meth','get_field_choices',
-                  'get_title'):
-            setattr(self,n,getattr(report,n))
+        #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth','get_field_choices',
+                  #~ 'get_title'):
+            #~ setattr(self,n,getattr(report,n))
             
     def setup(self):
         def lh(layout_class,*args,**kw):
@@ -530,6 +497,48 @@ class ReportHandle(layouts.DataLink):
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
         
+    def get_fields(self):
+        return [ f.name for f in self.report.model._meta.fields + self.report.model._meta.many_to_many]
+        
+    def try_get_field(self,name):
+        try:
+            return self.report.model._meta.get_field(name)
+        except models.FieldDoesNotExist,e:
+            return None
+            
+    def try_get_meth(self,name):
+        def get_unbound_meth(cl,name):
+            meth = getattr(cl,name,None)
+            if meth is not None:
+                return meth
+            for b in cl.__bases__:
+                meth = getattr(b,name,None)
+                if meth is not None:
+                    return meth
+        return get_unbound_meth(self.report.model,name)
+            
+    def try_get_virt(self,name):
+        for vf in self.report.model._meta.virtual_fields:
+            if vf.name == name:
+                return vf
+            
+    def get_slave(self,name):
+        return get_slave(self.report.model,name)
+        #l = self.slaves() # to populate
+        #return self._slaves.get(name,None)
+        
+    def get_title(self,renderer):
+        return self.report.get_title(renderer)
+        
+    def get_field_choices(self,field):
+        return get_model_report(field.rel.to)
+        #return field._lino_choice_report
+        #~ rpt = getattr(field,'_lino_choice_report',None)
+        #~ if rpt is None:
+            #~ return get_model_report(field.rel.to)
+        #~ return rpt
+        
+        
     
 class ReportRequest:
     """
@@ -546,14 +555,15 @@ class ReportRequest:
             extra=1,
             **kw):
         assert isinstance(rh,ReportHandle)
-        lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)
         self.report = rh.report
         self.rh = rh
         self.name = rh.report.actor_id+"Request"
         self.extra = extra
         self.master_instance = master_instance
         rh.report.setup_request(self)
+        lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)        
         self.queryset = self.get_queryset(**kw)
+        #print 20091211, self, self.queryset
         # get_queryset() may return a list
         if isinstance(self.queryset,models.query.QuerySet):
             self.total_count = self.queryset.count()
@@ -584,6 +594,7 @@ class ReportRequest:
         
     def get_queryset(self,**kw):
         return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
+        
         
 
 

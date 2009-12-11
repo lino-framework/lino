@@ -19,6 +19,7 @@ from django.contrib.contenttypes import generic
 from lino.modlib import fields, tools
 from lino import reports
 from lino import layouts
+from lino.utils import perms
 
 tools.requires_apps('auth','contenttypes','links')
 
@@ -31,8 +32,8 @@ class NoteType(models.Model):
 class Note(models.Model):
     user = models.ForeignKey("auth.User")
     date = fields.MyDateField()
-    owner_type = models.ForeignKey(ContentType)
-    owner_id = models.PositiveIntegerField()
+    owner_type = models.ForeignKey(ContentType,blank=True,null=True)
+    owner_id = models.PositiveIntegerField(blank=True,null=True)
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
     partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     type = models.ForeignKey(NoteType,blank=True,null=True)
@@ -61,6 +62,7 @@ class Notes(reports.Report):
 class MyNotes(Notes):
     fk_name = 'user'
     columnNames = "date short partner owner"
+    can_view = perms.is_authenticated
     
     #~ def get_queryset(self,req,master_instance=None,**kw):
         #~ if master_instance is None:
@@ -68,12 +70,19 @@ class MyNotes(Notes):
         #~ return super(MyNotes,self).get_queryset(req,master_instance=master_instance,**kw)
 
     def setup_request(self,req):
+        #print 20091211, "MyNotes.setup_request"
         if req.master_instance is None:
             req.master_instance = req.get_user()
+            #print req.master_instance
 
 
 class NotesByOwner(Notes):
     fk_name = 'owner'
     columnNames = "date short user partner"
+    order_by = "date"
+  
+class NotesByPartner(Notes):
+    fk_name = 'partner'
+    columnNames = "date short user owner"
     order_by = "date"
   

@@ -27,5 +27,14 @@ def objects():
     yield notetype(name="todo")
     
     note = Instantiator('notes.Note').build
-    yield note(user=u,date=i2d(20091208),short="note for partner 1",text="""Lorem ipsum...""",partner=1)
-    yield note(user=u,date=i2d(20091208),short="note for partner 2",text="""Lorem ipsum...""",partner=2)
+    n = note(user=u,date=i2d(20091208),short="note for partner 1",text="""Lorem ipsum...""",partner=1)
+    yield n    
+    
+    n = note(user=u,date=i2d(20091208),short="note for partner 2",text="""Lorem ipsum...""",partner=2)
+    yield n 
+
+    link = Instantiator('links.Link').build
+    yield link(user=u,owner=n,url="http://www.djangoproject.com")
+    yield link(user=u,owner=n,url="http://www.extjs.com")
+    yield link(user=u,owner=n,url="http://www.python.org")
+    

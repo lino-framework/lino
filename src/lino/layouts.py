@@ -42,6 +42,8 @@ class DataLink:
         self.ui = ui
         self.name = name
 
+    def try_get_virt(self,name):
+        return None
 
 class DialogLink(DataLink):
     "Wrapper around a DialogLayout to make it usable as link of a LayoutHandle."
@@ -314,16 +316,14 @@ class LayoutHandle:
         name,kw = self.splitdesc(name)
         rpt = self.link.get_slave(name)
         if rpt is not None:
-            #rpt.setup()
-            #slaverpt = slaveclass()
-            #self._slave_dict[name] = slaverpt
-            #elems = rpt.row_layout._main.elements
-            #elems = rpt.row_layout.columns
             e = self.ui.GridElement(self,name,rpt.get_handle(self.ui),**kw)
             self.slave_grids.append(e)
             return e
         field = self.link.try_get_field(name)
         if field is None:
+            vf = self.link.try_get_virt(name)
+            if vf is not None:
+                return self.create_virt_element(name,vf)
             meth = self.link.try_get_meth(name)
             if meth is not None:
                 return self.create_meth_element(name,meth,**kw)
@@ -360,11 +360,15 @@ class LayoutHandle:
         rt = getattr(meth,'return_type',None)
         if rt is None:
             rt = models.TextField()
-        e = self.ui.VirtualFieldElement(self,name,meth,rt,**kw)
+        e = self.ui.MethodElement(self,name,meth,rt,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)
         self._store_fields.append(e.field)
         return e
           
+    def create_virt_element(self,name,field,**kw):
+        e = self.ui.VirtualFieldElement(self,name,field,**kw)
+        return e
+        
     def create_field_element(self,field,**kw):
         e = self.ui.field2elem(self,field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (self._ld,name)

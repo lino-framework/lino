@@ -464,7 +464,7 @@ class LinoSite:
         
     def get_menu(self,request):
         self.setup()
-        return menus.menu_request(self._menu,request)
+        return self._menu.menu_request(request)
         
       
     def fill(self,fixtures=[]):

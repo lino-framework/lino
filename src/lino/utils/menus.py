@@ -13,6 +13,7 @@
 
 
 import traceback
+import copy
 
 from django.conf import settings
 from django.conf.urls.defaults import patterns, url, include
@@ -94,6 +95,10 @@ class MenuItem:
         return mark_safe('<a href="%s">%s</a>' % (
               self.get_url_path(),self.label))
               
+    def menu_request(self,request):
+        if self.can_view.passes(request):
+            return self
+
     #~ def can_view(self,request):
         #~ return True
         
@@ -211,13 +216,24 @@ class Menu(MenuItem):
         except Exception, e:
             traceback.print_exc(e)
 
+    def menu_request(self,request):
+        if self.can_view.passes(request):
+            m = copy.copy(self)
+            items = []
+            for i in m.items:
+                r = i.menu_request(request)
+                if r is not None:
+                    items.append(r)
+            m.items = items
+            return m
 
-import copy
 
-def menu_request(menu,request):
-    if menu.can_view.passes(request):
-        m = copy.copy(menu)
-        items = [i for i in m.items if i.can_view.passes(request)]
-        m.items = items
-        return m
+
+
+#~ def menu_request(menu,request):
+    #~ if menu.can_view.passes(request):
+        #~ m = copy.copy(menu)
+        #~ items = [i for i in m.items if i.can_view.passes(request)]
+        #~ m.items = items
+        #~ return m
 

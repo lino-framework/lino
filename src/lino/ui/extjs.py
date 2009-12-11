@@ -26,6 +26,7 @@ from django.utils import simplejson
 #from django.utils import html
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
 from django.core import exceptions
 
 import lino
@@ -589,7 +590,7 @@ class Store(Component):
         d.update(root='rows')
         d.update(id=self.pk.name)
         d.update(fields=[js_code(f.as_js()) for f in self.fields])
-        #d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
+        d.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return d
         
     def get_from_form(self,post_values):
@@ -826,6 +827,15 @@ class StaticTextElement(LayoutElement):
         kw.update(html=self.text.text)
         return kw
         
+class VirtualFieldElement(LayoutElement):
+    def __init__(self,lh,name,gfk,**kw):
+        assert isinstance(gfk,generic.GenericForeignKey)
+        self.gfk = gfk
+        LayoutElement.__init__(self,lh,name,label=name,**kw)
+        #print "20091210", name,gfk
+    
+        
+        
 class FieldElement(LayoutElement):
     declare_type = DECLARE_THIS
     stored = True
@@ -1027,8 +1037,7 @@ class BooleanFieldElement(FieldElement):
 
 
 
-  
-class VirtualFieldElement(FieldElement):
+class MethodElement(FieldElement):
     stored = True
     editable = False
 
@@ -1348,6 +1357,7 @@ class MainGridElement(GridElement):
         #d.update(title=self.layout.label)
         #d.update(title=self.report.get_title(None)) 
         #d.update(region='center',split=True)
+        del d['title']
         return d
         
     def unused_js_lines(self):
@@ -1529,10 +1539,10 @@ class Viewport:
 <!-- page specific -->
 <script type="text/javascript">
 Ext.namespace('Lino');
-// Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
+Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
   // console.log("Ha! on_store_exception() was called!");
-  // console.log("params:",store,type,action,options,reponse,arg);
-// };
+  console.log("on_store_exception:",store,type,action,options,reponse,arg);
+};
 
 Lino.save_window_config = function(url) {
   return function(event,toolEl,panel,tc) {
@@ -1862,7 +1872,8 @@ class ViewReportRequest(reports.ReportRequest):
                     lino.log.warning(
                       "There's no %s with primary key %r",
                       master_model.__name__,pk)
-                kw.update(master_instance=m)
+                else:
+                    kw.update(master_instance=m)
         sort = request.GET.get('sort',None)
         if sort:
             self.sort_column = sort
@@ -2059,7 +2070,7 @@ def json_report_view(request,rptname=None,**kw):
 def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
     if not rpt.can_view.passes(request):
         return json_response(success=False,
-            msg="User %s cannot view %s." % (request.user,rptname))
+            msg="User %s cannot view %s." % (request.user,rpt))
     rh = rpt.get_handle(ui)
     if action:
         # TODO: store actions in a dict (in Report or ReportHandle)
@@ -2131,6 +2142,7 @@ class ExtUI(reports.UI):
         #self.StaticText = StaticText
         self.GridElement = GridElement
         self.VirtualFieldElement = VirtualFieldElement
+        self.MethodElement = MethodElement
         self.ButtonElement = ButtonElement
         self.Panel = Panel
         self.Store = Store
