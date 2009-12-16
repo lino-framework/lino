@@ -27,10 +27,10 @@ def objects():
     yield notetype(name="todo")
     
     note = Instantiator('notes.Note').build
-    n = note(user=u,date=i2d(20091208),short="note for partner 1",text="""Lorem ipsum...""",partner=1)
+    n = note(user=u,date=i2d(20091208),short="note for company 1",text="""Lorem ipsum...""",company=1)
     yield n    
     
-    n = note(user=u,date=i2d(20091208),short="note for partner 2",text="""Lorem ipsum...""",partner=2)
+    n = note(user=u,date=i2d(20091208),short="note for person 2",text="""Lorem ipsum...""",person=2)
     yield n 
 
     link = Instantiator('links.Link').build

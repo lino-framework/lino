@@ -22,6 +22,7 @@ from django.utils.safestring import mark_safe
 from django import template 
 
 from lino.utils import perms
+from lino.utils import actors
 
 class MenuItem:
   
@@ -144,7 +145,8 @@ class Menu(MenuItem):
         self.items = []
         #self.items_dict = {}
 
-    def add_action(self,actor,**kw):
+    def add_action(self,actor_name,**kw):
+        actor = actors.get_actor(actor_name)
         return self._add_item(Action(self,actor,**kw))
 
     def add_item(self,**kw):

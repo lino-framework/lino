@@ -88,7 +88,7 @@ class ActionRenderer:
     def __init__(self,a,**kw):
         assert isinstance(a,actions.Action)
         self.action = a
-        self.name = a.actor_id # a.app_label + "_" + a.name
+        self.name = id2js(a.actor_id) # a.app_label + "_" + a.name
         
     def js_lines(self):
         yield "var %s = new function() {" % self.name
@@ -104,7 +104,7 @@ class ReportRenderer:
     def __init__(self,report,**kw):
         assert isinstance(report,reports.Report)
         self.report = ui.get_report_handle(report)
-        self.ext_name = report.actor_id # report.app_label + "_" + report.name
+        self.ext_name = id2js(report.actor_id) # report.app_label + "_" + report.name
         self.options = kw
         self.windows = [ ReportWindowRenderer(l) for l in self.report.layouts[1:] ]
 
@@ -129,7 +129,7 @@ class WindowRenderer:
         assert isinstance(lh,layouts.LayoutHandle)
         self.options = kw
         self.lh = lh
-        self.name = lh.name
+        self.name = id2js(lh.name)
         self.options.update(title=self.lh.get_title(self))
         self.options.update(closeAction='hide')
         self.options.update(maximizable=True)
@@ -150,15 +150,14 @@ class WindowRenderer:
             else:
                 self.options.update(width=self.lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
         else:
-            assert len(wc) == 3
-            #assert len(wc) == 4
-            #self.options.update(x=wc[0])
-            #self.options.update(y=wc[1])
-            #self.options.update(width=wc[2])
-            #self.options.update(height=wc[3])
-            self.options.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
-            self.options.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
-            self.options.update(maximized=wc[2])
+            assert len(wc) == 5
+            self.options.update(x=wc[0])
+            self.options.update(y=wc[1])
+            self.options.update(width=wc[2])
+            self.options.update(height=wc[3])
+            #self.options.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
+            #self.options.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
+            self.options.update(maximized=wc[4])
 
 class ReportWindowRenderer(WindowRenderer):
     def __init__(self,lh,**kw):
@@ -216,7 +215,7 @@ class DialogRenderer(WindowRenderer):
         WindowRenderer.__init__(self,lh,**kw)
         
     def js_lines(self):
-        yield "var %s = new function() {" % self.lh.name
+        yield "var %s = new function() {" % id2js(self.name)
         #~ for b in self.lh._buttons:
             #~ yield "  this.%s_handler = function(btn,event) {" % b.name
             #~ yield "    console.log(20091119, '%s',this);"  % b.name
@@ -227,9 +226,9 @@ class DialogRenderer(WindowRenderer):
         yield "  this.comp = new Ext.Window( %s );" % py2js(self.options)
         yield "  this.get_values = function() {"
         yield "    var v = {};"
-        yield "    console.log(20091119,%s.main_panel);" % self.lh.name
+        #yield "    console.log(20091119,%s.main_panel);" % self.name
         for e in self.lh.inputs:
-            yield "    v[%r] = %s.main_panel.getForm().findField(%r).getValue();" % (e.name,self.lh.name,e.name)
+            yield "    v[%r] = %s.main_panel.getForm().findField(%r).getValue();" % (e.name,self.name,e.name)
         #~ for f in self.lh._store_fields:
             #~ yield "    v[%r] = %s.main_panel.getForm().findField(%r).getValue();" % (f.name,self.lh.name,f.name)
         yield "    return v;"
@@ -242,7 +241,9 @@ class DialogRenderer(WindowRenderer):
         yield "}();"
 
 
-
+def id2js(s):
+  return s.replace('.','_')
+  
 def py2js(v,**kw):
     #lino.log.debug("py2js(%r,%r)",v,kw)
         
@@ -257,10 +258,10 @@ def py2js(v,**kw):
     if isinstance(v,menus.MenuItem):
         if v.args:
             handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
-                v.actor.actor_id,
+                v.actor.id2js(actor_id),
                 ",".join([py2js(a) for a in v.args]))
         else:
-            handler = "function(btn,evt) {%s.show(btn,evt);}" % v.actor.actor_id
+            handler = "function(btn,evt) {%s.show(btn,evt);}" % id2js(v.actor.actor_id)
         return py2js(dict(text=v.label,handler=js_code(handler)))
     if isinstance(v,Component):
         return v.as_ext(**kw)
@@ -496,7 +497,7 @@ class Store(Component):
     
     def __init__(self,rh,**options):
         assert isinstance(rh,reports.ReportHandle)
-        Component.__init__(self,rh.report.actor_id,**options)
+        Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.report = rh.report
         
@@ -1131,12 +1132,14 @@ class Panel(Container):
             
         w = h = 0
         for e in elements:
+            ew = e.width or e.preferred_width
+            eh = e.height or e.preferred_height
             if self.vertical:
                 h += e.flex
-                w = max(w,e.preferred_width)
+                w = max(w,ew)
             else:
                 w += e.flex
-                h = max(h,e.preferred_height)
+                h = max(h,eh)
         self.preferred_height = h
         self.preferred_width = w
         
@@ -1211,6 +1214,7 @@ class GridElement(Container):
     has_comp = True
 
     def __init__(self,lh,name,rh,*elements,**kw):
+        name = id2js(name)
         assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
         """
         Note: lh is the owning layout handle. 
@@ -1237,8 +1241,8 @@ class GridElement(Container):
         buttons = []
         for a in self.report.actions:
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
-                  a.actor_id, 
-                  self.rh.get_absolute_url(action=a.actor_id)))
+                  id2js(a.actor_id), 
+                  self.rh.get_absolute_url(action=id2js(a.actor_id))))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 keys.append(dict(
@@ -1249,18 +1253,18 @@ class GridElement(Container):
             key = actions.RETURN(ctrl=True)
             layout = self.rh.layouts[2]
             keys.append(dict(
-              handler=js_code("Lino.show_detail(this,%r)" % layout.name),
+              handler=js_code("Lino.show_detail(this,%r)" % id2js(layout.name)),
               key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
             for layout in self.rh.layouts[2:]:
                 buttons.append(dict(
-                  handler=js_code("Lino.show_detail(this,%r)" % layout.name),
+                  handler=js_code("Lino.show_detail(this,%r)" % id2js(layout.name)),
                   text=layout._ld.label))
               
         for sl in self.report._slaves:
             slave = sl.get_handle(self.lh.ui)
             buttons.append(dict(
-              handler=js_code("Lino.show_slave(this,%r)" % slave.row_layout.name),
+              handler=js_code("Lino.show_slave(this,%r)" % id2js(slave.row_layout.name)),
               text = slave.report.label,
             ))
             
@@ -1334,7 +1338,7 @@ class M2mGridElement(GridElement):
         self.field = field
         rpt = reports.get_model_report(field.rel.to)
         rh = rpt.get_handle(lh.ui)
-        GridElement.__init__(self,lh,rpt.actor_id,rh,*elements,**kw)
+        GridElement.__init__(self,lh,id2js(rpt.actor_id),rh,*elements,**kw)
   
 
   
@@ -1347,7 +1351,7 @@ class MainGridElement(GridElement):
             #~ self.height = self.preferred_height
         #~ if self.width is None:
             #~ self.width = self.preferred_width
-        #print "MainGridElement.__init__()",self.ext_name
+        lino.log.debug("MainGridElement.__init__() %s",self.name)
         
     def ext_options(self):
         d = GridElement.ext_options(self)
@@ -1422,10 +1426,10 @@ class ReportMainPanel(Panel):
     def js_lines(self):
         for ln in Panel.js_lines(self):
             yield ln
-        yield "%s.main_grid.comp.getSelectionModel().addListener('rowselect'," % self.lh.link.row_layout.name
+        yield "%s.main_grid.comp.getSelectionModel().addListener('rowselect'," % id2js(self.lh.link.row_layout.name)
         yield "  function(sm,rowIndex,record) { "
         #yield "    console.log(this);"
-        name = self.lh.name + '.' + self.lh._main.ext_name
+        name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         yield "    %s.form._lino_pk = record.data.id;" % name
         yield "    %s.form.loadRecord(record);" % name
         yield "    var p = {%s: record.data.%s}" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
@@ -1449,7 +1453,7 @@ class ReportMainPanel(Panel):
         keys = []
         buttons = []
 
-        main_name = self.lh.link.row_layout.name + '.' + 'main_grid'
+        main_name = id2js(self.lh.link.row_layout.name) + '.' + 'main_grid'
         key = actions.PAGE_UP
         js = js_code("function() {%s.comp.getSelectionModel().selectPrevious()}" % main_name)
         keys.append(dict(
@@ -1547,12 +1551,14 @@ Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
 Lino.save_window_config = function(url) {
   return function(event,toolEl,panel,tc) {
     console.log(panel.id,panel.getSize(),panel.getPosition());
-    // var pos = panel.getPosition();
+    var pos = panel.getPosition();
     var size = panel.getSize();
     var w = size['width'] * 100 / Lino.viewport.getWidth();
     var h = size['height'] * 100 / Lino.viewport.getHeight();
-    Lino.do_action(url,'save_window_config',{h:Math.round(h),w:Math.round(w),max:panel.maximized});
-    // Lino.do_action(url,'save_window_config',{x:pos[0],y:pos[1],h:size['height'],w:size['width']});
+    // Lino.do_action(url,'save_window_config',{h:Math.round(h),w:Math.round(w),max:panel.maximized});
+    Lino.do_action(url,'save_window_config',{
+      x:pos[0],y:pos[1],h:size['height'],w:size['width'],
+      max:panel.maximized});
   }
 };
 
@@ -2009,12 +2015,12 @@ class SaveWindowConfigAction(actions.Action):
             maximized = True
         else:
             maximized = False
-        #x = int(context.request.POST.get('x'))
-        #y = int(context.request.POST.get('y'))
-        #context.confirm("%r,%r,%r,%r,%r : Are you sure?!" % (name,x,y,h,w))
-        context.confirm("%r,%r,%r,%r : Are you sure?!" % (name,h,w,maximized))
-        #ui.window_configs[name] = (x,y,w,h)
-        ui.window_configs[name] = (w,h,maximized)
+        x = int(context.request.POST.get('x'))
+        y = int(context.request.POST.get('y'))
+        context.confirm("Save %r window config (%r,%r,%r,%r,%r)\nAre you sure?" % (name,x,y,h,w,maximized))
+        #context.confirm("%r,%r,%r,%r : Are you sure?!" % (name,h,w,maximized))
+        ui.window_configs[name] = (x,y,w,h,maximized)
+        #ui.window_configs[name] = (w,h,maximized)
         ui.save_window_configs()
 
 def save_win_view(request,name=None):
@@ -2030,16 +2036,16 @@ def menu_view(request):
     return HttpResponse(s, mimetype='text/html')
 
 
-def dialog_view(request,dlgname=None,actname=None,**kw):
+def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
 #def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
-    dlg = actors.get_actor(dlgname)
+    dlg = actors.get_actor2(app_label,dlgname)
     action = getattr(dlg,actname)
     context = ActionContext(action,request)
     context.run()
     return json_response(**context.response)
 
-def action_view(request,actname=None,**kw):
-    action = actors.get_actor(actname)
+def action_view(request,app_label=None,actname=None,**kw):
+    action = actors.get_actor2(app_label,actname)
     context = ActionContext(action,request)
     context.run()
     return json_response(**context.response)
@@ -2063,8 +2069,8 @@ def list_report_view(request,**kw):
     kw['simple_list'] = True
     return json_report_view(request,**kw)
     
-def json_report_view(request,rptname=None,**kw):
-    rpt = actors.get_actor(rptname)
+def json_report_view(request,app_label=None,rptname=None,**kw):
+    rpt = actors.get_actor(app_label+'.'+rptname)
     return json_report_view_(request,rpt,**kw)
 
 def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
@@ -2216,18 +2222,19 @@ class ExtUI(reports.UI):
             #(r'^json/(?P<app_label>\w+)/(?P<rptname>\w+)$', extjs.view_report_as_json),
             (r'^$', self.index),
             (r'^menu$', menu_view),
-            (r'^list/(?P<rptname>\w+)$', list_report_view),
-            (r'^grid_action/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
-            (r'^submit/(?P<rptname>\w+)$', form_submit_view),
-            (r'^grid_afteredit/(?P<rptname>\w+)$', grid_afteredit_view),
-            (r'^dialog/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
-            (r'^action/(?P<actname>\w+)$', action_view),
+            (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_report_view),
+            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
+            (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
+            (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
+            (r'^dialog/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
+            (r'^action/(?P<app_label>\w+)/(?P<actname>\w+)$', action_view),
             (r'^choices/(?P<app_label>\w+)/(?P<modname>\w+)/(?P<fldname>\w+)$', choices_view),
             (r'^save_win/(?P<name>\w+)$', save_win_view),
             
         )
 
     def get_action_url(self,a,**kw):
+        url = "/action/" + a.app_label + "/" + a.name 
         url = "/action/" + a.actor_id # app_label + "/" + a.name 
         if len(kw):
             url += "?"+urlencode(kw)
@@ -2235,8 +2242,8 @@ class ExtUI(reports.UI):
         
     def get_button_url(self,btn,**kw):
         layout = btn.lh.layout
-        #url = "/dialog/" + layout.app_label + "/" + layout.name + "/" + btn.name
-        url = "/dialog/" + layout.actor_id + "/" + btn.name
+        url = "/dialog/" + layout.app_label + "/" + layout.name + "/" + btn.name
+        #url = "/dialog/" + layout.actor_id + "/" + btn.name
         if len(kw):
             url += "?"+urlencode(kw)
         return url
@@ -2256,8 +2263,8 @@ class ExtUI(reports.UI):
         else:
             raise "one of json, save or action must be True"
             #url = "/r/"
-        url += rh.report.actor_id
-        #url += rh.report.app_label + "/" + rh.report.name
+        #url += rh.report.actor_id
+        url += rh.report.app_label + "/" + rh.report.name
         if action:
             url += "/" + action
         if master_instance is not None:

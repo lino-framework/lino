@@ -135,118 +135,110 @@ def objects():
     yield person(u'Tiina',u'Türnpuu')
     yield person(u'Urmas',u'Uukivi')
     
-    partner = Instantiator('contacts.Partner').build
+    s = u"""\
+Aachener Straße
+Akazienweg
+Alter Malmedyer Weg
+Am Bahndamm
+Am Berg
+Am Waisenbüschchen
+Auenweg
+Auf dem Spitzberg
+Auf'm Rain
+August-Thonnar-Str.
+Bahnhofsgasse
+Bahnhofstraße
+Bellmerin
+Bennetsborn
+Bergkapellstraße
+Bergstraße
+Binsterweg
+Brabantstraße
+Buchenweg
+Edelstraße
+Euregiostraße
+Favrunpark
+Feldstraße
+Fränzel
+Gewerbestraße
+Gospert
+Gülcherstraße
+Haagenstraße
+Haasberg
+Haasstraße
+Habsburgerweg
+Heidberg
+Heidgasse
+Heidhöhe
+Herbesthaler Straße
+Hisselsgasse
+Hochstraße
+Hook
+Hostert
+Hufengasse
+Hugo-Zimmermann-Str.
+Hütte
+Hütterprivatweg
+Im Peschgen
+In den Siepen
+Industriestraße
+Johannesstraße
+Judenstraße
+Kaperberg
+Kaplan-Arnolds-Str.
+Karl-Weiß-Str.
+Kehrweg
+Kirchgasse
+Kirchstraße
+Klinkeshöfchen
+Kügelgasse
+Langesthal
+Lascheterweg
+Limburgerweg
+Lindenweg
+Lothringerweg
+Malmedyer Straße
+Maria-Theresia-Straße
+Marktplatz
+Monschauer Straße
+Mühlenweg
+Neustraße
+Nikolausfeld
+Nispert
+Noereth
+Obere Ibern
+Obere Rottergasse
+Oestraße
+Olengraben
+Panorama
+Paveestraße
+Peter-Becker-Str.
+Rosenweg
+Rot-Kreuz-Str.
+Rotenberg
+Rotenbergplatz
+Schilsweg
+Schlüsselhof
+Schnellewindgasse
+Schönefeld
+Schorberg
+Schulstraße
+Selterschlag
+Simarstraße
+Steinroth
+Stendrich
+Stockbergerweg
+Stockem
+Theodor-Mooren-Str.
+Untere Ibern
+Vervierser Straße
+Vossengasse
+Voulfeld
+Werthplatz
+Weserstraße
+"""
     
-    for c in resolve_model('contacts.Company').objects.all():
-        yield partner(company=c.pk)
-        
-    for p in resolve_model('contacts.Person').objects.all():
-        yield partner(person=p.pk)
-    
-    s = u"""
-    Aachener Straße
-    Akazienweg
-    Alter Malmedyer Weg
-    Am Bahndamm
-    Am Berg
-    Am Waisenbüschchen
-    Auenweg
-    Auf dem Spitzberg
-    Auf'm Rain
-    August-Thonnar-Str.
-    Bahnhofsgasse
-    Bahnhofstraße
-    Bellmerin
-    Bennetsborn
-    Bergkapellstraße
-    Bergstraße
-    Binsterweg
-    Brabantstraße
-    Buchenweg
-    Edelstraße
-    Euregiostraße
-    Favrunpark
-    Feldstraße
-    Fränzel
-    Gewerbestraße
-    Gospert
-    Gülcherstraße
-    Haagenstraße
-    Haasberg
-    Haasstraße
-    Habsburgerweg
-    Heidberg
-    Heidgasse
-    Heidhöhe
-    Herbesthaler Straße
-    Hisselsgasse
-    Hochstraße
-    Hook
-    Hostert
-    Hufengasse
-    Hugo-Zimmermann-Str.
-    Hütte
-    Hütterprivatweg
-    Im Peschgen
-    In den Siepen
-    Industriestraße
-    Johannesstraße
-    Judenstraße
-    Kaperberg
-    Kaplan-Arnolds-Str.
-    Karl-Weiß-Str.
-    Kehrweg
-    Kirchgasse
-    Kirchstraße
-    Klinkeshöfchen
-    Kügelgasse
-    Langesthal
-    Lascheterweg
-    Limburgerweg
-    Lindenweg
-    Lothringerweg
-    Malmedyer Straße
-    Maria-Theresia-Straße
-    Marktplatz
-    Monschauer Straße
-    Mühlenweg
-    Neustraße
-    Nikolausfeld
-    Nispert
-    Noereth
-    Obere Ibern
-    Obere Rottergasse
-    Oestraße
-    Olengraben
-    Panorama
-    Paveestraße
-    Peter-Becker-Str.
-    Rosenweg
-    Rot-Kreuz-Str.
-    Rotenberg
-    Rotenbergplatz
-    Schilsweg
-    Schlüsselhof
-    Schnellewindgasse
-    Schönefeld
-    Schorberg
-    Schulstraße
-    Selterschlag
-    Simarstraße
-    Steinroth
-    Stendrich
-    Stockbergerweg
-    Stockem
-    Theodor-Mooren-Str.
-    Untere Ibern
-    Vervierser Straße
-    Vossengasse
-    Voulfeld
-    Werthplatz
-    Weserstraße
-    """
-    
-    streets_of_eupen = [ line for line in s.splitlines() if len(line.strip()) > 0 ]
+    streets_of_eupen = [ line.strip() for line in s.splitlines() if len(line.strip()) > 0 ]
     
     i = 0
     nr = 1

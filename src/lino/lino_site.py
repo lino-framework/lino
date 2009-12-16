@@ -70,6 +70,7 @@ import lino
 from lino import reports
 from lino import layouts
 from lino import actions
+from lino import diag
 from lino.utils import perms
 from lino.utils import menus
 #from . import layouts
@@ -106,69 +107,6 @@ class LinoSite:
         self._setup_done = False
         self.root_path = '/lino/'
         self._response = None
-
-        for name,url,version in self.thanks_to():
-            lino.log.info("%s %s <%s>",name,version,url)
-        self.app_labels = [a.__name__.split('.')[-2] for a in loading.get_apps()]
-          
-        lino.log.debug("%d applications: %s.", len(self.app_labels),", ".join(self.app_labels))
-        models_list = models.get_models()
-        lino.log.debug("%d models:",len(models_list))
-        i = 0
-        for model in models_list:
-            i += 1
-            lino.log.debug("  %2d: %s %r",i,model._meta.db_table,model)
-        
-        
-        
-        
-    def versions(self):
-        def HREF(name,url,version):
-            return mark_safe('<a href="%s">%s</a> %s' % (url,name,version))
-        for name,url,version in self.thanks_to():
-            yield HREF(name,url,version)
-            
-          
-    def thanks_to(self):
-        import lino
-        version = lino.__version__
-        from django.utils.version import get_svn_revision
-        svn_rev = get_svn_revision(os.path.dirname(__file__))
-        if svn_rev != u'SVN-unknown':
-            version += " " + svn_rev
-        yield ("Lino",
-               "http://lino.saffre-rumma.ee",
-               version)
-        
-        import django
-        yield ("Django",
-               "http://www.djangoproject.com",
-               django.get_version())
-        
-        import reportlab
-        yield ("ReportLab Toolkit",
-               "http://www.reportlab.org/rl_toolkit.html",
-               reportlab.Version)
-                   
-        import yaml
-        version = getattr(yaml,'__version__','')
-        yield ("PyYaml","http://pyyaml.org/",version)
-        
-        import dateutil
-        version = getattr(dateutil,'__version__','')
-        yield ("python-dateutil","http://labix.org/python-dateutil",version)
-        
-        import sys
-        version = "%d.%d.%d" % sys.version_info[:3]
-        yield ("Python","http://www.python.org/",version)
-        
-        try:
-            # l:\snapshot\xhtml2pdf
-            import ho.pisa as pisa
-            version = getattr(pisa,'__version__','')
-            yield ("xhtml2pdf","http://www.xhtml2pdf.com//",version)
-        except ImportError:
-            pisa = None
         
 
     def setup(self):
@@ -488,7 +426,7 @@ class LinoSite:
                 if os.path.exists(settings.DATABASE_NAME):
                     os.remove(settings.DATABASE_NAME)
         else:
-            call_command('reset',*self.app_labels,**options)
+            call_command('reset',*diag.app_labels(),**options)
         #call_command('reset','songs','auth',interactive=False)
         lino.log.info("syncdb")
         call_command('syncdb',**options)

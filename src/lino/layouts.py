@@ -137,7 +137,7 @@ class Layout(actors.Actor):
     A Layout specifies how fields of a Report should be arranged when they are
     displayed in a form or a grid. 
     
-    Each Layout will hold LayoutHandle will analyzes her Layout's
+    Each Layout will get one LayoutHandle per UI that analyzes it's Layout's
     "descriptor" and builds a tree of LayoutElements. 
     
     A layout descriptor is a plain text with some simple rules:
@@ -145,12 +145,16 @@ class Layout(actors.Actor):
     - ...todo...
     
     """
-    #target = None
+    # for internal use:
     join_str = None # set by subclasses
+    
+    # the following may be overriddedn in subclasses:
+    #target = None
+    layout_for = None
     label = None
     has_frame = False # True
-    #label_align = LABEL_ALIGN_TOP
-    label_align = LABEL_ALIGN_LEFT
+    label_align = LABEL_ALIGN_TOP
+    #label_align = LABEL_ALIGN_LEFT
     #label_align = 'left'
     
     def __init__(self):
@@ -205,6 +209,8 @@ class StaticText:
 class LayoutHandle:
   
     def __init__(self,link,layout,index,desc=None,main=None):
+        lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
+        assert isinstance(link.name,basestring), "link.name %r is not a string" % link.name
         assert isinstance(layout,Layout)
         #assert isinstance(link,reports.ReportHandle)
         self.ui = link.ui
@@ -284,9 +290,19 @@ class LayoutHandle:
   
   
         
-    def desc2elem(self,panelclass,name,desc,**kw):
-        #lino.log.debug("desc2elem(panelclass,%r,%r)", name,desc)
+    def desc2elem(self,panelclass,desc_name,desc,**kw):
+        lino.log.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
         #assert desc != 'Countries_choices2'
+        if '*' in desc:
+            explicit_specs = set()
+            for spec in desc.split():
+                if spec != '*':
+                    name,kw = self.splitdesc(spec)
+                    explicit_specs.add(name)
+            wildcard_fields = self.layout.join_str.join([
+                name for name in self.link.get_fields() if name not in explicit_specs])
+            desc = desc.replace('*',wildcard_fields)
+            lino.log.debug('desc -> %r',desc)
         if "\n" in desc:
             elems = []
             i = 0
@@ -294,11 +310,11 @@ class LayoutHandle:
                 x = x.strip()
                 if len(x) > 0 and not x.startswith("#"):
                     i += 1
-                    elems.append(self.desc2elem(self.ui.Panel,name+'_'+str(i),x,**kw))
+                    elems.append(self.desc2elem(self.ui.Panel,desc_name+'_'+str(i),x,**kw))
             if len(elems) == 1 and panelclass != self._main_class:
                 return elems[0]
             #return self.vbox_class(self,name,*elems,**kw)
-            return panelclass(self,name,True,*elems,**kw)
+            return panelclass(self,desc_name,True,*elems,**kw)
         else:
             elems = []
             for x in desc.split():
@@ -309,11 +325,11 @@ class LayoutHandle:
             if len(elems) == 1 and panelclass != self._main_class:
                 return elems[0]
             #return self.hbox_class(self,name,*elems,**kw)
-            return panelclass(self,name,False,*elems,**kw)
+            return panelclass(self,desc_name,False,*elems,**kw)
             
-    def create_element(self,panelclass,name):
-        #lino.log.debug("create_element(panelclass,%r)", name)
-        name,kw = self.splitdesc(name)
+    def create_element(self,panelclass,desc_name):
+        lino.log.debug("create_element(panelclass,%r)", desc_name)
+        name,kw = self.splitdesc(desc_name)
         rpt = self.link.get_slave(name)
         if rpt is not None:
             e = self.ui.GridElement(self,name,rpt.get_handle(self.ui),**kw)
@@ -332,7 +348,7 @@ class LayoutHandle:
         if not name in ('__str__','__unicode__','name','label'):
             value = getattr(self._ld,name,None)
             if value is not None:
-                if type(value) == str:
+                if isinstance(value,basestring):
                     return self.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,StaticText):
                     return self.ui.StaticTextElement(self,name,value)

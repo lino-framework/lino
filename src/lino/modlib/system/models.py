@@ -162,6 +162,6 @@ class Logout(actions.OK):
 
 def add_auth_menu(lino):
     m = lino.add_menu("auth",_("~Authentificate"))
-    m.add_action(Login(),can_view=perms.is_anonymous)
-    m.add_action(Logout(),can_view=perms.is_authenticated)
-    m.add_action(PasswordReset(),can_view=perms.is_authenticated)
+    m.add_action('system.Login',can_view=perms.is_anonymous)
+    m.add_action('system.Logout',can_view=perms.is_authenticated)
+    m.add_action('system.PasswordReset',can_view=perms.is_authenticated)

@@ -191,49 +191,6 @@ class CompaniesByCountry(Companies):
 #~ countries.Countries.register_page_layout(CompaniesByCountryPage)
 
         
-class Partner(models.Model):
-    """
-    The Partner model in lino.modlib.contacts is abstract. 
-    igen uses the implementation in lino.modlib.sales (which has Meta app_label = "").
-    dsbe uses its own implementation in dsbe.modlib.contacts.models which just removes the abstract attribute.
-    """
-    class Meta:
-        abstract = True
-        app_label = 'contacts'
-    
-        
-    name = models.CharField("Sort name",max_length=40,editable=False)
-    company = models.ForeignKey('contacts.Company',blank=True,null=True)
-    person = models.ForeignKey('contacts.Person',blank=True,null=True)
-    
-    def __unicode__(self):
-        return self.name
-        
-    def save(self,*args,**kw):
-        self.before_save()
-        return super(Partner,self).save(*args,**kw)
-        
-    def before_save(self):
-        if self.company:
-            self.name = self.company.name
-        elif self.person:
-            l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
-            self.name = " ".join(l)
-        
-
-class PartnerPageLayout(layouts.PageLayout):
-    main = """
-           company person
-           """
-    
-class Partners(reports.Report):
-    page_layouts = (PartnerPageLayout,)
-    columnNames = "name company person"
-    can_delete = True
-    model = "contacts.Partner"
-    order_by = "name"
-    #can_view = perms.is_authenticated
-
 
 
 

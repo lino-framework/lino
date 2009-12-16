@@ -30,15 +30,23 @@ class NoteType(models.Model):
 
 
 class Note(models.Model):
+    #~ class Meta:
+        #~ abstract = True
+        
     user = models.ForeignKey("auth.User")
     date = fields.MyDateField()
-    owner_type = models.ForeignKey(ContentType,blank=True,null=True)
-    owner_id = models.PositiveIntegerField(blank=True,null=True)
-    owner = generic.GenericForeignKey('owner_type', 'owner_id')
-    partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
+    #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
+    #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
+    #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     type = models.ForeignKey(NoteType,blank=True,null=True)
     short = models.CharField(max_length=200,blank=True,null=True)
     text = models.TextField(blank=True)
+    
+    project = models.ForeignKey("projects.Project",blank=True,null=True)
+    person = models.ForeignKey("contacts.Person",blank=True,null=True)
+    company = models.ForeignKey("contacts.Company",blank=True,null=True)
+    
+    # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     
     def __unicode__(self):
         return self.short
@@ -49,40 +57,40 @@ class Note(models.Model):
 
 class NoteDetail(layouts.PageLayout):
     main = """
-    date type user owner 
-    short partner
-    text:40x5 links_LinksByOwner:40x5
+    date short type user
+    person company
+    text:40x5 links.LinksByOwner:40x5
     """
 class Notes(reports.Report):
     page_layouts = (NoteDetail,)
     model = 'notes.Note'
-    columnNames = "id date user owner short text partner"
+    columnNames = "id date user short * text"
     order_by = "id"
 
 class MyNotes(Notes):
     fk_name = 'user'
-    columnNames = "date short partner owner"
+    columnNames = "date short * text user"
     can_view = perms.is_authenticated
     
-    #~ def get_queryset(self,req,master_instance=None,**kw):
-        #~ if master_instance is None:
-            #~ master_instance = req.get_user()
-        #~ return super(MyNotes,self).get_queryset(req,master_instance=master_instance,**kw)
-
     def setup_request(self,req):
         #print 20091211, "MyNotes.setup_request"
         if req.master_instance is None:
             req.master_instance = req.get_user()
             #print req.master_instance
 
-
-class NotesByOwner(Notes):
-    fk_name = 'owner'
-    columnNames = "date short user partner"
+class NotesByProject(Notes):
+    fk_name = 'project'
+    columnNames = "date short user"
     order_by = "date"
   
-class NotesByPartner(Notes):
-    fk_name = 'partner'
-    columnNames = "date short user owner"
+class NotesByPerson(Notes):
+    fk_name = 'person'
+    columnNames = "date short user"
     order_by = "date"
+  
+class NotesByCompany(Notes):
+    fk_name = 'company'
+    columnNames = "date short user"
+    order_by = "date"
+  
   

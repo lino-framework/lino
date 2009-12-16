@@ -65,6 +65,15 @@ def objects():
         
     yield salesrule(imode='e',shipping_mode="ta",payment_term="7")
     
+    
+    #~ partner = Instantiator('contacts.Partner').build
+    
+    #~ for c in resolve_model('contacts.Company').objects.all():
+        #~ yield partner(company=c.pk)
+        
+    #~ for p in resolve_model('contacts.Person').objects.all():
+        #~ yield partner(person=p.pk)
+    
     Partner = resolve_model('contacts.Partner')
     metsjapuu = Partner.objects.get(company__name__startswith="Mets")
     dubois = Partner.objects.get(person__last_name__startswith="Dubois")

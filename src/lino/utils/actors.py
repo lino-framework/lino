@@ -19,6 +19,20 @@ import lino
 
 actors_dict = {}
 
+ACTOR_SEP = '.'
+
+def get_actor(actor_id):
+    cls = actors_dict[actor_id]
+    return cls()
+    
+def get_actor2(app_label,name):
+    k = app_label + ACTOR_SEP + name
+    cls = actors_dict.get(k,None)
+    if cls is None:
+        return cls
+    return cls()
+    
+
 class ActorMetaClass(type):
     def __new__(meta, classname, bases, classDict):
         #~ if not classDict.has_key('app_label'):
@@ -29,10 +43,11 @@ class ActorMetaClass(type):
             # dynamically created report classes must specify themselves their app_label,
             # otherwise the app_label will be 'utils' (from utils.report_factory()).
             cls.app_label = cls.__module__.split('.')[-2]
-        actor_id = classDict.get('actor_id',None)
-        if actor_id is None:
-            actor_id = cls.app_label + "_" + cls.__name__
-            cls.actor_id = actor_id
+        name = classDict.get('name',None)
+        if name is None:
+            name = cls.__name__
+            cls.name = name
+        cls.actor_id = cls.app_label + ACTOR_SEP + cls.name
         old = actors_dict.get(cls.actor_id,None)
         if old is not None:
             lino.log.debug("ActorMetaClass %s : %r replaced by %r",cls.actor_id,old,cls)
@@ -53,7 +68,7 @@ class ActorMetaClass(type):
 
 class Actor(object):
     __metaclass__ = ActorMetaClass
-    actor_id = None
+    name = None
     label = None
     def __init__(self):
         if self.label is None:
@@ -65,16 +80,8 @@ class Actor(object):
         #~ if self.label is None:
             #~ return self.__class__.__name__
         return self.label
+    
 
-def get_actor(actor_id):
-    cls = actors_dict[actor_id]
-    return cls()
-    
-def old_get_actor(app_label,name):
-    k = app_label + "." + name
-    cls = actors_dict[k]
-    return cls()
-    
 
 def unused_get_actor(app_label,name):
     app = models.get_app(app_label)

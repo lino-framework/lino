@@ -30,7 +30,7 @@ def get_app(app_label):
       
 
 
-def resolve_model(model_spec,app_label=None):
+def resolve_model(model_spec,app_label=None,who=None):
     # Same logic as in django.db.models.fields.related.add_lazy_relation()
     if isinstance(model_spec,basestring):
         try:
@@ -43,7 +43,9 @@ def resolve_model(model_spec,app_label=None):
     else:
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
-        raise Exception("Could not resolve model_spec %r using app_label=%r" % (model_spec,app_label))
+        raise Exception(
+            "%s could not resolve model_spec %r using app_label=%r" % (
+            who,model_spec,app_label))
     return model
     
     

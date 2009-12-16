@@ -256,7 +256,7 @@ class Report(actors.Actor):
                 raise Exception(self.__class__)
             self.model = self.queryset.model
         else:
-            self.model = resolve_model(self.model,self.app_label)
+            self.model = resolve_model(self.model,self.app_label,self)
         
         if self.fk_name:
             #~ self.master = resolve_model(self.master,self.app_label)
@@ -266,13 +266,15 @@ class Report(actors.Actor):
                 assert not m2m
                 master = fk.rel.to
             except models.FieldDoesNotExist,e:
+                lino.log.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.fk_name)
                 master = None
                 for vf in self.model._meta.virtual_fields:
                     if vf.name == self.fk_name:
                         fk = vf
                         master = ContentType
             if master is None:
-                raise Exeption("No master for fk_name %r in %s" % (self.fk_name,self.model.__name__))
+                raise Exception("%s : no master for fk_name %r in %s" % (
+                    self,self.fk_name,self.model.__name__))
             self.master = master
             self.fk = fk
         else:
@@ -471,6 +473,9 @@ class ReportHandle(layouts.DataLink):
         #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth','get_field_choices',
                   #~ 'get_title'):
             #~ setattr(self,n,getattr(report,n))
+            
+    def __str__(self):
+        return self.report.name + 'Handle'
             
     def setup(self):
         def lh(layout_class,*args,**kw):

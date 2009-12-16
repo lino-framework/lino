@@ -161,14 +161,64 @@ def get_sales_rule(doc):
         if r.journal is None or r.journal == doc.journal:
             return r
             
-            
-class Partner(contacts.Partner):
-    class Meta:
-        app_label = 'contacts'
+
+class Partner(models.Model):
+    """
+    20091215 No longer valid, Partner is no longer part o modlib.contacts:
+    The Partner model in lino.modlib.contacts is abstract. 
+    igen uses the implementation in lino.modlib.sales (which has Meta app_label = "").
+    dsbe uses its own implementation in dsbe.modlib.contacts.models which just removes the abstract attribute.
+    """
+    #~ class Meta:
+        #~ abstract = True
+        #~ app_label = 'contacts'
+    
+        
+    name = models.CharField("Sort name",max_length=40,editable=False)
+    company = models.ForeignKey('contacts.Company',blank=True,null=True)
+    person = models.ForeignKey('contacts.Person',blank=True,null=True)
+    
     payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
     vat_exempt = models.BooleanField(default=False)
     item_vat = models.BooleanField(default=False)
     
+    def __unicode__(self):
+        return self.name
+        
+    def save(self,*args,**kw):
+        self.before_save()
+        return super(Partner,self).save(*args,**kw)
+        
+    def before_save(self):
+        if self.company:
+            self.name = self.company.name
+        elif self.person:
+            l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
+            self.name = " ".join(l)
+        
+#~ class Partner(contacts.Partner):
+    #~ class Meta:
+        #~ app_label = 'contacts'
+    #~ payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
+    #~ vat_exempt = models.BooleanField(default=False)
+    #~ item_vat = models.BooleanField(default=False)
+    
+
+#~ class PartnerPageLayout(layouts.PageLayout):
+    #~ main = """
+           #~ company person
+           #~ """
+    
+class Partners(reports.Report):
+    page_layouts = (PartnerPageLayout,)
+    columnNames = "name company person"
+    can_delete = True
+    model = "contacts.Partner"
+    order_by = "name"
+    #can_view = perms.is_authenticated
+
+
+
 
 class PartnerPageLayout(layouts.PageLayout):
     main = """

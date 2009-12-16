@@ -33,9 +33,11 @@ class ProjectTypes(reports.Report):
 # PROJECT
 #
 class Project(models.Model):
+    class Meta:
+        abstract = True
+        
     name = models.CharField(max_length=200)
     type = models.ForeignKey(ProjectType,blank=True,null=True)
-    partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     started = fields.MyDateField(blank=True,null=True) 
     stopped = fields.MyDateField(blank=True,null=True) 
     
@@ -43,10 +45,6 @@ class Project(models.Model):
         return self.name
         
 class Projects(reports.Report):
-    model = Project
+    model = 'projects.Project'
     order_by = "name"
-    
-class ProjectsByPartner(Projects):
-    fk_name = 'partner'
-    order_by = "started"
     
