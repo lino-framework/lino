@@ -32,7 +32,7 @@ from django.core import exceptions
 import lino
 from lino import reports
 from lino import actions
-from lino import layouts
+from lino import layouts, forms
 from lino.utils import menus, actors
 from lino.utils import constrain
 
@@ -70,10 +70,9 @@ class ActionContext(actions.ActionContext):
         if self.confirmed is not None:
             self.confirmed = int(self.confirmed)
         self.confirms = 0
-        self.response = dict(success=True,must_reload=False,msg=None,close_dialog=True)
         #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
         
-class ReportActionContext(ActionContext):
+class GridActionContext(ActionContext):
     def __init__(self,action,request,rh,*args,**kw):
         ActionContext.__init__(self,action,request,**kw)
         selected = self.request.POST.get('selected',None)
@@ -131,7 +130,7 @@ class WindowRenderer:
         self.lh = lh
         self.name = id2js(lh.name)
         self.options.update(title=self.lh.get_title(self))
-        self.options.update(closeAction='hide')
+        #self.options.update(closeAction='hide')
         self.options.update(maximizable=True)
         self.options.update(id=self.name)
         url = '/save_win/' + self.name
@@ -159,7 +158,7 @@ class WindowRenderer:
             #self.options.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
             self.options.update(maximized=wc[4])
 
-class ReportWindowRenderer(WindowRenderer):
+class unused_ReportWindowRenderer(WindowRenderer): # moved to ExtUI.run_report
     def __init__(self,lh,**kw):
         WindowRenderer.__init__(self,lh,**kw)
         self.store = lh.link.store
@@ -208,7 +207,7 @@ class ReportWindowRenderer(WindowRenderer):
         
         
 
-class DialogRenderer(WindowRenderer):
+class unused_DialogRenderer(WindowRenderer): # moved to ExtUI.run_dialog
   
     def __init__(self,layout,**kw):
         lh = ui.get_dialog_handle(layout)
@@ -244,6 +243,13 @@ class DialogRenderer(WindowRenderer):
 def id2js(s):
   return s.replace('.','_')
   
+class js_code:
+    "A string that py2js will represent as is, not between quotes."
+    def __init__(self,s):
+        self.s = s
+    #~ def __repr__(self):
+        #~ return self.s
+  
 def py2js(v,**kw):
     #lino.log.debug("py2js(%r,%r)",v,kw)
         
@@ -256,13 +262,15 @@ def py2js(v,**kw):
         return py2js(kw)
         
     if isinstance(v,menus.MenuItem):
-        if v.args:
-            handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
-                v.actor.id2js(actor_id),
-                ",".join([py2js(a) for a in v.args]))
-        else:
-            handler = "function(btn,evt) {%s.show(btn,evt);}" % id2js(v.actor.actor_id)
+        handler = "function(btn,evt){Lino.do_action(%r,%r,{})}" % (v.actor.get_url(ui),id2js(v.actor.actor_id))
         return py2js(dict(text=v.label,handler=js_code(handler)))
+        #~ if v.args:
+            #~ handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
+                #~ id2js(v.actor.actor_id),
+                #~ ",".join([py2js(a) for a in v.args]))
+        #~ else:
+            #~ handler = "function(btn,evt) {%s.show(btn,evt);}" % id2js(v.actor.actor_id)
+        #~ return py2js(dict(text=v.label,handler=js_code(handler)))
     if isinstance(v,Component):
         return v.as_ext(**kw)
         
@@ -270,24 +278,23 @@ def py2js(v,**kw):
         return "\n".join([ln for ln in v(**kw)])
 
     assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
-    if type(v) in (types.ListType, types.TupleType):
+    if isinstance(v,js_code):
+        return v.s
+    if v is None:
+        return 'null'
+    if isinstance(v,(list,tuple)): # (types.ListType, types.TupleType):
         return "[ %s ]" % ", ".join([py2js(x) for x in v])
-    if type(v) is types.DictType:
+    if isinstance(v,dict): # ) is types.DictType:
         return "{ %s }" % ", ".join([
             "%s: %s" % (k,py2js(v)) for k,v in v.items()])
-    if type(v) is types.BooleanType:
+    if isinstance(v,bool): # types.BooleanType:
         return str(v).lower()
-    if type(v) is unicode:
-        return repr(v.encode('utf8'))
-    return repr(v)
+    if isinstance(v, (int, long)):
+        return str(v)
+    if isinstance(v, float):
+        return repr(v)
+    return simplejson.encoder.encode_basestring(v)
             
-class js_code:
-    "A string that py2js will represent as is, not between quotes."
-    def __init__(self,s):
-        self.s = s
-    def __repr__(self):
-        return self.s
-  
 
 
 DECLARE_INLINE = 0
@@ -491,7 +498,9 @@ class ForeignKeyStoreField(StoreField):
 
 
 class Store(Component):
+    #declare_type = DECLARE_THIS
     declare_type = DECLARE_VAR
+    #declare_type = DECLARE_INLINE
     ext_suffix = "_store"
     value_template = "new Ext.data.JsonStore({ %s })"
     
@@ -604,7 +613,9 @@ class Store(Component):
         
 
 class ColumnModel(Component):
-    declare_type = DECLARE_VAR
+    declare_type = DECLARE_THIS
+    #declare_type = DECLARE_VAR
+    #declare_type = DECLARE_INLINE
     ext_suffix = "_cols"
     value_template = "new Ext.grid.ColumnModel({ %s })"
     #declaration_order = 2
@@ -772,15 +783,17 @@ class LayoutElement(VisibleComponent):
         #~ return max(self.width,self.label_width) * EXT_CHAR_WIDTH + self.xpadding
         
 class InputElement(LayoutElement):
+    #declare_type = DECLARE_INLINE
     declare_type = DECLARE_THIS
     name_suffix = "_input"
     xtype = 'textfield'
     preferred_height = 1
+    field = None 
     
-    def __init__(self,lh,name,input,**kw):
-        lino.log.debug("InputElement.__init__(%r,%r,%r)",lh,name,input)
-        LayoutElement.__init__(self,lh,name,**kw)
-        assert isinstance(lh.layout,layouts.DialogLayout), "%s is not a DialogLayout" % lh.name
+    def __init__(self,lh,input,**kw):
+        lino.log.debug("InputElement.__init__(%r,%r)",lh,input)
+        LayoutElement.__init__(self,lh,input.name,**kw)
+        assert isinstance(lh.layout,layouts.FormLayout), "%s is not a FormLayout" % lh.name
         self.input = input
         
     def ext_options(self,**kw):
@@ -792,6 +805,7 @@ class InputElement(LayoutElement):
         return po
         
 class ButtonElement(LayoutElement):
+    #declare_type = DECLARE_INLINE
     declare_type = DECLARE_THIS
     name_suffix = "_btn"
     xtype = 'button'
@@ -800,7 +814,7 @@ class ButtonElement(LayoutElement):
     def __init__(self,lh,name,action,**kw):
         lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
         LayoutElement.__init__(self,lh,name,**kw)
-        assert isinstance(lh.layout,layouts.DialogLayout), "%s is not a DialogLayout" % lh.name
+        assert isinstance(lh.layout,layouts.Layout), "%s is not a Layout" % lh.name
         self.action = action
         
     def ext_options(self,**kw):
@@ -808,12 +822,13 @@ class ButtonElement(LayoutElement):
         kw = LayoutElement.ext_options(self,**kw)
         #kw.update(xtype=self.xtype)
         kw.update(text=self.action.label or self.name)
-        kw.update(handler=js_code('Lino.dialog_action(this,%r,%r)' % (
+        kw.update(handler=js_code('Lino.form_action(this,%r,%r)' % (
           self.name,self.lh.ui.get_button_url(self))))
         return kw
 
 
 class StaticTextElement(LayoutElement):
+    #declare_type = DECLARE_INLINE
     declare_type = DECLARE_THIS
     xtype = 'label'
     
@@ -838,6 +853,7 @@ class VirtualFieldElement(LayoutElement):
         
         
 class FieldElement(LayoutElement):
+    #declare_type = DECLARE_INLINE
     declare_type = DECLARE_THIS
     stored = True
     #declaration_order = 3
@@ -1062,6 +1078,7 @@ class Container(LayoutElement):
     hpad = 1
     is_fieldset = False
     
+    #declare_type = DECLARE_INLINE
     declare_type = DECLARE_THIS
     
     
@@ -1093,20 +1110,20 @@ class Container(LayoutElement):
         #~ return d
         
     def js_lines(self):
-        assert self.declare_type == DECLARE_THIS
-        if self.has_comp:
-            yield "this.%s = new function(parent) {" % self.ext_name
-            #yield "  this._parent = parent;" 
-            for e in self.elements:
-                for ln in e.js_lines():
-                    yield "  "+ln
-            yield "  this.comp = %s;" % self.as_ext_value()
-            yield "}(this);"
-        else:
-            for e in self.elements:
-                for ln in e.js_lines():
-                    yield ln
-            yield "this.%s = %s;" % (self.ext_name,self.as_ext_value())
+        if self.declare_type == DECLARE_THIS:
+            if self.has_comp:
+                yield "this.%s = new function(parent) {" % self.ext_name
+                #yield "  this._parent = parent;" 
+                for e in self.elements:
+                    for ln in e.js_lines():
+                        yield "  "+ln
+                yield "  this.comp = %s;" % self.as_ext_value()
+                yield "}(this);"
+            else:
+                for e in self.elements:
+                    for ln in e.js_lines():
+                        yield ln
+                yield "this.%s = %s;" % (self.ext_name,self.as_ext_value())
             
             
 
@@ -1242,7 +1259,7 @@ class GridElement(Container):
         for a in self.report.actions:
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
                   id2js(a.actor_id), 
-                  self.rh.get_absolute_url(action=id2js(a.actor_id))))
+                  self.rh.get_absolute_url(grid_action=id2js(a.actor_id))))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 keys.append(dict(
@@ -1252,8 +1269,9 @@ class GridElement(Container):
             # the first detail window can be opend with Ctrl+ENTER 
             key = actions.RETURN(ctrl=True)
             layout = self.rh.layouts[2]
+            url = '/action/' ...
             keys.append(dict(
-              handler=js_code("Lino.show_detail(this,%r)" % id2js(layout.name)),
+              handler=js_code("Lino.show_detail(this,%r,%r)" % (url,layout.name)),
               key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
             for layout in self.rh.layouts[2:]:
@@ -1284,8 +1302,8 @@ class GridElement(Container):
         #yield "this.cols = %s;" % self.column_model.as_ext_value()
         for ln in self.column_model.js_lines():
             yield "  " + ln
-        yield "  var buttons = %s;" % py2js(self.buttons)
-        yield "  var keys = %s;" % py2js(self.keys)
+        # yield "  var buttons = %s;" % py2js(self.buttons)
+        # TODO: yield "  var keys = %s;" % py2js(self.keys)
         yield "  this.comp = %s;" % self.as_ext_value()
         yield "  this.comp.on('afteredit', Lino.grid_afteredit(this,'%s','%s'));" % (
           self.rh.get_absolute_url(grid_afteredit=True),
@@ -1311,7 +1329,7 @@ class GridElement(Container):
         #d.update(autoScroll=True)
         #d.update(fitToFrame=True)
         d.update(emptyText="Nix gefunden...")
-        d.update(store=js_code(self.rh.store.ext_name))
+        d.update(store=self.rh.store) # js_code(self.rh.store.ext_name))
         d.update(colModel=self.column_model)
         d.update(title=self.rh.report.label)
         #d.update(colModel=js_code('this.cols'))
@@ -1326,7 +1344,7 @@ class GridElement(Container):
           displayInfo=True,
           pageSize=self.report.page_length,
           prependButtons=False,
-          items=js_code('buttons'),
+          items=self.buttons, # js_code('buttons'),
         )
         d.update(tbar=js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         return d
@@ -1483,7 +1501,7 @@ class ReportMainPanel(Panel):
     
         
 
-class DialogMainPanel(Panel):
+class FormMainPanel(Panel):
     value_template = "new Ext.form.FormPanel({ %s })"
 
     def ext_options(self,**d):
@@ -1529,8 +1547,8 @@ class Viewport:
 <!-- ** Javascript ** -->
 <!-- ExtJS library: base/adapter -->
 <script type="text/javascript" src="%sadapter/ext/ext-base.js"></script>""" % settings.EXTJS_URL
-        #widget_library = 'ext-all-debug'
-        widget_library = 'ext-all'
+        widget_library = 'ext-all-debug'
+        #widget_library = 'ext-all'
         s += """
 <!-- ExtJS library: all widgets -->
 <script type="text/javascript" src="%s%s.js"></script>""" % (settings.EXTJS_URL,widget_library)
@@ -1639,8 +1657,10 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
   }
 };
 
-Lino.do_action = function(url,name,params,reload,close_dialog) {
-  console.log('Lino.do_action()',name,params,reload);
+Lino.last_result = 1;
+
+Lino.do_action = function(url,name,params,reload,close_form) {
+  // console.log('Lino.do_action()',name,params,reload);
   var doit = function(confirmed) {
     params['confirmed'] = confirmed;
     Ext.Ajax.request({
@@ -1655,8 +1675,11 @@ Lino.do_action = function(url,name,params,reload,close_dialog) {
           if (result.msg) Ext.MessageBox.alert('success',result.msg);
           if (result.html) { new Ext.Window({html:result.html}).show(); };
           if (result.window) { new Ext.Window(result.window).show(); };
+          // if (result.call) { Lino.last_result = new result.call(); };
+          if (result.call) { new result.call(); };
           if (result.redirect) { window.open(result.redirect); };
           if (result.must_reload) reload();
+          // Lino.last_result = result;
         } else {
           if(result.confirm) Ext.Msg.show({
             title: 'Confirmation',
@@ -1670,7 +1693,7 @@ Lino.do_action = function(url,name,params,reload,close_dialog) {
             }
           })
         }
-        if (result.close_dialog && close_dialog) close_dialog();
+        if (result.close_form && close_form) close_form();
         if (result.refresh_menu) Lino.load_main_menu();
       },
       failure: function(response){
@@ -1723,20 +1746,19 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.show_detail = function (grid,wrappername) { 
+Lino.show_detail = function (grid,url,name) { 
   return function(btn,evt) {
     p = grid.comp.getStore().baseParams;
-    w = eval(wrappername);
-    w.show(btn,evt,p[%r]);
+    Lino.do_action(url,name,p[%r]);
   }
 };
 """ % URL_PARAM_MASTER_PK
         s += """
-Lino.dialog_action = function (dlg,name,url) { 
+Lino.form_action = function (dlg,name,url) { 
   return function(btn,evt) {
-    console.log('dialog_action()',dlg,name);
+    console.log('form_action()',dlg,name);
     v = dlg.get_values();
-    Lino.do_action(url,name,v,undefined,function() {dlg.comp.hide()});
+    Lino.do_action(url,name,v,undefined,function() {dlg.comp.close()});
   }
 };
 
@@ -1745,24 +1767,25 @@ Lino.main_menu = new Ext.Toolbar({});
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
 
-        rpts = [ ReportRenderer(rpt) 
-            for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values()]
-        for rpt in rpts:
-            for ln in rpt.report.store.js_lines():
-                s += "\n" + ln
-        for rpt in rpts:
-            for ln in rpt.js_lines():
-                s += "\n" + ln
+        if False:
+            rpts = [ ReportRenderer(rpt) 
+                for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values()]
+            for rpt in rpts:
+                for ln in rpt.report.store.js_lines():
+                    s += "\n" + ln
+            for rpt in rpts:
+                for ln in rpt.js_lines():
+                    s += "\n" + ln
         
-        dlgs = [ DialogRenderer(dlg) for dlg in layouts.dialogs ]
-        for dlg in dlgs:
-            for ln in dlg.js_lines():
-                s += "\n" + ln
+            dlgs = [ DialogRenderer(dlg) for dlg in layouts.dialogs ]
+            for dlg in dlgs:
+                for ln in dlg.js_lines():
+                    s += "\n" + ln
 
-        acts = [ ActionRenderer(a) for a in actions.global_actions ]
-        for a in acts:
-            for ln in a.js_lines():
-                s += "\n" + ln
+            acts = [ ActionRenderer(a) for a in actions.global_actions ]
+            for a in acts:
+                for ln in a.js_lines():
+                    s += "\n" + ln
 
         s += """
 Lino.on_load_menu = function(response) {
@@ -2028,7 +2051,7 @@ def save_win_view(request,name=None):
     action = SaveWindowConfigAction()
     context = ActionContext(action,request,name)
     context.run()
-    return json_response(**context.response)
+    return json_response(context.response)
 
 def menu_view(request):
     from lino import lino_site
@@ -2036,19 +2059,19 @@ def menu_view(request):
     return HttpResponse(s, mimetype='text/html')
 
 
-def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
-#def dialog_view(request,app_label=None,dlgname=None,actname=None,**kw):
-    dlg = actors.get_actor2(app_label,dlgname)
-    action = getattr(dlg,actname)
+def form_view(request,app_label=None,formname=None,actname=None,**kw):
+    action = actors.get_actor2(app_label,formname)
+    if actname is not None:
+        action = getattr(action,actname)
     context = ActionContext(action,request)
     context.run()
-    return json_response(**context.response)
+    return json_response(context.response)
 
 def action_view(request,app_label=None,actname=None,**kw):
     action = actors.get_actor2(app_label,actname)
     context = ActionContext(action,request)
     context.run()
-    return json_response(**context.response)
+    return json_response(context.response)
 
 def choices_view(request,app_label=None,modname=None,fldname=None,**kw):
     model = models.get_model(app_label,modname)
@@ -2059,74 +2082,81 @@ def choices_view(request,app_label=None,modname=None,fldname=None,**kw):
     
 def grid_afteredit_view(request,**kw):
     kw['colname'] = request.POST['colname']
+    kw['submit'] = True
     return json_report_view(request,**kw)
 
 def form_submit_view(request,**kw):
-    #kw['submit'] = True
+    kw['submit'] = True
     return json_report_view(request,**kw)
 
 def list_report_view(request,**kw):
     kw['simple_list'] = True
     return json_report_view(request,**kw)
     
+    
 def json_report_view(request,app_label=None,rptname=None,**kw):
     rpt = actors.get_actor(app_label+'.'+rptname)
     return json_report_view_(request,rpt,**kw)
 
-def json_report_view_(request,rpt,action=None,colname=None,simple_list=False):
+def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,simple_list=False):
     if not rpt.can_view.passes(request):
-        return json_response(success=False,
+        return json_response_kw(success=False,
             msg="User %s cannot view %s." % (request.user,rpt))
     rh = rpt.get_handle(ui)
-    if action:
+    if grid_action:
         # TODO: store actions in a dict (in Report or ReportHandle)
         for a in rpt.actions:
-            if a.actor_id == action:
-                context = ReportActionContext(a,request,rh)
+            if a.name == grid_action:
+                context = GridActionContext(a,request,rh)
                 context.run()
                 #d = a.get_response(rptreq)
-                return json_response(**context.response)
-        return json_response(
+                return json_response(context.response)
+        return json_response_kw(
             success=False,
-            msg="Report %r has no action %r" % (rpt.actor_id,action))
+            msg="Report %s has no action %r" % (rpt,grid_action))
             
     rptreq = ViewReportRequest(request,rh)
     
     if simple_list:
         d = rptreq.render_to_json()
-        return json_response(**d)
-
-    pk = request.POST.get(rh.store.pk.name) #,None)
-    #~ if pk == reports.UNDEFINED:
-        #~ pk = None
-    try:
-        data = rh.store.get_from_form(request.POST)
-        if pk in ('', None):
-            #return json_response(success=False,msg="No primary key was specified")
-            instance = rptreq.create_instance(**data)
-            instance.save(force_insert=True)
-        else:
-            instance = rpt.model.objects.get(pk=pk)
-            for k,v in data.items():
-                setattr(instance,k,v)
-            instance.save(force_update=True)
-        return json_response(success=True,
-              msg="%s has been saved" % instance)
-    except Exception,e:
-        lino.log.exception(e)
-        #traceback.format_exc(e)
-        return json_response(success=False,msg="Exception occured: "+cgi.escape(str(e)))
+        return json_response(d)
+    if submit:
+        pk = request.POST.get(rh.store.pk.name) #,None)
+        #~ if pk == reports.UNDEFINED:
+            #~ pk = None
+        try:
+            data = rh.store.get_from_form(request.POST)
+            if pk in ('', None):
+                #return json_response(success=False,msg="No primary key was specified")
+                instance = rptreq.create_instance(**data)
+                instance.save(force_insert=True)
+            else:
+                instance = rpt.model.objects.get(pk=pk)
+                for k,v in data.items():
+                    setattr(instance,k,v)
+                instance.save(force_update=True)
+            return json_response_kw(success=True,
+                  msg="%s has been saved" % instance)
+        except Exception,e:
+            lino.log.exception(e)
+            #traceback.format_exc(e)
+            return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
+    #return json_response(success=True,window=dict(title="Hello world",html="just a test"))
+    raise Exception("These were no good arguments for json_report_view_()")
     
-def json_response(**kw):
-    s = simplejson.dumps(kw,default=unicode)
+def json_response_kw(**kw):
+    return json_response(kw)
+    
+def json_response(x):
+    #s = simplejson.dumps(kw,default=unicode)
     #return HttpResponse(s, mimetype='text/html')
-    #s = py2js(kw)
-    #print "json_response()", s
+    s = py2js(x)
+    lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
     
+from lino.ui import base
 
-
-class ExtUI(reports.UI):
+class ExtUI(base.UI):
     _response = None
     
     _field2elem = (
@@ -2174,21 +2204,24 @@ class ExtUI(reports.UI):
         
         
     def field2elem(self,lh,field,**kw):
+        #~ if isinstance(field,forms.Input):
+            #~ return InputElement(lh,name,field)
+      
         for cl,x in self._field2elem:
             if isinstance(field,cl):
                 return x(lh,field,**kw)
         if True:
-            raise NotImplementedError("field %s (%s)" % (field.name,field.__class__))
+            raise NotImplementedError("field %r" % field)
         lino.log.warning("No LayoutElement for %s",field.__class__)
                 
 
     def main_panel_class(self,layout):
         if isinstance(layout,layouts.RowLayout) : 
-            return MainGridElement    
+            return MainGridElement
         if isinstance(layout,layouts.PageLayout) : 
             return ReportMainPanel
-        if isinstance(layout,layouts.DialogLayout) : 
-            return DialogMainPanel
+        if isinstance(layout,layouts.FormLayout) : 
+            return FormMainPanel
         raise Exception("No element class for layout %r" % layout)
             
 
@@ -2226,7 +2259,8 @@ class ExtUI(reports.UI):
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
-            (r'^dialog/(?P<app_label>\w+)/(?P<dlgname>\w+)/(?P<actname>\w+)$', dialog_view),
+            (r'^form/(?P<app_label>\w+)/(?P<formname>\w+)/(?P<actname>\w+)$', form_view),
+            (r'^form/(?P<app_label>\w+)/(?P<formname>\w+)$', form_view),
             (r'^action/(?P<app_label>\w+)/(?P<actname>\w+)$', action_view),
             (r'^choices/(?P<app_label>\w+)/(?P<modname>\w+)/(?P<fldname>\w+)$', choices_view),
             (r'^save_win/(?P<name>\w+)$', save_win_view),
@@ -2235,21 +2269,26 @@ class ExtUI(reports.UI):
 
     def get_action_url(self,a,**kw):
         url = "/action/" + a.app_label + "/" + a.name 
-        url = "/action/" + a.actor_id # app_label + "/" + a.name 
+        #url = "/action/" + a.actor_id # app_label + "/" + a.name 
+        if len(kw):
+            url += "?"+urlencode(kw)
+        return url
+        
+    def get_form_url(self,fh,**kw):
+        url = "/form/" + fh.form.app_label + "/" + fh.form.name 
         if len(kw):
             url += "?"+urlencode(kw)
         return url
         
     def get_button_url(self,btn,**kw):
-        layout = btn.lh.layout
-        url = "/dialog/" + layout.app_label + "/" + layout.name + "/" + btn.name
-        #url = "/dialog/" + layout.actor_id + "/" + btn.name
+        a = btn.lh.link.actor
+        url = "/form/" + a.app_label + "/" + a.name + "/" + btn.name
         if len(kw):
             url += "?"+urlencode(kw)
         return url
         
     def get_report_url(self,rh,master_instance=None,
-            simple_list=False,submit=False,grid_afteredit=False,action=None,**kw):
+            simple_list=False,submit=False,grid_afteredit=False,grid_action=None,hello=False,**kw):
         #~ lino.log.debug("get_report_url(%s)", [rh.name,master_instance,
             #~ simple_list,submit,grid_afteredit,action,kw])
         if simple_list:
@@ -2258,15 +2297,17 @@ class ExtUI(reports.UI):
             url = "/grid_afteredit/"
         elif submit:
             url = "/submit/"
-        elif action:
+        elif grid_action:
             url = "/grid_action/"
+        elif hello:
+            url = "/action/"
         else:
-            raise "one of json, save or action must be True"
+            raise "one of json, hello, save or grid_action must be True"
             #url = "/r/"
         #url += rh.report.actor_id
         url += rh.report.app_label + "/" + rh.report.name
-        if action:
-            url += "/" + action
+        if grid_action:
+            url += "/" + grid_action
         if master_instance is not None:
             kw[URL_PARAM_MASTER_PK] = master_instance.pk
             mt = ContentType.objects.get_for_model(master_instance.__class__).pk
@@ -2274,6 +2315,116 @@ class ExtUI(reports.UI):
         if len(kw):
             url += "?"+urlencode(kw)
         return url
+        
+    def layout2kw(self,lh,**kw):
+        name = id2js(lh.name)
+        kw.update(title=lh.get_title(self))
+        kw.update(closeAction='hide')
+        kw.update(maximizable=True)
+        kw.update(id=name)
+        url = '/save_win/' + name
+        js = 'Lino.save_window_config(%r)' % url
+        kw.update(tools=[dict(id='save',handler=js_code(js))])
+        kw.update(layout='fit')
+        kw.update(items=lh._main)
+        wc = self.window_configs.get(name,None)
+        if wc is None:
+            if lh.height is None:
+                kw.update(height=300)
+            else:
+                kw.update(height=lh.height*EXT_CHAR_HEIGHT + 7*EXT_CHAR_HEIGHT)
+            if lh.width is None:
+                kw.update(width=400)
+            else:
+                kw.update(width=lh.width*EXT_CHAR_WIDTH + 10*EXT_CHAR_WIDTH)
+        else:
+            assert len(wc) == 5
+            kw.update(x=wc[0])
+            kw.update(y=wc[1])
+            kw.update(width=wc[2])
+            kw.update(height=wc[3])
+            #kw.update(width=js_code('Lino.viewport.getWidth()*%d/100' % wc[0]))
+            #kw.update(height=js_code('Lino.viewport.getHeight()*%d/100' % wc[1]))
+            kw.update(maximized=wc[4])
+        return kw
+            
+        
+    def run_report(self,rpt,context,**kw):
+        """
+        called from Report.run()
+        """
+        rh = self.get_report_handle(rpt)
+        lh = rh.layouts[1]
+        kw = self.layout2kw(lh,**kw)
+        
+        def js_lines():
+            stores = [ rh.store ]
+            for e in lh.walk():
+                if isinstance(e,ForeignKeyElement):
+                    stores.append(e.rh.store)
+        
+            yield "function() {"
+            for store in stores:
+                for ln in store.js_lines():
+                    yield "  " + ln
+            for ln in lh._main.js_lines():
+                yield "  " + ln
+            yield "  this.comp = new Ext.Window( %s );" % py2js(kw)
+            if lh.link.report.master is None:
+                yield "  %s.load();" % rh.store.as_ext()
+            else:
+                # ab hier noch nicht fertig...
+                #self.lh.link.report.params.has_key('master_instance')
+                #master_report = reports.get_model_report(self.lh.link.report.master)
+                #yield "    master_grid = %s.grid;" % master_report.actor_id
+                #~ yield "    if(master) {"
+                #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
+                #~ yield "      %s.load();" % self.store.as_ext()
+                #~ yield "    } else {"
+                yield "    if(master_grid) {"
+                #yield "      console.log('show() master_grid=',master_grid);"
+                yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
+                #yield "      console.log(rowIndex,record);" 
+                yield "      var p={%s:record.id};" % URL_PARAM_MASTER_PK
+                mt = ContentType.objects.get_for_model(self.lh.link.report.model).pk
+                yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+                yield "      %s.load({params:p});" % self.store.as_ext()
+                yield "    });"
+                yield "  } else {"
+                yield "      %s.load();" % self.store.as_ext()
+                yield "  }"
+            yield "  this.comp.show();"
+            yield "  this.success = true;"
+            yield "}"
+            
+        #context.show_window(**kw) #title=rpt.get_title(context),html="todo: extjs.run_report()")
+        #~ js = ""
+        #~ js += '\n'.join([ln for ln in lh._main.js_lines()])
+        #~ context.js_eval("new Ext.Window(%s).show();" % py2js(kw)) #title=rpt.get_title(context),html="todo: extjs.run_report()")
+        # context.js_eval(js_lines)
+        context.response.update(call=js_lines)
+        
+    def run_form(self,frm,context,**kw):
+        fh = self.get_form_handle(frm)
+        #fh.setup()
+        lh = fh.lh
+        kw = self.layout2kw(lh,**kw)
+        name = id2js(lh.name)
+        def js_lines():
+            yield "function() {" 
+            for ln in lh._main.js_lines():
+                yield "  " + ln
+            yield "  this.comp = new Ext.Window( %s );" % py2js(kw)
+            yield "  this.get_values = function() {"
+            yield "    var v = {};"
+            for e in fh.inputs:
+                yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
+            yield "    return v;"
+            yield "  };"
+            yield "  this.comp.show();"
+            yield "}"
+      
+        context.response.update(call=js_lines)
             
     
 ui = ExtUI()

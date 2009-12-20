@@ -201,7 +201,7 @@ def get_model_report(model):
     return model._lino_model_report
 
 
-class Report(actors.Actor):
+class Report(actions.Action): # actors.Actor):
     #__metaclass__ = ReportMetaClass
     params = {}
     field = None
@@ -213,7 +213,7 @@ class Report(actors.Actor):
     exclude = None
     title = None
     columnNames = None
-    label = None
+    #label = None
     param_form = ReportParameterForm
     #default_filter = ''
     #name = None
@@ -243,7 +243,8 @@ class Report(actors.Actor):
     actions = []
     
     def __init__(self):
-        actors.Actor.__init__(self)
+        #actors.Actor.__init__(self)
+        actions.Action.__init__(self)
         lino.log.debug("Report.__init__() %s", self.actor_id)
         self._handles = {}
         self._setup_done = False
@@ -252,9 +253,9 @@ class Report(actors.Actor):
         
         #~ if self.field is None:
         if self.model is None:
-            if self.queryset is None:
-                raise Exception(self.__class__)
-            self.model = self.queryset.model
+            if self.queryset is not None:
+                self.model = self.queryset.model
+            # raise Exception(self.__class__)
         else:
             self.model = resolve_model(self.model,self.app_label,self)
         
@@ -334,6 +335,17 @@ class Report(actors.Actor):
         self._setup_done = True
         lino.log.debug("Report.setup() done: %s", self.actor_id)
         return True
+        
+    def run(self,context):
+        return context.ui.run_report(self,context)
+        
+    def get_url(self,ui,**kw):
+        "todo: rename 'hello' to sth like 'action' but first change extjs.get_report_url()"
+        kw['hello'] = True
+        rh = self.get_handle(ui)
+        return rh.get_absolute_url(**kw)
+        #return ui.get_report_url(rh,**kw)
+        
         
     def get_handle(self,ui):
         return ui.get_report_handle(self)
@@ -434,8 +446,8 @@ class Report(actors.Actor):
     def getLabel(self):
         return self.label
         
-    def __str__(self):
-        return rc_name(self.__class__)
+    #~ def __str__(self):
+        #~ return rc_name(self.__class__)
         
     def ajax_update(self,request):
         print request.POST
@@ -461,15 +473,22 @@ def report_factory(model):
     #~ fldname = model._meta.app_label+'.'+model.__class__.__name__+'.'+field.name
     #~ return type(clsname,(Report,),dict(field=fldname,app_label=model._meta.app_label,columnNames='__unicode__'))
 
+def get_unbound_meth(cl,name):
+    meth = getattr(cl,name,None)
+    if meth is not None:
+        return meth
+    for b in cl.__bases__:
+        meth = getattr(b,name,None)
+        if meth is not None:
+            return meth
 
 class ReportHandle(layouts.DataLink):
     def __init__(self,ui,report):
         #lino.log.debug('ReportHandle.__init__(%s)',rd)
         layouts.DataLink.__init__(self,ui,report.actor_id)
         assert isinstance(report,Report)
-        assert isinstance(ui,UI)
         #self._rd = rd
-        self.report = report
+        self.actor = self.report = report
         #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth','get_field_choices',
                   #~ 'get_title'):
             #~ setattr(self,n,getattr(report,n))
@@ -502,35 +521,48 @@ class ReportHandle(layouts.DataLink):
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_report_url(self,*args,**kw)
         
-    def get_fields(self):
-        return [ f.name for f in self.report.model._meta.fields + self.report.model._meta.many_to_many]
-        
-    def try_get_field(self,name):
+    def data_elems(self):
+        for f in self.report.model._meta.fields: yield f.name
+        for f in self.report.model._meta.many_to_many: yield f.name
+        for f in self.report.model._meta.virtual_fields: yield f.name
+        # todo: for slave in self.report.slaves
+          
+    def get_data_elem(self,name):
         try:
             return self.report.model._meta.get_field(name)
         except models.FieldDoesNotExist,e:
-            return None
-            
-    def try_get_meth(self,name):
-        def get_unbound_meth(cl,name):
-            meth = getattr(cl,name,None)
-            if meth is not None:
-                return meth
-            for b in cl.__bases__:
-                meth = getattr(b,name,None)
-                if meth is not None:
-                    return meth
-        return get_unbound_meth(self.report.model,name)
-            
-    def try_get_virt(self,name):
+            pass
+        rpt = get_slave(self.report.model,name)
+        if rpt is not None: return rpt
+        m = get_unbound_meth(self.report.model,name)
+        if m is not None: return m
+        
         for vf in self.report.model._meta.virtual_fields:
             if vf.name == name:
                 return vf
+          
+          
+    #~ def get_fields(self):
+        #~ return [ f.name for f in self.report.model._meta.fields + self.report.model._meta.many_to_many]
+        
+    #~ def try_get_field(self,name):
+        #~ try:
+            #~ return self.report.model._meta.get_field(name)
+        #~ except models.FieldDoesNotExist,e:
+            #~ return None
             
-    def get_slave(self,name):
-        return get_slave(self.report.model,name)
-        #l = self.slaves() # to populate
-        #return self._slaves.get(name,None)
+    #~ def try_get_meth(self,name):
+        #~ return get_unbound_meth(self.report.model,name)
+            
+    #~ def try_get_virt(self,name):
+        #~ for vf in self.report.model._meta.virtual_fields:
+            #~ if vf.name == name:
+                #~ return vf
+            
+    #~ def get_slave(self,name):
+        #~ return get_slave(self.report.model,name)
+        #~ #l = self.slaves() # to populate
+        #~ #return self._slaves.get(name,None)
         
     def get_title(self,renderer):
         return self.report.get_title(renderer)
@@ -599,46 +631,6 @@ class ReportRequest:
         
     def get_queryset(self,**kw):
         return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
-        
-        
-
-
-
-class UI:
-    
-    def get_urls():
-        pass
-        
-    def setup_site(self,lino_site):
-        pass
-    
-    def field2elem(self,lui,field,**kw):
-        pass
-        
-    def _get_report_handle(self,app_label,rptname):
-        rpt = actors.get_actor(app_label,rptname)
-        #rpt = get_report(app_label,rptname)
-        return self.get_report_handle(rpt)
-        
-    def get_report_handle(self,rpt):
-        #lino.log.debug('get_report_handle(%s)',rpt)
-        rpt.setup()
-        h = rpt._handles.get(self,None)
-        if h is None:
-            h = ReportHandle(self,rpt)
-            rpt._handles[self] = h
-            h.setup()
-        return h
-        
-    def get_dialog_handle(self,layout):
-        assert isinstance(layout,layouts.DialogLayout)
-        h = layout._handles.get(self,None)
-        if h is None:
-            lnk = layouts.DialogLink(self,layout)
-            h = layouts.LayoutHandle(lnk,layout,1)
-            layout._handles[self] = h
-            #h.setup()
-        return h
         
 
 

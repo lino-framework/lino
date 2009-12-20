@@ -51,7 +51,8 @@ class ActorMetaClass(type):
         old = actors_dict.get(cls.actor_id,None)
         if old is not None:
             lino.log.debug("ActorMetaClass %s : %r replaced by %r",cls.actor_id,old,cls)
-        actors_dict[cls.actor_id] = cls
+        if classname not in ('Report','Action'):
+            actors_dict[cls.actor_id] = cls
         #actors.append(cls)
         return cls
 
@@ -80,6 +81,9 @@ class Actor(object):
         #~ if self.label is None:
             #~ return self.__class__.__name__
         return self.label
+        
+    def __str__(self):
+        return '<' + self.actor_id + '>'
     
 
 

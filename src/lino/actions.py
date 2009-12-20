@@ -49,14 +49,6 @@ class ValidationError(Exception):
     #~ pass
     
     
-global_actions = []
-
-def setup():
-    lino.log.debug("Registering Global Actions...")
-    for cls in actors.actors_dict.values():
-        if issubclass(cls,Action) and cls is not Action:
-            global_actions.append(cls())
-    
     
 class Action(actors.Actor):
     label = None
@@ -73,23 +65,6 @@ class Action(actors.Actor):
         #self.report = report
         
         
-    def unused_get_response(self,rptreq):
-        context = rptreq.report.ui.ActionContext(self,rptreq)
-        if self.needs_selection and len(context.selected_rows) == 0:
-            context._response.update(
-              msg="No selection. Nothing to do.",
-              success=False)
-        else:
-            try:
-                self.run(context)
-            except ActionEvent,e:
-                pass
-            except Exception,e:
-                traceback.print_exc(e)
-                context._response.update(msg=str(e),success=False)
-        return context._response
-
-        
     def run(self,context):
         raise NotImplementedError
         
@@ -98,6 +73,7 @@ class Action(actors.Actor):
 
 class ActionContext:
     def __init__(self,ui,action,*args,**kw):
+        self.response = dict(success=True,must_reload=False,msg=None,close_dialog=True)
         self.ui = ui
         self.action = action
         self._kw = kw
@@ -109,6 +85,7 @@ class ActionContext:
               msg="No selection. Nothing to do.",
               success=False)
         else:
+            lino.log.debug('ActionContext.run() %s',self.action)
             try:
                 self.action.run(self,*self._args,**self._kw)
             except ActionEvent,e:
@@ -152,6 +129,8 @@ class ActionContext:
     def show_window(self,**kw):
         self.response.update(window=kw)
 
+    def js_eval(self,js):
+        self.response.update(js_eval=js)
 
 class DeleteSelected(Action):
     needs_selection = True

@@ -12,36 +12,17 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-  the account/ views are initially copied from django.contrib.auth.views with the 
-  following changes:
-    - implemented as methods of LinoSite
-    - context has the Lino Standard Context variables (title, main_menu
-    - Moved email sending code from PasswordResetForm.save() to Linosite.password_reset()
-  
-"""
-
-
 import os
 import sys
 import imp
 
 from django.conf import settings
 
-#from timtools.tools.my_import import my_import as import_module
-#from django.contrib.admin.sites import AdminSite
-from django import template 
-from django.views.decorators.cache import never_cache 
 from django.db import models
 #from django.shortcuts import render_to_response 
 #from django.contrib.auth.models import User
 
 
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
-from django.contrib.auth.tokens import default_token_generator
 from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.sites.models import Site, RequestSite
@@ -54,10 +35,6 @@ from django.conf.urls.defaults import patterns, url, include
 #auth = models.get_app('auth')
 from django.contrib.auth import models as auth
 
-from django import forms
-from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
-from django.utils.http import int_to_base36
 
 from django.utils.safestring import mark_safe
 
@@ -67,28 +44,11 @@ from django.db.models import loading
     #~ return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
 import lino
-from lino import reports
-from lino import layouts
-from lino import actions
+from lino import reports, forms, layouts, actions
 from lino import diag
 from lino.utils import perms
 from lino.utils import menus
 #from . import layouts
-
-class PasswordResetForm(forms.Form):
-    email = forms.EmailField(label=_("E-mail"), max_length=75)
-
-    def clean_email(self):
-        """
-        Validates that a user exists with the given e-mail address.
-        """
-        email = self.cleaned_data["email"]
-        self.users_cache = auth.User.objects.filter(email__iexact=email)
-        if len(self.users_cache) == 0:
-            raise forms.ValidationError(
-              _("That e-mail address doesn't have an associated user account. Are you sure you've registered?"))
-        return email
-
 
 
 class LinoSite:
@@ -97,7 +57,6 @@ class LinoSite:
     title = "Unnamed LinoSite"
     domain = "www.example.com"
     
-  
     def __init__(self):
         
         #self.django_settings = settings
@@ -108,7 +67,6 @@ class LinoSite:
         self.root_path = '/lino/'
         self._response = None
         
-
     def setup(self):
         if self._setup_done:
             return
@@ -127,15 +85,23 @@ class LinoSite:
         lino.log.info("Setting up Lino reports...")
         #from lino import reports
         reports.setup()
-        layouts.setup()
-        actions.setup()
         
-            
         from lino.ui import extjs
         self.ui = extjs.ui
         self.ui.setup_site(self)
         
+        lino.log.debug("Registering Global Actors...")
         from lino.utils import actors
+        self.global_forms = []
+        self.global_actions = []
+        for cls in actors.actors_dict.values():
+            if cls not in (actions.Action, reports.Report, forms.Form):
+                if issubclass(cls,actions.Action):
+                    self.global_actions.append(cls())
+                if issubclass(cls,forms.Form):
+                    self.global_forms.append(cls())
+    
+            
         lino.log.debug("ACTORS:")
         for k,v in actors.actors_dict.items():
             lino.log.debug("%s -> %r",k,v)
@@ -146,13 +112,9 @@ class LinoSite:
         self._setting_up = False
         
         
-        
     def add_menu(self,*args,**kw):
         return self._menu.add_menu(*args,**kw)
        
-    #~ def sort_menu_items(self,*args,**kw):
-        #~ return self._menu.sort_items(*args,**kw)
-
 
     def context(self,request,**kw):
         d = dict(
@@ -168,229 +130,9 @@ class LinoSite:
         return d
         
         
-    def old_index(self, request):
-        context = self.context(request,title=self._menu.label)
-        return render_to_response(self.index_template, context,
-            context_instance=template.RequestContext(request)
-        )
-    
-    def login(self,request, template_name='registration/login.html', 
-              redirect_field_name=REDIRECT_FIELD_NAME):
-        "Displays the login form and handles the login action."
-        redirect_to = request.REQUEST.get(redirect_field_name, '')
-        if request.method == "POST":
-            form = AuthenticationForm(data=request.POST)
-            if form.is_valid():
-                # Light security check -- make sure redirect_to isn't garbage.
-                if not redirect_to or '//' in redirect_to or ' ' in redirect_to:
-                    redirect_to = settings.LOGIN_REDIRECT_URL
-                from django.contrib.auth import login
-                login(request, form.get_user())
-                if request.session.test_cookie_worked():
-                    request.session.delete_test_cookie()
-                return HttpResponseRedirect(redirect_to)
-            print "not valid"
-        else:
-            form = AuthenticationForm(request)
-        request.session.set_test_cookie()
-        if Site._meta.installed:
-            current_site = Site.objects.get_current()
-        else:
-            current_site = RequestSite(request)
-        context = self.context(request,
-            title = _('Login'),
-            form = form,
-            redirect_field_name = redirect_to,
-            site = current_site,
-            site_name = current_site.name,
-        )
-        return render_to_response(template_name, context, 
-            context_instance=RequestContext(request))
-    login = never_cache(login)
-
-
-    
-    def logout(self,request, next_page=None, 
-              template_name='registration/logged_out.html', 
-              redirect_field_name=REDIRECT_FIELD_NAME):
-        "Logs out the user and displays 'You are logged out' message."
-        from django.contrib.auth import logout
-        logout(request)
-        if next_page is None:
-            redirect_to = request.REQUEST.get(redirect_field_name, '')
-            if redirect_to:
-                return HttpResponseRedirect(redirect_to)
-            else:
-                context = self.context(request,
-                    title=_('Logged out')
-                )
-                return render_to_response(template_name, context, 
-                  context_instance=RequestContext(request))
-        else:
-            # Redirect to this page until the session has been cleared.
-            return HttpResponseRedirect(next_page or request.path)
-            
-            
-    def password_reset(self,request, is_admin_site=False, 
-                      template_name='registration/password_reset_form.html',
-                      email_template_name='registration/password_reset_email.html',
-                      token_generator=default_token_generator,
-                      post_reset_redirect=None):
-        if post_reset_redirect is None:
-            post_reset_redirect = reverse(self.password_reset_done)
-        if request.method == "POST":
-            form = PasswordResetForm(request.POST)
-            if form.is_valid():
-                domain_override = None
-                use_https = request.is_secure()
-                if is_admin_site:
-                    domain_override = request.META['HTTP_HOST']
-                else:
-                    if not Site._meta.installed:
-                        domain_override = RequestSite(request).domain
-                # this was previously in form.save(**opts)
-                for user in form.users_cache:
-                    if not domain_override:
-                        current_site = Site.objects.get_current()
-                        site_name = current_site.name
-                        domain = current_site.domain
-                    else:
-                        site_name = domain = domain_override
-                    t = loader.get_template(email_template_name)
-                    token = token_generator.make_token(user)
-                    uid = int_to_base36(user.id)
-                    c = {
-                        'email': user.email,
-                        'domain': domain,
-                        'site_name': site_name,
-                        'uid': uid,
-                        'user': user,
-                        'token': token,
-                        'protocol': use_https and 'https' or 'http',
-                        'confirm_path': reverse(
-                          self.password_reset_confirm,
-                          kwargs=dict(uidb36=uid,token=token)),
-                    }
-                    #sender = settings.ADMINS[0][1]
-                    send_mail(
-                      _("Password reset on %s") % site_name,
-                      t.render(Context(c)), None, [user.email])
-                
-                return HttpResponseRedirect(post_reset_redirect)
-        else:
-            form = PasswordResetForm()
-        context = self.context(request,
-            form=form,
-            title=_("Password reset"),
-        )
-        return render_to_response(template_name, context, 
-          context_instance=RequestContext(request))
-
-    def password_reset_done(self,request, template_name='registration/password_reset_done.html'):
-        context = self.context(request,
-            title="password_reset_done()"
-        )
-        return render_to_response(template_name,context,context_instance=RequestContext(request))
-
-    def password_reset_confirm(self,request, uidb36=None, token=None, 
-                               template_name='registration/password_reset_confirm.html',
-                               token_generator=default_token_generator, 
-                               set_password_form=SetPasswordForm,
-                               post_reset_redirect=None):
-        """
-        View that checks the hash in a password reset link and presents a
-        form for entering a new password.
-        """
-        assert uidb36 is not None and token is not None # checked by URLconf
-        if post_reset_redirect is None:
-            post_reset_redirect = reverse(self.password_reset_complete)
-        try:
-            uid_int = base36_to_int(uidb36)
-        except ValueError:
-            raise Http404
-
-        user = get_object_or_404(auth.User, id=uid_int)
-        context_instance = RequestContext(request)
-
-        if token_generator.check_token(user, token):
-            context_instance['validlink'] = True
-            if request.method == 'POST':
-                form = set_password_form(user, request.POST)
-                if form.is_valid():
-                    form.save()
-                    return HttpResponseRedirect(post_reset_redirect)
-            else:
-                form = set_password_form(None)
-        else:
-            context_instance['validlink'] = False
-            form = None
-        context = self.context(request,
-            title=_('Password reset'),
-            form = form,
-        )
-        return render_to_response(template_name,context,context_instance=context_instance)
-
-    def password_reset_complete(self,request, 
-                    template_name='registration/password_reset_complete.html'):
-        context = self.context(request,
-            title=_('Password reset complete')
-        )
-        return render_to_response(template_name, context,
-          context_instance=RequestContext(request,{'login_url': settings.LOGIN_URL}))
-
-    def password_change(self,request, 
-                        template_name='registration/password_change_form.html',
-                        post_change_redirect=None):
-        if post_change_redirect is None:
-            post_change_redirect = reverse(self.password_change_done)
-        if request.method == "POST":
-            form = PasswordChangeForm(request.user, request.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect(post_change_redirect)
-        else:
-            form = PasswordChangeForm(request.user)
-        context = self.context(request,
-            title="password_change()",
-            form=form,
-        )
-        return render_to_response(template_name, context, 
-          context_instance=RequestContext(request))
-    password_change = login_required(password_change)
-
-    def password_change_done(self,request, 
-                             template_name='registration/password_change_done.html'):
-        context = self.context(request,
-            title=_('Password change successful'),
-        )
-        return render_to_response(template_name, context,context_instance=RequestContext(request))
-            
     def get_urls(self):
         self.setup()
-        #~ for k,v in self.model_reports.items():
-            #~ print k,v
-        
-        urlpatterns = patterns('',
-            (r'^accounts/login/$', self.login),
-            (r'^accounts/logout/$', self.logout),
-            (r'^accounts/password_change/$', self.password_change),
-            (r'^accounts/password_change/done/$', self.password_change_done),
-            (r'^accounts/password_reset/$', self.password_reset),
-            (r'^accounts/password_reset/done/$', self.password_reset_done),
-            (r'^accounts/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 
-              self.password_reset_confirm),
-            (r'^accounts/reset/done/$', self.password_reset_complete),
-        )
-        #~ urlpatterns = AdminSite.get_urls(self)
-        #~ from lino.utils import urls
-        #~ urlpatterns += urls.get_urls()
-        
-        urlpatterns += self.ui.get_urls()
-        
-        #urlpatterns += urls.url_patterns
-        #urlpatterns += self._menu.get_urls() # self._menu.name)
-        return urlpatterns
-        #return self._menu.get_urls()
+        return self.ui.get_urls()
         
     def add_program_menu(self):
         return
@@ -444,33 +186,8 @@ class LinoSite:
 
   
   
-#~ class Skin:
-    #~ body = dict(
-      #~ background = "#eee",
-      #~ text = "#333",
-      #~ link = "#5b80b2",
-    #~ )
-    #~ params = dict(
-      #~ background = "#5b80b2",
-      #~ text = "yellow",
-      #~ link = "#5b80b2",
-    #~ )
-    #~ grid = dict(
-      #~ background = "#bbbbbb",
-      #~ text = "yellow",
-      #~ border = "1pt solid white",
-      #~ link = "#5b80b2",
-    #~ )
-    
-
-    #~ background_color = "#eee"
-    #~ text_color = "#333"
-    #~ link_color = "#5b80b2"
-    #~ header_text_color = "#666"
-    
 
 lino_site = LinoSite()
-#lino_site.setup()
 
 #'get_urls','fill','context'
 

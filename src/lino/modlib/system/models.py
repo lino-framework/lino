@@ -21,6 +21,7 @@ from django.utils.translation import ugettext as _
 
 import lino
 from lino import reports
+from lino import forms
 from lino import layouts
 from lino import actions
 from lino.utils import perms
@@ -54,20 +55,26 @@ class PasswordResetAction(actions.Action):
     def run(self,context):
         context.error('not implemented')
 
-class PasswordReset(layouts.DialogLayout):
-    width = 50
-    title = _("Request Password Reset")
-    email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
+class PasswordResetLayout(layouts.FormLayout):
     #form = PasswordResetForm
-    main = """
-    intro
-    email
-    ok cancel
-    """
+    #width = 50
+    
     intro = layouts.StaticText("""
     Please fill in your e-mail adress.
     We will then send you a mail with a new temporary password.
     """)
+    
+    main = """
+    intro
+    email:50
+    ok cancel
+    """
+    
+class PasswordReset(forms.Form):
+    layout = PasswordResetLayout
+    title = _("Request Password Reset")
+    #email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
+    email = forms.Input(fieldLabel=_("E-mail"),maxLength=75)
     ok = PasswordResetAction()
     
     
@@ -93,56 +100,27 @@ class LoginAction(actions.OK):
             #lino.log.info("User %s logged in.",user)
             context.refresh_menu()
         
-        
-        
-        
-        
-    def unused(self):
-        redirect_to = request.REQUEST.get(redirect_field_name, '')
-        if request.method == "POST":
-            form = AuthenticationForm(data=request.POST)
-            if form.is_valid():
-                # Light security check -- make sure redirect_to isn't garbage.
-                if not redirect_to or '//' in redirect_to or ' ' in redirect_to:
-                    redirect_to = settings.LOGIN_REDIRECT_URL
-                from django.contrib.auth import login
-                login(request, form.get_user())
-                if request.session.test_cookie_worked():
-                    request.session.delete_test_cookie()
-                return HttpResponseRedirect(redirect_to)
-            print "not valid"
-        else:
-            form = AuthenticationForm(request)
-        request.session.set_test_cookie()
-        if Site._meta.installed:
-            current_site = Site.objects.get_current()
-        else:
-            current_site = RequestSite(request)
-        context = self.context(request,
-            title = _('Login'),
-            form = form,
-            redirect_field_name = redirect_to,
-            site = current_site,
-            site_name = current_site.name,
-        )
-        return render_to_response(template_name, context, 
-            context_instance=RequestContext(request))
-    
 
-class Login(layouts.DialogLayout):
-    #username = models.CharField(verbose_name=_("Username"), max_length=75)    
-    #password = models.CharField(verbose_name=_("Password"), max_length=75)
-    username = layouts.Input(fieldLabel=_("Username"),maxLength=75)
-    password = layouts.Input(fieldLabel=_("Password"),maxLength=75,inputType='password')
+class LoginLayout(layouts.FormLayout):
     main = """
     text
     username
     password
     cancel ok
     """
-    ok = LoginAction()
     text = layouts.StaticText("Please enter your username and password to authentificate.")
     
+
+
+class Login(forms.Form):
+    layout = LoginLayout
+    #username = models.CharField(verbose_name=_("Username"), max_length=75)    
+    #password = models.CharField(verbose_name=_("Password"), max_length=75)
+    username = forms.Input(fieldLabel=_("Username"),maxLength=75)
+    password = forms.Input(fieldLabel=_("Password"),maxLength=75,inputType='password')
+    ok = LoginAction()
+  
+
     def before(self,context):
         if not context.request.session.test_cookie_worked():
            raise actions.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
