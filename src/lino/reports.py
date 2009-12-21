@@ -336,22 +336,25 @@ class Report(actions.Action): # actors.Actor):
         lino.log.debug("Report.setup() done: %s", self.actor_id)
         return True
         
+    # implements actions.Action
     def run(self,context):
         return context.ui.run_report(self,context)
         
+    # implements actions.Action
     def get_url(self,ui,**kw):
-        "todo: rename 'hello' to sth like 'action' but first change extjs.get_report_url()"
-        kw['hello'] = True
+        kw['run'] = True
         rh = self.get_handle(ui)
         return rh.get_absolute_url(**kw)
         #return ui.get_report_url(rh,**kw)
         
         
+    # implements actors.Actor
     def get_handle(self,ui):
         return ui.get_report_handle(self)
         
     def add_actions(self,*args):
-        "May be used in Model.setup_report() to specify actions for each report which uses this model."
+        """Used in Model.setup_report() to specify actions for each report that uses 
+        this model."""
         self.actions += args
         #~ for a in more_actions:
             #~ self._actions.append(a)
@@ -589,7 +592,7 @@ class ReportRequest:
     def __init__(self,rh,
             master_instance=None,
             offset=None,limit=None,
-            extra=1,
+            extra=1,layout=None,
             **kw):
         assert isinstance(rh,ReportHandle)
         self.report = rh.report
@@ -597,6 +600,12 @@ class ReportRequest:
         self.name = rh.report.actor_id+"Request"
         self.extra = extra
         self.master_instance = master_instance
+        if layout is None:
+            layout = self.rh.layouts[1]
+        else:
+            assert isinstance(layout,layouts.LayoutHandle), \
+                "Value %r is not a LayoutHandle" % layout
+        self.layout = layout
         rh.report.setup_request(self)
         lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)        
         self.queryset = self.get_queryset(**kw)

@@ -16,6 +16,7 @@ import traceback
 import types
 import cPickle as pickle
 import cgi
+from urllib import urlencode
 
 from dateutil import parser as dateparser
 
@@ -557,24 +558,6 @@ class Store(Component):
             #~ kw['name'] = fld.name
             #~ yield kw
 
-            
-    def unused_get_absolute_url(self,**kw):
-        #~ if request._lino_request.report == self.report:
-            #~ return request._lino_request.get_absolute_url(**kw)
-        #~ else:
-        #~ if self.report.master is not None:
-            #~ kw.update(master=js_code('master'))
-        #kw.update(layout=self.layout.index)
-        return self.rh.get_absolute_url(**kw)
-        #~ if request._lino_report.report == self.report:
-            #~ #rr = request._lino_report
-            #~ layout = self.layout
-            #~ url = request._lino_report.get_absolute_url(json=True)
-        #~ else:
-            #~ # it's a slave
-            #~ layout = request._lino_report.report.row_layout
-            #~ #rr = self.report.renderer()
-            #~ url = self.report.get_absolute_url(json=True)
       
     def ext_options(self):
         d = Component.ext_options(self)
@@ -589,7 +572,7 @@ class Store(Component):
         #url = self.report.get_absolute_url(json=True,mode=self.mode)
         #url = self.get_absolute_url(json=True)
         #self.report.setup()
-        proxy = dict(url=self.rh.get_absolute_url(simple_list=True),method='GET')
+        proxy = dict(url=self.rh.get_absolute_url(),method='GET')
         d.update(proxy=js_code(
           "new Ext.data.HttpProxy(%s)" % py2js(proxy)
         ))
@@ -1268,15 +1251,14 @@ class GridElement(Container):
         if len(self.rh.layouts) > 2:
             # the first detail window can be opend with Ctrl+ENTER 
             key = actions.RETURN(ctrl=True)
-            layout = self.rh.layouts[2]
-            url = '/action/' ...
+            lh = self.rh.layouts[2]
             keys.append(dict(
-              handler=js_code("Lino.show_detail(this,%r,%r)" % (url,layout.name)),
+              handler=js_code("Lino.show_detail(this,%r,%r)" % (lh.get_absolute_url(run=True),lh.label)),
               key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
             for layout in self.rh.layouts[2:]:
                 buttons.append(dict(
-                  handler=js_code("Lino.show_detail(this,%r)" % id2js(layout.name)),
+              handler=js_code("Lino.show_detail(this,%r,%r)" % (lh.get_absolute_url(run=True),lh.label)),
                   text=layout._ld.label))
               
         for sl in self.report._slaves:
@@ -1698,7 +1680,7 @@ Lino.do_action = function(url,name,params,reload,close_form) {
       },
       failure: function(response){
         // console.log(response);
-        Ext.MessageBox.alert('error','Could not connect to the server.');
+        Ext.MessageBox.alert('Error','Lino.do_action() could not connect to the server.');
       }
     });
   };
@@ -1749,10 +1731,11 @@ Lino.goto_permalink = function () {
 Lino.show_detail = function (grid,url,name) { 
   return function(btn,evt) {
     p = grid.comp.getStore().baseParams;
-    Lino.do_action(url,name,p[%r]);
+    console.log('show_detail',grid,url,name,p)
+    Lino.do_action(url,name,p);
   }
 };
-""" % URL_PARAM_MASTER_PK
+""" #% URL_PARAM_MASTER_PK
         s += """
 Lino.form_action = function (dlg,name,url) { 
   return function(btn,evt) {
@@ -1921,6 +1904,9 @@ class ViewReportRequest(reports.ReportRequest):
         limit = request.GET.get('limit',None)
         if limit:
             kw.update(limit=limit)
+        layout = request.GET.get('layout',None)
+        if layout:
+            kw.update(layout=rh.layouts[int(layout)])
 
         #print "ViewReportRequest.__init__() 1",report.name
         self.request = request
@@ -1945,6 +1931,8 @@ class ViewReportRequest(reports.ReportRequest):
             kw.update(sort=self.sort_column)
         if self.sort_direction is not None:
             kw.update(dir=self.sort_direction)
+        if self.layout is not self.rh.layouts[1]:
+            kw.update(layout=self.layout.index)
         return self.report.get_absolute_url(**kw)
 
     #~ def unused_render_to_html(self):
@@ -2090,7 +2078,7 @@ def form_submit_view(request,**kw):
     return json_report_view(request,**kw)
 
 def list_report_view(request,**kw):
-    kw['simple_list'] = True
+    #kw['simple_list'] = True
     return json_report_view(request,**kw)
     
     
@@ -2098,7 +2086,7 @@ def json_report_view(request,app_label=None,rptname=None,**kw):
     rpt = actors.get_actor(app_label+'.'+rptname)
     return json_report_view_(request,rpt,**kw)
 
-def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,simple_list=False):
+def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None):
     if not rpt.can_view.passes(request):
         return json_response_kw(success=False,
             msg="User %s cannot view %s." % (request.user,rpt))
@@ -2117,9 +2105,6 @@ def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,simp
             
     rptreq = ViewReportRequest(request,rh)
     
-    if simple_list:
-        d = rptreq.render_to_json()
-        return json_response(d)
     if submit:
         pk = request.POST.get(rh.store.pk.name) #,None)
         #~ if pk == reports.UNDEFINED:
@@ -2141,8 +2126,9 @@ def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,simp
             lino.log.exception(e)
             #traceback.format_exc(e)
             return json_response_kw(success=False,msg="Exception occured: "+cgi.escape(str(e)))
-    #return json_response(success=True,window=dict(title="Hello world",html="just a test"))
-    raise Exception("These were no good arguments for json_report_view_()")
+    # otherwise it's a simple list:
+    d = rptreq.render_to_json()
+    return json_response(d)
     
 def json_response_kw(**kw):
     return json_response(kw)
@@ -2271,40 +2257,36 @@ class ExtUI(base.UI):
         url = "/action/" + a.app_label + "/" + a.name 
         #url = "/action/" + a.actor_id # app_label + "/" + a.name 
         if len(kw):
-            url += "?"+urlencode(kw)
+            url += "?" + urlencode(kw)
         return url
         
     def get_form_url(self,fh,**kw):
         url = "/form/" + fh.form.app_label + "/" + fh.form.name 
         if len(kw):
-            url += "?"+urlencode(kw)
+            url += "?" + urlencode(kw)
         return url
         
     def get_button_url(self,btn,**kw):
         a = btn.lh.link.actor
         url = "/form/" + a.app_label + "/" + a.name + "/" + btn.name
         if len(kw):
-            url += "?"+urlencode(kw)
+            url += "?" + urlencode(kw)
         return url
         
     def get_report_url(self,rh,master_instance=None,
-            simple_list=False,submit=False,grid_afteredit=False,grid_action=None,hello=False,**kw):
+            submit=False,grid_afteredit=False,grid_action=None,run=False,**kw):
         #~ lino.log.debug("get_report_url(%s)", [rh.name,master_instance,
             #~ simple_list,submit,grid_afteredit,action,kw])
-        if simple_list:
-            url = "/list/"
-        elif grid_afteredit:
+        if grid_afteredit:
             url = "/grid_afteredit/"
         elif submit:
             url = "/submit/"
         elif grid_action:
             url = "/grid_action/"
-        elif hello:
+        elif run:
             url = "/action/"
         else:
-            raise "one of json, hello, save or grid_action must be True"
-            #url = "/r/"
-        #url += rh.report.actor_id
+            url = "/list/"
         url += rh.report.app_label + "/" + rh.report.name
         if grid_action:
             url += "/" + grid_action
@@ -2313,7 +2295,7 @@ class ExtUI(base.UI):
             mt = ContentType.objects.get_for_model(master_instance.__class__).pk
             kw[URL_PARAM_MASTER_TYPE] = mt
         if len(kw):
-            url += "?"+urlencode(kw)
+            url += "?" + urlencode(kw)
         return url
         
     def layout2kw(self,lh,**kw):
@@ -2354,7 +2336,8 @@ class ExtUI(base.UI):
         called from Report.run()
         """
         rh = self.get_report_handle(rpt)
-        lh = rh.layouts[1]
+        rr = ViewReportRequest(context.request,rh)
+        lh = rr.layout # rh.layouts[1]
         kw = self.layout2kw(lh,**kw)
         
         def js_lines():

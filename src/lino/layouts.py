@@ -41,6 +41,8 @@ class DataLink:
     def try_get_virt(self,name):
         return None
 
+    def get_absolute_url(self,*args,**kw):
+        raise NotImplementedError
 
 #~ def register_dialog_class(cls):
     #~ if cls.__name__ == 'DialogLayout':
@@ -168,6 +170,7 @@ class LayoutHandle:
         #lino.log.debug('LayoutHandle.__init__(%s)',self.name)
         self.link = link
         self.index = index
+        self.label = layout.label or ''
         #self.inputs = []
         self._store_fields = []
         self.slave_grids = []
@@ -205,6 +208,9 @@ class LayoutHandle:
         if hasattr(self,'_main'):
             s += "(%s)" % self._main
         return s
+        
+    def get_absolute_url(self,**kw):
+        return self.link.get_absolute_url(layout=self.index,**kw)
         
     def add_hidden_field(self,field):
         return HiddenField(self,field)
