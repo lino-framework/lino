@@ -286,19 +286,11 @@ class LayoutHandle:
         name,kw = self.splitdesc(desc_name)
         
         de = self.link.get_data_elem(name)
-        if isinstance(de,actions.Action):
-            e = self.ui.ButtonElement(self,name,de,**kw)
-            self._buttons.append(e)
-            return e
+        
         if isinstance(de,models.Field):
             return self.create_field_element(de,**kw)
         if isinstance(de,generic.GenericForeignKey):
             return self.ui.VirtualFieldElement(self,name,de,**kw)
-        from lino import forms
-        if isinstance(de,forms.Input):
-            return self.ui.InputElement(self,de,**kw)
-        if callable(de):
-            return self.create_meth_element(name,de,**kw)
             
         from lino import reports
         if isinstance(de,reports.Report):
@@ -306,6 +298,17 @@ class LayoutHandle:
             self.slave_grids.append(e)
             return e
         
+        
+        if isinstance(de,actions.Action):
+            e = self.ui.ButtonElement(self,name,de,**kw)
+            self._buttons.append(e)
+            return e
+        from lino import forms
+        if isinstance(de,forms.Input):
+            return self.ui.InputElement(self,de,**kw)
+        if callable(de):
+            return self.create_meth_element(name,de,**kw)
+            
         #~ rpt = self.link.get_slave(name)
         #~ if rpt is not None:
             #~ e = self.ui.GridElement(self,name,rpt.get_handle(self.ui),**kw)

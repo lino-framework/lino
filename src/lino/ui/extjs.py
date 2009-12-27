@@ -44,7 +44,7 @@ EXT_CHAR_HEIGHT = 12
 
 URL_PARAM_MASTER_TYPE = 'mt'
 URL_PARAM_MASTER_PK = 'mk'
-URL_PARAM_MASTER_GRID = 'mg'
+# URL_PARAM_MASTER_GRID = 'mg'
 
 def define_vars(variables,indent=0,prefix="var "):
     template = "var %s = %s;"
@@ -98,7 +98,7 @@ class js_code:
         #~ return self.s
   
 def py2js(v,**kw):
-    #lino.log.debug("py2js(%r,%r)",v,kw)
+    lino.log.debug("py2js(%r,%r)",v,kw)
         
     if isinstance(v,menus.Menu):
         if v.parent is None:
@@ -118,7 +118,7 @@ def py2js(v,**kw):
         #~ else:
             #~ handler = "function(btn,evt) {%s.show(btn,evt);}" % id2js(v.actor.actor_id)
         #~ return py2js(dict(text=v.label,handler=js_code(handler)))
-    if isinstance(v,Component):
+    if isinstance(v,Variable):
         return v.as_ext(**kw)
         
     if callable(v):
@@ -148,18 +148,19 @@ DECLARE_INLINE = 0
 DECLARE_VAR = 1
 DECLARE_THIS = 2
 
-class Component(object): # better name? JSObject? Scriptable?
-    #declared = False
-    declare_type = DECLARE_INLINE
+class Variable(object):
+    declare_type = DECLARE_THIS
+    #declare_type = DECLARE_INLINE
     ext_suffix = ''
-    value_template = "{ %s }"
+    value_template = "%s"
+    #declared = False
     #declaration_order = 9
     has_comp = False
     
-    def __init__(self,name,**options):
+    def __init__(self,name,value):
         self.name = name
-        self.options = options
-        self.ext_name = name + self.ext_suffix
+        self.value = value
+        self.ext_name = id2js(name) + self.ext_suffix
         
     def js_lines(self):
         if self.has_comp:
@@ -168,14 +169,14 @@ class Component(object): # better name? JSObject? Scriptable?
               #yield "  this._parent = parent;" 
               for e in self.js_elements():
                   for ln in e.js_lines():
-                      yield "  "+ln
+                      yield "  " + ln
               yield "  this.comp = %s;" % self.as_ext_value()
-              yield "}(this);"
+              yield "}(this)"
             value = '\n'.join([ln for ln in lines()])
         else:
             for e in self.js_elements():
                 for ln in e.js_lines():
-                    yield "  "+ln
+                    yield ln
             value = self.as_ext_value()
         if self.declare_type == DECLARE_INLINE:
             pass
@@ -184,20 +185,12 @@ class Component(object): # better name? JSObject? Scriptable?
         elif self.declare_type == DECLARE_THIS:
             yield "this.%s = %s;" % (self.ext_name,value)
             
-            
-            
+    def as_ext_value(self):
+        return self.value_template % py2js(self.value)
+        
     def js_elements(self):
         return []
             
-    def ext_options(self,**kw):
-        kw.update(self.options)
-        return kw
-        
-    def as_ext_value(self):
-      
-        options = self.ext_options()
-        return self.value_template % dict2js(options)
-        
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
             return self.as_ext_value()
@@ -210,6 +203,21 @@ class Component(object): # better name? JSObject? Scriptable?
         else:
             return name
 
+class Component(Variable): # better name? JSObject? Scriptable?
+    
+    def __init__(self,name,**options):
+        Variable.__init__(self,name,options)
+        #~ self.name = name
+        #~ self.options = options
+        
+    def as_ext_value(self):
+        value = self.ext_options()
+        return self.value_template % py2js(value)
+        
+    def ext_options(self,**kw):
+        kw.update(self.value)
+        return kw
+        
 
 class StoreField(object):
 
@@ -366,11 +374,11 @@ class ForeignKeyStoreField(StoreField):
 
 
 class Store(Component):
-    #declare_type = DECLARE_THIS
-    declare_type = DECLARE_VAR
+    declare_type = DECLARE_THIS
+    #declare_type = DECLARE_VAR
     #declare_type = DECLARE_INLINE
     ext_suffix = "_store"
-    value_template = "new Ext.data.JsonStore({ %s })"
+    value_template = "new Ext.data.JsonStore(%s)"
     
     def __init__(self,rh,**options):
         assert isinstance(rh,reports.ReportHandle)
@@ -467,7 +475,7 @@ class ColumnModel(Component):
     #declare_type = DECLARE_VAR
     #declare_type = DECLARE_INLINE
     ext_suffix = "_cols"
-    value_template = "new Ext.grid.ColumnModel({ %s })"
+    value_template = "new Ext.grid.ColumnModel(%s)"
     #declaration_order = 2
     
     def __init__(self,grid):
@@ -552,7 +560,7 @@ class LayoutElement(VisibleComponent):
     xtype = None # set by subclasses
     
     def __init__(self,lh,name,**kw):
-        #print "Element.__init__()", layout,name
+        lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
         #self.parent = parent
         VisibleComponent.__init__(self,name,**kw)
         self.lh = lh
@@ -635,6 +643,7 @@ class LayoutElement(VisibleComponent):
 class InputElement(LayoutElement):
     #declare_type = DECLARE_INLINE
     declare_type = DECLARE_THIS
+    #declare_type = DECLARE_VAR
     name_suffix = "_input"
     xtype = 'textfield'
     preferred_height = 1
@@ -663,7 +672,7 @@ class ButtonElement(LayoutElement):
     preferred_height = 1
 
     def __init__(self,lh,name,action,**kw):
-        lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
+        #lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
         LayoutElement.__init__(self,lh,name,**kw)
         assert isinstance(lh.layout,layouts.Layout), "%s is not a Layout" % lh.name
         self.action = action
@@ -934,7 +943,7 @@ class Container(LayoutElement):
     #declare_type = DECLARE_INLINE
     #declare_type = DECLARE_THIS
     #declare_type = DECLARE_VAR
-    has_comp = True
+    #has_comp = True
     declare_type = DECLARE_THIS
     
     
@@ -1068,7 +1077,7 @@ class Panel(Container):
         
 
 class TabPanel(Container):
-    value_template = "new Ext.TabPanel({ %s })"
+    value_template = "new Ext.TabPanel(%s)"
     #~ def __init__(self,lh,name,*elements,**options):
         #~ Container.__init__(self,lh,name,*elements,**options)
         #~ self.width = self.elements[0].ext_width() or 300
@@ -1087,11 +1096,11 @@ class TabPanel(Container):
         return d
         
 class GridElement(Container):
-    value_template = "new Ext.grid.EditorGridPanel({ %s })"
+    value_template = "new Ext.grid.EditorGridPanel(%s)"
     ext_suffix = "_grid"
+    #has_comp = True    
     
     def __init__(self,lh,name,rh,*elements,**kw):
-        name = id2js(name)
         assert isinstance(rh,reports.ReportHandle), "%r is not a ReportHandle!" % rh
         """
         Note: lh is the owning layout handle. 
@@ -1145,8 +1154,8 @@ class GridElement(Container):
               text = slave.report.label,
             ))
             
-        self.keys = keys
-        self.buttons = buttons
+        self.keys = Variable('keys',keys)
+        self.buttons = Variable('buttons',buttons)
         
         
     def unused_js_lines(self):
@@ -1174,7 +1183,10 @@ class GridElement(Container):
         #yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(self.buttons))
           
     def js_elements(self):
-        yield self.column_model 
+        self.setup()
+        yield self.column_model
+        yield self.buttons
+        yield self.keys
 
     def ext_options(self):
         self.setup()
@@ -1224,7 +1236,7 @@ class M2mGridElement(GridElement):
 
   
 class MainGridElement(GridElement):
-    declare_type = DECLARE_VAR
+    #declare_type = DECLARE_VAR
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
         #lh.report.setup()
@@ -1270,21 +1282,11 @@ function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
 
 class ReportMainPanel(Panel):
     declare_type = DECLARE_VAR
-    value_template = "new Ext.form.FormPanel({ %s })"
+    value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.rh = lh.link
         self.report = self.rh.report
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
-        #~ if self.height is not None:
-            #~ self.height += 6
-        #~ if self.width is not None:
-            #~ self.width += 4
-        
-        
-    #~ def ext_variables(self):
-        #~ yield self.layout.store
-        #~ for v in Panel.ext_variables(self):
-            #~ yield v
         
     def ext_options(self):
         d = Panel.ext_options(self)
@@ -1304,27 +1306,26 @@ class ReportMainPanel(Panel):
         d.update(autoHeight=False)
         return d
         
-        
-        
     def js_lines(self):
         for ln in Panel.js_lines(self):
             yield ln
         #yield "mastergrid = Ext.getCmp()"
-        yield "var master_sm = Lino.master_grid.comp.getSelectionModel();"
-        yield "master_sm.addListener('rowselect',"
-        yield "  function(sm,rowIndex,record) { "
-        yield "    console.log('on_rowselect',this);"
+        yield "var tied_grid = call_params['tied_grid'];"
+        yield "if (tied_grid) {"
+        yield "  tied_grid.main_grid.getSelectionModel().addListener('rowselect',"
+        yield "    function(sm,rowIndex,record) { "
+        #yield "    console.log('on_rowselect',this);"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         #name = 'this.' + self.lh._main.ext_name
         name = self.as_ext()
-        yield "    %s.form._lino_pk = record.data.id;" % name
-        yield "    %s.form.loadRecord(record);" % name
-        yield "    var p = {%s: record.data.%s}" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
+        yield "      %s.form._lino_pk = record.data.id;" % name
+        yield "      %s.form.loadRecord(record);" % name
+        yield "      var p = {%s: record.data.%s}" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
         mt = ContentType.objects.get_for_model(self.report.model).pk
-        yield "    p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+        yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
         for slave in self.lh.slave_grids:
-            yield "    %s.load({params: p });" % slave.rh.store.as_ext()
-        yield "});"
+            yield "      %s.load({params: p });" % slave.rh.store.as_ext()
+        yield "  })}"
         
         #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
@@ -1369,7 +1370,7 @@ class ReportMainPanel(Panel):
         
 
 class FormMainPanel(Panel):
-    value_template = "new Ext.form.FormPanel({ %s })"
+    value_template = "new Ext.form.FormPanel(%s)"
 
     def ext_options(self,**d):
         d = Panel.ext_options(self,**d)
@@ -1523,9 +1524,9 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
   }
 };
 
-Lino.last_result = 1;
+// Lino.last_result = 1;
 
-Lino.do_action = function(url,name,params,reload,close_form) {
+Lino.do_action = function(url,name,params,reload,close_form,call_params) {
   // console.log('Lino.do_action()',name,params,reload);
   var doit = function(confirmed) {
     params['confirmed'] = confirmed;
@@ -1542,7 +1543,7 @@ Lino.do_action = function(url,name,params,reload,close_form) {
           if (result.html) { new Ext.Window({html:result.html}).show(); };
           if (result.window) { new Ext.Window(result.window).show(); };
           // if (result.call) { Lino.last_result = new result.call(); };
-          if (result.call) { new result.call(); };
+          if (result.call) { new result.call(call_params); };
           if (result.redirect) { window.open(result.redirect); };
           if (result.must_reload) reload();
           // Lino.last_result = result;
@@ -1584,7 +1585,7 @@ Lino.grid_action = function(gridwin,name,url) {
     var sels = gridwin.comp.getSelectionModel().getSelections();
     // console.log(sels);
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
-    Lino.do_action(url,name,{selected:sel_pks},function() {gridwin.comp.getStore().load()});
+    Lino.do_action(url,name,{selected:sel_pks},function() {gridwin.main_grid.getStore().load()});
   };
 };"""
 
@@ -1614,16 +1615,14 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.master_grid = null;
-Lino.show_detail = function (grid_handle,url,name) { 
+Lino.show_detail = function (rptwin,url,name) { 
   return function(btn,evt) {
-    Lino.master_grid = grid_handle;
-    p = grid_handle.comp.getStore().baseParams;
-    console.log('show_detail',btn,evt,grid_handle,url,name,p)
-    Lino.do_action(url,name,p);
+    p = rptwin.main_grid.getStore().baseParams;
+    console.log('show_detail',btn,evt,rptwin,url,name,p)
+    Lino.do_action(url,name,p,null,null,{tied_grid:rptwin});
   }
 };
-""" # % URL_PARAM_MASTER_GRID
+""" 
 
         s += """
 Lino.form_action = function (dlg,name,url) { 
@@ -2204,13 +2203,13 @@ class ExtUI(base.UI):
                 if isinstance(e,ForeignKeyElement):
                     stores.append(e.rh.store)
         
-            yield "function() {"
+            yield "function(call_params) {"
             for store in stores:
                 for ln in store.js_lines():
                     yield "  " + ln
             for ln in lh._main.js_lines():
                 yield "  " + ln
-            yield "  var window = new Ext.Window( %s );" % py2js(kw)
+            yield "  this.window = new Ext.Window( %s );" % py2js(kw)
             if lh.link.report.master is None:
                 yield "  %s.load();" % rh.store.as_ext()
             else:
@@ -2234,7 +2233,7 @@ class ExtUI(base.UI):
                 yield "  } else {"
                 yield "      %s.load();" % self.store.as_ext()
                 yield "  }"
-            yield "  window.show();"
+            yield "  this.window.show();"
             yield "  this.success = true;"
             yield "}"
             
