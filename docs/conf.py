@@ -188,6 +188,6 @@ latex_documents = [
 
 #language="de"
 
-srcref_base_uri="http://svn.berlios.de/wsvn/lino/trunk"
+srcref_base_uri="http://code.google.com/lino"
 
-from lino.sphinx import setup
+from timtools.sphinx import setup

@@ -13,7 +13,8 @@ Quick links:
 - Demo sites: 
   http://igen.saffre-rumma.ee
   http://dsbe.saffre-rumma.ee
-- http://pypi.python.org/pypi/lino
+- `PyPI entry <http://pypi.python.org/pypi/lino>`__
+- :doc:`changes/index`
 
 
 The rest of this page is being migrated to the above sites.

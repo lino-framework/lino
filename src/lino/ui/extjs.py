@@ -1148,10 +1148,11 @@ class GridElement(Container):
                   text=layout._ld.label))
               
         for sl in self.report._slaves:
-            slave = sl.get_handle(self.lh.ui)
+            rh = sl.get_handle(self.lh.ui)
             buttons.append(dict(
-              handler=js_code("Lino.show_slave(this,%r)" % id2js(slave.row_layout.name)),
-              text = slave.report.label,
+              handler=js_code("Lino.show_detail(this,%r,%r)" % (rh.row_layout.get_absolute_url(run=True),rh.report.label)),
+              #handler=js_code("Lino.show_slave(this,%r)" % id2js(rh.row_layout.name)),
+              text = rh.report.label,
             ))
             
         self.keys = Variable('keys',keys)
@@ -2194,7 +2195,7 @@ class ExtUI(base.UI):
         """
         rh = self.get_report_handle(rpt)
         rr = ViewReportRequest(context.request,rh)
-        lh = rr.layout # rh.layouts[1]
+        lh = rr.layout 
         kw = self.layout2kw(lh,**kw)
         
         def js_lines():
@@ -2210,10 +2211,23 @@ class ExtUI(base.UI):
             for ln in lh._main.js_lines():
                 yield "  " + ln
             yield "  this.window = new Ext.Window( %s );" % py2js(kw)
+            yield "  %s.load();" % rh.store.as_ext()
             if lh.link.report.master is None:
                 yield "  %s.load();" % rh.store.as_ext()
             else:
-                # ab hier noch nicht fertig...
+                yield "var tied_grid = call_params['tied_grid'];"
+                yield "if (tied_grid) {"
+                yield "  var store = %s;" % rh.store.as_ext()
+                yield "  tied_grid.main_grid.getSelectionModel().addListener('rowselect',"
+                yield "    function(sm,rowIndex,record) { "
+                yield "      var p={%s:record.id};" % URL_PARAM_MASTER_PK
+                mt = ContentType.objects.get_for_model(lh.link.report.model).pk
+                yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+                # yield "      console.log('on_rowselect',this,p);"
+                yield "      store.load({params:p});" 
+                yield "})}"
+              
+                # ab hier noch nicht fertig uebernommen...
                 #self.lh.link.report.params.has_key('master_instance')
                 #master_report = reports.get_model_report(self.lh.link.report.master)
                 #yield "    master_grid = %s.grid;" % master_report.actor_id
@@ -2221,18 +2235,18 @@ class ExtUI(base.UI):
                 #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
                 #~ yield "      %s.load();" % self.store.as_ext()
                 #~ yield "    } else {"
-                yield "    if(master_grid) {"
-                #yield "      console.log('show() master_grid=',master_grid);"
-                yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
-                #yield "      console.log(rowIndex,record);" 
-                yield "      var p={%s:record.id};" % URL_PARAM_MASTER_PK
-                mt = ContentType.objects.get_for_model(self.lh.link.report.model).pk
-                yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-                yield "      %s.load({params:p});" % self.store.as_ext()
-                yield "    });"
-                yield "  } else {"
-                yield "      %s.load();" % self.store.as_ext()
-                yield "  }"
+                #~ yield "    if(master_grid) {"
+                #~ #yield "      console.log('show() master_grid=',master_grid);"
+                #~ yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
+                #~ #yield "      console.log(rowIndex,record);" 
+                #~ yield "      var p={%s:record.id};" % URL_PARAM_MASTER_PK
+                #~ mt = ContentType.objects.get_for_model(self.lh.link.report.model).pk
+                #~ yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+                #~ yield "      %s.load({params:p});" % self.store.as_ext()
+                #~ yield "    });"
+                #~ yield "  } else {"
+                #~ yield "      %s.load();" % self.store.as_ext()
+                #~ yield "  }"
             yield "  this.window.show();"
             yield "  this.success = true;"
             yield "}"
