@@ -501,8 +501,9 @@ class ReportHandle(layouts.DataLink):
             
     def setup(self):
         def lh(layout_class,*args,**kw):
-            layout = layout_class()
-            return layouts.LayoutHandle(self,layout,*args,**kw)
+            return layouts.LayoutHandle(self,layout_class(),*args,**kw)
+            #h.needs_store(self)
+            #return h
         
         self.choice_layout = lh(layouts.RowLayout,0,self.report.display_field)
         

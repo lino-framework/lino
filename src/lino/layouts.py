@@ -173,6 +173,7 @@ class LayoutHandle:
         self.label = layout.label or ''
         #self.inputs = []
         self._store_fields = []
+        self._needed_stores = set()
         self.slave_grids = []
         self._store_fields = []
         self._buttons = []
@@ -198,7 +199,8 @@ class LayoutHandle:
         self.height = self._main.height
         self.write_debug_info()
                 
-        
+    def needs_store(self,rh):
+        self._needed_stores.add(rh)
             
     def __str__(self):
         return self.name # self.report.model._meta.app_label+"."+self.name # __class__.__name__

@@ -98,7 +98,7 @@ class js_code:
         #~ return self.s
   
 def py2js(v,**kw):
-    lino.log.debug("py2js(%r,%r)",v,kw)
+    #lino.log.debug("py2js(%r,%r)",v,kw)
         
     if isinstance(v,menus.Menu):
         if v.parent is None:
@@ -798,6 +798,7 @@ class ForeignKeyElement(FieldElement):
         self.report = self.lh.link.get_field_choices(self.field)
         #self.report = rd.get_handle(self.lh.ui)
         self.rh = self.report.get_handle(self.lh.ui)
+        self.lh.needs_store(self.rh)
         #~ if self.editable:
             #~ setup_report(self.choice_report)
             #self.store = rpt.choice_store
@@ -1117,6 +1118,7 @@ class GridElement(Container):
         Container.__init__(self,lh,name,*elements,**kw)
         self.rh = rh
         self.report = rh.report
+        lh.needs_store(rh)
         self.column_model = ColumnModel(self)
         
     def setup(self):
@@ -1155,8 +1157,8 @@ class GridElement(Container):
               text = rh.report.label,
             ))
             
-        self.keys = Variable('keys',keys)
-        self.buttons = Variable('buttons',buttons)
+        self.keys = Variable(self.ext_name+'_keys',keys)
+        self.buttons = Variable(self.ext_name+'_buttons',buttons)
         
         
     def unused_js_lines(self):
@@ -1185,6 +1187,7 @@ class GridElement(Container):
           
     def js_elements(self):
         self.setup()
+        #yield self.rh.store
         yield self.column_model
         yield self.buttons
         yield self.keys
@@ -1288,6 +1291,14 @@ class ReportMainPanel(Panel):
         self.rh = lh.link
         self.report = self.rh.report
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
+        lh.needs_store(self.rh)
+        
+    #~ def js_elements(self):
+        #~ self.setup()
+        #~ yield self.rh.store
+        #~ yield self.column_model
+        #~ yield self.buttons
+        #~ yield self.keys
         
     def ext_options(self):
         d = Panel.ext_options(self)
@@ -1311,22 +1322,23 @@ class ReportMainPanel(Panel):
         for ln in Panel.js_lines(self):
             yield ln
         #yield "mastergrid = Ext.getCmp()"
-        yield "var tied_grid = call_params['tied_grid'];"
-        yield "if (tied_grid) {"
-        yield "  tied_grid.main_grid.getSelectionModel().addListener('rowselect',"
+        yield "if(call_params && call_params['tied_grid']) {"
+        yield "  var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
+        yield "  call_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
         yield "    function(sm,rowIndex,record) { "
         #yield "    console.log('on_rowselect',this);"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         #name = 'this.' + self.lh._main.ext_name
         name = self.as_ext()
-        yield "      %s.form._lino_pk = record.data.id;" % name
-        yield "      %s.form.loadRecord(record);" % name
-        yield "      var p = {%s: record.data.%s}" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
+        yield "        %s.form._lino_pk = record.data.id;" % name
+        yield "        %s.form.loadRecord(record);" % name
+        yield "        var p = {%s: record.data.%s}" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
         mt = ContentType.objects.get_for_model(self.report.model).pk
-        yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-        for slave in self.lh.slave_grids:
-            yield "      %s.load({params: p });" % slave.rh.store.as_ext()
-        yield "  })}"
+        yield "        p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+        yield "        for(i=0;i++;i<len(slaves)) {slaves[i].load({params:p})};"
+        #~ for slave in self.lh.slave_grids:
+            #~ yield "        %s.load({params: p });" % slave.rh.store.as_ext()
+        yield " })}"
         
         #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
@@ -1472,14 +1484,6 @@ Lino.form_submit = function (form,url,store,pkname) {
   } 
 };
 
-Lino.show_slave = function(master_win,slave_name) {
-  return function(btn,evt) {
-    slave_win = eval(slave_name);
-    slave_win.show(btn,evt,undefined,master_win);
-  }
-}
-                      
-
 
 Lino.grid_afteredit = function (gridwin,url,pk) {
   return function(e) {
@@ -1619,7 +1623,7 @@ Lino.goto_permalink = function () {
 Lino.show_detail = function (rptwin,url,name) { 
   return function(btn,evt) {
     p = rptwin.main_grid.getStore().baseParams;
-    console.log('show_detail',btn,evt,rptwin,url,name,p)
+    // console.log('show_detail',btn,evt,rptwin,url,name,p)
     Lino.do_action(url,name,p,null,null,{tied_grid:rptwin});
   }
 };
@@ -1836,8 +1840,10 @@ class ViewReportRequest(reports.ReportRequest):
 
 
     def obj2json(self,obj,**kw):
+        lino.log.debug('obj2json(%r)',obj)
         for fld in self.store.fields:
             fld.obj2json(obj,kw)
+        lino.log.debug('  -> %r',kw)
         return kw
             
     def render_to_json(self):
@@ -2199,14 +2205,15 @@ class ExtUI(base.UI):
         kw = self.layout2kw(lh,**kw)
         
         def js_lines():
-            stores = [ rh.store ]
-            for e in lh.walk():
-                if isinstance(e,ForeignKeyElement):
-                    stores.append(e.rh.store)
+            #~ stores = [ rh.store ]
+            #~ for e in lh.walk():
+                #~ if isinstance(e,ForeignKeyElement):
+                    #~ stores.append(e.rh.store)
         
             yield "function(call_params) {"
-            for store in stores:
-                for ln in store.js_lines():
+            #for store in stores:
+            for rh in lh._needed_stores:
+                for ln in rh.store.js_lines():
                     yield "  " + ln
             for ln in lh._main.js_lines():
                 yield "  " + ln
@@ -2215,38 +2222,29 @@ class ExtUI(base.UI):
             if lh.link.report.master is None:
                 yield "  %s.load();" % rh.store.as_ext()
             else:
-                yield "var tied_grid = call_params['tied_grid'];"
-                yield "if (tied_grid) {"
+                master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
+                yield "if (call_params && call_params['tied_grid']) {"
                 yield "  var store = %s;" % rh.store.as_ext()
-                yield "  tied_grid.main_grid.getSelectionModel().addListener('rowselect',"
+                yield "  call_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
                 yield "    function(sm,rowIndex,record) { "
-                yield "      var p={%s:record.id};" % URL_PARAM_MASTER_PK
-                mt = ContentType.objects.get_for_model(lh.link.report.model).pk
-                yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+                yield "      var p = { %s:record.id, %s:%r };" % (
+                  URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
                 # yield "      console.log('on_rowselect',this,p);"
                 yield "      store.load({params:p});" 
-                yield "})}"
+                yield "  })"
+                yield "} else {"
+                if rr.master_instance is None:
+                    mpk = None
+                else:
+                    mpk = rr.master_instance.pk
+                yield "  store.load({params:{ %s:%r, %s:%r }});" % (
+                  URL_PARAM_MASTER_PK,mpk,URL_PARAM_MASTER_TYPE,master_type)
+                yield "}"
               
-                # ab hier noch nicht fertig uebernommen...
-                #self.lh.link.report.params.has_key('master_instance')
-                #master_report = reports.get_model_report(self.lh.link.report.master)
-                #yield "    master_grid = %s.grid;" % master_report.actor_id
+                # der folgende fall ist noch nicht uebernommen:
                 #~ yield "    if(master) {"
                 #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
                 #~ yield "      %s.load();" % self.store.as_ext()
-                #~ yield "    } else {"
-                #~ yield "    if(master_grid) {"
-                #~ #yield "      console.log('show() master_grid=',master_grid);"
-                #~ yield "      master_grid.comp.getSelectionModel().addListener('rowselect',function(sm,rowIndex,record) {"
-                #~ #yield "      console.log(rowIndex,record);" 
-                #~ yield "      var p={%s:record.id};" % URL_PARAM_MASTER_PK
-                #~ mt = ContentType.objects.get_for_model(self.lh.link.report.model).pk
-                #~ yield "      p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-                #~ yield "      %s.load({params:p});" % self.store.as_ext()
-                #~ yield "    });"
-                #~ yield "  } else {"
-                #~ yield "      %s.load();" % self.store.as_ext()
-                #~ yield "  }"
             yield "  this.window.show();"
             yield "  this.success = true;"
             yield "}"
