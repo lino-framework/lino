@@ -49,7 +49,10 @@ class Note(models.Model):
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     
     def __unicode__(self):
-        return self.short
+        s = u"(%s %s)" % (self.user,self.date)
+        if self.short:
+            return self.short + " " + s
+        return s
         
     def on_create(self,req):
         self.user = req.get_user()

@@ -1840,6 +1840,7 @@ class ViewReportRequest(reports.ReportRequest):
 
 
     def obj2json(self,obj,**kw):
+        lino.log.debug('obj2json(%s)',obj.__class__)
         lino.log.debug('obj2json(%r)',obj)
         for fld in self.store.fields:
             fld.obj2json(obj,kw)
@@ -2212,13 +2213,13 @@ class ExtUI(base.UI):
         
             yield "function(call_params) {"
             #for store in stores:
-            for rh in lh._needed_stores:
-                for ln in rh.store.js_lines():
+            for nrh in lh._needed_stores:
+                for ln in nrh.store.js_lines():
                     yield "  " + ln
             for ln in lh._main.js_lines():
                 yield "  " + ln
             yield "  this.window = new Ext.Window( %s );" % py2js(kw)
-            yield "  %s.load();" % rh.store.as_ext()
+            #yield "  %s.load();" % rh.store.as_ext()
             if lh.link.report.master is None:
                 yield "  %s.load();" % rh.store.as_ext()
             else:
@@ -2246,7 +2247,7 @@ class ExtUI(base.UI):
                 #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
                 #~ yield "      %s.load();" % self.store.as_ext()
             yield "  this.window.show();"
-            yield "  this.success = true;"
+            #~ yield "  this.success = true;"
             yield "}"
             
         #context.show_window(**kw) #title=rpt.get_title(context),html="todo: extjs.run_report()")

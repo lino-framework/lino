@@ -27,6 +27,7 @@ class Property(models.Model):
     only_for = models.ForeignKey(ContentType,blank=True,null=True)
     
     def __unicode__(self):
+        #if self.name is None: return u''
         return self.name
         
 class Properties(reports.Report):
@@ -41,6 +42,7 @@ class PropChoice(models.Model):
     short = models.CharField(max_length=40)
     
     def __unicode__(self):
+        #if self.name is None: return u''
         return self.name
 
 class PropChoices(reports.Report):
