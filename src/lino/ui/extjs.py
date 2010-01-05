@@ -1322,9 +1322,9 @@ class ReportMainPanel(Panel):
         for ln in Panel.js_lines(self):
             yield ln
         #yield "mastergrid = Ext.getCmp()"
-        yield "if(call_params && call_params['tied_grid']) {"
+        yield "if(job_params && job_params['tied_grid']) {"
         yield "  var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
-        yield "  call_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
+        yield "  job_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
         yield "    function(sm,rowIndex,record) { "
         #yield "    console.log('on_rowselect',this);"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
@@ -1529,9 +1529,10 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
   }
 };
 
-// Lino.last_result = 1;
+Lino.jobs = Array();
+Lino.active_job = undefined;
 
-Lino.do_action = function(url,name,params,reload,close_form,call_params) {
+Lino.do_action = function(url,name,params,reload,close_dialog,job_params) {
   // console.log('Lino.do_action()',name,params,reload);
   var doit = function(confirmed) {
     params['confirmed'] = confirmed;
@@ -1548,7 +1549,13 @@ Lino.do_action = function(url,name,params,reload,close_form,call_params) {
           if (result.html) { new Ext.Window({html:result.html}).show(); };
           if (result.window) { new Ext.Window(result.window).show(); };
           // if (result.call) { Lino.last_result = new result.call(); };
-          if (result.call) { new result.call(call_params); };
+          if (result.call) { 
+            var job = new result.call(job_params); 
+            Lino.active_job = Lino.jobs.length;
+            Lino.jobs[Lino.jobs.length] = job;
+            job.run();
+            console.log(Lino.jobs);
+          };
           if (result.redirect) { window.open(result.redirect); };
           if (result.must_reload) reload();
           // Lino.last_result = result;
@@ -1565,7 +1572,7 @@ Lino.do_action = function(url,name,params,reload,close_form,call_params) {
             }
           })
         }
-        if (result.close_form && close_form) close_form();
+        if (result.close_dialog && close_dialog) close_dialog();
         if (result.refresh_menu) Lino.load_main_menu();
       },
       failure: function(response){
@@ -2211,7 +2218,7 @@ class ExtUI(base.UI):
                 #~ if isinstance(e,ForeignKeyElement):
                     #~ stores.append(e.rh.store)
         
-            yield "function(call_params) {"
+            yield "function(job_params) {"
             #for store in stores:
             for nrh in lh._needed_stores:
                 for ln in nrh.store.js_lines():
@@ -2224,9 +2231,9 @@ class ExtUI(base.UI):
                 yield "  %s.load();" % rh.store.as_ext()
             else:
                 master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
-                yield "if (call_params && call_params['tied_grid']) {"
+                yield "if (job_params && job_params['tied_grid']) {"
                 yield "  var store = %s;" % rh.store.as_ext()
-                yield "  call_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
+                yield "  job_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
                 yield "    function(sm,rowIndex,record) { "
                 yield "      var p = { %s:record.id, %s:%r };" % (
                   URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
@@ -2246,8 +2253,14 @@ class ExtUI(base.UI):
                 #~ yield "    if(master) {"
                 #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
                 #~ yield "      %s.load();" % self.store.as_ext()
-            yield "  this.window.show();"
+            #yield "  this.window.show();"
             #~ yield "  this.success = true;"
+            yield "  this.run = function() {"
+            yield "     this.window.show();"
+            yield "  }"
+            yield "  this.kill = function() {"
+            yield "     this.window.close();"
+            yield "  }"
             yield "}"
             
         #context.show_window(**kw) #title=rpt.get_title(context),html="todo: extjs.run_report()")
@@ -2264,7 +2277,7 @@ class ExtUI(base.UI):
         kw = self.layout2kw(lh,**kw)
         name = id2js(lh.name)
         def js_lines():
-            yield "function() {" 
+            yield "function(job_params) {" 
             for ln in lh._main.js_lines():
                 yield "  " + ln
             yield "  this.comp = new Ext.Window( %s );" % py2js(kw)
@@ -2274,7 +2287,12 @@ class ExtUI(base.UI):
                 yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
             yield "    return v;"
             yield "  };"
-            yield "  this.comp.show();"
+            yield "  this.run = function() {"
+            yield "     this.comp.show();"
+            yield "  }"
+            yield "  this.kill = function() {"
+            yield "     this.comp.close();"
+            yield "  }"
             yield "}"
       
         context.response.update(call=js_lines)
