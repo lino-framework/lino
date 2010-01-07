@@ -73,7 +73,7 @@ class Action(actors.Actor):
 
 class ActionContext:
     def __init__(self,ui,action,*args,**kw):
-        self.response = dict(success=True,must_reload=False,msg=None,close_dialog=True)
+        self.response = dict(success=True,must_reload=False,msg=None,stop_caller=False)
         self.ui = ui
         self.action = action
         self._kw = kw
@@ -116,7 +116,11 @@ class ActionContext:
     def cancel(self,msg=_("User abort")):
         self.response.update(success=False)
         self.setmsg(msg)
-        self.response.update(close_dialog=True)
+        self.response.update(stop_caller=True)
+        
+    def done(self,msg=_("OK")):
+        self.setmsg(msg)
+        self.response.update(stop_caller=True)
         
     def confirm(self,msg):
         #print "ActionContext.confirm()", msg
@@ -160,4 +164,4 @@ class OK(Action):
     key = RETURN
 
     def run(self,context):
-        pass
+        context.done()

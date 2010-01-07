@@ -109,7 +109,7 @@ def py2js(v,**kw):
         return py2js(kw)
         
     if isinstance(v,menus.MenuItem):
-        handler = "function(btn,evt){Lino.do_action(%r,%r,{})}" % (v.actor.get_url(ui),id2js(v.actor.actor_id))
+        handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (v.actor.get_url(ui),id2js(v.actor.actor_id))
         return py2js(dict(text=v.label,handler=js_code(handler)))
         #~ if v.args:
             #~ handler = "function(btn,evt) {%s.show(btn,evt,%s);}" % (
@@ -1262,25 +1262,12 @@ class MainGridElement(GridElement):
         del d['title']
         return d
         
-    def unused_js_lines(self):
-        # rowselect is currently not used. maybe in the future.
+    def js_lines(self):
         for ln in GridElement.js_lines(self):
             yield ln
-        s = """
-function %s_rowselect(grid, rowIndex, e) {""" % self.ext_name
-        s += """
-    var row = %s.getAt(rowIndex);""" % self.report.store.ext_name
-        for layout in self.report.layouts[1:]:
-            s += """
-    %s.form.loadRecord(row);""" % layout._main.ext_name
-            for slave in layout.slave_grids:
-                setup_report(slave.report)
-                s += """  
-    %s.load({params: { master: row.id } });""" % slave.report.store.ext_name
-    
-        s += "\n};"
-        #yield s
-        #yield "%s.getSelectionModel().on('rowselect', %s_rowselect);" % (self.ext_name,self.ext_name)
+            
+        yield "this.refresh = function() { this.%s.getStore().load()}" % self.name
+        
 
 
 
@@ -1322,9 +1309,10 @@ class ReportMainPanel(Panel):
         for ln in Panel.js_lines(self):
             yield ln
         #yield "mastergrid = Ext.getCmp()"
-        yield "if(job_params && job_params['tied_grid']) {"
+        yield "this.refresh = function() { console.log('DetailJob.refresh() not yet implemented.');}"
+        yield "if(caller) {"
         yield "  var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
-        yield "  job_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
+        yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
         yield "    function(sm,rowIndex,record) { "
         #yield "    console.log('on_rowselect',this);"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
@@ -1338,7 +1326,7 @@ class ReportMainPanel(Panel):
         yield "        for(i=0;i++;i<len(slaves)) {slaves[i].load({params:p})};"
         #~ for slave in self.lh.slave_grids:
             #~ yield "        %s.load({params: p });" % slave.rh.store.as_ext()
-        yield " })}"
+        yield "  })"
         
         #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
@@ -1354,14 +1342,14 @@ class ReportMainPanel(Panel):
 
         #main_name = id2js(self.lh.link.row_layout.name) + '.' + 'main_grid'
         key = actions.PAGE_UP
-        js = js_code("function() {master_sm.selectPrevious()}")
+        js = js_code("function() {caller.main_grid.getSelectionModel().selectPrevious()}")
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
         buttons.append(dict(handler=js,text="Previous"))
 
         key = actions.PAGE_DOWN
-        js = js_code("function() {master_sm.selectNext()}")
+        js = js_code("function() {caller.main_grid.getSelectionModel().selectNext()}")
         keys.append(dict(
           handler=js,
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
@@ -1371,14 +1359,21 @@ class ReportMainPanel(Panel):
             #yield "console.log(%s.comp);" % self.as_ext()
             yield "%s.keys = %s;" % (self.as_ext(),py2js(keys))
         
+        for btn in buttons:
+            yield "  %s.addButton(%s);" % (self.as_ext(),py2js(btn))
+    
+        yield "}"
         
+        keys = []
+        buttons = []
+
         url = self.rh.get_absolute_url(submit=True)
         js = js_code("Lino.form_submit(%s.form,'%s',%s,'%s')" % (
                 self.as_ext(),url,self.rh.store.as_ext(),self.rh.store.pk.name))
         buttons.append(dict(handler=js,text='Submit'))
         
         for btn in buttons:
-            yield "%s.addButton(%s);" % (self.as_ext(),py2js(btn))
+            yield "  %s.addButton(%s);" % (self.as_ext(),py2js(btn))
     
         
 
@@ -1446,7 +1441,7 @@ Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
   // console.log("Ha! on_store_exception() was called!");
   console.log("on_store_exception:",store,type,action,options,reponse,arg);
 };
-Lino.save_window_config = function(url) {
+Lino.save_window_config = function(caller,url) {
   return function(event,toolEl,panel,tc) {
     console.log(panel.id,panel.getSize(),panel.getPosition());
     var pos = panel.getPosition();
@@ -1454,7 +1449,7 @@ Lino.save_window_config = function(url) {
     var w = size['width'] * 100 / Lino.viewport.getWidth();
     var h = size['height'] * 100 / Lino.viewport.getHeight();
     // Lino.do_action(url,'save_window_config',{h:Math.round(h),w:Math.round(w),max:panel.maximized});
-    Lino.do_action(url,'save_window_config',{
+    Lino.do_action(caller,url,'save_window_config',{
       x:pos[0],y:pos[1],h:size['height'],w:size['width'],
       max:panel.maximized});
   }
@@ -1529,10 +1524,10 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
   }
 };
 
-Lino.jobs = Array();
-Lino.active_job = undefined;
+// Lino.jobs = Array();
+// Lino.active_job = undefined;
 
-Lino.do_action = function(url,name,params,reload,close_dialog,job_params) {
+Lino.do_action = function(caller,url,name,params,unused_reload,unused_close_dialog,unused_job_params) {
   // console.log('Lino.do_action()',name,params,reload);
   var doit = function(confirmed) {
     params['confirmed'] = confirmed;
@@ -1545,21 +1540,22 @@ Lino.do_action = function(url,name,params,reload,close_dialog,job_params) {
         var result = Ext.decode(response.responseText);
         // console.log('got response:',result);
         if(result.success) {
-          if (result.msg) Ext.MessageBox.alert('success',result.msg);
+          if (result.msg) Ext.MessageBox.alert('success',escape(result.msg));
           if (result.html) { new Ext.Window({html:result.html}).show(); };
           if (result.window) { new Ext.Window(result.window).show(); };
           // if (result.call) { Lino.last_result = new result.call(); };
-          if (result.call) { 
-            var job = new result.call(job_params); 
-            Lino.active_job = Lino.jobs.length;
-            Lino.jobs[Lino.jobs.length] = job;
-            job.run();
+          if (result.call) {
+            var job = new result.call(caller);
+            // Lino.active_job = Lino.jobs.length;
+            // Lino.jobs[Lino.jobs.length] = job;
+            // job.run();
             console.log(Lino.jobs);
           };
           if (result.redirect) { window.open(result.redirect); };
-          if (result.must_reload) reload();
+          if (result.must_reload && caller) caller.refresh();
           // Lino.last_result = result;
         } else {
+          if (result.msg) Ext.MessageBox.alert('action failed',escape(result.msg));
           if(result.confirm) Ext.Msg.show({
             title: 'Confirmation',
             msg: result.confirm,
@@ -1572,7 +1568,7 @@ Lino.do_action = function(url,name,params,reload,close_dialog,job_params) {
             }
           })
         }
-        if (result.close_dialog && close_dialog) close_dialog();
+        if (result.stop_caller && caller) caller.stop();
         if (result.refresh_menu) Lino.load_main_menu();
       },
       failure: function(response){
@@ -1584,7 +1580,7 @@ Lino.do_action = function(url,name,params,reload,close_dialog,job_params) {
   doit(0);
 };
 
-Lino.grid_action = function(gridwin,name,url) {
+Lino.grid_action = function(caller,name,url) {
   // console.log("grid_action.this=",this);
   // console.log("grid_action.gridwin=",gridwin);
   // console.log("foo",grid,name,url);
@@ -1594,10 +1590,10 @@ Lino.grid_action = function(gridwin,name,url) {
     // console.log("grid_action.event = ",event);
     var sel_pks = '';
     var must_reload = false;
-    var sels = gridwin.comp.getSelectionModel().getSelections();
+    var sels = caller.main_grid.getSelectionModel().getSelections();
     // console.log(sels);
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
-    Lino.do_action(url,name,{selected:sel_pks},function() {gridwin.main_grid.getStore().load()});
+    Lino.do_action(caller,url,name,{selected:sel_pks});
   };
 };"""
 
@@ -1627,21 +1623,21 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.show_detail = function (rptwin,url,name) { 
+Lino.show_detail = function (caller,url,name) { 
   return function(btn,evt) {
-    p = rptwin.main_grid.getStore().baseParams;
+    p = caller.main_grid.getStore().baseParams;
     // console.log('show_detail',btn,evt,rptwin,url,name,p)
-    Lino.do_action(url,name,p,null,null,{tied_grid:rptwin});
+    Lino.do_action(caller,url,name,p,null,null,{tied_grid:caller});
   }
 };
 """ 
 
         s += """
-Lino.form_action = function (dlg,name,url) { 
+Lino.form_action = function (caller,name,url) { 
   return function(btn,evt) {
-    console.log('form_action()',dlg,name);
-    v = dlg.get_values();
-    Lino.do_action(url,name,v,undefined,function() {dlg.comp.close()});
+    console.log('form_action()',caller,name);
+    v = caller.get_values();
+    Lino.do_action(caller,url,name,v,undefined,function() {caller.comp.close()});
   }
 };
 
@@ -1741,7 +1737,7 @@ Ext.onReady(function(){ """
   for(i=0;i<windows.length;i++) {
     // console.log(windows[i]);
     // if(windows[i]) eval(windows[i]+".show()");
-    if(windows[i]) Lino.do_action('/permalink_do/'+windows[i],windows[i],{});
+    if(windows[i]) Lino.do_action(undefined,'/permalink_do/'+windows[i],windows[i],{});
   }
         """
         s += "\n}); // end of onReady()"
@@ -2113,7 +2109,7 @@ class ExtUI(base.UI):
             (r'^$', self.index),
             (r'^menu$', menu_view),
             (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_report_view),
-            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<action>\w+)$', json_report_view),
+            (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', json_report_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
             (r'^form/(?P<app_label>\w+)/(?P<formname>\w+)/(?P<actname>\w+)$', form_view),
@@ -2177,7 +2173,7 @@ class ExtUI(base.UI):
         kw.update(maximizable=True)
         kw.update(id=name)
         url = '/save_win/' + name
-        js = 'Lino.save_window_config(%r)' % url
+        js = 'Lino.save_window_config(this,%r)' % url
         kw.update(tools=[dict(id='save',handler=js_code(js))])
         kw.update(layout='fit')
         kw.update(items=lh._main)
@@ -2218,7 +2214,7 @@ class ExtUI(base.UI):
                 #~ if isinstance(e,ForeignKeyElement):
                     #~ stores.append(e.rh.store)
         
-            yield "function(job_params) {"
+            yield "function(caller) {"
             #for store in stores:
             for nrh in lh._needed_stores:
                 for ln in nrh.store.js_lines():
@@ -2231,9 +2227,9 @@ class ExtUI(base.UI):
                 yield "  %s.load();" % rh.store.as_ext()
             else:
                 master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
-                yield "if (job_params && job_params['tied_grid']) {"
+                yield "if (caller) {"
                 yield "  var store = %s;" % rh.store.as_ext()
-                yield "  job_params['tied_grid'].main_grid.getSelectionModel().addListener('rowselect',"
+                yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
                 yield "    function(sm,rowIndex,record) { "
                 yield "      var p = { %s:record.id, %s:%r };" % (
                   URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
@@ -2253,14 +2249,10 @@ class ExtUI(base.UI):
                 #~ yield "    if(master) {"
                 #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
                 #~ yield "      %s.load();" % self.store.as_ext()
-            #yield "  this.window.show();"
-            #~ yield "  this.success = true;"
-            yield "  this.run = function() {"
-            yield "     this.window.show();"
-            yield "  }"
-            yield "  this.kill = function() {"
+            yield "  this.stop = function() {"
             yield "     this.window.close();"
             yield "  }"
+            yield "  this.window.show();"
             yield "}"
             
         #context.show_window(**kw) #title=rpt.get_title(context),html="todo: extjs.run_report()")
@@ -2277,7 +2269,7 @@ class ExtUI(base.UI):
         kw = self.layout2kw(lh,**kw)
         name = id2js(lh.name)
         def js_lines():
-            yield "function(job_params) {" 
+            yield "function(caller) {" 
             for ln in lh._main.js_lines():
                 yield "  " + ln
             yield "  this.comp = new Ext.Window( %s );" % py2js(kw)
@@ -2287,12 +2279,10 @@ class ExtUI(base.UI):
                 yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
             yield "    return v;"
             yield "  };"
-            yield "  this.run = function() {"
-            yield "     this.comp.show();"
-            yield "  }"
-            yield "  this.kill = function() {"
+            yield "  this.stop = function() {"
             yield "     this.comp.close();"
             yield "  }"
+            yield "  this.comp.show();"
             yield "}"
       
         context.response.update(call=js_lines)
