@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -69,15 +69,15 @@ class Action: # (actors.Actor):
         raise NotImplementedError
         
 class ActionContext:
-    def __init__(self,ui,actor,action,*args,**kw):
+    def __init__(self,ui,actor,action_name,*args,**kw):
         self.response = dict(success=True,must_reload=False,msg=None,stop_caller=False)
         self.ui = ui
         self.actor = actor
-        self.action = actor.get_action(action)
+        self.action = actor.get_action(action_name)
         self._kw = kw
         self._args = args
         if not isinstance(self.action,Action):
-            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action,self.action))
+            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action_name,self.action))
         
     def run(self):
         if self.action.needs_selection and len(self.selected_rows) == 0:
@@ -85,7 +85,7 @@ class ActionContext:
               msg="No selection. Nothing to do.",
               success=False)
         else:
-            lino.log.debug('ActionContext.run() %s',self.action)
+            lino.log.debug('ActionContext.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
             try:
                 self.action.run(self,*self._args,**self._kw)
             except ActionEvent,e:

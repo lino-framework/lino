@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -1846,8 +1846,8 @@ class ViewReportRequest(reports.ReportRequest):
 
 
     def obj2json(self,obj,**kw):
-        lino.log.debug('obj2json(%s)',obj.__class__)
-        lino.log.debug('obj2json(%r)',obj)
+        #lino.log.debug('obj2json(%s)',obj.__class__)
+        #lino.log.debug('obj2json(%r)',obj)
         for fld in self.store.fields:
             fld.obj2json(obj,kw)
         lino.log.debug('  -> %r',kw)
@@ -1877,7 +1877,7 @@ class ViewReportRequest(reports.ReportRequest):
 
 from django.conf.urls.defaults import patterns, url, include
 
-class SaveWindowConfigAction(actors.Actor): # actions.Action):
+class SaveWindowConfig(actions.Command): # actors.Actor): # actions.Action):
     def run(self,context,name):
         h = int(context.request.POST.get('h'))
         w = int(context.request.POST.get('w'))
@@ -1904,8 +1904,8 @@ def permalink_do_view(request,name=None):
 
 def save_win_view(request,name=None):
     #print 'save_win_view()',name
-    actor = SaveWindowConfigAction()
-    context = ActionContext(request,actor,name)
+    actor = SaveWindowConfig()
+    context = ActionContext(request,actor,None,name)
     context.run()
     return json_response(context.response)
 
