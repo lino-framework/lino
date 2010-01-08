@@ -66,11 +66,12 @@ class ActorMetaClass(type):
         return cls.instance
 
 
-
 class Actor(object):
     __metaclass__ = ActorMetaClass
     name = None
     label = None
+    #default_action = 'view'
+
     def __init__(self):
         if self.label is None:
             self.label = self.__class__.__name__
@@ -85,6 +86,14 @@ class Actor(object):
     def __str__(self):
         return '<' + self.actor_id + '>'
     
+    def get_url(self,ui,**kw):
+        return ui.get_action_url(self,**kw)
+
+    def get_action(self,action_name=None):
+        if action_name is None:
+            return self.default_action
+            #action_name = self.default_action
+        return getattr(self,action_name,None)
 
 
 def unused_get_actor(app_label,name):

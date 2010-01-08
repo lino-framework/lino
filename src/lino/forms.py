@@ -22,19 +22,25 @@ class Input:
     def __init__(self,**kw):
         self.options = kw
 
+class ViewForm(actions.Action):
+    def run(self,context):
+        return context.ui.view_form(context)
 
-class Form(actions.Action):
+class Form(actors.Actor): # actions.Action):
     layout = None
     title = None
     
     cancel = actions.CancelDialog()
+    
+    default_action = ViewForm()
 
     def __init__(self):
-        actions.Action.__init__(self)
+        #actions.Action.__init__(self)
+        actors.Actor.__init__(self)
         self._handles = {}
         
     def run(self,context):
-        return context.ui.run_form(self,context)
+        return context.ui.view_form(self,context)
         
     def get_url(self,ui,**kw):
         h = self.get_handle(ui)

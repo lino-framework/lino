@@ -51,7 +51,7 @@ class Contact(models.Model):
     #image = models.ImageField(blank=True,null=True,
     # upload_to=".")
     
-    remarks = models.TextField(blank=True)
+    remarks = models.TextField(blank=True,null=True)
     
     def __unicode__(self):
         return self.name

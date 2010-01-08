@@ -65,8 +65,8 @@ def dict2js(d):
       
       
 class ActionContext(actions.ActionContext):
-    def __init__(self,action,request,*args,**kw):
-        actions.ActionContext.__init__(self,ui,action,*args,**kw)
+    def __init__(self,request,*args,**kw):
+        actions.ActionContext.__init__(self,ui,*args,**kw)
         self.request = request
         self.confirmed = self.request.POST.get('confirmed',None)
         if self.confirmed is not None:
@@ -74,13 +74,16 @@ class ActionContext(actions.ActionContext):
         self.confirms = 0
         #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
         
+    def get_user(self):
+        return self.request.user
+        
 class GridActionContext(ActionContext):
-    def __init__(self,action,request,rh,*args,**kw):
-        ActionContext.__init__(self,action,request,**kw)
+    def __init__(self,request,*args,**kw):
+        ActionContext.__init__(self,request,*args,**kw)
         selected = self.request.POST.get('selected',None)
         if selected:
             self.selected_rows = [
-              rh.report.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
+              self.actor.model.objects.get(pk=pk) for pk in selected.split(',') if pk]
         else:
             self.selected_rows = []
         
@@ -1129,8 +1132,8 @@ class GridElement(Container):
         buttons = []
         for a in self.report.actions:
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
-                  id2js(a.actor_id), 
-                  self.rh.get_absolute_url(grid_action=id2js(a.actor_id))))
+                  a.name, 
+                  self.rh.get_absolute_url(grid_action=a.name)))
             buttons.append(dict(text=a.label,handler=h))
             if a.key:
                 keys.append(dict(
@@ -1266,7 +1269,7 @@ class MainGridElement(GridElement):
         for ln in GridElement.js_lines(self):
             yield ln
             
-        yield "this.refresh = function() { this.%s.getStore().load()}" % self.name
+        yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
         
 
 
@@ -1309,7 +1312,7 @@ class ReportMainPanel(Panel):
         for ln in Panel.js_lines(self):
             yield ln
         #yield "mastergrid = Ext.getCmp()"
-        yield "this.refresh = function() { console.log('DetailJob.refresh() not yet implemented.');}"
+        yield "this.refresh = function() { console.log('ReportMainPanel.refresh() not yet implemented.');}"
         yield "if(caller) {"
         yield "  var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
         yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
@@ -1443,7 +1446,7 @@ Lino.on_store_exception = function (store,type,action,options,reponse,arg) {
 };
 Lino.save_window_config = function(caller,url) {
   return function(event,toolEl,panel,tc) {
-    console.log(panel.id,panel.getSize(),panel.getPosition());
+    // console.log(panel.id,panel.getSize(),panel.getPosition());
     var pos = panel.getPosition();
     var size = panel.getSize();
     var w = size['width'] * 100 / Lino.viewport.getWidth();
@@ -1540,7 +1543,7 @@ Lino.do_action = function(caller,url,name,params,unused_reload,unused_close_dial
         var result = Ext.decode(response.responseText);
         // console.log('got response:',result);
         if(result.success) {
-          if (result.msg) Ext.MessageBox.alert('success',escape(result.msg));
+          if (result.msg) Ext.MessageBox.alert('Success',result.msg);
           if (result.html) { new Ext.Window({html:result.html}).show(); };
           if (result.window) { new Ext.Window(result.window).show(); };
           // if (result.call) { Lino.last_result = new result.call(); };
@@ -1549,13 +1552,13 @@ Lino.do_action = function(caller,url,name,params,unused_reload,unused_close_dial
             // Lino.active_job = Lino.jobs.length;
             // Lino.jobs[Lino.jobs.length] = job;
             // job.run();
-            console.log(Lino.jobs);
+            // console.log(Lino.jobs);
           };
           if (result.redirect) { window.open(result.redirect); };
           if (result.must_reload && caller) caller.refresh();
           // Lino.last_result = result;
         } else {
-          if (result.msg) Ext.MessageBox.alert('action failed',escape(result.msg));
+          if (result.msg) Ext.MessageBox.alert('Action failed',result.msg);
           if(result.confirm) Ext.Msg.show({
             title: 'Confirmation',
             msg: result.confirm,
@@ -1874,7 +1877,7 @@ class ViewReportRequest(reports.ReportRequest):
 
 from django.conf.urls.defaults import patterns, url, include
 
-class SaveWindowConfigAction(actions.Action):
+class SaveWindowConfigAction(actors.Actor): # actions.Action):
     def run(self,context,name):
         h = int(context.request.POST.get('h'))
         w = int(context.request.POST.get('w'))
@@ -1894,15 +1897,15 @@ class SaveWindowConfigAction(actions.Action):
 
 def permalink_do_view(request,name=None):
     name = name.replace('_','.')
-    action = actors.get_actor(name)
-    context = ActionContext(action,request)
+    actor = actors.get_actor(name)
+    context = ActionContext(request,actor,None)
     context.run()
     return json_response(context.response)
 
 def save_win_view(request,name=None):
     #print 'save_win_view()',name
-    action = SaveWindowConfigAction()
-    context = ActionContext(action,request,name)
+    actor = SaveWindowConfigAction()
+    context = ActionContext(request,actor,name)
     context.run()
     return json_response(context.response)
 
@@ -1912,7 +1915,14 @@ def menu_view(request):
     return HttpResponse(s, mimetype='text/html')
 
 
-def form_view(request,app_label=None,formname=None,actname=None,**kw):
+def act_view(request,app_label=None,actor=None,action=None,**kw):
+    actor = actors.get_actor2(app_label,actor)
+    #action = actor.get_action(action)
+    context = ActionContext(request,actor,action)
+    context.run()
+    return json_response(context.response)
+
+def unused_form_view(request,app_label=None,formname=None,actname=None,**kw):
     action = actors.get_actor2(app_label,formname)
     if actname is not None:
         action = getattr(action,actname)
@@ -1920,7 +1930,7 @@ def form_view(request,app_label=None,formname=None,actname=None,**kw):
     context.run()
     return json_response(context.response)
 
-def action_view(request,app_label=None,actname=None,**kw):
+def unused_action_view(request,app_label=None,actname=None,**kw):
     action = actors.get_actor2(app_label,actname)
     context = ActionContext(action,request)
     context.run()
@@ -1948,28 +1958,25 @@ def list_report_view(request,**kw):
     
     
 def json_report_view(request,app_label=None,rptname=None,**kw):
-    rpt = actors.get_actor(app_label+'.'+rptname)
+    rpt = actors.get_actor2(app_label,rptname)
     return json_report_view_(request,rpt,**kw)
 
 def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None):
     if not rpt.can_view.passes(request):
         return json_response_kw(success=False,
             msg="User %s cannot view %s." % (request.user,rpt))
-    rh = rpt.get_handle(ui)
     if grid_action:
-        """TODO: store actions in a dict for quicker lookup. 
-        The dict can be either in Report or in ReportHandle.
-        """
-        for a in rpt.actions:
-            if a.name == grid_action:
-                context = GridActionContext(a,request,rh)
-                context.run()
-                #d = a.get_response(rptreq)
-                return json_response(context.response)
-        return json_response_kw(
-            success=False,
-            msg="Report %s has no action %r" % (rpt,grid_action))
+        #~ a = rpt.get_action(grid_action)
+        #~ if a is None:
+            #~ return json_response_kw(
+                #~ success=False,
+                #~ msg="Report %s has no action %r" % (rpt,grid_action))
+        context = GridActionContext(request,rpt,grid_action)
+        context.run()
+        #d = a.get_response(rptreq)
+        return json_response(context.response)
             
+    rh = rpt.get_handle(ui)
     rptreq = ViewReportRequest(request,rh)
     
     if submit:
@@ -2112,9 +2119,9 @@ class ExtUI(base.UI):
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', json_report_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
-            (r'^form/(?P<app_label>\w+)/(?P<formname>\w+)/(?P<actname>\w+)$', form_view),
-            (r'^form/(?P<app_label>\w+)/(?P<formname>\w+)$', form_view),
-            (r'^action/(?P<app_label>\w+)/(?P<actname>\w+)$', action_view),
+            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<action>\w+)$', act_view),
+            (r'^form/(?P<app_label>\w+)/(?P<actor>\w+)$', act_view),
+            (r'^action/(?P<app_label>\w+)/(?P<actor>\w+)$', act_view),
             (r'^choices/(?P<app_label>\w+)/(?P<modname>\w+)/(?P<fldname>\w+)$', choices_view),
             (r'^save_win/(?P<name>\w+)$', save_win_view),
             (r'^permalink_do/(?P<name>\w+)$', permalink_do_view),
@@ -2199,10 +2206,11 @@ class ExtUI(base.UI):
         return kw
             
         
-    def run_report(self,rpt,context,**kw):
+    def view_report(self,context,**kw):
         """
-        called from Report.run()
+        called from Report.view()
         """
+        rpt = context.actor
         rh = self.get_report_handle(rpt)
         rr = ViewReportRequest(context.request,rh)
         lh = rr.layout 
@@ -2227,8 +2235,8 @@ class ExtUI(base.UI):
                 yield "  %s.load();" % rh.store.as_ext()
             else:
                 master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
+                yield "var store = %s;" % rh.store.as_ext()
                 yield "if (caller) {"
-                yield "  var store = %s;" % rh.store.as_ext()
                 yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
                 yield "    function(sm,rowIndex,record) { "
                 yield "      var p = { %s:record.id, %s:%r };" % (
@@ -2255,14 +2263,11 @@ class ExtUI(base.UI):
             yield "  this.window.show();"
             yield "}"
             
-        #context.show_window(**kw) #title=rpt.get_title(context),html="todo: extjs.run_report()")
-        #~ js = ""
-        #~ js += '\n'.join([ln for ln in lh._main.js_lines()])
-        #~ context.js_eval("new Ext.Window(%s).show();" % py2js(kw)) #title=rpt.get_title(context),html="todo: extjs.run_report()")
-        # context.js_eval(js_lines)
         context.response.update(call=js_lines)
         
-    def run_form(self,frm,context,**kw):
+    def view_form(self,context,**kw):
+        frm = context.actor
+        # called from Form.run()
         fh = self.get_form_handle(frm)
         #fh.setup()
         lh = fh.lh

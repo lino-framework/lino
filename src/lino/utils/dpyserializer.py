@@ -34,8 +34,8 @@ class FakeDeserializedObject(base.DeserializedObject):
     def __init__(self, obj):
         self.object = obj
 
-    def save(self, save_m2m=True):
-        self.object.save()
+    def save(self, *args,**kw):
+        self.object.save(*args,**kw)
 
 
 class Serializer:

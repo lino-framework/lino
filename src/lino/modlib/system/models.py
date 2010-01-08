@@ -51,7 +51,7 @@ class ContentTypes(reports.Report):
     model = contenttypes.ContentType
 
 
-class PasswordResetAction(actions.Action):
+class PasswordResetOK(actions.Action):
     label = _("Request Password Reset")
     def run(self,context):
         context.error('not implemented')
@@ -76,12 +76,12 @@ class PasswordReset(forms.Form):
     title = _("Request Password Reset")
     #email = models.EmailField(verbose_name=_("E-mail"), max_length=75)
     email = forms.Input(fieldLabel=_("E-mail"),maxLength=75)
-    ok = PasswordResetAction()
+    ok = PasswordResetOK()
     
     
 from django.contrib.auth import login, authenticate, logout
 
-class LoginAction(actions.OK):
+class LoginOK(actions.OK):
   
     label = _("Login")
     
@@ -100,6 +100,7 @@ class LoginAction(actions.OK):
             login(context.request, user)
             #lino.log.info("User %s logged in.",user)
             context.refresh_menu()
+            context.done("Welcome, %s!" % user)
         
 
 class LoginLayout(layouts.FormLayout):
@@ -119,7 +120,7 @@ class Login(forms.Form):
     #password = models.CharField(verbose_name=_("Password"), max_length=75)
     username = forms.Input(fieldLabel=_("Username"),maxLength=75)
     password = forms.Input(fieldLabel=_("Password"),maxLength=75,inputType='password')
-    ok = LoginAction()
+    ok = LoginOK()
   
 
     def before(self,context):
@@ -127,14 +128,16 @@ class Login(forms.Form):
            raise actions.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
         
 
-class Logout(actions.OK):
+class Logout(actions.Command): #actions.OK):
   
     label = _("Log out")
     
     def run(self,context):
-        context.confirm(_("Are you sure you want to log out?"))
+        user = context.get_user()
+        context.confirm(_("%s, are you sure you want to log out?") % user)
         logout(context.request)
         context.refresh_menu()
+        context.done("Goodbye, %s!" % user)
 
     
 

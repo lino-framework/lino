@@ -122,7 +122,7 @@ def unused_get_report(app_label,rptname):
 def setup():
     """
     - Each model can receive a number of "slaves". 
-      slaves are reports that display detail data for a known instance of that model (their master).
+      Slaves are reports that display detail data for a known instance of that model (their master).
       They are stored in a dictionary called '_lino_slaves'.
       
     - For each model we want to find out the "model report" ot "default report".
@@ -200,8 +200,12 @@ def get_slave(model,name):
 def get_model_report(model):
     return model._lino_model_report
 
+class ViewReport(actions.Action):
+    def run(self,context):
+        return context.ui.view_report(context)
+        
 
-class Report(actions.Action): # actors.Actor):
+class Report(actors.Actor): # actions.Action): # 
     #__metaclass__ = ReportMetaClass
     params = {}
     field = None
@@ -237,14 +241,16 @@ class Report(actions.Action): # actors.Actor):
     can_add = perms.is_authenticated
     can_change = perms.is_authenticated
     can_delete = perms.is_authenticated
-
+    
+    default_action = ViewReport()
+    
     typo_check = True
     url = None
     actions = []
     
     def __init__(self):
-        #actors.Actor.__init__(self)
-        actions.Action.__init__(self)
+        actors.Actor.__init__(self)
+        #actions.Action.__init__(self)
         lino.log.debug("Report.__init__() %s", self.actor_id)
         self._handles = {}
         self._setup_done = False
@@ -337,10 +343,6 @@ class Report(actions.Action): # actors.Actor):
         return True
         
     # implements actions.Action
-    def run(self,context):
-        return context.ui.run_report(self,context)
-        
-    # implements actions.Action
     def get_url(self,ui,**kw):
         kw['run'] = True
         rh = self.get_handle(ui)
@@ -352,6 +354,12 @@ class Report(actions.Action): # actors.Actor):
     def get_handle(self,ui):
         return ui.get_report_handle(self)
         
+    def get_action(self,name):
+        for a in self.actions:
+            if a.name == name:
+                return a
+        return actors.Actor.get_action(self,name)
+              
     def add_actions(self,*args):
         """Used in Model.setup_report() to specify actions for each report that uses 
         this model."""

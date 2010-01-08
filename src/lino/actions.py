@@ -50,34 +50,34 @@ class ValidationError(Exception):
     
     
     
-class Action(actors.Actor):
+class Action: # (actors.Actor):
     label = None
     name = None
     key = None
     needs_selection = False
     
     def __init__(self):
-        actors.Actor.__init__(self)
+        #actors.Actor.__init__(self)
+        if self.name is None:
+            self.name = self.__class__.__name__ # label
         if self.label is None:
             self.label = self.name #self.__class__.__name__
-        #~ if self.name is None:
-            #~ self.name = self.label
         #self.report = report
         
         
     def run(self,context):
         raise NotImplementedError
         
-    def get_url(self,ui,**kw):
-        return ui.get_action_url(self,**kw)
-
 class ActionContext:
-    def __init__(self,ui,action,*args,**kw):
+    def __init__(self,ui,actor,action,*args,**kw):
         self.response = dict(success=True,must_reload=False,msg=None,stop_caller=False)
         self.ui = ui
-        self.action = action
+        self.actor = actor
+        self.action = actor.get_action(action)
         self._kw = kw
         self._args = args
+        if not isinstance(self.action,Action):
+            raise Exception("%s.get_action(%r) returned %r which is not an Action." % (actor,action,self.action))
         
     def run(self):
         if self.action.needs_selection and len(self.selected_rows) == 0:
@@ -94,6 +94,9 @@ class ActionContext:
                 traceback.print_exc(e)
                 self.response.update(msg=str(e),success=False)
         return self.response
+        
+    def get_user(self):
+        raise NotImplementedError()
 
     def refresh(self):
         self.response.update(must_reload=True)
@@ -165,3 +168,16 @@ class OK(Action):
 
     def run(self,context):
         context.done()
+
+
+class RunCommand(Action):
+  
+    def run(self,context):
+        context.actor.run(context)
+
+class Command(actors.Actor):
+    default_action = RunCommand()
+    
+    def run(self,context):
+        context.done()
+      
