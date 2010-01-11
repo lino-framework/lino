@@ -158,7 +158,8 @@ class Company(Contact):
         return self.name + linesep + s
 
 class CompanyPageLayout(ContactPageLayout):
-    box1 = "name vat_id:12"
+    box1 = """name 
+    vat_id:12"""
               
 class Companies(reports.Report):
     #label = "Companies"

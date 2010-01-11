@@ -1264,7 +1264,7 @@ class GridMainPanel(GridElement):
 
 
 class DetailMainPanel(Panel):
-    declare_type = DECLARE_VAR
+    declare_type = DECLARE_THIS
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.rh = lh.link
@@ -1304,12 +1304,14 @@ class DetailMainPanel(Panel):
         yield "this.refresh = function() { console.log('DetailMainPanel.refresh() not yet implemented.');};"
         yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
         yield "var load_record = this.load_record = function(record) {"
+        #yield "function load_record (record) {"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         #name = 'this.' + self.lh._main.ext_name
         name = self.as_ext()
-        yield "  %s.current_pk = record.data.id;" % name
+        yield "  this.current_pk = record.data.id;" 
         yield "  %s.form.loadRecord(record);" % name
-        yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
+        yield "  var p = { %s: record.data.id }" % URL_PARAM_MASTER_PK
+        #yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
         mt = ContentType.objects.get_for_model(self.report.model).pk
         yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
         yield "  for(i=0;i++;i<len(slaves)) { slaves[i].load({params:p}) };"
@@ -1318,7 +1320,7 @@ class DetailMainPanel(Panel):
         yield "};"
         yield "if(caller) {"
         yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
-        yield "    function(sm,rowIndex,record) { load_record(record); });"
+        yield "    function(sm,rowIndex,record) { this.load_record(record); },this);"
         
         #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
@@ -1349,7 +1351,7 @@ class DetailMainPanel(Panel):
         if len(keys):
             #yield "console.log(%s);" % self.as_ext()
             #yield "console.log(%s.comp);" % self.as_ext()
-            yield "%s.keys = %s;" % (self.as_ext(),py2js(keys))
+            yield "  %s.keys = %s;" % (self.as_ext(),py2js(keys))
         
         for btn in buttons:
             yield "  %s.addButton(%s);" % (self.as_ext(),py2js(btn))
@@ -1447,13 +1449,14 @@ Lino.save_window_config = function(caller,url) {
   }
 };
 
-Lino.form_submit = function (caller,url,store,pkname) {
+Lino.form_submit = function (job,url,store,pkname) {
+  // console.log("Lino.form_submit:",job);
   return function(btn,evt) {
-    // console.log(store);
+    // console.log(pkname,job);
     p = {};
     // p[pkname] = store.getAt(0).data.id;
-    p[pkname] = caller.current_pk
-    form.submit({
+    p[pkname] = job.current_pk;
+    job.main_panel.form.submit({
       url: url, 
       failure: function(form, action) {
         // console.log("form:",form);
@@ -2031,8 +2034,8 @@ class ExtUI(base.UI):
         self.window_configs = {}
         if os.path.exists(self.window_configs_file):
             lino.log.info("Loading %s...",self.window_configs_file)
-            wc = pickle.load(open(self.window_configs_file))
-            lino.log.info("  -> %r",wc)
+            wc = pickle.load(open(self.window_configs_file,"rU"))
+            lino.log.debug("  -> %r",wc)
             if type(wc) is dict:
                 self.window_configs = wc
         else:
@@ -2160,7 +2163,7 @@ class ExtUI(base.UI):
     def layout2kw(self,lh,**kw):
         name = id2js(lh.name)
         kw.update(title=lh.get_title(self))
-        kw.update(closeAction='hide')
+        #kw.update(closeAction='hide')
         kw.update(maximizable=True)
         kw.update(id=name)
         url = '/save_win/' + name
@@ -2216,32 +2219,32 @@ class ExtUI(base.UI):
             
                 
             if isinstance(lh._main,DetailMainPanel):
-                yield "var sels = caller.main_grid.getSelectionModel().getSelections()"
-                yield "if(sels.length > 0) this.load_record(sels[0]);"
+                yield "  var sels = caller.main_grid.getSelectionModel().getSelections()"
+                yield "  if(sels.length > 0) this.load_record(sels[0]);"
+                
             if isinstance(lh._main,GridMainPanel):
-              
                 yield "  var grid = this.main_grid;"
                 yield "  var store = grid.getStore();"
                 if lh.link.report.master is None:
                     yield "  store.load();" 
                 else:
                     master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
-                    yield "if (caller) {"
-                    yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
-                    yield "    function(sm,rowIndex,record) { "
-                    yield "      var p = { %s:record.id, %s:%r };" % (
+                    yield "  if (caller) {"
+                    yield "    caller.main_grid.getSelectionModel().addListener('rowselect',"
+                    yield "      function(sm,rowIndex,record) { "
+                    yield "        var p = { %s:record.id, %s:%r };" % (
                       URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
                     # yield "      console.log('on_rowselect',this,p);"
-                    yield "      store.load({params:p});" 
-                    yield "  })"
-                    yield "} else {"
+                    yield "        store.load({params:p});" 
+                    yield "    })"
+                    yield "  } else {"
                     if rr.master_instance is None:
                         mpk = None
                     else:
                         mpk = rr.master_instance.pk
-                    yield "  store.load({params:{ %s:%r, %s:%r }});" % (
+                    yield "    store.load({params:{ %s:%r, %s:%r }});" % (
                       URL_PARAM_MASTER_PK,mpk,URL_PARAM_MASTER_TYPE,master_type)
-                    yield "}"
+                    yield "  }"
                   
                     # der folgende fall ist noch nicht uebernommen:
                     #~ yield "    if(master) {"
@@ -2258,6 +2261,12 @@ class ExtUI(base.UI):
                 yield "    grid.getSelectionModel().selectFirstRow();"
                 #yield "    grid.getView().focusEl.focus();"
                 yield "  });"
+            yield "  if (caller) {"
+            yield "    caller.window.on('close',function() {"
+            yield "      console.log('close',caller,this);"
+            yield "      this.stop();"
+            yield "    },this);"
+            yield "  }"
             yield "  this.window.show();"
             yield "}"
             
