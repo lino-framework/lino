@@ -156,7 +156,7 @@ class LayoutHandle:
     """
   
     def __init__(self,link,layout,index,desc=None,main=None):
-        lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
+        # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
         assert isinstance(link.name,basestring), "link.name %r is not a string" % link.name
         assert isinstance(layout,Layout)
         #assert isinstance(link,reports.ReportHandle)
@@ -247,7 +247,7 @@ class LayoutHandle:
   
         
     def desc2elem(self,panelclass,desc_name,desc,**kw):
-        lino.log.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
+        #lino.log.debug("desc2elem(panelclass,%r,%r)",desc_name,desc)
         #assert desc != 'Countries_choices2'
         if '*' in desc:
             explicit_specs = set()
@@ -258,7 +258,7 @@ class LayoutHandle:
             wildcard_fields = self.layout.join_str.join([
                 name for name in self.link.data_elems() if name not in explicit_specs])
             desc = desc.replace('*',wildcard_fields)
-            lino.log.debug('desc -> %r',desc)
+            #lino.log.debug('desc -> %r',desc)
         if "\n" in desc:
             elems = []
             i = 0
@@ -284,7 +284,7 @@ class LayoutHandle:
             return panelclass(self,desc_name,False,*elems,**kw)
             
     def create_element(self,panelclass,desc_name):
-        lino.log.debug("create_element(panelclass,%r)", desc_name)
+        #lino.log.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         
         de = self.link.get_data_elem(name)

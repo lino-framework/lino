@@ -2032,6 +2032,7 @@ class ExtUI(base.UI):
         if os.path.exists(self.window_configs_file):
             lino.log.info("Loading %s...",self.window_configs_file)
             wc = pickle.load(open(self.window_configs_file))
+            lino.log.info("  -> %r",wc)
             if type(wc) is dict:
                 self.window_configs = wc
         else:
