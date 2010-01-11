@@ -143,7 +143,8 @@ def py2js(v,**kw):
         return str(v)
     if isinstance(v, float):
         return repr(v)
-    return simplejson.encoder.encode_basestring(v)
+    #return simplejson.encoder.encode_basestring(v)
+    return simplejson.dumps(v)
             
 
 
@@ -563,7 +564,7 @@ class LayoutElement(VisibleComponent):
     xtype = None # set by subclasses
     
     def __init__(self,lh,name,**kw):
-        lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
+        #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
         #self.parent = parent
         VisibleComponent.__init__(self,name,**kw)
         self.lh = lh
@@ -653,7 +654,7 @@ class InputElement(LayoutElement):
     field = None 
     
     def __init__(self,lh,input,**kw):
-        lino.log.debug("InputElement.__init__(%r,%r)",lh,input)
+        #lino.log.debug("InputElement.__init__(%r,%r)",lh,input)
         LayoutElement.__init__(self,lh,input.name,**kw)
         assert isinstance(lh.layout,layouts.FormLayout), "%s is not a FormLayout" % lh.name
         self.input = input
@@ -1241,7 +1242,7 @@ class GridMainPanel(GridElement):
             #~ self.height = self.preferred_height
         #~ if self.width is None:
             #~ self.width = self.preferred_width
-        lino.log.debug("GridMainPanel.__init__() %s",self.name)
+        #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
     def ext_options(self):
         d = GridElement.ext_options(self)
@@ -1836,7 +1837,7 @@ class ViewReportRequest(reports.ReportRequest):
         #lino.log.debug('obj2json(%r)',obj)
         for fld in self.store.fields:
             fld.obj2json(obj,kw)
-        lino.log.debug('  -> %r',kw)
+        #lino.log.debug('  -> %r',kw)
         return kw
             
     def render_to_json(self):
@@ -2042,7 +2043,7 @@ class ExtUI(base.UI):
             lino.log.warning("window_configs_file %s not found",self.window_configs_file)
             
     def save_window_configs(self):
-        f = open(self.window_configs_file,'w')
+        f = open(self.window_configs_file,'wb')
         pickle.dump(self.window_configs,f)
         f.close()
         self._response = None
