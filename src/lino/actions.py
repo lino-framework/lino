@@ -172,12 +172,13 @@ class OK(Action):
 
 class RunCommand(Action):
   
-    def run(self,context):
-        context.actor.run(context)
+    def run(self,context,*args,**kw):
+        context.actor.run(context,*args,**kw)
 
 class Command(actors.Actor):
     default_action = RunCommand()
     
     def run(self,context):
+        # override this in subclasses
         context.done()
       

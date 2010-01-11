@@ -1144,18 +1144,18 @@ class GridElement(Container):
             key = actions.RETURN(ctrl=True)
             lh = self.rh.layouts[2]
             keys.append(dict(
-              handler=js_code("Lino.show_detail(this,%r,%r)" % (lh.get_absolute_url(run=True),lh.label)),
+              handler=js_code("Lino.show_slave(this,%r,%r)" % (lh.get_absolute_url(run=True),lh.label)),
               key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
 
             for layout in self.rh.layouts[2:]:
                 buttons.append(dict(
-              handler=js_code("Lino.show_detail(this,%r,%r)" % (lh.get_absolute_url(run=True),lh.label)),
+              handler=js_code("Lino.show_slave(this,%r,%r)" % (lh.get_absolute_url(run=True),lh.label)),
                   text=layout._ld.label))
               
         for sl in self.report._slaves:
             rh = sl.get_handle(self.lh.ui)
             buttons.append(dict(
-              handler=js_code("Lino.show_detail(this,%r,%r)" % (rh.row_layout.get_absolute_url(run=True),rh.report.label)),
+              handler=js_code("Lino.show_slave(this,%r,%r)" % (rh.row_layout.get_absolute_url(run=True),rh.report.label)),
               #handler=js_code("Lino.show_slave(this,%r)" % id2js(rh.row_layout.name)),
               text = rh.report.label,
             ))
@@ -1164,31 +1164,20 @@ class GridElement(Container):
         self.buttons = Variable(self.ext_name+'_buttons',buttons)
         
         
-    def unused_js_lines(self):
-        """
-        a grid doesn't generate the declaration of its elements 
-        because its column_model does this indirectly
-        """
+    def js_lines(self):
         self.setup()
-        #~ for ln in Container.js_lines(self):
-            #~ yield ln
-        #yield "this.%s = new function() {" % self.ext_name
-        #yield "this.cols = %s;" % self.column_model.as_ext_value()
-        #for ln in self.column_model.js_lines():
-        #    yield ln
-        # TODO: yield "  var keys = %s;" % py2js(self.keys)
         for ln in Container.js_lines(self):
             yield ln
-        # yield "comp = %s;" % self.as_ext_value()
         yield "%s.on('afteredit', Lino.grid_afteredit(this,'%s','%s'));" % (
           self.as_ext(),
           self.rh.get_absolute_url(grid_afteredit=True),
           self.rh.store.pk.name)
-        #yield "}();"
-        #yield "%s.keys = %s;" % (self.ext_name,py2js(self.keys))
-        #yield "%s.getTopToolbar().addButton(%s);" % (self.ext_name,py2js(self.buttons))
           
     def js_elements(self):
+        """
+        GridElement, though it is a Container, doesn't generate the declaration of its elements 
+        because self.column_model does this indirectly.
+        """
         self.setup()
         #yield self.rh.store
         yield self.column_model
@@ -1242,7 +1231,7 @@ class M2mGridElement(GridElement):
   
 
   
-class MainGridElement(GridElement):
+class GridMainPanel(GridElement):
     #declare_type = DECLARE_VAR
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
@@ -1252,7 +1241,7 @@ class MainGridElement(GridElement):
             #~ self.height = self.preferred_height
         #~ if self.width is None:
             #~ self.width = self.preferred_width
-        lino.log.debug("MainGridElement.__init__() %s",self.name)
+        lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
     def ext_options(self):
         d = GridElement.ext_options(self)
@@ -1274,14 +1263,14 @@ class MainGridElement(GridElement):
 
 
 
-class ReportMainPanel(Panel):
+class DetailMainPanel(Panel):
     declare_type = DECLARE_VAR
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.rh = lh.link
         self.report = self.rh.report
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
-        lh.needs_store(self.rh)
+        #lh.needs_store(self.rh)
         
     #~ def js_elements(self):
         #~ self.setup()
@@ -1312,24 +1301,24 @@ class ReportMainPanel(Panel):
         for ln in Panel.js_lines(self):
             yield ln
         #yield "mastergrid = Ext.getCmp()"
-        yield "this.refresh = function() { console.log('ReportMainPanel.refresh() not yet implemented.');}"
-        yield "if(caller) {"
-        yield "  var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
-        yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
-        yield "    function(sm,rowIndex,record) { "
-        #yield "    console.log('on_rowselect',this);"
+        yield "this.refresh = function() { console.log('DetailMainPanel.refresh() not yet implemented.');};"
+        yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
+        yield "var load_record = this.load_record = function(record) {"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         #name = 'this.' + self.lh._main.ext_name
         name = self.as_ext()
-        yield "        %s.form._lino_pk = record.data.id;" % name
-        yield "        %s.form.loadRecord(record);" % name
-        yield "        var p = {%s: record.data.%s}" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
+        yield "  %s.current_pk = record.data.id;" % name
+        yield "  %s.form.loadRecord(record);" % name
+        yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
         mt = ContentType.objects.get_for_model(self.report.model).pk
-        yield "        p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-        yield "        for(i=0;i++;i<len(slaves)) {slaves[i].load({params:p})};"
+        yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
+        yield "  for(i=0;i++;i<len(slaves)) { slaves[i].load({params:p}) };"
         #~ for slave in self.lh.slave_grids:
             #~ yield "        %s.load({params: p });" % slave.rh.store.as_ext()
-        yield "  })"
+        yield "};"
+        yield "if(caller) {"
+        yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
+        yield "    function(sm,rowIndex,record) { load_record(record); });"
         
         #~ yield "%s.addListener('load',function(store,rows,options) { " % self.report.store.ext_name
         #~ yield "  %s.form.loadRecord(rows[0]);" % self.ext_name
@@ -1371,8 +1360,8 @@ class ReportMainPanel(Panel):
         buttons = []
 
         url = self.rh.get_absolute_url(submit=True)
-        js = js_code("Lino.form_submit(%s.form,'%s',%s,'%s')" % (
-                self.as_ext(),url,self.rh.store.as_ext(),self.rh.store.pk.name))
+        js = js_code("Lino.form_submit(this,'%s',caller.main_grid.getStore(),'%s')" % (
+                url,self.rh.store.pk.name))
         buttons.append(dict(handler=js,text='Submit'))
         
         for btn in buttons:
@@ -1458,12 +1447,12 @@ Lino.save_window_config = function(caller,url) {
   }
 };
 
-Lino.form_submit = function (form,url,store,pkname) {
+Lino.form_submit = function (caller,url,store,pkname) {
   return function(btn,evt) {
     // console.log(store);
     p = {};
     // p[pkname] = store.getAt(0).data.id;
-    p[pkname] = form._lino_pk
+    p[pkname] = caller.current_pk
     form.submit({
       url: url, 
       failure: function(form, action) {
@@ -1476,14 +1465,14 @@ Lino.form_submit = function (form,url,store,pkname) {
       success: function (form, action) {
         Ext.MessageBox.alert('Saved OK',
           action.result ? action.result.msg : '(undefined action result)');
-          store.reload();
+        store.reload();
       }
     })
   } 
 };
 
 
-Lino.grid_afteredit = function (gridwin,url,pk) {
+Lino.grid_afteredit = function (caller,url,pk) {
   return function(e) {
     /*
     e.grid - This grid
@@ -1494,7 +1483,6 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
     e.row - The grid row index
     e.column - The grid column index
     
-    Note: the line {{{p[e.field+'Hidden'] = e.value;}}} is there for ForeignKeyStoreField.
     
     */
     var p = e.record.data;
@@ -1502,6 +1490,7 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
     p['colname'] = e.field;
     p[e.field] = e.value;
     // console.log(e);
+    // add Hidden value used by ForeignKeyStoreField
     p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
     Ext.Ajax.request({
@@ -1513,8 +1502,8 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
         var result=Ext.decode(response.responseText);
         // console.log(result);
         if (result.success) {
-          gridwin.comp.getStore().commitChanges(); // get rid of the red triangles
-          gridwin.comp.getStore().reload();        // reload our datastore.
+          caller.main_grid.getStore().commitChanges(); // get rid of the red triangles
+          caller.main_grid.getStore().reload();        // reload our datastore.
         } else {
           Ext.MessageBox.alert('Action failed',result.msg);
         }
@@ -1530,7 +1519,7 @@ Lino.grid_afteredit = function (gridwin,url,pk) {
 // Lino.jobs = Array();
 // Lino.active_job = undefined;
 
-Lino.do_action = function(caller,url,name,params,unused_reload,unused_close_dialog,unused_job_params) {
+Lino.do_action = function(caller,url,name,params) {
   // console.log('Lino.do_action()',name,params,reload);
   var doit = function(confirmed) {
     params['confirmed'] = confirmed;
@@ -1546,7 +1535,6 @@ Lino.do_action = function(caller,url,name,params,unused_reload,unused_close_dial
           if (result.msg) Ext.MessageBox.alert('Success',result.msg);
           if (result.html) { new Ext.Window({html:result.html}).show(); };
           if (result.window) { new Ext.Window(result.window).show(); };
-          // if (result.call) { Lino.last_result = new result.call(); };
           if (result.call) {
             var job = new result.call(caller);
             // Lino.active_job = Lino.jobs.length;
@@ -1588,13 +1576,8 @@ Lino.grid_action = function(caller,name,url) {
   // console.log("grid_action.gridwin=",gridwin);
   // console.log("foo",grid,name,url);
   return function(event) {
-    // 'this' is the button who called this handler
-    // console.log("grid_action.this = ",this);
-    // console.log("grid_action.event = ",event);
     var sel_pks = '';
-    var must_reload = false;
     var sels = caller.main_grid.getSelectionModel().getSelections();
-    // console.log(sels);
     for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };
     Lino.do_action(caller,url,name,{selected:sel_pks});
   };
@@ -1613,7 +1596,7 @@ Lino.gup = function( name )
   else
     return results[1];
 };"""
-        uri = request.build_absolute_uri()
+        #uri = request.build_absolute_uri()
         uri = request.path
         s += """
 Lino.goto_permalink = function () {
@@ -1626,11 +1609,12 @@ Lino.goto_permalink = function () {
 };""" % uri
 
         s += """
-Lino.show_detail = function (caller,url,name) { 
+Lino.show_slave = function (caller,url,name) { 
   return function(btn,evt) {
-    p = caller.main_grid.getStore().baseParams;
-    // console.log('show_detail',btn,evt,rptwin,url,name,p)
-    Lino.do_action(caller,url,name,p,null,null,{tied_grid:caller});
+    // p = caller.main_grid.getStore().baseParams;
+    // console.log('show_detail',name,url,p)
+    // Lino.do_action(caller,url,name,p);
+    Lino.do_action(caller,url,name,{});
   }
 };
 """ 
@@ -1638,9 +1622,8 @@ Lino.show_detail = function (caller,url,name) {
         s += """
 Lino.form_action = function (caller,name,url) { 
   return function(btn,evt) {
-    console.log('form_action()',caller,name);
-    v = caller.get_values();
-    Lino.do_action(caller,url,name,v,undefined,function() {caller.comp.close()});
+    // console.log('form_action()',caller,name);
+    Lino.do_action(caller,url,name,caller.get_values());
   }
 };
 
@@ -2011,7 +1994,7 @@ def json_response(x):
     #s = simplejson.dumps(kw,default=unicode)
     #return HttpResponse(s, mimetype='text/html')
     s = py2js(x)
-    lino.log.debug("json_response() -> %r", s)
+    #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
     
 from lino.ui import base
@@ -2077,9 +2060,9 @@ class ExtUI(base.UI):
 
     def main_panel_class(self,layout):
         if isinstance(layout,layouts.RowLayout) : 
-            return MainGridElement
+            return GridMainPanel
         if isinstance(layout,layouts.PageLayout) : 
-            return ReportMainPanel
+            return DetailMainPanel
         if isinstance(layout,layouts.FormLayout) : 
             return FormMainPanel
         raise Exception("No element class for layout %r" % layout)
@@ -2217,49 +2200,63 @@ class ExtUI(base.UI):
         kw = self.layout2kw(lh,**kw)
         
         def js_lines():
-            #~ stores = [ rh.store ]
-            #~ for e in lh.walk():
-                #~ if isinstance(e,ForeignKeyElement):
-                    #~ stores.append(e.rh.store)
         
             yield "function(caller) {"
-            #for store in stores:
             for nrh in lh._needed_stores:
                 for ln in nrh.store.js_lines():
                     yield "  " + ln
             for ln in lh._main.js_lines():
                 yield "  " + ln
+                
             yield "  this.window = new Ext.Window( %s );" % py2js(kw)
-            #yield "  %s.load();" % rh.store.as_ext()
-            if lh.link.report.master is None:
-                yield "  %s.load();" % rh.store.as_ext()
-            else:
-                master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
-                yield "var store = %s;" % rh.store.as_ext()
-                yield "if (caller) {"
-                yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
-                yield "    function(sm,rowIndex,record) { "
-                yield "      var p = { %s:record.id, %s:%r };" % (
-                  URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
-                # yield "      console.log('on_rowselect',this,p);"
-                yield "      store.load({params:p});" 
-                yield "  })"
-                yield "} else {"
-                if rr.master_instance is None:
-                    mpk = None
-                else:
-                    mpk = rr.master_instance.pk
-                yield "  store.load({params:{ %s:%r, %s:%r }});" % (
-                  URL_PARAM_MASTER_PK,mpk,URL_PARAM_MASTER_TYPE,master_type)
-                yield "}"
-              
-                # der folgende fall ist noch nicht uebernommen:
-                #~ yield "    if(master) {"
-                #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
-                #~ yield "      %s.load();" % self.store.as_ext()
             yield "  this.stop = function() {"
             yield "     this.window.close();"
             yield "  }"
+            
+                
+            if isinstance(lh._main,DetailMainPanel):
+                yield "var sels = caller.main_grid.getSelectionModel().getSelections()"
+                yield "if(sels.length > 0) this.load_record(sels[0]);"
+            if isinstance(lh._main,GridMainPanel):
+              
+                yield "  var grid = this.main_grid;"
+                yield "  var store = grid.getStore();"
+                if lh.link.report.master is None:
+                    yield "  store.load();" 
+                else:
+                    master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
+                    yield "if (caller) {"
+                    yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
+                    yield "    function(sm,rowIndex,record) { "
+                    yield "      var p = { %s:record.id, %s:%r };" % (
+                      URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
+                    # yield "      console.log('on_rowselect',this,p);"
+                    yield "      store.load({params:p});" 
+                    yield "  })"
+                    yield "} else {"
+                    if rr.master_instance is None:
+                        mpk = None
+                    else:
+                        mpk = rr.master_instance.pk
+                    yield "  store.load({params:{ %s:%r, %s:%r }});" % (
+                      URL_PARAM_MASTER_PK,mpk,URL_PARAM_MASTER_TYPE,master_type)
+                    yield "}"
+                  
+                    # der folgende fall ist noch nicht uebernommen:
+                    #~ yield "    if(master) {"
+                    #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
+                    #~ yield "      %s.load();" % self.store.as_ext()
+                    
+                # the following doesn't work and i don't understand why
+                yield "  this.window.on('show',function() {"
+                yield "    grid.focus();"
+                yield "  });"
+                yield "  grid.on('viewready',function() {"
+                #yield "    console.log('on render');"
+                #yield "    grid.getView().focusRow(1);"
+                yield "    grid.getSelectionModel().selectFirstRow();"
+                #yield "    grid.getView().focusEl.focus();"
+                yield "  });"
             yield "  this.window.show();"
             yield "}"
             
