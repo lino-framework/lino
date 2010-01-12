@@ -33,7 +33,7 @@ class Note(models.Model):
     #~ class Meta:
         #~ abstract = True
         
-    user = models.ForeignKey("auth.User")
+    user = models.ForeignKey("auth.User",blank=True,null=True)
     date = fields.MyDateField()
     #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
     #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
@@ -49,13 +49,18 @@ class Note(models.Model):
     # partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
     
     def __unicode__(self):
-        s = u"(%s %s)" % (self.user,self.date)
+        if self.user:
+            s = u"(%s %s)" % (self.user,self.date)
+        else:
+            s = u"(Anon %s)" % (self.date)
         if self.short:
             return self.short + " " + s
         return s
         
     def on_create(self,req):
-        self.user = req.get_user()
+        u = req.get_user()
+        if u is not None:
+            self.user = u
         
 
 class NoteDetail(layouts.PageLayout):

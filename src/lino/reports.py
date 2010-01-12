@@ -616,7 +616,7 @@ class ReportRequest:
                 "Value %r is not a LayoutHandle" % layout
         self.layout = layout
         rh.report.setup_request(self)
-        lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)        
+        #lino.log.debug('%sRequest.__init__(%r)',rh.report.actor_id,master_instance)        
         self.queryset = self.get_queryset(**kw)
         #print 20091211, self, self.queryset
         # get_queryset() may return a list

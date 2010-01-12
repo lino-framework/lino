@@ -62,7 +62,12 @@ def define_vars(variables,indent=0,prefix="var "):
 
 def dict2js(d):
     return ", ".join(["%s: %s" % (k,py2js(v)) for k,v in d.items()])
-      
+
+def authenticated_user(user):
+    if user.is_anonymous():
+        return None
+    return user
+        
       
 class ActionContext(actions.ActionContext):
     def __init__(self,request,*args,**kw):
@@ -75,7 +80,7 @@ class ActionContext(actions.ActionContext):
         #print 'ActionContext.__init__()', self.confirmed, self.selected_rows
         
     def get_user(self):
-        return self.request.user
+        return authenticated_user(self.request.user)
         
 class GridActionContext(ActionContext):
     def __init__(self,request,*args,**kw):
@@ -1303,7 +1308,7 @@ class DetailMainPanel(Panel):
             yield ln
         #yield "mastergrid = Ext.getCmp()"
         yield "this.refresh = function() { console.log('DetailMainPanel.refresh() not yet implemented.');};"
-        yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
+        #yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
         yield "var load_record = this.load_record = function(record) {"
         #yield "function load_record (record) {"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
@@ -1315,9 +1320,9 @@ class DetailMainPanel(Panel):
         #yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
         mt = ContentType.objects.get_for_model(self.report.model).pk
         yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
-        yield "  for(i=0;i++;i<len(slaves)) { slaves[i].load({params:p}) };"
-        #~ for slave in self.lh.slave_grids:
-            #~ yield "        %s.load({params: p });" % slave.rh.store.as_ext()
+        for slave in self.lh.slave_grids:
+            yield "  %s.load({params:p});" % slave.rh.store.as_ext()
+        #yield "  for(i=0;i++;i<slaves.length) { console.log('load slave',slaves[i],p); slaves[i].load({params:p}) };"
         yield "};"
         yield "if(caller) {"
         yield "  caller.main_grid.getSelectionModel().addListener('rowselect',"
@@ -1804,8 +1809,7 @@ class ViewReportRequest(reports.ReportRequest):
         request._lino_request = self
         
     def get_user(self):
-        return self.request.user
-        
+        return authenticated_user(self.request.user)
 
     def get_absolute_url(self,**kw):
         if self.master_instance is not None:
@@ -1843,7 +1847,7 @@ class ViewReportRequest(reports.ReportRequest):
     def render_to_json(self):
         rows = [ self.obj2json(row) for row in self.queryset ]
         total_count = self.total_count
-        # add one empty row:
+        # add extra blank row(s):
         for i in range(0,self.extra):
         #if self.layout.index == 1: # currently only in a grid
             row = self.create_instance()
