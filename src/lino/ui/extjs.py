@@ -45,6 +45,7 @@ EXT_CHAR_HEIGHT = 12
 URL_PARAM_MASTER_TYPE = 'mt'
 URL_PARAM_MASTER_PK = 'mk'
 # URL_PARAM_MASTER_GRID = 'mg'
+URL_PARAM_FILTER = 'qs'
 
 def define_vars(variables,indent=0,prefix="var "):
     template = "var %s = %s;"
@@ -1106,7 +1107,8 @@ class TabPanel(Container):
         return d
         
 class GridElement(Container):
-    value_template = "new Ext.grid.EditorGridPanel(%s)"
+    #value_template = "new Ext.grid.EditorGridPanel(%s)"
+    value_template = "new Lino.GridPanel(%s)"
     ext_suffix = "_grid"
     #has_comp = True    
     
@@ -1168,6 +1170,7 @@ class GridElement(Container):
             
         self.keys = Variable(self.ext_name+'_keys',keys)
         self.buttons = Variable(self.ext_name+'_buttons',buttons)
+        self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
         
         
     def js_lines(self):
@@ -1178,6 +1181,8 @@ class GridElement(Container):
           self.as_ext(),
           self.rh.get_absolute_url(grid_afteredit=True),
           self.rh.store.pk.name)
+        yield "%s.on('cellcontextmenu', Lino.cell_context_menu(this));" % self.as_ext()
+        
           
     def js_elements(self):
         """
@@ -1189,6 +1194,7 @@ class GridElement(Container):
         yield self.column_model
         yield self.buttons
         yield self.keys
+        yield self.cmenu
 
     def ext_options(self):
         self.setup()
@@ -1215,6 +1221,16 @@ class GridElement(Container):
         #d.update(layout='fit')
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
+        #~ def cellcontextmenu():
+            #~ yield "Lino.cell_context_menu = function(grid,row,col,e) {"
+            #~ yield "  console.log('contextmenu',grid,row,col,e);"
+            #~ yield "  e.stopEvent();"
+            #~ yield "  if(!this.cmenu.el){this.cmenu.render(); }"
+            #~ yield "  var xy = e.getXY();"
+            #~ yield "  xy[1] -= this.cmenu.el.getHeight();"
+            #~ yield "  this.cmenu.showAt(xy);"
+            #~ yield "}"
+        #~ d.update(listeners=dict(cellcontextmenu=cellcontextmenu))
         
         tbar = dict(
           store=self.rh.store,
@@ -1224,6 +1240,25 @@ class GridElement(Container):
           items=self.buttons, # js_code('buttons'),
         )
         d.update(tbar=js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
+        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
+        def keypress():
+            yield "function(field, e) {"
+            # searching starts when user presses Enter.
+            yield "  if(e.getKey() == e.RETURN) {"
+            yield "    console.log('keypress',field.getValue(),store)"
+            #    // var searchString = Ext.getCmp('seachString').getValue();
+            yield "    store.setBaseParam('%s',field.getValue());" % URL_PARAM_FILTER
+            yield "    store.load({params: { start: 0, limit: %d }});" % self.report.page_length
+            yield "  }"
+            yield "}"
+        search_field = dict(
+            id = 'seachString',
+            fieldLabel = 'Search',
+            xtype = 'textfield',
+            enableKeyEvents = True, # required if you need to detect key-presses
+            listeners = dict(keypress=keypress)
+        )
+        d.update(bbar=[search_field])
         return d
             
       
@@ -1661,6 +1696,45 @@ Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_UR
                 for ln in a.js_lines():
                     s += "\n" + ln
 
+
+        s += """
+Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
+  afterRender : function() {
+    Lino.GridPanel.superclass.afterRender.call(this);
+    // this.getView().mainBody.focus();
+    // console.log(20100114,this.getView().getRows());
+    // if (this.getView().getRows().length > 0) {
+    //  this.getView().focusRow(1);
+    // }
+    var tbar = this.getTopToolbar();
+    // tbar.on('change',function() {this.getView().focusRow(1);},this);
+    // tbar.on('change',function() {this.getSelectionModel().selectFirstRow();this.getView().mainBody.focus();},this);
+    // tbar.on('change',function() {this.getView().mainBody.focus();},this);
+    // tbar.on('change',function() {this.getView().focusRow(1);},this);
+    this.nav = new Ext.KeyNav(this.getEl(),{
+      pageUp: function() {tbar.movePrevious(); },
+      pageDown: function() {tbar.moveNext(); },
+      home: function() {tbar.moveFirst(); },
+      end: function() {tbar.moveLast(); },
+      scope: this
+    });
+  }
+});
+
+Lino.cell_context_menu = function(job) {
+  return function(grid,row,col,e) {
+    // console.log('contextmenu',grid,row,col,e);
+    e.stopEvent();
+    grid.getView().focusRow(row);
+    if(!job.cmenu.el){job.cmenu.render(); }
+    var xy = e.getXY();
+    xy[1] -= job.cmenu.el.getHeight();
+    job.cmenu.showAt(xy);
+  }
+}
+
+
+        """
         s += """
 Lino.on_load_menu = function(response) {
   // console.log('success',response.responseText);
@@ -1787,7 +1861,7 @@ class ViewReportRequest(reports.ReportRequest):
                 self.sort_direction = 'DESC'
             kw.update(order_by=sort)
         
-        quick_search = request.GET.get('query',None)
+        quick_search = request.GET.get(URL_PARAM_FILTER,None)
         if quick_search:
             kw.update(quick_search=quick_search)
         offset = request.GET.get('start',None)
@@ -2206,6 +2280,7 @@ class ExtUI(base.UI):
         rh = self.get_report_handle(rpt)
         rr = ViewReportRequest(context.request,rh)
         lh = rr.layout 
+        # kw['defaultButton'] = js_code('this.main_grid')
         kw = self.layout2kw(lh,**kw)
         
         def js_lines():
@@ -2257,15 +2332,15 @@ class ExtUI(base.UI):
                     #~ yield "      %s.load();" % self.store.as_ext()
                     
                 # the following doesn't work and i don't understand why
-                yield "  this.window.on('show',function() {"
-                yield "    grid.focus();"
-                yield "  });"
-                yield "  grid.on('viewready',function() {"
-                #yield "    console.log('on render');"
-                #yield "    grid.getView().focusRow(1);"
-                yield "    grid.getSelectionModel().selectFirstRow();"
-                #yield "    grid.getView().focusEl.focus();"
-                yield "  });"
+                #~ yield "  this.window.on('show',function() {"
+                #~ yield "    grid.focus();"
+                #~ yield "  });"
+                #~ yield "  grid.on('viewready',function() {"
+                #~ #yield "    console.log('on render');"
+                #~ #yield "    grid.getView().focusRow(1);"
+                #~ yield "    grid.getSelectionModel().selectFirstRow();"
+                #~ #yield "    grid.getView().focusEl.focus();"
+                #~ yield "  });"
             yield "  if (caller) {"
             yield "    caller.window.on('close',function() {"
             yield "      console.log('close',caller,this);"
@@ -2273,6 +2348,7 @@ class ExtUI(base.UI):
             yield "    },this);"
             yield "  }"
             yield "  this.window.show();"
+            yield "  this.window.focus();"
             yield "}"
             
         context.response.update(call=js_lines)

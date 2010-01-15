@@ -44,8 +44,8 @@ def resolve_model(model_spec,app_label=None,who=None):
         model = model_spec
     if not isinstance(model,type) or not issubclass(model,models.Model):
         raise Exception(
-            "%s could not resolve model_spec %r using app_label=%r" % (
-            who,model_spec,app_label))
+            "resolve_model(%r,app_label=%r,who=%r) found %r" % (
+            model_spec,app_label,who,model))
     return model
     
     
