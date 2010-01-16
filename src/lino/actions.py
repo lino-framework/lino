@@ -13,6 +13,7 @@
 
 import traceback
 from django.utils.translation import ugettext as _
+from django.utils.encoding import force_unicode
 
 import lino
 from lino.utils import actors
@@ -55,6 +56,7 @@ class Action: # (actors.Actor):
     name = None
     key = None
     needs_selection = False
+    needs_validation = False
     
     def __init__(self):
         #actors.Actor.__init__(self)
@@ -91,8 +93,9 @@ class ActionContext:
             except ActionEvent,e:
                 pass
             except Exception,e:
-                traceback.print_exc(e)
-                self.response.update(msg=str(e),success=False)
+                #traceback.print_exc(e)
+                #print repr(e)
+                self.response.update(msg=force_unicode(e),success=False)
         return self.response
         
     def get_user(self):
@@ -163,6 +166,7 @@ class CancelDialog(Action):
         context.cancel()
 
 class OK(Action):
+    needs_validation = True
     label = "OK"
     key = RETURN
 

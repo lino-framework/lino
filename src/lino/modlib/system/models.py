@@ -82,7 +82,7 @@ class PasswordReset(forms.Form):
 from django.contrib.auth import login, authenticate, logout
 
 class LoginOK(actions.OK):
-  
+
     label = _("Login")
     
     def run(self,context):
@@ -90,17 +90,16 @@ class LoginOK(actions.OK):
         username = context.request.POST.get('username')
         password = context.request.POST.get('password')
 
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if user is None:
-                raise actions.ValidationError(
-                _("Please enter a correct username and password. Note that both fields are case-sensitive."))
-            elif not user.is_active:
-                raise actions.ValidationError(_("This account is inactive."))
-            login(context.request, user)
-            #lino.log.info("User %s logged in.",user)
-            context.refresh_menu()
-            context.done("Welcome, %s!" % user)
+        user = authenticate(username=username, password=password)
+        if user is None:
+            raise actions.ValidationError(
+            _(u"Please enter a correct username and password. Note that both fields are case-sensitive."))
+        elif not user.is_active:
+            raise actions.ValidationError(_("This account is inactive."))
+        login(context.request, user)
+        #lino.log.info("User %s logged in.",user)
+        context.refresh_menu()
+        context.done("Welcome, %s!" % user)
         
 
 class LoginLayout(layouts.FormLayout):
@@ -110,7 +109,8 @@ class LoginLayout(layouts.FormLayout):
     password
     cancel ok
     """
-    text = layouts.StaticText("Please enter your username and password to authentificate.")
+    text = layouts.StaticText(_("Please enter your username and password to authentificate."))
+    default_button = 'ok'
     
 
 
@@ -118,12 +118,13 @@ class Login(forms.Form):
     layout = LoginLayout
     #username = models.CharField(verbose_name=_("Username"), max_length=75)    
     #password = models.CharField(verbose_name=_("Password"), max_length=75)
-    username = forms.Input(fieldLabel=_("Username"),maxLength=75)
-    password = forms.Input(fieldLabel=_("Password"),maxLength=75,inputType='password')
+    username = forms.Input(fieldLabel=_("Username"),maxLength=75,allowBlank=False)
+    password = forms.Input(fieldLabel=_("Password"),maxLength=75,inputType='password',allowBlank=False)
     ok = LoginOK()
   
 
     def before(self,context):
+        # not used
         if not context.request.session.test_cookie_worked():
            raise actions.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
         

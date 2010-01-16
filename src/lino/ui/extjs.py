@@ -669,9 +669,10 @@ class InputElement(LayoutElement):
         kw = LayoutElement.ext_options(self,**kw)
         kw.update(self.input.options)
         kw.update(name=self.name)
+        kw.update(id=self.name)
         #kw.update(xtype='textfield')
-        po = dict(xtype='container',layout='form',items=kw)
-        return po
+        panel_options = dict(xtype='container',layout='form',items=kw)
+        return panel_options
         
 class ButtonElement(LayoutElement):
     #declare_type = DECLARE_INLINE
@@ -692,8 +693,11 @@ class ButtonElement(LayoutElement):
         kw = LayoutElement.ext_options(self,**kw)
         #kw.update(xtype=self.xtype)
         kw.update(text=self.action.label or self.name)
-        kw.update(handler=js_code('Lino.form_action(this,%r,%r)' % (
-          self.name,self.lh.ui.get_button_url(self))))
+        kw.update(id=self.name)
+        if self.lh.default_button == self:
+            kw.update(plugins='defaultButton')
+        kw.update(handler=js_code('Lino.form_action(this,%r,%s,%r)' % (
+          self.name,py2js(self.action.needs_validation),self.lh.ui.get_button_url(self))))
         return kw
 
 
@@ -1664,9 +1668,13 @@ Lino.show_slave = function (caller,url,name) {
 """ 
 
         s += """
-Lino.form_action = function (caller,name,url) { 
+Lino.form_action = function (caller,name,needs_validation,url) { 
   return function(btn,evt) {
-    // console.log('form_action()',caller,name);
+    // console.log('Lino.form_action()',caller,name,needs_validation);
+    if (needs_validation && !caller.main_panel.form.isValid()) {
+        Ext.MessageBox.alert('error',"One or more fields contain invalid data.");
+        return;
+    }
     Lino.do_action(caller,url,name,caller.get_values());
   }
 };
@@ -1780,6 +1788,51 @@ Lino.load_main_menu = function() {
     }
   });
 };
+
+
+(function(){
+    var ns = Ext.ns('Ext.ux.plugins');
+
+    /**
+     * @class Ext.ux.plugins.DefaultButton
+     * @extends Object
+     *
+     * Plugin for Button that will click() the button if the user presses ENTER while
+     * a component in the button's form has focus.
+     *
+     * @author Stephen Friedrich
+     * @date 09-DEC-2009
+     * @version 0.1
+     *
+     */
+    ns.DefaultButton =  Ext.extend(Object, {
+        init: function(button) {
+            button.on('afterRender', setupKeyListener, button);
+        }
+    });
+
+    function setupKeyListener() {
+        var formPanel = this.findParentByType('form');
+        new Ext.KeyMap(formPanel.el, {
+            key: Ext.EventObject.ENTER,
+            shift: false,
+            alt: false,
+            fn: function(keyCode, e){
+                if(e.target.type === 'textarea' && !e.ctrlKey) {
+                    return true;
+                }
+
+                this.el.select('button').item(0).dom.click();
+                return false;
+            },
+            scope: this
+        });
+    }
+
+    Ext.ComponentMgr.registerPlugin('defaultButton', ns.DefaultButton);
+
+})(); 
+
 
 """   
 
@@ -2250,6 +2303,8 @@ class ExtUI(base.UI):
         kw.update(tools=[dict(id='save',handler=js_code(js))])
         kw.update(layout='fit')
         kw.update(items=lh._main)
+        # if lh.layout.default_element is not None:
+        #     kw.update(defaultButton=lh.layout.default_element)
         wc = self.window_configs.get(name,None)
         if wc is None:
             if lh.height is None:
