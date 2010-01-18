@@ -93,7 +93,17 @@ class FormHandle(layouts.DataLink):
                 
     def get_absolute_url(self,*args,**kw):
         return self.ui.get_form_url(self,*args,**kw)
+
+
+    def get_actions(self):
+        return []
         
+    def get_details(self):
+        return []
+
+    def get_slaves(self):
+        return []
+      
         
     #~ def get_fields(self):
         #~ return self._fields

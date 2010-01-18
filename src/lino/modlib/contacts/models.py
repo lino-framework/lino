@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class Contact(models.Model):
     class Meta:
         abstract = True
         
-    name = models.CharField(max_length=200,editable=False)
+    name = models.CharField(max_length=200)
     national_id = models.CharField(max_length=200,blank=True)
     addr1 = models.CharField(max_length=200,blank=True)
     addr2 = models.CharField(max_length=200,blank=True)
@@ -115,7 +115,7 @@ class Person(Contact):
         return r
         
     def before_save(self):
-        if True: # not self.name:
+        if not self.name:
             l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
             self.name = " ".join(l)
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -15,19 +15,20 @@
 
 from django.test import TestCase
 #from lino.igen import models
-from lino.modlib.contacts.models import Contact, Companies
-from lino.modlib.countries.models import Country
+#from lino.modlib.contacts.models import Contact, Companies
+#from lino.modlib.countries.models import Country
+from lino.modlib.contacts.models import Companies
 
-from django.forms.models import modelform_factory, formset_factory
-from lino import layouts
+from lino.modlib.tools import resolve_model
+Person = resolve_model('contacts.Person')
+#Companies = resolve_model('contacts.Companies')
 
 class DemoTest(TestCase):
-    urls = 'mysites.demo.urls'
     fixtures = [ 'demo' ]
         
     def test01(self):
-        self.assertEquals(Contact.objects.count(), 16)
-        luc = Contact.objects.get(id=2)
+        self.assertEquals(Person.objects.count(), 16)
+        luc = Person.objects.get(id=2)
         print repr(luc)
         self.assertEquals(unicode(luc), 'Luc Saffre')
         self.assertEquals(luc.as_address("\n"), u'''\
@@ -41,20 +42,17 @@ Vigala vald
         """A simple query. Select all contacts whose lastName contains an 'a', ordered by lastName.
         """
         
-        s="\n".join([unicode(c) 
-          for c in Contact.objects.filter(
+        s = "\n".join([unicode(c) 
+          for c in Person.objects.filter(
             lastName__contains="a").order_by("lastName")])
         #print "\n"+s
         self.assertEquals(s,u"""\
 Andreas Arens
-Bäckerei Ausdemwald (Alfons Ausdemwald)
 Bernard Bodard
 Emil Eierschal
 Jérôme Jeanémart
 Karl Kask
-Hans Flott & Co (Lisa Lahm)
-Luc Saffre
-Mets ja Puu OÜ (Tõnu Tamme)""")
+Luc Saffre""")
 
     def test05(self):
         s = Companies().as_text(
@@ -74,38 +72,4 @@ Minu Firma OÜ       |Estonia     |              |              |
 """.split(),"Companies().as_text() has changed in demo")
         
         
-        
-    def test10(self):
-        for url in (
-          '',
-          '/contacts',
-          '/contacts/contacts',
-          '/contacts/contacts?editing=1',
-          '/contacts/contacts?editing=0',
-          #'/instance/igen/Contact/1',
-        ):
-            response = self.client.get(url) # ,follow=True)
-            self.failUnlessEqual(response.status_code, 200,
-              "GET %r fails to respond" % url)
-
-        # now we just check whether some methods raise an exception
-        # templates silently ignore them
-        response = self.client.get('/contacts/contacts')
-        s = "\n".join([repr(c) for c in response.context])
-        renderer = response.context[0].get("report")
-        s = renderer.navigator()
-        count = 0
-        for row in renderer.rows():
-            s = row.as_html()
-            count += 1
-        self.assertEqual(count,15)
-        
-        response = self.client.get('/config/languages/1')
-        report = response.context[0].get("report")
-        s = report.layout.as_html()
-
-        response = self.client.get('/contacts/contacts/1?editing=1')
-        report = response.context[0].get("report")
-        s = report.layout.as_html()
-        s = report.navigator()
         

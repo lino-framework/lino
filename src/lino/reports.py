@@ -255,7 +255,7 @@ class Report(actors.Actor): # actions.Action): #
         self._handles = {}
         self._setup_done = False
         self._setup_doing = False
-        self.actions = self.actions + [ actions.DeleteSelected() ]
+        self.actions = self.actions + [ actions.DeleteSelected(), actions.InsertRow() ]
         
         #~ if self.field is None:
         if self.model is None:
@@ -552,6 +552,17 @@ class ReportHandle(layouts.DataLink):
         for vf in self.report.model._meta.virtual_fields:
             if vf.name == name:
                 return vf
+                
+    def get_actions(self):
+        return self.report.actions
+        
+    def get_details(self):
+        return self.layouts[1:]
+          
+    def get_slaves(self):
+        return [ sl.get_handle(self.ui) for sl in self.report._slaves ]
+            
+        
           
           
     #~ def get_fields(self):

@@ -34,10 +34,12 @@ class Hotkey:
                 kw[n] = getattr(self,n)
             return Hotkey(**kw)
       
+# ExtJS src/core/EventManager-more.js
 RETURN = Hotkey(keycode=13)
 ESCAPE = Hotkey(keycode=27)
 PAGE_UP  = Hotkey(keycode=33)
 PAGE_DOWN = Hotkey(keycode=34)
+INSERT = Hotkey(keycode=44)
 DELETE = Hotkey(keycode=46)
     
 class ActionEvent(Exception):
@@ -84,7 +86,7 @@ class ActionContext:
     def run(self):
         if self.action.needs_selection and len(self.selected_rows) == 0:
             self.response.update(
-              msg="No selection. Nothing to do.",
+              msg=_("No selection. Nothing to do."),
               success=False)
         else:
             lino.log.debug('ActionContext.run() : %s.%s(%r,%r)',self.actor,self.action.name,self._args,self._kw)
@@ -142,16 +144,30 @@ class ActionContext:
     def js_eval(self,js):
         self.response.update(js_eval=js)
 
+class InsertRow(Action):
+    label = _("Insert")
+    key = INSERT # (ctrl=True)
+    
+    def run(self,context):
+        #if len(context.selected_rows) != 1:
+        #    return context.error(_("More than one row selected."))
+        context.confirm(_("Insert new row. Are you sure?"))
+        rr = context.get_report_request()
+        row = rr.create_instance()
+        row.save()
+        context.refresh()
+        
+  
 class DeleteSelected(Action):
     needs_selection = True
-    label = "Delete"
+    label = _("Delete")
     key = DELETE # (ctrl=True)
     
     def run(self,context):
         if len(context.selected_rows) == 1:
-            context.confirm("Delete row %s. Are you sure?" % context.selected_rows[0])
+            context.confirm(_("Delete row %s. Are you sure?") % context.selected_rows[0])
         else:
-            context.confirm("Delete %d rows. Are you sure?" % len(context.selected_rows))
+            context.confirm(_("Delete %d rows. Are you sure?") % len(context.selected_rows))
         for row in context.selected_rows:
             #print "DELETE:", row
             row.delete()

@@ -1,5 +1,5 @@
 #coding: utf8
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ from django.contrib.auth import models as auth
 
 def objects():
   
-    u = auth.User.objects.get(username='user')
+    u = auth.User.objects.get(pk=1) # username='user')
     
     notetype = Instantiator('notes.NoteType').build
     yield notetype(name="phone report")
