@@ -1207,11 +1207,44 @@ class GridElement(Container,DataElementMixin):
         else:
             self.preferred_height += ADD_GRID_HEIGHT
         
-        
         self.rh = rh
         self.report = rh.report
         lh.needs_store(rh)
         self.column_model = ColumnModel(self)
+        
+        self.pager = None
+        
+    def setup(self):
+        if self.pager:
+            return
+        DataElementMixin.setup(self)
+        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
+        def keypress():
+            yield "function(field, e) {"
+            # searching starts when user presses ENTER.
+            yield "  if(e.getKey() == e.RETURN) {"
+            # yield "    console.log('keypress',field.getValue(),store)"
+            #    // var searchString = Ext.getCmp('seachString').getValue();
+            yield "    store.setBaseParam('%s',field.getValue());" % URL_PARAM_FILTER
+            yield "    store.load({params: { start: 0, limit: this.pager.pageSize }});" 
+            yield "  }"
+            yield "}"
+        search_field = dict(
+            id = 'seachString',
+            fieldLabel = 'Search',
+            xtype = 'textfield',
+            enableKeyEvents = True, # required if you need to detect key-presses
+            #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
+            listeners = dict(keypress=keypress,scope=js_code('this'))
+        )
+        tbar = dict(
+          store=self.rh.store,
+          displayInfo=True,
+          pageSize=self.report.page_length,
+          prependButtons=True,
+          items=[search_field], # js_code('buttons'),
+        )
+        self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         
         
     def js_lines(self):
@@ -1223,17 +1256,31 @@ class GridElement(Container,DataElementMixin):
           self.rh.get_absolute_url(grid_afteredit=True),
           self.rh.store.pk.name)
         yield "%s.on('cellcontextmenu', Lino.cell_context_menu(this));" % self.as_ext()
+        # recalculate page size when size changes
+        yield "%s.on('resize', function() {" % self.as_ext()
+        yield "    this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
+        yield "    this.refresh();"
+        yield "  }, this, {delay:500});"
+        # first load with "offset" and "limit" params
+        yield "%s.on('render', function() {" % self.as_ext()
+        yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
+        yield "  this.refresh();"
+        #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
+        yield "}, this, {delay:100});"
+        
         
           
     def js_elements(self):
         """
-        GridElement, though it is a Container, doesn't generate the declaration of its elements 
+        GridElement, unlike Container, doesn't generate the declaration of its elements 
         because self.column_model does this indirectly.
         """
+        self.setup()
         #yield self.rh.store
         yield self.column_model
         for e in DataElementMixin.js_elements(self):
             yield e
+        yield self.pager
 
     def ext_options(self):
         self.setup()
@@ -1260,44 +1307,7 @@ class GridElement(Container,DataElementMixin):
         #d.update(layout='fit')
         d.update(enableColLock=False)
         d.update(selModel=js_code("new Ext.grid.RowSelectionModel({singleSelect:false})"))
-        #~ def cellcontextmenu():
-            #~ yield "Lino.cell_context_menu = function(grid,row,col,e) {"
-            #~ yield "  console.log('contextmenu',grid,row,col,e);"
-            #~ yield "  e.stopEvent();"
-            #~ yield "  if(!this.cmenu.el){this.cmenu.render(); }"
-            #~ yield "  var xy = e.getXY();"
-            #~ yield "  xy[1] -= this.cmenu.el.getHeight();"
-            #~ yield "  this.cmenu.showAt(xy);"
-            #~ yield "}"
-        #~ d.update(listeners=dict(cellcontextmenu=cellcontextmenu))
-        
-        # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
-        def keypress():
-            yield "function(field, e) {"
-            # searching starts when user presses Enter.
-            yield "  if(e.getKey() == e.RETURN) {"
-            # yield "    console.log('keypress',field.getValue(),store)"
-            #    // var searchString = Ext.getCmp('seachString').getValue();
-            yield "    store.setBaseParam('%s',field.getValue());" % URL_PARAM_FILTER
-            yield "    store.load({params: { start: 0, limit: %d }});" % self.report.page_length
-            yield "  }"
-            yield "}"
-        search_field = dict(
-            id = 'seachString',
-            fieldLabel = 'Search',
-            xtype = 'textfield',
-            enableKeyEvents = True, # required if you need to detect key-presses
-            listeners = dict(keypress=keypress)
-        )
-        tbar = dict(
-          store=self.rh.store,
-          displayInfo=True,
-          pageSize=self.report.page_length,
-          prependButtons=True,
-          items=[search_field], # js_code('buttons'),
-        )
-        d.update(tbar=js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
-        #d.update(tbar=tbar)
+        d.update(tbar=self.pager)
         d.update(bbar=self.buttons)
         return d
             
@@ -1338,7 +1348,10 @@ class GridMainElement(GridElement):
     def js_lines(self):
         for ln in GridElement.js_lines(self):
             yield ln
-        yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
+        #yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
+        yield "this.refresh = function() { "
+        yield "  %s.getStore().load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.as_ext()
+        yield "}"
         yield "this.get_current_record = function() {"
         yield "  return this.%s.getSelectionModel().getSelected();" % self.ext_name
         yield "};" 
@@ -1799,8 +1812,32 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
       end: function() {tbar.moveLast(); },
       scope: this
     });
+  },
+  // pageSize depends on grid height (Trying to remove scrollbar)
+  // Thanks to Christophe Badoit on http://www.extjs.net/forum/showthread.php?t=82647
+  calculatePageSize : function() {
+    if (!this.rendered) { return false; }
+    var row = this.view.getRow(0);
+    var rowHeight;
+    if (!row) { 
+        rowHeight = 41;
+    } else {
+        rowHeight = Ext.get(row).getHeight();
+    }
+    // var height = this.getView().scroller.getHeight();
+    // console.log('scroller',this.getView().scroller.getHeight());
+    // console.log('scroller',this.getView().scroller.getHeight());
+    // console.log('mainBody',this.getView().mainBody.getHeight());
+    // console.log('getInnerHeight',this.getInnerHeight());
+    // console.log('getFrameHeight',this.getFrameHeight());
+    var height = this.getView().scroller.getHeight()
+    // height -= this.getFrameHeight();
+    var ps = Math.floor(height / rowHeight);
+    ps -= 1;
+    return (ps > 1 ? ps : false);
   }
-});
+  
+  });
 
 Lino.cell_context_menu = function(job) {
   return function(grid,row,col,e) {
@@ -2052,11 +2089,6 @@ class ViewReportRequest(reports.ReportRequest):
         #if self.layout.index == 1: # currently only in a grid
             row = self.create_instance()
             rows.append(self.obj2json(row))
-            #~ d = {}
-            #~ for fld in self.store.fields:
-                #~ d[fld.field.name] = None
-            #~ # d[self.store.pk.name] = UNDEFINED
-            #~ rows.append(d)
             total_count += 1
         return dict(count=total_count,rows=rows)
         
