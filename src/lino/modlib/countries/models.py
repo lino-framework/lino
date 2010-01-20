@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -15,15 +15,16 @@
 import datetime
 from django.db import models
 from lino import reports
-
+from django.utils.translation import ugettext as _
 
 
 class Country(models.Model):
     name = models.CharField(max_length=200)
     isocode = models.CharField(max_length=4,primary_key=True)
+    short_code = models.CharField(max_length=4)
     
     class Meta:
-        verbose_name_plural = "Countries"
+        verbose_name_plural = _("Countries")
     
     def __unicode__(self):
         return self.name
@@ -31,10 +32,30 @@ class Country(models.Model):
 class Countries(reports.Report):
     model = 'countries.Country'
     order_by = "isocode"
-    columnNames = "isocode name"
+    columnNames = "isocode name short_code"
     
 FREQUENT_COUNTRIES = ['BE','NL','DE', 'FR', 'LU']
+
+
+class City(models.Model):
+    name = models.CharField(max_length=200)
+    country = models.ForeignKey('countries.Country')
+    zip_code = models.CharField(max_length=8,blank=True)
     
+    class Meta:
+        verbose_name_plural = _("Cities")
+    
+    def __unicode__(self):
+        return self.name
+        
+class Cities(reports.Report):
+    model = 'countries.City'
+    order_by = "name"
+    columnNames = "name zip_code"
+    
+
+
+
 class Language(models.Model):
     id = models.CharField(max_length=2,primary_key=True)
     name = models.CharField(max_length=200)

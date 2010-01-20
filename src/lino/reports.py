@@ -390,9 +390,9 @@ class Report(actors.Actor): # actions.Action): #
             #~ return self.label
         return self.title or self.label
         
-    def get_queryset(self,req,master_instance=None,quick_search=None,order_by=None,**kw):
-        assert isinstance (req,ReportRequest)
-        assert req.report is self
+    def get_queryset(self,master_instance=None,quick_search=None,order_by=None,**kw):
+        #~ assert isinstance (req,ReportRequest)
+        #~ assert req.report is self
         #lino.log.debug('%sReport.get_queryset(%r)',self.actor_id,master_instance)
         if self.queryset is not None:
             qs = self.queryset
@@ -470,6 +470,29 @@ class Report(actors.Actor): # actions.Action): #
         r = renderers_text.TextReportRequest(self,*args,**kw)
         return r.render()
         
+    def get_field_choices(self,fld,pk):
+        # pk is the primary key of the "receiving" instance (who is asking for a list of choices)
+        methname = fld.name + "_choices"
+        meth = getattr(self,methname,None)
+        if meth is not None:
+            try:
+                recipient = fld.rel.to.objects.get(pk=pk)
+            except fld.rel.to.DoesNotExist:
+                pass
+            else:
+                choices = meth(recipient)
+                if choices is not None:
+                    return choices
+        # print 20100120, "%s has not attribute %s" % (self,methname)
+        return fld.rel.to.objects.all()
+        # return get_model_report(field.rel.to)
+        #return field._lino_choice_report
+        #~ rpt = getattr(field,'_lino_choice_report',None)
+        #~ if rpt is None:
+            #~ return get_model_report(field.rel.to)
+        #~ return rpt
+        
+        
     @classmethod
     def register_page_layout(cls,*layouts):
         cls.page_layouts = tuple(cls.page_layouts) + layouts
@@ -500,7 +523,7 @@ class ReportHandle(layouts.DataLink):
         assert isinstance(report,Report)
         #self._rd = rd
         self.actor = self.report = report
-        #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth','get_field_choices',
+        #~ for n in 'get_fields', 'get_slave','try_get_field','try_get_meth',
                   #~ 'get_title'):
             #~ setattr(self,n,getattr(report,n))
             
@@ -590,15 +613,6 @@ class ReportHandle(layouts.DataLink):
     def get_title(self,renderer):
         return self.report.get_title(renderer)
         
-    def get_field_choices(self,field):
-        return get_model_report(field.rel.to)
-        #return field._lino_choice_report
-        #~ rpt = getattr(field,'_lino_choice_report',None)
-        #~ if rpt is None:
-            #~ return get_model_report(field.rel.to)
-        #~ return rpt
-        
-        
     
 class ReportRequest:
     """
@@ -659,7 +673,7 @@ class ReportRequest:
         raise NotImplementedError
         
     def get_queryset(self,**kw):
-        return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
+        return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
 
 

@@ -21,15 +21,38 @@ Examples:
 
 >>> name2kw("Saffre Luc")
 {'first_name': 'Luc', 'last_name': 'Saffre'}
+
 >>> name2kw("Van Rompuy Herman")
 {'first_name': 'Herman', 'last_name': 'Van Rompuy'}
+
 >>> name2kw("'T Jampens Jan")
 {'first_name': 'Jan', 'last_name': "'T Jampens"}
 >>> name2kw("Van den Bossche Marc Antoine Bernard")
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
 
+>>> street2kw(u"Limburger Weg")
+{'street': u'Limburger Weg'}
+>>> street2kw(u"Loten 3")
+{'street_box': u'', 'street': u'Loten', 'street_no': u'3'}
+>>> street2kw(u"Loten 3A")
+{'street_box': u'A', 'street': u'Loten', 'street_no': u'3'}
+
+>>> street2kw(u"In den Loten 3A")
+{'street_box': u'A', 'street': u'In den Loten', 'street_no': u'3'}
+
+>>> street2kw(u"Auf'm Bach")
+{'street': u"Auf'm Bach"}
+>>> street2kw(u"Auf'm Bach 3")
+{'street_box': u'', 'street': u"Auf'm Bach", 'street_no': u'3'}
+>>> street2kw(u"Auf'm Bach 3a")
+{'street_box': u'a', 'street': u"Auf'm Bach", 'street_no': u'3'}
+>>> street2kw(u"Auf'm Bach 3 A")
+{'street_box': u'A', 'street': u"Auf'm Bach", 'street_no': u'3'}
 
 """
+
+import re
+
 
 name_prefixes1 = ("HET", "'T",'VAN','DER', 'TER','VON','OF', "DE", "DU", "EL", "AL")
 name_prefixes2 = ("VAN DEN","VAN DE","IN HET", "VON DER","DE LA")
@@ -54,6 +77,33 @@ def name2kw(s,**kw):
             kw['last_name'] = a[0] 
             kw['first_name'] = ' '.join(a[1:])
     return kw
+    
+def street2kw(s,**kw):
+    m = re.match(r"(\D+)\s*(\d+)\s*(\w*)", s)
+    if m:
+        kw['street'] = m.group(1).strip()
+        kw['street_no'] = m.group(2).strip()
+        kw['street_box'] = m.group(3).strip()
+    else:
+        kw['street'] = s
+    return kw
+    
+    #~ a = s.split()
+    #~ if len(a) == 1:
+        #~ kw['street'] = a[0]
+    #~ else:
+        #~ tail = a.pop()
+        #~ if tail.isdigit():
+            #~ kw['street'] = join_words(*a)
+            
+
+def join_words(*words):
+    """
+    removes any None. calls unicode on each.
+    """
+    words = filter(lambda x:x,words)
+    return ' '.join([unicode(x) for x in words])
+      
 
 
 def _test():

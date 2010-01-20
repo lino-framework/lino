@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
 
 #from lino.modlib.countries import models as countries
 #countries = reports.get_app('countries')
@@ -27,6 +28,7 @@ from lino import reports
 from lino import layouts
 from lino.utils import perms
 
+from lino.modlib.contacts.utils import join_words
 
 class Contact(models.Model):
   
@@ -35,11 +37,14 @@ class Contact(models.Model):
         
     name = models.CharField(max_length=200)
     national_id = models.CharField(max_length=200,blank=True)
+    street = models.CharField(max_length=200,blank=True)
+    street_no = models.CharField(max_length=10,blank=True)
+    street_box = models.CharField(max_length=10,blank=True)
     addr1 = models.CharField(max_length=200,blank=True)
-    addr2 = models.CharField(max_length=200,blank=True)
+    #addr2 = models.CharField(max_length=200,blank=True)
     country = models.ForeignKey('countries.Country',blank=True,null=True)
-    #city = models.ForeignKey("City",blank=True,null=True)
-    city = models.CharField(max_length=200,blank=True)
+    city = models.ForeignKey('countries.City',blank=True,null=True)
+    #city = models.CharField(max_length=200,blank=True)
     zip_code = models.CharField(max_length=10,blank=True)
     region = models.CharField(max_length=200,blank=True)
     language = models.ForeignKey('countries.Language',blank=True,null=True)
@@ -57,24 +62,33 @@ class Contact(models.Model):
         return self.name
         
     def as_address(self,linesep="\n<br/>"):
-        l = filter(lambda x:x,[self.name,self.addr1,self.addr2])
-        s = linesep.join(l)
-        if self.city:
-          s += linesep+self.city
-        if self.zipCode:
-          s += linesep+self.zipCode
-          if self.region:
-            s += " " + self.region
-        elif self.region:
-            s += linesep + self.region
+        street = join_words(self.street,self.street_no,self.street_box)
+        lines = [self.name,street,self.addr1]
+        #lines = [self.name,street,self.addr1,self.addr2]
+        if self.region: # format used in Estonia
+            if self.city:
+                lines.append(unicode(self.city))
+            lines.append(join_words(self.zip_code,self.region))
+        else: 
+            lines.append(join_words(self.zip_code,self.city))
         if self.id == 1:
             foreigner = False
         else:
             foreigner = (self.country != Contact.objects.get(id=1).country)
         if foreigner: # (if self.country != sender's country)
-            s += linesep + unicode(self.country)
-        return mark_safe(s)
+            lines.append(unicode(self.country))
+        return linesep.join(lines)
     
+class Contacts(reports.Report):
+    def city_choices(self,recipient):
+        #recipient = self.objects.get(pk=pk)
+        if recipient and recipient.country:
+            return recipient.country.city_set.order_by('name')
+        #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
+        #print "city_choices_filter", recipient
+        #return dict(country__in=(recipient.country,))
+        
+  
 class ContactPageLayout(layouts.PageLayout):
     
     box2 = """national_id:15
@@ -82,8 +96,8 @@ class ContactPageLayout(layouts.PageLayout):
               """
     box3 = """country region
               city zip_code:10
+              street:25 street_no street_box
               addr1:40
-              addr2
               """
     box4 = """email:40 
               url
@@ -125,14 +139,15 @@ class PersonPageLayout(ContactPageLayout):
               nationality language
               """
 
-class Persons(reports.Report):
+class Persons(Contacts):
     model = "contacts.Person"
-    #label = "Personen"
+    label = _("Persons")
     page_layouts = (PersonPageLayout,)
     columnNames = "first_name last_name title country id name"
     can_delete = True
     order_by = "last_name first_name id"
     #can_view = perms.is_authenticated
+    
 
 class PersonsByCountry(Persons):
     fk_name = 'country'
@@ -161,8 +176,8 @@ class CompanyPageLayout(ContactPageLayout):
     box1 = """name 
     vat_id:12"""
               
-class Companies(reports.Report):
-    #label = "Companies"
+class Companies(Contacts):
+    label = _("Companies")
     page_layouts = (CompanyPageLayout,)
     columnNames = "name country id"
     model = 'contacts.Company'
