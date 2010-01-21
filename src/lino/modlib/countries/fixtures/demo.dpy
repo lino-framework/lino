@@ -1,4 +1,4 @@
-## Copyright 2003-2010 Luc Saffre 
+﻿## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,21 +11,18 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-"""
+from django.db import models
+#countries = models.get_app('countries')
 
-import csv
-import os
-import codecs
+from lino.utils.instantiator import Instantiator
 
-if __name__ == "__main__":
-    print "zip_code name"
-    f = codecs.open('belgzip.csv','r',"cp850")
-    r = csv.reader(f)
-    r.next()
-    for (name,zip) in r:
-        print zip, " ", name
-    f.close()
-    
+country = Instantiator('countries.Country',"isocode name").build
 
-    
+def objects():
+
+    yield country('EE',"Estonia")
+    yield country('BE',"Belgium")
+    yield country('DE',"Germany")
+    yield country('FR',"France")
+    yield country('NL',"Netherlands")
+

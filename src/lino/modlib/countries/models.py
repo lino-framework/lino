@@ -50,8 +50,8 @@ class City(models.Model):
         
 class Cities(reports.Report):
     model = 'countries.City'
-    order_by = "name"
-    columnNames = "name zip_code"
+    order_by = "country name"
+    columnNames = "country name zip_code"
     
 
 

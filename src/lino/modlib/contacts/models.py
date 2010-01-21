@@ -61,21 +61,30 @@ class Contact(models.Model):
     def __unicode__(self):
         return self.name
         
+    def address(self):
+        return self.as_address(', ')
+        
     def as_address(self,linesep="\n<br/>"):
-        street = join_words(self.street,self.street_no,self.street_box)
-        lines = [self.name,street,self.addr1]
+        lines = [self.name]
+        if self.street:
+            lines.append(join_words(self.street,self.street_no,self.street_box))
+        if self.addr1:
+            lines.append(self.addr1)
         #lines = [self.name,street,self.addr1,self.addr2]
         if self.region: # format used in Estonia
             if self.city:
                 lines.append(unicode(self.city))
-            lines.append(join_words(self.zip_code,self.region))
+            s = join_words(self.zip_code,self.region)
         else: 
-            lines.append(join_words(self.zip_code,self.city))
-        if self.id == 1:
-            foreigner = False
-        else:
-            foreigner = (self.country != Contact.objects.get(id=1).country)
-        if foreigner: # (if self.country != sender's country)
+            s = join_words(self.zip_code,self.city)
+        if s:
+            lines.append(s)
+        foreigner = False
+        #~ if self.id == 1:
+            #~ foreigner = False
+        #~ else:
+            #~ foreigner = (self.country != self.objects.get(pk=1).country)
+        if foreigner and self.country: # (if self.country != sender's country)
             lines.append(unicode(self.country))
         return linesep.join(lines)
     
@@ -168,9 +177,9 @@ class Company(Contact):
     
     vat_id = models.CharField(max_length=200,blank=True)
     
-    def as_address(self,linesep="\n<br/>"):
-        s = Contact.as_address(self,linesep)
-        return self.name + linesep + s
+    #~ def as_address(self,linesep="\n<br/>"):
+        #~ s = Contact.as_address(self,linesep)
+        #~ return self.name + linesep + s
 
 class CompanyPageLayout(ContactPageLayout):
     box1 = """name 
@@ -179,7 +188,7 @@ class CompanyPageLayout(ContactPageLayout):
 class Companies(Contacts):
     label = _("Companies")
     page_layouts = (CompanyPageLayout,)
-    columnNames = "name country id"
+    columnNames = "name country city id address"
     model = 'contacts.Company'
     order_by = "name"
     #~ queryset = Contact.objects.exclude(companyName__exact=None)\

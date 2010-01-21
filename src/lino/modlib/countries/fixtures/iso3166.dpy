@@ -1,4 +1,5 @@
 # http://www.davros.org/misc/iso3166.html
+# slightly modified
 
 TABLE1 = """
 AF 	AFG 	004 		Afghanistan
@@ -21,7 +22,7 @@ BH 	BHR 	048 		Bahrain, Kingdom of
 BD 	BGD 	050 		Bangladesh, People's Republic of
 BB 	BRB 	052 		Barbados
 BY 	BLR 	112 	 	Belarus
-BE 	BEL 	056 		Belgium, Kingdom of
+BE 	BEL 	056 		Belgium
 BZ 	BLZ 	084 		Belize
 BJ 	BEN 	204 	 	Benin (was Dahomey), People's Republic of
 BM 	BMU 	060 		Bermuda

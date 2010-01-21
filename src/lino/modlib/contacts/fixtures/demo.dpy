@@ -1,5 +1,5 @@
 #coding: utf8
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -19,15 +19,31 @@ from lino.utils.instantiator import Instantiator
 
 
 def objects():
-    company = Instantiator("contacts.Company",country='EE',language='et').build
-    yield company(name=u'Minu Firma OÜ')
-    yield company(name=u'Mets ja Puu OÜ')
+    city = Instantiator('countries.City','name country').build
+    yield city('Eupen','BE')
+    yield city('Kelmis','BE')
+    yield city('Kettenis','BE')
+    yield city('Raeren','BE')
+    yield city('Angleur','BE')
+    yield city(u'Brüssel','BE')
     
-    company = Instantiator('contacts.Company',"name zip_code city addr1",country='BE',language='de').build
-    yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße 45')
-    yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert 103')
-    yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße 53')
-    yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße 13')
+    yield city('Oostende','BE')
+    yield city('Vigala','EE')
+    yield city('Tallinn','EE')
+    yield city(u'Pärnu','EE')
+    yield city(u'Tartu','EE')
+    
+    yield city(u'Aachen','DE')
+    yield city(u'Köln','DE')
+    yield city(u'Berlin','DE')
+    yield city(u'Hamburg','DE')
+    yield city(u'München','DE')
+    
+    company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE',language='de').build
+    yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
+    yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')
+    yield company(u'Bäckerei Schmitz',    '4700', 'Eupen',  u'Aachener Straße','53')
+    yield company(u'Garage Mergelsberg',  '4720', 'Kelmis', u'Kasinostraße','13')
     
     company = Instantiator('contacts.Company',country='NL',language='nl').build
     yield company(name=u'Donderweer bv')
@@ -36,8 +52,10 @@ def objects():
     yield company(name=u'Hans Flott & Co')
     yield company(name=u'Bernd Brechts Bücherladen')
     
+    City = resolve_model('countries.City')
+    eupen = City.objects.get(name__exact='Eupen')
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='BE',language='de',city='Eupen',zip_code='4700').build
+                country='BE',language='de',city=eupen,zip_code='4700').build
     yield person(u'Andreas',  u'Arens')
     yield person(u'Annette',  u'Arens')
     yield person(u'Hans',     u'Altenberg')
@@ -74,9 +92,9 @@ def objects():
     yield person(u'Franz', u'Mießen')
     yield person(u'Marie-Louise', u'Meier')
     
-    
+    raeren = City.objects.get(name__exact='Raeren')
     person = Instantiator('contacts.Person',"first_name last_name",
-                country='BE',language='de',city='Raeren',zip_code='4730').build
+                country='BE',language='de',city=raeren,zip_code='4730').build
     yield person(u'Erich',    u'Emonts')
     yield person(u'Erwin',    u'Emontspool')
     yield person(u'Erna',     u'Emonts-Gast')
@@ -93,11 +111,11 @@ def objects():
     yield person(u'Jean',     u'Radermacher')
     
     
-    person = Instantiator('contacts.Person',country='BE',language='fr').build
+    person = Instantiator('contacts.Person',country='BE',language='fr',city=City.objects.get(name__exact=u'Angleur')).build
     yield person(first_name=u'Bernard',last_name=u'Bodard',title='Dr.')
     yield person(first_name=u'Jean',last_name=u'Dupont')
     
-    person = Instantiator('contacts.Person',country='BE',language='nl').build
+    person = Instantiator('contacts.Person',country='BE',language='nl',city=City.objects.get(name__exact=u'Oostende')).build
     yield person(first_name=u'Mark',last_name=u'Martelaer')
     yield person(first_name=u'Rik',last_name=u'Radermecker')
     yield person(first_name=u'Marie-Louise',last_name=u'Vandenmeulenbos')
@@ -113,27 +131,6 @@ def objects():
     yield person(first_name=u'Denis',last_name=u'Denon')
     yield person(first_name=u'Jérôme',last_name=u'Jeanémart')
     
-    person = Instantiator('contacts.Person',"first_name last_name",country='EE').build
-    yield person(u'Aare',u'Aaresild')
-    yield person(u'Ahti',u'Aaspere')
-    yield person(u'Peeter',u'Bach')
-    yield person(u'Tiina',u'Engelbert')
-    yield person(u'Inge',u'Hallik')
-    yield person(u'Harri',u'Hunt')
-    yield person(u'Ingmar',u'Iliste')
-    yield person(u'Jaan',u'Janno')
-    yield person(u'Jaan',u'Jõgi')
-    yield person(u'Karl',u'Kask')
-    yield person(u'Leo',u'Lepamets')
-    yield person(u'Madis',u'Mäeorg')
-    yield person(u'Natalja',u'Nagel')
-    yield person(u'Ott',u'Ojavee')
-    yield person(u'Piret',u'Paas')
-    yield person(u'Rannes',u'Rannala')
-    yield person(u'Silja',u'Sääsk')
-    yield person(u'Tõnu',u'Tamm')
-    yield person(u'Tiina',u'Türnpuu')
-    yield person(u'Urmas',u'Uukivi')
     
     s = u"""\
 Aachener Straße
@@ -242,8 +239,9 @@ Weserstraße
     
     i = 0
     nr = 1
-    for p in resolve_model('contacts.Person').objects.filter(city__exact='Eupen'):
-        setattr(p,'addr1',streets_of_eupen[i] + " " + str(nr))
+    for p in resolve_model('contacts.Person').objects.filter(city=eupen):
+        p.street = streets_of_eupen[i]
+        p.stret_no = str(nr)
         p.save()
         nr += 1
         if i < len(streets_of_eupen) : 

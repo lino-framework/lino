@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -74,12 +74,12 @@ class ForeignKeyConverter(Converter):
         if value is not None:
             model = self.field.rel.to
             if not isinstance(value,model):
+                lookup_kw = {self.lookup_field: value}
                 try:
-                    p = model.objects.get(
-                    **{self.lookup_field: value})
+                    p = model.objects.get(**lookup_kw)
                 except model.DoesNotExist,e:
-                    raise DataError("%s.objects.get(%r) : %s" % (
-                          model.__name__,value,e))
+                    raise DataError("%s.objects.get(**%r) : %s" % (
+                          model.__name__,lookup_kw,e))
                 kw[self.field.name] = p
         return kw
 
@@ -163,7 +163,11 @@ class Instantiator:
         i = 0
         kw['_m2m'] = {}
         for v in values:
-            if (not isinstance(v,basestring)) or len(v) > 0:
+            if isinstance(v,basestring):
+                v = v.strip()
+                if len(v) > 0:
+                    kw[self.fields[i].name] = v
+            else:
                 kw[self.fields[i].name] = v
             i += 1
         kw.update(self.default_values)

@@ -24,7 +24,7 @@ def objects():
     yield language('et','Estonian')
     yield language('en','English')
     yield language('de','German')
-    yield language('fr','German')
+    yield language('fr','French')
     yield language('nl','Dutch')
 
     #~ yield country('ee',"Estonia")
@@ -33,5 +33,5 @@ def objects():
     #~ yield country('fr',"France")
     #~ yield country('nl',"Netherlands")
 
-    from lino.modlib.countries.fixtures import iso3166
-    for o in iso3166.objects(): yield o
+    #~ from lino.modlib.countries.fixtures import iso3166
+    #~ for o in iso3166.objects(): yield o
