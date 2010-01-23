@@ -48,6 +48,10 @@ URL_PARAM_MASTER_PK = 'mk'
 URL_PARAM_FILTER = 'query'
 URL_PARAM_CHOICES_PK = "ck"
 
+CHOICES_TEXT_FIELD = 'text'
+CHOICES_VALUE_FIELD = 'value'
+CHOICES_HIDDEN_SUFFIX = "Hidden"
+
 def build_url(*args,**kw):
     url = "/".join(args)  
     if len(kw):
@@ -261,8 +265,8 @@ class StoreField(object):
         #d[self.field.name] = self.field.value_to_string(obj)
         d[self.field.name] = self.field.value_from_object(obj)
         
-    def get_from_form(self,instance,values):
-        v = values.get(self.field.name)
+    def get_from_form(self,instance,post_data):
+        v = post_data.get(self.field.name)
         #~ if v == '' and self.field.null:
             #~ v = None
         if v == '':
@@ -279,8 +283,8 @@ class BooleanStoreField(StoreField):
     def __init__(self,field,**kw):
         kw['type'] = 'boolean'
         StoreField.__init__(self,field,**kw)
-    def get_from_form(self,instance,values):
-        v = values.get(self.field.name)
+    def get_from_form(self,instance,post_data):
+        v = post_data.get(self.field.name)
         if v == 'true':
             v = True
         else:
@@ -301,8 +305,8 @@ class DateStoreField(StoreField):
             #print value
             d[self.field.name] = value
             
-    def get_from_form(self,instance,values):
-        v = values.get(self.field.name)
+    def get_from_form(self,instance,post_data):
+        v = post_data.get(self.field.name)
         if v == '' and self.field.null:
             v = None
         if v is not None:
@@ -316,8 +320,8 @@ class unused_IntegerStoreField(StoreField):
         kw['type'] = 'int'
         StoreField.__init__(self,field,**kw)
         
-    def get_from_form(self,instance,values):
-        v = values.get(self.field.name)
+    def get_from_form(self,instance,post_data):
+        v = post_data.get(self.field.name)
         if v == '':
             v = None
             #~ if self.field.default is models.NOT_PROVIDED:
@@ -335,16 +339,16 @@ class MethodStoreField(StoreField):
         # print 20091208, self.field.name
         d[self.field.name] = meth()
         
-    def get_from_form(self,instance,values):
+    def get_from_form(self,instance,post_data):
         pass
         #raise Exception("Cannot update a virtual field")
 
 
 class OneToOneStoreField(StoreField):
         
-    def get_from_form(self,instance,values):
+    def get_from_form(self,instance,post_data):
         #v = values.get(self.field.name,None)
-        v = values.get(self.field.name)
+        v = post_data.get(self.field.name)
         if v == '' and self.field.null:
             v = None
         if v is not None:
@@ -366,22 +370,27 @@ class ForeignKeyStoreField(StoreField):
         
     def as_js(self):
         s = StoreField.as_js(self)
-        s += "," + repr(self.field.name+"Hidden")
+        s += "," + repr(self.field.name+CHOICES_HIDDEN_SUFFIX)
         return s 
         
-    def get_from_form(self,instance,values):
+    def get_from_form(self,instance,post_data):
         #v = values.get(self.name,None)
         #v = values.get(self.field.name+"Hidden",None)
-        v = values.get(self.field.name+"Hidden")
+        #v = values.get(self.field.name+CHOICES_HIDDEN_SUFFIX)
         #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
-        if v == '' and self.field.null:
-            v = None
+        v = post_data.getlist(self.field.name)
+        #print "%s=%r" % (self.field.name, v)
         if v is not None:
-        #if len(v):
-            try:
-                v = self.field.rel.to.objects.get(pk=v)
-            except self.field.rel.to.DoesNotExist,e:
-                print "[get_from_form]", v, values.get(self.field.name)
+            v,text = v
+            if v == '': # and self.field.null:
+                v = None
+            if v is not None:
+                try:
+                    v = self.field.rel.to.objects.get(pk=v)
+                except self.field.rel.to.DoesNotExist,e:
+                    #print "[get_from_form]", v, values.get(self.field.name)
+                    lino.log.debug("[%r,%r] : %s",v,text,e)
+                    v = None
         instance[self.field.name] = v
         
     def obj2json(self,obj,d):
@@ -390,11 +399,15 @@ class ForeignKeyStoreField(StoreField):
         except self.field.rel.to.DoesNotExist,e:
             v = None
         if v is None:
-            d[self.field.name+"Hidden"] = None
-            d[self.field.name] = None
+            d[self.field.name] = [None, '']
+            #d[self.field.name] = dict(text='',value=None)
+            #~ d[self.field.name+CHOICES_HIDDEN_SUFFIX] = None
+            #~ d[self.field.name] = None
         else:
-            d[self.field.name] = unicode(v)
-            d[self.field.name+"Hidden"] = v.pk
+            #~ d[self.field.name+CHOICES_HIDDEN_SUFFIX] = unicode(v)
+            #~ d[self.field.name] = v.pk
+            #d[self.field.name] = dict(text=unicode(v),value=v.pk)
+            d[self.field.name] = [v.pk,unicode(v)]
         
 
 
@@ -527,7 +540,8 @@ class ColumnModel(Component):
     def ext_options(self):
         #self.report.setup()
         d = Component.ext_options(self)
-        d.update(columns=[js_code(e.as_ext_column()) for e in self.grid.elements])
+        # d.update(columns=[js_code(e.as_ext_column()) for e in self.grid.elements])
+        d.update(columns=[e.get_column_options() for e in self.grid.elements])
         #d.update(defaultSortable=True)
         return d
         
@@ -615,13 +629,14 @@ class LayoutElement(VisibleComponent):
           )
         if self.editable:
             editor = self.get_field_options()
-            kw.update(editor=js_code(py2js(editor)))
+            #kw.update(editor=js_code(py2js(editor)))
+            kw.update(editor=editor)
         w = self.width or self.preferred_width
         kw.update(width=w*EXT_CHAR_WIDTH)
         return kw    
         
-    def as_ext_column(self):
-        return py2js(self.get_column_options())
+    #~ def as_ext_column(self):
+        #~ return py2js(self.get_column_options())
         
     def set_parent(self,parent):
         assert self.parent is None
@@ -843,6 +858,16 @@ class ForeignKeyElement(FieldElement):
         #~ yield self.report.choice_layout.store
         #~ yield self
         
+    def get_column_options(self,**kw):
+        kw = FieldElement.get_column_options(self,**kw)
+        #kw.update(dataIndex=self.name+CHOICES_HIDDEN_SUFFIX)
+        #js = "function(v, meta, rec, row, col, store) {return rec.data.%s}" % (self.name+CHOICES_HIDDEN_SUFFIX)
+        # js = "function(v, meta, rec, row, col, store) {return v.text}" 
+        js = "function(v, meta, rec, row, col, store) {return v[1]}" 
+        #kw.update(renderer=js_code('Lino.ForeignKeyRenderer(%r)' % (self.name+"Hidden") ))
+        kw.update(renderer=js_code(js))
+        return kw    
+        
     def store_options(self,**kw):
         proxy = dict(url=ui.get_choices_url(self),method='GET')
         kw.update(proxy=js_code(
@@ -851,83 +876,46 @@ class ForeignKeyElement(FieldElement):
         # a JsonStore without explicit proxy sometimes used method POST
         # d.update(url=self.rr.get_absolute_url(json=True))
         # d.update(method='GET')
+        # kw.update(autoLoad=True)
         kw.update(totalProperty='count')
         kw.update(root='rows')
-        kw.update(id=self.report.model._meta.pk.name)
-        kw.update(fields=['__unicode__'])
+        kw.update(id=CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
+        kw.update(fields=[CHOICES_VALUE_FIELD,CHOICES_TEXT_FIELD])
         kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         return kw
       
         
     def get_field_options(self,**kw):
-        """
-        
-        valueField: The underlying data value name to bind to this 
-        ComboBox (defaults to undefined if mode = 'remote', or 'field2' 
-        if transforming a select or if the field name is autogenerated 
-        based on the store configuration).
-        Note: use of a valueField requires the user to make a selection 
-        in order for a value to be mapped. 
-        
-        displayField: 
-        The underlying data field name to bind to this ComboBox 
-        (defaults to undefined if mode = 'remote' or 'field1' if transforming 
-        a select or if the field name is autogenerated based on the store 
-        configuration).
-
-        hiddenName:
-        If specified, a hidden form field with this name is dynamically 
-        generated to store the field's data value 
-        (defaults to the underlying DOM element's name). 
-        Required for the combo's value to automatically post during a 
-        form submission. See also valueField.
-        Note: the hidden field's id will also default to this name if 
-        hiddenId is not specified. The ComboBox id and the hiddenId should 
-        be different, since no two DOM nodes should share the same id. 
-        So, if the ComboBox name and hiddenName are the same, you should 
-        specify a unique hiddenId.
-        
-        hiddenValue: 
-        Sets the initial value of the hidden field if hiddenName is specified 
-        to contain the selected valueField, from the Store. 
-        Defaults to the configured value.
-        
-        submitValue: False to clear the name attribute on the field so that 
-        it is not submitted during a form post. 
-        If a hiddenName is specified, setting this to true will cause both 
-        the hidden field and the element to be submitted. 
-        
-        """
+        # see blog 20100222
         kw = FieldElement.get_field_options(self,**kw)
         if self.editable:
+            kw.update(mode='remote')
             #setup_report(self.report)
             #kw.update(store=self.rh.store)
             sto = self.store_options()
             #print repr(sto)
             kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
             #kw.update(store=js_code(self.store.as_ext_value(request)))
-            kw.update(hiddenName=self.name+"Hidden")
-            #kw.update(valueField=self.report.model._meta.pk.name)
+            #kw.update(hiddenName=self.name+CHOICES_HIDDEN_SUFFIX)
+            kw.update(valueField=CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
             #kw.update(valueField='id')
-            #kw.update(hiddenValue='id')
             #kw.update(valueField=self.name)
-            
+            kw.update(triggerAction='all')
+            #kw.update(listeners=dict(beforequery=js_code("function(qe) {console.log('beforequery',qe); return true;}")))
             
             kw.update(submitValue=True)
-            kw.update(displayField=self.report.display_field)
+            kw.update(displayField=CHOICES_TEXT_FIELD) # self.report.display_field)
             kw.update(typeAhead=True)
-            #kw.update(lazyInit=False)
-            kw.update(mode='remote')
+            kw.update(lazyInit=False)
             kw.update(minChars=2) # default 4 is to much
             kw.update(queryDelay=300) # default 500 is maybe slow
+            kw.update(queryParam=URL_PARAM_FILTER)
             kw.update(typeAhead=True)
             #kw.update(typeAheadDelay=300) # default 500 is maybe slow
             kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
             kw.update(resizable=True)
-            kw.update(queryParam=URL_PARAM_FILTER)
             kw.update(pageSize=self.report.page_length)
             
-        kw.update(triggerAction='all')
         kw.update(emptyText='Select a %s...' % self.report.model.__name__)
         return kw
         
@@ -1481,6 +1469,7 @@ class DetailMainPanel(DataElementMixin,Panel):
         d.update(items=self.elements)
         d.update(autoHeight=False)
         d.update(bbar=self.buttons)
+        d.update(standardSubmit=True)
         return d
         
     def js_lines(self):
@@ -1500,13 +1489,13 @@ class DetailMainPanel(DataElementMixin,Panel):
         #yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
         yield "var load_record = this.load_record = function(record) {"
         #yield "function load_record (record) {"
-        #yield "  console.log('load_record()');"
+        yield "  console.log('load_record()',record.data);"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         #name = 'this.' + self.lh._main.ext_name
-        name = self.as_ext()
+        #name = self.as_ext()
         #yield "  this.current_pk = record.data.id;" 
         yield "  this.current_record = record;" 
-        yield "  %s.form.loadRecord(record);" % name
+        yield "  %s.form.loadRecord(record);" % self.as_ext()
         yield "  var p = { %s: record.data.id }" % URL_PARAM_MASTER_PK
         #yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
         mt = ContentType.objects.get_for_model(self.report.model).pk
@@ -1667,6 +1656,7 @@ Lino.form_submit = function (job,url,store,pkname) {
     // p[pkname] = job.current_pk;
     p[pkname] = job.get_current_record().data.id;
     job.main_panel.form.submit({
+      clientValidation: false,
       url: url, 
       failure: function(form, action) {
         // console.log("form:",form);
@@ -1698,13 +1688,13 @@ Lino.grid_afteredit = function (caller,url,pk) {
     */
     var p = e.record.data;
     // var p = {};
-    p['colname'] = e.field;
+    p['grid_afteredit_colname'] = e.field;
     p[e.field] = e.value;
     // console.log(e);
     // add Hidden value used by ForeignKeyStoreField
-    p[e.field+'Hidden'] = e.value;
+    // p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
-    console.log("grid_afteredit:",e.field,'=',e.value);
+    // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.Ajax.request({
       waitMsg: 'Please wait...',
       url: url,
@@ -1842,27 +1832,6 @@ Lino.main_menu = new Ext.Toolbar({});
 // Path to the blank image should point to a valid location on your server
 Ext.BLANK_IMAGE_URL = '%sresources/images/default/s.gif';""" % settings.EXTJS_URL
 
-        if False:
-            rpts = [ ReportRenderer(rpt) 
-                for rpt in reports.master_reports + reports.slave_reports + reports.generic_slaves.values()]
-            for rpt in rpts:
-                for ln in rpt.report.store.js_lines():
-                    s += "\n" + ln
-            for rpt in rpts:
-                for ln in rpt.js_lines():
-                    s += "\n" + ln
-        
-            dlgs = [ DialogRenderer(dlg) for dlg in layouts.dialogs ]
-            for dlg in dlgs:
-                for ln in dlg.js_lines():
-                    s += "\n" + ln
-
-            acts = [ ActionRenderer(a) for a in actions.global_actions ]
-            for a in acts:
-                for ln in a.js_lines():
-                    s += "\n" + ln
-
-
         s += """
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
   afterRender : function() {
@@ -1907,8 +1876,13 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     var ps = Math.floor(height / rowHeight);
     ps -= 1; // extra row
     return (ps > 1 ? ps : false);
-  }
-  
+  },
+	postEditValue : function(value, originalValue, r, field){
+    value = Lino.GridPanel.superclass.postEditValue.call(this,value,originalValue,r,field);
+    console.log('GridPanel.postEdit()',value, originalValue, r, field);
+		return value;
+	},
+   
   });
 
 Lino.cell_context_menu = function(job) {
@@ -1922,7 +1896,6 @@ Lino.cell_context_menu = function(job) {
     job.cmenu.showAt(xy);
   }
 }
-
 
         """
         s += """
@@ -2014,6 +1987,116 @@ Lino.load_main_menu = function() {
     Ext.ComponentMgr.registerPlugin('defaultButton', ns.DefaultButton);
 
 })(); 
+
+
+/*
+Feature request developed in http://extjs.net/forum/showthread.php?t=75751
+Ext.override(Ext.form.ComboBox, {
+    setValue : function(v){
+        // if(this.name == 'country') console.log('country ComboBox.setValue()',v);
+        var text = v;
+        if(this.valueField){
+            if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
+                this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
+                if(this.store.lastOptions === null){
+                    var params;
+                    if(this.valueParam){
+                        params = {};
+                        params[this.valueParam] = v;
+                    }else{
+                        var q = this.allQuery;
+                        this.lastQuery = q;
+                        this.store.setBaseParam(this.queryParam, q);
+                        params = this.getParams(q);
+                    }
+                    this.store.load({params: params});
+                }
+                return;
+            }
+            var r;
+            // if (v) r = this.findRecord(this.valueField, v);
+            if (v) r = this.store.getById(v);
+            // if(this.name == 'country') console.log(20100122,r,this.displayField);
+            if(r){
+                text = r.data[this.displayField];
+            }else if(this.valueNotFoundText !== undefined){
+                text = this.valueNotFoundText;
+            }
+        }
+        this.lastSelectionText = text;
+        if(this.hiddenField){
+            this.hiddenField.value = v;
+        }
+        Ext.form.ComboBox.superclass.setValue.call(this, text);
+        this.value = v;
+    }
+});
+*/
+
+
+Ext.override(Ext.form.ComboBox, {
+    setValue : function(v){
+        // if(this.name == 'country') 
+        // if(! v) { v = { text:'', value:undefined }};
+        if(! v) { v = [undefined, '']};
+        /*
+        var text = v;
+        if(this.valueField){
+            var r;
+            // if (v) r = this.findRecord(this.valueField, v);
+            if (v) r = this.store.getById(v);
+            if(r){
+                text = r.data[this.displayField];
+            }else if(this.valueNotFoundText !== undefined){
+                text = this.valueNotFoundText;
+            }
+        }
+        */
+        this.lastSelectionText = v[1];
+        if(this.hiddenField){
+            this.hiddenField.value = v[0];
+        }
+        Ext.form.ComboBox.superclass.setValue.call(this, v[1]);
+        this.value = v;
+    },
+    onSelect : function(record, index){
+        if(this.fireEvent('beforeselect', this, record, index) !== false){
+            this.setValue([record.data[this.valueField], record.data[this.displayField]]);
+            this.collapse();
+            this.fireEvent('select', this, record, index);
+        }
+    },
+    beforeBlur : function(){
+        var val = this.getRawValue(),
+            rec = this.findRecord(this.displayField, val);
+        if(!rec && this.forceSelection){
+            if(val.length > 0 && val != this.emptyText){
+                this.el.dom.value = Ext.isEmpty(this.lastSelectionText) ? '' : this.lastSelectionText;
+                this.applyEmptyText();
+            }else{
+                this.clearValue();
+            }
+        }else{
+            if(rec){
+                val = [rec.get(this.valueField),rec.get(this.displayField)];
+            }else{
+                val = [undefined, '']
+            }
+            this.setValue(val);
+        }
+    },
+    clearValue : function(){
+        if(this.hiddenField){
+            this.hiddenField.value = '';
+        }
+        this.setRawValue('');
+        this.lastSelectionText = '';
+        this.applyEmptyText();
+        this.value = [undefined, ''];
+    },
+
+});
+
 
 
 """   
@@ -2115,17 +2198,17 @@ class ChoicesReportRequest(BaseViewReportRequest):
           
     def get_queryset(self,**kw):
         pk = self.request.GET.get(URL_PARAM_CHOICES_PK,None)
-        return self.report.get_field_choices(self.rec_field,pk)
+        return self.report.get_field_choices(self.rec_field,pk,**kw)
         #return self.report.get_queryset(self,master_instance=self.master_instance,**kw)
         
     def get_absolute_url(self,**kw):
         kw['choices_for_field'] = self.fieldname
         return BaseViewReportRequest.get_absolute_url(self,**kw)
-      
     def obj2json(self,obj,**kw):
-        kw['__unicode__'] = unicode(obj)
-        kw['id'] = obj.pk # getattr(obj,'pk')
-        kw[self.fieldname] = obj.pk 
+        kw[CHOICES_TEXT_FIELD] = unicode(obj)
+        #kw['__unicode__'] = unicode(obj)
+        kw[CHOICES_VALUE_FIELD] = obj.pk # getattr(obj,'pk')
+        #kw[self.fieldname] = obj.pk 
         return kw
           
     #~ rh = 
@@ -2282,7 +2365,7 @@ def choices_view(request,app_label=None,rptname=None,fldname=None,**kw):
     
     
 def grid_afteredit_view(request,**kw):
-    kw['colname'] = request.POST['colname']
+    kw['colname'] = request.POST['grid_afteredit_colname']
     kw['submit'] = True
     return json_report_view(request,**kw)
 

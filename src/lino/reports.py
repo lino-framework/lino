@@ -60,6 +60,14 @@ def base_attrs(cl):
             yield k
 
     
+def add_quick_search_filter(qs,model,search_text):
+    q = models.Q()
+    for field in model._meta.fields:
+        if isinstance(field,models.CharField):
+            kw = {field.name+"__contains": search_text}
+            q = q | models.Q(**kw)
+    return qs.filter(q)
+        
 
 
 class ReportParameterForm(forms.Form):
@@ -406,18 +414,14 @@ class Report(actors.Actor): # actions.Action): #
             qs = qs.filter(**self.filter)
         if self.exclude:
             qs = qs.exclude(**self.exclude)
+              
         if quick_search is not None:
-            l = []
-            q = models.Q()
-            for field in self.model._meta.fields:
-                if isinstance(field,models.CharField):
-                    q = q | models.Q(**{
-                      field.name+"__contains": quick_search})
-            qs = qs.filter(q)
+            qs = add_quick_search_filter(qs,self.model,quick_search)
         order_by = order_by or self.order_by
         if order_by:
             qs = qs.order_by(*order_by.split())
         return qs
+        
         
     def setup_request(self,req):
         pass
@@ -470,10 +474,12 @@ class Report(actors.Actor): # actions.Action): #
         r = renderers_text.TextReportRequest(self,*args,**kw)
         return r.render()
         
-    def get_field_choices(self,fld,pk):
+    def get_field_choices(self,fld,pk,quick_search=None):
         # pk is the primary key of the "receiving" instance (who is asking for a list of choices)
+        # query is a string used as filter
         methname = fld.name + "_choices"
         meth = getattr(self,methname,None)
+        choices = None
         if meth is not None:
             try:
                 recipient = fld.rel.to.objects.get(pk=pk)
@@ -481,10 +487,11 @@ class Report(actors.Actor): # actions.Action): #
                 pass
             else:
                 choices = meth(recipient)
-                if choices is not None:
-                    return choices
-        # print 20100120, "%s has not attribute %s" % (self,methname)
-        return fld.rel.to.objects.all()
+        if choices is None:
+            choices = fld.rel.to.objects.all()
+        if quick_search is not None:
+            choices = add_quick_search_filter(choices,fld.rel.to,quick_search)
+        return choices
         # return get_model_report(field.rel.to)
         #return field._lino_choice_report
         #~ rpt = getattr(field,'_lino_choice_report',None)
@@ -673,6 +680,7 @@ class ReportRequest:
         raise NotImplementedError
         
     def get_queryset(self,**kw):
+        # overridden by ChoicesReportRequest
         return self.report.get_queryset(master_instance=self.master_instance,**kw)
         
 
