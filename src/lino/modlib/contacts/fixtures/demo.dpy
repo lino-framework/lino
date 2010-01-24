@@ -39,6 +39,19 @@ def objects():
     yield city(u'Hamburg','DE')
     yield city(u'München','DE')
     
+    yield city(u'Maastricht','NL')
+    yield city(u'Amsterdam','NL')
+    yield city(u'Den Haag','NL')
+    yield city(u'Rotterdam','NL')
+    yield city(u'Utrecht','NL')
+    
+    yield city(u'Paris','FR')
+    yield city(u'Nice','FR')
+    yield city(u'Metz','FR')
+    yield city(u'Strasbourg','FR')
+    yield city(u'Nancy','FR')
+    yield city(u'Marseille','FR')
+    
     company = Instantiator('contacts.Company',"name zip_code city:name street street_no",country='BE',language='de').build
     yield company(u'Bäckerei Ausdemwald', '4700', 'Eupen',  u'Vervierser Straße','45')
     yield company(u'Bäckerei Mießen',     '4700', 'Eupen',  u'Gospert','103')

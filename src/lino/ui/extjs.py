@@ -374,6 +374,24 @@ class ForeignKeyStoreField(StoreField):
         return s 
         
     def get_from_form(self,instance,post_data):
+        #v = post_data.get(self.name,None)
+        #v = post_data.get(self.field.name+"Hidden",None)
+        v = post_data.get(self.field.name+CHOICES_HIDDEN_SUFFIX)
+        #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
+        #v = post_data.getlist(self.field.name)
+        #print "%s=%r" % (self.field.name, v)
+        if v == '': # and self.field.null:
+            v = None
+        if v is not None:
+            try:
+                v = self.field.rel.to.objects.get(pk=v)
+            except self.field.rel.to.DoesNotExist,e:
+                #print "[get_from_form]", v, values.get(self.field.name)
+                lino.log.debug("[%r,%r] : %s",v,text,e)
+                v = None
+        instance[self.field.name] = v
+
+    def unused_get_from_form(self,instance,post_data):
         #v = values.get(self.name,None)
         #v = values.get(self.field.name+"Hidden",None)
         #v = values.get(self.field.name+CHOICES_HIDDEN_SUFFIX)
@@ -392,22 +410,22 @@ class ForeignKeyStoreField(StoreField):
                     lino.log.debug("[%r,%r] : %s",v,text,e)
                     v = None
         instance[self.field.name] = v
-        
+
     def obj2json(self,obj,d):
         try:
             v = getattr(obj,self.field.name)
         except self.field.rel.to.DoesNotExist,e:
             v = None
         if v is None:
-            d[self.field.name] = [None, '']
+            #d[self.field.name] = [None, '']
             #d[self.field.name] = dict(text='',value=None)
-            #~ d[self.field.name+CHOICES_HIDDEN_SUFFIX] = None
-            #~ d[self.field.name] = None
+            d[self.field.name+CHOICES_HIDDEN_SUFFIX] = None
+            d[self.field.name] = None
         else:
-            #~ d[self.field.name+CHOICES_HIDDEN_SUFFIX] = unicode(v)
-            #~ d[self.field.name] = v.pk
+            d[self.field.name+CHOICES_HIDDEN_SUFFIX] = v.pk
+            d[self.field.name] = unicode(v)
             #d[self.field.name] = dict(text=unicode(v),value=v.pk)
-            d[self.field.name] = [v.pk,unicode(v)]
+            #d[self.field.name] = [v.pk,unicode(v)]
         
 
 
@@ -519,6 +537,7 @@ class ColumnModel(Component):
     def __init__(self,grid):
         self.grid = grid
         Component.__init__(self,grid.name)
+        self.columns = [GridColumn(e) for e in self.grid.elements]
         #grid.layout.report.add_variable(self)
 
         #Element.__init__(self,layout,report.name+"_cols"+str(layout.index))
@@ -536,16 +555,38 @@ class ColumnModel(Component):
         #~ self.report = report
         #~ self.name = report.name
         
+    def js_elements(self):
+        for col in self.columns:
+            yield col.editor
+            yield col
+        
         
     def ext_options(self):
         #self.report.setup()
         d = Component.ext_options(self)
-        # d.update(columns=[js_code(e.as_ext_column()) for e in self.grid.elements])
-        d.update(columns=[e.get_column_options() for e in self.grid.elements])
+        #d.update(columns=[e.get_column_options() for e in self.grid.elements])
+        d.update(columns=self.columns)
         #d.update(defaultSortable=True)
         return d
         
-
+class GridColumn(Component):
+    declare_type = DECLARE_THIS
+    ext_suffix = "_col"
+    value_template = "new Ext.grid.Column(%s)"
+    
+    def __init__(self,editor,**kw):
+        Component.__init__(self,editor.name,**kw)
+        self.editor = editor
+    
+        #~ if self.editable:
+            #~ editor = self.get_field_options()
+        
+    def ext_options(self,**kw):
+        kw = Component.ext_options(self,**kw)
+        kw.update(self.editor.get_column_options())
+        kw.update(editor=self.editor)
+        return kw
+        
 class VisibleComponent(Component):
     width = None
     height = None
@@ -627,10 +668,6 @@ class LayoutElement(VisibleComponent):
           header=unicode(self.label) if self.label else self.name,
           sortable=self.sortable
           )
-        if self.editable:
-            editor = self.get_field_options()
-            #kw.update(editor=js_code(py2js(editor)))
-            kw.update(editor=editor)
         w = self.width or self.preferred_width
         kw.update(width=w*EXT_CHAR_WIDTH)
         return kw    
@@ -858,14 +895,14 @@ class ForeignKeyElement(FieldElement):
         #~ yield self.report.choice_layout.store
         #~ yield self
         
-    def get_column_options(self,**kw):
+    def unused_get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
         #kw.update(dataIndex=self.name+CHOICES_HIDDEN_SUFFIX)
         #js = "function(v, meta, rec, row, col, store) {return rec.data.%s}" % (self.name+CHOICES_HIDDEN_SUFFIX)
         # js = "function(v, meta, rec, row, col, store) {return v.text}" 
-        js = "function(v, meta, rec, row, col, store) {return v[1]}" 
+        #js = "function(v, meta, rec, row, col, store) {return v[1]}" 
         #kw.update(renderer=js_code('Lino.ForeignKeyRenderer(%r)' % (self.name+"Hidden") ))
-        kw.update(renderer=js_code(js))
+        #kw.update(renderer=js_code(js))
         return kw    
         
     def store_options(self,**kw):
@@ -881,54 +918,68 @@ class ForeignKeyElement(FieldElement):
         kw.update(root='rows')
         kw.update(id=CHOICES_VALUE_FIELD) # self.report.model._meta.pk.name)
         kw.update(fields=[CHOICES_VALUE_FIELD,CHOICES_TEXT_FIELD])
-        kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
+        #~ kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
+        listeners = dict(exception=js_code("Lino.on_store_exception"))
+        if False: # done by combobox.on(render)
+            def js():
+                yield "function(store,options) {"
+                yield "  console.log('beforeload',store,options);"
+                #yield "  store.setBaseParam(%r,job.get_current_record().data.id);" % URL_PARAM_CHOICES_PK
+                yield "  options.params[%r] = job.get_current_record().data.id;" % URL_PARAM_CHOICES_PK
+                yield "}"
+            listeners.update(beforeload=js)
+        kw.update(listeners=listeners)
         return kw
       
         
     def get_field_options(self,**kw):
         # see blog 20100222
         kw = FieldElement.get_field_options(self,**kw)
-        if self.editable:
-            kw.update(mode='remote')
-            #setup_report(self.report)
-            #kw.update(store=self.rh.store)
-            sto = self.store_options()
-            #print repr(sto)
-            kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
-            #kw.update(store=js_code(self.store.as_ext_value(request)))
-            #kw.update(hiddenName=self.name+CHOICES_HIDDEN_SUFFIX)
-            kw.update(valueField=CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
-            #kw.update(valueField='id')
-            #kw.update(valueField=self.name)
-            kw.update(triggerAction='all')
-            #kw.update(listeners=dict(beforequery=js_code("function(qe) {console.log('beforequery',qe); return true;}")))
-            
-            kw.update(submitValue=True)
-            kw.update(displayField=CHOICES_TEXT_FIELD) # self.report.display_field)
-            kw.update(typeAhead=True)
-            kw.update(lazyInit=False)
-            kw.update(minChars=2) # default 4 is to much
-            kw.update(queryDelay=300) # default 500 is maybe slow
-            kw.update(queryParam=URL_PARAM_FILTER)
-            kw.update(typeAhead=True)
-            #kw.update(typeAheadDelay=300) # default 500 is maybe slow
-            kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
-            kw.update(resizable=True)
-            kw.update(pageSize=self.report.page_length)
-            
+        kw.update(mode='remote')
+        #setup_report(self.report)
+        #kw.update(store=self.rh.store)
+        sto = self.store_options()
+        #print repr(sto)
+        kw.update(store=js_code("new Ext.data.JsonStore(%s)" % py2js(sto)))
+        #kw.update(store=js_code(self.store.as_ext_value(request)))
+        kw.update(hiddenName=self.name+CHOICES_HIDDEN_SUFFIX)
+        kw.update(valueField=CHOICES_VALUE_FIELD) #self.report.model._meta.pk.name)
+        #kw.update(valueField='id')
+        #kw.update(valueField=self.name)
+        kw.update(triggerAction='all')
+        #kw.update(listeners=dict(beforequery=js_code("function(qe) {console.log('beforequery',qe); return true;}")))
+        
+        kw.update(submitValue=True)
+        kw.update(displayField=CHOICES_TEXT_FIELD) # self.report.display_field)
+        kw.update(typeAhead=True)
+        kw.update(minChars=2) # default 4 is to much
+        kw.update(queryDelay=300) # default 500 is maybe slow
+        kw.update(queryParam=URL_PARAM_FILTER)
+        kw.update(typeAhead=True)
+        #kw.update(typeAheadDelay=300) # default 500 is maybe slow
+        kw.update(selectOnFocus=True) # select any existing text in the field immediately on focus.
+        kw.update(resizable=True)
+        kw.update(pageSize=self.report.page_length)
         kw.update(emptyText='Select a %s...' % self.report.model.__name__)
+        if not True: # TODO: test whether field has a %s_choices() method
+            kw.update(contextParam=URL_PARAM_CHOICES_PK)
+            #kw.update(lazyInit=True)
+            def js():
+                yield "function(combo) {"
+                yield "  console.log('20100124',combo);"
+                yield "  combo.setQueryContext(job.get_current_record().data.id);"
+                yield "}"
+            kw.update(listeners=dict(focus=js,render=js))
         return kw
         
-    #~ def value2js(self,obj):
-        #~ v = getattr(obj,self.name)
-        #~ if v is not None:
-            #~ return v.pk
+    def js_lines(self):
+        for ln in super(ForeignKeyElement,self).js_lines():
+            yield ln
+        #yield "job.add_row_listener(function(sm,rowIndex,record) {this.setQueryContext(record.data.id)},this);"
+        #yield "job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
+        yield "console.log('20100124b',this,job);"
         
-    #~ def as_store_field(self):
-        #~ return "{ %s },{ %s }" % (
-          #~ dict2js(dict(name=self.name)),
-          #~ dict2js(dict(name=self.name+"Hidden"))
-        #~ )
+        
 
         
             
@@ -1406,6 +1457,9 @@ class GridMainElement(GridElement):
         return d
         
     def js_lines(self):
+        yield "this.add_row_listener = function(fn,scope) {"
+        yield "  this.%s.getSelectionModel().addListener('rowselect',fn,scope);" % self.ext_name
+        yield "}"
         for ln in GridElement.js_lines(self):
             yield ln
         #yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
@@ -1423,9 +1477,6 @@ class GridMainElement(GridElement):
         yield "  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };"
         #yield "  console.log('get_selected() ok');"
         yield "  return sel_pks;"
-        yield "}"
-        yield "this.add_row_listener = function(fn,scope) {"
-        yield "  this.%s.getSelectionModel().addListener('rowselect',fn,scope);" % self.ext_name
         yield "}"
         
 
@@ -1469,27 +1520,27 @@ class DetailMainPanel(DataElementMixin,Panel):
         d.update(items=self.elements)
         d.update(autoHeight=False)
         d.update(bbar=self.buttons)
-        d.update(standardSubmit=True)
+        #d.update(standardSubmit=True)
         return d
         
     def js_lines(self):
         #yield "console.log(10);"
-        for ln in Panel.js_lines(self):
-            yield ln
-        #yield "console.log(11);"
-        #yield "mastergrid = Ext.getCmp()"
         yield "this.refresh = function() { if(caller) caller.refresh(); };"
         yield "this.get_current_record = function() { return this.current_record;};"
         yield "this.get_selected = function() {"
         yield "  return this.current_record.id;"
         yield "}"
         yield "this.add_row_listener = function(fn,scope) {"
-        yield "  if(caller) caller.add_rwo_listener(fn,scope);"
+        yield "  if(caller) caller.add_row_listener(fn,scope);"
         yield "}"
+        for ln in Panel.js_lines(self):
+            yield ln
+        #yield "console.log(11);"
+        #yield "mastergrid = Ext.getCmp()"
         #yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
         yield "var load_record = this.load_record = function(record) {"
         #yield "function load_record (record) {"
-        yield "  console.log('load_record()',record.data);"
+        #yield "  console.log('load_record()',record.data);"
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         #name = 'this.' + self.lh._main.ext_name
         #name = self.as_ext()
@@ -1620,6 +1671,14 @@ class Viewport:
         s += """
 <!-- ExtJS library: all widgets -->
 <script type="text/javascript" src="%s%s.js"></script>""" % (settings.EXTJS_URL,widget_library)
+        if True:
+            s += """
+<style type="text/css">
+/* http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js  */
+.x-grid3-cell-inner, .x-grid3-hd-inner {
+  white-space: normal; /* changed from nowrap */
+}
+</style>"""
         if False:
             s += """
 <!-- overrides to library -->
@@ -1650,11 +1709,11 @@ Lino.save_window_config = function(caller,url) {
 Lino.form_submit = function (job,url,store,pkname) {
   // console.log("Lino.form_submit:",job);
   return function(btn,evt) {
-    // console.log(pkname,job);
     p = {};
     // p[pkname] = store.getAt(0).data.id;
     // p[pkname] = job.current_pk;
     p[pkname] = job.get_current_record().data.id;
+    // console.log('Lino.form_submit',p);
     job.main_panel.form.submit({
       clientValidation: false,
       url: url, 
@@ -1691,8 +1750,8 @@ Lino.grid_afteredit = function (caller,url,pk) {
     p['grid_afteredit_colname'] = e.field;
     p[e.field] = e.value;
     // console.log(e);
-    // add Hidden value used by ForeignKeyStoreField
-    // p[e.field+'Hidden'] = e.value;
+    // add value used by ForeignKeyStoreField CHOICES_HIDDEN_SUFFIX
+    p[e.field+'Hidden'] = e.value;
     // p[pk] = e.record.data[pk];
     // console.log("grid_afteredit:",e.field,'=',e.value);
     Ext.Ajax.request({
@@ -1877,11 +1936,11 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     ps -= 1; // extra row
     return (ps > 1 ? ps : false);
   },
-	postEditValue : function(value, originalValue, r, field){
+  postEditValue : function(value, originalValue, r, field){
     value = Lino.GridPanel.superclass.postEditValue.call(this,value,originalValue,r,field);
     console.log('GridPanel.postEdit()',value, originalValue, r, field);
-		return value;
-	},
+    return value;
+  },
    
   });
 
@@ -1991,9 +2050,12 @@ Lino.load_main_menu = function() {
 
 /*
 Feature request developed in http://extjs.net/forum/showthread.php?t=75751
+*/
 Ext.override(Ext.form.ComboBox, {
+    // queryContext : null, 
+    // contextParam : null, 
     setValue : function(v){
-        // if(this.name == 'country') console.log('country ComboBox.setValue()',v);
+        if(this.name == 'country') console.log('country ComboBox.setValue()',v);
         var text = v;
         if(this.valueField){
             if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
@@ -2029,35 +2091,47 @@ Ext.override(Ext.form.ComboBox, {
         }
         Ext.form.ComboBox.superclass.setValue.call(this, text);
         this.value = v;
+    },
+    getParams : function(q){
+        // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
+        // causes "Ext.form.ComboBox.superclass.getParams is undefined"
+        var p = {};
+        //p[this.queryParam] = q;
+        if(this.pageSize){
+            p.start = 0;
+            p.limit = this.pageSize;
+        }
+        // now my code:
+        if(this.queryContext) 
+            p[this.contextParam] = this.queryContext;
+        return p;
+    },
+    setQueryContext : function(qc){
+        console.log('setQueryContext');
+        if(this.contextParam && this.queryContext != qc) {
+            this.queryContext = qc;
+            delete this.lastQuery;
+        }
     }
 });
-*/
 
 
+/*
 Ext.override(Ext.form.ComboBox, {
     setValue : function(v){
         // if(this.name == 'country') 
         // if(! v) { v = { text:'', value:undefined }};
         if(! v) { v = [undefined, '']};
-        /*
         var text = v;
-        if(this.valueField){
-            var r;
-            // if (v) r = this.findRecord(this.valueField, v);
-            if (v) r = this.store.getById(v);
-            if(r){
-                text = r.data[this.displayField];
-            }else if(this.valueNotFoundText !== undefined){
-                text = this.valueNotFoundText;
-            }
-        }
-        */
         this.lastSelectionText = v[1];
         if(this.hiddenField){
             this.hiddenField.value = v[0];
         }
         Ext.form.ComboBox.superclass.setValue.call(this, v[1]);
         this.value = v;
+    },
+    getValue : function(){
+        v = Ext.form.ComboBox.superclass.getValue.call(this);
     },
     onSelect : function(record, index){
         if(this.fireEvent('beforeselect', this, record, index) !== false){
@@ -2096,8 +2170,7 @@ Ext.override(Ext.form.ComboBox, {
     },
 
 });
-
-
+*/
 
 """   
 
@@ -2650,6 +2723,7 @@ class ExtUI(base.UI):
         def js_lines():
         
             yield "function(caller) {"
+            yield "  var job = this;" # beforequery needs this
             #yield "  console.log(1);"
             for nrh in lh._needed_stores:
                 for ln in nrh.store.js_lines():

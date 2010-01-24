@@ -90,11 +90,11 @@ class Contact(models.Model):
     
 class Contacts(reports.Report):
     def city_choices(self,recipient):
+        print "city_choices", repr(recipient)
         #recipient = self.objects.get(pk=pk)
         if recipient and recipient.country:
             return recipient.country.city_set.order_by('name')
         #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
-        #print "city_choices_filter", recipient
         #return dict(country__in=(recipient.country,))
         
   

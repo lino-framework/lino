@@ -482,8 +482,9 @@ class Report(actors.Actor): # actions.Action): #
         choices = None
         if meth is not None:
             try:
-                recipient = fld.rel.to.objects.get(pk=pk)
-            except fld.rel.to.DoesNotExist:
+                #recipient = fld.rel.to.objects.get(pk=pk)
+                recipient = self.model.objects.get(pk=pk)
+            except self.model.DoesNotExist:
                 pass
             else:
                 choices = meth(recipient)
