@@ -93,7 +93,7 @@ class BankStatement(ledger.LedgerDocument):
             b.credit = - sum_debit
         yield b
         
-    def add_item(self,account=None,partner=None,**kw):
+    def add_item(self,account=None,company=None,person=None,**kw):
         pos = self.docitem_set.count() + 1
         if account is not None:
             if not isinstance(account,ledger.Account):
@@ -103,7 +103,7 @@ class BankStatement(ledger.LedgerDocument):
                 person = Person.objects.get(pk=person)
         if company is not None:
             if not isinstance(company,Company):
-                person = Company.objects.get(pk=company)
+                company = Company.objects.get(pk=company)
         kw['account'] = account
         kw['person'] = person
         kw['company'] = company

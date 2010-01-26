@@ -83,15 +83,15 @@ class LedgerDocument(journals.AbstractDocument):
         pass
         
     def create_booking(self,**kw):
-      #kw['journal'] = self.idjnl
-      kw['document'] = self
-      #kw['number'] = self.number
-      if not kw.get('date',None):
-          kw['date'] = self.value_date
-      b = Booking(**kw)
-      #print b.date
-      #b.save()
-      return b
+        #kw['journal'] = self.idjnl
+        kw['document'] = self
+        #kw['number'] = self.number
+        if not kw.get('date',None):
+            kw['date'] = self.value_date
+        b = Booking(**kw)
+        #print b.date
+        #b.save()
+        return b
         
         
 
@@ -114,24 +114,6 @@ def get_account(name):
     if a is None:
         raise ConfigurationError("No account %s defined" % x)
     return a
-    
-#~ def customers_account():
-    #~ a = Account.objects.get(pk="4000")
-    #~ if a is None:
-        #~ raise ConfigurationError("No account 4000 defined")
-    #~ return a
-
-#~ def sales_base():
-    #~ a = Account.objects.get(pk="7000")
-    #~ if a is None:
-        #~ raise ConfigurationError("No account 7000 defined")
-    #~ return a
-
-#~ def vat_base():
-    #~ a = Account.objects.get(pk="4510")
-    #~ if a is None:
-        #~ raise ConfigurationError("No account 7000 defined")
-    #~ return a
     
         
 class Booking(models.Model):

@@ -1034,7 +1034,7 @@ class MethodElement(FieldElement):
         return_type.name = name
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
-        delegate = lh.field2elem(return_type,**kw)
+        delegate = MainPanel.field2elem(lh,return_type,**kw)
         for a in ('ext_options','get_column_options','get_field_options'):
             setattr(self,a,getattr(delegate,a))
         

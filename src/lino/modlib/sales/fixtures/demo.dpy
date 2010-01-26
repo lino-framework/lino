@@ -50,6 +50,8 @@ def objects():
 
     for company in Company.objects.all():
         yield Customer(company=company)
+    for person in Person.objects.all():
+        yield Customer(person=person)
     
     #ORD = journals.get_journal_by_docclass(Order)
     #INV = journals.get_journal_by_docclass(Invoice)
@@ -132,7 +134,8 @@ def objects():
     utils.make_invoices(make_until=date(2009,05,14))
 
     order = Instantiator(sales.Order,journal=ORD,cycle='M',imode='e',payment_term="15").build
-    for i in range(29):
+    for i in range(10):
+    #for i in range(29):
         o = order(
             customer=i+1,creation_date=date(2009,6,1+i),
             sales_remark="range demo #%d" % i)

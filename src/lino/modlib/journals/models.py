@@ -54,7 +54,7 @@ def register_doctype(docclass,rptclass):
 def get_doctype(cl):
     i = 0
     for c,r in DOCTYPES:
-        if c == cl:
+        if c is cl:
             return i
         i += 1
     return None
@@ -83,12 +83,13 @@ class Journal(models.Model):
 
     def create_document(self,**kw):
         cl = self.get_doc_model()
-        doc = cl(journal=self,**kw)
-        print 20100126, doc
+        kw.update(journal=self)
+        doc = cl(**kw)
         doc.save()
         return doc
         
     def get_next_number(self):
+        self.save()
         cl = self.get_doc_model()
         d = cl.objects.filter(journal=self).aggregate(
             models.Max('number'))
@@ -213,7 +214,8 @@ class AbstractDocument(documents.AbstractDocument):
         
     def __unicode__(self):
         if self.id is None:
-            return "(Unsaved %s document)" % self.__class__
+            return "(Unsaved %s document (journal=%r,number=%r))" % (
+              self.__class__,self.journal,self.number)
             #~ return "%s#%d (%d)" % (self.journal.id,self.number, self.id)
         return "%s#%s (%d)" % (self.journal,self.number,self.id)
         

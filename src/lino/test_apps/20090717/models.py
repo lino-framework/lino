@@ -1,5 +1,8 @@
 """
 
+Diamond inheritance
+===================
+
 To try this test, save the body of this mail as a file models.py together with an empty __init__.py in some new directory on your PYTHONPATH, add this to your INSTALLED_APPS and then run "manage.py test".
 
 This test needs issue #10808 to be solved.

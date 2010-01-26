@@ -527,7 +527,7 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 box5
-      sales_ItemsByDocument:100x15
+      sales.ItemsByDocument:100x15
       """
       
         
@@ -548,7 +548,7 @@ class EmittedInvoicesPageLayout(OrderPageLayout):
     label = "Emitted invoices"
     main = """
     journal number:4 creation_date customer:20 start_date
-    sales_InvoicesByOrder
+    sales.InvoicesByOrder
     """
 
 

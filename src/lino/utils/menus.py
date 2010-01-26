@@ -145,8 +145,9 @@ class Menu(MenuItem):
         self.items = []
         #self.items_dict = {}
 
-    def add_action(self,actor_name,can_view=None,**kw):
-        actor = actors.get_actor(actor_name)
+    def add_action(self,actor,can_view=None,**kw):
+        if isinstance(actor,basestring):
+            actor = actors.get_actor(actor)
         if can_view is None:
             can_view = actor.can_view
         return self._add_item(Action(self,actor,can_view=can_view,**kw))

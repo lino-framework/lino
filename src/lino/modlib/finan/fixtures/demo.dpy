@@ -1,5 +1,5 @@
 #coding: utf8
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ from lino import reports
 ledger = reports.get_app('ledger')
 finan = reports.get_app('finan')
 
-Partner = resolve_model('contacts.Partner')
+Company = resolve_model('contacts.Company')
 
 def objects():
     #ba = ledger.Account.objects.get(pk="5500")
@@ -48,7 +48,7 @@ def objects():
       balance1=decimal.Decimal('1056.40'))
     doc.add_item(
       account=PR,
-      partner=Partner.objects.get(pk=2),
+      company=Company.objects.get(pk=2),
       debit='12.49')
     doc.book()
     yield doc
