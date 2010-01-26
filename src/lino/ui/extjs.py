@@ -570,7 +570,7 @@ class ColumnModel(Component):
         return d
         
 class GridColumn(Component):
-    declare_type = DECLARE_THIS
+    declare_type = DECLARE_VAR
     ext_suffix = "_col"
     value_template = "new Ext.grid.Column(%s)"
     
@@ -721,7 +721,7 @@ class InputElement(LayoutElement):
     #declare_type = DECLARE_INLINE
     declare_type = DECLARE_THIS
     #declare_type = DECLARE_VAR
-    name_suffix = "_input"
+    ext_suffix = "_input"
     xtype = 'textfield'
     preferred_height = 1
     field = None 
@@ -745,7 +745,7 @@ class ButtonElement(LayoutElement):
     #declare_type = DECLARE_INLINE
     #declare_type = DECLARE_THIS
     declare_type = DECLARE_VAR
-    name_suffix = "_btn"
+    ext_suffix = "_btn"
     xtype = 'button'
     preferred_height = 1
 
@@ -800,7 +800,7 @@ class FieldElement(LayoutElement):
     declare_type = DECLARE_VAR
     stored = True
     #declaration_order = 3
-    name_suffix = "_field"
+    ext_suffix = "_field"
     
     def __init__(self,lh,field,**kw):
         assert field.name, Exception("field %r has no name!" % field)
@@ -808,15 +808,17 @@ class FieldElement(LayoutElement):
         self.field = field
         self.editable = field.editable and not field.primary_key
         
-    def get_column_options(self,**kw):
-        kw = LayoutElement.get_column_options(self,**kw)
-        if self.editable:
-            fo = self.get_field_options()
-            kw.update(editor=fo)
-        return kw    
+    #~ def get_column_options(self,**kw):
+        #~ kw = LayoutElement.get_column_options(self,**kw)
+        #~ if self.editable:
+            #~ fo = self.get_field_options()
+            #~ kw.update(editor=fo)
+        #~ return kw    
         
     def get_field_options(self,**kw):
-        kw.update(xtype=self.xtype,name=self.name)
+        if self.xtype:
+            kw.update(xtype=self.xtype)
+        kw.update(name=self.name)
         kw.update(anchor="100%")
         #kw.update(style=dict(padding='0px'),color='green')
         if self.label:
@@ -827,24 +829,23 @@ class FieldElement(LayoutElement):
             kw.update(readOnly=True)
         return kw
         
-    def get_panel_options(self,**kw):
-        d = LayoutElement.ext_options(self,**kw)
-        #d.update(xtype='panel',layout='form') 
-        d.update(xtype='container',layout='form')
-        #d.update(style=dict(padding='0px'),color='green')
-        #d.update(hideBorders=True)
-        #d.update(margins='0')
-        return d
-
     def ext_options(self,**kw):
         """
-        ExtJS renders fieldLabels only if the field's container has layout 'form', so we create a panel around each field
+        ExtJS renders fieldLabels only if the field's Container has layout 'form', so we create a panel around each field
         """
-        fo = self.get_field_options()
-        po = self.get_panel_options()
-        #po.update(items=js_code("[ { %s } ]" % dict2js(fo)))
-        po.update(items=fo)
-        return po
+        kw = LayoutElement.ext_options(self,**kw)
+        kw.update(self.get_field_options())
+        #kw.update(xtype='panel',layout='form') 
+        #kw.update(style=dict(padding='0px'),color='green')
+        #kw.update(hideBorders=True)
+        #kw.update(margins='0')
+        return kw
+        #~ kw.update(xtype='container',layout='form')
+        #~ kw.update(items=self.get_field_options())
+        #~ return kw
+        
+    def js_column_lines(self):
+        return []
         
 class TextFieldElement(FieldElement):
     xtype = 'textarea'
@@ -870,9 +871,10 @@ class CharFieldElement(FieldElement):
 
         
 class ForeignKeyElement(FieldElement):
-    xtype = "combo"
+    #xtype = "combo"
     sortable = True
     #width = 20
+    value_template = "new Ext.form.ComboBox(%s)"
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -924,8 +926,8 @@ class ForeignKeyElement(FieldElement):
             def js():
                 yield "function(store,options) {"
                 yield "  console.log('beforeload',store,options);"
-                #yield "  store.setBaseParam(%r,job.get_current_record().data.id);" % URL_PARAM_CHOICES_PK
-                yield "  options.params[%r] = job.get_current_record().data.id;" % URL_PARAM_CHOICES_PK
+                #yield "  store.setBaseParam(%r,client_job.get_current_record().data.id);" % URL_PARAM_CHOICES_PK
+                yield "  options.params[%r] = client_job.get_current_record().data.id;" % URL_PARAM_CHOICES_PK
                 yield "}"
             listeners.update(beforeload=js)
         kw.update(listeners=listeners)
@@ -961,23 +963,27 @@ class ForeignKeyElement(FieldElement):
         kw.update(resizable=True)
         kw.update(pageSize=self.report.page_length)
         kw.update(emptyText='Select a %s...' % self.report.model.__name__)
-        if not True: # TODO: test whether field has a %s_choices() method
+        if True: # TODO: test whether field has a %s_choices() method
             kw.update(contextParam=URL_PARAM_CHOICES_PK)
             #kw.update(lazyInit=True)
+        if False:
             def js():
                 yield "function(combo) {"
                 yield "  console.log('20100124',combo);"
-                yield "  combo.setQueryContext(job.get_current_record().data.id);"
+                yield "  combo.setQueryContext(client_job.get_current_record().data.id);"
                 yield "}"
             kw.update(listeners=dict(focus=js,render=js))
         return kw
         
-    def js_lines(self):
-        for ln in super(ForeignKeyElement,self).js_lines():
-            yield ln
-        #yield "job.add_row_listener(function(sm,rowIndex,record) {this.setQueryContext(record.data.id)},this);"
-        #yield "job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
-        yield "console.log('20100124b',this,job);"
+    def js_column_lines(self):
+        yield "client_job.add_row_listener(function(sm,rowIndex,record) {"
+        #yield "  console.log('20100124b',this,client_job);"
+        yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
+        #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
+        
+    #~ def js_lines(self):
+        #~ for ln in super(ForeignKeyElement,self).js_lines():
+            #~ yield ln
         
         
 
@@ -1059,9 +1065,7 @@ class MethodElement(FieldElement):
         return_type.name = name
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
-        delegate = lh.ui.field2elem(lh,return_type,**kw)
-        #~ for a in ('ext_width','ext_options',
-          #~ 'get_column_options','get_field_options'):
+        delegate = lh.field2elem(return_type,**kw)
         for a in ('ext_options','get_column_options','get_field_options'):
             setattr(self,a,getattr(delegate,a))
         
@@ -1378,7 +1382,9 @@ class GridElement(Container,DataElementMixin):
         yield "  this.refresh();"
         #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
         yield "}, this, {delay:100});"
-        
+        for col in self.column_model.columns:
+            for ln in col.editor.js_column_lines():
+                yield ln
         
           
     def js_elements(self):
@@ -1432,8 +1438,40 @@ class M2mGridElement(GridElement):
         GridElement.__init__(self,lh,id2js(rpt.actor_id),rh,*elements,**kw)
   
 
+_field2elem = (
+    (models.TextField, TextFieldElement),
+    (models.CharField, CharFieldElement),
+    (models.DateField, DateFieldElement),
+    (models.IntegerField, IntegerFieldElement),
+    (models.DecimalField, DecimalFieldElement),
+    (models.BooleanField, BooleanFieldElement),
+    (models.ManyToManyField, M2mGridElement),
+    (models.ForeignKey, ForeignKeyElement),
+    (models.AutoField, IntegerFieldElement),
+    (models.EmailField, CharFieldElement),
+)
+    
+class MainPanel:
   
-class GridMainElement(GridElement):
+    @classmethod
+    def field2elem(cls,lh,field,**kw):
+        for cl,x in _field2elem:
+            if isinstance(field,cl):
+                return x(lh,field,**kw)
+        lino.log.warning("No LayoutElement for %s",field.__class__)
+        raise NotImplementedError("field %r" % field)
+                
+#class FieldContainer(Container):
+    
+class WrappingMainPanel(MainPanel):
+    @classmethod
+    def field2elem(cls,lh,field,**kw):
+        e = MainPanel.field2elem(lh,field,**kw)
+        ct = Container(lh,field.name+"_ct",e,items=e,xtype='container',layout='form')
+        ct.field = field
+        return ct
+
+class GridMainElement(GridElement,MainPanel):
     #declare_type = DECLARE_VAR
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
@@ -1482,7 +1520,7 @@ class GridMainElement(GridElement):
 
 
 
-class DetailMainPanel(DataElementMixin,Panel):
+class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
     declare_type = DECLARE_THIS
     value_template = "new Ext.form.FormPanel(%s)"
     def __init__(self,lh,name,vertical,*elements,**kw):
@@ -1610,7 +1648,7 @@ class DetailMainPanel(DataElementMixin,Panel):
     
         
 
-class FormMainPanel(DataElementMixin,Panel):
+class FormMainPanel(DataElementMixin,Panel,WrappingMainPanel):
     value_template = "new Ext.form.FormPanel(%s)"
     
     def __init__(self,lh,name,vertical,*elements,**kw):
@@ -2055,12 +2093,18 @@ Ext.override(Ext.form.ComboBox, {
     // queryContext : null, 
     // contextParam : null, 
     setValue : function(v){
-        if(this.name == 'country') console.log('country ComboBox.setValue()',v);
+        // if(this.name == 'country') console.log('country ComboBox.setValue()',v);
         var text = v;
         if(this.valueField){
+          if(v == '') { 
+              console.log(this.name,'.setValue',v,'no lookup needed, value is null');
+              v = null;
+          }else{
             if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
+            // if(this.mode == 'remote' && ( (this.lastQuery == undefined) || (!Ext.isDefined(this.store.totalLength)))){
+                console.log(this.name,'.setValue',v,'must wait for load');
                 this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
-                if(this.store.lastOptions === null){
+                if(this.store.lastOptions === null || this.lastQuery === null){
                     var params;
                     if(this.valueParam){
                         params = {};
@@ -2071,19 +2115,20 @@ Ext.override(Ext.form.ComboBox, {
                         this.store.setBaseParam(this.queryParam, q);
                         params = this.getParams(q);
                     }
+                    console.log(this.name,'.setValue',v,' : call load() with params ',params);
                     this.store.load({params: params});
+                }else{
+                    console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
                 }
                 return;
             }
-            var r;
-            // if (v) r = this.findRecord(this.valueField, v);
-            if (v) r = this.store.getById(v);
-            // if(this.name == 'country') console.log(20100122,r,this.displayField);
+            var r = this.findRecord(this.valueField, v);
             if(r){
                 text = r.data[this.displayField];
             }else if(this.valueNotFoundText !== undefined){
                 text = this.valueNotFoundText;
             }
+          }
         }
         this.lastSelectionText = text;
         if(this.hiddenField){
@@ -2107,12 +2152,12 @@ Ext.override(Ext.form.ComboBox, {
         return p;
     },
     setQueryContext : function(qc){
-        console.log('setQueryContext');
-        if(this.contextParam && this.queryContext != qc) {
-            this.queryContext = qc;
-            delete this.lastQuery;
-        }
-    }
+        console.log(this.name,'.setQueryContext',this.contextParam,'=',qc);
+        if(this.contextParam) {
+            if(this.queryContext != qc) {
+                this.queryContext = qc;
+                delete this.lastQuery;
+    }   }   }
 });
 
 
@@ -2509,24 +2554,14 @@ def json_response(x):
     s = py2js(x)
     #lino.log.debug("json_response() -> %r", s)
     return HttpResponse(s, mimetype='text/html')
-    
+
+
+
 from lino.ui import base
 
 class ExtUI(base.UI):
     _response = None
     
-    _field2elem = (
-        (models.TextField, TextFieldElement),
-        (models.CharField, CharFieldElement),
-        (models.DateField, DateFieldElement),
-        (models.IntegerField, IntegerFieldElement),
-        (models.DecimalField, DecimalFieldElement),
-        (models.BooleanField, BooleanFieldElement),
-        (models.ManyToManyField, M2mGridElement),
-        (models.ForeignKey, ForeignKeyElement),
-        (models.AutoField, IntegerFieldElement),
-        (models.EmailField, CharFieldElement),
-    )
     
     window_configs_file = os.path.join(settings.PROJECT_DIR,'window_configs.pck')
                 
@@ -2558,19 +2593,6 @@ class ExtUI(base.UI):
         self._response = None
 
 
-        
-        
-    def field2elem(self,lh,field,**kw):
-        #~ if isinstance(field,forms.Input):
-            #~ return InputElement(lh,name,field)
-      
-        for cl,x in self._field2elem:
-            if isinstance(field,cl):
-                return x(lh,field,**kw)
-        if True:
-            raise NotImplementedError("field %r" % field)
-        lino.log.warning("No LayoutElement for %s",field.__class__)
-                
 
     def main_panel_class(self,layout):
         if isinstance(layout,layouts.RowLayout) : 
@@ -2723,7 +2745,7 @@ class ExtUI(base.UI):
         def js_lines():
         
             yield "function(caller) {"
-            yield "  var job = this;" # beforequery needs this
+            yield "  var client_job = this;" # beforequery needs this
             #yield "  console.log(1);"
             for nrh in lh._needed_stores:
                 for ln in nrh.store.js_lines():

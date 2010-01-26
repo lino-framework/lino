@@ -302,37 +302,23 @@ class LayoutHandle:
             return self.ui.VirtualFieldElement(self,name,de,**kw)
             
         from lino import reports
+        
         if isinstance(de,reports.Report):
             e = self.ui.GridElement(self,name,de.get_handle(self.ui),**kw)
             self.slave_grids.append(e)
             return e
-        
-        
         if isinstance(de,actions.Action):
             e = self.ui.ButtonElement(self,name,de,**kw)
             self._buttons.append(e)
             return e
+            
         from lino import forms
+        
         if isinstance(de,forms.Input):
             return self.ui.InputElement(self,de,**kw)
         if callable(de):
             return self.create_meth_element(name,de,**kw)
             
-        #~ rpt = self.link.get_slave(name)
-        #~ if rpt is not None:
-            #~ e = self.ui.GridElement(self,name,rpt.get_handle(self.ui),**kw)
-            #~ self.slave_grids.append(e)
-            #~ return e
-        #~ field = self.link.try_get_field(name)
-        #~ if field is not None:
-            #~ return self.create_field_element(field,**kw)
-            
-        #~ vf = self.link.try_get_virt(name)
-        #~ if vf is not None:
-            #~ return self.create_virt_element(name,vf)
-        #~ meth = self.link.try_get_meth(name)
-        #~ if meth is not None:
-            #~ return self.create_meth_element(name,meth,**kw)
         if not name in ('__str__','__unicode__','name','label'):
             value = getattr(self.layout,name,None)
             if value is not None:
@@ -340,16 +326,6 @@ class LayoutHandle:
                     return self.desc2elem(panelclass,name,value,**kw)
                 if isinstance(value,StaticText):
                     return self.ui.StaticTextElement(self,name,value)
-                #~ if isinstance(value,Input):
-                    #~ e = self.ui.InputElement(self,name,value)
-                    #~ self.inputs.append(e)
-                    #~ return e
-                #~ if isinstance(value,models.Field):
-                    #~ if value.name is None:
-                        #~ value.name = name
-                    #~ return self.create_field_element(value,**kw)
-                #~ if isinstance(value,actions.Action):
-                    #~ return self.create_button_element(name,value,**kw)
                 raise KeyError("Cannot handle value %r in %s.%s." % (value,self.layout.name,name))
         msg = "Unknown element %r referred in layout %s" % (name,self.layout)
         #print "[Warning]", msg
@@ -373,8 +349,13 @@ class LayoutHandle:
         #~ e = self.ui.VirtualFieldElement(self,name,field,**kw)
         #~ return e
         
+    def field2elem(self,field,**kw):
+        # used also by lion.ui.extjs.MethodElement
+        return self._main_class.field2elem(self,field,**kw)
+        # return self.ui.field2elem(self,field,**kw)
+        
     def create_field_element(self,field,**kw):
-        e = self.ui.field2elem(self,field,**kw)
+        e = self.field2elem(field,**kw)
         assert e.field is not None,"e.field is None for %s.%s" % (self.layout,name)
         self._store_fields.append(e.field)
         return e
