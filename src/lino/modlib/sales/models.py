@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ class InvoicingMode(models.Model):
         return self.name
         
 class InvoicingModes(reports.Report):
-    model = InvoicingMode
+    model = 'sales.InvoicingMode'
     order_by = "id"
     can_view = perms.is_staff
     
@@ -162,19 +162,9 @@ def get_sales_rule(doc):
             return r
             
 
-class Partner(models.Model):
-    """
-    20091215 No longer valid, Partner is no longer part o modlib.contacts:
-    The Partner model in lino.modlib.contacts is abstract. 
-    igen uses the implementation in lino.modlib.sales (which has Meta app_label = "").
-    dsbe uses its own implementation in dsbe.modlib.contacts.models which just removes the abstract attribute.
-    """
-    #~ class Meta:
-        #~ abstract = True
-        #~ app_label = 'contacts'
-    
+class Customer(models.Model):
         
-    name = models.CharField("Sort name",max_length=40,editable=False)
+    name = models.CharField(max_length=40)
     company = models.ForeignKey('contacts.Company',blank=True,null=True)
     person = models.ForeignKey('contacts.Person',blank=True,null=True)
     
@@ -187,7 +177,7 @@ class Partner(models.Model):
         
     def save(self,*args,**kw):
         self.before_save()
-        return super(Partner,self).save(*args,**kw)
+        return super(Customer,self).save(*args,**kw)
         
     def before_save(self):
         if self.company:
@@ -196,52 +186,32 @@ class Partner(models.Model):
             l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
             self.name = " ".join(l)
         
-#~ class Partner(contacts.Partner):
-    #~ class Meta:
-        #~ app_label = 'contacts'
-    #~ payment_term = models.ForeignKey(PaymentTerm,blank=True,null=True)
-    #~ vat_exempt = models.BooleanField(default=False)
-    #~ item_vat = models.BooleanField(default=False)
     
-
-#~ class PartnerPageLayout(layouts.PageLayout):
-    #~ main = """
-           #~ company person
-           #~ """
-    
-class Partners(reports.Report):
-    page_layouts = (PartnerPageLayout,)
-    columnNames = "name company person"
-    can_delete = True
-    model = "contacts.Partner"
-    order_by = "name"
-    #can_view = perms.is_authenticated
-
-
-
-
-class PartnerPageLayout(layouts.PageLayout):
+class CustomerPageLayout(layouts.PageLayout):
     main = """
            company person
            payment_term 
            vat_exempt item_vat
            """
     
-class Partners(reports.Report):
-    page_layouts = (PartnerPageLayout,)
+class Customers(reports.Report):
+    page_layouts = (CustomerPageLayout,)
     columnNames = "name payment_term vat_exempt item_vat company person"
     can_delete = True
-    model = Partner
+    model = Customer
     order_by = "name"
     #can_view = perms.is_authenticated
+
+
+
 
 
 class SalesDocument(journals.AbstractDocument):
     
     creation_date = fields.MyDateField() #auto_now_add=True)
-    customer = models.ForeignKey('contacts.Partner',
+    customer = models.ForeignKey(Customer,
         related_name="customer_%(class)s")
-    ship_to = models.ForeignKey('contacts.Partner',
+    ship_to = models.ForeignKey(Customer,
         blank=True,null=True,
         related_name="shipTo_%(class)s")
     your_ref = models.CharField(max_length=200,blank=True)
@@ -708,7 +678,7 @@ class ItemsByDocument(reports.Report):
 #~ contacts.Partners.register_page_layout(DocumentsByPartnerDetail)
             
 
-class DocumentsByPartner(SalesDocuments):
+class DocumentsByCustomer(SalesDocuments):
     columnNames = "journal:4 number:4 creation_date:8 " \
                   "total_incl total_excl total_vat"
     #master = 'contacts.Partner'

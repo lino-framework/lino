@@ -88,15 +88,17 @@ class Contact(models.Model):
             lines.append(unicode(self.country))
         return linesep.join(lines)
     
-class Contacts(reports.Report):
-    def city_choices(self,recipient):
-        print "city_choices", repr(recipient)
+    def city_choices(self):
+        #print "city_choices", repr(recipient)
         #recipient = self.objects.get(pk=pk)
-        if recipient and recipient.country:
-            return recipient.country.city_set.order_by('name')
+        if self.country:
+        #if recipient and recipient.country:
+            return self.country.city_set.order_by('name')
         #return countries.City.oiesByCountry().get_queryset(master_instance=recipient.country)
         #return dict(country__in=(recipient.country,))
         
+class Contacts(reports.Report):
+    pass
   
 class ContactPageLayout(layouts.PageLayout):
     

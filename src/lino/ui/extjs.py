@@ -149,10 +149,13 @@ def py2js(v,**kw):
     if isinstance(v,Variable):
         return v.as_ext(**kw)
         
+    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
+    if type(v) is types.GeneratorType:
+        return "\n".join([ln for ln in v])
     if callable(v):
+        raise Exception("Please call the function yourself")
         return "\n".join([ln for ln in v(**kw)])
 
-    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
     if isinstance(v,js_code):
         return v.s
     if v is None:
@@ -183,31 +186,17 @@ class Variable(object):
     #declare_type = DECLARE_INLINE
     ext_suffix = ''
     value_template = "%s"
-    #declared = False
-    #declaration_order = 9
-    has_comp = False
     
     def __init__(self,name,value):
         self.name = name
         self.value = value
         self.ext_name = id2js(name) + self.ext_suffix
         
-    def js_lines(self):
-        if self.has_comp:
-            def lines():
-              yield "new function(parent) {"
-              #yield "  this._parent = parent;" 
-              for e in self.js_elements():
-                  for ln in e.js_lines():
-                      yield "  " + ln
-              yield "  this.comp = %s;" % self.as_ext_value()
-              yield "}(this)"
-            value = '\n'.join([ln for ln in lines()])
-        else:
-            for e in self.js_elements():
-                for ln in e.js_lines():
-                    yield ln
-            value = self.as_ext_value()
+    def js_declare(self):
+        for v in self.subvars():
+            for ln in v.js_declare():
+                yield ln
+        value = self.as_ext_value()
         if self.declare_type == DECLARE_INLINE:
             pass
         elif self.declare_type == DECLARE_VAR:
@@ -215,30 +204,28 @@ class Variable(object):
         elif self.declare_type == DECLARE_THIS:
             yield "this.%s = %s;" % (self.ext_name,value)
             
-    def as_ext_value(self):
-        return self.value_template % py2js(self.value)
-        
-    def js_elements(self):
+    def js_run(self,rr):
+        for v in self.subvars():
+            for ln in v.js_run(rr):
+                yield ln
+                
+    def subvars(self):
         return []
             
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
             return self.as_ext_value()
         if self.declare_type == DECLARE_THIS:
-            name = "this." + self.ext_name
-        else:
-            name = self.ext_name
-        if self.has_comp:
-            return name + ".comp"
-        else:
-            return name
+            return "this." + self.ext_name
+        return self.ext_name
 
+    def as_ext_value(self):
+        return self.value_template % py2js(self.value)
+        
 class Component(Variable): # better name? JSObject? Scriptable?
     
     def __init__(self,name,**options):
         Variable.__init__(self,name,options)
-        #~ self.name = name
-        #~ self.options = options
         
     def as_ext_value(self):
         value = self.ext_options()
@@ -555,7 +542,7 @@ class ColumnModel(Component):
         #~ self.report = report
         #~ self.name = report.name
         
-    def js_elements(self):
+    def subvars(self):
         for col in self.columns:
             yield col.editor
             yield col
@@ -711,6 +698,9 @@ class LayoutElement(VisibleComponent):
             kw.update(xtype=self.xtype)
         return kw
         
+    def js_column_lines(self,grid):
+        return []
+        
     #~ def ext_width(self):
         #~ if self.width is None:
             #~ return None
@@ -844,8 +834,6 @@ class FieldElement(LayoutElement):
         #~ kw.update(items=self.get_field_options())
         #~ return kw
         
-    def js_column_lines(self):
-        return []
         
 class TextFieldElement(FieldElement):
     xtype = 'textarea'
@@ -922,14 +910,6 @@ class ForeignKeyElement(FieldElement):
         kw.update(fields=[CHOICES_VALUE_FIELD,CHOICES_TEXT_FIELD])
         #~ kw.update(listeners=dict(exception=js_code("Lino.on_store_exception")))
         listeners = dict(exception=js_code("Lino.on_store_exception"))
-        if False: # done by combobox.on(render)
-            def js():
-                yield "function(store,options) {"
-                yield "  console.log('beforeload',store,options);"
-                #yield "  store.setBaseParam(%r,client_job.get_current_record().data.id);" % URL_PARAM_CHOICES_PK
-                yield "  options.params[%r] = client_job.get_current_record().data.id;" % URL_PARAM_CHOICES_PK
-                yield "}"
-            listeners.update(beforeload=js)
         kw.update(listeners=listeners)
         return kw
       
@@ -963,28 +943,17 @@ class ForeignKeyElement(FieldElement):
         kw.update(resizable=True)
         kw.update(pageSize=self.report.page_length)
         kw.update(emptyText='Select a %s...' % self.report.model.__name__)
-        if True: # TODO: test whether field has a %s_choices() method
+        # test whether field has a %s_choices() method
+        if self.lh.link.report.get_field_choices_meth(self.field): 
             kw.update(contextParam=URL_PARAM_CHOICES_PK)
             #kw.update(lazyInit=True)
-        if False:
-            def js():
-                yield "function(combo) {"
-                yield "  console.log('20100124',combo);"
-                yield "  combo.setQueryContext(client_job.get_current_record().data.id);"
-                yield "}"
-            kw.update(listeners=dict(focus=js,render=js))
         return kw
         
-    def js_column_lines(self):
-        yield "client_job.add_row_listener(function(sm,rowIndex,record) {"
+    def js_column_lines(self,grid):
+        yield "%s.add_row_listener(function(sm,rowIndex,record) {" % grid
         #yield "  console.log('20100124b',this,client_job);"
         yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
         #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
-        
-    #~ def js_lines(self):
-        #~ for ln in super(ForeignKeyElement,self).js_lines():
-            #~ yield ln
-        
         
 
         
@@ -1080,7 +1049,6 @@ class Container(LayoutElement):
     #declare_type = DECLARE_INLINE
     #declare_type = DECLARE_THIS
     #declare_type = DECLARE_VAR
-    #has_comp = True
     declare_type = DECLARE_THIS
     
     
@@ -1090,10 +1058,8 @@ class Container(LayoutElement):
         self.elements = elements
         LayoutElement.__init__(self,lh,name,**kw)
         
-    def js_elements(self):
+    def subvars(self):
         return self.elements
-        #~ for ln in self.elements.js_lines():
-            #~ yield ln
             
     def walk(self):
         for e in self.elements:
@@ -1111,27 +1077,6 @@ class Container(LayoutElement):
                 s += ln + "\n"
         return s
 
-    #~ def ext_options(self):
-        #~ d = LayoutElement.ext_options(self)
-        #~ return d
-        
-    #~ def js_lines(self):
-        #~ if self.declare_type == DECLARE_THIS and self.has_comp:
-            #~ yield "this.%s = new function(parent) {" % self.ext_name
-            #~ #yield "  this._parent = parent;" 
-            #~ for e in self.elements:
-                #~ for ln in e.js_lines():
-                    #~ yield "  "+ln
-            #~ yield "  this.comp = %s;" % self.as_ext_value()
-            #~ yield "}(this);"
-        #~ else:
-            #~ for e in self.elements:
-                #~ for ln in e.js_lines():
-                    #~ yield ln
-            #~ for ln in LayoutElement.jslines(self):
-                #~ yield ln
-            #~ #yield "this.%s = %s;" % (self.ext_name,self.as_ext_value())
-            
 
 
 
@@ -1235,7 +1180,7 @@ class TabPanel(Container):
 class DataElementMixin:
     "common for Grids, Details and Forms"
     def __init__(self,dl):
-        self.dl = dl # DataLink
+        self.dl = dl # DataLink (i.e. a Report or a Form)
         self.keys = None
         self.buttons = None
         self.cmenu = None
@@ -1286,8 +1231,10 @@ class DataElementMixin:
         self.buttons = Variable(self.ext_name+'_buttons',buttons)
         self.cmenu = Variable('cmenu',js_code("new Ext.menu.Menu(%s)" % py2js(self.buttons)))
         
-    def js_elements(self):
+    def subvars(self):
         self.setup()
+        for rh in self.lh._needed_stores:
+            yield rh.store
         yield self.buttons
         yield self.keys
         yield self.cmenu
@@ -1297,7 +1244,6 @@ class GridElement(Container,DataElementMixin):
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
     value_template = "new Lino.GridPanel(%s)"
     ext_suffix = "_grid"
-    #has_comp = True    
     
     def __init__(self,lh,name,rh,*elements,**kw):
         """
@@ -1334,7 +1280,7 @@ class GridElement(Container,DataElementMixin):
             return
         DataElementMixin.setup(self)
         # searchString thanks to http://www.extjs.com/forum/showthread.php?t=82838
-        def keypress():
+        def js_keypress():
             yield "function(field, e) {"
             # searching starts when user presses ENTER.
             yield "  if(e.getKey() == e.RETURN) {"
@@ -1350,7 +1296,7 @@ class GridElement(Container,DataElementMixin):
             xtype = 'textfield',
             enableKeyEvents = True, # required if you need to detect key-presses
             #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
-            listeners = dict(keypress=keypress,scope=js_code('this'))
+            listeners = dict(keypress=js_keypress(),scope=js_code('this'))
         )
         tbar = dict(
           store=self.rh.store,
@@ -1362,9 +1308,9 @@ class GridElement(Container,DataElementMixin):
         self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         
         
-    def js_lines(self):
+    def js_declare(self):
         self.setup()
-        for ln in Container.js_lines(self):
+        for ln in Container.js_declare(self):
             yield ln
         yield "%s.on('afteredit', Lino.grid_afteredit(this,'%s','%s'));" % (
           self.as_ext(),
@@ -1382,12 +1328,9 @@ class GridElement(Container,DataElementMixin):
         yield "  this.refresh();"
         #yield "  %s.load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.rh.store.as_ext()
         yield "}, this, {delay:100});"
-        for col in self.column_model.columns:
-            for ln in col.editor.js_column_lines():
-                yield ln
         
           
-    def js_elements(self):
+    def subvars(self):
         """
         GridElement, unlike Container, doesn't generate the declaration of its elements 
         because self.column_model does this indirectly.
@@ -1395,7 +1338,7 @@ class GridElement(Container,DataElementMixin):
         self.setup()
         #yield self.rh.store
         yield self.column_model
-        for e in DataElementMixin.js_elements(self):
+        for e in DataElementMixin.subvars(self):
             yield e
         yield self.pager
 
@@ -1460,8 +1403,52 @@ class MainPanel:
                 return x(lh,field,**kw)
         lino.log.warning("No LayoutElement for %s",field.__class__)
         raise NotImplementedError("field %r" % field)
+        
+        
+    def js_job_constructor(self,rr,**kw):
+    
+        yield "function(caller) {"
+        yield "  var client_job = this;" 
+        for ln in self.js_declare():
+            yield "  " + ln
+            
+        yield "  this.window = new Ext.Window(%s);" % py2js(kw)
+        # for permalink:
+        yield "  this.window._permalink = %s;" % py2js(id2js(self.lh.name))
+        #~ yield "  console.log(4);"
+        yield "  this.stop = function() {"
+        yield "     this.window.close();"
+        yield "  }"
+        yield "  if (caller) {"
+        yield "    caller.window.on('close',function() {"
+        #yield "      console.log('close',caller,this);"
+        yield "      this.stop();"
+        yield "    },this);"
+        yield "  }"
+        
+            
+        for ln in self.js_run(rr):
+            yield "  " + ln
+            
+        for e in self.lh.walk():
+            for ln in e.js_column_lines('this.main_grid'):
+                yield ln
                 
-#class FieldContainer(Container):
+        #~ if isinstance(self,FormMainPanel):
+            #~ yield "  this.get_values = function() {"
+            #~ yield "    var v = {};"
+            #~ for e in self.lh.link.inputs:
+                #~ yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
+            #~ yield "    return v;"
+            #~ yield "  };"
+            
+          
+        #~ if isinstance(self,GridMainPanel):
+        yield "  this.window.show();"
+        yield "  this.window.focus();"
+        yield "}"
+            
+        
     
 class WrappingMainPanel(MainPanel):
     @classmethod
@@ -1471,7 +1458,7 @@ class WrappingMainPanel(MainPanel):
         ct.field = field
         return ct
 
-class GridMainElement(GridElement,MainPanel):
+class GridMainPanel(GridElement,MainPanel):
     #declare_type = DECLARE_VAR
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
@@ -1481,7 +1468,7 @@ class GridMainElement(GridElement,MainPanel):
             #~ self.height = self.preferred_height
         #~ if self.width is None:
             #~ self.width = self.preferred_width
-        #lino.log.debug("GridMainElement.__init__() %s",self.name)
+        #lino.log.debug("GridMainPanel.__init__() %s",self.name)
         
     def ext_options(self):
         d = GridElement.ext_options(self)
@@ -1494,29 +1481,65 @@ class GridMainElement(GridElement,MainPanel):
         del d['title']
         return d
         
-    def js_lines(self):
-        yield "this.add_row_listener = function(fn,scope) {"
-        yield "  this.%s.getSelectionModel().addListener('rowselect',fn,scope);" % self.ext_name
-        yield "}"
-        for ln in GridElement.js_lines(self):
-            yield ln
+    #~ def js_declare(self):
+        #~ for ln in GridElement.js_declare(self):
+            #~ yield ln
+            
+    def js_run(self,rr):
         #yield "this.refresh = function() { this.%s.getStore().load()}" % self.ext_name
         yield "this.refresh = function() { "
         #yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
         yield "  %s.getStore().load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.as_ext()
         yield "}"
-        yield "this.get_current_record = function() {"
-        yield "  return this.%s.getSelectionModel().getSelected();" % self.ext_name
-        yield "};" 
+        yield "this.get_current_record = function() { return this.getSelectionModel().getSelected()};"
         yield "this.get_selected = function() {"
-        #yield "  console.log('get_selected() start');"
         yield "  var sel_pks = '';"
-        yield "  var sels = this.%s.getSelectionModel().getSelections();" % self.ext_name
+        yield "  var sels = this.getSelectionModel().getSelections();"
         yield "  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };"
-        #yield "  console.log('get_selected() ok');"
         yield "  return sel_pks;"
         yield "}"
         
+        yield "var grid = this.main_grid;"
+        yield "var store = grid.getStore();"
+        if self.lh.link.report.master is None:
+            yield "  store.load();" 
+        else:
+            master_type = ContentType.objects.get_for_model(self.lh.link.report.model).pk
+            yield "  if (caller) {"
+            yield "    caller.main_grid.add_row_listener("
+            yield "      function(sm,rowIndex,record) { "
+            yield "        var p = { %s:record.id, %s:%r };" % (
+              URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
+            yield "        store.load({params:p});" 
+            yield "    })"
+            yield "  } else {"
+            if rr.master_instance is None:
+                mpk = None
+            else:
+                mpk = rr.master_instance.pk
+            yield "    store.load({params:{ %s:%r, %s:%r }});" % (
+              URL_PARAM_MASTER_PK,mpk,URL_PARAM_MASTER_TYPE,master_type)
+            yield "  }"
+          
+            # der folgende fall ist noch nicht uebernommen:
+            #~ yield "    if(master) {"
+            #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
+            #~ yield "      %s.load();" % self.store.as_ext()
+            
+        #~ for col in self.column_model.columns:
+            #~ for ln in col.editor.js_column_lines(self.as_ext()):
+                #~ yield ln
+        
+        # the following doesn't work and i don't understand why
+        #~ yield "  this.window.on('show',function() {"
+        #~ yield "    grid.focus();"
+        #~ yield "  });"
+        #~ yield "  grid.on('viewready',function() {"
+        #~ #yield "    console.log('on render');"
+        #~ #yield "    grid.getView().focusRow(1);"
+        #~ yield "    grid.getSelectionModel().selectFirstRow();"
+        #~ #yield "    grid.getView().focusEl.focus();"
+        #~ yield "  });"
 
 
 
@@ -1530,14 +1553,14 @@ class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
         Panel.__init__(self,lh,name,vertical,*elements,**kw)
         #lh.needs_store(self.rh)
         
-    #~ def js_elements(self):
-        #~ for e in DataElementMixin.js_elements(self):
+    #~ def subvars(self):
+        #~ for e in DataElementMixin.subvars(self):
             #~ yield e
             
-    def js_elements(self):
-        for e in DataElementMixin.js_elements(self):
+    def subvars(self):
+        for e in DataElementMixin.subvars(self):
             yield e
-        for e in Panel.js_elements(self):
+        for e in Panel.subvars(self):
             yield e
             
     def ext_options(self):
@@ -1561,17 +1584,21 @@ class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
         #d.update(standardSubmit=True)
         return d
         
-    def js_lines(self):
+    def js_declare(self):
         #yield "console.log(10);"
         yield "this.refresh = function() { if(caller) caller.refresh(); };"
         yield "this.get_current_record = function() { return this.current_record;};"
         yield "this.get_selected = function() {"
         yield "  return this.current_record.id;"
         yield "}"
-        yield "this.add_row_listener = function(fn,scope) {"
-        yield "  if(caller) caller.add_row_listener(fn,scope);"
+        yield "if(caller) {"
+        #yield "  this.add_row_listener = function(fn,scope){caller.add_row_listener(fn,scope)};"
+        yield "  this.main_grid = caller.main_grid;"
+        yield "}else{"
+        #yield "  this.add_row_listener = function(fn,scope) {};"
+        yield "  this.main_grid = undefined;"
         yield "}"
-        for ln in Panel.js_lines(self):
+        for ln in Panel.js_declare(self):
             yield ln
         #yield "console.log(11);"
         #yield "mastergrid = Ext.getCmp()"
@@ -1593,8 +1620,8 @@ class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
             yield "  %s.load({params:p});" % slave.rh.store.as_ext()
         #yield "  for(i=0;i++;i<slaves.length) { console.log('load slave',slaves[i],p); slaves[i].load({params:p}) };"
         yield "};"
-        yield "if(caller) {"
-        yield "  caller.add_row_listener("
+        yield "if(this.main_grid) {"
+        yield "  this.main_grid.add_row_listener("
         yield "    function(sm,rowIndex,record) { this.load_record(record); },this);"
         
         
@@ -1612,18 +1639,20 @@ class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
 
         #main_name = id2js(self.lh.link.row_layout.name) + '.' + 'main_grid'
         key = actions.PAGE_UP
-        js = js_code("function() {caller.main_grid.getSelectionModel().selectPrevious()}")
+        js = js_code("function() {this.main_grid.getSelectionModel().selectPrevious()}")
         keys.append(dict(
           handler=js,
+          scope=js_code('this'),
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-        buttons.append(dict(handler=js,text="Previous"))
+        buttons.append(dict(handler=js,scope=js_code('this'),text="Previous"))
 
         key = actions.PAGE_DOWN
-        js = js_code("function() {caller.main_grid.getSelectionModel().selectNext()}")
+        js = js_code("function() {this.main_grid.getSelectionModel().selectNext()}")
         keys.append(dict(
           handler=js,
+          scope=js_code('this'),
           key=key.keycode,ctrl=key.ctrl,alt=key.alt,shift=key.shift))
-        buttons.append(dict(handler=js,text="Next"))
+        buttons.append(dict(handler=js,scope=js_code('this'),text="Next"))
         if len(keys):
             #yield "console.log(%s);" % self.as_ext()
             #yield "console.log(%s.comp);" % self.as_ext()
@@ -1639,13 +1668,18 @@ class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
         buttons = []
 
         url = self.rh.get_absolute_url(submit=True)
-        js = js_code("Lino.form_submit(this,'%s',caller.main_grid.getStore(),'%s')" % (
+        js = js_code("Lino.form_submit(this,'%s',this.main_grid.getStore(),'%s')" % (
                 url,self.rh.store.pk.name))
         buttons.append(dict(handler=js,text='Submit'))
         
         for btn in buttons:
             yield "%s.addButton(%s);" % (self.as_ext(),py2js(btn))
     
+    def js_run(self,rr):
+        yield "if(this.main_grid) {"
+        yield "  var sels = this.main_grid.getSelectionModel().getSelections()"
+        yield "  if(sels.length > 0) this.load_record(sels[0]);"
+        yield "}"
         
 
 class FormMainPanel(DataElementMixin,Panel,WrappingMainPanel):
@@ -1665,13 +1699,20 @@ class FormMainPanel(DataElementMixin,Panel,WrappingMainPanel):
         d.update(autoHeight=False)
         return d
         
-    def js_elements(self):
-        for e in DataElementMixin.js_elements(self):
+    def subvars(self):
+        for e in DataElementMixin.subvars(self):
             yield e
-        for e in Panel.js_elements(self):
+        for e in Panel.subvars(self):
             yield e
             
 
+    def js_run(self,rr):
+        yield "  this.get_values = function() {"
+        yield "    var v = {};"
+        for e in self.lh.link.inputs:
+            yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
+        yield "    return v;"
+        yield "  };"
 
 
 class Viewport:
@@ -1750,7 +1791,7 @@ Lino.form_submit = function (job,url,store,pkname) {
     p = {};
     // p[pkname] = store.getAt(0).data.id;
     // p[pkname] = job.current_pk;
-    p[pkname] = job.get_current_record().data.id;
+    p[pkname] = job.main_grid.get_current_record().data.id;
     // console.log('Lino.form_submit',p);
     job.main_panel.form.submit({
       clientValidation: false,
@@ -1979,7 +2020,9 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,{
     console.log('GridPanel.postEdit()',value, originalValue, r, field);
     return value;
   },
-   
+  add_row_listener : function(fn,scope) {
+    this.getSelectionModel().addListener('rowselect',fn,scope);
+  }
   });
 
 Lino.cell_context_menu = function(job) {
@@ -2096,12 +2139,12 @@ Ext.override(Ext.form.ComboBox, {
         // if(this.name == 'country') console.log('country ComboBox.setValue()',v);
         var text = v;
         if(this.valueField){
-          if(v == '') { 
+          if(v === null) { 
               console.log(this.name,'.setValue',v,'no lookup needed, value is null');
               v = null;
           }else{
-            if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
-            // if(this.mode == 'remote' && ( (this.lastQuery == undefined) || (!Ext.isDefined(this.store.totalLength)))){
+            // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
+            if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
                 console.log(this.name,'.setValue',v,'must wait for load');
                 this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
                 if(this.store.lastOptions === null || this.lastQuery === null){
@@ -2121,6 +2164,8 @@ Ext.override(Ext.form.ComboBox, {
                     console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
                 }
                 return;
+            }else{
+                console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
             }
             var r = this.findRecord(this.valueField, v);
             if(r){
@@ -2152,11 +2197,12 @@ Ext.override(Ext.form.ComboBox, {
         return p;
     },
     setQueryContext : function(qc){
-        console.log(this.name,'.setQueryContext',this.contextParam,'=',qc);
         if(this.contextParam) {
+            console.log(this.name,'.setQueryContext',this.contextParam,'=',qc);
             if(this.queryContext != qc) {
                 this.queryContext = qc;
-                delete this.lastQuery;
+                // delete this.lastQuery;
+                this.lastQuery = null;
     }   }   }
 });
 
@@ -2223,7 +2269,7 @@ Ext.override(Ext.form.ComboBox, {
 Ext.onReady(function(){ """
 
         for c in self.components:
-            for ln in c.js_lines():
+            for ln in c.js_declare():
                 s += "\n" + ln
             
         d = dict(layout='border')
@@ -2596,7 +2642,7 @@ class ExtUI(base.UI):
 
     def main_panel_class(self,layout):
         if isinstance(layout,layouts.RowLayout) : 
-            return GridMainElement
+            return GridMainPanel
         if isinstance(layout,layouts.PageLayout) : 
             return DetailMainPanel
         if isinstance(layout,layouts.FormLayout) : 
@@ -2696,7 +2742,7 @@ class ExtUI(base.UI):
             url += "?" + urlencode(kw)
         return url
         
-    def layout2kw(self,lh,**kw):
+    def window_options(self,lh,**kw):
         name = id2js(lh.name)
         kw.update(title=lh.get_title(self))
         # kw.update(closeAction='hide')
@@ -2740,116 +2786,20 @@ class ExtUI(base.UI):
         rr = ViewReportRequest(context.request,rh)
         lh = rr.layout 
         # kw['defaultButton'] = js_code('this.main_grid')
-        kw = self.layout2kw(lh,**kw)
+        kw = self.window_options(lh,**kw)
+        context.response.update(call=lh._main.js_job_constructor(rr,**kw))
         
-        def js_lines():
-        
-            yield "function(caller) {"
-            yield "  var client_job = this;" # beforequery needs this
-            #yield "  console.log(1);"
-            for nrh in lh._needed_stores:
-                for ln in nrh.store.js_lines():
-                    yield "  " + ln
-            #yield "  console.log(2);"
-            for ln in lh._main.js_lines():
-                yield "  " + ln
-            #~ yield "  console.log(3);"
-                
-            yield "  this.window = new Ext.Window( %s );" % py2js(kw)
-            # for permalink:
-            yield "  this.window._permalink = %s;" % py2js(id2js(lh.name))
-            #~ yield "  console.log(4);"
-            yield "  this.stop = function() {"
-            yield "     this.window.close();"
-            yield "  }"
-            
-                
-            if isinstance(lh._main,DetailMainPanel):
-                #~ yield "  console.log(5);"
-                yield "  var sels = caller.main_grid.getSelectionModel().getSelections()"
-                #~ yield "  console.log(6);"
-                yield "  if(sels.length > 0) this.load_record(sels[0]);"
-                #~ yield "  console.log(7);"
-                
-            if isinstance(lh._main,GridMainElement):
-                yield "  var grid = this.main_grid;"
-                yield "  var store = grid.getStore();"
-                if lh.link.report.master is None:
-                    yield "  store.load();" 
-                else:
-                    master_type = ContentType.objects.get_for_model(lh.link.report.model).pk
-                    yield "  if (caller) {"
-                    #yield "    caller.main_grid.getSelectionModel().addListener('rowselect',"
-                    yield "    caller.add_row_listener("
-                    yield "      function(sm,rowIndex,record) { "
-                    yield "        var p = { %s:record.id, %s:%r };" % (
-                      URL_PARAM_MASTER_PK,URL_PARAM_MASTER_TYPE,master_type)
-                    # yield "      console.log('on_rowselect',this,p);"
-                    yield "        store.load({params:p});" 
-                    yield "    })"
-                    yield "  } else {"
-                    if rr.master_instance is None:
-                        mpk = None
-                    else:
-                        mpk = rr.master_instance.pk
-                    yield "    store.load({params:{ %s:%r, %s:%r }});" % (
-                      URL_PARAM_MASTER_PK,mpk,URL_PARAM_MASTER_TYPE,master_type)
-                    yield "  }"
-                  
-                    # der folgende fall ist noch nicht uebernommen:
-                    #~ yield "    if(master) {"
-                    #~ yield "      %s.setBaseParam(%r,master);" % (self.store.as_ext(),URL_PARAM_MASTER_PK)
-                    #~ yield "      %s.load();" % self.store.as_ext()
-                    
-                # the following doesn't work and i don't understand why
-                #~ yield "  this.window.on('show',function() {"
-                #~ yield "    grid.focus();"
-                #~ yield "  });"
-                #~ yield "  grid.on('viewready',function() {"
-                #~ #yield "    console.log('on render');"
-                #~ #yield "    grid.getView().focusRow(1);"
-                #~ yield "    grid.getSelectionModel().selectFirstRow();"
-                #~ #yield "    grid.getView().focusEl.focus();"
-                #~ yield "  });"
-            yield "  if (caller) {"
-            yield "    caller.window.on('close',function() {"
-            yield "      console.log('close',caller,this);"
-            yield "      this.stop();"
-            yield "    },this);"
-            yield "  }"
-            yield "  this.window.show();"
-            yield "  this.window.focus();"
-            yield "}"
-            
-        context.response.update(call=js_lines)
         
     def view_form(self,context,**kw):
+        "called from Form.run()"
         frm = context.actor
-        # called from Form.run()
         fh = self.get_form_handle(frm)
         #fh.setup()
         lh = fh.lh
-        kw = self.layout2kw(lh,**kw)
-        name = id2js(lh.name)
-        def js_lines():
-            yield "function(caller) {" 
-            for ln in lh._main.js_lines():
-                yield "  " + ln
-            yield "  this.window = new Ext.Window( %s );" % py2js(kw)
-            yield "  this.window._permalink = %s;" % py2js(id2js(lh.name))
-            yield "  this.get_values = function() {"
-            yield "    var v = {};"
-            for e in fh.inputs:
-                yield "    v[%r] = this.main_panel.getForm().findField(%r).getValue();" % (e.name,e.name)
-            yield "    return v;"
-            yield "  };"
-            yield "  this.stop = function() {"
-            yield "     this.window.close();"
-            yield "  }"
-            yield "  this.window.show();"
-            yield "}"
-      
-        context.response.update(call=js_lines)
+        kw = self.window_options(lh,**kw)
+        rr = None
+        context.response.update(call=lh._main.js_job_constructor(rr,**kw))
+        
             
     
 ui = ExtUI()

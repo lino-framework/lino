@@ -474,11 +474,15 @@ class Report(actors.Actor): # actions.Action): #
         r = renderers_text.TextReportRequest(self,*args,**kw)
         return r.render()
         
+    def get_field_choices_meth(self,fld):
+        # used also in extjs to test whether this field does have context-sensitive choices
+        methname = fld.name + "_choices"
+        return getattr(self.model,methname,None)
+        
     def get_field_choices(self,fld,pk,quick_search=None):
         # pk is the primary key of the "receiving" instance (who is asking for a list of choices)
-        # query is a string used as filter
-        methname = fld.name + "_choices"
-        meth = getattr(self,methname,None)
+        # query is a string typed by user to filter the choices
+        meth = self.get_field_choices_meth(fld)
         choices = None
         if meth is not None:
             try:

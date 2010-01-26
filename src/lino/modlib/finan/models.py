@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@ from lino.utils import perms
 
 from django.db import models
 from lino.modlib import fields
+from lino.modlib.tools import resolve_model
 
 contacts = reports.get_app('contacts')
 ledger = reports.get_app('ledger')
 journals = reports.get_app('journals')
 
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.ledger import models as ledger
-#~ from lino.modlib.journals import models as journals
+Person = resolve_model('contacts.Person')
+Company = resolve_model('contacts.Company')
 
 def _functionId(nFramesUp):
     # thanks to:
@@ -73,7 +73,8 @@ class BankStatement(ledger.LedgerDocument):
             b = self.create_booking(
               pos=i.pos,
               account=i.account,
-              partner=i.partner,
+              person=i.person,
+              company=i.company,
               date=i.date,
               debit=i.debit,
               credit=i.credit)
@@ -92,17 +93,20 @@ class BankStatement(ledger.LedgerDocument):
             b.credit = - sum_debit
         yield b
         
-        
     def add_item(self,account=None,partner=None,**kw):
         pos = self.docitem_set.count() + 1
         if account is not None:
             if not isinstance(account,ledger.Account):
                 account = ledger.Account.objects.get(pk=account)
-        if partner is not None:
-            if not isinstance(partner,contacts.Partner):
-                partner = contacts.Partner.objects.get(pk=partner)
+        if person is not None:
+            if not isinstance(person,Person):
+                person = Person.objects.get(pk=person)
+        if company is not None:
+            if not isinstance(company,Company):
+                person = Company.objects.get(pk=company)
         kw['account'] = account
-        kw['partner'] = partner
+        kw['person'] = person
+        kw['company'] = company
         for k in ('debit','credit'):
             v = kw.get(k,None)
             if isinstance(v,basestring):
@@ -118,7 +122,8 @@ class DocItem(models.Model):
     credit = fields.PriceField(default=0)
     remark = models.CharField(max_length=200,blank=True)
     account = models.ForeignKey(ledger.Account)
-    partner = models.ForeignKey('contacts.Partner',blank=True,null=True)
+    person = models.ForeignKey(Person,blank=True,null=True)
+    company = models.ForeignKey(Company,blank=True,null=True)
     
     def save(self,*args,**kw):
         if self.pos is None:
@@ -171,12 +176,12 @@ class BankStatements(journals.DocumentsByJournal):
     
 class DocItems(reports.Report):
     columnNames = "document pos:3 "\
-                  "date account partner remark debit credit" 
+                  "date account company person remark debit credit" 
     model = DocItem
     order_by = "pos"
 
 class ItemsByDocument(DocItems):
-    columnNames = "pos:3 date account partner remark debit credit" 
+    columnNames = "pos:3 date account company person remark debit credit" 
     #master = BankStatement
     fk_name = 'document'
     order_by = "pos"

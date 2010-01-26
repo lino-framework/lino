@@ -1,5 +1,5 @@
 #coding: utf8
-## Copyright 2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -20,6 +20,10 @@ from dateutil import parser as dateparser
 from lino.modlib.sales import utils
 from lino.utils.instantiator import Instantiator, i2d
 from lino.modlib.tools import resolve_model
+
+Person = resolve_model('contacts.Person')
+Company = resolve_model('contacts.Company')
+Customer = resolve_model('sales.Customer')
 
 #contacts = reports.get_app('contacts')
 products = reports.get_app('products')
@@ -44,8 +48,8 @@ def objects():
     yield shippingmode("ta","take away")
     yield shippingmode("rm","regular mail")
 
-    #~ for ct in contacts.Contact.objects.all():
-        #~ yield Customer.from_parent(ct)
+    for company in Company.objects.all():
+        yield Customer(company=company)
     
     #ORD = journals.get_journal_by_docclass(Order)
     #INV = journals.get_journal_by_docclass(Invoice)
@@ -65,18 +69,11 @@ def objects():
         
     yield salesrule(imode='e',shipping_mode="ta",payment_term="7")
     
-    
-    #~ partner = Instantiator('contacts.Partner').build
-    
-    #~ for c in resolve_model('contacts.Company').objects.all():
-        #~ yield partner(company=c.pk)
-        
-    #~ for p in resolve_model('contacts.Person').objects.all():
-        #~ yield partner(person=p.pk)
-    
-    Partner = resolve_model('contacts.Partner')
-    metsjapuu = Partner.objects.get(company__name__startswith="Mets")
-    dubois = Partner.objects.get(person__last_name__startswith="Dubois")
+   
+    #Company = resolve_model('contacts.Company')
+    #Person = resolve_model('contacts.Person')
+    #company1 = Company.objects.get(name__startswith="Ausdemwald")
+    #dubois = Person.objects.get(last_name__startswith="Dubois")
     furniture = products.ProductCat.objects.get(name="Furniture")
     hosting = 5
     
@@ -87,13 +84,13 @@ def objects():
       "customer creation_date imode",
       payment_term="30",journal=INV).build
     
-    o = order(metsjapuu,"2008-09-23","2008-09-24","M","e",
+    o = order(1,"2008-09-23","2008-09-24","M","e",
         sales_remark="monthly order")
     o.add_item(hosting,1)
     yield o
 
-    o = order(dubois,"2008-09-23","2008-09-24","M","e",
-        sales_remark="dubois gets 50% discount")
+    o = order(2,"2008-09-23","2008-09-24","M","e",
+        sales_remark="Customer 2 gets 50% discount")
     o.add_item(hosting,1,discount=50)
     yield o  
 

@@ -64,14 +64,14 @@ class PropValue(models.Model):
             #~ return ''
         return "%s: %s" % (self.prop.short,self.value)
         
-    def prop_choices_filter(self,recipient):
+    def prop_choices(self,recipient):
         """
         recipient is a PropValue instance which doesn't know her .prop attribute.
         This report answers the question "What Properties are possible for this PropValue?", 
         which basically is "All Properties that apply to this type of owner". 
         This means currently that Property.only_for must be either None or equal to master_instance.owner_type
         """
-        return dict(only_for__in=(recipient.owner_type,None))
+        return Property.objects.filter(only_for__in=(recipient.owner_type,None))
   
 
 class PropValues(reports.Report):

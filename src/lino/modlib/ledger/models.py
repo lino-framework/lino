@@ -1,4 +1,4 @@
-## Copyright 2008-2009 Luc Saffre
+## Copyright 2008-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -27,6 +27,9 @@ journals = reports.get_app('journals')
 #from lino.modlib.contacts import models as contacts
 #from lino.modlib.journals import models as journals
 
+from lino.modlib.tools import resolve_model
+Person = resolve_model('contacts.Person')
+Company = resolve_model('contacts.Company')
 
 
 class Account(models.Model):
@@ -138,7 +141,8 @@ class Booking(models.Model):
     pos = models.IntegerField("Position",blank=True,null=True)
     date = fields.MyDateField()
     account = models.ForeignKey(Account)
-    partner = models.ForeignKey("contacts.Partner",blank=True,null=True)
+    person = models.ForeignKey(Person,blank=True,null=True)
+    company = models.ForeignKey(Company,blank=True,null=True)
     debit = fields.PriceField(default=0)
     credit = fields.PriceField(default=0)
     
