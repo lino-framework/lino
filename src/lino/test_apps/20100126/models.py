@@ -3,13 +3,17 @@
 A Strange Problem
 =================
 
+This testcase may also be useful as an overview on how Lino handles Documents and Journals.
+
+The following works only if you have issue 10808 solved:
+
   >>> ORD = Order.create_journal("ORD",name="Orders")
   >>> print ORD.create_document()
   ORD#1 (1)
   >>> INV = Invoice.create_journal("INV",name="Invoices")
   >>> print INV.create_document()
   INV#1 (1)
-
+  
 
 """
 
@@ -40,7 +44,6 @@ def get_doctype(cl):
             return i
         i += 1
     return None
-    
 
 
     
@@ -54,7 +57,6 @@ class Journal(models.Model):
         return self.id
         
     def get_doc_model(self):
-        #print self,DOCTYPE_CLASSES, self.doctype
         return DOCTYPES[self.doctype]
 
     def create_document(self,**kw):
@@ -76,7 +78,6 @@ class Journal(models.Model):
         
     
 def JournalRef(**kw):
-    #return models.CharField(max_length=4,choices=JOURNALS,**kw)
     return models.ForeignKey(Journal,**kw)
 
 def DocumentRef(**kw):
@@ -145,19 +146,19 @@ class SalesDocument(JournaledAbstractDocument):
 class Order(SalesDocument):
     valid_until = models.DateField(auto_now=True) 
 
-#~ class Invoice(LedgerDocument,SalesDocument):
-    #~ due_date = models.DateField("Payable until",blank=True,null=True)
-    
-    #~ def before_save(self):
-        #~ # ...
-        #~ super(Invoice,self).before_save()
-
-class Invoice(LedgerDocument):
-    due_date = models.DateField(auto_now=True) 
+class Invoice(LedgerDocument,SalesDocument):
+    due_date = models.DateField("Payable until",blank=True,null=True)
     
     def before_save(self):
         # ...
         super(Invoice,self).before_save()
+
+#~ class Invoice(LedgerDocument):
+    #~ due_date = models.DateField(auto_now=True) 
+    
+    #~ def before_save(self):
+        #~ # ...
+        #~ super(Invoice,self).before_save()
 
 
 register_doctype(Order)

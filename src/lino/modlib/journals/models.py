@@ -78,7 +78,7 @@ class Journal(models.Model):
 
     def get_doc_report(self,**kw):
         kw['master_instance'] = self
-        rptclass = DOCTYPES[self.doctype][1].spawn(self.id,params=kw)
+        rptclass = DOCTYPES[self.doctype][1].spawn(self.id,master=self.__class__,params=kw)
         return rptclass()
 
     def create_document(self,**kw):
@@ -171,6 +171,7 @@ class Journal(models.Model):
     
 def JournalRef(**kw):
     #return models.CharField(max_length=4,choices=JOURNALS,**kw)
+    kw.update(null=True) # Django Ticket #12708
     return models.ForeignKey(Journal,**kw)
 
 def DocumentRef(**kw):

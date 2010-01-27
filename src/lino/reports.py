@@ -427,6 +427,7 @@ class Report(actors.Actor): # actions.Action): #
         pass
         
     def add_master_kw(self,master_instance,**kw):
+        lino.log.debug('%s.add_master_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
             assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
         elif self.master is ContentType:
@@ -679,6 +680,7 @@ class ReportRequest:
 
     def create_instance(self,**kw):
         kw = self.report.add_master_kw(self.master_instance,**kw)
+        lino.log.debug('%s.create_instance(%r)',self,kw)
         return self.report.create_instance(self,**kw)
         
     def get_user(self):

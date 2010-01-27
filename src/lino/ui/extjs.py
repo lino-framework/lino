@@ -24,6 +24,7 @@ from django.db import models
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import simplejson
+from django.core.serializers.json import DjangoJSONEncoder
 #from django.utils import html
 from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
@@ -126,7 +127,7 @@ class js_code:
         #~ return self.s
   
 def py2js(v,**kw):
-    #lino.log.debug("py2js(%r,%r)",v,kw)
+    lino.log.debug("py2js(%r,%r)",v,kw)
         
     if isinstance(v,menus.Menu):
         if v.parent is None:
@@ -173,7 +174,7 @@ def py2js(v,**kw):
         return repr(v)
     #return simplejson.encoder.encode_basestring(v)
     #print repr(v)
-    return simplejson.dumps(v)
+    return simplejson.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
             
 
 
@@ -323,7 +324,7 @@ class MethodStoreField(StoreField):
   
     def obj2json(self,obj,d):
         meth = getattr(obj,self.field.name)
-        # print 20091208, self.field.name
+        lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
         d[self.field.name] = meth()
         
     def get_from_form(self,instance,post_data):
@@ -564,6 +565,7 @@ class GridColumn(Component):
     def __init__(self,editor,**kw):
         Component.__init__(self,editor.name,**kw)
         self.editor = editor
+        self.value_template = editor.grid_column_template
     
         #~ if self.editable:
             #~ editor = self.get_field_options()
@@ -625,6 +627,7 @@ class LayoutElement(VisibleComponent):
     editable = False
     sortable = False
     xtype = None # set by subclasses
+    grid_column_template = "new Ext.grid.Column(%s)"
     
     def __init__(self,lh,name,**kw):
         #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
@@ -964,10 +967,11 @@ class DateFieldElement(FieldElement):
     sortable = True
     preferred_width = 8 
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
+    grid_column_template = "new Ext.grid.DateColumn(%s)"
     
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        kw.update(xtype='datecolumn')
+        #kw.update(xtype='datecolumn')
         kw.update(format=self.lh.link.report.date_format)
         return kw
     
@@ -981,6 +985,7 @@ class DecimalFieldElement(FieldElement):
     xtype = 'numberfield'
     sortable = True
     data_type = 'float' 
+    grid_column_template = "new Ext.grid.NumberColumn(%s)"
     
     def __init__(self,*args,**kw):
         FieldElement.__init__(self,*args,**kw)
@@ -989,7 +994,7 @@ class DecimalFieldElement(FieldElement):
                 
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        kw.update(xtype='numbercolumn')
+        #kw.update(xtype='numbercolumn')
         kw.update(align='right')
         fmt = "0,000"
         if self.field.decimal_places > 0:
@@ -1003,13 +1008,13 @@ class BooleanFieldElement(FieldElement):
   
     xtype = 'checkbox'
     data_type = 'boolean' 
-    
+    grid_column_template = "new Ext.grid.BooleanColumn(%s)"
     #~ def __init__(self,*args,**kw):
         #~ FieldElement.__init__(self,*args,**kw)
         
     def get_column_options(self,**kw):
         kw = FieldElement.get_column_options(self,**kw)
-        kw.update(xtype='booleancolumn')
+        #kw.update(xtype='booleancolumn')
         kw.update(trueText=self.lh.link.report.boolean_texts[0])
         kw.update(falseText=self.lh.link.report.boolean_texts[1])
         kw.update(undefinedText=self.lh.link.report.boolean_texts[2])
@@ -1035,7 +1040,7 @@ class MethodElement(FieldElement):
         return_type._return_type_for_method = meth
         FieldElement.__init__(self,lh,return_type)
         delegate = MainPanel.field2elem(lh,return_type,**kw)
-        for a in ('ext_options','get_column_options','get_field_options'):
+        for a in ('ext_options','get_column_options','get_field_options','grid_column_template'):
             setattr(self,a,getattr(delegate,a))
         
 
@@ -1517,8 +1522,8 @@ class GridMainPanel(GridElement,MainPanel):
                 mpk = None
             else:
                 mpk = rr.master_instance.pk
-            yield "    store.load({params:{ %s:%r, %s:%r }});" % (
-              URL_PARAM_MASTER_PK,mpk,URL_PARAM_MASTER_TYPE,master_type)
+            yield "    store.load({params:{ %s:%s, %s:%r }});" % (
+              URL_PARAM_MASTER_PK,py2js(mpk),URL_PARAM_MASTER_TYPE,master_type)
             yield "  }"
           
             # der folgende fall ist noch nicht uebernommen:
@@ -2330,6 +2335,7 @@ class BaseViewReportRequest(reports.ReportRequest):
     def render_to_json(self):
         rows = [ self.obj2json(row) for row in self.queryset ]
         total_count = self.total_count
+        lino.log.debug('%s.render_to_json() total_count=%d extra=%d',self,total_count,self.extra)
         # add extra blank row(s):
         for i in range(0,self.extra):
             row = self.create_instance()
@@ -2450,8 +2456,8 @@ class ViewReportRequest(BaseViewReportRequest):
         return BaseViewReportRequest.get_absolute_url(self,**kw)
 
     def obj2json(self,obj,**kw):
-        #lino.log.debug('obj2json(%s)',obj.__class__)
-        #lino.log.debug('obj2json(%r)',obj)
+        lino.log.debug('obj2json(%s)',obj.__class__)
+        lino.log.debug('obj2json(%r)',obj)
         for fld in self.store.fields:
             fld.obj2json(obj,kw)
         #lino.log.debug('  -> %r',kw)
