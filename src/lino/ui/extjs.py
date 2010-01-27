@@ -1450,6 +1450,7 @@ class MainPanel:
           
         #~ if isinstance(self,GridMainPanel):
         yield "  this.window.show();"
+        yield "  this.window.syncSize();"
         yield "  this.window.focus();"
         yield "}"
             
@@ -2759,9 +2760,10 @@ class ExtUI(base.UI):
         kw.update(tools=[dict(id='save',handler=js_code(js))])
         kw.update(layout='fit')
         kw.update(items=lh._main)
-        # if lh.layout.default_element is not None:
-        #     kw.update(defaultButton=lh.layout.default_element)
+        if lh.start_focus is not None:
+            kw.update(defaultButton=lh.start_focus.name)
         wc = self.window_configs.get(name,None)
+        #kw.update(defaultButton=self.lh.link.inputs[0].name)
         if wc is None:
             if lh.height is None:
                 kw.update(height=300)

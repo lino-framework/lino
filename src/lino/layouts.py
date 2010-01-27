@@ -155,7 +155,8 @@ class LayoutHandle:
     - remove '_ld' attribute and test whether all external code is converted to use 'layout' instead
     - rename this. It is not a handle in the same meaning as for Report and Form.
     """
-  
+    start_focus = None
+    
     def __init__(self,link,layout,index,desc=None,main=None):
         # lino.log.debug('LayoutHandle.__init__(%s,%s,%d)',link,layout,index)
         assert isinstance(link.name,basestring), "link.name %r is not a string" % link.name
@@ -315,7 +316,10 @@ class LayoutHandle:
         from lino import forms
         
         if isinstance(de,forms.Input):
-            return self.ui.InputElement(self,de,**kw)
+            e = self.ui.InputElement(self,de,**kw)
+            if not self.start_focus:
+                self.start_focus = e
+            return e
         if callable(de):
             return self.create_meth_element(name,de,**kw)
             

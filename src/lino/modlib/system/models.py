@@ -110,7 +110,7 @@ class LoginLayout(layouts.FormLayout):
     cancel ok
     """
     text = layouts.StaticText(_("Please enter your username and password to authentificate."))
-    default_button = 'ok'
+    #default_button = 'username'
     
 
 
@@ -126,7 +126,8 @@ class Login(forms.Form):
     def before(self,context):
         # not used
         if not context.request.session.test_cookie_worked():
-           raise actions.ValidationError(_("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
+            raise actions.ValidationError(
+                _("Your Web browser doesn't appear to have cookies enabled. Cookies are required for logging in."))
         
 
 class Logout(actions.Command): #actions.OK):

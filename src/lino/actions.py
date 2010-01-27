@@ -95,8 +95,8 @@ class ActionContext:
             except ActionEvent,e:
                 pass
             except Exception,e:
-                #traceback.print_exc(e)
-                #print repr(e)
+                traceback.print_exc(e)
+                lino.log.exception(e)
                 self.response.update(msg=force_unicode(e),success=False)
         return self.response
         
