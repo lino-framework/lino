@@ -1,0 +1,28 @@
+= 20100128 =
+
+Aha, das ist cool: "it is also possible to update an issue by putting an issue tracker command in your commit-log message." [http://code.google.com/p/support/wiki/IssueTracker#Integration_with_version_control (1)]. 
+Das muss ich gleich mal probieren, das wäre vielleicht ein guter Nachkomme für meinen [Blog], der ja auch nicht ganz das Wahre ist.
+
+Ich hatte gemerkt, was mich am Google Issue Tracker stört: dass man nicht die komplette Datenbank der Issues und Comments runterladen kann. Dabei stimmt das gar nicht:
+http://code.google.com/p/support/wiki/IssueTrackerAPIPython
+
+New issue
+Summary: Implement server actions as generator functions
+Labels: Type-Enhancement
+Labels: Priority-Medium
+Momentan führt jedes `context.confirm()` in `Actions.run()` dazu, dass der Code ein zweites Mal aufgerufen wird. Um das zu vermeiden, könnte ich Actions als generators definieren. In `Action.run()` müsste man dann sagen `yield context.confirm()`. Bin noch nicht sicher, wie die laufenden Generatoren dann in der Session gespeichert werden. Kann man einen Generator pickeln?
+
+New issue
+Summary: Show user messages 
+Labels: Type-Enhancement
+Labels: Priority-Medium
+Meldungen wie "Welcome, user X" sollten nicht in einer `MessageBox.alert()` gezeigt werden, sondern irgendwo in einem scrolling text field erscheinen, wo man die letzten paar Meldungen nach sehen kann.
+
+Update issue 64
+Im Login-Fenster ist jetzt (seit dem vorigen Commit) nach dem Öffnen das erste Textfeld fokussiert. Das, was ExtJS den `defaultButton` nennt, nenne ich `start_focus`. Für Grids und Details ist das wohl noch nicht gelöst.
+
+New issue
+Summary: Implement Layout.default_button 
+`Layout.default_button` ist der Button, der ausgeführt werden soll, wenn man in einem Textfeld des Fensters ENTER drückt. Das ist momentan überhaupt noch nicht implementiert.
+
+Und jetzt bin ich mal gespannt, wie mein changelog aussieht. Ich mach jetzt `hg ci -l 20100128.txt`. Nein, das geht noch nicht, weil Mercurial darauf "Nothing changed" sagt. Hat seine Logik. Soll ich vielleicht meine Changelogs auch ins repository setzen? Na probieren wir das mal.
