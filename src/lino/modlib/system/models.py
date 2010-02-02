@@ -107,7 +107,7 @@ class LoginLayout(layouts.FormLayout):
     text
     username
     password
-    cancel ok
+    _ cancel ok
     """
     text = layouts.StaticText(_("Please enter your username and password to authentificate."))
     #default_button = 'username'

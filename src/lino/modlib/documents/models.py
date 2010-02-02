@@ -150,6 +150,7 @@ class AbstractDocument(models.Model):
             pisa.log.addHandler(h)
             pdf = pisa.pisaDocument(cStringIO.StringIO(html), result)
             pisa.log.removeHandler(h)
+            h.close()
             file(filename,'wb').write(result.getvalue())
             if pdf.err:
                 raise Exception("pisa.pisaDocument.err is %r" % pdf.err)

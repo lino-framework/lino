@@ -406,7 +406,9 @@ class Report(actors.Actor): # actions.Action): #
             qs = self.queryset
         else:
             qs = self.model.objects.all()
-        kw = self.add_master_kw(master_instance,**kw)
+        kw = self.get_master_kw(master_instance,**kw)
+        if kw is None:
+            return []
         if len(kw):
             qs = qs.filter(**kw)
 
@@ -426,8 +428,8 @@ class Report(actors.Actor): # actions.Action): #
     def setup_request(self,req):
         pass
         
-    def add_master_kw(self,master_instance,**kw):
-        lino.log.debug('%s.add_master_kw(%r) master=%r',self,kw,self.master)
+    def get_master_kw(self,master_instance,**kw):
+        #lino.log.debug('%s.get_master_kw(%r) master=%r',self,kw,self.master)
         if self.master is None:
             assert master_instance is None, "Report %s doesn't accept a master" % self.actor_id
         elif self.master is ContentType:
@@ -440,7 +442,10 @@ class Report(actors.Actor): # actions.Action): #
                 kw[self.fk.fk_field] = master_instance.pk
         else:
             if master_instance is None:
+                if not self.fk.null:
+                    return # cannot add rows to this report
                 kw[self.fk.name] = master_instance
+                
                 #kw["%s__exact" % self.fk.name] = None
             elif not isinstance(master_instance,self.master):
                 raise Exception("%r is not a %s" % (master_instance,self.master.__name__))
@@ -639,12 +644,22 @@ class ReportRequest:
     def __init__(self,rh,
             master_instance=None,
             offset=None,limit=None,
-            extra=1,layout=None,
+            layout=None,user=None,
+            extra=None,
             **kw):
         assert isinstance(rh,ReportHandle)
         self.report = rh.report
+        self.user = user
         self.rh = rh
         self.name = rh.report.actor_id+"Request"
+        self.master_kw = rh.report.get_master_kw(master_instance)
+        if extra is None:
+            if self.master_kw is None:
+                extra = 0
+            elif rh.report.can_add.passes(self):
+                extra = 1
+            else:
+                extra = 0
         self.extra = extra
         self.master_instance = master_instance
         if layout is None:
@@ -679,8 +694,8 @@ class ReportRequest:
         return self.report.get_title(self)
 
     def create_instance(self,**kw):
-        kw = self.report.add_master_kw(self.master_instance,**kw)
-        lino.log.debug('%s.create_instance(%r)',self,kw)
+        kw.update(self.master_kw)
+        #lino.log.debug('%s.create_instance(%r)',self,kw)
         return self.report.create_instance(self,**kw)
         
     def get_user(self):

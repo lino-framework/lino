@@ -24,6 +24,7 @@ from django.utils.translation import ugettext as _
 
 from django import forms
 
+import lino
 from lino import reports
 from lino import layouts
 from lino.utils import perms
@@ -79,14 +80,15 @@ class Contact(models.Model):
             s = join_words(self.zip_code,self.city)
         if s:
             lines.append(s)
-        foreigner = False
+        foreigner = True # False
         #~ if self.id == 1:
             #~ foreigner = False
         #~ else:
             #~ foreigner = (self.country != self.objects.get(pk=1).country)
         if foreigner and self.country: # (if self.country != sender's country)
             lines.append(unicode(self.country))
-        return linesep.join(lines)
+        lino.log.debug('%s : as_address() -> %r',self,lines)
+        return mark_safe(linesep.join(lines))
     
     def city_choices(self):
         #print "city_choices", repr(recipient)

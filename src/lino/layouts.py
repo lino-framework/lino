@@ -292,9 +292,12 @@ class LayoutHandle:
             return panelclass(self,desc_name,False,*elems,**kw)
             
     def create_element(self,panelclass,desc_name):
-        #lino.log.debug("create_element(panelclass,%r)", desc_name)
+        lino.log.debug("create_element(panelclass,%r)", desc_name)
         name,kw = self.splitdesc(desc_name)
         
+        if name == "_":
+            return self.ui.Spacer(self,name,**kw)
+            
         de = self.link.get_data_elem(name)
         
         if isinstance(de,models.Field):

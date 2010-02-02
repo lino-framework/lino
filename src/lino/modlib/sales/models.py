@@ -186,6 +186,9 @@ class Customer(models.Model):
             l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
             self.name = " ".join(l)
         
+    def as_address(self,*args,**kw):
+        recipient = self.company or self.person
+        return recipient.as_address(self,*args,**kw)
     
 class CustomerPageLayout(layouts.PageLayout):
     main = """
@@ -527,7 +530,7 @@ class DocumentPageLayout(layouts.PageLayout):
     main = """
       box1 box2 box4
       box3 box5
-      sales.ItemsByDocument:100x15
+      sales.ItemsByDocument:100x5
       """
       
         

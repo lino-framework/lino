@@ -127,7 +127,7 @@ class js_code:
         #~ return self.s
   
 def py2js(v,**kw):
-    lino.log.debug("py2js(%r,%r)",v,kw)
+    # lino.log.debug("py2js(%r,%r)",v,kw)
         
     if isinstance(v,menus.Menu):
         if v.parent is None:
@@ -324,7 +324,7 @@ class MethodStoreField(StoreField):
   
     def obj2json(self,obj,d):
         meth = getattr(obj,self.field.name)
-        lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
+        #lino.log.debug('MethodStoreField.obj2json() %s',self.field.name)
         d[self.field.name] = meth()
         
     def get_from_form(self,instance,post_data):
@@ -375,7 +375,7 @@ class ForeignKeyStoreField(StoreField):
                 v = self.field.rel.to.objects.get(pk=v)
             except self.field.rel.to.DoesNotExist,e:
                 #print "[get_from_form]", v, values.get(self.field.name)
-                lino.log.debug("[%r,%r] : %s",v,text,e)
+                # lino.log.debug("[%r,%r] : %s",v,text,e)
                 v = None
         instance[self.field.name] = v
 
@@ -395,7 +395,7 @@ class ForeignKeyStoreField(StoreField):
                     v = self.field.rel.to.objects.get(pk=v)
                 except self.field.rel.to.DoesNotExist,e:
                     #print "[get_from_form]", v, values.get(self.field.name)
-                    lino.log.debug("[%r,%r] : %s",v,text,e)
+                    # lino.log.debug("[%r,%r] : %s",v,text,e)
                     v = None
         instance[self.field.name] = v
 
@@ -732,6 +732,7 @@ class InputElement(LayoutElement):
         kw.update(id=self.name)
         #kw.update(xtype='textfield')
         panel_options = dict(xtype='container',layout='form',items=kw)
+        panel_options.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         return panel_options
         
 class ButtonElement(LayoutElement):
@@ -752,7 +753,10 @@ class ButtonElement(LayoutElement):
         #kw = super(StaticTextElement,self).ext_options(**kw)
         kw = LayoutElement.ext_options(self,**kw)
         #kw.update(xtype=self.xtype)
-        kw.update(text=self.action.label or self.name)
+        label = self.action.label or self.name
+        kw.update(text=label)
+        kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
+        kw.update(maxWidth=len(label)*EXT_CHAR_WIDTH)
         kw.update(id=self.name)
         if self.lh.default_button == self:
             kw.update(plugins='defaultButton')
@@ -778,12 +782,22 @@ class StaticTextElement(LayoutElement):
         kw.update(html=self.text.text)
         return kw
         
+class Spacer(LayoutElement):
+    declare_type = DECLARE_INLINE
+    #xtype = 'label'
+    value_template = "new Ext.Spacer(%s)"
+    
+        
 class VirtualFieldElement(LayoutElement):
     def __init__(self,lh,name,gfk,**kw):
         assert isinstance(gfk,generic.GenericForeignKey)
         self.gfk = gfk
         LayoutElement.__init__(self,lh,name,label=name,**kw)
         #print "20091210", name,gfk
+        
+    def ext_options(self,**kw):
+        kw = LayoutElement.ext_options(self,**kw)
+        kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
     
         
         
@@ -820,6 +834,7 @@ class FieldElement(LayoutElement):
             kw.update(allowBlank=False)
         if not self.editable:
             kw.update(readOnly=True)
+        kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         return kw
         
     def ext_options(self,**kw):
@@ -828,6 +843,7 @@ class FieldElement(LayoutElement):
         """
         kw = LayoutElement.ext_options(self,**kw)
         kw.update(self.get_field_options())
+        kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         #kw.update(xtype='panel',layout='form') 
         #kw.update(style=dict(padding='0px'),color='green')
         #kw.update(hideBorders=True)
@@ -836,6 +852,7 @@ class FieldElement(LayoutElement):
         #~ kw.update(xtype='container',layout='form')
         #~ kw.update(items=self.get_field_options())
         #~ return kw
+    
         
         
 class TextFieldElement(FieldElement):
@@ -1123,6 +1140,7 @@ class Panel(Container):
         d = Container.ext_options(self,**d)
         #d.update(xtype='panel')
         d.update(xtype='container')
+        d.update(pack='end')
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
         
@@ -1196,6 +1214,8 @@ class DataElementMixin:
         #setup_report(self.report)
         keys = []
         buttons = []
+        export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
+        buttons.append(export_csv)
         for a in self.dl.get_actions():
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
                   a.name, 
@@ -1303,12 +1323,13 @@ class GridElement(Container,DataElementMixin):
             #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
             listeners = dict(keypress=js_keypress(),scope=js_code('this'))
         )
+        #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
         tbar = dict(
           store=self.rh.store,
           displayInfo=True,
           pageSize=self.report.page_length,
           prependButtons=True,
-          items=[search_field], # js_code('buttons'),
+          items=[search_field], 
         )
         self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         
@@ -1497,10 +1518,10 @@ class GridMainPanel(GridElement,MainPanel):
         #yield "  this.pager.pageSize = %s.calculatePageSize() || 10;" % self.as_ext()
         yield "  %s.getStore().load({params:{limit:this.pager.pageSize,start:this.pager.cursor}});" % self.as_ext()
         yield "}"
-        yield "this.get_current_record = function() { return this.getSelectionModel().getSelected()};"
+        yield "this.get_current_record = function() { return this.main_grid.getSelectionModel().getSelected()};"
         yield "this.get_selected = function() {"
         yield "  var sel_pks = '';"
-        yield "  var sels = this.getSelectionModel().getSelections();"
+        yield "  var sels = this.main_grid.getSelectionModel().getSelections();"
         yield "  for(var i=0;i<sels.length;i++) { sel_pks += sels[i].id + ','; };"
         yield "  return sel_pks;"
         yield "}"
@@ -1611,14 +1632,14 @@ class DetailMainPanel(DataElementMixin,Panel,WrappingMainPanel):
         #yield "var slaves = [ %s ];" % ','.join([slave.rh.store.as_ext() for slave in self.lh.slave_grids])
         yield "var load_record = this.load_record = function(record) {"
         #yield "function load_record (record) {"
-        #yield "  console.log('load_record()',record.data);"
+        #yield "  console.log('DetailMainPanel-%s.load_record()',record);" % self.report
         #name = id2js(self.lh.name) + '.' + self.lh._main.ext_name
         #name = 'this.' + self.lh._main.ext_name
         #name = self.as_ext()
         #yield "  this.current_pk = record.data.id;" 
         yield "  this.current_record = record;" 
         yield "  %s.form.loadRecord(record);" % self.as_ext()
-        yield "  var p = { %s: record.data.id }" % URL_PARAM_MASTER_PK
+        yield "  var p = { %s: record.id }" % URL_PARAM_MASTER_PK
         #yield "  var p = { %s: record.data.%s }" % (URL_PARAM_MASTER_PK,self.rh.store.pk.name)
         mt = ContentType.objects.get_for_model(self.report.model).pk
         yield "  p[%r] = %r;" % (URL_PARAM_MASTER_TYPE,mt)
@@ -1764,6 +1785,10 @@ class Viewport:
   white-space: normal; /* changed from nowrap */
 }
 </style>"""
+        if True:
+            s += """
+<script type="text/javascript" src="%s/Exporter-all.js"></script>""" % settings.EXTJS_URL
+
         if False:
             s += """
 <!-- overrides to library -->
@@ -1797,7 +1822,7 @@ Lino.form_submit = function (job,url,store,pkname) {
     p = {};
     // p[pkname] = store.getAt(0).data.id;
     // p[pkname] = job.current_pk;
-    p[pkname] = job.main_grid.get_current_record().data.id;
+    p[pkname] = job.get_current_record().id;
     // console.log('Lino.form_submit',p);
     job.main_panel.form.submit({
       clientValidation: false,
@@ -2146,12 +2171,12 @@ Ext.override(Ext.form.ComboBox, {
         var text = v;
         if(this.valueField){
           if(v === null) { 
-              console.log(this.name,'.setValue',v,'no lookup needed, value is null');
+              // console.log(this.name,'.setValue',v,'no lookup needed, value is null');
               v = null;
           }else{
             // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
             if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
-                console.log(this.name,'.setValue',v,'must wait for load');
+                // console.log(this.name,'.setValue',v,'must wait for load');
                 this.store.on('load', this.setValue.createDelegate(this, arguments), null, {single: true});
                 if(this.store.lastOptions === null || this.lastQuery === null){
                     var params;
@@ -2164,14 +2189,14 @@ Ext.override(Ext.form.ComboBox, {
                         this.store.setBaseParam(this.queryParam, q);
                         params = this.getParams(q);
                     }
-                    console.log(this.name,'.setValue',v,' : call load() with params ',params);
+                    // console.log(this.name,'.setValue',v,' : call load() with params ',params);
                     this.store.load({params: params});
                 }else{
-                    console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
+                    // console.log(this.name,'.setValue',v,' : but store is loading',this.store.lastOptions);
                 }
                 return;
             }else{
-                console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
+                // console.log(this.name,'.setValue',v,' : store is loaded, lastQuery is "',this.lastQuery,'"');
             }
             var r = this.findRecord(this.valueField, v);
             if(r){
@@ -2324,6 +2349,7 @@ class BaseViewReportRequest(reports.ReportRequest):
         limit = request.GET.get('limit',None)
         if limit:
             kw.update(limit=limit)
+        kw.update(user=request.user)
         return kw
       
     def get_absolute_url(self,**kw):
@@ -2336,7 +2362,7 @@ class BaseViewReportRequest(reports.ReportRequest):
     def render_to_json(self):
         rows = [ self.obj2json(row) for row in self.queryset ]
         total_count = self.total_count
-        lino.log.debug('%s.render_to_json() total_count=%d extra=%d',self,total_count,self.extra)
+        #lino.log.debug('%s.render_to_json() total_count=%d extra=%d',self,total_count,self.extra)
         # add extra blank row(s):
         for i in range(0,self.extra):
             row = self.create_instance()
@@ -2457,8 +2483,8 @@ class ViewReportRequest(BaseViewReportRequest):
         return BaseViewReportRequest.get_absolute_url(self,**kw)
 
     def obj2json(self,obj,**kw):
-        lino.log.debug('obj2json(%s)',obj.__class__)
-        lino.log.debug('obj2json(%r)',obj)
+        #lino.log.debug('obj2json(%s)',obj.__class__)
+        #lino.log.debug('obj2json(%r)',obj)
         for fld in self.store.fields:
             fld.obj2json(obj,kw)
         #lino.log.debug('  -> %r',kw)
@@ -2626,6 +2652,7 @@ class ExtUI(base.UI):
         self.ButtonElement = ButtonElement
         self.Panel = Panel
         self.Store = Store
+        self.Spacer = Spacer
         self.StaticTextElement = StaticTextElement
         #self.ActionContext = ActionContext
         self.InputElement = InputElement
@@ -2633,7 +2660,7 @@ class ExtUI(base.UI):
         if os.path.exists(self.window_configs_file):
             lino.log.info("Loading %s...",self.window_configs_file)
             wc = pickle.load(open(self.window_configs_file,"rU"))
-            lino.log.debug("  -> %r",wc)
+            #lino.log.debug("  -> %r",wc)
             if type(wc) is dict:
                 self.window_configs = wc
         else:
