@@ -1214,8 +1214,6 @@ class DataElementMixin:
         #setup_report(self.report)
         keys = []
         buttons = []
-        export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
-        buttons.append(export_csv)
         for a in self.dl.get_actions():
             h = js_code("Lino.grid_action(this,'%s','%s')" % (
                   a.name, 
@@ -1323,13 +1321,16 @@ class GridElement(Container,DataElementMixin):
             #listeners = dict(keypress=dict(handler=keypress,scope=js_code('this')))
             listeners = dict(keypress=js_keypress(),scope=js_code('this'))
         )
+        buttons = [search_field]
+        export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
+        buttons.append(export_csv)
         #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
         tbar = dict(
           store=self.rh.store,
           displayInfo=True,
           pageSize=self.report.page_length,
           prependButtons=True,
-          items=[search_field], 
+          items=buttons, 
         )
         self.pager = Variable('pager',js_code("new Ext.PagingToolbar(%s)" % py2js(tbar)))
         
