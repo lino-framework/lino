@@ -16,6 +16,7 @@ import traceback
 import types
 import cPickle as pickle
 import cgi
+from lino.utils import ucsv
 from urllib import urlencode
 
 from dateutil import parser as dateparser
@@ -379,25 +380,6 @@ class ForeignKeyStoreField(StoreField):
                 v = None
         instance[self.field.name] = v
 
-    def unused_get_from_form(self,instance,post_data):
-        #v = values.get(self.name,None)
-        #v = values.get(self.field.name+"Hidden",None)
-        #v = values.get(self.field.name+CHOICES_HIDDEN_SUFFIX)
-        #print self.field.name,"=","%s.objects.get(pk=%r)" % (self.model.__name__,v)
-        v = post_data.getlist(self.field.name)
-        #print "%s=%r" % (self.field.name, v)
-        if v is not None:
-            v,text = v
-            if v == '': # and self.field.null:
-                v = None
-            if v is not None:
-                try:
-                    v = self.field.rel.to.objects.get(pk=v)
-                except self.field.rel.to.DoesNotExist,e:
-                    #print "[get_from_form]", v, values.get(self.field.name)
-                    # lino.log.debug("[%r,%r] : %s",v,text,e)
-                    v = None
-        instance[self.field.name] = v
 
     def obj2json(self,obj,d):
         try:
@@ -405,15 +387,11 @@ class ForeignKeyStoreField(StoreField):
         except self.field.rel.to.DoesNotExist,e:
             v = None
         if v is None:
-            #d[self.field.name] = [None, '']
-            #d[self.field.name] = dict(text='',value=None)
             d[self.field.name+CHOICES_HIDDEN_SUFFIX] = None
             d[self.field.name] = None
         else:
             d[self.field.name+CHOICES_HIDDEN_SUFFIX] = v.pk
             d[self.field.name] = unicode(v)
-            #d[self.field.name] = dict(text=unicode(v),value=v.pk)
-            #d[self.field.name] = [v.pk,unicode(v)]
         
 
 
@@ -1322,9 +1300,11 @@ class GridElement(Container,DataElementMixin):
             listeners = dict(keypress=js_keypress(),scope=js_code('this'))
         )
         buttons = [search_field]
-        export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
-        buttons.append(export_csv)
+        #export_csv = dict(xtype='exportbutton',store=self.dl.store) #,scope=js_code('this'))
         #export_csv = dict(text="CSV",handler=js_code("function(){console.log('not implemented')}"),scope=js_code('this'))
+        export_csv = dict(text=_("Download"),handler=js_code(
+          "function() {window.open(%r);}" % self.dl.get_absolute_url(csv=True)))
+        buttons.append(export_csv)
         tbar = dict(
           store=self.rh.store,
           displayInfo=True,
@@ -2372,8 +2352,41 @@ class BaseViewReportRequest(reports.ReportRequest):
         return dict(count=total_count,rows=rows)
         
 
-class ChoicesReportRequest(BaseViewReportRequest):
+class CSVReportRequest(BaseViewReportRequest):
+    extra = 0
+    
+    def get_absolute_url(self,**kw):
+        kw['csv'] = True
+        return BaseViewReportRequest.get_absolute_url(self,**kw)
+        
+    def render_to_csv(self):
+        response = HttpResponse(mimetype='text/csv')
+        w = ucsv.UnicodeWriter(response)
+        names = [] # fld.name for fld in self.fields]
+        fields = []
+        for col in self.rh.row_layout._main.column_model.columns:
+            names.append(col.editor.field.name)
+            fields.append(col.editor.field)
+        w.writerow(names)
+        for row in self.queryset:
+            values = []
+            for fld in fields:
+                # uh, this is tricky...
+                meth = getattr(fld,'_return_type_for_method',None)
+                if meth is not None:
+                    v = meth(row)
+                else:
+                    v = fld.value_to_string(row)
+                #lino.log.debug("20100202 %r.%s is %r",row,fld.name,v)
+                values.append(v)
+            w.writerow(values)
+        return response
+
+        
   
+class ChoicesReportRequest(BaseViewReportRequest):
+    extra = 0
+    
     def __init__(self,request,rh,fldname,*args,**kw):
         #self.recipient_report = rh.report
         self.fieldname = fldname
@@ -2385,14 +2398,10 @@ class ChoicesReportRequest(BaseViewReportRequest):
         #rh = rpt.get_handle(ui)
         BaseViewReportRequest.__init__(self,request,rh,*args,**kw)
         
-    def parse_req(self,request,rh,**kw):
-        kw = BaseViewReportRequest.parse_req(self,request,rh,**kw)
-        #self.choices = self.report.get_field_choices(self.rec_field,pk)
-        #~ if choices_filter:
-            #~ assert isinstance(choices_filter,dict)
-            #~ kw.update(choices_filter)
-        kw['extra'] = 0
-        return kw
+    #~ def parse_req(self,request,rh,**kw):
+        #~ kw = BaseViewReportRequest.parse_req(self,request,rh,**kw)
+        #~ kw['extra'] = 0
+        #~ return kw
           
     def get_queryset(self,**kw):
         pk = self.request.GET.get(URL_PARAM_CHOICES_PK,None)
@@ -2402,6 +2411,7 @@ class ChoicesReportRequest(BaseViewReportRequest):
     def get_absolute_url(self,**kw):
         kw['choices_for_field'] = self.fieldname
         return BaseViewReportRequest.get_absolute_url(self,**kw)
+        
     def obj2json(self,obj,**kw):
         kw[CHOICES_TEXT_FIELD] = unicode(obj)
         #kw['__unicode__'] = unicode(obj)
@@ -2575,12 +2585,16 @@ def list_report_view(request,**kw):
     #kw['simple_list'] = True
     return json_report_view(request,**kw)
     
+def csv_report_view(request,**kw):
+    kw['csv'] = True
+    return json_report_view(request,**kw)
+    
     
 def json_report_view(request,app_label=None,rptname=None,**kw):
     rpt = actors.get_actor2(app_label,rptname)
     return json_report_view_(request,rpt,**kw)
 
-def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None):
+def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,choices_for_field=None,csv=False):
     if not rpt.can_view.passes(request):
         return json_response_kw(success=False,
             msg="User %s cannot view %s." % (request.user,rpt))
@@ -2598,6 +2612,9 @@ def json_report_view_(request,rpt,grid_action=None,colname=None,submit=None,choi
     rh = rpt.get_handle(ui)
     if choices_for_field:
         rptreq = ChoicesReportRequest(request,rh,choices_for_field)
+    elif csv:
+        rptreq = CSVReportRequest(request,rh,choices_for_field)
+        return rptreq.render_to_csv()
     else:
         rptreq = ViewReportRequest(request,rh)
         if submit:
@@ -2716,6 +2733,7 @@ class ExtUI(base.UI):
             (r'^$', self.index),
             (r'^menu$', menu_view),
             (r'^list/(?P<app_label>\w+)/(?P<rptname>\w+)$', list_report_view),
+            (r'^csv/(?P<app_label>\w+)/(?P<rptname>\w+)$', csv_report_view),
             (r'^grid_action/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<grid_action>\w+)$', json_report_view),
             (r'^submit/(?P<app_label>\w+)/(?P<rptname>\w+)$', form_submit_view),
             (r'^grid_afteredit/(?P<app_label>\w+)/(?P<rptname>\w+)$', grid_afteredit_view),
@@ -2753,7 +2771,7 @@ class ExtUI(base.UI):
         return build_url("/choices",fke.lh.link.report.app_label,fke.lh.link.report.name,fke.field.name,**kw)
         
     def get_report_url(self,rh,master_instance=None,
-            submit=False,grid_afteredit=False,grid_action=None,run=False,**kw):
+            submit=False,grid_afteredit=False,grid_action=None,run=False,csv=False,**kw):
         #~ lino.log.debug("get_report_url(%s)", [rh.name,master_instance,
             #~ simple_list,submit,grid_afteredit,action,kw])
         if grid_afteredit:
@@ -2764,6 +2782,8 @@ class ExtUI(base.UI):
             url = "/grid_action/"
         elif run:
             url = "/action/"
+        elif csv:
+            url = "/csv/"
         else:
             url = "/list/"
         url += rh.report.app_label + "/" + rh.report.name

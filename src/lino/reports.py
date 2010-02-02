@@ -640,6 +640,7 @@ class ReportRequest:
     offset = None
     master_instance = None
     instance = None
+    extra = None
     
     def __init__(self,rh,
             master_instance=None,
@@ -653,14 +654,15 @@ class ReportRequest:
         self.rh = rh
         self.name = rh.report.actor_id+"Request"
         self.master_kw = rh.report.get_master_kw(master_instance)
-        if extra is None:
-            if self.master_kw is None:
-                extra = 0
-            elif rh.report.can_add.passes(self):
-                extra = 1
-            else:
-                extra = 0
-        self.extra = extra
+        if self.extra is None:
+            if extra is None:
+                if self.master_kw is None:
+                    extra = 0
+                elif rh.report.can_add.passes(self):
+                    extra = 1
+                else:
+                    extra = 0
+            self.extra = extra
         self.master_instance = master_instance
         if layout is None:
             layout = self.rh.layouts[1]
