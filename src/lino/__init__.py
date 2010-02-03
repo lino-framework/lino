@@ -1,4 +1,4 @@
-## Copyright 2002-2009 Luc Saffre
+## Copyright 2002-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -11,28 +11,43 @@
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-__micro__ = 1
+import sys
+import logging
 
-__version__ = "0.8.%d" % __micro__
+__version__ = "0.8.1+"
 
 __author__ = "Luc Saffre <luc.saffre@gmx.net>"
 
-__url__ = "http://lino.saffre-rumma.ee"
+__url__ = "http://code.google.com/p/lino/"
 
 __copyright__ = """\
-Copyright (c) 2002-2009 Luc Saffre.
+Copyright (c) 2002-2010 Luc Saffre.
 This software comes with ABSOLUTELY NO WARRANTY and is
 distributed under the terms of the GNU General Public License.
 See file COPYING.txt for more information."""
 
-#from lino.utils import logger as log
 
-import sys
-import logging
+# Copied from Sphinx <http://sphinx.pocoo.org>
+from os import path
+package_dir = path.abspath(path.dirname(__file__))
+if '+' in __version__ or 'pre' in __version__:
+    # try to find out the changeset hash if checked out from hg, and append
+    # it to __version__ (since we use this value from setup.py, it gets
+    # automatically propagated to an installed copy as well)
+    try:
+        import subprocess
+        p = subprocess.Popen(['hg', 'id', '-i', '-R',
+                              path.join(package_dir, '..', '..')],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if out:
+            __version__ += ' (Hg ' + out.strip() +')'
+        #~ if err:
+            #~ print err
+    except Exception:
+        pass
 
-#~ if len(logging.root.handlers) == 0:
 
-#logging.basicConfig(level=logging.DEBUG)    
 
 log = logging.getLogger('lino')
     
@@ -84,3 +99,6 @@ if len(log.handlers) == 0:
           
 #~ print "log.parent=", log.parent
 #~ print "log.manager.disable=", log.manager.disable
+
+
+
