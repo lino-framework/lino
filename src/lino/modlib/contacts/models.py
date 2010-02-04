@@ -117,11 +117,15 @@ class ContactDetail(layouts.PageLayout):
               phone
               gsm
               """
-    bottom = "remarks:60x6"
-    main = """box1 box2
-              box3 box4
-              bottom
+    intro_box = "box1 box2"
+    address_box = "box3 box4"
+    bottom_box = "remarks:60x6"
+    main = """intro_box
+              address_box
+              bottom_box
               """
+              
+    collapsible_elements = "bottom_box intro_box address_box"
        
  
 

@@ -606,6 +606,7 @@ class LayoutElement(VisibleComponent):
     sortable = False
     xtype = None # set by subclasses
     grid_column_template = "new Ext.grid.Column(%s)"
+    collapsible = False
     
     def __init__(self,lh,name,**kw):
         #lino.log.debug("LayoutElement.__init__(%r,%r)", lh.layout,name)
@@ -677,6 +678,8 @@ class LayoutElement(VisibleComponent):
             #~ kw.update(height=self.height * EXT_CHAR_HEIGHT)
         if self.xtype is not None:
             kw.update(xtype=self.xtype)
+        if self.collapsible:
+            kw.update(collapsible=self.collapsible)
         return kw
         
     def js_column_lines(self,grid):
@@ -841,6 +844,7 @@ class TextFieldElement(FieldElement):
     #width = 60
     preferred_width = 60
     preferred_height = 3
+    #collapsible = True
 
 class CharFieldElement(FieldElement):
     xtype = "textfield"
@@ -1088,6 +1092,8 @@ class Panel(Container):
     
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
+        if name in lh.layout.collapsible_elements:
+            self.collapsible = True
         Container.__init__(self,lh,name,*elements,**kw)
         for e in elements:
             if not isinstance(e,LayoutElement):
@@ -1119,8 +1125,13 @@ class Panel(Container):
         
     def ext_options(self,**d):
         d = Container.ext_options(self,**d)
-        #d.update(xtype='panel')
-        d.update(xtype='container')
+        if self.collapsible:
+            d.update(xtype='panel')
+            js = "function(cmp,aw,ah,rw,rh) { console.log('Panel.collapse',this,cmp,aw,ah,rw,rh); this.main_panel.doLayout(); }"
+            d.update(listeners=dict(scope=js_code('this'),collapse=js_code(js),expand=js_code(js)))
+            #d.update(monitorResize=True)
+        else:
+            d.update(xtype='container')
         d.update(pack='end')
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
@@ -1187,7 +1198,7 @@ class TabPanel(Container):
 
 class GridElement(Container): #,DataElementMixin):
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
-    value_template = "new Lino.GridPanel(%s)"
+    value_template = "new Ext.grid.GridPanel(%s)"
     ext_suffix = "_grid"
     
     def __init__(self,lh,name,rh,*elements,**kw):
@@ -1397,7 +1408,9 @@ class WrappingMainPanel(MainPanel):
         return ct
 
 class GridMainPanel(GridElement,MainPanel):
+    value_template = "new Lino.GridPanel(%s)"
     #declare_type = DECLARE_VAR
+    #collapsible = False
     def __init__(self,lh,name,vertical,*elements,**kw):
         'ignore the "vertical" arg'
         #lh.report.setup()

@@ -106,6 +106,7 @@ class Layout:
     #label_align = LABEL_ALIGN_LEFT
     #label_align = 'left'
     default_button = None
+    collapsible_elements  = ''
     
     
 
