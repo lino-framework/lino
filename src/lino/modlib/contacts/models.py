@@ -102,7 +102,7 @@ class Contact(models.Model):
 class Contacts(reports.Report):
     pass
   
-class ContactPageLayout(layouts.PageLayout):
+class ContactDetail(layouts.PageLayout):
     
     box2 = """national_id:15
               language
@@ -117,9 +117,10 @@ class ContactPageLayout(layouts.PageLayout):
               phone
               gsm
               """
+    bottom = "remarks:60x6"
     main = """box1 box2
               box3 box4
-              remarks:60x6
+              bottom
               """
        
  
@@ -146,7 +147,7 @@ class Person(Contact):
             l = filter(lambda x:x,[self.last_name,self.first_name,self.title])
             self.name = " ".join(l)
 
-class PersonPageLayout(ContactPageLayout):
+class PersonDetail(ContactDetail):
     box1 = "last_name first_name:15 title:10"
     box2 = """national_id:15 id
               nationality language
@@ -155,7 +156,7 @@ class PersonPageLayout(ContactPageLayout):
 class Persons(Contacts):
     model = "contacts.Person"
     label = _("Persons")
-    page_layouts = (PersonPageLayout,)
+    page_layouts = (PersonDetail,)
     columnNames = "first_name last_name title country id name"
     can_delete = True
     order_by = "last_name first_name id"
@@ -185,13 +186,13 @@ class Company(Contact):
         #~ s = Contact.as_address(self,linesep)
         #~ return self.name + linesep + s
 
-class CompanyPageLayout(ContactPageLayout):
+class CompanyDetail(ContactDetail):
     box1 = """name 
     vat_id:12"""
               
 class Companies(Contacts):
     label = _("Companies")
-    page_layouts = (CompanyPageLayout,)
+    page_layouts = (CompanyDetail,)
     columnNames = "name country city id address"
     model = 'contacts.Company'
     order_by = "name"
