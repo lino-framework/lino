@@ -3,19 +3,231 @@
 <title id="title">20100206</title>
 <!-- ** CSS ** -->
 <!-- base library -->
-<link rel="stylesheet" type="text/css" href="http://127.0.0.1:8000/extjs/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="../../resources/css/ext-all.css" />
 <!-- overrides to base library -->
 <!-- ** Javascript ** -->
 <!-- ExtJS library: base/adapter -->
-<script type="text/javascript" src="http://127.0.0.1:8000/extjs/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="../../adapter/ext/ext-base.js"></script>
 <!-- ExtJS library: all widgets -->
-<script type="text/javascript" src="http://127.0.0.1:8000/extjs/ext-all-debug.js"></script>
+<script type="text/javascript" src="../../ext-all-debug.js"></script>
 <!-- page specific -->
 <script type="text/javascript">
 
 /* 
   This snippet was used to write
   http://code.google.com/p/lino/wiki/20100206
+*/
+
+/*
+from http://www.extjs.com/forum/showthread.php?t=88251
+Ext.override(Ext.layout.VBoxLayout, {
+    onLayout : function(ct, target){
+        Ext.layout.VBoxLayout.superclass.onLayout.call(this, ct, target);
+        var cs = this.getItems(ct), cm, ch, margin, cl, diff, aw,
+            size = target.getViewSize(true),
+            w = size.width,
+            h = size.height - this.scrollOffset,
+            l = this.padding.left, t = this.padding.top,
+            isStart = this.pack == 'start',
+            stretchWidth = w - (this.padding.left + this.padding.right),
+            extraHeight = 0,
+            maxWidth = 0,
+            totalFlex = 0,
+            flexHeight = 0,
+            usedHeight = 0,
+            idx = 0,
+            heights = [],
+            restore = [],
+            c,
+            csLen = cs.length, i;
+        for (i = 0 ; i < csLen; i++) {
+            c = cs[i];
+            cm = c.margins;
+            margin = cm.top + cm.bottom;
+            maxWidth = Math.max(maxWidth, c.getWidth() + cm.left + cm.right);
+        }
+        var innerCtWidth = maxWidth + this.padding.left + this.padding.right;
+        switch(this.align){
+            case 'stretch':
+                this.innerCt.setSize(w, h);
+                break;
+            case 'stretchmax':
+            case 'left':
+                this.innerCt.setSize(innerCtWidth, h);
+                break;
+            case 'center':
+                this.innerCt.setSize(w = Math.max(w, innerCtWidth), h);
+                break;
+        }
+        var availableWidth = Math.max(0, w - this.padding.left - this.padding.right);
+        for (i = 0 ; i < csLen; i++) {
+            c = cs[i];
+            cm = c.margins;
+            if(this.align == 'stretch'){
+                c.setWidth((stretchWidth - (cm.left + cm.right)).constrain(
+                    c.minWidth || 0, c.maxWidth || 1000000));
+            }else if(this.align == 'stretchmax'){
+                c.setWidth((maxWidth - (cm.left + cm.right)).constrain(
+                    c.minWidth || 0, c.maxWidth || 1000000));
+            }else if(isStart && c.flex){
+                c.setWidth();
+            }
+        }
+        for (i = 0 ; i < csLen; i++) {
+            c = cs[i];
+            cm = c.margins;
+            totalFlex += c.flex || 0;
+            if (c.doLayout && !c.height && !c.hasLayout) {
+                c.doLayout();
+            }
+            ch = c.getHeight();
+            margin = cm.top + cm.bottom;
+            extraHeight += ch + margin;
+            flexHeight += margin + (c.flex ? 0 : ch);
+        }
+        extraHeight = h - extraHeight - this.padding.top - this.padding.bottom;
+        var availHeight = Math.max(0, h - this.padding.top - this.padding.bottom - flexHeight),
+            leftOver = availHeight;
+        for (i = 0 ; i < csLen; i++) {
+            c = cs[i];
+            if(isStart && c.flex){
+                ch = Math.floor(availHeight * (c.flex / totalFlex));
+                leftOver -= ch;
+                heights.push(ch);
+            }
+        }
+        if(this.pack == 'center'){
+            t += extraHeight ? extraHeight / 2 : 0;
+        }else if(this.pack == 'end'){
+            t += extraHeight;
+        }
+        idx = 0;
+        for (i = 0 ; i < csLen; i++) {
+            c = cs[i];
+            cm = c.margins;
+            t += cm.top;
+            aw = availableWidth;
+            cl = l + cm.left
+            if(this.align == 'center'){
+                if((diff = availableWidth - (c.getWidth() + cm.left + cm.right)) > 0){
+                    cl += (diff/2);
+                    aw -= diff;
+                }
+            }
+            c.setPosition(cl, t);
+            if(isStart && c.flex){
+                ch = Math.max(0, heights[idx++] + (leftOver-- > 0 ? 1 : 0));
+                c.setSize(aw, ch);
+            }else{
+                ch = c.getHeight();
+            }
+            t += ch + cm.bottom;
+        }
+    }
+});
+Ext.override(Ext.layout.HBoxLayout, {
+    onLayout : function(ct, target){
+        Ext.layout.HBoxLayout.superclass.onLayout.call(this, ct, target);
+        var cs = this.getItems(ct), cm, cw, margin, ch, diff,
+            size = target.getViewSize(true),
+            w = size.width - this.scrollOffset,
+            h = size.height,
+            l = this.padding.left, t = this.padding.top,
+            isStart = this.pack == 'start',
+            isRestore = ['stretch', 'stretchmax'].indexOf(this.align) == -1,
+            stretchHeight = h - (this.padding.top + this.padding.bottom),
+            extraWidth = 0,
+            maxHeight = 0,
+            totalFlex = 0,
+            flexWidth = 0,
+            usedWidth = 0;
+        Ext.each(cs, function(c){
+            cm = c.margins;
+            totalFlex += c.flex || 0;
+            if (c.doLayout && !c.height && !c.hasLayout) {
+                c.doLayout();
+            }
+            cw = c.getWidth();
+            margin = cm.left + cm.right;
+            extraWidth += cw + margin;
+            flexWidth += margin + (c.flex ? 0 : cw);
+            maxHeight = Math.max(maxHeight, c.getHeight() + cm.top + cm.bottom);
+        });
+        extraWidth = w - extraWidth - this.padding.left - this.padding.right;
+        var innerCtHeight = maxHeight + this.padding.top + this.padding.bottom;
+        switch(this.align){
+            case 'stretch':
+                this.innerCt.setSize(w, h);
+                break;
+            case 'stretchmax':
+            case 'top':
+                this.innerCt.setSize(w, innerCtHeight);
+                break;
+            case 'middle':
+                this.innerCt.setSize(w, h = Math.max(h, innerCtHeight));
+                break;
+        }
+        var availWidth = Math.max(0, w - this.padding.left - this.padding.right - flexWidth),
+            leftOver = availWidth,
+            widths = [],
+            restore = [],
+            idx = 0,
+            availableHeight = Math.max(0, h - this.padding.top - this.padding.bottom);
+        Ext.each(cs, function(c){
+            if(isStart && c.flex){
+                cw = Math.floor(availWidth * (c.flex / totalFlex));
+                leftOver -= cw;
+                widths.push(cw);
+            }
+        });
+        if(this.pack == 'center'){
+            l += extraWidth ? extraWidth / 2 : 0;
+        }else if(this.pack == 'end'){
+            l += extraWidth;
+        }
+        Ext.each(cs, function(c){
+            cm = c.margins;
+            l += cm.left;
+            c.setPosition(l, t + cm.top);
+            if(isStart && c.flex){
+                cw = Math.max(0, widths[idx++] + (leftOver-- > 0 ? 1 : 0));
+                if(isRestore){
+                    restore.push(c.getHeight());
+                }
+                c.setSize(cw, availableHeight);
+            }else{
+                cw = c.getWidth();
+            }
+            l += cw + cm.right;
+        });
+        idx = 0;
+        Ext.each(cs, function(c){
+            cm = c.margins;
+            ch = c.getHeight();
+            if(isStart && c.flex){
+                ch = restore[idx++];
+            }
+            if(this.align == 'stretch'){
+                c.setHeight((stretchHeight - (cm.top + cm.bottom)).constrain(
+                    c.minHeight || 0, c.maxHeight || 1000000));
+            }else if(this.align == 'stretchmax'){
+                c.setHeight((maxHeight - (cm.top + cm.bottom)).constrain(
+                    c.minHeight || 0, c.maxHeight || 1000000));
+            }else{
+                if(this.align == 'middle'){
+                    diff = availableHeight - (ch + cm.top + cm.bottom);
+                    ch = t + cm.top + (diff/2);
+                    if(diff > 0){
+                        c.setPosition(c.x, ch);
+                    }
+                }
+                if(isStart && c.flex){
+                    c.setHeight(ch);
+                }
+            }
+        }, this);
+    }
+});
 */
 
 test1 = function() {
@@ -30,7 +242,7 @@ test1 = function() {
   });
     
   var win = new Ext.Window({ 
-    layout: "fit", title: "Test 1", items: main_panel, height:400, width: 400, x:10});
+    layout: "fit", title: "Test 1", items: main_panel, height:400, width: 400, x:10, y:10});
   win.show();
   
  
@@ -61,7 +273,7 @@ test2 = function() {
     });
     
   var win = new Ext.Window({ 
-    layout: "fit", title: "Test 2", items: main_panel, height:400, width: 400, x:420});
+    layout: "fit", title: "Test 2", items: main_panel, height:400, width: 400, x:50, y:50});
   win.show();
 
 }
@@ -87,10 +299,11 @@ test3 = function() {
     layout: "vbox", layoutConfig: { align: "stretch" }, pack: "end", 
     items: [ names_panel, comment_panel ], 
     frame: true, 
+    autoHeight:true, 
     });
     
   var win = new Ext.Window({ 
-    layout: "fit", title: "Test 3", items: main_panel, height:400, width: 400, x:830});
+    layout: "fit", title: "Test 3", items: main_panel, height:400, width: 400, x:90, y:90});
   win.show();
 
 }
@@ -120,7 +333,7 @@ test4 = function() {
     });
     
   var win = new Ext.Window({ 
-    layout: "fit", title: "Test 4", items: main_panel, height:400, width: 400, x:10});
+    layout: "fit", title: "Test 4", items: main_panel, height:400, width: 400, x:130, y:130});
   win.show();
 
 }
