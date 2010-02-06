@@ -558,10 +558,10 @@ class VisibleComponent(Component):
     width = None
     height = None
     preferred_width = 10
-    preferred_height = 1
+    preferred_height = 0
     flex = None
     
-    def __init__(self,name,width=None,height=None,label=None,**kw):
+    def __init__(self,name,width=None,height=None,label=None,flex=None,**kw):
         Component.__init__(self,name,**kw)
         if width is not None:
             self.width = width
@@ -569,6 +569,8 @@ class VisibleComponent(Component):
             self.height = height
         if label is not None:
             self.label = label
+        if flex is not None:
+            self.flex = flex
     
 
     def __str__(self):
@@ -645,17 +647,19 @@ class LayoutElement(VisibleComponent):
         #~ return py2js(self.get_column_options())
         
     def set_parent(self,parent):
-        assert self.parent is None
+        if self.parent is not None:
+            raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
         self.parent = parent
         if self.label:
-            if parent.labelAlign == layouts.LABEL_ALIGN_TOP:
-                self.preferred_height += 1
-            elif parent.labelAlign == layouts.LABEL_ALIGN_LEFT:
+            if parent.labelAlign == layouts.LABEL_ALIGN_LEFT:
                 self.preferred_width += len(self.label)
-        if parent.vertical:
-            self.flex = self.height or self.preferred_height
-        else:
-            self.flex = self.width or self.preferred_width
+            #~ elif parent.labelAlign == layouts.LABEL_ALIGN_TOP:
+                #~ self.preferred_height += 1
+        if self.flex is None:
+            if parent.vertical:
+                self.flex = self.height or self.preferred_height
+            else:
+                self.flex = self.width or self.preferred_width
 
     def ext_options(self,**kw):
         kw = VisibleComponent.ext_options(self,**kw)
@@ -697,7 +701,7 @@ class InputElement(LayoutElement):
     #declare_type = DECLARE_VAR
     ext_suffix = "_input"
     xtype = 'textfield'
-    preferred_height = 1
+    preferred_height = 0
     field = None 
     
     def __init__(self,lh,input,**kw):
@@ -713,7 +717,7 @@ class InputElement(LayoutElement):
         kw.update(id=self.name)
         #kw.update(xtype='textfield')
         panel_options = dict(xtype='container',layout='form',items=kw)
-        panel_options.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
+        #panel_options.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         return panel_options
         
 class ButtonElement(LayoutElement):
@@ -722,7 +726,7 @@ class ButtonElement(LayoutElement):
     declare_type = DECLARE_VAR
     ext_suffix = "_btn"
     xtype = 'button'
-    preferred_height = 1
+    preferred_height = 0
 
     def __init__(self,lh,name,action,**kw):
         #lino.log.debug("ButtonElement.__init__(%r,%r,%r)",lh,name,action)
@@ -736,7 +740,7 @@ class ButtonElement(LayoutElement):
         #kw.update(xtype=self.xtype)
         label = self.action.label or self.name
         kw.update(text=label)
-        kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
+        #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
         kw.update(maxWidth=len(label)*EXT_CHAR_WIDTH)
         kw.update(id=self.name)
         if self.lh.default_button == self:
@@ -778,7 +782,7 @@ class VirtualFieldElement(LayoutElement):
         
     def ext_options(self,**kw):
         kw = LayoutElement.ext_options(self,**kw)
-        kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
+        #kw.update(maxHeight=self.preferred_height*EXT_CHAR_HEIGHT)
     
         
         
@@ -808,6 +812,7 @@ class FieldElement(LayoutElement):
             kw.update(xtype=self.xtype)
         kw.update(name=self.name)
         kw.update(anchor="100%")
+        #~ kw.update(anchor="100% 100%")
         #kw.update(style=dict(padding='0px'),color='green')
         if self.label:
             kw.update(fieldLabel=unicode(self.label))
@@ -824,9 +829,9 @@ class FieldElement(LayoutElement):
         """
         kw = LayoutElement.ext_options(self,**kw)
         kw.update(self.get_field_options())
-        h = self.preferred_height*EXT_CHAR_HEIGHT
-        kw.update(minHeight=h)
-        kw.update(height=h)
+        #~ h = self.preferred_height*EXT_CHAR_HEIGHT
+        #~ kw.update(minHeight=h)
+        #~ kw.update(height=h)
         #kw.update(flex=0)
         #kw.update(xtype='panel',layout='form') 
         #kw.update(style=dict(padding='0px'),color='green')
@@ -955,10 +960,11 @@ class ForeignKeyElement(FieldElement):
         return kw
         
     def js_column_lines(self,grid):
-        yield "%s.add_row_listener(function(sm,rowIndex,record) {" % grid
-        #yield "  console.log('20100124b',this,client_job);"
-        yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
-        #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
+        if self.lh.link.report.get_field_choices_meth(self.field) is not None:
+            yield "%s.add_row_listener(function(sm,rowIndex,record) {" % grid
+            #yield "  console.log('20100124b',this,client_job);"
+            yield "  %s.setQueryContext(record.data.id)});" % self.as_ext()
+            #yield "client_job.add_row_listener(function(sm,rowIndex,record) {console.log('20100124b',this)},this);"
         
 
         
@@ -1052,6 +1058,7 @@ class Container(LayoutElement):
     vertical = False
     hpad = 1
     is_fieldset = False
+    xtype = 'container'
     
     #declare_type = DECLARE_INLINE
     #declare_type = DECLARE_THIS
@@ -1092,9 +1099,11 @@ class Panel(Container):
     
     def __init__(self,lh,name,vertical,*elements,**kw):
         self.vertical = vertical
-        if name in lh.layout.collapsible_elements:
-            self.collapsible = True
         Container.__init__(self,lh,name,*elements,**kw)
+        label = lh.layout.collapsible_elements.get(name,None)
+        if label:
+            self.collapsible = True
+            self.label = label
         for e in elements:
             if not isinstance(e,LayoutElement):
                 raise Exception("%r is not a LayoutElement" % e)
@@ -1113,10 +1122,12 @@ class Panel(Container):
             ew = e.width or e.preferred_width
             eh = e.height or e.preferred_height
             if self.vertical:
-                h += e.flex
+                #~ h += e.flex
+                h += eh
                 w = max(w,ew)
             else:
-                w += e.flex
+                #w += e.flex
+                w += ew
                 h = max(h,eh)
         self.preferred_height = h
         self.preferred_width = w
@@ -1127,11 +1138,11 @@ class Panel(Container):
         d = Container.ext_options(self,**d)
         if self.collapsible:
             d.update(xtype='panel')
-            js = "function(cmp,aw,ah,rw,rh) { console.log('Panel.collapse',this,cmp,aw,ah,rw,rh); this.main_panel.doLayout(); }"
-            d.update(listeners=dict(scope=js_code('this'),collapse=js_code(js),expand=js_code(js)))
+            #~ js = "function(cmp,aw,ah,rw,rh) { console.log('Panel.collapse',this,cmp,aw,ah,rw,rh); this.main_panel.doLayout(); }"
+            #~ d.update(listeners=dict(scope=js_code('this'),collapse=js_code(js),expand=js_code(js)))
             #d.update(monitorResize=True)
-        else:
-            d.update(xtype='container')
+        #~ else:
+            #~ d.update(xtype='container')
         d.update(pack='end')
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
@@ -1141,18 +1152,19 @@ class Panel(Container):
         #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         #d.update(items=js_code("this.elements"))
         
-        if len(self.elements) == 1:
-            d.update(layout='fit')
-        elif self.vertical:
-            #align = 'left'
-            align = 'stretch'
-            #align = 'stretchmax'
-            d.update(layout='vbox',layoutConfig=dict(align=align))
-        else:
-            #align = 'top'
-            align = 'stretch'
-            #align = 'stretchmax'
-            d.update(layout='hbox',layoutConfig=dict(align=align))
+        if not d.has_key('layout'):
+            if len(self.elements) == 1:
+                d.update(layout='fit')
+            elif self.vertical:
+                #align = 'left'
+                align = 'stretch'
+                #align = 'stretchmax'
+                d.update(layout='vbox',layoutConfig=dict(align=align))
+            else:
+                #align = 'top'
+                align = 'stretch'
+                #align = 'stretchmax'
+                d.update(layout='hbox',layoutConfig=dict(align=align))
             
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
@@ -1219,11 +1231,11 @@ class GridElement(Container): #,DataElementMixin):
         
         # override Container's height algorithm
         self.preferred_height = rh.report.page_length 
-        ADD_GRID_HEIGHT = 4 # experimental value...
-        if self.height:
-            self.height += ADD_GRID_HEIGHT
-        else:
-            self.preferred_height += ADD_GRID_HEIGHT
+        #~ ADD_GRID_HEIGHT = 4 # experimental value...
+        #~ if self.height:
+            #~ self.height += ADD_GRID_HEIGHT
+        #~ else:
+            #~ self.preferred_height += ADD_GRID_HEIGHT
         
         self.rh = rh
         self.report = rh.report
@@ -1396,14 +1408,16 @@ class MainPanel:
         lino.log.warning("No LayoutElement for %s",field.__class__)
         raise NotImplementedError("field %r" % field)
 
-
+#~ class FieldPanel(Container):
+    #~ xtype = "container"
+  
 class WrappingMainPanel(MainPanel):
     "Inherited by DetailMainPanel and FormMainPanel (not GridPanel)"
     
     @classmethod
     def field2elem(cls,lh,field,**kw):
         e = MainPanel.field2elem(lh,field,**kw)
-        ct = Container(lh,field.name+"_ct",e,items=e,xtype='container',layout='form')
+        ct = Panel(lh,field.name+"_ct",True,e,layout='form')#,flex=0)
         ct.field = field
         return ct
 
@@ -1612,7 +1626,7 @@ class DetailMainPanel(Panel,WrappingMainPanel):
         #d.update(items=js_code(self._main.as_ext(request)))
         #d.update(items=js_code("[%s]" % ",".join([e.as_ext() for e in self.elements])))
         d.update(items=self.elements)
-        d.update(autoHeight=False)
+        #d.update(autoHeight=False)
         d.update(bbar=self.buttons)
         #d.update(standardSubmit=True)
         return d

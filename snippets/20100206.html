@@ -1,0 +1,80 @@
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title id="title">20100206</title>
+<!-- ** CSS ** -->
+<!-- base library -->
+<link rel="stylesheet" type="text/css" href="http://127.0.0.1:8000/extjs/resources/css/ext-all.css" />
+<!-- overrides to base library -->
+<!-- ** Javascript ** -->
+<!-- ExtJS library: base/adapter -->
+<script type="text/javascript" src="http://127.0.0.1:8000/extjs/adapter/ext/ext-base.js"></script>
+<!-- ExtJS library: all widgets -->
+<script type="text/javascript" src="http://127.0.0.1:8000/extjs/ext-all-debug.js"></script>
+
+<!-- page specific -->
+<script type="text/javascript">
+
+/* 
+  This snippet was used to write
+  http://code.google.com/p/lino/wiki/20100206
+*/
+
+test1 = function() {
+  var first_name = { fieldLabel: "first_name", xtype: "textfield", anchor: "100%" };
+  var last_name = { fieldLabel: "last_name", xtype: "textfield", anchor: "100%" };
+  var comment = { fieldLabel: "comment", xtype: "textarea", anchor: "100% 100%"};
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    items: [ first_name, last_name, comment ], 
+    frame: true, 
+    labelAlign: "top" 
+  });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 1", items: main_panel, height:400, width: 400, x:10});
+  win.show();
+  
+ 
+}
+
+
+test2 = function() {
+  var labelAlign = "top";
+  var first_name = { fieldLabel: "first_name", xtype: "textfield", anchor: "100%" };
+  var first_name_panel = { layout: "form", items: first_name, labelAlign: labelAlign, autoHeight:true, flex:20 };
+  
+  var last_name = { fieldLabel: "last_name", xtype: "textfield", anchor: "100%" };
+  var last_name_panel = { layout: "form", items: last_name, labelAlign: labelAlign, autoHeight:true, flex:30 };
+  
+  var names_panel = { layout: "hbox", layoutConfig: { align: "stretch" }, pack: "end",
+    items: [ first_name_panel,last_name_panel], 
+    // autoHeight:true, 
+    height: 50,
+    }
+  
+  var comment = { fieldLabel: "comment", xtype: "textarea", anchor: "100% 100%" };
+  var comment_panel = { layout: "form", items: comment, labelAlign: labelAlign, flex:1 };
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    layout: "vbox", layoutConfig: { align: "stretch" }, pack: "end", 
+    items: [ names_panel, comment_panel ], 
+    frame: true, 
+    });
+    
+  var window = new Ext.Window({ 
+    layout: "fit", title: "Test 2", items: main_panel, height:400, width: 400, x:420});
+  window.show();
+
+}
+
+
+
+Ext.onReady(function() {
+  test1();
+  test2();
+  // test3();
+});
+</script>
+</head><body>
+vbox doesn't know the preferred height of textfields 
+</body></html>

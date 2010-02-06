@@ -103,7 +103,7 @@ class Contacts(reports.Report):
     pass
   
 class ContactDetail(layouts.PageLayout):
-    
+    box1 = "name"
     box2 = """national_id:15
               language
               """
@@ -125,7 +125,7 @@ class ContactDetail(layouts.PageLayout):
               bottom_box
               """
               
-    collapsible_elements = "bottom_box intro_box address_box"
+    collapsible_elements = dict(bottom_box=_("Bottom"),address_box=_("Address"))
        
  
 
