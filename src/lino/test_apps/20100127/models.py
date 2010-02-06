@@ -1,7 +1,7 @@
 """
 
 Django raises DoesNotExist when consulting an empty ForeignKey field
-# Django Ticket#12708 (http://code.djangoproject.com/ticket/12708)
+Django Ticket#12708 (http://code.djangoproject.com/ticket/12708)
 
 We create an Order without a Journal:
   
@@ -16,7 +16,9 @@ so I remove `null=True` from the field definition.
 
   >>> o = Order2()
   >>> print o.journal
-  None
+  Traceback (most recent call last):  
+  ...
+  DoesNotExist
   
 The above line raises a DoesNotExist exception. Django should raise 
 an exception only when I try to save the instance, not already when 

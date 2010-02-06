@@ -338,6 +338,32 @@ test4 = function() {
 
 }
 
+test5 = function() {
+  var labelAlign = "top";
+  var first_name = { fieldLabel: "first_name", xtype: "textfield", anchor: "100% 100%", autoHeight:true };
+  var first_name_panel = { layout: "form", items: first_name, labelAlign: labelAlign, autoHeight:true};
+  
+  var last_name = { fieldLabel: "last_name", xtype: "textfield", anchor: "100% 100%", autoHeight:true };
+  var last_name_panel = { layout: "form", items: last_name, labelAlign: labelAlign, autoHeight:true};
+  
+  var comment = { fieldLabel: "comment", xtype: "textarea", anchor: "100% 100%" };
+  var comment_panel = { layout: "form", items: comment, labelAlign: labelAlign, flex:1 };
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    layout: "vbox", layoutConfig: { align: "stretch" }, pack: "end", 
+    // items: [ first_name_panel, last_name_panel, comment_panel ], 
+    items: [ first_name, last_name, comment ], 
+    frame: true, 
+    autoHeight:true, 
+    });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 5", items: main_panel, height:400, width: 400, x:170, y:170});
+  win.show();
+
+}
+
+
 
 
 Ext.onReady(function() {
@@ -345,6 +371,7 @@ Ext.onReady(function() {
   test2();
   test3();
   test4();
+  test5();
 });
 </script>
 </head><body>
