@@ -16,6 +16,7 @@
 /* 
   This snippet was used to write
   http://code.google.com/p/lino/wiki/20100206
+  http://www.extjs.com/forum/showthread.php?t=91461
 */
 
 /*
@@ -363,6 +364,37 @@ test5 = function() {
 
 }
 
+test6 = function() {
+  var labelAlign = "top";
+  var first_name = new Ext.form.TextField({ fieldLabel: "first_name", anchor: "100% 100%", autoHeight:true });
+  var first_name_panel = new Ext.Container({ layout: "form", items: first_name, labelAlign: labelAlign, autoHeight:true, flex:20 });
+  
+  var last_name = new Ext.form.TextField({ fieldLabel: "last_name", anchor: "100% 100%", autoHeight:true });
+  var last_name_panel = new Ext.Container({ layout: "form", items: last_name, labelAlign: labelAlign, autoHeight:true, flex:30 });
+  
+  var names_panel = new Ext.Container({ layout: "hbox", layoutConfig: { align: "stretch" }, pack: "end",
+    items: [ first_name_panel,last_name_panel], 
+    // autoHeight:true, 
+    height:last_name.getHeight(),
+    });
+    
+  
+  
+  var comment = new Ext.form.TextArea({ fieldLabel: "comment", anchor: "100% 100%" });
+  var comment_panel = new Ext.Container({ layout: "form", items: comment, labelAlign: labelAlign, flex:1 });
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    layout: "vbox", layoutConfig: { align: "stretch" }, pack: "end", 
+    items: [ names_panel, comment_panel ], 
+    frame: true, 
+    autoHeight:true, 
+    });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 6", items: main_panel, height:400, width: 400, x:170, y:170});
+  win.show();
+
+}
 
 
 
@@ -371,7 +403,8 @@ Ext.onReady(function() {
   test2();
   test3();
   test4();
-  test5();
+  // test5(); // using table layout. not working.
+  test6();
 });
 </script>
 </head><body>
