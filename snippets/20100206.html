@@ -396,15 +396,43 @@ test6 = function() {
 
 }
 
+test7 = function() {
+  var labelAlign = "top";
+  var first_name = { fieldLabel: "first_name", xtype: "textfield", anchor: "100%" };
+  var last_name = { fieldLabel: "last_name", xtype: "textfield", anchor: "100%"  };
+  var first_name_panel = { layout: "form", items: first_name, labelAlign: labelAlign, columnWidth: 0.5 };
+  var last_name_panel = { layout: "form", items: last_name, labelAlign: labelAlign, columnWidth: 0.5 };
+  
+  var names_panel = { 
+    layout: "column", 
+    items: [ first_name_panel, last_name_panel], 
+    labelAlign: labelAlign,
+    };
+    
+  var comment = { fieldLabel: "comment", xtype: "textarea", anchor: "100% 100%" };
+  
+  var main_panel = new Ext.form.FormPanel({ 
+    items: [ names_panel, comment ], 
+    labelAlign: labelAlign,
+    frame: true, 
+    });
+    
+  var win = new Ext.Window({ 
+    layout: "fit", title: "Test 7", items: main_panel, height:400, width: 400, x:170, y:170});
+  win.show();
+
+}
+
 
 
 Ext.onReady(function() {
   test1();
   test2();
   test3();
-  test4();
-  // test5(); // using table layout. not working.
-  test6();
+  // test4(); // using table layout. doesn't work.
+  // test5(); // 
+  // test6(); // calls TextField.getHeight() before it has been rendered. doesn't work.
+  test7(); // uses column layout. 
 });
 </script>
 </head><body>
