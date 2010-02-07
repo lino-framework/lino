@@ -24,37 +24,55 @@ from lino.utils import perms
 class Property(models.Model):
     short = models.CharField(max_length=40)
     name = models.CharField(max_length=200)
-    only_for = models.ForeignKey(ContentType,blank=True,null=True)
+    only_for = models.ForeignKey(ContentType,blank=True,null=True,related_name='only_for_properties')
+    value_type = models.ForeignKey(ContentType,related_name='value_for_properties')
     
     def __unicode__(self):
         #if self.name is None: return u''
         return self.name
         
+    def create_values(self,s,owner=None):
+        cl = self.value_type.model_class()
+        #qs = cl.objects.all()
+        for n in s.splitlines():
+            n = n.strip()
+            if n:
+                print "%s.%s = %r" % (owner,self,n)
+                #qs.create(name=n,prop=self,owner=owner)
+                if owner is None:
+                    i = cl(value=n,prop=self)
+                else:
+                    i = cl(value=n,prop=self,owner=owner)
+                i.save()
+                
 class Properties(reports.Report):
     model = Property
     columnNames = 'short name only_for'
     order_by = "short"
         
 
-class PropChoice(models.Model):
-    prop = models.ForeignKey(Property)
-    name = models.CharField(max_length=200)
-    short = models.CharField(max_length=40)
+#~ class PropChoice(models.Model):
+    #~ prop = models.ForeignKey(Property)
+    #~ name = models.CharField(max_length=200)
+    #~ short = models.CharField(max_length=40,blank=True,null=True)
     
-    def __unicode__(self):
-        #if self.name is None: return u''
-        return self.name
+    #~ def __unicode__(self):
+        #~ #if self.name is None: return u''
+        #~ return self.name
 
-class PropChoices(reports.Report):
-    model = PropChoice
+#~ class PropChoices(reports.Report):
+    #~ model = PropChoice
 
 class PropValue(models.Model):
-    owner_type = models.ForeignKey(ContentType)
-    owner_id = models.PositiveIntegerField()
+    "Note: PropValue instances with owner None = possible choices"
+    owner_type = models.ForeignKey(ContentType,blank=True,null=True)
+    owner_id = models.PositiveIntegerField(blank=True,null=True)
     owner = generic.GenericForeignKey('owner_type', 'owner_id')
     prop = models.ForeignKey(Property)
-    value = models.CharField(max_length=200)
     
+    #~ class Meta:
+        #~ abstract = True
+        
     def __unicode__(self):
         if self.pk is None:
             return ''
@@ -66,13 +84,24 @@ class PropValue(models.Model):
         
     def prop_choices(self,recipient):
         """
-        recipient is a PropValue instance which doesn't know her .prop attribute.
         This report answers the question "What Properties are possible for this PropValue?", 
         which basically is "All Properties that apply to this type of owner". 
         This means currently that Property.only_for must be either None or equal to master_instance.owner_type
         """
         return Property.objects.filter(only_for__in=(recipient.owner_type,None))
-  
+        
+    def value_choices(self,recipient):
+        return recipient.prop.propchoice_set.all(owner__exact=None)
+
+class CharPropValue(PropValue):
+    value = models.CharField(max_length=200)
+    
+class IntegerPropValue(PropValue):
+    value = models.IntegerField()
+
+class BooleanPropValue(PropValue):
+    value = models.BooleanField()
+
 
 class PropValues(reports.Report):
     model = PropValue
@@ -85,3 +114,5 @@ class PropValuesByOwner(reports.Report):
     columnNames = "prop value"
     #can_delete = True
     order_by = "prop__short"
+
+

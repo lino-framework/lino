@@ -20,7 +20,7 @@ from django.contrib.auth import models as auth
 
 def objects():
   
-    u = auth.User.objects.get(pk=1) # username='user')
+    u = auth.User.objects.get(pk=1)
     
     notetype = Instantiator('notes.NoteType').build
     yield notetype(name="phone report")
