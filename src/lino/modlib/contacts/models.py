@@ -125,7 +125,7 @@ class ContactDetail(layouts.PageLayout):
               bottom_box
               """
               
-    collapsible_elements = dict(bottom_box=_("Bottom"),address_box=_("Address"))
+    #collapsible_elements = dict(bottom_box=_("Bottom"),address_box=_("Address"))
        
  
 

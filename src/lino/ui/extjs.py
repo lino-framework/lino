@@ -559,9 +559,9 @@ class VisibleComponent(Component):
     height = None
     preferred_width = 10
     preferred_height = 0
-    flex = None
+    #flex = None
     
-    def __init__(self,name,width=None,height=None,label=None,flex=None,**kw):
+    def __init__(self,name,width=None,height=None,label=None,**kw):
         Component.__init__(self,name,**kw)
         if width is not None:
             self.width = width
@@ -569,8 +569,8 @@ class VisibleComponent(Component):
             self.height = height
         if label is not None:
             self.label = label
-        if flex is not None:
-            self.flex = flex
+        #~ if flex is not None:
+            #~ self.flex = flex
     
 
     def __str__(self):
@@ -655,16 +655,16 @@ class LayoutElement(VisibleComponent):
                 self.preferred_width += len(self.label)
             #~ elif parent.labelAlign == layouts.LABEL_ALIGN_TOP:
                 #~ self.preferred_height += 1
-        if self.flex is None:
-            if parent.vertical:
-                self.flex = self.height or self.preferred_height
-            else:
-                self.flex = self.width or self.preferred_width
+        #~ if self.flex is None:
+            #~ if parent.vertical:
+                #~ self.flex = self.height or self.preferred_height
+            #~ else:
+                #~ self.flex = self.width or self.preferred_width
 
     def ext_options(self,**kw):
         kw = VisibleComponent.ext_options(self,**kw)
-        if self.flex is not None:
-            kw.update(flex=self.flex)
+        #~ if self.flex is not None:
+            #~ kw.update(flex=self.flex)
         #~ if self.width is None:
             #~ """
             #~ an element without explicit width will get flex=1 when in a hbox, otherwise anchor="100%".
@@ -1132,6 +1132,36 @@ class Panel(Container):
         self.preferred_height = h
         self.preferred_width = w
         
+        d = self.value
+        if not d.has_key('layout'):
+            if len(self.elements) == 1:
+                d.update(layout='fit')
+            elif self.vertical:
+                d.update(layout='form')
+                for e in self.elements:
+                    h = e.height or e.preferred_height
+                    e.value.update(anchor="100%")
+                    #~ if h == 0:
+                        #~ e.value.update(anchor="95%")
+                    #~ else:
+                        #~ e.value.update(anchor="95%% %d%%" % (100.0*self.preferred_height/h))
+                    #e.value.update(flex=h)
+                #~ #align = 'left'
+                #~ align = 'stretch'
+                #~ #align = 'stretchmax'
+                #~ d.update(layout='vbox',layoutConfig=dict(align=align))
+                #~ d.update(pack='end')
+            else:
+                d.update(layout='column')
+                for e in self.elements:
+                    w = e.width or e.preferred_width
+                    e.value.update(columnWidth=float(w)/self.preferred_width)
+                
+                #~ #align = 'top'
+                #~ align = 'stretch'
+                #~ #align = 'stretchmax'
+                #~ d.update(layout='hbox',layoutConfig=dict(align=align))
+            
         
         
     def ext_options(self,**d):
@@ -1143,7 +1173,6 @@ class Panel(Container):
             #d.update(monitorResize=True)
         #~ else:
             #~ d.update(xtype='container')
-        d.update(pack='end')
         #d.update(margins='0')
         #d.update(style=dict(padding='0px'))
         
@@ -1152,20 +1181,6 @@ class Panel(Container):
         #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
         #d.update(items=js_code("this.elements"))
         
-        if not d.has_key('layout'):
-            if len(self.elements) == 1:
-                d.update(layout='fit')
-            elif self.vertical:
-                #align = 'left'
-                align = 'stretch'
-                #align = 'stretchmax'
-                d.update(layout='vbox',layoutConfig=dict(align=align))
-            else:
-                #align = 'top'
-                align = 'stretch'
-                #align = 'stretchmax'
-                d.update(layout='hbox',layoutConfig=dict(align=align))
-            
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
             
@@ -1273,7 +1288,7 @@ class GridElement(Container): #,DataElementMixin):
         d.update(title=self.rh.report.label)
         #d.update(colModel=js_code('this.cols'))
         #d.update(colModel=js_code(self.column_model.ext_name))
-        #d.update(autoHeight=True)
+        d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
         return d
