@@ -1,4 +1,4 @@
-## Copyright 2009 Luc Saffre
+## Copyright 2009-2010 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify 
 ## it under the terms of the GNU General Public License as published by
@@ -21,8 +21,9 @@ import cStringIO
 
 from django.db import models
 
-from lino.utils import render
-from lino.misc.etc import assert_pure
+#from lino.misc.etc import assert_pure
+
+from lino import reports
 
 LEFT = "LEFT"
 RIGHT = "RIGHT"
@@ -183,13 +184,13 @@ class DetailColumn(Column):
 
 class ColumnsReportRequest(reports.ReportRequest):
         
-    def __init__(self,report,*args,**kw):
-        reports.ReportRequest.__init__(self,report,*args,**kw)
+    def __init__(self,rh,*args,**kw):
+        reports.ReportRequest.__init__(self,rh,*args,**kw)
         self.columns_by_name = {}
         columns = []
-        meta = report.model._meta
-        if report.columnNames:
-            for colname in report.columnNames.split() :
+        meta = rh.report.model._meta
+        if rh.report.columnNames:
+            for colname in rh.report.columnNames.split() :
                 a = colname.split(":")
                 if len(a) == 1:
                     fieldname = colname
@@ -202,7 +203,7 @@ class ColumnsReportRequest(reports.ReportRequest):
                       meta.get_field_by_name(fieldname)
                     #print field, model, direct, m2m 
                 except models.FieldDoesNotExist,e:
-                    dtlrep = report.row_layout._inlines.get(fieldname,None)
+                    dtlrep = rh.report.row_layout._inlines.get(fieldname,None)
                     if dtlrep != None:
                         col = DetailColumn(self,
                                            fieldname,
@@ -232,7 +233,7 @@ class ColumnsReportRequest(reports.ReportRequest):
 
 class TextReportRequest(ColumnsReportRequest):
     def __init__( self,
-                  report,
+                  rh,
                   master_instance=None,
                   width=79,
                   columnWidths=None,
@@ -250,7 +251,7 @@ class TextReportRequest(ColumnsReportRequest):
         #~ if flt is None:
             #~ flt = report.default_filter
         #~ self.flt = flt
-        ColumnsReportRequest.__init__(self,report,master_instance,**params)
+        ColumnsReportRequest.__init__(self,rh,master_instance,**params)
                              
   
     def computeWidths(self):
@@ -408,7 +409,7 @@ class TextReportRequest(ColumnsReportRequest):
     def _row_as_text(self,cellValues,i,columnSep):
         l = []
         for j in range(len(self.columns)):
-            assert_pure(cellValues[j][i])
+            #assert_pure(cellValues[j][i])
             l.append(hfill(cellValues[j][i],
                            self.columns[j].halign,
                            self.columns[j].width))

@@ -1291,6 +1291,10 @@ class GridElement(Container): #,DataElementMixin):
         d.update(autoHeight=True)
         #d.update(layout='fit')
         d.update(enableColLock=False)
+        # TODO: How to test this?
+        if self.__class__ is not GridMainPanel: 
+            js="Lino.show_slave(this,%r,%s)" % (self.rh.row_layout.get_absolute_url(run=True),py2js(self.rh.report.label))
+            d.update(listeners=dict(click=js_code(js)))
         return d
             
       
@@ -1766,7 +1770,7 @@ class FormMainPanel(Panel,WrappingMainPanel):
         return d
         
     def subvars(self):
-        for e in DataElementMixin.subvars(self):
+        for e in WrappingMainPanel.subvars(self):
             yield e
         for e in Panel.subvars(self):
             yield e

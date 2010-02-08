@@ -127,12 +127,12 @@ INSTALLED_APPS = (
   'lino.test_apps.properties',
   
   # apps that test some specific problem encountered
-  'lino.test_apps.20090714',
-  'lino.test_apps.20090717', # Diamond inheritance (needs ticket #10808 to be fixed)
-  'lino.test_apps.20091014', # assign floats to DecimalField
-  'lino.test_apps.20100126', # Journals and Documents (needs ticket #10808 to be fixed)
-  'lino.test_apps.20100127', # Django raises DoesNotExist when consulting an empty ForeignKey field
-  'lino.test_apps.20100206', # 
+  #~ 'lino.test_apps.20090714',
+  #~ 'lino.test_apps.20090717', # Diamond inheritance (needs ticket #10808 to be fixed)
+  #~ 'lino.test_apps.20091014', # assign floats to DecimalField
+  #~ 'lino.test_apps.20100126', # Journals and Documents (needs ticket #10808 to be fixed)
+  #~ 'lino.test_apps.20100127', # Django raises DoesNotExist when consulting an empty ForeignKey field
+  #~ 'lino.test_apps.20100206', # 
 )
 
 

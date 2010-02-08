@@ -477,9 +477,7 @@ class Report(actors.Actor): # actions.Action): #
 
     def as_text(self, *args,**kw):
         from lino.ui import console
-        rh = console.get_report_handle(self)
-        rr = ReportRequest(rh,*args,**kw)
-        return rr.render()
+        return console.ui.report_as_text(self)
         
     def get_field_choices_meth(self,fld):
         # used also in extjs to test whether this field does have context-sensitive choices
